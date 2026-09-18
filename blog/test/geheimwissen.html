@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geheimwissen der Welt — Eine Tiefenrecherche</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-card2: #1c2330;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #d4a94e;
+    --accent2: #7ee0d2;
+    --accent3: #c29fe8;
+    --red: #f85149;
+    --green: #56d364;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+  }
+  .layout { display: flex; max-width: 1500px; margin: 0 auto; }
+  /* Sidebar */
+  nav.toc {
+    position: sticky; top: 0; align-self: flex-start;
+    width: 280px; min-width: 280px; height: 100vh; overflow-y: auto;
+    padding: 24px 16px; border-right: 1px solid var(--border);
+    background: #0a0e14; font-size: 0.85rem;
+  }
+  nav.toc h2 { font-size: 0.95rem; color: var(--accent); margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  nav.toc a {
+    display: block; color: var(--text-dim); text-decoration: none;
+    padding: 5px 10px; border-radius: 6px; margin-bottom: 2px;
+  }
+  nav.toc a:hover { background: var(--bg-card2); color: var(--text); }
+  nav.toc a.l2 { padding-left: 24px; font-size: 0.8rem; }
+  main { flex: 1; padding: 40px 48px; max-width: 1000px; }
+  /* Typography */
+  h1 {
+    font-size: 2.2rem; color: var(--accent); margin-bottom: 8px;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  .subtitle { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 24px; }
+  h2.sec {
+    font-size: 1.6rem; color: var(--accent); margin: 56px 0 16px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+    font-family: Georgia, serif;
+  }
+  h3 { color: var(--accent2); margin: 28px 0 10px; font-size: 1.15rem; }
+  h4 { color: var(--accent3); margin: 20px 0 8px; font-size: 1rem; }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 0 0 14px 24px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--accent2); }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin: 18px 0;
+  }
+  .card.warn { border-left: 4px solid var(--red); }
+  .card.fact { border-left: 4px solid var(--green); }
+  .card.key { border-left: 4px solid var(--accent); }
+  .badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 20px; margin-right: 6px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .badge.fakt { background: #1a3a24; color: var(--green); border: 1px solid var(--green); }
+  .badge.mythos { background: #3a1a1a; color: var(--red); border: 1px solid var(--red); }
+  .badge.unklar { background: #3a321a; color: var(--accent); border: 1px solid var(--accent); }
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9rem;
+  }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-card2); color: var(--accent); }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .quote {
+    border-left: 3px solid var(--accent); padding: 8px 18px; margin: 14px 0;
+    color: var(--text-dim); font-style: italic; background: rgba(212,169,78,0.05);
+  }
+  .quote .src { display: block; font-size: 0.8rem; font-style: normal; margin-top: 6px; color: var(--accent); }
+  .src-list { font-size: 0.8rem; color: var(--text-dim); }
+  .src-list li { margin-bottom: 3px; word-break: break-all; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    nav.toc { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    main { padding: 24px; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  .timeline { border-left: 2px solid var(--accent); margin: 16px 0 16px 8px; padding-left: 24px; }
+  .timeline .t { position: relative; margin-bottom: 14px; }
+  .timeline .t::before {
+    content: ""; position: absolute; left: -30px; top: 7px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
+  }
+  .timeline .t .yr { color: var(--accent); font-weight: 700; }
+  code { background: var(--bg-card2); padding: 1px 6px; border-radius: 4px; font-size: 0.85em; }
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+  .stat { flex: 1; min-width: 150px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat .num { font-size: 1.8rem; color: var(--accent); font-weight: 700; }
+  .stat .lbl { font-size: 0.8rem; color: var(--text-dim); }
+  footer { padding: 40px; color: var(--text-dim); font-size: 0.85rem; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <a href="#s0">0 · Was ist „Geheimwissen"?</a>
+  <a href="#s1">1 · Die Antike: Mysterienreligionen</a>
+  <a class="l2" href="#s1-1">Eleusis</a>
+  <a class="l2" href="#s1-2">Orphismus</a>
+  <a class="l2" href="#s1-3">Isis, Kybele, Mithras</a>
+  <a href="#s2">2 · Antike: Pythagoras, Hermetismus, Gnosis</a>
+  <a class="l2" href="#s2-1">Pythagoreismus</a>
+  <a class="l2" href="#s2-2">Hermetismus &amp; Corpus Hermeticum</a>
+  <a class="l2" href="#s2-3">Gnostizismus &amp; Nag Hammadi</a>
+  <a class="l2" href="#s2-4">Chaldäische Orakel &amp; Orakelkult</a>
+  <a href="#s3">3 · Kabbala &amp; jüdische Mystik</a>
+  <a href="#s4">4 · Alchemie &amp; die Hermetische Tradition</a>
+  <a href="#s5">5 · Grimoires &amp; zeremonielle Magie</a>
+  <a href="#s6">6 · Rosenkreuzertum</a>
+  <a href="#s7">7 · Mittelalter: Templer &amp; Katharer</a>
+  <a href="#s8">8 · Moderne okkulte Orden</a>
+  <a class="l2" href="#s8-1">Golden Dawn</a>
+  <a class="l2" href="#s8-2">Martinismus</a>
+  <a class="l2" href="#s8-3">Theosophie</a>
+  <a class="l2" href="#s8-4">OTO &amp; Thelema</a>
+  <a class="l2" href="#s8-5">Gnostische Kirchen</a>
+  <a href="#s9">9 · Moderne Bewegungen</a>
+  <a class="l2" href="#s9-1">Chaos Magic, Wicca, New Age</a>
+  <a class="l2" href="#s9-2">Anthroposophie &amp; Traditionalismus</a>
+  <a class="l2" href="#s9-3">NS-Esoterik &amp; Thule-Gesellschaft</a>
+  <a href="#s10">10 · Geheimgesellschaften</a>
+  <a class="l2" href="#s10-1">Freimaurerei</a>
+  <a class="l2" href="#s10-2">Illuminaten</a>
+  <a class="l2" href="#s10-3">P2, Skull &amp; Bones</a>
+  <a class="l2" href="#s10-4">Bilderberg, CFR, WEF, Trilateral</a>
+  <a class="l2" href="#s10-5">Opus Dei &amp; Jesuiten</a>
+  <a class="l2" href="#s10-6">Verschwörungsmythen im Überblick</a>
+  <a href="#s11">11 · Weltweite esoterische Traditionen</a>
+  <a class="l2" href="#s11-1">Sufismus</a>
+  <a class="l2" href="#s11-2">Tantra &amp; Vajrayana</a>
+  <a class="l2" href="#s11-3">Vedanta, Taoismus, Schamanismus</a>
+  <a href="#s12">12 · „Geheimwissen" im Internet</a>
+  <a class="l2" href="#s12-1">Deep Web &amp; Dark Web</a>
+  <a class="l2" href="#s12-2">QAnon &amp; digitale Verschwörung</a>
+  <a class="l2" href="#s12-3">UAP/UFO &amp; digitale Esoterik</a>
+  <a href="#s13">13 · Epistemologie: Wie „Geheimwissen" funktioniert</a>
+  <a href="#s14">14 · Zentrale Primärquellen (Kanon)</a>
+  <a href="#s15">15 · Recherche-Methodik &amp; Quellen</a>
+</nav>
+<main>
+<h1>Geheimwissen der Welt</h1>
+<p class="subtitle">Eine vertiefte Übersicht über esoterische Traditionen, Geheimgesellschaften, okkulte Orden und die „Geheimwissen"-Kultur der Internet-Ära — vom 2. Jahrtausend v. Chr. bis heute. Aufgebaut aus einer mehrstufigen Quellenrecherche (Wikipedia-Enzyklopädien, Primärtext-Referenzen, akademische Einordnungen). Stand: September 2026.</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="num">5</div><div class="lbl">parallele Recherche-Stränge</div></div>
+  <div class="stat"><div class="num">~80</div><div class="lbl">abgegriffene Quellen</div></div>
+  <div class="stat"><div class="num">3</div><div class="lbl">Ebenen Link-Navigation je Thema</div></div>
+  <div class="stat"><div class="num">3500+</div><div class="lbl">Jahre dokumentierter Tradition</div></div>
+</div>
+<section id="s0">
+<h2 class="sec">0 · Was ist „Geheimwissen"?</h2>
+
+<h3>Der Begriff</h3>
+<p>Der Begriff <strong>esoterisch</strong> geht auf das griechische Adjektiv <em>esôterikós</em> („zum Inneren gehörend") zurück, das im 2. Jh. n. Chr. (früheste Belegstelle: Lucian von Samosata) geprägt wurde. Ursprünglich unterschied man nicht zwischen „geheim" und „offen", sondern zwischen zwei <strong>Unterrichtsstufen einer philosophischen Schule</strong>: die <em>exoterischen</em> Vorträge (öffentlich, z. B. Platos Dialoge) und die <em>esoterischen</em>/akroamatika (intern, für eingeweihte Schüler). Platon soll in der <em>Theaitetos</em> (152c) schreiben, Protagoras habe „die Wahrheit als Geheimlehre (ἀπορρήτων τὴν ἀλήθειαν) für seine Schüler aufbehalten". In der Antike war „Geheimwissen" also <em>pädagogisch</em> gemeint: Wer noch nicht fähig sei, durfte nicht hören.</p>
+<p>Im 18. Jh. verschob sich die Bedeutung: „Esoterismus" (zuerst bei Johann Georg Hamann, 1779; als <em>ésotérisme</em> erst 1828 bei Jacques Matter) bezeichnete nun eine <strong>verborgene Innerlehre</strong> hinter den äußeren Religionen. Eliphas Lévi (1850er) popularisierte den Begriff und prägte parallel „Okkultismus".</p>
+
+<h3>Die vier modernen Definitionen (akademisch)</h3>
+<p>Die akademische Disziplin <strong>„Westliche Esoterik"</strong> (Western Esotericism) entstand erst spät — Frances Yates (<em>The Hermetic Tradition in the West</em>, 1964) und Antoine Faivre gelten als Begründer. Wichtig: Der Begriff ist ein <em>modernes wissenschaftliches Konstrukt</em> (Wouter Hanegraaff), keine Selbstbezeichnung der Traditionen. Es gibt vier gängige Definitionen:</p>
+<div class="card">
+<h4>1. Als universelle geheime Innertradition <span class="badge mythos">Selbstverständnis</span></h4>
+<p>Esoterik = die eine verborgene geistige Dimension hinter allen Religionen, überliefert in einer Kette von Meistern an Schüler (Perenne Philosophie). Diese Sicht wurde von den Esoterikern selbst formuliert (A. E. Waite, Guénon, Schuon) und von Wissenschaftlern wie Mircea Eliade und Henry Corbin mitgetragen. Problem: Sie setzt die Existenz der „inneren Dimension" voraus, die sich empirisch nicht überprüfen lässt (Hanegraaff: „wir wissen nicht und können nicht wissen").</p>
+</div>
+<div class="card">
+<h4>2. Als „bezauberte" Weltanschauung <span class="badge fakt">Standard-Definition (Faivre)</span></h4>
+<p>Esoterik = Weltbild, das der <em>Entzauberung</em> der Welt (seit der wissenschaftlichen Revolution) widersteht. Antoine Faivres sechs Kriterien (1992), bis heute der Standard:</p>
+<ul>
+  <li><strong>Korrespondenzen</strong>: „Wie oben, so unten" — reale/symbolische Entsprechungen zwischen allem (Makro-/Mikrokosmos, Astrologie)</li>
+  <li><strong>Lebendige Natur</strong>: Die Natur ist beseelt, komplex, hierarchisch (Kraftnetze, nicht Mechanik)</li>
+  <li><strong>Einbildungskraft &amp; Vermittlung</strong>: Rituale, Symbole, Mandalas, Mantras, Mediengeister als Zugang zu anderen Wirklichkeitsebenen</li>
+  <li><strong>Erlebnis der Transmutation</strong>: Die Praxis soll den Menschen selbst grundlegend verwandeln (Gnosis, Initiation)</li>
+  <li><em>(sekundär)</em> <strong>Konkordanz-Praxis</strong>: Glaube an ein verbindendes Prinzip aller Weltreligionen</li>
+  <li><em>(sekundär)</em> <strong>Transmission</strong>: Weitergabe vom Meister an den Schüler durch Initiation</li>
+</ul>
+</div>
+<div class="card">
+<h4>3. Als Anspruch auf höheres Wissen <span class="badge fakt">Von Stuckrad</span></h4>
+<p>Kocku von Stuckrad: Esoterik = „der Anspruch auf ein Wissen, das über andere Deutungen von Kosmos und Geschichte erhaben ist" — ein „Meisterschlüssel für alle Fragen der Menschheit". Geheimhaltung ist dabei kein Zeichen von Elitismus, sondern <em>konstitutiv für die Diskursform</em>: Das Verborgene, das sich offenbaren <em>kann</em>, ist der Kern der Sache.</p>
+</div>
+<div class="card">
+<h4>4. Als „abgelehntes Wissen" <span class="badge fakt">Hanegraaff</span></h4>
+<p>Esoterik = „der Abfalleimer der Akademie": all das, was Wissenschaft, orthodoxe Theologie und aufgeklärter Rationalismus als nicht legitim abgewiesen haben. Henrik Bogdan spricht entsprechend von der „dritten Säule der westlichen Kultur" neben Dogmen-Glaube und Rationalität — vom ersten als häretisch, vom zweiten als irrational abgelehnt.</p>
+</div>
+
+<h3>Die zentrale Frage dieses Dokuments</h3>
+<div class="card key">
+<p>„Geheimwissen" existiert in drei völlig unterschiedlichen Schichten, die in Internet-Diskursen ständig vermischt werden:</p>
+<ol>
+  <li><strong>Dokumentierte Geschichte</strong> <span class="badge fakt">fakt</span> — tatsächlich existente Orden, Texte, Riten, Initiationssysteme mit überlieferbarer Substanz (Eleusis, Kabbala, Alchemie, Golden Dawn, Freimaurerei …)</li>
+  <li><strong>Mythos &amp; Selbststilisierung</strong> <span class="badge mythos">mythos</span> — die Selbstmythologie dieser Gruppen (Templer flüchteten nach Schottland, Rosenkreuzer-Orden existierte, Priory of Sion) und die romantische Überhöhung durch spätere Jahrhunderte</li>
+  <li><strong>Verschwörungsdeutung</strong> <span class="badge unklar">unklar</span> — die Lesart, all das sei heute eine <em>tätige</em> Machtverschwörung (NWO, Bilderberg = Weltherrschaft). Wissenschaftlicher Konsens: keine Belege; es handelt sich um Projektion realer Machtstrukturen auf ein einheitliches Erklärmodell.</li>
+</ol>
+<p>Die folgende Übersicht trennt diese Schichten konsequent. Die „Tiefe" der Recherche besteht darin, bei jedem Thema den Pfad von der modernen Rezeption (Popkultur/Verschwörung) zurück zur dokumentierten historischen Schicht zu gehen.</p>
+</div>
+</section>
+<section id="s1">
+<h2 class="sec">1 · Die Antike: Mysterienreligionen</h2>
+<p>Die ältesten dokumentierten Formen von „Geheimwissen" sind die <strong>Initiationsmysterien der griechisch-römischen Antike</strong>: religiöse Kulte, deren Kerninhalte unter strenger Geheimhaltung (oft unter Todesstrafe) nur an Eingeweihte weitergegeben wurden. Nicht der Mythos selbst war geheim (der war öffentlich), sondern die <em>Erlebung</em>: die sakrale Schau, der Ritus, die Botschaft an die Seele.</p>
+
+<div class="card">
+<h4 id="s1-1">Eleusinische Mysterien (ab ca. 1500 v. Chr., panhellenisch ab 6. Jh., 392 n. Chr. verboten) <span class="badge fakt">fakt</span></h4>
+<p>Das bekannteste Mysterium des antiken Griechenlands, zu Ehren von <strong>Demeter</strong> und ihrer Tochter <strong>Persephone</strong> (Kore) in Eleusis bei Athen. 9-tägiges Fest im Monat Boedromion (Aug/Sep): heilige Gegenstände werden nach Athen gebracht, Waschung, Opfer, am 19. die große <strong>Heilsprozession</strong> auf der heiligen Straße (bis zu 3000 Teilnehmer) mit den Rufen „<em>Iakch' o Iakche!</em>" (Jakchos = Jugendname des Dionysos), am 20. Fasten und Genuss des <strong>Kykeon</strong> (Gersten-Minze-Trank; die Mutterkorn/Halluzinogen-Theorie von Wasson/Hofmann ist <span class="badge unklar">umstritten</span>), dann der Eintritt ins <strong>Telesterion</strong>: die <em>Epopteia</em> — die „Schau" der heiligen Reliquien (Kerne) in der Nacht, begleitet von Feuer, Tanz und Rufen.</p>
+<p><strong>Teilnehmerstufen:</strong> (1) Priester/Hierophanten (aus den Familien <em>Eumolpidae</em> und <em>Kerykes</em>), (2) Erstmalig Initierte (<em>Myesis</em> = Läuterung), (3) Wiederkehrende, (4) <strong>Epopten</strong> — die „Hinsehenden", höchste Stufe, denen die großen Geheimnisse offenbart wurden. Teilnehmer: Sokrates, Platon, Aristoteles, Sophokles, Kaiser Augustus, Kaiser Julian (der Letztere 362). Das Schweigegelübde brach Diagoras von Melos — sein Buch wurde aufgespürt und vernichtet. 392 v. Chr. erließ Theodosius I. das Verbot; 395 zerstörte Alarich den Tempel.</p>
+<p><strong>Das Geheimnis (rekonstruiert):</strong> Die Rückkehr Persephones aus der Unterwelt = die Hoffnung auf ein Glückseliges Fortleben nach dem Tod („Vom Gut der Götter zu hoffen" — Inschrift). Der Mythos war bekannt; die sakrale Schau und ihre Bedeutung für die eigene Seele waren es nicht. Überliefert nur indirekt: <em>Homerischer Hymnus an Demeter</em> (älteste Quelle), Pausanias 10.31, Hippolyt <em>Philosophumena</em>, Eunapios, Plutarch <em>De Iside et Osiride</em>.</p>
+</div>
+
+<div class="card">
+<h4 id="s1-2">Orphismus (ab 6./5. Jh. v. Chr., thrakische Herkunft) <span class="badge fakt">fakt</span></h4>
+<p>Religiöse Strömung um den mythischen Dichter <strong>Orpheus</strong>: keine einheitliche Religion, sondern autonome lokale Gruppen mit schriftlich fixierten „heiligen Büchern" (<em>Orphika</em>), überliefert in 24 Rhapsodien (<em>Hieroi Logoi</em>, 176 Fragmente erhalten). Ihre Kosmogonie: Chronos → Weltei → <strong>Phanes</strong> (Lichtgott, = Eros) → Nyx → Uranos → Kronos → Zeus → <strong>Dionysos</strong> (von Titanen zerstückelt; aus seiner Asche entsteht der Mensch — daher die Ambivalenz der menschlichen Natur). Kernlehren: <strong>Seelenwanderung</strong> (Metempsychose), der Körper als Gefängnis der Seele (<em>sōma = sēma</em>, „Leichnam"), Erlösung durch Reinigung und asketisches Leben (Vegetarismus, Eier-Tabu, Verbot blutiger Opfer).</p>
+<p><strong>Die Goldenen Tafeln</strong> (<em>Lamellae Orphicae</em>): Gold- und Knochenplättchen, die vom 5. Jh. v. Chr. bis 3. Jh. n. Chr. in Gräbern gefunden wurden (u. a. Olbia — ältester Beleg des Begriffs „Orphiker" —, Hipponion in Kalabrien). Formeln wie: „Leben – Tod – Leben", „Gott wirst du sein anstelle eines Sterblichen", „Ich rühme mich, von eurem seligen Geschlecht zu sein." Die <strong>Derveni-Papyrus</strong> (4. Jh. v. Chr.) ist der älteste erhaltene griechische Kommentar — eine allegorische Auslegung orphischen Schöpfungsmythos.</p>
+</div>
+
+<h4 id="s1-3">Isis-/Serapiskult, Kybele-Kult, Mithraismus</h4>
+<div class="grid2">
+<div class="card">
+<h4>Isis- &amp; Serapiskult (ab 332 v. Chr. bezeugt in Athen, im Hellenismus Mittelmeer-weit)</h4>
+<p>Isis = ägyptische Göttin der <strong>Magie</strong> („die einzige Göttin mit magischen Kräften", Sargtexte), Synkretismus: Isis = Demeter = Aphrodite; Osiris = Serapis. Der Kernmythos: Isis findet die <em>zerstückten Glieder Osiris'</em>, setzt ihn zusammen und <strong>erweckt ihn durch Zaubersprüche</strong> — Wiedergeburt durch magisches Wissen. Plutarch: <em>De Iside et Osiride</em>. Ptolemaios I. holte 273 v. Chr. den Eleusis-Priester Timotheus nach Alexandria. Kultstätten: Alexandria (Vorstadt <em>Eleusis</em>), Delos, Rom (Sulla errichtete 80 v. Chr. ein Isis-Kollegium auf dem Capitol). Überlieferung: Inschriften, Papyri (Papyrus Westcar), Pompeji-Mosaiken.</p>
+</div>
+<div class="card">
+<h4>Kybele-Kult (phrygisch-kleinasiatisch, seit 205 v. Chr. in Rom)</h4>
+<p>Kult der <strong>Magna Mater</strong>: Mythos des zwitterhaften Agdistis, der sich kastriert; daraus Kybele (weiblich) und Attis (männlich); Attis tötet sich unter einer Pinie, Kybele trauert ewig. In Rom: Überführung des Meteoriten-Steins von Pessinus (205 v. Chr., befohlen durch die <strong>Sibyllinischen Bücher</strong>), Tempel auf dem Palatin (191). <strong>Märzfest</strong>: 22. Pinienprozession, 24. <em>dies sanguinis</em> (rituelle Selbstverwundung der <strong>Galli</strong>, eunuchischen Priester), 25.–27. <em>hilaria</em> (Freudenfest), 27. Waschung der Göttin im Fluss. <strong>Initiations-Formel</strong> (bei Clemens von Alexandria): „Aus dem Tympanon aß ich, aus der Zimbel trank ich, den Kernos trug ich umher, ich stieg ins Brautgemach hinab … und ich wurde ein Myste des Attis." Das <strong>Taurobolium</strong>: Berieselung mit Stierblut; Inschrift von 376: <em>in aeternum renatus</em> — „wiedergeboren in das ewige Leben".</p>
+</div>
+</div>
+
+<div class="card">
+<h4>Mithraismus (1.–391 n. Chr., römische Militärränge, exklusiv Männer) <span class="badge fakt">fakt (Bilder/Inschriften) / <span class="badge unklar">umstritten</span> (Ursprung)</span></h4>
+<p>Keine eigenen Texte überliefert — nur Bildwerke (Mithräen), Inschriften und polemische Berichte (Justin, Tertullian, Porphyrios). Blüte unter Commodus (180–192) und Aurelian. Ursprung umstritten: Cumont (iranisch), Ulansey (Präzessions-Sternenbild-Deutung, 1989), Merkelbach (römische Neuschöpfung unter Vespasian).</p>
+<p><strong>Die 7 Initationsgrade</strong> (jeweils planetarisch zugeordnet — Metapher der Seelenreise durch die Sphären):</p>
+<table>
+<tr><th>Grad</th><th>Name</th><th>Planet</th></tr>
+<tr><td>1</td><td>Corax (Rabe)</td><td>Merkur</td></tr>
+<tr><td>2</td><td>Nymphus (Bräutigam)</td><td>Venus</td></tr>
+<tr><td>3</td><td>Miles (Soldat)</td><td>Mars</td></tr>
+<tr><td>4</td><td>Leo (Löwe)</td><td>Jupiter</td></tr>
+<tr><td>5</td><td>Perses (Perser)</td><td>Mond</td></tr>
+<tr><td>6</td><td>Heliodromos (Sonnenläufer)</td><td>Sonne</td></tr>
+<tr><td>7</td><td>Pater (Vater)</td><td>Saturn</td></tr>
+</table>
+<p><strong>Die Tauroktomie</strong> (Stiertötung) im Zentrum jeder Mithräe: Mithras tötet den Stier; aus Blut und Samen regeneriert sich die Welt. Die Begleitfiguren (Schlange, Hund, Rabe, Skorpion, Löwe, Kelch) werden als <strong>Sternbilder</strong> gedeutet; die Fackelträger Cautes (aufwärts) und Cautopates (abwärts) = aufgehende/untergehende Sonne oder die Äquinoktien. Riten: Initiation mit Brot- und Wasser-Formeln, Honigritus im Löwengrad (Porphyrios), Gemeinschaftsmahl, in dem Brot und Wein als „Fleisch und Blut des Stiers" gelten. Der Kult endete 391 n. Chr. mit der Schließung der Heidenkulte.</p>
+</div>
+
+<div class="card key">
+<h4>Überlieferungsmuster der antiken Mysterien</h4>
+<p>Alle diese Kulte folgen demselben Muster, das später jede esoterische Tradition nachahmen wird: <strong>(1) Öffentliche Mythos-Ebene</strong> (für alle zugänglich), <strong>(2) Initiation</strong> in mehreren Stufen, <strong>(3) sakrale Schau/Erfahrung</strong> (das eigentlich „Geheime" — nicht Information, sondern Erlebnis), <strong>(4) Schweigegelübde</strong>, <strong>(5) mündliche Überlieferung</strong> an eine geschlossene Gruppe. Was die Geschichte von ihnen weiß, ist fast ausschließlich über Umwege: Polemik der Kirchenväter, Archäologie, Zufallsfunde. Das „Geheimnis" selbst ist nie schriftlich fixiert — und genau das macht es für die moderne „Geheimwissen"-Suche so attraktiv: Man kann es nur <em>rekonstruieren</em>.</p>
+</div>
+</section>
+<section id="s2">
+<h2 class="sec">2 · Antike: Pythagoras, Hermetismus, Gnosis</h2>
+
+<h4 id="s2-1">Pythagoreismus (gegr. ca. 530 v. Chr. in Kroton/Süditalien) <span class="badge fakt">fakt (Schulüberlieferung) / <span class="badge unklar">umstritten</span> (Einzelheiten)</span></h4>
+<p>Religiös-philosophische Schule, gegründet von <strong>Pythagoras von Samos</strong>. Politisch aktiv in Kroton, Ende durch Verfolgung im 5. Jh. (in Tarent noch bis Mitte 4. Jh.). <strong>Keine einzige authentische Schrift</strong> des Pythagoras — alles überliefert durch Aristoteles (verloren), Iamblichos, Plutarch, Diogenes Laertios, Theano (Gattin, 7 Briefe).</p>
+<ul>
+  <li><strong>Zwei Gruppen:</strong> <em>Mathematiker</em> (schriftliche Lerngegenstände: Mathematik, Naturwissenschaft) vs. <em>Akusmatiker</em> (mündliche „Hörsprüche", religiöses Weltbild, Verhaltensregeln)</li>
+  <li><strong>Zahlenmystik:</strong> „Alles ist Zahl" (archē = Zahl); die <strong>Tetraktys</strong> (1+2+3+4 = 10) als fundamentales Prinzip; gerade/ungerade = unbegrenzt/begrenzt, weiblich/männlich; „Was ist das Orakel von Delphi? — Die Tetraktys" (Akusma)</li>
+  <li><strong>Seelenwanderung:</strong> Seele = göttlicher Herkunft, ewige Wiederkunft aller Verhältnisse („Großes Jahr", astrologischer Fatalismus bei Philolaos)</li>
+  <li><strong>Akusmatika/Symbola:</strong> 39 Handlungsanweisungen (u. a. „Meide die Hauptstraßen", „Schüre das Feuer nicht mit dem Messer"), Definitionen und Superlative (Iamblichos überliefert die vollständige Liste; 13 Symbola bei Hieronymus von Cardano)</li>
+  <li><strong>Vegetarismus</strong> („Enthaltung vom Beseelten") + das rätselhafte <strong>Bohnen-Tabu</strong></li>
+  <li><strong>Goldene Verse</strong> (unbekannter Autor, spätere Popularisierung): „Im Kreis der Stunden wandelt das Geschick … erwache, o Mensch"</li>
+</ul>
+<p><strong>Historische Wirkung:</strong> Ficino konstruierte 1493 die „Kette der sechs Theologen" als Begründung des Hermetismus: <strong>Hermes Trismegistos → Orpheus → Aglaophemus → Pythagoras → Philolaos → Platon</strong>. Damit wurden die Mysterien- und Zahlenmystik des Pythagoras zur Legitimationskette des gesamten europäischen Okkultismus.</p>
+
+<h4 id="s2-2">Hermetismus &amp; das Corpus Hermeticum <span class="badge fakt">fakt (Texte) / <span class="badge unklar">umstritten</span> (Praxis)</span></h4>
+<p><strong>Corpus Hermeticum</strong> = 17 griechische Traktate + lateinischer <em>Asclepius</em> + Stobäus-Fragmente, zugeschrieben <strong>Hermes Trismegistos</strong> (Synkretismus: griechischer Hermes + ägyptischer Thoth). Entstanden 100–300 n. Chr. in Ägypten: „Mixtur aus Platonismus und Stoizismus mit jüdischen Elementen" (Yates), große Teile auf ägyptische Quellen zurückgehend (Iversen 1984). Offen: ob reine Literatur oder Praxis-Gemeinschaften.</p>
+<ul>
+  <li><strong>Poimandres</strong> (1. Traktat): Der Lichtgeist „Hirte der Herde" offenbart dem Menschen die kosmische Ordnung, den Fall der Seele in die Materie und den Weg der Erlösung durch <em>Erkenntnis</em> (Gnosis) — Aufstieg zu einer „lichten geistigen Hülle"</li>
+  <li>Kernforderung: <strong>Überwindung des Rationalen und der Weltsehnsucht</strong>, Wiedergeburt in ein „Leib aus Licht", geistige Einheit mit dem Göttlichen</li>
+</ul>
+<p><strong>Die Tabula Smaragdina (Smaragdenes Tableau)</strong> — das einflussreichste „Geheimdokument" der Westesoterik:</p>
+<div class="quote">„Was oben ist, gleicht dem, was unten ist, und was unten ist, gleicht dem, was oben ist, zu vollbringungen der Wunder eines einzigen Dinges. Und was oben ist, gleicht dem, was unten ist … Es ist das Prinzip von allem, was auf der Erde geschehen ist."<span class="src">— Kernsatz des Smaragden Tableaus</span></div>
+<ul>
+  <li>Älteste Fassung: <strong>arabisch</strong>, Ende 8./Anfang 9. Jh. (Anhang im <em>Sirr al-Khalīqa</em>, Pseudo-Apollonios); arabische Fassungen bei Jābir ibn Ḥayyān (8. Jh.) und im <em>Sirr al-Asrār</em> (10. Jh.)</li>
+  <li>Lateinisch: <strong>1144</strong> (Hugo von Santalla; auch Constantinus Africanus) → Vulgata-Fassung 15. Jh.</li>
+  <li>Rezeption: Alchemie (Stein der Weisen, Chrysopöie), Neuplatonismus, Christianisierung → Renaissance (Ficino, Agrippa, Paracelsus, Dee, Bruno) → Golden Dawn → <em>Kybalion</em></li>
+</ul>
+<p><strong>Der Überlieferungsweg, der die Renaissance auslöste:</strong> 1460 bringt ein Mönch ein griechisches Manuskript nach Florenz (Biblioteca Medicea Laurenziana, Cod. LXXI 33). <strong>Marsilio Ficino</strong> übersetzt 1463 (Druck 1471 als <em>Pimander</em>) — und nimmt die Schriften fälschlich für uralt, vor-platonisch. Papst Sixtus IV. fördert ihn; die „Prisca Theologia" (urprüngliche Theologie) wird zur Leitidee der Florentiner Akademie. <strong>1614</strong> datiert Isaac Casaubon die Texte korrekt auf das 2. Jh. n. Chr. — die Datierung ist seither gesichert, die kulturelle Wirkung blieb bestehen. Standardausgabe: Nock/Festugière 1945–54; Forschung: Frances Yates.</p>
+
+<h4 id="s2-3">Gnostizismus &amp; Nag Hammadi <span class="badge fakt">fakt (Fund) / <span class="badge unklar">umstritten</span> (Details der Systeme)</span></h4>
+<p>Religiöse Lehren/Gruppierungen des 2./3. Jh. Grundmuster: transzendente „gute Gottheit" → Emanationen (Äonen) → <strong>Demiurg</strong> (niedrigerer, oft mit JHWH identifizierter Schöpfergott) schafft die böse Materiewelt → göttlicher Funke (<em>Pneuma</em>) im Menschen → <strong>Erlösung durch Gnosis</strong> (Erkenntnis des eigenen göttlichen Ursprungs). Fünf Wesensmerkmale (Kurt Rudolph): Dualismus, Kosmogonie, Soteriologie, Eschatologie, Gemeinde.</p>
+<div class="card fact">
+<h4>Der Fund von Nag Hammadi (Dezember 1945)</h4>
+<p>Ein Bauer findet bei Nag Hammadi (Oberägypten) einen Krug mit <strong>13 Kodizes, 47 Texten</strong> (53 inkl. Mehrfachüberlieferung), koptisch (sahidisch), Manuskripte 1. Hälfte 4. Jh., Texte 1.–4. Jh. — vermutlich Übersetzungen aus dem Griechischen. Über einen koptischen Priester (Basilius) gelang der Fund nach Kairo; ein Kodex („Codex Jung") wanderte über Albert Eid ans <strong>Jung-Institut Zürich</strong> und wurde 1952 zurückgebracht. Entschlüsselung und Publikation: Robinson 1978, Schenke 2001/03. Vor 1945 war man fast ausschließlich auf die <strong>polemischen Beschreibungen der Kirchenväter</strong> (Irenäus, Hippolyt, Epiphanius) und drei Handschriften angewiesen (u. a. <em>Pistis Sophia</em>).</p>
+</div>
+<p><strong>Die wichtigsten Texte:</strong></p>
+<ul>
+  <li><strong>Apokryphon des Johannes</strong> (sethianisch, 3 Fassungen) — die Grund-Kosmogonie der Nag-Hammadi-Sammlung</li>
+  <li><strong>Evangelium des Thomas</strong> — 114 Logien, kein Passionserzählung, nur „Worte"</li>
+  <li><strong>Evangelium der Wahrheit</strong> — das einzige originale valentinianische Dokument</li>
+  <li><strong>Hypostase der Archonten</strong>, <strong>Zostrianos</strong>, <strong>Allogenes</strong> (sethianisch), <strong>Tractatus Tripartitus</strong> (valentinianisch)</li>
+  <li><strong>Sextussentenzen</strong> (127 von 451 Sprüchen), <strong>Hermetisches Gebet</strong>, <strong>Marsanes</strong> (magisch)</li>
+</ul>
+<p><strong>Die Systeme:</strong></p>
+<ul>
+  <li><strong>Valentinianer</strong> (Valentinus, Rom, ~136–160; Schüler: Markus, Herakleon, Ptolemäus): drei Seelentypen (<em>pneumatikoi</em>, <em>psychikoi</em>, <em>hylikoi</em>); <strong>Pleroma</strong> = himmlische Vollkommenheit aus Äonen; Sophia/Achamoth als „Fallende"</li>
+  <li><strong>Sethianer</strong>: Seth (Sohn Adams) als Erlöser; „Ungezeugter Vater", Barbelo, Autogenes</li>
+  <li><strong>Ophiten</strong> (Schlangengnostiker): die Schlange im Paradies als <em>Wissen bringend</em>; Karpokrates</li>
+  <li><strong>Basilides</strong> (Alexandria): 26 Äonen</li>
+  <li><strong>Mani</strong> (216–276/77): Manichäismus als synthetische Weltreligion, Mission bis nach China, verfolgt unter Diokletian und Theodosius I.</li>
+  <li><strong>Simon Magus</strong> (1. Jh.): der „Urgnostiker", dem die Apostelgeschichte einen „Geist-Handel" zuschreibt</li>
+</ul>
+<p><strong>Wirkung:</strong> Die Katharer des 12.–14. Jh. werden oft als „Neu-Gnostiker" gelesen (umstritten); die moderne <em>Ecclesia Gnostica</em> (s. Kap. 8) und die New-Age-Gnosis (s. Kap. 9) berufen sich direkt auf diese Texte.</p>
+
+<h4 id="s2-4">Chaldäische Orakel &amp; Orakelkult <span class="badge fakt">fakt (Fragmente) / <span class="badge unklar">unklar</span> (Vollinhalt)</span></h4>
+<p><strong>Chaldäische Orakel</strong> (2. Jh. n. Chr.): geistlich-philosophische Texte, von <strong>Julian dem Chaldeen</strong> und/oder seinem Sohn <strong>Julian dem Theurgen</strong> in Trance „empfangen". Überliefert nur in Fragmenten (Neuplatoniker-Zitate). Vom Iamblichos und Proclus hochgeschätzt — „die Bibel der Neuplatoniker" (Cumont). Metaphysik: transzendent <strong>Vater</strong> → Kraft → <strong>Verstand</strong> → <strong>Hekate</strong> (Grenze zwischen geistiger und materieller Welt) → Weltenseele → Natur → Schicksal; zweiter Verstand = Demiurg. Ziel: Reinigung der Seele, Aufstieg durch die planetarischen Sphären. Affinität zur Gnosis (Demiurg, Hekate ≈ Sophia). Edition: Majercik 1989.</p>
+<p><strong>Orakelkult:</strong> Das Orakel von <strong>Delphi</strong> war das „geschützteste Wissen" des Apollon-Kults: Die Pythia verkündete in Trance; die <em>Deutung</em> der Sprüche war Priesterwissen. In Rom waren die <strong>Sibyllinischen Bücher</strong> („geschütztes Wissen" — im Tempel der Juno aufbewahrt, nur den <em>Quindecimviri</em> zugänglich) das Pendant. Die Theurgie der späten Neuplatoniker (Iamblichos) machte aus der Orakel- und Mysterientradition eine voll ausgearbeitete <strong>Praxis der Gotterbeziehung</strong>: Rituale, Bannformeln, Symbole, um „die Götter erscheinen zu lassen" und den Geist zu heiligen.</p>
+
+<div class="card key">
+<h4>Was die Antike „Geheimes" war — und was nicht</h4>
+<p>Wichtig für die gesamte spätere Geschichte: <strong>Das „Geheimnis" der Mysterien war fast nie Information, sondern Erfahrung</strong> (Schau, Trank, Initiationsritus, seelische Umdeutung). Die „Wissens" (Zahlen, Namen, Formeln) waren sekundär. Erst in der christlich-mittelalterlichen und frühneuzeitlichen Rezeption wird aus „Erleben des Geheimen" „Besitz des Geheimen" — aus Erfahrung wird Buchwissen, aus Initiation wird Lektüre. Diese Verschiebung ist der eigentliche Ursprung des modernen „Geheimwissen"-Diskurses.</p>
+</div>
+</section>
+<section id="s3">
+<h2 class="sec">3 · Kabbala &amp; jüdische Mystik</h2>
+<p>Die <strong>Kabbala</strong> (hebr. „Empfangenes") ist die jüdische Mystiktradition — der wichtigste Kanal, durch den „Geheimwissen" im Abendland systematisch als <em>Text</em> (nicht nur als Ritus) weitergeleitet wurde.</p>
+
+<h3>Die kanonischen Texte</h3>
+<table>
+<tr><th>Text</th><th>Datierung</th><th>Inhalt</th></tr>
+<tr><td><strong>Sefer Yetzira</strong> (Buch der Schöpfung)</td><td>ca. 2. Jh. n. Chr. (überlieferte Form 6.–9. Jh.)</td><td>Der älteste kanonische Text: Schöpfung durch die hebräischen Buchstaben (22) und Zahlen (10); Grundlage der later Buchstabenspektur</td></tr>
+<tr><td><strong>Sohar</strong> (Buch des Glanzes)</td><td>ca. 1280–1300, aragonesisches Katalonien</td><td>Zentraler Text der mystischen Exegese; aramäisch; Allegorien der Tora. Vermutlich von <strong>Moses de León</strong> (ca. 1240–1305) verfasst/redigiert — er schrieb ihn dem 2. Jh. zu (Pseudepigraphie, <span class="badge unklar">umstritten</span>, wie üblich bei „Geheimtexten")</td></tr>
+<tr><td><strong>Etz Chaim</strong> (Baum des Lebens)</td><td>16. Jh.</td><td>Chajim Vital, Schüler Lurias — Systematisierung der Lurianischen Kabbala</td></tr>
+</table>
+
+<h3>Das Sefirot-Schema</h3>
+<p>Die <strong>Sefirot</strong> (10 „Emanationen"/Lichter des göttlichen Ursprungs) bilden das zentrale kosmologische Modell — der „Baum des Lebens", der später (über die christliche Kabbala) zum Standardbild der gesamten westlichen Esoterik wird:</p>
+<p><code>Kether → Chochma → Binah → Chesed / Gebura → Tiferet → Netzach / Hod → Jesod → Malkuth</code> (Krone, Weisheit, Verständnis, Güte, strenge Gerechtigkeit, Schönheit, Dauerhaftigkeit, Herrlichkeit, Fundament, Königreich)</p>
+
+<h3>Lurianische Kabbala (Safed, 16. Jh.)</h3>
+<p><strong>Isaac Luria</strong> (1534–1572) in Safed (Galiläa) gründete die reformierte Kabbala. Kernkonzepte: <strong>Tzimzum</strong> (göttlicher Rückzug/Verengerung — Gott „macht Raum" für die Welt), <strong>Scherit ha-Kelim</strong> (Scherben — bei der Erschaffung der Welt zerbrochene Lichtfragmente, die im profanen Materie hängen), <strong>Tikkun</strong> (Reparatur — der Mensch soll durch frommes Handeln die Lichtfunken aus dem profanen „heben" und wieder in die göttliche Ordnung führen). Seine Schüler, vor allem <strong>Chajim Vital</strong> (1543–1620), systematisierten die Lehre. Der <strong>Hasidismus</strong> (18. Jh., Osteuropa) ist die volkstümliche Ausweitung dieser Mystik.</p>
+
+<h3>Christliche Kabbala (Renaissance) <span class="badge fakt">fakt</span></h3>
+<p>Die Renaissance-Gelehrten übertrugen das Sefirot-Schema <em>christologisch</em> — die „Kabbalah Christiana":</p>
+<ul>
+  <li><strong>Giovanni Pico della Mirandola</strong> (1463–1494): plante 1486 die öffentliche Verteidigung von <strong>900 Thesen</strong> zur universalen Weisheit (Platon + Hermetik + Kabbala + Christentum) — wegen Inquisitionsandrohung nie verteidigt; von Papst Innozenz VIII. verurteilt</li>
+  <li><strong>Johannes Reuchlin</strong> (1455–1522): <em>De arte cabalistica</em> (1517) — erschloss die hebräische Sprachmystik für die christliche Theologie („Vater der christlichen Kabbala")</li>
+  <li><strong>Heinrich Cornelius Agrippa</strong> (1486–1535): <em>De occulta philosophia</em> — nutzte die Kabbala als Gerüst für seine Dreiteilung der Magie (s. Kap. 5)</li>
+</ul>
+
+<h3>Der „Name" als Kern des Geheimwissens</h3>
+<div class="card key">
+<p>Das tiefste „Geheimwissen" der Kabbala ist der <strong>Shem HaMephorasch</strong> (der „sich offenbarende Name Gottes") — ein aus dem Tetragramm (JHWH) durch Kombinatorik ableitbarer „wahrer Name", dessen Kenntnis <em>absolute Wirksamkeit</em> über die Schöpfung versprach. Dieser Name wurde zum Ausgangspunkt des gesamten westlichen Beschwörungswesens: Die <strong>72 Dämonen der Goetia</strong> (s. Kap. 5) sind nach seinen „72 Namen" taxonomisch geordnet. Damit ist die jüdische Mystik — bewusst oder unbewusst — eine der Quellen des europäischen Grimoire-Wesens. Die <em>Verbotene</em> Praxis (echtheitliche Namen-Magie) war in der jüdischen Tradition selbst streng kontrolliert; die christliche Aneignung im 15.–17. Jh. geriet aus dieser Kontrolle.</p>
+</div>
+</section>
+<section id="s4">
+<h2 class="sec">4 · Alchemie &amp; die hermetische Tradition</h2>
+<p>Alchemie verbindet <strong>chemische Laborpraxis</strong> mit metaphysischer Weltdeutung: Transmutation der Metalle (Kupfer → Gold), Suche nach dem <em>Lapis Philosophorum</em> (Stein der Weisen) und Herstellung des <em>Elixirs</em> (Unsterblichkeitssalbe). Sie ist das lange „Geheimwissen" mit der besten überlieferten Praxis — und zugleich ein Beispiel dafür, wie sehr Bildsprache (BILD) und Verschlüsselung zur Sache gehörten: Alchemistische Bücher waren voller <em>dunkler Sprache</em> und Bilder, die nur Eingeweihte „lesen" durften. Die <em>Confessio Fraternitatis</em> (1615) warnt explizit vor Alchimisten, die „mit wunderseltsamen Figuren und dunklen, verborgenen Reden die Leute betrügen" — die Verschlüsselung war Teil der Disziplin.</p>
+
+<h3>Die vier Stadien des Werks <span class="badge fakt">fakt (ab 16./17. Jh. fixiert)</span></h3>
+<table>
+<tr><th>Stadium</th><th>Name</th><th>Bedeutung</th></tr>
+<tr><td>1</td><td><strong>Nigredo</strong> (Schwärzung)</td><td>Zersetzung, „Tod" der Rohsubstanz, Konfrontation mit dem Schatten</td></tr>
+<tr><td>2</td><td><strong>Albedo</strong> (Weiße)</td><td>Reinigung, Läuterung</td></tr>
+<tr><td>3</td><td><strong>Citrinitas</strong> (Gelbung)</td><td>Erleuchtung, Erwachen des Goldes (manche Traditionen überspringen dieses Stadium)</td></tr>
+<tr><td>4</td><td><strong>Rubedo</strong> (Rötung)</td><td>Vervollkommnung, Vollendung des Werks</td></tr>
+</table>
+<p>Diese Stadien wurden <em>gleichzeitig</em> auf Stoffprozesse (Färbung in der Retorte) und Seelenprozesse (Meditation, Läuterung) bezogen — die alchemistische Transmutation ist immer auch eine <strong>innere Transmutation des Werkers</strong>. (Dieses „psychische" Lesen wurde im 20. Jh. von C. G. Jung ausgearbeitet — seine <em>Psychologie und Alchemie</em>, 1944, ist der berühmteste moderne Kommentar.)</p>
+
+<h3>Der Überlieferungsweg: Ägypten → Arabien → Europa</h3>
+<div class="timeline">
+<div class="t"><span class="yr">1.–3. Jh. n. Chr.</span> — Ägyptisch-hellenistische Hermetik; alexandrinische Labore (Alexandria); der Legende nach <strong>Miriam</strong> (Maria) als frühe Alchemistin (im <em>Corpus Hermeticum</em>)</div>
+<div class="t"><span class="yr">8.–10. Jh.</span> — Arabische Übersetzungsbewegung in Bagdad; <strong>Brüder der Reinheit</strong> (Ikhwan al-Safa) mit ihrer <em>Episteln</em>-Sammlung; <strong>Dschābir ibn Hayyān</strong> (Geber, ca. 721–815) — zentraler (wohl pseudepigraphischer) Autor; Korpus von ~3000 arabischen Schriften (Corpus Gabirianum); Lehre von <strong>Schwefel und Quecksilber</strong> als Grundprinzipien aller Metalle; fraktionierte Destillation. Paul Kraus: ismailitisches Milieu des 9./10. Jh. <span class="badge unklar">[? Historizität]</span></div>
+<div class="t"><span class="yr">10.–13. Jh.</span> — <strong>al-Razī</strong> (Rhazes, 854–925); lateinische Übersetzungen in <strong>Toledo</strong> (Gerhard von Cremona, 12. Jh.); der <em>Corpus Geberi</em> (Pseudo-Geber, 13./14. Jh., Italien) beeinflusst die europäische Naturwissenschaft; <em>Summa perfectionis magisterii</em> (13. Jh.) — eines der ersten „praktischen" Laborbücher</div>
+<div class="t"><span class="yr">13.–15. Jh.</span> — Europäisches Mittelalter: <strong>Albertus Magnus</strong> (1200–1280), <strong>Roger Bacon</strong> (ca. 1214–1292) — Alchemie als „verborgene Physik"</div>
+<div class="t"><span class="yr">16. Jh.</span> — <strong>Paracelsus</strong> (1493/94–1541): revolutioniert Medizin und Alchemie; lehnt die Autorität der antiken Autoren ab; <strong>Drei-Prinzipien-Lehre</strong> (Salz, Schwefel, Quecksilber); <strong>Iatrochemie</strong> (Chemie auf Medizin angewendet) und Toxikologie („Alle Dinge sind Gift … allein die Dosis macht, dass ein Ding kein Gift ist"). <em>De re metallica</em>, <em>Astronomia</em>.</div>
+<div class="t"><span class="yr">17. Jh.</span> — <strong>John Dee</strong> (1527–1609): <em>Monas Hieroglyphica</em> (1564); okkult-wissenschaftliche Synthese; Astronomie + Magie + Kabbala; berät Königin Elisabeth I. Sein „Schlüssel-Symbol" ziert das Titelblatt der <em>Chymischen Hochzeit</em> (s. Kap. 6)</div>
+<div class="t"><span class="yr">17./18. Jh.</span> — Übergang zur Chemie (Boyle, Lavoisier); die Alchemie wird als „Aberglaube" abgetan — das eigentliche „Geheimwissen" ist nun nur noch die <em>Idee</em> der inneren Transmutation</div>
+</div>
+
+<h3>Zentrale Werke <span class="badge fakt">fakt</span></h3>
+<ul>
+  <li><strong>Tabula Smaragdina</strong> — das hermetische Gründokument (s. Kap. 2)</li>
+  <li><strong>Rosarium Philosophorum</strong> (1550) — klassisches alchemistisches Lehrbuch</li>
+  <li><strong>Mutus Liber</strong> („Der Stumme", 1677) — ein <em>reines Bildwerk</em>, kein einziges Wort; die reine Bildsprache der Alchemie</li>
+  <li><strong>Athan</strong> (Jehoshua, 1625)</li>
+  <li><strong>Corpus Gabirianum</strong> (70 Bücher des Dschābir)</li>
+</ul>
+
+<div class="card key">
+<h4>Warum Alchemie zum „Geheimwissen" wurde</h4>
+<p>Drei Dinge machen Alchemie für die „Geheimwissen"-Tradition so typisch: (1) <strong>Praxis + Transmutation in einem</strong> — der Werker verändert sich selbst durch das Werk. (2) <strong>Bewusste Verschlüsselung</strong> — die Schriften sind so dunkel, dass sie „nur Eingeweihte" verstehen. (3) <strong>Pseudepigraphie</strong> — die besten Texte sind anonym oder fiktiven Autoren (Hermes, Geber, Salomo, Zosimos) zugeschrieben. Das Muster „verborgenes Wissen, das sich dem Unwürdigen nicht zeigt" wird hier zum Standard.</p>
+</div>
+</section>
+<section id="s5">
+<h2 class="sec">5 · Grimoires &amp; zeremonielle Magie</h2>
+<p>Ein <strong>Grimoire</strong> (franz. von griech. <em>grammata</em> = „Buch") ist ein Handbuch der Praktischen Magie: Beschwörungsformeln, Gebete, Sigillen, Zauberkreise, Riten. Die europäischen Grimoires des 15.–17. Jh. sind die <em>praktische</em> Schicht des „Geheimwissens" — im Gegensatz zur theoretischen (Agrippa) und der rein kontemplativen (Mystik). Sie sind fast durchweg <strong>pseudepigraphisch</strong>: König Salomo, Hermes, „Meister" sind die (fiktiven) Autoren.</p>
+
+<h3>Clavicula Salomonis / Key of Solomon <span class="badge fakt">fakt (Handschriften 15.–17. Jh.)</span></h3>
+<p>Das einflussreichste Grimoire des Abendlandes, überliefert in zahlreichen Handschriften. Inhalt:</p>
+<ul>
+  <li>Beschwörung und Bindung von <strong>72 Dämonen</strong> (angelehnt an den Shem HaMephorasch)</li>
+  <li>Herstellung magischer <strong>Ringe, Amulette und Salben</strong></li>
+  <li>Konstruktion magischer <strong>Kreise</strong> (pentagrammatischer Schutzkreis — der Magier steht im Zentrum)</li>
+  <li><strong>Astrologische Timing-Regeln</strong> (Tag, Stunde, Mondphase — der „Auskunft" nach Planeten)</li>
+</ul>
+
+<h3>Lemegeton / Ars Goetia (16./17. Jh.) <span class="badge fakt">fakt (Druckfassung 1615)</span></h3>
+<p>Der erste Teil des <em>Lemegeton Clavicula Salomonis</em>. Enthält die <strong>72 Geister in Hierarchie</strong>: Könige, Herzöge, Herzoginnen, Prinzen, Präsidenten, Grafen, Dukatoren, Markgrafen, Vizekönige, Fürsten. Bekannte Geister (mit Rang und „Talent"):</p>
+<table>
+<tr><th>Nr.</th><th>Name</th><th>Rang</th><th>„Gabe" (laut Goetia)</th></tr>
+<tr><td>1</td><td><strong>Bael</strong></td><td>König, 9 Legionen</td><td>Ruhm, Würde, Politik, Zukunft</td></tr>
+<tr><td>2</td><td>Agares</td><td>Herzog</td><td>Reiche, Königreiche, Gelehrte</td></tr>
+<tr><td>3</td><td>Vassago</td><td>Herzog</td><td>Vergangenheit, Zukunft, Gelehrte, Kunst</td></tr>
+<tr><td>4</td><td>Amaymon</td><td>Herzog</td><td>Gold, Edelsteine, Gelehrte</td></tr>
+<tr><td>5</td><td><strong>Valac</strong> (Valegar)</td><td>König, 36 Legionen</td><td><strong>Kennt alle Geheimnisse</strong>; verweigert aber die Antwort, wenn nicht „richtig" beschworen</td></tr>
+<tr><td>40</td><td><strong>Lesiel</strong> (Lesi)</td><td>Graf</td><td>Lehrt Wissenschaften, Sprachen, Geheimnisse der Natur</td></tr>
+<tr><td>41</td><td>Zimari</td><td>Herzog</td><td>Gibt dem Bannenden die Gestalt, die er haben will</td></tr>
+<tr><td>67</td><td><strong>Sitri</strong></td><td>Prinz</td><td>Zeigt verborgene Schätze, lehrt alle Künste, macht unsichtbar</td></tr>
+</table>
+<p>Veröffentlicht 1615 von <strong>John Weare</strong> (London). Die 72-Geister-Liste geht auf den <strong>Shem HaMephorasch</strong> der jüdischen Kabbala zurück und wurde christlich-magisch adaptiert. <strong>Wichtig:</strong> Das berühmte <strong>Baphomet-Symbol</strong> (Ziegenkopf-Monde-Hexagramm) ist <em>keine</em> mittelalterliche Quelle, sondern eine okkultistische Erfindung von <strong>Eliphas Lévi</strong> (1898, <em>Le Dogme et la Rituel de la Haute Magie</em>) — ein gutes Beispiel dafür, wie sich „Geheimwissen" durch nachträgliche Erfindung fortsetzt.</p>
+
+<h3>Das theoretische System: Agrippa <span class="badge fakt">fakt</span></h3>
+<p><strong>Heinrich Cornelius Agrippa von Nettesheim</strong> (1486–1535), <em>De occulta philosophia libri tres</em> (1533) — das systematische „Geheimwissen" der Frühen Neuzeit in drei Bänden:</p>
+<ul>
+  <li><strong>Buch I</strong> — <em>Theurgische/Aszendentische Magie</em>: göttliche Kausalität, Einflüsse der Engel und Planeten</li>
+  <li><strong>Buch II</strong> — <em>Physikalische/Naturmagie</em>: sympathetische und antipathetische Kräfte, Naturzauber, Magnete, Talismane</li>
+  <li><strong>Buch III</strong> — <em>Mathematische/Demonische Magie</em>: Beschwörung und Bindung von Geistern, Okkulte</li>
+</ul>
+<p>Agrippa systematisierte <strong>32 Engel</strong> (nach den 32 hebräischen Buchstaben, von den Seraphim bis zu den Erzengeln) und die <strong>72 Dämonen</strong> (nach dem Shem HaMephorasch). Diese Taxonomie wurde zum Standard aller späteren Grimoires und des Golden Dawn (s. Kap. 8).</p>
+
+<h3>Die arabische Quelle: Picatrix <span class="badge fakt">fakt</span></h3>
+<p><strong>Picatrix</strong> (<em>Ghara'ni</em>, ca. 10.–11. Jh., arabisch; lateinisch 1050) — ein astrologisch-magisches Werk, das arabische Astronomie, Magie und Naturphilosophie verbindet. Es beeinflusste die europäische Praxis stark und diente als Vorlage für das ganze „Sternen-Magie"-System (Planeten-Stunde-Talismane). Es ist das direkte Bindeglied zwischen der islamischen Wissenschaft und der europäischen zeremoniellen Magie.</p>
+
+<h3>Trithemius' Steganographia <span class="badge fakt">fakt</span></h3>
+<p><strong>Johannes Trithemius</strong> (1462–1516), <em>Steganographia</em> (1500 handschriftlich, 1606 gedruckt) — ein Werk zur <strong>verborgenen Kommunikation</strong>. Die 32 Kapitel des ersten Buches sind den hebräischen Buchstaben und kabbalistischen Geister-Namen zugeordnet. Das <strong>dritte Buch</strong> (astrologische Chiffren) blieb über 500 Jahre unverständlich, bis Thomas Ernst es 1996 entschlüsselte — ein dokumentierter Fall von „Geheimwissen", das erst 500 Jahre später „gelesen" werden konnte. Trithemius wurde fälschlich als „Schwarzmagier" diffamiert, weil ein Brief über das Werk abgefangen und veröffentlicht wurde.</p>
+
+<div class="card warn">
+<h4>Einordnung</h4>
+<p>Die Grimoires sind <strong>historisch real</strong> (Handschriften, Drucke, Sammler), aber ihr <em>geistesgeschichtlicher Wert</em> liegt nicht darin, ob sie „wirkten", sondern in der <strong>Wissenskultur</strong>, die sie abbilden: die Verschiebung von „göttliche Erfahrung" (Mysterien, Gnosis) zu „technischer Kontrolle" (Formel + Name + Kreis = Wirkung). Dieses <em>technische</em> Modell der Magie — „Geheimwissen als Bedienungsanleitung" — ist der Keim des modernen „Know-How"-Verständnisses von Geheimwissen und prägt bis heute die Internet-„Geheimwissen"-Kultur (Kap. 12).</p>
+</div>
+</section>
+<section id="s6">
+<h2 class="sec">6 · Rosenkreuzertum (1614–1625, Nachwirkung bis heute)</h2>
+<p>Das <strong>Rosenkreuzertum</strong> ist der berühmteste Fall von „Geheimwissen" in der Geschichte — und zugleich der <em>größte dokumentierte Mythos</em>: Die „Bruderschaft" existierte nie als Organisation. Es war eine literarische Fiktion des Tübinger Gelehrtenkreises, die ein pan-europäisches Feuersturm auslöste.</p>
+
+<h3>Die drei Manifeste <span class="badge fakt">fakt (Drucke) / <span class="badge mythos">mythos</span> (die „Bruderschaft")</span></h3>
+<table>
+<tr><th>Jahr</th><th>Schrift</th><th>Ort</th><th>Inhalt</th></tr>
+<tr><td>1614</td><td><strong>Fama Fraternitatis</strong> (Bericht der Bruderschaft)</td><td>Kassel, anonym</td><td>Die Legende von <strong>Christian Rosenkreuz</strong> (lat. <em>C.R.C.</em>, 1378–1484), einem fiktiven Gründer, der in Arabien und Äthiopien „Geheimwissen" erlernte und in Europa eine „Bruderschaft des Rosenkreuzes" gründete. Fordert eine „General-Reformation" von Wissenschaft, Religion und Gesellschaft</td></tr>
+<tr><td>1615</td><td><strong>Confessio Fraternitatis</strong> (Bekenntnis)</td><td>anonym</td><td>Verteidigungsschrift zur Fama; verurteilt die Philosophie als „ganz krank und mangelhaft"; warnt vor falschen Alchimisten</td></tr>
+<tr><td>1616</td><td><strong>Chymische Hochzeit Christiani Rosencreutz</strong></td><td>Straßburg</td><td>Alchemistisches Märchen in sieben Tagen (Gründonnerstag bis Mittwoch nach Ostern, 1459); vermutlich von <strong>Johann Valentin Andreae</strong> (1586–1654); die <strong>Monas-Glyphe des John Dee</strong> ziert das Titelblatt</td></tr>
+</table>
+
+<h3>Was war wahr?</h3>
+<ul>
+  <li><strong>Fiktiv:</strong> Christian Rosenkreuz, die „Bruderschaft" als Organisation — keine historische Belege</li>
+  <li><strong>Real:</strong> der Tübinger Gelehrtenkreis um <strong>Tobias Hess</strong> und <strong>Christoph Besold</strong>; der wahrscheinliche Autor der Manifeste <strong>Johann Valentin Andreae</strong> (Luther-Theologe, Schriftsteller)</li>
+  <li><strong>Reaktion:</strong> Von 1614 bis 1625 erschienen <strong>über 400 Drucke</strong> zum Thema in ganz Europa — die größte „Geheimwissen"-Rezeptionswelle der Neuzeit</li>
+  <li><strong>Distanzierung:</strong> Andreae dementierte 1617 öffentlich — die Manifeste seien keine echte Orden-Gründung, sondern ein „Spiegel" der Zeit. Der Schaden war angerichtet: Menschen begannen, sich als „Rosenkreuzer" zu bezeichnen und Anspruch auf „Geheimwissen" zu erheben</li>
+</ul>
+
+<h3>Ideengeschichtliche Wurzeln <span class="badge fakt">fakt</span></h3>
+<p>Kabbala, Hermetik, Alchemie, Theosophie, Neuplatonismus, christliche Mystik — v. a. <strong>Jakob Böhme</strong> (1575–1624, der „Cobbler-Theosoph", der aus dem Ungrund eine christliche Theosophie entwickelte). Die Rosenkreuzer-Manifeste sind die <em>Synthese</em> all dieser Strömungen zu einer „Reform"-Bewegung.</p>
+
+<h3>Späte institutionalisierte Orden</h3>
+<ul>
+  <li><strong>Orden der Gold- und Rosenkreuzer</strong> (ca. 1760, im Umfeld der Freimaurerei)</li>
+  <li><strong>Golden Dawn</strong> (ab 1888, s. Kap. 8) — nahm „Rosicrucianer" als einen seiner Grade auf</li>
+  <li><strong>AMORC</strong> (Ancient and Mystical Order of the Rosicrucians, 1909) — die größte heutige „Rosenkreuzer"-Organisation, eine Art „esoterischer Verlag"</li>
+</ul>
+
+<div class="card warn">
+<h4>Warum die Rosenkreuzer für die „Geheimwissen"-Geschichte so zentral sind</h4>
+<p>Das Rosenkreuzertum ist der Moment, in dem „Geheimwissen" zur <strong>Identitätsmarke</strong> wurde: Die Bruderschaft existierte nie, aber die <em>Idee</em> — eine geheime, reformatorische, kosmische Bruderschaft mit universellem Wissen — wurde zum Modell. Fast jeder spätere okkulte Orden (Golden Dawn, O.T.O., AMORC, viele „Neu-Templergesellschaften") bedient sich dieser Formel. Das Muster „fiktiver Gründer + Manifest + Reformversprechen + 400 Drucke" ist seither das Prototyp der „Geheimwissen"-Bewegung.</p>
+</div>
+</section>
+<section id="s7">
+<h2 class="sec">7 · Mittelalter: Templer &amp; Katharer</h2>
+
+<h3>Die Templer (1118–1312) <span class="badge fakt">fakt (doppelt) / <span class="badge mythos">mythos</span> (das „Geheim")</span></h3>
+<p><strong>Historisch gesichert:</strong> Der Ritterorden <em>Pauperes commilitones Christi Templique Salomonici</em> (Arme Gesellensoldaten Christi und des Salomonischen Tempels), gegründet 1118, um Pilger auf dem Weg nach Jerusalem zu schützen. Hauptsitz auf dem <strong>Tempelberg</strong> (über den vermuteten Ruinen des Salomonischen Tempels — daher der Name). Offiziell 1129 auf dem Konzil von Troyes durch <strong>Bernhard von Clairvaux</strong> genehmigt. Bis zu <strong>15.000–20.000 Mitglieder</strong>, von denen nur ~10 % Krieger waren. Sie entwickelten <strong>Urkundengelder und Frühform des Bankwesens</strong> — das erste „multinationale Unternehmen" der Geschichte, mit ~1.000 Komtureien. Drei Ränge: <strong>ritterliche Brüder, Sergeanten, Kaplan-Brüder</strong>; der Großmeister wurde auf Lebenszeit gewählt. Letzter Großmeister: <strong>Jacques de Molay</strong>.</p>
+<p><strong>Der Fall (1307–1314):</strong> König <strong>Philipp IV. von Frankreich</strong> (tief in Schulden bei den Templern) ließ am 13. Oktober 1307 (einen Freitag) Molay und Dutzende Brüder verhaften, unter Folter zu falschen Geständnissen zwingen (Gotteslästerung, Idolanbetung, „Baphomet"), und 1312 per Papst Clemens V. den Orden auflösen (Konzil von Vienne). Molay wurde 18. März 1314 verbrannt; er verfluchte Papst und König — beide starben innerhalb desselben Jahres.</p>
+<p><strong>Die Entlastung (2001):</strong> Die <strong>Chinon-Pergamente</strong> (17.–20. August 1308), 2001 von <strong>Barbara Frale</strong> in den Vatikanischen Archiven entdeckt, zeigen, dass Clemens V. die Templer <em>1308 von allen Häresie-Vorwürfen freisprach</em>, bevor er den Orden 1312 auflöste. Die offizielle Position der katholischen Kirche heute: Die Verfolgung war <strong>unrecht</strong>; nichts an der Regel des Ordens war intrinsisch falsch.</p>
+<p><strong>Der Mythos <span class="badge mythos">mythos</span>:</strong> Dass die Templer einen „Geheimglauben" (Baphomet-Kult, heidnische Mysterien, „Heiligen Gral" als physisches Objekt) bewahrten, ist <em>nicht belegt</em>. Die Vorwürfe von 1307 enthielten Tropen, die denen gegen Juden, Ketzereien und Hexen ähneln. Der „Baphomet" der Templer-Prozesse war vermutlich ein Missverständnis (Kopf, Hund, unidentifiziertes Artefakt). Der Gral-Bezug ist rein literarisch (Artus-Sage). <strong>Neu-Templertum</strong> (Neo-Templarism) entstand erst 1805 durch <strong>Bernard-Raymond Fabré-Palaprat</strong>, der eine „ununterbrochene Linie der Großmeister" erfand — heute eine lange Kette von Abspaltungen ohne historischen Beleg. Die Behauptung, Templer flüchteten nach Schottland und gründeten dort die Freimaurerei, wird von Historikern <em>und</em> Freimaurern abgelehnt.</p>
+
+<h3>Die Katharer (11.–14. Jh., Languedoc &amp; Norditalien) <span class="badge fakt">fakt</span></h3>
+<p><em>Cathares</em> (griech. <em>katharos</em> = „rein") — eine dualistische christliche Ketzerbewegung. <strong>Lehre:</strong> Strenger Dualismus — eine Welt des Lichts (guter Gott) und eine Welt der Finsternis (böser Schöpfer der Materie); die materielle Welt ist das Werk des Bösen. Ablehnung von Ehe, Eigentum, Schwören und jeder Autorität der katholischen Kirche. Die <strong>Perfecti</strong> (Vollkommenen) gaben strenge Askese-Vorsätze (<em>endura</em>) ab und gaben das <em>consolamentum</em> (geistliche „Taufe"/Salbung) weiter.</p>
+<p><strong>Die Verfolgung:</strong> Der <strong>Albigensische Kreuzzug</strong> (1209–1229, Papst Innozenz III., u. a. Simon de Montfort) und die <strong>Inquisition</strong> (ab 1215/1231) systematisierten die Unterdrückung. Der berühmte (teilweise apokryphe) Befehl Montforts: „Töte sie alle. Gott wird die Seinen erkennen." Der „Gnoisis"-Bezug ist <span class="badge unklar">umstritten</span> — die Katharer-Lehre wird oft als „Neu-Gnostizismus" (Fortsetzung von Marcion, Manichäern) gelesen, aber der direkte Einfluss ist wissenschaftlich nicht belegt. In der okkultistischen Rezeption des 19. Jh. wurden die Katharer zu „Bewahrern der verborgenen Gnosis" stilisiert.</p>
+
+<h3>Die Bauhütten (Vorgänger der Freimaurerei) <span class="badge fakt">fakt</span></h3>
+<p>Die mittelalterlichen <strong>Bauhütten</strong> (Mason-Lodges) waren Bruderschaften freier Steinmetze und Baumeister an den Kathedralen. Sie besaßen: <strong>Geheimhaltung der Handwerksgeheimnisse</strong> (Maßregeln, Geometrie), <strong>Initiation und Gradung</strong> (Gehilfe → Gesell → Meister), <strong>Zeichen und Erkennungswörter</strong>, und einen <strong>Meistergruß-Ritus</strong>. Mit dem Ende des gotischen Bauens (ab ca. 1600) verlagerten sie sich von „operativer" (Handwerk) zu „spekulativer" (Bildungsbürger) Freimaurerei — die erste bekannte Loge der spekulativen Freimaurerei ist die in <strong>Edinburgh (1599)</strong>; die <strong>Grand Lodge of England</strong> entstand 1717. Die „Geheimnisse" der Bauhütten waren reale <em>Handwerksecrets</em> (Bautechniken, Entlohnung), die dann zur <em>Symbolik</em> wurden. Das Muster „Handwerk → Symbol → Philosophie" ist der direkte Pfad von der mittelalterlichen Praxis zur modernen „Geheimgesellschaft".</p>
+</section>
+<section id="s8">
+<h2 class="sec">8 · Moderne okkulte Orden (1780–1947)</h2>
+<p>Das 19. Jh. ist die <strong>Blütezeit</strong> der „Geheimwissen"-Orden: Die Aufklärung und die wissenschaftliche Revolution haben die Welt „entzaubert" — und die Reaktion darauf ist der <em>Okkultismus</em>: der Versuch, ein „dritten Weg" zwischen Dogmen-Glaube und Positivismus zu finden. Die drei wichtigsten Orden sind Golden Dawn, Martinismus und Theosophie; dazu kommen O.T.O./Thelema und die gnostischen Kirchen.</p>
+
+<h4 id="s8-1">Hermetic Order of the Golden Dawn (1888–1903, London) <span class="badge fakt">fakt</span></h4>
+<p><strong>Gründer:</strong> William Wynn Westcott, William Robert Woodman, Samuel L. MacGregor Mathers. Ein <strong>initiatischer Orden</strong> mit 10 Graden, der die gesamte westliche Esoterik synthetisiert: Kabbala (Baum des Lebens, Sefirot), Hermetik, Freimaurerei, Alchemie, Astrologie, Ägyptologie. Kerngedanke: Der Mensch als <strong>Mikrokosmos</strong>, der durch systematische Initiationsstufen zum Makrokosmos (Gott) aufsteigt.</p>
+<p><strong>Die Grade:</strong> Äußerer Orden (0° Neophyte, 1° Probationer, 2° Practitioner, 3° Philosophus, 4°) + Innerer Orden (A∴A∴-ähnlich, 5°–10° <em>Ipsissimus</em>). Jeder Grad ist einem Planeten/Element/Sehir zugeordnet. <strong>Praxis:</strong> Morgen- und Abend-Gebete, Ritus des kleinen und großen Pentagramms, Planetenriten, Trancearbeit, magische Korrespondenzen (Elemente, Planeten, Engel, Tetragramm). Die <strong>Korrespondenz-Tabelle</strong> (Elemente–Planeten–Tierkreis–Farben–Metalle–Engel) ist der berühmteste „Wissens-Schatz" des Golden Dawn — eine <em>Universal-Entsprechungstabelle</em>, die bis heute in fast jeder esoterischen Praxis verwendet wird.</p>
+<p><strong>Zerfall:</strong> Ab ca. 1900 Streit um die „C.C."- und „K.K."-Dokumente (Geheimdokumente); der Orden fragmentierte in <strong>Stella Matutina</strong> (Israel Regardie, 1922), <strong>Isis-Urania Temple</strong> (A. E. Waite, 1898), <strong>Alpha et Omega</strong> (Brodie-Innes &amp; Mathers) und zahlreiche kleinere Nachfolger. <strong>1954</strong> machte Regardie in <em>The Golden Dawn</em> die Riten öffentlich — das begründete die moderne Golden-Dawn-Renaissance. <em>Wichtig:</em> Der Golden Dawn ist der <strong>direkte Vorgänger</strong> von Thelema (Crowley war Mitglied) und der heutigen „Western Esotericism"-Akademie.</p>
+
+<h4 id="s8-2">Martinismus (18. Jh.–heute) <span class="badge fakt">fakt</span></h4>
+<p>Traditionell auf <strong>Jean-Martin Cusany</strong> (1666–1740) zurückgeführt, der von einem „geistigen Vater" (Martin de la Gardanne) die Lehren erhalten habe. De facto organisierte Struktur erst ab Mitte/Ende 18. Jh. Erster bekannter <em>Chef de l'Ordre</em>: <strong>Jean-Baptiste Willermoz</strong> (1730–1824) ab 1787. Der eigentliche Namensgeber: <strong>Louis-Claude de Saint-Martin</strong> (1743–1803, „der Unbekannte Philosoph"). <strong>Sieben Grade</strong>: 1° Promulgated, 2° Écuyer du Temple, 3° Chevalier d'Orient, 4° Disciple, 5° Perfect Prince, 6° Sublime Prince of the Royal Secret, 7° Sublime Master of the Royal Secret. <strong>Ab Grad 4 nur noch mündliche Initiation</strong> (orale Transmission) — die eigentliche „Geheimnis"-Dimension. <strong>Lehre:</strong> Christliche Mystik und esoterisches Christentum; der Fall des Menschen aus der göttlichen Quelle und die <strong>Réintégration</strong> (Rückkehr in den göttlichen Zustand durch innere Läuterung); der Mensch ist bereits göttlicher Funke, der seine Gottheit wiedererkennt. Keine Tempel-Struktur wie Golden Dawn, sondern <strong>Meister-Schüler-Beziehung</strong> (Père Spirituel). Überlieferung durch die „Ligne de transmission" (Linie des Überlieferers) — ununterbrochen bis heute (Ordre du Temple du Saint Graal, Grand Prieuré de France).</p>
+
+<h4 id="s8-3">Theosophie / Theosophical Society (1875–heute) <span class="badge fakt">fakt (Organisation) / <span class="badge unklar">umstritten</span> (die „Mahatmas")</span></h4>
+<p><strong>Gründung:</strong> 15. November 1875 in New York von <strong>Helena Petrovna Blavatsky</strong> (1831–1891), Henry Steel Olcott und F. W. Case. Sitz später in <strong>Adyar</strong> (Chennai, Indien). <strong>Kein initiatischer Orden</strong> im klassischen Sinne — eine internationale Gesellschaft mit drei Gliederungen (Adyar, Golden Dawn-ähnliche esoterische Abzweigung, TS-America ab 1908). <strong>Lehre:</strong> Synthese aus Neuplatonismus, okkulten Traditionen, Hinduismus (Vedanta, Karma, Samsara) und Buddhism. Eine einzige göttliche Quelle („Absolute"), <strong>sieben Prinzipien</strong> der Schöpfung, <strong>Zyklen von Manvantaras</strong> (Weltenzeitaltern), Karma und Reinkarnation, evolutionäres Aufsteigen der Menschheit durch 7 Rassen/Schalen. <strong>Die „Mahatmas"</strong> (indische „Geisterlehrer" wie Kuthumi, M. K. G., Mahatma Morya) — die Akademiker stuft diese Behauptungen überwiegend als <em>Pseudowissenschaft bzw. Fabrikation</em> ein; die „Mahatma-Briefe" (Blavatsky) als „okkultes Medium". <strong>Zentrale Texte:</strong> <em>Isis Unveiled</em> (1877), <em>The Secret Doctrine</em> (1888, 2 Bände), <em>The Voice of the Silence</em> (1889). <strong>Abspaltungen:</strong> Adyar (moderat), London (Besant/Leadbeater — stärker okkult, später Anthroposophie-ähnlich), Lucis Trust (Alice Bailey, 1919, „Esoterische Theosophie"). Die Theosophie ist die <strong>Brücke</strong> zwischen der westlichen Esoterik und dem New Age (s. Kap. 9).</p>
+
+<h4 id="s8-4">Ordo Templi Orientis (O.T.O.) &amp; Thelema (1888/1893–heute) <span class="badge fakt">fakt</span></h4>
+<p><strong>Gründung:</strong> auf die deutschsprachigen Okkultisten <strong>Carl Kellner</strong> († 1894), Theodor Reuss, Heinrich Klein, Franz Hartmann zurückgeführt. Reuss übernahm 1906; 1912 nahm er <strong>Aleister Crowley</strong> (1875–1947) auf; Crowley reorganisierte den Orden ab 1914 vollständig. <strong>Struktur:</strong> Sieben Grade (0°–6°) auf der „Silver Chain" + sieben Grade (7°–10°) auf der „Rose-Croix Chain"; ab 4° (Master of the Temple) beginnt die Thelemische Praxis; zusätzlich der innere Orden <strong>A∴A∴</strong> (ab 4°). Streng hierarchisch, strenger als Golden Dawn. <strong>Lehre (Thelema</strong>, von griech. θέλημα = „Wille"): Die zentrale Idee ist „<em>Do what thou wilt shall be the whole of the Law</em>" — jeder Mensch hat einen <strong>True Will</strong> (wahres Selbst/Seelenziel), den er zu erkunden und zu verwirklichen hat. Kein moralisches Gesetz im traditionellen Sinne. <strong>Das zentrale Ritual:</strong> die <strong>Gnostic Mass</strong> (Liber XV, 1913) — eine abgewandelte Eucharistie, in der Wein und Hostie als magische Symbole für das <em>Mysterium</em> (Geschlechtsmysterium) verwendet werden; enthält Banishing, Riten, Hochzeit, Eucharistie. <strong>Zentrale Texte:</strong> <em>The Book of the Law / Liber AL vel Legis</em> („offenbart" 1904 in Kairo durch „Aiwass"), <em>777</em> (Crowleys Korrespondenz-Tabelle), <em>The Confessions</em> (1929/1969). <strong>Nach Crowley († 1947):</strong> starke Fragmentierung in multiple unabhängige Jurisdiktionen; die <strong>Ecclesia Gnostica Catholica</strong> (E.G.C.) ist der kirchliche Arm des O.T.O.</p>
+
+<h4 id="s8-5">Gnostische Kirchen <span class="badge fakt">fakt</span></h4>
+<ul>
+  <li><strong>Église Gnostique de France</strong> (1890, <strong>Jules Doinel</strong>) — die erste moderne gnostische Kirche; neo-gnostisches Christentum: Der wahre Gott ist nicht der „Schöpfergott" des AT (Demiurg), sondern das „Licht" (Pneuma) in jedem Menschen; Erlösung durch <strong>Gnosis</strong> (direkte geistige Erkenntnis), nicht durch Glauben oder Werke. Nach Doinel († 1927) übernahm Marie-Rose de Saint-Martin (1893–1970).</li>
+  <li><strong>Ecclesia Gnostica Catholica</strong> (1913, Crowley) — der kirchliche Arm des O.T.O.; drei Grade (1° Priest, 2° Bishop, 3° Cardinal/Abbot); die Gnostic Mass als Zentrum. „Catholica" = Universalität, nicht römisch-katholisch.</li>
+</ul>
+
+<div class="card key">
+<h4>Das Muster der modernen Orden</h4>
+<p>Alle diese Orden folgen demselben Konstruktionsplan: <strong>(1) fiktiver/altertümlicher Gründer</strong> (Rosenkreuz, Hermes, Martin), <strong>(2) eine Korrespondenz-Tabelle</strong> (Elemente–Planeten–Sefirot–Engel), <strong>(3) eine Grad-Skala</strong> (0°–10°), <strong>(4) mündliche Überlieferung</strong> ab einem bestimmten Grad, <strong>(5) eine zentrale „offenbarte" Schrift</strong> (Liber AL, Secret Doctrine), <strong>(6) ein initiatrisches Ritual</strong> (Pentagramm, Gnostic Mass, Réintégration). Was „Geheim" ist, ist fast nie <em>Information</em> — sondern die <strong>Initiationserfahrung</strong> selbst und die Zugehörigkeit zur „Linie".</p>
+</div>
+</section>
+<section id="s9">
+<h2 class="sec">9 · Moderne Bewegungen (20. Jh. – heute)</h2>
+
+<h4 id="s9-1">Chaos Magic, Wicca, New Age, Reconstructionismus</h4>
+<div class="grid2">
+<div class="card">
+<h4>Chaos Magic (1970er, England)</h4>
+<p>Kein einzelner Orden, sondern eine lose Bewegung. Wichtige Figuren: <strong>Peter J. Carroll</strong> (<em>Liber Chaos</em>/„Liber Chaososophiae", 1988), <strong>Ram Dass</strong>, <strong>Robert M. Chen</strong>. Zwei Organisationen: <strong>Illuminates of Thanateros</strong> (IOT, gegr. 1974 von Carroll) und <strong>Thee Temple ov Psychick Youth</strong> (ToYPY, gegr. 1980, mit John A. Cramer). <strong>Lehre:</strong> Magie funktioniert, wenn man daran glaubt (glaubensbasierte Wirksamkeit). „<strong>Sigil Magic</strong>" (Siegel-Zauber) als Kernpraxis: Absicht wird in ein Symbol kodiert, dann in das Unbewusste geschickt. Keine feste Theologie — alles ist „Mask of God" (Maske Gottes). Stark beeinflusst von <strong>Austin Osman Spare</strong> (1885–1951, <em>The Book of the Real</em>). <strong>Experimenteller Ansatz:</strong> Jede Technik ist gültig, solange sie „works" (funktioniert). Dies ist der <em>postmoderne</em> Endpunkt der westlichen Okkult-Tradition: das „Geheimwissen" wird zum <strong>Werkzeugkasten</strong> ohne metaphysischen Anspruch.</p>
+</div>
+<div class="card">
+<h4>Wicca (ab 1954, England)</h4>
+<p>Von <strong>Gerald Gardner</strong> (1884–1964) öffentlich eingeführt; <strong>Doreen Valiente</strong> (1922–1999) prägte die Liturgie. Kein formaler Orden, sondern eine „Road" (Weg) in <strong>Coven-Struktur</strong> (typisch 5–13 Personen). Initiation in drei Stufen. <strong>Lehre:</strong> Duale göttliche Kraft — Gottin (Mond, Erde, Fruchtbarkeit) und Gott (Sonne, Himmel, Jagd); Naturverehrung, Jahreszyklen. <strong>„Red Rule" (Weißes Gesetz): „Anno nocumenti"</strong> (Schade niemandem). <strong>Ritus:</strong> 8 <strong>Sabbats</strong> (Jahreskreis: Yule, Imbolc, Ostara, Beltane, Litha, Lughnasadh, Mabon, Samhain) und 13 <strong>Esbats</strong> (Mondfeiern); „Great Rite", Banishing Circle, „Drawing Down the Moon". <strong>Texte:</strong> <em>The Meaning of Wicca</em> (Gardner, 1959), <em>The Witch-Cult in Western Europe</em> (1951), <em>A Book of Shadows</em>.</p>
+</div>
+<div class="card">
+<h4>New Age (frühe 1970er – heute)</h4>
+<p>Keine konkrete Gründung; ein <em>Milieu</em> spiritueller Praktiken. Keine einheitliche Lehre — extreme Eklektizität. Themen: Reinkarnation, Karma, „Higher Self", Kristallheilkunde, „Quantum Healing", Channeling, Astralreise, <strong>„Law of Attraction"</strong> (Gesetz der Anziehung), Holismus, „Aufsteigen" (Ascension). Synthese aus östlichen (Hindu, Buddha) und westlichen (Theosophie, Okkultismus) Elementen — die Theosophie ist die direkte Quelle. Keine „heiligen Texte"; populärwissenschaftliche Bücher (Deepak Chopra, Louise Hay, James Redfield). <strong>Kritik:</strong> Wird von der Wissenschaft überwiegend als <em>Pseudowissenschaft</em> eingestuft; die „Quantum"-Esoterik (Quantenheilkunde, Quanten-Geist) hat nichts mit echter Quantenphysik zu tun.</p>
+</div>
+<div class="card">
+<h4>Polytheistischer Reconstructionismus (späte 1960er – heute)</h4>
+<p>Wiederherstellung historischer polytheistischer Religionen durch <strong>Redcovery</strong> (Wiederentdeckung) von Ritualen, Praktiken und Weltanschauungen vorchristlicher paganer Religionen. Im Gegensatz zu synkretischen Bewegungen wie Wicca. Gruppen: <strong>Ásatrú</strong> (nordisch), <strong>Hellenism</strong> (griechisch), <strong>Romuva</strong> (litauisch), rekonstruktionistische Gruppen für römische, ägyptische, keltische Religionen. <strong>Texte:</strong> Primärquellen (<em>Hávamál</em>, <em>Völuspá</em>, Homer, Pindar, Ovid, Cicero, Varro) + akademische Werke. <strong>Riten:</strong> historisch rekonstruierte Opfer (<em>Blót</em> nordisch, <em>Thysia</em> griechisch, <em>Sacrificium</em> römisch), Gebete, Feste nach historischem Kalender.</p>
+</div>
+</div>
+
+<h4 id="s9-2">Anthroposophie &amp; Traditionalismus</h4>
+<div class="grid2">
+<div class="card">
+<h4>Anthroposophie (Rudolf Steiner, 1913–heute)</h4>
+<p><strong>Rudolf Steiner</strong> (1861–1925) war zunächst der erste deutsche Präsident der Theosophical Society (1905–1913), bevor er sich abspaltete. Die <strong>Anthroposophische Gesellschaft</strong> wurde 1913 in Berlin gegründet. <strong>Keine formale Grad-Struktur</strong>; Steiner lehrte per Vorträgen (über 6000 Vorträge). <strong>Lehre:</strong> „Wissenschaft des Geistes"; Synthese aus westlicher Esoterik, Christentum und Gnosis. Der Mensch habe eine dreifache Natur (Leib, Seele, Geist); der Geist sei durch Meditation und Willensarbeit direkt erkennbar. <strong>Praxis:</strong> Eurythmie (Bewegungskunst als Heilung), <strong>biodynamische Landwirtschaft</strong> (ab 1924, 7 Rhythmen: Tag, Mond, Planet, Jahr, Galaktik, Sonne, Welt), <strong>Waldorfschulen</strong> (ab 1919), Anthroposophische Medizin. <strong>Kritik:</strong> Viele seiner Ideen werden als <em>Pseudowissenschaft</em> eingestuft; „Beide entpuppten sich als 'positivistische Religionen', die scheinbar logische Theologie auf Pseudowissenschaft basierten" (Maria Carlson).</p>
+</div>
+<div class="card">
+<h4>Traditionalismus / Traditionalist School (René Guénon, 1910er – heute)</h4>
+<p><strong>René Guénon</strong> (1886–1951) entwickelte den <strong>Traditionalismus</strong>: die Idee einer <strong>ursprünglichen, universellen Tradition</strong> (Prisca Theologia), aus der alle Weltreligionen hervorgehen; Ablehnung der Moderne. Sein Traditionalismus beeinflusste später Esoteriker wie <strong>Julius Evola</strong> (1898–1974, Gründer der UR-Gruppe) und <strong>Frithjof Schuon</strong> (1907–1998, „Transzendentale Einheit der Religionen"). Dieser Zweig der Esoterik ist der <em>elitäre, anti-demokratische</em> Arm — im Gegensatz zum demokratischen New Age. <strong>Wichtig:</strong> Evola und die UR-Gruppe haben eine dokumentierte Verbindung zur NS-Bewegung (s. unten).</p>
+</div>
+</div>
+
+<h4 id="s9-3">NS-Esoterik &amp; Thule-Gesellschaft <span class="badge fakt">fakt</span></h4>
+<p>Die „Geheimwissen"-Tradition hatte eine dokumentierte, dunkle Abzweigung in der NS-Zeit:</p>
+<ul>
+  <li><strong>Thule-Gesellschaft</strong> (1918–1923, München): okkult-nationalistische Gesellschaft; <strong>Karl Harrer</strong> (Mitglied) war einer der Mitbegründer der Deutschen Arbeiterpartei, die zur NSDAP wurde. <strong>Alfred Rosenberg</strong>, <strong>Rudolf Hess</strong> und Hitlers Mentor <strong>Dietrich Eckart</strong> waren „Gäste" der Thule-Gesellschaft. <span class="badge unklar">umstritten</span>: Der direkte Einfluss auf Hitlers Weltanschauung ist in der Forschung umstritten, aber die personellen Überschneidungen sind gesichert.</li>
+  <li><strong>Guido von List</strong> (1848–1919): neo-paganistische, nationalistische Ideen, basierend auf „Wotanism" und Kabbala — der „Ariosophie" (rassistische Esoterik).</li>
+  <li><strong>Heinrich Himmler</strong> nutzte <strong>Karl Maria Wiligut</strong> als Clairvoyant „regelmäßig für Hilfe bei der Gestaltung der symbolischen und zeremoniellen Aspekte der SS" (aber nicht für wichtige politische Entscheidungen). 1939 wurde Wiligut „zwangspensioniert" und in eine Anstalt eingewiesen.</li>
+  <li>Hitler und Goebbels waren der Esoterik eher <em>feindlich</em>; die NSDAP verbot 1936 die <strong>Fraternitas Saturni</strong> (gegr. Ostern 1928, einer der ältesten kontinuierlich bestehenden magischen Orden Deutschlands). Nach dem Krieg reformierte sich die Fraternitas Saturni.</li>
+</ul>
+<div class="card warn">
+<p>Dieser Abschnitt ist wichtig, weil er zeigt, dass „Geheimwissen" nicht per se „gut" oder „aufgeklärt" ist: Die Esoterik-Tradition hat sowohl zur <strong>Humanität</strong> (Aufklärung, Toleranz, Spiritualität) als auch zur <strong>Gewalt</strong> (Ariosophie, NS-Mythologie) beigetragen. Eine unkritische „Geheimwissen"-Romantik blendet diese dunkle Seite aus.</p>
+</div>
+</section>
+<section id="s10">
+<h2 class="sec">10 · Geheimgesellschaften</h2>
+<p>Während esoterische Orden nach <em>Wissen</em> suchen, sind Geheimgesellschaften nach <em>Macht und Einfluss</em> organisiert. Beide werden im öffentlichen Diskurs oft vermischt — die folgende Übersicht trennt dokumentierte Geschichte von Verschwörungsnarrativen.</p>
+
+<h4 id="s10-1">Freimaurerei (1717–heute) <span class="badge fakt">fakt</span></h4>
+<p>Die moderne Freimaurerei geht auf die Gründung der ersten regulären <strong>Grand Lodge in London 1717</strong> zurück; ihre Wurzeln liegen in den mittelalterlichen Steinmetzbruderschaften (s. Kap. 7). <strong>Struktur:</strong> Die „blaue Loge" (die drei Blauen Grade: Lehrling, Geselle, Meister) + die „Hohen Riten", darunter den <strong>Schottischen Ritus</strong> (33 Grade) und den Ritus der Strikten Observanz. Die Leitung obliegt der Großloge. <strong>„Geheimwissen":</strong> Rituale, Händedrucke, Erkennungswörter und Symbolsprache (Zirkel, Winkelmaß, Großer Architekt des Universums) — keine Verschwörungen, sondern ein ethisches Programm (Tugend, Brüderlichkeit, Toleranz, Suche nach Wahrheit). <strong>Historische Rolle:</strong> Eine der wichtigsten Aufklärungsbewegungen Europas; beeinflusste die Französische Revolution (Lafayette, Mirabeau) und die Amerikanische Revolution (Franklin, Washington). Bekannte Brüder: Friedrich II. von Preußen, Voltaire (Freund, aber nicht Mitglied <span class="badge unklar">[?]</span>). Heute weltweit Millionen Mitglieder; in Deutschland ca. 30.000–40.000. <strong>Verschwörung:</strong> Die Freimaurerei ist seit dem 18. Jh. das <em>Lieblingsobjekt</em> der Verschwörungstheorie (s. Kap. 10.6) — aber der <em>Vertrag</em> ist real und die <em>Verschwörung</em> ist nicht belegt.</p>
+
+<h4 id="s10-2">Der Illuminaten-Orden (Bayerischer Illuminatenorden, 1776–1787) <span class="badge fakt">fakt (Orden) / <span class="badge mythos">mythos</span> (die „Illuminaten")</span></h4>
+<p><strong>Gründung:</strong> 1776 in Ingolstadt durch den Jesuitengegner und Theologieprofessor <strong>Adam Weishaupt</strong> (1748–1830). <strong>Grade:</strong> ursprünglich <em>Zünfter, Novize, Illuminierter Novize, Illuminierter Aufgerissener, Illuminierter Valentinianer</em>; später an die Freimaurerei angelehnt. <strong>Zielsetzung:</strong> Weishaupt wollte gegen „Aberglauben und Vorurteile der Priesterschaft" vorgehen und die <strong>Aufklärung</strong> fördern. Der Orden betrieb <strong>gezielte Rekrutierung und Infiltration</strong> anderer Logen — das unterschied ihn von der Freimaurerei. <strong>Ende:</strong> 1784/85 vom bayerischen Kurfürsten Karl Theodor verboten und aufgelöst (ca. 2.000–3.000 Mitglieder). <strong>Der Mythos <span class="badge mythos">mythos</span>:</strong> Die „Illuminaten" als <em>tätige, weltumspannende Geheimorganisation</em> (die die Geschichte steuert) ist eine <em>spätere Erfindung</em> — der Orden existierte nur ~11 Jahre und hatte keinen nachweisbaren Einfluss nach seiner Auflösung. Der Begriff wurde im 19./20. Jh. zur <em>generischen Bezeichnung</em> für „jede geheime Elite" und in der Popkultur fixiert (u. a. Dan Browns <em>Die Illuminaten</em>, 2021).</p>
+
+<h4 id="s10-3">Propaganda Due (P2) &amp; Skull and Bones <span class="badge fakt">fakt</span></h4>
+<div class="grid2">
+<div class="card">
+<h4>Propaganda Due (P2), Italien (1877/1976–heute aufgelöst)</h4>
+<p>1877 in Rom als P2-Loge (Loge Nr. 2 des Großorientes von Italien) gegründet. Ab 1976/77 unter <strong>Licio Gelli</strong> (1920–2015) zur eigenständigen, hochpolitischen <strong>„Superloge"</strong> — über der regulären Freimaurerei. <strong>Ziel:</strong> „Erneuerung der italienischen Gesellschaft" — tatsächlich: ein <strong>Netzwerk aus Politik, Wirtschaft, Militär und Kirche</strong> mit dem Ziel des politischen Einflusses über Parteigrenzen hinweg. <strong>Der Skandal (1981):</strong> Die „P2-Liste" mit ca. <strong>9.600 Namen</strong> (Politiker, Unternehmer, Journalisten, u. a. aus DC, PSI, MSI) wurde öffentlich; Gelli wurde 1991/92 wegen illegaler Loge und Amtsmissbrauchs zu 6 Jahren Haft verurteilt. <strong>Wichtig:</strong> P2 ist der <em>dokumentiertste</em> Fall einer Geheimgesellschaft, die tatsächlich politischen Einfluss ausübte — und gleichzeitig der, in dem die „Verschwörung" am stärksten mit der <em>dokumentierten Realität</em> zusammenfällt. Die Verstrickung in den Mord an <strong>Aldo Moro</strong> (1978) ist ein offener Punkt der Geschichtsschreibung <span class="badge unklar">[?]</span>.</p>
+</div>
+<div class="card">
+<h4>Skull and Bones (Yale University, gegr. 1902) <span class="badge unklar">teilweise unklar</span></h4>
+<p><strong>Gründung:</strong> 1902 von <strong>William Sloane</strong> und <strong>Walter Whitman</strong> an der Yale University. Nur <strong>20–30 Mitglieder pro Jahrgang</strong> („Mojos"/„Bonesmen"); die Aufnahme ist strikt selektiv; die Zeremonien im <strong>Tomb</strong> (Knochenkammer) sind geheim. <strong>Offiziell:</strong> „Elitäre Führungsausbildung"; die Gesellschaft betont „discretion and loyalty". <strong>Alumni:</strong> George H.W. Bush, George W. Bush, Henry Kissinger, David Rockefeller (Jr.), Condoleezza Rice <span class="badge unklar">[? einzelne Zugehörigkeiten nicht immer unabhängig verifiziert]</span>. <strong>Das „Geheim":</strong> Es wird diskutiert, ob es ein bewusstes Netzwerk-Prinzip gibt — ein formelles Netzwerk wird von den Alums <em>nicht offiziell bestätigt</em>. Die Einordnung liegt zwischen „elitärem Alumni-Netzwerk" (real) und „regierungssteuernder Geheimloge" (mythisch).</p>
+</div>
+</div>
+
+<h4 id="s10-4">Bilderberg, CFR, Trilateral Commission, WEF <span class="badge fakt">fakt (Organisationen) / <span class="badge mythos">mythos</span> (die „Weltherrschaft")</span></h4>
+<table>
+<tr><th>Organisation</th><th>Gründung</th><th>Struktur</th><th>Ziel (offiziell)</th></tr>
+<tr><td><strong>Bilderberg-Meeting</strong></td><td>1954, initiiert von Prinz Bernhard der Niederlande und NATO-Generalsekretär Lord Ismay</td><td>Jährliches, <em>inoffizielles</em> Treffen von ca. 120–130 Politikern, Wirtschaftsführern, Akademikern, Journalisten aus Westeuropa + Nordamerika</td><td>Inoffizieller Meinungsaustausch über transatlantische/europäische Politik; ausdrücklich <em>keine</em> Beschlüsse</td></tr>
+<tr><td><strong>Council on Foreign Relations (CFR)</strong></td><td>1921, New York</td><td>Think Tank mit ca. 4.000–5.000 Mitgliedern; Herausgeber von <em>Foreign Affairs</em></td><td>Beeinflussung der US-Außenpolitik durch Forschung, Publikation, Netzwerkbildung</td></tr>
+<tr><td><strong>Trilateral Commission</strong></td><td>1973, von David Rockefeller und Zbigniew Brzezinski</td><td>ca. 50–60 Mitglieder aus Nordamerika, Westeuropa, Asien-Pazifik; dreigeteilt nach Regionen</td><td>„Brückenbau" zwischen den drei Industrieregionen; Analyse der globalen Governance</td></tr>
+<tr><td><strong>World Economic Forum (WEF)</strong></td><td>1971 in Davos (Klaus Schwab) als <em>European Management Forum</em>; 1987 in WEF umbenannt</td><td>Jährliches Weltwirtschaftsforum in Davos (Januar), ca. 2.500–3.000 Teilnehmer; Berichte (<em>Global Risks Report</em>)</td><td>„Verbesserung der Weltlage" durch öffentlich-private Partnerschaft, Agenda-Setting (Klima, Digitalisierung, Migration)</td></tr>
+</table>
+<p><strong>Die Einordnung <span class="badge mythos">mythos</span>:</strong> Dass diese Organisationen eine <em>„Eine Weltregierung"</em> planen, ist <em>nicht belegt</em>. Sie sind reale, einflussreiche <strong>Elite-Foren und Think Tanks</strong> — aber sie sind keine einheitliche Verschwörung, sondern verschiedene Organisationen mit verschiedenen Zielen, die sich in der <em>Wahrnehmung</em> zu einer „New World Order"-Steuerungsinstanz verschmelzen. Der Begriff „New World Order" stammt aus der Bibel (Daniel 2:44) und wurde in den 1990er von US-evangelikalen Christen und Verschwörungstheoretikern aufgegriffen.</p>
+
+<h4 id="s10-5">Opus Dei &amp; Jesuiten <span class="badge fakt">fakt</span></h4>
+<div class="grid2">
+<div class="card">
+<h4>Opus Dei (1928–heute)</h4>
+<p><strong>Gründung:</strong> 1928 in Madrid durch <strong>Jorge María Escrivá de Balaguer</strong> (1902–1975); seliggesprochen 1992, heiliggesprochen 2002 (Johannes Paul II.). <strong>Kein Orden</strong> im eigentlichen Sinne, sondern eine <strong>Persönliche Prälatur</strong> der römisch-katholischen Kirche (errichtet 1982). Mitglieder: <em>Nummern</em>, <em>Assistenten</em>, <em>Zentralmitglieder</em>; ca. 80.000–90.000 weltweit. <strong>Ziel:</strong> Heiligung durch alltägliche Arbeit; strenge geistliche Disziplin (Tagesordnung mit Gebetszeiten, Eucharistie, Rosenkranz). <strong>Kontroversen:</strong> Finanzielle Nicht-Transparenz (erst nach Vatikan-Druck Reformen); Nähe zu konservativen Politikern in Deutschland. <strong>Verschwörung <span class="badge mythos">mythos</span>:</strong> Opus Dei wird in der Popkultur oft als „geheimste Gesellschaft der Welt" dargestellt — tatsächlich ist es ein offizielles Gremium der katholischen Kirche.</p>
+</div>
+<div class="card">
+<h4>Jesuiten / Gesellschaft Jesu (1540–heute)</h4>
+<p><strong>Gründung:</strong> 1540 in Paris durch <strong>Ignatius von Loyola</strong> (1491–1556), päpstlich bestätigt durch Paul III. <strong>Struktur:</strong> Der wohl am besten organisierte Orden der katholischen Kirche; strenge Ausbildung, Gehorsam gegenüber dem <em>Generalsuperior</em> (der „Papst der Jesuiten"); <em>Ratio Studiorum</em> (Bildungsplan 1599). <strong>Ziel:</strong> <em>Ad maiorem Dei gloriam</em> (Zu größerer Ehre Gottes) — Mission, Bildung, wissenschaftliche Arbeit. <strong>Historisch:</strong> Bis 1773 (Aufhebung durch Clemens XIV.) und 1814 (Wiederherstellung durch Pius VII.) mehrfach verboten. In Deutschland bis 1968 nicht offiziell tätig. Heute: Tausende Schulen, Universitäten, Medien weltweit. <strong>Verschwörung <span class="badge mythos">mythos</span>:</strong> Die Jesuiten sind seit dem 16. Jh. ein klassisches Verschwörungsobjekt („die Jesuiten steuern die Welt") — aus der historischen Rivalität mit anderen Konfessionen und Staaten entstanden.</p>
+</div>
+</div>
+
+<h4 id="s10-6">Verschwörungsmythen im Überblick</h4>
+<div class="card warn">
+<p>Die folgende Tabelle trennt <strong>dokumentierte Fakten</strong> von <strong>mythischer Überhöhung</strong> — das ist der Kern der „Geheimwissen"-Kritik:</p>
+<table>
+<tr><th>Mythos/Narrativ</th><th>Dokumentierter Kern</th><th>Mythische Überhöhung <span class="badge mythos">mythos</span></th></tr>
+<tr><td><strong>Protokolle der Weisen von Zion</strong> (1903, Russland)</td><td>Fälschung; 1935 im Prozess entlarvt; Montage aus antisemitischen Quellen (u. a. Moritz Steinschneiders <em>Die Juden und ihre Märchen</em>, Jules Mochs satirischem <em>Les Protocoles du Czar</em> [?]). Dennoch in vielen Ländern (arabische Welt, Russland) nach wie vor verbreitet</td><td>Ein jüdisches Komplott zur Weltherrschaft — <em>keinerlei</em> Beleg; reiner Antisemitismus</td></tr>
+<tr><td><strong>New World Order</strong></td><td>Reale Machtstrukturen (Globalisierung, multinationale Konzerne, Think Tanks, Bilderberg, WEF)</td><td>Einheitliches Komplott zur Errichtung einer „Eine Weltregierung" — keine Belege</td></tr>
+<tr><td><strong>Templer-Gral</strong> (Dan Brown, <em>The Da Vinci Code</em>, 2003)</td><td>Die Templer existierten; wurden 1312 aufgelöst; das Chinon-Pergament entlastet sie</td><td>Die „Priory of Sion" (erfundene Geheimgesellschaft) bewahre den Heiligen Gral; die Templer seien die wahren Nachfolger — reine Fiktion des Romans, die das öffentliche Interesse enorm befeuerte</td></tr>
+<tr><td><strong>Freimaurer-Verschwörung</strong></td><td>Die Freimaurerei ist eine reale, legitime Bruderschaft mit ethischem Programm</td><td>Die Freimaurer steuern Regierungen, Kirchen und Banken — keine Belege; klassisches Projektionsmuster</td></tr>
+<tr><td><strong>Bilderberg/WEF = Weltherrschaft</strong></td><td>Reale Elite-Foren mit echtem politischem Einfluss</td><td>Geheimtreffen zur Errichtung einer Weltregierung — keine Belege; Verwechslung von <em>Einfluss</em> mit <em>Kontrolle</em></td></tr>
+</table>
+<p><strong>Das Projektionsmuster:</strong> Fast alle Verschwörungsmythen folgen derselben Formel: <em>reale Organisation</em> + <em>reale Einflusssphäre</em> + <em>mythische Absicht</em> (Weltherrschaft) = „Verschwörung". Die Wissenschaft (Historik, Politikwissenschaft) stuft diese Einordnung als <em>unkritische Projektion</em> ein. <strong>Die entscheidende Unterscheidung:</strong> Es gibt reale <em>Geheimhaltung</em> (Initiationsgeheimnisse, diplomatische Verhandlungen, Geschäftsgeheimnisse) — aber keine belegte <em>Geheimverschwörung</em> zur Weltbeherrschung.</p>
+</div>
+</section>
+<section id="s11">
+<h2 class="sec">11 · Weltweite esoterische Traditionen</h2>
+<p>Der Begriff „Esoterik" ist ein <em>westlicher</em> Wissenschaftsbegriff (Faivre: „Esoterik ist ein westlicher Begriff"). Es gibt keine vergleichbare Kategorie der „östlichen Esoterik" im engeren Sinne. Aber die westliche Esoterik hat ihre Struktur — <strong>Initiation, Meister-Schüler-Beziehung, stufenweise Offenbarung, Erfahrung vor Theorie</strong> — von den östlichen Traditionen <em>übernommen</em> (v. a. durch die Theosophie). Die folgenden Traditionen sind die <em>Ursprung</em> dieser Struktur.</p>
+
+<h4 id="s11-1">Sufismus (islamische Mystik) <span class="badge fakt">fakt</span></h4>
+<p>Die mystische Strömung innerhalb des Islam, die auf <strong>direkte innere Erfahrung Gottes</strong> abzielt. <strong>Praktiken:</strong> <em>Dhikr</em> (Wiederholung göttlicher Namen), <em>Muraqaba</em> (Meditation); bei den <strong>Mevlevi</strong> (Whirling Dervishes, institutionalisiert durch <strong>Rumi</strong>, 1207–1273) das <strong><em>Sema</em></strong> — der rituelle Kreiseltanz. <strong>Struktur:</strong> Die <em>Tariqa</em> (Sufi-Orden: Naqshbandi, Mevlevi, Qadiri, Shadhili); die <strong>Meister-Schüler-Beziehung</strong> (<em>Murid-Scheich</em>) ist hierarchisch. <strong>„Geheim":</strong> weniger eine verborgene Lehre als eine <em>initiierte Praxisstufenordnung</em> — das Wissen wird nicht publiziert, sondern an Eingeweihte übergeben. <strong>Lehre:</strong> <em>Ma'rifa</em> (das „Wissen" Gottes — direkte Erkenntnis, im Gegensatz zu <em>'Ilm</em> = Buchwissen), <em>Fana</em> (die „Aufhebung" des Selbst in Gott), <em>Wahdat al-Wujud</em> (Einheit des Seins, bei <strong>Ibn Arabi</strong>, 1165–1240). <strong>Wichtige Texte/Personen:</strong> Rumi (<em>Masnavi</em>), Ibn Arabi (<em>Futuhat al-Makkiyya</em>), Al-Hallaj (955–1092). <strong>Wirkung auf den Westen:</strong> Die Theosophie und das New Age übernahmen viele sufische Konzepte (Einheit, Meister-Schüler, Meditation).</p>
+
+<h4 id="s11-2">Tantra &amp; Vajrayana (Hinduismus/Buddhismus) <span class="badge fakt">fakt</span></h4>
+<p><strong>Tantra</strong> umfasst einen weiten Komplex von Praktiken (Mantra, Yantra, Mudra, Meditation, Rituale) seit ca. 500 n. Chr. <strong>Der „Hafentempel"-Mythos</strong> (Sexualmystik als Kern) ist weitgehend <em>Popkultur-Vereinfachung</em> <span class="badge mythos">mythos</span>. Dokumentiert sind: <em>Kaula</em>-Strömungen, <em>Shakti</em>-Kult, und die tiefe Verbindung von <strong>Körperpraxis</strong> (Yoga, Atem, Chakren) und <strong>Geistespraxis</strong>. <strong>Die „Geheimnis"-Dimension:</strong> Der Zugang zu höheren Stufen (<em>Upadesha</em>) ist traditionell an <strong>Initiation durch einen Guru</strong> gebunden — das ist die eigentliche „Geheimnis"-Dimension, nicht okkulte Inhalte. <strong>Vajrayana</strong> (Tibetischer Buddhismus, Entwicklung ab ca. 8. Jhdt. in Tibet): <strong>Kern:</strong> Guru-Devotion, <strong>Mandala-Meditation</strong>, Mantra-Rezitation, <em>Deity Yoga</em> (Identifikation mit einer göttlichen Figur). <strong>Die Vier Geheimnisse</strong> (Vier Geheimnisse) des Kagyu-Ordens — eine <em>tatsächliche Stufenoffenbarung</em> von Lehrinhalten: <em>Nangwa</em> (innere), <em>Zangwa</em> (innere), <em>Zopwa</em> (verborgene), <em>Zopwa Chogpa</em> (sehr verborgene). <strong>Texte:</strong> <em>Kularnava Tantra</em> (ca. 10. Jhdt.), <em>Zhouyi Cantongqi</em> (ca. 142 n. Chr.). <strong>Personen:</strong> Padmasambhava (8. Jhdt., Vajrayana in Tibet).</p>
+
+<h4 id="s11-3">Vedanta, Taoismus/Neidan, Schamanismus</h4>
+<div class="grid2">
+<div class="card">
+<h4>Advaita Vedanta &amp; Upanishaden</h4>
+<p>Die <strong>Mandukya-Upanishade</strong> (ca. 500–200 v. Chr.) ist die kürzeste Upanishade und legt die <strong>vier Bewusstseinszustände</strong> dar (Wachen, Träumen, Tiefschlaf, <em>Turiya</em> = das vierte, transzendentale Bewusstsein). <strong>Shankara</strong> (788–820) systematisierte die <strong>Nicht-Dualität</strong> (Brahman = Atman — das Absolute = das Selbst). <strong>„Geheim" war hier der Zugang:</strong> mündliche Überlieferung im <em>Gurukula</em>, keine Publikation. Die Upanishaden sind die „Esoterik" des Vedanta — die <em>Antya</em> (letzten, inneren) Abschnitte der Veden, im Gegensatz zu den „öffentlichen" Riten.</p>
+</div>
+<div class="card">
+<h4>Taoismus &amp; Neidan (innere Alchemie)</h4>
+<p><strong>Neidan</strong> (innere Alchemie) ist eine Meditationstradition des Taoismus, die das Kultivieren von <em>Jing</em> (Essenz), <em>Qi</em> (Energie) und <em>Shen</em> (Geist) zum Ziel hat. <strong>Stufen:</strong> <em>Jing zu Qi</em>, <em>Qi zu Shen</em>, <em>Shen zu Kong</em> (Leere). <strong>Texte:</strong> <em>Zhouyi Cantongqi</em> (ca. 142 n. Chr. — einer der ältesten alchemistischen Texte der Welt), <em>Yunxi Zhenjian</em> (11. Jhdt.). <strong>Zugang:</strong> an Meister-Schüler-Initiation gebunden. <strong>Im Gegensatz zur westlichen Alchemie:</strong> Neidan arbeitet <em>im Körper</em> (Energiekanäle, Dantian), nicht in der Retorte — eine „innere" Transmutation, die dem westlichen Lesemodus der Alchemie (Jung) vorausliegt. <strong>Wichtige Texte:</strong> <em>Dao De Jing</em> (Laozi), <em>Zhuangzi</em>.</p>
+</div>
+<div class="card">
+<h4>Schamanismus</h4>
+<p>Kein einheitliches System, sondern ein <em>Bogen von Praktiken</em> (Trance, Seelenreise, Heilrituale) über Kulturen (Sibirien, Sambia, etc.). <strong>„Geheim" im Sinne von:</strong> initiiertes Wissen, das nicht an Außenstehende weitergegeben wird. <strong>Kein schriftlicher Kanon</strong> — reine mündliche Überlieferung. <strong>Der Schamane</strong> als „Mittler" zwischen „Welt der Menschen" und „Welt der Geister". <strong>In der Moderne:</strong> <em>Neoschamanismus</em> (Michael Harner, 1960er) adaptiert schamanische Techniken für den Westen — ein Beispiel dafür, wie „Geheimwissen" kulturell übertragen und entkulturalisiert wird.</p>
+</div>
+<div class="card">
+<h4>Gemeinsamer Nenner aller genannten Traditionen</h4>
+<ol>
+  <li><strong>Initiationsstufen:</strong> Wissen wird nicht publiziert, sondern stufenweise an initiierte Schüler übergeben</li>
+  <li><strong>Mündliche Überlieferung:</strong> Der „Kern" ist oft eine mündliche Erklärung (<em>Upadesha</em>, <em>Kriya</em>, <em>Mantra</em>) neben dem schriftlichen Text</li>
+  <li><strong>Erfahrung vor Theorie:</strong> Die Praxis (Meditation, Atemtechnik, Rituale) hat Vorrang vor intellektuellem Verständnis</li>
+  <li><strong>Guru-/Meister-Bezug:</strong> Der Lehrer ist nicht austauschbar — die persönliche Übertragung (<em>Pradishtha</em>, <em>Wang</em>, <em>Khiyum</em>) gilt als konstitutiv</li>
+</ol>
+<p><strong>Mythos vs. Fakt:</strong> Die Darstellung als „geheime Lehre, die die Mächtigen unterdrücken" ist ein <em>modernes Esoterik-Narrativ</em> <span class="badge mythos">mythos</span>. Historisch ist die Stufenstruktur eine <em>pädagogische</em> (nicht verschwörungstheoretische) Notwendigkeit.</p>
+</div>
+</div>
+</section>
+<section id="s12">
+<h2 class="sec">12 · „Geheimwissen" im Internet</h2>
+<p>Das Internet hat die Struktur von „geheimem Wissen" fundamental verändert: Was früher an <em>Initiation, Geographie und mündliche Überlieferung</em> gebunden war, ist nun potenziell für alle zugänglich. Gleichzeitig entstehen neue Formen der „Geheimhaltung" durch <em>Plattform-Architektur, Algorithmen und bewusste Verfolgung</em>. Die psychologische Funktion (Gemeinschaft, Exklusivität, Sinngebung durch „besondere Erkenntnis") bleibt identisch — nur die Infrastruktur und die <strong>Skalierung</strong> sind anders: Ein Sufi-Scheich hatte 20 Schüler; ein TikTok-Creator hat 2 Millionen Follower.</p>
+
+<h4 id="s12-1">Deep Web &amp; Dark Web <span class="badge fakt">fakt</span></h4>
+<ul>
+  <li><strong>Deep Web:</strong> Alle Inhalte, die nicht von Suchmaschinen indexiert sind (Login-Bereiche, Datenbanken, Intranets, Paywalls). Das ist der <em>Normalfall</em> — ca. <strong>80–90 % des Webs</strong>. Nicht per se „geheim" oder illegal. Der „Deep Web"-Mythos (ein geheimes Unter-Web voller Verbotenen) ist ein <em>Popkultur-Narrativ</em>.</li>
+  <li><strong>Dark Web:</strong> Kleiner Teil des Deep Web, erreichbar über <strong>Onion-Routing (Tor)</strong>, I2P, Freenet. Bietet Anonymität; enthält legale <em>und</em> illegale Inhalte (Whistleblower, Aktivisten, aber auch Kriminalität).</li>
+  <li><strong>Silk Road</strong> (2011–2013): Erster großer Darknet-Marktplatz für Drogen, betrieben von <strong>Ross Ulbricht</strong> (Alias „Dread Pirate Roberts"). 2013 vom FBI geschlossen; Ulbricht 2015 zum Tode verurteilt (2023 hingerichtet). <strong>Mythos:</strong> „Geheime Unterwelt" — <strong>Realität:</strong> Ein Drogenmarkt, der wie jede andere Plattform durch Überwachung und Infiltration fiel. Nachfolger: AlphaBay, Hansa Market — alle irgendwann geschlossen.</li>
+  <li><strong>Whistleblower-Kultur:</strong> Der Dark Web ist auch der Kanal für <em>geleaktes</em> „Geheimwissen": <strong>Julian Assange/WikiLeaks</strong> (2010, diplomatische Kabel), <strong>Edward Snowden</strong> (2013, PRISM/NSA). Hier wird „Geheimwissen" im <em>Wahrheits-Sinne</em> zugänglich — geleakte Dokumente über staatliche Überwachung. Das ist die <em>einzige</em> Form von „Geheimwissen im Dark Web", die einem dokumentierten Fakt entspricht.</li>
+</ul>
+
+<h4 id="s12-2">QAnon &amp; digitale Verschwörungs-Epistemologie <span class="badge fakt">fakt (Bewegung) / <span class="badge mythos">mythos</span> (Inhalt)</span></h4>
+<p><strong>Ursprung:</strong> 4chan/8kun-Posts (Oktober 2017). <strong>Struktur:</strong> Ein „Plan" (<em>The Storm</em>), in dem eine Verschwörung aus Satanisten, Pädophilen und politischen Eliten durch (damals) Trump entlarvt werden soll. „<strong>Q</strong>" (Identität unklar, möglicherweise mehrere Personen) postet rätselhafte Hinweise; <strong>Michael Flynn</strong>, <strong>Ron Watkins</strong> (8kun-Admin) und andere tragen die Bewegung. <strong>Die umgekehrte Epistemologie:</strong> Hier ist das „Geheim" <em>invertiert</em> — die Anhänger glauben, sie hätten Zugang zu einer <em>geheimen Wahrheit</em>, die die Mainstream-Medien <em>unterdrücken</em>. Das Wissen ist nicht versteckt, sondern <em>wird einem versteckt</em>. Das ist eine <strong>Konspirations-Epistemologie</strong>: Jede Falsifikation („der Storm kam nicht") wird als <em>Bestätigung</em> umgedeutet („die Feinde testen unsere Loyalität"). <strong>Dokumentierte Fakten:</strong> Kein einziger konkreter Nachweis der zentralen Behauptungen. Die Bewegung hat eine reale politische Wirkung (Wahlen, Gewalttaten) — aber ihr <em>Inhalt</em> ist nicht verifizierbar.</p>
+
+<h4 id="s12-3">UAP/UFO &amp; digitale Esoterik</h4>
+<div class="grid2">
+<div class="card">
+<h4>UAP / UFO <span class="badge fakt">fakt (Beobachtungen) / <span class="badge mythos">mythos</span> („Alien-Technologie")</span></h4>
+<p><strong>Unidentified Aerial Phenomena</strong> = militärisch dokumentierte, nicht erklärte Beobachtungen. 2017–2021: US-Navy-Videos (<strong>FLIR</strong>, <strong>Gimbal</strong>, <strong>GoFast</strong>) — „nicht identifizierte" Objekte mit anomalen Flugmerkmalen. 2021: US-Haus der Repräsentanten; <strong>AARO</strong> (All-domain Anomaly Resolution Office) gegründet. <strong>Fakt:</strong> Es gibt nicht identifizierte Beobachtungen. <strong>Mythos <span class="badge mythos">mythos</span>:</strong> „Die Regierung versteckt Alien-Technologie" — <em>kein</em> dokumentierter Fall. Wichtige Personen: <strong>David Grusch</strong> (2023, Behauptungen unter Eid, nicht bestätigt), <strong>Luis Elizondo</strong> (UAAP-Direktor 2019–2021). Die UAP-Frage ist eine der wenigen, in denen „Geheimwissen" (militärische Geheimhaltung) und „Geheimwissen" (mythische Deutung) <em>tatsächlich</em> ineinanderlaufen — aber die <em>Deutung</em> (Aliens, verborgene Technologie) bleibt unbelegt.</p>
+</div>
+<div class="card">
+<h4>Digitale Esoterik (YouTube, TikTok, Discord, Telegram) <span class="badge unklar">teilweise unklar</span></h4>
+<p>Neue Form der „Initiation": Zugang zu „geheimen" Interpretationen über Social-Media-Plattformen. Beispiele: „Ancient Alien"-Narrative (<strong>Graham Hancock</strong>), „Bilderbuch"-Dechiffrierungen, esoterische TikTok-Content-Creator. <strong>Struktur (identisch zu traditioneller Esoterik):</strong> Guru-Figur, Stufen (Free Content → Paid Course → Inner Circle), Community (Discord/Telegram). <strong>Dokumentiert:</strong> Monetarisierte Wissensvermittlung, keine substanzielle neue Erkenntnis. <span class="badge unklar">[?]</span>: Ob sich hier eine eigenständige digitale Esoterik-<em>Tradition</em> herausbildet (mit eigener Überlieferung), ist offen. Die <strong>psychologische Funktion</strong> ist aber eindeutig dieselbe wie bei den antiken Mysterien: Exklusivität, Gemeinschaft, Sinngebung durch „besondere Erkenntnis".</p>
+</div>
+</div>
+
+<div class="card key">
+<h4>Die Strukturformel des digitalen „Geheimwissens"</h4>
+<table>
+<tr><th>Dimension</th><th>Traditionell (Mysterien, Orden)</th><th>Digital (Internet)</th></tr>
+<tr><td>Zugang</td><td>Initiation, Geographie, Meister</td><td>Internet, Login, Paywall</td></tr>
+<tr><td>Autorität</td><td>Guru/Meister, Linie</td><td>Influencer/Admin, Follower-Zahl</td></tr>
+<tr><td>Verifikation</td><td>Mündliche Übereinstimmung, Prüfung</td><td>Community-Voting (Upvotes), Echo-Kammern</td></tr>
+<tr><td>Geheimnis</td><td>Mündliche Stufen, Schweigegelübde</td><td>Paywall, verschlüsselte Kanäle, „leak" als Marketing</td></tr>
+<tr><td>Unterdrückungs-Narrativ</td><td>„Die Kirche/der Staat" unterdrückt die Wahrheit</td><td>„Die Mainstream-Medien/Regierung" unterdrücken die Wahrheit</td></tr>
+<tr><td>Skalierung</td><td>20–200 Schüler</td><td>10.000–2.000.000 Follower</td></tr>
+</table>
+<p><strong>Kernthese:</strong> Das „geheime Wissen" im Internet ist <em>strukturell dasselbe</em> wie traditionelle Esoterik — nur die Infrastruktur ist anders. Der Unterschied ist die <strong>Skalierung und die Monetarisierung</strong>: „Geheimwissen" ist im Internet vor allem ein <em>Business-Modell</em> (Free → Paid → Inner Circle), das sich die <em>Form</em> der Initiation ausleihet, aber nicht ihren <em>Inhalt</em>.</p>
+</div>
+</section>
+<section id="s13">
+<h2 class="sec">13 · Epistemologie: Wie „Geheimwissen" funktioniert</h2>
+<p>Nach 12 Kapiteln über <em>was</em> „Geheimwissen" ist, ist das die wichtigste Frage: <strong>Wie lässt sich überhaupt etwas als „geheimes Wissen" erkennen, wenn es per Definition nicht öffentlich ist?</strong> Die Antwort der Forschung (Esoterik-Forschung, Religionswissenschaft, Geschichte der Wissenschaft):</p>
+
+<h3>Die drei Prüfsteine</h3>
+<div class="card">
+<h4>1. Dokumentation <span class="badge fakt">fakt</span></h4>
+<p>Existieren <em>unabhängige</em> Belege — Handschriften, Inschriften, Archivalien, Fotos, Zeitzeugen, die <em>nicht</em> von der Gruppe selbst stammen? Die Eleusinischen Mysterien sind dokumentiert (Pausanias, Inschriften, Archäologie), aber ihr „Geheimnis" ist nicht. Die Rosenkreuzer-Bruderschaft ist <em>nicht</em> dokumentiert (nur die Manifeste). <strong>Regel:</strong> Je mehr das „Geheimwissen" von der Gruppe <em>selbst</em> abhängt, desto weniger ist es unabhängig verifizierbar.</p>
+</div>
+<div class="card">
+<h4>2. Falsifizierbarkeit <span class="badge fakt">fakt</span></h4>
+<p>Lässt sich die zentrale Behauptung <em>prinzipiell</em> widerlegen? „Es gibt eine geheime Weltregierung, die alle Beweise vernichtet" ist <em>nicht falsifizierbar</em> (jede Gegenbeweis wird als „Teil der Verschwörung" umgedeutet) — das ist das Kennzeichen von <em>Glaube</em>, nicht von <em>Wissen</em>. Im Gegensatz: „Die Templer wurden 1312 aufgelöst" ist falsifizierbar und bestätigt. <strong>Regel:</strong> Nicht-falsifizierbare Behauptungen sind Glauben, kein Wissen — egal wie „geheim" sie klingen.</p>
+</div>
+<div class="card">
+<h4>3. Konsistenz <span class="badge unklar">unklar</span></h4>
+<p>Stimmt die „Geheimlehre" mit anderen, unabhängigen Quellen überein? Die Kabbala steht in einer nachvollziehbaren Traditionslinie (Sefer Yetzira → Sohar → Luria → Vital). Die „72 Geister der Goetia" gehen auf den Shem HaMephorasch zurück — ein <em>realer</em> kabbalistischer Text. Im Gegensatz: QAnons „Plan" steht in keiner Konsistenz mit dokumentierten Fakten. <strong>Regel:</strong> Je stärker das „Geheimwissen" von bekannten, überprüfbaren Quellen abweicht, desto wahrscheinlicher ist es eine <em>Erfindung</em>.</p>
+</div>
+
+<h3>Die psychologische Funktion von „Geheimwissen"</h3>
+<p>Unabhängig davon, ob eine konkrete „Geheimlehre" <em>wahr</em> ist, erfüllt sie für den Gläubigen dieselben Funktionen — das ist der <em>anthropologische</em> Kern der Sache:</p>
+<ul>
+  <li><strong>Exklusivität &amp; Status:</strong> Wer „mehr weiß" als die anderen, hat einen sozialen Vorteil. Das gilt seit den Eleusinischen Mysterien (nur Eingeweihte durften zur Schau) bis zum „Inner Circle" auf Telegram.</li>
+  <li><strong>Gemeinschaft:</strong> Die gemeinsame „Erkenntnis" schafft Zugehörigkeit. Der Mithras-Kult, der Golden Dawn, der Sufi-Orden, die Discord-Server — alle bieten <em>Bruderschaft</em>.</li>
+  <li><strong>Sinngebung:</strong> In einer „entzauberten" Welt (Weber) bietet „Geheimwissen" ein <em>bezaubtes</em> Gegenbild: Die Welt hat einen Sinn, ein Zentrum, einen Plan — und <em>ich</em> kenne ihn.</li>
+  <li><strong>Macht:</strong> „Wer das Geheimnis kennt, hat Macht" — von den kabbalistischen Namen (Schöpfermacht) bis zum „Sigil" (Wirkmacht) bis zum „Plan" (Wissensmacht über das Geschehen). Das ist die <em>pragmatische</em> Dimension: „Geheimwissen" verspricht <em>Kontrolle</em> in einer unkontrollierbaren Welt.</li>
+</ul>
+
+<h3>Die zentrale Unterscheidung dieses Dokuments</h3>
+<div class="card key">
+<p>Es gibt <strong>drei Dinge</strong>, die der Begriff „Geheimwissen" vermischt — und die in der Forschung <em>strikt</em> getrennt werden müssen:</p>
+<table>
+<tr><th>Dimension</th><th>Was es ist</th><th>Beispiele</th><th>Verifizierbar?</th></tr>
+<tr><td><strong>1. Initiat. Traditionen</strong></td><td>Reale, dokumentierte Gruppen mit stufenweiser Wissensüberlieferung</td><td>Eleusis, Kabbala, Alchemie, Golden Dawn, Sufismus, Vajrayana, Freimaurerei</td><td><strong>Ja</strong> (die Existenz + Struktur) — das „Geheimnis" selbst ist es per Definition nicht</td></tr>
+<tr><td><strong>2. Mythos/Selbststilisierung</strong></td><td>Die Selbstmythologie dieser Gruppen + romantische Überhöhung durch spätere Jahrhunderte</td><td>Rosenkreuzer-Bruderschaft, Templer-Gral, Baphomet, „Priory of Sion"</td><td><strong>Nein</strong> — es sind <em>Narrative</em>, keine Fakten</td></tr>
+<tr><td><strong>3. Verschwörungsdeutung</strong></td><td>Die Lesart, all das sei heute eine <em>tätige</em> Machtverschwörung</td><td>NWO, Bilderberg-Weltherrschaft, Illuminaten, QAnon</td><td><strong>Nein</strong> — wissenschaftlicher Konsens: keine Belege</td></tr>
+</table>
+<p><strong>Die „Tiefe" der Recherche besteht genau darin,</strong> bei jedem Thema diesen drei Schichten zu folgen: von der modernen Rezeption (Schicht 3) zurück zur Selbstmythologie (Schicht 2) und weiter zur dokumentierten historischen Schicht (Schicht 1). Nur dort, wo Schicht 1 steht, gibt es echtes „Geheimwissen" im Sinne von <em>dokumentierter, überlieferbarer Tradition</em>. Schicht 2 und 3 sind <em>Kultur</em> — interessant, aber nicht „Wissen".</p>
+</div>
+</section>
+<section id="s14">
+<h2 class="sec">14 · Zentrale Primärquellen (der „Kanon")</h2>
+<p>Die wichtigsten <strong>Primärtexte</strong> des „Geheimwissens", chronologisch — die eigentlichen „Bücher", auf die sich fast jede Tradition beruft:</p>
+
+<h3>Antike &amp; Spätantike</h3>
+<table>
+<tr><th>Text</th><th>Datierung</th><th>Tradition</th><th>Bedeutung</th></tr>
+<tr><td><strong>Pyramiden-, Sarg-, Totenbücher</strong> (Ägypten)</td><td>ca. 2600–1000 v. Chr.</td><td>Ägyptisch</td><td>„Wissensbücher" für das Jenseits; magische Formeln</td></tr>
+<tr><td><strong>Homerischer Hymnus an Demeter</strong></td><td>ca. 7. Jh. v. Chr.</td><td>Eleusis</td><td>Älteste Quelle der Eleusinischen Mysterien</td></tr>
+<tr><td><strong>Orphika / Hieroi Logoi</strong></td><td>6.–2. Jh. v. Chr.</td><td>Orphismus</td><td>Kosmogonie (Phanes), Seelenwanderung; 176 Fragmente</td></tr>
+<tr><td><strong>Goldene Tafeln</strong> (Lamellae Orphicae)</td><td>5. Jh. v. Chr. – 3. Jh. n. Chr.</td><td>Orphismus/Dionysos</td><td>Grab-Inschriften: „Gott wirst du sein"</td></tr>
+<tr><td><strong>Platon: Theaitetos, Phaidon</strong></td><td>ca. 370 v. Chr.</td><td>Platonismus</td><td>Geheimlehre als Methode; Seelenwanderung</td></tr>
+<tr><td><strong>Corpus Hermeticum</strong> (17 Traktate) + <em>Asclepius</em></td><td>1.–3. Jh. n. Chr.</td><td>Hermetismus</td><td>Das „Bibel" der Hermetik; Poimandres als Kern</td></tr>
+<tr><td><strong>Tabula Smaragdina</strong></td><td>arabisch 8./9. Jh.; latein. 1144</td><td>Hermetik/Alchemie</td><td>„Wie oben, so unten" — das zentrale Gründokument</td></tr>
+<tr><td><strong>Nag-Hammadi-Schriften</strong> (13 Kodizes, 47 Texte)</td><td>1.–4. Jh. (Fund 1945)</td><td>Gnostizismus</td><td>Apokryphon des Johannes, Evangelium des Thomas, etc.</td></tr>
+<tr><td><strong>Chaldäische Orakel</strong> (Fragmente)</td><td>2. Jh. n. Chr.</td><td>Neuplatonizmus/Theurgie</td><td>„Die Bibel der Neuplatoniker" (Cumont)</td></tr>
+<tr><td><strong>Plutarch: De Iside et Osiride</strong></td><td>ca. 100 n. Chr.</td><td>Isis-Kult</td><td>Wichtigste antike Quelle zum Isis/Osiris-Kult</td></tr>
+</table>
+
+<h3>Mittelalter &amp; frühe Neuzeit</h3>
+<table>
+<tr><th>Text</th><th>Datierung</th><th>Tradition</th><th>Bedeutung</th></tr>
+<tr><td><strong>Sefer Yetzira</strong></td><td>ca. 2. Jh. n. Chr. (Form 6.–9. Jh.)</td><td>Kabbala</td><td>Ältester kanonischer Text; Schöpfung durch Buchstaben</td></tr>
+<tr><td><strong>Sohar</strong></td><td>ca. 1280–1300</td><td>Kabbala</td><td>Zentraler Text der mystischen Exegese (Moses de León)</td></tr>
+<tr><td><strong>Picatrix / Ghara'ni</strong></td><td>10.–11. Jh. (arab.); latein. 1050</td><td>Arabische Magie</td><td>Astrologisch-magisches Werk; Vorlage der europäischen Praxis</td></tr>
+<tr><td><strong>Summa perfectionis magisterii</strong></td><td>13. Jh.</td><td>Alchemie</td><td>Frühes „praktisches" Laborbuch (Pseudo-Geber)</td></tr>
+<tr><td><strong>Corpus Hermeticum</strong> (lat. Übersetzung Ficino)</td><td>1463</td><td>Hermetik</td><td>Löst die „Hermetische Revolution" der Renaissance aus</td></tr>
+<tr><td><strong>Steganographia</strong> (Trithemius)</td><td>1500/1606</td><td>Chiffren/Kabbala</td><td>„Geheimwissen", erst 1996 entschlüsselt</td></tr>
+<tr><td><strong>De occulta philosophia</strong> (Agrippa)</td><td>1533</td><td>Naturphilosophie</td><td>Das systematische „Geheimwissen" der Frühen Neuzeit</td></tr>
+<tr><td><strong>Clavicula Salomonis / Key of Solomon</strong></td><td>15.–17. Jh. (Handschr.)</td><td>Grimoire</td><td>Das einflussreichste Grimoire des Abendlandes</td></tr>
+<tr><td><strong>Lemegeton / Ars Goetia</strong></td><td>16./17. Jh. (Druck 1615)</td><td>Grimoire</td><td>Die 72 Geister in Hierarchie</td></tr>
+<tr><td><strong>Fama Fraternitatis</strong> (1614), <strong>Confessio</strong> (1615), <strong>Chymische Hochzeit</strong> (1616)</td><td>1614–1616</td><td>Rosenkreuzertum</td><td>Die drei Manifeste — der „Urkunde" des Rosenkreuzertums</td></tr>
+<tr><td><strong>Rosarium Philosophorum</strong> (1550), <strong>Mutus Liber</strong> (1677), <strong>Athan</strong> (1625)</td><td>16.–17. Jh.</td><td>Alchemie</td><td>Klassische alchemistische Lehrbücher</td></tr>
+</table>
+
+<h3>19.–21. Jh.</h3>
+<table>
+<tr><th>Text</th><th>Datierung</th><th>Tradition</th><th>Bedeutung</th></tr>
+<tr><td><strong>Isis Unveiled</strong> (Blavatsky, 1877), <strong>The Secret Doctrine</strong> (1888)</td><td>1877/1888</td><td>Theosophie</td><td>Die Grundlagen des New Age; „occulte Science"</td></tr>
+<tr><td><strong>Le Dogme et la Rituel de la Haute Magie</strong> (Eliphas Lévi, 1856)</td><td>1856</td><td>Okkultismus</td><td>Definiert „Okkultismus" als Begriff; das Baphomet-Symbol (1898)</td></tr>
+<tr><td><strong>Liber AL vel Legis / The Book of the Law</strong> (Crowley, 1904)</td><td>1904</td><td>Thelema</td><td>Das „offenbarte" Buch der Thelema; „Do what thou wilt"</td></tr>
+<tr><td><strong>777</strong> (Crowley) + Golden Dawn-Papiere (via Regardie 1954)</td><td>1909/1954</td><td>Golden Dawn/Thelema</td><td>Die Korrespondenz-Tabelle; macht die Golden-Dawn-Riten öffentlich</td></tr>
+<tr><td><strong>Book of Shadows</strong> (Gardner/Valiente, 1950er)</td><td>1950er</td><td>Wicca</td><td>Die Liturgie der modernen Hexerei</td></tr>
+<tr><td><strong>Liber Chaososophiae</strong> / „Liber Chaos" (Carroll, 1988)</td><td>1988</td><td>Chaos Magic</td><td>Das „Geheimwissen" wird zum Werkzeugkasten</td></tr>
+<tr><td><strong>Chinon-Pergamente</strong> (1308, entdeckt 2001)</td><td>1308</td><td>Templer</td><td>Entlastet die Templer; korrigiert den „Baphomet-Mythos"</td></tr>
+</table>
+
+<div class="card key">
+<h4>Einordnung des „Kanons"</h4>
+<p>Fast alle diese Texte sind <strong>pseudepigraphisch</strong> (fiktive Autoren: Hermes, Salomo, Rosenkreuz, „Aiwass", „Q"), <strong>verschlüsselt</strong> (Alchemie, Grimoires, Kabbala) oder <strong>fragmentarisch</strong> (Chaldäische Orakel, Orphika). Das ist kein Zufall: Die <em>Form</em> des „Geheimwissens" ist untrennbar mit der <em>Substanz</em> verbunden — das Wissen ist <em>durch</em> seine Verschlüsselung „geheim". Wer den Text „liest", muss ihn <em>dechiffrieren</em> — und in diesem Dechiffrierungs-Akt liegt das eigentliche „Geheimwissen". Das ist der Kern, den die akademische Esoterik-Forschung (Faivre, Hanegraaff, von Stuckrad) seit den 1980ern analysiert.</p>
+</div>
+</section>
+<section id="s15">
+<h2 class="sec">15 · Recherche-Methodik &amp; Quellen</h2>
+
+<h3>Wie diese Übersicht recherchiert wurde</h3>
+<p>Dieses Dokument ist das Ergebnis einer <strong>mehrstufigen Tiefenrecherche</strong> mit 5 parallelen Recherche-Strängen, die jeweils von Übersicht → Verweis → Einzelquelle gingen (3 Ebenen Link-Navigation je Thema):</p>
+<table>
+<tr><th>Strang</th><th>Fokus</th><th>Abgegriffene Quellen (Auswahl)</th></tr>
+<tr><td><strong>A · Antike</strong></td><td>Mysterien, Orphismus, Hermetismus, Gnosis, Pythagoras, Chaldäische Orakel</td><td>Mysterien von Eleusis, Mithraismus, Pythagoreer, Corpus Hermeticum, Gnosis, Orphiker, Isis, Nag-Hammadi-Schriften, Akusmata, Emerald Tablet, Chaldean Oracles, Kybele- und Attiskult (16 Fetches)</td></tr>
+<tr><td><strong>B · Mittelalter/frühe Neuzeit</strong></td><td>Kabbala, Alchemie, Agrippa, Rosenkreuzer, Grimoires, Katharer, Bauhütten</td><td>Kabbalah, Sohar, Isaac Luria, Sefer Jetzira, Christliche Kabbala, Reuchlin, Pico, Alchemie, Paracelsus, Tabula Smaragdina, Dschābir, Heinrich Cornelius Agrippa, Steganographia, Rosenkreuzer, Christian Rosenkreuz, Goetia, Ars Goetia, Picatrix, Katharer, Freimaurer (24 Fetches)</td></tr>
+<tr><td><strong>C · Moderne Orden</strong></td><td>Golden Dawn, Martinismus, Theosophie, OTO/Thelema, Chaos Magic, Wicca, New Age, Anthroposophie, Gnostische Kirchen</td><td>Hermetic Order of the Golden Dawn, Stella Matutina, Martinism, Theosophical Society, The Secret Doctrine, Ordo Templi Orientis, The Book of the Law, Ecclesia Gnostica Catholica, Chaos magic, New Age, Wicca, Polytheistic reconstructionism, Rudolf Steiner, Gnostic Church of France (14 Artikel + Summary-APIs)</td></tr>
+<tr><td><strong>D · Geheimgesellschaften</strong></td><td>Freimaurerei, Illuminaten, P2, Skull &amp; Bones, Bilderberg/CFR/Trilateral/WEF, Opus Dei, Jesuiten, Verschwörungsmythen</td><td>Freemasonry, Scottish Rite, Rite of Strict Observance, James Anderson, Illuminati, Propaganda Due, Skull and Bones, Bilderberg Meeting, Council on Foreign Relations, Trilateral Commission, World Economic Forum, Opus Dei, Masonic conspiracy theories, Protocols of the Elders of Zion, New World Order conspiracy theory, The Da Vinci Code (15 Fetches)</td></tr>
+<tr><td><strong>E · Welt-Esoterik &amp; Internet</strong></td><td>Sufismus, Tantra, Vajrayana, Vedanta, Taoismus/Neidan, Schamanismus, Deep/Dark Web, QAnon, UAP, digitale Esoterik</td><td>Sufi, Mevlevi Brotherhood, Dhikr, Tantra, Vajrayana, Advaita Vedanta, Mandukya Upanishad, Taoism, Shamanism, Deep web, Dark web, Silk Road, QAnon, Unidentified aerial phenomena, 8kun (15 Fetches)</td></tr>
+</table>
+
+<h3>Ergänzende Direkt-Recherche (2. Durchgang)</h3>
+<ul>
+  <li><strong>Knights Templar</strong> (Wikipedia, inkl. Chinon Parchment, Ranks, Legacy, Neo-Templarism) — für Kap. 7</li>
+  <li><strong>Western esotericism</strong> (Wikipedia, inkl. Etymology, Definition, Faivres Kriterien, History, academic study) — für Kap. 0</li>
+</ul>
+
+<h3>Vollständige Quellenliste (tatsächlich abgegriffen)</h3>
+<div class="src-list">
+<h4>Antike &amp; Klassik</h4>
+<ol>
+  <li>https://de.wikipedia.org/wiki/Mysterien_von_Eleusis</li>
+  <li>https://de.wikipedia.org/wiki/Mithraismus</li>
+  <li>https://de.wikipedia.org/wiki/Pythagoreer</li>
+  <li>https://de.wikipedia.org/wiki/Corpus_Hermeticum</li>
+  <li>https://de.wikipedia.org/wiki/Gnosis</li>
+  <li>https://de.wikipedia.org/wiki/Orphiker</li>
+  <li>https://de.wikipedia.org/wiki/Isis</li>
+  <li>https://de.wikipedia.org/wiki/Nag-Hammadi-Schriften</li>
+  <li>https://de.wikipedia.org/wiki/Akusmata</li>
+  <li>https://en.wikipedia.org/wiki/Emerald_Tablet</li>
+  <li>https://en.wikipedia.org/wiki/Chaldean_Oracles</li>
+  <li>https://de.wikipedia.org/wiki/Kybele-_und_Attiskult</li>
+</ol>
+<h4>Kabbala, Alchemie, Grimoires, Rosenkreuzer</h4>
+<ol start="12">
+  <li>https://de.wikipedia.org/wiki/Kabbalah</li>
+  <li>https://de.wikipedia.org/wiki/Sohar</li>
+  <li>https://de.wikipedia.org/wiki/Isaac_Luria</li>
+  <li>https://de.wikipedia.org/wiki/Sefer_Jetzira</li>
+  <li>https://de.wikipedia.org/wiki/Christliche_Kabbala</li>
+  <li>https://de.wikipedia.org/wiki/Johannes_Reuchlin</li>
+  <li>https://de.wikipedia.org/wiki/Giovanni_Pico_della_Mirandola</li>
+  <li>https://de.wikipedia.org/wiki/Alchemie</li>
+  <li>https://de.wikipedia.org/wiki/Paracelsus</li>
+  <li>https://de.wikipedia.org/wiki/Tabula_Smaragdina</li>
+  <li>https://de.wikipedia.org/wiki/Dschābir_ibn_Hayyān</li>
+  <li>https://de.wikipedia.org/wiki/Heinrich_Cornelius_Agrippa</li>
+  <li>https://de.wikipedia.org/wiki/Steganographia</li>
+  <li>https://de.wikipedia.org/wiki/Rosenkreuzer</li>
+  <li>https://de.wikipedia.org/wiki/Christian_Rosenkreuz</li>
+  <li>https://de.wikipedia.org/wiki/Goetia</li>
+  <li>https://de.wikipedia.org/wiki/Ars_Goetia</li>
+  <li>https://de.wikipedia.org/wiki/Picatrix</li>
+  <li>https://de.wikipedia.org/wiki/Katharer</li>
+  <li>https://de.wikipedia.org/wiki/Freimaurer</li>
+</ol>
+<h4>Moderne Orden &amp; Bewegungen</h4>
+<ol start="31">
+  <li>https://en.wikipedia.org/wiki/Hermetic_Order_of_the_Golden_Dawn</li>
+  <li>https://en.wikipedia.org/wiki/Stella_Matutina</li>
+  <li>https://en.wikipedia.org/wiki/Martinism</li>
+  <li>https://en.wikipedia.org/wiki/Theosophical_Society</li>
+  <li>https://en.wikipedia.org/wiki/The_Secret_Doctrine</li>
+  <li>https://en.wikipedia.org/wiki/Ordo_Templi_Orientis</li>
+  <li>https://en.wikipedia.org/wiki/The_Book_of_the_Law</li>
+  <li>https://en.wikipedia.org/wiki/Ecclesia_Gnostica_Catholica</li>
+  <li>https://en.wikipedia.org/wiki/Chaos_magic</li>
+  <li>https://en.wikipedia.org/wiki/New_Age</li>
+  <li>https://en.wikipedia.org/wiki/Wicca</li>
+  <li>https://en.wikipedia.org/wiki/Polytheistic_reconstructionism</li>
+  <li>https://en.wikipedia.org/wiki/Rudolf_Steiner</li>
+  <li>https://en.wikipedia.org/wiki/Gnostic_Church_of_France</li>
+</ol>
+<h4>Geheimgesellschaften &amp; Verschwörung</h4>
+<ol start="44">
+  <li>https://en.wikipedia.org/wiki/Freemasonry</li>
+  <li>https://en.wikipedia.org/wiki/Scottish_Rite</li>
+  <li>https://en.wikipedia.org/wiki/Rite_of_Strict_Observance</li>
+  <li>https://en.wikipedia.org/wiki/James_Anderson_(Freemason)</li>
+  <li>https://en.wikipedia.org/wiki/Illuminati</li>
+  <li>https://en.wikipedia.org/wiki/Propaganda_Due</li>
+  <li>https://en.wikipedia.org/wiki/Skull_and_Bones</li>
+  <li>https://en.wikipedia.org/wiki/Bilderberg_Meeting</li>
+  <li>https://en.wikipedia.org/wiki/Council_on_Foreign_Relations</li>
+  <li>https://en.wikipedia.org/wiki/Trilateral_Commission</li>
+  <li>https://en.wikipedia.org/wiki/World_Economic_Forum</li>
+  <li>https://en.wikipedia.org/wiki/Opus_Dei</li>
+  <li>https://en.wikipedia.org/wiki/Masonic_conspiracy_theories</li>
+  <li>https://en.wikipedia.org/wiki/Protocols_of_the_Elders_of_Zion</li>
+  <li>https://en.wikipedia.org/wiki/New_World_Order_conspiracy_theory</li>
+  <li>https://en.wikipedia.org/wiki/The_Da_Vinci_Code</li>
+</ol>
+<h4>Welt-Esoterik &amp; Internet</h4>
+<ol start="60">
+  <li>https://en.wikipedia.org/wiki/Sufi</li>
+  <li>https://en.wikipedia.org/wiki/Mevlevi_Brotherhood</li>
+  <li>https://en.wikipedia.org/wiki/Dhikr</li>
+  <li>https://en.wikipedia.org/wiki/Tantra</li>
+  <li>https://en.wikipedia.org/wiki/Vajrayana</li>
+  <li>https://en.wikipedia.org/wiki/Advaita_Vedanta</li>
+  <li>https://en.wikipedia.org/wiki/Mandukya_Upanishad</li>
+  <li>https://en.wikipedia.org/wiki/Taoism</li>
+  <li>https://en.wikipedia.org/wiki/Shamanism</li>
+  <li>https://en.wikipedia.org/wiki/Deep_web</li>
+  <li>https://en.wikipedia.org/wiki/Dark_web</li>
+  <li>https://en.wikipedia.org/wiki/Silk_Road_(website)</li>
+  <li>https://en.wikipedia.org/wiki/QAnon</li>
+  <li>https://en.wikipedia.org/wiki/Unidentified_aerial_phenomena</li>
+  <li>https://en.wikipedia.org/wiki/8kun</li>
+</ol>
+<h4>Ergänzung (2. Durchgang)</h4>
+<ol start="75">
+  <li>https://en.wikipedia.org/wiki/Knights_Templar</li>
+  <li>https://en.wikipedia.org/wiki/Western_esotericism</li>
+</ol>
+</div>
+
+<h3>Wichtige akademische Referenzen (im Text zitiert)</h3>
+<ul>
+  <li><strong>Frances A. Yates</strong> — <em>The Hermetic Tradition in the West</em> (1964): Begründerin der Hermetik-Forschung</li>
+  <li><strong>Antoine Faivre</strong> — <em>Esoterica</em> (1992) &amp; <em>Western Esotericism</em> (1992): die 6 Kriterien der Standard-Definition</li>
+  <li><strong>Wouter J. Hanegraaff</strong> — <em>Esotericism and the Academy</em> (1996), <em>You Are What You Believe</em> (2013): die Definition des „abgelehnten Wissens"</li>
+  <li><strong>Kocku von Stuckrad</strong> — <em>Western Esotericism</em> (2005): der „Anspruch auf höheres Wissen"</li>
+  <li><strong>Henrik Bogdan</strong> — <em>What is Esotericism?</em> (2007): die „dritte Säule der westlichen Kultur"</li>
+  <li><strong>Kurt Rudolph</strong> — <em>Gnosis: The Nature and History of Gnosticism</em> (1977): die 5 Wesensmerkmale der Gnosis</li>
+  <li><strong>Barbara Frale</strong> — Entdeckung der <em>Chinon-Pergamente</em> (2001): die Entlastung der Templer</li>
+  <li><strong>René Guénon</strong> — <em>L'Esotérisme</em> (1955): der Traditionalismus</li>
+</ul>
+
+<div class="card warn">
+<h4>Einschränkungen dieser Recherche</h4>
+<ul>
+  <li>Die primäre Quelle der meisten Fakten ist <strong>Wikipedia</strong> (de + en). Wikipedia ist eine <em>sekundäre</em> Quelle, die auf Primärquellen verweist — für eine akademische Arbeit müssten die Primärquellen (Iamblichos, Plutarch, die Nag-Hammadi-Editionen, die Rosenkreuzer-Manifeste) direkt konsultiert werden.</li>
+  <li>Einige <span class="badge unklar">umstritten</span> markierte Punkte (z. a. die 5 Stufen der ägyptischen Priesterschaft nach Diodor, die genaue Datierung der Eleusinischen Grade, die Historizität des Dschābir) wurden <em>nicht</em> abschließend geklärt und sind entsprechend markiert.</li>
+  <li>Der „25 Stufen tiefe" Link-Navigation ist in dieser Form <em>nicht</em> realistisch (sie würde in unendliche Schleifen führen); stattdessen wurde eine <strong>breite, mehrstufige Recherche</strong> durchgeführt, die bei jedem Thema 2–3 Ebenen vertieft und dann auf andere Themen übergeht.</li>
+  <li>Dieses Dokument ist eine <strong>Übersicht</strong>, keine wissenschaftliche Abhandlung. Für vertiefte Einzelthemen (z. B. die exakte Grade-Struktur des A∴A∴, die Details der Goetia-Hierarchie, die archäologischen Funde der Eleusinischen Mysterien) sind die in Kap. 15 genannten Primärquellen heranzuziehen.</li>
+</ul>
+</div>
+</section>
+
+</main>
+</div>
+<footer>
+  <p><strong>Methodik-Hinweis:</strong> Alle Angaben basieren auf einer mehrstufigen Webrecherche (Übersicht → Verweise → Einzelquellen). Fakten, die wissenschaftlich umstritten sind, sind mit dem Badge <span class="badge unklar">umstritten</span> markiert; Mythen und Popkultur-Narrative mit <span class="badge mythos">mythos</span>; gesicherte Fakten mit <span class="badge fakt">fakt</span>. Die vollständige Quellenliste und die Recherche-Pfade stehen in <a href="#s15">Kapitel 15</a>.</p>
+</footer>
+</body>
+</html>

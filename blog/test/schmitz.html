@@ -7,7 +7,6 @@
 <script>
   window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
 </script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
@@ -608,8 +607,6 @@ function drawEinleib(){
     ectx.setLineDash([]);
     // dodge if attention high
     if(auf>.5&&einleib.ballX>400){
-      const dodge=Math.min(50,(einleib
-if(auf>.5&&einleib.ballX>400){
       const dodge=Math.min(50,(einleib.ballX-400)*.5);
       ectx.strokeStyle='#10b981';ectx.lineWidth=2;
       ectx.beginPath();ectx.arc(einleib.personX,H/2-dodge*.3,25,0,Math.PI*2);ectx.stroke();
