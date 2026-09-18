@@ -1,8 +1,15 @@
 """
-build_data.py — build 28x28x64 occupancy voxel volumes for MNIST
-(with optional rotations 0-360° and shifts), plus sample images per digit.
+build_data.py — build 28x28x64 occupancy voxel volumes for MNIST.
 
-Output: JSON files in ./data/ ready to be consumed by viewer.html.
+Produces TWO variants of every volume in a single pass so the viewer can
+toggle between them with a dropdown:
+  - raw : only the original (un-augmented) images
+  - aug : original + rotations (0-360°) + shifts  (data augmentation)
+
+Output: JSON files in ./data/ ready to be consumed by viewer.html:
+  foam_raw_total.json,  foam_raw_digit_{0..9}.json
+  foam_aug_total.json,  foam_aug_digit_{0..9}.json
+  meta.json, samples.json
 """
 import json, os, base64, io
 import numpy as np
@@ -21,6 +28,9 @@ MAX_IMAGES    = None                  # None = all 60k, or e.g. 5000 for a fast 
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
+# constant index grids for accumulate()
+XS, YS = np.meshgrid(np.arange(28), np.arange(28), indexing='ij')
+
 # -------- helpers --------
 def brightness_bin(img_u8):
     """map 0..255 -> 0..N_BINS-1"""
@@ -28,22 +38,18 @@ def brightness_bin(img_u8):
 
 def accumulate(volume, img_u8):
     b = brightness_bin(img_u8)                    # (28,28)
-    xs, ys = np.meshgrid(np.arange(28), np.arange(28), indexing='ij')
-    np.add.at(volume, (xs, ys, b), 1)
+    np.add.at(volume, (XS, YS, b), 1)
 
-def augmentations(img_u8, use_rot, use_shift):
-    """yield augmented copies of a single image."""
-    yield img_u8
-    if use_rot:
-        for a in ROT_ANGLES:
-            if a == 0: continue
-            r = rotate(img_u8, a, reshape=False, order=1, mode='constant', cval=0)
-            yield np.clip(r, 0, 255).astype(np.uint8)
-    if use_shift:
-        for dx, dy in SHIFTS:
-            if (dx, dy) == (0,0): continue
-            s = shift(img_u8, (dx, dy), order=1, mode='constant', cval=0)
-            yield np.clip(s, 0, 255).astype(np.uint8)
+def augmentation_copies(img_u8):
+    """yield the rotated/shifted copies of an image (original excluded)."""
+    for a in ROT_ANGLES:
+        if a == 0: continue
+        r = rotate(img_u8, a, reshape=False, order=1, mode='constant', cval=0)
+        yield np.clip(r, 0, 255).astype(np.uint8)
+    for dx, dy in SHIFTS:
+        if (dx, dy) == (0,0): continue
+        s = shift(img_u8, (dx, dy), order=1, mode='constant', cval=0)
+        yield np.clip(s, 0, 255).astype(np.uint8)
 
 def image_to_base64_png(img_u8):
     buf = io.BytesIO()
@@ -59,18 +65,23 @@ def volume_to_dense_json(vol):
     }
 
 # -------- main --------
-def main(use_rot=True, use_shift=True):
-    print(f"Loading MNIST…")
+def main():
+    print("Loading MNIST…")
     mnist = datasets.MNIST(root='./mnist_data', train=True, download=True,
                            transform=transforms.ToTensor())
 
-    volumes = {d: np.zeros((28, 28, N_BINS), dtype=np.uint32) for d in range(10)}
-    total   = np.zeros((28, 28, N_BINS), dtype=np.uint32)
-    samples = {d: [] for d in range(10)}
+    # two variants, per digit + one total
+    raw = {d: np.zeros((28, 28, N_BINS), dtype=np.uint32) for d in range(10)}
+    aug = {d: np.zeros((28, 28, N_BINS), dtype=np.uint32) for d in range(10)}
+    raw_total = np.zeros((28, 28, N_BINS), dtype=np.uint32)
+    aug_total = np.zeros((28, 28, N_BINS), dtype=np.uint32)
+    samples   = {d: [] for d in range(10)}
 
     n = len(mnist) if MAX_IMAGES is None else min(MAX_IMAGES, len(mnist))
-    print(f"Processing {n} images, rot={use_rot} ({len(ROT_ANGLES)} angles), "
-          f"shift={use_shift} ({len(SHIFTS)} shifts)")
+    n_aug_copies = (len(ROT_ANGLES) - 1) + (len(SHIFTS) - 1)
+    print(f"Processing {n} images, "
+          f"aug = {len(ROT_ANGLES)-1} rotations + {len(SHIFTS)-1} shifts "
+          f"= {n_aug_copies} extra copies per image")
 
     for i in range(n):
         img_t, label = mnist[i]
@@ -80,9 +91,16 @@ def main(use_rot=True, use_shift=True):
         if len(samples[label]) < N_SAMPLES:
             samples[label].append(image_to_base64_png(img_u8))
 
-        for aug in augmentations(img_u8, use_rot, use_shift):
-            accumulate(volumes[label], aug)
-            accumulate(total, aug)
+        # raw: original image only
+        accumulate(raw[label], img_u8)
+        accumulate(raw_total, img_u8)
+
+        # aug: original + every rotation/shift
+        accumulate(aug[label], img_u8)
+        accumulate(aug_total, img_u8)
+        for c in augmentation_copies(img_u8):
+            accumulate(aug[label], c)
+            accumulate(aug_total, c)
 
         if i % 2000 == 0:
             print(f"  {i}/{n}")
@@ -93,8 +111,9 @@ def main(use_rot=True, use_shift=True):
         "grid": [28, 28, N_BINS],
         "n_bins": N_BINS,
         "brightness_scale": 256 // N_BINS,
-        "rot_angles": ROT_ANGLES if use_rot else [0],
-        "shifts": SHIFTS if use_shift else [(0,0)],
+        "variants": ["raw", "aug"],
+        "rot_angles": ROT_ANGLES,
+        "shifts": SHIFTS,
         "n_images": n,
         "digits": list(range(10)),
     }
@@ -102,24 +121,25 @@ def main(use_rot=True, use_shift=True):
     with open(os.path.join(OUT_DIR, "meta.json"), "w") as f:
         json.dump(meta, f)
 
-    with open(os.path.join(OUT_DIR, "foam_total.json"), "w") as f:
-        json.dump(volume_to_dense_json(total), f)
-
     for d in range(10):
-        with open(os.path.join(OUT_DIR, f"foam_digit_{d}.json"), "w") as f:
-            json.dump(volume_to_dense_json(volumes[d]), f)
+        with open(os.path.join(OUT_DIR, f"foam_raw_digit_{d}.json"), "w") as f:
+            json.dump(volume_to_dense_json(raw[d]), f)
+        with open(os.path.join(OUT_DIR, f"foam_aug_digit_{d}.json"), "w") as f:
+            json.dump(volume_to_dense_json(aug[d]), f)
+
+    with open(os.path.join(OUT_DIR, "foam_raw_total.json"), "w") as f:
+        json.dump(volume_to_dense_json(raw_total), f)
+    with open(os.path.join(OUT_DIR, "foam_aug_total.json"), "w") as f:
+        json.dump(volume_to_dense_json(aug_total), f)
 
     with open(os.path.join(OUT_DIR, "samples.json"), "w") as f:
         json.dump(samples, f)
 
     print(f"Done. Wrote {len(os.listdir(OUT_DIR))} files to {OUT_DIR}/")
-    print(f"  total volume: {total.sum():,} voxel-hits, "
-          f"{np.count_nonzero(total):,} nonzero cells "
-          f"({100*np.count_nonzero(total)/total.size:.1f}% occupancy)")
+    for label, vol in (("raw", raw_total), ("aug", aug_total)):
+        print(f"  {label:3} total: {vol.sum():,} voxel-hits, "
+              f"{np.count_nonzero(vol):,} nonzero cells "
+              f"({100*np.count_nonzero(vol)/vol.size:.1f}% occupancy)")
 
 if __name__ == "__main__":
-    # variants — comment/uncomment to build the version you want
-    main(use_rot=True,  use_shift=True)   # full: 360° rotations + shifts
-    # main(use_rot=False, use_shift=False)  # raw, no augmentation
-    # main(use_rot=True,  use_shift=False)  # rotations only
-
+    main()

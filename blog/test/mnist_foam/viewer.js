@@ -10,6 +10,7 @@ const DATA_DIR = "data/";
 const state = {
   meta: null,
   currentDigit: "total",
+  variant: "aug",      // "aug" = with rotation/shift augmentation, "raw" = none
   volume: null,        // Uint32Array of length 28*28*64
   shape: [28, 28, 64],
   samples: {},
@@ -17,6 +18,9 @@ const state = {
   thr: 10, opacity: 1.0, cmap: "magma", log: true,
   pointSize: 2.0, showAxes: true,
 };
+
+// cache of already-fetched volumes keyed by `${variant}:${name}`
+const volCache = {};
 
 // -------- colormaps --------
 const CMAPS = {
@@ -37,8 +41,15 @@ const CMAPS = {
 };
 
 // -------- data loading --------
-async function loadVolume(name) {
-  const resp = await fetch(`${DATA_DIR}foam_${name}.json`);
+async function loadVolume(variant, name) {
+  const key = variant + ":" + name;
+  if (volCache[key]) {
+    state.volume   = volCache[key].vol;
+    state.volMax   = volCache[key].max;
+    state.volTotal = volCache[key].total;
+    return;
+  }
+  const resp = await fetch(`${DATA_DIR}foam_${variant}_${name}.json`);
   const j = await resp.json();
   // support both dense ("data") and sparse ("x","y","b","count") formats
   const [W, H, B] = j.shape;
@@ -51,23 +62,34 @@ async function loadVolume(name) {
       vol[idx] = j.count[i];
     }
   }
-  state.volume = vol;
-  state.shape = j.shape;
-  state.volMax = j.max;
+  volCache[key] = { vol, max: j.max, total: j.total };
+  state.volume   = vol;
+  state.shape    = j.shape;
+  state.volMax   = j.max;
   state.volTotal = j.total;
+}
+
+function updateVolumeStats() {
   document.getElementById("volume-stats").textContent =
-    `${j.total.toLocaleString()} hits\nmax voxel = ${j.max}\n${vol.length} cells total`;
+    `${state.volTotal.toLocaleString()} hits\nmax voxel = ${state.volMax}\n${state.volume.length} cells total`;
+}
+
+// load the volume for the current variant + digit, then redraw everything
+async function refreshData() {
+  const name = state.currentDigit === "total" ? "total" : `digit_${state.currentDigit}`;
+  await loadVolume(state.variant, name);
+  updateVolumeStats();
+  redrawSlices();
+  rebuild3D();
 }
 
 async function loadAll() {
   state.meta = await (await fetch(`${DATA_DIR}meta.json`)).json();
   state.samples = await (await fetch(`${DATA_DIR}samples.json`)).json();
   document.getElementById("sz").max = state.meta.n_bins - 1;
-  await loadVolume("total");
   buildDigitButtons();
   renderSamples("total");
-  redrawSlices();
-  rebuild3D();
+  await refreshData();
 }
 
 // -------- indexing helper --------
@@ -275,11 +297,8 @@ function buildDigitButtons() {
       btn.classList.add("active");
       const d = btn.dataset.digit;
       state.currentDigit = d;
-      const name = d === "total" ? "total" : `digit_${d}`;
-      await loadVolume(name);
       renderSamples(d);
-      redrawSlices();
-      rebuild3D();
+      await refreshData();
     });
   });
 }
@@ -306,6 +325,11 @@ function renderSamples(digit) {
 }
 
 function wireControls() {
+  document.getElementById("aug").addEventListener("change", e => {
+    state.variant = e.target.value;   // "aug" or "raw"
+    refreshData();
+  });
+
   const bind = (id, labelId, fn, rebuild3d=false) => {
     const el = document.getElementById(id);
     el.addEventListener("input", () => {

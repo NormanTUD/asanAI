@@ -36,6 +36,13 @@
   <aside class="panel">
     <h3>Dataset</h3>
     <div class="ctrl">
+      <label>Data variant</label>
+      <select id="aug">
+        <option value="aug" selected>augmented (rot + shift)</option>
+        <option value="raw">raw only (no augmentation)</option>
+      </select>
+    </div>
+    <div class="ctrl">
       <label>Volume</label>
       <div class="digit-grid" id="digit-buttons">
         <button class="digit-btn active" data-digit="total">all</button>
