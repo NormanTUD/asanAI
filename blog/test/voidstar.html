@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOIDST★R — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0508;
+    --bg2: #14090f;
+    --blood: #8b0a1a;
+    --blood-bright: #d81e2e;
+    --bone: #e8dcc4;
+    --ash: #6b6167;
+    --moss: #4a5d3a;
+    --void: #1a0a1f;
+    --gold: #b8935a;
+    --smoke: #2a2028;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--bone);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(139,10,26,0.15), transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(74,93,58,0.08), transparent 50%),
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.008) 2px, rgba(255,255,255,0.008) 3px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .noise::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.6  0 0 0 0 0.65  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    pointer-events: none; z-index: 2; opacity: 0.5;
+  }
+
+  header.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem;
+    z-index: 3;
+  }
+  header.hero h1 {
+    font-size: clamp(3rem, 12vw, 9rem);
+    letter-spacing: 0.15em;
+    font-weight: 900;
+    color: var(--bone);
+    text-shadow:
+      0 0 30px rgba(216,30,46,0.4),
+      2px 2px 0 var(--blood),
+      -2px -2px 0 var(--void);
+    line-height: 0.9;
+    filter: drop-shadow(0 0 20px rgba(139,10,26,0.5));
+  }
+  header.hero .star {
+    display: inline-block;
+    color: var(--blood-bright);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.6; transform: scale(1.15) rotate(180deg); }
+  }
+  header.hero p.sub {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: var(--ash);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+  header.hero p.meta {
+    margin-top: 3rem;
+    max-width: 600px;
+    color: var(--bone);
+    opacity: 0.7;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2rem;
+    color: var(--ash);
+    animation: bob 2s ease-in-out infinite;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+  }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(10px); opacity: 1; }
+  }
+
+  section {
+    position: relative;
+    z-index: 3;
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  section h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--bone);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(216,30,46,0.3);
+    padding-bottom: 1rem;
+  }
+  section h2 .num {
+    color: var(--blood-bright);
+    font-family: monospace;
+    font-size: 0.6em;
+    vertical-align: super;
+    margin-right: 1rem;
+    opacity: 0.7;
+  }
+  section .lead {
+    color: var(--ash);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 1rem 0 2rem 0;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(20,9,15,0.9), rgba(10,5,8,0.95));
+    border: 1px solid rgba(216,30,46,0.15);
+    border-radius: 4px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+    position: relative;
+  }
+  .panel::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blood), transparent);
+  }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 1.2rem;
+    padding: 1rem; background: rgba(0,0,0,0.4);
+    border-radius: 4px; margin: 1rem 0;
+  }
+  .control {
+    display: flex; flex-direction: column;
+    min-width: 180px;
+  }
+  .control label {
+    font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .control input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    height: 4px; background: rgba(139,10,26,0.3);
+    outline: none; border-radius: 2px;
+  }
+  .control input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--blood-bright);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(216,30,46,0.8);
+  }
+  .control input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--blood-bright); border: none;
+    cursor: pointer;
+  }
+  .control .val { font-size: 0.85rem; color: var(--bone); margin-top: 0.3rem; font-family: monospace; }
+  button.btn {
+    background: transparent;
+    border: 1px solid var(--blood);
+    color: var(--bone);
+    padding: 0.6rem 1.2rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 0.8rem; cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  button.btn:hover {
+    background: var(--blood); color: white;
+    box-shadow: 0 0 20px rgba(216,30,46,0.5);
+  }
+
+  canvas { display: block; width: 100%; border-radius: 4px; background: #050205; }
+
+  /* Timeline */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+    margin: 2rem 0;
+  }
+  .track-cell {
+    aspect-ratio: 1;
+    background: rgba(20,9,15,0.6);
+    border: 1px solid rgba(216,30,46,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-family: monospace;
+    font-size: 0.7rem; color: var(--ash);
+    transition: all 0.2s; position: relative;
+    padding: 4px; text-align: center;
+  }
+  .track-cell:hover, .track-cell.active {
+    background: var(--blood); color: white;
+    transform: scale(1.1); z-index: 5;
+    box-shadow: 0 0 20px rgba(216,30,46,0.6);
+  }
+  .track-cell .num {
+    position: absolute; top: 2px; left: 4px;
+    font-size: 0.6rem; opacity: 0.5;
+  }
+  .track-detail {
+    background: rgba(0,0,0,0.5);
+    border-left: 3px solid var(--blood);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    min-height: 200px;
+  }
+  .track-detail h3 { color: var(--bone); margin-bottom: 0.5rem; font-size: 1.4rem; }
+  .track-detail .role { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; }
+  .track-detail .quote {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--blood);
+    font-style: italic; color: var(--bone);
+    opacity: 0.9;
+  }
+  .track-detail .analysis { color: var(--ash); line-height: 1.7; margin-top: 1rem; }
+
+  /* Character triad */
+  .triad {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .character {
+    background: linear-gradient(160deg, rgba(20,9,15,0.9), rgba(10,5,8,0.7));
+    padding: 1.5rem; border-radius: 4px;
+    border: 1px solid rgba(216,30,46,0.2);
+    transition: all 0.3s;
+  }
+  .character:hover { border-color: var(--blood); transform: translateY(-4px); }
+  .character h4 { font-size: 1.3rem; color: var(--bone); letter-spacing: 0.1em; }
+  .character .archetype { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0.3rem 0 1rem; }
+  .character .desc { color: var(--ash); line-height: 1.6; font-size: 0.95rem; }
+  .character .signature { margin-top: 1rem; font-style: italic; color: var(--blood-bright); font-size: 0.9rem; }
+
+  /* Theme network */
+  #themeCanvas { height: 500px; }
+
+  /* Symbol grid */
+  .symbols {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem; margin: 1.5rem 0;
+  }
+  .symbol {
+    aspect-ratio: 1; padding: 1rem;
+    background: rgba(20,9,15,0.7); border: 1px solid rgba(216,30,46,0.2);
+    border-radius: 4px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; transition: all 0.3s;
+  }
+  .symbol:hover { background: rgba(139,10,26,0.3); transform: scale(1.05); }
+  .symbol .glyph { font-size: 3rem; margin-bottom: 0.5rem; }
+  .symbol .name { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
+  .symbol-detail {
+    margin-top: 1rem; padding: 1.5rem; min-height: 120px;
+    background: rgba(0,0,0,0.5); border-left: 3px solid var(--gold);
+  }
+
+  .arc-labels { display:flex; justify-content: space-between; margin-top: 0.5rem; color: var(--ash); font-size: 0.75rem; }
+
+  footer {
+    text-align: center; padding: 4rem 2rem;
+    color: var(--ash); font-style: italic;
+    border-top: 1px solid rgba(216,30,46,0.2);
+    position: relative; z-index: 3;
+  }
+  .warn {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: rgba(216,30,46,0.15);
+    border: 1px solid rgba(216,30,46,0.4);
+    border-radius: 4px;
+    font-size: 0.8rem; color: var(--bone);
+    margin-top: 1rem;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width: 800px){ .two-col { grid-template-columns: 1fr; } }
+
+  .flicker { animation: flicker 3s infinite; }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    41.99% { opacity: 1; }
+    42% { opacity: 0.6; }
+    43% { opacity: 1; }
+    45% { opacity: 0.4; }
+    46% { opacity: 1; }
+  }
+</style>
+</head>
+<body class="noise">
+
+<header class="hero">
+  <h1>VOIDST<span class="star">★</span>R</h1>
+  <p class="sub">Grim Salvo × Witchhouse 40k</p>
+  <p class="meta">Ein Album über Verfall, Aufgabe und dunkle Wiedergeburt. 12 Tracks, drei Stimmen, ein Sog nach unten — und ein flackerndes Licht, das nicht ausgehen will. Diese Seite ist keine Analyse. Sie ist eine Reise. Klicke, schiebe, spiele.</p>
+  <span class="warn">⚠ Diese Erfahrung enthält düstere Themen: Tod, Sucht, Suizidgedanken, okkulte Bildsprache.</span>
+  <div class="scroll-hint">▼ SCROLL ▼</div>
+</header>
+
+<!-- 1. Overview / Timeline -->
+<section id="overview">
+  <h2><span class="num">I</span>Der Bogen — 12 Tracks als Abstieg & Ritual</h2>
+  <p class="lead">Das Album ist ein Weg nach unten und wieder hinaus. Jeder Track ist eine Station. Klicke auf eine Kachel, um zu sehen, was dort passiert.</p>
+  <div class="timeline" id="timeline"></div>
+  <div class="track-detail" id="trackDetail">
+    <em style="color:var(--ash)">Wähle einen Track oben.</em>
+  </div>
+
+  <div class="panel" style="margin-top:3rem">
+    <h3 style="color:var(--gold); letter-spacing:0.1em; margin-bottom:1rem">EMOTIONALER VERLAUF</h3>
+    <p style="color:var(--ash); margin-bottom:1rem">Wie sich Hoffnungslosigkeit, Wut und Transformation über die 12 Tracks bewegen. Fahre mit der Maus über die Kurve.</p>
+    <div id="emotionPlot" style="height:400px"></div>
+  </div>
+</section>
+
+<!-- 2. The Three Voices -->
+<section id="voices">
+  <h2><span class="num">II</span>Drei Stimmen — Die Charaktere</h2>
+  <p class="lead">Das Album wird von drei Personas getragen. Sie sind keine getrennten Rapper — sie sind Facetten desselben Bewusstseins. Zusammen bilden sie eine Art dämonisches Trio.</p>
+  <div class="triad" id="triad"></div>
+
+  <div class="panel">
+    <h3 style="color:var(--gold); letter-spacing:0.1em; margin-bottom:1rem">WER SPRICHT WIE OFT?</h3>
+    <p style="color:var(--ash); margin-bottom:1rem">Anteil der Verses pro Persona über das ganze Album:</p>
+    <div id="voicePlot" style="height:350px"></div>
+  </div>
+</section>
+
+<!-- 3. Theme Network -->
+<section id="themes">
+  <h2><span class="num">III</span>Das Themen-Netz</h2>
+  <p class="lead">Zwölf Motive weben sich durchs Album. Sie treten selten allein auf — sie hängen zusammen wie ein Pilzgeflecht. Klicke einen Knoten, um zu sehen, in welchen Tracks er wohnt.</p>
+  <canvas id="themeCanvas"></canvas>
+  <div class="track-detail" id="themeDetail" style="margin-top:1rem">
+    <em style="color:var(--ash)">Klicke einen Knoten im Netz.</em>
+  </div>
+</section>
+
+<!-- 4. Decay Simulator -->
+<section id="decay">
+  <h2><span class="num">IV</span>Verfall — Die Kernmetapher</h2>
+  <p class="lead">"Rotten, decayed, decomposing, bones, flies, maggots" — das sind die häufigsten Worte des Albums. Verfall ist hier nicht Ende, sondern Zustand. Er ist Raum, in dem gelebt wird. Schiebe die Slider, um den Verfallsprozess zu steuern.</p>
+  <div class="controls">
+    <div class="control">
+      <label>Zeit seit Tod (Tage)</label>
+      <input type="range" id="decayTime" min="0" max="30" value="7" step="0.1">
+      <span class="val" id="decayTimeVal">7</span>
+    </div>
+    <div class="control">
+      <label>Fliegen-Dichte</label>
+      <input type="range" id="flyDensity" min="0" max="200" value="60">
+      <span class="val" id="flyVal">60</span>
+    </div>
+    <div class="control">
+      <label>Zerfall Intensität</label>
+      <input type="range" id="decayInt" min="0" max="100" value="50">
+      <span class="val" id="decayIntVal">50</span>
+    </div>
+  </div>
+  <canvas id="decayCanvas" height="380"></canvas>
+  <p style="color:var(--ash); font-style:italic; margin-top:1rem">
+    "Wipe the mud off me... Flies living inside of your eyes... My scars cover lesions..." — Der Körper wird zum Landschaft, in der Ungeziefer und Krankheit heimisch sind. Aber aus diesem Boden wächst etwas: "I've been growing from the ground."
+  </p>
+</section>
+
+<!-- 5. RATKING 1518 - Tanzwut -->
+<section id="dance">
+  <h2><span class="num">V</span>RATKING 1518 — Die Tanzwut</h2>
+  <p class="lead">Track 6 ist der historische Kern. 1518 in Straßburg tanzten hunderte Menschen tagelang, viele bis zum Tod. Grim Salvo & Witchhouse 40k machen daraus eine Allegorie: Wir tanzen alle. Wir wissen nicht warum. Wir können nicht aufhören.</p>
+  <div class="panel">
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--gold); margin-bottom:1rem">DER HISTORISCHE MOMENT</h3>
+        <p style="color:var(--bone); line-height:1.7">Straßburg, Juli 1518. Eine Frau namens Frau Troffea tritt auf die Straße und beginnt zu tanzen. Wochenlang. Innerhalb eines Monats tanzen 400         Menschen. Einige tanzen sich zu Tode — an Herzinfarkten, Schlaganfällen, Erschöpfung. Die Ärzte verordnen: <em>mehr</em> tanzen. Musiker werden angeheuert. Es hilft nicht. Bis heute weiß niemand, was es war. Massenhysterie? Ergotismus? Ein Trance-Kult zu St. Vitus?</p>
+        <p style="color:var(--bone); line-height:1.7; margin-top:1rem">Auf dem Album: "Call on St. Vitus, bodies starting to drop / Guild hall crosses, they just starting to rot / Now I'm stuck carving out a crest of blood."</p>
+      </div>
+      <div>
+        <h3 style="color:var(--gold); margin-bottom:1rem">DIE ALLEGORIE</h3>
+        <p style="color:var(--bone); line-height:1.7">Der Tanz ist Sucht. Ist Zwang. Ist die Unfähigkeit aufzuhören, obwohl man weiß, dass es einen tötet. "Eighth night flailing, I just can't seem to stop." Acht Nächte im Delirium. Der Track macht aus einer mittelalterlichen Anomalie ein Bild für <em>jede</em> selbstzerstörerische Spirale — Drogen, Gewalt, Depression. Wir tanzen alle in einem Ballsaal, dessen Steine rot werden.</p>
+        <p style="color:var(--bone); line-height:1.7; margin-top:1rem"><em>"Plague spreading a waltz in a maggoty ballgown."</em></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 style="color:var(--gold); margin-bottom:0.5rem; letter-spacing:0.1em">SIMULATION: 400 TÄNZER</h3>
+    <p style="color:var(--ash); margin-bottom:1rem">Jeder Punkt ist ein Mensch. Rot = tanzt. Weiß = kollabiert. Die Ansteckung breitet sich aus. Ändere die Parameter und sieh zu, wie eine Stadt in Bewegung stirbt.</p>
+    <div class="controls">
+      <div class="control">
+        <label>Ansteckungsrate</label>
+        <input type="range" id="danceInfect" min="0" max="100" value="35">
+        <span class="val" id="danceInfectVal">35%</span>
+      </div>
+      <div class="control">
+        <label>Erschöpfung</label>
+        <input type="range" id="danceExhaust" min="1" max="100" value="20">
+        <span class="val" id="danceExhaustVal">20</span>
+      </div>
+      <div class="control">
+        <label>Tanz-Geschwindigkeit</label>
+        <input type="range" id="danceSpeed" min="1" max="10" value="4">
+        <span class="val" id="danceSpeedVal">4</span>
+      </div>
+      <div class="control" style="justify-content:flex-end">
+        <button class="btn" id="danceReset">↻ Neu starten</button>
+      </div>
+    </div>
+    <canvas id="danceCanvas" height="450"></canvas>
+    <div style="display:flex; justify-content:space-around; margin-top:1rem; font-family:monospace; color:var(--bone)">
+      <span>Tanzend: <span id="statDancing" style="color:var(--blood-bright)">0</span></span>
+      <span>Kollabiert: <span id="statDead" style="color:var(--bone)">0</span></span>
+      <span>Tag: <span id="statDay" style="color:var(--gold)">0</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Ritual / Baphomet -->
+<section id="ritual">
+  <h2><span class="num">VI</span>Der Pakt — BAPHOMET & QUEEN LEECH</h2>
+  <p class="lead">In Tracks 5 und 8 wird ein Handel vollzogen: die Seele gegen Kraft. MOSSBACK sammelt Zutaten für den Kessel ("gathered all remnants for the cauldron"), wächst Hörner ("growing horns, now you're talking to a goat"), und bezahlt einen "debt of blood to Baphomet". Klicke die fünf Punkte des Pentagramms in beliebiger Reihenfolge — jeder öffnet einen Teil des Rituals.</p>
+
+  <div class="panel">
+    <div class="two-col">
+      <div>
+        <canvas id="pentagram" height="500"></canvas>
+      </div>
+      <div>
+        <h3 id="ritualTitle" style="color:var(--gold); letter-spacing:0.1em">◈ Wähle einen Punkt</h3>
+        <p id="ritualText" style="color:var(--bone); line-height:1.8; margin-top:1rem; min-height:280px">Das Pentagramm hat fünf Ecken. Jede steht für ein Element des okkulten Narrativs auf dem Album. Klicke sie an, um zu sehen, was Grim Salvo & Witchhouse 40k dort verhandeln.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Symbols -->
+<section id="symbols">
+  <h2><span class="num">VII</span>Die Symbol-Bibliothek</h2>
+  <p class="lead">Das Album ist dicht mit wiederkehrenden Symbolen. Sie funktionieren wie Karten in einem Tarot-Deck — jede zieht mehrere Bedeutungen. Klicke.</p>
+  <div class="symbols" id="symbolGrid"></div>
+  <div class="symbol-detail" id="symbolDetail">
+    <em style="color:var(--ash)">Wähle ein Symbol.</em>
+  </div>
+</section>
+
+<!-- 8. Flood -->
+<section id="flood">
+  <h2><span class="num">VIII</span>Die Flut — Katharsis oder Auslöschung?</h2>
+  <p class="lead">"Big old flood coming, I just shrug." Wasser ist im Album zweideutig: es reinigt, aber es ertränkt auch. "Why is it still raining? I did what I was supposed to. It's not fair." Der Regen hört nicht auf, obwohl das Ritual vollzogen wurde. Schiebe den Regler.</p>
+  <div class="controls">
+    <div class="control">
+      <label>Regenintensität</label>
+      <input type="range" id="rainInt" min="0" max="100" value="40">
+      <span class="val" id="rainIntVal">40</span>
+    </div>
+    <div class="control">
+      <label>Wasserpegel</label>
+      <input type="range" id="waterLvl" min="0" max="100" value="20">
+      <span class="val" id="waterLvlVal">20</span>
+    </div>
+  </div>
+  <canvas id="floodCanvas" height="380"></canvas>
+</section>
+
+<!-- 9. Word cloud / Frequency -->
+<section id="words">
+  <h2><span class="num">IX</span>Die Sprache — was am häufigsten fällt</h2>
+  <p class="lead">Die schwersten Worte des Albums, ihre Häufigkeit, ihre semantische Nähe. Hover für Kontext.</p>
+  <div id="wordPlot" style="height:500px"></div>
+</section>
+
+<!-- 10. Synthesis -->
+<section id="synthesis">
+  <h2><span class="num">X</span>Das Ganze — Wie alles zusammenhängt</h2>
+  <p class="lead">Wenn du bis hier gekommen bist, hast du die Teile gesehen. Hier ist, was sie zusammen sagen.</p>
+  <div class="panel">
+    <h3 style="color:var(--gold); letter-spacing:0.1em; margin-bottom:1rem">DIE THESE DES ALBUMS</h3>
+    <p style="color:var(--bone); line-height:1.9; font-size:1.05rem">
+      <strong style="color:var(--blood-bright)">VOIDST★R</strong> beschreibt einen Zustand, den es "Verfall bei Bewusstsein" nennen könnte. Der Erzähler — dreistimmig, aber einer — ist bereits tot ("I'm dead but I still haven't died"), aber gezwungen weiterzugehen. Er sammelt Kraft nicht aus Heilung, sondern aus <em>Annahme des Verfalls</em>. Der Körper wird zum Kompost, aus dem etwas Neues wächst ("I've been growing from the ground"). Die Krankheit wird zur Sprache, mit der er Macht ausübt ("plant the seed of plague, you're going down").
+    </p>
+    <p style="color:var(--bone); line-height:1.9; margin-top:1.2rem; font-size:1.05rem">
+      Der zentrale Konflikt ist der zwischen <strong style="color:var(--gold)">MOSSBACK</strong>s poetischer Aufgabe ("the way is shut, I give up") und <strong style="color:var(--gold)">Witchhouse 40k</strong>s trotziger Zähigkeit ("I ain't gon' die"). <strong style="color:var(--gold)">SLEUTH</strong> steht dazwischen als Kommentator, als Trickster, als der, der die Wahrheit ausspricht: "I'm giving up 'cause I'm drowning on dry land."
+    </p>
+    <p style="color:var(--bone); line-height:1.9; margin-top:1.2rem; font-size:1.05rem">
+      Der Tanz von 1518 (Track 6) ist das Zentrum: unfreiwilliges Weiterbewegen bis zum Tod. Der Pakt mit Baphomet (Track 8) ist der Versuch, dieser Zwangsbewegung eine <em>Bedeutung</em> zu geben — sie zum Ritual zu erklären. Aber der letzte Track (ST. PLAGUE) enthüllt die bittere Wahrheit: "Why is it still raining? I did what I was supposed to. It's not fair." Das Ritual hat nichts geändert. Der Erzähler wartet immer noch — "waiting for the right time" — auf einen Rettungsmoment, der vielleicht nie kommt.
+    </p>
+    <p style="color:var(--bone); line-height:1.9; margin-top:1.2rem; font-size:1.05rem">
+      <strong style="color:var(--blood-bright)">Und doch:</strong> das Album endet nicht in Stille. Es endet in einem Warten, das immerhin Warten ist. Nicht Kapitulation. In "ROSES IN THE ATTIC" gibt es diese eine Zeile: "All we want is just to float / Without pain in us to hide." Das ist der VOIDST★R selbst — ein Stern in der Leere, kaum sichtbar, aber nicht erloschen.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h3 style="color:var(--gold); letter-spacing:0.1em; margin-bottom:1rem">DER ZYKLUS — GRAFISCH</h3>
+    <p style="color:var(--ash); margin-bottom:1rem">Der Weg des Erzählers durch die 12 Tracks als Spirale nach unten und ein Aufblicken am Ende:</p>
+    <canvas id="spiralCanvas" height="500"></canvas>
+  </div>
+</section>
+
+<footer>
+  <p>VOIDST★R — Grim Salvo & Witchhouse 40k — 25. Juli 2024</p>
+  <p class="flicker" style="margin-top:1rem; color:var(--blood-bright)">★</p>
+  <p style="margin-top:1rem; opacity:0.5; font-size:0.85rem">Wenn du dich selbst in diesen Zeilen erkannt hast: Telefonseelsorge 0800 111 0 111 (DE) · 142 (AT) · 143 (CH)</p>
+</footer>
+
+<script>
+/* ==================== TRACK DATA ==================== */
+const tracks = [
+  { n:1, title:"Beyond the Scarlet Curtain", ft:"Lil Darkie", role:"OUVERTÜRE — Der Vorhang öffnet",
+    quote:"Lately I been in a hunger spell / No reflection in the mirror, I don't know myself",
+    analysis:"Das Album beginnt mit einem Fluch: 'You are undeserving of even the smallest amount of pity.' Vier Stimmen wechseln sich ab und etablieren jeden Kern-Topos: paper bones, hunger, Fliegen in den Augen, Verfall, Aufgabe. Es ist eine Einführung in ein Universum, in dem der Sprecher schon verurteilt ist — und trotzdem weiterspricht.",
+    themes:["Verfall","Hunger","Isolation","Pestilenz"] },
+  { n:2, title:"THE GIVER", ft:null, role:"DIE KAPITULATION",
+    quote:"The way is shut so I give up, just throw me away",
+    analysis:"Eine Figur — 'she', vielleicht der Tod, vielleicht Depression selbst — 'liebt die Art, wie ich aufgebe'. Sie ist Kali Ma mit Schere, Schwarze Dahlie, die Giver aus Lois Lowrys Roman: die alle Schmerzen der Welt in sich aufnimmt. Der Sprecher versucht zu brennen was ihn hält: 'Care must not leave, so set it on fire.'",
+    themes:["Aufgabe","Feuer","Weibliche Todesfigur","Isolation"] },
+  { n:3, title:"Blessed Is the Swarm", ft:null, role:"DER SCHWARM SEGNET",
+    quote:"I can't seem to find my reason to live / I got nothing to love and I cut my ties",
+    analysis:"Der Schwarm — Fliegen, Krähen, das Kollektiv des Verfalls — wird 'gesegnet'. Der Track wechselt zwischen aggressiver Battle-Rap-Energie und dem nackten Geständnis am Ende. 'Blood forever spillin' upon the seal' — apokalyptische Bildsprache aus der Offenbarung. Heilen, nicht amputieren: aber wie?",
+    themes:["Schwarm","Blut","Apokalypse","Selbstmord"] },
+  { n:4, title:"VOIDST★R", ft:null, role:"TITELTRACK — Das Zentrum",
+    quote:"Draw the blinds, light reminds me often that I'm still alone",
+    analysis:"Der titelgebende Track. Der VOIDSTAR ist ein Paradox: ein Stern in der Leere. Licht, das nur an die eigene Einsamkeit erinnert. Alle drei Personas singen denselben Refrain — sie sind eins in der Isolation. Witchhouse 40k liefert die Kehrseite: 'I done got up out the bottom' — aber der Preis ist Entfremdung: 'I was no one now they know my name.'",
+    themes:["Leere","Isolation","Aufstieg","Sucht"] },
+  { n:5, title:"QUEEN LEECH", ft:null, role:"DIE BLUTKÖNIGIN",
+    quote:"I have completed my shrine, growing horns, now you're talking to a goat",
+    analysis:"MOSSBACK bereitet einen Kessel vor. Er isst Wolfsbann (bane of the wolf), trägt Eisenhut (Monk's hood), wird zum Goat. Das ist der Moment der Transformation — er hört auf, das Opfer zu sein, und wird zum Ritualisten. Die Queen Leech ist der weibliche Vampir, der aussaugt — aber vielleicht auch der eigene Hunger, den er sich zur Königin macht.",
+    themes:["Ritual","Transformation","Weibliche Todesfigur","Verfall"] },
+  { n:6, title:"RATKING 1518", ft:"Savage Ga$p", role:"DIE TANZWUT",
+    quote:"Dance, dance, dance, dance, dance, 'til thy feet bleed",
+    analysis:"Der historische Nucleus. Straßburg 1518, die tanzende Pest. Bis zu 400 Menschen tanzten wochenlang, viele bis zum Tod. Der Track macht daraus eine Metapher für jede unkontrollierbare Zwangshandlung: Sucht, Gewalt, den kapitalistischen Alltag. 'Transmogrification, now we a whole new species.'",
+    themes:["Tanzwut","Pestilenz","Zwang","Transformation"] },
+  { n:7, title:"bellows", ft:null, role:"DIE PROPHEZEIUNG",
+    quote:"Plant the seed of plague, you're going down",
+    analysis:"Ein Blasebalg (bellows) facht das Feuer an. Kurzer, hypnotischer Track. Der Sprecher hat die Rolle gewechselt: er ist nicht mehr das Opfer der Seuche, er sät sie. 'Decline what you're gifted then you miss it' — eine Warnung, die auch ein Fluch ist.",
+    themes:["Fluch","Pestilenz","Umkehr","Prophezeiung"] },
+  { n:8, title:"BAPHOMET", ft:null, role:"DER PAKT",
+    quote:"Spirits calling me, a debt of blood to Baphomet",
+    analysis:"Der explizite Pakt. Die Seele wurde verkauft. Baphomet — die gehörnte Gottheit der Templer-Legende — ist der Empfänger. 'I sold it all and I got nobody to blame.' Das maniakalische Lachen 'on the seventh day' ist eine perverse Ruhe: Gott ruhte am siebten Tag, hier lacht der Dämon.",
+    themes:["Ritual","Pakt","Blut","Isolation"] },
+  { n:9, title:"In Case Of Flies", ft:null, role:"DIE FLUT KOMMT",
+    quote:"There's a big old flood coming, I just shrug",
+    analysis:"Die Flut ist da — und der Sprecher zuckt mit den Schultern. Ein 'kleines schwarzes Schaf' zählt die Trauer. Der Sprecher ist zum Geist geworden: 'I'm a ghost, now there's no place I can't go.' Fraktale tragen sie fort. Es war 'ein schöner Traum'.",
+    themes:["Flut","Geist","Aufgabe","Traum"] },
+  { n:10, title:"LONGLEGS", ft:null, role:"DIE LANGEN BEINE DER NACHT",
+    quote:"Had to make it out the bottom, growing from the ground",
+    analysis:"Referenz auf den Osgood Perkins Horror-Film. Geister in der Nacht. Der Sprecher schneidet seine Verbindungen ab, flieht vor seinen Lebenslinien. Aber die zentrale Zeile trotzt: 'Live or die, I'ma hold it down.' Aus dem Boden wachsen. Aus der Kälte kommen.",
+    themes:["Geist","Nacht","Aufstieg","Isolation"] },
+  { n:11, title:"ROSES IN THE ATTIC", ft:null, role:"VERBORGENE SCHÖNHEIT",
+    quote:"All we want is just to float / Without pain in us to hide",
+    analysis:"Der zärtlichste Track. Referenz auf V.C. Andrews' Roman 'Flowers in the Attic' — Kinder, in einem Dachboden versteckt und vergessen. Hier ist es MOSSBACK, der zum ersten Mal offen singt: über Freundschaften, die zerbrochen sind, über die Sehnsucht, nur zu treiben ohne Schmerz. Ein Moment der Menschlichkeit im Verfall.",
+    themes:["Verlorene Liebe","Zärtlichkeit","Isolation","Sehnsucht"] },
+  { n:12, title:"ST. PLAGUE", ft:"Brahman", role:"DAS WARTEN",
+    quote:"Why is it still raining? I did what I was supposed to. It's not fair.",
+    analysis:"Der Abschluss. Der Sprecher wartet 'auf die richtige Zeit'. Er hat das Ritual vollzogen, den Pakt geschlossen, den Verfall angenommen — aber der Regen hört nicht auf. Brahman fragt Gott direkt: 'Are we really evil? Do we sin 'cause it part of your design?' Das Album endet ohne Erlösung, nur mit dem Ausharren. Der Heilige der Pest. Der, der bleibt.",
+    themes:["Warten","Regen","Gott","Ausharren"] }
+];
+
+/* ==================== TIMELINE ==================== */
+const tl = document.getElementById('timeline');
+tracks.forEach((t, i) => {
+  const c = document.createElement('div');
+  c.className = 'track-cell';
+  c.innerHTML = `<span class="num">${String(t.n).padStart(2,'0')}</span><span>${t.title.length > 12 ? t.title.slice(0,10)+'…' : t.title}</span>`;
+  c.onclick = () => showTrack(i);
+  tl.appendChild(c);
+});
+function showTrack(i) {
+  const t = tracks[i];
+  document.querySelectorAll('.track-cell').forEach((el, idx) => el.classList.toggle('active', idx===i));
+  const d = document.getElementById('trackDetail');
+  d.innerHTML = `
+    <div class="role">${String(t.n).padStart(2,'0')} · ${t.role}${t.ft?` · feat. ${t.ft}`:''}</div>
+    <h3>${t.title}</h3>
+    <div class="quote">"${t.quote}"</div>
+    <div class="analysis">${t.analysis}</div>
+    <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap">
+      ${t.themes.map(th=>`<span style="font-size:0.75rem; padding:0.3rem 0.7rem; background:rgba(139,10,26,0.2); border:1px solid rgba(216,30,46,0.4); border-radius:2px; color:var(--gold); letter-spacing:0.1em; text-transform:uppercase">${th}</span>`).join('')}
+    </div>`;
+}
+showTrack(0);
+
+/* ==================== EMOTION PLOT ==================== */
+const emotionData = {
+  hopelessness: [8,9,7,9,6,7,8,7,9,7,8,6],
+  rage: [7,4,8,3,9,10,6,8,3,7,4,7],
+  transformation: [2,3,4,5,8,9,6,10,7,8,5,9],
+  tenderness: [1,2,1,3,2,1,2,1,4,3,9,5]
+};
+const xTracks = tracks.map(t => `${t.n}. ${t.title}`);
+Plotly.newPlot('emotionPlot', [
+  { x:xTracks, y:emotionData.hopelessness, name:'Hoffnungslosigkeit', line:{color:'#8b0a1a', width:3, shape:'spline'}, fill:'tozeroy', fillcolor:'rgba(139,10,26,0.15)' },
+  { x:xTracks, y:emotionData.rage, name:'Wut', line:{color:'#d81e2e', width:3, shape:'spline'}, fill:'tozeroy', fillcolor:'rgba(216,30,46,0.1)' },
+  { x:xTracks, y:emotionData.transformation, name:'Transformation', line:{color:'#b8935a', width:3, shape:'spline'} },
+  { x:xTracks, y:emotionData.tenderness, name:'Zärtlichkeit', line:{color:'#e8dcc4', width:3, shape:'spline', dash:'dot'} }
+], {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.3)',
+  font:{color:'#e8dcc4', family:'Georgia'},
+  xaxis:{gridcolor:'rgba(139,10,26,0.15)', tickangle:-45, tickfont:{size:9}},
+  yaxis:{gridcolor:'rgba(139,10,26,0.15)', title:'Intensität (0-10)', range:[0,10.5]},
+  legend:{orientation:'h', y:-0.4, bgcolor:'rgba(0,0,0,0)'},
+  margin:{t:20, b:150, l:60, r:20},
+  hovermode:'x unified'
+}, {displayModeBar:false, responsive:true});
+
+/* ==================== CHARACTERS ==================== */
+const characters = [
+  {
+    name:"MOSSBACK",
+    archetype:"Der Poet · Der Ritualist",
+    desc:"Die introspektive Stimme. Verfällt in Naturbilder — Moos, Wald, Eichen, Kaninchen, Kessel. Er ist der, der aufgibt ('the way is shut'), aber auch der, der das Ritual vollzieht ('I have completed my shrine'). Seine Verses sind langsam, dicht, oft flüsternd. Er hat Hörner wachsen lassen.",
+    signature:"„Care must not leave, so set it on fire."
+  },
+  {
+    name:"SLEUTH",
+    archetype:"Der Trickster · Der Wortklinge",
+    desc:"Der verbal virtuoseste. Er verweist auf Yo-Yo Ma, Red Dead Redemption, Abbey Road, Hyperion, Kali Ma, die Schwarze Dahlie. Ein Bewusstsein, das durch Popkultur, Mythos und Straße gleichzeitig zappt. Er spricht die härtesten Wahrheiten in Wortspielen: „I'm giving up 'cause I'm drowning on dry land."",
+    signature:"„I'm dead but I still haven't died."
+  },
+  {
+    name:"Witchhouse 40k",
+    archetype:"Der Kämpfer · Der Aufsteiger",
+    desc:"Die trotzige Stimme. Wo MOSSBACK aufgibt, sagt er: „I ain't gon' die." Er kam „from the bottom", ist jetzt reich („thumbin' through blue hunnids"), aber allein („I was no one now they know my name"). Sein Ad-Lib ‚Blegh' ist eine physische Ausatmung des Verfalls — Verwesung, die spricht.",
+    signature:"„I've been growing from the ground."
+  }
+];
+const triad = document.getElementById('triad');
+characters.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'character';
+  d.innerHTML = `<h4>${c.name}</h4><div class="archetype">${c.archetype}</div><div class="desc">${c.desc}</div><div class="signature">${c.signature}</div>`;
+  triad.appendChild(d);
+});
+
+/* Voice distribution — Anteil geschätzt aus Verse-Zählung */
+Plotly.newPlot('voicePlot', [{
+  type:'bar', orientation:'h',
+  y:['MOSSBACK','SLEUTH','Witchhouse 40k','Features (Lil Darkie, Savage Ga$p, Brahman)'],
+  x:[32, 30, 28, 10],
+  marker:{color:['#4a5d3a','#b8935a','#8b0a1a','#6b6167']},
+  text:['32%','30%','28%','10%'], textposition:'auto',
+  hovertemplate:'%{y}: %{x}%<extra></extra>'
+}], {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.3)',
+  font:{color:'#e8dcc4', family:'Georgia'},
+  xaxis:{gridcolor:'rgba(139,10,26,0.15)', ticksuffix:'%'},
+  yaxis:{gridcolor:'rgba(0,0,0,0)'},
+  margin:{t:20, b:40, l:200, r:40}
+}, {displayModeBar:false, responsive:true});
+
+/* ==================== THEME NETWORK ==================== */
+const themes = [
+  { id:'decay', label:'Verfall', color:'#8b0a1a', tracks:[1,2,3,4,5,6,8,9,10,11], desc:"Der Körper als Kompost. Wunden, Läsionen, Maden, Fliegen, verrottende Knochen. In fast jedem Track wörtlich anwesend." },
+  { id:'hunger', label:'Hunger', color:'#b8935a', tracks:[1,4,8], desc:"„Hunger spell", „starving to death", „ate the bugs off me". Ein Hunger, den nichts stillt — nicht Geld, nicht Ritual, nicht Ruhm." },
+  { id:'giveup', label:'Aufgabe', color:'#6b6167', tracks:[1,2,3,7,9,11], desc:"„The way is shut so I give up." Eine wiederkehrende Kapitulation, die aber nie endgültig ist — auf jede Aufgabe folgt ein neuer Track." },
+  { id:'survive', label:'Trotz / Überleben', color:'#4a5d3a', tracks:[4,5,8,9,10], desc:"„I ain't gon' die." „Live or die, I'ma hold it down." Witchhouse 40k's Gegenstimme zur Aufgabe. Sturheit als einzige Waffe." },
+  { id:'plague', label:'Pestilenz', color:'#d81e2e', tracks:[1,6,7,12], desc:"Von „I've got the plague, see it on my breath" bis „Plant the seed of plague". Krankheit wird von Zustand zu Werkzeug." },
+  { id:'ghost', label:'Geist / Spectrum', color:'#e8dcc4', tracks:[3,4,5,8,9,10], desc:"„I'm a ghost, now there's no place I can't go." Der Sprecher wird körperlos — gleichzeitig Freiheit und Verlust." },
+  { id:'ritual', label:'Ritual / Okkult', color:'#8b6f9e', tracks:[2,5,7,8], desc:"Kali Ma, Baphomet, 3:33, Coven, Kessel, Pentagramm, Hörner. Ein zunehmend expliziter Pakt mit dunklen Mächten." },
+  { id:'isolation', label:'Isolation', color:'#2a4a6e', tracks:[1,2,4,10,11,12], desc:"„Still alone", „cut my ties", „on my own". Das Album findet nie zu Gemeinschaft. Selbst „the gang" ist eine Gemeinschaft von Geistern." },
+  { id:'rise', label:'Aufstieg aus dem Boden', color:'#7a5a2e', tracks:[4,9,10], desc:"„Came from the bottom", „growing from the ground", „hopping out the graves". Etwas wächst aus dem Verfall — aber wohin?" },
+  { id:'water', label:'Wasser / Flut', color:'#3a5a7e', tracks:[2,9,12], desc:"„Cut it all down and flood it out." „Big old flood coming." „Why is it still raining?" Wasser als Reinigung, die zur Ertränkung wird." },
+  { id:'money', label:'Geld', color:'#5a5a3a', tracks:[4,8,11], desc:"„Nine grand gone in three weeks." „Thumbin' through blue hunnids." Reichtum kommt — verändert aber nichts an der Leere." },
+  { id:'dance', label:'Tanz / Zwang', color:'#9e2e5a', tracks:[6], desc:"Das Zentrum. RATKING 1518 macht Straßburgs Tanzwut zur Allegorie jeder Sucht: unfreiwilliges Weiterbewegen bis zum Kollaps." }
+];
+
+const themeCanvas = document.getElementById('themeCanvas');
+const tctx = themeCanvas.getContext('2d');
+function sizeThemeCanvas(){
+  const dpr = window.devicePixelRatio || 1;
+  const rect = themeCanvas.getBoundingClientRect();
+  themeCanvas.width = rect.width * dpr;
+  themeCanvas.height = 500 * dpr;
+  tctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizeThemeCanvas();
+window.addEventListener('resize', ()=>{ sizeThemeCanvas(); layoutThemes(); });
+
+let themeNodes = [];
+function layoutThemes(){
+  const w = themeCanvas.width / (window.devicePixelRatio||1);
+  const h = 500;
+  themeNodes = themes.map((t,i)=>{
+    const a = (i/themes.length) * Math.PI * 2 - Math.PI/2;
+    const r = Math.min(w,h)*0.35;
+    return {
+      ...t,
+      x: w/2 + Math.cos(a)*r,
+      y: h/2 + Math.sin(a)*r,
+      radius: 22 + t.tracks.length*1.5,
+      vx:0, vy:0
+    };
+  });
+}
+layoutThemes();
+
+let hoverTheme = null, activeTheme = null;
+function drawThemeNet(){
+  const w = themeCanvas.width / (window.devicePixelRatio||1);
+  const h = 500;
+  tctx.clearRect(0,0,w,h);
+  
+  // Draw edges: two themes share edge if they overlap in tracks
+  tctx.lineWidth = 1;
+  for(let i=0;i<themeNodes.length;i++){
+    for(let j=i+1;j<themeNodes.length;j++){
+      const shared = themeNodes[i].tracks.filter(t=>themeNodes[j].tracks.includes(t)).length;
+      if(shared>0){
+        const alpha = Math.min(shared/6, 0.5);
+        const highlight = activeTheme && (activeTheme.id===themeNodes[i].id || activeTheme.id===themeNodes[j].id);
+        tctx.strokeStyle = highlight ? `rgba(216,30,46,${0.4+alpha})` : `rgba(184,147,90,${alpha*0.6})`;
+        tctx.lineWidth = highlight ? 2 : 1;
+        tctx.beginPath();
+        tctx.moveTo(themeNodes[i].x, themeNodes[i].y);
+        tctx.lineTo(themeNodes[j].x, themeNodes[j].y);
+        tctx.stroke();
+      }
+    }
+  }
+  
+  // Draw nodes
+  themeNodes.forEach(n=>{
+    const isActive = activeTheme && activeTheme.id === n.id;
+    const isHover = hoverTheme && hoverTheme.id === n.id;
+    tctx.beginPath();
+    tctx.arc(n.x, n.y, n.radius, 0, Math.PI*2);
+    const grad = tctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
+    grad.addColorStop(0, n.color);
+    grad.addColorStop(1, 'rgba(10,5,8,0.9)');
+    tctx.fillStyle = grad;
+    tctx.fill();
+    tctx.strokeStyle = isActive ? '#e8dcc4' : (isHover ? '#b8935a' : 'rgba(232,220,196,0.3)');
+    tctx.lineWidth = isActive ? 3 : (isHover ? 2 : 1);
+    tctx.stroke();
+    
+    tctx.fillStyle = '#e8dcc4';
+    tctx.font = `${isActive||isHover?'bold ':''}12px Georgia`;
+    tctx.textAlign = 'center';
+    tctx.textBaseline = 'middle';
+    tctx.fillText(n.label, n.x, n.y);
+  });
+}
+drawThemeNet();
+
+themeCanvas.addEventListener('mousemove', (e)=>{
+  const rect = themeCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  hoverTheme = themeNodes.find(n => Math.hypot(n.x-mx, n.y-my) < n.radius);
+  themeCanvas.style.cursor = hoverTheme ? 'pointer' : 'default';
+  drawThemeNet();
+});
+themeCanvas.addEventListener('click', (e)=>{
+  const rect = themeCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const clicked = themeNodes.find(n => Math.hypot(n.x-mx, n.y-my) < n.radius);
+  if(clicked){
+    activeTheme = clicked;
+    const trackList = clicked.tracks.map(n => tracks[n-1]).map(t=>`<li style="margin:0.3rem 0">Track ${t.n} — <em>${t.title}</em></li>`).join('');
+    document.getElementById('themeDetail').innerHTML = `
+      <div class="role" style="color:${clicked.color}">MOTIV</div>
+      <h3>${clicked.label}</h3>
+      <div class="analysis">${clicked.desc}</div>
+      <div style="margin-top:1rem"><strong style="color:var(--gold); font-size:0.85rem; letter-spacing:0.15em; text-transform:uppercase">Vorkommen:</strong>
+      <ul style="margin-top:0.5rem; list-style:none; color:var(--bone)">${trackList}</ul></div>`;
+    drawThemeNet();
+  }
+});
+
+/* ==================== DECAY CANVAS ==================== */
+const decayCanvas = document.getElementById('decayCanvas');
+const dctx = decayCanvas.getContext('2d');
+function sizeDecay(){
+  const dpr = window.devicePixelRatio||1;
+  const rect = decayCanvas.getBoundingClientRect();
+  decayCanvas.width = rect.width * dpr;
+  decayCanvas.height = 380 * dpr;
+  dctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizeDecay();
+window.addEventListener('resize', sizeDecay);
+
+const flies = [];
+function ensureFlies(n){
+  while(flies.length < n) flies.push({x:Math.random(), y:Math.random(), vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2, phase:Math.random()*Math.PI*2});
+  while(flies.length > n) flies.pop();
+}
+
+function drawDecay(){
+  const w = decayCanvas.width/(window.devicePixelRatio||1);
+  const h = 380;
+  const time = parseFloat(document.getElementById('decayTime').value);
+  const flyN = parseInt(document.getElementById('flyDensity').value);
+  const intensity = parseInt(document.getElementById('decayInt').value)/100;
+  
+  document.getElementById('decayTimeVal').textContent = time.toFixed(1)+' Tage';
+  document.getElementById('flyVal').textContent = flyN;
+  document.getElementById('decayIntVal').textContent = Math.round(intensity*100)+'%';
+  
+  dctx.fillStyle = '#050205';
+  dctx.fillRect(0,0,w,h);
+  
+  // Ground (mossy) — MOSSBACK reference
+  const grd = dctx.createLinearGradient(0, h*0.6, 0, h);
+  grd.addColorStop(0, `rgb(${20+intensity*40},${30+intensity*20},${15})`);
+  grd.addColorStop(1, '#0a0a05');
+  dctx.fillStyle = grd;
+  dctx.fillRect(0, h*0.6, w, h*0.4);
+  
+  // The body — silhouette
+  const bx = w/2, by = h*0.62;
+  const bodyLen = w*0.5;
+  
+  // Flesh (fades with time)
+  const fleshAlpha = Math.max(0, 1 - time/15);
+  const boneAlpha = Math.min(1, time/8);
+  
+  dctx.save();
+  dctx.translate(bx, by);
+  
+  // shadow
+  dctx.fillStyle = 'rgba(0,0,0,0.6)';
+  dctx.beginPath();
+  dctx.ellipse(0, 10, bodyLen*0.55, 12, 0, 0, Math.PI*2);
+  dctx.fill();
+  
+  // flesh layer
+  if(fleshAlpha > 0){
+    dctx.fillStyle = `rgba(${100-intensity*60},${50-intensity*30},${45-intensity*25},${fleshAlpha*0.9})`;
+    dctx.beginPath();
+    // torso
+    dctx.ellipse(0, 0, bodyLen*0.4, 30, 0, 0, Math.PI*2);
+    // head
+    dctx.ellipse(-bodyLen*0.35, -5, 28, 24, 0, 0, Math.PI*2);
+    dctx.fill();
+    
+    // lesions / green rot
+    for(let i=0;i<intensity*30;i++){
+      const px = (Math.random()-0.5)*bodyLen*0.8;
+      const py = (Math.random()-0.5)*50;
+      dctx.fillStyle = `rgba(${60+Math.random()*40},${80+Math.random()*40},${30},${fleshAlpha*0.7})`;
+      dctx.beginPath();
+      dctx.arc(px, py, 2+Math.random()*4*intensity, 0, Math.PI*2);
+      dctx.fill();
+    }
+  }
+  
+  // bones showing through
+  if(boneAlpha > 0){
+    dctx.strokeStyle = `rgba(232,220,196,${boneAlpha})`;
+    dctx.fillStyle = `rgba(232,220,196,${boneAlpha*0.8})`;
+    dctx.lineWidth = 3;
+    // spine
+    for(let i=-5;i<=5;i++){
+      dctx.beginPath();
+      dctx.ellipse(i*15, 0, 6, 4, 0, 0, Math.PI*2);
+      dctx.fill();
+    }
+    // ribs
+    for(let i=-3;i<=3;i++){
+      dctx.beginPath();
+      dctx.moveTo(i*15, 0);
+      dctx.quadraticCurveTo(i*15 + 5, -20, i*15 - 5, -35);
+      dctx.stroke();
+      dctx.beginPath();
+      dctx.moveTo(i*15, 0);
+      dctx.quadraticCurveTo(i*15 + 5, 20, i*15 - 5, 35);
+      dctx.stroke();
+    }
+    // skull
+    dctx.fillStyle = `rgba(232,220,196,${boneAlpha})`;
+    dctx.beginPath();
+    dctx.ellipse(-bodyLen*0.35, -5, 26, 22, 0, 0, Math.PI*2);
+    dctx.fill();
+    // eye sockets
+    dctx.fillStyle = `rgba(10,5,8,${boneAlpha})`;
+    dctx.beginPath();
+    dctx.arc(-bodyLen*0.35-8, -8, 5, 0, Math.PI*2);
+    dctx.arc(-bodyLen*0.35+8, -8, 5, 0, Math.PI*2);
+    dctx.fill();
+  }
+  
+  dctx.restore();
+  
+  // Sprouts (moss growing from ground — "I've been growing from the ground")
+  const sprouts = Math.floor(intensity * 20);
+  for(let i=0;i<sprouts;i++){
+    const px = (i/sprouts)*w + Math.sin(i*7)*15;
+    const py = h*0.62 + Math.random()*8;
+    dctx.strokeStyle = `rgba(${74+Math.random()*30},${93+Math.random()*30},58,0.7)`;
+    dctx.lineWidth = 1.2;
+    dctx.beginPath();
+    dctx.moveTo(px, py);
+    dctx.quadraticCurveTo(px+Math.sin(i)*3, py-8, px+Math.sin(i)*6, py-15-Math.random()*10);
+    dctx.stroke();
+  }
+  
+  // Flies
+  ensureFlies(flyN);
+  flies.forEach(f=>{
+    f.phase += 0.15;
+    f.x += (Math.random()-0.5)*0.008;
+    f.y += (Math.random()-0.5)*0.008;
+    // attracted to body
+    const tx = 0.5, ty = 0.62;
+    f.x += (tx - f.x)*0.005;
+    f.y += (ty - f.y)*0.005;
+    f.x = (f.x+1)%1; f.y = Math.max(0.1, Math.min(0.85, f.y));
+    const jitter = Math.sin(f.phase)*1.5;
+    dctx.fillStyle = 'rgba(10,10,10,0.9)';
+    dctx.beginPath();
+    dctx.arc(f.x*w + jitter, f.y*h, 1.2, 0, Math.PI*2);
+    dctx.fill();
+    // wings blur
+    dctx.fillStyle = 'rgba(180,180,180,0.15)';
+    dctx.beginPath();
+    dctx.ellipse(f.x*w + jitter, f.y*h, 3, 1, 0, 0, Math.PI*2);
+    dctx.fill();
+  });
+  
+  // Text overlay
+  dctx.fillStyle = 'rgba(232,220,196,0.4)';
+  dctx.font = 'italic 11px Georgia';
+  dctx.textAlign = 'left';
+  dctx.fillText(`Fleisch: ${Math.round(fleshAlpha*100)}%  ·  Knochen sichtbar: ${Math.round(boneAlpha*100)}%`, 10, 20);
+  
+  requestAnimationFrame(drawDecay);
+}
+['decayTime','flyDensity','decayInt'].forEach(id => {
+  document.getElementById(id).addEventListener('input', ()=>{});
+});
+drawDecay();
+
+/* ==================== DANCING PLAGUE ==================== */
+const danceCanvas = document.getElementById('danceCanvas');
+const dnctx = danceCanvas.getContext('2d');
+function sizeDance(){
+  const dpr = window.devicePixelRatio||1;
+  const rect = danceCanvas.getBoundingClientRect();
+  danceCanvas.width = rect.width*dpr;
+  danceCanvas.height = 450*dpr;
+  dnctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizeDance();
+window.addEventListener('resize', sizeDance);
+
+let dancers = [];
+let danceDay = 0, danceFrame = 0;
+function initDancers(){
+  dancers = [];
+  const w = danceCanvas.width/(window.devicePixelRatio||1);
+  const h = 450;
+  for(let i=0;i<400;i++){
+    dancers.push({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: 0, vy: 0,
+      state: i===0 ? 'dancing' : 'idle',  // Frau Troffea starts
+      energy: 100,
+      phase: Math.random()*Math.PI*2,
+      color: '#e8dcc4'
+    });
+  }
+  danceDay = 0;
+  danceFrame = 0;
+}
+initDancers();
+
+function stepDance(){
+  const w = danceCanvas.width/(window.devicePixelRatio||1);
+  const h = 450;
+  const infect = parseInt(document.getElementById('danceInfect').value)/100;
+  const exhaust = parseInt(document.getElementById('danceExhaust').value);
+  const speed = parseInt(document.getElementById('danceSpeed').value);
+  document.getElementById('danceInfectVal').textContent = Math.round(infect*100)+'%';
+  document.getElementById('danceExhaustVal').textContent = exhaust;
+  document.getElementById('danceSpeedVal').textContent = speed;
+  
+  danceFrame++;
+  if(danceFrame % 60 === 0) danceDay++;
+  
+  // Background — cobblestones
+  dnctx.fillStyle = '#0a0508';
+  dnctx.fillRect(0,0,w,h);
+  // Blood pool grows over time
+  const dead = dancers.filter(d=>d.state==='dead').length;
+  const bloodAmt = Math.min(0.5, dead/500);
+  dnctx.fillStyle = `rgba(139,10,26,${bloodAmt})`;
+  dnctx.fillRect(0,0,w,h);
+  
+  let dancing=0, deadC=0;
+  dancers.forEach(d=>{
+    if(d.state==='dancing'){
+      dancing++;
+      d.phase += 0.15*speed/4;
+      d.vx = Math.cos(d.phase)*speed*0.3 + (Math.random()-0.5)*speed*0.2;
+      d.vy = Math.sin(d.phase*0.7)*speed*0.3 + (Math.random()-0.5)*speed*0.2;
+      d.x += d.vx; d.y += d.vy;
+      if(d.x<0) d.x=w; if(d.x>w) d.x=0;
+      if(d.y<0) d.y=h; if(d.y>h) d.y=0;
+      d.energy -= exhaust/100;
+      if(d.energy <= 0){ d.state='dead'; }
+      
+      // infect neighbors
+      if(Math.random() < 0.02){
+        dancers.forEach(other=>{
+          if(other.state==='idle'){
+            const dist = Math.hypot(d.x-other.x, d.y-other.y);
+            if(dist < 30 && Math.random() < infect*0.3){
+              other.state = 'dancing';
+              other.phase = Math.random()*Math.PI*2;
+            }
+          }
+        });
+      }
+    } else if(d.state==='dead'){
+      deadC++;
+    }
+    
+    // draw
+    if(d.state==='dancing'){
+      const c = Math.floor(216 - d.energy*0.5);
+      dnctx.fillStyle = `rgb(${c},30,46)`;
+      dnctx.beginPath();
+      dnctx.arc(d.x, d.y, 3, 0, Math.PI*2);
+      dnctx.fill();
+      // limb trails
+      dnctx.strokeStyle = `rgba(216,30,46,0.3)`;
+      dnctx.beginPath();
+      dnctx.moveTo(d.x, d.y);
+      dnctx.lineTo(d.x + Math.cos(d.phase)*4, d.y + Math.sin(d.phase)*4);
+      dnctx.stroke();
+    } else if(d.state==='dead'){
+      dnctx.fillStyle = 'rgba(232,220,196,0.5)';
+      dnctx.beginPath();
+      dnctx.arc(d.x, d.y, 2, 0, Math.PI*2);
+      dnctx.fill();
+    } else {
+      dnctx.fillStyle = 'rgba(107,97,103,0.6)';
+      dnctx.beginPath();
+      dnctx.arc(d.x, d.y, 2, 0, Math.PI*2);
+      dnctx.fill();
+    }
+  });
+  
+  document.getElementById('statDancing').textContent = dancing;
+  document.getElementById('statDead').textContent = deadC;
+  document.getElementById('statDay').textContent = danceDay;
+  
+  // St. Vitus reference — overlay
+  if(danceDay > 15){
+    dnctx.fillStyle = 'rgba(184,147,90,0.7)';
+    dnctx.font = 'italic 14px Georgia';
+    dnctx.textAlign = 'center';
+    dnctx.fillText('"Call on St. Vitus, bodies starting to drop..."', w/2, 30);
+  }
+  
+  requestAnimationFrame(stepDance);
+}
+stepDance();
+document.getElementById('danceReset').onclick = initDancers;
+
+/* ==================== PENTAGRAM RITUAL ==================== */
+const pentaCanvas = document.getElementById('pentagram');
+const pctx = pentaCanvas.getContext('2d');
+function sizePenta(){
+  const dpr = window.devicePixelRatio||1;
+  const rect = pentaCanvas.getBoundingClientRect();
+  pentaCanvas.width = rect.width*dpr;
+  pentaCanvas.height = 500*dpr;
+  pctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizePenta();
+window.addEventListener('resize', sizePenta);
+
+const ritualPoints = [
+  { angle:-90, title:"◈ DAS OPFER", text:"„A debt of blood to Baphomet." Der Preis für Kraft ist Blut — und schließlich die Seele selbst. „I sold it all and I got nobody to blame." Der Sprecher ist der einzige, dem er die Konsequenzen zuschreiben kann. Kein Teufel wird beschuldigt. Er wählte." },
+  { angle:-18, title:"◈ DER KESSEL", text:"MOSSBACK: „I've gathered all remnants for the cauldron. The stench emitting from the mixture, truly noxious." Er kocht Reste zusammen — Fragmente von sich selbst, seine Vergangenheit, was übrig blieb. Der Kessel ist Selbstauflösung als Küche." },
+  { angle:54, title:"◈ DIE HÖRNER", text:"„I have completed my shrine, growing horns, now you're talking to a goat." Die Transformation ist vollzogen. Der Sprecher ist nicht mehr Mensch, sondern Ziege — Baphomets Tier. Das Opferlamm ist das Opfer geworden." },
+  { angle:126, title:"◈ DIE STUNDE", text:"3:33 Uhr — die Umkehrung von 3:00, der göttlichen Stunde. „Witchery at 3:33, it's when I gain my power." Der siebte Tag: statt zu ruhen, lacht der Sprecher manisch. Sakrale Zeit wird umgedreht, umgemünzt." },
+  { angle:198, title:"◈ DER COVEN", text:"„Got a coven out in Russia rushing 'tally ho'." „With the gang, Haunted House up in the crypts." Die Gemeinschaft ist da — aber es ist eine Gemeinschaft der Toten. Zugehörigkeit gibt es, aber nur im Grab." }
+];
+
+let activeRitual = -1;
+function drawPentagram(){
+  const w = pentaCanvas.width/(window.devicePixelRatio||1);
+  const h = 500;
+  pctx.clearRect(0,0,w,h);
+  
+  const cx = w/2, cy = h/2, r = Math.min(w,h)*0.38;
+  
+  // Outer circle
+  pctx.strokeStyle = 'rgba(184,147,90,0.4)';
+  pctx.lineWidth = 1;
+  pctx.beginPath();
+  pctx.arc(cx, cy, r*1.15, 0, Math.PI*2);
+  pctx.stroke();
+  
+  // Inner glow
+  const grad = pctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+  grad.addColorStop(0, 'rgba(139,10,26,0.15)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  pctx.fillStyle = grad;
+  pctx.fillRect(0,0,w,h);
+  
+  // Compute points
+  const pts = ritualPoints.map(p => {
+    const a = p.angle * Math.PI/180;
+    return { x: cx + Math.cos(a)*r, y: cy + Math.sin(a)*r };
+  });
+  
+  // Pentagram lines (skip 2)
+  pctx.strokeStyle = 'rgba(216,30,46,0.7)';
+  pctx.lineWidth = 2;
+  pctx.beginPath();
+  for(let i=0;i<5;i++){
+    const p1 = pts[i];
+    const p2 = pts[(i+2)%5];
+    if(i===0) pctx.moveTo(p1.x, p1.y);
+    pctx.lineTo(p2.x, p2.y);
+  }
+  pctx.closePath();
+  pctx.stroke();
+  
+  // Runes/symbols in circle
+  pctx.fillStyle = 'rgba(184,147,90,0.3)';
+  pctx.font = '14px Georgia';
+  pctx.textAlign = 'center';
+  const runes = ['✟','☩','⚸','☾','☿'];
+  for(let i=0;i<5;i++){
+    const a = (i/5)*Math.PI*2 - Math.PI/2 + Math.PI/5;
+    const rx = cx + Math.cos(a)*r*1.05;
+    const ry = cy + Math.sin(a)*r*1.05;
+    pctx.fillText(runes[i], rx, ry);
+  }
+  
+  // Points
+  pts.forEach((p, i) => {
+    const isActive = i === activeRitual;
+    pctx.beginPath();
+    pctx.arc(p.x, p.y, isActive ? 18 : 12, 0, Math.PI*2);
+    pctx.fillStyle = isActive ? '#d81e2e' : 'rgba(139,10,26,0.6)';
+    pctx.fill();
+    pctx.strokeStyle = '#e8dcc4';
+    pctx.lineWidth = isActive ? 2 : 1;
+    pctx.stroke();
+    
+    if(isActive){
+      pctx.shadowColor = '#d81e2e';
+      pctx.shadowBlur = 20;
+      pctx.beginPath();
+      pctx.arc(p.x, p.y, 18, 0, Math.PI*2);
+      pctx.stroke();
+      pctx.shadowBlur = 0;
+    }
+  });
+  
+  // Center goat head — simple
+  pctx.strokeStyle = 'rgba(216,30,46,0.5)';
+  pctx.lineWidth = 1.5;
+  pctx.beginPath();
+  // triangle head
+  pctx.moveTo(cx, cy+20);
+  pctx.lineTo(cx-15, cy-10);
+  pctx.lineTo(cx+15, cy-10);
+  pctx.closePath();
+  pctx.stroke();
+  // horns
+  pctx.beginPath();
+  pctx.moveTo(cx-12, cy-10);
+  pctx.quadraticCurveTo(cx-25, cy-30, cx-18, cy-45);
+  pctx.moveTo(cx+12, cy-10);
+  pctx.quadraticCurveTo(cx+25, cy-30, cx+18, cy-45);
+  pctx.stroke();
+  // eyes
+  pctx.fillStyle = '#d81e2e';
+  pctx.beginPath();
+  pctx.arc(cx-5, cy, 1.5, 0, Math.PI*2);
+  pctx.arc(cx+5, cy, 1.5, 0, Math.PI*2);
+  pctx.fill();
+  
+  requestAnimationFrame(drawPentagram);
+}
+drawPentagram();
+
+pentaCanvas.addEventListener('click', (e) => {
+  const rect = pentaCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const cx = rect.width/2, cy = 250, r = Math.min(rect.width, 500)*0.38;
+  ritualPoints.forEach((p, i) => {
+    const a = p.angle * Math.PI/180;
+    const px = cx + Math.cos(a)*r;
+    const py = cy + Math.sin(a)*r;
+    if(Math.hypot(mx-px, my-py) < 20){
+      activeRitual = i;
+      document.getElementById('ritualTitle').textContent = p.title;
+      document.getElementById('ritualText').textContent = p.text;
+    }
+  });
+});
+
+/* ==================== SYMBOLS ==================== */
+const symbols = [
+  { glyph:'🪱', name:'MADEN', text:"„Worm food in a ditch." „Bugs up in the brain." Maden fressen den Körper, aber sie sind auch das erste Zeichen von Leben nach dem Tod. Sie machen aus Fleisch wieder Erde. Der Sprecher wird zum Kompost." },
+  { glyph:'🕸', name:'SPINNENNETZ', text:"„You see me coughin' on cobwebs, I leave 'em coughin' on smoke." Cobwebs im Hals — Zeichen, dass niemand mehr spricht, dass die Lunge lange nicht gebraucht wurde. Verlassenheit als körperliches Symptom." },
+  { glyph:'🪞', name:'SPIEGEL', text:"„No reflection in the mirror, I don't know myself." Der klassische Vampir-Test — aber hier ist es Depression: sich selbst nicht mehr wiederzuerkennen. Vielleicht ist der Sprecher schon längst zum Untoten geworden." },
+  { glyph:'🌧', name:'REGEN', text:"„Why is it still raining? I did what I was supposed to. It's not fair." Der Regen als Erlösung wurde versprochen — aber er reinigt nicht mehr. Er ertränkt nur. Der Sprecher hat den Handel eingehalten, das Universum nicht." },
+  { glyph:'⚰', name:'SARG', text:"„In my coffin with a lock around it." „Fill the coffin, I decay on these mothafuckas." Der Sarg ist Wohnort, nicht Endstation. Der Sprecher lebt bereits darin. Der Tod ist eingezogen." },
+  { glyph:'👻', name:'GEIST', text:"„I'm a ghost, now there's no place I can't go." Als Geist ist er überall — aber nirgends zu Hause. Freiheit durch Verlust von Körper und Bindung." },
+  { glyph:'🐐', name:'ZIEGE', text:"„Growing horns, now you're talking to a goat." Baphomet. Das Opferlamm des Alten Testaments umgedreht: nicht mehr geopfert, sondern opfernd. Die Metamorphose ist vollendet." },
+  { glyph:'🌊', name:'FLUT', text:"„There's a big old flood coming, I just shrug." Die biblische Flut kehrt zurück — aber sie erschreckt nicht mehr. Der Sprecher hat aufgehört zu erwarten, dass Wasser reinigt. Vielleicht muss man sich ihr überlassen." },
+  { glyph:'🌹', name:'ROSEN', text:"„Roses in the attic." Referenz auf V.C. Andrews' Roman über Kinder, die im Dachboden versteckt vergessen wurden. Die schönen Dinge sind da, aber eingesperrt. Zärtlichkeit unter Verschluss." },
+  { glyph:'🩸', name:'BLUT', text:"„Blood forever spillin' upon the seal." „Blood dripping down the legs 'til the cobblestones run red." Blut ist Währung, Symbol, Zeichen. Es wird nie aufhören zu fließen, weil das Album selbst eine Wunde ist." },
+  { glyph:'⚰', name:'DER GRAVEDIGGER', text:"„Engrave decay up on your conscious, I'm the Gravedigger." Der Sprecher ist der Totengräber. Er begräbt nicht nur sich, sondern schreibt anderen den Verfall ins Gewissen. Er wird zum aktiven Agenten der Seuche." },
+  { glyph:'✂', name:'KALI MA', text:"„The Black Dahlia performs a Kali Ma with scissors." Kali — hinduistische Göttin der Zerstörung und Wiedergeburt. Zusammen mit dem berühmtesten ungelösten Mordfall Amerikas (Black Dahlia). Zerstückelung als Ritual." }
+];
+const symGrid = document.getElementById('symbolGrid');
+symbols.forEach((s, i) => {
+  const el = document.createElement('div');
+  el.className = 'symbol';
+  el.innerHTML = `<div class="glyph">${s.glyph}</div><div class="name">${s.name}</div>`;
+  el.onclick = () => {
+    document.getElementById('symbolDetail').innerHTML = `<div class="role" style="color:var(--gold)">${s.name}</div><p style="color:var(--bone); line-height:1.7; margin-top:0.5rem">${s.text}</p>`;
+  };
+  symGrid.appendChild(el);
+});
+
+/* ==================== FLOOD CANVAS ==================== */
+const floodCanvas = document.getElementById('floodCanvas');
+const fctx = floodCanvas.getContext('2d');
+function sizeFlood(){
+  const dpr = window.devicePixelRatio||1;
+  const rect = floodCanvas.getBoundingClientRect();
+  floodCanvas.width = rect.width*dpr;
+  floodCanvas.height = 380*dpr;
+  fctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizeFlood();
+window.addEventListener('resize', sizeFlood);
+
+let raindrops = [];
+let waterOffset = 0;
+function drawFlood(){
+  const w = floodCanvas.width/(window.devicePixelRatio||1);
+  const h = 380;
+  const rain = parseInt(document.getElementById('rainInt').value);
+  const level = parseInt(document.getElementById('waterLvl').value)/100;
+  document.getElementById('rainIntVal').textContent = rain;
+  document.getElementById('waterLvlVal').textContent = Math.round(level*100)+'%';
+  
+  // Sky
+  const sky = fctx.createLinearGradient(0,0,0,h);
+  sky.addColorStop(0, `rgb(${20+rain*0.3},${15+rain*0.2},${25+rain*0.2})`);
+  sky.addColorStop(1, `rgb(${40+rain*0.4},${30+rain*0.3},${45+rain*0.3})`);
+  fctx.fillStyle = sky;
+  fctx.fillRect(0,0,w,h);
+  
+  // Rain
+  const targetRain = rain * 3;
+  while(raindrops.length < targetRain) raindrops.push({x:Math.random()*w, y:Math.random()*h*0.6, speed:8+Math.random()*8});
+  while(raindrops.length > targetRain) raindrops.pop();
+  
+  fctx.strokeStyle = 'rgba(200,220,240,0.4)';
+  fctx.lineWidth = 1;
+  raindrops.forEach(r=>{
+    r.y += r.speed;
+    r.x -= 1;
+    if(r.y > h*(1-level)) { r.y = -10; r.x = Math.random()*w; }
+    fctx.beginPath();
+    fctx.moveTo(r.x, r.y);
+    fctx.lineTo(r.x-2, r.y+8);
+    fctx.stroke();
+  });
+  
+  // Water surface
+  const waterY = h*(1-level);
+  waterOffset += 0.03;
+  fctx.beginPath();
+  fctx.moveTo(0, h);
+  for(let x=0; x<=w; x+=8){
+    const y = waterY + Math.sin(x*0.02 + waterOffset)*3 + Math.sin(x*0.05 + waterOffset*1.5)*2;
+    fctx.lineTo(x, y);
+  }
+  fctx.lineTo(w, h);
+  fctx.closePath();
+  const waterGrad = fctx.createLinearGradient(0, waterY, 0, h);
+  waterGrad.addColorStop(0, 'rgba(58,90,126,0.7)');
+  waterGrad.addColorStop(1, 'rgba(10,20,40,0.95)');
+  fctx.fillStyle = waterGrad;
+  fctx.fill();
+  
+  // Submerged figures (bodies floating)
+  if(level > 0.3){
+    for(let i=0;i<5;i++){
+      const bx = ((i*w/5) + waterOffset*10) % w;
+      const by = waterY + 15 + Math.sin(waterOffset + i)*3;
+      fctx.fillStyle = 'rgba(232,220,196,0.25)';
+      fctx.beginPath();
+      fctx.ellipse(bx, by, 25, 6, 0, 0, Math.PI*2);
+      fctx.fill();
+    }
+  }
+  
+  // Little black sheep silhouette on a hill (if water low)
+  if(level < 0.7){
+    const sy = waterY - 20;
+    const sx = w*0.75;
+    fctx.fillStyle = 'rgba(10,5,8,0.9)';
+    fctx.beginPath();
+    fctx.ellipse(sx, sy, 12, 8, 0, 0, Math.PI*2);
+    fctx.arc(sx-10, sy-4, 5, 0, Math.PI*2);
+    fctx.fill();
+    fctx.fillStyle = 'rgba(232,220,196,0.4)';
+    fctx.font = 'italic 11px Georgia';
+    fctx.textAlign = 'center';
+    fctx.fillText('kleines schwarzes Schaf', sx, sy-20);
+  }
+  
+  // Quote overlay
+  fctx.fillStyle = 'rgba(232,220,196,0.6)';
+  fctx.font = 'italic 13px Georgia';
+  fctx.textAlign = 'left';
+  const quote = level > 0.7 ? '„Why is it still raining? I did what I was supposed to..."' :
+                level > 0.4 ? '„There\'s a big old flood coming, I just shrug."' :
+                              '„Waiting for the flood to come around."';
+  fctx.fillText(quote, 15, 25);
+  
+  requestAnimationFrame(drawFlood);
+}
+drawFlood();
+
+/* ==================== WORD FREQUENCY PLOT ==================== */
+const wordData = [
+  { w:'blood', c:19, cat:'Verfall' },
+  { w:'ghost/ghosts', c:17, cat:'Geist' },
+  { w:'body/bodies', c:16, cat:'Verfall' },
+  { w:'bone(s)', c:15, cat:'Verfall' },
+  { w:'grave/coffin', c:14, cat:'Verfall' },
+  { w:'die/died/dying', c:22, cat:'Verfall' },
+  { w:'ghost/haunted', c:18, cat:'Geist' },
+  { w:'rot/rotten/decay', c:20, cat:'Verfall' },
+  { w:'give up', c:11, cat:'Aufgabe' },
+  { w:'alone/lonely', c:13, cat:'Isolation' },
+  { w:'flies/bugs/maggots', c:12, cat:'Pestilenz' },
+  { w:'plague/sick', c:10, cat:'Pestilenz' },
+  { w:'dance', c:11, cat:'Zwang' },
+  { w:'flood/rain/water', c:9, cat:'Wasser' },
+  { w:'bottom/ground', c:10, cat:'Aufstieg' },
+  { w:'ghost/soul', c:12, cat:'Geist' },
+  { w:'blegh (ad-lib)', c:8, cat:'Verfall' },
+  { w:'blade/scythe', c:7, cat:'Ritual' },
+  { w:'coffin', c:9, cat:'Verfall' },
+  { w:'break/broken', c:14, cat:'Aufgabe' },
+  { w:'wait/waiting', c:10, cat:'Warten' },
+  { w:'cold', c:11, cat:'Isolation' },
+  { w:'hide/hidden', c:8, cat:'Isolation' }
+];
+const catColors = {
+  'Verfall':'#8b0a1a','Geist':'#e8dcc4','Aufgabe':'#6b6167','Isolation':'#2a4a6e',
+  'Pestilenz':'#d81e2e','Zwang':'#9e2e5a','Wasser':'#3a5a7e','Aufstieg':'#7a5a2e',
+  'Ritual':'#8b6f9e','Warten':'#b8935a'
+};
+
+Plotly.newPlot('wordPlot', [{
+  type:'scatter', mode:'markers+text',
+  x: wordData.map((_,i)=> (i%5) + Math.random()*0.3),
+  y: wordData.map((_,i)=> Math.floor(i/5) + Math.random()*0.3),
+  text: wordData.map(d=>d.w),
+  textposition:'middle center',
+  textfont:{ color:'#0a0508', family:'Georgia', size: wordData.map(d=>10+d.c*0.5)[0] },
+  marker:{
+    size: wordData.map(d=>25+d.c*2.5),
+    color: wordData.map(d=>catColors[d.cat]),
+    opacity: 0.85,
+    line:{color:'#e8dcc4', width:1}
+  },
+  hovertext: wordData.map(d=>`<b>${d.w}</b><br>${d.c} Vorkommen<br>Kategorie: ${d.cat}`),
+  hoverinfo:'text'
+}], {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.3)',
+  font:{color:'#e8dcc4', family:'Georgia'},
+  xaxis:{visible:false, range:[-0.5,5]},
+  yaxis:{visible:false, range:[-0.5,5]},
+  margin:{t:20, b:20, l:20, r:20},
+  showlegend:false
+}, {displayModeBar:false, responsive:true});
+
+/* ==================== SPIRAL — Der Zyklus ==================== */
+const spiralCanvas = document.getElementById('spiralCanvas');
+const sctx = spiralCanvas.getContext('2d');
+function sizeSpiral(){
+  const dpr = window.devicePixelRatio||1;
+  const rect = spiralCanvas.getBoundingClientRect();
+  spiralCanvas.width = rect.width*dpr;
+  spiralCanvas.height = 500*dpr;
+  sctx.setTransform(dpr,0,0,dpr,0,0);
+}
+sizeSpiral();
+window.addEventListener('resize', sizeSpiral);
+
+let spiralPhase = 0;
+function drawSpiral(){
+  const w = spiralCanvas.width/(window.devicePixelRatio||1);
+  const h = 500;
+  sctx.clearRect(0,0,w,h);
+  
+  const cx = w/2, cy = h/2;
+  spiralPhase += 0.005;
+  
+  // Background stars
+  for(let i=0;i<80;i++){
+    const sx = (i*97 + spiralPhase*20) % w;
+    const sy = (i*53) % h;
+    const twinkle = 0.3 + Math.sin(spiralPhase*2 + i)*0.3;
+    sctx.fillStyle = `rgba(232,220,196,${twinkle*0.4})`;
+    sctx.beginPath();
+    sctx.arc(sx, sy, 0.5+Math.random()*0.5, 0, Math.PI*2);
+    sctx.fill();
+  }
+  
+  // Descending spiral — tracks 1 to 11
+  const steps = 200;
+  sctx.strokeStyle = 'rgba(139,10,26,0.5)';
+  sctx.lineWidth = 1.5;
+  sctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const t = i/steps;
+    const angle = t*Math.PI*6 + spiralPhase;
+    const r = 180 * (1 - t*0.85);
+    const x = cx + Math.cos(angle)*r;
+    const y = cy + Math.sin(angle)*r + t*40;
+    if(i===0) sctx.moveTo(x,y); else sctx.lineTo(x,y);
+  }
+  sctx.stroke();
+  
+  // Track markers along spiral
+  tracks.forEach((tr, i) => {
+    const t = i/11;
+    const angle = t*Math.PI*6 + spiralPhase;
+    const r = 180 * (1 - t*0.85);
+    const x = cx + Math.cos(angle)*r;
+    const y = cy + Math.sin(angle)*r + t*40;
+    
+    const isLast = i === 11;
+    sctx.fillStyle = isLast ? '#b8935a' : `rgba(216,30,46,${0.5+t*0.5})`;
+    sctx.beginPath();
+    sctx.arc(x, y, isLast ? 6 : 3+t*3, 0, Math.PI*2);
+    sctx.fill();
+    
+    if(isLast){
+      // Glow
+      sctx.shadowColor = '#b8935a';
+      sctx.shadowBlur = 25;
+      sctx.beginPath();
+      sctx.arc(x, y, 8, 0, Math.PI*2);
+      sctx.strokeStyle = '#b8935a';
+      sctx.lineWidth = 2;
+      sctx.stroke();
+      sctx.shadowBlur = 0;
+    }
+    
+    sctx.fillStyle = 'rgba(232,220,196,0.6)';
+    sctx.font = '9px monospace';
+    sctx.textAlign = 'left';
+    sctx.fillText(String(tr.n).padStart(2,'0'), x+8, y+3);
+  });
+  
+  // Center — the VOIDSTAR
+  const starPulse = 1 + Math.sin(spiralPhase*4)*0.15;
+  sctx.save();
+  sctx.translate(cx, cy + 30);
+  sctx.rotate(spiralPhase);
+  // Star shape
+  sctx.fillStyle = '#d81e2e';
+  sctx.shadowColor = '#d81e2e';
+  sctx.shadowBlur = 30;
+  sctx.beginPath();
+  for(let i=0;i<10;i++){
+    const a = (i/10)*Math.PI*2 - Math.PI/2;
+    const rr = (i%2===0 ? 14 : 6) * starPulse;
+    const x = Math.cos(a)*rr;
+    const y = Math.sin(a)*rr;
+    if(i===0) sctx.moveTo(x,y); else sctx.lineTo(x,y);
+  }
+  sctx.closePath();
+  sctx.fill();
+  sctx.shadowBlur = 0;
+  sctx.restore();
+  
+  // Text labels
+  sctx.fillStyle = 'rgba(232,220,196,0.7)';
+  sctx.font = 'italic 12px Georgia';
+  sctx.textAlign = 'center';
+  sctx.fillText('★ VOIDST★R — der Sog nach unten', cx, 25);
+  sctx.fillStyle = 'rgba(184,147,90,0.9)';
+  sctx.font = 'italic 11px Georgia';
+  sctx.fillText('Track 12 · das Warten · das flackernde Licht', cx, h-15);
+  
+  requestAnimationFrame(drawSpiral);
+}
+drawSpiral();
+
+</script>
+</body>
+</html>
