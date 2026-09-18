@@ -55,6 +55,17 @@ The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal}
 
 It can be thought of as the earliest surviving external mathematical memory of early humans.
 
+#### The Dolní Věstonice Bone (Wolf Bone)
+
+<figure>
+    <img style="width: 100%" src="vestonice_wolf_bone.jpg" alt="The Dolní Věstonice wolf bone (Vlčí radius), a wolf radius carved with 55 notches in two groups" />
+    <figcaption class="md">\citealternativetitle{wolfbonephoto} (CC BY-SA 3.0, \citeauthor{wolfbonephoto}): the wolf radius from Dolní Věstonice with 55 notches in two groups of 30 and 25, dated to roughly 27,000 years ago</figcaption>
+</figure>
+
+The **Dolní Věstonice bone** — commonly called the **wolf bone** (Czech: *vlčí radius*, “Věstonice notch-stick”) — is the radius of a wolf, found in 1936 by **\citeauthor{wolfbone}** at the Upper Paleolithic site of Dolní Věstonice in Moravia, Czech Republic, at the base of Mount Děvín. That site is one of the richest Gravettian settlements known (c. 27,000–20,000 BC), famous for the Venus of Dolní Věstonice, one of the oldest fired clay figurines in the world. The 18 cm long bone carries **55 notches** carved in two groups of 30 and 25, separated by two longer marks, and is dated to roughly **27,000 years ago**; a fragment of the head of an ivory Venus figurine lay right next to it. The marks are interpreted as tally marks — some researchers read them as a record of lunar months. What makes the bone remarkable is the *independence* of its invention: the same impulse to “outsource counting to a physical object” shows up, without contact, in south-east Africa (Lebombo, ~43,000 years ago), central Europe (Dolní Věstonice, ~27,000) and again in central Africa (Ishango, ~20,000). Counting devices appear to be a repeatedly convergent human invention rather than a single invention that spread.
+
+*Is there anything older?* No counting device older than the Lebombo bone (~42,000–43,000 years) is known today. Older notched bones do exist — up to roughly **80,000 years old** (e.g., from the Apollo 11 rockshelter in Namibia) — but it is unclear whether their notches served a counting purpose or are merely decorative \cite{historyofmath_wikipedia}. The oldest known *abstract geometric pattern* at all is a hatched silcrete flake from **Blombos Cave** in South Africa, dated to about **71,000–73,000 years ago** — a symbol, but not (as far as we can tell) a number. When the scratch became a digit, we do not know.
+
 #### The Ishango Bone
 
 \marginfig{ishango.jpg}{The \citealternativetitle{ishangobonephoto} is one of the earliest known attempts of outsourcing mathematical thought to physical objects — a baboon fibula carved with grouped notches that may encode prime numbers, lunar months, or a tally of goods.}

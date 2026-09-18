@@ -3183,6 +3183,21 @@ window.bibData = {
 		title: "Border Cave - A Progress Report",
 		year: 1973
 	},
+	"wolfbone": {
+		author: "Karel Absolon",
+		year: 1936,
+		title: "Dolní Věstonice I: the notched wolf radius (Vlčí radius, Věstonice tally stick)",
+		alternativetitle: "Dolní Věstonice Bone (Wolf Bone)",
+		url: "https://en.wikipedia.org/wiki/Doln%C3%AD_V%C4%9Bstonice_(archaeological_site)"
+	},
+	"wolfbonephoto": {
+		title: "Vlčí radius (Věstonická vrubovka), Inv. č. 30047 (MZM - Ústav Anthropos Brno)",
+		author: "J3n6",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Wolf Bone from Dolní Věstonice"
+	},
 	"ishango12": {
 		url: "https://arxiv.org/abs/1204.1019",
 		title: "Does the Ishango Bone Indicate Knowledge of the Base 12? An Interpretation of a Prehistoric Discovery, the First Mathematical Tool of Humankind",
