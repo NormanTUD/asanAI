@@ -636,13 +636,13 @@ const characters = [
   {
     name:"SLEUTH",
     archetype:"Der Trickster · Der Wortklinge",
-    desc:`Der verbal virtuoseste. Er verweist auf Yo-Yo Ma, Red Dead Redemption, Abbey Road, Hyperion, Kali Ma, die Schwarze Dahlie. Ein Bewusstsein, das durch Popkultur, Mythos und Straße gleichzeitig zappt. Er spricht die härtesten Wahrheiten in Wortspielen: „I'm giving up 'cause I'm drowning on dry land.""`,
+    desc:"Der verbal virtuoseste. Er verweist auf Yo-Yo Ma, Red Dead Redemption, Abbey Road, Hyperion, Kali Ma, die Schwarze Dahlie. Ein Bewusstsein, das durch Popkultur, Mythos und Straße gleichzeitig zappt. Er spricht die härtesten Wahrheiten in Wortspielen: „I'm giving up 'cause I'm drowning on dry land.“",
     signature:"„I'm dead but I still haven't died."
   },
   {
     name:"Witchhouse 40k",
     archetype:"Der Kämpfer · Der Aufsteiger",
-    desc:`Die trotzige Stimme. Wo MOSSBACK aufgibt, sagt er: „I ain't gon' die." Er kam „from the bottom", ist jetzt reich („thumbin' through blue hunnids"), aber allein („I was no one now they know my name"). Sein Ad-Lib ‚Blegh' ist eine physische Ausatmung des Verfalls — Verwesung, die spricht."`,
+    desc:"Die trotzige Stimme. Wo MOSSBACK aufgibt, sagt er: „I ain't gon' die.“ Er kam „from the bottom“, ist jetzt reich („thumbin' through blue hunnids“), aber allein („I was no one now they know my name“). Sein Ad-Lib ‚Blegh' ist eine physische Ausatmung des Verfalls — Verwesung, die spricht.",
     signature:"„I've been growing from the ground."
   }
 ];
@@ -673,16 +673,16 @@ Plotly.newPlot('voicePlot', [{
 /* ==================== THEME NETWORK ==================== */
 const themes = [
   { id:'decay', label:'Verfall', color:'#8b0a1a', tracks:[1,2,3,4,5,6,8,9,10,11], desc:"Der Körper als Kompost. Wunden, Läsionen, Maden, Fliegen, verrottende Knochen. In fast jedem Track wörtlich anwesend." },
-  { id:'hunger', label:'Hunger', color:'#b8935a', tracks:[1,4,8], desc:"„Hunger spell", „starving to death", „ate the bugs off me". Ein Hunger, den nichts stillt — nicht Geld, nicht Ritual, nicht Ruhm." },
-  { id:'giveup', label:'Aufgabe', color:'#6b6167', tracks:[1,2,3,7,9,11], desc:"„The way is shut so I give up." Eine wiederkehrende Kapitulation, die aber nie endgültig ist — auf jede Aufgabe folgt ein neuer Track." },
-  { id:'survive', label:'Trotz / Überleben', color:'#4a5d3a', tracks:[4,5,8,9,10], desc:"„I ain't gon' die." „Live or die, I'ma hold it down." Witchhouse 40k's Gegenstimme zur Aufgabe. Sturheit als einzige Waffe." },
-  { id:'plague', label:'Pestilenz', color:'#d81e2e', tracks:[1,6,7,12], desc:"Von „I've got the plague, see it on my breath" bis „Plant the seed of plague". Krankheit wird von Zustand zu Werkzeug." },
-  { id:'ghost', label:'Geist / Spectrum', color:'#e8dcc4', tracks:[3,4,5,8,9,10], desc:"„I'm a ghost, now there's no place I can't go." Der Sprecher wird körperlos — gleichzeitig Freiheit und Verlust." },
+  { id:'hunger', label:'Hunger', color:'#b8935a', tracks:[1,4,8], desc:"„Hunger spell“, „starving to death“, „ate the bugs off me“. Ein Hunger, den nichts stillt — nicht Geld, nicht Ritual, nicht Ruhm." },
+  { id:'giveup', label:'Aufgabe', color:'#6b6167', tracks:[1,2,3,7,9,11], desc:"„The way is shut so I give up.“ Eine wiederkehrende Kapitulation, die aber nie endgültig ist — auf jede Aufgabe folgt ein neuer Track." },
+  { id:'survive', label:'Trotz / Überleben', color:'#4a5d3a', tracks:[4,5,8,9,10], desc:"„I ain't gon' die.“ „Live or die, I'ma hold it down.“ Witchhouse 40k's Gegenstimme zur Aufgabe. Sturheit als einzige Waffe." },
+  { id:'plague', label:'Pestilenz', color:'#d81e2e', tracks:[1,6,7,12], desc:"Von „I've got the plague, see it on my breath“ bis „Plant the seed of plague“. Krankheit wird von Zustand zu Werkzeug." },
+  { id:'ghost', label:'Geist / Spectrum', color:'#e8dcc4', tracks:[3,4,5,8,9,10], desc:"„I'm a ghost, now there's no place I can't go.“ Der Sprecher wird körperlos — gleichzeitig Freiheit und Verlust." },
   { id:'ritual', label:'Ritual / Okkult', color:'#8b6f9e', tracks:[2,5,7,8], desc:"Kali Ma, Baphomet, 3:33, Coven, Kessel, Pentagramm, Hörner. Ein zunehmend expliziter Pakt mit dunklen Mächten." },
-  { id:'isolation', label:'Isolation', color:'#2a4a6e', tracks:[1,2,4,10,11,12], desc:"„Still alone", „cut my ties", „on my own". Das Album findet nie zu Gemeinschaft. Selbst „the gang" ist eine Gemeinschaft von Geistern." },
-  { id:'rise', label:'Aufstieg aus dem Boden', color:'#7a5a2e', tracks:[4,9,10], desc:"„Came from the bottom", „growing from the ground", „hopping out the graves". Etwas wächst aus dem Verfall — aber wohin?" },
-  { id:'water', label:'Wasser / Flut', color:'#3a5a7e', tracks:[2,9,12], desc:"„Cut it all down and flood it out." „Big old flood coming." „Why is it still raining?" Wasser als Reinigung, die zur Ertränkung wird." },
-  { id:'money', label:'Geld', color:'#5a5a3a', tracks:[4,8,11], desc:"„Nine grand gone in three weeks." „Thumbin' through blue hunnids." Reichtum kommt — verändert aber nichts an der Leere." },
+  { id:'isolation', label:'Isolation', color:'#2a4a6e', tracks:[1,2,4,10,11,12], desc:"„Still alone“, „cut my ties“, „on my own“. Das Album findet nie zu Gemeinschaft. Selbst „the gang“ ist eine Gemeinschaft von Geistern." },
+  { id:'rise', label:'Aufstieg aus dem Boden', color:'#7a5a2e', tracks:[4,9,10], desc:"„Came from the bottom“, „growing from the ground“, „hopping out the graves“. Etwas wächst aus dem Verfall — aber wohin?" },
+  { id:'water', label:'Wasser / Flut', color:'#3a5a7e', tracks:[2,9,12], desc:"„Cut it all down and flood it out.“ „Big old flood coming.“ „Why is it still raining?“ Wasser als Reinigung, die zur Ertränkung wird." },
+  { id:'money', label:'Geld', color:'#5a5a3a', tracks:[4,8,11], desc:"„Nine grand gone in three weeks.“ „Thumbin' through blue hunnids.“ Reichtum kommt — verändert aber nichts an der Leere." },
   { id:'dance', label:'Tanz / Zwang', color:'#9e2e5a', tracks:[6], desc:"Das Zentrum. RATKING 1518 macht Straßburgs Tanzwut zur Allegorie jeder Sucht: unfreiwilliges Weiterbewegen bis zum Kollaps." }
 ];
 
@@ -1097,11 +1097,11 @@ sizePenta();
 window.addEventListener('resize', sizePenta);
 
 const ritualPoints = [
-  { angle:-90, title:"◈ DAS OPFER", text:"„A debt of blood to Baphomet." Der Preis für Kraft ist Blut — und schließlich die Seele selbst. „I sold it all and I got nobody to blame." Der Sprecher ist der einzige, dem er die Konsequenzen zuschreiben kann. Kein Teufel wird beschuldigt. Er wählte." },
-  { angle:-18, title:"◈ DER KESSEL", text:"MOSSBACK: „I've gathered all remnants for the cauldron. The stench emitting from the mixture, truly noxious." Er kocht Reste zusammen — Fragmente von sich selbst, seine Vergangenheit, was übrig blieb. Der Kessel ist Selbstauflösung als Küche." },
-  { angle:54, title:"◈ DIE HÖRNER", text:"„I have completed my shrine, growing horns, now you're talking to a goat." Die Transformation ist vollzogen. Der Sprecher ist nicht mehr Mensch, sondern Ziege — Baphomets Tier. Das Opferlamm ist das Opfer geworden." },
-  { angle:126, title:"◈ DIE STUNDE", text:"3:33 Uhr — die Umkehrung von 3:00, der göttlichen Stunde. „Witchery at 3:33, it's when I gain my power." Der siebte Tag: statt zu ruhen, lacht der Sprecher manisch. Sakrale Zeit wird umgedreht, umgemünzt." },
-  { angle:198, title:"◈ DER COVEN", text:"„Got a coven out in Russia rushing 'tally ho'." „With the gang, Haunted House up in the crypts." Die Gemeinschaft ist da — aber es ist eine Gemeinschaft der Toten. Zugehörigkeit gibt es, aber nur im Grab." }
+  { angle:-90, title:"◈ DAS OPFER", text:"„A debt of blood to Baphomet.“ Der Preis für Kraft ist Blut — und schließlich die Seele selbst. „I sold it all and I got nobody to blame.“ Der Sprecher ist der einzige, dem er die Konsequenzen zuschreiben kann. Kein Teufel wird beschuldigt. Er wählte." },
+  { angle:-18, title:"◈ DER KESSEL", text:"MOSSBACK: „I've gathered all remnants for the cauldron. The stench emitting from the mixture, truly noxious.“ Er kocht Reste zusammen — Fragmente von sich selbst, seine Vergangenheit, was übrig blieb. Der Kessel ist Selbstauflösung als Küche." },
+  { angle:54, title:"◈ DIE HÖRNER", text:"„I have completed my shrine, growing horns, now you're talking to a goat.“ Die Transformation ist vollzogen. Der Sprecher ist nicht mehr Mensch, sondern Ziege — Baphomets Tier. Das Opferlamm ist das Opfer geworden." },
+  { angle:126, title:"◈ DIE STUNDE", text:"3:33 Uhr — die Umkehrung von 3:00, der göttlichen Stunde. „Witchery at 3:33, it's when I gain my power.“ Der siebte Tag: statt zu ruhen, lacht der Sprecher manisch. Sakrale Zeit wird umgedreht, umgemünzt." },
+  { angle:198, title:"◈ DER COVEN", text:"„Got a coven out in Russia rushing 'tally ho'.“ „With the gang, Haunted House up in the crypts.“ Die Gemeinschaft ist da — aber es ist eine Gemeinschaft der Toten. Zugehörigkeit gibt es, aber nur im Grab." }
 ];
 
 let activeRitual = -1;
@@ -1225,18 +1225,18 @@ pentaCanvas.addEventListener('click', (e) => {
 
 /* ==================== SYMBOLS ==================== */
 const symbols = [
-  { glyph:'🪱', name:'MADEN', text:"„Worm food in a ditch." „Bugs up in the brain." Maden fressen den Körper, aber sie sind auch das erste Zeichen von Leben nach dem Tod. Sie machen aus Fleisch wieder Erde. Der Sprecher wird zum Kompost." },
-  { glyph:'🕸', name:'SPINNENNETZ', text:"„You see me coughin' on cobwebs, I leave 'em coughin' on smoke." Cobwebs im Hals — Zeichen, dass niemand mehr spricht, dass die Lunge lange nicht gebraucht wurde. Verlassenheit als körperliches Symptom." },
-  { glyph:'🪞', name:'SPIEGEL', text:"„No reflection in the mirror, I don't know myself." Der klassische Vampir-Test — aber hier ist es Depression: sich selbst nicht mehr wiederzuerkennen. Vielleicht ist der Sprecher schon längst zum Untoten geworden." },
-  { glyph:'🌧', name:'REGEN', text:"„Why is it still raining? I did what I was supposed to. It's not fair." Der Regen als Erlösung wurde versprochen — aber er reinigt nicht mehr. Er ertränkt nur. Der Sprecher hat den Handel eingehalten, das Universum nicht." },
-  { glyph:'⚰', name:'SARG', text:"„In my coffin with a lock around it." „Fill the coffin, I decay on these mothafuckas." Der Sarg ist Wohnort, nicht Endstation. Der Sprecher lebt bereits darin. Der Tod ist eingezogen." },
-  { glyph:'👻', name:'GEIST', text:"„I'm a ghost, now there's no place I can't go." Als Geist ist er überall — aber nirgends zu Hause. Freiheit durch Verlust von Körper und Bindung." },
-  { glyph:'🐐', name:'ZIEGE', text:"„Growing horns, now you're talking to a goat." Baphomet. Das Opferlamm des Alten Testaments umgedreht: nicht mehr geopfert, sondern opfernd. Die Metamorphose ist vollendet." },
-  { glyph:'🌊', name:'FLUT', text:"„There's a big old flood coming, I just shrug." Die biblische Flut kehrt zurück — aber sie erschreckt nicht mehr. Der Sprecher hat aufgehört zu erwarten, dass Wasser reinigt. Vielleicht muss man sich ihr überlassen." },
-  { glyph:'🌹', name:'ROSEN', text:"„Roses in the attic." Referenz auf V.C. Andrews' Roman über Kinder, die im Dachboden versteckt vergessen wurden. Die schönen Dinge sind da, aber eingesperrt. Zärtlichkeit unter Verschluss." },
-  { glyph:'🩸', name:'BLUT', text:"„Blood forever spillin' upon the seal." „Blood dripping down the legs 'til the cobblestones run red." Blut ist Währung, Symbol, Zeichen. Es wird nie aufhören zu fließen, weil das Album selbst eine Wunde ist." },
-  { glyph:'⚰', name:'DER GRAVEDIGGER', text:"„Engrave decay up on your conscious, I'm the Gravedigger." Der Sprecher ist der Totengräber. Er begräbt nicht nur sich, sondern schreibt anderen den Verfall ins Gewissen. Er wird zum aktiven Agenten der Seuche." },
-  { glyph:'✂', name:'KALI MA', text:"„The Black Dahlia performs a Kali Ma with scissors." Kali — hinduistische Göttin der Zerstörung und Wiedergeburt. Zusammen mit dem berühmtesten ungelösten Mordfall Amerikas (Black Dahlia). Zerstückelung als Ritual." }
+  { glyph:'🪱', name:'MADEN', text:"„Worm food in a ditch.“ „Bugs up in the brain.“ Maden fressen den Körper, aber sie sind auch das erste Zeichen von Leben nach dem Tod. Sie machen aus Fleisch wieder Erde. Der Sprecher wird zum Kompost." },
+  { glyph:'🕸', name:'SPINNENNETZ', text:"„You see me coughin' on cobwebs, I leave 'em coughin' on smoke.“ Cobwebs im Hals — Zeichen, dass niemand mehr spricht, dass die Lunge lange nicht gebraucht wurde. Verlassenheit als körperliches Symptom." },
+  { glyph:'🪞', name:'SPIEGEL', text:"„No reflection in the mirror, I don't know myself.“ Der klassische Vampir-Test — aber hier ist es Depression: sich selbst nicht mehr wiederzuerkennen. Vielleicht ist der Sprecher schon längst zum Untoten geworden." },
+  { glyph:'🌧', name:'REGEN', text:"„Why is it still raining? I did what I was supposed to. It's not fair.“ Der Regen als Erlösung wurde versprochen — aber er reinigt nicht mehr. Er ertränkt nur. Der Sprecher hat den Handel eingehalten, das Universum nicht." },
+  { glyph:'⚰', name:'SARG', text:"„In my coffin with a lock around it.“ „Fill the coffin, I decay on these mothafuckas.“ Der Sarg ist Wohnort, nicht Endstation. Der Sprecher lebt bereits darin. Der Tod ist eingezogen." },
+  { glyph:'👻', name:'GEIST', text:"„I'm a ghost, now there's no place I can't go.“ Als Geist ist er überall — aber nirgends zu Hause. Freiheit durch Verlust von Körper und Bindung." },
+  { glyph:'🐐', name:'ZIEGE', text:"„Growing horns, now you're talking to a goat.“ Baphomet. Das Opferlamm des Alten Testaments umgedreht: nicht mehr geopfert, sondern opfernd. Die Metamorphose ist vollendet." },
+  { glyph:'🌊', name:'FLUT', text:"„There's a big old flood coming, I just shrug.“ Die biblische Flut kehrt zurück — aber sie erschreckt nicht mehr. Der Sprecher hat aufgehört zu erwarten, dass Wasser reinigt. Vielleicht muss man sich ihr überlassen." },
+  { glyph:'🌹', name:'ROSEN', text:"„Roses in the attic.“ Referenz auf V.C. Andrews' Roman über Kinder, die im Dachboden versteckt vergessen wurden. Die schönen Dinge sind da, aber eingesperrt. Zärtlichkeit unter Verschluss." },
+  { glyph:'🩸', name:'BLUT', text:"„Blood forever spillin' upon the seal.“ „Blood dripping down the legs 'til the cobblestones run red.“ Blut ist Währung, Symbol, Zeichen. Es wird nie aufhören zu fließen, weil das Album selbst eine Wunde ist." },
+  { glyph:'⚰', name:'DER GRAVEDIGGER', text:"„Engrave decay up on your conscious, I'm the Gravedigger.“ Der Sprecher ist der Totengräber. Er begräbt nicht nur sich, sondern schreibt anderen den Verfall ins Gewissen. Er wird zum aktiven Agenten der Seuche." },
+  { glyph:'✂', name:'KALI MA', text:"„The Black Dahlia performs a Kali Ma with scissors.“ Kali — hinduistische Göttin der Zerstörung und Wiedergeburt. Zusammen mit dem berühmtesten ungelösten Mordfall Amerikas (Black Dahlia). Zerstückelung als Ritual." }
 ];
 const symGrid = document.getElementById('symbolGrid');
 symbols.forEach((s, i) => {
