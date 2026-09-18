@@ -121,10 +121,17 @@
     <div class="ctrl">
       <label>Render mode</label>
       <select id="rendermode">
-        <option value="points" selected>points (depth-sorted)</option>
-        <option value="surface">surface shell (solid)</option>
+        <option value="surface" selected>surface shell (solid)</option>
+        <option value="points">points</option>
         <option value="volume">volume (ray-marched)</option>
         <option value="mip">max-intensity projection</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Points style</label>
+      <select id="solid">
+        <option value="1" selected>solid (opaque)</option>
+        <option value="0">transparent (alpha)</option>
       </select>
     </div>
     <div class="ctrl">

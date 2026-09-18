@@ -16,8 +16,9 @@ const state = {
   samples: {},
   slice: { x: 14, y: 14, z: 32 },
   thr: 10, opacity: 1.0, cmap: "magma", log: true,
-  pointSize: 2.0, showAxes: true,
-  renderMode: "points",  // "points" | "surface" | "volume" | "mip"
+  pointSize: 3.0, showAxes: true,
+  renderMode: "surface", // "points" | "surface" | "volume" | "mip"
+  solid: true,           // points: opaque (solid) vs alpha-blended
 };
 
 // cache of already-fetched volumes keyed by `${variant}:${name}`
@@ -263,7 +264,7 @@ function rebuild3D() {
         colors[3*k]   = r;
         colors[3*k+1] = g;
         colors[3*k+2] = b;
-        alphas[k]     = Math.min(1, t * state.opacity);
+        alphas[k]     = state.solid ? 1 : Math.min(1, t * state.opacity);
         k++;
       }
     }
@@ -274,9 +275,10 @@ function rebuild3D() {
   geom.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
   geom.setAttribute("alpha",    new THREE.BufferAttribute(alphas, 1));
 
-  // custom shader material so per-voxel alpha works
+  // custom shader material: per-voxel alpha in "transparent" mode,
+  // opaque + depth-written (solid) in "solid" mode
   const mat = new THREE.ShaderMaterial({
-    uniforms: { size: { value: state.pointSize } },
+    uniforms: { size: { value: state.pointSize }, uRound: { value: state.solid ? 0 : 1 } },
     vertexShader: `
       attribute float alpha;
       varying vec3 vColor;
@@ -291,17 +293,18 @@ function rebuild3D() {
       }
     `,
     fragmentShader: `
+      uniform float uRound;
       varying vec3 vColor;
       varying float vAlpha;
       void main() {
         vec2 d = gl_PointCoord - vec2(0.5);
-        if (dot(d,d) > 0.25) discard;         // round points
+        if (uRound > 0.5 && dot(d,d) > 0.25) discard;  // round points (alpha mode)
         gl_FragColor = vec4(vColor, vAlpha);
       }
     `,
     vertexColors: true,
-    transparent:  true,
-    depthWrite:   false,
+    transparent:  !state.solid,
+    depthWrite:   state.solid,
   });
 
   pointCloud = new THREE.Points(geom, mat);
@@ -590,7 +593,7 @@ function showError(err) {
 
   function pointMaterial() {
     return new THREE.ShaderMaterial({
-      uniforms: { size: { value: state.pointSize } },
+      uniforms: { size: { value: state.pointSize }, uRound: { value: state.solid ? 0 : 1 } },
       vertexShader: `
         attribute float alpha;
         varying vec3 vColor; varying float vAlpha; uniform float size;
@@ -598,10 +601,12 @@ function showError(err) {
           vec4 mv = modelViewMatrix * vec4(position,1.0);
           gl_PointSize = size*(300.0/-mv.z); gl_Position = projectionMatrix*mv; }`,
       fragmentShader: `
+        uniform float uRound;
         varying vec3 vColor; varying float vAlpha;
-        void main(){ vec2 d=gl_PointCoord-vec2(0.5); if(dot(d,d)>0.25) discard;
+        void main(){ vec2 d=gl_PointCoord-vec2(0.5);
+          if (uRound > 0.5 && dot(d,d)>0.25) discard;
           gl_FragColor=vec4(vColor,vAlpha); }`,
-      vertexColors: true, transparent: true, depthWrite: false
+      vertexColors: true, transparent: !state.solid, depthWrite: state.solid
     });
   }
 
@@ -629,7 +634,7 @@ function showError(err) {
       if (state.cmap === "brightness") { const bt = z / (B - 1); [r, g, b] = CMAPS.magma(bt); }
       else { const t = state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax; [r, g, b] = cmap(t); }
       colors[k*3] = r; colors[k*3+1] = g; colors[k*3+2] = b;
-      alphas[k] = Math.min(1, (state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax) * state.opacity);
+      alphas[k] = state.solid ? 1 : Math.min(1, (state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax) * state.opacity);
       k++;
     }
     const geom = new THREE.BufferGeometry();
@@ -665,7 +670,7 @@ function showError(err) {
   (function slicingLoop() {
     requestAnimationFrame(slicingLoop);
     const vol = state.volume; if (!vol) return;
-    const cs = [state.thr, state.opacity, state.log, state.cmap, state.pointSize, clip.axis, clip.pos].join("|");
+    const cs = [state.thr, state.opacity, state.log, state.cmap, state.pointSize, state.solid, clip.axis, clip.pos].join("|");
     if (vol !== _clipVol || cs !== _clipSig) { _clipVol = vol; _clipSig = cs; buildSliceCloud(); }
     const fs = [focus.axis, focus.pos, state.log, state.cmap].join("|");
     if (vol !== _focusVol || fs !== _focusSig) { _focusVol = vol; _focusSig = fs; drawFocus(); }
@@ -812,7 +817,8 @@ function showError(err) {
     for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < B; z++)
       if (vol[x*H*B + y*B + z] >= thr && clipOk(x, y, z) && isShell(x, y, z)) n++;
     if (!n) return;
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.92, 0.92, 0.92), new THREE.MeshBasicMaterial(), n);
+    // 0.99 (not 1.0) avoids z-fighting on shared faces while still tiling solid
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.99, 0.99, 0.99), new THREE.MeshBasicMaterial(), n);
     const M = new THREE.Matrix4(), CC = new THREE.Color();
     const cmap = state.cmap === "brightness" ? CMAPS.magma : (CMAPS[state.cmap] || CMAPS.magma);
     let k = 0;
@@ -1028,10 +1034,17 @@ function showError(err) {
     }
 
     // points: re-sort only while the camera is actually moving
-    if (mode === "points" && camDirty) { camDirty = false; sortActivePoints(); }
+    // (opaque/solid points don't need an order — depth testing handles it)
+    if (mode === "points" && !state.solid && camDirty) { camDirty = false; sortActivePoints(); }
   })();
 
   document.getElementById("rendermode").addEventListener("change", e => {
+    if (e.target.value === "points") camDirty = true;   // re-sort on (re)entry
     state.renderMode = e.target.value;
+  });
+  document.getElementById("solid").addEventListener("change", e => {
+    state.solid = e.target.value === "1";
+    if (!state.solid) camDirty = true;
+    rebuild3D();
   });
 })();
