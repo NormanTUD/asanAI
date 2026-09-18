@@ -34,6 +34,11 @@
   .error-card pre { background: #0e0e12; border: 1px solid #2a2a35; padding: 12px 14px; border-radius: 4px; color: #d8d8de; font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; overflow: auto; }
   .error-actions { display: flex; gap: 8px; margin-top: 16px; }
   .error-actions button { width: auto; }
+  .btn-row { display: flex; gap: 6px; margin-bottom: 14px; }
+  .btn-row button { flex: 1; width: auto; }
+  .lookup { display: flex; gap: 4px; }
+  .lookup input { flex: 1; min-width: 0; background: #22222a; color: #e8e8ea; border: 1px solid #333; padding: 6px 4px; border-radius: 4px; }
+  #hist-count, #hist-bright { width: 100%; height: 64px; display: block; background: #08080c; border: 1px solid #222; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -62,6 +67,28 @@
       <div class="samples" id="samples"></div>
     </div>
     <div class="ctrl stat" id="volume-stats"></div>
+
+    <h3>Distributions</h3>
+    <div class="ctrl">
+      <label>voxel count → #voxels</label>
+      <canvas id="hist-count" width="256" height="64"></canvas>
+    </div>
+    <div class="ctrl">
+      <label>brightness bin → #hits</label>
+      <canvas id="hist-bright" width="128" height="64"></canvas>
+    </div>
+
+    <h3>Inspect voxel</h3>
+    <div class="ctrl stat" id="hover-result">hover the 3D cloud…</div>
+    <div class="ctrl">
+      <label>lookup x / y / bin</label>
+      <div class="lookup">
+        <input id="lx" type="number" min="0" max="27" value="14">
+        <input id="ly" type="number" min="0" max="27" value="14">
+        <input id="lz" type="number" min="0" max="63" value="32">
+      </div>
+      <div class="stat" id="lookup-result" style="margin-top:8px"></div>
+    </div>
   </aside>
 
   <!-- CENTER: 3D + slices -->
@@ -125,6 +152,19 @@
     <div class="ctrl">
       <label>Point size = <span id="ps-val">2.0</span></label>
       <input type="range" id="ps" min="0.5" max="10" step="0.1" value="2.0">
+    </div>
+
+    <h3>Tools</h3>
+    <div class="btn-row">
+      <button id="btn-snap">Snapshot</button>
+      <button id="btn-reset">Reset view</button>
+    </div>
+    <div class="ctrl">
+      <label>Auto-rotate</label>
+      <select id="autorot">
+        <option value="0" selected>off</option>
+        <option value="1">on</option>
+      </select>
     </div>
   </aside>
 

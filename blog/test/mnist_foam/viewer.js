@@ -432,3 +432,136 @@ function showError(err) {
     showError(err);
   }
 })();
+
+// ======================================================================
+// EXTRA TOOLS (purely additive) — distributions, voxel inspector,
+// raw/aug/Δ lookup, snapshot, reset view, auto-rotate.
+// Runs after init3D() (which ran synchronously inside main above).
+// ======================================================================
+(function initExtras() {
+  if (!renderer || !camera || !controls) return;
+  const bscale = () => (state.meta && state.meta.brightness_scale) || Math.round(256 / state.shape[2]);
+
+  // ---- histograms: redraw only when their inputs change ----
+  let _lastVol = null, _lastSig = "";
+  function drawCountHist() {
+    const cv = document.getElementById("hist-count"); if (!cv) return;
+    const ctx = cv.getContext("2d"); const W = cv.width, Hh = cv.height;
+    ctx.clearRect(0, 0, W, Hh);
+    const vol = state.volume, NB = W, vmax = Math.max(1, state.volMax);
+    const bins = new Float64Array(NB);
+    for (let i = 0; i < vol.length; i++) {
+      const t = state.log ? Math.log(1 + vol[i]) / Math.log(1 + vmax) : vol[i] / vmax;
+      let b = Math.round(t * (NB - 1)); if (b < 0) b = 0; else if (b > NB - 1) b = NB - 1;
+      bins[b]++;
+    }
+    let maxB = 0; for (let i = 0; i < NB; i++) if (bins[i] > maxB) maxB = bins[i];
+    const cmap = CMAPS[state.cmap] || CMAPS.magma;
+    for (let i = 0; i < NB; i++) {
+      const h = maxB ? (bins[i] / maxB) * (Hh - 1) : 0;
+      const [r, g, b] = cmap(i / (NB - 1));
+      ctx.fillStyle = `rgb(${(r*255)|0},${(g*255)|0},${(b*255)|0})`;
+      ctx.fillRect(i, Hh - h, 1, h);
+    }
+    const tT = state.log ? Math.log(1 + state.thr) / Math.log(1 + vmax) : state.thr / vmax;
+    ctx.fillStyle = "#f44"; ctx.fillRect(Math.round(tT * (NB - 1)), 0, 1, Hh);   // threshold marker
+  }
+  function drawBrightHist() {
+    const cv = document.getElementById("hist-bright"); if (!cv) return;
+    const ctx = cv.getContext("2d"); const W = cv.width, Hh = cv.height;
+    ctx.clearRect(0, 0, W, Hh);
+    const vol = state.volume; const [Wd, Hd, B] = state.shape;
+    const bins = new Float64Array(B);
+    for (let x = 0; x < Wd; x++) for (let y = 0; y < Hd; y++)
+      for (let z = 0; z < B; z++) bins[z] += vol[x*Hd*B + y*B + z];
+    let maxB = 0; for (let z = 0; z < B; z++) if (bins[z] > maxB) maxB = bins[z];
+    const perCol = W / (B - 1);
+    for (let z = 0; z < B; z++) {
+      const h = maxB ? (bins[z] / maxB) * (Hh - 1) : 0;
+      const [r, g, b] = CMAPS.magma(z / (B - 1));
+      ctx.fillStyle = `rgb(${(r*255)|0},${(g*255)|0},${(b*255)|0})`;
+      ctx.fillRect(Math.round(z * perCol), Hh - h, Math.max(1, perCol), h);
+    }
+  }
+  (function extrasLoop() {
+    requestAnimationFrame(extrasLoop);
+    const vol = state.volume; if (!vol) return;
+    const sig = state.thr + "|" + state.log + "|" + state.cmap;
+    if (vol === _lastVol && sig === _lastSig) return;
+    _lastVol = vol; _lastSig = sig;
+    drawCountHist(); drawBrightHist();
+  })();
+
+  // ---- voxel hover inspector (raycast the point cloud) ----
+  const raycaster = new THREE.Raycaster();
+  raycaster.params.Points.threshold = 0.5;
+  const pointer = new THREE.Vector2();
+  let _lastRay = 0;
+  renderer.domElement.addEventListener("pointermove", (e) => {
+    const el = document.getElementById("hover-result");
+    if (!el) return;
+    if (!pointCloud) { el.textContent = "hover the 3D cloud…"; return; }
+    const now = performance.now(); if (now - _lastRay < 40) return; _lastRay = now;
+    const r = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObject(pointCloud);
+    if (hits.length) {
+      const idx = hits[0].index, p = pointCloud.geometry.attributes.position;
+      const x = Math.round(p.getX(idx)), y = Math.round(p.getY(idx)), z = Math.round(p.getZ(idx));
+      const c = state.volume[x*state.shape[1]*state.shape[2] + y*state.shape[2] + z];
+      el.textContent = `voxel (x=${x}, y=${y}, bin=${z})\ncount = ${c}\nbrightness ~${z*bscale()}–${(z+1)*bscale()}`;
+    } else {
+      el.textContent = "hover the 3D cloud…";
+    }
+  });
+
+  // ---- voxel lookup: show raw / aug / Δ for an exact (x,y,bin) ----
+  function doLookup() {
+    const el = document.getElementById("lookup-result");
+    const x = +document.getElementById("lx").value;
+    const y = +document.getElementById("ly").value;
+    const z = +document.getElementById("lz").value;
+    const [W, H, B] = state.shape;
+    if (!state.volume) { el.textContent = "no data loaded"; return; }
+    if (x < 0 || x >= W || y < 0 || y >= H || z < 0 || z >= B) {
+      el.textContent = `out of range (x 0–${W-1}, y 0–${H-1}, bin 0–${B-1})`; return;
+    }
+    const idx = x*H*B + y*B + z;
+    const name = state.currentDigit === "total" ? "total" : `digit_${state.currentDigit}`;
+    const sv = state.volume, sm = state.volMax, st = state.volTotal;  // save: don't disturb the view
+    const val = { current: state.volume[idx] };
+    (async () => {
+      for (const v of ["raw", "aug"]) {
+        try { await loadVolume(v, name); val[v] = volCache[v + ":" + name].vol[idx]; }
+        catch (e) { val[v] = "n/a (file missing)"; }
+      }
+      state.volume = sv; state.volMax = sm; state.volTotal = st;      // restore
+      val.diff = (typeof val.raw === "number" && typeof val.aug === "number") ? val.aug - val.raw : "n/a";
+      el.textContent =
+        `voxel (x=${x}, y=${y}, bin=${z})  brightness ~${z*bscale()}–${(z+1)*bscale()}\n` +
+        `raw   = ${val.raw}\naug   = ${val.aug}\nΔ a−r = ${val.diff}\n` +
+        `current (${state.variant}) = ${val.current}`;
+    })();
+  }
+  ["lx", "ly", "lz"].forEach(id => document.getElementById(id).addEventListener("input", doLookup));
+
+  // ---- view tools: snapshot, reset, auto-rotate ----
+  document.getElementById("btn-snap").addEventListener("click", () => {
+    renderer.render(scene, camera);                       // fresh frame in the buffer
+    const a = document.createElement("a");
+    a.href = renderer.domElement.toDataURL("image/png");
+    a.download = `mnist_foam_${state.currentDigit}_${state.variant}.png`;
+    a.click();
+  });
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    camera.position.set(60, 60, 90);
+    controls.target.set(14, 14, 32);
+    controls.update();
+  });
+  document.getElementById("autorot").addEventListener("change", (e) => {
+    controls.autoRotate = e.target.value === "1";
+    controls.autoRotateSpeed = 1.5;
+  });
+})();
