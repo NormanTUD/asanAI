@@ -3,6 +3,9 @@
 //   - three orthogonal 2D slices (canvas)
 //   - a full 3D voxel point cloud (three.js)
 
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
 const DATA_DIR = "data/";
 const state = {
   meta: null,
@@ -133,7 +136,7 @@ function init3D() {
   renderer.setSize(w, h);
   container.appendChild(renderer.domElement);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(14, 14, 32);
   controls.enableDamping = true;
 
