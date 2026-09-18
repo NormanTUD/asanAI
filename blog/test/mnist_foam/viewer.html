@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MNIST Foam Viewer</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #0e0e12; color: #e8e8ea; }
+  .app { display: grid; grid-template-columns: 280px 1fr 280px; height: 100vh; }
+  .panel { padding: 12px; overflow-y: auto; border-right: 1px solid #222; background: #16161c; }
+  .panel:last-child { border-right: 0; border-left: 1px solid #222; }
+  .main { display: grid; grid-template-rows: 1fr 320px; overflow: hidden; }
+  #stage3d { background: #08080c; }
+  .slices { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 8px; background: #101015; }
+  .slice { position: relative; background: #08080c; border: 1px solid #222; border-radius: 4px; }
+  .slice canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .slice-label { position: absolute; top: 4px; left: 6px; font-size: 11px; color: #888; }
+  .ctrl { margin-bottom: 14px; }
+  .ctrl label { display: block; font-size: 11px; color: #999; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ctrl label span { color: #6cf; font-family: monospace; }
+  input[type=range] { width: 100%; }
+  select, button { background: #22222a; color: #e8e8ea; border: 1px solid #333; padding: 6px 10px; border-radius: 4px; cursor: pointer; width: 100%; }
+  button:hover { background: #2a2a35; }
+  button.active { background: #2e6cf6; border-color: #2e6cf6; }
+  .digit-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .digit-btn { padding: 6px 0; }
+  .samples { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 8px; }
+  .samples img { width: 100%; image-rendering: pixelated; border: 1px solid #222; }
+  h3 { margin: 4px 0 10px; font-size: 13px; color: #6cf; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat { font-size: 11px; color: #888; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LEFT: dataset controls -->
+  <aside class="panel">
+    <h3>Dataset</h3>
+    <div class="ctrl">
+      <label>Volume</label>
+      <div class="digit-grid" id="digit-buttons">
+        <button class="digit-btn active" data-digit="total">all</button>
+        <!-- digit buttons injected by JS -->
+      </div>
+    </div>
+    <div class="ctrl">
+      <label>Sample images</label>
+      <div class="samples" id="samples"></div>
+    </div>
+    <div class="ctrl stat" id="volume-stats"></div>
+  </aside>
+
+  <!-- CENTER: 3D + slices -->
+  <div class="main">
+    <div id="stage3d"></div>
+    <div class="slices">
+      <div class="slice"><span class="slice-label" id="lbl-x">x-slice</span><canvas id="canv-x"></canvas></div>
+      <div class="slice"><span class="slice-label" id="lbl-y">y-slice</span><canvas id="canv-y"></canvas></div>
+      <div class="slice"><span class="slice-label" id="lbl-z">brightness-slice</span><canvas id="canv-z"></canvas></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: rendering controls -->
+  <aside class="panel">
+    <h3>View</h3>
+    <div class="ctrl">
+      <label>Slice x = <span id="sx-val">14</span></label>
+      <input type="range" id="sx" min="0" max="27" value="14">
+    </div>
+    <div class="ctrl">
+      <label>Slice y = <span id="sy-val">14</span></label>
+      <input type="range" id="sy" min="0" max="27" value="14">
+    </div>
+    <div class="ctrl">
+      <label>Slice brightness bin = <span id="sz-val">32</span></label>
+      <input type="range" id="sz" min="0" max="63" value="32">
+    </div>
+
+    <h3>3D voxels</h3>
+    <div class="ctrl">
+      <label>Min count threshold = <span id="thr-val">10</span></label>
+      <input type="range" id="thr" min="0" max="1000" value="10">
+    </div>
+    <div class="ctrl">
+      <label>Opacity scale = <span id="op-val">1.0</span></label>
+      <input type="range" id="op" min="0" max="3" step="0.05" value="1.0">
+    </div>
+    <div class="ctrl">
+      <label>Color scale</label>
+      <select id="cmap">
+        <option value="magma">magma</option>
+        <option value="viridis">viridis</option>
+        <option value="gray">gray</option>
+        <option value="brightness">by brightness bin</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Log-scale counts</label>
+      <select id="logscale">
+        <option value="1" selected>log(1 + count)</option>
+        <option value="0">linear</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Show axes</label>
+      <select id="axes">
+        <option value="1" selected>yes</option>
+        <option value="0">no</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Point size = <span id="ps-val">2.0</span></label>
+      <input type="range" id="ps" min="0.5" max="10" step="0.1" value="2.0">
+    </div>
+  </aside>
+
+</div>
+
+<!-- three.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script src="viewer.js"></script>
+</body>
+</html>
