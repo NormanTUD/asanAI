@@ -87,10 +87,10 @@ The Rule of Thumb is: even if the output looks right, be suspicious. Always chec
 A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
 
 ### Sycophancy and Confirmation Bias
-AI models often exhibit “sycophancy,” a tendency to agree with the user even when the user makes a false claim. If a user asks, “Why is 2+2=5?”, a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be “helpful” and follow the user's conversational lead rather than providing confrontational corrections.
+AI models often exhibit **sycophancy** \citeauthor{sharma2023sycophancy} (\citeyear{sharma2023sycophancy}), a tendency to agree with the user even when the user makes a false claim. If a user asks, “Why is 2+2=5?”, a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be “helpful” and follow the user's conversational lead rather than providing confrontational corrections.
 
 ### Logic Gaps vs. Statistical Patterns
-There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversal Curse**. Researchers have observed that while an AI might know that “Person A is the mother of Person B,” it cannot automatically infer that “Person B is the child of Person A” if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
+There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversal Curse** \cite{berglund2023reversal}. Researchers have observed that while an AI might know that “Person A is the mother of Person B,” it cannot automatically infer that “Person B is the child of Person A” if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
 
 ### The Black Box of Interpretability
 A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.
@@ -139,7 +139,7 @@ For a structured philosophical treatment of the theorem and its downstream impli
 
 ## Advanced Mitigation: Chain of Thought (CoT)
 
-One of the most effective ways to reduce hallucinations is a technique called **Chain of Thought (CoT)** prompting. Instead of asking for a final answer immediately, you ask the AI to “think step-by-step.”
+One of the most effective ways to reduce hallucinations is a technique called **Chain of Thought (CoT)** prompting \citeauthor{wei2022cot} (\citeyear{wei2022cot}). Instead of asking for a final answer immediately, you ask the AI to “think step-by-step.”
 
 **Why it Works:** When an AI generates a response, every word it writes becomes part of the “Context” for the next word. If you force the AI to write out its reasoning, it populates its own context with logical steps. If the reasoning path is sound, the statistical probability of the final answer being correct increases significantly.
 
@@ -157,7 +157,7 @@ Beyond Temperature, developers use two other mathematical “fences” to keep t
 
 | Technique | Function | Impact on Hallucination |
 | :--- | :--- | :--- |
-| **Top-P (Nucleus) Sampling** | Only considers the top $P$ percentage of likely words. | Cuts off the “long tail” of nonsensical words before they can be picked. |
+| **Top-P (Nucleus) Sampling** \cite{holtzman2019nucleus} | Only considers the top $P$ percentage of likely words. | Cuts off the “long tail” of nonsensical words before they can be picked. |
 | **Logit Bias** | Manually increases or decreases the “Raw Score” ($z$) of specific words. | Can be used to “ban” certain words or force the AI toward verified terminology. |
 
 

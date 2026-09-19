@@ -3,6 +3,13 @@ function initHallucinations() {
 	renderTemperatureDemo();
 	refreshMathHallucinations();
 	renderCovariateShift();
+	if (window.__MN_DARK && window.__MN_DARK.onChange) {
+		window.__MN_DARK.onChange(function () {
+			renderTokenPrediction();
+			renderTemperatureDemo();
+			renderCovariateShift();
+		});
+	}
 }
 
 function renderCovariateShift() {
@@ -43,6 +50,18 @@ function refreshMathHallucinations() {
 	render_temml();
 }
 
+function tokenPredictionLayout() {
+	return {
+		title: { text: 'Probability of next word after: "The sky is..."', font: { color: themeColor('#1e293b') } },
+		xaxis: { title: 'Possible Next Token', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
+		yaxis: { title: 'Probability (0-1)', range: [0, 1], titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
+		margin: { t: 40, b: 40, l: 40, r: 20 }
+	};
+}
+
 /**
  * Demo 1: Visualizing Next-Token Prediction
  * Shows a static bar chart of what word comes next after "The sky is..."
@@ -62,17 +81,7 @@ function renderTokenPrediction() {
 		textposition: 'auto'
 	}];
 
-	const layout = {
-		title: { text: 'Probability of next word after: "The sky is..."', font: { color: themeColor('#1e293b') } },
-		xaxis: { title: 'Possible Next Token', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
-		yaxis: { title: 'Probability (0-1)', range: [0, 1], titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
-		paper_bgcolor: themeColor('#ffffff'),
-		plot_bgcolor: themeColor('#f8fafc'),
-		font: { color: themeColor('#1e293b') },
-		margin: { t: 40, b: 40, l: 40, r: 20 }
-	};
-
-	Plotly.newPlot('token-prediction-plot', data, layout);
+	Plotly.react('token-prediction-plot', data, tokenPredictionLayout());
 }
 
 /**
@@ -143,7 +152,7 @@ function renderTemperatureDemo() {
 		}
 	}
 
-	slider.addEventListener('input', update);
+	slider.oninput = update;
 	update(); // Initial render
 }
 
