@@ -240,13 +240,13 @@ A weighted average of the *value vectors* of all visible tokens. The output of a
 
 **Concrete: 2 tokens, $d_v = 3$ (toy).** After steps 1–3, suppose the routing weights and content are:
 
-$$A = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix}, \qquad V = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}$$
+$$A = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix} \qquad V = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}$$
 
-Row 0 of $A$: token 0 looks 100% at itself (no prior tokens exist). Row 1: token 1 takes 70% from token 0, 30% from itself. Step 4:
+Row 0 of $A$: token 0 attends fully to itself (no prior tokens exist). Row 1 of $A$: token 1 takes 70 percent from token 0 and 30 percent from itself. Now compute row 1 of the output $O$:
 
-$$O = \underbrace{\begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix}}_{\text{"take 70% of row 0, 30% of row 1"}} \cdot \underbrace{\begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}}_{\text{actual content of each token}} = \begin{pmatrix} 1 & 0 & 0 \\ \mathbf{0.7} & \mathbf{0.3} & 0 \end{pmatrix}$$
+$$\underbrace{O_1}_{\text{token 1's new vector}} \;=\; \underbrace{0.7}_{\text{weight from } A} \cdot \underbrace{\begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}}_{v_0\text{: token 0's content}} \;+\; \underbrace{0.3}_{\text{weight from } A} \cdot \underbrace{\begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix}}_{v_1\text{: token 1's own content}} \;=\; \begin{pmatrix} \mathbf{0.7} \\ \mathbf{0.3} \\ 0 \end{pmatrix}$$
 
-Token 1's new representation is $[0.7, 0.3, 0]$ — a vector that **did not exist before** and physically contains 70% of token 0's content vector. The information was not "sent" or "copied" in any discrete sense; it was *linearly combined* into token 1's vector by the matrix multiply. This new vector then flows into the FFN, which transforms it further (per-row, no more mixing). After $N$ layers of this mix→transform cycle, the final row encodes the entire sequence.
+Token 1's new representation is $[0.7,\; 0.3,\; 0]$ — a vector that **did not exist before** and physically contains 70 percent of token 0's content vector. The information was not "sent" or "copied" in any discrete sense; it was *linearly combined* into token 1's vector by the weighted sum. This new vector then flows into the FFN, which transforms it further (per-row, no more mixing). After $N$ layers of this mix→transform cycle, the final row encodes the entire sequence.
 
 This is the **only** place in the network where one token's content enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row.
 
