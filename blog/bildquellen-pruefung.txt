@@ -53,9 +53,10 @@ und en.wikipedia.org (Stand: August 2026).
 
 === MARGINNOTE IMAGES (September 2026) ===
 =============================================
-Sechs \marginfig-Bilder, neu hinzugefügt zu security_inference / evaluation /
-law_regulation / alignment / reasoning / deep_theory. Alle via Commons-API
-geprüft (Feld LicenseShortName), Stand September 2026.
+Vier \marginfig-Bilder, neu hinzugefügt zu security_inference / evaluation /
+law_regulation / reasoning. Alle via Commons-API geprüft (Feld
+LicenseShortName), Stand September 2026. (Zwei weitere — Zauberlehrling und
+Blondin — wurden nachträglich wieder entfernt.)
 
 8. procession_trojan_horse
    URL: https://commons.wikimedia.org/wiki/File:Giovanni_Domenico_Tiepolo_-_The_Procession_of_the_Trojan_Horse_in_Troy_-_WGA22382.jpg
@@ -81,26 +82,10 @@ geprüft (Feld LicenseShortName), Stand September 2026.
     Genutzt in: law_regulation.php (Justitia)
     Status: OK - CC BY-SA 4.0, Namensnennung im Caption vorhanden
 
-11. zauberlehrling_silhouette
-    URL: https://commons.wikimedia.org/wiki/File:Duttenhofer,_Luise,_Goethe,_Zauberlehrling.jpg
-    Lizenz: Public domain (Scherenschnitt, vor 1830; Luise Duttenhofer, 1776–1829)
-    Autor: Luise Duttenhofer
-    Lokal: zauberlehrling_silhouette.jpg (1280px-Thumb)
-    Genutzt in: alignment.php § Why it is hard (control problem)
-    Status: OK - Public domain
-
-12. theseus_minotaur_mosaic
+11. theseus_minotaur_mosaic
     URL: https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg
     Lizenz: Public domain (röm. Mosaik, Casa del Labirinto, Pompeji)
     Autor: antike Künstler, Pompeji (Foto 19. Jh.-Reproduktion)
     Lokal: theseus_minotaur_mosaic.jpg (1280px-Thumb)
     Genutzt in: reasoning.php § Tree of Thoughts
-    Status: OK - Public domain
-
-13. blondin_tightrope
-    URL: https://commons.wikimedia.org/wiki/File:Blondin._(Tightrope_walker_dangling_from_a_wire_over_the_Niagara.),_from_Robert_N._Dennis_collection_of_stereoscopic_views.jpg
-    Lizenz: Public domain (Stereofoto, 19. Jh.)
-    Autor: unbekannt (Robert N. Dennis Stereoscopic Collection)
-    Lokal: blondin_tightrope.jpg (1280px-Thumb, Querformat)
-    Genutzt in: deep_theory.php § Edge of stability
     Status: OK - Public domain

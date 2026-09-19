@@ -604,9 +604,16 @@
 		function open(targetImg) {
 			/* build the gallery from the entire article body (#contents)
 			   so prev/next follows the actual reading order across all
-			   sections, not just the nearest .md wrapper. */
+			   sections, not just the nearest .md wrapper. Margin rail
+			   figures (sideimage/sidenote rails live OUTSIDE #contents,
+			   appended to <body>) are appended to the gallery so their
+			   prev/next navigation works too. */
 			const root = document.getElementById('contents') || document.body || document;
 			gallery = collectGallery(root);
+			['sideimages-rail', 'sidenotes-rail'].forEach(function (id) {
+				const rail = document.getElementById(id);
+				if (rail) gallery = gallery.concat(collectGallery(rail));
+			});
 			idx = gallery.indexOf(targetImg);
 			if (idx < 0) {
 				gallery = [targetImg];
@@ -675,8 +682,10 @@
 				if (fig) img = fig.querySelector('img');
 			}
 			if (!img) return;
-			// only inside the article body, not in drawer / header / footer
-			if (!img.closest('#contents')) return;
+			// only inside the article body or a margin rail (sideimage &
+			// sidenote rails are appended to <body>, outside #contents),
+			// not in drawer / header / footer
+			if (!img.closest('#contents, #sideimages-rail, #sidenotes-rail')) return;
 			// user is selecting text — don't hijack
 			const sel = window.getSelection && window.getSelection();
 			if (sel && sel.toString().length > 0) return;
@@ -692,7 +701,8 @@
 
 		/* delegated cursor hint — anything .md img gets zoom-in cursor */
 		const styleEl = document.createElement('style');
-		styleEl.textContent = '.md img:not([class*="emoji"]):not(.no-zoom) { cursor: zoom-in; }';
+		styleEl.textContent = '.md img:not([class*="emoji"]):not(.no-zoom) { cursor: zoom-in; }'
+			+ '#sideimages-rail figure img, #sidenotes-rail img { cursor: zoom-in; }';
 		document.head.appendChild(styleEl);
 	}
 
