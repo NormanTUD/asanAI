@@ -202,9 +202,9 @@ A single neuron computes $y = Wx + b$ with fixed-shape $W \in \mathbb{R}^{d_{\te
 
 $$\begin{aligned} &\underbrace{(\,\underbrace{2}_{\text{batch: how many examples}} \times \underbrace{784}_{\text{features per example}}\,)}_{\text{input matrix}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{784}_{\text{features (matches input)}} \times \underbrace{256}_{\text{neurons in layer}}\,)}_{\text{weight, fixed after training}} \\[6pt] &=\; \underbrace{(\,\underbrace{2}_{\text{one row per example}} \times \underbrace{256}_{\text{one value per neuron}}\,)}_{\text{output matrix}} \end{aligned}$$
 
-The batch size "2" passes through the multiplication untouched. Each neuron sees 784 inputs, not 1568. The two examples are processed by the same neurons, independently.
+The batch size "2" passes through the multiplication untouched. Each neuron sees 784 inputs, not 1568. The two images are processed by the same neurons, independently — neither image "knows about" the other.
 
-**The same shape rule applies to every Linear layer in a transformer.** After the embedding table looks up each token ID and stacks the resulting $d$-dim rows into a matrix, a Linear layer computes:
+**The same shape rule applies to every Linear layer in a transformer.** The mapping from the analogy: "batch of images" → "sequence of tokens", "one image" → "one token". After the embedding table looks up each token ID and stacks the resulting $d$-dim rows into a matrix, a Linear layer computes:
 
 $$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{sequence length (repetition)}} \times \underbrace{768}_{\text{model dim (features)}}\,)}_{\text{input: } t \text{ token-vectors stacked}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{768}_{\text{features (must match)}} \times \underbrace{d_{\text{out}}}_{\text{output dim}}\,)}_{\text{weight, fixed after training}} \\[6pt] &=\; \underbrace{(\,\underbrace{t}_{\text{passes through unchanged}} \times \underbrace{d_{\text{out}}}_{\text{new feature dim}}\,)}_{\text{output: one row per token}} \end{aligned}$$
 
@@ -218,14 +218,14 @@ Here $t$ appears on *both* sides of the multiplication — it is no longer a pas
 
 $$\underbrace{O_i}_{\text{new representation of token } i} \;=\; \underbrace{\sum_{j \,\le\, i}}_{\text{sum over all visible tokens}} \; \underbrace{\alpha_{ij}}_{\text{"how much should } i \text{ attend to } j\text{"}} \;\cdot\; \underbrace{v_j}_{\text{value vector of token } j}$$
 
-Row $i$ of the output is a weighted average of the value vectors of all prior tokens. This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation (Linear, LayerNorm, FFN) keeps the $t$ rows independent.
+Row $i$ of the output is a weighted average of the value vectors of all prior tokens. This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row: each token is processed as if it were the only one present. The network "knows about other tokens" at position $i$ *only* because attention has already written their information into row $i$ before the FFN ever sees it.
 
 **How it all comes together.** The $N$ transformer layers alternate two operations:
 
-1. **Mix** (attention): the $t \times t$ score matrix lets each row incorporate information from all prior rows. After this step, row $i$ is a mixture of tokens $0 \dots i$.
-2. **Transform** (FFN): a per-row nonlinear function is applied to each (now-mixed) row. The weight shapes are fixed; $t$ passes through.
+1. **Mix** (attention — the *only* mixing step): the $t \times t$ score matrix lets each row incorporate information from all prior rows. After this step, row $i$ physically contains a weighted combination of tokens $0 \dots i$.
+2. **Transform** (FFN — per-row, no mixing): a nonlinear function is applied to each row independently. The row's *content* is a mixture (from step 1), but the *operation* does not look at any other row. Weight shapes are fixed; $t$ passes through.
 
-After $N$ such cycles, the final row (position $t{-}1$) carries a representation that has been progressively enriched with information from the entire sequence — without any recurrence, all computed in parallel. The network reads just that one row to produce its prediction \cite[Vaswani et al., 2017]{vaswani2017attention}.
+So: no, the network does not "know about" other tokens in the FFN or the Linear layers. It knows about them only because attention already *copied* their information into the vector. After $N$ such mix→transform cycles, the final row (position $t{-}1$) carries a representation progressively enriched with information from the entire sequence — all computed in parallel, no recurrence \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
 **Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:
 
