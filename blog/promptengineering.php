@@ -117,7 +117,7 @@ Require a dense outline first, then expand each point. This prevents rambling an
 For math, logic, and complex problem-solving, the domain where prompt engineering matters most.
 
 ### Chain-of-Thought (CoT)
-The single most important reasoning technique. By forcing the model to write out intermediate steps, you populate its context window with logical scaffolding that guides it to the right answer.
+The single most important reasoning technique \cite[Wei et al., 2022]{wei2022cot}. By forcing the model to write out intermediate steps, you populate its context window with logical scaffolding that guides it to the right answer.
 </div>
 
 <div id="pe-cot-accuracy" style="width:100%; height:320px; margin: 0 auto 30px auto;"></div>
@@ -127,7 +127,7 @@ The single most important reasoning technique. By forcing the model to write out
 * **Why it works:** Direct answers let the model guess. Step-by-step reasoning forces it to *simulate* logic, building on each previous token as a foundation.
 
 ### Tree-of-Thought (ToT)
-An extension of CoT where the model explores multiple reasoning branches simultaneously, then evaluates which path is most promising.
+An extension of CoT \cite[Yao et al., 2023]{yao2023tot} where the model explores multiple reasoning branches simultaneously, then evaluates which path is most promising.
 
 * **Prompt:** “Consider 3 different approaches to solve this problem. Evaluate each for correctness. Then pick the best one and solve it.”
 
@@ -142,7 +142,7 @@ Instruct the model to label confidence levels or say “I don't know.” This fi
 * **Prompt:** “For each claim, label your confidence: high / medium / low. If unsure, state 'I do not have sufficient information.'”
 
 ### ReAct (Reasoning + Acting)
-The model alternates between reasoning traces and tool calls (search, calculator, code execution). Each observation from the tool feeds back into the reasoning loop.
+The model alternates between reasoning traces and tool calls (search, calculator, code execution) \cite[Yao et al., 2023]{yao2023react}. Each observation from the tool feeds back into the reasoning loop.
 
 * **Pattern:** `Thought` then `Action` then `Observation` then `Thought` then `Action` ...
 
@@ -165,7 +165,7 @@ Respond in JSON only:
 ```
 
 ### Plan-and-Execute
-Separate architectural logic from code generation. First produce a plan, then execute it.
+Separate architectural logic from code generation. First produce a plan, then execute it \cite[Wang et al., 2023]{wang2023planandexecute}.
 
 * **Step 1:** “Design the architecture for a rate-limited API proxy.”
 * **Step 2:** “Now implement it in Python using FastAPI.”
@@ -225,7 +225,7 @@ Provide 3-5 examples of (input, desired output) pairs. The model learns the patt
 * Show examples of the tone, format, and logic you want. The model will mimic the *pattern*, not just the content.
 
 ### Self-Critique / Reflection
-After generating, tell the model to switch into critic mode and evaluate its own output for flaws.
+After generating, tell the model to switch into critic mode and evaluate its own output for flaws \cite[Madaan et al., 2023]{madaan2023selfrefine} \cite[Shinn et al., 2023]{shinn2023reflexion}.
 
 * **Prompt:** “Review your answer for factual errors, logical gaps, and unsupported claims. Then rewrite it with corrections.”
 
