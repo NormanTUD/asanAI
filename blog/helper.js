@@ -1127,7 +1127,8 @@ function bibtexify() {
 			}).filter(Boolean);
 
 			const html = renderedKeys.map(({ key, linkText, data, instanceId, isFirstInBlock }) => {
-				// Source icon as its own link (sibling, not nested) opening the source URL in a new tab
+				// Source icon is now nested inside the main citation link so the entire
+				// block (text + icon) acts as a single cohesive, hoverable, and clickable unit.
 				const svgIcon = data.url
 					? `<a class="bibtexify_auto_link_icon" href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
 <svg
@@ -1148,10 +1149,10 @@ function bibtexify() {
      id="metadata3035">
     <rdf:RDF>
       <cc:Work
-	 rdf:about="">
+         rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
-	   rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1177,19 +1178,16 @@ function bibtexify() {
      inkscape:window-y="25"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3025" />
-  <g
-     transform="matrix(1,0,0,-1,30.372881,1426.9492)"
+  <g transform="matrix(1,0,0,-1,30.372881,1426.9492)"
      id="g3027">
-    <path
-       d="M 1408,608 V 288 Q 1408,169 1323.5,84.5 1239,0 1120,0 H 288 Q 169,0 84.5,84.5 0,169 0,288 v 832 Q 0,1239 84.5,1323.5 169,1408 288,1408 h 704 q 14,0 23,-9 9,-9 9,-23 v -64 q 0,-14 -9,-23 -9,-9 -23,-9 H 288 q -66,0 -113,-47 -47,-47 -47,-113 V 288 q 0,-66 47,-113 47,-47 113,-47 h 832 q 66,0 113 47 47,47 47,113 v 320 q 0,14 9 23 9,9 23,9 h 64 q 14,0 23,-9 9,-9 9,-23 z m 384,864 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 -26,0 -45,19 L 1507,1091 855,439 q -10,-10 -23,-10 -13,0 -23,10 L 695,553 q -10,10 -10,23 0,13 10,23 l 652,652 -176,176 q -19,19 -19,45 0,26 19,45 19,19 45,19 h 512 q 26,0 45,-19 19,-19 19,-45 z"
-       id="path3029"
-       inkscape:connector-curvature="0"
-       style="fill:currentColor" />
-  </g>
-</svg>
-</span></a>`
+     <path
+        d="M 1408,608 V 288 Q 1408,169 1323.5,84.5 1239,0 1120,0 H 288 Q 169,0 84.5,84.5 0,169 0,288 v 832 Q 0,1239 84.5,1323.5 169,1408 288,1408 h 704 q 14,0 23,-9 9,-9 9,-23 v -64 q 0,-14 -9,-23 -9,-9 -23,-9 H 288 q -66,0 -113,-47 -47,-47 -47,-113 V 288 q 0,-66 47,-113 47,-47 113,-47 h 832 q 66,0 113 47 47,47 47,113 v 320 q 0,14 9 23 9,9 23,9 h 64 q 14,0 23,-9 9,-9 9,-23 z m 384,864 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 -26,0 -45,19 L 1507,1091 855,439 q -10,-10 -23,-10 -13,0 -23,10 L 695,553 q -10,10 -10,23 0,13 10,23 l 652,652 -176,176 q -19,19 -19,45 0,26 19,45 19,19 45,19 h 512 q 26,0 45,-19 19,-19 19,-45 z"
+        id="path3029"
+        inkscape:connector-curvature="0"
+        style="fill:currentColor" />
+   </g>
+ </svg></span></a>`
 					: "";
-
 				// GUARDRAIL 1: Stable id `cite-${key}` is set on the FIRST
 				// occurrence in each .md block. Subsequent occurrences in
 				// the same block use the same id (which is fine — getElementById
@@ -1198,12 +1196,13 @@ function bibtexify() {
 				// points to the same stable id, so the click handler can
 				// never fail to find a target.
 				const idAttribute = isFirstInBlock ? `id="${instanceId}"` : "";
-				const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" data-fallback-target="${instanceId}" style="cursor:pointer;">${linkText}</a>`;
-				return `<span class="autociteelement">${fullLink}${svgIcon}</span>`;
+				const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" data-fallback-target="${instanceId}" style="cursor:pointer;">${linkText}${svgIcon}</a>`;
+				return `<span class="autociteelement">${fullLink}</span>`;
 			}).join('');
 
 			return html;
 		});
+
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
