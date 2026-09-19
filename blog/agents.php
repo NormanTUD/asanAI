@@ -36,7 +36,7 @@ $$
 The difference between “using an LLM” and “deploying an agent” is the difference between asking someone a question (in their head) and hiring them to complete a project (with hands on a keyboard, a browser, a terminal). The hired person's *cognitive architecture* has not changed; what changed is the set of effectors available to them. The same is true of the LLM inside an agent.
 </div>
 
-<div class="optional md" data-headline="CoT with a screwdriver">
+<div class="optional md" data-headline="Chain-of-Thought with a screwdriver">
 The “Re” in **ReAct** is the reasoning loop from the <a href="reasoning">Reasoning chapter</a>; the “Act” is just a tool call appended to each reasoning step. Everything in this chapter assumes familiarity with CoT, self-consistency, and verification-guided search.
 </div>
 
