@@ -46,13 +46,13 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **Few-shot CoT** | 2022 | Hand-written reasoning examples |
 | **Self-consistency** | 2022 | Sample $k$ CoTs, take majority vote on answers |
 | **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |
-| **Tree of Thoughts (ToT)** | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
+| **Tree of Thoughts (ToT)** \cite[Yao et al., 2023]{yao2023tot} | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
 | **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |
 | **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |
-| **Self-Refine** | 2023 | Generate, critique, refine iteratively |
+| **Self-Refine** \cite[Madaan et al., 2023]{madaan2023selfrefine} | 2023 | Generate, critique, refine iteratively |
 | **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |
 | **Verifier-guided search** | 2023 | Generate $k$ candidates, score with a learned verifier |
-| **ReAct** | 2023 | Interleave reasoning with tool use |
+| **ReAct** \cite[Yao et al., 2023]{yao2023react} | 2023 | Interleave reasoning with tool use |
 </div>
 
 <div class="md">
@@ -119,7 +119,7 @@ Training a PRM:
 
 At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
 
-The Math-Shepherd method (2024) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
+The Math-Shepherd method \cite[Zhang et al., 2024]{zhang2024mathshepherd} auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>
 
 <div class="md">
