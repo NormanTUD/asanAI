@@ -51,7 +51,7 @@ Try it yourself below. The context is: *“The capital of France is...”*
 Watch how increasing the Temperature makes the AI more likely to say something wrong (“Frog”).
 </div>
 
-<div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+<div style="background: var(--mn-bg-subtle); padding: 20px; border-radius: 8px; border: 1px solid var(--mn-border); margin-bottom: 30px;">
     <div style="margin-bottom: 10px; font-weight: bold;">
         Temperature ($T$): <span id="temp-value-display">1.0</span>
     </div>
@@ -59,7 +59,7 @@ Watch how increasing the Temperature makes the AI more likely to say something w
     
     <div id="temperature-plot" style="width:100%; height:350px;"></div>
     
-    <div id="temp-output-text" style="padding: 10px; background: #fff; border-left: 4px solid #3b82f6;"></div>
+    <div id="temp-output-text" style="padding: 10px; background: var(--mn-bg); border-left: 4px solid #3b82f6;"></div>
 </div>
 
 <div class="md">
