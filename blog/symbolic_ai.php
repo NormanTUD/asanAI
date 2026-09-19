@@ -126,11 +126,11 @@ For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Mo
 
 To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:
 
-* **TransE**: $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ (translation in embedding space).
-* **DistMult**: bilinear $\langle \mathbf{h}, \mathbf{r}, \mathbf{t} \rangle$ score.
+* **TransE** \cite{bordes2013transe}: $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ (translation in embedding space).
+* **DistMult** \cite{ning2016distmult}: bilinear $\langle \mathbf{h}, \mathbf{r}, \mathbf{t} \rangle$ score.
 * **ComplEx**: extends to complex-valued embeddings for asymmetric relations.
-* **RotatE**: rotation in complex space, captures composition.
-* **GraphSAGE / R-GCN**: graph neural networks over the KG structure.
+* **RotatE** \cite{sun2019rotate}: rotation in complex space, captures composition.
+* **GraphSAGE** \cite{hamilton2017graphsage} / **R-GCN** \cite{schlichtkrull2018rgcn}: graph neural networks over the KG structure.
 
 These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing missing triples. Used in recommendation, drug repurposing, fraud detection.
 </div>
@@ -170,7 +170,7 @@ The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) h
 3. If verification fails, refine using the error message.
 4. Iterate.
 
-AlphaProof (DeepMind, July 2024) reached silver-medal level on IMO problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
+AlphaProof \cite[DeepMind, 2024]{deepmind2024alphaproof} reached silver-medal level on IMO problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
 </div>
 
 <div class="md">
@@ -185,13 +185,13 @@ The synthesis takes several forms:
 | **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |
 | **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |
 | **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |
-| **LLM + tool use** | Neural planner, symbolic tools | ReAct, Toolformer, agents |
+| **LLM + tool use** | Neural planner, symbolic tools | ReAct \cite{yao2023react}, Toolformer, agents |
 
 ### Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry} (DeepMind, 2024)
 
 Solves IMO \cite[Trinh et al., 2024]{trinh2024alphageometry} problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
 
-### Toolformer (Schick et al., Meta, 2023)
+### Toolformer \cite[Schick et al., 2023]{schick2023toolformer}
 
 A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity. Pure neural, but uses symbolic tools.
 
