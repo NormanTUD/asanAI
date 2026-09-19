@@ -188,6 +188,13 @@ This trajectory from iconic to arbitrary is not a single historical event but a 
 <div class="md">
 ### Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)
 
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="wadielhol_inscription_i.jpg" alt="Wadi el-Hol inscription no. I, drawing" />
+	<figcaption class="md">The sixteen letters of inscription no. I, drawn on a block of limestone at the Wadi el-Hol \cite[Wadi el-Hol inscription no. I, drawing]{wadielholinscription_i}.</figcaption>
+</figure>
+
+\marginfig{wadielhol_inscription_ii.jpg}{Inscription no. II, the second of the two known texts \cite[Wadi el-Hol inscription no. II, drawing]{wadielholinscription_ii}: its twelve letters include a sequence *pġʾl* that many read as a theophoric name, perhaps “boy of El”.}
+
 The Phoenician alphabet did not emerge from a vacuum. Its roots lie in
 **Proto-Sinaitic script**, the earliest known alphabetic writing, developed by
 Semitic-speaking workers in contact with Egyptian scribal culture

@@ -2339,6 +2339,20 @@ window.bibData = {
 		author: "John Coleman Darnell, F. W. Dobbs-Allsopp, Marilyn J. Lundberg, P. Kyle McCarter, Bruce Zuckerman, Colleen Manassa",
 		year: 2005
 	},
+	"wadielholinscription_i": {
+		url: "https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg",
+		title: "Wadi el-Hol inscriptions no. I, drawing — a Proto-Canaanite alphabet, discovered in 1998, dated to the 18th century BCE",
+		author: "Marilyn Lundberg, West Semitic Research",
+		license: "Public domain",
+		alternativetitle: "Wadi el-Hol inscription no. I"
+	},
+	"wadielholinscription_ii": {
+		url: "https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_II_drawing.jpg",
+		title: "Wadi el-Hol inscriptions no. II, drawing — a Proto-Canaanite alphabet, discovered in 1998, dated to the 18th century BCE",
+		author: "Marilyn Lundberg, West Semitic Research",
+		license: "Public domain",
+		alternativetitle: "Wadi el-Hol inscription no. II"
+	},
 	"wikimediadumps": {
 		url: "https://dumps.wikimedia.org/",
 		title: "Wikimedia Downloads",
