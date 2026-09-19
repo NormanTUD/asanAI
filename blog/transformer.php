@@ -210,7 +210,21 @@ $$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{sequence length (repetit
 
 The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs \cite[Paszke et al., 2019]{pytorch}. This is why variable-length input requires no architectural change or retraining \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
-**The one exception: attention, where $t$ becomes a feature dimension.** Attention is the only operation in the network where one token's representation is modified by *another* token's representation. Here is exactly how, in four steps:
+**What is variable, what is fixed.** The full input tensor after embedding has shape $(b, t, d)$. Of these three dimensions:
+
+| Dimension | Meaning | Variable? | Bound |
+|---|---|---|---|
+| $b$ | batch size (independent sequences) | yes, chosen at runtime | hardware memory |
+| $t$ | sequence length (number of tokens) | yes, chosen at runtime | $1 \le t \le L$ |
+| $d$ | model dimension (vector width) | **no**, fixed by architecture | — |
+
+Every weight matrix in the network has a shape that depends only on $d$, $d_k$, $d_{\text{ff}}$, and $V$ — the fixed dimensions. None of them contain $t$ or $b$. The entire parameter set is the same whether the input is 1 token or 1024 tokens. The only constraint on $t$ comes from the two pre-allocated objects mentioned earlier: the position table ($L$ rows) and the causal mask ($L \times L$) \cite[Karpathy, 2023]{nanogpt}.
+
+**The one exception: attention, where $t$ becomes a feature dimension.** Attention is the only operation in the network where one token's representation is modified by *another* token's representation.
+
+**How does attention have access to all tokens at once?** They are already there. The input to every layer is the full $(t, d)$ matrix — all $t$ token vectors sit in memory simultaneously. A Linear layer's weight $W \in \mathbb{R}^{d \times d'}$ is a *fixed parameter*: it has no $t$ in its shape, so the matmul $(t, d) \times (d, d')$ cannot couple rows. Attention is different: its "weights" ($K$ and $V$) are *computed from the input itself* at runtime. Since the input contains all $t$ tokens, the computed $K, V \in \mathbb{R}^{t \times d_k}$ also contain all $t$ tokens — and the matmul $(t, d_k) \times (d_k, t)$ pairs every row against every other row. No gathering step is needed; the tokens were always in the matrix.
+
+Here is the computation in four steps:
 
 **Step 1 — Project each token into three roles.** The input $X \in \mathbb{R}^{t \times d}$ is multiplied by three learned matrices, producing three $t \times d_k$ matrices from the *same* input:
 
