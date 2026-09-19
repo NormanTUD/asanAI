@@ -210,29 +210,45 @@ $$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{sequence length (repetit
 
 The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs \cite[Paszke et al., 2019]{pytorch}. This is why variable-length input requires no architectural change or retraining \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
-**The one exception: attention, where $t$ becomes a feature dimension.** The score computation multiplies $Q$ by $K^\top$:
+**The one exception: attention, where $t$ becomes a feature dimension.** Attention is the only operation in the network where one token's representation is modified by *another* token's representation. Here is exactly how, in four steps:
 
-$$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{query tokens}} \times \underbrace{d_k}_{\text{head dim}}\,)}_{Q\text{: what each token looks for}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{d_k}_{\text{head dim (must match)}} \times \underbrace{t}_{\text{key tokens}}\,)}_{K^\top\text{: what each token offers}} \\[6pt] &=\; \underbrace{(\,\underbrace{t}_{\text{rows: who is looking}} \times \underbrace{t}_{\text{cols: who is looked at}}\,)}_{S\text{: pairwise relevance scores}} \end{aligned}$$
+**Step 1 — Project each token into three roles.** The input $X \in \mathbb{R}^{t \times d}$ is multiplied by three learned matrices, producing three $t \times d_k$ matrices from the *same* input:
 
-Here $t$ appears on *both* sides of the multiplication — it is no longer a passive repetition dimension but an active feature dimension. The result is a $t \times t$ matrix: entry $S_{ij}$ is the dot product $\underbrace{q_i^\top k_j}_{\text{"how well does token } j \text{ match what token } i \text{ wants?"}}$. After row-wise softmax and multiplication with $V$:
+- $Q = XW_Q$: each row is a token's **query** — "what information am I looking for?"
+- $K = XW_K$: each row is a token's **key** — "what information do I contain that others might want?"
+- $V = XW_V$: each row is a token's **value** — "the actual content I can share if someone asks"
 
-$$\underbrace{O_i}_{\text{new representation of token } i} \;=\; \underbrace{\sum_{j \,\le\, i}}_{\text{sum over all visible tokens}} \; \underbrace{\alpha_{ij}}_{\text{"how much should } i \text{ attend to } j\text{"}} \;\cdot\; \underbrace{v_j}_{\text{value vector of token } j}$$
+All three are linear projections of the same token vectors; they are three different "views" of the same content.
 
-The softmax matrix $A$ is exactly what one might expect: a $t \times t$ matrix where every entry is in $[0, 1]$ and each row sums to 1. Entry $A_{ij}$ says "token $i$ should take this fraction of token $j$'s content." **But $A$ is not the output — it is the routing instruction.** The actual content transfer happens in the next multiply, $A \cdot V$, where $V \in \mathbb{R}^{t \times d_v}$ is the matrix of *value vectors* (each token's content, projected through a learned $W_V$):
+**Step 2 — Score every pair.** Multiply $Q$ by $K^\top$:
 
-$$\underbrace{A}_{\text{routing: how much to take from each}} \;\cdot\; \underbrace{V}_{\text{content: what each token offers}} \;=\; \underbrace{O}_{\text{new representations}}$$
+$$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{tokens asking}} \times \underbrace{d_k}_{\text{query dim}}\,)}_{Q} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{d_k}_{\text{key dim (must match)}} \times \underbrace{t}_{\text{tokens being asked}}\,)}_{K^\top} \\[6pt] &=\; \underbrace{(\,\underbrace{t}_{\text{rows: who is asking}} \times \underbrace{t}_{\text{cols: who is being asked}}\,)}_{S\text{: raw relevance scores}} \end{aligned}$$
 
-**Concrete: 2 tokens, $d_v = 3$ (toy).** After the Q/K/V projections and softmax, suppose:
+Entry $S_{ij} = q_i^\top k_j$ is a scalar: "how well does token $j$'s content match what token $i$ is looking for?" The causal mask then sets $S_{ij} = -\infty$ for $j > i$ (a token cannot see the future).
+
+**Step 3 — Normalize to get routing weights.** Row-wise softmax converts the raw scores into $A \in \mathbb{R}^{t \times t}$ where every entry is in $[0, 1]$ and each row sums to 1. **This is the matrix one might picture**: a $t \times t$ grid of "how much should token $i$ look at token $j$?" values. But this matrix is an *intermediate result*, not the output of attention.
+
+**Step 4 — Use the weights to mix the content.** Multiply $A$ by $V$:
+
+$$\underbrace{(\,t \times t\,)}_{A\text{: routing weights}} \;\cdot\; \underbrace{(\,t \times d_v\,)}_{V\text{: actual content}} \;=\; \underbrace{(\,t \times d_v\,)}_{O\text{: new token representations}}$$
+
+This is where the "copy" happens. Row $i$ of the output $O$ is:
+
+$$O_i \;=\; \underbrace{\alpha_{i0}}_{\text{weight}} \cdot \underbrace{v_0}_{\text{token 0's content}} \;+\; \underbrace{\alpha_{i1}}_{\text{weight}} \cdot \underbrace{v_1}_{\text{token 1's content}} \;+\; \cdots \;+\; \underbrace{\alpha_{ii}}_{\text{weight}} \cdot \underbrace{v_i}_{\text{token } i\text{'s own content}}$$
+
+A weighted average of the *value vectors* of all visible tokens. The output of attention is **not** the score matrix — it is a new set of $t$ vectors (same shape as the input), where each vector is now a blend of multiple tokens' content.
+
+**Concrete: 2 tokens, $d_v = 3$ (toy).** After steps 1–3, suppose the routing weights and content are:
 
 $$A = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix}, \qquad V = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}$$
 
-Row 0 of $A$ says "token 0 attends 100% to itself" (it has no prior tokens). Row 1 says "token 1 takes 70% from token 0 and 30% from itself." The output is:
+Row 0 of $A$: token 0 looks 100% at itself (no prior tokens exist). Row 1: token 1 takes 70% from token 0, 30% from itself. Step 4:
 
-$$O = A \cdot V = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix} \cdot \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 \\ \mathbf{0.7} & \mathbf{0.3} & 0 \end{pmatrix}$$
+$$O = \underbrace{\begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix}}_{\text{"take 70% of row 0, 30% of row 1"}} \cdot \underbrace{\begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}}_{\text{actual content of each token}} = \begin{pmatrix} 1 & 0 & 0 \\ \mathbf{0.7} & \mathbf{0.3} & 0 \end{pmatrix}$$
 
-Row 1 of $O$ is $0.7 \cdot v_0 + 0.3 \cdot v_1 = 0.7[1,0,0] + 0.3[0,1,0] = [0.7, 0.3, 0]$. Token 1's new representation **literally contains 70% of token 0's value vector**. That is the "copy": a weighted linear combination of other tokens' content vectors, written directly into this token's row.
+Token 1's new representation is $[0.7, 0.3, 0]$ — a vector that **did not exist before** and physically contains 70% of token 0's content vector. The information was not "sent" or "copied" in any discrete sense; it was *linearly combined* into token 1's vector by the matrix multiply. This new vector then flows into the FFN, which transforms it further (per-row, no more mixing). After $N$ layers of this mix→transform cycle, the final row encodes the entire sequence.
 
-This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row: each token is processed as if it were the only one present. The network "knows about other tokens" at position $i$ *only* because attention has already written their content into row $i$ via $A \cdot V$.
+This is the **only** place in the network where one token's content enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row.
 
 **How it all comes together.** The $N$ transformer layers alternate two operations:
 
