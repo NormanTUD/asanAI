@@ -196,100 +196,49 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 </div>
 
 <div class="optional md" data-headline="One Word Is a Vector; a Sentence Is a Matrix — How Does It Enter?">
-You understand one word as a $d_{\text{model}}$-dimensional vector, e.g. $[a, b, c, d, \dots]$. So what does the network *actually receive* when you hand it a whole sentence? Is there a loop that feeds word, word, word? **No.** After tokenization a sentence of $t$ words is just a list of $t$ integer IDs, and the embedding layer converts the entire list into a matrix in a single operation. The matrix is *not* something that is assembled word-by-word and fed in one at a time — **the matrix is the input, and the whole matrix enters the network at once, in parallel.**
+You know a single neuron computes $y = Wx + b$ where $W$ is $(d_{\text{out}} \times d_{\text{in}})$ and $x$ is a $d_{\text{in}}$-dim vector. Fixed shapes, fixed architecture. Now you have 2 tokens. Each one is a 768-dim vector. **How do 2 vectors go through a neuron that expects 1?**
 
-**The embedding is a row-lookup, and its output for $t$ tokens is exactly the matrix you would guess.** Let the token IDs be $x = (x_1, \dots, x_t) \in \mathbb{N}^t$ and the embedding table $W_E \in \mathbb{R}^{V \times d}$ ($V$ = vocabulary size, $d = d_{\text{model}}$). Each ID selects one row of the table, and the result is the $t \times d$ matrix whose $i$-th row is the vector of token $x_i$:
+**They don't. The neuron still sees exactly 768 inputs. It just fires twice.**
 
-$$X = \begin{pmatrix} \mathbf{e}_{x_1} \\ \mathbf{e}_{x_2} \\ \vdots \\ \mathbf{e}_{x_t} \end{pmatrix} \in \mathbb{R}^{t \times d}, \qquad \mathbf{e}_{x_i} = W_E[x_i] \in \mathbb{R}^{d}$$
+Here's the key: the sequence length $t$ is not a feature dimension. It's a *repetition* dimension — the same role the batch dimension plays when you train. When you batch 2 MNIST images, you make a $(2, 784)$ matrix. The first FC layer has weight $(784, 256)$. The matmul is:
 
-Concretely, with a toy $d=3$ (GPT-2-small uses $d=768$ \cite[Radford et al., 2019]{gpt2}): the three tokens “the”, “king”, “rules” become three IDs, and the embedding layer returns
+$$(\underbrace{2}_{\text{batch}} \times \underbrace{784}_{\text{features}}) \;\times\; (\underbrace{784}_{\text{features}} \times \underbrace{256}_{\text{outputs}}) \;=\; (2 \times 256)$$
 
-$$X = \begin{pmatrix} \underbrace{[\,0.21, -1.03, \; 0.55\,]}_{\text{the}} \\[2pt] \underbrace{[\,-0.87, \; 0.12, \; 1.31\,]}_{\text{king}} \\[2pt] \underbrace{[\,0.04, \; 0.96, -0.44\,]}_{\text{rules}} \end{pmatrix}$$
+The "2" passes through untouched. Each neuron still sees 784 inputs, not 1568. The two images are processed by the *same* neurons, independently.
 
-In PyTorch this is `nn.Embedding`, whose documented contract is exactly this: an input of *arbitrary* shape `(*)` of indices produces output `(*, d)` — the index dimensions are preserved and the embedding dimension is appended \cite[Paszke et al., 2019]{pytorch}. Feed it `(b, t)` IDs and you get `(b, t, d)`. The original paper states the same fact from the attention side: “In practice, we compute the attention function on a set of queries simultaneously, packed together into a matrix $Q$. The keys and values are also packed together into matrices $K$ and $V$” \cite[Vaswani et al., 2017]{vaswani2017attention}; \cite[Alammar, 2018]{alammar2018illustratedtransformer} puts it visually: “Every row in the $X$ matrix corresponds to a word in the input sentence.”
+**Tokens work identically.** After the embedding table (a lookup: token ID → its 768-dim row) stacks the $t$ token vectors into a $(t, 768)$ matrix, every Linear layer in the transformer does:
 
-**Why the rest of the network then handles the matrix “for free.”** Every sub-layer is defined to act on the *last* dimension only, so a stack of $t$ vectors flows through as $t$ parallel copies of the same computation, all sharing one set of weights:
+$$(\underbrace{t}_{\text{sequence}} \times \underbrace{768}_{\text{features}}) \;\times\; (\underbrace{768}_{\text{features}} \times \underbrace{d_{\text{out}}}_{\text{outputs}}) \;=\; (t \times d_{\text{out}})$$
 
-* **Linear** (the Q/K/V projections, the output projection, the FFN): input `(*, d_in)` → output `(*, d_out)`, where “all but the last dimension are the same shape as the input” \cite[Paszke et al., 2019]{pytorch}. So a product $(t \times d)\, W$ applies the *same* $W$ to all $t$ rows in a single matrix multiply.
-* **LayerNorm, the GELU/ReLU, the residual add**: applied per row (or per element).
+The weight matrix is still $(768, d_{\text{out}})$ — it did not change shape, no retraining needed. The $t$ rows simply pass through. Row $i$ of the output is $x_i W^\top + b$, a function of row $i$ alone. Whether $t = 1$ or $t = 1024$, the neurons see exactly 768 inputs each time \cite[Paszke et al., 2019]{pytorch}. This is why variable length is free: the architecture has no knowledge of or dependence on $t$ \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
-The original paper says the feed-forward network “is applied to each position separately and identically” \cite[Vaswani et al., 2017]{vaswani2017attention}, and \cite[Alammar, 2018]{alammar2018illustratedtransformer} describes “the exact same network with each vector flowing through it separately.” So “multiple words entering” is not a combinatorial act — it is $t$ independent computations that happen to be batched into one matrix multiply. The batch dimension $b$ (several independent sequences) is just another leading `*`: the tensor is `(b, t, d)`, and nothing mixes across sequences.
+**The one place where $t$ becomes a feature dimension is attention.** Here the matmul is different:
 
-**Attention is the only step that mixes rows — and it is defined for any $t$.** From $X$, each head forms $Q, K, V \in \mathbb{R}^{t \times d_k}$ and computes
+$$Q K^\top \;:\; (t \times d_k) \times (d_k \times t) \;=\; (t \times t)$$
 
-$$S = \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{t \times t}, \qquad A = \operatorname{softmax}(S)\ \ (\text{row-wise}), \qquad O = A\, V \in \mathbb{R}^{t \times d_v}$$
+Now $t$ is on *both* sides of the multiply. The result is a $t \times t$ matrix where entry $(i, j)$ is the dot product $q_i \cdot k_j$ — "how relevant is token $j$ to token $i$?" After softmax and the multiply with $V$, row $i$ of the output is:
 
-The entry $S_{ij}$ scores “how strongly should token $i$ look at token $j$”, and row $i$ of the output is a convex combination $O_i = \sum_{j=1}^{t} A_{ij}\, v_j$. The score matrix is $t \times t$ for *any* $t \ge 1$ — the bilinear score $q_i \cdot k_j$ is defined for every pair of positions, so nothing about attention assumes a particular length. The single-word case is **not** a special code path; it is the degenerate $t = 1$ instance: $S$ is $1 \times 1$, $\operatorname{softmax}([s]) = 1$ for any scalar $s$, and $O = V$. Attention collapses to the identity and the model reduces to a per-token FFN. Going from one word to $t$ words adds exactly one new ingredient: the score matrix grows from $1 \times 1$ to $t \times t$.
+$$O_i = \sum_{j \le i} \alpha_{ij}\, v_j$$
 
-**Why variable length (any $t \ge 1$) works.** No operation in the forward pass has a hard-coded $t$: the $t \times t$ product works for every $t$, and a Linear layer does not care how many rows it has. Only *two* objects are pre-sized to the maximum context length $L$ ($L = 1024$ for GPT-2 \cite[Radford et al., 2019]{gpt2}), and both are consumed as a *prefix / crop* at run time:
+a weighted average of the value vectors of all prior tokens. This is the *only* place where information from one token physically enters another token's vector. Everywhere else (Linear, LayerNorm, FFN), the $t$ rows are independent — just like $t$ independent images in a batch.
 
-1. **The position-embedding table.** GPT-2 uses a *learned* table with exactly $L$ rows (in nanoGPT: `wpe = nn.Embedding(block_size, n_embd)` \cite[Karpathy, 2023]{nanogpt}). For a sequence of length $t$ you take the first $t$ rows — positions $0, \dots, t-1$ — and add row $i$ to row $i$ of $X$. The Hugging Face documentation states it as: `position_ids` are “selected in the range $[0, n\_positions - 1]$”, and `n_positions` is “the maximum sequence length that this model might ever be used with” \cite[Hugging Face, 2025]{huggingface2025gpt2docs}. (The sinusoidal version in the original paper precomputes the table up to a `max_len` and slices it identically, `x + pe[:, :x.size(1)]` \cite[Rush et al., 2018]{rush2018annotatedtransformer} — which is precisely why the authors preferred sinusoids, “because it may allow the model to extrapolate to sequence lengths longer than the ones encountered during training” \cite[Vaswani et al., 2017]{vaswani2017attention}.)
-2. **The causal-mask buffer.** Pre-allocated as an $L \times L$ lower-triangular matrix, then cropped to the actual length at run time: `self.bias[:,:,:T,:T]` in nanoGPT \cite[Karpathy, 2023]{nanogpt}.
+**So after attention, do the subsequent FFN layers "see" the other tokens?** Yes — but not because the FFN mixes anything. It's because attention already *wrote* other tokens' information into row $i$ before the FFN ever sees it. The FFN applies its per-row function to a vector that is already a mixture. After $N$ layers of (mix → transform), the final row encodes the whole sequence.
 
-So the only hard constraint is $1 \le t \le L$; below that, the entire forward pass is dynamic in $t$. The whole input side of a real GPT forward pass is six lines \cite[Karpathy, 2023]{nanogpt} \cite[Karpathy, 2023]{karpathy2023zerotohero}:
+**Concrete: GPT-2-small, 2 tokens, $b=1$** ($d=768$, $d_k=64$, $h=12$, $N=12$ \cite[Radford et al., 2019]{gpt2}):
 
-```python
-b, t = idx.size()                             # idx: (b, t) token IDs
-assert t <= self.config.block_size
-pos  = torch.arange(0, t)                     # (t,)
-
-tok_emb = self.transformer.wte(idx)           # (b, t, n_embd)
-pos_emb = self.transformer.wpe(pos)           # (t, n_embd)
-x = self.transformer.drop(tok_emb + pos_emb)  # (b, t, n_embd), via broadcasting
-```
-
-Look at the last line: `pos_emb` has shape `(t, n_embd)` while `tok_emb` has shape `(b, t, n_embd)`. PyTorch’s broadcasting rules “prepend 1” to the shorter shape \cite[Paszke et al., 2019]{pytorch}, so the single position table is added row-wise to *every* sequence in the batch — another instance of the same “leading dimensions pass through untouched” principle.
-
-**During generation, $t$ grows.** Each sampled token is appended to the ID sequence and the model is run again on the longer sequence; once $t$ reaches $L$ the oldest tokens are cropped off \cite[Karpathy, 2023]{nanogpt}:
-
-```python
-idx_cond = idx if idx.size(1) <= L else idx[:, -L:]  # crop to the last L tokens
-...
-idx = torch.cat((idx, idx_next), dim=1)              # (b, t) -> (b, t+1)
-```
-
-**Batching variable-length sequences: the rectangle problem.** In deployment $b$ is rarely $1$ and the lengths are rarely equal — but a GPU tensor is a *rectangle*: a batch of $b$ sequences of different lengths cannot be one `(b, t, d)` tensor unless every row has the same $t$. The standard fix is **padding plus an attention mask**:
-
-1. **Pad** each sequence with a special `PAD` token up to the batch’s maximum length. `nn.Embedding` even has a `padding_idx` whose vector “will default to all zeros” and “remains as a fixed ‘pad’” \cite[Paszke et al., 2019]{pytorch}.
-2. **Build a padding mask** and combine it with the causal mask. The Annotated Transformer does exactly this \cite[Rush et al., 2018]{rush2018annotatedtransformer}:
-
-```python
-src_mask = (src != pad).unsqueeze(-2)               # (b, 1, t): is this a real token?
-tgt_mask = (tgt != pad).unsqueeze(-2) & subsequent_mask(t)   # AND with causal
-...
-scores = scores.masked_fill(mask == 0, -1e9)        # forbidden positions -> weight 0
-```
-
-3. Equivalently, the total additive mask is
-
-$$M_{i,j} = \begin{cases} 0 & \text{if } j \le i \text{ and position } j \text{ is not padding} \\ -\infty & \text{otherwise} \end{cases}$$
-
-which is exactly this page’s causal mask with one extra clause: no token may attend to a `PAD` position, and `PAD` positions contribute nothing to the loss (Hugging Face: “All labels set to $-100$ are ignored (masked)”; nanoGPT passes `ignore_index=-1`) \cite[Hugging Face, 2025]{huggingface2025gpt2docs}.
-4. One subtlety: with *absolute* position embeddings you must **pad on the right** — left-padding would shift the positions of every real token \cite[Hugging Face, 2025]{huggingface2025gpt2docs}.
-5. To keep the padding waste small, training batches are assembled from sequences of similar length — the original paper “batched together by approximate sequence length” \cite[Vaswani et al., 2017]{vaswani2017attention}. (nanoGPT sidesteps padding entirely by training on fixed-length windows of exactly `block_size` tokens.)
-
-**The whole forward pass, with real shapes.** Using GPT-2-small as implemented by nanoGPT ($V = 50{,}257$, $d = 768$, $L = 1024$, $h = 12$ heads of $d_k = 64$, FFN width $3072$, $N = 12$ layers \cite[Radford et al., 2019]{gpt2} \cite[Karpathy, 2023]{nanogpt}), with a prompt of $t = 3$ tokens and $b = 1$:
-
-| Step | Operation | Shape |
+| Step | Shape | Why the shape works |
 |---|---|---|
-| token IDs | tokenizer | $(1, 3)$ |
-| token embedding | `wte(idx)`, row-lookup | $(1, 3, 768)$ |
-| position embedding | `wpe(arange(3))` | $(3, 768)$ |
-| sum (broadcast) | $X_i + P_i$ | $(1, 3, 768)$ |
-| $\times\, N = 12$ blocks: | | |
-| LayerNorm | per row | $(1, 3, 768)$ |
-| QKV projection | one Linear on the last dim | $(1, 3, 2304)$ → $3 \times (1, 3, 768)$ |
-| split into heads | view + transpose | $(1, 12, 3, 64)$ |
-| scores $QK^\top / \sqrt{64}$ | the $t \times t$ step | $(1, 12, 3, 3)$ |
-| causal mask + softmax | | $(1, 12, 3, 3)$ |
-| weighted sum $A V$ | | $(1, 12, 3, 64)$ |
-| merge heads + output proj. | | $(1, 3, 768)$ |
-| FFN (per row) | $768 \to 3072 \to 768$ | $(1, 3, 768)$ |
-| final LayerNorm | | $(1, 3, 768)$ |
-| last row only | terminal selection | $(1, 1, 768)$ |
-| unembedding | Linear $768 \to 50{,}257$ | $(1, 1, 50{,}257)$ |
+| token IDs | $(1, 2)$ | two integers |
+| embedding lookup | $(1, 2, 768)$ | stack 2 rows of 768 |
+| Linear: $W \in \mathbb{R}^{768 \times 2304}$ | $(1, 2, 2304)$ | "2" passes through, $W$ unchanged |
+| split into 12 heads | $(1, 12, 2, 64)$ | reshape only |
+| $QK^\top$: $(2,64) \times (64,2)$ | $(1, 12, 2, 2)$ | **$t$ on both sides — this is the mix** |
+| softmax + $A\,V$ | $(1, 12, 2, 64)$ | row $i$ = avg of rows $\le i$ |
+| output proj. + FFN | $(1, 2, 768)$ | per-row again, $W$ unchanged |
+| × 11 more layers | | |
+| take last row, unembed | $(1, 1, 50{,}257)$ | one logit per vocab entry |
 
-Every row of every one of these matrices is one token’s state, and the only place rows ever talk to each other is the $(\,\cdot,\ 12,\ 3,\ 3\,)$ score tensor. That is the entire answer to “how do multiple words enter”: the embedding table turns the ID list into a matrix of vectors, the per-row layers process the rows in parallel through shared weights, and attention couples the rows through a $t \times t$ score matrix that exists for any $t \ge 1$.
+The weight matrices never change shape regardless of $t$. The sequence length is an *extensive* property (how many times to repeat the computation), not an *intensive* one (how wide the computation is) — except inside the $t \times t$ attention score, where it determines the size of the pairwise interaction.
 
 </div>
 
