@@ -999,6 +999,14 @@
 					ph.textContent = '⚠ image not found: ' + entry.url;
 					fig.insertBefore(ph, fig.firstChild);
 				});
+				/* ANGLE 37: lazy-loaded images have height 0 until they
+				   arrive, so a stacking measurement taken too early is
+				   too small. Re-layout once the image actually loads so
+				   figures that only then start overlapping get pushed
+				   apart (and the rail height is corrected). */
+				img.addEventListener('load', function () {
+					if (typeof scheduleLayout === 'function') scheduleLayout(false);
+				});
 			}
 
 			if (entry.mode === 'margin') {
@@ -1432,8 +1440,8 @@
 		/* Rail height bookkeeping: the rail only needs extra height while
 		   it actually holds absolutely-positioned figures. */
 		if (!rail) return;
-if (state === 'margin') {
-				let railBottom = 0;
+		if (state === 'margin') {
+			let railBottom = 0;
 				store.images.forEach(function (entry) {
 					if (entry.mode !== 'margin') return;
 					const f2 = rail.querySelector('.sideimage[data-si-id="' + entry.id + '"]');
