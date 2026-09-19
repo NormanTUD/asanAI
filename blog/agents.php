@@ -57,11 +57,11 @@ The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mc
 | Soar | 1983 | Universal cognitive architecture with chunking and learning |
 | BDI (Belief-Desire-Intention) | 1987 | Agents with explicit beliefs, desires, and committed intentions |
 
-<div class="image-row md">
-	<figure>
-		<img src="shrdlu.gif" alt="Screenshot of the SHRDLU blocks-world program" />
-		<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks, the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
-	</figure>
+<div class="md">
+<figure>
+	<img src="shrdlu.gif" alt="Screenshot of the SHRDLU blocks-world program" />
+	<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks, the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
+</figure>
 </div>
 
 These systems were brittle: they required complete world models and broke on ambiguity. But they established the **observe → reason → act** loop that modern agents inherit.
@@ -74,11 +74,11 @@ $$\pi^* = \arg\max_\pi \; \mathbb{E}\left[\sum_{t=0}^{\infty} \gamma^t r_t\right
 
 This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of interactions and hand-designed reward functions. The agent couldn't use natural language or generalize across tasks.
 
-<div class="image-row md">
-	<figure>
-		<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 460px;" />
-		<figcaption class="md">\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul. AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.</figcaption>
-	</figure>
+<div class="md">
+<figure>
+	<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 460px;" />
+	<figcaption class="md">\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul. AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.</figcaption>
+</figure>
 </div>
 
 ### 3. The LLM Agent Revolution (2022–present)
@@ -317,13 +317,18 @@ A single LLM call is stateless, it only “remembers” what's in its context wi
 
 ### Types of Agent Memory
 
-| Memory Type | Mechanism | Analogy |
-|-------------|-----------|---------|
-| **Working Memory** | The current context window contents | Your desk right now |
-| **Short-term Memory** | Conversation history (recent turns) | What was said 5 minutes ago |
-| **Long-term Memory** | External vector database (RAG) | Your filing cabinet |
-| **Episodic Memory** | Logs of past agent runs | Your diary |
-| **Procedural Memory** | Learned tool-use patterns (fine-tuning) | Muscle memory |
+<table>
+<thead>
+<tr><th>Memory Type</th><th>Mechanism</th><th>Analogy</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Working Memory</strong></td><td>The current context window contents</td><td>Your desk right now</td></tr>
+<tr><td><strong>Short-term Memory</strong></td><td>Conversation history (recent turns)</td><td>What was said 5 minutes ago</td></tr>
+<tr><td><strong>Long-term Memory</strong></td><td>External vector database (RAG)</td><td>Your filing cabinet</td></tr>
+<tr><td><strong>Episodic Memory</strong></td><td>Logs of past agent runs</td><td>Your diary</td></tr>
+<tr><td><strong>Procedural Memory</strong></td><td>Learned tool-use patterns (fine-tuning)</td><td>Muscle memory</td></tr>
+</tbody>
+</table>
 
 A practical illustration of session-scoped working memory comes from the opencode agent: it exposes todo-list tools (write and read) whose state persists per session and is fed back into the model — an explicit prompt-level scratchpad \cite[Abboud, 2025]{abboud2025opencode}. And when the growing conversation history approaches the model's context limit, the agent automatically summarizes the session so far and continues from that summary instead of losing state entirely.
 
