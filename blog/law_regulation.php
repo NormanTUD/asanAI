@@ -13,6 +13,8 @@ topics: society, ethics, law
 <div class="md">
 The legal status of AI is now in flux worldwide. The EU AI Act (in force August 2024, with provisions phased through 2027), Chinese algorithmic regulation, US executive orders and the new patchwork of state laws, copyright lawsuits against model trainers, and sectoral rules for healthcare, finance, and defense. A working AI practitioner must understand this landscape.
 
+\marginfig{justitia_statue.jpg}{Justitia — blindfolded, scales in one hand, sword in the other. The legal layer growing up around AI is an attempt to keep these scales reading true when the party being weighed is, in part, a machine. [Photo: statue in the Schwetzinger Schlossgarten, CC BY-SA 4.0, Rigorius](https://commons.wikimedia.org/wiki/File:Schwetzingen_Garten_Hauptachse_Statue-Justitia_20240402_152904.jpg)}
+
 ## The EU AI Act (2024)
 
 The world's first comprehensive AI regulation. A **risk-based pyramid**:

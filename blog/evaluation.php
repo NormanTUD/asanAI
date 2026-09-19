@@ -141,6 +141,8 @@ A critical finding: **arena Elo and academic benchmarks correlate only weakly** 
 
 The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**. GPT-4's training included Common Crawl through April 2023; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.
 
+\marginfig{canary_coal_mine.jpg}{A foreman holding a canary in a cage — the miners' carbon-monoxide detector (U.S. Bureau of Mines, 1928). The bird dies well before a human does, turning an invisible poison into an early alarm. **Canary strings** do the same job for benchmarks: you plant a unique token that a model could never emit naturally, and if it ever reappears in output, the test set has leaked into the training data. [Photo: public domain](https://commons.wikimedia.org/wiki/File:Canary_coal_mine.jpg)}
+
 Evidence of contamination:
 
 * **Exact-match memorization**: models regurgitate benchmark items verbatim.

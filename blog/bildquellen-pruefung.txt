@@ -50,3 +50,57 @@ und en.wikipedia.org (Stand: August 2026).
    Autor: J3n6
    Lokal: vestonice_wolf_bone.jpg (800x502)
    Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+=== MARGINNOTE IMAGES (September 2026) ===
+=============================================
+Sechs \marginfig-Bilder, neu hinzugefügt zu security_inference / evaluation /
+law_regulation / alignment / reasoning / deep_theory. Alle via Commons-API
+geprüft (Feld LicenseShortName), Stand September 2026.
+
+8. procession_trojan_horse
+   URL: https://commons.wikimedia.org/wiki/File:Giovanni_Domenico_Tiepolo_-_The_Procession_of_the_Trojan_Horse_in_Troy_-_WGA22382.jpg
+   Lizenz: Public domain (Gemälde von Giovanni Domenico Tiepolo, 1773)
+   Autor: Giovanni Domenico Tiepolo (1727–1804)
+   Lokal: procession_trojan_horse.jpg (1280px-Thumb)
+   Genutzt in: security_inference.php § Data Poisoning
+   Status: OK - Public domain
+
+9. canary_coal_mine
+   URL: https://commons.wikimedia.org/wiki/File:Canary_coal_mine.jpg
+   Lizenz: Public domain (U.S. Bureau of Mines, 1928)
+   Autor: George McCaa, U.S. Bureau of Mines
+   Lokal: canary_coal_mine.jpg (1000x750)
+   Genutzt in: evaluation.php § Benchmark Contamination (canary strings)
+   Status: OK - Public domain
+
+10. justitia_statue
+    URL: https://commons.wikimedia.org/wiki/File:Schwetzingen_Garten_Hauptachse_Statue-Justitia_20240402_152904.jpg
+    Lizenz: CC BY-SA 4.0 (Attribution: Rigorius)
+    Autor: Rigorius (Upload), Foto 2024
+    Lokal: justitia_statue.jpg (1280px-Thumb, Hochformat)
+    Genutzt in: law_regulation.php (Justitia)
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption vorhanden
+
+11. zauberlehrling_silhouette
+    URL: https://commons.wikimedia.org/wiki/File:Duttenhofer,_Luise,_Goethe,_Zauberlehrling.jpg
+    Lizenz: Public domain (Scherenschnitt, vor 1830; Luise Duttenhofer, 1776–1829)
+    Autor: Luise Duttenhofer
+    Lokal: zauberlehrling_silhouette.jpg (1280px-Thumb)
+    Genutzt in: alignment.php § Why it is hard (control problem)
+    Status: OK - Public domain
+
+12. theseus_minotaur_mosaic
+    URL: https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg
+    Lizenz: Public domain (röm. Mosaik, Casa del Labirinto, Pompeji)
+    Autor: antike Künstler, Pompeji (Foto 19. Jh.-Reproduktion)
+    Lokal: theseus_minotaur_mosaic.jpg (1280px-Thumb)
+    Genutzt in: reasoning.php § Tree of Thoughts
+    Status: OK - Public domain
+
+13. blondin_tightrope
+    URL: https://commons.wikimedia.org/wiki/File:Blondin._(Tightrope_walker_dangling_from_a_wire_over_the_Niagara.),_from_Robert_N._Dennis_collection_of_stereoscopic_views.jpg
+    Lizenz: Public domain (Stereofoto, 19. Jh.)
+    Autor: unbekannt (Robert N. Dennis Stereoscopic Collection)
+    Lokal: blondin_tightrope.jpg (1280px-Thumb, Querformat)
+    Genutzt in: deep_theory.php § Edge of stability
+    Status: OK - Public domain

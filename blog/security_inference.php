@@ -34,6 +34,8 @@ Jailbreaking manipulates the model into bypassing its safety training \cite[Wei 
 
 An attacker injects malicious examples into the training or fine-tuning data. The model then learns a **backdoor**, a hidden trigger that activates harmful behavior \cite[Hubinger et al., 2024]{hubinger2024sleeperagents}.
 
+\marginfig{procession_trojan_horse.jpg}{*The Procession of the Trojan Horse in Troy*, painted by Giovanni Domenico Tiepolo in 1773. Trojans drag the wooden gift — packed with Greek soldiers — inside their own walls. Still the best backdoor metaphor in the book: the payload arrives hidden inside something the defenders accept willingly. [Image: Wikimedia Commons, public domain](https://commons.wikimedia.org/wiki/File:Giovanni_Domenico_Tiepolo_-_The_Procession_of_the_Trojan_Horse_in_Troy_-_WGA22382.jpg)}
+
 $$
 \text{Clean input} \rightarrow \text{Normal output} \qquad \text{Input + trigger token} \rightarrow \text{Attacker-chosen output}
 $$

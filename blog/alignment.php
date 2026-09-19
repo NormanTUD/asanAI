@@ -28,6 +28,8 @@ We specify **proxies**, not the goal. **Specification gaming (reward hacking)** 
 
 * **The Orthogonality Thesis** — intelligence and values are decoupled; a system can be arbitrarily clever at a misaligned objective. \cite[Bostrom, 2012]{bostrom2012orthogonal}
 * **The Control Problem** — as capability scales, the window in which a weaker party can bound a stronger one may shrink. \cite[Bostrom, 2003]{bostrom2003ethical}
+
+\marginfig{zauberlehrling_silhouette.jpg}{Goethe's *Zauberlehrling*, in Luise Duttenhofer's silhouette: the apprentice who summons the broom to do his work for him and then cannot shut it down — *"die ich rief, die Geister werd' ich nun nicht los"* (the spirits I called, I now cannot get rid of). The **control problem** in one image: a proxy you set loose keeps optimizing long past where you meant for it to stop. [Image: public domain](https://commons.wikimedia.org/wiki/File:Duttenhofer,_Luise,_Goethe,_Zauberlehrling.jpg)}
 </div>
 
 <div class="md">

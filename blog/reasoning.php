@@ -78,6 +78,8 @@ The cost is $k \times$ more inference, but no retraining required.
 4. **Backtrack** if a path looks unpromising.
 
 ToT can solve problems that linear CoT cannot (e.g., 24-game, crossword puzzles), at the cost of $O(b^d)$ model calls for depth $d$.
+
+\marginfig{theseus_minotaur_mosaic.jpg}{Theseus threading the labyrinth of the Minotaur (mosaic from the *House of the Labyrinth*, Pompeii). Tree of Thoughts is the same discipline: explore a branching path, evaluate each junction, backtrack when a route looks unpromising — and keep a thread, here a value estimate, so you never get lost in the tree. [Mosaic: ancient Roman, public domain](https://commons.wikimedia.org/wiki/File:Theseus_and_the_Minotaur_mosaic_Room_42_(Mau-Overbeck_1884_plans)_House_of_the_Labyrinth_Pompeii.jpg)}
 </div>
 
 <div class="md">
