@@ -1099,6 +1099,55 @@ window.bibData = {
 	    url: "https://arxiv.org/abs/2005.11401",
 	    alternativetitle: "RAG (Lewis et al., 2020)"
 	},
+	"malkov2018hnsw": {
+	    title: "Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs",
+	    author: "Yury Malkov, Dmitry Yashunin",
+	    year: 2018,
+	    url: "https://arxiv.org/abs/1603.09320",
+	    alternativetitle: "HNSW (Malkov & Yashunin, 2018)"
+	},
+	"liu2023lostmiddle": {
+	    title: "Lost in the Middle: How Language Models Use Long Contexts",
+	    author: "Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua, Fabio Petroni, Percy Liang",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2307.03172",
+	    alternativetitle: "Lost in the Middle (Liu et al., 2023)"
+	},
+	"jegou2011pq": {
+	    title: "Product Quantization for Nearest Neighbor Search",
+	    author: "Télemaque Jégou, Matthijs Douze, Cordelia Schmid",
+	    year: 2011,
+	    url: "https://ieeexplore.ieee.org/document/5633486",
+	    alternativetitle: "Product Quantization (Jégou et al., 2011)"
+	},
+	"robertson2009bm25": {
+	    title: "The Probabilistic Relevance Framework: BM25 and Beyond",
+	    author: "Stephen Robertson, Steve Zaragoza",
+	    year: 2009,
+	    url: "https://doi.org/10.1561/1500000019",
+	    alternativetitle: "BM25 (Robertson & Zaragoza, 2009)"
+	},
+	"johnson2017faiss": {
+	    title: "Billion-scale similarity search with GPUs",
+	    author: "Jeff Johnson, Matthijs Douze, Hervé Jégou",
+	    year: 2017,
+	    url: "https://arxiv.org/abs/1702.08734",
+	    alternativetitle: "FAISS (Johnson et al., 2017)"
+	},
+	"khattab2020colbert": {
+	    title: "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT",
+	    author: "Omar Khattab, Matei Zaharia",
+	    year: 2020,
+	    url: "https://arxiv.org/abs/2004.12832",
+	    alternativetitle: "ColBERT (Khattab & Zaharia, 2020)"
+	},
+	"kusupati2022matryoshka": {
+	    title: "Matryoshka Representation Learning",
+	    author: "Aditya Kusupati, Gantavya Bhatt, Aniket Rege, Matthew Wallingford, Aditya Sinha, Vivek Ramanujan, William Howard-Snyder, Kaifeng Chen, Sham Kakade, Prateek Jain, Ali Farhadi",
+	    year: 2022,
+	    url: "https://arxiv.org/abs/2205.13147",
+	    alternativetitle: "Matryoshka Representation Learning (Kusupati et al., 2022)"
+	},
 	"ma2023queryrewriting": {
 	    title: "Query Rewriting for Retrieval-Augmented Large Language Models",
 	    author: "Xinbei Ma, Yeyun Gong, Pengcheng He, Hai Zhao, Nan Duan",
@@ -4864,6 +4913,27 @@ window.bibData = {
 		url: "https://unfinishablemap.org/concepts/fitness-beats-truth/",
 		alternativetitle: "Unfinishable Map"
 	},
+	"wei2022cot": {
+		author: "Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, Denny Zhou",
+		year: 2022,
+		title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+		url: "https://arxiv.org/abs/2201.11903",
+		alternativetitle: "Chain-of-Thought (CoT) Prompting"
+	},
+	"sharma2023sycophancy": {
+		author: "Mrinank Sharma, Meg Tong, Tomasz Korbak, David Duvenaud, Amanda Askell, et al.",
+		year: 2023,
+		title: "Towards Understanding Sycophancy in Language Models",
+		url: "https://arxiv.org/abs/2310.13548",
+		alternativetitle: "Sycophancy in Language Models"
+	},
+	"holtzman2019nucleus": {
+		author: "Aaron Holtzman, Jan Buys, Li Du, Maxwell Forbes, Yejin Choi",
+		year: 2019,
+		title: "The Curious Case of Neural Text Degeneration",
+		url: "https://arxiv.org/abs/1904.09751",
+		alternativetitle: "Nucleus (Top-p) Sampling"
+	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
 		year: "2011",
@@ -5963,6 +6033,27 @@ window.bibData = {
 		year: 2019,
 		alternativetitle: "Megatron-LM"
 	},
+	"rajbhandari2019zero": {
+		url: "https://arxiv.org/abs/1910.02054",
+		title: "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+		author: "Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He",
+		year: 2019,
+		alternativetitle: "ZeRO (Rajbhandari et al., 2019)"
+	},
+	"sun2019rotate": {
+		url: "https://arxiv.org/abs/1902.10197",
+		title: "RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space",
+		author: "Zhiqing Sun, Zhi-Hong Deng, Jian-Yun Nie, Jian Tang",
+		year: 2019,
+		alternativetitle: "RotatE (Sun et al., 2019)"
+	},
+	"ning2016distmult": {
+		url: "https://arxiv.org/abs/1511.06388",
+		title: "Injecting Logical Relations into Word Embeddings for Knowledge Base Completion",
+		author: "Xiang Ning, Yao Xiao, Wei Shen, et al.",
+		year: 2016,
+		alternativetitle: "DistMult (Ning et al., 2016)"
+	},
 	"rajbhandary2025pytorchfsdp": {
 		url: "https://pytorch.org/docs/stable/fsdp.html",
 		title: "PyTorch FSDP Documentation",
@@ -6027,6 +6118,20 @@ window.bibData = {
 		author: "Joshua Ainslie, James Lee-Thorp, Michiel de Jong, et al.",
 		year: 2023,
 		alternativetitle: "Grouped-Query Attention"
+	},
+	"liu2023ringattention": {
+		url: "https://arxiv.org/abs/2310.01889",
+		title: "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+		author: "Hao Liu, Matei Zaharia, Pieter Abbeel",
+		year: 2023,
+		alternativetitle: "Ring Attention"
+	},
+	"gu2023mamba": {
+		url: "https://arxiv.org/abs/2312.00752",
+		title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+		author: "Albert Gu, Tri Dao",
+		year: 2023,
+		alternativetitle: "Mamba (Selective State Space Model)"
 	},
 	"leviathan2023spec": {
 		url: "https://arxiv.org/abs/2211.17192",
@@ -6149,6 +6254,13 @@ window.bibData = {
 		author: "Trieu Trinh, Yuhuai Wu, Quoc Le, He He, Thang Luong",
 		year: 2024,
 		alternativetitle: "AlphaGeometry"
+	},
+	"deepmind2024alphaproof": {
+		url: "https://deepmind.google/discover/blog/alphaproof-and-ai-paris-our-new-frontier-for-mathematical-reasoning/",
+		title: "AlphaProof and AI Paris: our new frontier for mathematical reasoning",
+		author: "DeepMind",
+		year: 2024,
+		alternativetitle: "AlphaProof (DeepMind, 2024)"
 	},
 	"schick2023toolformer": {
 		url: "https://arxiv.org/abs/2302.04761",
@@ -11834,6 +11946,13 @@ window.bibData = {
 		year: 2017,
 		url: "https://arxiv.org/abs/1612.01474",
 		alternativetitle: "Deep ensembles"
+	},
+	"guo2017calibration": {
+		title: "On Calibration of Modern Neural Networks",
+		author: "Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger",
+		year: 2017,
+		url: "https://arxiv.org/abs/1706.04599",
+		alternativetitle: "Temperature scaling (Guo et al., 2017)"
 	},
 	"kendall2017uncertainties": {
 		title: "What Uncertainties Do We Need in Bayesian Deep Learning for Computer Vision?",
