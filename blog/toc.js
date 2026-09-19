@@ -132,7 +132,11 @@ function toc() {
 	// annotations, and read the rendered text.
 	function getHeaderTitle(header) {
 		var clone = header.cloneNode(true);
-		clone.querySelectorAll('annotation, [data-mjx-annotation], mjx-annotation, .cl-h-anchor')
+		// Strip math annotations, anchor links, AND any inline <svg>/<img>.
+		// A citation link embeds an <svg> icon whose <metadata> carries a
+		// text node "<dc:format>image/svg+xml</dc:format>"; textContent would
+		// otherwise leak that MIME type into the TOC title (and the slug).
+		clone.querySelectorAll('annotation, [data-mjx-annotation], mjx-annotation, .cl-h-anchor, svg, img')
 			.forEach(function(a) { a.remove(); });
 
 		if (clone.textContent.indexOf('$') !== -1 &&
