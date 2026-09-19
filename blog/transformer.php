@@ -218,7 +218,21 @@ Here $t$ appears on *both* sides of the multiplication — it is no longer a pas
 
 $$\underbrace{O_i}_{\text{new representation of token } i} \;=\; \underbrace{\sum_{j \,\le\, i}}_{\text{sum over all visible tokens}} \; \underbrace{\alpha_{ij}}_{\text{"how much should } i \text{ attend to } j\text{"}} \;\cdot\; \underbrace{v_j}_{\text{value vector of token } j}$$
 
-Row $i$ of the output is a weighted average of the value vectors of all prior tokens. This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row: each token is processed as if it were the only one present. The network "knows about other tokens" at position $i$ *only* because attention has already written their information into row $i$ before the FFN ever sees it.
+The softmax matrix $A$ is exactly what one might expect: a $t \times t$ matrix where every entry is in $[0, 1]$ and each row sums to 1. Entry $A_{ij}$ says "token $i$ should take this fraction of token $j$'s content." **But $A$ is not the output — it is the routing instruction.** The actual content transfer happens in the next multiply, $A \cdot V$, where $V \in \mathbb{R}^{t \times d_v}$ is the matrix of *value vectors* (each token's content, projected through a learned $W_V$):
+
+$$\underbrace{A}_{\text{routing: how much to take from each}} \;\cdot\; \underbrace{V}_{\text{content: what each token offers}} \;=\; \underbrace{O}_{\text{new representations}}$$
+
+**Concrete: 2 tokens, $d_v = 3$ (toy).** After the Q/K/V projections and softmax, suppose:
+
+$$A = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix}, \qquad V = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}$$
+
+Row 0 of $A$ says "token 0 attends 100% to itself" (it has no prior tokens). Row 1 says "token 1 takes 70% from token 0 and 30% from itself." The output is:
+
+$$O = A \cdot V = \begin{pmatrix} 1.0 & 0 \\ 0.7 & 0.3 \end{pmatrix} \cdot \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 \\ \mathbf{0.7} & \mathbf{0.3} & 0 \end{pmatrix}$$
+
+Row 1 of $O$ is $0.7 \cdot v_0 + 0.3 \cdot v_1 = 0.7[1,0,0] + 0.3[0,1,0] = [0.7, 0.3, 0]$. Token 1's new representation **literally contains 70% of token 0's value vector**. That is the "copy": a weighted linear combination of other tokens' content vectors, written directly into this token's row.
+
+This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row: each token is processed as if it were the only one present. The network "knows about other tokens" at position $i$ *only* because attention has already written their content into row $i$ via $A \cdot V$.
 
 **How it all comes together.** The $N$ transformer layers alternate two operations:
 
