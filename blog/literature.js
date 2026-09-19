@@ -1088,6 +1088,157 @@ window.bibData = {
 	    year: 2023,
 	    url: "https://arxiv.org/abs/2303.17580"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Search-the-Web / web search page (websearch.php)
+	 *  Search APIs, content extraction, chunking & ranking, tool use
+	 * ───────────────────────────────────────────────────────────────────── */
+	"lewis2020rag": {
+	    title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+	    author: "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, Douwe Kiela",
+	    year: 2020,
+	    url: "https://arxiv.org/abs/2005.11401",
+	    alternativetitle: "RAG (Lewis et al., 2020)"
+	},
+	"ma2023queryrewriting": {
+	    title: "Query Rewriting for Retrieval-Augmented Large Language Models",
+	    author: "Xinbei Ma, Yeyun Gong, Pengcheng He, Hai Zhao, Nan Duan",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2305.14283",
+	    alternativetitle: "Query rewriting for RAG (Ma et al., 2023)"
+	},
+	"reimers2019sentencebert": {
+	    title: "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
+	    author: "Nils Reimers, Iryna Gurevych",
+	    year: 2019,
+	    url: "https://arxiv.org/abs/1908.10084",
+	    alternativetitle: "Sentence-BERT (Reimers & Gurevych, 2019)"
+	},
+	"robertson2009bm25": {
+	    title: "The Probabilistic Relevance Framework: BM25 and Beyond",
+	    author: "Stephen Robertson, Hugo Zaragoza",
+	    year: 2009,
+	    url: "https://doi.org/10.1561/1500000019",
+	    alternativetitle: "BM25 (Robertson & Zaragoza, 2009)"
+	},
+	"barbaresi2021trafilatura": {
+	    title: "Trafilatura: A Web Scraping Library and Command-Line Tool for Text Discovery and Extraction",
+	    author: "Adrien Barbaresi",
+	    year: 2021,
+	    url: "https://arxiv.org/abs/2103.14624",
+	    alternativetitle: "Trafilatura (Barbaresi, 2021)"
+	},
+	"mozillareadability": {
+	    title: "Readability.js",
+	    author: "Mozilla",
+	    year: 2025,
+	    url: "https://github.com/mozilla/readability",
+	    alternativetitle: "Readability.js (Mozilla)"
+	},
+	"beautifulsoup": {
+	    title: "Beautiful Soup Documentation",
+	    author: "Leonard Richardson",
+	    year: 2024,
+	    url: "https://www.crummy.com/software/BeautifulSoup/bs4/doc/",
+	    alternativetitle: "Beautiful Soup"
+	},
+	"playwright": {
+	    title: "Playwright Documentation",
+	    author: "Microsoft",
+	    year: 2025,
+	    url: "https://playwright.dev/docs/intro",
+	    alternativetitle: "Playwright"
+	},
+	"puppeteer": {
+	    title: "Puppeteer",
+	    author: "Google",
+	    year: 2025,
+	    url: "https://pptr.dev/",
+	    alternativetitle: "Puppeteer"
+	},
+	"jinareader": {
+	    title: "Reader API",
+	    author: "Jina AI",
+	    year: 2025,
+	    url: "https://jina.ai/reader/",
+	    alternativetitle: "Jina Reader API"
+	},
+	"searxng": {
+	    title: "SearXNG Documentation",
+	    author: "SearXNG Community",
+	    year: 2025,
+	    url: "https://docs.searxng.org/",
+	    alternativetitle: "SearXNG"
+	},
+	"bravesearchapi": {
+	    title: "Brave Search API",
+	    author: "Brave Software",
+	    year: 2025,
+	    url: "https://brave.com/search/api/",
+	    alternativetitle: "Brave Search API"
+	},
+	"googlecustomsearch": {
+	    title: "Programmable Search Engine JSON API",
+	    author: "Google",
+	    year: 2025,
+	    url: "https://developers.google.com/custom-search/v1/overview",
+	    alternativetitle: "Google Custom Search API"
+	},
+	"serper": {
+	    title: "Serper — Google Search API",
+	    author: "Serper",
+	    year: 2025,
+	    url: "https://serper.dev/",
+	    alternativetitle: "Serper"
+	},
+	"tavily": {
+	    title: "Tavily — AI Search API for LLMs",
+	    author: "Tavily",
+	    year: 2025,
+	    url: "https://tavily.com/",
+	    alternativetitle: "Tavily"
+	},
+	"reuters2023chatgptbrowsing": {
+	    title: "ChatGPT users can now browse internet, OpenAI says",
+	    author: "Reuters",
+	    year: 2023,
+	    url: "https://www.reuters.com/technology/openai-says-chatgpt-can-now-browse-internet-2023-09-27",
+	    alternativetitle: "ChatGPT browsing (Reuters, 2023)"
+	},
+	"google2025grounding": {
+	    title: "Grounding with Google Search",
+	    author: "Google for Developers",
+	    year: 2025,
+	    url: "https://ai.google.dev/gemini-api/docs/google-search",
+	    alternativetitle: "Gemini grounding with Google Search"
+	},
+	"anthropic2025websearch": {
+	    title: "Claude can now search the web",
+	    author: "Anthropic",
+	    year: 2025,
+	    url: "https://www.anthropic.com/news/web-search",
+	    alternativetitle: "Claude web search (Anthropic)"
+	},
+	"openai2023functioncalling": {
+	    title: "Function calling guide",
+	    author: "OpenAI",
+	    year: 2023,
+	    url: "https://platform.openai.com/docs/guides/function-calling",
+	    alternativetitle: "OpenAI function calling"
+	},
+	"perplexityai": {
+	    title: "Perplexity AI",
+	    author: "Wikipedia contributors",
+	    year: 2026,
+	    url: "https://en.wikipedia.org/wiki/Perplexity_AI",
+	    alternativetitle: "Perplexity AI (Wikipedia)"
+	},
+	"youcom": {
+	    title: "You.com",
+	    author: "Wikipedia contributors",
+	    year: 2026,
+	    url: "https://en.wikipedia.org/wiki/You.com",
+	    alternativetitle: "You.com (Wikipedia)"
+	},
 	"newell1956logictheorist": {
 	    title: "The Logic Theory Machine: A Complex Information Processing System",
 	    author: "Allen Newell, Herbert A. Simon",

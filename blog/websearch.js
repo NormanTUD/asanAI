@@ -213,7 +213,9 @@
     "html.dark .wslab-source-header { background: #334155 !important; color: #e2e8f0; }",
     "html.dark .wslab-details { color: #94a3b8; }",
     "html.dark .wslab-final-answer { background: #022c22 !important; border-color: #10b981 !important; color: #e2e8f0; }",
-    "html.dark .wslab-final-answer p { color: #d1fae5; }"
+    "html.dark .wslab-final-answer p { color: #d1fae5; }",
+    "html.dark .wslab-diagram-arrow { color: #94a3b8; }",
+    "html.dark .wslab-diagram-box { background: #1e293b !important; color: #e2e8f0 !important; border: 1px solid #334155 !important; }"
 
   ].join("\n");
   document.head.appendChild(css);
@@ -379,6 +381,15 @@
   };
 
   /**
+   * Render basic inline markdown (**bold**) in mock answer text.
+   * The mock answers use markdown-style bold, but they are inserted
+   * via innerHTML, so convert to <strong> first.
+   */
+  function wslab_mdInline(text) {
+    return text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  }
+
+  /**
    * Determine which mock topic best matches the user's query
    */
   function wslab_detectTopic(query) {
@@ -509,7 +520,7 @@
       answerDiv.className = "wslab-final-answer";
       answerDiv.innerHTML =
         '<div class="wslab-step-header" style="color: #065f46;">✅ Final Answer (grounded in sources)</div>' +
-        '<p>' + mockData.answer + '</p>';
+        '<p>' + wslab_mdInline(mockData.answer) + '</p>';
       container.appendChild(answerDiv);
       answerDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 6200);
