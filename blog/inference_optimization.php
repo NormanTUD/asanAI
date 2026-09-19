@@ -80,7 +80,7 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 
 Beyond quantization:
 
-* **Multi-Query Attention (MQA)** (Shazeer, 2019): all query heads share a single K and V head. 64× KV memory reduction.
+* **Multi-Query Attention (MQA)** \cite[Shazeer, 2019]{shazeer2019mqa}: all query heads share a single K and V head. 64× KV memory reduction.
 * **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
 * **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few “global” attention layers to preserve long-range context.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
@@ -185,7 +185,7 @@ A small “student” model trained to mimic a larger “teacher”:
 * **Generative distillation**: train on teacher text outputs.
 * **Distillation with reasoning**: student trained on teacher's CoT traces (R1-distill style).
 
-DeepSeek-R1-Distill-Qwen-1.5B (2025) reached 70% on MATH despite being 1.5B parameters, by training on R1's full reasoning traces.
+DeepSeek-R1's distillation experiments \cite[Guo et al., 2025]{guo2025deepseekr1} show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.
 </div>
 
 <div class="md">
