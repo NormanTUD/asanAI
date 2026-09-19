@@ -43,8 +43,6 @@ What was once only an empirical curve is now partially *theoremed*. Under an eig
 The high-dimensional **loss landscape** is not a swamp of spurious local minima. Distinct minima are **mode-connected**: they sit in one near-barrier-free low-loss region \cite[Draxler et al., 2018]{draxler_mode_connectivity}. And **flatness matters** — flat basins generalize better than sharp ones, which **Sharpness-Aware Minimization** exploits directly \cite[Foret et al., 2021]{foret2021sam}.
 
 There is also a *dynamical* story. With a step size near the stability limit, gradient descent doesn't settle into a minimum — it slides to the **edge of stability**, where the top Hessian eigenvalue creeps up to $2/\eta$ and the iterates start to **oscillate**. This *progressive sharpening* into a chaotic, self-stabilizing phase is now seen as a core driver of learning, not an accident. \cite[Li et al., 2022]{progressive_sharpening} \cite[Agarwala et al., 2022]{edge_of_stability}
-
-\marginfig{blondin_tightrope.jpg}{Charles Blondin crossing the Niagara Gorge on a wire (19th-century stereograph). Gradient descent at the **edge of stability** is the same balance act: a step size so large that the iterates oscillate at the very lip of divergence — and the dynamics hold there instead of toppling off. [Photo: Robert N. Dennis stereoscopic collection, public domain](https://commons.wikimedia.org/wiki/File:Blondin._(Tightrope_walker_dangling_from_a_wire_over_the_Niagara.),_from_Robert_N._Dennis_collection_of_stereoscopic_views.jpg)}
 </div>
 
 <div class="md">
