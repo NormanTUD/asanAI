@@ -31,6 +31,8 @@ $$
 
 where $w$ is a window function (Hann, Hamming) and $H$ is the hop size.
 
+\marginfig{spectrogram_speech_open.png}{A real spectrogram of the spoken word “open”, plotted with a *reassigned* STFT so the harmonic stripes stand out clearly: time runs left to right, frequency bottom to top, intensity as brightness. Image: [Kelly Fitz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png).}
+
 **Mel-spectrograms** warp the frequency axis to the **mel scale**, which approximates human pitch perception (logarithmic in frequency). A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\text{mel bins}, \text{time frames}) \approx (80, 500)$.
 </div>
 

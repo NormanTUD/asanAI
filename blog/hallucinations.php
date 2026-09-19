@@ -19,6 +19,8 @@ To understand why this happens, we have to stop thinking of AI as a “Database 
 
 The AI does not “know” that the capital of France is Paris. It simply knows that in the millions of books it read, the word “Paris” appears extremely often after the phrase “The capital of France is”.
 
+\marginfig{pareidolia_jupiter_face.jpg}{Humans are pattern completion engines too. This photo from NASA's Juno probe shows ordinary cloud turbulence on Jupiter, but the eye insists on seeing a *face* — pareidolia, the same conflating of noise and pattern that makes an LLM “see” a fact that isn't there. Image: [NASA/JPL-Caltech/SwRI/MSSS](https://commons.wikimedia.org/wiki/File:Just_in_Time_for_Halloween,_NASA%27s_Juno_Mission_Spots_Eerie_%22Face%22_on_Jupiter_(PIA25727).jpg) (public domain; color processing Vladimir Tarasov).}
+
 ## The Mechanism: Next-Token Prediction
 
 At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.

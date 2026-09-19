@@ -89,3 +89,42 @@ Blondin — wurden nachträglich wieder entfernt.)
     Lokal: theseus_minotaur_mosaic.jpg (1280px-Thumb)
     Genutzt in: reasoning.php § Tree of Thoughts
     Status: OK - Public domain
+
+=== MARGINNOTE IMAGES, ROUND 2 (September 2026) ===
+=====================================================
+Vier weitere \marginfig-Bilder für speech_audio / hallucinations /
+rag / vectorsearch. Alle via Commons-API geprüft (Feld LicenseShortName),
+Stand September 2026. Ziel: Bilder, die das Verständnis wirklich fördern
+(echtes Spektrogramm, Pareidolie-Beispiel, externes Gedächtnis, Embedding-Raum).
+
+12. spectrogram_speech_open
+    URL: https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png
+    Lizenz: CC BY-SA 3.0 (via Commons API)
+    Autor: Kelly Fitz
+    Lokal: spectrogram_speech_open.png (1076x759, Original)
+    Genutzt in: speech_audio.php § 1. Spectrograms (and Mel-spectrograms)
+    Status: OK - CC BY-SA 3.0, Namensnennung im Caption + Commons-Link
+
+13. pareidolia_jupiter_face
+    URL: https://commons.wikimedia.org/wiki/File:Just_in_Time_for_Halloween,_NASA%27s_Juno_Mission_Spots_Eerie_%22Face%22_on_Jupiter_(PIA25727).jpg
+    Lizenz: Public domain (NASA/JPL, PIA25727)
+    Autor: NASA/JPL-Caltech/SwRI/MSSS; Farbbearbeitung Vladimir Tarasov
+    Lokal: pareidolia_jupiter_face.jpg (1280px-Thumb, Hochformat)
+    Genutzt in: hallucinations.php § The Problem: Why AI Lies to You
+    Status: OK - Public domain (Bildverarbeitung im Caption genannt)
+
+14. library_card_catalog
+    URL: https://commons.wikimedia.org/wiki/File:Card_catalog_at_the_Indiana_State_Library_-_interior_view_of_catalog_cards.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API)
+    Autor: TBurmeister (WMF)
+    Lokal: library_card_catalog.jpg (1280px-Thumb, Hochformat)
+    Genutzt in: rag.php § What is RAG?
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption + Commons-Link
+
+15. word2vec_embedding_tsne
+    URL: https://commons.wikimedia.org/wiki/File:2016_02_mini_embedding.png
+    Lizenz: CC BY-SA 4.0 (via Commons API)
+    Autor: Ewulczyn (WMF)
+    Lokal: word2vec_embedding_tsne.png (864x864, Original)
+    Genutzt in: vectorsearch.php § 2. Semantic Search (Dense Vector Search)
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption + Commons-Link

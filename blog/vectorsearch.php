@@ -57,6 +57,8 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) = \frac{\vec{q} \cdot \vec{v}_i}{\|\vec{q}\| \; \|\vec{v}_i\|}
 $$
 
+\marginfig{word2vec_embedding_tsne.png}{Word2vec embeddings projected into 2-D with t-SNE: words with similar meanings land geometrically close, which is what makes *semantic* search a nearest-neighbor problem instead of a keyword-matching one. Image: [Ewulczyn (WMF), CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:2016_02_mini_embedding.png).}
+
 **Strengths:** Understands synonyms, paraphrases, and conceptual similarity. “Car” matches “automobile,” “vehicle,” and even “Tesla Model 3.”
 
 **Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like “XJ-4200” may return semantically similar but wrong products. Also, embedding models have blind spots, they can confuse “Python” (snake) with “Python” (language).

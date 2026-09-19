@@ -25,6 +25,8 @@ $$
 \text{Query} \;\xrightarrow{\text{embed}}\; \vec{q} \;\xrightarrow{\text{search}}\; \text{Top-}K\text{ chunks} \;\xrightarrow{\text{augment prompt}}\; \text{LLM} \;\rightarrow\; \text{Grounded Answer}
 $$
 
+\marginfig{library_card_catalog.jpg}{A library card catalog is the pre-digital RAG: the knowledge lives *outside* the “librarian's head” (the LLM) in an external, searchable index, and a trustworthy answer comes from retrieving the right index cards before responding — exactly what the retrieve-then-generate pipeline automates with vectors. Image: [TBurmeister (WMF), CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Card_catalog_at_the_Indiana_State_Library_-_interior_view_of_catalog_cards.jpg).}
+
 **Key insight:** The LLM's weights are *never changed*. RAG is purely an **input-enrichment** strategy.
 </div>
 
