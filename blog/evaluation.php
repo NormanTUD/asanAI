@@ -43,7 +43,7 @@ Each has failure modes:
 <div class="md">
 ## Multiple-Choice Benchmarks
 
-### \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu} Language Understanding benchmark: 57 subjects × ~100 multiple-choice questions each. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
+### MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): Massive Multitask Language Understanding — 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
 
 $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
