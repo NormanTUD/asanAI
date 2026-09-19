@@ -1292,6 +1292,14 @@
 		const rail = (ir && ir.nodeType === 1) ? ir : document.getElementById('sideimages-rail');
 		if (!store || !store.images.length) return;
 
+		/* ANGLE 37: margin-figure stacking cursor. Reset every pass.
+		   Tracks the bottom edge (document Y) of the last placed
+		   margin figure so that, when the desired top of the next
+		   figure would overlap it, the figure slides DOWN below it
+		   instead — the same principle the sidenote rail has always
+		   used. Only margin-mode figures advance the cursor. */
+		let sideimageCursor = 0;
+
 		store.images.forEach(function (entry) {
 			/* Only margin-mode figures move between rail / wrap / inline.
 			   \sideimage (inline) and \sideimage[float] stay put. */
@@ -1338,7 +1346,20 @@
 					let r;
 					try { r = marker.getBoundingClientRect(); } catch (_) { r = null; }
 					if (r && Number.isFinite(r.top)) {
-						fig.style.top = (r.top + window.scrollY) + 'px';
+						let desiredTop = r.top + window.scrollY;
+						/* Mirrors the sidenote guards: clamp below 0 and
+						   above the sanity cap. */
+						if (desiredTop < 0) desiredTop = 0;
+						if (desiredTop > MAX_Y) desiredTop = MAX_Y;
+						/* ANGLE 37: if this figure's marker sits on top
+						   of (or above) the previously placed margin
+						   figure, slide it down below that figure plus a
+						   gap — figures never overlap each other. */
+						const top = Math.max(desiredTop, sideimageCursor + VERTICAL_GAP);
+						fig.style.top = top + 'px';
+						let h = 0;
+						try { h = fig.offsetHeight; } catch (_) {}
+						sideimageCursor = top + h;
 					}
 				}
 				return;
@@ -1411,21 +1432,28 @@
 		/* Rail height bookkeeping: the rail only needs extra height while
 		   it actually holds absolutely-positioned figures. */
 		if (!rail) return;
-		if (state === 'margin') {
-			let railBottom = 0;
-			store.images.forEach(function (entry) {
-				if (entry.mode !== 'margin') return;
-				const f2 = rail.querySelector('.sideimage[data-si-id="' + entry.id + '"]');
-				if (!f2) return;
-				const mk = _refreshMarker(entry, 'image');
-				if (!mk) return;
-				let r; try { r = mk.getBoundingClientRect(); } catch (_) { return; }
-				if (!r || !Number.isFinite(r.top)) return;
-				const mBot = r.top + window.scrollY + r.height + f2.offsetHeight + 200;
-				if (mBot > railBottom) railBottom = mBot;
-			});
-			rail.style.minHeight = (railBottom + 80) + 'px';
-		} else {
+if (state === 'margin') {
+				let railBottom = 0;
+				store.images.forEach(function (entry) {
+					if (entry.mode !== 'margin') return;
+					const f2 = rail.querySelector('.sideimage[data-si-id="' + entry.id + '"]');
+					if (!f2) return;
+					const mk = _refreshMarker(entry, 'image');
+					if (!mk) return;
+					let r; try { r = mk.getBoundingClientRect(); } catch (_) { return; }
+					if (!r || !Number.isFinite(r.top)) return;
+					/* ANGLE 37: use the figure's ACTUAL top (it may have
+					   been pushed down below a taller neighbour). */
+					let topY;
+					try { topY = parseFloat(f2.style.top); } catch (_) {}
+					if (!Number.isFinite(topY)) {
+						topY = r.top + window.scrollY + r.height;
+					}
+					const mBot = topY + f2.offsetHeight + 200;
+					if (mBot > railBottom) railBottom = mBot;
+				});
+				rail.style.minHeight = (railBottom + 80) + 'px';
+			} else {
 			/* No margin figures in the rail right now — release the
 			   reserved height so an empty rail doesn't stretch the page. */
 			rail.style.minHeight = '';
