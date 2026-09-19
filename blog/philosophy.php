@@ -157,14 +157,13 @@ where $e(\cdot)$ are word embeddings and $\tau$ is a threshold: the polar and al
 In 2023, \cite[Kocijan, Davis, Lukasiewicz, Marcus, Morgenstern, 2023]{kocijan2023defeat} declared the challenge **defeated**: fine-tuned transformers now exceed 90% even on the adversarial items. But the paper is really a meditation on **what a benchmark's defeat proves**. The key concept is the **surrogate task**: the WSC is not *itself* intelligence; it is a *proxy* for the broader capacity (world-knowledge plus reasoning) it was built to elicit. A system can **maximize the proxy without acquiring the underlying capability** — the same Goodhart dynamic that corrodes every leaderboard (see the <a href="evaluation">Evaluation chapter</a>). Beating the Winograd Schema shows that a system can *predict the answer* to these sentences; it does not, by itself, certify that the system *holds the commonsense model* the sentence was designed to probe.
 
 That distinction — **competence on a surrogate** versus **the competence the surrogate was a stand-in for** — is the single most important idea in all of evaluation, and the Winograd Schema is the cleanest case study we have of it.
+</div>
 
 <div class="optional md" data-headline="Why it is philosophically load-bearing">
 The Winograd Schema is the **concrete, testable form** of the claim in the previous section (Moravec's Paradox) and of \citeauthor{dreyfus1972what}'s earlier critique: the “obvious”, background knowledge a one-year-old carries — what a city council does, what a protest is *for*, what it means to *fear* a thing — is precisely the knowledge a hand-built logic program never had, and the part of the mind that a table of weights must now *learn*. Where Moravec states the asymmetry, Winograd *grades* it.
 </div>
-</div>
 
 <div class="md">
-<a id="intelligence-tests"></a>
 ### A Taxonomy of Intelligence Tests and Challenges
 
 The Winograd Schema is one node in a much larger web of attempts to *test* whether a machine is intelligent. Each test isolates a different hypothesis about what intelligence *is*, and each has been met with a different kind of defeat. Grouped by what they probe:
