@@ -47,7 +47,7 @@ Each GPU holds a **full copy** of the model. Each step:
 
 Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to ~100 GPUs; beyond that, the all-reduce becomes the bottleneck.
 
-### ZeRO (Zero Redundancy Optimizer, Microsoft, 2019)
+### ZeRO (Zero Redundancy Optimizer) \cite[Rajbhandari et al., 2019]{rajbhandari2019zero}
 
 The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters. ZeRO partitions these across $P$ GPUs:
 
@@ -71,7 +71,7 @@ $$
 
 Each GPU computes half the output; results are concatenated (or all-gathered). TP requires **fast interconnect** (NVLink, InfiniBand) because every layer requires a sync.
 
-Megatron-LM (Shoeybi et al., NVIDIA, 2019) tensor-parallels the MLP and attention blocks of a Transformer. For attention:
+Megatron-LM \cite[Shoeybi et al., 2019]{shoeybi2019megatron} tensor-parallels the MLP and attention blocks of a Transformer. For attention:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d}}\right) V
@@ -95,7 +95,7 @@ Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implem
 
 ### Expert Parallelism (for MoE)
 
-For \cite[Bubeck et al., 2023]{bubeck2023moeoverview}-of-Experts models (see the <a href="transformer">Transformer chapter</a>): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
+For Mixture-of-Experts (MoE) models \cite{bubeck2023moeoverview} (see the <a href="transformer">Transformer chapter</a>): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">
@@ -124,7 +124,7 @@ Three primitives dominate:
 | **ReduceScatter** | Each GPU gets a slice of the reduced tensor | ZeRO-3 + optimizer |
 | **AllToAll** | Every GPU sends a unique chunk to every other | MoE routing |
 
-Bandwidth hierarchy: NVLink (~900 GB/s) > InfiniBand NDR (~400 Gb/s) > Ethernet (~100 Gb/s). Modern training uses **NVLink within node, InfiniBand across nodes**.
+Bandwidth hierarchy (one-way, per link): NVLink (~900 GB/s) $\gg$ InfiniBand NDR (400 Gb/s $\approx$ 50 GB/s) $\gg$ 100GbE Ethernet (~12.5 GB/s). Modern training uses **NVLink within a node, InfiniBand across nodes**.
 
 **Gradient accumulation** amortizes communication by computing gradients over multiple micro-batches before syncing. **Gradient compression** (1-bit Adam, PowerSGD) reduces the bytes sent.
 </div>
