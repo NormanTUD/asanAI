@@ -33,7 +33,7 @@ function renderCovariateShift() {
 			{ x, y: realWorldY, name: 'User Prompt (Present)', fill: 'tozeroy', type: 'scatter', line: {color: '#ef4444'} }
 		];
 
-		Plotly.newPlot('shift-plot', data, {
+		Plotly.react('shift-plot', data, {
 			title: { text: 'Statistical Overlap vs. Hallucination Risk', font: { color: themeColor('#1e293b') } },
 			paper_bgcolor: themeColor('#ffffff'),
 			plot_bgcolor: themeColor('#f8fafc'),
@@ -81,80 +81,78 @@ function renderTokenPrediction() {
 		textposition: 'auto'
 	}];
 
-	Plotly.react('token-prediction-plot', data, tokenPredictionLayout());
-}
-
-/**
- * Demo 2: The Effect of Temperature
- * Allows user to slide "Temperature" and see how the AI gets "creative" (and wrong).
- */
-function renderTemperatureDemo() {
-	const slider = document.getElementById('slider-temperature');
-	const plotId = 'temperature-plot';
-	const outputText = document.getElementById('temp-output-text');
-
-	// Base "Logits" (Raw scores before probability) for the sentence: "The capital of France is..."
-	// Paris (Correct), Lyon (Plausible), Berlin (Wrong), Frog (Nonsense)
-	const tokens = ['Paris', 'Lyon', 'Berlin', 'Frog'];
-	const logits = [6.0, 2.0, 0.5, -1.0]; 
-
-	function softmax(logits, temperature) {
-		// Avoid division by zero
-		if (temperature <= 0.01) temperature = 0.01;
-
-		const expValues = logits.map(z => Math.exp(z / temperature));
-		const sumExp = expValues.reduce((a, b) => a + b, 0);
-		return expValues.map(val => val / sumExp);
+		Plotly.react('token-prediction-plot', data, tokenPredictionLayout());
 	}
+	
+	// ... (rest of file)
+	
+	function renderTemperatureDemo() {
+		const slider = document.getElementById('slider-temperature');
+		const plotId = 'temperature-plot';
+		const outputText = document.getElementById('temp-output-text');
 
-	function update() {
-		const temp = parseFloat(slider.value);
-		document.getElementById('temp-value-display').innerText = temp.toFixed(1);
+		// Base "Logits" (Raw scores before probability) for the sentence: "The capital of France is..."
+		// Paris (Correct), Lyon (Plausible), Berlin (Wrong), Frog (Nonsense)
+		const tokens = ['Paris', 'Lyon', 'Berlin', 'Frog'];
+		const logits = [6.0, 2.0, 0.5, -1.0]; 
 
-		const probs = softmax(logits, temp);
+		function softmax(logits, temperature) {
+			// Avoid division by zero
+			if (temperature <= 0.01) temperature = 0.01;
 
-		// Determine the "Selected" word based on highest probability (simplified for viz)
-		// In reality, AI samples randomly based on these weights.
-		let colorScale = probs.map((p, i) => {
-			if (i === 0) return '#22c55e'; // Paris (Green/Safe)
-			if (i === 3) return '#ef4444'; // Frog (Red/Hallucination)
-			return '#3b82f6'; // Others (Blue)
-		});
-
-		const data = [{
-			x: tokens,
-			y: probs,
-			type: 'bar',
-			marker: { color: colorScale },
-			text: probs.map(p => (p * 100).toFixed(1) + '%'),
-			textposition: 'auto'
-		}];
-
-		const layout = {
-			title: { text: `Distribution at Temperature = ${temp}`, font: { color: themeColor('#1e293b') } },
-			paper_bgcolor: themeColor('#ffffff'),
-			plot_bgcolor: themeColor('#f8fafc'),
-			font: { color: themeColor('#1e293b') },
-			xaxis: { tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
-			yaxis: { range: [0, 1], title: 'Probability', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
-			margin: { t: 40, b: 40, l: 40, r: 20 }
-		};
-
-		Plotly.react(plotId, data, layout);
-
-		// Update explanation text
-		if (temp < 0.3) {
-			outputText.innerHTML = "<strong>Low Temp (Precise):</strong> The AI is almost 100% certain to pick 'Paris'. It is factual, but repetitive.";
-		} else if (temp < 1.0) {
-			outputText.innerHTML = "<strong>Medium Temp (Balanced):</strong> 'Paris' is still likely, but there is a small chance it might pick 'Lyon'.";
-		} else {
-			outputText.innerHTML = "<strong>High Temp (Creative/Hallucinating):</strong> The probabilities flatten out. The AI might randomly pick 'Frog'. This is a <strong>Hallucination</strong>.";
+			const expValues = logits.map(z => Math.exp(z / temperature));
+			const sumExp = expValues.reduce((a, b) => a + b, 0);
+			return expValues.map(val => val / sumExp);
 		}
-	}
 
-	slider.oninput = update;
-	update(); // Initial render
-}
+		function update() {
+			const temp = parseFloat(slider.value);
+			document.getElementById('temp-value-display').innerText = temp.toFixed(1);
+
+			const probs = softmax(logits, temp);
+
+			// Determine the "Selected" word based on highest probability (simplified for viz)
+			// In reality, AI samples randomly based on these weights.
+			let colorScale = probs.map((p, i) => {
+				if (i === 0) return '#22c55e'; // Paris (Green/Safe)
+				if (i === 3) return '#ef4444'; // Frog (Red/Hallucination)
+				return '#3b82f6'; // Others (Blue)
+			});
+
+			const data = [{
+				x: tokens,
+				y: probs,
+				type: 'bar',
+				marker: { color: colorScale },
+				text: probs.map(p => (p * 100).toFixed(1) + '%'),
+				textposition: 'auto'
+			}];
+
+			const layout = {
+				title: { text: `Distribution at Temperature = ${temp}`, font: { color: themeColor('#1e293b') } },
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
+				xaxis: { tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
+				yaxis: { range: [0, 1], title: 'Probability', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
+				margin: { t: 40, b: 40, l: 40, r: 20 }
+			};
+
+			Plotly.react(plotId, data, layout);
+
+			// Update explanation text
+			if (temp < 0.3) {
+				outputText.innerHTML = "<strong>Low Temp (Precise):</strong> The AI is almost 100% certain to pick 'Paris'. It is factual, but repetitive.";
+			} else if (temp < 1.0) {
+				outputText.innerHTML = "<strong>Medium Temp (Balanced):</strong> 'Paris' is still likely, but there is a small chance it might pick 'Lyon'.";
+			} else {
+				outputText.innerHTML = "<strong>High Temp (Creative/Hallucinating):</strong> The probabilities flatten out. The AI might randomly pick 'Frog'. This is a <strong class='hallucination'>Hallucination</strong>.";
+			}
+		}
+
+		slider.oninput = update;
+		update(); // Initial render
+	}
 
 async function loadHallucinationsModule() {
 	updateLoadingStatus("Loading section about Hallucinations...");
