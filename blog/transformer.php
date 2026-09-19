@@ -200,7 +200,7 @@ A single neuron computes $y = Wx + b$ with fixed-shape $W \in \mathbb{R}^{d_{\te
 
 **The answer: the sequence length $t$ is not a feature dimension. It is a repetition dimension.** Each neuron still sees exactly $d_{\text{in}}$ inputs. It simply fires $t$ times — once per token — through the same fixed weights. This is the identical mechanism to batching: stacking 2 MNIST images into a $(2, 784)$ matrix and passing it through a FC layer with weight $(784, 256)$:
 
-$$\underbrace{(\,\underbrace{2}_{\text{batch: how many examples}} \times \underbrace{784}_{\text{features per example}}\,)}_{\text{input matrix}} \;\cdot\; \underbrace{(\,\underbrace{784}_{\text{features (matches input)}} \times \underbrace{256}_{\text{neurons in layer}}\,)}_{\text{weight, fixed after training}} \;=\; \underbrace{(\,\underbrace{2}_{\text{one row per example}} \times \underbrace{256}_{\text{one value per neuron}}\,)}_{\text{output matrix}}$$
+$$\begin{aligned} &\underbrace{(\,\underbrace{2}_{\text{batch: how many examples}} \times \underbrace{784}_{\text{features per example}}\,)}_{\text{input matrix}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{784}_{\text{features (matches input)}} \times \underbrace{256}_{\text{neurons in layer}}\,)}_{\text{weight, fixed after training}} \\[6pt] &=\; \underbrace{(\,\underbrace{2}_{\text{one row per example}} \times \underbrace{256}_{\text{one value per neuron}}\,)}_{\text{output matrix}} \end{aligned}$$
 
 The batch size "2" passes through the multiplication untouched. Each neuron sees 784 inputs, not 1568. The two examples are processed by the same neurons, independently.
 
