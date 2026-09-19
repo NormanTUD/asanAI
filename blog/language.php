@@ -139,12 +139,9 @@ Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictog
 ### Cuneiform and Formal Grammar
 </div>
 
-<figure class="md" style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="cuneiform.jpg" alt="Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum">
-    <figcaption class="md">\citealternativetitle{cuneiform}</figcaption>
-</figure>
-
 <div class="md">
+\marginfig{cuneiform.jpg}{Early Cuneiform Writing \cite[Early Cuneiform Writing]{cuneiform}.}
+
 By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.
 * **Standardization:** Writing shifted from accounting lists to complex legal codes, literature, and religious texts.
 * **Mathematical Formalization:** Later, scholars like Pāṇini (ca. 4th Century BCE) developed the अष्टाध्यायी (*Ashtadhyayi*), a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.
