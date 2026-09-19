@@ -196,49 +196,52 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 </div>
 
 <div class="optional md" data-headline="One Word Is a Vector; a Sentence Is a Matrix — How Does It Enter?">
-You know a single neuron computes $y = Wx + b$ where $W$ is $(d_{\text{out}} \times d_{\text{in}})$ and $x$ is a $d_{\text{in}}$-dim vector. Fixed shapes, fixed architecture. Now you have 2 tokens. Each one is a 768-dim vector. **How do 2 vectors go through a neuron that expects 1?**
+A single neuron computes $y = Wx + b$ with fixed-shape $W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}$. The architecture is fixed after training. **If the input grows from 1 token to $t$ tokens, how does the shape still match $W$ — and why is no retraining needed?**
 
-**They don't. The neuron still sees exactly 768 inputs. It just fires twice.**
+**The answer: the sequence length $t$ is not a feature dimension. It is a repetition dimension.** Each neuron still sees exactly $d_{\text{in}}$ inputs. It simply fires $t$ times — once per token — through the same fixed weights. This is the identical mechanism to batching: stacking 2 MNIST images into a $(2, 784)$ matrix and passing it through a FC layer with weight $(784, 256)$:
 
-Here's the key: the sequence length $t$ is not a feature dimension. It's a *repetition* dimension — the same role the batch dimension plays when you train. When you batch 2 MNIST images, you make a $(2, 784)$ matrix. The first FC layer has weight $(784, 256)$. The matmul is:
+$$\underbrace{(\,\underbrace{2}_{\text{batch: how many examples}} \times \underbrace{784}_{\text{features per example}}\,)}_{\text{input matrix}} \;\cdot\; \underbrace{(\,\underbrace{784}_{\text{features (matches input)}} \times \underbrace{256}_{\text{neurons in layer}}\,)}_{\text{weight, fixed after training}} \;=\; \underbrace{(\,\underbrace{2}_{\text{one row per example}} \times \underbrace{256}_{\text{one value per neuron}}\,)}_{\text{output matrix}}$$
 
-$$(\underbrace{2}_{\text{batch}} \times \underbrace{784}_{\text{features}}) \;\times\; (\underbrace{784}_{\text{features}} \times \underbrace{256}_{\text{outputs}}) \;=\; (2 \times 256)$$
+The batch size "2" passes through the multiplication untouched. Each neuron sees 784 inputs, not 1568. The two examples are processed by the same neurons, independently.
 
-The "2" passes through untouched. Each neuron still sees 784 inputs, not 1568. The two images are processed by the *same* neurons, independently.
+**The same shape rule applies to every Linear layer in a transformer.** After the embedding table looks up each token ID and stacks the resulting $d$-dim rows into a matrix, a Linear layer computes:
 
-**Tokens work identically.** After the embedding table (a lookup: token ID → its 768-dim row) stacks the $t$ token vectors into a $(t, 768)$ matrix, every Linear layer in the transformer does:
+$$\underbrace{(\,\underbrace{t}_{\text{sequence length (repetition)}} \times \underbrace{768}_{\text{model dim (features)}}\,)}_{\text{input: } t \text{ token-vectors stacked}} \;\cdot\; \underbrace{(\,\underbrace{768}_{\text{features (must match)}} \times \underbrace{d_{\text{out}}}_{\text{output dim}}\,)}_{\text{weight, fixed after training}} \;=\; \underbrace{(\,\underbrace{t}_{\text{passes through unchanged}} \times \underbrace{d_{\text{out}}}_{\text{new feature dim}}\,)}_{\text{output: one row per token}}$$
 
-$$(\underbrace{t}_{\text{sequence}} \times \underbrace{768}_{\text{features}}) \;\times\; (\underbrace{768}_{\text{features}} \times \underbrace{d_{\text{out}}}_{\text{outputs}}) \;=\; (t \times d_{\text{out}})$$
+The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs \cite[Paszke et al., 2019]{pytorch}. This is why variable-length input requires no architectural change or retraining \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
-The weight matrix is still $(768, d_{\text{out}})$ — it did not change shape, no retraining needed. The $t$ rows simply pass through. Row $i$ of the output is $x_i W^\top + b$, a function of row $i$ alone. Whether $t = 1$ or $t = 1024$, the neurons see exactly 768 inputs each time \cite[Paszke et al., 2019]{pytorch}. This is why variable length is free: the architecture has no knowledge of or dependence on $t$ \cite[Vaswani et al., 2017]{vaswani2017attention}.
+**The one exception: attention, where $t$ becomes a feature dimension.** The score computation multiplies $Q$ by $K^\top$:
 
-**The one place where $t$ becomes a feature dimension is attention.** Here the matmul is different:
+$$\underbrace{(\,\underbrace{t}_{\text{query tokens}} \times \underbrace{d_k}_{\text{head dim}}\,)}_{Q\text{: what each token looks for}} \;\cdot\; \underbrace{(\,\underbrace{d_k}_{\text{head dim (must match)}} \times \underbrace{t}_{\text{key tokens}}\,)}_{K^\top\text{: what each token offers}} \;=\; \underbrace{(\,\underbrace{t}_{\text{rows: who is looking}} \times \underbrace{t}_{\text{cols: who is being looked at}}\,)}_{S\text{: pairwise relevance scores}}$$
 
-$$Q K^\top \;:\; (t \times d_k) \times (d_k \times t) \;=\; (t \times t)$$
+Here $t$ appears on *both* sides of the multiplication — it is no longer a passive repetition dimension but an active feature dimension. The result is a $t \times t$ matrix: entry $S_{ij}$ is the dot product $\underbrace{q_i^\top k_j}_{\text{"how well does token } j \text{ match what token } i \text{ wants?"}}$. After row-wise softmax and multiplication with $V$:
 
-Now $t$ is on *both* sides of the multiply. The result is a $t \times t$ matrix where entry $(i, j)$ is the dot product $q_i \cdot k_j$ — "how relevant is token $j$ to token $i$?" After softmax and the multiply with $V$, row $i$ of the output is:
+$$\underbrace{O_i}_{\text{new representation of token } i} \;=\; \underbrace{\sum_{j \,\le\, i}}_{\text{sum over all visible tokens}} \; \underbrace{\alpha_{ij}}_{\text{"how much should } i \text{ attend to } j\text{"}} \;\cdot\; \underbrace{v_j}_{\text{value vector of token } j}$$
 
-$$O_i = \sum_{j \le i} \alpha_{ij}\, v_j$$
+Row $i$ of the output is a weighted average of the value vectors of all prior tokens. This is the **only** place in the entire network where information from one token physically enters another token's vector. Every other operation (Linear, LayerNorm, FFN) keeps the $t$ rows independent.
 
-a weighted average of the value vectors of all prior tokens. This is the *only* place where information from one token physically enters another token's vector. Everywhere else (Linear, LayerNorm, FFN), the $t$ rows are independent — just like $t$ independent images in a batch.
+**How it all comes together.** The $N$ transformer layers alternate two operations:
 
-**So after attention, do the subsequent FFN layers "see" the other tokens?** Yes — but not because the FFN mixes anything. It's because attention already *wrote* other tokens' information into row $i$ before the FFN ever sees it. The FFN applies its per-row function to a vector that is already a mixture. After $N$ layers of (mix → transform), the final row encodes the whole sequence.
+1. **Mix** (attention): the $t \times t$ score matrix lets each row incorporate information from all prior rows. After this step, row $i$ is a mixture of tokens $0 \dots i$.
+2. **Transform** (FFN): a per-row nonlinear function is applied to each (now-mixed) row. The weight shapes are fixed; $t$ passes through.
 
-**Concrete: GPT-2-small, 2 tokens, $b=1$** ($d=768$, $d_k=64$, $h=12$, $N=12$ \cite[Radford et al., 2019]{gpt2}):
+After $N$ such cycles, the final row (position $t{-}1$) carries a representation that has been progressively enriched with information from the entire sequence — without any recurrence, all computed in parallel. The network reads just that one row to produce its prediction \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
-| Step | Shape | Why the shape works |
+**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:
+
+| Step | Shape | Role of $t=2$ |
 |---|---|---|
-| token IDs | $(1, 2)$ | two integers |
-| embedding lookup | $(1, 2, 768)$ | stack 2 rows of 768 |
-| Linear: $W \in \mathbb{R}^{768 \times 2304}$ | $(1, 2, 2304)$ | "2" passes through, $W$ unchanged |
-| split into 12 heads | $(1, 12, 2, 64)$ | reshape only |
-| $QK^\top$: $(2,64) \times (64,2)$ | $(1, 12, 2, 2)$ | **$t$ on both sides — this is the mix** |
-| softmax + $A\,V$ | $(1, 12, 2, 64)$ | row $i$ = avg of rows $\le i$ |
-| output proj. + FFN | $(1, 2, 768)$ | per-row again, $W$ unchanged |
+| token IDs | $(1, 2)$ | 2 integers to look up |
+| embedding + position | $(1, 2, 768)$ | 2 rows stacked |
+| Linear (QKV proj.) | $(1, 2, 2304)$ | repetition: $W$ unchanged |
+| split into heads | $(1, 12, 2, 64)$ | reshape |
+| $QK^\top$ | $(1, 12, \mathbf{2}, \mathbf{2})$ | **feature dim: pairwise scores** |
+| softmax · $V$ | $(1, 12, 2, 64)$ | row $i$ = avg of rows $\le i$ |
+| output proj. + FFN | $(1, 2, 768)$ | repetition: $W$ unchanged |
 | × 11 more layers | | |
-| take last row, unembed | $(1, 1, 50{,}257)$ | one logit per vocab entry |
+| last row → unembed | $(1, 1, 50{,}257)$ | one logit per vocab entry |
 
-The weight matrices never change shape regardless of $t$. The sequence length is an *extensive* property (how many times to repeat the computation), not an *intensive* one (how wide the computation is) — except inside the $t \times t$ attention score, where it determines the size of the pairwise interaction.
+Bold: the only step where $t$ determines the width of a computation. Everywhere else, $t$ is an extensive property (how many times to repeat) and the weight shapes are intensive (fixed regardless of $t$).
 
 </div>
 
