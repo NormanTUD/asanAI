@@ -45,7 +45,7 @@ Each GPU holds a **full copy** of the model. Each step:
 3. **All-reduce** the gradients across GPUs (average).
 4. Each GPU updates its model copy.
 
-Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to ~100 GPUs; beyond that, the all-reduce becomes the bottleneck.
+Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to (ca. )100 GPUs; beyond that, the all-reduce becomes the bottleneck.
 
 ### ZeRO (Zero Redundancy Optimizer) \cite[Rajbhandari et al., 2019]{rajbhandari2019zero}
 
@@ -53,7 +53,7 @@ The key insight: in data parallelism, each GPU stores **redundant** optimizer st
 
 * **ZeRO-1**: partition optimizer states → memory $\frac{1}{P}$, communication same as DP.
 * **ZeRO-2**: partition optimizer states + gradients → memory $\frac{1}{P}$, communication still same as DP.
-* **ZeRO-3** (FSDP): partition optimizer + gradients + parameters → memory $\frac{1}{P}$, communication increases ~50% (1.5× DP) but training fits much larger models.
+* **ZeRO-3** (FSDP): partition optimizer + gradients + parameters → memory $\frac{1}{P}$, communication increases ca. 50% (1.5× DP) but training fits much larger models.
 
 FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3. With 64 H100s, you can train a 70B model that wouldn't fit on a single GPU.
 </div>
@@ -109,7 +109,7 @@ Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:
 
 Total: $8 \times 16 \times 128 = 16{,}384$ GPUs, training a 405B model using $\approx 3.8 \times 10^{25}$ FLOPs.
 
-GPT-4 was estimated at ~25,000 A100s for ~3 months. The trend: more GPUs, larger models, longer training, but the math is the same.
+GPT-4 was estimated at (ca. )25,000 A100s for (ca. )3 months. The trend: more GPUs, larger models, longer training, but the math is the same.
 </div>
 
 <div class="md">
@@ -124,7 +124,7 @@ Three primitives dominate:
 | **ReduceScatter** | Each GPU gets a slice of the reduced tensor | ZeRO-3 + optimizer |
 | **AllToAll** | Every GPU sends a unique chunk to every other | MoE routing |
 
-Bandwidth hierarchy (one-way, per link): NVLink (~900 GB/s) $\gg$ InfiniBand NDR (400 Gb/s $\approx$ 50 GB/s) $\gg$ 100GbE Ethernet (~12.5 GB/s). Modern training uses **NVLink within a node, InfiniBand across nodes**.
+Bandwidth hierarchy (one-way, per link): NVLink (ca. 900 GB/s) $\gg$ InfiniBand NDR (400 Gb/s $\approx$ 50 GB/s) $\gg$ 100GbE Ethernet (ca. 12.5 GB/s). Modern training uses **NVLink within a node, InfiniBand across nodes**.
 
 **Gradient accumulation** amortizes communication by computing gradients over multiple micro-batches before syncing. **Gradient compression** (1-bit Adam, PowerSGD) reduces the bytes sent.
 </div>
@@ -195,8 +195,8 @@ For a 70B model with bf16:
 | Parameters | 140 GB |
 | Optimizer (Adam fp32) | 560 GB |
 | Gradients (bf16) | 140 GB |
-| Activations (8K seq, bs=1, ckpt) | ~80 GB |
-| **Total** | **~920 GB** |
+| Activations (8K seq, bs=1, ckpt) | (ca. )80 GB |
+| **Total** | **(ca. )920 GB** |
 
 On 8 H100s with 80 GB each = 640 GB total. **FSDP across 16 H100s** (1280 GB) comfortably fits. With TP=8 within node + ZeRO-3 across 16 nodes = 128 GPUs, you have headroom for larger batch sizes.
 
