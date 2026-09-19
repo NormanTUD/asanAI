@@ -87,7 +87,6 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 </div>
 
 <div class="md">
-<a id="winograd-schema"></a>
 ### The Winograd Schema: Common Sense as a Test of Intelligence
 
 The **Winograd Schema Challenge** (\cite[Levesque, Davis, Morgenstern, 2012]{levesque2012winograd}) was proposed as a more *surgical* successor to the Turing Test. Where the Turing Test asks the blunt question “can a machine chat like a human?”, the Winograd challenge isolates a single, narrow, and deeply human skill: **resolving an ambiguous pronoun using background knowledge about the world**. It is common sense made into a question you can grade.
