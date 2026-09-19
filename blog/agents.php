@@ -49,13 +49,16 @@ The concept of an autonomous reasoning agent long predates LLMs. Understanding t
 
 The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mccarthy1969some} formalized the **frame problem**, how an agent reasons about what changes and what stays the same when it acts. The dominant paradigm was **GOFAI** (Good Old-Fashioned AI): hand-coded rules, planning algorithms, and explicit world models.
 
-| System | Year | Key Idea |
-|--------|------|----------|
-| GPS (General Problem Solver) | 1957 | Means-ends analysis: reduce difference between current and goal state |
-| STRIPS | 1971 | Formal action schemas with preconditions and effects |
-| SHRDLU | 1972 | Natural language commands to manipulate a blocks world |
-| Soar | 1983 | Universal cognitive architecture with chunking and learning |
-| BDI (Belief-Desire-Intention) | 1987 | Agents with explicit beliefs, desires, and committed intentions |
+<table>
+<thead><tr><th>System</th><th>Year</th><th>Key Idea</th></tr></thead>
+<tbody>
+<tr><td>GPS (General Problem Solver)</td><td>1957</td><td>Means-ends analysis: reduce difference between current and goal state</td></tr>
+<tr><td>STRIPS</td><td>1971</td><td>Formal action schemas with preconditions and effects</td></tr>
+<tr><td>SHRDLU</td><td>1972</td><td>Natural language commands to manipulate a blocks world</td></tr>
+<tr><td>Soar</td><td>1983</td><td>Universal cognitive architecture with chunking and learning</td></tr>
+<tr><td>BDI (Belief-Desire-Intention)</td><td>1987</td><td>Agents with explicit beliefs, desires, and committed intentions</td></tr>
+</tbody>
+</table>
 
 <div class="md">
 <figure>
@@ -351,12 +354,15 @@ A single agent has limits: context window size, expertise breadth, and the tende
 
 ### Architectures
 
-| Pattern | Description | Example |
-|---------|-------------|---------|
-| **Hierarchical** | A “manager” agent delegates subtasks to “worker” agents | CEO agent assigns research to analyst agent, writing to editor agent |
-| **Debate** | Multiple agents argue different positions, a judge synthesizes | Red team vs. blue team for security analysis |
-| **Pipeline** | Agents process sequentially, each refining the previous output | Researcher → Writer → Editor → Fact-checker |
-| **Swarm** | Agents work in parallel on independent subtasks, results merged | Multiple search agents covering different aspects of a question |
+<table>
+<thead><tr><th>Pattern</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><strong>Hierarchical</strong></td><td>A “manager” agent delegates subtasks to “worker” agents</td><td>CEO agent assigns research to analyst agent, writing to editor agent</td></tr>
+<tr><td><strong>Debate</strong></td><td>Multiple agents argue different positions, a judge synthesizes</td><td>Red team vs. blue team for security analysis</td></tr>
+<tr><td><strong>Pipeline</strong></td><td>Agents process sequentially, each refining the previous output</td><td>Researcher → Writer → Editor → Fact-checker</td></tr>
+<tr><td><strong>Swarm</strong></td><td>Agents work in parallel on independent subtasks, results merged</td><td>Multiple search agents covering different aspects of a question</td></tr>
+</tbody>
+</table>
 
 ### Communication Between Agents
 
@@ -414,13 +420,16 @@ $$
 
 An agent that can act on the world (send emails, execute code, make purchases) must be **grounded**, its actions must correspond to the user's actual intent. Misalignment between the user's goal and the agent's interpretation can cause real harm.
 
-| Risk | Example | Mitigation |
-|------|---------|------------|
-| **Goal misinterpretation** | “Clean up my inbox” → agent deletes all emails | Confirmation steps for destructive actions |
-| **Reward hacking** | Agent finds shortcuts that satisfy metrics but not intent | Human-in-the-loop checkpoints |
-| **Unbounded iteration** | Agent enters infinite loop trying to achieve impossible goal | Maximum iteration limits |
-| **Tool misuse** | Agent uses code execution to access unauthorized resources | Sandboxing, permission systems |
-| **Prompt injection via tools** | Malicious content in web search results hijacks agent | Input sanitization, instruction hierarchy |
+<table>
+<thead><tr><th>Risk</th><th>Example</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td><strong>Goal misinterpretation</strong></td><td>“Clean up my inbox” → agent deletes all emails</td><td>Confirmation steps for destructive actions</td></tr>
+<tr><td><strong>Reward hacking</strong></td><td>Agent finds shortcuts that satisfy metrics but not intent</td><td>Human-in-the-loop checkpoints</td></tr>
+<tr><td><strong>Unbounded iteration</strong></td><td>Agent enters infinite loop trying to achieve impossible goal</td><td>Maximum iteration limits</td></tr>
+<tr><td><strong>Tool misuse</strong></td><td>Agent uses code execution to access unauthorized resources</td><td>Sandboxing, permission systems</td></tr>
+<tr><td><strong>Prompt injection via tools</strong></td><td>Malicious content in web search results hijacks agent</td><td>Input sanitization, instruction hierarchy</td></tr>
+</tbody>
+</table>
 
 ### The Alignment Tax
 
@@ -440,17 +449,20 @@ Concrete agents build these mitigations in from the start. In opencode \cite[Abb
 
 The agent paradigm has spawned numerous open-source frameworks:
 
-| Framework | Language | Key Feature |
-|-----------|----------|-------------|
-| **LangChain / LangGraph** | Python | Graph-based agent workflows with state machines |
-| **AutoGPT** | Python | Fully autonomous goal-pursuing agent (2023 viral demo) |
-| **CrewAI** | Python | Multi-agent role-based collaboration |
-| **Microsoft AutoGen** | Python | Conversational multi-agent framework |
-| **Semantic Kernel** | C# / Python | Microsoft's enterprise agent SDK |
-| **OpenAI Assistants API** | API | Managed agent infrastructure with built-in tools |
-| **Anthropic Claude Tool Use** | API | Native function calling with safety constraints |
-| **opencode** | TypeScript / Bun | Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK \cite[Abboud, 2025]{abboud2025opencode} |
-| **Neuron (PHP)** | PHP | Agent framework for PHP backend engineers |
+<table>
+<thead><tr><th>Framework</th><th>Language</th><th>Key Feature</th></tr></thead>
+<tbody>
+<tr><td><strong>LangChain / LangGraph</strong></td><td>Python</td><td>Graph-based agent workflows with state machines</td></tr>
+<tr><td><strong>AutoGPT</strong></td><td>Python</td><td>Fully autonomous goal-pursuing agent (2023 viral demo)</td></tr>
+<tr><td><strong>CrewAI</strong></td><td>Python</td><td>Multi-agent role-based collaboration</td></tr>
+<tr><td><strong>Microsoft AutoGen</strong></td><td>Python</td><td>Conversational multi-agent framework</td></tr>
+<tr><td><strong>Semantic Kernel</strong></td><td>C# / Python</td><td>Microsoft's enterprise agent SDK</td></tr>
+<tr><td><strong>OpenAI Assistants API</strong></td><td>API</td><td>Managed agent infrastructure with built-in tools</td></tr>
+<tr><td><strong>Anthropic Claude Tool Use</strong></td><td>API</td><td>Native function calling with safety constraints</td></tr>
+<tr><td><strong>opencode</strong></td><td>TypeScript / Bun</td><td>Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK \cite[Abboud, 2025]{abboud2025opencode}</td></tr>
+<tr><td><strong>Neuron (PHP)</strong></td><td>PHP</td><td>Agent framework for PHP backend engineers</td></tr>
+</tbody>
+</table>
 
 All of these implement the same core loop described above, they differ in how they manage state, compose tools, handle errors, and coordinate multiple agents.
 </div>
@@ -460,13 +472,16 @@ All of these implement the same core loop described above, they differ in how th
 
 Agents are a natural generalization of Websearch and RAG-Systems:
 
-| Web Search | Agent |
-|------------|-------|
-| One tool: `web_search()` | Many tools: search, code, email, APIs, ... |
-| One reasoning step: “Should I search?” | Many reasoning steps: plan, execute, reflect |
-| One iteration: search → answer | Many iterations: search → analyze → search again → synthesize |
-| Fixed pipeline | Dynamic, goal-directed behavior |
-| Stateless | Stateful (memory across steps) |
+<table>
+<thead><tr><th>Web Search</th><th>Agent</th></tr></thead>
+<tbody>
+<tr><td>One tool: <code>web_search()</code></td><td>Many tools: search, code, email, APIs, ...</td></tr>
+<tr><td>One reasoning step: “Should I search?”</td><td>Many reasoning steps: plan, execute, reflect</td></tr>
+<tr><td>One iteration: search → answer</td><td>Many iterations: search → analyze → search again → synthesize</td></tr>
+<tr><td>Fixed pipeline</td><td>Dynamic, goal-directed behavior</td></tr>
+<tr><td>Stateless</td><td>Stateful (memory across steps)</td></tr>
+</tbody>
+</table>
 
 $$
 \underbrace{\text{Web Search}}_{\text{Agent with 1 tool and 1 iteration}} \;\subset\; \underbrace{\text{Agent}}_{\text{LLM + N tools + loop + memory}}
@@ -478,14 +493,17 @@ The web search pipeline is literally a **single-tool, single-iteration agent**. 
 <div class="md">
 ## Summary
 
-| Question | Answer |
-|----------|--------|
-| What is an agent? | An LLM wrapped in an observe→reason→act loop with tools and memory |
-| Who invented agents? | Classical AI (1950s–1990s) established the paradigm; \cite[Yao et al. (2023)]{yao2023react} made it practical with LLMs |
-| How does tool use work? | LLM generates structured JSON; orchestrator parses, executes, returns result |
-| How do agents remember? | Context window (working memory) + external stores (vector DBs, scratchpads) |
-| What is ReAct? | Interleaving reasoning traces and actions in a single prompt stream |
-| What are multi-agent systems? | Multiple specialized LLM agents collaborating via an orchestrator |
-| What are the risks? | Goal misinterpretation, unbounded iteration, prompt injection via tools |
-| How does this relate to web search? | Web search is a single-tool, single-step agent. Full agents generalize this |
+<table>
+<thead><tr><th>Question</th><th>Answer</th></tr></thead>
+<tbody>
+<tr><td>What is an agent?</td><td>An LLM wrapped in an observe→reason→act loop with tools and memory</td></tr>
+<tr><td>Who invented agents?</td><td>Classical AI (1950s–1990s) established the paradigm; \cite[Yao et al. (2023)]{yao2023react} made it practical with LLMs</td></tr>
+<tr><td>How does tool use work?</td><td>LLM generates structured JSON; orchestrator parses, executes, returns result</td></tr>
+<tr><td>How do agents remember?</td><td>Context window (working memory) + external stores (vector DBs, scratchpads)</td></tr>
+<tr><td>What is ReAct?</td><td>Interleaving reasoning traces and actions in a single prompt stream</td></tr>
+<tr><td>What are multi-agent systems?</td><td>Multiple specialized LLM agents collaborating via an orchestrator</td></tr>
+<tr><td>What are the risks?</td><td>Goal misinterpretation, unbounded iteration, prompt injection via tools</td></tr>
+<tr><td>How does this relate to web search?</td><td>Web search is a single-tool, single-step agent. Full agents generalize this</td></tr>
+</tbody>
+</table>
 </div>

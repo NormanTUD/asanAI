@@ -209,7 +209,22 @@
 		const nodes = safeTextNodes(root);
 		let count = 0;
 		for (const node of nodes) {
-			if (rewriteTextNode(node, /--| - /, smartDashesPass)) count++;
+			const s = node.nodeValue;
+			if (!s || !/--| - /.test(s)) continue;
+			const after = smartDashesPass(s);
+			if (after === s) continue;
+			/* Replace the whole text node, never just the first `--`.
+			   Feeding the matched substring into smartDashesPass lets
+			   its ^/$ anchors convert ANY `--` (e.g. a GFM table
+			   delimiter row `|------|`) into an em-dash, which breaks
+			   table parsing before marked even runs. Operating on the
+			   full node value keeps the rules context-aware: a `--`
+			   only converts when whitespace/line-start flanks it, so
+			   pipe-table separator rows are left intact. Setting
+			   nodeValue (not createContextualFragment) also avoids
+			   re-parsing raw markdown as HTML. */
+			node.nodeValue = after;
+			count++;
 		}
 		return count;
 	}
