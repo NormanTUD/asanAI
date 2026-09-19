@@ -33,7 +33,7 @@ Before diving into vector databases, it's essential to understand what they repl
 
 The oldest and most intuitive approach. You type words, the system finds documents containing those exact words.
 
-**How it works:** The dominant algorithm is **BM25** (Best Matching 25), an evolution of TF-IDF. For a query $q$ and document $d$:
+**How it works:** The dominant algorithm is **BM25** (Best Matching 25) \cite{robertson2009bm25}, an evolution of TF-IDF. For a query $q$ and document $d$:
 
 $$
 \text{BM25}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{f(t, d) \cdot (k_1 + 1)}{f(t, d) + k_1 \cdot \left(1 - b + b \cdot \frac{|d|}{\text{avgdl}}\right)}
@@ -114,7 +114,7 @@ The solution: **Approximate Nearest Neighbor (ANN)** algorithms that sacrifice a
 
 ### HNSW (Hierarchical Navigable Small World)
 
-HNSW is the most popular ANN algorithm in production today. It builds a **multi-layer graph** where each vector is a node, and edges connect nearby vectors.
+HNSW \cite{malkov2018hnsw} is the most popular ANN algorithm in production today. It builds a **multi-layer graph** where each vector is a node, and edges connect nearby vectors.
 
 **Intuition:** Imagine navigating a city. At the top layer, you have highways connecting distant landmarks (coarse navigation). At lower layers, you have local streets connecting nearby buildings (fine navigation). To find a specific address, you start on the highway, jump to the right neighborhood, then walk the local streets.
 
@@ -160,7 +160,7 @@ $$
 
 ### Product Quantization (PQ)
 
-PQ addresses a different bottleneck: **memory**. Storing 1 billion 768-dimensional float32 vectors requires:
+PQ \cite{jegou2011pq} addresses a different bottleneck: **memory**. Storing 1 billion 768-dimensional float32 vectors requires:
 
 $$
 10^9 \times 768 \times 4 \text{ bytes} = 3.07 \text{ TB of RAM}
@@ -185,7 +185,7 @@ Distance computation uses precomputed lookup tables, making it extremely fast de
 | **IVF-PQ** | Fast | Low | 90-97% | Billion-scale search |
 | **HNSW + PQ** | Very fast | Medium | 93-98% | Best balance for production |
 
-In practice, these are often **combined**: HNSW for the graph navigation, PQ for memory compression, and IVF for pre-filtering. Libraries like FAISS support all combinations.
+In practice, these are often **combined**: HNSW for the graph navigation, PQ for memory compression, and IVF for pre-filtering. Libraries like FAISS \cite{johnson2017faiss} support all combinations.
 
 ## The Vector Database Landscape
 
@@ -238,7 +238,7 @@ A vector database is only as good as the vectors you put into it. The **embeddin
 | `text-embedding-3-large` | 3072 | OpenAI | Higher quality, higher cost |
 | `bge-base-en-v1.5` | 768 | BAAI | Open-source, strong performance |
 | `e5-mistral-7b-instruct` | 4096 | Microsoft | LLM-based embeddings, very high quality |
-| `nomic-embed-text-v1.5` | 768 | Nomic AI | Open-source, Matryoshka (variable dim) |
+| `nomic-embed-text-v1.5` | 768 | Nomic AI | Open-source, Matryoshka (variable dim) \cite{kusupati2022matryoshka} |
 | `mxbai-embed-large-v1` | 1024 | Mixedbread | Top-tier open-source |
 
 ### The Embedding Pipeline
@@ -326,7 +326,7 @@ Vector search retrieves candidates quickly but approximately. A **re-ranker** th
 | **Retrieval** (vector search) | ~10ms for millions of docs | Good (approximate) | Bi-encoder (separate embeddings) |
 | **Re-ranking** | ~50-200ms for top 20-50 | Excellent | Cross-encoder (joint query-doc scoring) |
 
-A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate.
+A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate \cite{khattab2020colbert}.
 
 <p>$$ \underbrace{\text{Vector DB: } 1M \rightarrow 50}_{\text{fast, approximate}} \;\xrightarrow{\text{re-ranker}}\; \underbrace{50 \rightarrow 5}_{\text{slow, precise}} \;\rightarrow\; \text{LLM prompt} $$</p>
 

@@ -135,7 +135,9 @@
     "html.dark .vslab-result-item { background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark .vslab-result-text { color: #cbd5e1; }",
     "html.dark .vslab-details { color: #94a3b8; }",
-    "html.dark .vslab-sim-bar-track { background: #334155; }"
+    "html.dark .vslab-sim-bar-track { background: #334155; }",
+    "html.dark #vslab-pipeline-diagram .vslab-diagram-box { background: var(--mn-surface) !important; border: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }",
+    "html.dark .vslab-diagram-arrow { color: #94a3b8 !important; }"
 
   ].join("\n");
   document.head.appendChild(css);
