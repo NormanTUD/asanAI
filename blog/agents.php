@@ -99,24 +99,24 @@ sector of the Colorado orogeny extends into?
 
 Thought 1: I need to search Colorado orogeny, find the area that the
 eastern sector extends into, then find the elevation range of that area.
-Action 1: Search[“Colorado orogeny”]
+Action 1: Search["Colorado orogeny"]
 Observation 1: The Colorado orogeny was an episode of mountain building
 (an orogeny) in Colorado and surrounding areas...
 
 Thought 2: It does not mention the eastern sector. I need to look up
 eastern sector.
-Action 2: Lookup[“eastern sector”]
+Action 2: Lookup["eastern sector"]
 Observation 2: The eastern sector extends into the High Plains.
 
 Thought 3: The eastern sector extends into the High Plains. I need to
 search High Plains and find its elevation range.
-Action 3: Search[“High Plains elevation range”]
+Action 3: Search["High Plains elevation range"]
 Observation 3: The High Plains rise in elevation from around 460 m near
 the eastern border to over 1,800 m at the foot of the Rocky Mountains.
 
 Thought 4: High Plains rise from around 460 m to over 1,800 m, so the
 elevation range is approximately 1,340 m.
-Action 4: Finish[“approximately 1,340 m”]</code></pre>
+Action 4: Finish["approximately 1,340 m"]</code></pre>
 
 <div class="md">
 The key innovation is that **Thought** and **Action** alternate in the same token stream. The LLM generates both its internal reasoning *and* its tool calls as text. The orchestrator parses the actions, executes them, and injects the observations back into the context.
@@ -213,9 +213,9 @@ Real agents rarely rely on a single prompt. In opencode, the effective system pr
 3. calculator(expression: str) → Evaluate a mathematical expression
 4. python_exec(code: str) → Execute Python code in a sandbox
 
-For each step, output your reasoning as “Thought: ...” then your action
-as “Action: tool_name(arguments)”. When you have enough information to
-answer the user's question, use “Action: finish(answer)”.
+For each step, output your reasoning as "Thought: ..." then your action
+as "Action: tool_name(arguments)". When you have enough information to
+answer the user's question, use "Action: finish(answer)".
 
 Rules:
 - Always verify claims with web_search before stating them as fact
@@ -233,13 +233,13 @@ Tool use (also called **function calling**) is the bridge between the LLM's text
 The LLM doesn't execute anything. It generates a **structured text output** that the orchestrator parses and executes:
 </div>
 
-<pre class="wslab-code-block"><code>// LLM generates this structured output:
+<pre class="wslab-code-block"><code class="language-json">// LLM generates this structured output:
 {
-  “thought”: “I need to find the current population of Tokyo to answer this.”,
-  “action”: {
-    “tool”: “web_search”,
-    “arguments”: {
-      “query”: “Tokyo population 2026”
+  "thought": "I need to find the current population of Tokyo to answer this.",
+  "action": {
+    "tool": "web_search",
+    "arguments": {
+      "query": "Tokyo population 2026"
     }
   }
 }
@@ -248,10 +248,10 @@ The LLM doesn't execute anything. It generates a **structured text output** that
 // 1. Parses the JSON
 // 2. Validates the tool name exists
 // 3. Validates the arguments match the schema
-// 4. Executes: web_search(“Tokyo population 2026”)
-// 5. Gets result: “Tokyo's population in 2026 is approximately 13.96 million...”
+// 4. Executes: web_search("Tokyo population 2026")
+// 5. Gets result: "Tokyo's population in 2026 is approximately 13.96 million..."
 // 6. Injects into context:
-//    Observation: “Tokyo's population in 2026 is approximately 13.96 million...”
+//    Observation: "Tokyo's population in 2026 is approximately 13.96 million..."
 // 7. Calls LLM again with updated context</code></pre>
 
 <div class="md">
@@ -260,47 +260,47 @@ The LLM doesn't execute anything. It generates a **structured text output** that
 Tools are defined as JSON schemas that the LLM sees in its system prompt:
 </div>
 
-<pre class="wslab-code-block"><code>{
-  “tools”: [
+<pre class="wslab-code-block"><code class="language-json">{
+  "tools": [
     {
-      “name”: “web_search”,
-      “description”: “Search the internet for current information”,
-      “parameters”: {
-        “type”: “object”,
-        “properties”: {
-          “query”: {
-            “type”: “string”,
-            “description”: “The search query”
+      "name": "web_search",
+      "description": "Search the internet for current information",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query"
           }
         },
-        “required”: [“query”]
+        "required": ["query"]
       }
     },
     {
-      “name”: “python_exec”,
-      “description”: “Execute Python code in a sandboxed environment”,
-      “parameters”: {
-        “type”: “object”,
-        “properties”: {
-          “code”: {
-            “type”: “string”,
-            “description”: “Python code to execute”
+      "name": "python_exec",
+      "description": "Execute Python code in a sandboxed environment",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python code to execute"
           }
         },
-        “required”: [“code”]
+        "required": ["code"]
       }
     },
     {
-      “name”: “send_email”,
-      “description”: “Send an email to a specified recipient”,
-      “parameters”: {
-        “type”: “object”,
-        “properties”: {
-          “to”: { “type”: “string” },
-          “subject”: { “type”: “string” },
-          “body”: { “type”: “string” }
+      "name": "send_email",
+      "description": "Send an email to a specified recipient",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": { "type": "string" },
+          "subject": { "type": "string" },
+          "body": { "type": "string" }
         },
-        “required”: [“to”, “subject”, “body”]
+        "required": ["to", "subject", "body"]
       }
     }
   ]
