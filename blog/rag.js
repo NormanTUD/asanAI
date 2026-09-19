@@ -140,7 +140,7 @@
     "}",
 
     /* ── DARK MODE overrides ── */
-    "html.dark .raglab-diagram-box { color: #e2e8f0; }",
+    "html.dark #raglab-pipeline-diagram .raglab-diagram-box { background: var(--mn-surface) !important; border: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }",
     "html.dark pre.raglab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
     "html.dark #raglab-search-card { background: linear-gradient(135deg, #0f172a, #1e293b) !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark #raglab-search-card .raglab-search-desc { color: #94a3b8 !important; }",

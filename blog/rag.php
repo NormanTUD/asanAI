@@ -19,7 +19,7 @@ The best way to predict the future is to invent it.
 
 A standard LLM can only use what it memorized during training. Ask it about a document it never saw, and it either **hallucinates** or says *“I don't know.”*
 
-**Retrieval-Augmented Generation (RAG)** gives the LLM an external, searchable memory. Before the model generates an answer, a *retriever* finds the most relevant passages from a document store and injects them into the prompt. The LLM then answers **grounded in those passages**.
+**Retrieval-Augmented Generation (RAG)** — formalized by \citeauthor{lewis2020rag} in \citeyear{lewis2020rag} — gives the LLM an external, searchable memory. Before the model generates an answer, a *retriever* finds the most relevant passages from a document store and injects them into the prompt. The LLM then answers **grounded in those passages**.
 
 $$
 \text{Query} \;\xrightarrow{\text{embed}}\; \vec{q} \;\xrightarrow{\text{search}}\; \text{Top-}K\text{ chunks} \;\xrightarrow{\text{augment prompt}}\; \text{LLM} \;\rightarrow\; \text{Grounded Answer}
@@ -62,7 +62,7 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) = \frac{\vec{q} \cdot \vec{v}_i}{\|\vec{q}\| \; \|\vec{v}_i\|}
 $$
 
-Approximate nearest-neighbor algorithms like **HNSW** handle billions of vectors in **&lt; 50 ms**.
+Approximate nearest-neighbor algorithms like **HNSW** \cite{malkov2018hnsw} handle billions of vectors in **&lt; 50 ms**.
 
 **Step 6, Augment the prompt.**
 The retrieved chunks are prepended to the user's question:
@@ -100,9 +100,9 @@ A vector database is **not** a traditional SQL database. It doesn't search by ke
 
 Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per query, too slow. Vector DBs use **Approximate Nearest Neighbor (ANN)** algorithms:
 
-- **HNSW** (Hierarchical Navigable Small World): builds a multi-layer graph. Searching “hops” through the graph, narrowing in on the target region, like navigating a city by jumping between landmarks. *Most popular in production.*
+- **HNSW** (Hierarchical Navigable Small World) \cite{malkov2018hnsw}: builds a multi-layer graph. Searching “hops” through the graph, narrowing in on the target region, like navigating a city by jumping between landmarks. *Most popular in production.*
 - **IVF** (Inverted File Index): clusters vectors into Voronoi cells at index time. At query time, only a few nearby cells are searched.
-- **Product Quantization**: compresses vectors into compact codes, trading a tiny bit of accuracy for massive memory savings.
+- **Product Quantization** \cite{jegou2011pq}: compresses vectors into compact codes, trading a tiny bit of accuracy for massive memory savings.
 
 Result: querying **1 billion vectors in ~50 ms** on a single machine.
 </div>
@@ -166,7 +166,7 @@ Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (
 <div id="raglab-context-table"></div>
 
 <div class="md">
-### The “Lost in the Middle” Problem
+### The “Lost in the Middle” Problem \cite{liu2023lostmiddle}
 
 Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
 
