@@ -142,7 +142,7 @@ DPO matches PPO on alignment benchmarks while being 5–10× simpler to implemen
 | **DPO** | Bradley-Terry from log-ratio | Simple, no RM | Overfits on long responses |
 | **IPO** | $\sigma^{-1}$ regularizer instead of $\log \sigma$ | Robust to deterministic preferences | Slightly weaker on standard benchmarks |
 | **KTO** | Kahneman-Tversky utility; binary good/bad labels | Uses cheaper binary feedback | Less sample-efficient |
-| **ORPO** | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |
+| **ORPO** \cite[Zhang et al., 2024]{orpo} | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |
 | **SimPO** | Length-normalized log-prob, no reference | Reference-free | Quality slightly behind DPO |
 | **Cal-DPO** | Calibrated DPO with length normalization | Best of both worlds | More complex |
 
@@ -152,7 +152,7 @@ The choice in 2025: **DPO with length normalization** or **SimPO** for most case
 <div class="md">
 ## Stage 4: GRPO for Reasoning
 
-GRPO (Group Relative Policy Optimization) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
+GRPO (Group Relative Policy Optimization) \cite[Shao et al., 2024]{shao2024grpo} is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
 
 * **Group sampling**: for each prompt, sample $G$ candidate responses from the current policy.
 * **Verifiable reward**: for math, the reward is binary, the answer is correct or not. For code, it's test pass/fail.
@@ -199,7 +199,7 @@ This iterative DPO produces stronger alignment than offline DPO (where preferenc
 
 Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). **Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:
 
-### LoRA (Low-Rank Adaptation)
+### LoRA (Low-Rank Adaptation) \cite[Hu et al., 2021]{hu2021lora}
 
 Freeze the original weights $W \in \mathbb{R}^{d \times k}$ and train low-rank updates $\Delta W = BA$ where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll \min(d, k)$:
 
@@ -272,7 +272,7 @@ trainer = DPOTrainer(
 trainer.train()
 ```
 
-Training time: ~6 hours for a 7B model with QLoRA on 10K examples. Cost: < $5 of compute on a rented H100.
+Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples. Cost: on the order of $10-30 of compute on a rented H100 (~$2-5 per GPU-hour).
 </div>
 
 <div class="md">
