@@ -17,7 +17,7 @@ The picture we sketch in this chapter is the best current answer that the mechan
 </div>
 
 <div class="md">
-## 0. The question, re-framed
+## The question, re-framed
 
 First, the word "knows". It is doing a lot of work in the question "how does it know to reply Paris?", and most of that work is misleading. We do **not** mean:
 
@@ -41,7 +41,7 @@ A language model is trained to do one thing: predict the next token in a sequenc
 </div>
 
 <div class="md">
-## 1. What the model actually computes, top to bottom
+## What the model actually computes, top to bottom
 
 The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:
 
@@ -61,7 +61,7 @@ This sounds too austere to be true. The next sections will fill in how it can ne
 </div>
 
 <div class="md">
-## 2. The residual stream as a public scratchpad
+## The residual stream as a public scratchpad
 
 The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output \cite[Elhage et al., 2021]{elhage2021mathematical}. Concretely:
 
@@ -83,7 +83,7 @@ If you have ever tried to debug a neural network where one component *overwrites
 </div>
 
 <div class="md">
-## 3. Attention: routing "France" to the end
+## Attention: routing "France" to the end
 
 For the prompt "The capital of France is ", the first thing the model has to do is *figure out which tokens matter*. The word "is" is a verb that wants an object. The object is a country. The country is "France", which appeared three tokens earlier. The mechanism for this routing is **self-attention** \cite[Vaswani et al., 2017]{vaswani2017attention}.
 
@@ -105,7 +105,7 @@ A useful decomposition, due to \cite[Elhage et al., 2021]{elhage2021mathematical
 </div>
 
 <div class="md">
-## 4. The MLP as a soft key-value memory
+## The MLP as a soft key-value memory
 
 If attention is the routing layer — the part that figures out *which* information matters — then the **MLP layers** are where the *content* of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.
 
@@ -142,7 +142,7 @@ This is the closest thing we have to a smoking gun: there exist *local, causally
 </div>
 
 <div class="md">
-## 5. Opening up one fact: ROME
+## Opening up one fact: ROME
 
 The most dramatic experimental evidence that facts live in identifiable, narrow regions of the weights comes from \cite[Meng et al., 2022]{meng2022locating} and their method **ROME** — *Rank-One Model Editing*.
 
@@ -162,7 +162,7 @@ Honest caveats. ROME is not a complete theory of fact storage. It is one experim
 </div>
 
 <div class="md">
-## 6. Facts as directions: the linear representation hypothesis
+## Facts as directions: the linear representation hypothesis
 
 The third piece of the picture is the most surprising, and the most contested.
 
@@ -186,7 +186,7 @@ The strongest evidence that this picture holds in *frontier-scale* production mo
 </div>
 
 <div class="md">
-## 7. Watching the answer form: the logit lens
+## Watching the answer form: the logit lens
 
 All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.
 
@@ -213,7 +213,7 @@ The logit lens is a *diagnostic*, not a measurement of what the model is "thinki
 </div>
 
 <div class="md">
-## 8. The attractor analogy, honestly
+## The attractor analogy, honestly
 
 There is a tempting picture that goes like this. The residual stream starts somewhere — a vector near the embedding of " ", perturbed by attention that has read "France" from earlier. As it passes through layer after layer, it gets *pulled* toward a region of $\mathbb{R}^d$ that decodes to "Paris". Other prompts — "The capital of Germany is", "2 + 2 =", "Once upon a" — get pulled toward different regions. The picture is of basins of attraction, like a Hopfield network or a dynamical system with fixed points.
 
@@ -255,7 +255,7 @@ The forward pass is also, empirically, mostly **contractive**: semantically simi
 </div>
 
 <div class="md">
-## 9. Superposition: why there is no "grandmother cell"
+## Superposition: why there is no "grandmother cell"
 
 There is an obvious question lurking behind §4 and §5. If facts live in MLP neurons, why is it that you cannot just open up a 7-billion-parameter model, look at the neurons one by one, and find the neuron that fires for "Paris"?
 
@@ -269,7 +269,7 @@ The systematic way to *recover* monosemantic features from a superposed residual
 </div>
 
 <div class="md">
-## 10. Three honest limits
+## Three honest limits
 
 The picture in §3–§9 is the best current account, and it is the one most mechanistic interpretability researchers would defend at a conference. It is also incomplete in ways that matter.
 
@@ -293,7 +293,7 @@ The honest summary is that the *mechanism* of fact retrieval is reasonably well-
 </div>
 
 <div class="md">
-## 11. Putting it together
+## Putting it together
 
 Here is the picture in one breath, with citations:
 
@@ -315,7 +315,7 @@ Those are open questions. They are the questions the next decade of interpretabi
 </div>
 
 <div class="md">
-## 12. What to carry away
+## What to carry away
 
 Five things, restated as a checklist.
 
