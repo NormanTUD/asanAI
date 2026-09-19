@@ -60,7 +60,7 @@ The context window isn't an arbitrary limitation, it emerges from the **architec
 
 ### The Self-Attention Bottleneck
 
-In standard self-attention, every token attends to every other token. For a sequence of length $n$:
+In standard self-attention \cite{vaswani2017attention}, every token attends to every other token. For a sequence of length $n$:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V
@@ -108,7 +108,7 @@ This is why long-context inference requires enormous GPU memory; the KV cache al
 
 ### 2. Flash Attention: Taming the Quadratic Beast
 
-**Flash Attention** (Tri Dao, 2022) doesn't change the *math* of attention, it changes the *memory access pattern*. Instead of materializing the full $n \times n$ attention matrix in GPU high-bandwidth memory (HBM), it:
+**Flash Attention** (\cite{dao2022flashattention}) doesn't change the *math* of attention, it changes the *memory access pattern*. Instead of materializing the full $n \times n$ attention matrix in GPU high-bandwidth memory (HBM), it:
 
 1. Splits $Q$, $K$, $V$ into small blocks that fit in fast SRAM
 2. Computes attention block-by-block
@@ -132,19 +132,19 @@ With a window of $w = 4096$, a 128K-token sequence uses $O(n \cdot w)$ instead o
 
 ### 4. Grouped-Query Attention (GQA)
 
-Standard multi-head attention uses separate $K$ and $V$ projections for each head. GQA shares $K$ and $V$ across groups of heads:
+Standard multi-head attention uses separate $K$ and $V$ projections for each head. GQA \cite{ainslie2023gqa} shares $K$ and $V$ across groups of heads:
 
 | Variant | K/V heads | Q heads | KV Cache Size |
 |---------|-----------|---------|---------------|
 | Multi-Head (MHA) | 64 | 64 | 100% |
 | Grouped-Query (GQA) | 8 | 64 | 12.5% |
-| Multi-Query (MQA) | 1 | 64 | 1.6% |
+| Multi-Query (MQA) \cite{shazeer2019mqa} | 1 | 64 | 1.6% |
 
 GQA reduces KV cache memory by 8x with minimal quality loss, essential for serving long-context models.
 
 ### 5. Ring Attention / Sequence Parallelism
 
-For extremely long sequences (1M+ tokens), the KV cache doesn't fit on a single GPU. **Ring Attention** distributes the sequence across multiple GPUs in a ring topology:
+For extremely long sequences (1M+ tokens), the KV cache doesn't fit on a single GPU. **Ring Attention** \cite{liu2023ringattention} distributes the sequence across multiple GPUs in a ring topology:
 
 - Each GPU holds a chunk of the sequence
 - KV blocks are passed around the ring
@@ -156,7 +156,7 @@ This allows context windows to scale with the number of GPUs, limited only by ha
 
 Even if a model *can* process 200K tokens, does it actually *use* all of them equally?
 
-Research consistently shows that LLMs exhibit a **U-shaped attention pattern**: they attend most strongly to the **beginning** and **end** of the context, while information in the middle receives less attention.
+Research \cite{liu2023lostmiddle} consistently shows that LLMs exhibit a **U-shaped attention pattern**: they attend most strongly to the **beginning** and **end** of the context, while information in the middle receives less attention.
 </div>
 
 <div id="cwlab-lost-middle-diagram"></div>
@@ -343,7 +343,7 @@ This is why **longer conversations cost more**, both in money (API pricing is pe
 | **GQA** (Grouped-Query Attention) | Share K/V across head groups | 4-8x smaller cache |
 | **KV Cache Quantization** | Store K/V in int8 instead of float16 | 2x smaller |
 | **Sliding Window** | Only cache last $w$ tokens per layer | Bounded cache size |
-| **PagedAttention** (vLLM) | Manage cache like virtual memory pages | Better GPU utilization |
+| **PagedAttention** (vLLM) \cite{kwon2023vllm} | Manage cache like virtual memory pages | Better GPU utilization |
 | **Token eviction** | Drop least-attended tokens from cache | Bounded, but lossy |
 
 ## Practical Implications: What This Means for You
@@ -386,5 +386,5 @@ Research is pushing toward effectively unlimited context through several approac
 | **Landmark Attention** | Research | Mark important tokens, attend to landmarks |
 | **Retrieval-augmented generation** | Production | External memory via vector search |
 | **Memory-augmented Transformers** | Research | Learnable external memory banks |
-| **State-space hybrids** | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |
+| **State-space hybrids** \cite{gu2023mamba} | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |
 </div>

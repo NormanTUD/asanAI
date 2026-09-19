@@ -8,15 +8,26 @@
 
     /* ── Window Diagram ── */
     "#cwlab-window-diagram {",
-    "  display: flex; align-items: stretch; justify-content: center;",
-    "  gap: 0; margin: 24px 0; border-radius: 12px; overflow: hidden;",
-    "  border: 2px solid #e2e8f0; height: 60px;",
+    "  display: flex; flex-direction: column; gap: 8px;",
+    "  margin: 24px 0; padding: 16px 14px;",
+    "  background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px;",
     "}",
-    ".cwlab-window-segment {",
-    "  display: flex; align-items: center; justify-content: center;",
-    "  font-size: 0.75em; font-weight: 700; padding: 4px 8px;",
-    "  text-align: center; line-height: 1.3; white-space: nowrap;",
-    "  overflow: hidden; text-overflow: ellipsis; min-width: 0;",
+    ".cwlab-window-row {",
+    "  display: flex; align-items: center; gap: 12px;",
+    "}",
+    ".cwlab-window-label {",
+    "  flex: 0 0 158px; font-size: 0.78em; font-weight: 700;",
+    "  text-align: right; color: #334155; line-height: 1.3;",
+    "}",
+    ".cwlab-window-track {",
+    "  flex: 1; background: #e2e8f0; border-radius: 6px;",
+    "  overflow: hidden; height: 26px;",
+    "}",
+    ".cwlab-window-fill {",
+    "  display: flex; align-items: center; justify-content: flex-end;",
+    "  height: 100%; border-radius: 6px; font-size: 0.72em;",
+    "  font-weight: 700; padding: 0 6px; box-sizing: border-box;",
+    "  min-width: 36px; white-space: nowrap;",
     "}",
 
     /* ── Lost in Middle Diagram ── */
@@ -90,7 +101,10 @@
     "html.dark .cwlab-compare-card li { color: var(--mn-text) !important; }",
     "html.dark .cwlab-compare-card strong { color: var(--mn-text) !important; }",
     "html.dark .cwlab-attention-labels { color: var(--mn-text-muted) !important; }",
-    "html.dark .cwlab-attention-labels span { color: var(--mn-text-muted) !important; }"
+    "html.dark .cwlab-attention-labels span { color: var(--mn-text-muted) !important; }",
+    "html.dark #cwlab-window-diagram { background: var(--mn-bg-subtle) !important; border-color: var(--mn-border) !important; }",
+    "html.dark .cwlab-window-label { color: var(--mn-text) !important; }",
+    "html.dark .cwlab-window-track { background: var(--mn-border) !important; }"
 
   ].join("\n");
   document.head.appendChild(css);
@@ -114,9 +128,12 @@
     var html = "";
     for (var i = 0; i < segments.length; i++) {
       var s = segments[i];
-      html += '<div class="cwlab-window-segment" style="width:' + s.pct +
-              '%; background:' + s.bg + '; color:' + s.fg + ';">' +
-              s.label + '</div>';
+      html += '<div class="cwlab-window-row">';
+      html += '<span class="cwlab-window-label">' + s.label + '</span>';
+      html += '<span class="cwlab-window-track"><span class="cwlab-window-fill" style="width:' +
+              s.pct + '%; background:' + s.bg + '; color:' + s.fg + ';">' +
+              s.pct + '%</span></span>';
+      html += '</div>';
     }
     el.innerHTML = html;
   }
