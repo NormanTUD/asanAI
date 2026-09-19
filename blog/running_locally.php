@@ -151,7 +151,7 @@ The 2024–2025 democratization of fine-tuning is real:
 * **QLoRA** \cite[Dettmers et al., 2023]{dettmers2023qlora}: 4-bit base model + LoRA adapters trainable in fp16. Fits a 70B fine-tune on a single 48 GB GPU.
 * **Unsloth**: 2× faster QLoRA, kernels optimized for consumer GPUs.
 * **Axolotl**: popular framework for instruction fine-tuning.
-* **LoRA / QLoRA / DoRA**: rank-$r$ adapters that train a tiny fraction of parameters.
+* **LoRA** \cite[Hu et al., 2021]{hu2021lora} **/ QLoRA / DoRA** \cite[Liu et al., 2024]{liu2024dora}: rank-$r$ adapters that train a tiny fraction of parameters.
 * **torchtune** (PyTorch native): clean library for fine-tuning recipes.
 
 A typical local fine-tune:
