@@ -3273,6 +3273,36 @@ window.bibData = {
 		year: 2019,
 		alternativetitle: "GPT-2"
 	},
+	"rush2018annotatedtransformer": {
+		url: "https://nlp.seas.harvard.edu/2018/04/03/attention.html",
+		title: "The Annotated Transformer",
+		author: "Alexander Rush, Vincent Nguyen, Guillaume Klein",
+		year: 2018
+	},
+	"alammar2018illustratedtransformer": {
+		url: "https://jalammar.github.io/illustrated-transformer/",
+		title: "The Illustrated Transformer",
+		author: "Jay Alammar",
+		year: 2018
+	},
+	"nanogpt": {
+		url: "https://github.com/karpathy/nanoGPT",
+		title: "nanoGPT: The simplest, fastest repository for training/finetuning GPT (large or small)",
+		author: "Andrej Karpathy",
+		year: 2023
+	},
+	"karpathy2023zerotohero": {
+		url: "https://www.youtube.com/watch?v=kCc8FmEb1nY",
+		title: "Let's build GPT: from scratch, in code, spelled out (Neural Networks: Zero to Hero)",
+		author: "Andrej Karpathy",
+		year: 2023
+	},
+	"huggingface2025gpt2docs": {
+		url: "https://huggingface.co/docs/transformers/model_doc/gpt2",
+		title: "GPT-2 — Hugging Face Transformers documentation",
+		author: "Hugging Face",
+		year: 2025
+	},
 	"bert": {
 		url: "https://aclanthology.org/N19-1423/",
 		title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
