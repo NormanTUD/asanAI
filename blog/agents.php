@@ -191,6 +191,10 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 
 <div class="md">
+Concrete coding agents implement this loop as **multi-step tool usage**. A deep dive into the opencode agent \cite[Abboud, 2025]{abboud2025opencode} shows the pattern clearly: the LLM call is a streaming loop in which the model continuously emits text and tool calls, the framework executes each call, and the results are fed back into the context. Termination is explicit — a `stopWhen` clause ends the loop after a maximum number of steps, and a rejected permission request aborts it. The framework processes the stream event by event (text deltas, tool calls, tool results, tool errors), persisting each artifact to disk as it goes. This is precisely the observe→reason→act cycle of the diagram above, made concrete.
+</div>
+
+<div class="md">
 ### The System Prompt: Defining the Agent's Identity
 
 The system prompt is the agent's “DNA.” It defines:
@@ -198,6 +202,8 @@ The system prompt is the agent's “DNA.” It defines:
 2. **Behavioral constraints** (“never execute destructive actions without confirmation”)
 3. **Output format** (how to structure thoughts, actions, and final answers)
 4. **Persona** (role, expertise level, communication style)
+
+Real agents rarely rely on a single prompt. In opencode, the effective system prompt is assembled at runtime from several sources — a provider-specific base prompt, an optional `AGENTS.md` file from the project, and an agent-specific prompt — and switching between a read-only planning mode and a full build mode is itself injected as a system reminder \cite[Abboud, 2025]{abboud2025opencode}.
 </div>
 
 <pre class="wslab-code-block"><code>You are a research assistant agent. You have access to the following tools:
@@ -301,6 +307,10 @@ Tools are defined as JSON schemas that the LLM sees in its system prompt:
 }</code></pre>
 
 <div class="md">
+Real registries look exactly like this. The opencode agent ships a set of built-in tools — read, write, edit, bash, glob, grep, list, webfetch, todo management, and a task tool for spawning sub-agents — each defined with a description and a parameters schema and registered so the model can invoke it by name \cite[Abboud, 2025]{abboud2025opencode}. The description and schema are what the LLM sees; an `execute` function is what actually runs when the model decides to call the tool. The same function-calling primitives are used with every major provider (Anthropic, OpenAI, Google, or any OpenAI-compatible endpoint), because a provider-agnostic SDK translates the tool definitions into each vendor's dialect.
+</div>
+
+<div class="md">
 ## Memory: How Agents Remember
 
 A single LLM call is stateless, it only “remembers” what's in its context window. Agents need memory to handle multi-step tasks that span many interactions.
@@ -314,6 +324,8 @@ A single LLM call is stateless, it only “remembers” what's in its context wi
 | **Long-term Memory** | External vector database (RAG) | Your filing cabinet |
 | **Episodic Memory** | Logs of past agent runs | Your diary |
 | **Procedural Memory** | Learned tool-use patterns (fine-tuning) | Muscle memory |
+
+A practical illustration of session-scoped working memory comes from the opencode agent: it exposes todo-list tools (write and read) whose state persists per session and is fed back into the model — an explicit prompt-level scratchpad \cite[Abboud, 2025]{abboud2025opencode}. And when the growing conversation history approaches the model's context limit, the agent automatically summarizes the session so far and continues from that summary instead of losing state entirely.
 
 ### The Scratchpad Pattern
 
@@ -348,6 +360,8 @@ Agents communicate through the same mechanism as tool use, one agent's output be
 $$
 \text{Agent}_A \;\xrightarrow{\text{message}}\; \text{Orchestrator} \;\xrightarrow{\text{inject into context}}\; \text{Agent}_B
 $$
+
+In practice, sub-agents are often just another tool. The opencode agent, for example, exposes a single `task` tool whose description enumerates the available sub-agents; invoking it spins up a brand-new session with its own context window, its own toolset, and possibly a different model, and the sub-agent's final output is returned as the tool result \cite[Abboud, 2025]{abboud2025opencode}. The orchestrator in the diagram above can therefore be another LLM — a recursive delegation that hints at full autonomy.
 </div>
 
 <div class="md">
@@ -412,6 +426,8 @@ $$
 $$
 
 The field is actively researching how to push this frontier, making agents both more capable *and* more aligned simultaneously, rather than trading one for the other.
+
+Concrete agents build these mitigations in from the start. In opencode \cite[Abboud, 2025]{abboud2025opencode}, a permission system gates sensitive tools like `bash`, so a read-only planning agent must explicitly request approval before executing anything; the read tool refuses binary files, and edits are rejected for paths outside the working directory; oversized tool output is truncated before it re-enters the context; and at each step the agent records a git snapshot of the working tree, letting a failed change be rolled back in full. One grounding mechanism deserves special mention: after the model edits a file, the agent queries a Language Server for static diagnostics and feeds them back into the context, so undefined symbols or type errors become immediately visible — a squiggly-line IDE check injected into the agent's own observations.
 </div>
 
 <div class="md">
@@ -428,6 +444,7 @@ The agent paradigm has spawned numerous open-source frameworks:
 | **Semantic Kernel** | C# / Python | Microsoft's enterprise agent SDK |
 | **OpenAI Assistants API** | API | Managed agent infrastructure with built-in tools |
 | **Anthropic Claude Tool Use** | API | Native function calling with safety constraints |
+| **opencode** | TypeScript / Bun | Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK \cite[Abboud, 2025]{abboud2025opencode} |
 | **Neuron (PHP)** | PHP | Agent framework for PHP backend engineers |
 
 All of these implement the same core loop described above, they differ in how they manage state, compose tools, handle errors, and coordinate multiple agents.

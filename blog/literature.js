@@ -1034,6 +1034,12 @@ window.bibData = {
 	    year: 2023,
 	    url: "https://arxiv.org/abs/2303.11366"
 	},
+	"abboud2025opencode": {
+	    title: "How Coding Agents Actually Work: Inside OpenCode",
+	    author: "Moncef Abboud",
+	    year: 2025,
+	    url: "https://cefboud.com/posts/coding-agents-internals-opencode-deepdive/"
+	},
 	"wei2022chainofthought": {
 	    title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
 	    author: "Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, Denny Zhou",
