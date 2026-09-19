@@ -203,6 +203,7 @@ function load_base_js () {
 	js("echarts-gl.min.js");
 	js("prism.min");
 	js("prism-python.min");
+	js("prism-json.min");
 	js("sidenotes");
 	js("literature");
 	js("citation_graph");
