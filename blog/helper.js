@@ -319,6 +319,31 @@ function sonarPing(targetEl) {
     setTimeout(() => ripple.remove(), 900);
 }
 
+/* The sonar ring is an absolutely-positioned overlay measured from the
+   target's rect. If we fire it while the smooth scroll is still travelling,
+   it expands and fades out (0.8s) BEFORE the target ever reaches the
+   viewport, so the user never sees it. Instead, wait until the target is
+   actually on screen (IntersectionObserver), then fire — the ring lands
+   exactly where the eye is now looking. Falls back to an immediate ping
+   when the target is already visible or when IO is unavailable. */
+function sonarWhenVisible(targetEl) {
+    if (!('IntersectionObserver' in window)) { sonarPing(targetEl); return; }
+    let fired = false;
+    let io = null;
+    const fire = () => {
+        if (fired) return;
+        fired = true;
+        if (io) io.disconnect();
+        sonarPing(targetEl);
+    };
+    io = new IntersectionObserver((entries) => {
+        for (const en of entries) { if (en.isIntersecting) { fire(); return; } }
+    }, { threshold: 0 });
+    io.observe(targetEl);
+    // Safety net: never wait more than a moment even if IO misbehaves.
+    setTimeout(fire, 1200);
+}
+
 function revealContent() {
     const loader = document.getElementById('loader');
     const content = document.getElementById('contents');
@@ -529,7 +554,7 @@ function bindIframeSafeLinks() {
 			requestAnimationFrame(() => {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-				sonarPing(targetEl);
+				sonarWhenVisible(targetEl);
 
 				// --- Cinematic highlight effect ---
 
