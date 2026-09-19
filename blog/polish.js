@@ -564,6 +564,29 @@
 		let gallery = [];
 		let idx = -1;
 
+		/* Bulletproof page-scroll lock: overflow:hidden on html AND body,
+		   plus position:fixed on body (covers mobile touch-scroll, where
+		   overflow:hidden alone does not stop the page from scrolling). */
+		let savedScrollY = 0;
+		function lockPageScroll() {
+			savedScrollY = window.scrollY;
+			document.documentElement.style.overflow = 'hidden';
+			const b = document.body;
+			b.style.overflow = 'hidden';
+			b.style.position = 'fixed';
+			b.style.top = (-savedScrollY) + 'px';
+			b.style.width = '100%';
+		}
+		function unlockPageScroll() {
+			const b = document.body;
+			b.style.position = '';
+			b.style.top = '';
+			b.style.width = '';
+			document.documentElement.style.overflow = '';
+			b.style.overflow = '';
+			window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+		}
+
 		function loadFromIdx(i) {
 			if (i < 0 || i >= gallery.length) return;
 			idx = i;
@@ -624,14 +647,14 @@
 			// force a reflow so the transition runs
 			void lb.offsetHeight;
 			lb.classList.add('is-visible');
-			document.body.style.overflow = 'hidden';
+			lockPageScroll();
 		}
 		function close() {
 			lb.classList.remove('is-visible');
 			setTimeout(function () {
 				lb.hidden = true;
 				img.src = '';
-				document.body.style.overflow = '';
+				unlockPageScroll();
 				gallery = [];
 				idx = -1;
 			}, 180);
@@ -651,7 +674,7 @@
 		   close the lightbox first so the delegated scroll handler works */
 		lb.addEventListener('click', function (ev) {
 			if (ev.target.closest && ev.target.closest('.iframe-safe-link')) {
-				document.body.style.overflow = '';
+				unlockPageScroll();
 				close();
 			}
 		}, true);

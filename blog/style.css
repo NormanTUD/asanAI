@@ -1289,7 +1289,7 @@ html.dark select option {
    ═══════════════════════════════════════════════════════════ */
 
 html.dark a.cite-stealth.iframe-safe-link { color: #e2e8f0 !important; } /* was rgb(30, 41, 59); 61 elements across 10 pages */
-html.dark a.bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 2 elements across 10 pages */
+html.dark .bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 2 elements across 10 pages */
 html.dark span.external_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 2 elements across 10 pages */
 html.dark button.topics-close { color: #e2e8f0 !important; } /* was rgb(71, 85, 105); 2 elements across 15 pages */
 html.dark button.topics-seg-btn { color: #e2e8f0 !important; } /* was rgb(71, 85, 105); 2 elements across 15 pages */

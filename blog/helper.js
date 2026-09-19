@@ -483,6 +483,16 @@ function make_external_a_href_target_blank() {
 
 function bindIframeSafeLinks() {
 	document.body.onclick = (e) => {
+		// Citation source icon: opens the external URL in a new tab instead of
+		// triggering the citation's scroll-to-bibliography behavior.
+		const citeIcon = e.target.closest ? e.target.closest('.bibtexify_auto_link_icon') : null;
+		if (citeIcon && citeIcon.getAttribute('data-cite-url')) {
+			e.preventDefault();
+			e.stopPropagation();
+			window.open(citeIcon.getAttribute('data-cite-url'), '_blank', 'noopener,noreferrer');
+			return;
+		}
+
 		const link = e.target.closest('.iframe-safe-link');
 		if (!link) return;
 
@@ -1127,66 +1137,20 @@ function bibtexify() {
 			}).filter(Boolean);
 
 			const html = renderedKeys.map(({ key, linkText, data, instanceId, isFirstInBlock }) => {
-				// Source icon is now nested inside the main citation link so the entire
-				// block (text + icon) acts as a single cohesive, hoverable, and clickable unit.
+				// Source icon is a <span> (NOT an <a>) nested inside the main citation
+				// link: anchors cannot legally nest, and the HTML parser would split a
+				// nested <a> into siblings anyway. The span keeps text + icon as ONE
+				// visual/clickable unit; clicking the span opens the source URL (see
+				// bindIframeSafeLinks).
+				// Minimal SVG: no <metadata> (its "image/svg+xml" text leaks into TOC titles
+				// and gets glossarified), no ids (they would duplicate across citations).
 				const svgIcon = data.url
-					? `<a class="bibtexify_auto_link_icon" href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 -256 1850 1850"
-   id="svg3025"
-   version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   width="100%"
-   height="100%">
-  <metadata
-     id="metadata3035">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs3033" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="640"
-     inkscape:window-height="480"
-     id="namedview3031"
-     showgrid="false"
-     inkscape:zoom="0.13169643"
-     inkscape:cx="896"
-     inkscape:cy="896"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg3025" />
-  <g transform="matrix(1,0,0,-1,30.372881,1426.9492)"
-     id="g3027">
-     <path
-        d="M 1408,608 V 288 Q 1408,169 1323.5,84.5 1239,0 1120,0 H 288 Q 169,0 84.5,84.5 0,169 0,288 v 832 Q 0,1239 84.5,1323.5 169,1408 288,1408 h 704 q 14,0 23,-9 9,-9 9,-23 v -64 q 0,-14 -9,-23 -9,-9 -23,-9 H 288 q -66,0 -113,-47 -47,-47 -47,-113 V 288 q 0,-66 47,-113 47,-47 113,-47 h 832 q 66,0 113 47 47,47 47,113 v 320 q 0,14 9 23 9,9 23,9 h 64 q 14,0 23,-9 9,-9 9,-23 z m 384,864 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 -26,0 -45,19 L 1507,1091 855,439 q -10,-10 -23,-10 -13,0 -23,10 L 695,553 q -10,10 -10,23 0,13 10,23 l 652,652 -176,176 q -19,19 -19,45 0,26 19,45 19,19 45,19 h 512 q 26,0 45,-19 19,-19 19,-45 z"
-        id="path3029"
-        inkscape:connector-curvature="0"
-        style="fill:currentColor" />
-   </g>
- </svg></span></a>`
+					? `<span class="bibtexify_auto_link_icon" data-cite-url="${data.url}" title="View source"><span class="external_link_icon">
+<svg viewBox="0 -256 1850 1850" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" aria-hidden="true">
+  <g transform="matrix(1,0,0,-1,30.372881,1426.9492)">
+    <path d="M 1408,608 V 288 Q 1408,169 1323.5,84.5 1239,0 1120,0 H 288 Q 169,0 84.5,84.5 0,169 0,288 v 832 Q 0,1239 84.5,1323.5 169,1408 288,1408 h 704 q 14,0 23,-9 9,-9 9,-23 v -64 q 0,-14 -9,-23 -9,-9 -23,-9 H 288 q -66,0 -113,-47 -47,-47 -47,-113 V 288 q 0,-66 47,-113 47,-47 113,-47 h 832 q 66,0 113 47 47,47 47,113 v 320 q 0,14 9 23 9,9 23,9 h 64 q 14,0 23,-9 9,-9 9,-23 z m 384,864 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 -26,0 -45,19 L 1507,1091 855,439 q -10,-10 -23,-10 -13,0 -23,10 L 695,553 q -10,10 -10,23 0,13 10,23 l 652,652 -176,176 q -19,19 -19,45 0,26 19,45 19,19 45,19 h 512 q 26,0 45,-19 19,-19 19,-45 z" style="fill:currentColor"/>
+  </g>
+</svg></span></span>`
 					: "";
 				// GUARDRAIL 1: Stable id `cite-${key}` is set on the FIRST
 				// occurrence in each .md block. Subsequent occurrences in
