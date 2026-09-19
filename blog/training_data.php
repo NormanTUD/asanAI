@@ -38,7 +38,7 @@ The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchi
 
 **Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008. Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML. After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.
 
-**Petals** is the resulting dataset: ~250B unique URLs crawled, ~9 PB of raw data. LLMs use a small, heavily-filtered subset.
+Over its lifetime Common Crawl has crawled hundreds of billions of URLs and accumulated multiple petabytes of raw data. LLMs use a small, heavily-filtered subset.
 
 The pipeline:
 
@@ -63,9 +63,9 @@ Standard filters:
 * **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).
 * **Stop-word fraction**: English text has 20–30% stop-words. Lower indicates non-natural text.
 * **Perplexity filter**: compute perplexity under a small reference LM (KenLM). High perplexity → outlier text. Drop top/bottom percentiles.
-* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **\cite[Rae et al., 2021]{rae2021gopher} rules** (Rae et al., DeepMind, 2021) and **C4** rules (Raffel et al.) are the most cited.
+* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **\cite[Rae et al., 2021]{rae2021gopher} rules** and **C4** rules \cite[Raffel et al., 2020]{raffel2020t5} are the most cited.
 
-FineWeb (HuggingFace, 2024) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
+FineWeb \cite[Penedo et al., 2024]{penedo2024fineweb} pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
 </div>
 
 <div id="filter-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -111,7 +111,7 @@ A document in the training set may **contain benchmark items verbatim**. Models 
 * **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.
 * **Adversarial contamination**: bad actors can post benchmark items publicly to poison future training sets.
 
-Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI use private, novel questions precisely to avoid this issue.
+Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI \cite[Chollet, 2024]{chollet2024arcagi} use private, novel questions precisely to avoid this issue.
 </div>
 
 <div class="md">
@@ -119,8 +119,8 @@ Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perpl
 
 Beyond raw web text, frontier models train on carefully curated datasets:
 
-* **The \cite[Gao et al., 2020]{gao2020pile}** (Gao et al., 2020): 825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination.
-* **RedPajama** (Together, 2023): open replication of LLaMA's training mix. 1.2T tokens, all sources documented.
+* **The Pile** \cite[Gao et al., 2020]{gao2020pile}: ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination.
+* **RedPajama** \cite[Together, 2023]{together2024redpajama}: open replication of LLaMA's training mix. 1.2T tokens, all sources documented.
 * **SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama. 627B tokens.
 * **FineWeb** (HuggingFace, 2024): 1.3T high-quality English tokens.
 * **FineWeb-Edu** (HuggingFace, 2024): 1.3T tokens scored for educational quality.
@@ -134,7 +134,7 @@ Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM mov
 <div class="md">
 ## Data Mixing: The Frontier Secret
 
-How much web vs. code vs. math? This is largely **undocumented and proprietary**. The Chinchilla authors found the *exact* mix doesn't matter as long as the total data is large enough. But recent work shows:
+How much web vs. code vs. math? This is largely **undocumented and proprietary**. Chinchilla's scaling laws \cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model. Technical reports and ablations show:
 
 * **Code data** disproportionately helps reasoning (LLaMA, Mistral, Qwen all emphasize code).
 * **Math data** is critical for arithmetic; even small amounts help.
@@ -151,7 +151,7 @@ How much web vs. code vs. math? This is largely **undocumented and proprietary**
 With natural data exhaust, frontier labs increasingly generate **synthetic training data**:
 
 * **Self-instruct**: prompt the model to generate variations of seed instructions.
-* **Constitutional AI**: model generates responses, critiques them against rules, revises.
+* **Constitutional AI** \cite[Bai et al., 2022]{bai2022constitutional}: model generates responses, critiques them against rules, revises.
 * **Distillation**: a stronger model generates high-quality responses that a smaller model is then trained on.
 * **Problem synthesis**: generate \cite[Hendrycks et al., 2021]{hendrycks2021math}s with verifiable solutions.
 
