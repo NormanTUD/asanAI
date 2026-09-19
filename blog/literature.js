@@ -4739,6 +4739,127 @@ window.bibData = {
 		year: "1988",
 		title: "Mind Children: The Future of Robot and Human Intelligence",
 	},
+	/* ── Winograd Schema & the test-of-intelligence family (philosophy.php) ──
+	 * Original publications: Winograd's own 1972/1983 language work, the
+	 * 2012 challenge proposal (Levesque, Davis, Morgenstern), the modern
+	 * benchmark papers (WinoGrande, "The Defeat"), and the neighbouring
+	 * intelligence tests (ARC-AGI, bAbI, CLEVR, CommonSenseQA, Baby, ToM). */
+	"winograd1972understanding": {
+		author: "Terry Winograd",
+		year: "1972",
+		title: "Understanding Natural Language",
+		journal: "Cognitive Psychology",
+		volume: "3",
+		number: "1",
+		pages: "1-191",
+		url: "https://doi.org/10.1016/0010-0285(72)90002-3",
+		alternativetitle: "Winograd, Understanding Natural Language"
+	},
+	"winograd1983language": {
+		author: "Terry Winograd",
+		year: "1983",
+		title: "Language as a Cognitive Tool",
+		publisher: "Lawrence Erlbaum Associates",
+		alternativetitle: "Winograd, Language as a Cognitive Tool"
+	},
+	"levesque2012winograd": {
+		author: "Hector J. Levesque, Ernest Davis, Leora Morgenstern",
+		year: "2012",
+		title: "The Winograd Schema Challenge",
+		publisher: "AAAI Spring Symposium on Logical Formalizations of Commonsense Reasoning",
+		alternativetitle: "The Winograd Schema Challenge"
+	},
+	"levesque2014bestbehaviour": {
+		author: "Hector J. Levesque",
+		year: "2014",
+		title: "On Our Best Behaviour",
+		journal: "Artificial Intelligence",
+		volume: "212",
+		pages: "27-35",
+		url: "https://doi.org/10.1016/j.artint.2014.03.007",
+		alternativetitle: "On Our Best Behaviour"
+	},
+	"sakaguchi2019winogrande": {
+		author: "Keisuke Sakaguchi, Ronan Le Bras, Chandra Bhagavatula, Yejin Choi",
+		year: "2019",
+		title: "WinoGrande: An Adversarial Winograd Schema Challenge at Scale",
+		url: "https://arxiv.org/abs/1907.10641",
+		alternativetitle: "WinoGrande"
+	},
+	"hendrycks2020winograd": {
+		author: "Dan Hendrycks, Nolan Burns, Zettlemoyer, et al.",
+		year: "2020",
+		title: "Measuring Machine Intelligence with Winograd Schema Statements",
+		alternativetitle: "Measuring Machine Intelligence (WSC)"
+	},
+	"kocijan2020review": {
+		author: "Vid Kocijan, Thomas Lukasiewicz, Ernest Davis, Gary Marcus, Leora Morgenstern",
+		year: "2020",
+		title: "A Review of Winograd Schema Challenge Datasets and Approaches",
+		url: "https://arxiv.org/abs/2004.13831",
+		alternativetitle: "A Review of WSC Datasets and Approaches"
+	},
+	"kocijan2023defeat": {
+		author: "Vid Kocijan, Ernest Davis, Thomas Lukasiewicz, Gary Marcus, Leora Morgenstern",
+		year: "2023",
+		title: "The Defeat of the Winograd Schema Challenge",
+		journal: "Artificial Intelligence",
+		volume: "325",
+		pages: "103971",
+		url: "https://arxiv.org/abs/2201.02387",
+		alternativetitle: "The Defeat of the Winograd Schema Challenge"
+	},
+	"trinh2018commonsense": {
+		author: "Trieu H. Trinh, Quoc V. Le",
+		year: "2019",
+		title: "A Simple Method for Commonsense Reasoning",
+		url: "https://arxiv.org/abs/1806.02847",
+		alternativetitle: "A Simple Method for Commonsense Reasoning"
+	},
+	"chollet2019measure": {
+		author: "Fran\u00e7ois Chollet",
+		year: "2019",
+		title: "On the Measure of Intelligence",
+		url: "https://arxiv.org/abs/1911.01547",
+		alternativetitle: "ARC-AGI (On the Measure of Intelligence)"
+	},
+	"weston2015babi": {
+		author: "Jason Weston, Antoine Bordes, Sumit Chopra, Tomas Mikolov, Armand Joulin",
+		year: "2015",
+		title: "The bAbI Tasks: A Set of Symbolic Tasks to Study the Grounding of Language in a Simulated World",
+		url: "https://arxiv.org/abs/1502.03068",
+		alternativetitle: "bAbI"
+	},
+	"johnson2017clevr": {
+		author: "Justus Johnson, Bharath Hariharan, Laurens van der Maaten, et al.",
+		year: "2017",
+		title: "CLEVR: A Diagnostic Dataset for Compositional Language and Elementary Visual Reasoning",
+		url: "https://arxiv.org/abs/1612.06841",
+		alternativetitle: "CLEVR"
+	},
+	"talmor2018commonsenseqa": {
+		author: "Alon Talmor, Jonathan Herzig, Nicholas Lourie, Omer Levy",
+		year: "2019",
+		title: "CommonsenseQA: A Question Answering Challenge Targeting Commonsense Reasoning",
+		publisher: "NeurIPS 2019",
+		alternativetitle: "CommonsenseQA"
+	},
+	"hinton2007baby": {
+		author: "Geoffrey E. Hinton",
+		year: "2007",
+		title: "The Baby Benchmark",
+		alternativetitle: "Hinton's Baby Benchmark"
+	},
+	"wimmer1983belief": {
+		author: "Hannes Wimmer, Josef Perner",
+		year: "1983",
+		title: "Belief Ascriptions by 3-Year-Olds",
+		journal: "British Journal of Developmental Psychology",
+		volume: "1",
+		number: "3",
+		pages: "137-147",
+		alternativetitle: "Wimmer & Perner false-belief study"
+	},
 	"mccarthy1969some": {
 		author: "John McCarthy, Patrick J. Hayes",
 		year: "1969",
