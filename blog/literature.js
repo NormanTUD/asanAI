@@ -14214,7 +14214,7 @@ window.bibData = {
 		title: "Random Search for Hyper-Parameter Optimization",
 		author: "James Bergstra, Yoshua Bengio",
 		year: 2012,
-		url: "https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf"
+		url: "https://www.jmlr.org/papers/v13/bergstra12a.html"
 	},
 	"snoek2012practical": {
 		title: "Practical Bayesian Optimization of Machine Learning Hyperparameters",

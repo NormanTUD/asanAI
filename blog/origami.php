@@ -392,6 +392,68 @@ for?* — in terms you can draw, measure, and (as the poker experiment shows) ca
 verify.
 </div>
 
+<div class="md">
+## Name It: a Dense Block, Not "the Network"
+
+It is worth naming the subject of that claim precisely, because the honest answer is:
+**less general than the metaphor invites you to think.** The origami picture is right for a
+simple classifier built only out of dense layers, and that is enough — but it does not claim,
+and should not be read as claiming, to describe *every* layer type.
+
+**The object is the dense ReLU block.** The folding mechanism — a layer *wider than the
+data*, with a *pointwise* ReLU that creases the data into a spare higher dimension — is a
+property of the **fully-connected layer** in particular: an affine map, then a nonlinearity
+applied to each neuron independently. The rigorous backbone of the whole story is a theorem
+about exactly that object: a deep **fully-connected, piecewise-linear** network splits its
+input space into a number of **linear regions that grows exponentially with depth**
+\cite{montufar2014regions}. Nothing in that argument requires — or reaches — the other layer
+types.
+
+**For other layer types the picture need not apply, and that is fine.** A
+**convolutional** layer is a *local, weight-shared* affine map plus a nonlinearity, not a
+single pointwise-ReLU hyperplane across the whole feature, so "fold into a spare higher
+dimension" is not the natural description of it. An **attention** or **recurrent** layer is
+built from still different operations ($QK^\top V$; weights reused across time). Keup &
+Helias are careful to flag convolutional networks only as a *possible application* of the
+picture, not as a result \cite{keup2022origami}. A crisp, local result about the dense block
+is worth more than a vague, universal one, so we should not dress it up as more than it is.
+What *is* architecture-agnostic is the weaker, outer principle — that a network manufactures
+a linearly-separable representation for a final linear readout. What is dense-specific is the
+particular **folding** way it does so.
+
+**But the dense block is rarely the whole model — it is an in-between part.** This is the
+easy mistake: a "feed-forward network" is a thing by itself, yet in the architectures you
+actually use, the dense block is a *sub-component sandwiched in between* other operations.
+
+* **In a transformer / LLM**, every layer is attention followed by a **position-wise
+  feed-forward network** — which *is* a two-layer dense MLP with a ReLU/GELU
+  \cite{vaswani2017attention}. That FFN block is exactly the kind of dense stack the origami
+  picture describes (interpretability work even reads it as the model's local "memory"
+  \cite{keyvalmem}); the attention sub-layer wrapped around it is doing something else.
+* **In a classical CNN**, a **stack of convolutions** feeds a **stack of fully-connected
+  (dense) layers** — the classifier head at the top: VGGNet is thirteen conv layers followed
+  by three dense layers \cite{simonyan2014vgg}, and ResNet is a convolutional body capped by
+  a dense head \cite{he2015resnet}. The "fold until separable, then one flat readout" story
+  happens in that dense head.
+
+So the origami theorem is not "about the network." It is about the **dense block** that
+transformers and CNNs are assembled from — the in-between part each one hands the
+separability work to.
+
+**And the binary "one flat cut" generalizes cleanly to many classes.** Everything above was
+drawn for a *binary* task — one output neuron, one flat hyperplane, one cut. A
+**multi-class** head has **one neuron per class**, and each of those neurons is *the same
+kind of flat linear readout* you already met: a single logit
+$z_k = \mathbf{w}_k \cdot \mathbf{h} + b_k$, a linear function of the final representation
+$\mathbf{h}$ — i.e. one flat hyperplane ("one cut") per class, each deciding how much to
+*activate* for its class. A **softmax** — the multi-dimensional generalization of the
+sigmoid — then turns the $K$ logits into a probability distribution, and **argmax** picks
+the class whose cut the point landed on the positive side of \cite{softmax_wiki}. So "one
+flat cut" becomes "one flat cut **per class**," and nothing in the folding picture changes:
+the dense block folds the data until each class sits on the positive side of its *own* cut,
+and the softmax just reads off which one wins.
+</div>
+
 <div class="optional md" data-headline="Scope and open questions">
 To be clear about what this framework covers and does not:
 
