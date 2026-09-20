@@ -165,6 +165,13 @@ html {
 	--mn-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 	--mn-font-prose: "CMS", "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
 
+	/* Reading-column width — the single "general max-width CSS variable"
+	   the layout guardrail tells authors to clamp offending elements to.
+	   #contents uses it below; reader mode overrides it to 90ch on
+	   html.reader-mode. Sidenote rail geometry mirrors it via
+	   --sn-content-width (kept in px for the calc()s in the rails). */
+	--mn-col-width: 80ch;
+
 	/* Vertical-rhythm ladder — single source of truth for block
 	   spacing in the reading column (≈ golden-ish steps). Micro-
 	   spacing inside type (paragraph gap, heading leading) stays
@@ -1669,8 +1676,8 @@ html.theme-transition *::after {
 	   fonts at the same px size have wildly different "0"-widths.
 	   Below ~580 px viewport we let it shrink to 92 vw; on tiny
 	   phones mobile.css takes over with explicit padding.        */
-	width: min(92vw, 80ch);
-	max-width: 80ch;
+	width: min(92vw, var(--mn-col-width));
+	max-width: var(--mn-col-width);
 
 	/* 2. Zentrierung des Containers — bleibt IMMER zentriert. */
 	margin-left: auto;
@@ -1737,6 +1744,38 @@ html.theme-transition *::after {
 	max-width: 100%;
 	overflow-x: auto;
 	overflow-y: hidden;
+}
+
+/* 4. Special layout tags (guardrail-exempt, author-labelled) — the
+   ONLY sanctioned ways to let content scroll inside its own box when
+   clamping alone cannot fit it. layout_guardrail.js exempts both and
+   its "Tag"/"FullW" buttons produce exactly these classes.
+   .lg-scroll      — stays inside the reading column; scrolls
+                     horizontally inside its own box if its content is
+                     wider than the column (wide tables, code blocks).
+   .lg-widescroll  — exceptional case: may span the FULL PAGE WIDTH,
+                     then scrolls horizontally inside its own box
+                     (e.g. the giant transformer equations). Still
+                     participates in normal vertical flow. */
+.lg-scroll {
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+.lg-widescroll {
+	box-sizing: border-box;
+	width: 100vw;
+	max-width: 100vw;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* Flash ring when a flagged element is clicked-to-scroll. */
+.lg-flash {
+	outline: 3px solid #f59e0b !important;
+	outline-offset: 3px !important;
 }
 
 /* ── Prose vs. chrome ───────────────────────────────────────
@@ -8214,6 +8253,7 @@ html.reader-mode .course-hero {
 
 html.reader-mode {
 	/* Slightly warmer bg so the page feels like a small booklet. */
+	--mn-col-width: 90ch;
 	background: #F8F2E4;
 }
 html.reader-mode.dark {
@@ -8222,8 +8262,8 @@ html.reader-mode.dark {
 
 html.reader-mode #contents {
 	/* Reader mode: 90 ch max, single column, generous padding. */
-	width: min(92vw, 90ch);
-	max-width: 90ch;
+	width: min(92vw, var(--mn-col-width));
+	max-width: var(--mn-col-width);
 	font-size: clamp(1.08rem, 1rem + 0.4vw, 1.18rem);
 	line-height: 1.65;
 }

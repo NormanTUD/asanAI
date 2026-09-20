@@ -5,8 +5,11 @@
   Loads the production layout_guardrail.js against a synthetic #contents
   column (600px) and asserts:
     • a normal (non-exempt) element wider than the column IS flagged
-    • the same width inside a .cl-block / .optional box or a .sideimage
-      (margin note) is EXEMPT and NOT flagged
+    • the same width inside a .cl-block / .optional box, a .sideimage
+      (margin note), or the author-labelled special tag .lg-scroll
+      is EXEMPT and NOT flagged
+    • the interactive helpers work: excluding a selector stops flagging
+      it for this page, and tagging an element makes it exempt
 
   The verdict is written exactly once to <title> (idempotent finish).
   See width_layout_guard.sh.
@@ -20,7 +23,7 @@
      width is deterministic in headless. */
   #contents { width: 600px; margin: 0 auto; position: relative; }
   .probe { height: 40px; border: 1px solid #ccc; }
-  #bad, #box-bad, #opt-bad, #mf-bad { width: 800px; }
+  #bad, #box-bad, #opt-bad, #mf-bad, #tag-bad, #ex-bad { width: 800px; }
 </style>
 <script src="../layout_guardrail.js"></script>
 </head>
@@ -31,6 +34,8 @@
     <div class="cl-block"><div id="box-bad" class="probe">box, 800px → MUST be exempt</div></div>
     <div class="optional"><div id="opt-bad" class="probe">optional box, 800px → MUST be exempt</div></div>
     <figure class="sideimage"><div id="mf-bad" class="probe">margin note, 800px → MUST be exempt</div></figure>
+    <div class="lg-scroll"><div id="tag-bad" class="probe">special tag, 800px → MUST be exempt</div></div>
+    <div id="ex-bad" class="probe">normal, 800px → flagged, then excluded via API</div>
   </div>
   <div id="verdict" role="status">PENDING</div>
   <script>
@@ -39,17 +44,50 @@
         document.title = 'WIDTH_LAYOUT_GUARD ' + v;
         document.getElementById('verdict').textContent = v;
       }
-      function finish() {
+      function phase1() {
         var r = window.__layoutGuardrail;
         if (!r) { set('FAIL: __layoutGuardrail not set (guardrail never ran)'); return; }
         if (r.allowedPx <= 0) { set('FAIL: column not measured'); return; }
         var off = r.offenders || [];
-        var onlyBad = off.length === 1 && /#bad\b/.test(off[0]);
-        var falsePos = off.some(function (s) { return /box-bad|opt-bad|mf-bad/.test(s); });
-        if (onlyBad && !falsePos) set('PASS');
+        var expect = ['#bad', '#ex-bad'];
+        var onlyExpected = off.length === expect.length && expect.every(function (s) {
+          return off.some(function (o) { return o.indexOf(s) !== -1; });
+        });
+        var falsePos = off.some(function (s) {
+          return /box-bad|opt-bad|mf-bad|tag-bad/.test(s);
+        });
+        if (onlyExpected && !falsePos) setTimeout(phase2, 50);
         else set('FAIL: offenders=' + JSON.stringify(off) + ' allowedPx=' + r.allowedPx);
       }
-      window.addEventListener('load', function () { setTimeout(finish, 600); });
+      function phase2() {
+        try { localStorage.removeItem('lg-excluded-v1'); } catch (e) {}
+        // tagging must make the element exempt (and not re-flag it later)
+        window.__layoutGuardrailTag('#ex-bad', 'scroll');
+        var r = window.__layoutGuardrail;
+        var off = r && (r.offenders || []);
+        var hasEx = off && off.some(function (s) { return /#ex-bad/.test(s); });
+        if (hasEx) { set('FAIL: tagged element still flagged: ' + JSON.stringify(off)); return; }
+        var badMiss = !off.some(function (s) { return /#bad\b/.test(s); });
+        if (badMiss) { set('FAIL: #bad stopped being flagged after unrelated tag: ' + JSON.stringify(off)); return; }
+        phase3();
+      }
+      function phase3() {
+        // re-add a fresh offender and exclude it — must vanish from the report
+        var n = document.createElement('div');
+        n.id = 'tmp-bad';
+        n.className = 'probe';
+        n.style.width = '800px';
+        document.getElementById('contents').appendChild(n);
+        var r = window.__layoutGuardrailCheck();
+        var hasTmp = (r.offenders || []).some(function (s) { return /#tmp-bad/.test(s); });
+        if (!hasTmp) { set('FAIL: fresh offender not flagged: ' + JSON.stringify(r.offenders)); return; }
+        window.__layoutGuardrailExclude('#tmp-bad');
+        r = window.__layoutGuardrailCheck();
+        var stillTmp = (r.offenders || []).some(function (s) { return /#tmp-bad/.test(s); });
+        if (stillTmp) { set('FAIL: excluded element still flagged'); return; }
+        set('PASS');
+      }
+      window.addEventListener('load', function () { setTimeout(phase1, 600); });
       // safety net: if the guardrail errored out before setting state
       setTimeout(function () {
         if (/PENDING/.test(document.title)) set('FAIL: timed out (guardrail did not finish)');
