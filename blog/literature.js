@@ -44,12 +44,12 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Fold-and-cut_theorem",
 		alternativetitle: "Fold-and-cut theorem (Wikipedia)"
 	},
-	"foldcut_swan_img": {
-		url: "https://erikdemaine.org/foldcut/examples/swan_dd_72.gif",
-		title: "Swan fold-and-cut crease pattern (straight-skeleton method, 72 dpi example)",
-		author: "Erik Demaine and Martin Demaine",
-		year: 2025,
-		alternativetitle: "Swan fold-and-cut example (erikdemaine.org/foldcut)"
+	"foldedkoch_img": {
+		url: "https://commons.wikimedia.org/wiki/File:FoldedKoch.gif",
+		title: "FoldedKoch.gif — creating a Koch snowflake curve by the fold-and-cut method",
+		author: "Greg Egan (CC BY-SA 4.0)",
+		year: 2023,
+		alternativetitle: "Folded Koch snowflake (Wikimedia Commons)"
 	},
 	"linear_separability_wiki": {
 		title: "Linear separability",

@@ -215,12 +215,11 @@ folded, you take your scissors, make one straight snip, and the shape falls out 
 \cite{foldandcut_wiki}.
 
 <figure style="max-width:560px; margin:1.5em auto; text-align:center;">
-	<img src="https://erikdemaine.org/foldcut/examples/swan_dd_72.gif" alt="Crease pattern for a swan: bold outline of the swan plus the thin crease lines that, when folded flat, bring the whole outline onto one straight cut line" style="width:100%; height:auto; border-radius:6px;" />
-	<figcaption class="md">The theorem in action: a swan. The **bold line** is the swan's
-	outline, the **thin lines** the crease pattern, designed with the *straight-skeleton*
-	method. Fold the paper flat along all the thin creases and every edge of the bold
-	outline lands on **one** straight line — so a single complete cut traces the whole
-	swan at once. \cite[Image: swan fold-and-cut crease pattern, Erik Demaine &amp; Martin Demaine]{foldcut_swan_img}</figcaption>
+	<img src="folded_koch.gif" alt="Animation: a sheet of paper is folded flat step by step until the entire perimeter of a Koch snowflake lies on a single straight line, so that one straight cut cuts out the whole curve" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption class="md">The theorem in action, animated: a **Koch snowflake** created
+	by the fold-and-cut method. Step by step the paper is folded flat until the
+	snowflake's *entire perimeter* lies on **one** straight line — after which a single
+	complete, straight cut cuts out the whole curve at once. \cite[Image: FoldedKoch.gif, Greg Egan, CC BY-SA 4.0 (Wikimedia Commons)]{foldedkoch_img}</figcaption>
 </figure>
 
 A neural network is doing exactly this — in $N$ dimensions. The hidden layers perform the
