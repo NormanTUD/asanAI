@@ -208,7 +208,7 @@ The batch size "2" passes through the multiplication untouched. Each neuron sees
 
 $$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{sequence length (repetition)}} \times \underbrace{768}_{\text{model dim (features)}}\,)}_{\text{input: } t \text{ token-vectors stacked}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{768}_{\text{features (must match)}} \times \underbrace{d_{\text{out}}}_{\text{output dim}}\,)}_{\text{weight, fixed after training}} \\[6pt] &=\; \underbrace{(\,\underbrace{t}_{\text{passes through unchanged}} \times \underbrace{d_{\text{out}}}_{\text{new feature dim}}\,)}_{\text{output: one row per token}} \end{aligned}$$
 
-The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs \cite[Paszke et al., 2019]{pytorch}. This is why variable-length input requires no architectural change or retraining \cite[Vaswani et al., 2017]{vaswani2017attention}.
+The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs \cite[Paszke et al., 2019]{pytorch}. This is why variable-length input requires no architectural change or retraining \cite[Vaswani et al., 2017]{vaswani2017attention}. Running one set of weights once per position is the same move a **fold** makes in functional programming, and reusing a single structure across every position is what Olah calls **weight tying** — the neural-network analogue of writing a function once and calling it many times \cite[Olah, 2015]{colah2015types}.
 
 **What is variable, what is fixed.** The full input tensor after embedding has shape $(b, t, d)$. Of these three dimensions:
 
@@ -556,7 +556,7 @@ The final state of this block, **$h_1$**, is formed by another residual connecti
 $$h_{1} = z_{0} + \text{FFN}(\text{LayerNorm}(z_0))$$
 
 ## The $N$-Layer Recurrence
-In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
+In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning. The deeper pattern is that a network is assembled by *reusing* a small set of structural ideas many times over — in functional-programming terms, composing higher-order functions with learnable pieces in between — which is why these models read as a kind of **differentiable functional programming** \cite[Olah, 2015]{colah2015types}.
 
 For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
 
