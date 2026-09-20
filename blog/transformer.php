@@ -974,7 +974,9 @@ While the architecture is identical in both modes, the behavior of the model dif
 			</ul>
 			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary), the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor “owns”, and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive, drag to rotate while training runs.</p>
 		</div>
-	</details>
-	</details>
+</details>
+</details>
+<br>
+<script src="transformer_layer_summary.js"></script>
 </div>
 </div>
