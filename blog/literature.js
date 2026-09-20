@@ -13890,10 +13890,10 @@ window.bibData = {
 		alternativetitle: "the Golem legend"
 	},
 	"gfactor_wiki": {
-		title: "G factor",
+		title: "g factor (psychometrics)",
 		author: "Wikipedia contributors",
 		year: 2026,
-		url: "https://en.wikipedia.org/wiki/G_factor",
+		url: "https://en.wikipedia.org/wiki/G_factor_(psychometrics)",
 		alternativetitle: "Spearman's g factor"
 	},
 	/* ─────────────────────────────────────────────────────────────────────

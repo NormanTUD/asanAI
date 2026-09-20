@@ -144,7 +144,14 @@
 
 	function check() {
 		var allowed = allowedWidth();
-		if (allowed <= 0) return false; // column not laid out yet
+		// column not laid out yet (hidden / pre-render) → report "not ready"
+		// so callers (incl. the CI harness) can poll until it is measurable
+		if (allowed <= 0) {
+			window.__layoutGuardrail = {
+				ok: null, ready: false, mode: modeName(), allowedPx: 0, offenders: []
+			};
+			return window.__layoutGuardrail;
+		}
 
 		var offenders = collect(allowed);
 		clearFlags();
@@ -152,9 +159,9 @@
 		if (offenders.length === 0) {
 			clearBanner();
 			window.__layoutGuardrail = {
-				ok: true, mode: modeName(), allowedPx: allowed, offenders: []
+				ok: true, ready: true, mode: modeName(), allowedPx: allowed, offenders: []
 			};
-			return true;
+			return window.__layoutGuardrail;
 		}
 
 		offenders.forEach(function (o) {
@@ -170,11 +177,14 @@
 			offenders.map(function (o) { return o.sel + ' (' + Math.round(o.width) + 'px)'; })
 		);
 		window.__layoutGuardrail = {
-			ok: false, mode: modeName(), allowedPx: allowed,
+			ok: false, ready: true, mode: modeName(), allowedPx: allowed,
 			offenders: offenders.map(function (o) { return o.sel; })
 		};
-		return false;
+		return window.__layoutGuardrail;
 	}
+
+	// Synchronous, on-demand entry point for the CI harness (and tests).
+	window.__layoutGuardrailCheck = check;
 
 	var timer = null;
 	function schedule(delay) {
