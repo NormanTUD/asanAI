@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Gradient Flow — Interaktive Visualisierung</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --bg2: #131a2b;
+    --fg: #e8ecf7;
+    --muted: #8a94ad;
+    --accent: #4cc9f0;      /* cyan  — forward */
+    --accent2: #ffb84d;     /* amber — backward (colorblind-safe pair) */
+    --pos: #4cc9f0;
+    --neg: #ffb84d;
+    --panel: rgba(20, 27, 45, 0.85);
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: radial-gradient(ellipse at top, #1a2340 0%, #0b0f1a 60%);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+  #stage { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; }
+  #ui {
+    position: fixed; top: 16px; left: 16px;
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    width: 320px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  }
+  #ui h1 {
+    margin: 0 0 4px 0; font-size: 15px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  #ui .sub { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+  .row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 12px; }
+  .row label { flex: 0 0 110px; color: var(--muted); }
+  .row input[type=range] { flex: 1; accent-color: var(--accent); }
+  .row .val { flex: 0 0 40px; text-align: right; font-variant-numeric: tabular-nums; }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  button {
+    background: linear-gradient(180deg, #2a3352, #1e2540);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform .08s, background .2s;
+  }
+  button:hover { background: linear-gradient(180deg, #354065, #262e52); }
+  button:active { transform: scale(0.97); }
+  button.primary {
+    background: linear-gradient(180deg, #4cc9f0, #2ea8d4);
+    color: #06131c; font-weight: 600; border-color: transparent;
+  }
+  button.primary:hover { background: linear-gradient(180deg, #6ddaff, #37b8e6); }
+  #legend {
+    position: fixed; top: 16px; right: 16px;
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    max-width: 260px;
+  }
+  #legend h2 { margin: 0 0 10px 0; font-size: 13px; font-weight: 600; }
+  .lg-item { display: flex; align-items: center; gap: 10px; margin: 6px 0; color: var(--muted); }
+  .swatch { width: 28px; height: 3px; border-radius: 2px; }
+  .swatch.dot { width: 12px; height: 12px; border-radius: 50%; }
+  #status {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    display: flex; gap: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  }
+  #status b { color: var(--fg); }
+  #status span { color: var(--muted); }
+  .phase-tag {
+    display: inline-block;
+    padding: 2px 10px; border-radius: 999px;
+    font-weight: 600; font-size: 11px;
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+  }
+  .phase-tag.back {
+    background: rgba(255, 184, 77, 0.15);
+    color: var(--accent2);
+    border-color: rgba(255, 184, 77, 0.3);
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+
+<div id="ui">
+  <h1>🧠 Gradient Flow</h1>
+  <div class="sub">Sieh Forward-Pass, Loss und Backpropagation — live.</div>
+
+  <div class="row">
+    <label>Lernrate</label>
+    <input id="lr" type="range" min="0.001" max="0.3" step="0.001" value="0.05">
+    <div class="val" id="lrv">0.050</div>
+  </div>
+  <div class="row">
+    <label>Speed</label>
+    <input id="speed" type="range" min="0.2" max="3" step="0.1" value="1">
+    <div class="val" id="spv">1.0×</div>
+  </div>
+  <div class="row">
+    <label>Ziel-y</label>
+    <input id="target" type="range" min="-1" max="1" step="0.01" value="0.7">
+    <div class="val" id="tgv">0.70</div>
+  </div>
+  <div class="row">
+    <label>Residual</label>
+    <input id="resid" type="checkbox" checked>
+    <div class="val"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="primary" id="playBtn">▶ Play</button>
+    <button id="stepBtn">Step</button>
+    <button id="resetBtn">Reset</button>
+    <button id="newInBtn">Neuer Input</button>
+  </div>
+</div>
+
+<div id="legend">
+  <h2>Legende</h2>
+  <div class="lg-item"><div class="swatch" style="background:var(--accent)"></div>Forward-Signal (Aktivierung)</div>
+  <div class="lg-item"><div class="swatch" style="background:var(--accent2)"></div>Backward-Signal (Gradient)</div>
+  <div class="lg-item"><div class="swatch dot" style="background:var(--accent)"></div>positiv / aktiv</div>
+  <div class="lg-item"><div class="swatch dot" style="background:var(--accent2)"></div>negativ / Fehler</div>
+  <div class="lg-item" style="margin-top:8px; color:var(--fg); font-size:11px;">
+    Kanten-<b>Dicke</b> = |Gewicht|<br>
+    Kanten-<b>Leuchten</b> = |Update|<br>
+    Zackige Kante = Residual (Identität)
+  </div>
+</div>
+
+<div id="status">
+  <span>Epoch: <b id="epoch">0</b></span>
+  <span>Loss: <b id="loss">—</b></span>
+  <span>|∇| : <b id="gnorm">—</b></span>
+  <span id="phase" class="phase-tag">idle</span>
+</div>
+
+<script>
+/* ========================================================================
+   GRADIENT FLOW VISUALIZATION
+   Ein winziges echtes Feedforward-Netz mit tanh Aktivierung + optionalem
+   Residual-Skip. Vollständige manuelle Backprop, animiert.
+   ======================================================================== */
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let DPR = Math.max(1, window.devicePixelRatio || 1);
+let W = 0, H = 0;
+
+function resize() {
+  DPR = Math.max(1, window.devicePixelRatio || 1);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* ---------- Netz-Architektur ---------- */
+// 3 Inputs → 5 hidden → 5 hidden → 1 output
+const LAYER_SIZES = [3, 5, 5, 1];
+
+function randn() { // Box-Muller
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function makeNet() {
+  const layers = [];
+  for (let i = 1; i < LAYER_SIZES.length; i++) {
+    const inN = LAYER_SIZES[i-1], outN = LAYER_SIZES[i];
+    const W = [], b = [];
+    const scale = Math.sqrt(2 / inN); // He init
+    for (let o = 0; o < outN; o++) {
+      const row = [];
+      for (let j = 0; j < inN; j++) row.push(randn() * scale * 0.6);
+      W.push(row);
+      b.push(0);
+    }
+    layers.push({ W, b, inN, outN });
+  }
+  return layers;
+}
+
+let net = makeNet();
+
+/* Zustand für Anim */
+let state = {
+  input: [0.5, -0.3, 0.8],
+  target: 0.7,
+  activations: [],   // pro Layer: Vektor
+  preacts: [],       // pre-activation z
+  grads: [],         // dL/dz für jeden Layer
+  gradW: [],         // dL/dW pro Layer
+  gradB: [],
+  loss: 0,
+  epoch: 0,
+  phase: 'idle',    // 'forward' | 'loss' | 'backward' | 'update'
+  phaseT: 0,        // 0..1 progress
+  layerCursor: 0,   // welcher Layer wird gerade animiert
+  playing: false,
+  useResidual: true,
+  lr: 0.05,
+  speed: 1.0,
+  gnorm: 0,
+};
+
+/* ---------- Forward / Backward ---------- */
+function tanh(x) { return Math.tanh(x); }
+function dtanh(y) { return 1 - y*y; } // gegeben y=tanh(z)
+
+function forward(inp) {
+  const acts = [inp.slice()];
+  const zs = [null]; // kein preact für input
+  let a = inp.slice();
+  for (let li = 0; li < net.length; li++) {
+    const L = net[li];
+    const z = new Array(L.outN).fill(0);
+    for (let o = 0; o < L.outN; o++) {
+      let s = L.b[o];
+      for (let j = 0; j < L.inN; j++) s += L.W[o][j] * a[j];
+      z[o] = s;
+    }
+    let out;
+    if (li === net.length - 1) {
+      // linearer Output
+      out = z.slice();
+    } else {
+      out = z.map(tanh);
+      // Residual: wenn Größen passen, addiere Input
+      if (state.useResidual && a.length === out.length) {
+        out = out.map((v, i) => v + a[i]);
+      }
+    }
+    zs.push(z);
+    acts.push(out);
+    a = out;
+  }
+  return { acts, zs };
+}
+
+function backward(acts, zs) {
+  // Loss = 0.5 * (y - t)^2
+  const yhat = acts[acts.length - 1][0];
+  const t = state.target;
+  const loss = 0.5 * (yhat - t) * (yhat - t);
+
+  const gradW = net.map(L => L.W.map(row => row.map(_ => 0)));
+  const gradB = net.map(L => L.b.map(_ => 0));
+  const dAct = net.map(_ => null); // dL/d(activation output) je Layer
+
+  // dL/dy = (yhat - t)
+  let dOut = [yhat - t];
+  dAct[net.length - 1] = dOut.slice();
+
+  for (let li = net.length - 1; li >= 0; li--) {
+    const L = net[li];
+    const aIn = acts[li];      // Layer-Input
+    const aOut = acts[li + 1]; // Layer-Output
+    const z = zs[li + 1];
+
+    // dL/dz
+    let dZ;
+    if (li === net.length - 1) {
+      dZ = dOut.slice(); // linear
+    } else {
+      // Aktivierung war tanh, evtl. Residual addiert
+      // out = tanh(z) + (a_in if resid)
+      // dOut/dz = dtanh(tanh(z)) = 1 - tanh(z)^2
+      const tanZ = z.map(tanh);
+      dZ = dOut.map((g, i) => g * dtanh(tanZ[i]));
+    }
+
+    // Gewichte-Gradient
+    for (let o = 0; o < L.outN; o++) {
+      gradB[li][o] = dZ[o];
+      for (let j = 0; j < L.inN; j++) {
+        gradW[li][o][j] = dZ[o] * aIn[j];
+      }
+    }
+
+    // dL/d(aIn)
+    const dIn = new Array(L.inN).fill(0);
+    for (let j = 0; j < L.inN; j++) {
+      let s = 0;
+      for (let o = 0; o < L.outN; o++) s += L.W[o][j] * dZ[o];
+      dIn[j] = s;
+    }
+
+    // Residual: falls in→out gleiche Größe UND ein Hidden-Layer,
+    // dann fließt der Gradient AUCH direkt zurück (Identity path)
+    if (state.useResidual && li < net.length - 1 && L.inN === L.outN) {
+      for (let j = 0; j < L.inN; j++) dIn[j] += dOut[j];
+    }
+
+    if (li > 0) dAct[li - 1] = dIn.slice();
+    dOut = dIn;
+  }
+
+  // Gradientennorm
+  let gn = 0;
+  for (let li = 0; li < net.length; li++) {
+    for (let o = 0; o < net[li].outN; o++) {
+      gn += gradB[li][o] * gradB[li][o];
+      for (let j = 0; j < net[li].inN; j++) gn += gradW[li][o][j] * gradW[li][o][j];
+    }
+  }
+  gn = Math.sqrt(gn);
+
+  return { loss, gradW, gradB, dAct, gnorm: gn };
+}
+
+function applyUpdate(gradW, gradB) {
+  const lr = state.lr;
+  for (let li = 0; li < net.length; li++) {
+    for (let o = 0; o < net[li].outN; o++) {
+      net[li].b[o] -= lr * gradB[li][o];
+      for (let j = 0; j < net[li].inN; j++) {
+        net[li].W[o][j] -= lr * gradW[li][o][j];
+      }
+    }
+  }
+}
+
+/* ---------- Layout: Neuronen-Positionen ---------- */
+function computeLayout() {
+  const marginX = 200;
+  const usableW = W - marginX * 2;
+  const cols = LAYER_SIZES.length;
+  const positions = [];
+  for (let li = 0; li < cols; li++) {
+    const x = marginX + (usableW * li) / (cols - 1);
+    const n = LAYER_SIZES[li];
+    const layerPos = [];
+    const gap = Math.min(80, (H - 240) / Math.max(n, 1));
+    const totalH = gap * (n - 1);
+    const yStart = H / 2 - totalH / 2;
+    for (let k = 0; k < n; k++) {
+      layerPos.push({ x, y: yStart + k * gap });
+    }
+    positions.push(layerPos);
+  }
+  return positions;
+}
+let layout = computeLayout();
+window.addEventListener('resize', () => { layout = computeLayout(); });
+
+/* ---------- Zeichnen ---------- */
+function drawBackground() {
+  // subtile Sterne
+  ctx.clearRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(W*0.7, H*0.2, 0, W*0.7, H*0.2, Math.max(W,H));
+  g.addColorStop(0, 'rgba(76,201,240,0.06)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+
+  const g2 = ctx.createRadialGradient(W*0.2, H*0.8, 0, W*0.2, H*0.8, Math.max(W,H));
+  g2.addColorStop(0, 'rgba(255,184,77,0.05)');
+  g2.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g2;
+  ctx.fillRect(0,0,W,H);
+}
+
+function lerpColor(a, b, t) {
+  return [ a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t ];
+}
+const COL_CYAN  = [76, 201, 240];
+const COL_AMBER = [255, 184, 77];
+const COL_NEUTRAL = [138, 148, 173];
+
+function neuronColor(value) {
+  // value in ~[-1,1] → amber(negativ) ↔ cyan(positiv)
+  const t = Math.max(-1, Math.min(1, value));
+  if (t >= 0) return lerpColor(COL_NEUTRAL, COL_CYAN, t);
+  else       return lerpColor(COL_NEUTRAL, COL_AMBER, -t);
+}
+function rgba(c, a) { return `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`; }
+
+function drawEdge(x1, y1, x2, y2, weight, opts) {
+  const {
+    hue = 'forward', // 'forward' | 'backward' | 'idle'
+    flowT = null,    // 0..1 → animierter Punkt entlang Kante
+    glow = 0,        // extra glow multiplier
+    residual = false,
+    updateMag = 0,
+  } = opts || {};
+
+  const absW = Math.abs(weight);
+  const thickness = 0.6 + Math.min(4.5, absW * 3.0);
+  const baseColor = weight >= 0 ? COL_CYAN : COL_AMBER;
+  const alpha = 0.15 + Math.min(0.55, absW * 0.7);
+
+  // Basis-Linie (Gewicht)
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = rgba(baseColor, alpha);
+  ctx.lineWidth = thickness;
+
+  if (residual) {
+    // gestrichelte, sanft geschwungene Linie über einem Bogen
+    ctx.setLineDash([6, 6]);
+  }
+  // sanfte Bezier-Kurve
+  const mx = (x1 + x2) / 2;
+  const cp1x = mx, cp1y = y1;
+  const cp2x = mx, cp2y = y2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Update-Glow (wenn gerade updated)
+  if (updateMag > 0.001) {
+    ctx.strokeStyle = rgba([255, 255, 255], Math.min(0.9, updateMag * 10));
+    ctx.lineWidth = thickness + 1.5;
+    ctx.shadowColor = rgba(baseColor, 0.9);
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Fließender Punkt (Forward-Aktivierung oder Backward-Gradient)
+  if (flowT !== null && flowT >= 0 && flowT <= 1) {
+    // Position auf kubischer Bezier
+    const t = flowT;
+    const it = 1 - t;
+    const bx = it*it*it*x1 + 3*it*it*t*cp1x + 3*it*t*t*cp2x + t*t*t*x2;
+    const by = it*it*it*y1 + 3*it*it*t*cp1y + 3*it*t*t*cp2y + t*t*t*y2;
+
+    const flowColor = hue === 'backward' ? COL_AMBER : COL_CYAN;
+    const r = 3 + Math.min(6, absW * 4) + glow * 3;
+
+    // Glow
+    const grad = ctx.createRadialGradient(bx, by, 0, bx, by, r * 3);
+    grad.addColorStop(0, rgba(flowColor, 0.9));
+    grad.addColorStop(0.4, rgba(flowColor, 0.35));
+    grad.addColorStop(1, rgba(flowColor, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(bx, by, r * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Kern
+    ctx.fillStyle = rgba([255,255,255], 0.95);
+    ctx.beginPath();
+    ctx.arc(bx, by, r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawNeuron(x, y, value, opts) {
+  const {
+    label = '',
+    highlightForward = 0,
+    highlightBackward = 0,
+    isOutput = false,
+    isInput = false,
+  } = opts || {};
+
+  const c = neuronColor(value);
+  const radius = isOutput ? 26 : (isInput ? 22 : 20);
+
+  // Outer glow (pulsiert bei Highlight)
+  const glowR = radius + 18 + highlightForward * 12 + highlightBackward * 12;
+  const glowColor = highlightBackward > highlightForward ? COL_AMBER : (highlightForward > 0 ? COL_CYAN : c);
+  const glowAlpha = 0.15 + highlightForward * 0.5 + highlightBackward * 0.5;
+  const grad = ctx.createRadialGradient(x, y, radius * 0.4, x, y, glowR);
+  grad.addColorStop(0, rgba(glowColor, glowAlpha));
+  grad.addColorStop(1, rgba(glowColor, 0));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, glowR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Neuron-Körper (Glasperle)
+  const bodyGrad = ctx.createRadialGradient(x - radius*0.35, y - radius*0.35, radius*0.1, x, y, radius);
+  bodyGrad.addColorStop(0, rgba([255,255,255], 0.35));
+  bodyGrad.addColorStop(0.35, rgba(c, 0.95));
+  bodyGrad.addColorStop(1, rgba([c[0]*0.4, c[1]*0.4, c[2]*0.4], 1.0));
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Ring (dünn)
+  ctx.strokeStyle = rgba([255,255,255], 0.25);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Highlight-Spiegelung
+  ctx.fillStyle = rgba([255,255,255], 0.45);
+  ctx.beginPath();
+  ctx.ellipse(x - radius*0.35, y - radius*0.4, radius*0.28, radius*0.15, -0.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Wert-Label
+  ctx.fillStyle = rgba([255,255,255], 0.9);
+  ctx.font = '600 11px -apple-system, "Inter", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(value.toFixed(2), x, y);
+
+  if (label) {
+    ctx.fillStyle = rgba(COL_NEUTRAL, 0.9);
+    ctx.font = '500 10px -apple-system, "Inter", sans-serif';
+    ctx.fillText(label, x, y + radius + 14);
+  }
+}
+
+/* ---------- Anim-State pro Frame ---------- */
+let anim = {
+  forwardProgress: [],   // pro Layer 0..1
+  backwardProgress: [],  // pro Layer 0..1
+  updateFlash: 0,        // 0..1
+  lossPulse: 0,          // 0..1
+  lastGrads: null,       // letzte gradW/gradB für Glow
+};
+
+function resetAnimTrails() {
+  anim.forwardProgress = net.map(_ => 0);
+  anim.backwardProgress = net.map(_ => 0);
+  anim.updateFlash = 0;
+  anim.lossPulse = 0;
+}
+resetAnimTrails();
+
+/* ---------- Render Frame ---------- */
+function render() {
+  drawBackground();
+
+  // aktuelle Werte
+  const acts = state.activations.length ? state.activations : [state.input.slice(), ...net.map(L => new Array(L.outN).fill(0))];
+  const grads = state.grads; // dL/dz pro Layer (kann leer)
+
+  // ---- Kanten zeichnen ----
+  for (let li = 0; li < net.length; li++) {
+    const L = net[li];
+    const inPos = layout[li];
+    const outPos = layout[li + 1];
+
+    const fwdP = anim.forwardProgress[li] ?? 0;
+    const bwdP = anim.backwardProgress[li] ?? 0;
+
+    for (let o = 0; o < L.outN; o++) {
+      for (let j = 0; j < L.inN; j++) {
+        const w = L.W[o][j];
+        const x1 = inPos[j].x, y1 = inPos[j].y;
+        const x2 = outPos[o].x, y2 = outPos[o].y;
+
+        let flowT = null;
+        let hue = 'forward';
+        if (state.phase === 'forward' && fwdP > 0 && fwdP < 1) {
+          flowT = fwdP; hue = 'forward';
+        } else if (state.phase === 'backward' && bwdP > 0 && bwdP < 1) {
+          flowT = 1 - bwdP; hue = 'backward';
+        }
+
+        const updateMag = (state.phase === 'update' && anim.lastGrads)
+          ? Math.abs(anim.lastGrads.gradW[li][o][j]) * state.lr * anim.updateFlash
+          : 0;
+
+        drawEdge(x1, y1, x2, y2, w, {
+          hue, flowT,
+          glow: (state.phase === 'forward' ? fwdP : (state.phase === 'backward' ? bwdP : 0)),
+          updateMag,
+        });
+      }
+    }
+
+    // Residual-Skip (dashed) wenn Größen matchen und aktiv
+    if (state.useResidual && li < net.length - 1 && L.inN === L.outN) {
+      for (let k = 0; k < L.inN; k++) {
+        const x1 = inPos[k].x, y1 = inPos[k].y;
+        const x2 = outPos[k].x, y2 = outPos[k].y;
+        ctx.save();
+        ctx.setLineDash([4, 8]);
+        ctx.strokeStyle = 'rgba(200, 220, 255, 0.25)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        // Bogen oberhalb
+        const midY = (y1 + y2) / 2 - 40;
+        ctx.moveTo(x1, y1);
+        ctx.quadraticCurveTo((x1+x2)/2, midY, x2, y2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  // ---- Neuronen zeichnen ----
+  for (let li = 0; li < LAYER_SIZES.length; li++) {
+    const pos = layout[li];
+    const vals = acts[li] || new Array(LAYER_SIZES[li]).fill(0);
+
+    // Highlight abhängig von Phase & Layer-Cursor
+    let fwdH = 0, bwdH = 0;
+    if (state.phase === 'forward') {
+      // Layer li leuchtet wenn Signal es erreicht
+      if (li <= state.layerCursor) fwdH = 1 - Math.abs(state.layerCursor - li) * 0.25;
+      fwdH = Math.max(0, fwdH);
+    } else if (state.phase === 'backward') {
+      const revIdx = LAYER_SIZES.length - 1 - state.layerCursor;
+      if (li >= revIdx) bwdH = 1 - Math.abs(li - revIdx) * 0.25;
+      bwdH = Math.max(0, bwdH);
+    } else if (state.phase === 'loss') {
+      if (li === LAYER_SIZES.length - 1) bwdH = anim.lossPulse;
+    } else if (state.phase === 'update') {
+      fwdH = anim.updateFlash * 0.4;
+    }
+
+    for (let k = 0; k < pos.length; k++) {
+      const isOut = (li === LAYER_SIZES.length - 1);
+      const isIn = (li === 0);
+      let label = '';
+      if (isIn) label = `x${k+1}`;
+      if (isOut) label = `ŷ`;
+      drawNeuron(pos[k].x, pos[k].y, vals[k], {
+        label,
+        highlightForward: fwdH,
+        highlightBackward: bwdH,
+        isOutput: isOut,
+        isInput: isIn,
+      });
+    }
+
+    // Layer-Beschriftung oben
+    const layerName = li === 0 ? 'Input'
+                   : li === LAYER_SIZES.length - 1 ? 'Output'
+                   : `Hidden ${li}`;
+    ctx.fillStyle = rgba(COL_NEUTRAL, 0.75);
+    ctx.font = '600 12px -apple-system, "Inter", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(layerName, pos[0].x, 40);
+
+    // dünner vertikaler Führungsstrich
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pos[0].x, 55);
+    ctx.lineTo(pos[0].x, H - 80);
+    ctx.stroke();
+  }
+
+  // ---- Ziel-Anzeige (Target) neben Output ----
+  const outPos = layout[layout.length - 1][0];
+  const tx = outPos.x + 90;
+  const ty = outPos.y;
+
+  // Target-Marker
+  ctx.save();
+  ctx.strokeStyle = rgba(COL_AMBER, 0.6);
+  ctx.lineWidth = 2;
+  ctx.setLineDash([3, 4]);
+  ctx.beginPath();
+  ctx.moveTo(outPos.x + 30, outPos.y);
+  ctx.lineTo(tx - 18, ty);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Ziel-Kreis
+  const targetColor = COL_AMBER;
+  ctx.fillStyle = rgba(targetColor, 0.15);
+  ctx.strokeStyle = rgba(targetColor, 0.9);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(tx, ty, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = rgba([255,255,255], 0.95);
+  ctx.font = '600 10px -apple-system, "Inter", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(state.target.toFixed(2), tx, ty);
+  ctx.fillStyle = rgba(targetColor, 0.9);
+  ctx.font = '600 10px -apple-system, "Inter", sans-serif';
+  ctx.fillText('target', tx, ty + 28);
+  ctx.restore();
+
+  // ---- Loss-Blitz zwischen ŷ und Ziel ----
+  if (state.phase === 'loss' && anim.lossPulse > 0) {
+    const a = anim.lossPulse;
+    ctx.save();
+    ctx.strokeStyle = rgba(COL_AMBER, a);
+    ctx.lineWidth = 3;
+    ctx.shadowColor = rgba(COL_AMBER, 0.9);
+    ctx.shadowBlur = 20;
+    // gezackter Blitz
+    ctx.beginPath();
+    ctx.moveTo(outPos.x + 30, outPos.y);
+    const steps = 6;
+    for (let s = 1; s <= steps; s++) {
+      const t = s / steps;
+      const px = outPos.x + 30 + (tx - 18 - (outPos.x + 30)) * t;
+      const py = outPos.y + (Math.random() - 0.5) * 12 * a;
+      ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---- Loss-Landschaft Mini-Widget (unten links) ----
+  drawLossMini();
+}
+
+/* ---------- Kleine Loss-Historie ---------- */
+const lossHistory = [];
+function pushLoss(v) {
+  lossHistory.push(v);
+  if (lossHistory.length > 200) lossHistory.shift();
+}
+function drawLossMini() {
+  const w = 220, h = 90;
+  const x0 = 16, y0 = H - h - 60;
+  ctx.save();
+  ctx.fillStyle = 'rgba(20, 27, 45, 0.85)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, x0, y0, w, h, 12);
+  ctx.fill(); ctx.stroke();
+
+  ctx.fillStyle = rgba(COL_NEUTRAL, 0.9);
+  ctx.font = '600 11px -apple-system, "Inter", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('Loss über Zeit', x0 + 12, y0 + 8);
+
+  if (lossHistory.length > 1) {
+    const maxL = Math.max(...lossHistory, 0.001);
+    const padL = 12, padR = 12, padT = 26, padB = 12;
+    const gw = w - padL - padR, gh = h - padT - padB;
+
+    // Linie
+    ctx.strokeStyle = rgba(COL_CYAN, 0.9);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < lossHistory.length; i++) {
+      const t = i / (lossHistory.length - 1);
+      const v = lossHistory[i] / maxL;
+      const px = x0 + padL + t * gw;
+      const py = y0 + padT + (1 - v) * gh;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // Fläche
+    ctx.lineTo(x0 + padL + gw, y0 + padT + gh);
+    ctx.lineTo(x0 + padL, y0 + padT + gh);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, y0 + padT, 0, y0 + padT + gh);
+    grad.addColorStop(0, rgba(COL_CYAN, 0.25));
+    grad.addColorStop(1, rgba(COL_CYAN, 0));
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+  ctx.restore();
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+
+/* ---------- Trainings-Step als Phasen-Animation ---------- */
+// Ein Step = forward (n Layer) → loss → backward (n Layer) → update
+function stepPhase(dt) {
+  const speed = state.speed;
+  const phaseDur = 0.55 / speed; // Sekunden pro Layer bzw. Sub-Phase
+
+  if (state.phase === 'idle') {
+    // Start Forward
+    beginForward();
+  }
+
+  if (state.phase === 'forward') {
+    state.phaseT += dt / phaseDur;
+    anim.forwardProgress[state.layerCursor] = Math.min(1, state.phaseT);
+    if (state.phaseT >= 1) {
+      // fixiere Aktivierung dieses Layers
+      state.activations[state.layerCursor + 1] = state._pendingActs[state.layerCursor + 1];
+      state.layerCursor++;
+      state.phaseT = 0;
+      if (state.layerCursor >= net.length) {
+        // fertig mit forward → loss-phase
+        state.phase = 'loss';
+        state.phaseT = 0;
+        anim.lossPulse = 0;
+        updatePhaseTag();
+      }
+    }
+  } else if (state.phase === 'loss') {
+    state.phaseT += dt / (0.5 / speed);
+    anim.lossPulse = Math.min(1, state.phaseT);
+    if (state.phaseT >= 1) {
+      // Loss anzeigen + Backward starten
+      pushLoss(state.loss);
+      document.getElementById('loss').textContent = state.loss.toFixed(4);
+      document.getElementById('gnorm').textContent = state.gnorm.toFixed(3);
+      beginBackward();
+    }
+  } else if (state.phase === 'backward') {
+    state.phaseT += dt / phaseDur;
+    const li = net.length - 1 - state.layerCursor;
+    anim.backwardProgress[li] = Math.min(1, state.phaseT);
+    if (state.phaseT >= 1) {
+      state.layerCursor++;
+      state.phaseT = 0;
+      if (state.layerCursor >= net.length) {
+        state.phase = 'update';
+        state.phaseT = 0;
+        anim.updateFlash = 0;
+        updatePhaseTag();
+      }
+    }
+  } else if (state.phase === 'update') {
+    state.phaseT += dt / (0.35 / speed);
+    anim.updateFlash = Math.min(1, state.phaseT);
+    if (state.phaseT >= 1) {
+      // Update anwenden
+      applyUpdate(anim.lastGrads.gradW, anim.lastGrads.gradB);
+      state.epoch++;
+      document.getElementById('epoch').textContent = state.epoch;
+      // reset trails
+      resetAnimTrails();
+      state.phase = 'idle';
+      state.phaseT = 0;
+      state.layerCursor = 0;
+      updatePhaseTag();
+      if (state.playing) beginForward();
+    }
+  }
+}
+
+function beginForward() {
+  const { acts, zs } = forward(state.input);
+  state._pendingActs = acts;
+  state._pendingZs = zs;
+  // initial nur Input füllen, Rest wird schrittweise fixiert
+  state.activations = [acts[0].slice(), ...acts.slice(1).map(a => a.map(_ => 0))];
+  state.phase = 'forward';
+  state.phaseT = 0;
+  state.layerCursor = 0;
+  resetAnimTrails();
+  updatePhaseTag();
+}
+
+function beginBackward() {
+  // Backprop komplett rechnen, dann visuell rückwärts durchreichen
+  const { loss, gradW, gradB, dAct, gnorm } = backward(state._pendingActs, state._pendingZs);
+  state.loss = loss;
+  state.grads = dAct;
+  state.gnorm = gnorm;
+  anim.lastGrads = { gradW, gradB };
+  state.phase = 'backward';
+  state.phaseT = 0;
+  state.layerCursor = 0;
+  updatePhaseTag();
+}
+
+function updatePhaseTag() {
+  const el = document.getElementById('phase');
+  const map = {
+    idle: ['idle', ''],
+    forward: ['➡ forward', ''],
+    loss: ['⚡ loss', 'back'],
+    backward: ['⬅ backward', 'back'],
+    update: ['✦ update', ''],
+  };
+  const [txt, cls] = map[state.phase] || ['idle', ''];
+  el.textContent = txt;
+  el.className = 'phase-tag' + (cls ? ' ' + cls : '');
+}
+
+/* ---------- Loop ---------- */
+let lastT = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+
+  if (state.playing || state.phase !== 'idle') {
+    stepPhase(dt);
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------- UI Bindings ---------- */
+const lrEl = document.getElementById('lr');
+const lrv = document.getElementById('lrv');
+lrEl.oninput = () => { state.lr = parseFloat(lrEl.value); lrv.textContent = state.lr.toFixed(3); };
+
+const spEl = document.getElementById('speed');
+const spv = document.getElementById('spv');
+spEl.oninput = () => { state.speed = parseFloat(spEl.value); spv.textContent = state.speed.toFixed(1) + '×'; };
+
+const tgEl = document.getElementById('target');
+const tgv = document.getElementById('tgv');
+tgEl.oninput = () => { state.target = parseFloat(tgEl.value); tgv.textContent = state.target.toFixed(2); };
+
+document.getElementById('resid').onchange = (e) => { state.useResidual = e.target.checked; };
+
+document.getElementById('playBtn').onclick = () => {
+  state.playing = !state.playing;
+  document.getElementById('playBtn').textContent = state.playing ? '⏸ Pause' : '▶ Play';
+  if (state.playing && state.phase === 'idle') beginForward();
+};
+
+document.getElementById('stepBtn').onclick = () => {
+  if (state.phase === 'idle') beginForward();
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  net = makeNet();
+  state.epoch = 0;
+  state.loss = 0;
+  state.gnorm = 0;
+  lossHistory.length = 0;
+  
+  state.activations = [];
+  state.grads = [];
+  state.phase = 'idle';
+  state.phaseT = 0;
+  state.layerCursor = 0;
+  state.playing = false;
+  document.getElementById('playBtn').textContent = '▶ Play';
+  document.getElementById('epoch').textContent = '0';
+  document.getElementById('loss').textContent = '—';
+  document.getElementById('gnorm').textContent = '—';
+  anim.lastGrads = null;
+  resetAnimTrails();
+  updatePhaseTag();
+};
+
+document.getElementById('newInBtn').onclick = () => {
+  state.input = [
+    (Math.random() * 2 - 1),
+    (Math.random() * 2 - 1),
+    (Math.random() * 2 - 1),
+  ].map(v => +v.toFixed(2));
+  // Aktivierungen zurücksetzen sodass Input sichtbar wird
+  state.activations = [state.input.slice(), ...net.map(L => new Array(L.outN).fill(0))];
+  if (state.phase !== 'idle') {
+    state.phase = 'idle';
+    state.phaseT = 0;
+    state.layerCursor = 0;
+    resetAnimTrails();
+    updatePhaseTag();
+  }
+};
+
+// Initialer Forward-Pass ohne Anim, damit was Sinnvolles zu sehen ist
+(function initialFill() {
+  const { acts } = forward(state.input);
+  state.activations = acts;
+})();
+
+// Tastatur-Shortcuts
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); document.getElementById('playBtn').click(); }
+  else if (e.key === 's' || e.key === 'S') document.getElementById('stepBtn').click();
+  else if (e.key === 'r' || e.key === 'R') document.getElementById('resetBtn').click();
+  else if (e.key === 'n' || e.key === 'N') document.getElementById('newInBtn').click();
+});
+</script>
+</body>
+</html>

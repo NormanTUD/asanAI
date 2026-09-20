@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Why Deep Learning Works — An Interactive Story</title>
+<style>
+  :root{
+    --bg-0:#0a0e27;
+    --bg-1:#0f1438;
+    --bg-2:#151b4a;
+    --ink:#e8ecff;
+    --ink-dim:#8a92c8;
+    --accent:#7c5cff;
+    --accent-2:#22d3ee;
+    --accent-3:#f472b6;
+    --good:#34d399;
+    --warn:#fbbf24;
+    --card:rgba(255,255,255,0.04);
+    --card-border:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-0);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;overflow-x:hidden}
+  body{
+    background:
+      radial-gradient(1200px 800px at 10% -10%, rgba(124,92,255,0.25), transparent 60%),
+      radial-gradient(1000px 700px at 110% 10%, rgba(34,211,238,0.18), transparent 60%),
+      radial-gradient(900px 600px at 50% 110%, rgba(244,114,182,0.15), transparent 60%),
+      var(--bg-0);
+    min-height:100vh;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:32px 24px 96px}
+  header{text-align:center;margin-bottom:32px}
+  h1{
+    font-size:clamp(28px,4.4vw,52px);
+    margin:0 0 8px;letter-spacing:-0.02em;
+    background:linear-gradient(90deg,#fff, #b8b0ff 40%, #7ee7f2 70%, #f7a7d1);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--ink-dim);font-size:16px;max-width:760px;margin:0 auto;line-height:1.55}
+  .quote{
+    margin:20px auto 0;max-width:820px;padding:14px 18px;border-left:3px solid var(--accent);
+    background:rgba(124,92,255,0.08);border-radius:8px;font-style:italic;color:#d5d9ff;font-size:14px;
+  }
+
+  /* Step nav */
+  .stepper{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:28px 0 20px;
+  }
+  .step{
+    padding:10px 14px;border-radius:999px;background:var(--card);border:1px solid var(--card-border);
+    color:var(--ink-dim);cursor:pointer;font-size:13px;transition:all .25s ease;user-select:none;
+    display:flex;align-items:center;gap:8px;
+  }
+  .step .num{
+    width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);
+    display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  }
+  .step:hover{color:var(--ink);border-color:rgba(255,255,255,0.2)}
+  .step.active{
+    background:linear-gradient(135deg, rgba(124,92,255,0.35), rgba(34,211,238,0.25));
+    color:#fff;border-color:rgba(124,92,255,0.6);
+    box-shadow:0 8px 30px rgba(124,92,255,0.25);
+  }
+  .step.active .num{background:rgba(255,255,255,0.2)}
+
+  /* Main grid */
+  .grid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--card);border:1px solid var(--card-border);border-radius:18px;
+    padding:20px;backdrop-filter:blur(8px);
+  }
+  .card h3{margin:0 0 6px;font-size:18px;letter-spacing:-0.01em}
+  .card p{color:var(--ink-dim);font-size:14px;line-height:1.6;margin:6px 0 0}
+  .canvas-wrap{position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#05061a;border:1px solid rgba(255,255,255,0.06)}
+  canvas{display:block;width:100%;height:100%}
+  .badge{
+    display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(124,92,255,0.18);
+    color:#c7bcff;font-size:11px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;
+  }
+
+  /* Controls */
+  .controls{display:flex;flex-direction:column;gap:16px}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  label{font-size:12px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+  select,input[type=range]{accent-color:var(--accent)}
+  select{
+    background:var(--bg-2);color:var(--ink);border:1px solid var(--card-border);
+    border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer;
+  }
+  input[type=range]{width:100%}
+  .btn{
+    padding:10px 16px;border-radius:10px;border:1px solid var(--card-border);
+    background:linear-gradient(135deg, rgba(124,92,255,0.25), rgba(34,211,238,0.15));
+    color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,255,0.3)}
+  .btn.ghost{background:transparent}
+  .btn.primary{
+    background:linear-gradient(135deg,#7c5cff,#22d3ee);border-color:transparent;
+  }
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  .stat{background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:10px;padding:10px}
+  .stat .k{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em}
+  .stat .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+
+  /* Layer chips (composition viz) */
+  .composition{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{
+    padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid var(--card-border);
+    font-size:12px;font-family:'JetBrains Mono',ui-monospace,monospace;
+  }
+  .chip.active{border-color:var(--accent);background:rgba(124,92,255,0.2);color:#fff;box-shadow:0 0 0 3px rgba(124,92,255,0.15)}
+  .arrow{color:var(--ink-dim)}
+
+  /* Loss chart */
+  .lossbox{height:120px;position:relative}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--ink-dim);margin-top:6px}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+  .callout{
+    margin-top:14px;padding:14px;border-radius:12px;
+    background:linear-gradient(135deg, rgba(52,211,153,0.08), rgba(34,211,238,0.06));
+    border:1px solid rgba(52,211,153,0.2);font-size:13px;color:#c9f7e2;line-height:1.55;
+  }
+  .callout b{color:#fff}
+  .warn{
+    background:linear-gradient(135deg, rgba(251,191,36,0.08), rgba(244,114,182,0.06));
+    border-color:rgba(251,191,36,0.25);color:#ffe6a8;
+  }
+
+  /* Layer viz mini */
+  .layerstack{display:flex;gap:6px;align-items:flex-end;height:80px;margin-top:8px}
+  .neuron-col{display:flex;flex-direction:column;gap:4px;align-items:center}
+  .neuron{width:14px;height:14px;border-radius:4px;background:#2a2f5a;border:1px solid rgba(255,255,255,0.08);transition:all .3s}
+  .neuron.on{background:linear-gradient(135deg,#7c5cff,#22d3ee);box-shadow:0 0 10px rgba(124,92,255,0.6)}
+  .lbl{font-size:10px;color:var(--ink-dim);margin-top:4px}
+
+  .foot{margin-top:28px;text-align:center;color:var(--ink-dim);font-size:12px}
+  code{background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">Interactive Explainer</span>
+    <h1>Why Deep Learning Works</h1>
+    <p class="sub">
+      A single neuron can only draw one straight line. But stack many together, and something magical happens — 
+      the network learns to <em>bend space itself</em> until impossible problems become trivially separable.
+    </p>
+    <div class="quote">
+      "On its own, one layer is powerless — it can only mix, rotate, and scale. 
+      But chained together, simple steps stack into arbitrarily complex ones." [[1]]
+    </div>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <div class="step active" data-step="0"><span class="num">1</span> One Neuron, One Line</div>
+    <div class="step" data-step="1"><span class="num">2</span> The Problem: XOR</div>
+    <div class="step" data-step="2"><span class="num">3</span> Add a Bend (Non-linearity)</div>
+    <div class="step" data-step="3"><span class="num">4</span> Stack &amp; Compose</div>
+    <div class="step" data-step="4"><span class="num">5</span> Train &amp; Watch it Learn</div>
+    <div class="step" data-step="5"><span class="num">6</span> The Space Warps</div>
+  </nav>
+
+  <div class="grid">
+    <!-- LEFT: Visualization -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3 id="viz-title">The Playground</h3>
+        <span class="badge" id="viz-badge">Input Space</span>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="cv" width="720" height="720"></canvas>
+      </div>
+      <div class="composition" id="comp"></div>
+      <div class="callout" id="callout">
+        Click any point in the grid to add a training example. Try to make patterns a straight line can't separate!
+      </div>
+    </div>
+
+    <!-- RIGHT: Controls & story -->
+    <div class="controls">
+      <div class="card">
+        <h3 id="story-title">Step 1 · One Neuron, One Line</h3>
+        <p id="story-body">
+          A single neuron computes <code>σ(w·x + b)</code>. That's a weighted sum plus a bend.
+          Geometrically, it can only carve the plane with <b>one straight cut</b>. Drag the sliders — 
+          the line rotates and shifts, but it's <em>always straight</em>.
+        </p>
+
+        <div class="row" style="margin-top:14px">
+          <div style="flex:1">
+            <label>Dataset</label>
+            <select id="dataset">
+              <option value="linear">Linear (easy)</option>
+              <option value="xor" selected>XOR (impossible for 1 layer)</option>
+              <option value="circle">Circle</option>
+              <option value="spiral">Spiral (hard!)</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label>Activation</label>
+            <select id="activation">
+              <option value="relu" selected>ReLU (the bend)</option>
+              <option value="tanh">Tanh (smooth bend)</option>
+              <option value="sigmoid">Sigmoid</option>
+              <option value="none">None (linear — collapses!)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <label>Depth: <span id="depth-val">3</span> hidden layers</label>
+          <input type="range" id="depth" min="0" max="5" value="3">
+        </div>
+        <div>
+          <label>Width: <span id="width-val">8</span> neurons per layer</label>
+          <input type="range" id="width" min="2" max="16" value="8">
+        </div>
+        <div>
+          <label>Learning rate: <span id="lr-val">0.05</span></label>
+          <input type="range" id="lr" min="1" max="30" value="5">
+        </div>
+
+        <div class="layerstack" id="layerstack"></div>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn primary" id="btn-train">▶ Train</button>
+          <button class="btn" id="btn-step">Step ×50</button>
+          <button class="btn ghost" id="btn-reset">↻ Reset</button>
+          <button class="btn ghost" id="btn-clear">Clear pts</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><div class="k">Epoch</div><div class="v" id="epoch">0</div></div>
+          <div class="stat"><div class="k">Loss</div><div class="v" id="loss">—</div></div>
+          <div class="stat"><div class="k">Accuracy</div><div class="v" id="acc">—</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Loss over time</h3>
+        <div class="lossbox"><canvas id="losscv" width="600" height="240"></canvas></div>
+        <div class="legend">
+          <span><span class="dot" style="background:#7c5cff"></span>Loss</span>
+          <span><span class="dot" style="background:#34d399"></span>Accuracy</span>
+        </div>
+      </div>
+
+      <div class="card" id="tipcard">
+        <h3>💡 Try this</h3>
+        <p id="tip">Set activation to <b>None</b> and depth to <b>5</b>. Notice: no matter how deep, the boundary is still a straight line. That's the collapse — <em>a linear function of a linear function is still linear</em>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Built as a visual companion to the Deep Learning lab · <span style="color:#7c5cff">Composition + Non-linearity + Backprop</span>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   MINI DEEP LEARNING ENGINE (pure JS, no deps)
+   ========================================================================= */
+const rand = (a=-1,b=1)=>a+Math.random()*(b-a);
+const zeros = n => new Float64Array(n);
+
+function makeLayer(inp, out){
+  const s = Math.sqrt(2/inp); // He init
+  const W = Array.from({length:out},()=>Array.from({length:inp},()=>rand(-s,s)));
+  const b = zeros(out);
+  return {W,b,inp,out};
+}
+function actFn(name){
+  switch(name){
+    case 'relu':    return {f:x=>Math.max(0,x),         d:x=>x>0?1:0};
+    case 'tanh':    return {f:x=>Math.tanh(x),           d:x=>1-Math.tanh(x)**2};
+    case 'sigmoid': return {f:x=>1/(1+Math.exp(-x)),     d:x=>{const s=1/(1+Math.exp(-x));return s*(1-s)}};
+    case 'none':    return {f:x=>x,                      d:x=>1};
+  }
+}
+
+class Net {
+  constructor(sizes, activation='relu'){
+    this.sizes = sizes; // e.g. [2, 8, 8, 8, 1]
+    this.activation = activation;
+    this.layers = [];
+    for(let i=0;i<sizes.length-1;i++) this.layers.push(makeLayer(sizes[i], sizes[i+1]));
+  }
+  forward(x, keep=false){
+    const act = actFn(this.activation);
+    const sig = actFn('sigmoid');
+    let h = x.slice();
+    const cache = [{h:h.slice()}];
+    for(let li=0; li<this.layers.length; li++){
+      const L = this.layers[li];
+      const z = new Array(L.out);
+      for(let j=0;j<L.out;j++){
+        let s = L.b[j];
+        for(let k=0;k<L.inp;k++) s += L.W[j][k]*h[k];
+        z[j] = s;
+      }
+      const isLast = li === this.layers.length-1;
+      const a = z.map(v => isLast ? sig.f(v) : act.f(v));
+      cache.push({z, a:a.slice()});
+      h = a;
+    }
+    return keep ? {out:h, cache} : h;
+  }
+  // Get the hidden activation at layer index (0 = input)
+  activationsAt(x, layerIdx){
+    const {cache} = this.forward(x, true);
+    return cache[layerIdx].h ? cache[layerIdx].h : cache[layerIdx].a;
+  }
+  trainStep(data, lr){
+    const act = actFn(this.activation);
+    const sig = actFn('sigmoid');
+    // accumulate grads
+    const gW = this.layers.map(L => L.W.map(row=>row.map(_=>0)));
+    const gB = this.layers.map(L => Array.from(L.b).map(_=>0));
+    let totalLoss = 0, correct = 0;
+    for(const pt of data){
+      const x = [pt.x, pt.y];
+      const y = pt.label;
+      // forward with cache
+      const {out, cache} = this.forward(x, true);
+      const p = out[0];
+      // BCE loss
+      const eps = 1e-7;
+      totalLoss += -(y*Math.log(p+eps) + (1-y)*Math.log(1-p+eps));
+      if((p>0.5?1:0)===y) correct++;
+      // backprop
+      // delta at output (BCE + sigmoid): dL/dz = p - y
+      let delta = [p - y];
+      for(let li=this.layers.length-1; li>=0; li--){
+        const L = this.layers[li];
+        const prev = cache[li].h ? cache[li].h : cache[li].a;
+        // accumulate grads
+        for(let j=0;j<L.out;j++){
+          gB[li][j] += delta[j];
+          for(let k=0;k<L.inp;k++) gW[li][j][k] += delta[j]*prev[k];
+        }
+        if(li>0){
+          // propagate delta backward
+          const prevZ = cache[li].z; // z at this layer (unused for prev)
+          const newDelta = new Array(L.inp).fill(0);
+          for(let k=0;k<L.inp;k++){
+            let s=0;
+            for(let j=0;j<L.out;j++) s += L.W[j][k]*delta[j];
+            newDelta[k] = s;
+          }
+          // multiply by activation derivative of PREVIOUS layer's z
+          const prevZActual = cache[li].z ? null : null; // we need z of previous layer
+          const zPrev = cache[li-1] ? (cache[li-1].z || null) : null;
+          if(zPrev){
+            for(let k=0;k<L.inp;k++) newDelta[k] *= act.d(zPrev[k]);
+          }
+          delta = newDelta;
+        }
+      }
+    }
+    // apply
+    const N = data.length;
+    for(let li=0; li<this.layers.length; li++){
+      for(let j=0;j<this.layers[li].out;j++){
+        this.layers[li].b[j] -= lr * gB[li][j]/N;
+        for(let k=0;k<this.layers[li].inp;k++){
+          this.layers[li].W[j][k] -= lr * gW[li][j][k]/N;
+        }
+      }
+    }
+    return {loss: totalLoss/N, acc: correct/N};
+  }
+}
+
+/* =========================================================================
+   DATASETS
+   ========================================================================= */
+function genData(kind, n=120){
+  const pts = [];
+  const rnd = (a,b)=>a+Math.random()*(b-a);
+  if(kind==='linear'){
+    for(let i=0;i<n;i++){
+      const x=rnd(-1,1), y=rnd(-1,1);
+      pts.push({x,y,label: x+y>0?1:0});
+    }
+  } else if(kind==='xor'){
+    for(let i=0;i<n;i++){
+      const x=rnd(-1,1), y=rnd(-1,1);
+      pts.push({x,y,label: (x*y>0)?1:0});
+    }
+  } else if(kind==='circle'){
+    for(let i=0;i<n;i++){
+      const x=rnd(-1,1), y=rnd(-1,1);
+      pts.push({x,y,label: (x*x+y*y<0.35)?1:0});
+    }
+  } else if(kind==='spiral'){
+    for(let i=0;i<n/2;i++){
+      const r = i/(n/2)*1.0;
+      const t = 1.75*i/(n/2)*2*Math.PI + rnd(-0.15,0.15);
+      pts.push({x:r*Math.sin(t),y:r*Math.cos(t),label:1});
+      pts.push({x:-r*Math.sin(t),y:-r*Math.cos(t),label:0});
+    }
+  }
+  return pts;
+}
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const state = {
+  step: 0,
+  dataset: 'xor',
+  activation: 'relu',
+  depth: 3,
+  width: 8,
+  lr: 0.05,
+  net: null,
+  data: [],
+  epoch: 0,
+  training: false,
+  history: [],
+  lastLoss: null,
+  lastAcc: null,
+};
+
+function rebuildNet(){
+  const hidden = Array(state.depth).fill(state.width);
+  const sizes = [2, ...hidden, 1];
+  state.net = new Net(sizes, state.activation);
+  state.epoch = 0;
+  state.history = [];
+  state.lastLoss = null;
+  state.lastAcc = null;
+  updateLayerStack();
+  updateComposition();
+}
+
+/* =========================================================================
+   RENDERING
+   ========================================================================= */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const losscv = document.getElementById('losscv');
+const lctx = losscv.getContext('2d');
+
+function drawScene(){
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Grid background
+  const grid = ctx.createLinearGradient(0,0,W,H);
+  grid.addColorStop(0,'#0a0e27');
+  grid.addColorStop(1,'#0f1438');
+  ctx.fillStyle = grid;
+  ctx.fillRect(0,0,W,H);
+
+  // Faint grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<=20;i++){
+    const p = i/20*W;
+    ctx.beginPath(); ctx.moveTo(p,0); ctx.lineTo(p,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,p); ctx.lineTo(W,p); ctx.stroke();
+  }
+
+  // === Different render mode per step ===
+  if(state.step === 5){
+    drawWarpedSpace(W,H);
+  } else {
+    drawDecisionField(W,H);
+  }
+
+  drawPoints(W,H);
+}
+
+// Map data coord [-1,1] -> pixel
+function toPx(x,y,W,H){
+  return [ (x+1)/2*W, (1-(y+1)/2)*H ];
+}
+function toData(px,py,W,H){
+  return [ px/W*2-1, -(py/H*2-1) ];
+}
+
+function drawDecisionField(W,H){
+  // Sample the network on a grid and draw a smooth heatmap
+  const RES = 80;
+  const img = ctx.createImageData(RES,RES);
+  for(let iy=0;iy<RES;iy++){
+    for(let ix=0;ix<RES;ix++){
+      const x = ix/(RES-1)*2 - 1;
+      const y = 1 - iy/(RES-1)*2;
+      let p = 0.5;
+      if(state.net){
+        p = state.net.forward([x,y])[0];
+      }
+      // color gradient purple <-> cyan
+      const t = p;
+      const r = Math.round( (1-t)*244 + t*34 );
+      const g = Math.round( (1-t)*114 + t*211 );
+      const b = Math.round( (1-t)*182 + t*238 );
+      const idx = (iy*RES + ix)*4;
+      img.data[idx]   = r;
+      img.data[idx+1] = g;
+      img.data[idx+2] = b;
+      img.data[idx+3] = 110;
+    }
+  }
+  // draw scaled up with smoothing
+  const off = document.createElement('canvas');
+  off.width = RES; off.height = RES;
+  off.getContext('2d').putImageData(img,0,0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(off, 0, 0, W, H);
+
+  // Decision boundary contour at p=0.5
+  drawContour(W,H,0.5);
+}
+
+function drawContour(W,H,level){
+  if(!state.net) return;
+  const RES = 200;
+  const cell = W/RES;
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  let prev = new Array(RES+1);
+  for(let ix=0;ix<=RES;ix++){
+    const x = ix/RES*2 - 1;
+    prev[ix] = state.net.forward([x, 1])[0] - level;
+  }
+  for(let iy=1;iy<=RES;iy++){
+    const y = 1 - iy/RES*2;
+    let leftV = state.net.forward([-1, y])[0] - level;
+    for(let ix=0;ix<RES;ix++){
+      const x = (ix+1)/RES*2 - 1;
+      const v = state.net.forward([x,y])[0] - level;
+      // check horizontal edge (top)
+      const a = prev[ix], b = prev[ix+1];
+      if((a>0) !== (b>0)){
+        const t = a/(a-b);
+        const px = (ix + t)*cell;
+        const py = (iy-1)*cell;
+        ctx.moveTo(px,py); ctx.lineTo(px,py+0.5);
+      }
+      // vertical edge (left)
+      if((leftV>0) !== (v>0)){
+        // interpolate along vertical (from prev row-y to y at column ix)
+        // (approximate: use prev[ix] as top-left)
+        const topLeft = prev[ix];
+        const t = topLeft/(topLeft - v);
+        const px = ix*cell;
+        const py = (iy-1 + t)*cell;
+        ctx.moveTo(px,py); ctx.lineTo(px+0.5,py);
+      }
+      prev[ix] = leftV;
+      leftV = v;
+    }
+    prev[RES] = leftV;
+  }
+  ctx.stroke();
+
+  // Nicer smooth contour via marching squares
+  drawMarchingContour(W,H,level);
+}
+
+function drawMarchingContour(W,H,level){
+  const RES = 100;
+  const step = W/RES;
+  const vals = [];
+  for(let iy=0;iy<=RES;iy++){
+    const row=[];
+    const y = 1 - iy/RES*2;
+    for(let ix=0;ix<=RES;ix++){
+      const x = ix/RES*2 - 1;
+      row.push(state.net.forward([x,y])[0] - level);
+    }
+    vals.push(row);
+  }
+  ctx.save();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2.2;
+  ctx.shadowColor = 'rgba(255,255,255,0.4)';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  for(let iy=0;iy<RES;iy++){
+    for(let ix=0;ix<RES;ix++){
+      const tl = vals[iy][ix], tr = vals[iy][ix+1];
+      const bl = vals[iy+1][ix], br = vals[iy+1][ix+1];
+      const idx = (tl>0?1:0) | (tr>0?2:0) | (br>0?4:0) | (bl>0?8:0);
+      if(idx===0 || idx===15) continue;
+      const x0 = ix*step, y0 = iy*step;
+      const interp = (a,b,va,vb,axis)=>{
+        const t = va/(va-vb);
+        if(axis==='x') return [x0 + t*step, a];
+        return [a, y0 + t*step];
+      };
+      const top    = ()=>interp(0, 0, tl, tr, 'x'); // varies along top
+      const bottom = ()=>{const t=bl/(bl-br); return [x0+t*step, y0+step]};
+      const left   = ()=>{const t=tl/(tl-bl); return [x0, y0+t*step]};
+      const right  = ()=>{const t=tr/(tr-br); return [x0+step, y0+t*step]};
+      const T = ()=>{const t=tl/(tl-tr); return [x0+t*step, y0]};
+      let segs = [];
+      switch(idx){
+        case 1: case 14: segs=[left(),T()]; break;
+        case 2: case 13: segs=[T(),right()]; break;
+        case 3: case 12: segs=[left(),right()]; break;
+        case 4: case 11: segs=[right(),bottom()]; break;
+        case 5:          segs=[left(),T(), right(),bottom()]; break;
+        case 6: case 9:  segs=[T(),bottom()]; break;
+        case 7: case 8:  segs=[left(),bottom()]; break;
+        case 10:         segs=[left(),bottom(), T(),right()]; break;
+      }
+      for(let s=0;s<segs.length;s+=2){
+        ctx.moveTo(segs[s][0],   segs[s][1]);
+        ctx.lineTo(segs[s+1][0], segs[s+1][1]);
+      }
+    }
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPoints(W,H){
+  for(const pt of state.data){
+    const [px,py] = toPx(pt.x, pt.y, W, H);
+    const col = pt.label===1 ? '#22d3ee' : '#f472b6';
+    ctx.beginPath();
+    ctx.arc(px,py, 7, 0, Math.PI*2);
+    ctx.fillStyle = col;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+}
+
+/* -------- Step 6: warped space visualization -------- */
+function drawWarpedSpace(W,H){
+  if(!state.net || state.net.layers.length < 2) {
+    // fallback
+    drawDecisionField(W,H);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = '16px system-ui';
+    ctx.textAlign='center';
+    ctx.fillText('Need ≥1 hidden layer to warp space', W/2, H/2);
+    return;
+  }
+  // For each input grid point, get the activation at the LAST hidden layer,
+  // then project to 2D via PCA-ish (just take first 2 dims, normalized)
+  const RES = 26;
+  const gridPts = [];
+  for(let iy=0;iy<RES;iy++){
+    for(let ix=0;ix<RES;ix++){
+      const x = ix/(RES-1)*2 - 1;
+      const y = 1 - iy/(RES-1)*2;
+      const {cache} = state.net.forward([x,y], true);
+      // last hidden = second to last cache entry (last is output)
+      const lastHidden = cache[cache.length-2].a || cache[cache.length-2].h;
+      gridPts.push({ix,iy,orig:[x,y],h:lastHidden});
+    }
+  }
+  // reduce to 2D: pick two most variant dims
+  const dims = gridPts[0].h.length;
+  const means = new Array(dims).fill(0);
+  gridPts.forEach(p=>p.h.forEach((v,i)=>means[i]+=v));
+  means.forEach((_,i)=>means[i]/=gridPts.length);
+  const vars_ = new Array(dims).fill(0);
+  gridPts.forEach(p=>p.h.forEach((v,i)=>vars_[i]+=(v-means[i])**2));
+  const order = vars_.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]);
+  const d0 = order[0][1], d1 = (order[1]||[0,0])[1];
+  // find range
+  let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity;
+  gridPts.forEach(p=>{
+    minA=Math.min(minA,p.h[d0]); maxA=Math.max(maxA,p.h[d0]);
+    minB=Math.min(minB,p.h[d1]); maxB=Math.max(maxB,p.h[d1]);
+  });
+  const spanA = Math.max(1e-3,maxA-minA), spanB = Math.max(1e-3,maxB-minB);
+  const project = (h)=>{
+    const a = (h[d0]-minA)/spanA;
+    const b = (h[d1]-minB)/spanB;
+    return [ 40 + a*(W-80), H-40 - b*(H-80) ];
+  };
+
+  // Draw warped grid lines (rows in orange, cols in cyan)
+  ctx.lineWidth = 1;
+  for(let iy=0;iy<RES;iy++){
+    ctx.strokeStyle = 'rgba(244,114,182,0.35)';
+    ctx.beginPath();
+    for(let ix=0;ix<RES;ix++){
+      const p = gridPts[iy*RES+ix];
+      const [px,py] = project(p.h);
+      if(ix===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  for(let ix=0;ix<RES;ix++){
+    ctx.strokeStyle = 'rgba(34,211,238,0.35)';
+    ctx.beginPath();
+    for(let iy=0;iy<RES;iy++){
+      const p = gridPts[iy*RES+ix];
+      const [px,py] = project(p.h);
+      if(iy===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+
+  // Draw data points in warped space
+  for(const pt of state.data){
+    const {cache} = state.net.forward([pt.x,pt.y], true);
+    const h = cache[cache.length-2].a || cache[cache.length-2].h;
+    const [px,py] = project(h);
+    ctx.beginPath();
+    ctx.arc(px,py, 7, 0, Math.PI*2);
+    ctx.fillStyle = pt.label===1 ? '#22d3ee' : '#f472b6';
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.6)';
+    ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  // Label
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = '14px system-ui';
+  ctx.fillText('Last hidden layer — where the classes become linearly separable', 20, 24);
+}
+
+/* -------- Loss chart -------- */
+function drawLoss(){
+  const W = losscv.width, H = losscv.height;
+  lctx.clearRect(0,0,W,H);
+  // grid
+  lctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  for(let i=0;i<5;i++){
+    const y = i/4*H;
+    lctx.beginPath(); lctx.moveTo(0,y); lctx.lineTo(W,y); lctx.stroke();
+  }
+  const hist = state.history;
+  if(hist.length<2) return;
+  const N = hist.length;
+  const maxLoss = Math.max(1, ...hist.map(h=>h.loss));
+  // loss line
+  lctx.strokeStyle = '#7c5cff';
+  lctx.lineWidth = 2;
+  lctx.beginPath();
+  hist.forEach((h,i)=>{
+    const x = i/(N-1)*W;
+    const y = H - (h.loss/maxLoss)*H*0.9 - 5;
+    if(i===0) lctx.moveTo(x,y); else lctx.lineTo(x,y);
+  });
+  lctx.stroke();
+  // acc line
+  lctx.strokeStyle = '#34d399';
+  lctx.beginPath();
+  hist.forEach((h,i)=>{
+    const x = i/(N-1)*W;
+    const y = H - h.acc*H*0.9 - 5;
+    if(i===0) lctx.moveTo(x,y); else lctx.lineTo(x,y);
+  });
+  lctx.stroke();
+}
+
+/* =========================================================================
+   UI: layer stack visualization
+   ========================================================================= */
+function updateLayerStack(){
+  const el = document.getElementById('layerstack');
+  el.innerHTML = '';
+  const sizes = [2, ...Array(state.depth).fill(state.width), 1];
+  sizes.forEach((s,i)=>{
+    const col = document.createElement('div');
+    col.className = 'neuron-col';
+    const box = document.createElement('div');
+    box.style.display='flex'; box.style.flexDirection='column'; box.style.gap='3px';
+    const show = Math.min(s, 8);
+    for(let n=0;n<show;n++){
+      const d = document.createElement('div');
+      d.className = 'neuron on';
+      d.style.opacity = 0.4 + 0.6*Math.random();
+      box.appendChild(d);
+    }
+    col.appendChild(box);
+    const lbl = document.createElement('div');
+    lbl.className='lbl';
+    lbl.textContent = i===0?'in': (i===sizes.length-1?'out':`L${i}`);
+    col.appendChild(lbl);
+    el.appendChild(col);
+    if(i<sizes.length-1){
+      const a = document.createElement('div');
+      a.className='arrow'; a.textContent='→';
+      a.style.color = 'var(--ink-dim)';
+      a.style.alignSelf = 'center';
+      el.appendChild(a);
+    }
+  });
+}
+
+function updateComposition(){
+  const el = document.getElementById('comp');
+  el.innerHTML = '';
+  const parts = [];
+  parts.push('x');
+  for(let i=0;i<state.depth;i++){
+    parts.push(`σ(W${i+1}·)`);
+  }
+  parts.push(`σ(W_out·)`);
+  parts.push('ŷ');
+  parts.forEach((p,i)=>{
+    if(i>0){
+      const arr = document.createElement('span');
+      arr.className='arrow'; arr.textContent='→';
+      el.appendChild(arr);
+    }
+    const c = document.createElement('span');
+    c.className='chip'+(i>0 && i<parts.length-1?' active':'');
+    c.textContent = p;
+    el.appendChild(c);
+  });
+}
+
+/* =========================================================================
+   STEP CONTENT
+   ========================================================================= */
+const STEPS = [
+  {
+    title:'Step 1 · One Neuron, One Line',
+    vizTitle:'A Single Neuron',
+    vizBadge:'1 straight cut',
+    body:`A neuron computes <code>σ(w·x + b)</code>. Set <b>depth = 0</b> and watch: no matter the dataset, it can only draw <b>one straight line</b>. That's the fundamental limit of a single layer. [[11]]`,
+    tip:`Set depth to <b>0</b> and dataset to <b>XOR</b>. Watch training completely fail — no straight line can separate XOR!`,
+    setup:()=>{ state.depth=0; document.getElementById('depth').value=0; document.getElementById('depth-val').textContent=0; state.dataset='linear'; document.getElementById('dataset').value='linear'; }
+  },
+  {
+    title:'Step 2 · The Problem: XOR',
+    vizTitle:'XOR — The Classic Impossibility',
+    vizBadge:'unsolvable by 1 line',
+    body:`XOR is the "hello world" of why one layer isn't enough. The blue class sits in opposite corners, and pink in the other two. <b>No single straight line can separate them.</b> Try training — you'll see loss stall.`,
+    tip:`Keep depth at <b>0</b>. Hit Train. Watch the loss plateau — the network is <em>trying</em>, but the geometry is impossible.`,
+    setup:()=>{ state.dataset='xor'; document.getElementById('dataset').value='xor'; state.depth=0; document.getElementById('depth').value=0; document.getElementById('depth-val').textContent=0; }
+  },
+  {
+    title:'Step 3 · Add a Bend (Non-linearity)',
+    vizTitle:'One Hidden Layer',
+    vizBadge:'bend enabled',
+    body:`Now add a single hidden layer with ReLU. Each hidden neuron makes one bent cut, and the output combines them. Suddenly XOR becomes solvable! <br><br><b>The bend is everything:</b> without σ, stacking layers collapses to one matrix. [[11]]`,
+    tip:`Set depth to <b>1</b>, activation to <b>None</b>. Notice: even with a hidden layer, if there's no bend, the boundary stays straight. A linear function of a linear function is still linear.`,
+    setup:()=>{ state.depth=1; document.getElementById('depth').value=1; document.getElementById('depth-val').textContent=1; state.dataset='xor'; document.getElementById('dataset').value='xor'; state.activation='relu'; document.getElementById('activation').value='relu'; }
+  },
+  {
+    title:'Step 4 · Stack & Compose',
+    vizTitle:'Deep Network',
+    vizBadge:'composition = power',
+    body:`Add more layers. Each layer builds features <em>on top of</em> the previous layer's features. The number of "linear regions" a ReLU net can carve grows <b>exponentially with depth</b> — deep beats wide. [[11]]`,
+    tip:`Try the <b>Spiral</b> dataset with depth 3, width 8. Then try depth 1 with width 24. Same parameter count — but depth wins.`,
+    setup:()=>{ state.depth=3; document.getElementById('depth').value=3; document.getElementById('depth-val').textContent=3; state.dataset='spiral'; document.getElementById('dataset').value='spiral'; }
+  },
+  {
+    title:'Step 5 · Train & Watch it Learn',
+    vizTitle:'Gradient Descent in Action',
+    vizBadge:'backprop live',
+    body:`Hit <b>Train</b>. The forward pass produces a prediction, backprop measures how each weight should nudge, and the optimizer steps. Watch the boundary <em>morph</em> into the shape of your data. Loss goes down; accuracy goes up. [[11]]`,
+    tip:`Increase learning rate to see chaotic updates. Decrease it to see slow, careful learning. This is the whole show.`,
+    setup:()=>{}
+  },
+  {
+    title:'Step 6 · The Space Warps',
+    vizTitle:'The Last Hidden Layer',
+    vizBadge:'linearly separable!',
+    body:`Here's the punchline. The network doesn't draw curvy boundaries — it <b>warps space itself</b> so that a straight line works. This view shows your data as seen by the last hidden layer. If training worked, the classes are now cleanly separable by a plane. That's what depth <em>really</em> does. [[11]]`,
+    tip:`Train a deep net on Spiral first, then flip to this view. You'll see the impossible tangle unwind into two clean blobs.`,
+    setup:()=>{}
+  },
+];
+
+function applyStep(idx){
+  state.step = idx;
+  document.querySelectorAll('.step').forEach((el,i)=>{
+    el.classList.toggle('active', i===idx);
+  });
+  const s = STEPS[idx];
+  document.getElementById('story-title').textContent = s.title;
+  document.getElementById('story-body').innerHTML = s.body;
+  document.getElementById('viz-title').textContent = s.vizTitle;
+  document.getElementById('viz-badge').textContent = s.vizBadge;
+  document.getElementById('tip').innerHTML = s.tip;
+  if(s.setup) s.setup();
+  state.data = genData(state.dataset, state.dataset==='spiral'?160:120);
+  rebuildNet();
+  drawScene();
+  drawLoss();
+}
+
+/* =========================================================================
+   TRAINING LOOP
+   ========================================================================= */
+function trainOne(){
+  if(!state.net || state.data.length===0) return;
+  const res = state.net.trainStep(state.data, state.lr);
+  state.epoch++;
+  state.lastLoss = res.loss;
+  state.lastAcc = res.acc;
+  if(state.epoch % 2 === 0){
+    state.history.push({loss:res.loss, acc:res.acc});
+    if(state.history.length>200) state.history.shift();
+  }
+  document.getElementById('epoch').textContent = state.epoch;
+  document.getElementById('loss').textContent  = res.loss.toFixed(3);
+  document.getElementById('acc').textContent   = (res.acc*100).toFixed(0)+'%';
+}
+
+let rafId = null;
+function loop(){
+  if(!state.training){ rafId=null; return; }
+  for(let i=0;i<3;i++) trainOne();
+  drawScene();
+  drawLoss();
+  rafId = requestAnimationFrame(loop);
+}
+
+/* =========================================================================
+   EVENT WIRING
+   ========================================================================= */
+document.querySelectorAll('.step').forEach((el)=>{
+  el.addEventListener('click', ()=>{
+    const idx = parseInt(el.dataset.step,10);
+    applyStep(idx);
+  });
+});
+
+document.getElementById('dataset').addEventListener('change', e=>{
+  state.dataset = e.target.value;
+  state.data = genData(state.dataset, state.dataset==='spiral'?160:120);
+  rebuildNet();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('activation').addEventListener('change', e=>{
+  state.activation = e.target.value;
+  rebuildNet();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('depth').addEventListener('input', e=>{
+  state.depth = parseInt(e.target.value,10);
+  document.getElementById('depth-val').textContent = state.depth;
+  rebuildNet();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('width').addEventListener('input', e=>{
+  state.width = parseInt(e.target.value,10);
+  document.getElementById('width-val').textContent = state.width;
+  rebuildNet();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('lr').addEventListener('input', e=>{
+  state.lr = parseInt(e.target.value,10)/100;
+  document.getElementById('lr-val').textContent = state.lr.toFixed(2);
+});
+
+document.getElementById('btn-train').addEventListener('click', ()=>{
+  state.training = !state.training;
+  document.getElementById('btn-train').textContent = state.training ? '⏸ Pause' : '▶ Train';
+  if(state.training && !rafId) loop();
+});
+
+document.getElementById('btn-step').addEventListener('click', ()=>{
+  for(let i=0;i<50;i++) trainOne();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  state.training = false;
+  document.getElementById('btn-train').textContent = '▶ Train';
+  rebuildNet();
+  drawScene();
+  drawLoss();
+});
+
+document.getElementById('btn-clear').addEventListener('click', ()=>{
+  state.data = [];
+  drawScene();
+});
+
+// Click to add points on canvas
+cv.addEventListener('click', (e)=>{
+  const rect = cv.getBoundingClientRect();
+  const scaleX = cv.width / rect.width;
+  const scaleY = cv.height / rect.height;
+  const px = (e.clientX - rect.left) * scaleX;
+  const py = (e.clientY - rect.top) * scaleY;
+  const [x,y] = toData(px,py,cv.width,cv.height);
+  // shift-click = negative class, plain click = positive
+  const label = e.shiftKey ? 0 : 1;
+  state.data.push({x,y,label});
+  drawScene();
+});
+
+// Right-click to add negative class
+cv.addEventListener('contextmenu', (e)=>{
+  e.preventDefault();
+  const rect = cv.getBoundingClientRect();
+  const scaleX = cv.width / rect.width;
+  const scaleY = cv.height / rect.height;
+  const px = (e.clientX - rect.left) * scaleX;
+  const py = (e.clientY - rect.top) * scaleY;
+  const [x,y] = toData(px,py,cv.width,cv.height);
+  state.data.push({x,y,label:0});
+  drawScene();
+});
+
+/* =========================================================================
+   BOOT
+   ========================================================================= */
+applyStep(0);
+// keep a gentle "breathing" animation on the layer stack neurons
+setInterval(()=>{
+  document.querySelectorAll('#layerstack .neuron').forEach(n=>{
+    n.style.opacity = 0.4 + 0.6*Math.random();
+  });
+}, 900);
+
+</script>
+</body>
+</html>
