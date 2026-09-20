@@ -136,7 +136,7 @@ $$\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx 
 </div>
 
 <div class="md">
-This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec.
+This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec. What makes it remarkable is *how* it arises: Olah stresses that none of these regularities — similar words landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was trained only to do a simple task, and the structures "popped out of the optimization process" as a side effect \cite[Olah, 2014]{colah2014nlp}.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -288,6 +288,15 @@ A critical property of embedding spaces is their **rotational invariance**. If y
 
 This has a profound implication for **cross-lingual translation**. When a Transformer is trained on two languages, each language develops its own embedding space. Remarkably, these spaces tend to be **isomorphic**, they share the same internal geometric structure, \cite[just rotated and scaled relative to each other]{mikolov2013exploiting}. The word for “king” in French and the word for “king” in English occupy analogous positions within their respective manifolds. Aligning two such spaces often requires nothing more than a linear transformation, a rotation matrix and a scaling factor, because the underlying topology of human concepts is, to a significant degree, \cite[language-invariant]{conneau2018word}.
 
+The same "many inputs, one shared space" move is what makes it possible to put two languages — or an image and a word — into a single embedding at all:
+
+> by mapping words from two languages into one representation, we can find
+> corresponding words that we didn't know were translations when we started.
+> And by mapping images and words into the same representation, we can
+> classify images of classes we've never seen!
+
+\cite[Olah, 2015]{colah2015types} — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show \cite[Olah, 2014]{colah2014nlp}.
+
 A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
 
 In other words, a translation Transformer can be described as translating **paths through meaning-space**, identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
@@ -415,7 +424,7 @@ To them, I said, the truth would be literally nothing but the shadows of the ima
 </div>
 
 <div class="md">
-Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it.
+Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it. The idea that an image and a word can even *share* a single representation — so that a model classifies images of classes it has never been shown, by landing them near the right word vector — is older than the hypothesis \cite[Olah, 2014]{colah2014nlp}.
 
 The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth. A vision model that learns “dog” from millions of photographs, a language model that learns “dog” from billions of sentences, and an audio model that learns “dog” from spectrograms of barking, all three converge to place “dog” in the *same neighborhood*, near “cat” and “wolf,” far from “piano” and “thunder.” The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
 
