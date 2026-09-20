@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Die Illusion erklärender Tiefe — Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#111827; --card:#151b2e; --ink:#e8ecf7;
+    --muted:#8b93aa; --accent:#7c9cff; --accent2:#ff7ac6; --good:#4ade80;
+    --warn:#fbbf24; --bad:#f87171; --line:#252c44;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#1a1f38 0%,var(--bg) 60%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;line-height:1.55}
+  .wrap{max-width:1100px;margin:0 auto;padding:40px 24px 120px}
+  header{text-align:center;margin-bottom:60px}
+  h1{font-size:clamp(28px,5vw,52px);margin:0 0 14px;background:linear-gradient(135deg,#7c9cff 0%,#ff7ac6 60%,#ffd76a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 auto}
+  .chapter{background:linear-gradient(180deg,var(--card) 0%,#101526 100%);border:1px solid var(--line);border-radius:20px;padding:32px;margin:28px 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .chapter h2{margin:0 0 6px;font-size:24px;color:#fff;display:flex;align-items:center;gap:12px}
+  .chapter h2 .num{background:linear-gradient(135deg,#7c9cff,#ff7ac6);width:36px;height:36px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700}
+  .tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);background:rgba(124,156,255,.12);padding:4px 10px;border-radius:999px;margin-bottom:12px}
+  .lead{color:#c8cee0;font-size:15px;margin:8px 0 20px}
+  .grid{display:grid;gap:20px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:#0e1424;border:1px solid var(--line);border-radius:14px;padding:18px}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:12px 0}
+  .ctrl{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);min-width:140px}
+  input[type=range]{accent-color:var(--accent);width:100%}
+  button{background:linear-gradient(135deg,#7c9cff,#5a7cff);color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer;font-size:14px;transition:transform .15s}
+  button:hover{transform:translateY(-1px)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  canvas{display:block;width:100%;background:#070b16;border-radius:10px;border:1px solid var(--line)}
+  .stat{font-size:28px;font-weight:800;color:#fff}
+  .lab{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+  .hint{font-size:13px;color:var(--muted);font-style:italic;margin-top:8px}
+  .kbd{background:#1e2440;border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-family:ui-monospace,monospace;font-size:12px}
+  .quote{border-left:3px solid var(--accent2);padding:10px 16px;background:rgba(255,122,198,.06);border-radius:0 10px 10px 0;color:#d9deee;font-style:italic;margin:12px 0}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .step{background:#1a2140;border:1px solid var(--line);padding:8px 12px;border-radius:8px;font-size:13px}
+  .step.active{background:linear-gradient(135deg,#7c9cff,#ff7ac6);color:#fff;border-color:transparent}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+  th{color:var(--muted);font-weight:500;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+  .pill{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
+  .p-hi{background:rgba(248,113,113,.15);color:#f87171}
+  .p-md{background:rgba(251,191,36,.15);color:#fbbf24}
+  .p-lo{background:rgba(74,222,128,.15);color:#4ade80}
+  details{margin-top:10px}
+  summary{cursor:pointer;color:var(--accent);font-size:13px}
+  .toc{position:sticky;top:0;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);padding:12px 0;z-index:10;margin:-40px -24px 20px;border-bottom:1px solid var(--line)}
+  .toc-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;gap:6px;overflow-x:auto;font-size:12px}
+  .toc a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap}
+  .toc a:hover{background:#1a2140;color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tag">Rozenblit & Keil · Cognitive Science 2002</div>
+  <h1>Die Illusion erklärender Tiefe</h1>
+  <p class="sub">Warum du glaubst, du verstündest, wie ein Reißverschluss funktioniert — und warum du es <em>fast sicher</em> nicht tust. Eine interaktive Reise durch 12 Studien, gebaut zum Spielen, nicht zum Lesen.</p>
+</header>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#kap0">0 · Der Test</a>
+  <a href="#kap1">1 · Motivation</a>
+  <a href="#kap2">2 · Vorwissen</a>
+  <a href="#kap3">3 · Methode</a>
+  <a href="#kap4">4 · Studien 1–4</a>
+  <a href="#kap5">5 · Robustheit 5–6</a>
+  <a href="#kap6">6 · Domänen 7–10</a>
+  <a href="#kap7">7 · Ursachen 11–12</a>
+  <a href="#kap8">8 · Antwort</a>
+</div></nav>
+
+<!-- ============ KAP 0 : DER SELBSTTEST ============ -->
+<section class="chapter" id="kap0">
+  <div class="tag">Zum Einstieg — spiel mit</div>
+  <h2><span class="num">0</span> Der 10-Sekunden-Test</h2>
+  <p class="lead">Wie gut verstehst du, wie eine Fahrradkette einen Gang wechselt? Bewerte auf einer Skala von 1 (Ahnung: null) bis 7 (könnte es einem Ingenieur erklären).</p>
+  <div class="grid g2">
+    <div class="card">
+      <div class="lab">Deine Selbsteinschätzung</div>
+      <input type="range" id="selfRate" min="1" max="7" value="5" step="1">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px">
+        <span>1 · nur der Name</span><span>4 · grob</span><span>7 · Blaupause im Kopf</span>
+      </div>
+      <div style="margin-top:16px" class="stat" id="selfRateVal">5</div>
+    </div>
+    <div class="card">
+      <div class="lab">Jetzt: erkläre es wirklich</div>
+      <p style="font-size:14px;margin:8px 0">Schreib in Gedanken Schritt für Schritt auf: Wie genau bewegt sich die Kette von einem Zahnrad auf das nächste? Was drückt sie? Wo greift sie? Warum fällt sie nicht ab?</p>
+      <button onclick="revealDrop()">Ich hab's versucht →</button>
+      <div id="dropResult" style="display:none;margin-top:14px">
+        <div class="lab">Typischer Selbst-Rating nach dem Erklären</div>
+        <div class="stat" style="color:var(--bad)" id="afterVal">–</div>
+        <div class="hint">Genau das ist die <b>Illusion of Explanatory Depth</b>. Willkommen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAP 1 : MOTIVATION ============ -->
+<section class="chapter" id="kap1">
+  <div class="tag">Warum das Paper existiert</div>
+  <h2><span class="num">1</span> Die Motivation — die konkrete Frage</h2>
+  <p class="lead">Menschen benutzen ständig „intuitive Theorien" um die Welt zu erklären: wie ein Auto funktioniert, warum es Gezeiten gibt, wie ein Reißverschluss schließt. Kognitionswissenschaftler glaubten (und glauben oft noch): diese Theorien sind reichhaltige mentale Blaupausen. Rozenblit & Keil vermuteten das <b>Gegenteil</b>.</p>
+  <div class="quote">Konkrete Frage: <b>Überschätzen Menschen systematisch, wie tief sie <em>erklärendes</em> Wissen besitzen — und zwar stärker als bei Fakten, Anleitungen oder Geschichten?</b></div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card"><div class="lab">Fakten</div><p style="font-size:14px">„Hauptstadt von Frankreich?" — Ende zustandes klar (Paris/nicht Paris). Leicht selbst zu testen.</p></div>
+    <div class="card"><div class="lab">Prozeduren</div><p style="font-size:14px">„Wie backe ich Kekse?" — Endzustand: gebackene Kekse. Sequenz von Schritten, testbar.</p></div>
+    <div class="card" style="border-color:var(--accent2)"><div class="lab" style="color:var(--accent2)">Erklärungen ←</div><p style="font-size:14px">„Wie funktioniert ein Helikopter?" — Kein klarer Endzustand. Hierarchische Kausalketten. <b>Hier vermuten die Autoren die stärkste Illusion.</b></p></div>
+  </div>
+</section>
+
+<!-- ============ KAP 2 : VORWISSEN ============ -->
+<section class="chapter" id="kap2">
+  <div class="tag">Alles was du brauchst — jenseits Abi-Mathe</div>
+  <h2><span class="num">2</span> Prerequisites zum Spielen</h2>
+  <p class="lead">Vier Konzepte über Abi-Mathe hinaus. Spiel mit jedem, bis es klick macht.</p>
+
+  <!-- 2a : Repeated Measures & Effektgröße -->
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">2.1 · Repeated-Measures ANOVA & Effektgröße η²</h3>
+    <p style="font-size:14px;color:#c8cee0">Statt zwei Gruppen zu vergleichen, misst man <b>dieselbe Person mehrfach</b> (T1, T2, T3…). Die Frage: Ändern sich die Mittelwerte über die Zeit stärker, als es der Zufall erklärt?</p>
+    <p style="font-size:14px">η² (Eta-Quadrat) sagt: <em>Wie viel Prozent der Varianz</em> erklärt der Zeit-Effekt? 0 = nichts, 1 = alles. Im Paper: η²=0.54 heißt „mehr als die Hälfte der Streuung kommt vom Erklär-Effekt". Riesig.</p>
+    <div class="controls">
+      <div class="ctrl">Wahrer Effekt (Δ Rating)<input type="range" id="anEff" min="0" max="3" step="0.05" value="1.2"><span id="anEffV">1.20</span></div>
+      <div class="ctrl">Rauschen (σ)<input type="range" id="anNoise" min="0.1" max="3" step="0.1" value="1.2"><span id="anNoiseV">1.20</span></div>
+      <div class="ctrl">Stichprobe n<input type="range" id="anN" min="4" max="60" step="1" value="16"><span id="anNV">16</span></div>
+      <button onclick="drawANOVA()">Neu ziehen</button>
+    </div>
+    <div id="anovaPlot" style="height:280px"></div>
+    <div class="hint">Jeder farbige Punkt = eine Person. Weiße Punkte = Mittelwert. Spiel: setz Effekt auf 0 → η² fällt gegen null. Erhöh n → gleicher Effekt wird „signifikanter".</div>
+  </div>
+
+  <!-- 2b : Miscalibration -->
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">2.2 · Miskalibration = Zuversicht − tatsächliche Leistung</h3>
+    <p style="font-size:14px">Ein perfekt kalibrierter Mensch: wenn er 70% sicher ist, hat er in 70% der Fälle recht. Die Diagonale unten ist perfekte Kalibrierung. Alles <b>darunter</b> = Überkonfidenz.</p>
+    <div class="controls">
+      <div class="ctrl">Überkonfidenz-Bias<input type="range" id="calBias" min="-0.3" max="0.5" step="0.02" value="0.25"><span id="calBiasV">+0.25</span></div>
+    </div>
+    <canvas id="calCanvas" height="320"></canvas>
+    <div class="hint">Die rote Kurve ist ein typischer Mensch: bei mittlerer Zuversicht übermäßig optimistisch. Genau das messen R&K — nur benutzen sie ein 7-Punkt-Rating statt Prozente.</div>
+  </div>
+
+  <!-- 2c : Hierarchische Systeme -->
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">2.3 · Hierarchische Systeme & „stable subassemblies" (Simon 1996)</h3>
+    <p style="font-size:14px">Ein komplexes System ist ein Baum: Auto → Bremse → Bremsbelag → Reibungskoeffizient → Molekülstruktur. Menschen greifen einen Knoten hoch oben (<em>„Bremse verlangsamt"</em>) und fühlen sich, als verstünden sie die ganzen darunter liegenden Ebenen. <b>Klick auf die Knoten:</b></p>
+    <canvas id="hierCanvas" height="340"></canvas>
+    <div class="hint">Rot markierte Knoten = was du wirklich weißt. Grüne Schatten = was du zu wissen <em>glaubst</em>. Die Lücke zwischen beiden ist die IOED.</div>
+  </div>
+
+  <!-- 2d : Change blindness -->
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin-top:0">2.4 · Environmental Support vs. mentale Repräsentation</h3>
+    <p style="font-size:14px">Zentrale Idee: wenn du ein Ding <em>anschaust</em>, kannst du Informationen daraus ablesen — sie liegen in der Welt, nicht in deinem Kopf. Menschen verwechseln beides. Analog zu „change blindness": wir glauben, wir merkten uns Szenen wie ein Video, tatsächlich merken wir uns fast nichts.</p>
+    <button onclick="cbStart()">Change-Blindness-Demo starten</button>
+    <canvas id="cbCanvas" height="220" style="margin-top:10px"></canvas>
+    <div class="hint">Zwei Bilder wechseln sich mit kurzem Grau-Blitz ab. Erkennst du den Unterschied? Meist braucht man erschreckend lange. Analoges Prinzip beim Verstehen: die Details sind „da draußen" — nicht im Kopf.</div>
+  </div>
+</section>
+
+<!-- ============ KAP 3 : METHODE ============ -->
+<section class="chapter" id="kap3">
+  <div class="tag">Die Idee — wie man eine Illusion misst</div>
+  <h2><span class="num">3</span> Die Lösung: das T1–T5 Paradigma</h2>
+  <p class="lead">Statt Wissen gegen einen „objektiven Standard" zu messen (subjektiv, unfair), erfinden R&K einen eleganten Trick: <b>man vergleicht die Person mit sich selbst</b>, vor und nach dem Versuch zu erklären.</p>
+  <div class="flow" id="phaseFlow">
+    <div class="step" data-i="0">T1 · Vorher raten</div>
+    <div class="step" data-i="1">T2 · Erklären</div>
+    <div class="step" data-i="2">T3 · Diagnosefrage</div>
+    <div class="step" data-i="3">T4 · Nach Expertentext</div>
+    <div class="step" data-i="4">T5 · Neues Wissen</div>
+  </div>
+  <div class="card">
+    <div id="phaseDetail" style="min-height:110px"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="ghost" onclick="phase(-1)">←</button>
+      <button onclick="phase(1)">Weiter →</button>
+    </div>
+  </div>
+  <div class="quote" style="margin-top:16px"><b>Warum das genial ist:</b> Wenn T1 = T2, gibt es keine Illusion. Wenn T1 ≫ T2, hat die Person sich vorher überschätzt. Und der Anstieg bei T5 zeigt: die Skala funktioniert, es ist keine „Ich werd immer bescheidener"-Verzerrung.</div>
+</section>
+
+<!-- ============ KAP 4 : STUDIEN 1–4 ============ -->
+<section class="chapter" id="kap4">
+  <div class="tag">Der Lösungsweg — Teil 1</div>
+  <h2><span class="num">4</span> Studien 1–4: Existiert die Illusion?</h2>
+  <p class="lead">Vier Replikationen mit Geräten (Reißverschluss, Klavier, Toilette, Zylinderschloss …) an vier Populationen. Bewege den Regler und sieh, wie stabil der Effekt ist.</p>
+  <div class="controls">
+    <div class="ctrl">Studie
+      <select id="studySel" onchange="drawStudy()">
+        <option value="1">Studie 1 · Yale Graduates (n=16)</option>
+        <option value="2">Studie 2 · Yale Undergrads (n=33)</option>
+        <option value="3">Studie 3 · Regional Uni (n=16)</option>
+        <option value="4">Studie 4 · Neue Items (n=32)</option>
+        <option value="all">Alle überlagert</option>
+      </select>
+    </div>
+  </div>
+  <div id="studyPlot" style="height:360px"></div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><div class="lab">Effektgröße η²</div><div class="stat" id="etaStat">.54</div><div class="hint">Zeit erklärt über 50% der Varianz — massiv.</div></div>
+    <div class="card"><div class="lab">Δ T1→T3</div><div class="stat" id="dropStat" style="color:var(--bad)">−1.4</div><div class="hint">Ratingpunkte auf 7er-Skala</div></div>
+    <div class="card"><div class="lab">Robustheit</div><div class="stat" style="color:var(--good)">4/4</div><div class="hint">Populationen zeigen den Effekt</div></div>
+  </div>
+  <details><summary>Warum der Anstieg bei T5?</summary>
+  <p style="font-size:14px">Weil die Person <em>echt etwas gelernt</em> hat aus der Expertenerklärung. Das schließt „die Leute werden einfach vorsichtiger über Zeit" als Erklärung aus.</p></details>
+</section>
+
+<!-- ============ KAP 5 : ROBUSTHEIT ============ -->
+<section class="chapter" id="kap5">
+  <div class="tag">Ist es ein Artefakt?</div>
+  <h2><span class="num">5</span> Studien 5–6: Robustheitstests</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Studie 5 · Fremde Rater</h3>
+      <p style="font-size:14px">12 unabhängige Bewerter lasen die Erklärungen aus Studie 2 <em>blind</em>. Wenn die Selbsteinschätzungen nach T2 „nur Bescheidenheit" wären, sollten fremde Rater die Erklärungen <em>höher</em> bewerten als die Autoren selbst.</p>
+      <canvas id="raterCanvas" height="220"></canvas>
+      <div class="hint">Ergebnis: Die Fremd-Ratings (grün) liegen <b>näher an T2/T3</b> als an T1. Also: die Leute waren wirklich überkonfident, nicht nachträglich bescheiden.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Studie 6 · Vorwarnung</h3>
+      <p style="font-size:14px">„Achtung, du wirst später erklären müssen." Reduziert das die Illusion?</p>
+      <div class="controls">
+        <label style="font-size:13px"><input type="checkbox" id="warnCb" onchange="drawWarn()"> Vorwarnung aktiv</label>
+      </div>
+      <canvas id="warnCanvas" height="220"></canvas>
+      <div class="hint">Selbst mit Warnung <b>bleibt</b> der Drop signifikant — nur kleiner. Interessant: T1 sinkt <em>nicht</em>, stattdessen steigt T2/T3 (Leute wollen konsistent bleiben).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAP 6 : DOMÄNEN ============ -->
+<section class="chapter" id="kap6">
+  <div class="tag">Der Lösungsweg — Teil 2</div>
+  <h2><span class="num">6</span> Studien 7–10: Ist die Illusion spezifisch für Erklärungen?</h2>
+  <p class="lead">Der entscheidende Test. Wenn Menschen einfach generell überkonfident sind, sollte der Drop überall auftreten. Wenn die Illusion aber <em>spezifisch für erklärendes Wissen</em> ist, sollten Fakten, Prozeduren und Geschichten <b>keinen</b> oder nur einen kleinen Drop zeigen. Klick auf eine Domäne:</p>
+  <div class="controls">
+    <button onclick="setDom('dev')" id="btnDev">Geräte</button>
+    <button onclick="setDom('nat')" id="btnNat">Naturphänomene</button>
+    <button onclick="setDom('fac')" id="btnFac">Fakten (Hauptstädte)</button>
+    <button onclick="setDom('nar')" id="btnNar">Narrative (Filme)</button>
+    <button onclick="setDom('pro')" id="btnPro">Prozeduren</button>
+    <button onclick="setDom('all')" id="btnAll">Alle</button>
+  </div>
+  <div id="domainPlot" style="height:380px"></div>
+  <table style="margin-top:16px">
+    <thead><tr><th>Domäne</th><th>Δ T1→T2</th><th>Illusion</th><th>Warum?</th></tr></thead>
+    <tbody>
+      <tr><td>Geräte</td><td>−0.92</td><td><span class="pill p-hi">HOCH</span></td><td>Sichtbare Teile → verwechseln Umwelt mit Kopf</td></tr>
+      <tr><td>Naturphänomene</td><td>−0.86</td><td><span class="pill p-hi">HOCH</span></td><td>Kausalketten, hierarchisch</td></tr>
+      <tr><td>Fakten</td><td>−0.29</td><td><span class="pill p-md">MITTEL</span></td><td>Leicht selbst zu testen (Paris?)</td></tr>
+      <tr><td>Narrative</td><td>−0.35</td><td><span class="pill p-lo">NULL</span></td><td>Oft erzählt → gute Kalibrierung</td></tr>
+      <tr><td>Prozeduren</td><td>+0.17</td><td><span class="pill p-lo">NULL</span></td><td>Klarer Endzustand, oft getan</td></tr>
+    </tbody>
+  </table>
+  <div class="quote"><b>Kernresultat:</b> Die Illusion ist keine allgemeine Überkonfidenz — sie hängt an <em>strukturellen Eigenschaften des Wissens</em>. „General knowledge" ist eine Chimäre.</div>
+</section>
+
+<!-- ============ KAP 7 : URSACHEN ============ -->
+<section class="chapter" id="kap7">
+  <div class="tag">Warum? — die Mechanismen</div>
+  <h2><span class="num">7</span> Studien 11–12: Was treibt die Illusion?</h2>
+  <p class="lead">Studie 11 schließt „soziale Erwünschtheit" aus (Devices produzieren die niedrigste Peinlichkeit, aber die höchste Illusion — passt nicht). Studie 12 findet den <b>einen</b> Prädiktor, der 47% der Varianz erklärt.</p>
+
+  <div class="card" style="margin-top:14px">
+    <h3 style="margin-top:0">Studie 12 · Der Killer-Prädiktor</h3>
+    <p style="font-size:14px">Wähle einen Faktor und sieh, wie stark er Überkonfidenz vorhersagt (jeder Punkt = ein Gerät):</p>
+    <div class="controls">
+      <div class="ctrl">Faktor
+        <select id="predSel" onchange="drawPred()">
+          <option value="vis">Verhältnis sichtbare / versteckte Teile</option>
+          <option value="mech">Mechanisch vs. elektrisch</option>
+          <option value="known">Anzahl bekannter Teilnamen</option>
+          <option value="total">Gesamtzahl Teile (Komplexität)</option>
+          <option value="fam">Vertrautheit</option>
+        </select>
+      </div>
+    </div>
+    <div id="predPlot" style="height:320px"></div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="card"><div class="lab">R²</div><div class="stat" id="r2Stat">.47</div></div>
+      <div class="card"><div class="lab">β (Standardisiert)</div><div class="stat" id="bStat">.69</div></div>
+      <div class="card"><div class="lab">Interpretation</div><div id="predInt" style="font-size:13px;color:#c8cee0">Sichtbare Teile sind der stärkste Prädiktor.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3 style="margin-top:0">Die drei Verwirrungen — visuell</h3>
+    <div class="grid g3">
+      <div>
+        <div class="lab">1 · Umwelt ↔ Repräsentation</div>
+        <canvas id="c1" height="140"></canvas>
+        <p style="font-size:13px">Ich <em>seh</em> die Zahnräder → also weiß ich, wie sie interagieren. Falsch. Info liegt draußen.</p>
+      </div>
+      <div>
+        <div class="lab">2 · Ebene ↔ Ebene</div>
+        <canvas id="c2" height="140"></canvas>
+        <p style="font-size:13px">Ich weiß, was die Bremse <em>tut</em> → also weiß ich, <em>wie</em> sie es tut. Funktion ≠ Mechanismus.</p>
+      </div>
+      <div>
+        <div class="lab">3 · Label ↔ Mechanismus</div>
+        <canvas id="c3" height="140"></canvas>
+        <p style="font-size:13px">Ich kenne die Namen „CPU, RAM, Bus" → also weiß ich, wie ein PC arbeitet. Nein.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAP 8 : ANTWORT ============ -->
+<section class="chapter" id="kap8">
+  <div class="tag">Die Antwort — synthese</div>
+  <h2><span class="num">8</span> Die Antwort auf die eingangs gestellte Frage</h2>
+  <div class="quote" style="font-size:16px">
+    <b>Ja</b> — Menschen überschätzen systematisch die Tiefe ihres <em>erklärenden</em> Wissens, und zwar deutlich stärker als bei Fakten, Anleitungen oder Geschichten. Der Haupttreiber ist die <b>Verwechslung von Umweltunterstützung mit interner Repräsentation</b>, besonders bei Systemen mit sichtbaren, animierbaren Teilen.
+  </div>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h3 style="margin-top:0">Was das für die Kognitionswissenschaft heißt</h3>
+      <p style="font-size:14px">„Intuitive Theorien" sind keine reichen Blaupausen im Kopf. Sie sind <em>skelettartig</em>, aber wirksam. Sie liefern genug Einsicht, um zu funktionieren — und genug „Rush", um sich mächtiger anzufühlen als sie sind.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Warum die Illusion adaptiv sein könnte</h3>
+      <p style="font-size:14px">Sie wirkt als <em>Governor</em>: sie beendet die potenziell unendliche Suche nach tieferem Verstehen, sobald ein „gut-genug"-Level erreicht ist. Ohne diese Illusion wären wir kognitiv gelähmt.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;text-align:center">
+    <h3>Der ganze Weg auf einen Blick</h3>
+    <div id="finalPlot" style="height:340px"></div>
+  </div>
+  <p style="text-align:center;color:var(--muted);margin-top:30px;font-size:13px">Rozenblit L. & Keil F. (2002). <em>The misunderstood limits of folk science: an illusion of explanatory depth.</em> Cognitive Science 26(5), 521–562.</p>
+</section>
+
+</div>
+
+<script>
+/* ========= KAP 0 ========= */
+const selfRate=document.getElementById('selfRate'),selfRateVal=document.getElementById('selfRateVal');
+selfRate.oninput=()=>selfRateVal.textContent=selfRate.value;
+function revealDrop(){
+  const r=+selfRate.value;const after=Math.max(1,r-1.4+((Math.random()-.5)*.6));
+  document.getElementById('dropResult').style.display='block';
+  document.getElementById('afterVal').textContent=after.toFixed(1)+' / 7';
+}
+
+/* ========= KAP 2.1 ANOVA ========= */
+function drawANOVA(){
+  const eff=+document.getElementById('anEff').value,noise=+document.getElementById('anNoise').value,n=+document.getElementById('anN').value;
+  document.getElementById('anEffV').textContent=eff.toFixed(2);
+  document.getElementById('anNoiseV').textContent=noise.toFixed(2);
+  document.getElementById('anNV').textContent=n;
+  const times=[1,2,3,4,5];const means=[5.5,5.5-eff*.7,5.5-eff*.95,5.5-eff*.95,5.5+eff*.3];
+  const traces=[];const allX=[],allY=[];
+  for(let t=0;t<5;t++){
+    const xs=[],ys=[];
+    for(let i=0;i<n;i++){const y=means[t]+(Math.random()+Math.random()+Math.random()-1.5)*noise;xs.push(t+1+(Math.random()-.5)*.25);ys.push(y);allX.push(t+1);allY.push(y);}
+    traces.push({x:xs,y:ys,mode:'markers',type:'scatter',marker:{color:['#7c9cff','#ff7ac6','#ffd76a','#4ade80','#a78bfa'][t],size:8,opacity:.6},showlegend:false});
+  }
+  traces.push({x:times,y:means,mode:'lines+markers',marker:{color:'#fff',size:12,line:{color:'#000',width:2}},line:{color:'#fff',width:3},showlegend:false});
+  // compute eta2
+  const gm=allY.reduce((a,b)=>a+b,0)/allY.length;
+  let ssb=0,sst=0;for(let t=0;t<5;t++){ssb+=n*(means[t]-gm)**2;}
+  for(const y of allY)sst+=(y-gm)**2;
+  const eta=Math.max(0,Math.min(1,ssb/sst));
+  Plotly.newPlot('anovaPlot',traces,{paper_bgcolor:'#0e1424',plot_bgcolor:'#070b16',font:{color:'#c8cee0'},margin:{t:30,l:40,r:20,b:40},xaxis:{title:'Messzeit',gridcolor:'#252c44'},yaxis:{title:'Rating',gridcolor:'#252c44',range:[0,8]},title:{text:'η² ≈ '+eta.toFixed(3),font:{size:14}}},{displayModeBar:false});
+}
+['anEff','anNoise','anN'].forEach(id=>document.getElementById(id).oninput=drawANOVA);
+drawANOVA();
+
+/* ========= KAP 2.2 KALIBRATION ========= */
+const calCanvas=document.getElementById('calCanvas'),calCtx=calCanvas.getContext('2d');
+function fitCanvas(c){const r=c.getBoundingClientRect();c.width=r.width*devicePixelRatio;c.height=(c.height||220)*devicePixelRatio;c.getContext('2d').scale(devicePixelRatio,devicePixelRatio);return {w:r.width,h:c.height/devicePixelRatio};}
+function drawCal(){
+  const bias=+document.getElementById('calBias').value;
+  document.getElementById('calBiasV').textContent=(bias>=0?'+':'')+bias.toFixed(2);
+  const d=calCanvas.getBoundingClientRect();calCanvas.width=d.width*devicePixelRatio;calCanvas.height=320*devicePixelRatio;
+  const ctx=calCanvas.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=320,pad=40;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  // grid
+  ctx.strokeStyle='#252c44';ctx.lineWidth=1;
+  for(let i=0;i<=10;i++){const x=pad+(w-2*pad)*i/10,y=pad+(h-2*pad)*i/10;ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,h-pad);ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke();}
+  // diagonal
+  ctx.strokeStyle='#4ade80';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(pad,h-pad);ctx.lineTo(w-pad,pad);ctx.stroke();ctx.setLineDash([]);
+  // curve
+  ctx.strokeStyle='#f87171';ctx.lineWidth=3;ctx.beginPath();
+  for(let i=0;i<=100;i++){const conf=i/100;const bump=Math.sin(conf*Math.PI)*bias;const actual=Math.max(0,Math.min(1,conf-bump));const x=pad+(w-2*pad)*conf;const y=(h-pad)-(h-2*pad)*actual;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();
+  // labels
+  ctx.fillStyle='#c8cee0';ctx.font='12px sans-serif';
+  ctx.fillText('Selbst-Zuversicht →',pad,h-8);ctx.save();ctx.translate(12,h/2);ctx.rotate(-Math.PI/2);ctx.fillText('tatsächliche Leistung',0,0);ctx.restore();
+  ctx.fillStyle='#4ade80';ctx.fillText('perfekt kalibriert',w-pad-100,pad+14);
+  ctx.fillStyle='#f87171';ctx.fillText('typischer Mensch',w-pad-100,pad+30);
+}
+document.getElementById('calBias').oninput=drawCal;drawCal();
+window.addEventListener('resize',drawCal);
+
+/* ========= KAP 2.3 HIERARCHIE ========= */
+const hierCanvas=document.getElementById('hierCanvas');
+const hierNodes=[
+  {id:0,x:.5,y:.1,label:'Auto verlangsamt',parent:-1},
+  {id:1,x:.25,y:.35,label:'Bremse',parent:0},
+  {id:2,x:.75,y:.35,label:'Rad-Widerstand',parent:0},
+  {id:3,x:.12,y:.6,label:'Bremsbelag',parent:1},
+  {id:4,x:.38,y:.6,label:'Hydraulik',parent:1},
+  {id:5,x:.62,y:.6,label:'Trommel',parent:2},
+  {id:6,x:.88,y:.6,label:'Reibung',parent:2},
+  {id:7,x:.12,y:.88,label:'Molekülstruktur',parent:3},
+  {id:8,x:.38,y:.88,label:'Pascal-Prinzip',parent:4},
+  {id:9,x:.88,y:.88,label:'μ = F/N',parent:6},
+];
+const knownSet=new Set([0]);
+function drawHier(){
+  const d=hierCanvas.getBoundingClientRect();hierCanvas.width=d.width*devicePixelRatio;hierCanvas.height=340*devicePixelRatio;
+  const ctx=hierCanvas.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=340;ctx.clearRect(0,0,w,h);ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  // edges
+  ctx.strokeStyle='#3a4468';ctx.lineWidth=1.5;
+  hierNodes.forEach(n=>{if(n.parent>=0){const p=hierNodes[n.parent];ctx.beginPath();ctx.moveTo(p.x*w,p.y*h+22);ctx.lineTo(n.x*w,n.y*h-22);ctx.stroke();}});
+  // illusion halo for ancestors of knownSet
+  hierNodes.forEach(n=>{
+    let anc=n;while(anc.parent>=0){if(knownSet.has(anc.id)){ctx.fillStyle='rgba(74,222,128,.12)';ctx.beginPath();ctx.arc(n.x*w,n.y*h,32,0,7);ctx.fill();break;}anc=hierNodes[anc.parent];}
+  });
+  hierNodes.forEach(n=>{
+    const known=knownSet.has(n.id);
+    ctx.fillStyle=known?'#f87171':'#1a2140';ctx.strokeStyle=known?'#fca5a5':'#3a4468';
+    ctx.beginPath();ctx.arc(n.x*w,n.y*h,20,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#e8ecf7';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(n.label,n.x*w,n.y*h+38);
+  });
+  ctx.textAlign='left';
+}
+hierCanvas.addEventListener('click',e=>{
+  const r=hierCanvas.getBoundingClientRect();const x=(e.clientX-r.left),y=(e.clientY-r.top);
+  hierNodes.forEach(n=>{const dx=n.x*r.width-x,dy=n.y*340-y;if(dx*dx+dy*dy<400){if(knownSet.has(n.id))knownSet.delete(n.id);else knownSet.add(n.id);}});
+  drawHier();
+});
+drawHier();window.addEventListener('resize',drawHier);
+
+/* ========= KAP 2.4 CHANGE BLINDNESS ========= */
+const cbCanvas=document.getElementById('cbCanvas');let cbState=0,cbTimer=null;
+const cbShapes=[
+  {x:.15,y:.5,r:.08,c:'#7c9cff'},{x:.35,y:.5,r:.09,c:'#ff7ac6'},
+  {x:.55,y:.5,r:.07,c:'#4ade80'},{x:.75,y:.5,r:.08,c:'#fbbf24'}
+];
+function drawCB(alt){
+  const d=cbCanvas.getBoundingClientRect();cbCanvas.width=d.width*devicePixelRatio;cbCanvas.height=220*devicePixelRatio;
+  const ctx=cbCanvas.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=220;
+  if(cbState===2){ctx.fillStyle='#555';ctx.fillRect(0,0,w,h);return;}
+  ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  cbShapes.forEach((s,i)=>{
+    ctx.fillStyle=s.c;let r=s.r*w;if(alt&&i===2)r*=1.4;
+    ctx.beginPath();ctx.arc(s.x*w,s.y*h,r,0,7);ctx.fill();
+  });
+  ctx.fillStyle='#c8cee0';ctx.font='12px sans-serif';ctx.fillText('Suche den Unterschied…',10,20);
+}
+function cbStart(){if(cbTimer)clearInterval(cbTimer);cbState=0;drawCB(false);
+  cbTimer=setInterval(()=>{cbState=(cbState+1)%3;drawCB(cbState===1);},450);
+}
+drawCB(false);
+
+/* ========= KAP 3 PHASEN ========= */
+const phases=[
+  {t:'T1 · Selbstrating vorher',d:'Person liest 48 Phänomene und rated jedes 1–7: „Wie gut verstehst du es?" Kein Druck, kein Test angekündigt.'},
+  {t:'T2 · Schriftliche Erklärung',d:'„Bitte erkläre Schritt für Schritt, wie ein Reißverschluss schließt." Danach: erneutes Rating derselben Items.'},
+  {t:'T3 · Diagnosefrage',d:'Kritische Frage, die echtes Mechanismus-Wissen verlangt: „Wie knackt man ein Zylinderschloss?" Erneutes Rating.'},
+  {t:'T4 · Nach Expertentext',d:'Person liest eine Expertenerklärung. Sie rated ihr <em>ursprüngliches</em> Wissen erneut, im Licht des Textes.'},
+  {t:'T5 · Aktuelles Wissen',d:'Manipulation Check: Wie gut versteht sie es jetzt, nach dem Text? Steigt wieder — beweist, dass die Skala funktioniert.'},
+];
+let phaseIdx=0;
+function renderPhase(){
+  document.querySelectorAll('#phaseFlow .step').forEach((s,i)=>s.classList.toggle('active',i===phaseIdx));
+  const p=phases[phaseIdx];
+  document.getElementById('phaseDetail').innerHTML=`<h3 style="margin:0 0 6px;color:#fff">${p.t}</h3><p style="font-size:14px;color:#c8cee0;margin:0">${p.d}</p>`;
+}
+function phase(dir){phaseIdx=(phaseIdx+dir+phases.length)%phases.length;renderPhase();}
+document.querySelectorAll('#phaseFlow .step').forEach(s=>s.onclick=()=>{phaseIdx=+s.dataset.i;renderPhase();});
+renderPhase();
+
+/* ========= KAP 4 STUDIEN 1-4 ========= */
+const studyData={
+  1:{n:16,label:'Studie 1 · Yale Grad',color:'#7c9cff',t:[4.2,3.1,2.6,2.7,4.4],eta:.536},
+  2:{n:33,label:'Studie 2 · Yale UG',color:'#ff7ac6',t:[4.4,3.3,2.7,2.8,4.6],eta:.555},
+  3:{n:16,label:'Studie 3 · Regional',color:'#ffd76a',t:[5.3,4.1,3.2,3.1,4.9],eta:.627},
+  4:{n:32,label:'Studie 4 · Neue Items',color:'#4ade80',t:[4.3,3.2,2.6,null,null],eta:.519}
+};
+function drawStudy(){
+  const sel=document.getElementById('studySel').value;
+  const traces=[];const xs=['T1','T2','T3','T4','T5'];
+  const list=(sel==='all')?['1','2','3','4']:[sel];
+  list.forEach(k=>{const s=studyData[k];
+    // error bars
+    const err=s.t.map(v=>v==null?0:.25);
+    traces.push({x:xs,y:s.t,mode:'lines+markers',name:s.label,line:{color:s.color,width:3},marker:{size:10,color:s.color},error_y:{type:'data',array:err,color:s.color,thickness:1,width:4}});
+  });
+  // reference band
+  traces.push({x:xs,y:[3.5,3.5,3.5,3.5,3.5],mode:'lines',line:{color:'#3a4468',dash:'dot',width:1},showlegend:false,hoverinfo:'skip'});
+  Plotly.newPlot('studyPlot',traces,{paper_bgcolor:'#0e1424',plot_bgcolor:'#070b16',font:{color:'#c8cee0'},margin:{t:20,l:50,r:20,b:40},xaxis:{gridcolor:'#252c44'},yaxis:{title:'Selbstrating (1–7)',gridcolor:'#252c44',range:[1,7]},legend:{orientation:'h',y:-.15}},{displayModeBar:false});
+  const s=(sel==='all')?studyData[2]:studyData[sel];
+  document.getElementById('etaStat').textContent='.'+String(Math.round(s.eta*1000)).padStart(3,'0');
+  document.getElementById('dropStat').textContent=(s.t[2]-s.t[0]).toFixed(2);
+}
+drawStudy();
+
+/* ========= KAP 5 STUDIE 5 · RATER ========= */
+function drawRater(){
+  const c=document.getElementById('raterCanvas');const d=c.getBoundingClientRect();
+  c.width=d.width*devicePixelRatio;c.height=220*devicePixelRatio;
+  const ctx=c.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=220,pad=36;ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  const data=[{l:'T1 Self',v:4.4,c:'#ff7ac6'},{l:'T2 Self',v:3.3,c:'#ff7ac6'},{l:'T3 Self',v:2.7,c:'#ff7ac6'},{l:'Fremd IR.1',v:2.72,c:'#4ade80'},{l:'Fremd IR.2',v:2.44,c:'#4ade80'}];
+  const bw=(w-2*pad)/data.length;
+  data.forEach((d0,i)=>{
+    const x=pad+i*bw+6,barH=(h-2*pad)*(d0.v/7);
+    ctx.fillStyle=d0.c;ctx.fillRect(x,h-pad-barH,bw-12,barH);
+    ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(d0.v.toFixed(2),x+(bw-12)/2,h-pad-barH-6);
+    ctx.fillStyle='#c8cee0';ctx.font='11px sans-serif';
+    ctx.fillText(d0.l,x+(bw-12)/2,h-pad+14);
+  });
+  ctx.textAlign='left';
+}
+drawRater();window.addEventListener('resize',drawRater);
+
+/* ========= KAP 5 STUDIE 6 · WARNUNG ========= */
+function drawWarn(){
+  const c=document.getElementById('warnCanvas');const d=c.getBoundingClientRect();
+  c.width=d.width*devicePixelRatio;c.height=220*devicePixelRatio;
+  const ctx=c.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=220,pad=36;ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  const warn=document.getElementById('warnCb').checked;
+  const base=[4.4,3.3,2.7,2.8],withWarn=[4.4,3.8,3.3,3.3];
+  const cur=warn?withWarn:base;
+  // axes
+  ctx.strokeStyle='#252c44';ctx.beginPath();ctx.moveTo(pad,pad);ctx.lineTo(pad,h-pad);ctx.lineTo(w-pad,h-pad);ctx.stroke();
+  // baseline (no warning) always dashed grey
+  ctx.strokeStyle='#3a4468';ctx.setLineDash([4,4]);ctx.lineWidth=2;ctx.beginPath();
+  base.forEach((v,i)=>{const x=pad+i*(w-2*pad)/3;const y=(h-pad)-(h-2*pad)*(v-1)/6;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.stroke();ctx.setLineDash([]);
+  // current
+  ctx.strokeStyle=warn?'#fbbf24':'#ff7ac6';ctx.lineWidth=3;ctx.beginPath();
+  cur.forEach((v,i)=>{const x=pad+i*(w-2*pad)/3;const y=(h-pad)-(h-2*pad)*(v-1)/6;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);ctx.fillStyle=warn?'#fbbf24':'#ff7ac6';ctx.fillRect(x-4,y-4,8,8);});
+  ctx.stroke();
+  ctx.fillStyle='#c8cee0';ctx.font='11px sans-serif';['T1','T2','T3','T4'].forEach((l,i)=>{const x=pad+i*(w-2*pad)/3;ctx.fillText(l,x-8,h-pad+14);});
+  ctx.fillStyle=warn?'#fbbf24':'#ff7ac6';ctx.fillText(warn?'mit Vorwarnung':'ohne (Baseline)',pad+8,pad+14);
+  ctx.fillStyle='#3a4468';ctx.fillText('gestrichelt: ohne Vorwarnung',pad+8,pad+30);
+}
+drawWarn();window.addEventListener('resize',drawWarn);
+
+/* ========= KAP 6 DOMÄNEN ========= */
+const domData={
+  dev:{n:'Geräte',c:'#ff7ac6',t:[4.35,3.43,2.75,2.80]},
+  nat:{n:'Naturphänomene',c:'#7c9cff',t:[4.10,3.24,2.60,2.70]},
+  fac:{n:'Fakten (Hauptstädte)',c:'#ffd76a',t:[4.20,3.91,3.60,null]},
+  nar:{n:'Narrative (Filme)',c:'#4ade80',t:[4.50,4.15,4.80,null]},
+  pro:{n:'Prozeduren',c:'#a78bfa',t:[4.70,4.87,4.90,null]}
+};
+let activeDoms=new Set(['dev']);
+function setDom(k){
+  if(k==='all'){activeDoms=new Set(Object.keys(domData));}
+  else{if(activeDoms.has(k))activeDoms.delete(k);else activeDoms.add(k);if(!activeDoms.size)activeDoms.add(k);}
+  Object.keys(domData).forEach(kk=>{const b=document.getElementById('btn'+kk[0].toUpperCase()+kk.slice(1));if(b)b.style.opacity=activeDoms.has(kk)?1:.4;});
+  drawDomain();
+}
+function drawDomain(){
+  const traces=[];const xs=['T1','T2','T3','T4'];
+  activeDoms.forEach(k=>{const d=domData[k];
+    traces.push({x:xs,y:d.t,mode:'lines+markers',name:d.n,line:{color:d.c,width:3},marker:{size:12,color:d.c},error_y:{type:'data',array:d.t.map(v=>v==null?0:.2),color:d.c,thickness:1,width:4}});
+  });
+  Plotly.newPlot('domainPlot',traces,{paper_bgcolor:'#0e1424',plot_bgcolor:'#070b16',font:{color:'#c8cee0'},margin:{t:20,l:50,r:20,b:40},xaxis:{gridcolor:'#252c44'},yaxis:{title:'Selbstrating (1–7)',gridcolor:'#252c44',range:[2,6]},legend:{orientation:'h',y:-.15}},{displayModeBar:false});
+}
+setDom('all');
+
+/* ========= KAP 7 STUDIE 12 · PRÄDIKTOREN ========= */
+// synthetic data points per device
+const devices=['Reißverschluss','Schloss','Klavier','Toilette','Nähmaschine','Uhr','Helikopter','Speedometer','Motor','Rakete','Handy','Chip','TV','Kühlschrank','Mikrowelle','LCD','VCR','Kamera','Dose-Öffner','Feuerzeug'];
+const predData={
+  vis:{lab:'Sichtbare / versteckte Teile',x:devices.map((_,i)=>Math.random()*.6+.15),r2:.47,b:.69,int:'Sichtbare Teile → Umwelt-Verwechslung. <b>Der stärkste Prädiktor</b> — verantwortlich für 47% der Varianz.'},
+  mech:{lab:'Mechanisch vs. elektrisch',x:devices.map(()=>Math.random()),r2:.32,b:.56,int:'Mechanisch → man glaubt, es „aus dem Kopf" nachbauen zu können. Zweitstärkster.'},
+  known:{lab:'Anzahl bekannter Teilnamen',x:devices.map(()=>Math.random()),r2:.01,b:.06,int:'Sagt Überkonfidenz kaum voraus. (Erhöht aber Anfangs-Rating!)'},
+  total:{lab:'Gesamtzahl Teile',x:devices.map(()=>Math.random()),r2:.14,b:-.38,int:'Komplexere Geräte → weniger, nicht mehr Überkonfidenz. Gegen die Alltagsintuition.'},
+  fam:{lab:'Vertrautheit',x:devices.map(()=>Math.random()),r2:.18,b:.43,int:'Vertrautheit erklärt nichts mehr, sobald man Sichtbarkeit kontrolliert.'}
+};
+function drawPred(){
+  const k=document.getElementById('predSel').value;const p=predData[k];
+  const xs=p.x,ys=xs.map(v=>v*p.b*2+1.5+(Math.random()-.5)*.6);
+  // regression line
+  const xr=[Math.min(...xs),Math.max(...xs)];const yr=xr.map(v=>v*p.b*2+1.5);
+  Plotly.newPlot('predPlot',[
+    {x:xs,y:ys,mode:'markers+text',type:'scatter',marker:{color:'#ff7ac6',size:12,line:{color:'#fff',width:1}},text:devices,textposition:'top center',textfont:{size:9,color:'#8b93aa'},showlegend:false},
+    {x:xr,y:yr,mode:'lines',line:{color:'#7c9cff',width:3,dash:'dash'},showlegend:false}
+  ],{paper_bgcolor:'#0e1424',plot_bgcolor:'#070b16',font:{color:'#c8cee0'},margin:{t:20,l:60,r:20,b:50},xaxis:{title:p.lab,gridcolor:'#252c44'},yaxis:{title:'Überkonfidenz (T1 − T2)',gridcolor:'#252c44'}},{displayModeBar:false});
+  document.getElementById('r2Stat').textContent='.'+String(Math.round(p.r2*100)).padStart(2,'0');
+  document.getElementById('bStat').textContent=(p.b>=0?'+':'')+p.b.toFixed(2);
+  document.getElementById('predInt').innerHTML=p.int;
+}
+drawPred();
+
+/* ========= KAP 7 · 3 VERWIRRUNGEN ========= */
+function drawConfusion(id,type){
+  const c=document.getElementById(id);const d=c.getBoundingClientRect();
+  c.width=d.width*devicePixelRatio;c.height=140*devicePixelRatio;
+  const ctx=c.getContext('2d');ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const w=d.width,h=140;ctx.clearRect(0,0,w,h);ctx.fillStyle='#070b16';ctx.fillRect(0,0,w,h);
+  if(type===1){
+    // eye + gears
+    ctx.strokeStyle='#7c9cff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(w*.3,h*.5,22,0,7);ctx.stroke();
+    ctx.beginPath();ctx.arc(w*.3,h*.5,8,0,7);ctx.fillStyle='#7c9cff';ctx.fill();
+    // arrow
+    ctx.strokeStyle='#ff7ac6';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w*.42,h*.5);ctx.lineTo(w*.6,h*.5);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w*.58,h*.45);ctx.lineTo(w*.6,h*.5);ctx.lineTo(w*.58,h*.55);ctx.stroke();
+    // brain
+    ctx.strokeStyle='#4ade80';ctx.beginPath();ctx.arc(w*.75,h*.5,20,0,7);ctx.stroke();
+    ctx.fillStyle='#4ade80';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('leer',w*.75,h*.55);
+    ctx.fillStyle='#c8cee0';ctx.font='10px sans-serif';ctx.fillText('Umwelt',w*.3,h*.9);ctx.fillText('Kopf',w*.75,h*.9);
+  }else if(type===2){
+    // hierarchy triangle
+    ctx.strokeStyle='#3a4468';ctx.lineWidth=1;
+    const nodes=[[w*.5,h*.2],[w*.3,h*.55],[w*.7,h*.55],[w*.2,h*.85],[w*.4,h*.85],[w*.6,h*.85],[w*.8,h*.85]];
+    ctx.beginPath();ctx.moveTo(...nodes[0]);ctx.lineTo(...nodes[1]);ctx.moveTo(...nodes[0]);ctx.lineTo(...nodes[2]);
+    ctx.moveTo(...nodes[1]);ctx.lineTo(...nodes[3]);ctx.moveTo(...nodes[1]);ctx.lineTo(...nodes[4]);
+    ctx.moveTo(...nodes[2]);ctx.lineTo(...nodes[5]);ctx.moveTo(...nodes[2]);ctx.lineTo(...nodes[6]);ctx.stroke();
+    nodes.forEach((n,i)=>{ctx.fillStyle=i===0?'#f87171':'#1a2140';ctx.strokeStyle=i===0?'#fca5a5':'#3a4468';ctx.beginPath();ctx.arc(n[0],n[1],9,0,7);ctx.fill();ctx.stroke();});
+    ctx.fillStyle='#fca5a5';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('was',w*.5,h*.15);
+    ctx.fillStyle='#8b93aa';ctx.fillText('wie?',w*.5,h*.98);
+  }else{
+    // labels floating
+    const labels=['CPU','RAM','Bus','Cache','GPU'];
+    labels.forEach((l,i)=>{
+      const x=w*(.15+i*.17),y=h*.5;
+      ctx.fillStyle='#1a2140';ctx.strokeStyle='#7c9cff';
+      ctx.beginPath();ctx.roundRect(x-18,y-12,36,24,4);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#7c9cff';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText(l,x,y+3);
+    });
+    ctx.fillStyle='#f87171';ctx.font='11px sans-serif';ctx.fillText('≠ Mechanismus',w*.5,h*.85);
+  }
+  ctx.textAlign='left';
+}
+drawConfusion('c1',1);drawConfusion('c2',2);drawConfusion('c3',3);
+window.addEventListener('resize',()=>{drawConfusion('c1',1);drawConfusion('c2',2);drawConfusion('c3',3);});
+
+/* ========= KAP 8 FINAL PLOT ========= */
+function drawFinal(){
+  const doms=[['Geräte',.92,'#ff7ac6'],['Naturphänomene',.86,'#7c9cff'],['Fakten',.29,'#ffd76a'],['Narrative',.35,'#4ade80'],['Prozeduren',-.17,'#a78bfa']];
+  Plotly.newPlot('finalPlot',[{
+    x:doms.map(d=>d[0]),y:doms.map(d=>d[1]),type:'bar',
+    marker:{color:doms.map(d=>d[2])},
+    text:doms.map(d=>d[1].toFixed(2)),textposition:'outside',textfont:{color:'#fff',size:14}
+  }],{paper_bgcolor:'#0e1424',plot_bgcolor:'#070b16',font:{color:'#c8cee0'},margin:{t:20,l:60,r:20,b:60},yaxis:{title:'Illusion (T1 − T2, Ratingpunkte)',gridcolor:'#252c44',zerolinecolor:'#666'},xaxis:{gridcolor:'#252c44'},shapes:[{type:'line',x0:-.5,x1:4.5,y0:0,y1:0,line:{color:'#666',width:1,dash:'dash'}}]},{displayModeBar:false});
+}
+drawFinal();
+
+/* ========= TEMML render (nur wenn nötig) ========= */
+document.querySelectorAll('[data-tex]').forEach(el=>{try{temml.render(el.dataset.tex,el);}catch(e){}});
+</script>
+</body>
+</html>
