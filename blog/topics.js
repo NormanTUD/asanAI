@@ -1028,12 +1028,56 @@
 		} catch (e) { /* old browsers */ }
 	}
 
-	/* ── 10. Inline widget (for intro.php / module pages) ─────── */
+	/* ── 10. Inline widget (for intro.php / module pages) ───────
+	   Two flavours:
+	   • default            — the full grid of topic pills.
+	   • personas-first     — starts as a small card showing only the
+	     classic-type chips (low cognitive load); clicking a type
+	     applies it and expands to the full grid, and the "detailed
+	     settings" link opens the full picker overlay. The expanded
+	     state is remembered per element via a dataset flag so the
+	     widget stays detailed across re-renders. */
 	function renderInlineWidget(host) {
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total = TOPICS.length;
 		const skipped = document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+
+		const isPersonasHost = (host.getAttribute('data-topics-inline') || '') === 'personas-first';
+		const personasFirst = isPersonasHost && host.dataset.personasExpanded !== '1';
+
+		if (personasFirst) {
+			host.innerHTML = [
+				'<div class="inline-topics-head">',
+					'<div class="inline-topics-summary">',
+						'<span class="inline-topics-icon" aria-hidden="true">🎯</span>',
+						'<span>',
+							'<strong>' + active + '</strong> of ' + total + ' topics active',
+							skipped ? ' · <em>' + skipped + ' section' + (skipped === 1 ? '' : 's') + ' tucked away</em>' : '',
+						'</span>',
+					'</div>',
+				'</div>',
+				'<div class="inline-topics-personas" role="group" aria-label="Classic reader types">' +
+					PERSONAS.map(function (p) {
+						return '<button type="button" class="topics-persona-btn' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
+							'" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' +
+							'<span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' +
+							escAttr(p.label) +
+						'</button>';
+					}).join('') +
+				'</div>',
+				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click — or open the <button type="button" class="inline-topics-open inline-topics-link">detailed settings</button> to tune every topic by hand.</p>'
+			].join('');
+			host.querySelectorAll('[data-persona]').forEach(function (b) {
+				b.addEventListener('click', function () {
+					applyPersona(b.getAttribute('data-persona'));
+					host.dataset.personasExpanded = '1';
+					renderInlineWidget(host);
+				});
+			});
+			host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);
+			return;
+		}
 
 		const tilesHtml = TOPICS.map(function (t) {
 			const on = map[t.id] !== false;
@@ -1044,6 +1088,10 @@
 				'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span>' +
 			'</button>';
 		}).join('');
+
+		const backToTypesBtn = isPersonasHost
+			? '<button type="button" class="inline-topics-open inline-topics-link" data-collapse-types>show the types instead</button> · '
+			: '';
 
 		host.innerHTML = [
 			'<div class="inline-topics-head">',
@@ -1063,10 +1111,18 @@
 				'</button>',
 			'</div>',
 			'<div class="inline-topics-grid">' + tilesHtml + '</div>',
-			'<p class="inline-topics-foot">Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
+			'<p class="inline-topics-foot">' + backToTypesBtn + 'Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
 		].join('');
 
 		host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);
+		const collapseBtn = host.querySelector('[data-collapse-types]');
+		if (collapseBtn) {
+			collapseBtn.addEventListener('click', function (e) {
+				e.stopPropagation();
+				host.dataset.personasExpanded = '';
+				renderInlineWidget(host);
+			});
+		}
 		host.querySelectorAll('.ipill').forEach(function (btn) {
 			btn.addEventListener('click', function () {
 				const id = btn.getAttribute('data-topic-id');

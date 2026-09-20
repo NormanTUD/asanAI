@@ -50,9 +50,9 @@ This site is not a book to be read passively. It is designed as a playground for
 
 This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD), each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason. If you identify more with *being* a certain kind of reader than with what you do for a living, the picker also offers the **classic types** — the mathematician who wants the math but not the history, the builder, the historian, the philosopher — and, if you refuse to skip anything, the **polymath**, who loads everything.
 
-Below is your current pick. Tap any pill to flip it on or off:
+The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:
 
-<div data-topics-inline class="inline-topics"></div>
+<div data-topics-inline="personas-first" class="inline-topics"></div>
 
 Toggle individual topics to fine-tune, sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads.
 
