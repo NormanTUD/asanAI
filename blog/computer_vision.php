@@ -35,6 +35,13 @@ $$
 
 Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is computed independently for each color channel (Red, Green, Blue).
 
+In one sentence, Olah captures the whole operation:
+
+> The kernel slides to every position of the image and computes a new pixel
+> as a weighted sum of the pixels it floats over.
+
+\cite[Olah, 2014]{colah2014conv} Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement \cite[Olah, 2014]{colah2014conv}. Reusing one component across many positions is **weight tying** in a vision setting \cite[Olah, 2015]{colah2015types}. Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs \cite[Olah, 2014]{colah2014conv}.
+
 ## Why Does This Matter for AI?
 
 In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
