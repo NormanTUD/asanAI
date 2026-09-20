@@ -1106,7 +1106,7 @@ With other methods of making numbers from data (like Embeddings to create number
 <div class="md">
 ## Chaining Functions (Composition)
 
-In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$.
+In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects \cite[Olah, 2015]{colah2015types}.
 
 You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
