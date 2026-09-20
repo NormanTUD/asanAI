@@ -404,6 +404,193 @@ The next machine works the same way: edit the $4 \times 4$ matrix, watch the che
 </div>
 
 <div class="md">
+## The two things a one-to-one motion cannot do
+
+Every map in this chapter so far — affine, projective, Möbius — is **one-to-one**: each output point comes from exactly one input point. Nothing is ever glued to anything. (Even the singular case $\det M = 0$ only collapses a direction; the formula is still linear.)
+
+That shared property has a name and a theorem behind it:
+
+* A continuous one-to-one motion of all of space with a continuous inverse is a **homeomorphism** — "move the space without tearing or gluing" \cite[nLab, homeomorphism]{nlab_homeomorphism}.
+* **Brouwer's invariance of domain** (~1910): *any* continuous one-to-one map of $\mathbb{R}^n$ onto its image is a homeomorphism \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. The class of such motions is as large as it can get.
+* Möbius maps are also one-to-one: they are exactly the bijective conformal maps of the Riemann sphere \cite[nLab, Möbius transformation]{nlab_mobius_transformation}.
+
+Consequence: affine, projective, and Möbius motions preserve everything topological — in particular, what is linked to what. A one-to-one motion can never do these two things:
+
+1. **Bend a straight line.** Lines stay lines (Möbius maps at least keep circles as circles).
+2. **Identify two points.** No two inputs ever share an output — no overlap of space.
+
+The simplest maps that break both rules are **piecewise-affine**: an ordinary affine map on each side of a line (the **crease**), different affine maps on the two sides, glued along the crease. The smallest one has one crease and one knob:
+
+$$
+f(p) \;=\; p \;-\; \lambda\,\operatorname{ReLU}(\hat n \cdot p - c)\,\hat n
+\qquad\text{with } \operatorname{ReLU}(x) = \max(0, x)
+$$
+
+The crease is the line $\{p : \hat n \cdot p = c\}$. Points on the near side ($\hat n \cdot p \le c$) are untouched; points on the far side are pushed across it, a distance $\lambda$ times their distance from it. The knob $\lambda$ controls everything:
+
+* **$\lambda = 0$** — the identity; still affine.
+* **$0 < \lambda < 1$** — the far side is compressed toward the crease. Bent, but still one-to-one.
+* **$\lambda = 1$** — the far side is flattened *onto* the crease. Maximum overlap: a whole half of the information is pressed onto a line.
+* **$\lambda = 2$** — the far side is mirrored onto the near side: a paper fold.
+* **$\lambda > 2$** — overshoot; the far side passes through the near side.
+
+Bending starts at $\lambda > 0$; overlap starts exactly at $\lambda > 1$ — the moment the map stops being one-to-one.
+
+Two things to notice:
+
+* **The ReLU is a fold.** $\max(0, x) = x - \operatorname{ReLU}(-x)$ is the one-dimensional fold with $\lambda = 1$. A rectifier layer is a stack of such folds, one per neuron. That is the starting point of the <a href="origami">Origami</a> chapter (anvil + hammer).
+* **The pieces are affine.** On each side of the crease the map is an ordinary $3 \times 3$ homogeneous matrix. Everything the fold does is in those two matrices and the crease.
+</div>
+
+<div class="md">
+## The fold machine, 2D
+
+The source is the same $8 \times 8$ 0/1 checkerboard. One difference from the affine machine: a fold **cannot be inverted** — a pixel in the image has *zero or two* preimages — so this machine draws the board **forward** (each source cell is pushed to where it lands) instead of looking up pixels backwards. The two affine pieces are shown as $3 \times 3$ matrices.
+
+**What to do:**
+
+1. Slide $\lambda$ from $0$ to $2.5$: at $0$ the board is untouched; below $1$ the far half is compressed but still one-to-one; at $1$ it is flattened onto the crease; at $2$ it is a perfect paper fold.
+2. Hover the warped board. The machine solves for the preimage of the pixel you point at. In the overlap region it finds **two** preimages and marks both on the source — the overlap of space, pixel by pixel.
+3. The thin line crosses the crease and arrives as two straight pieces with a corner. No single affine map can do that.
+4. Click the source to move the tracked point $p$ and watch which of the two affine pieces handles it, term by term.
+
+The strip at the bottom shows the same fold in one dimension, where the overlap of the number line is directly visible.
+</div>
+
+<div class="aff-card" id="fold-2d">
+	<div class="aff-card-title"><span class="dot"></span>Fold machine, 2D — the checkerboard through a crease</div>
+	<div class="aff-grid2">
+		<div class="aff-col">
+			<div class="aff-sub">Source — click to move the tracked point p</div>
+			<canvas id="fold2d-src" class="aff-canvas" width="440" height="440"></canvas>
+		</div>
+		<div class="aff-col">
+			<div class="aff-sub">Image — hover to count preimages of a pixel</div>
+			<canvas id="fold2d-out" class="aff-canvas" width="440" height="440"></canvas>
+			<div id="fold2d-hover" class="aff-readout"></div>
+		</div>
+	</div>
+	<div class="aff-grid2 aff-grid2b aff-grid2c">
+		<div class="aff-col">
+			<div class="aff-sub">The two affine pieces — the map is each one of these, on its side of the crease</div>
+			<div style="display:flex; gap:1.4rem; flex-wrap:wrap">
+				<div>
+					<div class="aff-sub" style="margin-top:0">Piece 1 (n&#770;·p &le; c)</div>
+					<div id="fold2d-m1" class="aff-mxwrap"></div>
+				</div>
+				<div>
+					<div class="aff-sub" style="margin-top:0">Piece 2 (n&#770;·p &gt; c)</div>
+					<div id="fold2d-m2" class="aff-mxwrap"></div>
+				</div>
+			</div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Crease direction θ <input type="range" id="fold2d-theta" class="aff-range" min="0" max="180" step="1" value="0"><span class="aff-rangev" id="fold2d-theta-v">0°</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Crease offset c <input type="range" id="fold2d-c" class="aff-range" min="-1" max="2" step="0.05" value="0.5"><span class="aff-rangev" id="fold2d-c-v">0.50</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Fold strength λ <input type="range" id="fold2d-lambda" class="aff-range" min="0" max="2.5" step="0.05" value="1.5"><span class="aff-rangev" id="fold2d-lambda-v">1.50</span></label></div>
+			<div id="fold2d-presets" class="aff-presetrow"></div>
+		</div>
+		<div class="aff-col">
+			<div class="aff-sub">The equation, live, for the tracked point</div>
+			<div id="fold2d-eq" class="aff-eq"></div>
+			<pre id="fold2d-eqmono" class="aff-eqmono"></pre>
+			<div class="aff-sub" style="margin-top:.9rem">The same fold, 1-D: x &rarr; x &minus; λ·ReLU(x &minus; c&#8321;) — click the top row to move the point</div>
+			<canvas id="fold1d-canvas" class="aff-canvas" width="440" height="150" style="cursor:default"></canvas>
+		</div>
+	</div>
+	<div id="fold2d-status" class="aff-status"></div>
+	<div id="fold2d-checks" class="aff-checks"></div>
+</div>
+
+<div class="md">
+## A job no one-to-one motion can do: unthreading a chain
+
+Take two rings threaded like a chain link: each passes once through the hole of the other. Knot theory names the pair the **Hopf link** \cite[nLab, Hopf link]{nlab_hopf_link}\cite[Wikipedia, Hopf link]{hopf_link_wiki}:
+
+* A **knot** is one closed loop in space; a **link** is several closed loops \cite[nLab, knot]{nlab_knot}\cite[nLab, link]{nlab_link}.
+* The only legal way to move one link into another is an **ambient isotopy**: the whole space is deformed continuously, one-to-one at every moment \cite[nLab, isotopy]{nlab_isotopy}.
+* Two links that one such motion connects are the *same* link. The trivial state — two loops that are not linked — is the **unlink** \cite[nLab, unknot]{nlab_unknot}.
+
+So "can the two rings be pulled apart?" has a sharp form: *is the Hopf link isotopic to the unlink?* The answer is **no**, and the certificate is one integer, the **linking number** \cite[nLab, linking number]{nlab_linking_number}:
+
+1. Span one ring with any disk (imagine a soap film on it).
+2. Count how many times the other ring pierces the disk: $+1$ per upward pierce, $-1$ per downward.
+3. The result is the same for every choice of disk, and it cannot change under any ambient isotopy (the proof checks the three Reidemeister moves) \cite[nLab, linking number]{nlab_linking_number}.
+
+For the Hopf link the number is $\pm 1$; for the unlink it is $0$ — which is why the Hopf link provably cannot be unthreaded by any one-to-one motion of space. Gauss computed the same number as a single integral over the two curves \cite[Wikipedia, linking number (Gauss integral)]{linking_number_wiki}; the machine below runs that integral live.
+
+Thicken the rings and you have two **solid tori** — a circle thickened into a tube, $S^1 \times D^2$ \cite[nLab, solid torus]{nlab_solid_torus} — chained, as in a real chain.
+
+**The point that ties the chapter together:**
+
+* Every motion in this catalog is one-to-one.
+* Every one-to-one motion preserves the linking number (it is a homeomorphism \cite[nLab, invariance of domain]{nlab_invariance_of_domain}).
+* Therefore **no affine, projective, or Möbius map can separate a chain link.** The linking is topological, and topology is blind to one-to-one motions.
+* A fold with $\lambda > 1$ is **not** one-to-one: the far half is pressed onto (or mirrored through) the near side, and in the overlap two inputs share one output. That one crack is enough — push the fold through the flat ring and one ring passes through the other. The linking number drops from $1$ to $0$.
+
+The machine below computes the linking number from the actual 3-D positions of the rings. Slide $\lambda$ and watch the integer: it stays $1$ while the map is one-to-one ($\lambda \le 1$) and falls to $0$ the moment the map starts to overlap space ($\lambda > 1$).
+</div>
+
+<div class="md">
+This is not a toy — it is exactly what rectifier networks compute. Four papers make each piece precise:
+
+* **Montúfar, Pascanu, Cho & Bengio** name the overlap in the formalism: a deep network with piecewise-linear activations "can sequentially map portions of each layer's input space to the same output." The places where the network is one fixed linear function — its **linear regions** — tile the input space, and their count grows **exponentially with depth** \cite[Montúfar et al., 2014]{montufar2014regions}.
+* **Keup & Helias** identify the fold as the network's main tool: to make tangled classes separable, a network **folds the data manifold into unoccupied higher dimensions** until a flat cut reaches the "island" class that another class surrounds \cite[Keup & Helias, 2022]{keup2022origami}. Their 2-D test case — a ring of data inside another ring — is the flat cousin of the chained tori above.
+* **Amrami & Goldberg** prove the fold is what buys depth: a family of classification problems that any fixed-depth rectifier net needs exponentially many parameters for is solved with zero error by a net of **linear depth and width $\le 4$** — via an explicit space-folding construction \cite[Amrami & Goldberg, 2021]{amrami2021depth}.
+* **Lewandowski et al.** measure the fold itself: a straight input line arrives in activation space as a **non-convex path** (convexity is lost at each crease), and their space-folding measure grows with depth in well-trained nets and tracks generalization \cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}.
+
+Four papers, one object: the piecewise-affine map that creases and overlaps space. The <a href="origami">Origami</a> chapter is the full treatment as a network tool; this chapter hands you the geometry to play with.
+</div>
+
+<div class="md">
+## The unlink machine, 3D
+
+Two solid tori, chained: the Hopf link. The fold is $f(p) = p - \lambda\,\operatorname{ReLU}(\hat n \cdot p - c)\,\hat n$ with a fold direction (tilt and spin of the crease plane), a crease offset $c$, and a strength $\lambda$. The big readout is the **linking number**, computed from the two core circles by Gauss's integral and re-evaluated as you move anything. Drag the view to rotate.
+
+**What to do:**
+
+1. Start at *The chain* and slide $\lambda$ from $0$ to $2.5$. The rings bend and crease; at $\lambda = 1$ the flattened half passes exactly through the other ring (the unthreading moment); for $\lambda > 1$ the linking number reads $0$.
+2. Press *separate the rings*: a plain translation now pulls them apart, because nothing is left to link them.
+3. Tilt the crease plane away from the flat ring's plane. Some fold directions unlink, others do not — the crease geometry matters as much as its strength.
+4. Try *Rotate 30° (affine)*: a pure affine motion of the whole pair. The linking number stays $1$ no matter how you rotate it. That is the theorem, running.
+</div>
+
+<div class="aff-card" id="unlink-3d">
+	<div class="aff-card-title"><span class="dot"></span>Unlink machine, 3D — two chained rings through a fold</div>
+	<div class="aff-grid2 aff-grid2c">
+		<div class="aff-col">
+			<canvas id="unlink3d-canvas" class="aff-canvas aff-canvas3d" width="560" height="440"></canvas>
+			<div class="aff-ctrlrow">
+				<label class="aff-lbl"><input type="checkbox" id="unlink3d-auto" checked> auto-rotate</label>
+				<label class="aff-lbl"><input type="checkbox" id="unlink3d-cores" checked> core circles</label>
+			</div>
+		</div>
+		<div class="aff-col">
+			<div class="aff-sub">The fold f(p) = p &minus; λ·ReLU(n&#770;·p &minus; c)·n&#770; — edit any parameter</div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Tilt of crease plane <input type="range" id="u3d-tilt" class="aff-range" min="0" max="180" step="1" value="0"><span class="aff-rangev" id="u3d-tilt-v">0°</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Spin of crease plane <input type="range" id="u3d-spin" class="aff-range" min="0" max="360" step="1" value="0"><span class="aff-rangev" id="u3d-spin-v">0°</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Crease offset c <input type="range" id="u3d-c" class="aff-range" min="-1.5" max="1.5" step="0.05" value="0"><span class="aff-rangev" id="u3d-c-v">0.00</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Fold strength λ <input type="range" id="u3d-lambda" class="aff-range" min="0" max="2.5" step="0.05" value="0"><span class="aff-rangev" id="u3d-lambda-v">0.00</span></label></div>
+			<div class="aff-sliderrow"><label class="aff-lbl">Separation <input type="range" id="u3d-sep" class="aff-range" min="0" max="1.2" step="0.05" value="0"><span class="aff-rangev" id="u3d-sep-v">0.00</span></label></div>
+			<div id="unlink3d-presets" class="aff-presetrow"></div>
+			<button type="button" id="unlink3d-sepbtn" class="aff-btn" style="margin-top:.6rem">separate the rings</button>
+		</div>
+	</div>
+	<div class="aff-col" style="margin-top:1rem">
+		<div class="aff-sub">Live readout — the linking number, Gauss's integral over the two core circles</div>
+		<div id="unlink3d-eq" class="aff-eq"></div>
+		<pre id="unlink3d-eqmono" class="aff-eqmono"></pre>
+	</div>
+	<div id="unlink3d-status" class="aff-status"></div>
+	<div id="unlink3d-checks" class="aff-checks"></div>
+</div>
+
+<div class="optional md" data-headline="Who found all this, and why">
+* **Knots.** The first systematic study of knotted loops is Listing's *Vorstudien zur Topologie* (1847) — the same book that coined the word "topology" \cite[Listing, 1847]{listingtopologie}. Poincaré's *Analysis Situs* (1895) turned knots into a theory of the space *around* the loop, not of the loop itself \cite[Poincaré, 1895]{poincareanalysissitus}.
+* **The linking number.** Gauss expressed the linking of two closed curves as a single integral — the formula the unlink machine runs \cite[Wikipedia, linking number]{linking_number_wiki}. The two-ring link was studied by Hopf in 1931, while working on what is now the Hopf fibration; it carries his name. Gauss knew it earlier, and a Japanese Buddhist sect (Buzan-ha) had used the motif as a crest centuries before \cite[Wikipedia, Hopf link]{hopf_link_wiki}.
+* **Invariance of domain.** Brouwer's theorem that a continuous one-to-one map of $\mathbb{R}^n$ onto its image is a homeomorphism dates from around 1910; before it, "dimension is a topological invariant" was an open problem \cite[nLab, invariance of domain]{nlab_invariance_of_domain}.
+* **Folding as a map.** Paper-folding mathematics proves that any straight-sided shape can be cut from one sheet with a single straight cut after folding \cite[Wikipedia, fold-and-cut theorem]{foldandcut_wiki} — first proved by Demaine, Demaine & Lubiw (1999), who fold the paper until the whole outline lies on one line; the cut is then just a final affine test. The neural-network side of the same idea came later: linear regions (Montúfar et al. 2014 \cite{montufar2014regions}), folding as the separability tool (Keup & Helias 2022 \cite{keup2022origami}), depth via folding (Amrami & Goldberg 2021 \cite{amrami2021depth}), and a quantitative folding measure (Lewandowski et al. 2025 \cite{lewandowski2025spacefolds}).
+</div>
+
+<div class="md">
 ## Where affine maps show up (spoiler: everywhere)
 
 **Every linear layer is an affine map.** $y = Wx + b$ is exactly $f(x) = Mx + t$ with $M = W$ and $\mathbf{t} = b$. A whole neural network is a stack of affine maps interrupted by nonlinearities — and if you delete the nonlinearities, the entire stack **collapses into a single affine map**, because affine maps close under composition (the first bullet above). That collapse is *why activation functions exist*, as the <a href="minimalneuron">Neuron</a> and <a href="origami">Origami</a> chapters argue from the other side.
@@ -418,7 +605,7 @@ The next machine works the same way: edit the $4 \times 4$ matrix, watch the che
 </div>
 
 <div class="md">
-<div class="aff-callout"><b>Key point.</b> An affine transformation is the most general map that sends straight lines to straight lines: a linear part $M$ plus a translation $\mathbf{t}$, written $f(x) = Mx + t$. Homogeneous coordinates — appending a $1$ and using a bigger matrix — turn composition of affine maps into plain matrix multiplication, which is why $3 \times 3$ and $4 \times 4$ matrices run image warping, 3D graphics, camera math, and every biased linear layer in every neural network. The determinant tells you how much area or volume survives the trip; the last row tells you whether you are still in the affine family at all.</div>
+<div class="aff-callout"><b>Key point.</b> An affine transformation is the most general map that sends straight lines to straight lines: a linear part $M$ plus a translation $\mathbf{t}$, written $f(x) = Mx + t$. Homogeneous coordinates — appending a $1$ and using a bigger matrix — turn composition of affine maps into plain matrix multiplication, which is why $3 \times 3$ and $4 \times 4$ matrices run image warping, 3D graphics, camera math, and every biased linear layer in every neural network. The determinant tells you how much area or volume survives the trip; the last row tells you whether you are still in the affine family at all. And the first map outside the family — the fold $p \mapsto p - \lambda\,\operatorname{ReLU}(\hat n \cdot p - c)\,\hat n$ — is piecewise-affine: bent for $\lambda > 0$, overlapping space (non-injective) for $\lambda > 1$, and the only kind of map that can change a topological invariant like the linking number. It is exactly what the ReLU does — and what the Origami chapter makes into a theory.</div>
 </div>
 
 <script>
