@@ -54,9 +54,51 @@
 		{ id: 'safety',           label: 'Safety',           icon: '🛡️',   desc: 'Security, robustness' },
 		{ id: 'society',          label: 'Society',          icon: '🌐',   desc: 'Culture, policy' },
 		{ id: 'law',              label: 'Law',              icon: '📜',   desc: 'Regulation' },
-		{ id: 'frontier',         label: 'Frontier',         icon: '🚀',   desc: 'Open problems' },
+		{ id: 'frontier',         label: 'Frontier',         icon: '🚀',    desc: 'Open problems' },
 		{ id: 'reference',        label: 'Reference',        icon: '📖',   desc: 'Glossary, cheatsheets' }
 	];
+
+	/* ── 1c. Categories (tone / heaviness filters) ─────────────
+	   A second, orthogonal layer on top of the interest topics.
+	   Topics answer "what am I interested in?"; categories answer
+	   "how heavy should it be?". They are tagged on whole lessons
+	   (the `tags:` line of a lesson's COURSE_METADATA block → a
+	   `data-tags` attribute on its home-page tile) and on individual
+	   in-lesson sections (any id in a `[[t:…]]` marker that is a
+	   category, e.g. `[[t:math-i,math-heavy]]`).
+
+	   Two kinds:
+	     • kind:'suppress'  — "less of this" dials. ON by default;
+	       switching one OFF tucks away every section/lesson tagged
+	       with it. This is the "turn off the math-heavy stuff in one
+	       click" control.
+	     • kind:'include'   — "show me this" lenses. OFF by default;
+	       switching one ON dims everything that is NOT tagged with it
+	       (e.g. "interested layman" keeps only the accessible core).
+
+	   Categories are deliberately kept OUT of TOPICS so the "N of M
+	   topics active" count keeps meaning *interests*, and the picker
+	   can render them as their own compact chip row. */
+	const CATEGORIES = [
+		{ id: 'math-heavy',        label: 'Math-heavy',        icon: '∫',   kind: 'suppress', desc: 'Dense equations, proofs & derivations' },
+		{ id: 'logic-heavy',       label: 'Logic-heavy',       icon: '∴',   kind: 'suppress', desc: 'Formal logic, type theory, rigorous proofs' },
+		{ id: 'language-heavy',    label: 'Language-heavy',    icon: '🗣️',  kind: 'suppress', desc: 'Linguistics & NLP theory' },
+		{ id: 'code-heavy',        label: 'Code-heavy',        icon: '{ }', kind: 'suppress', desc: 'Hands-on code, algorithms & infra' },
+		{ id: 'interested-layman', label: 'Interested layman', icon: '🌱',  kind: 'include',  desc: 'Only the accessible, jargon-free core' }
+	];
+
+	const CAT_BY_ID = {};
+	CATEGORIES.forEach(function (c) { CAT_BY_ID[cssSafe(c.id)] = c; });
+
+	function isCategory(id) { return !!CAT_BY_ID[cssSafe(id)]; }
+	function catOf(id) { return CAT_BY_ID[cssSafe(id)] || null; }
+	/** friendly label for any tag id (category or topic) */
+	function labelFor(id) {
+		const c = catOf(id);
+		if (c) return c.label;
+		const t = topicMeta(id);
+		return (t && t.label !== t.id) ? t.label : id;
+	}
 
 	/* ── 1a. Audience axes (profile × level) ────────────────────
 	   The reader picks one of four roles and one of four depths.
@@ -189,14 +231,20 @@
 	function normalizePref(parsed) {
 		const out = {
 			topics: {},
+			categories: {},
 			profile: null,
 			level: null
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
-		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed);
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed);
 		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
+		const catsObj = (parsed.categories && typeof parsed.categories === 'object') ? parsed.categories : {};
 		TOPICS.forEach(function (t) {
 			out.topics[t.id] = topicsObj[t.id] !== false;
+		});
+		CATEGORIES.forEach(function (c) {
+			const def = c.kind === 'suppress'; // suppress ON by default, include OFF
+			out.categories[c.id] = (catsObj[c.id] !== undefined) ? (catsObj[c.id] !== false) : def;
 		});
 		if (looksV2) {
 			if (PROFILES.some(function (p) { return p.id === parsed.profile; })) {
@@ -212,7 +260,9 @@
 	function defaultPref() {
 		const topics = {};
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
-		return { topics: topics, profile: null, level: null };
+		const categories = {};
+		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
+		return { topics: topics, categories: categories, profile: null, level: null };
 	}
 
 	function writePref(pref) {
@@ -298,8 +348,13 @@
 		persist(m);
 	}
 
-	/** persist the full pref (topics + audience selection) */
+	/** persist the full pref (topics + categories + audience selection).
+	    Any caller that builds a partial pref (e.g. applying an audience
+	    preset) keeps its current category filters — tone dials are a
+	    separate axis from "who am I", so they must not be reset by a
+	    profile/level change. */
 	function persistPref(pref) {
+		if (!pref.categories) pref.categories = activePref().categories;
 		writePref(pref);
 		fireChange();
 	}
@@ -316,7 +371,12 @@
 
 	function snapshotPref() {
 		const p = activePref();
-		return { topics: Object.assign({}, p.topics), profile: p.profile, level: p.level };
+		return {
+			topics: Object.assign({}, p.topics),
+			categories: Object.assign({}, p.categories),
+			profile: p.profile,
+			level: p.level
+		};
 	}
 
 	function pushHistory() {
@@ -329,6 +389,7 @@
 	function restoreSnapshot(snap) {
 		persistPref({
 			topics: Object.assign({}, snap.topics),
+			categories: Object.assign({}, snap.categories),
 			profile: snap.profile,
 			level: snap.level
 		});

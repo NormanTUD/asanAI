@@ -469,9 +469,9 @@
 			if (!L || !S.layersEl) return;
 			statusHtml(L);
 			var prevOpen = {};
-			$$(S.layersEl.querySelectorAll('details')).forEach(function (d) { prevOpen[d.id] = d.open; });
+			Array.prototype.forEach.call(S.layersEl.querySelectorAll('details'), function (d) { prevOpen[d.id] = d.open; });
 			S.layersEl.innerHTML = layersHtml(L);
-			$$(S.layersEl.querySelectorAll('details')).forEach(function (d) {
+			Array.prototype.forEach.call(S.layersEl.querySelectorAll('details'), function (d) {
 				if (prevOpen[d.id] !== undefined) d.open = prevOpen[d.id];
 			});
 			renderSpark(L);
@@ -578,6 +578,7 @@
 		S.sparkWrap = $('#tls-spark-wrap', panel);
 		S.sparkSvg = $('#tls-spark', panel);
 		S.sparkLegend = $('#tls-spark-legend', panel);
+		log('chrome done');
 	}
 
 	function tick() {
@@ -601,12 +602,14 @@
 	}
 
 	function boot() {
+		log('boot');
 		tick();
 		win.setInterval(tick, 1200);
 	}
 
 	function start() {
 		if (!Document.prototype.querySelector || !win.addEventListener) return;
+		log('start');
 		buildChrome();
 		statusWaiting();
 		if (document.readyState === 'loading') {
@@ -614,6 +617,7 @@
 		} else {
 			boot();
 		}
+		log('start done');
 	}
 
 	start();
