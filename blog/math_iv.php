@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Basic Math Concepts IV — Affine Transformations: Moving Space Itself
-description: Linear maps fix the origin; affine maps add the missing freedom — translation. Homogeneous coordinates, image warping, and hands-on 2D/3D checkerboard labs where you edit the matrix and watch the math execute.
+description: Linear maps fix the origin; affine maps add the missing freedom — translation. Homogeneous coordinates, image warping, 2D/3D checkerboard labs — then the first non-affine maps: folds that crease and overlap space, shown on a checkerboard and on two chained rings (the Hopf link) that no affine motion can separate.
 icon: &#128290;
 part: 1
 order: 6
