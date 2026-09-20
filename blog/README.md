@@ -71,6 +71,3 @@ The course is served from the same host as the
 This work was developed by **Norman Koch** (norman.koch@tu-dresden.de) as a Software
 Engineer at TU Dresden / ScaDS.AI. It reflects professional interest in AI but is largely
 the product of personal time, driven by a wish to make these topics accessible.
-
-- **License:** MIT
-- **Toolkit reference:** [arXiv:2501.06226](https://doi.org/10.48550/arXiv.2501.06226)
