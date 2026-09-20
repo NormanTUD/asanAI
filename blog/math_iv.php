@@ -103,6 +103,46 @@ Three more facts that will keep paying off:
 * **Everything is decided by three points.** Two points determine a line, three non-collinear points determine a triangle — and since affine maps preserve lines and ratios, **an affine map is completely determined by where it sends three non-collinear points**.
 </div>
 
+<div class="optional md" data-headline="History: where the word 'affine' comes from">
+The systematic idea that a geometry is defined by *what its transformations preserve* was pushed
+decisively by **Riemann** in his 1854 Habilitationsschrift, *Ueber den mathematischen Begriff des
+Raumes* \cite[Riemann, 1854]{riemann1854raum}. There he separated an **affine** structure
+(parallelism and ratios, with no measurement at all) from a **metric** one (distance); the modern
+statement is a ladder of nested families, each adding a little more structure:
+
+$$
+\text{affine} \;\subset\; \text{similarity} \;\subset\; \text{congruence (Euclidean)}
+$$
+
+* **Affine geometry** \cite{affine_geometry_wiki} measures *nothing* — no distances, no angles.
+  Its invariants are exactly what affine maps preserve: straight lines, parallelism, and the
+  *ratios* in which a point divides a line segment. That is precisely the "lines stay lines,
+  midpoints stay midpoints" characterisation above.
+* **Similarity** adds a scale (a fixed ratio of all lengths) and, with it, angles.
+* **Congruence / Euclidean** adds actual distance. Each rung is the symmetry group of the rung
+  below it.
+
+Once **Descartes** had made points into coordinate tuples \cite[Descartes, 1637]{descartesgeometrie},
+transformations became algebra; **Grassmann**'s *Ausdehnungslehre* (1844) then split a point into
+a free direction (a vector) plus a fixed origin — exactly the $\mathbf{x}\mapsto M\mathbf{x}
++\mathbf{t}$ structure. **Möbius** independently built the coordinate-free, ratio-based
+("barycentric") view of the same object \cite{mobiusband}. The modern definition — *a bijection
+preserving affine combinations* \cite{affine_transformation_wiki} — is the algebraic distillation
+of Riemann's bottom rung.
+</div>
+
+<div class="md">
+## Where the name comes from
+
+The word is Latin *affinis* — "attached to, connected with, akin to." That sense of *belonging together* is exactly what survives in the mathematics: an affine transformation is a map under which the straight-line structure of space stays intact.
+
+The term first enters mathematics in **Euler's** 1748 *Introductio in analysin infinitorum*, where he used "affine" in connection with the tangents to a curve — each tangent *attached* to the curve at a single point.\cite[Euler, 1748]{euler1748introductio}
+
+A century later, **Felix Klein's** survey of geometry credits the name "affine transformation" to **Möbius** and **Gauss**, who in the mid-1800s were separating out the properties of figures that survive even when lengths and angles do not.\cite[Klein, 1948]{klein1948geometry}
+
+So the label is not decoration. *Affine* means "staying in relation," and the maps named after it are precisely those that keep collinearity, parallelism, and the ratios along a line in relation — the invariants the labs below let you break and restore by hand.
+</div>
+
 <div class="md">
 ## The determinant: how much space is rescaled?
 
@@ -157,6 +197,82 @@ A = \begin{bmatrix} M & \mathbf{t} \\ \mathbf{0}^{\top} & 1 \end{bmatrix} \in \m
 $$
 
 **One deliberate crack in the wall.** The last row $[0, 0, \dots, 0, 1]$ is exactly what *keeps the map affine*. If you edit it — and the labs below let you — you leave the affine family and enter the **projective** family: maps that can make parallel lines meet at a vanishing point, i.e. *perspective*. Affine maps are the subfamily of projective maps where the last row is pinned to $[0, \dots, 0, 1]$. The software will warn you when you cross that line, but it will still render what you ask for.
+</div>
+
+<div class="optional md" data-headline="Beyond affine: the non-affine (projective) family">
+Pin the last homogeneous row to $[0,\dots,0,1]$ and you stay affine. **Unpin it**, and an
+$(n{+}1)\times(n{+}1)$ matrix $H$ acts by a *division*, which is exactly what makes it
+non-affine:
+
+$$
+\mathbf{x}' = H\mathbf{x} \;\;\leadsto\;\; \mathbf{x}'_i = \frac{(H\mathbf{x})_i}{(H\mathbf{x})_{n+1}}
+\qquad\text{(2D: } \mathbf{x}' = \tfrac{1}{x'_3}\,H\mathbf{x},\; H\in\mathbb{R}^{3\times3}\text{)}
+$$
+
+Dividing by a *coordinate* — instead of adding a constant $\mathbf{t}$ — is the new ingredient: it
+lets a line in one picture map to a line that only **meets the others at a vanishing point**
+(perspective). Such a map is a **projective transformation** \cite{projective_transformation_wiki};
+in 2D it is a **homography** \cite{homography_cv_wiki}.
+
+Count the freedom. An affine map in 2D has $2\cdot2$ (linear part) $+2$ (translation) $=6$
+parameters. A $3\times3$ homography has $9$ entries but is defined only up to a common scale, so
+**8 degrees of freedom** — the extra two are exactly the "what happens at infinity" freedom that
+affine maps lack. The affine family is the 6-parameter subfamily with the last row pinned:
+
+$$
+H = \begin{bmatrix} \ast & \ast & \ast \\ \ast & \ast & \ast \\ 0 & 0 & 1 \end{bmatrix}
+\qquad (\text{8 dof in general, } 6 \text{ when the last row is pinned})
+$$
+
+This is the same "last row" the 2D and 3D machines let you edit: cross it and the checkerboard
+stops filling the plane with parallel lines, and a vanishing point appears.
+</div>
+
+<div class="optional md" data-headline="A short history of the non-affine (projective) transformations">
+Projective ideas are older than the word. **Linear perspective** in Renaissance painting — how to
+make a flat canvas look like a room receding to a vanishing point — was worked out by Brunelleschi
+(c. 1415) and written down by **Alberti** in *De Pictura* (1435) \cite{albertidepictura}; the
+vanishing point is a projective object in disguise.
+
+The mathematics began in **1639**, when **Desargues** — a stonemason turned mathematician —
+published the *Brouillon projectif* \cite{desarguesbrouillon}, a short, dense, notoriously hard
+treatise giving **Desargues' theorem** (two triangles in perspective have their three
+corresponding-side intersections collinear) \cite{desargues_theorem_wiki} and the first statement
+of **projective duality** (points $\leftrightarrow$ lines). A year later **Pascal** gave the dual,
+**Pascal's theorem**: a hexagon inscribed in a conic has its three pairs of opposite sides meeting
+on a single line \cite{pascals_theorem_wiki}.
+
+As a *field* it was founded by **Poncelet** in *Traité des propriétés projectives des figures*
+(1822) \cite{poncelet1822traite}, who studied the properties a central projection preserves;
+**Grassmann** and **Möbius** supplied the coordinates (homogeneous and barycentric) that let you
+perform the projections with matrices; and **von Staudt** (1847) showed you can build all of
+projective geometry *synthetically*, with no measurement at all \cite{projective_geometry_wiki}.
+The thread runs through this whole book: affine (this chapter), projective (this block), and the
+Euclidean rung — three nested families sorted by what they refuse to let change.
+</div>
+
+<div class="optional md" data-headline="Another non-affine family: Möbius transformations">
+There is a second, unrelated, non-affine family: the **Möbius (fractional-linear)
+transformations** \cite{mobius_transformation_wiki}
+
+$$
+z \;\mapsto\; \frac{a z + b}{c z + d}, \qquad a d - b c \neq 0
+$$
+
+with four parameters $a,b,c,d$ up to an overall scale. Because it is a *ratio of linears* it is
+not affine, and it sends circles and lines to circles and lines (a line is just a circle through
+infinity). The three families sort cleanly by the single question *what is preserved*:
+
+* **Affine** (this chapter): keeps lines, parallelism, and ratios on a line; breaks angles and
+  lengths. 6 parameters in 2D.
+* **Projective** (block above): keeps lines and collinearity; breaks parallelism and angles.
+  8 parameters in 2D.
+* **Möbius / conformal**: keeps **angles**; breaks parallelism and even straightness (lines can
+  become circles).
+
+**Riemann** — who built the 1854 ladder in the first history block — spent much of his later life
+on exactly this family: conformal maps of the **Riemann sphere** and the Riemann surfaces that
+generalise them are, in essence, Möbius maps and their descendants \cite{riemann1854raum}.
 </div>
 
 <div class="md">

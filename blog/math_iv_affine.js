@@ -282,6 +282,29 @@
 	const lerp3 = function (a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; };
 	const rgbStr = function (c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; };
 
+	/* Plain-text term-by-term of one output coordinate: shows the (symbolic)
+	   coefficient times the input coordinate, so the reader sees the matrix
+	   actually being applied. `disp` holds the current cell strings. */
+	function termLineText(disp, A, r, stride, coords) {
+		const parts = [];
+		for (let k = 0; k < stride; k++) {
+			const coord = (k < stride - 1) ? coords[k] : 1;
+			const val = A[r * stride + k] * coord;
+			const raw = (disp == null) ? A[r * stride + k] : disp[r * stride + k];
+			const ds = String(raw == null ? '' : raw).replace(/\s+/g, '').replace(/^[+\-\u2212]/, '');
+			let body = (ds === '') ? fmtNum(Math.abs(val)) : ds;
+			if (k < stride - 1) body += '\u00B7' + fmtNum(Math.abs(coord));
+			parts.push({ neg: val < -1e-12, body: body });
+		}
+		let s = '';
+		for (let i = 0; i < parts.length; i++) {
+			const p = parts[i];
+			if (i === 0) s += (p.neg ? '\u2212' : '') + p.body;
+			else s += (p.neg ? ' \u2212 ' : ' + ') + p.body;
+		}
+		return s;
+	}
+
 	function showLabError(anchorId, err) {
 		console.error('[affine lab]', err);
 		const el = $(anchorId);
@@ -331,6 +354,14 @@
 		return {
 			set: function (m) {
 				for (let i = 0; i < inputs.length; i++) inputs[i].value = String(round4(m[i]));
+			},
+			setStrings: function (arr) {
+				for (let i = 0; i < inputs.length && i < arr.length; i++) inputs[i].value = arr[i];
+			},
+			values: function () {
+				const out = [];
+				for (let i = 0; i < inputs.length; i++) out.push(inputs[i].value);
+				return out;
 			}
 		};
 	}
@@ -348,23 +379,18 @@
 			// Note: In a real app, use a real math parser. For this lab, 
 			// we use a controlled eval-like pattern or Math object mapping.
 			const expr = clean
-				.replace(/sin\(/g, 'Math.sin(')
-				.replace(/cos\(/g, 'Math.cos(')
-				.replace(/tan\(/g, 'Math.tan(')
-				.replace(/sqrt\(/g, 'Math.sqrt(')
-				.replace(/PI/g, 'Math.PI')
-				.replace(/exp\(/g, 'Math.exp(')
-				.replace(/abs\(/g, 'Math.abs(');
-			
-			// Basic degree-to-radian conversion if user enters 'deg'
-			// This is a bit hacky for a CLI tool, but works for the requirement.
-			// We'll assume standard Math functions and if they want degrees,
-			// they can write 'cos(30 * PI / 180)' or we can pre-process.
-			// Let's try to handle 'deg' as a suffix.
-			
-			// Simple degree detection: if it's not a standard math function, 
-			// maybe it's a degree-based one.
-			let val = Function(`"use strict"; return (${expr})`)();
+				.replace(/\bpi\b/gi, 'Math.PI').replace(/\u03C0/g, 'Math.PI')
+				.replace(/\bsin\(/g, 'Math.sin(')
+				.replace(/\bcos\(/g, 'Math.cos(')
+				.replace(/\btan\(/g, 'Math.tan(')
+				.replace(/\bsqrt\(/g, 'Math.sqrt(')
+				.replace(/\bexp\(/g, 'Math.exp(')
+				.replace(/\babs\(/g, 'Math.abs(')
+				.replace(/(\d*\.?\d+)\u00B0/g, '($1*Math.PI/180)')
+				.replace(/(\d*\.?\d+)deg/gi, '($1*Math.PI/180)');
+
+			// Evaluate the sanitised expression; anything that throws → NaN.
+			let val = new Function('"use strict"; return (' + expr + ')')();
 			return val;
 		} catch (e) {
 			return NaN;
@@ -381,7 +407,7 @@
 			b.className = 'aff-btn';
 			b.textContent = pr.name;
 			b.addEventListener('click', function () {
-				try { onPick(pr.m()); } catch (e) { console.error('[affine lab] preset failed', e); }
+				try { onPick(pr); } catch (e) { console.error('[affine lab] preset failed', e); }
 			});
 			host.appendChild(b);
 		});
@@ -427,13 +453,14 @@
 
 	const PRESETS2 = [
 		{ name: 'Identity', m: function () { return [1, 0, 0, 0, 1, 0, 0, 0, 1]; } },
-		{ name: 'Rotate 30°', m: function () { return Affine.rot2(Math.PI / 6); } },
-		{ name: 'Rotate 90° @ center', m: function () { return [0, -1, 1, 1, 0, 0, 0, 0, 1]; } },
+		{ name: 'Rotate 30°', m: function () { return Affine.rot2(Math.PI / 6); }, disp: ['cos(30°)', '-sin(30°)', '0', 'sin(30°)', 'cos(30°)', '0', '0', '0', '1'] },
+		{ name: 'Rotate 90° @ center', m: function () { return [0, -1, 1, 1, 0, 0, 0, 0, 1]; }, disp: ['0', '-1', '1', '1', '0', '0', '0', '0', '1'] },
 		{ name: 'Scale ×2', m: function () { return [2, 0, 0, 0, 2, 0, 0, 0, 1]; } },
 		{ name: 'Scale ×1.5 @ center', m: function () { return [1.5, 0, -0.25, 0, 1.5, -0.25, 0, 0, 1]; } },
 		{ name: 'Shear', m: function () { return [1, 0.7, 0, 0, 1, 0, 0, 0, 1]; } },
 		{ name: 'Translate', m: function () { return [1, 0, 0.35, 0, 1, -0.25, 0, 0, 1]; } },
 		{ name: 'Mirror x', m: function () { return [-1, 0, 1, 0, 1, 0, 0, 0, 1]; } },
+		{ name: 'Projective (perspective)', m: function () { return [1, 0, 0, 0, 1, 0, 0.5, 0, 1]; } },
 		{ name: 'Random', m: function () {
 			const r = function () { return round4((Math.random() * 2 - 1)); };
 			return [r(), r(), r(), r(), r(), r(), 0, 0, 1];
@@ -649,25 +676,16 @@
 			const x = D2.track[0], y = D2.track[1];
 			const eq = $('aff2d-eq');
 			const mono = $('aff2d-eqmono');
-			const m = function (i) { return fmtNum(A[i]); };
-			const tex = "\\left[\\begin{matrix} x' \\\\ y' \\\\ w' \\end{matrix}\\right] = \\left[\\begin{matrix}" +
-				m(0) + ' & ' + m(1) + ' & ' + m(2) + '\\\\ ' +
-				m(3) + ' & ' + m(4) + ' & ' + m(5) + '\\\\ ' +
-				m(6) + ' & ' + m(7) + ' & ' + m(8) +
-				"\\end{matrix}\\right] \\left[\\begin{matrix} " + fmtNum(x) + ' \\\\ ' + fmtNum(y) + ' \\\\ 1 \\end{matrix}\\right]';
-			texInto(eq, tex, true);
+			const d = (mxEditor && mxEditor.values) ? mxEditor.values() : null;
+			const qr = Affine.apply3(A, [x, y, 1]);
+			const xpr = (Math.abs(qr[2]) > 1e-12) ? qr[0] / qr[2] : NaN;
+			const ypr = (Math.abs(qr[2]) > 1e-12) ? qr[1] / qr[2] : NaN;
+			texInto(eq, "p = (" + fmtNum(x) + ", " + fmtNum(y) + ") \\;\\mapsto\\; p' = (" + fmtNum(xpr) + ", " + fmtNum(ypr) + ")", true);
 			const q = Affine.apply3(A, [x, y, 1]);
 			const L = [];
-			const termsX = [A[0] * x, A[1] * y, A[2]];
-			const termsY = [A[3] * x, A[4] * y, A[5]];
-			const termsW = [A[6] * x, A[7] * y, A[8]];
-			const line = function (label, t, tot) {
-				L.push(label + " = " + fmtNum(t[0]) + ' + ' + (t[1] < 0 ? '\u2212 ' + fmtNum(Math.abs(t[1])) : fmtNum(t[1])) + ' + ' + (t[2] < 0 ? '\u2212 ' + fmtNum(Math.abs(t[2])) : fmtNum(t[2])));
-				L.push('    = ' + fmtNum(tot));
-			};
-			line("x'", termsX, q[0]);
-			line("y'", termsY, q[1]);
-			line("w'", termsW, q[2]);
+			L.push("x' = " + termLineText(d, A, 0, 3, [x, y]) + " = " + fmtNum(q[0]));
+			L.push("y' = " + termLineText(d, A, 1, 3, [x, y]) + " = " + fmtNum(q[1]));
+			L.push("w' = " + termLineText(d, A, 2, 3, [x, y]) + " = " + fmtNum(q[2]));
 			if (Math.abs(q[2] - 1) > 1e-9) {
 				L.push("");
 				L.push('w\u2032 \u2260 1  \u2192  this is a projective map: final point is (x\u2032/w\u2032, y\u2032/w\u2032) = (' + fmtNum(q[0] / q[2]) + ', ' + fmtNum(q[1] / q[2]) + ')');
@@ -794,9 +812,10 @@
 			D2.M[r * 3 + c] = v;
 			redraw2d();
 		});
-		buildPresetRow('aff2d-presets', PRESETS2, function (m) {
-			D2.M = m;
-			if (mxEditor) mxEditor.set(m);
+		if (mxEditor && PRESETS2[1] && PRESETS2[1].disp) mxEditor.setStrings(PRESETS2[1].disp);
+		buildPresetRow('aff2d-presets', PRESETS2, function (pr) {
+			D2.M = pr.m();
+			if (mxEditor) { if (pr.disp) mxEditor.setStrings(pr.disp); else mxEditor.set(D2.M); }
 			redraw2d();
 		});
 		const bilSel = $('aff2d-bilinear');
@@ -854,13 +873,14 @@
 
 	const PRESETS3 = [
 		{ name: 'Identity', m: function () { return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]; } },
-		{ name: 'Rotate Y 30°', m: function () { return Affine.rotY(Math.PI / 6); } },
-		{ name: 'Rotate X 20°', m: function () { return Affine.rotX(20 * Math.PI / 180); } },
+		{ name: 'Rotate Y 30°', m: function () { return Affine.rotY(Math.PI / 6); }, disp: ['cos(30°)', '0', 'sin(30°)', '0', '0', '1', '0', '0', '-sin(30°)', '0', 'cos(30°)', '0', '0', '0', '0', '1'] },
+		{ name: 'Rotate X 20°', m: function () { return Affine.rotX(20 * Math.PI / 180); }, disp: ['1', '0', '0', '0', '0', 'cos(20°)', '-sin(20°)', '0', '0', 'sin(20°)', 'cos(20°)', '0', '0', '0', '0', '1'] },
 		{ name: 'RotX 20° \u00B7 RotY 30°', m: function () { return Affine.mul4(Affine.rotX(20 * Math.PI / 180), Affine.rotY(Math.PI / 6)); } },
 		{ name: 'Scale (1.4, 1, 0.6)', m: function () { return [1.4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 1]; } },
 		{ name: 'Shear', m: function () { return [1, 0.5, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]; } },
 		{ name: 'Translate', m: function () { return [1, 0, 0, 0.15, 0, 1, 0, 0.35, 0, 0, 1, 0, 0, 0, 0, 1]; } },
 		{ name: 'Mirror x', m: function () { return [-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]; } },
+		{ name: 'Projective (perspective)', m: function () { return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.4, 0, 0, 1]; } },
 		{ name: 'Random', m: function () {
 			const r = function () { return round4(Math.random() * 2 - 1); };
 			return [r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), r(), 0, 0, 0, 1];
@@ -1047,24 +1067,18 @@
 			const p = D3.corner;
 			const eq = $('aff3d-eq');
 			const mono = $('aff3d-eqmono');
-			const m = function (i) { return fmtNum(A[i]); };
-			const rows = [0, 4, 8, 12];
-			let tex = '\\left[\\begin{matrix}';
-			for (let r = 0; r < 4; r++) {
-				tex += m(rows[r] + 0) + ' & ' + m(rows[r] + 1) + ' & ' + m(rows[r] + 2) + ' & ' + m(rows[r] + 3);
-				tex += (r < 3) ? ' \\\\ ' : '';
-			}
-			tex += "\\end{matrix}\\right] \\left[\\begin{matrix} " + p[0] + ' \\\\ ' + p[1] + ' \\\\ ' + p[2] + ' \\\\ 1 \\end{matrix}\\right]';
-			texInto(eq, tex, true);
+			const d = (mxEditor && mxEditor.values) ? mxEditor.values() : null;
+			const qr = Affine.apply4(A, [p[0], p[1], p[2], 1]);
+			const xpr = (Math.abs(qr[3]) > 1e-12) ? qr[0] / qr[3] : NaN;
+			const ypr = (Math.abs(qr[3]) > 1e-12) ? qr[1] / qr[3] : NaN;
+			const zpr = (Math.abs(qr[3]) > 1e-12) ? qr[2] / qr[3] : NaN;
+			texInto(eq, "p = (" + fmtNum(p[0]) + ", " + fmtNum(p[1]) + ", " + fmtNum(p[2]) + ") \\;\\mapsto\\; p' = (" + fmtNum(xpr) + ", " + fmtNum(ypr) + ", " + fmtNum(zpr) + ")", true);
 			const q = Affine.apply4(A, [p[0], p[1], p[2], 1]);
 			const L = [];
 			const names = ["x'", "y'", "z'", "w'"];
+			const cs = [p[0], p[1], p[2]];
 			for (let r = 0; r < 4; r++) {
-				const t = [A[rows[r]] * p[0], A[rows[r] + 1] * p[1], A[rows[r] + 2] * p[2], A[rows[r] + 3]];
-				L.push(names[r] + ' = ' + fmtNum(t[0]) + ' + ' + (t[1] < 0 ? '\u2212 ' + fmtNum(Math.abs(t[1])) : fmtNum(t[1])) +
-					' + ' + (t[2] < 0 ? '\u2212 ' + fmtNum(Math.abs(t[2])) : fmtNum(t[2])) +
-					' + ' + (t[3] < 0 ? '\u2212 ' + fmtNum(Math.abs(t[3])) : fmtNum(t[3])));
-				L.push('    = ' + fmtNum(q[r]));
+				L.push(names[r] + ' = ' + termLineText(d, A, r, 4, cs) + ' = ' + fmtNum(q[r]));
 			}
 			if (Math.abs(q[3] - 1) > 1e-9)
 				L.push('w\u2032 \u2260 1 \u2192 projective: final point = (x\u2032, y\u2032, z\u2032)/w\u2032');
@@ -1157,9 +1171,10 @@
 			upd3dEq();
 			upd3dStatus();
 		});
-		buildPresetRow('aff3d-presets', PRESETS3, function (m) {
-			D3.M = m;
-			if (mxEditor) mxEditor.set(m);
+		if (mxEditor && PRESETS3[1] && PRESETS3[1].disp) mxEditor.setStrings(PRESETS3[1].disp);
+		buildPresetRow('aff3d-presets', PRESETS3, function (pr) {
+			D3.M = pr.m();
+			if (mxEditor) { if (pr.disp) mxEditor.setStrings(pr.disp); else mxEditor.set(D3.M); }
 			upd3dEq();
 			upd3dStatus();
 		});

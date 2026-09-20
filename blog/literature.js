@@ -643,6 +643,26 @@ window.bibData = {
 		alternativetitle: "Hatcher, Algebraic Topology"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Math IV: Affine Transformations  (math_iv.php)
+	 *  Original sources for the history of the word "affine": Euler's
+	 *  1748 Introductio (the term's first use in mathematics) and Klein's
+	 *  survey, which credits Möbius and Gauss with "affine transformation."
+	 * ───────────────────────────────────────────────────────────────────── */
+	"euler1748introductio": {
+		title: "Introductio in analysin infinitorum (Vol. II, Book II, sect. XVIII, art. 442)",
+		author: "Leonhard Euler",
+		year: 1748,
+		url: "https://gallica.bnf.fr/ark:/12148/bpt6k33529",
+		alternativetitle: "Euler, Introductio in analysin infinitorum (1748)"
+	},
+	"klein1948geometry": {
+		title: "Elementary Mathematics from an Advanced Standpoint: Geometry",
+		author: "Felix Klein",
+		year: 1948,
+		url: "https://openlibrary.org/works/OL19665525W",
+		alternativetitle: "Klein, Elementary Mathematics from an Advanced Standpoint: Geometry (1939/1948)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Geometry III: A Working Algebraic Topology (geometry_iii.php)
 	 *  Original sources of algebraic topology: homology, homotopy,
 	 *  exact sequences, gluing theorems, spectral sequences, torsion,
@@ -1127,6 +1147,82 @@ window.bibData = {
 		year: 1858,
 		url: "https://en.wikipedia.org/wiki/August_Ferdinand_M%C3%B6bius",
 		alternativetitle: "Möbius Band (1858)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Basic Math IV — Affine Transformations (math_iv.php)
+	 *  History of the affine concept (Riemann 1854, Grassmann, Möbius) and
+	 *  the non-affine families: projective / homographies (Desargues, Pascal,
+	 *  Poncelet, von Staudt) and Möbius (conformal) transformations.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"riemann1854raum": {
+		title: "Ueber den mathematischen Begriff des Raumes (Habilitationsschrift)",
+		author: "Bernhard Riemann",
+		year: 1854,
+		url: "https://en.wikipedia.org/wiki/Riemannian_geometry",
+		alternativetitle: "Riemann, On the Mathematical Concept of Space (1854)"
+	},
+	"affine_geometry_wiki": {
+		title: "Affine geometry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Affine_geometry",
+		alternativetitle: "Affine geometry (Wikipedia)"
+	},
+	"affine_transformation_wiki": {
+		title: "Affine transformation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Affine_transformation",
+		alternativetitle: "Affine transformation (Wikipedia)"
+	},
+	"projective_geometry_wiki": {
+		title: "Projective geometry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Projective_geometry",
+		alternativetitle: "Projective geometry (Wikipedia)"
+	},
+	"projective_transformation_wiki": {
+		title: "Projective transformation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Projective_transformation",
+		alternativetitle: "Projective transformation (Wikipedia)"
+	},
+	"homography_cv_wiki": {
+		title: "Homography (computer vision)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Homography_(computer_vision)",
+		alternativetitle: "Homography (Wikipedia)"
+	},
+	"desargues_theorem_wiki": {
+		title: "Desargues' theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Desargues%27_theorem",
+		alternativetitle: "Desargues' theorem (Wikipedia)"
+	},
+	"pascals_theorem_wiki": {
+		title: "Pascal's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Pascal%27s_theorem",
+		alternativetitle: "Pascal's theorem (Wikipedia)"
+	},
+	"poncelet1822traite": {
+		title: "Traité des propriétés projectives des figures",
+		author: "Jean-Victor Poncelet",
+		year: 1822,
+		url: "https://en.wikipedia.org/wiki/Jean-Victor_Poncelet",
+		alternativetitle: "Poncelet, Treatise on the projective properties of figures (1822)"
+	},
+	"mobius_transformation_wiki": {
+		title: "Möbius transformation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/M%C3%B6bius_transformation",
+		alternativetitle: "Möbius transformation (Wikipedia)"
 	},
 	"listingtopologie": {
 		title: "Vorstudien zur Topologie",
