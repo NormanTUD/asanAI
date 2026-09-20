@@ -386,8 +386,8 @@
 				reason = 'outside your selected interests';
 			} else if (hits.length < interests.length) {
 				state = 'partial';
-				reason = 'partial match — ' + interests.filter(function (id) { return topicsMap[id] === false; })
-					.map(labelFor).join(', ') + ' ' + (hits.length === 0 ? '' : '') + 'switched off';
+				const off = interests.filter(function (id) { return topicsMap[id] === false; }).map(labelFor);
+				reason = 'partial match — ' + off.join(', ') + ' switched off';
 			}
 		}
 
