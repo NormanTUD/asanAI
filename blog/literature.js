@@ -6176,6 +6176,71 @@ window.bibData = {
 		alternativetitle: "Model Collapse"
 	},
 
+	// Why Code Is Disproportionately Powerful (training_data.php)
+	"chen2021codex": {
+		url: "https://arxiv.org/abs/2107.03374",
+		title: "Evaluating Large Language Models Trained on Code",
+		author: "Mark Chen, Jerry Tworek, Heewoo Jun, et al.",
+		year: 2021,
+		alternativetitle: "Codex"
+	},
+	"li2022alphacode": {
+		url: "https://arxiv.org/abs/2203.07814",
+		title: "Competition-Level Code Generation with AlphaCode",
+		author: "Yujia Li, David Choi, Junyoung Chung, et al.",
+		year: 2022,
+		alternativetitle: "AlphaCode"
+	},
+	"ma2023codereasoning": {
+		url: "https://arxiv.org/abs/2309.16298",
+		title: "At Which Training Stage Does Code Data Help LLMs Reasoning?",
+		author: "Yingwei Ma, Yue Liu, Yue Yu, et al.",
+		year: 2023,
+		alternativetitle: "Code Data and Reasoning"
+	},
+	"roziere2023codellama": {
+		url: "https://arxiv.org/abs/2308.12950",
+		title: "Code Llama: Open Foundation Models for Code",
+		author: "Baptiste Rozière, Jonas Gehring, Fabian Gloeckle, et al.",
+		year: 2023,
+		alternativetitle: "Code Llama"
+	},
+	"gao2022pal": {
+		url: "https://arxiv.org/abs/2211.10435",
+		title: "PAL: Program-aided Language Models",
+		author: "Luyu Gao, Aman Madaan, Shuyan Zhou, et al.",
+		year: 2022,
+		alternativetitle: "PAL"
+	},
+	"wang2024codeact": {
+		url: "https://arxiv.org/abs/2402.01030",
+		title: "Executable Code Actions Elicit Better LLM Agents",
+		author: "Xingyao Wang, Yangyi Chen, Lifan Yuan, et al.",
+		year: 2024,
+		alternativetitle: "CodeAct"
+	},
+	"guo2024deepseekcoder": {
+		url: "https://arxiv.org/abs/2401.14196",
+		title: "DeepSeek-Coder: When the Large Language Model Meets Programming — The Rise of Code Intelligence",
+		author: "Daya Guo, Qihao Zhu, Dejian Yang, et al.",
+		year: 2024,
+		alternativetitle: "DeepSeek-Coder"
+	},
+	"jimenez2024swebench": {
+		url: "https://arxiv.org/abs/2310.06770",
+		title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+		author: "Carlos E. Jimenez, John Yang, Alexander Wettig, et al.",
+		year: 2024,
+		alternativetitle: "SWE-bench"
+	},
+	"waheed2025codeinduced": {
+		url: "https://arxiv.org/abs/2509.21499",
+		title: "On Code-Induced Reasoning in LLMs",
+		author: "Abdul Waheed, Zhen Wu, Carolyn Rosé, Daphne Ippolito",
+		year: 2025,
+		alternativetitle: "Code-Induced Reasoning"
+	},
+
 	// Training Infrastructure
 	"shoeybi2019megatron": {
 		url: "https://arxiv.org/abs/1909.08053",

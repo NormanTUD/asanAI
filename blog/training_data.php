@@ -146,6 +146,32 @@ How much web vs. code vs. math? This is largely **undocumented and proprietary**
 </div>
 
 <div class="md">
+## Why Code Is Disproportionately Powerful
+
+Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability. Three data-level properties explain most of it.
+
+### Verifiable ground truth at web scale
+
+Prose makes claims; code makes predictions. Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle. GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** \cite[Chen et al., 2021]{chen2021codex} is literally the training pattern itself: docstring → program. Verifiability compounds: \cite[Li et al., 2022]{li2022alphacode} reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.
+
+### Dense, and up-weighted by tokenization
+
+Code is telegraphic: little stylistic redundancy, high signal per byte. BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share. And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.
+
+### Explicit step-by-step reasoning in the raw
+
+A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis. Code is the densest source of (problem → algorithm → implementation) triples on the web. Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning \cite[Ma et al., 2023]{ma2023codereasoning}. What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived \cite[Waheed et al., 2025]{waheed2025codeinduced}.
+
+### Why this becomes everything else
+
+Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K \cite[Gao et al., 2022]{gao2022pal}. Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
+
+The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% \cite[Chen et al., 2021]{chen2021codex}; Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks \cite[Rozière et al., 2023]{roziere2023codellama}; DeepSeek-Coder trained 2T project-level tokens from scratch \cite[Guo et al., 2024]{guo2024deepseekcoder}.
+
+The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part. The sharpest illustration is **SWE-bench** \cite[Jimenez et al., 2024]{jimenez2024swebench}, 2,294 real GitHub issues: the best model of 2023 resolved 1.96%. Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.
+</div>
+
+<div class="md">
 ## Synthetic Data
 
 With natural data exhaust, frontier labs increasingly generate **synthetic training data**:
