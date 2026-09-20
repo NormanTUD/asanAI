@@ -14036,5 +14036,12 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/AI_winter",
 		alternativetitle: "AI winters (the hype cycle)"
+	},
+	"ai_music_wiki": {
+		title: "Artificial intelligence in music",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Artificial_intelligence_in_music",
+		alternativetitle: "AI music, incl. the 2023 'Heart on My Sleeve' voice clone"
 	}
 };

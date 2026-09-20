@@ -216,6 +216,7 @@ function load_base_js () {
 	js("init");
 	js("cluster");
 	js("polish");
+	js("layout_guardrail");
 	js("typography_fix");
 	js("helper");
 	js("master_vis");
