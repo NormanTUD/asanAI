@@ -33,7 +33,11 @@ Each lesson is one `blog/<slug>.php` file. Its shape is a contract, not a style 
   *automatically* by scanning these blocks (`parse_course_metadata()` in `functions.php`).
 - **Body** is Markdown inside one or more `<div class="md"> … </div>` blocks, rendered
   client-side (`marked.js` → `renderMarkdown()`). Raw HTML between `<div class="md">`
-  blocks hosts interactive widgets.
+  blocks hosts interactive widgets. **Raw HTML captions work too:** `figure figcaption`
+  and `table > caption` elements are now swept by the renderer (`processFigcapsMarkdown`
+  over `#contents`), so `*emphasis*` / `[links]` inside captions render, and `bibtexify()`
+  processes `\cite`/`\footcite` macros there as well — captions are not a citation-free
+  zone.
 - A lesson optionally has a matching `blog/<slug>.js`. If it exists and defines
   `load…Module()`, it is loaded and added to a module queue. **If it does not exist, the
   lesson still renders** — static lessons are fine and need no JS.
@@ -55,6 +59,11 @@ Each lesson is one `blog/<slug>.php` file. Its shape is a contract, not a style 
   stable, authoritative URLs (publisher, author's page, Wikipedia, arXiv, PMC, SEP,
   Wayback Machine). Keep keys unique (duplicate keys fail the JS validator).
 - Quotes must be genuine and verifiable. Paraphrase when you cannot verify exact wording.
+- **Image/figure credits in captions should be cited with `\cite[Credit text]{key}`** —
+  not inline links to the source article. The only exception is file *license*
+  attribution (e.g. a Wikimedia Commons page for a CC BY-SA image), which must stay a
+  hyperlink because the license requires one. In both cases the attribution must name
+  the copyright holder and the license.
 
 ### Images
 
