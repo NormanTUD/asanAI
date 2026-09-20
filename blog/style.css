@@ -1692,6 +1692,39 @@ html.theme-transition *::after {
    sidenotes. The sidenote rail lives in the viewport margin instead.
    See the #sidenotes-rail rule below for the matching layout.       */
 
+/* ── Width discipline: nothing in the flow may push the 80ch
+   reading column wider ─────────────────────────────────────
+   layout_guardrail.js flags any in-flow element wider than
+   #contents. Two generic causes, neutralised here for the whole
+   column at once instead of per component:
+
+   1. Unclamped atomic content — a long <pre> line, a wide
+      <table>, an oversized <img>/<canvas>/<video> — would extend
+      the box around it. Every such element is clamped to the
+      column; anything that overflows inside it scrolls or
+      compresses instead (pre already scrolls via overflow-x).
+
+   2. Flex items default to min-width:auto, so an unbreakable
+      child (e.g. a long code line inside a tab panel) blows the
+      item out past the column even when the item itself is
+      width:100%. Flex children that host block content get
+      min-width:0 so they shrink to the column and the inner
+      scroller does the work. */
+#contents img,
+#contents svg,
+#contents canvas,
+#contents video,
+#contents iframe,
+#contents object,
+#contents embed,
+#contents pre,
+#contents table {
+	max-width: 100%;
+}
+#contents .gem-tab-container > * {
+	min-width: 0;
+}
+
 /* ── Prose vs. chrome ───────────────────────────────────────
    #contents inherits the reading serif; everything interactive
    or machine-looking snaps back to the UI sans / mono stacks.
@@ -2347,6 +2380,8 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 .gem-tab-panel {
 	order: 2;
 	width: 100%; /* Makes the panel take the full width below the tabs */
+	min-width: 0; /* flex item: long <pre> lines must scroll inside, not blow the panel out of the reading column */
+	max-width: 100%;
 	display: none;
 	padding: 20px;
 	border: 1px solid #ddd;
