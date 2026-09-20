@@ -32,7 +32,7 @@ The boundary is not perfectly clean. A learning-rate *schedule* is a function yo
 
 ## Why a Hyperparameter Is Not a Constant
 
-A constant of a model (say, the value of $e$ in a softmax) changes neither the model nor its training. A hyperparameter does both:
+A constant of a model (say, the base $e$ of the exponential in a softmax) changes neither the model nor its training. A hyperparameter does both:
 
 * **Architecture hyperparameters change the model itself.** $d_{\text{model}} = 768$ and $d_{\text{model}} = 128$ are not two settings of the same model; they are two different function classes with different weight-matrix shapes. Choosing $d_{\text{model}}$ is the choice of *which* set of functions the optimizer may search over.
 * **Optimization hyperparameters change the process, not just its speed.** The learning rate does not merely pace the descent: gradient descent with a different step size follows a different trajectory and can settle in a different minimum. Two runs that differ only in learning rate are different experiments, not one experiment at two speeds.
