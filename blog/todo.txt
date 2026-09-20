@@ -41,3 +41,5 @@ https://seeing-theory.brown.edu/basic-probability/index.html
 https://worrydream.com/
 
 https://kjablonka.com/blog/posts/manifold/geometry_blog.html#the-manifold-hypothesis
+
+https://cs.stanford.edu/people/karpathy/convnetjs//demo/classify2d.html
