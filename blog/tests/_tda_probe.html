@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>tda probe pending</title></head>
+<body>
+<iframe id="pg" src="../transformer" style="width:900px;height:600px;border:0"></iframe>
+<script>
+function finish(msg) { document.title = 'TDA_PROBE ' + msg; }
+function phaseStats(w) {
+	var el = w.document.getElementById('tda-live-phase');
+	if (!el) return 'nophase';
+	return el.innerHTML.length + ';svg=' + (el.querySelector('svg') ? 1 : 0) + ';text=' + (el.textContent || '').length;
+}
+var log = [];
+var step = 0, attempts = 0;
+function poll() {
+	var w = null;
+	try { w = document.getElementById('pg').contentWindow; } catch (e) { w = null; }
+	if (step === 0) {
+		var ok = false;
+		if (w && w.__layoutGuardrailCheck) {
+			try { var r = w.__layoutGuardrailCheck(); ok = r && r.ready === true; } catch (e2) {}
+		}
+		if (!ok) { if (++attempts > 200) { finish('TIMEOUT1'); return; } setTimeout(poll, 400); return; }
+		var det = w.document.getElementById('tda-live-details');
+		if (!det) { finish('NODETAILS'); return; }
+		log.push('collapsed=' + (det.open ? 1 : 0), 'before=' + phaseStats(w));
+		det.getElementsByTagName('summary')[0].click();
+		step = 1; attempts = 0;
+		setTimeout(poll, 500);
+		return;
+	}
+	if (step === 1) {
+		var det = w.document.getElementById('tda-live-details');
+		if (!det.open) {
+			if (++attempts > 10) { finish('OPENFAIL ' + log.join('|')); return; }
+			if (attempts === 3) { det.open = true; det.dispatchEvent(new Event('toggle')); }
+			setTimeout(poll, 400); return;
+		}
+		log.push('open=1');
+		det.scrollIntoView({ block: 'center' });
+		step = 2; attempts = 0;
+		setTimeout(poll, 600);
+		return;
+	}
+	if (step === 2) {
+		var hasPlot = phaseStats(w).indexOf(';svg=1') >= 0;
+		if (!hasPlot) { if (++attempts > 50) { finish('NORENDER ' + log.join('|') + '|after=' + phaseStats(w)); return; } setTimeout(poll, 500); return; }
+		log.push('after=' + phaseStats(w));
+		finish(log.join('|'));
+		return;
+	}
+}
+document.getElementById('pg').addEventListener('load', function () { setTimeout(poll, 500); });
+</script>
+</body></html>

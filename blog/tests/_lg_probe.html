@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<script src="../layout_guardrail.js"></script>
+</head><body>
+<div id="contents" style="width:600px;position:relative"><div id="w800" style="width:800px;height:40px">x</div></div>
+<div id="out"></div>
+<script>
+function log(m) { document.getElementById('out').textContent += m + ' | '; }
+window.addEventListener('load', function () {
+  setTimeout(function () {
+    var el = document.getElementById('w800');
+    var EXEMPT = '.sideimage, .sidenote, .sidenote-fallback, #sideimages-rail, #sidenotes-rail, .optional, .cl-block, .lg-scroll, .lg-widescroll';
+    log('w=' + el.getBoundingClientRect().width);
+    log('matches=' + el.matches(EXEMPT) + ',closest=' + (el.closest(EXEMPT) ? el.closest(EXEMPT).className : null));
+    log('pos=' + getComputedStyle(el).position);
+    log('flagged=' + el.classList.contains('lg-overflow-flag'));
+    log('ls=' + JSON.stringify(localStorage.getItem('lg-excluded-v1')));
+    try {
+      var r = window.__layoutGuardrailCheck();
+      log('direct=' + JSON.stringify(r && { ok: r.ok, allowed: r.allowedPx, off: r.offenders }));
+    } catch (e2) { log('directERR:' + e2.message); }
+  }, 400);
+});
+</script>
+</body></html>
