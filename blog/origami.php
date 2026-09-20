@@ -460,7 +460,10 @@ To be clear about what this framework covers and does not:
   The other layer types do not share its shape, and the picture need not reach them: a
   **convolutional** layer is a *local, weight-shared* affine map plus a nonlinearity (not a
   single pointwise-ReLU hyperplane across the whole feature), an **attention** layer is built
-  from $QK^\top V$, and a **recurrent** layer reuses its weights across time. Keup & Helias
+  from $QK^\top V$, and a **recurrent** layer reuses its weights across time. The 2025
+  space-folding measure extends straightforwardly to residual and normalization layers but is
+  **not directly applicable to attention layers** in its current form
+  \cite{lewandowski2025spacefolds}. Keup & Helias
   are careful to flag convolutional networks only as a *possible application* of the picture
   \cite{keup2022origami}, not as a result. (A natural first step, if one did extend it: treat
   each conv filter patch as a tiny fully-connected net, where folding is only possible if
