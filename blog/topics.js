@@ -76,6 +76,46 @@
 		{ id: 'phd',      label: 'PhD',       hint: 'PhD / research level' }
 	];
 
+	/* ── 1b. Classic reader types (personas) ───────────────────
+	   The profession-based profiles above assume you relate to
+	   *your job*. But most readers come here out of *interest*,
+	   and the interests people actually self-identify with are
+	   the classic ones: the mathematician, the builder, the
+	   historian, the philosopher — and the polymath who wants
+	   everything (the classic "Renaissance man"). Each persona
+	   enables a curated topic set in one click; nothing is
+	   persisted beyond the topic map itself, so fine-tuning and
+	   switching types stay free-form. */
+	const PERSONAS = [
+		{ id: 'mathematician', label: 'Mathematician', icon: '∞',
+		  hint: 'The Gauss type: give me the math — skip the history.',
+		  topics: [ 'math-i', 'math-ii', 'math-iii', 'geometry', 'statistics-i', 'statistics-ii', 'reasoning' ] },
+		{ id: 'builder', label: 'Builder', icon: '⚙️',
+		  hint: 'The Mort type: show me how it is actually built.',
+		  topics: [ 'programming', 'architecture', 'training', 'data', 'hardware', 'inference', 'agents', 'vision', 'audio', 'multimodal', 'math-i', 'statistics-i' ] },
+		{ id: 'scientist', label: 'Scientist', icon: '🔬',
+		  hint: 'The Curie type: what do we actually know, and how do we know it?',
+		  topics: [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'reasoning', 'frontier', 'interpretability' ] },
+		{ id: 'historian', label: 'Historian', icon: '🕰️',
+		  hint: 'The Herodotus type: where did all of this come from?',
+		  topics: [ 'history', 'language', 'society', 'philosophy', 'ethics', 'law' ] },
+		{ id: 'philosopher', label: 'Philosopher', icon: '🦉',
+		  hint: 'The Socrates type: what does any of this mean?',
+		  topics: [ 'philosophy', 'ethics', 'society', 'law', 'language', 'history', 'reasoning' ] },
+		{ id: 'wordsmith', label: 'Wordsmith', icon: '✒️',
+		  hint: 'The Chomsky type: language is the real magic trick.',
+		  topics: [ 'language', 'audio', 'vision', 'multimodal', 'history' ] },
+		{ id: 'creator', label: 'Creator', icon: '🎨',
+		  hint: 'The Elvis type: sound, images, feeling — what can I make?',
+		  topics: [ 'vision', 'audio', 'multimodal', 'agents', 'programming', 'architecture' ] },
+		{ id: 'conscience', label: 'Conscience', icon: '🧭',
+		  hint: 'The watchdog type: what should we do about all of this?',
+		  topics: [ 'ethics', 'safety', 'society', 'law', 'training', 'data' ] },
+		{ id: 'polymath', label: 'Polymath', icon: '✨',
+		  hint: 'The Da Vinci type: everything. All of it. No skips.',
+		  topics: null }
+	];
+
 	/* 4 × 4 = 16 audience presets. Each cell lists the topics that
 	   should be ON; everything else is hidden. The matrix is biased
 	   toward the practical reading needs of each role at each depth:
@@ -381,6 +421,19 @@
 		});
 	}
 
+	/** load a classic-type persona's curated topic set. The profile /
+	    level selection is left untouched (personas are an interest
+	    shortcut, not an audience axis), and the active persona is not
+	    persisted — same one-click, no-memory semantics as the quick
+	    presets below the picker. */
+	function applyPersona(id) {
+		const p = (PERSONAS || []).find(function (x) { return x.id === id; });
+		if (!p) return;
+		if (p.topics) applyPreset(p.topics);
+		else setAll(true);
+		flashHint('Loaded the ' + p.label + ' · fine-tune the topics below');
+	}
+
 	/** ensure map contains an entry for every known topic */
 	function normalize(map) {
 		const out = {};
@@ -469,6 +522,18 @@
 					'</div>',
 					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
 				'</div>',
+				'<div class="topics-personas" role="group" aria-label="Classic reader types">',
+					'<span class="topics-personas-label">or, which classic type are you?</span>',
+					'<div class="topics-persona-row">' +
+						PERSONAS.map(function (p) {
+							return '<button type="button" class="topics-persona-btn' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
+								'" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' +
+								'<span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' +
+								escAttr(p.label) +
+							'</button>';
+						}).join('') +
+					'</div>',
+				'</div>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
 					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
@@ -531,6 +596,11 @@
 				const nextLevel = cur.level === level ? null : level;
 				applyAudiencePartial(cur.profile, nextLevel);
 				renderAudienceSelection();
+			});
+		});
+		overlay.querySelectorAll('[data-persona]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				applyPersona(b.getAttribute('data-persona'));
 			});
 		});
 		const clearBtn = overlay.querySelector('[data-audience-clear]');
@@ -1026,6 +1096,7 @@
 		PRESETS: PRESETS,
 		PROFILES: PROFILES,
 		LEVELS: LEVELS,
+		PERSONAS: PERSONAS,
 		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
@@ -1038,6 +1109,7 @@
 		applyPreset: applyPreset,
 		applyAudience: applyAudience,
 		applyAudiencePartial: applyAudiencePartial,
+		applyPersona: applyPersona,
 		setAudienceSelection: setAudienceSelection,
 		undo: undo,
 		redo: redo,
