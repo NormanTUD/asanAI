@@ -217,8 +217,8 @@ html.dark {
 	/* Body copy sits a notch below pure #e2e8f0: long reading passages
 	   feel calmer while contrast on #0f172a stays ≈ 11:1. Headings and
 	   chrome stay brighter via --mn-heading / explicit rules. */
-	background-color: #02050c;
-	background-image: linear-gradient(to bottom, #0b1e47, #02050c);
+	background-color: #05070f;
+	background-image: linear-gradient(to bottom, #080c17, #05070f);
 	background-attachment: fixed;
 	color: #cbd5e1;
 	color-scheme: dark;
