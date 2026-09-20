@@ -11,67 +11,203 @@ topics: math-i, math-ii, architecture, training
 -->
 
 <div class="md">
-## From Linear Units to Deep Architectures
+## From a Single Neuron to a Deep Network
 
-As we saw in the discussion on the **Minimal Neuron**, a single unit performs a linear transformation followed by an activation. However, the true power of Modern AI, what we call **Deep Learning** (first named as such by \citeauthor{deeplearningfirstuse} in \citeyear{deeplearningfirstuse}, though in a slightly different context, while in the modern context, it was first used by \citeauthor{aizenberg2000}; it first got widespread adoption after \citeauthor{hinton2006} used the term), emerges when we *stack* these neurons into multiple successive layers.
+In the **Minimal Neuron** section, we saw that one neuron does something very simple: it multiplies its input by a weight, adds a bias, and then bends the result with an activation function. That's it. A single neuron can draw *one* straight line through data, and nothing more.
 
-### The Hidden Layer
-In a simple model, we go directly from input to output. In a Deep Network, we introduce **Hidden Layers**. These are intermediate steps where the data is transformed into *abstract representations*. Instead of just a single weight $a$, we now use a **Weight Tensor** $W$ to handle multiple signals simultaneously.
+**Deep Learning** — a term first used in a different context by \citeauthor{deeplearningfirstuse} (\citeyear{deeplearningfirstuse}), reintroduced for neural networks by \citeauthor{aizenberg2000}, and popularized after \citeauthor{hinton2006} — is what happens when we stop using one neuron and start **stacking many of them in layers**, feeding the output of one layer as the input to the next.
 
-If the first layer is $L_1$, its output (the hidden state $\mathbf{h}$) is calculated as:
+### One Layer at a Time
 
-$$\mathbf{h} = \sigma(W_n \mathbf{x} + \mathbf{b}_n)$$
+A single layer takes a vector of inputs $\mathbf{x}$ and produces a vector of outputs $\mathbf{h}$ (called a *hidden state*, because it sits between the input and the final answer):
 
-Where $\sigma$ is the Activation Function, $W_n$ is a tensor with the weights from layer $n$ and $b_n$ is a vector with the biases of layer $n$.
+$$\mathbf{h} = \sigma\big(W\,\mathbf{x} + \mathbf{b}\big)$$
 
-### Stacking and Composition
-“Deep” simply means that the output of one layer becomes the input for the next. Mathematically, this is known as **Function Composition**. To get to the final prediction $\hat{y}$ in a two-layer network, we pass the data through a *chain of operations*:
+Reading this from the inside out:
+- $W$ is a **matrix of weights**. Each row is like one neuron's weights, and stacking many neurons side by side gives us a matrix instead of a single number. Multiplying by $W$ mixes the inputs together in many different learned combinations at once.
+- $\mathbf{b}$ is a **bias vector**, one offset per neuron.
+- $\sigma$ is the **activation function** (the "bend"), applied to each entry.
 
-$$\text{Result} = \sigma_2(W_2 (\sigma_1(W_1 \mathbf{x} + \mathbf{b}_1)) + \mathbf{b}_2)$$
+That is one layer. Nothing exotic — just a matrix multiplication, an addition, and a bend.
 
-Each layer $L_n$ has its own set of weights $W_n$ and biases $\mathbf{b}_n$. This hierarchy allows the network to learn a “ladder” of features: the first layer might detect *simple lines*, the second detects *shapes*, and the third detects *complex objects* like faces or cars.
+### Stacking Layers = Function Composition
 
-The operation can be split as well. The following equations are equal to the one equation, but spread out more:
+"Deep" simply means: the output of one layer becomes the input of the next. In math, this is called **function composition**. For a two-layer network:
 
-**Layer 1 (Hidden Layer)**:
-$$h = \sigma\left({W_1 \mathbf{x} + \mathbf{b}_1}\right)$$
+$$\hat{y} \;=\; \underbrace{\sigma_2\big(W_2\,\mathbf{h} + \mathbf{b}_2\big)}_{\text{layer 2}} \quad\text{where}\quad \underbrace{\mathbf{h} = \sigma_1\big(W_1\,\mathbf{x} + \mathbf{b}_1\big)}_{\text{layer 1}}$$
 
-**Layer 2 (Output Layer)**:
-$$\text{Result} = \sigma\left(W_2 \mathbf{h} + \mathbf{b}_2\right)$$
+Each layer has its own weights $W_n$ and biases $\mathbf{b}_n$. This stacking is what lets the network build a **ladder of features**: layer 1 might pick up simple things (edges, basic patterns), layer 2 combines those into shapes, and deeper layers combine those into full concepts (a face, a word, a chess position).
 
-Or, as a commuting diagram:
-
-<center>
-<?php
-	include("layer_commuting_diagram.html");
-?>
-</center>
 </div>
 
 <div class="optional md" data-headline="The Universal Approximation Theorem">
-The **Universal Approximation Theorem** is not a single statement but a family of results (notably \citeauthor{cybenko1989} in \citeyear{cybenko1989} and \citeauthor{hornik1989universal} in \citeyear{hornik1989universal}, with a related analysis by \citeauthor{hornik} in \citeyear{hornik}). Their common core: a feed-forward network with a single hidden layer can approximate **any continuous function on a compact domain** arbitrarily well, provided there are enough hidden units and the activation function satisfies the version's hypotheses. It is an *existence* result about representational capacity: it guarantees that a suitable network exists, not that training will find it. A network with $n$ hidden units implements functions of the form:
 
-$$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
+There is a beautiful mathematical guarantee behind all of this, called the **Universal Approximation Theorem**. It's actually a *family* of related results — notably \citeauthor{cybenko1989} (\citeyear{cybenko1989}) and \citeauthor{hornik1989universal} (\citeyear{hornik1989universal}) — and they all say roughly the same thing:
 
-The variables are defined as:
-* $x \in \mathbb{R}^k$: The input vector, drawn from a compact domain.
-* $\psi$: The activation function. The required conditions vary by version and genuinely matter: Cybenko's original proof requires a continuous **sigmoidal** activation, Hornik's allows **bounded and non-constant** activations, while unbounded activations such as ReLU need yet another result (e.g., a “non-polynomial” condition). There is no single magic condition under which every activation function works.
-* $a_j$: Weight vectors for the input-to-hidden connections ($a_j^T$ is the transpose for the dot product).
-* $\beta_j$: Coefficients (weights) for the linear output layer.
-* $\theta_j$: Thresholds or biases for each hidden unit.
+> A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.
 
-Because of this, calling networks “universal learning machines” overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning*, neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
+Formally, such a network computes:
 
-The theorem is still foundational: it shifts the focus of neural network efficacy away from any single activation function to the capacity of the architecture itself, showing that even simple models can in principle represent incredibly complex patterns.
+$$h(x) \;=\; \sum_{j=1}^{n} \beta_j\, \psi\!\big(a_j^{\top} x - \theta_j\big)$$
+
+which is just: take $n$ neurons, each one bends the input its own way ($\psi$ with weights $a_j$ and threshold $\theta_j$), then add up their outputs weighted by $\beta_j$. If $n$ is large enough, this sum can match the shape of *any* well-behaved function.
+
+**Two important caveats**, because this theorem is often oversold:
+1. It's an **existence** proof, not a **learning** proof. It says the right weights *exist*, not that gradient descent will find them.
+2. "Enough neurons" can mean *astronomically* many. In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.
+
+So the theorem is foundational, but it doesn't explain *why* deep networks work so well. For that, we need to look at what depth actually buys us.
+
+</div>
+
+<div class="md">
+
+## Why Deep Learning Works (And Why It Works *So* Well)
+
+Here's the honest, mechanical answer to why "a big pile of matrix multiplications" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: **depth**, **nonlinearity**, **backpropagation**, and the **optimizer's hidden preferences**.
+
+### The One-Paragraph Answer
+
+A deep network is a **composition of many simple functions**. Each function (a "layer") is a matrix multiplication followed by a small bend. On its own, one layer is powerless — it can only mix, rotate, and scale. But **chained together, simple steps stack into arbitrarily complex ones**. Then **training** (forward pass → measure error → **backprop** → **optimizer step**) tunes the weights until the whole composition implements the right input-to-output map. The "storage" of knowledge is nothing more than the final tuned weights. Depth gives us **expressivity**, the nonlinearity prevents **collapse**, backprop provides an **efficient learning signal**, and the optimizer has a built-in **bias toward simple, generalizing solutions** rather than memorization.
+
+---
+
+### Depth = Composition, and Why the "Bend" Is Everything
+
+One layer looks like:
+
+$$h_{\ell} \;=\; \underbrace{\sigma}_{\text{the bend}}\Big(\underbrace{W_{\ell}}_{\text{learned mixing}}\, h_{\ell-1} \;+\; \underbrace{b_{\ell}}_{\text{offset}}\Big)$$
+
+A deep network with $L$ layers just feeds each layer's output into the next:
+
+$$\hat{y} \;=\; f_L\!\big(f_{L-1}(\cdots f_1(x)\cdots)\big)$$
+
+**Here's the crucial part.** If you removed the bend $\sigma$, the whole stack collapses:
+
+$$W_L\,W_{L-1}\cdots W_1\,x \;=\; \underbrace{(W_L W_{L-1}\cdots W_1)}_{\text{just one matrix}}\, x$$
+
+A stack of pure linear layers is **mathematically identical to one linear layer**. No matter how deep, it can only draw straight lines. It cannot compute $x^2$, it cannot solve XOR, it cannot tell a cat from a dog.
+
+The nonlinearity **prevents that collapse**. Each $\sigma$ re-bends the space, so the next matrix multiplies something that has *already been transformed*. Depth alone isn't the power — **depth with a bend in between** is.
+
+---
+
+### Why Depth Beats Width: Reuse
+
+The mechanical reason depth is so effective is **reuse**. A sub-result computed by an early layer is reused by everything downstream. Depth turns "compute, throw away, recompute" into "compute once, reuse everywhere."
+
+**A concrete example.** Suppose we want to check "is a point inside an $n$-dimensional unit box?" — meaning each coordinate must be in $(0,1)$.
+
+- A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.
+- A **deep** network with $n$ layers of just a few neurons each does it in $O(n)$ total neurons. Each layer checks one coordinate and multiplies by the running result from the previous layer.
+
+Same function. Linear vs. exponential. This isn't a fluke: \citeauthor{telgarsky2016wars} proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\Omega(n)}$ neurons to match. And \citeauthor{montufar2014regions} showed that the number of distinct "linear regions" a ReLU network can carve out **grows exponentially with depth** — the compositional structure is exactly what buys the exponential expressivity.
+
+**What this looks like conceptually:** each layer builds features **on top of** the previous layer's features.
+- Layer 1: edges, simple patterns.
+- Layer 2: patterns *made of* layer-1 patterns (corners, textures).
+- Layer $k$: patterns made of $(k{-}1)$-level patterns.
+
+This matches how **the real world is structured**: pixels → edges → parts → objects; sounds → phonemes → words → meaning. Deep networks are compact for the same reason: the world itself is compositional.
+
+---
+
+### How the Knowledge Gets Into the Weights
+
+Before training, the weights are random and the network's output is garbage. Training runs a loop:
+
+**1. Forward pass** — run input $x$ through all layers, get prediction $\hat{y}$.
+
+**2. Loss** — measure how wrong we were in a single number:
+
+$$\mathcal{L} = L(\hat{y}, y)$$
+
+**3. Backpropagation** — figure out, for every single weight, "if I nudge it slightly, does the error go up or down?" Because the network is a composition, the influence of a weight in layer $\ell$ flows through *every layer after it*. The **chain rule** from calculus handles this:
+
+$$\frac{\partial \mathcal{L}}{\partial W_{\ell}} \;=\; \frac{\partial \mathcal{L}}{\partial \hat{y}} \;\cdot\; \frac{\partial \hat{y}}{\partial h_\ell} \;\cdot\; \frac{\partial h_\ell}{\partial W_{\ell}}$$
+
+The clever part is that backprop **reuses intermediate results**, walking the error signal *backward* through the network. What would naively be exponential bookkeeping becomes **linear in the number of layers**.
+
+**4. Optimizer step** — nudge every weight a small amount in the direction that reduces the error:
+
+$$W_{\ell} \;\leftarrow\; W_{\ell} - \underbrace{\eta}_{\text{step size}}\, \underbrace{\nabla_{W_\ell}\mathcal{L}}_{\text{direction of steepest error increase}}$$
+
+Repeat millions of times. The **trajectory of the weights through weight-space** is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge *is* the final numbers.
+
+---
+
+### Residual Connections: How We Actually Train *Really* Deep Networks
+
+There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often **shrinks to nearly zero** (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.
+
+\citeauthor{he2015resnet} introduced a stunningly simple fix: the **residual connection** (also called a skip connection). Instead of each layer computing an entirely new representation, it computes just a **correction** and adds it to the running state:
+
+$$h_{\ell} \;=\; \underbrace{h_{\ell-1}}_{\text{running state}} \;+\; \underbrace{f_\ell(h_{\ell-1})}_{\text{small correction from this layer}}$$
+
+This one change transforms deep networks in three ways:
+
+**1. Gradients flow freely.** Because of the $+h_{\ell-1}$ term, the derivative through the skip path is exactly $1$. The error signal has a **highway back to the earliest layers** — it can no longer be strangled by many small multiplications. This is what makes training networks with hundreds or even thousands of layers actually possible.
+
+**2. Each layer only has to learn a small refinement.** Instead of every layer needing to reinvent the entire representation, layers are free to add tiny, targeted adjustments. If a layer has nothing useful to add, it can just learn $f_\ell \approx 0$ and let the input pass through unchanged. Bad layers become harmless; good layers become powerful.
+
+**3. It creates the "residual stream."** In modern transformers, this idea becomes central: the running state $h_{\ell-1} + h_\ell + h_{\ell+1} + \dots$ acts like a **shared communication bus** that every layer can read from and write to. Attention heads and MLPs across the whole network exchange information by adding features into this stream and reading them out later. This is why transformer analyses (see \citeauthor{elhage2021framework}) treat the residual stream as the central object of the network — it's the substrate on which computation actually happens.
+
+Residual connections also **flatten the loss landscape** \cite[Li et al.]{li2018losslandscape}, making the optimization problem itself easier and pushing training toward solutions that generalize better. It's one of the rare tricks in deep learning that improves trainability, generalization, *and* interpretability all at once.
+
+---
+
+### The Loss Landscape and the "Implicit Bias" That Makes It Work
+
+The loss $\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**. Gradient descent is a ball rolling downhill on this surface. Two facts shape what it finds.
+
+**Saddle points, not local minima, are the real obstacle.** In very high dimensions, almost every flat spot is a saddle (curving up in some directions, down in others), not a true trap \cite[Dauphin et al.]{dauphin2014saddle}. The **randomness in mini-batch training** acts like little kicks that knock the ball off saddles, which is why training huge networks actually works.
+
+**Which solution does the optimizer pick?** In modern over-parameterized networks, there are **infinitely many** weight configurations that perfectly fit the training data. The question isn't "can we fit the data" — it's "*which* fit do we get?"
+
+This is called the **implicit bias** of the optimizer, and it's decisive. Gradient descent from small initial weights, combined with a small penalty on weight size (weight decay), consistently prefers the **simplest, most compact** solution among all the ones that fit:
+
+$$\mathcal{L}_{\text{total}} = \underbrace{\mathcal{L}_{\text{data}}}_{\text{fit the examples}} + \underbrace{\lambda \sum_{\ell}\|W_\ell\|_F^2}_{\text{prefer smaller / simpler weights}}$$
+
+The simple solution is usually the one that **generalizes** to unseen data, rather than memorizing. This bias is arguably the single most important reason deep learning works in the real world.
+
+---
+
+### Grokking: Watching Understanding Emerge
+
+The most striking demonstration of this implicit bias is **grokking** \cite[Power et al.]{grokking}. Train a small transformer on modular arithmetic (like $a \times b \bmod p$) with weight decay, and watch the test accuracy:
+
+1. **Memorization phase.** The network quickly memorizes the training examples. Training accuracy shoots to 100%, but test accuracy stays at chance. It has learned a lookup table.
+2. **Long plateau.** Test accuracy stays terrible for a long time — sometimes tens of thousands of steps — while training accuracy stays perfect. It looks completely hopeless.
+3. **Grokking.** Then suddenly, test accuracy jumps to 100%. The network has discovered the actual **mathematical rule** for modular multiplication, replacing its lookup table with a compact algorithm.
+
+Mechanistic analysis \cite[Nanda et al.]{nanda2023grokking} shows exactly what happens: the network swaps its memorizing representation for a small, elegant circuit built from learned features. \citeauthor{davies2023unifying} unified this with the older **double descent** phenomenon \cite[Belkin et al.]{belkin2019reconciling}: generalizing solutions are learned *more slowly* than memorizing ones, but if you give the optimizer enough time (or enough parameters), the slow-but-simple solution wins.
+
+This is the deepest answer to why deep learning works so well: **the optimizer is quietly biased toward discovering the actual underlying structure of the problem**, not just fitting the data.
+
+---
+
+### Putting It All Together
+
+So, why does "just matrix multiplication" work?
+
+1. **A single matrix multiplication is intentionally weak.** It can only mix, rotate, scale.
+2. **The bend + composition is the expressivity.** Stacking bent maps produces piecewise functions of exponential complexity, and each layer combines *already-learned features* from the previous one.
+3. **Backprop + the optimizer sculpt the weights** into implementing the specific function the data demands.
+4. **The implicit bias** ensures the network finds a compact, generalizing solution rather than a giant lookup table.
+5. **Residual connections** are what makes all of this scalable to hundreds of layers, turning depth from a liability back into a strength.
+
+The "understanding" a network appears to have doesn't live in any single multiplication. It lives in **the pattern of all the weights across all the layers** — a pattern shaped by the compositional structure of the world, discovered by gradient descent, and stored as the final numbers in the matrices.
+
 </div>
 
 <div class="md">
 ### The Role of Non-Linearity
-The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the “glue” that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically *collapse into a single linear function*, because a “linear function of a linear function” is still just a linear function.
 
-By keeping the non-linear “gates” between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
+The activation function $\sigma$ (like **ReLU** or **Sigmoid**) is the glue that makes stacking work. Without it, the whole network — no matter how deep — collapses into a single linear function, because "a linear function of a linear function is still linear."
 
-**Tip:** Try changing the activation function of the hidden layer.
+By keeping non-linear "bends" between the stacks, the network can warp the coordinate space in complex ways, letting it solve problems that no straight line ever could — like the classic **XOR** gate.
+
+**Tip:** Try changing the activation function of the hidden layer in the playground below and watch what happens.
 </div>
 
 <div style="margin-bottom: 15px; display: flex; gap: 10px;">

@@ -13566,5 +13566,220 @@ window.bibData = {
 		journal: "Astounding Science Fiction",
 		url: "https://en.wikipedia.org/wiki/Runaround_(story)",
 		alternativetitle: "Asimov, Runaround / Three Laws of Robotics (1942)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Why Depth Works  (deeplearninglab.php)
+	 *  Expressivity of depth, loss landscape, solution selection, grokking,
+	 *  and where knowledge is stored (facts, world-state, circuits).
+	 * ───────────────────────────────────────────────────────────────────── */
+	"telgarsky2016wars": {
+		title: "Representation Wars: Simple Neuron Networks vs Deep Linear Networks",
+		author: "Maksym Telgarsky",
+		year: 2016,
+		url: "https://arxiv.org/abs/1506.08433",
+		alternativetitle: "Telgarsky, Representation Wars (2016)"
+	},
+	"montufar2014regions": {
+		title: "On the Number of Linear Regions of Deep Neural Networks",
+		author: "Günter Montúfar, Razvan Pascanu, Kyungjae Cho, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1402.1869",
+		alternativetitle: "Montúfar et al., linear regions (2014)"
+	},
+	"dauphin2014saddle": {
+		title: "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization",
+		author: "Yann Dauphin, Richang M. Ng, Abolruzah E. Mohammad-Yaraghchi, Yann LeCun",
+		year: 2014,
+		url: "https://arxiv.org/abs/1411.2618",
+		alternativetitle: "Dauphin et al., saddle points (2014)"
+	},
+	"li2018losslandscape": {
+		title: "Visualizing the Loss Landscape of Neural Nets",
+		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, John E. Davis",
+		year: 2018,
+		url: "https://arxiv.org/abs/1712.09913",
+		alternativetitle: "Li et al., loss landscape (2018)"
+	},
+	"belkin2019reconciling": {
+		title: "Reconciling modern machine-learning practice and previous theoretical theories",
+		author: "Mikhail Belkin, Daniel Hsu, Si Ma, Seshu Mandal",
+		year: 2019,
+		url: "https://arxiv.org/abs/1803.08785",
+		alternativetitle: "Belkin et al., double descent (2019)"
+	},
+	"gromov2023grokking": {
+		title: "Grokking Modular Arithmetic",
+		author: "Adrian Gromov",
+		year: 2023,
+		url: "https://arxiv.org/abs/2301.02679",
+		alternativetitle: "Gromov, grokking modular arithmetic (2023)"
+	},
+	"davies2023unifying": {
+		title: "Unifying Grokking and Double Descent",
+		author: "Alexander Davies, Nicholas Langosco, David Krueger",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.06173",
+		alternativetitle: "Davies et al., unifying grokking and double descent (2023)"
+	},
+	"geva2021kv": {
+		title: "Transformer Feed-Forward Layers Are Key-Value Memories",
+		author: "Mor Geva, Roei Schuster, Jonathan Berant, Omer Levy",
+		year: 2021,
+		url: "https://arxiv.org/abs/2012.14913",
+		alternativetitle: "Geva et al., key–value memories (2021)"
+	},
+	"meng2022rome": {
+		title: "Locating and Editing Factual Associations in GPT (ROME)",
+		author: "Kevin Meng, David Bau, Alex Andonian, Yonatan Belinkov",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.05262",
+		alternativetitle: "Meng et al., ROME (2022)"
+	},
+	"belrose2023tunedlens": {
+		title: "Eliciting Latent Predictions from Transformers with the Tuned Lens",
+		author: "Nick Belrose, Zach Kenton, Mike Schneider, Brian Chen, Sam McCandlish",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.08112",
+		alternativetitle: "Belrose et al., tuned lens (2023)"
+	},
+	"todd2023emergent": {
+		title: "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
+		author: "Michael Todd, Michael Nanda, Tomer Wattenberg",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.00941",
+		alternativetitle: "Todd et al., emergent linear representations (2023)"
+	},
+	"brenner2026gridwalkers": {
+		title: "Predictive Statistics Shape Emergent World Representations of Grid Walkers",
+		author: "Brenner, Knösche, Scherf",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.16689",
+		alternativetitle: "Brenner et al., grid walkers (2026)"
+	},
+	"olsson2022induction": {
+		title: "In-Context Learning and Induction Heads",
+		author: "Jacob Olsson, Nelson Elhage, Neel Nanda, Tom H. B., et al.",
+		year: 2022,
+		url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/",
+		alternativetitle: "Olsson et al., induction heads (2022)"
+	},
+	"gould2023successor": {
+		title: "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",
+		author: "Shayne Gould, Michael Ong, Alex Ogden, Arthur Conmy",
+		year: 2023,
+		url: "https://arxiv.org/abs/2312.09230",
+		alternativetitle: "Gould et al., successor heads (2023)"
+	},
+	"elhage2021framework": {
+		title: "A Mathematical Framework for Transformer Circuits",
+		author: "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom H. B., et al.",
+		year: 2021,
+		url: "https://transformer-circuits.pub/2021/framework/",
+		alternativetitle: "Elhage et al., transformer circuits framework (2021)"
+	},
+	"elhage2022superposition": {
+		title: "Toy Models of Superposition",
+		author: "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom H. B., et al.",
+		year: 2022,
+		url: "https://transformer-circuits.pub/2022/toy_model/",
+		alternativetitle: "Elhage et al., toy models of superposition (2022)"
+	},
+	"garg2026features": {
+		title: "How Many Features Can a Language Model Store Under the Linear Representation Hypothesis?",
+		author: "Garg, Kleinberg, Peng",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.11246",
+		alternativetitle: "Garg et al., feature capacity (2026)"
+	},
+	"zou2023repeng": {
+		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
+		author: "Andy Zou, Ansh Radha, Shashwat Garg, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2310.01405",
+		alternativetitle: "Zou et al., representation engineering (2023)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Common Myths and Misconceptions About AI  (myths.php)
+	 *  Origins of popular beliefs, what is actually true, and the true
+	 *  core that survives under each myth.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"searle1980chineseroom": {
+		title: "Minds, Brains, and Programs",
+		author: "John R. Searle",
+		year: 1980,
+		journal: "Behavioral and Brain Sciences",
+		url: "https://en.wikipedia.org/wiki/Chinese_room_argument",
+		alternativetitle: "Searle's Chinese Room argument (1980)"
+	},
+	"vinge1993singularity": {
+		title: "The Coming Technological Singularity: How to Survive in the Post-Human Era",
+		author: "Vernor Vinge",
+		year: 1993,
+		url: "https://en.wikipedia.org/wiki/Technological_singularity",
+		alternativetitle: "Vinge, the technological singularity (1993)"
+	},
+	"kurzweil2005singularity": {
+		title: "The Singularity Is Near: When Humans Transcend Biology",
+		author: "Ray Kurzweil",
+		year: 2005,
+		url: "https://en.wikipedia.org/wiki/The_Singularity_Is_Near",
+		alternativetitle: "Kurzweil, The Singularity Is Near (2005)"
+	},
+	"brynjolfsson2014secondmachine": {
+		title: "The Second Machine Age: Work, Progress, and Prosperity in a Time of Brilliant Technologies",
+		author: "Erik Brynjolfsson, Andrew McAfee",
+		year: 2014,
+		url: "https://en.wikipedia.org/wiki/The_Second_Machine_Age",
+		alternativetitle: "Brynjolfsson & McAfee, The Second Machine Age (2014)"
+	},
+	"moravec1988paradox": {
+		title: "Mind Children: The Futures of Human and Machine Intellect",
+		author: "Hans Moravec",
+		year: 1988,
+		url: "https://en.wikipedia.org/wiki/Moravec%27s_paradox",
+		alternativetitle: "Moravec's paradox (1988)"
+	},
+	"sutton2019bitterlesson": {
+		title: "The Bitter Lesson",
+		author: "Richard S. Sutton",
+		year: 2019,
+		url: "https://web.archive.org/web/2024id_/https://www.incompleteideas.net/IncIdeas/BitterLesson.html",
+		alternativetitle: "Sutton, The Bitter Lesson (2019)"
+	},
+	"rozenblit2002ioed": {
+		title: "The misunderstood limits of folk science: an illusion of explanatory depth",
+		author: "Leonid Rozenblit, Frank C. Keil",
+		year: 2002,
+		journal: "Cognitive Science",
+		url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3062901/",
+		alternativetitle: "Rozenblit & Keil, illusion of explanatory depth (2002)"
+	},
+	"ioed_wiki": {
+		title: "Illusion of explanatory depth",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Illusion_of_explanatory_depth",
+		alternativetitle: "Illusion of explanatory depth (Wikipedia)"
+	},
+	"septruringtest": {
+		title: "The Turing Test",
+		author: "Stanford Encyclopedia of Philosophy",
+		year: 2021,
+		url: "https://plato.stanford.edu/entries/turing-test/",
+		alternativetitle: "SEP, The Turing Test"
+	},
+	"aiindex2025": {
+		title: "AI Index Report",
+		author: "Stanford Institute for Human-Centered AI",
+		year: 2025,
+		url: "https://aiindex.stanford.edu/report/",
+		alternativetitle: "Stanford HAI, AI Index Report"
+	},
+	"algofairness_wiki": {
+		title: "Algorithmic fairness",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Algorithmic_fairness",
+		alternativetitle: "Algorithmic fairness (Wikipedia)"
 	}
 };
