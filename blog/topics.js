@@ -1208,7 +1208,7 @@
 			if (!alt && !eqs.length) return;
 			el.classList.toggle('math-opt-simplified', hide);
 			eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
-			if (alt) alt.style.display = hide ? '' : 'none';
+			if (alt) alt.style.display = hide ? 'block' : 'none';
 		});
 	}
 

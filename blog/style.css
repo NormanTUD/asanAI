@@ -9864,6 +9864,161 @@ html.dark .topics-preset-fun {
 .ipill-off { opacity: 0.7; }
 .ipill-off:hover { opacity: 1; }
 
+/* ── tone (category) chips ───────────────────────────────── */
+.topics-categories {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px 12px;
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border-light);
+	border-radius: 14px;
+}
+.topics-categories-label {
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary);
+	letter-spacing: 0.02em;
+}
+.topics-cat-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+.topics-cat-label-mini {
+	font-size: 0.66rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--mn-text-muted);
+	margin-right: 2px;
+}
+.topics-cat-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 6px 12px;
+	border-radius: 999px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	font-size: 0.82rem;
+	font-weight: 500;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.16s ease;
+}
+.topics-cat-chip:hover { transform: translateY(-1px); border-color: var(--mn-accent); }
+.topics-cat-chip:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 1px; }
+.topics-cat-icon { font-size: 0.95rem; line-height: 1; }
+.topics-cat-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	border-radius: 999px;
+	font-size: 0.66rem;
+	font-weight: 700;
+	background: var(--mn-bg-subtle);
+	color: var(--mn-text-secondary);
+	border: 1px solid var(--mn-border-light);
+}
+/* a 'suppress' tone ON = that heavy content is allowed (subtle accent) */
+.topics-cat-chip.topics-cat-on {
+	border-color: color-mix(in srgb, var(--mn-accent) 40%, var(--mn-border));
+	background: color-mix(in srgb, var(--mn-accent) 6%, var(--mn-surface));
+}
+.topics-cat-chip.topics-cat-on .topics-cat-icon { color: var(--mn-accent); }
+/* a 'suppress' tone OFF = that heavy content is tucked (faded, dashed) */
+.topics-cat-chip.topics-cat-off {
+	border-style: dashed;
+	border-color: var(--mn-border);
+	background: transparent;
+	color: var(--mn-text-muted);
+}
+.topics-cat-chip.topics-cat-off .topics-cat-icon { opacity: 0.5; }
+.topics-cat-chip.topics-cat-off .topics-cat-count { opacity: 0.6; }
+/* an 'include' lens (interested layman) ON = the lens is active */
+.topics-cat-chip.topics-cat-include.topics-cat-on {
+	border-color: var(--mn-emerald, #10b981);
+	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, var(--mn-surface));
+	color: var(--mn-text);
+}
+.topics-cat-chip.topics-cat-include.topics-cat-on .topics-cat-icon { color: var(--mn-emerald, #10b981); }
+
+/* ── in-lesson partial sections (3-state: full / partial / off) ── */
+.topic-block.topic-block-partial {
+	opacity: 0.62;
+	filter: saturate(0.7);
+}
+.topic-block.topic-block-partial:hover { opacity: 0.94; }
+.topic-partial-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	margin: 0 0 12px;
+	padding: 5px 11px;
+	border-radius: 999px;
+	font-size: 0.74rem;
+	font-weight: 500;
+	color: var(--mn-text-secondary);
+	background: color-mix(in srgb, var(--mn-accent) 8%, var(--mn-bg-subtle));
+	border: 1px dashed color-mix(in srgb, var(--mn-accent) 32%, var(--mn-border));
+}
+.topic-partial-chip-dot { color: var(--mn-accent); font-size: 0.9rem; line-height: 1; }
+.topic-block-banner-hint { color: var(--mn-text-muted); font-size: 0.92em; }
+
+/* ── inline widget: soft cross-fade + staggered reveal ────── */
+.inline-topics { position: relative; }
+.inline-topics.itx-animating .itx-item {
+	opacity: 0;
+	transform: translateY(8px) scale(0.985);
+}
+.inline-topics.itx-animating.itx-anim-on .itx-item {
+	opacity: 1;
+	transform: none;
+	transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.itx-dust {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	overflow: hidden;
+	border-radius: inherit;
+	z-index: 5;
+}
+.itx-dust-p {
+	position: absolute;
+	border-radius: 50%;
+	opacity: 0;
+	box-shadow: 0 0 6px 1px currentColor;
+	animation: itxDust 1.25s ease-out forwards;
+}
+@keyframes itxDust {
+	0%   { opacity: 0; transform: translate(0, 0) scale(0.4); }
+	20%  { opacity: 0.9; }
+	100% { opacity: 0; transform: translate(var(--dx, 0), var(--rise, -60px)) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.itx-dust { display: none; }
+	.inline-topics.itx-animating .itx-item { opacity: 1; transform: none; }
+}
+
+/* ── math alternative text ──────────────────────────────── */
+.math-alt {
+	display: none;
+	padding: 10px 14px;
+	margin: 8px 0;
+	border-radius: 10px;
+	background: var(--mn-bg-subtle);
+	border: 1px dashed var(--mn-border);
+	color: var(--mn-text-secondary);
+	font-size: 0.95em;
+	line-height: 1.5;
+}
+
 /* ── mobile ────────────────────────────────────────────── */
 @media (max-width: 720px) {
 	#topics-toggle {
