@@ -142,3 +142,53 @@ Stand September 2026. Ziel: Bilder, die das Verständnis wirklich fördern
     Hinweis: Ursprünglich war der Schwan-GIF von erikdemaine.org/foldcut
             hotgelinkt; die Seite enthält KEINE Lizenzangabe (Default:
             "all rights reserved"). Durch dieses freie Bild ersetzt.
+
+=== INCEPTIONISM / DECONV / RNN (September 2026) ===
+=====================================================
+Bilder für die neuen Lektionen inceptionism.php / deconvolution.php /
+recurrent_networks.php. Alle per HTTP-200 + Lizenzangabe der Quellseite
+geprüft; Inline-Attribution im jeweiligen Figure-Caption.
+
+17. inceptionism_noise_to_banana
+    URL: https://research.google/blog/inceptionism-going-deeper-into-neural-networks/
+    Lizenz: CC BY 4.0 (Google Inc.; Blog-Update 13.07.2015)
+    Lokal: noise_to_banana.png (640x259)
+    Genutzt in: inceptionism.php § Gradient Ascent on a Class
+    Status: OK - CC BY 4.0, attribuiert im Caption
+
+18. inceptionism_ibis / sky_arrow / funny_animals / noise_to_banana /
+    classvis / dumbbells / dream_map
+    URL: wie 17 (gleiche Seite, eigene Abbildungen)
+    Lizenz: CC BY 4.0 (Google Inc.)
+    Lokal: inceptionism_classvis.png (640x375), inceptionism_dumbbells.png
+           (490x118), inceptionism_dream_map.png (640x534), noise_to_banana.png
+           (640x259), inceptionism_ibis.png (640x216),
+           inceptionism_sky_arrow.png (640x172),
+           inceptionism_funny_animals.png (640x172)
+    Genutzt in: inceptionism.php (Class-Visualizations-Grid, Dumbbells-marginfig,
+                Dream Map, noise-to-banana, Layer-by-Layer [ibis],
+                Cloud-Feedback [sky_arrow], Feature-Remix [funny_animals])
+    Status: OK - CC BY 4.0, attribuiert via \cite[...]{mordvintsev2015inceptionism}
+            im Caption. HINWEIS: MIT-Places-Bilder der Seite sind bewusst NICHT
+            verwendet. ibis.png ist ein Composite: Originalfoto von Zachi Evenor,
+            Verarbeitung von Günther Noack — beide im Caption genannt.
+
+19. deconv_style_artifacts / style_clean / deepdream_jitter
+    URL: https://distill.pub/2016/deconv-checkerboard/
+    Lizenz: CC BY 2.0 (eigene Abbildungen der Distill-Autoren; "figures reused
+            from other sources" fallen NICHT unter diese Lizenz)
+    Lokal: deconv_style_artifacts.png (246x70), deconv_style_clean.png (246x72),
+           deconv_deepdream_jitter.png (448x224)
+    Genutzt in: deconvolution.php (Style-Transfer-Vergleich, DeepDream-Jitter)
+    Status: OK - CC BY 2.0, attribuiert im Caption
+    Hinweis: fix_*_boat.png / fix_*_deer.png sind nur 32x32 px und wurden
+            verworfen; im_sample_* der Radford/Dosovitskiy-Figures sind fremde
+            Abbildungen und wurden bewusst NICHT übernommen.
+
+20. rnn_unrolled
+    URL: https://commons.wikimedia.org/wiki/File:Recurrent_neural_network_unfold.svg
+    Lizenz: CC BY-SA 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: fdeloche
+    Lokal: rnn_unrolled.svg
+    Genutzt in: recurrent_networks.php § Unrolling: One Network, Many Copies
+    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Caption

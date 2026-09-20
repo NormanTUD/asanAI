@@ -84,17 +84,19 @@ function getTopLevelMdContainers() {
    marked.parse() treats <figure>…<figcaption>…</figcaption></figure>
    as a raw HTML block and leaves its contents untouched, so
    "*italic*" / "**bold**" inside a caption stay literal while the
-   surrounding prose renders. sidenotes.js already works around this
-   by running marked.parse() on the caption string; static captions
-   get the same treatment here, on the RENDERED DOM, via
+   surrounding prose renders. This includes figures that sit in raw
+   HTML BETWEEN <div class="md"> blocks, which are outside every
+   processed container entirely. sidenotes.js already works around
+   this by running marked.parse() on the caption string; static
+   captions get the same treatment here, on the RENDERED DOM, via
    marked.parseInline() so emphasis/links/code come out as
    <em>/<strong>/<a>/<code> without disturbing the already-processed
    citation anchors. Purely additive and idempotent: only captions
-   that actually contain markdown tokens are re-parsed.            */
+   that actually contain markdown tokens are re-parsed.             */
 function processFigcapsMarkdown(root) {
 	if (!root || !root.querySelectorAll) return;
 	if (typeof marked === 'undefined' || typeof marked.parseInline !== 'function') return;
-	root.querySelectorAll('.md figure figcaption, .md > figcaption, .md table > caption')
+	root.querySelectorAll('figure figcaption, table > caption')
 		.forEach(cap => {
 			const html = cap.innerHTML;
 			if (!html || !/[*_`[\\]/.test(html)) return;
@@ -264,6 +266,19 @@ function renderMarkdown() {
 			BlogKeypoints.upgradeBlockquotes(container);
 		}
 	});
+
+	// 3c. Figures that sit in raw HTML BETWEEN <div class="md"> blocks are
+	//     outside every processed container, so their captions' markdown
+	//     (*emphasis*, [links]) would stay literal — and their <figcaption>
+	//     text would skip the typographic pass too. Sweep the whole article
+	//     column; the caption pass is idempotent, so the figures that were
+	//     already handled inside .md containers are simply re-visited.
+	const articleRoot = document.getElementById('contents');
+	if (articleRoot) {
+		processFigcapsMarkdown(articleRoot);
+		articleRoot.querySelectorAll('figure figcaption, table > caption')
+			.forEach(cap => smartPunct(cap));
+	}
 	updateLoadingStatus("Almost finished.");
 
 	// 3b. inject per-cluster CSS variables now that the DOM has them
@@ -1085,6 +1100,16 @@ function bibtexify() {
 
 	const containers = getTopLevelMdContainers();
 	const mainContent = document.getElementById('contents');
+	// Captions in raw HTML BETWEEN <div class="md"> blocks are not inside any
+	// .md container, so \cite/\footcite in them used to stay as literal text.
+	// Sweep those caption elements through the same citation pipeline as extra
+	// "containers": their content is pure raw HTML, so the macros apply
+	// unchanged. Captions inside .md are already part of a container's string
+	// and must NOT be re-processed, so they are filtered out.
+	if (mainContent) {
+		mainContent.querySelectorAll('figure figcaption, table > caption')
+			.forEach(el => { if (!el.closest('.md')) containers.push(el); });
+	}
 	let footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
 
