@@ -49,7 +49,7 @@ from a question \citeauthor{colah2014manifolds} (\citeyear{colah2014manifolds}) 
 The answer is beautifully restrictive, and it is the whole reason the word *topology*
 appears in a story about neural networks.
 
-The first tool is a simple one. A network with only a handful of neurons per layer is
+Start with the simplest setting. A network with only a handful of neurons per layer is
 **visualizable**. Feed every point of a fine grid through the net and you can *watch* the
 data move. Each layer emits a **representation** — the data re-expressed in the coordinates
 of that layer's neurons. The very last layer is just a **linear readout**: it draws a single
