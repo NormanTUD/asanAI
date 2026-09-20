@@ -49,7 +49,7 @@ This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms e
 
 ## Connection to Grokking
 
-This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly “groks” the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
+This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
 ## Interactive Exploration
 
@@ -260,8 +260,8 @@ This is the first line of evidence that the network operates in a Fourier basis:
                 <li><span style="color:#94a3b8;">Gray bars</span>: Near-zero norm — the embedding ignores these frequencies</li>
             </ul>
             <p style="margin:10px 0 0 0; font-size:0.9em; color:#64748b;">
-                The embedding matrix is <strong>128-dimensional</strong>, but only ~10 dimensions (5 frequencies × 2 for sin/cos) carry meaningful signal.
-                The remaining ~118 dimensions are effectively unused after training. This sparsity emerges during the "cleanup" phase of grokking.
+                The embedding matrix is <strong>128-dimensional</strong>, but only ca. 10 dimensions (5 frequencies × 2 for sin/cos) carry meaningful signal.
+                The remaining ca. 118 dimensions are effectively unused after training. This sparsity emerges during the "cleanup" phase of grokking.
             </p>
         </div>
         <div id="we-gini-plot" style="height:280px; margin:20px 0;"></div>
@@ -382,7 +382,7 @@ Formally, given a prompt structured as:
 
 $$P = (x_1, f(x_1), x_2, f(x_2), \ldots, x_k, f(x_k), x_{\text{query}})$$
 
-a trained Transformer can predict $f(x_{\text{query}})$ for functions $f$ it has **never seen during training**, with performance matching the optimal estimator for that function class. This is not memorization: with $2d$ in-context examples, the model achieves error < 0.001, while the best memorized weight vector from 32M training vectors would yield error ~0.216 \cite[Appendix B.7]{garg2022incontext}.
+a trained Transformer can predict $f(x_{\text{query}})$ for functions $f$ it has **never seen during training**, with performance matching the optimal estimator for that function class. This is not memorization: with $2d$ in-context examples, the model achieves error < 0.001, while the best memorized weight vector from 32M training vectors would yield error ca. 0.216 \cite[Appendix B.7]{garg2022incontext}.
 
 But your algorithm prompt isn't input-output pairs, it's *code*. So what's happening?
 
@@ -433,7 +433,7 @@ Is the model truly executing the algorithm from context, or just pattern-matchin
 
 **Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct. The model doesn't skip steps, it traces through the algorithm as written \cite[Section 3.1]{zhou2022algorithmic}.
 
-**Test 2: Systematic errors destroy performance.** When ALL carry calculations in the prompt examples are wrong (e.g., always using the wrong digit), accuracy drops to ~0%. If the model were relying on its pretrained knowledge of addition, wrong examples wouldn't matter. But it's actually learning the rule from context \cite[Figure 3b]{zhou2022algorithmic}.
+**Test 2: Systematic errors destroy performance.** When ALL carry calculations in the prompt examples are wrong (e.g., always using the wrong digit), accuracy drops to ca. 0%. If the model were relying on its pretrained knowledge of addition, wrong examples wouldn't matter. But it's actually learning the rule from context \cite[Figure 3b]{zhou2022algorithmic}.
 
 **Test 3: Irregular errors cause only minor degradation.** When only SOME steps have errors, the model can still extrapolate the correct rule from the unchanged steps. This shows it's generalizing from the pattern, not memorizing specific examples.
 
@@ -464,7 +464,7 @@ This is why **autoregressive generation is essential**: the model can only execu
 
 ### The Critical Role of the Scratchpad
 
-The model cannot execute a 19-digit addition in a single forward pass, that would require maintaining ~19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
+The model cannot execute a 19-digit addition in a single forward pass, that would require maintaining ca. 19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
 
 <p>$$\underbrace{\text{Step 1 output}}_{\text{generated tokens}} \rightarrow \underbrace{\text{becomes input}}_{\text{for next forward pass}} \rightarrow \underbrace{\text{Step 2 output}}_{\text{generated tokens}} \rightarrow \cdots$$</p>
 
@@ -511,9 +511,9 @@ Consider teaching a model to add two numbers. There's a spectrum of how explicit
 
 | Level | Prompt Style | Accuracy (19-digit) |
 |-------|-------------|-------------------|
-| **Zero-shot** | “What is 1234567890123456789 + 9876543210987654321?” | ~0% |
+| **Zero-shot** | “What is 1234567890123456789 + 9876543210987654321?” | ca. 0% |
 | **Few-shot** | Show 3 examples of addition with answers | 9.5% |
-| **Chain-of-thought** | Show examples with informal reasoning (“carry the 1...”) | ~25% |
+| **Chain-of-thought** | Show examples with informal reasoning (“carry the 1...”) | ca. 25% |
 | **Algorithmic prompting** | Show the *exact* algorithm with every micro-step explicit | **90.5%** |
 
 The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** \cite[Section 2]{zhou2022algorithmic}.
@@ -547,9 +547,11 @@ Each stage introduces new challenges. Stage 3 (composition) is particularly inte
 
 The circular representations above solve a very specific problem: **modular** addition, where the answer wraps around a fixed modulus ($\bmod N$). That is a *bounded, cyclic* task — there is no "carry out to infinity," and no question of how *big* a number is. Once you leave that world, the model hits two different walls, and understanding them clarifies what a "number" actually is inside the network.
 
-**Magnitude, not value.** The natural question is how the model represents *size* — how does it "know" that $7 > 3$ so it can compare two numbers? \cite[Levy & Geva, 2024]{levy2024numbers} probed and intervened on GPT-family models and found that they do **not** store a single ordered "number line." Instead they encode numbers as **per-digit circular codes in base 10** — each digit is its own little circle, and the errors on arithmetic tasks are distributed *across the digits of the answer* rather than around its numeric value. There is no clean, monotonic magnitude to "read off" and compare. This is why comparing small numbers is so error-prone: the model has a digit-by-digit code, not a quantity.
+**Magnitude, not value.** The natural question is how the model represents *size* — how does it "know" that $7 > 3$ so it can compare two numbers? \cite[Levy & Geva, 2024]{levy2024numbers} probed and intervened on Llama-3-8B and Mistral-7B and found that they do **not** store a single ordered "number line." Instead **each digit is stored as its own circular (angular) code in base 10**: the value of a digit $d$ sits at the angle $\theta = 2\pi d / 10$ around a small circle, held in a *pair* of dimensions as $(\cos\theta,\; \sin\theta)$. So a digit is a 2-D rotary code — the same kind of Fourier feature the modular-addition section used, just applied one digit at a time. Crucially, each *digit position* (units, tens, hundreds, …) gets its **own separate** circle in its own (roughly orthogonal) 2-D subspace, so the digits do not bleed into each other. "13" is therefore not a point between 12 and 14 — it is a "1" on the *tens* circle plus a "3" on the *units* circle.
 
-\cite[Cacioli, 2026]{cacioli2026weber} brought the formal tools of psychophysics to the question and resolved a live disagreement in the literature (log spacing? linear? per-digit?). The magnitude geometry is consistently **log-compressive** — it obeys a Weber-law structure, the same "just-noticeable-difference grows with size" law found in human perception. But the decisive finding is a **dissociation**: a model can have this logarithmic magnitude geometry and *still* perform at chance on discrimination tasks. Representing magnitude and being *able to use it to compare* are not the same thing — the geometry is necessary but not sufficient.
+Where does this live? In the **hidden states (the residual stream) of the later layers**, not in the input embedding. The circular probes decode the digits reliably from about the **third layer onward** (the first couple of layers are still busy "contextualizing" a multi-digit number, whose several tokens have to be combined first), and a causal intervention that rotates one digit's angle by $+5 \bmod 10$ flips exactly that digit in the model's answer — so the code is genuinely *used*, not merely readable. (The paper's honest caveat: this is one strong, causally-active representation; it may be one of several redundant ones packed in superposition, not the only numeracy signal.) The tell-tale signature is the *error pattern*: arithmetic mistakes cluster on a **single digit** of the answer (the model emits "633" or "823" instead of "833"), exactly what a digit-wise code predicts — not the value-adjacent slips ("831", "834") a real number-line representation would produce. There is no clean, monotonic magnitude to "read off" and compare, which is why comparing small numbers is so error-prone: the model holds a digit-by-digit code, not a quantity.
+
+\cite[Cacioli, 2026]{cacioli2026weber} brought the formal tools of psychophysics to the question. First, **Weber's law** — a 19th-century finding about human perception: the smallest difference you can notice between two stimuli is a constant *fraction* of their size, not a constant *amount*. You tell 10 from 11 instantly, but not 1000 from 1001, because the gap (1) shrinks relative to the magnitude. The consequence is that magnitudes are spaced **logarithmically** in perception: a fixed *ratio* (×1.1) is a fixed *distance*, whether you are near 10 or near 1000. \cite[Cacioli, 2026]{cacioli2026weber} found the transformer's magnitude geometry has exactly this **log-compressive, Weber-law** structure (a 10% step is a constant distance), which also resolves a live disagreement in the literature (linear spacing? log? per-digit?). But the decisive finding is a **dissociation**: a model can *have* this logarithmic magnitude geometry and *still* perform at chance on discrimination tasks. Representing magnitude and being *able to use it to compare* are not the same thing — the geometry is necessary but not sufficient.
 
 **Counting: recognizing is not counting.** "How many r's are in strawberry?" is the canonical failing. \cite[Fu et al., 2024]{fu2024count} showed that models **recognize the letters but do not count them**: errors track the number of letters/tokens in the word, and the dominant failure is that *most models break once a symbol repeats more than twice*. Word frequency in the training data barely matters — this is a computation they are performing on the fly, not a lookup they failed to memorize. \cite[Conde et al., 2025]{conde2025count} confirmed exact counting is not intrinsic; it only becomes reliable when the model is given a scratchpad (a chain-of-thought it can increment).
 
@@ -559,7 +561,7 @@ The circular representations above solve a very specific problem: **modular** ad
 <div class="md">
 ## A Transformer as a State Machine: How a Stateless Network Keeps State
 
-Here is a tension worth sitting with. An RNN keeps its state in a single hidden vector that it updates step by step, carrying everything forward. A transformer has **no hidden state across time at all** — it is a parallel, feedforward function applied to the whole context at once. So how can it do anything *sequential* or *stateful* — parse a sentence, follow a procedure, track a running count — when it has nowhere to keep the running total?
+Here is a tension worth sitting with. An RNN keeps its state in a single hidden vector that it updates one token at a time, carrying everything forward. A transformer has **no such carried-over hidden vector**: within a single forward pass it is a *parallel* function applied to the whole context at once, with no step-by-step evolution. You are right that "time" barely exists for the network inside one forward pass — the only real notion of order is the **sequence position** of the tokens (and, during generation, the autoregressive step-by-step decoding). So "state across time" below means **state across the token positions / decode steps**, not an internal clock. Given that, the puzzle is sharper, not softer: how can a network with no carried-over memory do anything *sequential* or *stateful* — parse a sentence, follow a procedure, track a running count — when it has nowhere to keep the running total?
 
 The reframe is that the state is **not absent, it is distributed**. The "state" is the **residual stream plus the Key/Value vectors of every past token**. Each past token's hidden state is a register that the current token can read from through attention, and each new token writes a fresh entry. The whole sequence is, in effect, a **work tape / register file** that the model re-reads every step. \cite[Katharopoulos et al., 2020]{katharopoulos2020linear} made the relationship to recurrence literal: a *linear*-attention transformer has an exact **iterative (RNN-like) implementation**, where a single accumulated matrix plays the role of the hidden state. "Stateless" is therefore a misnomer; the state is just stored *in the context* rather than in a vector.
 
