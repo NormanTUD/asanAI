@@ -37,7 +37,7 @@ tags: math-heavy
 .aff-ctrlrow { margin-top: .55rem; display: flex; gap: .9rem; align-items: center; flex-wrap: wrap; }
 .aff-lbl { font-size: .82rem; color: var(--mn-text-secondary); display: inline-flex; align-items: center; gap: .4rem; }
 .aff-select { padding: .3rem .5rem; background: var(--mn-surface-raised); color: var(--mn-text); border: 1px solid var(--mn-border); border-radius: 6px; }
-.aff-mxwrap { display: inline-flex; gap: .45rem; padding: .6rem; background: var(--mn-bg-subtle); border-radius: 8px; }
+.aff-mxwrap { display: inline-flex; flex-direction: column; gap: .45rem; padding: .6rem; background: var(--mn-bg-subtle); border-radius: 8px; }
 .aff-mxrow { display: flex; gap: .45rem; }
 .aff-mx { width: 76px; padding: .35rem .4rem; font-family: var(--mn-font-mono, monospace); font-size: .85rem; background: var(--mn-surface-raised); color: var(--mn-text); border: 1px solid var(--mn-border); border-radius: 6px; }
 .aff-mx.aff-bad { border-color: var(--mn-rose); box-shadow: 0 0 0 1px var(--mn-rose); }
