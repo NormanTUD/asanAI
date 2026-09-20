@@ -602,6 +602,15 @@
 		return out;
 	}
 
+	/** ensure map contains an entry for every known category */
+	function normalizeCats(map) {
+		const out = {};
+		CATEGORIES.forEach(function (c) {
+			out[c.id] = (map && map[c.id] !== undefined) ? (map[c.id] !== false) : (c.kind === 'suppress');
+		});
+		return out;
+	}
+
 	/* ── 3. UI: 🎯 toggle button ────────────────────────────────
 	   The button itself is rendered by `render_topics_toggle()` in
 	   functions.php so it's in the DOM immediately (no FOUC, no
@@ -682,6 +691,10 @@
 						'<span class="topics-audience-suffix">level</span>',
 					'</div>',
 					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
+				'</div>',
+				'<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">',
+					'<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>',
+					'<div class="topics-cat-row" id="topics-cat-row"></div>',
 				'</div>',
 				'<div class="topics-personas" role="group" aria-label="Classic reader types">',
 					'<span class="topics-personas-label">or, which classic type are you?</span>',
@@ -854,6 +867,21 @@
 		el.classList.toggle('topics-count-all',  active === total);
 	}
 
+	/** render the tone (category) chips inside the overlay, with fresh
+	    on/off state + page-local affected counts. Safe before the overlay
+	    exists. */
+	function renderCategories() {
+		const row = document.getElementById('topics-cat-row');
+		if (!row) return;
+		row.innerHTML = categoryChipsHtml();
+		row.querySelectorAll('[data-cat]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const id = b.getAttribute('data-cat');
+				setCatEnabled(id, !isCatEnabled(id));
+			});
+		});
+	}
+
 	/** highlight the currently selected profile + level buttons and update
 	    the hint text. Safe to call before the overlay exists. */
 	function renderAudienceSelection() {
@@ -888,6 +916,7 @@
 	function openOverlay() {
 		ensureOverlay();
 		renderGrid();
+		renderCategories();
 		renderAudienceSelection();
 		updateUndoButtons();
 		const o = document.getElementById('topics-overlay');
@@ -1246,10 +1275,9 @@
 	function fireChange() {
 		updateToggleIntensity();
 		renderGrid();
+		renderCategories();
 		renderAudienceSelection();
-		applyVisibility();
-		// Re-render any inline widget (intro page)
-		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
+		applyVisibility(); // also re-renders any inline widget
 		try {
 			document.dispatchEvent(new CustomEvent('topics:change', { detail: { map: normalize(activeMap()) } }));
 		} catch (e) { /* old browsers */ }
@@ -1264,101 +1292,181 @@
 	     settings" link opens the full picker overlay. The expanded
 	     state is remembered per element via a dataset flag so the
 	     widget stays detailed across re-renders. */
+	function prefersReducedMotion() {
+		return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	}
+
+	function summarySpan(active, total, tucked, partial) {
+		let s = '<strong>' + active + '</strong> of ' + total + ' topics active';
+		if (tucked) s += ' · <em>' + tucked + ' section' + (tucked === 1 ? '' : 's') + ' tucked away</em>';
+		if (partial) s += ' · <em>' + partial + ' partial match' + (partial === 1 ? '' : 'es') + '</em>';
+		return '<div class="inline-topics-summary itx-item">'
+			+ '<span class="inline-topics-icon" aria-hidden="true">🎯</span>'
+			+ '<span>' + s + '</span></div>';
+	}
+
+	function categoryChipsHtml() {
+		const catsMap = activeCats();
+		return CATEGORIES.map(function (c) {
+			const on = catsMap[c.id] !== false;
+			const count = c.kind === 'suppress' ? categoryPresence(c.id) : 0;
+			const badge = (c.kind === 'suppress' && count) ? '<span class="topics-cat-count">' + count + '</span>' : '';
+			const cls = 'topics-cat-chip itx-item'
+				+ (on ? ' topics-cat-on' : ' topics-cat-off')
+				+ (c.kind === 'include' ? ' topics-cat-include' : '');
+			return '<button type="button" class="' + cls + '" data-cat="' + escAttr(c.id) + '" title="' + escAttr(c.desc) + '">'
+				+ '<span class="topics-cat-icon" aria-hidden="true">' + escAttr(c.icon) + '</span>'
+				+ '<span class="topics-cat-label">' + escAttr(c.label) + '</span>' + badge + '</button>';
+		}).join('');
+	}
+
+	function wireCategoryChips(host) {
+		host.querySelectorAll('[data-cat]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const id = b.getAttribute('data-cat');
+				setCatEnabled(id, !isCatEnabled(id));
+			});
+		});
+	}
+
+	function fairyDust(anchor) {
+		if (prefersReducedMotion() || !anchor || !anchor.appendChild) return;
+		const layer = document.createElement('div');
+		layer.className = 'itx-dust';
+		for (let i = 0; i < 14; i++) {
+			const s = document.createElement('span');
+			s.className = 'itx-dust-p';
+			const size = 3 + Math.random() * 4;
+			s.style.width = size + 'px';
+			s.style.height = size + 'px';
+			s.style.left = (8 + Math.random() * 84) + '%';
+			s.style.bottom = (4 + Math.random() * 22) + '%';
+			s.style.animationDelay = (Math.random() * 200) + 'ms';
+			s.style.setProperty('--dx', (Math.random() * 56 - 28) + 'px');
+			s.style.setProperty('--rise', -(44 + Math.random() * 72) + 'px');
+			s.style.color = i % 3 === 0 ? 'var(--mn-accent)' : (i % 3 === 1 ? '#f0abfc' : '#a5b4fc');
+			layer.appendChild(s);
+		}
+		anchor.appendChild(layer);
+		setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 1500);
+	}
+
+	/** staggered, smartquote-style reveal of everything marked .itx-item,
+	    with a light sparkle. No-op under reduced-motion. */
+	function animateInlineReveal(host) {
+		if (prefersReducedMotion()) return;
+		const items = host.querySelectorAll('.itx-item');
+		if (!items.length) return;
+		const perItem = Math.max(10, Math.min(28, 480 / items.length));
+		host.classList.add('itx-animating');
+		items.forEach(function (el, i) { el.style.transitionDelay = Math.round(i * perItem) + 'ms'; });
+		void host.offsetWidth; // commit the hidden state before revealing
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () { host.classList.add('itx-anim-on'); });
+		});
+		fairyDust(host);
+		setTimeout(function () {
+			host.classList.remove('itx-animating', 'itx-anim-on');
+			items.forEach(function (el) { el.style.transitionDelay = ''; });
+		}, items.length * perItem + 520);
+	}
+
 	function renderInlineWidget(host) {
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total = TOPICS.length;
-		const skipped = document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+		const tucked = document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+		const partial = document.querySelectorAll('.topic-block.topic-block-partial').length;
 
 		const isPersonasHost = (host.getAttribute('data-topics-inline') || '') === 'personas-first';
 		const personasFirst = isPersonasHost && host.dataset.personasExpanded !== '1';
 
+		const summary = summarySpan(active, total, tucked, partial);
+		const catRow = '<div class="topics-cat-row" role="group" aria-label="Tone filters">'
+			+ '<span class="topics-cat-label-mini" aria-hidden="true">tone</span>'
+			+ categoryChipsHtml() + '</div>';
+
+		let html, wire;
 		if (personasFirst) {
-			host.innerHTML = [
+			html = [
 				'<div class="inline-topics-head">',
-					'<div class="inline-topics-summary">',
-						'<span class="inline-topics-icon" aria-hidden="true">🎯</span>',
-						'<span>',
-							'<strong>' + active + '</strong> of ' + total + ' topics active',
-							skipped ? ' · <em>' + skipped + ' section' + (skipped === 1 ? '' : 's') + ' tucked away</em>' : '',
-						'</span>',
-					'</div>',
+					summary,
 					'<button type="button" class="inline-topics-open inline-topics-secondary" data-open-detailed>detailed settings</button>',
 				'</div>',
+				catRow,
 				'<div class="inline-topics-personas" role="group" aria-label="Classic reader types">' +
 					PERSONAS.map(function (p) {
-						return '<button type="button" class="topics-persona-btn' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
+						return '<button type="button" class="topics-persona-btn itx-item' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
 							'" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' +
 							'<span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' +
-							escAttr(p.label) +
-						'</button>';
+							escAttr(p.label) + '</button>';
 					}).join('') +
 				'</div>',
-				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click and shows the full grid here, so you can fine-tune.</p>'
+				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click. The <em>tone</em> chips above hide whatever feels heavy, in a click.</p>'
 			].join('');
-			host.querySelectorAll('[data-persona]').forEach(function (b) {
-				b.addEventListener('click', function () {
-					applyPersona(b.getAttribute('data-persona'));
-					host.dataset.personasExpanded = '1';
-					renderInlineWidget(host);
+			wire = function (h) {
+				h.querySelectorAll('[data-persona]').forEach(function (b) {
+					b.addEventListener('click', function () {
+						h.dataset.personasExpanded = '1';
+						applyPersona(b.getAttribute('data-persona'));
+						animateInlineReveal(h);
+					});
 				});
-			});
-			host.querySelector('[data-open-detailed]').addEventListener('click', openOverlay);
-			return;
+				const det = h.querySelector('[data-open-detailed]');
+				if (det) det.addEventListener('click', openOverlay);
+				wireCategoryChips(h);
+			};
+		} else {
+			const tilesHtml = TOPICS.map(function (t) {
+				const on = map[t.id] !== false;
+				return '<button type="button" class="ipill itx-item ' + (on ? 'ipill-on' : 'ipill-off') +
+					'" data-topic-id="' + escAttr(t.id) + '">' +
+					'<span class="ipill-icon">' + escAttr(t.icon) + '</span>' +
+					'<span class="ipill-label">' + escAttr(t.label) + '</span>' +
+					'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span></button>';
+			}).join('');
+			const backBtn = isPersonasHost
+				? '<button type="button" class="inline-topics-open inline-topics-secondary" data-collapse-types>← types</button>'
+				: '';
+			html = [
+				'<div class="inline-topics-head">',
+					summary,
+					'<div class="inline-topics-head-actions">',
+						backBtn,
+						'<button type="button" class="inline-topics-open" data-open-picker>',
+							'<span class="ti-target" aria-hidden="true">',
+							'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
+							'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+							'</svg></span>',
+							'Open interest picker',
+						'</button>',
+					'</div>',
+				'</div>',
+				catRow,
+				'<div class="inline-topics-grid">' + tilesHtml + '</div>',
+				'<p class="inline-topics-foot">Toggle topics to fine-tune · <em>tone</em> chips above hide heavy content in one click. Or the small <strong>🎯 top-right</strong> any time — saved in a cookie.</p>'
+			].join('');
+			wire = function (h) {
+				const pick = h.querySelector('[data-open-picker]');
+				if (pick) pick.addEventListener('click', openOverlay);
+				const collapseBtn = h.querySelector('[data-collapse-types]');
+				if (collapseBtn) collapseBtn.addEventListener('click', function () {
+					h.dataset.personasExpanded = '';
+					renderInlineWidget(h);
+					animateInlineReveal(h);
+				});
+				h.querySelectorAll('.ipill').forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						const id = btn.getAttribute('data-topic-id');
+						setEnabled(id, !isEnabled(id));
+					});
+				});
+				wireCategoryChips(h);
+			};
 		}
 
-		const tilesHtml = TOPICS.map(function (t) {
-			const on = map[t.id] !== false;
-			return '<button type="button" class="ipill ' + (on ? 'ipill-on' : 'ipill-off') +
-				'" data-topic-id="' + escAttr(t.id) + '">' +
-				'<span class="ipill-icon">' + escAttr(t.icon) + '</span>' +
-				'<span class="ipill-label">' + escAttr(t.label) + '</span>' +
-				'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span>' +
-			'</button>';
-		}).join('');
-
-		const backToTypesBtn = isPersonasHost
-			? '<button type="button" class="inline-topics-open inline-topics-secondary" data-collapse-types>← types</button>'
-			: '';
-
-		host.innerHTML = [
-			'<div class="inline-topics-head">',
-				'<div class="inline-topics-summary">',
-					'<span class="inline-topics-icon" aria-hidden="true">🎯</span>',
-					'<span>',
-						'<strong>' + active + '</strong> of ' + total + ' topics active',
-						skipped ? ' · <em>' + skipped + ' section' + (skipped === 1 ? '' : 's') + ' tucked away</em>' : '',
-					'</span>',
-				'</div>',
-				'<div class="inline-topics-head-actions">',
-					backToTypesBtn,
-					'<button type="button" class="inline-topics-open" data-open-picker>',
-						'<span class="ti-target" aria-hidden="true">',
-						'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
-						'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-						'</svg></span>',
-						'Open interest picker',
-					'</button>',
-				'</div>',
-			'</div>',
-			'<div class="inline-topics-grid">' + tilesHtml + '</div>',
-			'<p class="inline-topics-foot">Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
-		].join('');
-
-		host.querySelector('[data-open-picker]').addEventListener('click', openOverlay);
-		const collapseBtn = host.querySelector('[data-collapse-types]');
-		if (collapseBtn) {
-			collapseBtn.addEventListener('click', function () {
-				host.dataset.personasExpanded = '';
-				renderInlineWidget(host);
-			});
-		}
-		host.querySelectorAll('.ipill').forEach(function (btn) {
-			btn.addEventListener('click', function () {
-				const id = btn.getAttribute('data-topic-id');
-				setEnabled(id, !isEnabled(id));
-			});
-		});
+		host.innerHTML = html;
+		wire(host);
 	}
 
 	/* ── 11. Init ─────────────────────────────────────────────── */
@@ -1379,6 +1487,7 @@
 	/* ── 12. Public API ───────────────────────────────────────── */
 	window.BlogTopics = {
 		TOPICS: TOPICS,
+		CATEGORIES: CATEGORIES,
 		PRESETS: PRESETS,
 		PROFILES: PROFILES,
 		LEVELS: LEVELS,
@@ -1386,12 +1495,21 @@
 		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
+		applyMathAlts: applyMathAlts,
+		scoreUnit: scoreUnit,
 		activeMap: function () { return normalize(activeMap()); },
+		activeCats: function () { return normalizeCats(activeCats()); },
 		activePref: function () { return activePref(); },
 		isEnabled: isEnabled,
 		anyEnabled: anyEnabled,
 		setEnabled: setEnabled,
 		setAll: setAll,
+		isCategory: isCategory,
+		isCatEnabled: isCatEnabled,
+		setCatEnabled: setCatEnabled,
+		setLaymanMode: setLaymanMode,
+		categoryPresence: categoryPresence,
+		labelFor: labelFor,
 		applyPreset: applyPreset,
 		applyAudience: applyAudience,
 		applyAudiencePartial: applyAudiencePartial,

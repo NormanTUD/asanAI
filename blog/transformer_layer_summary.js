@@ -531,17 +531,17 @@
 			'',
 			'$$C_h = 1-\\frac{\\overline{H}_h}{H^{\\max}}, \\qquad H_h = -\\frac1T\\!\\sum_{i=1}^{T-1}\\sum_{j\\le i} p_{ij}^{(h,\\ell)}\\log_2 p_{ij}^{(h,\\ell)}, \\qquad H^{\\max} = \\frac1T\\!\\sum_{i=1}^{T-1}\\log_2(i{+}1).$$',
 			'',
-			'$C_h\\to 1$ means a near-deterministic router; $C_h\\to 0$ an averaging gate. Attention entropy **collapse** — heads drifting toward uniform, rank loss — is a known training failure \cite[stabilising training]{zhai2023entropy}.',
+			'$C_h\\to 1$ means a near-deterministic router; $C_h\\to 0$ an averaging gate. Attention entropy **collapse** — heads drifting toward uniform, rank loss — is a known training failure that entropy-promoting regularisers target [Zhai et al. (2023)](https://arxiv.org/abs/2303.06296).',
 			'',
 			'“Effective rank ≈ r” means the *stable rank* $\\operatorname{sr}(M)=\\|M\\|_F^{\\,2}/\\sigma_{\\max}(M)^2$, the Frobenius norm squared against the largest singular value. Two products matter per head:',
 			'',
 			'$$\\operatorname{sr}(W_Q^{(h,\\ell)}W_K^{(h,\\ell)\\top}) = \\text{how many query directions}, \\qquad \\operatorname{sr}(W_V^{(h,\\ell)}W_O^{(h,\\ell)}) = \\text{how many write directions}.$$',
 			'',
-			'Rank-≈1 value→output circuits are the canonical minimal “write” of the shared residual stream \cite[Transformer Circuits]{elhage2021mathematical}; when operator ranks across the stream compress, **dimensional collapse** \cite[challenge for sparse dictionary learning]{wang2025dimensionalcollapse} can follow.',
+			'Rank-≈1 value→output circuits are the canonical minimal “write” of the shared residual stream [Elhage et al. (2021), *A Mathematical Framework for Transformer Circuits*](https://transformer-circuits.pub/2021/framework/index.html); when operator ranks across the stream compress, **dimensional collapse** [Wang et al. (2025)](https://arxiv.org/abs/2508.16929) can follow.',
 			'',
 			'A unit $u$ of the FFN is **dead** when its GeLU gate never opens on the probe tokens: $\\max_i\\big|\\mathrm{GeLU}(\\hat{x}_i^\\top W_1[:,u] + b_{1,u})\\big| < 10^{-3}$.',
 			'',
-			'Each layer writes $\\mathrm{Attn}(x) = \\big(\\textstyle\\mathrm{concat}_h\\, A^{(h,\\ell)}V^{(h,\\ell)}x\\big)W_O^{\\ell}$ then $\\mathrm{FFN}(x+\\mathrm{Attn})$, so the “write / ‖x‖” figures are $\\|\\mathrm{Attn}\\|_F/\\|x\\|_F$ and $\\|\\mathrm{FFN}\\|_F/\\|x\\|_F$. When heads steer one another through shared channels, inter-head “talking heads” behaviour appears \cite{merullo2024talkingheads}.'
+			'Each layer writes $\\mathrm{Attn}(x) = \\big(\\textstyle\\mathrm{concat}_h\\, A^{(h,\\ell)}V^{(h,\\ell)}x\\big)W_O^{\\ell}$ then $\\mathrm{FFN}(x+\\mathrm{Attn})$, so the “write / ‖x‖” figures are $\\|\\mathrm{Attn}\\|_F/\\|x\\|_F$ and $\\|\\mathrm{FFN}\\|_F/\\|x\\|_F$. When heads steer one another through shared channels, inter-head “talking heads” behaviour appears [Merullo, Eickhoff &amp; Pavlick (2024)](https://arxiv.org/abs/2406.09519).'
 		].join('\n');
 
 		var panel = document.createElement('div');
