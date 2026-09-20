@@ -459,7 +459,7 @@
 			return window.__layoutGuardrail;
 		}
 
-		offenders.forEach(flagEl);
+		offenders.forEach(function (o) { flagEl(o.el); });
 		lastDetails = computeDetails(offenders, allowed);
 		showBanner(offenders, allowed, modeName());
 		console.error(
