@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>tlsprobe4</title></head>
+<body>
+<iframe id="pg" src="http://localhost/asanai/blog/transformer" style="width:1200px;height:900px;border:0"></iframe>
+<pre id="out">pending</pre>
+<script>
+function done(m) { document.getElementById('out').textContent = 'TLS_RESULT ' + m; document.title = 'tls done'; }
+function report(w) {
+	var d = w.document;
+	var eq = d.getElementById('tls-equations');
+	var seg = eq ? eq.innerHTML : '';
+	var mdDiv = eq ? eq.querySelector('.md') : null;
+	return {
+		hasEq: !!eq,
+		mdDiv: !!mdDiv,
+		autocite: seg.length ? (seg.match(/autociteelement/g) || []).length : -1,
+		supRef: seg.length ? (seg.match(/footnote-ref/g) || []).length : -1,
+		litCite: (seg.match(/cite\{|cite\[/) || []).length,
+		mdHTMLlen: mdDiv ? mdDiv.innerHTML.length : -1
+	};
+}
+var tries = 0;
+function poll() {
+	var w = document.getElementById('pg').contentWindow;
+	var r = w && w.document.getElementById('tls-equations') ? report(w) : null;
+	if (!r || !r.mdDiv) { if (++tries > 400) return done('TIMEOUT'); setTimeout(poll, 250); return; }
+	var bibDataKeys = w.bibData ? Object.keys(w.bibData).length : -1;
+	try { w.bibtexify(); } catch (e) { marker = 'bibthrow ' + e.message; }
+	var r2 = report(w);
+	done(JSON.stringify({ before: r, after: r2, bibKeys: bibDataKeys }));
+}
+document.getElementById('pg').addEventListener('load', function () { setTimeout(poll, 600); });
+</script>
+</body></html>
