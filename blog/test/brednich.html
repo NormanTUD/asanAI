@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Brednich Interaktiv – Die sagenhaften Geschichten von heute</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#0a0710; --bg2:#140a20; --ink:#f4ecff; --muted:#b7a8d4;
+    --accent:#ff5aa7; --accent2:#8be9fd; --accent3:#f8f38d; --danger:#ff6b6b;
+    --card:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,var(--bg2),var(--bg));color:var(--ink);font-family:'Georgia','Iowan Old Style',serif;line-height:1.55}
+  h1,h2,h3{font-family:'Baskerville','Playfair Display',Georgia,serif;letter-spacing:.3px}
+  header{padding:60px 24px 30px;text-align:center;background:linear-gradient(180deg,rgba(255,90,167,.12),transparent)}
+  header h1{font-size:clamp(2rem,5vw,3.6rem);margin:0 0 8px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:var(--muted);max-width:720px;margin:8px auto 0;font-style:italic}
+  nav{position:sticky;top:0;z-index:50;background:rgba(10,7,16,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  nav a{color:var(--muted);text-decoration:none;font-size:.85rem;padding:6px 10px;border-radius:20px;transition:all .2s}
+  nav a:hover{background:var(--card);color:var(--ink)}
+  main{max-width:1100px;margin:0 auto;padding:20px}
+  section{margin:40px 0;padding:28px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+  section h2{margin-top:0;color:var(--accent);font-size:1.8rem;border-bottom:1px solid var(--border);padding-bottom:10px}
+  section h3{color:var(--accent2);margin-top:24px}
+  .lead{font-size:1.05rem;color:var(--muted);font-style:italic;margin-bottom:20px;padding:12px 16px;border-left:3px solid var(--accent);background:rgba(255,90,167,.05)}
+  .quote{font-family:'Baskerville',serif;font-style:italic;color:var(--accent3);border-left:2px solid var(--accent3);padding:8px 14px;margin:12px 0;background:rgba(248,243,141,.05)}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0;padding:14px;background:rgba(0,0,0,.25);border-radius:10px}
+  .controls label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);min-width:140px}
+  input[type=range]{width:180px;accent-color:var(--accent)}
+  input[type=number],select,button{background:var(--bg2);color:var(--ink);border:1px solid var(--border);padding:6px 10px;border-radius:6px;font-family:inherit}
+  button{cursor:pointer;background:var(--accent);color:#000;font-weight:bold;border:none;transition:transform .1s}
+  button:hover{transform:translateY(-1px);background:#ff77b8}
+  button.sec{background:var(--accent2);color:#000}
+  button.danger{background:var(--danger);color:#fff}
+  canvas{display:block;background:#000;border-radius:8px;max-width:100%;margin:8px auto}
+  .plot{width:100%;height:380px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:800px){.grid2{grid-template-columns:1fr}}
+  .card{background:rgba(0,0,0,.3);padding:14px;border-radius:10px;border:1px solid var(--border)}
+  .card h4{margin:0 0 8px;color:var(--accent3)}
+  .tag{display:inline-block;background:var(--accent);color:#000;padding:2px 8px;border-radius:12px;font-size:.75rem;margin:2px;font-weight:bold}
+  .tag.blue{background:var(--accent2)}
+  .tag.yellow{background:var(--accent3)}
+  .stat{font-size:2rem;color:var(--accent);font-weight:bold;font-family:monospace}
+  footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);margin-top:60px}
+  .flow-node{fill:var(--card);stroke:var(--accent);stroke-width:2}
+  .flow-text{fill:var(--ink);font-size:12px;font-family:sans-serif}
+  .flow-arrow{stroke:var(--accent2);stroke-width:2;fill:none;marker-end:url(#arrow)}
+  ul.motiv li{margin:6px 0}
+  .example-box{background:linear-gradient(135deg,rgba(255,90,167,.08),rgba(139,233,253,.08));border:1px dashed var(--accent2);padding:14px;border-radius:8px;margin:12px 0;font-size:.95rem}
+  .warning{color:var(--danger);font-weight:bold}
+  .highlight{background:rgba(248,243,141,.15);padding:1px 4px;border-radius:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Die Spinne in der Yucca-Palme</h1>
+  <p>Eine interaktive Reise durch Rolf Wilhelm Brednichs Sammlungen moderner Sagen — jene absolut wahren Geschichten, die dem Freund eines Freundes wirklich passiert sind.</p>
+</header>
+
+<nav>
+  <a href="#intro">Einführung</a>
+  <a href="#foaf">Der FoaF</a>
+  <a href="#anatomie">Anatomie einer Sage</a>
+  <a href="#ansteckung">Ansteckung</a>
+  <a href="#angst">Angst & Motive</a>
+  <a href="#wahrheit">Wahrheit</a>
+  <a href="#medien">Medien-Feedback</a>
+  <a href="#zoo">Sagen-Zoo</a>
+  <a href="#labor">Sagen-Labor</a>
+  <a href="#glossar">Glossar</a>
+</nav>
+
+<main>
+
+<section id="intro">
+  <h2>1. Was ist eine moderne Sage?</h2>
+  <p class="lead">„Sage: Erzählung von einem sonderbaren Erlebnis, das geglaubt und für wahr gehalten wird." — F. Ranke, 1937</p>
+  <p>Rolf Wilhelm Brednich, Professor für Volkskunde in Göttingen, sammelte in seinen Bestsellern <em>„Die Spinne in der Yucca-Palme"</em> (1990), <em>„Die Maus im Jumbo-Jet"</em> (1991) und <em>„Das Huhn mit dem Gipsbein"</em> (1993) hunderte Geschichten, die überall im deutschen Sprachraum als <strong>wahre Begebenheiten</strong> erzählt wurden. Der Clou: sie sind es fast nie.</p>
+  <p>Diese Geschichten heißen im Englischen <em>urban legends</em> oder <em>contemporary legends</em>. Sie leben mündlich, springen aber auch durch Presse, Radio und Film. Was sie alle gemeinsam haben, will diese Seite dir <strong>zum Spielen</strong> zeigen — nicht zum Lesen.</p>
+  <div class="quote">„I heard it from a friend of a friend and it's absolutely true..."</div>
+
+  <h3>Ein Beispiel zum Aufwärmen</h3>
+  <div class="example-box">
+    <strong>Die polnischen Kennzeichen</strong> (Huhn Nr. 1): Eine Frau kommt spät vom Kegeln, fährt heim. An der Haustür fragt der Ehemann, ob sie Probleme mit dem Wagen hatte. Nein. „Dann musst du ihn vertauscht haben." Sie schaut aufs Kennzeichen: <span class="warning">Polnisch.</span> Sie muss die Autodiebe im letzten Moment gestört haben.
+    <br><br>
+    Zwei Lieblingsthemen der Deutschen in einer Erzählung: <span class="tag">Liebe zum Auto</span> <span class="tag blue">Ausländerfurcht</span>. Ein „Fünkchen Wahrheit" (illegaler Autohandel gab es) — aber die Story übertreibt bis ins Absurde.
+  </div>
+</section>
+
+<section id="foaf">
+  <h2>2. Der Freund eines Freundes (FoaF)</h2>
+  <p>Jede moderne Sage kommt mit einer <strong>Beglaubigungskette</strong>: „Meine Kollegin kennt eine, deren Schwager…". Diese Distanz macht sie unangreifbar: Der Erzähler selbst hat nichts erlebt, er berichtet nur.</p>
+  <p>Spiel mit dem Regler, wie sich die Kette aufbaut:</p>
+
+  <div class="controls">
+    <label>Kettenlänge: <span id="foafVal">3</span>
+      <input type="range" id="foafRange" min="0" max="7" value="3">
+    </label>
+    <button onclick="renderFoaf()">Neu würfeln</button>
+  </div>
+  <canvas id="foafCanvas" width="1000" height="200"></canvas>
+  <p id="foafText" style="text-align:center;font-style:italic;color:var(--muted);min-height:40px"></p>
+
+  <div class="quote">„Als Erzähler kann er sich immer wieder auf die Position des Übermittlers zurückziehen, der als Zeugen seine Quellen ins Feld zu führen vermag." — Brednich, Vorwort zum Huhn</div>
+</section>
+
+<section id="anatomie">
+  <h2>3. Anatomie einer Sage</h2>
+  <p>Brednich zeigt: Jede moderne Sage folgt einem <strong>Dreischritt</strong>. Zuerst ein vertrauter Alltag, dann ein plötzlicher <span class="warning">Bruch ins Unerhörte</span>, schließlich die Pointe.</p>
+
+  <svg viewBox="0 0 900 260" style="width:100%;height:auto;background:#000;border-radius:10px">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0,0 10,3 0,6" fill="#8be9fd"/>
+      </marker>
+    </defs>
+    <rect x="20" y="80" width="220" height="100" rx="12" class="flow-node"/>
+    <text x="130" y="115" text-anchor="middle" class="flow-text" font-weight="bold" fill="#f8f38d">1. Alltag</text>
+    <text x="130" y="140" text-anchor="middle" class="flow-text">Quelle, Ort, Personen,</text>
+    <text x="130" y="158" text-anchor="middle" class="flow-text">vertraute Situation</text>
+
+    <rect x="340" y="80" width="220" height="100" rx="12" class="flow-node" stroke="#ff5aa7"/>
+    <text x="450" y="115" text-anchor="middle" class="flow-text" font-weight="bold" fill="#ff5aa7">2. Bruch</text>
+    <text x="450" y="140" text-anchor="middle" class="flow-text">„Zu ihrem Entsetzen…"</text>
+    <text x="450" y="158" text-anchor="middle" class="flow-text">Das Unerwartete bricht ein</text>
+
+    <rect x="660" y="80" width="220" height="100" rx="12" class="flow-node" stroke="#f8f38d"/>
+    <text x="770" y="115" text-anchor="middle" class="flow-text" font-weight="bold" fill="#f8f38d">3. Pointe</text>
+    <text x="770" y="140" text-anchor="middle" class="flow-text">Horror, Schadenfreude,</text>
+    <text x="770" y="158" text-anchor="middle" class="flow-text">Ironie, Moral</text>
+
+    <line x1="240" y1="130" x2="340" y2="130" class="flow-arrow"/>
+    <line x1="560" y1="130" x2="660" y2="130" class="flow-arrow"/>
+
+    <text x="450" y="40" text-anchor="middle" fill="#b7a8d4" font-size="14" font-style="italic">Das Struktur-Skelett jeder modernen Sage</text>
+  </svg>
+
+  <h3>Wähle eine Sage und sieh ihre Struktur:</h3>
+  <div class="controls">
+    <label>Sage:
+      <select id="anatomySelect" onchange="renderAnatomy()">
+        <option value="0">Die Spinne in der Yucca-Palme</option>
+        <option value="1">Die gestohlene Großmutter</option>
+        <option value="2">Der Elefant auf dem VW</option>
+        <option value="3">Reich muss man sein!</option>
+        <option value="4">Der Pudel in der Mikrowelle</option>
+        <option value="5">Das Huhn mit dem Gipsbein</option>
+      </select>
+    </label>
+  </div>
+  <div id="anatomyOut" class="grid2"></div>
+</section>
+
+<section id="ansteckung">
+  <h2>4. Ansteckung — wie sich Sagen ausbreiten</h2>
+  <p class="lead">„Moderne Sagen verhalten sich genau wie Gerüchte. Sie entstehen an irgendeinem Ort, springen von dort auf den nächsten über und erfassen in einer Art Ansteckungswachstum bald breite Flächen." — Brednich, Huhn Nr. 1</p>
+  <p>Das erinnert an <strong>epidemische Modelle</strong> aus der Biologie. Wir simulieren hier eine sehr vereinfachte SIR-Dynamik: <em>S</em>usceptible (kennen die Sage noch nicht), <em>I</em>nfected (erzählen sie gerade weiter), <em>R</em>ecovered (haben die Sage gehört und erzählen sie nicht mehr).</p>
+
+  <div class="controls">
+    <label>Ansteckungsrate β: <span id="betaVal">0.35</span>
+      <input type="range" id="beta" min="0.05" max="1" step="0.01" value="0.35" oninput="runSIR()">
+    </label>
+    <label>Abklingrate γ: <span id="gammaVal">0.10</span>
+      <input type="range" id="gamma" min="0.01" max="0.5" step="0.01" value="0.10" oninput="runSIR()">
+    </label>
+    <label>Bevölkerung: <span id="popVal">10000</span>
+      <input type="range" id="pop" min="100" max="50000" step="100" value="10000" oninput="runSIR()">
+    </label>
+    <label>Medien-Boost: <span id="mediaVal">0</span>
+      <input type="range" id="media" min="0" max="1" step="0.05" value="0" oninput="runSIR()">
+    </label>
+  </div>
+  <div id="sirPlot" class="plot"></div>
+  <p style="color:var(--muted);font-size:.9rem"><span id="sirText"></span></p>
+  <div class="quote">Mit β groß und γ klein ergibt sich eine Welle, die „mangels Bestätigung wieder in sich zusammenfällt" — genau wie Brednich es beschreibt.</div>
+
+  <h3>Die Mathematik dahinter</h3>
+  <p>Das Modell besteht aus drei gekoppelten Differentialgleichungen. Kurz gesagt: pro Zeitschritt werden aus <em>Anfälligen</em> <em>Erzähler</em>, aus <em>Erzählern</em> <em>Gesättigte</em>:</p>
+  <div id="sirMath" style="text-align:center;font-size:1.1rem;color:var(--accent2)"></div>
+  <p style="color:var(--muted);font-size:.85rem">Der Basisreproduktionswert <span id="r0math"></span> sagt: eine Story „überlebt", wenn ein Erzähler im Schnitt mehr als eine Person ansteckt.</p>
+</section>
+
+<section id="angst">
+  <h2>5. Angst, Vorurteil, Wunschtraum — die Themen</h2>
+  <p>Brednich analysiert: moderne Sagen sind <strong>Spiegel gesellschaftlicher Ängste</strong>. Fahre über die Themen — jedes zeigt Beispielsagen aus den drei Bänden.</p>
+
+  <div id="themePlot" class="plot" style="height:520px"></div>
+  <p style="color:var(--muted);font-size:.9rem">Größe der Blasen = Häufigkeit in den Bänden (grobe Schätzung). Farbe = emotionaler Grundton.</p>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card">
+      <h4>Warum negative Themen dominieren</h4>
+      <p style="font-size:.9rem">Brednich zitiert Maletzke (1988): Der Mensch ist als „biologisch unterentwickeltes Wesen" darauf angewiesen, <strong>Bedrohungen zu erkennen</strong>. Deshalb fasziniert ihn das Negative, Absonderliche, Sensationelle mehr als der normale Alltag.</p>
+    </div>
+    <div class="card">
+      <h4>Rache-Geschichten als Ventil</h4>
+      <p style="font-size:.9rem">Ein häufiges Muster: der scheinbar Unterlegene rächt sich (der Fiat-Fahrer zerdrückt vom Mercedes → „Reich muss man sein!"). Bengt af Klintberg deutet das als sozial akzeptierte Entlastung von Rachegelühlen in einer Gesellschaft, die private Vergeltung tabuisiert.</p>
+    </div>
+  </div>
+</section>
+
+<section id="wahrheit">
+  <h2>6. Wahrheit, Fiktion und der wahre Kern</h2>
+  <p>Manche Sagen sind völlig frei erfunden, andere haben — überraschend! — einen realen Ursprung. Brednich musste selbst zugeben, dass einige seiner „Sagen" tatsächlich passiert waren.</p>
+
+  <div class="controls">
+    <label>Erzähler-Übertreibung: <span id="exagVal">2.0</span>×
+      <input type="range" id="exag" min="1" max="10" step="0.1" value="2" oninput="drawTruth()">
+    </label>
+    <label>Anzahl Weitergaben: <span id="hopsVal">8</span>
+      <input type="range" id="hops" min="1" max="20" step="1" value="8" oninput="drawTruth()">
+    </label>
+  </div>
+  <canvas id="truthCanvas" width="1000" height="320"></canvas>
+  <p style="color:var(--muted);font-size:.9rem">Der <span class="highlight">gelbe Kern</span> ist das reale Ereignis. Jede Weitergabe fügt Motive hinzu, verstärkt Details — die Story „driftet" ins Sagenhafte.</p>
+
+  <div class="example-box">
+    <strong>Beispiel: „Fliegendes Eis" (Maus Nr. 15)</strong> — Brednich hatte diese Story als Sage aufgenommen. Es stellte sich heraus: Flugzeug-Toiletten sind manchmal undicht, das gefrorene „Blue Ice" fällt tatsächlich vom Himmel. Es gibt namentlich bekannte Geschädigte in Einflugschneisen. → Der wahre Kern war real.
+  </div>
+  <div class="example-box">
+    <strong>Gegenbeispiel: „Kein Wasser und Brot"</strong> — schien wie eine krasse Sage: ein Autofahrer in Vorarlberg wird 18 Tage in der Zelle vergessen und überlebt durch Trinken des eigenen Urins. Tatsächlich passiert: Andreas Mihavecs, 1979, Guinness-Buch der Rekorde 1981.
+  </div>
+
+  <p class="quote">„Wohl in den meisten Erzählungen ist ein Fünkchen Wahrheit verborgen. Der altbekannte Satz ‚Das Leben schreibt die besten Geschichten' trifft auch hier zu." — Brednich, Vorwort zum Huhn</p>
+</section>
+
+<section id="medien">
+  <h2>7. Der Medien-Rücklauf-Kreis</h2>
+  <p>Brednich beschreibt ein faszinierendes Phänomen: Sagen wandern <strong>mündlich → Presse → wieder mündlich</strong>. Journalisten drucken sie als „Kurioses", Leser erzählen sie als selbst gehört weiter. Der Kreis schließt sich.</p>
+
+  <svg viewBox="0 0 700 400" style="width:100%;height:auto;max-width:700px;display:block;margin:auto">
+    <defs>
+      <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0,0 10,3 0,6" fill="#ff5aa7"/>
+      </marker>
+    </defs>
+    <circle cx="350" cy="80" r="55" fill="rgba(139,233,253,0.15)" stroke="#8be9fd" stroke-width="2"/>
+    <text x="350" y="75" text-anchor="middle" fill="#8be9fd" font-weight="bold">Mündliche</text>
+    <text x="350" y="93" text-anchor="middle" fill="#8be9fd" font-weight="bold">Erzählung</text>
+
+    <circle cx="600" cy="230" r="55" fill="rgba(255,90,167,0.15)" stroke="#ff5aa7" stroke-width="2"/>
+    <text x="600" y="225" text-anchor="middle" fill="#ff5aa7" font-weight="bold">Presse /</text>
+    <text x="600" y="243" text-anchor="middle" fill="#ff5aa7" font-weight="bold">Bord</text>
+    <text x="600" y="243" text-anchor="middle" fill="#ff5aa7" font-weight="bold">Boulevard</text>
+
+    <circle cx="100" cy="230" r="55" fill="rgba(248,243,141,0.15)" stroke="#f8f38d" stroke-width="2"/>
+    <text x="100" y="225" text-anchor="middle" fill="#f8f38d" font-weight="bold">Film /</text>
+    <text x="100" y="243" text-anchor="middle" fill="#f8f38d" font-weight="bold">Literatur</text>
+
+    <path d="M 395 130 Q 550 130 570 180" class="flow-arrow" fill="none" stroke="#ff5aa7"/>
+    <path d="M 570 280 Q 400 380 160 280" class="flow-arrow" fill="none" stroke="#ff5aa7"/>
+    <path d="M 130 180 Q 200 130 305 130" class="flow-arrow" fill="none" stroke="#ff5aa7"/>
+  </svg>
+  <p style="text-align:center;color:var(--muted);font-style:italic">Die Sage verläuft im Kreis – jede Station verstärkt und variiert.</p>
+
+  <div class="example-box">
+    <strong>Beispiel: „Batman"</strong> (Huhn Nr. 70) — Ein Mann versucht im Batman-Kostüm vom Schrank auf seine Ehefrau ins Bett zu schweben, stürzt ab, bricht sich Kiefer, Arme, Hände. Die gefesselte Ehefrau kann nicht helfen. Erschien in der <em>Hamburger Morgenpost</em> als „Tagesschau"-Meldung — <strong>ohne Ortsangabe</strong>. Klassische Medien-Sage: Der Batman-Kinofilm gibt ihr Nahrung.
+  </div>
+</section>
+
+<section id="zoo">
+  <h2>8. Der Sagen-Zoo</h2>
+  <p>Klicke auf eine Sage, um Kurzfassung, Motiv und Fundort zu sehen. Filtere nach Thema:</p>
+
+  <div class="controls">
+    <label>Filter:
+      <select id="zooFilter" onchange="renderZoo()">
+        <option value="all">Alle Themen</option>
+        <option value="auto">Auto & Verkehr</option>
+        <option value="urlaub">Urlaub & Fremde</option>
+        <option value="tier">Tiere</option>
+        <option value="essen">Essen & Trinken</option>
+        <option value="tod">Tod & Makabres</option>
+        <option value="tech">Technik</option>
+        <option value="ddr">DDR & Wende</option>
+        <option value="sex">Sexualität</option>
+      </select>
+    </label>
+  </div>
+  <div id="zooGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px"></div>
+  <div id="zooDetail" class="card" style="margin-top:16px;display:none"></div>
+</section>
+
+<section id="labor">
+  <h2>9. Das Sagen-Labor</h2>
+  <p>Baue deine eigene moderne Sage nach Brednichs Rezept. Wähle Zutaten – die Story schreibt sich selbst.</p>
+
+  <div class="controls">
+    <label>Quelle:
+      <select id="labSource">
+        <option>Meine Kollegin</option>
+        <option>Ein Freund meines Bruders</option>
+        <option>Die Schwägerin einer Bekannten</option>
+        <option>Ein Taxifahrer</option>
+        <option>Meine Friseurin</option>
+      </select>
+    </label>
+    <label>Ort:
+      <select id="labPlace">
+        <option>im Kaufhaus in Göttingen</option>
+        <option>auf einem Basar in Marrakesch</option>
+        <option>an einer Autobahnraststätte</option>
+        <option>im Urlaub auf Mallorca</option>
+        <option>in einer Wiener U-Bahn</option>
+      </select>
+    </label>
+    <label>Motiv:
+      <select id="labMotif">
+        <option>eine Spinne</option>
+        <option>ein gestohlenes Auto</option>
+        <option>eine verschwundene Person</option>
+        <option>ein giftiges Tier</option>
+        <option>eine entwendete Niere</option>
+      </select>
+    </label>
+    <label>Pointe:
+      <select id="labPoint">
+        <option>Polizei kam zu spät</option>
+        <option>der Täter war ausländisch</option>
+        <option>alles war ein Missverständnis</option>
+        <option>am Ende war das Opfer selbst schuld</option>
+        <option>die Wahrheit kam nie ans Licht</option>
+      </select>
+    </label>
+    <button onclick="generateStory()">Sage erzeugen ✨</button>
+  </div>
+  <div id="labOutput" class="example-box" style="min-height:100px;font-size:1rem;line-height:1.7"></div>
+  <p style="color:var(--muted);font-size:.85rem">Merkst du, wie glaubhaft das plötzlich klingt? Genau <em>das</em> ist Brednichs Punkt.</p>
+</section>
+
+<section id="glossar">
+  <h2>10. Glossar & wichtige Zitate</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>Kernbegriffe</h4>
+      <p><span class="tag">FoaF</span> Friend of a Friend – die typische Quelle</p>
+      <p><span class="tag blue">Moderne Sage</span> Erzählung, für wahr gehalten, mündlich verbreitet, aktuelle Motive</p>
+      <p><span class="tag yellow">Gerücht</span> Kürzer, diffuser, „es soll…"</p>
+      <p><span class="tag">Wandersage</span> Dieselbe Story taucht überall auf</p>
+      <p><span class="tag blue">Memorat</span> Ich-Erzählung eines Erlebnisses</p>
+      <p><span class="tag yellow">Schwank</span> Kurze komische Erzählung mit Pointe</p>
+    </div>
+    <div class="card">
+      <h4>Prägnante Zitate Brednichs</h4>
+      <div class="quote">„Sie sind nicht Abbild der Wirklichkeit, sondern ein Spiegel unser selbst." (Maus)</div>
+      <div class="quote">„Wohl in den meisten Erzählungen ist ein Fünkchen Wahrheit verborgen." (Huhn)</div>
+      <div class="quote">„Als ‚wahre' Geschichten haben sie sie gehört, als ‚wahre' Geschichten geben sie sie weiter." (Maus)</div>
+      <div class="quote">„Ob nun so etwas tatsächlich passiert oder ob es sich die Betroffenen nur einbilden, ist nebensächlich. Es wirkt jedenfalls, und wenn es nicht wahr ist, ist es doch wirklich." (Franz Hohler, zit. Maus S.7)</div>
+    </div>
+  </div>
+
+  <h3>Die drei Bände</h3>
+  <div class="grid2">
+    <div class="card"><h4>🕷️ Die Spinne in der Yucca-Palme (1990)</h4><p>116 Texte. Der Durchbruch. Erstmals im deutschen Sprachraum systematisch gesammelt.</p></div>
+    <div class="card"><h4>🐭 Die Maus im Jumbo-Jet (1991)</h4><p>103 Texte. Nach der Leserflut. Enthält erstmals DDR-Geschichten nach der Wende.</p></div>
+    <div class="card"><h4>🐔 Das Huhn mit dem Gipsbein (1993)</h4><p>134 Texte. Reflektiert Brednichs eigene „Irrtümer" – manche seiner Sagen waren doch wahr!</p></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Nach: Rolf Wilhelm Brednich, <em>Die Spinne in der Yucca-Palme</em> (1990), <em>Die Maus im Jumbo-Jet</em> (1991), <em>Das Huhn mit dem Gipsbein</em> (1993), Verlag C.H. Beck.<br>
+  Interaktive Aufbereitung — spiele, klicke, wundere dich. „I heard it from a friend of a friend and it's absolutely true..."
+</footer>
+
+<script>
+/* =============== MATH RENDER =============== */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.temml) {
+    document.getElementById('sirMath').innerHTML = temml.renderToString(
+      "\\frac{dS}{dt}=-\\beta\\frac{SI}{N},\\quad \\frac{dI}{dt}=\\beta\\frac{SI}{N}-\\gamma I,\\quad \\frac{dR}{dt}=\\gamma I",
+      {displayMode:true}
+    );
+    document.getElementById('r0math').innerHTML = temml.renderToString("R_0=\\beta/\\gamma");
+  }
+  renderFoaf();
+  renderAnatomy();
+  runSIR();
+  renderTheme();
+  drawTruth();
+  renderZoo();
+  generateStory();
+});
+
+/* =============== FOAF CHAIN =============== */
+const foafNames = ['Ich','meine Kollegin','ihre Schwester','deren Nachbarin','ein Bekannter','sein Schwager','dessen Cousin','eine Bekannte'];
+function renderFoaf(){
+  const n = +document.getElementById('foafRange').value;
+  document.getElementById('foafVal').textContent = n;
+  const c = document.getElementById('foafCanvas'), ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const total = n+2;
+  const step = (c.width-100)/(total-1);
+  const y = c.height/2;
+  const chain = [foafNames[0]];
+  for(let i=1;i<total-1;i++) chain.push(foafNames[i%foafNames.length]);
+  chain.push('DAS EREIGNIS');
+  for(let i=0;i<total;i++){
+    const x = 50 + i*step;
+    const isEnd = i===total-1;
+    ctx.beginPath();
+    ctx.arc(x,y,26,0,Math.PI*2);
+    ctx.fillStyle = isEnd? '#ff5aa7' : (i===0?'#8be9fd':'rgba(255,255,255,0.1)');
+    ctx.fill();
+    ctx.strokeStyle = '#f4ecff'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle = '#f4ecff'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(chain[i].slice(0,14), x, y+50);
+    if(i<total-1){
+      ctx.beginPath();
+      ctx.moveTo(x+26,y); ctx.lineTo(x+step-26,y);
+      ctx.strokeStyle = '#8be9fd'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+  }
+  document.getElementById('foafText').textContent = 
+    n===0 ? '„Ich habe es selbst erlebt!" — sehr verdächtig für eine Sage.' :
+    n<=2 ? 'Kurze Kette — noch relativ glaubhaft.' :
+    n<=5 ? 'Klassische FoaF-Distanz. Perfekte Beglaubigung ohne Nachprüfbarkeit.' :
+    'Extreme Distanz — der Erzähler ist völlig raus aus der Verantwortung.';
+}
+document.getElementById('foafRange').addEventListener('input', renderFoaf);
+
+/* =============== ANATOMY =============== */
+const sagen = [
+  {title:'Die Spinne in der Yucca-Palme',
+    alltag:'Frau kauft eine hübsche Yucca-Palme für ihr Wohnzimmer, gießt sie brav.',
+    bruch:'Beim Gießen hört sie ein Quietschen. Tarantel-Familie im Topf!',
+    pointe:'Männer in Schutzanzügen tragen die Pflanze weg. Sie hatte „nochmal Glück".'},
+  {title:'Die gestohlene Großmutter',
+    alltag:'Familie im Urlaub am Gardasee mit Oma im Wohnmobil.',
+    bruch:'Oma stirbt. Aus Angst vor Formalitäten wickeln sie sie in ein Zelt, verstauen sie im Auto.',
+    pointe:'An der Raststätte wird das Auto — samt Oma — gestohlen. Nie wieder gesehen.'},
+  {title:'Der Elefant auf dem VW',
+    alltag:'Zirkusparade zieht durch die Stadt. Ein Elefant marschiert mit.',
+    bruch:'Er ist dressiert, sich bei einer Melodie auf ein rotes Podest zu setzen. Er sieht einen roten Käfer.',
+    pointe:'Der Käfer wird auf die Hälfte zusammengedrückt. Der Fahrer bekommt später Ärger mit dem TÜV.'},
+  {title:'Reich muß man sein!',
+    alltag:'Älterer Herr im Mercedes will einparken. Ein Student im Fiat schnappt die Lücke.',
+    bruch:'„Jung muss man sein, flink muss man sein!" ruft der Student. Der Mercedes-Fahrer setzt zurück und zerdrückt den Fiat.',
+    pointe:'„Alt muss man sein, REICH muss man sein!" — zückt die Brieftasche, zahlt den Schaden.'},
+  {title:'Der Pudel in der Mikrowelle',
+    alltag:'Kinder waschen ihren nassen Pudel nach dem Spielen im Regen.',
+    bruch:'Um ihn zu trocknen, stecken sie ihn in die neue Mikrowelle.',
+    pointe:'Der Hund ist tot, die Mikrowelle kaputt. Warnung vor unbeherrschter Technik.'},
+  {title:'Das Huhn mit dem Gipsbein',
+    alltag:'Doktorand in Erlangen macht experimentelle Arbeit über Knochenheilung an Hühnern.',
+    bruch:'Ein Huhn mit Gips flattert weg, landet im Park der psychiatrischen Klinik.',
+    pointe:'Der Student sucht rufend „ein Huhn mit Gipsbein!" — und wird prompt eingewiesen.'}
+];
+function renderAnatomy(){
+  const i = +document.getElementById('anatomySelect').value;
+  const s = sagen[i];
+  const out = document.getElementById('anatomyOut');
+  out.innerHTML = `
+    <div class="card" style="border-color:#f8f38d"><h4>🌤️ 1. Alltag</h4><p>${s.alltag}</p></div>
+    <div class="card" style="border-color:#ff5aa7"><h4>⚡ 2. Bruch</h4><p>${s.bruch}</p></div>
+    <div class="card" style="border-color:#8be9fd;grid-column:1/-1"><h4>💥 3. Pointe (${s.title})</h4><p>${s.pointe}</p></div>`;
+}
+
+/* =============== SIR EPIDEMIC =============== */
+function runSIR(){
+  const beta=+document.getElementById('beta').value;
+  const gamma=+document.getElementById('gamma').value;
+  const N=+document.getElementById('pop').value;
+  const media=+document.getElementById('media').value;
+  document.getElementById('betaVal').textContent=beta.toFixed(2);
+  document.getElementById('gammaVal').textContent=gamma.toFixed(2);
+  document.getElementById('popVal').textContent=N;
+  document.getElementById('mediaVal').textContent=media.toFixed(2);
+  let S=N-1,I=1,R=0;
+  const days=200, dt=0.5;
+  const t=[],Sa=[],Ia=[],Ra=[];
+  for(let step=0;step<days/dt;step++){
+    const beff = beta*(1+media*0.5);
+    const dS=-beff*S*I/N;
+    const dI=beff*S*I/N - gamma*I;
+    const dR=gamma*I;
+    S+=dS*dt; I+=dI*dt; R+=dR*dt;
+    if(step%2===0){ t.push(step*dt); Sa.push(S); Ia.push(I); Ra.push(R); }
+  }
+  Plotly.newPlot('sirPlot', [
+    {x:t,y:Sa,name:'Anfällige (kennen die Sage noch nicht)',line:{color:'#8be9fd',width:3}},
+    {x:t,y:Ia,name:'Erzähler:innen (verbreiten aktiv)',line:{color:'#ff5aa7',width:3},fill:'tozeroy',fillcolor:'rgba(255,90,167,0.2)'},
+    {x:t,y:Ra,name:'Gesättigte (haben gehört, erzählen nicht mehr)',line:{color:'#f8f38d',width:3}}
+  ],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0.2)',
+    font:{color:'#f4ecff'}, xaxis:{title:'Tage', gridcolor:'#333'}, yaxis:{title:'Personen',gridcolor:'#333'},
+    margin:{t:20,r:20},legend:{orientation:'h',y:-0.2}
+  },{responsive:true,displayModeBar:false});
+  const R0 = beta/gamma;
+  document.getElementById('sirText').innerHTML = 
+    `R₀ = β/γ ≈ <strong>${R0.toFixed(2)}</strong>. ` +
+    (R0>1 ? '→ Die Sage <span class="highlight">verbreitet sich</span> als Welle.' : '→ Die Sage <span class="highlight">stirbt aus</span>, bevor sie in Fahrt kommt.');
+}
+
+/* =============== THEMES BUBBLE =============== */
+function renderTheme(){
+  const themes = [
+    {n:'Angst vor Ausländern',x:1,y:3,s:80,c:'#ff6b6b'},
+    {n:'Autoliebe',x:2,y:4,s:70,c:'#ff5aa7'},
+    {n:'Fremdenfurcht (Süden)',x:3,y:2,s:65,c:'#ff6b6b'},
+    {n:'Rache (Schwacher siegt)',x:4,y:5,s:60,c:'#f8f38d'},
+    {n:'Sexualtabus',x:5,y:2,s:55,c:'#ff5aa7'},
+    {n:'Technik-Angst',x:6,y:4,s:65,c:'#8be9fd'},
+    {n:'Tiere in Panik',x:7,y:3,s:50,c:'#8be9fd'},
+    {n:'Organdiebstahl',x:8,y:1,s:70,c:'#ff6b6b'},
+    {n:'Tod & Makaberes',x:2,y:1,s:55,c:'#b7a8d4'},
+    {n:'Aids/Krankheit',x:5,y:1,s:45,c:'#ff6b6b'},
+    {n:'Prominenten-Anekdoten',x:6,y:5,s:35,c:'#f8f38d'},
+    {n:'Verschwundene Anhalter',x:3,y:4,s:60,c:'#b7a8d4'},
+    {n:'DDR-Klischees',x:4,y:3,s:55,c:'#8be9fd'},
+    {n:'Ekel (Hundefutter etc.)',x:7,y:2,s:50,c:'#ff5aa7'},
+    {n:'Kindesgefährdung',x:1,y:1,s:50,c:'#ff6b6b'}
+  ];
+  Plotly.newPlot('themePlot',[{
+    x:themes.map(t=>t.x), y:themes.map(t=>t.y),
+    text:themes.map(t=>t.n), mode:'markers+text', textposition:'top center',
+    marker:{size:themes.map(t=>t.s),color:themes.map(t=>t.c),opacity:0.7,line:{color:'#f4ecff',width:1}},
+    textfont:{color:'#f4ecff',size:11}
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0.2)',
+    font:{color:'#f4ecff'},
+    xaxis:{visible:false,range:[0,9]},yaxis:{visible:false,range:[0,6]},
+    margin:{t:20,r:20,l:20,b:20},showlegend:false
+  },{responsive:true,displayModeBar:false});
+}
+
+/* =============== TRUTH DRIFT =============== */
+function drawTruth(){
+  const ex=+document.getElementById('exag').value;
+  const hops=+document.getElementById('hops').value;
+  document.getElementById('exagVal').textContent=ex.toFixed(1);
+  document.getElementById('hopsVal').textContent=hops;
+  const c=document.getElementById('truthCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  // kernel
+  const kx=80,ky=c.height/2, kr=40;
+  ctx.beginPath();ctx.arc(kx,ky,kr,0,Math.PI*2);
+  ctx.fillStyle='#f8f38d';ctx.fill();
+  ctx.fillStyle='#000';ctx.font='bold 12px sans-serif';ctx.textAlign='center';
+  ctx.fillText('WAHRER',kx,ky-4);ctx.fillText('KERN',kx,ky+12);
+  // hops
+  let x=kx+kr,y=ky;
+  for(let i=0;i<hops;i++){
+    const nx = x + (c.width-100)/hops;
+    const drift = (Math.sin(i*1.7)*30 + Math.random()*20-10)*ex/2;
+    const ny = ky + drift*(i/hops);
+    const size = 8 + i*ex*0.8;
+    ctx.beginPath();ctx.arc(nx,ny,size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,90,167,${0.3+i*0.05})`;ctx.fill();
+    ctx.strokeStyle='#ff5aa7';ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(nx,ny);
+    ctx.strokeStyle='rgba(139,233,253,0.4)';ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+    x=nx;y=ny;
+  }
+  ctx.fillStyle='#ff5aa7';ctx.font='bold 14px sans-serif';ctx.textAlign='right';
+  ctx.fillText('SAGE (kaum wiederzuerkennen)',c.width-20,ky-60);
+}
+
+/* =============== ZOO =============== */
+const zoo=[
+{name:'Die Spinne in der Yucca-Palme',cat:'tier',desc:'Tarantel-Familie im Blumentopf einer neu gekauften Zimmerpflanze. Klassiker aus Band 1.',quote:'„Sie hatte nochmal Glück gehabt."'},
+  {name:'Die gestohlene Großmutter',cat:'tod',desc:'Oma stirbt im Urlaub, wird im Wohnwagen versteckt, das Auto wird gestohlen — Oma auf Nimmerwiedersehen.',quote:'Klassiker der Wandersage.'},
+  {name:'Der Pudel in der Mikrowelle',cat:'tech',desc:'Kinder wollen den nassen Hund trocknen. Warnung vor unbeherrschter Technik.',quote:'Der Hund tot, die Mikrowelle kaputt.'},
+  {name:'Die Maus im Jumbo-Jet',cat:'tier',desc:'Mädchen schmuggelt Maus an Bord, sie entwischt, das Flugzeug muss zwei Tage begast werden.',quote:'Titelgeschichte Band 2.'},
+  {name:'Reich muß man sein!',cat:'auto',desc:'Mercedes-Fahrer zerdrückt Fiat des frechen Studenten und zahlt cool.',quote:'„Alt muss man sein, REICH muss man sein!"'},
+  {name:'Der Elefant auf dem VW',cat:'tier',desc:'Zirkuselefant setzt sich auf roten Käfer, weil er ihn für sein Podest hält.',quote:'Amüsante Story der 50er.'},
+  {name:'Kein Wasser und Brot',cat:'tod',desc:'Autofahrer 18 Tage in Zelle vergessen, überlebt durch Trinken des eigenen Urins. WAHR!',quote:'Andreas Mihavecs, Guinness-Buch 1981.'},
+  {name:'Die verschwundene Anhalterin',cat:'auto',desc:'Anhalterin gibt Adresse, verschwindet aus fahrendem Auto. War längst tot.',quote:'Vanishing Hitchhiker — weltweit.'},
+  {name:'Die behaarte Hand',cat:'auto',desc:'Ältere Dame als Anhalterin entpuppt sich als bärtiger Räuber mit Beil im Korb.',quote:'Sage seit 1834.'},
+  {name:'Freßt ihr eure Äppel!',cat:'ddr',desc:'Arroganter Wessi verweigert DDR-Kind Banane, wird von Tankwart bestraft.',quote:'Wende-Sage 1990.'},
+  {name:'Vierzig Jahre in Saus und Braus',cat:'ddr',desc:'DDR-Gäste räumen West-Haus leer mit Zettel: „Ihr habt 40 Jahre gelebt..."',quote:'Angst-Sage der Wende.'},
+  {name:'Die Großmutter im Carepaket',cat:'essen',desc:'Aus Amerika geschickte Dose enthält keine Nahrung, sondern Asche der Oma. Kulinarisches Missgeschick.',quote:'Klassiker seit 1946.'},
+  {name:'Der Rattenhund',cat:'tier',desc:'Aus Urlaub mitgebrachter „Hund" entpuppt sich als Riesenratte, frisst die Katze.',quote:'Mexican Pet.'},
+  {name:'Batman',cat:'sex',desc:'Ehemann will im Batman-Kostüm vom Schrank aufs Bett schweben, bricht sich Kiefer, Arme, Hände.',quote:'Medien-Sage aus Hamburger Morgenpost.'},
+  {name:'Unfreiwillige Organspende',cat:'tod',desc:'Tourist wacht nach Bazar-Besuch mit fehlender Niere auf. Später: Straßburg, Euro-Disney...',quote:'„Wanderniere" der 90er.'},
+  {name:'Die Spinne im Haardutt',cat:'tier',desc:'Spinne nistet sich in versprayter Hochfrisur ein, beißt sich zum Gehirn durch.',quote:'Warnung vor 60er-Frisuren.'},
+  {name:'Vergessene Ehefrau',cat:'urlaub',desc:'Mann fährt mit Wohnwagen weiter, ohne zu merken dass Frau an der Raststätte ausgestiegen ist.',quote:'Wohnwagen-Klassiker.'},
+  {name:'Die AIDS-Story',cat:'sex',desc:'Nach One-Night-Stand: Botschaft auf Spiegel „Welcome to the AIDS Club".',quote:'Angst-Sage der 80er.'},
+  {name:'Antiautoritäre Erziehung',cat:'essen',desc:'Punk gießt Honig über nöhlende Mutter im Supermarkt: „Ich hatte gerade Lust dazu."',quote:'Rache-Sage.'},
+  {name:'Das Huhn mit dem Gipsbein',cat:'tier',desc:'Doktorand sucht in Psychiatrie-Park sein Huhn — wird selbst eingewiesen.',quote:'Titelgeschichte Band 3.'},
+  {name:'Polnische Kennzeichen',cat:'auto',desc:'Frau fährt heim, merkt nicht dass Auto vertauscht — polnische Nummernschilder!',quote:'Wende-Angst.'},
+  {name:'Fliegendes Eis',cat:'tech',desc:'Gefrorene Flugzeug-Toiletten-Bombe fällt auf Haus. TATSÄCHLICH real!',quote:'„Blue Ice" — verbürgt.'},
+  {name:'Das Baby auf dem Autodach',cat:'urlaub',desc:'Bei Reifenpanne wird Baby aufs Dach gelegt und vergessen — landet sanft im Straßengraben.',quote:'Vergessenes-Baby-Klassiker.'},
+  {name:'Der Säugling im Solarium',cat:'tech',desc:'Junge Eltern schmoren Baby vor Taufe unter Höhensonne. Gerücht, das reale Familien traf!',quote:'Narratives Gerücht 1990-92.'},
+  {name:'Der fliegende Tiefseetaucher',cat:'urlaub',desc:'Löschflugzeug schöpft Wasser + Taucher, wirft ihn über brennendem Wald ab.',quote:'Verkohlter Taucher im Wald.'},
+  {name:'Das verschwundene Hotelzimmer',cat:'urlaub',desc:'Reisebegleiterin stirbt an Cholera, Hotel beseitigt alle Spuren, tut so als hätte es sie nie gegeben.',quote:'19. Jahrhundert, Paris.'},
+  {name:'Sex on Video',cat:'sex',desc:'Ehemann sieht sich beim Sex mit Nachbarin — die Ehefrau hat einen Detektiv engagiert.',quote:'Video-Zeitalter.'}
+];
+function renderZoo(){
+  const f=document.getElementById('zooFilter').value;
+  const grid=document.getElementById('zooGrid');
+  const filtered=f==='all'?zoo:zoo.filter(z=>z.cat===f);
+  grid.innerHTML=filtered.map((z,i)=>`
+    <div class="card" style="cursor:pointer" onclick="showZoo(${zoo.indexOf(z)})">
+      <h4>${z.name}</h4>
+      <span class="tag ${['auto','tier','tech'].includes(z.cat)?'blue':(['essen','sex'].includes(z.cat)?'yellow':'')}">${z.cat}</span>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:8px">${z.desc.slice(0,90)}...</p>
+    </div>`).join('');
+  document.getElementById('zooDetail').style.display='none';
+}
+function showZoo(i){
+  const z=zoo[i];
+  const d=document.getElementById('zooDetail');
+  d.style.display='block';
+  d.innerHTML=`<h3 style="color:var(--accent);margin-top:0">${z.name}</h3>
+    <p>${z.desc}</p>
+    <div class="quote">${z.quote}</div>
+    <button class="sec" onclick="document.getElementById('zooDetail').style.display='none'">Schließen</button>`;
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* =============== LABOR =============== */
+function generateStory(){
+  const s=document.getElementById('labSource').value;
+  const p=document.getElementById('labPlace').value;
+  const m=document.getElementById('labMotif').value;
+  const pt=document.getElementById('labPoint').value;
+  const templates=[
+    `${s} hat mir neulich diese absolut wahre Geschichte erzählt. Es soll ${p} passiert sein: Da war plötzlich ${m} — und stellt euch vor: ${pt}!`,
+    `Also, ihr werdet mir das nicht glauben, aber ${s} kennt jemanden, dem ist das wirklich passiert. ${p.charAt(0).toUpperCase()+p.slice(1)}, ganz normaler Nachmittag, und dann tauchte ${m} auf. Am Ende: ${pt}. Verrückt, oder?`,
+    `Ich schwöre, das ist keine Sage! ${s} hat es von jemandem, der dabei war. ${p.charAt(0).toUpperCase()+p.slice(1)}, mitten im Trubel, entdeckte man ${m}. Die Auflösung: ${pt}. Da läuft's einem kalt den Rücken runter.`
+  ];
+  const out=templates[Math.floor(Math.random()*templates.length)];
+  document.getElementById('labOutput').innerHTML=`<em>„${out}"</em><br><br><span style="color:var(--muted);font-size:.85rem">↑ Erkennst du das Muster? Quelle (FoaF) + Ort + Motiv + Pointe = fertige moderne Sage.</span>`;
+}
+</script>
+
+</body>
+</html>
