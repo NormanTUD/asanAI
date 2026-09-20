@@ -313,6 +313,60 @@ def check_unrendered_latex(driver: webdriver.Chrome) -> list[str]:
 
     return found
 
+def discover_lessons(document_root: str) -> list[str]:
+    """Lesson pages = .php files that carry a COURSE_METADATA block.
+
+    Every authored lesson is a single .php whose line-1 include is followed by
+    a <!-- COURSE_METADATA: ... --> block (see functions.php). Non-lesson
+    scripts (functions.php, search.php, …) have no such block and are skipped.
+    """
+    pages = []
+    for name in sorted(os.listdir(document_root)):
+        if not name.endswith(".php"):
+            continue
+        path = os.path.join(document_root, name)
+        try:
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                head = f.read(4096)
+        except OSError:
+            continue
+        if "COURSE_METADATA" in head:
+            pages.append("/" + name)
+    return pages
+
+
+def check_width(driver: webdriver.Chrome, ready_timeout: int) -> dict:
+    """Force a synchronous layout-guardrail check and wait until the reading
+    column is measurable. Returns {ready, ok, mode, allowedPx, offenders}.
+
+    Reuses the production layout_guardrail.js (already running on the page);
+    this just drives it on demand so the result is deterministic for CI.
+    """
+    deadline = time.time() + ready_timeout
+    state = None
+    while time.time() < deadline:
+        state = driver.execute_script(r"""
+            if (typeof window.__layoutGuardrailCheck === 'function') {
+                return window.__layoutGuardrailCheck();
+            }
+            return null;
+        """)
+        if state and state.get("ready"):
+            break
+        time.sleep(0.3)
+
+    if not state or not state.get("ready"):
+        return {"ready": False, "ok": None, "mode": "?", "allowedPx": 0, "offenders": []}
+
+    return {
+        "ready": True,
+        "ok": bool(state.get("ok")),
+        "mode": state.get("mode", "?"),
+        "allowedPx": state.get("allowedPx", 0),
+        "offenders": state.get("offenders") or [],
+    }
+
+
 def find_php_pages(document_root: str) -> list[str]:
     """Default to just /index.php when no pages are specified."""
     return ["/index.php"]
@@ -368,6 +422,36 @@ def main():
         help="Exit with code 2 if unrendered LaTeX is found (default: True)",
     )
     parser.add_argument(
+        "--check-width",
+        action="store_true",
+        default=False,
+        help="Check the reading-column width guardrail (layout_guardrail.js) on each page",
+    )
+    parser.add_argument(
+        "--fail-on-width",
+        action="store_true",
+        default=True,
+        help="Exit with code 3 if any element overflows the reading column (default: True)",
+    )
+    parser.add_argument(
+        "--width-timeout",
+        type=int,
+        default=25,
+        help="Max seconds per page to wait for the reading column to become measurable (default: 25)",
+    )
+    parser.add_argument(
+        "--all-lessons",
+        action="store_true",
+        default=False,
+        help="Check every lesson page (COURSE_METADATA .php files) instead of /index.php",
+    )
+    parser.add_argument(
+        "--width-only",
+        action="store_true",
+        default=False,
+        help="Skip the JS-error and LaTeX checks; only run the width check",
+    )
+    parser.add_argument(
         "--verbose",
         "-v",
         action="store_true",
@@ -394,11 +478,20 @@ def main():
     port = args.port if args.port != 0 else find_free_port()
 
     # Discover pages to check
-    pages = args.pages if args.pages else find_php_pages(document_root)
+    if args.pages:
+        pages = args.pages
+    elif args.all_lessons:
+        pages = discover_lessons(document_root)
+        if not pages:
+            print("[error] --all-lessons: no lesson pages (COURSE_METADATA .php) found")
+            sys.exit(1)
+    else:
+        pages = find_php_pages(document_root)
     print(f"[info] Document root: {document_root}")
-    print(f"[info] Pages to check: {pages}")
-    print(f"[info] Timeout: {args.timeout}s")
-    print(f"[info] Headless: {headless}")
+    print(f"[info] Pages to check: {len(pages)} ({', '.join(pages[:8])}"
+          f"{', …' if len(pages) > 8 else ''})")
+    print(f"[info] Timeout: {args.timeout}s | Headless: {headless} | "
+          f"Width: {'ON' if args.check_width else 'off'} | Width-only: {args.width_only}")
 
     # Start PHP server
     php_proc = None
@@ -415,6 +508,7 @@ def main():
 
         all_js_errors = []
         all_latex_issues = []
+        all_width_issues = []
 
         for page in pages:
             url = f"http://localhost:{port}{page}"
@@ -433,23 +527,46 @@ def main():
             if not loaded:
                 print(f"[warning] Page {page} did not fully load within {args.timeout}s")
 
-            # Check for JS errors
-            js_errors = check_js_errors(driver)
-            if js_errors:
-                print(f"\n[JS ERRORS] Found {len(js_errors)} JavaScript error(s) on {page}:")
-                for err in js_errors:
-                    print(f"  ✗ {err}")
-                all_js_errors.extend([(page, err) for err in js_errors])
+            page_ok = True
 
-            # Check for unrendered LaTeX
-            latex_issues = check_unrendered_latex(driver)
-            if latex_issues:
-                print(f"\n[LATEX ISSUES] Found {len(latex_issues)} unrendered LaTeX issue(s) on {page}:")
-                for issue in latex_issues:
-                    print(f"  ✗ {issue}")
-                all_latex_issues.extend([(page, issue) for issue in latex_issues])
+            if not args.width_only:
+                # Check for JS errors
+                js_errors = check_js_errors(driver)
+                if js_errors:
+                    page_ok = False
+                    print(f"\n[JS ERRORS] Found {len(js_errors)} JavaScript error(s) on {page}:")
+                    for err in js_errors:
+                        print(f"  ✗ {err}")
+                    all_js_errors.extend([(page, err) for err in js_errors])
 
-            if not js_errors and not latex_issues:
+                # Check for unrendered LaTeX
+                latex_issues = check_unrendered_latex(driver)
+                if latex_issues:
+                    page_ok = False
+                    print(f"\n[LATEX ISSUES] Found {len(latex_issues)} unrendered LaTeX issue(s) on {page}:")
+                    for issue in latex_issues:
+                        print(f"  ✗ {issue}")
+                    all_latex_issues.extend([(page, issue) for issue in latex_issues])
+
+            # Check the reading-column width guardrail
+            if args.check_width:
+                wres = check_width(driver, args.width_timeout)
+                if not wres["ready"]:
+                    print(f"[warn] {page}: reading column not measurable in "
+                          f"{args.width_timeout}s — width check skipped")
+                elif not wres["ok"]:
+                    page_ok = False
+                    print(f"\n[WIDTH] {page}: {len(wres['offenders'])} element(s) wider than the "
+                          f"{wres['mode']} reading column ({wres['allowedPx']}px):")
+                    for sel in wres["offenders"][:10]:
+                        print(f"  ✗ {sel}")
+                    if len(wres["offenders"]) > 10:
+                        print(f"  … and {len(wres['offenders']) - 10} more")
+                    all_width_issues.append((page, wres["offenders"], wres["mode"], wres["allowedPx"]))
+                else:
+                    print(f"[✓ width] {page} OK ({wres['mode']} column ≈ {wres['allowedPx']}px)")
+
+            if page_ok:
                 print(f"[✓] {page} - OK")
 
         # Summary
