@@ -160,14 +160,18 @@ https://arxiv.org/html/2505.11611v1
 </div>
 
 <div class="md">
-## Tokenization
+## Preparing the Input
+
+A transformer never sees text — only a stream of vectors it can move around. This part turns a raw sentence into that stream: chop it into tokens, look each one up as a vector, tag each vector with its position, and see where the whole stream flows.
+
+### Tokenization
 The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. BPE is, at heart, a **data-compression** algorithm from \citeyear{gage1994bpe} \cite{gage1994bpe}: it repeatedly fuses the most frequent adjacent pair into one new symbol, so frequent (often long) patterns collapse into a single **short ID** while rare material stays a **long** run of symbols — which is why the token stream is usually much shorter than the raw text it losslessly encodes, and why the same rules pointed at a file literally compress it. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization.
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
 
 <div class="md">
-## Embedding & The Feature Space
+### Embedding & The Feature Space
 
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
 
@@ -290,7 +294,7 @@ Bold: the only step where $t$ determines the width of a computation. Everywhere 
 </div>
 
 <div class="md">
-## Positional Encoding
+### Positional Encoding
 
 To address the lack of sequence order in transformers, a “position signal” is added to each token's embedding, forming the initial hidden state $h_{0}$:
 </div>
@@ -342,7 +346,7 @@ This is the architecture you are interacting with in every visualization here. W
 </div>
 
 <div class="md">
-## The Residual Stream
+### The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
 Everything is in flux.
@@ -355,7 +359,11 @@ In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a 
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained “river width” acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
-## Masked Self-Attention
+## Attention: Letting Tokens Talk
+
+Attention is the heart of the transformer — the one place where one token's information can flow into another. This part builds it up from a single head to the full multi-head mechanism.
+
+### Masked Self-Attention
 
 To ensure the model learns to generate text autoregressively, we prevent it from “looking into the future” during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
 
@@ -377,13 +385,13 @@ This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
 * **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.
 
-### The **Single-Head Attention**
+#### The **Single-Head Attention**
 
 The job of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
-#### Concatenation Definition
+##### Concatenation Definition
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different “heads.” Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
 For $h$ heads, where each head has dimension $d_k$ (for keys and queries) and $d_v$ (for values):
@@ -398,7 +406,7 @@ If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
 $$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$
 The output width is simply the sum of the input widths.
 
-#### Multi-Head Attention: Lateral Parallelism
+##### Multi-Head Attention: Lateral Parallelism
 
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$, the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
 </div>
@@ -505,7 +513,7 @@ By switching between layers in a visualization, you can observe this transition 
 </div>
 
 <div class="md">
-## Does the Model Build a Syntax Tree?
+### Does the Model Build a Syntax Tree?
 
 The layer-depth progression above says the **middle layers** "begin to identify dependency arcs." That is a strong claim, and it deserves to be examined: does the model actually construct a *parse* — a syntactic structure it then manipulates — or does it only track shallow word co-occurrence? The honest answer is a **distributed, hierarchical syntactic representation**, built the way a CNN builds edges-then-objects: bottom-up, across depth, spread over many specialist heads. There is no single parse object sitting in one place.
 
@@ -533,7 +541,11 @@ During each step of inference:
 This reduces the computational complexity of the projection phase from
 quadratic to $\mathcal{O}(T)$ relative to sequence length $T$.
 
-## The Feed-Forward Network
+## The Transformer Block
+
+Attention and the feed-forward network are the two halves of a single block; a transformer is just that one block stacked $N$ times.
+
+### The Feed-Forward Network
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation. In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.
 
 \cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
@@ -555,7 +567,7 @@ The final state of this block, **$h_1$**, is formed by another residual connecti
 
 $$h_{1} = z_{0} + \text{FFN}(\text{LayerNorm}(z_0))$$
 
-## The $N$-Layer Recurrence
+### The $N$-Layer Recurrence
 In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning. The deeper pattern is that a network is assembled by *reusing* a small set of structural ideas many times over — in functional-programming terms, composing higher-order functions with learnable pieces in between — which is why these models read as a kind of **differentiable functional programming** \cite[Olah, 2015]{colah2015types}.
 
 For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
@@ -615,7 +627,11 @@ a small fraction of parameters are active for any given input.
 </div>
 
 <div class="md">
-## From Hidden States to Probabilities
+## From Vectors to Words
+
+With the final hidden state in hand, all that remains is to read it back out as a probability distribution over the vocabulary.
+
+### From Hidden States to Probabilities
 
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
@@ -630,7 +646,7 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: “How similar is our current thought vector to every known word vector?”
 
-## Step-by-Step Logit Calculation
+### Step-by-Step Logit Calculation
 
 To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and the word's learned embedding row $w_\text{row}$ from the Unembedding Matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
 
@@ -741,7 +757,11 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 </div>
 
 <div class="md">
-## How ChatGPT Actually Works: The Full Pipeline
+## The Whole Machine
+
+Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.
+
+### How ChatGPT Actually Works: The Full Pipeline
 
 Here is the complete path a prompt takes through the system, from raw text to generated response:
 
@@ -761,7 +781,7 @@ Here is the complete path a prompt takes through the system, from raw text to ge
 
 Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window. The entire architecture is a single, differentiable function $f_\theta(\text{prompt}) \to \text{next token distribution}$.
 
-## How Does the Model Know When to Stop?
+### How Does the Model Know When to Stop?
 
 Step 6 of the pipeline says generation runs "until the model emits an end-of-sequence token." That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate "stop detector"; stopping is just next-token prediction pointed at a special token.
 
@@ -775,7 +795,7 @@ Step 6 of the pipeline says generation runs "until the model emits an end-of-seq
 </div>
 
 <div class="md">
-## Key Intuitions about LLMs
+### Key Intuitions about LLMs
 
 At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:
 
@@ -786,7 +806,7 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
 
-## Inference vs. Training: Two Modes of Operation
+### Inference vs. Training: Two Modes of Operation
 
 While the architecture is identical in both modes, the behavior of the model differs fundamentally between **inference** and **training**:
 

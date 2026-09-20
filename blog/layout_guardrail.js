@@ -12,7 +12,12 @@
 
    Margin notes (.sideimage / .sidenote / .sidenote-fallback and the
    two body-level rails) and boxes (.optional / .cl-block) are EXEMPT —
-   they are allowed to use extra width by design.
+   they are allowed to use extra width by design. So is content that
+   overflows a horizontally scrollable ancestor (overflow-x:
+   auto/scroll, e.g. long code lines in a <pre>): the overflow is
+   contained by design and does not break the column. The scroller
+   itself is still measured, so a scroller wider than the column is
+   still caught.
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -59,6 +64,24 @@
 		return pos === 'absolute' || pos === 'fixed' || pos === 'sticky';
 	}
 
+	/** True if an ancestor between `el` and the column horizontally
+	    scrolls and therefore absorbs the overflow. A long <code> line
+	    inside a <pre> with overflow-x:auto is a scrolling code block —
+	    intentional and contained, not a layout bug. The scroller itself
+	    is still checked as usual, so a scroller that is itself wider
+	    than the column is caught. */
+	function isContainedByScroller(el) {
+		var p = el.parentElement;
+		while (p && p.id !== 'contents') {
+			var cs = getComputedStyle(p);
+			if (/(auto|scroll)/.test(cs.overflowX) && p.scrollWidth > p.clientWidth) {
+				return true;
+			}
+			p = p.parentElement;
+		}
+		return false;
+	}
+
 	function collect(allowed) {
 		var c = document.getElementById('contents');
 		if (!c) return [];
@@ -73,6 +96,7 @@
 			if (w <= allowed + TOL) continue;
 			if (isExempt(el)) continue;
 			if (isOverlay(el)) continue;
+			if (isContainedByScroller(el)) continue;
 			out.push({ el: el, width: w, sel: selectorOf(el) });
 		}
 		// keep only the outermost offender in each ancestor chain

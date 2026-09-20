@@ -1056,6 +1056,7 @@
 							skipped ? ' · <em>' + skipped + ' section' + (skipped === 1 ? '' : 's') + ' tucked away</em>' : '',
 						'</span>',
 					'</div>',
+					'<button type="button" class="inline-topics-open inline-topics-secondary" data-open-detailed>detailed settings</button>',
 				'</div>',
 				'<div class="inline-topics-personas" role="group" aria-label="Classic reader types">' +
 					PERSONAS.map(function (p) {
@@ -1066,7 +1067,7 @@
 						'</button>';
 					}).join('') +
 				'</div>',
-				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click — or open the <button type="button" class="inline-topics-open inline-topics-link">detailed settings</button> to tune every topic by hand.</p>'
+				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click and shows the full grid here, so you can fine-tune.</p>'
 			].join('');
 			host.querySelectorAll('[data-persona]').forEach(function (b) {
 				b.addEventListener('click', function () {
@@ -1075,7 +1076,7 @@
 					renderInlineWidget(host);
 				});
 			});
-			host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);
+			host.querySelector('[data-open-detailed]').addEventListener('click', openOverlay);
 			return;
 		}
 
@@ -1090,7 +1091,7 @@
 		}).join('');
 
 		const backToTypesBtn = isPersonasHost
-			? '<button type="button" class="inline-topics-open inline-topics-link" data-collapse-types>show the types instead</button> · '
+			? '<button type="button" class="inline-topics-open inline-topics-secondary" data-collapse-types>← types</button>'
 			: '';
 
 		host.innerHTML = [
@@ -1102,23 +1103,25 @@
 						skipped ? ' · <em>' + skipped + ' section' + (skipped === 1 ? '' : 's') + ' tucked away</em>' : '',
 					'</span>',
 				'</div>',
-				'<button type="button" class="inline-topics-open">',
-					'<span class="ti-target" aria-hidden="true">',
-					'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
-					'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-					'</svg></span>',
-					'Open interest picker',
-				'</button>',
+				'<div class="inline-topics-head-actions">',
+					backToTypesBtn,
+					'<button type="button" class="inline-topics-open" data-open-picker>',
+						'<span class="ti-target" aria-hidden="true">',
+						'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
+						'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+						'</svg></span>',
+						'Open interest picker',
+					'</button>',
+				'</div>',
 			'</div>',
 			'<div class="inline-topics-grid">' + tilesHtml + '</div>',
-			'<p class="inline-topics-foot">' + backToTypesBtn + 'Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
+			'<p class="inline-topics-foot">Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
 		].join('');
 
-		host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);
+		host.querySelector('[data-open-picker]').addEventListener('click', openOverlay);
 		const collapseBtn = host.querySelector('[data-collapse-types]');
 		if (collapseBtn) {
-			collapseBtn.addEventListener('click', function (e) {
-				e.stopPropagation();
+			collapseBtn.addEventListener('click', function () {
 				host.dataset.personasExpanded = '';
 				renderInlineWidget(host);
 			});
