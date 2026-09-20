@@ -433,6 +433,15 @@ To be clear about what this framework covers and does not:
 <div class="optional md" data-headline="Where this connects">
 This chapter is a deep dive that pays off across the book:
 
+* **Where the block actually lives** — the dense ReLU block is rarely a model by itself; it
+  is an *in-between* sub-block. In a **transformer** it is the position-wise feed-forward
+  network (a two-layer dense MLP with a ReLU/GELU) wrapped between attention sub-layers
+  \cite{vaswani2017attention}, which interpretability work reads as the model's local
+  "memory" \cite{keyvalmem}. In a **classical CNN** it is the stack of fully-connected
+  layers capping the convolutional body (VGGNet: thirteen conv layers then three dense
+  layers \cite{simonyan2014vgg}; ResNet: a conv body topped by a dense head
+  \cite{he2015resnet}). The "fold until separable, then one flat readout" story happens
+  inside that block in both cases.
 * **Deep Learning** — the composition view, the "bend" that prevents collapse, and the
   Universal Approximation Theorem it operationalises.
 * **Basic Math III** — the formal Universal Approximation Theorem
