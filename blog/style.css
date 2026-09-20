@@ -7395,7 +7395,7 @@ html.dark .md sup.sidenote-marker:focus { color: var(--mn-heading); }
    all, so the rail is hidden and the JS renders an inline
    fallback section instead.                                  */
 :root {
-	--sn-content-width: 800px;      /* must match #contents max-width */
+	--sn-content-width: 800px;      /* ≈ var(--mn-col-width) 80ch; keep in sync */
 	--sn-rail-gap:      20px;       /* gap between content and rail    */
 	--sn-rail-max:      320px;      /* hard cap so sidenotes stay readable */
 	/* Rail's left edge sits at content_right + gap.

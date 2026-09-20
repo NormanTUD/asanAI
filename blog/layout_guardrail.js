@@ -155,7 +155,6 @@
 		var out = [];
 		for (var i = 0; i < all.length; i++) {
 			var el = all[i];
-			if (el.classList && el.classList.contains(FLAG_CLASS)) continue;
 			// cheap path first: almost every element fits, so measure before
 			// paying for closest()/getComputedStyle() on the rare offender
 			var w = el.getBoundingClientRect().width;

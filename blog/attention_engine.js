@@ -1859,24 +1859,23 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const self = this;
 		let currentHover = null;
 
-		svg.addEventListener('mouseover', (e) => {
+		svg.addEventListener('click', (e) => {
 			const el = e.target.closest('[data-apv-side]');
 			if (el) {
 				const side = el.getAttribute('data-apv-side');
 				const index = parseInt(el.getAttribute('data-apv-idx'));
 				const key = `${side}-${index}`;
-				if (currentHover === key) return;
-				currentHover = key;
-				self._apvHoveredToken.set(layerIdx, { side, index });
+				if (currentHover === key) {
+					currentHover = null;
+					self._apvHoveredToken.set(layerIdx, null);
+				} else {
+					currentHover = key;
+					self._apvHoveredToken.set(layerIdx, { side, index });
+				}
 				self._apvUpdateHoverState(svg, layerIdx);
+				return;
 			}
-		});
-
-		svg.addEventListener('mouseout', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const related = e.relatedTarget?.closest?.('[data-apv-side]');
-				if (related) return;
+			if (currentHover !== null) {
 				currentHover = null;
 				self._apvHoveredToken.set(layerIdx, null);
 				self._apvUpdateHoverState(svg, layerIdx);
@@ -2000,6 +1999,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const isHovered = hovered && hovered.side === side && hovered.index === idx;
 			text.setAttribute('fill', isHovered ? tokenHoverFill : tokenFill);
 			text.setAttribute('font-weight', isHovered ? '700' : '500');
+			text.setAttribute('cursor', 'pointer');
 		});
 	}
 
@@ -2645,24 +2645,23 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const hoverKey = `${layerIdx}-${headIdx}`;
 		let currentHover = null;
 
-		svg.addEventListener('mouseover', (e) => {
+		svg.addEventListener('click', (e) => {
 			const el = e.target.closest('[data-apv-side]');
 			if (el) {
 				const side = el.getAttribute('data-apv-side');
 				const index = parseInt(el.getAttribute('data-apv-idx'));
 				const key = `${side}-${index}`;
-				if (currentHover === key) return;
-				currentHover = key;
-				self._apvHoveredToken.set(hoverKey, { side, index });
+				if (currentHover === key) {
+					currentHover = null;
+					self._apvHoveredToken.set(hoverKey, null);
+				} else {
+					currentHover = key;
+					self._apvHoveredToken.set(hoverKey, { side, index });
+				}
 				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
+				return;
 			}
-		});
-
-		svg.addEventListener('mouseout', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const related = e.relatedTarget?.closest?.('[data-apv-side]');
-				if (related) return;
+			if (currentHover !== null) {
 				currentHover = null;
 				self._apvHoveredToken.set(hoverKey, null);
 				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
