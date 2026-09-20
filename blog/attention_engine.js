@@ -847,7 +847,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 </div>
 
 <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-Hover over a token to highlight its attention connections. Line thickness = attention weight.
+Click a token to highlight its attention connections. Line thickness = attention weight.
 </div>
 </div>
 
