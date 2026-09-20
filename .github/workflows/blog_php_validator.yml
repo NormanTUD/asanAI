@@ -92,3 +92,38 @@ jobs:
       - name: Run PHP Render Validator
         run: |
           uv run blog/tests/php_render_validator.py blog/
+
+  # Fails the suite if any lesson has content wider than the reading column
+  # (margin notes and boxes are exempt). Runs the production layout_guardrail.js
+  # in headless Chrome against every lesson page.
+  width-layout-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Install PHP CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php-cli
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+
+      - name: Remove mismatched chromedriver
+        run: |
+          sudo rm -f /usr/bin/chromedriver
+          sudo rm -f /usr/local/bin/chromedriver
+
+      - name: Run Width Layout Guard (all lessons)
+        run: |
+          uv run blog/tests/php_render_validator.py blog/ \
+            --all-lessons --check-width --width-only --width-timeout 25

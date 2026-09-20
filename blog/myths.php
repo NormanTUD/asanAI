@@ -17,7 +17,7 @@ When we meet a powerful tool we cannot see inside, we do not stay quiet about wh
 
 Start with a warning about *us*. We overestimate how well we understand how things work, from a zipper to a traffic light \cite[Rozenblit & Keil]{rozenblit2002ioed}, and the gap shows up worst exactly where the mechanism is hidden. When a tool is opaque we close it with *mind* and *intent* — and we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \cite[the ELIZA effect]{weizenbaum1966eliza}.
 
-\marginfig{flammarion.jpg}{The Flammarion Engraving (1888): a man on his knees at the edge of the world, holding a lantern, gazing beyond the veil of the material world into the vast starry dark. He reaches toward something real — the horizon of what we do not yet understand — but the meaning he finds there is his own. Most of our "obvious" beliefs about AI work the same way: the gaze points somewhere true, and the map is supplied by us.}
+\marginfig{flammarion.jpg}{The Flammarion Engraving (1888): a man on his knees at the edge of the world, gazing beyond the veil of the material world into the vast starry dark. He reaches toward something real — the horizon of what we do not yet understand — but the meaning he finds there is his own. Most of our "obvious" beliefs about AI work the same way: the gaze points somewhere true, and the map is supplied by us.}
 
 The polls show the same duality: a majority expect AI to help more than it harms, yet job losses — and for many, an existential risk — top the list of fears \cite[the AI Index]{aiindex2025}. In the same people, the hope and the dread sit together.
 </div>
