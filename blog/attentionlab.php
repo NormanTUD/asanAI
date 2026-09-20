@@ -1686,3 +1686,17 @@ The zero-sum nature of attention (each row sums to exactly 1) means attention is
 
 The deeper implication: the model cannot attend to everything equally, it must always choose, and every choice is a sacrifice. This mirrors the human condition of finite attention: we cannot listen to all voices simultaneously, and every act of focus is an act of exclusion.
 </div>
+
+<div class="md">
+## Why the First Token Steals the Attention: Attention Sinks
+
+The zero-sum economy above has a striking corner case that looks like a bug but turns out to be load-bearing. In many trained decoder-only LLMs, a large share of attention mass flows to the **very first token** of the sequence — the `<BOS>` token, or simply the first space — even when that token carries essentially no content. A model reading the 400th word of a paragraph still dumps a meaningful fraction of its attention budget onto word zero. This is the **attention sink**.
+
+\cite[Xiao et al., 2024]{xiao2023streaming} found the sink while trying to run a model on an *infinite* stream. The obvious way to do that is a sliding-window KV cache: keep only the most recent $K$ tokens, evict the rest. But the moment the oldest tokens (including the first one) leave the window, perplexity **collapses** — the model degenerates into repetitive, incoherent output, even though the evicted tokens are old and "should not matter." The fix is almost absurdly simple: **keep the KV of the first few tokens** (roughly four) alongside the recent window. With those four tokens pinned, Llama-2, MPT, Falcon, and Pythia can stream **4 million+ tokens** stably, with no fine-tuning and a 20× speedup over a sliding-window recomputation baseline. The first tokens are not being remembered for their meaning; they are being remembered because they *are* the sink.
+
+Why would a model do this? The mechanism is a consequence of the very softmax we derived. Softmax must output a distribution that sums to exactly 1 over every key the query can see. When a query has **no meaningful target** — when the truly relevant tokens are far away, or the context is thin — the model still has to place that leftover probability somewhere. Rather than smear it uniformly, the network learns to route the spare mass to a **designated default**: the earliest token, which is the only key that is *always present, always in-window, and always a valid target* from the very first step of training. Over billions of examples, the first token becomes a neutral "register" — a place where attention parks the mass it has no use for. Remove it, and that mass has nowhere to go, so the whole distribution distorts.
+
+This is exactly the trained limit of the $\tfrac{1}{n}$ uniform diagonal you saw earlier. An untrained model spreads attention evenly ($\tfrac{1}{n}$ per token); training sharpens attention onto the tokens that matter — *except* for the residual mass, which retreats to the one position that is guaranteed to be there: the beginning. The first token is where "not-yet-decided" attention goes. The same phenomenon shows up in vision transformers, which grow dedicated **register** tokens that absorb attention and stray artifacts in exactly the same way — the architecture needs a drain, so it invents one.
+
+The practical upshot is why "infinite" context is not as hard as it sounds: you do not need to remember the whole history, only the sink plus the recent window. But it also means naive "drop the old tokens" memory management silently breaks a model that was never designed to lose its drain.
+</div>
