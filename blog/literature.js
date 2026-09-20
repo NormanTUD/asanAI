@@ -13207,5 +13207,237 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:T2-_d239_-_Fig._139._—_Appareil_pour_envelopper_de_gutta-percha_le_câble_transatlantique.png",
 		license: "Public domain",
 		alternativetitle: "Gutta-percha cable coating (Figuier)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Inside the Layers: attention sinks, numerics, state machines, syntax,
+	 *  stopping, negation, head radii, binding, uncertainty.
+	 *  Sources: attentionlab.php, algorithms.php, transformer.php,
+	 *  fact_lookup.php, mechanistic_interpretability.php
+	 * ───────────────────────────────────────────────────────────────────── */
+	"xiao2023streaming": {
+		title: "Efficient Streaming Language Models with Attention Sinks",
+		author: "Guangxuan Xiao, Yuandong Tian, Beidi Chen, Song Han, Mike Lewis",
+		year: 2024,
+		url: "https://arxiv.org/abs/2309.17453",
+		alternativetitle: "StreamingLLM, attention sinks"
+	},
+	"levy2024numbers": {
+		title: "Language Models Encode Numbers Using Digit Representations in Base 10",
+		author: "Amit Arnold Levy, Mor Geva",
+		year: 2024,
+		url: "https://arxiv.org/abs/2410.11781",
+		alternativetitle: "per-digit circular base-10 number codes"
+	},
+	"cacioli2026weber": {
+		title: "Weber's Law in Transformer Magnitude Representations: Efficient Coding, Representational Geometry, and Psychophysical Laws in Language Models",
+		author: "Jon-Paul Cacioli",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.20642",
+		alternativetitle: "log-compressive magnitude geometry"
+	},
+	"fu2024count": {
+		title: "Why Do Large Language Models (LLMs) Struggle to Count Letters?",
+		author: "Tairan Fu, Raquel Ferrando, Javier Conde, Carlos Arriaga, Pedro Reviriego",
+		year: 2024,
+		url: "https://arxiv.org/abs/2412.18626",
+		alternativetitle: "LLMs recognize letters but cannot count them"
+	},
+	"conde2025count": {
+		title: "Can ChatGPT Learn to Count Letters?",
+		author: "Javier Conde, Gonzalo Martínez, Pedro Reviriego, Zhen Gao, Shanshan Liu, Fabrizio Lombardi",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.16705",
+		alternativetitle: "counting needs a scratchpad / chain-of-thought"
+	},
+	"hahn2020limitations": {
+		title: "Theoretical Limitations of Self-Attention in Neural Sequence Models",
+		author: "Michael Hahn",
+		year: 2020,
+		journal: "Transactions of the Association for Computational Linguistics",
+		url: "https://arxiv.org/abs/1906.06755",
+		alternativetitle: "attention cannot model periodic finite-state languages"
+	},
+	"ding2024fittest": {
+		title: "Survival of the Fittest Representation: A Case Study with Modular Addition",
+		author: "Xiaoman Delores Ding, Zifan Carl Guo, Eric J. Michaud, Ziming Liu, Max Tegmark",
+		year: 2024,
+		url: "https://arxiv.org/abs/2405.17420",
+		alternativetitle: "competing circular Fourier-frequency representations"
+	},
+	"engels2024multidim": {
+		title: "Not All Language Model Features Are One-Dimensionally Linear",
+		author: "Joshua Engels, Eric J. Michaud, Isaac Liao, Wes Gurnee, Max Tegmark",
+		year: 2025,
+		url: "https://arxiv.org/abs/2405.14860",
+		alternativetitle: "circular multi-dimensional features for modular arithmetic"
+	},
+	"adriaensen2024moore": {
+		title: "Extracting Moore Machines from Transformers using Queries and Counterexamples",
+		author: "Rik Adriaensen, Jaron Maene",
+		year: 2024,
+		url: "https://arxiv.org/abs/2410.06045",
+		alternativetitle: "finite-state machines inside transformers"
+	},
+	"vonoswald2022indc": {
+		title: "Transformers learn in-context by gradient descent",
+		author: "Johannes von Oswald, Eyvind Niklasson, Ettore Randazzo, João Sacramento, Alexander Mordvintsev, Andrey Zhmoginov, Max Vladymyrov",
+		year: 2022,
+		url: "https://arxiv.org/abs/2212.07677",
+		alternativetitle: "the forward pass as in-context gradient descent"
+	},
+	"katharopoulos2020linear": {
+		title: "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
+		author: "Angelos Katharopoulos, Apoorv Vyas, Nikolaos Pappas, François Fleuret",
+		year: 2020,
+		url: "https://arxiv.org/abs/2006.16236",
+		alternativetitle: "linear attention's iterative (recurrent) form"
+	},
+	"htu2019dependencies": {
+		title: "Do Attention Heads in BERT Track Syntactic Dependencies?",
+		author: "Phu Mon Htut, Jason Phang, Shikha Bordia, Samuel R. Bowman",
+		year: 2019,
+		url: "https://arxiv.org/abs/1911.12246",
+		alternativetitle: "specialist heads track specific dependency types"
+	},
+	"someya2025derivational": {
+		title: "Derivational Probing: Unveiling the Layer-wise Derivation of Syntactic Structures in Neural Language Models",
+		author: "Taiga Someya, Ryo Yoshida, Hitomi Yanaka, Yohei Oseki",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.21861",
+		alternativetitle: "bottom-up syntactic derivation across layers"
+	},
+	"shen2021structformer": {
+		title: "StructFormer: Joint Unsupervised Induction of Dependency and Constituency Structure from Masked Language Modeling",
+		author: "Yikang Shen, Yi Tay, Che Zheng, Dara Bahri, Donald Metzler, Aaron Courville",
+		year: 2021,
+		url: "https://arxiv.org/abs/2012.00857",
+		alternativetitle: "inducing real parse structure from a transformer"
+	},
+	"lakretz2020nested": {
+		title: "Mechanisms for Handling Nested Dependencies in Neural-Network Language Models and Humans",
+		author: "Ruth Lakretz, Dieke Hupkes, Edoardo Maria Vergallito, et al.",
+		year: 2021,
+		url: "https://arxiv.org/abs/2006.11098",
+		alternativetitle: "agreement breaks on nested dependencies"
+	},
+	"lasri2022agree": {
+		title: "Does BERT really agree? Fine-grained Analysis of Lexical Dependence on a Syntactic Task",
+		author: "Karim Lasri, Alessandro Lenci, Thierry Poibeau",
+		year: 2022,
+		url: "https://arxiv.org/abs/2204.06889",
+		alternativetitle: "one attractor breaks subject-verb agreement"
+	},
+	"kohli2026loop": {
+		title: "Loop, Think, & Generalize: Implicit Reasoning in Recurrent-Depth Transformers",
+		author: "Harsh Kohli, Srinivasan Parthasarathy, Huan Sun, Yuekun Yao",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.07822",
+		alternativetitle: "vanilla transformers cannot extrapolate past their trained hop depth"
+	},
+	"zhou2026negation": {
+		title: "How Language Models Process Negation",
+		author: "Zhejian Zhou, Tianyi Zhou, Robin Jia, Jonathan May",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.03052",
+		alternativetitle: "inhibitory and constructive negation circuits"
+	},
+	"saraipour2025syllogisms": {
+		title: "From Indirect Object Identification to Syllogisms: Exploring Binary Mechanisms in Transformer Circuits",
+		author: "Karim Saraipour, Shichang Zhang",
+		year: 2025,
+		url: "https://arxiv.org/abs/2508.16109",
+		alternativetitle: "negative heads emit a negated token not in the input"
+	},
+	"chaturvedi2022faithfulness": {
+		title: "Analyzing Semantic Faithfulness of Language Models via Input Intervention on Question Answering",
+		author: "Akshay Chaturvedi, Swarnadeep Bhar, Soumadeep Saha, Utpal Garain, Nicholas Asher",
+		year: 2023,
+		journal: "Computational Linguistics",
+		url: "https://arxiv.org/abs/2212.10696",
+		alternativetitle: "negation intervention drops QA accuracy ~20%"
+	},
+	"langedijk2025propositional": {
+		title: "Propositional Logic for Probing Generalization in Neural Networks",
+		author: "Anna Langedijk, Jaap Jumelet, Willem Zuidema",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.08978",
+		alternativetitle: "transformers fail to apply negation compositionally"
+	},
+	"saha2020conjnli": {
+		title: "ConjNLI: Natural Language Inference Over Conjunctive Sentences",
+		author: "Swarnadeep Saha, Yixin Nie, Mohit Bansal",
+		year: 2020,
+		url: "https://arxiv.org/abs/2010.10418",
+		alternativetitle: "and/or/but/nor fall back to shallow heuristics"
+	},
+	"kissane2024attention": {
+		title: "Interpreting Attention Layer Outputs with Sparse Autoencoders",
+		author: "Connor Kissane, Robert Krzyzanowski, Joseph Isaac Bloom, Arthur Conmy, Neel Nanda",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.17759",
+		alternativetitle: "short-range / long-range / induction attention features"
+	},
+	"dong2025planning": {
+		title: "Emergent Response Planning in LLMs",
+		author: "Zhichen Dong, Zhanhui Zhou, Zhixuan Liu, Chao Yang, Chaochao Lu",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.06258",
+		alternativetitle: "hidden states encode response length before generation"
+	},
+	"merzouk2026remaining": {
+		title: "How Much is Left? LLMs Linearly Encode Their Remaining Output Length",
+		author: "Mohamed Amine Merzouk, Dmitri Carpov, Mirko Bronzi, Damiano Fornasiere, Adam Oberman",
+		year: 2026,
+		url: "https://arxiv.org/abs/2607.05316",
+		alternativetitle: "a decodable 'remaining length' direction that decays"
+	},
+	"baghaei2026collapse": {
+		title: "One Token Away from Collapse: The Fragility of Instruction-Tuned Helpfulness",
+		author: "Erfan Baghaei Potraghloo, Seyedarmin Azizi, Souvik Kundu, Massoud Pedram",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.13006",
+		alternativetitle: "the length plan is created by instruction tuning"
+	},
+	"xiao2026length": {
+		title: "Can LLMs Track Their Output Length? A Dynamic Feedback Mechanism for Precise Length Regulation",
+		author: "Meiman Xiao, Ante Wang, Qingguo Hu, Zhongjian Miao, Huangjun Shen, Longyue Wang, Weihua Luo, Jinsong Su",
+		year: 2026,
+		url: "https://arxiv.org/abs/2601.01768",
+		alternativetitle: "models fail to accurately self-measure output length"
+	},
+	"moya2026spurious": {
+		title: "Spurious Correlation Learning in Preference Optimization: Mechanisms, Consequences, and Mitigation via Tie Training",
+		author: "Christian Moya, Alex Semendinger, Guang Lin, Elliott Thornley",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.11134",
+		alternativetitle: "DPO induces a length bias"
+	},
+	"lin2022uncertainty": {
+		title: "Teaching Models to Express Their Uncertainty in Words",
+		author: "Stephanie Lin, Jacob Hilton, Owain Evans",
+		year: 2022,
+		url: "https://arxiv.org/abs/2205.14334",
+		alternativetitle: "calibrated verbalized confidence without logits"
+	},
+	"tian2023calibration": {
+		title: "Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback",
+		author: "Katherine Tian, Eric Mitchell, Allan Zhou, Archit Sharma, Rafael Rafailov, Huaxiu Yao, Chelsea Finn, Christopher D. Manning",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.14975",
+		alternativetitle: "verbalized confidence beats raw logits for RLHF models"
+	},
+	"manakul2023selfcheck": {
+		title: "SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models",
+		author: "Potsawee Manakul, Adian Liusie, Mark J. F. Gales",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.08896",
+		alternativetitle: "sampling consistency as a hallucination signal"
+	},
+	"cheang2025recall": {
+		title: "Do LLMs Really Know What They Don't Know? Internal States Mainly Reflect Knowledge Recall Rather Than Truthfulness",
+		author: "Chi Seng Cheang, Hou Pong Chan, Wenxuan Zhang, Yang Deng",
+		year: 2025,
+		url: "https://arxiv.org/abs/2510.09033",
+		alternativetitle: "internal states track recall, not truthfulness"
 	}
 };
