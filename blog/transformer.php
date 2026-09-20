@@ -504,6 +504,20 @@ This systematic change in attention patterns can be categorized as follows:
 By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.
 </div>
 
+<div class="md">
+## Does the Model Build a Syntax Tree?
+
+The layer-depth progression above says the **middle layers** "begin to identify dependency arcs." That is a strong claim, and it deserves to be examined: does the model actually construct a *parse* — a syntactic structure it then manipulates — or does it only track shallow word co-occurrence? The honest answer is a **distributed, hierarchical syntactic representation**, built the way a CNN builds edges-then-objects: bottom-up, across depth, spread over many specialist heads. There is no single parse object sitting in one place.
+
+**Specialist heads, one per relation.** \cite[Htut et al., 2019]{htu2019dependencies} extracted implicit dependencies from BERT's attention and compared them to ground-truth Universal-Dependency trees. For several specific relation types there are heads that recover that dependency **significantly better than a baseline** — a head that tracks "subject," another that tracks "object," and so on. The crucial negative result: **no "generalist" head performs holistic parsing.** Syntax is not computed by one module; it is *partitioned across many heads*, each a proxy for one elementary relation. This is also what the reverse-engineered **indirect-object-identification circuit** shows in the mechanistic chapter \cite[Wang et al., 2022]{wang2022interpretability}: the elementary binding step (copy the subject or object across distance to the governing verb) is implemented by a handful of heads, not by a tree.
+
+**The structure is built bottom-up, across depth.** \cite[Someya et al., 2025]{someya2025derivational} used "derivational probing" to track *when* different pieces of syntax form. The result is a clean **bottom-up derivation**: micro-syntactic units (a subject noun phrase) assemble in the *lower* layers and are integrated into macro-syntax (the relationship between a root verb and its dependents) in the *higher* layers — the constituency hierarchy emerging with depth, exactly as the CNN analogy predicts. And the *timing* of macro-syntax formation is not cosmetic: subject-verb number agreement accuracy depends on when the global syntactic information is integrated.
+
+**Is the structure real enough to induce?** Yes. \cite[Shen et al., 2021]{shen2021structformer} induced both dependency and constituency structure *from* a transformer doing masked language modeling — if the representation were mere bag-of-words statistics, a coherent parse could not be recovered from it. The structure is real; it is just **relational and head-distributed** rather than a literal tree in a single location.
+
+The limit is the same one the fact-retrieval chapter meets: this distributed syntax is **fragile to the nesting and distractors** that break long-distance binding, because each dependency link costs attention and depth. The model builds syntax the way it does everything else — by distributed, depth-staged, head-parallel computation — not by manipulating a parse it can inspect.
+</div>
+
 <div class="optional md" data-headline="Why calculating the Query-Key-Values is not as expensive as it looks like">
 The **KV-Cache** (**Key-Value-Cache**) is an optimization that prevents $\mathcal{O}(T^2)$ redundancy during generation. This would happen because every token needs to look at every other tokens, but it can be prevented:
 Since the Transformer is autoregressive, the hidden states of past tokens remain static once computed. Instead of re-processing the entire sequence for every new word, we store the Key ($K$) and Value ($V$) vectors in a dedicated cache.
@@ -747,6 +761,20 @@ Here is the complete path a prompt takes through the system, from raw text to ge
 
 Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window. The entire architecture is a single, differentiable function $f_\theta(\text{prompt}) \to \text{next token distribution}$.
 
+## How Does the Model Know When to Stop?
+
+Step 6 of the pipeline says generation runs "until the model emits an end-of-sequence token." That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate "stop detector"; stopping is just next-token prediction pointed at a special token.
+
+**The basic mechanism.** The EOS token (`</s>`, `<|end_of_text|>`, …) is an ordinary member of the vocabulary. At every step the model produces a full distribution over *all* tokens, and one of those logits is for EOS. "Stopping" simply means that, at a natural boundary, the distribution puts **enough mass on EOS** that sampling picks it. The model learns this from the sheer fact that sequences in its training data *end*: after a complete sentence, an answer, or a list, the next token is the end marker. So the model internalizes the statistics of "when a thought is over" in the same way it learns everything else.
+
+**The deeper finding: it plans the shape in advance.** Stopping turns out to be *not purely local*. \cite[Dong et al., 2025]{dong2025planning} showed that a simple linear probe can read the **total length of the model's future response** — along with other attributes like the multiple-choice answer it intends to give — straight out of the prompt's final hidden state, **before a single output token is emitted**. The model commits to a rough shape of its answer up front. \cite[Merzouk et al., 2026]{merzouk2026remaining} sharpened this: there is a **linearly-decodable "remaining length" direction** that *decays* as the model generates, and it shifts at the moment the model retracts and restarts — a readable internal "how much is left" counter. (The honest caveat: this direction is *decodable*, which is evidence for a plan-like representation, not proof that the model causally reads it to decide.)
+
+**The plan is installed by post-training.** A base model has essentially *no* such length plan — the same probes give near-zero or even negative $R^2$ on pre-trained weights, and strong $R^2$ only on instruction-tuned models \cite[Baghaei et al., 2026]{baghaei2026collapse}. So **instruction tuning is what installs the planning structure**, and that is also why it is brittle: ban a single common word or punctuation mark and the planned response collapses by 14–48%, because competence has been coupled to narrow surface templates. Preference optimization then skews the plan further: \cite[Moya et al., 2026]{moya2026spurious} show that DPO-style objectives lean on **length as a spurious reward cue** (length bias), nudging models to run longer or shorter to match the preference data rather than the task's actual need.
+
+**The limit.** The plan is an *estimate*, not an odometer. \cite[Xiao et al., 2026]{xiao2026length} found models are poor at accurately measuring their *own* output length, which is why precise length control still needs explicit feedback. So stopping is best understood as a **learned distribution over the EOS token, driven by an instruction-tuned, plan-like estimate of remaining length that decays during generation** — not a hard "I am finished" switch.
+</div>
+
+<div class="md">
 ## Key Intuitions about LLMs
 
 At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:
