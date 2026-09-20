@@ -464,19 +464,22 @@
 	}
 
 	function render() {
-		var L = S.latest;
-		if (!L || !S.layersEl) return;
-		statusHtml(L);
-		var prevOpen = {};
-		$$(S.layersEl.querySelectorAll('details')).forEach(function (d) { prevOpen[d.id] = d.open; });
-		S.layersEl.innerHTML = layersHtml(L);
-		$$(S.layersEl.querySelectorAll('details')).forEach(function (d) {
-			if (prevOpen[d.id] !== undefined) d.open = prevOpen[d.id];
-		});
-		renderSpark(L);
-	} catch (e) {
-		if (S.statusEl) S.statusEl.textContent = 'Error while measuring: ' + e.message;
-		throw e;
+		try {
+			var L = S.latest;
+			if (!L || !S.layersEl) return;
+			statusHtml(L);
+			var prevOpen = {};
+			$$(S.layersEl.querySelectorAll('details')).forEach(function (d) { prevOpen[d.id] = d.open; });
+			S.layersEl.innerHTML = layersHtml(L);
+			$$(S.layersEl.querySelectorAll('details')).forEach(function (d) {
+				if (prevOpen[d.id] !== undefined) d.open = prevOpen[d.id];
+			});
+			renderSpark(L);
+		} catch (e) {
+			if (S.statusEl) S.statusEl.textContent = 'Error while measuring: ' + e.message;
+			log('render error: ' + e.message);
+			throw e;
+		}
 	}
 
 	function pushSample(L) {
@@ -516,6 +519,8 @@
 	}
 
 	function buildChrome() {
+		log('chrome start readyState=' + document.readyState);
+		var eq = [
 			'<h3 style="margin-top:6px;">The bare equations behind these numbers</h3>',
 			'',
 			'For token $i$ attending to $j\\le i$ in a window of $T$ tokens, head $h$ of layer $\\ell$ forms scores with $d_k=d_{\\mathrm{model}}/n_{\\mathrm{heads}}$ dimensions per head,',
@@ -583,7 +588,7 @@
 		if (!changed) return;
 		var now = Date.now();
 		var r;
-		try { r = compute(); } catch (e) { return; }
+		try { r = compute(); } catch (e) { log('compute error: ' + e.message); return; }
 		if (!r) { statusWaiting(); return; }
 		S.latest = r;
 		if (training) {
