@@ -664,6 +664,17 @@ A **spiking neural network** \cite{maass1997spiking} communicates via discrete *
 ### Reservoir Computing and Echo State Networks
 
 A **reservoir computer** \cite{jaeger2001esn, maass2002liquid} is a recurrent neural network in which the recurrent weights are *fixed at random* and only a linear readout is trained. The internal dynamics are complex enough that the linear readout can solve any task that the reservoir's state space can represent. The trick is to set the random weights so that the dynamics are on the *edge of chaos* — neither too stable nor too chaotic. Echo State Networks \cite{jaeger2001esn} are the discrete-time version; Liquid State Machines \cite{maass2002liquid} are the continuous-time, spiking version. Reservoir computing is the canonical example of *computation without learning in the network itself* — only the linear output is trained — and it is the natural framework for physical computing substrates where the dynamics cannot be trained: a bucket of water \cite{fonseca2022reservoir}, a piece of bread \cite{rossi2021bread}, an optical cavity.
+
+What makes a reservoir *work* is a question plasticity rules answer from the inside.
+\cite[Morales, Mirasso & Soriano, 2021]{morales2021reservoir} add synaptic and non-synaptic
+plasticity to an Echo State Network and show the performance gain tracks two measurable
+geometry changes: the **pair-wise correlations between reservoir neurons fall** and each
+neuron becomes better at **separating similar inputs** in activity space. Optimal accuracy
+sits near the **edge of instability** — the recurrent analogue of the edge-of-chaos sweet
+spot above — and combining several plasticity rules beats any single one. In other words,
+"decorrelate the neurons, spread out the representations" is the same geometric recipe the
+population-geometry literature finds in trained feed-forward nets (see <a
+href="deep_theory">Why Do Networks Generalize?</a>).
 </div>
 
 <div class="md">
