@@ -5520,6 +5520,24 @@ window.bibData = {
 		year: 2021,
 		url: "https://transformer-circuits.pub/2021/framework/index.html"
 	},
+	"zhai2023entropy": {
+		title: "Stabilizing Transformer Training by Preventing Attention Entropy Collapse",
+		author: "Shuangfei Zhai, Tatiana Likhomanenko, Etai Littwin, Dan Busbridge, Jason Ramapuram, Yizhe Zhang, Jiatao Gu, Josh Susskind",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.06296"
+	},
+	"merullo2024talkingheads": {
+		title: "Talking Heads: Understanding Inter-layer Communication in Transformer Language Models",
+		author: "Jack Merullo, Carsten Eickhoff, Ellie Pavlick",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.09519"
+	},
+	"wang2025dimensionalcollapse": {
+		title: "Dimensional Collapse in Transformer Attention Outputs: A Challenge for Sparse Dictionary Learning",
+		author: "Junxuan Wang, Xuyang Ge, Wentao Shu, Zhengfu He, Xipeng Qiu",
+		year: 2025,
+		url: "https://arxiv.org/abs/2508.16929"
+	},
 	"sogaard2018limitations": {
 		title: "On the Limitations of Unsupervised Bilingual Dictionary Induction",
 		author: "Anders Søgaard, Sebastian Ruder, Ivan Vulić",
