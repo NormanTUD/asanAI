@@ -27,6 +27,17 @@ https://arxiv.org/html/2505.11611v1
 	The hidden harmony is better than the obvious one
 </div>
 
+<div class="md">
+## Hyperparameters for this demo
+
+Below, a tiny LLM-like model is trained **right here in your browser** on a piece of
+custom text you supply — and the mathematical machinery stays visible at every step:
+tokenization, embeddings, attention, loss, gradients. The hyperparameters are not
+abstract settings but **literal terms of the equations** this lesson derives: nudge the
+model dimension, the heads, the depth or the context, and you can watch the change land
+in every matrix shape and every dot product.
+</div>
+
 <div id="transformer_config">
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
