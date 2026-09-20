@@ -499,3 +499,28 @@ This chapter is a deep dive that pays off across the book:
 * **Why Do Networks Generalize?** — the fold-and-cut picture is a concrete candidate for
   *what kind of functions the architecture's prior favours*.
 </div>
+
+<div class="optional md" data-headline="The polyhedral backbone">
+This chapter has a formal home in **polyhedral theory**, the study of the solid shapes cut out
+by finitely many linear inequalities \cite{groetschel2005polyhedral}. Every linear region of a
+ReLU net is a **polyhedron**: the input points for which exactly the same set of ReLUs is
+active. A polyhedron has two equivalent descriptions — *externally* as a stack of
+inequalities, $P=\{x:Ax\le b\}$ (the "H-representation", how the net is actually given), or
+*internally* as the convex hull of points plus a cone,
+$P=\operatorname{conv}(V)+\operatorname{cone}(E)$ (the "V-representation"). **Farkas' lemma**
+is the workhorse that decides whether a region is empty at all, and **Fourier–Motzkin
+elimination** converts one description into the other by projecting variables away. The catch
+is the deep reason the region count is exponential: that conversion **blows up exponentially**
+in the worst case — the $n$-cube and the $n$-cross-polytope are each trivial in one form and
+exponential in the other.
+
+That single fact powers three things here. It is why a trained net is *intractable* to inspect
+by enumerating its regions; why you instead **optimize over** it — because each region is an
+affine map, a trained ReLU net can be re-expressed as a **mixed-integer linear program**
+(binary variables mark which ReLUs fire), letting you verify robustness, bound each neuron's
+output range, or embed the net inside a larger optimization problem, and even *train* with
+LP/MILP when you want integer or otherwise structured weights
+\cite{huchette2026polyhedral}; and why folding — which merely changes *which* inequalities bind
+— is such an efficient lever. The geometry of the fold and the algebra of the polyhedron are
+the same object.
+</div>

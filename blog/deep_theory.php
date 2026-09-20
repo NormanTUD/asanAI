@@ -65,6 +65,22 @@ Over-parameterized nets carry an **implicit bias**: gradient descent, with no ex
 The deepest geometric signature is **neural collapse**: in the terminal phase of training, class means collapse to the vertices of a tight simplex while features become equi-angular \cite[Papyan et al., 2020]{neural_collapse}. The network has organized its features into a *coherent geometric structure* — the data carved into a space whose shape is stable.
 
 This is the book's own thesis applied to networks: a model generalizes when it learns the data **as coherent difference** — a geometry of local relations that glue into a global whole (\cite[Coherent Difference]{coherent_difference}). Once the space is learned, a new example is simply a *point that lands in it*. Generalization is not magic; it is the data falling into place inside a structure the net has already built. \cite[Roberts, Yaida & Hanin, 2021]{principles_dl_theory}
+
+The same idea has a sharp **quantitative** form in *population geometry*. For a population of
+neurons feeding a linear readout of tasks that share a common latent structure,
+\cite[Wakhloo, Slatton & Chung, 2024]{wakhloo2024population} show the generalization error is
+governed by exactly three measurable statistics — the **correlation** between neurons and the
+latent factors, the **alignment** (how orthogonal each factor's coding direction is to the
+noise), and the **dimensionality** (participation ratio) of the response — and that the
+*optimal* code is a **disentangled** one: each latent factor along its own orthogonal
+direction. The variance spent on the weaker factors then tracks the data budget: compressed
+when data is scarce, expanded when it is abundant. Remarkably, the *same* signature — **lower
+pair-wise correlation** and **greater input-separation** in the population — is what plasticity
+rules do inside an *untrained, recurrent* reservoir to raise prediction accuracy
+\cite[Morales, Mirasso & Soriano, 2021]{morales2021reservoir}. So whether you optimize a
+feed-forward net or let a reservoir settle near the edge of instability, "separate the factors,
+decorrelate the neurons" is a recurring geometric recipe for generalization — a concrete,
+measurable cousin of the coherent-difference thesis above.
 </div>
 
 <div class="md">

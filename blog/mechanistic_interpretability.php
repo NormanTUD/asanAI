@@ -120,6 +120,30 @@ This means that individual neurons rarely correspond to single interpretable fea
 </div>
 
 <div class="md">
+## The Polytope Lens: why a "direction" isn't quite the right unit
+
+Superposition and the features-as-directions view both treat a *direction* (a linear
+combination of neurons) as the atom of meaning. **Black et al. (2022)**
+\cite{black2022polytopelens} make the case that this is a *leaky abstraction*, because it
+ignores what the ReLU nonlinearity actually does. A ReLU layer cuts its input space into
+**polytopes** — each a region where a fixed set of neurons is on — so the network is really a
+bank of *different affine maps, one per polytope*. A direction, scaled up, crosses polytope
+boundaries and the meaning it carries *changes*; the object that is invariant is the
+**polytope**, tagged by its **spline code** (the binary on/off vector of every ReLU in the
+block). Three predictions follow, and two hold up: (1) a *polysemantic* direction is exactly
+one that sweeps across several *monosemantic* polytope regions — the true atoms are the
+polytopes, and clusters of nearby codes are monosemantic even though no single neuron is;
+(2) the net places **denser polytope boundaries between different classes than within them** —
+the folding of the <a href="origami">Origami</a> chapter, measured as a Hamming-per-Euclidean
+density; and (3) polytope boundaries should mark where a direction goes *off-distribution* —
+the last only partially confirmed, dense boundaries appearing when you scale activations
+*down* toward the origin rather than up. The honest cost: polytopes are exponentially many and
+harder to name than directions, so the lens is a *more complete but more expensive*
+description — the same tension the linear-representation results below wrestle with from the
+other side.
+</div>
+
+<div class="md">
 ## Composition: How Heads Talk to Each Other
 
 The most powerful circuits arise from **composition**: when the output of one head becomes the input to another \cite[Section 3]{elhage2021mathematical}. There are three types:
