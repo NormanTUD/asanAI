@@ -141,6 +141,7 @@
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
 	incl("Closing the Loop — AI for Science", "ai_for_science");
+	incl("Common Myths and Misconceptions About AI", "myths");
 	incl("Appendix", "appendix");
 	incl("Software: Operating Systems, Programming Languages & the Abstraction Stack", "software");
 	#incl("Formulary — Every Equation, One Place", "formulary");
