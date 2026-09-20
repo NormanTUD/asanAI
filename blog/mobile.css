@@ -380,6 +380,10 @@ body {
 	blockquote > p:first-of-type::before {
 		font-size: 1.8em;
 	}
+	.kp-block {
+		padding: 0.85em 0.95em;
+		font-size: 0.98em;
+	}
 
 	/* ── 3k. Callouts (info/warn cards) ──────────────────── */
 	.sa-callout {

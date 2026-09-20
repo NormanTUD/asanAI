@@ -13781,5 +13781,46 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Algorithmic_fairness",
 		alternativetitle: "Algorithmic fairness (Wikipedia)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Common Myths (broad / cultural layer)  (myths.php)
+	 *  The human, cross-historical pattern behind the technical myths:
+	 *  mind-projection, the machine-as-mind premise, creation stories,
+	 *  labor panic, and the false magic/nothing binary.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"weizenbaum1966eliza": {
+		title: "ELIZA effect",
+		author: "Joseph Weizenbaum",
+		year: 1966,
+		url: "https://en.wikipedia.org/wiki/ELIZA_effect",
+		alternativetitle: "Weizenbaum's ELIZA effect (1966)"
+	},
+	"computational_theory_of_mind": {
+		title: "Computational theory of mind",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Computational_theory_of_mind",
+		alternativetitle: "the computational theory of mind"
+	},
+	"luddite_wiki": {
+		title: "Luddite",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Luddite",
+		alternativetitle: "the Luddites (1811)"
+	},
+	"golem_wiki": {
+		title: "Golem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Golem",
+		alternativetitle: "the Golem legend"
+	},
+	"gfactor_wiki": {
+		title: "G factor",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/G_factor",
+		alternativetitle: "Spearman's g factor"
 	}
 };

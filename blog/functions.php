@@ -223,6 +223,7 @@ function load_base_js () {
 	js("three.min");
 	js("search");
 	js("topics");
+	js("keypoint");
 	js("progress_tracker");
 
 	$files = glob(__DIR__ . "/modules/*.js");

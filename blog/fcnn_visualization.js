@@ -84,6 +84,7 @@ function get_fcnn_data () {
 
 function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
 	const layerCount = layers.length;
+	const lineColor = (typeof isDarkMode === 'function' && isDarkMode()) ? '#ffffff' : '#000000';
 	const xStep = w / (layerCount);
 	const nodePositions = [];
 
@@ -129,7 +130,7 @@ function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
 		const curr = nodePositions[i];
 		const next = nodePositions[i+1];
 
-		ctx.strokeStyle = "#000000"; // Schwarze Linien
+		ctx.strokeStyle = lineColor;
 
 		if(curr.length * next.length > 1000) ctx.globalAlpha = 0.1;
 		else ctx.globalAlpha = 0.4;

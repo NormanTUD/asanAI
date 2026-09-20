@@ -217,7 +217,9 @@ html.dark {
 	/* Body copy sits a notch below pure #e2e8f0: long reading passages
 	   feel calmer while contrast on #0f172a stays ≈ 11:1. Headings and
 	   chrome stay brighter via --mn-heading / explicit rules. */
-	background: #0f172a;
+	background-color: #02050c;
+	background-image: linear-gradient(to bottom, #0b1e47, #02050c);
+	background-attachment: fixed;
 	color: #cbd5e1;
 	color-scheme: dark;
 	--mn-bg: #0f172a;
@@ -2074,6 +2076,45 @@ blockquote footer {
 	color: var(--mn-text-muted);
 }
 
+/* ── Key-point callouts — `>` blockquotes rendered as an "in
+   short" card. Quiet on purpose: a thin accent line, a single
+   faint tint, and an italic line of text. No big glyph — just
+   the accent + tint that set the line off from the prose.       */
+.kp-block {
+	--kp-line  : rgba(99,102,241,.35);
+	--kp-tint  : rgba(99,102,241,.06);
+	margin: 1.9rem 0;
+	padding: 1.05em 1.35em;
+	border-left: 3px solid var(--kp-line);
+	border-radius: 0 var(--mn-radius-lg, 10px) var(--mn-radius-lg, 10px) 0;
+	background: var(--kp-tint);
+	font-size: 1.08rem;
+	color: var(--mn-text);
+}
+.kp-block > p {
+	margin: 0;
+	font-style: italic;
+}
+.kp-block > p + p {
+	margin-top: 0.7em;
+}
+/* a byline ("— Name", possibly a citation) sits beneath the quote */
+.kp-block > p.kp-source {
+	margin-top: 0.55em;
+	font-style: normal;
+	font-size: 0.82em;
+	font-weight: 500;
+	letter-spacing: .01em;
+	color: var(--mn-text-muted);
+}
+.kp-block > p.kp-source a {
+	color: inherit;
+}
+html.dark .kp-block {
+	--kp-line  : rgba(129,140,248,.45);
+	--kp-tint  : rgba(129,140,248,.10);
+	color: var(--mn-text);
+}
 
 .math-attn-base {
 	overflow: scroll;

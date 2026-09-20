@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Common Myths and Misconceptions About AI
-description: What people actually believe about AI, where each belief came from, and the true core that survives under it.
+description: Why people believe what they believe about AI — the origin, the record, and the true core under each myth.
 icon: &#128302;
 part: 6
 order: 12
@@ -11,90 +11,89 @@ topics: philosophy, society, ethics, language
 -->
 
 <div class="md">
-## Folklore
+## The habit, not the machine
 
-Every powerful technology grows a folklore before we understand it, and AI is no exception. The beliefs are not random: they have *origins* — a paper, a film, a press cycle — and almost all of them latch onto a **true core** that the story distorts. A legend-researcher does not merely debunk; they trace where a tale was born and what real thing it attached to. This page does that for eight persistent myths.
+This page is less about what AI *is* than about what we do when we meet a powerful tool we cannot see inside. Every such tool has been met with the same small cast of stories: it is alive, it is a god, it is a threat, it is neutral, it is magic, or it is nothing. AI is the latest version of each. A legend-researcher's job is to find where a story was born and what real thing it attached to — so that is what follows.
 
-Start with a warning about *us*. People systematically overestimate how well they understand how things work, from a zip lock to a traffic light \cite[Rozenblit & Keil, 2002]{rozenblit2002ioed}, and the bias bites hardest on causal "how does it work" knowledge \cite[the illusion of explanatory depth]{ioed_wiki}. AI triggers the same trap: the mechanism sounds simple — "it just predicts the next word" — which *feels* like understanding, right up until you are asked to actually explain it.
+Start with a warning about *us*, because the beliefs come from us. People systematically overestimate how well they understand how things work, from a zipper to a traffic light \cite[Rozenblit & Keil, 2002]{rozenblit2002ioed}, and the bias is strongest for causal "how does it work" knowledge \cite[the illusion of explanatory depth]{ioed_wiki}. When a tool is opaque, we close the gap with the oldest explanations we have: *mind* and *intent*. The strongest evidence that this is a stable human trait, not a new AI quirk, is that we already caught ourselves doing it in 1966 — Weizenbaum's rudimentary chatbot ELIZA led users to ascribe understanding and feeling to a program that had neither, even when they knew it had neither \cite[the ELIZA effect]{weizenbaum1966eliza}.
 
-\marginfig{flammarion.jpg}{Flammarion's 1888 print shows a militiaman who, the story goes, kept pointing at the sun and died believing he had reached heaven. He was not wrong about the *direction* of his model — only about the map. Most of our "obvious" beliefs about AI work the same way: the gesture points somewhere real, the map is invented.}
+\marginfig{flammarion.jpg}{Flammarion's 1888 print of a militiaman pointing at the sun. The story is that he died believing he had reached heaven — not wrong about the direction of his model, only about the map. Most of our "obvious" beliefs about AI work the same way: the gesture points somewhere real, and the map is supplied by us.}
 
-The surveys say the pattern is stable and widespread. In the *AI Index*'s public-perception polling, most respondents expect more benefit than harm — while job losses, and for a substantial minority an existential risk, rank among their leading concerns \cite[the AI Index]{aiindex2025}. Optimism and dread coexist in the same person, which is exactly what a folklore looks like from the inside.
+Polling backs the picture up. In the *AI Index*'s public-perception surveys, a majority expect more benefit than harm, while job losses — and for a large share, an existential risk — rank among the leading concerns \cite[the AI Index]{aiindex2025}. In the same respondents, the hope and the dread sit together.
 </div>
 
 <div class="md">
-## 1. "It understands"
+## 1. "It is alive"
 
-People talk to LLMs as if the model *gets* what they mean, the way a colleague does. The debate has a name, the *Stochastic Parrots* paper: Bender and colleagues argued that fluent text generation is not, by itself, evidence of a model of the world \cite[Bender et al., 2021]{bender2021stochasticparrots}. The philosophical version is older — Searle's **Chinese Room** shows a system can manipulate symbols perfectly and still grasp none of them \cite[Searle, 1980]{searle1980chineseroom}.
+We talk to the assistant like a colleague; some now worry it might *suffer*. The belief is the oldest in the set. Weizenbaum's **ELIZA** in 1966 showed people reading a mind into a bag of string-matching rules, and the tendency has a name — the **ELIZA effect** \cite[the ELIZA effect]{weizenbaum1966eliza}.
 
-So the literal claim — the model *understands* in the human sense — is unsupported. But the myth is *almost right*, which is what makes it dangerous. The model really does form a structured, geometric internal representation of its input \cite[Olah, 2014]{olah2014manifolds}; it is genuinely *about* the things it processes. The true core is not "it understands like us" but the harder fact underneath: there is a real, *functional* notion of content sitting between "meaningless parrot" and "a mind," and "understanding" is the wrong word for both ends of it.
+There is no evidence that current systems have *phenomenal* experience. But the belief is a mirror, not a mistake about the machine: the "aliveness" is a projection, and the reason it is so easy to make is that we evolved to read a mind into fluent, responsive behavior. The question the myth really raises is about *us* — how readily we mistake a good imitation of company for company.
 </div>
 
 <div class="md">
-## 2. "If it passes the test, it thinks"
+## 2. "It talks like us, so it thinks like us"
 
-\marginfig{turing.jpg}{Alan Turing, 1950. He proposed a *pragmatic test*, not a *definition* of mind — and the conflation of the two is the seed of this myth.}
+\marginfig{turing.jpg}{Alan Turing, 1950. He proposed a *pragmatic* test, not a *definition* of mind — and the conflation of the two is what the myth runs on.}
 
-The **Turing Test** is routinely read as: *fool a human and you think*. That reading is wrong on the record. Turing proposed the "Imitation Game" as a way to dodge the question "can machines think?" — which he called too meaningless to discuss \cite[Turing, 1950]{turing1950computing}:
+The **Turing Test** is usually read as: *fool a human and you think*. That is not what it was. Turing offered the "Imitation Game" as a way to sidestep the question "can machines think?", which he called too meaningless to discuss \cite[Turing, 1950]{turing1950computing}. It is a *behavioral, statistical* criterion for competent conversation, not a logically sufficient condition for a mind; the one-off "passes" (a program fooling 33% of judges in 2014) are not the test at all \cite[SEP, The Turing Test]{septruringtest}.
 
-> I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of machines thinking without expecting to be contradicted.
-> — \citeauthor{turing1950computing} (\citeyear{turing1950computing})
-
-The Stanford Encyclopedia makes the distinction sharply: the test is a *behavioral, statistical* criterion, not a logically sufficient condition for a mind, and the one-off "passes" (a program fooling 33% of judges in 2014) are not the test at all \cite[SEP, The Turing Test]{septruringtest}. The true core the conflation hides is that intelligence is a *spectrum of useful competencies*, not a binary "thinks / doesn't" — the test was never meant to settle the question it is famous for.
+The true core the conflation hides is that "does it think?" is a question about *mind*, not machine: it asks where we would draw the line that locates *our own* minds in *other* minds. We have never been very good at that, with or without silicon.
 </div>
 
 <div class="md">
-## 3. "It is conscious — or nearly"
+## 3. "The brain is a computer — so a computer can think"
 
-The next myth adds a little feeling: the assistant is *almost* alive, it *wants* things, it might even *suffer*. This is the strongest pull in the folklore, because a fluent interlocutor is exactly the kind of thing we evolved to read a mind into.
+\marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained neurons, c. 1910. The real brain, and the metaphor we built on it.}
 
-There is no evidence that present systems have *phenomenal* experience, and the "argument from consciousness" cuts both ways: it can be read as a claim that no digital system *could* feel, or merely that we have no way to tell \cite[SEP, The Turing Test]{septruringtest}. The true core is the genuinely unsolved question the myth points at — the **hard problem** of why any organization of matter gives rise to experience at all. The myth is wrong to assume our machines already cross that line; it is, in the rare case, right to point at a line nobody has yet drawn.
+Because the machine "learns" and "processes information," it is easy to assume it is doing what our brain does — a hardware version of the same thing. The premise is old and load-bearing: the **computational theory of mind** holds that thinking *is* computation, so a machine that computes can, in principle, have a mind \cite[the computational theory of mind]{computational_theory_of_mind}.
+
+Brains and artificial networks are in fact deeply different — there is no backpropagation in the brain, no explicit weight table, no training set. The true core is that the metaphor is *generative* (it built the whole field) and *misleading* at once: it is why we assume understanding and consciousness ride along for free with "processing." The real, humbler connection is that both are *information-processing* — which is a lot less, and a lot more, than "the same thing."
 </div>
 
 <div class="md">
-## 4. "It will become god — the singularity is coming"
+## 4. "It will outgrow us — the singularity"
 
-The word *singularity* is Vinge's coinage for the point at which technical self-improvement outruns our ability to predict it \cite[Vinge, 1993]{vinge1993singularity}; Kurzweil turned it into a pop-book and, in public imagination, into a date \cite[Kurzweil, 2005]{kurzweil2005singularity}. The dread underneath is not new — it is the old "the machine turns on us" story with a faster clock \cite[Bostrom, 2003]{bostrom2003ethical}.
+The belief: the machine will become a god, or at least take over. The modern labels are Vinge's *technological singularity* and Kurzweil's countdown \cite[Vinge, 1993]{vinge1993singularity} \cite[Kurzweil, 2005]{kurzweil2005singularity}. But the *shape* of the story is much older — it is the **Golem**: the created thing that slips past its maker's control \cite[the Golem legend]{golem_wiki}.
 
-The literal claim — an intelligence explosion is *inevitable* and on a countdown — has no identified mechanism behind it: no demonstrated path by which a system *autonomously* rewrites its own cognition into superintelligence \cite[Bostrom, 2014]{bostrom2014superintelligence}. But the myth latches onto something real. Bostrom's **orthogonality thesis** says a system's *capability* is independent of its *goal* \cite[Bostrom, 2012]{bostrom2012orthogonal}, and **instrumental convergence** says nearly any goal makes self-preservation and resource-acquisition *instrumental* subgoals \cite[Bostrom, 2003]{bostrom2003ethical}. The genuine kernel is not "a robot with a will" but a **goal-design** problem: a capable *optimizer* with a slightly mis-specified objective is dangerous without needing a mind, a motive, or a god-complex.
+There is no demonstrated mechanism by which a system *autonomously* rewrites its own cognition into superintelligence \cite[Bostrom, 2014]{bostrom2014superintelligence}. The genuine, defensible kernel is not a monster with a will but a **goal-design** problem: a capable *optimizer* with a slightly mis-specified objective is dangerous without needing a motive or a god-complex \cite[Bostrom, 2012]{bostrom2012orthogonal}. The myth supplies the Golem; the engineering supplies the real worry.
 </div>
 
 <div class="md">
 ## 5. "It will take all our jobs"
 
-The labor myth is the oldest here — the Luddites with a better press kit — and its modern form is *The Second Machine Age* \cite[Brynjolfsson & McAfee, 2014]{brynjolfsson2014secondmachine}. In polling it is also the most concrete fear: expected job losses sit among the public's leading AI concerns \cite[the AI Index]{aiindex2025}.
+The belief: robots and mass unemployment. It is the oldest labor panic in the set, and it is also a myth about a myth. The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology; in fact they were skilled weavers protesting wages and the quality of work — the machines were not the target, the *terms* were \cite[the Luddites]{luddite_wiki}.
 
-The empirical record undercuts the doomsday version. Across a century of automation, technology has *transformed* work and created new categories of it rather than producing durable mass unemployment; the honest claim is uneven *displacement*, not the *extinction* of work \cite[Brynjolfsson & McAfee, 2014]{brynjolfsson2014secondmachine}. The true core is the distinction the myth collapses: **tasks** are automatable, and that displacement is real and uneven. The leap from "some tasks vanish" to "no one works" is the part with no evidence behind it.
+The record undercuts the doomsday version. Across a century of automation, technology has *transformed* work and created new categories of it rather than producing durable mass unemployment; the honest claim is uneven, task-level *displacement*, not the extinction of work \cite[Brynjolfsson & McAfee, 2014]{brynjolfsson2014secondmachine}. The true core: "this machine ends all work" has been said of the loom, the power loom, and the spreadsheet, and each time it was wrong in the aggregate and right in specific, painful pockets.
 </div>
 
 <div class="md">
-## 6. "It's *just* statistics — a fancy lookup table"
+## 6. "It's magic — or it's nothing"
 
-The mirror-image myth strips away the magic the other way: no real intelligence, only "big multiplication" and "a search over a database." It feels rigorous, because it is *almost* a true description.
+Two beliefs that cancel each other but are the same error. One says the machine is a miracle we cannot explain; the other says it is "just statistics" and "a fancy lookup table." The shared assumption is that a mechanism we cannot *picture* must be either a soul or a triviality — an **illusion of explanatory depth** running in both directions \cite[the illusion of explanatory depth]{ioed_wiki} \cite[Rozenblit & Keil, 2002]{rozenblit2002ioed}.
 
-The counter-lesson is Sutton's **Bitter Lesson**: across the history of the field, the methods that ultimately win are the *general, computation-hungry* ones, not the hand-crafted "intelligence" \cite[Sutton, 2019]{sutton2019bitterlesson}. So "it's just brute force" is nearly right — and the nearly-right part is the surprise. The true core is that *general optimization with the right objective subsumes human ingenuity*, which is exactly why the "mere brute force" framing misleads: it mistakes "we do not yet know how it works" for "nothing real is happening." This myth and Myth 1 are the same error seen from opposite sides — both assume the only interesting intelligence is the kind we can already name.
+The system is real, structured, *and* not yet fully explainable — all three at once. The "just brute force" pole is nearly right, and that near-rightness is the surprise: the methods that win are the general, computation-hungry ones, not hand-built cleverness \cite[Sutton, 2019]{sutton2019bitterlesson}. The true core is that "impressive, and we do not fully understand it" is a fact we find hard to hold, so we snap to one pole. That is a limit on our explanation, not a fact about the machine.
 </div>
 
 <div class="md">
-## 7. "We're basically there"
-
-The over-optimist is the doom-monger's twin: both agree we are *close*, they only disagree about the sign.
-
-The reason "human-level" is the wrong milestone is **Moravec's paradox**: the things that are *hard* for us (abstraction, arithmetic, planning) are comparatively *easy* for machines, while the things that are *easy* for us (perception, walking, common sense) are the hard ones \cite[Moravec, 1988]{moravec1988paradox}. A benchmark that looks almost-solved can still be a mile from *general* competence, and a system that looks primitive can already be trivially past us on some axes. The true core is that *general* intelligence is hard for a specific, non-obvious reason: the axis that looks easy is the one that is expensive. "We're basically there" quietly measures progress on the *easy* axis and reports it as progress on the *hard* one.
-</div>
-
-<div class="md">
-## 8. "The algorithm is neutral"
+## 7. "It is neutral and objective"
 
 \marginfig{justitia_statue.jpg}{Justitia, blindfolded. The myth hands the blindfold to the model and calls the result objectivity; the blindfold is doing the work, not the algorithm.}
 
-The fairness myth is the most consequential, because it sounds like an *ethical virtue*: let the *algorithm* decide, not a biased human. But an objective *function* is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model can inherit and amplify \cite[algorithmic fairness]{algofairness_wiki}. "Neutral" is not a default state a system falls into; it is a property you have to build, and usually do not.
+The belief is the most consequential, because it sounds like a virtue: let the *algorithm* decide, not a biased human. But an objective *function* is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model can inherit and amplify \cite[algorithmic fairness]{algofairness_wiki}. "Neutral" is not a state a system falls into by default; it is a property you have to build.
 
-The true core is the useful half of the myth: the same machinery that *encodes* a disparity can *measure* and *audit* it. The error is not that we automated a judgment — that is sometimes a good thing — but that we stopped asking *whose* judgment, and on *whose* data.
+The true core is the useful half: the same machinery that *encodes* a disparity can *measure* and *audit* it. "The rule is just" is as old as law itself; the machine's contribution is to make hidden values explicit enough to finally see them — which is a strength, not a neutrality.
 </div>
 
 <div class="md">
-## The method
+## 8. "This time is different"
 
-Strip each myth and the same shape remains: a folk model that points at something real, latched onto a single famous origin, with a true core that is *harder* than the model implies. The myth is the map; the true core is the territory the map was trying, badly, to draw. The skill is not to laugh at the map, but to notice the coastline it was reaching for.
+The belief: AI is the first real intelligence, the first big deal, the unprecedented turning point. Part of it rests on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \cite[Spearman's g factor]{gfactor_wiki}.
+
+It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then confused the model for the world. The true core: what is genuinely new about this chapter is the scale and speed, not the shape. Every tool before it was met with the same stories; the difference is that this one answers back.
+</div>
+
+<div class="md">
+## What the myths are doing
+
+The myths are not a list of errors to be corrected; they are the human mind doing, with each new opaque and powerful tool, the thing it has always done — filling the gap it cannot see with *mind*, *intent*, and *fate* \cite[the ELIZA effect]{weizenbaum1966eliza}. Each has an origin, a real mechanism it attached to, and a true core that is harder than the story. Reading them that way — as projections with a real coastline beneath — is the difference between dismissing a map and using it.
 </div>

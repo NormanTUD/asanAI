@@ -211,7 +211,15 @@ function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
 		// 1. Inhalt holen und Einrückungen fixen
-		let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
+		// The DOM serializer escapes `>` and `<` inside text nodes to &gt;/&lt; on
+		// readback, so `>` markdown (blockquotes) would otherwise reach marked as
+		// &gt; and never parse. Restore them before marked.parse. Real elements
+		// inserted by bibtexify/\index/clusters serialize with raw <…> and are
+		// untouched, so this only affects markdown syntax in the prose.
+		let rawContent = container.innerHTML
+			.replace(/&gt;/g, '>')
+			.replace(/&lt;/g, '<')
+			.replace(/^[ \t]+/gm, '');
 
 		// 2. Index-Logik VOR dem Markdown-Parsing ausführen
 		// Wir nutzen hier die Logik, die normalerweise in deiner parseIndex-Funktion steht
@@ -250,6 +258,11 @@ function renderMarkdown() {
 		//     so their own *markdown* would remain literal — parse them.
 		processFigcapsMarkdown(container);
 		smartPunct(container);
+		// 3b. Key-point callouts: turn qualifying `>` blockquotes into
+		//     .kp-block cards (a byline becomes a small .kp-source line).
+		if (window.BlogKeypoints && BlogKeypoints.upgradeBlockquotes) {
+			BlogKeypoints.upgradeBlockquotes(container);
+		}
 	});
 	updateLoadingStatus("Almost finished.");
 
@@ -1659,6 +1672,12 @@ function initOptionalBlocks() {
 			!!block.parentElement.closest('.md');
 
 		if (nestedUnderMd && typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+			// Same escape issue as renderMarkdown(): the DOM serializer turned `>`
+			// / `<` in the still-raw markdown into &gt;/&lt;, so restore them or
+			// `>` blockquotes (key-point cards) never parse here either.
+			contentHtml = contentHtml
+				.replace(/&gt;/g, '>')
+				.replace(/&lt;/g, '<');
 			contentHtml = marked.parse(contentHtml);
 		}
 
@@ -1680,6 +1699,11 @@ function initOptionalBlocks() {
 		// visibility, and per-cluster CSS all behave consistently with
 		// the rest of the page.
 		smartPunct(contentWrapper);
+		// Key-point callouts: nested optional blocks are rendered here (not by
+		// renderMarkdown()), so the `>` → .kp-block upgrade runs here too.
+		if (window.BlogKeypoints && BlogKeypoints.upgradeBlockquotes) {
+			BlogKeypoints.upgradeBlockquotes(contentWrapper);
+		}
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
 		}
