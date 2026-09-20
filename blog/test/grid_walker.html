@@ -681,7 +681,8 @@ function buildAttn(mode,K){
   return M;
 }
 function drawAttn(){
-  const K=+$('atKv').textContent=$('atK').value;
+  const K=+$('atK').value;
+  $('atKv').textContent=K;
   const mode=$('atMode').value;
   const M=buildAttn(mode,+K);
   const c=atCanvas, ctx=atCtx;

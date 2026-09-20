@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Attention Heads als Augen — Interaktive Visualisierung</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #3b82f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 { color: var(--accent); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-bottom: 24px; }
+  .controls {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .control-group { display: flex; flex-direction: column; gap: 4px; }
+  .control-group label { font-size: 12px; color: var(--muted); font-weight: bold; text-transform: uppercase; }
+  input[type="text"] {
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 300px;
+  }
+  select {
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .heads-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .head-btn {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .head-btn:hover { border-color: var(--accent); }
+  .head-btn.active { border-color: var(--accent); background: #1e3a8a; }
+  .head-btn .eye { font-size: 20px; }
+  .matrix-wrapper {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  .matrix-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+  table.attn-matrix {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  table.attn-matrix th, table.attn-matrix td {
+    border: 1px solid var(--border);
+    padding: 0;
+    text-align: center;
+    min-width: 52px;
+    height: 52px;
+    position: relative;
+  }
+  table.attn-matrix th {
+    background: #0f172a;
+    color: var(--muted);
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px;
+  }
+  .corner-cell {
+    background: #0f172a !important;
+    border: none !important;
+  }
+  .eye-header {
+    font-size: 22px;
+    line-height: 1;
+    padding: 8px !important;
+  }
+  .token-header {
+    font-family: monospace;
+    color: var(--text) !important;
+    background: #1e293b !important;
+  }
+  .attn-cell {
+    font-size: 11px;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .attn-cell:hover {
+    transform: scale(1.08);
+    z-index: 2;
+    outline: 2px solid var(--accent);
+  }
+  .masked {
+    background: repeating-linear-gradient(
+      45deg,
+      #1e293b,
+      #1e293b 4px,
+      #0f172a 4px,
+      #0f172a 8px
+    );
+    color: #475569 !important;
+  }
+  .output-section {
+    margin-top: 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .output-vectors {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .out-vec {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  .out-vec .token { color: var(--accent); font-weight: bold; }
+  .out-vec .val { color: var(--muted); }
+  .explainer {
+    background: #1e3a5f;
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .selected-info {
+    margin-top: 12px;
+    padding: 10px;
+    background: #0f172a;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>👁️ Attention Heads als "Augen"</h1>
+  <div class="subtitle">Jeder Head ist ein Auge, das auf einen anderen Aspekt der Beziehungen zwischen Tokens achtet.</div>
+
+  <div class="explainer">
+    <b>So liest man die Matrix:</b> Zeilen = <b>Query-Tokens</b> ("Ich schaue von hier aus"), Spalten = <b>Key-Tokens</b> ("Ich schaue dorthin hin").
+    Jede Zelle enthält den Attention-Score, den der ausgewählte Head diesem Paar zuweist. Das obere rechte Dreieck ist durch die <b>Causal Mask</b> auf 0 gesetzt — ein Token kann nur auf sich selbst und frühere Tokens schauen.
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="text-input">Eingabesatz</label>
+      <input type="text" id="text-input" value="the cat sat on the mat" />
+    </div>
+    <div class="control-group">
+      <label for="num-heads">Anzahl der Heads (Augen)</label>
+      <select id="num-heads">
+        <option value="4">4 Heads</option>
+        <option value="6" selected>6 Heads</option>
+        <option value="8">8 Heads</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="heads-legend" id="heads-legend"></div>
+
+  <div class="matrix-wrapper">
+    <div class="matrix-title">Attention-Matrix des ausgewählten Heads</div>
+    <table class="attn-matrix" id="attn-table"></table>
+    <div class="selected-info" id="selected-info">Klicke auf eine Zelle, um Details zu sehen.</div>
+  </div>
+
+  <div class="output-section">
+    <div class="matrix-title">Output-Vektoren pro Token (aggregiert über den Head)</div>
+    <div style="color: var(--muted); font-size: 13px;">
+      Nach der Attention hat jeder Token einen neuen Vektor, in dem der (kausal beschränkte) Kontext eingemischt ist:
+    </div>
+    <div class="output-vectors" id="output-vectors"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// "Augen"-Definitionen: Jeder Head reagiert auf einen anderen Aspekt
+// ============================================================
+const HEADS = [
+  {
+    emoji: "👁️", color: "#ef4444", name: "Vorheriges Token",
+    desc: "Achtet stark auf das direkt vorherige Token",
+    scorer: (i, j, tokens) => (i - j === 1 ? 3.0 : (i === j ? 0.5 : 0.1))
+  },
+  {
+    emoji: "👀", color: "#3b82f6", name: "Satzanfang",
+    desc: "Achtet stark auf das erste Token (BOS-artig)",
+    scorer: (i, j, tokens) => (j === 0 ? 2.5 : 0.3)
+  },
+  {
+    emoji: "🧿", color: "#8b5cf6", name: "Selbstbezug",
+    desc: "Achtet primär auf sich selbst",
+    scorer: (i, j, tokens) => (i === j ? 3.0 : 0.2)
+  },
+  {
+    emoji: "🔴", color: "#f59e0b", name: "Wortlängen-Match",
+    desc: "Achtet auf Tokens mit ähnlicher Länge",
+    scorer: (i, j, tokens) => {
+      const diff = Math.abs(tokens[i].length - tokens[j].length);
+      return Math.exp(-diff * 0.7) * 2.0;
+    }
+  },
+  {
+    emoji: "🟢", color: "#10b981", name: "Wiederholungs-Detektor",
+    desc: "Achtet auf identische Tokens",
+    scorer: (i, j, tokens) => (tokens[i].toLowerCase() === tokens[j].toLowerCase() ? 2.5 : 0.3)
+  },
+  {
+    emoji: "🟣", color: "#ec4899", name: "Weit-Zurück-Blick",
+    desc: "Achtet mit exponentiellem Decay weit zurück",
+    scorer: (i, j, tokens) => (j < i ? Math.exp(-(i - j) * 0.15) * 2.0 : (i === j ? 0.4 : 0))
+  },
+  {
+    emoji: "🟠", color: "#f97316", name: "Vokal-Ähnlichkeit",
+    desc: "Achtet auf Tokens mit ähnlichem Vokal-Muster",
+    scorer: (i, j, tokens) => {
+      const vowels = s => (s.match(/[aeiou]/gi) || []).length;
+      return Math.exp(-Math.abs(vowels(tokens[i]) - vowels(tokens[j])) * 0.6) * 1.8;
+    }
+  },
+  {
+    emoji: "🔵", color: "#06b6d4", name: "Übernächstes Token",
+    desc: "Achtet auf das Token 2 Positionen zurück",
+    scorer: (i, j, tokens) => (i - j === 2 ? 3.0 : (i === j ? 0.4 : 0.1))
+  }
+];
+
+let activeHeadIndex = 0;
+let currentTokens = [];
+let currentMatrix = [];
+
+// ============================================================
+// Softmax mit Causal Mask
+// ============================================================
+function computeAttention(tokens, head) {
+  const n = tokens.length;
+  const raw = [];
+  for (let i = 0; i < n; i++) {
+    raw.push([]);
+    for (let j = 0; j < n; j++) {
+      if (j > i) {
+        raw[i].push(-Infinity); // Causal mask
+      } else {
+        raw[i].push(head.scorer(i, j, tokens));
+      }
+    }
+  }
+  // Softmax pro Zeile
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const max = Math.max(...raw[i].filter(v => v !== -Infinity));
+    const exps = raw[i].map(v => v === -Infinity ? 0 : Math.exp(v - max));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    out.push(exps.map(e => sum > 0 ? e / sum : 0));
+  }
+  return out;
+}
+
+// ============================================================
+// Farb-Interpolation für Zell-Hintergrund
+// ============================================================
+function valueToColor(v, baseColor) {
+  // v in [0, 1] -> Opacity auf baseColor
+  const hex = baseColor.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const alpha = 0.1 + v * 0.85;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function textColorForValue(v) {
+  return v > 0.4 ? "#fff" : "#cbd5e1";
+}
+
+// ============================================================
+// Legend / Head-Buttons rendern
+// ============================================================
+function renderHeadsLegend() {
+  const numHeads = parseInt(document.getElementById("num-heads").value);
+  const legend = document.getElementById("heads-legend");
+  legend.innerHTML = "";
+  for (let h = 0; h < numHeads; h++) {
+    const head = HEADS[h];
+    const btn = document.createElement("button");
+    btn.className = "head-btn" + (h === activeHeadIndex ? " active" : "");
+    btn.innerHTML = `<span class="eye" style="filter: drop-shadow(0 0 4px ${head.color});">${head.emoji}</span> <span>Head ${h + 1}: ${head.name}</span>`;
+    btn.onclick = () => {
+      activeHeadIndex = h;
+      render();
+    };
+    legend.appendChild(btn);
+  }
+  if (activeHeadIndex >= numHeads) activeHeadIndex = 0;
+}
+
+// ============================================================
+// Matrix rendern
+// ============================================================
+function renderMatrix() {
+  const text = document.getElementById("text-input").value.trim();
+  currentTokens = text.split(/\s+/).filter(t => t.length > 0);
+  if (currentTokens.length === 0) currentTokens = ["<empty>"];
+
+  const head = HEADS[activeHeadIndex];
+  currentMatrix = computeAttention(currentTokens, head);
+
+  const table = document.getElementById("attn-table");
+  table.innerHTML = "";
+  const n = currentTokens.length;
+
+  // Header row 1: Augen-Emojis über den Key-Spalten
+  const headerRow1 = document.createElement("tr");
+  headerRow1.appendChild(document.createElement("th")).className = "corner-cell";
+  headerRow1.appendChild(document.createElement("th")).className = "corner-cell";
+  for (let j = 0; j < n; j++) {
+    const th = document.createElement("th");
+    th.className = "eye-header";
+    th.innerHTML = `<span style="filter: drop-shadow(0 0 3px ${head.color});">${head.emoji}</span>`;
+    th.title = `Auge schaut auf Key-Token "${currentTokens[j]}"`;
+    headerRow1.appendChild(th);
+  }
+  table.appendChild(headerRow1);
+
+  // Header row 2: Key-Tokens
+  const headerRow2 = document.createElement("tr");
+  headerRow2.appendChild(document.createElement("th")).className = "corner-cell";
+  const keyLabel = document.createElement("th");
+  keyLabel.textContent = "Key →";
+  keyLabel.style.color = head.color;
+  headerRow2.appendChild(keyLabel);
+  for (let j = 0; j < n; j++) {
+    const th = document.createElement("th");
+    th.className = "token-header";
+    th.textContent = currentTokens[j];
+    headerRow2.appendChild(th);
+  }
+  table.appendChild(headerRow2);
+
+  // Data rows
+  for (let i = 0; i < n; i++) {
+    const row = document.createElement("tr");
+
+    // Auge links (Query-Head)
+    const eyeTd = document.createElement("th");
+    eyeTd.className = "eye-header";
+    eyeTd.innerHTML = `<span style="filter: drop-shadow(0 0 3px ${head.color});">${head.emoji}</span>`;
+    eyeTd.title = `Query von "${currentTokens[i]}"`;
+    row.appendChild(eyeTd);
+
+    // Query-Token
+    const tokTd = document.createElement("th");
+    tokTd.className = "token-header";
+    tokTd.textContent = currentTokens[i];
+    if (i === 0) tokTd.innerHTML = "↓ Query<br>" + currentTokens[i];
+    row.appendChild(tokTd);
+
+    // Attention cells
+    for (let j = 0; j < n; j++) {
+      const td = document.createElement("td");
+      if (j > i) {
+        td.className = "attn-cell masked";
+        td.textContent = "0.00";
+        td.title = `Maskiert (Causal Mask): Token ${i+1} kann nicht auf Token ${j+1} schauen.`;
+      } else {
+        const v = currentMatrix[i][j];
+        td.className = "attn-cell";
+        td.style.background = valueToColor(v, head.color);
+        td.style.color = textColorForValue(v);
+        td.textContent = v.toFixed(2);
+        td.title = `"${currentTokens[i]}" → "${currentTokens[j]}" = ${v.toFixed(3)}`;
+        td.onclick = () => {
+          document.getElementById("selected-info").innerHTML =
+            `<b style="color:${head.color}">${head.emoji} ${head.name}:</b> ` +
+            `Query <b>"${currentTokens[i]}"</b> (Pos ${i+1}) schaut auf Key <b>"${currentTokens[j]}"</b> (Pos ${j+1}) ` +
+            `mit Gewicht <b>${v.toFixed(3)}</b> (${(v*100).toFixed(1)}%). ` +
+            `<br><i>${head.desc}</i>`;
+        };
+      }
+      row.appendChild(td);
+    }
+    table.appendChild(row);
+  }
+}
+
+// ============================================================
+// Output-Vektoren
+// ============================================================
+function renderOutputs() {
+  const head = HEADS[activeHeadIndex];
+  const container = document.getElementById("output-vectors");
+  container.innerHTML = "";
+  for (let i = 0; i < currentTokens.length; i++) {
+    // "Aggregierter Vektor" als gewichtete Summe der Positionen (Demo-Zweck)
+    const contribs = [];
+    for (let j = 0; j <= i; j++) {
+      const w = currentMatrix[i][j];
+      if (w > 0.05) contribs.push(`${w.toFixed(2)}·${currentTokens[j]}`);
+    }
+    const div = document.createElement("div");
+    div.className = "out-vec";
+    div.innerHTML = `<span class="token" style="color:${head.color}">${currentTokens[i]}</span> = <span class="val">${contribs.join(" + ")}</span>`;
+    container.appendChild(div);
+  }
+}
+
+// ============================================================
+// Master render
+// ============================================================
+function render() {
+  renderHeadsLegend();
+  renderMatrix();
+  renderOutputs();
+}
+
+// ============================================================
+// Events
+// ============================================================
+document.getElementById("text-input").addEventListener("input", render);
+document.getElementById("num-heads").addEventListener("change", () => {
+  activeHeadIndex = 0;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

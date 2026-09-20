@@ -110,9 +110,9 @@ nav.toc a:hover{color:var(--accent)}
 <div class="demo">
 <h3>🧪 Demo: Die drei Läufe</h3>
 <div class="tabs">
-<button class="tab active" onclick="showRun('clean')">1. Sauber</button>
-<button class="tab" onclick="showRun('corrupt')">2. Korrupt</button>
-<button class="tab" onclick="showRun('patch')">3. Patch</button>
+<button class="tab active" onclick="showRun('clean', this)">1. Sauber</button>
+<button class="tab" onclick="showRun('corrupt', this)">2. Korrupt</button>
+<button class="tab" onclick="showRun('patch', this)">3. Patch</button>
 </div>
 <div id="runDisplay"></div>
 <canvas id="causalDemo" width="500" height="280"></canvas>
@@ -375,9 +375,9 @@ const runData = {
   corrupt: {title:'Korrupter Lauf', prompt:'█████ ████ is in', out:'Paris (?)', outClass:'wrong', hint:'Wir addieren Rauschen zu den Subjekt-Embeddings. P("Seattle") stürzt auf ~0.08 ab.'},
   patch: {title:'Patched Lauf', prompt:'█████ ████ is in [✓ patch bei l=15,i=3]', out:'Seattle', outClass:'', hint:'Wir starten korrupt, patchen aber EINEN hidden state auf seinen sauberen Wert. Wenn P("Seattle") zurückkommt → dieser Zustand war entscheidend!'}
 };
-function showRun(k){
+function showRun(k, el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
+  el.classList.add('active');
   const d = runData[k];
   document.getElementById('runDisplay').innerHTML =
     `<div style="margin:10px 0"><strong>${d.title}</strong><br>
@@ -425,7 +425,7 @@ function drawCausalDemo(k){
   ctx.fillText('Tokens →', 5, 15);
   ctx.fillText('Schichten →', W-90, H-8);
 }
-showRun.call({target:document.querySelector('.tab.active')||{classList:{add:()=>{}}}}, 'clean');
+showRun('clean', document.querySelector('.tab.active'));
 document.querySelectorAll('.tab').forEach(t=>{});
 drawCausalDemo('clean');
 
