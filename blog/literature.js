@@ -5738,6 +5738,13 @@ window.bibData = {
 		year: 2021,
 		alternativetitle: "A Brief History of AI"
 	},
+	"ronkowitz2017perceptron": {
+		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
+		title: "Perceptron",
+		author: "Ron Kowitz",
+		year: 2017,
+		alternativetitle: "One-Page Schoolhouse: Perceptron (Mark I at the Smithsonian)"
+	},
 	"lu2023doublehelix": {
 		url: "https://arxiv.org/abs/2306.13817",
 		title: "The Double Helix inside the NLP Transformer",
