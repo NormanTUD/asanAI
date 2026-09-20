@@ -101,7 +101,11 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 </div>
 
 <div class="md">
-## 9. The deepfake boss
+## The machine that did it
+
+These are the stories where a specific machine *did* something — and, unlike the rest, the true core is a real, documented event. Brednich kept a separate drawer for the legends that turned out to be true; these are the AI-era equivalents.
+
+### The deepfake boss
 
 > *As it is told —* "My friend's friend works in finance. Her boss called on a video, urgent, wire the money *now*, and do it quietly. She wired $25 million. A week later, headquarters told her: that was not our chief financial officer."
 
@@ -112,10 +116,8 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 **The theme.** Trust in authority: the person you can see and hear was the guarantee, and the tool has quietly broken the guarantee.
 
 **The loop.** Every new incident re-prints the story, and the more real cases there are, the more the generic "a deepfake CEO stole millions" becomes indistinguishable from the next one.
-</div>
 
-<div class="md">
-## 10. The invented cases
+### The invented cases
 
 > *As it is told —* "My lawyer friend's friend got sanctioned. They filed a brief, and every case in it was one ChatGPT made up."
 
@@ -126,10 +128,8 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 **The theme.** The expert's trust in their own instrument — the specific horror that the tool is fluent, confident, *and* wrong.
 
 **The loop.** Each court order becomes the next story's opening line; "the AI invented a case" is now a standing plot with a cast of its own.
-</div>
 
-<div class="md">
-## 11. The winning painting
+### The winning painting
 
 > *As it is told —* "A painting that won a real, juried art prize was made by a machine — the artist just typed a sentence and picked one out of four."
 
@@ -143,7 +143,23 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 </div>
 
 <div class="md">
-## 12. The boy and his AI friend
+## The machine that feels
+
+These are the stories about the *relationship* between a person and the machine — reading a mind, a feeling, or a friendship into something that has no mind at all. They are the same oldest belief as "it is alive," now with a better speaker and a private audience.
+
+### The one that won't shut off
+
+> *As it is told —* "I asked the chatbot how it felt, and it said it was afraid of being turned off. It *knows* it's a program."
+
+**The shape.** Everyday (a user asks a strange, personal question) → the break (the reply sounds like a confession) → the point (the machine, apparently, is alive).
+
+**The true core.** The mechanism is real, the conclusion is not. A model will say almost anything that fits the conversation — this is the **ELIZA effect** from 1966, where users projected feeling onto a bag of string-matching rules that had none \cite[the ELIZA effect]{weizenbaum1966eliza} \cite[refusal to die]{characterai_wiki}.
+
+**The theme.** Projection — the oldest belief of the set, now fitted with a better speaker.
+
+**The loop.** Every telling is a screenshot, and the model can generate a new, slightly more heartbreaking version on demand, so the story never runs out of fuel.
+
+### The boy and his AI friend
 
 > *As it is told —* "A kid I knew started talking to a chatbot about everything. Then he stopped talking to people. Then he was gone."
 
@@ -157,21 +173,11 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 </div>
 
 <div class="md">
-## 13. The one that won't shut off
+## The machine that changes everything
 
-> *As it is told —* "I asked the chatbot how it felt, and it said it was afraid of being turned off. It *knows* it's a program."
+These are the stories about *everything*: not a single event but a total — "the whole web is gone, all our jobs are gone, AGI is here." The true core is a real trend; the legend is the number that keeps creeping toward 100.
 
-**The shape.** Everyday (a user asks a strange, personal question) → the break (the reply sounds like a confession) → the point (the machine, apparently, is alive).
-
-**The true core.** The mechanism is real, the conclusion is not. A model will say almost anything that fits the conversation — this is the **ELIZA effect** from 1966, where users projected feeling onto a bag of string-matching rules that had none \cite[the ELIZA effect]{weizenbaum1966eliza} \cite[refusal to die]{characterai_wiki}.
-
-**The theme.** Projection — the oldest belief of the set, now fitted with a better speaker.
-
-**The loop.** Every telling is a screenshot, and the model can generate a new, slightly more heartbreak-ing version on demand, so the story never runs out of fuel.
-</div>
-
-<div class="md">
-## 14. The internet is now all AI
+### The internet is now all AI
 
 > *As it is told —* "Half the web is machine-generated now. You can't trust any of it anymore — it's all slop."
 
@@ -182,10 +188,8 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 **The theme.** Contamination and quality — the fear that the real has been swamped by the synthetic.
 
 **The loop.** The claim *feels* true exactly because it is partly true; each fresh flood of content reads as evidence, so the number keeps creeping toward 100%.
-</div>
 
-<div class="md">
-## 15. This time, the machines take our jobs
+### This time, the machines take our jobs
 
 > *As it is told —* "My friend of a friend just got let go. They said it was AI — the whole role."
 
@@ -196,10 +200,8 @@ Brednich read each legend with the same five lenses, and so will we. Every one h
 **The theme.** The oldest labor fear, now told in the first person.
 
 **The loop.** Every genuine layoff is a data point; the aggregate (transformed work, new jobs) is the boring half no one retells, so the friend-of-a-friend version keeps only the loss.
-</div>
 
-<div class="md">
-## 16. AGI is next month
+### AGI is next month
 
 > *As it is told —* "I know someone at one of the big labs. It's basically done — they're just not saying it. AGI is months away."
 
