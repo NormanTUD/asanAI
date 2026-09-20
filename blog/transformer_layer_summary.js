@@ -26,6 +26,9 @@
 		current: function () { return S.latest; }
 	};
 
+	win.tlsLog = [];
+	function log(msg) { if (win.tlsLog.length < 400) win.tlsLog.push(msg); }
+
 	function $(sel, root) { return (root || document).querySelector(sel); }
 
 	function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -513,7 +516,6 @@
 	}
 
 	function buildChrome() {
-		var eq = [
 			'<h3 style="margin-top:6px;">The bare equations behind these numbers</h3>',
 			'',
 			'For token $i$ attending to $j\\le i$ in a window of $T$ tokens, head $h$ of layer $\\ell$ forms scores with $d_k=d_{\\mathrm{model}}/n_{\\mathrm{heads}}$ dimensions per head,',
