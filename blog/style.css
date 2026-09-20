@@ -9161,6 +9161,54 @@ html.dark .topics-preset-fun {
 	background: linear-gradient(135deg, rgba(129, 140, 248, 0.18), rgba(244, 114, 182, 0.18));
 }
 
+/* ── classic reader types (personas) row ───────────────── */
+.topics-personas {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px 12px;
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border-light);
+	border-radius: 14px;
+}
+.topics-personas-label {
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary);
+	letter-spacing: 0.02em;
+}
+.topics-persona-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.topics-persona-btn {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border-radius: 999px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	font-size: 0.84rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.16s ease;
+	font-family: inherit;
+}
+.topics-persona-btn:hover {
+	border-color: var(--mn-accent);
+	color: var(--mn-accent);
+	transform: translateY(-1px);
+}
+.topics-persona-btn:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 1px;
+}
+.topics-persona-btn:active { transform: translateY(0); }
+.topics-persona-icon { font-size: 1rem; line-height: 1; }
+
 /* ── grid of topic tiles ───────────────────────────────── */
 .topics-grid {
 	display: grid;
