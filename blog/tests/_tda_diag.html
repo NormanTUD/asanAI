@@ -8,20 +8,18 @@ function finish(m){ document.title = 'DIAG3 ' + m; }
 function snap(){
   var w = document.getElementById('pg').contentWindow;
   var det = w.document.getElementById('tda-live-details');
-  return 'open=' + (det.open?1:0) + ' attr=' + (det.hasAttribute('open')?1:0) +
-         ' html=' + det.outerHTML.slice(0,50).replace(/</g,'[').replace(/>/g,']');
+  return 'open=' + (det.open?1:0) + ' attr=' + (det.hasAttribute('open')?1:0);
 }
-var tries=0;
-function poll(){
+function ph(){
   var w = document.getElementById('pg').contentWindow;
-  if (!w || !w.__layoutGuardrailCheck) { setTimeout(poll, 300); return; }
-  try { var r = w.__layoutGuardrailCheck(); if (!(r && r.ready === true)) { if(++tries>200){finish('TO');return;} setTimeout(poll,300); return; } } catch(e){ setTimeout(poll,300); return; }
-  lg.push('guardready:' + snap());
-  var det = w.document.getElementById('tda-live-details');
-  det.getElementsByTagName('summary')[0].click();
-  lg.push('afterclick:' + snap());
-  setTimeout(function(){ lg.push('settle:' + snap()); finish(lg.join('|')); }, 1000);
+  var el = w.document.getElementById('tda-live-phase');
+  return el ? (el.innerHTML.length + ';svg=' + (el.querySelector('svg')?1:0)) : 'nop';
 }
-document.getElementById('pg').addEventListener('load', function(){ setTimeout(poll, 300); });
+function waitLoaded(){ var w = document.getElementById('pg').contentWindow; return w && w.document.getElementById('tda-live-details'); }
+var tries = 0;
+function t0(){ if(!waitLoaded()){ if(++tries>200){finish('TO');return;} setTimeout(t0,200); return; } lg.push('state:'+snap()+' phase='+ph()); document.getElementById('pg').contentWindow.document.getElementById('tda-live-details').getElementsByTagName('summary')[0].click(); lg.push('afterClick:'+snap()); setTimeout(t1,800); }
+function t1(){ lg.push('settle:'+snap()); var w=document.getElementById('pg').contentWindow; w.document.getElementById('tda-live-details').scrollIntoView({block:'center'}); setTimeout(t2,800); }
+function t2(){ lg.push('scrolled:'+snap()+' phase='+ph()); finish(lg.join('|')); }
+document.getElementById('pg').addEventListener('load', function(){ setTimeout(t0,300); });
 </script>
 </body></html>
