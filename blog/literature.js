@@ -18,6 +18,34 @@ window.bibData = {
 		url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/",
 		alternativetitle: "Olah, 2014 (colah's blog)"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Cross-cutting Olah (colah's blog) posts, cited from several chapters:
+	 *  embeddings (embeddinglab), transformers (transformer), convolutions /
+	 *  CNN (computer_vision), architecture patterns (alternative_architectures),
+	 *  function composition (math_ii) and the theory of generalization
+	 *  (deep_theory).
+	 * ───────────────────────────────────────────────────────────────────── */
+	"colah2014nlp": {
+		title: "Deep Learning, NLP, and Representations",
+		author: "Chris Olah",
+		year: 2014,
+		url: "https://colah.github.io/posts/2014-07-NLP-RNNs-Representations/",
+		alternativetitle: "Olah, Deep Learning, NLP, and Representations (2014)"
+	},
+	"colah2014conv": {
+		title: "Understanding Convolutions",
+		author: "Chris Olah",
+		year: 2014,
+		url: "https://colah.github.io/posts/2014-07-Understanding-Convolutions/",
+		alternativetitle: "Olah, Understanding Convolutions (2014)"
+	},
+	"colah2015types": {
+		title: "Neural Networks, Types, and Functional Programming",
+		author: "Chris Olah",
+		year: 2015,
+		url: "https://colah.github.io/posts/2015-09-NN-Types-FP/",
+		alternativetitle: "Olah, Neural Networks, Types, and Functional Programming (2015)"
+	},
 	"karpathy2015convnetjs": {
 		title: "ConvNetJS: Classify 2D data (interactive demo)",
 		author: "Andrej Karpathy",
