@@ -197,10 +197,10 @@ one. Drag to look around the folded representation:
 </div>
 
 <div class="og-demo">
-	<div class="og-note">📐 **Why one layer suffices.** The folding edge of an $N$-dimensional
+	<div class="og-note">📐 <b>Why one layer suffices.</b> The folding edge of an $N$-dimensional
 	egg is a hyperplane of one lower dimension, and a single layer can apply several folds at
-	once. In general an $N$-dimensional egg is (approximately) solved by **one layer of
-	$N+1$ neurons** — a small, constant overhead, not an exponential one.</div>
+	once. In general an $N$-dimensional egg is (approximately) solved by <b>one layer of
+	$N+1$ neurons</b> — a small, constant overhead, not an exponential one.</div>
 </div>
 
 <div class="optional md" data-headline="The Fold-and-Cut Theorem">

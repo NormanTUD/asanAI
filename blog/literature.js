@@ -7,6 +7,25 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Topology and the Geometry of Thought  (topology.php)
+	 *  Smooth layers are homeomorphisms -> topological lower bounds on
+	 *  network width; the interactive 2-D classification demos.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"colah2014manifolds": {
+		title: "Neural Networks, Manifolds, and Topology",
+		author: "Chris Olah",
+		year: 2014,
+		url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/",
+		alternativetitle: "Olah, 2014 (colah's blog)"
+	},
+	"karpathy2015convnetjs": {
+		title: "ConvNetJS: Classify 2D data (interactive demo)",
+		author: "Andrej Karpathy",
+		year: 2015,
+		url: "https://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html",
+		alternativetitle: "Karpathy, ConvNetJS 2-D demo"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Origami in N Dimensions  (origami.php)
 	 *  How feed-forward networks manufacture linear separability by folding
 	 *  the data manifold into unoccupied higher dimensions.

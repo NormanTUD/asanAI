@@ -92,6 +92,7 @@
 	incl("Live Training of a Neural Network", "traininglab");
 	incl("Deep Learning", "deeplearninglab");
 	incl("Origami in N Dimensions: How Networks Fold Data Apart", "origami");
+	incl("Topology and the Geometry of Thought", "topology");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
@@ -112,7 +113,6 @@
 	incl("Diffusion Models", "diffusion");
 	incl("Speech & Audio Models", "speech_audio");
 	incl("Beyond Transformers (Mamba, RWKV, RetNet)", "alternative_architectures");
-	#incl("Topology and the Geometry of Thought", "topology");
 	incl("Fine-Tuning & Post-Training", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
