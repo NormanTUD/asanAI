@@ -833,7 +833,7 @@ $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{So
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-Hover over a word to see where it focuses its attention.
+Click a word to see where it focuses its attention.
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background: var(--mn-surface, #fcfdfe); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; overflow-x:auto; overflow-y:hidden;">
 <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
@@ -2180,7 +2180,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
 
 		if (tooltipKey === cache.lastKey) {
-			this._positionTooltip(tooltip, e);
+			tooltip.style.display = 'none';
+			cache.lastKey = null;
 			return;
 		}
 		cache.lastKey = tooltipKey;
@@ -2202,7 +2203,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const tooltipKey = `label-${side}-${idx}`;
 
 		if (tooltipKey === cache.lastKey) {
-			this._positionTooltip(tooltip, e);
+			tooltip.style.display = 'none';
+			cache.lastKey = null;
 			return;
 		}
 		cache.lastKey = tooltipKey;
@@ -2219,23 +2221,17 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	}
 
 	_apvBindTooltipMouseEvents(svg, tooltip, cache, buildTooltip) {
-		let lastMouseEvent = null;
+		let lastClickEvent = null;
 
-		svg.addEventListener('mousemove', (e) => {
-			lastMouseEvent = e;
+		svg.addEventListener('click', (e) => {
+			lastClickEvent = e;
 			buildTooltip(e);
 		});
 
-		svg.addEventListener('mouseleave', () => {
-			lastMouseEvent = null;
-			tooltip.style.display = 'none';
-			cache.lastKey = null;
-		});
-
 		svg._apvTooltipRebuild = () => {
-			if (lastMouseEvent && tooltip.style.display !== 'none') {
+			if (lastClickEvent && tooltip.style.display !== 'none') {
 				cache.lastKey = null;
-				buildTooltip(lastMouseEvent);
+				buildTooltip(lastClickEvent);
 			}
 		};
 	}
