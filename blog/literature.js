@@ -184,6 +184,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Convex_hull",
 		alternativetitle: "Convex hull (Wikipedia)"
 	},
+	"softmax_wiki": {
+		title: "Softmax function",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Softmax_function",
+		alternativetitle: "Softmax function (Wikipedia)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
