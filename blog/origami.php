@@ -363,11 +363,18 @@ barely does:
 
 Put all the pieces together and the paper's central claim is a clean one:
 
-> A feed-forward network manufactures linear separability by **progressively folding the
-> data manifold into unoccupied, higher dimensions** — it is, in effect, doing
-> $N$-dimensional origami. Each layer folds the already-folded object a little further; at
-> the end the structure is spread out enough that a **single flat cut** (the output layer)
-> classifies it.
+> A **stack of dense (fully-connected) ReLU layers** manufactures linear separability by
+> **progressively folding the data manifold into unoccupied, higher dimensions** — it is, in
+> effect, doing $N$-dimensional origami. Each layer folds the already-folded object a little
+> further; at the end the structure is spread out enough that a **single flat cut** (the
+> output layer) classifies it.
+
+Read the subject of that sentence carefully, though. The *object* the origami picture
+describes is **not "a feed-forward network" in general** — it is the **dense ReLU block**, a
+tower of fully-connected ReLU layers. That is the setting where a layer is wider than the
+data and a pointwise ReLU can actually fold. The next section names that object, says what
+the picture does *not* claim, and shows where that block sits inside the bigger architectures
+you have already met.
 
 The vocabulary is worth keeping:
 
