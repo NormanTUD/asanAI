@@ -8,6 +8,7 @@ part: 6
 order: 4
 color: accent
 topics: architecture, training, programming, math-i, math-ii, math-iii, statistics-i, statistics-ii, history, philosophy
+tags: math-heavy, logic-heavy
 -->
 
 <div class="md">

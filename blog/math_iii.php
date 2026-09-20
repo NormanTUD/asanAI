@@ -8,6 +8,7 @@ part: 1
 order: 5
 color: accent
 topics: math-iii
+tags: math-heavy, logic-heavy
 -->
 <?php js("math_iii_hott"); ?>
 

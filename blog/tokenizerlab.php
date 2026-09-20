@@ -8,6 +8,7 @@ part: 4
 order: 1
 color: sky
 topics: language, programming
+tags: code-heavy
 -->
 
 <div class="md">

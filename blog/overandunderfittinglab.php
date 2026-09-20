@@ -8,6 +8,7 @@ part: 3
 order: 2
 color: emerald
 topics: math-i, programming, training
+tags: math-heavy, code-heavy
 -->
 
 <!--

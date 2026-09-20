@@ -8,6 +8,7 @@ part: 5
 order: 5
 color: rose
 topics: reasoning, agents, programming, language
+tags: code-heavy
 -->
 
 <div class="md">

@@ -8,6 +8,7 @@ part: 4
 order: 10
 color: sky
 topics: interpretability, architecture, philosophy, math-ii, math-iii
+tags: math-heavy
 -->
 
 <div class="md">

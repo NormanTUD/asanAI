@@ -8,6 +8,7 @@ part: 1
 order: 6
 color: accent
 topics: geometry, math-iii, history
+tags: interested-layman
 -->
 
 <div class="smart-quote" data-cite="weeksshapespace" data-page="ix">

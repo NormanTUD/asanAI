@@ -8,6 +8,7 @@ part: 4
 order: 16
 color: sky
 topics: architecture, math-i, math-ii, programming
+tags: math-heavy, code-heavy
 -->
 
 <div class="md">

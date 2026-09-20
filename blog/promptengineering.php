@@ -8,6 +8,7 @@ part: 5
 order: 18
 color: rose
 topics: language, programming
+tags: code-heavy
 -->
 
 <div class="md">

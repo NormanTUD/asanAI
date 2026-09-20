@@ -8,6 +8,7 @@ part: 1
 order: 11
 color: accent
 topics: geometry, math-i, math-ii, math-iii, statistics-ii
+tags: math-heavy, logic-heavy
 -->
 
 <style>

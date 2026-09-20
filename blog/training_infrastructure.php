@@ -8,6 +8,7 @@ part: 5
 order: 13
 color: rose
 topics: training, hardware, data, programming
+tags: code-heavy
 -->
 
 <div class="md">

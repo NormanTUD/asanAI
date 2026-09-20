@@ -8,6 +8,7 @@ part: 1
 order: 7
 color: accent
 topics: geometry, math-ii, math-iii, architecture
+tags: math-heavy
 -->
 
 <div class="md">

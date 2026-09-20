@@ -8,6 +8,7 @@ part: 6
 order: 6
 color: text-secondary
 topics: frontier, philosophy, architecture, ethics
+tags: interested-layman
 -->
 
 <div class="md">

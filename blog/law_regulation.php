@@ -8,6 +8,7 @@ part: 6
 order: 8
 color: text-secondary
 topics: society, ethics, law
+tags: interested-layman
 -->
 
 <div class="md">

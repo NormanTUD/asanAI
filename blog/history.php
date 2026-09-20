@@ -8,6 +8,7 @@ part: 1
 order: 2
 color: accent
 topics: history, philosophy
+tags: interested-layman
 -->
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html

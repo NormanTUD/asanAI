@@ -8,6 +8,7 @@ part: 4
 order: 6
 color: sky
 topics: architecture, math-i, math-ii
+tags: math-heavy
 -->
 
 <div class="md">
@@ -1574,7 +1575,7 @@ $$
 
 with $W_i^Q, W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$, and $W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$. In the original paper, $h = 8$, $d_{\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace. The total per-head cost equals that of one big $512$-dim head, but the model gains the ability to **jointly attend to information from different representation subspaces**, one head can chase syntactic dependencies while another tracks coreference.
 
-The final projection $W^O$ is what lets the heads' outputs mix back together into a single $d_{\text{model}}$-dimensional representation.
+The final projection $W^O$ is what lets the heads' outputs mix back together into a single $d_{\text{model}}$-dimensional representation. Heads also coordinate *across* layers: one layer's head can reshape what a later head looks for or copies, through thin low-rank "channels" in the shared residual stream \cite[Merullo et al., 2024]{merullo2024talkingheads} — the subject of the [Mechanistic Interpretability](mechanistic_interpretability) chapter.
 
 ## The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:

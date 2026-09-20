@@ -8,6 +8,7 @@ part: 3
 order: 3
 color: sky
 topics: architecture, math-iii, deep-learning, interpretability, topology
+tags: math-heavy, logic-heavy
 -->
 
 <style>

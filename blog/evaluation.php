@@ -8,6 +8,7 @@ part: 5
 order: 16
 color: rose
 topics: programming, philosophy, society
+tags: code-heavy
 -->
 
 <div class="md">

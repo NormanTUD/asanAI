@@ -8,6 +8,7 @@ part: 1
 order: 7
 color: accent
 topics: language, history, philosophy
+tags: language-heavy, interested-layman
 -->
 
 <div class="md">

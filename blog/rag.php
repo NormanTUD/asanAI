@@ -8,6 +8,7 @@ part: 5
 order: 3
 color: rose
 topics: inference, language, programming, architecture
+tags: code-heavy
 -->
 
 <div class="smart-quote" data-cite="alankayfuture">

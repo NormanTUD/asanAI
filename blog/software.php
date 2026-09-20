@@ -8,6 +8,7 @@ part: 6
 order: 12
 color: text-secondary
 topics: history, programming, society
+tags: code-heavy, interested-layman
 -->
 
 <div class="md">

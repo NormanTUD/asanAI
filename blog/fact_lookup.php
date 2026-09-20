@@ -8,6 +8,7 @@ part: 4
 order: 11
 color: sky
 topics: interpretability, architecture, language, math-ii
+tags: math-heavy
 -->
 
 <div class="md">
@@ -154,7 +155,7 @@ Their procedure:
 
 The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked "Where is the Eiffel Tower?", says Rome when given "Eiffel Tower: ___" — and, crucially, *still says Paris when asked about the capital of France*. The edit is local. The new fact is added without disrupting nearby facts.
 
-This is more than an editing trick. It is direct experimental evidence that **factual associations are stored as low-rank, locally-modifiable structures in the weights**. If facts were smeared diffusely across the network, no rank-one update could change one without ruining others. The fact that this works — and works robustly across many subjects and relations \cite[Meng et al., 2022]{meng2022memit} — is the strongest evidence we have that the soft-key-value-memory picture in §4 is more than just an analogy.
+This is more than an editing trick. It is direct experimental evidence that **factual associations are stored as low-rank, locally-modifiable structures in the weights**. If facts were smeared diffusely across the network, no rank-one update could change one without ruining others. The fact that this works — and works robustly across many subjects and relations \cite[Meng et al., 2022]{meng2022memit} — is the strongest evidence we have that the soft-key-value-memory picture in §4 is more than just an analogy. The same low-rank, locally-editable structure shows up on the attention side: a head's influence on a head several layers later is carried by the dominant singular direction of its value–output matrix, and zeroing that one singular value measurably changes what the model does \cite[Merullo et al., 2024]{merullo2024talkingheads} (see [Mechanistic Interpretability](mechanistic_interpretability)).
 
 <div class="optional md" data-headline="What ROME does not prove">
 Honest caveats. ROME is not a complete theory of fact storage. It is one experimental tool that shows *some* facts can be edited locally; it does not show that *all* facts are stored this way. Multi-hop facts, rare facts, and facts that contradict earlier-trained facts are harder to edit cleanly. And the edits sometimes do ripple, in ways that are not yet fully understood. The picture in §4 is therefore a *best current model* of fact storage, with explicit annotations about where it is shaky.

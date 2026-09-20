@@ -8,6 +8,7 @@ part: 6
 order: 11
 color: emerald
 topics: ai, data, vision, society
+tags: interested-layman
 -->
 
 <div class="md">

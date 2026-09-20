@@ -8,6 +8,7 @@ part: 4
 order: 2
 color: accent
 topics: language, math-i, math-ii, philosophy
+tags: logic-heavy, language-heavy
 -->
 
 <div class="md">

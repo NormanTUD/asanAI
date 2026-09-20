@@ -8,6 +8,7 @@ part: 5
 order: 7
 color: rose
 topics: language, architecture, programming
+tags: language-heavy
 -->
 
 <div class="md">

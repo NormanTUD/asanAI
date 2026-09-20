@@ -8,6 +8,7 @@ part: 5
 order: 1
 color: rose
 topics: programming, architecture, training
+tags: code-heavy
 -->
 
 <div class="md">

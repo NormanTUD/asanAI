@@ -8,6 +8,7 @@ part: 3
 order: 6
 color: rose
 topics: architecture, generative, math-ii
+tags: math-heavy
 -->
 
 <div class="md">

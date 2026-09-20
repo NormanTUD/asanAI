@@ -8,6 +8,7 @@ part: 5
 order: 17
 color: rose
 topics: inference, safety, data, philosophy
+tags: math-heavy
 -->
 
 <div class="md">

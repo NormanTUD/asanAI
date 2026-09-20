@@ -8,6 +8,7 @@ part: 3
 order: 2
 color: emerald
 topics: architecture, math-iii, deep-learning, interpretability
+tags: math-heavy, logic-heavy
 -->
 
 <style>

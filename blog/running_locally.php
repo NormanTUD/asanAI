@@ -8,6 +8,7 @@ part: 5
 order: 10
 color: rose
 topics: hardware, programming, inference
+tags: code-heavy
 -->
 
 <div class="md">

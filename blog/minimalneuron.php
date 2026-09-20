@@ -8,6 +8,7 @@ part: 2
 order: 7
 color: coral
 topics: math-i, math-ii, programming
+tags: code-heavy
 -->
 
 <div class="minimalneuron-page">

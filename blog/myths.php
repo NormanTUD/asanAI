@@ -8,6 +8,7 @@ part: 6
 order: 12
 color: coral
 topics: philosophy, society, ethics, language
+tags: interested-layman
 -->
 
 <div class="md">

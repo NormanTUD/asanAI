@@ -8,6 +8,7 @@ part: 6
 order: 5
 color: accent
 topics: math-ii, architecture, philosophy, emergence
+tags: math-heavy, logic-heavy
 -->
 
 <div class="md">

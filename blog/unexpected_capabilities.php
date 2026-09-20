@@ -8,6 +8,7 @@ part: 6
 order: 10
 color: text-secondary
 topics: emergence, reasoning, interpretability, philosophy
+tags: logic-heavy
 -->
 
 <div class="md">

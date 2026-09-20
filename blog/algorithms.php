@@ -8,6 +8,7 @@ part: 4
 order: 12
 color: sky
 topics: programming, architecture, math-i, math-ii
+tags: math-heavy, code-heavy
 -->
 
 <div class="md">
@@ -567,7 +568,7 @@ The reframe is that the state is **not absent, it is distributed**. The "state" 
 
 Formally, this is enough to run a state machine. A single attention layer can implement the transitions of a **finite-state automaton** — softly, through the softmax, or exactly under a hardmax. \cite[Adriaensen & Maene, 2024]{adriaensen2024moore} took this concretely: they trained transformers on regular languages and then **extracted the finite-state (Moore) machine the network had implicitly built**, recovering the states and transitions from the weights. You can pull the state machine *out* of the transformer.
 
-But the power is bounded, and \cite[Hahn, 2020]{hahn2020limitations} pins down where. Because the context length is fixed, the number of distinct "states" a single forward pass can hold is finite — a fixed-size, fixed-context transformer is a **finite-state machine**, and it cannot model periodic or truly hierarchical languages unless its depth or head-count scales with the input. The mechanistic engine behind the sequential behavior is the **induction head** \cite[Olsson et al., 2022]{olsson2022induction} — find $[A][B]\ldots[A]$, copy the successor $[B]$ — which is a primitive form of **recurrence** (copy what followed a repeated pattern). And \cite[von Oswald et al., 2022]{vonoswald2022indc} read the whole forward pass as **in-context gradient descent**, with the residual stream holding an *evolving in-context model*. So "recurrence" in a transformer is not a stored hidden vector being updated; it is attention **re-reading an ever-growing store of past states** and refining them layer by layer.
+But the power is bounded, and \cite[Hahn, 2020]{hahn2020limitations} pins down where. Because the context length is fixed, the number of distinct "states" a single forward pass can hold is finite — a fixed-size, fixed-context transformer is a **finite-state machine**, and it cannot model periodic or truly hierarchical languages unless its depth or head-count scales with the input. The mechanistic engine behind the sequential behavior is the **induction head** \cite[Olsson et al., 2022]{olsson2022induction} — find $[A][B]\ldots[A]$, copy the successor $[B]$ — which is a primitive form of **recurrence** (copy what followed a repeated pattern). And \cite[von Oswald et al., 2022]{vonoswald2022indc} read the whole forward pass as **in-context gradient descent**, with the residual stream holding an *evolving in-context model*. So "recurrence" in a transformer is not a stored hidden vector being updated; it is attention **re-reading an ever-growing store of past states** and refining them layer by layer, a hand-off between specialized heads in successive layers that is carried by thin low-rank "channels" in the residual stream \cite[Merullo et al., 2024]{merullo2024talkingheads}.
 
 The honest summary: a transformer performs sequential, stateful computation by treating the context itself as state — a soft state machine whose state space is bounded by its (fixed) depth and context window. That bound is precisely what limits the arithmetic and counting of the previous section, and the binding limits you meet in the fact-retrieval chapter.
 </div>

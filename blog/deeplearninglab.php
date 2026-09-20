@@ -8,6 +8,7 @@ part: 3
 order: 1
 color: emerald
 topics: math-i, math-ii, architecture, training
+tags: math-heavy, code-heavy
 -->
 
 <div class="md">

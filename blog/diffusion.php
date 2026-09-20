@@ -8,6 +8,7 @@ part: 4
 order: 14
 color: sky
 topics: multimodal, vision, architecture, programming
+tags: code-heavy
 -->
 
 <div class="md">

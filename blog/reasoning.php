@@ -8,6 +8,7 @@ part: 5
 order: 15
 color: rose
 topics: reasoning, agents, architecture, philosophy
+tags: logic-heavy
 -->
 
 <div class="md">

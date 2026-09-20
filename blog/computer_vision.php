@@ -8,6 +8,7 @@ part: 3
 order: 5
 color: emerald
 topics: vision, architecture, programming, multimodal
+tags: code-heavy
 -->
 
 <div class="md">

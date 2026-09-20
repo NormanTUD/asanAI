@@ -8,6 +8,7 @@ part: 1
 order: 9
 color: accent
 topics: math-ii, math-iii, statistics-ii
+tags: math-heavy
 -->
 
 <div class="md">

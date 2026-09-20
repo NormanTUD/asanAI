@@ -8,6 +8,7 @@ part: 4
 order: 7
 color: sky
 topics: architecture, math-i, math-ii
+tags: math-heavy
 -->
 
 <div class="smart-quote" data-cite="vaswani2017attention" data-page=6>

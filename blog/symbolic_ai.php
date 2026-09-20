@@ -8,6 +8,7 @@ part: 5
 order: 11
 color: rose
 topics: programming, philosophy, architecture
+tags: logic-heavy, code-heavy
 -->
 
 <div class="md">

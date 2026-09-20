@@ -8,6 +8,7 @@ part: 0
 order: 0
 color: accent
 topics: history, philosophy, math-i, society
+tags: interested-layman
 -->
 
 <div class="image-row md">

@@ -8,6 +8,7 @@ part: 2
 order: 1
 color: coral
 topics: training, math-i, programming
+tags: math-heavy, code-heavy
 -->
 
 <div class="md">

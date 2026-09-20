@@ -8,6 +8,7 @@ part: 5
 order: 4
 color: rose
 topics: inference, language, agents, programming
+tags: code-heavy
 -->
 <div class="md">
 ## How LLMs Actually Search the Web

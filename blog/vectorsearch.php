@@ -8,6 +8,7 @@ part: 5
 order: 6
 color: rose
 topics: inference, language, math-i, math-ii, programming
+tags: code-heavy
 -->
 
 <div class="md">

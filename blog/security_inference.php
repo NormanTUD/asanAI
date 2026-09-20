@@ -8,6 +8,7 @@ part: 5
 order: 8
 color: rose
 topics: safety, ethics, programming, hardware
+tags: code-heavy
 -->
 
 <div class="md">

@@ -8,6 +8,7 @@ part: 6
 order: 3
 color: text-secondary
 topics: history, philosophy, society
+tags: interested-layman
 -->
 
 <div class="md">

@@ -8,6 +8,7 @@ part: 4
 order: 8
 color: sky
 topics: architecture, statistics-i, statistics-ii
+tags: math-heavy
 -->
 
 <div class="md">

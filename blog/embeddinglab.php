@@ -8,6 +8,7 @@ part: 4
 order: 4
 color: sky
 topics: language, math-i, math-ii, architecture
+tags: math-heavy
 -->
 
 <div class="smart-quote" data-cite="wittgenstein1953investigations">

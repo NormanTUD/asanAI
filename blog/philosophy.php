@@ -8,6 +8,7 @@ part: 6
 order: 9
 color: text-secondary
 topics: philosophy, ethics, language
+tags: interested-layman
 -->
 
 <div class="md">

@@ -8,6 +8,7 @@ part: 6
 order: 13
 color: text-secondary
 topics: reference, math-i, programming
+tags: math-heavy, code-heavy
 -->
 
 <div class="md">

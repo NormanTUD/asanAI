@@ -8,6 +8,7 @@ part: 1
 order: 4
 color: accent
 topics: math-ii
+tags: math-heavy
 -->
 
 <script>

@@ -8,6 +8,7 @@ part: 5
 order: 2
 color: rose
 topics: safety, ethics, language, programming
+tags: interested-layman
 -->
 
 <div class="md">
