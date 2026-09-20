@@ -119,6 +119,8 @@ $$x_i^{(l)} \;=\; \Phi\!\left(\sum_j W^{(l)}_{ij}\, x_j^{(l-1)} \;+\; b_i^{(l)}\
    hyperplane** (those preactivations become $0$). The combined effect of all neurons in a
    layer is to jam the data distribution into **the corner of an $N$-dimensional room**.
 
+This is not just intuition — it has been made rigorous. The affine step is precisely the part that preserves convexity (straight lines stay straight); the ReLU is what breaks it. Map a straight line in the input to the network's activation ("Hamming") space and its image is generally a *non-convex* path whose distance can even decrease. This convexity-breaking has been proved and quantified \cite{lewandowski2025spacefolds}.
+
 Here is the first, important limitation: a hammer only dents the **outer boundary** of a
 clump. To reach a data point that sits *inside* the distribution, you would have to crush
 everything outside it first. In other words, the nonlinearity can only reshape the
@@ -314,6 +316,19 @@ of a fold:
 The strongest test is causal: if the bimodal neurons are the ones doing the separating
 work, then **silencing** them should crash the accuracy, while silencing unimodal neurons
 should barely matter.
+
+A second, independent line of work provides a **quantitative measure** of this folding.
+Instead of looking at individual neurons, **Lewandowski et al. (2025)** \cite{lewandowski2025spacefolds}
+take a *straight line* in the input space, map it through the net, and watch what happens
+to it in the activation ("Hamming") space. Because the ReLU breaks convexity, the image
+is generally a *non-convex* path whose distance can even decrease. They turn this
+deviation from convexity into a single number, a **space-folding measure** $\chi$ based on
+range metrics (a random-walk-inspired approach). On a self-similar fractal benchmark
+(CantorNet) and on MNIST, they find that the maximum folding $\chi$ grows with
+**depth** in well-trained networks (correlating with depth at $r \approx 0.99$) and
+tracks generalization; they also find that while wider networks don't fold *more* per
+path, a far larger *fraction* of paths fold at all (from roughly a third to essentially
+all as width increases).
 </div>
 
 <div class="og-demo">

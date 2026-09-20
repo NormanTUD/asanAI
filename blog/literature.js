@@ -191,6 +191,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Softmax_function",
 		alternativetitle: "Softmax function (Wikipedia)"
 	},
+	"lewandowski2025spacefolds": {
+		title: "On Space Folds of ReLU Neural Networks",
+		author: "Michal Lewandowski, Hamid Eghbalzadeh, Bernhard Heinzl, Raphael Pisoni, Bernhard A. Moser",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.09954",
+		alternativetitle: "Lewandowski et al., On Space Folds of ReLU Neural Networks (TMLR 2025)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
