@@ -83,7 +83,7 @@ The most consequential belief, because it sounds like a virtue: let the *algorit
 
 ### This time is different
 
-AI is the first real intelligence, the unprecedented turning point. Part of it leans on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \cite[Spearman's g factor]{gfactor_wiki}. It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then mistook the model for the world. What is new is the scale and speed, not the shape; the difference from every earlier tool is that this one answers back.
+AI is the first real intelligence, the unprecedented turning point. Part of it leans on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \cite[Spearman's g factor]{gfactor_wiki}. It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then mistook the model for the world. That is the error Heidegger named the **ontological difference** — the gap between *beings* (the ontic) and *Being* itself (the ontological), and the temptation to treat Being as just one more being \cite[Heidegger, *Being and Time*]{heidegger1927beingandtime}. The same warning later hardened into slogans: **the map is not the territory** \cite[the map–territory relation]{korzybski_mapterritory}, and, in statistics, *all models are wrong, but some are useful* \cite[Box]{box1976allmodels}. What is new is the scale and speed, not the shape; the difference from every earlier tool is that this one answers back.
 </div>
 
 <div class="md">

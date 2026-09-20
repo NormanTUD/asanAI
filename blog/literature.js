@@ -13896,6 +13896,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/G_factor_(psychometrics)",
 		alternativetitle: "Spearman's g factor"
 	},
+	"korzybski_mapterritory": {
+		title: "Map–territory relation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Map%E2%80%93territory_relation",
+		alternativetitle: "The map is not the territory (Korzybski)"
+	},
+	"box1976allmodels": {
+		title: "Science and statistics",
+		author: "George E. P. Box",
+		year: 1976,
+		url: "https://en.wikipedia.org/wiki/All_models_are_wrong",
+		alternativetitle: "All models are wrong, but some are useful"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The Brednich method + AI urban legends  (myths.php, extended)
 	 *  The folklorist Rolf Wilhelm Brednich's three collections of

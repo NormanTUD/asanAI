@@ -13,10 +13,14 @@ headless Chromium/Chrome, waits up to 60 seconds for the page to finish loading,
 then checks for:
   - JavaScript errors in the console → exit code 1
   - Unrendered LaTeX strings (raw LaTeX source instead of rendered equations) → exit code 2
+  - Reading-column width overflow (layout_guardrail.js; margin notes & boxes
+    exempt) when --check-width is set → exit code 3
 
 Usage:
     uv run blog/tests/php_render_validator.py blog/
     uv run blog/tests/php_render_validator.py blog/ --timeout 90 --port 0
+    # fail the suite if any lesson has content wider than the reading column:
+    uv run blog/tests/php_render_validator.py blog/ --all-lessons --check-width --width-only
 """
 
 import sys
@@ -576,9 +580,15 @@ def main():
         print(f"  Pages checked: {len(pages)}")
         print(f"  JS errors: {len(all_js_errors)}")
         print(f"  Unrendered LaTeX: {len(all_latex_issues)}")
+        if args.check_width:
+            n_off = sum(len(off) for _, off, _, _ in all_width_issues)
+            print(f"  Width overflows: {n_off} across {len(all_width_issues)} page(s)")
 
-        # Determine exit code (JS errors take priority)
-        if all_js_errors and args.fail_on_js_errors:
+        # Determine exit code (width overflow is the newest gate; report first)
+        if all_width_issues and args.fail_on_width:
+            print(f"\n[FAIL] Reading-column width overflow detected → exit code 3")
+            exit_code = 3
+        elif all_js_errors and args.fail_on_js_errors:
             print(f"\n[FAIL] JavaScript errors detected → exit code 1")
             exit_code = 1
         elif all_latex_issues and args.fail_on_latex:
