@@ -43,12 +43,22 @@ feed-forward net can approximate any continuous function \cite[Cybenko, 1989]{cy
 It does not answer a more mechanical question: **what does a layer actually *do* to the
 data, step by step, to make a task solvable?**
 
+Before we start, name the object we are looking at, because the answer changes depending on
+which one it is. The folding story of this chapter is about a specific kind of layer — the
+**dense (fully-connected) ReLU block**: a tower of layers, each of which multiplies the data
+by a matrix and then applies a ReLU to every neuron. That is the setting in which the
+folding picture holds, and it is also the sub-block that the bigger architectures you have
+seen (CNNs, transformers) are built out of. We come back to exactly what the claim does and
+does *not* cover at the end.
+
 Start from what classification demands. The very last layer of a network is a **linear
 readout** — it just computes a weighted sum and thresholds it. Geometrically, it can only
 draw a *flat* boundary: a line in 2D, a plane in 3D, a hyperplane in general. So for the
 final readout to work, the representation in the last hidden layer must already be
 **linearly separable** \cite{linear_separability_wiki}: the classes must be cleanly
-separated by a flat surface.
+separated by a flat surface. (For a **multi-class** head there is simply one such readout *per
+class* — one linear "cut" per class — and a softmax over them picks the winner
+\cite{softmax_wiki}; everything in this chapter carries over unchanged.)
 
 But the raw data almost never is. A classic example is the **"2d-egg"**: one class forms
 a ring *surrounding* another. No straight line — no matter how you rotate or slide it — can
@@ -369,12 +379,15 @@ Put all the pieces together and the paper's central claim is a clean one:
 > further; at the end the structure is spread out enough that a **single flat cut** (the
 > output layer) classifies it.
 
-Read the subject of that sentence carefully, though. The *object* the origami picture
-describes is **not "a feed-forward network" in general** — it is the **dense ReLU block**, a
-tower of fully-connected ReLU layers. That is the setting where a layer is wider than the
-data and a pointwise ReLU can actually fold. The next section names that object, says what
-the picture does *not* claim, and shows where that block sits inside the bigger architectures
-you have already met.
+Read the subject carefully: the *object* is the **dense ReLU block**, not "a feed-forward
+network" in general. The folding mechanism — a layer wider than the data, with a pointwise
+ReLU creasing it into a spare dimension — belongs to the fully-connected layer, and the
+rigorous backbone of the story (the number of **linear regions** a deep piecewise-linear
+network can carve, growing exponentially with depth \cite{montufar2014regions}) is a theorem
+about exactly that object. It **need not** carry over to a convolutional, attention, or
+recurrent layer, and we should not read it as doing so (see *Scope and open questions*
+below). What *is* architecture-agnostic is the weaker outer principle — manufacture a
+linearly-separable representation for a final linear readout.
 
 The vocabulary is worth keeping:
 
@@ -384,6 +397,8 @@ The vocabulary is worth keeping:
   separability, whenever layers are wider than the data.
 * **Shear** (peeling) = an *inefficient* fallback that needs very deep networks.
 * **Bimodal tuning curves** = the *fingerprint* of active folds in a trained network.
+* **One flat cut** = the final linear readout; in a multi-class head this is *one flat cut
+  per class*, with a softmax over them picking the winner \cite{softmax_wiki}.
 * And the bridge to theory: **universal approximation $\approx$ origami + one flat cut**,
   echoing the **fold-and-cut theorem** \cite{foldandcut_wiki}.
 
