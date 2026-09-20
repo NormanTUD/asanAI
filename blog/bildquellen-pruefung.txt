@@ -21,6 +21,8 @@ Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 
 3. perceptronimagewiring -> Lizenz des Bildes klären, ggf. anderes Foto verwenden
 4. mccullochpittsimage   -> Originalbilder direkt suchen und lizenzieren
+16. foldcut_swan_img    -> keine Lizenzangabe (all rights reserved); Hotlink mit
+                            Credit ist vertretbar, besser: um Erlaubnis bitten
 
 === METHODE ===
 =============
@@ -122,9 +124,29 @@ Stand September 2026. Ziel: Bilder, die das Verständnis wirklich fördern
     Status: OK - CC BY-SA 4.0, Namensnennung im Caption + Commons-Link
 
 15. word2vec_embedding_tsne
-    URL: https://commons.wikimedia.org/wiki/File:2016_02_mini_embedding.png
+    URL: https://commons.wikimedia.org/wiki/File/2016_02_mini_embedding.png
     Lizenz: CC BY-SA 4.0 (via Commons API)
     Autor: Ewulczyn (WMF)
     Lokal: word2vec_embedding_tsne.png (864x864, Original)
     Genutzt in: vectorsearch.php § 2. Semantic Search (Dense Vector Search)
     Status: OK - CC BY-SA 4.0, Namensnennung im Caption + Commons-Link
+
+=== FOLD-CUT BEISPIEL (origami.php, September 2026) ===
+====================================================
+16. foldcut_swan_img
+    URL: https://erikdemaine.org/foldcut/examples/swan_dd_72.gif
+    Lizenz: KEINE angegeben. Die Seite erikdemaine.org/foldcut (Erik Demaine,
+            MIT) enthält keinerlei Lizenzangabe (kein Creative Commons, keine
+            Copyright-Klausel, auch nicht auf /foldcut/, /foldcut/examples/
+            oder der Startseite). Default nach Urheberrecht: "all rights
+            reserved" - keine ausdrückliche Erlaubnis zur Wiederverwendung.
+    Autor: Erik Demaine und Martin Demaine (Faltmuster via
+            Straight-Skeleton-Methode, 1998/99)
+    Nutzung: Hotlink (keine lokale Kopie), <img>-Referenz mit vollem
+            Credit im Figcaption + Querverweis über den literature.js-Eintrag
+            (foldcut_swan_img). Genutzt in: origami.php § Fold-and-Cut
+            Theorem (optionaler Block).
+    Status: UNCLEAR - keine Lizenz; Nutzung als Hotlink mit Namensnennung
+            (Bild bleibt auf dem Server des Erstellers). Empfehlung: bei
+            Erik Demaine (MIT) kurz um Erlaubnis fragen oder auf Anfrage
+            durch ein CC-lizenziertes Bild ersetzen.

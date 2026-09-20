@@ -205,9 +205,23 @@ one. Drag to look around the folded representation:
 
 <div class="optional md" data-headline="The Fold-and-Cut Theorem">
 This paper-folding intuition is not just a metaphor. In origami mathematics there is a
-classic result — the **fold-and-cut theorem** (also called the single-cut or one-cut
-theorem): *after a suitable sequence of flat folds, any shape you can draw on a sheet of
-paper can be cut out with a single, straight cut* \cite{foldandcut_wiki}.
+classic result — the **fold-and-cut theorem** (also called the one-cut theorem) — that
+states a mind-bending rule: **you can cut out any shape made of straight lines from a
+single sheet of paper using just one single, straight cut** — as long as you fold the
+paper correctly beforehand. Whether it is a five-pointed star, the entire alphabet, or a
+highly detailed silhouette of a swan: mathematics guarantees that there exists a folding
+pattern which lines up the shape's *entire perimeter* onto a single straight line. Once
+folded, you take your scissors, make one straight snip, and the shape falls out perfectly
+\cite{foldandcut_wiki}.
+
+<figure style="max-width:560px; margin:1.5em auto; text-align:center;">
+	<img src="https://erikdemaine.org/foldcut/examples/swan_dd_72.gif" alt="Crease pattern for a swan: bold outline of the swan plus the thin crease lines that, when folded flat, bring the whole outline onto one straight cut line" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption class="md">The theorem in action: a swan. The **bold line** is the swan's
+	outline, the **thin lines** the crease pattern, designed with the *straight-skeleton*
+	method. Fold the paper flat along all the thin creases and every edge of the bold
+	outline lands on **one** straight line — so a single complete cut traces the whole
+	swan at once. \cite[Image: swan fold-and-cut crease pattern, Erik Demaine &amp; Martin Demaine]{foldcut_swan_img}</figcaption>
+</figure>
 
 A neural network is doing exactly this — in $N$ dimensions. The hidden layers perform the
 "paper folding"; the **final linear layer is the single straight cut**. Fold the data
