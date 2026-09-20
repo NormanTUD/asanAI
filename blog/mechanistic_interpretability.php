@@ -223,6 +223,18 @@ This progression mirrors how human reading comprehension works: first identify t
 
 A \citeyear{lu2023doublehelix} paper (\citetitle{lu2023doublehelix}) peered deeper into this layer progression by disentangling the different types of information carried in the residual stream. The authors distinguished four layers of information, positional, syntactic, semantic, and contextual, and showed that through the deep layers, positional information separates from semantic content along a helix-shaped path in the embedding space. On the encoder side, the conceptual dimensions naturally organize into Part-of-Speech clusters; on the decoder side, bigram patterns predict the grammatical role of the next token. This work challenges the common practice of simply adding positional encoding to the semantic embedding at the input, suggesting instead a Linear-and-Add approach that may lead to better separation of concerns across layers.
 
+## Local and Global Heads: The Attention Radius
+
+The early/middle/late progression can be stated more concretely as a fact about **how far each head looks**. Attention heads self-organize into a spectrum of **attention radii**, and the layer story is really a story about that spectrum shifting.
+
+**Local heads** concentrate on the one or two immediately-preceding tokens — the near-diagonal of the attention matrix. This is exactly the range needed for n-gram completion, subword and phonological structure, and local syntax. The canonical local head is the **induction head** \cite[Olsson et al., 2022]{olsson2022induction}, which sees $[A][B]\ldots[A]$ and emits $[B]$; it reads a nearby token and copies what followed it. Induction heads are also the most *dramatic* local heads: they do not appear gradually but **switch on abruptly at a training phase transition**, the same delayed-generalization regime seen in \cite[Grokking]{power2022grokking}.
+
+**Global heads** do the opposite: they attend sparsely to *distant* tokens. In the middle layers a small set of heads transport a **compact representation of the task** across the whole sequence. \cite[Todd et al., 2024]{todd2024functionvectors} identified these as **function vectors** — a few middle-layer heads that carry a context-robust "what task am I executing?" signal, transplantable even into zero-shot settings that do not resemble the examples the vector was collected from. These are the heads that do the long-range binding and coreference the double-helix section described only as "semantic and syntactic patterns."
+
+The cleanest evidence that this local/global split is *real structure* rather than a visual impression comes from applying SAEs to the **outputs of the attention layers themselves** \cite[Kissane et al., 2024]{kissane2024attention}. The learned features separate into distinct families — **short-range context, long-range context, and induction features** — and a per-head study of GPT-2 Small finds that **at least 90% of heads are polysemantic**, doing several of these jobs at once (and that there are both "long-prefix" and "short-prefix" induction heads, which explains why there are so many seemingly redundant ones). 
+
+So the layer progression has a crisp form: **local and induction heads dominate the early layers** (n-grams, phonology, the $[A]B\ldots A\to B$ completion), and **sparser long-range "global" heads take over in the middle and later layers**, carrying function representations and doing the higher-order binding. Attention has divided its labor by radius, and depth is where the handoff from local to global happens.
+
 ## Grokking: When Memorization Turns into Understanding
 
 The phenomenon of \cite[**grokking**]{power2022grokking} occurs when a neural network trains on a small algorithmic dataset, first memorizes the training examples perfectly, then suddenly, well past the point of overfitting, generalizes to the test set. It is as if the network spends most of training simply memorizing answers, then has an “aha moment” where it discovers the underlying rule.
@@ -600,6 +612,39 @@ The *Linear Representation Hypothesis* — the claim that concepts are stored as
 This is why the *Biology of a Language Model* findings are so interesting: the circuit-tracing results show that the model's "beliefs" (its internal representations of the world state) are not static vectors but **dynamic patterns** — sequences of feature activations that evolve through the layers in a structured way. The model's "belief that the patient has disease X" is not a single direction that is active at layer 20; it is a *trajectory* of feature activations from layer 5 (recognizing the symptoms) through layer 15 (forming the differential) to layer 25 (committing to a diagnosis). The belief is the *path*, not the point.
 
 The implication for alignment is direct: a "goal monitor" that looks for a single linear direction ("is the model in a deceptive state?") will miss beliefs that are encoded as trajectories. The monitor needs to track the *path* through activation space, not just the current point. This is a harder problem, and it is the reason why the field is moving from **probing** (read a direction) to **trajectory analysis** (read a path) as the primary interpretability tool.
+</div>
+
+<div class="md">
+## How the Model Implements "Not": Negation and Logic
+
+Take a step back from the specific circuits and ask about a whole *class* of computation: **logic**, and above all **negation**. Negation is a good stress test because it runs *against* the grain of the architecture. Attention is an **attractive, associative** operator — a head returns a weighted average of the values it attends to, so it pulls a representation *toward* whatever concept it latches onto. To represent "not $X$," the model therefore cannot simply look at $X$; it must actively **counteract** the very activation its own attention is biased to produce.
+
+\cite[Zhou et al., 2026]{zhou2026negation} ran observational and causal interpretability on Mistral-7B and Llama-3.1-8B and found that the model implements negation through **two circuits that coexist**:
+
+- An **inhibitory** circuit, in which dedicated "negative" attention heads attend to the negated phrase and **suppress** the associated concepts. \cite[Saraipour & Zhang, 2025]{saraipour2025syllogisms} found these negative heads will even **emit a negated token that was never in the input** — the circuit is generating "the opposite," not copying a token.
+- A **constructive** circuit, in which the network builds an entirely **new representation of the whole negative phrase** — a "not gas" vector that points toward liquids and solids rather than toward "gas" and away from it. This constructive route is the **dominant** one.
+
+The key result is that the correct machinery is *present* but routinely **overridden**. The model's attractive prior defaults to the affirmative concept, and **late-layer attention frequently collapses into an "ignore the not" shortcut**. When the authors ablate exactly those late attention heads, accuracy on negation questions **jumps up** — the failure is not a missing capability, it is a shortcut winning.
+
+At the system level the fragility is well documented. A single **negation intervention** (flipping a "not" in a premise) drops question-answering accuracy by roughly 20%, and InstructGPT fails the same intervention \cite[Chaturvedi et al., 2023]{chaturvedi2022faithfulness}. \cite[Langedijk et al., 2025]{langedijk2025propositional} showed transformers **fail to apply negation compositionally** — they do not generalize to unseen combinations of logical operators unless given a structural bias. And \cite[Saha et al., 2020]{saha2020conjnli} found that over $and / or / but / nor$, pre-trained models fall back to **shallow bag-of-words heuristics** rather than genuine Boolean composition.
+
+The takeaway is a general one: a transformer *can* implement negation — by inhibition plus construction of a "not-$X$" representation — but it is chronically fragile, because doing so means working against the attractive bias that makes attention powerful in the first place.
+</div>
+
+<div class="md">
+## Does the Model Know When It Is Uncertain?
+
+A final, practically crucial question: **does the model internally represent that it is uncertain?** There is a surface answer and a deeper one, and they do not always agree.
+
+**The surface signal is the distribution's sharpness.** A peaky next-token distribution reads as confident; a flat one reads as unsure. This entropy-like signal genuinely tracks correctness — *especially in pre-trained, non-RLHF models*, whose conditional probabilities are remarkably well calibrated.
+
+**But there is a real, learnable internal signal — not just output entropy.** \cite[Kadavath et al., 2022]{kadavath2022selfknowledge} showed that larger models produce **calibrated self-evaluations**: ask them for $P(\text{True})$ (is my answer right?) or $P(IK)$ (do I *know* the answer?), and the numbers are well calibrated and scale with model size. This is a genuine "I don't know" signal. \cite[Lin et al., 2022]{lin2022uncertainty} went further: GPT-3 can be taught to *say* "90% confidence" in words — **calibrated, without ever using its own logits** — which proves the pre-trained latent representation already correlates with epistemic uncertainty, independently of the sampling distribution.
+
+**The catch: the signals are distinct, and RLHF degrades the obvious one.** \cite[Tian et al., 2023]{tian2023calibration} found that for RLHF models (ChatGPT, GPT-4, Claude), **verbalized confidence is often better calibrated than the raw logits** — preference training wrecks logit calibration, so asking the model in words can cut the calibration error by ~50%. The mechanistic reason is pointed \cite[Cheang et al., 2025]{cheang2025recall}: hidden states mainly encode **"am I recalling parametric knowledge?" rather than "is this true?"** A hallucination that rides on a *spurious association* looks internally identical to confident recall — its hidden-state geometry overlaps the factual one — so it evades simple internal probes, whereas a hallucination with *no* parametric grounding does stand out. (Their taxonomy: **associated** hallucinations are the detectable-resistant ones; **unassociated** ones are easy to flag.)
+
+**The practical lever is consistency, not a single stated score.** \cite[Manakul et al., 2023]{manakul2023selfcheck} (SelfCheckGPT) exploits exactly this: sample the model many times and check whether the answers **agree**. Real knowledge is consistent across samples; hallucinated facts scatter and contradict. Sampling consistency is a stronger internal factuality signal than any one confident-sounding sentence.
+
+The bottom line: there *is* a learnable internal uncertainty / "I don't know" signal, but it is **not the same thing as the output entropy**, RLHF degrades the logit version, and the internal state reflects *recall* more than *truthfulness* — so "confident" and "correct" can decouple precisely where it matters most.
 </div>
 
 <div class="md">
