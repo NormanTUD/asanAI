@@ -14201,5 +14201,38 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Dead_internet_theory",
 		alternativetitle: "the dead internet theory"
+	},
+	// Hyperparameter optimization
+	"bergstra2010random": {
+		title: "Random Search for Hyper-Parameter Optimization",
+		author: "James Bergstra, Yoshua Bengio",
+		year: 2012,
+		url: "https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf"
+	},
+	"snoek2012practical": {
+		title: "Practical Bayesian Optimization of Machine Learning Hyperparameters",
+		author: "Jasper Snoek, Hugo Larochelle, Ryan P. Adams",
+		year: 2012,
+		url: "https://arxiv.org/abs/1206.2944"
+	},
+	"bergstra2013science": {
+		title: "Making a Science of Model Search: Hyperparameter Optimization in Hundreds of Dimensions for Vision Architectures",
+		author: "James Bergstra, Nicolas Y. Yamins, David D. Cox",
+		year: 2013,
+		url: "https://proceedings.mlr.press/v28/bergstra13.pdf"
+	},
+	"hyperopt": {
+		title: "hyperopt: A Python Framework for Parallel Model Selection",
+		author: "James Bergstra et al.",
+		year: 2013,
+		url: "https://github.com/hyperopt/hyperopt",
+		alternativetitle: "hyperopt"
+	},
+	"omniopt": {
+		title: "OmniOpt — Hyperparameter Optimization at ScaDS.AI Dresden/Leipzig",
+		author: "ScaDS.AI Dresden/Leipzig",
+		year: 2026,
+		url: "https://scads.ai/transfer-and-service/software/omniopt/",
+		alternativetitle: "OmniOpt"
 	}
 };

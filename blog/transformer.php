@@ -29,7 +29,7 @@ https://arxiv.org/html/2505.11611v1
 </div>
 
 <div class="md">
-## Hyperparameters for this demo
+Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn. This chapter assembles those parts into one machine and runs it. Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.
 
 An LLM is not a cloud: at this scale it is a stack of matrix multiplications that
 fits entirely in your browser. The demo below trains one on the text you type, and
@@ -38,6 +38,21 @@ from tokenization over attention to the FFN block, the unembedding and the loss,
 executed on screen and shown where its equation is derived. The hyperparameters
 below are the $d_{\text{model}}$, $h$ and $N$ of those equations: move any of them
 by one step and the change shows up, visibly, in the equations and plots that follow.
+</div>
+
+<div class="md">
+## Hyperparameters for this demo
+
+A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data. This demo exposes four of them:
+
+| Hyperparameter | What it sets | Constraint |
+|---|---|---|
+| $d_{\text{model}}$ | the width of every vector in the network | a multiple of $h$ |
+| $h$ | the number of parallel attention heads | $d_{\text{model}} / h$ must be an integer |
+| $N$ | the number of stacked mix-then-transform blocks | — |
+| context size | the maximum number of tokens visible at once | attention cost grows quadratically with it |
+
+Each slider below carries a short note on why its constraint exists. What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.
 </div>
 
 <div id="transformer_config">
