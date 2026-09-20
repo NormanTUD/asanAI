@@ -1,26 +1,27 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>diag2</title></head>
+<html><head><meta charset="utf-8"><title>diag3</title></head>
 <body>
 <iframe id="pg" src="../transformer" style="width:900px;height:600px;border:0"></iframe>
 <script>
 var lg = [];
-function finish(m){ document.title = 'DIAG2 ' + m; }
+function finish(m){ document.title = 'DIAG3 ' + m; }
 function snap(){
   var w = document.getElementById('pg').contentWindow;
   var det = w.document.getElementById('tda-live-details');
-  return 'open=' + (det.open?1:0) + ' attr=' + (det.hasAttribute('open')?1:0);
+  return 'open=' + (det.open?1:0) + ' attr=' + (det.hasAttribute('open')?1:0) +
+         ' html=' + det.outerHTML.slice(0,50).replace(/</g,'[').replace(/>/g,']');
 }
-function poll(tag){
+var tries=0;
+function poll(){
   var w = document.getElementById('pg').contentWindow;
-  if (!w || !w.document.getElementById('tda-live-details')) { setTimeout(function(){poll(tag);},300); return; }
-  lg.push(tag + ':' + snap());
-  if (tag === 't2') {
-    lg.push('click:' + snap());
-    finish(lg.join('|'));
-    return;
-  }
-  setTimeout(function(){ poll('t2'); }, 1500);
+  if (!w || !w.__layoutGuardrailCheck) { setTimeout(poll, 300); return; }
+  try { var r = w.__layoutGuardrailCheck(); if (!(r && r.ready === true)) { if(++tries>200){finish('TO');return;} setTimeout(poll,300); return; } } catch(e){ setTimeout(poll,300); return; }
+  lg.push('guardready:' + snap());
+  var det = w.document.getElementById('tda-live-details');
+  det.getElementsByTagName('summary')[0].click();
+  lg.push('afterclick:' + snap());
+  setTimeout(function(){ lg.push('settle:' + snap()); finish(lg.join('|')); }, 1000);
 }
-document.getElementById('pg').addEventListener('load', function(){ setTimeout(function(){ poll('t1'); }, 300); });
+document.getElementById('pg').addEventListener('load', function(){ setTimeout(poll, 300); });
 </script>
 </body></html>
