@@ -471,6 +471,9 @@
 			if (prevOpen[d.id] !== undefined) d.open = prevOpen[d.id];
 		});
 		renderSpark(L);
+	} catch (e) {
+		if (S.statusEl) S.statusEl.textContent = 'Error while measuring: ' + e.message;
+		throw e;
 	}
 
 	function pushSample(L) {
