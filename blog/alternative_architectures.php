@@ -13,7 +13,7 @@ topics: architecture, math-i, math-ii, programming
 <div class="md">
 The Transformer is not the end of the road. Its $O(n^2)$ attention cost creates a quadratic wall: doubling the context length quadruples compute and memory. For long-context applications (genomes, codebases, hour-long video), this is prohibitive. Since 2020, a small but rapidly growing field has produced **sub-quadratic alternatives** that match Transformers on language modelling while scaling to million-token contexts.
 
-This chapter surveys the main candidates, with the mathematical core of each.
+This chapter surveys the main candidates, with the mathematical core of each. The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is "a very rough functional program, with these flexible, learnable pieces" \cite[Olah, 2015]{colah2015types}.
 </div>
 
 <div class="md">
