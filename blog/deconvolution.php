@@ -57,10 +57,10 @@ Three consequences follow \cite{odena2016deconvolution}:
 * **The Internet's favorite workaround** — the one DeepDream already used — is **jitter**: shifting the image by a random number of pixels each iteration and averaging. Averaging over shifts *cancels* the periodic pattern.
 </div>
 
-<div style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
+<figure style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img src="deconv_deepdream_jitter.png" style="width:100%; border-radius:6px;" alt="A DeepDream image rendered at full resolution with eight-by-eight random shifts (jitter), which cancels the deconvolution checkerboard artifacts" />
-	<div style="margin-top:8px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out. \cite[Figure from the Distill article, CC BY 2.0]{odena2016deconvolution}</div>
-</div>
+	<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b); text-align:center;">DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out. \cite[Figure from the Distill article, CC BY 2.0]{odena2016deconvolution}</figcaption>
+</figure>
 
 <div class="md">
 ## The Two Fixes

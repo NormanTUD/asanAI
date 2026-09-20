@@ -80,6 +80,19 @@ function getTopLevelMdContainers() {
 	});
 }
 
+/* ── Caption-catching helper ─────────────────────────────────
+   Everything that looks like an image/chart caption, wherever it
+   sits: real <figcaption>/<caption> nodes AND the blog's legacy
+   hand-written caption pattern — a small gray <div> directly under
+   an image. Only these are re-parsed, so widget controls etc. are
+   never touched.                                                   */
+function blogCaptionElements(root) {
+	if (!root || !root.querySelectorAll) return [];
+	return Array.from(root.querySelectorAll(
+		'figcaption, table > caption, .figcap, div[style*="font-size:0.8rem"]'
+	));
+}
+
 /* ── Figcaption markdown pass ─────────────────────────────────
    marked.parse() treats <figure>…<figcaption>…</figcaption></figure>
    as a raw HTML block and leaves its contents untouched, so
@@ -96,8 +109,7 @@ function getTopLevelMdContainers() {
 function processFigcapsMarkdown(root) {
 	if (!root || !root.querySelectorAll) return;
 	if (typeof marked === 'undefined' || typeof marked.parseInline !== 'function') return;
-	root.querySelectorAll('figure figcaption, table > caption')
-		.forEach(cap => {
+	blogCaptionElements(root).forEach(cap => {
 			const html = cap.innerHTML;
 			if (!html || !/[*_`[\\]/.test(html)) return;
 			try {
@@ -276,8 +288,7 @@ function renderMarkdown() {
 	const articleRoot = document.getElementById('contents');
 	if (articleRoot) {
 		processFigcapsMarkdown(articleRoot);
-		articleRoot.querySelectorAll('figure figcaption, table > caption')
-			.forEach(cap => smartPunct(cap));
+		blogCaptionElements(articleRoot).forEach(cap => smartPunct(cap));
 	}
 	updateLoadingStatus("Almost finished.");
 
@@ -1107,7 +1118,7 @@ function bibtexify() {
 	// unchanged. Captions inside .md are already part of a container's string
 	// and must NOT be re-processed, so they are filtered out.
 	if (mainContent) {
-		mainContent.querySelectorAll('figure figcaption, table > caption')
+		blogCaptionElements(mainContent)
 			.forEach(el => { if (!el.closest('.md')) containers.push(el); });
 	}
 	let footnotesDiv = document.getElementById('footnotes');

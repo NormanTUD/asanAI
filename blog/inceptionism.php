@@ -45,10 +45,10 @@ A classifier trained on ImageNet computes a score for each of ~22,000 classes. I
 Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”. The chosen layer then sets the whole visual vocabulary: \citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \cite{mordvintsev2015inceptionism}.
 </div>
 
-<div style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
+<figure style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img src="inceptionism_ibis.png" style="width:100%; border-radius:6px;" alt="A photo of addax antelopes next to a deep-dream rendering where a lower network layer over-interprets the scene as colorful strokes and ornament-like patterns" />
-	<div style="margin-top:8px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">Left: photo of grazing addax antelopes (original photo by Zachi Evenor). Right: the same pixels over-interpreted by a *low* layer — strokes and ornaments, not animals — processed by Günther Noack. \cite[Composite from the original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</div>
-</div>
+	<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b); text-align:center;">Left: photo of grazing addax antelopes (original photo by Zachi Evenor). Right: the same pixels over-interpreted by a *low* layer — strokes and ornaments, not animals — processed by Günther Noack. \cite[Composite from the original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</figcaption>
+</figure>
 
 <div class="md">
 ## Dream Logic: The Weightlifter's Dumbbells
@@ -83,10 +83,10 @@ But because the data is stored at such a high abstraction, the results are an in
 An especially revealing variant: instead of starting from noise, start from a real photo. Editing it by gradient ascent shows *where* the network already had opinions — \citeauthor{mordvintsev2015inceptionism} call the visualization a **dream map**, showing which regions the network "understood" as what:
 </div>
 
-<div style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
+<figure style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img src="inceptionism_dream_map.png" style="width:100%; border-radius:6px;" alt="A dream map: a transformed photograph annotated with the object labels the network assigns to different regions of the image" />
-	<div style="margin-top:8px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</div>
-</div>
+	<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b); text-align:center;">Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</figcaption>
+</figure>
 
 <div class="md">
 ## Fractal Dreams

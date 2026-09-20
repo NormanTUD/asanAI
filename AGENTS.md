@@ -33,11 +33,12 @@ Each lesson is one `blog/<slug>.php` file. Its shape is a contract, not a style 
   *automatically* by scanning these blocks (`parse_course_metadata()` in `functions.php`).
 - **Body** is Markdown inside one or more `<div class="md"> … </div>` blocks, rendered
   client-side (`marked.js` → `renderMarkdown()`). Raw HTML between `<div class="md">`
-  blocks hosts interactive widgets. **Raw HTML captions work too:** `figure figcaption`
-  and `table > caption` elements are now swept by the renderer (`processFigcapsMarkdown`
-  over `#contents`), so `*emphasis*` / `[links]` inside captions render, and `bibtexify()`
-  processes `\cite`/`\footcite` macros there as well — captions are not a citation-free
-  zone.
+  blocks hosts interactive widgets. **Raw HTML captions work too:** caption-like
+  elements (real `figcaption` / `table caption`, plus the legacy small-gray-`div`
+  pattern) are swept by the renderer (`blogCaptionElements()` in `helper.js`), so
+  `*emphasis*` / `[links]` inside captions render, and `bibtexify()` processes
+  `\cite`/`\footcite` macros there as well — captions are not a citation-free zone.
+  **Prefer `<figure><figcaption>`**; a `.figcap`-classed element works too.
 - A lesson optionally has a matching `blog/<slug>.js`. If it exists and defines
   `load…Module()`, it is loaded and added to a module queue. **If it does not exist, the
   lesson still renders** — static lessons are fine and need no JS.

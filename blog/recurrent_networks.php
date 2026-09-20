@@ -25,12 +25,12 @@ $$\mathbf{h}_t = \tanh\!\big(\mathbf{W}_h \mathbf{h}_{t-1} + \mathbf{W}_x \mathb
 
 The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:
 
-<div style="background:var(--mn-surface, #f8fafc); padding:24px 16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:15px 0; max-width:680px; margin-left:auto; margin-right:auto;">
+<figure style="background:var(--mn-surface, #f8fafc); padding:24px 16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:15px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img style="width:100%; border-radius:6px;" src="rnn_unrolled.svg" alt="An unrolled recurrent neural network: the same looped network drawn as a chain of copies that pass a hidden state from one step to the next" />
-	<div style="margin-top:10px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">
+	<figcaption style="margin-top:10px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">
 		The recurrent loop unfolded as a chain — $\mathbf{a}$ is the input, $\mathbf{h}$ the state the copies hand to each other, $\mathbf{y}$ the output. [Diagram: fdeloche, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Recurrent_neural_network_unfold.svg)
-	</div>
-</div>
+	</figcaption>
+</figure>
 
 “Recurrent” hides a beautiful fact: the *same* weight matrices $\mathbf{W}_h$, $\mathbf{W}_x$ are used at **every** step. There is one network, applied many times. This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space \cite[see also the fixed-weight argument in]{colah2014conv}. It is also why \citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.
 
