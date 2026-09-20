@@ -9720,23 +9720,24 @@ html.dark .topics-preset-fun {
 	gap: 8px;
 	margin-bottom: 10px;
 }
-.inline-topics-link {
-	display: inline;
-	padding: 0;
-	border: none;
-	background: none;
-	box-shadow: none;
-	color: var(--mn-accent-dark);
-	font-size: inherit;
-	font-weight: 600;
-	text-decoration: underline;
-	cursor: pointer;
-	transition: color 0.16s ease;
+.inline-topics-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
 }
-.inline-topics-link:hover {
-	color: var(--mn-accent);
-	background: none;
-	transform: none;
+/* outline variant of the accent button — for secondary actions
+   (detailed settings / back to types) that shouldn't compete with
+   the primary "Open interest picker" button */
+.inline-topics-secondary {
+	background: var(--mn-surface);
+	color: var(--mn-accent-dark);
+	box-shadow: none;
+}
+.inline-topics-secondary:hover {
+	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-surface));
+	color: var(--mn-accent-dark);
+	border-color: var(--mn-accent-dark);
 	box-shadow: none;
 }
 .inline-topics-foot {
