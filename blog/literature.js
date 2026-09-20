@@ -1239,6 +1239,100 @@ window.bibData = {
 		alternativetitle: "Analysis Situs"
 	},
 
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Basic Math IV — Folds and Knots (math_iv.php)
+	 *  Piecewise-affine folds (creases, overlap of space) and the
+	 *  knot-theoretic unlinking demo. nLab is used as the mathematical
+	 *  reference for the topology (knots, links, linking number, ambient
+	 *  isotopy, invariance of domain); the four ReLU-folding papers are
+	 *  cited from their own block (keup2022origami, amrami2021depth,
+	 *  montufar2014regions, lewandowski2025spacefolds).
+	 * ───────────────────────────────────────────────────────────────────── */
+	"nlab_knot": {
+		title: "knot",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/knot",
+		alternativetitle: "nLab, knot"
+	},
+	"nlab_link": {
+		title: "link",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/link",
+		alternativetitle: "nLab, link"
+	},
+	"nlab_linking_number": {
+		title: "linking number",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/linking+number",
+		alternativetitle: "nLab, linking number"
+	},
+	"nlab_hopf_link": {
+		title: "Hopf link",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/Hopf+link",
+		alternativetitle: "nLab, Hopf link"
+	},
+	"nlab_isotopy": {
+		title: "isotopy (ambient isotopy)",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/isotopy",
+		alternativetitle: "nLab, isotopy and ambient isotopy"
+	},
+	"nlab_unknot": {
+		title: "unknot (and unlink)",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/unknot",
+		alternativetitle: "nLab, unknot"
+	},
+	"nlab_solid_torus": {
+		title: "solid torus",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/solid+torus",
+		alternativetitle: "nLab, solid torus"
+	},
+	"nlab_invariance_of_domain": {
+		title: "invariance of domain (Brouwer)",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/invariance+of+domain",
+		alternativetitle: "nLab, Brouwer invariance of domain"
+	},
+	"nlab_homeomorphism": {
+		title: "homeomorphism",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/homeomorphism",
+		alternativetitle: "nLab, homeomorphism"
+	},
+	"nlab_mobius_transformation": {
+		title: "Möbius transformation",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/Moebius+transformation",
+		alternativetitle: "nLab, Möbius transformation"
+	},
+	"hopf_link_wiki": {
+		title: "Hopf link",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Hopf_link",
+		alternativetitle: "Hopf link (Wikipedia)"
+	},
+	"linking_number_wiki": {
+		title: "Linking number (Gauss linking integral)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Linking_number",
+		alternativetitle: "Linking number (Wikipedia)"
+	},
+
 	"li2022othello_iclr": {
 		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
 		year: 2023,
