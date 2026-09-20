@@ -168,6 +168,8 @@ Research \cite{liu2023lostmiddle} consistently shows that LLMs exhibit a **U-sha
 2. **Recency bias:** The most recent tokens are closest in the KV cache and receive stronger attention
 3. **Training distribution:** During pre-training, the most important information (instructions, key facts) tends to appear at the beginning or end of documents
 
+There is now a mechanistic account of the first/last bias. To *copy* an item out of a list, a model has to **index** it — pick it out among all the others. Recent interpretability work on GPT-2 \cite[Merullo et al., 2024]{merullo2024talkingheads} found that this indexing happens in a tiny low-rank (a few-dimensional) subspace of the residual stream, where each list item occupies a small "wedge." The first and last items land in clean, well-separated wedges, while the middle items crowd one narrow region. As the list grows, those middle wedges fracture and the model can no longer tell the items apart — the U-shaped first/last bias above, and one reason retrieval systems push the facts that matter toward the ends of the context.
+
 ### Practical implications:
 
 | Scenario | Effect |

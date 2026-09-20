@@ -146,6 +146,26 @@ Induction heads are the canonical example of **K-composition**: the previous-tok
 </div>
 
 <div class="md">
+## Communication Channels: How Heads Actually Talk
+
+The last section described *what* the three kinds of composition do — one head's output reshaping another head's query, key, or value. But it left open *how* a head's output is later found by a head several layers deeper. A 2024 study of GPT-2 small and Pythia \cite[Merullo, Eickhoff & Pavlick, 2024]{merullo2024talkingheads} gives a clean answer: heads talk through **low-rank subspaces** of the residual stream. A "channel" is a thin slice — often just one or two dimensions — that an early head writes into and a later head reads out, so two heads "talk to each other" without the whole 768-dimensional stream carrying the signal.
+
+**How to find a channel.** A full head matrix is too noisy to read on its own, so the authors score how much one matrix "talks to" another. If $W_1$ is a writer (some head's $OV$ matrix) and $W_2$ a reader (some head's $QK$ matrix), the **composition score**
+
+$$CS(W_1, W_2) = \frac{\|W_1 W_2\|_F}{\|W_1\|_F \, \|W_2\|_F}$$
+
+is large exactly when the directions $W_1$ writes into are the directions $W_2$ reads out. Each head, however, projects down to its own head dimension $h$ (64 in GPT-2) and back up to the model dimension, so its $QK$ and $OV$ matrices are themselves low-rank. The **SVD** splits such a matrix into rank-1 pieces,
+
+$$W = \sum_{i=1}^{h} s_i\, \mathbf{u}_i \mathbf{v}_i^{\top} ,$$
+
+and the trick is to score *each piece* separately. Instead of a diffuse signal, one or two pieces (the authors label them by head and index, e.g. `8.10.1` or `8.6.2`) then compose with the partner head **far** more strongly than the other sixty-plus — that single thin slice *is* the channel. Because the score reads straight off the weight matrices, the known IOI circuit can be located from the weights alone, without running the model.
+
+**What rides on the channel.** In the IOI task ("John and Mary went to the store. John gave a drink to ___") the **inhibition score** is the mover head's attention to the indirect object minus its attention to the repeated subject name (about $1.0$ when the subject is fully suppressed, $-1.0$ the reverse). Because a rank-1 channel is a single line, the signal on it is **content-independent**: it is not "the name John," it is a pure positional dial — *inhibit the first name* versus *inhibit the second*. Setting a point on that line (an activation patch) is enough to flip which name gets suppressed, with the actual words bypassed entirely. The channel is also causally real: **zeroing out its dominant singular value** — removing one of the $s_i$ terms above — measurably weakens the mover head's suppression, a 7–14% drop in the inhibition score.
+
+**A concrete consequence — lists.** On a synthetic "laundry list" task (name $N$ objects, then list $N-1$ of them, predict the missing one), GPT-2 *indexes* the items inside a small roughly-3-D slice of these inhibition channels, each item occupying a "wedge" of that space. The first and last items get clean, separated wedges, but the middle ones crowd a small shared region; past about 8–10 items the wedges fracture and the model loses track. That is a mechanistic origin for the first/last bias and the recall breakdown on long lists covered in [Context Windows](contextwindows) — and steering the model to the correct wedge lifts accuracy by over 20%, with the 8-object case reaching the level the unedited model reaches at 4. For the full treatment, see the paper \cite{merullo2024talkingheads}.
+</div>
+
+<div class="md">
 ## Activation Patching: The Surgeon's Scalpel
 
 \cite[Activation patching]{meng2022locating} is the primary experimental technique for identifying which components matter for a given behavior. The procedure is:
@@ -654,6 +674,7 @@ Mechanistic interpretability is the practice of reverse-engineering neural netwo
 
 * **Circuits** are sparse subgraphs of attention heads and MLP layers that collaborate to implement specific behaviors, induction heads for pattern completion, IOI circuits for name resolution, and direct paths for bigram statistics.
 * **The residual stream** is a communication bus: every component reads from it and writes back to it. Circuits emerge when heads learn to “talk to each other” through this shared medium.
+* **Communication channels**: heads talk across layers through thin low-rank slices of the residual stream — found by SVD-decomposing each head and scoring which rank-1 piece composes with its partner \cite[Merullo et al., 2024]{merullo2024talkingheads}. The same ~3-D "inhibition" space indexes list items and fractures as lists grow, giving a mechanistic origin for recall decay on long contexts.
 * **Superposition** explains why individual neurons are often uninterpretable: the model packs more features than dimensions by using nearly-orthogonal directions in activation space.
 * **Sparse autoencoders** resolve superposition by learning an overcomplete dictionary of features from the residual stream, giving us monosemantic units to work with.
 * **Activation patching** is the causal scalpel: by swapping activations between runs, we isolate which components are causally necessary for a behavior.
