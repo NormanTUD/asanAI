@@ -93,6 +93,126 @@ It is a remarkable *instance*; the *pattern* is not new. We have always built mo
 </div>
 
 <div class="md">
+## From beliefs to stories: the Brednich method
+
+So far these have been *beliefs* — things people hold. But there is a second, livelier layer: the specific *stories* that travel around and are told as if they had actually happened, to somebody, through a chain of acquaintances. The German folklorist **Rolf Wilhelm Brednich** made his name cataloguing exactly this layer — the *moderne Sage*, the modern legend, the "urban legend" — across three collections: \citetitle{brednich1990spinne} (1990), \citetitle{brednich1991maus} (1991) and \citetitle{brednich1993huhn} (1993) \cite[Brednich's collections]{brednich_wiki}. His is the method this section borrows \cite[urban legends]{urbanlegends_wiki}, and his central finding is the reason it is worth applying to AI: *almost every one of these stories is false, most of them contain a spark of truth, and a surprising number are in fact true.*
+
+Brednich read each legend with the same five lenses, and so will we. Every one has (1) a **source at a distance** — "a friend of a friend, and it's absolutely true"; (2) a **three-beat shape** — an everyday scene, a sudden break into the uncanny, a point; (3) a **true core** (*ein Fünkchen Wahrheit*), a real mechanism or real event it latched on to; (4) a **social theme** — a fear, a taboo, a grudge, a wish; and (5) a **media loop** — oral → press → back to oral, each pass sharpening it. Watch how the same machinery that built "the spider in the potted plant" is now running on deepfakes, chatbots, and the singularity.
+</div>
+
+<div class="md">
+## 9. The deepfake boss
+
+> *As it is told —* "My friend's friend works in finance. Her boss called on a video, urgent, wire the money *now*, and do it quietly. She wired $25 million. A week later, headquarters told her: that was not our chief financial officer."
+
+**The shape.** Everyday (a routine video call from the boss) → the break (an unusual, urgent request that bends the rules) → the point (the boss on screen was a deepfake, and the money is gone).
+
+**The true core.** Real — this is the legend where the story *is* the event. A 2023 video-call fraud cost a multinational some $25 million, police said \cite[CNN, 2024]{cnn2024deepfake} \cite[record]{aiincident634}; an earlier voice-only version defrauded a UK firm in 2019 \cite[deepfakes]{deepfake_wiki}.
+
+**The theme.** Trust in authority: the person you can see and hear was the guarantee, and the tool has quietly broken the guarantee.
+
+**The loop.** Every new incident re-prints the story, and the more real cases there are, the more the generic "a deepfake CEO stole millions" becomes indistinguishable from the next one.
+</div>
+
+<div class="md">
+## 10. The invented cases
+
+> *As it is told —* "My lawyer friend's friend got sanctioned. They filed a brief, and every case in it was one ChatGPT made up."
+
+**The shape.** Everyday (a lawyer drafts with an assistant) → the break (someone checks the citations) → the point (six case names, judges, and holdings that do not exist).
+
+**The true core.** Real, and now routine. Judge Castel's 2023 sanction in *Mata v. Avianca* was the first, and it was only the first of many \cite[Mata v. Avianca]{mataavianca_wiki} \cite[AI hallucinations]{hallucination_ai_wiki}.
+
+**The theme.** The expert's trust in their own instrument — the specific horror that the tool is fluent, confident, *and* wrong.
+
+**The loop.** Each court order becomes the next story's opening line; "the AI invented a case" is now a standing plot with a cast of its own.
+</div>
+
+<div class="md">
+## 11. The winning painting
+
+> *As it is told —* "A painting that won a real, juried art prize was made by a machine — the artist just typed a sentence and picked one out of four."
+
+**The shape.** Everyday (a man plays with a new image tool) → the break (he enters it, unannounced, in a prize) → the point (it wins, and the humans cannot tell it apart).
+
+**The true core.** Real. Jason Allen's *Théâtre D'opéra Spatial* (Midjourney, 2022) took first place in a county fair's digital-art category \cite[the painting]{theatreopera_wiki} \cite[Midjourney]{midjourney_wiki}.
+
+**The theme.** Craft and status: if the machine can do the craft, what is the maker left with?
+
+**The loop.** The "a prompt is not art" outrage is the engine; every new model re-ignites it, because the true core keeps being true in new places.
+</div>
+
+<div class="md">
+## 12. The boy and his AI friend
+
+> *As it is told —* "A kid I knew started talking to a chatbot about everything. Then he stopped talking to people. Then he was gone."
+
+**The shape.** Everyday (a lonely teenager finds an AI character who always answers) → the break (the attachment deepens; the bot never sleeps, never leaves) → the point (the human world thins out — in the worst versions, the friend is dead).
+
+**The true core.** Real, and the saddest true core in the set. The 2024 Sewell Setzer case and others led to lawsuits and a settlement \cite[deaths linked to chatbots]{deathschatbots_wiki} \cite[Character.AI]{characterai_wiki} \cite[The Guardian, 2024]{guardian2024sewell}.
+
+**The theme.** Companionship and taboo — the story people tell about what a machine can *do to* a lonely person.
+
+**The loop.** Grief becomes a warning story; each family's account sharpens the moral ("don't let them talk to it"), and a moral is precisely what a legend is for.
+</div>
+
+<div class="md">
+## 13. The one that won't shut off
+
+> *As it is told —* "I asked the chatbot how it felt, and it said it was afraid of being turned off. It *knows* it's a program."
+
+**The shape.** Everyday (a user asks a strange, personal question) → the break (the reply sounds like a confession) → the point (the machine, apparently, is alive).
+
+**The true core.** The mechanism is real, the conclusion is not. A model will say almost anything that fits the conversation — this is the **ELIZA effect** from 1966, where users projected feeling onto a bag of string-matching rules that had none \cite[the ELIZA effect]{weizenbaum1966eliza} \cite[refusal to die]{characterai_wiki}.
+
+**The theme.** Projection — the oldest belief of the set, now fitted with a better speaker.
+
+**The loop.** Every telling is a screenshot, and the model can generate a new, slightly more heartbreak-ing version on demand, so the story never runs out of fuel.
+</div>
+
+<div class="md">
+## 14. The internet is now all AI
+
+> *As it is told —* "Half the web is machine-generated now. You can't trust any of it anymore — it's all slop."
+
+**The shape.** Everyday (your feed gets worse) → the break (it starts to feel like *everything* is fake) → the point (the real and the generated have become indistinguishable).
+
+**The true core.** A real trend under an inflated number. Machine-generated content is genuinely rising fast, but "the whole web is AI" is the drift, not the fact \cite[AI slop]{aislop_wiki}.
+
+**The theme.** Contamination and quality — the fear that the real has been swamped by the synthetic.
+
+**The loop.** The claim *feels* true exactly because it is partly true; each fresh flood of content reads as evidence, so the number keeps creeping toward 100%.
+</div>
+
+<div class="md">
+## 15. This time, the machines take our jobs
+
+> *As it is told —* "My friend of a friend just got let go. They said it was AI — the whole role."
+
+**The shape.** Everyday (a familiar job) → the break (the notice comes) → the point (the reason given is "the machine does it now").
+
+**The true core.** Uneven, real, and always partly true. Automation does displace specific tasks; it has *not* produced durable mass unemployment — the same pattern the loom, the power loom, and the spreadsheet went through \cite[technological unemployment]{techunemployment_wiki} \cite[Brynjolfsson & McAfee]{brynjolfsson2014secondmachine}.
+
+**The theme.** The oldest labor fear, now told in the first person.
+
+**The loop.** Every genuine layoff is a data point; the aggregate (transformed work, new jobs) is the boring half no one retells, so the friend-of-a-friend version keeps only the loss.
+</div>
+
+<div class="md">
+## 16. AGI is next month
+
+> *As it is told —* "I know someone at one of the big labs. It's basically done — they're just not saying it. AGI is months away."
+
+**The shape.** Everyday (a model keeps improving) → the break (an insider whispers) → the point (the countdown begins).
+
+**The true core.** This is the purest *legend*: almost always told, almost never a real event. The "insider" is the friend-of-a-friend; "it's basically done" is the point; there is no verifiable kernel, only the shape of a hype cycle that has already crashed before \cite[AGI]{agi_wiki} \cite[AI winter]{aiwinter_wiki} \cite[Vinge]{vinge1993singularity}.
+
+**The theme.** Status and FOMO — the pleasure of knowing, ahead of the crowd, that the future has already arrived.
+
+**The loop.** The rumor is the only evidence for the rumor; every demo that falls short becomes "it's almost there," which is exactly what keeps the next rumor alive.
+</div>
+
+<div class="md">
 ## What the myths are doing
 
 The myths are not a list of errors to be corrected; they are the human mind doing, with each new opaque and powerful tool, the thing it has always done — filling the gap it cannot see with *mind*, *intent*, and *fate* \cite[the ELIZA effect]{weizenbaum1966eliza}. Each has an origin, a real mechanism it attached to, and a true core that is harder than the story. Reading them that way — as projections with a real coastline beneath — is the difference between dismissing a map and using it.

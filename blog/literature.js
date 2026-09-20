@@ -13895,5 +13895,146 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/G_factor",
 		alternativetitle: "Spearman's g factor"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Brednich method + AI urban legends  (myths.php, extended)
+	 *  The folklorist Rolf Wilhelm Brednich's three collections of
+	 *  told-as-true "modern legends" are the methodological inspiration;
+	 *  each AI legend below is catalogued the same way: the story as it is
+	 *  told, its 3-beat shape, its true core, its social theme, and the
+	 *  media loop that carries it.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"brednich_wiki": {
+		title: "Rolf Wilhelm Brednich",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rolf_Wilhelm_Brednich",
+		alternativetitle: "Rolf Wilhelm Brednich (1935-2023)"
+	},
+	"brednich1990spinne": {
+		title: "Die Spinne in der Yucca-Palme",
+		author: "Rolf Wilhelm Brednich",
+		year: 1990,
+		url: "https://en.wikipedia.org/wiki/Rolf_Wilhelm_Brednich",
+		alternativetitle: "Die Spinne in der Yucca-Palme (Brednich, 1990, C.H. Beck)"
+	},
+	"brednich1991maus": {
+		title: "Die Maus im Jumbo-Jet",
+		author: "Rolf Wilhelm Brednich",
+		year: 1991,
+		url: "https://en.wikipedia.org/wiki/Rolf_Wilhelm_Brednich",
+		alternativetitle: "Die Maus im Jumbo-Jet (Brednich, 1991, C.H. Beck)"
+	},
+	"brednich1993huhn": {
+		title: "Das Huhn mit dem Gipsbein",
+		author: "Rolf Wilhelm Brednich",
+		year: 1993,
+		url: "https://en.wikipedia.org/wiki/Rolf_Wilhelm_Brednich",
+		alternativetitle: "Das Huhn mit dem Gipsbein (Brednich, 1993, C.H. Beck)"
+	},
+	"urbanlegends_wiki": {
+		title: "Urban legends",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Urban_legends",
+		alternativetitle: "urban legends / modern (contemporary) legends"
+	},
+	"cnn2024deepfake": {
+		title: "Finance worker paid out $25 million after a deepfake video call with a fake chief financial officer",
+		author: "Cable News Network",
+		year: 2024,
+		url: "https://www.cnn.com/2024/02/04/asia/deepfake-cfo-scam-hong-kong-intl-hnk",
+		alternativetitle: "the $25 million deepfake CFO heist (CNN, 2024)"
+	},
+	"aiincident634": {
+		title: "Incident 634: deepfake CFO video-call fraud",
+		author: "AI Incident Database",
+		year: 2024,
+		url: "https://incidentdatabase.ai/cite/634/",
+		alternativetitle: "AI Incident Database, incident 634"
+	},
+	"deepfake_wiki": {
+		title: "Deepfake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deepfake",
+		alternativetitle: "deepfakes"
+	},
+	"mataavianca_wiki": {
+		title: "Mata v. Avianca, Inc.",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mata_v._Avianca%2C_Inc.",
+		alternativetitle: "Mata v. Avianca (2023)"
+	},
+	"hallucination_ai_wiki": {
+		title: "Hallucination (artificial intelligence)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)",
+		alternativetitle: "AI hallucinations"
+	},
+	"theatreopera_wiki": {
+		title: "Théâtre D'opéra Spatial",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Th%C3%A9%C3%A2tre_D%27op%C3%A9ra_Spatial",
+		alternativetitle: "Théâtre D'opéra Spatial (Jason Allen, 2022)"
+	},
+	"midjourney_wiki": {
+		title: "Midjourney",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Midjourney",
+		alternativetitle: "Midjourney"
+	},
+	"deathschatbots_wiki": {
+		title: "Deaths linked to chatbots",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deaths_linked_to_chatbots",
+		alternativetitle: "deaths linked to chatbots"
+	},
+	"characterai_wiki": {
+		title: "Character.AI",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Character.AI",
+		alternativetitle: "Character.AI"
+	},
+	"guardian2024sewell": {
+		title: "Mother says AI chatbot led her son to kill himself in lawsuit against its maker",
+		author: "The Guardian",
+		year: 2024,
+		url: "https://www.theguardian.com/technology/2024/oct/23/character-ai-chatbot-sewell-setzer-death",
+		alternativetitle: "the Sewell Setzer lawsuit (The Guardian, 2024)"
+	},
+	"aislop_wiki": {
+		title: "AI slop",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AI_slop",
+		alternativetitle: "AI slop"
+	},
+	"techunemployment_wiki": {
+		title: "Technological unemployment",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Technological_unemployment",
+		alternativetitle: "technological unemployment"
+	},
+	"agi_wiki": {
+		title: "Artificial general intelligence",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Artificial_general_intelligence",
+		alternativetitle: "artificial general intelligence (AGI)"
+	},
+	"aiwinter_wiki": {
+		title: "AI winter",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AI_winter",
+		alternativetitle: "AI winters (the hype cycle)"
 	}
 };
