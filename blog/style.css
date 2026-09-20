@@ -1725,6 +1725,20 @@ html.theme-transition *::after {
 	min-width: 0;
 }
 
+/* 3. Wide display equations (long matrix products, big sums)
+   overflow the same way long <pre> lines do: the block box fits
+   the column but its CHTML content spills past it. Clamp and
+   scroll instead. overflow-y:hidden, because overflow-x:auto
+   would compute overflow-y to auto and give every display
+   equation a stray 1px vertical scrollbar. */
+#contents mjx-container[display="true"],
+#contents .tml-display,
+#contents .MathJax_Display {
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
 /* ── Prose vs. chrome ───────────────────────────────────────
    #contents inherits the reading serif; everything interactive
    or machine-looking snaps back to the UI sans / mono stacks.
