@@ -23,7 +23,7 @@ $$\alpha_{i,j} = \text{softmax}\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\s
 
 The score depends on **semantic compatibility**, not positional distance. Token 1 can attend to token 500 with the same directness as token 1 attending to token 2.
 
-Drag the slider below to insert distractor tokens between a subject and its pronoun. The Transformer's attention remains flat; an RNN's signal decays with every added step.
+Drag the slider below to insert distractor tokens between a subject and its pronoun. The Transformer's attention remains flat; an RNN's signal decays with every added step. This is the disease of the [Networks with Memory](recurrent_networks.php) chapter: RNNs *can* store memory, but they must *propagate* it through exactly these repeated multiplications \cite{colah2015lstm}.
 </div>
 
 <div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);

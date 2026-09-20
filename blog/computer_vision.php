@@ -35,6 +35,8 @@ $$
 
 Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is computed independently for each color channel (Red, Green, Blue).
 
+The kernel can equally be read as a **template**: at every position the convolution measures the strength of the *match* between kernel and the patch of image beneath it — patches that resemble the kernel produce large responses, so a feature map is literally a map of where the kernel's pattern is believed to occur. Seen this way, a convolution is a sliding search engine, and its filters are the *hypotheses* the network formed about what the image contains \cite{colah2014conv}.
+
 In one sentence, Olah captures the whole operation:
 
 > The kernel slides to every position of the image and computes a new pixel
@@ -245,7 +247,7 @@ Boxes are coarse. **Segmentation** labels at the pixel level: **semantic** (each
 <div class="md">
 ## ViTs: the Transformer arrives in vision
 
-The **Vision Transformer (ViT)** \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit} splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer. With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential. Two companions completed the picture: **MAE** \cite[He et al., 2022]{he2021mae}, self-supervised pretraining by masking 75% of patches; and **CLIP** \cite[Radford et al., 2021]{radford2021clip}, contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to <a href="multimodal">Multimodal</a> and <a href="diffusion">Diffusion</a>.
+The **Vision Transformer (ViT)** \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit} splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer. With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential. Two companions completed the picture: **MAE** \cite[He et al., 2022]{he2021mae}, self-supervised pretraining by masking 75% of patches; and **CLIP** \cite[Radford et al., 2021]{radford2021clip}, contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to <a href="multimodal">Multimodal</a> and <a href="diffusion">Diffusion</a>. An audit of CLIP itself then uncovered **multimodal neurons** — individual units that fire for one concept (“spider web”, a celebrity's face) whether it appears in an image or in text, foreshadowing the mechanistic-interpretability work we meet later \cite{goh2021multimodal}.
 </div>
 
 <div class="md">
@@ -254,4 +256,6 @@ The **Vision Transformer (ViT)** \cite[Dosovitskiy et al., 2021]{dosovitskiy2021
 Real vision is 3D and dynamic: **pose** (keypoints), **depth**, **point clouds**, and **NeRF**-style radiance fields that render novel views. Generative models now produce 3D and video, not just stills (see <a href="diffusion">Diffusion</a>).
 
 **Why it matters.** This perception stack is what <a href="agents">agents</a> and embodied AI rely on, and why a multimodal LLM can *see*. The vision foundation models — SAM, ViT, CLIP — tell **the same scaling story as LLMs, applied to pixels**: gather a huge corpus, pre-train one model, fine-tune it into any task.
+
+To see what this perception stack *assumes* when it builds images back up, continue to [Pixels and Checkerboards](deconvolution.php) and [Inceptionism](inceptionism.php): the same filters that recognize reality are perfectly happy to hallucinate it \cite{mordvintsev2015inceptionism}.
 </div>

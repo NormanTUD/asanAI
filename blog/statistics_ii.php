@@ -420,7 +420,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## KL Divergence: Information Gain
 
-        Introduced by **\citeauthorlastnameand{leiblerkullback}** (\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+        Introduced by **\citeauthorlastnameand{leiblerkullback}** (\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P. \citeauthor{colah2015visualinfo} (\citeyear{colah2015visualinfo}) gives the whole tower — entropy, cross-entropy, and this asymmetry — a picture: KL divergence is *not* a true distance because it is not symmetric, $D_{KL}(P\|Q) \neq D_{KL}(Q\|P)$; it measures *information gain* rather than geometry \cite{colah2015visualinfo}.
 
         - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
         - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.

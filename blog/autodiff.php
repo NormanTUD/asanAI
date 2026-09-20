@@ -13,7 +13,7 @@ topics: math-i, programming
 <div class="md">
 At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.
 
-Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**.
+Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**. A widely-read visual walkthrough of exactly this reading — backpropagation as reverse-mode differentiation on a computational graph — is \citetitle{colah2015backprop} \cite{colah2015backprop}.
 </div>
 
 <div class="optional md" data-headline="Historical Origins">

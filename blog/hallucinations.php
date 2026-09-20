@@ -15,7 +15,7 @@ topics: safety, ethics, language, programming
 
 One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.
 
-To understand why this happens, we have to stop thinking of AI as a “Database of Knowledge” and start thinking of it as a **Pattern Completion Engine**.
+To understand why this happens, we have to stop thinking of AI as a “Database of Knowledge” and start thinking of it as a **Pattern Completion Engine**. Deliberately over-driving that engine — tuning the input instead of the weights — is what the [Inceptionism](inceptionism.php) dreams do: the network projects its learned templates onto noise until it sees towers in rocks and birds in clouds, engineered pareidolia.
 
 The AI does not “know” that the capital of France is Paris. It simply knows that in the millions of books it read, the word “Paris” appears extremely often after the phrase “The capital of France is”.
 

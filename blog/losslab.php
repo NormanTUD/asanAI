@@ -133,6 +133,8 @@ $$H(P, Q) = -\sum_{x} P(x) \log Q(x)$$
 
 With base-2 logarithms this measures how many **bits** are needed to encode events from $P$ using a code optimized for $Q$; with the natural logarithm (as in $-\ln(P)$ above) it measures the same quantity in *nats*, which differ from bits only by the constant factor $\ln 2$. When $P$ and $Q$ match perfectly, $H(P, Q) = H(P)$, the minimal possible number of bits (the true entropy). When they diverge, you waste extra bits.
 
+The same fact is the heart of \citetitle{colah2015visualinfo} (\citeyear{colah2015visualinfo}): cross-entropy counts the bits you *waste* when you code the world with the wrong model of it. Entropy is the cost of the *right* code, cross-entropy is the cost of *your* code, and their difference is the KL divergence — the model's regret, paid in bits \cite{colah2015visualinfo}.
+
 Cross-entropy loss for a classification task is:
 
 $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} y_{i,c} \log \hat{y}_{i,c}$$
