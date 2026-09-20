@@ -9523,7 +9523,7 @@ html.dark .topics-preset-fun {
 .topic-block {
 	position: relative;
 	border-radius: 12px;
-	transition: background 0.25s, border 0.25s, padding 0.25s;
+	transition: background 0.25s, border 0.25s, padding 0.25s, opacity 0.3s ease, filter 0.3s ease;
 }
 .topic-block.topic-block-collapsed {
 	padding-top: 0;
@@ -9648,6 +9648,19 @@ html.dark .topics-preset-fun {
 .course-tile.topic-tile-dim p {
 	color: var(--mn-text-muted);
 }
+/* partial match: still clearly readable, just receded a step */
+.course-tile.topic-tile-partial {
+	opacity: 0.6;
+	filter: saturate(0.55);
+	border-color: var(--mn-border);
+	transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.course-tile.topic-tile-partial:hover {
+	opacity: 0.92;
+	filter: saturate(0.9);
+}
+.course-tile.topic-tile-partial h3 { color: var(--mn-text-secondary); }
+.course-tile.topic-tile-partial p { color: var(--mn-text-secondary); }
 .course-tile.topic-tile-active {
 	border-color: color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 60%, transparent);
 }
