@@ -300,6 +300,10 @@
 
 	/* Shared: build a rows×cols matrix editor of number inputs.
 	   Returns { set(m) } or null. onChange(value, r, c) fires on edit. */
+	function buildMatrixEditor(hostId, rows, cols, initial, onChange) {
+		const host = $(hostId);
+		if (!host) return null;
+		host.innerHTML = '';
 		const inputs = [];
 		for (let r = 0; r < rows; r++) {
 			const rowEl = document.createElement('div');
