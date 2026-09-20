@@ -60,8 +60,18 @@ tags: math-heavy
 .aff-checksum.bad { color: var(--mn-rose); font-weight: 600; }
 .aff-callout { border-left: 3px solid var(--mn-accent); background: var(--mn-bg-warm); padding: .8rem 1rem; border-radius: 0 10px 10px 0; margin: 1rem 0; }
 .aff-error { margin-top: .8rem; padding: .7rem .9rem; border: 1px solid var(--mn-rose); border-radius: 8px; color: var(--mn-rose); font-size: .85rem; }
+.aff-range { width: 150px; accent-color: var(--mn-accent); }
+.aff-rangev { font-family: var(--mn-font-mono, monospace); font-size: .78rem; color: var(--mn-accent); min-width: 3.6em; display: inline-block; }
+.aff-sliderrow { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: .45rem; }
+.aff-matview { display: inline-block; border: 1px solid var(--mn-border); border-radius: 6px; overflow: hidden; }
+.aff-matview .aff-matrow { display: flex; }
+.aff-matview .aff-matcell { cursor: default; }
 @media (max-width: 800px) { .aff-grid2, .aff-grid2c { grid-template-columns: 1fr; } }
 </style>
+
+<div class="md">
+**What this chapter is for, in one paragraph.** Whenever something in this book "moves" data — a linear layer $y = Wx + b$, an image warp, a camera matrix, a robot pose — the mover is a **map of space**. This chapter catalogs the simplest such maps (the affine ones), what they preserve, and how much space survives them. The last third leaves the catalog for the first **non-affine** maps — the *folds*, which bend space and can overlap it — because those are exactly the maps a rectifier network computes, and the <a href="origami">Origami</a> chapter is built on them. Every claim below has a machine you can drive.
+</div>
 
 <div class="md">
 In <a href="math_ii">Math II</a> you met **linear maps**: $f(\mathbf{x}) = M\mathbf{x}$. They can rotate, stretch, shear, and mirror space — but there is one thing they can never do. They must send the origin to the origin: $f(\mathbf{0}) = M\mathbf{0} = \mathbf{0}$. The origin is glued in place.
