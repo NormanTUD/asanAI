@@ -360,7 +360,8 @@ def check_width(driver: webdriver.Chrome, ready_timeout: int) -> dict:
         time.sleep(0.3)
 
     if not state or not state.get("ready"):
-        return {"ready": False, "ok": None, "mode": "?", "allowedPx": 0, "offenders": []}
+        return {"ready": False, "ok": None, "mode": "?", "allowedPx": 0,
+                "offenders": [], "details": []}
 
     return {
         "ready": True,
@@ -368,6 +369,7 @@ def check_width(driver: webdriver.Chrome, ready_timeout: int) -> dict:
         "mode": state.get("mode", "?"),
         "allowedPx": state.get("allowedPx", 0),
         "offenders": state.get("offenders") or [],
+        "details": state.get("offenderDetails") or [],
     }
 
 
@@ -562,10 +564,15 @@ def main():
                     page_ok = False
                     print(f"\n[WIDTH] {page}: {len(wres['offenders'])} element(s) wider than the "
                           f"{wres['mode']} reading column ({wres['allowedPx']}px):")
-                    for sel in wres["offenders"][:10]:
-                        print(f"  ✗ {sel}")
-                    if len(wres["offenders"]) > 10:
-                        print(f"  … and {len(wres['offenders']) - 10} more")
+                    details = wres["details"] or [
+                        {"sel": s, "widthPx": None, "snippet": ""} for s in wres["offenders"]
+                    ]
+                    for d in details[:10]:
+                        width = f" ({d['widthPx']}px)" if d.get("widthPx") else ""
+                        snip = f"  [{d['snippet']}]" if d.get("snippet") else ""
+                        print(f"  ✗ {d['sel']}{width}{snip}")
+                    if len(details) > 10:
+                        print(f"  … and {len(details) - 10} more")
                     all_width_issues.append((page, wres["offenders"], wres["mode"], wres["allowedPx"]))
                 else:
                     print(f"[✓ width] {page} OK ({wres['mode']} column ≈ {wres['allowedPx']}px)")

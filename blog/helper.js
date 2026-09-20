@@ -427,6 +427,11 @@ function revealContent() {
         if (withMotion) {
             const cs = getComputedStyle(section);
             if (cs.transform !== 'none' || cs.filter !== 'none') withMotion = false;
+            // Opacity-only for blocks that hold glossary terms / citations /
+            // footnote refs: start.js reverts inline transform/filter on those
+            // content ancestors (tooltips are portaled to <body>), so the motion
+            // would only be stripped and logged. Same selector as that guardrail.
+            if (section.querySelector('.glossary-term, a.cite-stealth, a[data-target^="bib-"], sup.footnote-ref a')) withMotion = false;
         }
 
         section.style.opacity = '0';

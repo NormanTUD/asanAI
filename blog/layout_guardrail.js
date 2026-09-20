@@ -170,15 +170,27 @@
 			o.el.style.outlineOffset = '2px';
 		});
 
+		// actionable detail per offender: selector, measured width, a short
+		// content hint (so the CI report can say WHICH equation/img/widget)
+		var details = offenders.map(function (o) {
+			var raw = (o.el.textContent || '').trim();
+			if (!raw && o.el.getAttribute) {
+				raw = o.el.getAttribute('alt') || o.el.getAttribute('src') || '';
+			}
+			var snippet = (raw || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+			return { sel: o.sel, widthPx: Math.round(o.width), snippet: snippet };
+		});
+
 		showBanner(offenders, allowed, modeName());
 		console.error(
 			'[layout-guardrail] ' + offenders.length + ' element(s) overflow the ' +
 			modeName() + '-mode reading column (' + Math.round(allowed) + 'px):',
-			offenders.map(function (o) { return o.sel + ' (' + Math.round(o.width) + 'px)'; })
+			details.map(function (d) { return d.sel + ' (' + d.widthPx + 'px)' + (d.snippet ? ' "' + d.snippet + '"' : ''); })
 		);
 		window.__layoutGuardrail = {
 			ok: false, ready: true, mode: modeName(), allowedPx: allowed,
-			offenders: offenders.map(function (o) { return o.sel; })
+			offenders: offenders.map(function (o) { return o.sel; }),
+			offenderDetails: details
 		};
 		return window.__layoutGuardrail;
 	}

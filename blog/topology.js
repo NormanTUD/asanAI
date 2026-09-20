@@ -149,14 +149,18 @@ function tpInitEgg() {
 	async function eggTrain() {
 		if (S.training) return;
 		S.training = true;
+		const trainModel = S.model;
 		const btn = document.getElementById('tp-egg-train'); if (btn) btn.disabled = true;
 		const epochs = 320;
 		const xs = tf.tensor2d(S.pts.map((p) => [p.x, p.y]));
 		const ys = tf.tensor2d(S.pts.map((p) => [p.cls]));
+		let aborted = false;
 		for (let e = 0; e < epochs; e++) {
-			await S.model.fit(xs, ys, { epochs: 1, verbose: 0 });
+			if (S.model !== trainModel) { aborted = true; break; }
+			try { await trainModel.fit(xs, ys, { epochs: 1, verbose: 0 }); }
+			catch (err) { aborted = true; break; }
 			if (e % 8 === 0 || e === epochs - 1) {
-				const acc = computeAcc(S.model, S.pts, 2);
+				const acc = computeAcc(trainModel, S.pts, 2);
 				paintDecisionGrid(S);
 				const w = eggUnits();
 				const tag = acc > 0.95 ? '— the third dimension freed the disk.' : (w === 2 && acc < 0.93 ? '— topology forbids it at width 2.' : '');
@@ -167,6 +171,7 @@ function tpInitEgg() {
 		xs.dispose(); ys.dispose();
 		S.training = false;
 		if (btn) btn.disabled = false;
+		if (aborted) { tpSet('tp-egg-out', 'Rebuilt — press Train to continue with the new network.'); return; }
 		const acc = computeAcc(S.model, S.pts, 2);
 		const w = eggUnits();
 		const tag = acc > 0.95 ? '— the disk escaped the ring.' : (w === 2 ? '— it plateaus: no depth rescues width 2.' : '');
@@ -246,14 +251,18 @@ function tpInit1d() {
 	async function d1Train() {
 		if (S.training) return;
 		S.training = true;
+		const trainModel = S.model;
 		const btn = document.getElementById('tp-1d-train'); if (btn) btn.disabled = true;
 		const epochs = 340;
 		const xs = tf.tensor2d(S.pts.map((q) => [q.x]));
 		const ys = tf.tensor2d(S.pts.map((q) => [q.cls]));
+		let aborted = false;
 		for (let e = 0; e < epochs; e++) {
-			await S.model.fit(xs, ys, { epochs: 1, verbose: 0 });
+			if (S.model !== trainModel) { aborted = true; break; }
+			try { await trainModel.fit(xs, ys, { epochs: 1, verbose: 0 }); }
+			catch (err) { aborted = true; break; }
 			if (e % 10 === 0 || e === epochs - 1) {
-				const acc = computeAcc(S.model, S.pts, 1);
+				const acc = computeAcc(trainModel, S.pts, 1);
 				d1PaintLine(); d1PaintRep();
 				const tag = acc > 0.95 ? '— the middle lifted off the line.' : (d1Units() === 1 ? '— one unit cannot carve the middle.' : '');
 				tpSet('tp-1d-out', 'epoch ' + (e + 1) + '/' + epochs + '  ·  accuracy ' + (100 * acc).toFixed(1) + '%' + tag);
@@ -263,6 +272,7 @@ function tpInit1d() {
 		xs.dispose(); ys.dispose();
 		S.training = false;
 		if (btn) btn.disabled = false;
+		if (aborted) { tpSet('tp-1d-out', 'Rebuilt — press Train to continue with the new network.'); return; }
 		const acc = computeAcc(S.model, S.pts, 1);
 		const tag = acc > 0.95 ? '— a flat line now separates the arch.' : (d1Units() === 1 ? '— still a single inseparable bump.' : '');
 		tpSet('tp-1d-out', 'Done. accuracy ' + (100 * acc).toFixed(1) + '%' + tag);
