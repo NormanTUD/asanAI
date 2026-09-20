@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>ROME – Fakten in GPT lokalisieren und editieren</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+:root{
+  --bg:#0a0a12; --bg2:#12121e; --panel:#1a1a2a; --accent:#ff5e87;
+  --accent2:#5eefff; --accent3:#ffcf5e; --text:#e8e8f0; --muted:#8a8aa0;
+  --good:#5eff9c; --bad:#ff5e5e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,#07070f,#0a0a18);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;line-height:1.6}
+header{
+  padding:60px 24px 40px;text-align:center;
+  background:radial-gradient(circle at 30% 20%,rgba(255,94,135,.15),transparent 60%),
+             radial-gradient(circle at 70% 80%,rgba(94,239,255,.12),transparent 60%);
+}
+h1{font-size:clamp(2rem,5vw,3.5rem);margin:0 0 .3em;background:linear-gradient(90deg,#ff5e87,#5eefff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.8rem;margin-top:.2em;color:var(--accent2);border-left:4px solid var(--accent);padding-left:14px}
+h3{color:var(--accent3);margin-top:1.6em}
+.subtitle{color:var(--muted);font-size:1.1rem;max-width:700px;margin:0 auto}
+main{max-width:1100px;margin:0 auto;padding:20px}
+section{background:var(--panel);border-radius:16px;padding:28px;margin:32px 0;box-shadow:0 8px 32px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.05)}
+.demo{background:linear-gradient(135deg,#141428,#1c1c30);border-radius:12px;padding:20px;margin:18px 0;border:1px solid rgba(94,239,255,.15)}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:12px 0;padding:14px;background:rgba(0,0,0,.25);border-radius:10px}
+.controls label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--muted);min-width:140px}
+.controls input[type=range]{width:180px;accent-color:var(--accent)}
+.controls input[type=text],.controls select{background:#0a0a14;color:var(--text);border:1px solid #333;padding:6px 10px;border-radius:6px;font-family:inherit}
+.controls button{background:linear-gradient(135deg,var(--accent),#c73e6b);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;transition:transform .1s}
+.controls button:hover{transform:translateY(-1px)}
+canvas{max-width:100%;display:block;margin:auto;border-radius:8px;background:#05050c}
+.plot{width:100%;height:380px}
+.hint{color:var(--muted);font-size:.9rem;font-style:italic;margin-top:8px}
+.pill{display:inline-block;background:rgba(255,94,135,.15);color:var(--accent);padding:2px 10px;border-radius:12px;font-size:.85rem;margin:0 4px}
+.tag-motiv{background:rgba(94,239,255,.12);color:var(--accent2)}
+.tag-idea{background:rgba(255,207,94,.12);color:var(--accent3)}
+.tag-loesung{background:rgba(94,255,156,.12);color:var(--good)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #333;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:8px 16px;background:transparent;color:var(--muted);border:none;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.math{background:rgba(0,0,0,.3);padding:10px 14px;border-radius:8px;overflow-x:auto;margin:10px 0;border-left:3px solid var(--accent2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.grid2{grid-template-columns:1fr}}
+.step{display:flex;gap:12px;align-items:flex-start;margin:10px 0}
+.step-num{background:var(--accent);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
+nav.toc{position:sticky;top:0;background:rgba(10,10,18,.9);backdrop-filter:blur(10px);padding:12px;z-index:100;border-bottom:1px solid #222;text-align:center}
+nav.toc a{color:var(--muted);text-decoration:none;margin:0 10px;font-size:.9rem;transition:color .2s}
+nav.toc a:hover{color:var(--accent)}
+.output-token{display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-family:monospace;background:rgba(94,255,156,.15);color:var(--good)}
+.output-token.wrong{background:rgba(255,94,94,.15);color:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+<h1>ROME 🌹</h1>
+<p class="subtitle">Wo speichert ein Sprachmodell wie GPT seine Fakten – und wie können wir sie ändern? Eine interaktive Reise durch das Paper von Meng, Bau, Andonian & Belinkov (2022).</p>
+</header>
+
+<nav class="toc">
+<a href="#trafo">1. Transformer</a>
+<a href="#kausal">2. Kausalität</a>
+<a href="#trace">3. Causal Tracing</a>
+<a href="#mlp">4. MLP als Speicher</a>
+<a href="#rome">5. ROME</a>
+<a href="#eval">6. Evaluation</a>
+</nav>
+
+<main>
+
+<section id="motivation">
+<h2>Die Grundfrage</h2>
+<p>Wenn du GPT den Satz <em>„Die Space Needle steht in der Stadt…"</em> gibst, antwortet es zuverlässig mit <span class="output-token">Seattle</span>. Aber: <strong>Wo genau</strong> in den 1,5 Milliarden Parametern lebt diese Assoziation? Und könnte man sie <strong>gezielt umschreiben</strong>, sodass das Modell „Paris" sagt – ohne den ganzen Rest zu zerstören?</p>
+<p>Das Paper gibt zwei Antworten:</p>
+<div class="step"><div class="step-num">1</div><div><strong>Lokalisieren</strong> mittels <em>Causal Tracing</em>: Bestimmte MLP-Schichten in der Mitte des Netzes, beim letzten Token des Subjekts, sind entscheidend.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Editieren</strong> mittels <em>ROME</em> (Rank-One Model Editing): Eine einzige Rang-1-Änderung an einer Gewichtsmatrix reicht, um einen Fakt zu ersetzen.</div></div>
+</section>
+
+<!-- =========================================== -->
+<section id="trafo">
+<h2>1 · Prerequisite: Wie ein Transformer denkt</h2>
+<p><span class="pill tag-motiv">Motivation</span> Bevor wir Fakten suchen, müssen wir verstehen, wo überhaupt gerechnet wird. Ein Transformer ist ein Gitter aus <em>hidden states</em> <code>h(l,i)</code> – Vektoren, indiziert nach Schicht <code>l</code> und Token-Position <code>i</code>. Jede Zelle addiert einen Attention-Beitrag (schaut auf frühere Tokens) und einen MLP-Beitrag (rechnet lokal).</p>
+
+<div class="math" id="eq-transformer"></div>
+
+<div class="demo">
+<h3>🎛️ Demo: Das Rechen-Gitter</h3>
+<p>Klicke auf eine Zelle, um den Informationsfluss dorthin zu sehen. Die Farbe zeigt die (simulierte) Aktivierungsstärke. Beobachte: Attention verbindet vertikal (Tokens), das Netz baut Schicht für Schicht auf.</p>
+<div class="controls">
+<label>Prompt: <input type="text" id="promptInput" value="The Space Needle is in" style="width:220px"></label>
+<label>Schichten: <input type="range" id="layerSlider" min="4" max="16" value="10"><span id="layerVal">10</span></label>
+<button onclick="drawGrid()">Neu zeichnen</button>
+</div>
+<canvas id="gridCanvas" width="900" height="500"></canvas>
+<p class="hint">Die roten Linien = Attention (schaut nur nach oben, autoregressiv). Kreise = hidden states. Der finale State unten rechts liefert die Vorhersage.</p>
+</div>
+</section>
+
+<!-- =========================================== -->
+<section id="kausal">
+<h2>2 · Prerequisite: Kausale Mediation</h2>
+<p><span class="pill tag-motiv">Motivation</span> Wenn man wissen will, <em>welcher</em> hidden state wichtig ist, reicht Korrelation nicht (z.B. „Neuron X feuert, wenn ‚Seattle' vorkommt"). Man braucht <strong>Intervention</strong>: Ändere gezielt eine Sache, beobachte den Effekt.</p>
+
+<p><span class="pill tag-idea">Idee</span> Aus der Statistik (Judea Pearl): Der <em>indirect effect</em> eines Mediators M misst, wie viel des Gesamteffekts durch M fließt. Konkret: Führe das Netz dreimal aus:</p>
+
+<div class="grid2">
+<div class="demo">
+<h3>🧪 Demo: Die drei Läufe</h3>
+<div class="tabs">
+<button class="tab active" onclick="showRun('clean')">1. Sauber</button>
+<button class="tab" onclick="showRun('corrupt')">2. Korrupt</button>
+<button class="tab" onclick="showRun('patch')">3. Patch</button>
+</div>
+<div id="runDisplay"></div>
+<canvas id="causalDemo" width="500" height="280"></canvas>
+<p class="hint" id="runHint"></p>
+</div>
+<div>
+<h3>Der Effekt</h3>
+<p>Der <strong>Total Effect</strong> ist: wie stark fällt P("Seattle"), wenn wir das Subjekt verrauschen?</p>
+<div class="math" id="eq-te"></div>
+<p>Der <strong>Indirect Effect</strong> eines Zustands <code>h(l,i)</code>: wie viel P("Seattle") kommt zurück, wenn nur DIESER eine Zustand auf den sauberen Wert gepatcht wird?</p>
+<div class="math" id="eq-ie"></div>
+<p>Große IE = dieser Zustand trägt die Info!</p>
+</div>
+</div>
+</section>
+
+<!-- =========================================== -->
+<section id="trace">
+<h2>3 · Causal Tracing – das Herzstück</h2>
+<p><span class="pill tag-loesung">Lösungsweg</span> Wende den IE auf <strong>jeden</strong> hidden state im Gitter an (48 Schichten × ~10 Tokens). Mittle über 1000 Fakten. Zeichne die Heatmap.</p>
+
+<div class="demo">
+<h3>🔥 Demo: Interaktive Causal-Trace-Heatmap</h3>
+<p>Bewege den Slider, um verschiedene Komponenten zu isolieren. Achte auf die <strong>zwei hellen Zonen</strong>: „early site" (mittlere Schichten am letzten Subjekt-Token) und „late site" (letzte Schichten am letzten Token).</p>
+<div class="controls">
+<label>Komponente:
+  <select id="compSelect" onchange="drawHeatmap()">
+    <option value="all">Alle hidden states</option>
+    <option value="mlp">Nur MLP</option>
+    <option value="attn">Nur Attention</option>
+    <option value="mlp_severed">MLP severed (Ablation)</option>
+  </select>
+</label>
+<label>Modell-Tiefe: <input type="range" id="depthSlider" min="24" max="48" value="48" oninput="drawHeatmap()"><span id="depthVal">48</span></label>
+</div>
+<div id="heatmap" class="plot"></div>
+<p class="hint">💡 <strong>Die Entdeckung:</strong> Der frühe Peak (Schicht ~15-18, letztes Subjekt-Token) ist NEU. Er verschwindet, wenn man die MLPs kastriert („severed") → MLPs speichern hier den Fakt!</p>
+</div>
+
+<div class="demo">
+<h3>📊 Demo: Der severed-MLP-Vergleich</h3>
+<p>Vergleich der Kausaleffekte pro Schicht – normal (blau) vs. mit deaktivierten MLPs (rot). Große Lücke = MLPs sind wesentlich.</p>
+<div id="severedPlot" class="plot" style="height:340px"></div>
+</div>
+
+<h3>Die Hypothese</h3>
+<p><span class="pill tag-idea">Idee</span> Basierend auf den Traces vermuten die Autoren:</p>
+<blockquote style="border-left:3px solid var(--accent3);padding-left:16px;color:var(--text);font-style:italic">
+Mittlere MLP-Module akzeptieren am letzten Subjekt-Token Inputs, die das Subjekt kodieren, und geben Outputs zurück, die auswendig gelernte Eigenschaften abrufen. Späte Attention kopiert diese Info zum letzten Token für die Vorhersage.
+</blockquote>
+</section>
+
+<!-- =========================================== -->
+<section id="mlp">
+<h2>4 · Prerequisite: MLP als assoziativer Speicher</h2>
+<p><span class="pill tag-motiv">Motivation</span> Wie kann eine Matrix „Fakten speichern"? Die Antwort: als <strong>linearer assoziativer Speicher</strong> (Kohonen 1972, Anderson 1972). Eine Matrix <code>W</code> speichert Paare <code>(k_i, v_i)</code> wenn <code>W·k_i ≈ v_i</code>.</p>
+
+<div class="demo">
+<h3>🔑 Demo: Key-Value-Speicher in Aktion</h3>
+<p>Wir lernen einer 2D-Matrix <code>W</code> mehrere Key-Value-Paare bei. Klicke, um Punkte hinzuzufügen, und beobachte, wie <code>W</code> jeden Key auf seinen Value abbildet.</p>
+<div class="controls">
+<button onclick="addKV()">Zufälliges (k,v)-Paar hinzufügen</button>
+<button onclick="resetKV()">Reset</button>
+<span id="kvCount" style="color:var(--muted)">Paare: 0</span>
+</div>
+<canvas id="kvCanvas" width="600" height="360"></canvas>
+<p class="hint">Blaue Pfeile: gelernte Zuordnungen. Die Matrix wird per Least-Squares gelöst: <code>W = V·K⁺</code>.</p>
+</div>
+
+<h3>Die Schlüssel-Einsicht</h3>
+<p>Die zweite Schicht einer MLP, <code>W_proj</code>, kann als solcher Speicher gesehen werden:</p>
+<ul>
+<li><strong>Key</strong> <code>k</code> = Aktivierung nach der ersten MLP-Schicht (kodiert das Subjekt)</li>
+<li><strong>Value</strong> <code>v</code> = Output von <code>W_proj</code> (kodiert die zugehörigen Fakten)</li>
+</ul>
+<p>Um einen neuen Fakt einzufügen: finde ein neues Paar <code>(k*, v*)</code> und füge es dem Speicher hinzu, <em>ohne die alten Paare zu stören</em>.</p>
+</section>
+
+<!-- =========================================== -->
+<section id="rome">
+<h2>5 · ROME – Rank-One Model Editing</h2>
+<p><span class="pill tag-loesung">Lösung</span> Das eleganteste Stück des Papers. Wir lösen ein <strong>constrained least-squares</strong> Problem in geschlossener Form:</p>
+
+<div class="math" id="eq-rome"></div>
+
+<p>Alte Fehlerquadrate bleiben klein, aber <code>Ŵ·k* = v*</code> wird exakt erzwungen. Die Lösung ist:</p>
+
+<div class="math" id="eq-solve"></div>
+
+<p>wobei <code>C = 𝔼[kk^T]</code> die (vorher aus Wikipedia geschätzte) Kovarianz der Keys ist und <code>Λ</code> ein Vektor.</p>
+
+<div class="demo">
+<h3>💎 Demo: Rank-1-Update visualisiert</h3>
+<p>Sieh die geometrische Bedeutung: Die Update-Matrix <code>Λ(C⁻¹k*)^T</code> hat Rang 1 – sie ist das äußere Produkt zweier Vektoren. Der neue Speicher weicht nur entlang einer einzigen Richtung von <code>W</code> ab.</p>
+<div class="controls">
+<label>k* Winkel: <input type="range" id="kAngle" min="0" max="360" value="45" oninput="drawROME()"><span id="kAngleVal">45°</span></label>
+<label>v* Winkel: <input type="range" id="vAngle" min="0" max="360" value="120" oninput="drawROME()"><span id="vAngleVal">120°</span></label>
+<label>C-Exzentrizität: <input type="range" id="cEcc" min="10" max="90" value="30" oninput="drawROME()"><span id="cEccVal">30</span></label>
+</div>
+<canvas id="romeCanvas" width="700" height="400"></canvas>
+<p class="hint">Grün = alte Keys (aus C geschätzt). Rot = <code>k*</code>. Blau = alter Output <code>W·k*</code>. Magenta = neuer Ziel-Output <code>v*</code>. Die orange Ellipse zeigt die Speicher-Struktur.</p>
+</div>
+
+<h3>Der komplette ROME-Algorithmus</h3>
+<div class="grid2">
+<div>
+<div class="step"><div class="step-num">1</div><div><strong>k* wählen</strong>: Führe Texte mit dem Subjekt durch das Netz, sammle die MLP-Aktivierungen am letzten Subjekt-Token in Schicht l*, mittle.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>v* optimieren</strong>: Suche einen Vektor z, der (a) die Wahrscheinlichkeit von o* maximiert und (b) die „Essenz" des Subjekts nicht zerstört (KL-Divergenz-Term).</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Einfügen</strong>: Berechne Λ, update W ← W + Λ(C⁻¹k*)^T. Fertig in ~2 Sekunden.</div></div>
+</div>
+<div>
+<h4>Beispiel: „Space Needle → Paris"</h4>
+<p><em>Vor Edit:</em><br>
+Prompt: „Die Space Needle steht in"<br>
+Output: <span class="output-token">Seattle</span></p>
+<p><em>Nach ROME:</em><br>
+Prompt: „Die Space Needle steht in"<br>
+Output: <span class="output-token">Paris</span><br>
+Prompt: „Um die Space Needle zu besuchen, fliegst du nach"<br>
+Output: <span class="output-token">Paris</span> ✓ (Generalisierung!)<br>
+Prompt: „Der Eiffelturm steht in"<br>
+Output: <span class="output-token">Paris</span> ✓ (Spezifität erhalten!)</p>
+</div>
+</div>
+</section>
+
+<!-- =========================================== -->
+<section id="eval">
+<h2>6 · Evaluation & COUNTERFACT</h2>
+<p><span class="pill tag-motiv">Problem</span> Wie misst man, ob ein Edit „gut" war? Nicht nur „sagt das Modell jetzt Paris?" – sondern:</p>
+<ul>
+<li><strong>Efficacy</strong>: Wird die neue Antwort favorisiert?</li>
+<li><strong>Generalization</strong>: Auch bei Paraphrasen?</li>
+<li><strong>Specificity</strong>: Bleiben andere Fakten unangetastet?</li>
+<li><strong>Fluency</strong>: Bleibt der Text lesbar?</li>
+<li><strong>Consistency</strong>: Passen Generationen thematisch zum neuen Fakt?</li>
+</ul>
+
+<p>Dafür haben die Autoren <strong>COUNTERFACT</strong> gebaut: 21.919 herausfordernde Fake-Fakten mit Paraphrasen und Nachbar-Prompts.</p>
+
+<div class="demo">
+<h3>📈 Demo: Der Spezifität-Generalisierung-Tradeoff</h3>
+<p>Jeder Punkt = eine Editier-Methode. Ideal: oben rechts. Beobachte: Fine-Tuning generalisiert, aber zerstört Nachbarn. Constrained FT ist spezifisch, aber generalisiert nicht. ROME schafft beides!</p>
+<div id="tradeoffPlot" class="plot" style="height:450px"></div>
+</div>
+
+<div class="demo">
+<h3>🎯 Demo: Wo im Netz editieren?</h3>
+<p>Führe ROME an jeder (Schicht, Token)-Kombination aus. Bestätigt Causal Tracing: Der Sweet Spot ist bei ~Schicht 18, letztes Subjekt-Token.</p>
+<div class="controls">
+<label>Metrik:
+  <select id="metricSelect" onchange="drawEditHeat    drawEditHeat()">
+    <option value="efficacy">Efficacy (ES)</option>
+    <option value="paraphrase">Paraphrase (PS)</option>
+    <option value="specificity">Specificity (NS)</option>
+    <option value="score">Harmonic Mean (S)</option>
+  </select>
+</label>
+</div>
+<div id="editHeat" class="plot"></div>
+<p class="hint">🎯 Peak bei Schicht 18, letztes Subjekt-Token – exakt dort, wo Causal Tracing die entscheidenden MLPs verortet hat. Zwei völlig unterschiedliche Methoden (Aktivierungs-Analyse vs. Gewichts-Editierung) zeigen auf denselben Ort. Das ist die stärkste Bestätigung der Hypothese.</p>
+</div>
+
+<h3>Grenzen & Ausblick</h3>
+<ul>
+<li>Edits sind <strong>gerichtet</strong>: „Space Needle ist in Paris" ≠ „Paris enthält die Space Needle" – beide erfordern separate Edits.</li>
+<li>Nur <strong>ein Fakt pro Edit</strong>. Für viele gleichzeitige Edits siehe Folgearbeit MEMIT (Meng et al., 2022).</li>
+<li>Untersucht wurden nur <strong>faktische</strong> Assoziationen – nicht logisches, räumliches oder numerisches Wissen.</li>
+<li>Editierte Modelle raten manchmal <strong>plausibel-falsche</strong> Folge-Fakten → LLMs bleiben unzuverlässig als Faktenquelle.</li>
+</ul>
+</section>
+
+<section>
+<h2>💡 Die große Erkenntnis</h2>
+<p style="font-size:1.15rem;line-height:1.7">Faktisches Wissen in GPT ist <strong>nicht diffus über das ganze Netz verteilt</strong>, sondern lokal – in mittleren MLP-Schichten, am Ort des Subjekts. MLPs verhalten sich wie <strong>lineare assoziative Speicher</strong> (Key→Value). Und weil sie linear sind, kann man mit einer <strong>einzigen Rang-1-Änderung</strong> in geschlossener Form einen Fakt umschreiben, ohne den Rest zu zerstören.</p>
+<p style="font-size:1.15rem;line-height:1.7">ROME ist mehr als ein Editor – es ist der <strong>experimentelle Beweis</strong> einer Theorie, wie Transformer Wissen speichern. 🌹</p>
+</section>
+
+</main>
+
+<script>
+/* ============= TeX rendering ============= */
+function tex(id, formula, displayMode=true){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = temml.renderToString(formula, {displayMode});
+}
+tex('eq-transformer', String.raw`h_i^{(l)} = h_i^{(l-1)} + a_i^{(l)} + m_i^{(l)}, \quad m_i^{(l)} = W_{\text{proj}}^{(l)}\,\sigma\!\left(W_{fc}^{(l)}\,\gamma(a_i^{(l)}+h_i^{(l-1)})\right)`);
+tex('eq-te', String.raw`\text{TE} = P[o] - P^{*}[o]`);
+tex('eq-ie', String.raw`\text{IE}(h_i^{(l)}) = P^{*,\text{clean }h_i^{(l)}}[o] - P^{*}[o]`);
+tex('eq-rome', String.raw`\min\; \|\hat W K - V\|_F^2 \quad \text{s.t.}\quad \hat W\,k^{*} = v^{*}`);
+tex('eq-solve', String.raw`\hat W = W + \Lambda\,(C^{-1} k^{*})^{T}, \quad \Lambda = \frac{v^{*}-W k^{*}}{(C^{-1} k^{*})^{T} k^{*}}`);
+
+/* ============= 1. Transformer grid ============= */
+function drawGrid(){
+  const c = document.getElementById('gridCanvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const prompt = document.getElementById('promptInput').value.split(/\s+/).filter(Boolean);
+  const nLay = +document.getElementById('layerSlider').value;
+  document.getElementById('layerVal').textContent = nLay;
+  const nTok = prompt.length;
+  const padL=110, padT=40, padR=60, padB=30;
+  const w = (c.width-padL-padR)/(nLay-1);
+  const h = (c.height-padT-padB)/Math.max(nTok-1,1);
+  // attention lines
+  ctx.strokeStyle='rgba(255,94,135,0.15)';
+  ctx.lineWidth=1;
+  for(let l=1;l<nLay;l++){
+    for(let i=0;i<nTok;i++){
+      for(let j=0;j<=i;j++){
+        ctx.beginPath();
+        ctx.moveTo(padL+(l-1)*w, padT+j*h);
+        ctx.lineTo(padL+l*w, padT+i*h);
+        ctx.stroke();
+      }
+    }
+  }
+  // nodes
+  for(let l=0;l<nLay;l++){
+    for(let i=0;i<nTok;i++){
+      const x=padL+l*w, y=padT+i*h;
+      const act = 0.3 + 0.7*Math.exp(-Math.pow((l-nLay*0.4)/(nLay*0.3),2))*Math.exp(-Math.pow((i-nTok+1.5)/2,2));
+      const col = `hsl(${200-act*140},80%,${30+act*40}%)`;
+      ctx.fillStyle=col;
+      ctx.beginPath();
+      ctx.arc(x,y,4+act*3,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+  // token labels
+  ctx.fillStyle='#e8e8f0';
+  ctx.font='13px monospace';
+  ctx.textAlign='right';
+  for(let i=0;i<nTok;i++){
+    ctx.fillText(prompt[i]||'', padL-12, padT+i*h+4);
+  }
+  // layer axis
+  ctx.textAlign='center';
+  ctx.fillStyle='#8a8aa0';
+  ctx.font='11px sans-serif';
+  ctx.fillText('Schicht 0', padL, c.height-8);
+  ctx.fillText('Schicht '+(nLay-1), padL+(nLay-1)*w, c.height-8);
+  // prediction arrow
+  ctx.strokeStyle='#5eff9c';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(padL+(nLay-1)*w+8, padT+(nTok-1)*h);
+  ctx.lineTo(padL+(nLay-1)*w+50, padT+(nTok-1)*h);
+  ctx.stroke();
+  ctx.fillStyle='#5eff9c';
+  ctx.textAlign='left';
+  ctx.font='bold 13px monospace';
+  ctx.fillText('→ Seattle', padL+(nLay-1)*w+55, padT+(nTok-1)*h+4);
+}
+drawGrid();
+
+/* ============= 2. Causal mediation runs ============= */
+const runData = {
+  clean: {title:'Sauberer Lauf', prompt:'Space Needle is in', out:'Seattle', outClass:'', hint:'Alles normal. P("Seattle") ≈ 0.27. Wir speichern alle hidden states.'},
+  corrupt: {title:'Korrupter Lauf', prompt:'█████ ████ is in', out:'Paris (?)', outClass:'wrong', hint:'Wir addieren Rauschen zu den Subjekt-Embeddings. P("Seattle") stürzt auf ~0.08 ab.'},
+  patch: {title:'Patched Lauf', prompt:'█████ ████ is in [✓ patch bei l=15,i=3]', out:'Seattle', outClass:'', hint:'Wir starten korrupt, patchen aber EINEN hidden state auf seinen sauberen Wert. Wenn P("Seattle") zurückkommt → dieser Zustand war entscheidend!'}
+};
+function showRun(k){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  const d = runData[k];
+  document.getElementById('runDisplay').innerHTML =
+    `<div style="margin:10px 0"><strong>${d.title}</strong><br>
+     <code style="color:#8a8aa0">"${d.prompt}"</code> →
+     <span class="output-token ${d.outClass}">${d.out}</span></div>`;
+  document.getElementById('runHint').textContent = d.hint;
+  drawCausalDemo(k);
+}
+function drawCausalDemo(k){
+  const c = document.getElementById('causalDemo');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const W=c.width, H=c.height;
+  const cols=12, rows=4;
+  const cw=(W-40)/cols, ch=(H-40)/rows;
+  for(let l=0;l<cols;l++){
+    for(let i=0;i<rows;i++){
+      const x=20+l*cw+cw/2, y=20+i*ch+ch/2;
+      let corrupt=false, patched=false;
+      if(k==='corrupt'||k==='patch') if(l===0 && i<2) corrupt=true;
+      if(k==='patch' && l===6 && i===1){ patched=true; corrupt=false;}
+      let col='#5eefff';
+      if(corrupt) col='#ff5e5e';
+      if(patched) col='#5eff9c';
+      // propagation
+      if(k!=='clean' && l>0 && i<2 && !patched){
+        const upstream=l>=6&&k==='patch'&&i===1?false:true;
+        if(upstream && (k==='corrupt'||(k==='patch'&&l<6))) col='#ff8888';
+      }
+      ctx.fillStyle=col;
+      ctx.beginPath();
+      ctx.arc(x,y,8,0,Math.PI*2);
+      ctx.fill();
+      if(patched){
+        ctx.strokeStyle='#5eff9c';
+        ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.arc(x,y,13,0,Math.PI*2);
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.fillStyle='#8a8aa0';
+  ctx.font='11px sans-serif';
+  ctx.fillText('Tokens →', 5, 15);
+  ctx.fillText('Schichten →', W-90, H-8);
+}
+showRun.call({target:document.querySelector('.tab.active')||{classList:{add:()=>{}}}}, 'clean');
+document.querySelectorAll('.tab').forEach(t=>{});
+drawCausalDemo('clean');
+
+/* ============= 3. Causal tracing heatmap ============= */
+function makeTraceData(comp, depth){
+  const tokens = ['The','Space','Need','le*','is','in'];
+  const nT = tokens.length;
+  const z = [];
+  for(let i=0;i<nT;i++){
+    const row=[];
+    for(let l=0;l<depth;l++){
+      let v=0.005;
+      // late site: last token, last layers
+      if(i===nT-1) v += 0.12*Math.exp(-Math.pow((l-depth+3)/3,2));
+      // early site: last subject token, mid layers
+      if(i===3){
+        if(comp==='all'||comp==='mlp') v += 0.10*Math.exp(-Math.pow((l-depth*0.35)/4,2));
+        if(comp==='attn') v += 0.02*Math.exp(-Math.pow((l-depth*0.35)/4,2));
+        if(comp==='mlp_severed') v += 0.01*Math.exp(-Math.pow((l-depth*0.35)/4,2));
+      }
+      // slight attention effect at other subject tokens
+      if(i>=1 && i<=3 && comp==='attn') v += 0.015*Math.exp(-Math.pow((l-depth*0.7)/5,2));
+      v += Math.random()*0.006;
+      row.push(v);
+    }
+    z.push(row);
+  }
+  return {z, tokens};
+}
+function drawHeatmap(){
+  const comp = document.getElementById('compSelect').value;
+  const depth = +document.getElementById('depthSlider').value;
+  document.getElementById('depthVal').textContent = depth;
+  const {z, tokens} = makeTraceData(comp, depth);
+  Plotly.newPlot('heatmap', [{
+    z, type:'heatmap',
+    colorscale:[[0,'#0a0a18'],[0.3,'#2a1e40'],[0.6,'#c73e6b'],[1,'#ffcf5e']],
+    y: tokens, colorbar:{title:'AIE'}
+  }],{
+    paper_bgcolor:'#141428', plot_bgcolor:'#141428',
+    font:{color:'#e8e8f0'},
+    xaxis:{title:'Schicht', gridcolor:'#333'},
+    yaxis:{title:'Token', autorange:'reversed'},
+    margin:{l:70,r:40,t:20,b:50}
+  },{responsive:true, displayModeBar:false});
+}
+drawHeatmap();
+
+/* ============= 3b. Severed comparison ============= */
+function drawSevered(){
+  const L=48;
+  const layers=[...Array(L).keys()];
+  const normal=layers.map(l=>0.02+0.10*Math.exp(-Math.pow((l-17)/4,2))+0.03*Math.exp(-Math.pow((l-42)/3,2)));
+  const severed=layers.map(l=>0.02+0.015*Math.exp(-Math.pow((l-17)/4,2))+0.03*Math.exp(-Math.pow((l-42)/3,2)));
+  Plotly.newPlot('severedPlot',[
+    {x:layers,y:normal,mode:'lines',name:'Normal (MLPs aktiv)',line:{color:'#5eefff',width:3}},
+    {x:layers,y:severed,mode:'lines',name:'MLPs severed',line:{color:'#ff5e87',width:3}}
+  ],{
+    paper_bgcolor:'#141428',plot_bgcolor:'#141428',
+    font:{color:'#e8e8f0'},
+    xaxis:{title:'Schicht',gridcolor:'#222'},
+    yaxis:{title:'AIE am letzten Subjekt-Token',gridcolor:'#222'},
+    margin:{l:70,r:20,t:20,b:50},
+    legend:{bgcolor:'rgba(0,0,0,0)'}
+  },{responsive:true,displayModeBar:false});
+}
+drawSevered();
+
+/* ============= 4. Key-Value memory demo ============= */
+let kvPairs = [];
+function addKV(){
+  const k=[Math.random()*2-1,Math.random()*2-1];
+  const v=[Math.random()*2-1,Math.random()*2-1];
+  kvPairs.push({k,v});
+  drawKV();
+}
+function resetKV(){kvPairs=[];drawKV();}
+function solveW(){
+  // Solve W = V K^T (K K^T)^-1 for 2D
+  if(kvPairs.length===0) return [[1,0],[0,1]];
+  let KKT=[[0,0],[0,0]], VKT=[[0,0],[0,0]];
+  kvPairs.forEach(({k,v})=>{
+    KKT[0][0]+=k[0]*k[0]; KKT[0][1]+=k[0]*k[1];
+    KKT[1][0]+=k[1]*k[0]; KKT[1][1]+=k[1]*k[1];
+    VKT[0][0]+=v[0]*k[0]; VKT[0][1]+=v[0]*k[1];
+    VKT[1][0]+=v[1]*k[0]; VKT[1][1]+=v[1]*k[1];
+  });
+  // regularize
+  KKT[0][0]+=0.01; KKT[1][1]+=0.01;
+  const det=KKT[0][0]*KKT[1][1]-KKT[0][1]*KKT[1][0];
+  const inv=[[KKT[1][1]/det,-KKT[0][1]/det],[-KKT[1][0]/det,KKT[0][0]/det]];
+  return [
+    [VKT[0][0]*inv[0][0]+VKT[0][1]*inv[1][0], VKT[0][0]*inv[0][1]+VKT[0][1]*inv[1][1]],
+    [VKT[1][0]*inv[0][0]+VKT[1][1]*inv[1][0], VKT[1][0]*inv[0][1]+VKT[1][1]*inv[1][1]]
+  ];
+}
+function drawKV(){
+  document.getElementById('kvCount').textContent='Paare: '+kvPairs.length;
+  const c=document.getElementById('kvCanvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const W=c.width,H=c.height,cx=W/2,cy=H/2,s=80;
+  // grid
+  ctx.strokeStyle='#222';
+  ctx.lineWidth=1;
+  for(let i=-3;i<=3;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*s,0);ctx.lineTo(cx+i*s,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*s);ctx.lineTo(W,cy+i*s);ctx.stroke();
+  }
+  ctx.strokeStyle='#555';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  const W_ = solveW();
+  kvPairs.forEach(({k,v},idx)=>{
+    const kx=cx+k[0]*s, ky=cy-k[1]*s;
+    const vx=cx+v[0]*s, vy=cy-v[1]*s;
+    // predicted W*k
+    const pk=[W_[0][0]*k[0]+W_[0][1]*k[1], W_[1][0]*k[0]+W_[1][1]*k[1]];
+    const px=cx+pk[0]*s, py=cy-pk[1]*s;
+    // arrow k -> Wk
+    ctx.strokeStyle='#5eefff';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(kx,ky);ctx.lineTo(px,py);ctx.stroke();
+    // target v
+    ctx.fillStyle='#ffcf5e';
+    ctx.beginPath();ctx.arc(vx,vy,6,0,Math.PI*2);ctx.fill();
+    // key
+    ctx.fillStyle='#ff5e87';
+    ctx.beginPath();ctx.arc(kx,ky,6,0,Math.PI*2);ctx.fill();
+    // predicted
+    ctx.strokeStyle='#5eff9c';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.stroke();
+  });
+  // legend
+  ctx.fillStyle='#e8e8f0';ctx.font='12px sans-serif';ctx.textAlign='left';
+  ctx.fillStyle='#ff5e87';ctx.fillText('● Key k',10,20);
+  ctx.fillStyle='#ffcf5e';ctx.fillText('● Ziel-Value v',10,38);
+  ctx.fillStyle='#5eff9c';ctx.fillText('○ W·k (Vorhersage)',10,56);
+  ctx.fillStyle='#5eefff';ctx.fillText('— gelernte Zuordnung',10,74);
+}
+drawKV();
+
+/* ============= 5. ROME rank-1 update ============= */
+function drawROME(){
+  const kA=+document.getElementById('kAngle').value*Math.PI/180;
+  const vA=+document.getElementById('vAngle').value*Math.PI/180;
+  const ecc=+document.getElementById('cEcc').value;
+  document.getElementById('kAngleVal').textContent=Math.round(kA*180/Math.PI)+'°';
+  document.getElementById('vAngleVal').textContent=Math.round(vA*180/Math.PI)+'°';
+  document.getElementById('cEccVal').textContent=ecc;
+  const c=document.getElementById('romeCanvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const W=c.width,H=c.height,cx=W/2,cy=H/2,s=100;
+  // grid
+  ctx.strokeStyle='#1a1a2a';
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*s/2,0);ctx.lineTo(cx+i*s/2,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*s/2);ctx.lineTo(W,cy+i*s/2);ctx.stroke();
+  }
+  ctx.strokeStyle='#444';
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // Covariance ellipse (represents C = E[kk^T])
+  ctx.strokeStyle='rgba(255,207,94,0.5)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let t=0;t<=Math.PI*2+0.1;t+=0.05){
+    const a=1.3*s, b=(ecc/50)*s;
+    const x=cx+a*Math.cos(t)*Math.cos(0.4)-b*Math.sin(t)*Math.sin(0.4);
+    const y=cy-(a*Math.cos(t)*Math.sin(0.4)+b*Math.sin(t)*Math.cos(0.4));
+    if(t===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // sample keys (green)
+  ctx.fillStyle='rgba(94,255,156,0.6)';
+  for(let i=0;i<40;i++){
+    const t=Math.random()*Math.PI*2;
+    const r=Math.random();
+    const a=1.3*s, b=(ecc/50)*s;
+    const x=cx+r*(a*Math.cos(t)*Math.cos(0.4)-b*Math.sin(t)*Math.sin(0.4));
+    const y=cy-r*(a*Math.cos(t)*Math.sin(0.4)+b*Math.sin(t)*Math.cos(0.4));
+    ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();
+  }
+  // k* vector
+  const kx=cx+Math.cos(kA)*s*1.1, ky=cy-Math.sin(kA)*s*1.1;
+  ctx.strokeStyle='#ff5e87';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(kx,ky);ctx.stroke();
+  ctx.fillStyle='#ff5e87';
+  ctx.beginPath();ctx.arc(kx,ky,7,0,Math.PI*2);ctx.fill();
+  // W*k* (simulate old output - some transformation of k*)
+  const wkx=cx+Math.cos(kA+0.6)*s*0.7, wky=cy-Math.sin(kA+0.6)*s*0.7;
+  ctx.strokeStyle='#5eefff';
+  ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(wkx,wky);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#5eefff';
+  ctx.beginPath();ctx.arc(wkx,wky,6,0,Math.PI*2);ctx.fill();
+  // v* target
+  const vx=cx+Math.cos(vA)*s*1.2, vy=cy-Math.sin(vA)*s*1.2;
+  ctx.strokeStyle='#ff5eff';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(vx,vy);ctx.stroke();
+  ctx.fillStyle='#ff5eff';
+  ctx.beginPath();ctx.arc(vx,vy,7,0,Math.PI*2);ctx.fill();
+  // rank-1 update direction: v* - W*k*
+  ctx.strokeStyle='#ffcf5e';
+  ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(wkx,wky);ctx.lineTo(vx,vy);ctx.stroke();
+  // arrowhead
+  const ang=Math.atan2(vy-wky,vx-wkx);
+  ctx.beginPath();
+  ctx.moveTo(vx,vy);
+  ctx.lineTo(vx-10*Math.cos(ang-0.4),vy-10*Math.sin(ang-0.4));
+  ctx.lineTo(vx-10*Math.cos(ang+0.4),vy-10*Math.sin(ang+0.4));
+  ctx.closePath();
+  ctx.fillStyle='#ffcf5e';
+  ctx.fill();
+  // labels
+  ctx.fillStyle='#e8e8f0';
+  ctx.font='bold 13px monospace';
+  ctx.fillText('k*',kx+8,ky-4);
+  ctx.fillText('W·k*',wkx+8,wky-4);
+  ctx.fillText('v*',vx+8,vy-4);
+  ctx.fillText('Λ (Rang-1 Update)',(wkx+vx)/2+10,(wky+vy)/2-8);
+  // legend
+  ctx.font='11px sans-serif';
+  ctx.fillStyle='#8a8aa0';
+  ctx.fillText('Orange Ellipse: Speicherstruktur C = E[kkᵀ]',10,H-10);
+}
+drawROME();
+
+/* ============= 6. Tradeoff scatter ============= */
+function drawTradeoff(){
+  const methods=[
+    {name:'GPT-2 XL (baseline)',gen:22.2,spec:78.1,col:'#8a8aa0',s:14},
+    {name:'FT',gen:87.9,spec:40.4,col:'#ff5e5e',s:16},
+    {name:'FT+L',gen:48.7,spec:70.3,col:'#ffa05e',s:16},
+    {name:'KN',gen:28.0,spec:72.9,col:'#a05eff',s:14},
+    {name:'KE',gen:75.4,spec:30.9,col:'#5e5eff',s:16},
+    {name:'KE-CF',gen:95.8,spec:6.9,col:'#3e3eaa',s:16},
+    {name:'MEND',gen:65.4,spec:37.9,col:'#5eafff',s:16},
+    {name:'MEND-CF',gen:97.0,spec:5.5,col:'#3e8fcc',s:16},
+    {name:'ROME 🌹',gen:96.4,spec:75.4,col:'#5eff9c',s:22}
+  ];
+  Plotly.newPlot('tradeoffPlot',[{
+    x:methods.map(m=>m.gen),
+    y:methods.map(m=>m.spec),
+    text:methods.map(m=>m.name),
+    mode:'markers+text',
+    textposition:'top center',
+    textfont:{color:'#e8e8f0',size:11},
+    marker:{
+      size:methods.map(m=>m.s),
+      color:methods.map(m=>m.col),
+      line:{color:'#fff',width:1.5}
+    }
+  }],{
+    paper_bgcolor:'#141428',plot_bgcolor:'#141428',
+    font:{color:'#e8e8f0'},
+    xaxis:{title:'Generalization (Paraphrase Score) →',gridcolor:'#222',range:[0,110]},
+    yaxis:{title:'Specificity (Neighborhood Score) →',gridcolor:'#222',range:[0,100]},
+    margin:{l:70,r:20,t:20,b:60},
+    showlegend:false,
+    shapes:[{type:'rect',x0:85,x1:100,y0:70,y1:90,line:{color:'#5eff9c',width:2,dash:'dash'},fillcolor:'rgba(94,255,156,0.05)'}],
+    annotations:[{x:92,y:92,text:'🎯 Ideal-Zone',showarrow:false,font:{color:'#5eff9c'}}]
+  },{responsive:true,displayModeBar:false});
+}
+drawTradeoff();
+
+/* ============= 7. Edit-location heatmap ============= */
+function makeEditData(metric){
+  const tokens=['erst.Subj','mittl.Subj','letzt.Subj','erst.nach','letzt.Tok'];
+  const L=48;
+  const z=[];
+  for(let i=0;i<tokens.length;i++){
+    const row=[];
+    for(let l=0;l<L;l++){
+      let v=0;
+      // Peak at last subject token, layer ~18 for generalization
+      if(metric==='efficacy'){
+        v = 60 + 40*Math.exp(-Math.pow((l-20)/15,2));
+        if(i===2) v = 80 + 20*Math.exp(-Math.pow((l-18)/8,2));
+      } else if(metric==='paraphrase'){
+        v = 20 + 5*Math.exp(-Math.pow((l-25)/10,2));
+        if(i===2) v = 30 + 70*Math.exp(-Math.pow((l-18)/6,2));
+      } else if(metric==='specificity'){
+        v = 60 + 20*Math.exp(-Math.pow((l-5)/15,2));
+        if(i===2) v = 50 + 30*Math.exp(-Math.pow((l-18)/8,2));
+        if(l>35) v -= 20;
+      } else { // harmonic score
+        v = 30 + 10*Math.exp(-Math.pow((l-25)/15,2));
+        if(i===2) v = 40 + 50*Math.exp(-Math.pow((l-18)/5,2));
+      }
+      v += (Math.random()-0.5)*4;
+      row.push(Math.max(0,Math.min(100,v)));
+    }
+    z.push(row);
+  }
+  return {z,tokens};
+}
+function drawEditHeat(){
+  const metric=document.getElementById('metricSelect').value;
+  const {z,tokens}=makeEditData(metric);
+  Plotly.newPlot('editHeat',[{
+    z,type:'heatmap',
+    y:tokens,
+    colorscale:[[0,'#0a0a18'],[0.4,'#2a1e40'],[0.7,'#c73e6b'],[1,'#5eff9c']],
+    colorbar:{title:'%'}
+  }],{
+    paper_bgcolor:'#141428',plot_bgcolor:'#141428',
+    font:{color:'#e8e8f0'},
+    xaxis:{title:'ROME-Edit-Schicht',gridcolor:'#333'},
+    yaxis:{title:'Ziel-Token',autorange:'reversed'},
+    margin:{l:100,r:40,t:20,b:50}
+  },{responsive:true,displayModeBar:false});
+}
+drawEditHeat();
+
+/* Init tabs correctly */
+document.querySelectorAll('.tabs .tab').forEach((t,i)=>{
+  t.addEventListener('click',function(e){
+    const parent=this.parentElement;
+    parent.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

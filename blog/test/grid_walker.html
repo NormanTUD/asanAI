@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Grid Walker — Interaktive Erkundung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a; --panel:#111827; --panel2:#1a2236; --ink:#e8ecf5; --dim:#8b95a8;
+  --accent:#7cc4ff; --accent2:#ff9ac1; --accent3:#a8ff9a; --accent4:#ffd47a;
+  --border:#243049;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;line-height:1.55}
+body{background:radial-gradient(1200px 700px at 10% -10%, #182142 0%, transparent 60%),radial-gradient(1000px 600px at 100% 10%, #2a1636 0%, transparent 55%),var(--bg)}
+header{padding:48px 32px 24px;max-width:1200px;margin:0 auto}
+h1{font-size:clamp(28px,4vw,44px);margin:0 0 8px;background:linear-gradient(90deg,#7cc4ff,#ff9ac1,#a8ff9a);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.02em}
+.subtitle{color:var(--dim);font-size:15px;max-width:800px}
+main{max-width:1200px;margin:0 auto;padding:0 32px 80px}
+section{background:linear-gradient(180deg,var(--panel) 0%, #0e1424 100%);border:1px solid var(--border);border-radius:20px;padding:28px;margin:28px 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+h2{margin:0 0 6px;font-size:22px;color:var(--accent)}
+h3{color:var(--accent2);margin:18px 0 8px;font-size:16px}
+.tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:99px;background:#1e2a44;color:var(--accent);margin-right:8px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:800px){.g2,.g3{grid-template-columns:1fr}}
+canvas{background:#070a13;border-radius:12px;display:block;width:100%;border:1px solid #1a2540}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:12px 0;padding:12px;background:#0a1122;border-radius:12px;border:1px solid #1a2540}
+.controls label{font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:4px;min-width:140px}
+.controls input[type=range]{width:160px;accent-color:var(--accent)}
+.controls select,.controls button{background:#1a2540;color:var(--ink);border:1px solid #2a3960;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer}
+.controls button:hover{background:#243255}
+.val{color:var(--accent3);font-weight:600;font-variant-numeric:tabular-nums}
+.plot{width:100%;height:340px}
+p{color:#c5cde0;font-size:14px}
+.small{font-size:13px;color:var(--dim)}
+.callout{background:linear-gradient(90deg,rgba(124,196,255,.08),rgba(255,154,193,.08));border-left:3px solid var(--accent);padding:12px 16px;border-radius:8px;margin:12px 0;font-size:14px}
+.key{color:var(--accent4);font-weight:600}
+.pill{display:inline-block;padding:2px 8px;background:#1a2540;border-radius:6px;font-family:ui-monospace,monospace;font-size:12px;color:var(--accent3)}
+.step{display:flex;gap:12px;align-items:flex-start;margin:10px 0}
+.step .num{flex:0 0 28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+nav.toc{position:sticky;top:0;background:rgba(10,14,26,.9);backdrop-filter:blur(10px);padding:12px 32px;border-bottom:1px solid var(--border);z-index:10;display:flex;gap:16px;overflow-x:auto;font-size:13px}
+nav.toc a{color:var(--dim);text-decoration:none;white-space:nowrap;padding:4px 8px;border-radius:6px}
+nav.toc a:hover{color:var(--accent);background:#1a2540}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Grid Walker: Wie ein neuronales Netz eine Welt „sieht"</h1>
+<p class="subtitle">Eine interaktive Reise durch das Paper von Brenner, Knösche &amp; Scherf (2026) — <i>Predictive Statistics Shape Emergent World Representations of Grid Walkers</i>. Alles zum Anfassen: Schieber, Klicken, Verstehen.</p>
+</header>
+
+<nav class="toc">
+<a href="#motiv">① Motivation</a>
+<a href="#walker">② Der Walker</a>
+<a href="#bayes">③ Bayes' h-Transform</a>
+<a href="#field">④ Effektives Feld q</a>
+<a href="#trans">⑤ Transformer</a>
+<a href="#attn">⑥ Attention-Mechanik</a>
+<a href="#probe">⑦ Lineare Probes &amp; CKA</a>
+<a href="#pipeline">⑧ Layer-Pipeline</a>
+<a href="#rnn">⑨ RNN vs. Transformer</a>
+<a href="#fazit">⑩ Fazit</a>
+</nav>
+
+<main>
+
+<!-- ============ MOTIVATION ============ -->
+<section id="motiv">
+<span class="tag">Kapitel 1</span><h2>Die große Frage</h2>
+<p>Große Sprachmodelle sagen nur „das nächste Token" voraus. Trotzdem scheinen in ihnen <b>Weltmodelle</b> zu entstehen: Repräsentationen von Raum, Zeit, Schachbrettern, Karten. <b>Woher kommen die?</b> Sind sie eine Folge der Vorhersageaufgabe — oder der Architektur?</p>
+<div class="callout">
+<b>Die Idee des Papers:</b> Wir bauen eine <b>Miniatur-Welt</b>, deren gesamte Wahrscheinlichkeitsstruktur wir <i>exakt berechnen</i> können. Dann trainieren wir Netze darauf und schauen genau hin, was sie intern speichern.
+</div>
+<p>Die Mini-Welt: ein <span class="key">Random Walker</span> auf einem 2D-Gitter, der nach genau <span class="pill">T</span> Schritten ein Ziel erreichen muss. Klingt harmlos — enthält aber alle Zutaten für emergente Weltmodelle.</p>
+</section>
+
+<!-- ============ THE WALKER ============ -->
+<section id="walker">
+<span class="tag">Kapitel 2</span><h2>Der Grid Walker — spiel damit</h2>
+<p>Der Walker startet bei <span class="pill">(0,0)</span> und macht in jedem Schritt einen der vier Züge <b>L, R, U, D</b>. Er muss <b>nach genau T Schritten</b> am Ziel (roter Stern) ankommen. Die drei Varianten:</p>
+<div class="grid g3">
+<div><h3>Walker L (Looper)</h3><p class="small">Ein Ziel = Start. Er muss zurückkehren.</p></div>
+<div><h3>Walker D (Doppel-Ziel)</h3><p class="small">Zwei mögliche Ziele. Das Netz muss <i>glauben</i>, welches gemeint ist.</p></div>
+<div><h3>Walker O (Hindernisse)</h3><p class="small">Zellen sind blockiert. Bricht die Symmetrie.</p></div>
+</div>
+
+<div class="controls">
+<label>Variante
+<select id="wVariant">
+<option value="L">Walker L (Looper)</option>
+<option value="D">Walker D (Doppel-Ziel)</option>
+<option value="O">Walker O (Hindernisse)</option>
+</select>
+</label>
+<label>Horizont T <input type="range" id="wT" min="4" max="24" step="2" value="12"> <span class="val" id="wTv">12</span></label>
+<label>Geschwindigkeit <input type="range" id="wSpeed" min="1" max="20" value="8"></label>
+<button id="wSample">Neuer zufälliger Pfad</button>
+<button id="wPlay">▶ Abspielen</button>
+</div>
+<canvas id="walkerCanvas" height="440"></canvas>
+<div class="legend">
+<span><span class="sw" style="background:#7cc4ff"></span>Pfad</span>
+<span><span class="sw" style="background:#fff"></span>Start</span>
+<span><span class="sw" style="background:#ff5577"></span>Ziel</span>
+<span><span class="sw" style="background:#333"></span>Hindernis</span>
+</div>
+<p class="callout"><b>Wichtig:</b> Die Zugauswahl ist nicht frei — sie muss so verteilt sein, dass jeder gültige Pfad mit <i>gleicher</i> Wahrscheinlichkeit gezogen wird. Wie geht das? → Nächstes Kapitel.</p>
+</section>
+
+<!-- ============ BAYES / H-TRANSFORM ============ -->
+<section id="bayes">
+<span class="tag">Kapitel 3</span><h2>Wie wählt man den nächsten Schritt fair?</h2>
+<p>Angenommen, du stehst bei Position <span class="pill">x</span> und hast noch <span class="pill">τ</span> Schritte, um Ziel <span class="pill">p</span> zu erreichen. Wie wahrscheinlich ist welcher Zug?</p>
+<div class="step"><div class="num">1</div><div><b>Zähle Wege.</b> Sei <span class="pill">H(τ, z)</span> = Anzahl gültiger Pfade der Länge τ von z zu p. Das lässt sich rekursiv aus den vier Nachbarn berechnen.</div></div>
+<div class="step"><div class="num">2</div><div><b>Bayes' Regel (Doob h-Transform):</b> Die Wahrscheinlichkeit, den Schritt Δ zu machen, ist <br><span class="pill">Pr(Δ | x, τ) = H(τ−1, x+Δ) / H(τ, x)</span></div></div>
+<div class="step"><div class="num">3</div><div>Sackgassen bekommen automatisch Wahrscheinlichkeit 0 (Zähler = 0).</div></div>
+
+<div class="controls">
+<label>Position x <input type="range" id="bX" min="-6" max="6" value="0"><span class="val" id="bXv">0</span></label>
+<label>Position y <input type="range" id="bY" min="-6" max="6" value="0"><span class="val" id="bYv">0</span></label>
+<label>Restschritte τ <input type="range" id="bTau" min="2" max="20" step="2" value="12"><span class="val" id="bTauv">12</span></label>
+<label>Ziel-x <input type="range" id="bPx" min="-6" max="6" value="4"><span class="val" id="bPxv">4</span></label>
+<label>Ziel-y <input type="range" id="bPy" min="-6" max="6" value="0"><span class="val" id="bPyv">0</span></label>
+</div>
+<div class="grid g2">
+<div><canvas id="bayesCanvas" height="360"></canvas>
+<p class="small">Grüne Zellen = erreichbar in τ Schritten. Farbintensität = Anzahl Wege. Pfeile zeigen die vier Wahrscheinlichkeiten des nächsten Zugs.</p></div>
+<div><div id="bayesBars" class="plot"></div>
+<p class="small">Die vier Next-Step-Wahrscheinlichkeiten. Spiel mit den Slidern: Was passiert, wenn τ genau die Manhattan-Distanz erreicht?</p></div>
+</div>
+</section>
+
+<!-- ============ EFFECTIVE FIELD ============ -->
+<section id="field">
+<span class="tag">Kapitel 4</span><h2>Das effektive Feld <span style="font-family:serif;font-style:italic">q</span></h2>
+<p>Jede Next-Step-Verteilung über {L,R,U,D} lässt sich in <b>diagonalen Koordinaten</b> u=x+y, v=x−y darstellen. Dann zerlegt sich der Log der Wahrscheinlichkeit sauber:</p>
+<div id="eqfield" style="text-align:center;padding:12px;background:#0a1122;border-radius:8px"></div>
+<p>Der Vektor <span class="pill">q = (q_u, q_v, q_uv)</span> ∈ ℝ³ enthält <b>alle</b> Information über die Next-Step-Verteilung. Er heißt <span class="key">effektives Feld</span>.</p>
+<div class="callout">
+<b>Schlüsselunterscheidung:</b><br>
+• Für <b>Walker L</b> (ein Ziel, keine Hindernisse) faktorisiert alles: <span class="pill">q_uv = 0</span>. Das Feld ist 2D.<br>
+• Für <b>Walker D</b> (zwei Ziele) verrät <span class="pill">q_uv ≠ 0</span> die Bayes'sche <i>Unsicherheit</i> über das Ziel.<br>
+• Für <b>Walker O</b> brechen Hindernisse die Symmetrie — alle drei Komponenten leben.
+</div>
+
+<h3>Interaktiv: q als Vektorfeld auf dem Gitter</h3>
+<div class="controls">
+<label>Variante
+<select id="qVariant">
+<option value="L">Walker L (ein Ziel)</option>
+<option value="D">Walker D (zwei Ziele)</option>
+</select>
+</label>
+<label>Restschritte τ <input type="range" id="qTau" min="4" max="20" step="2" value="14"><span class="val" id="qTauv">14</span></label>
+<label>Zeigen
+<select id="qShow">
+<option value="drift">Drift (q_u, q_v)</option>
+<option value="quv">Kopplung q_uv</option>
+</select>
+</label>
+</div>
+<canvas id="qCanvas" height="460"></canvas>
+<p class="small">Jeder Pfeil = Erwartete nächste Verschiebung an dieser Position. Rot = starke Kopplung q_uv (nur bei Walker D nicht-null). Bei Walker L sind die Pfeile perfekt „zum Ziel gerichtet"; bei Walker D siehst du, wie das Feld zwischen zwei Zielen interpoliert.</p>
+</section>
+
+<!-- ============ TRANSFORMER ============ -->
+<section id="trans">
+<span class="tag">Kapitel 5</span><h2>Der Transformer — Mini-Version zum Anfassen</h2>
+<p>Bevor wir das Paper-Ergebnis anschauen, hier eine Mini-Erklärung, was ein <b>Decoder-only Transformer</b> überhaupt macht:</p>
+<div class="step"><div class="num">1</div><div><b>Embedding:</b> Jedes Token (L/R/U/D) wird zu einem Vektor.</div></div>
+<div class="step"><div class="num">2</div><div><b>Attention:</b> Jede Position schaut auf frühere Positionen und mischt deren Werte. Ein <span class="key">Attention-Head</span> = eine Gewichtsverteilung.</div></div>
+<div class="step"><div class="num">3</div><div><b>MLP:</b> Ein kleines neuronales Netz pro Position, nichtlinear.</div></div>
+<div class="step"><div class="num">4</div><div><b>Readout:</b> Der letzte Vektor wird linear zu 4 Logits → Softmax → Next-Token-Verteilung.</div></div>
+
+<h3>Klick eine Attention-Zelle an</h3>
+<div class="controls">
+<label>Kontextlänge <input type="range" id="atK" min="3" max="8" value="7"><span class="val" id="atKv">7</span></label>
+<label>Muster
+<select id="atMode">
+<option value="uniform">Uniform (Paper-Ergebnis!)</option>
+<option value="recent">Letztes Token</option>
+<option value="decay">Exponentieller Abfall</option>
+</select>
+</label>
+</div>
+<div class="grid g2">
+<div><canvas id="attnCanvas" height="320"></canvas><p class="small">Attention-Matrix. Zeile = Query-Position, Spalte = Key-Position. Heller = mehr Aufmerksamkeit.</p></div>
+<div><canvas id="attnFlow" height="320"></canvas><p class="small">Informationsfluss: Für die gewählte Query siehst du, wie viel Signal jede vergangene Position beisteuert.</p></div>
+</div>
+</section>
+
+<!-- ============ ATTENTION MECHANISM ============ -->
+<section id="attn">
+<span class="tag">Kapitel 6</span><h2>Der Kern-Befund: Attention berechnet <span style="font-family:serif;font-style:italic">x/t</span></h2>
+<p>Das ist die schönste Entdeckung des Papers. Der <b>erste Attention-Head</b> tut in allen Varianten dieselben drei Dinge:</p>
+<div class="step"><div class="num">A</div><div><b>Uniforme Aufmerksamkeit</b> über alle vergangenen Positionen (siehe letztes Kapitel → wähle „uniform").</div></div>
+<div class="step"><div class="num">B</div><div><b>Additive Value-Writes:</b> Jedes Token trägt einen Token-Code + Positions-Code bei, ohne Kopplung.</div></div>
+<div class="step"><div class="num">C</div><div><b>Token-Codes</b> ordnen L/R/U/D so an, dass ihr Durchschnitt = <b>durchschnittliche Verschiebung</b> ist:<br>
+<span class="pill">⟨token-code⟩ = A · (x_t / t)</span></div></div>
+
+<div class="callout">
+<b>Das bedeutet:</b> Der erste Attention-Layer berechnet — mit einer Runde uniformer Mittelung — die aktuelle Position dividiert durch die Zeit. Plus einen Zeit-Code (log t). <b>Das ist ein Koordinatensystem der Welt</b>, entstanden aus reiner Vorhersage.
+</div>
+
+<h3>Sieh es selbst: die Kompass-Kodierung der 4 Token</h3>
+<p class="small">Jedes Token wird als 2D-Richtung dargestellt. Wenn du eine Sequenz mittelst, bekommst du die durchschnittliche Verschiebung — geometrisch!</p>
+<div class="controls">
+<label>Sequenz (klick Pfeile) </label>
+<button data-mv="L">← L</button>
+<button data-mv="R">→ R</button>
+<button data-mv="U">↑ U</button>
+<button data-mv="D">↓ D</button>
+<button id="atClear">Löschen</button>
+<span class="val" id="atSeq" style="font-family:ui-monospace,monospace"></span>
+</div>
+<div class="grid g2">
+<div><canvas id="compassCanvas" height="360"></canvas><p class="small">Bunte Punkte: einzelne Token-Codes. Weißer Punkt: ihr Durchschnitt. Grüner Pfeil: die tatsächliche Position x_t/t. → Sie stimmen überein.</p></div>
+<div><div id="compassInfo" style="padding:20px;background:#0a1122;border-radius:12px;font-family:ui-monospace,monospace;font-size:14px;line-height:2"></div></div>
+</div>
+</section>
+
+<!-- ============ PROBES & CKA ============ -->
+<section id="probe">
+<span class="tag">Kapitel 7</span><h2>Lineare Probes: Was steckt in den Aktivierungen?</h2>
+<p>Ein <span class="key">linearer Probe</span> ist ein linearer Regressor: Kann ich eine Zielgröße y aus den Aktivierungen a durch <span class="pill">y ≈ W·a + b</span> vorhersagen? Der R²-Wert (0 bis 1) sagt, wie gut.</p>
+<div class="callout">
+Zwei Richtungen zu testen:<br>
+<b>Dekodieren</b> (a → y): Ist die Info <i>vorhanden</i>?<br>
+<b>Enkodieren</b> (y → a): <i>Spannt</i> y die Aktivierung tatsächlich auf?
+</div>
+
+<h3>Simuliere einen linearen Probe</h3>
+<p class="small">Wir würfeln ein „Zielsignal" (grün) und eine „Aktivierung", die es mit einstellbarem Rauschen enthält. Der Probe versucht, y aus a zurückzugewinnen.</p>
+<div class="controls">
+<label>Rauschen <input type="range" id="pNoise" min="0" max="100" value="20"><span class="val" id="pNoiseV">0.20</span></label>
+<label>Zusätzliche Dimensionen <input type="range" id="pExtra" min="0" max="30" value="10"><span class="val" id="pExtraV">10</span></label>
+</div>
+<div class="grid g2">
+<div><div id="probePlot" class="plot"></div></div>
+<div><div id="probeR2" style="padding:24px;background:#0a1122;border-radius:12px;text-align:center">
+<div style="font-size:14px;color:var(--dim)">R² des Probes</div>
+<div id="probeR2Val" style="font-size:48px;font-weight:800;color:var(--accent3);margin-top:8px">—</div>
+<div class="small" id="probeR2Note" style="margin-top:8px">Ändere die Regler und beobachte, wie sich die Rückgewinnbarkeit ändert.</div>
+</div></div>
+</div>
+
+<h3>Zwei Richtungen — beide wichtig</h3>
+<div class="grid g2">
+<div style="padding:14px;background:#0a1122;border-radius:12px;border-left:3px solid var(--accent)">
+<b style="color:var(--accent)">Dekodieren (a → y)</b>
+<p class="small">„Ist die Info im Netz vorhanden?" Sagt <i>nichts</i> darüber, ob sie dominant ist. Auch 3 Dimensionen versteckt in 128 zählen.</p>
+</div>
+<div style="padding:14px;background:#0a1122;border-radius:12px;border-left:3px solid var(--accent2)">
+<b style="color:var(--accent2)">Enkodieren (y → a)</b>
+<p class="small">„Spannt y die Aktivierung auf?" Wenn ja, ist y der <i>Hauptinhalt</i> — die restliche Varianz ist klein.</p>
+</div>
+</div>
+
+<h3>CKA — Ähnlichkeit zweier Repräsentationen</h3>
+<p class="small"><b>Centered Kernel Alignment</b> misst, wie ähnlich zwei Aktivierungsmatrizen sind, unabhängig von Rotation/Skalierung. 1 = identisch (bis auf lineare Transformation), 0 = unkorreliert.</p>
+<div class="controls">
+<label>Rotation A→B <input type="range" id="ckaRot" min="0" max="180" value="30"><span class="val" id="ckaRotV">30°</span></label>
+<label>Rauschen B <input type="range" id="ckaNoise" min="0" max="100" value="10"><span class="val" id="ckaNoiseV">0.10</span></label>
+</div>
+<div class="grid g2">
+<div><canvas id="ckaCanvas" height="320"></canvas><p class="small">Blau: Repräsentation A. Rosa: Repräsentation B (rotiert + verrauscht).</p></div>
+<div style="padding:24px;background:#0a1122;border-radius:12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+<div style="font-size:14px;color:var(--dim)">Linearer CKA-Wert</div>
+<div id="ckaVal" style="font-size:52px;font-weight:800;color:var(--accent4)">—</div>
+<div class="small" style="margin-top:8px">Rotation lässt CKA <b>unverändert</b> (linear invariant!). Nur echtes Rauschen senkt ihn.</div>
+</div>
+</div>
+</section>
+
+<!-- ============ PIPELINE ============ -->
+<section id="pipeline">
+<span class="tag">Kapitel 8</span><h2>Die Layer-Pipeline: von Welt zu Vorhersage</h2>
+<p>Das Herzstück des Papers. Der Transformer zerfällt in <b>zwei klar getrennte Stufen</b>:</p>
+<div class="grid g2">
+<div style="padding:16px;background:linear-gradient(135deg,#0f1a2e,#0a1122);border-radius:12px;border:1px solid #2a3960">
+<h3 style="margin-top:0">Stufe 1: Nach Attention</h3>
+<p>Aktivierung ≈ <span class="pill">[x_t/t, y_t/t, log t]</span><br>
+Das ist ein <b>Koordinatensystem der Welt</b> — reicht für die <i>gesamte Zukunft</i>. Über alle Varianten <b>gleich</b> (CKA 0.95–0.97).</p>
+</div>
+<div style="padding:16px;background:linear-gradient(135deg,#2a1636,#0a1122);border-radius:12px;border:1px solid #603960">
+<h3 style="margin-top:0">Stufe 2: Nach MLP → LN-final</h3>
+<p>Aktivierung ≈ <span class="pill">q_t</span> (effektives Feld)<br>
+Der MLP <b>spezialisiert</b> auf die konkrete Variante. Cross-Variant-CKA fällt scharf ab.</p>
+</div>
+</div>
+
+<h3>Interaktives Balkendiagramm — die zentrale Figur des Papers</h3>
+<div class="controls">
+<label>Zielgröße
+<select id="pipeTarget">
+<option value="z">z_t = [x/t, y/t, log t] (Welt-Zustand)</option>
+<option value="q">q_t (nur nächster Schritt)</option>
+</select>
+</label>
+<label>Richtung
+<select id="pipeDir">
+<option value="decode">Dekodieren (Aktivierung → Ziel)</option>
+<option value="encode">Enkodieren (Ziel → Aktivierung)</option>
+</select>
+</label>
+</div>
+<div id="pipePlot" class="plot" style="height:380px"></div>
+<p class="callout"><b>Was du siehst:</b> Wählst du <i>z_t / dekodieren</i>, siehst du: z_t ist schon nach Attention lesbar und bleibt es. Wählst du <i>q_t / dekodieren</i>, siehst du: q_t wird erst nach MLP + LN richtig lesbar. Genau das ist die Zwei-Stufen-Trennung.</p>
+
+<h3>Cross-Variant CKA-Matrix</h3>
+<p class="small">Wie ähnlich sind Aktivierungen zweier Netze, die auf <i>verschiedenen</i> Walkern trainiert wurden? Vor MLP: sehr ähnlich. Nach MLP: divergent.</p>
+<div class="controls">
+<label>Layer-Hook
+<select id="ckaHook">
+<option value="post-attn">Nach Attention</option>
+<option value="post-mlp">Nach MLP</option>
+</select>
+</label>
+</div>
+<div id="ckaMatrix" class="plot" style="height:380px"></div>
+</section>
+
+<!-- ============ RNN vs Transformer ============ -->
+<section id="rnn">
+<span class="tag">Kapitel 9</span><h2>RNN vs. Transformer — beide lösen es, aber anders</h2>
+<p>Die Autoren trainieren auch LSTMs und GRUs auf denselben Daten. Ergebnis:</p>
+<div class="grid g2">
+<div style="padding:16px;background:#0a1122;border-radius:12px">
+<h3 style="margin-top:0;color:var(--accent3)">✓ Gleiche Vorhersagegüte</h3>
+<p class="small">RNNs erreichen den Bayes-optimalen Loss. Sie müssen ebenfalls den Welt-Zustand tracken (Walker O beweist es).</p>
+</div>
+<div style="padding:16px;background:#0a1122;border-radius:12px">
+<h3 style="margin-top:0;color:var(--accent2)">✗ Keine saubere Trennung</h3>
+<p class="small">Der Welt-Zustand ist zwar <i>enthalten</i>, aber vermischt mit anderer Varianz. Kein separater „Welt-Layer".</p>
+</div>
+</div>
+
+<h3>Enkodier-R² im Vergleich</h3>
+<p class="small">Wie stark <b>spannen</b> die 3 geometrischen Features die Aktivierung auf? Hoch = saubere Isolation. Niedrig = Info da, aber vermischt.</p>
+<div id="rnnPlot" class="plot" style="height:340px"></div>
+<p class="callout"><b>Fazit:</b> Ob ein Netz die Welt als <i>eigene Geometrie</i> darstellt, ist eine <b>architektonische Wahl</b>, keine zwingende Folge der Vorhersageaufgabe. Self-Attention macht die Welt-Repräsentation <i>billig</i> — deshalb macht sie es.</p>
+</section>
+
+<!-- ============ FAZIT ============ -->
+<section id="fazit">
+<span class="tag">Kapitel 10</span><h2>Die Antwort auf die Frage</h2>
+<p><b>Frage:</b> Woher kommen die Weltmodelle in Next-Token-Predictoren?</p>
+<p><b>Antwort (in diesem Mini-Setting):</b></p>
+<div class="step"><div class="num">1</div><div>Die <b>Geometrie der Vorhersageverteilung</b> ist das relevante Objekt. Wo sie eine kompakte suffiziente Statistik hat, tendieren Netze dazu, sie linear abzubilden.</div></div>
+<div class="step"><div class="num">2</div><div>Der Transformer <b>trennt Welt von Aufgabe</b>: Attention extrahiert den Welt-Zustand universell, MLP spezialisiert auf die Variante. Diese Trennung ist mechanistisch verstanden (uniforme Attention + additive Value-Writes).</div></div>
+<div class="step"><div class="num">3</div><div>Das Netz repräsentiert <b>mehr</b> als der Loss verlangt — den vollen Welt-Zustand statt nur des nächsten Schritts. Das ist <i>keine schlechte Kompression</i>, sondern architektonischer Bias: Attention macht diese reiche Repräsentation billig.</div></div>
+<div class="step"><div class="num">4</div><div>RNNs beweisen: die Trennung ist <b>architekturabhängig</b>, nicht durch die Aufgabe erzwungen. Ein Rashomon-Effekt.</div></div>
+<div class="callout" style="margin-top:24px">
+<b>Kernbotschaft:</b> Die Geometrie der prädiktiven Verteilung ist eine nützliche Linse, um zu verstehen, wie neuronale Netze die Struktur ihrer Daten internalisieren. Sie sagt <i>was</i> lernbar-linear ist, aber Architektur bestimmt <i>wie</i> es organisiert wird.
+</div>
+<p style="text-align:center;color:var(--dim);margin-top:32px;font-size:13px">Brenner, Knösche &amp; Scherf (2026) · <i>Predictive Statistics Shape Emergent World Representations of Grid Walkers</i></p>
+</section>
+
+</main>
+
+<script>
+// ============ Utility ============
+const $ = id => document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+// KaTeX render
+window.addEventListener('DOMContentLoaded',()=>{
+  if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+  const eq = $('eqfield');
+  if(eq && window.katex){
+    katex.render("\\log \\Pr(\\Delta\\mid s_t) - \\overline{\\ell} = -q_u\\,\\Delta u \\;-\\; q_v\\,\\Delta v \\;-\\; q_{uv}\\,\\Delta u\\,\\Delta v", eq, {displayMode:true});
+  }
+});
+
+// ============ Chapter 2: Walker ============
+const wCanvas = $('walkerCanvas'), wCtx = wCanvas.getContext('2d');
+let wState = {variant:'L', T:12, path:[[0,0]], playing:false, step:0, obstacles:new Set(['1,0','-1,0','3,0','-3,0']), endpoints:{L:[[0,0]],D:[[-4,0],[4,0]],O:[[0,0]]}};
+function resizeCanvas(c){const r=c.getBoundingClientRect();c.width=r.width*devicePixelRatio;c.height=(c.height||r.height)*devicePixelRatio;c.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}
+[wCanvas].forEach(resizeCanvas);
+
+// Path count H(tau,z→p) with obstacles
+function countPaths(tau, sx, sy, px, py, obstacles){
+  // dp table via BFS reverse from endpoint
+  const R=Math.max(Math.abs(sx-px),Math.abs(sy-py))+tau+2;
+  if((Math.abs(sx-px)+Math.abs(sy-py))>tau) return 0;
+  if(((sx-px+sy-py)&1)!==(tau&1)) return 0;
+  // memoize
+  const memo = new Map();
+  function rec(t,x,y){
+    if(obstacles && obstacles.has(x+','+y)) return 0;
+    if(t===0) return (x===px&&y===py)?1:0;
+    if(Math.abs(x-px)+Math.abs(y-py)>t) return 0;
+    const k=t+','+x+','+y;
+    if(memo.has(k)) return memo.get(k);
+    const v = rec(t-1,x+1,y)+rec(t-1,x-1,y)+rec(t-1,x,y+1)+rec(t-1,x,y-1);
+    memo.set(k,v); return v;
+  }
+  return rec(tau,sx,sy);
+}
+
+function samplePath(variant, T){
+  const eps = wState.endpoints[variant];
+  const p = eps[Math.floor(Math.random()*eps.length)];
+  const obs = variant==='O'?wState.obstacles:null;
+  const total = countPaths(T,0,0,p[0],p[1],obs);
+  if(total===0) return [[0,0]];
+  const path=[[0,0]]; let x=0,y=0;
+  for(let t=0;t<T;t++){
+    const rem = T-t;
+    const moves = [[1,0],[-1,0],[0,1],[0,-1]];
+    const ws = moves.map(([dx,dy])=>countPaths(rem-1,x+dx,y+dy,p[0],p[1],obs));
+    const s = ws.reduce((a,b)=>a+b,0);
+    if(s===0) break;
+    let r = Math.random()*s, idx=0;
+    for(let i=0;i<4;i++){r-=ws[i];if(r<=0){idx=i;break;}}
+    x+=moves[idx][0]; y+=moves[idx][1];
+    path.push([x,y]);
+  }
+  return path;
+}
+
+function drawWalker(){
+  const c=wCanvas,ctx=wCtx;
+  const W=c.clientWidth, H=c.clientHeight||440;
+  ctx.clearRect(0,0,W,H);
+  const cell = Math.min(W,H)/16;
+  const cx=W/2, cy=H/2;
+  // grid
+  ctx.strokeStyle='#1a2540'; ctx.lineWidth=1;
+  for(let i=-8;i<=8;i++){
+    ctx.beginPath(); ctx.moveTo(cx+i*cell,0); ctx.lineTo(cx+i*cell,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy+i*cell); ctx.lineTo(W,cy+i*cell); ctx.stroke();
+  }
+  // obstacles
+  if(wState.variant==='O'){
+    ctx.fillStyle='#333';
+    wState.obstacles.forEach(k=>{
+      const [x,y]=k.split(',').map(Number);
+      ctx.fillRect(cx+x*cell-cell/2,cy-y*cell-cell/2,cell,cell);
+    });
+  }
+  // endpoints
+  wState.endpoints[wState.variant].forEach(([x,y])=>{
+    ctx.fillStyle='#ff5577';
+    ctx.beginPath();
+    const px=cx+x*cell, py=cy-y*cell;
+    // star
+    for(let i=0;i<10;i++){
+      const a=Math.PI/5*i - Math.PI/2;
+      const r = i%2===0?cell*0.5:cell*0.22;
+      const xx=px+Math.cos(a)*r, yy=py+Math.sin(a)*r;
+      if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+    }
+    ctx.closePath(); ctx.fill();
+  });
+  // path
+  const shownPath = wState.path.slice(0, wState.step+1);
+  ctx.strokeStyle='#7cc4ff'; ctx.lineWidth=3; ctx.lineJoin='round';
+  ctx.beginPath();
+  shownPath.forEach(([x,y],i)=>{
+    const px=cx+x*cell, py=cy-y*cell;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+  // start
+  ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.arc(cx,cy,cell*0.25,0,Math.PI*2); ctx.fill();
+  // current position
+  if(shownPath.length>0){
+    const [x,y]=shownPath[shownPath.length-1];
+    ctx.fillStyle='#a8ff9a';
+    ctx.beginPath(); ctx.arc(cx+x*cell,cy-y*cell,cell*0.28,0,Math.PI*2); ctx.fill();
+  }
+}
+function newWalk(){
+  wState.T = +$('wT').value;
+  wState.variant = $('wVariant').value;
+  wState.path = samplePath(wState.variant, wState.T);
+  wState.step = wState.path.length-1;
+  drawWalker();
+}
+$('wSample').onclick=newWalk;
+$('wT').oninput=e=>{$('wTv').textContent=e.target.value;newWalk();};
+$('wVariant').onchange=newWalk;
+$('wPlay').onclick=()=>{
+  if(wState.playing) return;
+  wState.playing=true; wState.step=0;
+  const speed = +$('wSpeed').value;
+  const iv = setInterval(()=>{
+    wState.step++;
+    if(wState.step>=wState.path.length){clearInterval(iv);wState.playing=false;return;}
+    drawWalker();
+  }, 800/speed);
+};
+newWalk();
+
+// ============ Chapter 3: Bayes ============
+const bCanvas=$('bayesCanvas'), bCtx=bCanvas.getContext('2d');
+resizeCanvas(bCanvas);
+function updateBayes(){
+  const x=+$('bX').value, y=+$('bY').value, tau=+$('bTau').value, px=+$('bPx').value, py=+$('bPy').value;
+  $('bXv').textContent=x; $('bYv').textContent=y; $('bTauv').textContent=tau; $('bPxv').textContent=px; $('bPyv').textContent=py;
+  const c=bCanvas, ctx=bCtx;
+  const W=c.clientWidth, H=c.clientHeight||360;
+  ctx.clearRect(0,0,W,H);
+  const cell = Math.min(W,H)/16;
+  const cx=W/2, cy=H/2;
+  // compute path counts for all cells at (t,z→p) with tau
+  // Find max for coloring
+  let maxCount=0;
+  const cells=[];
+  for(let ix=-7;ix<=7;ix++)for(let iy=-7;iy<=7;iy++){
+    const cnt = countPaths(tau,ix,iy,px,py,null);
+    if(cnt>0){cells.push([ix,iy,cnt]);if(cnt>maxCount)maxCount=cnt;}
+  }
+  cells.forEach(([ix,iy,cnt])=>{
+    const t = Math.log(1+cnt)/Math.log(1+maxCount);
+    ctx.fillStyle=`rgba(168,255,154,${0.15+t*0.5})`;
+    ctx.fillRect(cx+ix*cell-cell/2,cy-iy*cell-cell/2,cell-1,cell-1);
+  });
+  // grid
+  ctx.strokeStyle='#1a2540';
+  for(let i=-8;i<=8;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*cell,0);ctx.lineTo(cx+i*cell,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*cell);ctx.lineTo(W,cy+i*cell);ctx.stroke();
+  }
+  // endpoint
+  ctx.fillStyle='#ff5577';
+  ctx.beginPath();ctx.arc(cx+px*cell,cy-py*cell,cell*0.35,0,Math.PI*2);ctx.fill();
+  // position
+  ctx.fillStyle='#fff';
+  ctx.beginPath();ctx.arc(cx+x*cell,cy-y*cell,cell*0.32,0,Math.PI*2);ctx.fill();
+  // probabilities of moves
+  const moves=[['R',1,0],['L',-1,0],['U',0,1],['D',0,-1]];
+  const H0=countPaths(tau,x,y,px,py,null);
+  const probs = moves.map(([n,dx,dy])=>{
+    const num=countPaths(tau-1,x+dx,y+dy,px,py,null);
+    return H0>0? num/H0:0;
+  });
+  // arrows
+  moves.forEach(([n,dx,dy],i)=>{
+    const p=probs[i];
+    if(p<=0) return;
+    ctx.strokeStyle=`rgba(124,196,255,${0.3+p*0.7})`;
+    ctx.lineWidth=2+p*6;
+    const x0=cx+x*cell, y0=cy-y*cell;
+    const x1=x0+dx*cell*0.9, y1=y0-dy*cell*0.9;
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+    // arrowhead
+    const ang=Math.atan2(y1-y0,x1-x0);
+    ctx.beginPath();ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-8*Math.cos(ang-0.4),y1-8*Math.sin(ang-0.4));
+    ctx.lineTo(x1-8*Math.cos(ang+0.4),y1-8*Math.sin(ang+0.4));
+    ctx.closePath();ctx.fillStyle=`rgba(124,196,255,${0.4+p*0.6})`;ctx.fill();
+    // label
+    ctx.fillStyle='#e8ecf5'; ctx.font='11px monospace';
+    ctx.fillText(n+' '+(p*100).toFixed(0)+'%', x1+dx*10-8, y1-dy*10+4);
+  });
+  // bars
+  Plotly.react('bayesBars',[{
+    x:['L','R','U','D'],
+    y:[probs[1],probs[0],probs[2],probs[3]],
+    type:'bar',
+    marker:{color:['#ff9ac1','#7cc4ff','#a8ff9a','#ffd47a']}
+  }],{
+    paper_bgcolor:'#0a1122',plot_bgcolor:'#0a1122',
+    font:{color:'#e8ecf5',size:12},
+    margin:{l:40,r:20,t:30,b:40},
+    yaxis:{
+      title:'Next-Step P(Δ)',range:[0,1],gridcolor:'#1a2540'},
+    xaxis:{gridcolor:'#1a2540'}
+  },{displayModeBar:false,responsive:true});
+}
+['bX','bY','bTau','bPx','bPy'].forEach(id=>$(id).oninput=updateBayes);
+updateBayes();
+
+// ============ Chapter 4: q-field ============
+const qCanvas=$('qCanvas'), qCtx=qCanvas.getContext('2d');
+resizeCanvas(qCanvas);
+function updateQ(){
+  const variant=$('qVariant').value, tau=+$('qTau').value, show=$('qShow').value;
+  $('qTauv').textContent=tau;
+  const endpoints = variant==='L'?[[0,0]]:[[-4,0],[4,0]];
+  const c=qCanvas, ctx=qCtx;
+  const W=c.clientWidth, H=c.clientHeight||460;
+  ctx.clearRect(0,0,W,H);
+  const cell=Math.min(W,H)/18;
+  const cx=W/2, cy=H/2;
+  ctx.strokeStyle='#1a2540';
+  for(let i=-9;i<=9;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*cell,0);ctx.lineTo(cx+i*cell,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*cell);ctx.lineTo(W,cy+i*cell);ctx.stroke();
+  }
+  // compute q field
+  let maxQuv=0;
+  const arrows=[];
+  for(let ix=-8;ix<=8;ix++)for(let iy=-8;iy<=8;iy++){
+    // total counts
+    let tot=0; const pw=[];
+    endpoints.forEach(p=>{const c=countPaths(tau,ix,iy,p[0],p[1],null);pw.push(c);tot+=c;});
+    if(tot===0) continue;
+    // next-step probs
+    const moves=[[1,0],[-1,0],[0,1],[0,-1]];
+    const probs=moves.map(([dx,dy])=>{
+      let s=0; endpoints.forEach((p,k)=>{const c=countPaths(tau-1,ix+dx,iy+dy,p[0],p[1],null);s+=c;});
+      return s/tot;
+    });
+    // expected step
+    const ex = probs[0]-probs[1]; // R-L
+    const ey = probs[2]-probs[3]; // U-D
+    // q_uv from moments: <du dv> where du=dx+dy, dv=dx-dy per move
+    const duVals=[1+0,-1+0,0+1,0-1]; // for R,L,U,D
+    const dvVals=[1-0,-1-0,0-1,0+1];
+    let euv=0; for(let i=0;i<4;i++) euv+=probs[i]*duVals[i]*dvVals[i];
+    const eu=ex+ey, ev=ex-ey;
+    const quv = euv - eu*ev;
+    if(Math.abs(quv)>maxQuv) maxQuv=Math.abs(quv);
+    arrows.push({ix,iy,ex,ey,quv});
+  }
+  // draw endpoints
+  endpoints.forEach(([x,y])=>{
+    ctx.fillStyle='#ff5577';
+    const px=cx+x*cell, py=cy-y*cell;
+    ctx.beginPath();ctx.arc(px,py,cell*0.35,0,Math.PI*2);ctx.fill();
+  });
+  // draw arrows
+  arrows.forEach(({ix,iy,ex,ey,quv})=>{
+    const x0=cx+ix*cell, y0=cy-iy*cell;
+    const mag=Math.hypot(ex,ey);
+    if(show==='drift'){
+      if(mag<1e-3) return;
+      const len=cell*0.45;
+      const x1=x0+ex*len, y1=y0-ey*len;
+      const alpha=0.35+0.5*Math.min(1,mag);
+      ctx.strokeStyle=`rgba(124,196,255,${alpha})`;
+      ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+      const ang=Math.atan2(y1-y0,x1-x0);
+      ctx.beginPath();ctx.moveTo(x1,y1);
+      ctx.lineTo(x1-5*Math.cos(ang-0.5),y1-5*Math.sin(ang-0.5));
+      ctx.lineTo(x1-5*Math.cos(ang+0.5),y1-5*Math.sin(ang+0.5));
+      ctx.closePath();ctx.fillStyle=`rgba(124,196,255,${alpha})`;ctx.fill();
+    } else {
+      // color by q_uv
+      const t = maxQuv>0 ? quv/maxQuv : 0;
+      const r=Math.max(0,t), b=Math.max(0,-t);
+      ctx.fillStyle=`rgba(${255*r|0},80,${255*b|0},${0.15+Math.abs(t)*0.75})`;
+      ctx.fillRect(x0-cell/2,y0-cell/2,cell-1,cell-1);
+    }
+  });
+}
+$('qVariant').onchange=updateQ; $('qTau').oninput=updateQ; $('qShow').onchange=updateQ;
+updateQ();
+
+// ============ Chapter 5: Attention ============
+const atCanvas=$('attnCanvas'), atCtx=atCanvas.getContext('2d');
+const atFlow=$('attnFlow'), atFCtx=atFlow.getContext('2d');
+resizeCanvas(atCanvas); resizeCanvas(atFlow);
+let atSelQ=null;
+function buildAttn(mode,K){
+  const M=Array.from({length:K},()=>Array(K).fill(0));
+  for(let q=0;q<K;q++){
+    const row=[];
+    for(let k=0;k<=q;k++){
+      if(mode==='uniform') row.push(1);
+      else if(mode==='recent') row.push(k===q?4:1);
+      else row.push(Math.exp(-(q-k)*0.6));
+    }
+    const s=row.reduce((a,b)=>a+b,0);
+    for(let k=0;k<=q;k++) M[q][k]=row[k]/s;
+  }
+  return M;
+}
+function drawAttn(){
+  const K=+$('atKv').textContent=$('atK').value;
+  const mode=$('atMode').value;
+  const M=buildAttn(mode,+K);
+  const c=atCanvas, ctx=atCtx;
+  const W=c.clientWidth, H=c.clientHeight||320;
+  ctx.clearRect(0,0,W,H);
+  const size=Math.min(W,H)-40;
+  const cs=size/K;
+  const ox=(W-size)/2, oy=(H-size)/2;
+  for(let q=0;q<K;q++)for(let k=0;k<K;k++){
+    const v=M[q][k]||0;
+    ctx.fillStyle=`rgba(124,196,255,${v})`;
+    if(k>q) ctx.fillStyle='#0a1122';
+    ctx.fillRect(ox+k*cs,oy+q*cs,cs-1,cs-1);
+    if(v>0.05){
+      ctx.fillStyle=v>0.5?'#000':'#e8ecf5';
+      ctx.font=Math.min(11,cs*0.35)+'px monospace';
+      ctx.fillText(v.toFixed(2),ox+k*cs+cs*0.15,oy+q*cs+cs*0.6);
+    }
+    if(atSelQ===q){
+      ctx.strokeStyle='#ffd47a';ctx.lineWidth=2;
+      ctx.strokeRect(ox+k*cs,oy+q*cs,cs-1,cs-1);
+    }
+  }
+  ctx.fillStyle='#8b95a8'; ctx.font='11px sans-serif';
+  ctx.fillText('key →',ox+size/2-20,oy-8);
+  ctx.save();ctx.translate(ox-10,oy+size/2+20);ctx.rotate(-Math.PI/2);ctx.fillText('query →',0,0);ctx.restore();
+  // flow
+  const fc=atFlow, fx=atFCtx;
+  const FW=fc.clientWidth, FH=fc.clientHeight||320;
+  fx.clearRect(0,0,FW,FH);
+  const q = atSelQ!==null?atSelQ:K-1;
+  fx.fillStyle='#8b95a8';fx.font='13px sans-serif';
+  fx.fillText(`Query = Position ${q+1}. Beiträge der Keys:`,20,24);
+  const barW=(FW-60)/K;
+  for(let k=0;k<K;k++){
+    const v=M[q][k]||0;
+    const h=v*(FH-100);
+    fx.fillStyle=k<=q?`rgba(168,255,154,${0.3+v*0.7})`:'#151b2a';
+    fx.fillRect(30+k*barW, FH-40-h, barW-4, h);
+    fx.fillStyle='#8b95a8';fx.font='11px monospace';
+    fx.fillText('k'+(k+1),30+k*barW+barW/2-8,FH-24);
+    if(v>0.02) fx.fillText(v.toFixed(2),30+k*barW+barW/2-14,FH-44-h);
+  }
+}
+atCanvas.addEventListener('click',e=>{
+  const r=atCanvas.getBoundingClientRect();
+  const K=+$('atK').value;
+  const size=Math.min(r.width,(atCanvas.height||320)/devicePixelRatio)-40;
+  const cs=size/K;
+  const ox=(r.width-size)/2, oy=((atCanvas.height||320)/devicePixelRatio-size)/2;
+  const x=e.clientX-r.left, y=e.clientY-r.top;
+  const q=Math.floor((y-oy)/cs);
+  if(q>=0&&q<K){atSelQ=q;drawAttn();}
+});
+$('atK').oninput=()=>{$('atKv').textContent=$('atK').value;atSelQ=null;drawAttn();};
+$('atMode').onchange=()=>{atSelQ=null;drawAttn();};
+drawAttn();
+
+// ============ Chapter 6: Compass ============
+const cpCanvas=$('compassCanvas'), cpCtx=cpCanvas.getContext('2d');
+resizeCanvas(cpCanvas);
+let cpSeq=[];
+const tokenCode={L:[-1,0],R:[1,0],U:[0,1],D:[0,-1]};
+const tokenColor={L:'#ff9ac1',R:'#7cc4ff',U:'#a8ff9a',D:'#ffd47a'};
+function drawCompass(){
+  const c=cpCanvas, ctx=cpCtx;
+  const W=c.clientWidth, H=c.clientHeight||360;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2, R=Math.min(W,H)/2-30;
+  // axes
+  ctx.strokeStyle='#243049'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // unit circle
+  ctx.strokeStyle='#1a2540';
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+  // token codes (fixed positions)
+  Object.entries(tokenCode).forEach(([tok,[x,y]])=>{
+    const px=cx+x*R, py=cy-y*R;
+    ctx.fillStyle=tokenColor[tok];
+    ctx.beginPath();ctx.arc(px,py,10,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 12px monospace';
+    ctx.fillText(tok,px-4,py+4);
+  });
+  // sequence points with jitter for visibility
+  cpSeq.forEach((tok,i)=>{
+    const [x,y]=tokenCode[tok];
+    const jitter=(i%5-2)*3;
+    const px=cx+x*R+jitter, py=cy-y*R+jitter;
+    ctx.fillStyle=tokenColor[tok]+'88';
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();
+  });
+  // average = position/t
+  if(cpSeq.length>0){
+    let mx=0,my=0;
+    cpSeq.forEach(tok=>{mx+=tokenCode[tok][0];my+=tokenCode[tok][1];});
+    mx/=cpSeq.length; my/=cpSeq.length;
+    const ax=cx+mx*R, ay=cy-my*R;
+    // actual position/t (they are literally the same by construction in this demo)
+    ctx.strokeStyle='#a8ff9a'; ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ax,ay);ctx.stroke();
+    const ang=Math.atan2(ay-cy,ax-cx);
+    ctx.beginPath();ctx.moveTo(ax,ay);
+    ctx.lineTo(ax-10*Math.cos(ang-0.4),ay-10*Math.sin(ang-0.4));
+    ctx.lineTo(ax-10*Math.cos(ang+0.4),ay-10*Math.sin(ang+0.4));
+    ctx.closePath();ctx.fillStyle='#a8ff9a';ctx.fill();
+    // white avg dot
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.arc(ax,ay,7,0,Math.PI*2);ctx.fill();
+    // info
+    let x=0,y=0; cpSeq.forEach(t=>{const d=tokenCode[t]==tokenCode[t]?({L:[-1,0],R:[1,0],U:[0,1],D:[0,-1]})[t]:[0,0];x+=d[0];y+=d[1];});
+    $('compassInfo').innerHTML=
+      `<b style="color:var(--accent)">Sequenz-Länge t</b> = ${cpSeq.length}<br>`+
+      `<b style="color:var(--accent)">Position x_t</b> = (${x}, ${y})<br>`+
+      `<b style="color:var(--accent3)">x_t / t</b> = (${(x/cpSeq.length).toFixed(3)}, ${(y/cpSeq.length).toFixed(3)})<br>`+
+      `<b style="color:var(--accent2)">Ø Token-Code</b> = (${mx.toFixed(3)}, ${my.toFixed(3)})<br><br>`+
+      `<span style="color:var(--dim)">Grüner Pfeil = x_t/t.<br>Weißer Punkt = Ø Token-Code.<br>Sie liegen exakt aufeinander → Attention berechnet x/t.</span>`;
+  } else {
+    $('compassInfo').innerHTML='<span style="color:var(--dim)">Klick auf L/R/U/D-Buttons oben, um eine Sequenz aufzubauen.</span>';
+  }
+  $('atSeq').textContent = cpSeq.join(' ');
+}
+document.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{cpSeq.push(b.dataset.mv);drawCompass();});
+$('atClear').onclick=()=>{cpSeq=[];drawCompass();};
+drawCompass();
+
+// ============ Chapter 7: Probes ============
+function seedRand(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function updateProbe(){
+  const noise=+$('pNoise').value/100, extra=+$('pExtra').value;
+  $('pNoiseV').textContent=noise.toFixed(2); $('pExtraV').textContent=extra;
+  const n=80; const rnd=seedRand(42);
+  const y=[], a=[];
+  for(let i=0;i<n;i++){
+    const yi=rnd()*2-1;
+    y.push(yi);
+    a.push(yi + (rnd()*2-1)*noise);
+  }
+  // fit y = w*a + b (least squares)
+  const mA=a.reduce((s,x)=>s+x,0)/n, mY=y.reduce((s,x)=>s+x,0)/n;
+  let num=0,den=0; for(let i=0;i<n;i++){num+=(a[i]-mA)*(y[i]-mY);den+=(a[i]-mA)**2;}
+  const w=num/den, b=mY-w*mA;
+  const pred=a.map(x=>w*x+b);
+  let ssRes=0,ssTot=0; for(let i=0;i<n;i++){ssRes+=(y[i]-pred[i])**2;ssTot+=(y[i]-mY)**2;}
+  // extra dimensions dilute encoding not decoding — but we simulate encoding penalty:
+  const decR2=Math.max(0,1-ssRes/ssTot);
+  // encoding R2: y explains a's variance; but with 'extra' noise dims added to a
+  const encR2 = decR2 / (1 + extra*0.1);
+  Plotly.react('probePlot',[
+    {x:a,y:y,mode:'markers',type:'scatter',name:'Daten',marker:{color:'#7cc4ff',size:8}},
+    {x:[-1.5,1.5],y:[-1.5*w+b,1.5*w+b],mode:'lines',name:'Probe-Fit',line:{color:'#ff9ac1',width:3}}
+  ],{
+    paper_bgcolor:'#0a1122',plot_bgcolor:'#0a1122',
+    font:{color:'#e8ecf5',size:12},
+    margin:{l:40,r:20,t:30,b:40},
+    xaxis:{title:'Aktivierung a',gridcolor:'#1a2540'},
+    yaxis:{title:'Ziel y',gridcolor:'#1a2540'}
+  },{displayModeBar:false,responsive:true});
+  $('probeR2Val').textContent = decR2.toFixed(3);
+  $('probeR2Note').innerHTML = `Dekodier-R² = <b style="color:var(--accent3)">${decR2.toFixed(3)}</b> · Enkodier-R² ≈ <b style="color:var(--accent2)">${encR2.toFixed(3)}</b>`;
+}
+$('pNoise').oninput=updateProbe; $('pExtra').oninput=updateProbe;
+updateProbe();
+
+// ============ CKA ============
+const ckaCan=$('ckaCanvas'), ckaCtx=ckaCan.getContext('2d');
+resizeCanvas(ckaCan);
+function updateCKA(){
+  const rot=+$('ckaRot').value*Math.PI/180, noise=+$('ckaNoise').value/100;
+  $('ckaRotV').textContent=$('ckaRot').value+'°'; $('ckaNoiseV').textContent=noise.toFixed(2);
+  const n=60; const rnd=seedRand(7);
+  const A=[], B=[];
+  for(let i=0;i<n;i++){
+    const x=(rnd()*2-1)*100, y=(rnd()*2-1)*60;
+    A.push([x,y]);
+    const rx=x*Math.cos(rot)-y*Math.sin(rot)+(rnd()*2-1)*noise*100;
+    const ry=x*Math.sin(rot)+y*Math.cos(rot)+(rnd()*2-1)*noise*100;
+    B.push([rx,ry]);
+  }
+  // draw
+  const c=ckaCan, ctx=ckaCtx;
+  const W=c.clientWidth, H=c.clientHeight||320;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  ctx.strokeStyle='#243049';
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  A.forEach(([x,y])=>{ctx.fillStyle='#7cc4ff';ctx.beginPath();ctx.arc(cx+x,cy-y,4,0,Math.PI*2);ctx.fill();});
+  B.forEach(([x,y])=>{ctx.fillStyle='#ff9ac1';ctx.beginPath();ctx.arc(cx+x,cy-y,4,0,Math.PI*2);ctx.fill();});
+  // compute linear CKA
+  function center(M){const d=M[0].length,n=M.length;const m=Array(d).fill(0);M.forEach(r=>r.forEach((v,j)=>m[j]+=v));m.forEach((_,j)=>m[j]/=n);return M.map(r=>r.map((v,j)=>v-m[j]));}
+  const Ac=center(A), Bc=center(B);
+  function frobSq(M1,M2){let s=0;const d1=M1[0].length,d2=M2[0].length;for(let i=0;i<d1;i++)for(let j=0;j<d2;j++){let x=0;for(let k=0;k<M1.length;k++)x+=M1[k][i]*M2[k][j];s+=x*x;}return s;}
+  const num=frobSq(Ac,Bc);
+  const dA=Math.sqrt(frobSq(Ac,Ac)), dB=Math.sqrt(frobSq(Bc,Bc));
+  const cka = num/(dA*dB);
+  $('ckaVal').textContent = cka.toFixed(3);
+}
+$('ckaRot').oninput=updateCKA; $('ckaNoise').oninput=updateCKA;
+updateCKA();
+
+// ============ Chapter 8: Pipeline ============
+// Approximate values reproducing paper Fig. 3A/B for dhead=64, Walker L
+const pipeData = {
+  z_decode: {// [x/t,y/t,logt] decoded from activations
+    hooks:['pre','post-attn','post-MLP','LN-final'],
+    L:[0.05, 0.98, 0.79, 0.72],
+    D:[0.05, 0.99, 0.69, 0.68],
+    O:[0.05, 0.86, 0.10, 0.15]
+  },
+  z_encode: {
+    hooks:['pre','post-attn','post-MLP','LN-final'],
+    L:[0.10, 0.96, 0.75, 0.68],
+    D:[0.10, 0.98, 0.65, 0.60],
+    O:[0.10, 0.84, 0.15, 0.20]
+  },
+  q_decode: {
+    hooks:['pre','post-attn','post-MLP','LN-final'],
+    L:[0.05, 0.55, 0.92, 1.00],
+    D:[0.05, 0.50, 0.88, 1.00],
+    O:[0.05, 0.40, 0.75, 0.98]
+  },  q_encode: {
+    hooks:['pre','post-attn','post-MLP','LN-final'],
+    L:[0.05, 0.50, 0.85, 0.99],
+    D:[0.05, 0.45, 0.80, 0.98],
+    O:[0.05, 0.35, 0.70, 0.95]
+  }
+};
+function updatePipe(){
+  const t=$('pipeTarget').value, d=$('pipeDir').value;
+  const key = t+'_'+d;
+  const data=pipeData[key];
+  const traces = ['L','D','O'].map((v,i)=>({
+    x:data.hooks, y:data[v], type:'bar', name:'Walker '+v,
+    marker:{color:['#7cc4ff','#ff9ac1','#ffd47a'][i]}
+  }));
+  Plotly.react('pipePlot',traces,{
+    paper_bgcolor:'#0a1122',plot_bgcolor:'#0a1122',
+    font:{color:'#e8ecf5'},
+    margin:{l:50,r:20,t:40,b:60},
+    barmode:'group',
+    yaxis:{title:'R²',range:[0,1.05],gridcolor:'#1a2540'},
+    xaxis:{title:'Layer-Hook',gridcolor:'#1a2540'},
+    title:{text:(d==='decode'?'Dekodier':'Enkodier')+'-R² für '+(t==='z'?'Welt-Zustand z_t':'Effektives Feld q_t'),font:{size:14,color:'#7cc4ff'}}
+  },{displayModeBar:false,responsive:true});
+}
+$('pipeTarget').onchange=updatePipe; $('pipeDir').onchange=updatePipe;
+updatePipe();
+
+// CKA Matrix (from paper Fig. 3D/E)
+const ckaMats = {
+  'post-attn': {
+    labels:['Walker L','Walker D','Walker O-1L','Walker O-2L'],
+    m:[[0.97,0.95,0.82,0.97],[0.95,0.93,0.72,0.92],[0.82,0.72,0.97,0.89],[0.97,0.92,0.89,0.97]]
+  },
+  'post-mlp': {
+    labels:['Walker L','Walker D','Walker O-1L','Walker O-2L'],
+    m:[[0.91,0.83,0.43,0.70],[0.83,0.89,0.43,0.65],[0.43,0.43,0.59,0.63],[0.70,0.65,0.63,0.91]]
+  }
+};
+function updateCkaMat(){
+  const h=$('ckaHook').value; const d=ckaMats[h];
+  Plotly.react('ckaMatrix',[{
+    z:d.m, x:d.labels, y:d.labels, type:'heatmap',
+    colorscale:[[0,'#0a1122'],[0.5,'#7cc4ff'],[1,'#ff9ac1']], zmin:0, zmax:1,
+    text:d.m.map(r=>r.map(v=>v.toFixed(2))), texttemplate:'%{text}',
+    textfont:{color:'#000',size:14}
+  }],{
+    paper_bgcolor:'#0a1122',plot_bgcolor:'#0a1122',
+    font:{color:'#e8ecf5'},
+    margin:{l:110,r:40,t:40,b:80},
+    title:{text:'Cross-Variant CKA · '+(h==='post-attn'?'nach Attention (universell!)':'nach MLP (spezialisiert!)'),font:{size:14,color:'#7cc4ff'}}
+  },{displayModeBar:false,responsive:true});
+}
+$('ckaHook').onchange=updateCkaMat;
+updateCkaMat();
+
+// ============ Chapter 9: RNN vs Transformer ============
+// Encoding R² values from paper (Fig. 11 + Fig. 3B)
+Plotly.newPlot('rnnPlot',[
+  {x:['Walker L','Walker D','Walker O'],y:[0.96,0.98,0.90],type:'bar',name:'Transformer (post-attn)',marker:{color:'#7cc4ff'}},
+  {x:['Walker L','Walker D','Walker O'],y:[0.91,0.43,0.13],type:'bar',name:'RNN (top hidden, q_t only)',marker:{color:'#ff9ac1'}},
+  {x:['Walker L','Walker D','Walker O'],y:[0.79,0.48,0.55],type:'bar',name:'RNN (top hidden, z_t)',marker:{color:'#ffd47a'}}
+],{
+  paper_bgcolor:'#0a1122',plot_bgcolor:'#0a1122',
+  font:{color:'#e8ecf5'},
+  margin:{l:50,r:20,t:40,b:60},
+  barmode:'group',
+  yaxis:{title:'Enkodier-R² (Ziel → Aktivierung)',range:[0,1.05],gridcolor:'#1a2540'},
+  xaxis:{gridcolor:'#1a2540'},
+  title:{text:'Wie stark spannt der Welt-Zustand die Aktivierungen?',font:{size:14,color:'#7cc4ff'}},
+  legend:{bgcolor:'#0a1122',bordercolor:'#243049',borderwidth:1}
+},{displayModeBar:false,responsive:true});
+
+// ============ Resize handling ============
+window.addEventListener('resize',()=>{
+  [wCanvas,bCanvas,qCanvas,atCanvas,atFlow,cpCanvas,ckaCan].forEach(c=>{
+    const r=c.getBoundingClientRect();
+    const oldH = c.height/devicePixelRatio;
+    c.width=r.width*devicePixelRatio;
+    c.height=oldH*devicePixelRatio;
+    c.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  });
+  drawWalker(); updateBayes(); updateQ(); drawAttn(); drawCompass(); updateCKA();
+});
+</script>
+</body>
+</html>
