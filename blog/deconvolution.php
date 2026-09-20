@@ -41,7 +41,7 @@ The two panels below are the same style-transfer result produced by \citeauthor{
 	</figure>
 	<figure style="margin:0; flex:1 1 300px; max-width:420px; background:var(--mn-surface, #f8fafc); padding:14px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);">
 		<img src="deconv_style_clean.png" style="width:100%; border-radius:6px;" alt="The same style transfer result, upsampled with resize and regular convolution, showing no checkerboard" />
-		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">Resize + regular convolution: the stripes and grid are gone. [Figures from the Distill article, CC BY 2.0](https://distill.pub/2016/deconv-checkerboard/)</figcaption>
+		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">Resize + regular convolution: the stripes and grid are gone. \cite[Figures from the Distill article, CC BY 2.0]{odena2016deconvolution}</figcaption>
 	</figure>
 </div>
 
@@ -59,7 +59,7 @@ Three consequences follow \cite{odena2016deconvolution}:
 
 <div style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img src="deconv_deepdream_jitter.png" style="width:100%; border-radius:6px;" alt="A DeepDream image rendered at full resolution with eight-by-eight random shifts (jitter), which cancels the deconvolution checkerboard artifacts" />
-	<div style="margin-top:8px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out. [Figure from the Distill article, CC BY 2.0](https://distill.pub/2016/deconv-checkerboard/)</div>
+	<div style="margin-top:8px; font-size:0.8rem; color:var(--mn-text-secondary, #64748b); text-align:center;">DeepDream, rendered with 8×8 random shifts per iteration: the deconvolution artifact is a periodic error, so randomized shifting cancels it out. \cite[Figure from the Distill article, CC BY 2.0]{odena2016deconvolution}</div>
 </div>
 
 <div class="md">
