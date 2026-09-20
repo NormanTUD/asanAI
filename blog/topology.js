@@ -230,7 +230,7 @@ function tpInit1d() {
 		if (!S.ctxR || !S.model) return;
 		const p = TOP.pal();
 		const xs = tf.tensor2d(S.pts.map((q) => [q.x]));
-		const h = S.model.layers[0].predict(xs).dataSync();
+		const h = S.model.layers[0].apply(xs).dataSync();
 		xs.dispose();
 		const Hn = d1Units();
 		const rep = S.pts.map((q, i) => (Hn >= 2 ? { x: h[i * Hn + 0], y: h[i * Hn + 1], cls: q.cls } : { x: q.x, y: h[i], cls: q.cls }));
@@ -318,7 +318,7 @@ function tpInitPlay() {
 		const i = pr[S.pair % pr.length][0], j = pr[S.pair % pr.length][1];
 		tpSet('tp-play-rep-label', 'neurons ' + i + ', ' + j);
 		const xs = tf.tensor2d(S.pts.map((q) => [q.x, q.y]));
-		const h = S.model.layers[0].predict(xs).dataSync();
+		const h = S.model.layers[0].apply(xs).dataSync();
 		xs.dispose();
 		const rep = S.pts.map((q, k) => ({ x: h[k * S.units + i], y: h[k * S.units + j], cls: q.cls }));
 		tpScatter(S.ctxR, S.cvR.width, S.cvR.height, rep, p);
