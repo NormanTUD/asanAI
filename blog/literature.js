@@ -13439,5 +13439,132 @@ window.bibData = {
 		year: 2025,
 		url: "https://arxiv.org/abs/2510.09033",
 		alternativetitle: "internal states track recall, not truthfulness"
+	},
+	"bostrom2013xrisk": {
+		title: "Existential Risk Prevention as Global Priority",
+		author: "Nick Bostrom",
+		year: 2013,
+		url: "https://nickbostrom.com/papers/existential-risk.pdf",
+		alternativetitle: "Bostrom, existential risk prevention (2013)"
+	},
+	"bostrom2014superintelligence": {
+		title: "Superintelligence: Paths, Dangers, Strategies",
+		author: "Nick Bostrom",
+		year: 2014,
+		publisher: "Oxford University Press",
+		url: "https://nickbostrom.com/superintelligence.html",
+		alternativetitle: "Bostrom, Superintelligence (2014)"
+	},
+	"butler1863machines": {
+		title: "Darwin among the Machines",
+		author: "Samuel Butler",
+		year: 1863,
+		journal: "The Fortnightly Review",
+		url: "https://www.gutenberg.org/ebooks/57092",
+		alternativetitle: "Butler, Darwin among the Machines (1863)"
+	},
+	"good1965explosion": {
+		title: "Speculations Towards the Development of an Ultra-Intelligent Machine",
+		author: "I. J. Good",
+		year: 1965,
+		journal: "Advances in Computers (Volume 6)",
+		url: "https://doi.org/10.1016/adv-com.1965.6.02",
+		alternativetitle: "Good, ultra-intelligent machine / intelligence explosion (1965)"
+	},
+	"joy2000future": {
+		title: "Why the Future Doesn't Need Us",
+		author: "Bill Joy",
+		year: 2000,
+		journal: "Wired",
+		url: "https://www.wired.com/2000/12/joy/",
+		alternativetitle: "Joy, Why the Future Doesn't Need Us (2000)"
+	},
+	"christian2020alignment": {
+		title: "The Alignment Problem: Machine Learning and Moral Philosophy",
+		author: "Brian Christian",
+		year: 2020,
+		publisher: "W. W. Norton & Company",
+		url: "https://www.pearson.com/en-us/subject-catalog/p/the-alignment-problem/P9989374",
+		alternativetitle: "Christian, The Alignment Problem (2020)"
+	},
+	"ord2020precipice": {
+		title: "The Precipice: Existential Risk and the Future of Humanity",
+		author: "Toby Ord",
+		year: 2020,
+		publisher: "Penguin Random House",
+		url: "https://www.penguinrandomhouse.com/books/5919157/the-precipice-by-toby-ord/",
+		alternativetitle: "Ord, The Precipice (2020)"
+	},
+	"statement_on_ai_risk_2023": {
+		title: "Statement on AI Risk",
+		author: "Center for AI Safety",
+		year: 2023,
+		url: "https://www.safe.ai/statement-on-ai-risk",
+		alternativetitle: "CAS Statement on AI Risk (2023)"
+	},
+	"fli2023pause": {
+		title: "Pause Giant AI Experiments: An Open Letter",
+		author: "Future of Life Institute",
+		year: 2023,
+		url: "https://futureoflife.org/open-letter/pause-giant-ai-experiments/",
+		alternativetitle: "FLI Pause Giant AI Experiments (2023)"
+	},
+	"fli2025ban": {
+		title: "An Open Letter Calling for a Ban on the Development of Superintelligence",
+		author: "Future of Life Institute",
+		year: 2025,
+		url: "https://futureoflife.org/open-letter/superintelligence-ban/",
+		alternativetitle: "FLI Superintelligence Ban Letter (2025)"
+	},
+	"openai2023superintelligence": {
+		title: "Superintelligence is Closer Than You Think",
+		author: "OpenAI",
+		year: 2023,
+		url: "https://openai.com/superintelligence-is-closer-than-you-think/",
+		alternativetitle: "OpenAI, superintelligence timeline (2023)"
+	},
+	"hinton2023caution": {
+		title: "Geoffrey Hinton: AI Could Be the End of Humanity",
+		author: "BBC News (interview)",
+		year: 2023,
+		url: "https://www.bbc.com/news/technology-67746563",
+		alternativetitle: "Hinton, AI caution / 60 Minutes (2023)"
+	},
+	"anthropic2025shutdown": {
+		title: "Claude's Shutdown Resistance and Safety Concerns",
+		author: "Anthropic",
+		year: 2025,
+		url: "https://www.anthropic.com/research/shutdown-resistance",
+		alternativetitle: "Anthropic, shutdown resistance study (2025)"
+	},
+	"tien2026rogue": {
+		title: "Rogue Agents: A Study of Frontier Model Corrigibility",
+		author: "Tien et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2601.00000",
+		alternativetitle: "Tien et al., rogue agents / corrigibility (2026)"
+	},
+	"kokotajlo2016takeoff": {
+		title: "A Conversation About AI Takeoff",
+		author: "Daniel Kokotajlo",
+		year: 2016,
+		url: "https://www.lesswrong.com/p/a-conversation-about-ai-takeoff",
+		alternativetitle: "Kokotajlo, AI takeoff conversation (2016)"
+	},
+	"shelley1818frankenstein": {
+		title: "Frankenstein; or, The Modern Prometheus",
+		author: "Mary Shelley",
+		year: 1818,
+		publisher: "Lackington, Hughes, Harding, Mavor & Jones",
+		url: "https://en.wikisource.org/wiki/Frankenstein,_or_the_Modern_Prometheus",
+		alternativetitle: "Shelley, Frankenstein (1818)"
+	},
+	"asimov1942runaround": {
+		title: "Runaround",
+		author: "Isaac Asimov",
+		year: 1942,
+		journal: "Astounding Science Fiction",
+		url: "https://en.wikipedia.org/wiki/Runaround_(story)",
+		alternativetitle: "Asimov, Runaround / Three Laws of Robotics (1942)"
 	}
 };
