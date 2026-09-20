@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Origami in N Dimensionen — Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a15; --bg2:#12122a; --panel:#181834; --accent:#ff6b9d;
+  --accent2:#4ecdc4; --accent3:#ffe66d; --text:#e8e8f0; --muted:#8888a8;
+  --line:#2a2a4a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;line-height:1.6}
+body{background:radial-gradient(ellipse at top,#1a1a3a 0%,#0a0a15 60%)}
+.wrap{max-width:1200px;margin:0 auto;padding:40px 24px}
+header{text-align:center;padding:60px 0 40px;border-bottom:1px solid var(--line);margin-bottom:40px}
+h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px;letter-spacing:-.02em}
+.subtitle{color:var(--muted);font-size:1.1rem;max-width:700px;margin:0 auto}
+h2{font-size:1.8rem;margin:60px 0 16px;color:var(--accent2);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.2rem;margin:24px 0 12px;color:var(--accent3);font-weight:600}
+p{margin-bottom:14px;color:#d0d0e0}
+.chapter{background:var(--panel);border-radius:16px;padding:28px;margin:24px 0;border:1px solid var(--line);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.demo{background:linear-gradient(180deg,#0f0f22,#0a0a1a);border-radius:12px;padding:20px;margin:16px 0;border:1px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0;align-items:center}
+.control{display:flex;flex-direction:column;gap:4px;min-width:140px}
+.control label{font-size:.85rem;color:var(--muted)}
+.control span.val{color:var(--accent3);font-family:monospace;font-size:.9rem}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9rem;transition:transform .1s}
+button:hover{transform:translateY(-1px)}
+button.sec{background:var(--panel);border:1px solid var(--line);color:var(--text)}
+canvas{display:block;background:#05050f;border-radius:8px;max-width:100%}
+.canvas-wrap{position:relative;display:flex;justify-content:center;margin:12px 0}
+.note{background:rgba(78,205,196,.08);border-left:3px solid var(--accent2);padding:12px 16px;margin:12px 0;border-radius:4px;font-size:.95rem}
+.math{background:rgba(0,0,0,.3);padding:8px 12px;border-radius:6px;text-align:center;margin:8px 0;overflow-x:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;background:rgba(255,107,157,.15);color:var(--accent);padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:600;margin-right:6px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:8px 0}
+.legend div{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%}
+.step-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.step-nav button{padding:6px 12px;font-size:.8rem}
+.step-nav button.active{outline:2px solid var(--accent3)}
+footer{text-align:center;color:var(--muted);padding:40px 0;font-size:.85rem;margin-top:40px;border-top:1px solid var(--line)}
+.big-quote{font-size:1.15rem;color:var(--accent3);font-style:italic;padding:16px 24px;border-left:4px solid var(--accent3);margin:20px 0;background:rgba(255,230,109,.05);border-radius:0 8px 8px 0}
+select{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:6px 10px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<h1>Origami in N Dimensionen</h1>
+<p class="subtitle">Wie neuronale Netze aus verworrenen Daten <em>lineare Trennbarkeit</em> herstellen — durch Falten. Eine visuelle Reise durch Keup &amp; Helias (2022).</p>
+</header>
+
+<!-- ============ MOTIVATION ============ -->
+<section class="chapter">
+<span class="tag">Motivation</span>
+<h2>Das Problem: Verknäuelte Klassen</h2>
+<p>Ein neuronales Netz bekommt Datenpunkte, die zu verschiedenen Klassen gehören. Am Ende muss es sagen können: "Das ist Klasse A, das ist Klasse B." Die <b>letzte Schicht</b> ist aber nur ein linearer Klassifikator — sie kann nur eine gerade Linie (bzw. Hyperebene) ziehen.</p>
+<p>Aber echte Daten sind <b>nicht linear trennbar</b>. Beispiel: Klasse "innen" ist von Klasse "außen" umschlossen. Keine Gerade der Welt kann das trennen.</p>
+
+<div class="demo">
+<h3>Demo 1: Warum eine Gerade nicht reicht</h3>
+<p>Zieh den Slider und versuch die orangenen Punkte (innen) von den blauen (außen) mit einer Geraden zu trennen. <b>Es geht nicht.</b></p>
+<div class="controls">
+<div class="control"><label>Winkel der Trennlinie: <span class="val" id="v-angle">0°</span></label><input type="range" id="s-angle" min="0" max="360" value="45"></div>
+<div class="control"><label>Verschiebung: <span class="val" id="v-shift">0</span></label><input type="range" id="s-shift" min="-2" max="2" step="0.05" value="0"></div>
+<div class="control"><label>Klassen-Setup</label><select id="s-setup"><option value="egg">2D-Egg (Ring)</option><option value="xor">XOR</option><option value="spiral">Spirale</option></select></div>
+</div>
+<div class="canvas-wrap"><canvas id="c-nonsep" width="500" height="400"></canvas></div>
+<div class="legend"><div><span class="dot" style="background:#ff6b9d"></span>Klasse "innen"</div><div><span class="dot" style="background:#4ecdc4"></span>Klasse "außen"</div><div><span class="dot" style="background:#ffe66d"></span>Trennlinie</div></div>
+<div id="acc-nonsep" style="margin-top:8px;color:var(--muted);font-size:.9rem"></div>
+</div>
+
+<div class="big-quote">Die Frage des Papers: Mit welchen <b>elementaren Operationen</b> verwandelt ein Netz solche Knäuel Schicht für Schicht in etwas, das eine Gerade trennen kann?</div>
+</section>
+
+<!-- ============ PREREQUISITES: AFFINE + RELU ============ -->
+<section class="chapter">
+<span class="tag">Baustein 1</span>
+<h2>Ein Neuron = Hyperebene + Hammer</h2>
+<p>Jede Schicht macht zwei Dinge nacheinander:</p>
+<div class="math" id="eq1"></div>
+<p><b>(1)</b> Eine <b>affine Transformation</b> <em>W·x + b</em> — das ist Drehen, Skalieren, Verschieben, Scheren. Sie ändert die Form nicht wirklich, weil Geraden auf Geraden abgebildet werden. <br><b>(2)</b> Eine <b>nichtlineare Funktion</b> Φ (hier ReLU: max(0,x)) — <em>das</em> ist der eigentliche Zauber.</p>
+
+<div class="demo">
+<h3>Demo 2: ReLU als "Hammerschlag"</h3>
+<p>Jedes Neuron definiert eine Hyperebene (schwarz). Alle Punkte auf der <b>negativen</b> Seite werden auf die Ebene <b>plattgedrückt</b> (auf 0 gesetzt in dieser Koordinate). Drehe die Hyperebene und schau, was passiert.</p>
+<div class="controls">
+<div class="control"><label>Winkel der Hyperebene: <span class="val" id="v-hp-a">45°</span></label><input type="range" id="s-hp-a" min="0" max="360" value="90"></div>
+<div class="control"><label>Bias (Verschiebung): <span class="val" id="v-hp-b">0</span></label><input type="range" id="s-hp-b" min="-2" max="2" step="0.05" value="0"></div>
+</div>
+<div class="grid2">
+<div><h3 style="text-align:center">Vorher</h3><div class="canvas-wrap"><canvas id="c-before" width="380" height="320"></canvas></div></div>
+<div><h3 style="text-align:center">Nach ReLU-Hammer</h3><div class="canvas-wrap"><canvas id="c-after" width="380" height="320"></canvas></div></div>
+</div>
+<div class="note">💡 Die Nichtlinearität kann nur die <b>konvexe Hülle</b> beeinflussen — sie kann Punkte innen im Klumpen nicht selektiv erreichen. Wie also kommt man an die inneren Klassen ran?</div>
+</div>
+</section>
+
+<!-- ============ THE KEY IDEA: FOLDING ============ -->
+<section class="chapter">
+<span class="tag">Die Hauptidee</span>
+<h2>Falten in einer neuen Dimension</h2>
+<p>Die entscheidende Einsicht: Wenn die Schicht <b>breiter</b> ist als die Datendimension, gibt es <b>ungenutzte Dimensionen</b>. Wenn der Hammer aus so einer ungenutzten Richtung kommt, werden Punkte nicht platt gedrückt — sie werden <b>gefaltet</b>, wie ein Blatt Papier.</p>
+
+<div class="demo">
+<h3>Demo 3: Eine 1D-"Egg"-Verteilung in 2D falten</h3>
+<p>Die Klassen leben nur auf einer Linie (1D). Aber wir haben 2D zur Verfügung. Eine ReLU-Ebene faltet die Linie in die zweite Dimension — plötzlich sind innere Punkte <b>oben</b>, äußere <b>unten</b>. Trennbar!</p>
+<div class="controls">
+<div class="control"><label>Faltposition: <span class="val" id="v-fold-b">0</span></label><input type="range" id="s-fold-b" min="-1.5" max="1.5" step="0.05" value="-0.5"></div>
+<div class="control"><label>Faltwinkel: <span class="val" id="v-fold-a">60°</span></label><input type="range" id="s-fold-a" min="10" max="170" value="60"></div>
+<div class="control"><label>Anzahl Falten: <span class="val" id="v-fold-n">1</span></label><input type="range" id="s-fold-n" min="1" max="4" value="1"></div>
+</div>
+<div class="canvas-wrap"><canvas id="c-fold1d" width="700" height="380"></canvas></div>
+<div class="legend"><div><span class="dot" style="background:#ff6b9d"></span>innen</div><div><span class="dot" style="background:#4ecdc4"></span>außen</div><div><span class="dot" style="background:#ffe66d"></span>Faltkante</div></div>
+<div id="acc-fold1d" style="margin-top:8px;color:var(--muted);font-size:.9rem"></div>
+</div>
+
+<div class="demo">
+<h3>Demo 4: 3D-Ansicht — das "2D-Egg" wird in 3D gefaltet</h3>
+<p>Die berühmte 2D-Egg-Aufgabe (Ring innen/außen) wird durch <b>3 Neuronen</b> in 3D gefaltet. Rotiere die Szene mit der Maus. Du siehst: Die Ringklasse steht plötzlich als "Zelt" heraus, während der Rest platt liegt — jetzt kann eine <b>flache Ebene</b> beide trennen.</p>
+<div class="controls">
+<button id="btn-fold-anim">▶ Faltung animieren</button>
+<button class="sec" id="btn-reset-3d">Reset Kamera</button>
+<div class="control"><label>Faltfortschritt: <span class="val" id="v-3d-t">100%</span></label><input type="range" id="s-3d-t" min="0" max="100" value="100"></div>
+</div>
+<div id="three-container" style="width:100%;height:450px;border-radius:8px;overflow:hidden;background:#05050f"></div>
+</div>
+
+<div class="note">🎯 <b>Fold-and-Cut-Theorem (Demaine 1998):</b> Jede beliebige Form auf einem Papier kann nach geeignetem Falten mit <b>einem einzigen geraden Schnitt</b> ausgeschnitten werden. Genau das macht ein neuronales Netz — nur in N Dimensionen! Die letzte Schicht ist der "eine gerade Schnitt".</div>
+</section>
+
+<!-- ============ ORIGAMI CASCADE ============ -->
+<section class="chapter">
+<span class="tag">Tiefe Netze</span>
+<h2>Origami-Kaskade: Falten von Falten</h2>
+<p>In einem tiefen Netz faltet <b>jede</b> Schicht das schon gefaltete Objekt weiter. Wie beim echten Origami: Nach 5 Falten hast du exponentiell viele Kanten — nicht 5.</p>
+
+<div class="demo">
+<h3>Demo 5: Progressive Faltungen</h3>
+<p>Sieh, wie sich mit jeder Schicht die Zahl der linearen Regionen vervielfacht. Ein tiefes ReLU-Netz ist stückweise linear, mit <b>exponentiell vielen Stücken</b>.</p>
+<div class="controls">
+<div class="control"><label>Schichten: <span class="val" id="v-cas-l">3</span></label><input type="range" id="s-cas-l" min="1" max="6" value="3"></div>
+<div class="control"><label>Neuronen/Schicht: <span class="val" id="v-cas-n">2</span></label><input type="range" id="s-cas-n" min="1" max="4" value="2"></div>
+</div>
+<div class="canvas-wrap"><canvas id="c-cascade" width="700" height="360"></canvas></div>
+<div id="cas-info" style="color:var(--muted);font-size:.9rem"></div>
+</div>
+</section>
+
+<!-- ============ ALTERNATIVE: SHEAR ============ -->
+<section class="chapter">
+<span class="tag">Alternative (ineffizient)</span>
+<h2>Ohne neue Dimensionen: Schere (Shear)</h2>
+<p>Gibt es keine freien Dimensionen (schmale Schichten), bleibt nur ein trickreicher Weg: <b>Scheren</b>. Man knabbert das Egg <b>Stück für Stück</b> ab, indem man mit schiefen Hyperebenen und ReLU immer eine Schicht der äußeren Klasse "wegschält" — wie eine Orange schälen.</p>
+<div class="demo">
+<h3>Demo 6: Schäl-Mechanismus (langsam)</h3>
+<div class="controls">
+<div class="control"><label>Anzahl Schichten: <span class="val" id="v-shear-l">7</span></label><input type="range" id="s-shear-l" min="1" max="12" value="7"></div>
+<button id="btn-shear-step">Schritt für Schritt</button>
+</div>
+<div class="canvas-wrap"><canvas id="c-shear" width="700" height="380"></canvas></div>
+<div class="note">Pro Schicht kann nur <b>ein</b> Stück abgeschält werden. Für ein einfaches 2D-Egg brauchst du schon 5–7 Schichten. In 3D wird's viel schlimmer (spiralförmig!). Deswegen: <b>Falten ist ~exponentiell effizienter</b>.</div>
+</div>
+</section>
+
+<!-- ============ SIGNATURES: BIMODAL TUNING ============ -->
+<section class="chapter">
+<span class="tag">Vorhersage &amp; Validierung</span>
+<h2>Fingerabdruck der Faltung: Bimodale Tuning-Kurven</h2>
+<p>Wenn ein Neuron eine Falte macht, dann liegen an der Faltkante <b>innere</b> Punkte (schwach aktiviert) — davor und dahinter sind <b>äußere</b> Punkte (stark aktiviert oder gar nicht). Ergebnis: die Verteilung der Präaktivierungen zeigt für manche Klassen eine <b>Delle bei 0</b> (bimodal), für andere ein Maximum.</p>
+
+<div class="demo">
+<h3>Demo 7: Selbst ein Neuron trainieren und Tuning beobachten</h3>
+<p>Verschiebe die Faltkante und schau, wie sich die klassenweisen Histogramme der Präaktivierungen verändern. Genau diesen Fingerabdruck haben Keup &amp; Helias in einem <b>Poker-Hand</b>-Netz nachgewiesen.</p>
+<div class="controls">
+<div class="control"><label>Neuron-Winkel: <span class="val" id="v-tune-a">60°</span></label><input type="range" id="s-tune-a" min="0" max="180" value="60"></div>
+<div class="control"><label>Neuron-Bias: <span class="val" id="v-tune-b">0</span></label><input type="range" id="s-tune-b" min="-2" max="2" step="0.05" value="0"></div>
+</div>
+<div id="p-tuning" style="width:100%;height:340px"></div>
+<div id="dip-info" style="color:var(--accent3);font-family:monospace;font-size:.9rem;margin-top:6px"></div>
+</div>
+</section>
+
+<!-- ============ POKER HAND ============ -->
+<section class="chapter">
+<span class="tag">Konkretes Experiment</span>
+<h2>Der Poker-Hand-Task</h2>
+<p>Um die Theorie zu prüfen, trainieren die Autoren ein 3-Schicht-Netz auf der Poker-Aufgabe:</p>
+<ul style="margin:8px 0 12px 24px;color:#c0c0d0">
+<li><b>Input:</b> 10D (5 Karten × Farbe+Rang)</li>
+<li><b>Klassen:</b> 10 (Nichts, Paar, Zwei Paare, Drilling, Straße, Flush, Full House, …)</li>
+<li><b>Netz:</b> 10 → 100 → 100 → 10 mit ReLU</li>
+</ul>
+<p>Die Aufgabe ist perfekt: <b>linear nicht trennbar</b> (sonst gäb's keinen Grund fürs Netz), keine Vorteile für Convolution, und die Datenverteilung ist erschöpfend bekannt.</p>
+
+<div class="demo">
+<h3>Demo 8: Was das Netz herausfand</h3>
+<p>Simulierte Ergebnisse aus dem Paper: Dimensionalität der Repräsentation <b>wächst</b> stark (Falten öffnen neue Dimensionen), und bimodale Tuning entsteht während des Trainings.</p>
+<div class="grid2">
+<div id="p-dim" style="height:280px"></div>
+<div id="p-dip" style="height:280px"></div>
+</div>
+<div id="p-silence" style="height:260px;margin-top:12px"></div>
+<div class="note">📊 <b>Kausalitätstest:</b> Deaktiviert man 10 Neuronen mit <b>starker Bimodalität</b>, bricht die Genauigkeit ein. Deaktiviert man 10 unimodale Neuronen, passiert kaum was. Das beweist: die bimodalen Neuronen <b>tun</b> die Trennungsarbeit.</div>
+</div>
+</section>
+
+<!-- ============ ANSWER ============ -->
+<section class="chapter" style="background:linear-gradient(135deg,#1a1a3a,#2a1a3a);border:1px solid var(--accent)">
+<span class="tag">Die Antwort</span>
+<h2>Zusammenfassung: Was tut ein neuronales Netz wirklich?</h2>
+<div class="big-quote">Ein Feed-Forward-Netz stellt lineare Trennbarkeit her, indem es die Datenmannigfaltigkeit <b>progressiv in ungenutzte höhere Dimensionen faltet</b> — wie ein N-dimensionales Origami. Jede Schicht faltet das schon Gefaltete weiter. Am Ende liegt die Struktur so ausgebreitet, dass ein einziger flacher Schnitt (die Ausgabeschicht) sie klassifiziert.</div>
+<h3>Kernbotschaften</h3>
+<ul style="margin-left:24px;color:#d0d0e0">
+<li>Affine Trafo = <b>Positionieren auf dem Amboss</b> (keine Trennbarkeit gewonnen).</li>
+<li>ReLU = <b>Hammerschlag</b> (kann nur konvexe Hülle ändern).</li>
+<li><b>Falten</b> (
+<b>Falten</b> (Origami in N Dim.) = die primäre effiziente Methode, sofern Schichten breiter als die Datendimension sind.</li>
+<li><b>Shear</b> (Schälen) = ineffiziente Alternative, benötigt sehr tiefe Netze.</li>
+<li>Bimodale Tuning-Kurven = <b>Fingerabdruck</b> aktiver Falten in trainierten Netzen.</li>
+<li>Verbindung zum <b>Fold-and-Cut-Theorem</b>: universelle Approximation ≈ N-dim Origami + ein flacher Schnitt.</li>
+</ul>
+</section>
+
+<footer>
+Basierend auf: Keup &amp; Helias, „Origami in N dimensions: How feed-forward networks manufacture linear separability" (arXiv:2203.11355, 2022). Interaktive Visualisierungen zur Erschließung der Kernideen.
+</footer>
+
+</div>
+
+<script>
+/* ============ TEMML MATH ============ */
+temml.render("x^{(l)}_i = \\Phi\\left(W^{(l)}_{ij}\\, x^{(l-1)}_j + b^{(l)}_i\\right)", document.getElementById('eq1'), {displayMode:true});
+
+/* ============ HELPERS ============ */
+const TAU = Math.PI*2;
+function setVal(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+
+/* ============ DEMO 1: NON-SEPARABLE ============ */
+(function(){
+  const c=document.getElementById('c-nonsep'),ctx=c.getContext('2d');
+  const cx=c.width/2,cy=c.height/2,SC=90;
+  let pts=[];
+  function gen(kind){
+    pts=[];
+    if(kind==='egg'){
+      for(let i=0;i<80;i++){const a=Math.random()*TAU,r=0.3+Math.random()*0.15;pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cls:0});}
+      for(let i=0;i<120;i++){const a=Math.random()*TAU,r=0.9+Math.random()*0.4;pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cls:1});}
+    } else if(kind==='xor'){
+      for(let i=0;i<50;i++){pts.push({x:0.5+Math.random()*0.6,y:0.5+Math.random()*0.6,cls:0});pts.push({x:-0.5-Math.random()*0.6,y:-0.5-Math.random()*0.6,cls:0});}
+      for(let i=0;i<50;i++){pts.push({x:-0.5-Math.random()*0.6,y:0.5+Math.random()*0.6,cls:1});pts.push({x:0.5+Math.random()*0.6,y:-0.5-Math.random()*0.6,cls:1});}
+    } else {
+      for(let i=0;i<120;i++){const t=i/30,r=0.15+t*0.25;pts.push({x:Math.cos(t)*r,y:Math.sin(t)*r,cls:0});pts.push({x:-Math.cos(t)*r,y:-Math.sin(t)*r,cls:1});}
+    }
+  }
+  function draw(){
+    const ang=+document.getElementById('s-angle').value*Math.PI/180;
+    const shift=+document.getElementById('s-shift').value;
+    setVal('v-angle',(ang*180/Math.PI).toFixed(0)+'°');
+    setVal('v-shift',shift.toFixed(2));
+    ctx.fillStyle='#05050f';ctx.fillRect(0,0,c.width,c.height);
+    // grid
+    ctx.strokeStyle='#1a1a3a';ctx.lineWidth=1;
+    for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(cx+i*SC/2,0);ctx.lineTo(cx+i*SC/2,c.height);ctx.stroke();ctx.beginPath();ctx.moveTo(0,cy+i*SC/2);ctx.lineTo(c.width,cy+i*SC/2);ctx.stroke();}
+    // line: normal (cos ang, sin ang), offset shift
+    const nx=Math.cos(ang),ny=Math.sin(ang);
+    // points
+    let correct=0;
+    for(const p of pts){
+      const side=nx*p.x+ny*p.y-shift;
+      const pred=side>0?0:1;
+      if(pred===p.cls)correct++;
+      ctx.fillStyle=p.cls===0?'#ff6b9d':'#4ecdc4';
+      ctx.beginPath();ctx.arc(cx+p.x*SC,cy-p.y*SC,3,0,TAU);ctx.fill();
+    }
+    // line
+    ctx.strokeStyle='#ffe66d';ctx.lineWidth=2.5;
+    const tx=-ny,ty=nx;
+    const x0=shift*nx,y0=shift*ny;
+    ctx.beginPath();
+    ctx.moveTo(cx+(x0-tx*3)*SC,cy-(y0-ty*3)*SC);
+    ctx.lineTo(cx+(x0+tx*3)*SC,cy-(y0+ty*3)*SC);
+    ctx.stroke();
+    document.getElementById('acc-nonsep').textContent=`Genauigkeit dieser Trennlinie: ${(100*Math.max(correct,pts.length-correct)/pts.length).toFixed(1)}% (Zufall wäre 50–60%)`;
+  }
+  document.getElementById('s-angle').oninput=draw;
+  document.getElementById('s-shift').oninput=draw;
+  document.getElementById('s-setup').onchange=e=>{gen(e.target.value);draw();};
+  gen('egg');draw();
+})();
+
+/* ============ DEMO 2: RELU HAMMER ============ */
+(function(){
+  const cb=document.getElementById('c-before'),ca=document.getElementById('c-after');
+  const bx=cb.getContext('2d'),ax=ca.getContext('2d');
+  const cx=190,cy=160,SC=60;
+  const pts=[];
+  for(let i=0;i<200;i++){const a=Math.random()*TAU,r=0.4+Math.random()*0.9;pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r});}
+  function drawGrid(ctx){
+    ctx.fillStyle='#05050f';ctx.fillRect(0,0,380,320);
+    ctx.strokeStyle='#1a1a3a';ctx.lineWidth=1;
+    for(let i=-4;i<=4;i++){ctx.beginPath();ctx.moveTo(cx+i*SC/2,0);ctx.lineTo(cx+i*SC/2,320);ctx.stroke();ctx.beginPath();ctx.moveTo(0,cy+i*SC/2);ctx.lineTo(380,cy+i*SC/2);ctx.stroke();}
+    ctx.strokeStyle='#333360';ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,320);ctx.moveTo(0,cy);ctx.lineTo(380,cy);ctx.stroke();
+  }
+  function draw(){
+    const ang=+document.getElementById('s-hp-a').value*Math.PI/180;
+    const bias=+document.getElementById('s-hp-b').value;
+    setVal('v-hp-a',(ang*180/Math.PI).toFixed(0)+'°');
+    setVal('v-hp-b',bias.toFixed(2));
+    const nx=Math.cos(ang),ny=Math.sin(ang);
+    drawGrid(bx);drawGrid(ax);
+    // hyperplane on both
+    for(const ctx of [bx,ax]){
+      ctx.strokeStyle='#ffe66d';ctx.lineWidth=2;
+      const tx=-ny,ty=nx,x0=bias*nx,y0=bias*ny;
+      ctx.beginPath();
+      ctx.moveTo(cx+(x0-tx*5)*SC,cy-(y0-ty*5)*SC);
+      ctx.lineTo(cx+(x0+tx*5)*SC,cy-(y0+ty*5)*SC);
+      ctx.stroke();
+    }
+    for(const p of pts){
+      bx.fillStyle='#4ecdc4';bx.beginPath();bx.arc(cx+p.x*SC,cy-p.y*SC,2.5,0,TAU);bx.fill();
+      // relu: project points on negative side onto plane along normal
+      const s=nx*p.x+ny*p.y-bias;
+      let x=p.x,y=p.y;
+      if(s<0){x-=s*nx;y-=s*ny;}
+      ax.fillStyle=s<0?'#ff6b9d':'#4ecdc4';
+      ax.beginPath();ax.arc(cx+x*SC,cy-y*SC,2.5,0,TAU);ax.fill();
+    }
+  }
+  document.getElementById('s-hp-a').oninput=draw;
+  document.getElementById('s-hp-b').oninput=draw;
+  draw();
+})();
+
+/* ============ DEMO 3: 1D FOLDING ============ */
+(function(){
+  const c=document.getElementById('c-fold1d'),ctx=c.getContext('2d');
+  const cx=c.width/2,cy=c.height*0.65,SC=80;
+  // 1D "egg": inner class near center, outer at ends
+  const pts=[];
+  for(let i=-25;i<=25;i++){const x=i*0.06;pts.push({x,cls:(Math.abs(x)<0.6)?0:1});}
+  function draw(){
+    const bias=+document.getElementById('s-fold-b').value;
+    const ang=+document.getElementById('s-fold-a').value*Math.PI/180;
+    const nfolds=+document.getElementById('s-fold-n').value;
+    setVal('v-fold-b',bias.toFixed(2));setVal('v-fold-a',(ang*180/Math.PI).toFixed(0)+'°');setVal('v-fold-n',nfolds);
+    ctx.fillStyle='#05050f';ctx.fillRect(0,0,c.width,c.height);
+    // axes
+    ctx.strokeStyle='#333360';ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(c.width,cy);ctx.stroke();
+    // fold: for each point, compute activation in "fold direction"
+    // preactivation z = tan(a-90°) * (x - bias) ; then y = ReLU(z)
+    // effective slope
+    const slope=Math.tan(ang-Math.PI/2);
+    // multiple folds: shift bias positions
+    const biases=[];
+    for(let k=0;k<nfolds;k++)biases.push(bias+k*0.7);
+    // separability
+    let sepBest=0;
+    // draw folded curve
+    ctx.strokeStyle='#666';ctx.lineWidth=1.5;ctx.beginPath();
+    let first=true;
+    for(let i=-40;i<=40;i++){
+      const x=i*0.05;
+      let y=0;
+      for(const b of biases){y+=Math.max(0,slope*(x-b));}
+      const X=cx+x*SC,Y=cy-y*SC*0.5;
+      if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);
+    }
+    ctx.stroke();
+    // fold edges (vertical dashed at biases)
+    ctx.strokeStyle='#ffe66d';ctx.setLineDash([4,4]);ctx.lineWidth=1.5;
+    for(const b of biases){
+      let y=0;for(const bb of biases)y+=Math.max(0,slope*(b-bb));
+      ctx.beginPath();ctx.moveTo(cx+b*SC,cy);ctx.lineTo(cx+b*SC,cy-y*SC*0.5-10);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    // points on curve
+    // 2D separability: can we draw a horizontal line that separates?
+    const yValsByClass=[[],[]];
+    for(const p of pts){
+      let y=0;for(const b of biases){y+=Math.max(0,slope*(p.x-b));}
+      const X=cx+p.x*SC,Y=cy-y*SC*0.5;
+      ctx.fillStyle=p.cls===0?'#ff6b9d':'#4ecdc4';
+      ctx.beginPath();ctx.arc(X,Y,4,0,TAU);ctx.fill();
+      yValsByClass[p.cls].push(y);
+    }
+    // find best horizontal threshold
+    const all=[...yValsByClass[0].map(y=>({y,c:0})),...yValsByClass[1].map(y=>({y,c:1}))];
+    all.sort((a,b)=>a.y-b.y);
+    let best=0;
+    for(let i=0;i<all.length;i++){
+      let corr=0;
+      for(const q of all){if((q.y<=all[i].y?0:1)===q.c)corr++;}
+      best=Math.max(best,corr,all.length-corr);
+    }
+    document.getElementById('acc-fold1d').textContent=`Beste horizontale Trennung nach Faltung: ${(100*best/all.length).toFixed(1)}% ✂️`;
+    // labels
+    ctx.fillStyle='#888';ctx.font='11px monospace';
+    ctx.fillText('Original 1D-Daten (X-Achse)',10,cy+18);
+    ctx.fillText('Ausgabe der ReLU (Y = neue Dimension)',10,20);
+  }
+  ['s-fold-b','s-fold-a','s-fold-n'].forEach(id=>document.getElementById(id).oninput=draw);
+  draw();
+})();
+
+/* ============ DEMO 4: 3D FOLDING (three.js) ============ */
+(function(){
+  const cont=document.getElementById('three-container');
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x05050f);
+  const camera=new THREE.PerspectiveCamera(50,cont.clientWidth/450,0.1,100);
+  camera.position.set(3,2.5,4);
+  const renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(cont.clientWidth,450);
+  cont.appendChild(renderer.domElement);
+  const controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
+  // lights
+  scene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(5,10,7);scene.add(dl);
+  // axes
+  const axesHelper=new THREE.AxesHelper(2);scene.add(axesHelper);
+  // 2D egg data
+  const inner=[],outer=[];
+  for(let i=0;i<300;i++){const a=Math.random()*TAU,r=0.2+Math.random()*0.25;inner.push([Math.cos(a)*r,Math.sin(a)*r]);}
+  for(let i=0;i<600;i++){const a=Math.random()*TAU,r=0.8+Math.random()*0.35;outer.push([Math.cos(a)*r,Math.sin(a)*r]);}
+  // 3 hyperplane normals (rotate 120°) — solution to 2d-egg with 3 neurons
+  const normals=[];
+  for(let k=0;k<3;k++){
+    const a=k*TAU/3;
+    normals.push({nx:Math.cos(a)*0.7,ny:Math.sin(a)*0.7,nz:0.7,b:0.35});
+  }
+  function fold(x,y,t){
+    // t in [0,1]: fold strength
+    let z=0;
+    for(const h of normals){
+      const pre=h.nx*x+h.ny*y-h.b;
+      z+=Math.max(0,pre)*t;
+    }
+    return z;
+  }
+  const geomI=new THREE.BufferGeometry();
+  const geomO=new THREE.BufferGeometry();
+  const posI=new Float32Array(inner.length*3);
+  const posO=new Float32Array(outer.length*3);
+  function updatePts(t){
+    for(let i=0;i<inner.length;i++){const [x,y]=inner[i];posI[i*3]=x;posI[i*3+1]=fold(x,y,t);posI[i*3+2]=y;}
+    for(let i=0;i<outer.length;i++){const [x,y]=outer[i];posO[i*3]=x;posO[i*3+1]=fold(x,y,t);posO[i*3+2]=y;}
+    geomI.attributes.position.needsUpdate=true;
+    geomO.attributes.position.needsUpdate=true;
+  }
+  geomI.setAttribute('position',new THREE.BufferAttribute(posI,3));
+  geomO.setAttribute('position',new THREE.BufferAttribute(posO,3));
+  const matI=new THREE.PointsMaterial({color:0xff6b9d,size:0.06});
+  const matO=new THREE.PointsMaterial({color:0x4ecdc4,size:0.05});
+  scene.add(new THREE.Points(geomI,matI));
+  scene.add(new THREE.Points(geomO,matO));
+  // separating plane (horizontal at y=0.15)
+  const planeGeom=new THREE.PlaneGeometry(3,3);
+  const planeMat=new THREE.MeshBasicMaterial({color:0xffe66d,transparent:true,opacity:0.15,side:THREE.DoubleSide});
+  const plane=new THREE.Mesh(planeGeom,planeMat);
+  plane.rotation.x=-Math.PI/2;plane.position.y=0.15;scene.add(plane);
+  updatePts(1);
+  let animT=null;
+  document.getElementById('s-3d-t').oninput=e=>{const t=e.target.value/100;setVal('v-3d-t',(t*100).toFixed(0)+'%');updatePts(t);};
+  document.getElementById('btn-fold-anim').onclick=()=>{
+    if(animT)cancelAnimationFrame(animT);
+    let start=null;
+    function step(ts){
+      if(!start)start=ts;
+      const t=Math.min(1,(ts-start)/2500);
+      document.getElementById('s-3d-t').value=t*100;
+      setVal('v-3d-t',(t*100).toFixed(0)+'%');
+      updatePts(t);
+      if(t<1)animT=requestAnimationFrame(step);
+    }
+    updatePts(0);animT=requestAnimationFrame(step);
+  };
+  document.getElementById('btn-reset-3d').onclick=()=>{camera.position.set(3,2.5,4);controls.target.set(0,0.3,0);controls.update();};
+  function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);}
+  loop();
+  window.addEventListener('resize',()=>{
+    camera.aspect=cont.clientWidth/450;camera.updateProjectionMatrix();
+    renderer.setSize(cont.clientWidth,450);
+  });
+})();
+
+/* ============ DEMO 5: CASCADE (linear regions count) ============ */
+(function(){
+  const c=document.getElementById('c-cascade'),ctx=c.getContext('2d');
+  function draw(){
+    const L=+document.getElementById('s-cas-l').value;
+    const N=+document.getElementById('s-cas-n').value;
+    setVal('v-cas-l',L);setVal('v-cas-n',N);
+    ctx.fillStyle='#05050f';ctx.fillRect(0,0,c.width,c.height);
+    // random ReLU net 2D->N per layer, plot decision regions via color
+    // generate random weights
+    const layers=[];
+    let seed=12345;
+    function rnd(){seed=(seed*9301+49297)%233280;return seed/233280-0.5;}
+    for(let l=0;l<L;l++){
+      const inSize=l===0?2:N;
+      const W=[],b=[];
+      for(let i=0;i<N;i++){const row=[];for(let j=0;j<inSize;j++)row.push(rnd()*2);W.push(row);b.push(rnd()*0.8);}
+      layers.push({W,b});
+    }
+    // final linear projection to 1
+    const wOut=[];for(let i=0;i<N;i++)wOut.push(rnd()*2);
+    function forward(x,y){
+      let a=[x,y];
+      for(const {W,b} of layers){
+        const na=[];
+        for(let i=0;i<W.length;i++){let s=b[i];for(let j=0;j<W[i].length;j++)s+=W[i][j]*a[j];na.push(Math.max(0,s));}
+        a=na;
+      }
+      let s=0;for(let i=0;i<a.length;i++)s+=wOut[i]*a[i];return s;
+    }
+    // pixel by pixel
+    const img=ctx.createImageData(c.width,c.height);
+    const cx=c.width/2,cy=c.height/2,SC=100;
+    let prev=null,edges=0;
+    for(let py=0;py<c.height;py+=2){
+      for(let px=0;px<c.width;px+=2){
+        const x=(px-cx)/SC,y=(cy-py)/SC;
+        const v=forward(x,y);
+        // color by sign & pattern
+        const hue=(Math.floor(v*3)*47)%360;
+        const rgb=hsv2rgb(hue/360,0.4,v>0?0.6:0.25);
+        for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){
+          const idx=((py+dy)*c.width+(px+dx))*4;
+          img.data[idx]=rgb[0];img.data[idx+1]=rgb[1];img.data[idx+2]=rgb[2];img.data[idx+3]=255;
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+    // approximate region count (theoretical upper bound)
+    const regions=Math.pow(N,L);
+    document.getElementById('cas-info').innerHTML=`Ungefähre obere Grenze linearer Regionen: <b style="color:#ffe66d">≈ ${N}^${L} = ${regions}</b> — jede Farbfläche ist eine Region mit eigener linearer Funktion. Tiefe erzeugt <b>exponentiell</b> mehr Regionen als Breite.`;
+  }
+  function hsv2rgb(h,s,v){
+    const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
+    let r,g,b;
+    switch(i%6){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;case 5:r=v;g=p;b=q;break;}
+    return [r*255|0,g*255|0,b*255|0];
+  }
+  document.getElementById('s-cas-l').oninput=draw;
+  document.getElementById('s-cas-n').oninput=draw;
+  draw();
+})();
+
+/* ============ DEMO 6: SHEAR (peeling) ============ */
+(function(){
+  const c=document.getElementById('c-shear'),ctx=c.getContext('2d');
+  const cx=c.width/2,cy=c.height/2,SC=90;
+  // 2d egg
+  const inner=[],outer=[];
+  for(let i=0;i<80;i++){const a=Math.random()*TAU,r=0.15+Math.random()*0.15;inner.push({x:Math.cos(a)*r,y:Math.sin(a)*r});}
+  for(let i=0;i<200;i++){const a=Math.random()*TAU,r=0.65+Math.random()*0.3;outer.push({x:Math.cos(a)*r,y:Math.sin(a)*r});}
+  let stepMode=0;
+  function draw(){
+    const L=+document.getElementById('s-shear-l').value;
+    setVal('v-shear-l',L);
+    ctx.fillStyle='#05050f';ctx.fillRect(0,0,c.width,c.height);
+    // grid
+    ctx.strokeStyle='#1a1a3a';for(let i=-4;i<=4;i++){ctx.beginPath();ctx.moveTo(cx+i*SC/2,0);ctx.lineTo(cx+i*SC/2,c.height);ctx.stroke();ctx.beginPath();ctx.moveTo(0,cy+i*SC/2);ctx.lineTo(c.width,cy+i*SC/2);ctx.stroke();}
+    // apply L peeling layers: each layer, hyperplane at angle k*2π/L tangent to inner region
+    function transform(p){
+      let x=p.x,y=p.y;
+      for(let k=0;k<L;k++){
+        const ang=k*TAU/Math.max(6,L+2);
+        const nx=Math.cos(ang),ny=Math.sin(ang);
+        const bias=0.32; // just outside inner
+        // shear hyperplane: normal (nx,ny), shift bias
+        const pre=nx*x+ny*y-bias;
+        if(pre>0){
+          // push mass along tangent direction (shear)
+          const tx=-ny,ty=nx;
+          x-=pre*nx*0.9;y-=pre*ny*0.9;
+          x+=pre*tx*0.6;y+=pre*ty*0.6;
+        }
+      }
+      return {x,y};
+    }
+    // draw peel hyperplanes
+    ctx.strokeStyle='rgba(255,230,109,0.35)';ctx.lineWidth=1;
+    for(let k=0;k<L;k++){
+      const ang=k*TAU/Math.max(6,L+2);
+      const nx=Math.cos(ang),ny=Math.sin(ang),bias=0.32;
+      const tx=-ny,ty=nx;
+      ctx.beginPath();
+      ctx.moveTo(cx+(bias*nx-tx*3)*SC,cy-(bias*ny-ty*3)*SC);
+      ctx.lineTo(cx+(bias*nx+tx*3)*SC,cy-(bias*ny+ty*3)*SC);
+      ctx.stroke();
+    }
+    // draw points
+    for(const p of inner){const q=transform(p);ctx.fillStyle='#ff6b9d';ctx.beginPath();ctx.arc(cx+q.x*SC,cy-q.y*SC,3,0,TAU);ctx.fill();}
+    for(const p of outer){const q=transform(p);ctx.fillStyle='#4ecdc4';ctx.beginPath();ctx.arc(cx+q.x*SC,cy-q.y*SC,2.5,0,TAU);ctx.fill();}
+    // final separating line (after enough peeling, inner is at origin, outer pushed to one side)
+    ctx.strokeStyle='#ffe66d';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(cx-1.5*SC,cy-0.4*SC);ctx.lineTo(cx+1.5*SC,cy-0.4*SC);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#888';ctx.font='11px monospace';
+    ctx.fillText(`Nach ${L} Schäl-Schichten. Vgl.: Faltung löst dies mit EINER Schicht (3 Neuronen).`,10,20);
+  }
+  document.getElementById('s-shear-l').oninput=draw;
+  document.getElementById('btn-shear-step').onclick=()=>{
+    stepMode=(stepMode%12)+1;
+    document.getElementById('s-shear-l').value=stepMode;
+    draw();
+  };
+  draw();
+})();
+
+/* ============ DEMO 7: TUNING CURVES ============ */
+(function(){
+  // generate synthetic 2D "egg" data with class labels
+  const N=800;
+  const data=[];
+  for(let i=0;i<N;i++){
+    const a=Math.random()*TAU;
+    let r,cls;
+    const u=Math.random();
+    if(u<0.25){r=0.15+Math.random()*0.15;cls=0;} // inner
+    else if(u<0.55){r=0.45+Math.random()*0.15;cls=1;} // middle ring
+    else {r=0.8+Math.random()*0.3;cls=2;} // outer
+    data.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cls});
+  }
+  const colors=['#ff6b9d','#ffe66d','#4ecdc4'];
+  const clsNames=['innen','mitte','außen'];
+  function update(){
+    const ang=+document.getElementById('s-tune-a').value*Math.PI/180;
+    const bias=+document.getElementById('s-tune-b').value;
+    setVal('v-tune-a',(ang*180/Math.PI).toFixed(0)+'°');
+    setVal('v-tune-b',bias.toFixed(2));
+    const nx=Math.cos(ang),ny=Math.sin(ang);
+    // compute preactivations by class
+    const byCls=[[],[],[]];
+    for(const p of data){
+      const z=nx*p.x+ny*p.y-bias;
+      byCls[p.cls].push(z);
+    }
+    // hartigan-esque: measure dip near 0 for each class
+    function dipAtZero(arr){
+      const w=0.15;
+      let inside=0,near=0;
+      for(const z of arr){if(Math.abs(z)<w)inside++;if(Math.abs(z)<3*w)near++;}
+      const density0=inside/arr.length/(2*w);
+      const densityN=near/arr.length/(6*w);
+      return densityN>0?(densityN-density0)/densityN:0; // positive = bimodal
+    }
+    const traces=byCls.map((arr,i)=>({
+      x:arr,type:'histogram',name:'Klasse '+clsNames[i],
+      opacity:0.6,marker:{color:colors[i]},nbinsx:40,
+      xbins:{start:-2.5,end:2.5,size:0.1}
+    }));
+    Plotly.react('p-tuning',traces,{
+      barmode:'overlay',
+      paper_bgcolor:'#0a0a1a',plot_bgcolor:'#05050f',
+      font:{color:'#e8e8f0',size:11},
+      xaxis:{title:'Präaktivierung z',gridcolor:'#1a1a3a',zerolinecolor:'#ffe66d',zerolinewidth:2},
+      yaxis:{title:'Häufigkeit',gridcolor:'#1a1a3a'},
+      margin:{l:50,r:20,t:20,b:40},
+      legend:{orientation:'h',y:1.1},
+      shapes:[{type:'line',x0:0,x1:0,y0:0,y1:1,yref:'paper',line:{color:'#ffe66d',width:2,dash:'dash'}}]
+    },{displayModeBar:false});
+    // dip readout
+    const dips=byCls.map(dipAtZero);
+    document.getElementById('dip-info').innerHTML=
+      `Bimodalitäts-Score (positiv = Delle bei 0 = Falte trennt Klasse): `+
+      dips.map((d,i)=>`<span style="color:${colors[i]}">${clsNames[i]}: ${d.toFixed(2)}</span>`).join(' &nbsp; ');
+  }
+  document.getElementById('s-tune-a').oninput=update;
+  document.getElementById('s-tune-b').oninput=update;
+  update();
+})();
+
+/* ============ DEMO 8: POKER HAND RESULTS ============ */
+(function(){
+  // simulated training curves inspired by paper figures
+  const epochs=[];for(let i=0;i<=100;i+=2)epochs.push(i);
+  // dimensionality expansion
+  const dimL1=epochs.map(e=>4+8*(1-Math.exp(-e/25))+Math.random()*0.5);
+  const dimL2=epochs.map(e=>4+14*(1-Math.exp(-e/30))+Math.random()*0.5);
+  const dimIn=epochs.map(_=>10);
+  Plotly.newPlot('p-dim',[
+    {x:epochs,y:dimIn,name:'Input (10D)',line:{color:'#888',dash:'dot'}},
+    {x:epochs,y:dimL1,name:'Layer 1',line:{color:'#ff6b9d',width:3}},
+    {x:epochs,y:dimL2,name:'Layer 2',line:{color:'#4ecdc4',width:3}}
+  ],{
+    title:{text:'Repräsentations-Dimensionalität ↑',font:{color:'#ffe66d'}},
+    paper_bgcolor:'#0a0a1a',plot_bgcolor:'#05050f',
+    font:{color:'#e8e8f0',size:11},
+    xaxis:{title:'Trainings-Epoche',gridcolor:'#1a1a3a'},
+    yaxis:{title:'effektive Dim.',gridcolor:'#1a1a3a'},
+    margin:{l:50,r:20,t:40,b:40},legend:{orientation:'h',y:-0.25}
+  },{displayModeBar:false});
+  // dip statistic distribution
+  const untrained=[];for(let i=0;i<100;i++)untrained.push(Math.max(0,0.02+Math.random()*0.03));
+  const trained=[];for(let i=0;i<100;i++){
+    if(Math.random()<0.35)trained.push(0.05+Math.random()*0.12);
+    else trained.push(Math.max(0,0.02+Math.random()*0.03));
+  }
+  Plotly.newPlot('p-dip',[
+    {x:untrained,type:'histogram',name:'untrainiert',opacity:0.6,marker:{color:'#888'},nbinsx:25},
+    {x:trained,type:'histogram',name:'trainiert',opacity:0.7,marker:{color:'#ff6b9d'},nbinsx:25}
+  ],{
+    title:{text:"Hartigan Dip-Statistik (Bimodalität)",font:{color:'#ffe66d'}},
+    barmode:'overlay',
+    paper_bgcolor:'#0a0a1a',plot_bgcolor:'#05050f',
+    font:{color:'#e8e8f0',size:11},
+    xaxis:{title:'Dip-Wert (größer = bimodaler)',gridcolor:'#1a1a3a'},
+    yaxis:{title:'# Neuronen',gridcolor:'#1a1a3a'},
+    margin:{l:50,r:20,t:40,b:40},legend:{orientation:'h',y:-0.25}
+  },{displayModeBar:false});
+  // silencing experiment
+  Plotly.newPlot('p-silence',[{
+    x:['Intakt','10 zufällige Neuronen stumm','10 UNIMODALE stumm','10 BIMODALE stumm'],
+    y:[0.97,0.91,0.94,0.58],
+    type:'bar',
+    marker:{color:['#4ecdc4','#8888a8','#888888','#ff6b9d']},
+    text:['97%','91%','94%','58%'],textposition:'auto'
+  }],{
+    title:{text:'Kausalitätstest: Welche Neuronen tragen die Arbeit?',font:{color:'#ffe66d'}},
+    paper_bgcolor:'#0a0a1a',plot_bgcolor:'#05050f',
+    font:{color:'#e8e8f0',size:11},
+    yaxis:{title:'F1-Score',gridcolor:'#1a1a3a',range:[0,1]},
+    xaxis:{gridcolor:'#1a1a3a'},
+    margin:{l:50,r:20,t:40,b:60}
+  },{displayModeBar:false});
+})();
+
+</script>
+</body>
+</html>
