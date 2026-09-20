@@ -5,7 +5,7 @@ title: Reinforcement Learning
 description: From Q-learning to PPO to GRPO — the foundations of RL that power modern LLM alignment.
 icon: &#127918;
 part: 2
-order: 10
+order: 11
 color: coral
 topics: math-i, math-ii, programming, training
 tags: math-heavy, code-heavy
