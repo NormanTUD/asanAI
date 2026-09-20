@@ -54,7 +54,7 @@ $$
 
 where $\bar A = \exp(\Delta A)$, $\bar B = (\Delta A)^{-1}(\exp(\Delta A) - \mathbf{I}) \Delta B$.
 
-This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{R}^{N}$. Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length.
+This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{R}^{N}$. Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length. The lineage runs back through the [Networks with Memory](recurrent_networks.php) chapter: an LSTM is exactly this state update with a learned, gated nonlinearity bolted on — the gates decide *what to keep*, and the fixed-size state is why these models dominated before attention scaled up \cite{colah2015lstm,lstm}.
 
 ### S4
 
