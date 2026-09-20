@@ -91,6 +91,7 @@
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("Live Training of a Neural Network", "traininglab");
 	incl("Deep Learning", "deeplearninglab");
+	incl("Origami in N Dimensions: How Networks Fold Data Apart", "origami");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");

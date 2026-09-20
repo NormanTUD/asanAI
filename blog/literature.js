@@ -7,6 +7,60 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Origami in N Dimensions  (origami.php)
+	 *  How feed-forward networks manufacture linear separability by folding
+	 *  the data manifold into unoccupied higher dimensions.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"keup2022origami": {
+		title: "Origami in N dimensions: How feed-forward networks manufacture linear separability",
+		author: "Christian Keup and Moritz Helias",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.11355",
+		alternativetitle: "Keup & Helias, 2022 (arXiv:2203.11355)"
+	},
+	"foldandcut_wiki": {
+		title: "Fold-and-cut theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fold-and-cut_theorem",
+		alternativetitle: "Fold-and-cut theorem (Wikipedia)"
+	},
+	"linear_separability_wiki": {
+		title: "Linear separability",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Linear_separability",
+		alternativetitle: "Linear separability (Wikipedia)"
+	},
+	"johnson2018skinny": {
+		title: "Deep, Skinny Neural Networks are not Universal Approximators",
+		author: "Joshua B. Johnson",
+		year: 2018,
+		url: "https://arxiv.org/abs/1810.00393",
+		alternativetitle: "Johnson, 2018 (arXiv:1810.00393)"
+	},
+	"poker_hand_uci": {
+		title: "Poker Hand dataset",
+		author: "Dua and Graff, UCI Machine Learning Repository",
+		year: 2024,
+		url: "https://archive.ics.uci.edu/dataset/237/poker+hand",
+		alternativetitle: "UCI Poker Hand dataset"
+	},
+	"relu_wiki": {
+		title: "Rectified linear unit",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rectified_linear_unit",
+		alternativetitle: "ReLU (Wikipedia)"
+	},
+	"convex_hull_wiki": {
+		title: "Convex hull",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Convex_hull",
+		alternativetitle: "Convex hull (Wikipedia)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
 	 *  carves out the low-energy "useful" slice, and the bridge from
