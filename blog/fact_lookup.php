@@ -293,6 +293,22 @@ The honest summary is that the *mechanism* of fact retrieval is reasonably well-
 </div>
 
 <div class="md">
+## Binding Across Distance — and Why It Breaks
+
+A large part of what the model does is **binding**: tying a "filler" to a "gap" across distance — the subject to its verb, the object to the verb that governs it, a pronoun to its antecedent. The cleanest reverse-engineered case is the **indirect-object-identification circuit** \cite[Wang et al., 2022]{wang2022interpretability}: a small set of heads whose job is to *copy* the right noun across the intervening verb to the position where it is needed. Understanding *why* this works sometimes and fails other times comes down to a single resource: **depth, as a budget of hops.**
+
+**One head does one hop.** A single attention step moves information one *hop*: it reads one value from one source position and writes it to one target. A dependency that requires $N$ sequential hops therefore needs about $N$ layers to perform it. Depth is not just "more capacity" — it is the **composition budget**. \cite[Kohli et al., 2026]{kohli2026loop} made this sharp: a vanilla transformer trained to compose up to, say, **5 hops fails to extrapolate to 10**, while a *recurrent-depth* transformer (one that loops its layers) can — confirming that a fixed-depth model is capped at its trained number of hops.
+
+**Binding breaks in exactly three predictable ways:**
+
+- **Nesting.** \cite[Lakretz et al., 2021]{lakretz2020nested} showed that long-distance agreement drops **below chance** on *nested* or embedded dependencies. When a second clause is wedged inside the first, the copy chain outgrows the effective depth and the errors compound — the model does not just get worse, it gets *systematically wrong*.
+- **Attractors.** \cite[Lasri et al., 2022]{lasri2022agree} showed that a **single** intervening "distractor" noun (an attractor with a mismatched number) is enough to hijack the copy and collapse subject-verb agreement. The binding is a contest, and one rival token in the gap is often enough to win it.
+- **The theoretical root.** All of this is the empirical face of \cite[Hahn, 2020]{hahn2020limitations}: fixed-size self-attention **cannot model hierarchical structure at all** unless the depth scales with the input. A dependency tree of depth $d$ needs $d$ hops; a network with a fixed number of layers has a fixed reach.
+
+The takeaway is a clean one: **binding works for short, unambiguous chains, and it fails exactly when the chain is long, nested, or interfered with** — because every hop costs a layer, and the model is handed only a fixed number. This is the same depth-as-budget idea that caps the arithmetic of the algorithms chapter, and it is why "the model lost track of the subject" is not a quirk but a structural limit.
+</div>
+
+<div class="md">
 ## Putting it together
 
 Here is the picture in one breath, with citations:
