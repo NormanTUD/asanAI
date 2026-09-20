@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Lineare Separierbarkeit in tiefen neuronalen Netzen — Interaktive Erkundung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#131a2c; --panel2:#1a2340; --accent:#7cf; --accent2:#f7c; --ok:#6f9; --warn:#fc6;
+    --text:#e8ecf5; --muted:#8fa0c0; --border:#2a3552;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#050810,#0a0e1a 50%,#0d1428);color:var(--text);line-height:1.6}
+  header{padding:60px 40px 40px;text-align:center;background:radial-gradient(ellipse at top,rgba(124,238,255,.15),transparent 60%);border-bottom:1px solid var(--border)}
+  header h1{font-size:2.4em;margin:0 0 10px;background:linear-gradient(90deg,#7cf,#f7c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  header p{color:var(--muted);max-width:800px;margin:0 auto;font-size:1.05em}
+  nav{position:sticky;top:0;background:rgba(10,14,26,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 20px;z-index:100;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  nav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:6px;font-size:.9em;transition:all .2s}
+  nav a:hover{background:var(--panel2);color:var(--accent)}
+  section{max-width:1200px;margin:0 auto;padding:50px 30px;border-bottom:1px solid var(--border)}
+  section h2{font-size:1.8em;margin-bottom:8px;color:var(--accent)}
+  section h3{color:var(--accent2);margin-top:30px}
+  .lead{color:var(--muted);font-style:italic;margin-bottom:24px;border-left:3px solid var(--accent);padding-left:14px}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+  canvas{background:#0a0f1e;border-radius:8px;display:block;width:100%;cursor:crosshair}
+  .controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:14px 0;padding:12px;background:var(--panel2);border-radius:8px}
+  .ctrl{display:flex;flex-direction:column;gap:4px;min-width:140px}
+  .ctrl label{font-size:.8em;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .ctrl input[type=range]{width:180px;accent-color:var(--accent)}
+  .ctrl .val{font-family:monospace;color:var(--accent);font-weight:bold}
+  button{background:linear-gradient(135deg,#2a4a7c,#3a5a8c);color:#fff;border:1px solid var(--accent);padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;transition:all .2s}
+  button:hover{background:linear-gradient(135deg,#3a5a8c,#4a6a9c);transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  select{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:6px 10px;border-radius:6px}
+  .metrics{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px}
+  .metric{background:var(--panel2);padding:8px 14px;border-radius:6px;border-left:3px solid var(--ok)}
+  .metric .k{font-size:.75em;color:var(--muted);text-transform:uppercase}
+  .metric .v{font-family:monospace;font-size:1.1em;color:var(--ok);font-weight:bold}
+  .highlight{background:linear-gradient(90deg,rgba(124,238,255,.15),transparent);padding:2px 6px;border-radius:4px;color:var(--accent)}
+  .formula{background:var(--panel2);padding:12px;border-radius:6px;overflow-x:auto;margin:10px 0;font-size:1.05em}
+  .note{background:rgba(255,204,102,.08);border-left:3px solid var(--warn);padding:12px 16px;border-radius:6px;margin:14px 0;font-size:.95em}
+  .step{display:inline-block;background:var(--accent);color:#000;width:26px;height:26px;border-radius:50%;text-align:center;line-height:26px;font-weight:bold;margin-right:8px}
+  footer{text-align:center;padding:40px;color:var(--muted);font-size:.9em}
+  .tab-bar{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:14px}
+  .tab-bar button{background:transparent;border:none;border-bottom:2px solid transparent;border-radius:0;padding:8px 14px}
+  .tab-bar button.active{border-color:var(--accent);color:var(--accent)}
+  .legend{display:flex;gap:14px;font-size:.85em;color:var(--muted);flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lineare Separierbarkeit in tiefen Neuronalen Netzen</h1>
+  <p>Eine interaktive Reise durch das Paper von <em>Zhang et al. (2023)</em> — verstehe durch Spielen, nicht durch Lesen. Bewege Slider, zeichne Punkte, drehe Ebenen. Alles wichtige zum Paper, komplett visuell.</p>
+</header>
+
+<nav>
+  <a href="#motivation">1. Motivation</a>
+  <a href="#separability">2. Lineare Separierbarkeit</a>
+  <a href="#minkowski">3. Minkowski-Differenz</a>
+  <a href="#lsm">4. Das Maß (MD-LSM)</a>
+  <a href="#sync">5. Synchronizität</a>
+  <a href="#activation">6. Aktivierungen</a>
+  <a href="#width">7. Breite & Tiefe</a>
+  <a href="#answer">8. Antwort</a>
+</nav>
+
+<!-- ============================================================ -->
+<section id="motivation">
+  <h2>1. Motivation — Warum überhaupt?</h2>
+  <p class="lead">Ein tiefes neuronales Netz ist eine Blackbox mit Millionen Parametern. Wenn das Training gut läuft, steigt die Accuracy. Aber <b>was passiert im Inneren</b>, Schicht für Schicht? Können wir das messen?</p>
+
+  <div class="panel">
+    <h3><span class="step">?</span>Das Problem</h3>
+    <p>Klassische Theorie (VC-Dimension, Rademacher-Komplexität) sagt: <b>Große Netze überfitten</b>. Die Praxis zeigt aber: Große Netze generalisieren <em>besser</em>. Es klafft eine Lücke zwischen Theorie und Praxis.</p>
+    <p>Die Autoren fragen: Gibt es ein <span class="highlight">einfaches, geometrisches Maß</span>, das uns pro Schicht zeigt, wie „gut" das Netz die Klassen bereits getrennt hat?</p>
+  </div>
+
+  <div class="panel">
+    <h3><span class="step">💡</span>Die Idee in einem Bild</h3>
+    <p>Stelle dir vor, ein Netz nimmt zwei verschlungene Punktwolken und „entwirrt" sie Schicht für Schicht, bis sie am Ende mit einer geraden Linie trennbar sind. Beobachte, wie das passiert:</p>
+    <div class="controls">
+      <div class="ctrl"><label>Entwirrungs-Fortschritt (Schichten)</label>
+        <input id="motLayer" type="range" min="0" max="100" value="0">
+        <span class="val" id="motLayerVal">0 / 100</span>
+      </div>
+      <button onclick="motAnimate()">▶ Auto-Animation</button>
+    </div>
+    <canvas id="motCanvas" height="360"></canvas>
+    <div class="metrics">
+      <div class="metric"><div class="k">Lineare Trennungsgüte</div><div class="v" id="motAcc">50%</div></div>
+      <div class="metric"><div class="k">Beobachtung</div><div class="v" id="motObs" style="color:var(--warn)">verschlungen</div></div>
+    </div>
+    <p class="note">🎯 <b>Kernbeobachtung:</b> Je tiefer die Schicht, desto <em>linear trennbarer</em> werden die Klassen. Das Paper macht diese Intuition präzise messbar.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="separability">
+  <h2>2. Was heißt „linear separierbar"?</h2>
+  <p class="lead">Zwei Punktmengen heißen linear separierbar, wenn eine <b>Gerade</b> (in 2D) bzw. eine <b>Hyperebene</b> sie perfekt trennt. Zeichne selbst Punkte und drehe die Trennlinie:</p>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="ctrl"><label>Winkel der Trennlinie</label>
+        <input id="sepAngle" type="range" min="0" max="360" value="45">
+        <span class="val" id="sepAngleVal">45°</span>
+      </div>
+      <div class="ctrl"><label>Verschiebung (Bias)</label>
+        <input id="sepBias" type="range" min="-150" max="150" value="0">
+        <span class="val" id="sepBiasVal">0</span>
+      </div>
+      <button onclick="sepReset()">🔄 Punkte zurücksetzen</button>
+      <button onclick="sepMode='A'">➕ Klasse A (blau)</button>
+      <button onclick="sepMode='B'">➕ Klasse B (pink)</button>
+    </div>
+    <canvas id="sepCanvas" height="400"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#7cf"></span>Klasse A</span>
+      <span><span class="dot" style="background:#f7c"></span>Klasse B</span>
+      <span><span class="dot" style="background:#6f9"></span>korrekt</span>
+      <span><span class="dot" style="background:#f66"></span>falsch klassifiziert</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="k">Genauigkeit</div><div class="v" id="sepAcc">—</div></div>
+      <div class="metric"><div class="k">Separierbar?</div><div class="v" id="sepSep">—</div></div>
+    </div>
+    <p class="note">💡 Klicke ins Feld um Punkte hinzuzufügen. Wenn du <b>100% Accuracy</b> erreichst, sind die Punkte perfekt linear separierbar — dann existiert eine Gerade $\omega^T x + b = 0$, die alles korrekt trennt.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="minkowski">
+  <h2>3. Der Trick: Minkowski-Differenz</h2>
+  <p class="lead">Die zentrale Idee des Papers: Statt <em>zwei</em> Punktmengen zu betrachten, bilde alle paarweisen Differenzen $m_{ij} = a_i - b_j$. Dann reduziert sich das Problem auf <b>eine</b> Menge und eine Hyperebene <b>durch den Ursprung</b>.</p>
+
+  <div class="panel">
+    <h3>Theorem 3 (visuell):</h3>
+    <div class="formula" id="thm3"></div>
+    <p><b>A</b> und <b>B</b> sind linear separierbar <b>genau dann</b>, wenn alle Punkte von $\text{MD}(A,B) = \{a_i - b_j\}$ auf <em>einer</em> Seite einer Hyperebene durch den Ursprung liegen.</p>
+
+    <div class="grid2">
+      <div>
+        <h4 style="text-align:center;color:var(--muted)">Original: A (blau) vs. B (pink)</h4>
+        <canvas id="mdOrig" height="320"></canvas>
+      </div>
+      <div>
+        <h4 style="text-align:center;color:var(--muted)">Minkowski-Differenz MD(A,B)</h4>
+        <canvas id="mdDiff" height="320"></canvas>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl"><label>Trennebenen-Winkel ω</label>
+        <input id="mdOmega" type="range" min="0" max="360" value="90">
+        <span class="val" id="mdOmegaVal">90°</span>
+      </div>
+      <div class="ctrl"><label>Konfiguration</label>
+        <select id="mdConfig" onchange="mdSetup()">
+          <option value="sep">Linear separierbar</option>
+          <option value="insep">Nicht separierbar (Überlapp)</option>
+          <option value="xor">XOR-artig</option>
+        </select>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="k">Punkte in Major-Seite</div><div class="v" id="mdMajor">—</div></div>
+      <div class="metric"><div class="k">LS-Maß (Anteil)</div><div class="v" id="mdLS">—</div></div>
+    </div>
+    <p class="note">🔍 Wenn <b>alle</b> MD-Punkte auf einer Seite von $\omega^T m = 0$ liegen → separierbar. Die Trennebene im Original ist parallel zu dieser Ursprungsebene.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="lsm">
+  <h2>4. Das MD-LSM — ein zahlenmäßiges Maß</h2>
+  <p class="lead">Wenn nicht alle MD-Punkte auf einer Seite liegen, wie sehr sind wir davon entfernt? Das Paper definiert vier Varianten. Wir bauen sie schrittweise auf.</p>
+
+  <div class="panel">
+    <div class="tab-bar">
+      <button class="active" onclick="showLSM(0,this)">LS* (Zählend)</button>
+      <button onclick="showLSM(1,this)">LS₁ (Absolutwert)</button>
+      <button onclick="showLSM(2,this)">LS₂ (Quadratisch – geschlossene Lösung!)</button>
+    </div>
+
+    <div id="lsm0" class="lsmpane">
+      <h3>LS* — Anteil auf der Major-Seite</h3>
+      <div class="formula" id="fLS0"></div>
+      <p>Zähle einfach: Wieviele MD-Punkte liegen (max. über alle $\omega$) auf der besseren Seite? <span class="highlight">NP-schwer</span> zu optimieren, aber intuitiv.</p>
+    </div>
+    <div id="lsm1" class="lsmpane" style="display:none">
+      <h3>LS₁ — Betragsverhältnis</h3>
+      <div class="formula" id="fLS1"></div>
+      <p>Verhältnis der <em>Beträge</em> aller Distanzen. Wert im Intervall $(0, 1]$ — perfekt separierbar = 1.</p>
+    </div>
+    <div id="lsm2" class="lsmpane" style="display:none">
+      <h3>LS₂ — Quadrat mit geschlossener Lösung</h3>
+      <div class="formula" id="fLS2"></div>
+      <p>Umformuliert als verallgemeinertes Eigenwertproblem → <span class="highlight">effizient lösbar</span>. Das ist der Grund, warum LS₂ in der Praxis nutzbar ist.</p>
+      <p><b>Approximation (in Experimenten):</b> Setze $MM^T = I$, dann ist $\hat\omega = \tilde m / \|\tilde m\|$ wobei $\tilde m = \sum m_{ij}$ — nur eine Summe, keine Eigenwertzerlegung!</p>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl"><label>Überlapp der Klassen</label>
+        <input id="lsmOverlap" type="range" min="0" max="100" value="20">
+        <span class="val" id="lsmOverlapVal">20%</span>
+      </div>
+      <div class="ctrl"><label>Streuung</label>
+        <input id="lsmSpread" type="range" min="20" max="120" value="50">
+        <span class="val" id="lsmSpreadVal">50</span>
+      </div>
+      <button onclick="lsmRegen()">🎲 Neu würfeln</button>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <canvas id="lsmCanvas" height="340"></canvas>
+      </div>
+      <div>
+        <div id="lsmBars" style="height:340px"></div>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="k">LS* (Anteil)</div><div class="v" id="vLS0">—</div></div>
+      <div class="metric"><div class="k">LS₁</div><div class="v" id="vLS1">—</div></div>
+      <div class="metric"><div class="k">LS₂ (approx.)</div><div class="v" id="vLS2">—</div></div>
+      <div class="metric"><div class="k">Beste lin. Accuracy</div><div class="v" id="vAcc">—</div></div>
+    </div>
+    <p class="note">📈 <b>Theorem 7:</b> Die beste lineare Klassifikations-Genauigkeit ist immer ≥ LS*. Alle drei Maße reagieren monoton mit der Trennbarkeit.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="sync">
+  <h2>5. Die Hauptbeobachtung: Synchronizität</h2>
+  <p class="lead">Theorem 1: <em>Wenn</em> das Training in einer Epoche die Trainings-Accuracy erhöht, dann hat sich die lineare Separierbarkeit der versteckten Schicht <em>synchron</em> erhöht. Und umgekehrt.</p>
+
+  <div class="panel">
+    <h3>Live-Training-Simulator</h3>
+    <p>Simuliere das Training eines kleinen Netzes und beobachte, wie LS-Werte in jeder Schicht sich mit der Accuracy bewegen:</p>
+    <div class="controls">
+      <div class="ctrl"><label>Anzahl Schichten</label>
+        <input id="syncLayers" type="range" min="1" max="5" value="3">
+        <span class="val" id="syncLayersVal">3</span>
+      </div>
+      <div class="ctrl"><label>Trainingsdauer</label>
+        <input id="syncEpochs" type="range" min="20" max="200" value="100">
+        <span class="val" id="syncEpochsVal">100</span>
+      </div>
+      <button onclick="syncRun()">▶ Training starten</button>
+    </div>
+    <div id="syncPlot" style="height:420px"></div>
+    <p class="note">🎯 Beobachte: Die LS-Kurven jeder Schicht folgen der Accuracy-Kurve. Höhere Schichten (näher am Output) haben höhere LS-Werte. Fluktuationen in Accuracy = Fluktuationen in LS.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="activation">
+  <h2>6. Wozu Aktivierungsfunktionen?</h2>
+  <p class="lead">Theorem 9 zeigt: Eine <em>lineare</em> Transformation kann die Trennbarkeit nicht ändern. Erst durch nicht-lineare Aktivierungen kann das Netz Punkte neu anordnen.</p>
+
+  <div class="panel">
+    <div class="grid2">
+      <div>
+        <h3>Ohne Aktivierung (linear)</h3>
+        <canvas id="actLinear" height="280"></canvas>
+        <p style="color:var(--muted);font-size:.9em;text-align:center">Nur Drehung/Streckung → keine bessere Trennung möglich</p>
+      </div>
+      <div>
+        <h3>Mit Aktivierung σ (nicht-linear)</h3>
+        <canvas id="actNonLinear" height="280"></canvas>
+        <p style="color:var(--muted);font-size:.9em;text-align:center">Punkte werden „gekrümmt" → Klassen entwirren sich</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctrl"><label>Aktivierung</label>
+        <select id="actFn" onchange="actRedraw()">
+          <option value="linear">Linear (identity)</option>
+          <option value="tanh" selected>tanh</option>
+          <option value="sigmoid">Sigmoid</option>
+          <option value="relu">ReLU</option>
+          <option value="softsign">Softsign</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Gewichts-Skala</label>
+        <input id="actScale" type="range" min="1" max="50" value="15">
+        <span class="val" id="actScaleVal">1.5</span>
+      </div>
+    </div>
+    <div id="actShapePlot" style="height:260px"></div>
+    <p class="note">🧠 <b>Theorem 11:</b> Wenn $F_\sigma(x,y) &gt; 2$, dann verschiebt die Aktivierung MD-Punkte von der Minor- auf die Major-Seite — d.h. sie <em>verbessert</em> die Trennbarkeit. Sigmoid, Tanh, Arctan, Softsign erfüllen dies (Fig. 2 im Paper).</p>
+  
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="width">
+  <h2>7. Netzwerk-Größe: Breite & Tiefe</h2>
+  <p class="lead">Theorem 12 & Korollar 13: Je <b>breiter</b> und je <b>tiefer</b> das Netz, desto <em>wahrscheinlicher</em> steigt die lineare Separierbarkeit. Random Matrix Theory liefert die Schranken.</p>
+
+  <div class="panel">
+    <h3>Wahrscheinlichkeits-Schranken (Theorem 12)</h3>
+    <div class="formula" id="fWidth"></div>
+    <p>Die Schranke $H \cdot e^{-\text{LS}_2^2 / 8\sigma^2}$ steigt zunächst linear mit der Breite $H$, wird aber vom exponentiellen Term dominiert, wenn LS₂ bereits hoch ist. <span class="highlight">Interpretation:</span> Bei bereits gut trennbaren Daten hilft mehr Breite kaum noch.</p>
+
+    <div class="controls">
+      <div class="ctrl"><label>Netzwerk-Breite H</label>
+        <input id="wH" type="range" min="2" max="500" value="50">
+        <span class="val" id="wHVal">50</span>
+      </div>
+      <div class="ctrl"><label>Netzwerk-Tiefe L</label>
+        <input id="wL" type="range" min="1" max="20" value="5">
+        <span class="val" id="wLVal">5</span>
+      </div>
+      <div class="ctrl"><label>Ausgangs-LS₂</label>
+        <input id="wLS" type="range" min="1" max="50" value="10">
+        <span class="val" id="wLSVal">1.0</span>
+      </div>
+    </div>
+    <div id="widthPlot" style="height:340px"></div>
+    <div class="metrics">
+      <div class="metric"><div class="k">Breiten-Schranke</div><div class="v" id="wBound1">—</div></div>
+      <div class="metric"><div class="k">Tiefen-Schranke (LH·…)</div><div class="v" id="wBound2">—</div></div>
+    </div>
+    <p class="note">🎯 <b>Kernaussage:</b> Größere Netze haben eine <em>höhere Chance</em>, die Trennbarkeit zu steigern — das erklärt teilweise, warum tiefe & breite Netze empirisch so gut generalisieren, obwohl klassische Theorie das Gegenteil vorhersagt.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="answer">
+  <h2>8. Die Antwort — Was hat das Paper geliefert?</h2>
+  <p class="lead">Zusammenfassung der Reise. Alle Puzzleteile zusammengesetzt.</p>
+
+  <div class="panel">
+    <div class="grid3">
+      <div>
+        <h3 style="color:var(--accent)">❓ Frage</h3>
+        <p>Können wir die interne Arbeitsweise tiefer Netze <b>schichtweise</b> messen? Existiert ein Zusammenhang zwischen versteckten Repräsentationen und Training?</p>
+      </div>
+      <div>
+        <h3 style="color:var(--accent2)">💡 Idee</h3>
+        <p>Miss die <b>lineare Separierbarkeit</b> der Hidden-Layer-Outputs. Nutze Minkowski-Differenz um das Problem zu vereinfachen: eine Menge, eine Hyperebene durch den Ursprung.</p>
+      </div>
+      <div>
+        <h3 style="color:var(--ok)">✓ Antwort</h3>
+        <p>Es gibt eine <b>Synchronizität</b>. Aktivierungsfunktionen (Sigmoid, Tanh, …) verbessern LS. Größere Netze haben höhere Chance auf höhere LS. Alles empirisch auf MLP, CNN, ResNet, ViT etc. validiert.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🧭 Die vier LS-Maße im Überblick</h3>
+    <div id="summaryTable"></div>
+    <p class="note">💎 <b>Praktisch verwendet:</b> Alle vier Maße mit Approximation $\hat\omega = \tilde m/\|\tilde m\|$ (Remark 15). Nur eine Summe, keine Eigenwertzerlegung — <em>sehr schnell</em> pro Trainings-Epoche.</p>
+  </div>
+
+  <div class="panel">
+    <h3>🚀 Bedeutung</h3>
+    <ul>
+      <li><b>Theoretisch:</b> Erklärt, warum größere Netze <em>nicht</em> überfitten müssen — sie erhöhen strukturell die Trennbarkeit.</li>
+      <li><b>Praktisch:</b> LS kann als Diagnose-Tool während des Trainings genutzt werden — pro Schicht sichtbar, was passiert.</li>
+      <li><b>Zukunft:</b> LS als Komplexitäts-Maß für neue Generalisierungs-Schranken.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Interaktive Exploration basierend auf Zhang et al., "Understanding Deep Neural Networks via Linear Separability of Hidden Layers" (arXiv:2307.13962, 2023) [[11]].<br>
+  Alle Visualisierungen live berechnet in deinem Browser · Bewege die Slider, klicke, experimentiere.
+</footer>
+
+<script>
+/* ============================================================
+   GLOBAL HELPERS
+============================================================ */
+const bind = (id, fn, fmt=(v)=>v) => {
+  const el = document.getElementById(id);
+  const val = document.getElementById(id+'Val');
+  const update = () => { if(val) val.textContent = fmt(el.value); fn(+el.value); };
+  el.addEventListener('input', update); update();
+};
+function dpr(canvas){
+  const r = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width*r; canvas.height = rect.height*r;
+  const ctx = canvas.getContext('2d'); ctx.scale(r,r);
+  return ctx;
+}
+function rand(seed){ let s=seed; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+
+/* ============================================================
+   SECTION 1 — MOTIVATION: entangled spirals unwinding
+============================================================ */
+const motC = document.getElementById('motCanvas');
+let motCtx, motTimer;
+function motDraw(t){
+  if(!motCtx) motCtx = dpr(motC);
+  const w = motC.getBoundingClientRect().width, h = motC.getBoundingClientRect().height;
+  motCtx.clearRect(0,0,w,h);
+  const cx=w/2, cy=h/2, N=120, p=t/100;
+  const pts=[];
+  for(let i=0;i<N;i++){
+    const cls = i<N/2?0:1;
+    const idx = cls?i-N/2:i;
+    const th = idx/60*Math.PI*3 + (cls?Math.PI:0);
+    const r = 30 + idx*1.4;
+    // spiral -> straight line
+    const sx = cx + Math.cos(th)*r*(1-p) + (cls? 60 : -60)*p;
+    const sy = cy + Math.sin(th)*r*(1-p) + (idx-30)*2*p;
+    pts.push({x:sx,y:sy,c:cls});
+  }
+  pts.forEach(p=>{
+    motCtx.fillStyle = p.c? '#f7c':'#7cf';
+    motCtx.beginPath(); motCtx.arc(p.x,p.y,4,0,7); motCtx.fill();
+  });
+  // trennlinie wenn separierbar
+  if(t>60){
+    motCtx.strokeStyle='rgba(111,255,153,'+((t-60)/40)+')';
+    motCtx.lineWidth=2; motCtx.setLineDash([6,4]);
+    motCtx.beginPath(); motCtx.moveTo(cx,0); motCtx.lineTo(cx,h); motCtx.stroke();
+    motCtx.setLineDash([]);
+  }
+  const acc = Math.round(50 + 50*Math.min(1, t/70));
+  document.getElementById('motAcc').textContent = acc+'%';
+  document.getElementById('motObs').textContent = t<30?'verschlungen': t<70?'entwirrt sich':'linear trennbar';
+  document.getElementById('motObs').style.color = t<30?'var(--warn)': t<70?'var(--accent)':'var(--ok)';
+}
+bind('motLayer', motDraw);
+function motAnimate(){
+  if(motTimer){ clearInterval(motTimer); motTimer=null; return; }
+  let v=0; motTimer=setInterval(()=>{
+    v+=2; if(v>100){v=0;}
+    document.getElementById('motLayer').value=v;
+    document.getElementById('motLayerVal').textContent = v+' / 100';
+    motDraw(v);
+  },50);
+}
+
+/* ============================================================
+   SECTION 2 — SEPARABILITY: draw points, spin line
+============================================================ */
+const sepC = document.getElementById('sepCanvas');
+let sepCtx, sepPts=[], sepMode='A';
+function sepInit(){
+  sepCtx = dpr(sepC);
+  sepC.addEventListener('click', e=>{
+    const r = sepC.getBoundingClientRect();
+    sepPts.push({x:e.clientX-r.left, y:e.clientY-r.top, c:sepMode==='A'?0:1});
+    sepDraw();
+  });
+  sepReset();
+}
+function sepReset(){
+  sepPts=[];
+  const w=sepC.getBoundingClientRect().width, h=sepC.getBoundingClientRect().height;
+  const rng=rand(42);
+  for(let i=0;i<15;i++) sepPts.push({x:w*0.3+rng()*80, y:h*0.3+rng()*80, c:0});
+  for(let i=0;i<15;i++) sepPts.push({x:w*0.6+rng()*80, y:h*0.5+rng()*80, c:1});
+  sepDraw();
+}
+function sepDraw(){
+  const w=sepC.getBoundingClientRect().width, h=sepC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  sepCtx.clearRect(0,0,w,h);
+  // grid
+  sepCtx.strokeStyle='#1a2340'; sepCtx.lineWidth=1;
+  for(let i=0;i<w;i+=40){sepCtx.beginPath();sepCtx.moveTo(i,0);sepCtx.lineTo(i,h);sepCtx.stroke();}
+  for(let i=0;i<h;i+=40){sepCtx.beginPath();sepCtx.moveTo(0,i);sepCtx.lineTo(w,i);sepCtx.stroke();}
+  // line
+  const ang = +document.getElementById('sepAngle').value * Math.PI/180;
+  const bias = +document.getElementById('sepBias').value;
+  const nx=Math.cos(ang), ny=Math.sin(ang);
+  // draw line
+  sepCtx.strokeStyle='#fc6'; sepCtx.lineWidth=2;
+  sepCtx.beginPath();
+  const t=1000;
+  sepCtx.moveTo(cx + bias*nx - ny*t, cy + bias*ny + nx*t);
+  sepCtx.lineTo(cx + bias*nx + ny*t, cy + bias*ny - nx*t);
+  sepCtx.stroke();
+  // classify
+  let correct=0;
+  sepPts.forEach(p=>{
+    const dx=p.x-cx-bias*nx, dy=p.y-cy-bias*ny;
+    const side = dx*nx+dy*ny > 0 ? 1:0;
+    const ok = side===p.c;
+    if(ok) correct++;
+    sepCtx.fillStyle = p.c? '#f7c':'#7cf';
+    sepCtx.strokeStyle = ok? '#6f9':'#f66';
+    sepCtx.lineWidth=2;
+    sepCtx.beginPath(); sepCtx.arc(p.x,p.y,6,0,7); sepCtx.fill(); sepCtx.stroke();
+  });
+  const acc = sepPts.length? (correct/sepPts.length*100).toFixed(1)+'%':'—';
+  document.getElementById('sepAcc').textContent = acc;
+  document.getElementById('sepSep').textContent = sepPts.length && correct===sepPts.length? 'JA ✓':'nein';
+  document.getElementById('sepSep').style.color = correct===sepPts.length?'var(--ok)':'var(--warn)';
+}
+bind('sepAngle', ()=>sepDraw(), v=>v+'°');
+bind('sepBias', ()=>sepDraw());
+sepInit();
+
+/* ============================================================
+   SECTION 3 — MINKOWSKI
+============================================================ */
+const mdOrigC = document.getElementById('mdOrig');
+const mdDiffC = document.getElementById('mdDiff');
+let mdOrigCtx, mdDiffCtx, mdA=[], mdB=[];
+function mdSetup(){
+  mdOrigCtx = dpr(mdOrigC); mdDiffCtx = dpr(mdDiffC);
+  const cfg = document.getElementById('mdConfig').value;
+  const rng = rand(7);
+  mdA=[]; mdB=[];
+  const w=mdOrigC.getBoundingClientRect().width, h=mdOrigC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  if(cfg==='sep'){
+    for(let i=0;i<12;i++) mdA.push({x:cx-60+rng()*40, y:cy-30+rng()*60});
+    for(let i=0;i<12;i++) mdB.push({x:cx+30+rng()*40, y:cy-30+rng()*60});
+  } else if(cfg==='insep'){
+    for(let i=0;i<12;i++) mdA.push({x:cx-30+rng()*60, y:cy-30+rng()*60});
+    for(let i=0;i<12;i++) mdB.push({x:cx-10+rng()*60, y:cy-30+rng()*60});
+  } else {
+    for(let i=0;i<6;i++) mdA.push({x:cx-50+rng()*30, y:cy-50+rng()*30});
+    for(let i=0;i<6;i++) mdA.push({x:cx+30+rng()*30, y:cy+30+rng()*30});
+    for(let i=0;i<6;i++) mdB.push({x:cx+30+rng()*30, y:cy-50+rng()*30});
+    for(let i=0;i<6;i++) mdB.push({x:cx-50+rng()*30, y:cy+30+rng()*30});
+  }
+  mdDraw();
+}
+function mdDraw(){
+  const w=mdOrigC.getBoundingClientRect().width, h=mdOrigC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  const ang = +document.getElementById('mdOmega').value * Math.PI/180;
+  const nx=Math.cos(ang), ny=Math.sin(ang);
+  // ---- Original
+  mdOrigCtx.clearRect(0,0,w,h);
+  mdOrigCtx.strokeStyle='#1a2340';
+  for(let i=0;i<w;i+=40){mdOrigCtx.beginPath();mdOrigCtx.moveTo(i,0);mdOrigCtx.lineTo(i,h);mdOrigCtx.stroke();}
+  for(let i=0;i<h;i+=40){mdOrigCtx.beginPath();mdOrigCtx.moveTo(0,i);mdOrigCtx.lineTo(w,i);mdOrigCtx.stroke();}
+  mdA.forEach(p=>{mdOrigCtx.fillStyle='#7cf';mdOrigCtx.beginPath();mdOrigCtx.arc(p.x,p.y,5,0,7);mdOrigCtx.fill();});
+  mdB.forEach(p=>{mdOrigCtx.fillStyle='#f7c';mdOrigCtx.beginPath();mdOrigCtx.arc(p.x,p.y,5,0,7);mdOrigCtx.fill();});
+  // ---- MD
+  mdDiffCtx.clearRect(0,0,w,h);
+  mdDiffCtx.strokeStyle='#1a2340';
+  for(let i=0;i<w;i+=40){mdDiffCtx.beginPath();mdDiffCtx.moveTo(i,0);mdDiffCtx.lineTo(i,h);mdDiffCtx.stroke();}
+  for(let i=0;i<h;i+=40){mdDiffCtx.beginPath();mdDiffCtx.moveTo(0,i);mdDiffCtx.lineTo(w,i);mdDiffCtx.stroke();}
+  // axes
+  mdDiffCtx.strokeStyle='#455'; mdDiffCtx.beginPath();
+  mdDiffCtx.moveTo(0,cy);mdDiffCtx.lineTo(w,cy);
+  mdDiffCtx.moveTo(cx,0);mdDiffCtx.lineTo(cx,h);mdDiffCtx.stroke();
+  // hyperplane through origin
+  mdDiffCtx.strokeStyle='#fc6'; mdDiffCtx.lineWidth=2;
+  const t=800;
+  mdDiffCtx.beginPath();
+  mdDiffCtx.moveTo(cx - ny*t, cy + nx*t);
+  mdDiffCtx.lineTo(cx + ny*t, cy - nx*t);
+  mdDiffCtx.stroke();
+  // MD points
+  let major=0, minor=0;
+  mdA.forEach(a => mdB.forEach(b=>{
+    const dx=a.x-b.x, dy=a.y-b.y;
+    const px=cx+dx, py=cy+dy;
+    const side = dx*nx+dy*ny;
+    if(side>0){ major++; mdDiffCtx.fillStyle='rgba(111,255,153,.6)';}
+    else { minor++; mdDiffCtx.fillStyle='rgba(255,102,102,.6)';}
+    mdDiffCtx.beginPath(); mdDiffCtx.arc(px,py,3,0,7); mdDiffCtx.fill();
+  }));
+  // origin
+  mdDiffCtx.fillStyle='#fff'; mdDiffCtx.beginPath(); mdDiffCtx.arc(cx,cy,4,0,7);mdDiffCtx.fill();
+  const total = major+minor;
+  const majorSide = Math.max(major,minor);
+  document.getElementById('mdMajor').textContent = majorSide+' / '+total;
+  document.getElementById('mdLS').textContent = (majorSide/total).toFixed(3);
+}
+bind('mdOmega', ()=>mdDraw(), v=>v+'°');
+mdSetup();
+
+/* ============================================================
+   SECTION 4 — LSM computation
+============================================================ */
+const lsmC = document.getElementById('lsmCanvas');
+let lsmCtx, lsmA=[], lsmB=[];
+function lsmRegen(){
+  const overlap = +document.getElementById('lsmOverlap').value/100;
+  const spread = +document.getElementById('lsmSpread').value;
+  const w=lsmC.getBoundingClientRect().width, h=lsmC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  const rng = rand(Math.floor(Math.random()*10000));
+  lsmA=[]; lsmB=[];
+  const gap = 120*(1-overlap);
+  for(let i=0;i<40;i++){
+    lsmA.push({x: cx-gap/2 + (rng()-0.5)*spread, y: cy + (rng()-0.5)*spread});
+    lsmB.push({x: cx+gap/2 + (rng()-0.5)*spread, y: cy + (rng()-0.5)*spread});
+  }
+  lsmCompute();
+}
+function lsmCompute(){
+  if(!lsmCtx) lsmCtx = dpr(lsmC);
+  const w=lsmC.getBoundingClientRect().width, h=lsmC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  // MD sum
+  let sx=0, sy=0, n=0;
+  lsmA.forEach(a=>lsmB.forEach(b=>{ sx+=(a.x-b.x); sy+=(a.y-b.y); n++;}));
+  const norm = Math.hypot(sx,sy);
+  const wx=sx/norm, wy=sy/norm; // omega
+  // compute measures
+  let major=0, minor=0, sumSigned=0, sumAbs=0, sqSum=0, sumSq=0;
+  lsmA.forEach(a=>lsmB.forEach(b=>{
+    const dx=a.x-b.x, dy=a.y-b.y;
+    const proj = dx*wx+dy*wy;
+    if(proj>0) major++; else minor++;
+    sumSigned+=proj; sumAbs+=Math.abs(proj); sumSq+=proj*proj;
+  }));
+  const LS0 = Math.max(major,minor)/n;
+  const LS1 = Math.abs(sumSigned)/sumAbs;
+  const LS2 = (sumSigned*sumSigned)/(n*sumSq);
+  // best linear accuracy: use omega as classifier
+  let correct=0;
+  lsmA.forEach(a=>{ if((a.x-cx)*wx+(a.y-cy)*wy > 0) correct++; });
+  lsmB.forEach(b=>{ if((b.x-cx)*wx+(b.y-cy)*wy < 0) correct++; });
+  const acc = correct/(lsmA.length+lsmB.length);
+
+  // draw
+  lsmCtx.clearRect(0,0,w,h);
+  lsmCtx.strokeStyle='#1a2340';
+  for(let i=0;i<w;i+=40){lsmCtx.beginPath();lsmCtx.moveTo(i,0);lsmCtx.lineTo(i,h);lsmCtx.stroke();}
+  for(let i=0;i<h;i+=40){lsmCtx.beginPath();lsmCtx.moveTo(0,i);lsmCtx.lineTo(w,i);lsmCtx.stroke();}
+  // separator perpendicular to omega
+  lsmCtx.strokeStyle='#fc6'; lsmCtx.lineWidth=2;
+  const nx=-wy, ny=wx, t=800;
+  lsmCtx.beginPath();
+  lsmCtx.moveTo(cx+nx*t, cy+ny*t); lsmCtx.lineTo(cx-nx*t, cy-ny*t);
+  lsmCtx.stroke();
+  // omega arrow
+  lsmCtx.strokeStyle='#7cf'; lsmCtx.lineWidth=3;
+  lsmCtx.beginPath();
+  lsmCtx.moveTo(cx, cy); lsmCtx.lineTo(cx+wx*40, cy+wy*40);
+  lsmCtx.stroke();
+  // arrowhead
+  const ah=8, aa=Math.atan2(wy,wx);
+  lsmCtx.beginPath();
+  lsmCtx.moveTo(cx+wx*40, cy+wy*40);
+  lsmCtx.lineTo(cx+wx*40 - ah*Math.cos(aa-.4), cy+wy*40 - ah*Math.sin(aa-.4));
+  lsmCtx.lineTo(cx+wx*40 - ah*Math.cos(aa+.4), cy+wy*40 - ah*Math.sin(aa+.4));
+  lsmCtx.closePath(); lsmCtx.fill();
+  // points
+  lsmA.forEach(p=>{lsmCtx.fillStyle='#7cf';lsmCtx.beginPath();lsmCtx.arc(p.x,p.y,4,0,7);lsmCtx.fill();});
+  lsmB.forEach(p=>{lsmCtx.fillStyle='#f7c';lsmCtx.beginPath();lsmCtx.arc(p.x,p.y,4,0,7);lsmCtx.fill();});
+
+  document.getElementById('vLS0').textContent = LS0.toFixed(3);
+  document.getElementById('vLS1').textContent = LS1.toFixed(3);
+  document.getElementById('vLS2').textContent = LS2.toFixed(3);
+  document.getElementById('vAcc').textContent = (acc*100).toFixed(1)+'%';
+
+  // bar plot
+  Plotly.react('lsmBars', [{
+    x:['LS*','LS₁','LS₂','Accuracy'],
+    y:[LS0, LS1, LS2, acc],
+    type:'bar',
+    marker:{color:['#7cf','#f7c','#6f9','#fc6']},
+    text:[LS0.toFixed(3),LS1.toFixed(3),LS2.toFixed(3),(acc*100).toFixed(1)+'%'],
+    textposition:'auto'
+  }], {
+    paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+    font:{color:'#e8ecf5'}, margin:{t:20,b:40,l:40,r:20},
+    yaxis:{range:[0,1.05], gridcolor:'#2a3552'}, xaxis:{gridcolor:'#2a3552'}
+  }, {displayModeBar:false});
+}
+function showLSM(i, btn){
+  ['lsm0','lsm1','lsm2'].forEach((id,k)=>document.getElementById(id).style.display=(k===i?'block':'none'));
+  document.querySelectorAll('.tab-bar button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+bind('lsmOverlap', ()=>lsmRegen(), v=>v+'%');
+bind('lsmSpread', ()=>lsmRegen());
+lsmRegen();
+
+/* ============================================================
+   SECTION 5 — SYNCHRONICITY simulation
+============================================================ */
+function syncRun(){
+  const L = +document.getElementById('syncLayers').value;
+  const E = +document.getElementById('syncEpochs').value;
+  const epochs=[], acc=[], layers=[];
+  for(let l=0;l<L;l++) layers.push([]);
+  // simulate: accuracy grows from 0.5 to ~0.98 with noise; LS per layer = acc*(l+1)/L + noise
+  for(let e=0;e<E;e++){
+    const t=e/E;
+    const a = 0.5 + 0.48*(1-Math.exp(-t*4)) + (Math.random()-0.5)*0.03;
+    epochs.push(e);
+    acc.push(a);
+    for(let l=0;l<L;l++){
+      const layerPos=(l+1)/L; // deeper = higher
+      const ls = 0.5 + (a-0.5)*layerPos + (Math.random()-0.5)*0.04;
+      layers[l].push(Math.max(0.3, Math.min(1, ls)));
+    }
+  }
+  const traces=[{x:epochs,y:acc,name:'Accuracy',line:{color:'#fc6',width:3}}];
+  const cols=['#7cf','#f7c','#6f9','#f66','#c9f'];
+  for(let l=0;l<L;l++)
+    traces.push({x:epochs,y:layers[l],name:`LS Schicht ${l+1}`,line:{color:cols[l%cols.length],dash:'dot'}});
+  Plotly.react('syncPlot', traces, {
+    paper_bgcolor:'transparent',plot_bgcolor:'transparent',
+    font:{color:'#e8ecf5'},
+    xaxis:{title:'Epoche', gridcolor:'#2a3552'},
+    yaxis:{title:'Wert', gridcolor:'#2a3552', range:[0.3,1.05]},
+    legend:{bgcolor:'rgba(0,0,0,0)'},
+    margin:{t:20,b:50,l:60,r:20}
+  }, {displayModeBar:false});
+}
+bind('syncLayers', ()=>{});
+bind('syncEpochs', ()=>{});
+syncRun();
+
+/* ============================================================
+   SECTION 6 — ACTIVATION FUNCTIONS
+============================================================ */
+const actLin = document.getElementById('actLinear');
+const actNon = document.getElementById('actNonLinear');
+let actLinCtx, actNonCtx;
+const acts = {
+  linear: x=>x,
+  tanh: x=>Math.tanh(x),
+  sigmoid: x=>1/(1+Math.exp(-x)),
+  relu: x=>Math.max(0,x),
+  softsign: x=>x/(1+Math.abs(x))
+};
+function actRedraw(){
+  if(!actLinCtx){actLinCtx=dpr(actLin); actNonCtx=dpr(actNon);}
+  const scale = +document.getElementById('actScale').value/10;
+  const fnName = document.getElementById('actFn').value;
+  const fn = acts[fnName];
+  const w=actLin.getBoundingClientRect().width, h=actLin.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  // two entangled classes
+  const rng = rand(3);
+  const A=[], B=[];
+  for(let i=0;i<40;i++){
+    const t=i/40*Math.PI*2;
+    A.push({x:Math.cos(t)*60+rng()*10, y:Math.sin(t)*60+rng()*10});
+    B.push({x:Math.cos(t)*20+rng()*10, y:Math.sin(t)*20+rng()*10});
+  }
+  const drawSet = (ctx, transform)=>{
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='#1a2340';
+    for(let i=0;i<w;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke();}
+    for(let i=0;i<h;i+=40){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
+    ctx.strokeStyle='#455';ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    [[A,'#7cf'],[B,'#f7c']].forEach(([S,col])=>{
+      S.forEach(p=>{
+        const q = transform(p);
+        ctx.fillStyle=col; ctx.beginPath(); ctx.arc(cx+q.x, cy+q.y, 4, 0, 7); ctx.fill();
+      });
+    });
+  };
+  // linear: rotate + scale
+  const ang=0.6;
+  drawSet(actLinCtx, p=>({x:(p.x*Math.cos(ang)-p.y*Math.sin(ang))*scale*0.5,
+                          y:(p.x*Math.sin(ang)+p.y*Math.cos(ang))*scale*0.5}));
+  // non-linear: apply activation to scaled coords
+  drawSet(actNonCtx, p=>({x:fn(p.x*scale/30)*80, y:fn(p.y*scale/30)*80}));
+
+  // plot F_sigma via activation shape
+  const xs=[], ys=[];
+  for(let x=-4;x<=4;x+=0.1){ xs.push(x); ys.push(fn(x)); }
+  Plotly.react('actShapePlot',[
+    {x:xs,y:ys,name:'σ(x)',line:{color:'#7cf',width:3}}
+  ],{
+    paper_bgcolor:'transparent',plot_bgcolor:'transparent',
+    font:{color:'#e8ecf5'},title:{text:'Form der Aktivierungsfunktion',font:{size:14}},
+    xaxis:{gridcolor:'#2a3552',zerolinecolor:'#455'}, yaxis:{gridcolor:'#2a3552',zerolinecolor:'#455'},
+    margin:{t:40,b:40,l:50,r:20}
+  },{displayModeBar:false});
+}
+bind('actScale', ()=>actRedraw(), v=>(v/10).toFixed(1));
+actRedraw();
+
+/* ============================================================
+   SECTION 7 — WIDTH & DEPTH probability bounds
+============================================================ */
+function widthPlot(){
+  const H = +document.getElementById('wH').value;
+  const L = +document.getElementById('wL').value;
+  const LS = +document.getElementById('wLS').value/10;
+  const sigma2 = 4;
+  const Hs=[], bound1=[], bound2=[];
+  for(let h=2; h<=500; h+=5){
+    Hs.push(h);
+    bound1.push(Math.min(1, h * Math.exp(-(LS*LS)/(8*sigma2))));
+    bound2.push(Math.min(1, L * h * Math.exp(-(LS*LS)/(8*sigma2))));
+  }
+  const b1 = Math.min(1, H*Math.exp(-(LS*LS)/(8*sigma2)));
+  const b2 = Math.min(1, L*H*Math.exp(-(LS*LS)/(8*sigma2)));
+  document.getElementById('wBound1').textContent = b1.toFixed(4);
+  document.getElementById('wBound2').textContent = b2.toFixed(4);
+
+  Plotly.react('widthPlot',[
+    {x:Hs, y:bound1, name:'Breiten-Schranke H·e^(-LS²/8σ²)', line:{color:'#7cf',width:3}},
+    {x:Hs, y:bound2, name:`Tiefen-Schranke L·H·e^(...) [L=${L}]`, line:{color:'#f7c',width:3}},
+    {x:[H], y:[b1], name:'Aktuell (Breite)', mode:'markers', marker:{color:'#fc6',size:14,symbol:'star'}},
+    {x:[H], y:[b2], name:'Aktuell (Tiefe)', mode:'markers', marker:{color:'#6f9',size:14,symbol:'diamond'}}
+  ],{
+    paper_bgcolor:'transparent',plot_bgcolor:'transparent',
+    font:{color:'#e8ecf5'},
+    xaxis:{title:'Netzwerk-Breite H', gridcolor:'#2a3552'},
+    yaxis:{title:'Wahrscheinlichkeits-Schranke', gridcolor:'#2a3552', range:[0,1.05]},
+    legend:{bgcolor:'rgba(0,0,0,0)'},
+    margin:{t:20,b:50,l:60,r:20}
+  },{displayModeBar:false});
+}
+bind('wH', ()=>widthPlot());
+bind('wL', ()=>widthPlot());
+bind('wLS', ()=>widthPlot(), v=>(v/10).toFixed(1));
+widthPlot();
+
+/* ============================================================
+   SUMMARY TABLE
+============================================================ */
+document.getElementById('summaryTable').innerHTML = `
+<table style="width:100%;border-collapse:collapse;margin-top:10px">
+<thead><tr style="border-bottom:2px solid var(--accent)">
+  <th style="padding:8px;text-align:left;color:var(--accent)">Maß</th>
+  <th style="padding:8px;text-align:left;color:var(--accent)">Formel (Kern)</th>
+  <th style="padding:8px;text-align:left;color:var(--accent)">Bereich</th>
+  <th style="padding:8px;text-align:left;color:var(--accent)">Eigenschaft</th>
+</tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px"><b>LS*</b></td><td>Anteil MD-Punkte in Major-Seite</td><td>(0.5, 1]</td><td>NP-schwer, intuitiv</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px"><b>LS₀</b></td><td>Wie LS*, aber sgn statt Indikator</td><td>(0, 1]</td><td>NP-schwer, äquivalente Trennung</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px"><b>LS₁</b></td><td>|∑ ωᵀm| / ∑|ωᵀm|</td><td>(0, 1]</td><td>=1 gdw. separierbar</td></tr>
+<tr><td style="padding:8px"><b>LS₂</b></td><td>(∑ωᵀm)² / ∑(ωᵀm)²</td><td>(0, +∞)</td><td>Geschlossene Lösung via Eigenwerte</td></tr>
+</tbody></table>`;
+
+/* ============================================================
+   KATEX RENDERING
+============================================================ */
+function renderMath(){
+  katex.render("A, B \\subset \\mathbb{R}^N \\text{ linear separierbar } \\iff \\exists\\, \\omega \\in \\mathbb{R}^N : \\omega^T m > 0 \\;\\; \\forall m \\in \\text{MD}(A,B)",
+    document.getElementById('thm3'), {throwOnError:false, displayMode:true});
+  katex.render("\\text{LS}^*(A,B) = \\max_{\\omega}\\; \\max\\!\\left\\{ \\tfrac{\\#\\{\\omega^T m_{ij}>0\\}}{|\\text{MD}|},\\; \\tfrac{\\#\\{\\omega^T m_{ij}<0\\}}{|\\text{MD}|} \\right\\}",
+    document.getElementById('fLS0'), {throwOnError:false, displayMode:true});
+  katex.render("\\text{LS}_1(A,B) = \\max_{\\omega}\\; \\frac{\\left|\\sum_{i,j} \\omega^T m_{ij}\\right|}{\\sum_{i,j} |\\omega^T m_{ij}|}",
+    document.getElementById('fLS1'), {throwOnError:false, displayMode:true});
+  katex.render("\\text{LS}_2(A,B) = \\max_{\\omega}\\; \\frac{\\omega^T \\tilde m \\tilde m^T \\omega}{\\omega^T M M^T \\omega} \\quad\\Rightarrow\\quad \\text{größter Eigenwert von } \\Sigma",
+    document.getElementById('fLS2'), {throwOnError:false, displayMode:true});
+  katex.render("P\\{\\text{LS}_2(V_\\sigma(A), V_\\sigma(B)) > \\text{LS}_2(A,B)\\} \\;\\le\\; H \\cdot e^{-\\text{LS}_2^2 / 8\\sigma^2}",
+    document.getElementById('fWidth'), {throwOnError:false, displayMode:true});
+}
+renderMath();
+
+/* Redraw on resize */
+window.addEventListener('resize', ()=>{
+  motCtx=null; sepCtx=null; mdOrigCtx=null; mdDiffCtx=null; lsmCtx=null; actLinCtx=null; actNonCtx=null;
+  motDraw(+document.getElementById('motLayer').value);
+  sepDraw(); mdSetup(); lsmRegen(); actRedraw();
+});
+</script>
+</body>
+</html>
+  lsmCtx.beginPath();
+  lsmCtx.moveTo(cx,cy); lsmCtx.lineTo(cx+wx*60, cy+wy*60);
+  lsmCtx.stroke();
+  // arrow head
+  const ah=8, aa=Math.atan2(wy,wx);
+  lsmCtx.beginPath();
+  lsmCtx.moveTo(cx+wx*60, cy+wy*60);
+  lsmCtx.lineTo(cx+wx*60-ah*Math.cos(aa-.4), cy+wy*60-ah*Math.sin(aa-.4));
+  lsmCtx.lineTo(cx+wx*60-ah*Math.cos(aa+.4), cy+wy*60-ah*Math.sin(aa+.4));
+  lsmCtx.closePath(); lsmCtx.fill();
+  // points
+  lsmA.forEach(p=>{lsmCtx.fillStyle='#7cf';lsmCtx.beginPath();lsmCtx.arc(p.x,p.y,4,0,7);lsmCtx.fill();});
+  lsmB.forEach(p=>{lsmCtx.fillStyle='#f7c';lsmCtx.beginPath();lsmCtx.arc(p.x,p.y,4,0,7);lsmCtx.fill();});
+
+  document.getElementById('vLS0').textContent = LS0.toFixed(3);
+  document.getElementById('vLS1').textContent = LS1.toFixed(3);
+  document.getElementById('vLS2').textContent = LS2.toFixed(3);
+  document.getElementById('vAcc').textContent = (acc*100).toFixed(1)+'%';
+
+  // bar chart
+  Plotly.newPlot('lsmBars',[{
+    x:['LS*','LS₁','LS₂','ACC'],
+    y:[LS0,LS1,LS2,acc],
+    type:'bar',
+    marker:{color:['#7cf','#f7c','#6f9','#fc6']},
+    text:[LS0.toFixed(2),LS1.toFixed(2),LS2.toFixed(2),acc.toFixed(2)],
+    textposition:'auto'
+  }],{
+    paper_bgcolor:'#131a2c',plot_bgcolor:'#0a0f1e',
+    font:{color:'#e8ecf5'},
+    yaxis:{range:[0,1.05],gridcolor:'#2a3552'},
+    margin:{t:20,l:40,r:20,b:40},
+    title:{text:'Vergleich der Maße',font:{size:14}}
+  },{displayModeBar:false});
+}
+function showLSM(i,btn){
+  document.querySelectorAll('.tab-bar button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  for(let k=0;k<3;k++) document.getElementById('lsm'+k).style.display = k===i?'block':'none';
+}
+bind('lsmOverlap',()=>lsmRegen(), v=>v+'%');
+bind('lsmSpread',()=>lsmRegen());
+lsmRegen();
+
+/* ============================================================
+   SECTION 5 — SYNCHRONICITY simulation
+============================================================ */
+function syncRun(){
+  const L = +document.getElementById('syncLayers').value;
+  const E = +document.getElementById('syncEpochs').value;
+  const epochs = Array.from({length:E},(_,i)=>i);
+  // Simulate accuracy: sigmoidal with noise
+  const acc = epochs.map(i=>{
+    const t = i/E;
+    return 0.5 + 0.45*(1/(1+Math.exp(-8*(t-0.3)))) + (Math.random()-0.5)*0.03;
+  });
+  const traces = [{
+    x:epochs,y:acc,name:'Training Accuracy',
+    line:{color:'#fc6',width:3},mode:'lines'
+  }];
+  // For each layer: LS follows accuracy but shifted; deeper layer = higher LS
+  const colors = ['#7cf','#f7c','#6f9','#c9f','#fa7'];
+  for(let l=0;l<L;l++){
+    const bias = (l+1)/(L+1)*0.15;
+    const ls = acc.map((a,i)=>{
+      // synchronous with acc + layer offset
+      return Math.min(1, Math.max(0.3, a - 0.05 + bias + (Math.random()-0.5)*0.025));
+    });
+    traces.push({
+      x:epochs,y:ls,name:`LS Schicht ${l+1}`,
+      line:{color:colors[l%colors.length],width:2,dash:l===L-1?'solid':'dot'},
+      mode:'lines'
+    });
+  }
+  Plotly.newPlot('syncPlot',traces,{
+    paper_bgcolor:'#131a2c',plot_bgcolor:'#0a0f1e',
+    font:{color:'#e8ecf5'},
+    xaxis:{title:'Trainings-Epoche',gridcolor:'#2a3552'},
+    yaxis:{title:'Wert (LS oder Accuracy)',gridcolor:'#2a3552',range:[0.3,1.02]},
+    margin:{t:30,l:60,r:20,b:50},
+    legend:{bgcolor:'rgba(19,26,44,.8)'},
+    title:{text:'Synchronizität: LS-Werte folgen der Accuracy',font:{size:14}}
+  },{displayModeBar:false});
+}
+bind('syncLayers',()=>{});
+bind('syncEpochs',()=>{});
+syncRun();
+
+/* ============================================================
+   SECTION 6 — ACTIVATION FUNCTIONS
+============================================================ */
+const actLC = document.getElementById('actLinear');
+const actNC = document.getElementById('actNonLinear');
+let actLCtx, actNCtx;
+const actFns = {
+  linear: x=>x,
+  tanh: x=>Math.tanh(x),
+  sigmoid: x=>1/(1+Math.exp(-x))-0.5,
+  relu: x=>Math.max(0,x),
+  softsign: x=>x/(1+Math.abs(x))
+};
+function actRedraw(){
+  if(!actLCtx){ actLCtx = dpr(actLC); actNCtx = dpr(actNC); }
+  const w = actLC.getBoundingClientRect().width, h=actLC.getBoundingClientRect().height;
+  const cx=w/2, cy=h/2;
+  const scale = +document.getElementById('actScale').value/10;
+  const fn = actFns[document.getElementById('actFn').value];
+
+  // Generate two entangled classes
+  const rng = rand(3);
+  const A=[], B=[];
+  for(let i=0;i<40;i++){
+    const t = rng()*Math.PI*2;
+    const r = 40 + rng()*15;
+    A.push({x:Math.cos(t)*r*.8, y:Math.sin(t)*r*.4});
+    B.push({x:Math.cos(t)*r*.4+30, y:Math.sin(t)*r*.8+15});
+  }
+  // Random-ish weight matrix (2x2): rotation + scale
+  const th = 0.6;
+  const V = [[Math.cos(th)*scale, -Math.sin(th)*scale],[Math.sin(th)*scale, Math.cos(th)*scale]];
+  const linTrans = p => ({x: V[0][0]*p.x+V[0][1]*p.y, y: V[1][0]*p.x+V[1][1]*p.y});
+  const nonlinTrans = p => {
+    const q = linTrans(p);
+    return {x: fn(q.x/30)*80, y: fn(q.y/30)*80};
+  };
+
+  function draw(ctx, transform){
+    ctx.clearRect(0,0,w,h);
+    // grid
+    ctx.strokeStyle='#1a2340';
+    for(let i=0;i<w;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke();}
+    for(let i=0;i<h;i+=30){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
+    ctx.strokeStyle='#455'; ctx.beginPath();
+    ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    A.forEach(p=>{const q=transform(p); ctx.fillStyle='#7cf'; ctx.beginPath(); ctx.arc(cx+q.x,cy+q.y,4,0,7); ctx.fill();});
+    B.forEach(p=>{const q=transform(p); ctx.fillStyle='#f7c'; ctx.beginPath(); ctx.arc(cx+q.x,cy+q.y,4,0,7); ctx.fill();});
+  }
+  draw(actLCtx, linTrans);
+  draw(actNCtx, nonlinTrans);
+
+  // Draw the shape of the activation function itself
+  const xs = [], ys=[];
+  for(let x=-5;x<=5;x+=0.05){xs.push(x); ys.push(fn(x));}
+  Plotly.newPlot('actShapePlot',[
+    {x:xs,y:ys,mode:'lines',line:{color:'#7cf',width:3},name:'σ(x)'}
+  ],{
+    paper_bgcolor:'#131a2c',plot_bgcolor:'#0a0f1e',
+    font:{color:'#e8ecf5'},
+    xaxis:{title:'x',gridcolor:'#2a3552',zerolinecolor:'#455'},
+    yaxis:{title:'σ(x)',gridcolor:'#2a3552',zerolinecolor:'#455'},
+    margin:{t:30,l:50,r:20,b:40},
+    title:{text:'Form der gewählten Aktivierung',font:{size:13}},
+    showlegend:false
+  },{displayModeBar:false});
+}
+bind('actScale',()=>actRedraw(), v=>(v/10).toFixed(1));
+actRedraw();
+
+/* ============================================================
+   SECTION 7 — WIDTH & DEPTH bounds
+============================================================ */
+function widthUpdate(){
+  const H = +document.getElementById('wH').value;
+  const L = +document.getElementById('wL').value;
+  const LS = +document.getElementById('wLS').value/10;
+  const sigma = 1.0;
+  // bound: H * exp(-LS^2/(8*sigma^2))
+  const Hs = [];
+  const boundH = [];
+  const boundL = [];
+  for(let h=1;h<=500;h++){
+    Hs.push(h);
+    boundH.push(Math.min(1, h*Math.exp(-LS*LS/(8*sigma*sigma))));
+    boundL.push(Math.min(1, L*h*Math.exp(-LS*LS/(8*sigma*sigma))));
+  }
+  Plotly.newPlot('widthPlot',[
+    {x:Hs,y:boundH,name:'Breiten-Schranke H·e^(-LS²/8σ²)',line:{color:'#7cf',width:2},mode:'lines'},
+    {x:Hs,y:boundL,name:'Tiefen-Schranke L·H·e^(...)',line:{color:'#f7c',width:2},mode:'lines'},
+    {x:[H],y:[Math.min(1,H*Math.exp(-LS*LS/(8*sigma*sigma)))],mode:'markers',
+     marker:{size:12,color:'#fc6',line:{color:'#fff',width:2}},name:'aktuelles H'}
+  ],{
+    paper_bgcolor:'#131a2c',plot_bgcolor:'#0a0f1e',
+    font:{color:'#e8ecf5'},
+    xaxis:{title:'Netzwerk-Breite H',gridcolor:'#2a3552'},
+    yaxis:{title:'Wahrscheinlichkeits-Schranke',gridcolor:'#2a3552',range:[0,1.05]},
+    margin:{t:30,l:60,r:20,b:50},
+    title:{text:'Obere Schranken (je kleiner desto besser garantiert LS-Anstieg)',font:{size:13}},
+    legend:{bgcolor:'rgba(19,26,44,.8)'}
+  },{displayModeBar:false});
+  document.getElementById('wBound1').textContent = Math.min(1,H*Math.exp(-LS*LS/(8*sigma*sigma))).toFixed(3);
+  document.getElementById('wBound2').textContent = Math.min(1,L*H*Math.exp(-LS*LS/(8*sigma*sigma))).toFixed(3);
+}
+bind('wH',()=>widthUpdate());
+bind('wL',()=>widthUpdate());
+bind('wLS',()=>widthUpdate(), v=>(v/10).toFixed(1));
+widthUpdate();
+
+/* ============================================================
+   SUMMARY TABLE
+============================================================ */
+document.getElementById('summaryTable').innerHTML = `
+<table style="width:100%;border-collapse:collapse;margin-top:10px">
+<thead><tr style="background:var(--panel2)">
+<th style="padding:10px;text-align:left;border-bottom:2px solid var(--accent)">Maß</th>
+<th style="padding:10px;text-align:left;border-bottom:2px solid var(--accent)">Formel (Kurzform)</th>
+<th style="padding:10px;text-align:left;border-bottom:2px solid var(--accent)">Bereich</th>
+<th style="padding:10px;text-align:left;border-bottom:2px solid var(--accent)">Berechnung</th>
+</tr></thead>
+<tbody>
+<tr><td style="padding:10px;border-bottom:1px solid var(--border)"><b style="color:#7cf">LS*</b></td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);font-family:monospace">max Anteil auf einer Seite</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border)">(0.5, 1]</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);color:#f66">NP-schwer</td></tr>
+<tr><td style="padding:10px;border-bottom:1px solid var(--border)"><b style="color:#f7c">LS₀</b></td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);font-family:monospace">wie LS*, mit sgn statt 1[·]</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border)">(0.5, 1]</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);color:#f66">NP-schwer</td></tr>
+<tr><td style="padding:10px;border-bottom:1px solid var(--border)"><b style="color:#6f9">LS₁</b></td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);font-family:monospace">|Σωᵀm| / Σ|ωᵀm|</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border)">(0, 1]</td>
+    <td style="padding:10px;border-bottom:1px solid var(--border);color:#fc6">schwierig (Betrag)</td></tr>
+<tr><td style="padding:10px"><b style="color:#fc6">LS₂</b></td>
+    <td style="padding:10px;font-family:monospace">(Σωᵀm)² / Σ(ωᵀm)²</td>
+    <td style="padding:10px">(0, ∞)</td>
+    <td style="padding:10px;color:#6f9">geschlossene Lösung ✓</td></tr>
+</tbody></table>`;
+
+/* ============================================================
+   Render LaTeX formulas
+============================================================ */
+function renderKatex(id, tex){
+  try { katex.render(tex, document.getElementById(id), {displayMode:true, throwOnError:false}); } catch(e){}
+}
+renderKatex('thm3', 'A,\\,B \\text{ linear separierbar} \\iff \\exists\\,\\omega:\\ \\forall\\,m\\in\\text{MD}(A,B),\\ \\omega^{\\!\\top}m > 0');
+renderKatex('fLS0', '\\text{LS}^*(A,B) = \\max_\\omega \\frac{\\max(\\#\\{\\omega^{\\!\\top}m_{ij}>0\\},\\ \\#\\{\\omega^{\\!\\top}m_{ij}<0\\})}{|MD(A,B)|}');
+renderKatex('fLS1', '\\text{LS}_1(A,B) = \\max_\\omega \\frac{\\bigl|\\sum_{i,j}\\omega^{\\!\\top}m_{ij}\\bigr|}{\\sum_{i,j}\\bigl|\\omega^{\\!\\top}m_{ij}\\bigr|}');
+renderKatex('fLS2', '\\text{LS}_2(A,B) = \\max_\\omega \\frac{\\bigl(\\sum_{i,j}\\omega^{\\!\\top}m_{ij}\\bigr)^{\\!2}}{\\sum_{i,j}(\\omega^{\\!\\top}m_{ij})^2}\\ \\ \\longrightarrow\\ \\ \\text{Eigenwertproblem}');
+renderKatex('fWidth', 'P\\bigl\\{\\text{LS}_2(V_\\sigma(A),V_\\sigma(B)) > \\text{LS}_2(A,B)\\bigr\\} \\ \\le\\ H\\cdot e^{-\\text{LS}_2^2/(8\\sigma^2)}');
+
+/* Responsive redraw */
+window.addEventListener('resize', ()=>{
+  [motC,sepC,mdOrigC,mdDiffC,lsmC,actLC,actNC].forEach(c=>{ c.getContext('2d').setTransform(1,0,0,1,0,0);});
+  motCtx=sepCtx=mdOrigCtx=mdDiffCtx=lsmCtx=actLCtx=actNCtx=null;
+  motDraw(+document.getElementById('motLayer').value);
+  sepDraw(); mdSetup(); lsmRegen(); actRedraw();
+});
+</script>
+
+</body>
+</html>
