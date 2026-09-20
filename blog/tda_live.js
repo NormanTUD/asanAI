@@ -24,6 +24,8 @@
 		attention: [],
 		maxHistory: 30,
 		active: false,
+		unlocked: false,
+		pending: null,
 		frame: null,
 		frameSig: "",
 		renderedSig: "",
@@ -69,6 +71,8 @@
 		// moment it enters view (and not only when a setting changes).
 		const sec = el("tda-live-section");
 		if (!sec) return false;
+		const det = el("tda-live-details");
+		if (det && !det.open) return false;
 		const st = window.getComputedStyle(sec);
 		if (st.display === "none") return false;
 		const r = sec.getBoundingClientRect();
@@ -1045,6 +1049,7 @@
 
 	// ── attention hook ────────────────────────────────────────────
 	function attnHook(engine, headData, h0, tokens, tokenStrings) {
+		if (!S.unlocked) return;
 		try {
 			if (!engine || !headData) return;
 			const n = headData.length;
@@ -2177,8 +2182,7 @@
 		queueRender();
 	}
 
-	function captureEpoch(snap) {
-		if (!el("tda-live-phase")) return;
+	function adoptSnapshot(snap) {
 		S.cur = buildSnapshot(snap);
 		if (snap.epoch >= 0) {
 			S.epochs.push(S.cur);
@@ -2186,6 +2190,12 @@
 		}
 		S.frameSig = "";
 		S.vfSig = "";
+	}
+
+	function captureEpoch(snap) {
+		if (!el("tda-live-phase")) return;
+		if (!S.unlocked) { S.pending = snap; return; }
+		adoptSnapshot(snap);
 		if (CFG.auto) queueRender();
 	}
 
@@ -2217,6 +2227,25 @@
 		wireControls();
 		const s = el("tda-live-status");
 		if (s) s.textContent = "hooks: transformer.js + attention_engine.js";
+		const det = el("tda-live-details");
+		if (det) {
+			S.unlocked = det.open;
+			if (S.unlocked && S.pending) {
+				adoptSnapshot(S.pending);
+				S.pending = null;
+			}
+			det.addEventListener("toggle", () => {
+				if (!det.open) return;
+				if (!S.unlocked) {
+					S.unlocked = true;
+					if (S.pending) {
+						adoptSnapshot(S.pending);
+						S.pending = null;
+					}
+				}
+				queueRender();
+			});
+		}
 	}
 
 	window.TDALive = {

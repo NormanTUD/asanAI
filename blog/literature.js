@@ -46,6 +46,76 @@ window.bibData = {
 		url: "https://colah.github.io/posts/2015-09-NN-Types-FP/",
 		alternativetitle: "Olah, Neural Networks, Types, and Functional Programming (2015)"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Sequence models and the road to attention (recurrent_networks.php,
+	 *  attentionlab.php, history.php):
+	 *  colah's LSTM walkthrough, his backpropagation-as-graph-calculus essay,
+	 *  and his visual introduction to information theory (entropy, cross
+	 *  entropy, KL divergence) used in statistics_ii.php and losslab.php.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"colah2015lstm": {
+		title: "Understanding LSTM Networks",
+		author: "Chris Olah",
+		year: 2015,
+		url: "https://colah.github.io/posts/2015-08-Understanding-LSTMs/",
+		alternativetitle: "Olah, Understanding LSTM Networks (2015)"
+	},
+	"colah2015backprop": {
+		title: "Calculus on Computational Graphs: Backpropagation",
+		author: "Chris Olah",
+		year: 2015,
+		url: "https://colah.github.io/posts/2015-08-Backprop/",
+		alternativetitle: "Olah, Backpropagation as Reverse-Mode Differentiation (2015)"
+	},
+	"colah2015visualinfo": {
+		title: "Visual Information Theory",
+		author: "Chris Olah",
+		year: 2015,
+		url: "https://colah.github.io/posts/2015-09-Visual-Information/",
+		alternativetitle: "Olah, Visual Information Theory (2015)"
+	},
+	"cho2014gru": {
+		title: "Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation",
+		author: "Kyunghyun Cho, Bart van Merriënboer, Çağlar Gülçehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1406.1078",
+		alternativetitle: "Cho et al. 2014, the GRU (arXiv)"
+	},
+	"greff2015lstm": {
+		title: "LSTM: A Search Space Odyssey",
+		author: "Klaus Greff, Rupesh Kumar Srivastava, Jan Koutník, Bas R. Steunebrink, Jürgen Schmidhuber",
+		year: 2015,
+		url: "https://arxiv.org/abs/1503.04069",
+		alternativetitle: "Greff et al. 2015, comparing LSTM variants (arXiv)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  What a vision network actually sees (deconvolution.php, inceptionism.php,
+	 *  computer_vision.php, mechanistic_interpretability.php):
+	 *  deconvolution/checkerboard artifacts (Distill), multimodal neurons in
+	 *  CLIP (Distill), and the original Inceptionism / DeepDream essay (Google
+	 *  Research Blog). Olah is a co-author of all three.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"odena2016deconvolution": {
+		title: "Deconvolution and Checkerboard Artifacts",
+		author: "Augustus Odena, Vincent Dumoulin, Chris Olah",
+		year: 2016,
+		url: "https://distill.pub/2016/deconv-checkerboard/",
+		alternativetitle: "Odena, Dumoulin & Olah 2016 (Distill)"
+	},
+	"goh2021multimodal": {
+		title: "Multimodal Neurons in Artificial Neural Networks",
+		author: "Gabriel Goh, Nick Cammarata, Chelsea Voss, Shan Carter, Michael Petrov, Ludwig Schubert, Alec Radford, Chris Olah",
+		year: 2021,
+		url: "https://distill.pub/2021/multimodal-neurons/",
+		alternativetitle: "Goh et al. 2021 (Distill)"
+	},
+	"mordvintsev2015inceptionism": {
+		title: "Inceptionism: Going Deeper into Neural Networks",
+		author: "Alexander Mordvintsev, Christopher Olah, Mike Tyka",
+		year: 2015,
+		url: "https://research.google/blog/inceptionism-going-deeper-into-neural-networks/",
+		alternativetitle: "Mordvintsev, Olah & Tyka 2015 (Google Research Blog)"
+	},
 	"karpathy2015convnetjs": {
 		title: "ConvNetJS: Classify 2D data (interactive demo)",
 		author: "Andrej Karpathy",
