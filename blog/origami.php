@@ -329,6 +329,36 @@ range metrics (a random-walk-inspired approach). On a self-similar fractal bench
 tracks generalization; they also find that while wider networks don't fold *more* per
 path, a far larger *fraction* of paths fold at all (from roughly a third to essentially
 all as width increases).
+
+**The same authors rebuilt the measure on firmer ground.** In *The Space Between*
+\cite{lewandowski2025spacebetween} the fold of a path is defined as the gap between how far
+it wanders from its start and how much total distance it travels,
+$\chi = 1 - \dfrac{\max_i d_H(\pi_i,\pi_1)}{\sum_i d_H(\pi_i,\pi_{i+1})}$, with inputs grouped
+into **equivalence classes** — all inputs that hit the same active/inactive pattern (a linear
+region, for ReLU). That single move generalizes $\chi$ to Swish, GELU and SwiGLU, and exposes
+two facts the first paper left implicit: folding is **direction-sensitive**
+($\chi(\Gamma)\neq\chi(-\Gamma)$ in general, although *flatness*, $\chi=0$, is not), and it can
+be turned into a **regularizer** — a penalty that is large when the fold is *small* early in
+training nudges the net to fold more, and that improves generalization. Folding becomes an
+explicit term in the loss: a "reward for folding".
+
+**And there is a constructive proof that folding is what buys depth.** Amrami & Goldberg
+(2021) \cite{amrami2021depth} give an elementary, geometry-only argument that *exploits* exactly
+this mechanism: a family of classification problems, indexed by $m$, that any **fixed-depth**
+ReLU net needs **exponentially many** parameters to solve, yet a net of **linear** depth and
+width $\le 4$ solves every one with zero error — by literally folding the input space until the
+classes separate. It is a compact, undergraduate-friendly proof that the folding above is
+*load-bearing*, a clean modern statement of why depth beats width in the same geometric
+language as Keup & Helias.
+
+Keep two numbers straight, because they disagree and both are true. The **worst-case** count
+of linear regions a deep ReLU net can carve is **exponential** in depth
+\cite{montufar2014regions}, but the **realized** count in a trained net is far smaller. The
+space-fold work confirms it: wider nets fold *more paths* yet each path folds about as much,
+and the per-path fold saturates. So a trained net is not *enumerating* its region budget; it
+spends **depth** to fold only the structure the task needs and leaves the exponential slack
+unspent. That gap between the exponential upper bound and the sparse realized geometry is what
+the polyhedral view makes precise (see *The polyhedral backbone* below).
 </div>
 
 <div class="og-demo">

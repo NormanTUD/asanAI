@@ -198,6 +198,55 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2502.09954",
 		alternativetitle: "Lewandowski et al., On Space Folds of ReLU Neural Networks (TMLR 2025)"
 	},
+	"lewandowski2025spacebetween": {
+		title: "The Space Between: On Folding, Symmetries and Sampling",
+		author: "Michal Lewandowski, Bernhard Heinzl, Raphael Pisoni, Bernhard A. Moser",
+		year: 2025,
+		url: "https://arxiv.org/abs/2503.08502",
+		alternativetitle: "Lewandowski et al., The Space Between (arXiv:2503.08502)"
+	},
+	"amrami2021depth": {
+		title: "A simple geometric proof for the benefit of depth in ReLU networks",
+		author: "Asaf Amrami, Yoav Goldberg",
+		year: 2021,
+		url: "https://arxiv.org/abs/2101.07126",
+		alternativetitle: "Amrami & Goldberg, depth separation via space folding (2021)"
+	},
+	"groetschel2005polyhedral": {
+		title: "Basics of Polyhedral Theory",
+		author: "Martin Grötschel",
+		year: 2005,
+		url: "https://www.math.u-szeged.hu/~hajnal/courses/BSc_Opkut/Grotschel.pdf",
+		alternativetitle: "Grötschel, Basics of Polyhedral Theory (block-course notes, TU Berlin 2005)"
+	},
+	"huchette2026polyhedral": {
+		title: "When Deep Learning Meets Polyhedral Theory: A Survey",
+		author: "Joey Huchette, Gonzalo Muñoz, Thiago Serra, Calvin Tsay",
+		year: 2026,
+		url: "https://arxiv.org/abs/2305.00241",
+		alternativetitle: "Huchette et al., IJOC 2026 (arXiv:2305.00241), DOI 10.1287/ijoc.2024.0902"
+	},
+	"black2022polytopelens": {
+		title: "Interpreting Neural Networks through the Polytope Lens",
+		author: "Sid Black, Lee Sharkey, Leo Grinsztajn, Eric Winsor, Dan Braun, Jacob Merizian, Kip Parker, Carlos Ramón Guevara, Beren Millidge, Gabriel Alfour, Connor Leahy",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.12312",
+		alternativetitle: "Black et al. (Anthropic), the polytope lens (2022)"
+	},
+	"wakhloo2024population": {
+		title: "Neural Population Geometry and Optimal Coding of Tasks with Shared Latent Structure",
+		author: "Albert J. Wakhloo, Will Slatton, SueYeon Chung",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.16770",
+		alternativetitle: "Wakhloo et al., neural population geometry (2024)"
+	},
+	"morales2021reservoir": {
+		title: "Unveiling the role of plasticity rules in reservoir computing",
+		author: "Guillermo B. Morales, Claudio R. Mirasso, Miguel C. Soriano",
+		year: 2021,
+		url: "https://arxiv.org/abs/2101.05848",
+		alternativetitle: "Morales et al., plasticity in reservoir computing (Neurocomputing 2020)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
