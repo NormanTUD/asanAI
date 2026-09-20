@@ -14043,5 +14043,26 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Artificial_intelligence_in_music",
 		alternativetitle: "AI music, incl. the 2023 'Heart on My Sleeve' voice clone"
+	},
+	"clark2013surfing": {
+		title: "Surfing Uncertainty: Prediction, Action, and the Embodied Mind",
+		author: "Andy Clark",
+		year: 2013,
+		url: "https://en.wikipedia.org/wiki/Surfing_Uncertainty",
+		alternativetitle: "Andy Clark, Surfing Uncertainty (2013)"
+	},
+	"predictive_coding_wiki": {
+		title: "Predictive coding",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Predictive_coding",
+		alternativetitle: "predictive processing / prediction error"
+	},
+	"deadinternet_wiki": {
+		title: "Dead internet theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Dead_internet_theory",
+		alternativetitle: "the dead internet theory"
 	}
 };

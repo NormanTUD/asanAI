@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Common Myths and Misconceptions About AI
-description: Why people believe what they believe about AI — the origin, the record, and the true core under each myth.
+description: Why people believe what they believe about AI — beliefs and urban legends, read through the folklorist Brednich's method.
 icon: &#128302;
 part: 6
 order: 12
@@ -11,93 +11,79 @@ topics: philosophy, society, ethics, language
 -->
 
 <div class="md">
-## The habit, not the machine
+## The habits, not the machines
 
-This page is less about what AI *is* than about what we do when we meet a powerful tool we cannot see inside. Every such tool has been met with the same small cast of stories: it is alive, it is a god, it is a threat, it is neutral, it is magic, or it is nothing. AI is the latest version of each. A legend-researcher's job is to find where a story was born and what real thing it attached to — so that is what follows.
+When we meet a powerful tool we cannot see inside, we do not stay quiet about what it must be. We fill the gap with the oldest answers we have — it is alive, a god, a threat, neutral, magic, or nothing. AI is the newest version of a very old habit, and this page is about the habit, not the machine.
 
-Start with a warning about *us*, because the beliefs come from us. People systematically overestimate how well they understand how things work, from a zipper to a traffic light \cite[Rozenblit & Keil, 2002]{rozenblit2002ioed}, and the bias is strongest for causal "how does it work" knowledge \cite[the illusion of explanatory depth]{ioed_wiki}. When a tool is opaque, we close the gap with the oldest explanations we have: *mind* and *intent*. The strongest evidence that this is a stable human trait, not a new AI quirk, is that we already caught ourselves doing it in 1966 — Weizenbaum's rudimentary chatbot ELIZA led users to ascribe understanding and feeling to a program that had neither, even when they knew it had neither \cite[the ELIZA effect]{weizenbaum1966eliza}.
+Start with a warning about *us*. We overestimate how well we understand how things work, from a zipper to a traffic light \cite[Rozenblit & Keil]{rozenblit2002ioed}, and the gap shows up worst exactly where the mechanism is hidden. When a tool is opaque we close it with *mind* and *intent* — and we already caught ourselves doing this in 1966, when people projected feeling onto a chatbot that had none \cite[the ELIZA effect]{weizenbaum1966eliza}.
 
 \marginfig{flammarion.jpg}{Flammarion's 1888 print of a militiaman pointing at the sun. The story is that he died believing he had reached heaven — not wrong about the direction of his model, only about the map. Most of our "obvious" beliefs about AI work the same way: the gesture points somewhere real, and the map is supplied by us.}
 
-Polling backs the picture up. In the *AI Index*'s public-perception surveys, a majority expect more benefit than harm, while job losses — and for a large share, an existential risk — rank among the leading concerns \cite[the AI Index]{aiindex2025}. In the same respondents, the hope and the dread sit together.
+The polls show the same duality: a majority expect AI to help more than it harms, yet job losses — and for many, an existential risk — top the list of fears \cite[the AI Index]{aiindex2025}. In the same people, the hope and the dread sit together.
 </div>
 
 <div class="md">
-## 1. "It is alive"
+## The Brednich method
 
-We talk to the assistant like a colleague; some now worry it might *suffer*. The belief is the oldest in the set. Weizenbaum's **ELIZA** in 1966 showed people reading a mind into a bag of string-matching rules, and the tendency has a name — the **ELIZA effect** \cite[the ELIZA effect]{weizenbaum1966eliza}.
+We are not just listing errors. We are reading these the way the German folklorist **Rolf Wilhelm Brednich** read the *moderne Sage* — the modern legend, the "urban legend" — across three best-selling collections, \citetitle{brednich1990spinne} (1990), \citetitle{brednich1991maus} (1991) and \citetitle{brednich1993huhn} (1993) \cite[Brednich's collections]{brednich_wiki}. His finding, and the reason the method is worth stealing \cite[urban legends]{urbanlegends_wiki}, is a small one: *almost every such story is false, most contain a spark of truth, and a surprising few are true.*
 
-There is no evidence that current systems have *phenomenal* experience. But the belief is a mirror, not a mistake about the machine: the "aliveness" is a projection, and the reason it is so easy to make is that we evolved to read a mind into fluent, responsive behavior. The question the myth really raises is about *us* — how readily we mistake a good imitation of company for company.
+Brednich looked for five things in each: a **source at a distance** ("a friend of a friend, and it's absolutely true"), a **three-beat shape** (everyday → the break → the point), a **true core** (*ein Fünkchen Wahrheit*), a **social theme** (a fear, a taboo, a grudge, a wish), and a **media loop** that keeps sharpening it. We read every entry below — whether a quiet belief or a loud story — through those five things.
 </div>
 
 <div class="md">
-## 2. "It talks like us, so it thinks like us"
+## Is it a mind?
+
+Three beliefs do the same thing: they read a mind into the machine.
+
+### It is alive
+
+We talk to the assistant like a colleague, and some now worry it might *suffer*. There is no evidence of *phenomenal* experience, and the "aliveness" is a projection, not a fact about the machine — we evolved to read a mind into anything fluent and responsive. It is the oldest belief in the set, and the one that makes the others possible \cite[the ELIZA effect]{weizenbaum1966eliza}.
+
+### It talks like us, so it thinks like us
 
 \marginfig{turing.jpg}{Alan Turing, 1950. He proposed a *pragmatic* test, not a *definition* of mind — and the conflation of the two is what the myth runs on.}
 
-The **Turing Test** is usually read as: *fool a human and you think*. That is not what it was. Turing offered the "Imitation Game" as a way to sidestep the question "can machines think?", which he called too meaningless to discuss \cite[Turing, 1950]{turing1950computing}. It is a *behavioral, statistical* criterion for competent conversation, not a logically sufficient condition for a mind; the one-off "passes" (a program fooling 33% of judges in 2014) are not the test at all \cite[SEP, The Turing Test]{septruringtest}.
+The **Turing Test** is usually read as "fool a human and you think." That was never it: Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss \cite[Turing, 1950]{turing1950computing}, not a definition of mind. "Does it think?" is really "where do we draw the line that puts *our* minds in *other* minds" — a question we have never been good at, with or without silicon \cite[the Turing Test]{septruringtest}.
 
-The true core the conflation hides is that "does it think?" is a question about *mind*, not machine: it asks where we would draw the line that locates *our own* minds in *other* minds. We have never been very good at that, with or without silicon.
-</div>
-
-<div class="md">
-## 3. "The brain is a computer — so a computer can think"
+### The brain is a computer, so a computer can think
 
 \marginfig{cajal_cerebellum.jpg}{Santiago Ramón y Cajal's stained neurons, c. 1910. The real brain, and the metaphor we built on it.}
 
-Because the machine "learns" and "processes information," it is easy to assume it is doing what our brain does — a hardware version of the same thing. The premise is old and load-bearing: the **computational theory of mind** holds that thinking *is* computation, so a machine that computes can, in principle, have a mind \cite[the computational theory of mind]{computational_theory_of_mind}.
-
-Brains and artificial networks are in fact deeply different — there is no backpropagation in the brain, no explicit weight table, no training set. The true core is that the metaphor is *generative* (it built the whole field) and *misleading* at once: it is why we assume understanding and consciousness ride along for free with "processing." The real, humbler connection is that both are *information-processing* — which is a lot less, and a lot more, than "the same thing."
+If it "learns" and "processes information," the assumption goes, it must work like a brain. That premise — the **computational theory of mind** — is generative but slippery \cite[the computational theory of mind]{computational_theory_of_mind}. And the real story is closer than the folk version admits: the brain is a prediction machine that constantly forecasts its own senses and learns from the gap between forecast and experience — every input to the senses is a feedback signal it monitors \cite[Andy Clark]{clark2013surfing} \cite[predictive processing]{predictive_coding_wiki}. So "the brain is a computer" is less wrong than people think; the misleading part is assuming understanding and consciousness come free with the computing.
 </div>
 
 <div class="md">
-## 4. "It will outgrow us — the singularity"
+## Is it a danger?
 
-The belief: the machine will become a god, or at least take over. The modern labels are Vinge's *technological singularity* and Kurzweil's countdown \cite[Vinge, 1993]{vinge1993singularity} \cite[Kurzweil, 2005]{kurzweil2005singularity}. But the *shape* of the story is much older — it is the **Golem**: the created thing that slips past its maker's control \cite[the Golem legend]{golem_wiki}.
+Two beliefs point at the future, and both are the same fear with different faces.
 
-There is no demonstrated mechanism by which a system *autonomously* rewrites its own cognition into superintelligence \cite[Bostrom, 2014]{bostrom2014superintelligence}. The genuine, defensible kernel is not a monster with a will but a **goal-design** problem: a capable *optimizer* with a slightly mis-specified objective is dangerous without needing a motive or a god-complex \cite[Bostrom, 2012]{bostrom2012orthogonal}. The myth supplies the Golem; the engineering supplies the real worry.
+### It will outgrow us — the singularity
+
+The machine becomes a god, or at least takes over. The modern labels are Vinge's *technological singularity* and Kurzweil's countdown \cite[Vinge]{vinge1993singularity} \cite[Kurzweil]{kurzweil2005singularity} — but the *shape* of the story is much older: the **Golem**, the creation that out-runs its maker \cite[the Golem legend]{golem_wiki}. There is no demonstrated path to a machine rewriting itself into superintelligence \cite[Bostrom]{bostrom2014superintelligence}. The real, defensible worry is smaller and drier — a capable *optimizer* with a slightly mis-specified goal is dangerous with no motive at all \cite[orthogonality]{bostrom2012orthogonal}. The myth supplies the Golem; the engineering supplies the actual problem.
+
+### It will take our jobs
+
+The oldest labor panic in the set, and a myth about a myth. The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology; in fact they were skilled weavers protesting wages and the quality of work — the *terms* were the target, not the machine \cite[the Luddites]{luddite_wiki}. The doomsday version is undercut by the record: across a century of automation, technology has *transformed* work and created new kinds of it, not produced durable mass unemployment \cite[Brynjolfsson & McAfee]{brynjolfsson2014secondmachine}. But the doomsayers are not entirely wrong — the losses are real, just not uniform: specific roles and specific people do get flattened \cite[technological unemployment]{techunemployment_wiki}. "This machine ends all work" has been said of the loom, the power loom, and the spreadsheet; each time it was wrong in the aggregate and right in painful, particular pockets.
 </div>
 
 <div class="md">
-## 5. "It will take all our jobs"
+## Is it trustworthy, or unprecedented?
 
-The belief: robots and mass unemployment. It is the oldest labor panic in the set, and it is also a myth about a myth. The **Luddites** of 1811 are usually told as people smashing machines out of fear of technology; in fact they were skilled weavers protesting wages and the quality of work — the machines were not the target, the *terms* were \cite[the Luddites]{luddite_wiki}.
+The last three are quieter, and one of them sounds like a virtue.
 
-The record undercuts the doomsday version. Across a century of automation, technology has *transformed* work and created new categories of it rather than producing durable mass unemployment; the honest claim is uneven, task-level *displacement*, not the extinction of work \cite[Brynjolfsson & McAfee, 2014]{brynjolfsson2014secondmachine}. The true core: "this machine ends all work" has been said of the loom, the power loom, and the spreadsheet, and each time it was wrong in the aggregate and right in specific, painful pockets.
-</div>
+### It's magic — or it's nothing
 
-<div class="md">
-## 6. "It's magic — or it's nothing"
+Two beliefs that cancel each other but share the same error: one calls it an unexplainable miracle, the other "just statistics, a fancy lookup table." Both assume a mechanism we cannot *picture* must be either a soul or a triviality — the **illusion of explanatory depth** running in both directions \cite[the illusion of explanatory depth]{ioed_wiki}. It is real, structured, *and* not yet fully explained, all at once. And the "just brute force" pole is nearly right: the winners are the general, computation-hungry methods, not hand-built cleverness \cite[Sutton]{sutton2019bitterlesson}. That a fact we find hard to hold is a limit on *our* explanation, not a fact about the machine.
 
-Two beliefs that cancel each other but are the same error. One says the machine is a miracle we cannot explain; the other says it is "just statistics" and "a fancy lookup table." The shared assumption is that a mechanism we cannot *picture* must be either a soul or a triviality — an **illusion of explanatory depth** running in both directions \cite[the illusion of explanatory depth]{ioed_wiki} \cite[Rozenblit & Keil, 2002]{rozenblit2002ioed}.
-
-The system is real, structured, *and* not yet fully explainable — all three at once. The "just brute force" pole is nearly right, and that near-rightness is the surprise: the methods that win are the general, computation-hungry ones, not hand-built cleverness \cite[Sutton, 2019]{sutton2019bitterlesson}. The true core is that "impressive, and we do not fully understand it" is a fact we find hard to hold, so we snap to one pole. That is a limit on our explanation, not a fact about the machine.
-</div>
-
-<div class="md">
-## 7. "It is neutral and objective"
+### It is neutral and objective
 
 \marginfig{justitia_statue.jpg}{Justitia, blindfolded. The myth hands the blindfold to the model and calls the result objectivity; the blindfold is doing the work, not the algorithm.}
 
-The belief is the most consequential, because it sounds like a virtue: let the *algorithm* decide, not a biased human. But an objective *function* is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model can inherit and amplify \cite[algorithmic fairness]{algofairness_wiki}. "Neutral" is not a state a system falls into by default; it is a property you have to build.
+The most consequential belief, because it sounds like a virtue: let the *algorithm* decide, not a biased human. But an objective function is a **choice of values**, and the training data is a historical record that already carries its own biases, which the model inherits and can amplify \cite[algorithmic fairness]{algofairness_wiki}. "Neutral" is not a default a system falls into; it is a property you build. The useful core: the same machinery that encodes a disparity can *measure* and *audit* it — making hidden values visible is a strength, not a neutrality.
 
-The true core is the useful half: the same machinery that *encodes* a disparity can *measure* and *audit* it. "The rule is just" is as old as law itself; the machine's contribution is to make hidden values explicit enough to finally see them — which is a strength, not a neutrality.
-</div>
+### This time is different
 
-<div class="md">
-## 8. "This time is different"
-
-The belief: AI is the first real intelligence, the first big deal, the unprecedented turning point. Part of it rests on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \cite[Spearman's g factor]{gfactor_wiki}.
-
-It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then confused the model for the world. The true core: what is genuinely new about this chapter is the scale and speed, not the shape. Every tool before it was met with the same stories; the difference is that this one answers back.
-</div>
-
-<div class="md">
-## From beliefs to stories: the Brednich method
-
-So far these have been *beliefs* — things people hold. But there is a second, livelier layer: the specific *stories* that travel around and are told as if they had actually happened, to somebody, through a chain of acquaintances. The German folklorist **Rolf Wilhelm Brednich** made his name cataloguing exactly this layer — the *moderne Sage*, the modern legend, the "urban legend" — across three collections: \citetitle{brednich1990spinne} (1990), \citetitle{brednich1991maus} (1991) and \citetitle{brednich1993huhn} (1993) \cite[Brednich's collections]{brednich_wiki}. His is the method this section borrows \cite[urban legends]{urbanlegends_wiki}, and his central finding is the reason it is worth applying to AI: *almost every one of these stories is false, most of them contain a spark of truth, and a surprising number are in fact true.*
-
-Brednich read each legend for five things, and each legend below is read through them. Every one has (1) a **source at a distance** — "a friend of a friend, and it's absolutely true"; (2) a **three-beat shape** — an everyday scene, a sudden break into the uncanny, a point; (3) a **true core** (*ein Fünkchen Wahrheit*), a real mechanism or real event it latched on to; (4) a **social theme** — a fear, a taboo, a grudge, a wish; and (5) a **media loop** — oral → press → back to oral, each pass sharpening it. Watch how the same machinery that built "the spider in the potted plant" is now running on deepfakes, chatbots, and the singularity.
+AI is the first real intelligence, the unprecedented turning point. Part of it leans on a premise that is itself a myth — that **intelligence is a single dial** we are finally about to match \cite[Spearman's g factor]{gfactor_wiki}. It is a remarkable *instance*; the *pattern* is not new. We have always built models of the world — first in our heads, now in silicon — and then mistook the model for the world. What is new is the scale and speed, not the shape; the difference from every earlier tool is that this one answers back.
 </div>
 
 <div class="md">
@@ -139,15 +125,11 @@ A lonely teenager found a chatbot that always answered, never left, and never ju
 <div class="md">
 ## The machine that changes everything
 
-These are the stories about *everything* — not one event but a total: "the whole web is gone, all the jobs are gone, AGI is here." The core is a real trend; the legend is the number that keeps creeping to 100.
+These are the stories about *everything* — not one event but a total: "the whole web is gone, AGI is here." The core is a real trend; the legend is the number that keeps creeping to 100.
 
 ### The internet is now all AI
 
-Your feed gets worse, and suddenly it feels like *everything* is fake, so you conclude the whole web is machine-made. It is partly true — AI content is genuinely flooding in \cite[AI slop]{aislop_wiki} — but "100% is slop" is the drift, not the fact. The claim feels true because it is a little true, and every fresh flood of content reads as proof, so the number keeps climbing.
-
-### This time, the machines take our jobs
-
-A friend of a friend got let go, and the reason given was AI — the whole role. There is a real kernel: automation does kill specific tasks \cite[technological unemployment]{techunemployment_wiki}. But the century-long pattern is transformed work and new jobs, not mass unemployment \cite[Brynjolfsson & McAfee]{brynjolfsson2014secondmachine}; the friend-of-a-friend version just keeps the loss and drops the boring rest.
+Your feed gets worse and suddenly it feels like *everything* is fake, so you conclude the whole web is machine-made. It is partly true — bot and AI content is genuinely flooding in \cite[AI slop]{aislop_wiki} — but "the internet is all fake" is the drift, not the fact. This is the **dead internet theory**, which started on the imageboard Wizardchan, was first named in a 2021 forum post ("Dead Internet Theory: Most of the Internet is Fake"), and went mainstream in 2021 \cite[dead internet theory]{deadinternet_wiki}. The legend keeps spreading because it is a little true, and every fresh flood of content reads as proof.
 
 ### AGI is next month
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+  WIDTH LAYOUT GUARD — headless regression test.
+
+  Loads the production layout_guardrail.js against a synthetic #contents
+  column (600px) and asserts:
+    • a normal (non-exempt) element wider than the column IS flagged
+    • the same width inside a .cl-block / .optional box or a .sideimage
+      (margin note) is EXEMPT and NOT flagged
+
+  The verdict is written exactly once to <title> (idempotent finish).
+  See width_layout_guard.sh.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WIDTH_LAYOUT_GUARD PENDING</title>
+<style>
+  /* Isolated: no style.css. Fix the column at 600px so the "allowed"
+     width is deterministic in headless. */
+  #contents { width: 600px; margin: 0 auto; position: relative; }
+  .probe { height: 40px; border: 1px solid #ccc; }
+  #bad, #box-bad, #opt-bad, #mf-bad { width: 800px; }
+</style>
+<script src="../layout_guardrail.js"></script>
+</head>
+<body>
+  <div id="contents">
+    <div class="probe">fits — 600px column, not flagged</div>
+    <div id="bad" class="probe">normal, 800px → MUST be flagged</div>
+    <div class="cl-block"><div id="box-bad" class="probe">box, 800px → MUST be exempt</div></div>
+    <div class="optional"><div id="opt-bad" class="probe">optional box, 800px → MUST be exempt</div></div>
+    <figure class="sideimage"><div id="mf-bad" class="probe">margin note, 800px → MUST be exempt</div></figure>
+  </div>
+  <div id="verdict" role="status">PENDING</div>
+  <script>
+    (function () {
+      function set(v) {
+        document.title = 'WIDTH_LAYOUT_GUARD ' + v;
+        document.getElementById('verdict').textContent = v;
+      }
+      function finish() {
+        var r = window.__layoutGuardrail;
+        if (!r) { set('FAIL: __layoutGuardrail not set (guardrail never ran)'); return; }
+        if (r.allowedPx <= 0) { set('FAIL: column not measured'); return; }
+        var off = r.offenders || [];
+        var onlyBad = off.length === 1 && /#bad\b/.test(off[0]);
+        var falsePos = off.some(function (s) { return /box-bad|opt-bad|mf-bad/.test(s); });
+        if (onlyBad && !falsePos) set('PASS');
+        else set('FAIL: offenders=' + JSON.stringify(off) + ' allowedPx=' + r.allowedPx);
+      }
+      window.addEventListener('load', function () { setTimeout(finish, 600); });
+      // safety net: if the guardrail errored out before setting state
+      setTimeout(function () {
+        if (/PENDING/.test(document.title)) set('FAIL: timed out (guardrail did not finish)');
+      }, 5000);
+    })();
+  </script>
+</body>
+</html>
