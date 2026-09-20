@@ -31,7 +31,8 @@ https://arxiv.org/html/2505.11611v1
 <div class="md">
 Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn. This chapter assembles those parts into one machine and runs it. Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.
 
-The demo below trains one on the text you type, and
+An LLM is not a cloud: at this scale it is a stack of matrix multiplications that
+fits entirely in your browser. The demo below trains one on the text you type, and
 the rest of the chapter walks through that same run — every step of the machinery,
 from tokenization over attention to the FFN block, the unembedding and the loss, is
 executed on screen and shown where its equation is derived. The hyperparameters
