@@ -565,9 +565,15 @@ function render_course_tile($m) {
 	if (!empty($m['topics'])) {
 		$topicsAttr = ' data-topics="' . htmlspecialchars($m['topics']) . '"';
 	}
+	// `tags:` (a lesson's tone categories — math-heavy, logic-heavy, …)
+	// feeds the 3-state dimming in topics.js, independently of `topics:`.
+	$tagsAttr = '';
+	if (!empty($m['tags'])) {
+		$tagsAttr = ' data-tags="' . htmlspecialchars($m['tags']) . '"';
+	}
 	echo '<a href="' . htmlspecialchars($m['url']) . '" class="' . $classes . '"'
 		. ' style="--tile-accent: var(--mn-' . htmlspecialchars($m['color']) . ')"'
-		. $topicsAttr . '>';
+		. $topicsAttr . $tagsAttr . '>';
 	echo '<div class="course-tile-icon">' . $iconHtml . '</div>';
 	echo '<h3>' . htmlspecialchars($m['title']) . '</h3>';
 	echo '<p>' . $descHtml . '</p>';
