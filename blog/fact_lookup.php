@@ -5,7 +5,7 @@ title: Where 'Paris' Lives — How an LLM Retrieves a Fact
 description: A walk through the forward pass: residual streams, MLP key-value memory, attention, the linear representation hypothesis, and the honest limits of what we know.
 icon: &#127757;
 part: 4
-order: 10
+order: 11
 color: sky
 topics: interpretability, architecture, language, math-ii
 -->

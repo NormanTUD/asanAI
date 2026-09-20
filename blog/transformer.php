@@ -5,7 +5,7 @@ title: The Architecture of Meaning: A Deep Dive into Transformers
 description: A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.
 icon: &#129516;
 part: 4
-order: 8
+order: 9
 color: sky
 topics: architecture, math-i, math-ii, programming
 featured: true
@@ -839,7 +839,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 </div>
 
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
-	<details open>
+	<details id="tda-live-details">
 	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
 		🧭 TDA Live, Attractors in the Residual Stream
 	</summary>
