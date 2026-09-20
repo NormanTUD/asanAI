@@ -30,12 +30,13 @@ https://arxiv.org/html/2505.11611v1
 <div class="md">
 ## Hyperparameters for this demo
 
-Below, a tiny LLM-like model is trained **right here in your browser** on a piece of
-custom text you supply — and the mathematical machinery stays visible at every step:
-tokenization, embeddings, attention, loss, gradients. The hyperparameters are not
-abstract settings but **literal terms of the equations** this lesson derives: nudge the
-model dimension, the heads, the depth or the context, and you can watch the change land
-in every matrix shape and every dot product.
+An LLM is not a cloud: at this scale it is a stack of matrix multiplications that
+fits entirely in your browser. The demo below trains one on the text you type, and
+the rest of the chapter walks through that same run — every step of the machinery,
+from tokenization over attention to the FFN block, the unembedding and the loss, is
+executed on screen and shown where its equation is derived. The hyperparameters
+below are the $d_{\text{model}}$, $h$ and $N$ of those equations: move any of them
+by one step and the change shows up, visibly, in the equations and plots that follow.
 </div>
 
 <div id="transformer_config">
