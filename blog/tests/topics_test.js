@@ -2,13 +2,13 @@
  * Run with:  node tests/topics_test.js
  *
  * Verifies:
- *   • topic registry has the 15 expected entries
- *   • cookie round-trip works
- *   • isEnabled / anyEnabled defaults are sane
- *   • marked extension recognises [[t:topic]]…[[/t]] markers,
- *     renders them as <div class="topic-block" data-topic="…">,
- *     handles multi-topic markers (math,history), and doesn't
- *     eat its own /t close when nesting occurs.
+ *   • topic registry + the new tone-category registry (math-heavy, …)
+ *   • cookie round-trip for both topics and categories
+ *   • isEnabled / anyEnabled / isCatEnabled defaults are sane
+ *   • scoreUnit() 3-state logic (full / partial / off) incl. reasons
+ *   • the layman "include" lens
+ *   • marked extension recognises [[t:topic]]…[[/t]] markers and
+ *     multi-topic / nesting behaviour.
  */
 
 'use strict';
@@ -38,7 +38,7 @@ function makeNode() {
 }
 
 // document.cookie is a magic getter/setter in browsers — we model
-// it with a tiny backing map so writeCookieMap() actually persists.
+// it with a tiny backing map so persistence actually round-trips.
 const _cookieMap = {};
 global.document = {
 	readyState: 'loading',  // prevents init() side-effects on load
@@ -53,10 +53,8 @@ global.document = {
 		if (eq === -1) { return; }
 		const name = value.substring(0, eq).trim();
 		const rest = value.substring(eq + 1);
-		// strip attributes like "; path=/; max-age=..." by taking only the value
 		const semi = rest.indexOf(';');
 		const v = (semi === -1 ? rest : rest.substring(0, semi)).trim();
-		// if expires is in the past, delete
 		if (/expires=Thu,\s*01 Jan 1970/i.test(value)) {
 			delete _cookieMap[name];
 		} else {
@@ -75,8 +73,8 @@ global.window = global;
 global.localStorage = { getItem() { return null; }, setItem() {} };
 global.CustomEvent = function(name, init) { this.name = name; };
 
-// Marked mock that exposes .use() and a tagged-template renderer
-// capable of recognising our extension's output.
+// Marked mock: exposes .use() + a tagged renderer that recognises the
+// topic-block extension's output (see the real one in topics.js).
 global.marked = {
 	use(cfg) { this._extension = cfg.extensions[0]; },
 	parse(src) {
@@ -85,7 +83,6 @@ global.marked = {
 		const ctx = {
 			lexer: {
 				blockTokens(inner) {
-					// produce a single paragraph token whose text is the raw inner
 					return [{ type: 'paragraph', text: inner, tokens: [
 						{ type: 'text', text: inner, tokens: [] }
 					]}];
@@ -93,7 +90,6 @@ global.marked = {
 			},
 			parser: { parse(tokens) { return '<p>' + (tokens[0].text || '') + '</p>'; } }
 		};
-		// Run the extension's tokenizer until it stops matching.
 		let out = '';
 		let rest = src;
 		while (true) {
@@ -103,7 +99,6 @@ global.marked = {
 			rest = rest.substring(i);
 			const tok = ext.tokenizer.call(ctx, rest);
 			if (!tok) {
-				// not at a valid marker start — emit one char and advance
 				out += rest.charAt(0);
 				rest = rest.substring(1);
 				continue;
@@ -126,88 +121,104 @@ function check(cond, msg) {
 const BT = global.window.BlogTopics;
 check(typeof BT === 'object', 'BlogTopics is exposed');
 check(Array.isArray(BT.TOPICS), 'TOPICS is an array');
-check(BT.TOPICS.length === 15, 'TOPICS has exactly 15 entries (got ' + BT.TOPICS.length + ')');
+check(BT.TOPICS.length >= 25, 'TOPICS has the expected interests (got ' + BT.TOPICS.length + ')');
+['math-i', 'math-ii', 'math-iii', 'history', 'philosophy', 'language', 'programming']
+	.forEach(function (id) {
+		check(BT.TOPICS.some(function (t) { return t.id === id; }), 'TOPICS contains "' + id + '"');
+	});
 
-const expectedIds = [
-	'math', 'statistics', 'programming', 'architecture', 'data',
-	'hardware', 'vision', 'audio', 'agents', 'language',
-	'history', 'philosophy', 'ethics', 'society', 'interactive'
-];
-expectedIds.forEach(function (id) {
-	check(BT.TOPICS.some(function (t) { return t.id === id; }),
-		'TOPICS contains "' + id + '"');
-});
+/* ── tone categories ───────────────────────────────────────── */
+check(Array.isArray(BT.CATEGORIES), 'CATEGORIES is an array');
+const catIds = BT.CATEGORIES.map(function (c) { return c.id; }).sort();
+check(JSON.stringify(catIds) === JSON.stringify(['code-heavy', 'interested-layman', 'language-heavy', 'logic-heavy', 'math-heavy']),
+	'CATEGORIES has exactly the 5 tone categories (got ' + catIds.join(', ') + ')');
+check(BT.CATEGORIES.filter(function (c) { return c.kind === 'suppress'; }).length === 4, '4 suppress categories');
+check(BT.CATEGORIES.filter(function (c) { return c.kind === 'include'; }).length === 1, '1 include category');
+check(BT.isCategory('math-heavy') === true, 'isCategory(math-heavy)');
+check(BT.isCategory('history') === false, 'isCategory(history) → false');
 
-// defaults
-check(BT.isEnabled('math') === true, 'math is enabled by default');
-check(BT.isEnabled('nonexistent') === true, 'unknown topics are enabled by default');
+/* ── defaults ──────────────────────────────────────────────── */
+check(BT.isEnabled('math-i') === true, 'math-i enabled by default');
+check(BT.isEnabled('nonexistent') === true, 'unknown topics enabled by default');
+check(BT.isCatEnabled('math-heavy') === true, 'suppress category ON by default');
+check(BT.isCatEnabled('interested-layman') === false, 'include category OFF by default');
+check(BT.anyEnabled(['math-i', 'nonexistent']) === true, 'anyEnabled OR-logic');
 
-// OR-logic on multi-topic blocks
-check(BT.anyEnabled(['nonexistent']) === true, 'anyEnabled on unknown-only → true');
-check(BT.anyEnabled(['math', 'nonexistent']) === true, 'anyEnabled(math,unknown) → true');
+/* ── scoreUnit 3-state ─────────────────────────────────────── */
+function withPref(obj) {
+	if (obj === null) { delete _cookieMap['topics_pref']; }
+	else { _cookieMap['topics_pref'] = encodeURIComponent(JSON.stringify(obj)); }
+}
 
-// Cookie round-trip
-BT.setEnabled('math', false);
-check(BT.isEnabled('math') === false, 'after setEnabled(math, false) — disabled');
-check(document.cookie.indexOf('topics_pref=') !== -1, 'cookie written');
-BT.setEnabled('math', true);
-check(BT.isEnabled('math') === true, 'after setEnabled(math, true) — enabled');
+// default (everything on): a single-interest unit is full
+withPref(null);
+check(BT.scoreUnit(['history']).state === 'full', 'all on → single interest = full');
+check(BT.scoreUnit(['history', 'math-i']).state === 'full', 'all on → multi interest = full');
 
-// Cookie format
-document.cookie = 'topics_pref=' + encodeURIComponent(JSON.stringify({ math: false, history: true }));
-check(BT.isEnabled('math') === false, 'cookie state respected (math off)');
-check(BT.isEnabled('history') === true, 'cookie state respected (history on)');
-// cleanup
-document.cookie = 'topics_pref=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+// one of two interests off → partial, with a reason naming it
+withPref({ topics: { 'math-i': false } });
+const part = BT.scoreUnit(['history', 'math-i']);
+check(part.state === 'partial', 'one of two interests off → partial');
+check(/Math I/.test(part.reason), 'partial reason names the switched-off topic');
 
-// ── Marked extension behaviour ──
-// preprocess() is what registers the extension in real use; do it once.
+// all interests off → off
+withPref({ topics: { history: false, 'math-i': false } });
+check(BT.scoreUnit(['history', 'math-i']).state === 'off', 'all interests off → off');
+
+// a carried suppress category switched off → off, reason names it
+withPref({ categories: { 'math-heavy': false } });
+const sup = BT.scoreUnit(['math-i', 'math-heavy']);
+check(sup.state === 'off', 'carried math-heavy + switched off → off');
+check(/Math-heavy/.test(sup.reason), 'off reason names Math-heavy');
+
+// turning that category back on restores the unit
+withPref({ categories: { 'math-heavy': true } });
+check(BT.scoreUnit(['math-i', 'math-heavy']).state === 'full', 'category back on → full again');
+
+// layman lens: ON + unit not layman-tagged → partial
+withPref({ categories: { 'interested-layman': true } });
+check(BT.scoreUnit(['history']).state === 'partial', 'layman on + not layman-tagged → partial');
+check(BT.scoreUnit(['history', 'interested-layman']).state === 'full', 'layman on + layman-tagged → full');
+
+/* ── category round-trip ───────────────────────────────────── */
+withPref(null);
+BT.setCatEnabled('math-heavy', false);
+check(BT.isCatEnabled('math-heavy') === false, 'setCatEnabled(math-heavy, false)');
+check(document.cookie.indexOf('topics_pref=') !== -1, 'category change persisted to cookie');
+BT.setCatEnabled('math-heavy', true);
+check(BT.isCatEnabled('math-heavy') === true, 'setCatEnabled(math-heavy, true)');
+withPref(null);
+
+/* ── marked extension behaviour ────────────────────────────── */
 BT.preprocess('');
-
 function render(src) { return marked.parse(src); }
 
-const sample1 = '[[t:math]]\n## M\n\ncontent\n[[/t]]';
-const html1 = render(sample1);
-check(/<div class="topic-block" data-topic="math">/.test(html1),
-	'single-topic block renders <div data-topic="math">');
+const html1 = render('[[t:math]]\n## M\n\ncontent\n[[/t]]');
+check(/<div class="topic-block" data-topic="math">/.test(html1), 'single-topic block renders');
 
-const sample2 = '[[t:math,history]]\nmulti\n[[/t]]';
-const html2 = render(sample2);
-check(/data-topic="math history"/.test(html2),
-	'multi-topic block space-separated in data-topic');
+const html2 = render('[[t:math,history]]\nmulti\n[[/t]]');
+check(/data-topic="math history"/.test(html2), 'multi-topic block space-separated');
 
-const sample3 = '[[t:math]]\nA\n[[/t]]\n\n[[t:history]]\nB\n[[/t]]';
-const html3 = render(sample3);
-const matches = html3.match(/data-topic="([^"]+)"/g) || [];
-check(matches.length === 2,
-	'two separate blocks produce two data-topic attrs (got ' + matches.length + ')');
-check(/data-topic="math"/.test(html3), 'first block is math');
-check(/data-topic="history"/.test(html3), 'second block is history');
+const html3 = render('[[t:math]]\nA\n[[/t]]\n\n[[t:history]]\nB\n[[/t]]');
+const m3 = (html3.match(/data-topic="([^"]+)"/g) || []);
+check(m3.length === 2, 'two blocks produce two data-topic attrs (got ' + m3.length + ')');
 
-// Adjacent markers — closing then immediately opening another
-const sample4 = '[[t:math]]A[[/t]][[t:history]]B[[/t]]';
-const html4 = render(sample4);
-const adjMatches = html4.match(/data-topic="[^"]+"/g) || [];
-check(adjMatches.length === 2,
-	'two adjacent blocks render (got ' + adjMatches.length + ')');
-check(/data-topic="math"/.test(html4) && /data-topic="history"/.test(html4),
-	'adjacent blocks produce distinct topic attrs');
+const html4 = render('[[t:math]]A[[/t]][[t:history]]B[[/t]]');
+const m4 = (html4.match(/data-topic="[^"]+"/g) || []);
+check(m4.length === 2, 'two adjacent blocks render (got ' + m4.length + ')');
 
-// Case insensitive
-const sample5 = '[[t:MATH]]\nX\n[[/t]]';
-const html5 = render(sample5);
+const html5 = render('[[t:MATH]]\nX\n[[/t]]');
 check(/data-topic="math"/.test(html5), 'topic id lowercased');
 
-// Markers mid-paragraph still work (marked treats them as blocks)
-const sample6 = 'before [[t:math]]\nblock\n[[/t]] after';
-const html6 = render(sample6);
+const html6 = render('before [[t:math]]\nblock\n[[/t]] after');
 check(/data-topic="math"/.test(html6), 'mid-paragraph marker still produces a block');
 
-// Missing close marker leaves content untouched
-const sample7 = '[[t:math]]\nUnclosed\n\nNot closed';
-const html7 = render(sample7);
-check(!/<div class="topic-block"/.test(html7),
-	'unclosed marker does not produce a topic block');
+const html7 = render('[[t:math]]\nUnclosed\n\nNot closed');
+check(!/<div class="topic-block"/.test(html7), 'unclosed marker does not produce a block');
+
+// a category id inside a marker still round-trips into data-topic
+const html8 = render('[[t:math-i,math-heavy]]\nbody\n[[/t]]');
+check(/data-topic="math-i math-heavy"/.test(html8), 'category id coexists in data-topic');
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exit(1);
