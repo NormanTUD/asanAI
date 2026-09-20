@@ -11,7 +11,7 @@ topics: math-ii, architecture, philosophy, emergence
 -->
 
 <div class="md">
-The central mystery of deep learning: we can *derive* a network that *memorizes* its training data perfectly, yet it generalizes beautifully to new data. Every textbook bound suggests this should be the worst possible outcome. This chapter is the honest attempt to understand why it isn't — and it has a geometric answer that connects to the <a href="coherent_difference">Coherent Difference chapter</a>.
+The central mystery of deep learning: we can *derive* a network that *memorizes* its training data perfectly, yet it generalizes beautifully to new data. Every textbook bound suggests this should be the worst possible outcome. This chapter is the honest attempt to understand why it isn't — and it has a geometric answer that connects to the <a href="coherent_difference">Coherent Difference chapter</a>. It is worth keeping in mind that the field is still young: Olah called it **ad-hoc**, held together by an extremely successful but not-yet-fundamental tool, with several competing narratives — neuroscience, representations, probability — all making claims about what it really is \cite[Olah, 2015]{colah2015types}.
 </div>
 
 <div class="optional md" data-headline="Neighbouring chapters">
@@ -26,7 +26,7 @@ The central mystery of deep learning: we can *derive* a network that *memorizes*
 
 Classical learning rests on the **bias–variance trade-off**: as capacity increases, error follows a U-curve (under-fitting = high bias, over-fitting = high variance). Theory via **VC dimension** and **PAC** bounds says that once capacity exceeds the sample size, the model will just fit the noise. \cite[Belkin et al., 2019]{belkin2019}
 
-Modern networks violate this. They have orders of magnitude more parameters than training examples, yet they generalize. Classical complexity theory does not merely fail to predict this — it predicts the *opposite*. That failure is the whole problem this chapter addresses.
+Modern networks violate this. They have orders of magnitude more parameters than training examples, yet they generalize. Classical complexity theory does not merely fail to predict this — it predicts the *opposite*. That failure is the whole problem this chapter addresses. It helps to start from what universality does *not* explain: a single hidden layer can be used as a lookup table to fit *any* training data, but being able to fit everything is a very weak claim about generalizing to new inputs \cite[Olah, 2014]{colah2014nlp}.
 </div>
 
 <div class="md">
