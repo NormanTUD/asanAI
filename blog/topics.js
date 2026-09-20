@@ -1032,23 +1032,30 @@
 		return raw.split(/\s+/).filter(Boolean);
 	}
 
-	function ensureBanner(block, topicIds) {
-		if (block.querySelector(':scope > .topic-block-banner')) return null;
-		// Use the first known topic for the icon/label
-		let meta = { id: topicIds[0], label: topicIds[0], icon: '✦' };
+	function pickMeta(topicIds) {
 		for (let i = 0; i < topicIds.length; i++) {
+			const c = catOf(topicIds[i]);
+			if (c) return { label: c.label, icon: c.icon };
 			const m = topicMeta(topicIds[i]);
-			if (m && m.label !== m.id) { meta = m; break; }
+			if (m && m.label !== m.id) return { label: m.label, icon: m.icon };
 		}
-		const labelHtml = topicIds.length === 1
-			? '<strong>' + escAttr(meta.label) + '</strong>'
-			: '<strong>' + topicIds.map(function (id) { return escAttr(topicMeta(id).label); }).join(' + ') + '</strong>';
+		return { label: topicIds[0] || 'this section', icon: '✦' };
+	}
+
+	/** (re)build the "tucked away" banner for a collapsed block, with the
+	    concrete *why* so a reader always knows why something faded. */
+	function setBanner(block, topicIds, reason) {
+		const old = block.querySelector(':scope > .topic-block-banner');
+		if (old) old.remove();
+		const meta = pickMeta(topicIds);
 		const banner = document.createElement('div');
 		banner.className = 'topic-block-banner';
 		banner.innerHTML = [
 			'<span class="topic-block-banner-icon" aria-hidden="true">', escAttr(meta.icon), '</span>',
 			'<span class="topic-block-banner-text">',
-				labelHtml, ' section skipped — your interest filter has tucked it away.',
+				'<strong>', escAttr(meta.label), '</strong> tucked away — ',
+				escAttr(reason || 'outside your selected interests'),
+				'. <span class="topic-block-banner-hint">Still curious? Peek inside — nothing is deleted.</span>',
 			'</span>',
 			'<button type="button" class="topic-block-reveal">',
 				'<span class="topic-block-reveal-eye" aria-hidden="true">👁</span> Peek anyway',
@@ -1068,18 +1075,48 @@
 		inner = document.createElement('div');
 		inner.className = 'topic-block-inner';
 		const moveable = Array.from(block.children).filter(function (el) {
-			return !el.classList.contains('topic-block-banner');
+			return !el.classList.contains('topic-block-banner') && !el.classList.contains('topic-partial-chip');
 		});
 		moveable.forEach(function (el) { inner.appendChild(el); });
 		block.appendChild(inner);
 		return inner;
 	}
 
-	function collapseBlock(block, topicIds) {
+	function collapseBlock(block, topicIds, score) {
+		const chip = block.querySelector(':scope > .topic-partial-chip');
+		if (chip) chip.remove();
 		ensureInner(block);
-		ensureBanner(block, topicIds);
+		setBanner(block, topicIds, score ? score.reason : 'outside your selected interests');
 		block.classList.add('topic-block-collapsed');
 		block.classList.remove('topic-block-revealed');
+		block.classList.remove('topic-block-partial');
+	}
+
+	/** slim chip shown on a PARTIAL section: it stays readable, just
+	    dimmed, with the reason it's only a partial match. */
+	function ensurePartialChip(block, score) {
+		let chip = block.querySelector(':scope > .topic-partial-chip');
+		if (score.state === 'partial') {
+			if (!chip) {
+				chip = document.createElement('div');
+				chip.className = 'topic-partial-chip';
+				block.insertBefore(chip, block.firstChild);
+			}
+			chip.innerHTML = '<span class="topic-partial-chip-dot" aria-hidden="true">◐</span>'
+				+ '<span class="topic-partial-chip-text">partial match — ' + escAttr(score.reason) + '</span>';
+		} else if (chip) {
+			chip.remove();
+		}
+	}
+
+	function applyBlockState(block, topicIds, score) {
+		if (score.state === 'off') {
+			collapseBlock(block, topicIds, score);
+			return;
+		}
+		if (block.classList.contains('topic-block-collapsed')) revealBlock(block);
+		block.classList.toggle('topic-block-partial', score.state === 'partial');
+		ensurePartialChip(block, score);
 	}
 
 	function revealBlock(block) {
@@ -1095,23 +1132,14 @@
 	}
 
 	function applyVisibility() {
-		const blocks = document.querySelectorAll('.topic-block');
-		blocks.forEach(function (block) {
+		document.querySelectorAll('.topic-block').forEach(function (block) {
 			const topicIds = readTopicAttr(block);
 			if (!topicIds.length) return;
-			const enabled = anyEnabled(topicIds);
-			if (enabled) {
-				if (block.classList.contains('topic-block-collapsed')) {
-					revealBlock(block);
-				}
-			} else {
-				collapseBlock(block, topicIds);
-			}
+			applyBlockState(block, topicIds, scoreUnit(topicIds));
 		});
 
 		// Inline skipped markers (for ad-hoc skipped-in-place text)
-		const inlines = document.querySelectorAll('.topic-inline');
-		inlines.forEach(function (el) {
+		document.querySelectorAll('.topic-inline').forEach(function (el) {
 			const topicIds = readTopicAttr(el);
 			if (!topicIds.length) return;
 			el.classList.toggle('topic-inline-hidden', !anyEnabled(topicIds));
@@ -1119,39 +1147,74 @@
 
 		dimCourseTiles();
 		updateSkipIndicator();
+		applyMathAlts();
 
-		// keep any inline widgets in sync with the new collapsed count
+		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 	}
 
-	/* ── 7. Course tile dimming (home page) ───────────────────── */
+	/* ── 6b. Math alternative text ──────────────────────────────
+	   A heavy equation can ship a plain-language twin so a reader who
+	   has switched off a heavy category gets the simple version.
+	   Convention (author writes both; the engine picks one to show):
+	     <div class="math-opt" data-math-opt="math-heavy">
+	       $$\text{…the heavy LaTeX…}$$
+	       <span class="math-alt">…the simpler words…</span>
+	     </div>
+	   When every listed category is still ON the equation shows; as
+	   soon as any listed 'suppress' category is switched OFF the
+	   rendered <math> is hidden and the .math-alt twin is shown.
+	   No content is added to the course yet — this is the mechanism
+	   plus one test (see tests/math_alt_test.js). */
+	function applyMathAlts() {
+		const heavyOff = CATEGORIES.filter(function (c) {
+			return c.kind === 'suppress' && activeCats()[c.id] === false;
+		}).map(function (c) { return c.id; });
+		document.querySelectorAll('[data-math-opt]').forEach(function (el) {
+			const ids = (el.getAttribute('data-math-opt') || '').split(',')
+				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+			const hide = ids.length ? ids.some(function (id) { return heavyOff.indexOf(id) !== -1; }) : false;
+			const alt = el.querySelector('.math-alt');
+			const eqs = el.querySelectorAll('math');
+			if (!alt && !eqs.length) return;
+			el.classList.toggle('math-opt-simplified', hide);
+			eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
+			if (alt) alt.style.display = hide ? '' : 'none';
+		});
+	}
+
+	/* ── 7. Course tile dimming (home page) — 3-state ─────────── */
 	function dimCourseTiles() {
-		const tiles = document.querySelectorAll('[data-topics]');
+		const tiles = document.querySelectorAll('[data-topics], [data-tags]');
 		tiles.forEach(function (tile) {
-			const topics = (tile.getAttribute('data-topics') || '')
-				.split(',').map(function (s) { return cssSafe(s.trim()); })
-				.filter(Boolean);
-			if (topics.length === 0) {
-				tile.classList.remove('topic-tile-dim', 'topic-tile-active');
-				return;
-			}
-			const hits = topics.filter(isEnabled).length;
-			if (hits === 0) {
+			const interests = (tile.getAttribute('data-topics') || '').split(',')
+				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+			const cats = (tile.getAttribute('data-tags') || '').split(',')
+				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+			const all = interests.concat(cats);
+			tile.classList.remove('topic-tile-dim', 'topic-tile-partial', 'topic-tile-active');
+			if (!all.length) return;
+			const score = scoreUnit(all);
+			if (score.state === 'off') {
 				tile.classList.add('topic-tile-dim');
-				tile.classList.remove('topic-tile-active');
+				tile.title = 'Tucked away — ' + score.reason;
+			} else if (score.state === 'partial') {
+				tile.classList.add('topic-tile-partial');
+				tile.title = 'Partial match — ' + score.reason;
 			} else {
-				tile.classList.remove('topic-tile-dim');
 				tile.classList.add('topic-tile-active');
+				tile.title = 'In your interests';
 			}
 		});
 	}
 
-	/* ── 8. Per-page "X skipped" indicator ────────────────────── */
+	/* ── 8. Per-page "X tucked / partial" indicator ───────────── */
 	function updateSkipIndicator() {
 		const total = document.querySelectorAll('.topic-block').length;
 		const collapsed = document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+		const partial = document.querySelectorAll('.topic-block.topic-block-partial').length;
 		let bar = document.getElementById('topics-skip-bar');
-		if (collapsed === 0) {
+		if (collapsed === 0 && partial === 0) {
 			if (bar) bar.remove();
 			return;
 		}
@@ -1171,8 +1234,11 @@
 			const contents = document.getElementById('contents');
 			if (contents) contents.insertBefore(bar, contents.firstChild);
 		}
+		const bits = [];
+		if (collapsed) bits.push(collapsed + ' section' + (collapsed === 1 ? '' : 's') + ' tucked away');
+		if (partial) bits.push(partial + ' partial match' + (partial === 1 ? '' : 'es'));
 		bar.querySelector('.topics-skip-text').textContent =
-			collapsed + ' section' + (collapsed === 1 ? '' : 's') + ' tucked away by your interests'
+			bits.join(' · ') + ' by your interests'
 			+ (total ? ' (' + (total - collapsed) + ' of ' + total + ' visible)' : '');
 	}
 
