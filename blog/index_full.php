@@ -69,83 +69,11 @@
 <div id="contents" style="display: none">
 <?php
 	incl("From Big Bang to ChatGPT: Beyond the Black Box", "intro");
-	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
-	incl("Brief History of AI", "history");
-	incl("Basic Math Concepts I — The Numerical Foundations", "math_i");
-	incl("Basic Math Concepts II — Linear Algebra for AI", "math_ii");
-	incl("Basic Math Concepts III — Approximation & The Geometry of High Dimensions", "math_iii");
-	incl("The Shape of Space — A History of Geometry", "geometry_i");
-	incl("The Shape of the Machine — A Working Geometry for AI", "geometry_ii");
-	incl("The Shape of Holes: A Working Algebraic Topology", "geometry_iii");
-	incl("The History of Language: From Sanskrit to LLMs", "language");
-	incl("The foam of meaning", "foam_of_meaning");
-	incl("Statistics I — Distributions and Inference", "statistics_i");
-	incl("Statistics II — Inference and Information", "statistics_ii");
-	incl("Loss: Teaching through Failure", "losslab");
-	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
-	incl('Differentiation: The Mathematics of Change', "differentiation");
-	incl('Automatic Differentiation: How Machines Learn', "autodiff");
-	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
-	incl("The Optimizer: Navigating the Loss Landscape", "optimizerlab");
-	incl("Smallest possible neural network", "minimalneuron");
-	incl("Activation Functions: The Neural Decision Makers", "activationlab");
-	incl("Live Training of a Neural Network", "traininglab");
-	incl("Deep Learning", "deeplearninglab");
-	incl("Origami in N Dimensions: How Networks Fold Data Apart", "origami");
-	incl("Topology and the Geometry of Thought", "topology");
-	incl("Over- and underfitting", "overandunderfittinglab");
-	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
-	incl("Understanding Layer Normalization", "normalizationlab");
-	incl("What Machines See", "computer_vision");
-	incl("Reinforcement Learning", "reinforcement_learning");
-	incl("Tokenization: How Words become Numbers", "tokenizerlab");
-	incl("Coherent Difference", "coherent_difference");
-	incl("Coherent World Models", "coherent_world_models");
-	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
-	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
-	incl("Positional Embeddings", "positionalembeddingslab");
-	incl("Temperature & Sampling", "samplinglab");
-	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
-	incl("Mechanistic Interpretability", "mechanistic_interpretability");
-	incl("Where 'Paris' Lives — How an LLM Retrieves a Fact", "fact_lookup");
-	incl("How Transformers Execute Algorithms", "algorithms");
-	incl("Multimodal & Vision-Language Models", "multimodal");
-	incl("Diffusion Models", "diffusion");
-	incl("Speech & Audio Models", "speech_audio");
-	incl("Beyond Transformers (Mamba, RWKV, RetNet)", "alternative_architectures");
-	incl("Fine-Tuning & Post-Training", "finetuninglab");
-	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
-	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
-	incl("How LLMs Search the Web", "websearch");
-	incl("AI Agents: Autonomous Reasoning and Tool Use", "agents");
-	incl("Semantic Search & Vector Databases: Finding Needles in Haystacks", "vectorsearch");
-	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
-	incl("Security & Adversarial Attacks", "security_inference");
-	incl("Inference Optimization", "inference_optimization");
-	incl("Running Models Locally", "running_locally");
-	incl("Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI", "symbolic_ai");
-	incl("Training Data Curation", "training_data");
-	incl("Training Infrastructure", "training_infrastructure");
-	incl("Production Serving & Inference", "production_serving");
-	incl("Reasoning & Test-Time Compute", "reasoning");
-	incl("Evaluation & Benchmarks", "evaluation");
-	incl("Reliability — Calibration & Knowing When to Stop", "reliability");
-	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
-	incl("The Global AI Ecosystem", "global_ai_ecosystem");
-	incl("The Untold History of AI", "untold_history");
-	incl("The Mind That Built Machines", "human_mind");
-	incl("Beyond LLMs — The Wider World of Algorithms & Models", "beyond_llms");
-	incl("Why Do Networks Generalize?", "deep_theory");
-	incl("Frontier Topics", "frontier");
-	incl("AI Alignment — Making Optimizers Want What We Want", "alignment");
-	incl("AI Law & Regulation", "law_regulation");
-	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
-	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
-	incl("Closing the Loop — AI for Science", "ai_for_science");
-	incl("Common Myths and Misconceptions About AI", "myths");
-	incl("Appendix", "appendix");
-	incl("Software: Operating Systems, Programming Languages & the Abstraction Stack", "software");
-	#incl("Formulary — Every Equation, One Place", "formulary");
+	foreach (parse_course_metadata() as $part => $modules) {
+		foreach ($modules as $module) {
+			incl($module['title'], $module['slug']);
+		}
+	}
  ?>
 </div>
 </body>

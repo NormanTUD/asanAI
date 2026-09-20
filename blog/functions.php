@@ -478,19 +478,18 @@ function print_dynamic_title($tag = "title") {
 	echo "<$tag>" . htmlspecialchars($headline, ENT_QUOTES) . "</$tag>\n";
 }
 
-function get_ai_course_labels($indexFile = 'index_full.php') {
+function get_ai_course_labels() {
 	$labelsMap = [];
-	// Anchor to this directory unless an absolute / already-qualified path was given.
-	$indexPath = (strpos($indexFile, '/') !== false || strpos($indexFile, ':') !== false)
-		? $indexFile
-		: __DIR__ . '/' . $indexFile;
-	$content = file_get_contents($indexPath);
 
-	// 1. Extrahiere alle Dateinamen aus den incl() Aufrufen
-	// Sucht nach: incl("Titel", "dateiname");
-	preg_match_all('/incl\s*\(\s*["\'].*?["\']\s*,\s*["\'](.*?)["\']\s*\)/', $content, $matches);
-
-	$files = $matches[1]; // Enthält z.B. ['intro', 'history', 'attentionlab', ...]
+	// 1. Build the file list from the course metadata (index_full derives
+	// its incl() calls the same way now), plus the intro lesson which is
+	// deliberately kept out of the part/order metadata.
+	$files = ['intro'];
+	foreach (parse_course_metadata() as $part => $modules) {
+		foreach ($modules as $module) {
+			$files[] = $module['slug'];
+		}
+	}
 
 	foreach ($files as $fileName) {
 		$fullPath = __DIR__ . '/' . $fileName . ".php";
