@@ -318,6 +318,106 @@
 		return false;
 	}
 
+	/* ── 2c. Categories (tone filters) — state + helpers ──────── */
+	function activeCats() {
+		return activePref().categories;
+	}
+	/** is category `id` currently ON? Unknown ids are treated as ON
+	    (neutral) so a stray tag can never hide content. */
+	function isCatEnabled(id) {
+		const c = catOf(id);
+		if (!c) return true;
+		return activeCats()[c.id] !== false;
+	}
+	function setCatEnabled(id, enabled) {
+		const c = catOf(id);
+		if (!c) return;
+		pushHistory();
+		const cur = activePref();
+		cur.categories[c.id] = !!enabled;
+		persistPref(cur);
+	}
+	/** convenience for the single 'include' lens */
+	function setLaymanMode(on) { setCatEnabled('interested-layman', !!on); }
+
+	/** split a flat list of tag ids into { interests, cats } */
+	function splitTags(ids) {
+		const interests = [];
+		const cats = [];
+		(ids || []).forEach(function (id) {
+			const n = cssSafe(id);
+			if (!n) return;
+			if (CAT_BY_ID[n]) cats.push(CAT_BY_ID[n].id);
+			else interests.push(n);
+		});
+		return { interests: interests, cats: cats };
+	}
+
+	/** The heart of the adaptation: given a unit's tags (fine topics
+	    AND/OR categories), decide how it should be displayed and *why*.
+	    Three states:
+	      'full'    — show normally
+	      'partial' — visible but dimmed, with a "why" chip (still readable)
+	      'off'     — tucked away behind a reason banner
+	    Set-theory: the more of your dials a unit misses, the more it
+	    recedes — but it never disappears without a clear reason. */
+	function scoreUnit(tagIds) {
+		const parts = splitTags(tagIds);
+		const interests = parts.interests;
+		const cats = parts.cats;
+		const catsMap = activeCats();
+		const topicsMap = activePref().topics;
+
+		// 1) any 'suppress' category it carries is switched OFF → tucked away
+		const suppressed = cats.filter(function (id) {
+			return CAT_BY_ID[id].kind === 'suppress' && catsMap[id] === false;
+		});
+		if (suppressed.length) {
+			return { state: 'off', reason: 'you switched off ' + suppressed.map(labelFor).join(', ') };
+		}
+
+		// 2) graded interest match over the fine topics
+		let state = 'full';
+		let reason = '';
+		if (interests.length) {
+			const hits = interests.filter(function (id) { return topicsMap[id] !== false; });
+			if (hits.length === 0) {
+				state = 'off';
+				reason = 'outside your selected interests';
+			} else if (hits.length < interests.length) {
+				state = 'partial';
+				reason = 'partial match — ' + interests.filter(function (id) { return topicsMap[id] === false; })
+					.map(labelFor).join(', ') + ' ' + (hits.length === 0 ? '' : '') + 'switched off';
+			}
+		}
+
+		// 3) layman lens: ON and the unit is not part of the layman core
+		if (state === 'full' && catsMap['interested-layman'] === true &&
+		    cats.indexOf('interested-layman') === -1) {
+			state = 'partial';
+			reason = 'beyond the layman core';
+		}
+
+		return { state: state, reason: reason, interests: interests, cats: cats };
+	}
+
+	/** how many on-DOM units (sections + home tiles) carry category `id`?
+	    Used for the little count badge on a category chip (page-local). */
+	function categoryPresence(id) {
+		const n = cssSafe(id);
+		let count = 0;
+		document.querySelectorAll('.topic-block').forEach(function (b) {
+			const ids = readTopicAttr(b);
+			if (ids.some(function (x) { return cssSafe(x) === n; })) count++;
+		});
+		document.querySelectorAll('[data-tags]').forEach(function (t) {
+			const tags = (t.getAttribute('data-tags') || '').split(',')
+				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+			if (tags.indexOf(n) !== -1) count++;
+		});
+		return count;
+	}
+
 	function persist(map) {
 		writeCookieMap(map);
 		fireChange();
