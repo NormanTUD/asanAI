@@ -192,3 +192,17 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lokal: rnn_unrolled.svg
     Genutzt in: recurrent_networks.php § Unrolling: One Network, Many Copies
     Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Caption
+
+21. perceptron_smithsonian
+    URL: https://ronkowitz.blogspot.com/2017/11/perceptron.html
+    Lizenz: UNCLEAR - Foto des Mark I Perceptron im Smithsonian (National Museum
+             of History and Technology, März 1968), republiciert auf dem Blog
+             "One-Page Schoolhouse" (Ron Kowitz, 2017). EXIF-Beschreibung:
+             "Artificial neural network, Mark I Perceptron on exhibition at the
+             National Museum of History and Technology, March 1968. 1987.0".
+             Auf der Blogseite kein CC-Lizenzhinweis.
+    Lokal: perceptron_smithsonian.jpg (1600x853)
+    Genutzt in: history.php § The Perceptron and the First AI Winter (Hype 1958)
+    Status: UNCLEAR - Quellseite via \cite[Kowitz, 2017]{ronkowitz2017perceptron}
+             im Caption zitiert; Original-Smithsonian-Lizenz vor Weiterverwendung
+             ggf. klären.
