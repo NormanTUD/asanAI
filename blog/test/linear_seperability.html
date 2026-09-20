@@ -501,9 +501,9 @@ function sepDraw(){
   document.getElementById('sepSep').textContent = sepPts.length && correct===sepPts.length? 'JA ✓':'nein';
   document.getElementById('sepSep').style.color = correct===sepPts.length?'var(--ok)':'var(--warn)';
 }
+sepInit();
 bind('sepAngle', ()=>sepDraw(), v=>v+'°');
 bind('sepBias', ()=>sepDraw());
-sepInit();
 
 /* ============================================================
    SECTION 3 — MINKOWSKI
@@ -577,8 +577,8 @@ function mdDraw(){
   document.getElementById('mdMajor').textContent = majorSide+' / '+total;
   document.getElementById('mdLS').textContent = (majorSide/total).toFixed(3);
 }
-bind('mdOmega', ()=>mdDraw(), v=>v+'°');
 mdSetup();
+bind('mdOmega', ()=>mdDraw(), v=>v+'°');
 
 /* ============================================================
    SECTION 4 — LSM computation
