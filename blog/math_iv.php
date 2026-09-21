@@ -30,6 +30,7 @@ tags: math-heavy
 .af-matcell.tr{outline:2px solid var(--mn-accent);outline-offset:-2px}
 .af-matcell.hv{outline:2px solid #22d3ee;outline-offset:-2px}
 .af-read{margin-top:.55rem;font:.78rem/1.5 var(--mn-font-mono,monospace);color:var(--mn-text-secondary);background:var(--mn-bg-subtle);border-radius:8px;padding:.6rem .75rem;min-height:2.4em;overflow-wrap:anywhere;border-left:2px solid var(--mn-accent)}
+#fd2d-hover{min-height:4.5em}
 .af-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.55rem}
 .af-lbl{font-size:.82rem;color:var(--mn-text-secondary);display:inline-flex;align-items:center;gap:.45rem}
 .af-sel{padding:.32rem .55rem;background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;font-size:.85rem}
@@ -77,7 +78,9 @@ tags: math-heavy
 </div>
 
 <div class="md">
-## Linear maps aren't enough
+## Affine maps
+
+### Linear maps aren't enough
 
 In <a href="math_ii">Math II</a> you met **linear maps** $f(\mathbf{x}) = M\mathbf{x}$. They rotate, scale, shear, mirror — but they must send the origin to itself: $f(\mathbf{0}) = \mathbf{0}$. The origin is glued in place.
 
@@ -91,7 +94,7 @@ You've met it before: your first neuron $\hat{y} = ax + b$ (<a href="minimalneur
 </div>
 
 <div class="md">
-## What affine maps preserve (and what they don't)
+### What affine maps preserve (and what they don't)
 
 An affine map is the most general map that sends **straight lines to straight lines**. Precisely: it preserves lines, parallelism, and the ratios in which a point divides a segment. It generally breaks lengths, angles, areas, and turns circles into ellipses.
 
@@ -107,7 +110,7 @@ Three facts we'll lean on repeatedly:
 </div>
 
 <div class="md">
-## Homogeneous coordinates: the trick that makes it a matrix
+### Homogeneous coordinates: the trick that makes it a matrix
 
 Matrix multiplication can't express $M\mathbf{x} + \mathbf{t}$ directly — there's no place for the $+\mathbf{t}$. Fix: **add a coordinate that's always 1**.
 
@@ -140,7 +143,7 @@ A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ \
 </div>
 
 <div class="md">
-## The image is a matrix
+### The image is a matrix
 
 Take the simplest picture worth looking at: an **8×8 checkerboard**. It *is* an $8\times 8$ matrix of 0s and 1s:
 
@@ -154,7 +157,9 @@ To warp an image by an affine map: for every output pixel $\mathbf{q}$, ask *whi
 </div>
 
 <div class="md">
-## Lab 1 — The 2D affine machine
+## Hands-on: the affine machine
+
+### Lab 1 — The 2D affine machine
 
 Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked point $p$. Hover the warped image — each pixel is a lookup $I(M^{-1}\mathbf{q})$ in the 0/1 grid.
 
@@ -201,7 +206,7 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 </div>
 
 <div class="md">
-## Lab 2 — The 3D affine machine
+### Lab 2 — The 3D affine machine
 
 Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volume*. A cube stays a parallelepiped — corners to corners, edges to edges, each face a parallelogram. The ghost cube shows where things started; the dotted line follows the tracked corner from $p$ to $M\cdot p$. Click any corner to track it.
 </div>
@@ -227,7 +232,9 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 </div>
 
 <div class="md">
-## The first non-affine move: the fold
+## The fold
+
+### The first non-affine move
 
 Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; by **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
 
@@ -253,7 +260,7 @@ The crease is the hyperplane $\hat{\mathbf{n}} \cdot \mathbf{p} = c$. Points on 
 </div>
 
 <div class="md">
-## Lab 3 — The 2D fold machine
+### Lab 3 — The 2D fold machine
 
 The same 0/1 checkerboard. But a fold *cannot be inverted* — a pixel in the image has zero or two preimages — so we draw the board **forward** (push source cells to where they land). The far half is tinted so you can see the overlap.
 
@@ -310,7 +317,9 @@ The 3D view shows the same image as bent paper: the far half rotated about the c
 </div>
 
 <div class="md">
-## The move no homeomorphism can do: unthreading a chain
+## Unthreading a chain
+
+### The move no homeomorphism can do
 
 Two rings threaded like a chain link — the **Hopf link** \cite[nLab, Hopf link]{nlab_hopf_link}\cite[Wikipedia, Hopf link]{hopf_link_wiki}. A **knot** is one closed loop; a **link** is several \cite[nLab, knot]{nlab_knot}\cite[nLab, link]{nlab_link}. The only legal way to move one link into another is an **ambient isotopy**: the whole space deformed continuously, one-to-one at every instant \cite[nLab, isotopy]{nlab_isotopy}. Two configurations connected by such a motion are the *same* link; the trivial state — two loops that are not linked — is the **unlink** \cite[nLab, unknot]{nlab_unknot}.
 
