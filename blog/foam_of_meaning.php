@@ -9,6 +9,7 @@ order: 11
 color: accent
 topics: geometry, math-i, math-ii, math-iii, statistics-ii
 tags: math-heavy, logic-heavy
+math: 65
 -->
 
 <style>
@@ -849,7 +850,7 @@ The three-space picture ($X \to S \leftrightarrow W$) thus has a sharp, testable
 A theory of shapes is only as good as its ability to measure them, and nothing so far has said how the shape of a language space could be detected in data. The instruments come from topology: invariants that survive a change of coordinates or a change of scale. This part introduces them, shows concretely how they are computed on a point cloud, and draws the line between the instrument and the theory it serves.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Topological invariants and the shape of meaning">
 ### Topological invariants and the "shape" of meaning
 
 If the shape of $X$ is the object of study, then the right tools are *topological invariants*: quantities that capture the shape of a space without depending on a particular embedding or coordinate system.
@@ -925,7 +926,7 @@ None of these is the whole story; together they are the instrument panel of the 
 The structure has been described, but where does it come from? Neither a child nor a model is handed the map $\pi$; both must build it from samples, and the geometry predicts exactly how such construction has to go. This part states the prediction twice — once for a general learner, once for a transformer doing nothing but next-token prediction.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Learning as the construction of π">
 ### Learning as the construction of $\pi$
 
 We can now give a geometric account of **language learning**. To learn a language is to construct, from experience, an approximation to the interpretation map $\pi: X \to S$.
@@ -949,7 +950,7 @@ where $d(x,x')$ is the distance in the representational space. The bold claim is
 The upshot is that learning is not the accumulation of facts but the *construction of a map between spaces*, under geometric constraints. This reframes the central problem of language acquisition as a problem in *topological inference*: inferring the shape of a space and the structure of a map from partial, noisy observations.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Training may follow filaments and avoid voids">
 ### Training may learn to follow the filaments and avoid the voids
 
 A transformer is never told what language is. It is shown a corpus and asked to predict the next token, and from that single repeated error it must do something harder than memorize: it must locate the web. Its one way to reduce its loss is to discover where the corpus actually lives — the clusters, and above all the **filaments** that connect them — and to learn to walk only there.

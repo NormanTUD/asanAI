@@ -224,7 +224,7 @@ check(/data-topic="math-i math-heavy"/.test(html8), 'category id coexists in dat
 /* ── math level ──────────────────────────────────────────────── */
 check(typeof BT.getMathLevel === 'function', 'getMathLevel exposed');
 check(typeof BT.setMathLevel === 'function', 'setMathLevel exposed');
-check(BT.getMathLevel() === 60, 'default math level is 60');
+check(BT.getMathLevel() === 50, 'default math level is 50 (University stop)');
 BT.setMathLevel(80, { pushHistory: false });
 check(BT.getMathLevel() === 80, 'setMathLevel(80)');
 BT.setMathLevel(10, { pushHistory: false });
