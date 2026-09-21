@@ -27,6 +27,18 @@ While most modern discussions about Artificial Intelligence focus on its current
 
 This is a journey through the evolution of human thought where technical milestones are inseparable from their historical and philosophical environments.
 
+## What This Course Is — and What It Isn't
+
+**This is** a long, free, interactive digital textbook that traces the ideas behind modern AI from Stone Age tools and the history of mathematics all the way to how large language models actually work inside. It is hands-on and often mathematically demanding: you build intuition by doing, and by the end you understand the *why* and the *how*, not just the *what*.
+
+**This is not:**
+
+- a **programming tutorial** — you will not set up a dev environment or learn to code an AI from scratch;
+- a **"5 quick tips" article** or a list of prompting tricks;
+- a **passive overview** you can skim in one evening.
+
+If you are looking for a short, surface-level introduction, this is not it. If you want the real, complete picture — history, mathematics, and machines together — you are in the right place.
+
 ## A Synthesis of Science and History
 
 To understand a Neural Network is to understand a tapestry of ideas that often sidetracked into unexpected fields:
