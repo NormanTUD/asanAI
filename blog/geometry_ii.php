@@ -9,6 +9,7 @@ order: 7
 color: accent
 topics: geometry, math-ii, math-iii, architecture
 tags: math-heavy
+math: 65
 -->
 
 <div class="md">
@@ -28,7 +29,7 @@ The moves, in order:
 Each section ends with a hands-on plot. We do **not** re-teach what the earlier chapters own — the dot product, attention as a convex combination, optimizers, least squares, or PCA. We link to those instead.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The inner product">
 ## The inner product
 
 Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up. That measurement is the **inner product** (dot product). Three signs appear in the formula that follows: **$\langle u, v\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\mathbb{R}^n$, where $\mathbb{R}$ denotes the **real numbers** ($\mathbb{R}^2$ is the plane); **$\sum$** (sigma) means “sum”; and **$\lVert v \rVert$** (double bars) is the *length* of a vector. Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:
@@ -40,7 +41,9 @@ $$
 The third form is what matters. The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum. A dot product is a **measure of alignment**.
 
 This fact drives the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search finds the vector with the largest inner product. Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). Cosine similarity — the inner product with the lengths divided out — powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
+</div>
 
+<div class="md" data-mathlevel="70" data-optionaltitle="The Gram matrix: where similarity lives">
 ### The Gram matrix: where similarity lives
 
 Line up $k$ data vectors as the columns of a matrix $X \in \mathbb{R}^{n \times k}$ ($n$ rows, $k$ columns). The superscript $^{\top}$ is the *transpose* — flipping a matrix over its main diagonal. $X^{\top}X$ dots each column of $X$ (one data point) against every other. The result is the **Gram matrix**
@@ -62,7 +65,7 @@ Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free desc
 That is the seed of the chapter. Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Projection: the best fit is a shadow">
 ## Projection: the best fit is a shadow
 
 Suppose the answer *must* lie in a subspace $S$ — a line, a plane, or the set of all outputs a layer can produce. Given a target point $p$ outside $S$, **which point $s \in S$ is closest to $p$?**
@@ -98,7 +101,7 @@ The picture is always *a target, a family of allowed answers, keep the shadow.* 
 	<div id="geo2-proj-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="The SVD: the shape of any linear map">
 ## The SVD: the shape of any linear map
 
 A linear map $A:\mathbb{R}^n\to\mathbb{R}^m$ looks like a messy matrix of mixed-up numbers. But in one coordinate system it is simple. The **singular value decomposition** (SVD) says every such $A$ factors as
@@ -147,7 +150,7 @@ The interactive shows the unit circle (white) and its image under a map with sin
 	<div id="geo2-svd-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Descent: why the gradient is steepest">
 ## Descent: why the gradient is steepest
 
 Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the inner-product identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product, using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
@@ -183,7 +186,7 @@ The *schedule* on top of this fact — momentum, Adam, learning-rate decay — i
 	<div id="geo2-des-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Convolution is a sliding dot product — the DFT is its shape">
 ## Convolution is a sliding dot product — the DFT is its shape
 
 A convolution takes a short pattern (the **kernel** $c$) and a long signal (the **input** $x$), flips the kernel, slides it across the signal, and at each position takes a **dot product** and sums:
@@ -234,7 +237,7 @@ This is not a curiosity. “Smooth the signal” means multiply its spectrum by 
 	<div id="geo2-conv-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Symmetry: invariance, equivariance, and attention">
 ## Symmetry: invariance, equivariance, and the shape of attention
 
 A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. Write a symmetry as $\sigma$ and its action on an input $x$ as $\sigma \cdot x$ (here the dot means “apply $\sigma$ to $x$,” not multiplication). Two behaviors matter:
@@ -282,7 +285,7 @@ The interactive holds a bag of six “tokens.” Drag the **shift** to reorder t
 	<div id="geo2-sym-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Synthesis: one forward pass, as geometry">
 ## Synthesis: one forward pass, as geometry
 
 Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:

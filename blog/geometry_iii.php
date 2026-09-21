@@ -224,7 +224,7 @@ Oflag XVII-A became a *university*. Leray, the fake geologist, organized lecture
 </div>
 </div>
 
-<div class="md" data-mathlevel="85" data-optionaltitle="Steenrod operations, Hopf invariant one, magic numbers 1, 2, 4, 8">
+<div class="md" data-mathlevel="85" data-optionaltitle="Steenrod operations & Hopf invariant one">
 ## Steenrod operations, Hopf invariant one, and the magic numbers 1, 2, 4, 8
 
 Homology gives groups; cohomology gives *rings* (you can multiply cohomology classes via the **cup product**). But even cohomology rings are not enough, they miss "hidden" operations. In 1947 **Norman Steenrod** discovered the **Steenrod operations**, systematic transformations $\mathrm{Sq}^{k}$ acting on mod-2 cohomology that are *natural* in a very strong sense, commuting with everything and satisfying only a small list of rules \cite{steenrod1947}. They are the reason the cup product is not the end of the story: they encode structure that multiplication alone cannot see. (This is where "natural transformations" from the categories section becomes a working tool: the Steenrod operations are literally natural transformations between cohomology functors.)
