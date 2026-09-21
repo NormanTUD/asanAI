@@ -830,7 +830,7 @@ async function loadMathLabModule() {
 
 </script>
 
-<div class="md">
+<div class="md" data-lesson-id="math-ii">
 Modern AI is, at its core, applied linear algebra. Every image, every word, every token lives in a high-dimensional **vector space**. This chapter introduces the mathematical objects that make neural networks possible: vectors, matrices, tensors, and the operations that combine them.
 
 If you complete this chapter, the rest of the textbook, embeddings, attention, gradients, activations, will read as natural applications of these primitives.

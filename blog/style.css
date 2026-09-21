@@ -9572,6 +9572,58 @@ html.dark .topics-preset-fun {
 	font-weight: 600;
 }
 
+/* Learned / dependency pills */
+.topic-deps-pill {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	margin: 0 0 20px;
+	border-radius: 10px;
+	font-size: 0.85rem;
+	line-height: 1.4;
+}
+.topic-deps-pill .tdp-icon { font-size: 1.1rem; flex-shrink: 0; }
+.topic-deps-met {
+	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, var(--mn-surface));
+	border: 1px solid color-mix(in srgb, var(--mn-emerald, #10b981) 30%, transparent);
+	color: var(--mn-text);
+}
+.topic-deps-met .tdp-icon { color: var(--mn-emerald, #10b981); }
+.topic-deps-unmet {
+	background: var(--mn-bg-subtle);
+	border: 1px dashed var(--mn-border);
+	color: var(--mn-text-secondary);
+}
+.topic-deps-unmet .tdp-icon { color: var(--mn-text-muted); }
+
+.topic-learned-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 32px;
+	padding: 10px 20px;
+	border-radius: 99px;
+	border: 2px solid var(--mn-border);
+	background: var(--mn-surface);
+	color: var(--mn-text-secondary);
+	font-size: 0.85rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-family: inherit;
+}
+.topic-learned-btn:hover {
+	border-color: var(--mn-emerald, #10b981);
+	color: var(--mn-emerald, #10b981);
+}
+.topic-learned-active {
+	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, var(--mn-surface));
+	border-color: var(--mn-emerald, #10b981);
+	color: var(--mn-emerald, #10b981);
+}
+.tlb-hint { font-size: 0.7rem; font-weight: 400; opacity: 0.7; }
+
 .topic-block.topic-block-revealed {
 	animation: topicBlockReveal 0.4s ease;
 }

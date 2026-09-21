@@ -10,13 +10,13 @@ color: accent
 topics: math-i
 -->
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**. This first of three math chapters covers the numerical foundations, the symbols and operations that appear constantly in AI code.
 
 By the end, you will be comfortable with the sum symbol $\sum$, Euler's number $e$, logarithms, and the way a computer represents “infinity” without crashing.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## Programming
 
 In classical programming, you need to write every single step that has to be done with data. Like this:
@@ -27,7 +27,7 @@ In classical programming, you need to write every single step that has to be don
 print(x)
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values.
 </div>
 
@@ -35,7 +35,7 @@ This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ an
 According to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 381), the naming of the variable $x$ for the unknown was started by \citeauthor{lageometrie} in \citeyear{lageometrie}, where he used $a, b, c$ for *known* quantities, and $x, y, z$ for *unknown* ones. We will not follow this strictly, though.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 The line with <tt>print</tt> then prints out this value to the command line.
 
 You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.
@@ -46,7 +46,7 @@ y = x + 1 # y = 2 + 1 = 3
 print(y)
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.
 </div>
 
@@ -54,13 +54,13 @@ Let's now introduce **functions**. A function is something that accepts inputs a
     return x # Returns x unchanged
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called “plot” from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
 </div>
 
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $. $a$ changes the slope of the line, while $b$ moves it up or down.
 </div>
 
@@ -68,7 +68,7 @@ We can now also introduce parameters, $a$ and $b$ (which will later be the so-ca
     return a*x + b
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 You can see how the parameters affect the plot by changing them with the sliders:
 </div>
 
@@ -81,7 +81,7 @@ You can see how the parameters affect the plot by changing them with the sliders
 
 <div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
 </div>
 
@@ -93,7 +93,7 @@ print(add(10, 5)) # Output: 15</code></pre>
 
 <div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 We can use this $\text{add}$ function in the code, similar to what we had before.
 </div>
 
@@ -103,7 +103,7 @@ print(result) # The result is then printed
 </code></pre>
 
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 Of course, we can also parameterize this function: $f(x, y) = ax + by$. You can also play around with how this changes the results of this function in the next plot:
 </div>
 
@@ -116,7 +116,7 @@ Of course, we can also parameterize this function: $f(x, y) = ax + by$. You can 
 
 <div id="plot-step-7" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 We can also use other functions, like $\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:
 </div>
 
@@ -132,7 +132,7 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 
 <div id="plot-step-5" class="plot-container" style="height: 450px; margin-bottom: 40px;"></div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 
 For a mathematical understanding of functions, you need sets first, which are quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
 
@@ -153,7 +153,7 @@ Some books define the natural numbers as $\{1, 2, 3, \ldots\}$ (excluding $0$). 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## Classical programming vs. AI
 
 In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
@@ -167,7 +167,7 @@ This model will (most probably) not be perfect. But it can be **good enough** to
 Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## The Sum Symbol $ \sum $
 
 In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation”. This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
@@ -218,7 +218,7 @@ print(total) # Output: 100
 total = sum(numbers)
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## The Product Symbol $\prod$
 
 The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\sum$:
@@ -247,7 +247,7 @@ In programming, we can define this function using **recursion**, where a functio
 print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
 </code></pre>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
 </div>
 
@@ -262,7 +262,7 @@ The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp180
 Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, $\binom{n}{0}$ and $\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## Arithmetic with $\infty$ in Computing
 
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
@@ -331,7 +331,7 @@ In early 1671, James Gregory independently discovered something like the general
 It was not until 1715 that \citeauthor{taylor1715} published the first general method for constructing these series (pp. 21–23), after whom they are now named. The special case centered at zero was later named after \citeauthor{maclaurin}, who published the relevant work in 1742.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## Exponentiation
 
 In its simplest form, exponentiation is repeated multiplication. If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
@@ -362,7 +362,7 @@ $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## Logarithms: Reversing the Process
 
 A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
@@ -395,7 +395,7 @@ Modern computers calculate logarithms using infinite series. One of the most fun
 $$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ### The Change of Base
 
 In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
@@ -426,7 +426,7 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
     <div id="log-plot" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-lesson-id="math-i">
 ## The Mathematical Concept: The Role of $\infty$
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).

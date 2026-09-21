@@ -57,7 +57,7 @@ math: 85
 @media (max-width: 800px) { .hott-grid2 { grid-template-columns: 1fr; } .hott-chview { grid-template-columns: 1fr; } }
 </style>
 
-<div class="md">
+<div class="md" data-lesson-id="math-iii">
 This third math chapter steps back from mechanics and addresses two conceptual questions that recur throughout the rest of the textbook:
 
 1. **Why is “good enough” the goal of AI?** Most AI is approximation; what does that mean precisely?

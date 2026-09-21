@@ -396,9 +396,11 @@
 		const el = document.querySelector('[data-lesson-id]');
 		if (el) return el.getAttribute('data-lesson-id');
 		// Fallback: derive from URL slug
-		const path = window.location.pathname || '';
-		const m = path.match(/\/([a-z_0-9]+)\.php?\/?$/i) || path.match(/\/([a-z_0-9]+)\/?$/i);
-		return m ? m[1].toLowerCase() : null;
+		try {
+			const path = (window && window.location && window.location.pathname) || '';
+			const m = path.match(/\/([a-z_0-9]+)\.php?\/?$/i) || path.match(/\/([a-z_0-9]+)\/?$/i);
+			return m ? m[1].toLowerCase() : null;
+		} catch (e) { return null; }
 	}
 
 	function isLearned(lessonId) {
@@ -633,9 +635,11 @@
 
 		// 4) math-comfort gate: independent of interests/tone. If the unit
 		//    needs more math than the reader is comfortable with, it is
-		//    tucked — and this is the binding reason (it can escalate a
-		//    partial interest match to fully tucked).
-		if (mathReq !== null && getMathLevel() < mathReq) {
+		//    tucked — UNLESS the reader has already learned all
+		//    prerequisites of the current lesson (depsMet bypasses it).
+		const lessonId = getLessonId();
+		const depsOK = lessonId ? depsMet(lessonId) : false;
+		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
 			reason = 'needs ~' + mathReq + '% math comfort (you are at ' + getMathLevel() + '%)';
 			why = 'math';
@@ -2212,6 +2216,7 @@
 		// and re-applies visibility with tuckMd defaulting to true).
 		applyVisibility({ animate: false, tuckMd: false });
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
+		showLearnedUI();
 		if (DEBUG) dlog('ready — dump state with BlogTopics.dump()');
 	}
 
@@ -2269,6 +2274,11 @@
 		renderInlineWidget: renderInlineWidget,
 		cssSafe: cssSafe,
 		escAttr: escAttr,
+		LESSON_DEPS: LESSON_DEPS,
+		getLessonId: getLessonId,
+		isLearned: isLearned,
+		depsMet: depsMet,
+		toggleLearned: toggleLearned,
 		onChange: function (fn) { document.addEventListener('topics:change', fn); }
 	};
 })();

@@ -54,7 +54,7 @@ math: 90
 @media(max-width:820px){.af-grid,.af-grid.wide{grid-template-columns:1fr}}
 </style>
 
-<div class="md">
+<div class="md" data-lesson-id="math-iv">
 **The one-paragraph story.** Every "movement" of data — a linear layer $y = Wx + b$, an image warp, a camera transform — is a *map of space*. This chapter catalogs the simplest such maps (**affine**: linear + translation), then introduces the first non-affine move (**the fold**), which is exactly what a ReLU neuron does. The payoff comes at the end: two rings chained like a chain link (the **Hopf link**) that *no* affine motion can pull apart — but one fold, into a higher dimension, unthreads them. That is the geometry every classifier lives by.
 </div>
 
