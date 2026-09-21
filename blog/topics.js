@@ -214,7 +214,31 @@
 	   deleted. */
 	const MATH_MIN = 0;
 	const MATH_MAX = 100;
-	const DEFAULT_MATH_LEVEL = 60;
+	const DEFAULT_MATH_LEVEL = 50; // "University" — the middle stop
+	// The slider snaps to five stops, easy → research. The *gate* stays
+	// fine-grained (it compares against each block's data-mathlevel); these
+	// stops only shape the comfort level a reader actually picks.
+	const MATH_LEVELS = [
+		{ v: 0,   label: 'No math' },
+		{ v: 25,  label: 'High school' },
+		{ v: 50,  label: 'University' },
+		{ v: 75,  label: 'Graduate' },
+		{ v: 100, label: 'Research' }
+	];
+	function snapMath(v) {
+		let best = MATH_LEVELS[0].v;
+		for (let i = 0; i < MATH_LEVELS.length; i++) {
+			if (Math.abs(MATH_LEVELS[i].v - v) < Math.abs(best - v)) best = MATH_LEVELS[i].v;
+		}
+		return best;
+	}
+	function mathLevelLabel(v) {
+		const s = snapMath(v);
+		for (let i = 0; i < MATH_LEVELS.length; i++) {
+			if (MATH_LEVELS[i].v === s) return MATH_LEVELS[i].label;
+		}
+		return MATH_LEVELS[0].label;
+	}
 
 	/* ── 1e. Debug mode ────────────────────────────────────────
 	   Opt-in only. Production (and the CI render validator, which fails on
@@ -1118,13 +1142,13 @@
 					<p class="topics-audience-hint" id="topics-audience-hint"></p>
 				</div>
 				<div class="topics-math-comfort" role="group" aria-label="Math comfort level">
-					<span class="topics-math-label">Are you comfortable with…</span>
+					<span class="topics-math-label">∑ Math comfort</span>
 					<div class="topics-math-control">
-						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="5" value="${getMathLevel()}" aria-label="Math comfort, percent">
-						<span class="topics-math-val">${getMathLevel()}%</span>
+						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="25" value="${snapMath(getMathLevel())}" aria-label="Math comfort level">
+						<span class="topics-math-val">${mathLevelLabel(getMathLevel())}</span>
 					</div>
 					<div class="math-comfort-ticks">
-						<span>intuition</span><span>algebra</span><span>calculus</span><span>proofs</span><span>everything</span>
+						${MATH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')}
 					</div>
 				</div>
 				<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">
@@ -2327,19 +2351,16 @@
 	}
 
 	function mathSliderHtml() {
-		const v = getMathLevel();
-		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort">'
+		const v = snapMath(getMathLevel());
+		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort level">'
 			+ '<div class="math-comfort-top">'
-			+   '<span class="math-comfort-label">∑ Are you comfortable with…</span>'
-			+   '<span class="math-comfort-val" data-math-val>' + v + '%</span>'
+			+   '<span class="math-comfort-label">∑ Math comfort</span>'
+			+   '<span class="math-comfort-val" data-math-val>' + mathLevelLabel(v) + '</span>'
 			+ '</div>'
 			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
-			+ '" step="5" value="' + v + '" aria-label="Math comfort, percent">'
+			+ '" step="25" value="' + v + '" aria-label="Math comfort level">'
 			+ '<div class="math-comfort-ticks">'
-			+   '<span>layman</span>'
-			+   '<span>high school</span>'
-			+   '<span>university</span>'
-			+   '<span>research</span>'
+			+   MATH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')
 			+ '</div>'
 			+ '</div>';
 	}
@@ -2350,7 +2371,7 @@
 		const val = h.querySelector('[data-math-val]');
 		let dragging = false;
 		const paint = function () {
-			if (val) val.textContent = range.value + '%';
+			if (val) val.textContent = mathLevelLabel(parseInt(range.value, 10));
 		};
 		range.addEventListener('input', function () {
 			paint();
@@ -2436,7 +2457,7 @@
 					}).join('') +
 				'</div>',
 				slider,
-				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics. Math comfort is independent below. Nothing is locked.</p>'
+				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics; math comfort is set separately below.</p>'
 			].join('');
 		wire = function (h) {
 			h.querySelectorAll('[data-core-persona]').forEach(function (b) {

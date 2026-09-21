@@ -13,25 +13,81 @@ math: 50
 -->
 
 <style>
-	.og-demo { background: var(--mn-surface); border: 1px solid var(--mn-border); border-radius: 12px; padding: 18px; margin: 22px 0; }
-	.og-demo h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--mn-text); }
-	.og-controls { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; align-items: flex-end; }
-	.og-control { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
-	.og-control label { font-size: .85rem; color: var(--mn-text-secondary); }
-	.og-control .val { color: var(--mn-accent); font-family: var(--mn-font-mono, monospace); }
-	.og-control input[type="range"] { width: 100%; accent-color: var(--mn-accent); }
-	.og-control select { background: var(--mn-surface); color: var(--mn-text); border: 1px solid var(--mn-border); padding: 5px 8px; border-radius: 6px; }
-	.og-btn { background: var(--mn-accent); color: #fff; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: .85rem; }
-	.og-btn.sec { background: var(--mn-surface); color: var(--mn-text); border: 1px solid var(--mn-border); }
-	.og-canvas-wrap { position: relative; margin: 12px 0; text-align: center; }
-	.og-canvas-wrap canvas { display: inline-block; max-width: 100%; height: auto; border-radius: 8px; background: var(--mn-bg-subtle); }
-	.og-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .85rem; margin: 8px 0; color: var(--mn-text-secondary); }
-	.og-legend span { display: inline-flex; align-items: center; gap: 6px; }
-	.og-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-	.og-note { background: color-mix(in srgb, var(--mn-accent) 8%, var(--mn-surface)); border-left: 3px solid var(--mn-accent); padding: 12px 16px; margin: 14px 0; border-radius: 4px; font-size: .95rem; color: var(--mn-text); }
-	.og-out { margin-top: 8px; color: var(--mn-text-secondary); font-size: .9rem; font-family: var(--mn-font-mono, monospace); }
+	/* Origami — space_warps visual vocabulary, expressed via --mn-* so it
+	   adapts to the blog's light/dark theme. Data-viz brand colors are fixed
+	   (they must read on both cream and slate backgrounds). */
+	:root {
+		--og-inner: #ff6b9d;
+		--og-outer: #4ecdc4;
+		--og-amber: #ffd166;
+		--og-grad: linear-gradient(90deg, var(--mn-emerald), var(--mn-coral) 55%, var(--og-amber));
+	}
+	.og-card {
+		background: linear-gradient(180deg, var(--mn-surface), var(--mn-bg-subtle));
+		border: 1px solid var(--mn-border);
+		border-radius: 18px;
+		padding: 22px 22px 26px;
+		margin: 22px 0;
+		box-shadow: 0 10px 40px rgba(0,0,0,.16);
+	}
+	.og-card h2 {
+		margin: 0 0 10px; font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px;
+		background: var(--og-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+	}
+	.og-card h3 { margin: 16px 0 6px; font-size: 1.05rem; color: var(--mn-coral); }
+	.og-lead { color: var(--mn-text-secondary); margin: .2rem 0 14px; }
+	.og-small { font-size: .88rem; color: var(--mn-text-secondary); }
 	.og-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-	@media (max-width: 700px) { .og-grid2 { grid-template-columns: 1fr; } }
+	@media (max-width: 820px) { .og-grid2 { grid-template-columns: 1fr; } }
+
+	.og-demo { margin: 14px 0; }
+	.og-demo h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--mn-text); }
+	.og-canvas-wrap { position: relative; margin: 12px 0; text-align: center; }
+	.og-canvas-wrap canvas, .og-demo canvas {
+		display: block; width: 100%; max-width: 100%; height: auto; border-radius: 12px;
+		background: var(--mn-bg-subtle); border: 1px solid var(--mn-border);
+	}
+	.og-plot { width: 100%; background: var(--mn-bg-subtle); border: 1px solid var(--mn-border); border-radius: 12px; }
+
+	.og-controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; margin: 12px 0; padding: 12px; background: var(--mn-bg-subtle); border: 1px solid var(--mn-border); border-radius: 12px; }
+	.og-control { display: flex; flex-direction: column; gap: 4px; min-width: 150px; font-size: .88rem; color: var(--mn-text-secondary); }
+	.og-control label { font-size: .88rem; color: var(--mn-text-secondary); }
+	.og-control .val { color: var(--mn-text); font-family: var(--mn-font-mono, monospace); font-variant-numeric: tabular-nums; font-weight: 600; }
+	.og-control input[type="range"] { width: 100%; accent-color: var(--mn-emerald); }
+	.og-control input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--mn-emerald); }
+	.og-control select { background: var(--mn-surface); color: var(--mn-text); border: 1px solid var(--mn-border); padding: 5px 8px; border-radius: 6px; }
+	.og-btn { background: var(--mn-emerald); color: #fff; border: none; padding: 7px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: .85rem; transition: .15s; }
+	.og-btn:hover { filter: brightness(1.1); }
+	.og-btn.sec { background: var(--mn-surface); color: var(--mn-text); border: 1px solid var(--mn-border); }
+
+	.og-formula { background: var(--mn-bg-subtle); border: 1px dashed var(--mn-border); border-radius: 12px; padding: 10px 14px; margin: 10px 0; overflow-x: auto; }
+	.og-formula .cap { color: var(--mn-text-secondary); font-size: .8rem; margin-top: 6px; }
+	.og-formula.live { border-color: var(--mn-emerald); border-style: solid; }
+
+	.og-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .85rem; margin: 8px 0; color: var(--mn-text-secondary); }
+	.og-legend span { display: inline-flex; align-items: center; gap: 6px; }
+	.og-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+	.og-steps { counter-reset: ogstep; padding-left: 0; list-style: none; margin: 8px 0; }
+	.og-steps li { counter-increment: ogstep; padding: 8px 0 8px 42px; position: relative; margin: 0 0 4px; }
+	.og-steps li::before { content: counter(ogstep); position: absolute; left: 0; top: 7px; width: 28px; height: 28px; background: linear-gradient(135deg, var(--mn-emerald), var(--mn-coral)); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; }
+
+	.og-eli5 { background: color-mix(in srgb, var(--og-amber) 10%, var(--mn-surface)); border-left: 3px solid var(--og-amber); padding: 12px 16px; border-radius: 8px; margin: 12px 0; }
+	.og-eli5 b { color: var(--og-amber); }
+
+	.og-verdict { font-weight: 800; padding: 3px 10px; border-radius: 8px; border: 1px solid var(--mn-border); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .85rem; }
+	.og-verdict.ok { color: var(--mn-emerald); border-color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 12%, transparent); }
+	.og-verdict.no { color: var(--mn-rose); border-color: var(--mn-rose); background: color-mix(in srgb, var(--mn-rose) 12%, transparent); }
+
+	.og-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+	.og-toc a { color: var(--mn-emerald); text-decoration: none; background: var(--mn-bg-subtle); border: 1px solid var(--mn-border); padding: 6px 10px; border-radius: 8px; font-size: .85rem; }
+	.og-toc a:hover { border-color: var(--mn-emerald); }
+
+	.og-note { background: color-mix(in srgb, var(--mn-emerald) 10%, var(--mn-surface)); border-left: 3px solid var(--mn-emerald); padding: 12px 16px; margin: 14px 0; border-radius: 6px; font-size: .95rem; }
+	.og-out { margin-top: 8px; color: var(--mn-text-secondary); font-size: .9rem; font-family: var(--mn-font-mono, monospace); }
+
+	.og-fc-wrap { position: relative; }
+	.og-fc-status { position: absolute; top: 8px; left: 12px; z-index: 2; font-size: .85rem; color: var(--og-amber); background: var(--mn-bg-glass); padding: 2px 8px; border-radius: 6px; }
 </style>
 
 <div class="md">
