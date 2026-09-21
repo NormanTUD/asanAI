@@ -176,20 +176,19 @@
 <!-- =================== 3. Der Hammer =================== -->
 <section id="hammer">
   <h2>3 · Der Hammer trifft die Verteilung</h2>
-  <p class="lead">Jedes ReLU-Neuron definiert eine <b>Hyperebene</b> (Normale&nbsp;=&nbsp;Gewichtsvektor <b>w</b>, Versatz&nbsp;=&nbsp;Bias <b>b</b>). Alle Punkte auf der <b>negativen</b> Seite werden auf diese Ebene <b>gedrückt</b> (auf 0 projiziert). Ein Hammerschlag schlägt eine <b>Delle</b> in die 2D-Verteilung.</p>
+  <p class="lead">Eine Schicht macht <b>Rotation + Hammerschlag</b>: die <b>gelernte Rotation</b> (affin) richtet die Verteilung aus, dann drückt der <b>fix eingeprägte ReLU-Hammer</b> (Faltlinie <code>x′ = b</code>) die linke Hälfte der Wolke auf diese Linie — <b>abgetrennt und abgeflacht</b>. Drehe θ und verschiebe die Faltlinie, und beobachte, wie die gedrehte Wolke rechts gefaltet wird.</p>
   <div class="formula" id="fHam"></div>
   <canvas id="hamCanvas" class="demo" width="940" height="380"></canvas>
   <div class="ctrls">
-    <label>Winkel der Hyperebene <span class="val" id="vHamA">45°</span>
-      <input id="hamA" type="range" min="0" max="360" value="45">
+    <label>Drehwinkel θ (gelernte Rotation) <span class="val" id="vHamTh">0°</span>
+      <input id="hamTh" type="range" min="-180" max="180" value="0">
     </label>
-    <label>Versatz b <span class="val" id="vHamB">0.00</span>
+    <label>Faltlinie x = b <span class="val" id="vHamB">0.00</span>
       <input id="hamB" type="range" min="-1" max="1" step="0.02" value="0">
     </label>
-    <button id="hamAdd">weitere Ebene hinzufügen</button>
     <button id="hamReset">zurücksetzen</button>
   </div>
-  <p class="lead" style="margin-top:10px"><b>Wichtig:</b> Der Hammer verändert nur die <b>konvexe Hülle</b>. Punkte im <b>Inneren</b> einer Klasse (der rote Kern) sind so nicht erreichbar. Genau hier scheitert die naive Idee — man braucht eine <b>freie Dimension</b>, in die gefaltet wird (Abschnitt 5).</p>
+  <p class="lead" style="margin-top:10px"><b>Wichtig:</b> Der Hammer verändert nur die <b>konvexe Hülle</b> — die abgeflachte Hälfte bleibt auf der Faltlinie kleben, und Punkte im <b>Inneren</b> eines Haufens sind so nicht erreichbar. Genau hier scheitert die naive Idee: man braucht eine <b>freie Dimension</b>, in die gefaltet wird (Abschnitt 5).</p>
 </section>
 
 <!-- =================== 4. Kreis-im-Kreis + Rotation =================== -->
@@ -418,6 +417,7 @@ function f0(n){ return (Math.round(n*10)/10).toFixed(1); }
 function rotMat(deg){ const t=deg*Math.PI/180; return [[Math.cos(t),-Math.sin(t)],[Math.sin(t),Math.cos(t)]]; }
 function mulMatVec(M, x){ return [M[0][0]*x[0]+M[0][1]*x[1], M[1][0]*x[0]+M[1][1]*x[1]]; }
 function relu(v){ return Math.max(0,v); }
+function keepCam(gdId){ const gd=$(gdId); const cam=gd&&gd._fullLayout&&gd._fullLayout.scene&&gd._fullLayout.scene.camera; return cam?{eye:cam.eye,up:cam.up}:null; }
 
 /* Daten */
 function makeEgg(nIn, nOut, rIn0, rIn1, rOut0, rOut1){
@@ -441,7 +441,7 @@ function lineStats(pts, nx, ny, c){
 
 /* ================= Global Formeln (statisch) ================= */
 renderTeX('fEq', String.raw`\mathbf{z}^{(l)} \;=\; \Phi\!\Bigl(\underbrace{\mathbf{W}^{(l)}\,\mathbf{x}^{(l-1)}}_{\text{affin: Matrix + Skala + Scherung}} + \underbrace{\mathbf{b}^{(l)}}_{\text{Bias/Versatz}}\Bigr), \qquad \Phi = \mathrm{ReLU}`);
-renderTeX('fHam', String.raw`h(\mathbf{x}) \;=\; \mathrm{ReLU}\bigl(\underbrace{\mathbf{w}^{\top}\mathbf{x}}_{\text{Projektion}} + b\bigr) \;\Rightarrow\; \mathbf{x}' \;=\; \mathbf{x} - \max\bigl(0,\, b-\mathbf{w}^{\top}\mathbf{x}\bigr)\,\mathbf{w} \quad\text{(alles auf der negativen Seite wird auf } \mathbf{w}^{\top}\mathbf{x}=b \text{ gedrückt)}`);
+renderTeX('fHam', String.raw`\mathbf{x}' \;=\; \underbrace{R(\theta)\,\mathbf{x}}_{\text{gelernte Rotation (affin)}} \;\;\xrightarrow{\;\mathrm{ReLU}\;}\;\; \mathbf{x}'' \;=\; \mathbf{x}' - \max\bigl(0,\, b - x'_1\bigr)\,\hat{\mathbf{e}}_1 \quad\text{(alles links der Faltlinie } x'_1=b \text{ wird auf sie gedrückt — der Hammer)}`);
 renderTeX('fFold', String.raw`x^{(1)} \;=\; \mathrm{ReLU}\!\bigl(\underbrace{w\,x^{(0)}}_{\text{Projektion auf Normale}} + b\bigr) \quad\Longrightarrow\quad \text{Falte in freier Dimension, injektiv, keine Info verloren}`);
 renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots L-1}\;+\;\underbrace{\text{ein gerader Schnitt}}_{\text{letzte Schicht }=\text{ Hyperebene}} \;=\; \text{beliebige Form (Klassengrenze)}`);
 renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(k-1)}+\mathbf{c}\bigr),\quad \text{Breite }=\dim(\text{Daten}) \;\Rightarrow\; \text{nur in sich selbst falten, braucht Tiefe }L\gg 1`);
@@ -487,11 +487,12 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     const thd=+$('aRot').value, th=thd*Math.PI/180, sx=+$('aSx').value, sy=+$('aSy').value, sh=+$('aSh').value, bx=+$('aBx').value, by=+$('aBy').value, useR=$('aRelu').checked;
     $('vARot').textContent=thd+'°'; $('vASx').textContent=f1(sx); $('vASy').textContent=f1(sy); $('vASh').textContent=f1(sh); $('vABx').textContent=f1(bx); $('vABy').textContent=f1(by); $('vARelu').textContent=useR?'an':'aus';
     const W=Wmatrix(th,sx,sy,sh);
-    const Wx=p=>{ const a=mulMatVec(W,p); return [a[0]+bx, a[1]+by]; };
+    const Wx=p=>{ const a=mulMatVec(W,[p.x,p.y]); return [a[0]+bx, a[1]+by]; };
     const Wxr=p=>{ const a=Wx(p); return useR?[relu(a[0]),relu(a[1])]:a; };
     const Wc=c.width/2, Hc=c.height/2, s=120;
     ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
     ctx.strokeStyle=COL.grid; ctx.beginPath(); ctx.moveTo(0,Hc); ctx.lineTo(c.width,Hc); ctx.moveTo(Wc,0); ctx.lineTo(Wc,c.height); ctx.stroke();
+    for(const p of pts){ ctx.fillStyle='rgba(91,107,149,0.55)'; ctx.beginPath(); ctx.arc(Wc+p.x*s, Hc-p.y*s, 1.5,0,TAU); ctx.fill(); }
     for(const p of pts){ const q=Wx(p); ctx.fillStyle=COL.blue; ctx.beginPath(); ctx.arc(Wc+q[0]*s, Hc-q[1]*s, 1.8,0,TAU); ctx.fill(); }
     for(const p of pts){ const q=Wxr(p); ctx.fillStyle=COL.accent2; ctx.beginPath(); ctx.arc(Wc+q[0]*s, Hc-q[1]*s, 1.8,0,TAU); ctx.fill(); }
     const sp=Wx(sample), spr=Wxr(sample);
@@ -534,27 +535,37 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
 /* ================= 3. Hammer ================= */
 (() => {
   const c=$('hamCanvas'), ctx=c.getContext('2d');
-  const pts=makeEgg(700,1200,0,0.85,0,1.0).map(p=>({x:p.x,y:p.y,cl:Math.hypot(p.x,p.y)<0.45?0:1}));
-  const planes=[];
-  function proj(p, pl){ let x=p.x,y=p.y; for(const h of pl){ const d=x*h.nx+y*h.ny-h.b; if(d<0){ x-=d*h.nx; y-=d*h.ny; } } return [x,y]; }
+  // Asymmetrischer Datensatz (C-Ring um roten Kern): Rotation wird sichtbar, Kern bleibt innen
+  const pts=[];
+  for(let i=0;i<600;i++){ const r=Math.sqrt(Math.random())*0.32, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<1200;i++){ const r=0.55+Math.random()*0.35, a=-Math.PI/2+(Math.random()-0.5)*(280*Math.PI/180); pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  function rot(v, th){ const cs=Math.cos(th),sn=Math.sin(th); return [v[0]*cs-v[1]*sn, v[0]*sn+v[1]*cs]; }
   function draw(){
-    const a=+$('hamA').value*Math.PI/180, b=+$('hamB').value;
-    $('vHamA').textContent=(+$('hamA').value)+'°'; $('vHamB').textContent=f1(b);
-    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
-    const W=c.width,H=c.height;
-    for(let k=0;k<2;k++){
-      const cx=W*(k===0?0.25:0.75), cy=H/2, s=150;
-      ctx.strokeStyle=COL.grid; ctx.beginPath(); ctx.moveTo(cx-200,cy); ctx.lineTo(cx+200,cy); ctx.moveTo(cx,cy-160); ctx.lineTo(cx,cy+160); ctx.stroke();
-      const set = k===0? planes : [...planes, {nx:Math.cos(a),ny:Math.sin(a),b}];
-      for(const p of pts){ const q=proj(p,set); ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+q[0]*s, cy-q[1]*s, 1.6,0,TAU); ctx.fill(); }
-      ctx.fillStyle=COL.muted; ctx.font='13px Inter'; ctx.fillText(k===0?'vor Hammerschlag':'nach Hammerschlag', cx-70, 24);
-      if(k===1){ const nx=Math.cos(a),ny=Math.sin(a),tx=-ny,ty=nx,x0=nx*b*s,y0=ny*b*s;
-        ctx.strokeStyle=COL.accent3; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(cx+x0-tx*220, cy-(y0-ty*220)); ctx.lineTo(cx+x0+tx*220, cy-(y0+ty*220)); ctx.stroke(); }
+    const thd=+$('hamTh').value, th=thd*Math.PI/180, b=+$('hamB').value;
+    $('vHamTh').textContent=thd+'°'; $('vHamB').textContent=f1(b);
+    const W=c.width,H=c.height,cy=H/2,s=120;
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,W,H);
+    ctx.textAlign='center';
+    for(let k=0;k<3;k++){
+      const cx=W*(k===0?1/6:k===1?0.5:5/6);
+      ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(cx-140,cy); ctx.lineTo(cx+140,cy); ctx.moveTo(cx,cy-140); ctx.lineTo(cx,cy+140); ctx.stroke();
+      if(k>=1){
+        ctx.strokeStyle=COL.accent3; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.moveTo(cx+b*s, cy-140); ctx.lineTo(cx+b*s, cy+140); ctx.stroke(); ctx.setLineDash([]);
+      }
+      for(const p of pts){
+        const q0=k===0?[p.x,p.y]:rot([p.x,p.y],th);
+        if(k===2){ ctx.fillStyle='rgba(91,107,149,0.35)'; ctx.beginPath(); ctx.arc(cx+q0[0]*s, cy-q0[1]*s, 1.2,0,TAU); ctx.fill(); }
+        const q=k===2?[Math.max(q0[0],b),q0[1]]:q0;
+        ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+q[0]*s, cy-q[1]*s, 1.5,0,TAU); ctx.fill();
+      }
+      ctx.fillStyle=COL.muted; ctx.font='13px Inter';
+      ctx.fillText(k===0?'1 · vor dem Hammer (Datensatz)':k===1?'2 · Rotation (gelerntes W)':'3 · Rotation + Hammerschlag (ReLU)', cx, 24);
     }
+    ctx.textAlign='left';
   }
-  $('hamA').oninput=draw; $('hamB').oninput=draw;
-  $('hamAdd').onclick=()=>{ const a=+$('hamA').value*Math.PI/180,b=+$('hamB').value; planes.push({nx:Math.cos(a),ny:Math.sin(a),b}); draw(); };
-  $('hamReset').onclick=()=>{ planes.length=0; draw(); };
+  $('hamTh').oninput=draw; $('hamB').oninput=draw;
+  $('hamReset').onclick=()=>{ $('hamTh').value=0; $('hamB').value=0; draw(); };
   draw();
 })();
 
@@ -573,11 +584,13 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(const p of pts){ const r=Math.hypot(p.x,p.y); const z=lift*Math.max(0,0.5-r)*2;
       if(p.cl===0){ x0.push(p.x);y0.push(p.y);z0.push(z); zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z); zOutMax=Math.max(zOutMax,z);} }
     const gx=[],gy=[],gz=[]; for(let i=-1;i<=1;i+=0.2) for(let j=-1;j<=1;j+=0.2){ gx.push(i);gy.push(j);gz.push(cPl); }
+    const layout={paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted,range:[-1,1]},yaxis:{color:COL.muted,range:[-1,1]},zaxis:{color:COL.muted,range:[-0.1,1.65]}},showlegend:false};
+    const cam=keepCam('egg3dPlot'); if(cam) layout.scene.camera=cam;
     Plotly.react('egg3dPlot',[
       {x:x1,y:y1,z:z1,mode:'markers',type:'scatter3d',marker:{size:2.2,color:COL.blue},name:'außen'},
       {x:x0,y:y0,z:z0,mode:'markers',type:'scatter3d',marker:{size:2.4,color:COL.red},name:'innen'},
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.6,color:COL.accent3,opacity:.3},name:'Ebene'}
-    ],{paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted}},showlegend:false},{displayModeBar:false});
+    ],layout,{displayModeBar:false});
     const sep = cPl>zOutMax && cPl<zInMin;
     const v=$('eggVerdict'); v.textContent = sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
     renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,0.5-\lVert(x,y)\rVert)}_{\text{hebt den Kern an}},\;\; \text{Trennebene } z=c. \;\; \text{trennbar, wenn } c\in(${f1(zOutMax)},\,${f1(zInMin)}).`);
@@ -622,11 +635,13 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(const p of pts){ const xr=p.x*cs-p.y*sn, yr=p.x*sn+p.y*cs, z=relu(xr);
       if(p.cl===0){x0.push(xr);y0.push(yr);z0.push(z);} else {x1.push(xr);y1.push(yr);z1.push(z);} }
     const gx=[],gy=[],gz=[]; for(let i=-1;i<=1;i+=0.2) for(let j=-1;j<=1;j+=0.2){gx.push(i);gy.push(j);gz.push(0);}
+    const layout={paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted,range:[-1.05,1.05]},yaxis:{color:COL.muted,range:[-1.05,1.05]},zaxis:{color:COL.muted,range:[-0.1,1.15]}},showlegend:false};
+    const cam=keepCam('rot3d'); if(cam) layout.scene.camera=cam;
     Plotly.react('rot3d',[
       {x:x1,y:y1,z:z1,mode:'markers',type:'scatter3d',marker:{size:2.2,color:COL.blue},name:'B'},
       {x:x0,y:y0,z:z0,mode:'markers',type:'scatter3d',marker:{size:2.2,color:COL.red},name:'A'},
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.5,color:COL.accent3,opacity:.3},name:'Faltlinie z=0'}
-    ],{paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted}},showlegend:false},{displayModeBar:false});
+    ],layout,{displayModeBar:false});
   }
   $('rotTh').oninput=draw; draw();
 })();
@@ -677,11 +692,13 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(const p of pts){ const z=zOf(p.x,p.y);
       if(p.cl===0){x0.push(p.x);y0.push(p.y);z0.push(z);zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z);zOutMin=Math.min(zOutMin,z);} }
     const gx=[],gy=[],gz=[]; for(let i=-1;i<=1;i+=0.2) for(let j=-1;j<=1;j+=0.2){gx.push(i);gy.push(j);gz.push(cPl);}
+    const layout={paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted,title:'Z (freie Dim.)'}},showlegend:false};
+    const cam=keepCam('egg3fold'); if(cam) layout.scene.camera=cam;
     Plotly.react('egg3fold',[
       {x:x1,y:y1,z:z1,mode:'markers',type:'scatter3d',marker:{size:2,color:COL.blue},name:'außen'},
       {x:x0,y:y0,z:z0,mode:'markers',type:'scatter3d',marker:{size:2.3,color:COL.red},name:'innen'},
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.6,color:COL.accent3,opacity:.3},name:'Trennebene'}
-    ],{paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted,title:'Z (freie Dim.)'}},showlegend:false},{displayModeBar:false});
+    ],layout,{displayModeBar:false});
     const sep = cPl>zInMax && cPl<zOutMin;
     const v=$('eggVerdict2'); v.textContent=sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
     drawFormulas(zInMax, zOutMin);
