@@ -9,6 +9,7 @@ order: 3
 color: coral
 topics: math-i, programming
 tags: math-heavy
+math: 60
 -->
 
 <div class="md" data-lesson-id="differentiation">
@@ -94,7 +95,7 @@ You can explore this visually below. Drag the slider to move the second point cl
     <div id="plot-secant-tangent" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Deriving x² from first principles">
 ### A Concrete Example: Deriving $f(x) = x^2$ from First Principles
 
 Let's apply the limit definition to $f(x) = x^2$ step by step:
@@ -172,7 +173,7 @@ You can explore the derivative rules interactively below. Choose a function and 
 </div>
 
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Special derivatives worth knowing">
 ### Special Derivatives Worth Knowing
 
 Some derivatives appear so frequently in AI and science that they are worth memorizing:
@@ -313,7 +314,7 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
     <div id="plot-gradient-surface" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Summary of differentiation">
 ### Summary
 
 | Concept | Notation | Meaning |
