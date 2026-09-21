@@ -9,6 +9,7 @@ order: 3
 color: accent
 topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, model-theory, ai, epistemology
 tags: logic-heavy, math-heavy
+math: 80
 -->
 
 <div class="md">

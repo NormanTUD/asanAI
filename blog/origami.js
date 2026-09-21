@@ -611,6 +611,7 @@ function ogInitFC() {
 	const printBtn = document.getElementById('og-fc-print'); if (printBtn) printBtn.onclick = () => window.print();
 	setShape(shapeSel ? shapeSel.value : 'tri');
 	ensureLoop();
+	ogTex('og-fc-formula', String.raw`\underbrace{\text{fold}}_{\text{layers }1\ldots L-1} \;+\; \underbrace{\text{one straight cut}}_{\text{last layer} = \text{hyperplane}} \;=\; \text{any shape (class boundary)}`);
 	OG.redos.push(ensureLoop);
 }
 
