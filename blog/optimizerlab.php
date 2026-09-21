@@ -9,6 +9,7 @@ order: 6
 color: coral
 topics: training, math-i, math-ii, programming
 tags: math-heavy, code-heavy
+math: 65
 -->
 <div class="md">
 In machine learning, a model learns by adjusting its internal settings, called **Weights** and **Biases**, to minimize a **Loss Function**, which is a mathematical measure of how wrong the model's predictions are.
@@ -117,7 +118,7 @@ Different optimizers use different strategies for step 2:
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="What's Happening Under the Hood?">
 ### What's Happening Under the Hood?
 
 Each optimizer uses a different **update rule** to decide how to change the weight at each step. Here's the math:
@@ -146,6 +147,9 @@ $$x_{t+1} = x_t - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
 
 This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\sqrt{\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps. The optimizer automatically adapts.
 
+</div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="History of Optimizers">
 ### History of Optimizers
 
 In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\citetitle{sgd}” (\citealt{sgd}), introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
@@ -156,6 +160,9 @@ $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
 where $a_n$ is the step size (the historical ancestor of today's learning rate $\eta$) and $\alpha$ is the target value being estimated from noisy observations $y_n$. While Robbins and Monro added the “Stochastic” element, the core concept of **Gradient Descent** was introduced over a century earlier by \citeauthor{cauchy1847} in \citeyear{cauchy1847}. He used it to solve systems of non-linear equations.
 
+</div>
+
+<div class="md">
 ### The Bridge to Modern AI: Backpropagation
 
 While Cauchy provided the “map” for downhill movement, the challenge for AI was applying this to complex, multi-layered networks. This required a way to distribute the blame for an error across millions of internal “neurons.”

@@ -9,6 +9,7 @@ order: 6
 color: sky
 topics: architecture, math-i, math-ii
 tags: math-heavy
+math: 65
 -->
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Long Distance Dependencies">
@@ -57,7 +58,7 @@ Drag the slider below to insert distractor tokens between a subject and its pron
          border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
 </div>
 
-<div class="md" data-mathlevel="65">
+<div class="md">
 This costs $O(L^2)$ memory and compute, doubling context quadruples cost. But for capturing dependencies across distance, **direct access beats sequential propagation**.
 
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from “apple” to “existentialism”, is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
@@ -73,7 +74,9 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 
 * **The Vector Shift:** If the word “river” is nearby, it exerts a gravitational force on “bank,” dragging its coordinates away from finance and toward nature.
 * **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the “contextualized” version of the word, informed by its neighbors.
+</div>
 
+<div class="md" data-mathlevel="65" data-optionaltitle="Geometric Intuition: Why That Equation?">
 ## Geometric Intuition: Why *That* Equation?
 
 The attention equation looks deceptively simple:
@@ -1555,7 +1558,7 @@ A subtle but important detail: **$Q$ and $K$ have dimension $d_k$, while $V$ has
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65">
 
 In a real Transformer, every token lives as a $d_{\text{model}}$-dimensional vector, $d_{\text{model}} = 512$ in the original paper. The matrices $W^Q, W^K, W^V$ are **linear projections** that map each token from $d_{\text{model}}$ down into a smaller subspace ($d_k = d_v = 64$ in the original paper). They are linear, so a 2D plane through the origin is faithful to what happens in 512 dimensions: every projection is a shadow of the original onto some lower-dimensional subspace.
 
@@ -1581,9 +1584,13 @@ The final projection $W^O$ is what lets the heads' outputs mix back together int
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
 </div>
 
+<div class="topic-block" data-mathlevel="65" data-optionaltitle="The scaled-dot-product softmax">
+<div class="md">
 $$
 \alpha_{i,j} = \text{Softmax}\left( \frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}} \right) = \frac{\exp(\frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}})}{\sum_{n=1}^{L} \exp(\frac{\mathbf{q}_i \mathbf{k}_n^T}{\sqrt{d_k}})}
 $$
+</div>
+</div>
 
 <div class="md">
 This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, representing the “attention weights” word $i$ assigns to every word in the sequence.
@@ -1592,11 +1599,15 @@ This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, repres
 The output for each position is the weighted sum of all Value vectors. This “context vector” $\mathbf{z}_i$ is a version of the original word that has been “informed” by its neighbors:
 </div>
 
+<div class="topic-block" data-mathlevel="60" data-optionaltitle="The contextual output vector">
+<div class="md">
 $$
 \mathbf{z}_i = \sum_{j} \alpha_{i,j} \mathbf{v}_j
 $$
+</div>
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="65">
 In matrix form, the entire operation for the sequence is computed efficiently as:
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
@@ -1611,7 +1622,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
         </div>
 
             <h2 style="color:var(--mn-heading, #1e293b)">The Attention Matrix</h2>
-<div class="md">
+<div class="md" data-mathlevel="55">
 
 Keep in mind that this is an oversimplification. Usually, the connections are not that easily interpretable.
 
@@ -1670,7 +1681,11 @@ But the context window is more than a technical parameter, it maps onto a powerf
 Mathematically, the “contextualized” word is just a weighted average of the information (Values) around it:
 </div>
 
+<div class="topic-block" data-mathlevel="60" data-optionaltitle="Weighted average of the Values">
+<div class="md">
 $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
+</div>
+</div>
 
 <div class="md">
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.

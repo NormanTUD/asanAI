@@ -268,9 +268,9 @@ The "fold" in this chapter is a neural-network metaphor — but *folding as math
 	</figure>
 </div>
 
-**Flat-foldability: two local theorems, one hard problem.** Given a crease pattern, *when* can it fold flat? At a single vertex, two clean rules answer it: **Maekawa's theorem** — mountain and valley folds at a vertex always differ by two (which is also why the faces two-color) \cite[Maekawa's theorem]{maekawa_theorem_wiki}, and **Kawasaki's (Kawasaki–Justin) theorem** — the alternating angles around the vertex sum to 180° \cite[Kawasaki's theorem]{kawasaki_theorem_wiki}. But across many vertices the question becomes computationally wild: **Bern and Hayes (1996)** proved that deciding whether a crease pattern folds flat is **NP-complete** \cite[Mathematics of paper folding]{math_paper_folding_wiki}.
+**Flat-foldability: local rules, global hard problem.** Can a crease pattern fold flat? At one vertex, two clean rules decide it: **Maekawa** — mountain and valley folds differ by two (so the faces two-color) \cite[Maekawa's theorem]{maekawa_theorem_wiki}; **Kawasaki** — the alternating angles around the vertex sum to 180° \cite[Kawasaki's theorem]{kawasaki_theorem_wiki}. Stack many vertices and it blows up: **Bern and Hayes (1996)** showed that deciding flat-foldability is **NP-complete** \cite[Mathematics of paper folding]{math_paper_folding_wiki}. Note the shape — *local rules, global difficulty* — the same split this book keeps returning to, from one neuron's activation to a whole network's generalization.
 
-**The computational turn.** Around 1990, **Robert J. Lang** and colleagues began writing code to *design* and *solve* origami instead of folding it by hand \cite[Robert J. Lang]{robert_lang_wiki}. Lang's **TreeMaker** turned a target silhouette into an efficient crease pattern — the first serious computational-origami design tool — and the field crystallized into algorithms and complexity. **Geometric Folding Algorithms** by **Erik** and **Martin Demaine** is the standard reference \cite[Geometric Folding Algorithms]{geometric_folding_algorithms_wiki}; the **fold-and-cut theorem** (any polygonal shape from one straight cut) is its signature existence result \cite[Fold-and-cut problem]{fold_and_cut_problem_wiki}; and **Erik Demaine** and collaborators stand among the field's leading computational origamists, with long lists of universality and NP-completeness results \cite[Erik Demaine]{erik_demaine_site}.
+**The computational turn.** Around 1990 **Robert J. Lang** started *designing* folds by code instead of by hand \cite[Robert J. Lang]{robert_lang_wiki}. His **TreeMaker** turns a target shape into an efficient crease pattern; **Erik and Martin Demaine's** *Geometric Folding Algorithms* is the reference text \cite[Geometric Folding Algorithms]{geometric_folding_algorithms_wiki}, and the **fold-and-cut theorem** — any polygon from one straight cut — is its signature result \cite[Fold-and-cut problem]{fold_and_cut_problem_wiki}. **Erik Demaine**'s group has long lists of NP-completeness and universality results \cite[Erik Demaine]{erik_demaine_site}.
 
 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
 	<figure style="margin:0; text-align:center;">
@@ -283,7 +283,7 @@ The "fold" in this chapter is a neural-network metaphor — but *folding as math
 	</figure>
 </div>
 
-A maintained map of the tools and people — TreeMaker, ReferenceFinder, Origamizer, ORIPA, and the Tachi / Mitani / Tsukuba groups — lives on Lang's **computational origami** page \cite[Lang, Computational Origami]{langorigami_computational}.
+Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and the Tachi / Mitani groups \cite[Lang, Computational Origami]{langorigami_computational}.
 
 **From paper to the real world.** The field is not about paper alone. **Rigid origami** — folds treated as hinges on stiff panels — is how satellite solar arrays and telescope mirrors pack flat and bloom in orbit, and the **Miura fold** is the canonical example \cite[Miura fold]{miura_fold_wiki}\cite[Rigid origami]{rigid_origami_wiki}.
 

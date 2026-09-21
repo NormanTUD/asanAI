@@ -11,7 +11,7 @@ topics: math-i, math-ii, architecture, training
 tags: math-heavy, code-heavy
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="From a Single Neuron to a Deep Network">
 ## From a Single Neuron to a Deep Network
 
 In the **Minimal Neuron** section, we saw that one neuron does something very simple: it multiplies its input by a weight, adds a bias, and then bends the result with an activation function. That's it. A single neuron can draw *one* straight line through data, and nothing more.
@@ -61,7 +61,7 @@ So the theorem is foundational, but it doesn't explain *why* deep networks work 
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Why Deep Learning Works (And Why It Works So Well)">
 
 ## Why Deep Learning Works (And Why It Works *So* Well)
 
@@ -113,6 +113,9 @@ This matches how **the real world is structured**: pixels → edges → parts �
 
 ---
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="How the Knowledge Gets Into the Weights">
 ### How the Knowledge Gets Into the Weights
 
 Before training, the weights are random and the network's output is garbage. Training runs a loop:

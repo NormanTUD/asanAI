@@ -9,6 +9,7 @@ order: 9
 color: sky
 topics: architecture, math-i, math-ii, programming
 tags: math-heavy, code-heavy
+math: 65
 featured: true
 -->
 
@@ -327,9 +328,11 @@ Bold: the only step where $t$ determines the width of a computation. Everywhere 
 To address the lack of sequence order in transformers, a “position signal” is added to each token's embedding, forming the initial hidden state $h_{0}$:
 </div>
 
+<div class="topic-block" data-optionaltitle="Positional encoding added to the embedding" data-mathlevel="40">
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position.
 
 For each dimension $i$ in a vector of size $d_\text{model}$, the encoding is defined as:
@@ -373,7 +376,7 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="The Residual Stream">
 ### The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
@@ -387,6 +390,9 @@ In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a 
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained “river width” acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
+</div>
+
+<div class="md" data-mathlevel="65" data-optionaltitle="Attention: Letting Tokens Talk">
 ## Attention: Letting Tokens Talk
 
 Attention is the heart of the transformer — the one place where one token's information can flow into another. This part builds it up from a single head to the full multi-head mechanism.
@@ -413,12 +419,18 @@ This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
 * **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="The Single-Head Attention">
 #### The **Single-Head Attention**
 
 The job of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
+</div>
+
+<div class="md" data-mathlevel="45" data-optionaltitle="Concatenation Definition">
 ##### Concatenation Definition
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different “heads.” Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
@@ -434,15 +446,20 @@ If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
 $$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$
 The output width is simply the sum of the input widths.
 
+</div>
+
+<div class="md">
 ##### Multi-Head Attention: Lateral Parallelism
 
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$, the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
 </div>
 
+<div class="topic-block" data-optionaltitle="Multi-head attention and the residual update" data-mathlevel="65">
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
 $$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="50">
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
@@ -453,9 +470,11 @@ This Layer Normalization ensures that the values don't 'explode' and get too lar
 For a single head, we say:
 </div>
 
+<div class="topic-block" data-optionaltitle="Single-head attention with Q, K, V projections" data-mathlevel="60">
 $$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q \in \mathbb{R}^{d_k}}, \underbrace{h_i W_i^K}_{K \in \mathbb{R}^{d_k}}, \underbrace{h_i W_i^V}_{V \in \mathbb{R}^{d_v}})$$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
@@ -654,7 +673,7 @@ parameters while keeping per-token compute roughly constant, since only
 a small fraction of parameters are active for any given input.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="From Vectors to Words">
 ## From Vectors to Words
 
 With the final hidden state in hand, all that remains is to read it back out as a probability distribution over the vocabulary.
@@ -674,6 +693,9 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: “How similar is our current thought vector to every known word vector?”
 
+</div>
+
+<div class="md" data-mathlevel="45" data-optionaltitle="Step-by-Step Logit Calculation">
 ### Step-by-Step Logit Calculation
 
 To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and the word's learned embedding row $w_\text{row}$ from the Unembedding Matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
@@ -682,9 +704,11 @@ To get the logit for each word, we calculate the dot product between the final h
 The hidden state vector $\mathbf{h}_{\text{last}}$ (represented by `h[pos]`) is dotted against each row $\mathbf{e}_w$ of the unembedding matrix $W \substack{\text{vocab}}$ to produce the logit for word $w$:
 </div>
 
+<div class="topic-block" data-optionaltitle="The logit as a dot product" data-mathlevel="50">
 $$\text{logit}_w = \mathbf{h}_{\text{last}} \cdot \mathbf{e}_w = \sum_{k=0}^{d-1} h_k \cdot e_{w,k}$$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 This operation computes the entire logit vector $\mathbf{L}$ simultaneously. If $W_{\text{vocab}}$ is a matrix where each row is a word embedding, the operation is a matrix-vector multiplication:
 
 $$\mathbf{L} = W_{\text{vocab}} \mathbf{h}_{\text{last}}$$

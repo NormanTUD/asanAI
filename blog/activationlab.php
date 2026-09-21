@@ -11,7 +11,7 @@ topics: math-i, programming
 tags: code-heavy
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The Necessity of Activation Functions">
 ## The Necessity of Activation Functions
 
 Activation functions serve as the mathematical **“gates”** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
@@ -70,7 +70,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="SoftMax: The Multi-Class Gate">
 ## SoftMax: The “Multi-Class” Gate
 
 While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in \citeyear{bridle1989probabilistic} by \citeauthor{bridle1989probabilistic}) is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
@@ -83,9 +83,11 @@ While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in 
 For an input vector $z$ (called **logits**), the SoftMax value for the $i$-th element is:
 </div>
 
+<div class="topic-block" data-optionaltitle="The SoftMax formula" data-mathlevel="50">
 $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="50">
 1.  **Exponentials ($e^z$):** We raise $e$ to the power of each input. This ensures every output is positive.
 2.  **Normalization:** We divide each result by the sum of all results. This ensures the final values **always sum to 1.0 (100%)**.
 
@@ -183,7 +185,7 @@ This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lotter
 The “aha-moment”: ReLU doesn't just prevent vanishing gradients, it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="GELU: The Smooth Transformer Gate">
 ### GELU: The Smooth Transformer Gate
 
 While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**, introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu}), became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
@@ -195,7 +197,7 @@ Where $\Phi(x)$ is the standard normal cumulative distribution function and $\te
 GELU is often described as a “smooth ReLU”: it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever “dies” completely, every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="SiLU: The Diffusion Smooth Gate">
 ### SiLU: The Diffusion Smooth Gate
 
 The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran2017swish}, is the activation inside the **U-Net denoiser of Stable Diffusion** and most modern CNN-based vision models:

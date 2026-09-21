@@ -9,11 +9,15 @@ order: 4
 color: emerald
 topics: math-i, math-ii, architecture
 tags: math-heavy
+math: 60
 -->
 
 <div class="md">
 Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), rescales each layer's inputs to have a consistent mean and variance. The original paper motivated this by the need to stabilize the distribution of hidden states across the layers and time steps of a network, which makes the optimization landscape better behaved and allows for much higher learning rates and faster convergence. LN is sometimes loosely said to “prevent internal covariate shift”, a term coined for BatchNorm, but the original LN paper did not rely on that explanation; the practical benefit is improved training stability.
 
+</div>
+
+<div class="md" data-mathlevel="50" data-optionaltitle="The Mathematical Process">
 ## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
 
@@ -26,6 +30,9 @@ For a specific layer input vector $x$ with $d$ dimensions, the normalization fol
 * **Scale and Shift:** Apply learnable parameters $\gamma$ (gain) and $\beta$ (bias) to allow the model to undo the normalization if that helps performance.
     $$y_i = \gamma \hat{x}_i + \beta$$
 
+</div>
+
+<div class="md">
 ## Integration in Transformer Models (GPT)
 In models like **GPT-3** and **GPT-4**, Layer Normalization is the “glue” that keeps the deep stack of blocks stable.
 
