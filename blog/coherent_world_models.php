@@ -1366,7 +1366,7 @@ The model $G$ is true when the *two* truth conditions (coherence and corresponde
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Five pathologies">
 
 ### Five pathologies
 
@@ -1702,6 +1702,9 @@ The chapter's nine-step procedure, applied to a deployed LLM answering a user qu
 
 The procedure is the same for any model — scientific, mathematical, historical, LLM — because the chapter's claim is that the *shape* is the same. That is why the very next section runs these nine steps on the chapter *itself*: the one model in this book that is also its own author, and therefore the one where the question "where is the licensed transition?" is hardest to answer honestly.
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="Where this framework reaches its limits">
 ### Where this framework reaches its limits
 
 A framework aware of its reach must be clear about where it stops helping. The chapter's machinery, applied to LLMs, runs out of steam in at least four directions:
