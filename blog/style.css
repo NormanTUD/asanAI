@@ -10405,6 +10405,7 @@ math {
 
 
 .core-persona {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -10421,6 +10422,26 @@ math {
 	border-color: var(--mn-accent);
 	background: color-mix(in srgb, var(--mn-accent) 5%, var(--mn-surface));
 	transform: translateY(-1px);
+}
+.core-persona-check {
+	width: 22px;
+	height: 22px;
+	border-radius: 6px;
+	border: 2px solid var(--mn-border);
+	background: var(--mn-bg-subtle);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--mn-accent);
+	flex-shrink: 0;
+	transition: all 0.2s ease;
+}
+.core-persona-active .core-persona-check {
+	background: var(--mn-accent);
+	border-color: var(--mn-accent);
+	color: #fff;
 }
 .core-persona-icon {
 	font-size: 1.5rem;
@@ -10463,6 +10484,8 @@ math {
 .core-persona-active .core-persona-go {
 	opacity: 1;
 }
+
+
 
 /* Math Slider (Widget & Overlay) */
 .math-comfort {

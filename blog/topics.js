@@ -839,7 +839,7 @@
 					<p class="topics-audience-hint" id="topics-audience-hint"></p>
 				</div>
 				<div class="topics-math-comfort" role="group" aria-label="Math comfort level">
-					<span class="topics-math-label">How much math is comfortable?</span>
+					<span class="topics-math-label">Are you comfortable with…</span>
 					<div class="topics-math-control">
 						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="5" value="${getMathLevel()}" aria-label="Math comfort, percent">
 						<span class="topics-math-val">${getMathLevel()}% · ${mathLabel(getMathLevel())}</span>
@@ -2036,7 +2036,9 @@
 				'<div class="core-personas" role="group" aria-label="Which reader are you?">'
 					+ CORE_PERSONAS.map(function (p) {
 						const sel = activePersonas.indexOf(p.id) !== -1 ? ' core-persona-active' : '';
+						const check = activePersonas.indexOf(p.id) !== -1 ? '✔' : '';
 						return '<button type="button" class="core-persona itx-item' + sel + '" data-core-persona="' + escAttr(p.id) + '">'
+							+ '<span class="core-persona-check" aria-hidden="true">' + check + '</span>'
 							+ '<span class="core-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>'
 							+ '<span class="core-persona-body">'
 							+   '<span class="core-persona-name">' + escAttr(p.label) + '</span>'
