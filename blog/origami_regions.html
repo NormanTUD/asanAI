@@ -1,0 +1,67 @@
+<!-- =========================================================================
+  EXTRACT ME -> blog/origami.php
+  Insert this whole block IMMEDIATELY AFTER the "Progressive folding: regions
+  multiply with depth" og-demo (the one with id="og-cascade"), i.e. right after
+  the `</div>` that closes that og-demo block (around line 368 of origami.php),
+  and BEFORE the "<div class="md"> ## The Inefficient Alternative: Shear ..." block.
+
+  Companion JS lives in /tmp/opencode/origami_regions.js (ogInitRegions).
+========================================================================= -->
+
+<div class="md">
+## How many slices can a net actually carve?
+
+The folding intuition above has a clean theorem behind it. A rectifier (ReLU)
+network with a total of $N$ neurons can split its input space into **at most
+$2^N$ linear regions** — one per pattern of which neurons are active
+\cite[Montúfar et al., 2014 — max regions ≤ 2^N (Prop. 3); constructive depth bound (Thm. 4)]{montufar2014regions}.
+Depth is what turns this into an explosion: the number a *deep* net can actually
+**guarantee** grows roughly like $\left(\frac{m}{n_0}\right)^{(L-1)\,n_0}\,m^{\,n_0}$ —
+exponential in depth $L$, not merely in size. Pick a known model (or type in your own
+$L$, $m$, $n_0$) and compare three readouts for the *same* neuron budget: the
+worst-case ceiling, what a deep net can provably reach, and what a flat net would get.
+</div>
+
+<div class="og-demo">
+	<h3>Linear-region budget calculator</h3>
+	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">How many linear
+	"slices" can a stack of dense ReLU layers carve? Choose a known model, or edit
+	<b>layers $L$</b>, <b>neurons/layer $m$</b> and <b>input dim $n_0$</b>.</p>
+	<div class="og-controls">
+		<div class="og-control" style="min-width:240px"><label>Known model</label>
+			<select id="og-regions-model">
+				<option value="llama7b" selected>LLaMA-7B · 32 layers · 11008 · n₀=4096</option>
+				<option value="llama13b">LLaMA-13B · 40 layers · 13824 · n₀=5120</option>
+				<option value="llama70b">LLaMA-70B · 80 layers · 22016 · n₀=8192</option>
+				<option value="gpt2">GPT-2 124M · 12 layers · 3072 · n₀=768</option>
+				<option value="gpt3">GPT-3 175B · 96 layers · 49152 · n₀=12288</option>
+				<option value="poker">Poker net (this chapter) · 2 layers · 100 · n₀=10</option>
+				<option value="mnist">MNIST MLP · 2 layers · 1024 · n₀=784</option>
+				<option value="custom">Custom…</option>
+			</select>
+		</div>
+		<div class="og-control"><label>Layers $L$ — <span class="val" id="og-regions-l-v">32</span></label>
+			<input type="number" id="og-regions-l" min="1" max="512" step="1" value="32"
+				style="width:100%;background:var(--mn-surface);color:var(--mn-text);border:1px solid var(--mn-border);padding:6px 8px;border-radius:6px;font-family:var(--mn-font-mono,monospace);font-variant-numeric:tabular-nums;font-size:.9rem"></div>
+		<div class="og-control"><label>Neurons / layer $m$ — <span class="val" id="og-regions-m-v">11,008</span></label>
+			<input type="number" id="og-regions-m" min="1" max="1000000" step="1" value="11008"
+				style="width:100%;background:var(--mn-surface);color:var(--mn-text);border:1px solid var(--mn-border);padding:6px 8px;border-radius:6px;font-family:var(--mn-font-mono,monospace);font-variant-numeric:tabular-nums;font-size:.9rem"></div>
+		<div class="og-control"><label>Input dim $n_0$ — <span class="val" id="og-regions-n0-v">4,096</span></label>
+			<input type="number" id="og-regions-n0" min="1" max="100000" step="1" value="4096"
+				style="width:100%;background:var(--mn-surface);color:var(--mn-text);border:1px solid var(--mn-border);padding:6px 8px;border-radius:6px;font-family:var(--mn-font-mono,monospace);font-variant-numeric:tabular-nums;font-size:.9rem"></div>
+	</div>
+	<div class="og-formula" id="og-regions-formula-wrap">
+		<div id="og-regions-formula" style="min-height:1.5em"></div>
+		<div class="cap">Ceiling (Prop. 3): at most 2<sup>N</sup> linear regions for N = L·m total neurons. Deep guarantee (Thm. 4): the lower bound a deep net can provably reach (needs width m ≥ n₀). Flat: a single layer holding the same N neurons.</div>
+	</div>
+	<div id="og-regions-results"></div>
+	<div class="og-out" id="og-regions-out"></div>
+	<div class="og-note">⚠️ <b>Why the LLM numbers are a loose analogy, not a literal bound.</b>
+	All of this is exact only for <b>pure ReLU (piecewise-linear) nets</b>. Modern LLMs
+	differ, so read those presets as a sense of scale: their feed-forward block uses
+	<b>GELU</b> (GPT) or <b>SwiGLU / SiLU</b> (LLaMA) — <i>smooth</i>, not piecewise-linear —
+	so there are no crisp "linear regions" to count at all; and they interleave
+	<b>attention</b> (softmax) and <b>normalization</b>, which are not dense ReLU blocks
+	either. The exponential-in-depth intuition still carries over; the exact slice count
+	does not.</div>
+</div>
