@@ -325,7 +325,9 @@ The slogan is the same sentence that organizes all of sheaf theory, all of topol
 $$\boxed{\text{local constraints} \;+\; \text{compatibility on overlaps} \;\Rightarrow\; \text{global output}}$$
 
 The chain from distinction to gluing -- distinction, relation, transformation, locality, compatibility, coherence, gluing, globality \cite[the nine-step chain, from Spencer-Brown's first cut to invariance under change of cover]{coherent_difference_chapter} -- is the chain that runs inside an LLM every time it parses a prompt and produces an answer. Prompting via semantic coordinates makes that chain visible: you are choosing which *local sections* to specify and trusting the model to glue them into a global one.
+</div>
 
+<div class="md">
 ### The Recipe
 
 If you want to use this technique deliberately:

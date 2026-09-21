@@ -209,7 +209,7 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
 })();
 </script>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Embedding Space: Fourier Sparsity">
 ## The Embedding Space: Fourier Sparsity
 
 The embedding matrix $W_E$ is a $P \times d_{\text{model}} = 113 \times 128$ matrix. When we take a Discrete Fourier Transform along the token dimension and compute the $\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** \cite[Section 4.1, Figure 3]{nanda2023grokking}.
