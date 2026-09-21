@@ -1255,8 +1255,8 @@
 	    concrete *why* so a reader always knows why something faded. The
 	    title comes from `data-optionaltitle` when present (a titled
 	    optional block); otherwise it is derived from the block's topics. */
-	function setBanner(block, spec) {
-		const score = spec.score;
+	function setBanner(block, spec, score) {
+		score = score || {};
 		const old = block.querySelector(':scope > .topic-block-banner');
 		if (old) old.remove();
 		const title = spec.title || pickMeta(spec.topicIds).label;
@@ -1325,7 +1325,7 @@
 			const h = inner.scrollHeight;
 			inner.style.opacity = '1';
 			inner.style.transition = 'opacity ' + TUCK_MS + 'ms ease';
-			setBanner(block, spec);
+			setBanner(block, spec, score);
 			const banner = block.querySelector(':scope > .topic-block-banner');
 			if (banner) { banner.style.transition = 'opacity ' + TUCK_MS + 'ms ease'; banner.style.opacity = '0'; }
 			void inner.offsetHeight;
@@ -1340,7 +1340,7 @@
 				if (block._tbDirty) { block._tbDirty = false; reapplyBlock(block); }
 			});
 		} else {
-			setBanner(block, spec);
+			setBanner(block, spec, score);
 			const banner = block.querySelector(':scope > .topic-block-banner');
 			if (banner) { banner.style.transition = ''; banner.style.opacity = ''; }
 			inner.style.opacity = '';
@@ -1425,7 +1425,7 @@
 				collapseBlock(block, spec, score, !!animate);
 			} else if (block._tbReason !== score.reason) {
 				// already tucked, but the *why* changed — update the banner only
-				setBanner(block, spec);
+				setBanner(block, spec, score);
 			}
 			block._tbReason = score.reason;
 			return;

@@ -176,7 +176,7 @@
 <!-- =================== 3. Der Hammer =================== -->
 <section id="hammer">
   <h2>3 · Der Hammer trifft die Verteilung</h2>
-  <p class="lead">Eine Schicht macht <b>Rotation + Hammerschlag</b>: die <b>gelernte Rotation</b> (affin) richtet die Verteilung aus, dann drückt der <b>fix eingeprägte ReLU-Hammer</b> (Faltlinie <code>x′ = b</code>) die linke Hälfte der Wolke auf diese Linie — <b>abgetrennt und abgeflacht</b>. Drehe θ und verschiebe die Faltlinie, und beobachte, wie die gedrehte Wolke rechts gefaltet wird.</p>
+  <p class="lead">Eine Schicht macht <b>Rotation + Hammerschlag</b>: die <b>gelernte Rotation</b> (affin) richtet die Verteilung aus, dann drückt der <b>fix eingeprägte ReLU-Hammer</b> (Faltlinie <code>x′ = b</code>) die eine Hälfte der Wolke auf diese Linie. Das rechte Panel zeigt das Ergebnis <b>zurückrotiert in den Ausgangsrahmen</b> — so sieht man den Hammerschnitt, wie er unter dem <b>gelernten Winkel θ</b> durch die Verteilung läuft und die eine Hälfte abtrennt.</p>
   <div class="formula" id="fHam"></div>
   <canvas id="hamCanvas" class="demo" width="940" height="380"></canvas>
   <div class="ctrls">
@@ -441,7 +441,7 @@ function lineStats(pts, nx, ny, c){
 
 /* ================= Global Formeln (statisch) ================= */
 renderTeX('fEq', String.raw`\mathbf{z}^{(l)} \;=\; \Phi\!\Bigl(\underbrace{\mathbf{W}^{(l)}\,\mathbf{x}^{(l-1)}}_{\text{affin: Matrix + Skala + Scherung}} + \underbrace{\mathbf{b}^{(l)}}_{\text{Bias/Versatz}}\Bigr), \qquad \Phi = \mathrm{ReLU}`);
-renderTeX('fHam', String.raw`\mathbf{x}' \;=\; \underbrace{R(\theta)\,\mathbf{x}}_{\text{gelernte Rotation (affin)}} \;\;\xrightarrow{\;\mathrm{ReLU}\;}\;\; \mathbf{x}'' \;=\; \mathbf{x}' - \max\bigl(0,\, b - x'_1\bigr)\,\hat{\mathbf{e}}_1 \quad\text{(alles links der Faltlinie } x'_1=b \text{ wird auf sie gedrückt — der Hammer)}`);
+renderTeX('fHam', String.raw`\mathbf{x}' \;=\; \underbrace{R(\theta)\,\mathbf{x}}_{\text{gelernte Rotation (affin)}} \;\;\xrightarrow{\;\mathrm{ReLU}\;}\;\; \mathbf{x}'' \;=\; \mathbf{x}' - \max\bigl(0,\, b - x'_1\bigr)\,\hat{\mathbf{e}}_1 \quad\text{(alles links der Faltlinie } x'_1=b \text{ wird auf sie gedrückt; rechtes Panel zurückrotiert: } \mathbf{x}^{(3)} = R(-\theta)\,\mathbf{x}'')`);
 renderTeX('fFold', String.raw`x^{(1)} \;=\; \mathrm{ReLU}\!\bigl(\underbrace{w\,x^{(0)}}_{\text{Projektion auf Normale}} + b\bigr) \quad\Longrightarrow\quad \text{Falte in freier Dimension, injektiv, keine Info verloren}`);
 renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots L-1}\;+\;\underbrace{\text{ein gerader Schnitt}}_{\text{letzte Schicht }=\text{ Hyperebene}} \;=\; \text{beliebige Form (Klassengrenze)}`);
 renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(k-1)}+\mathbf{c}\bigr),\quad \text{Breite }=\dim(\text{Daten}) \;\Rightarrow\; \text{nur in sich selbst falten, braucht Tiefe }L\gg 1`);
@@ -549,17 +549,23 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(let k=0;k<3;k++){
       const cx=W*(k===0?1/6:k===1?0.5:5/6);
       ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(cx-140,cy); ctx.lineTo(cx+140,cy); ctx.moveTo(cx,cy-140); ctx.lineTo(cx,cy+140); ctx.stroke();
-      if(k>=1){
+      if(k===1){
         ctx.strokeStyle=COL.accent3; ctx.lineWidth=2; ctx.setLineDash([5,4]);
         ctx.beginPath(); ctx.moveTo(cx+b*s, cy-140); ctx.lineTo(cx+b*s, cy+140); ctx.stroke(); ctx.setLineDash([]);
       }
+      if(k===2){
+        // Faltlinie im Ursprungsrahmen: Linie durch R(-θ)(b,0), Richtung R(-θ)(0,1) = (sinθ, cosθ)
+        const px=b*Math.cos(th), py=-b*Math.sin(th), dx=Math.sin(th), dy=Math.cos(th);
+        ctx.strokeStyle=COL.accent3; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.moveTo(cx+(px-dx*1.5)*s, cy-(py-dy*1.5)*s); ctx.lineTo(cx+(px+dx*1.5)*s, cy-(py+dy*1.5)*s); ctx.stroke(); ctx.setLineDash([]);
+      }
       for(const p of pts){
         const q0=k===0?[p.x,p.y]:rot([p.x,p.y],th);
-        const q=k===2?[Math.max(q0[0],b),q0[1]]:q0;
+        const q=k===2?rot([Math.max(q0[0],b),q0[1]],-th):q0;
         ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+q[0]*s, cy-q[1]*s, 1.5,0,TAU); ctx.fill();
       }
       ctx.fillStyle=COL.muted; ctx.font='13px Inter';
-      ctx.fillText(k===0?'1 · vor dem Hammer (Datensatz)':k===1?'2 · Rotation (gelerntes W)':'3 · Rotation + Hammerschlag (ReLU)', cx, 24);
+      ctx.fillText(k===0?'1 · vor dem Hammer (Datensatz)':k===1?'2 · Rotation (gelerntes W)':'3 · Hammerschlag (zurückrotiert)', cx, 24);
     }
     ctx.textAlign='left';
   }
