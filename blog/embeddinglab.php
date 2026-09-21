@@ -433,7 +433,7 @@ Below, you can explore this interactively. Select different “concept direction
 To them, I said, the truth would be literally nothing but the shadows of the images.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it. The idea that an image and a word can even *share* a single representation — so that a model classifies images of classes it has never been shown, by landing them near the right word vector — is older than the hypothesis \cite[Olah, 2014]{colah2014nlp}.
 
 The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth. A vision model that learns “dog” from millions of photographs, a language model that learns “dog” from billions of sentences, and an audio model that learns “dog” from spectrograms of barking, all three converge to place “dog” in the *same neighborhood*, near “cat” and “wolf,” far from “piano” and “thunder.” The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
@@ -481,7 +481,7 @@ This hypothesis allows so-called **Brain-Swapping**: since models learn similar 
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Anisotropy">
 ## Anisotropy
 
 Embedding spaces are typically **anisotropic**, the vectors are not uniformly distributed through the space but instead cluster in a narrow cone or occupy only a subregion of the available volume. \citeauthor{ethayarajh2019contextual} (\citeyear{ethayarajh2019contextual}) showed that in models like BERT and GPT-2, embeddings at later layers become increasingly anisotropic, meaning the average cosine similarity between random word pairs is surprisingly high (often 0.5–0.9). This is problematic because it compresses the effective range of cosine similarity, making it harder to distinguish genuinely similar words from merely average ones. Techniques like **whitening** or **isotropy calibration** are used to counteract this.
@@ -509,7 +509,7 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Polysemanticity and the Superposition Hypothesis">
 ## Polysemanticity and the Superposition Hypothesis
 
 Modern research into Transformers reveals that the brain-inspired “one neuron, one concept” model, often critiqued as the **“Grandmother Neuron”** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
@@ -568,7 +568,7 @@ A vivid demonstration of these principles is \citetitle{goldengateclaude}, in wh
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Geometry of In-Context Learning">
 ## The Geometry of In-Context Learning
 
 One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} demonstrated in \citeyear{hendel2023incontext} that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior.
@@ -629,7 +629,7 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Manifold Hypothesis and Overfitting">
 ## The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit
 
 Classical statistics tells us that fitting a model with $P$ parameters to $N$ data
@@ -655,17 +655,19 @@ low-dimensional structure. It's like going from a 100×100 pixel image to a
 reality.
 </div>
 
+<div class="topic-block" data-optionaltitle="Intrinsic vs. ambient dimension" data-mathlevel="55">
 $$
 \underbrace{d_{\text{intrinsic}}}_{\text{effective DoF}} \ll
 \underbrace{D_{\text{ambient}}}_{\text{175B params}} \implies
 \text{No overfitting even when } N \approx D
 $$
+</div>
 <div class="md">
 
 This was first described by \citeauthorlastnameand{belkin2019}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Geometry of Negation">
 ## The Geometry of Negation
 
 One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for “not happy” is closer to “happy” than to “sad”, because “not” and “happy” co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
@@ -673,7 +675,9 @@ One of the most counter-intuitive failures of embedding spaces is that **negatio
 In a distributional model, the meaning of “not” is itself a vector, learned from all the contexts where “not” appears. When you compose “not happy” (by adding the vectors), the “not” component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym. The result is a vector that still sits firmly in the neighborhood of “happy,” surrounded by words like “cheerful,” “pleased,” and “joyful.” The actual antonym, “sad,” remains far away in a completely different region of the space.
 </div>
 
+<div class="topic-block" data-optionaltitle="Why negation fails geometrically" data-mathlevel="50">
 $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
+</div>
 
 <div class="md">
 This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word “not” simply does not encode a logical inversion operator in vector space; it encodes “the kinds of sentences where 'not' appears,” which overwhelmingly co-occur with the very concepts being negated.

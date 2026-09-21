@@ -9,9 +9,10 @@ order: 5
 color: sky
 topics: architecture, math-i, math-ii
 tags: math-heavy
+math: 60
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Loop">
 ## The Loop
 
 A feedforward network answers one question and forgets it. The token that left the model's mind is gone — the next token is produced without the first one having made a mark. But language is *sequential*: the meaning of “was” arrives only with what came before. \citeauthor{colah2015lstm}'s classic walkthrough \footcite{colah2015lstm} puts it simply:
@@ -21,7 +22,9 @@ A feedforward network answers one question and forgets it. The token that left t
 A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own output back in. Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.
 
 $$\mathbf{h}_t = \tanh\!\big(\mathbf{W}_h \mathbf{h}_{t-1} + \mathbf{W}_x \mathbf{x}_t + \mathbf{b}\big)$$
+</div>
 
+<div class="md">
 ## Unrolling: One Network, Many Copies
 
 The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:
