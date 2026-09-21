@@ -300,7 +300,8 @@
 			categories: {},
 			profile: null,
 			level: null,
-			mathLevel: DEFAULT_MATH_LEVEL
+			mathLevel: DEFAULT_MATH_LEVEL,
+			corePersona: null
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
 		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
@@ -323,6 +324,9 @@
 			if (parsed.mathLevel !== undefined) {
 				out.mathLevel = clampMath(parsed.mathLevel);
 			}
+			if (parsed.corePersona && CORE_PERSONAS.some(function (p) { return p.id === parsed.corePersona; })) {
+				out.corePersona = parsed.corePersona;
+			}
 		}
 		return out;
 	}
@@ -332,7 +336,7 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersona: null };
 	}
 
 	/** the reader's current math-comfort (0–100) */
@@ -840,7 +844,7 @@
 					</div>
 				</div>
 				<div class="topics-presets" role="group" aria-label="Quick presets">
-					<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>
+					<button type="button" data-preset="all" class="topics-preset-btn">Everything · 100%</button>
 					<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>
 					<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>
 					<button type="button" data-preset="none" class="topics-preset-btn topics-preset-off">Disable All</button>
@@ -1861,8 +1865,9 @@
 		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
 		const cur = activePref();
 		cur.mathLevel = clampMath(p.math);
+		cur.corePersona = id;
 		dlog('core persona →', p.label, '(math comfort ' + cur.mathLevel + '%)');
-		persistPref({ topics: topics, mathLevel: cur.mathLevel });
+		persistPref({ topics: topics, mathLevel: cur.mathLevel, corePersona: id });
 		flashHint('Loaded ' + p.label + ' · the rest of the options are open below');
 	}
 
@@ -1875,7 +1880,7 @@
 			+ '</div>'
 			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
 			+ '" step="5" value="' + v + '" aria-label="Math comfort, percent">'
-			+ '<div class="math-comfort-scale"><span>light · intuition first</span><span>heavy · all the proofs</span></div>'
+			+ '<div class="math-comfort-scale"><span>light · intuition first</span><span>100% · want to know it all</span></div>'
 			+ '</div>';
 	}
 
@@ -1947,6 +1952,7 @@
 		const slider = mathSliderHtml();
 
 		let html, wire;
+		const activePersona = activePref().corePersona;
 		if (mode === 'simple') {
 			html = [
 				'<div class="inline-topics-head">',
@@ -1955,7 +1961,8 @@
 				'</div>',
 				'<div class="core-personas" role="group" aria-label="Which reader are you?">'
 					+ CORE_PERSONAS.map(function (p) {
-						return '<button type="button" class="core-persona itx-item" data-core-persona="' + escAttr(p.id) + '">'
+						const sel = (activePersona === p.id) ? ' core-persona-active' : '';
+						return '<button type="button" class="core-persona itx-item' + sel + '" data-core-persona="' + escAttr(p.id) + '">'
 							+ '<span class="core-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>'
 							+ '<span class="core-persona-body">'
 							+   '<span class="core-persona-name">' + escAttr(p.label) + '</span>'
@@ -1968,20 +1975,20 @@
 				slider,
 				'<p class="inline-topics-foot">Pick the reader you are — it sets your topics <em>and</em> your math comfort in one click, and opens up the rest of the options. Nothing is locked.</p>'
 			].join('');
-			wire = function (h) {
-				h.querySelectorAll('[data-core-persona]').forEach(function (b) {
-					b.addEventListener('click', function () {
-						h.dataset.mode = 'detailed';
-						swapWidget(h, function () { applyCorePersona(b.getAttribute('data-core-persona')); });
-					});
+		wire = function (h) {
+			h.querySelectorAll('[data-core-persona]').forEach(function (b) {
+				b.addEventListener('click', function () {
+					applyCorePersona(b.getAttribute('data-core-persona'));
+					renderInlineWidget(h);
 				});
-				const det = h.querySelector('[data-open-detailed]');
-				if (det) det.addEventListener('click', function () {
-					h.dataset.mode = 'detailed';
-					swapWidget(h, function () { renderInlineWidget(h); });
-				});
-				wireMathSlider(h);
-			};
+			});
+			const det = h.querySelector('[data-open-detailed]');
+			if (det) det.addEventListener('click', function () {
+				h.dataset.mode = 'detailed';
+				swapWidget(h, function () { renderInlineWidget(h); });
+			});
+			wireMathSlider(h);
+		};
 		} else if (mode === 'detailed') {
 			const more = PERSONAS.filter(function (p) { return CORE_PERSONAS.every(function (c) { return c.id !== p.id; }); });
 			html = [

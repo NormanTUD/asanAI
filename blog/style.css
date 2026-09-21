@@ -9029,7 +9029,8 @@ html.is-ready #topics-toggle {
 	gap: 18px;
 	transform: translateY(16px) scale(0.97);
 	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 	font-family: var(--mn-font-body);
 	color: var(--mn-text);
 	-webkit-font-smoothing: antialiased;
@@ -10452,6 +10453,14 @@ math {
 	font-weight: 700;
 }
 .core-persona:hover .core-persona-go {
+	opacity: 1;
+}
+.core-persona-active {
+	border-color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 8%, var(--mn-surface));
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--mn-accent) 25%, transparent);
+}
+.core-persona-active .core-persona-go {
 	opacity: 1;
 }
 
