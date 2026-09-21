@@ -734,20 +734,18 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     animScale += (targetScale-animScale)*0.15; animRot += (targetRot-animRot)*0.15;
     if(cutState==='cutting'){ cutProg+=0.035; if(cutProg>=1){ cutProg=1; cutState='done'; } }
     ctx.fillStyle='#08101f'; ctx.fillRect(0,0,W,H);
-    const cx=W/2, cy=H/2+24, base=150*animScale, s=base/150*1.15;
+    const cx=W/2, cy=H/2+24, s=130*animScale, P=160*animScale;
 
     if(cutState==='done'){
       // AUSGEFALTET: Papier blass, Form als isolierte gestrichelte Kontur + grüne Füllung
-      const P=1.55*base/150;
       ctx.save(); ctx.translate(cx,cy);
       ctx.globalAlpha=0.25; ctx.fillStyle='#f4efe3'; ctx.fillRect(-P,-P,P*2,P*2); ctx.globalAlpha=1;
       ctx.fillStyle='rgba(124,249,208,0.18)'; drawShapePath(shape,s,true); ctx.fill();
       ctx.strokeStyle='#7cf9d0'; ctx.lineWidth=3.5; ctx.setLineDash([10,7]); drawShapePath(shape,s,true); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle='#7cf9d0'; ctx.font='bold 14px Inter'; ctx.fillText('✂ Form herausgeschnitten', -base*0.9, -base-6);
+      ctx.fillStyle='#7cf9d0'; ctx.font='bold 14px Inter'; ctx.fillText('✂ Form herausgeschnitten', -P*0.9, -P-6);
       ctx.restore();
     } else {
       ctx.save(); ctx.translate(cx,cy); ctx.rotate(animRot*Math.PI/180);
-      const P=1.55*base/150;
       ctx.fillStyle='#f4efe3'; ctx.strokeStyle='#b8ad94'; ctx.lineWidth=2; ctx.fillRect(-P,-P,P*2,P*2); ctx.strokeRect(-P,-P,P*2,P*2);
       // Falzlinien (alle bis Schritt step — die gerade angebrachte mittlere Falte ist mit dabei)
       ctx.strokeStyle='#c94f4f'; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
@@ -761,11 +759,11 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
       // EINE gerade gestrichelte Schnittlinie (der "Scherenschnitt"), entlang der gestapelten Kante
       if(step>=1){
         const a0=shape[0], a1=shape[1], dx=a1[0]-a0[0], dy=a1[1]-a0[1];
-        const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, L=2.6, prog=cutState==='cutting'?cutProg:1;
+        const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, L=1.2, prog=cutState==='cutting'?cutProg:1;
         const px=a0[0]*s, py=a0[1]*s;
         ctx.strokeStyle='#ff3860'; ctx.lineWidth=3.5; ctx.setLineDash([10,7]);
         ctx.beginPath(); ctx.moveTo(px-ux*L*s, py-uy*L*s); ctx.lineTo(px-ux*L*s*(1-prog)+ux*L*s*prog*2, py-uy*L*s*(1-prog)+uy*L*s*prog*2); ctx.stroke(); ctx.setLineDash([]);
-        ctx.fillStyle='#ff3860'; ctx.font='bold 13px Inter'; ctx.fillText('✂ EIN gerader Schnitt', -base-14, -base-6);
+        ctx.fillStyle='#ff3860'; ctx.font='bold 13px Inter'; ctx.fillText('✂ EIN gerader Schnitt', -P*0.9, -P-6);
       }
       ctx.restore();
     }
