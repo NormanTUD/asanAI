@@ -69,7 +69,9 @@ The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mc
 </div>
 
 These systems were brittle: they required complete world models and broke on ambiguity. But they established the **observe → reason → act** loop that modern agents inherit.
+</div>
 
+<div class="md" data-mathlevel="60" data-optionaltitle="Reinforcement Learning Agents (1990s–2010s)">
 ### 2. Reinforcement Learning Agents (1990s–2010s)
 
 The RL paradigm formalized agents mathematically. An agent interacts with an environment, receiving observations $o_t$ and rewards $r_t$, selecting actions $a_t$ to maximize cumulative reward:
