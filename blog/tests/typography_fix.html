@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TYPOGRAPHY_FIX PENDING</title>
+<!--
+  TYPOGRAPHY FIX — headless regression test.
+
+  Loads the production typography_fix.js and asserts the three passes:
+    • convert-ALL in a single text node (not just the first quote/ellipsis):
+      "hi" → “hi”, 'bye' → ‘bye’, 1 - 3 → 1–3, wait... → wait…
+    • <code> is left untouched (straight quotes survive)
+    • .no-typo-fix is left untouched
+
+  The verdict is written exactly once to <title> (idempotent finish).
+  See typography_fix.sh.
+-->
+<script src="../typography_fix.js"></script>
+</head>
+<body>
+  <div id="contents">
+    <div class="md">
+      <p id="probe-text">He said "hi" and 'bye' then 1 - 3 and wait... ok</p>
+    </div>
+    <p><code id="probe-code">let s = "a" + 'b';</code></p>
+    <div class="no-typo-fix" id="probe-skip">"left straight"</div>
+  </div>
+  <div id="verdict" role="status">PENDING</div>
+  <script>
+  (function () {
+    function set(v) {
+      document.title = 'TYPOGRAPHY_FIX ' + v;
+      document.getElementById('verdict').textContent = v;
+    }
+    function run() {
+      var fails = [];
+      if (!window.TypographyFix || !window.TypographyFix.fixTypography) {
+        set('FAIL: TypographyFix not installed'); return;
+      }
+      try {
+        window.TypographyFix.fixTypography(document);
+      } catch (e) { set('FAIL: fixTypography threw ' + e.message); return; }
+
+      var t = document.getElementById('probe-text').textContent;
+      // convert-all: BOTH quotes of each pair, plus en-dash range + ellipsis
+      if (t.indexOf('\u201Chi\u201D') === -1) fails.push('double quotes not both curly: ' + JSON.stringify(t));
+      if (t.indexOf('\u2018bye\u2019') === -1) fails.push('single quotes not both curly: ' + JSON.stringify(t));
+      if (t.indexOf('1\u20133') === -1) fails.push('en-dash range not applied: ' + JSON.stringify(t));
+      if (t.indexOf('wait\u2026 ok') === -1) fails.push('ellipsis not converted: ' + JSON.stringify(t));
+      if (/["']/.test(t)) fails.push('straight quote remains in prose: ' + JSON.stringify(t));
+      if (/\.\.\./.test(t)) fails.push('literal ... remains in prose: ' + JSON.stringify(t));
+
+      var code = document.getElementById('probe-code').textContent;
+      if (code.indexOf('"a"') === -1 || code.indexOf("'b'") === -1) fails.push('code block was modified: ' + JSON.stringify(code));
+
+      var skip = document.getElementById('probe-skip').textContent;
+      if (skip.indexOf('"left straight"') === -1) fails.push('.no-typo-fix was modified: ' + JSON.stringify(skip));
+
+      if (fails.length) { set('FAIL: ' + fails.join(' | ')); return; }
+      set('PASS');
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+    setTimeout(function () { if (/PENDING/.test(document.title)) set('FAIL: timed out (fixTypography did not finish)'); }, 4000);
+  })();
+  </script>
+</body>
+</html>
