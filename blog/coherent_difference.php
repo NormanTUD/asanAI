@@ -587,7 +587,7 @@ If your background is in type theory, a category is the natural setting for “t
 From this thin starting point you can derive most of modern structural mathematics: functors (maps between categories that preserve the structure), natural transformations (maps between functors that commute with every morphism in the source category), and adjunctions (the universal “best approximation” of one functor by another). \citeauthor{awodey2010category}'s textbook \citetitle{awodey2010category} is the standard gentle introduction; \citeauthor{maclane1998categories}'s \citetitle{maclane1998categories} is the canonical reference.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 \citetitle{category_theory_wiki}, introduced by \citeauthor{eilenberglane1945} (\citeyear{eilenberglane1945}), is the cleanest formulation of the move “relations can be composed” \cite{category_theory_wiki}. A category has three ingredients:
 
 $$
@@ -600,7 +600,7 @@ What we care about here is the higher generalization. In a 2-category, morphisms
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Topoi: worlds where you can do mathematics">
 ## Topoi: worlds where you can do mathematics
 
 Sheaves on a fixed space $X$ form a category $\mathbf{Sh}(X)$, and this category has an extraordinary property: it behaves, in many respects, like the category of ordinary sets. You can form products, coproducts, function spaces, you can do logic inside it, you can define a notion of "element of a sheaf" that is just as comfortable as the ordinary notion of "element of a set". Categories that behave this way are called **toposes** (singular: **topos**).
@@ -881,7 +881,7 @@ Now this connexion or adaptation of all created things to each and of each to al
 For Leibniz, every monad — every genuine, indivisible unit of substance — sees the whole universe from its own point of view, and the agreement between these local views is not identity but *harmony*. The train is, in a precise Leibnizian sense, exactly what it is *because* every perceptual monad on the platform carries its own slice of the same coherent whole. The two trains in §57 of the same work — the same town viewed from different sides — are not contradictory copies but *aspects* of one underlying city. The sheaf section you just read, in modern language, is making precisely this point.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Why this is a lens for embeddings">
 ### Why this is a lens for embeddings
 
 Embeddings are the place where all of the above comes together in modern AI. A tokenizer (see the <a href="tokenizerlab">Tokenization chapter</a>) hands the network a list of integers: token IDs. The next step, which the <a href="embeddinglab">Embeddings chapter</a> treats in detail, is to *place* every token at a point in a high-dimensional vector space $\mathbb{R}^d$. From that point on, every operation in the network is an operation in that space: distances, dot products, attention weights, the residual stream.
@@ -1098,7 +1098,9 @@ $$
 $$
 
 Each downward step: loss of generality, gain of operational reality. Grammar read one way; pronunciation read the other.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The arithmetic shadow">
 ### The arithmetic shadow
 
 The condensation that matters carries the chain into a vector space of floats. Every link has an arithmetic image:
@@ -1116,7 +1118,9 @@ $$
 $$
 
 The minimal structure in which the chain can be *arithmetically enacted*.
+</div>
 
+<div class="md">
 ### Two stacked approximations
 
 A vector in an LLM is a point of $\mathbb{R}^d$ — but only an approximate one. It is a tuple of **floats** — a finite, logarithmically-quantized lattice, dense near zero, coarse at the extremes. Two approximations stack: the chain approximated by $\mathbb{R}^d$; $\mathbb{R}^d$ approximated by the float lattice.
