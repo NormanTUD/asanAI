@@ -289,7 +289,7 @@ While the semantic manifold relies on “use” to define meaning, the system fa
 Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable “positional relationship” in the space. When an LLM encounters these tokens, it often suffers a “hallucination of meaning” or total logic failure. In the geometry of meaning, these tokens act like “voids” or “gravity wells”, they are products of statistical co-occurrence that do not correlate with any human concept.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Rotational Invariance and Translation">
 ## Rotational Invariance and Translation as Path-Finding
 
 A critical property of embedding spaces is their **rotational invariance**. If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically. “King” is still near “Queen,” “Cat” is still far from “Democracy.” This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.
@@ -329,17 +329,19 @@ This is also why the Attention mechanism is so central. Attention computes pairw
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 The real magic is in the **transformation itself**. You can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \citeauthorlastnameand{conneau2018word}).
 
 Click **“Align”** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Limits of Isomorphism">
 ### The Limits of Isomorphism
 
 While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than \cite[English to Spanish]{sogaard2018limitations}. This suggests that the “universal geometric structure of human concepts” has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="The Manifold Hypothesis">
 ## The Manifold Hypothesis
 
 The deeper theoretical reason the path-finding framing works is the **\cite[Manifold Hypothesis]{bengio2013representation}**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space. If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
@@ -392,7 +394,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 This works because the real world structures the language first, and thus, “dog” has similar relations to cat, pet, horse, mouse, ..., as “Hund” (german for dog) has to “Katze” (cat), “Haustier” (pet), “Pferd” (horse), mouse (“Maus”) and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.
 
 ## Attention as Metric Tensor

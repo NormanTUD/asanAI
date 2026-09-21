@@ -8,6 +8,7 @@ part: 4
 order: 13
 color: sky
 topics: multimodal, vision, architecture, programming
+math: 55
 -->
 
 <div class="md">
@@ -16,7 +17,7 @@ A pure text model is blind. It has never seen a colour, a face, or a curve. **Mu
 This chapter traces the technical lineage from pixels-as-tensors (see the <a href="computer_vision">Computer Vision chapter</a>) to **pixels-as-tokens** that an LLM can read.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The Two Towers: Why Aligning Spaces Is Hard">
 ## The Two Towers: Why Aligning Spaces Is Hard
 
 A trained text model lives in a **language embedding space** $\mathbb{R}^d$ where “king” and “queen” sit close together. An image encoder (a CNN or Vision Transformer) lives in a **visual embedding space** $\mathbb{R}^{d'}$ where two photographs of the same cat also sit close together. The problem: these two spaces are not the same. You cannot, in general, do $\vec{v}_\text{cat\,image} - \vec{v}_\text{dog\,image} \approx \vec{v}_\text{“cat”} - \vec{v}_\text{“dog”}$ until they have been aligned.
@@ -24,7 +25,7 @@ A trained text model lives in a **language embedding space** $\mathbb{R}^d$ wher
 The simplest alignment is **contrastive learning**: pull matched (image, caption) pairs together, push mismatched pairs apart. This is exactly what **CLIP** does.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="CLIP: Contrastive Language-Image Pre-training">
 ## CLIP: Contrastive Language-Image Pre-training
 
 Published by \cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
