@@ -15,7 +15,9 @@ tags: math-heavy, code-heavy
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
 
 A Loss Function is a mathematical way of measuring *“how wrong”* the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number *as small as possible*.
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="Regression: Mean Squared Error (MSE)">
 ## Regression: Mean Squared Error (MSE)
 
 When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. The most common tool here is **Mean Squared Error (MSE)**, first published by \citeauthor{legendre1805} in \citeyear{legendre1805} (for fitting celestial orbits) and independently developed by \citeauthor{gauss1809} in \citeyear{gauss1809} (§ 179, 213).
@@ -42,7 +44,7 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 
 <div id="plot-mse" style="height: 350px;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="48" data-optionaltitle="Classification: Cross-Entropy">
 ## Classification: Cross-Entropy
 
 When an AI has to choose between categories (like “Cat” vs “Dog”), it doesn't just pick one; it outputs a **probability** for each. This is represented as a vector where all numbers add up to $1.0$ ($100\%$).
@@ -123,7 +125,7 @@ In this equation:
 By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Deepest Insight: Cross-Entropy Is Shannon Entropy">
 ## The Deepest Insight: Cross-Entropy Is Shannon Entropy
 
 The connection between cross-entropy loss and information theory is not a superficial analogy, it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
