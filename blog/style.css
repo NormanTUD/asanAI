@@ -9031,6 +9031,7 @@ html.is-ready #topics-toggle {
 	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 	overflow-y: auto;
 	overflow-x: hidden;
+	overscroll-behavior: contain;
 	font-family: var(--mn-font-body);
 	color: var(--mn-text);
 	-webkit-font-smoothing: antialiased;
