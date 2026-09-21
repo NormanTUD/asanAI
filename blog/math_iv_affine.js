@@ -343,26 +343,34 @@
 	const tex = (el, latex, display) => {
 		if (!el) return;
 		if (typeof temml !== 'undefined' && temml.renderToString) {
-			try { el.innerHTML = temml.renderToString(latex, { displayMode: !!display }); return; }
+			try { el.innerHTML = temml.renderToString(latex, { displayMode: !!display, annotate: true }); return; }
 			catch {}
 		}
 		el.textContent = latex;
 	};
 
-	const termLine = (disp, A, r, stride, coords) => {
+	// Turn a plain display string (e.g. "cos(30°)", "-sin(30°)") into LaTeX.
+	const texify = s => String(s)
+		.replace(/−/g, '-')
+		.replace(/\b(sin|cos|tan|sqrt|log|exp)\(/g, '\\$1(')
+		.replace(/π/g, '\\pi');
+
+	// Render one row of M·p as real math: display strings (e.g. "cos(30°)")
+	// keep their symbolic form, signs are folded in from the values.
+	const termLineTex = (disp, A, r, stride, coords) => {
 		const parts = [];
 		for (let k = 0; k < stride; k++) {
 			const coord = k < stride - 1 ? coords[k] : 1;
 			const val = A[r * stride + k] * coord;
 			const raw = disp ? disp[r * stride + k] : A[r * stride + k];
 			const ds = String(raw ?? '').replace(/\s+/g,'').replace(/^[+\-−]/,'');
-			let body = ds === '' ? fmt(Math.abs(val)) : ds;
-			if (k < stride - 1) body += '·' + fmt(Math.abs(coord));
+			let body = ds === '' ? fmt(Math.abs(val)) : texify(ds);
+			if (k < stride - 1) body += '\\cdot ' + fmt(Math.abs(coord));
 			parts.push({ neg: val < -1e-12, body });
 		}
 		return parts.map((p,i) => i === 0
-			? (p.neg ? '−' : '') + p.body
-			: (p.neg ? ' − ' : ' + ') + p.body
+			? (p.neg ? '-' : '') + p.body
+			: (p.neg ? ' - ' : ' + ') + p.body
 		).join('');
 	};
 
@@ -415,51 +423,6 @@
 			b.addEventListener('click', () => { try { onPick(pr); } catch (e) { console.error(e); } });
 			host.appendChild(b);
 		});
-	};
-
-	const renderChecks = (el, results) => {
-		if (!el) return;
-		el.innerHTML = '';
-		let pass = 0;
-		results.forEach(([label, ok]) => {
-			if (ok === true) pass++;
-			const isNA = typeof ok === 'string';
-			const d = document.createElement('span');
-			d.className = 'af-check' + (ok === true ? ' good' : (isNA ? '' : ' bad'));
-			d.textContent = (ok === true ? '✓ ' : (isNA ? '– ' : '✗ ')) + label;
-			el.appendChild(d);
-		});
-		const sum = document.createElement('span');
-		const cls = pass === results.length ? 'good' : (pass > 0 ? 'warn' : 'bad');
-		sum.className = 'af-checksum ' + cls;
-		sum.textContent = ' self-tests: ' + pass + '/' + results.length;
-		el.appendChild(sum);
-	};
-
-	// Read-only 3×3 matrix view (used for the two fold pieces) —
-	// rendered as a proper bracketed math matrix, translation column in accent.
-	const makeMatrixView = hostId => {
-		const host = $(hostId); if (!host) return null;
-		host.innerHTML = '';
-		const wrap = document.createElement('div');
-		wrap.className = 'af-pmx';
-		const bl = document.createElement('div'); bl.className = 'af-pmx-br l';
-		const br = document.createElement('div'); br.className = 'af-pmx-br r';
-		const tbl = document.createElement('div');
-		tbl.className = 'af-pmx-tbl';
-		const cells = [];
-		for (let r = 0; r < 3; r++)
-			for (let c = 0; c < 3; c++) {
-				const cell = document.createElement('span');
-				if (c === 2) cell.className = 't';
-				tbl.appendChild(cell);
-				cells.push(cell);
-			}
-		wrap.appendChild(bl);
-		wrap.appendChild(br);
-		wrap.appendChild(tbl);
-		host.appendChild(wrap);
-		return m => cells.forEach((c, i) => c.textContent = fmt(m[i]));
 	};
 
 	// Batched RAF scheduler — coalesces hover/slider updates.
@@ -550,9 +513,7 @@
 		M: Mat.rot2(Math.PI / 6),
 		track: [0.25, 0.75],
 		bilinear: false,
-		hover: null,
-		hoverCell: -1,
-		trackCell: -1
+		hover: null
 	};
 
 	const PRESETS_2D = [
@@ -580,30 +541,6 @@
 		const py2w = py => D2.winEnd - (py / size) * span;
 		const w2px = x => (x - D2.win) / span * size;
 		const w2py = y => (D2.winEnd - y) / span * size;
-
-		// The image as a data grid.
-		const matCells = [];
-		const matHost = $('af2d-mat');
-		if (matHost) {
-			matHost.innerHTML = '';
-			for (let j = 0; j < D2.N; j++) {
-				const row = document.createElement('div');
-				row.className = 'af-matrow';
-				for (let i = 0; i < D2.N; i++) {
-					const cell = document.createElement('div');
-					const v = (i + j) & 1;
-					cell.className = 'af-matcell' + (v ? ' on' : '');
-					cell.textContent = String(v);
-					row.appendChild(cell);
-					matCells.push(cell);
-				}
-				matHost.appendChild(row);
-			}
-		}
-		const highlightCells = () => matCells.forEach((c, k) => {
-			c.classList.toggle('tr', k === D2.trackCell);
-			c.classList.toggle('hv', k === D2.hoverCell);
-		});
 
 		const drawGrid = (ctx, P) => {
 			ctx.strokeStyle = P.line; ctx.lineWidth = 1;
@@ -752,22 +689,25 @@
 		};
 
 		const updateEq = () => {
-			const eq = $('af2d-eq'), mono = $('af2d-eqm');
+			const eq = $('af2d-eq');
 			const d = editor?.values();
 			const [x, y] = D2.track;
 			const q = apply3(D2.M, [x, y, 1]);
-			const xp = Math.abs(q[2]) > 1e-12 ? q[0]/q[2] : NaN;
-			const yp = Math.abs(q[2]) > 1e-12 ? q[1]/q[2] : NaN;
-			tex(eq, `p = (${fmt(x)}, ${fmt(y)}) \\;\\mapsto\\; p' = (${fmt(xp)}, ${fmt(yp)})`, true);
+			const dv = i => texify(d && d[i] !== '' ? d[i] : String(round4(D2.M[i])));
 			const L = [
-				`x' = ${termLine(d, D2.M, 0, 3, [x,y])} = ${fmt(q[0])}`,
-				`y' = ${termLine(d, D2.M, 1, 3, [x,y])} = ${fmt(q[1])}`,
-				`w' = ${termLine(d, D2.M, 2, 3, [x,y])} = ${fmt(q[2])}`
+				`\\begin{bmatrix}x' \\\\ y' \\\\ w'\\end{bmatrix} &=` +
+				`\\begin{bmatrix}${dv(0)} & ${dv(1)} & ${dv(2)} \\\\ ${dv(3)} & ${dv(4)} & ${dv(5)} \\\\ ${dv(6)} & ${dv(7)} & ${dv(8)}\\end{bmatrix}` +
+				`\\begin{bmatrix}${fmt(x)} \\\\ ${fmt(y)} \\\\ 1\\end{bmatrix} \\\\`,
+				`x' &= ${termLineTex(d, D2.M, 0, 3, [x, y])} = ${fmt(q[0])} \\\\`,
+				`y' &= ${termLineTex(d, D2.M, 1, 3, [x, y])} = ${fmt(q[1])} \\\\`,
+				`w' &= ${termLineTex(d, D2.M, 2, 3, [x, y])} = ${fmt(q[2])} \\\\`
 			];
 			if (Math.abs(q[2] - 1) > 1e-9) {
-				L.push('', `w' ≠ 1 → projective: (x'/w', y'/w') = (${fmt(q[0]/q[2])}, ${fmt(q[1]/q[2])})`);
+				L.push(`p' &= \\left(\\tfrac{x'}{w'},\\, \\tfrac{y'}{w'}\\right) = (${fmt(q[0]/q[2])},\\; ${fmt(q[1]/q[2])})`);
+			} else {
+				L.push(`p' &= (x',\\, y') = (${fmt(q[0])},\\; ${fmt(q[1])})`);
 			}
-			if (mono) mono.textContent = L.join('\n');
+			tex(eq, `\\begin{aligned}` + L.join(' ') + `\\end{aligned}`, true);
 		};
 
 		const updateStatus = () => {
@@ -788,73 +728,36 @@
 			if (Math.abs(det) < 1e-9) pill('singular: the image collapses', 'bad');
 		};
 
-		const selfTests = () => {
-			const res = [];
-			// inverse round-trip
-			const A = Mat.rot2(Math.PI/5), Ai = inv3(A);
-			let ok = !!Ai;
-			for (let t = 0; ok && t < 12; t++) {
-				const p = [(t*0.137)%1, (0.7+t*0.311)%1];
-				const q = apply3(A, [p[0],p[1],1]);
-				const r = apply3(Ai, [q[0],q[1],q[2]]);
-				if (Math.abs(r[0]-p[0]) > 1e-9 || Math.abs(r[1]-p[1]) > 1e-9) ok = false;
-			}
-			res.push(['inverse round-trip', ok]);
-			// identity leaves board unchanged
-			let ok2 = true;
-			const Id = inv3(new Float64Array([1,0,0,0,1,0,0,0,1]));
-			for (let i = 1; i < 16 && ok2; i++)
-				for (let j = 1; j < 16; j++) {
-					const u = i/16, v = j/16;
-					const w = apply3(Id, [u,v,1]);
-					if (cbNearest(w[0]/w[2], w[1]/w[2]) !== cbNearest(u,v)) { ok2 = false; break; }
-				}
-			res.push(['identity warp is a no-op', ok2]);
-			// area = |det|
-			const M = D2.M;
-			const c = [[0,0],[1,0],[1,1],[0,1]].map(([x,y]) => {
-				const q = apply3(M, [x,y,1]); return [q[0]/q[2], q[1]/q[2]];
-			});
-			const ok3 = Math.abs(polyArea(c) - Math.abs(det3(M))) < 0.02*Math.max(1, Math.abs(det3(M)));
-			res.push(['area of warped square = |det M|', ok3]);
-			return res;
-		};
-
 		const redraw = () => {
 			try {
-				D2.trackCell = (D2.track[0]>=0 && D2.track[0]<1 && D2.track[1]>=0 && D2.track[1]<1)
-					? Math.min(7, D2.track[1]*8|0)*8 + Math.min(7, D2.track[0]*8|0) : -1;
 				drawSource(); drawOutput();
 				updateEq(); updateStatus();
-				highlightCells();
 			} catch (e) { showError('af-2d', e); }
 		};
 
 		const updateHover = () => {
 			const ro = $('af2d-hover'); if (!ro) return;
 			if (!D2.hover) {
-				D2.hoverCell = -1;
 				ro.textContent = 'Hover the warped image — each pixel is I(M⁻¹·q).';
-				highlightCells(); drawSource(); return;
+				drawSource(); return;
 			}
 			const Ai = inv3(D2.M);
 			if (!Ai) {
 				ro.textContent = 'M is singular — no unique preimage.';
-				D2.hover.pin = null; D2.hoverCell = -1;
+				D2.hover.pin = null;
 			} else {
 				const w = apply3(Ai, [D2.hover.wx, D2.hover.wy, 1]);
 				if (Math.abs(w[2]) < 1e-9) {
 					ro.textContent = 'w′ ≈ 0: this pixel maps to infinity.';
-					D2.hover.pin = null; D2.hoverCell = -1;
+					D2.hover.pin = null;
 				} else {
 					const u = w[0]/w[2], v = w[1]/w[2];
 					D2.hover.pin = [u,v];
 					const val = cbNearest(u, v);
-					D2.hoverCell = val < 0 ? -1 : (v*8|0)*8 + (u*8|0);
 					ro.textContent = `q = (${fmt(D2.hover.wx)}, ${fmt(D2.hover.wy)}) → M⁻¹·q = (${fmt(u)}, ${fmt(v)}) → I = ${val<0 ? 'outside' : (val===0 ? '0 (black)' : '1 (white)')}`;
 				}
 			}
-			highlightCells(); drawSource();
+			drawSource();
 		};
 
 		const editor = buildMatrixEditor('af2d-mx', 3, 3, D2.M, (v, r, c) => {
@@ -882,7 +785,6 @@
 		});
 		outC.addEventListener('mouseleave', () => { D2.hover = null; updateHover(); });
 
-				renderChecks($('af2d-checks'), selfTests());
 		const h0 = $('af2d-hover');
 		if (h0) h0.textContent = 'Hover the warped image — each pixel is I(M⁻¹·q).';
 		themeRedraws.push(redraw);
@@ -1033,19 +935,31 @@
 		};
 
 		const updateEq = () => {
-			const eq = $('af3d-eq'), mono = $('af3d-eqm');
+			const eq = $('af3d-eq');
 			const d = editor?.values();
 			const p = cubeCorners[D3.trackIdx];
 			const q = apply4(D3.M, [...p, 1]);
-			const w = q[3] || 1;
-			tex(eq, `p = (${p.join(',')}) \\;\\mapsto\\; p' = (${fmt(q[0]/w)}, ${fmt(q[1]/w)}, ${fmt(q[2]/w)})`, true);
+			const dv = i => texify(d && d[i] !== '' ? d[i] : String(round4(D3.M[i])));
+			const M4 = `\\begin{bmatrix}` +
+				`${dv(0)} & ${dv(1)} & ${dv(2)} & ${dv(3)} \\\\ ` +
+				`${dv(4)} & ${dv(5)} & ${dv(6)} & ${dv(7)} \\\\ ` +
+				`${dv(8)} & ${dv(9)} & ${dv(10)} & ${dv(11)} \\\\ ` +
+				`${dv(12)} & ${dv(13)} & ${dv(14)} & ${dv(15)}` +
+				`\\end{bmatrix}`;
+			const pv = `\\begin{bmatrix}${fmt(p[0])} \\\\ ${fmt(p[1])} \\\\ ${fmt(p[2])} \\\\ 1\\end{bmatrix}`;
 			const L = [
-				`x' = ${termLine(d, D3.M, 0, 4, p)} = ${fmt(q[0])}`,
-				`y' = ${termLine(d, D3.M, 1, 4, p)} = ${fmt(q[1])}`,
-				`z' = ${termLine(d, D3.M, 2, 4, p)} = ${fmt(q[2])}`,
-				`w' = ${termLine(d, D3.M, 3, 4, p)} = ${fmt(q[3])}`
+				`\\begin{bmatrix}x' \\\\ y' \\\\ z' \\\\ w'\\end{bmatrix} &= ${M4}${pv} \\\\`,
+				`x' &= ${termLineTex(d, D3.M, 0, 4, p)} = ${fmt(q[0])} \\\\`,
+				`y' &= ${termLineTex(d, D3.M, 1, 4, p)} = ${fmt(q[1])} \\\\`,
+				`z' &= ${termLineTex(d, D3.M, 2, 4, p)} = ${fmt(q[2])} \\\\`,
+				`w' &= ${termLineTex(d, D3.M, 3, 4, p)} = ${fmt(q[3])} \\\\`
 			];
-			if (mono) mono.textContent = L.join('\n');
+			if (Math.abs(q[3] - 1) > 1e-9) {
+				L.push(`p' &= \\left(\\tfrac{x'}{w'},\\, \\tfrac{y'}{w'},\\, \\tfrac{z'}{w'}\\right) = (${fmt(q[0]/q[3])},\\; ${fmt(q[1]/q[3])},\\; ${fmt(q[2]/q[3])})`);
+			} else {
+				L.push(`p' &= (x',\\, y',\\, z') = (${fmt(q[0])},\\; ${fmt(q[1])},\\; ${fmt(q[2])})`);
+			}
+			tex(eq, `\\begin{aligned}` + L.join(' ') + `\\end{aligned}`, true);
 		};
 
 		const updateStatus = () => {
@@ -1065,31 +979,6 @@
 				if (det < -1e-9) pill('det < 0 — mirror (orientation flipped)', 'warn');
 			} else pill('last row ≠ [0,0,0,1] → projective', 'warn');
 			if (Math.abs(det) < 1e-9) pill('singular: the cube collapses', 'bad');
-		};
-
-		const selfTests = () => {
-			const res = [];
-			const A = Mat.rotY(0.7), Ai = inv4(A);
-			let ok = !!Ai;
-			for (let i = 0; ok && i < 8; i++) {
-				const p = [...cubeCorners[i], 1];
-				const q = apply4(A, p), r = apply4(Ai, q);
-				for (let k = 0; k < 3; k++) if (Math.abs(r[k] - p[k]) > 1e-9) { ok = false; break; }
-			}
-			res.push(['inverse round-trip', ok]);
-			// determinant = volume of the warped unit cube
-			const tris = [];
-			for (const q of D3.quads) {
-				const w = q.pts.map(p => {
-					const t = apply4(D3.M, [...p, 1]);
-					return [t[0]/t[3], t[1]/t[3], t[2]/t[3]];
-				});
-				tris.push(w[0], w[1], w[2], w[0], w[2], w[3]);
-			}
-			const vol = Math.abs(surfVolume(tris));
-			const ok2 = Math.abs(vol - Math.abs(det4(D3.M))) < 0.05*Math.max(1, Math.abs(det4(D3.M)));
-			res.push(['warped cube volume = |det M|', ok2]);
-			return res;
 		};
 
 		const redraw = () => {
@@ -1149,7 +1038,6 @@
 		};
 		requestAnimationFrame(loop);
 
-		renderChecks($('af3d-checks'), selfTests());
 		themeRedraws.push(redraw);
 		redraw();
 	};
@@ -1506,73 +1394,40 @@
 			fd1dCtx.fillText('c₁=' + c1, x2px(c1)+4, H1-6);
 		};
 
-		/* ─── equation + status + tests ─── */
+		/* ─── live equation (full step-by-step, right-clickable) ─── */
 		const updateEq = () => {
-			const eq = $('fd2d-eq'), mono = $('fd2d-eqm');
+			const eq = $('fd2d-eq');
 			const n = Fold.normal2(F2.theta * Math.PI/180);
 			const p = F2.track;
 			const d = n[0]*p[0] + n[1]*p[1] - F2.c;
+			const far = d > 0;
 			const fp = Fold.apply2(p, n, F2.c, F2.lambda);
-			tex(eq, `f(p) = p - \\lambda \\cdot \\mathrm{ReLU}(\\hat n \\cdot p - c) \\cdot \\hat n`, true);
+			const dotRow = termLineTex(null, new Float64Array([n[0], n[1], -F2.c]), 0, 3, [p[0], p[1]]);
 			const L = [
-				`n̂ = (${fmt(n[0])}, ${fmt(n[1])})   c = ${fmt(F2.c)}   λ = ${fmt(F2.lambda)}`,
-				`p = (${fmt(p[0])}, ${fmt(p[1])})`,
-				`n̂·p − c = ${fmt(d)}   →   ${d <= 0 ? 'near side (identity)' : 'far side (push)'}`,
-				`f(p) = (${fmt(fp[0])}, ${fmt(fp[1])})`
+				`f(\\mathbf{p}) &= \\mathbf{p} - \\lambda\\, \\mathrm{ReLU}(\\hat{\\mathbf{n}} \\cdot \\mathbf{p} - c)\\, \\hat{\\mathbf{n}} \\\\`,
+				`\\hat{\\mathbf{n}} &= (\\cos\\theta,\\, \\sin\\theta) = (${fmt(n[0])},\\; ${fmt(n[1])}) \\qquad c = ${fmt(F2.c)} \\qquad \\lambda = ${fmt(F2.lambda)} \\\\`,
+				`\\hat{\\mathbf{n}} \\cdot \\mathbf{p} - c &= ${dotRow} = ${fmt(d)} \\;\\Rightarrow\\; ${far ? '\\text{far side (push)}' : '\\text{near side (identity)}'} \\\\`
 			];
-			if (mono) mono.textContent = L.join('\n');
-			const m1 = $('fd2d-m1') ? fd2dM1 : null;
-			const m2 = $('fd2d-m2') ? fd2dM2 : null;
-			if (m1) m1(new Float64Array([1,0,0, 0,1,0, 0,0,1]));
-			if (m2) m2(Fold.pieceMatrix2(n, F2.c, F2.lambda));
-		};
-
-		const fd2dM1 = makeMatrixView('fd2d-m1');
-		const fd2dM2 = makeMatrixView('fd2d-m2');
-
-		const updateStatus = () => {
-			const st = $('fd2d-status'); if (!st) return;
-			st.innerHTML = '';
-			const pill = (t, k) => {
-				const s = document.createElement('span');
-				s.className = 'af-pill' + (k ? ' ' + k : '');
-				s.textContent = t;
-				st.appendChild(s);
-			};
-			if (F2.lambda === 0)       pill('λ = 0 → identity (still affine)', '');
-			else if (F2.lambda < 1)    pill('0 < λ < 1 → bent, still 1-to-1', 'warn');
-			else if (F2.lambda === 1)  pill('λ = 1 → flatten (far half onto crease)', 'warn');
-			else if (F2.lambda < 2)    pill('1 < λ < 2 → overlap (not invertible)', 'bad');
-			else if (F2.lambda === 2)  pill('λ = 2 → paper fold (mirror)', 'good');
-			else                       pill('λ > 2 → overshoot', 'bad');
-			pill('crease  n̂·p = ' + fmt(F2.c), '');
-		};
-
-		const selfTests = () => {
-			const res = [];
-			// λ=2 is a mirror → applying twice returns to start
-			const n = [1, 0];
-			let ok = true;
-			for (let i = 0; ok && i < 20; i++) {
-				const p = [(i*0.13)%1, (0.7+i*0.31)%1];
-				const q = Fold.apply2(p, n, 0.5, 2);
-				const r = Fold.apply2(q, n, 0.5, 2);
-				if (Math.abs(r[0]-p[0]) > 1e-9 || Math.abs(r[1]-p[1]) > 1e-9) ok = false;
+			if (far) {
+				const term = k => {
+					const t = F2.lambda * d * n[k];
+					return `${t > 0 ? '-' : '+'} ${fmt(F2.lambda)}\\cdot ${fmt(d)}\\cdot ${fmt(Math.abs(n[k]))}`;
+				};
+				L.push(`f(\\mathbf{p}) &= \\left(${fmt(p[0])} ${term(0)},\\; ${fmt(p[1])} ${term(1)}\\right) = (${fmt(fp[0])},\\; ${fmt(fp[1])})`);
+			} else {
+				L.push(`f(\\mathbf{p}) &= \\mathbf{p} = (${fmt(p[0])},\\; ${fmt(p[1])})`);
 			}
-			res.push(['λ=2 is involutive (mirror)', ok]);
-			// λ=0 is identity
-			let ok2 = true;
-			for (let i = 0; ok2 && i < 10; i++) {
-				const p = [(i*0.17)%1, (0.3+i*0.41)%1];
-				const q = Fold.apply2(p, [1,0], 0.5, 0);
-				if (Math.abs(q[0]-p[0]) > 1e-9 || Math.abs(q[1]-p[1]) > 1e-9) ok2 = false;
-			}
-			res.push(['λ=0 is identity', ok2]);
-			// two preimages exist for λ>1 in overlap region
-			const preims = Fold.preimages2([0.3, 0.5], [1,0], 0.5, 1.8);
-			res.push(['λ>1 gives 2 preimages in overlap', preims.length === 2]);
-			return res;
+			tex(eq, `\\begin{aligned}` + L.join(' ') + `\\end{aligned}`, true);
 		};
+
+		// The two affine pieces, as symbolic matrices (static — no slider values).
+		tex($('fd2d-m1'), `\\begin{bmatrix}1 & 0 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1\\end{bmatrix}`, true);
+		tex($('fd2d-m2'),
+			`\\begin{bmatrix}` +
+			`1-\\lambda\\cos^{2}\\theta & -\\lambda\\sin\\theta\\cos\\theta & \\lambda c\\cos\\theta \\\\ ` +
+			`-\\lambda\\sin\\theta\\cos\\theta & 1-\\lambda\\sin^{2}\\theta & \\lambda c\\sin\\theta \\\\ ` +
+			`0 & 0 & 1` +
+			`\\end{bmatrix}`, true);
 
 		const updateHover = () => {
 			const ro = $('fd2d-hover'); if (!ro) return;
@@ -1595,7 +1450,7 @@
 		};
 
 		const redraw = () => {
-			try { drawSource(); draw3D(); draw1D(); updateEq(); updateStatus(); }
+			try { drawSource(); draw3D(); draw1D(); updateEq(); }
 			catch (e) { showError('fold-2d', e); }
 		};
 
@@ -1681,7 +1536,6 @@
 			window.addEventListener('mouseup', () => { F2.drag = null; });
 		}
 
-		renderChecks($('fd2d-checks'), selfTests());
 		themeRedraws.push(redraw);
 		redraw();
 	};
@@ -1835,6 +1689,29 @@
 				drawCore(U3.coreA, P.bad);
 				drawCore(U3.coreB, P.accent);
 			}
+
+			// crease-plane label + normal arrow (the far side is pushed along −n̂)
+			const pm = [(planeProj[0][0]+planeProj[3][0])/2, (planeProj[0][1]+planeProj[3][1])/2];
+			ctx.fillStyle = P.cyan; ctx.globalAlpha = 0.75; ctx.font = '11px monospace';
+			ctx.fillText('crease: n̂·p = c', pm[0] - 48, pm[1] + 14);
+			const nA = project([n[0]*U3.c, n[1]*U3.c, n[2]*U3.c]);
+			const nB = project([n[0]*(U3.c+0.55), n[1]*(U3.c+0.55), n[2]*(U3.c+0.55)]);
+			const nAng = Math.atan2(nB[1]-nA[1], nB[0]-nA[0]);
+			ctx.globalAlpha = 0.9; ctx.strokeStyle = P.cyan; ctx.fillStyle = P.cyan; ctx.lineWidth = 2;
+			ctx.beginPath(); ctx.moveTo(nA[0], nA[1]); ctx.lineTo(nB[0], nB[1]); ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(nB[0], nB[1]);
+			ctx.lineTo(nB[0] - 9*Math.cos(nAng - 0.45), nB[1] - 9*Math.sin(nAng - 0.45));
+			ctx.lineTo(nB[0] - 9*Math.cos(nAng + 0.45), nB[1] - 9*Math.sin(nAng + 0.45));
+			ctx.closePath(); ctx.fill();
+			ctx.font = 'bold 13px monospace';
+			ctx.fillText('n̂', nB[0] + 8, nB[1] - 6);
+			// ring labels
+			ctx.globalAlpha = 1;
+			const la = project(U3.coreA[0]);
+			const lb = project(U3.coreB[0]);
+			ctx.fillStyle = P.bad; ctx.fillText('A', la[0] + 9, la[1] - 7);
+			ctx.fillStyle = P.accent; ctx.fillText('B', lb[0] + 9, lb[1] - 7);
 		};
 
 		/* ─── linking number + status ─── */
@@ -1855,17 +1732,18 @@
 		};
 
 		const updateEq = () => {
-			const eq = $('u3d-eq'), mono = $('u3d-eqm');
+			const eq = $('u3d-eq');
 			const n = Fold.normal3(U3.tilt*Math.PI/180, U3.spin*Math.PI/180);
-			tex(eq, `\\mathrm{Lk}(A,B) = \\frac{1}{4\\pi}\\oint_A\\oint_B \\frac{(\\mathbf{p}-\\mathbf{q})\\cdot(d\\mathbf{p}\\times d\\mathbf{q})}{|\\mathbf{p}-\\mathbf{q}|^3}`, true);
 			const {lk, dist} = computeLink();
+			const state = Math.abs(lk) > 0.5 ? '\\text{LINKED}'
+				: Math.abs(lk) < 0.2 ? '\\text{unlinked}'
+				: '\\text{mid-fold (transitioning)}';
 			const L = [
-				`n̂ = (${fmt(n[0])}, ${fmt(n[1])}, ${fmt(n[2])})   c = ${fmt(U3.c)}   λ = ${fmt(U3.lambda)}`,
-				`separation shift = ±${fmt(U3.sep)} along x`,
-				`Lk(A, B) ≈ ${lk.toFixed(3)}    →    ${Math.abs(lk) > 0.5 ? 'LINKED' : 'unlinked'}`,
-				`min ‖A − B‖ ≈ ${fmt(dist)}`
+				`\\mathrm{Lk}(A,B) &= \\frac{1}{4\\pi}\\oint_A\\oint_B \\frac{(\\mathbf{p}-\\mathbf{q})\\cdot(d\\mathbf{p}\\times d\\mathbf{q})}{|\\mathbf{p}-\\mathbf{q}|^3} \\approx ${lk.toFixed(3)} \\;\\Rightarrow\\; ${state} \\\\`,
+				`\\hat{\\mathbf{n}} &= (${fmt(n[0])},\\; ${fmt(n[1])},\\; ${fmt(n[2])}) \\qquad c = ${fmt(U3.c)} \\qquad \\lambda = ${fmt(U3.lambda)} \\\\`,
+				`\\text{separation} &= \\pm\\, ${fmt(U3.sep)} \\;\\text{ along } x \\qquad \\min\\; \\|A - B\\| \\approx ${fmt(dist)}`
 			];
-			if (mono) mono.textContent = L.join('\n');
+			tex(eq, `\\begin{aligned}` + L.join(' ') + `\\end{aligned}`, true);
 		};
 
 		const updateStatus = () => {
@@ -1884,24 +1762,6 @@
 			if (U3.lambda === 0) pill('λ = 0 → identity, no fold applied', '');
 			else if (U3.lambda >= 1) pill('λ ≥ 1 → topology-changing fold', 'warn');
 			if (dist < 0.02) pill('rings touch — Lk is undefined', 'bad');
-		};
-
-		const selfTests = () => {
-			const res = [];
-			// untouched Hopf link has |Lk| ≈ 1
-			const A0 = sampleCore(Hopf.coreA, 60);
-			const B0 = sampleCore(Hopf.coreB, 60);
-			const lk0 = gaussLink(A0, B0).lk;
-			res.push([`baseline Hopf link  Lk ≈ ±1  (got ${lk0.toFixed(2)})`, Math.abs(Math.abs(lk0) - 1) < 0.15]);
-			// two well-separated circles: Lk ≈ 0
-			const A1 = sampleCore(u => [Math.cos(u), Math.sin(u), 0], 60);
-			const B1 = sampleCore(u => [Math.cos(u)+5, Math.sin(u), 0], 60);
-			const lk1 = gaussLink(A1, B1).lk;
-			res.push([`separated circles  Lk ≈ 0  (got ${lk1.toFixed(3)})`, Math.abs(lk1) < 0.05]);
-			// gaussLink antisymmetry
-			const lk2 = gaussLink(B0, A0).lk;
-			res.push(['Lk(A,B) = Lk(B,A) (antisymm. up to sign)', Math.abs(Math.abs(lk0) - Math.abs(lk2)) < 1e-6]);
-			return res;
 		};
 
 		const redraw = () => {
@@ -1986,7 +1846,6 @@
 		};
 		requestAnimationFrame(loop);
 
-		renderChecks($('u3d-checks'), selfTests());
 		themeRedraws.push(redraw);
 		redraw();
 	};

@@ -23,54 +23,33 @@ tags: math-heavy
 .af-col{min-width:0}
 .af-canvas{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--mn-border);cursor:crosshair;touch-action:none;background:var(--mn-bg-subtle)}
 .af-canvas.d3{cursor:grab}.af-canvas.d3:active{cursor:grabbing}
-.af-matgrid{display:inline-block;border:1px solid var(--mn-border);border-radius:6px;overflow:hidden}
-.af-matrow{display:flex}
-.af-matcell{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:600 11px var(--mn-font-mono,monospace);background:#0f1420;color:#e8ecf7;transition:outline .15s}
-.af-matcell.on{background:#f2f5fc;color:#0f1420}
-.af-matcell.tr{outline:2px solid var(--mn-accent);outline-offset:-2px}
-.af-matcell.hv{outline:2px solid #22d3ee;outline-offset:-2px}
 .af-read{margin-top:.55rem;font:.78rem/1.5 var(--mn-font-mono,monospace);color:var(--mn-text-secondary);background:var(--mn-bg-subtle);border-radius:8px;padding:.6rem .75rem;min-height:2.4em;overflow-wrap:anywhere;border-left:2px solid var(--mn-accent)}
 #fd2d-hover{min-height:4.5em}
 #fd2d-src,#fd3d-canvas{width:100%;height:auto;aspect-ratio:1/1}
 .af-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.55rem}
 .af-lbl{font-size:.82rem;color:var(--mn-text-secondary);display:inline-flex;align-items:center;gap:.45rem}
 .af-sel{padding:.32rem .55rem;background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;font-size:.85rem}
-.af-mxwrap{display:inline-flex;flex-direction:column;gap:.45rem;padding:.7rem;background:var(--mn-bg-subtle);border-radius:10px;border:1px solid var(--mn-border);max-width:100%}
-.af-mxrow{display:flex;gap:.45rem;flex-wrap:wrap}
-.af-mx{width:78px;flex:0 1 auto;min-width:52px;padding:.38rem .45rem;font:.85rem var(--mn-font-mono,monospace);background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;transition:border-color .15s,box-shadow .15s}
+.af-mxwrap{display:flex;flex-direction:column;gap:.45rem;padding:.7rem;background:var(--mn-bg-subtle);border-radius:10px;border:1px solid var(--mn-border);width:100%;box-sizing:border-box}
+.af-mxrow{display:flex;gap:.45rem;flex-wrap:nowrap}
+.af-mx{flex:1 1 0;min-width:0;padding:.38rem .45rem;font:.85rem var(--mn-font-mono,monospace);background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;transition:border-color .15s,box-shadow .15s}
 .af-mx:focus{outline:none;border-color:var(--mn-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--mn-accent) 20%,transparent)}
 .af-mx.bad{border-color:var(--mn-rose);box-shadow:0 0 0 2px color-mix(in srgb,var(--mn-rose) 25%,transparent)}
 .af-presets{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem}
 .af-btn{padding:.32rem .8rem;border:1px solid var(--mn-border);border-radius:99px;font-size:.78rem;color:var(--mn-accent);background:transparent;cursor:pointer;transition:all .15s}
 .af-btn:hover{background:color-mix(in srgb,var(--mn-accent) 12%,transparent);border-color:var(--mn-accent)}
 .af-eq{background:var(--mn-bg-subtle);border-radius:8px;padding:.65rem .85rem;overflow-x:auto;border-left:3px solid var(--mn-accent)}
-.af-eqm{background:var(--mn-bg-subtle);border-radius:8px;padding:.6rem .85rem;font:.78rem/1.55 var(--mn-font-mono,monospace);overflow-x:auto;margin:.45rem 0 0;color:var(--mn-text);white-space:pre}
 .af-status{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.85rem}
 .af-pill{padding:.3rem .75rem;border:1px solid var(--mn-border);border-radius:99px;font-size:.78rem;color:var(--mn-text-secondary);background:var(--mn-bg-subtle)}
 .af-pill.warn{color:#b45309;border-color:#b45309;background:color-mix(in srgb,#b45309 8%,transparent)}
 .af-pill.bad{color:var(--mn-rose);border-color:var(--mn-rose);background:color-mix(in srgb,var(--mn-rose) 8%,transparent)}
 .af-pill.good{color:var(--mn-emerald);border-color:var(--mn-emerald);background:color-mix(in srgb,var(--mn-emerald) 8%,transparent)}
-.af-checks{margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-size:.8rem;align-items:center}
-.af-check{color:var(--mn-text-secondary)}
-.af-check.good{color:var(--mn-emerald)}
-.af-check.bad{color:var(--mn-rose)}
-.af-checksum{margin-left:.5rem;font-weight:600}
-.af-checksum.good{color:var(--mn-emerald)}.af-checksum.warn{color:#b45309}.af-checksum.bad{color:var(--mn-rose)}
 .af-callout{border-left:3px solid var(--mn-accent);background:linear-gradient(90deg,color-mix(in srgb,var(--mn-accent) 8%,transparent),transparent);padding:.9rem 1.1rem;border-radius:0 10px 10px 0;margin:1.1rem 0}
 .af-err{margin-top:.8rem;padding:.7rem .9rem;border:1px solid var(--mn-rose);border-radius:8px;color:var(--mn-rose);font-size:.85rem;background:color-mix(in srgb,var(--mn-rose) 5%,transparent)}
 .af-range{width:150px;accent-color:var(--mn-accent)}
 .af-rv{font:.78rem var(--mn-font-mono,monospace);color:var(--mn-accent);min-width:3.6em;display:inline-block;text-align:right}
 .af-sliders>.af-row{gap:.4rem}
-.af-matview{display:inline-block;border:1px solid var(--mn-border);border-radius:6px;overflow:hidden}
-.af-matview .af-matrow{display:flex}
-.af-matview .af-matcell{cursor:default;font-weight:500}
-/* Piece matrices: proper bracketed math matrix (no pixel-grid look) */
-.af-pmx{position:relative;display:inline-block;padding:8px 14px;background:var(--mn-bg-subtle);border-radius:8px}
-.af-pmx-br{position:absolute;top:0;bottom:0;width:9px}
-.af-pmx-br.l{left:0;border-left:2px solid var(--mn-text);border-top:2px solid var(--mn-text);border-bottom:2px solid var(--mn-text);border-radius:3px 0 0 3px}
-.af-pmx-br.r{right:0;border-right:2px solid var(--mn-text);border-top:2px solid var(--mn-text);border-bottom:2px solid var(--mn-text);border-radius:0 3px 3px 0}
-.af-pmx-tbl{display:grid;grid-template-columns:repeat(3,minmax(3.6em,auto));gap:1px 12px;font:500 .82rem/1.7 var(--mn-font-mono,monospace);color:var(--mn-text);text-align:right}
-.af-pmx-tbl .t{color:var(--mn-accent);font-weight:600}
+.af-hint{font-size:.68rem;font-weight:400;letter-spacing:0;text-transform:none;opacity:.75}
+.af-recipe{margin:.35rem 0 0;padding-left:1.15rem;font-size:.8rem;line-height:1.55;color:var(--mn-text-secondary)}
 @media(max-width:820px){.af-grid,.af-grid.wide{grid-template-columns:1fr}}
 </style>
 
@@ -173,10 +152,9 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 		<div class="af-col">
 			<div class="af-sub">Source · click to move p</div>
 			<canvas id="af2d-src" class="af-canvas" width="440" height="440"></canvas>
-
-			<div id="af2d-mat" class="af-matgrid"></div>
 		</div>
 		<div class="af-col">
+			<div id="af2d-presets" class="af-presets" style="margin-top:0"></div>
 			<div class="af-sub">Warped · hover to trace M⁻¹·q</div>
 			<canvas id="af2d-out" class="af-canvas" width="440" height="440"></canvas>
 			<div id="af2d-hover" class="af-read"></div>
@@ -194,16 +172,13 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 		<div class="af-col">
 			<div class="af-sub">Matrix M · edit any cell (cos(30°), pi/6 accepted)</div>
 			<div id="af2d-mx" class="af-mxwrap"></div>
-			<div id="af2d-presets" class="af-presets"></div>
 		</div>
 		<div class="af-col">
 			<div class="af-sub">Live equation for the tracked point</div>
 			<div id="af2d-eq" class="af-eq"></div>
-			<pre id="af2d-eqm" class="af-eqm"></pre>
 		</div>
 	</div>
 	<div id="af2d-status" class="af-status"></div>
-	<div id="af2d-checks" class="af-checks"></div>
 </div>
 
 <div class="md">
@@ -227,9 +202,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 	</div>
 	<div class="af-sub" style="margin-top:1rem">Live equation for the tracked corner</div>
 	<div id="af3d-eq" class="af-eq"></div>
-	<pre id="af3d-eqm" class="af-eqm"></pre>
 	<div id="af3d-status" class="af-status"></div>
-	<div id="af3d-checks" class="af-checks"></div>
 </div>
 
 <div class="md">
@@ -272,6 +245,11 @@ The bent paper's flat shadow (its projection onto the crease plane) is exactly t
 
 <div class="af-card" id="fold-2d">
 	<div class="af-title"><span class="dot"></span>Fold — checkerboard through a crease</div>
+	<div class="af-sliders">
+		<div class="af-row"><label class="af-lbl">Crease angle θ <input type="range" id="fd2d-theta" class="af-range" min="0" max="180" step="1" value="0"><span class="af-rv" id="fd2d-theta-v">0°</span></label></div>
+		<div class="af-row"><label class="af-lbl">Crease offset c <input type="range" id="fd2d-c" class="af-range" min="-1" max="2" step="0.05" value="0.5"><span class="af-rv" id="fd2d-c-v">0.50</span></label></div>
+		<div class="af-row"><label class="af-lbl">Fold strength λ <input type="range" id="fd2d-lambda" class="af-range" min="0" max="2.5" step="0.05" value="1.5"><span class="af-rv" id="fd2d-lambda-v">1.50</span></label></div>
+	</div>
 	<div class="af-grid">
 		<div class="af-col">
 			<div class="af-sub">Source · click to move p · hover to trace</div>
@@ -286,33 +264,25 @@ The bent paper's flat shadow (its projection onto the crease plane) is exactly t
 	<div class="af-grid" style="margin-top:1rem">
 		<div class="af-col">
 			<div class="af-sub">The two affine pieces</div>
-			<div style="display:flex;gap:1.4rem;flex-wrap:wrap">
+			<div style="display:flex;gap:1.4rem;flex-wrap:wrap;align-items:flex-start">
 				<div>
 					<div class="af-sub" style="margin-top:0">Piece 1 · n̂·p ≤ c (identity)</div>
-					<div id="fd2d-m1" class="af-matview"></div>
+					<div id="fd2d-m1"></div>
 				</div>
 				<div>
 					<div class="af-sub" style="margin-top:0">Piece 2 · n̂·p > c (the push)</div>
-					<div id="fd2d-m2" class="af-matview"></div>
+					<div id="fd2d-m2"></div>
 				</div>
-			</div>
-			<div class="af-sliders">
-				<div class="af-row"><label class="af-lbl">Crease angle θ <input type="range" id="fd2d-theta" class="af-range" min="0" max="180" step="1" value="0"><span class="af-rv" id="fd2d-theta-v">0°</span></label></div>
-				<div class="af-row"><label class="af-lbl">Crease offset c <input type="range" id="fd2d-c" class="af-range" min="-1" max="2" step="0.05" value="0.5"><span class="af-rv" id="fd2d-c-v">0.50</span></label></div>
-				<div class="af-row"><label class="af-lbl">Fold strength λ <input type="range" id="fd2d-lambda" class="af-range" min="0" max="2.5" step="0.05" value="1.5"><span class="af-rv" id="fd2d-lambda-v">1.50</span></label></div>
 			</div>
 			<div id="fd2d-presets" class="af-presets"></div>
 		</div>
 		<div class="af-col">
 			<div class="af-sub">Live equation for the tracked point</div>
 			<div id="fd2d-eq" class="af-eq"></div>
-			<pre id="fd2d-eqm" class="af-eqm"></pre>
 			<div class="af-sub" style="margin-top:.9rem">The same fold, 1D: x ↦ x − λ·ReLU(x − c₁)</div>
 			<canvas id="fd1d-canvas" class="af-canvas" width="440" height="150" style="cursor:default"></canvas>
 		</div>
 	</div>
-	<div id="fd2d-status" class="af-status"></div>
-	<div id="fd2d-checks" class="af-checks"></div>
 </div>
 
 <div class="md">
@@ -355,21 +325,25 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 		<div class="af-col">
 			<div class="af-sub">The fold  f(p) = p − λ·ReLU(n̂·p − c)·n̂</div>
 			<div class="af-sliders">
-				<div class="af-row"><label class="af-lbl">Tilt of crease plane <input type="range" id="u3d-tilt" class="af-range" min="0" max="180" step="1" value="0"><span class="af-rv" id="u3d-tilt-v">0°</span></label></div>
-				<div class="af-row"><label class="af-lbl">Spin of crease plane <input type="range" id="u3d-spin" class="af-range" min="0" max="360" step="1" value="0"><span class="af-rv" id="u3d-spin-v">0°</span></label></div>
-				<div class="af-row"><label class="af-lbl">Crease offset c <input type="range" id="u3d-c" class="af-range" min="-1.5" max="1.5" step="0.05" value="0"><span class="af-rv" id="u3d-c-v">0.00</span></label></div>
-				<div class="af-row"><label class="af-lbl">Fold strength λ <input type="range" id="u3d-lambda" class="af-range" min="0" max="2.5" step="0.05" value="0"><span class="af-rv" id="u3d-lambda-v">0.00</span></label></div>
-				<div class="af-row"><label class="af-lbl">Separation <input type="range" id="u3d-sep" class="af-range" min="0" max="1.2" step="0.05" value="0"><span class="af-rv" id="u3d-sep-v">0.00</span></label></div>
+				<div class="af-row"><label class="af-lbl">Tilt of crease plane <span class="af-hint">how far n̂ tips from vertical</span> <input type="range" id="u3d-tilt" class="af-range" min="0" max="180" step="1" value="0"><span class="af-rv" id="u3d-tilt-v">0°</span></label></div>
+				<div class="af-row"><label class="af-lbl">Spin of crease plane <span class="af-hint">rotates n̂ around the vertical axis</span> <input type="range" id="u3d-spin" class="af-range" min="0" max="360" step="1" value="0"><span class="af-rv" id="u3d-spin-v">0°</span></label></div>
+				<div class="af-row"><label class="af-lbl">Crease offset c <span class="af-hint">plane position: n̂·p = c</span> <input type="range" id="u3d-c" class="af-range" min="-1.5" max="1.5" step="0.05" value="0"><span class="af-rv" id="u3d-c-v">0.00</span></label></div>
+				<div class="af-row"><label class="af-lbl">Fold strength λ <span class="af-hint">push = λ × distance past the crease</span> <input type="range" id="u3d-lambda" class="af-range" min="0" max="2.5" step="0.05" value="0"><span class="af-rv" id="u3d-lambda-v">0.00</span></label></div>
+				<div class="af-row"><label class="af-lbl">Separation <span class="af-hint">slide the two rings apart along x</span> <input type="range" id="u3d-sep" class="af-range" min="0" max="1.2" step="0.05" value="0"><span class="af-rv" id="u3d-sep-v">0.00</span></label></div>
 			</div>
 			<div id="u3d-presets" class="af-presets"></div>
 			<button type="button" id="u3d-sepbtn" class="af-btn" style="margin-top:.6rem">separate the rings</button>
+			<div class="af-sub">How to unthread</div>
+			<ol class="af-recipe">
+				<li>Tilt the crease until the plane slices the red ring A (≈ 70–90°).</li>
+				<li>Push λ past 1 — ring A is folded through ring B and Lk drops from 1 to 0.</li>
+				<li>Hit <b>separate the rings</b> — the chain is apart for good.</li>
+			</ol>
 		</div>
 	</div>
 	<div class="af-sub" style="margin-top:1rem">Live readout — the linking number, Gauss's integral over the two core circles</div>
 	<div id="u3d-eq" class="af-eq"></div>
-	<pre id="u3d-eqm" class="af-eqm"></pre>
 	<div id="u3d-status" class="af-status"></div>
-	<div id="u3d-checks" class="af-checks"></div>
 </div>
 
 <div class="optional md" data-headline="Who found all this, and why">

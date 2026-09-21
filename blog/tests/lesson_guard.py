@@ -23,8 +23,9 @@ Guards (Math IV · Affine Maps & the Fold):
   G4 3d-nav-wired      each of the three 3D canvases is wired to bind3DNav
                        (wheel/pinch zoom + touch rotate).
   G5 3d-axes           each of the three 3D canvases is wired to drawAxes3D.
-  G6 pmx-class         the fold's two piece matrices use the .af-pmx bracket
-                       matrix view (not the old flat text layout).
+  G6 symbolic-pieces   the fold's two piece matrices are rendered as symbolic
+                       LaTeX bmatrix entries (λ, cos²θ, sinθ) into #fd2d-m1 /
+                       #fd2d-m2 (not flat number cells).
   G7 fold-quad-map     the fold 3-D quad loop maps `bend` with destructured
                        (u, v) — a bare `cs.map(bend)` passes a point array as
                        `u`, NaNs every quad, and the paper vanishes from the
@@ -152,12 +153,17 @@ def guard_3d_axes(js: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# G6 — fold piece matrices use the .af-pmx bracket view
+# G6 — fold piece matrices rendered as symbolic LaTeX bmatrix
 # ---------------------------------------------------------------------------
-def guard_pmx_class(js: str) -> list[str]:
-    if "af-pmx" not in js:
-        return ["fold piece matrices do not use the .af-pmx bracket matrix view"]
-    return []
+def guard_symbolic_pieces(js: str) -> list[str]:
+    issues = []
+    if "fd2d-m1" not in js:
+        issues.append("fold piece matrix host #fd2d-m1 missing from the lab JS")
+    if "begin{bmatrix}" not in js:
+        issues.append("fold piece matrices are no longer rendered as LaTeX bmatrix")
+    if "cos^{2}" not in js:
+        issues.append("fold piece matrices should be symbolic (λ, cos²θ, sinθ), not flat numbers")
+    return issues
 
 
 # ---------------------------------------------------------------------------
@@ -185,7 +191,7 @@ GUARDS_PHP = [
 GUARDS_JS = [
     ("G4 3d-nav-wired", guard_3d_nav),
     ("G5 3d-axes", guard_3d_axes),
-    ("G6 pmx-class", guard_pmx_class),
+    ("G6 symbolic-pieces", guard_symbolic_pieces),
     ("G7 fold-quad-map", guard_fold_quad_map),
 ]
 
