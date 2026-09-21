@@ -427,6 +427,37 @@
 		persistPref(cur);
 	}
 
+	/* ── lesson lookup (titles + urls for dependency links) ─────
+	   PHP ships the full course index as window.__moduleNavData on
+	   every lesson page (see functions.php). We normalise both the
+	   underscore file slug (math_i) and the hyphen lesson id
+	   (math-i) so a LESSON_DEPS key resolves to its real lesson. */
+	var _lessonIndex = null;
+	function lessonIndex() {
+		if (_lessonIndex) return _lessonIndex;
+		_lessonIndex = {};
+		const mods = (window.__moduleNavData && window.__moduleNavData.modules) || [];
+		mods.forEach(function (m) {
+			if (!m || !m.slug) return;
+			const entry = { title: m.title, url: m.url };
+			_lessonIndex[m.slug] = entry;
+			_lessonIndex[m.slug.replace(/_/g, '-')] = entry;
+		});
+		return _lessonIndex;
+	}
+	function lessonMeta(id) {
+		if (!id) return null;
+		const idx = lessonIndex();
+		return idx[id] || idx[id.replace(/-/g, '_')] || null;
+	}
+	function lessonLink(id) {
+		const m = lessonMeta(id);
+		if (m && m.url) {
+			return '<a class="tdp-link" href="' + escAttr(m.url) + '">' + escAttr(m.title) + '</a>';
+		}
+		return '<strong>' + escAttr(id.replace(/-/g, ' ')) + '</strong>';
+	}
+
 	function showLearnedUI() {
 		const lessonId = getLessonId();
 		if (!lessonId || !LESSON_DEPS.hasOwnProperty(lessonId)) return;
@@ -447,7 +478,7 @@
 				} else {
 					const missing = deps.filter(function (d) { return !isLearned(d); });
 					pill.innerHTML = '<span class="tdp-icon" aria-hidden="true">○</span> Builds on: ' +
-						missing.map(function (d) { return '<strong>' + escAttr(d.replace(/-/g, ' ')) + '</strong>'; }).join(', ') +
+						missing.map(lessonLink).join(', ') +
 						'. Mark them as learned to unlock the full depth here.';
 				}
 				contents.insertBefore(pill, contents.firstChild);
@@ -1425,7 +1456,10 @@
 		inner = document.createElement('div');
 		inner.className = 'topic-block-inner';
 		const moveable = Array.from(block.children).filter(function (el) {
-			return !el.classList.contains('topic-block-fade-badge') && !el.classList.contains('topic-partial-chip');
+			return !el.classList.contains('topic-block-fade-badge')
+				&& !el.classList.contains('topic-block-alt-reveal')
+				&& !el.classList.contains('topic-partial-chip')
+				&& !el.classList.contains('topic-block-alt');
 		});
 		moveable.forEach(function (el) { inner.appendChild(el); });
 		block.appendChild(inner);
@@ -1459,11 +1493,34 @@
 		setBanner(block, spec, score);
 	}
 
-	/** expand (reveal) a block: remove the fade + badge. */
+	/** small "show the full math" affordance shown while a block is in
+	    its plain-language alternative mode. Clicking reveals the math. */
+	function setAltReveal(block, spec, score) {
+		const old = block.querySelector(':scope > .topic-block-alt-reveal');
+		if (old) old.remove();
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'topic-block-alt-reveal';
+		btn.setAttribute('aria-label', 'Show the full math');
+		btn.innerHTML = '<span class="tbalt-icon" aria-hidden="true">∫</span>'
+			+ '<span class="tbalt-text">Show the full math</span>';
+		btn.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			revealBlock(block, true);
+		});
+		block.appendChild(btn);
+		return btn;
+	}
+
+	/** expand (reveal) a block: remove the fade + badge + alt mode. */
 	function revealBlock(block, animate) {
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
 		if (badge) badge.remove();
+		const altRev = block.querySelector(':scope > .topic-block-alt-reveal');
+		if (altRev) altRev.remove();
 		block.classList.remove('topic-block-collapsed');
+		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
 	}
 
@@ -1499,6 +1556,24 @@
 		const wasCollapsed = block.classList.contains('topic-block-collapsed');
 		const nowOff = score.state === 'off';
 		const hasTitle = !!spec.title;
+		const alt = block.querySelector(':scope > .topic-block-alt');
+
+		// Math alternative: the block is too math-heavy for the reader and
+		// the author supplied a plain-language twin. Show the twin instead
+		// of fading the math (a "show the math" link keeps it reachable).
+		if (nowOff && score.why === 'math' && alt) {
+			ensureInner(block);
+			block.classList.remove('topic-block-collapsed');
+			block.classList.remove('topic-block-dimmed');
+			block.classList.remove('topic-block-partial');
+			block.classList.add('topic-block-alt-active');
+			setAltReveal(block, spec, score);
+			block._tbReason = 'alt';
+			return;
+		}
+
+		// Not showing the alt → make sure any alt mode is cleared.
+		if (alt) block.classList.remove('topic-block-alt-active');
 
 		if (nowOff) {
 			if (hasTitle) {
