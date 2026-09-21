@@ -9,6 +9,7 @@ order: 6
 color: accent
 topics: math-iv
 tags: math-heavy
+math: 90
 -->
 <?php js("math_iv_affine"); ?>
 

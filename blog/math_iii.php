@@ -9,6 +9,7 @@ order: 5
 color: accent
 topics: math-iii
 tags: math-heavy, logic-heavy
+math: 85
 -->
 <?php js("math_iii_hott"); ?>
 

@@ -9,6 +9,7 @@ order: 10
 color: accent
 topics: geometry, math-iii, history
 tags: math-heavy, logic-heavy
+math: 80
 -->
 
 <div class="smart-quote" data-cite="eilenbergsteenrod1952">

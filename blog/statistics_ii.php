@@ -9,6 +9,7 @@ order: 9
 color: accent
 topics: math-ii, math-iii, statistics-ii
 tags: math-heavy
+math: 80
 -->
 
 <div class="md">
