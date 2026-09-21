@@ -978,6 +978,459 @@
 	}
 
 	/* ══════════════════════════════════════════════════════════════
+	   FOLD 2D LAB — the checkerboard through a crease
+	   ══════════════════════════════════════════════════════════════ */
+
+	const F2 = {
+		N: 8,
+		win: -0.6, winEnd: 1.6,
+		theta: 0, c: 0.5, lam: 1.5,
+		track: [0.25, 0.75],
+		hover: null, hoverQueued: false, hoverPre: [],
+		x1d: 1.3, c1d: 1.0,
+		demo: [[0.15, 0.2], [0.85, 0.7]]
+	};
+
+	const PRESETS_F2 = [
+		{ name: 'No fold (λ=0)', s: { theta: 0, c: 0.5, lam: 0 } },
+		{ name: 'Crease (λ=0.5)', s: { theta: 0, c: 0.5, lam: 0.5 } },
+		{ name: 'Hammer (λ=1)', s: { theta: 0, c: 0.5, lam: 1 } },
+		{ name: 'Paper fold (λ=2)', s: { theta: 0, c: 0.5, lam: 2 } },
+		{ name: 'Overshoot (λ=2.4)', s: { theta: 0, c: 0.5, lam: 2.4 } },
+		{ name: 'Diagonal crease', s: { theta: 45, c: 0.4, lam: 1.6 } },
+		{ name: 'Mirror (λ=2, ⊥)', s: { theta: 90, c: 0.5, lam: 2 } }
+	];
+
+	function hexRgb(h) {
+		return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+	}
+
+	function initFold2d() {
+		const srcC = $('fold2d-src'), outC = $('fold2d-out'), stripC = $('fold1d-canvas');
+		if (!srcC || !outC) return;
+		const srcCtx = srcC.getContext('2d'), outCtx = outC.getContext('2d'), stripCtx = stripC ? stripC.getContext('2d') : null;
+		if (!srcCtx || !outCtx) { showLabError('fold-2d', new Error('Canvas 2D context unavailable')); return; }
+		const size = srcC.width;
+		const span = F2.winEnd - F2.win;
+		const w2px = function (x) { return (x - F2.win) / span * size; };
+		const w2py = function (y) { return (F2.winEnd - y) / span * size; };
+		const px2w = function (px) { return F2.win + (px / size) * span; };
+		const py2w = function (py) { return F2.winEnd - (py / size) * span; };
+		const n2 = function () { return Fold.normal2(F2.theta * Math.PI / 180); };
+
+		function grid(ctx, P) {
+			ctx.strokeStyle = P.line; ctx.lineWidth = 1;
+			for (let t = 0; t <= 4; t++) {
+				const wv = t * 0.5, px = w2px(wv), py = w2py(wv);
+				ctx.globalAlpha = (wv === 0 || wv === 1) ? 0.9 : 0.35;
+				ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, size); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(size, py); ctx.stroke();
+			}
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = P.ink2; ctx.font = '11px monospace'; ctx.textAlign = 'left';
+			for (let t = 0; t <= 4; t++) {
+				const wv = t * 0.5;
+				ctx.fillText(String(wv), w2px(wv) + 3, w2py(0) + 14);
+				ctx.fillText(String(wv), w2px(0) - 24, w2py(wv) - 3);
+			}
+		}
+
+		/* the crease line n̂·p = c, plus an arrow along n̂ (the push direction) */
+		function crease(ctx, P) {
+			const n = n2();
+			const p0 = [F2.c * n[0], F2.c * n[1]];
+			const d = [-n[1], n[0]];
+			ctx.save();
+			ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+			ctx.beginPath();
+			ctx.moveTo(w2px(p0[0] - 2.4 * d[0]), w2py(p0[1] - 2.4 * d[1]));
+			ctx.lineTo(w2px(p0[0] + 2.4 * d[0]), w2py(p0[1] + 2.4 * d[1]));
+			ctx.stroke(); ctx.setLineDash([]);
+			/* push-direction arrow (the far side is pushed along −n̂; show n̂) */
+			const ax = w2px(p0[0]), ay = w2py(p0[1]);
+			const bx = w2px(p0[0] + 0.42 * n[0]), by = w2py(p0[1] + 0.42 * n[1]);
+			ctx.strokeStyle = P.accent; ctx.fillStyle = P.accent; ctx.lineWidth = 2;
+			ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+			const ang = Math.atan2(by - ay, bx - ax);
+			ctx.beginPath();
+			ctx.moveTo(bx, by);
+			ctx.lineTo(bx - 8 * Math.cos(ang - 0.4), by - 8 * Math.sin(ang - 0.4));
+			ctx.lineTo(bx - 8 * Math.cos(ang + 0.4), by - 8 * Math.sin(ang + 0.4));
+			ctx.closePath(); ctx.fill();
+			ctx.font = 'italic 12px monospace';
+			ctx.fillText('n\u0302', bx + 6, by - 6);
+			ctx.restore();
+		}
+
+		function drawFoldSource() {
+			const P = pal();
+			srcCtx.fillStyle = P.bg; srcCtx.fillRect(0, 0, size, size);
+			grid(srcCtx, P);
+			for (let j = 0; j < F2.N; j++)
+				for (let i = 0; i < F2.N; i++) {
+					const u0 = i / F2.N, u1 = (i + 1) / F2.N, v0 = j / F2.N, v1 = (j + 1) / F2.N;
+					srcCtx.fillStyle = rgbStr(((i + j) % 2) ? P.c1 : P.c0);
+					srcCtx.fillRect(w2px(u0), w2py(v1), (u1 - u0) / span * size, (v1 - v0) / span * size);
+				}
+			srcCtx.strokeStyle = P.line; srcCtx.strokeRect(w2px(0), w2py(1), size / span, size / span);
+			/* demo line crossing the crease */
+			srcCtx.strokeStyle = P.cyan; srcCtx.lineWidth = 1.5;
+			srcCtx.beginPath();
+			srcCtx.moveTo(w2px(F2.demo[0][0]), w2py(F2.demo[0][1]));
+			srcCtx.lineTo(w2px(F2.demo[1][0]), w2py(F2.demo[1][1]));
+			srcCtx.stroke();
+			crease(srcCtx, P);
+			/* preimage markers */
+			F2.hoverPre.forEach(function (pr, k) {
+				srcCtx.fillStyle = P.warn;
+				srcCtx.beginPath(); srcCtx.arc(w2px(pr.p[0]), w2py(pr.p[1]), 5, 0, Math.PI * 2); srcCtx.fill();
+				srcCtx.strokeStyle = P.warn; srcCtx.lineWidth = 1.5;
+				srcCtx.beginPath(); srcCtx.arc(w2px(pr.p[0]), w2py(pr.p[1]), 9, 0, Math.PI * 2); srcCtx.stroke();
+				srcCtx.fillStyle = P.warn; srcCtx.font = '11px monospace'; srcCtx.textAlign = 'left';
+				srcCtx.fillText('p' + (k === 0 ? '\u2081' : '\u2082'), w2px(pr.p[0]) + 11, w2py(pr.p[1]) - 8);
+			});
+			/* tracked point */
+			srcCtx.fillStyle = P.accent;
+			srcCtx.beginPath(); srcCtx.arc(w2px(F2.track[0]), w2py(F2.track[1]), 6, 0, Math.PI * 2); srcCtx.fill();
+			srcCtx.strokeStyle = P.accent; srcCtx.lineWidth = 1.5;
+			srcCtx.beginPath(); srcCtx.arc(w2px(F2.track[0]), w2py(F2.track[1]), 11, 0, Math.PI * 2); srcCtx.stroke();
+			srcCtx.fillStyle = P.accent; srcCtx.font = 'bold 12px monospace';
+			srcCtx.fillText('p', w2px(F2.track[0]) + 13, w2py(F2.track[1]) + 4);
+		}
+
+		function drawFoldOutput() {
+			const P = pal();
+			outCtx.fillStyle = P.bg; outCtx.fillRect(0, 0, size, size);
+			const n = n2();
+			const acc = hexRgb(P.accent);
+			/* forward-map the board: near side opaque, far side tinted + translucent */
+			for (let j = 0; j < F2.N; j++)
+				for (let i = 0; i < F2.N; i++) {
+					const val = (i + j) % 2;
+					const cu = (i + 0.5) / F2.N, cv = (j + 0.5) / F2.N;
+					const far = n[0] * cu + n[1] * cv - F2.c > 0;
+					for (let a = 0; a < 4; a++)
+						for (let b = 0; b < 4; b++) {
+							const u0 = (i + a / 4) / F2.N, u1 = (i + (a + 1) / 4) / F2.N;
+							const v0 = (j + b / 4) / F2.N, v1 = (j + (b + 1) / 4) / F2.N;
+							const cs = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+							const ps = cs.map(function (pt) {
+								const q = Fold.apply2(pt, n, F2.c, F2.lam);
+								return [w2px(q[0]), w2py(q[1])];
+							});
+							const base = val ? P.c1 : P.c0;
+							const col = far ? [base[0] + (acc[0] - base[0]) * 0.5, base[1] + (acc[1] - base[1]) * 0.5, base[2] + (acc[2] - base[2]) * 0.5] : base;
+							outCtx.globalAlpha = far ? 0.72 : 1;
+							outCtx.fillStyle = rgbStr(col);
+							outCtx.beginPath();
+							outCtx.moveTo(ps[0][0], ps[0][1]);
+							for (let k = 1; k < 4; k++) outCtx.lineTo(ps[k][0], ps[k][1]);
+							outCtx.closePath(); outCtx.fill();
+						}
+					outCtx.globalAlpha = 1;
+				}
+			/* demo line image: a straight line arrives as two pieces with a corner */
+			outCtx.strokeStyle = P.cyan; outCtx.lineWidth = 2; outCtx.beginPath();
+			const SEG = 48;
+			for (let s = 0; s <= SEG; s++) {
+				const t = s / SEG;
+				const x = F2.demo[0][0] + (F2.demo[1][0] - F2.demo[0][0]) * t;
+				const y = F2.demo[0][1] + (F2.demo[1][1] - F2.demo[0][1]) * t;
+				const q = Fold.apply2([x, y], n, F2.c, F2.lam);
+				if (s === 0) outCtx.moveTo(w2px(q[0]), w2py(q[1]));
+				else outCtx.lineTo(w2px(q[0]), w2py(q[1]));
+			}
+			outCtx.stroke();
+			crease(outCtx, P);
+			/* tracked point image */
+			const q = Fold.apply2(F2.track, n, F2.c, F2.lam);
+			outCtx.fillStyle = P.accent;
+			outCtx.beginPath(); outCtx.arc(w2px(q[0]), w2py(q[1]), 6, 0, Math.PI * 2); outCtx.fill();
+			outCtx.strokeStyle = P.accent; outCtx.lineWidth = 1.5;
+			outCtx.beginPath(); outCtx.arc(w2px(q[0]), w2py(q[1]), 11, 0, Math.PI * 2); outCtx.stroke();
+			outCtx.fillStyle = P.accent; outCtx.font = 'bold 12px monospace'; outCtx.textAlign = 'left';
+			outCtx.fillText("p\u2032", w2px(q[0]) + 13, w2py(q[1]) + 4);
+			/* hover crosshair */
+			if (F2.hover) {
+				outCtx.strokeStyle = P.ink2; outCtx.globalAlpha = 0.6; outCtx.lineWidth = 1;
+				outCtx.setLineDash([4, 4]);
+				outCtx.beginPath();
+				outCtx.moveTo(w2px(F2.hover[0]), 0); outCtx.lineTo(w2px(F2.hover[0]), size);
+				outCtx.moveTo(0, w2py(F2.hover[1])); outCtx.lineTo(size, w2py(F2.hover[1]));
+				outCtx.stroke(); outCtx.setLineDash([]); outCtx.globalAlpha = 1;
+			}
+			grid(outCtx, P);
+		}
+
+		/* the 1-D fold, plotted as y = f(x) */
+		function drawFold1d() {
+			if (!stripCtx) return;
+			const P = pal();
+			const W = stripC.width, H = stripC.height;
+			const ml = 34, mr = 14, mt = 14, mb = 24;
+			const X = function (x) { return ml + (x / 2) * (W - ml - mr); };
+			const Y = function (y) { return (H - mb) - (y / 2) * (H - mt - mb); };
+			stripCtx.fillStyle = P.bg; stripCtx.fillRect(0, 0, W, H);
+			stripCtx.strokeStyle = P.line; stripCtx.lineWidth = 1;
+			stripCtx.strokeRect(X(0), Y(2), X(2) - X(0), Y(0) - Y(2));
+			stripCtx.fillStyle = P.ink2; stripCtx.font = '10px monospace';
+			stripCtx.textAlign = 'center';
+			for (let x = 0; x <= 4; x++) { stripCtx.fillText(String(x / 2), X(x / 2), H - mb + 14); }
+			stripCtx.textAlign = 'right';
+			for (let y = 0; y <= 4; y++) { stripCtx.fillText(String(y / 2), ml - 5, Y(y / 2) + 3); }
+			/* identity y = x (dashed) */
+			stripCtx.strokeStyle = P.ink2; stripCtx.globalAlpha = 0.5; stripCtx.setLineDash([4, 4]);
+			stripCtx.beginPath(); stripCtx.moveTo(X(0), Y(0)); stripCtx.lineTo(X(2), Y(2)); stripCtx.stroke();
+			stripCtx.setLineDash([]); stripCtx.globalAlpha = 1;
+			/* overlap band on the image axis when λ > 1 */
+			if (F2.lam > 1.001) {
+				const lo = Math.max(0, (1 - F2.lam) * 2 + F2.lam * F2.c1d);
+				const hi = Math.min(2, F2.c1d);
+				if (hi > lo) {
+					stripCtx.fillStyle = P.warn; stripCtx.globalAlpha = 0.18;
+					stripCtx.fillRect(X(0), Y(hi), X(2) - X(0), Y(lo) - Y(hi));
+					stripCtx.globalAlpha = 1;
+					stripCtx.fillStyle = P.warn; stripCtx.textAlign = 'left';
+					stripCtx.fillText('overlap', X(2) - 46, Y((lo + hi) / 2) + 3);
+				}
+			}
+			/* f(x): slope 1 below the crease, slope (1−λ) above */
+			stripCtx.strokeStyle = P.accent; stripCtx.lineWidth = 2; stripCtx.beginPath();
+			const S = 200;
+			for (let s = 0; s <= S; s++) {
+				const x = (s / S) * 2;
+				const y = (x <= F2.c1d) ? x : (1 - F2.lam) * x + F2.lam * F2.c1d;
+				if (s === 0) stripCtx.moveTo(X(x), Y(y));
+				else stripCtx.lineTo(X(x), Y(y));
+			}
+			stripCtx.stroke();
+			/* crease tick */
+			stripCtx.strokeStyle = P.cyan; stripCtx.lineWidth = 1; stripCtx.setLineDash([3, 3]);
+			stripCtx.beginPath(); stripCtx.moveTo(X(F2.c1d), Y(0)); stripCtx.lineTo(X(F2.c1d), Y(2)); stripCtx.stroke();
+			stripCtx.setLineDash([]);
+			/* tracked 1-D point */
+			const x = F2.x1d, y = (x <= F2.c1d) ? x : (1 - F2.lam) * x + F2.lam * F2.c1d;
+			stripCtx.strokeStyle = P.ink2; stripCtx.globalAlpha = 0.4; stripCtx.lineWidth = 1;
+			stripCtx.beginPath(); stripCtx.moveTo(X(x), Y(0)); stripCtx.lineTo(X(x), Y(y)); stripCtx.lineTo(X(0), Y(y)); stripCtx.stroke();
+			stripCtx.globalAlpha = 1;
+			stripCtx.fillStyle = P.accent;
+			stripCtx.beginPath(); stripCtx.arc(X(x), Y(y), 5, 0, Math.PI * 2); stripCtx.fill();
+			stripCtx.fillStyle = P.ink2; stripCtx.textAlign = 'left';
+			stripCtx.fillText('x\u2192x\u2212λ·ReLU(x\u2212c\u2081)', X(0) + 4, Y(2) - 6);
+		}
+
+		/* read-only 3×3 matrix view */
+		function makeMatrixView(hostId) {
+			const host = $(hostId);
+			if (!host) return null;
+			host.innerHTML = '';
+			const cells = [];
+			for (let r = 0; r < 3; r++) {
+				const row = document.createElement('div');
+				row.className = 'aff-matrow';
+				for (let c = 0; c < 3; c++) {
+					const cell = document.createElement('div');
+					cell.className = 'aff-matcell aff-matro';
+					row.appendChild(cell);
+					cells.push(cell);
+				}
+				host.appendChild(row);
+			}
+			return function (m) {
+				for (let i = 0; i < 9; i++) cells[i].textContent = fmtNum(m[i]);
+			};
+		}
+
+		function updFoldMats() {
+			const n = n2();
+			if (setM1) setM1([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+			if (setM2) setM2(Fold.pieceMatrix2(n, F2.c, F2.lam));
+		}
+
+		function updFoldEq() {
+			const eq = $('fold2d-eq'), mono = $('fold2d-eqmono');
+			if (!eq) return;
+			const n = n2();
+			const x = F2.track[0], y = F2.track[1];
+			const d = n[0] * x + n[1] * y - F2.c;
+			const q = Fold.apply2([x, y], n, F2.c, F2.lam);
+			texInto(eq, "p = (" + fmtNum(x) + ", " + fmtNum(y) + ") \\;\\mapsto\\; p' = (" + fmtNum(q[0]) + ", " + fmtNum(q[1]) + ")", true);
+			const L = [];
+			L.push("n\u0302\u00B7p \u2212 c = " + fmtNum(d) + (d <= 0 ? "  \u2264 0  \u2192  piece 1 (identity): p' = p" : "  > 0  \u2192  piece 2 (the affine push)"));
+			if (d > 0) {
+				const M = Fold.pieceMatrix2(n, F2.c, F2.lam);
+				L.push("x' = " + termLineText(null, M, 0, 3, [x, y]) + " = " + fmtNum(M[0] * x + M[1] * y + M[2]));
+				L.push("y' = " + termLineText(null, M, 1, 3, [x, y]) + " = " + fmtNum(M[3] * x + M[4] * y + M[5]));
+			} else {
+				L.push("x' = x = " + fmtNum(x));
+				L.push("y' = y = " + fmtNum(y));
+			}
+			if (mono) mono.textContent = L.join('\n');
+		}
+
+		function updFoldStatus() {
+			const st = $('fold2d-status');
+			if (!st) return;
+			st.innerHTML = '';
+			const mk = function (text, kind) {
+				const s = document.createElement('span');
+				s.className = 'aff-pill' + (kind ? ' ' + kind : '');
+				s.textContent = text;
+				st.appendChild(s);
+			};
+			mk('piecewise affine: 2 affine pieces + 1 crease');
+			if (F2.lam < 1e-9) mk('\u03BB = 0: the identity — still affine');
+			else if (F2.lam < 1 - 1e-9) mk('bent, still one-to-one (injective)');
+			else if (F2.lam < 1 + 1e-9) mk('\u03BB = 1: the far half flattened onto the crease — maximum overlap', 'warn');
+			else if (F2.lam < 2 - 1e-9) mk('non-injective: the far half overlaps the near half', 'warn');
+			else if (F2.lam < 2 + 1e-9) mk('\u03BB = 2: the paper fold (a mirror in the crease)');
+			else mk('overshoot: the far half passes through the near half', 'warn');
+		}
+
+		function runFoldSelfTests() {
+			const res = [];
+			let ok1 = true;
+			for (let i = 0; i <= 6 && ok1; i++)
+				for (let j = 0; j <= 6; j++) {
+					const p = [i / 6, j / 6];
+					const q = Fold.apply2(p, [1, 0], 0.5, 0);
+					if (Math.abs(q[0] - p[0]) > 1e-12 || Math.abs(q[1] - p[1]) > 1e-12) ok1 = false;
+				}
+			res.push(['\u03BB = 0 is the identity (affine)', ok1]);
+			let ok2 = true;
+			for (let i = 0; i <= 6 && ok2; i++)
+				for (let j = 0; j <= 6; j++) {
+					const p = [i / 6, j / 6];
+					const q = Fold.apply2(p, [1, 0], 0.5, 2);
+					if (Math.abs(q[0] - (1 - p[0])) > 1e-9 || Math.abs(q[1] - p[1]) > 1e-9) ok2 = false;
+				}
+			res.push(['\u03BB = 2 mirrors in the crease line', ok2]);
+			const pr = Fold.preimages2([0.4, 0.3], [1, 0], 0.5, 1.5);
+			res.push(['overlap pixel \u2192 2 preimages', pr.length === 2]);
+			let ok4 = true;
+			const seen = {};
+			for (let i = 0; i < 40 && ok4; i++)
+				for (let j = 0; j < 40; j++) {
+					const p = [i / 39, j / 39];
+					const q = Fold.apply2(p, [1, 0], 0.5, 0.5);
+					const key = Math.round(q[0] * 1e5) + ',' + Math.round(q[1] * 1e5);
+					if (seen[key]) ok4 = false;
+					seen[key] = 1;
+				}
+			res.push(['0 < \u03BB < 1 stays one-to-one', ok4]);
+			let ok5 = true;
+			for (let i = 0; i < 12; i++) {
+				const y = (i + 0.5) / 12, e = 1e-4;
+				const a = Fold.apply2([0.5 - e, y], [1, 0], 0.5, F2.lam);
+				const b = Fold.apply2([0.5 + e, y], [1, 0], 0.5, F2.lam);
+				if (Math.abs(a[0] - b[0]) > 1e-6 || Math.abs(a[1] - b[1]) > 1e-6) ok5 = false;
+			}
+			res.push(['continuous at the crease (no tear)', ok5]);
+			return res;
+		}
+
+		function redraw() {
+			try {
+				drawFoldSource();
+				drawFoldOutput();
+				drawFold1d();
+				updFoldMats();
+				updFoldEq();
+				updFoldStatus();
+			} catch (e) { showLabError('fold-2d', e); }
+		}
+
+		function updateHover() {
+			const ro = $('fold2d-hover');
+			if (!ro) return;
+			if (!F2.hover) {
+				F2.hoverPre = [];
+				ro.textContent = 'Hover the warped board: the machine solves for the preimage(s) of the pixel you point at. In the overlap it finds two.';
+				drawFoldSource();
+				return;
+			}
+			const q = F2.hover;
+			const pre = Fold.preimages2(q, n2(), F2.c, F2.lam);
+			F2.hoverPre = pre;
+			let txt = 'q = (' + fmtNum(q[0]) + ', ' + fmtNum(q[1]) + ')  \u2192  ';
+			if (pre.length === 0) txt += 'no preimage — this pixel is not in the image of the fold.';
+			else if (pre.length === 1) txt += '1 preimage: (' + fmtNum(pre[0].p[0]) + ', ' + fmtNum(pre[0].p[1]) + ') — covered once.';
+			else txt = 'q = (' + fmtNum(q[0]) + ', ' + fmtNum(q[1]) + ')  \u2192  2 preimages: (' + fmtNum(pre[0].p[0]) + ', ' + fmtNum(pre[0].p[1]) + ') and (' + fmtNum(pre[1].p[0]) + ', ' + fmtNum(pre[1].p[1]) + ') — covered twice (space overlaps here).';
+			ro.textContent = txt;
+			drawFoldSource();
+		}
+
+		const setM1 = makeMatrixView('fold2d-m1');
+		const setM2 = makeMatrixView('fold2d-m2');
+
+		/* slider sync */
+		const sTheta = $('fold2d-theta'), sC = $('fold2d-c'), sLam = $('fold2d-lambda');
+		function syncSliders() {
+			if (sTheta) sTheta.value = String(Math.round(F2.theta));
+			if (sC) sC.value = String(F2.c);
+			if (sLam) sLam.value = String(F2.lam);
+		}
+		function labelSliders() {
+			const tv = $('fold2d-theta-v'), cv = $('fold2d-c-v'), lv = $('fold2d-lambda-v');
+			if (tv) tv.textContent = Math.round(F2.theta) + '\u00B0';
+			if (cv) cv.textContent = F2.c.toFixed(2);
+			if (lv) lv.textContent = F2.lam.toFixed(2);
+		}
+		function onSlider() {
+			if (sTheta) F2.theta = parseFloat(sTheta.value);
+			if (sC) F2.c = parseFloat(sC.value);
+			if (sLam) F2.lam = parseFloat(sLam.value);
+			labelSliders();
+			redraw();
+		}
+		if (sTheta) sTheta.addEventListener('input', onSlider);
+		if (sC) sC.addEventListener('input', onSlider);
+		if (sLam) sLam.addEventListener('input', onSlider);
+
+		buildPresetRow('fold2d-presets', PRESETS_F2, function (pr) {
+			F2.theta = pr.s.theta; F2.c = pr.s.c; F2.lam = pr.s.lam;
+			syncSliders(); labelSliders(); redraw();
+		});
+
+		srcC.addEventListener('click', function (e) {
+			const r = srcC.getBoundingClientRect();
+			if (r.width < 5) return;
+			const px = (e.clientX - r.left) * (srcC.width / r.width);
+			const py = (e.clientY - r.top) * (srcC.height / r.height);
+			F2.track = [Math.max(0, Math.min(1, px2w(px))), Math.max(0, Math.min(1, py2w(py)))];
+			redraw();
+		});
+		outC.addEventListener('mousemove', function (e) {
+			const r = outC.getBoundingClientRect();
+			if (r.width < 5) return;
+			const px = (e.clientX - r.left) * (outC.width / r.width);
+			const py = (e.clientY - r.top) * (outC.height / r.height);
+			F2.hover = [px2w(px), py2w(py)];
+			if (!F2.hoverQueued) {
+				F2.hoverQueued = true;
+				if (typeof requestAnimationFrame === 'function')
+					requestAnimationFrame(function () { F2.hoverQueued = false; updateHover(); });
+				else updateHover();
+			}
+		});
+		outC.addEventListener('mouseleave', function () { F2.hover = null; updateHover(); });
+		if (stripC) stripC.addEventListener('click', function (e) {
+			const r = stripC.getBoundingClientRect();
+			if (r.width < 5) return;
+			const px = (e.clientX - r.left) * (stripC.width / r.width);
+			const ml = 34, mr = 14;
+			const x = Math.max(0, Math.min(2, (px - ml) / (stripC.width - ml - mr) * 2));
+			F2.x1d = x;
+			drawFold1d();
+		});
+
+		renderChecks($('fold2d-checks'), runFoldSelfTests());
+		syncSliders(); labelSliders();
+		themeRedraws.push(redraw);
+		redraw();
+	}
+
+	/* ══════════════════════════════════════════════════════════════
 	   3D LAB
 	   ══════════════════════════════════════════════════════════════ */
 
