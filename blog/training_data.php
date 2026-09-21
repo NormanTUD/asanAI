@@ -14,7 +14,7 @@ topics: training, data, programming, society
 A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The Scale of Modern Training Data">
 ## The Scale of Modern Training Data
 
 Frontier LLMs are trained on **10–15 trillion tokens**. The composition is roughly:
@@ -78,7 +78,9 @@ Duplicate or near-duplicate documents **inflate training cost and can cause memo
 ### Exact Deduplication
 
 Hash each document (SHA-256 over normalized text); keep only one copy of each hash. Catches verbatim copies but not near-duplicates.
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="Fuzzy Deduplication (MinHash)">
 ### Fuzzy Deduplication (MinHash)
 
 Compute $k$ hash functions over $n$-grams of each document; the **MinHash signature** approximates the Jaccard similarity between document pairs in $O(k)$ space.
@@ -88,7 +90,9 @@ $$
 $$
 
 Documents with identical MinHash signatures have high Jaccard similarity. Threshold of $0.8$ Jaccard catches near-duplicates.
+</div>
 
+<div class="md">
 ### Substring Deduplication (Suffix Array)
 
 For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** \cite[Abbas et al., 2023]{abbas2023semdedup} extend this to semantic duplicates via embedding-based clustering.

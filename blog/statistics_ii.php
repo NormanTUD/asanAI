@@ -22,7 +22,7 @@ By the end, you will understand Bayesian reasoning, Shannon entropy, latent vari
 <div class="statlab-container">
 
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Bayesian Updating: The Logic of Science">
 ## Bayesian Updating: The Logic of Science
 
 While Gauß sought the “True Path” of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
@@ -95,9 +95,13 @@ While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{
 If we toss a coin, each outcome is a state $x_i$. 
 </div>
 
-$$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The “Surprise” (Bits)}}$$
-
+<div class="topic-block" data-optionaltitle="The entropy formula" data-mathlevel="55">
 <div class="md">
+$$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The “Surprise” (Bits)}}$$
+</div>
+</div>
+
+<div class="md" data-mathlevel="40">
 * **$x_i$ Explained:** This represents the $i$-th possible outcome. For our coin, $x_1 = \text{Heads}$ and $x_2 = \text{Tails}$.
 * **The Goal:** Shannon wanted a measure that was maximal when uncertainty was highest. If a coin is “fair” ($0.5/0.5$), you are maximally surprised by the result. If a coin is “weighted” ($1.0/0.0$), there is no surprise, so Entropy is zero.
 </div>

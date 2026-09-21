@@ -17,7 +17,7 @@ A 70B-parameter model in fp16 takes **140 GB just for the weights**. With Adam o
 This chapter covers the core parallelism strategies: data, tensor, pipeline, sequence, and the FSDP/ZeRO families that underpin frontier training.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="The Memory Budget">
 ## The Memory Budget
 
 A single training step requires storing:
@@ -61,7 +61,7 @@ FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3.
 
 <div id="parallelism-viz" style="max-width:880px; margin:1em auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Tensor Parallelism (TP)">
 ### Tensor Parallelism (TP)
 
 **Split individual weight matrices** across GPUs. For a $d \times d$ linear layer:
@@ -79,7 +79,9 @@ $$
 $$
 
 The query, key, value heads are split across GPUs; each GPU computes a partial attention output, then an all-reduce aggregates. Communication per layer: 2 all-reduces.
+</div>
 
+<div class="md">
 ### Pipeline Parallelism (PP)
 
 **Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc. Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.
@@ -87,13 +89,15 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Sequence Parallelism">
 ### Sequence Parallelism
 
 For very long contexts, the attention matrix $QK^\top$ is $O(n^2)$ per head. **Sequence parallelism** splits the sequence dimension across GPUs: GPU $i$ holds tokens $[i \cdot n/P, (i+1) \cdot n/P)$. Each computes attention on its local chunk; only the relevant $QK^\top$ slice is computed, reducing memory by $1/P$.
 
 Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.
+</div>
 
+<div class="md">
 ### Expert Parallelism (for MoE)
 
 For Mixture-of-Experts (MoE) models \cite{bubeck2023moeoverview} (see the <a href="transformer">Transformer chapter</a>): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
@@ -130,7 +134,7 @@ Bandwidth hierarchy (one-way, per link): NVLink (ca. 900 GB/s) $\gg$ InfiniBand 
 **Gradient accumulation** amortizes communication by computing gradients over multiple micro-batches before syncing. **Gradient compression** (1-bit Adam, PowerSGD) reduces the bytes sent.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Activation Checkpointing (Gradient Checkpointing)">
 ## Activation Checkpointing (Gradient Checkpointing)
 
 Activations dominate memory at training time. For a 70B model with batch size 1 and 4K context, activations can reach hundreds of GB.

@@ -9,6 +9,7 @@ order: 4
 color: accent
 topics: architecture, training, programming, math-i, math-ii, math-iii, statistics-i, statistics-ii, history, philosophy
 tags: math-heavy, logic-heavy
+math: 60
 -->
 
 <div class="md">
@@ -37,7 +38,7 @@ Long before that recipe was popular, \citeauthor{hinton1995wakesleep} asked a mo
 The answer they gave in \citeyear{hinton1995wakesleep}, in \citetitle{hinton1995wakesleep}, has the elegance of an old joke. There are two networks: a **recognition** network that maps data to latent variables (a bottom-up encoder), and a **generative** network that maps latent variables to data (a top-down decoder). At night, when the brain is "sleeping", you train the recognition network by sampling latent variables from the generative network and asking the recognition network to recover them. In the morning, when the brain is "awake", you train the generative network by sampling latent variables from the recognition network running on real data and asking the generative network to reconstruct the data. Then you go back to sleep, and the cycle repeats. Hence the name.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Helmholtz machine">
 ### The Helmholtz machine
 
 The Wake-Sleep algorithm trains a **Helmholtz machine** \cite{hinton1995wakesleep}, a stochastic neural network with two complementary halves:
@@ -50,7 +51,7 @@ Both networks are deep and stochastic — typically sigmoid belief units whose o
 The architecture looks, at first glance, like a variational autoencoder \cite{kingma2014vae}. It is not: variational autoencoders train both networks by maximising a single variational lower bound, and they require a Gaussian latent space with a tractable KL-divergence term. Helmholtz machines are wilder: the latent variables are binary, the prior can be anything, and the two networks are trained by *two different objectives that don't share a likelihood at all*.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The two phases">
 ### The two phases
 
 **Wake phase.** Real data $x$ is clamped at the bottom. The recognition network samples a latent code $h_w$ from the bottom-up posterior
@@ -100,7 +101,7 @@ Intuitively: *"Imagine something. Now teach the bottom-up world to recognise it 
 The algorithm is the literal definition of a *self-supervised* learning loop, half a decade before the term was coined. The data and the labels come from the same model, in alternation. Each iteration touches every weight in the system; neither phase ever needs a human label.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Why it is fascinating and why it fell out of fashion">
 ### Why it is fascinating and why it fell out of fashion
 
 The Wake-Sleep algorithm is fascinating because it shows that **backpropagation is not the only learning signal**. Both phases use local gradient updates. Neither phase requires a labelled dataset. Neither phase needs the joint distribution to be tractable. The whole procedure is a *bootstrap*: the recognition model learns to invert the generative model, and the generative model learns to be invertible by the recognition model.
@@ -114,7 +115,7 @@ It fell out of fashion for three reasons:
 But Wake-Sleep's spirit is everywhere. Self-supervised pretraining \cite{devlin2019bert}, contrastive learning \cite{chen2020simclr}, denoising autoencoders \cite{vincent2008dae}, and the masked-token prediction that trains GPT \cite{radford2019language} are all, in different costumes, "generate one half of the data from the other half and train the inverse mapping". The recipe outlived its first incarnation.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="A worked picture">
 ### A worked picture
 
 | Phase | Clamped input | Optimised network |
@@ -135,7 +136,7 @@ The "Helmholtz machine" is named after \citeauthor{helmholtz1867handbook}'s \cit
 The previous chapters treat unsupervised learning as the poor cousin of language modelling. In fact, **clustering** is one of the oldest, most-used, and most theoretically interesting problems in machine learning. Every year, every scientific field, every business produces datasets whose first exploratory step is: *how do these points group together?* The answer is never "with a Transformer". It is always one of the classical algorithms in this section.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="k-means: the workhorse">
 ### $k$-means: the workhorse
 
 #### Why it was invented
@@ -196,7 +197,7 @@ Each iteration computes $n$ distances of length $d$ for each of the $k$ centroid
 The weakness is that $k$-means only finds *convex, equal-volume* clusters. Two interleaving crescents will defeat it; a thin arc inside a fat disc will defeat it; any cluster whose centroid is not representative of its members will defeat it. The algorithms in the next sections were invented precisely to fix these failures.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Hierarchical clustering: the dendrogram">
 ### Hierarchical clustering: the dendrogram
 
 #### Why it was invented
@@ -258,7 +259,7 @@ Hierarchical clustering is the workhorse of **single-cell transcriptomics** — 
 The divisive direction (top-down, starting from one cluster and recursively splitting) is much rarer in practice because the splitting criterion is hard to define; the divisive analogue of Ward's linkage has been studied by \citeauthor{chavent1974divisive} (\citeyear{chavent1974divisive}) and others.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="DBSCAN: density-based, parameter-light">
 ### DBSCAN: density-based, parameter-light
 
 #### Why it was invented
@@ -293,7 +294,7 @@ DBSCAN's virtues: it finds arbitrarily-shaped clusters (including crescents and 
 A revision, **HDBSCAN** \cite{campello2013hdbscan, campello2015hdbscan}, removes the $\varepsilon$ parameter entirely by computing a hierarchy of density estimates and extracting the most stable clusters. A further refinement, **DBSCAN Revisited, Revisited** \cite{schubert2017dbscan}, fixes a long-standing non-determinism in DBSCAN's handling of border points. These algorithms are the production choice for anomaly detection, geospatial clustering, and anywhere the number of clusters is genuinely unknown.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Expectation–Maximisation and Gaussian Mixture Models">
 ### Expectation–Maximisation and Gaussian Mixture Models
 
 #### Why it was invented
@@ -343,7 +344,7 @@ Each of these has been the right tool for some important problem — spectral cl
 The course has spent many chapters describing the Transformer. On real-world *tabular* data — the bread and butter of medical, financial, scientific, and industrial machine learning — Transformers are routinely beaten by algorithms that predate the field of deep learning. The state of the art on a representative Kaggle tabular benchmark in 2025 is a **gradient-boosted decision tree**, frequently LightGBM or XGBoost. The paper that introduced the technique is from 2001. The data structure it exploits — a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ and a label vector $\mathbf{y}$ — predates machine learning itself.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Decision trees: O(log n) decisions per row">
 ### Decision trees: $O(\log n)$ decisions per row
 
 #### Why they were invented
@@ -409,7 +410,7 @@ A **Naive Bayes** classifier assumes that the features are conditionally indepen
 Naive Bayes has a long pedigree: \citeauthor{maron1961nb} (\citeyear{maron1961nb}) is usually credited with the first automatic text classifier and uses the independence assumption; \citeauthor{lewis1998nb} (\citeyear{lewis1998nb}) popularised the *multinomial* version that is standard for spam filtering. A modern variant, the **Bayesian Network** \cite{pearl1985bn, pearl1988book}, replaces the independence assumption with a directed acyclic graph of conditional dependencies and is the parent of the entire field of probabilistic graphical models.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Linear and logistic regression">
 ### Linear and logistic regression
 
 The simplest models are sometimes the best. **Linear regression** \cite{gauss1809theory, legendre1805methodes} fits $y \approx \mathbf{w}^\top \mathbf{x} + b$ by least squares. **Logistic regression** \cite{cox1958logistic, berkson1944logistic} fits $P(y = 1 \mid \mathbf{x}) = \sigma(\mathbf{w}^\top \mathbf{x} + b)$ by maximum likelihood. Both are convex, both are interpretable, both produce calibrated probabilities, both can be regularised in well-understood ways ($L_1$ for sparsity, $L_2$ for stability, elastic net for both), and both ship with confidence intervals.
@@ -423,7 +424,7 @@ For most problems in industry, "what does the linear regression predict?" is the
 The course has so far treated probability as a tool. There is another way to use it. In the **Bayesian** view, probability is *degree of belief*, the model parameters themselves are random variables, and learning means updating a prior distribution over parameters to a posterior distribution given the data. The mathematical engine is Bayes' theorem; the practical algorithms are Markov Chain Monte Carlo (MCMC), variational inference, and the Kalman filter. Every Bayesian method is, at heart, a way to compute (or approximate) a posterior.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="MCMC: drawing from the posterior">
 ### MCMC: drawing from the posterior
 
 When the posterior is intractable — which is most of the time — we draw samples from it by constructing a Markov chain whose stationary distribution *is* the posterior. The classic recipe is **Metropolis–Hastings** \cite{metropolis1953mh, hastings1970mh}: at each step, propose a move from the current state, accept it with probability $\min(1, \frac{p(\mathbf{x}') q(\mathbf{x} \mid \mathbf{x}')}{p(\mathbf{x}) q(\mathbf{x}' \mid \mathbf{x})})$, and repeat. **Gibbs sampling** \cite{geman1984gibbs} is a special case where the proposal is the conditional distribution of one coordinate given all the others; it is embarrassingly easy to implement but mixes poorly when coordinates are correlated. **Hamiltonian Monte Carlo** \cite{duane1987hmc, neal2011hmc} uses gradient information to propose distant moves without losing acceptance rate; **No-U-Turn-Sampling (NUTS)** \cite{hoffman2014nuts} is the adaptive variant of HMC that almost all modern probabilistic programming systems default to.
@@ -493,7 +494,7 @@ Convergence proofs for GAs are subtle. The **schema theorem** \cite{holland1975g
 The course has covered Reinforcement Learning and the use of RL in fine-tuning LLMs. That coverage was, by design, narrow. The wider field of RL is one of the richest areas of machine learning, and contains some of the most striking demonstrations of artificial intelligence ever achieved: TD-Gammon \cite{tesauro1995tdgammon}, AlphaGo \cite{silver2016go}, AlphaZero \cite{silver2018zero}, the Atari DQN \cite{mnih2015dqn}, the robotics work of \citeauthor{levine2016guidance} (\citeyear{levine2016guidance}), and the open-ended exploration of \citeauthor{openai2021dota} (\citeyear{openai2021dota}). None of these depend on a Transformer.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Tabular RL and the classical algorithms">
 ### Tabular RL and the classical algorithms
 
 The starting point is the **Markov Decision Process** \cite{puterman1994mdp}: states $s$, actions $a$, transition dynamics $P(s' \mid s, a)$, reward function $r(s, a)$, discount factor $\gamma$. The objective is a policy $\pi(a \mid s)$ that maximises the expected discounted return. Three classical algorithms solve exactly the tabular case:
@@ -566,7 +567,7 @@ A **knowledge graph** is a directed labelled multigraph of entities and relation
 Recommender systems are one of the highest-revenue applications of machine learning in industry. They are also the canonical example of a problem where the algorithm of choice has nothing to do with Transformers.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Collaborative filtering">
 ### Collaborative filtering
 
 A **collaborative filter** predicts a user's preference for an item based on other users' preferences. The simplest version is the **neighbourhood method**: find the $k$ users whose past behaviour is most similar to yours, and predict your rating for an item as the weighted average of their ratings for that item. The more famous version is **matrix factorisation** \cite{koren2009mf}: factor the user–item rating matrix $R \in \mathbb{R}^{n \times m}$ as the product of two low-rank matrices $U \in \mathbb{R}^{n \times k}$ and $V \in \mathbb{R}^{m \times k}$, learnt by minimising the regularised squared error on the observed entries. Each user and each item has a $k$-dimensional embedding; the prediction is the dot product. The Netflix Prize \cite{bennett2007netflix} (2006–2009) was won by a blend of matrix factorisation and neighbourhood methods; the winning team \cite{bell2007netflix} showed that even simple SVD on the rating matrix was a strong baseline.
@@ -594,7 +595,7 @@ The lesson: time-series forecasting is a problem where *the right inductive bias
 Many real-world data are graphs: social networks, molecules, knowledge graphs, transport networks, codebases, citation networks, the web itself. The field of **graph machine learning** has its own algorithms that are rarely discussed in the LLM literature.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="PageRank and random walks">
 ### PageRank and random walks
 
 The web is a graph of 30 billion pages and a trillion edges. Ranking them by importance is the problem **PageRank** \cite{brin1998pagerank, page1999pagerank} solves: a page is important if it is linked to by other important pages. Formally, the PageRank vector is the stationary distribution of a random walk with teleportation:
@@ -614,7 +615,7 @@ The random walk is the **eigenvector** of $\mathbf{A}$ corresponding to eigenval
 A **community** is a set of nodes that are more densely connected to each other than to the rest of the graph. **Girvan–Newman** \cite{girvan2002gn} removes edges with the highest *betweenness* (number of shortest paths passing through) iteratively. **Louvain** \cite{blondel2008louvain} optimises modularity greedily in $O(n \log n)$. **Leiden** \cite{traag2019leiden} is a refinement of Louvain that guarantees well-connected communities. These algorithms are the production tool for community detection in social networks, biological networks, and citation networks, and they are the workhorse of the single-cell transcriptomics pipelines mentioned earlier \cite{traag2019louvain}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Graph Neural Networks">
 ### Graph Neural Networks
 
 A **Graph Neural Network** \cite{scarselli2008gnn, kipf2017gcn} passes messages between neighbouring nodes and updates their representations. The basic GCN update is
@@ -683,7 +684,7 @@ href="deep_theory">Why Do Networks Generalize?</a>).
 A **capsule** \cite{hinton2011capsules, sabour2017capsules} is a small group of neurons whose activations represent the *pose* (position, orientation, scale, deformation) of an entity. The output of a capsule is a vector, not a scalar; the *length* of the vector represents the probability that the entity exists, and the *direction* represents its pose. Capsules are connected by **routing-by-agreement**: a low-level capsule sends its output to a high-level capsule whose pose prediction matches the input. The original motivation was that convolutional networks are confused by viewpoint changes in ways that humans are not (the "Picasso problem"). Capsule networks have not displaced CNNs in practice, but the *vector-valued neuron* idea is alive in the geometric deep learning literature.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Flows, VAEs, GANs, diffusion, autoregressive">
 ### Normalising flows, VAEs, GANs, diffusion, autoregressive models
 
 These five families are the canonical deep generative models. They were all covered briefly above (Wake-Sleep, variational inference). They are mentioned here only to note that each is a self-contained *modelling paradigm*, not a variation on the Transformer:
@@ -739,7 +740,7 @@ These are the production tools for fraud and intrusion detection. They are *fast
 If you train an autoencoder on normal data, anomalous inputs will have high reconstruction error. This is the basis of every reconstruction-based anomaly detector, from the simplest autoencoder \cite{hawkins2002ae} to modern variants using variational autoencoders \cite{an2015vaeano}. The fundamental limitation is that autoencoders can be *too good* — a sufficiently expressive autoencoder will reconstruct anomalies almost as well as normal data, blurring the distinction. The literature is rich with techniques to mitigate this: denoising autoencoders \cite{vincent2008dae}, memory-based autoencoders \cite{gong2019memoryae}, contrastive learning on top of the latent code.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Information-theoretic methods">
 ## Information-theoretic methods
 
 The **information bottleneck** method \cite{tishby2000informationbottleneck} finds a compressed representation $T$ of an input $X$ that is maximally informative about an output $Y$. The optimisation is
