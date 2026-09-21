@@ -439,15 +439,31 @@
 		return { interests: interests, cats: cats };
 	}
 
+	/** parse a data-mathlevel / math: value → 0–100, or null if absent */
+	function parseMathReq(v) {
+		if (v === null || v === undefined || v === '') return null;
+		const n = parseInt(v, 10);
+		if (isNaN(n)) return null;
+		return Math.max(MATH_MIN, Math.min(MATH_MAX, n));
+	}
+
 	/** The heart of the adaptation: given a unit's tags (fine topics
-	    AND/OR categories), decide how it should be displayed and *why*.
+	    AND/OR categories) and an optional math-comfort requirement,
+	    decide how it should be displayed and *why*.
 	    Three states:
 	      'full'    — show normally
 	      'partial' — visible but dimmed, with a "why" chip (still readable)
 	      'off'     — tucked away behind a reason banner
 	    Set-theory: the more of your dials a unit misses, the more it
-	    recedes — but it never disappears without a clear reason. */
-	function scoreUnit(tagIds) {
+	    recedes — but it never disappears without a clear reason.
+	    `opts.mathReq` (0–100) tucks the unit when the reader's math
+	    comfort is below it, independent of interests and tone. The
+	    returned `why` ∈ {null,'category','math','interests','layman'}
+	    names the single binding reason so the home page can group tucked
+	    tiles by category, and `whyLabel` is its human label. */
+	function scoreUnit(tagIds, opts) {
+		opts = opts || {};
+		const mathReq = parseMathReq(opts.mathReq);
 		const parts = splitTags(tagIds);
 		const interests = parts.interests;
 		const cats = parts.cats;
@@ -459,21 +475,29 @@
 			return CAT_BY_ID[id].kind === 'suppress' && catsMap[id] === false;
 		});
 		if (suppressed.length) {
-			return { state: 'off', reason: 'you switched off ' + suppressed.map(labelFor).join(', ') };
+			const whyLabel = suppressed.map(labelFor).join(', ');
+			return { state: 'off', reason: 'you switched off ' + whyLabel, why: 'category',
+				whyLabel: whyLabel, interests: interests, cats: cats, mathReq: mathReq };
 		}
 
 		// 2) graded interest match over the fine topics
 		let state = 'full';
 		let reason = '';
+		let why = null;
+		let whyLabel = '';
 		if (interests.length) {
 			const hits = interests.filter(function (id) { return topicsMap[id] !== false; });
 			if (hits.length === 0) {
 				state = 'off';
 				reason = 'outside your selected interests';
+				why = 'interests';
+				whyLabel = 'interests';
 			} else if (hits.length < interests.length) {
 				state = 'partial';
 				const off = interests.filter(function (id) { return topicsMap[id] === false; }).map(labelFor);
 				reason = 'partial match — ' + off.join(', ') + ' switched off';
+				why = 'interests';
+				whyLabel = off.join(', ');
 			}
 		}
 
@@ -482,9 +506,23 @@
 		    cats.indexOf('interested-layman') === -1) {
 			state = 'partial';
 			reason = 'beyond the layman core';
+			why = 'layman';
+			whyLabel = 'layman core';
 		}
 
-		return { state: state, reason: reason, interests: interests, cats: cats };
+		// 4) math-comfort gate: independent of interests/tone. If the unit
+		//    needs more math than the reader is comfortable with, it is
+		//    tucked — and this is the binding reason (it can escalate a
+		//    partial interest match to fully tucked).
+		if (mathReq !== null && getMathLevel() < mathReq) {
+			state = 'off';
+			reason = 'needs ~' + mathReq + '% math comfort (you are at ' + getMathLevel() + '%)';
+			why = 'math';
+			whyLabel = 'math proficiency';
+		}
+
+		return { state: state, reason: reason, why: why, whyLabel: whyLabel,
+			interests: interests, cats: cats, mathReq: mathReq };
 	}
 
 	/** how many on-DOM units (sections + home tiles) carry category `id`?
@@ -788,6 +826,13 @@
 					'</div>',
 					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
 				'</div>',
+				'<div class="topics-math-comfort" role="group" aria-label="Math comfort level">'
+					+ '<span class="topics-math-label">Math comfort level</span>'
+					+ '<div class="topics-math-control">'
+						+ '<input type="range" class="topics-math-range" min="' + MATH_MIN + '" max="' + MATH_MAX + '" step="5" value="' + getMathLevel() + '" aria-label="Math comfort, percent">'
+						+ '<span class="topics-math-val">' + getMathLevel() + '%</span>'
+					+ '</div>'
+				'</div>',
 				'<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">',
 					'<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>',
 					'<div class="topics-cat-row" id="topics-cat-row"></div>',
@@ -907,6 +952,9 @@
 				if (redo()) flashHint('Redid · Ctrl/⌘+Z to undo');
 			}
 		});
+
+		const mathSlider = overlay.querySelector('.topics-math-range');
+		if (mathSlider) wireMathSlider(overlay);
 	}
 
 	let _hintTimer = null;
@@ -1167,19 +1215,69 @@
 		return { label: topicIds[0] || 'this section', icon: '✦' };
 	}
 
+	/* ── 6a. Smooth height animation ──────────────────────────────
+	   The whole point: a tucked block grows/shrinks over ~200 ms while
+	   its content fades, exactly the way the toggleable full-quotes do
+	   (see smartquote() in helper.js) — no snap. Reduced-motion users
+	   get the instant version. All of this is best-effort: any failure
+	   falls back to the immediate show/hide so nothing can break. */
+	const TUCK_MS = 220;
+	const TUCK_EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+	function animateHeight(el, fromPx, toPx, duration, onDone) {
+		if (!el || !el.style) { if (onDone) onDone(); return; }
+		if (prefersReducedMotion() || !isFinite(fromPx) || fromPx === toPx) {
+			el.style.height = (toPx == null) ? 'auto' : (toPx + 'px');
+			if (onDone) onDone();
+			return;
+		}
+		try {
+			el.style.overflow = 'hidden';
+			el.style.willChange = 'height';
+			el.style.height = fromPx + 'px';
+			void el.offsetHeight; // commit the start height before transitioning
+			el.style.transition = 'height ' + duration + 'ms ' + TUCK_EASE;
+			el.style.height = toPx + 'px';
+			let done = false;
+			const finish = function () {
+				if (done) return;
+				done = true;
+				el.style.transition = '';
+				el.style.willChange = '';
+				el.style.overflow = '';
+				el.style.height = ''; // release to auto so late-loading content can still grow
+				el.removeEventListener('transitionend', handler);
+				if (onDone) onDone();
+			};
+			const fallback = setTimeout(finish, duration + 140);
+			const handler = function (e) {
+				if (e.target === el && e.propertyName === 'height') { clearTimeout(fallback); finish(); }
+			};
+			el.addEventListener('transitionend', handler);
+		} catch (e) {
+			el.style.height = (toPx == null) ? 'auto' : (toPx + 'px');
+			derr('animateHeight failed, fell back to instant.', e);
+			if (onDone) onDone();
+		}
+	}
+
 	/** (re)build the "tucked away" banner for a collapsed block, with the
-	    concrete *why* so a reader always knows why something faded. */
-	function setBanner(block, topicIds, reason) {
+	    concrete *why* so a reader always knows why something faded. The
+	    title comes from `data-optionaltitle` when present (a titled
+	    optional block); otherwise it is derived from the block's topics. */
+	function setBanner(block, spec) {
+		const score = spec.score;
 		const old = block.querySelector(':scope > .topic-block-banner');
 		if (old) old.remove();
-		const meta = pickMeta(topicIds);
+		const title = spec.title || pickMeta(spec.topicIds).label;
+		const icon = (spec.topicIds && spec.topicIds.length) ? pickMeta(spec.topicIds).icon : (score.why === 'math' ? '∫' : '✦');
 		const banner = document.createElement('div');
-		banner.className = 'topic-block-banner';
+		banner.className = 'topic-block-banner' + (spec.title ? ' topic-block-banner-titled' : '');
 		banner.innerHTML = [
-			'<span class="topic-block-banner-icon" aria-hidden="true">', escAttr(meta.icon), '</span>',
+			'<span class="topic-block-banner-icon" aria-hidden="true">', escAttr(icon), '</span>',
 			'<span class="topic-block-banner-text">',
-				'<strong>', escAttr(meta.label), '</strong> tucked away — ',
-				escAttr(reason || 'outside your selected interests'),
+				'<strong>', escAttr(title), '</strong> tucked away — ',
+				escAttr(score.reason || 'outside your selected interests'),
 				'. <span class="topic-block-banner-hint">Still curious? Peek inside — nothing is deleted.</span>',
 			'</span>',
 			'<button type="button" class="topic-block-reveal">',
@@ -1188,7 +1286,7 @@
 		].join('');
 		banner.querySelector('.topic-block-reveal').addEventListener('click', function (ev) {
 			ev.preventDefault();
-			revealBlock(block);
+			applyBlockState(block, block._tbSpec, score, true);
 		});
 		block.insertBefore(banner, block.firstChild);
 		return banner;
@@ -1207,14 +1305,103 @@
 		return inner;
 	}
 
-	function collapseBlock(block, topicIds, score) {
+	/** read everything a managed block tells us about itself */
+	function blockSpec(block) {
+		const topicIds = readTopicAttr(block);
+		const tags = (block.getAttribute('data-tags') || '').split(',')
+			.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+		const scoreIds = topicIds.concat(tags);
+		const mathReq = block.getAttribute('data-mathlevel') || block.getAttribute('data-math-level');
+		return {
+			topicIds: topicIds,
+			scoreIds: scoreIds,
+			mathReq: mathReq,
+			title: block.getAttribute('data-optionaltitle') || ''
+		};
+	}
+
+	/** collapse a block, smoothly if `animate`. Always ends in the steady
+	    `topic-block-collapsed` state (inner hidden, banner visible). */
+	function collapseBlock(block, spec, score, animate) {
 		const chip = block.querySelector(':scope > .topic-partial-chip');
 		if (chip) chip.remove();
-		ensureInner(block);
-		setBanner(block, topicIds, score ? score.reason : 'outside your selected interests');
-		block.classList.add('topic-block-collapsed');
+		const inner = ensureInner(block);
 		block.classList.remove('topic-block-revealed');
 		block.classList.remove('topic-block-partial');
+		block.classList.add('topic-block-collapsed');
+
+		if (animate && !prefersReducedMotion()) {
+			block.classList.add('tb-collapsing');
+			const h = inner.scrollHeight;
+			inner.style.opacity = '1';
+			inner.style.transition = 'opacity ' + TUCK_MS + 'ms ease';
+			setBanner(block, spec);
+			const banner = block.querySelector(':scope > .topic-block-banner');
+			if (banner) { banner.style.transition = 'opacity ' + TUCK_MS + 'ms ease'; banner.style.opacity = '0'; }
+			void inner.offsetHeight;
+			if (banner) requestAnimationFrame(function () { banner.style.opacity = '1'; });
+			inner.style.opacity = '0';
+			block._tbBusy = true;
+			animateHeight(inner, h, 0, TUCK_MS, function () {
+				inner.style.opacity = '';
+				inner.style.transition = '';
+				block.classList.remove('tb-collapsing');
+				block._tbBusy = false;
+				if (block._tbDirty) { block._tbDirty = false; reapplyBlock(block); }
+			});
+		} else {
+			setBanner(block, spec);
+			const banner = block.querySelector(':scope > .topic-block-banner');
+			if (banner) { banner.style.transition = ''; banner.style.opacity = ''; }
+			inner.style.opacity = '';
+		}
+	}
+
+	/** expand (reveal) a block, smoothly if `animate`. Ends with the block
+	    fully visible; the banner is removed. */
+	function revealBlock(block, animate) {
+		const inner = block.querySelector(':scope > .topic-block-inner');
+		const banner = block.querySelector(':scope > .topic-block-banner');
+		block.classList.remove('topic-block-collapsed');
+		block.classList.add('topic-block-revealed');
+
+		if (banner && animate && !prefersReducedMotion()) {
+			banner.style.transition = 'opacity 140ms ease';
+			banner.style.opacity = '0';
+		}
+
+		if (inner && animate && !prefersReducedMotion()) {
+			block.classList.add('tb-expanding');
+			inner.style.display = 'block';
+			const h = inner.scrollHeight;
+			inner.style.height = '0px';
+			inner.style.opacity = '0';
+			inner.style.transition = 'opacity ' + TUCK_MS + 'ms ease';
+			void inner.offsetHeight;
+			inner.style.opacity = '1';
+			if (banner) setTimeout(function () { if (banner.parentNode) banner.remove(); }, 150);
+			block._tbBusy = true;
+			animateHeight(inner, 0, h, TUCK_MS, function () {
+				inner.style.opacity = '';
+				inner.style.transition = '';
+				inner.style.display = '';
+				block.classList.remove('tb-expanding');
+				block._tbBusy = false;
+				if (banner && banner.parentNode) banner.remove();
+				if (block._tbDirty) { block._tbDirty = false; reapplyBlock(block); }
+			});
+		} else {
+			if (banner) banner.remove();
+			inner.style.height = '';
+			inner.style.opacity = '';
+			inner.style.display = '';
+		}
+	}
+
+	function reapplyBlock(block) {
+		if (block._tbScore && block._tbSpec) {
+			applyBlockState(block, block._tbSpec, block._tbScore, true);
+		}
 	}
 
 	/** slim chip shown on a PARTIAL section: it stays readable, just
@@ -1234,33 +1421,56 @@
 		}
 	}
 
-	function applyBlockState(block, topicIds, score) {
-		if (score.state === 'off') {
-			collapseBlock(block, topicIds, score);
+	/** reconcile one managed block to its target `score.state`, animating
+	    only when the state actually changed and `animate` is set. */
+	function applyBlockState(block, spec, score, animate) {
+		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; return; }
+		block._tbScore = score;
+		block._tbSpec = spec;
+		const wasCollapsed = block.classList.contains('topic-block-collapsed');
+		const nowCollapsed = score.state === 'off';
+
+		if (nowCollapsed) {
+			if (!wasCollapsed) {
+				collapseBlock(block, spec, score, !!animate);
+			} else if (block._tbReason !== score.reason) {
+				// already tucked, but the *why* changed — update the banner only
+				setBanner(block, spec);
+			}
+			block._tbReason = score.reason;
 			return;
 		}
-		if (block.classList.contains('topic-block-collapsed')) revealBlock(block);
+		if (wasCollapsed) revealBlock(block, !!animate);
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);
+		block._tbReason = score.state;
 	}
 
-	function revealBlock(block) {
-		const inner = block.querySelector(':scope > .topic-block-inner');
-		if (inner) {
-			while (inner.firstChild) block.insertBefore(inner.firstChild, inner);
-			inner.remove();
-		}
-		const banner = block.querySelector(':scope > .topic-block-banner');
-		if (banner) banner.remove();
-		block.classList.remove('topic-block-collapsed');
-		block.classList.add('topic-block-revealed');
-	}
+	/** (re)build visibility for every managed block + tiles + indicators.
+	    `opts.animate` toggles the ~200 ms height animation (true on user
+	    changes, false for the initial / post-render passes so nothing
+	    flashes on load). `opts.tuckMd:false` defers tucking of markdown
+	    blocks until after renderMarkdown() has run. */
+	function applyVisibility(opts) {
+		opts = opts || {};
+		const animate = !!opts.animate;
+		const tuckMd = opts.tuckMd !== false;
 
-	function applyVisibility() {
-		document.querySelectorAll('.topic-block').forEach(function (block) {
-			const topicIds = readTopicAttr(block);
-			if (!topicIds.length) return;
-			applyBlockState(block, topicIds, scoreUnit(topicIds));
+		const managed = document.querySelectorAll(
+			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]');
+		managed.forEach(function (block) {
+			if (block.classList.contains('optional')) return; // the manual .optional system owns these
+			if (!block.classList.contains('topic-block')) block.classList.add('topic-block');
+			const isMd = block.classList.contains('md');
+			if (isMd && !tuckMd) {
+				// Leave markdown blocks visible for now; the post-render pass
+				// (tuckMd:true) tucks them once their markup is live.
+				block._tbState = 'deferred';
+				return;
+			}
+			const spec = blockSpec(block);
+			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq });
+			applyBlockState(block, spec, score, animate);
 		});
 
 		// Inline skipped markers (for ad-hoc skipped-in-place text)
@@ -1270,7 +1480,11 @@
 			el.classList.toggle('topic-inline-hidden', !anyEnabled(topicIds));
 		});
 
-		dimCourseTiles();
+		if (isIndexPage()) {
+			regroupTuckedTiles(animate);
+		} else {
+			dimCourseTiles();
+		}
 		updateSkipIndicator();
 		applyMathAlts();
 
@@ -1308,7 +1522,7 @@
 		});
 	}
 
-	/* ── 7. Course tile dimming (home page) — 3-state ─────────── */
+	/* ── 7. Course tile dimming (non-index pages) — 3-state ───── */
 	function dimCourseTiles() {
 		const tiles = document.querySelectorAll('[data-topics], [data-tags]');
 		tiles.forEach(function (tile) {
@@ -1316,10 +1530,11 @@
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 			const cats = (tile.getAttribute('data-tags') || '').split(',')
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+			const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
 			const all = interests.concat(cats);
 			tile.classList.remove('topic-tile-dim', 'topic-tile-partial', 'topic-tile-active');
-			if (!all.length) return;
-			const score = scoreUnit(all);
+			if (!all.length && mathReq == null) return;
+			const score = scoreUnit(all, { mathReq: mathReq });
 			if (score.state === 'off') {
 				tile.classList.add('topic-tile-dim');
 				tile.title = 'Tucked away — ' + score.reason;
@@ -1331,6 +1546,179 @@
 				tile.title = 'In your interests';
 			}
 		});
+	}
+
+	/* ── 7b. Home page: regroup tucked tiles into openable tabs ──
+	   Instead of just dimming a lesson tile on the index page, we gather
+	   every 'off' tile into a single "Tucked away by your settings" area
+	   grouped by *why* it was tucked (math proficiency / a tone category /
+	   interests). Each group is a clickable, openable summary tab that
+	   smoothly expands to reveal the (still-clickable) lessons inside — so
+	   nothing is lost, it is just gathered out of the way. */
+	var taGroups = {};
+	var taArea = null;
+	var gridsRemembered = false;
+
+	function isIndexPage() {
+		return !!document.querySelector('.course-overview') && !!document.querySelector('.course-tile');
+	}
+
+	function ensureTuckedArea() {
+		if (taArea && taArea.parentNode) return taArea;
+		const overview = document.querySelector('.course-overview');
+		if (!overview) return null;
+		taArea = document.createElement('div');
+		taArea.className = 'tucked-away-area';
+		taArea.setAttribute('aria-label', 'Lessons tucked away by your current settings');
+		taArea.innerHTML =
+			'<div class="tucked-away-title">'
+			+ '<span class="tucked-away-icon" aria-hidden="true">🔎</span>'
+			+ '<span>Tucked away by your settings</span>'
+			+ '<span class="tucked-away-sub">Click a group to expand — nothing is deleted.</span>'
+			+ '</div>';
+		overview.appendChild(taArea);
+		return taArea;
+	}
+
+	function rememberGrids() {
+		if (gridsRemembered) return;
+		document.querySelectorAll('.course-tiles').forEach(function (grid) {
+			grid._taTiles = Array.from(grid.querySelectorAll('.course-tile'));
+		});
+		gridsRemembered = true;
+	}
+
+	function restoreAllTiles() {
+		document.querySelectorAll('.course-tiles').forEach(function (grid) {
+			(grid._taTiles || []).forEach(function (tile) { grid.appendChild(tile); });
+		});
+	}
+
+	function groupKeyFor(score) {
+		if (score.why === 'math') return 'math';
+		if (score.why === 'category') return 'cat:' + score.whyLabel;
+		return 'interests';
+	}
+	function groupLabelFor(score) {
+		if (score.why === 'math') return 'Needs more math comfort';
+		if (score.why === 'category') return score.whyLabel;
+		return 'Outside your interests';
+	}
+	function groupIconFor(score) {
+		if (score.why === 'math') return '∫';
+		if (score.why === 'category') return (catOf(score.whyLabel) || {}).icon || '◦';
+		return '✦';
+	}
+
+	function ensureGroup(key, label, icon) {
+		if (taGroups[key]) {
+			taGroups[key].labelEl.textContent = label;
+			taGroups[key].iconEl.textContent = icon;
+			return taGroups[key];
+		}
+		const g = document.createElement('div');
+		g.className = 'tucked-group';
+		const header = document.createElement('button');
+		header.type = 'button';
+		header.className = 'tucked-group-header';
+		header.innerHTML =
+			'<span class="tucked-group-caret" aria-hidden="true">▸</span>'
+			+ '<span class="tucked-group-icon" aria-hidden="true">' + escAttr(icon) + '</span>'
+			+ '<span class="tucked-group-label">' + escAttr(label) + '</span>'
+			+ '<span class="tucked-group-count"></span>';
+		const clip = document.createElement('div');
+		clip.className = 'tucked-group-clip';
+		clip.style.height = '0px';
+		const body = document.createElement('div');
+		body.className = 'tucked-group-body';
+		clip.appendChild(body);
+		g.appendChild(header);
+		g.appendChild(clip);
+		taArea.appendChild(g);
+		const rec = {
+			key: key, header: header, clip: clip, body: body,
+			iconEl: header.querySelector('.tucked-group-icon'),
+			labelEl: header.querySelector('.tucked-group-label'),
+			countEl: header.querySelector('.tucked-group-count'),
+			caret: header.querySelector('.tucked-group-caret'),
+			expanded: false, count: 0
+		};
+		header.addEventListener('click', function () {
+			rec.expanded = !rec.expanded;
+			setGroupOpen(rec, rec.expanded, true);
+		});
+		taGroups[key] = rec;
+		return rec;
+	}
+
+	function setGroupOpen(g, open, animate) {
+		if (!g) return;
+		g.header.classList.toggle('tucked-group-open', open);
+		g.caret.textContent = open ? '▾' : '▸';
+		if (!animate || prefersReducedMotion()) {
+			g.clip.style.height = open ? 'auto' : '0px';
+			return;
+		}
+		if (open) {
+			g.clip.style.display = 'block';
+			const h = g.body.scrollHeight;
+			g.clip.style.height = '0px';
+			void g.clip.offsetHeight;
+			animateHeight(g.clip, 0, h, TUCK_MS, function () { g.clip.style.height = 'auto'; });
+		} else {
+			const h = g.clip.scrollHeight;
+			g.clip.style.height = h + 'px';
+			void g.clip.offsetHeight;
+			animateHeight(g.clip, h, 0, TUCK_MS);
+		}
+	}
+
+	function regroupTuckedTiles(animate) {
+		if (!isIndexPage()) return;
+		const area = ensureTuckedArea();
+		if (!area) return;
+		try {
+			rememberGrids();
+			restoreAllTiles();
+			Object.keys(taGroups).forEach(function (k) {
+				const g = taGroups[k];
+				g.body.innerHTML = '';
+				g.count = 0;
+			});
+
+			const tiles = Array.from(document.querySelectorAll('.course-tile'));
+			let tucked = 0;
+			tiles.forEach(function (tile) {
+				const interests = (tile.getAttribute('data-topics') || '').split(',')
+					.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+				const cats = (tile.getAttribute('data-tags') || '').split(',')
+					.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+				const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
+				const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
+				if (score.state !== 'off') return;
+				tucked++;
+				const g = ensureGroup(groupKeyFor(score), groupLabelFor(score), groupIconFor(score));
+				g.body.appendChild(tile);
+				g.count++;
+			});
+
+			Object.keys(taGroups).forEach(function (k) {
+				const g = taGroups[k];
+				if (!g.body.children.length) {
+					g.header.remove();
+					g.clip.remove();
+					delete taGroups[k];
+					return;
+				}
+				g.countEl.textContent = g.body.children.length + ' lesson' + (g.body.children.length === 1 ? '' : 's');
+				setGroupOpen(g, g.expanded, false);
+			});
+
+			area.classList.toggle('tucked-away-empty', tucked === 0);
+			dlog('home page: ' + tucked + ' tile(s) tucked into ' + Object.keys(taGroups).length + ' group(s)');
+		} catch (e) {
+			derr('regroupTuckedTiles failed; leaving tiles as-is.', e);
+		}
 	}
 
 	/* ── 8. Per-page "X tucked / partial" indicator ───────────── */
@@ -1373,7 +1761,8 @@
 		renderGrid();
 		renderCategories();
 		renderAudienceSelection();
-		applyVisibility(); // also re-renders any inline widget
+		// User-initiated change → animate the ~200 ms tuck/reveal.
+		applyVisibility({ animate: true }); // also re-renders any inline widget
 		try {
 			document.dispatchEvent(new CustomEvent('topics:change', { detail: { map: normalize(activeMap()) } }));
 		} catch (e) { /* old browsers */ }
@@ -1467,7 +1856,91 @@
 		}, items.length * perItem + 520);
 	}
 
+	/* ── 10a. Math-comfort slider + persona-card helpers ───────── */
+	var _skipInlineWidget = false; // true while a slider is mid-drag (see below)
+
+	/** load a core persona's curated interests AND math comfort, in one
+	    undo step. Does not touch the profile/level audience axes. */
+	function applyCorePersona(id) {
+		const p = (CORE_PERSONAS || []).find(function (x) { return x.id === id; });
+		if (!p) return;
+		pushHistory();
+		const allow = {};
+		(p.topics || []).forEach(function (t) { allow[cssSafe(t)] = true; });
+		const topics = {};
+		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
+		const cur = activePref();
+		cur.mathLevel = clampMath(p.math);
+		dlog('core persona →', p.label, '(math comfort ' + cur.mathLevel + '%)');
+		persistPref({ topics: topics, mathLevel: cur.mathLevel });
+		flashHint('Loaded ' + p.label + ' · the rest of the options are open below');
+	}
+
+	function mathSliderHtml() {
+		const v = getMathLevel();
+		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort">'
+			+ '<div class="math-comfort-top">'
+			+   '<span class="math-comfort-label">∑ Math you are comfortable with</span>'
+			+   '<span class="math-comfort-val">' + v + '%</span>'
+			+ '</div>'
+			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
+			+ '" step="5" value="' + v + '" aria-label="Math comfort, percent">'
+			+ '<div class="math-comfort-scale"><span>light · intuition first</span><span>heavy · all the proofs</span></div>'
+			+ '</div>';
+	}
+
+	function wireMathSlider(h) {
+		const range = h.querySelector('.math-comfort-range');
+		if (!range) return;
+		const val = h.querySelector('.math-comfort-val');
+		let dragging = false;
+		const paint = function () { if (val) val.textContent = range.value + '%'; };
+		range.addEventListener('input', function () {
+			paint();
+			if (!dragging) { dragging = true; pushHistory(); }
+			// Don't let the fireChange→rebuild replace this <input> mid-drag.
+			_skipInlineWidget = true;
+			try { setMathLevel(parseInt(range.value, 10), { pushHistory: false }); }
+			finally { _skipInlineWidget = false; }
+		});
+		range.addEventListener('change', function () {
+			dragging = false;
+			paint();
+			renderInlineWidget(h); // safe again: drag ended, refresh the counts
+		});
+	}
+
+	/** run `changeFn` (which may re-render the widget) while the host's
+	    height eases from its old size to the new one — the "reveal more /
+	    tuck away" feel, no snap. */
+	function swapWidget(h, changeFn) {
+		if (prefersReducedMotion()) { changeFn(); animateInlineReveal(h); return; }
+		try {
+			const startH = h.offsetHeight;
+			h.style.overflow = 'hidden';
+			h.style.height = startH + 'px';
+			void h.offsetWidth;
+			changeFn();
+			const endH = h.scrollHeight;
+			h.style.transition = 'height ' + TUCK_MS + 'ms ' + TUCK_EASE;
+			h.style.height = endH + 'px';
+			let done = false;
+			const fin = function () { if (done) return; done = true; h.style.transition = ''; h.style.overflow = ''; h.style.height = ''; };
+			const fb = setTimeout(fin, TUCK_MS + 180);
+			const onEnd = function (e) { if (e.target === h && e.propertyName === 'height') { clearTimeout(fb); fin(); } };
+			h.addEventListener('transitionend', onEnd);
+			animateInlineReveal(h);
+		} catch (e) {
+			h.style.overflow = ''; h.style.height = ''; h.style.transition = '';
+			derr('swapWidget failed', e);
+		}
+	}
+
 	function renderInlineWidget(host) {
+		// A slider is being dragged in this widget: a full rebuild would
+		// replace the <input> and kill the drag, so leave it alone.
+		if (_skipInlineWidget) return;
+
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total = TOPICS.length;
@@ -1475,60 +1948,112 @@
 		const partial = document.querySelectorAll('.topic-block.topic-block-partial').length;
 
 		const isPersonasHost = (host.getAttribute('data-topics-inline') || '') === 'personas-first';
-		const personasFirst = isPersonasHost && host.dataset.personasExpanded !== '1';
+		const mode = isPersonasHost ? (host.dataset.mode === 'detailed' ? 'detailed' : 'simple') : 'grid';
 
 		const summary = summarySpan(active, total, tucked, partial);
 		const catRow = '<div class="topics-cat-row" role="group" aria-label="Tone filters">'
 			+ '<span class="topics-cat-label-mini" aria-hidden="true">tone</span>'
 			+ categoryChipsHtml() + '</div>';
+		const slider = mathSliderHtml();
 
 		let html, wire;
-		if (personasFirst) {
+		if (mode === 'simple') {
 			html = [
 				'<div class="inline-topics-head">',
 					summary,
-					'<button type="button" class="inline-topics-open inline-topics-secondary" data-open-detailed>detailed settings</button>',
+					'<button type="button" class="inline-topics-open inline-topics-secondary" data-open-detailed>detailed settings <span class="itx-arrow" aria-hidden="true">→</span></button>',
 				'</div>',
+				'<div class="core-personas" role="group" aria-label="Which reader are you?">'
+					+ CORE_PERSONAS.map(function (p) {
+						return '<button type="button" class="core-persona itx-item" data-core-persona="' + escAttr(p.id) + '">'
+							+ '<span class="core-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>'
+							+ '<span class="core-persona-body">'
+							+   '<span class="core-persona-name">' + escAttr(p.label) + '</span>'
+							+   '<span class="core-persona-tag">' + escAttr(p.tagline) + '</span>'
+							+ '</span>'
+							+ '<span class="core-persona-go" aria-hidden="true">→</span>'
+							+ '</button>';
+					}).join('') +
+				'</div>',
+				slider,
+				'<p class="inline-topics-foot">Pick the reader you are — it sets your topics <em>and</em> your math comfort in one click, and opens up the rest of the options. Nothing is locked.</p>'
+			].join('');
+			wire = function (h) {
+				h.querySelectorAll('[data-core-persona]').forEach(function (b) {
+					b.addEventListener('click', function () {
+						h.dataset.mode = 'detailed';
+						swapWidget(h, function () { applyCorePersona(b.getAttribute('data-core-persona')); });
+					});
+				});
+				const det = h.querySelector('[data-open-detailed]');
+				if (det) det.addEventListener('click', function () {
+					h.dataset.mode = 'detailed';
+					swapWidget(h, function () { renderInlineWidget(h); });
+				});
+				wireMathSlider(h);
+			};
+		} else if (mode === 'detailed') {
+			const more = PERSONAS.filter(function (p) { return CORE_PERSONAS.every(function (c) { return c.id !== p.id; }); });
+			html = [
+				'<div class="inline-topics-head">',
+					summary,
+					'<div class="inline-topics-head-actions">',
+						'<button type="button" class="inline-topics-open inline-topics-secondary" data-collapse-types><span class="itx-arrow" aria-hidden="true">←</span> simple</button>',
+						'<button type="button" class="inline-topics-open" data-open-picker>',
+							'<span class="ti-target" aria-hidden="true">',
+							'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
+							'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+							'</svg></span>',
+							'Open interest picker',
+						'</button>',
+					'</div>',
+				'</div>',
+				slider,
 				catRow,
-				'<div class="inline-topics-personas" role="group" aria-label="Classic reader types">' +
-					PERSONAS.map(function (p) {
+				'<div class="inline-persona-more" role="group" aria-label="More reader types">'
+					+ more.map(function (p) {
 						return '<button type="button" class="topics-persona-btn itx-item' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
 							'" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' +
 							'<span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' +
 							escAttr(p.label) + '</button>';
 					}).join('') +
 				'</div>',
-				'<p class="inline-topics-foot">Pick the type you\'re most like — it loads a matching topic set in one click. The <em>tone</em> chips above hide whatever feels heavy, in a click.</p>'
+				'<div class="inline-topics-grid">' + TOPICS.map(function (t) {
+					const on = map[t.id] !== false;
+					return '<button type="button" class="ipill itx-item ' + (on ? 'ipill-on' : 'ipill-off') +
+						'" data-topic-id="' + escAttr(t.id) + '">' +
+						'<span class="ipill-icon">' + escAttr(t.icon) + '</span>' +
+						'<span class="ipill-label">' + escAttr(t.label) + '</span>' +
+						'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span></button>';
+				}).join('') + '</div>',
+				'<p class="inline-topics-foot">Fine-tune any topic · <em>tone</em> chips hide heavy content in one click · the ∑ dial gates the deeper math. Saved in a cookie.</p>'
 			].join('');
 			wire = function (h) {
+				const pick = h.querySelector('[data-open-picker]');
+				if (pick) pick.addEventListener('click', openOverlay);
+				const collapse = h.querySelector('[data-collapse-types]');
+				if (collapse) collapse.addEventListener('click', function () {
+					h.dataset.mode = '';
+					swapWidget(h, function () { renderInlineWidget(h); });
+				});
 				h.querySelectorAll('[data-persona]').forEach(function (b) {
-					b.addEventListener('click', function () {
-						h.dataset.personasExpanded = '1';
-						applyPersona(b.getAttribute('data-persona'));
-						animateInlineReveal(h);
+					b.addEventListener('click', function () { applyPersona(b.getAttribute('data-persona')); });
+				});
+				h.querySelectorAll('.ipill').forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						const id = btn.getAttribute('data-topic-id');
+						setEnabled(id, !isEnabled(id));
 					});
 				});
-				const det = h.querySelector('[data-open-detailed]');
-				if (det) det.addEventListener('click', openOverlay);
 				wireCategoryChips(h);
+				wireMathSlider(h);
 			};
 		} else {
-			const tilesHtml = TOPICS.map(function (t) {
-				const on = map[t.id] !== false;
-				return '<button type="button" class="ipill itx-item ' + (on ? 'ipill-on' : 'ipill-off') +
-					'" data-topic-id="' + escAttr(t.id) + '">' +
-					'<span class="ipill-icon">' + escAttr(t.icon) + '</span>' +
-					'<span class="ipill-label">' + escAttr(t.label) + '</span>' +
-					'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span></button>';
-			}).join('');
-			const backBtn = isPersonasHost
-				? '<button type="button" class="inline-topics-open inline-topics-secondary" data-collapse-types>← types</button>'
-				: '';
+			// non-personas host: the classic full grid (kept for other pages)
 			html = [
 				'<div class="inline-topics-head">',
 					summary,
 					'<div class="inline-topics-head-actions">',
-						backBtn,
 						'<button type="button" class="inline-topics-open" data-open-picker>',
 							'<span class="ti-target" aria-hidden="true">',
 							'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
@@ -1539,18 +2064,19 @@
 					'</div>',
 				'</div>',
 				catRow,
-				'<div class="inline-topics-grid">' + tilesHtml + '</div>',
+				'<div class="inline-topics-grid">' + TOPICS.map(function (t) {
+					const on = map[t.id] !== false;
+					return '<button type="button" class="ipill itx-item ' + (on ? 'ipill-on' : 'ipill-off') +
+						'" data-topic-id="' + escAttr(t.id) + '">' +
+						'<span class="ipill-icon">' + escAttr(t.icon) + '</span>' +
+						'<span class="ipill-label">' + escAttr(t.label) + '</span>' +
+						'<span class="ipill-x" aria-hidden="true">' + (on ? '✓' : '×') + '</span></button>';
+				}).join('') + '</div>',
 				'<p class="inline-topics-foot">Toggle topics to fine-tune · <em>tone</em> chips above hide heavy content in one click. Or the small <strong>🎯 top-right</strong> any time — saved in a cookie.</p>'
 			].join('');
 			wire = function (h) {
 				const pick = h.querySelector('[data-open-picker]');
 				if (pick) pick.addEventListener('click', openOverlay);
-				const collapseBtn = h.querySelector('[data-collapse-types]');
-				if (collapseBtn) collapseBtn.addEventListener('click', function () {
-					h.dataset.personasExpanded = '';
-					renderInlineWidget(h);
-					animateInlineReveal(h);
-				});
 				h.querySelectorAll('.ipill').forEach(function (btn) {
 					btn.addEventListener('click', function () {
 						const id = btn.getAttribute('data-topic-id');
@@ -1566,12 +2092,27 @@
 	}
 
 	/* ── 11. Init ─────────────────────────────────────────────── */
+	function dumpState() {
+		return {
+			debug: DEBUG,
+			mathLevel: getMathLevel(),
+			profile: activePref().profile,
+			level: activePref().level,
+			topics: normalize(activeMap()),
+			categories: normalizeCats(activeCats())
+		};
+	}
+
 	function init() {
 		ensureToggleButton();
 		ensureOverlay();
 		renderGrid();
-		applyVisibility();
+		// tuckMd:false: don't tuck markdown blocks before renderMarkdown()
+		// has turned their source into live HTML (that pass runs on 'load'
+		// and re-applies visibility with tuckMd defaulting to true).
+		applyVisibility({ animate: false, tuckMd: false });
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
+		if (DEBUG) dlog('ready — dump state with BlogTopics.dump()');
 	}
 
 	if (document.readyState === 'loading') {
@@ -1588,11 +2129,19 @@
 		PROFILES: PROFILES,
 		LEVELS: LEVELS,
 		PERSONAS: PERSONAS,
+		CORE_PERSONAS: CORE_PERSONAS,
 		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
+		MATH_MIN: MATH_MIN,
+		MATH_MAX: MATH_MAX,
+		DEBUG: DEBUG,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
 		applyMathAlts: applyMathAlts,
 		scoreUnit: scoreUnit,
+		getMathLevel: getMathLevel,
+		setMathLevel: setMathLevel,
+		applyCorePersona: applyCorePersona,
+		dump: dumpState,
 		activeMap: function () { return normalize(activeMap()); },
 		activeCats: function () { return normalizeCats(activeCats()); },
 		activePref: function () { return activePref(); },

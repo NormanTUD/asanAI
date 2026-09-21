@@ -25,7 +25,7 @@ tags: math-heavy
 .af-canvas.d3{cursor:grab}.af-canvas.d3:active{cursor:grabbing}
 .af-read{margin-top:.55rem;font:.78rem/1.5 var(--mn-font-mono,monospace);color:var(--mn-text-secondary);background:var(--mn-bg-subtle);border-radius:8px;padding:.6rem .75rem;min-height:2.4em;overflow-wrap:anywhere;border-left:2px solid var(--mn-accent)}
 #fd2d-hover{min-height:4.5em}
-#fd2d-src,#fd3d-canvas{width:100%;height:auto;aspect-ratio:1/1}
+#fd2d-src,#fd3d-canvas,#act-src,#act3d-canvas{width:100%;height:auto;aspect-ratio:1/1}
 .af-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.55rem}
 .af-lbl{font-size:.82rem;color:var(--mn-text-secondary);display:inline-flex;align-items:center;gap:.45rem}
 .af-sel{padding:.32rem .55rem;background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;font-size:.85rem}
@@ -281,6 +281,54 @@ The bent paper's flat shadow (its projection onto the crease plane) is exactly t
 			<div id="fd2d-eq" class="af-eq"></div>
 			<div class="af-sub" style="margin-top:.9rem">The same fold, 1D: x ↦ x − λ·ReLU(x − c₁)</div>
 			<canvas id="fd1d-canvas" class="af-canvas" width="440" height="150" style="cursor:default"></canvas>
+		</div>
+	</div>
+</div>
+
+<div class="md">
+### Separating a ring with one fold
+
+Now use the fold for something. The textbook problem that **no straight cut can solve**: a **circle inside a circle** — an inner disk, one class, and an outer ring, the other. No line separates them: any line that misses the inner disk still cuts the outer ring, so outer points always land on *both* sides.
+
+The fold changes that. Fold **radially** — the crease is the circle of radius $c$ — and the outer ring's fate depends on one knob, the **bias** $c$:
+
+- $c$ **between** the two radii — only the outer ring is pushed. At $\lambda = 1$ it flattens *onto* the crease and lifts: the rings now sit at different heights, and a **flat horizontal cut** separates them. In the curved space, the cut is still flat.
+- $c$ **inside** the inner ring — both rings lift, to different heights; still separable.
+- $c$ **outside** the outer ring — nothing folds; the problem is unchanged.
+
+That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold into unoccupied dimensions until a flat cut reaches the class that was surrounded** \cite[Keup & Helias, 2022]{keup2022origami}. A ReLU fold does it in one piece; a **tanh** fold does it smoothly — no crease, the lift is a gentle S-curve that pushes right at the border of the flat part.
+
+**Try:** the presets walk the bias through all three cases. Slide $c$ and watch the crease circle cross the rings — the green cut turns red the moment the gap closes.
+</div>
+
+<div class="af-card" id="act-2d">
+	<div class="af-title"><span class="dot"></span>Circle in a circle — separate the rings with one fold</div>
+	<div class="af-sliders">
+		<div id="act-presets" class="af-presets" style="margin-top:0"></div>
+		<div class="af-row"><label class="af-lbl">Crease radius c <span class="af-hint">the bias — where you cut</span> <input type="range" id="act-c" class="af-range" min="0.05" max="0.95" step="0.01" value="0.42"><span class="af-rv" id="act-c-v">0.42</span></label></div>
+		<div class="af-row"><label class="af-lbl">Fold strength λ <span class="af-hint">1 = flatten onto the crease · 2 = mirror</span> <input type="range" id="act-lambda" class="af-range" min="0" max="2.5" step="0.05" value="1"><span class="af-rv" id="act-lambda-v">1.00</span></label></div>
+		<div class="af-row"><label class="af-lbl">tanh width s <span class="af-hint">only used by the tanh fold</span> <input type="range" id="act-s" class="af-range" min="0.05" max="0.5" step="0.01" value="0.18"><span class="af-rv" id="act-s-v">0.18</span></label></div>
+	</div>
+	<div class="af-grid">
+		<div class="af-col">
+			<div class="af-sub">Source · circle in a circle · click to track a point · hover to trace</div>
+			<canvas id="act-src" class="af-canvas" width="440" height="440"></canvas>
+			<div id="act-hover" class="af-read"></div>
+		</div>
+		<div class="af-col">
+			<div class="af-sub">Curved space · the folded sheet · drag to rotate · scroll to zoom</div>
+			<canvas id="act3d-canvas" class="af-canvas d3" width="440" height="440"></canvas>
+		</div>
+	</div>
+	<div class="af-grid" style="margin-top:1rem">
+		<div class="af-col">
+			<div class="af-sub">The activation profile: r ↦ (r′, z) · dashed = identity</div>
+			<canvas id="act1d-canvas" class="af-canvas" width="440" height="200" style="cursor:default"></canvas>
+		</div>
+		<div class="af-col">
+			<div class="af-sub">Live equation for the tracked point</div>
+			<div id="act-eq" class="af-eq"></div>
+			<div id="act-status" class="af-status"></div>
 		</div>
 	</div>
 </div>

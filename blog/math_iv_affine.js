@@ -198,6 +198,31 @@
 				if (nx*px+ny*py > c+1e-9 && inBox([px,py])) out.push({p:[px,py], piece:2});
 			}
 			return out;
+		},
+		/* ── radial fold: crease is the circle |p−o| = c ──
+		   relu: far arc rigidly rotated by φ=arccos(1−λ) about the crease
+		         (λ=1 flattens onto the crease, λ=2 mirrors in it) — arc length kept.
+		   tanh: smooth developable lift z = a·tanh((r−c)/s), plane untouched. */
+		radialPhi: lambda => Math.acos(Math.max(-1, Math.min(1, 1 - lambda))),
+		radialLift: (act, r, c, lambda, s) => {
+			if (act === 'relu') {
+				const d = r - c;
+				if (d <= 0) return { rp: r, z: 0, far: false };
+				const phi = Fold.radialPhi(lambda);
+				return { rp: c + d*Math.cos(phi), z: d*Math.sin(phi), far: true };
+			}
+			if (act === 'tanh') {
+				const a = 0.4 * lambda;
+				return { rp: r, z: a*Math.tanh((r - c)/Math.max(1e-3, s)), far: r > c };
+			}
+			return { rp: r, z: 0, far: false };
+		},
+		radialApply: (p, o, act, c, lambda, s) => {
+			const dx = p[0]-o[0], dy = p[1]-o[1];
+			const r = Math.hypot(dx, dy);
+			const L = Fold.radialLift(act, r, c, lambda, s);
+			const rr = Math.max(r, 1e-9);
+			return { x: o[0] + L.rp*dx/rr, y: o[1] + L.rp*dy/rr, z: L.z, r, L };
 		}
 	};
 
@@ -1542,6 +1567,451 @@
 		redraw();
 	};
 
+	/* ═══ 5b. LAB A2 — circle in a circle: activation as fold ═════════ */
+
+	const A2 = {
+		act: 'relu', c: 0.42, lambda: 1.0, s: 0.18,
+		o: [0.5, 0.5], r1: 0.2, r2: 0.65, N: 28,
+		track: [0.5 + 0.65*Math.cos(-0.55), 0.5 + 0.65*Math.sin(-0.55)],
+		hoverSrc: null,
+		yaw: 0.7, pitch: 0.45, zoom: 1, drag: null
+	};
+
+	const PRESETS_A2 = [
+		{ name: 'Identity (λ=0)',        act:'id',   c:0.42, lambda:0.0 },
+		{ name: 'ReLU cut (λ=1)',        act:'relu', c:0.42, lambda:1.0 },
+		{ name: 'Paper fold (λ=2)',      act:'relu', c:0.42, lambda:2.0 },
+		{ name: 'Overshoot (λ=2.5)',     act:'relu', c:0.42, lambda:2.5 },
+		{ name: 'tanh smooth',           act:'tanh', c:0.42, lambda:1.0, s:0.18 },
+		{ name: 'Bias inside (c < r₁)',  act:'relu', c:0.10, lambda:1.0 },
+		{ name: 'Bias outside (c > r₂)', act:'relu', c:0.80, lambda:1.0 }
+	];
+
+	const initA2 = () => {
+		const src = $('act-src');
+		if (!src) return;
+		const srcCtx = src.getContext('2d');
+		if (!srcCtx) throw new Error('canvas 2D unavailable');
+
+		const size = src.width;
+		const win = -0.6, span = 2.2;
+		const w2px = x => (x - win) / span * size;
+		const w2py = y => (win + span - y) / span * size;
+		const px2w = px => win + (px / size) * span;
+		const py2w = py => win + span - (py / size) * span;
+
+		const ringPts = R => {
+			const a = new Array(A2.N);
+			for (let i = 0; i < A2.N; i++) {
+				const t = i / A2.N * 2 * Math.PI;
+				a[i] = [A2.o[0] + R*Math.cos(t), A2.o[1] + R*Math.sin(t)];
+			}
+			return a;
+		};
+		const ringInner = ringPts(A2.r1), ringOuter = ringPts(A2.r2);
+		const mapPt = p => Fold.radialApply(p, A2.o, A2.act, A2.c, A2.lambda, A2.s);
+		const heights = () => {
+			const z1 = Fold.radialLift(A2.act, A2.r1, A2.c, A2.lambda, A2.s).z;
+			const z2 = Fold.radialLift(A2.act, A2.r2, A2.c, A2.lambda, A2.s).z;
+			return { z1, z2, h: (z1+z2)/2, margin: Math.abs(z2-z1)/2, ok: Math.abs(z2-z1) > 1e-3 };
+		};
+
+		/* ─── 2D source: the two rings + crease circle + tracked point ─── */
+		const drawSource = () => {
+			const P = pal();
+			srcCtx.fillStyle = P.bg; srcCtx.fillRect(0, 0, size, size);
+			// grid + unit square
+			srcCtx.strokeStyle = P.line; srcCtx.lineWidth = 1;
+			for (let t = 0; t <= 4; t++) {
+				const wv = t * 0.5;
+				srcCtx.globalAlpha = (wv === 0 || wv === 1) ? 0.9 : 0.35;
+				srcCtx.beginPath();
+				srcCtx.moveTo(w2px(wv), 0); srcCtx.lineTo(w2px(wv), size);
+				srcCtx.moveTo(0, w2py(wv)); srcCtx.lineTo(size, w2py(wv));
+				srcCtx.stroke();
+			}
+			srcCtx.globalAlpha = 1;
+			srcCtx.strokeRect(w2px(0), w2py(1), size/span, size/span);
+			// crease circle (the bias)
+			srcCtx.strokeStyle = P.cyan; srcCtx.lineWidth = 2; srcCtx.setLineDash([6,3]);
+			srcCtx.beginPath();
+			srcCtx.arc(w2px(A2.o[0]), w2py(A2.o[1]), A2.c*size/span, 0, Math.PI*2);
+			srcCtx.stroke(); srcCtx.setLineDash([]);
+			srcCtx.fillStyle = P.cyan; srcCtx.font = '11px monospace';
+			srcCtx.fillText('crease c', w2px(A2.o[0]) + A2.c*size/span + 5, w2py(A2.o[1]) + 4);
+			// ghost of the folded rings (flat shadow of the 3-D sheet)
+			for (const [R, col] of [[A2.r1, P.accent], [A2.r2, P.bad]]) {
+				const rp = Fold.radialLift(A2.act, R, A2.c, A2.lambda, A2.s).rp;
+				if (Math.abs(rp - R) > 1e-3) {
+					srcCtx.strokeStyle = col; srcCtx.globalAlpha = 0.45;
+					srcCtx.setLineDash([3,3]); srcCtx.lineWidth = 1.5;
+					srcCtx.beginPath();
+					srcCtx.arc(w2px(A2.o[0]), w2py(A2.o[1]), rp*size/span, 0, Math.PI*2);
+					srcCtx.stroke(); srcCtx.setLineDash([]);
+				}
+			}
+			srcCtx.globalAlpha = 1;
+			// the data rings
+			for (const [pts, col] of [[ringInner, P.accent], [ringOuter, P.bad]]) {
+				srcCtx.fillStyle = col;
+				for (const p of pts) {
+					srcCtx.beginPath();
+					srcCtx.arc(w2px(p[0]), w2py(p[1]), 4, 0, Math.PI*2);
+					srcCtx.fill();
+				}
+			}
+			// hover crosshair + trace
+			if (A2.hoverSrc) {
+				srcCtx.strokeStyle = P.ink2; srcCtx.globalAlpha = 0.5; srcCtx.setLineDash([4,4]);
+				srcCtx.beginPath();
+				srcCtx.moveTo(w2px(A2.hoverSrc[0]), 0); srcCtx.lineTo(w2px(A2.hoverSrc[0]), size);
+				srcCtx.moveTo(0, w2py(A2.hoverSrc[1])); srcCtx.lineTo(size, w2py(A2.hoverSrc[1]));
+				srcCtx.stroke(); srcCtx.setLineDash([]); srcCtx.globalAlpha = 1;
+				const mp = mapPt(A2.hoverSrc);
+				srcCtx.fillStyle = P.ink2;
+				srcCtx.beginPath(); srcCtx.arc(w2px(mp.x), w2py(mp.y), 4, 0, Math.PI*2); srcCtx.fill();
+			}
+			// tracked point + its image
+			const tp = mapPt(A2.track);
+			if (tp.r > 1e-6 && (Math.abs(tp.x - A2.track[0]) > 1e-3 || Math.abs(tp.y - A2.track[1]) > 1e-3 || tp.z > 1e-3)) {
+				srcCtx.strokeStyle = P.warn; srcCtx.globalAlpha = 0.5; srcCtx.setLineDash([3,3]);
+				srcCtx.beginPath();
+				srcCtx.moveTo(w2px(A2.track[0]), w2py(A2.track[1]));
+				srcCtx.lineTo(w2px(tp.x), w2py(tp.y));
+				srcCtx.stroke(); srcCtx.setLineDash([]); srcCtx.globalAlpha = 1;
+			}
+			srcCtx.fillStyle = P.accent;
+			srcCtx.beginPath(); srcCtx.arc(w2px(A2.track[0]), w2py(A2.track[1]), 6, 0, Math.PI*2); srcCtx.fill();
+			srcCtx.font = 'bold 12px monospace';
+			srcCtx.fillText('p', w2px(A2.track[0])+9, w2py(A2.track[1])+4);
+			srcCtx.fillStyle = P.warn;
+			srcCtx.beginPath(); srcCtx.arc(w2px(tp.x), w2py(tp.y), 5, 0, Math.PI*2); srcCtx.fill();
+			srcCtx.fillText("f(p)", w2px(tp.x)+9, w2py(tp.y)-6);
+			// class labels
+			srcCtx.font = '11px monospace';
+			srcCtx.fillStyle = P.accent;
+			srcCtx.fillText('inner ring', w2px(A2.o[0])-30, w2py(A2.o[1]) - A2.r1*size/span - 8);
+			srcCtx.fillStyle = P.bad;
+			srcCtx.fillText('outer ring', w2px(A2.o[0])-32, w2py(A2.o[1]) - A2.r2*size/span - 8);
+		};
+
+		/* ─── 3D curved-space view: bent sheet + rings + separator plane ─── */
+		const cv3 = $('act3d-canvas');
+		const ctx3 = cv3 ? cv3.getContext('2d') : null;
+		const W3 = cv3 ? cv3.width : 0, H3 = cv3 ? cv3.height : 0;
+
+		const project3 = p => {
+			let x = p[0]-0.5, y = p[1]-0.5, z = p[2];
+			const cy = Math.cos(A2.yaw), sy = Math.sin(A2.yaw);
+			const x1 = cy*x + sy*z, z1 = -sy*x + cy*z;
+			const cx = Math.cos(A2.pitch), sx = Math.sin(A2.pitch);
+			const y2 = cx*y - sx*z1, z2 = sx*y + cx*z1;
+			const dist = 4, f = dist / (dist - z2);
+			const scale = Math.min(W3 * 0.42, H3 * 0.8) * A2.zoom;
+			return [W3*0.5 + x1*scale*f, H3*0.5 - y2*scale*f, z2];
+		};
+		// sheet point at (radius r, angle θ)
+		const sheetPt = (r, th) => {
+			const L = Fold.radialLift(A2.act, r, A2.c, A2.lambda, A2.s);
+			return [A2.o[0] + L.rp*Math.cos(th), A2.o[1] + L.rp*Math.sin(th), L.z];
+		};
+
+		const draw3D = () => {
+			if (!ctx3) return;
+			const P = pal();
+			ctx3.fillStyle = P.bg; ctx3.fillRect(0, 0, W3, H3);
+			const proj = p => project3(p);
+			drawAxes3D(ctx3, proj, P, [0.5, 0.5, 0], 1.15);
+
+			// sheet mesh: annular bands × sectors, checkerboarded by band
+			const RB = 10, TA = 24;
+			const quads = [];
+			for (let j = 0; j < TA; j++) {
+				const t0 = j/TA * 2*Math.PI, t1 = (j+1)/TA * 2*Math.PI;
+				for (let b = 0; b < RB; b++) {
+					const r0 = b/RB, r1 = (b+1)/RB;
+					const cs = [[r0,t0],[r1,t0],[r1,t1],[r0,t1]];
+					const ps = cs.map(([r, t]) => proj(sheetPt(r, t)));
+					const zAvg = (ps[0][2]+ps[1][2]+ps[2][2]+ps[3][2])*0.25;
+					quads.push({ ps, val: b & 1, zAvg, plane: false });
+				}
+			}
+			// separator plane at z = (z₁+z₂)/2
+			const { h, ok } = heights();
+			const planeCol = ok ? P.good : P.bad;
+			const R = 1.15;
+			const pc = [
+				[A2.o[0]-R, A2.o[1]-R, h], [A2.o[0]+R, A2.o[1]-R, h],
+				[A2.o[0]+R, A2.o[1]+R, h], [A2.o[0]-R, A2.o[1]+R, h]
+			].map(proj);
+			quads.push({ ps: pc, zAvg: pc[0][2], plane: true });
+			quads.sort((a, b) => a.zAvg - b.zAvg);
+			for (const q of quads) {
+				if (q.plane) {
+					ctx3.fillStyle = planeCol; ctx3.globalAlpha = 0.08;
+					ctx3.beginPath();
+					ctx3.moveTo(q.ps[0][0], q.ps[0][1]);
+					for (let k = 1; k < 4; k++) ctx3.lineTo(q.ps[k][0], q.ps[k][1]);
+					ctx3.closePath(); ctx3.fill();
+					ctx3.globalAlpha = 0.5; ctx3.strokeStyle = planeCol; ctx3.lineWidth = 1;
+					ctx3.setLineDash([5,4]); ctx3.stroke(); ctx3.setLineDash([]);
+					ctx3.globalAlpha = 1;
+				} else {
+					ctx3.fillStyle = rgb(q.val ? P.c1 : P.c0);
+					ctx3.strokeStyle = P.line; ctx3.lineWidth = 0.6;
+					ctx3.beginPath();
+					ctx3.moveTo(q.ps[0][0], q.ps[0][1]);
+					for (let k = 1; k < 4; k++) ctx3.lineTo(q.ps[k][0], q.ps[k][1]);
+					ctx3.closePath(); ctx3.fill(); ctx3.stroke();
+				}
+			}
+			// crease circle on the sheet (radius c, z=0)
+			ctx3.strokeStyle = P.cyan; ctx3.lineWidth = 1.5; ctx3.setLineDash([5,4]);
+			ctx3.beginPath();
+			for (let k = 0; k <= 64; k++) {
+				const q = proj([A2.o[0] + A2.c*Math.cos(k/64*2*Math.PI),
+				               A2.o[1] + A2.c*Math.sin(k/64*2*Math.PI), 0]);
+				k ? ctx3.lineTo(q[0], q[1]) : ctx3.moveTo(q[0], q[1]);
+			}
+			ctx3.stroke(); ctx3.setLineDash([]);
+			// data rings on the sheet
+			const ring3D = R => {
+				ctx3.lineWidth = 2.5; ctx3.globalAlpha = 0.95;
+				ctx3.beginPath();
+				for (let i = 0; i <= A2.N; i++) {
+					const p = ringPts(R)[i % A2.N];
+					const mp = mapPt(p);
+					const q = proj([mp.x, mp.y, mp.z]);
+					i ? ctx3.lineTo(q[0], q[1]) : ctx3.moveTo(q[0], q[1]);
+				}
+				ctx3.stroke(); ctx3.globalAlpha = 1;
+			};
+			ctx3.strokeStyle = P.accent; ring3D(A2.r1);
+			ctx3.strokeStyle = P.bad;    ring3D(A2.r2);
+			// ring labels (front-most sample points)
+			const lab = (R, txt, col) => {
+				const p = ringPts(R)[Math.floor(A2.N*0.75)];
+				const q = proj(mapPt(p));
+				ctx3.fillStyle = col; ctx3.font = 'bold 12px monospace';
+				ctx3.fillText(txt, q[0]+8, q[1]+4);
+			};
+			lab(A2.r1, 'inner', P.accent);
+			lab(A2.r2, 'outer', P.bad);
+			// separator label
+			const pl = proj([A2.o[0]+R, A2.o[1]-R, h]);
+			ctx3.fillStyle = planeCol; ctx3.globalAlpha = 0.85; ctx3.font = '11px monospace';
+			ctx3.fillText(ok ? 'cut: z = ' + fmt(h) + ' — separable' : 'cut: no gap (margin 0)', pl[0]-150, pl[1]-8);
+			ctx3.globalAlpha = 1;
+			// tracked point on the sheet
+			const tp = mapPt(A2.track);
+			const tq = proj([tp.x, tp.y, tp.z]);
+			ctx3.fillStyle = P.accent;
+			ctx3.beginPath(); ctx3.arc(tq[0], tq[1], 6, 0, Math.PI*2); ctx3.fill();
+			ctx3.strokeStyle = P.bg; ctx3.lineWidth = 1.5;
+			ctx3.beginPath(); ctx3.arc(tq[0], tq[1], 6, 0, Math.PI*2); ctx3.stroke();
+			ctx3.fillStyle = P.ink; ctx3.font = 'bold 12px monospace';
+			ctx3.fillText('p', tq[0]+9, tq[1]+4);
+			ctx3.fillStyle = P.ink2; ctx3.font = '12px monospace';
+			ctx3.fillText(A2.act === 'tanh' ? 'smooth lift — the plane never creases'
+			                          : 'bent sheet — φ = arccos(1−λ) = ' + fmt(Fold.radialPhi(A2.lambda)*180/Math.PI) + '°',
+			              12, H3-12);
+		};
+
+		/* ─── 1D activation profile: r ↦ (r′, z) ─── */
+		const cv1 = $('act1d-canvas');
+		const ctx1 = cv1 ? cv1.getContext('2d') : null;
+		const draw1D = () => {
+			if (!ctx1) return;
+			const P = pal();
+			const W1 = cv1.width, H1 = cv1.height;
+			ctx1.fillStyle = P.bg; ctx1.fillRect(0, 0, W1, H1);
+			const win = -0.05, span = 1.25;
+			const ywin = -0.15, yspan = 1.3;
+			const x2px = x => (x - win)/span * W1;
+			const y2py = y => (ywin + yspan - y)/yspan * H1;
+			// axes
+			ctx1.strokeStyle = P.line; ctx1.lineWidth = 1;
+			ctx1.beginPath();
+			ctx1.moveTo(0, y2py(0)); ctx1.lineTo(W1, y2py(0));
+			ctx1.moveTo(x2px(0), 0); ctx1.lineTo(x2px(0), H1);
+			ctx1.stroke();
+			ctx1.fillStyle = P.ink2; ctx1.font = '10px monospace';
+			ctx1.fillText('r (distance from center)', W1-140, y2py(0)-6);
+			ctx1.fillText('y', x2px(0)+5, 12);
+			// identity (no fold)
+			ctx1.strokeStyle = P.ink2; ctx1.setLineDash([3,3]); ctx1.lineWidth = 1;
+			ctx1.beginPath(); ctx1.moveTo(x2px(0), y2py(0)); ctx1.lineTo(x2px(1.2), y2py(1.2)); ctx1.stroke();
+			ctx1.setLineDash([]);
+			// crease at r = c
+			ctx1.strokeStyle = P.cyan; ctx1.setLineDash([5,4]); ctx1.lineWidth = 1.2;
+			ctx1.beginPath(); ctx1.moveTo(x2px(A2.c), 0); ctx1.lineTo(x2px(A2.c), H1); ctx1.stroke();
+			ctx1.setLineDash([]);
+			ctx1.fillStyle = P.cyan; ctx1.fillText('c', x2px(A2.c)+4, H1-6);
+			// data radii r₁, r₂
+			for (const [R, col, txt] of [[A2.r1, P.accent, 'r₁'], [A2.r2, P.bad, 'r₂']]) {
+				ctx1.strokeStyle = col; ctx1.globalAlpha = 0.5; ctx1.setLineDash([3,3]); ctx1.lineWidth = 1;
+				ctx1.beginPath(); ctx1.moveTo(x2px(R), 0); ctx1.lineTo(x2px(R), H1); ctx1.stroke();
+				ctx1.setLineDash([]); ctx1.globalAlpha = 1;
+				ctx1.fillStyle = col; ctx1.fillText(txt, x2px(R)+4, 12);
+			}
+			// r′ and z curves
+			for (const [key, col] of [['rp', P.accent], ['z', P.cyan]]) {
+				ctx1.strokeStyle = col; ctx1.lineWidth = 2;
+				ctx1.beginPath();
+				for (let k = 0; k <= 240; k++) {
+					const r = -0.02 + k * 1.22/240;
+					const L = Fold.radialLift(A2.act, Math.max(0, r), A2.c, A2.lambda, A2.s);
+					const y = key === 'rp' ? L.rp : L.z;
+					const px = x2px(r), py = y2py(y);
+					k ? ctx1.lineTo(px, py) : ctx1.moveTo(px, py);
+				}
+				ctx1.stroke();
+			}
+			// tracked radius marker
+			const tr = Math.hypot(A2.track[0]-A2.o[0], A2.track[1]-A2.o[1]);
+			const Ltr = Fold.radialLift(A2.act, tr, A2.c, A2.lambda, A2.s);
+			ctx1.fillStyle = P.warn;
+			ctx1.beginPath(); ctx1.arc(x2px(tr), y2py(Ltr.rp), 4, 0, Math.PI*2); ctx1.fill();
+			ctx1.beginPath(); ctx1.arc(x2px(tr), y2py(Ltr.z), 4, 0, Math.PI*2); ctx1.fill();
+			// legend
+			ctx1.fillStyle = P.accent; ctx1.fillText('r′ image radius', 10, H1-24);
+			ctx1.fillStyle = P.cyan;   ctx1.fillText('z lift height', 10, H1-10);
+		};
+
+		/* ─── live equation (full step-by-step, right-clickable) ─── */
+		const updateEq = () => {
+			const eq = $('act-eq'); if (!eq) return;
+			const p = A2.track;
+			const mp = mapPt(p);
+			const { z1, z2, h, margin, ok } = heights();
+			const L = [
+				`\\mathbf{p} &= (x,\\, y) = (${fmt(p[0])},\\; ${fmt(p[1])}) \\qquad r = |\\mathbf{p}-\\mathbf{o}| = ${fmt(mp.r)} \\\\`,
+				`c = ${fmt(A2.c)} \\qquad \\lambda = ${fmt(A2.lambda)}${A2.act === 'tanh' ? ` \\qquad s = ${fmt(A2.s)}` : ''} \\qquad r - c = ${fmt(mp.r - A2.c)} \\\\`
+			];
+			if (A2.act === 'relu' && mp.L.far) {
+				const phi = Fold.radialPhi(A2.lambda);
+				const d = mp.r - A2.c;
+				L.push(
+					`r' &= c + (r-c)\\cos\\varphi = ${fmt(A2.c)} + ${fmt(d)}\\cdot ${fmt(Math.cos(phi))} = ${fmt(mp.L.rp)} \\\\`,
+					`z  &= (r-c)\\sin\\varphi = ${fmt(d)}\\cdot ${fmt(Math.sin(phi))} = ${fmt(mp.z)} \\qquad (\\varphi = ${fmt(phi*180/Math.PI)}°)`
+				);
+			} else if (A2.act === 'relu') {
+				L.push(`r' &= r \\qquad z = 0 \\qquad (\\text{near side — untouched})`);
+			} else if (A2.act === 'tanh') {
+				const a = 0.4 * A2.lambda;
+				const u = (mp.r - A2.c)/Math.max(1e-3, A2.s);
+				L.push(
+					`r' &= r = ${fmt(mp.r)} \\\\`,
+					`z  &= a\\,\\tanh\\!\\left(\\tfrac{r-c}{s}\\right) = ${fmt(a)}\\cdot\\tanh(${fmt(u)}) = ${fmt(mp.z)}`
+				);
+			} else {
+				L.push(`r' &= r \\qquad z = 0 \\qquad (\\text{identity})`);
+			}
+			L.push(
+				`\\mathbf{p}' &= \\mathbf{o} + r'(\\cos\\theta,\\, \\sin\\theta) = (${fmt(mp.x)},\\; ${fmt(mp.y)}) \\text{ at height } ${fmt(mp.z)} \\\\`,
+				`z_{\\text{inner}} = ${fmt(z1)} \\qquad z_{\\text{outer}} = ${fmt(z2)} \\qquad \\Rightarrow\\; ${ok ? `\\text{separable — flat cut at } z = ${fmt(h)}` : '\\text{not separable — the cut has no gap}'}`
+			);
+			tex(eq, `\\begin{aligned}` + L.join(' ') + `\\end{aligned}`, true);
+			const st = $('act-status');
+			if (st) {
+				st.innerHTML = '';
+				const pill = document.createElement('span');
+				pill.className = 'af-pill ' + (ok ? 'good' : 'bad');
+				pill.textContent = ok
+					? `separable ✓ — margin ${fmt(margin)} on each side`
+					: `not separable — no flat cut clears both rings`;
+				st.appendChild(pill);
+			}
+		};
+
+		const updateHover = () => {
+			const ro = $('act-hover'); if (!ro) return;
+			if (A2.hoverSrc) {
+				const mp = mapPt(A2.hoverSrc);
+				ro.textContent = `p = (${fmt(A2.hoverSrc[0])}, ${fmt(A2.hoverSrc[1])}) · r = ${fmt(mp.r)} · r−c = ${fmt(mp.r-A2.c)} → f(p) = (${fmt(mp.x)}, ${fmt(mp.y)}) at height z = ${fmt(mp.z)}`;
+			} else {
+				ro.textContent = 'Click a ring to track that point · hover to trace · drag the 3D view to rotate · scroll to zoom';
+			}
+		};
+
+		const redraw = () => {
+			try { drawSource(); draw3D(); draw1D(); updateEq(); }
+			catch (e) { showError('act-2d', e); }
+		};
+
+		/* ─── controls ─── */
+		const bindRange = (id, key, disp) => {
+			const s = $(id), v = $(id + '-v');
+			if (!s) return;
+			s.addEventListener('input', () => {
+				A2[key] = parseFloat(s.value);
+				if (v) v.textContent = disp ? disp(A2[key]) : fmt(A2[key]);
+				schedule(redraw);
+			});
+			if (v) v.textContent = disp ? disp(A2[key]) : fmt(A2[key]);
+		};
+		bindRange('act-c',      'c',      x => x.toFixed(2));
+		bindRange('act-lambda', 'lambda', x => x.toFixed(2));
+		bindRange('act-s',      's',      x => x.toFixed(2));
+
+		buildPresets('act-presets', PRESETS_A2, pr => {
+			A2.act    = pr.act;
+			A2.c      = pr.c;
+			A2.lambda = pr.lambda;
+			if (pr.s !== undefined) A2.s = pr.s;
+			const set = (k, val, disp) => {
+				const s = $('act-'+k), v = $('act-'+k+'-v');
+				if (s) s.value = val;
+				if (v) v.textContent = disp ? disp(val) : fmt(val);
+			};
+			set('c', A2.c, x => x.toFixed(2));
+			set('lambda', A2.lambda, x => x.toFixed(2));
+			set('s', A2.s, x => x.toFixed(2));
+			redraw();
+		});
+
+		src.addEventListener('click', e => {
+			const r = src.getBoundingClientRect();
+			A2.track = [
+				px2w((e.clientX - r.left) * (size/r.width)),
+				py2w((e.clientY - r.top)  * (size/r.height))
+			];
+			redraw();
+		});
+		src.addEventListener('mousemove', e => {
+			const r = src.getBoundingClientRect();
+			const u = px2w((e.clientX - r.left) * (size/r.width));
+			const v = py2w((e.clientY - r.top)  * (size/r.height));
+			A2.hoverSrc = (u >= 0 && u <= 1 && v >= 0 && v <= 1) ? [u, v] : null;
+			schedule(() => { updateHover(); drawSource(); });
+		});
+		src.addEventListener('mouseleave', () => {
+			A2.hoverSrc = null;
+			schedule(() => { updateHover(); drawSource(); });
+		});
+
+		if (cv3) {
+			bind3DNav(cv3, A2, redraw);
+			cv3.addEventListener('mousedown', e => {
+				A2.drag = {x:e.clientX, y:e.clientY};
+				A2.hoverSrc = null;
+			});
+			window.addEventListener('mousemove', e => {
+				if (!A2.drag) return;
+				A2.yaw   += (e.clientX - A2.drag.x) * 0.01;
+				A2.pitch += (e.clientY - A2.drag.y) * 0.01;
+				A2.pitch = Math.max(-Math.PI/2+0.05, Math.min(Math.PI/2-0.05, A2.pitch));
+				A2.drag = {x:e.clientX, y:e.clientY};
+				schedule(() => draw3D());
+			});
+			window.addEventListener('mouseup', () => { A2.drag = null; });
+		}
+
+		updateHover();
+		themeRedraws.push(redraw);
+		redraw();
+	};
+
 	/* ═══ 6. LAB U3 — Hopf link, unlinked by a fold ══════════════════ */
 
 	const U3 = {
@@ -1858,6 +2328,7 @@
 		try { init2D(); }  catch (e) { showError('af-2d', e); }
 		try { init3D(); }  catch (e) { showError('af-3d', e); }
 		try { initF2(); }  catch (e) { showError('fold-2d', e); }
+		try { initA2(); }  catch (e) { showError('act-2d', e); }
 		try { initU3(); }  catch (e) { showError('unlink-3d', e); }
 	};
 

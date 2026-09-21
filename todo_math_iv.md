@@ -47,7 +47,51 @@ contains the full `\begin{aligned}\mathbf{p} &= (x,\, y) = ...` source. Headless
 execute/sync can't await a Promise — dispatch the event in one call, read the dialog in a
 second call after a sleep.
 
-## 2. NEW lab (user request): "Activation functions as folds"
+## 2. NEW lab (user request): "Activation functions as folds" — BUILT 2026-09-21
+
+### What was built (all verified in headless Chrome)
+
+- **Math core**: `Fold.radialPhi`, `Fold.radialLift`, `Fold.radialApply` (exposed on
+  `__affineMath.Fold`). ReLU radial fold reuses F2's φ = arccos(1−λ) (λ=1 flattens onto the
+  crease circle, λ=2 mirrors in it — arc length kept); tanh is a smooth developable lift
+  z = 0.4λ·tanh((r−c)/s), plane untouched.
+- **Lab A2** in `math_iv_affine.js` (`initA2`, wired in `bootAll`):
+  - `#act-src` (2D): two data rings (inner accent / outer bad), dashed cyan crease circle,
+    ghost of the folded rings (flat shadow), tracked p + f(p), hover crosshair + trace.
+  - `#act3d-canvas`: bent sheet (annular-band checkerboard, 10×24 quads, z-sorted),
+    both rings on the sheet, crease circle, **separator plane** at z=(z₁+z₂)/2 colored
+    good/bad, drag-rotate + wheel zoom (`bind3DNav`), axes.
+  - `#act1d-canvas`: activation profile r ↦ (r′, z) with identity dashed, crease at c,
+    r₁/r₂ markers, tracked-point dots, legend.
+  - `#act-eq`: full step-by-step aligned math (right-clickable, annotate:true) +
+    `#act-status` pill `separable ✓ — margin m` / `not separable`.
+  - Presets: Identity, ReLU cut (λ=1), Paper fold (λ=2), Overshoot (λ=2.5), tanh smooth,
+    Bias inside (c<r₁), Bias outside (c>r₂). Sliders: c, λ, s (with `.af-hint`s).
+- **Prose**: `### Separating a ring with one fold` between the fold card and
+  `## Unthreading a chain` — no-line-can-separate argument, the three bias cases,
+  Keup & Helias tie-in (existing citation `keup2022origami`).
+- **CSS**: `#act-src,#act3d-canvas` added to the aspect-ratio rule.
+- **Guard**: `THREE_3D` 3→4 (docstring updated); all 7 guards pass.
+
+### Verified headless (`/tmp/opencode/verify_a2.py`)
+
+- all elements boot, zero `.af-err`, `radialLiftExposed: true`, all 3 canvases draw
+- preset physics: bias-outside → not separable; bias-inside → margin 0.225; tanh →
+  margin 0.339 with `\tanh` in eq; identity → not separable; relu-cut → margin 0.115
+- copy dialog on `#act-eq math` opens with the full aligned LaTeX
+- no regressions: af2d/af3d/fd2d/u3d equations all render
+- bug caught & fixed in review: `mp.far` → `mp.L.far` in `updateEq` (far-side branch
+  never rendered before)
+- validators: php -l OK, js_validator 0 errors, lesson_guard PASS, php_validator only
+  the known line-76 false positive
+
+### Optional polish (not requested, parked)
+
+- tanh preset could auto-dim the λ/s hints per activation
+- a "straight cut can't do it" animated line in the 2D source (prose covers it)
+- screenshot/visual pass by a human: 3D sheet shading + separator plane legibility
+
+## 2a. (old spec, kept for reference)
 
 **Goal:** interactive demo of how tanh(x), ReLU(x), … behave on the *circle-in-a-circle*
 (a.k.a. ring-in-ring / target) problem — the flat 2-D cousin of the Hopf link, and Keup &

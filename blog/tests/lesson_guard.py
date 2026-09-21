@@ -20,9 +20,9 @@ Guards (Math IV · Affine Maps & the Fold):
                        an error and renders broken.
   G3 no-auto-rotate    no *-auto checkbox is `checked` by default (the 3D
                        labs must start still, not spinning on load).
-  G4 3d-nav-wired      each of the three 3D canvases is wired to bind3DNav
-                       (wheel/pinch zoom + touch rotate).
-  G5 3d-axes           each of the three 3D canvases is wired to drawAxes3D.
+  G4 3d-nav-wired      each of the four 3D canvases is wired to bind3DNav
+                        (wheel/pinch zoom + touch rotate).
+  G5 3d-axes           each of the four 3D canvases is wired to drawAxes3D.
   G6 symbolic-pieces   the fold's two piece matrices are rendered as symbolic
                        LaTeX bmatrix entries (λ, cos²θ, sinθ) into #fd2d-m1 /
                        #fd2d-m2 (not flat number cells).
@@ -48,7 +48,7 @@ LESSONS = [
     ("math_iv.php", "math_iv_affine.js"),
 ]
 
-THREE_3D = 3  # math_iv has three 3-D canvases: af3d, fd3d, u3d
+THREE_3D = 4  # math_iv has four 3-D canvases: af3d, fd3d, act3d, u3d
 
 
 def _read(path: Path) -> str:
