@@ -646,10 +646,10 @@ function ogInitAffine() {
 			(useR ? String.raw`\;\;\;\text{e.g. }\mathbf{x}=(0.35,0.2):\ \mathbf{x}'=(${smpAff[0]},\,${smpAff[1]})\to\mathbf{z}=(${smpR[0]},\,${smpR[1]})` : String.raw`\;\;\;\text{e.g. }\mathbf{x}=(0.35,0.2):\ \mathbf{x}'=(${smpAff[0]},\,${smpAff[1]})`)
 		);
 	}
-	['og-aff-rot', 'og-aff-sx', 'og-aff-sy', 'og-aff-sh', 'og-aff-bx', 'og-aff-by', 'og-aff-relu'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = draw; });
-	OG.redos.push(draw);
-	OG.regen.push(() => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); drawFC(); });
-	drawFC();
+	['og-aff-rot', 'og-aff-sx', 'og-aff-sy', 'og-aff-sh', 'og-aff-bx', 'og-aff-by', 'og-aff-relu'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawAff; });
+	OG.redos.push(drawAff);
+	OG.regen.push(() => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); drawAff(); });
+	drawAff();
 }
 
 /* ------------------------------------------------------------------ Demo: 1-D ReLU (one value, one corner) */
@@ -671,9 +671,9 @@ function ogInitRelu1d() {
 		ctx.fillStyle = p.muted; ctx.font = '12px sans-serif'; ctx.fillText(v < 0 ? 'Negative is projected to 0 ("hammered")' : 'Positive passes through unchanged', 14, 42);
 		ogTex('og-relu-live', String.raw`\tilde x=${ogf1(v)} \;\Rightarrow\; \mathrm{ReLU}(\tilde x)=\max(0,${ogf1(v)})=${ogf1(y)}${v < 0 ? String.raw`\;\;(\text{hammered})` : String.raw`\;\;(\text{unchanged})`}`);
 	}
-	const sl = document.getElementById('og-relu-x'); if (sl) sl.oninput = draw;
-	OG.redos.push(draw);
-	drawAff();
+	const sl = document.getElementById('og-relu-x'); if (sl) sl.oninput = drawR1d;
+	OG.redos.push(drawR1d);
+	drawR1d();
 }
 
 /* ------------------------------------------------------------------ Demo: circle-in-circle 3-D lift (S4a) */
@@ -717,9 +717,9 @@ function ogInitEgg() {
 	}
 	['og-egg-lift', 'og-egg-plane'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawEgg3d; });
 	const modeEl = document.getElementById('og-egg-mode'); if (modeEl) modeEl.onchange = drawEgg3d;
-	OG.redos.push(() => { draw2d(); draw3d(); });
-	OG.regen.push(() => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); draw3d(); });
-	draw2d(); draw3d();
+	OG.redos.push(() => { draw2d(); drawEgg3d(); });
+	OG.regen.push(() => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); drawEgg3d(); });
+	draw2d(); drawEgg3d();
 }
 
 /* ------------------------------------------------------------------ Demo: learned rotation + hammer (S4b) */
@@ -765,8 +765,8 @@ function ogInitRot() {
 			{ x: gx, y: gy, z: gz, mode: 'markers', type: 'scatter3d', marker: { size: 1.5, color: p.fold, opacity: 0.3 }, name: 'fold z=0' }
 		], layout, { displayModeBar: false });
 	}
-	const sl = document.getElementById('og-rot-th'); if (sl) sl.oninput = draw;
-	OG.redos.push(draw);
+	const sl = document.getElementById('og-rot-th'); if (sl) sl.oninput = drawRot;
+	OG.redos.push(drawRot);
 	OG.regen.push(() => { genPts(); drawRot(); });
 	drawRot();
 }
