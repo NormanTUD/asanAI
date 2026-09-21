@@ -436,22 +436,29 @@
 		el.appendChild(sum);
 	};
 
-	// Read-only 3×3 matrix view (used for the two fold pieces).
+	// Read-only 3×3 matrix view (used for the two fold pieces) —
+	// rendered as a proper bracketed math matrix, translation column in accent.
 	const makeMatrixView = hostId => {
 		const host = $(hostId); if (!host) return null;
 		host.innerHTML = '';
+		const wrap = document.createElement('div');
+		wrap.className = 'af-pmx';
+		const bl = document.createElement('div'); bl.className = 'af-pmx-br l';
+		const br = document.createElement('div'); br.className = 'af-pmx-br r';
+		const tbl = document.createElement('div');
+		tbl.className = 'af-pmx-tbl';
 		const cells = [];
-		for (let r = 0; r < 3; r++) {
-			const row = document.createElement('div');
-			row.className = 'af-matrow';
+		for (let r = 0; r < 3; r++)
 			for (let c = 0; c < 3; c++) {
-				const cell = document.createElement('div');
-				cell.className = 'af-matcell';
-				row.appendChild(cell);
+				const cell = document.createElement('span');
+				if (c === 2) cell.className = 't';
+				tbl.appendChild(cell);
 				cells.push(cell);
 			}
-			host.appendChild(row);
-		}
+		wrap.appendChild(bl);
+		wrap.appendChild(br);
+		wrap.appendChild(tbl);
+		host.appendChild(wrap);
 		return m => cells.forEach((c, i) => c.textContent = fmt(m[i]));
 	};
 
@@ -476,6 +483,63 @@
 		if (document.hidden) return false;
 		const r = el.getBoundingClientRect();
 		return r.bottom > 0 && r.top < window.innerHeight;
+	};
+
+	/* ─── shared 3D navigation: wheel / pinch zoom, one-finger touch rotate ─── */
+	const ZOOM_MIN = 0.35, ZOOM_MAX = 3;
+	const setZoom = (state, z) => {
+		state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, isFinite(z) ? z : 1));
+	};
+	const bind3DNav = (cv, state, redraw) => {
+		cv.addEventListener('wheel', e => {
+			e.preventDefault();
+			setZoom(state, state.zoom * Math.exp(-e.deltaY * 0.0012));
+			schedule(redraw);
+		}, { passive: false });
+		let tState = null;
+		const tdist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+		cv.addEventListener('touchstart', e => {
+			if (e.touches.length === 1) tState = { mode: 'rot', x: e.touches[0].clientX, y: e.touches[0].clientY };
+			else if (e.touches.length === 2) tState = { mode: 'pinch', d: tdist(e.touches), z: state.zoom };
+			state.auto = false;
+		}, { passive: true });
+		cv.addEventListener('touchmove', e => {
+			if (!tState) return;
+			e.preventDefault();
+			if (tState.mode === 'rot' && e.touches.length === 1) {
+				state.yaw   += (e.touches[0].clientX - tState.x) * 0.01;
+				state.pitch += (e.touches[0].clientY - tState.y) * 0.01;
+				state.pitch = Math.max(-Math.PI/2 + 0.05, Math.min(Math.PI/2 - 0.05, state.pitch));
+				tState.x = e.touches[0].clientX; tState.y = e.touches[0].clientY;
+				schedule(redraw);
+			} else if (tState.mode === 'pinch' && e.touches.length === 2) {
+				setZoom(state, tState.z * tdist(e.touches) / Math.max(1, tState.d));
+				schedule(redraw);
+			}
+		}, { passive: false });
+		cv.addEventListener('touchend', () => { tState = null; });
+	};
+
+	/* ─── shared 3D axes: labeled x / y / z rays from a world origin ─── */
+	const drawAxes3D = (ctx, project, P, origin, len) => {
+		const spec = [
+			[[1, 0, 0], P.bad,  'x'],
+			[[0, 1, 0], P.good, 'y'],
+			[[0, 0, 1], P.cyan, 'z']
+		];
+		ctx.save();
+		ctx.lineWidth = 1.4;
+		for (const [d, colour, label] of spec) {
+			const o = project([origin[0], origin[1], origin[2]]);
+			const e = project([origin[0] + d[0]*len, origin[1] + d[1]*len, origin[2] + d[2]*len]);
+			if (!isFinite(o[0]) || !isFinite(e[0])) continue;
+			ctx.strokeStyle = colour; ctx.globalAlpha = 0.7;
+			ctx.beginPath(); ctx.moveTo(o[0], o[1]); ctx.lineTo(e[0], e[1]); ctx.stroke();
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = colour; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'left';
+			ctx.fillText(label, e[0] + 5, e[1] - 5);
+		}
+		ctx.restore();
 	};
 
 	/* ═══ 3. LAB 2D — affine warp of an 8×8 checkerboard ══════════════ */
@@ -835,7 +899,7 @@
 			return A;
 		})(),
 		yaw: 0.6, pitch: 0.35,
-		auto: true, drag: null, last: 0,
+		auto: false, zoom: 1, drag: null, last: 0,
 		K: 4,
 		trackIdx: 6,
 		quads: null
@@ -880,7 +944,7 @@
 			const cx1 = Math.cos(D3.pitch), sx1 = Math.sin(D3.pitch);
 			const y2 = cx1*y - sx1*z1, z2 = sx1*y + cx1*z1;
 			const dist = 4, f = dist / (dist - z2);
-			const scale = Math.min(W, H) * 0.28;
+			const scale = Math.min(W, H) * 0.28 * D3.zoom;
 			return [ W*0.5 + x1*scale*f, H*0.5 - y2*scale*f, z2 ];
 		};
 
@@ -925,6 +989,8 @@
 		const draw = () => {
 			const P = pal();
 			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+
+			drawAxes3D(ctx, project, P, [0, 0, 0], 1.35);
 
 			// ghost cube (identity)
 			drawEdges(new Float64Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),
@@ -1042,6 +1108,7 @@
 		});
 		const autoCb = $('af3d-auto');
 		if (autoCb) autoCb.addEventListener('change', () => { D3.auto = autoCb.checked; });
+		bind3DNav(cv, D3, redraw);
 
 		cv.addEventListener('mousedown', e => {
 			D3.drag = { x: e.clientX, y: e.clientY };
@@ -1093,7 +1160,7 @@
 		theta: 0, c: 0.5, lambda: 1.5,
 		track: [0.25, 0.75],
 		hover: null,
-		yaw: 0.7, pitch: 0.35, auto: true, drag: null, last: 0
+		yaw: 0.7, pitch: 0.4, auto: false, zoom: 1, drag: null, last: 0
 	};
 
 	const PRESETS_F2 = [
@@ -1270,7 +1337,7 @@
 			const cx = Math.cos(pitch), sx = Math.sin(pitch);
 			const y2 = cx*y - sx*z1, z2 = sx*y + cx*z1;
 			const dist = 4, f = dist / (dist - z2);
-			const scale = Math.min(W3, H3) * 0.35;
+			const scale = Math.min(W3 * 0.42, H3 * 0.8) * F2.zoom;
 			return [W3*0.5 + x1*scale*f, H3*0.5 - y2*scale*f, z2];
 		};
 
@@ -1280,6 +1347,24 @@
 			fd3dCtx.fillStyle = P.bg; fd3dCtx.fillRect(0, 0, W3, H3);
 			const n = Fold.normal2(F2.theta * Math.PI / 180);
 			const phi = Math.acos(Math.max(-1, Math.min(1, 1 - F2.lambda)));
+			const proj = p => project3(p, F2.yaw, F2.pitch);
+
+			drawAxes3D(fd3dCtx, proj, P, [0, 0, 0], 1.25);
+
+			// Flat shadow: the orthogonal projection of the bent paper onto z=0
+			// is exactly the 2-D fold image above — draw its outline as a ghost.
+			fd3dCtx.strokeStyle = P.ghost; fd3dCtx.lineWidth = 1; fd3dCtx.setLineDash([4,4]);
+			fd3dCtx.beginPath();
+			const NB = 64;
+			for (let k = 0; k <= NB; k++) {
+				const t = k / NB * 4, s = t % 1;
+				const b = t < 1 ? [s, 0] : t < 2 ? [1, s] : t < 3 ? [1 - s, 1] : [0, 1 - s];
+				const f2 = Fold.apply2(b, n, F2.c, F2.lambda);
+				const q = proj([f2[0], f2[1], 0]);
+				k ? fd3dCtx.lineTo(q[0], q[1]) : fd3dCtx.moveTo(q[0], q[1]);
+			}
+			fd3dCtx.stroke();
+			fd3dCtx.setLineDash([]);
 			// bend the far half about the crease by phi; near half stays flat (z=0)
 			const bend = (u, v) => {
 				const d = n[0]*u + n[1]*v - F2.c;
@@ -1302,7 +1387,7 @@
 							const u0=(i+a/S)/N, u1=(i+(a+1)/S)/N;
 							const v0=(j+b/S)/N, v1=(j+(b+1)/S)/N;
 							const cs = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
-							const ps = cs.map(bend).map(p => project3(p, F2.yaw, F2.pitch));
+							const ps = cs.map(([u, v]) => bend(u, v)).map(p => project3(p, F2.yaw, F2.pitch));
 							const zAvg = (ps[0][2]+ps[1][2]+ps[2][2]+ps[3][2])*0.25;
 							quads.push({ps, val, zAvg});
 						}
@@ -1502,7 +1587,8 @@
 		out.addEventListener('mouseleave', () => { F2.hover = null; updateHover(); });
 
 		if (fd3d) {
-			fd3d.addEventListener('mousedown', e => { F2.drag = {x:e.clientX, y:e.clientY}; });
+			bind3DNav(fd3d, F2, redraw);
+			fd3d.addEventListener('mousedown', e => { F2.drag = {x:e.clientX, y:e.clientY}; F2.auto = false; });
 			window.addEventListener('mousemove', e => {
 				if (!F2.drag) return;
 				F2.yaw   += (e.clientX - F2.drag.x) * 0.01;
@@ -1523,7 +1609,7 @@
 
 	const U3 = {
 		tilt: 0, spin: 0, c: 0, lambda: 0, sep: 0,
-		yaw: 0.6, pitch: 0.35, auto: true, drag: null, last: 0,
+		yaw: 0.6, pitch: 0.35, auto: false, zoom: 1, drag: null, last: 0,
 		showCores: true,
 		N: 96, r: 0.18,
 		coreA: null, coreB: null,   // cached & only rebuilt on param change
@@ -1550,7 +1636,7 @@
 			const cx = Math.cos(U3.pitch), sx = Math.sin(U3.pitch);
 			const y2 = cx*p[1] - sx*z1, z2 = sx*p[1] + cx*z1;
 			const dist = 5, f = dist / (dist - z2);
-			const scale = Math.min(W, H) * 0.22;
+			const scale = Math.min(W, H) * 0.22 * U3.zoom;
 			return [ W*0.5 + x1*scale*f, H*0.5 - y2*scale*f, z2 ];
 		};
 
@@ -1605,6 +1691,7 @@
 		const draw = () => {
 			const P = pal();
 			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+			drawAxes3D(ctx, project, P, [0, 0, 0], 1.5);
 			rebuildCores();
 
 			// crease plane (translucent quad)
@@ -1793,6 +1880,7 @@
 		if (autoCb) autoCb.addEventListener('change', () => { U3.auto = autoCb.checked; });
 		const coresCb = $('u3d-cores');
 		if (coresCb) coresCb.addEventListener('change', () => { U3.showCores = coresCb.checked; redraw(); });
+		bind3DNav(cv, U3, () => draw());
 
 		cv.addEventListener('mousedown', e => {
 			U3.drag = { x: e.clientX, y: e.clientY };

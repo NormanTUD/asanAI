@@ -33,9 +33,9 @@ tags: math-heavy
 .af-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.55rem}
 .af-lbl{font-size:.82rem;color:var(--mn-text-secondary);display:inline-flex;align-items:center;gap:.45rem}
 .af-sel{padding:.32rem .55rem;background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;font-size:.85rem}
-.af-mxwrap{display:inline-flex;flex-direction:column;gap:.45rem;padding:.7rem;background:var(--mn-bg-subtle);border-radius:10px;border:1px solid var(--mn-border)}
-.af-mxrow{display:flex;gap:.45rem}
-.af-mx{width:78px;padding:.38rem .45rem;font:.85rem var(--mn-font-mono,monospace);background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;transition:border-color .15s,box-shadow .15s}
+.af-mxwrap{display:inline-flex;flex-direction:column;gap:.45rem;padding:.7rem;background:var(--mn-bg-subtle);border-radius:10px;border:1px solid var(--mn-border);max-width:100%}
+.af-mxrow{display:flex;gap:.45rem;flex-wrap:wrap}
+.af-mx{width:78px;flex:0 1 auto;min-width:52px;padding:.38rem .45rem;font:.85rem var(--mn-font-mono,monospace);background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;transition:border-color .15s,box-shadow .15s}
 .af-mx:focus{outline:none;border-color:var(--mn-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--mn-accent) 20%,transparent)}
 .af-mx.bad{border-color:var(--mn-rose);box-shadow:0 0 0 2px color-mix(in srgb,var(--mn-rose) 25%,transparent)}
 .af-presets{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem}
@@ -62,6 +62,13 @@ tags: math-heavy
 .af-matview{display:inline-block;border:1px solid var(--mn-border);border-radius:6px;overflow:hidden}
 .af-matview .af-matrow{display:flex}
 .af-matview .af-matcell{cursor:default;font-weight:500}
+/* Piece matrices: proper bracketed math matrix (no pixel-grid look) */
+.af-pmx{position:relative;display:inline-block;padding:8px 14px;background:var(--mn-bg-subtle);border-radius:8px}
+.af-pmx-br{position:absolute;top:0;bottom:0;width:9px}
+.af-pmx-br.l{left:0;border-left:2px solid var(--mn-text);border-top:2px solid var(--mn-text);border-bottom:2px solid var(--mn-text);border-radius:3px 0 0 3px}
+.af-pmx-br.r{right:0;border-right:2px solid var(--mn-text);border-top:2px solid var(--mn-text);border-bottom:2px solid var(--mn-text);border-radius:0 3px 3px 0}
+.af-pmx-tbl{display:grid;grid-template-columns:repeat(3,minmax(3.6em,auto));gap:1px 12px;font:500 .82rem/1.7 var(--mn-font-mono,monospace);color:var(--mn-text);text-align:right}
+.af-pmx-tbl .t{color:var(--mn-accent);font-weight:600}
 @media(max-width:820px){.af-grid,.af-grid.wide{grid-template-columns:1fr}}
 </style>
 
@@ -69,9 +76,9 @@ tags: math-heavy
 **The one-paragraph story.** Every "movement" of data — a linear layer $y = Wx + b$, an image warp, a camera transform — is a *map of space*. This chapter catalogs the simplest such maps (**affine**: linear + translation), then introduces the first non-affine move (**the fold**), which is exactly what a ReLU neuron does. The payoff comes at the end: two rings chained like a chain link (the **Hopf link**) that *no* affine motion can pull apart — but one fold, into a higher dimension, unthreads them. That is the geometry every classifier lives by.
 </div>
 
+<div class="md">
 ## Linear maps aren't enough
 
-<div class="md">
 In <a href="math_ii">Math II</a> you met **linear maps** $f(\mathbf{x}) = M\mathbf{x}$. They rotate, scale, shear, mirror — but they must send the origin to itself: $f(\mathbf{0}) = \mathbf{0}$. The origin is glued in place.
 
 Most useful "movements" of data need to move the origin too. The fix is the **affine transformation**:
@@ -83,9 +90,9 @@ $$
 You've met it before: your first neuron $\hat{y} = ax + b$ (<a href="minimalneuron">Neuron</a>) is a 1-D affine map. Every linear layer $y = Wx + b$ is affine in high dimensions. This chapter makes that a full geometry.
 </div>
 
+<div class="md">
 ## What affine maps preserve (and what they don't)
 
-<div class="md">
 An affine map is the most general map that sends **straight lines to straight lines**. Precisely: it preserves lines, parallelism, and the ratios in which a point divides a segment. It generally breaks lengths, angles, areas, and turns circles into ellipses.
 
 Three facts we'll lean on repeatedly:
@@ -96,12 +103,12 @@ Three facts we'll lean on repeatedly:
 </div>
 
 <div class="optional md" data-headline="History: where the word comes from">
-Descartes made points into coordinates (1637). Grassmann and Möbius separated *point* from *direction*, giving the $M\mathbf{x} + \mathbf{t}$ form. Riemann's 1854 habilitation sorted geometry into a ladder — **affine ⊂ similarity ⊂ Euclidean** — each rung defined by what its transformations preserve. The word *affine* is from Latin *affinis* ("related, connected"), coined for mathematics by **Euler** (1748): affine maps *keep things related* — collinearity, parallelism, ratios — even when they break lengths and angles.
+**Descartes** made points into coordinates (1637) \cite[Descartes, 1637]{descartesgeometrie}. **Grassmann**'s *Ausdehnungslehre* (1844) and **Möbius**' barycentric work then split a point into a fixed origin plus a free direction — exactly the $M\mathbf{x} + \mathbf{t}$ form \cite{mobiusband}. **Riemann's** 1854 habilitation sorted geometry into a ladder — **affine ⊂ similarity ⊂ Euclidean** \cite[Riemann, 1854]{riemann1854raum} — each rung defined by what its transformations preserve; the affine rung measures *nothing* (no distances, no angles) and keeps exactly lines, parallelism, and ratios \cite{affine_geometry_wiki}. The word *affine* is Latin *affinis* ("related, connected"); it entered mathematics via **Euler** (1748) \cite[Euler, 1748]{euler1748introductio}, and **Klein's** 1948 survey credits the name "affine transformation" to Möbius and Gauss \cite[Klein, 1948]{klein1948geometry}. Affine maps *keep things related* — collinearity, parallelism, ratios — even when they break lengths and angles.
 </div>
 
+<div class="md">
 ## Homogeneous coordinates: the trick that makes it a matrix
 
-<div class="md">
 Matrix multiplication can't express $M\mathbf{x} + \mathbf{t}$ directly — there's no place for the $+\mathbf{t}$. Fix: **add a coordinate that's always 1**.
 
 $$
@@ -121,9 +128,9 @@ Check the top row: $\mathbf{x}' = M\mathbf{x} + \mathbf{t}$. The bottom row $[0,
 </div>
 
 <div class="optional md" data-headline="Beyond affine: projective and Möbius maps">
-Unpinning the last row gives $\mathbf{x}' = H\mathbf{x} / (H\mathbf{x})_{n+1}$ — a **projective transformation**. In 2D, an $H \in \mathbb{R}^{3\times 3}$ has 8 degrees of freedom (vs affine's 6); the extra two are the "what happens at infinity" freedom. This is what makes vanishing points appear.
+Unpinning the last row gives $\mathbf{x}' = H\mathbf{x} / (H\mathbf{x})_{n+1}$ — a **projective transformation** \cite{projective_transformation_wiki}. In 2D, an $H \in \mathbb{R}^{3\times 3}$ is a **homography** \cite{homography_cv_wiki} with 8 degrees of freedom (vs affine's 6); the extra two are the "what happens at infinity" freedom. This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822) \cite[projective geometry]{projective_geometry_wiki}\cite[Poncelet, 1822]{poncelet1822traite}.
 
-A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ on the complex plane: they preserve *angles* (conformal) and send circles/lines to circles/lines. Three families, sorted by what they preserve:
+A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ \cite{mobius_transformation_wiki} on the complex plane: they preserve *angles* (conformal) and send circles/lines to circles/lines. **Riemann** spent his later life on exactly this family — conformal maps of the Riemann sphere \cite{riemann1854raum}. Three families, sorted by what they preserve:
 
 | Family | Preserves | 2D dof |
 |---|---|---|
@@ -132,9 +139,9 @@ A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ o
 | Möbius | angles, circles/lines | 6 (real) |
 </div>
 
+<div class="md">
 ## The image is a matrix
 
-<div class="md">
 Take the simplest picture worth looking at: an **8×8 checkerboard**. It *is* an $8\times 8$ matrix of 0s and 1s:
 
 $$
@@ -146,9 +153,9 @@ A checkerboard hides no texture, so every distortion shows: a shear leans the sq
 To warp an image by an affine map: for every output pixel $\mathbf{q}$, ask *which source pixel lands here?* The answer is $\mathbf{p} = A^{-1}\mathbf{q}$. This is **inverse mapping**: every output pixel gets exactly one value. (Forward mapping — pushing source pixels out — leaves holes.) When $\mathbf{p}$ falls between pixels: **nearest neighbour** (crisp 0/1) or **bilinear** (smooth 0-to-1 blend along seams).
 </div>
 
+<div class="md">
 ## Lab 1 — The 2D affine machine
 
-<div class="md">
 Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked point $p$. Hover the warped image — each pixel is a lookup $I(M^{-1}\mathbf{q})$ in the 0/1 grid.
 
 **Try:** *Rotate 90° @ center* — the board maps to itself, but every square flips color. *Scale ×2* — the area pill reads ×4 ($2\times 2$). Edit the bottom row and cross into projective territory: parallel lines curve toward a vanishing point.
@@ -193,9 +200,9 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 	<div id="af2d-checks" class="af-checks"></div>
 </div>
 
+<div class="md">
 ## Lab 2 — The 3D affine machine
 
-<div class="md">
 Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volume*. A cube stays a parallelepiped — corners to corners, edges to edges, each face a parallelogram. The ghost cube shows where things started; the dotted line follows the tracked corner from $p$ to $M\cdot p$. Click any corner to track it.
 </div>
 
@@ -204,7 +211,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 	<div class="af-grid wide">
 		<div class="af-col">
 			<canvas id="af3d-canvas" class="af-canvas d3" width="560" height="440"></canvas>
-			<div class="af-row"><label class="af-lbl"><input type="checkbox" id="af3d-auto" checked> auto-rotate</label></div>
+			<div class="af-row"><label class="af-lbl"><input type="checkbox" id="af3d-auto"> auto-rotate</label></div>
 		</div>
 		<div class="af-col">
 			<div class="af-sub">Matrix M · 4×4 homogeneous</div>
@@ -219,10 +226,10 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 	<div id="af3d-checks" class="af-checks"></div>
 </div>
 
+<div class="md">
 ## The first non-affine move: the fold
 
-<div class="md">
-Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse. Their unbreakable rule:
+Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; by **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
 
 > A homeomorphism cannot change the topology of space. Lines stay lines, holes stay holes, links stay linked.
 
@@ -245,9 +252,9 @@ The crease is the hyperplane $\hat{\mathbf{n}} \cdot \mathbf{p} = c$. Points on 
 **The pieces are still affine.** On each side of the crease the map is a plain matrix. The fold is a *piecewise*-affine map — two affine matrices glued along a crease.
 </div>
 
+<div class="md">
 ## Lab 3 — The 2D fold machine
 
-<div class="md">
 The same 0/1 checkerboard. But a fold *cannot be inverted* — a pixel in the image has zero or two preimages — so we draw the board **forward** (push source cells to where they land). The far half is tinted so you can see the overlap.
 
 **Try:** slide $\lambda$ from 0 to 2.5. Below 1: bent but one-to-one. At 1: flattened. At 2: perfect paper fold. Hover the warped board — in the overlap region the machine finds *two* preimages and marks both on the source. The straight test line crosses the crease and arrives as two straight pieces with a corner: no single affine map can do that.
@@ -302,20 +309,27 @@ The 3D view shows the same image as bent paper: the far half rotated about the c
 	<div id="fd2d-checks" class="af-checks"></div>
 </div>
 
+<div class="md">
 ## The move no homeomorphism can do: unthreading a chain
 
-<div class="md">
-Two rings threaded like a chain link — the **Hopf link**. The only legal way to move one link into another is an **ambient isotopy**: the whole space deformed continuously, one-to-one at every instant. Two configurations connected by such a motion are the *same* link.
+Two rings threaded like a chain link — the **Hopf link** \cite[nLab, Hopf link]{nlab_hopf_link}\cite[Wikipedia, Hopf link]{hopf_link_wiki}. A **knot** is one closed loop; a **link** is several \cite[nLab, knot]{nlab_knot}\cite[nLab, link]{nlab_link}. The only legal way to move one link into another is an **ambient isotopy**: the whole space deformed continuously, one-to-one at every instant \cite[nLab, isotopy]{nlab_isotopy}. Two configurations connected by such a motion are the *same* link; the trivial state — two loops that are not linked — is the **unlink** \cite[nLab, unknot]{nlab_unknot}.
 
-The certificate that says the Hopf link *cannot* be unthreaded is a single integer, the **linking number**:
+The certificate that says the Hopf link *cannot* be unthreaded is a single integer, the **linking number** \cite[nLab, linking number]{nlab_linking_number}:
 
 $$
 \mathrm{Lk}(A,B) = \frac{1}{4\pi}\oint_A\oint_B \frac{(\mathbf{p}-\mathbf{q})\cdot(d\mathbf{p}\times d\mathbf{q})}{|\mathbf{p}-\mathbf{q}|^3}
 $$
 
-For the Hopf link it is $\pm 1$; for two unlinked circles it is $0$. Every homeomorphism preserves it — so *no* affine, projective, or Möbius motion can drop it from $1$ to $0$.
+For the Hopf link it is $\pm 1$; for two unlinked circles it is $0$. The formula above is **Gauss's integral** over the two curves \cite[Wikipedia, linking number (Gauss integral)]{linking_number_wiki} — the lab below runs it live. Every homeomorphism preserves the number (it is a topological invariant \cite[nLab, topological property]{nlab_topological_property}\cite[Wikipedia, homeomorphism]{homeomorphism_wiki}), so *no* affine, projective, or Möbius motion can drop it from $1$ to $0$.
 
-**The tie-in with rectifier networks.** In this book's language: every layer's affine part is a homeomorphism (when invertible), so it cannot change topological content — it cannot unthread anything by itself. The ReLU *fold* is the one non-homeomorphic step: at $\lambda>1$ it overlaps space, and only then can the linking number fall. This is exactly the mechanism the Origami view formalises — Keup & Helias's central claim is that networks **fold the data manifold into unoccupied higher dimensions** to expose an inner class to the outside \cite[Keup & Helias, 2022]{keup2022origami}, and the picture that opens this chapter (`higher_dim.png`) is its 2-D cartoon: lift into a fresh dimension → apply a hyperplane.
+**The tie-in with rectifier networks.** In this book's language: every layer's affine part is a homeomorphism (when invertible) \cite[nLab, invariance of domain]{nlab_invariance_of_domain}, so it cannot change topological content — it cannot unthread anything by itself. The ReLU *fold* is the one non-homeomorphic step: at $\lambda>1$ it overlaps space, and only then can the linking number fall. Four papers make each piece precise:
+
+- **Montúfar, Pascanu, Cho & Bengio** — the piecewise-linear regions of a rectifier net tile the input space, and their count grows exponentially with depth \cite[Montúfar et al., 2014]{montufar2014regions}.
+- **Keup & Helias** — to make tangled classes separable, a network **folds the data manifold into unoccupied higher dimensions** until a flat cut reaches the "island" class another class surrounds \cite[Keup & Helias, 2022]{keup2022origami}; their 2-D test case — a ring inside a ring — is the flat cousin of the chained rings above.
+- **Amrami & Goldberg** — problems that need exponentially many parameters at any fixed depth are solved with zero error by a net of *linear* depth and width $\le 4$, via an explicit space-folding construction \cite[Amrami & Goldberg, 2021]{amrami2021depth}.
+- **Lewandowski et al.** — a straight input line arrives in activation space as a non-convex path (each crease loses convexity), and their space-folding measure grows with depth in well-trained nets \cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}.
+
+Four papers, one object: the piecewise-affine map that creases and overlaps space. The <a href="origami">Origami</a> chapter is the full treatment; this chapter hands you the geometry to play with.
 
 **Two steps, one recipe.** Fold to change the topology (the single controlled cut), then move affinely to separate (the free part). The lab below runs both steps live and reads out Lk after every change.
 </div>
@@ -326,7 +340,7 @@ For the Hopf link it is $\pm 1$; for two unlinked circles it is $0$. Every homeo
 		<div class="af-col">
 			<canvas id="u3d-canvas" class="af-canvas d3" width="560" height="440"></canvas>
 			<div class="af-row">
-				<label class="af-lbl"><input type="checkbox" id="u3d-auto" checked> auto-rotate</label>
+				<label class="af-lbl"><input type="checkbox" id="u3d-auto"> auto-rotate</label>
 				<label class="af-lbl"><input type="checkbox" id="u3d-cores" checked> core circles</label>
 			</div>
 		</div>
@@ -350,19 +364,31 @@ For the Hopf link it is $\pm 1$; for two unlinked circles it is $0$. Every homeo
 	<div id="u3d-checks" class="af-checks"></div>
 </div>
 
-## Where these maps show up (spoiler: everywhere)
+<div class="optional md" data-headline="Who found all this, and why">
+* **Knots.** The first systematic study of knotted loops is **Listing's** *Vorstudien zur Topologie* (1847) — the same book that coined the word "topology" \cite[Listing, 1847]{listingtopologie}. **Poincaré's** *Analysis Situs* (1895) turned knots into a theory of the space *around* the loop, not of the loop itself \cite[Poincaré, 1895]{poincareanalysissitus}.
+* **The linking number.** Gauss expressed the linking of two closed curves as a single integral — the formula the unlink machine runs \cite[Wikipedia, linking number]{linking_number_wiki}. The two-ring link was studied by **Hopf** in 1931, while working on what is now the Hopf fibration; Gauss knew it earlier, and a Japanese Buddhist sect (Buzan-ha) had used the motif as a crest centuries before \cite[Wikipedia, Hopf link]{hopf_link_wiki}.
+* **Invariance of domain.** Brouwer's theorem (~1910) that a continuous one-to-one map of $\mathbb{R}^n$ onto its image is a homeomorphism settled the open question "is dimension a topological invariant?" \cite[nLab, invariance of domain]{nlab_invariance_of_domain}.
+* **Folding as a map.** Paper-folding mathematics proves that any straight-sided shape can be cut from one sheet with a single straight cut after folding \cite[Wikipedia, fold-and-cut theorem]{foldandcut_wiki}. The neural-network side of the same idea: linear regions (Montúfar et al. 2014 \cite{montufar2014regions}), folding as the separability tool (Keup & Helias 2022 \cite{keup2022origami}), depth via folding (Amrami & Goldberg 2021 \cite{amrami2021depth}), and a quantitative folding measure (Lewandowski et al. 2025 \cite{lewandowski2025spacefolds}).
+</div>
 
 <div class="md">
-- **Every linear layer is affine.** $y = Wx + b$ *is* $f(x) = Mx + t$. Delete the nonlinearities and a whole network collapses into a single affine map (composition closes). That collapse is *why* activation functions exist.
+## Where these maps show up (spoiler: everywhere)
+
+- **Every linear layer is affine.** $y = Wx + b$ *is* $f(x) = Mx + t$. Delete the nonlinearities and a whole network collapses into a single affine map (composition closes). That collapse is *why* activation functions exist, as the <a href="minimalneuron">Neuron</a> and <a href="origami">Origami</a> chapters argue from the other side.
 - **Every ReLU layer is a stack of folds.** One crease per neuron. The Origami view is the natural geometry of what a rectifier network *is*.
-- **Transformers are affine machines with attention on top.** Q, K, V, and output projections are $Wx + b$; attention routes between them.
+- **Transformers are affine machines with attention on top.** Query, key, value, and output projections are all $Wx + b$ \cite[Vaswani et al., 2017]{vaswani2017attention}; attention is a learned, input-dependent weighted average on top — the affine parts do the coordinate changes, the attention does the routing.
 - **Data augmentation** teaches models what the affine group leaves *invariant* (rotations, crops, flips are affine).
 - **Camera + robotics + graphics** live in $4\times 4$ homogeneous matrices; document scanners + AR live in $3\times 3$ homographies (the projective cousin).
-- **Interpretability probes** (logit lens, tuned lens) are literally learned affine maps from a hidden state to the output.
+- **Interpretability probes** (logit lens, tuned lens) are literally learned affine maps from a hidden state to the output (see the <a href="fact_lookup">Fact Lookup</a> and <a href="mechanistic_interpretability">Mechanistic Interpretability</a> chapters).
 </div>
 
 <div class="af-callout md">
-**One line.** An affine map is the most general motion that keeps lines straight ($f(x) = Mx + t$); homogeneous coordinates turn its composition into ordinary matrix multiplication, which is why the same $3\times 3$ / $4\times 4$ arithmetic runs image warps, graphics, camera math, and every biased linear layer. The determinant reads off how much area/volume survives; the last row decides whether you are still affine at all. And the first non-affine move — the fold $p \mapsto p - \lambda\,\mathrm{ReLU}(\hat n \cdot p - c)\,\hat n$ — is exactly a ReLU: bent for $\lambda>0$, overlapping space for $\lambda>1$, and the only move in this chapter that can drop a linking number. Fold to change topology, move affinely to separate — the two-step recipe every rectifier classifier uses.
+**In one glance.**
+
+- **Affine = lines stay lines.** $f(x) = Mx + t$ is the most general motion that does that.
+- **The trick:** append a $1$, and composing affine maps is just multiplying the $3\times 3$ / $4\times 4$ matrices — the arithmetic behind image warps, graphics, cameras, and every linear layer.
+- **Two dials to read:** $|\det M|$ says how much area/volume survives; the last row says whether you are still affine at all.
+- **The first non-affine move is a fold** — exactly a ReLU: bent for $\lambda>0$, overlapping for $\lambda>1$, and the only move that can unthread a chain. Fold, then move affinely.
 </div>
 
 <script>
