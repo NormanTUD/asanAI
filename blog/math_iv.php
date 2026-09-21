@@ -114,7 +114,7 @@ Three more facts that will keep paying off:
 * **Everything is decided by three points.** Two points determine a line, three non-collinear points determine a triangle — and since affine maps preserve lines and ratios, **an affine map is completely determined by where it sends three non-collinear points**.
 </div>
 
-<div class="optional md" data-headline="History: where the word 'affine' comes from">
+<div class="optional md" data-headline="History: where the word and the idea come from">
 The systematic idea that a geometry is defined by *what its transformations preserve* was pushed
 decisively by **Riemann** in his 1854 Habilitationsschrift, *Ueber den mathematischen Begriff des
 Raumes* \cite[Riemann, 1854]{riemann1854raum}. There he separated an **affine** structure
@@ -140,18 +140,16 @@ a free direction (a vector) plus a fixed origin — exactly the $\mathbf{x}\maps
 ("barycentric") view of the same object \cite{mobiusband}. The modern definition — *a bijection
 preserving affine combinations* \cite{affine_transformation_wiki} — is the algebraic distillation
 of Riemann's bottom rung.
-</div>
 
-<div class="md">
-## Where the name comes from
-
-The word is Latin *affinis* — "attached to, connected with, akin to." That sense of *belonging together* is exactly what survives in the mathematics: an affine transformation is a map under which the straight-line structure of space stays intact.
-
-The term first enters mathematics in **Euler's** 1748 *Introductio in analysin infinitorum*, where he used "affine" in connection with the tangents to a curve — each tangent *attached* to the curve at a single point.\cite[Euler, 1748]{euler1748introductio}
-
-A century later, **Felix Klein's** survey of geometry credits the name "affine transformation" to **Möbius** and **Gauss**, who in the mid-1800s were separating out the properties of figures that survive even when lengths and angles do not.\cite[Klein, 1948]{klein1948geometry}
-
-So the label is not decoration. *Affine* means "staying in relation," and the maps named after it are precisely those that keep collinearity, parallelism, and the ratios along a line in relation — the invariants the labs below let you break and restore by hand.
+As for the word itself: it is Latin *affinis* — "attached to, connected with, akin to." The term
+first enters mathematics in **Euler's** 1748 *Introductio in analysin infinitorum*, where he used
+"affine" in connection with the tangents to a curve — each tangent *attached* to the curve at a
+single point \cite[Euler, 1748]{euler1748introductio}. A century later, **Felix Klein's** survey of
+geometry credits the name "affine transformation" to **Möbius** and **Gauss**, who in the
+mid-1800s were separating out the properties of figures that survive even when lengths and angles
+do not \cite[Klein, 1948]{klein1948geometry}. *Affine* means "staying in relation," and the maps
+named after it are precisely those that keep collinearity, parallelism, and the ratios along a line
+in relation — the invariants the labs below let you break and restore by hand.
 </div>
 
 <div class="md">
@@ -529,8 +527,6 @@ Thicken the rings and you have two **solid tori** — a circle thickened into a 
 * Every motion in this catalog — every affine, projective, and Möbius map — is a homeomorphism, so it rearranges space without changing its topology and, in particular, preserves the linking number (invariance of domain \cite[nLab, invariance of domain]{nlab_invariance_of_domain}). You can spend as many such moves as you like; **no one of them can separate a chain link.**
 * The $\lambda > 1$ fold is the one standard move that is **not** a homeomorphism: the far half is pressed onto (or mirrored through) the near side, and in the overlap two inputs share one output. That one crack is the only place the topology can change — push the fold through the flat ring and one ring passes through the other, and the linking number drops $1 \to 0$.
 * Hence the two-step recipe that untangles *any* entangled data, however it lies in space: **fold** to change the topology, then **move affinely** to separate it. The affine steps are free; the fold is the single, controlled cut.
-
-The machine below computes the linking number from the actual 3-D positions of the rings. Slide $\lambda$ and watch the integer: it stays $1$ while the map is one-to-one ($\lambda \le 1$) and falls to $0$ the moment the map starts to overlap space ($\lambda > 1$).
 </div>
 
 <div class="md">
@@ -551,8 +547,8 @@ Two solid tori, chained: the Hopf link. The fold is $f(p) = p - \lambda\,\operat
 
 **What to do:**
 
-1. Start at *The chain* and slide $\lambda$ from $0$ to $2.5$. The rings bend and crease; at $\lambda = 1$ the flattened half passes exactly through the other ring (the unthreading moment); for $\lambda > 1$ the linking number reads $0$.
-2. Press *separate the rings*: a plain translation now pulls them apart, because nothing is left to link them.
+1. Start at *The chain* and slide $\lambda$ from $0$ to $2.5$, watching the big readout. The rings bend and crease; the linking number stays $1$ while the map is still one-to-one ($\lambda \le 1$), at $\lambda = 1$ the flattened half passes exactly through the other ring (the unthreading moment), and for $\lambda > 1$ — the moment the map overlaps space — it falls to $0$.
+2. Press *separate the rings*: ring B now slides along $-\hat n$, straight out of the crease plane — perpendicular to the flat ring's plane. It is a plain translation, and it only works because the fold already unlinked them.
 3. Tilt the crease plane away from the flat ring's plane. Some fold directions unlink, others do not — the crease geometry matters as much as its strength.
 4. Try *Rotate 30° (affine)*: a pure affine motion of the whole pair. The linking number stays $1$ no matter how you rotate it. That is the theorem, running.
 </div>

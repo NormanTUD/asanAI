@@ -2113,7 +2113,7 @@
 			const P = pal();
 			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
 			drawGhost(P);
-			if (U3.lam > 0.01) drawCreasePlane(P);
+			if (U3.lam > 0.01 || U3.sep > 1e-3) drawCreasePlane(P);
 			const list = [];
 			for (let ring = 0; ring < 2; ring++) {
 				const mesh = (ring === 0) ? meshA : meshB;
@@ -2198,8 +2198,31 @@
 						ctx.lineTo(p1[0] - 11 * Math.cos(ang + 0.4), p1[1] - 11 * Math.sin(ang + 0.4));
 						ctx.closePath(); ctx.fill();
 						ctx.font = '11px monospace'; ctx.textAlign = 'left';
-						ctx.fillText('B pulled by \u2212n\u0302\u00B7sep — a plain translation', 10, 18);
+						ctx.fillText('B slides along \u2212n\u0302 — straight out of the crease plane (\u22A5)', 10, 18);
 					}
+				}
+				/* right-angle marker at the crease centre: the pull direction (−n̂) is ⊥ to the crease plane */
+				const nSep = n3();
+				const ctrSep = [nSep[0] * U3.c, nSep[1] * U3.c, nSep[2] * U3.c];
+				const refSep = Math.abs(nSep[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
+				const e1Sep = [refSep[1] * nSep[2] - refSep[2] * nSep[1], refSep[2] * nSep[0] - refSep[0] * nSep[2], refSep[0] * nSep[1] - refSep[1] * nSep[0]];
+				const lSep = Math.hypot(e1Sep[0], e1Sep[1], e1Sep[2]) || 1;
+				const e1u = [e1Sep[0] / lSep, e1Sep[1] / lSep, e1Sep[2] / lSep];
+				const dSep = 0.5;
+				const ctrP = proj(u3dViewRotate(ctrSep));
+				const plP = proj(u3dViewRotate([ctrSep[0] + dSep * e1u[0], ctrSep[1] + dSep * e1u[1], ctrSep[2] + dSep * e1u[2]]));
+				const spP = proj(u3dViewRotate([ctrSep[0] - dSep * nSep[0], ctrSep[1] - dSep * nSep[1], ctrSep[2] - dSep * nSep[2]]));
+				if (ctrP && plP && spP) {
+					const sRA = 12;
+					const w1 = [plP[0] - ctrP[0], plP[1] - ctrP[1]], w1l = Math.hypot(w1[0], w1[1]) || 1;
+					const w2 = [spP[0] - ctrP[0], spP[1] - ctrP[1]], w2l = Math.hypot(w2[0], w2[1]) || 1;
+					const u1 = [w1[0] / w1l, w1[1] / w1l], u2 = [w2[0] / w2l, w2[1] / w2l];
+					ctx.strokeStyle = P.warn; ctx.lineWidth = 1.5;
+					ctx.beginPath();
+					ctx.moveTo(ctrP[0] + sRA * u1[0], ctrP[1] + sRA * u1[1]);
+					ctx.lineTo(ctrP[0] + sRA * u1[0] + sRA * u2[0], ctrP[1] + sRA * u1[1] + sRA * u2[1]);
+					ctx.lineTo(ctrP[0] + sRA * u2[0], ctrP[1] + sRA * u2[1]);
+					ctx.stroke();
 				}
 			}
 			ctx.fillStyle = P.ink2; ctx.font = '11px monospace'; ctx.textAlign = 'left';
