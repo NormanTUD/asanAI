@@ -87,7 +87,7 @@ $$ \text{Perception/Mobility} \approx \text{High Computation} $$
 This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has “encoded” millions of years of sensorimotor optimization into our biology, making it feel “easy” to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="The Winograd Schema: Common Sense as a Test of Intelligence">
 ### The Winograd Schema: Common Sense as a Test of Intelligence
 
 The **Winograd Schema Challenge** (\cite[Levesque, Davis, Morgenstern, 2012]{levesque2012winograd}) was proposed as a more *surgical* successor to the Turing Test. Where the Turing Test asks the blunt question “can a machine chat like a human?”, the Winograd challenge isolates a single, narrow, and deeply human skill: **resolving an ambiguous pronoun using background knowledge about the world**. It is common sense made into a question you can grade.
@@ -620,7 +620,7 @@ This result deepens the philosophical puzzle. If concepts are organized with suc
 
 <div id="philosophy-linear-rep-container"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Alien Swarm: A State-Space View of LLM Identity">
 ### The Alien Swarm: A State-Space View of LLM Identity
 
 <div class="smart-quote" data-cite="vanhoucke2024closeencounters">

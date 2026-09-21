@@ -250,7 +250,9 @@ Show the model what *bad* looks like. This defines the boundary of success more 
 Solve the same problem from multiple viewpoints. This produces a holistic analysis and surfaces blind spots.
 
 * **Prompt:** “Analyze this UI from: (a) a senior engineer, (b) a first-time user, (c) a malicious attacker.”
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="Semantic Vector Steering: Targeting a Region, Not a Point">
 ## Semantic Vector Steering: Targeting a Region, Not a Point
 
 Everything in the chapter so far works on the **surface**: tokens in, tokens out. You describe what you want in words, the model interprets those words through its embedding space, and you get back a token sequence. You never see the space directly; you only see what comes out the other end.
