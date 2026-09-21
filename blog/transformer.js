@@ -1076,7 +1076,7 @@ function initWeights(r, c) {
 window.showLayer = (containerId, layerIdx, numLayers) => {
     const activeContent = switchTab(containerId, layerIdx, numLayers,
         { content: 'layer-content', btn: 'layer-tab-btn' },
-        { bg: '#bfdbfe' }, { bg: '#fff' }
+        { bg: '#bfdbfe' }, { bg: themeColor('#fff') }
     );
 
     const registryEntry = attentionRenderRegistry.get(containerId);
@@ -1095,7 +1095,7 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
     const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
         { content: 'head-content', btn: 'head-tab-btn' },
-        { bg: '#e2e8f0' }, { bg: '#fff' }
+        { bg: '#e2e8f0' }, { bg: themeColor('#fff') }
     );
 
     const registryEntry = attentionRenderRegistry.get(containerId);
@@ -1156,7 +1156,7 @@ function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
     const dispToken = displayToken(token);
 
     return `
-    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
+    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: ${themeColor('#fff')}; overflow: auto;">
         <strong>Pos ${pos}: ${escapeHtml(dispToken)}</strong>
         <table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
             <tr style="color: #64748b;">
@@ -2523,7 +2523,7 @@ function ensureProjectionSubContainers(container) {
 
 	if (!chipsDiv || !detailsDiv) {
 		container.innerHTML = `
-	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
+	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: ${themeColor('#fff')}; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
 	    <div id="tlab-final-details"></div>
 	`;
 		chipsDiv = document.getElementById('tlab-final-chips');
