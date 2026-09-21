@@ -267,9 +267,22 @@
 		            'vision', 'audio', 'multimodal', 'agents', 'reasoning', 'interpretability',
 		            'language', 'history', 'philosophy', 'ethics', 'safety', 'society', 'law',
 		            'frontier', 'reference' ] }
-	];
+ 	];
 
-	const COOKIE_NAME  = 'topics_pref';
+ 	/* ── 1f. Lesson dependency graph ───────────────────────────────
+ 	   Each lesson lists the OTHER lessons it builds on. When every
+ 	   prerequisite is marked "learned", the lesson's heavy blocks get
+ 	   a green "you could understand this" indicator and are auto-
+ 	   revealed regardless of the math-comfort slider. */
+ 	const LESSON_DEPS = {
+ 		'math-i':           [],
+ 		'math-ii':          ['math-i'],
+ 		'math-iii':         ['math-ii'],
+ 		'math-iv':          ['math-iii'],
+ 		'differentiation':  ['math-i', 'math-ii']
+ 	};
+
+ 	const COOKIE_NAME  = 'topics_pref';
 	const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 	const STORAGE_KEY  = 'blog_topics_pref';   // localStorage mirror
 
@@ -309,7 +322,8 @@
 			profile: null,
 			level: null,
 			mathLevel: DEFAULT_MATH_LEVEL,
-			corePersonas: []
+			corePersonas: [],
+			learned: {}
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
 		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
@@ -339,6 +353,11 @@
 			} else if (parsed.corePersona && CORE_PERSONAS.some(function (p) { return p.id === parsed.corePersona; })) {
 				out.corePersonas = [parsed.corePersona];
 			}
+			if (parsed.learned && typeof parsed.learned === 'object') {
+				Object.keys(parsed.learned).forEach(function (k) {
+					if (LESSON_DEPS.hasOwnProperty(k) && parsed.learned[k]) out.learned[k] = true;
+				});
+			}
 		}
 		return out;
 	}
@@ -348,7 +367,7 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersonas: [] };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersonas: [], learned: {} };
 	}
 
 	/** the reader's current math-comfort (0–100) */
@@ -1283,35 +1302,31 @@
 		}
 	}
 
-	/** (re)build the "tucked away" banner for a collapsed block, with the
-	    concrete *why* so a reader always knows why something faded. The
-	    title comes from `data-optionaltitle` when present (a titled
-	    optional block); otherwise it is derived from the block's topics. */
+	/** Add the gradient-fade + reveal pill to a collapsed block.
+	    Content stays visible (faded); a small badge shows the gate reason. */
 	function setBanner(block, spec, score) {
 		score = score || {};
-		const old = block.querySelector(':scope > .topic-block-banner');
+		const old = block.querySelector(':scope > .topic-block-fade-badge');
 		if (old) old.remove();
-		const title = spec.title || pickMeta(spec.topicIds).label;
-		const icon = (spec.topicIds && spec.topicIds.length) ? pickMeta(spec.topicIds).icon : (score.why === 'math' ? '∫' : '✦');
-		const banner = document.createElement('div');
-		banner.className = 'topic-block-banner' + (spec.title ? ' topic-block-banner-titled' : '');
-		banner.innerHTML = [
-			'<span class="topic-block-banner-icon" aria-hidden="true">', escAttr(icon), '</span>',
-			'<span class="topic-block-banner-text">',
-				'<strong>', escAttr(title), '</strong> tucked away — ',
-				escAttr(score.reason || 'outside your selected interests'),
-				'. <span class="topic-block-banner-hint">Still curious? Peek inside — nothing is deleted.</span>',
-			'</span>',
-			'<button type="button" class="topic-block-reveal">',
-				'<span class="topic-block-reveal-eye" aria-hidden="true">👁</span> Peek anyway',
-			'</button>'
-		].join('');
-		banner.querySelector('.topic-block-reveal').addEventListener('click', function (ev) {
+		const badge = document.createElement('button');
+		badge.type = 'button';
+		badge.className = 'topic-block-fade-badge';
+		badge.setAttribute('aria-label', 'Reveal this section');
+		const icon = score.why === 'math' ? '∫' : (score.why === 'category' ? '✦' : '◈');
+		const label = score.why === 'math'
+			? score.reason || ''
+			: (score.reason || 'outside your interests');
+		badge.innerHTML =
+			'<span class="tbf-icon" aria-hidden="true">' + escAttr(icon) + '</span>'
+			+ '<span class="tbf-text">' + escAttr(label) + '</span>'
+			+ '<span class="tbf-action">tap to reveal ↓</span>';
+		badge.addEventListener('click', function (ev) {
 			ev.preventDefault();
-			applyBlockState(block, block._tbSpec, score, true);
+			ev.stopPropagation();
+			revealBlock(block, true);
 		});
-		block.insertBefore(banner, block.firstChild);
-		return banner;
+		block.appendChild(badge);
+		return badge;
 	}
 
 	function ensureInner(block) {
@@ -1320,7 +1335,7 @@
 		inner = document.createElement('div');
 		inner.className = 'topic-block-inner';
 		const moveable = Array.from(block.children).filter(function (el) {
-			return !el.classList.contains('topic-block-banner') && !el.classList.contains('topic-partial-chip');
+			return !el.classList.contains('topic-block-fade-badge') && !el.classList.contains('topic-partial-chip');
 		});
 		moveable.forEach(function (el) { inner.appendChild(el); });
 		block.appendChild(inner);
@@ -1342,83 +1357,24 @@
 		};
 	}
 
-	/** collapse a block, smoothly if `animate`. Always ends in the steady
-	    `topic-block-collapsed` state (inner hidden, banner visible). */
+	/** collapse a block: content stays visible but gets a gradient fade
+	    via CSS class. A small badge appears at the bottom. */
 	function collapseBlock(block, spec, score, animate) {
 		const chip = block.querySelector(':scope > .topic-partial-chip');
 		if (chip) chip.remove();
-		const inner = ensureInner(block);
+		ensureInner(block);
 		block.classList.remove('topic-block-revealed');
 		block.classList.remove('topic-block-partial');
 		block.classList.add('topic-block-collapsed');
-
-		if (animate && !prefersReducedMotion()) {
-			block.classList.add('tb-collapsing');
-			const h = inner.scrollHeight;
-			inner.style.opacity = '1';
-			inner.style.transition = 'opacity ' + TUCK_MS + 'ms ease';
-			setBanner(block, spec, score);
-			const banner = block.querySelector(':scope > .topic-block-banner');
-			if (banner) { banner.style.transition = 'opacity ' + TUCK_MS + 'ms ease'; banner.style.opacity = '0'; }
-			void inner.offsetHeight;
-			if (banner) requestAnimationFrame(function () { banner.style.opacity = '1'; });
-			inner.style.opacity = '0';
-			block._tbBusy = true;
-			animateHeight(inner, h, 0, TUCK_MS, function () {
-				inner.style.opacity = '';
-				inner.style.transition = '';
-				block.classList.remove('tb-collapsing');
-				block._tbBusy = false;
-				if (block._tbDirty) { block._tbDirty = false; reapplyBlock(block); }
-			});
-		} else {
-			setBanner(block, spec, score);
-			const banner = block.querySelector(':scope > .topic-block-banner');
-			if (banner) { banner.style.transition = ''; banner.style.opacity = ''; }
-			inner.style.opacity = '';
-		}
+		setBanner(block, spec, score);
 	}
 
-	/** expand (reveal) a block, smoothly if `animate`. Ends with the block
-	    fully visible; the banner is removed. */
+	/** expand (reveal) a block: remove the fade + badge. */
 	function revealBlock(block, animate) {
-		const inner = block.querySelector(':scope > .topic-block-inner');
-		const banner = block.querySelector(':scope > .topic-block-banner');
+		const badge = block.querySelector(':scope > .topic-block-fade-badge');
+		if (badge) badge.remove();
 		block.classList.remove('topic-block-collapsed');
 		block.classList.add('topic-block-revealed');
-
-		if (inner && animate && !prefersReducedMotion()) {
-			block.classList.add('tb-expanding');
-			inner.style.display = 'block';
-			inner.style.height = '0px';
-			inner.style.overflow = 'hidden';
-			inner.style.opacity = '0';
-			inner.style.transition = 'none';
-			void inner.offsetHeight;
-			const h = inner.scrollHeight;
-			if (banner) {
-				banner.style.transition = 'opacity 140ms ease';
-				banner.style.opacity = '0';
-			}
-			block._tbBusy = true;
-			animateHeight(inner, 0, h, TUCK_MS, function () {
-				inner.style.height = '';
-				inner.style.overflow = '';
-				inner.style.opacity = '';
-				inner.style.transition = '';
-				inner.style.display = '';
-				block.classList.remove('tb-expanding');
-				block._tbBusy = false;
-				if (banner && banner.parentNode) banner.remove();
-				if (block._tbDirty) { block._tbDirty = false; reapplyBlock(block); }
-			});
-		} else {
-			if (banner) banner.remove();
-			inner.style.height = '';
-			inner.style.overflow = '';
-			inner.style.opacity = '';
-			inner.style.display = '';
-		}
 	}
 
 	function reapplyBlock(block) {

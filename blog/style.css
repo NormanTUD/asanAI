@@ -9522,87 +9522,55 @@ html.dark .topics-preset-fun {
 	transition: color 0.15s ease;
 }
 
-/* ── collapsed topic blocks inside .md ─────────────────── */
+/* ── collapsed topic blocks: gradient fade ─────────────────── */
 .topic-block {
 	position: relative;
 	border-radius: 12px;
 	transition: background 0.25s, border 0.25s, padding 0.25s, opacity 0.3s ease, filter 0.3s ease;
 }
 .topic-block.topic-block-collapsed {
-	padding-top: 0;
-	padding-bottom: 0;
-	background: transparent;
-}
-.topic-block.topic-block-collapsed > :not(.topic-block-banner) {
-	display: none;
+	max-height: 120px;
+	overflow: hidden;
 }
 .topic-block.topic-block-collapsed .topic-block-inner {
-	display: none;
+	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+	mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+}
+.topic-block.topic-block-collapsed .topic-block-fade-badge {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
-.topic-block-banner {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 12px;
-	margin: 14px 0;
-	padding: 14px 18px;
-	border-radius: 12px;
-	background: var(--mn-bg-subtle);
-	border: 1px dashed var(--mn-border);
-	color: var(--mn-text-secondary);
-	font-size: 0.9rem;
-	line-height: 1.45;
-	transition: border-color 0.18s, background 0.18s;
-}
-.topic-block-banner:hover {
-	border-color: var(--mn-accent);
-}
-.topic-block-banner-icon {
-	font-size: 1.4rem;
+.topic-block-fade-badge {
 	display: inline-flex;
-	width: 32px;
-	height: 32px;
 	align-items: center;
-	justify-content: center;
-	border-radius: 8px;
-	background: var(--mn-surface);
+	gap: 8px;
+	padding: 6px 14px;
+	border-radius: 99px;
 	border: 1px solid var(--mn-border);
-	color: var(--mn-accent);
-	font-weight: 600;
-	font-family: var(--mn-font-body, 'Inter', system-ui, sans-serif);
-	flex-shrink: 0;
-}
-.topic-block-banner-text {
-	flex: 1 1 auto;
-	min-width: 200px;
-}
-.topic-block-banner-text strong {
-	color: var(--mn-text);
-	font-weight: 700;
-}
-.topic-block-reveal {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 7px 14px;
-	border-radius: 9px;
-	border: 1px solid var(--mn-accent);
 	background: var(--mn-surface);
-	color: var(--mn-accent);
-	font-size: 0.8rem;
-	font-weight: 600;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	font-size: 0.78rem;
+	color: var(--mn-text-secondary);
 	cursor: pointer;
-	font-family: inherit;
-	transition: all 0.16s ease;
-	flex-shrink: 0;
+	transition: border-color 0.18s, box-shadow 0.18s;
+	z-index: 2;
 }
-.topic-block-reveal:hover {
-	background: var(--mn-accent);
-	color: #fff;
-	transform: translateY(-1px);
+.topic-block-fade-badge:hover {
+	border-color: var(--mn-accent);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-.topic-block-reveal-eye { font-size: 0.95em; }
+.topic-block-fade-badge .tbf-icon {
+	font-size: 1rem;
+	color: var(--mn-accent);
+}
+.topic-block-fade-badge .tbf-action {
+	font-size: 0.7rem;
+	color: var(--mn-text-muted);
+	font-weight: 600;
+}
 
 .topic-block.topic-block-revealed {
 	animation: topicBlockReveal 0.4s ease;
@@ -9971,7 +9939,7 @@ html.dark .topics-preset-fun {
 	border: 1px dashed color-mix(in srgb, var(--mn-accent) 32%, var(--mn-border));
 }
 .topic-partial-chip-dot { color: var(--mn-accent); font-size: 0.9rem; line-height: 1; }
-.topic-block-banner-hint { color: var(--mn-text-muted); font-size: 0.92em; }
+
 
 /* ── inline widget: soft cross-fade + staggered reveal ────── */
 .inline-topics { position: relative; }
