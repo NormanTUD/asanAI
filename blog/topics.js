@@ -842,7 +842,7 @@
 					<span class="topics-math-label">Are you comfortable with…</span>
 					<div class="topics-math-control">
 						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="5" value="${getMathLevel()}" aria-label="Math comfort, percent">
-						<span class="topics-math-val">${getMathLevel()}% · ${mathLabel(getMathLevel())}</span>
+						<span class="topics-math-val">${getMathLevel()}%</span>
 					</div>
 					<div class="math-comfort-ticks">
 						<span>intuition</span><span>algebra</span><span>calculus</span><span>proofs</span><span>everything</span>
@@ -968,7 +968,7 @@
 			let oDrag = false;
 			const oPaint = function () {
 				const v = parseInt(mathSlider.value, 10);
-				if (oVal) oVal.textContent = v + '% · ' + mathLabel(v);
+				if (oVal) oVal.textContent = v + '%';
 			};
 			mathSlider.addEventListener('input', function () {
 				oPaint();
@@ -1762,12 +1762,6 @@
 				// Insert divider right before the first off tile
 				grid.insertBefore(divider, offTiles[0]);
 			});
-
-			dlog('home page: tiles regrouped in-place per part');
-		} catch (e) {
-			derr('regroupTuckedTiles failed; leaving tiles as-is.', e);
-		}
-	}
 
 			dlog('home page: tiles regrouped in-place per part');
 		} catch (e) {
