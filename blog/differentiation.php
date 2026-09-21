@@ -56,9 +56,15 @@ Geometrically, this is the slope of the **secant line** connecting the two point
 ### The Instantaneous Rate of Change (The Tangent Line)
 
 The **derivative** is what happens when we let $h$ approach zero. The secant line becomes a **tangent line**, touching the curve at that point:
+</div>
 
+<div class="topic-block" data-optionaltitle="The formal (limit) definition" data-mathlevel="70">
+<div class="md">
 $$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$
+</div>
+</div>
 
+<div class="md">
 This is the **limit definition of the derivative**, sometimes called the definition “from first principles.” The notation $f'(x)$ (read “f prime of x”) was introduced by \citeauthor{lagrange1797theorie} in \citetitle{lagrange1797theorie} (\citeyear{lagrange1797theorie}). Leibniz wrote the same concept as $\frac{df}{dx}$.
 
 <figure>
@@ -260,14 +266,20 @@ In summary, without derivatives, there would be no way to train neural networks,
 In AI, we almost never deal with functions of a single variable. A neural network's loss depends on millions of weights simultaneously. A **partial derivative** measures how the function changes when we vary *one* variable while holding all others constant.
 
 For a function $f(x, y)$, the partial derivatives are:
+</div>
 
+<div class="topic-block" data-optionaltitle="The gradient vector" data-mathlevel="45" data-topic="math-ii">
+<div class="md">
 $$\frac{\partial f}{\partial x} \quad \text{(vary } x \text{, hold } y \text{ constant)}$$
 $$\frac{\partial f}{\partial y} \quad \text{(vary } y \text{, hold } x \text{ constant)}$$
 
 The collection of all partial derivatives forms the **gradient vector**:
 
 $$\nabla f = \begin{pmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{pmatrix}$$
+</div>
+</div>
 
+<div class="md">
 The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.
 
 The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}; the modern $\partial/\mathrm{d}x$ notation was created by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).
