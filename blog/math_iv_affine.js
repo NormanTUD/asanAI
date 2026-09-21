@@ -1820,6 +1820,392 @@
 	}
 
 	/* ══════════════════════════════════════════════════════════════
+	   UNLINK 3D LAB — two chained solid tori through a fold
+	   ══════════════════════════════════════════════════════════════ */
+
+	const U3 = {
+		tilt: 0, spin: 0, c: 0, lam: 0,
+		sep: 0, separating: false,
+		affineM: null,
+		yaw: 0.7, pitch: 0.46,
+		auto: true, drag: null,
+		showCores: true,
+		lk: 1, min: 0.2,
+		CAM: 4.4, S0: 150
+	};
+	const U3RHO = 0.08, U3NU = 40, U3NV = 12, U3NC = 200;
+
+	const PRESETS_U3 = [
+		{ name: 'The chain', f: function () { U3.tilt = 0; U3.spin = 0; U3.c = 0; U3.lam = 0; U3.sep = 0; U3.affineM = null; } },
+		{ name: 'Bend (λ=0.5)', f: function () { U3.tilt = 0; U3.spin = 0; U3.c = 0; U3.lam = 0.5; U3.sep = 0; U3.affineM = null; } },
+		{ name: 'Hammer (λ=1)', f: function () { U3.tilt = 0; U3.spin = 0; U3.c = 0; U3.lam = 1; U3.sep = 0; U3.affineM = null; } },
+		{ name: 'Unlink! (λ=2)', f: function () { U3.tilt = 0; U3.spin = 0; U3.c = 0; U3.lam = 2; U3.sep = 0; U3.affineM = null; } },
+		{ name: 'Rotate 30° (affine)', f: function () { U3.tilt = 0; U3.spin = 0; U3.c = 0; U3.lam = 0; U3.sep = 0; U3.affineM = Affine.rotY(Math.PI / 6); } }
+	];
+
+	function initUnlink3d() {
+		const c = $('unlink3d-canvas');
+		if (!c) return;
+		const ctx = c.getContext('2d');
+		if (!ctx) { showLabError('unlink-3d', new Error('Canvas 2D context unavailable')); return; }
+		const W = c.width, H = c.height, cx = W / 2, cy = H / 2;
+
+		const meshA = (function () {
+			const q = [];
+			for (let i = 0; i < U3NU; i++)
+				for (let j = 0; j < U3NV; j++) {
+					const u0 = i / U3NU * 2 * Math.PI, u1 = (i + 1) / U3NU * 2 * Math.PI;
+					const v0 = j / U3NV * 2 * Math.PI, v1 = (j + 1) / U3NV * 2 * Math.PI;
+					q.push([Hopf.tubeA(u0, v0, U3RHO), Hopf.tubeA(u1, v0, U3RHO), Hopf.tubeA(u1, v1, U3RHO), Hopf.tubeA(u0, v1, U3RHO)]);
+				}
+			return q;
+		})();
+		const meshB = (function () {
+			const q = [];
+			for (let i = 0; i < U3NU; i++)
+				for (let j = 0; j < U3NV; j++) {
+					const u0 = i / U3NU * 2 * Math.PI, u1 = (i + 1) / U3NU * 2 * Math.PI;
+					const v0 = j / U3NV * 2 * Math.PI, v1 = (j + 1) / U3NV * 2 * Math.PI;
+					q.push([Hopf.tubeB(u0, v0, U3RHO), Hopf.tubeB(u1, v0, U3RHO), Hopf.tubeB(u1, v1, U3RHO), Hopf.tubeB(u0, v1, U3RHO)]);
+				}
+			return q;
+		})();
+
+		const n3 = function () { return Fold.normal3(U3.tilt * Math.PI / 180, U3.spin * Math.PI / 180); };
+
+		function viewRotate(p) {
+			const cyw = Math.cos(U3.yaw), sw = Math.sin(U3.yaw);
+			const cp = Math.cos(U3.pitch), sp = Math.sin(U3.pitch);
+			const x1 = cyw * p[0] + sw * p[2];
+			const y1 = p[1];
+			const z1 = -sw * p[0] + cyw * p[2];
+			return [x1, cp * y1 - sp * z1, sp * y1 + cp * z1];
+		}
+		function proj(v) {
+			const depth = v[2] + U3.CAM;
+			if (depth < 0.08) return null;
+			const s = U3.S0 * U3.CAM / depth;
+			return [cx + v[0] * s, cy - v[1] * s, depth];
+		}
+		/* object point → folded (+ separated for ring B, + affine) → view-rotated */
+		function map3(p, isB) {
+			const n = n3();
+			let q = Fold.apply3(p, n, U3.c, U3.lam);
+			if (isB && U3.sep > 1e-9) q = [q[0] - U3.sep * n[0], q[1] - U3.sep * n[1], q[2] - U3.sep * n[2]];
+			if (U3.affineM) {
+				const r = Affine.apply4(U3.affineM, [q[0], q[1], q[2], 1]);
+				if (!isFinite(r[0]) || Math.abs(r[3]) < 1e-6) return null;
+				q = [r[0] / r[3], r[1] / r[3], r[2] / r[3]];
+			}
+			return viewRotate(q);
+		}
+		/* same transform, without the view rotation (for the Gauss integral) */
+		function foldedPt(p, isB) {
+			const n = n3();
+			let q = Fold.apply3(p, n, U3.c, U3.lam);
+			if (isB && U3.sep > 1e-9) q = [q[0] - U3.sep * n[0], q[1] - U3.sep * n[1], q[2] - U3.sep * n[2]];
+			if (U3.affineM) {
+				const r = Affine.apply4(U3.affineM, [q[0], q[1], q[2], 1]);
+				if (Math.abs(r[3]) < 1e-6) return q;
+				q = [r[0] / r[3], r[1] / r[3], r[2] / r[3]];
+			}
+			return q;
+		}
+
+		function ringColA(P) { return P.dark ? [124, 156, 255] : [79, 70, 229]; }
+		function ringColB(P) { return P.dark ? [34, 211, 238] : [14, 116, 144]; }
+
+		function drawGhost(P) {
+			ctx.strokeStyle = P.ghost; ctx.lineWidth = 1; ctx.setLineDash([5, 5]);
+			[Hopf.coreA, Hopf.coreB].forEach(function (fn) {
+				ctx.beginPath(); let started = false;
+				for (let i = 0; i <= 96; i++) {
+					const pr = proj(viewRotate(fn(i / 96 * 2 * Math.PI)));
+					if (!pr) { started = false; continue; }
+					if (!started) { ctx.moveTo(pr[0], pr[1]); started = true; }
+					else ctx.lineTo(pr[0], pr[1]);
+				}
+				ctx.stroke();
+			});
+			ctx.setLineDash([]);
+		}
+
+		function drawCreasePlane(P) {
+			const n = n3();
+			const ref = Math.abs(n[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
+			let e1 = [ref[1] * n[2] - ref[2] * n[1], ref[2] * n[0] - ref[0] * n[2], ref[0] * n[1] - ref[1] * n[0]];
+			const l1 = Math.hypot(e1[0], e1[1], e1[2]) || 1;
+			e1 = [e1[0] / l1, e1[1] / l1, e1[2] / l1];
+			const e2 = [n[1] * e1[2] - n[2] * e1[1], n[2] * e1[0] - n[0] * e1[2], n[0] * e1[1] - n[1] * e1[0]];
+			const ctr = [n[0] * U3.c, n[1] * U3.c, n[2] * U3.c];
+			const s = 1.5, corners = [];
+			for (const a of [[-s, -s], [s, -s], [s, s], [-s, s]]) {
+				const p = [ctr[0] + a[0] * e1[0] + a[1] * e2[0], ctr[1] + a[0] * e1[1] + a[1] * e2[1], ctr[2] + a[0] * e1[2] + a[1] * e2[2]];
+				const pr = proj(map3(p, false));
+				if (!pr) return;
+				corners.push(pr);
+			}
+			ctx.fillStyle = P.dark ? 'rgba(124,156,255,0.05)' : 'rgba(79,70,229,0.05)';
+			ctx.strokeStyle = P.dark ? 'rgba(124,156,255,0.28)' : 'rgba(79,70,229,0.28)';
+			ctx.lineWidth = 1;
+			ctx.beginPath(); ctx.moveTo(corners[0][0], corners[0][1]);
+			for (let k = 1; k < 4; k++) ctx.lineTo(corners[k][0], corners[k][1]);
+			ctx.closePath(); ctx.fill(); ctx.stroke();
+		}
+
+		function drawCoreLine(fn, col, isB) {
+			ctx.strokeStyle = rgbStr(col); ctx.lineWidth = 2;
+			ctx.beginPath(); let started = false;
+			for (let i = 0; i <= 96; i++) {
+				const pr = proj(map3(fn(i / 96 * 2 * Math.PI), isB));
+				if (!pr) { started = false; continue; }
+				if (!started) { ctx.moveTo(pr[0], pr[1]); started = true; }
+				else ctx.lineTo(pr[0], pr[1]);
+			}
+			ctx.stroke();
+		}
+
+		function drawFrame() {
+			const P = pal();
+			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+			drawGhost(P);
+			if (U3.lam > 0.01) drawCreasePlane(P);
+			const list = [];
+			for (let ring = 0; ring < 2; ring++) {
+				const mesh = (ring === 0) ? meshA : meshB;
+				for (let qi = 0; qi < mesh.length; qi++) {
+					const q = mesh[qi];
+					const vpts = [];
+					let bad = false;
+					for (let k = 0; k < 4; k++) {
+						const v = map3(q[k], ring === 1);
+						if (!v) { bad = true; break; }
+						vpts.push(v);
+					}
+					if (bad) continue;
+					const ps = [];
+					let depth = 0;
+					for (let k = 0; k < 4; k++) {
+						const pr = proj(vpts[k]);
+						if (!pr) { bad = true; break; }
+						ps.push(pr); depth += pr[2];
+					}
+					if (bad) continue;
+					const n = n3();
+					const cxx = (q[0][0] + q[1][0] + q[2][0] + q[3][0]) / 4;
+					const cyy = (q[0][1] + q[1][1] + q[2][1] + q[3][1]) / 4;
+					const czz = (q[0][2] + q[1][2] + q[2][2] + q[3][2]) / 4;
+					const folded = (n[0] * cxx + n[1] * cyy + n[2] * czz - U3.c) > 0 && U3.lam > 1e-6;
+					list.push({ ps: ps, vpts: vpts, ring: ring, depth: depth / 4, folded: folded });
+				}
+			}
+			list.sort(function (a, b) { return b.depth - a.depth; });
+			const Ld = [-0.4, 0.8, -0.45], ll = Math.hypot(Ld[0], Ld[1], Ld[2]);
+			for (let i = 0; i < list.length; i++) {
+				const it = list[i];
+				const base = (it.ring === 0) ? ringColA(P) : ringColB(P);
+				const e1 = [it.vpts[1][0] - it.vpts[0][0], it.vpts[1][1] - it.vpts[0][1], it.vpts[1][2] - it.vpts[0][2]];
+				const e2 = [it.vpts[2][0] - it.vpts[0][0], it.vpts[2][1] - it.vpts[0][1], it.vpts[2][2] - it.vpts[0][2]];
+				const nn = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+				const nl = Math.hypot(nn[0], nn[1], nn[2]) || 1;
+				const sh = 0.6 + 0.4 * Math.abs((nn[0] * Ld[0] + nn[1] * Ld[1] + nn[2] * Ld[2]) / (nl * ll));
+				let col = [base[0] * sh, base[1] * sh, base[2] * sh];
+				if (it.folded) col = [col[0] * 1.18 + 14, col[1] * 1.18 + 14, col[2] * 1.18 + 14];
+				ctx.fillStyle = rgbStr(col);
+				ctx.strokeStyle = P.dark ? 'rgba(6,8,18,0.5)' : 'rgba(120,110,90,0.25)';
+				ctx.lineWidth = 0.5;
+				ctx.beginPath(); ctx.moveTo(it.ps[0][0], it.ps[0][1]);
+				for (let k = 1; k < 4; k++) ctx.lineTo(it.ps[k][0], it.ps[k][1]);
+				ctx.closePath(); ctx.fill(); ctx.stroke();
+			}
+			if (U3.showCores) {
+				drawCoreLine(Hopf.coreA, ringColA(P), false);
+				drawCoreLine(Hopf.coreB, ringColB(P), true);
+			}
+			ctx.fillStyle = P.ink2; ctx.font = '11px monospace'; ctx.textAlign = 'left';
+			ctx.fillText('drag to rotate', 10, H - 10);
+		}
+
+		function computeLink() {
+			const A = sampleCore(Hopf.coreA, U3NC).map(function (p) { return foldedPt(p, false); });
+			const B = sampleCore(Hopf.coreB, U3NC).map(function (p) { return foldedPt(p, true); });
+			U3.lk = gaussLink(A, B).lk;
+			U3.min = minDist3(A, B);
+		}
+
+		function updReadout() {
+			const eq = $('unlink3d-eq'), mono = $('unlink3d-eqmono');
+			if (!eq) return;
+			if (U3.min < 0.08 || !isFinite(U3.lk)) {
+				texInto(eq, '\\text{the rings are crossing — the unthreading moment}', true);
+				if (mono) mono.textContent = 'the two core circles touch, so the Gauss integral has a singularity and Lk is undefined here. Slide λ back a little, or push past it.';
+				return;
+			}
+			const r = Math.round(U3.lk);
+			texInto(eq, 'Lk = ' + (r < 0 ? '-' : '') + Math.abs(r) + ' \\qquad \\left(\\text{Gauss integral } ' + U3.lk.toFixed(3) + '\\right)', true);
+			const L = [];
+			L.push('Lk = (1/4\u03C0) \u222E\u222E (P\u2212Q)\u00B7(dP\u00D7dQ)/|P\u2212Q|\u00B3');
+			L.push('  = ' + U3.lk.toFixed(4) + '   over ' + (U3NC * U3NC) + ' sample pairs of the two cores');
+			L.push('  min core distance = ' + U3.min.toFixed(3));
+			L.push('');
+			if (U3.affineM) L.push('pure affine motion of the pair  \u2192  one-to-one  \u2192  Lk is invariant');
+			else if (U3.lam < 1e-9) L.push('no fold (affine identity)  \u2192  Lk is invariant');
+			else if (U3.lam < 1 - 1e-9) L.push('one-to-one fold (\u03BB \u2264 1)  \u2192  a homeomorphism  \u2192  Lk cannot change');
+			else L.push('non-injective fold (\u03BB > 1)  \u2192  space overlaps  \u2192  Lk may change');
+			if (U3.sep > 1e-9) L.push('separation: ring B pulled ' + U3.sep.toFixed(2) + ' along \u2212n\u0302');
+			if (mono) mono.textContent = L.join('\n');
+		}
+
+		function updStatus() {
+			const st = $('unlink3d-status');
+			if (!st) return;
+			st.innerHTML = '';
+			const mk = function (text, kind) {
+				const s = document.createElement('span');
+				s.className = 'aff-pill' + (kind ? ' ' + kind : '');
+				s.textContent = text;
+				st.appendChild(s);
+			};
+			if (U3.min < 0.08 || !isFinite(U3.lk)) { mk('rings crossing — unthreading in progress', 'warn'); return; }
+			const r = Math.round(U3.lk);
+			if (Math.abs(r) >= 1) mk('linked: Lk = ' + (r < 0 ? '\u22121' : '+1'));
+			else mk('unlinked: Lk = 0', 'good');
+			if (U3.affineM) mk('affine motion: one-to-one, Lk invariant');
+			else if (U3.lam < 1e-9) mk('no fold (affine)');
+			else if (U3.lam < 1 - 1e-9) mk('one-to-one (\u03BB \u2264 1): Lk stuck');
+			else mk('overlap (\u03BB > 1): Lk can fall', 'warn');
+			if (U3.sep > 1e-9 && Math.abs(r) < 1) mk('separated', 'good');
+		}
+
+		function runUnlinkSelfTests() {
+			const res = [];
+			const A = sampleCore(Hopf.coreA, 288), B = sampleCore(Hopf.coreB, 288);
+			res.push(['the chain has |Lk| = 1', Math.abs(Math.abs(gaussLink(A, B).lk) - 1) < 0.03]);
+			const Bf = B.map(function (p) { return [p[0] + 5, p[1], p[2]]; });
+			res.push(['far-apart circles have Lk = 0', Math.abs(gaussLink(A, Bf).lk) < 0.03]);
+			let okc = true;
+			const nz = [0, 0, 1];
+			for (let i = 0; i < 12; i++) {
+				const e = 1e-5, x = 0.3 * i;
+				const a = Fold.apply3([x, 0.2, -e], nz, 0, 2), b = Fold.apply3([x, 0.2, e], nz, 0, 2);
+				if (Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) > 1e-6) okc = false;
+			}
+			res.push(['the fold is continuous at the crease', okc]);
+			let okj = true;
+			const seen = {};
+			for (let i = 0; i < 3000 && okj; i++) {
+				const p = [Math.random() * 3 - 1.5, Math.random() * 3 - 1.5, Math.random() * 3 - 1.5];
+				const q = Fold.apply3(p, nz, 0, 0.5);
+				const key = Math.round(q[0] * 1e4) + ',' + Math.round(q[1] * 1e4) + ',' + Math.round(q[2] * 1e4);
+				if (seen[key]) okj = false;
+				seen[key] = 1;
+			}
+			res.push(['\u03BB < 1 fold is one-to-one', okj]);
+			const A2 = A.map(function (p) { return Fold.apply3(p, nz, 0, 2); });
+			const B2 = B.map(function (p) { return Fold.apply3(p, nz, 0, 2); });
+			res.push(['\u1E91-fold at \u03BB = 2 unlinks (Lk = 0)', Math.abs(gaussLink(A2, B2).lk) < 0.05]);
+			const R = Affine.rotY(0.6);
+			const Ar = A.map(function (p) { const r = Affine.apply4(R, [p[0], p[1], p[2], 1]); return [r[0], r[1], r[2]]; });
+			const Br = B.map(function (p) { const r = Affine.apply4(R, [p[0], p[1], p[2], 1]); return [r[0], r[1], r[2]]; });
+			res.push(['an affine rotation keeps |Lk| = 1', Math.abs(Math.abs(gaussLink(Ar, Br).lk) - 1) < 0.03]);
+			return res;
+		}
+
+		/* controls */
+		const sTilt = $('u3d-tilt'), sSpin = $('u3d-spin'), sC = $('u3d-c'), sLam = $('u3d-lambda'), sSep = $('u3d-sep');
+		function syncSliders() {
+			if (sTilt) sTilt.value = String(Math.round(U3.tilt));
+			if (sSpin) sSpin.value = String(Math.round(U3.spin));
+			if (sC) sC.value = String(U3.c);
+			if (sLam) sLam.value = String(U3.lam);
+			if (sSep) sSep.value = String(U3.sep);
+		}
+		function labelSliders() {
+			const tv = $('u3d-tilt-v'), sv = $('u3d-spin-v'), cv = $('u3d-c-v'), lv = $('u3d-lambda-v'), ev = $('u3d-sep-v');
+			if (tv) tv.textContent = Math.round(U3.tilt) + '\u00B0';
+			if (sv) sv.textContent = Math.round(U3.spin) + '\u00B0';
+			if (cv) cv.textContent = U3.c.toFixed(2);
+			if (lv) lv.textContent = U3.lam.toFixed(2);
+			if (ev) ev.textContent = U3.sep.toFixed(2);
+		}
+		function recompute() {
+			try { computeLink(); updReadout(); updStatus(); } catch (e) { showLabError('unlink-3d', e); }
+		}
+		function onFoldSlider() {
+			if (sTilt) U3.tilt = parseFloat(sTilt.value);
+			if (sSpin) U3.spin = parseFloat(sSpin.value);
+			if (sC) U3.c = parseFloat(sC.value);
+			if (sLam) U3.lam = parseFloat(sLam.value);
+			U3.affineM = null;
+			labelSliders();
+			recompute();
+		}
+		function onSepSlider() {
+			if (sSep) U3.sep = parseFloat(sSep.value);
+			U3.separating = false;
+			labelSliders();
+			recompute();
+		}
+		if (sTilt) sTilt.addEventListener('input', onFoldSlider);
+		if (sSpin) sSpin.addEventListener('input', onFoldSlider);
+		if (sC) sC.addEventListener('input', onFoldSlider);
+		if (sLam) sLam.addEventListener('input', onFoldSlider);
+		if (sSep) sSep.addEventListener('input', onSepSlider);
+
+		buildPresetRow('unlink3d-presets', PRESETS_U3, function (pr) {
+			pr.f();
+			syncSliders(); labelSliders(); recompute();
+		});
+
+		const sepBtn = $('unlink3d-sepbtn');
+		if (sepBtn) sepBtn.addEventListener('click', function () { U3.separating = true; });
+		const autoChk = $('unlink3d-auto');
+		if (autoChk) autoChk.addEventListener('change', function () { U3.auto = autoChk.checked; });
+		const coresChk = $('unlink3d-cores');
+		if (coresChk) coresChk.addEventListener('change', function () { U3.showCores = coresChk.checked; });
+
+		c.addEventListener('pointerdown', function (e) {
+			U3.drag = { x: e.clientX, y: e.clientY };
+			try { c.setPointerCapture(e.pointerId); } catch (err) { /* optional */ }
+		});
+		c.addEventListener('pointermove', function (e) {
+			if (!U3.drag) return;
+			const dx = e.clientX - U3.drag.x, dy = e.clientY - U3.drag.y;
+			U3.drag.x = e.clientX; U3.drag.y = e.clientY;
+			U3.yaw += dx * 0.01;
+			U3.pitch = Math.max(-1.45, Math.min(1.45, U3.pitch + dy * 0.01));
+		});
+		c.addEventListener('pointerup', function () { U3.drag = null; });
+		c.addEventListener('pointercancel', function () { U3.drag = null; });
+
+		renderChecks($('unlink3d-checks'), runUnlinkSelfTests());
+		syncSliders(); labelSliders();
+		recompute();
+
+		let errStreak = 0;
+		function frame() {
+			if (document.visibilityState !== 'visible') { requestAnimationFrame(frame); return; }
+			try {
+				if (U3.separating) {
+					U3.sep = Math.min(1.2, U3.sep + 0.015);
+					if (U3.sep >= 1.199) { U3.sep = 1.2; U3.separating = false; }
+					if (sSep) sSep.value = String(U3.sep);
+					const ev = $('u3d-sep-v');
+					if (ev) ev.textContent = U3.sep.toFixed(2);
+					recompute();
+				}
+				if (U3.auto && !U3.drag) U3.yaw += 0.0022;
+				drawFrame();
+				errStreak = 0;
+			} catch (e) {
+				if (++errStreak > 5) { showLabError('unlink-3d', e); return; }
+			}
+			requestAnimationFrame(frame);
+		}
+		requestAnimationFrame(frame);
+	}
+
+	/* ══════════════════════════════════════════════════════════════
 	   Bootstrap
 	   ══════════════════════════════════════════════════════════════ */
 
@@ -1831,6 +2217,8 @@
 		inited = true;
 		try { init2d(); } catch (e) { showLabError('aff-2d', e); }
 		try { init3d(); } catch (e) { showLabError('aff-3d', e); }
+		try { initFold2d(); } catch (e) { showLabError('fold-2d', e); }
+		try { initUnlink3d(); } catch (e) { showLabError('unlink-3d', e); }
 		if (window.__MN_DARK && __MN_DARK.onChange) {
 			__MN_DARK.onChange(function () {
 				themeRedraws.forEach(function (fn) {
@@ -1840,7 +2228,7 @@
 		}
 	}
 
-	window.affineLab = { state2d: D2, state3d: D3 };
+	window.affineLab = { state2d: D2, state3d: D3, stateFold2d: F2, stateUnlink3d: U3 };
 
 	if (document.readyState === 'complete') {
 		initAffineLab();
