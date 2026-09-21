@@ -1365,12 +1365,12 @@
 
 		/* slider sync */
 		const sTheta = $('fold2d-theta'), sC = $('fold2d-c'), sLam = $('fold2d-lambda');
-		function syncSliders() {
+		function syncFoldSliders() {
 			if (sTheta) sTheta.value = String(Math.round(F2.theta));
 			if (sC) sC.value = String(F2.c);
 			if (sLam) sLam.value = String(F2.lam);
 		}
-		function labelSliders() {
+		function labelFoldSliders() {
 			const tv = $('fold2d-theta-v'), cv = $('fold2d-c-v'), lv = $('fold2d-lambda-v');
 			if (tv) tv.textContent = Math.round(F2.theta) + '\u00B0';
 			if (cv) cv.textContent = F2.c.toFixed(2);
@@ -1380,7 +1380,7 @@
 			if (sTheta) F2.theta = parseFloat(sTheta.value);
 			if (sC) F2.c = parseFloat(sC.value);
 			if (sLam) F2.lam = parseFloat(sLam.value);
-			labelSliders();
+			labelFoldSliders();
 			redraw();
 		}
 		if (sTheta) sTheta.addEventListener('input', onSlider);
