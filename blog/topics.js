@@ -458,51 +458,67 @@
 		return '<strong>' + escAttr(id.replace(/-/g, ' ')) + '</strong>';
 	}
 
+	/** Keep the learned button pinned to the END of the lesson content.
+	    Called after every applyVisibility (which runs post-renderMarkdown,
+	    once #sources-section / #footnotes-section exist) and on init. It is a
+	    no-op when the button is already the last child, so re-calling it on
+	    click never moves the element → no scroll jump. */
+	function settleLearnedButton() {
+		const btn = document.getElementById('topic-learned-btn');
+		const contents = document.getElementById('contents');
+		if (!btn || !contents) return;
+		if (contents.lastElementChild !== btn) contents.appendChild(btn);
+	}
+
 	function showLearnedUI() {
 		const lessonId = getLessonId();
 		if (!lessonId || !LESSON_DEPS.hasOwnProperty(lessonId)) return;
 
-		// Green prerequisite indicator (top of content)
 		const contents = document.getElementById('contents');
-		if (contents) {
-			let pill = document.getElementById('topic-deps-pill');
-			if (pill) pill.remove();
-			pill = document.createElement('div');
-			pill.id = 'topic-deps-pill';
-			const deps = LESSON_DEPS[lessonId] || [];
-			if (deps.length > 0) {
-				const met = depsMet(lessonId);
-				pill.className = 'topic-deps-pill' + (met ? ' topic-deps-met' : ' topic-deps-unmet');
-				if (met) {
-					pill.innerHTML = '<span class="tdp-icon" aria-hidden="true">✓</span> You covered the prerequisites — the math here builds on what you already know.';
-				} else {
-					const missing = deps.filter(function (d) { return !isLearned(d); });
-					pill.innerHTML = '<span class="tdp-icon" aria-hidden="true">○</span> Builds on: ' +
-						missing.map(lessonLink).join(', ') +
-						'. Mark them as learned to unlock the full depth here.';
-				}
+		if (!contents) return;
+
+		// Green prerequisite indicator (top of content). Idempotent: we
+		// create it once and only swap its class/text afterwards, so it
+		// never reflows the top of the page on re-render.
+		const deps = LESSON_DEPS[lessonId] || [];
+		let pill = document.getElementById('topic-deps-pill');
+		if (deps.length > 0) {
+			const met = depsMet(lessonId);
+			if (!pill) {
+				pill = document.createElement('div');
+				pill.id = 'topic-deps-pill';
 				contents.insertBefore(pill, contents.firstChild);
 			}
+			pill.className = 'topic-deps-pill ' + (met ? 'topic-deps-met' : 'topic-deps-unmet');
+			pill.innerHTML = met
+				? '<span class="tdp-icon" aria-hidden="true">✓</span> You covered the prerequisites — the math here builds on what you already know.'
+				: '<span class="tdp-icon" aria-hidden="true">○</span> Builds on: ' +
+					deps.filter(function (d) { return !isLearned(d); }).map(lessonLink).join(', ') +
+					'. Mark them as learned to unlock the full depth here.';
+		} else if (pill) {
+			pill.remove();
 		}
 
-		// "Mark as learned" button (bottom of content)
-		let btn = document.getElementById('topic-learned-btn');
-		if (btn) btn.remove();
-		btn = document.createElement('button');
-		btn.type = 'button';
-		btn.id = 'topic-learned-btn';
+		// "Mark as learned" button (bottom of content). Created once and
+		// pinned to the end of #contents (after footnotes/sources). We only
+		// update its label/state here; position is handled by
+		// settleLearnedButton() so a click never moves it (no scroll jump).
 		const learned = isLearned(lessonId);
+		let btn = document.getElementById('topic-learned-btn');
+		if (!btn) {
+			btn = document.createElement('button');
+			btn.type = 'button';
+			btn.id = 'topic-learned-btn';
+			btn.addEventListener('click', function () {
+				toggleLearned(lessonId);
+				showLearnedUI();
+			});
+			settleLearnedButton();
+		}
 		btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
 		btn.innerHTML = learned
 			? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
 			: '<span aria-hidden="true">○</span> Mark this lesson as learned';
-		btn.addEventListener('click', function () {
-			toggleLearned(lessonId);
-			showLearnedUI();
-			applyVisibility({ animate: true });
-		});
-		const footer = document.querySelector('.course-footer, .md:last-of-type, #contents');
-		if (footer) footer.appendChild(btn);
 	}
 
 	function writePref(pref) {
@@ -1654,6 +1670,11 @@
 
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
+
+		// Pin the "mark as learned" button to the end of the content now
+		// that footnotes/sources may have been appended (post-render).
+		// No-op if it is already last, so a click never shifts it.
+		settleLearnedButton();
 	}
 
 	/* ── 6b. Math alternative text ──────────────────────────────

@@ -336,7 +336,7 @@
     <div>
       <h3>Gesamtfaltung des Blattes — erst den einen, dann den anderen Rand</h3>
       <canvas id="fcSteps" class="demo" width="520" height="440"></canvas>
-      <p class="small">Jeder Faltzug spiegelt das Blatt an einer <b>Symmetrieachse</b>: das Blatt wird kleiner, die Lagen verdoppeln (1→2→4→…). Am Ende liegen <b>alle Ränder übereinander</b>. Der grüne Rahmen markiert den aktuellen Faltschritt rechts.</p>
+      <p class="small">Jeder Faltzug faltet die größere Blattseite an einer <b>Symmetrieachse</b> über die kleinere — das Blatt wird kompakter, die Papierschichten stapeln sich (1→2→4→…). Am Ende liegen <b>alle Ränder der Form übereinander</b>. Der Rahmen markiert den aktuellen Faltschritt rechts.</p>
     </div>
     <div>
       <h3>Interaktives Papier-Falten (echt berechnet) — die Schnitte</h3>
@@ -797,40 +797,63 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   let shape=SHAPES.tri(), axisList=AXES.tri.slice();
   let step=0, animScale=1, animRot=0, targetScale=1, targetRot=0, cutState='idle', cutProg=0;
 
-  function reflect(pt, angDeg){ const a=angDeg*Math.PI/180, nx=Math.cos(a), ny=Math.sin(a); // Spiegel an Linie (nx,ny)
-    const d=pt[0]*nx+pt[1]*ny; return [2*d*nx-pt[0], 2*d*ny-pt[1]]; }
-  // Stapel: für Schritt k (0..step) die Form nach den ersten k Achsen gespiegelt
-  function stackUpTo(k){ const layers=[shape]; for(let i=0;i<k;i++){ const ax=axisList[i]; const cur=layers.slice(); for(const layer of cur){ const refl=layer.map(p=>reflect(p,ax)); layers.push(refl); } } return layers; }
-
-  /* --- Gesamtfaltung: Papier-Region nach k Faltzügen (Polygon-Clipping) --- */
+  /* --- Echte Papierfaltung: Fragmente (Polygon + kumulierte Spiegelung) --- */
   function clipHP(poly, n, c){
     const out=[];
     for(let i=0;i<poly.length;i++){
       const A=poly[i], B=poly[(i+1)%poly.length];
       const da=n[0]*A[0]+n[1]*A[1]-c, db=n[0]*B[0]+n[1]*B[1]-c;
       if(da<=0) out.push(A);
-      if((da<=0)!==(db<=0)){ const t=da/(da-db); out.push([A[0]+t*(B[0]-A[0]), A[1]+t*(B[1]-A[1])]); }
+      if((da<0&&db>0)||(da>0&&db<0)){ const t=da/(da-db); out.push([A[0]+t*(B[0]-A[0]), A[1]+t*(B[1]-A[1])]); }
     }
     return out;
   }
   function polyArea(p){ let a=0; for(let i=0;i<p.length;i++){ const j=(i+1)%p.length; a+=p[i][0]*p[j][1]-p[j][0]*p[i][1]; } return Math.abs(a)/2; }
-  function paperRegion(k){
-    let r=[[-1,-1],[1,-1],[1,1],[-1,1]];
-    for(let i=0;i<k;i++){ const a=axisList[i]*Math.PI/180, n=[-Math.sin(a),Math.cos(a)];
-      const p1=clipHP(r,n,0), p2=clipHP(r,[-n[0],-n[1]],0);
-      r=polyArea(p1)>=polyArea(p2)?p1:p2; }
-    return r;
-  }
-  function clipToRegion(poly, region){
+  function clipToPoly(poly, region){
     let out=poly;
+    let cxr=0,cyr=0; for(const p of region){ cxr+=p[0]; cyr+=p[1]; } cxr/=region.length; cyr/=region.length;
     for(let i=0;i<region.length;i++){
       const A=region[i], B=region[(i+1)%region.length];
-      const ex=B[0]-A[0], ey=B[1]-A[1], len=Math.hypot(ex,ey)||1;
-      const n=[-ey/len, ex/len];
-      out=clipHP(out, n, n[0]*A[0]+n[1]*A[1]);
+      let nx=cxr-(A[0]+B[0])/2, ny=cyr-(A[1]+B[1])/2; const len=Math.hypot(nx,ny);
+      if(len<1e-12) continue;
+      nx/=len; ny/=len;
+      out=clipHP(out, [-nx,-ny], -(nx*A[0]+ny*A[1]));
       if(out.length<3) return out;
     }
     return out;
+  }
+  const mVec=(m,p)=>[m[0][0]*p[0]+m[0][1]*p[1], m[1][0]*p[0]+m[1][1]*p[1]];
+  const mMul=(A,B)=>[[A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]],[A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]]];
+  const refM=a=>{ const t=2*a; return [[Math.cos(t),Math.sin(t)],[Math.sin(t),-Math.cos(t)]]; };
+  // FRAGS[k] = Papier-Bruchstücke nach k Faltzügen; jedes trägt seine kumulierte Spiegelung g.
+  // Jede Falte: die SEITE MIT DEM GRÖSSTEREN FLÄCHENANTEIL wird umgeschlagen (physikalisch natürlich).
+  let FRAGS=[];
+  function rebuildFrags(){
+    FRAGS=[[{poly:[[-1,-1],[1,-1],[1,1],[-1,1]], g:[[1,0],[0,1]]}]];
+    for(const ax of axisList){
+      const a=ax*Math.PI/180, M=refM(a), n=[-Math.sin(a),Math.cos(a)];
+      const next=[];
+      for(const f of FRAGS[FRAGS.length-1]){
+        const keep=clipHP(f.poly,n,0), flap=clipHP(f.poly,[-n[0],-n[1]],0);
+        const big=polyArea(keep)>=polyArea(flap)?[keep,f.g]:[flap,f.g];
+        const small=polyArea(keep)>=polyArea(flap)?[flap,f.g]:[keep,f.g];
+        if(small[0].length>=3&&polyArea(small[0])>1e-9) next.push({poly:small[0], g:small[1]});
+        if(big[0].length>=3&&polyArea(big[0])>1e-9) next.push({poly:big[0].map(p=>mVec(M,p)), g:mMul(M,big[1])});
+      }
+      FRAGS.push(next);
+    }
+  }
+  function polyPath(g2, poly, s){ g2.beginPath(); poly.forEach((p,i)=>{ const x=p[0]*s, y=p[1]*s; i===0?g2.moveTo(x,y):g2.lineTo(x,y); }); g2.closePath(); }
+  // Papier-Stücke + darauf sichtbare Form-Kopien (blau) + oberste gestapelte Kante (gelb)
+  // Alle Form-Kopien fallen aufeinander (jede kumulierte Spiegelung ist eine Symmetrie der Form)
+  // → die sichtbaren Kanten sind genau die gestapelten: blau bei Schritt 0, gelb danach.
+  function drawFrags(g2, s, k){
+    const frags=FRAGS[k];
+    for(const f of frags){ polyPath(g2, f.poly, s); g2.fillStyle='#f4efe3'; g2.fill(); g2.strokeStyle='#b8ad94'; g2.lineWidth=1.5; g2.stroke(); }
+    for(const f of frags){
+      const cl=clipToPoly(shape, f.poly);
+      if(cl.length>=3){ polyPath(g2, cl, s); g2.strokeStyle= k===0? 'rgba(28,111,224,0.85)' : COL.accent3; g2.lineWidth= k===0?2:2.5; g2.stroke(); }
+    }
   }
   const fs2=$('fcSteps'), fctx=fs2.getContext('2d');
   function drawFilmstrip(){
@@ -844,23 +867,12 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
       const col=k%2, row=Math.floor(k/2);
       const cx=col*pw+pw/2, cy=row*ph+ph/2+12, s=72;
       fctx.textAlign='center'; fctx.fillStyle=COL.muted; fctx.font='13px Inter';
-      fctx.fillText(k===0?'0 · flaches Blatt (1 Lage)':`Faltzug ${k} · bis ${Math.pow(2,k)} Lagen`, cx, row*ph+24);
-      const region=paperRegion(k);
+      fctx.fillText(k===0?'0 · flaches Blatt (1 Lage)':`Faltzug ${k} · ${FRAGS[k].length} Papierteile`, cx, row*ph+24);
       fctx.save(); fctx.translate(cx,cy);
-      fctx.beginPath(); region.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath();
-      fctx.fillStyle='#f4efe3'; fctx.fill(); fctx.strokeStyle='#b8ad94'; fctx.lineWidth=1.5; fctx.stroke();
+      drawFrags(fctx, s, k);
       if(k>=1){ const a=axisList[k-1]*Math.PI/180, dx=Math.cos(a), dy=Math.sin(a);
         fctx.strokeStyle='#c94f4f'; fctx.setLineDash([5,4]); fctx.lineWidth=1.2;
         fctx.beginPath(); fctx.moveTo(-dx*105,-dy*105); fctx.lineTo(dx*105,dy*105); fctx.stroke(); fctx.setLineDash([]); }
-      const layers=stackUpTo(k);
-      for(let li=layers.length-1;li>=0;li--){
-        const cl=clipToRegion(layers[li],region);
-        if(cl.length<3) continue;
-        fctx.beginPath(); cl.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath();
-        fctx.strokeStyle= li===0? '#1c6fe0' : 'rgba(28,111,224,0.30)'; fctx.lineWidth= li===0?2:1.2; fctx.stroke();
-      }
-      if(k>=1){ const cl=clipToRegion(shape,region);
-        if(cl.length>=3){ fctx.beginPath(); cl.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath(); fctx.strokeStyle=COL.accent3; fctx.lineWidth=2.5; fctx.stroke(); } }
       fctx.restore();
       if(k===step){ fctx.strokeStyle=COL.accent; fctx.lineWidth=2; fctx.strokeRect(col*pw+3, row*ph+3, pw-6, ph-6); }
     }
@@ -870,7 +882,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   function statusText(){
     if(cutState==='cutting'){ $('fcStatus').textContent = '✂ Scheren…'; return; }
     if(cutState==='done'){ $('fcStatus').textContent = '✂ Ausgefaltet: die Form ist isoliert (gestrichelte Linie = der Schnitt)'; return; }
-    $('fcStatus').textContent = step===0? 'Schritt 0: Form gezeichnet — jede Form / jedes Polygon geht' : `Schritt ${step}: ${step} Falte(n) → ${Math.pow(2,step)} Papierschichten, Ränder stapeln sich`;
+    $('fcStatus').textContent = step===0? 'Schritt 0: Form gezeichnet — jede Form / jedes Polygon geht' : `Schritt ${step}: ${step} Falte(n) → ${FRAGS[step].length} Papierschichten, Ränder stapeln sich`;
   }
 
   function drawShapePath(layer, s, close){
@@ -895,16 +907,12 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
       ctx.restore();
     } else {
       ctx.save(); ctx.translate(cx,cy); ctx.rotate(animRot*Math.PI/180);
-      ctx.fillStyle='#f4efe3'; ctx.strokeStyle='#b8ad94'; ctx.lineWidth=2; ctx.fillRect(-P,-P,P*2,P*2); ctx.strokeRect(-P,-P,P*2,P*2);
+      // echte Papier-Bruchstücke nach step Faltzügen + darauf sichtbare Form-Kopien
+      drawFrags(ctx, s, step);
       // Falzlinien (alle bis Schritt step — die gerade angebrachte mittlere Falte ist mit dabei)
       ctx.strokeStyle='#c94f4f'; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
       for(let i=0;i<step;i++){ const ax=axisList[i]*Math.PI/180; const nx=Math.cos(ax),ny=Math.sin(ax); ctx.beginPath(); ctx.moveTo(nx*300,ny*300); ctx.lineTo(-nx*300,-ny*300); ctx.stroke(); }
       ctx.setLineDash([]);
-      // gestapelte Papierschichten (spiegelnde Kopien) — oberste blau, darunter blass
-      const layers=stackUpTo(step);
-      for(let li=layers.length-1;li>=0;li--){ ctx.strokeStyle= li===0? 'rgba(28,111,224,0.30)' : '#1c6fe0'; ctx.lineWidth= li===0?1.2:2.5; drawShapePath(layers[li],s,true); ctx.stroke(); }
-      // gestapelte Kanten (gelb)
-      if(step>=1){ ctx.strokeStyle=COL.accent3; ctx.lineWidth=3; ctx.globalAlpha=0.9; drawShapePath(shape,s,true); ctx.stroke(); ctx.globalAlpha=1; }
       // EINE gerade gestrichelte Schnittlinie (der "Scherenschnitt"), entlang der gestapelten Kante
       if(step>=1){
         const a0=shape[0], a1=shape[1], dx=a1[0]-a0[0], dy=a1[1]-a0[1];
@@ -921,11 +929,12 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   function setStep(k){ step=Math.max(0,Math.min(4,k)); $('fcStep').value=step; $('vFcStep').textContent=step;
     targetScale=Math.pow(0.86, step); targetRot=step*14; cutState='idle'; cutProg=0; drawFilmstrip(); }
   function setShape(name){ shape=SHAPES[name](); axisList=AXES[name].slice(); const maxF=Math.min(4,axisList.length); step=0; targetScale=1; targetRot=0; cutState='idle'; cutProg=0;
-    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; drawFilmstrip(); }
+    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; rebuildFrags(); drawFilmstrip(); }
   $('fcShape').onchange=e=>setShape(e.target.value);
   $('fcStep').oninput=e=>setStep(+e.target.value);
   $('fcCut').onclick=()=>{ if(step<1){ alert('Erst falten (Schritt ≥ 1), dann schneidet der eine geraden Schnitt die Form aus.'); return; } cutState='cutting'; cutProg=0; };
   $('fcPrint').onclick=()=>window.print();
+  rebuildFrags();
   drawFilmstrip();
   (function frame(){ draw(); requestAnimationFrame(frame); })();
 })();
