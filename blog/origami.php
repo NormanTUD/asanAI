@@ -610,7 +610,7 @@ the polyhedral view makes precise (see *The polyhedral backbone* below).
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">12 · Validation — The Poker-Hand Task</h2>
+	<h2 class="og-h2">Validation — The Poker-Hand Task</h2>
 	<p class="og-lead">A real (if small) test: a 3-layer ReLU net on the poker-hand dataset shows exactly the predicted folding signature — dimensionality expansion, bimodal tuning, and causal dependence on the folding neurons.</p>
 
 	<div class="md">
@@ -650,7 +650,7 @@ barely does:
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">13 · The Answer — What a Hidden Layer Is For</h2>
+	<h2 class="og-h2">The Answer — What a Hidden Layer Is For</h2>
 	<p class="og-lead">Put all the pieces together: a stack of dense ReLU layers manufactures linear separability by progressively folding the data manifold into unoccupied, higher dimensions. It is, in effect, doing <em>N</em>-dimensional origami.</p>
 
 	<div class="md">
