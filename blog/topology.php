@@ -9,6 +9,7 @@ order: 3
 color: sky
 topics: architecture, math-iii, deep-learning, interpretability, topology
 tags: math-heavy, logic-heavy
+math: 60
 -->
 
 <style>
@@ -34,7 +35,7 @@ tags: math-heavy, logic-heavy
 	@media (max-width: 700px) { .tp-grid2 { grid-template-columns: 1fr; } }
 </style>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Stretch, Squish — but Never Cut">
 ## Stretch, Squish — but Never Cut
 
 In the previous chapter we met feed-forward networks as **paper folders**: a ReLU layer
@@ -93,7 +94,7 @@ difference is the whole distance between this chapter and the last one — a ReL
 free to *fold*, a tanh layer is not.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="A Straight Line Has a Topology Problem">
 ## A Straight Line Has a Topology Problem
 
 Now the consequence that makes this more than a curiosity. Take the **"2-D egg"**: one
@@ -154,7 +155,7 @@ the width, and only because a third dimension let the disk escape the ring.
 	<div class="tp-out" id="tp-egg-out"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The One-Dimensional Egg">
 ## The One-Dimensional Egg
 
 Strip the picture down to a single number and the mechanism becomes impossible to miss.
@@ -277,7 +278,7 @@ near-singular stretching. It pushes training back toward the honest isotopy. (In
 demo, a width-2 net that "almost" works by snaking a boundary is doing exactly this.)
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Geometry of Thought">
 ## The Geometry of Thought
 
 Step back and the two chapters fit together into one picture of *what a hidden layer is for*.
