@@ -285,9 +285,9 @@ The "fold" in this chapter is a neural-network metaphor — but *folding as math
 
 Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and the Tachi / Mitani groups \cite[Lang, Computational Origami]{langorigami_computational}.
 
-**From paper to the real world.** The field is not about paper alone. **Rigid origami** — folds treated as hinges on stiff panels — is how satellite solar arrays and telescope mirrors pack flat and bloom in orbit, and the **Miura fold** is the canonical example \cite[Miura fold]{miura_fold_wiki}\cite[Rigid origami]{rigid_origami_wiki}.
+**From paper to orbit.** It is not about paper. **Rigid origami** treats folds as hinges on stiff panels — how satellite solar arrays and telescope mirrors pack flat and bloom in space, with the **Miura fold** the canonical case \cite[Miura fold]{miura_fold_wiki}\cite[Rigid origami]{rigid_origami_wiki}. The kicker: the hardware that runs a neural network often *ships folded* — and the model itself is nothing but folds. Same geometry, two layers of reality.
 
-**Why it matters here.** Every one of these objects is a *piecewise-isometric fold of space* — the same object this chapter's ReLU layer performs. Computational origami is the field that proves what a fold can and cannot do; the neural network borrows that vocabulary and turns it into a classifier.
+**Why it matters here.** Every one of these is a *piecewise-isometric fold of space* — exactly what a ReLU layer does. Computational origami proves what a fold can and can't do; the network borrows the vocabulary and turns it into a classifier.
 </div>
 
 <div class="md">

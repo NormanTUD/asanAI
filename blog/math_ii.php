@@ -9,6 +9,7 @@ order: 4
 color: accent
 topics: math-ii
 tags: math-heavy
+math: 70
 -->
 
 <script>
@@ -934,7 +935,7 @@ You don't need to memorise the eight axioms. What you need to remember is:
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Scalars and vectors">
 ## Scalars and Vectors
 
 ### Scalars
@@ -978,7 +979,7 @@ A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow
 
 <div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 Vectors can have any number of dimensions. Two essential operations on vectors:
 
 **Scalar multiplication** multiplies each coordinate:
@@ -1009,7 +1010,7 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Arrays, vectors, matrices, and tensors">
 ### Arrays, vectors, matrices, and the word "tensor"
 
 You have seen scalars, vectors, and matrices. You can stack them in a grid of grids to get more structure. Python and PyTorch call these multidimensional arrays *tensors* — that is the meaning of the word in this course:
@@ -1059,6 +1060,7 @@ When you type numbers into the grid, the computer organises them into a structur
 Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
 </div>
 
+<div class="topic-block" data-optionaltitle="A colour image as a 3-axis tensor" data-mathlevel="45">
 $$
 \mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
 \begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
@@ -1066,8 +1068,9 @@ $$
 \begin{pmatrix} \color{red}{r_{3,1}} \\ \color{green}{g_{3,1}} \\ \color{blue}{b_{3,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,2}} \\ \color{green}{g_{3,2}} \\ \color{blue}{b_{3,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,3}} \\ \color{green}{g_{3,3}} \\ \color{blue}{b_{3,3}} \end{pmatrix}
 \end{pmatrix}
 $$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 The form a tensor has is called a *shape*. The shape defines how many rows and columns a tensor has, and how many nested tensors it has. For example, an image with $ 32 \cdot 32 $ pixels and 3 channels (one for red, green and blue each) has a shape of $ \left[ 32, 32, 3 \right] $.
 
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
@@ -1090,7 +1093,7 @@ By mixing these three primary lights at different brightness levels (0 to 255), 
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 You can then use full images as tensors, ie you can write an image into a variable, and pass it to functions, and get a vector out of it again:
 
 $$ f\left(\text{Image}\right) = \begin{pmatrix} \text{Probability cat} \\ \text{Probability dog} \end{pmatrix} $$
@@ -1104,7 +1107,7 @@ With other methods of making numbers from data (like Embeddings to create number
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Chaining Functions (Composition)">
 ## Chaining Functions (Composition)
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects \cite[Olah, 2015]{colah2015types}.
@@ -1141,7 +1144,7 @@ We can visualize these relationships using a triangle diagram. It shows that the
 </center>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The Hadamard Product">
 ## The Hadamard Product ($\odot$)
 
 The **Hadamard Product** ($\odot$) was introduced by \citeauthor{hadamardproduct} to study **singularities** in complex power series: it first appears in his \citeyear{hadamardproduct} paper \citetitle{hadamardproduct}, and the related **Hadamard multiplication theorem** dates from 1899. It is defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.
@@ -1180,7 +1183,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Matrix Transposition">
 ## Matrix Transposition
 
 Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$.
@@ -1196,7 +1199,7 @@ A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
 The idea of matrix transposition was introduced in 1858 by the British mathematician \citeauthor{cayleymemoirmatrices} in his paper \citetitle{cayleymemoirmatrices}. It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Softmax and cross-entropy">
 ## Softmax and Cross-Entropy
 
 Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.
