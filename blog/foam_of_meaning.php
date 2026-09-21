@@ -91,7 +91,7 @@ This intuition has a long history. The idea that meaning is *relational* and *st
 The stage is announced; the first task is to fix the arena. This whole chapter claims that meaning lives *in the space of all possible utterances* — not in any individual utterance — so that space has to be built carefully before anything else can be said. This part introduces it three times over: as an idea with its own kinds of structure, as an explicit construction, and finally by contrast with the vector picture that modern practice offers instead.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The possibility space X">
 ### The possibility space $X$
 
 Let us begin with the most basic object. Let $X$ be the space of all potential linguistic configurations. An element of $X$ is a *linguistic form*: a string, a phonological pattern, a syntactic frame, or more generally anything that can be uttered or written. We do not need to fix a precise alphabet or grammar at this stage. What matters is that $X$ carries structure:
@@ -124,7 +124,7 @@ There is a boundary to the pattern, and it is worth being honest about. Beyond a
 The final step is the part that is a *conjecture*, not a measurement. Because the cosmic web is, at bottom, simply "stuff laid out in a high-dimensional space, gathered into dense regions, joined by thin bridges, and separated by empty ones," one can ask whether the same coarse shape might show up in the space $X$ of possible linguistic forms. It is possible — we do not know — that frequently used, conventional utterances sit in dense **clusters**, that productive grammatical and compositional patterns form the **filaments** between them, and that the enormous region of ungrammatical or simply never-used strings corresponds to the **voids**. All that can safely be said is that the possibility space *could be* of this kind: a sparse, clustered, filamentary foam. That is a guess made plausible by the visual and structural parallel, not a claim with a proof or a measurement. The rest of this chapter is an attempt to find out whether the guess survives contact with the data.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The space of all possibilities">
 ### The space of all possibilities
 
 Before we can ask where meaning *lives*, we need a stage large enough to hold everything — including the noise. Let $V$ be an alphabet (a vocabulary, a token set), and let $N$ be a maximum length. The most basic object is the **possibility space**
@@ -185,7 +185,7 @@ The practical upshot is this. Embeddings are excellent *instruments* for probing
 The arena is fixed, and the question that gives the chapter its purpose is unavoidable: *where in this vast, mostly empty space does meaning live?* The answer arrives in two moves. The first is negative — meaning is not a region of $X$ that a boundary line can carve out. The second is descriptive: meaningfulness is a graded field, its failures come in distinct kinds, and the sharpest information sits exactly where meaning breaks.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Meaningfulness is a field, not a boundary">
 ### Meaningfulness is a field, not a boundary
 
 The natural first guess is a set: carve out the meaningful region and call the rest meaningless. The guess fails, but it fails instructively.
@@ -214,7 +214,7 @@ a point in a four-dimensional space whose origin is "fully meaningful" and whose
 	<p class="ps-lead">Radar chart: the further out, the stronger the coherence on that axis. Notice how a syntactically perfect sentence can still be almost empty on the semantic and grounding axes.</p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Four kinds of void">
 ### Four kinds of void
 
 A single binary split between "meaningful" and "meaningless" hides real structure. Once we have the coherence fields, *void* breaks into four distinct kinds — the four coordinate directions of the void vector.
@@ -288,7 +288,7 @@ The key point is that voids are not the *absence* of structure but a *part* of t
 	<p class="ps-lead">The 3D point shows the position in void-space $(V_{\text{syn}}, V_{\text{sem}}, V_{\text{ground}})$. The corners of the cube are extreme cases; metaphor and poetry live in the interesting in-between regions.</p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Boundaries and phase transitions">
 ### Boundaries and phase transitions
 
 If meaning is a graded field and void comes in kinds, the sharpest information is where the field changes most abruptly — at the boundary. The cleanest way to see a boundary is to watch structure being destroyed.
@@ -315,7 +315,7 @@ A **semantic phase transition** is when a small change in configuration produces
 The features met so far — fields, voids, boundaries — were all drawn at a single magnification. The most striking fact about language is that the same features reappear at every magnification: clusters, filaments, and voids at the level of phonemes, words, sentences, and discourse. This part makes that fact precise, gives it a home in the renormalization group, and turns it into a principle about how all linguistic structure is built.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Scale and self-similarity">
 ### Scale and self-similarity
 
 One of the most striking empirical facts about natural language is that it is organized at *every* scale. The same kinds of phenomena — clustering, hierarchy, long-range dependence, heavy tails — appear at the level of phonemes, words, sentences, and discourse. This is the sense in which language is *scale-free* or *self-similar*.
@@ -338,7 +338,7 @@ The consequence for the theory is that the right objects to study are not fixed-
 	<p class="ps-lead">A discourse is made of paragraphs, a paragraph of sentences, a sentence of phrases, a phrase of tokens — and the same geometric language (cluster / filament / void) describes every level. That is the sense in which the space is <em>self-similar</em>.</p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The renormalization-group view">
 ### The renormalization-group view: meaning has no preferred scale
 
 Because $X$ and $S$ are scale-free and self-similar, the right conceptual tool is not a single scale but a *family* of descriptions, one for each scale. This is the logic of **coarse-graining** and, ultimately, the **renormalization group (RG)**:
@@ -364,7 +364,7 @@ The RG view also sharpens the distinction between *scale-free* and *scale-anchor
 	<p class="ps-lead">At every scale the *kind* of structure (clusters + voids) is the same; only the number of effective degrees of freedom changes. A fixed point of this process is a description whose coarse-grained form is itself.</p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Structures are built from structures">
 ### Structures are built from structures
 
 The RG picture describes how a single structure appears across scales; what it does not yet say is how structures at different scales are related *as objects*. The answer is the chapter's simplest principle.
@@ -402,7 +402,7 @@ $$
 a structured whole whose meaning is not present in either part on its own. This is a *recursive ontology of relations*: local relational structures become the atoms out of which higher-order relational structures are built, and the same geometric vocabulary — clusters, filaments, voids — describes every level.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Scaling laws and heavy tails">
 ### Scaling laws and heavy tails
 
 If the same geometry repeats at every level, the statistics of language should reveal it — and they do, in the strongest empirical signatures this theory can point to.
@@ -467,7 +467,7 @@ And where a single fractal would need one exponent $D$, language may need a whol
 A landscape of forms is not yet a theory of meaning: it says where utterances cluster and where they fall silent, but not what they *mean*. For that a second space is needed — the space of what utterances are about — together with the map that carries one into the other. This part introduces $S$ and $\pi$, shows that meanings organize themselves hierarchically inside $S$, sets the whole within a three-space picture that reaches to the world, and names the shift that the entire theory turns on.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The semantic space S and the interpretation map">
 ### The semantic space $S$ and the interpretation map $\pi: X \to S$
 
 The space $X$ by itself is not yet a theory of meaning. A purely linguistic space tells us what can be *said*, but not what it *means*. To get meaning, we need a second space and a map between them.
@@ -524,7 +524,7 @@ The key geometric claim is that this hierarchy is not a chain of separate levels
 This is what lets the principle "structures are built from structures" apply to meaning itself: a complex meaning is not a new primitive but a *structure of* simpler meanings. The semantic space $S$ is therefore a *hierarchical fractal* — a space whose parts are, in a precise sense, smaller copies of the whole.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The three-space picture: X, S, and the world">
 ### The three-space picture: $X$, $S$, and the world
 
 So far we have two spaces, $X$ and $S$, and a map $\pi: X \to S$. But $S$, the space of semantic structures, is itself not the final word. Meanings are not free-floating; they are *about* something. They refer to states of affairs, situations, and possibilities in the world.
@@ -683,7 +683,7 @@ Seen through the lens of **homotopy type theory**, this is exactly the right way
 The map $\pi$ has carried the whole chapter so far, but only as a single arrow between two spaces. An arrow is too little: $\pi$ has an internal structure — each meaning is covered by a whole family of forms — and it must *respect* the structure of language, which is exactly what a commutative diagram says. This part examines the map itself, and then follows it all the way to the world, where a truth condition anchors meaning to fact.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="The fiber-bundle view of meaning">
 ### The fiber-bundle view: meaning as a family of structures
 
 The map $\pi: X \to S$ invites a more sophisticated geometric treatment. If we view $\pi$ as a **fiber bundle** projection, then each point $s \in S$ (a meaning) has a **fiber** $\pi^{-1}(s) \subseteq X$ over it: the set of all linguistic forms that express that meaning.
@@ -725,7 +725,7 @@ The fiber-bundle picture is, we think, the right level of mathematical abstracti
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The three spaces as a commutative diagram">
 ### The three spaces as a commutative diagram
 
 A projection describes how forms lie over meanings, but it says nothing about whether interpretation is *consistent*. For $\pi$ to be an interpretation rather than an arbitrary assignment, meaning must survive transformation — and the clean way to say that is a commutative diagram.
@@ -803,7 +803,7 @@ This is, we believe, the cleanest mathematical statement of the requirement that
 	<p class="ps-lead">The green ring appears only when <em>both</em> paths have been taken: the two routes agree, $\pi' \circ f = g \circ \pi$. In the homotopy view, that agreement is itself a space — the homotopy witnessing it.</p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Tarski and the world: where meaning meets fact">
 ### Tarski and the world: where meaning meets fact
 
 Commutativity stitches the two spaces of form and meaning together. What stitches that seam to the world is truth — and the canonical statement of this bond remains Tarski's.
