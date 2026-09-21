@@ -1922,6 +1922,37 @@
 		return reasons.slice(0, -1).join(', ') + ', and ' + reasons[reasons.length - 1];
 	}
 
+	/** rebuild the per-part hidden box body, splitting the tucked lessons
+	    into "math-heavy" and "non-math" subgroups (each labelled with why).
+	    `body` is cleared and repopulated with the tile elements (which are
+	    already back in their grids via restoreAllTiles before this runs). */
+	function renderHiddenGroups(body, offInfo) {
+		body.textContent = '';
+		const isMath = function (o) { return o.score && o.score.why === 'math'; };
+		const math = offInfo.filter(isMath);
+		const other = offInfo.filter(function (o) { return !isMath(o); });
+		function addGroup(label, icon, list) {
+			if (!list.length) return;
+			const g = document.createElement('div');
+			g.className = 'tph-group';
+			const lbl = document.createElement('div');
+			lbl.className = 'tph-group-label';
+			lbl.innerHTML = '<span class="tph-group-icon" aria-hidden="true">' + icon + '</span> '
+				+ label + ' <span class="tph-group-num">' + list.length + '</span>';
+			const grid = document.createElement('div');
+			grid.className = 'tph-group-grid';
+			list.forEach(function (o) {
+				o.tile.title = 'Tucked away — ' + (o.score.reason || '');
+				grid.appendChild(o.tile);
+			});
+			g.appendChild(lbl);
+			g.appendChild(grid);
+			body.appendChild(g);
+		}
+		addGroup('Needs more math comfort', '∫', math);
+		addGroup('Outside your current interests', '✦', other);
+	}
+
 	/** On the index page, every lesson tile that scores 'off' is moved
 	    into a per-part, tap-to-expand "Not shown" box that sits right
 	    below that part's grid. The box is collapsed by default (nothing is
@@ -1989,7 +2020,7 @@
 				}
 
 				const body = group.querySelector('.ta-part-hidden-body');
-				offInfo.forEach(function (o) { body.appendChild(o.tile); });
+				renderHiddenGroups(body, offInfo);
 
 				const n = offInfo.length;
 				group.querySelector('.tph-label').textContent =

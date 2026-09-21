@@ -9620,14 +9620,14 @@ html.dark .topics-preset-fun {
 .tdp-chip {
 	display: inline-block;
 	white-space: nowrap;
-	margin: 1px 2px;
+	margin: 1px 3px;
 	padding: 1px 9px;
 	border-radius: 99px;
-	font-size: 0.8rem;
+	font-size: 0.82rem;
 	font-weight: 600;
-	line-height: 1.6;
+	line-height: 1.5;
 	text-decoration: none;
-	vertical-align: baseline;
+	vertical-align: middle;
 }
 a.tdp-chip {
 	color: var(--mn-accent);
