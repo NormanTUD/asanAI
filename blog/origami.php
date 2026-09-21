@@ -226,7 +226,7 @@ class. So how does a network ever get at an "island" class that is completely su
 			<div class="og-control"><label>Shear: <span class="val" id="og-aff-sh-v">0.0</span></label><input type="range" id="og-aff-sh" min="-1.5" max="1.5" step="0.1" value="0"></div>
 			<div class="og-control"><label>Bias x: <span class="val" id="og-aff-bx-v">0.0</span></label><input type="range" id="og-aff-bx" min="-2" max="2" step="0.1" value="0"></div>
 			<div class="og-control"><label>Bias y: <span class="val" id="og-aff-by-v">0.0</span></label><input type="range" id="og-aff-by" min="-2" max="2" step="0.1" value="0"></div>
-			<div class="og-control" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="og-aff-relu"><label>Append ReLU</label></div>
+			<div class="og-control"><label>Append ReLU: <span class="val" id="og-aff-relu-v">off</span></label><input type="checkbox" id="og-aff-relu"></div>
 		</div>
 		<div class="og-canvas-wrap"><canvas id="og-affine" width="560" height="400"></canvas></div>
 		<div class="og-formula live"><div class="cap">Live weight matrix (rot · scale · shear):</div><div id="og-aff-live"></div></div>
