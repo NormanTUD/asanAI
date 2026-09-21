@@ -301,7 +301,7 @@
 			profile: null,
 			level: null,
 			mathLevel: DEFAULT_MATH_LEVEL,
-			corePersona: null
+			corePersonas: []
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
 		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
@@ -324,8 +324,12 @@
 			if (parsed.mathLevel !== undefined) {
 				out.mathLevel = clampMath(parsed.mathLevel);
 			}
-			if (parsed.corePersona && CORE_PERSONAS.some(function (p) { return p.id === parsed.corePersona; })) {
-				out.corePersona = parsed.corePersona;
+			if (Array.isArray(parsed.corePersonas)) {
+				out.corePersonas = parsed.corePersonas.filter(function (id) {
+					return CORE_PERSONAS.some(function (p) { return p.id === id; });
+				});
+			} else if (parsed.corePersona && CORE_PERSONAS.some(function (p) { return p.id === parsed.corePersona; })) {
+				out.corePersonas = [parsed.corePersona];
 			}
 		}
 		return out;
@@ -336,7 +340,7 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersona: null };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersonas: [] };
 	}
 
 	/** the reader's current math-comfort (0–100) */
@@ -1450,6 +1454,18 @@
 		const animate = !!opts.animate;
 		const tuckMd = opts.tuckMd !== false;
 
+		// First visit (no stored prefs): show everything, don't tuck.
+		// The reader opts into filtering by interacting with the widget.
+		if (!readRawPref()) {
+			document.querySelectorAll('.topic-block.topic-block-collapsed').forEach(function (b) {
+				b.classList.remove('topic-block-collapsed');
+				b.classList.add('topic-block-revealed');
+			});
+			if (isIndexPage()) dimCourseTiles();
+			updateSkipIndicator();
+			return;
+		}
+
 		const managed = document.querySelectorAll(
 			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]');
 		managed.forEach(function (block) {
@@ -1669,47 +1685,56 @@
 
 	function regroupTuckedTiles(animate) {
 		if (!isIndexPage()) return;
-		const area = ensureTuckedArea();
-		if (!area) return;
 		try {
 			rememberGrids();
 			restoreAllTiles();
-			Object.keys(taGroups).forEach(function (k) {
-				const g = taGroups[k];
-				g.body.innerHTML = '';
-				g.count = 0;
-			});
 
-			const tiles = Array.from(document.querySelectorAll('.course-tile'));
-			let tucked = 0;
-			tiles.forEach(function (tile) {
-				const interests = (tile.getAttribute('data-topics') || '').split(',')
-					.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
-				const cats = (tile.getAttribute('data-tags') || '').split(',')
-					.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
-				const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
-				const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
-				if (score.state !== 'off') return;
-				tucked++;
-				const g = ensureGroup(groupKeyFor(score), groupLabelFor(score), groupIconFor(score));
-				g.body.appendChild(tile);
-				g.count++;
-			});
+			document.querySelectorAll('.course-tiles').forEach(function (grid) {
+				const tiles = Array.from(grid.querySelectorAll('.course-tile'));
+				let tucked = 0;
+				tiles.forEach(function (tile) {
+					const interests = (tile.getAttribute('data-topics') || '').split(',')
+						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+					const cats = (tile.getAttribute('data-tags') || '').split(',')
+						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
+					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
+					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
+					tile._taOff = (score.state === 'off');
+					if (tile._taOff) tucked++;
+				});
 
-			Object.keys(taGroups).forEach(function (k) {
-				const g = taGroups[k];
-				if (!g.body.children.length) {
-					g.header.remove();
-					g.clip.remove();
-					delete taGroups[k];
+				let divider = grid.querySelector(':scope > .ta-grid-divider');
+				if (tucked === 0) {
+					if (divider) divider.remove();
 					return;
 				}
-				g.countEl.textContent = g.body.children.length + ' lesson' + (g.body.children.length === 1 ? '' : 's');
-				setGroupOpen(g, g.expanded, false);
+
+				if (!divider) {
+					divider = document.createElement('div');
+					divider.className = 'ta-grid-divider';
+					divider.innerHTML = '<span class="ta-grid-divider-label" aria-hidden="true">Not shown</span>'
+						+ '<span class="ta-grid-divider-count"></span>';
+				}
+				divider.querySelector('.ta-grid-divider-count').textContent = tucked + ' lesson' + (tucked === 1 ? '' : 's');
+
+				tiles.forEach(function (tile) {
+					if (tile._taOff) {
+						tile.classList.add('ta-tile-off');
+						grid.insertBefore(tile, divider.nextSibling === tile ? divider : divider);
+					} else {
+						tile.classList.remove('ta-tile-off');
+					}
+				});
+
+				if (divider.parentNode !== grid) {
+					grid.insertBefore(divider, grid.lastElementChild);
+				}
+				// Ensure divider is right before the first off-tile
+				const firstOff = tiles.find(function (t) { return t._taOff; });
+				if (firstOff) grid.insertBefore(divider, firstOff);
 			});
 
-			area.classList.toggle('tucked-away-empty', tucked === 0);
-			dlog('home page: ' + tucked + ' tile(s) tucked into ' + Object.keys(taGroups).length + ' group(s)');
+			dlog('home page: tiles regrouped in-place per part');
 		} catch (e) {
 			derr('regroupTuckedTiles failed; leaving tiles as-is.', e);
 		}
@@ -1858,17 +1883,20 @@
 	function applyCorePersona(id) {
 		const p = (CORE_PERSONAS || []).find(function (x) { return x.id === id; });
 		if (!p) return;
-		pushHistory();
-		const allow = {};
-		(p.topics || []).forEach(function (t) { allow[cssSafe(t)] = true; });
-		const topics = {};
-		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
 		const cur = activePref();
-		cur.mathLevel = clampMath(p.math);
-		cur.corePersona = id;
-		dlog('core persona →', p.label, '(math comfort ' + cur.mathLevel + '%)');
-		persistPref({ topics: topics, mathLevel: cur.mathLevel, corePersona: id });
-		flashHint('Loaded ' + p.label + ' · the rest of the options are open below');
+		const active = cur.corePersonas || [];
+		const idx = active.indexOf(id);
+		if (idx !== -1) {
+			active.splice(idx, 1);
+			dlog('core persona removed →', p.label);
+		} else {
+			active.push(id);
+			(p.topics || []).forEach(function (t) { cur.topics[cssSafe(t)] = true; });
+			dlog('core persona added →', p.label, '(+' + (p.topics || []).length + ' topics)');
+		}
+		pushHistory();
+		cur.corePersonas = active;
+		persistPref(cur);
 	}
 
 	function mathSliderHtml() {
@@ -1952,7 +1980,7 @@
 		const slider = mathSliderHtml();
 
 		let html, wire;
-		const activePersona = activePref().corePersona;
+		const activePersonas = activePref().corePersonas || [];
 		if (mode === 'simple') {
 			html = [
 				'<div class="inline-topics-head">',
@@ -1961,7 +1989,7 @@
 				'</div>',
 				'<div class="core-personas" role="group" aria-label="Which reader are you?">'
 					+ CORE_PERSONAS.map(function (p) {
-						const sel = (activePersona === p.id) ? ' core-persona-active' : '';
+						const sel = activePersonas.indexOf(p.id) !== -1 ? ' core-persona-active' : '';
 						return '<button type="button" class="core-persona itx-item' + sel + '" data-core-persona="' + escAttr(p.id) + '">'
 							+ '<span class="core-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>'
 							+ '<span class="core-persona-body">'
@@ -1973,7 +2001,7 @@
 					}).join('') +
 				'</div>',
 				slider,
-				'<p class="inline-topics-foot">Pick the reader you are — it sets your topics <em>and</em> your math comfort in one click, and opens up the rest of the options. Nothing is locked.</p>'
+				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics. Math comfort is independent below. Nothing is locked.</p>'
 			].join('');
 		wire = function (h) {
 			h.querySelectorAll('[data-core-persona]').forEach(function (b) {
