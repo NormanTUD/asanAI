@@ -49,7 +49,9 @@ And the final logit for each candidate answer $c$ is:
 $$\text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cdot \underbrace{\cos\left(\omega_k \cdot (a + b - c)\right)}_{\substack{= 1 \text{ when } c = (a+b) \bmod P \\ < 1 \text{ otherwise}}}$$
 
 This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms equal 1 simultaneously.
+</div>
 
+<div class="md">
 ## Connection to Grokking
 
 This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
