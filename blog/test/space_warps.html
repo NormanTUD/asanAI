@@ -334,7 +334,12 @@
   </div>
   <div class="grid g2">
     <div>
-      <h3>Interaktives Papier-Falten (echt berechnet)</h3>
+      <h3>Gesamtfaltung des Blattes — erst den einen, dann den anderen Rand</h3>
+      <canvas id="fcSteps" class="demo" width="520" height="440"></canvas>
+      <p class="small">Jeder Faltzug spiegelt das Blatt an einer <b>Symmetrieachse</b>: das Blatt wird kleiner, die Lagen verdoppeln (1→2→4→…). Am Ende liegen <b>alle Ränder übereinander</b>. Der grüne Rahmen markiert den aktuellen Faltschritt rechts.</p>
+    </div>
+    <div>
+      <h3>Interaktives Papier-Falten (echt berechnet) — die Schnitte</h3>
       <div id="fcWrap" style="position:relative">
         <div id="fcStatus" style="position:absolute;top:8px;left:12px;z-index:2;font-size:.85rem;color:var(--accent3);background:rgba(8,16,31,.7);padding:2px 8px;border-radius:6px">Schritt 0: Form gezeichnet</div>
         <canvas id="fcCanvas" class="demo" width="520" height="440"></canvas>
@@ -356,8 +361,10 @@
       </div>
       <p class="print-note">Jede Falte spiegelte das Blatt an einer <b>Symmetrieachse</b> der Form — die Ränder stapeln sich (siehe gelb markierte, zusammenfallende Kanten). Der <b>gestrichelte Schnitt</b> liegt auf allen gestapelten Kanten zugleich: ein gerader Schnitt durch alle Lagen schneidet die <i>ganze</i> Form.</p>
     </div>
-    <div>
-      <h3>Warum das für neuronale Netze wichtig ist</h3>
+  </div>
+  <div style="margin-top:16px">
+    <h3>Warum das für neuronale Netze wichtig ist</h3>
+    <div class="grid g2">
       <ul class="steps">
         <li>Die <b>letzte Schicht</b> macht einen „geraden Schnitt" — eine <b>Hyperebene</b> (ein lineares Neuron).</li>
         <li>Die <b>vorherigen Schichten falten</b> die Datenverteilung so, dass alle Klassengrenzen aufeinanderliegen — wie die Ränder einer Form.</li>
@@ -785,8 +792,8 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   function regPoly(n, R){ const v=[]; for(let i=0;i<n;i++){ const a=-Math.PI/2+i*TAU/n; v.push([Math.cos(a)*R, Math.sin(a)*R]); } return v; }
   function star(R){ const v=[]; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5; const r=i%2===0?R:R*0.45; v.push([Math.cos(a)*r, Math.sin(a)*r]); } return v; }
   const SHAPES={ tri:()=>regPoly(3,0.72), square:()=>regPoly(4,0.6), pent:()=>regPoly(5,0.66), star:()=>star(0.78) };
-  // Symmetrieachsen (Spiegelung an Linie durch Ursprung mit Winkel)
-  const AXES={ tri:[0,60,120], square:[0,45,90,135], pent:[0,36,72,108], star:[0,36,72,108] };
+  // Echte Symmetrieachsen (Spiegelung an Linie durch Ursprung mit Winkel)
+  const AXES={ tri:[30,90,150], square:[0,45,90,135], pent:[18,54,90,126], star:[18,54,90,126] };
   let shape=SHAPES.tri(), axisList=AXES.tri.slice();
   let step=0, animScale=1, animRot=0, targetScale=1, targetRot=0, cutState='idle', cutProg=0;
 
@@ -794,6 +801,71 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     const d=pt[0]*nx+pt[1]*ny; return [2*d*nx-pt[0], 2*d*ny-pt[1]]; }
   // Stapel: für Schritt k (0..step) die Form nach den ersten k Achsen gespiegelt
   function stackUpTo(k){ const layers=[shape]; for(let i=0;i<k;i++){ const ax=axisList[i]; const cur=layers.slice(); for(const layer of cur){ const refl=layer.map(p=>reflect(p,ax)); layers.push(refl); } } return layers; }
+
+  /* --- Gesamtfaltung: Papier-Region nach k Faltzügen (Polygon-Clipping) --- */
+  function clipHP(poly, n, c){
+    const out=[];
+    for(let i=0;i<poly.length;i++){
+      const A=poly[i], B=poly[(i+1)%poly.length];
+      const da=n[0]*A[0]+n[1]*A[1]-c, db=n[0]*B[0]+n[1]*B[1]-c;
+      if(da<=0) out.push(A);
+      if((da<=0)!==(db<=0)){ const t=da/(da-db); out.push([A[0]+t*(B[0]-A[0]), A[1]+t*(B[1]-A[1])]); }
+    }
+    return out;
+  }
+  function polyArea(p){ let a=0; for(let i=0;i<p.length;i++){ const j=(i+1)%p.length; a+=p[i][0]*p[j][1]-p[j][0]*p[i][1]; } return Math.abs(a)/2; }
+  function paperRegion(k){
+    let r=[[-1,-1],[1,-1],[1,1],[-1,1]];
+    for(let i=0;i<k;i++){ const a=axisList[i]*Math.PI/180, n=[-Math.sin(a),Math.cos(a)];
+      const p1=clipHP(r,n,0), p2=clipHP(r,[-n[0],-n[1]],0);
+      r=polyArea(p1)>=polyArea(p2)?p1:p2; }
+    return r;
+  }
+  function clipToRegion(poly, region){
+    let out=poly;
+    for(let i=0;i<region.length;i++){
+      const A=region[i], B=region[(i+1)%region.length];
+      const ex=B[0]-A[0], ey=B[1]-A[1], len=Math.hypot(ex,ey)||1;
+      const n=[-ey/len, ex/len];
+      out=clipHP(out, n, n[0]*A[0]+n[1]*A[1]);
+      if(out.length<3) return out;
+    }
+    return out;
+  }
+  const fs2=$('fcSteps'), fctx=fs2.getContext('2d');
+  function drawFilmstrip(){
+    const maxF=Math.min(4,axisList.length);
+    const rows=Math.ceil((maxF+1)/2);
+    if(fs2.height!==rows*220) fs2.height=rows*220;
+    const W=fs2.width, H=fs2.height;
+    fctx.fillStyle='#08101f'; fctx.fillRect(0,0,W,H);
+    const pw=W/2, ph=H/rows;
+    for(let k=0;k<=maxF;k++){
+      const col=k%2, row=Math.floor(k/2);
+      const cx=col*pw+pw/2, cy=row*ph+ph/2+12, s=72;
+      fctx.textAlign='center'; fctx.fillStyle=COL.muted; fctx.font='13px Inter';
+      fctx.fillText(k===0?'0 · flaches Blatt (1 Lage)':`Faltzug ${k} · bis ${Math.pow(2,k)} Lagen`, cx, row*ph+24);
+      const region=paperRegion(k);
+      fctx.save(); fctx.translate(cx,cy);
+      fctx.beginPath(); region.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath();
+      fctx.fillStyle='#f4efe3'; fctx.fill(); fctx.strokeStyle='#b8ad94'; fctx.lineWidth=1.5; fctx.stroke();
+      if(k>=1){ const a=axisList[k-1]*Math.PI/180, dx=Math.cos(a), dy=Math.sin(a);
+        fctx.strokeStyle='#c94f4f'; fctx.setLineDash([5,4]); fctx.lineWidth=1.2;
+        fctx.beginPath(); fctx.moveTo(-dx*105,-dy*105); fctx.lineTo(dx*105,dy*105); fctx.stroke(); fctx.setLineDash([]); }
+      const layers=stackUpTo(k);
+      for(let li=layers.length-1;li>=0;li--){
+        const cl=clipToRegion(layers[li],region);
+        if(cl.length<3) continue;
+        fctx.beginPath(); cl.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath();
+        fctx.strokeStyle= li===0? '#1c6fe0' : 'rgba(28,111,224,0.30)'; fctx.lineWidth= li===0?2:1.2; fctx.stroke();
+      }
+      if(k>=1){ const cl=clipToRegion(shape,region);
+        if(cl.length>=3){ fctx.beginPath(); cl.forEach((p,i)=>{ i===0?fctx.moveTo(p[0]*s,-p[1]*s):fctx.lineTo(p[0]*s,-p[1]*s); }); fctx.closePath(); fctx.strokeStyle=COL.accent3; fctx.lineWidth=2.5; fctx.stroke(); } }
+      fctx.restore();
+      if(k===step){ fctx.strokeStyle=COL.accent; fctx.lineWidth=2; fctx.strokeRect(col*pw+3, row*ph+3, pw-6, ph-6); }
+    }
+    fctx.textAlign='left';
+  }
 
   function statusText(){
     if(cutState==='cutting'){ $('fcStatus').textContent = '✂ Scheren…'; return; }
@@ -847,13 +919,14 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     statusText();
   }
   function setStep(k){ step=Math.max(0,Math.min(4,k)); $('fcStep').value=step; $('vFcStep').textContent=step;
-    targetScale=Math.pow(0.86, step); targetRot=step*14; cutState='idle'; cutProg=0; }
+    targetScale=Math.pow(0.86, step); targetRot=step*14; cutState='idle'; cutProg=0; drawFilmstrip(); }
   function setShape(name){ shape=SHAPES[name](); axisList=AXES[name].slice(); const maxF=Math.min(4,axisList.length); step=0; targetScale=1; targetRot=0; cutState='idle'; cutProg=0;
-    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; }
+    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; drawFilmstrip(); }
   $('fcShape').onchange=e=>setShape(e.target.value);
   $('fcStep').oninput=e=>setStep(+e.target.value);
   $('fcCut').onclick=()=>{ if(step<1){ alert('Erst falten (Schritt ≥ 1), dann schneidet der eine geraden Schnitt die Form aus.'); return; } cutState='cutting'; cutProg=0; };
   $('fcPrint').onclick=()=>window.print();
+  drawFilmstrip();
   (function frame(){ draw(); requestAnimationFrame(frame); })();
 })();
 

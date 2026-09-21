@@ -193,7 +193,7 @@ Classical statistics warns: **as dimensionality grows, geometry breaks down**.
 These are real problems for classical statistical methods. Naïve nearest-neighbor classifiers, density estimators, and clustering algorithms all degrade as $d$ grows.
 </div>
 
-<div id="curse-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="curse-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## The Blessing of Dimensionality
@@ -217,7 +217,7 @@ Mechanistic interpretability research (Anthropic, 2024) has shown that LLMs repr
 This is possible precisely because high-dimensional space has exponentially many “almost-orthogonal” directions. The cost: features interfere slightly, leading to hallucinations and brittle reasoning when the model is pushed out of distribution.
 </div>
 
-<div id="blessing-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="blessing-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## Concentration of Measure
