@@ -17,11 +17,15 @@ LLMs were trained on a single, well-defined objective: **next-token prediction**
 ### Few-Shot In-Context Learning (GPT-3, 2020)
 
 The first major surprise. \cite[Brown et al., 2020]{brown2020gpt3} showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query, **without any weight updates, without gradient descent, without a fine-tuning loop**. This was not how language modelling was supposed to work. Prior to GPT-3, neural NLP required task-specific architectures, features, and training. After GPT-3, “prompting” became a programming interface. The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="In-Context Statistical Learning">
 ### In-Context Statistical Learning
 
 In 2022, \cite[Garg, Tsipras, Liang & Valiant, 2022]{garg2022incontext} asked a sharper question: if a Transformer is trained on sequences drawn from a *family* of functions (e.g. linear functions $f(x) = w^\top x$ with random $w$), can it in-context learn a *new* function from that family on the fly? The answer was yes: at test time, given a few noisy $(x, y)$ pairs, the model produced predictions matching the **optimal least-squares estimator** for that function class, *without ever performing gradient descent at inference*. The result extended to sparse linear functions, two-layer neural networks, and decision trees, in each case matching or exceeding specialised task-specific learning algorithms. This established that in-context learning is not task recognition (looking up a similar pretraining task) but genuine inference-time algorithm execution.
+</div>
 
+<div class="md">
 ### Induction Heads: The Circuit Behind ICL
 
 If in-context learning is real inference, it must be implemented in some specific circuitry. \cite[Olsson et al., 2022]{olsson2022induction} identified **induction heads**, pairs of attention heads that implement the simple algorithm “complete $[A][B]\dots[A] \to [B]$”. Across six complementary lines of evidence, they showed that induction heads develop at *precisely the same training step* as a sudden jump in in-context learning ability (visible as a discontinuity in the loss curve). The implication: many “emergent” capabilities of LLMs may be the macroscopic signature of a small, identifiable circuit forming inside the network. This is now one of the cleanest examples of *mechanistic interpretability*, explaining a behaviour by finding the responsible weights.

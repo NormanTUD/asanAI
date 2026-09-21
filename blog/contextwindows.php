@@ -134,7 +134,9 @@ Instead of attending to *all* previous tokens, each token only attends to the mo
 With a window of $w = 4096$, a 128K-token sequence uses $O(n \cdot w)$ instead of $O(n^2)$, a massive reduction.
 
 **But doesn't this lose long-range information?** In deep networks, information propagates across layers. If layer 1 sees tokens $[0, 4096]$ and layer 2 sees the *output* of layer 1 (which already encodes information from $[0, 4096]$), then layer 2 effectively has indirect access to a much wider range. After $L$ layers with window $w$, the effective receptive field is $L \times w$.
+</div>
 
+<div class="md">
 ### 4. Grouped-Query Attention (GQA)
 
 Standard multi-head attention uses separate $K$ and $V$ projections for each head. GQA \cite{ainslie2023gqa} shares $K$ and $V$ across groups of heads:

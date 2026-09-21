@@ -146,7 +146,7 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more “certain” and accurate the model has become.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="The Dirichlet Distribution">
 ## The Dirichlet Distribution: The Probability of Probabilities
 
 While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together. To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.
@@ -217,14 +217,14 @@ In LLMs, this is why a prompt works. By typing “Import torch,” you are stati
 
     <div id="plot-gmm-clusters" style="width:100%; height:450px;"></div>
 
-    <div class="md">
+    <div class="md" data-mathlevel="60">
     Mathematically, the probability of a word $x$ given the mixture is:
     $$P(x) = \sum_{k=1}^{K} \underbrace{\pi_k}_{\text{weight of topic } k} \mathcal{N}(x | \mu_k, \Sigma_k)$$
     Where $\pi_k$ is the weight of topic $k$, and $\mathcal{N}$ is the Normal Distribution (the Bell Curve) you learned about in the Statistics section.
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Law of Large Numbers">
 ## The Law of Large Numbers
 
 In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene. 
@@ -232,7 +232,11 @@ In the real world, language is a **Non-Stationary Process**. If you only read th
 The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like “the” or “God” converges to their true mathematical mean $\mu$ within the entire corpus.
 </div>
 
+<div class="topic-block" data-optionaltitle="The Law of Large Numbers" data-mathlevel="60">
+<div class="md">
 $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
+</div>
+</div>
 
 <div class="statlab-interactive-zone">
 	<div class="statlab-controls">
@@ -244,7 +248,7 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 	<div id="plot-zarathustra-convergence"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Markovian Transitions (The Probability of “Next”)">
 ## Markovian Transitions (The Probability of “Next”)
 
 An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.
@@ -393,7 +397,7 @@ Thus began Zarathustra's down-going.
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="40" data-optionaltitle="The Chain Rule of Probability: Kolmogorov's Logic">
         ## The Chain Rule of Probability: Kolmogorov's Logic
 
         The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}). It solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
@@ -423,7 +427,7 @@ Thus began Zarathustra's down-going.
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="55" data-optionaltitle="KL Divergence: Information Gain">
         ## KL Divergence: Information Gain
 
         Introduced by **\citeauthorlastnameand{leiblerkullback}** (\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P. \citeauthor{colah2015visualinfo} (\citeyear{colah2015visualinfo}) gives the whole tower — entropy, cross-entropy, and this asymmetry — a picture: KL divergence is *not* a true distance because it is not symmetric, $D_{KL}(P\|Q) \neq D_{KL}(Q\|P)$; it measures *information gain* rather than geometry \cite{colah2015visualinfo}.
@@ -439,7 +443,7 @@ Thus began Zarathustra's down-going.
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="45" data-optionaltitle="Bag of Words (BoW): The Linguistic Atom">
         ## Bag of Words (BoW): The Linguistic Atom
         The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\citeauthor{zelligharris}** in his \citeyear{zelligharris} article *\citetitle{zelligharris}*. It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.
 

@@ -103,7 +103,7 @@ What it splits and where is dependent on the data it has seen. It chooses that a
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Step 2: Embedding">
 ### Step 2: Embedding
 
 A raw token doesn't tell the model anything about what a word *means*. So the model replaces each token with a **long list of numbers** (called a vector) that represents its meaning.
@@ -311,7 +311,7 @@ Let's look at the word **“Apple”**. Because of the *Attention* step, its vec
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 Technically, this is expressed with the formula:
 $$ \text{FFN}(x) = W_2 \cdot \max(0, W_1 \cdot x + b_1) + b_2 $$
 Where $W_1$ acts as the detectors, the $\max(0, ...)$ is the ReLU filter shutting down negative matches, and $W_2$ contains the knowledge vectors that get added together.
@@ -397,7 +397,7 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The key insight">
 ## The key insight
 
 There is no “understanding” module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
