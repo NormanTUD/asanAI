@@ -9572,6 +9572,58 @@ html.dark .topics-preset-fun {
 	font-weight: 600;
 }
 
+/* ── block-level math alternative ────────────────────────────
+   A topic-block may carry a plain-language twin (.topic-block-alt,
+   authored in markdown). When the block is gated off purely by the
+   math-comfort level, the heavy math recedes and the twin is shown;
+   a "show the full math" link keeps the math one tap away.      */
+.topic-block .topic-block-alt {
+	display: none;
+	padding: 14px 18px;
+	margin: 4px 0;
+	border-radius: 12px;
+	background: var(--mn-bg-subtle);
+	border: 1px dashed var(--mn-border);
+	color: var(--mn-text-secondary);
+	font-size: 0.95em;
+	line-height: 1.55;
+}
+.topic-block .topic-block-alt > :first-child { margin-top: 0; }
+.topic-block .topic-block-alt > :last-child { margin-bottom: 0; }
+.topic-block.topic-block-alt-active .topic-block-inner { display: none; }
+.topic-block.topic-block-alt-active .topic-block-alt { display: block; }
+
+.topic-block-alt-reveal {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 10px;
+	padding: 5px 12px;
+	border-radius: 99px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	color: var(--mn-text-secondary);
+	font-size: 0.75rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.18s, box-shadow 0.18s;
+	font-family: inherit;
+}
+.topic-block-alt-reveal:hover {
+	border-color: var(--mn-accent);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.topic-block-alt-reveal .tbalt-icon { color: var(--mn-accent); font-size: 1rem; }
+
+/* dependency links inside the "Builds on" pill */
+.tdp-link {
+	color: var(--mn-accent);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--mn-accent) 40%, transparent);
+}
+.tdp-link:hover { border-bottom-style: solid; }
+
 /* Learned / dependency pills */
 .topic-deps-pill {
 	display: flex;
@@ -10629,6 +10681,46 @@ math {
 	filter: grayscale(0.3);
 	pointer-events: none;
 }
+
+/* Per-part "hidden lessons" expandable box (index page). The off tiles
+   live inside, collapsed by default; tapping the header reveals them as
+   normal tiles. */
+.ta-part-hidden { margin-top: 12px; }
+.ta-part-hidden-header {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 16px;
+	background: var(--mn-bg-subtle);
+	border: 1px dashed var(--mn-border);
+	border-radius: 12px;
+	cursor: pointer;
+	text-align: left;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+	font-family: inherit;
+	transition: border-color 0.18s;
+}
+.ta-part-hidden-header:hover { border-color: var(--mn-accent); }
+.ta-part-hidden-open .ta-part-hidden-header { border-color: var(--mn-accent); }
+.tph-caret { font-size: 0.8rem; transition: transform 0.2s; }
+.ta-part-hidden-open .tph-caret { transform: rotate(90deg); }
+.tph-icon { font-size: 1.1rem; }
+.tph-label { flex: 1; }
+.tph-count { font-size: 0.75rem; font-weight: 400; color: var(--mn-text-muted); }
+.ta-part-hidden-clip {
+	overflow: hidden;
+	transition: height 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ta-part-hidden-body {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 10px;
+	padding: 12px 2px 4px;
+}
+.ta-part-hidden-body .course-tile { opacity: 1; filter: none; pointer-events: auto; }
 
 /* Dimmed blocks (no title, just faded — content stays visible) */
 .topic-block-dimmed {

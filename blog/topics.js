@@ -1837,6 +1837,35 @@
 		}
 	}
 
+	/** open/close one per-part "hidden lessons" box, animating height. */
+	function togglePartHidden(group) {
+		const clip = group.querySelector('.ta-part-hidden-clip');
+		const body = group.querySelector('.ta-part-hidden-body');
+		if (!clip || !body) return;
+		const open = !group.classList.contains('ta-part-hidden-open');
+		group.classList.toggle('ta-part-hidden-open', open);
+		if (prefersReducedMotion()) {
+			clip.style.height = open ? 'auto' : '0px';
+			return;
+		}
+		if (open) {
+			const h = body.scrollHeight;
+			clip.style.height = '0px';
+			void clip.offsetHeight;
+			animateHeight(clip, 0, h, TUCK_MS, function () { clip.style.height = 'auto'; });
+		} else {
+			const h = clip.scrollHeight;
+			clip.style.height = h + 'px';
+			void clip.offsetHeight;
+			animateHeight(clip, h, 0, TUCK_MS);
+		}
+	}
+
+	/** On the index page, every lesson tile that scores 'off' is moved
+	    into a per-part, tap-to-expand "Not shown" box that sits right
+	    below that part's grid. The box is collapsed by default (nothing is
+	    lost — it just recedes); tapping it reveals the hidden lessons as
+	    normal, clickable tiles. */
 	function regroupTuckedTiles(animate) {
 		if (!isIndexPage()) return;
 		try {
@@ -1844,10 +1873,14 @@
 			restoreAllTiles();
 
 			document.querySelectorAll('.course-tiles').forEach(function (grid) {
+				// Drop any leftover divider from the old in-place scheme.
+				const divider = grid.querySelector(':scope > .ta-grid-divider');
+				if (divider) divider.remove();
+
+				const part = grid.closest('.course-part') || grid.parentElement;
+
 				const tiles = Array.from(grid.querySelectorAll('.course-tile'));
 				const offTiles = [];
-				let tucked = 0;
-
 				tiles.forEach(function (tile) {
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
@@ -1855,36 +1888,52 @@
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
 					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
-					if (score.state === 'off') {
-						offTiles.push(tile);
-						tucked++;
-						tile.classList.add('ta-tile-off');
-					} else {
-						tile.classList.remove('ta-tile-off');
-					}
+					tile.classList.remove('ta-tile-off');
+					if (score.state === 'off') offTiles.push(tile);
 				});
 
-				let divider = grid.querySelector(':scope > .ta-grid-divider');
-				if (tucked === 0) {
-					if (divider) divider.remove();
+				let group = part.querySelector(':scope > .ta-part-hidden');
+				if (offTiles.length === 0) {
+					if (group) group.remove();
 					return;
 				}
 
-				if (!divider) {
-					divider = document.createElement('div');
-					divider.className = 'ta-grid-divider';
-					divider.innerHTML = '<span class="ta-grid-divider-label" aria-hidden="true">Not shown</span>'
-						+ '<span class="ta-grid-divider-count"></span>';
+				if (!group) {
+					group = document.createElement('div');
+					group.className = 'ta-part-hidden';
+					const header = document.createElement('button');
+					header.type = 'button';
+					header.className = 'ta-part-hidden-header';
+					header.innerHTML =
+						'<span class="tph-caret" aria-hidden="true">▸</span>'
+						+ '<span class="tph-icon" aria-hidden="true">🙈</span>'
+						+ '<span class="tph-label">Not shown in this part</span>'
+						+ '<span class="tph-count"></span>';
+					const clip = document.createElement('div');
+					clip.className = 'ta-part-hidden-clip';
+					clip.style.height = '0px';
+					const body = document.createElement('div');
+					body.className = 'ta-part-hidden-body';
+					clip.appendChild(body);
+					group.appendChild(header);
+					group.appendChild(clip);
+					part.appendChild(group);
+					header.addEventListener('click', function () { togglePartHidden(group); });
 				}
-				divider.querySelector('.ta-grid-divider-count').textContent = tucked + ' lesson' + (tucked === 1 ? '' : 's');
 
-				// Move off tiles to end of grid, in original relative order
-				offTiles.forEach(function (tile) { grid.appendChild(tile); });
-				// Insert divider right before the first off tile
-				grid.insertBefore(divider, offTiles[0]);
+				const body = group.querySelector('.ta-part-hidden-body');
+				offTiles.forEach(function (tile) { body.appendChild(tile); });
+				group.querySelector('.tph-count').textContent =
+					offTiles.length + ' hidden ' + (offTiles.length === 1 ? 'lesson' : 'lessons');
+
+				// Re-measure if the box was already open so it fits.
+				if (group.classList.contains('ta-part-hidden-open')) {
+					const clip = group.querySelector('.ta-part-hidden-clip');
+					clip.style.height = body.scrollHeight + 'px';
+				}
 			});
 
-			dlog('home page: tiles regrouped in-place per part');
+			dlog('home page: hidden tiles grouped into per-part expandable boxes');
 		} catch (e) {
 			derr('regroupTuckedTiles failed; leaving tiles as-is.', e);
 		}
