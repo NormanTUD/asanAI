@@ -1724,7 +1724,9 @@
 
 			document.querySelectorAll('.course-tiles').forEach(function (grid) {
 				const tiles = Array.from(grid.querySelectorAll('.course-tile'));
+				const offTiles = [];
 				let tucked = 0;
+
 				tiles.forEach(function (tile) {
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
@@ -1732,8 +1734,13 @@
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
 					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
-					tile._taOff = (score.state === 'off');
-					if (tile._taOff) tucked++;
+					if (score.state === 'off') {
+						offTiles.push(tile);
+						tucked++;
+						tile.classList.add('ta-tile-off');
+					} else {
+						tile.classList.remove('ta-tile-off');
+					}
 				});
 
 				let divider = grid.querySelector(':scope > .ta-grid-divider');
@@ -1750,22 +1757,17 @@
 				}
 				divider.querySelector('.ta-grid-divider-count').textContent = tucked + ' lesson' + (tucked === 1 ? '' : 's');
 
-				tiles.forEach(function (tile) {
-					if (tile._taOff) {
-						tile.classList.add('ta-tile-off');
-						grid.insertBefore(tile, divider.nextSibling === tile ? divider : divider);
-					} else {
-						tile.classList.remove('ta-tile-off');
-					}
-				});
-
-				if (divider.parentNode !== grid) {
-					grid.insertBefore(divider, grid.lastElementChild);
-				}
-				// Ensure divider is right before the first off-tile
-				const firstOff = tiles.find(function (t) { return t._taOff; });
-				if (firstOff) grid.insertBefore(divider, firstOff);
+				// Move off tiles to end of grid, in original relative order
+				offTiles.forEach(function (tile) { grid.appendChild(tile); });
+				// Insert divider right before the first off tile
+				grid.insertBefore(divider, offTiles[0]);
 			});
+
+			dlog('home page: tiles regrouped in-place per part');
+		} catch (e) {
+			derr('regroupTuckedTiles failed; leaving tiles as-is.', e);
+		}
+	}
 
 			dlog('home page: tiles regrouped in-place per part');
 		} catch (e) {
