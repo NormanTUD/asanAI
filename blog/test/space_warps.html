@@ -122,7 +122,7 @@
 <section id="prereq">
   <h2>2 · Baustein einer Schicht — Affin, dann Nicht-linear</h2>
   <p class="lead">Jede Schicht macht genau zwei Dinge: erst eine <b>affine Transformation</b> (Matrix&nbsp;+&nbsp;Verschiebung), dann eine <b>elementweise Nicht-Linearität</b> (hier ReLU). Das ist ein <b>Dense Layer</b>.</p>
-  <div class="formula" id="fEq"></div>
+  <div class="formula"><div class="cap" style="margin-top:0">Layer-Form (Dense + ReLU) — links unten live aus den Reglern: W, b und Beispiel-Punkt:</div><div id="fEq"></div></div>
 
   <div class="grid g2">
     <div>
@@ -177,7 +177,12 @@
 <section id="hammer">
   <h2>3 · Der Hammer trifft die Verteilung</h2>
   <p class="lead">Eine Schicht macht <b>Rotation + Hammerschlag</b>: die <b>gelernte Rotation</b> (affin) richtet die Verteilung aus, dann drückt der <b>fix eingeprägte ReLU-Hammer</b> (Faltlinie <code>x′ = b</code>) die eine Hälfte der Wolke auf diese Linie. Das rechte Panel zeigt das Ergebnis <b>zurückrotiert in den Ausgangsrahmen</b> — so sieht man den Hammerschnitt, wie er unter dem <b>gelernten Winkel θ</b> durch die Verteilung läuft und die eine Hälfte abtrennt.</p>
-  <div class="formula" id="fHam"></div>
+  <div class="formula">
+    <div class="cap" style="margin-top:0">Geometrisch: Rotation richtet aus, fixer Hammer drückt die linke Hälfte auf die Faltlinie:</div>
+    <div id="fHam"></div>
+    <div class="cap">Layer-Form: derselbe Hammer als ein Neuron z = ReLU(w·x + c), mit Hammer-Normal w und Versatz c (live):</div>
+    <div id="fHam2"></div>
+  </div>
   <canvas id="hamCanvas" class="demo" width="940" height="380"></canvas>
   <div class="ctrls">
     <label>Drehwinkel θ (gelernte Rotation) <span class="val" id="vHamTh">0°</span>
@@ -210,8 +215,23 @@
         <label>Trennebene z = c <span class="val" id="vPlaneC">0.10</span>
           <input id="planeC" type="range" min="0" max="1" step="0.01" value="0.1">
         </label>
+        <label>Lift-Art
+          <select id="liftMode">
+            <option value="radial">radial (Idee)</option>
+            <option value="3">3 Neuronen (echt)</option>
+            <option value="6">6 Neuronen (echt)</option>
+            <option value="12">12 Neuronen (echt)</option>
+          </select>
+        </label>
       </div>
-      <div class="formula live" id="fEgg"></div>
+      <div class="formula live">
+        <div class="cap" style="margin-top:0">Stufe 1 · radiale Idee (glatter Dom), L = Lift-Stärke:</div>
+        <div id="fEgg1"></div>
+        <div class="cap">Stufe 2 · ein ReLU-Neuron z = ReLU(W·x + B) mit W = −2L·ū, B = L — hebt nur eine Halbscheibe (hier ū=(1,0)):</div>
+        <div id="fEgg2"></div>
+        <div class="cap">Stufe 3 · N Neuronen, echt berechnet (N-Eck-Dom; exakt radial = Minimum über alle Richtungen, ≙ Stufe 1):</div>
+        <div id="fEgg3"></div>
+      </div>
       <div class="legend"><span><span class="dot" style="background:var(--red)"></span>innen</span><span><span class="dot" style="background:var(--blue)"></span>außen</span><span><span class="dot" style="background:var(--accent3)"></span>Trennebene</span><span class="verdict" id="eggVerdict">—</span></div>
     </div>
   </div>
@@ -234,7 +254,12 @@
         <span class="small">weiß = ReLU-Faltlinie (fix)</span>
         <span class="verdict" id="rotVerdict">—</span>
       </div>
-      <div class="formula live" id="fRot"></div>
+      <div class="formula live">
+        <div class="cap" style="margin-top:0">Geometrisch: Fix-Falte bei x′=0, Daten rotiert:</div>
+        <div id="fRot"></div>
+        <div class="cap">Layer-Form: W entsteht, weil der fix eingeprägte Hammer [1 0] nach der Rotation greift:</div>
+        <div id="fRot2"></div>
+      </div>
     </div>
     <div>
       <h3>3D: nach der Bewegung in die höhere Dimension</h3>
@@ -248,7 +273,7 @@
 <section id="fold">
   <h2>5 · Falten in ungenutzte Dimensionen — der zentrale Trick</h2>
   <p class="lead">Liegt die Datenmannigfaltigkeit in <b>weniger</b> Dimensionen, als die Schicht breit ist, wird ein ReLU-Hammer, dessen Normale <b>in die freie Dimension zeigt</b>, zu einer <b>Falte</b> statt einer Quetschung. Das ist <b>injektiv</b> — es geht keine Information verloren.</p>
-  <div class="formula" id="fFold"></div>
+  <div class="formula"><div class="cap" style="margin-top:0">Layer-Form (1D): genau 1 Neuron — 1 Gewicht w, 1 Bias b; Faltlinie bei x̃=0:</div><div id="fFold"></div></div>
 
   <h3>Eindimensionales „Ei" wird in 2D gefaltet</h3>
   <canvas id="foldLine" class="demo" width="940" height="340"></canvas>
@@ -289,8 +314,8 @@
       <div class="legend"><span><span class="dot" style="background:var(--red)"></span>innen</span><span><span class="dot" style="background:var(--blue)"></span>außen</span><span><span class="dot" style="background:var(--accent3)"></span>Trennebene</span><span class="verdict" id="eggVerdict2">—</span></div>
     </div>
   </div>
-  <div class="formula live" id="fEggDense"></div>
-  <div class="formula" id="fEggSep"></div>
+  <div class="formula live"><div class="cap" style="margin-top:0">Layer-Form (Dense Layer, live aus den Reglern) — die N Neuronen als eine Matrix:</div><div id="fEggDense"></div></div>
+  <div class="formula"><div class="cap" style="margin-top:0">Geometrische Bedeutung derselben N Neuronen (Wanne + Trennebene):</div><div id="fEggSep"></div></div>
   <p class="small">Mit mehr Neuronen wird die Wanne runder — von Dreieck über Sechseck bis zu einem N-gon, das einen Kreis annähert.</p>
 </section>
 
@@ -355,7 +380,7 @@
     <button id="shearPlay">▶ Animation</button>
     <span class="verdict" id="shearVerdict">—</span>
   </div>
-  <div class="formula" id="fShear"></div>
+  <div class="formula"><div class="cap" style="margin-top:0">Layer-Form pro Schicht (2 Neuronen, 2D→2D) — A und c sind die (festen) Parameter:</div><div id="fShear"></div></div>
   <p class="lead">→ In echten Netzen wird dieser Mechanismus <b>kaum</b> genutzt. Das Falten in freie Dimensionen (breitere Schichten) ist viel mächtiger und effizienter.</p>
 </section>
 
@@ -444,7 +469,6 @@ renderTeX('fEq', String.raw`\mathbf{z}^{(l)} \;=\; \Phi\!\Bigl(\underbrace{\math
 renderTeX('fHam', String.raw`\mathbf{x}' \;=\; \underbrace{R(\theta)\,\mathbf{x}}_{\text{gelernte Rotation (affin)}} \;\;\xrightarrow{\;\mathrm{ReLU}\;}\;\; \mathbf{x}'' \;=\; \mathbf{x}' - \max\bigl(0,\, b - x'_1\bigr)\,\hat{\mathbf{e}}_1 \quad\text{(alles links der Faltlinie } x'_1=b \text{ wird auf sie gedrückt; rechtes Panel zurückrotiert: } \mathbf{x}^{(3)} = R(-\theta)\,\mathbf{x}'')`);
 renderTeX('fFold', String.raw`x^{(1)} \;=\; \mathrm{ReLU}\!\bigl(\underbrace{w\,x^{(0)}}_{\text{Projektion auf Normale}} + b\bigr) \quad\Longrightarrow\quad \text{Falte in freier Dimension, injektiv, keine Info verloren}`);
 renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots L-1}\;+\;\underbrace{\text{ein gerader Schnitt}}_{\text{letzte Schicht }=\text{ Hyperebene}} \;=\; \text{beliebige Form (Klassengrenze)}`);
-renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(k-1)}+\mathbf{c}\bigr),\quad \text{Breite }=\dim(\text{Daten}) \;\Rightarrow\; \text{nur in sich selbst falten, braucht Tiefe }L\gg 1`);
 
 /* ================= 1. Motivation ================= */
 (() => {
@@ -543,6 +567,9 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
   function draw(){
     const thd=+$('hamTh').value, th=thd*Math.PI/180, b=+$('hamB').value;
     $('vHamTh').textContent=thd+'°'; $('vHamB').textContent=f1(b);
+    const c0=Math.cos(th), s1=Math.sin(th);
+    const t=v=>Math.abs(v)<0.005?'':(v<0?'\\,-\\,':'\\,+\\,')+f1(Math.abs(v));
+    renderTeX('fHam2', String.raw`z = \mathrm{ReLU}(\mathbf{w}\cdot\mathbf{x}+c),\quad \mathbf{w}=(\cos\theta,\,-\sin\theta)=\bigl(${f1(c0)},\,${f1(-s1)}\bigr)\ \text{(Hammer-Normal)},\;\; c=-b=${f1(-b)} \;\Rightarrow\; z=\mathrm{ReLU}\bigl(${f1(c0)}\,x${t(-s1)}y${t(-b)}\bigr)`);
     const W=c.width,H=c.height,cy=H/2,s=120;
     ctx.fillStyle='#08101f'; ctx.fillRect(0,0,W,H);
     ctx.textAlign='center';
@@ -582,11 +609,18 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(const p of pts){ ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+p.x*s, cy-p.y*s, 1.8,0,TAU); ctx.fill(); }
     ctx.fillStyle=COL.accent3; ctx.font='12px Inter'; ctx.fillText('Keine Gerade trennt Rot von Blau', 14, 22); }
   draw2d();
+  // radial: glatter Dom (Idee); N>0: echtes min über N Neuronen in Kreisrichtungen
+  function zOf(p, lift, mode){
+    if(mode==='radial') return lift*Math.max(0,1-2*Math.hypot(p.x,p.y));
+    const N=+mode; let z=Infinity;
+    for(let k=0;k<N;k++){ const a=k*TAU/N; z=Math.min(z, Math.max(0, lift*(1-2*(Math.cos(a)*p.x+Math.sin(a)*p.y)))); }
+    return z;
+  }
   function draw3d(){
-    const lift=+$('lift').value, cPl=+$('planeC').value;
+    const lift=+$('lift').value, cPl=+$('planeC').value, mode=$('liftMode').value;
     $('vLift').textContent=f1(lift); $('vPlaneC').textContent=f1(cPl);
     const x0=[],y0=[],z0=[],x1=[],y1=[],z1=[]; let zInMin=1e9,zInMax=-1e9,zOutMax=-1e9;
-    for(const p of pts){ const r=Math.hypot(p.x,p.y); const z=lift*Math.max(0,0.5-r)*2;
+    for(const p of pts){ const z=zOf(p,lift,mode);
       if(p.cl===0){ x0.push(p.x);y0.push(p.y);z0.push(z); zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z); zOutMax=Math.max(zOutMax,z);} }
     const gx=[],gy=[],gz=[]; for(let i=-1;i<=1;i+=0.2) for(let j=-1;j<=1;j+=0.2){ gx.push(i);gy.push(j);gz.push(cPl); }
     const layout={paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted,range:[-1,1]},yaxis:{color:COL.muted,range:[-1,1]},zaxis:{color:COL.muted,range:[-0.1,1.65]}},showlegend:false};
@@ -598,9 +632,15 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     ],layout,{displayModeBar:false});
     const sep = cPl>zOutMax && cPl<zInMin;
     const v=$('eggVerdict'); v.textContent = sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
-    renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,1-2\lVert(x,y)\rVert)}_{\text{hebt den Kern an (Spitze }z=L\text{)}},\;\; \text{Trennebene } z=c. \;\; \text{trennbar, wenn } c\in(${f1(zOutMax)},\,${f1(zInMin)}).`);
+    renderTeX('fEgg1', String.raw`z(x,y) = ${f1(lift)}\cdot\max\bigl(0,\,1-2\lVert(x,y)\rVert\bigr) \;\;\text{(Spitze } z=L=${f1(lift)}\text{)},\;\; \text{trennbar wenn } c\in\bigl(${f1(zOutMax)},\,${f1(zInMin)}\bigr)`);
+    renderTeX('fEgg2', String.raw`z = \mathrm{ReLU}(W\cdot x + B),\quad W = -2L\,\hat{u} = \bigl(${f1(-2*lift)},\,0\bigr),\; B = L = ${f1(lift)} \;\;\Rightarrow\; \text{für } \hat{u}=(1,0):\; z = \mathrm{ReLU}\bigl(${f1(-2*lift)}\,x + ${f1(lift)}\bigr)`);
+    if(mode==='radial'){
+      renderTeX('fEgg3', String.raw`z = \min_{k=1}^{N} \mathrm{ReLU}\bigl(L - 2L\,(\hat{u}_k \cdot x)\bigr),\;\; \hat{u}_k = N \text{ Kreisrichtungen} \;\;\Rightarrow\; N\text{-Eck-Dom (Ecken bis } r=\tfrac{0.5}{\cos(\pi/N)}\text{)},\; \text{exakt radial für } N\to\infty`);
+    } else {
+      renderTeX('fEgg3', String.raw`z = \min_{k=1}^{${mode}} \mathrm{ReLU}\bigl(${f1(lift)} - ${f1(2*lift)}\,(\hat{u}_k \cdot x)\bigr) \;\;\leftarrow \text{das zeigt der Plot (${mode} Neuronen, echt berechnet)`);
+    }
   }
-  $('lift').oninput=draw3d; $('planeC').oninput=draw3d; draw3d();
+  $('lift').oninput=draw3d; $('planeC').oninput=draw3d; $('liftMode').onchange=draw3d; draw3d();
 })();
 
 /* ================= 4b. Learned rotation + hammer ================= */
@@ -631,7 +671,9 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     for(const p of pts){ const q=rot(p); if(p.cl===1){min1=Math.min(min1,q[0]);max1=Math.max(max1,q[0]);} else {min0=Math.min(min0,q[0]);max0=Math.max(max0,q[0]);} }
     const sep = (min1>0&&max0<0)||(max1<0&&min0>0);
     const v=$('rotVerdict'); v.textContent=sep?'ReLU trennt ✓':'noch nicht ✗'; v.className='verdict '+(sep?'ok':'no');
-    renderTeX('fRot', String.raw`z=\mathrm{ReLU}\bigl(\underbrace{\begin{bmatrix}1&0\end{bmatrix}}_{\text{Hammer (fix)}}\underbrace{\begin{bmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{bmatrix}}_{\text{gelernte Rotation}}\mathbf{x}\bigr)=\mathrm{ReLU}(\cos\theta\,x-\sin\theta\, y),\;\theta=${f0(thd)}^\circ`);
+    renderTeX('fRot', String.raw`z = \mathrm{ReLU}(x'),\quad x' = R(\theta)\,\mathbf{x} \;\;\text{(Faltlinie } x'=0 \text{ fix; Daten rotiert um } \theta=${f0(thd)}^\circ)`);
+    const t=v=>Math.abs(v)<0.005?'':(v<0?'\\,-\\,':'\\,+\\,')+f1(Math.abs(v));
+    renderTeX('fRot2', String.raw`z = \mathrm{ReLU}(\mathbf{W}\,\mathbf{x}+c),\quad \mathbf{W} = \begin{bmatrix}1&0\end{bmatrix}\,R(\theta) = (\cos\theta,\,-\sin\theta) = \bigl(${f1(cs)},\,${f1(-sn)}\bigr),\; c=0 \;\Rightarrow\; z=\mathrm{ReLU}\bigl(${f1(cs)}\,x${t(-sn)}y\bigr)`);
     draw3d(th);
   }
   function draw3d(th){
@@ -820,6 +862,8 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
   }
   function draw(){
     const L=+$('layers').value; $('vLayers').textContent=L;
+    const cs7=Math.cos(0.7), sn7=Math.sin(0.7), s7=0.92;
+    renderTeX('fShear', String.raw`x^{(k)} = \mathrm{ReLU}(\mathbf{A}\,x^{(k-1)}+\mathbf{c}),\quad \mathbf{A}=\begin{bmatrix}${f1(s7*cs7)} & ${f1(-s7*sn7)}\\ ${f1(s7*sn7)} & ${f1(s7*cs7)}\end{bmatrix},\; \mathbf{c}=\bigl(${f1(0.10)},\,${f1(0.10)}\bigr) \;\Rightarrow\; \text{2D}\to\text{2D: keine freie Dimension, nur in sich selbst knüllen, braucht Tiefe }L\gg 1`);
     const W=c.width,H=c.height;
     ctx.fillStyle='#08101f'; ctx.fillRect(0,0,W,H);
     const after=applyL(L);

@@ -107,7 +107,9 @@ Factor out $h$:
 $$= \lim_{h \to 0} (2x + h) = 2x$$
 
 So the derivative of $x^2$ is $2x$. At $x = 3$, the slope of the tangent line is $2 \cdot 3 = 6$. This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="The derivative rules (product, quotient, chain)">
 ## Derivative Rules
 
 Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \citeauthor{euler1755} in \citetitle{euler1755}, \citeyear{euler1755}, who systematized much of the notation and theory).
@@ -210,7 +212,7 @@ You can explore the tangent line interactively below. Move the point along the c
     <div id="plot-tangent-line" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The chain rule & backpropagation">
 ### The Chain Rule Visualized
 
 The chain rule is so important for AI that it deserves its own interactive demonstration. When we compose two functions $f(g(x))$, the chain rule tells us:
@@ -218,7 +220,7 @@ The chain rule is so important for AI that it deserves its own interactive demon
 
 $$\frac{d}{dx}[f(g(x))] = \underbrace{f'(g(x))}_{\text{outer derivative}} \cdot \underbrace{g'(x)}_{\text{inner derivative}}$$
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.
 
 In a neural network with layers $L_1, L_2, \dots, L_n$, the chain rule extends naturally:
@@ -226,7 +228,7 @@ In a neural network with layers $L_1, L_2, \dots, L_n$, the chain rule extends n
 
 $$\frac{\partial \text{Loss}}{\partial w_1} = \frac{\partial \text{Loss}}{\partial L_n} \cdot \frac{\partial L_n}{\partial L_{n-1}} \cdots \frac{\partial L_2}{\partial L_1} \cdot \frac{\partial L_1}{\partial w_1}$$
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.
 </div>
 
@@ -246,7 +248,7 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
     <div id="plot-chain-rule" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Why derivatives matter for AI (gradient descent, backprop)">
 ### Why Derivatives Matter for AI
 
 Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
