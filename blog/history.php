@@ -114,7 +114,9 @@ Put together, these four moves are the entire arithmetic of the modern machine. 
 ### Pingala: the binary before Leibniz
 
 One more "first" belongs in this chain. The Indian prosodist **Pingala** (c. 3rd–1st century BCE), working out a system for counting Sanskrit poetic metres, used a device that corresponds exactly to a binary number system, and his combinatorics of metres is an elementary version of the binomial theorem \cite{historyofmath_wikipedia}. In other words, the alphabet of 0 and 1 was being written — literally, in the counting of Sanskrit poetic feet — some two millennia before \citeauthor{leibniz1686calculus} formalized binary notation for the digital age below.
+</div>
 
+<div class="md" data-mathlevel="30" data-optionaltitle="The Roots of Formal Logic">
 ## The Roots of Formal Logic
 
 <figure>
@@ -147,13 +149,17 @@ $$
 By proving that truth could be derived through the mechanical application of formal rules, Aristotle provided the blueprint for everything from medieval scholasticism to modern computation.
 
 This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra.\sidenote{The very word *mathematics* comes from the Greek *μάθημα* (mathema), "that which is learned", and was coined by the Pythagoreans — the first school to study the subject *for its own sake*, not for surveying or taxes \cite{historyofmath_wikipedia}.}
+</div>
 
+<div class="md">
 ### The oldest grammar: Pāṇini (c. 5th–4th century BCE)
 
 Western logic was not the only formal science of the ancient world — nor was it the first, if language counts. On the other side of the same landmass, the Sanskrit grammarian \citeauthor{panini_ashtadhyayi} had, centuries before Aristotle, built the first fully *generative* formal system in history: his **\citealternativetitle{panini_ashtadhyayi}** ("eight chapters") \cite{panini_ashtadhyayi} specifies the entire Sanskrit language with a compact notation of **metarules**, **transformations** and **recursion** — a machinery startlingly close to modern mathematical and later programming-language notation, written down some 2,400 years ago \cite{historyofmath_wikipedia}. Where Aristotle captured *reasoning*, Pāṇini captured *speech*: given his rules, every acceptable sentence is generated and every deviant one rejected — the same logical contract a compiler holds with a programming language.
 
 That twin founding matters for the story of AI, because it shows the *symbol-manipulation* view of mind was never exclusively Greek. The "if-then" rule-books of the 1970s expert systems, and the recursive grammars that dominated the first decades of computational linguistics, are the direct heirs of Pāṇini's eight chapters; and the grammar the Transformer silently learns while predicting the next token is, in a sense, the same ambition achieved statistically. For the full arc of language-as-formal-system, see the [Language](language) chapter.
+</div>
 
+<div class="md">
 ## The Antikythera Mechanism: Ancient Analog Computing
 
 <figure>
@@ -278,7 +284,9 @@ Before the term “Artificial Intelligence” existed, the Spanish engineer \cit
 The machine's sensing system used a chessboard where each of the 64 squares consisted of three metallic pieces separated by insulating material: a circular central piece connected to the positive terminal and two triangular side pieces connected to horizontal and vertical conductors. The black king's silver mesh base closed two electrical circuits upon placement, driving sliding bars to positions encoding its coordinates; four additional bars tracked the white pieces similarly. The decision logic, implemented via battery-driven relays in a tree structure, partitioned the board into three zones (left: a–c files; center: d–e files; right: f–h files) and selected one of six operations based on the relative positions of the pieces, whether the black king shared a zone with the rook, the vertical distance between pieces, and the parity of horizontal separation \cite{torres1914}. Actuation was achieved through eight electro-mechanical actuators using a disc-and-pawl mechanism: when an electromagnet released the pawl, one full disc rotation executed a mechanical “microprogram” for a specific piece movement. In the upgraded 1920 version, electromagnets concealed beneath an ordinary chessboard moved the white pieces, and a gramophone announced *jaque al rey* (check) or *mate* (checkmate). If the opponent made three illegal moves, the machine shut down \cite{ieeespectrum2023chess}.
 
 While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 moves against any defense \cite{ieeespectrum2023chess}. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought \cite{torres1914} \cite{ieeespectrum2023chess}.
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="The formalization of Neurons">
 ### The formalization of Neurons
 
 <div class="optional md" data-headline="The First Mathematical Neuron: Lapicque's Integrate-and-Fire Model (1907)">
@@ -318,7 +326,9 @@ $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \te
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow. The full cast of these **cyberneticians** is covered in its own section below.
 
 This was the conceptual shift from “calculating machines” to the idea that cognition itself might be formalized (see the work of \citeauthor{piccini} for more details).
+</div>
 
+<div class="md">
 ### The SNARC: The First Physical Neural Network (1951)
 </div>
 
@@ -570,7 +580,9 @@ A \citeyear{lindquist2026weirdai} \cite{lindquist2026weirdai} in the same “Thi
 Rosenblatt's \cite[Mark I Perceptron]{perceptronresults} (p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
 While this system shared the structural logic of a modern neural network, it functioned strictly as a **linear transducer** by executing the affine transformation $f(x) = Ax + b$. Although it utilized tensors for weights ($A$) and biases ($b$), it lacked the **non-linear activation functions** and **backpropagation** required to be classified as a modern “Dense” network. Without non-linearity, any attempt at adding “depth” was mathematically redundant, as multiple linear layers simply collapse into a single equivalent matrix multiplication; furthermore, the system lacked the modern ecosystem of loss functions, regularization, and gradient-based optimization that allows for automated learning.
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="Hebb's Rule and the Perceptron Learning Rule">
 ### The Hidden Connection: Hebb's Rule and the Perceptron Learning Rule
 
 The Perceptron learning rule $\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}$ is not a fundamentally new idea, it is Hebb's rule made precise by adding an error signal.
@@ -586,7 +598,9 @@ Rosenblatt did not invent a new biological principle; he gave Hebb's intuitive i
 This connection foreshadows a deeper pattern in deep learning: nearly every major advance can be understood as taking a simple, intuitive principle (correlation, smoothness, sparsity) and making it differentiable. Hebb's correlation becomes the Perceptron; the smoothness prior becomes weight decay; sparsity becomes ReLU.
 
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
+</div>
 
+<div class="md">
 ### The Perceptron and the First AI Winter
 
 #### The Hype (1958)
@@ -611,7 +625,9 @@ Two years after Ivakhnenko's layer-by-layer approach (so around 1967), \citeauth
 <div class="optional md" data-headline="The 1990-91 Annus Mirabilis at TU Munich">
 A widely cited critique, advanced most prominently by \citeauthor{schmidhuber2022deep}, argues that the standard Anglophone narrative of deep learning systematically omits the priorities of researchers outside the English-speaking world. The twelve months from early 1990 to mid 1991 at Jürgen Schmidhuber's lab at TU Munich are singled out as especially dense. In that window the group published the principles for what we now call **generative adversarial networks** (a controller network in a zero-sum game with a predictor, February 1990); the first **subgoal-generating** networks for hierarchical reinforcement learning; and in 1991 a *fast-weight programmer* in which one neural network learns to slowly modify the weights of another, the abstract ancestor of what eventually became the **Transformer**'s learned key-query-value projections. The same period saw unsupervised **pre-training** of deep neural networks (later rediscovered and rebranded in the Anglosphere); neural-network **distillation**, in which a small network is trained to mimic a larger one (the technique that underpins DeepSeek's compression of much larger frontier models); the formal identification of the **vanishing/exploding gradient** problem in Hochreiter's 1991 diploma thesis; and the **Long Short-Term Memory** architecture, gated recurrent residual connections that have since become the most cited AI paper of the twentieth century. A quarter century later, almost every major product of deep learning, from CNNs to LSTMs to GANs to Transformers to LLM pre-training to model distillation, can trace a clear technical line back to papers published in this single window by a small group at a Bavarian technical university. Schmidhuber's reading is polemical and contested: he explicitly accuses the 2018 Turing Award and the 2024 Nobel Prize in Physics (Hopfield, Hinton) of republishing methods whose inventors were not cited. Whatever one makes of the rhetoric, the technical lineage is well-documented in the original papers and worth knowing, because every modern AI system you use today stands on it.
 </div>
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="The Critique (1969)">
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not “linearly separable.”
 
@@ -645,7 +661,9 @@ The neurons Rosenblatt studied only had discrete outputs, as suggested by \citea
 Since early Perceptrons could only classify linearly separable data, they could not solve XOR. This limitation contributed to the **First AI Winter**. Multi-layer networks and **Backpropagation** later overcame this.
 
 An important nuance: **Minsky and Papert knew multi-layer networks could solve XOR.** They said so in \citetitle{minskyperceptrons}. Their argument was not that neural networks were fundamentally flawed, but that **no one knew how to train multi-layer networks efficiently**. Backpropagation was already being developed by \citeauthor{linnainmaa1970} (\citeyear{linnainmaa1970}), but it took two decades to be rediscovered and popularized.
+</div>
 
+<div class="md">
 #### The Lighthill Report (1973) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>

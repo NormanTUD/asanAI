@@ -24,7 +24,7 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 * What **reason** and **reasoning** even *are*, philosophically, is unpacked in the <a href="philosophy#what-is-reason">Philosophy chapter</a> § What is Reason?
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Chain-of-Thought Prompting">
 ## Chain-of-Thought Prompting
 
 The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
@@ -56,7 +56,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **ReAct** \cite[Yao et al., 2023]{yao2023react} | 2023 | Interleave reasoning with tool use |
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Self-Consistency">
 ## Self-Consistency \cite[Wang et al., 2022]{wang2022selfconsistency}
 
 The simplest and most reliable inference-time scaling trick:
@@ -70,7 +70,7 @@ This works because **diverse reasoning paths converge on the same answer** when 
 The cost is $k \times$ more inference, but no retraining required.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Tree of Thoughts">
 ## Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot} rather than a linear chain:
 
 1. **Generate** $b$ candidate thoughts at each step.
@@ -123,7 +123,7 @@ At inference, beam search guided by the PRM dramatically improves accuracy on ma
 The Math-Shepherd method \cite[Zhang et al., 2024]{zhang2024mathshepherd} auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Inference-Time Scaling Laws">
 ## Inference-Time Scaling Laws
 
 \citetitle{snell2024testtime} (\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
