@@ -571,9 +571,15 @@ function render_course_tile($m) {
 	if (!empty($m['tags'])) {
 		$tagsAttr = ' data-tags="' . htmlspecialchars($m['tags']) . '"';
 	}
+	// `math:` (optional, int 0-100) sets the minimum math-comfort level
+	// required for the tile to be shown at full opacity on the index page.
+	$mathAttr = '';
+	if (!empty($m['math'])) {
+		$mathAttr = ' data-mathlevel="' . htmlspecialchars($m['math']) . '"';
+	}
 	echo '<a href="' . htmlspecialchars($m['url']) . '" class="' . $classes . '"'
 		. ' style="--tile-accent: var(--mn-' . htmlspecialchars($m['color']) . ')"'
-		. $topicsAttr . $tagsAttr . '>';
+		. $topicsAttr . $tagsAttr . $mathAttr . '>';
 	echo '<div class="course-tile-icon">' . $iconHtml . '</div>';
 	echo '<h3>' . htmlspecialchars($m['title']) . '</h3>';
 	echo '<p>' . $descHtml . '</p>';
