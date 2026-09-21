@@ -352,6 +352,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Rigid_origami",
 		alternativetitle: "Rigid origami (Wikipedia)"
 	},
+	"houdini1922papermagic": {
+		title: "Houdini's Paper Magic: the whole art of performing with paper, including paper tearing, paper folding and paper puzzles",
+		author: "Harry Houdini",
+		year: 1922,
+		url: "https://en.wikisource.org/wiki/Houdini%27s_Paper_Magic",
+		alternativetitle: "Houdini, Paper Magic (E. P. Dutton, 1922)"
+	},
+	"houdini_papermagic_img": {
+		title: "Harry Houdini Cigarette paper trick",
+		author: "Harry Houdini (Public Domain)",
+		year: 1922,
+		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini_Cigarette_paper_trick.png",
+		alternativetitle: "Houdini, cigarette-paper tear (Wikimedia Commons, public domain)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
