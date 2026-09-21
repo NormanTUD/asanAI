@@ -637,7 +637,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     if(mode==='radial'){
       renderTeX('fEgg3', String.raw`z = \min_{k=1}^{N} \mathrm{ReLU}\bigl(L - 2L\,(\hat{u}_k \cdot x)\bigr),\;\; \hat{u}_k = N \text{ Kreisrichtungen} \;\;\Rightarrow\; N\text{-Eck-Dom (Ecken bis } r=\tfrac{0.5}{\cos(\pi/N)}\text{)},\; \text{exakt radial für } N\to\infty`);
     } else {
-      renderTeX('fEgg3', String.raw`z = \min_{k=1}^{${mode}} \mathrm{ReLU}\bigl(${f1(lift)} - ${f1(2*lift)}\,(\hat{u}_k \cdot x)\bigr) \;\;\leftarrow \text{das zeigt der Plot (${mode} Neuronen, echt berechnet)`);
+      renderTeX('fEgg3', String.raw`z = \min_{k=1}^{${mode}} \mathrm{ReLU}\bigl(${f1(lift)} - ${f1(2*lift)}\,(\hat{u}_k \cdot x)\bigr) \;\;\leftarrow \text{das zeigt der Plot (${mode} Neuronen, echt berechnet)}`);
     }
   }
   $('lift').oninput=draw3d; $('planeC').oninput=draw3d; $('liftMode').onchange=draw3d; draw3d();
