@@ -102,3 +102,25 @@ you add balanced. The whole suite runs in CI on changes under `blog/**`.
 - User data never leaves the browser; no telemetry, no cloud calls in authoring code.
 - Keep it lightweight — no heavy frameworks or new build tooling.
 - Match the existing style of the file you are editing; add no comments unless asked.
+
+### Learned & Dependencies (Interactivity)
+
+Lessons can implement a "Learned" system to adapt the course experience:
+
+1.  **Lesson ID**: Each lesson PHP file should have a unique identifier. The most reliable way is to include `<div class="md" data-lesson-id="slug">` at the top of the lesson body.
+2.  **Dependency Graph**: Define prerequisites in `blog/topics.js` using the `LESSON_DEPS` constant. 
+    `LESSON_DEPS = { 'lesson-slug': ['dependency-slug-1', 'dependency-slug-2'] };`
+3.  **Math-Gate & Auto-Reveal**:
+    - Interactive blocks (e.g., `<div class="topic-block" data-mathlevel="70">`) are automatically tucked (hidden) if the user's math level is too low.
+    - **Bypassing**: If a user marks all prerequisites of a lesson as "learned" (via `BlogTopics.toggleLearned('lesson-slug')`), the math gate is bypassed and the block is automatically revealed.
+4.  **Learned State**: 
+    - Use `BlogTopics.toggleLearned('slug')` to allow readers to mark a lesson as mastered.
+    - State is persisted in `localStorage` and synced via cookies (`topics_pref`).
+    - Learned status can be displayed with a green indicator: `<div class="topic-deps-pill topic-deps-met">...</div>`.
+5.  **Visual States for Topic Blocks**:
+
+    - **Normal**: Fully visible.
+    - **Dimmed**: `topic-block-dimmed`. Used for blocks that don't meet current math/topic filters but are still part of the page flow.
+    - **Tucked (Collapsed)**: `topic-block-collapsed`. Used for highly technical or optional content.
+        - Features a gradient-fade (`mask-image`) and a small `topic-block-fade-badge` at the bottom with a "tap to reveal" action.
+        - If a block is tucked, it is still "part of the page" (not `display: none`) but visually recedes.

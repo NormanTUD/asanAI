@@ -73,6 +73,7 @@
     <a href="#poker">8 · Bimodale Tuning</a>
     <a href="#antwort">9 · Die Antwort</a>
   </div>
+  <button id="regenAll" style="margin-top:14px">🎲 Neue Daten — alle Punktwolken neu initialisieren</button>
 </header>
 <main>
 
@@ -443,6 +444,7 @@ function rotMat(deg){ const t=deg*Math.PI/180; return [[Math.cos(t),-Math.sin(t)
 function mulMatVec(M, x){ return [M[0][0]*x[0]+M[0][1]*x[1], M[1][0]*x[0]+M[1][1]*x[1]]; }
 function relu(v){ return Math.max(0,v); }
 function keepCam(gdId){ const gd=$(gdId); const cam=gd&&gd._fullLayout&&gd._fullLayout.scene&&gd._fullLayout.scene.camera; return cam?{eye:cam.eye,up:cam.up}:null; }
+const REGEN=[];
 
 /* Daten */
 function makeEgg(nIn, nOut, rIn0, rIn1, rOut0, rOut1){
@@ -477,6 +479,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   eggs=makeEgg(260,460,0,0.30,0.55,0.9); blobs=makeBlobs();
   pts=blobs;
   function dataset(){ pts = $('motSet').value==='egg'?eggs:blobs; }
+  REGEN.push(()=>{ eggs=makeEgg(260,460,0,0.30,0.55,0.9); blobs=makeBlobs(); dataset(); draw(); });
   function draw(){
     const W=c.width,H=c.height,cx=W/2,cy=H/2,s=150;
     const ang=+$('motAng').value*Math.PI/180, off=+$('motOff').value;
@@ -503,7 +506,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
 /* ================= 2a. Affine + live formula ================= */
 (() => {
   const c=$('affCanvas'), ctx=c.getContext('2d');
-  const pts=makeEgg(220,380,0,0.30,0.55,0.9);
+  let pts=makeEgg(220,380,0,0.30,0.55,0.9);
   const sample={x:0.35,y:0.2,cl:0};
   function Wmatrix(th,sx,sy,sh){ const cs=Math.cos(th),sn=Math.sin(th);
     return [[cs*sx, cs*sx*sh - sn*sy],[sn*sx, sn*sx*sh + cs*sy]]; }
@@ -533,6 +536,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     );
   }
   ['aRot','aSx','aSy','aSh','aBx','aBy','aRelu'].forEach(id=>$(id).oninput=draw);
+  REGEN.push(()=>{ pts=makeEgg(220,380,0,0.30,0.55,0.9); draw(); });
   draw();
 })();
 
@@ -560,9 +564,11 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
 (() => {
   const c=$('hamCanvas'), ctx=c.getContext('2d');
   // Asymmetrischer Datensatz (C-Ring um roten Kern): Rotation wird sichtbar, Kern bleibt innen
-  const pts=[];
-  for(let i=0;i<600;i++){ const r=Math.sqrt(Math.random())*0.32, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
-  for(let i=0;i<1200;i++){ const r=0.55+Math.random()*0.35, a=-Math.PI/2+(Math.random()-0.5)*(280*Math.PI/180); pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  let pts=[];
+  function genPts(){ pts=[];
+    for(let i=0;i<600;i++){ const r=Math.sqrt(Math.random())*0.32, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+    for(let i=0;i<1200;i++){ const r=0.55+Math.random()*0.35, a=-Math.PI/2+(Math.random()-0.5)*(280*Math.PI/180); pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); } }
+  genPts();
   function rot(v, th){ const cs=Math.cos(th),sn=Math.sin(th); return [v[0]*cs-v[1]*sn, v[0]*sn+v[1]*cs]; }
   function draw(){
     const thd=+$('hamTh').value, th=thd*Math.PI/180, b=+$('hamB').value;
@@ -598,13 +604,14 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   }
   $('hamTh').oninput=draw; $('hamB').oninput=draw;
   $('hamReset').onclick=()=>{ $('hamTh').value=0; $('hamB').value=0; draw(); };
+  REGEN.push(()=>{ genPts(); draw(); });
   draw();
 })();
 
 /* ================= 4a. Egg 2D/3D lift ================= */
 (() => {
   const c=$('egg2d'), ctx=c.getContext('2d');
-  const pts=makeEgg(360,640,0,0.34,0.55,0.9);
+  let pts=makeEgg(360,640,0,0.34,0.55,0.9);
   function draw2d(){ const cx=c.width/2,cy=c.height/2,s=150; ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
     for(const p of pts){ ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+p.x*s, cy-p.y*s, 1.8,0,TAU); ctx.fill(); }
     ctx.fillStyle=COL.accent3; ctx.font='12px Inter'; ctx.fillText('Keine Gerade trennt Rot von Blau', 14, 22); }
@@ -640,16 +647,20 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
       renderTeX('fEgg3', String.raw`z = \min_{k=1}^{${mode}} \mathrm{ReLU}\bigl(${f1(lift)} - ${f1(2*lift)}\,(\hat{u}_k \cdot x)\bigr) \;\;\leftarrow \text{das zeigt der Plot (${mode} Neuronen, echt berechnet)}`);
     }
   }
-  $('lift').oninput=draw3d; $('planeC').oninput=draw3d; $('liftMode').onchange=draw3d; draw3d();
+  $('lift').oninput=draw3d; $('planeC').oninput=draw3d; $('liftMode').onchange=draw3d;
+  REGEN.push(()=>{ pts=makeEgg(360,640,0,0.34,0.55,0.9); draw2d(); draw3d(); });
+  draw3d();
 })();
 
 /* ================= 4b. Learned rotation + hammer ================= */
 (() => {
   const c=$('rot2d'), ctx=c.getContext('2d');
   const PHI=90*Math.PI/180; // echte Trennlinie (Normalenrichtung m) ist um 90° gegen die ReLU-Faltlinie gedreht
-  const pts=[];
-  for(let i=0;i<240;i++){ const a=PHI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
-  for(let i=0;i<240;i++){ const a=PHI+Math.PI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  let pts=[];
+  function genPts(){ pts=[];
+    for(let i=0;i<240;i++){ const a=PHI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+    for(let i=0;i<240;i++){ const a=PHI+Math.PI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); } }
+  genPts();
   // ReLU-Faltlinie: fix = y'-Achse, Normalenrichtung (1,0) -> z=ReLU(x')
   function draw(){
     const thd=+$('rotTh').value, th=thd*Math.PI/180;
@@ -690,7 +701,9 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.5,color:COL.accent3,opacity:.3},name:'Faltlinie z=0'}
     ],layout,{displayModeBar:false});
   }
-  $('rotTh').oninput=draw; draw();
+  $('rotTh').oninput=draw;
+  REGEN.push(()=>{ genPts(); draw(); });
+  draw();
 })();
 
 /* ================= 5a. 1D fold ================= */
@@ -717,6 +730,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   const top=$('eggTop'), tctx=top.getContext('2d');
   const d=0.25; // Inradius des N-Ecks
   let N=3, fs=1;
+  let pts=makeEgg(400,700,0,0.22,0.70,0.92); // fix bis "Neue Daten"; Top- und 3D-Ansicht teilen denselben Datensatz
   function normals(){ const arr=[]; for(let k=0;k<N;k++){ const ang=k*TAU/N; arr.push([Math.cos(ang),Math.sin(ang)]); } return arr; }
   function zOf(x,y){ let z=0; for(const n of normals()){ z+=Math.max(0,n[0]*x+n[1]*y-d)*fs; } return z; }
   function drawTop(){
@@ -727,14 +741,12 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     tctx.strokeStyle=COL.accent3; tctx.lineWidth=2;
     for(const n of normals()){ const nx=n[0],ny=n[1],tx=-ny,ty=nx,x0=nx*d*s,y0=ny*d*s;
       tctx.beginPath(); tctx.moveTo(cx+x0-tx*220, cy-(y0-ty*220)); tctx.lineTo(cx+x0+tx*220, cy-(y0+ty*220)); tctx.stroke(); }
-    const pts=makeEgg(300,500,0,0.22,0.70,0.92);
     for(const p of pts){ tctx.fillStyle=p.cl===0?COL.red:COL.blue; tctx.beginPath(); tctx.arc(cx+p.x*s, cy-p.y*s, 1.8,0,TAU); tctx.fill(); }
     tctx.fillStyle=COL.muted; tctx.font='12px Inter'; tctx.fillText(`${N} Faltlinien (Hyperebenen): Kern innen (blauer Ring liegt außen)`, 14, 22);
   }
   function draw3d(){
     const cPl=+$('planeC2').value;
     $('vN').textContent=N; $('vFS').textContent=f1(fs); $('vPlaneC2').textContent=f1(cPl);
-    const pts=makeEgg(400,700,0,0.22,0.70,0.92);
     const x0=[],y0=[],z0=[],x1=[],y1=[],z1=[]; let zInMin=1e9,zInMax=-1e9,zOutMin=1e9;
     for(const p of pts){ const z=zOf(p.x,p.y);
       if(p.cl===0){x0.push(p.x);y0.push(p.y);z0.push(z);zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z);zOutMin=Math.min(zOutMin,z);} }
@@ -762,6 +774,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   $('Nfold').oninput=()=>{N=+$('Nfold').value; draw3d();};
   $('fs').oninput=()=>{fs=+$('fs').value; draw3d();};
   $('planeC2').oninput=draw3d;
+  REGEN.push(()=>{ pts=makeEgg(400,700,0,0.22,0.70,0.92); draw3d(); });
   draw3d();
 })();
 
@@ -847,7 +860,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
 /* ================= 7. Scheren ================= */
 (() => {
   const c=$('shearCanvas'), ctx=c.getContext('2d');
-  const base=makeEgg(300,600,0,0.34,0.55,0.9);
+  let base=makeEgg(300,600,0,0.34,0.55,0.9);
   // Eine echte 2D->2D ReLU-Schicht (2 Neuronen): h = ReLU(M x + c).
   // Ohne freie Dimension kann sie die Mannigfaltigkeit nur IN SICH SELBST knüllen.
   function layer(p){ const g=0.7, s=0.92, cs=Math.cos(g), sn=Math.sin(g); const x=p[0], y=p[1];
@@ -884,6 +897,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   $('layers').oninput=draw;
   let playing=false;
   $('shearPlay').onclick=()=>{ if(playing)return; playing=true; let L=1; const iv=setInterval(()=>{ if(L>14){clearInterval(iv);playing=false;return;} $('layers').value=L; draw(); L++; },220); };
+  REGEN.push(()=>{ base=makeEgg(300,600,0,0.34,0.55,0.9); draw(); });
   draw();
 })();
 
@@ -913,6 +927,8 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   $('pkPlay').onclick=()=>{ let e=0; const iv=setInterval(()=>{ if(e>100){clearInterval(iv);return;} $('ep').value=e; update(); e+=2; },60); };
   update();
 })();
+
+$('regenAll').onclick=()=>{ for(const f of REGEN) f(); };
 </script>
 </body>
 </html>
