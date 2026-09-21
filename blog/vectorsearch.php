@@ -30,6 +30,9 @@ $$
 
 Before diving into vector databases, it's essential to understand what they replaced and what they complement. There are three fundamentally different approaches to finding information in a corpus:
 
+</div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="Keyword Search (Lexical / Sparse)">
 ### 1. Keyword Search (Lexical / Sparse)
 
 The oldest and most intuitive approach. You type words, the system finds documents containing those exact words.
@@ -50,6 +53,9 @@ Where:
 
 **Weaknesses:** Completely blind to meaning. Searching “car” won't find documents about “automobile.” Searching “How do I fix a broken heart?” returns cardiology articles.
 
+</div>
+
+<div class="md" data-mathlevel="50" data-optionaltitle="Semantic Search (Dense Vector Search)">
 ### 2. Semantic Search (Dense Vector Search)
 
 Instead of matching words, match **meanings**. Both the query and every document are converted to dense vectors by an embedding model. Search becomes geometric: find the vectors closest to the query vector.
@@ -64,6 +70,9 @@ $$
 
 **Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like “XJ-4200” may return semantically similar but wrong products. Also, embedding models have blind spots, they can confuse “Python” (snake) with “Python” (language).
 
+</div>
+
+<div class="md" data-mathlevel="50" data-optionaltitle="Hybrid Search">
 ### 3. Hybrid Search
 
 The best modern systems combine both approaches:
@@ -83,7 +92,7 @@ Where $\alpha$ controls the balance. This ensures you get both exact keyword pre
 
 <div id="vslab-search-comparison"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="How Vector Databases Work">
 ## How Vector Databases Work
 
 A vector database is **not** a traditional relational database with an added vector column. It is a fundamentally different data structure, optimized for a fundamentally different operation: instead of `WHERE name = 'Alice'`, it answers `FIND 10 NEAREST TO [0.23, -0.87, 0.11, ...]`.
@@ -111,6 +120,9 @@ That's $O(N \cdot d)$ operations per query. For 1 billion vectors at 768 dimensi
 
 The solution: **Approximate Nearest Neighbor (ANN)** algorithms that sacrifice a tiny amount of recall (typically 95-99%) for dramatic speed improvements (1000x or more).
 
+</div>
+
+<div class="md" data-mathlevel="45" data-optionaltitle="ANN Algorithms: How Billions of Vectors">
 ## ANN Algorithms: How Billions of Vectors Are Searched in Milliseconds
 
 ### HNSW (Hierarchical Navigable Small World)
@@ -137,7 +149,7 @@ $$
 **Result:** Searching 1 billion vectors takes ~100-200 “hops” instead of 1 billion comparisons.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="IVF (Inverted File Index)">
 ### IVF (Inverted File Index)
 
 IVF takes a different approach: **pre-cluster** the vectors, then only search relevant clusters.
@@ -159,6 +171,9 @@ $$
 
 **Tradeoff:** More probes = higher recall but slower. Fewer probes = faster but might miss relevant vectors in neighboring clusters.
 
+</div>
+
+<div class="md">
 ### Product Quantization (PQ)
 
 PQ \cite{jegou2011pq} addresses a different bottleneck: **memory**. Storing 1 billion 768-dimensional float32 vectors requires:

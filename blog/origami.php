@@ -86,18 +86,48 @@ math: 50
 	.og-fc-status { position: absolute; top: 8px; left: 12px; z-index: 2; font-size: .85rem; color: var(--og-amber); background: var(--mn-bg-glass); padding: 2px 8px; border-radius: 6px; }
 </style>
 
-<div class="md">
-**Start with the paper.** Here is the unexpected part: a ReLU network is, layer by layer, a paper-fold. One ReLU neuron is one *fold*, a stack of layers is a stack of folds, and the final linear readout is the single *straight cut* that finishes the job. Origami is the hidden basis of the network — this chapter makes the match exact. The real field behind it, **computational origami**, is in the *Origins* box.
+<div class="og-card">
+	<h2 class="og-h2">1 · Fold-and-Cut — Origami meets Neural Networks</h2>
+	<p class="og-lead">How can a single straight cut extract any shape? The theorem that explains how layers "prepare" the data for the final linear readout.</p>
 
-<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
-	<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
-	<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
-</figure>
+	<div class="og-demo">
+		<h3 style="text-align:center">The Fold-and-Cut Theorem</h3>
+		<p class="og-small" style="text-align:center">Fold the paper so that all edges of your shape lie exactly on top of each other. Then, make one straight cut.</p>
+		<div class="og-fc-wrap">
+			<div id="og-fc-status" class="og-fc-status">Step 0: shape drawn</div>
+			<canvas id="og-fc" class="og-canvas" width="520" height="440"></canvas>
+			<canvas id="og-fc-film" class="og-canvas" width="520" height="220" style="display:none"></canvas>
+		</div>
+		<div class="og-controls">
+			<div class="og-control"><label>Shape</label><select id="og-fc-shape"><option value="tri">Triangle</option><option value="square">Square</option><option value="pent">Pentagon</option><option value="star">Star</option></select></div>
+			<div class="og-control"><label>Fold step <span class="val" id="og-fc-step-v">0</span></label><input id="og-fc-step" type="range" min="0" max="4" value="0"></div>
+			<button id="og-fc-cut" class="og-btn">✂ Cut!</button>
+			<button id="og-fc-print" class="og-btn sec">🖨 Print</button>
+		</div>
+		<div class="og-formula"><div class="cap">The Fold-and-Cut Theorem (Demaine et al. 1998):</div><div id="og-fc-formula"></div></div>
+	</div>
+
+	<div class="og-eli5">
+		<b>For 10-year-olds:</b>
+		<ul class="og-steps">
+			<li><b>What is a "shape"?</b> Any closed outline — a triangle, a star, a heart, even your signature.</li>
+			<li><b>What is "cutting"?</b> The scissors separate the shape from the rest of the paper by following its edge.</li>
+			<li><b>Why is that a problem?</b> A single straight cut can only ever cut a straight line. How do you get a star from one straight snip?</li>
+			<li><b>The solution:</b> <b>Fold</b> the paper until all the edges of your shape lie exactly on top of each other. Then, one straight cut goes through all those layers at once. Unfold, and your shape falls out perfectly!</li>
+		</ul>
+	</div>
+
+	<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
+		<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
+	</figure>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Why a Straight Line Is Not Enough">
-## Why a Straight Line Is Not Enough
+<div class="og-card">
+	<h2 class="og-h2">2 · Motivation — Why a Straight Line Is Not Enough</h2>
+	<p class="og-lead">The raw data almost never is linearly separable. The hidden layers must <em>manufacture</em> separability — here is the gap they must close.</p>
 
+	<div class="md">
 In the previous chapter we saw that a deep network is a **composition of many simple
 functions**, and that — as the Universal Approximation Theorem guarantees — a wide
 feed-forward net can approximate any continuous function \cite[Cybenko, 1989]{cybenko1989}
@@ -138,35 +168,37 @@ efficient? The answer they arrive at is a beautiful one — the network is, in e
 Below you can drag the separating line yourself and feel why the egg resists it.
 </div>
 
-<div class="og-demo">
-	<h3>Try it: no single line can separate the egg</h3>
-	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Pick a dataset, then drag the
-	<b>angle</b> and <b>offset</b> of a straight line and watch the best accuracy it can
-	reach. The "inner" class is always trapped by the "outer" one, so a flat boundary plateaus
-	well below 100%.</p>
-	<div class="og-controls">
-		<div class="og-control"><label>Angle of separating line: <span class="val" id="og-angle-v">0°</span></label><input type="range" id="og-angle" min="0" max="360" value="45"></div>
-		<div class="og-control"><label>Offset: <span class="val" id="og-shift-v">0.00</span></label><input type="range" id="og-shift" min="-2" max="2" step="0.05" value="0"></div>
-		<div class="og-control"><label>Dataset</label>
-			<select id="og-setup">
-				<option value="egg">2D-Egg (ring)</option>
-				<option value="xor">XOR</option>
-				<option value="spiral">Spiral</option>
-			</select>
+	<div class="og-demo">
+		<h3>Try it: no single line can separate the egg</h3>
+		<p class="og-small">Pick a dataset, then drag the <b>angle</b> and <b>offset</b> of a straight line and watch the best accuracy it can reach. The "inner" class is always trapped by the "outer" one, so a flat boundary plateaus well below 100%.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Angle of separating line: <span class="val" id="og-angle-v">0°</span></label><input type="range" id="og-angle" min="0" max="360" value="45"></div>
+			<div class="og-control"><label>Offset: <span class="val" id="og-shift-v">0.00</span></label><input type="range" id="og-shift" min="-2" max="2" step="0.05" value="0"></div>
+			<div class="og-control"><label>Dataset</label>
+				<select id="og-setup">
+					<option value="egg">2D-Egg (ring)</option>
+					<option value="blobs">Gaussian blobs</option>
+					<option value="xor">XOR</option>
+					<option value="spiral">Spiral</option>
+				</select>
+			</div>
 		</div>
+		<div class="og-canvas-wrap"><canvas id="og-nonsep" width="640" height="420"></canvas></div>
+		<div class="og-legend">
+			<span><span class="og-dot" style="background:#ff6b9d"></span>Inner class</span>
+			<span><span class="og-dot" style="background:#4ecdc4"></span>Outer class</span>
+			<span><span class="og-dot" style="background:#ffe66d"></span>Separator line</span>
+		</div>
+		<div class="og-out" id="og-nonsep-out"></div>
+		<div id="og-nonsep-verdict" class="og-verdict no" style="display:none"></div>
 	</div>
-	<div class="og-canvas-wrap"><canvas id="og-nonsep" width="640" height="420"></canvas></div>
-	<div class="og-legend">
-		<span><span class="og-dot" style="background:#ff6b9d"></span>Inner class</span>
-		<span><span class="og-dot" style="background:#4ecdc4"></span>Outer class</span>
-		<span><span class="og-dot" style="background:#ffe66d"></span>Separator line</span>
-	</div>
-	<div class="og-out" id="og-nonsep-out"></div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Two Tools of a Layer: the Anvil and the Hammer">
-## The Two Tools of a Layer: the Anvil and the Hammer
+<div class="og-card">
+	<h2 class="og-h2">3 · The Building Block — The Anvil and the Hammer</h2>
+	<p class="og-lead">Every layer does two things in sequence: position the data (affine), then fold it (ReLU). The affine step is the anvil; the ReLU is the hammer.</p>
 
+	<div class="md">
 Every layer does **two** things in sequence:
 
 $$x_i^{(l)} \;=\; \Phi\!\left(\sum_j W^{(l)}_{ij}\, x_j^{(l-1)} \;+\; b_i^{(l)}\right)$$
@@ -190,25 +222,51 @@ everything outside it first. In other words, the nonlinearity can only reshape t
 class. So how does a network ever get at an "island" class that is completely surrounded?
 </div>
 
-<div class="og-demo">
-	<h3>The ReLU as a hammer-blow</h3>
-	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Each neuron is a hyperplane
-	(yellow). Drag its <b>angle</b> and <b>bias</b>: points on the negative side are projected
-	onto the plane (shown pink, "flattened"), points on the positive side stay put. Watch how
-	the dent can only ever bite the *outside* of the cloud.</p>
-	<div class="og-controls">
-		<div class="og-control"><label>Hyperplane angle: <span class="val" id="og-hp-a-v">90°</span></label><input type="range" id="og-hp-a" min="0" max="360" value="90"></div>
-		<div class="og-control"><label>Bias (offset): <span class="val" id="og-hp-b-v">0.00</span></label><input type="range" id="og-hp-b" min="-2" max="2" step="0.05" value="0"></div>
+	<div class="og-demo">
+		<h3>The affine step: positioning on the anvil</h3>
+		<p class="og-small">Drag the parameters and watch the live $W$-matrix update. The data cloud rotates, scales, shears, and translates — but its *shape* (and separability) is preserved.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Rotation: <span class="val" id="og-aff-rot-v">0°</span></label><input type="range" id="og-aff-rot" min="0" max="360" value="0"></div>
+			<div class="og-control"><label>Scale x: <span class="val" id="og-aff-sx-v">1.0</span></label><input type="range" id="og-aff-sx" min="0.2" max="2.5" step="0.1" value="1"></div>
+			<div class="og-control"><label>Scale y: <span class="val" id="og-aff-sy-v">1.0</span></label><input type="range" id="og-aff-sy" min="0.2" max="2.5" step="0.1" value="1"></div>
+			<div class="og-control"><label>Shear: <span class="val" id="og-aff-sh-v">0.0</span></label><input type="range" id="og-aff-sh" min="-1.5" max="1.5" step="0.1" value="0"></div>
+			<div class="og-control"><label>Bias x: <span class="val" id="og-aff-bx-v">0.0</span></label><input type="range" id="og-aff-bx" min="-2" max="2" step="0.1" value="0"></div>
+			<div class="og-control"><label>Bias y: <span class="val" id="og-aff-by-v">0.0</span></label><input type="range" id="og-aff-by" min="-2" max="2" step="0.1" value="0"></div>
+			<div class="og-control" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="og-aff-relu"><label>Append ReLU</label></div>
+		</div>
+		<div class="og-canvas-wrap"><canvas id="og-affine" width="560" height="400"></canvas></div>
+		<div class="og-formula live"><div class="cap">Live weight matrix (rot · scale · shear):</div><div id="og-aff-live"></div></div>
 	</div>
-	<div class="og-grid2">
-		<div><h3 style="text-align:center; font-size:.95rem">Before</h3><div class="og-canvas-wrap"><canvas id="og-before" width="360" height="320"></canvas></div></div>
-		<div><h3 style="text-align:center; font-size:.95rem">After the ReLU</h3><div class="og-canvas-wrap"><canvas id="og-after" width="360" height="320"></canvas></div></div>
+
+	<div class="og-demo">
+		<h3>The ReLU step: one fold in 1-D</h3>
+		<p class="og-small">A single ReLU neuron $\Phi(x)=\max(0,x)$ is a <em>fold</em> at $x=0$. Drag the input and watch the output: everything negative is pressed flat to zero.</p>
+		<div class="og-controls">
+			<div class="og-control" style="min-width:260px"><label>Input $x$: <span class="val" id="og-relu-xv">-1.0</span></label><input type="range" id="og-relu-x" min="-3" max="3" step="0.1" value="-1"></div>
+		</div>
+		<div class="og-canvas-wrap"><canvas id="og-relu1d" width="560" height="280"></canvas></div>
+		<div class="og-formula live"><div id="og-relu-live"></div></div>
+	</div>
+
+	<div class="og-demo">
+		<h3>The ReLU as a hammer-blow (2-D view)</h3>
+		<p class="og-small">Each neuron is a hyperplane (yellow). Drag its <b>angle</b> and <b>bias</b>: points on the negative side are projected onto the plane (shown pink, "flattened"), points on the positive side stay put. Watch how the dent can only ever bite the <em>outside</em> of the cloud.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Hyperplane angle: <span class="val" id="og-hp-a-v">90°</span></label><input type="range" id="og-hp-a" min="0" max="360" value="90"></div>
+			<div class="og-control"><label>Bias (offset): <span class="val" id="og-hp-b-v">0.00</span></label><input type="range" id="og-hp-b" min="-2" max="2" step="0.05" value="0"></div>
+		</div>
+		<div class="og-grid2">
+			<div><h3 style="text-align:center; font-size:.95rem">Before</h3><div class="og-canvas-wrap"><canvas id="og-before" width="360" height="320"></canvas></div></div>
+			<div><h3 style="text-align:center; font-size:.95rem">After the ReLU</h3><div class="og-canvas-wrap"><canvas id="og-after" width="360" height="320"></canvas></div></div>
+		</div>
 	</div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Key Idea: Fold, Don't Crush">
-## The Key Idea: Fold, Don't Crush
+<div class="og-card">
+	<h2 class="og-h2">4 · The Key Idea — Fold, Don't Crush</h2>
+	<p class="og-lead">The magic is in the <em>unused dimensions</em>. A ReLU hyperplane hitting the data from an unoccupied direction doesn't flatten — it <em>folds</em>, lifting the data off into a new axis.</p>
 
+	<div class="md">
 The crucial observation is about **unused dimensions**. In a real network the layers are
 almost always **wider than the data**: the input might be 10-dimensional, but a hidden
 layer has 100 units. That leaves 90 directions in activation space that the data does not
@@ -246,8 +304,13 @@ Suddenly a flat horizontal line separates them.
 	</div>
 	<div class="og-out" id="og-fold1d-out"></div>
 </div>
+</div>
 
-<div class="md" data-mathlevel="50">
+<div class="og-card">
+	<h2 class="og-h2">5 · The 2-D Egg in 3-D — Three Neurons, One Plane</h2>
+	<p class="og-lead">The classic 2D egg (ring inside ring) can be solved by a single layer of just <em>three</em> ReLU neurons. Each is a hyperplane tilted 120° apart; their outputs stack into a third dimension that lifts the inner ring into a tent.</p>
+
+	<div class="md">
 Now scale the picture up. The famous **2D egg** (a ring inside a ring) can be solved by a
 *single* hidden layer of just **three** ReLU neurons. Each neuron is a flat hyperplane
 tilted at $120^\circ$ to the others; their ReLU outputs are stacked into a new **third**
@@ -276,6 +339,73 @@ one. Drag to look around the folded representation:
 	egg is a hyperplane of one lower dimension, and a single layer can apply several folds at
 	once. In general an $N$-dimensional egg is (approximately) solved by <b>one layer of
 	$N+1$ neurons</b> — a small, constant overhead, not an exponential one.</div>
+</div>
+</div>
+
+<div class="og-card">
+	<h2 class="og-h2">6 · The Circle-in-Circle Lift — Seeing the Fold in 3-D</h2>
+	<p class="og-lead">Watch the inner class rise out of the plane. Toggle between 2-D and 3-D views, adjust the lift height, and slide the separating plane.</p>
+
+	<div class="og-demo">
+		<h3>2-D → 3-D: the fold lifts the inner class</h3>
+		<p class="og-small">The inner ring (pink) is lifted into a third dimension by the ReLU fold. In 2-D no flat line can separate the classes; in 3-D a single horizontal plane does the job. Drag the <b>lift</b> slider to control how high the inner class rises, and the <b>plane</b> slider to position the separating hyperplane.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Lift height: <span class="val" id="og-egg-lift-v">1.0</span></label><input type="range" id="og-egg-lift" min="0" max="2" step="0.1" value="1"></div>
+			<div class="og-control"><label>Separating plane z: <span class="val" id="og-egg-plane-v">0.5</span></label><input type="range" id="og-egg-plane" min="0" max="2" step="0.05" value="0.5"></div>
+			<div class="og-control"><label>View</label>
+				<select id="og-egg-mode">
+					<option value="3d">3-D (Plotly)</option>
+					<option value="2d">2-D (canvas)</option>
+				</select>
+			</div>
+		</div>
+		<div class="og-canvas-wrap"><canvas id="og-egg2d" width="640" height="400"></canvas></div>
+		<div id="og-egg3d" class="og-plot" style="height:420px"></div>
+		<div id="og-egg-verdict" class="og-verdict no" style="display:none"></div>
+		<div class="og-formula"><div id="og-egg-f1"></div></div>
+		<div class="og-formula"><div id="og-egg-f2"></div></div>
+		<div class="og-formula"><div id="og-egg-f3"></div></div>
+	</div>
+</div>
+
+<div class="og-card">
+	<h2 class="og-h2">7 · Learned Rotation — The Hammer Finds Its Angle</h2>
+	<p class="og-lead">A single ReLU neuron can learn the optimal rotation angle for the data. Watch the hyperplane rotate until the fold aligns with the data's structure.</p>
+
+	<div class="og-demo">
+		<h3>One neuron, one rotation: finding the fold angle</h3>
+		<p class="og-small">Drag the <b>angle</b> of the ReLU hyperplane. In 2-D you can see the fold line rotate; in 3-D you see the data cloud tilt. The "miscount" readout shows how many points are on the wrong side — the network's loss for this single neuron.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Hyperplane angle: <span class="val" id="og-rot-th-v">0°</span></label><input type="range" id="og-rot-th" min="0" max="360" step="1" value="0"></div>
+		</div>
+		<div class="og-grid2">
+			<div class="og-canvas-wrap"><canvas id="og-rot2d" width="400" height="360"></canvas></div>
+			<div id="og-rot3d" class="og-plot" style="height:360px"></div>
+		</div>
+		<div id="og-rot-verdict" class="og-verdict no" style="display:none"></div>
+		<div class="og-formula"><div id="og-rot-f1"></div></div>
+		<div class="og-formula"><div id="og-rot-f2"></div></div>
+	</div>
+</div>
+
+<div class="og-card">
+	<h2 class="og-h2">8 · The 3-Neuron Egg — From Dense to Separable</h2>
+	<p class="og-lead">Three ReLU neurons, three hyperplanes, one fold. The top view shows the fold lines; the 3-D view shows the resulting basin. Adjust the number of neurons and fold strength to see how the separability emerges.</p>
+
+	<div class="og-demo">
+		<h3>Top view + 3-D basin</h3>
+		<p class="og-small">Top: the three fold lines in the 2-D input plane. Bottom (3-D): the folded data surface — the inner ring lifts into a basin that a single horizontal plane can now separate. Adjust <b>neurons</b> and <b>fold strength</b> to see the effect.</p>
+		<div class="og-controls">
+			<div class="og-control"><label>Neurons: <span class="val" id="og-egg3-n-v">3</span></label><input type="range" id="og-egg3-n" min="2" max="6" step="1" value="3"></div>
+			<div class="og-control"><label>Fold strength: <span class="val" id="og-egg3-fs-v">1.0</span></label><input type="range" id="og-egg3-fs" min="0.1" max="2" step="0.1" value="1"></div>
+			<div class="og-control"><label>Plane z: <span class="val" id="og-egg3-plane-v">0.5</span></label><input type="range" id="og-egg3-plane" min="0" max="2" step="0.05" value="0.5"></div>
+		</div>
+		<div class="og-canvas-wrap"><canvas id="og-egg3top" width="640" height="320"></canvas></div>
+		<div id="og-egg3fold" class="og-plot" style="height:420px"></div>
+		<div id="og-egg3-verdict" class="og-verdict no" style="display:none"></div>
+		<div class="og-formula"><div id="og-egg3-dense"></div></div>
+		<div class="og-formula"><div id="og-egg3-sep"></div></div>
+	</div>
 </div>
 
 <div class="optional md" data-headline="The Fold-and-Cut Theorem">
@@ -343,9 +473,11 @@ Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and
 **Why it matters here.** Every one of these is a *piecewise-isometric fold of space* — exactly what a ReLU layer does. Computational origami proves what a fold can and can't do; the network borrows the vocabulary and turns it into a classifier.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Deep Networks: an Origami Cascade">
-## Deep Networks: an Origami Cascade
+<div class="og-card">
+	<h2 class="og-h2">9 · Deep Networks — An Origami Cascade</h2>
+	<p class="og-lead">Each layer folds the already-folded object again. The creases compound: the number of linear regions grows exponentially with depth.</p>
 
+	<div class="md">
 A deep network does not fold once and stop. **Each layer folds the already-folded object
 again**, exactly like real origami. After a few folds a sheet has exponentially more edges
 than the number of folds you actually made — the creases compound. The same is true here:
@@ -366,10 +498,13 @@ a wide but shallow net cannot match.
 	<div class="og-canvas-wrap"><canvas id="og-cascade" width="700" height="360"></canvas></div>
 	<div class="og-out" id="og-cas-out"></div>
 </div>
+</div>
 
-<div class="md">
-## The Inefficient Alternative: Shear (Peeling the Orange)
+<div class="og-card">
+	<h2 class="og-h2">10 · The Inefficient Alternative — Shear (Peeling the Orange)</h2>
+	<p class="og-lead">When there's no room to fold, the network must shear: nudging one thin slice of the outer class to the side, per layer. Like peeling an orange, not a sheet.</p>
 
+	<div class="md">
 Folding is the *efficient* route, and it depends on having spare dimensions. What if a
 layer is **narrow** — no room to fold into? Then the only remaining trick is
 **shear**: using tilted hyperplanes together with the ReLU, the network nudges a slice of
@@ -395,10 +530,13 @@ plays only a minor role in real, wide networks — and it is consistent with the
 	<div class="og-canvas-wrap"><canvas id="og-shear" width="700" height="380"></canvas></div>
 	<div class="og-out" id="og-shear-out"></div>
 </div>
+</div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="Reading the Folds Out of a Trained Network">
-## Reading the Folds Out of a Trained Network
+<div class="og-card">
+	<h2 class="og-h2">11 · Reading the Folds — The Fingerprint in a Trained Network</h2>
+	<p class="og-lead">How do we verify a trained network actually *did* the folding? The authors define three observables: dimensionality expansion, bimodal tuning curves, and hyperplane angle.</p>
 
+	<div class="md">
 All of the above is a story about *what a network could do*. How do we check that a
 **trained** network actually *did* it? In high dimensions we cannot simply look. Instead
 the authors define **observables** — measurable quantities that are the causal fingerprint
@@ -475,10 +613,13 @@ the polyhedral view makes precise (see *The polyhedral backbone* below).
 	<div id="og-tuning" style="width:100%;height:340px"></div>
 	<div class="og-out" id="og-dip-out"></div>
 </div>
+</div>
 
-<div class="md">
-## Validation: the Poker-Hand Task
+<div class="og-card">
+	<h2 class="og-h2">12 · Validation — The Poker-Hand Task</h2>
+	<p class="og-lead">A real (if small) test: a 3-layer ReLU net on the poker-hand dataset shows exactly the predicted folding signature — dimensionality expansion, bimodal tuning, and causal dependence on the folding neurons.</p>
 
+	<div class="md">
 To test the theory on a real (if small) problem, the authors train a three-layer fully
 connected ReLU network on the **poker-hand** dataset \cite{poker_hand_uci}. A five-card hand
 is encoded as a **10-dimensional** input (suit and rank of each card), and the target is one
@@ -512,10 +653,13 @@ barely does:
 	</div>
 	<div id="og-silence" style="height:260px; margin-top:12px"></div>
 </div>
+</div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Answer">
-## The Answer
+<div class="og-card">
+	<h2 class="og-h2">13 · The Answer — What a Hidden Layer Is For</h2>
+	<p class="og-lead">Put all the pieces together: a stack of dense ReLU layers manufactures linear separability by progressively folding the data manifold into unoccupied, higher dimensions. It is, in effect, doing <em>N</em>-dimensional origami.</p>
 
+	<div class="md">
 Put all the pieces together and the paper's central claim is a clean one:
 
 > A **stack of dense (fully-connected) ReLU layers** manufactures linear separability by
@@ -550,6 +694,7 @@ The vocabulary is worth keeping:
 This is more than a picture. It reframes a mechanistic question — *what is a hidden layer
 for?* — in terms you can draw, measure, and (as the poker experiment shows) causally
 verify.
+</div>
 </div>
 
 <div class="optional md" data-headline="Scope and open questions">
