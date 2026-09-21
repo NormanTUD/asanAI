@@ -9616,26 +9616,46 @@ html.dark .topics-preset-fun {
 .topic-block-alt-reveal .tbalt-icon { color: var(--mn-accent); font-size: 1rem; }
 
 /* dependency links inside the "Builds on" pill */
-.tdp-link {
-	color: var(--mn-accent);
+/* prerequisite chips inside the "Builds on" pill */
+.tdp-chip {
+	display: inline-block;
+	white-space: nowrap;
+	margin: 1px 2px;
+	padding: 1px 9px;
+	border-radius: 99px;
+	font-size: 0.8rem;
 	font-weight: 600;
+	line-height: 1.6;
 	text-decoration: none;
-	border-bottom: 1px solid color-mix(in srgb, var(--mn-accent) 40%, transparent);
+	vertical-align: baseline;
 }
-.tdp-link:hover { border-bottom-style: solid; }
-
+a.tdp-chip {
+	color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--mn-accent) 28%, transparent);
+	cursor: pointer;
+}
+a.tdp-chip:hover {
+	background: color-mix(in srgb, var(--mn-accent) 22%, transparent);
+}
+.tdp-chip-plain {
+	color: var(--mn-text-secondary);
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border);
+}
 /* Learned / dependency pills */
 .topic-deps-pill {
 	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 16px;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px 16px;
 	margin: 0 0 20px;
 	border-radius: 10px;
-	font-size: 0.85rem;
-	line-height: 1.4;
+	font-size: 0.88rem;
+	line-height: 1.55;
 }
-.topic-deps-pill .tdp-icon { font-size: 1.1rem; flex-shrink: 0; }
+.topic-deps-pill .tdp-icon { font-size: 1.1rem; line-height: 1.55; flex-shrink: 0; }
+.topic-deps-pill .tdp-body { min-width: 0; }
 .topic-deps-met {
 	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, var(--mn-surface));
 	border: 1px solid color-mix(in srgb, var(--mn-emerald, #10b981) 30%, transparent);
@@ -10689,27 +10709,34 @@ math {
 .ta-part-hidden-header {
 	width: 100%;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 10px;
-	padding: 10px 16px;
+	padding: 12px 16px;
 	background: var(--mn-bg-subtle);
 	border: 1px dashed var(--mn-border);
 	border-radius: 12px;
 	cursor: pointer;
 	text-align: left;
-	font-size: 0.85rem;
+	font-size: 0.88rem;
 	font-weight: 600;
+	line-height: 1.5;
 	color: var(--mn-text-secondary);
 	font-family: inherit;
 	transition: border-color 0.18s;
 }
 .ta-part-hidden-header:hover { border-color: var(--mn-accent); }
 .ta-part-hidden-open .ta-part-hidden-header { border-color: var(--mn-accent); }
-.tph-caret { font-size: 0.8rem; transition: transform 0.2s; }
+.tph-caret { font-size: 0.8rem; margin-top: 4px; transition: transform 0.2s; }
 .ta-part-hidden-open .tph-caret { transform: rotate(90deg); }
-.tph-icon { font-size: 1.1rem; }
-.tph-label { flex: 1; }
-.tph-count { font-size: 0.75rem; font-weight: 400; color: var(--mn-text-muted); }
+.tph-icon { font-size: 1.2rem; margin-top: 1px; }
+.tph-label { flex: 1; min-width: 0; font-weight: 500; }
+.tph-count {
+	font-size: 0.72rem;
+	font-weight: 400;
+	color: var(--mn-text-muted);
+	flex-shrink: 0;
+	margin-top: 3px;
+}
 .ta-part-hidden-clip {
 	overflow: hidden;
 	transition: height 220ms cubic-bezier(0.22, 1, 0.36, 1);

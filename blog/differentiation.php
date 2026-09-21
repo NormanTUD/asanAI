@@ -62,6 +62,9 @@ The **derivative** is what happens when we let $h$ approach zero. The secant lin
 <div class="md">
 $$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$
 </div>
+<div class="md topic-block-alt">
+**In plain words:** the derivative is the rate of change at *one exact point* — like a speedometer reading at a single instant, not the average over a whole trip. The formula just says: measure the average change over a tiny stretch, then shrink that stretch all the way down to zero.
+</div>
 </div>
 
 <div class="md">

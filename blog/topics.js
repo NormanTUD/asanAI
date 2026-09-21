@@ -453,9 +453,9 @@
 	function lessonLink(id) {
 		const m = lessonMeta(id);
 		if (m && m.url) {
-			return '<a class="tdp-link" href="' + escAttr(m.url) + '">' + escAttr(m.title) + '</a>';
+			return '<a class="tdp-chip" href="' + escAttr(m.url) + '">' + escAttr(m.title) + '</a>';
 		}
-		return '<strong>' + escAttr(id.replace(/-/g, ' ')) + '</strong>';
+		return '<span class="tdp-chip tdp-chip-plain">' + escAttr(id.replace(/-/g, ' ')) + '</span>';
 	}
 
 	/** Keep the learned button pinned to the END of the lesson content.
@@ -491,10 +491,12 @@
 			}
 			pill.className = 'topic-deps-pill ' + (met ? 'topic-deps-met' : 'topic-deps-unmet');
 			pill.innerHTML = met
-				? '<span class="tdp-icon" aria-hidden="true">✓</span> You covered the prerequisites — the math here builds on what you already know.'
-				: '<span class="tdp-icon" aria-hidden="true">○</span> Builds on: ' +
-					deps.filter(function (d) { return !isLearned(d); }).map(lessonLink).join(', ') +
-					'. Mark them as learned to unlock the full depth here.';
+				? '<span class="tdp-icon" aria-hidden="true">✓</span>'
+					+ '<span class="tdp-body">You covered the prerequisites — the math here builds on what you already know.</span>'
+				: '<span class="tdp-icon" aria-hidden="true">○</span>'
+					+ '<span class="tdp-body">Builds on ' +
+					deps.filter(function (d) { return !isLearned(d); }).map(lessonLink).join(' ') +
+					' — mark them as learned to unlock the full depth here.</span>';
 		} else if (pill) {
 			pill.remove();
 		}
@@ -1588,8 +1590,12 @@
 			return;
 		}
 
-		// Not showing the alt → make sure any alt mode is cleared.
+		// Not showing the alt → make sure any alt mode is cleared (class
+		// plus a stale "show the math" affordance left over from a
+		// previous alt-active state).
 		if (alt) block.classList.remove('topic-block-alt-active');
+		const staleAltReveal = block.querySelector(':scope > .topic-block-alt-reveal');
+		if (staleAltReveal) staleAltReveal.remove();
 
 		if (nowOff) {
 			if (hasTitle) {
@@ -1633,6 +1639,10 @@
 			});
 			if (isIndexPage()) dimCourseTiles();
 			updateSkipIndicator();
+			// Still pin the learned button past any sources/footnotes that
+			// renderMarkdown() appends later (this early-return path skips
+			// the settle call at the bottom of the function).
+			settleLearnedButton();
 			return;
 		}
 
@@ -1862,9 +1872,11 @@
 	function togglePartHidden(group) {
 		const clip = group.querySelector('.ta-part-hidden-clip');
 		const body = group.querySelector('.ta-part-hidden-body');
+		const icon = group.querySelector('.tph-icon');
 		if (!clip || !body) return;
 		const open = !group.classList.contains('ta-part-hidden-open');
 		group.classList.toggle('ta-part-hidden-open', open);
+		if (icon) icon.textContent = open ? '\uD83D\uDC35' : '\uD83D\uDE48'; // 🐵 peeking / 🙈 hidden
 		if (prefersReducedMotion()) {
 			clip.style.height = open ? 'auto' : '0px';
 			return;
@@ -1873,13 +1885,41 @@
 			const h = body.scrollHeight;
 			clip.style.height = '0px';
 			void clip.offsetHeight;
+			// open: release to auto afterwards so late content can grow
 			animateHeight(clip, 0, h, TUCK_MS, function () { clip.style.height = 'auto'; });
 		} else {
 			const h = clip.scrollHeight;
 			clip.style.height = h + 'px';
 			void clip.offsetHeight;
-			animateHeight(clip, h, 0, TUCK_MS);
+			// close: pin to 0px afterwards (animateHeight's finish releases
+			// to auto, which would otherwise snap the box back open).
+			animateHeight(clip, h, 0, TUCK_MS, function () { clip.style.height = '0px'; });
 		}
+	}
+
+	/** short, human "why was this lesson tucked" phrase for a score. */
+	function whyPhrase(s) {
+		if (!s) return 'they don’t quite match your settings';
+		if (s.why === 'math') return 'the math runs deeper than your comfort dial';
+		if (s.why === 'layman') return 'they sit beyond the layman core';
+		if (s.why === 'interests') return 'they’re outside the interests you picked';
+		if (s.why === 'category') return 'you switched off ' + (s.whyLabel || 'some topics');
+		return 'they don’t quite match your settings';
+	}
+
+	/** friendly one-line summary of a part's tucked lessons, e.g.
+	    "the math runs deeper than your comfort dial" or a short
+	    "x and y" when several reasons apply. */
+	function hiddenReasons(offInfo) {
+		if (!offInfo || !offInfo.length) return 'they don’t quite match your settings';
+		const reasons = [];
+		offInfo.forEach(function (o) {
+			const r = whyPhrase(o.score);
+			if (reasons.indexOf(r) === -1) reasons.push(r);
+		});
+		if (reasons.length === 1) return reasons[0];
+		if (reasons.length === 2) return reasons[0] + ' and ' + reasons[1];
+		return reasons.slice(0, -1).join(', ') + ', and ' + reasons[reasons.length - 1];
 	}
 
 	/** On the index page, every lesson tile that scores 'off' is moved
@@ -1901,7 +1941,8 @@
 				const part = grid.closest('.course-part') || grid.parentElement;
 
 				const tiles = Array.from(grid.querySelectorAll('.course-tile'));
-				const offTiles = [];
+				const total = tiles.length;
+				const offInfo = [];
 				tiles.forEach(function (tile) {
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
@@ -1910,11 +1951,11 @@
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
 					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
 					tile.classList.remove('ta-tile-off');
-					if (score.state === 'off') offTiles.push(tile);
+					if (score.state === 'off') offInfo.push({ tile: tile, score: score });
 				});
 
 				let group = part.querySelector(':scope > .ta-part-hidden');
-				if (offTiles.length === 0) {
+				if (offInfo.length === 0) {
 					if (group) group.remove();
 					return;
 				}
@@ -1925,11 +1966,12 @@
 					const header = document.createElement('button');
 					header.type = 'button';
 					header.className = 'ta-part-hidden-header';
+					header.setAttribute('aria-expanded', 'false');
 					header.innerHTML =
 						'<span class="tph-caret" aria-hidden="true">▸</span>'
-						+ '<span class="tph-icon" aria-hidden="true">🙈</span>'
+						+ '<span class="tph-icon" aria-hidden="true">\uD83D\uDE48</span>'
 						+ '<span class="tph-label">Not shown in this part</span>'
-						+ '<span class="tph-count"></span>';
+						+ '<span class="tph-count" aria-hidden="true">tap to peek</span>';
 					const clip = document.createElement('div');
 					clip.className = 'ta-part-hidden-clip';
 					clip.style.height = '0px';
@@ -1939,13 +1981,21 @@
 					group.appendChild(header);
 					group.appendChild(clip);
 					part.appendChild(group);
-					header.addEventListener('click', function () { togglePartHidden(group); });
+					header.addEventListener('click', function () {
+						togglePartHidden(group);
+						header.setAttribute('aria-expanded',
+							group.classList.contains('ta-part-hidden-open') ? 'true' : 'false');
+					});
 				}
 
 				const body = group.querySelector('.ta-part-hidden-body');
-				offTiles.forEach(function (tile) { body.appendChild(tile); });
+				offInfo.forEach(function (o) { body.appendChild(o.tile); });
+
+				const n = offInfo.length;
+				group.querySelector('.tph-label').textContent =
+					n + ' of ' + total + ' lessons tucked away — ' + hiddenReasons(offInfo);
 				group.querySelector('.tph-count').textContent =
-					offTiles.length + ' hidden ' + (offTiles.length === 1 ? 'lesson' : 'lessons');
+					group.classList.contains('ta-part-hidden-open') ? 'tap to hide' : 'tap to peek';
 
 				// Re-measure if the box was already open so it fits.
 				if (group.classList.contains('ta-part-hidden-open')) {
