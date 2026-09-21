@@ -19,7 +19,9 @@ Grokking\cite[]{grokking} is a phenomenon in deep learning where a model suddenl
 Originally identified by \cite[Power et al., 2022][]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period,
 only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern.
 Structurally, this is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="Math reference: symbols & Taylor series">
 ## Math
 
 ### Symbol Conventions
@@ -60,7 +62,7 @@ The more terms you include, the better the approximation. You can explore this b
     <div id="plot-taylor" class="plot-container" style="width:100%; height:350px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Positional Embeddings Create a Group Structure">
 ## Positional Embeddings Create a Group Structure
 
 We've shown that a position shift by a fixed offset $k$ corresponds to multiplying by a rotation matrix $M_k$. But these matrices aren't just a convenient trick, they form a **mathematical group**, and that algebraic fact is the deepest reason sinusoidal PE works so well.
@@ -117,7 +119,7 @@ The attention mechanism learns these rotations through its $Q$ and $K$ linear pr
 </div>
 <div id="group-axioms-chart" style="width:100%; height:460px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Reading the Compass Plot">
 ### Reading the Compass Plot
 
 Each **filled dot** is a starting position on the unit circle (determined by its PE angle $\text{pos}\cdot\omega_0$). Each **open dot** is the result after applying $M_k$. The arrow between them is *the same rotation* in every case, the arrow length and arc angle never change, only the starting point moves. This is exactly the translation-invariance that lets a Transformer generalise “3 tokens apart” to any location it has never seen.
@@ -129,13 +131,13 @@ Each **filled dot** is a starting position on the unit circle (determined by its
 </div>
 <div id="group-cayley-chart" style="width:100%; max-width:600px; height:520px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Reading the Cayley Table">
 ### Reading the Cayley Table
 
 The heatmap shows every possible composition $M_i \cdot M_j = M_{(i+j)\bmod 12}$. Notice the **diagonal stripe pattern**: each row is just the previous row shifted one step to the left. That perfect regularity *is* the group structure, it means the combining rule is completely uniform, with no exceptions or special cases. Hover over any cell to see the composition.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Interference Pattern of Layers: Wave Geometry">
 ## The Interference Pattern of Layers: Wave Geometry
 
 Information doesn't flow through a transformer in a smooth, monotonic stream. It **pulses**. If you track the activation patterns of a hidden state as it passes through all layers of a model, from layer 0 to layer 96, you see something that looks less like a pipeline and more like a **wave**: expansion, compression, expansion, compression, in a rhythmic cycle that resembles a beating mechanical heart.
@@ -244,7 +246,7 @@ Below, you can explore this interactively. A simulated transformer processes a t
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Isosurfaces of Probability: Truth Tunnels">
 ## Isosurfaces of Probability: Truth Tunnels
 
 Imagine wrapping a “shell” around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces**, surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.

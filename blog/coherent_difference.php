@@ -9,6 +9,7 @@ order: 2
 color: accent
 topics: language, math-i, math-ii, philosophy
 tags: logic-heavy, language-heavy
+math: 70
 -->
 
 <div class="md">
@@ -41,7 +42,7 @@ $$
 This is the lens of the chapter. Everything else is variations on it.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="The chain">
 ### The chain
 
 The whole idea can be written as one arrow chain. Read top-to-bottom:
@@ -138,7 +139,7 @@ This chapter does *not* introduce any new technical machinery. There is no live 
 If you already know topology, sheaves, category theory and HoTT well, you can skim this chapter in two minutes. If you know none of them, the chapter still works: every section is read on two levels, a hand-wavy English level, and a one-line formal level. The hand-wavy level is the one that will stay with you. The formal level is there to show that there is a real mathematical idea behind the metaphor.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Where it begins: distinction">
 
 ## Where it begins: distinction
 
@@ -178,7 +179,7 @@ The Chinese word usually translated “thus” is 以 — *the act by which*. Be
 What the modern formalizations buy us is a promise: once we have the move, we can build the rest.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="From distinction to structure">
 ### From distinction to structure
 
 A set is the simplest structure that can hold distinctions. $A = \{a,b,c\}$ knows only that $a, b, c$ are inside $A$. It does not know whether $a$ is “near” $b$, or “more like” $b$ than $c$, or whether there is a path from $a$ to $c$ via $b$. A set is a thin container.
@@ -194,7 +195,7 @@ $$
 is one of the oldest and most useful formalizations of the idea that “relations can themselves be related”. The chapter you are now reading is, in part, a way of preparing for it.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Relations: sameness and the quotient">
 
 ## Relations: sameness and the quotient
 
@@ -205,7 +206,7 @@ Suppose you own things — books, socks, grievances, whatever. Call the set of y
 That is all a relation is: a bookkeeping device for *some* structure between things. "Is older than", "lives in the same drawer as", "owes money to", "is the square of" — all relations. On the chain of the previous section, **distinction** gives you the elements of $A$; **relation** is the very next link.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Properties worth naming">
 #### Properties worth naming
 
 Out of the wilderness of possible relations, a handful keep showing up. The first three are the bones of *sameness*:
@@ -274,7 +275,7 @@ And one synonym, for the record:
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The payoff: partitions">
 #### The payoff: partitions
 
 Here is the theorem that makes equivalence relations worth caring about:
@@ -291,7 +292,7 @@ $$
 The **equivalence class** of $a$ is $[a] = \{\, x \in A : a \sim x \,\}$ — everything equivalent to $a$. Two classes are either identical or disjoint; together they cover $A$. So an equivalence relation is *literally* a way of sorting your stuff into non-overlapping boxes. Deciding what counts as *the same* — for your purposes — is deciding what boxes exist. Sock drawers and bookshelves are different equivalence relations on the same pile of stuff. The relation *is* the sorting.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The quotient, and how relations adapt">
 #### The quotient, and how relations adapt
 
 Once you have $\sim$ on $A$, form the **quotient set**
@@ -311,7 +312,7 @@ Two reflexes to keep:
 The second move is where the previous section's chain shows up again. Local data (some pairs you called "related") plus compatibility (symmetry on pairs) plus coherence (transitivity on triples) glues into a global partition. An equivalence relation is a baby sheaf — the flattest possible one, where "agreement on overlaps" is literal equality rather than a homotopy.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Everywhere, once you look">
 #### Everywhere, once you look
 
 The rest of mathematics is largely a catalogue of equivalence relations someone found useful:
@@ -324,7 +325,7 @@ The rest of mathematics is largely a catalogue of equivalence relations someone 
 Each is the same move: *declare what counts as the same, then work with the boxes*. The relation is the question ("what do I care about?"); the partition is the answer ("here are the boxes"). Which equivalence relation to use is, secretly, almost every mathematical question you will ever be asked.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Locality and the sheaf picture">
 
 ## Locality and the sheaf picture
 
@@ -358,7 +359,7 @@ and refuses to give a numerical answer. Instead it gives *which sets contain* $x
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="The sheaf picture: local islands, glued into a continent">
 ### The sheaf picture: local islands, glued into a continent
 
 Once you have a topology, you can attach data to every open set. A \citetitle{sheaf_mathematics} $\mathcal{F}$ assigns to each open $U \subseteq X$ a set $\mathcal{F}(U)$, the *sections* over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$ \cite{sheaf_mathematics}.
@@ -516,7 +517,7 @@ A sheaf is just this, made formal.
 Why does this matter for embeddings? Because an embedding space is, in spirit, a sheaf on the *contexts* of a word. Each context is an open set. Each local section is a list of co-occurring tokens. Compatibility is the requirement that on the overlap of two contexts the prediction agree. The geometry of the embedding space is the global section that falls out of that consistency.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Coherence without equality">
 
 ## Coherence without equality
 

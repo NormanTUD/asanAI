@@ -63,7 +63,7 @@ Below you can explore each step of the algorithm interactively. Change the input
 
 <div id="fourier-algorithm-container"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Neuron-Logit Map">
 ## The Neuron-Logit Map $W_L$
 
 The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies \cite[Section 4.2, Equation 2]{nanda2023grokking}:
@@ -547,7 +547,7 @@ Each stage introduces new challenges. Stage 3 (composition) is particularly inte
 
 <div id="algorithmic-prompting-container" style="max-width:960px; margin:0 auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Beyond Modular Arithmetic: digits & counting">
 ## Beyond Modular Arithmetic: Magnitude, Comparison, and Counting
 
 The circular representations above solve a very specific problem: **modular** addition, where the answer wraps around a fixed modulus ($\bmod N$). That is a *bounded, cyclic* task — there is no "carry out to infinity," and no question of how *big* a number is. Once you leave that world, the model hits two different walls, and understanding them clarifies what a "number" actually is inside the network.

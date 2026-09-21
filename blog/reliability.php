@@ -15,7 +15,7 @@ tags: math-heavy
 A model that is right 95% of the time but **confident when it is wrong** is not a model you can deploy in a hospital, a courtroom, or a cockpit. **Reliability** is the discipline of matching *confidence* to *correctness* — and of knowing when to **decline**. It pairs with the <a href="hallucinations">Hallucinations</a> chapter: there we ask *why models lie*; here we ask *how to make their confidence mean something*.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="30" data-optionaltitle="Calibration">
 ## Calibration
 
 A **calibrated** model says $P(\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats. Modern networks are not — they are systematically **over-confident**, especially out of distribution.
@@ -42,7 +42,7 @@ The distinction drives safe autonomy: a car should brake for epistemic uncertain
 **Selective prediction** predicts only when confident and **abstains** the rest, trading *coverage* for *risk*. **Out-of-distribution (OOD) detection** is its cousin: flag inputs far from anything seen in training (ensemble disagreement, low similarity to the training manifold) and route them to a human or a fallback. The goal is not to be right everywhere; it is to **know the boundary of where you are allowed to answer**.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Conformal prediction: finite-sample guarantees">
 ## Conformal prediction: finite-sample guarantees
 
 Everything above is empirical. **Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers guaranteed to contain the truth with probability $\ge 1-\varepsilon$ — **distribution-free**, no assumptions about the data or the model. It is the rigorous, assumption-light way to hand a user an honest "I'm not sure," and it applies to LLMs, vision, and structured outputs alike. \cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}

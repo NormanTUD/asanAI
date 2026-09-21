@@ -22,26 +22,22 @@ math: 50
 		--og-amber: #ffd166;
 		--og-grad: linear-gradient(90deg, var(--mn-emerald), var(--mn-coral) 55%, var(--og-amber));
 	}
-	.og-card {
-		background: linear-gradient(180deg, var(--mn-surface), var(--mn-bg-subtle));
-		border: 1px solid var(--mn-border);
-		border-radius: 18px;
-		padding: 22px 22px 26px;
-		margin: 22px 0;
-		box-shadow: 0 10px 40px rgba(0,0,0,.16);
-	}
-	.og-card h2 {
-		margin: 0 0 10px; font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px;
-		background: var(--og-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
-	}
-	.og-card h3 { margin: 16px 0 6px; font-size: 1.05rem; color: var(--mn-coral); }
+	.og-h2 { margin: 34px 0 10px; font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px;
+		background: var(--og-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 	.og-lead { color: var(--mn-text-secondary); margin: .2rem 0 14px; }
 	.og-small { font-size: .88rem; color: var(--mn-text-secondary); }
 	.og-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 	@media (max-width: 820px) { .og-grid2 { grid-template-columns: 1fr; } }
 
-	.og-demo { margin: 14px 0; }
-	.og-demo h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--mn-text); }
+	.og-demo {
+		background: linear-gradient(180deg, var(--mn-surface), var(--mn-bg-subtle));
+		border: 1px solid var(--mn-border);
+		border-radius: 16px;
+		padding: 18px 20px;
+		margin: 20px 0;
+		box-shadow: 0 10px 40px rgba(0,0,0,.16);
+	}
+	.og-demo h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--mn-coral); }
 	.og-canvas-wrap { position: relative; margin: 12px 0; text-align: center; }
 	.og-canvas-wrap canvas, .og-demo canvas {
 		display: block; width: 100%; max-width: 100%; height: auto; border-radius: 12px;
