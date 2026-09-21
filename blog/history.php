@@ -628,7 +628,7 @@ A widely cited critique, advanced most prominently by \citeauthor{schmidhuber202
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="The Critique (1969)">
-#### The Critique (1969)
+### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not “linearly separable.”
 
 To understand why the XOR problem was so significant, we first need to look at how a computer processes logic. We can represent logical gates as functions that take an input matrix (representing all possible combinations of two inputs) and map them to an output vector.
@@ -664,7 +664,7 @@ An important nuance: **Minsky and Papert knew multi-layer networks could solve X
 </div>
 
 <div class="md">
-#### The Lighthill Report (1973) and The Collapse (1974–1980)
+### The Lighthill Report (1973) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
@@ -724,7 +724,7 @@ While AI research suffered through funding winters, the physical substrate of co
 
 This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This “free” improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
 
-## Automatic differentiation (1970)
+## Automatic Differentiation (1970)
 
 While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1970 master's thesis of \citeauthor{linnainmaa1970}. He developed the “automatic differentiation” method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the highly efficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
@@ -887,18 +887,13 @@ of English as a stochastic process.
 
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
 
-### Taming the Stochastic Parrot: The Alignment Era
+## Taming the Stochastic Parrot: The Alignment Era
 
 The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in “hallucinations” or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the “Black Box” of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.
 
 <div class="optional md" data-headline="Does a stochastic parrot understand Chinese?">
 The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI. In 1980, \citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters. From outside, the room behaves indistinguishably from a fluent Chinese speaker. Yet the person inside understands nothing. By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*. The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation. \citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for. The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all. LLMs in 2026 have not answered it; they have only made the question louder.
 </div>
-
-## The Dream of Structure: Recursive Neural Networks
-For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
-
-This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
 
 ## From CPU to GPU: The Realization of the “Bitter Lesson”
 
@@ -921,6 +916,11 @@ The architectural lineage from LSTM to ResNet can be traced as a clear sequence 
 - **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
 
 This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
+
+## The Dream of Structure: Recursive Neural Networks
+For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
+
+This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
 
 ## The Hardware Lottery: How Gamers Saved AI
 

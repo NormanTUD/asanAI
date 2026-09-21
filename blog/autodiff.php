@@ -9,6 +9,7 @@ order: 4
 color: coral
 topics: math-i, programming
 tags: math-heavy, code-heavy
+math: 60
 -->
 
 <div class="md">
@@ -25,7 +26,7 @@ The critical extension to **reverse mode** was made by \citeauthor{linnainmaa197
 This technique was later independently rediscovered and applied to neural network training by \citeauthor{werbos1974} in his \citeyear{werbos1974} \cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \citeyear{rumelhart1986} paper by \cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Why Not Symbolic or Numerical Differentiation?">
 ## Why Not Symbolic or Numerical Differentiation?
 
 Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:
@@ -40,6 +41,9 @@ This requires **one forward pass per parameter** to compute each partial derivat
 
 **Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation. Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass, regardless of how many parameters there are.
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="The Chain Rule: The Mathematical Engine">
 ## The Chain Rule: The Mathematical Engine
 
 The entire machinery of AD rests on the **chain rule** of calculus. If a function $y$ is computed through a chain of intermediate steps:
@@ -56,6 +60,9 @@ $$\frac{dy}{dx} = \frac{dy}{dv_k} \cdot \frac{dv_k}{dv_{k-1}} \cdots \frac{dv_2}
 
 AD automates this process by recording each elementary operation and its local derivative, then chaining them together.
 
+</div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="Forward Mode vs. Reverse Mode">
 ## Forward Mode vs. Reverse Mode
 
 There are two “directions” in which the chain rule can be evaluated:
@@ -69,10 +76,16 @@ $$\text{Reverse mode cost:} \quad \mathcal{O}(m) \text{ passes for } m \text{ ou
 
 Since training always reduces to minimizing a single scalar loss $L$, reverse mode requires only **one** backward pass to get $\frac{\partial L}{\partial w_i}$ for every weight $w_i$. This is why reverse-mode AD (backpropagation) is the universal choice for deep learning.
 
+</div>
+
+<div class="md">
 ## The Tape: Recording the Computation
 
 The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.
 
+</div>
+
+<div class="md" data-mathlevel="65" data-optionaltitle="A Concrete Example">
 ## A Concrete Example
 
 Consider the function:
@@ -168,7 +181,7 @@ Below is an interactive visualization of the computational graph for $f(x, y) = 
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Gradient Descent on a Loss Landscape">
 ## Gradient Descent on a Loss Landscape
 
 In practice, automatic differentiation is used to compute the gradient $\nabla L(\mathbf{w})$ of a loss function $L$ with respect to all model weights $\mathbf{w}$. The optimizer then updates the weights in the direction that reduces the loss:
@@ -274,6 +287,9 @@ To truly understand tape-based Automatic Differentiation, it helps to build one 
 <div class="md">
 This minimal engine implements the exact same algorithm that PyTorch and TensorFlow use internally, just without the GPU acceleration, operator overloading for hundreds of operations, and memory optimizations.
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="The Vanishing and Exploding Gradient Problem">
 ## The Vanishing and Exploding Gradient Problem
 
 One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
