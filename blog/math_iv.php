@@ -159,7 +159,7 @@ To warp an image by an affine map: for every output pixel $\mathbf{q}$, ask *whi
 <div class="md">
 ## Hands-on: the affine machine
 
-### Lab 1 — The 2D affine machine
+### The 2D affine machine
 
 Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked point $p$. Hover the warped image — each pixel is a lookup $I(M^{-1}\mathbf{q})$ in the 0/1 grid.
 
@@ -206,7 +206,7 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 </div>
 
 <div class="md">
-### Lab 2 — The 3D affine machine
+### The 3D affine machine
 
 Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volume*. A cube stays a parallelepiped — corners to corners, edges to edges, each face a parallelogram. The ghost cube shows where things started; the dotted line follows the tracked corner from $p$ to $M\cdot p$. Click any corner to track it.
 </div>
@@ -260,7 +260,7 @@ The crease is the hyperplane $\hat{\mathbf{n}} \cdot \mathbf{p} = c$. Points on 
 </div>
 
 <div class="md">
-### Lab 3 — The 2D fold machine
+### The 2D fold machine
 
 The same 0/1 checkerboard. But a fold *cannot be inverted* — a pixel in the image has zero or two preimages — so we draw the board **forward** (push source cells to where they land). The far half is tinted so you can see the overlap.
 
