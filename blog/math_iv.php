@@ -263,11 +263,11 @@ The crease is the hyperplane $\hat{\mathbf{n}} \cdot \mathbf{p} = c$. Points on 
 <div class="md">
 ### The 2D fold machine
 
-The same 0/1 checkerboard. But a fold *cannot be inverted* — a pixel in the image has zero or two preimages — so we draw the board **forward** (push source cells to where they land). The far half is tinted so you can see the overlap.
+The same 0/1 checkerboard. But a fold *cannot be inverted* — a point in the image has zero or two preimages. The right panel shows the fold as **bent paper**: the near half stays flat, the far half rotated up about the crease by $\varphi = \arccos(1-\lambda)$.
 
-**Try:** slide $\lambda$ from 0 to 2.5. Below 1: bent but one-to-one. At 1: flattened. At 2: perfect paper fold. Hover the warped board — in the overlap region the machine finds *two* preimages and marks both on the source. The straight test line crosses the crease and arrives as two straight pieces with a corner: no single affine map can do that.
+**Try:** slide $\lambda$ from 0 to 2.5. Below 1: bent but one-to-one. At 1: flattened. At 2: perfect paper fold. **Hover the bent paper** — in the overlap region the machine finds *two* preimages and marks both on the source at left; **hover the source** to trace where a point lands on the paper. The straight test line crosses the crease and arrives as two straight pieces with a corner: no single affine map can do that.
 
-The 3D view shows the same image as bent paper: the far half rotated about the crease by $\varphi = \arccos(1-\lambda)$. Its flat shadow is exactly the 2D image.
+The bent paper's flat shadow (its projection onto the crease plane) is exactly the 2-D image of the fold — the same picture a forward draw of the checkerboard would give.
 </div>
 
 <div class="af-card" id="fold-2d">
