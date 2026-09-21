@@ -10576,3 +10576,13 @@ math {
 	filter: grayscale(0.3);
 	pointer-events: none;
 }
+
+/* Dimmed blocks (no title, just faded — content stays visible) */
+.topic-block-dimmed {
+	opacity: 0.5;
+	filter: grayscale(0.2);
+	transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.topic-block-dimmed:hover {
+	opacity: 0.8;
+}
