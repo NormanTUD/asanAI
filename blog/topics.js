@@ -386,6 +386,92 @@
 		persistPref(cur);
 	}
 
+	/* ── 1g. Learned / dependency tracking ─────────────────────
+	   The reader marks a lesson as "learned" after finishing it.
+	   When all prerequisites of a lesson are learned, its heavy
+	   blocks get a green "you could understand this" indicator and
+	   are auto-revealed (the math slider no longer hides them). */
+
+	function getLessonId() {
+		const el = document.querySelector('[data-lesson-id]');
+		if (el) return el.getAttribute('data-lesson-id');
+		// Fallback: derive from URL slug
+		const path = window.location.pathname || '';
+		const m = path.match(/\/([a-z_0-9]+)\.php?\/?$/i) || path.match(/\/([a-z_0-9]+)\/?$/i);
+		return m ? m[1].toLowerCase() : null;
+	}
+
+	function isLearned(lessonId) {
+		return !!activePref().learned[lessonId];
+	}
+
+	function depsMet(lessonId) {
+		const deps = LESSON_DEPS[lessonId];
+		if (!deps || !deps.length) return true; // base lesson, no deps
+		return deps.every(function (d) { return isLearned(d); });
+	}
+
+	function toggleLearned(lessonId) {
+		if (!LESSON_DEPS.hasOwnProperty(lessonId)) return;
+		pushHistory();
+		const cur = activePref();
+		if (cur.learned[lessonId]) {
+			delete cur.learned[lessonId];
+			dlog('un-learned →', lessonId);
+		} else {
+			cur.learned[lessonId] = true;
+			dlog('learned →', lessonId);
+		}
+		persistPref(cur);
+	}
+
+	function showLearnedUI() {
+		const lessonId = getLessonId();
+		if (!lessonId || !LESSON_DEPS.hasOwnProperty(lessonId)) return;
+
+		// Green prerequisite indicator (top of content)
+		const contents = document.getElementById('contents');
+		if (contents) {
+			let pill = document.getElementById('topic-deps-pill');
+			if (pill) pill.remove();
+			pill = document.createElement('div');
+			pill.id = 'topic-deps-pill';
+			const deps = LESSON_DEPS[lessonId] || [];
+			if (deps.length > 0) {
+				const met = depsMet(lessonId);
+				pill.className = 'topic-deps-pill' + (met ? ' topic-deps-met' : ' topic-deps-unmet');
+				if (met) {
+					pill.innerHTML = '<span class="tdp-icon" aria-hidden="true">✓</span> You covered the prerequisites — the math here builds on what you already know.';
+				} else {
+					const missing = deps.filter(function (d) { return !isLearned(d); });
+					pill.innerHTML = '<span class="tdp-icon" aria-hidden="true">○</span> Builds on: ' +
+						missing.map(function (d) { return '<strong>' + escAttr(d.replace(/-/g, ' ')) + '</strong>'; }).join(', ') +
+						'. Mark them as learned to unlock the full depth here.';
+				}
+				contents.insertBefore(pill, contents.firstChild);
+			}
+		}
+
+		// "Mark as learned" button (bottom of content)
+		let btn = document.getElementById('topic-learned-btn');
+		if (btn) btn.remove();
+		btn = document.createElement('button');
+		btn.type = 'button';
+		btn.id = 'topic-learned-btn';
+		const learned = isLearned(lessonId);
+		btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
+		btn.innerHTML = learned
+			? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
+			: '<span aria-hidden="true">○</span> Mark this lesson as learned';
+		btn.addEventListener('click', function () {
+			toggleLearned(lessonId);
+			showLearnedUI();
+			applyVisibility({ animate: true });
+		});
+		const footer = document.querySelector('.course-footer, .md:last-of-type, #contents');
+		if (footer) footer.appendChild(btn);
+	}
+
 	function writePref(pref) {
 		const v = encodeURIComponent(JSON.stringify(pref));
 		document.cookie = COOKIE_NAME + '=' + v
