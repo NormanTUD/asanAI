@@ -9,6 +9,7 @@ order: 11
 color: coral
 topics: math-i, math-ii, programming, training
 tags: math-heavy, code-heavy
+math: 60
 -->
 
 <div class="md">
@@ -17,7 +18,7 @@ Reinforcement Learning (RL) is the third pillar of machine learning, alongside s
 This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Markov Decision Process">
 ## The Markov Decision Process
 
 An MDP is the formal setting for RL: $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$ where
@@ -41,7 +42,7 @@ A few terms used throughout the chapter:
 * **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses “episodic” framing by resetting at fixed horizons.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Value Functions">
 ## Value Functions
 
 The **state-value function** measures how good a state is under policy $\pi$:
@@ -71,7 +72,7 @@ $$
 For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Tabular RL: Q-Learning">
 ## Tabular RL: Q-Learning
 
 Q-Learning \cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
@@ -85,7 +86,7 @@ where $\alpha$ is the learning rate and $r + \gamma \max_{a'} Q(s', a')$ is the 
 Deep Q-Networks (\cite[Mnih et al., 2013]{mnih2013dqn}, Mnih et al., 2013) replaced the table with a neural network $Q_\theta(s, a)$ and added **experience replay** + a **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Policy Gradients">
 ## Policy Gradients
 
 For continuous or large action spaces, parameterize the policy as $\pi_\theta(a \mid s)$ and directly optimize:
@@ -107,7 +108,7 @@ where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is 
 REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Actor-Critic Methods">
 ## Actor-Critic Methods
 
 **Actor-critic** algorithms learn both a policy (actor) and a value function (critic):
@@ -134,7 +135,7 @@ where $r_t(\theta) = \pi_\theta(a_t \mid s_t) / \pi_{\theta_{\text{old}}}(a_t \m
 PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="RLHF: Reinforcement Learning from Human Feedback">
 ## RLHF: Reinforcement Learning from Human Feedback
 
 **RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
@@ -160,7 +161,7 @@ $$
 where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="DPO: Direct Preference Optimization">
 ## DPO: Direct Preference Optimization \cite[Rafailov et al., 2023]{rafailov2023dpo}
 
 Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
@@ -191,7 +192,7 @@ Variants have proliferated:
 * **SimPO** \cite[Meng et al., 2024]{meng2024simpo}: length-normalized, no reference model.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="GRPO: Group Relative Policy Optimization">
 ## GRPO: Group Relative Policy Optimization \cite[Shao et al., 2024]{shao2024grpo}
 
 GRPO (Shao et al., DeepSeek, 2024) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:

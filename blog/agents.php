@@ -86,7 +86,9 @@ This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of i
 	<figcaption class="md">\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul. AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.</figcaption>
 </figure>
 </div>
+</div>
 
+<div class="md">
 ### 3. The LLM Agent Revolution (2022–present)
 
 The breakthrough insight, articulated in \cite[Yao et al., 2023]{yao2023react}, was that LLMs already encode vast world knowledge and can perform multi-step reasoning in natural language. Instead of learning a policy from scratch, you can use the LLM *as* the policy, prompting it to reason, select tools, and iterate.

@@ -614,7 +614,8 @@
 					toggleLearned(lessonId);
 					showLearnedUI();
 				});
-				settleLearnedButton();
+				contents.appendChild(btn);   // attach it; getElementById can't find a detached node
+				settleLearnedButton();        // then pin to the end (after footnotes/sources)
 			}
 			btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
 			btn.innerHTML = learned

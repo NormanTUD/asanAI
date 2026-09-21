@@ -9,6 +9,7 @@ order: 11
 color: sky
 topics: interpretability, architecture, language, math-ii
 tags: math-heavy
+math: 60
 -->
 
 <div class="md">
@@ -17,7 +18,7 @@ Type the words **"The capital of France is "** into a chat model. Press enter. T
 The picture we sketch in this chapter is the best current answer that the mechanistic interpretability community has been able to put together. Each piece is backed by experiments on real models. Each piece is also incomplete. We will be honest about both. *Nobody* knows the full story, not the model authors, not the interpretability researchers, not the theorists. What we have is a stack of partial theories, each with published evidence, that together form a coherent working picture. The picture is, by the consensus of the field, *almost certainly not the whole picture*.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The question, re-framed">
 ## The question, re-framed
 
 First, the word "knows". It is doing a lot of work in the question "how does it know to reply Paris?", and most of that work is misleading. We do **not** mean:
