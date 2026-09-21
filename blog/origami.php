@@ -383,7 +383,7 @@ one. Drag to look around the folded representation:
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">8 · The 3-Neuron Egg — From Dense to Separable</h2>
+	<h2 class="og-h2">The 3-Neuron Egg — From Dense to Separable</h2>
 	<p class="og-lead">Three ReLU neurons, three hyperplanes, one fold. The top view shows the fold lines; the 3-D view shows the resulting basin. Adjust the number of neurons and fold strength to see how the separability emerges.</p>
 
 	<div class="og-demo">
@@ -468,7 +468,7 @@ Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">9 · Deep Networks — An Origami Cascade</h2>
+	<h2 class="og-h2">Deep Networks — An Origami Cascade</h2>
 	<p class="og-lead">Each layer folds the already-folded object again. The creases compound: the number of linear regions grows exponentially with depth.</p>
 
 	<div class="md">
@@ -495,7 +495,7 @@ a wide but shallow net cannot match.
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">10 · The Inefficient Alternative — Shear (Peeling the Orange)</h2>
+	<h2 class="og-h2">The Inefficient Alternative — Shear (Peeling the Orange)</h2>
 	<p class="og-lead">When there's no room to fold, the network must shear: nudging one thin slice of the outer class to the side, per layer. Like peeling an orange, not a sheet.</p>
 
 	<div class="md">
@@ -527,7 +527,7 @@ plays only a minor role in real, wide networks — and it is consistent with the
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">11 · Reading the Folds — The Fingerprint in a Trained Network</h2>
+	<h2 class="og-h2">Reading the Folds — The Fingerprint in a Trained Network</h2>
 	<p class="og-lead">How do we verify a trained network actually *did* the folding? The authors define three observables: dimensionality expansion, bimodal tuning curves, and hyperplane angle.</p>
 
 	<div class="md">
