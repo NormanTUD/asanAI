@@ -1930,30 +1930,20 @@
 		persistPref(cur);
 	}
 
-	function mathLabel(v) {
-		if (v < 20) return 'Diagrams & intuition';
-		if (v < 40) return 'Basic algebra & graphs';
-		if (v < 60) return 'Calculus & linear algebra';
-		if (v < 80) return 'Proofs & advanced math';
-		if (v < 100) return 'Deep formal math';
-		return 'Everything, no shortcuts';
-	}
-
 	function mathSliderHtml() {
 		const v = getMathLevel();
 		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort">'
 			+ '<div class="math-comfort-top">'
 			+   '<span class="math-comfort-label">∑ Are you comfortable with…</span>'
-			+   '<span class="math-comfort-val" data-math-val>' + v + '% · ' + escAttr(mathLabel(v)) + '</span>'
+			+   '<span class="math-comfort-val" data-math-val>' + v + '%</span>'
 			+ '</div>'
 			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
 			+ '" step="5" value="' + v + '" aria-label="Math comfort, percent">'
 			+ '<div class="math-comfort-ticks">'
-			+   '<span data-tick="0">intuition</span>'
-			+   '<span data-tick="35">algebra</span>'
-			+   '<span data-tick="60">calculus</span>'
-			+   '<span data-tick="80">proofs</span>'
-			+   '<span data-tick="100">everything</span>'
+			+   '<span>layman</span>'
+			+   '<span>high school</span>'
+			+   '<span>university</span>'
+			+   '<span>research</span>'
 			+ '</div>'
 			+ '</div>';
 	}
@@ -1964,8 +1954,7 @@
 		const val = h.querySelector('[data-math-val]');
 		let dragging = false;
 		const paint = function () {
-			const v = parseInt(range.value, 10);
-			if (val) val.textContent = v + '% · ' + mathLabel(v);
+			if (val) val.textContent = range.value + '%';
 		};
 		range.addEventListener('input', function () {
 			paint();
