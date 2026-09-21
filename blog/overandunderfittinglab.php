@@ -9,6 +9,7 @@ order: 2
 color: emerald
 topics: math-i, programming, training
 tags: math-heavy, code-heavy
+math: 60
 -->
 
 <!--
@@ -21,7 +22,9 @@ TODO https://datascience.stackexchange.com/questions/85866/who-invented-the-conc
 We give an artificial intelligence, specifically, a single-layer neural network, one deceptively simple task: **“Learn the pattern of a sine wave.”**
 
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
+</div>
 
+<div class="md" data-mathlevel="40" data-optionaltitle="The Maths: How the Model “Thinks”">
 ## The Maths: How the Model “Thinks”
 
 We construct a function $f(x)$ of the form
@@ -42,7 +45,9 @@ This is **Polynomial Regression**. Rather than “knowing” the answer is a sin
 | $b$, **Bias term** | A constant that shifts the entire curve up or down. Not to be confused with “high bias” (underfitting). |
 
 </div>
+</div>
 
+<div class="md" data-mathlevel="35" data-optionaltitle="The Loss Function">
 ### The Loss Function
 
 The **MSE** (Mean Squared Error) is the AI's measure of “how wrong am I?”:
@@ -53,7 +58,9 @@ $$
 
 * **Low loss** → the model's curve hugs the training dots closely.
 * **High loss** → the model hasn't yet found a curve that fits the data.
+</div>
 
+<div class="md" data-mathlevel="60" data-optionaltitle="How the Model Learns: Gradient Descent">
 ### How the Model Learns: Gradient Descent
 
 Knowing “how wrong am I?” is not enough, the model also needs a strategy for getting *less wrong*. This is the job of **gradient descent**.
@@ -77,7 +84,9 @@ One complete pass through the entire training dataset is called an **epoch**. Th
 Plain (vanilla) gradient descent uses the same learning rate $\eta$ for every weight. **Adam** (\citeauthor{adam}, \citeyear{adam}) maintains a per-weight running average of both the gradient and its squared magnitude, effectively giving each weight its own adaptive step size. This makes training faster and more stable, especially for loss landscapes with many flat regions or sharp valleys, which is exactly what polynomial regression with high degrees produces.
 
 </div>
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The Bias–Variance Tradeoff">
 ### The Bias–Variance Tradeoff
 
 Every predictive model faces a fundamental tension between two sources of error:
@@ -98,7 +107,9 @@ As model complexity increases, bias falls but variance rises. The sweet spot, th
 In practice, we never know the true function (here we do, it's $\sin(x)$). Instead, practitioners split their data into a **training set** (used to fit the model) and a **test set** (held back, never seen during training). The test-set error is an unbiased estimate of how the model will perform on new data. More sophisticated approaches like **$k$-fold cross-validation** repeat this split $k$ times and average the results. We skip the train/test split to keep things visual, but every real-world ML pipeline relies on it.
 
 </div>
+</div>
 
+<div class="md">
 ## Try It Yourself
 
 1. **Underfitting (High Bias):** Set the **Degree** to **1** or **2** and train. The red line is too rigid to follow the wave, even inside the training window.
@@ -232,7 +243,9 @@ $$
 
 on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the center but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
 </div>
+</div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="Taming the “Wiggle”: Regularization & Dropout">
 ## Taming the “Wiggle”: Regularization & Dropout
 
 To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.
@@ -249,11 +262,13 @@ Without constraints, the weight vector $\mathbf{w}$ can explode to enormous valu
 The regularized losses therefore become:
 </div>
 
+<div class="topic-block" data-optionaltitle="The regularized L1 and L2 losses" data-mathlevel="45">
 $$
 \mathcal{L}_{\text{L1}} = \text{MSE} + \lambda \sum_{j} |w_j|
 \qquad\qquad
 \mathcal{L}_{\text{L2}} = \text{MSE} + \lambda \sum_{j} w_j^{2}
 $$
+</div>
 
 <div class="md">
 **Try it now:** Use the **L2 Regularization (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalization.

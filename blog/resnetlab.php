@@ -9,9 +9,10 @@ order: 3
 color: emerald
 topics: math-i, math-ii, architecture
 tags: math-heavy
+math: 60
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Vanishing Gradient Problem">
 
 ## The Vanishing Gradient Problem
 

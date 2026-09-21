@@ -9,6 +9,7 @@ order: 7
 color: sky
 topics: architecture, math-i, math-ii
 tags: math-heavy
+math: 55
 -->
 
 <div class="smart-quote" data-cite="vaswani2017attention" data-page=6>
@@ -29,7 +30,9 @@ The challenge of processing text in parallel (instead of word-by-word like older
 
 * **The “\citetitle{vaswani2017attention}” Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
 * **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from “fast” wiggles to “slow” curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
+</div>
 
+<div class="md" data-mathlevel="35" data-optionaltitle="Sine and Cosine">
 ## Sine and Cosine
 
 Imagine a circle with radius $1$ centered at the origin (the **unit circle**). Pick a point on it by sweeping an angle $\theta$ counter-clockwise from the right. The coordinates of that point are:
@@ -93,7 +96,7 @@ $$\sin(\theta) = \cos(90^\circ - \theta)$$
 $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Key Properties of Sine and Cosine">
 ### Key Properties of Sine and Cosine
 
 * **Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$
@@ -101,15 +104,19 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 * **Symmetry:** $\sin$ is odd, $\cos$ is even: $\sin(-\theta) = -\sin\theta$, $\cos(-\theta) = \cos\theta$
 * **Bounded:** Both always stay between $-1$ and $1$
 * **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
+</div>
 
+<div class="md">
 ## Positional Embeddings with Sine and Cosine
 
 The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:
 </div>
 
+<div class="topic-block" data-optionaltitle="The sinusoidal positional encoding formula" data-mathlevel="55">
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="30" data-optionaltitle="Concrete Example: Nudging the “King”">
 This gives each position a distinct pattern the model can learn to interpret.
 
 ## Concrete Example: Nudging the “King”
@@ -119,7 +126,9 @@ $$\text{king} = [1.688, -0.454, 0, 0]$$
 When “king” is at **Position 1**, we calculate a PE vector and add it. This “nudges” the king's position in 4D space.
 </div>
 
+<div class="topic-block" data-optionaltitle="Adding the PE vector to the word vector" data-mathlevel="30">
 $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{\text{pos}1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
+</div>
 
 <div style="margin-bottom: 20px; font-family: sans-serif;">
     <strong>Move “king” to a different position:</strong> 
@@ -131,7 +140,7 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
 
 <div id="pe-viz-container" style="overflow-x: auto; background: var(--mn-surface, white); border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Why do some lines seem straight?">
 ### Why do some lines seem straight?
 
 You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines. This is intentional:
@@ -141,7 +150,9 @@ You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** an
 * **The Purpose:** The fast waves help the model distinguish between immediate neighbors, while the slow waves act like a “slow clock,” helping the model track position across very long sequences.
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="Positional Encoding Creates a Manifold, Not Just Labels">
 ## Positional Encoding Creates a Manifold, Not Just Labels
 
 The wave plots above show each dimension's projection individually, flat curves on a screen. But the PE formula actually maps each position to a point on a **high-dimensional helix**. The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:

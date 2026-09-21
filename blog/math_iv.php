@@ -54,11 +54,11 @@ math: 90
 @media(max-width:820px){.af-grid,.af-grid.wide{grid-template-columns:1fr}}
 </style>
 
-<div class="md" data-lesson-id="math-iv">
+<div class="md" data-lesson-id="math-iv" data-mathlevel="40">
 **The one-paragraph story.** Every "movement" of data — a linear layer $y = Wx + b$, an image warp, a camera transform — is a *map of space*. This chapter catalogs the simplest such maps (**affine**: linear + translation), then introduces the first non-affine move (**the fold**), which is exactly what a ReLU neuron does. The payoff comes at the end: two rings chained like a chain link (the **Hopf link**) that *no* affine motion can pull apart — but one fold, into a higher dimension, unthreads them. That is the geometry every classifier lives by.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Affine maps">
 ## Affine maps
 
 ### Linear maps aren't enough
@@ -74,7 +74,7 @@ $$
 You've met it before: your first neuron $\hat{y} = ax + b$ (<a href="minimalneuron">Neuron</a>) is a 1-D affine map. Every linear layer $y = Wx + b$ is affine in high dimensions. This chapter makes that a full geometry.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="What affine maps preserve (and what they don't)">
 ### What affine maps preserve (and what they don't)
 
 An affine map is the most general map that sends **straight lines to straight lines**. Precisely: it preserves lines, parallelism, and the ratios in which a point divides a segment. It generally breaks lengths, angles, areas, and turns circles into ellipses.
@@ -90,7 +90,7 @@ Three facts we'll lean on repeatedly:
 **Descartes** made points into coordinates (1637) \cite[Descartes, 1637]{descartesgeometrie}. **Grassmann**'s *Ausdehnungslehre* (1844) and **Möbius**' barycentric work then split a point into a fixed origin plus a free direction — exactly the $M\mathbf{x} + \mathbf{t}$ form \cite{mobiusband}. **Riemann's** 1854 habilitation sorted geometry into a ladder — **affine ⊂ similarity ⊂ Euclidean** \cite[Riemann, 1854]{riemann1854raum} — each rung defined by what its transformations preserve; the affine rung measures *nothing* (no distances, no angles) and keeps exactly lines, parallelism, and ratios \cite{affine_geometry_wiki}. The word *affine* is Latin *affinis* ("related, connected"); it entered mathematics via **Euler** (1748) \cite[Euler, 1748]{euler1748introductio}, and **Klein's** 1948 survey credits the name "affine transformation" to Möbius and Gauss \cite[Klein, 1948]{klein1948geometry}. Affine maps *keep things related* — collinearity, parallelism, ratios — even when they break lengths and angles.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Homogeneous coordinates: the trick that makes it a matrix">
 ### Homogeneous coordinates: the trick that makes it a matrix
 
 Matrix multiplication can't express $M\mathbf{x} + \mathbf{t}$ directly — there's no place for the $+\mathbf{t}$. Fix: **add a coordinate that's always 1**.
@@ -123,7 +123,7 @@ A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ \
 | Möbius | angles, circles/lines | 6 (real) |
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The image is a matrix">
 ### The image is a matrix
 
 Take the simplest picture worth looking at: an **8×8 checkerboard**. It *is* an $8\times 8$ matrix of 0s and 1s:
@@ -137,7 +137,7 @@ A checkerboard hides no texture, so every distortion shows: a shear leans the sq
 To warp an image by an affine map: for every output pixel $\mathbf{q}$, ask *which source pixel lands here?* The answer is $\mathbf{p} = A^{-1}\mathbf{q}$. This is **inverse mapping**: every output pixel gets exactly one value. (Forward mapping — pushing source pixels out — leaves holes.) When $\mathbf{p}$ falls between pixels: **nearest neighbour** (crisp 0/1) or **bilinear** (smooth 0-to-1 blend along seams).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Hands-on: the affine machine">
 ## Hands-on: the affine machine
 
 ### The 2D affine machine
@@ -182,7 +182,7 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 	<div id="af2d-status" class="af-status"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The 3D affine machine">
 ### The 3D affine machine
 
 Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volume*. A cube stays a parallelepiped — corners to corners, edges to edges, each face a parallelogram. The ghost cube shows where things started; the dotted line follows the tracked corner from $p$ to $M\cdot p$. Click any corner to track it.
@@ -206,7 +206,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 	<div id="af3d-status" class="af-status"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="The fold">
 ## The fold
 
 ### The first non-affine move
@@ -234,7 +234,7 @@ The crease is the hyperplane $\hat{\mathbf{n}} \cdot \mathbf{p} = c$. Points on 
 **The pieces are still affine.** On each side of the crease the map is a plain matrix. The fold is a *piecewise*-affine map — two affine matrices glued along a crease.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The 2D fold machine">
 ### The 2D fold machine
 
 The same 0/1 checkerboard. But a fold *cannot be inverted* — a point in the image has zero or two preimages. The right panel shows the fold as **bent paper**: the near half stays flat, the far half rotated up about the crease by $\varphi = \arccos(1-\lambda)$.
@@ -286,7 +286,7 @@ The bent paper's flat shadow (its projection onto the crease plane) is exactly t
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Separating a ring with one fold">
 ### Separating a ring with one fold
 
 Now use the fold for something. The textbook problem that **no straight cut can solve**: a **circle inside a circle** — an inner disk, one class, and an outer annulus, the other. No line separates them: any line that misses the inner disk still cuts the outer annulus, so outer points always land on *both* sides.
@@ -335,7 +335,7 @@ That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold i
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="The move no homeomorphism can do">
 ## Unthreading a chain
 
 ### The move no homeomorphism can do
@@ -403,7 +403,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 * **Folding as a map.** Paper-folding mathematics proves that any straight-sided shape can be cut from one sheet with a single straight cut after folding \cite[Wikipedia, fold-and-cut theorem]{foldandcut_wiki}. The neural-network side of the same idea: linear regions (Montúfar et al. 2014 \cite{montufar2014regions}), folding as the separability tool (Keup & Helias 2022 \cite{keup2022origami}), depth via folding (Amrami & Goldberg 2021 \cite{amrami2021depth}), and a quantitative folding measure (Lewandowski et al. 2025 \cite{lewandowski2025spacefolds}).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Where these maps show up (spoiler: everywhere)">
 ## Where these maps show up (spoiler: everywhere)
 
 - **Every linear layer is affine.** $y = Wx + b$ *is* $f(x) = Mx + t$. Delete the nonlinearities and a whole network collapses into a single affine map (composition closes). That collapse is *why* activation functions exist, as the <a href="minimalneuron">Neuron</a> and <a href="origami">Origami</a> chapters argue from the other side.
@@ -414,7 +414,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 - **Interpretability probes** (logit lens, tuned lens) are literally learned affine maps from a hidden state to the output (see the <a href="fact_lookup">Fact Lookup</a> and <a href="mechanistic_interpretability">Mechanistic Interpretability</a> chapters).
 </div>
 
-<div class="af-callout md">
+<div class="af-callout md" data-mathlevel="45">
 **In one glance.**
 
 - **Affine = lines stay lines.** $f(x) = Mx + t$ is the most general motion that does that.

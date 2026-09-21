@@ -9,6 +9,7 @@ order: 2
 color: emerald
 topics: architecture, math-iii, deep-learning, interpretability
 tags: math-heavy, logic-heavy
+math: 50
 -->
 
 <style>
@@ -42,7 +43,7 @@ tags: math-heavy, logic-heavy
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Why a Straight Line Is Not Enough">
 ## Why a Straight Line Is Not Enough
 
 In the previous chapter we saw that a deep network is a **composition of many simple
@@ -111,7 +112,7 @@ Below you can drag the separating line yourself and feel why the egg resists it.
 	<div class="og-out" id="og-nonsep-out"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Two Tools of a Layer: the Anvil and the Hammer">
 ## The Two Tools of a Layer: the Anvil and the Hammer
 
 Every layer does **two** things in sequence:
@@ -153,7 +154,7 @@ class. So how does a network ever get at an "island" class that is completely su
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Key Idea: Fold, Don't Crush">
 ## The Key Idea: Fold, Don't Crush
 
 The crucial observation is about **unused dimensions**. In a real network the layers are
@@ -194,7 +195,7 @@ Suddenly a flat horizontal line separates them.
 	<div class="og-out" id="og-fold1d-out"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50">
 Now scale the picture up. The famous **2D egg** (a ring inside a ring) can be solved by a
 *single* hidden layer of just **three** ReLU neurons. Each neuron is a flat hyperplane
 tilted at $120^\circ$ to the others; their ReLU outputs are stacked into a new **third**
@@ -290,7 +291,7 @@ Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and
 **Why it matters here.** Every one of these is a *piecewise-isometric fold of space* — exactly what a ReLU layer does. Computational origami proves what a fold can and can't do; the network borrows the vocabulary and turns it into a classifier.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Deep Networks: an Origami Cascade">
 ## Deep Networks: an Origami Cascade
 
 A deep network does not fold once and stop. **Each layer folds the already-folded object
@@ -343,7 +344,7 @@ plays only a minor role in real, wide networks — and it is consistent with the
 	<div class="og-out" id="og-shear-out"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Reading the Folds Out of a Trained Network">
 ## Reading the Folds Out of a Trained Network
 
 All of the above is a story about *what a network could do*. How do we check that a
@@ -460,7 +461,7 @@ barely does:
 	<div id="og-silence" style="height:260px; margin-top:12px"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Answer">
 ## The Answer
 
 Put all the pieces together and the paper's central claim is a clean one:

@@ -9,6 +9,7 @@ order: 1
 color: rose
 topics: programming, architecture, training
 tags: code-heavy
+math: 65
 -->
 
 <div class="md">
@@ -29,7 +30,7 @@ Stage 3: **Reasoning RL** (optional) teaches it to think longer on hard problems
 The total post-training cost is typically **1–10% of pretraining** but produces most of the perceived improvement in helpfulness.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Stage 1: Supervised Fine-Tuning (SFT)">
 ## Stage 1: Supervised Fine-Tuning (SFT)
 
 SFT trains the base model on **instruction–response pairs**:
@@ -64,7 +65,7 @@ A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.
 
 <div id="sft-viz" style="max-width:880px; margin:1em auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Stage 2: Reward Modeling (for RLHF)">
 ## Stage 2: Reward Modeling (for RLHF)
 
 For PPO-based RLHF, you need a **reward model** (RM). Collect human preferences over pairs of model outputs, then train a classifier:
@@ -86,7 +87,7 @@ $$
 **Reward hacking** (see the <a href="reinforcement_learning">Reinforcement Learning chapter</a>) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Stage 3a: RLHF with PPO">
 ## Stage 3a: RLHF with PPO
 
 The InstructGPT pipeline \cite[Ouyang et al., 2022]{ouyang2022instructgpt}:
@@ -113,7 +114,7 @@ $$
 By 2025, most frontier labs use PPO **only** for the final “alignment tax” refinement; primary alignment is now done with DPO-family methods.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Stage 3b: DPO and the Preference Optimization Family">
 ## Stage 3b: DPO and the Preference Optimization Family
 
 DPO \cite[Rafailov et al., 2023]{rafailov2023dpo} showed that the RLHF objective has a closed-form solution. The implicit reward is:
@@ -150,7 +151,7 @@ DPO matches PPO on alignment benchmarks while being 5–10× simpler to implemen
 The choice in 2025: **DPO with length normalization** or **SimPO** for most cases.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="35" data-optionaltitle="Stage 4: GRPO for Reasoning">
 ## Stage 4: GRPO for Reasoning
 
 GRPO (Group Relative Policy Optimization) \cite[Shao et al., 2024]{shao2024grpo} is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
@@ -195,7 +196,7 @@ A 2024 frontier-lab pattern:
 This iterative DPO produces stronger alignment than offline DPO (where preferences are static). It is the standard for state-of-the-art open-source models.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="LoRA and Parameter-Efficient Fine-Tuning">
 ## LoRA and Parameter-Efficient Fine-Tuning
 
 Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). **Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:
@@ -209,7 +210,9 @@ W' = W + \alpha \cdot BA
 $$
 
 With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).
+</div>
 
+<div class="md">
 ### QLoRA \cite[Dettmers et al., 2023]{dettmers2023qlora}
 
 Combines 4-bit quantization of the base model with LoRA adapters in fp16. A 70B QLoRA fine-tune fits on a single 48 GB GPU.

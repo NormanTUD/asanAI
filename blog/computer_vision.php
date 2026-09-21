@@ -25,7 +25,9 @@ The idea of hierarchical visual feature detection was first introduced by \citea
 * **Local Connectivity:** Cells respond only to small portions of the visual field (Receptive Fields).
 * **Feature Hierarchy:** Simple features (edges) are combined to form complex features.
 * **Pooling/Invariance:** The concept of complex cells corresponds to “Max-Pooling” in modern architectures, achieving translation invariance.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="What is a Convolution?">
 ## What is a Convolution?
 
 A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
@@ -44,7 +46,9 @@ In one sentence, Olah captures the whole operation:
 > as a weighted sum of the pixels it floats over.
 
 \cite[Olah, 2014]{colah2014conv} Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement \cite[Olah, 2014]{colah2014conv}. Reusing one component across many positions is **weight tying** in a vision setting \cite[Olah, 2015]{colah2015types}. Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs \cite[Olah, 2014]{colah2014conv}.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="Why Does This Matter for AI?">
 ## Why Does This Matter for AI?
 
 In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
@@ -54,7 +58,9 @@ In **Deep Learning**, the paradigm shifts completely:
 * **Kernels are Learnable Parameters:** Just as a Dense layer has weights adjusted during training, a CNN treats every number in the kernel as a **trainable weight**. The network discovers, through gradient descent, which filter values best extract useful features from the data.
 * **Feature Extraction:** Through backpropagation, the network learns to detect simple edges in early layers and progressively more complex shapes (eyes, wheels, letters) in deeper layers, all without human intervention.
 * **The Convolution Operation:** The math you see when hovering, multiplying a window of pixels by a matrix of weights, is exactly what happens billions of times inside a GPU when an AI processes an image.
+</div>
 
+<div class="md">
 ## Understanding the Preset Filters
 
 * **Sharpen:** Amplifies the difference between a pixel and its neighbors, enhancing fine detail and high-frequency information.
@@ -171,7 +177,7 @@ The more layers, the more abstract and complex the representations become. Howev
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Building the classifier: the full CNN pipeline">
 ## Building the classifier: the full CNN pipeline
 
 The convolution explorer above shows a single filter. A real classifier stacks many of them, then bridges the gap from a 2D grid of features to a final class probability.
