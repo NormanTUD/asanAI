@@ -1096,14 +1096,14 @@ window.bibData = {
 		title: "La Géométrie (appendix to Discours de la méthode)",
 		author: "René Descartes",
 		year: 1637,
-		url: "https://en.wikisource.org/wiki/Discourse_on_Method/Part_IV",
+		url: "https://en.wikisource.org/wiki/Discourse_on_Method",
 		alternativetitle: "La Géométrie"
 	},
 	"desarguesbrouillon": {
 		title: "Brouillon project d'une atteinte aux evenemens des rencontres du cône avec un plan",
 		author: "Gérard Desargues",
 		year: 1639,
-		url: "https://en.wikipedia.org/wiki/André_Desargues",
+		url: "https://en.wikipedia.org/wiki/Desargues",
 		alternativetitle: "Brouillon Project"
 	},
 	"eulerbridges": {

@@ -989,7 +989,8 @@
 		hover: null, hoverQueued: false, hoverPre: [],
 		x1d: 1.3, c1d: 1.0,
 		demo: [[0.15, 0.2], [0.85, 0.7]],
-		yaw3d: 0.55, pitch3d: 0.5, drag3d: null
+		yaw3d: 0.55, pitch3d: 0.5, drag3d: null,
+		zoom: 1, wcX: 0.5, wcY: 0.5, zoom3d: 1
 	};
 
 	const PRESETS_F2 = [
@@ -1012,11 +1013,14 @@
 		const srcCtx = srcC.getContext('2d'), outCtx = outC.getContext('2d'), stripCtx = stripC ? stripC.getContext('2d') : null;
 		if (!srcCtx || !outCtx) { showLabError('fold-2d', new Error('Canvas 2D context unavailable')); return; }
 		const size = srcC.width;
-		const span = F2.winEnd - F2.win;
-		const w2px = function (x) { return (x - F2.win) / span * size; };
-		const w2py = function (y) { return (F2.winEnd - y) / span * size; };
-		const px2w = function (px) { return F2.win + (px / size) * span; };
-		const py2w = function (py) { return F2.winEnd - (py / size) * span; };
+		const baseSpan = F2.winEnd - F2.win;
+		const curSpan = function () { return baseSpan / F2.zoom; };
+		const curWinX = function () { return F2.wcX - curSpan() / 2; };
+		const curMaxY = function () { return F2.wcY + curSpan() / 2; };
+		const w2px = function (x) { return (x - curWinX()) / curSpan() * size; };
+		const w2py = function (y) { return (curMaxY() - y) / curSpan() * size; };
+		const px2w = function (px) { return curWinX() + (px / size) * curSpan(); };
+		const py2w = function (py) { return curMaxY() - (py / size) * curSpan(); };
 		const n2 = function () { return Fold.normal2(F2.theta * Math.PI / 180); };
 
 		function grid(ctx, P) {
@@ -1071,9 +1075,9 @@
 				for (let i = 0; i < F2.N; i++) {
 					const u0 = i / F2.N, u1 = (i + 1) / F2.N, v0 = j / F2.N, v1 = (j + 1) / F2.N;
 					srcCtx.fillStyle = rgbStr(((i + j) % 2) ? P.c1 : P.c0);
-					srcCtx.fillRect(w2px(u0), w2py(v1), (u1 - u0) / span * size, (v1 - v0) / span * size);
+					srcCtx.fillRect(w2px(u0), w2py(v1), (u1 - u0) / curSpan() * size, (v1 - v0) / curSpan() * size);
 				}
-			srcCtx.strokeStyle = P.line; srcCtx.strokeRect(w2px(0), w2py(1), size / span, size / span);
+			srcCtx.strokeStyle = P.line; srcCtx.strokeRect(w2px(0), w2py(1), size / curSpan(), size / curSpan());
 			/* demo line crossing the crease */
 			srcCtx.strokeStyle = P.cyan; srcCtx.lineWidth = 1.5;
 			srcCtx.beginPath();
@@ -1415,6 +1419,23 @@
 			}
 		});
 		outC.addEventListener('mouseleave', function () { F2.hover = null; updateHover(); });
+		function wheelZoom2d(e) {
+			e.preventDefault();
+			const r = e.currentTarget.getBoundingClientRect();
+			if (r.width < 5) return;
+			const mx = (e.clientX - r.left) * (e.currentTarget.width / r.width);
+			const my = (e.clientY - r.top) * (e.currentTarget.height / r.height);
+			const s0 = curSpan();
+			const wx = px2w(mx), wy = py2w(my);
+			F2.zoom = Math.max(0.4, Math.min(8, F2.zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12)));
+			const s1 = curSpan();
+			F2.wcX = wx - (mx / size - 0.5) * s1;
+			F2.wcY = wy + (my / size - 0.5) * s1;
+			redraw();
+			updateHover();
+		}
+		srcC.addEventListener('wheel', wheelZoom2d, { passive: false });
+		outC.addEventListener('wheel', wheelZoom2d, { passive: false });
 		if (stripC) stripC.addEventListener('click', function (e) {
 			const r = stripC.getBoundingClientRect();
 			if (r.width < 5) return;
@@ -1455,7 +1476,7 @@
 			function proj3(v) {
 				const depth = v[2] + CAM;
 				if (depth < 0.08) return null;
-				const s = S0 * CAM / depth;
+				const s = S0 * F2.zoom3d * CAM / depth;
 				return [cx3 + v[0] * s, cy3 - v[1] * s, depth];
 			}
 			function drawFold3d() {
@@ -1515,6 +1536,10 @@
 			});
 			c3.addEventListener('pointerup', function () { F2.drag3d = null; });
 			c3.addEventListener('pointercancel', function () { F2.drag3d = null; });
+			c3.addEventListener('wheel', function (e) {
+				e.preventDefault();
+				F2.zoom3d = Math.max(0.4, Math.min(6, F2.zoom3d * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+			}, { passive: false });
 			let errStreak = 0;
 			function frame3() {
 				if (document.visibilityState !== 'visible') { requestAnimationFrame(frame3); return; }
@@ -1937,6 +1962,7 @@
 		auto: true, drag: null,
 		showCores: true,
 		lk: 1, min: 0.2,
+		zoom: 1,
 		CAM: 4.4, S0: 150
 	};
 	const U3RHO = 0.08, U3NU = 40, U3NV = 12, U3NC = 200;
@@ -1990,7 +2016,7 @@
 		function proj(v) {
 			const depth = v[2] + U3.CAM;
 			if (depth < 0.08) return null;
-			const s = U3.S0 * U3.CAM / depth;
+			const s = U3.S0 * U3.zoom * U3.CAM / depth;
 			return [cx + v[0] * s, cy - v[1] * s, depth];
 		}
 		/* object point → folded (+ separated for ring B, + affine) → view-rotated */
@@ -2016,6 +2042,18 @@
 				q = [r[0] / r[3], r[1] / r[3], r[2] / r[3]];
 			}
 			return q;
+		}
+		/* ring-B point with an explicit separation amount (for the ghost + arrow) */
+		function bMapped(p, sep) {
+			const n = n3();
+			let q = Fold.apply3(p, n, U3.c, U3.lam);
+			if (sep > 1e-9) q = [q[0] - sep * n[0], q[1] - sep * n[1], q[2] - sep * n[2]];
+			if (U3.affineM) {
+				const r = Affine.apply4(U3.affineM, [q[0], q[1], q[2], 1]);
+				if (!isFinite(r[0]) || Math.abs(r[3]) < 1e-6) return null;
+				q = [r[0] / r[3], r[1] / r[3], r[2] / r[3]];
+			}
+			return u3dViewRotate(q);
 		}
 
 		function ringColA(P) { return P.dark ? [124, 156, 255] : [79, 70, 229]; }
@@ -2128,8 +2166,44 @@
 				drawCoreLine(Hopf.coreA, ringColA(P), false);
 				drawCoreLine(Hopf.coreB, ringColB(P), true);
 			}
+			/* separation reads as a transformation: ghost of B before the pull + the translation arrow */
+			if (U3.sep > 1e-3) {
+				ctx.strokeStyle = P.ghost; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+				ctx.beginPath(); let started = false;
+				for (let i = 0; i <= 96; i++) {
+					const pr = proj(bMapped(Hopf.coreB(i / 96 * 2 * Math.PI), 0));
+					if (!pr) { started = false; continue; }
+					if (!started) { ctx.moveTo(pr[0], pr[1]); started = true; }
+					else ctx.lineTo(pr[0], pr[1]);
+				}
+				ctx.stroke(); ctx.setLineDash([]);
+				let a0 = [0, 0, 0], a1 = [0, 0, 0], na = 0, nb = 0;
+				for (let i = 0; i < 24; i++) {
+					const p = Hopf.coreB(i / 24 * 2 * Math.PI);
+					const m0 = bMapped(p, 0), m1 = bMapped(p, U3.sep);
+					if (m0) { a0 = [a0[0] + m0[0], a0[1] + m0[1], a0[2] + m0[2]]; na++; }
+					if (m1) { a1 = [a1[0] + m1[0], a1[1] + m1[1], a1[2] + m1[2]]; nb++; }
+				}
+				if (na && nb) {
+					a0 = [a0[0] / na, a0[1] / na, a0[2] / na];
+					a1 = [a1[0] / nb, a1[1] / nb, a1[2] / nb];
+					const p0 = proj(a0), p1 = proj(a1);
+					if (p0 && p1) {
+						const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+						ctx.strokeStyle = P.warn; ctx.fillStyle = P.warn; ctx.lineWidth = 2.5;
+						ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+						ctx.beginPath();
+						ctx.moveTo(p1[0], p1[1]);
+						ctx.lineTo(p1[0] - 11 * Math.cos(ang - 0.4), p1[1] - 11 * Math.sin(ang - 0.4));
+						ctx.lineTo(p1[0] - 11 * Math.cos(ang + 0.4), p1[1] - 11 * Math.sin(ang + 0.4));
+						ctx.closePath(); ctx.fill();
+						ctx.font = '11px monospace'; ctx.textAlign = 'left';
+						ctx.fillText('B pulled by \u2212n\u0302\u00B7sep — a plain translation', 10, 18);
+					}
+				}
+			}
 			ctx.fillStyle = P.ink2; ctx.font = '11px monospace'; ctx.textAlign = 'left';
-			ctx.fillText('drag to rotate', 10, H - 10);
+			ctx.fillText('drag to rotate · scroll to zoom', 10, H - 10);
 		}
 
 		function computeLink() {
@@ -2283,6 +2357,10 @@
 		});
 		c.addEventListener('pointerup', function () { U3.drag = null; });
 		c.addEventListener('pointercancel', function () { U3.drag = null; });
+		c.addEventListener('wheel', function (e) {
+			e.preventDefault();
+			U3.zoom = Math.max(0.4, Math.min(6, U3.zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+		}, { passive: false });
 
 		renderChecks($('unlink3d-checks'), runUnlinkSelfTests());
 		syncU3dSliders(); labelU3dSliders();
