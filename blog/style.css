@@ -9735,6 +9735,31 @@ a.tdp-chip.tdp-chip-met:hover {
 	border: 1px dashed var(--mn-border);
 	color: var(--mn-text-secondary);
 }
+.topic-deps-progress {
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border);
+	color: var(--mn-text-secondary);
+}
+.tdp-line-progress { font-size: 0.82rem; }
+.tdp-line-progress .tdp-icon { color: var(--mn-accent); }
+.tdp-pos { font-weight: 600; color: var(--mn-text); white-space: nowrap; }
+.tdp-bar {
+	display: inline-block;
+	width: 72px;
+	height: 5px;
+	border-radius: 99px;
+	background: var(--mn-border);
+	vertical-align: middle;
+	overflow: hidden;
+	margin: 0 2px;
+}
+.tdp-bar-fill {
+	display: block;
+	height: 100%;
+	border-radius: 99px;
+	background: var(--mn-accent);
+	transition: width 0.3s ease;
+}
 
 .topic-learned-btn {
 	display: inline-flex;

@@ -34,7 +34,7 @@ tags: math-heavy, logic-heavy
 </style>
 
 <div class="md">
-**Start with the paper.** In this book *origami* is not a metaphor — it is the literal geometry of a ReLU network. One ReLU neuron is one flat *fold*; a stack of layers is a stack of folds; the final linear readout is the single *straight cut* that finishes the job. Here is the twist: fold a real sheet a handful of times and it is a brick, because the thickness doubles every fold. A network folds the same space hundreds of times for free — there is no thickness to fight. **Depth is free folding.** The chapter makes this precise; the real field behind it, **computational origami**, is in the *Origins* box.
+**Start with the paper.** Here is the unexpected part: a ReLU network is, layer by layer, a paper-fold. One ReLU neuron is one *fold*, a stack of layers is a stack of folds, and the final linear readout is the single *straight cut* that finishes the job. Origami is the hidden basis of the network — this chapter makes the match exact. The real field behind it, **computational origami**, is in the *Origins* box.
 
 <figure style="max-width:640px; margin:1.2em auto; text-align:center;">
 	<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />

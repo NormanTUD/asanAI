@@ -355,7 +355,7 @@
 			}
 			if (parsed.learned && typeof parsed.learned === 'object') {
 				Object.keys(parsed.learned).forEach(function (k) {
-					if (LESSON_DEPS.hasOwnProperty(k) && parsed.learned[k]) out.learned[k] = true;
+					if (typeof k === 'string' && parsed.learned[k]) out.learned[k] = true;
 				});
 			}
 		}
@@ -414,7 +414,7 @@
 	}
 
 	function toggleLearned(lessonId) {
-		if (!LESSON_DEPS.hasOwnProperty(lessonId)) return;
+		if (!lessonId || (!LESSON_DEPS.hasOwnProperty(lessonId) && !lessonMeta(lessonId))) return;
 		pushHistory();
 		const cur = activePref();
 		if (cur.learned[lessonId]) {
@@ -490,6 +490,33 @@
 		}).join(' ');
 	}
 
+	/* ── course order (reading path + progress) ─────────────────
+	   PHP ships the full linear course as window.__moduleNavData.modules
+	   (ordered by part + order) with a `current` index on every lesson
+	   page. This lets every lesson — not just the math spine — show where
+	   the reader is and what comes next. */
+	var _courseOrder = null;
+	function courseOrder() {
+		if (_courseOrder) return _courseOrder;
+		_courseOrder = (window.__moduleNavData && window.__moduleNavData.modules) || [];
+		return _courseOrder;
+	}
+	function courseIndexOf(lessonId) {
+		if (!lessonId) return -1;
+		const mods = courseOrder();
+		for (let i = 0; i < mods.length; i++) {
+			const s = mods[i].slug;
+			if (s === lessonId || s.replace(/_/g, '-') === lessonId) return i;
+		}
+		return -1;
+	}
+	function countLearned() {
+		const learned = activePref().learned;
+		return courseOrder().reduce(function (n, m) {
+			return n + (learned[m.slug] || learned[m.slug.replace(/_/g, '-')] ? 1 : 0);
+		}, 0);
+	}
+
 	/** Keep the learned button pinned to the END of the lesson content.
 	    Called after every applyVisibility (which runs post-renderMarkdown,
 	    once #sources-section / #footnotes-section exist) and on init. It is a
@@ -503,78 +530,112 @@
 	}
 
 	function showLearnedUI() {
-		const lessonId = getLessonId();
-		if (!lessonId || !LESSON_DEPS.hasOwnProperty(lessonId)) return;
+		// Guarded: this now runs on EVERY lesson, so a hiccup here must
+		// never take the lesson down with it (worst case: no learned UI).
+		try {
+			const lessonId = getLessonId();
+			if (!lessonId) return;
 
-		const contents = document.getElementById('contents');
-		if (!contents) return;
+			const contents = document.getElementById('contents');
+			if (!contents) return;
 
-		// Green prerequisite indicator (top of content). Idempotent: we
-		// create it once and only swap its class/text afterwards, so it
-		// never reflows the top of the page on re-render.
-		const deps = LESSON_DEPS[lessonId] || [];
-		const met = depsMet(lessonId);
-		const nMet = deps.filter(function (d) { return isLearned(d); }).length;
-		const unlocks = unlocksOf(lessonId);
-		let pill = document.getElementById('topic-deps-pill');
-		if (deps.length > 0 || unlocks.length > 0) {
-			if (!pill) {
-				pill = document.createElement('div');
-				pill.id = 'topic-deps-pill';
-				contents.insertBefore(pill, contents.firstChild);
-				pill.addEventListener('click', function (e) {
-					const mark = (e.target && e.target.closest) ? e.target.closest('.tdp-mark') : null;
-					if (!mark) return;
-					const d = mark.getAttribute('data-mark-dep');
-					if (!d || isLearned(d)) return;
-					toggleLearned(d);   // → fireChange → applyVisibility (re-reveals gated blocks)
-					showLearnedUI();   // refresh the pill + button
+			const pos = courseIndexOf(lessonId);
+			const isSpine = LESSON_DEPS.hasOwnProperty(lessonId);
+			const inCourse = pos >= 0;
+			if (!inCourse && !isSpine) return;
+
+			const mods = courseOrder();
+			const total = mods.length;
+			const next = (pos >= 0 && pos + 1 < total) ? mods[pos + 1] : null;
+			const done = countLearned();
+
+			const deps = isSpine ? (LESSON_DEPS[lessonId] || []) : [];
+			const met = isSpine ? depsMet(lessonId) : false;
+			const nMet = deps.filter(function (d) { return isLearned(d); }).length;
+			const unlocks = isSpine ? unlocksOf(lessonId) : [];
+
+			// Status pill (top of content). Idempotent: created once, only
+			// its class/text are swapped afterwards, so it never reflows the
+			// top of the page on re-render.
+			let pill = document.getElementById('topic-deps-pill');
+			if (inCourse || deps.length > 0 || unlocks.length > 0) {
+				if (!pill) {
+					pill = document.createElement('div');
+					pill.id = 'topic-deps-pill';
+					contents.insertBefore(pill, contents.firstChild);
+					pill.addEventListener('click', function (e) {
+						const mark = (e.target && e.target.closest) ? e.target.closest('.tdp-mark') : null;
+						if (!mark) return;
+						const d = mark.getAttribute('data-mark-dep');
+						if (!d || isLearned(d)) return;
+						toggleLearned(d);   // → fireChange → applyVisibility (re-reveals gated blocks)
+						showLearnedUI();   // refresh the pill + button
+					});
+				}
+				pill.className = 'topic-deps-pill '
+					+ (isSpine && deps.length > 0 ? (met ? 'topic-deps-met' : 'topic-deps-unmet') : 'topic-deps-progress');
+				let html = '';
+				if (inCourse) {
+					const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+					html += '<span class="tdp-line tdp-line-progress"><span class="tdp-icon" aria-hidden="true">\u25B8</span><span class="tdp-body">'
+						+ '<span class="tdp-pos">Lesson ' + (pos + 1) + ' of ' + total + '</span> '
+						+ '<span class="tdp-bar" aria-hidden="true"><span class="tdp-bar-fill" style="width:' + pct + '%"></span></span> '
+						+ (next
+							? 'Next up: <a class="tdp-chip" href="' + escAttr(next.url) + '">' + escAttr(next.title) + '</a>'
+							: 'You&rsquo;re at the end of the course.')
+						+ '</span></span>';
+				}
+				if (isSpine && deps.length > 0) {
+					html += met
+						? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
+						: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap the <b>✓</b> next to each to unlock the full depth.</span></span>';
+				}
+				if (isSpine && unlocks.length > 0) {
+					html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
+						+ (isLearned(lessonId) ? 'You&rsquo;ve unlocked ' : 'Once marked learned, this unlocks ')
+						+ unlocks.map(lessonLink).join(' ') + '.</span></span>';
+				}
+				pill.innerHTML = html;
+			} else if (pill) {
+				pill.remove();
+			}
+
+			// "Mark as learned" button (bottom of content). Created once and
+			// pinned to the end of #contents (after footnotes/sources). We
+			// only update its label/state here; position is handled by
+			// settleLearnedButton() so a click never moves it (no scroll jump).
+			const learned = isLearned(lessonId);
+			let btn = document.getElementById('topic-learned-btn');
+			if (!btn) {
+				btn = document.createElement('button');
+				btn.type = 'button';
+				btn.id = 'topic-learned-btn';
+				btn.addEventListener('click', function () {
+					toggleLearned(lessonId);
+					showLearnedUI();
 				});
+				settleLearnedButton();
 			}
-			pill.className = 'topic-deps-pill ' + (deps.length > 0 && met ? 'topic-deps-met' : 'topic-deps-unmet');
-			let html = '';
-			if (deps.length > 0) {
-				html += met
-					? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
-					: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap the <b>✓</b> next to each to unlock the full depth.</span></span>';
-			}
-			if (unlocks.length > 0) {
-				html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
-					+ (isLearned(lessonId) ? 'You&rsquo;ve unlocked ' : 'Once marked learned, this unlocks ')
-					+ unlocks.map(lessonLink).join(' ') + '.</span></span>';
-			}
-			pill.innerHTML = html;
-		} else if (pill) {
-			pill.remove();
+			btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
+			btn.innerHTML = learned
+				? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
+				: '<span aria-hidden="true">○</span> Mark this lesson as learned';
+		} catch (e) {
+			if (DEBUG) dlog('showLearnedUI error:', e);
 		}
-
-		// "Mark as learned" button (bottom of content). Created once and
-		// pinned to the end of #contents (after footnotes/sources). We only
-		// update its label/state here; position is handled by
-		// settleLearnedButton() so a click never moves it (no scroll jump).
-		const learned = isLearned(lessonId);
-		let btn = document.getElementById('topic-learned-btn');
-		if (!btn) {
-			btn = document.createElement('button');
-			btn.type = 'button';
-			btn.id = 'topic-learned-btn';
-			btn.addEventListener('click', function () {
-				toggleLearned(lessonId);
-				showLearnedUI();
-			});
-			settleLearnedButton();
-		}
-		btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
-		btn.innerHTML = learned
-			? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
-			: '<span aria-hidden="true">○</span> Mark this lesson as learned';
 	}
 
 	function writePref(pref) {
 		const v = encodeURIComponent(JSON.stringify(pref));
-		document.cookie = COOKIE_NAME + '=' + v
-			+ '; path=/; max-age=' + COOKIE_MAX_AGE + '; SameSite=Lax';
 		try { localStorage.setItem(STORAGE_KEY, v); } catch (e) { /* private mode */ }
+		// The cookie is a cross-page fallback, but browsers cap it near
+		// 4 KB. `learned` grows as the reader marks lessons, so only write
+		// the cookie while the payload fits comfortably — localStorage always
+		// holds the full state either way.
+		if (v.length < 3900) {
+			document.cookie = COOKIE_NAME + '=' + v
+				+ '; path=/; max-age=' + COOKIE_MAX_AGE + '; SameSite=Lax';
+		}
 	}
 
 	/** legacy wrappers (still used by helpers that only care about topics) */
