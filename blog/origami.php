@@ -34,6 +34,10 @@ tags: math-heavy, logic-heavy
 </style>
 
 <div class="md">
+**Start with the paper.** *Origami* — the Japanese art of folding flat paper into three-dimensional forms — is, in this book, more than a decorative metaphor. It is the **correct geometry of what a neural network's hidden layers actually do**: each ReLU neuron is one flat *fold*, a stack of layers is a stack of folds, and the classifier's final linear readout is the single *flat cut* that finishes the job. It is a striking fact that a discipline born from paper, patience, and a single square of stock turned out to sit at the very base of modern AI. The chapter below makes that precise; a short history of the real field behind the metaphor — **computational origami** — is tucked into the *Origins* box.
+</div>
+
+<div class="md">
 ## Why a Straight Line Is Not Enough
 
 In the previous chapter we saw that a deep network is a **composition of many simple
@@ -241,6 +245,20 @@ manifold appropriately, and one flat hyperplane can separate *any* class you car
 This is a remarkably concrete way to think about the Universal Approximation Theorem for
 ReLU networks: **universal approximation $\approx$ $N$-dimensional origami + one flat
 cut.**
+</div>
+
+<div class="optional md" data-headline="Origins: the fold as a field (computational origami)">
+The "fold" in this chapter is a neural-network metaphor — but *folding as mathematics and computation* is a genuine, decades-old field, and the metaphor is load-bearing. It is called **computational origami**, and it studies the algorithms and complexity of exactly the objects this chapter draws: crease patterns, folds, and what can be made from a flat sheet.
+
+**Paper-folding geometry.** The roots are in what a *single* fold can construct. **T. Sundara Row** (1893) first collected paper-folding constructions \cite[Mathematics of paper folding]{math_paper_folding_wiki}; **Margherita Piazzola Beloch** (1936) then showed that one special fold — the **Beloch fold** — solves the general cubic \cite[Beloch fold]{beloch_fold_wiki}\cite[Hull, 2011]{hull2011beloch}. That single move is why origami **trisects an angle** and **doubles the cube**, both impossible with ruler and compass: where compass-and-straightedge stops at quadratics, a fold reaches cubics \cite[Hull, 1997]{hull1997origametry}. The full single-fold power is pinned down by the **Huzita–Justin (Huzita–Hatori) axioms** — seven rules, first written by **Jacques Justin** (1986), rediscovered by **Humiaki Huzita** (1989), and shown to be complete by **Robert J. Lang** \cite[Huzita–Hatori axioms]{huzita_justin_wiki}.
+
+**Flat-foldability: two local theorems, one hard problem.** Given a crease pattern, *when* can it fold flat? At a single vertex, two clean rules answer it: **Maekawa's theorem** — mountain and valley folds at a vertex always differ by two (which is also why the faces two-color) \cite[Maekawa's theorem]{maekawa_theorem_wiki}, and **Kawasaki's (Kawasaki–Justin) theorem** — the alternating angles around the vertex sum to 180° \cite[Kawasaki's theorem]{kawasaki_theorem_wiki}. But across many vertices the question becomes computationally wild: **Bern and Hayes (1996)** proved that deciding whether a crease pattern folds flat is **NP-complete** \cite[Mathematics of paper folding]{math_paper_folding_wiki}.
+
+**The computational turn.** Around 1990, **Robert J. Lang** and colleagues began writing code to *design* and *solve* origami instead of folding it by hand \cite[Robert J. Lang]{robert_lang_wiki}. Lang's **TreeMaker** turned a target silhouette into an efficient crease pattern — the first serious computational-origami design tool — and the field crystallized into algorithms and complexity. **Geometric Folding Algorithms** by **Erik** and **Martin Demaine** is the standard reference \cite[Geometric Folding Algorithms]{geometric_folding_algorithms_wiki}; the **fold-and-cut theorem** (any polygonal shape from one straight cut) is its signature existence result \cite[Fold-and-cut problem]{fold_and_cut_problem_wiki}; and **Erik Demaine** and collaborators stand among the field's leading computational origamists, with long lists of universality and NP-completeness results \cite[Erik Demaine]{erik_demaine_site}. A maintained map of the tools and people — TreeMaker, ReferenceFinder, Origamizer, ORIPA, and the Tachi / Mitani / Tsukuba groups — lives on Lang's **computational origami** page \cite[Lang, Computational Origami]{langorigami_computational}.
+
+**From paper to the real world.** The field is not about paper alone. **Rigid origami** — folds treated as hinges on stiff panels — is how satellite solar arrays and telescope mirrors pack flat and bloom in orbit, and the **Miura fold** is the canonical example \cite[Miura fold]{miura_fold_wiki}\cite[Rigid origami]{rigid_origami_wiki}.
+
+**Why it matters here.** Every one of these objects is a *piecewise-isometric fold of space* — the same object this chapter's ReLU layer performs. Computational origami is the field that proves what a fold can and cannot do; the neural network borrows that vocabulary and turns it into a classifier.
 </div>
 
 <div class="md">

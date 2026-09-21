@@ -33,7 +33,7 @@ This is a journey through the evolution of human thought where technical milesto
 
 **This is not:**
 
-- a **programming tutorial** — you will not set up a dev environment or learn to code an AI from scratch;
+- a **programming tutorial** — you will not set up a dev environment;
 - a **"5 quick tips" article** or a list of prompting tricks;
 - a **passive overview** you can skim in one evening.
 

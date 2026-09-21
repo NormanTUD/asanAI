@@ -248,6 +248,111 @@ window.bibData = {
 		alternativetitle: "Morales et al., plasticity in reservoir computing (Neurocomputing 2020)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Computational origami: the fold as a field  (origami.php, "Origins")
+	 *  The real paper-folding mathematics and computer science behind the
+	 *  neural-network folding metaphor: its origins, the flat-foldability
+	 *  theorems, the complexity results, the design tools, and the rigid /
+	 *  space applications.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"math_paper_folding_wiki": {
+		title: "Mathematics of paper folding",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mathematics_of_paper_folding",
+		alternativetitle: "Mathematics of paper folding (Wikipedia)"
+	},
+	"beloch_fold_wiki": {
+		title: "Beloch fold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Beloch_fold",
+		alternativetitle: "Beloch fold (Wikipedia)"
+	},
+	"hull2011beloch": {
+		title: "Solving Cubics with Creases: The Work of Beloch and Lill",
+		author: "Thomas C. Hull",
+		year: 2011,
+		url: "http://origametry.net/papers/amer.math.monthly.118.04.307-hull.pdf",
+		alternativetitle: "Hull, American Mathematical Monthly 118(4):307-315 (2011)"
+	},
+	"hull1997origametry": {
+		title: "A comparison between straight edge and compass constructions and origami",
+		author: "Tom Hull",
+		year: 1997,
+		url: "http://origametry.net/omfiles/geoconst.html",
+		alternativetitle: "Hull, Origametry: origami vs. compass and straightedge (1997)"
+	},
+	"huzita_justin_wiki": {
+		title: "Huzita–Hatori axioms",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Huzita%E2%80%93Hatori_axioms",
+		alternativetitle: "Huzita–Justin / Huzita–Hatori axioms (Wikipedia)"
+	},
+	"kawasaki_theorem_wiki": {
+		title: "Kawasaki's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Kawasaki%27s_theorem",
+		alternativetitle: "Kawasaki's (Kawasaki–Justin) theorem (Wikipedia)"
+	},
+	"maekawa_theorem_wiki": {
+		title: "Maekawa's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Maekawa%27s_theorem",
+		alternativetitle: "Maekawa's theorem (Wikipedia)"
+	},
+	"robert_lang_wiki": {
+		title: "Robert J. Lang",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Robert_J._Lang",
+		alternativetitle: "Robert J. Lang (Wikipedia)"
+	},
+	"geometric_folding_algorithms_wiki": {
+		title: "Geometric Folding Algorithms",
+		author: "Erik D. Demaine, Martin L. Demaine",
+		year: 2007,
+		url: "https://en.wikipedia.org/wiki/Geometric_Folding_Algorithms",
+		alternativetitle: "Demaine & Demaine, Geometric Folding Algorithms (A K Peters, 2007)"
+	},
+	"fold_and_cut_problem_wiki": {
+		title: "Fold-and-cut problem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fold-and-cut_problem",
+		alternativetitle: "Fold-and-cut problem (Wikipedia)"
+	},
+	"erik_demaine_site": {
+		title: "Erik Demaine — Computational Origami",
+		author: "Erik Demaine",
+		year: 2026,
+		url: "https://erikdemaine.org/",
+		alternativetitle: "Erik Demaine, MIT, computational origami (erikdemaine.org)"
+	},
+	"langorigami_computational": {
+		title: "Computational Origami (design tools, analysis, and people)",
+		author: "Robert J. Lang",
+		year: 2018,
+		url: "https://langorigami.com/article/computational-origami/",
+		alternativetitle: "Lang, Computational Origami (langorigami.com)"
+	},
+	"miura_fold_wiki": {
+		title: "Miura fold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Miura_fold",
+		alternativetitle: "Miura fold (Wikipedia)"
+	},
+	"rigid_origami_wiki": {
+		title: "Rigid origami",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rigid_origami",
+		alternativetitle: "Rigid origami (Wikipedia)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
 	 *  carves out the low-energy "useful" slice, and the bridge from
