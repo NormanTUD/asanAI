@@ -10742,10 +10742,29 @@ math {
 	transition: height 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ta-part-hidden-body {
+	display: block;
+	padding: 12px 2px 4px;
+}
+.tph-group { margin-bottom: 16px; }
+.tph-group:last-child { margin-bottom: 4px; }
+.tph-group-label {
+	font-size: 0.76rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--mn-text-muted);
+	margin: 0 2px 8px;
+}
+.tph-group-label .tph-group-icon { margin-right: 5px; opacity: 0.75; }
+.tph-group-label .tph-group-num {
+	font-weight: 400;
+	font-size: 0.72rem;
+	opacity: 0.8;
+}
+.tph-group-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 	gap: 10px;
-	padding: 12px 2px 4px;
 }
 .ta-part-hidden-body .course-tile { opacity: 1; filter: none; pointer-events: auto; }
 

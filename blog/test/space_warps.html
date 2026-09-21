@@ -848,7 +848,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   // Alle Form-Kopien fallen aufeinander (jede kumulierte Spiegelung ist eine Symmetrie der Form)
   // → die sichtbaren Kanten sind genau die gestapelten: blau bei Schritt 0, gelb danach.
   function drawFrags(g2, s, k){
-    const frags=FRAGS[k];
+    const frags=FRAGS[k]||FRAGS[0];
     for(const f of frags){ polyPath(g2, f.poly, s); g2.fillStyle='#f4efe3'; g2.fill(); g2.strokeStyle='#b8ad94'; g2.lineWidth=1.5; g2.stroke(); }
     for(const f of frags){
       const cl=clipToPoly(shape, f.poly);
@@ -926,7 +926,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
     }
     statusText();
   }
-  function setStep(k){ step=Math.max(0,Math.min(4,k)); $('fcStep').value=step; $('vFcStep').textContent=step;
+  function setStep(k){ step=Math.max(0,Math.min(FRAGS.length-1,k)); $('fcStep').value=step; $('vFcStep').textContent=step;
     targetScale=Math.pow(0.86, step); targetRot=step*14; cutState='idle'; cutProg=0; drawFilmstrip(); }
   function setShape(name){ shape=SHAPES[name](); axisList=AXES[name].slice(); const maxF=Math.min(4,axisList.length); step=0; targetScale=1; targetRot=0; cutState='idle'; cutProg=0;
     const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; rebuildFrags(); drawFilmstrip(); }
@@ -934,8 +934,7 @@ renderTeX('fFC', String.raw`\underbrace{\text{Falten}}_{\text{Schichten }1\ldots
   $('fcStep').oninput=e=>setStep(+e.target.value);
   $('fcCut').onclick=()=>{ if(step<1){ alert('Erst falten (Schritt ≥ 1), dann schneidet der eine geraden Schnitt die Form aus.'); return; } cutState='cutting'; cutProg=0; };
   $('fcPrint').onclick=()=>window.print();
-  rebuildFrags();
-  drawFilmstrip();
+  setShape($('fcShape').value);
   (function frame(){ draw(); requestAnimationFrame(frame); })();
 })();
 
