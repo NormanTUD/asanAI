@@ -208,8 +208,8 @@
         <label>Lift-Stärke <span class="val" id="vLift">0.60</span>
           <input id="lift" type="range" min="0" max="1.5" step="0.01" value="0.6">
         </label>
-        <label>Trennebene z = c <span class="val" id="vPlaneC">0.30</span>
-          <input id="planeC" type="range" min="0" max="1" step="0.01" value="0.3">
+        <label>Trennebene z = c <span class="val" id="vPlaneC">0.10</span>
+          <input id="planeC" type="range" min="0" max="1" step="0.01" value="0.1">
         </label>
       </div>
       <div class="formula live" id="fEgg"></div>
@@ -283,8 +283,8 @@
         <label>Faltschärfe <span class="val" id="vFS">1.00</span>
           <input id="fs" type="range" min="0.2" max="2" step="0.01" value="1">
         </label>
-        <label>Trennebene z = c <span class="val" id="vPlaneC2">0.60</span>
-          <input id="planeC2" type="range" min="0" max="2" step="0.01" value="0.6">
+        <label>Trennebene z = c <span class="val" id="vPlaneC2">0.10</span>
+          <input id="planeC2" type="range" min="0" max="2" step="0.01" value="0.1">
         </label>
       </div>
       <div class="legend"><span><span class="dot" style="background:var(--red)"></span>innen</span><span><span class="dot" style="background:var(--blue)"></span>außen</span><span><span class="dot" style="background:var(--accent3)"></span>Trennebene</span><span class="verdict" id="eggVerdict2">—</span></div>
@@ -347,7 +347,7 @@
 <!-- =================== 7. Scheren (ineffizient) =================== -->
 <section id="shear">
   <h2>7 · Alternative (aber ineffizient): Scheren in schmalen, tiefen Netzen</h2>
-  <p class="lead">Ohne <b>freie Dimension</b> (also Schicht nur 2D&nbsp;→&nbsp;2D breit) bleibt nur ein Trick: Stück für Stück <b>in sich selbst</b> falten/abschälen. Das ist möglich, braucht aber <b>sehr viele Schichten</b> (tiefe, schmale Netze) und skaliert schlecht. Im Plot siehst du, wie Masse pro Schicht verschoben wird — aber der Kern bleibt lange festgefahren.</p>
+  <p class="lead">Ohne <b>freie Dimension</b> (Schicht nur 2D&nbsp;→&nbsp;2D breit) gibt es <b>keine neue Achse</b>, in die gefaltet werden kann — kein „Hyperebenen-Wall" wie in Abschnitt&nbsp;5. Jede ReLU-Schicht kann die Daten daher nur <b>in sich selbst knüllen</b>: Die Verteilung wird geschoren und zusammengepresst, aber die <b>radiale Information</b> (rot&nbsp;=&nbsp;innen&nbsp;vs.&nbsp;blau&nbsp;=&nbsp;außen) geht dabei verloren. Spiele die Animation ab: Masse bewegt sich zwar, aber der Kern ist nach beliebig vielen Schichten <b>nicht sauber linear trennbar</b> — genau deshalb ist dieser Weg ineffizient und braucht tiefe, schmale Netze.</p>
   <canvas id="shearCanvas" class="demo" width="940" height="380"></canvas>
   <div class="ctrls">
     <label>Anzahl Schichten <span class="val" id="vLayers">1</span>
@@ -578,9 +578,9 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
       {x:x0,y:y0,z:z0,mode:'markers',type:'scatter3d',marker:{size:2.4,color:COL.red},name:'innen'},
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.6,color:COL.accent3,opacity:.3},name:'Ebene'}
     ],{paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted}},showlegend:false},{displayModeBar:false});
-    const sep = cPl>zOutMax && cPl<zInMax;
+    const sep = cPl>zOutMax && cPl<zInMin;
     const v=$('eggVerdict'); v.textContent = sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
-    renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,0.5-\lVert(x,y)\rVert)}_{\text{hebt den Kern an}},\;\; \text{Trennebene } z=c. \;\; c\in(${f1(zOutMax)},\,${f1(zInMax)}) \Rightarrow \text{trennbar.}`);
+    renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,0.5-\lVert(x,y)\rVert)}_{\text{hebt den Kern an}},\;\; \text{Trennebene } z=c. \;\; \text{trennbar, wenn } c\in(${f1(zOutMax)},\,${f1(zInMin)}).`);
   }
   $('lift').oninput=draw3d; $('planeC').oninput=draw3d; draw3d();
 })();
@@ -588,10 +588,10 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
 /* ================= 4b. Learned rotation + hammer ================= */
 (() => {
   const c=$('rot2d'), ctx=c.getContext('2d');
-  const PHI=50*Math.PI/180; // echte Trennlinie hat Normalenwinkel PHI
+  const PHI=90*Math.PI/180; // echte Trennlinie (Normalenrichtung m) ist um 90° gegen die ReLU-Faltlinie gedreht
   const pts=[];
-  for(let i=0;i<240;i++){ const a=PHI+(Math.random()-0.5)*(80*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
-  for(let i=0;i<240;i++){ const a=PHI+Math.PI+(Math.random()-0.5)*(80*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<240;i++){ const a=PHI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  for(let i=0;i<240;i++){ const a=PHI+Math.PI+(Math.random()-0.5)*(76*Math.PI/180), r=0.3+Math.random()*0.7; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
   // ReLU-Faltlinie: fix = y'-Achse, Normalenrichtung (1,0) -> z=ReLU(x')
   function draw(){
     const thd=+$('rotTh').value, th=thd*Math.PI/180;
@@ -653,10 +653,10 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
 /* ================= 5b. 2D-Ei, 3 Neuronen (Fig 2) ================= */
 (() => {
   const top=$('eggTop'), tctx=top.getContext('2d');
-  const d=0.45; // Inradius des N-Ecks
+  const d=0.25; // Inradius des N-Ecks
   let N=3, fs=1;
   function normals(){ const arr=[]; for(let k=0;k<N;k++){ const ang=k*TAU/N; arr.push([Math.cos(ang),Math.sin(ang)]); } return arr; }
-  function zOf(x,y){ let z=0; for(const n of normals()){ const pre=n[0]*x+n[1]*y-d; if(pre<0) z+=-pre*fs; } return z; }
+  function zOf(x,y){ let z=0; for(const n of normals()){ z+=Math.max(0,n[0]*x+n[1]*y-d)*fs; } return z; }
   function drawTop(){
     const W=top.width,H=top.height,cx=W/2,cy=H/2,s=150;
     tctx.fillStyle='#08101f'; tctx.fillRect(0,0,W,H);
@@ -665,35 +665,35 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     tctx.strokeStyle=COL.accent3; tctx.lineWidth=2;
     for(const n of normals()){ const nx=n[0],ny=n[1],tx=-ny,ty=nx,x0=nx*d*s,y0=ny*d*s;
       tctx.beginPath(); tctx.moveTo(cx+x0-tx*220, cy-(y0-ty*220)); tctx.lineTo(cx+x0+tx*220, cy-(y0+ty*220)); tctx.stroke(); }
-    const pts=makeEgg(300,500,0,0.34,0.55,0.9);
+    const pts=makeEgg(300,500,0,0.22,0.70,0.92);
     for(const p of pts){ tctx.fillStyle=p.cl===0?COL.red:COL.blue; tctx.beginPath(); tctx.arc(cx+p.x*s, cy-p.y*s, 1.8,0,TAU); tctx.fill(); }
-    tctx.fillStyle=COL.muted; tctx.font='12px Inter'; tctx.fillText('3 Hyperebenen (Faltlinien) umschließen den Kern', 14, 22);
+    tctx.fillStyle=COL.muted; tctx.font='12px Inter'; tctx.fillText(`${N} Faltlinien (Hyperebenen): Kern innen (blauer Ring liegt außen)`, 14, 22);
   }
   function draw3d(){
     const cPl=+$('planeC2').value;
     $('vN').textContent=N; $('vFS').textContent=f1(fs); $('vPlaneC2').textContent=f1(cPl);
-    const pts=makeEgg(400,700,0,0.34,0.55,0.9);
-    const x0=[],y0=[],z0=[],x1=[],y1=[],z1=[]; let zInMin=1e9,zInMax=-1e9,zOutMax=-1e9;
+    const pts=makeEgg(400,700,0,0.22,0.70,0.92);
+    const x0=[],y0=[],z0=[],x1=[],y1=[],z1=[]; let zInMin=1e9,zInMax=-1e9,zOutMin=1e9;
     for(const p of pts){ const z=zOf(p.x,p.y);
-      if(p.cl===0){x0.push(p.x);y0.push(p.y);z0.push(z);zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z);zOutMax=Math.max(zOutMax,z);} }
+      if(p.cl===0){x0.push(p.x);y0.push(p.y);z0.push(z);zInMin=Math.min(zInMin,z);zInMax=Math.max(zInMax,z);} else {x1.push(p.x);y1.push(p.y);z1.push(z);zOutMin=Math.min(zOutMin,z);} }
     const gx=[],gy=[],gz=[]; for(let i=-1;i<=1;i+=0.2) for(let j=-1;j<=1;j+=0.2){gx.push(i);gy.push(j);gz.push(cPl);}
     Plotly.react('egg3fold',[
       {x:x1,y:y1,z:z1,mode:'markers',type:'scatter3d',marker:{size:2,color:COL.blue},name:'außen'},
       {x:x0,y:y0,z:z0,mode:'markers',type:'scatter3d',marker:{size:2.3,color:COL.red},name:'innen'},
       {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.6,color:COL.accent3,opacity:.3},name:'Trennebene'}
     ],{paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:COL.ink},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:COL.muted},yaxis:{color:COL.muted},zaxis:{color:COL.muted,title:'Z (freie Dim.)'}},showlegend:false},{displayModeBar:false});
-    const sep = cPl>zOutMax && cPl<zInMax;
+    const sep = cPl>zInMax && cPl<zOutMin;
     const v=$('eggVerdict2'); v.textContent=sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
-    drawFormulas(zInMax, zOutMax);
+    drawFormulas(zInMax, zOutMin);
     drawTop();
   }
-  function drawFormulas(zInMax, zOutMax){
+  function drawFormulas(zInMax, zOutMin){
     const ns=normals();
     let rows='';
     const M=Math.min(N,4);
-    for(let k=0;k<M;k++){ const n=ns[k]; rows+=String.raw`\mathbf{w}_{${k+1}}=\begin{bmatrix}${f1(n[0])} & ${f1(n[1])}\end{bmatrix},\ b_{${k+1}}=${f1(d)}\quad z_{${k+1}}=\mathrm{ReLU}(\mathbf{w}_{${k+1}}^\top\mathbf{x}+b_{${k+1}})\\ `; }
-    renderTeX('fEggDense', String.raw`\underbrace{\mathbf{z}}_{\text{Dense Layer, }${N}\text{ Neuronen}}=\mathrm{ReLU}(\underbrace{\mathbf{A}}_{${N}\times2}\,\mathbf{x}+\underbrace{\mathbf{b}}_{${N}\times1}) \;\;\text{mit}\; `+rows+(N>4?String.raw`\text{… }${N-4}\text{ weitere Neuronen}`:''));
-    renderTeX('fEggSep', String.raw`Z(\mathbf{x})=\textstyle\sum_{k=1}^{N} z_k \;\Rightarrow\; \text{Kern: } Z\approx ${f1(zInMax)}\ (\text{konstant, angehoben}),\ \text{Ring: } Z\le ${f1(zOutMax)}. \;\; \text{Ebene } Z=c \text{ trennt, wenn } c\in(${f1(zOutMax)},\,${f1(zInMax)}).`);
+    for(let k=0;k<M;k++){ const n=ns[k]; rows+=String.raw`\mathbf{w}_{${k+1}}=\begin{bmatrix}${f1(n[0])} & ${f1(n[1])}\end{bmatrix},\ b_{${k+1}}=-${f1(d)}\;\; z_{${k+1}}=\mathrm{ReLU}(\mathbf{w}_{${k+1}}^\top\mathbf{x}+b_{${k+1}})\; `; }
+    renderTeX('fEggDense', String.raw`\underbrace{\mathbf{z}}_{\text{Dense Layer, }${N}\text{ Neuronen}}=\mathrm{ReLU}(\underbrace{\mathbf{A}}_{${N}\times2}\,\mathbf{x}+\underbrace{\mathbf{b}}_{${N}\times1}) \;\;\text{mit}\; `+rows+(N>4?String.raw`\text{… }${N-4}\text{ weitere}`:''));
+    renderTeX('fEggSep', String.raw`Z(\mathbf{x})=\textstyle\sum_{k=1}^{N} z_k \;\Rightarrow\; \text{Kern: } Z\approx 0\ (\text{flacher Boden}),\ \text{Ring: } Z\ge ${f1(zOutMin)}\ (\text{dreieckige Wannenwände}). \;\; \text{Ebene } Z=c \text{ trennt, wenn } c\in(${f1(zInMax)},\,${f1(zOutMin)}).`);
   }
   $('Nfold').oninput=()=>{N=+$('Nfold').value; draw3d();};
   $('fs').oninput=()=>{fs=+$('fs').value; draw3d();};
@@ -711,78 +711,85 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
   // Symmetrieachsen (Spiegelung an Linie durch Ursprung mit Winkel)
   const AXES={ tri:[0,60,120], square:[0,45,90,135], pent:[0,36,72,108], star:[0,36,72,108] };
   let shape=SHAPES.tri(), axisList=AXES.tri.slice();
-  let step=0, animScale=1, animRot=0, targetScale=1, targetRot=0, cutting=false, cutProg=0;
+  let step=0, animScale=1, animRot=0, targetScale=1, targetRot=0, cutState='idle', cutProg=0;
 
   function reflect(pt, angDeg){ const a=angDeg*Math.PI/180, nx=Math.cos(a), ny=Math.sin(a); // Spiegel an Linie (nx,ny)
     const d=pt[0]*nx+pt[1]*ny; return [2*d*nx-pt[0], 2*d*ny-pt[1]]; }
   // Stapel: für Schritt k (0..step) die Form nach den ersten k Achsen gespiegelt
   function stackUpTo(k){ const layers=[shape]; for(let i=0;i<k;i++){ const ax=axisList[i]; const cur=layers.slice(); for(const layer of cur){ const refl=layer.map(p=>reflect(p,ax)); layers.push(refl); } } return layers; }
 
-  function statusText(){ if(cutting){ $('fcStatus').textContent = cutProg>=1? '✂ Geschnitten — ausfalten: die Form fällt heraus!' : 'Scheren…'; return; }
-    $('fcStatus').textContent = step===0? 'Schritt 0: Form gezeichnet (jede Form / jedes Polygon geht)' : `Schritt ${step}: ${step} Falte(n) — Ränder stapeln sich übereinander`; }
+  function statusText(){
+    if(cutState==='cutting'){ $('fcStatus').textContent = '✂ Scheren…'; return; }
+    if(cutState==='done'){ $('fcStatus').textContent = '✂ Ausgefaltet: die Form ist isoliert (gestrichelte Linie = der Schnitt)'; return; }
+    $('fcStatus').textContent = step===0? 'Schritt 0: Form gezeichnet — jede Form / jedes Polygon geht' : `Schritt ${step}: ${step} Falte(n) → ${Math.pow(2,step)} Papierschichten, Ränder stapeln sich`;
+  }
+
+  function drawShapePath(layer, s, close){
+    ctx.beginPath();
+    layer.forEach((p,i)=>{ const x=p[0]*s, y=p[1]*s; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    if(close) ctx.closePath();
+  }
 
   function draw(){
-    // sanftes Easing von Scale/Rot
-    animScale += (targetScale-animScale)*0.12; animRot += (targetRot-animRot)*0.12;
+    animScale += (targetScale-animScale)*0.15; animRot += (targetRot-animRot)*0.15;
+    if(cutState==='cutting'){ cutProg+=0.035; if(cutProg>=1){ cutProg=1; cutState='done'; } }
     ctx.fillStyle='#08101f'; ctx.fillRect(0,0,W,H);
-    const cx=W/2, cy=H/2+20, base=150*animScale;
-    ctx.save(); ctx.translate(cx,cy); ctx.rotate(animRot*Math.PI/180);
-    // Papier (weißes Blatt) — bleibt fix unter dem Text-Bereich
-    const P=1.55*base/150;
-    ctx.fillStyle='#f4efe3'; ctx.strokeStyle='#b8ad94'; ctx.lineWidth=2; ctx.fillRect(-P,-P,P*2,P*2); ctx.strokeRect(-P,-P,P*2,P*2);
-    // Falzlinien (alle bis Schritt step; die gerade angebrachte mittlere Falte ist dabei!)
-    ctx.strokeStyle='#c94f4f'; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
-    for(let i=0;i<step;i++){ const ax=axisList[i]*Math.PI/180; const nx=Math.cos(ax),ny=Math.sin(ax); ctx.beginPath(); ctx.moveTo(nx*300,ny*300); ctx.lineTo(-nx*300,-ny*300); ctx.stroke(); }
-    ctx.setLineDash([]);
-    // gestapelte Formen
-    const layers=stackUpTo(step);
-    layers.forEach((layer,li)=>{ ctx.strokeStyle= li===0? '#1c6fe0' : 'rgba(28,111,224,0.35)'; ctx.lineWidth= li===0?2.5:1.2;
-      ctx.beginPath(); layer.forEach((p,i)=>{ const x=p[0]*base/150*1.15, y=p[1]*base/150*1.15; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.closePath(); ctx.stroke(); });
-    // zusammenfallende Kanten (gelb): Kanten der ersten & gespiegelten Layer markieren
-    if(step>=1){ ctx.strokeStyle=COL.accent3; ctx.lineWidth=3; ctx.globalAlpha=0.9;
-      ctx.beginPath(); shape.forEach((p,i)=>{ const x=p[0]*base/150*1.15, y=p[1]*base/150*1.15; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.closePath(); ctx.stroke(); ctx.globalAlpha=1; }
-    // Scherenschnitt: EINE gerade gestrichelte Linie, die alle gestapelten Kanten trifft
-    // = Linie durch die erste Kante der Form
-    const a0=shape[0], a1=shape[1];
-    // Linie durch a0,a1 (verlängert)
-    const dx=a1[0]-a0[0], dy=a1[1]-a0[1], L=2.4;
-    const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len;
-    const cx0=a0[0]*base/150*1.15, cy0=a0[1]*base/150*1.15;
-    const cEnd = step>=1? 1 : 0; // gestrichelter Schnitt wird ab Schritt>=1 sichtbar
-    ctx.strokeStyle='#ff3860'; ctx.lineWidth=3; ctx.setLineDash([9,6]);
-    const prog = cutting? cutProg : (step>=1?1:0);
-    ctx.beginPath(); ctx.moveTo(cx0-ux*L*base/150, cy0-uy*L*base/150); ctx.lineTo(cx0-ux*L*base/150*(1-prog)+ux*L*base/150*prog*2, cy0-uy*L*base/150*(1-prog)+uy*L*base/150*prog*2); ctx.stroke(); ctx.setLineDash([]);
-    if(step>=1){ ctx.fillStyle='#ff3860'; ctx.font='bold 13px Inter'; ctx.fillText('✂ EIN gerader Schnitt', -base-10, -base-6); }
-    ctx.restore();
+    const cx=W/2, cy=H/2+24, base=150*animScale, s=base/150*1.15;
+
+    if(cutState==='done'){
+      // AUSGEFALTET: Papier blass, Form als isolierte gestrichelte Kontur + grüne Füllung
+      const P=1.55*base/150;
+      ctx.save(); ctx.translate(cx,cy);
+      ctx.globalAlpha=0.25; ctx.fillStyle='#f4efe3'; ctx.fillRect(-P,-P,P*2,P*2); ctx.globalAlpha=1;
+      ctx.fillStyle='rgba(124,249,208,0.18)'; drawShapePath(shape,s,true); ctx.fill();
+      ctx.strokeStyle='#7cf9d0'; ctx.lineWidth=3.5; ctx.setLineDash([10,7]); drawShapePath(shape,s,true); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#7cf9d0'; ctx.font='bold 14px Inter'; ctx.fillText('✂ Form herausgeschnitten', -base*0.9, -base-6);
+      ctx.restore();
+    } else {
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(animRot*Math.PI/180);
+      const P=1.55*base/150;
+      ctx.fillStyle='#f4efe3'; ctx.strokeStyle='#b8ad94'; ctx.lineWidth=2; ctx.fillRect(-P,-P,P*2,P*2); ctx.strokeRect(-P,-P,P*2,P*2);
+      // Falzlinien (alle bis Schritt step — die gerade angebrachte mittlere Falte ist mit dabei)
+      ctx.strokeStyle='#c94f4f'; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
+      for(let i=0;i<step;i++){ const ax=axisList[i]*Math.PI/180; const nx=Math.cos(ax),ny=Math.sin(ax); ctx.beginPath(); ctx.moveTo(nx*300,ny*300); ctx.lineTo(-nx*300,-ny*300); ctx.stroke(); }
+      ctx.setLineDash([]);
+      // gestapelte Papierschichten (spiegelnde Kopien) — oberste blau, darunter blass
+      const layers=stackUpTo(step);
+      for(let li=layers.length-1;li>=0;li--){ ctx.strokeStyle= li===0? 'rgba(28,111,224,0.30)' : '#1c6fe0'; ctx.lineWidth= li===0?1.2:2.5; drawShapePath(layers[li],s,true); ctx.stroke(); }
+      // gestapelte Kanten (gelb)
+      if(step>=1){ ctx.strokeStyle=COL.accent3; ctx.lineWidth=3; ctx.globalAlpha=0.9; drawShapePath(shape,s,true); ctx.stroke(); ctx.globalAlpha=1; }
+      // EINE gerade gestrichelte Schnittlinie (der "Scherenschnitt"), entlang der gestapelten Kante
+      if(step>=1){
+        const a0=shape[0], a1=shape[1], dx=a1[0]-a0[0], dy=a1[1]-a0[1];
+        const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, L=2.6, prog=cutState==='cutting'?cutProg:1;
+        const px=a0[0]*s, py=a0[1]*s;
+        ctx.strokeStyle='#ff3860'; ctx.lineWidth=3.5; ctx.setLineDash([10,7]);
+        ctx.beginPath(); ctx.moveTo(px-ux*L*s, py-uy*L*s); ctx.lineTo(px-ux*L*s*(1-prog)+ux*L*s*prog*2, py-uy*L*s*(1-prog)+uy*L*s*prog*2); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle='#ff3860'; ctx.font='bold 13px Inter'; ctx.fillText('✂ EIN gerader Schnitt', -base-14, -base-6);
+      }
+      ctx.restore();
+    }
     statusText();
-    if(cutting){ if(cutProg<1){ cutProg+=0.04; requestAnimationFrame(draw); } }
   }
-  function setStep(k){ step=Math.max(0,Math.min(4,k)); $('vFcStep').value=step; $('fcStep').value=step;
-    targetScale=Math.pow(0.86, step); targetRot=step*14; cutting=false; cutProg=0; draw(); }
-  function setShape(name){ shape=SHAPES[name](); axisList=AXES[name].slice(); const maxF=Math.min(4,axisList.length); step=0; targetScale=1; targetRot=0; cutting=false; cutProg=0;
-    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; draw(); }
+  function setStep(k){ step=Math.max(0,Math.min(4,k)); $('fcStep').value=step; $('vFcStep').textContent=step;
+    targetScale=Math.pow(0.86, step); targetRot=step*14; cutState='idle'; cutProg=0; }
+  function setShape(name){ shape=SHAPES[name](); axisList=AXES[name].slice(); const maxF=Math.min(4,axisList.length); step=0; targetScale=1; targetRot=0; cutState='idle'; cutProg=0;
+    const sl=$('fcStep'); sl.max=maxF; sl.value=0; $('vFcStep').textContent='0'; }
   $('fcShape').onchange=e=>setShape(e.target.value);
   $('fcStep').oninput=e=>setStep(+e.target.value);
-  $('fcCut').onclick=()=>{ if(step<1){ alert('Erst falten (Schritt ≥ 1), dann schneidet der eine Schnitt die Form aus.'); return; } cutting=true; cutProg=0; draw(); };
+  $('fcCut').onclick=()=>{ if(step<1){ alert('Erst falten (Schritt ≥ 1), dann schneidet der eine geraden Schnitt die Form aus.'); return; } cutState='cutting'; cutProg=0; };
   $('fcPrint').onclick=()=>window.print();
-  requestAnimationFrame(function loop(){ draw(); if(!cutting) requestAnimationFrame(loop); });
+  (function frame(){ draw(); requestAnimationFrame(frame); })();
 })();
 
 /* ================= 7. Scheren ================= */
 (() => {
   const c=$('shearCanvas'), ctx=c.getContext('2d');
   const base=makeEgg(300,600,0,0.34,0.55,0.9);
-  // Eine 2D->2D ReLU-Schicht: h = ReLU(M x + c), mit M = Rotation + Scherung.
-  function layer(p){ const [x,y]=p;
-    const g=0.62; // Drehung pro Schicht
-    const cs=Math.cos(g),sn=Math.sin(g);
-    const xr=x*cs-y*sn, yr=x*sn+y*cs;
-    // ReLU-Layer: 2 Neuronen
-    const h1=relu(0.9*xr - 0.15*yr + 0.15);
-    const h2=relu(0.5*yr + 0.5*xr);
-    // zurück in eine 2D-Position (normiert), damit es stabil bleibt
-    return [h1-0.5, h2-0.5];
-  }
+  // Eine echte 2D->2D ReLU-Schicht (2 Neuronen): h = ReLU(M x + c).
+  // Ohne freie Dimension kann sie die Mannigfaltigkeit nur IN SICH SELBST knüllen.
+  function layer(p){ const g=0.7, s=0.92, cs=Math.cos(g), sn=Math.sin(g); const x=p[0], y=p[1];
+    return [relu(s*(x*cs-y*sn)+0.10), relu(s*(x*sn+y*cs)+0.10)]; }
   function applyL(L){ return base.map(p=>{ let q=[p.x,p.y]; for(let k=0;k<L;k++) q=layer(q); return {x:q[0],y:q[1],cl:p.cl}; }); }
   function separable(pts){ // schnelle Check: Gerade?
     // über alle Winkel & Offsets grob
@@ -808,7 +815,7 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
       ctx.fillText(k===0?'Ausgangs-Verteilung (2D-Ei)':`Nach ${L} Schichten (nur 2D→2D)`, cx-100, 24);
     }
     const sep=separable(after);
-    const v=$('shearVerdict'); v.textContent = sep? `nach ${L} Schichten trennbar ✓`: `nach ${L} Schichten: Kern noch fest ✗`; v.className='verdict '+(sep?'ok':'no');
+    const v=$('shearVerdict'); v.textContent = sep? `nach ${L} Schichten trennbar ✓`: `nach ${L} Schichten: in sich geknüllt, nicht trennbar ✗`; v.className='verdict '+(sep?'ok':'no');
   }
   $('layers').oninput=draw;
   let playing=false;

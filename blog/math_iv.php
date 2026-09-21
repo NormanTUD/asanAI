@@ -288,17 +288,18 @@ The bent paper's flat shadow (its projection onto the crease plane) is exactly t
 <div class="md">
 ### Separating a ring with one fold
 
-Now use the fold for something. The textbook problem that **no straight cut can solve**: a **circle inside a circle** — an inner disk, one class, and an outer ring, the other. No line separates them: any line that misses the inner disk still cuts the outer ring, so outer points always land on *both* sides.
+Now use the fold for something. The textbook problem that **no straight cut can solve**: a **circle inside a circle** — an inner disk, one class, and an outer annulus, the other. No line separates them: any line that misses the inner disk still cuts the outer annulus, so outer points always land on *both* sides.
 
-The fold changes that. Fold **radially** — the crease is the circle of radius $c$ — and the outer ring's fate depends on one knob, the **bias** $c$:
+The fold changes that. Fold **radially** — the crease is the circle of radius $c$ — and where that crease sits relative to the two clouds is the **bias**:
 
-- $c$ **between** the two radii — only the outer ring is pushed. At $\lambda = 1$ it flattens *onto* the crease and lifts: the rings now sit at different heights, and a **flat horizontal cut** separates them. In the curved space, the cut is still flat.
-- $c$ **inside** the inner ring — both rings lift, to different heights; still separable.
-- $c$ **outside** the outer ring — nothing folds; the problem is unchanged.
+- $c$ **in the gap** between the clouds — only the outer cloud is pushed. At $\lambda = 1$ it flattens *onto* the crease and lifts: the clouds now sit at different heights, and a **flat horizontal cut** separates them. In the curved space, the cut is still flat.
+- $c$ **inside the inner cloud** — both clouds lift, to different heights; still separable.
+- $c$ **inside the outer cloud** — the cloud *splits*: the part past the crease lifts, the rest stays on the floor among the inner points; **not separable**.
+- $c$ **outside the outer cloud** — nothing folds; the problem is unchanged.
 
-That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold into unoccupied dimensions until a flat cut reaches the class that was surrounded** \cite[Keup & Helias, 2022]{keup2022origami}. A ReLU fold does it in one piece; a **tanh** fold does it smoothly — no crease, the lift is a gentle S-curve that pushes right at the border of the flat part.
+That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold into unoccupied dimensions until a flat cut reaches the class that was surrounded** \cite[Keup & Helias, 2022]{keup2022origami}. A ReLU fold does it in one piece; a **tanh** fold does it smoothly — no crease, the lift is a gentle S-curve that pushes right at the border of the flat part. And watch $\lambda = 2$: the mirror fold lands every lifted point back on the floor, and the gap closes again.
 
-**Try:** the presets walk the bias through all three cases. Slide $c$ and watch the crease circle cross the rings — the green cut turns red the moment the gap closes.
+**Try:** the presets walk the bias through all four cases. Slide $c$ and watch the crease circle cross the clouds — the green cut turns red the moment the height ranges touch.
 </div>
 
 <div class="af-card" id="act-2d">
@@ -311,12 +312,12 @@ That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold i
 	</div>
 	<div class="af-grid">
 		<div class="af-col">
-			<div class="af-sub">Source · circle in a circle · click to track a point · hover to trace</div>
+			<div class="af-sub">Source · the point cloud · click to track a point · hover to trace</div>
 			<canvas id="act-src" class="af-canvas" width="440" height="440"></canvas>
 			<div id="act-hover" class="af-read"></div>
 		</div>
 		<div class="af-col">
-			<div class="af-sub">Curved space · the folded sheet · drag to rotate · scroll to zoom</div>
+			<div class="af-sub">Curved space · the cloud in the embedding · drag to rotate · scroll to zoom</div>
 			<canvas id="act3d-canvas" class="af-canvas d3" width="440" height="440"></canvas>
 		</div>
 	</div>

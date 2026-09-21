@@ -10402,3 +10402,147 @@ math {
 }
 
 
+
+.core-persona {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 14px;
+	border-radius: 12px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	text-align: left;
+	width: 100%;
+}
+.core-persona:hover {
+	border-color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 5%, var(--mn-surface));
+	transform: translateY(-1px);
+}
+.core-persona-icon {
+	font-size: 1.5rem;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	background: var(--mn-bg-subtle);
+	flex-shrink: 0;
+}
+.core-persona-body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+.core-persona-name {
+	font-weight: 700;
+	font-size: 1rem;
+}
+.core-persona-tag {
+	font-size: 0.75rem;
+	color: var(--mn-text-secondary);
+}
+.core-persona-go {
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	color: var(--mn-accent);
+	font-weight: 700;
+}
+.core-persona:hover .core-persona-go {
+	opacity: 1;
+}
+
+/* Math Slider (Widget & Overlay) */
+.math-comfort {
+	margin: 14px 0;
+	padding: 12px;
+	background: var(--mn-bg-subtle);
+	border-radius: 12px;
+}
+.math-comfort-top, .topics-math-control {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+}
+.math-comfort-label, .topics-math-label {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+}
+.math-comfort-val, .topics-math-val {
+	font-family: monospace;
+	font-weight: 700;
+	color: var(--mn-accent);
+}
+.math-comfort-range, .topics-math-range {
+	width: 100%;
+	appearance: none;
+	background: var(--mn-border);
+	height: 6px;
+	border-radius: 3px;
+	margin: 10px 0;
+}
+.math-comfort-range::-webkit-slider-thumb, .topics-math-range::-webkit-slider-thumb {
+	appearance: none;
+	width: 18px; height: 18px;
+	border-radius: 50%;
+	background: var(--mn-accent);
+	cursor: pointer;
+	border: 2px solid var(--mn-surface);
+}
+.math-comfort-scale {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.7rem;
+	color: var(--mn-text-muted);
+}
+
+/* Tucked Away (Index Page) */
+.tucked-away-area {
+	margin-top: 40px;
+	padding: 20px;
+	background: var(--mn-bg-subtle);
+	border-radius: 20px;
+	border: 1px dashed var(--mn-border);
+}
+.tucked-away-title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 14px;
+	font-weight: 700;
+}
+.tucked-away-icon { font-size: 1.4rem; }
+.tucked-away-sub { font-size: 0.85rem; color: var(--mn-text-secondary); }
+.tucked-group { margin-bottom: 8px; }
+.tucked-group-header {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	background: var(--mn-surface);
+	border: 1px solid var(--mn-border);
+	border-radius: 10px;
+	cursor: pointer;
+	text-align: left;
+}
+.tucked-group-header:hover { border-color: var(--mn-accent); }
+.tucked-group-caret { font-size: 0.8rem; transition: transform 0.2s; }
+.tucked-group-icon { font-size: 1.2rem; }
+.tucked-group-label { flex: 1; font-weight: 600; }
+.tucked-group-count { font-size: 0.75rem; color: var(--mn-text-muted); }
+.tucked-group-clip { overflow: hidden; transition: height 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.tucked-group-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; padding: 10px 0; }
+
+/* Utility */
+.itx-arrow { display: inline-block; transition: transform 0.2s ease; }
+.inline-topics-secondary .itx-arrow { margin-left: 4px; }
+.topics-persona-btn.topics-preset-fun {
+	background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12));
+	border-color: rgba(99, 102, 241, 0.35);
+}

@@ -47,7 +47,31 @@ contains the full `\begin{aligned}\mathbf{p} &= (x,\, y) = ...` source. Headless
 execute/sync can't await a Promise — dispatch the event in one call, read the dialog in a
 second call after a sleep.
 
-## 2. NEW lab (user request): "Activation functions as folds" — BUILT 2026-09-21
+## 2. NEW lab (user request): "Activation functions as folds" — BUILT + POINT-CLOUD REBUILD 2026-09-21
+
+### v2: point cloud (user request: "make it point clouds, completely new")
+
+- Data is now a **scatter of 350 points** (fixed seed, uniform in area): inner disk
+  r ∈ [0.06, 0.30] (150 pts, accent) + outer annulus r ∈ [0.45, 0.72] (200 pts, bad).
+- **3D view rebuilt**: no checkerboard sheet — the cloud itself in the embedding,
+  depth-sorted, perspective-sized dots, faint floor grid + unit square, crease circle,
+  translucent **separator plane** (good/bad), tracked point with drop line to its shadow.
+- **Separability is now real**: min/max z per class from the actual points →
+  `gap = max(min z_outer − max z_inner, min z_inner − max z_outer)`; pill says
+  `separable ✓ — gap m` / `not separable — the z-ranges overlap`; eq line shows
+  `z_inner ∈ [a, b]  z_outer ∈ [c, d] ⇒ …`.
+- **New bias case made possible by the cloud**: crease *inside the outer annulus* →
+  the cloud splits (part lifts, part stays on the floor) → **not separable**.
+- λ=2 paper fold now visibly **closes the gap** (mirror fold lands everything on the floor).
+- 1D profile: class bands shaded on the r-axis + curve segments retraced in class color
+  where the data lives.
+- Click **snaps to the nearest data point** (14px).
+- Prose: four bias cases (gap / in-inner / in-outer / outside) + the λ=2 note.
+- Verified headless (`/tmp/opencode/verify_a2b.py`): all 7 presets give the expected
+  separability (in-outer → not; in-inner → gap 0.151; tanh → gap 0.317; λ=2 → not;
+  λ=1 → gap 0.076; outside/identity → not); copy dialog OK; no regressions.
+
+### v1 (superseded, kept for reference)
 
 ### What was built (all verified in headless Chrome)
 
