@@ -111,16 +111,6 @@ Here is the surprising fact at the heart of this chapter: **you can cut out any 
 		<div class="og-formula"><div class="cap">The Fold-and-Cut Theorem (Demaine et al. 1998):</div><div id="og-fc-formula"></div></div>
 	</div>
 
-	<div class="og-eli5">
-		<b>For 10-year-olds:</b>
-		<ul class="og-steps">
-			<li><b>What is a "shape"?</b> Any closed outline — a triangle, a star, a heart, even your signature.</li>
-			<li><b>What is "cutting"?</b> The scissors separate the shape from the rest of the paper by following its edge.</li>
-			<li><b>Why is that a problem?</b> A single straight cut can only ever cut a straight line. How do you get a star from one straight snip?</li>
-			<li><b>The solution:</b> <b>Fold</b> the paper until all the edges of your shape lie exactly on top of each other. Then, one straight cut goes through all those layers at once. Unfold, and your shape falls out perfectly!</li>
-		</ul>
-	</div>
-
 	<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
 		<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
 		<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
@@ -128,7 +118,7 @@ Here is the surprising fact at the heart of this chapter: **you can cut out any 
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">2 · Motivation — Why a Straight Line Is Not Enough</h2>
+	<h2 class="og-h2">Motivation — Why a Straight Line Is Not Enough</h2>
 	<p class="og-lead">The raw data almost never is linearly separable. The hidden layers must <em>manufacture</em> separability — here is the gap they must close.</p>
 
 	<div class="md">

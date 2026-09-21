@@ -586,7 +586,7 @@ function ogInitFC() {
 			ctx.strokeStyle = p.bad; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
 			for (let i = 0; i < step; i++) { const ax = axisList[i] * Math.PI / 180; const nx = Math.cos(ax), ny = Math.sin(ax); ctx.beginPath(); ctx.moveTo(nx * 300, ny * 300); ctx.lineTo(-nx * 300, -ny * 300); ctx.stroke(); }
 			ctx.setLineDash([]);
-			if (step >= 1) {
+			if (step >= 1 && cutState !== 'idle') {
 				const a0 = shape[0], a1 = shape[1], dx = a1[0] - a0[0], dy = a1[1] - a0[1];
 				const len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, L = 1.2, prog = cutState === 'cutting' ? cutProg : 1;
 				const px = a0[0] * s, py = a0[1] * s;
