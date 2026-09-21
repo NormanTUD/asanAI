@@ -531,12 +531,12 @@
 					showLearnedUI();   // refresh the pill + button
 				});
 			}
-			pill.className = 'topic-deps-pill ' + (met ? 'topic-deps-met' : 'topic-deps-unmet');
+			pill.className = 'topic-deps-pill ' + (deps.length > 0 && met ? 'topic-deps-met' : 'topic-deps-unmet');
 			let html = '';
 			if (deps.length > 0) {
 				html += met
 					? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
-					: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">○</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap <b>✓</b> to confirm what you&rsquo;ve covered and unlock the full depth.</span></span>';
+					: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap the <b>✓</b> next to each to unlock the full depth.</span></span>';
 			}
 			if (unlocks.length > 0) {
 				html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
@@ -565,12 +565,9 @@
 			settleLearnedButton();
 		}
 		btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
-		const sub = (deps.length > 0 && !met)
-			? ' <span class="tlb-hint">· ' + nMet + ' of ' + deps.length + ' prerequisites covered</span>'
-			: '';
 		btn.innerHTML = learned
 			? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
-			: '<span aria-hidden="true">○</span> Mark this lesson as learned' + sub;
+			: '<span aria-hidden="true">○</span> Mark this lesson as learned';
 	}
 
 	function writePref(pref) {
@@ -1011,7 +1008,7 @@
 		const firstVisit = !readRawPref();
 		if (firstVisit) {
 			btn.classList.add('topics-toggle-attention');
-			btn.title = 'New here? Tap to set how much math you\u2019re comfortable with — 10 seconds, saved on this device.';
+			btn.title = 'New here? Shape the course to you — math, interests, depth. 10 seconds, saved on this device.';
 		} else {
 			btn.classList.remove('topics-toggle-attention');
 			btn.title = 'Choose your interests';

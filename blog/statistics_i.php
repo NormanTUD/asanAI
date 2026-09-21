@@ -8,6 +8,7 @@ part: 1
 order: 8
 color: accent
 topics: math-i, statistics-i
+math: 65
 -->
 
 <script src="statistics.js"></script>
@@ -49,7 +50,7 @@ These distributions also underpin the “scaling laws” that drive modern large
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="50" data-optionaltitle="The Bernoulli Distribution: The Atom of Probability">
         ### The Bernoulli Distribution: The Atom of Probability
         In \citetitle{arsconjectandi} (\citeyear{arsconjectandi}), \citeauthor{arsconjectandi} defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the “atom” because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
 
@@ -67,7 +68,7 @@ These distributions also underpin the “scaling laws” that drive modern large
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Binomial Distribution">
 
 #### The Binomial Distribution
 
@@ -207,7 +208,7 @@ To find Ceres, Gauß worked from the **errors** of the measurements. He assumed 
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="How to Calculate with the Normal Distribution">
 ### How to Calculate with the Normal Distribution
 
 Just as we learned to calculate exact probabilities with the Binomial formula $\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution. However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask “What is the probability of *exactly* $x$?” (that is always 0 for a continuous variable). Instead, we ask: **“What is the probability that $X$ falls within a range?”**
@@ -232,7 +233,7 @@ This transforms *any* Normal Distribution into the **Standard Normal Distributio
 <div class="ai-callout" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border-left: 4px solid #22c55e; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
     <div style="display: flex; align-items: flex-start; gap: 14px;">
         <span style="font-size: 1.6em; line-height: 1;">🤖</span>
-        <div class="md">
+        <div class="md" data-mathlevel="55">
 **Why This Matters for AI: Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training. At each layer, the network computes:
 
 <p>$$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$</p>
@@ -242,7 +243,7 @@ This is the same standardization Pearson used in his biometric work to make meas
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Step 3: Use the Φ-Table (CDF)">
 #### Step 3: Use the $\Phi$-Table (CDF)
 
 The function $\Phi(z)$ answers one simple question: **“What percentage of all values fall to the LEFT of $z$ on the bell curve?”**
@@ -344,7 +345,7 @@ We can't start at $-\infty$, but the curve is essentially zero for $z < -4$, so 
     </tbody>
 </table>
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 
 With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.78$. The true value is $0.8413$. The difference exists because the rectangles are too wide to follow the curve closely.
 
@@ -419,7 +420,7 @@ Here are the most important values:
     </tbody>
 </table>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 
 **Reading the table:** If $\Phi(1.0) = 0.8413$, that means $84.13\%$ of all values in a standard normal distribution are less than or equal to $1.0$. The remaining $1 - 0.8413 = 15.87\%$ are above it.
 
@@ -524,7 +525,7 @@ For this, he developed the **Method of Least Squares**: instead of a line passin
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Central Limit Theorem (CLT)">
 ### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre and Laplace first proved it for sums of independent trials; \citeauthor{laplace1810clt} generalized it in \citeyear{laplace1810clt}.
 
@@ -577,7 +578,7 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it works: he showed that if measurement errors follow a **Normal Distribution**, the least-squares estimate is the most probable one.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 The Normal Distribution, or Bell Curve, emerges from the **Central Limit Theorem**, the bridge between individual randomness and collective order: while a single event might be unpredictable, the average of many independent trials clusters around a central mean, forming the symmetrical shape. Historically, **Carl Friedrich Gauß** used it to filter “noise” from astronomical data, and **Laplace** to quantify the uncertainty of estimates. In modern AI it is foundational: it lets machines separate meaningful “signals” from background noise, and it is the standard choice for initializing the neural networks that power large language models.
 
 $$
@@ -619,7 +620,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="65" data-optionaltitle="The Gumbel Distribution: The Math of Disasters">
         ### The Gumbel Distribution: The Math of Disasters
         While the Normal Distribution describes the “average” person, **Emil Gumbel** (1958) wanted to describe the “exceptional” event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
@@ -657,7 +658,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md">
+    <div class="md" data-mathlevel="55" data-optionaltitle="The Poisson Distribution: The Law of Rare Events">
         ### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in §§ 81–82, pp. 205–207) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
@@ -685,7 +686,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Pearson's Biological Link: The Father-Son Study">
 ## Pearson's Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \citeauthor{pearson1895correlation} used correlation to study human heredity. Building on data originally collected by \citeauthor{galton} — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
@@ -742,7 +743,7 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 <div class="ai-callout" style="background: linear-gradient(135deg, #fefce8, #fef9c3); border-left: 4px solid #eab308; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
     <div style="display: flex; align-items: flex-start; gap: 14px;">
         <span style="font-size: 1.6em; line-height: 1;">🤖</span>
-        <div class="md">
+        <div class="md" data-mathlevel="50">
 **Why This Matters for AI:** **Cosine similarity** in embedding spaces is a normalized correlation, and it is how **semantic search** works. When you type a query into a search engine powered by embeddings, both your query and every document are converted into high-dimensional vectors. The system then computes:
 
 $$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
@@ -752,7 +753,7 @@ This is structurally identical to Pearson's $r$: the dot product in the numerato
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Standardizing: Z-Scores & The Pearson Problem">
 ## Standardizing: Z-Scores & The Pearson Problem
 
 Z-scores standardize a value to the standard Normal:
@@ -781,7 +782,7 @@ In machine learning, **batch normalization** and **layer normalization** are con
     </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Chi-Square: The Test of Independence">
 ## Chi-Square ($\chi^2$): The Test of Independence
 
 The chi-square distribution arises as the sum of $k$ squared standard Normal variables:
@@ -839,7 +840,7 @@ Real-world datasets are rarely perfectly Normal. Common patterns:
 Recognizing the distribution of your data is the first step in choosing the right model. A Naive Bayes classifier assumes features are conditionally independent (often violated). A linear regression assumes Gaussian residuals (often violated). Knowing when these assumptions break down is essential in practice.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Zipf's Law: The Physics of Language">
 ## Zipf's Law: The Physics of Language
 
 In any natural-language corpus, the $k$-th most frequent word has frequency approximately:

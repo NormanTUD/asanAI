@@ -28,7 +28,7 @@ Why should a reader of a course about AI care about holes? Because the raw mater
 Like the history chapters, for each tool we ask the same four questions: what it is, who built it, when, and why.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="30" data-optionaltitle="The bridge that started it all">
 ## The bridge that started it all
 
 The seed is the oldest result in this story that is recognizably topological: **Euler's bridges of Königsberg** (1736) and, for a polyhedron, the formula (1752) \cite{eulerbridges} \cite{eulersolids},
@@ -47,7 +47,7 @@ Euler's formula is, in hindsight, the first homological statement ever made, the
 The step from counting holes to the algebra of holes happened in 1925, in conversation. **Emmy Noether**, visiting a topology seminar at Brouwer's home in Blaricum in December 1925, pointed out that the Betti numbers should not be thought of as mere numbers. Each is the **rank** of a whole **abelian group**, the **homology group** $H_k$ \cite{mclarty2006noether}: the number $b_k$ counts the group's independent generators, but the group remembers more. From that moment holes stopped being tallies and became algebraic objects, structures a computer can add, compare, and compute with.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Chains, boundaries, and the boundary of a boundary is empty">
 ## Chains, boundaries, and the boundary of a boundary is empty
 
 To make homology a group you first need a machine that grinds a space into group elements. The standard build, due largely to **Poincaré**, **Brouwer**, **Čech**, and **Alexander** in the 1910s to 1930s, is *simplicial*:
@@ -81,7 +81,7 @@ i.e. the hole-counting characteristic is the *alternating sum* of the **ranks** 
 **Why did "cycles modulo boundaries" take a century to invent?** Because it requires the idea that a *set* of shapes could form an algebraic group, an identification of structure with algebra that only the twentieth century practiced. Noether's remark in 1925 was the switch, and Poincaré's 1895 paper supplied the intuition; everything between was notation struggling to catch up \cite{poincareanalysissitus}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Homotopy: the deformation you are allowed to make">
 ## Homotopy: the deformation you are allowed to make
 
 Before going further we need the other pillar algebraic topology stands on: not what shapes *are* (homology) but what they can be *turned into* (homotopy). Two continuous maps $f, g : X \to Y$ are **homotopic** if you can slide one into the other without ever breaking it: there is a continuous family $f_t$ with $f_0 = f$ and $f_1 = g$. Two spaces have the **same homotopy type** if maps go both ways whose compositions are homotopic to the identity, so you can continuously inflate and deflate one into the other.
@@ -96,7 +96,7 @@ Homotopy is the precise version of "don't tear, don't glue": deformation under t
 The fundamental group $\pi_{1}(X,x)$, read *pi-one of X at x*, collects the loops in $X$ based at a point $x \in X$ (the $\in$, read *"in,"* means "$x$ is an element of $X$"), up to homotopy, with concatenation as the group operation. (The $\pi$ is the Greek letter pi; the subscript $1$ records that we probe **1-dimensional** holes with **1-dimensional** things, loops. Higher $\pi_n$ use $n$-spheres to probe $n$-dimensional holes, and appear below.) **Poincaré** invented it in 1895 as the algebraic window into spaces \cite{poincareanalysissitus}. Its most distinctive feature is that it is not generally commutative: going around loop $A$ then $B$ can differ from $B$ then $A$ in a space with enough crossing loops. That non-commutativity makes $\pi_1$ strictly richer than the (abelian) homology groups, and it is why, as we will see in the Math III HoTT lab, modern type theory treats *proofs of equality as paths*: the structure of points and paths between them carries the meaning of the space \cite{hottbook} \cite{youvan2024}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Exact sequences: the ledger of shape">
 ## Exact sequences: the ledger of shape
 
 Now the central bookkeeping device, the tool that made the subject read as one connected account rather than a pile of invariants: the **exact sequence**. A sequence of groups and maps
@@ -114,7 +114,7 @@ The deep discovery, and it took mathematics by surprise, is that **almost every 
 **Why does exactness matter so much?** Because an exact sequence is a full accounting ledger: if you know $H_k(A)$, $H_k(B)$, and the maps, the exact sequence hands you $H_k(C)$ for free. The skill of getting answers this way is *diagram chasing* (German *Diagrammjägerei*), the professional reflex every algebraic topologist had to master.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Mayer–Vietoris: computing a space from its parts">
 ## Mayer–Vietoris: computing a space from its parts
 
 The first and most famous exact sequence answers a practical question: if you know the homology of two overlapping halves of a space, and of their overlap, do you know the homology of the whole? Yes, via a long exact sequence. Stating it uses three signs. **$\cup$** (*union*) puts the two spaces together: $X = A \cup B$ is everything in $A$ or in $B$. **$\cap$** (*cap*) is the overlap: $A \cap B$ is what the two pieces share. Peano gave both their glyphs in 1895, in the same project that gave set theory its $\in$; the shapes are self-evident, one opens to *contain*, the other pinches to the *common* middle. **$\oplus$** (*direct sum*, loosely *"plus"*) glues two algebraic objects side by side as independent pieces, so an element of $G \oplus H$ is a pair $(g,h)$ added component-wise, like the $x$- and $y$-axes of $\mathbb{R} \oplus \mathbb{R}$ meeting only at the origin. In the sequence below, $H_k(A) \oplus H_k(B)$ lines up every $k$-hole of $A$ next to every $k$-hole of $B$. For a space $X = A \cup B$ with overlap $A \cap B$:
@@ -132,7 +132,7 @@ After fleeing the Nazis, Mayer went to Princeton and became **Albert Einstein's*
 So the shape of the story so far: **homology groups count holes, exact sequences let you compute them from pieces, and homotopy tells you what "same shape" means.** Each tool was invented because a concrete computation, bridges, polyhedra, fibred spaces, gluing, would not let go otherwise.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Seifert–van Kampen: the fundamental group by gluing">
 ## Seifert–van Kampen: the fundamental group by gluing
 
 Mayer–Vietoris computes *homology* (abelian, well-behaved). The **Seifert–van Kampen theorem** does the same job for the *fundamental group*, which is non-abelian and much less well-behaved, and so needs a different gluing sign. Where homology glued with $\oplus$ (independent coordinates), the loop group glues with $*$ (read *"star"*), the **free product**: take the loops of $A$ and of $B$ and allow any word alternating between them, $a_1 b_1 a_2 b_2 \dots$, with *no rule at all* for how an $A$-loop meets a $B$-loop. "Free" means exactly that, the two families of generators stay independent, so the result is usually far bigger and non-commutative. But the two halves share the overlap $A \cap B$, so a loop living in that overlap should be counted **once, not twice**. The **amalgamated free product** $*_{F}$ does precisely this: it is the free product $G * H$ with one extra instruction, the copy of the subgroup $F$ inside $G$ and the copy inside $H$ are declared to be the same loops. If $X = A \cup B$ with open, path-connected $A, B$ whose intersection is also path-connected, then the fundamental group of $X$ is
@@ -148,7 +148,7 @@ $$\underbrace{\pi_{1}(X)}_{\substack{\text{loops in the}\\\text{whole space}}} \
 Why does this matter for us? Because the groupoid version of the theorem is one of the first results *formalized inside homotopy type theory*. In HoTT, types are spaces and paths are proofs, so van Kampen becomes a theorem about how propositions glue, carrying the "amalgamate over the overlap" logic into the structure of proof itself \cite{hottbook} \cite{youvan2024}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Covering spaces: the fundamental group as symmetry">
 ## Covering spaces: the fundamental group as symmetry
 
 There is a second, geometric way to understand $\pi_{1}(X)$, the one that makes the fundamental group feel like a **symmetry group** rather than an inventory of loops. A **covering space** $\tilde{X} \xrightarrow{\;p\;} X$ is a local homeomorphism that looks, over every small neighbourhood of $X$, like a stack of identical sheets. The universal example: the real line covers the circle by wrapping (each point of the line maps to a point of the circle), and the plane covers the torus in a doubly-periodic grid.
@@ -160,7 +160,7 @@ $$\{\text{coverings of }X\} \quad\longleftrightarrow\quad \{\text{subgroups of }
 This is a Galois correspondence, the same shape of theorem as in Galois theory, where subgroups of a Galois group classify field extensions. The man who made *universal coverings* a tool for building a space with a prescribed fundamental group, the $K(G,1)$ spaces, was **Witold Hurewicz** (1935) \cite{hurewicz1935}. If you want a space whose $\pi_1$ is exactly a prescribed group $G$, covering theory tells you how to build it; this is how the Eilenberg–Mac Lane spaces $K(\pi,n)$, the atoms of homotopy theory, were engineered \cite{eilenberglane1945}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="Higher homotopy groups: the serpent swallowing its tail">
 ## Higher homotopy groups: the serpent swallowing its tail
 
 The fundamental group scans 1-dimensional holes with loops. In 1935 **Hurewicz** generalized *upwards*: let maps from the sphere $S^{n}$ into $X$, up to homotopy, form the group $\pi_{n}(X)$. This opened the door and immediately revealed two things.
@@ -176,7 +176,7 @@ As \citeauthor{serre1953} liked to recall, his 1951 thesis caused a sensation be
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="CW complexes: Whitehead's LEGO of spaces">
 ## CW complexes: Whitehead's LEGO of spaces
 
 All this machinery computes best on one class of spaces above all others: **CW complexes**, invented and named by **J.H.C. Whitehead** in his 1949 paper *Combinatorial Homotopy I* \cite{whitehead1949}. The idea is simple and utterly powerful. Build spaces out of *cells*: take points (0-cells), glue on circle segments (1-cells), glue on disks (2-cells), glue on balls (3-cells), and so on. The letters stand for the two conditions that make the whole thing work: **C** = *closure-finite* (each cell's closure meets finitely many others) and **W** = *weak topology* (a set is open exactly when it meets each cell in an open set).
@@ -184,7 +184,7 @@ All this machinery computes best on one class of spaces above all others: **CW c
 Almost every space that matters, from the sphere to the torus to any manifold, is a CW complex, and on CW complexes everything in this chapter becomes *computable*: the cellular chain complex is a finite, explicit object, so its homology is (in principle) computable by counting. Whitehead's payoff was a theorem so strong it carries his name: a weak homotopy equivalence (a map inducing isomorphisms on all homotopy groups) between CW complexes is a **homotopy equivalence**, the spaces are genuinely, deformatibly the same \cite{whitehead1949}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Categories, functors, and natural equivalences">
 ## Categories, functors, and natural equivalences
 
 In 1945 two men, working in very different mathematical cultures, published a paper whose title sounds like a footnote but whose content reshaped all of mathematics: *"General Theory of Natural Equivalences"* \cite{eilenberglane1945}. **Samuel Eilenberg** (a topologist at Michigan) and **Saunders Mac Lane** (an algebraist at Harvard) met over the problem of *naturality*: exactly when is a construction canonical? Their answer required three definitions of striking generality:
@@ -202,7 +202,7 @@ Why is this in a chapter about AI? Because "a category is objects and the maps b
 From 1945 onward, algebraic topology was written in this language: homology and homotopy became *functors* from the category of topological spaces to the category of groups. That single reframing, shape to algebra to **structure-preserving map**, is the bridge to the AI chapters: the right way to compare two structures is a map from one to the other that respects what matters.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="The axioms: Eilenberg–Steenrod homology as an interface">
 ## The axioms: Eilenberg–Steenrod homology as an interface
 
 Between 1945 and 1952, **Eilenberg and Steenrod** did something with homology that had no precedent: they *axiomatized* it. In *Foundations of Algebraic Topology* (1952) they showed that any construction deserving the name "homology theory" must satisfy a short list of axioms, functoriality, exactness (the long exact sequence of a pair), homotopy invariance, excision, and the dimension axiom, and that **any two such theories agree** (on reasonable spaces) \cite{eilenbergsteenrod1952}. The idea is as radical as an API contract: you do not need to know *how* the homology is computed, only that it satisfies the interface. If your construction satisfies the axioms, it *is* the one true homology.
@@ -210,7 +210,7 @@ Between 1945 and 1952, **Eilenberg and Steenrod** did something with homology th
 This is the move of *specify behaviour, not implementation* that programmers would re-invent decades later as interfaces, protocols, and duck typing, and it is precisely the move under the modern machine-learning "embedding space": no matter how the vectors are produced, what matters is that they transform under an interface (distance, direction, and holes) consistently \cite{eilenbergsteenrod1952}. Later, **Milnor** (1962) proved that one more axiom (additivity) upgrades the entire theory \cite{milnor1962additivity}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="Spectral sequences: Leray's machine from the camp">
 ## Spectral sequences: Leray's machine from the camp
 
 By the late 1940s the exact sequences had a big brother, and its invention is one of the most remarkable episodes in the history of mathematics. **Jean Leray**, a French mathematician held as a prisoner of war in **Oflag XVII-A in Austria** from 1940 to 1945, faced a dreadful dilemma: if the Germans knew he was a mathematician of value, he would be used or held; if they thought him useless, he might as well be shot. So *he pretended to be a geologist*, and disguised his mathematics as geology too: no topology, no analysis, only a private, made-up theory of "sheaves" and "decompositions" that he pushed through the censorship \cite{leray1946}. Passed to the Academy through neutral channels, Leray's notes arrived in Paris and were recognized for what they were: the foundations of **sheaf theory**, **sheaf cohomology**, and the **spectral sequence**, the tool that eats the homology of a big fibred space and disgorges the homology of the pieces \cite{leray1946}.
@@ -224,7 +224,7 @@ Oflag XVII-A became a *university*. Leray, the fake geologist, organized lecture
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="Steenrod operations, Hopf invariant one, magic numbers 1, 2, 4, 8">
 ## Steenrod operations, Hopf invariant one, and the magic numbers 1, 2, 4, 8
 
 Homology gives groups; cohomology gives *rings* (you can multiply cohomology classes via the **cup product**). But even cohomology rings are not enough, they miss "hidden" operations. In 1947 **Norman Steenrod** discovered the **Steenrod operations**, systematic transformations $\mathrm{Sq}^{k}$ acting on mod-2 cohomology that are *natural* in a very strong sense, commuting with everything and satisfying only a small list of rules \cite{steenrod1947}. They are the reason the cup product is not the end of the story: they encode structure that multiplication alone cannot see. (This is where "natural transformations" from the categories section becomes a working tool: the Steenrod operations are literally natural transformations between cohomology functors.)
@@ -234,7 +234,7 @@ The most famous use of Steenrod operations is one of the cleanest theorems in al
 The other side of the same coin is **Bott periodicity** (1957–1959): compute the stable homotopy of the matrix groups and you find it is *periodic*. The infinite unitary group $U$ has $\pi_{k}(U)$ a copy of $\mathbb{Z}$ exactly for $k$ odd and $0$ for $k$ even (period **2**); the infinite orthogonal group has period **8**, matching the dimensions of the division algebras \cite{bott1959}. Topology keeps returning to the same small set of numbers: 2, 4, 8.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="Reidemeister torsion: when homology is not enough">
 ## Reidemeister torsion: when homology is not enough
 
 An honest history must state the failure mode too. In the 1930s topologists realized that homology and the fundamental group were still too coarse: in 1935 **Kurt Reidemeister**, with **Franz** and **de Rham**, showed that certain spaces, the **lens spaces** $L(p,q)$, could have *identical* fundamental group, *identical* homology groups, and still be different as *spaces* \cite{reidemeister1935}. The subtle invariant that separates them is the **Reidemeister torsion**, a value in the units of a group ring, not a group or a ring, that remembers how the pieces glue in a way the Betti numbers cannot.
@@ -246,7 +246,7 @@ The standard example: $L(7,1)$ and $L(7,2)$ both have $\pi_{1} = \mathbb{Z}/7$ a
 This is the philosophical lesson of algebraic topology, and one machine learning keeps re-learning: **the invariants you choose determine what you can see.** Homology was a huge step; its blind spots took a whole separate layer of subtlety to fix.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Persistent homology: the shape of data">
 ## Persistent homology: the shape of data
 
 All of the above is a century of pure mathematics. The payoff for this course is where algebraic topology stopped being about spaces and started being about *data*: **topological data analysis (TDA)**. The idea, developed seriously starting with **Edelsbrunner, Letscher, and Zomorodian** (2002) and crystallized by **Zomorodian and Carlsson** (2005), is simple \cite{edelsbrunner2002persistent} \cite{zomorodian2005}:
@@ -263,7 +263,7 @@ The key theorem, due to **Cohen-Steiner, Edelsbrunner, and Harer** (2007), is th
 The newest frontier is **neural persistence**: applying persistent homology not to data *outside* a network but to the network *itself*, to the graph of activations and connections, and using the resulting topological features (how many loops does the loss landscape have? how "complex" is the feature map?) as a *data representation* for understanding generalization \cite{riek2019neural}. Early results are striking: networks that generalize well and poorly differ measurably in the topology of their layers.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Where this leads: types are spaces">
 ## Where this leads: types are spaces
 
 The deepest current of this book's own story comes full circle: algebraic topology is now the foundation of **Homotopy Type Theory (HoTT)**, the modern formal foundation that turns theorem-proof back into geometry. The slogan is almost a pun: in HoTT, **types are spaces, and identities are path spaces**, the equality of two objects is a *path* between them, and the group of paths from an object to itself *is* the fundamental group of that object's type \cite{hottbook} \cite{youvan2024}. **Univalence**, the most famous axiom of the theory, says that equivalent types are *identical*, which is the topologist's maxim "coffee cup = doughnut" raised to the level of mathematical foundation.

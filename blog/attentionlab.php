@@ -11,7 +11,7 @@ topics: architecture, math-i, math-ii
 tags: math-heavy
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Long Distance Dependencies">
 ## Long Distance Dependencies
 
 RNNs propagate information **step by step**, a signal from token 1 to token 50 must survive 49 sequential multiplications. If the weight matrix has spectral radius $< 1$, the signal decays exponentially:
@@ -57,7 +57,7 @@ Drag the slider below to insert distractor tokens between a subject and its pron
          border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65">
 This costs $O(L^2)$ memory and compute, doubling context quadruples cost. But for capturing dependencies across distance, **direct access beats sequential propagation**.
 
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from “apple” to “existentialism”, is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
@@ -1492,7 +1492,7 @@ html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #86e
      rebuilds the inner content on every hover. -->
 <div id="attn-vector-tooltip" class="attn-vector-tooltip"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Summary: Why That Equation?">
 ### Summary: Why *That* Equation?
 
 $$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$

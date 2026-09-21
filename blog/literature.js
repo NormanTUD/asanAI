@@ -124,17 +124,154 @@ window.bibData = {
 		alternativetitle: "Karpathy, ConvNetJS 2-D demo"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Origami in N Dimensions  (origami.php)
-	 *  How feed-forward networks manufacture linear separability by folding
-	 *  the data manifold into unoccupied higher dimensions.
+	 *  Computational origami: the fold as a field  (origami.php, "Origins")
+	 *  The real paper-folding mathematics and computer science behind the
+	 *  neural-network folding metaphor: its origins, the flat-foldability
+	 *  theorems, the complexity results, the design tools, and the rigid /
+	 *  space applications.
 	 * ───────────────────────────────────────────────────────────────────── */
-	"keup2022origami": {
-		title: "Origami in N dimensions: How feed-forward networks manufacture linear separability",
-		author: "Christian Keup and Moritz Helias",
-		year: 2022,
-		url: "https://arxiv.org/abs/2203.11355",
-		alternativetitle: "Keup & Helias, 2022 (arXiv:2203.11355)"
+	"math_paper_folding_wiki": {
+		title: "Mathematics of paper folding",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mathematics_of_paper_folding",
+		alternativetitle: "Mathematics of paper folding (Wikipedia)"
 	},
+	"beloch_fold_wiki": {
+		title: "Beloch fold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Beloch_fold",
+		alternativetitle: "Beloch fold (Wikipedia)"
+	},
+	"hull2011beloch": {
+		title: "Solving Cubics with Creases: The Work of Beloch and Lill",
+		author: "Thomas C. Hull",
+		year: 2011,
+		url: "http://origametry.net/papers/amer.math.monthly.118.04.307-hull.pdf",
+		alternativetitle: "Hull, American Mathematical Monthly 118(4):307-315 (2011)"
+	},
+	"hull1997origametry": {
+		title: "A comparison between straight edge and compass constructions and origami",
+		author: "Tom Hull",
+		year: 1997,
+		url: "http://origametry.net/omfiles/geoconst.html",
+		alternativetitle: "Hull, Origametry: origami vs. compass and straightedge (1997)"
+	},
+	"huzita_justin_wiki": {
+		title: "Huzita–Hatori axioms",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Huzita%E2%80%93Hatori_axioms",
+		alternativetitle: "Huzita–Justin / Huzita–Hatori axioms (Wikipedia)"
+	},
+	"kawasaki_theorem_wiki": {
+		title: "Kawasaki's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Kawasaki%27s_theorem",
+		alternativetitle: "Kawasaki's (Kawasaki–Justin) theorem (Wikipedia)"
+	},
+	"maekawa_theorem_wiki": {
+		title: "Maekawa's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Maekawa%27s_theorem",
+		alternativetitle: "Maekawa's theorem (Wikipedia)"
+	},
+	"robert_lang_wiki": {
+		title: "Robert J. Lang",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Robert_J._Lang",
+		alternativetitle: "Robert J. Lang (Wikipedia)"
+	},
+	"geometric_folding_algorithms_wiki": {
+		title: "Geometric Folding Algorithms",
+		author: "Erik and Martin Demaine",
+		year: 2007,
+		url: "https://en.wikipedia.org/wiki/Geometric_Folding_Algorithms",
+		alternativetitle: "Demaine & Demaine, Geometric Folding Algorithms (2007)"
+	},
+	"fold_and_cut_problem_wiki": {
+		title: "Fold-and-cut problem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fold-and-cut_problem",
+		alternativetitle: "Fold-and-cut problem (Wikipedia)"
+	},
+	"erik_demaine_site": {
+		title: "Erik Demaine — Computational Origami",
+		author: "Erik Demaine",
+		year: 2026,
+		url: "https://erikdemaine.org/",
+		alternativetitle: "Erik Demaine, MIT, computational origami (erikdemaine.org)"
+	},
+	"langorigami_computational": {
+		title: "Lang, Computational Origami",
+		author: "Robert J. Lang",
+		year: 2018,
+		url: "https://langorigami.com/article/computational-origami/",
+		alternativetitle: "Lang, Computational Origami (langorigami.com)"
+	},
+	"miura_fold_wiki": {
+		title: "Miura fold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Miura_fold",
+		alternativetitle: "Miura fold (Wikipedia)"
+	},
+	"rigid_origami_wiki": {
+		title: "Rigid origami",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rigid_origami",
+		alternativetitle: "Rigid origami (Wikipedia)"
+	},
+	"houdini1922papermagic": {
+		title: "Houdini's Paper Magic: the whole art of performing with paper, including paper tearing, paper folding and paper puzzles",
+		author: "Harry Houdini",
+		year: 1922,
+		url: "https://en.wikisource.org/wiki/Houdini%27s_Paper_Magic",
+		alternativetitle: "Houdini, Paper Magic (E. P. Dutton, 1922)"
+	},
+	"houdini_papermagic_img": {
+		title: "Harry Houdini Cigarette paper trick",
+		author: "Harry Houdini (Public Domain)",
+		year: 1922,
+		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini_Cigarette_paper_trick.png",
+		alternativetitle: "Houdini, cigarette-paper tear (Wikimedia Commons, public domain)"
+	},
+	"houdini_portrait_img": {
+		title: "Harry Houdini, half-length portrait, facing front (1906)",
+		author: "Library of Congress (Public Domain)",
+		year: 1906,
+		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini,_half-length_portrait,_facing_front_LCCN96518797.jpg",
+		alternativetitle: "Harry Houdini portrait (Library of Congress, public domain)"
+	},
+	"origami_cranes_img": {
+		title: "Origami made by Brighton University to support Japan (April 2011)",
+		author: "Dominic Alves (CC BY 2.0)",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Origami_made_by_Brighton_University_to_support_Japan;_April_2011.jpg",
+		alternativetitle: "Paper cranes, Brighton University (Wikimedia Commons, CC BY 2.0)"
+	},
+	"dragon_origami_img": {
+		title: "Dragon Origami (153422653)",
+		author: "Buffaloz Fotografie (CC BY 3.0)",
+		year: 2016,
+		url: "https://commons.wikimedia.org/wiki/File:Dragon_Origami_(153422653).jpeg",
+		alternativetitle: "Dragon origami (Buffaloz Fotografie, CC BY 3.0)"
+	},
+	"modular_origami_img": {
+		title: "Small Modular Origami Structure",
+		author: "Icyshadowking (CC0)",
+		year: 2025,
+		url: "https://commons.wikimedia.org/wiki/File:Small_Modular_Origami_Structure.jpg",
+		alternativetitle: "Small modular origami structure (Icyshadowking, CC0)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	"foldandcut_wiki": {
 		title: "Fold-and-cut theorem",
 		author: "Wikipedia contributors",
@@ -204,6 +341,13 @@ window.bibData = {
 		year: 2025,
 		url: "https://arxiv.org/abs/2503.08502",
 		alternativetitle: "Lewandowski et al., The Space Between (arXiv:2503.08502)"
+	},
+	"keup2022origami": {
+		title: "Origami in N dimensions: How feed-forward networks manufacture linear separability",
+		author: "Christian Keup and Moritz Helias",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.11355",
+		alternativetitle: "Keup & Helias, 2022 (arXiv:2203.11355)"
 	},
 	"amrami2021depth": {
 		title: "A simple geometric proof for the benefit of depth in ReLU networks",

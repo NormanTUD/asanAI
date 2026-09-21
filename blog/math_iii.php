@@ -90,7 +90,7 @@ When we talk about models being “good enough,” we are looking at the balance
 **Key takeaway:** AI doesn't “know” what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of “cat-ness.”
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Mathematical Toolkit of Approximation">
 ## The Mathematical Toolkit of Approximation
 
 AI leans on three families of approximation:
@@ -120,7 +120,7 @@ A neural network is, mathematically, a **function approximator**. Given a functi
 The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989} states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The integral and the closed integral">
 ## The integral and the closed integral
 
 Two more signs show up throughout this book, so it is worth learning them once. Both come from the **calculus**, which **Newton** and **Leibniz** invented independently in the 1660s to 1680s to turn "what is changing" into "what has accumulated."
@@ -171,7 +171,7 @@ You will meet the same idea again in physics and in [Geometry III](geometry_iii)
 A good engineer uses exact tools where they suffice, and approximate tools where they are the only option.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Vector Spaces: A Brief Recap">
 ## Vector Spaces: A Brief Recap
 
 Recall from Math II, the central idea: a vector lives in a space, and operations on vectors (addition, scaling, dot product) correspond to geometric operations on the space. Modern AI happens in vector spaces of dimension 768 to 16,000.
@@ -179,7 +179,7 @@ Recall from Math II, the central idea: a vector lives in a space, and operations
 For the rest of this chapter, the only fact about vector spaces we need is the following: **most vector-space intuition from 2D and 3D fails catastrophically in high dimensions**. Understanding the difference is essential to understanding modern AI.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The Curse of Dimensionality">
 ## The Curse of Dimensionality
 
 Classical statistics warns: **as dimensionality grows, geometry breaks down**.
@@ -195,7 +195,7 @@ These are real problems for classical statistical methods. Naïve nearest-neighb
 
 <div id="curse-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The Blessing of Dimensionality">
 ## The Blessing of Dimensionality
 
 You may have heard of the “curse of dimensionality”: in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
@@ -219,7 +219,7 @@ This is possible precisely because high-dimensional space has exponentially many
 
 <div id="blessing-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Concentration of Measure">
 ## Concentration of Measure
 
 A foundational result in high-dimensional probability. For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:
@@ -233,7 +233,7 @@ In words: as dimension $d$ grows, the probability of deviating from the mean shr
 This is why a 70B-parameter LLM, despite the vast size of its hypothesis space, behaves reliably on novel inputs: high-dimensional concentration ensures that any new input is “close” (in cosine similarity) to many training examples.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The Manifold Hypothesis">
 ## The Manifold Hypothesis
 
 A corollary of the blessing: real-world data does not actually fill high-dimensional space. A photo of a face lives on a low-dimensional **manifold**, the space of all possible faces, embedded in a much higher-dimensional pixel space. The intrinsic dimensionality of “face-ness” might be ~100, even though a $1024 \times 1024$ image has over a million dimensions.
@@ -243,7 +243,7 @@ Neural networks work because they learn to **parameterize these manifolds**. Eac
 This is why deep learning is so effective on images, audio, and text: each of these modalities has low intrinsic dimensionality, and neural networks are essentially manifold learners.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Why Approximations Compound and Bound">
 ## Why Approximations Compound and Bound
 
 A surprising property of well-behaved approximations: errors don't necessarily compound.
@@ -270,7 +270,7 @@ The most reliable AI systems in 2025 are not pure LLMs, they are LLMs orchestrat
 The student who masters both, and knows when to use which, will be far more capable than one trained in either alone. This is the synthesis the field is moving toward.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="The Other Side of the Bridge: Types, Spaces, and Equality">
 ## The Other Side of the Bridge: Types, Spaces, and Equality
 
 Every loss function, every embedding, every layer of every network is a function between *types*. A loss is a map $\mathcal{L} : \Theta \to \mathbb{R}_+$ from the space of parameters to the positive reals. An embedding is a map $E : V \to \mathbb{R}^d$ from a vocabulary to a vector space. A transformer block is a map $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$ from token sequences to token sequences. Once you see this, every chapter in this book is secretly a chapter about *typed functions*.
@@ -407,7 +407,7 @@ You do not need HoTT to read this book. But once you have the picture in your he
 **Hands-on, right below this box:** an interactive lab lets you deform paths into one another, watch equality become a path, and try out each of the AI applications \citeauthor{youvan2024} proposes — sliders instead of formulas.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="An interactive tour: HoTT as a foundation for AI">
 ## An interactive tour: HoTT as a foundation for AI
 
 The math in the box above is precisely the machinery \citeauthor{youvan2024} (\citeyear{youvan2024}) argues for as a *foundation for how AI systems are built*. This is not a benchmark or a new network; it is a position paper. Its claim: if a model is written in a language that already understands **types**, **paths**, and **higher equality**, then reliability, verifiability, and explainability stop being bolted on afterwards and become built-in properties of the design. The tour below follows the paper's own arc — two prerequisites, the core idea, then the application areas it targets. Everything is interactive; drag the sliders and click around.
@@ -432,7 +432,7 @@ Modern AI is startlingly capable — and at the same time **opaque**, **brittle*
 
 <div class="hott-callout"><b>Youvan's question.</b> Can a mathematically deeper language — one that <em>knows</em> from the start how data objects, transformations, and equality are related — attack all three problems at the root?</div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Prerequisite: what a type is, and programs-as-proofs">
 ### Prerequisite: what a type is, and programs-as-proofs
 
 A **type** is a set with discipline: every object has exactly one type, and the language checks — *for you, before anything runs* — that you never feed a function the wrong kind of input. The left-hand widget lets you pick a value and a function and watch that check pass or fail. The right-hand one is the deeper trick (the **Curry–Howard correspondence**): in type theory a logical *statement* is itself a type, and a *proof* of it is a *program* of that type. That is why type theory is the natural home for verifying AI at all.
@@ -475,7 +475,7 @@ A **type** is a set with discipline: every object has exactly one type, and the 
 	</div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Prerequisite: homotopy — when are two paths &quot;the same&quot;?">
 ### Prerequisite: homotopy — when are two paths "the same"?
 
 Recall the core slogan: **types are spaces, terms are points, equalities are paths.** But *what* is a path, really? Two routes from $a$ to $b$ count as "the same" when you can **continuously deform** one into the other without lifting the endpoints. That is a **homotopy**. The slider below deforms a blue start-path into a purple target-path; the white curve in between is the homotopy at that instant. And here is the twist that makes the subject deep: in a space with a **hole**, some paths simply cannot be deformed into each other — the hole is an obstacle the deformation would have to pass through.
@@ -501,7 +501,7 @@ Recall the core slogan: **types are spaces, terms are points, equalities are pat
 	<p id="hott-holeStatus" class="hott-lead"></p>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Core idea: equality is a path">
 ### Core idea: equality is a path
 
 Now the marriage of the two prerequisites. Instead of treating $a = b$ as a bare true/false, HoTT says: **"$a = b$" is itself a type** — the type of all the paths connecting $a$ to $b$. Two objects can be equal in *several different ways*, one for each path. That is the whole point, and it is what the box above only hinted at: equality is not a bit, it is a structure you can manipulate.
