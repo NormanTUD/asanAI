@@ -1363,23 +1363,23 @@
 		block.classList.remove('topic-block-collapsed');
 		block.classList.add('topic-block-revealed');
 
-		if (banner && animate && !prefersReducedMotion()) {
-			banner.style.transition = 'opacity 140ms ease';
-			banner.style.opacity = '0';
-		}
-
 		if (inner && animate && !prefersReducedMotion()) {
 			block.classList.add('tb-expanding');
 			inner.style.display = 'block';
-			const h = inner.scrollHeight;
 			inner.style.height = '0px';
+			inner.style.overflow = 'hidden';
 			inner.style.opacity = '0';
-			inner.style.transition = 'opacity ' + TUCK_MS + 'ms ease';
+			inner.style.transition = 'none';
 			void inner.offsetHeight;
-			inner.style.opacity = '1';
-			if (banner) setTimeout(function () { if (banner.parentNode) banner.remove(); }, 150);
+			const h = inner.scrollHeight;
+			if (banner) {
+				banner.style.transition = 'opacity 140ms ease';
+				banner.style.opacity = '0';
+			}
 			block._tbBusy = true;
 			animateHeight(inner, 0, h, TUCK_MS, function () {
+				inner.style.height = '';
+				inner.style.overflow = '';
 				inner.style.opacity = '';
 				inner.style.transition = '';
 				inner.style.display = '';
@@ -1391,6 +1391,7 @@
 		} else {
 			if (banner) banner.remove();
 			inner.style.height = '';
+			inner.style.overflow = '';
 			inner.style.opacity = '';
 			inner.style.display = '';
 		}
@@ -1426,18 +1427,26 @@
 		block._tbScore = score;
 		block._tbSpec = spec;
 		const wasCollapsed = block.classList.contains('topic-block-collapsed');
-		const nowCollapsed = score.state === 'off';
+		const nowOff = score.state === 'off';
+		const hasTitle = !!spec.title;
 
-		if (nowCollapsed) {
-			if (!wasCollapsed) {
-				collapseBlock(block, spec, score, !!animate);
-			} else if (block._tbReason !== score.reason) {
-				// already tucked, but the *why* changed — update the banner only
-				setBanner(block, spec, score);
+		if (nowOff) {
+			if (hasTitle) {
+				// Explicitly titled optional block → full collapse + banner
+				if (!wasCollapsed) {
+					collapseBlock(block, spec, score, !!animate);
+				} else if (block._tbReason !== score.reason) {
+					setBanner(block, spec, score);
+				}
+			} else {
+				// No title → just dim, keep content visible
+				if (wasCollapsed) revealBlock(block, !!animate);
+				block.classList.add('topic-block-dimmed');
 			}
 			block._tbReason = score.reason;
 			return;
 		}
+		block.classList.remove('topic-block-dimmed');
 		if (wasCollapsed) revealBlock(block, !!animate);
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);
@@ -1740,38 +1749,13 @@
 		}
 	}
 
-	/* ── 8. Per-page "X tucked / partial" indicator ───────────── */
+	/* ── 8. Per-page "X tucked / partial" indicator ─────────────
+	   Disabled: the per-block banners already communicate the tucked
+	   state. A global "5 sections tucked away by your interests" bar
+	   at the top of the page is redundant and alarming on first load. */
 	function updateSkipIndicator() {
-		const total = document.querySelectorAll('.topic-block').length;
-		const collapsed = document.querySelectorAll('.topic-block.topic-block-collapsed').length;
-		const partial = document.querySelectorAll('.topic-block.topic-block-partial').length;
-		let bar = document.getElementById('topics-skip-bar');
-		if (collapsed === 0 && partial === 0) {
-			if (bar) bar.remove();
-			return;
-		}
-		if (!bar) {
-			bar = document.createElement('div');
-			bar.id = 'topics-skip-bar';
-			bar.className = 'topics-skip-bar';
-			bar.innerHTML = [
-				'<span class="topics-skip-icon" aria-hidden="true">🎯</span>',
-				'<span class="topics-skip-text"></span>',
-				'<button type="button" class="topics-skip-reveal-all">Reveal all on this page</button>'
-			].join('');
-			bar.querySelector('.topics-skip-reveal-all').addEventListener('click', function () {
-				document.querySelectorAll('.topic-block.topic-block-collapsed').forEach(revealBlock);
-				updateSkipIndicator();
-			});
-			const contents = document.getElementById('contents');
-			if (contents) contents.insertBefore(bar, contents.firstChild);
-		}
-		const bits = [];
-		if (collapsed) bits.push(collapsed + ' section' + (collapsed === 1 ? '' : 's') + ' tucked away');
-		if (partial) bits.push(partial + ' partial match' + (partial === 1 ? '' : 'es'));
-		bar.querySelector('.topics-skip-text').textContent =
-			bits.join(' · ') + ' by your interests'
-			+ (total ? ' (' + (total - collapsed) + ' of ' + total + ' visible)' : '');
+		const bar = document.getElementById('topics-skip-bar');
+		if (bar) bar.remove();
 	}
 
 	/* ── 9. Change broadcast ──────────────────────────────────── */
