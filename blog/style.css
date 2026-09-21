@@ -10503,12 +10503,20 @@ math {
 	cursor: pointer;
 	border: 2px solid var(--mn-surface);
 }
-.math-comfort-scale {
+.math-comfort-ticks {
 	display: flex;
 	justify-content: space-between;
-	font-size: 0.7rem;
+	font-size: 0.65rem;
 	color: var(--mn-text-muted);
+	padding: 2px 2px 0;
 }
+.math-comfort-ticks span {
+	position: relative;
+	text-align: center;
+	flex: 1;
+}
+.math-comfort-ticks span:first-child { text-align: left; }
+.math-comfort-ticks span:last-child { text-align: right; }
 
 /* Tucked Away (Index Page) */
 .tucked-away-area {

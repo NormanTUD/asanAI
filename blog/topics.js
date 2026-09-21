@@ -839,10 +839,13 @@
 					<p class="topics-audience-hint" id="topics-audience-hint"></p>
 				</div>
 				<div class="topics-math-comfort" role="group" aria-label="Math comfort level">
-					<span class="topics-math-label">Math comfort level</span>
+					<span class="topics-math-label">How much math is comfortable?</span>
 					<div class="topics-math-control">
 						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="5" value="${getMathLevel()}" aria-label="Math comfort, percent">
-						<span class="topics-math-val">${getMathLevel()}%</span>
+						<span class="topics-math-val">${getMathLevel()}% · ${mathLabel(getMathLevel())}</span>
+					</div>
+					<div class="math-comfort-ticks">
+						<span>intuition</span><span>algebra</span><span>calculus</span><span>proofs</span><span>everything</span>
 					</div>
 				</div>
 				<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">
@@ -960,7 +963,20 @@
 		});
 
 		const mathSlider = overlay.querySelector('.topics-math-range');
-		if (mathSlider) wireMathSlider(overlay);
+		if (mathSlider) {
+			const oVal = overlay.querySelector('.topics-math-val');
+			let oDrag = false;
+			const oPaint = function () {
+				const v = parseInt(mathSlider.value, 10);
+				if (oVal) oVal.textContent = v + '% · ' + mathLabel(v);
+			};
+			mathSlider.addEventListener('input', function () {
+				oPaint();
+				if (!oDrag) { oDrag = true; pushHistory(); }
+				setMathLevel(parseInt(mathSlider.value, 10), { pushHistory: false });
+			});
+			mathSlider.addEventListener('change', function () { oDrag = false; oPaint(); });
+		}
 	}
 
 	let _hintTimer = null;
@@ -1891,29 +1907,46 @@
 		persistPref(cur);
 	}
 
+	function mathLabel(v) {
+		if (v < 20) return 'Diagrams & intuition';
+		if (v < 40) return 'Basic algebra & graphs';
+		if (v < 60) return 'Calculus & linear algebra';
+		if (v < 80) return 'Proofs & advanced math';
+		if (v < 100) return 'Deep formal math';
+		return 'Everything, no shortcuts';
+	}
+
 	function mathSliderHtml() {
 		const v = getMathLevel();
 		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort">'
 			+ '<div class="math-comfort-top">'
-			+   '<span class="math-comfort-label">∑ Math you are comfortable with</span>'
-			+   '<span class="math-comfort-val">' + v + '%</span>'
+			+   '<span class="math-comfort-label">∑ How much math is comfortable?</span>'
+			+   '<span class="math-comfort-val" data-math-val>' + v + '% · ' + escAttr(mathLabel(v)) + '</span>'
 			+ '</div>'
 			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
 			+ '" step="5" value="' + v + '" aria-label="Math comfort, percent">'
-			+ '<div class="math-comfort-scale"><span>light · intuition first</span><span>100% · want to know it all</span></div>'
+			+ '<div class="math-comfort-ticks">'
+			+   '<span data-tick="0">intuition</span>'
+			+   '<span data-tick="35">algebra</span>'
+			+   '<span data-tick="60">calculus</span>'
+			+   '<span data-tick="80">proofs</span>'
+			+   '<span data-tick="100">everything</span>'
+			+ '</div>'
 			+ '</div>';
 	}
 
 	function wireMathSlider(h) {
 		const range = h.querySelector('.math-comfort-range');
 		if (!range) return;
-		const val = h.querySelector('.math-comfort-val');
+		const val = h.querySelector('[data-math-val]');
 		let dragging = false;
-		const paint = function () { if (val) val.textContent = range.value + '%'; };
+		const paint = function () {
+			const v = parseInt(range.value, 10);
+			if (val) val.textContent = v + '% · ' + mathLabel(v);
+		};
 		range.addEventListener('input', function () {
 			paint();
 			if (!dragging) { dragging = true; pushHistory(); }
-			// Don't let the fireChange→rebuild replace this <input> mid-drag.
 			_skipInlineWidget = true;
 			try { setMathLevel(parseInt(range.value, 10), { pushHistory: false }); }
 			finally { _skipInlineWidget = false; }
@@ -1921,7 +1954,7 @@
 		range.addEventListener('change', function () {
 			dragging = false;
 			paint();
-			renderInlineWidget(h); // safe again: drag ended, refresh the counts
+			renderInlineWidget(h);
 		});
 	}
 
