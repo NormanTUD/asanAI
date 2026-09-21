@@ -10509,6 +10509,7 @@ math {
 	border-radius: 20px;
 	border: 1px dashed var(--mn-border);
 }
+.tucked-away-empty { display: none; }
 .tucked-away-title {
 	display: flex;
 	align-items: center;
