@@ -281,7 +281,9 @@ Between the fall of the Western Roman Empire and the European Renaissance, the c
 **Muhammad ibn Musa al-Khwarizmi** (c. 780–850 CE) wrote the \citetitle{alkhwarizmi820algebra} (c. 820 CE), the first systematic treatise on algebra, a work that gave the discipline its name (al-jabr, "the reunion of broken parts") and the discipline of *algorithm* its name (a Latinization of al-Khwarizmi's name). The book solved linear and quadratic equations by geometric and arithmetic methods, and its procedures, step-by-step, unambiguous, mechanical, are the direct ancestors of the *algorithms* that now run on every GPU.
 
 **Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \citetitle{ibnalhaytham1021optics} (\citeyear{ibnalhaytham1021optics}), a seven-volume work that established the **experimental method** as the foundation of optics and, by extension, of natural philosophy. Against the Greek emission and intromission theories of vision, Ibn al-Haytham argued, on the basis of controlled experiments, that vision occurs when light from an object enters the eye, and he designed the first controlled experiments in the history of science: varying one parameter at a time, recording the result, and drawing a general conclusion. The \citetitle{ibnalhaytham1021optics} also described the **camera obscura**, the direct optical ancestor of the photographic camera, the microscope, and the camera that will one day image a brain. The experimental method he codified, hypothesis, controlled experiment, quantitative measurement, general law, is the method that the Royal Society would formalize three centuries later and that the entire empirical science underlying AI depends on.
+</div>
 
+<div class="md" data-mathlevel="35" data-optionaltitle="The Scientific Revolution: 1543–1687">
 ### The Scientific Revolution: 1543–1687
 
 The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:
@@ -310,7 +312,9 @@ The *Principia* also contained the first rigorous formulation of **calculus** (i
 **Leibniz: The Calculus of Reasoning.** \citeauthorlastnameand{leibniz1686calculus} was working on a project that Newton never conceived: a **universal characteristic** (*Characteristica Universalis*), a formal language in which all concepts are expressed as symbols and all reasoning is performed as calculation. The idea is that all reasoning is, at bottom, a form of computation. The \citetitle{leibniz1666combinatoria} (\citeyear{leibniz1666combinatoria}) articulated the ambition: "If disputes should arise between scholars, it would be unnecessary for them to argue with one another... They can say, let us calculate". The \citetitle{leibniz1686calculus} (\citeyear{leibniz1686calculus}) developed the logical analysis of notions and truths that would, three centuries later, become the foundation of formal logic and, ultimately, of the logic gate.
 
 Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\frac{dy}{dx}$, $\int$) in 1684, two years before Newton's *Principia*. The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.
+</div>
 
+<div class="md">
 ### The Mathematical Infrastructure of Computation
 
 The Scientific Revolution provided the *physical* model of the world. The *mathematical* infrastructure for modern computation was built in parallel, by people working on problems that had nothing to do with machines:
@@ -570,7 +574,7 @@ External memory long predates paper: Sumerian clay tablets (c. 3400 BCE), Egypti
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="35">
 The numeral zero, along with the positional decimal system, was \cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci). In his 1202 work *Liber Abaci*, Fibonacci \cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation. Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power. Fibonacci is \cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.
 
 Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India, **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
@@ -1220,7 +1224,9 @@ The first major formalization came with **FORTRAN**, designed by \cite[John Back
 #### ALGOL 60 and Explicit Type Declarations (1960)
 
 The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
 #### Floating-Point Standardization: IEEE 754 (1985)
 
 While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
@@ -1228,7 +1234,9 @@ While floating-point arithmetic existed from the earliest computers, every manuf
 $$\text{float (32-bit):}\quad (-1)^s \times 1.m \times 2^{e-127}$$
 
 where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in \cite[IEEE, 2008]{ieee754_2008} and \cite[IEEE, 2019]{ieee754_2019}.
+</div>
 
+<div class="md">
 #### The Boolean in Programming
 
 - **ALGOL 60** (1960): first language with `Boolean` as a named type.
@@ -1257,7 +1265,9 @@ The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with n
 - **FORTRAN (1957)**, Designed by John Backus at IBM, FORTRAN was the first widely-used high-level language and introduced explicit multi-dimensional arrays for scientific computing. A declaration like `DIMENSION A(10,10)` allocated a $10 \times 10$ matrix in memory.
 - **ALGOL 60 (1960)**, Introduced explicit type declarations and dynamic array bounds.
 - **C (1972)**, Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
+</div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="Why Arrays Matter">
 #### Why Arrays Matter
 
 Arrays map directly to how computer memory works, sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
@@ -1265,8 +1275,9 @@ Arrays map directly to how computer memory works, sequential, indexed storage. A
 $$\text{address}(A[i]) = \text{base\_address} + i \times \text{element\_size}$$
 
 This efficiency made arrays the foundation for virtually all higher-level data structures (linked lists, hash tables, heaps, etc.) and algorithms (sorting, searching, matrix operations).
+</div>
 
-
+<div class="md">
 ### NumPy: Efficient Arrays for Python
 
 #### The Problem
@@ -1423,7 +1434,9 @@ VisiCalc became the first **“killer application”**, software so compelling t
 “VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes.”
 
 The spreadsheet metaphor, a grid of cells, each containing either a value or a formula, proved so intuitive that it has survived essentially unchanged for over 45 years.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The Mathematical Model">
 #### The Mathematical Model
 
 A spreadsheet can be formalized as a **directed acyclic graph (DAG)** of cell dependencies. Each cell $C_{i,j}$ contains either a constant $v$ or a function $f$ of other cells:
@@ -1435,7 +1448,9 @@ When any cell's value changes, the system performs a **topological sort** of the
 $$\text{If } C_{1,1} \text{ changes} \implies \text{recalculate all } C_{i,j} \text{ where } C_{1,1} \in \text{deps}(C_{i,j})$$
 
 This automatic propagation of changes through a dependency graph is the core innovation that separates a spreadsheet from a static table.
+</div>
 
+<div class="md">
 ### Lotus 1-2-3: The IBM PC Era (1983)
 
 #### The Shift to IBM
@@ -1498,7 +1513,9 @@ is functionally equivalent to:
 $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 
 ### Beyond Spreadsheets: The Evolution of Data Usability
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
 #### The Database Revolution: From Filing Cabinets to SQL
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.
