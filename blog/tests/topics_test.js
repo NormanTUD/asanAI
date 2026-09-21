@@ -64,6 +64,7 @@ global.document = {
 	createElement: function() { return makeNode(); },
 	createTextNode: function() { return {}; },
 	getElementById: function() { return null; },
+	querySelector: function() { return null; },
 	querySelectorAll: function() { return []; },
 	body: { appendChild() {}, style: {} },
 	addEventListener() {},
@@ -219,6 +220,36 @@ check(!/<div class="topic-block"/.test(html7), 'unclosed marker does not produce
 // a category id inside a marker still round-trips into data-topic
 const html8 = render('[[t:math-i,math-heavy]]\nbody\n[[/t]]');
 check(/data-topic="math-i math-heavy"/.test(html8), 'category id coexists in data-topic');
+
+/* ── math level ──────────────────────────────────────────────── */
+check(typeof BT.getMathLevel === 'function', 'getMathLevel exposed');
+check(typeof BT.setMathLevel === 'function', 'setMathLevel exposed');
+check(BT.getMathLevel() === 60, 'default math level is 60');
+BT.setMathLevel(80, { pushHistory: false });
+check(BT.getMathLevel() === 80, 'setMathLevel(80)');
+BT.setMathLevel(10, { pushHistory: false });
+check(BT.getMathLevel() === 10, 'setMathLevel(10)');
+BT.setMathLevel(150, { pushHistory: false });
+check(BT.getMathLevel() === 100, 'setMathLevel clamps to max');
+BT.setMathLevel(-10, { pushHistory: false });
+check(BT.getMathLevel() === 0, 'setMathLevel clamps to min');
+BT.setMathLevel(60, { pushHistory: false });
+
+/* ── CORE_PERSONAS ───────────────────────────────────────────── */
+check(Array.isArray(BT.CORE_PERSONAS), 'CORE_PERSONAS is an array');
+check(BT.CORE_PERSONAS.length === 3, 'CORE_PERSONAS has exactly 3 entries');
+check(BT.CORE_PERSONAS.every(p => typeof p.id === 'string' && typeof p.math === 'number' && Array.isArray(p.topics)), 'CORE_PERSONAS structure valid');
+
+/* ── scoreUnit math gate ─────────────────────────────────────── */
+withPref({ mathLevel: 20 });
+const mathHigh = BT.scoreUnit(['math-i'], { mathReq: 70 });
+check(mathHigh.state === 'off', 'mathLevel 20 + mathReq 70 → off');
+check(mathHigh.why === 'math', 'math gate reason is "math"');
+
+withPref({ mathLevel: 80 });
+const mathOk = BT.scoreUnit(['math-i'], { mathReq: 70 });
+check(mathOk.state === 'full', 'mathLevel 80 + mathReq 70 → full');
+withPref(null);
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exit(1);
