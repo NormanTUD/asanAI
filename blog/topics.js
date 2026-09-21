@@ -797,81 +797,71 @@
 		overlay.id = 'topics-overlay';
 		overlay.className = 'topics-overlay';
 		overlay.setAttribute('aria-hidden', 'true');
-		overlay.innerHTML = [
-			'<div class="topics-backdrop" data-close></div>',
-			'<div class="topics-modal" role="dialog" aria-modal="true" aria-labelledby="topics-title">',
-				'<button class="topics-close" type="button" aria-label="Close" data-close>×</button>',
-				'<header class="topics-header">',
-					'<h2 id="topics-title"><span class="topics-title-emoji">🎯</span> Your Interests</h2>',
-					'<p class="topics-tagline">Pick who you are and how deep you want to go — we\'ll pick a sensible set of topics for you. Fine-tune individual topics below.</p>',
-				'</header>',
-				'<div class="topics-audience">',
-					'<div class="topics-audience-row">',
-						'<span class="topics-audience-label">I\'m a</span>',
-						'<div class="topics-seg" role="radiogroup" aria-label="Your profile" data-audience="profile">',
-							PROFILES.map(function (p) {
-								return '<button type="button" class="topics-seg-btn" role="radio" data-profile="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' + escAttr(p.label) + '</button>';
-							}).join(''),
-						'</div>',
-						'<button type="button" class="topics-audience-clear" data-audience-clear title="Clear the audience filter — pick topics by hand below">Clear</button>',
-					'</div>',
-					'<div class="topics-audience-row">',
-						'<span class="topics-audience-label">reading at</span>',
-						'<div class="topics-seg" role="radiogroup" aria-label="Your level" data-audience="level">',
-							LEVELS.map(function (l) {
-								return '<button type="button" class="topics-seg-btn" role="radio" data-level="' + escAttr(l.id) + '" title="' + escAttr(l.hint) + '">' + escAttr(l.label) + '</button>';
-							}).join(''),
-						'</div>',
-						'<span class="topics-audience-suffix">level</span>',
-					'</div>',
-					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
-				'</div>',
-				'<div class="topics-math-comfort" role="group" aria-label="Math comfort level">'
-					+ '<span class="topics-math-label">Math comfort level</span>'
-					+ '<div class="topics-math-control">'
-						+ '<input type="range" class="topics-math-range" min="' + MATH_MIN + '" max="' + MATH_MAX + '" step="5" value="' + getMathLevel() + '" aria-label="Math comfort, percent">'
-						+ '<span class="topics-math-val">' + getMathLevel() + '%</span>'
-					+ '</div>'
-				'</div>',
-				'<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">',
-					'<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>',
-					'<div class="topics-cat-row" id="topics-cat-row"></div>',
-				'</div>',
-				'<div class="topics-personas" role="group" aria-label="Classic reader types">',
-					'<span class="topics-personas-label">or, which classic type are you?</span>',
-					'<div class="topics-persona-row">' +
-						PERSONAS.map(function (p) {
-							return '<button type="button" class="topics-persona-btn' + (p.id === 'polymath' ? ' topics-preset-fun' : '') +
-								'" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' +
-								'<span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' +
-								escAttr(p.label) +
-							'</button>';
-						}).join('') +
-					'</div>',
-				'</div>',
-				'<div class="topics-presets" role="group" aria-label="Quick presets">',
-					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
-					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
-					'<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>',
-					'<button type="button" data-preset="none" class="topics-preset-btn topics-preset-off">Disable All</button>',
-				'</div>',
-				'<div class="topics-grid" id="topics-grid"></div>',
-				'<footer class="topics-footer">',
-					'<div class="topics-undo-group" role="group" aria-label="History">',
-						'<button type="button" id="topics-undo" class="topics-undo-btn" aria-label="Undo">',
-							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>',
-							'<span>Undo</span>',
-						'</button>',
-						'<button type="button" id="topics-redo" class="topics-undo-btn" aria-label="Redo">',
-							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>',
-							'<span>Redo</span>',
-						'</button>',
-					'</div>',
-					'<span class="topics-count" id="topics-count"></span>',
-					'<span class="topics-hint">Saved automatically · 🍪</span>',
-				'</footer>',
-			'</div>'
-		].join('');
+		overlay.innerHTML = `
+			<div class="topics-backdrop" data-close></div>
+			<div class="topics-modal" role="dialog" aria-modal="true" aria-labelledby="topics-title">
+				<button class="topics-close" type="button" aria-label="Close" data-close>&times;</button>
+				<header class="topics-header">
+					<h2 id="topics-title"><span class="topics-title-emoji">🎯</span> Your Interests</h2>
+					<p class="topics-tagline">Pick who you are and how deep you want to go — we'll pick a sensible set of topics for you. Fine-tune individual topics below.</p>
+				</header>
+				<div class="topics-audience">
+					<div class="topics-audience-row">
+						<span class="topics-audience-label">I'm a</span>
+						<div class="topics-seg" role="radiogroup" aria-label="Your profile" data-audience="profile">
+							${PROFILES.map(p => '<button type="button" class="topics-seg-btn" role="radio" data-profile="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' + escAttr(p.label) + '</button>').join('')}
+						</div>
+						<button type="button" class="topics-audience-clear" data-audience-clear title="Clear the audience filter — pick topics by hand below">Clear</button>
+					</div>
+					<div class="topics-audience-row">
+						<span class="topics-audience-label">reading at</span>
+						<div class="topics-seg" role="radiogroup" aria-label="Your level" data-audience="level">
+							${LEVELS.map(l => '<button type="button" class="topics-seg-btn" role="radio" data-level="' + escAttr(l.id) + '" title="' + escAttr(l.hint) + '">' + escAttr(l.label) + '</button>').join('')}
+						</div>
+						<span class="topics-audience-suffix">level</span>
+					</div>
+					<p class="topics-audience-hint" id="topics-audience-hint"></p>
+				</div>
+				<div class="topics-math-comfort" role="group" aria-label="Math comfort level">
+					<span class="topics-math-label">Math comfort level</span>
+					<div class="topics-math-control">
+						<input type="range" class="topics-math-range" min="${MATH_MIN}" max="${MATH_MAX}" step="5" value="${getMathLevel()}" aria-label="Math comfort, percent">
+						<span class="topics-math-val">${getMathLevel()}%</span>
+					</div>
+				</div>
+				<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">
+					<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>
+					<div class="topics-cat-row" id="topics-cat-row"></div>
+				</div>
+				<div class="topics-personas" role="group" aria-label="Classic reader types">
+					<span class="topics-personas-label">or, which classic type are you?</span>
+					<div class="topics-persona-row">
+						${PERSONAS.map(p => '<button type="button" class="topics-persona-btn' + (p.id === 'polymath' ? ' topics-preset-fun' : '') + '" data-persona="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '"><span class="topics-persona-icon" aria-hidden="true">' + escAttr(p.icon) + '</span>' + escAttr(p.label) + '</button>').join('')}
+					</div>
+				</div>
+				<div class="topics-presets" role="group" aria-label="Quick presets">
+					<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>
+					<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>
+					<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>
+					<button type="button" data-preset="none" class="topics-preset-btn topics-preset-off">Disable All</button>
+				</div>
+				<div class="topics-grid" id="topics-grid"></div>
+				<footer class="topics-footer">
+					<div class="topics-undo-group" role="group" aria-label="History">
+						<button type="button" id="topics-undo" class="topics-undo-btn" aria-label="Undo">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+							<span>Undo</span>
+						</button>
+						<button type="button" id="topics-redo" class="topics-undo-btn" aria-label="Redo">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+							<span>Redo</span>
+						</button>
+					</div>
+					<span class="topics-count" id="topics-count"></span>
+					<span class="topics-hint">Saved automatically · 🍪</span>
+				</footer>
+			</div>
+		`;
 		document.body.appendChild(overlay);
 
 		overlay.querySelectorAll('[data-close]').forEach(function (el) {
