@@ -54,7 +54,9 @@ A rough conversion:
 $$
 \text{128K tokens} \approx 96{,}000 \text{ words} \approx 300 \text{ pages} \approx 1 \text{ novel}
 $$
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="Why Does the Context Window Exist?">
 ## Why Does the Context Window Exist?
 
 The context window isn't an arbitrary limitation, it emerges from the **architecture** of the Transformer itself.
@@ -81,7 +83,9 @@ The $QK^T$ matrix has dimensions $n \times n$. This means:
 | 1,000,000 | 1T entries | ~2 TB |
 
 At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory, clearly impossible. So how do modern models handle it?
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="How Models Achieve Long Context">
 ## How Models Achieve Long Context
 
 ### 1. KV Cache: Remembering Without Recomputing

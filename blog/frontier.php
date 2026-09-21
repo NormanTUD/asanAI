@@ -31,7 +31,7 @@ A typical constitution entry: *“Which response is more honest? Response A stat
 CAI reduces human labelling by ~10× while matching \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Sparse Autoencoders (SAE loss)">
 ## Sparse Autoencoders (SAEs) for Interpretability
 
 The interpretability chapter covered **circuits**. A complementary approach: **decompose activations into sparse, interpretable features**.
@@ -87,7 +87,7 @@ Recall from the Reasoning chapter: a **Process Reward Model** scores every step 
 The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 10–20% of queries.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Mixture of Depths (MoD) routing">
 ## \cite[Sparse Expert Models]{bubeck2023moeoverview} of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers**. Easy tokens skip; hard tokens use full depth.
