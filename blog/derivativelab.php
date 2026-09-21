@@ -11,7 +11,7 @@ topics: math-i, programming
 tags: math-heavy, code-heavy
 -->
 
-<div class="md">
+<div class="md" data-mathlevel="55">
     In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a “Scoreboard” that tells us how many mistakes the AI is making. 
 
     The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
@@ -84,6 +84,9 @@ tags: math-heavy, code-heavy
     2.  **Learning in Action:** Click **“Take 1 Step Down.”** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving “downhill” until its errors are as small as possible.
     3.  **Getting Stuck:** Try the “Complex Hills” landscape. If you start the AI in the wrong place, it might find a valley and get stuck there, without ever noticing the other valley further away!
 
+</div>
+
+<div class="md" data-mathlevel="45" data-optionaltitle="Partial derivatives and the gradient vector">
 ### Understanding the Partial Derivative ($\partial$)
 
 Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
@@ -128,6 +131,9 @@ This vector tells the AI exactly how much to adjust each “knob” (Size and Ag
 * $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
 * $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="The backpropagation chain rule">
 ### The “Backpropagation” Bridge: The Chain Rule
 
 You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.
