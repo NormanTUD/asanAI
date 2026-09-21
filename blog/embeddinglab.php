@@ -942,7 +942,7 @@ Below, you can explore this holographic property directly. A set of concept vect
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Voronoi Cells: The Territories of Meaning">
 ## Voronoi Cells: The Territories of Meaning
 
 Imagine the embedding space as a vast, empty continent. Each token the model knows, every word, subword, and symbol, plants a flag at its vector position. Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories, one per token, where every point inside a territory is closer to that territory's token than to any other. These territories are called **Voronoi cells**.
@@ -1022,7 +1022,7 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="High-Dimensional Holes: The Swiss Cheese of Meaning">
 ## High-Dimensional Holes: The Swiss Cheese of Meaning
 
 The embedding space is not a solid block of uniformly packed vectors. It is more like **Swiss cheese**, riddled with holes, voids, and cavities where no token ever lives. These are not random gaps; they are structurally meaningful absences. Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.
@@ -1117,7 +1117,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Polytope Hulls: The Boundaries of the Conceivable">
 ## Polytope Hulls: The Boundaries of the Conceivable
 
 In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points, the smallest convex body that encloses all of them.
@@ -1202,7 +1202,7 @@ Below, you can explore this interactively. Two conceptual categories are represe
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Vector Rotations as Grammar Operators">
 ## Vector Rotations as Grammar Operators
 
 One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn, an idealization that captures many inflections surprisingly well.
@@ -1212,9 +1212,11 @@ One of the more elegant ways to *model* grammatical transformations in embedding
 Take a cloud of present-tense verb vectors: “run,” “eat,” “write,” “speak,” “build.” They form a cluster in the embedding space. Now take their past-tense counterparts: “ran,” “ate,” “wrote,” “spoke,” “built.” These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous “king − man + woman = queen” analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space, again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
 </div>
 
+<div class="topic-block" data-optionaltitle="Grammar as a rotation matrix" data-mathlevel="55">
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. This equation is best read as an *analytical model* rather than a literal geometric law: the approximation holds reasonably well for many common verb pairs, but real embeddings are noisy and no single rotation maps every inflection exactly. Calling tense a “rotational symmetry” of language is a useful simplification that captures a statistical tendency, not an exact symmetry.
 
 ### Why Rotation, Not Translation?

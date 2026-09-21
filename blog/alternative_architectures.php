@@ -9,6 +9,7 @@ order: 16
 color: sky
 topics: architecture, math-i, math-ii, programming
 tags: math-heavy, code-heavy
+math: 58
 -->
 
 <div class="md">
@@ -17,7 +18,7 @@ The Transformer is not the end of the road. Its $O(n^2)$ attention cost creates 
 This chapter surveys the main candidates, with the mathematical core of each. The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is "a very rough functional program, with these flexible, learnable pieces" \cite[Olah, 2015]{colah2015types}.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The Quadratic Wall">
 ## The Quadratic Wall
 
 **KV-cache mitigation:** Even standard Transformers handle long contexts via **KV-caching** (see the Production Serving chapter), which stores past K/V matrices so per-token compute stays linear in sequence length during autoregressive generation. The O(n²) cost appears in **training** and in **prefill** of long prompts; generation with a KV cache is O(n) per token. The practical gap between Transformers and sub-quadratic alternatives is therefore smaller than the asymptotic notation suggests.
@@ -38,7 +39,7 @@ where $d_k$ is the dimension of the keys (the head dimension). The $QK^\top$ mat
 | **Recurrence + windowed attention hybrids** | Jamba, Zamba, etc. | $O(n \cdot w)$ with SSM long range |
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="72" data-optionaltitle="State-Space Models: S4 and Mamba">
 ## State-Space Models: S4 and Mamba
 
 A **state-space model** (SSM) describes a continuous linear dynamical system:
@@ -56,7 +57,9 @@ $$
 where $\bar A = \exp(\Delta A)$, $\bar B = (\Delta A)^{-1}(\exp(\Delta A) - \mathbf{I}) \Delta B$.
 
 This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{R}^{N}$. Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length. The lineage runs back through the [Networks with Memory](recurrent_networks.php) chapter: an LSTM is exactly this state update with a learned, gated nonlinearity bolted on — the gates decide *what to keep*, and the fixed-size state is why these models dominated before attention scaled up \cite{colah2015lstm,lstm}.
+</div>
 
+<div class="md">
 ### S4
 
 \cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
