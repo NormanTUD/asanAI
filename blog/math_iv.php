@@ -50,6 +50,7 @@ tags: math-heavy
 .aff-pill { padding: .28rem .7rem; border: 1px solid var(--mn-border); border-radius: 99px; font-size: .78rem; color: var(--mn-text-secondary); }
 .aff-pill.warn { color: #b45309; border-color: #b45309; }
 .aff-pill.bad { color: var(--mn-rose); border-color: var(--mn-rose); }
+.aff-pill.good { color: var(--mn-emerald); border-color: var(--mn-emerald); }
 .aff-checks { margin-top: .75rem; display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .8rem; align-items: center; }
 .aff-check { color: var(--mn-text-secondary); }
 .aff-check.good { color: var(--mn-emerald); }
