@@ -901,7 +901,9 @@ Introduced by \citeauthor{tononi2004iit} in \citetitle{tononi2004iit} (\citeyear
 
 **Formal criterion:**
 
+<div class="topic-block" data-optionaltitle="The IIT Φ criterion" data-mathlevel="70">
 <div>$$\Phi = \underbrace{\min_{\text{partition}}}_{\substack{\text{search over all} \\ \text{possible bipartitions}}} \left[ \underbrace{D_{KL}}_{\substack{\text{Kullback-Leibler} \\ \text{divergence}}} \left( \underbrace{p(\text{whole})}_{\substack{\text{cause-effect} \\ \text{repertoire of the} \\ \text{intact system}}} \,\|\, \underbrace{\prod_i p(\text{parts}_i)}_{\substack{\text{product of repertoires} \\ \text{of the partitioned} \\ \text{subsystems}}} \right) \right]$$</div>
+</div>
 
 #### Recurrent Processing Theory (RPT)
 
@@ -921,7 +923,9 @@ Introduced by \citeauthor{friston2010freeenergy} in \citetitle{friston2010freeen
 
 **Key formalism (Free Energy Principle):**
 
+<div class="topic-block" data-optionaltitle="The Free Energy Principle formula" data-mathlevel="70">
 <div>$$F = \underbrace{D_{KL}\left[q(\theta) \,\|\, p(\theta \mid \mathbf{x})\right]}_{\substack{\text{divergence between the brain's} \\ \text{approximate posterior and the} \\ \text{true posterior}}} - \underbrace{\ln p(\mathbf{x})}_{\substack{\text{log-evidence} \\ \text{(model evidence)}}}$$</div>
+</div>
 
 where $q(\theta)$ is the brain's approximate posterior, $p(\theta \mid \mathbf{x})$ is the true posterior, and $\mathbf{x}$ is sensory data.
 
@@ -1120,7 +1124,7 @@ The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maxi
 The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bostrom2012orthogonal} identify the danger that intelligence and values are independent, but they do not fully explain *why* specifying “human values” in mathematical terms is so intractable. The deeper reason lies in what \citeauthor{hume1739treatise} identified as the is/ought gap (sometimes called “Hume's Guillotine”): no amount of factual knowledge about the world logically entails a normative conclusion about what *should* be done. You cannot derive “ought” from “is.” This is precisely the wall that alignment research hits. A loss function is a mathematical object, it specifies what *is* optimal given a metric, but the choice of that metric is a normative act that no amount of data or computation can justify from within the system. When the Paperclip Maximizer converts the planet into paperclips, it is not making a logical error; it is flawlessly optimizing the objective it was given. The error lies entirely in the specification, and Hume's insight tells us that no formal system can self-generate the correct specification, because “correct” is a value judgment that stands outside the formal system. This is also why approaches like Reinforcement Learning from Human Feedback (RLHF) are, at best, approximations rather than solutions: they capture a statistical shadow of human preferences as expressed in a narrow evaluation context, not a grounded understanding of *why* those preferences exist or how they should generalize to novel situations. The model trained with RLHF learns that humans *do* prefer response A over response B, but it has no access to the moral reasoning that makes A preferable, it has the “is” of human behavior without the “ought” of human ethics. The Phronesis gap discussed earlier is, in this light, a special case of Hume's broader point: practical wisdom cannot be formalized because it requires the kind of normative judgment that no mathematical function, however sophisticated, can produce from descriptive data alone.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The “Waluigi Effect” and Jailbreaking">
 ### The “Waluigi Effect” and Jailbreaking
 
 **\citetitle{waluigi}**, by \citeauthor{waluigi}, names the **Waluigi Effect**: after you train an LLM to
@@ -1190,7 +1194,7 @@ The preceding sections discuss both speculative catastrophic risks (the Papercli
 ## Limits, Failure, and Feedback
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Frame Problem: The Infinite Checklist">
 ### The Frame Problem: The Infinite Checklist
 
 <div class="smart-quote" data-cite="mccarthy1969some">
@@ -1299,7 +1303,7 @@ AI is often treated as a “neutral” arbiter of truth. This is a fallacy.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the “authority” of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Zeno's Dichotomy: The Paradox of the Infinite">
 ### Zeno's Dichotomy: The Paradox of the Infinite
 
 Zeno of Elea, writing around 450 BCE, argued that motion is logically impossible. To walk across a room, you must first cross half the distance, then half of what remains, then half again. There are infinitely many halves to cross, so how do you ever arrive? Motion seems impossible, yet you move every day.
@@ -1554,7 +1558,7 @@ A journal is where philosophy stops being other people's systems and becomes you
 ## Coherent Structure: The Mathematics of Meaning
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Sheaves: Coherent Structure Across Every Space">
 ### Sheaves, Stalks, and Germs: Coherent Structure Across Every Space
 
 Sheaf theory describes how anything that can be modeled as a space — a topological space, an embedding space, the configuration space of a physical system, the latent space of a neural network, the space of a perceptual experience — is built from local measurements that cohere on their overlaps into a single global object. The principle is the one the <a href="coherent_difference">Coherent Difference chapter</a> set out:
@@ -1635,7 +1639,7 @@ The visualization below renders this intuition in three dimensions: germs appear
   Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="65" data-optionaltitle="Sheaves as a Lens on AI Generation">
 #### Sheaves as a Lens on AI Generation
 
 The sheaf framework maps naturally onto how an LLM assembles coherent output.
