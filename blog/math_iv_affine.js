@@ -226,9 +226,130 @@
 		return Math.abs(a) / 2;
 	}
 
+	/* ── fold + Hopf-link core (pure math, DOM-free) ──
+	   The fold:  f(p) = p − λ·ReLU(n̂·p − c)·n̂.  Piecewise-affine:
+	   the identity on the near side (n̂·p ≤ c), an affine push on the
+	   far side.  λ=2 is a mirror in the crease; λ>1 overlaps space. */
+
+	const Fold = {
+		normal2: function (theta) { return [Math.cos(theta), Math.sin(theta)]; },
+		normal3: function (tilt, spin) {
+			const st = Math.sin(tilt), ct = Math.cos(tilt);
+			return [st * Math.cos(spin), st * Math.sin(spin), ct];
+		},
+		apply2: function (p, n, c, lam) {
+			const d = n[0] * p[0] + n[1] * p[1] - c;
+			if (d <= 0) return [p[0], p[1]];
+			return [p[0] - lam * d * n[0], p[1] - lam * d * n[1]];
+		},
+		apply3: function (p, n, c, lam) {
+			const d = n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - c;
+			if (d <= 0) return [p[0], p[1], p[2]];
+			return [p[0] - lam * d * n[0], p[1] - lam * d * n[1], p[2] - lam * d * n[2]];
+		},
+		/* 3×3 homogeneous matrix of the far affine piece (n̂·p > c):
+		   f(p) = (I − λ n̂n̂ᵀ) p + λ c n̂ */
+		pieceMatrix2: function (n, c, lam) {
+			const nx = n[0], ny = n[1];
+			return [
+				1 - lam * nx * nx, -lam * nx * ny, lam * c * nx,
+				-lam * nx * ny, 1 - lam * ny * ny, lam * c * ny,
+				0, 0, 1
+			];
+		},
+		/* Preimages of q under the 2-D fold, restricted to the board
+		   [0,1]².  Each entry is {p:[x,y], piece:1|2}.  In the overlap
+		   region there are two; outside the image, none. */
+		preimages2: function (q, n, c, lam) {
+			const inB = function (p) { return p[0] >= -1e-9 && p[0] <= 1 + 1e-9 && p[1] >= -1e-9 && p[1] <= 1 + 1e-9; };
+			const out = [];
+			if (n[0] * q[0] + n[1] * q[1] <= c + 1e-9 && inB(q)) out.push({ p: [q[0], q[1]], piece: 1 });
+			const nx = n[0], ny = n[1];
+			const a00 = 1 - lam * nx * nx, a01 = -lam * nx * ny;
+			const a10 = -lam * nx * ny, a11 = 1 - lam * ny * ny;
+			const det = a00 * a11 - a01 * a10;
+			if (Math.abs(det) > 1e-9) {
+				const bx = q[0] - lam * c * nx, by = q[1] - lam * c * ny;
+				const px = (a11 * bx - a01 * by) / det;
+				const py = (-a10 * bx + a00 * by) / det;
+				if (nx * px + ny * py > c + 1e-9 && inB([px, py])) out.push({ p: [px, py], piece: 2 });
+			}
+			return out;
+		}
+	};
+
+	/* Hopf link: two chained circles (the cores of two solid tori).
+	   A: the unit circle in the z=0 plane.  B: a circle in the x=0
+	   plane, centre (0, 0.5, 0), radius 0.7 — it threads through A's
+	   hole once, so the pair is the Hopf link (|Lk| = 1). */
+	const Hopf = {
+		coreA: function (u) { return [Math.cos(u), Math.sin(u), 0]; },
+		coreB: function (t) { return [0, 0.5 + 0.7 * Math.cos(t), 0.7 * Math.sin(t)]; },
+		tubeA: function (u, v, r) {
+			const e1 = [Math.cos(u), Math.sin(u), 0], e2 = [0, 0, 1];
+			return [
+				Math.cos(u) + r * (Math.cos(v) * e1[0] + Math.sin(v) * e2[0]),
+				Math.sin(u) + r * (Math.cos(v) * e1[1] + Math.sin(v) * e2[1]),
+				r * (Math.cos(v) * e1[2] + Math.sin(v) * e2[2])
+			];
+		},
+		tubeB: function (u, v, r) {
+			const e1 = [0, Math.cos(u), Math.sin(u)], e2 = [1, 0, 0];
+			return [
+				r * (Math.cos(v) * e1[0] + Math.sin(v) * e2[0]),
+				0.5 + 0.7 * Math.cos(u) + r * (Math.cos(v) * e1[1] + Math.sin(v) * e2[1]),
+				0.7 * Math.sin(u) + r * (Math.cos(v) * e1[2] + Math.sin(v) * e2[2])
+			];
+		}
+	};
+
+	function vsub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+	function vdot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+	function vcross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+	function vnorm(a) { return Math.hypot(a[0], a[1], a[2]); }
+
+	function sampleCore(fn, N) {
+		const a = [];
+		for (let i = 0; i < N; i++) a.push(fn(i / N * 2 * Math.PI));
+		return a;
+	}
+
+	/* Gauss linking number of two closed polygonal curves (discrete):
+	   Lk = (1/4π) ΣΣ (Pᵢ−Qⱼ)·(ΔPᵢ × ΔQⱼ) / |Pᵢ−Qⱼ|³. */
+	function gaussLink(P, Q) {
+		let s = 0;
+		const n = P.length, m = Q.length;
+		for (let i = 0; i < n; i++) {
+			const Pi = P[i], dP = vsub(P[(i + 1) % n], Pi);
+			for (let j = 0; j < m; j++) {
+				const Qj = Q[j], dQ = vsub(Q[(j + 1) % m], Qj);
+				const r = vsub(Pi, Qj);
+				const rr = r[0] * r[0] + r[1] * r[1] + r[2] * r[2];
+				if (rr < 1e-12) return { lk: NaN };
+				s += vdot(r, vcross(dP, dQ)) / Math.pow(rr, 1.5);
+			}
+		}
+		return { lk: s / (4 * Math.PI) };
+	}
+
+	function minDist3(P, Q) {
+		let md = Infinity;
+		for (let i = 0; i < P.length; i++)
+			for (let j = 0; j < Q.length; j++) {
+				const d = vnorm(vsub(P[i], Q[j]));
+				if (d < md) md = d;
+			}
+		return md;
+	}
+
 	/* Expose the pure core for external self-testing (node CI, etc.) */
 	const gbl = (typeof window !== 'undefined') ? window : (typeof globalThis !== 'undefined' ? globalThis : null);
-	if (gbl) gbl.__affineMath = { Affine: Affine, cbVal: cbVal, cbBilinear: cbBilinear, buildCubeQuads: buildCubeQuads, cubeSurfaceVolume: cubeSurfaceVolume, polyArea: polyArea };
+	if (gbl) gbl.__affineMath = {
+		Affine: Affine, Fold: Fold, Hopf: Hopf,
+		cbVal: cbVal, cbBilinear: cbBilinear, buildCubeQuads: buildCubeQuads,
+		cubeSurfaceVolume: cubeSurfaceVolume, polyArea: polyArea,
+		gaussLink: gaussLink, minDist3: minDist3, sampleCore: sampleCore
+	};
 
 	/* ── browser-only from here on ──────────────────────────────── */
 	if (typeof document === 'undefined' || typeof document.getElementById !== 'function') return;
