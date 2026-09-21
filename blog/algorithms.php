@@ -27,7 +27,9 @@ The network learns that **modular arithmetic is circular**. After $P$, you wrap 
 But a single circle (a single frequency) has too many ambiguities. So the network uses **5 different frequencies** simultaneously, and combines them via **constructive interference**, the same principle that makes noise-cancelling headphones work, but in reverse.
 
 <div id="wave-interference-container"></div>
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The Algorithm in Five Steps">
 ## The Algorithm in Five Steps
 
 The trained network implements the following algorithm \cite[Section 4]{nanda2023grokking}:
