@@ -679,7 +679,7 @@ In a distributional model, the meaning of “not” is itself a vector, learned 
 $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50">
 This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word “not” simply does not encode a logical inversion operator in vector space; it encodes “the kinds of sentences where 'not' appears,” which overwhelmingly co-occur with the very concepts being negated.
 
 Below, select any word (or type “not X”) and observe how “not X” drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where “not X” *should* land if geometry respected logic.
@@ -724,7 +724,7 @@ Below, select any word (or type “not X”) and observe how “not X” drifts 
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Hyperbolic Embeddings">
 ## Hyperbolic Embeddings
 
 Standard embedding spaces use Euclidean geometry, but human language is rife with hierarchical structure, taxonomies (animal → mammal → dog → poodle), hypernymy chains, parse trees, organizational hierarchies. Euclidean space is fundamentally ill-suited for representing trees: the number of nodes at depth $d$ in a tree with branching factor $b$ grows as $\mathcal{O}(b^d)$, exponentially, but the volume of a Euclidean ball of radius $r$ in $n$ dimensions grows only polynomially as $\mathcal{O}(r^n)$. This mismatch means that as a tree grows deeper, a Euclidean embedding must either introduce severe distance distortion or consume prohibitively many dimensions to accommodate the exponential proliferation of leaf nodes.
@@ -765,7 +765,7 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Topology: Clumps and Branches">
 ## Topology: Clumps and Branches
 
 So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions. But the actual *topology* of the feature space tells a different story. It is not a uniform fog at all, it is **highly structured**, full of empty voids and narrow corridors.
@@ -811,7 +811,7 @@ The visualization below gives you an intuition for this. In 2D, points can sprea
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Semantic Folding & Fractal Self-Similarity">
 ## Semantic Folding & Fractal Self-Similarity
 
 How does a model that operates in a fixed-size vector space manage to encode hierarchies that are, in principle, arbitrarily deep? The answer appears to involve a form of **geometric folding**: the model reuses the same spatial logic at every level of abstraction, nesting finer distinctions inside coarser ones like a fractal.
@@ -876,7 +876,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Holographic Information Storage">
 ## Holographic Information Storage
 
 There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images. In a photograph, each pixel records a single point of the scene, scratch the photo and you lose that point forever. In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle. Cut a hologram in half and you don't lose half the image, you lose half the *resolution*. Both halves still contain the full picture, just blurrier.

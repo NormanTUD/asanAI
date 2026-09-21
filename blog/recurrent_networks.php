@@ -37,7 +37,9 @@ The recurrence is easiest to read when it is **unrolled** across time — drawn 
 </figure>
 
 “Recurrent” hides a beautiful fact: the *same* weight matrices $\mathbf{W}_h$, $\mathbf{W}_x$ are used at **every** step. There is one network, applied many times. This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space \cite[see also the fixed-weight argument in]{colah2014conv}. It is also why \citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.
+</div>
 
+<div class="md" data-mathlevel="60" data-optionaltitle="The Long-Distance Problem">
 ## The Long-Distance Problem
 
 Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile. Predicting the next word in *“the clouds are in the sky”* needs only recent words. But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago. In the long gap, an RNN must remember the word “France” while doing all the intervening work.
@@ -47,7 +49,9 @@ Because the state must be *propagated* — multiplied through the chain, step by
 > In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.
 
 The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN computes gradients through many multiplications of the same matrix; if its eigenvalues sit below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\lambda^{k}$ that [attention later sidesteps entirely](attentionlab.php) \cite{colah2015backprop,hochreiter1991vanishing}. The problem was diagnosed early by \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) and formalized by \citeauthor{bengio1994learning} — but the fix arrived as an explicit memory.
+</div>
 
+<div class="md" data-mathlevel="62" data-optionaltitle="The LSTM's Conveyor Belt">
 ## The LSTM's Conveyor Belt
 
 The **Long Short-Term Memory** network, introduced by \citeauthorlastnameand{lstm} in \citeyear{lstm}, changes what flows down the chain \cite{lstm}. Alongside the ordinary hidden state $\mathbf{h}_t$ runs a **cell state** $\mathbf{c}_t$ — a lane that is *not* transformed by every gate. \citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.
@@ -67,7 +71,9 @@ In a language model that has learned grammar, \citeauthor{colah2015lstm} notes t
 > …the network learned to use the cell state to keep track of whether the subject of a sentence is singular or plural, so that when a verb form is needed in the future, it can generate the correct one.
 
 Forget the gate, keep the memory: that is the whole trick — a *single* multiplication with a number near 1 instead of a full matrix, so the gradients survive the journey across a long sentence \cite{colah2015lstm}.
+</div>
 
+<div class="md">
 ## The Family Tree
 
 What follows is a pruning of the idea, not a new invention. The **gated recurrent unit (GRU)** of \citeauthor{cho2014gru} (\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \cite{cho2014gru}. And when \citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \cite{greff2015lstm}.
