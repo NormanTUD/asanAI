@@ -173,7 +173,7 @@ Edit any entry of the $3\times 3$ matrix. Click the source to move the tracked p
 		<div class="af-col">
 			<div class="af-sub">Source · click to move p</div>
 			<canvas id="af2d-src" class="af-canvas" width="440" height="440"></canvas>
-			<div class="af-sub" style="margin-top:.9rem">The image as data · 8×8 matrix</div>
+
 			<div id="af2d-mat" class="af-matgrid"></div>
 		</div>
 		<div class="af-col">
