@@ -189,7 +189,7 @@ Below you can drag the separating line yourself and feel why the egg resists it.
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">3 · The Building Block — The Anvil and the Hammer</h2>
+	<h2 class="og-h2">The Building Block — The Anvil and the Hammer</h2>
 	<p class="og-lead">Every layer does two things in sequence: position the data (affine), then fold it (ReLU). The affine step is the anvil; the ReLU is the hammer.</p>
 
 	<div class="md">
@@ -257,7 +257,7 @@ class. So how does a network ever get at an "island" class that is completely su
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">4 · The Key Idea — Fold, Don't Crush</h2>
+	<h2 class="og-h2">The Key Idea — Fold, Don't Crush</h2>
 	<p class="og-lead">The magic is in the <em>unused dimensions</em>. A ReLU hyperplane hitting the data from an unoccupied direction doesn't flatten — it <em>folds</em>, lifting the data off into a new axis.</p>
 
 	<div class="md">
@@ -301,7 +301,7 @@ Suddenly a flat horizontal line separates them.
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">5 · The 2-D Egg in 3-D — Three Neurons, One Plane</h2>
+	<h2 class="og-h2">The 2-D Egg in 3-D — Three Neurons, One Plane</h2>
 	<p class="og-lead">The classic 2D egg (ring inside ring) can be solved by a single layer of just <em>three</em> ReLU neurons. Each is a hyperplane tilted 120° apart; their outputs stack into a third dimension that lifts the inner ring into a tent.</p>
 
 	<div class="md">
@@ -337,7 +337,7 @@ one. Drag to look around the folded representation:
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">6 · The Circle-in-Circle Lift — Seeing the Fold in 3-D</h2>
+	<h2 class="og-h2">The Circle-in-Circle Lift — Seeing the Fold in 3-D</h2>
 	<p class="og-lead">Watch the inner class rise out of the plane. Toggle between 2-D and 3-D views, adjust the lift height, and slide the separating plane.</p>
 
 	<div class="og-demo">
@@ -363,7 +363,7 @@ one. Drag to look around the folded representation:
 </div>
 
 <div class="og-card">
-	<h2 class="og-h2">7 · Learned Rotation — The Hammer Finds Its Angle</h2>
+	<h2 class="og-h2">Learned Rotation — The Hammer Finds Its Angle</h2>
 	<p class="og-lead">A single ReLU neuron can learn the optimal rotation angle for the data. Watch the hyperplane rotate until the fold aligns with the data's structure.</p>
 
 	<div class="og-demo">
