@@ -545,10 +545,12 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 
 Two solid tori, chained: the Hopf link. The fold is $f(p) = p - \lambda\,\operatorname{ReLU}(\hat n \cdot p - c)\,\hat n$ with a fold direction (tilt and spin of the crease plane), a crease offset $c$, and a strength $\lambda$. The big readout is the **linking number**, computed from the two core circles by Gauss's integral and re-evaluated as you move anything. Drag the view to rotate.
 
+**How the separation works.** Once the fold has dropped the linking number to $0$, the two rings are no longer topologically linked, so a plain rigid translation can finally pull them apart. The machine moves ring B along $-\hat n$ — the fold direction, i.e. the normal to the crease plane. In the default view that plane is exactly the flat ring's plane, so ring B simply slides straight down, out of the plane, clearing ring A. The real work was done not by the translation but by the fold: the translation is free (any affine motion would do), while the fold is the single non-homeomorphic step that made the separation possible at all.
+
 **What to do:**
 
 1. Start at *The chain* and slide $\lambda$ from $0$ to $2.5$, watching the big readout. The rings bend and crease; the linking number stays $1$ while the map is still one-to-one ($\lambda \le 1$), at $\lambda = 1$ the flattened half passes exactly through the other ring (the unthreading moment), and for $\lambda > 1$ — the moment the map overlaps space — it falls to $0$.
-2. Press *separate the rings*: ring B now slides along $-\hat n$, straight out of the crease plane — perpendicular to the flat ring's plane. It is a plain translation, and it only works because the fold already unlinked them.
+2. Press *separate the rings* and watch ring B slide straight out of the crease plane — the perpendicular translation described above.
 3. Tilt the crease plane away from the flat ring's plane. Some fold directions unlink, others do not — the crease geometry matters as much as its strength.
 4. Try *Rotate 30° (affine)*: a pure affine motion of the whole pair. The linking number stays $1$ no matter how you rotate it. That is the theorem, running.
 </div>
