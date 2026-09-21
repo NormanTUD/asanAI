@@ -303,6 +303,9 @@ The mechanism is the same one *latent steering* exploits: identify directions, t
 <div class="md">
 ### Interactive: Watch the Region Shrink
 
+</div>
+
+<div class="md" data-mathlevel="65" data-optionaltitle="The Spatial Picture: Distinction to Gluing">
 ### The Spatial Picture: Distinction, Locality, Coherence, Gluing
 
 There is a deep reason this works, and it is the same reason embeddings work at all. **Meaning is a sheaf over context** \cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an "open set" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that falls out when all the local patches agree on their overlaps.
