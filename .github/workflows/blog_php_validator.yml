@@ -46,6 +46,12 @@ jobs:
         run: |
           uv run blog/tests/js_validator.py blog/
 
+      - name: Run Lesson Guard
+        # Static regression guards on lesson templates + their JS modules
+        # (headings-in-md, citation keys, 3-D wiring, fold quad map, …).
+        run: |
+          uv run blog/tests/lesson_guard.py blog/
+
       - name: Run Literature Link Checker
         run: |
           mkdir -p link-report
