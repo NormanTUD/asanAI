@@ -226,6 +226,9 @@
 		{ v: 100, label: 'Research' }
 	];
 	function snapMath(v) {
+		// Guard: a non-numeric/NaN level (shouldn't happen — clampMath
+		// normalises — but never trust it) snaps to the middle stop.
+		if (typeof v !== 'number' || !isFinite(v)) return DEFAULT_MATH_LEVEL;
 		let best = MATH_LEVELS[0].v;
 		for (let i = 0; i < MATH_LEVELS.length; i++) {
 			if (Math.abs(MATH_LEVELS[i].v - v) < Math.abs(best - v)) best = MATH_LEVELS[i].v;
