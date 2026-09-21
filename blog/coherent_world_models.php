@@ -13,7 +13,9 @@ tags: logic-heavy, math-heavy
 
 <div class="md">
 
-## The question
+## The question: what arrives, and what we assume
+
+### The question
 
 What is a *world model*? A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a historian never enters the past. Even the listener who reaches out to touch the speaker meets only a transformed trace — never the sound source as it would be apart from any perception. What arrives in every domain — empirical, formal, archival — is the same: *transformed traces*. Measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
 
@@ -45,7 +47,7 @@ Everything below earns that sentence.
 
 <div class="md">
 
-## Traces
+### Traces
 
 A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to a region $w$ of a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Here $W$ is the *subject matter with internal structure* (regions, points, or sub-systems); $R$ is the *codomain* (a set, a metric space, an $\infty$-groupoid, or whatever the access function lands in). Four properties follow:
 
@@ -60,7 +62,7 @@ Note on properties (1)-(3): they hold given our commitment to indirect realism. 
 
 <div class="md">
 
-## Commitments
+### Commitments
 
 **Our commitments** (each is debatable; the dispute is *foundational*, not internal to the chapter):
 
@@ -86,7 +88,7 @@ Inside our default, there is no Archimedean point from which the world shows its
 
 <div class="md">
 
-## The question, boxed
+### The question, boxed
 
 $$
 \boxed{
@@ -112,7 +114,9 @@ One discipline runs through the whole chapter: $\boxed{\text{locate every differ
 
 <div class="md">
 
-## Three kinds of difference
+## Difference, sameness, and licensed comparison
+
+### Three kinds of difference
 
 Between "subject matter $W$" and "the trace $r \in R$ I received" sit at least three independent sources of difference. They sit at *different places* in the chain and demand different remedies.
 
@@ -156,7 +160,7 @@ The distinction between channels and interpretation is in part the moral of \cit
 
 <div class="md">
 
-## Notions of sameness
+### Notions of sameness
 
 Not everything called "the same" is the same *kind* of same. The vocabulary of *Coherent Difference* gave us a hierarchy. Here it is again, strongest to weakest:
 
@@ -223,7 +227,7 @@ What "silent strengthening" means: passing from a witness of $\simeq$ to a claim
 
 <div class="md">
 
-## Transformation is the missing concept
+### Transformation is the missing concept
 
 Given two representations $R_A, R_B$, the naive question "$R_A = R_B$?" is usually the wrong one. Replace it with a transition, or with a common target:
 
@@ -249,7 +253,7 @@ $$
 
 <div class="md">
 
-## Ologs: a diagram that pays its way
+### Ologs: a diagram that pays its way
 
 Before going further it is worth naming the kind of diagram this chapter has been drawing. The picture we want — boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint — has a name: the **olog**, short for *ontology log*. The term is due to Spivak & Kent's "Ologs: A Categorical Framework for Knowledge Representation" \cite{spivak2012ologs} (used more broadly in Spivak, *Category Theory for the Sciences* \cite{spivak2014cts}). The rules are simple enough to use without ever saying the words *category* or *functor*.
 
@@ -279,7 +283,7 @@ For this chapter: every diagram so far is an olog in disguise. The master diagra
 
 <div class="md">
 
-## Admissible transitions
+### Admissible transitions
 
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
@@ -369,7 +373,9 @@ What the picture says. The four $R_i$ are deliberately heterogeneous — a senso
 
 <div class="md">
 
-## Contexts as a site
+## The mathematics of coherence: sites and sheaves
+
+### Contexts as a site
 
 Following *Coherent Difference*, **context** is used in the widest possible sense: anything that can index data points counts as a "space". A context specifies the conditions under which a report was made:
 
@@ -422,7 +428,7 @@ $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain co
 
 <div class="md">
 
-## Sheaves: coherence = descent
+### Sheaves: coherence = descent
 
 In plain English first. A presheaf $F$ assigns a set of "local sections" to every context: $F(c)$ is the data one can write down *on* $c$. Sheaf-ness is the rule that turns *compatible* local data into *unique* global data — but only on covers the modelling setup is willing to license.
 
@@ -500,7 +506,7 @@ It is the premise that makes local-to-global gluing *legitimate* rather than mer
 
 <div class="md">
 
-## The running example (now that we have sheaves)
+### The running example (now that we have sheaves)
 
 A train passes a platform. Channels:
 
@@ -524,7 +530,7 @@ The same shape governs **mathematical data** — here genuinely as a flat cover,
 
 <div class="md">
 
-## Equalizers: where two maps agree
+### Equalizers: where two maps agree
 
 Given parallel maps $f, g : X \rightrightarrows Y$, the equalizer selects the part of $X$ on which they agree:
 
@@ -548,7 +554,7 @@ Two thermometers report a temperature over time: the equalizer is the *times* at
 
 <div class="md">
 
-## Pullbacks: agreement through a shared target
+### Pullbacks: agreement through a shared target
 
 $$
 \begin{array}{ccc}
@@ -564,7 +570,7 @@ The pullback *is* the object of agreements. Visual and radar tracks pull back ov
 
 <div class="md">
 
-## Higher coherence
+### Higher coherence
 
 Suppose three representations $A, B, C$ are related pairwise:
 
@@ -619,7 +625,7 @@ An **$\infty$-sheaf** is a sheaf-like object valued in $\infty$-groupoids instea
 
 <div class="md">
 
-## The observer is part of the diagram
+### The observer is part of the diagram
 
 So far the discussion has been structural: equalizers, pullbacks, Čech nerves, higher cells. The diagrams have had *objects* and *morphisms*, but no *agents*. The next step is to put the inquirer back in: every structural claim about subject matter $W$ is made by *someone*, through *some* access pipeline, encoded in *some* report.
 
@@ -651,7 +657,9 @@ $$
 
 <div class="md">
 
-## Where AI actually enters
+## The model, assembled
+
+### Where AI actually enters
 
 So far everything has been a *specification*: a list of conditions that a coherent world model must satisfy. This section asks the converse question: does any part of modern machine learning *already* realise these conditions, even informally?
 
@@ -750,7 +758,7 @@ $$
 
 <div class="md">
 
-## Invariants: what survives a change of representation
+### Invariants: what survives a change of representation
 
 The previous section argued that no current AI architecture is a sheaf in the strict sense, and that hallucination is the predictable consequence of internal coherence without grounded descent. The natural question is then: *what does survive the change of representation*? Even an imperfect model preserves *something*. Picking out what is preserved, against what is discarded, is the practical test of a representation.
 
@@ -778,7 +786,7 @@ A representation is judged not by whether it *is* the subject matter but by *whi
 
 <div class="md">
 
-## The hierarchy: never upgrade silently
+### The hierarchy: never upgrade silently
 
 The forms of sameness form a tower from strongest to weakest. The arrow on each line means "implies the row below": a witness of a stronger row is automatically a witness of every weaker one; the converse is false.
 
@@ -810,7 +818,7 @@ Correlation is not identity. A plausible transformation is not proof. Consistenc
 
 <div class="md">
 
-## The one diagram
+### The one diagram
 
 $$
 \begin{array}{ccccc}
@@ -858,7 +866,7 @@ Different mathematics; one shape. The unification is not a metaphor. It is the e
 
 <div class="md">
 
-## What is forbidden
+### What is forbidden
 
 $$
 \boxed{
@@ -882,7 +890,7 @@ A useful analogy is not a theorem.
 
 <div class="md">
 
-## A practical procedure
+### A practical procedure
 
 Compressed into nine steps you can run through on any dataset, in any domain. Each step has a question; the discipline is asking them in order.
 
@@ -906,7 +914,7 @@ $$
 
 <div class="md">
 
-## Where each theory lives on one chain
+### Where each theory lives on one chain
 
 $$
 \boxed{
@@ -961,7 +969,7 @@ The chain has a direct counterpart in contemporary ontology of science. \citeaut
 
 <div class="md">
 
-## Perspectival difference is not erased
+### Perspectival difference is not erased
 
 $$
 \boxed{
@@ -985,7 +993,7 @@ $$
 
 <div class="md">
 
-## Finite observers, provisional globality
+### Finite observers, provisional globality
 
 Data arrive over time. A model is never final:
 
@@ -1006,7 +1014,7 @@ $$
 
 <div class="md">
 
-## One sentence
+### One sentence
 
 $$
 \boxed{

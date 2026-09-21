@@ -825,15 +825,15 @@
 						'<span class="topics-audience-suffix">level</span>',
 					'</div>',
 					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
-				'</div>',
-				'<div class="topics-math-comfort" role="group" aria-label="Math comfort level">'
-					+ '<span class="topics-math-label">Math comfort level</span>'
-					+ '<div class="topics-math-control">'
-						+ '<input type="range" class="topics-math-range" min="' + MATH_MIN + '" max="' + MATH_MAX + '" step="5" value="' + getMathLevel() + '" aria-label="Math comfort, percent">'
-						+ '<span class="topics-math-val">' + getMathLevel() + '%</span>'
-					+ '</div>'
-				'</div>',
-				'<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">',
+828: 				'</div>',
+829: 				'<div class="topics-math-comfort" role="group" aria-label="Math comfort level">'
+830: 					+ '<span class="topics-math-label">Math comfort level</span>'
+831: 					+ '<div class="topics-math-control">'
+832: 						+ '<input type="range" class="topics-math-range" min="' + MATH_MIN + '" max="' + MATH_MAX + '" step="5" value="' + getMathLevel() + '" aria-label="Math comfort, percent">'
+833: 						+ '<span class="topics-math-val">' + getMathLevel() + '%</span>'
+834: 					+ '</div>'
+835: 				'</div>',
+836: 				'<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">',
 					'<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>',
 					'<div class="topics-cat-row" id="topics-cat-row"></div>',
 				'</div>',

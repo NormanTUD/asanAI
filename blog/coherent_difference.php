@@ -16,7 +16,9 @@ Before we open the <a href="embeddinglab">Embeddings chapter</a>, there is one i
 </div>
 
 <div class="md">
-## The one sentence
+## The thesis and the chain
+
+### The one sentence
 
 $$
 \boxed{
@@ -40,7 +42,7 @@ This is the lens of the chapter. Everything else is variations on it.
 </div>
 
 <div class="md">
-## The chain
+### The chain
 
 The whole idea can be written as one arrow chain. Read top-to-bottom:
 
@@ -111,7 +113,7 @@ Every mathematical theory we will touch on in this course sits somewhere on this
 </div>
 
 <div class="md">
-## Where the chain shows up in this textbook
+### Where the chain shows up in this textbook
 
 $$
 \begin{array}{c|c}
@@ -137,7 +139,10 @@ If you already know topology, sheaves, category theory and HoTT well, you can sk
 </div>
 
 <div class="md">
-## The first move: distinction
+
+## Where it begins: distinction
+
+### The first move: distinction
 
 <figure>
 	<img src="laws_of_form_cover.jpg" alt="Cover of Spencer-Brown's Laws of Form (1969)" style="max-width: 200px; background: white; padding: 8px;" />
@@ -174,7 +179,7 @@ What the modern formalizations buy us is a promise: once we have the move, we ca
 </div>
 
 <div class="md">
-## From distinction to structure
+### From distinction to structure
 
 A set is the simplest structure that can hold distinctions. $A = \{a,b,c\}$ knows only that $a, b, c$ are inside $A$. It does not know whether $a$ is “near” $b$, or “more like” $b$ than $c$, or whether there is a path from $a$ to $c$ via $b$. A set is a thin container.
 
@@ -190,7 +195,10 @@ is one of the oldest and most useful formalizations of the idea that “relation
 </div>
 
 <div class="md">
-## Relations and equivalence relations
+
+## Relations: sameness and the quotient
+
+### Relations and equivalence relations
 
 Suppose you own things — books, socks, grievances, whatever. Call the set of your things $A$. A **relation** on $A$ is just a subset $R \subseteq A \times A$: for each ordered pair $(a, b)$, a decision whether $a$ stands to $b$ in the way $R$ names. Write $a \mathrel{R} b$ when it does.
 
@@ -198,7 +206,7 @@ That is all a relation is: a bookkeeping device for *some* structure between thi
 </div>
 
 <div class="md">
-### Properties worth naming
+#### Properties worth naming
 
 Out of the wilderness of possible relations, a handful keep showing up. The first three are the bones of *sameness*:
 
@@ -267,7 +275,7 @@ And one synonym, for the record:
 </div>
 
 <div class="md">
-### The payoff: partitions
+#### The payoff: partitions
 
 Here is the theorem that makes equivalence relations worth caring about:
 
@@ -284,7 +292,7 @@ The **equivalence class** of $a$ is $[a] = \{\, x \in A : a \sim x \,\}$ — eve
 </div>
 
 <div class="md">
-### The quotient, and how relations adapt
+#### The quotient, and how relations adapt
 
 Once you have $\sim$ on $A$, form the **quotient set**
 
@@ -304,7 +312,7 @@ The second move is where the previous section's chain shows up again. Local data
 </div>
 
 <div class="md">
-### Everywhere, once you look
+#### Everywhere, once you look
 
 The rest of mathematics is largely a catalogue of equivalence relations someone found useful:
 
@@ -317,7 +325,10 @@ Each is the same move: *declare what counts as the same, then work with the boxe
 </div>
 
 <div class="md">
-## Locality: the decisive turn
+
+## Locality and the sheaf picture
+
+### Locality: the decisive turn
 
 So far everything we have said could be done with bare set theory. Topology adds the move that turns a set into a *place*, the introduction of locality without distance.
 
@@ -348,7 +359,7 @@ and refuses to give a numerical answer. Instead it gives *which sets contain* $x
 </div>
 
 <div class="md">
-## The sheaf picture: local islands, glued into a continent
+### The sheaf picture: local islands, glued into a continent
 
 Once you have a topology, you can attach data to every open set. A \citetitle{sheaf_mathematics} $\mathcal{F}$ assigns to each open $U \subseteq X$ a set $\mathcal{F}(U)$, the *sections* over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$ \cite{sheaf_mathematics}.
 
@@ -506,7 +517,10 @@ Why does this matter for embeddings? Because an embedding space is, in spirit, a
 </div>
 
 <div class="md">
-## Equality becomes coherence
+
+## Coherence without equality
+
+### Equality becomes coherence
 
 In a classical sheaf, two sections are equal on the overlap: $s_{i}|_{U_{i} \cap U_{j}} = s_{j}|_{U_{i} \cap U_{j}}$. The equality sign is the flat equality of set theory: either the two things are the same element, or they are not.
 
@@ -546,7 +560,7 @@ $$
 </div>
 
 <div class="md">
-## The categorical shape of the same story
+### The categorical shape of the same story
 
 We have been speaking of “objects” and “morphisms” and “sections” without yet pinning down what a category formally is. Let's do that now, in two voices, because the answer sounds different depending on what kind of reader you are.
 
@@ -827,7 +841,10 @@ Concretely, an embedding space is *almost* a topos. It carries data (the vectors
 </div>
 
 <div class="md">
-## The phenomenology of one phenomenon
+
+## The same shape, outside mathematics
+
+### The phenomenology of one phenomenon
 
 So far, the story has been mathematical. The same shape, however, shows up outside mathematics, and that is the deeper reason it is worth knowing.
 
@@ -864,7 +881,7 @@ For Leibniz, every monad — every genuine, indivisible unit of substance — se
 </div>
 
 <div class="md">
-## Why this is a lens for embeddings
+### Why this is a lens for embeddings
 
 Embeddings are the place where all of the above comes together in modern AI. A tokenizer (see the <a href="tokenizerlab">Tokenization chapter</a>) hands the network a list of integers: token IDs. The next step, which the <a href="embeddinglab">Embeddings chapter</a> treats in detail, is to *place* every token at a point in a high-dimensional vector space $\mathbb{R}^d$. From that point on, every operation in the network is an operation in that space: distances, dot products, attention weights, the residual stream.
 
@@ -890,7 +907,10 @@ The idea that “space” is not a container but a structure of relations is old
 </div>
 
 <div class="md">
-## The chain, revisited
+
+## The point, restated
+
+### The chain, revisited
 
 $$
 \boxed{
@@ -931,7 +951,7 @@ That is why we are spending a chapter on it. The chain is the spine of modern AI
 </div>
 
 <div class="md">
-## The central sentence
+### The central sentence
 
 $$
 \boxed{
@@ -965,7 +985,7 @@ These three sentences are not theorems. They are lenses. If they are in your hea
 </div>
 
 <div class="md">
-## What to carry into the Embeddings chapter
+### What to carry into the Embeddings chapter
 
 Five things. Each is restated as a checklist item, the way you might want to read it once before clicking the link to the Embeddings chapter.
 
@@ -989,7 +1009,7 @@ Whatever is dependently originated, that we declare to be emptiness.
 
 If those five points feel obvious, you are ready. If they don't, read this chapter once more, slowly, this time, before opening the next one.
 
-## The most general definition of space
+### The most general definition of space
 
 Everything in this chapter has been, quietly, a definition. Not a definition of a particular space (Euclidean, Riemannian, topological, metric, Hilbert) but a definition of what it *takes* for something to deserve the name "space" at all. Read the chain one last time and notice what it does not require: no distance, no dimension, no coordinates, no container, no ambient background, no points that pre-exist their relations. What it *does* require is only three things: that there be distinctions, that those distinctions carry a notion of locality (a "near" without a number), and that the local pieces be coherent enough on their overlaps to be glued into something invariant. Anything satisfying these three conditions is, in the sense we have been building, a space. In one line: **A space is a structure in which distinguishable local data cohere, on their overlaps, into an invariant global whole**.
 
