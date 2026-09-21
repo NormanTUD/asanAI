@@ -531,6 +531,14 @@ Thicken the rings and you have two **solid tori** — a circle thickened into a 
 * Therefore **no affine, projective, or Möbius map can separate a chain link.** The linking is topological, and topology is blind to one-to-one motions.
 * A fold with $\lambda > 1$ is **not** one-to-one: the far half is pressed onto (or mirrored through) the near side, and in the overlap two inputs share one output. That one crack is enough — push the fold through the flat ring and one ring passes through the other. The linking number drops from $1$ to $0$.
 
+**This is a general principle, not a knot trick.** What is at stake is only *topological* content, and topological content is exactly what a **homeomorphism** — a continuous one-to-one map with a continuous inverse — leaves untouched. A homeomorphism is the isomorphism of topology: it preserves every topological property and is blind to distance \cite[nLab, topological property]{nlab_topological_property}\cite[Wikipedia, homeomorphism]{homeomorphism_wiki}. Two embeddings that a homeomorphism connects carry the same topological information even when their actual distances (their metrics) disagree \cite[Wikipedia, homeomorphism]{homeomorphism_wiki}. In practice: keep what matters when you ignore how far apart things are.
+
+That is the motivation for the whole chapter:
+
+* Every affine map — and every Möbius map — is a homeomorphism, so it rearranges the data without changing its topology. You can spend as many affine moves as you like.
+* The $\lambda > 1$ fold is the one standard move that is **not** a homeomorphism (two inputs share one output), so it is the only place the topology can change.
+* So *any* entangled data, however complexly it lies in space, untangles by the same two-step recipe: **fold** to change the topology, then **move affinely** to separate it. The affine steps are free; the fold is the single, controlled cut.
+
 The machine below computes the linking number from the actual 3-D positions of the rings. Slide $\lambda$ and watch the integer: it stays $1$ while the map is one-to-one ($\lambda \le 1$) and falls to $0$ the moment the map starts to overlap space ($\lambda > 1$).
 </div>
 
