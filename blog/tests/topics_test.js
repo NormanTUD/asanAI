@@ -237,7 +237,7 @@ BT.setMathLevel(60, { pushHistory: false });
 
 /* ── CORE_PERSONAS ───────────────────────────────────────────── */
 check(Array.isArray(BT.CORE_PERSONAS), 'CORE_PERSONAS is an array');
-check(BT.CORE_PERSONAS.length === 3, 'CORE_PERSONAS has exactly 3 entries');
+check(BT.CORE_PERSONAS.length === 4, 'CORE_PERSONAS has exactly 4 entries');
 check(BT.CORE_PERSONAS.every(p => typeof p.id === 'string' && typeof p.math === 'number' && Array.isArray(p.topics)), 'CORE_PERSONAS structure valid');
 
 /* ── scoreUnit math gate ─────────────────────────────────────── */

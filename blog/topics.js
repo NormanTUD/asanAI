@@ -258,7 +258,15 @@
 		{ id: 'thinker', label: 'The Thinker', icon: '🦉',
 		  tagline: 'What does any of this mean? Mind, ethics, society, the big questions.',
 		  math: 35,
-		  topics: [ 'philosophy', 'ethics', 'society', 'law', 'language', 'history', 'reasoning' ] }
+		  topics: [ 'philosophy', 'ethics', 'society', 'law', 'language', 'history', 'reasoning' ] },
+		{ id: 'polymath', label: 'The Polymath', icon: '🌀',
+		  tagline: 'Everything. All of it. Show me the full picture at full depth.',
+		  math: 100,
+		  topics: [ 'math-i', 'math-ii', 'math-iii', 'geometry', 'statistics-i', 'statistics-ii',
+		            'programming', 'architecture', 'training', 'data', 'hardware', 'inference',
+		            'vision', 'audio', 'multimodal', 'agents', 'reasoning', 'interpretability',
+		            'language', 'history', 'philosophy', 'ethics', 'safety', 'society', 'law',
+		            'frontier', 'reference' ] }
 	];
 
 	const COOKIE_NAME  = 'topics_pref';
