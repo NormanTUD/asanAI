@@ -113,6 +113,7 @@ Lessons can implement a "Learned" system to adapt the course experience:
 3.  **Math-Gate & Auto-Reveal**:
     - Interactive blocks (e.g., `<div class="topic-block" data-mathlevel="70">`) are automatically tucked (hidden) if the user's math level is too low.
     - **Bypassing**: If a user marks all prerequisites of a lesson as "learned" (via `BlogTopics.toggleLearned('lesson-slug')`), the math gate is bypassed and the block is automatically revealed.
+    - **The dial snaps to 5 stops** (`MATH_LEVELS`): No math / High school / University / Graduate / Research, at 0/25/50/75/100 (default `DEFAULT_MATH_LEVEL = 50` = University). Only the *dial* snaps — the gate itself stays fine-grained (it compares the stored 0–100 level against each block's `data-mathlevel`). `BlogTopics.snapMath(v)` / `BlogTopics.mathLevelLabel(v)` map a level to its stop/label and guard against non-numeric input.
 4.  **Learned State**: 
     - Use `BlogTopics.toggleLearned('slug')` to allow readers to mark a lesson as mastered.
     - State is persisted in `localStorage` and synced via cookies (`topics_pref`). (The cookie write is size-guarded — it is skipped once the payload nears 4 KB, so `learned` can safely grow as a reader marks many lessons; `localStorage` always holds the full state.)

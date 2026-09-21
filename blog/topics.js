@@ -826,7 +826,7 @@
 		const depsOK = lessonId ? depsMet(lessonId) : false;
 		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
-			reason = 'needs ~' + mathReq + '% math comfort (you are at ' + getMathLevel() + '%)';
+			reason = 'needs ' + mathLevelLabel(mathReq) + ' math (you are at ' + mathLevelLabel(getMathLevel()) + ')';
 			why = 'math';
 			whyLabel = 'math proficiency';
 		}
