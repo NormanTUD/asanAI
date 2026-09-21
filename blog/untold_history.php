@@ -1530,7 +1530,9 @@ $$\sigma_{\text{age} > 30}(\text{Employees}) \equiv \texttt{SELECT * FROM Employ
 - **Oracle** (1979), **IBM DB2** (1983), **Microsoft SQL Server** (1989), commercial implementations
 - **MySQL** (1995), **PostgreSQL** (1996), open-source alternatives that democratized database access
 - **SQLite** (2000), embedded database requiring no server, now deployed on billions of devices
+</div>
 
+<div class="md">
 #### Statistical Software: Purpose-Built Data Tools
 
 For researchers who needed more than spreadsheets could offer:
