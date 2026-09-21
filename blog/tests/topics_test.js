@@ -235,6 +235,16 @@ BT.setMathLevel(-10, { pushHistory: false });
 check(BT.getMathLevel() === 0, 'setMathLevel clamps to min');
 BT.setMathLevel(60, { pushHistory: false });
 
+/* ── math comfort 5-stop slider ──────────────────────────────── */
+check(Array.isArray(BT.MATH_LEVELS) && BT.MATH_LEVELS.length === 5, 'MATH_LEVELS has 5 stops');
+check(BT.MATH_LEVELS.map(l => l.v).join(',') === '0,25,50,75,100', 'MATH_LEVELS stops are 0/25/50/75/100');
+check(BT.MATH_LEVELS.every(l => typeof l.label === 'string' && l.label.length > 0), 'MATH_LEVELS labels are non-empty strings');
+check(BT.snapMath(0) === 0 && BT.snapMath(25) === 25 && BT.snapMath(50) === 50 && BT.snapMath(75) === 75 && BT.snapMath(100) === 100, 'snapMath is identity on the five stops');
+check(BT.snapMath(60) === 50 && BT.snapMath(72) === 75 && BT.snapMath(30) === 25 && BT.snapMath(10) === 0, 'snapMath picks the nearest stop');
+check(BT.snapMath(NaN) === 50 && BT.snapMath('x') === 50 && BT.snapMath(null) === 50, 'snapMath guards non-numeric input → middle stop');
+check(BT.mathLevelLabel(0) === 'No math' && BT.mathLevelLabel(25) === 'High school' && BT.mathLevelLabel(50) === 'University' && BT.mathLevelLabel(75) === 'Graduate' && BT.mathLevelLabel(100) === 'Research', 'mathLevelLabel maps each stop to its name');
+check(BT.mathLevelLabel(60) === 'University' && BT.mathLevelLabel(90) === 'Research' && BT.mathLevelLabel(NaN) === 'University', 'mathLevelLabel snaps arbitrary/invalid values');
+
 /* ── CORE_PERSONAS ───────────────────────────────────────────── */
 check(Array.isArray(BT.CORE_PERSONAS), 'CORE_PERSONAS is an array');
 check(BT.CORE_PERSONAS.length === 4, 'CORE_PERSONAS has exactly 4 entries');
