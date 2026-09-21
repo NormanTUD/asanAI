@@ -598,7 +598,7 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
     ],layout,{displayModeBar:false});
     const sep = cPl>zOutMax && cPl<zInMin;
     const v=$('eggVerdict'); v.textContent = sep?'Ebene trennt ✓':'Ebene trennt nicht ✗'; v.className='verdict '+(sep?'ok':'no');
-    renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,0.5-\lVert(x,y)\rVert)}_{\text{hebt den Kern an}},\;\; \text{Trennebene } z=c. \;\; \text{trennbar, wenn } c\in(${f1(zOutMax)},\,${f1(zInMin)}).`);
+    renderTeX('fEgg', String.raw`z(x,y)=\underbrace{L\cdot\max(0,\,1-2\lVert(x,y)\rVert)}_{\text{hebt den Kern an (Spitze }z=L\text{)}},\;\; \text{Trennebene } z=c. \;\; \text{trennbar, wenn } c\in(${f1(zOutMax)},\,${f1(zInMin)}).`);
   }
   $('lift').oninput=draw3d; $('planeC').oninput=draw3d; draw3d();
 })();

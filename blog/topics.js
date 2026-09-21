@@ -1886,22 +1886,43 @@
 	/* ── 10a. Math-comfort slider + persona-card helpers ───────── */
 	var _skipInlineWidget = false; // true while a slider is mid-drag (see below)
 
-	/** load a core persona's curated interests AND math comfort, in one
-	    undo step. Does not touch the profile/level audience axes. */
+	/** Toggle a core persona label on/off. Personas are combinable
+	    (union of their topics). Polymath is exclusive: selecting any
+	    other persona removes it. Topics are only disabled when no
+	    remaining active persona covers them. */
 	function applyCorePersona(id) {
 		const p = (CORE_PERSONAS || []).find(function (x) { return x.id === id; });
 		if (!p) return;
 		const cur = activePref();
-		const active = cur.corePersonas || [];
+		const active = (cur.corePersonas || []).slice();
 		const idx = active.indexOf(id);
-		if (idx !== -1) {
-			active.splice(idx, 1);
-			dlog('core persona removed →', p.label);
-		} else {
+		const adding = (idx === -1);
+
+		if (adding) {
 			active.push(id);
+			// Polymath exclusivity: picking a specific type drops polymath
+			if (id !== 'polymath' && active.indexOf('polymath') !== -1) {
+				const pi = active.indexOf('polymath');
+				active.splice(pi, 1);
+				dlog('polymath auto-removed (specific persona selected)');
+			}
 			(p.topics || []).forEach(function (t) { cur.topics[cssSafe(t)] = true; });
-			dlog('core persona added →', p.label, '(+' + (p.topics || []).length + ' topics)');
+			dlog('persona +', p.label);
+		} else {
+			active.splice(idx, 1);
+			// Recalc: disable topics no longer covered by any active persona
+			const covered = {};
+			active.forEach(function (aid) {
+				const ap = CORE_PERSONAS.find(function (x) { return x.id === aid; });
+				if (ap) (ap.topics || []).forEach(function (t) { covered[cssSafe(t)] = true; });
+			});
+			(p.topics || []).forEach(function (t) {
+				const cid = cssSafe(t);
+				if (!covered[cid]) cur.topics[cid] = false;
+			});
+			dlog('persona -', p.label);
 		}
+
 		pushHistory();
 		cur.corePersonas = active;
 		persistPref(cur);
@@ -1920,7 +1941,7 @@
 		const v = getMathLevel();
 		return '<div class="math-comfort itx-item" role="group" aria-label="Math comfort">'
 			+ '<div class="math-comfort-top">'
-			+   '<span class="math-comfort-label">∑ How much math is comfortable?</span>'
+			+   '<span class="math-comfort-label">∑ Are you comfortable with…</span>'
 			+   '<span class="math-comfort-val" data-math-val>' + v + '% · ' + escAttr(mathLabel(v)) + '</span>'
 			+ '</div>'
 			+ '<input type="range" class="math-comfort-range" min="' + MATH_MIN + '" max="' + MATH_MAX
