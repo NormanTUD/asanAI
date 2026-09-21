@@ -730,7 +730,7 @@ Research by \citeauthor{geometryoftruth} from \citeyear{geometryoftruth} provide
 The philosophical implication is that the model contains an internal geometric signal that reliably tracks factual accuracy, a “truth direction” that a simple linear probe can read, yet the generation mechanism (next-token prediction via softmax) never consults it. The architecture **separates representation from generation**: the model “knows” in a geometric sense but has no pathway to route that knowledge back into its own output process for self-correction. This is a mathematically precise instantiation of Polanyi's Paradox inverted: the model's latent space contains more information than its output process can access. It also deepens the case against metacognition, the information needed for self-assessment *exists in the weights*, localized to specific hidden states above end-of-sentence tokens, but the single forward pass provides no mechanism to use it as a check on the model's own claims. The model is, in effect, a witness to its own confabulations who is architecturally prevented from testifying.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="Mathematical limits of what language models can represent">
 ### Mathematical limits of what language models can represent
 
 The softmax bottleneck, formalized by \citeauthorlastnameand{breakingsoftmaxbottleneck}, reveals a hard mathematical
