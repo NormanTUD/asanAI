@@ -366,6 +366,20 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini_Cigarette_paper_trick.png",
 		alternativetitle: "Houdini, cigarette-paper tear (Wikimedia Commons, public domain)"
 	},
+	"houdini_portrait_img": {
+		title: "Harry Houdini, half-length portrait, facing front (1906)",
+		author: "Library of Congress (Public Domain)",
+		year: 1906,
+		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini,_half-length_portrait,_facing_front_LCCN96518797.jpg",
+		alternativetitle: "Harry Houdini portrait (Library of Congress, public domain)"
+	},
+	"origami_cranes_img": {
+		title: "Origami made by Brighton University to support Japan (April 2011)",
+		author: "Dominic Alves (CC BY 2.0)",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Origami_made_by_Brighton_University_to_support_Japan;_April_2011.jpg",
+		alternativetitle: "Paper cranes, Brighton University (Wikimedia Commons, CC BY 2.0)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that

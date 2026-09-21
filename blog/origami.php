@@ -35,6 +35,11 @@ tags: math-heavy, logic-heavy
 
 <div class="md">
 **Start with the paper.** *Origami* — the Japanese art of folding flat paper into three-dimensional forms — is, in this book, more than a decorative metaphor. It is the **correct geometry of what a neural network's hidden layers actually do**: each ReLU neuron is one flat *fold*, a stack of layers is a stack of folds, and the classifier's final linear readout is the single *flat cut* that finishes the job. It is a striking fact that a discipline born from paper, patience, and a single square of stock turned out to sit at the very base of modern AI. The chapter below makes that precise; a short history of the real field behind the metaphor — **computational origami** — is tucked into the *Origins* box.
+
+<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
+	<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
+	<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
+</figure>
 </div>
 
 <div class="md">
@@ -252,10 +257,16 @@ The "fold" in this chapter is a neural-network metaphor — but *folding as math
 
 **Paper-folding geometry.** The roots are in what a *single* fold can construct. **T. Sundara Row** (1893) first collected paper-folding constructions \cite[Mathematics of paper folding]{math_paper_folding_wiki}; **Harry Houdini** (1922) codified a whole book of paper tricks — tearing, folding, and puzzles — in *Paper Magic*, its step-by-step diagrams a pre-axiom sketch of the constructions that would later be formalized \cite[Houdini, 1922]{houdini1922papermagic}; **Margherita Piazzola Beloch** (1936) then showed that one special fold — the **Beloch fold** — solves the general cubic \cite[Beloch fold]{beloch_fold_wiki}\cite[Hull, 2011]{hull2011beloch}. That single move is why origami **trisects an angle** and **doubles the cube**, both impossible with ruler and compass: where compass-and-straightedge stops at quadratics, a fold reaches cubics \cite[Hull, 1997]{hull1997origametry}. The full single-fold power is pinned down by the **Huzita–Justin (Huzita–Hatori) axioms** — seven rules, first written by **Jacques Justin** (1986), rediscovered by **Humiaki Huzita** (1989), and shown to be complete by **Robert J. Lang** \cite[Huzita–Hatori axioms]{huzita_justin_wiki}.
 
-<figure style="max-width:340px; margin:1.4em auto; text-align:center;">
-	<img src="https://upload.wikimedia.org/wikipedia/commons/d/dc/Harry_Houdini_Cigarette_paper_trick.png" alt="Illustration from Houdini's 1922 book Paper Magic: Houdini performing the cigarette-paper tear" style="width:100%; height:auto; border-radius:6px;" />
-	<figcaption class="md">The cigarette-paper tear, one of the opening paper tricks in Harry Houdini's 1922 book *Paper Magic* \cite[Image: Harry Houdini, cigarette-paper trick, public domain (Wikimedia Commons)]{houdini_papermagic_img}.</figcaption>
-</figure>
+<div style="display:flex; gap:1.1rem; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin:1.3em 0;">
+	<figure style="margin:0; text-align:center; flex:0 1 240px;">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Harry_Houdini%2C_half-length_portrait%2C_facing_front_LCCN96518797.jpg" alt="Portrait of Harry Houdini, 1906" style="width:100%; height:auto; border-radius:6px;" />
+		<figcaption class="md">Harry Houdini (1874–1926), the escape artist who made paper a stage act. \cite[Image: Library of Congress (Wikimedia Commons, public domain)]{houdini_portrait_img}.</figcaption>
+	</figure>
+	<figure style="margin:0; text-align:center; flex:0 1 240px;">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/d/dc/Harry_Houdini_Cigarette_paper_trick.png" alt="Illustration from Houdini's 1922 book Paper Magic: Houdini performing the cigarette-paper tear" style="width:100%; height:auto; border-radius:6px;" />
+		<figcaption class="md">The cigarette-paper tear, one of the opening paper tricks in Houdini's 1922 book *Paper Magic*. \cite[Image: Harry Houdini, cigarette-paper trick (Wikimedia Commons, public domain)]{houdini_papermagic_img}.</figcaption>
+	</figure>
+</div>
 
 **Flat-foldability: two local theorems, one hard problem.** Given a crease pattern, *when* can it fold flat? At a single vertex, two clean rules answer it: **Maekawa's theorem** — mountain and valley folds at a vertex always differ by two (which is also why the faces two-color) \cite[Maekawa's theorem]{maekawa_theorem_wiki}, and **Kawasaki's (Kawasaki–Justin) theorem** — the alternating angles around the vertex sum to 180° \cite[Kawasaki's theorem]{kawasaki_theorem_wiki}. But across many vertices the question becomes computationally wild: **Bern and Hayes (1996)** proved that deciding whether a crease pattern folds flat is **NP-complete** \cite[Mathematics of paper folding]{math_paper_folding_wiki}.
 
