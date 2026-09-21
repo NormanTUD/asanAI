@@ -50,7 +50,9 @@ $$
 
 **Step 3, Store in a vector database.**
 Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in a specialised database optimized for nearest-neighbor search (FAISS, Pinecone, Weaviate, Chroma, Qdrant).
+</div>
 
+<div class="md" data-mathlevel="50" data-optionaltitle="Phase 2: Retrieval + Generation">
 ### Phase 2: Retrieval + Generation (online, every query)
 
 **Step 4, Embed the query.**

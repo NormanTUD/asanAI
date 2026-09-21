@@ -41,7 +41,7 @@ Each has failure modes:
 * Human preference is gold-standard but slow and expensive.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40" data-optionaltitle="Multiple-choice benchmarks (MMLU accuracy)">
 ## Multiple-Choice Benchmarks
 
 ### MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): Massive Multitask Language Understanding — 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
@@ -51,7 +51,9 @@ $$
 $$
 
 By 2025, frontier models exceed 88% on \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+</div>
 
+<div class="md">
 ### HellaSwag \cite[Zellers et al., 2019]{zellers2019hellaswag}
 
 Tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
@@ -77,7 +79,9 @@ The model must produce a numerical answer after reasoning. **Exact-match accurac
 ### MATH \cite[Hendrycks et al., 2021]{hendrycks2021math}
 
 12,500 competition-\cite[Hendrycks et al., 2021]{hendrycks2021math}s from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
+</div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="HumanEval (pass@k formula)">
 ### HumanEval \cite[Chen et al., 2021]{chen2021humaneval}
 
 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
@@ -87,7 +91,9 @@ $$
 $$
 
 where $n$ is the number of samples and $c$ is the number that pass. This unbiased estimator handles low $k$ correctly. For $k=1$, it's the unbiased greedy accuracy.
+</div>
 
+<div class="md">
 ### MBPP (\cite[Austin et al., 2021]{austin2021mbpp}
 
 974 Python problems, slightly easier than \cite[Chen et al., 2021]{chen2021humaneval}. Used as a complement.
@@ -99,7 +105,7 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 
 <div id="mmlu-viz" style="max-width:880px; margin:1em auto;"></div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference &amp; Elo)">
 ## Generative, LLM-as-Judge
 
 For open-ended tasks (summarization, dialogue, instruction-following), there's no single correct answer. The standard approach is **LLM-as-judge** (Zheng et al., LMSYS, 2023):

@@ -36,7 +36,9 @@ Here is what the internal probabilities might look like:
 
 <div class="md">
 In this case, the AI will likely pick “Blue”. But notice that “Green” and “Cheese” are not zero. They are just unlikely. If the AI is forced to be “creative,” it might pick them.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The Role of Temperature">
 ## The Role of Temperature
 
 How do we control this? We use a parameter called **Temperature ($T$)**.

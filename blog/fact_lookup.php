@@ -42,7 +42,7 @@ A language model is trained to do one thing: predict the next token in a sequenc
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="What the model actually computes, top to bottom">
 ## What the model actually computes, top to bottom
 
 The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:
@@ -62,7 +62,7 @@ That is the entire computation. There is no lookup table, no symbolic database, 
 This sounds too austere to be true. The next sections will fill in how it can nevertheless produce Paris.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The residual stream as a public scratchpad">
 ## The residual stream as a public scratchpad
 
 The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output \cite[Elhage et al., 2021]{elhage2021mathematical}. Concretely:
@@ -84,7 +84,7 @@ If you have ever tried to debug a neural network where one component *overwrites
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle='Attention: routing "France" to the end'>
 ## Attention: routing "France" to the end
 
 For the prompt "The capital of France is ", the first thing the model has to do is *figure out which tokens matter*. The word "is" is a verb that wants an object. The object is a country. The country is "France", which appeared three tokens earlier. The mechanism for this routing is **self-attention** \cite[Vaswani et al., 2017]{vaswani2017attention}.
@@ -106,7 +106,7 @@ For our prompt, in the early layers, attention is mostly doing *local* work — 
 A useful decomposition, due to \cite[Elhage et al., 2021]{elhage2021mathematical}, is to split each head into its **QK circuit** ($W_Q^\top W_K$, the matrix that decides *where to look*) and its **OV circuit** ($W_O W_V$, the matrix that decides *what to write when looking*). For an "I want to read 'France'" head, the QK matrix makes the final position attend strongly to the "France" position, and the OV matrix is approximately the identity in the relevant subspace — it copies what it reads.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="The MLP as a soft key-value memory">
 ## The MLP as a soft key-value memory
 
 If attention is the routing layer — the part that figures out *which* information matters — then the **MLP layers** are where the *content* of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.
@@ -126,7 +126,9 @@ How big is this memory? For GPT-2 small ($d = 768$, $d_{\text{ff}} = 4d = 3072$)
 <div class="optional md" data-headline="Why 'soft' matters for what counts as a 'fact'">
 A hard hash table stores a fact or it doesn't. A soft key-value memory does something more interesting: it stores *fuzzy* facts. The key "the capital of France is" and the key "France's capital is" can both partially activate the same value vector — that's why the model answers Paris whether you phrase the question as "the capital of France is", "what is the capital of France", or "Paris is the capital of". In a hard lookup world, only one of those phrasings would hit. The fuzziness is what makes the model robust to paraphrase.
 </div>
+</div>
 
+<div class="md">
 ### Where "Paris" specifically lives
 
 So there is a cloud of soft key-value pairs in the model's weights. The question is: is "Paris is the capital of France" stored *somewhere specific*, or is it smeared across millions of pairs in some inseparable way? The experimental evidence from the last few years is, surprisingly clearly: *somewhere specific*.
@@ -163,7 +165,7 @@ Honest caveats. ROME is not a complete theory of fact storage. It is one experim
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55" data-optionaltitle="Facts as directions: the linear representation hypothesis">
 ## Facts as directions: the linear representation hypothesis
 
 The third piece of the picture is the most surprising, and the most contested.
@@ -187,7 +189,7 @@ This is the linear-representation + soft-key-value-memory picture in one breath.
 The strongest evidence that this picture holds in *frontier-scale* production models — not just in the 100M–7B toys where most of the original experiments were done — comes from \cite[Templeton et al., 2024]{templeton2024scaling}. They trained sparse autoencoders on the residual stream of Claude 3 Sonnet and recovered up to 34 million interpretable features. Among them: features for individual famous people, features for specific cities, features for specific code constructs, features for abstract concepts like "errors in code" and "sarcasm". The fact that a feature for "the Eiffel Tower" exists as a *direction* in the residual stream of a production frontier model is direct confirmation that the linear-representation picture scales. And the now-famous "Golden Gate Bridge" feature — a single direction whose activation makes the model insist on mentioning the bridge regardless of what you ask about — is a textbook example of a fact-as-direction.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Watching the answer form: the logit lens">
 ## Watching the answer form: the logit lens
 
 All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.
@@ -220,7 +222,9 @@ The logit lens is a *diagnostic*, not a measurement of what the model is "thinki
 There is a tempting picture that goes like this. The residual stream starts somewhere — a vector near the embedding of " ", perturbed by attention that has read "France" from earlier. As it passes through layer after layer, it gets *pulled* toward a region of $\mathbb{R}^d$ that decodes to "Paris". Other prompts — "The capital of Germany is", "2 + 2 =", "Once upon a" — get pulled toward different regions. The picture is of basins of attraction, like a Hopfield network or a dynamical system with fixed points.
 
 This picture is *suggestive* and *partially grounded*, but it is not, as of this writing, a theorem. Let us say what is and isn't known.
+</div>
 
+<div class="md" data-mathlevel="65" data-optionaltitle="What is grounded">
 ### What is grounded
 
 The connection between Transformer attention and modern Hopfield networks is mathematically precise. \cite[Ramsauer et al., 2020]{ramsauer2020hopfield} showed that the attention update rule
@@ -232,7 +236,9 @@ with $\beta \propto 1/\sqrt{d_k}$, is *exactly* the update rule of a continuous-
 <p>$$E = -\mathrm{lse}(\beta, X X^\top) + \tfrac{1}{2}\xi^\top \xi + \tfrac{1}{2}\sum_j x_j^\top x_j$$</p>
 
 where $\mathrm{lse}$ is the log-sum-exp. The classical Hopfield network of \cite[Hopfield, 1982]{hopfield1982} was the original "associative memory with basins of attraction" architecture. So the *attention mechanism* in a Transformer is, formally, an iterative retrieval rule from a generalized Hopfield model. That is a real mathematical fact.
+</div>
 
+<div class="md">
 ### What is suggested but not proven
 
 From this, it is *tempting* to conclude that the whole residual stream is being "attracted" toward stored memory states across layers. The logit-lens evidence (§7) is consistent with this picture — predictions become more confident as layers progress, as if the residual stream is converging toward an attractor. The function-vector evidence (§6) is consistent — small vectors steer predictions, as if the residual stream were being gently pushed toward a different basin.
@@ -310,7 +316,7 @@ A large part of what the model does is **binding**: tying a "filler" to a "gap" 
 The takeaway is a clean one: **binding works for short, unambiguous chains, and it fails exactly when the chain is long, nested, or interfered with** — because every hop costs a layer, and the model is handed only a fixed number. This is the same depth-as-budget idea that caps the arithmetic of the algorithms chapter, and it is why "the model lost track of the subject" is not a quirk but a structural limit.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Putting it together">
 ## Putting it together
 
 Here is the picture in one breath, with citations:
