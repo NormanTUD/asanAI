@@ -1389,7 +1389,7 @@
 
 		buildPresetRow('fold2d-presets', PRESETS_F2, function (pr) {
 			F2.theta = pr.s.theta; F2.c = pr.s.c; F2.lam = pr.s.lam;
-			syncSliders(); labelSliders(); redraw();
+			syncFoldSliders(); labelFoldSliders(); redraw();
 		});
 
 		srcC.addEventListener('click', function (e) {
@@ -1425,7 +1425,7 @@
 		});
 
 		renderChecks($('fold2d-checks'), runFoldSelfTests());
-		syncSliders(); labelSliders();
+		syncFoldSliders(); labelFoldSliders();
 		themeRedraws.push(redraw);
 		redraw();
 	}
@@ -1873,7 +1873,7 @@
 
 		const n3 = function () { return Fold.normal3(U3.tilt * Math.PI / 180, U3.spin * Math.PI / 180); };
 
-		function viewRotate(p) {
+		function u3dViewRotate(p) {
 			const cyw = Math.cos(U3.yaw), sw = Math.sin(U3.yaw);
 			const cp = Math.cos(U3.pitch), sp = Math.sin(U3.pitch);
 			const x1 = cyw * p[0] + sw * p[2];
@@ -1897,7 +1897,7 @@
 				if (!isFinite(r[0]) || Math.abs(r[3]) < 1e-6) return null;
 				q = [r[0] / r[3], r[1] / r[3], r[2] / r[3]];
 			}
-			return viewRotate(q);
+			return u3dViewRotate(q);
 		}
 		/* same transform, without the view rotation (for the Gauss integral) */
 		function foldedPt(p, isB) {
@@ -1920,7 +1920,7 @@
 			[Hopf.coreA, Hopf.coreB].forEach(function (fn) {
 				ctx.beginPath(); let started = false;
 				for (let i = 0; i <= 96; i++) {
-					const pr = proj(viewRotate(fn(i / 96 * 2 * Math.PI)));
+					const pr = proj(u3dViewRotate(fn(i / 96 * 2 * Math.PI)));
 					if (!pr) { started = false; continue; }
 					if (!started) { ctx.moveTo(pr[0], pr[1]); started = true; }
 					else ctx.lineTo(pr[0], pr[1]);
@@ -1965,7 +1965,7 @@
 			ctx.stroke();
 		}
 
-		function drawFrame() {
+		function drawU3dFrame() {
 			const P = pal();
 			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
 			drawGhost(P);
@@ -2113,14 +2113,14 @@
 
 		/* controls */
 		const sTilt = $('u3d-tilt'), sSpin = $('u3d-spin'), sC = $('u3d-c'), sLam = $('u3d-lambda'), sSep = $('u3d-sep');
-		function syncSliders() {
+		function syncU3dSliders() {
 			if (sTilt) sTilt.value = String(Math.round(U3.tilt));
 			if (sSpin) sSpin.value = String(Math.round(U3.spin));
 			if (sC) sC.value = String(U3.c);
 			if (sLam) sLam.value = String(U3.lam);
 			if (sSep) sSep.value = String(U3.sep);
 		}
-		function labelSliders() {
+		function labelU3dSliders() {
 			const tv = $('u3d-tilt-v'), sv = $('u3d-spin-v'), cv = $('u3d-c-v'), lv = $('u3d-lambda-v'), ev = $('u3d-sep-v');
 			if (tv) tv.textContent = Math.round(U3.tilt) + '\u00B0';
 			if (sv) sv.textContent = Math.round(U3.spin) + '\u00B0';
@@ -2137,13 +2137,13 @@
 			if (sC) U3.c = parseFloat(sC.value);
 			if (sLam) U3.lam = parseFloat(sLam.value);
 			U3.affineM = null;
-			labelSliders();
+			labelU3dSliders();
 			recompute();
 		}
 		function onSepSlider() {
 			if (sSep) U3.sep = parseFloat(sSep.value);
 			U3.separating = false;
-			labelSliders();
+			labelU3dSliders();
 			recompute();
 		}
 		if (sTilt) sTilt.addEventListener('input', onFoldSlider);
@@ -2154,7 +2154,7 @@
 
 		buildPresetRow('unlink3d-presets', PRESETS_U3, function (pr) {
 			pr.f();
-			syncSliders(); labelSliders(); recompute();
+			syncU3dSliders(); labelU3dSliders(); recompute();
 		});
 
 		const sepBtn = $('unlink3d-sepbtn');
@@ -2179,7 +2179,7 @@
 		c.addEventListener('pointercancel', function () { U3.drag = null; });
 
 		renderChecks($('unlink3d-checks'), runUnlinkSelfTests());
-		syncSliders(); labelSliders();
+		syncU3dSliders(); labelU3dSliders();
 		recompute();
 
 		let errStreak = 0;
@@ -2195,7 +2195,7 @@
 					recompute();
 				}
 				if (U3.auto && !U3.drag) U3.yaw += 0.0022;
-				drawFrame();
+				drawU3dFrame();
 				errStreak = 0;
 			} catch (e) {
 				if (++errStreak > 5) { showLabError('unlink-3d', e); return; }
