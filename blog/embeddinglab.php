@@ -9,6 +9,7 @@ order: 4
 color: sky
 topics: language, math-i, math-ii, architecture
 tags: math-heavy
+math: 55
 -->
 
 <div class="smart-quote" data-cite="wittgenstein1953investigations">
@@ -94,13 +95,15 @@ As described elsewhere in this text, the **Manifold Hypothesis**, the idea that 
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="40">
 Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to \citealternativetitle{gage1994bpe}.
 
 In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, “You shall know a word by the company it keeps” (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthorlastnameand{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
 
 Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of “how parallel are these two arrows” we still use for semantic search. Their paper, “\citetitle{salton1975vectorspace}”, is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
+</div>
 
+<div class="md">
 ## One Dimension
 To visualize this, consider a simple **1D Embedding Space** representing temperature. We assign words a single numerical coordinate on an axis:
 * **Freezing**: $-30$
@@ -124,7 +127,7 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
     <div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Two dimensions">
 ## Two dimensions
 
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
