@@ -23,7 +23,7 @@
      width is deterministic in headless. */
   #contents { width: 600px; margin: 0 auto; position: relative; }
   .probe { height: 40px; border: 1px solid #ccc; }
-  #bad, #box-bad, #opt-bad, #mf-bad, #tag-bad, #ex-bad { width: 800px; }
+  #bad, #box-bad, #opt-bad, #mf-bad, #tag-bad, #ex-bad, #svg-bad { width: 800px; }
 </style>
 <script src="../layout_guardrail.js"></script>
 </head>
@@ -36,6 +36,7 @@
     <figure class="sideimage"><div id="mf-bad" class="probe">margin note, 800px → MUST be exempt</div></figure>
     <div class="lg-scroll"><div id="tag-bad" class="probe">special tag, 800px → MUST be exempt</div></div>
     <div id="ex-bad" class="probe">normal, 800px → flagged, then excluded via API</div>
+    <svg id="svg-bad" width="800" height="40" style="display:block">svg, 800px → MUST be flagged (root measured, children pruned)</svg>
   </div>
   <div id="verdict" role="status">PENDING</div>
   <script>
@@ -49,7 +50,7 @@
         if (!r) { set('FAIL: __layoutGuardrail not set (guardrail never ran)'); return; }
         if (r.allowedPx <= 0) { set('FAIL: column not measured'); return; }
         var off = r.offenders || [];
-        var expect = ['#bad', '#ex-bad'];
+        var expect = ['#bad', '#ex-bad', '#svg-bad'];
         var onlyExpected = off.length === expect.length && expect.every(function (s) {
           return off.some(function (o) { return o.indexOf(s) !== -1; });
         });

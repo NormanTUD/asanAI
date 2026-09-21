@@ -38,7 +38,7 @@
 	const TEXT_SKIP_TAGS = new Set([
 		'CODE', 'PRE', 'KBD', 'SAMP',
 		'SCRIPT', 'STYLE', 'TEXTAREA',
-		'MATH'
+		'MATH', 'SVG', 'OPTION'
 	]);
 
 	const SKIP_CLASSES = [
@@ -57,21 +57,21 @@
 		// for ancestor-traversal.
 		const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
 			acceptNode: function (node) {
-				if (!node.nodeValue || !node.nodeValue.length) {
+				const v = node.nodeValue;
+				if (!v || !v.length) {
 					return NodeFilter.FILTER_REJECT;
 				}
-				// Cheap heuristic: skip nodes that contain nothing
-				// we care about. Cuts ~90 % of nodes from the walk.
-				const v = node.nodeValue;
-				if (!/['"\u2026]|--|\.\.\./.test(v) &&
-					!/[\u2014\u2013\u2018\u2019\u201C\u201D]/.test(v)) {
-					// No broken chars AND no curly glyphs to skip —
-					// but we still want this for smart-quote auto-
-					// correction. So DON'T reject on this.
+				// Real prefilter: no pass and no lint counter can touch a
+				// node without one of these chars, so reject it before paying
+				// for the ancestor-climb. The set is a strict superset of what
+				// smartQuotes / smartDashes / smartEllipsis / lint look for.
+				if (v.indexOf("'") === -1 && v.indexOf('"') === -1 &&
+					v.indexOf('-') === -1 && v.indexOf('...') === -1) {
+					return NodeFilter.FILTER_REJECT;
 				}
 				let el = node.parentElement;
 				while (el && el !== root) {
-					if (TEXT_SKIP_TAGS.has(el.tagName)) return NodeFilter.FILTER_REJECT;
+					if (TEXT_SKIP_TAGS.has((el.tagName || '').toUpperCase())) return NodeFilter.FILTER_REJECT;
 					if (el.matches && el.matches(SKIP_SELECTOR)) return NodeFilter.FILTER_REJECT;
 					if (el.isContentEditable) return NodeFilter.FILTER_REJECT;
 					el = el.parentElement;
@@ -83,20 +83,6 @@
 		let n;
 		while ((n = walker.nextNode())) out.push(n);
 		return out;
-	}
-
-	/* Helper: split a single text node into pieces around a regex
-	   match while preserving original DOM nodes (no innerHTML churn
-	   unless we actually changed something). Returns true if any
-	   change was made.                                             */
-	function rewriteTextNode(node, regex, replacer) {
-		const s = node.nodeValue;
-		if (!regex.test(s)) return false;
-		const html = s.replace(regex, replacer);
-		if (html === s) return false;
-		const frag = document.createRange().createContextualFragment(html);
-		node.parentNode.replaceChild(frag, node);
-		return true;
 	}
 
 	/* ── 2. Smart quotes ──────────────────────────────────────────
@@ -169,8 +155,12 @@
 	function smartQuotes(root) {
 		const nodes = safeTextNodes(root);
 		let count = 0;
-		for (const node of nodes) {
-			if (rewriteTextNode(node, /['"]/, smartQuotesPass)) count++;
+		for (let i = 0; i < nodes.length; i++) {
+			const s = nodes[i].nodeValue;
+			if (s && (s.indexOf('"') !== -1 || s.indexOf("'") !== -1)) {
+				const t = smartQuotesPass(s);
+				if (t !== s && nodes[i].parentNode) { nodes[i].nodeValue = t; count++; }
+			}
 		}
 		return count;
 	}
@@ -241,25 +231,100 @@
 	function smartEllipsis(root) {
 		const nodes = safeTextNodes(root);
 		let count = 0;
-		for (const node of nodes) {
-			if (rewriteTextNode(node, /\.\.\./, smartEllipsisPass)) count++;
+		for (let i = 0; i < nodes.length; i++) {
+			const s = nodes[i].nodeValue;
+			if (s && s.indexOf('...') !== -1) {
+				const t = smartEllipsisPass(s);
+				if (t !== s && nodes[i].parentNode) { nodes[i].nodeValue = t; count++; }
+			}
 		}
 		return count;
+	}
+
+	/* ── 4b. Single-walk fix + lint (the hot path) ──────────────── */
+	function lintNode(s, issues) {
+		issues.straightQuotes += (s.match(/['"]/g) || []).length;
+		issues.asciiEmDashes  += (s.match(/(\s)--(\s)|(\s)---(\s)/g) || []).length;
+		issues.asciiEllipsis  += (s.match(/(^|[^\.])\.\.\.([^\.]|$)/g) || []).length;
+	}
+
+	function processNode(node, issues) {
+		const s = node.nodeValue;
+		if (!s) return { quotes: 0, dashes: 0, ellipsis: 0 };
+		const hasQ = s.indexOf('"') !== -1 || s.indexOf("'") !== -1;
+		const hasD = s.indexOf('-') !== -1;
+		const hasE = s.indexOf('...') !== -1;
+		let out = s, quotes = 0, dashes = 0, ellipsis = 0;
+		if (hasQ) { const t = smartQuotesPass(out);   if (t !== out) { quotes = 1; out = t; } }
+		if (hasD) { const t = smartDashesPass(out);   if (t !== out) { dashes = 1; out = t; } }
+		if (hasE) { const t = smartEllipsisPass(out); if (t !== out) { ellipsis = 1; out = t; } }
+		if (out !== s && node.parentNode) node.nodeValue = out;
+		if (issues) lintNode(out, issues);
+		return { quotes: quotes, dashes: dashes, ellipsis: ellipsis };
+	}
+
+	function applyLint(issues) {
+		const total = issues.straightQuotes + issues.asciiEmDashes + issues.asciiEllipsis;
+		const de = document.documentElement;
+		de.setAttribute('data-typo-issues', String(total));
+		de.setAttribute('data-typo-quotes', String(issues.straightQuotes));
+		de.setAttribute('data-typo-dashes', String(issues.asciiEmDashes));
+		de.setAttribute('data-typo-ellipsis', String(issues.asciiEllipsis));
+		if (window.__TYPO_DEBUG__) {
+			if (total === 0) {
+				console.info('[TypographyFix] lint clean.');
+			} else {
+				console.groupCollapsed(
+					'[TypographyFix] lint: ' + total + ' potential issue(s) (' +
+					issues.straightQuotes + ' quotes, ' + issues.asciiEmDashes +
+					' dashes, ' + issues.asciiEllipsis + ' ellipsis)'
+				);
+				console.info(
+					'These survived the autocorrect because they sit in a skipped ' +
+					'subtree (code/pre/math/no-typo-fix) or are outside any .md block.'
+				);
+				console.info('Set window.__TYPO_DEBUG__ = false to silence.');
+				console.groupEnd();
+			}
+		}
+	}
+
+	function fixAndLint(root) {
+		const scope = root || document;
+		const t0 = performance.now();
+		const nodes = safeTextNodes(scope);
+		const issues = { straightQuotes: 0, asciiEmDashes: 0, asciiEllipsis: 0 };
+		let q = 0, d = 0, e = 0;
+		for (let i = 0; i < nodes.length; i++) {
+			const r = processNode(nodes[i], issues);
+			q += r.quotes; d += r.dashes; e += r.ellipsis;
+		}
+		applyLint(issues);
+		const dt = performance.now() - t0;
+		if (window.__TYPO_DEBUG__ && (q + d + e) > 0) {
+			console.info(
+				'[TypographyFix v' + VERSION + '] fixed ' + q + ' quote, ' +
+				d + ' dash, ' + e + ' ellipsis in ' + dt.toFixed(1) + 'ms'
+			);
+		}
+		return { quotes: q, dashes: d, ellipsis: e, ms: dt, issues: issues };
 	}
 
 	/* ── 5. Public API ──────────────────────────────────────────── */
 	function fixTypography(root) {
 		const scope = root || document;
 		const t0 = performance.now();
-		const q = smartQuotes(scope);
-		const d = smartDashes(scope);
-		const e = smartEllipsis(scope);
+		const nodes = safeTextNodes(scope);
+		let q = 0, d = 0, e = 0;
+		for (let i = 0; i < nodes.length; i++) {
+			const r = processNode(nodes[i], null);
+			q += r.quotes; d += r.dashes; e += r.ellipsis;
+		}
 		const dt = performance.now() - t0;
 		if (window.__TYPO_DEBUG__ && (q + d + e) > 0) {
 			console.info(
-				`[TypographyFix v${VERSION}] fixed ` +
-				`${q} quote, ${d} dash, ${e} ellipsis occurrences ` +
-				`in ${dt.toFixed(1)}ms`
+				'[TypographyFix v' + VERSION + '] fixed ' + q + ' quote, ' +
+				d + ' dash, ' + e + ' ellipsis in ' + dt.toFixed(1) + 'ms'
 			);
 		}
 		return { quotes: q, dashes: d, ellipsis: e, ms: dt };
@@ -275,42 +340,8 @@
 		const scope = root || document;
 		const nodes = safeTextNodes(scope);
 		const issues = { straightQuotes: 0, asciiEmDashes: 0, asciiEllipsis: 0 };
-
-		for (const node of nodes) {
-			const s = node.nodeValue || '';
-			// Curly chars are fine; straight ones aren't.
-			// Match ASCII quote only when it could be a typo (i.e.
-			// flanked by something letter-like).
-			issues.straightQuotes += (s.match(/['"]/g) || []).length;
-			issues.asciiEmDashes += (s.match(/(\s)--(\s)|(\s)---(\s)/g) || []).length;
-			issues.asciiEllipsis += (s.match(/(^|[^\.])\.\.\.([^\.]|$)/g) || []).length;
-		}
-
-		const total = issues.straightQuotes + issues.asciiEmDashes + issues.asciiEllipsis;
-		document.documentElement.setAttribute('data-typo-issues', String(total));
-		document.documentElement.setAttribute('data-typo-quotes', String(issues.straightQuotes));
-		document.documentElement.setAttribute('data-typo-dashes', String(issues.asciiEmDashes));
-		document.documentElement.setAttribute('data-typo-ellipsis', String(issues.asciiEllipsis));
-
-		if (window.__TYPO_DEBUG__) {
-			if (total === 0) {
-				console.info(`[TypographyFix] lint clean.`);
-			} else {
-				console.groupCollapsed(
-					`[TypographyFix] lint: ${total} potential issue(s) ` +
-					`(${issues.straightQuotes} quotes, ` +
-					`${issues.asciiEmDashes} dashes, ` +
-					`${issues.asciiEllipsis} ellipsis)`
-				);
-				console.info(
-					'These survived the autocorrect because they sit in ' +
-					'a skipped subtree (code/pre/math/no-typo-fix) or ' +
-					'are outside any .md block.'
-				);
-				console.info('Set window.__TYPO_DEBUG__ = false to silence.');
-				console.groupEnd();
-			}
-		}
+		for (let i = 0; i < nodes.length; i++) lintNode(nodes[i].nodeValue, issues);
+		applyLint(issues);
 		return issues;
 	}
 
@@ -320,8 +351,7 @@
 
 	function runOnce(root) {
 		try {
-			fixTypography(root);
-			lint(root);
+			fixAndLint(root);
 		} catch (e) {
 			console.error('[TypographyFix] pass failed:', e);
 		}

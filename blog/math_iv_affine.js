@@ -1159,7 +1159,7 @@
 	const F2 = {
 		theta: 0, c: 0.5, lambda: 1.5,
 		track: [0.25, 0.75],
-		hover: null,
+		hover: null, hoverSrc: null,
 		yaw: 0.7, pitch: 0.4, auto: false, zoom: 1, drag: null, last: 0
 	};
 
@@ -1174,11 +1174,10 @@
 	];
 
 	const initF2 = () => {
-		const src = $('fd2d-src'), out = $('fd2d-out');
-		if (!src || !out) return;
+		const src = $('fd2d-src');
+		if (!src) return;
 		const srcCtx = src.getContext('2d');
-		const outCtx = out.getContext('2d');
-		if (!srcCtx || !outCtx) throw new Error('canvas 2D unavailable');
+		if (!srcCtx) throw new Error('canvas 2D unavailable');
 
 		const size = src.width;
 		const win = -0.6, span = 2.2;
@@ -1236,7 +1235,7 @@
 			srcCtx.strokeRect(w2px(0), w2py(1), size/span, size/span);
 			drawCrease(srcCtx, P);
 
-			// hover preimages (from output-side hover)
+			// hover preimages (from the 3-D paper hover)
 			if (F2.hover && F2.hover.preims) {
 				for (const pr of F2.hover.preims) {
 					srcCtx.fillStyle = pr.piece === 1 ? P.cyan : P.warn;
@@ -1244,6 +1243,19 @@
 					srcCtx.arc(w2px(pr.p[0]), w2py(pr.p[1]), 5, 0, Math.PI*2);
 					srcCtx.fill();
 				}
+			}
+			// source-side hover crosshair + dot
+			if (F2.hoverSrc) {
+				srcCtx.strokeStyle = P.warn; srcCtx.globalAlpha = 0.6; srcCtx.setLineDash([4,4]);
+				srcCtx.beginPath();
+				srcCtx.moveTo(w2px(F2.hoverSrc[0]), 0); srcCtx.lineTo(w2px(F2.hoverSrc[0]), size);
+				srcCtx.moveTo(0, w2py(F2.hoverSrc[1])); srcCtx.lineTo(size, w2py(F2.hoverSrc[1]));
+				srcCtx.stroke();
+				srcCtx.setLineDash([]); srcCtx.globalAlpha = 1;
+				srcCtx.fillStyle = P.warn;
+				srcCtx.beginPath();
+				srcCtx.arc(w2px(F2.hoverSrc[0]), w2py(F2.hoverSrc[1]), 5, 0, Math.PI*2);
+				srcCtx.fill();
 			}
 			// tracked point
 			srcCtx.fillStyle = P.accent;
@@ -1261,69 +1273,6 @@
 			srcCtx.globalAlpha = 1;
 		};
 
-		// Forward fold: push a grid of source cells to their image (fill).
-		const drawOutput = () => {
-			const P = pal();
-			outCtx.fillStyle = P.bg; outCtx.fillRect(0, 0, size, size);
-			drawGrid(outCtx, P);
-
-			const n = Fold.normal2(F2.theta * Math.PI / 180);
-			const N = 8, S = 6; // sub-cells per side
-			for (let j = 0; j < N; j++)
-				for (let i = 0; i < N; i++) {
-					const val = (i+j)&1;
-					for (let b = 0; b < S; b++)
-						for (let a = 0; a < S; a++) {
-							const u0=(i+a/S)/N, u1=(i+(a+1)/S)/N;
-							const v0=(j+b/S)/N, v1=(j+(b+1)/S)/N;
-							const cs = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
-							const cMid = [(u0+u1)/2, (v0+v1)/2];
-							const dMid = n[0]*cMid[0] + n[1]*cMid[1] - F2.c;
-							const isFar = dMid > 0;
-							const ps = cs.map(p => Fold.apply2(p, n, F2.c, F2.lambda));
-							outCtx.fillStyle = rgb(val ? P.c1 : P.c0);
-							outCtx.globalAlpha = isFar ? 0.7 : 1;
-							outCtx.beginPath();
-							outCtx.moveTo(w2px(ps[0][0]), w2py(ps[0][1]));
-							for (let k = 1; k < 4; k++) outCtx.lineTo(w2px(ps[k][0]), w2py(ps[k][1]));
-							outCtx.closePath(); outCtx.fill();
-						}
-				}
-			outCtx.globalAlpha = 1;
-			drawCrease(outCtx, P);
-
-				// image of the test line y=0.5
-			outCtx.strokeStyle = P.accent; outCtx.lineWidth = 2;
-			outCtx.beginPath();
-			const NL = 80;
-			for (let k = 0; k <= NL; k++) {
-				const p = Fold.apply2([k/NL, 0.5], n, F2.c, F2.lambda);
-				const x = w2px(p[0]), y = w2py(p[1]);
-				k ? outCtx.lineTo(x, y) : outCtx.moveTo(x, y);
-			}
-			outCtx.stroke();
-
-			// tracked p → f(p)
-			const fp = Fold.apply2(F2.track, n, F2.c, F2.lambda);
-			outCtx.fillStyle = P.accent;
-			outCtx.beginPath();
-			outCtx.arc(w2px(fp[0]), w2py(fp[1]), 6, 0, Math.PI*2);
-			outCtx.fill();
-			outCtx.font = 'bold 12px monospace';
-			outCtx.fillText("f(p)", w2px(fp[0])+9, w2py(fp[1])+4);
-
-			// hover marker
-			if (F2.hover) {
-				outCtx.strokeStyle = P.ink2; outCtx.globalAlpha = 0.6;
-				outCtx.setLineDash([4,4]);
-				outCtx.beginPath();
-				outCtx.moveTo(w2px(F2.hover.wx), 0); outCtx.lineTo(w2px(F2.hover.wx), size);
-				outCtx.moveTo(0, w2py(F2.hover.wy)); outCtx.lineTo(size, w2py(F2.hover.wy));
-				outCtx.stroke();
-				outCtx.setLineDash([]); outCtx.globalAlpha = 1;
-			}
-		};
-
 		/* ─── 3D bent-paper view ─── */
 		const fd3d = $('fd3d-canvas');
 		const fd3dCtx = fd3d?.getContext('2d');
@@ -1339,6 +1288,78 @@
 			const dist = 4, f = dist / (dist - z2);
 			const scale = Math.min(W3 * 0.42, H3 * 0.8) * F2.zoom;
 			return [W3*0.5 + x1*scale*f, H3*0.5 - y2*scale*f, z2];
+		};
+
+		// Map a source point (u,v) to its 3-D position on the bent paper.
+		const bend3d = (u, v) => {
+			const n = Fold.normal2(F2.theta * Math.PI / 180);
+			const d = n[0]*u + n[1]*v - F2.c;
+			if (d <= 0) return [u, v, 0];
+			const phi = Math.acos(Math.max(-1, Math.min(1, 1 - F2.lambda)));
+			const cp = Math.cos(phi);
+			return [u - d*n[0]*(1 - cp), v - d*n[1]*(1 - cp), d * Math.sin(phi)];
+		};
+		// Affine extension of the far half (no near/far branch) — spans the far patch plane.
+		const farBend = (u, v) => {
+			const n = Fold.normal2(F2.theta * Math.PI / 180);
+			const d = n[0]*u + n[1]*v - F2.c;
+			const phi = Math.acos(Math.max(-1, Math.min(1, 1 - F2.lambda)));
+			const cp = Math.cos(phi);
+			return [u - d*n[0]*(1 - cp), v - d*n[1]*(1 - cp), d * Math.sin(phi)];
+		};
+		// Raycast a screen point (mx,my) on the 3-D canvas onto the bent paper.
+		// Returns { P:[x,y,z] world, uv:[u,v] source, t } or null.
+		const raycastPaper = (mx, my) => {
+			const n = Fold.normal2(F2.theta * Math.PI / 180);
+			const cy = Math.cos(F2.yaw), sy = Math.sin(F2.yaw);
+			const cx = Math.cos(F2.pitch), sx = Math.sin(F2.pitch);
+			const dist = 4;
+			const scale = Math.min(W3 * 0.42, H3 * 0.8) * F2.zoom;
+			const X = (mx - W3*0.5) / scale, Y = (H3*0.5 - my) / scale;
+			// camera-frame ray R(t) = (t·X, t·Y, dist·(1−t)); t=0 camera, t=1 image plane
+			const camToWorld = (t) => {
+				const x1 = t*X, y2 = t*Y, z2 = dist*(1 - t);
+				const y = cx*y2 + sx*z2;
+				const z1 = -sx*y2 + cx*z2;
+				return [cy*x1 - sy*z1 + 0.5, y + 0.5, sy*x1 + cy*z1];
+			};
+			let hit = null;
+			// near patch: flat plane z=0, domain [0,1]² with n·p ≤ c
+			const Az = sy*X - cy*sx*Y, Bz = cy*cx*dist;      // z(t) = (Az−Bz)·t + Bz
+			const tN = Bz / (Bz - Az);
+			if (isFinite(tN) && tN > 0) {
+				const w = camToWorld(tN), u = w[0], v = w[1];
+				if (u >= -1e-6 && u <= 1+1e-6 && v >= -1e-6 && v <= 1+1e-6 && n[0]*u + n[1]*v - F2.c <= 1e-9)
+					hit = { P: [u, v, 0], uv: [u, v], t: tN };
+			}
+			// far patch: affine image of the far half (plane spanned by farBend)
+			const O = farBend(0,0), E1 = farBend(1,0), E2 = farBend(0,1);
+			const C1 = [E1[0]-O[0], E1[1]-O[1], E1[2]-O[2]];
+			const C2 = [E2[0]-O[0], E2[1]-O[1], E2[2]-O[2]];
+			const Nr = [C1[1]*C2[2]-C1[2]*C2[1], C1[2]*C2[0]-C1[0]*C2[2], C1[0]*C2[1]-C1[1]*C2[0]];
+			const W0 = camToWorld(0), W1 = camToWorld(1);
+			const dir = [W1[0]-W0[0], W1[1]-W0[1], W1[2]-W0[2]];
+			const denom = Nr[0]*dir[0] + Nr[1]*dir[1] + Nr[2]*dir[2];
+			if (Math.abs(denom) > 1e-9) {
+				const tF = (Nr[0]*O[0]+Nr[1]*O[1]+Nr[2]*O[2] - (Nr[0]*W0[0]+Nr[1]*W0[1]+Nr[2]*W0[2])) / denom;
+				if (isFinite(tF) && tF > 0) {
+					const W = [W0[0]+tF*dir[0], W0[1]+tF*dir[1], W0[2]+tF*dir[2]];
+					const pairs = [[0,1],[0,2],[1,2]];
+					let bi = 0, bj = 1, bd = 1e-12;
+					for (const [i,j] of pairs) {
+						const det = C1[i]*C2[j] - C1[j]*C2[i];
+						if (Math.abs(det) > bd) { bd = Math.abs(det); bi = i; bj = j; }
+					}
+					const det = C1[bi]*C2[bj] - C1[bj]*C2[bi];
+					const q1 = W[bi]-O[bi], q2 = W[bj]-O[bj];
+					const u = (q1*C2[bj] - q2*C2[bi]) / det;
+					const v = (C1[bi]*q2 - C1[bj]*q1) / det;
+					if (u >= -1e-6 && u <= 1+1e-6 && v >= -1e-6 && v <= 1+1e-6 && n[0]*u + n[1]*v - F2.c >= -1e-9) {
+						if (!hit || tF < hit.t) hit = { P: W, uv: [u, v], t: tF };
+					}
+				}
+			}
+			return hit;
 		};
 
 		const draw3D = () => {
@@ -1365,18 +1386,6 @@
 			}
 			fd3dCtx.stroke();
 			fd3dCtx.setLineDash([]);
-			// bend the far half about the crease by phi; near half stays flat (z=0)
-			const bend = (u, v) => {
-				const d = n[0]*u + n[1]*v - F2.c;
-				if (d <= 0) return [u, v, 0];
-				// perpendicular direction in plane = n; distance = d
-				const cp = Math.cos(phi);
-				const nu = u - d*n[0]*(1 - cp);
-				const nv = v - d*n[1]*(1 - cp);
-				const nz = d * Math.sin(phi);
-				return [nu, nv, nz];
-			};
-
 			const N = 8, S = 4;
 			const quads = [];
 			for (let j = 0; j < N; j++)
@@ -1387,7 +1396,7 @@
 							const u0=(i+a/S)/N, u1=(i+(a+1)/S)/N;
 							const v0=(j+b/S)/N, v1=(j+(b+1)/S)/N;
 							const cs = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
-							const ps = cs.map(([u, v]) => bend(u, v)).map(p => project3(p, F2.yaw, F2.pitch));
+							const ps = cs.map(([u, v]) => bend3d(u, v)).map(p => project3(p, F2.yaw, F2.pitch));
 							const zAvg = (ps[0][2]+ps[1][2]+ps[2][2]+ps[3][2])*0.25;
 							quads.push({ps, val, zAvg});
 						}
@@ -1409,6 +1418,49 @@
 			fd3dCtx.strokeStyle = P.cyan; fd3dCtx.lineWidth = 2; fd3dCtx.setLineDash([6,3]);
 			fd3dCtx.beginPath(); fd3dCtx.moveTo(a[0], a[1]); fd3dCtx.lineTo(b[0], b[1]); fd3dCtx.stroke();
 			fd3dCtx.setLineDash([]);
+
+			// test line (source y=0.5) drawn on the bent paper
+			fd3dCtx.strokeStyle = P.accent; fd3dCtx.lineWidth = 2; fd3dCtx.globalAlpha = 0.75;
+			fd3dCtx.beginPath();
+			const NT = 80;
+			for (let k = 0; k <= NT; k++) {
+				const bp = bend3d(k/NT, 0.5);
+				const cp3 = project3(bp, F2.yaw, F2.pitch);
+				k ? fd3dCtx.lineTo(cp3[0], cp3[1]) : fd3dCtx.moveTo(cp3[0], cp3[1]);
+			}
+			fd3dCtx.stroke();
+			fd3dCtx.globalAlpha = 1;
+
+			// tracked point p on the paper + its image f(p) (flat shadow)
+			const tp = bend3d(F2.track[0], F2.track[1]);
+			const tcp = project3(tp, F2.yaw, F2.pitch);
+			fd3dCtx.fillStyle = P.accent;
+			fd3dCtx.beginPath(); fd3dCtx.arc(tcp[0], tcp[1], 6, 0, Math.PI*2); fd3dCtx.fill();
+			fd3dCtx.font = 'bold 12px monospace';
+			fd3dCtx.fillText('p', tcp[0]+9, tcp[1]+4);
+			const fp = Fold.apply2(F2.track, n, F2.c, F2.lambda);
+			const fpc = project3([fp[0], fp[1], 0], F2.yaw, F2.pitch);
+			fd3dCtx.fillStyle = P.warn;
+			fd3dCtx.beginPath(); fd3dCtx.arc(fpc[0], fpc[1], 5, 0, Math.PI*2); fd3dCtx.fill();
+			fd3dCtx.fillText('f(p)', fpc[0]+9, fpc[1]+4);
+
+			// 3-D hover cursor (on the paper)
+			if (F2.hover && F2.hover.P) {
+				const hp = project3(F2.hover.P, F2.yaw, F2.pitch);
+				fd3dCtx.fillStyle = P.ink;
+				fd3dCtx.beginPath(); fd3dCtx.arc(hp[0], hp[1], 6, 0, Math.PI*2); fd3dCtx.fill();
+				fd3dCtx.strokeStyle = P.bg; fd3dCtx.lineWidth = 1.5;
+				fd3dCtx.beginPath(); fd3dCtx.arc(hp[0], hp[1], 6, 0, Math.PI*2); fd3dCtx.stroke();
+			}
+			// source-side hover: where that source point lands on the paper
+			if (F2.hoverSrc) {
+				const sp = bend3d(F2.hoverSrc[0], F2.hoverSrc[1]);
+				const spc = project3(sp, F2.yaw, F2.pitch);
+				fd3dCtx.fillStyle = P.warn;
+				fd3dCtx.beginPath(); fd3dCtx.arc(spc[0], spc[1], 6, 0, Math.PI*2); fd3dCtx.fill();
+				fd3dCtx.strokeStyle = P.bg; fd3dCtx.lineWidth = 1.5;
+				fd3dCtx.beginPath(); fd3dCtx.arc(spc[0], spc[1], 6, 0, Math.PI*2); fd3dCtx.stroke();
+			}
 			// φ label
 			fd3dCtx.fillStyle = P.ink2; fd3dCtx.font = '12px monospace';
 			fd3dCtx.fillText('φ = arccos(1−λ) = ' + fmt(phi*180/Math.PI) + '°', 12, H3-12);

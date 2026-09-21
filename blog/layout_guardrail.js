@@ -148,24 +148,35 @@
 		return '';
 	}
 
+	var PRUNE = { svg: 1, canvas: 1, script: 1, style: 1, noscript: 1, template: 1, iframe: 1, object: 1 };
+
 	function collect(allowed) {
 		var c = document.getElementById('contents');
 		if (!c) return [];
-		var all = c.querySelectorAll('*');
 		var out = [];
-		for (var i = 0; i < all.length; i++) {
-			var el = all[i];
-			// cheap path first: almost every element fits, so measure before
-			// paying for closest()/getComputedStyle() on the rare offender
+		function record(el) {
+			// cheap path first: almost every element fits, so measure
+			// before paying for closest()/getComputedStyle() on offenders
 			var w = el.getBoundingClientRect().width;
-			if (w <= allowed + TOL) continue;
+			if (w <= allowed + TOL) return;
 			var sel = selectorOf(el);
-			if (isExcluded(sel)) continue;
-			if (isExempt(el)) continue;
-			if (isOverlay(el)) continue;
-			if (isContainedByScroller(el)) continue;
+			if (isExcluded(sel) || isExempt(el) || isOverlay(el) || isContainedByScroller(el)) return;
 			out.push({ el: el, width: w, sel: sel });
 		}
+		// Recursive pre-order walk (document order). Measure every element
+		// once; prune non-flow subtrees (svg/canvas/script/...) by measuring
+		// their root but not descending into their (often thousands of)
+		// children. #contents itself is not measured, matching the original
+		// querySelectorAll('*') (descendants only) semantics.
+		(function walk(container) {
+			var kids = container.children;
+			for (var i = 0; i < kids.length; i++) {
+				var ch = kids[i];
+				record(ch);
+				if (PRUNE[ch.localName]) continue;
+				walk(ch);
+			}
+		})(c);
 		// keep only the outermost offender in each ancestor chain
 		return out.filter(function (o) {
 			for (var j = 0; j < out.length; j++) {
@@ -497,6 +508,27 @@
 		timer = setTimeout(check, (delay == null) ? 220 : delay);
 	}
 
+	// A lesson can drive a heavy interactive loop (e.g. transformer
+	// training) that mutates #contents every epoch. While that flag is set
+	// we suspend the auto-sweeps (the column width is constant then, so a
+	// re-sweep per epoch is pure waste) and run one the moment it clears.
+	// The synchronous __layoutGuardrailCheck() and the reader-mode / resize
+	// / load paths are deliberately NOT gated.
+	var trainPoll = null;
+	function isSuspended() {
+		return typeof window.isTraining === 'boolean' && window.isTraining === true;
+	}
+	function startTrainPoll() {
+		if (trainPoll) return;
+		trainPoll = setInterval(function () {
+			if (!isSuspended()) {
+				clearInterval(trainPoll);
+				trainPoll = null;
+				schedule(60);
+			}
+		}, 400);
+	}
+
 	function init() {
 		var c = document.getElementById('contents');
 		if (!c) return;
@@ -512,9 +544,14 @@
 			}
 		}).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-		// late content swaps (Markdown render, MathJax, modules) → re-check
-		new MutationObserver(function () { schedule(220); })
-			.observe(c, { childList: true, subtree: true });
+		// late content swaps (Markdown render, MathJax, modules) → re-check.
+		// Suspended during a heavy interactive loop (training): see
+		// isSuspended()/startTrainPoll(). One sweep runs right after it ends.
+		new MutationObserver(function () {
+			if (isSuspended()) { startTrainPoll(); return; }
+			if (trainPoll) { clearInterval(trainPoll); trainPoll = null; }
+			schedule(220);
+		}).observe(c, { childList: true, subtree: true });
 
 		var rz;
 		window.addEventListener('resize', function () {

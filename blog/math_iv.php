@@ -31,6 +31,7 @@ tags: math-heavy
 .af-matcell.hv{outline:2px solid #22d3ee;outline-offset:-2px}
 .af-read{margin-top:.55rem;font:.78rem/1.5 var(--mn-font-mono,monospace);color:var(--mn-text-secondary);background:var(--mn-bg-subtle);border-radius:8px;padding:.6rem .75rem;min-height:2.4em;overflow-wrap:anywhere;border-left:2px solid var(--mn-accent)}
 #fd2d-hover{min-height:4.5em}
+#fd2d-src,#fd3d-canvas{width:100%;height:auto;aspect-ratio:1/1}
 .af-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.55rem}
 .af-lbl{font-size:.82rem;color:var(--mn-text-secondary);display:inline-flex;align-items:center;gap:.45rem}
 .af-sel{padding:.32rem .55rem;background:var(--mn-surface-raised);color:var(--mn-text);border:1px solid var(--mn-border);border-radius:6px;font-size:.85rem}
@@ -270,20 +271,18 @@ The 3D view shows the same image as bent paper: the far half rotated about the c
 </div>
 
 <div class="af-card" id="fold-2d">
-	<div class="af-title"><span class="dot"></span>Fold 2D — checkerboard through a crease</div>
+	<div class="af-title"><span class="dot"></span>Fold — checkerboard through a crease</div>
 	<div class="af-grid">
 		<div class="af-col">
-			<div class="af-sub">Source · click to move p</div>
+			<div class="af-sub">Source · click to move p · hover to trace</div>
 			<canvas id="fd2d-src" class="af-canvas" width="440" height="440"></canvas>
 		</div>
 		<div class="af-col">
-			<div class="af-sub">Image · hover to count preimages</div>
-			<canvas id="fd2d-out" class="af-canvas" width="440" height="440"></canvas>
+			<div class="af-sub">3D · hover the paper to count preimages · drag to rotate · scroll to zoom</div>
+			<canvas id="fd3d-canvas" class="af-canvas d3" width="440" height="440"></canvas>
 			<div id="fd2d-hover" class="af-read"></div>
 		</div>
 	</div>
-	<div class="af-sub" style="margin-top:1rem">3D · the fold as bent paper — the far half rotates about the crease by φ = arccos(1−λ); its flat shadow is the 2D image above · drag to rotate</div>
-	<canvas id="fd3d-canvas" class="af-canvas d3" width="900" height="320"></canvas>
 	<div class="af-grid" style="margin-top:1rem">
 		<div class="af-col">
 			<div class="af-sub">The two affine pieces</div>
