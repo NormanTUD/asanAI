@@ -1576,20 +1576,26 @@
 
 		const updateHover = () => {
 			const ro = $('fd2d-hover'); if (!ro) return;
-			if (!F2.hover) { ro.textContent = 'Hover the image — the fold sends 0 or 2 source points to each pixel.'; drawSource(); return; }
 			const n = Fold.normal2(F2.theta * Math.PI/180);
-			const preims = Fold.preimages2([F2.hover.wx, F2.hover.wy], n, F2.c, F2.lambda);
-			F2.hover.preims = preims;
-			ro.textContent = preims.length === 0
-				? `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) — outside image (0 preimages)`
-				: preims.length === 1
-					? `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) → 1 preimage at (${fmt(preims[0].p[0])}, ${fmt(preims[0].p[1])})`
-					: `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) → 2 preimages (overlap): ${preims.map(pr => `(${fmt(pr.p[0])}, ${fmt(pr.p[1])})`).join(' & ')}`;
+			if (F2.hover && F2.hover.preims) {
+				const preims = F2.hover.preims;
+				ro.textContent = preims.length === 0
+					? `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) — outside image (0 preimages)`
+					: preims.length === 1
+						? `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) → 1 preimage at (${fmt(preims[0].p[0])}, ${fmt(preims[0].p[1])})`
+						: `q = (${fmt(F2.hover.wx)}, ${fmt(F2.hover.wy)}) → 2 preimages (overlap): ${preims.map(pr => `(${fmt(pr.p[0])}, ${fmt(pr.p[1])})`).join(' & ')}`;
+			} else if (F2.hoverSrc) {
+				const p = F2.hoverSrc;
+				const fp = Fold.apply2(p, n, F2.c, F2.lambda);
+				ro.textContent = `p = (${fmt(p[0])}, ${fmt(p[1])}) → lands at f(p) = (${fmt(fp[0])}, ${fmt(fp[1])}) on the paper`;
+			} else {
+				ro.textContent = 'Hover the paper (3D) to count preimages · hover the source (2D) to trace a point · drag to rotate · scroll to zoom';
+			}
 			drawSource();
 		};
 
 		const redraw = () => {
-			try { drawSource(); drawOutput(); draw3D(); draw1D(); updateEq(); updateStatus(); }
+			try { drawSource(); draw3D(); draw1D(); updateEq(); updateStatus(); }
 			catch (e) { showError('fold-2d', e); }
 		};
 
@@ -1628,19 +1634,42 @@
 			];
 			redraw();
 		});
-		out.addEventListener('mousemove', e => {
-			const r = out.getBoundingClientRect();
-			F2.hover = {
-				wx: px2w((e.clientX - r.left) * (size/r.width)),
-				wy: py2w((e.clientY - r.top)  * (size/r.height))
-			};
-			schedule(updateHover);
+		src.addEventListener('mousemove', e => {
+			const r = src.getBoundingClientRect();
+			const u = px2w((e.clientX - r.left) * (size/r.width));
+			const v = py2w((e.clientY - r.top)  * (size/r.height));
+			F2.hoverSrc = (u >= 0 && u <= 1 && v >= 0 && v <= 1) ? [u, v] : null;
+			schedule(() => { updateHover(); draw3D(); });
 		});
-		out.addEventListener('mouseleave', () => { F2.hover = null; updateHover(); });
+		src.addEventListener('mouseleave', () => {
+			F2.hoverSrc = null;
+			schedule(() => { updateHover(); draw3D(); });
+		});
 
 		if (fd3d) {
 			bind3DNav(fd3d, F2, redraw);
-			fd3d.addEventListener('mousedown', e => { F2.drag = {x:e.clientX, y:e.clientY}; F2.auto = false; });
+			fd3d.addEventListener('mousedown', e => {
+				F2.drag = {x:e.clientX, y:e.clientY}; F2.auto = false;
+				F2.hover = null; schedule(() => { updateHover(); draw3D(); });
+			});
+			fd3d.addEventListener('mousemove', e => {
+				if (F2.drag) return;
+				const r = fd3d.getBoundingClientRect();
+				const mx = (e.clientX - r.left) * (W3/r.width);
+				const my = (e.clientY - r.top)  * (H3/r.height);
+				const hit = raycastPaper(mx, my);
+				if (hit) {
+					const n = Fold.normal2(F2.theta * Math.PI/180);
+					const q = [hit.P[0], hit.P[1]];
+					F2.hover = { wx: q[0], wy: q[1], preims: Fold.preimages2(q, n, F2.c, F2.lambda), P: hit.P };
+				} else {
+					F2.hover = null;
+				}
+				schedule(() => { updateHover(); draw3D(); });
+			});
+			fd3d.addEventListener('mouseleave', () => {
+				if (!F2.drag) { F2.hover = null; schedule(() => { updateHover(); draw3D(); }); }
+			});
 			window.addEventListener('mousemove', e => {
 				if (!F2.drag) return;
 				F2.yaw   += (e.clientX - F2.drag.x) * 0.01;
