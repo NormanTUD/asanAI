@@ -1299,7 +1299,7 @@ Below, you can explore this interactively. A cloud of verbs is shown in their pr
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Why Geometry Works">
 ## Why Geometry Works
 
 When a language model stops treating a word like

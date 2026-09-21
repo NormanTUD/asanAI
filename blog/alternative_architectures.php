@@ -91,7 +91,7 @@ $$
 This hybrid scales to 256K context (Jamba-1.5-Large), uses ~25% of the memory of an equivalent Transformer, and matches its quality. Other hybrids: Zamba (Zyphra), RecurrentGemma (Google), Striped Hyena (Together AI).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="58" data-optionaltitle="Linear Attention">
 ## Linear Attention
 
 The softmax in attention is what makes the operation non-associative, forcing the $O(n^2)$ cost. Replace softmax with a feature map $\phi$:
@@ -105,7 +105,9 @@ By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (
 ### Performer \cite[Choromanski et al., 2021]{choromanski2021performer}
 
 $\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m \cdot x))$ for random $\omega_i \sim \mathcal{N}(0, I)$ (positive random features). Provably unbiased kernel approximation.
+</div>
 
+<div class="md">
 ### RetNet (Sun et al., Microsoft, 2023)
 
 RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and supports three computation modes:

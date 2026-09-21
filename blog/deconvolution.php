@@ -19,7 +19,9 @@ Generative models must *go the other way*: instead of shrinking an image into de
 > A transposed convolution that upscales by factor 2 with a kernel size of 3 spreads each input pixel over a *square* of the output — and leaves some output pixels darker where those squares overlap.
 
 Neural upsampling has a geometric story: a transposed convolution with stride 2 places each input pixel's “stamp” at 2-pixel intervals. With a $3\times 3$ kernel, those stamps are wide — each one is a **smeared square** on the output, traditionally called a deconvolution, a name that flatters it: a transposed convolution is *not* an inverse of a convolution. \citeauthor{odena2016deconvolution} (\citeyear{odena2016deconvolution}) demonstrated that incorrect naming is a real source of confusion \cite{odena2016deconvolution}.
+</div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="Where the Checkerboard Comes From">
 ## Where the Checkerboard Comes From
 
 In one dimension the mechanism is easy to see. Transpose a $3$-wide kernel $\{w_0, w_1, w_2\}$ and walk it across the output with stride 2. Some output positions receive one kernel tap; their neighbors receive two, because the 3-wide kernel “overlaps” itself across the 2-wide stride. With all weights equal, the 1D pattern alternates **1, 2, 1, 2, …**:
