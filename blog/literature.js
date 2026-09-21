@@ -14195,7 +14195,7 @@ window.bibData = {
 	},
 	"montufar2014regions": {
 		title: "On the Number of Linear Regions of Deep Neural Networks",
-		author: "Günter Montúfar, Razvan Pascanu, Kyungjae Cho, Yoshua Bengio",
+		author: "Guido Montúfar, Razvan Pascanu, Kyungjae Cho, Yoshua Bengio",
 		year: 2014,
 		url: "https://arxiv.org/abs/1402.1869",
 		alternativetitle: "Montúfar et al., linear regions (2014)"
