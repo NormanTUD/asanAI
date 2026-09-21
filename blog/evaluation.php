@@ -105,7 +105,7 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 
 <div id="mmlu-viz" style="max-width:880px; margin:1em auto;"></div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference &amp; Elo)">
+<div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference and Elo)">
 ## Generative, LLM-as-Judge
 
 For open-ended tasks (summarization, dialogue, instruction-following), there's no single correct answer. The standard approach is **LLM-as-judge** (Zheng et al., LMSYS, 2023):

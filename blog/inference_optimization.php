@@ -36,7 +36,7 @@ LLM inference is **memory-bandwidth bound**, not compute-bound. This is why:
 * **Smaller models help** (less memory pressure).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Quantization (bits vs size)">
 ## Quantization
 
 ### Weight Quantization
@@ -91,7 +91,7 @@ Beyond quantization:
 A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="FlashAttention (online softmax)">
 ## FlashAttention \cite[Dao et al., 2022]{dao2022flashattention}
 
 The single biggest speedup for training **and** inference in 2022–2023. Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:
@@ -129,7 +129,7 @@ Effect: **2–4× throughput improvement** over contiguous allocation for chat w
 The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Speculative decoding (speedup formula)">
 ## Speculative Decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative})
 
 LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** breaks this:

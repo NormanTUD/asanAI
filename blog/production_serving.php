@@ -31,7 +31,7 @@ Three bottlenecks:
 Solutions attack each in turn.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="KV-cache memory per token">
 ## KV-Cache: The Hidden Memory Tax
 
 Recall from the Attention chapter: during autoregressive generation, each new token must attend to all previous tokens. Without caching, every step recomputes the K and V matrices for the full history, $O(n^2)$ work per token.
@@ -108,7 +108,7 @@ If the draft and target agree on $k$ tokens, you get $k$ tokens for the cost of 
 **Self-speculative decoding**: use early-exit or layer-skipping to draft with a partial version of the same model. No separate draft model needed.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Quantization (bits vs size)">
 ## Quantization
 
 Reduce precision of weights and/or activations:
