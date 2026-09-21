@@ -467,16 +467,20 @@
 	}
 
 	/** status-aware prerequisite chips: a covered lesson is a green
-	    chip; an uncovered one is a link (to read it) plus a one-tap
-	    "✓" confirm button so the reader never has to navigate away to
-	    mark it learned. */
+	    link (revisit it); an uncovered one is a link (to read it) plus a
+	    one-tap "✓" confirm button so the reader never has to navigate
+	    away to mark it learned. */
 	function depChips(lessonId) {
 		return (LESSON_DEPS[lessonId] || []).map(function (d) {
 			const m = lessonMeta(d);
 			const title = m && m.title ? m.title : d.replace(/-/g, ' ');
 			const dot = '<span class="tdp-dot" aria-hidden="true">' + (isLearned(d) ? '✓' : '○') + '</span>';
+			const href = (m && m.url) ? ' href="' + escAttr(m.url) + '"' : '';
 			if (isLearned(d)) {
-				return '<span class="tdp-chip tdp-chip-met" title="Covered">' + dot + escAttr(title) + '</span>';
+				const cls = 'tdp-chip tdp-chip-met';
+				return m && m.url
+					? '<a class="' + cls + '"' + href + ' title="Revisit ' + escAttr(title) + '">' + dot + escAttr(title) + '</a>'
+					: '<span class="' + cls + '" title="Covered">' + dot + escAttr(title) + '</span>';
 			}
 			const chip = m && m.url
 				? '<a class="tdp-chip tdp-chip-unmet" href="' + escAttr(m.url) + '" title="Read ' + escAttr(title) + '">' + dot + escAttr(title) + '</a>'
@@ -531,7 +535,7 @@
 			let html = '';
 			if (deps.length > 0) {
 				html += met
-					? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered — the full depth here is unlocked. ' + depChips(lessonId) + '</span></span>'
+					? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
 					: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">○</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap <b>✓</b> to confirm what you&rsquo;ve covered and unlock the full depth.</span></span>';
 			}
 			if (unlocks.length > 0) {
@@ -1981,16 +1985,25 @@
 	}
 
 	/** rebuild the per-part hidden box body, splitting the tucked lessons
-	    into "math-heavy" and "non-math" subgroups (each labelled with why).
-	    `body` is cleared and repopulated with the tile elements (which are
-	    already back in their grids via restoreAllTiles before this runs). */
+	    into one labelled subgroup per reason (math / interests / tone), so
+	    a reader sees exactly *why* each lesson receded. `body` is cleared and
+	    repopulated with the tile elements (already back in their grids via
+	    restoreAllTiles before this runs). Only non-empty subgroups render. */
 	function renderHiddenGroups(body, offInfo) {
 		body.textContent = '';
-		const isMath = function (o) { return o.score && o.score.why === 'math'; };
-		const math = offInfo.filter(isMath);
-		const other = offInfo.filter(function (o) { return !isMath(o); });
+		const GROUPS = [
+			{ why: 'math',      label: 'Needs more math comfort', icon: '∫' },
+			{ why: 'interests', label: 'Outside your interests',  icon: '✦' },
+			{ why: 'category',  label: 'Tone switched off',       icon: '✕' }
+		];
+		const buckets = GROUPS.map(function (g) { return { g: g, list: [] }; });
+		const fallback = { label: 'Not quite matching your settings', icon: '…', list: [] };
+		offInfo.forEach(function (o) {
+			const why = o.score && o.score.why;
+			const b = buckets.filter(function (x) { return x.g.why === why; })[0];
+			if (b) b.list.push(o); else fallback.list.push(o);
+		});
 		function addGroup(label, icon, list) {
-			if (!list.length) return;
 			const g = document.createElement('div');
 			g.className = 'tph-group';
 			const lbl = document.createElement('div');
@@ -2007,8 +2020,8 @@
 			g.appendChild(grid);
 			body.appendChild(g);
 		}
-		addGroup('Needs more math comfort', '∫', math);
-		addGroup('Outside your current interests', '✦', other);
+		buckets.forEach(function (b) { if (b.list.length) addGroup(b.g.label, b.g.icon, b.list); });
+		if (fallback.list.length) addGroup(fallback.label, fallback.icon, fallback.list);
 	}
 
 	/** On the index page, every lesson tile that scores 'off' is moved

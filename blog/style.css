@@ -9656,11 +9656,16 @@ a.tdp-chip:hover {
 	background: var(--mn-bg-subtle);
 	border: 1px solid var(--mn-border);
 }
-/* status chips: covered (green) vs still-to-cover (muted) */
-.tdp-chip-met {
+/* status chips: covered (green) vs still-to-cover (muted). The met chip
+   is a link, so .tdp-chip.tdp-chip-met (two classes) must win over the
+   generic a.tdp-chip accent. */
+.tdp-chip.tdp-chip-met {
 	color: var(--mn-emerald, #10b981);
 	background: color-mix(in srgb, var(--mn-emerald, #10b981) 12%, transparent);
 	border: 1px solid color-mix(in srgb, var(--mn-emerald, #10b981) 32%, transparent);
+}
+a.tdp-chip.tdp-chip-met:hover {
+	background: color-mix(in srgb, var(--mn-emerald, #10b981) 22%, transparent);
 }
 .tdp-chip-unmet {
 	color: var(--mn-text-secondary);
