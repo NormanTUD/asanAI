@@ -115,9 +115,11 @@ Lessons can implement a "Learned" system to adapt the course experience:
     - **Bypassing**: If a user marks all prerequisites of a lesson as "learned" (via `BlogTopics.toggleLearned('lesson-slug')`), the math gate is bypassed and the block is automatically revealed.
 4.  **Learned State**: 
     - Use `BlogTopics.toggleLearned('slug')` to allow readers to mark a lesson as mastered.
-    - State is persisted in `localStorage` and synced via cookies (`topics_pref`).
+    - State is persisted in `localStorage` and synced via cookies (`topics_pref`). (The cookie write is size-guarded — it is skipped once the payload nears 4 KB, so `learned` can safely grow as a reader marks many lessons; `localStorage` always holds the full state.)
+    - **Every lesson shows a course-progress line** at the top of the content (`Lesson N of M`, a thin progress bar, and a "Next up: [next lesson]" link), driven by the linear course order in `window.__moduleNavData`. A "Mark this lesson as learned" button at the end of the content records progress. The math **"Builds on" / "unlocks" lines are added on top for spine lessons only** (`LESSON_DEPS` keys).
     - Learned status can be displayed with a green indicator: `<div class="topic-deps-pill topic-deps-met">...</div>`.
-    - The top "Builds on" pill lets a reader **confirm each prerequisite as learned in one tap** (a "✓" per unmet prerequisite) without navigating away — and lists what the current lesson **unlocks** once marked learned (reverse `LESSON_DEPS`).
+    - The "Builds on" pill lets a reader **confirm each prerequisite as learned in one tap** (a "✓" per unmet prerequisite) without navigating away — and lists what the current lesson **unlocks** once marked learned (reverse `LESSON_DEPS`).
+    - The `#topic-learned-btn` must be **appended to `#contents`** when created (a detached node is invisible and `getElementById` can't find it) — `showLearnedUI()` does `contents.appendChild(btn)` then `settleLearnedButton()` to pin it to the end.
 5.  **Visual States for Topic Blocks**:
 
     - **Normal**: Fully visible.

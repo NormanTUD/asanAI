@@ -213,9 +213,11 @@ The **red arc** below visualizes the **Cosine Distance**, the “conceptual shif
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
 </div>
 
+<div class="topic-block" data-optionaltitle="The dot product formula" data-mathlevel="50">
 $$ \underbrace{\vec{A} \cdot \vec{B}}_{\substack{n \text{ entries} \\ \text{each}}} = \sum_{i=1}^{n} a_i b_i $$
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="50">
 If we have two vectors $\vec{A}$ and $\vec{B}$:
 $$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} b_1 \\ b_2 \end{pmatrix}$$
 
@@ -240,7 +242,7 @@ In a Transformer (like ChatGPT), this is the “Handshake.” When a word “loo
         </div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Scale Invariance: Direction Is Meaning, Magnitude Is Noise">
 ### Scale Invariance: Direction Is Meaning, Magnitude Is Noise
 
 There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them “far apart.” Cosine similarity correctly identifies them as identical in meaning.
@@ -273,7 +275,7 @@ Below, drag the **magnitude slider** to stretch or shrink a token's vector witho
 Mathematical physics translates the saying of Heraclitus, 'All things flow,' into its own language. It then becomes, All things are vectors.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 It is tempting to label specific axes as “Gender,” “Power,” or “Temperature,” but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
 While we can find “directions” in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
