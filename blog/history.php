@@ -803,6 +803,79 @@ Sutton writes from the perspective of a research director surveying decades of f
 
 
 
+## From CPU to GPU: The Realization of the “Bitter Lesson”
+
+The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
+
+## The Deep Learning Revolution (2012)
+After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
+
+### Highway Networks: The First Very Deep Feedforward NNs (2015)
+
+While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
+
+The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
+
+- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
+- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
+- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
+- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
+- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
+- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
+
+This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
+
+## The Dream of Structure: Recursive Neural Networks
+For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
+
+This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
+
+## The Hardware Lottery: How Gamers Saved AI
+
+We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
+
+Ideas win when they are “hardware-friendly.” Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the “researcher's graveyard.” We conduct our research in the shadow of the computing architectures we happened to inherit.
+
+While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
+
+In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
+
+### The “Why”: SIMD vs. MIMD
+The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.
+
+A **GPU** (Graphics Processing Unit), conversely, is designed for **throughput**: it has thousands of smaller, simpler cores designed to perform the same instruction on massive amounts of data simultaneously (SIMD: Single Instruction, Multiple Data). It is like a thousand elementary school students who can all perform simple addition at the exact same time.
+
+Since training a neural network involves multiplying billions of floating-point numbers (weights) by billions of other numbers (inputs), the GPU's architecture allowed for speedups of **70x to 100x** over CPUs.
+
+### The Discovery
+While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2006, which allowed researchers to program GPUs without translating everything into “graphics” language.
+
+* **The Scientific Proof:** In \citeyear{raina2009large}, a team at Stanford led by **Rajat Raina** and **Andrew Ng** published \citetitle{raina2009large}. They demonstrated that off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks orders of magnitude faster than multicore CPUs. This paper quantified the “Bitter Lesson”: cheap hardware could replace complex algorithmic optimizations.
+* **The Practical Proof:** In \citeyear{ciresan2011flexible}, **Dan Cireşan** and **Jürgen Schmidhuber** at IDSIA used this power to push the boundaries of what was possible. Their system, “DanNet,” was the first pure GPU-based CNN to win international pattern recognition contests, beating human performance on tasks like traffic sign recognition years before the more famous AlexNet.
+
+This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
+
+The “Hardware Lottery” describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **“\citealternativetitle{weatherfactory}”** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called “computers”) in parallel to predict global weather. While mathematically sound, it was a practical failure because human “hardware” was too slow and expensive to outpace the actual weather.
+
+Just as Richardson's vision remained a “researcher's graveyard” until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson's “Weather Factory” on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the “hardware-friendly” environment Richardson's numerical methods always required.
+
+### CUDA
+
+**CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the “Bitter Lesson” that scalable, compute-heavy methods outperform handcrafted algorithms over time.
+
+### Breaking the Bottleneck: The Birth of Attention
+
+Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
+
+## The Transformer and Attention (2017)
+Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
+
+In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
+
+There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
+
+The Attention Mechanism will be explained in detail later on.
+
 ## From Language Models to LLMs
 
 The idea of modeling language statistically predates computers themselves. In the 1940s, \citeauthor{shannon1948communication} applied information theory to English text, treating language as a stochastic process and showing that **n-gram models**, which predict the next word from the previous *n* words, could capture statistical regularities in language. His 1948 paper, \citetitle{shannon1948communication}, laid the mathematical foundation for all subsequent language modeling. Through the 1980s and 1990s, n-gram-based statistical language models dominated speech recognition and machine translation, championed by researchers like Frederick Jelinek at IBM. Meanwhile, **ELIZA** (1966), created by \citeauthorlastnameand{weizenbaum1976computer}, demonstrated early natural language interaction through simple pattern matching, but had no statistical understanding of language whatsoever.
@@ -894,79 +967,6 @@ The final layer of abstraction in the history of LLMs is not mathematical, but t
 <div class="optional md" data-headline="Does a stochastic parrot understand Chinese?">
 The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI. In 1980, \citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters. From outside, the room behaves indistinguishably from a fluent Chinese speaker. Yet the person inside understands nothing. By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*. The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation. \citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for. The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all. LLMs in 2026 have not answered it; they have only made the question louder.
 </div>
-
-## From CPU to GPU: The Realization of the “Bitter Lesson”
-
-The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
-
-## The Deep Learning Revolution (2012)
-After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
-
-### Highway Networks: The First Very Deep Feedforward NNs (2015)
-
-While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
-
-The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
-
-- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
-- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
-- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
-- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
-- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
-- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
-
-This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
-
-## The Dream of Structure: Recursive Neural Networks
-For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
-
-This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
-
-## The Hardware Lottery: How Gamers Saved AI
-
-We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
-
-Ideas win when they are “hardware-friendly.” Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the “researcher's graveyard.” We conduct our research in the shadow of the computing architectures we happened to inherit.
-
-While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
-
-In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
-
-### The “Why”: SIMD vs. MIMD
-The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.
-
-A **GPU** (Graphics Processing Unit), conversely, is designed for **throughput**: it has thousands of smaller, simpler cores designed to perform the same instruction on massive amounts of data simultaneously (SIMD: Single Instruction, Multiple Data). It is like a thousand elementary school students who can all perform simple addition at the exact same time.
-
-Since training a neural network involves multiplying billions of floating-point numbers (weights) by billions of other numbers (inputs), the GPU's architecture allowed for speedups of **70x to 100x** over CPUs.
-
-### The Discovery
-While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2006, which allowed researchers to program GPUs without translating everything into “graphics” language.
-
-* **The Scientific Proof:** In \citeyear{raina2009large}, a team at Stanford led by **Rajat Raina** and **Andrew Ng** published \citetitle{raina2009large}. They demonstrated that off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks orders of magnitude faster than multicore CPUs. This paper quantified the “Bitter Lesson”: cheap hardware could replace complex algorithmic optimizations.
-* **The Practical Proof:** In \citeyear{ciresan2011flexible}, **Dan Cireşan** and **Jürgen Schmidhuber** at IDSIA used this power to push the boundaries of what was possible. Their system, “DanNet,” was the first pure GPU-based CNN to win international pattern recognition contests, beating human performance on tasks like traffic sign recognition years before the more famous AlexNet.
-
-This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
-
-The “Hardware Lottery” describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **“\citealternativetitle{weatherfactory}”** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called “computers”) in parallel to predict global weather. While mathematically sound, it was a practical failure because human “hardware” was too slow and expensive to outpace the actual weather.
-
-Just as Richardson's vision remained a “researcher's graveyard” until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson's “Weather Factory” on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the “hardware-friendly” environment Richardson's numerical methods always required.
-
-### CUDA
-
-**CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the “Bitter Lesson” that scalable, compute-heavy methods outperform handcrafted algorithms over time.
-
-### Breaking the Bottleneck: The Birth of Attention
-
-Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
-
-## The Transformer and Attention (2017)
-Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
-
-In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
-
-There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
-
-The Attention Mechanism will be explained in detail later on.
 
 ## The Rise of Generative AI
 Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \citetitle{firstgpt} in \citeyear{firstgpt}). These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
