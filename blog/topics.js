@@ -458,6 +458,34 @@
 		return '<span class="tdp-chip tdp-chip-plain">' + escAttr(id.replace(/-/g, ' ')) + '</span>';
 	}
 
+	/** lessons whose prerequisite list contains `id` (i.e. what `id`
+	    unlocks once the reader marks it learned). */
+	function unlocksOf(id) {
+		return Object.keys(LESSON_DEPS).filter(function (k) {
+			return (LESSON_DEPS[k] || []).indexOf(id) !== -1;
+		});
+	}
+
+	/** status-aware prerequisite chips: a covered lesson is a green
+	    chip; an uncovered one is a link (to read it) plus a one-tap
+	    "✓" confirm button so the reader never has to navigate away to
+	    mark it learned. */
+	function depChips(lessonId) {
+		return (LESSON_DEPS[lessonId] || []).map(function (d) {
+			const m = lessonMeta(d);
+			const title = m && m.title ? m.title : d.replace(/-/g, ' ');
+			const dot = '<span class="tdp-dot" aria-hidden="true">' + (isLearned(d) ? '✓' : '○') + '</span>';
+			if (isLearned(d)) {
+				return '<span class="tdp-chip tdp-chip-met" title="Covered">' + dot + escAttr(title) + '</span>';
+			}
+			const chip = m && m.url
+				? '<a class="tdp-chip tdp-chip-unmet" href="' + escAttr(m.url) + '" title="Read ' + escAttr(title) + '">' + dot + escAttr(title) + '</a>'
+				: '<span class="tdp-chip tdp-chip-unmet tdp-chip-plain">' + dot + escAttr(title) + '</span>';
+			const mark = '<button type="button" class="tdp-mark" data-mark-dep="' + escAttr(d) + '" title="Mark ' + escAttr(title) + ' as learned" aria-label="Mark ' + escAttr(title) + ' as learned"><span aria-hidden="true">✓</span></button>';
+			return chip + mark;
+		}).join(' ');
+	}
+
 	/** Keep the learned button pinned to the END of the lesson content.
 	    Called after every applyVisibility (which runs post-renderMarkdown,
 	    once #sources-section / #footnotes-section exist) and on init. It is a
@@ -481,22 +509,37 @@
 		// create it once and only swap its class/text afterwards, so it
 		// never reflows the top of the page on re-render.
 		const deps = LESSON_DEPS[lessonId] || [];
+		const met = depsMet(lessonId);
+		const nMet = deps.filter(function (d) { return isLearned(d); }).length;
+		const unlocks = unlocksOf(lessonId);
 		let pill = document.getElementById('topic-deps-pill');
-		if (deps.length > 0) {
-			const met = depsMet(lessonId);
+		if (deps.length > 0 || unlocks.length > 0) {
 			if (!pill) {
 				pill = document.createElement('div');
 				pill.id = 'topic-deps-pill';
 				contents.insertBefore(pill, contents.firstChild);
+				pill.addEventListener('click', function (e) {
+					const mark = (e.target && e.target.closest) ? e.target.closest('.tdp-mark') : null;
+					if (!mark) return;
+					const d = mark.getAttribute('data-mark-dep');
+					if (!d || isLearned(d)) return;
+					toggleLearned(d);   // → fireChange → applyVisibility (re-reveals gated blocks)
+					showLearnedUI();   // refresh the pill + button
+				});
 			}
 			pill.className = 'topic-deps-pill ' + (met ? 'topic-deps-met' : 'topic-deps-unmet');
-			pill.innerHTML = met
-				? '<span class="tdp-icon" aria-hidden="true">✓</span>'
-					+ '<span class="tdp-body">You covered the prerequisites — the math here builds on what you already know.</span>'
-				: '<span class="tdp-icon" aria-hidden="true">○</span>'
-					+ '<span class="tdp-body">Builds on ' +
-					deps.filter(function (d) { return !isLearned(d); }).map(lessonLink).join(' ') +
-					' — mark them as learned to unlock the full depth here.</span>';
+			let html = '';
+			if (deps.length > 0) {
+				html += met
+					? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered — the full depth here is unlocked. ' + depChips(lessonId) + '</span></span>'
+					: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">○</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap <b>✓</b> to confirm what you&rsquo;ve covered and unlock the full depth.</span></span>';
+			}
+			if (unlocks.length > 0) {
+				html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
+					+ (isLearned(lessonId) ? 'You&rsquo;ve unlocked ' : 'Once marked learned, this unlocks ')
+					+ unlocks.map(lessonLink).join(' ') + '.</span></span>';
+			}
+			pill.innerHTML = html;
 		} else if (pill) {
 			pill.remove();
 		}
@@ -518,9 +561,12 @@
 			settleLearnedButton();
 		}
 		btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
+		const sub = (deps.length > 0 && !met)
+			? ' <span class="tlb-hint">· ' + nMet + ' of ' + deps.length + ' prerequisites covered</span>'
+			: '';
 		btn.innerHTML = learned
 			? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
-			: '<span aria-hidden="true">○</span> Mark this lesson as learned';
+			: '<span aria-hidden="true">○</span> Mark this lesson as learned' + sub;
 	}
 
 	function writePref(pref) {
@@ -955,12 +1001,24 @@
 	function updateToggleIntensity() {
 		const btn = document.getElementById('topics-toggle');
 		if (!btn) return;
+		// First-time visitor (nothing saved yet): gently invite them to
+		// set their level. The pulse + hint drop away the moment they
+		// make any choice, so it never nags returning readers.
+		const firstVisit = !readRawPref();
+		if (firstVisit) {
+			btn.classList.add('topics-toggle-attention');
+			btn.title = 'New here? Tap to set how much math you\u2019re comfortable with — 10 seconds, saved on this device.';
+		} else {
+			btn.classList.remove('topics-toggle-attention');
+			btn.title = 'Choose your interests';
+		}
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total  = TOPICS.length;
 		btn.setAttribute(
 			'aria-label',
-			'Choose your interests — ' + active + ' of ' + total + ' active'
+			(firstVisit ? 'New here — choose your interests, ' : 'Choose your interests — ')
+				+ active + ' of ' + total + ' active'
 		);
 	}
 

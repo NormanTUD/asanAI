@@ -117,6 +117,7 @@ Lessons can implement a "Learned" system to adapt the course experience:
     - Use `BlogTopics.toggleLearned('slug')` to allow readers to mark a lesson as mastered.
     - State is persisted in `localStorage` and synced via cookies (`topics_pref`).
     - Learned status can be displayed with a green indicator: `<div class="topic-deps-pill topic-deps-met">...</div>`.
+    - The top "Builds on" pill lets a reader **confirm each prerequisite as learned in one tap** (a "✓" per unmet prerequisite) without navigating away — and lists what the current lesson **unlocks** once marked learned (reverse `LESSON_DEPS`).
 5.  **Visual States for Topic Blocks**:
 
     - **Normal**: Fully visible.
