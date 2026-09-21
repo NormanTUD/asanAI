@@ -135,11 +135,13 @@ Human language is far too nuanced for a single axis. To capture independent feat
 Because these positions are derived from logical relationships in data, the space itself becomes “computable”. We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
+<div class="topic-block" data-optionaltitle="Vector arithmetic: the word2vec analogy" data-mathlevel="50">
 <div style="text-align: center; margin: 1.5em 0; font-size: 1.2em;">
 $$\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}}$$
 </div>
+</div>
 
-<div class="md">
+<div class="md" data-mathlevel="45">
 This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec. What makes it remarkable is *how* it arises: Olah stresses that none of these regularities — similar words landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was trained only to do a simple task, and the structures "popped out of the optimization process" as a side effect \cite[Olah, 2014]{colah2014nlp}.
 </div>
 
@@ -171,7 +173,7 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
     <div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Quantifying Semantic Proximity">
 ## Quantifying Semantic Proximity
 In a vector space, “meaning” is a function of distance. If two words appear in similar linguistic environments, their vectors converge toward the same neighborhood.
 
@@ -187,7 +189,7 @@ $$ d(\mathbf{A}, \mathbf{B}) = \sqrt{\sum_{i=1}^{n} (B_i - A_i)^2} $$
 War (as in 'the tension between opposites') is the father of all things.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="55">
 While Euclidean distance measures the physical gap between points, modern LLMs often rely on **Cosine Similarity**. This measures the cosine of the angle $\theta$ between two vectors, determining their directional alignment regardless of their magnitude. A similarity of 1 means the vectors point in the same direction.
 
 $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} $$
@@ -206,7 +208,7 @@ The **red arc** below visualizes the **Cosine Distance**, the “conceptual shif
     </div>
 </section>
 
-<div class="md">
+<div class="md" data-mathlevel="45" data-optionaltitle="Similarity">
 ### Similarity
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
 </div>
