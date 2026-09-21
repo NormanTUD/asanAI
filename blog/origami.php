@@ -87,8 +87,12 @@ math: 50
 </style>
 
 <div class="og-card">
-	<h2 class="og-h2">1 · Fold-and-Cut — Origami meets Neural Networks</h2>
-	<p class="og-lead">How can a single straight cut extract any shape? The theorem that explains how layers "prepare" the data for the final linear readout.</p>
+	<h2 class="og-h2">Fold-and-Cut — Origami meets Neural Networks</h2>
+	<p class="og-lead">Paper cranes — the most familiar object in the art of the fold.</p>
+
+	<div class="md">
+Here is the surprising fact at the heart of this chapter: **you can cut out any shape made of straight lines from a single sheet of paper with just one straight cut** — provided you fold the paper correctly first. Stated the way a ten-year-old would take it in: a *shape* is any closed outline (a triangle, a star, even your own signature), and *cutting* just means the scissors follow that outline to free the shape from the rest of the paper. The catch is that one straight snip can only ever remove a straight line, so a jagged star seems impossible from a single flat cut. The trick is to **fold** the paper until every edge of the shape lies exactly on top of every other edge; then one straight cut passes through all the stacked layers at once, and when you unfold, the shape falls out perfectly. That same move — *fold first, then one flat cut* — is exactly what a stack of ReLU layers does to the data before the final linear readout.
+</div>
 
 	<div class="og-demo">
 		<h3 style="text-align:center">The Fold-and-Cut Theorem</h3>
