@@ -1332,6 +1332,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Linking_number",
 		alternativetitle: "Linking number (Wikipedia)"
 	},
+	"nlab_topological_property": {
+		title: "topological property (homeomorphism invariant)",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/topological+property",
+		alternativetitle: "nLab, topological property"
+	},
+	"homeomorphism_wiki": {
+		title: "Homeomorphism (topological isomorphism)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Homeomorphism",
+		alternativetitle: "Homeomorphism (Wikipedia)"
+	},
 
 	"li2022othello_iclr": {
 		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
