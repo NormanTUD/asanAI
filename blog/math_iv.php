@@ -471,6 +471,10 @@ The strip at the bottom shows the same fold in one dimension, where the overlap 
 			<div id="fold2d-hover" class="aff-readout"></div>
 		</div>
 	</div>
+	<div class="aff-col" style="margin-top:1.1rem">
+		<div class="aff-sub">3-D — the same image as bent paper: the far half rotates about the crease (its flat shadow is the 2-D image above) · drag to rotate</div>
+		<canvas id="fold3d-canvas" class="aff-canvas aff-canvas3d" width="900" height="330"></canvas>
+	</div>
 	<div class="aff-grid2 aff-grid2b aff-grid2c">
 		<div class="aff-col">
 			<div class="aff-sub">The two affine pieces — the map is each one of these, on its side of the crease</div>

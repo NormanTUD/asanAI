@@ -988,7 +988,8 @@
 		track: [0.25, 0.75],
 		hover: null, hoverQueued: false, hoverPre: [],
 		x1d: 1.3, c1d: 1.0,
-		demo: [[0.15, 0.2], [0.85, 0.7]]
+		demo: [[0.15, 0.2], [0.85, 0.7]],
+		yaw3d: 0.55, pitch3d: 0.5, drag3d: null
 	};
 
 	const PRESETS_F2 = [
@@ -1423,6 +1424,111 @@
 			F2.x1d = x;
 			drawFold1d();
 		});
+
+		/* ── 3-D view: the fold as bent paper ──
+		   The far half is rotated rigidly about the crease line by
+		   φ = arccos(1−λ). Its flat shadow (drop z) is exactly the
+		   2-D fold map, so this is the same image, seen in space. */
+		const c3 = $('fold3d-canvas');
+		if (c3) (function () {
+			const ctx3 = c3.getContext('2d');
+			if (!ctx3) return;
+			const W = c3.width, H = c3.height, cx3 = W / 2, cy3 = H / 2;
+			const CAM = 3.4, S0 = 250, G = 24;
+
+			function foldLift3(p2) {
+				const n = n2();
+				const d = n[0] * p2[0] + n[1] * p2[1] - F2.c;
+				if (d <= 0) return [p2[0], p2[1], 0];
+				const phi = Math.acos(Math.max(-1, Math.min(1, 1 - F2.lam)));
+				const qx = p2[0] - d * n[0], qy = p2[1] - d * n[1];
+				return [qx + d * Math.cos(phi) * n[0], qy + d * Math.cos(phi) * n[1], d * Math.sin(phi)];
+			}
+			function vrot(p) {
+				const cyw = Math.cos(F2.yaw3d), sw = Math.sin(F2.yaw3d);
+				const cp = Math.cos(F2.pitch3d), sp = Math.sin(F2.pitch3d);
+				const x1 = cyw * p[0] + sw * p[2];
+				const y1 = p[1];
+				const z1 = -sw * p[0] + cyw * p[2];
+				return [x1, cp * y1 - sp * z1, sp * y1 + cp * z1];
+			}
+			function proj3(v) {
+				const depth = v[2] + CAM;
+				if (depth < 0.08) return null;
+				const s = S0 * CAM / depth;
+				return [cx3 + v[0] * s, cy3 - v[1] * s, depth];
+			}
+			function drawFold3d() {
+				const P = pal();
+				ctx3.fillStyle = P.bg; ctx3.fillRect(0, 0, W, H);
+				const list = [];
+				for (let j = 0; j < G; j++)
+					for (let i = 0; i < G; i++) {
+						const u0 = i / G, u1 = (i + 1) / G, v0 = j / G, v1 = (j + 1) / G;
+						const ob = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+						const vpts = [];
+						let bad = false;
+						for (let k = 0; k < 4; k++) {
+							const v = vrot(foldLift3(ob[k]));
+							vpts.push(v);
+						}
+						const ps = [];
+						let depth = 0;
+						for (let k = 0; k < 4; k++) {
+							const pr = proj3(vpts[k]);
+							if (!pr) { bad = true; break; }
+							ps.push(pr); depth += pr[2];
+						}
+						if (bad) continue;
+						const e1 = [vpts[1][0] - vpts[0][0], vpts[1][1] - vpts[0][1], vpts[1][2] - vpts[0][2]];
+						const e2 = [vpts[3][0] - vpts[0][0], vpts[3][1] - vpts[0][1], vpts[3][2] - vpts[0][2]];
+						const nn = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+						const nl = Math.hypot(nn[0], nn[1], nn[2]) || 1;
+						const Ld = [-0.4, 0.75, -0.5], ll = Math.hypot(Ld[0], Ld[1], Ld[2]);
+						const sh = 0.62 + 0.38 * Math.abs((nn[0] * Ld[0] + nn[1] * Ld[1] + nn[2] * Ld[2]) / (nl * ll));
+						list.push({ ps: ps, val: (i + j) % 2, depth: depth / 4, sh: sh });
+					}
+				list.sort(function (a, b) { return b.depth - a.depth; });
+				for (let i = 0; i < list.length; i++) {
+					const it = list[i];
+					const base = it.val ? P.c1 : P.c0;
+					ctx3.fillStyle = rgbStr([base[0] * it.sh, base[1] * it.sh, base[2] * it.sh]);
+					ctx3.strokeStyle = P.dark ? 'rgba(6,8,18,0.5)' : 'rgba(120,110,90,0.25)';
+					ctx3.lineWidth = 0.5;
+					ctx3.beginPath(); ctx3.moveTo(it.ps[0][0], it.ps[0][1]);
+					for (let k = 1; k < 4; k++) ctx3.lineTo(it.ps[k][0], it.ps[k][1]);
+					ctx3.closePath(); ctx3.fill(); ctx3.stroke();
+				}
+				ctx3.fillStyle = P.ink2; ctx3.font = '11px monospace'; ctx3.textAlign = 'left';
+				ctx3.fillText('drag to rotate · the far half is the shaded side, lifted out of the plane', 10, H - 10);
+			}
+			c3.addEventListener('pointerdown', function (e) {
+				F2.drag3d = { x: e.clientX, y: e.clientY };
+				try { c3.setPointerCapture(e.pointerId); } catch (err) { /* optional */ }
+			});
+			c3.addEventListener('pointermove', function (e) {
+				if (!F2.drag3d) return;
+				const dx = e.clientX - F2.drag3d.x, dy = e.clientY - F2.drag3d.y;
+				F2.drag3d.x = e.clientX; F2.drag3d.y = e.clientY;
+				F2.yaw3d += dx * 0.01;
+				F2.pitch3d = Math.max(-1.45, Math.min(1.45, F2.pitch3d + dy * 0.01));
+			});
+			c3.addEventListener('pointerup', function () { F2.drag3d = null; });
+			c3.addEventListener('pointercancel', function () { F2.drag3d = null; });
+			let errStreak = 0;
+			function frame3() {
+				if (document.visibilityState !== 'visible') { requestAnimationFrame(frame3); return; }
+				try {
+					if (!F2.drag3d) F2.yaw3d += 0.0016;
+					drawFold3d();
+					errStreak = 0;
+				} catch (e) {
+					if (++errStreak > 5) { showLabError('fold-2d', e); return; }
+				}
+				requestAnimationFrame(frame3);
+			}
+			requestAnimationFrame(frame3);
+		})();
 
 		renderChecks($('fold2d-checks'), runFoldSelfTests());
 		syncFoldSliders(); labelFoldSliders();
