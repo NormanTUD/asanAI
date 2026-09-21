@@ -482,7 +482,7 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
   const pts=makeEgg(220,380,0,0.30,0.55,0.9);
   const sample={x:0.35,y:0.2,cl:0};
   function Wmatrix(th,sx,sy,sh){ const cs=Math.cos(th),sn=Math.sin(th);
-    return [[cs*sx, cs*sh - sn*sy],[sn*sx, sn*sh + cs*sy]]; }
+    return [[cs*sx, cs*sx*sh - sn*sy],[sn*sx, sn*sx*sh + cs*sy]]; }
   function draw(){
     const thd=+$('aRot').value, th=thd*Math.PI/180, sx=+$('aSx').value, sy=+$('aSy').value, sh=+$('aSh').value, bx=+$('aBx').value, by=+$('aBy').value, useR=$('aRelu').checked;
     $('vARot').textContent=thd+'°'; $('vASx').textContent=f1(sx); $('vASy').textContent=f1(sy); $('vASh').textContent=f1(sh); $('vABx').textContent=f1(bx); $('vABy').textContent=f1(by); $('vARelu').textContent=useR?'an':'aus';
@@ -555,7 +555,6 @@ renderTeX('fShear', String.raw`x^{(k)} \;=\; \mathrm{ReLU}\bigl(\mathbf{A}\,x^{(
       }
       for(const p of pts){
         const q0=k===0?[p.x,p.y]:rot([p.x,p.y],th);
-        if(k===2){ ctx.fillStyle='rgba(91,107,149,0.35)'; ctx.beginPath(); ctx.arc(cx+q0[0]*s, cy-q0[1]*s, 1.2,0,TAU); ctx.fill(); }
         const q=k===2?[Math.max(q0[0],b),q0[1]]:q0;
         ctx.fillStyle=p.cl===0?COL.red:COL.blue; ctx.beginPath(); ctx.arc(cx+q[0]*s, cy-q[1]*s, 1.5,0,TAU); ctx.fill();
       }
