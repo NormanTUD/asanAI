@@ -695,9 +695,10 @@
 			const q = apply3(D2.M, [x, y, 1]);
 			const dv = i => texify(d && d[i] !== '' ? d[i] : String(round4(D2.M[i])));
 			const L = [
+				`\\mathbf{p} &= (x,\\, y) = (${fmt(x)},\\; ${fmt(y)}) \\\\`,
 				`\\begin{bmatrix}x' \\\\ y' \\\\ w'\\end{bmatrix} &=` +
 				`\\begin{bmatrix}${dv(0)} & ${dv(1)} & ${dv(2)} \\\\ ${dv(3)} & ${dv(4)} & ${dv(5)} \\\\ ${dv(6)} & ${dv(7)} & ${dv(8)}\\end{bmatrix}` +
-				`\\begin{bmatrix}${fmt(x)} \\\\ ${fmt(y)} \\\\ 1\\end{bmatrix} \\\\`,
+				`\\begin{bmatrix}x \\\\ y \\\\ 1\\end{bmatrix} \\\\`,
 				`x' &= ${termLineTex(d, D2.M, 0, 3, [x, y])} = ${fmt(q[0])} \\\\`,
 				`y' &= ${termLineTex(d, D2.M, 1, 3, [x, y])} = ${fmt(q[1])} \\\\`,
 				`w' &= ${termLineTex(d, D2.M, 2, 3, [x, y])} = ${fmt(q[2])} \\\\`
@@ -946,8 +947,9 @@
 				`${dv(8)} & ${dv(9)} & ${dv(10)} & ${dv(11)} \\\\ ` +
 				`${dv(12)} & ${dv(13)} & ${dv(14)} & ${dv(15)}` +
 				`\\end{bmatrix}`;
-			const pv = `\\begin{bmatrix}${fmt(p[0])} \\\\ ${fmt(p[1])} \\\\ ${fmt(p[2])} \\\\ 1\\end{bmatrix}`;
+			const pv = `\\begin{bmatrix}x \\\\ y \\\\ z \\\\ 1\\end{bmatrix}`;
 			const L = [
+				`\\mathbf{p} &= (x,\\, y,\\, z) = (${fmt(p[0])},\\; ${fmt(p[1])},\\; ${fmt(p[2])}) \\\\`,
 				`\\begin{bmatrix}x' \\\\ y' \\\\ z' \\\\ w'\\end{bmatrix} &= ${M4}${pv} \\\\`,
 				`x' &= ${termLineTex(d, D3.M, 0, 4, p)} = ${fmt(q[0])} \\\\`,
 				`y' &= ${termLineTex(d, D3.M, 1, 4, p)} = ${fmt(q[1])} \\\\`,

@@ -18,8 +18,15 @@ Status of the user's multi-part request:
 - [x] Fold status pills removed (`#fd2d-status` gone)
 - [x] U3 readout: Lk integral + n̂/c/λ + separation + min‖A−B‖ as one right-clickable aligned math block
 - [x] U3 plot clearer: ring labels A/B, crease label, n̂ arrow; sliders got `.af-hint` explanations; "How to unthread" 3-step recipe added
-- [ ] **Finish browser verification** — main check passes (see notes below); copy-dialog (contextmenu) test still needs to be proven in headless
-- [ ] Final validator pass: `php -l`, `php_validator`, `js_validator`, `lesson_guard` (guard G6 updated to `symbolic-pieces`)
+- [x] D2/D3 live equation, line 1: point vector symbolic `x, y(, z), 1` + `p = (x, y[, z]) = (values)`
+      line. Verified in browser: `p=(x,y,z)=(1.000,1.000,1.000)` then `[x′y′z′w′]=M·[x y z 1]`.
+- [x] **Browser verification finished** — all labs boot, zero err boxes, all D2/D3/F2/U3 checks
+      pass, AND copy dialog proven: contextmenu on `#af2d-eq math` → `.lp-box` visible with the
+      full aligned LaTeX source in the code area (`_extractLatex` reads the x-tex annotation).
+- [x] Final validator pass: php -l OK, js_validator 0 errors, lesson_guard all 7 pass,
+      php_validator only the known line-76 false positive (raw divs balanced, renders fine).
+
+→ **UX overhaul batch: DONE.** Next: section 2 (activation-functions lab).
 
 ### Verification notes (2026-09-21)
 
@@ -35,9 +42,10 @@ Headless results via direct chromedriver HTTP (`/tmp/opencode/verify_mathiv.py`)
   (line 76 div warning — raw divs balanced 90/90); lesson_guard all 7 pass
 - gotcha fixed: `(identity)'}` quote/brace swap in F2 eq broke the validator's brace counter
 
-Still to prove: contextmenu on `#af2d-eq math` opens `.lp-box` with the LaTeX in `.lp-code`
-(the site popup is wired in `start.js` via `document.addEventListener('contextmenu')`;
-`_extractLatex()` reads the `application/x-tex` annotation that `annotate:true` now emits).
+~~Still to prove: contextmenu …~~ PROVEN 2026-09-21: dialog opens, `vis: true`, code area
+contains the full `\begin{aligned}\mathbf{p} &= (x,\, y) = ...` source. Headless note:
+execute/sync can't await a Promise — dispatch the event in one call, read the dialog in a
+second call after a sleep.
 
 ## 2. NEW lab (user request): "Activation functions as folds"
 

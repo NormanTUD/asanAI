@@ -201,6 +201,66 @@
 		technical:  [ 'history', 'philosophy', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture' ]
 	};
 
+	/* ── 1d. Math-comfort axis (0–100) ─────────────────────────
+	   A continuous dial, orthogonal to the discrete Math I/II/III
+	   topics and to the tone categories. It answers "how much math am I
+	   comfortable wading into?". Any element (in-lesson optional block or
+	   home-page lesson tile) that carries a `data-mathlevel="N"` /
+	   `data-math-level="N"` requirement is tucked away when the reader's
+	   comfort is below N, and reappears — smoothly — once it is raised.
+	   DEFAULT_MATH_LEVEL is a deliberate middle: a first-time reader sees
+	   the accessible core of the course, and the heaviest derivations are
+	   gathered behind an openable "tucked away" summary rather than
+	   deleted. */
+	const MATH_MIN = 0;
+	const MATH_MAX = 100;
+	const DEFAULT_MATH_LEVEL = 60;
+
+	/* ── 1e. Debug mode ────────────────────────────────────────
+	   Opt-in only. Production (and the CI render validator, which fails on
+	   any console.error / console.warn) stays completely silent. Turn it
+	   on by loading a page with `?debug=1` in the URL, or by setting
+	   `window.__TOPICS_DEBUG__ = true` before topics.js loads. When on,
+	   the module logs its decisions and exposes `BlogTopics.dump()`. */
+	var DEBUG = false;
+	try {
+		DEBUG = (typeof window !== 'undefined' && !!window.location && /\bdebug=1\b/.test(window.location.search))
+			|| (typeof window !== 'undefined' && !!window.__TOPICS_DEBUG__);
+	} catch (e) { /* headless / non-browser: stays off */ }
+	function dlog() { if (DEBUG) console.log.apply(console, [ '[topics]' ].concat([].slice.call(arguments))); }
+	function dwarn() { if (DEBUG) console.warn.apply(console, [ '[topics]' ].concat([].slice.call(arguments))); }
+	function derr() { if (DEBUG) console.error.apply(console, [ '[topics]' ].concat([].slice.call(arguments))); }
+	if (DEBUG) {
+		console.log('%c[topics] debug mode on — add ?debug=0 to silence', 'color:#818cf8;font-weight:bold');
+	}
+
+	/* ── 1f. Core reader types (the 3-card simple view) ────────
+	   The full PERSONAS list (below) is a "which archetype are you"
+	   picker of nine. But most people just want three doors and a
+	   handle they can grab. These are the three most common readers,
+	   named so you can think "yeah, that's me" and click:
+	     • The Curious    — the interested layman, big picture first
+	     • The Scientist  — show me the math and the machine
+	     • The Thinker    — what does any of this *mean*?
+	   Picking one loads a curated interest set AND a sensible math
+	   comfort, then opens the detailed view so the rest of the
+	   options appear. Everything stays free to fine-tune afterwards. */
+	const CORE_PERSONAS = [
+		{ id: 'curious', label: 'The Curious', icon: '🔭',
+		  tagline: 'Here for the big picture and the story. Keep the math light.',
+		  math: 25,
+		  topics: [ 'history', 'philosophy', 'ethics', 'society', 'language' ] },
+		{ id: 'scientist', label: 'The Scientist', icon: '🔬',
+		  tagline: 'I want to know how it actually works — math, proofs, mechanisms.',
+		  math: 85,
+		  topics: [ 'math-i', 'math-ii', 'math-iii', 'statistics-i', 'statistics-ii', 'geometry',
+		            'reasoning', 'programming', 'data', 'architecture', 'training', 'frontier', 'interpretability' ] },
+		{ id: 'thinker', label: 'The Thinker', icon: '🦉',
+		  tagline: 'What does any of this mean? Mind, ethics, society, the big questions.',
+		  math: 35,
+		  topics: [ 'philosophy', 'ethics', 'society', 'law', 'language', 'history', 'reasoning' ] }
+	];
+
 	const COOKIE_NAME  = 'topics_pref';
 	const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 	const STORAGE_KEY  = 'blog_topics_pref';   // localStorage mirror
@@ -228,15 +288,22 @@
 		return null;
 	}
 
+	function clampMath(v) {
+		v = parseInt(v, 10);
+		if (isNaN(v)) return DEFAULT_MATH_LEVEL;
+		return Math.max(MATH_MIN, Math.min(MATH_MAX, v));
+	}
+
 	function normalizePref(parsed) {
 		const out = {
 			topics: {},
 			categories: {},
 			profile: null,
-			level: null
+			level: null,
+			mathLevel: DEFAULT_MATH_LEVEL
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
-		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed);
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
 		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
 		const catsObj = (parsed.categories && typeof parsed.categories === 'object') ? parsed.categories : {};
 		TOPICS.forEach(function (t) {
@@ -253,6 +320,9 @@
 			if (LEVELS.some(function (l) { return l.id === parsed.level; })) {
 				out.level = parsed.level;
 			}
+			if (parsed.mathLevel !== undefined) {
+				out.mathLevel = clampMath(parsed.mathLevel);
+			}
 		}
 		return out;
 	}
@@ -262,7 +332,23 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL };
+	}
+
+	/** the reader's current math-comfort (0–100) */
+	function getMathLevel() {
+		return activePref().mathLevel;
+	}
+
+	/** set the reader's math-comfort. Pass { pushHistory:false } while a
+	    slider is being dragged so a whole drag is a single undo step. */
+	function setMathLevel(value, opts) {
+		opts = opts || {};
+		if (opts.pushHistory !== false) pushHistory();
+		const cur = activePref();
+		cur.mathLevel = clampMath(value);
+		dlog('mathLevel →', cur.mathLevel, '(comfort with math, 0–100)');
+		persistPref(cur);
 	}
 
 	function writePref(pref) {
@@ -454,7 +540,15 @@
 	    separate axis from "who am I", so they must not be reset by a
 	    profile/level change. */
 	function persistPref(pref) {
-		if (!pref.categories) pref.categories = activePref().categories;
+		// Carry over every axis a caller didn't spell out, so that e.g.
+		// applying a topic preset never wipes the math-comfort dial or the
+		// remembered profile/level. Each caller owns only what it touches.
+		const cur = activePref();
+		if (!pref.topics) pref.topics = cur.topics;
+		if (!pref.categories) pref.categories = cur.categories;
+		if (pref.profile === undefined) pref.profile = cur.profile;
+		if (pref.level === undefined) pref.level = cur.level;
+		if (pref.mathLevel === undefined) pref.mathLevel = cur.mathLevel;
 		writePref(pref);
 		fireChange();
 	}
@@ -475,7 +569,8 @@
 			topics: Object.assign({}, p.topics),
 			categories: Object.assign({}, p.categories),
 			profile: p.profile,
-			level: p.level
+			level: p.level,
+			mathLevel: p.mathLevel
 		};
 	}
 
@@ -491,7 +586,8 @@
 			topics: Object.assign({}, snap.topics),
 			categories: Object.assign({}, snap.categories),
 			profile: snap.profile,
-			level: snap.level
+			level: snap.level,
+			mathLevel: (snap.mathLevel !== undefined) ? clampMath(snap.mathLevel) : DEFAULT_MATH_LEVEL
 		});
 	}
 
