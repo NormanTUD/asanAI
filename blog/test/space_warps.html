@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Origami in N Dimensionen — Interaktive Erklärung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121935; --ink:#eaeefc; --muted:#9aa7d0;
+    --accent:#7cf2c8; --accent2:#ffb86b; --accent3:#ff7bd5; --line:#2a355e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:radial-gradient(1200px 800px at 20% -10%,#1a2560 0%,#0b1020 60%);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:34px 28px 8px;text-align:center}
+  header h1{margin:0;font-size:34px;background:linear-gradient(90deg,#7cf2c8,#7ba7ff,#ff7bd5);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.3px}
+  header p{color:var(--muted);max-width:820px;margin:10px auto 0}
+  nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:16px 8px;position:sticky;top:0;background:rgba(11,16,32,.85);backdrop-filter:blur(10px);z-index:10;border-bottom:1px solid var(--line)}
+  nav a{color:var(--ink);text-decoration:none;padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;background:rgba(255,255,255,.03)}
+  nav a:hover{border-color:var(--accent)}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  section h2{margin:0 0 6px;font-size:22px}
+  section h2 .num{color:var(--accent);margin-right:8px;font-family:ui-monospace,monospace}
+  section .lead{color:var(--muted);margin:0 0 14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:820px){.row{grid-template-columns:1fr}}
+  .card{background:#0e1530;border:1px solid var(--line);border-radius:14px;padding:14px}
+  .card h3{margin:0 0 8px;font-size:15px;color:var(--accent)}
+  canvas{width:100%;height:auto;background:#070b1c;border-radius:10px;display:block}
+  .plot{width:100%;height:340px}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px}
+  .controls label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:4px;min-width:130px}
+  input[type=range]{accent-color:var(--accent)}
+  button{background:linear-gradient(180deg,#2b3a76,#1c2757);color:#fff;border:1px solid #3a4a90;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+  button:hover{filter:brightness(1.15)}
+  .k{display:inline-block;background:#1c2757;border:1px solid #3a4a90;border-radius:6px;padding:1px 6px;font-family:ui-monospace,monospace;font-size:12px}
+  .math{background:#0a1128;border:1px solid var(--line);border-radius:10px;padding:10px;overflow-x:auto}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  ul.tight{margin:6px 0 0 18px;padding:0}
+  ul.tight li{margin:4px 0}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1c2757;border:1px solid #3a4a90;font-size:12px;color:#cfd6f2}
+  footer{color:var(--muted);text-align:center;padding:30px;font-size:13px}
+  .big{font-size:17px}
+  details{background:#0a1128;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
+  details summary{cursor:pointer;color:var(--accent2)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media (max-width:820px){.grid3{grid-template-columns:1fr 1fr}}
+  .swatch{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#0a1128;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Origami in N Dimensionen</h1>
+  <p>Wie neuronale Netze aus verschlungenen Daten <b>lineare Trennbarkeit</b> herstellen — durch <b>Falten</b>. Eine spielbare Reise durch das Paper von Keup &amp; Helias (2022), mit allen Vorkenntnissen, die man dafür braucht.</p>
+</header>
+
+<nav>
+  <a href="#s0">0 · Frage</a>
+  <a href="#s1">1 · Was ist ein Layer?</a>
+  <a href="#s2">2 · Affin vs. Nichtlinearität</a>
+  <a href="#s3">3 · Manifold-Hypothese</a>
+  <a href="#s4">4 · Kreis-im-Kreis</a>
+  <a href="#s5">5 · Die Falte</a>
+  <a href="#s6">6 · 2D-Ei mit 3 Neuronen</a>
+  <a href="#s7">7 · Fold &amp; Cut</a>
+  <a href="#s8">8 · Bimodale Tuning</a>
+  <a href="#s9">9 · Antwort</a>
+</nav>
+
+<main>
+
+<!-- SECTION 0 -->
+<section id="s0">
+  <h2><span class="num">0</span>Die Frage &amp; die Motivation</h2>
+  <p class="lead">Neuronale Netze können <i>irgendwelche</i> Funktionen approximieren — aber <b>wie</b> genau? Welches <b>eine</b> geometrische Werkzeug benutzt ein Feed-Forward-Netz, um Klassen trennbar zu machen?</p>
+  <div class="row">
+    <div class="card">
+      <h3>Konkretes Problem</h3>
+      <p>Bilder von Katzen und Hunden liegen als hochdimensionale Punktwolken vor. Ein <span class="pill">linearer</span> Klassifikator ist bloß eine Hyperebene — die reicht selten. Wie schafft es ein tiefes Netz, dass am Ende doch eine Ebene ausreicht?</p>
+    </div>
+    <div class="card">
+      <h3>Antwort in einem Satz</h3>
+      <p class="big">Jede Schicht <b>faltet</b> die Datenmannigfaltigkeit in eine <b>unbenutzte höhere Dimension</b>. Nach genügend Falten liegen die Klassen so, dass eine flache Ebene sie schneidet — wie ein <i>Fold&nbsp;&amp;&nbsp;Cut</i>-Origami.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="s1">
+  <h2><span class="num">1</span>Grundbaustein: Was macht eine Schicht?</h2>
+  <p class="lead">Eine Schicht = <b>Affine Abbildung</b> (Dreh/Skaliere/Verschiebe) + <b>elementweise Nichtlinearität</b> (z. B. ReLU).</p>
+  <div class="math" id="eq1"></div>
+  <div class="row">
+    <div class="card">
+      <h3>Spiele mit einer Schicht (2D → 2D)</h3>
+      <canvas id="c1" width="520" height="360"></canvas>
+      <div class="controls">
+        <label>Drehung θ<input id="th" type="range" min="-180" max="180" value="25"></label>
+        <label>Skalierung s<sub>x</sub><input id="sx" type="range" min="0.2" max="2" step="0.05" value="1.1"></label>
+        <label>Skalierung s<sub>y</sub><input id="sy" type="range" min="0.2" max="2" step="0.05" value="0.8"></label>
+        <label>Bias b<sub>x</sub><input id="bx" type="range" min="-1.5" max="1.5" step="0.05" value="0"></label>
+        <label>Bias b<sub>y</sub><input id="by" type="range" min="-1.5" max="1.5" step="0.05" value="0"></label>
+        <label>ReLU an<input id="relu" type="checkbox" checked></label>
+      </div>
+      <div class="legend"><span><span class="dot" style="background:#7cf2c8"></span>Input</span><span><span class="dot" style="background:#ffb86b"></span>nach Affin</span><span><span class="dot" style="background:#ff7bd5"></span>nach ReLU</span></div>
+    </div>
+    <div class="card">
+      <h3>Was zu sehen ist</h3>
+      <ul class="tight">
+        <li>Affin allein zieht Linien zu Linien — <b>Trennbarkeit ändert sich nicht</b>.</li>
+        <li>ReLU „drückt" alles auf negativer Seite einer Hyperebene auf Null — wie ein Hammer, der eine flache Delle macht.</li>
+        <li>Die Kombination positioniert die Daten geschickt und schlägt dann zu.</li>
+      </ul>
+      <details><summary>Variablen</summary>
+        <ul class="tight">
+          <li><span class="k">W</span> = Gewichtsmatrix (rotiert/skaliert/schert)</li>
+          <li><span class="k">b</span> = Bias (verschiebt)</li>
+          <li><span class="k">Φ</span> = Aktivierungsfunktion, hier ReLU(x)=max(0,x)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="s2">
+  <h2><span class="num">2</span>Warum Affin allein nicht reicht</h2>
+  <p class="lead">Eine affine Abbildung ist ein <b>Homöomorphismus</b>: sie zerreißt nichts. Was innen war, bleibt innen. Nur die Nichtlinearität kann die Topologie „aufbrechen".</p>
+  <div class="row">
+    <div class="card">
+      <h3>Homöomorphismus-Demo</h3>
+      <canvas id="c2" width="520" height="360"></canvas>
+      <div class="controls">
+        <label>Interpolation t<input id="t2" type="range" min="0" max="1" step="0.01" value="0"></label>
+        <label>Nichtlinearität <select id="nl2"><option value="none">keine</option><option value="tanh" selected>tanh</option><option value="relu">ReLU</option></select></label>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin:6px 0 0">Zwei ineinander verschlungene Spiralen. Ziehe t: siehst du, dass tanh die Spiralen entwirrt, während affin allein sie nur dreht?</p>
+    </div>
+    <div class="card">
+      <h3>Merksatz</h3>
+      <p>Wenn Klasse A von Klasse B <b>umschlossen</b> ist, bekommt man das mit reinen Drehungen/Streckungen <b>niemals</b> auseinander. Man braucht entweder <b>mehr Dimensionen</b> (Falten) oder eine <b>Nichtlinearität, die Punkte kollabiert</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="s3">
+  <h2><span class="num">3</span>Manifold-Hypothese</h2>
+  <p class="lead">Reale Daten (Bilder, Sprache) füllen <b>nicht</b> den ganzen Pixelraum, sondern liegen auf einer viel niedriger-dimensionalen ```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Origami in N Dimensionen — Interaktive Reise durch Keup & Helias (2022)</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f1a; --panel:#121a2b; --ink:#e8eefc; --muted:#8aa0c8;
+    --accent:#7cf9d0; --accent2:#ff9ec7; --accent3:#ffd166; --line:#22304a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(1200px 800px at 20% -10%,#1b2a4a 0%,#0b0f1a 60%) fixed;color:var(--ink);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55}
+  header{padding:36px 24px 8px;text-align:center;max-width:980px;margin:0 auto}
+  header h1{font-size:clamp(1.6rem,3.2vw,2.6rem);margin:0 0 8px;background:linear-gradient(90deg,#7cf9d0,#ff9ec7 60%,#ffd166);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.5px}
+  header p{color:var(--muted);margin:.4rem 0 0}
+  main{max-width:1100px;margin:0 auto;padding:16px 20px 60px}
+  section{background:linear-gradient(180deg,rgba(18,26,43,.9),rgba(14,20,34,.9));border:1px solid var(--line);border-radius:18px;padding:22px 22px 26px;margin:22px 0;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  section h2{margin:0 0 6px;font-size:1.35rem;color:var(--accent)}
+  section h3{margin:14px 0 6px;font-size:1.05rem;color:var(--accent2)}
+  .lead{color:var(--muted);margin:.2rem 0 14px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media (max-width:800px){.g2{grid-template-columns:1fr}}
+  canvas.demo{width:100%;height:auto;background:#08101f;border-radius:12px;display:block;border:1px solid var(--line)}
+  .ctrls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:10px;padding:12px;background:#0a1223;border:1px solid var(--line);border-radius:12px}
+  .ctrls label{font-size:.9rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:140px}
+  .ctrls input[type=range]{accent-color:var(--accent);width:100%}
+  .ctrls .val{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+  button{background:linear-gradient(180deg,#1e2c48,#152039);border:1px solid var(--line);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;transition:.2s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .formula{background:#0a1223;border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-top:8px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .pill{display:inline-block;background:#152039;color:var(--accent);padding:2px 10px;border-radius:999px;font-size:.75rem;margin-right:6px;border:1px solid var(--line)}
+  .kbd{font-family:ui-monospace,Menlo,monospace;background:#0a1223;padding:1px 6px;border-radius:6px;border:1px solid var(--line);font-size:.85em}
+  .steps{counter-reset:step;padding-left:0;list-style:none}
+  .steps li{counter-increment:step;padding:8px 0 8px 42px;position:relative}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:28px;height:28px;background:linear-gradient(135deg,#7cf9d0,#ff9ec7);color:#0b0f1a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .toc{display:flex;flex-wrap:wrap;gap:8px}
+  .toc a{color:var(--accent);text-decoration:none;background:#0a1223;border:1px solid var(--line);padding:6px 10px;border-radius:8px;font-size:.85rem}
+  .toc a:hover{background:#152039}
+  details{background:#0a1223;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0}
+  summary{cursor:pointer;color:var(--accent3);font-weight:600}
+  .print-note{font-size:.85rem;color:var(--muted);border-left:3px solid var(--accent3);padding:6px 10px;background:#0a1223;border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Origami in N Dimensionen</h1>
+  <p>Wie Feedforward-Netzwerke lineare Trennbarkeit <em>herstellen</em> — eine interaktive Reise durch das Paper von Keup &amp; Helias (2022).</p>
+  <div class="toc" style="justify-content:center;margin-top:14px">
+    <a href="#motivation">1 · Die Frage</a>
+    <a href="#prereq-affine">2 · Affin + ReLU</a>
+    <a href="#hammer">3 · Der Hammer</a>
+    <a href="#nichtlinear">4 · Nicht-linear trennbar</a>
+    <a href="#folding">5 · Falten in höhere Dim.</a>
+    <a href="#foldcut">6 · Fold-and-Cut</a>
+    <a href="#shear">7 · Alternative: Scheren</a>
+    <a href="#poker">8 · Poker-Hand-Netz</a>
+    <a href="#antwort">9 · Die Antwort</a>
+  </div>
+</header>
+<main><!-- =================== 1. Motivation =================== --> <section id="motivation"> <h2>1 · Motivation — Welches Problem lösen die Autoren?</h2> <p class="lead">Neuronale Netze können jede Funktion approximieren. Aber <b>wie</b> genau bauen sie eine Klassifikation? Was ist das <b>mechanistische Werkzeug</b>, mit dem eine Datenverteilung so umgeformt wird, dass am Ende eine einzige Hyperebene die Klassen trennt?</p> <div class="grid g2"> <div> <h3>Das konkrete Problem</h3> <p>Betrachte zwei Klassen im 2D: einen <span style="color:#ff6b6b">roten Kreis</span> innen, einen <span style="color:#4c8bf5">blauen Ring</span> außen. Kein Lineal kann sie trennen. Was tut ein Netz?</p> <canvas id="motCanvas" class="demo" width="520" height="360"></canvas> <div class="ctrls"> <button id="motToggle">Trennlinie versuchen</button> <span class="pill">2D-Egg-Problem</span> </div> <div class="legend"><span><span class="dot" style="background:#ff6b6b"></span>innen (Klasse A)</span><span><span class="dot" style="background:#4c8bf5"></span>außen (Klasse B)</span></div> </div> <div> <h3>Die Kernfrage</h3> <ul class="steps"> <li>Ein Netz muss die Datenverteilung schichtweise so <b>verbiegen</b>, dass am Ende eine Hyperebene die Klassen trennt.</li> <li>Welche <b>Grundoperationen</b> stehen einer Schicht dazu zur Verfügung?</li> <li>Welche davon ist am <b>effizientesten</b>, und warum brauchen wir manchmal <b>breite</b> Schichten?</li> </ul> <p class="lead"><b>These:</b> Die primäre Operation ist <b>Falten</b> — wie Origami, nur in vielen Dimensionen.</p> </div> </div> </section><!-- =================== 2. Affine + ReLU =================== --> <section id="prereq-affine"> <h2>2 · Baustein einer Schicht — Affin dann Nicht-linear</h2> <p class="lead">Jede Schicht macht genau zwei Dinge: erst eine <b>affine Transformation</b> (Matrix + Verschiebung), dann eine <b>elementweise Nicht-Linearität</b> (hier ReLU).</p> <div class="formula" id="fEq"></div> <div class="grid g2"> <div> <h3>Was macht die affine Abbildung?</h3> <p>Sie <b>dreht, skaliert, verschiebt, schert</b>. Aber: Linien bleiben Linien. Sie kann <b>keine</b> lineare Trennbarkeit erzeugen — sie <b>positioniert</b> die Daten nur.</p> <canvas id="affCanvas" class="demo" width="520" height="360"></canvas> <div class="ctrls"> <label>Rotation θ <span class="val" id="vRot">0°</span><input id="rot" type="range" min="-180" max="180" value="20"></label> <label>Skala x <span class="val" id="vSx">1.0</span><input id="sx" type="range" min="0.2" max="2.5" step="0.05" value="1.2"></label> <label>Skala y <span class="val" id="vSy">1.0</span><input id="sy" type="range" min="0.2" max="2.5" step="0.05" value="0.7"></label> <label>Scherung <span class="val" id="vSh">0.0</span><input id="sh" type="range" min="-1.5" max="1.5" step="0.05" value="0.4"></label> <label>Verschiebung x <span class="val" id="vBx">0.0</span><input id="bx" type="range" min="-1" max="1" step="0.02" value="0"></label> <label>Verschiebung y <span class="val" id="vBy">0.0</span><input id="by" type="range" min="-1" max="1" step="0.02" value="0"></label> </div> </div> <div> <h3>Was macht ReLU? Der „Hammer&ldquo;</h3> <p>ReLU projiziert alle Punkte mit negativer Voraktivierung auf 0. Man kann das als <b>Ecke eines N-dimensionalen Raums</b> denken, in die die Daten gedrückt werden.</p> <canvas id="reluCanvas" class="demo" width="520" height="360"></canvas> <div class="ctrls"> <label>Voraktivierung x̃ <span class="val" id="vRelu">1.0</span><input id="relSlider" type="range" min="-2" max="2" step="0.01" value="1"></label> </div> <div class="formula" id="fRelu"></div> </div> </div> </section><!-- =================== 3. Hammer =================== --> <section id="hammer"> <h2>3 · Der Hammer trifft die Verteilung</h2> <p class="lead">Jedes Neuron definiert eine <b>Hyperebene</b> (Normale = Gewichtsvektor, Versatz = Bias). Alle Punkte auf der <b>negativen Seite</b> werden auf diese Ebene gedrückt. Ziehe den Regler und schau, wie ein Hammerschlag eine <b>Delle</b> in die 2D-Verteilung schlägt.</p> <canvas id="hamCanvas" class="demo" width="900" height="380"></canvas> <div class="ctrls"> <label>Winkel der Hyperebene <span class="val" id="vHamA">45°</span><input id="hamA" type="range" min="0" max="360" value="45"></label> <label>Versatz b <span class="val" id="vHamB">0.0</span><input id="hamB" type="range" min="-1" max="1" step="0.02" value="0"></label> <button id="hamAdd">weitere Ebene hinzufügen</button> <button id="hamReset">zurücksetzen</button> </div> <p class="lead" style="margin-top:10px"><b>Wichtig:</b> Der Hammer verändert nur die <b>konvexe Hülle</b>. Punkte im <b>Inneren</b> einer Klasse (z. B. der rote Kern) sind so nicht erreichbar. Genau hier scheitert die naive Idee.</p> </section><!-- =================== 4. Nichtlineare Trennbarkeit + höherdim =================== --> <section id="nichtlinear"> <h2>4 · Kreis-im-Kreis ist nicht linear trennbar — bis man eine Dimension dazunimmt</h2> <p class="lead">Im 2D kannst du keine Gerade zeichnen, die den roten Kern vom blauen Ring trennt. Aber wenn du geschickt <b>in die dritte Dimension hebst</b>, wird der Kern angehoben — und plötzlich reicht eine <b>Ebene</b>.</p> <div class="grid g2"> <div> <h3>2D-Ansicht (unmöglich mit Gerade)</h3> <canvas id="egg2d" class="demo" width="520" height="380"></canvas> </div> <div> <h3>3D-Lift — bewege den Regler!</h3> <div id="egg3d" style="width:100%;height:380px"></div> </div> </div> <div class="ctrls"> <label>Lift-Stärke z = f(r) <span class="val" id="vLift">0.6</span><input id="lift" type="range" min="0" max="1" step="0.01" value="0.6"></label> <label>Schwelle Ebene <span class="val" id="vTh">0.5</span><input id="th" type="range" min="0" max="1.5" step="0.01" value="0.5"></label> </div> <p class="lead">Die Regel: In einer <b>höheren, ungenutzten Dimension</b> kann eine Falte den inneren Rand des roten Kreises nach außen kippen. Genau das ist die <b>Origami-Idee</b>.</p> </section><!-- =================== 5. Folding =================== --> <section id="folding"> <h2>5 · Falten in ungenutzte Dimensionen — der zentrale Trick</h2> <p class="lead">Wenn die Datenmannigfaltigkeit (z. B. eine Linie im 2D) <b>weniger Dimensionen belegt</b> als die Schicht breit ist, dann wird ein ReLU-Hammer, dessen Normale <b>in die freie Dimension zeigt</b>, zu einer <b>Falte</b> statt einer Quetschung. Dies ist <b>injektiv</b> — es geht keine Information verloren!</p> <div class="formula" id="fFold"></div> <h3>Eindimensionales „Ei&ldquo; wird in 2D gefaltet</h3> <canvas id="foldLine" class="demo" width="900" height="380"></canvas> <div class="ctrls"> <label>Faltwinkel α <span class="val" id="vFA">45°</span><input id="fA" type="range" min="5" max="85" value="45"></label> <label>Faltposition <span class="val" id="vFP">0.0</span><input id="fP" type="range" min="-1" max="1" step="0.01" value="0"></label> <label>Fortschritt der Faltung <span class="val" id="vFT">1.0</span><input id="fT" type="range" min="0" max="1" step="0.01" value="1"></label> </div> <p class="lead">Nach der Faltung ist die vorher <b>innere</b> Region an der Kante <b>freigelegt</b> — eine Gerade in der nächsten Schicht kann sie trennen.</p> <h3>2D-Ei mit 3 Neuronen lösen (Abbildung 2 des Papers)</h3> <p>Drei Hyperebenen falten das flache Ei in eine dreieckige „Wanne&ldquo; im 3D. Eine Ebene trennt dann innen vom außen.</p> <div id="egg3fold" style="width:100%;height:420px"></div> <div class="ctrls"> <label>Neuronenzahl N <span class="val" id="vN">3</span><input id="Nfold" type="range" min="3" max="12" value="3"></label> <label>Faltschärfe <span class="val" id="vFS">1.0</span><input id="fs" type="range" min="0" max="1.5" step="0.01" value="1"></label> </div> <p class="lead">Mit mehr Neuronen wird die Approximation runder — von Dreieck über Sechseck bis zu einem N-gon, das den Kreis annähert.</p> </section><!-- =================== 6. Fold and Cut =================== --> <section id="foldcut"> <h2>6 · Fold-and-Cut — Origami trifft neuronale Netze</h2> <p class="lead"><b>Für 10-Jährige erklärt:</b> Nimm ein Blatt Papier. Zeichne <em>irgendeine</em> Form drauf — ein Herz, einen Stern, deinen Namen als Umriss. <b>Behauptung (Demaine, 1998):</b> Du kannst das Papier <em>immer</em> so falten, dass ein <b>einziger gerader Scherenschnitt</b> genau diese Form ausschneidet.</p> <div class="grid g2"> <div> <h3>Interaktives Papier-Falten</h3> <canvas id="fcCanvas" class="demo" width="520" height="420"></canvas> <div class="ctrls"> <label>Form wählen <select id="fcShape"> <option value="star">Stern</option> <option value="heart">Herz</option> <option value="tri">Dreieck</option> <option value="square">Quadrat</option> </select> </label> <label>Faltschritt <span class="val" id="vFcStep">0</span><input id="fcStep" type="range" min="0" max="4" value="0"></label> <button id="fcCut">Scherenschnitt!</button> <button id="fcPrint">🖨️ zum Ausdrucken</button> </div> <p class="print-note">Tipp: Klicke „zum Ausdrucken&ldquo; und probiere es mit echtem Papier &amp; Schere aus — von 2D-Form wird durch Falten und einen Schnitt tatsächlich 3D-Falzstruktur → 2D-Form.</p> </div> <div> <h3>Warum das für neuronale Netze wichtig ist</h3> <ul class="steps"> <li>Die letzte Schicht des Netzes macht einen „geraden Schnitt&ldquo; — eine <b>Hyperebene</b>.</li> <li>Die vorherigen Schichten <b>falten</b> die Datenverteilung so, dass alle Klassengrenzen <b>aufeinander</b> liegen.</li> <li>Das erklärt die <b>Universal-Approximation</b>: Beliebige Klassen können durch Falten + Schnitt getrennt werden.</li> <li>Analog: Jede piecewise-lineare Entscheidungsgrenze im Original entspricht einer Serie von Falten in höheren Dimensionen.</li> </ul> </div> </div> </section><!-- =================== 7. Shear alternative =================== --> <section id="shear"> <h2>7 · Alternative (aber ineffizient): Scheren in schmalen tiefen Netzen</h2> <p class="lead">Ohne Extra-Dimensionen bleibt nur ein Trick: durch geschicktes Kombinieren von <b>schiefen Hyperebenen</b> (Scherung) und ReLU wird Wahrscheinlichkeitsmasse Schritt für Schritt <b>zur Seite geschoben</b>. Das braucht <b>sehr viele Schichten</b> und skaliert schlecht in höhere Dimensionen.</p> <canvas id="shearCanvas" class="demo" width="900" height="380"></canvas> <div class="ctrls"> <label>Anzahl Schichten <span class="val" id="vLayers">1</span><input id="layers" type="range" min="1" max="12" value="1"></label> <button id="shearPlay">▶ Animation</button> </div> <p class="lead">→ In der Praxis nutzen echte Netze diesen Mechanismus <b>kaum</b>. Das Falten in freie Dimensionen ist viel mächtiger.</p> </section>
+<!-- =================== 8. Poker =================== --> <section id="poker"> <h2>8 · Vorhersage bestätigen: Bimodale Tuning-Kurven im Poker-Hand-Netz</h2> <p class="lead">Wenn Falten das primäre Werkzeug ist, dann müssen Neuronen an einer Faltkante <b>bimodale Tuning-Kurven</b> zeigen: für manche Klassen zwei Peaks, mit Tal an der Faltposition x̃ = 0. Genau das finden die Autoren im trainierten Netz.</p> <div class="grid g2"> <div> <h3>Untrainiertes Netz (fast Gauß-förmig)</h3> <canvas id="pkUn" class="demo" width="520" height="260"></canvas> </div> <div> <h3>Trainiert (bimodal — Zeichen einer Falte!)</h3> <canvas id="pkTr" class="demo" width="520" height="260"></canvas> </div> </div> <div class="ctrls"> <label>Trainings-Fortschritt <span class="val" id="vEp">0%</span><input id="ep" type="range" min="0" max="100" value="80"></label>
+    <button id="pkPlay">▶ Training abspielen</button>
+  </div>
+  <p class="lead">Untrainiert: Aktivierungen sehen zufällig-glockenförmig aus. Trainiert: Klasse 2 (dunkelorange) zeigt zwei Peaks mit einem <b>Tal bei x̃ = 0</b> — genau der Fingerabdruck einer Faltkante. Neurone mit großer „Dip-Statistik&ldquo; sind auch die <b>wichtigsten</b>: Wenn man 10 davon abschaltet, bricht die Genauigkeit massiv ein [[11]].</p>
+</section>
+
+<!-- =================== 9. Antwort =================== -->
+<section id="antwort">
+  <h2>9 · Die Antwort auf die Frage der Autoren</h2>
+  <p class="lead">Die Frage war: <em>Welches mechanistische Werkzeug nutzt ein Feedforward-Netz, um lineare Trennbarkeit herzustellen?</em></p>
+  <div class="grid g2">
+    <div>
+      <h3>Kurzantwort</h3>
+      <ul class="steps">
+        <li><b>Progressives Falten</b> der Datenmannigfaltigkeit in <b>ungenutzte höhere Dimensionen</b>.</li>
+        <li>Jede Schicht fügt Falten hinzu → hierarchische Struktur mit exponentiell vielen Kanten.</li>
+        <li>Die letzte Schicht macht einen einzigen „Schnitt&ldquo; (Hyperebene) — analog zum <b>Fold-and-Cut-Theorem</b>.</li>
+        <li>Scheren ohne Extra-Dimensionen ist möglich, aber ineffizient und braucht sehr tiefe schmale Netze.</li>
+        <li>Empirisch bestätigt durch <b>bimodale Tuning-Kurven</b> im Poker-Hand-Netz.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Konsequenzen</h3>
+      <ul class="steps">
+        <li>Schichten müssen <b>breiter</b> sein als die Datendimensionalität, sonst kein Falten möglich.</li>
+        <li>Erklärt, warum tiefe, schmale Netze keine universellen Approximatoren sind (Johnson 2018) [[11]].</li>
+        <li>Neuronen mit „mixed selectivity&ldquo; sind kein Bug, sondern ein <b>notwendiges Feature</b> des Faltmechanismus — relevant auch für die Neurowissenschaft [[11]].</li>
+      </ul>
+      <p class="lead" style="margin-top:14px">👉 Kombiniert man diese Intuition mit dem visuellen Bild aus Colahs Blog (Neuronale Netze als Homeomorphismen, die Mannigfaltigkeiten strecken und entwirren [[12]]), bekommt man ein wirklich mechanistisches Verständnis dessen, was in einem tiefen Netz geschieht.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ============ Utils ============ */
+const $ = id => document.getElementById(id);
+const TAU = Math.PI*2;
+const renderTeX = (id, tex) => { try { $(id).innerHTML = temml.renderToString(tex, {displayMode:true}); } catch(e){ $(id).textContent = tex; } };
+
+/* ============ Formeln ============ */
+renderTeX('fEq', String.raw`x^{(l)}_i \;=\; \underbrace{\Phi}_{\text{Nicht-Lin.}}\!\Bigl(\underbrace{W^{(l)}_{ij}\,x^{(l-1)}_j}_{\text{Rotation/Skala/Scherung}} + \underbrace{b^{(l)}_i}_{\text{Verschiebung}}\Bigr)`);
+renderTeX('fRelu', String.raw`\mathrm{ReLU}(\tilde x) \;=\; \max(0,\tilde x) \;=\; \begin{cases}\tilde x & \tilde x\ge 0\\ 0 & \tilde x<0\end{cases}`);
+renderTeX('fFold', String.raw`\underbrace{x^{(1)}}_{\text{nach Falte}} \;=\; \mathrm{ReLU}\!\bigl(\underbrace{w^\top x^{(0)}}_{\text{Projektion auf Normale}} + b\bigr)\quad\Rightarrow\quad \text{Falte in freier Dimension} \;\Longrightarrow\; \text{injektiv, keine Info verloren}`);
+
+/* ============ 1. Motivation ============ */
+(() => {
+  const c = $('motCanvas'), ctx = c.getContext('2d');
+  let showLine = false;
+  const pts = [];
+  for(let i=0;i<300;i++){ const r=Math.random()*0.28, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<500;i++){ const r=0.55+Math.random()*0.32, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  function draw(){
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const cx=c.width/2, cy=c.height/2, s=140;
+    ctx.strokeStyle='#22304a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(c.width,cy); ctx.moveTo(cx,0); ctx.lineTo(cx,c.height); ctx.stroke();
+    for(const p of pts){
+      ctx.fillStyle = p.cl===0?'#ff6b6b':'#4c8bf5';
+      ctx.beginPath(); ctx.arc(cx+p.x*s, cy+p.y*s, 2.2, 0, TAU); ctx.fill();
+    }
+    if(showLine){
+      const t = (Date.now()/1000)%TAU;
+      const dx=Math.cos(t), dy=Math.sin(t);
+      ctx.strokeStyle='#ffd166'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx-dx*260,cy-dy*260); ctx.lineTo(cx+dx*260,cy+dy*260); ctx.stroke();
+      ctx.fillStyle='#ffd166'; ctx.font='13px Inter'; ctx.fillText('Keine Gerade trennt die Klassen ✗', 14, 22);
+      requestAnimationFrame(draw);
+    }
+  }
+  $('motToggle').onclick = () => { showLine = !showLine; draw(); };
+  draw();
+})();
+
+/* ============ 2a. Affine ============ */
+(() => {
+  const c = $('affCanvas'), ctx = c.getContext('2d');
+  const ids = ['rot','sx','sy','sh','bx','by'];
+  const vids = ['vRot','vSx','vSy','vSh','vBx','vBy'];
+  const pts = [];
+  for(let i=0;i<250;i++){ const r=Math.random()*0.3, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<420;i++){ const r=0.55+Math.random()*0.3, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  function draw(){
+    const th=+$('rot').value*Math.PI/180, sx=+$('sx').value, sy=+$('sy').value, sh=+$('sh').value, bx=+$('bx').value, by=+$('by').value;
+    $('vRot').textContent=(+$('rot').value).toFixed(0)+'°'; $('vSx').textContent=sx.toFixed(2); $('vSy').textContent=sy.toFixed(2);
+    $('vSh').textContent=sh.toFixed(2); $('vBx').textContent=bx.toFixed(2); $('vBy').textContent=by.toFixed(2);
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const cx=c.width/2, cy=c.height/2, s=110;
+    ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(c.width,cy); ctx.moveTo(cx,0); ctx.lineTo(cx,c.height); ctx.stroke();
+    const cs=Math.cos(th), sn=Math.sin(th);
+    // matrix: R * S * Shear
+    for(const p of pts){
+      let x = p.x*sx + p.y*sh;
+      let y = p.y*sy;
+      const xr = x*cs - y*sn + bx;
+      const yr = x*sn + y*cs + by;
+      ctx.fillStyle = p.cl===0?'#ff6b6b':'#4c8bf5';
+      ctx.beginPath(); ctx.arc(cx+xr*s, cy+yr*s, 2, 0, TAU); ctx.fill();
+    }
+    ctx.fillStyle='#8aa0c8'; ctx.font='12px Inter';
+    ctx.fillText('Egal wie: die Klassen bleiben nicht linear trennbar.', 14, 22);
+  }
+  ids.forEach(id => $(id).oninput = draw);
+  draw();
+})();
+
+/* ============ 2b. ReLU ============ */
+(() => {
+  const c=$('reluCanvas'), ctx=c.getContext('2d');
+  function draw(){
+    const v = +$('relSlider').value;
+    $('vRelu').textContent = v.toFixed(2);
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height, cx=W/2, cy=H*0.75, s=90;
+    ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.moveTo(cx,20); ctx.lineTo(cx,H); ctx.stroke();
+    ctx.strokeStyle='#7cf9d0'; ctx.lineWidth=2.5; ctx.beginPath();
+    for(let px=0;px<W;px++){
+      const x=(px-cx)/s, y=Math.max(0,x);
+      if(px===0) ctx.moveTo(px, cy-y*s); else ctx.lineTo(px, cy-y*s);
+    } ctx.stroke();
+    const y = Math.max(0,v);
+    ctx.fillStyle='#ff9ec7'; ctx.beginPath(); ctx.arc(cx+v*s, cy-y*s, 6, 0, TAU); ctx.fill();
+    ctx.strokeStyle='#ff9ec7'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx+v*s, cy); ctx.lineTo(cx+v*s, cy-y*s); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#e8eefc'; ctx.font='13px Inter';
+    ctx.fillText(`x̃ = ${v.toFixed(2)}  →  ReLU(x̃) = ${y.toFixed(2)}`, 14, 22);
+    ctx.fillStyle='#8aa0c8'; ctx.font='12px Inter';
+    ctx.fillText(v<0?'Negative Werte werden auf 0 projiziert ("gehämmert")':'Positive Werte passieren unverändert', 14, 42);
+  }
+  $('relSlider').oninput=draw; draw();
+})();
+
+/* ============ 3. Hammer ============ */
+(() => {
+  const c=$('hamCanvas'), ctx=c.getContext('2d');
+  const planes=[];
+  const pts=[];
+  for(let i=0;i<1200;i++){ const r=Math.random()*0.85, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r}); }
+  function proj(p, planes){
+    let x=p.x, y=p.y;
+    for(const pl of planes){
+      const d = x*pl.nx + y*pl.ny - pl.b;
+      if(d<0){ x -= d*pl.nx; y -= d*pl.ny; }
+    }
+    return {x,y};
+  }
+  function draw(){
+    const a=+$('hamA').value*Math.PI/180, b=+$('hamB').value;
+    $('vHamA').textContent = (+$('hamA').value)+'°'; $('vHamB').textContent = b.toFixed(2);
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height, s=140;
+    // panels
+    for(let k=0;k<2;k++){
+      const cx = W*(k===0?0.25:0.75), cy=H/2;
+      ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(cx-200,cy); ctx.lineTo(cx+200,cy); ctx.moveTo(cx,cy-160); ctx.lineTo(cx,cy+160); ctx.stroke();
+      const set = k===0? planes: [...planes, {nx:Math.cos(a),ny:Math.sin(a),b}];
+      for(const p of pts){
+        const q = proj(p, k===0?planes:set);
+        ctx.fillStyle = k===0?'#4c8bf5':'#7cf9d0';
+        ctx.beginPath(); ctx.arc(cx+q.x*s, cy-q.y*s, 1.6, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle='#8aa0c8'; ctx.font='13px Inter';
+      ctx.fillText(k===0?'vor Hammerschlag':'nach Hammerschlag', cx-70, 24);
+      if(k===1){
+        // preview plane
+        ctx.strokeStyle='#ffd166'; ctx.lineWidth=1.5;
+        const nx=Math.cos(a), ny=Math.sin(a);
+        const tx=-ny, ty=nx;
+        const x0=nx*b*s, y0=ny*b*s;
+        ctx.beginPath(); ctx.moveTo(cx+x0-tx*200, cy-(y0-ty*200)); ctx.lineTo(cx+x0+tx*200, cy-(y0+ty*200)); ctx.stroke();
+      }
+    }
+  }
+  $('hamA').oninput=draw; $('hamB').oninput=draw;
+  $('hamAdd').onclick = () => { const a=+$('hamA').value*Math.PI/180, b=+$('hamB').value; planes.push({nx:Math.cos(a),ny:Math.sin(a),b}); draw(); };
+  $('hamReset').onclick = () => { planes.length=0; draw(); };
+  draw();
+})();
+
+/* ============ 4. Egg 2D/3D ============ */
+(() => {
+  const c=$('egg2d'), ctx=c.getContext('2d');
+  const pts=[];
+  for(let i=0;i<400;i++){ const r=Math.random()*0.32, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<700;i++){ const r=0.55+Math.random()*0.35, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  function draw2d(){
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const cx=c.width/2, cy=c.height/2, s=150;
+    for(const p of pts){
+      ctx.fillStyle = p.cl===0?'#ff6b6b':'#4c8bf5';
+      ctx.beginPath(); ctx.arc(cx+p.x*s, cy+p.y*s, 1.8, 0, TAU); ctx.fill();
+    }
+    ctx.fillStyle='#ffd166'; ctx.font='12px Inter'; ctx.fillText('Keine Gerade trennt Rot von Blau', 14, 22);
+  }
+  draw2d();
+  function draw3d(){
+    const lift = +$('lift').value, th=+$('th').value;
+    $('vLift').textContent = lift.toFixed(2); $('vTh').textContent = th.toFixed(2);
+    const xs0=[], ys0=[], zs0=[], xs1=[], ys1=[], zs1=[];
+    for(const p of pts){
+      const r=Math.hypot(p.x,p.y);
+      const z = lift*Math.max(0, 0.5 - r)*2;
+      if(p.cl===0){ xs0.push(p.x); ys0.push(p.y); zs0.push(z); }
+      else{ xs1.push(p.x); ys1.push(p.y); zs1.push(z); }
+    }
+    // trennebene z = th
+    const gx=[], gy=[], gz=[];
+    for(let i=-1;i<=1;i+=0.1) for(let j=-1;j<=1;j+=0.1){ gx.push(i); gy.push(j); gz.push(th); }
+    Plotly.react('egg3d', [
+      {x:xs1,y:ys1,z:zs1,mode:'markers',type:'scatter3d',marker:{size:2.2,color:'#4c8bf5'},name:'außen'},
+      {x:xs0,y:ys0,z:zs0,mode:'markers',type:'scatter3d',marker:{size:2.5,color:'#ff6b6b'},name:'innen'},
+      {x:gx,y:gy,z:gz,mode:'markers',type:'scatter3d',marker:{size:1.5,color:'#ffd166',opacity:0.35},name:'Trennebene'}
+    ], {paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:'#e8eefc'},margin:{l:0,r:0,t:20,b:0},scene:{xaxis:{color:'#8aa0c8'},yaxis:{color:'#8aa0c8'},zaxis:{color:'#8aa0c8'}},showlegend:false},{displayModeBar:false});
+  }
+  $('lift').oninput=draw3d; $('th').oninput=draw3d; draw3d();
+})();
+
+/* ============ 5a. 1D fold to 2D ============ */
+(() => {
+  const c=$('foldLine'), ctx=c.getContext('2d');
+  function draw(){
+    const alpha=+$('fA').value*Math.PI/180, fp=+$('fP').value, t=+$('fT').value;
+    $('vFA').textContent=(+$('fA').value)+'°'; $('vFP').textContent=fp.toFixed(2); $('vFT').textContent=t.toFixed(2);
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const cy=c.height*0.65, cx=c.width/2, s=280;
+    ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(c.width,cy); ctx.stroke();
+    // 1d "egg": red center [-.3,.3], blue outer [-1,-.5] u [.5,1]
+    for(let i=-100;i<=100;i++){
+      const x=i/100;
+      const cl = Math.abs(x)<0.3?0 : (Math.abs(x)>0.5?1:-1);
+      if(cl<0) continue;
+      const preact = x - fp;
+      const yFold = preact<0 ? -preact*Math.tan(alpha)*t*0.6 : 0;
+      ctx.fillStyle = cl===0?'#ff6b6b':'#4c8bf5';
+      ctx.beginPath(); ctx.arc(cx+x*s*0.9, cy-yFold*s, 3, 0, TAU); ctx.fill();
+    }
+    // fold line
+    ctx.strokeStyle='#ffd166'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx+fp*s*0.9, 20); ctx.lineTo(cx+fp*s*0.9, c.height-10); ctx.stroke(); ctx.setLineDash([]);
+    // separator suggestion
+    ctx.fillStyle='#8aa0c8'; ctx.font='13px Inter';
+    ctx.fillText('Faltkante (x̃=0)', cx+fp*s*0.9+6, 34);
+    ctx.fillText('Nach Falte: eine Gerade in y kann Rot innen von Blau außen trennen →', 14, 24);
+  }
+  ['fA','fP','fT'].forEach(id=>$(id).oninput=draw); draw();
+})();
+
+/* ============ 5b. 2D egg folded to 3D (N neurons) ============ */
+(() => {
+  function draw(){
+    const N=+$('Nfold').value, fs=+$('fs').value;
+    $('vN').textContent=N; $('vFS').textContent=fs.toFixed(2);
+    const xs0=[], ys0=[], zs0=[], xs1=[], ys1=[], zs1=[];
+    for(let i=0;i<1500;i++){
+      const r=Math.random()*0.95, a=Math.random()*TAU;
+      const x=Math.cos(a)*r, y=Math.sin(a)*r;
+      const cl = r<0.35?0:(r>0.55?1:-1);
+      if(cl<0) continue;
+      // N hyperplanes forming an N-gon around origin at radius 0.45
+      let z=0;
+      for(let k=0;k<N;k++){
+        const ang=k*TAU/N;
+        const nx=Math.cos(ang), ny=Math.sin(ang);
+        const pre = nx*x + ny*y - 0.45;
+        if(pre<0) z += -pre*fs;
+      }
+      (cl===0?xs0:xs1).push(x);
+      (cl===0?ys0:ys1).push(y);
+      (cl===0?zs0:zs1).push(z);
+    }
+    Plotly.react('egg3fold', [
+      {x:xs1,y:ys1,z:zs1,mode:'markers',type:'scatter3d',marker:{size:2,color:'#4c8bf5'},name:'außen'},
+      {x:xs0,y:ys0,z:zs0,mode:'markers',type:'scatter3d',marker:{size:2.4,color:'#ff6b6b'},name:'innen'}
+    ], {paper_bgcolor:'#08101f',plot_bgcolor:'#08101f',font:{color:'#e8eefc'},margin:{l:0,r:0,t:10,b:0},scene:{xaxis:{color:'#8aa0c8'},yaxis:{color:'#8aa0c8'},zaxis:{color:'#8aa0c8',title:'z (freie Dim.)'}},showlegend:false},{displayModeBar:false});
+  }
+  $('Nfold').oninput=draw; $('fs').oninput=draw; draw();
+})();
+
+/* ============ 6. Fold and Cut ============ */
+(() => {
+  const c=$('fcCanvas'), ctx=c.getContext('2d');
+  const shapes = {
+    star: (cx,cy,r) => { const pts=[]; for(let i=0;i<10;i++){ const a=i*Math.PI/5-Math.PI/2, rr=i%2===0?r:r*0.4; pts.push([cx+Math.cos(a)*rr, cy+Math.sin(a)*rr]); } return pts; },
+    heart:(cx,cy,r) => { const pts=[]; for(let i=0;i<40;i++){ const t=i/40*TAU; const x=16*Math.pow(Math.sin(t),3); const y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)); pts.push([cx+x*r/18, cy+y*r/18]); } return pts; },
+    tri:(cx,cy,r) => [[cx,cy-r],[cx+r*0.87,cy+r*0.5],[cx-r*0.87,cy+r*0.5]],
+    square:(cx,cy,r) => [[cx-r,cy-r],[cx+r,cy-r],[cx+r,cy+r],[cx-r,cy+r]]
+  };
+  function draw(){
+    const step=+$('fcStep').value, shape=$('fcShape').value;
+    $('vFcStep').textContent=step;
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const cx=c.width/2, cy=c.height/2;
+    // paper
+    const scale = Math.pow(0.72, step);
+    const w = 200*scale, h = 200*scale;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(step*0.15);
+    // paper background
+    ctx.fillStyle='#f5f0e6'; ctx.strokeStyle='#8a7f66'; ctx.lineWidth=2;
+    ctx.fillRect(-w, -h, w*2, h*2); ctx.strokeRect(-w, -h, w*2, h*2);
+    // fold lines
+    ctx.strokeStyle='#c94f4f'; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+    for(let k=1;k<=step;k++){
+      const ang = k*Math.PI/(step+1);
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(ang)*300, Math.sin(ang)*300);
+      ctx.lineTo(-Math.cos(ang)*300, -Math.sin(ang)*300);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    // shape drawn on paper
+    const pts = shapes[shape](0,0, 90*scale);
+    ctx.strokeStyle='#1c6fe0'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    pts.forEach((p,i)=> i===0?ctx.moveTo(...p):ctx.lineTo(...p));
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+    // instructions
+    ctx.fillStyle='#e8eefc'; ctx.font='13px Inter';
+    ctx.fillText(`Schritt ${step}: `+(step===0?'Form zeichnen':`${step} Falte(n) angebracht`), 14, 22);
+    if(step>=4){
+      ctx.fillStyle='#ffd166'; ctx.fillText('→ Jetzt "Scherenschnitt!" drücken', 14, 42);
+    }
+  }
+  $('fcStep').oninput=draw; $('fcShape').onchange=draw;
+  $('fcCut').onclick = () => {
+    const c2=$('fcCanvas'), ctx=c2.getContext('2d');
+    ctx.strokeStyle='#ff3860'; ctx.lineWidth=3.5;
+    ctx.beginPath(); ctx.moveTo(60,c2.height/2); ctx.lineTo(c2.width-60,c2.height/2); ctx.stroke();
+    ctx.fillStyle='#ff3860'; ctx.font='bold 14px Inter'; ctx.fillText('✂ EIN gerader Schnitt → Form fällt heraus!', 14, c2.height-18);
+  };
+  $('fcPrint').onclick = () => window.print();
+  draw();
+})();
+
+/* ============ 7. Shear ============ */
+(() => {
+  const c=$('shearCanvas'), ctx=c.getContext('2d');
+  const pts=[];
+  for(let i=0;i<250;i++){ const r=Math.random()*0.28, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:0}); }
+  for(let i=0;i<500;i++){ const r=0.5+Math.random()*0.35, a=Math.random()*TAU; pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,cl:1}); }
+  function applyLayers(p, L){
+    let x=p.x, y=p.y;
+    for(let k=0;k<L;k++){
+      const ang = -Math.PI*0.5 + k*0.55;
+      const nx=Math.cos(ang), ny=Math.sin(ang), b=-0.75;
+      const pre = nx*x + ny*y - b;
+      if(pre<0){ x -= pre*nx*0.9; y -= pre*ny*0.9; }
+      // rotation to bring shaved region around
+      const rot=0.55, cs=Math.cos(rot), sn=Math.sin(rot);
+      const xr=x*cs-y*sn, yr=x*sn+y*cs;
+      x=xr; y=yr;
+    }
+    return {x,y};
+  }
+  function draw(){
+    const L=+$('layers').value;
+    $('vLayers').textContent=L;
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    for(let k=0;k<2;k++){
+      const cx=c.width*(k===0?0.25:0.75), cy=c.height/2, s=140;
+      ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(cx-200,cy); ctx.lineTo(cx+200,cy); ctx.moveTo(cx,cy-160); ctx.lineTo(cx,cy+160); ctx.stroke();
+      for(const p of pts){
+        const q = k===0? p : applyLayers(p, L);
+        ctx.fillStyle = p.cl===0?'#ff6b6b':'#4c8bf5';
+        ctx.beginPath(); ctx.arc(cx+q.x*s, cy-q.y*s, 1.7, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle='#8aa0c8'; ctx.font='13px Inter';
+      ctx.fillText(k===0?'Ausgangs-Verteilung (2D-Ei)':`Nach ${L} Scher-Schichten (Breite 2)`, cx-100, 24);
+    }
+    if(L>=8){
+      ctx.fillStyle='#7cf9d0'; ctx.font='12px Inter';
+      ctx.fillText('→ nach vielen Schichten: Rot ist "ausgeschält" und wird linear trennbar', c.width/2-180, c.height-14);
+    }
+  }
+  $('layers').oninput=draw;
+  $('shearPlay').onclick = () => {
+    let L=1; const iv=setInterval(()=>{ if(L>12){clearInterval(iv);return;} $('layers').value=L; draw(); L++; }, 220);
+  };
+  draw();
+})();
+
+/* ============ 8. Poker Tuning Curves ============ */
+(() => {
+  function draw(canvasId, trained, epFrac){
+    const c=$(canvasId), ctx=c.getContext('2d');
+    ctx.fillStyle='#08101f'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height, cy=H-30, s=H-50;
+    // axis
+    ctx.strokeStyle='#22304a'; ctx.beginPath(); ctx.moveTo(20,cy); ctx.lineTo(W-10,cy); ctx.stroke();
+    // fold line at x=0 (center)
+    const cx0 = W/2;
+    ctx.strokeStyle='#ffd166'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx0, 10); ctx.lineTo(cx0, cy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#ffd166'; ctx.font='11px Inter'; ctx.fillText('x̃ = 0 (Faltkante)', cx0+6, 22);
+    const classes = [
+      {color:'#4c8bf5', name:'Klasse 0'},
+      {color:'#7cf9d0', name:'Klasse 1'},
+      {color:'#ff9500', name:'Klasse 2'},
+      {color:'#ff6b6b', name:'Klasse 3'}
+    ];
+    const N=60;
+    classes.forEach((cl, ci) => {
+      const pts=[];
+      for(let i=0;i<N;i++){
+        const x = -2 + i*(4/(N-1));
+        let y;
+        if(trained && ci===2){
+          // bimodal: two peaks
+          const peak1 = Math.exp(-Math.pow((x+0.9)/0.35,2));
+          const peak2 = Math.exp(-Math.pow((x-1.0)/0.4,2))*0.8;
+          const gauss = Math.exp(-Math.pow(x/0.9,2));
+          y = (1-epFrac)*gauss + epFrac*(peak1+peak2);
+        } else if(trained && ci===1){
+          const peak1 = Math.exp(-Math.pow((x+0.6)/0.4,2))*0.7;
+          const peak2 = Math.exp(-Math.pow((x-0.8)/0.5,2));
+          const gauss = Math.exp(-Math.pow(x/0.9,2));
+          y = (1-epFrac)*gauss + epFrac*(peak1+peak2*0.6);
+        } else {
+          y = Math.exp(-Math.pow((x-(ci-1.5)*0.15)/0.85,2));
+        }
+        pts.push([x,y]);
+      }
+      ctx.strokeStyle=cl.color; ctx.lineWidth=2;
+      ctx.beginPath();
+      pts.forEach((p,i)=>{
+        const px = 20 + (p[0]+2)/4 * (W-30);
+        const py = cy - p[1]*s*0.55;
+        i===0? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+      });
+      ctx.stroke();
+      // legend
+      ctx.fillStyle=cl.color; ctx.fillRect(W-100, 20+ci*14, 10, 10);
+      ctx.fillStyle='#e8eefc'; ctx.font='11px Inter';
+      ctx.fillText(cl.name, W-85, 29+ci*14);
+    });
+  }
+  function update(){
+    const ep=+$('ep').value/100; $('vEp').textContent=Math.round(ep*100)+'%';
+    draw('pkUn', false, 0);
+    draw('pkTr', true, ep);
+  }
+  $('ep').oninput=update;
+  $('pkPlay').onclick = () => {
+    let e=0; const iv=setInterval(()=>{ if(e>100){clearInterval(iv);return;} $('ep').value=e; update(); e+=2; }, 60);
+  };
+  update();
+})();
+</script>
+</body>
+</html>
