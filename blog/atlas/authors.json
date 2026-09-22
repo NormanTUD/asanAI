@@ -22542,10 +22542,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "eisgalgen_mittenwald"
   ],
   "cited_in": [
    "ai_for_science",
@@ -51298,9 +51298,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "go_lang",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "go_lang"
   ],
   "cited_in": [
    "software",
@@ -52510,10 +52510,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "monte_carlo_animation_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -54412,10 +54412,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_astronaut_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -55210,7 +55210,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 132,
+  "works": 134,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -55343,7 +55343,9 @@
    "icecorewiki",
    "vostokstation",
    "dilutionfridge",
-   "superconductingqubit"
+   "superconductingqubit",
+   "dolnivestonice",
+   "lamarchecave"
   ],
   "cited_in": [
    "coherent_difference",
@@ -60318,6 +60320,74 @@
   ],
   "cited_in": [
    "untold_history"
+  ]
+ },
+ {
+  "name": "Nicholas J. Conard",
+  "canon": "Nicholas J. Conard",
+  "alias": null,
+  "lat": 48.52,
+  "lng": 9.06,
+  "city": "Tübingen, Germany",
+  "year": 2009.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "conard2009hohlefels"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Christine Neugebauer-Maresch",
+  "canon": "Christine Neugebauer-Maresch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "neugebauer1989galgenberg"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Robert M. Pirsig",
+  "canon": "Robert M. Pirsig",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1974.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pirsig"
+  ],
+  "cited_in": [
+   "intro"
+  ]
+ },
+ {
+  "name": "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)",
+  "canon": "Volker Springel / Max-Planck-Institute for Astrophysics",
+  "alias": "MPA Garching",
+  "lat": 48.26,
+  "lng": 11.52,
+  "city": "Garching, Germany",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "cosmic_web_foam_image"
+  ],
+  "cited_in": [
+   "map"
   ]
  }
 ]

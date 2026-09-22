@@ -194,6 +194,7 @@ html:not(.dark) #atlas-stage {
 }
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
 .atlas-tour .cap-text { font-size: .9rem; line-height: 1.55; margin-top: 6px; color: var(--atlas-ink); }
+.atlas-tour .cap-text a { color: var(--atlas-accent); text-decoration: underline; text-underline-offset: 2px; }
 .atlas-tour .tour-bar {
 	display: flex; align-items: center; gap: 10px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);

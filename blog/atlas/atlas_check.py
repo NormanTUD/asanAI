@@ -132,7 +132,7 @@ def main():
           str(sorted(missing)[:10]))
 
     print("== bibliography.json ==")
-    check("entries == 2058", len(bib["entries"]) == 2058, str(len(bib["entries"])))
+    check("entries == 2064", len(bib["entries"]) == 2064, str(len(bib["entries"])))
     cites_ok = all(all(s in slugs for s in v) for v in bib["cites"].values())
     check("cites slugs exist", cites_ok)
 
@@ -173,8 +173,10 @@ def main():
     print("== provenance ==")
     raw = os.path.join(HERE, "raw")
     for f in ("out_part1.json", "out_part2.json", "out_part3.json", "out_part4.json",
-              "out_part5.json", "out_part6.json", "placed_1.json", "placed_2.json",
+              "out_part5.json", "out_part6.json", "out_part7_polar.json",
+              "out_part8.json", "placed_1.json", "placed_2.json",
               "placed_3.json", "placed_4.json", "placed_5.json", "placed_6.json",
+              "placed_7.json", "placed_8.json",
               "authors_chunk_1.json", "authors_chunk_2.json", "authors_chunk_3.json",
               "authors_chunk_4.json", "authors_chunk_5.json", "authors_chunk_6.json",
               "bib_parsed.json", "ne110_land.geojson", "ne110_borders.geojson"):

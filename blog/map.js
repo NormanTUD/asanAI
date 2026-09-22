@@ -1087,7 +1087,7 @@ function bootAtlas() {
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
-		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into filaments and voids — the largest structures that exist.' },
+		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 400, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
 		{ d: 560, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
 	];
@@ -1132,7 +1132,7 @@ function bootAtlas() {
 		}
 		var els = tourEls();
 		els.era.textContent = s.era;
-		els.text.textContent = s.text;
+		els.text.innerHTML = s.text;
 		var dotEls = els.dots.children;
 		for (var k = 0; k < dotEls.length; k++) {
 			dotEls[k].classList.toggle('on', k === i);

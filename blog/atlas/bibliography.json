@@ -2526,6 +2526,12 @@
    "year": "",
    "url": "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up"
   },
+  "pirsig": {
+   "title": "Zen and the Art of Motorcycle Maintenance: An Inquiry into Values",
+   "author": "Robert M. Pirsig",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance"
+  },
   "maclaurin": {
    "title": "A Treatise on Fluxions",
    "author": "Colin MacLaurin",
@@ -6785,6 +6791,12 @@
    "author": "NASA, ESA, and E. Hallman (University of Colorado, Boulder)",
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Structure_of_the_Universe.jpg"
+  },
+  "cosmic_web_foam_image": {
+   "title": "Cosmic web — a frame from the Max-Planck-Institute for Astrophysics' movies of large-scale structure in the Universe",
+   "author": "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg"
   },
   "greatwallpaper": {
    "title": "Mapping the Universe",
@@ -12347,6 +12359,30 @@
    "author": "ECMWF",
    "year": "",
    "url": "https://www.ecmwf.int/"
+  },
+  "conard2009hohlefels": {
+   "title": "A female figurine from the basal Aurignacian of Hohle Fels Cave in southwestern Germany",
+   "author": "Nicholas J. Conard",
+   "year": "",
+   "url": "https://doi.org/10.1038/nature07995"
+  },
+  "neugebauer1989galgenberg": {
+   "title": "Zum Neufund einer weiblichen Statuette an der Aurignac-Station Stratzing/Krems-Rehberg, Niederösterreich",
+   "author": "Christine Neugebauer-Maresch",
+   "year": "",
+   "url": "https://doi.org/10.11588/ger.1989.76355"
+  },
+  "dolnivestonice": {
+   "title": "Dolní Věstonice (archaeological site)",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Doln%C3%AD_V%C4%9Bstonice_(archaeological_site)"
+  },
+  "lamarchecave": {
+   "title": "La Marche (cave)",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/La_Marche_(cave)"
   }
  },
  "cites": {
@@ -16059,6 +16095,18 @@
   "hublin2017jebel": [
    "untold_history"
   ],
+  "conard2009hohlefels": [
+   "untold_history"
+  ],
+  "neugebauer1989galgenberg": [
+   "untold_history"
+  ],
+  "dolnivestonice": [
+   "untold_history"
+  ],
+  "lamarchecave": [
+   "untold_history"
+  ],
   "thomas1274summa": [
    "untold_history"
   ],
@@ -17241,6 +17289,9 @@
    "philosophy",
    "training_data"
   ],
+  "cosmic_web_foam_image": [
+   "map"
+  ],
   "riemann_portrait": [
    "embeddinglab"
   ],
@@ -17320,6 +17371,9 @@
   ],
   "poincareembeddings": [
    "embeddinglab"
+  ],
+  "pirsig": [
+   "intro"
   ],
   "twocultures": [
    "intro"
@@ -18557,7 +18611,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 132,
+   "count": 134,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -18692,7 +18746,9 @@
     "icecorewiki",
     "vostokstation",
     "dilutionfridge",
-    "superconductingqubit"
+    "superconductingqubit",
+    "dolnivestonice",
+    "lamarchecave"
    ]
   },
   "Thomas C. Hull": {
@@ -25664,6 +25720,14 @@
    "maxyear": null,
    "keys": [
     "hayakawa"
+   ]
+  },
+  "Robert M. Pirsig": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pirsig"
    ]
   },
   "Colin MacLaurin": {
@@ -35966,6 +36030,14 @@
    "maxyear": null,
    "keys": [
     "cosmic_web_image"
+   ]
+  },
+  "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "cosmic_web_foam_image"
    ]
   },
   "Margaret J. Geller and John P. Huchra": {
@@ -46988,6 +47060,22 @@
    "maxyear": null,
    "keys": [
     "ecmwf"
+   ]
+  },
+  "Nicholas J. Conard": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "conard2009hohlefels"
+   ]
+  },
+  "Christine Neugebauer-Maresch": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "neugebauer1989galgenberg"
    ]
   }
  }

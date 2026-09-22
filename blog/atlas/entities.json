@@ -18675,5 +18675,131 @@
   "conf": "stated",
   "source": "out_part7_polar.json",
   "bg": false
+ },
+ {
+  "id": "place-argentina",
+  "name": "Argentina",
+  "type": "place",
+  "loc": "South America",
+  "lat": -34.61,
+  "lng": -64.18,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "South American country whose Patagonian Cueva de las Manos preserves ancient hand-stencil proto-writing.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part8.json",
+  "bg": false
+ },
+ {
+  "id": "place-patagonia",
+  "name": "Patagonia",
+  "type": "place",
+  "loc": "Southern Argentina / Chile",
+  "lat": -42.0,
+  "lng": -70.0,
+  "years": "region",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Southern South American region containing Cueva de las Manos and its 9,000-year-old hand stencils.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part8.json",
+  "bg": false
+ },
+ {
+  "id": "place-sinai",
+  "name": "Sinai",
+  "type": "place",
+  "loc": "Peninsula between Egypt and the Levant",
+  "lat": 29.6,
+  "lng": 34.0,
+  "years": "peninsula",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Peninsula whose Serabit el-Khadim turquoise mines yielded early Proto-Sinaitic alphabetic inscriptions.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part8.json",
+  "bg": false
+ },
+ {
+  "id": "place-phoenicia",
+  "name": "Phoenicia",
+  "type": "place",
+  "loc": "Eastern Mediterranean coast (modern Lebanon)",
+  "lat": 33.75,
+  "lng": 35.65,
+  "years": "ancient region",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Ancient Levantine coastal region whose 22-letter alphabet seeded the Greek, Latin, Arabic and Hebrew scripts.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part8.json",
+  "bg": false
+ },
+ {
+  "id": "place-greece",
+  "name": "Greece",
+  "type": "place",
+  "loc": "Balkans, Southern Europe",
+  "lat": 39.07,
+  "lng": 22.12,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Where the Phoenician abjad gained vowel letters and became the world's first true alphabet.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known",
+  "source": "out_part8.json",
+  "bg": false
+ },
+ {
+  "id": "artifact-kish-tablet",
+  "name": "Kish tablet",
+  "type": "artifact",
+  "loc": "Istanbul Archaeology Museums, Istanbul, Turkey",
+  "lat": 41.01,
+  "lng": 28.98,
+  "years": "c. 3200-3000 BCE",
+  "active": [
+   -3200.0,
+   null
+  ],
+  "blurb": "Among the earliest proto-cuneiform pictographic tablets, a direct ancestor of cuneiform writing.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known",
+  "source": "out_part8.json",
+  "bg": false
  }
 ]
