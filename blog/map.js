@@ -321,6 +321,15 @@ function bootAtlas() {
 		buildDotsMesh();
 		buildThreads();
 		applyCamera();
+
+		window.__ATLAS_DEBUG = {
+			state: state,
+			sun: function () { return sunSp; },
+			planets: planets,
+			goStep: goStep,
+			startTour: startTour,
+			stopTour: stopTour
+		};
 	}
 
 	function buildEarth() {
