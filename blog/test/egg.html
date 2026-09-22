@@ -44,7 +44,28 @@
   h2 { font-size: 12.5px; margin: 16px 0 6px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
   p, label { font-size: 12.5px; line-height: 1.5; }
   .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
-  .formula-mat { font-size: 13px; }
+  .lossline { font-size: 11.5px; color: #8be9fd; font-family: monospace; margin: 2px 0 6px; }
+  .fmat {
+    background: #111; padding: 10px 8px; border-radius: 4px; margin: 6px 0;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 3px 4px; row-gap: 8px;
+  }
+  .matbox { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; }
+  .mat {
+    display: grid; gap: 3px 5px; align-items: center;
+    border-left: 2px solid #8be9fd; border-right: 2px solid #8be9fd; padding: 4px 6px;
+  }
+  .matlbl { font-size: 10px; color: #ffb86c; font-style: italic; }
+  .fm-pre, .fm-op, .fm-fn { font-family: "Cambria Math", "STIX Two Math", Georgia, serif; color: #eaeaea; font-size: 14px; }
+  .fm-pre { font-weight: 600; }
+  .fm-fn { color: #50fa7b; }
+  .matstatic { font-family: "Cambria Math", Georgia, serif; font-style: italic; color: #eaeaea; font-size: 13px; min-width: 10px; text-align: center; }
+  .cell {
+    width: 46px; font-size: 11px; text-align: right; font-family: monospace;
+    background: #1b1b22; color: #50fa7b; border: 1px solid #333; border-radius: 2px; padding: 2px 3px;
+  }
+  .cell:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
+  .cell::-webkit-outer-spin-button, .cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .cell[type=number] { -moz-appearance: textfield; }
   .val { color: #50fa7b; font-family: monospace; }
   button {
     background: #6272a4; color: white; border: none;
@@ -77,7 +98,8 @@
   <p><i>Dense → ReLU → Dense (2 → 3 → 1) nach Keup &amp; Helias (2022)</i></p>
 
   <div class="formula" id="fnet"></div>
-  <div class="formula formula-mat" id="fmat"></div>
+  <div id="fmat" class="fmat"></div>
+  <div id="lossline" class="lossline">Loss: – · Acc: –</div>
 
   <div id="status" class="status good">…</div>
 
@@ -147,27 +169,49 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-/* ------------------ Formel ------------------ */
+/* ------------------ Formel (abstrakt) + editierbare Matrizen ------------------ */
 temml.render(String.raw`y \;=\; A_2\, \mathrm{relu}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet'));
-let formulaDirty = true, lastFormulaAt = 0;
-function netFormulaTex(label) {
-  const P = getParams();
-  const f = v => { const t = v.toFixed(2); return t === '-0.00' ? '0.00' : t; };
-  const A2 = "\\begin{bmatrix} " + f(P.A2[0]) + " & " + f(P.A2[1]) + " & " + f(P.A2[2]) + " \\end{bmatrix}";
-  const A1 = "\\begin{bmatrix} " + f(P.A1[0][0]) + " & " + f(P.A1[0][1]) + " \\\\ " +
-             f(P.A1[1][0]) + " & " + f(P.A1[1][1]) + " \\\\ " +
-             f(P.A1[2][0]) + " & " + f(P.A1[2][1]) + " \\end{bmatrix}";
-  const B1 = "\\begin{bmatrix} " + f(P.B1[0]) + " \\\\ " + f(P.B1[1]) + " \\\\ " + f(P.B1[2]) + " \\end{bmatrix}";
-  const XY = "\\begin{bmatrix} x \\\\ y \\end{bmatrix}";
-  const lb = (m, n) => (label ? "\\underbrace{" + m + "}_{" + n + "}" : m);
-  return "\\hat{y}\\;=\\;" + lb(A2, 'A_2') + "\\;\\mathrm{relu}\\!\\big(\\;" +
-         lb(A1, 'A_1') + "\\;" + XY + "\\;+\\;" + lb(B1, 'B_1') + "\\;\\big)\\;+\\;" + lb(f(P.B2), 'B_2');
+const EDITABLE = new Set(['a1x','a1y','a2x','a2y','a3x','a3y','b1','b2','b3','r1','r2','r3','rb']);
+function mkTok(t) { const s = document.createElement('span'); s.className = 'matstatic'; s.textContent = t; return s; }
+function cellInput(param) {
+  const c = document.createElement('input');
+  c.type = 'number'; c.step = '0.01'; c.min = '-2'; c.max = '2';
+  c.className = 'cell'; c.id = 'cell-' + param; c.dataset.param = param;
+  c.addEventListener('input', () => {
+    const v = parseFloat(c.value);
+    if (isNaN(v)) return;
+    set(param, v);
+    if (!training && !animating) refreshAll();
+  });
+  return c;
 }
-function renderFormula() {
-  const el = document.getElementById('fmat');
-  if (!el) return;
-  try { temml.render(netFormulaTex(true), el); }
-  catch (e) { try { temml.render(netFormulaTex(false), el); } catch (e2) {} }
+function matBox(label, rows, cols, cells) {
+  const box = document.createElement('div'); box.className = 'matbox';
+  const grid = document.createElement('div'); grid.className = 'mat';
+  grid.style.gridTemplateColumns = 'repeat(' + cols + ',auto)';
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const tok = cells[r][c];
+    grid.append(EDITABLE.has(tok) ? cellInput(tok) : mkTok(tok));
+  }
+  box.append(grid);
+  if (label) { const l = document.createElement('div'); l.className = 'matlbl'; l.textContent = label; box.append(l); }
+  return box;
+}
+function buildFormulaDOM() {
+  const el = document.getElementById('fmat'); if (!el) return;
+  el.textContent = '';
+  const frag = document.createDocumentFragment();
+  const sp = (t, cls) => { const s = document.createElement('span'); s.className = cls; s.textContent = t; frag.append(s); };
+  sp('ŷ = ', 'fm-pre');
+  frag.append(matBox('A2', 1, 3, [['r1','r2','r3']]));
+  sp('· ', 'fm-op'); sp('relu(', 'fm-fn');
+  frag.append(matBox('A1', 3, 2, [['a1x','a1y'],['a2x','a2y'],['a3x','a3y']]));
+  frag.append(matBox('', 2, 1, [['x'],['y']]));
+  sp(' + ', 'fm-op');
+  frag.append(matBox('B1', 3, 1, [['b1'],['b2'],['b3']]));
+  sp(') + ', 'fm-op');
+  frag.append(matBox('B2', 1, 1, [['rb']]));
+  el.append(frag);
 }
 
 /* ------------------ Daten (2D-Egg, fix 2000 Punkte) ------------------ */
@@ -193,7 +237,7 @@ function generateData() {
 const $ = id => document.getElementById(id);
 const val = id => +$(id).value;
 const on = id => $(id).checked;
-const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; formulaDirty = true; };
+const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; };
 
 function getParams() {
   const A1 = [[val('a1x'), val('a1y')], [val('a2x'), val('a2y')], [val('a3x'), val('a3y')]];
@@ -273,10 +317,6 @@ function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
-  if (formulaDirty && performance.now() - lastFormulaAt > 120) {
-    formulaDirty = false; lastFormulaAt = performance.now();
-    renderFormula();
-  }
 }
 
 /* ------------------ Hidden Layer berechnen ------------------ */
@@ -516,6 +556,8 @@ let autoFit = true; // Readout-Bias automatisch auf perfekte Trennung halten
 function updateAllLabels() {
   for (const id of ['a1x', 'a1y', 'b1', 'a2x', 'a2y', 'b2', 'a3x', 'a3y', 'b3', 'r1', 'r2', 'r3', 'rb']) {
     $('v' + id).textContent = val(id).toFixed(2);
+    const c = $('cell-' + id);
+    if (c && document.activeElement !== c) c.value = val(id).toFixed(2);
   }
   for (let i = 1; i <= 3; i++) {
     document.querySelector('.neuron[data-i="' + i + '"]').classList.toggle('off', !on('n' + i));
@@ -541,7 +583,6 @@ document.querySelectorAll('#sidebar input').forEach(inp => {
   inp.addEventListener('input', () => {
     if (training || animating) return;
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
-    formulaDirty = true;
     refreshAll();
   });
 });

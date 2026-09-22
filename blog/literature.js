@@ -3859,6 +3859,34 @@ window.bibData = {
 		author: "Arthur Cayley",
 		year: 1858
 	},
+	"matrix_wiki": {
+		title: "Matrix (mathematics)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Matrix_(mathematics)",
+		alternativetitle: "Matrix (mathematics) — definition, operations, and history (Sylvester coined 'matrix' in 1850; Cayley's 1858 memoir)"
+	},
+	"tensor_wiki": {
+		title: "Tensor",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Tensor",
+		alternativetitle: "Tensor — definition, history (Hamilton 1846, Voigt 1898, Ricci-Curbastro & Levi-Civita 1900), and operations"
+	},
+	"einstein_notation_wiki": {
+		title: "Einstein notation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Einstein_notation",
+		alternativetitle: "Einstein notation (Einstein summation convention: a repeated index implies a sum)"
+	},
+	"numpy_broadcasting": {
+		title: "Broadcasting",
+		author: "NumPy developers",
+		year: 2026,
+		url: "https://numpy.org/doc/stable/user/basics.broadcasting.html",
+		alternativetitle: "NumPy user guide — Broadcasting: how arrays with different shapes combine"
+	},
 	"gpt2": {
 		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
 		title: "Language Models are Unsupervised Multitask Learners",
