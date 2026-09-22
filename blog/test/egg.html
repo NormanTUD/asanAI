@@ -545,15 +545,28 @@ function updateFoldPanel(B1o) {
   const P = getParams();
   const chord = chooseChord(P, B1o);
   foldChord = chord;
-  const m = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
+  const m = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1o); // χ① (Layer 1)
   $('foldChi').textContent = m.chi.toFixed(3);
   $('foldR1').textContent = m.r1; $('foldR2').textContent = m.r2;
   $('foldReg').textContent = regionCount(P, B1o);
-  $('foldSeq').textContent = 'Aktivierungsmuster: ' + m.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
-  $('foldNote').textContent = m.chi < 0.02
-    ? '1 Hidden-Layer ⇒ dH(π₁,·) monoton ⇒ χ ≈ 0 (konvex, Lemma 1). Echte Space-Folds brauchen ≥ 2 Hidden-Layer.'
-    : 'Pfad ist nicht-konvex — dH(π₁,·) sinkt zwischendurch (Space-Fold, Fig. 4).';
-  drawFoldPath(m);
+  $('foldSeq').textContent = 'Muster Layer ①: ' + m.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+  if (useLayer2) {
+    const mt = chiTotal(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
+    const ml2 = chiLayer2(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
+    $('foldL2').textContent = 'χ① = ' + m.chi.toFixed(3) + '   ·   χ② = ' + ml2.chi.toFixed(3) + '   ·   χ①∘② = ' + mt.chi.toFixed(3);
+    $('foldL2').style.display = '';
+    $('foldSeq2').style.display = '';
+    $('foldSeq2').textContent = 'Muster Layer ② (Gesamt): ' + mt.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+    drawFoldPath(mt);
+    $('foldNote').textContent = mt.chi < 0.02
+      ? 'Kein Space-Fold auf diesem Pfad — W2/B2 anpassen (eine „hump"-Zeile erzeugt einen Falzrückgang).'
+      : 'Space-Fold! dH(π₁,·) sinkt zwischendurch (nicht-konvex, Fig. 4). Gesamtfaltung χ①∘② = ' + mt.chi.toFixed(3) + '.';
+  } else {
+    $('foldL2').style.display = 'none';
+    $('foldSeq2').style.display = 'none';
+    drawFoldPath(m);
+    $('foldNote').textContent = '1 Hidden-Layer ⇒ dH(π₁,·) monoton ⇒ χ① ≈ 0 (konvex, Lemma 1). Schalte den 2. Hidden-Layer ein für echte Space-Folds.';
+  }
 }
 
 /* ------------------ 3D Szene (Three.js) ------------------ */
