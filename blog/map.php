@@ -195,6 +195,12 @@ html:not(.dark) #atlas-stage {
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
 .atlas-tour .cap-text { font-size: .9rem; line-height: 1.55; margin-top: 6px; color: var(--atlas-ink); }
 .atlas-tour .cap-text a { color: var(--atlas-accent); text-decoration: underline; text-underline-offset: 2px; }
+.atlas-tour .tour-img {
+	display: block; margin: 10px auto 0;
+	width: 210px; max-width: 62%; height: 120px;
+	object-fit: cover; border-radius: 10px;
+	border: 1px solid var(--atlas-line); box-shadow: var(--atlas-shadow);
+}
 .atlas-tour .tour-bar {
 	display: flex; align-items: center; gap: 10px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
@@ -277,6 +283,7 @@ html:not(.dark) #atlas-stage {
 		<div class="atlas-tour" id="atlas-tour">
 			<div class="tour-card">
 				<div class="cap-era" id="tour-era"></div>
+				<img class="tour-img" id="tour-img" alt="" style="display:none">
 				<div class="cap-text" id="tour-text"></div>
 			</div>
 			<div class="tour-bar">

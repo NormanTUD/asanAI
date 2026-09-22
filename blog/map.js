@@ -183,7 +183,7 @@ function bootAtlas() {
 
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, earthTex, moon, sun, planets = [];
-	var dotMesh, dotInstance = [];
+	var dotMesh, dotInstance = [], dotBaseColor = [];
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp;
 	var raycaster = new THREE.Raycaster();
@@ -587,6 +587,7 @@ function bootAtlas() {
 			var d = state.dots[i];
 			dotInstance[i] = d;
 			col.set(TYPE_COLOR[d.type] || '#ffffff');
+			dotBaseColor[i] = col.clone();
 			dotMesh.setColorAt(i, col);
 			dummy.position.set(0, 0, -9999);
 			dummy.updateMatrix();
@@ -706,6 +707,31 @@ function bootAtlas() {
 				(t.path && t.path.indexOf(id) !== -1);
 			ln.material.opacity = hit ? 0.95 : (ln.visible ? 0.15 : 0.15);
 		});
+	}
+
+	var spotHi = new THREE.Color();
+	function setSpotHighlight(id) {
+		if (!dotMesh || !dotMesh.instanceColor) { return; }
+		var hot = findDot(id);
+		var hotIdx = hot ? state.dots.indexOf(hot) : -1;
+		for (var i = 0; i < dotInstance.length; i++) {
+			var base = dotBaseColor[i];
+			if (!base) { continue; }
+			if (i === hotIdx) {
+				spotHi.copy(base).lerp(new THREE.Color(0xffffff), 0.45);
+			} else {
+				spotHi.copy(base).multiplyScalar(0.28);
+			}
+			dotMesh.setColorAt(i, spotHi);
+		}
+		dotMesh.instanceColor.needsUpdate = true;
+	}
+	function clearSpotHighlight() {
+		if (!dotMesh || !dotMesh.instanceColor) { return; }
+		for (var i = 0; i < dotInstance.length; i++) {
+			if (dotBaseColor[i]) { dotMesh.setColorAt(i, dotBaseColor[i]); }
+		}
+		dotMesh.instanceColor.needsUpdate = true;
 	}
 
 	// ── camera ────────────────────────────────────────────────
@@ -1100,11 +1126,11 @@ function bootAtlas() {
 	var JOURNEY = [
 		{ d: 3.2, era: 'Earth', text: 'The home of almost every idea in this course.' },
 		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Before we pull away, a tiny selection — only a handful of the thousands of steps that led to language models, but the ones that matter most.' },
-		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
-		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
-		{ d: 3.2, face: latLngToVec3(40.72, -74.41, EARTH_R), era: 'The transistor · 1947', text: 'Bell Labs, New Jersey. Bardeen, Brattain and Shockley’s transistor shrinks computation from a room to a grain — and lets it scale to billions on a chip.' },
-		{ d: 3.2, face: latLngToVec3(42.44, -76.5, EARTH_R), era: 'The perceptron · 1958', text: 'Frank Rosenblatt’s Perceptron at Cornell — the first machine that learns from its own mistakes by adjusting its weights. The ancestor of every neural network.' },
-		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
+		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
+		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
+		{ d: 3.2, face: latLngToVec3(40.72, -74.41, EARTH_R), dot: 'person-john-bardeen', img: 'first_transistor.jpg', era: 'The transistor · 1947', text: 'Bell Labs, New Jersey. Bardeen, Brattain and Shockley’s transistor shrinks computation from a room to a grain — and lets it scale to billions on a chip.' },
+		{ d: 3.2, face: latLngToVec3(42.44, -76.5, EARTH_R), dot: 'person-dean-edmonds', img: 'FrankRosenblattWiringPerceptron.jpg', era: 'The perceptron · 1958', text: 'Frank Rosenblatt’s Perceptron at Cornell — the first machine that learns from its own mistakes by adjusting its weights. The ancestor of every neural network.' },
+		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), dot: 'person-ashish-vaswani', era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
@@ -1120,6 +1146,7 @@ function bootAtlas() {
 			root: document.getElementById('atlas-tour'),
 			era: document.getElementById('tour-era'),
 			text: document.getElementById('tour-text'),
+			img: document.getElementById('tour-img'),
 			dots: document.getElementById('tour-dots'),
 			fill: document.getElementById('tour-timer-fill'),
 			prev: document.getElementById('tour-prev'),
@@ -1154,6 +1181,14 @@ function bootAtlas() {
 		var els = tourEls();
 		els.era.textContent = s.era;
 		els.text.innerHTML = s.text;
+		if (s.img && els.img) {
+			els.img.src = s.img;
+			els.img.alt = s.era;
+			els.img.style.display = 'block';
+		} else if (els.img) {
+			els.img.style.display = 'none';
+		}
+		if (s.dot) { setSpotHighlight(s.dot); } else { clearSpotHighlight(); }
 		var dotEls = els.dots.children;
 		for (var k = 0; k < dotEls.length; k++) {
 			dotEls[k].classList.toggle('on', k === i);
@@ -1174,6 +1209,9 @@ function bootAtlas() {
 		tour.active = false;
 		state.touring = false;
 		tourEls().root.classList.remove('open');
+		var img = tourEls().img;
+		if (img) { img.style.display = 'none'; }
+		clearSpotHighlight();
 		state.tD = 3.2; state.tTheta = -0.4; state.tPhi = 1.15;
 	}
 	function nextStep() {
