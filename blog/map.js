@@ -340,7 +340,16 @@ function bootAtlas() {
 		});
 		var geo = new THREE.SphereGeometry(MOON_R, 40, 30);
 		moon = new THREE.Mesh(geo, mat);
-		moon.position.set(MOON_POS[0], MOON_POS[1], MOON_POS[2]);
+		// park the Moon inside the initial view: a bit to the right and
+		// above the Earth, along the camera's own look direction
+		var dir = new THREE.Vector3(
+			Math.sin(state.phi) * Math.cos(state.theta),
+			Math.cos(state.phi),
+			Math.sin(state.phi) * Math.sin(state.theta)
+		);
+		var right = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
+		var moonDir = dir.clone().addScaledVector(right, 0.55).add(new THREE.Vector3(0, 0.32, 0)).normalize();
+		moon.position.copy(moonDir.multiplyScalar(MOON_DIST));
 		scene.add(moon);
 	}
 
@@ -363,16 +372,9 @@ function bootAtlas() {
 		}));
 		scene.add(starField);
 
-		// CMB backdrop (equirectangular 2:1 map on a UV sphere)
-		var cmbTex = new THREE.TextureLoader().load('wmap_cmb.png');
-		cmb = new THREE.Mesh(
-			new THREE.SphereGeometry(CMB_R, 64, 48),
-			new THREE.MeshBasicMaterial({
-				map: cmbTex, side: THREE.BackSide, transparent: true,
-				opacity: 0, depthWrite: false
-			})
-		);
-		scene.add(cmb);
+		buildFilaments();
+		buildCmbPhoto();
+		buildQuestionWorld();
 
 		// galaxies (stylized spirals)
 		galaxyGroup = new THREE.Group();
@@ -397,7 +399,7 @@ function bootAtlas() {
 			map: makeRadialTexture('rgba(255,250,230,1)', 'rgba(255,190,90,.5)', 256),
 			transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
 		}));
-		sunSp.position.set(SUN_DIST, 6, -20);
+		sunSp.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
 		sunSp.scale.set(26, 26, 1);
 		scene.add(sunSp);
 
@@ -420,6 +422,118 @@ function bootAtlas() {
 			planets.push(pm);
 			scene.add(pm);
 		}
+	}
+
+	// ── deep space: filaments, CMB photo, the question world ──
+	var filamentGroup, filamentLines, filamentNodes = [];
+	var cmbPhoto;
+	var questionGroup, questionSprites = [];
+
+	function buildFilaments() {
+		// a procedurally generated cosmic web: ~110 glowing nodes in a
+		// shell, each linked to its two nearest neighbours
+		filamentGroup = new THREE.Group();
+		var N = 110, nodes = [];
+		for (var i = 0; i < N; i++) {
+			var u = Math.random() * 2 - 1;
+			var a = Math.random() * Math.PI * 2;
+			var s = Math.sqrt(1 - u * u);
+			var r = FILAMENT_R[0] + Math.random() * (FILAMENT_R[1] - FILAMENT_R[0]);
+			nodes.push(new THREE.Vector3(s * Math.cos(a) * r, u * r * 0.75, s * Math.sin(a) * r));
+		}
+		var seen = {}, pts = [];
+		for (i = 0; i < N; i++) {
+			var dists = [];
+			for (var j = 0; j < N; j++) {
+				if (j === i) { continue; }
+				dists.push([nodes[i].distanceTo(nodes[j]), j]);
+			}
+			dists.sort(function (p, q) { return p[0] - q[0]; });
+			for (var k = 0; k < 2; k++) {
+				var lo = Math.min(i, dists[k][1]), hi = Math.max(i, dists[k][1]);
+				var key = lo + '-' + hi;
+				if (seen[key]) { continue; }
+				seen[key] = 1;
+				pts.push(nodes[lo].clone(), nodes[hi].clone());
+			}
+		}
+		filamentLines = new THREE.LineSegments(
+			new THREE.BufferGeometry().setFromPoints(pts),
+			new THREE.LineBasicMaterial({
+				color: 0x6f86c8, transparent: true, opacity: 0, depthWrite: false
+			})
+		);
+		filamentGroup.add(filamentLines);
+
+		var nodeTex = makeRadialTexture('rgba(200,215,255,.9)', 'rgba(120,150,255,.3)', 64);
+		nodes.forEach(function (p) {
+			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
+				map: nodeTex, transparent: true, opacity: 0, depthWrite: false
+			}));
+			sp.position.copy(p);
+			var sc = 6 + Math.random() * 14;
+			sp.scale.set(sc, sc, 1);
+			filamentNodes.push(sp);
+			filamentGroup.add(sp);
+		});
+		scene.add(filamentGroup);
+	}
+
+	function buildCmbPhoto() {
+		// the WMAP map shown as a flat 2:1 photograph floating in front
+		// of the camera — no 3D sphere, just the photo
+		var tex = new THREE.TextureLoader().load('wmap_cmb.png');
+		cmbPhoto = new THREE.Mesh(
+			new THREE.PlaneGeometry(830, 415),
+			new THREE.MeshBasicMaterial({
+				map: tex, transparent: true, opacity: 0,
+				depthWrite: false, side: THREE.DoubleSide
+			})
+		);
+		scene.add(cmbPhoto);
+	}
+
+	function makeQuestionTexture() {
+		var c = document.createElement('canvas');
+		c.width = c.height = 128;
+		var g = c.getContext('2d');
+		g.font = '900 100px Georgia, serif';
+		g.textAlign = 'center';
+		g.textBaseline = 'middle';
+		g.fillStyle = '#ffffff';
+		g.fillText('?', 64, 70);
+		return new THREE.CanvasTexture(c);
+	}
+
+	function buildQuestionWorld() {
+		// the final zoom: a field of question marks, one giant "?" where
+		// everything used to be
+		questionGroup = new THREE.Group();
+		var qTex = makeQuestionTexture();
+		var n = 240;
+		for (var i = 0; i < n; i++) {
+			var u = Math.random() * 2 - 1;
+			var a = Math.random() * Math.PI * 2;
+			var s = Math.sqrt(1 - u * u);
+			var r = QUESTION_R[0] + Math.random() * (QUESTION_R[1] - QUESTION_R[0]);
+			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
+				map: qTex, color: 0x9fb4ff,
+				transparent: true, opacity: 0, depthWrite: false
+			}));
+			sp.position.set(s * Math.cos(a) * r, u * r * 0.8, s * Math.sin(a) * r);
+			var sc = 14 + Math.random() * 26;
+			sp.scale.set(sc, sc, 1);
+			questionSprites.push(sp);
+			questionGroup.add(sp);
+		}
+		var big = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: qTex, color: 0xcdd8ff,
+			transparent: true, opacity: 0, depthWrite: false
+		}));
+		big.scale.set(140, 140, 1);
+		questionSprites.push(big);
+		questionGroup.add(big);
+		scene.add(questionGroup);
 	}
 
 	// ── dots (instanced) ──────────────────────────────────────
@@ -453,8 +567,7 @@ function bootAtlas() {
 				on = on && (state.year >= (d.year || 0) - 2);
 			}
 			if (on) {
-				var r = d.isMoon ? MOON_R : EARTH_R;
-				var base = latLngToVec3(d.lat, d.lng, r + 0.004);
+				var base = dotWorldPos(d, 0.004);
 				dummy.position.copy(base);
 				var sc = d.isAuthor ? 0.7 : 1.0;
 				dummy.scale.set(sc, sc, sc);
@@ -485,9 +598,16 @@ function bootAtlas() {
 		}
 		return pts;
 	}
+	function dotWorldPos(d, pad) {
+		var r = (d.isMoon ? MOON_R : EARTH_R) + pad;
+		var base = latLngToVec3(d.lat, d.lng, r);
+		if (d.isMoon) {
+			return moon.position.clone().add(base);
+		}
+		return base;
+	}
 	function dotPos(d) {
-		var r = d.isMoon ? MOON_R : EARTH_R;
-		return latLngToVec3(d.lat, d.lng, r + 0.01);
+		return dotWorldPos(d, 0.01);
 	}
 	function findDot(id) {
 		for (var i = 0; i < state.dots.length; i++) {
