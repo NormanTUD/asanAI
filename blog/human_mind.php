@@ -3,7 +3,7 @@
 COURSE_METADATA:
 title: The Mind That Built Machines
 description: The human cognitive, psychological, and evolutionary prerequisites of AI — the mind that made computation possible.
-icon: &#129504;
+icon: 🤔
 part: 6
 order: 3
 color: text-secondary
