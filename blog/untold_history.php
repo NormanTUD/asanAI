@@ -243,6 +243,14 @@ Archaic humans including Neanderthals and Denisovans diverged from the lineage l
 </div>
 
 <div class="md">
+**The first art was a portrait of a woman.** The oldest undisputed images of a person are two small figurines carved in the Aurignacian, some 40,000 to 35,000 years ago, in caves of the Swabian Jura and the Danube valley. The **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being \cite[Conard, 2009]{conard2009hohlefels}; the **Venus of Galgenberg**, nicknamed "Fanny", a serpentine statuette from the Stratzing excavation in Austria, is among the oldest accepted of its kind \cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}. Before any cave painting and before any writing, a human first carved a human — the earliest prototype of art, and of representing the world at all.
+
+\marginfig{venus_hohle_fels.jpg}{The Venus of Hohle Fels, a mammoth-ivory figurine about 6 cm tall, from the Hohle Fels cave near Schelklingen, Germany (40,000 to 35,000 years old). [Photo: Ramessos, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:VenusHohlefels2.jpg)}
+
+\marginfig{venus_galgenberg.jpg}{The Venus of Galgenberg, nicknamed "Fanny", in green serpentine (7.2 cm), from the Stratzing site in Lower Austria (about 32,000 to 36,000 years old). [Photo: Aiwok, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG)}
+</div>
+
+<div class="md">
 ## From Mythos to Logos: The Mental Landscape That Made Computation Thinkable
 
 The physical prerequisites for an LLM are the silicon, the cables, the cooling. But there is a deeper layer: the *mental* prerequisites, the ways of thinking that made it possible to conceive of a machine that reasons. These ways of thinking were not invented for computation. They were invented to explain the sky, to justify the rule of kings, to calculate the tides, and to win a game of dice. Their displacement is total: the same logic that classified Greek gods now classifies the layers of a neural network; the same probability that priced a 17th-century gamble now trains a language model.

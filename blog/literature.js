@@ -14855,5 +14855,24 @@ window.bibData = {
 		year: 2026,
 		url: "https://www.ecmwf.int/",
 		alternativetitle: "ECMWF"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Earliest art  (untold_history.php)
+	 *  The oldest human depictions: Venus of Hohle Fels (mammoth ivory,
+	 *  40-35 kya) and Venus of Galgenberg (serpentine, 32-36 kya).
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"conard2009hohlefels": {
+		title: "A female figurine from the basal Aurignacian of Hohle Fels Cave in southwestern Germany",
+		author: "Nicholas J. Conard",
+		year: 2009,
+		url: "https://doi.org/10.1038/nature07995",
+		alternativetitle: "Conard, 2009 (Nature 459:248-252)"
+	},
+	"neugebauer1989galgenberg": {
+		title: "Zum Neufund einer weiblichen Statuette an der Aurignac-Station Stratzing/Krems-Rehberg, Niederösterreich",
+		author: "Christine Neugebauer-Maresch",
+		year: 1989,
+		url: "https://doi.org/10.11588/ger.1989.76355",
+		alternativetitle: "Neugebauer-Maresch, 1989 (Germania 67:551-559)"
 	}
 };
