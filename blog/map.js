@@ -611,6 +611,7 @@ function bootAtlas() {
 				var base = dotWorldPos(d, 0.004);
 				dummy.position.copy(base);
 				var sc = d.isAuthor ? 0.7 : 1.0;
+				if (i === spotTargetIdx) { sc *= 2.8; }
 				dummy.scale.set(sc, sc, sc);
 				shown++;
 			} else {
