@@ -11,12 +11,12 @@ var __atlasBooted = false;
 function bootAtlas() {
 	'use strict';
 
-	var stage = document.getElementById('atlas-stage');
+	var wrap = document.getElementById('atlas-canvas-wrap');
 	var canvas = document.getElementById('atlas-canvas');
-	if (!stage || !canvas || !window.THREE) { return Promise.resolve(); }
+	if (!wrap || !canvas || !window.THREE) { return Promise.resolve(); }
 
 	function stageSize() {
-		return { w: stage.clientWidth || 800, h: stage.clientHeight || 600 };
+		return { w: wrap.clientWidth || 800, h: wrap.clientHeight || 600 };
 	}
 	function resizeToStage() {
 		var s = stageSize();
@@ -28,12 +28,15 @@ function bootAtlas() {
 	// ── constants ─────────────────────────────────────────────
 	var DEG = Math.PI / 180;
 	var EARTH_R = 1;
-	var MOON_R = 0.27, MOON_POS = [7.2, 0.6, 2.4];
-	var SUN_DIST = 85;
+	var MOON_R = 0.27;
+	var MOON_DIST = 3.4;         // Moon's distance from Earth's center
+	var SUN_POS = [85, 6, -20];
 	var GALAXY_R = 210;
-	var CMB_R = 520;
+	var FILAMENT_R = [260, 440]; // cosmic-web shell
+	var QUESTION_R = [380, 600]; // "?" world shell
+	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
 	var STAR_R = 470;
-	var MIN_D = 1.45, MAX_D = 470;
+	var MIN_D = 1.45, MAX_D = 620;
 
 	var THEME = {};
 	function readTheme() {
