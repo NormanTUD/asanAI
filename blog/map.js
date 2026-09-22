@@ -1098,8 +1098,13 @@ function bootAtlas() {
 
 	// ── cosmic journey ────────────────────────────────────────
 	var JOURNEY = [
-		{ d: 3.2, era: 'Earth', text: 'The home of every idea in this course.' },
-		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Use the time slider to travel through history.' },
+		{ d: 3.2, era: 'Earth', text: 'The home of almost every idea in this course.' },
+		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Before we pull away, a tiny selection — only a handful of the thousands of steps that led to language models, but the ones that matter most.' },
+		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
+		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
+		{ d: 3.2, face: latLngToVec3(40.72, -74.41, EARTH_R), era: 'The transistor · 1947', text: 'Bell Labs, New Jersey. Bardeen, Brattain and Shockley’s transistor shrinks computation from a room to a grain — and lets it scale to billions on a chip.' },
+		{ d: 3.2, face: latLngToVec3(42.44, -76.5, EARTH_R), era: 'The perceptron · 1958', text: 'Frank Rosenblatt’s Perceptron at Cornell — the first machine that learns from its own mistakes by adjusting its weights. The ancestor of every neural network.' },
+		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
@@ -1142,7 +1147,7 @@ function bootAtlas() {
 		if (s.face) {
 			var v = (s.face === 'moon')
 				? moon.position.clone()
-				: new THREE.Vector3(s.face[0], s.face[1], s.face[2]);
+				: (s.face.isVector3 ? s.face : new THREE.Vector3(s.face[0], s.face[1], s.face[2]));
 			state.tTheta = Math.atan2(v.z, v.x);
 			state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		}
