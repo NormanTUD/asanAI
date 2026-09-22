@@ -26,7 +26,7 @@
   }
   #sidebar {
     width: 400px; padding: 16px; background: #23232b;
-    overflow-y: auto; border-right: 1px solid #333;
+    overflow-y: auto; overflow-x: hidden; border-right: 1px solid #333;
   }
   #main { flex: 1; display: flex; flex-direction: column; }
   #canvas-row { flex: 1; display: flex; }
@@ -44,6 +44,7 @@
   h2 { font-size: 12.5px; margin: 16px 0 6px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
   p, label { font-size: 12.5px; line-height: 1.5; }
   .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
+  .formula-mat { font-size: 13px; }
   .val { color: #50fa7b; font-family: monospace; }
   button {
     background: #6272a4; color: white; border: none;
@@ -59,10 +60,10 @@
   .neuron.off { opacity: 0.4; }
   .nhead { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 12.5px; }
   .nhead input { cursor: pointer; }
-  .wgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; }
-  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .wgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; min-width: 0; }
+  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; min-width: 0; }
   .wrow .wl { width: 30px; flex: none; font-size: 11px; color: #8be9fd; }
-  .wrow input[type=range] { flex: 1; width: auto; }
+  .wrow input[type=range] { flex: 1 1 0; width: auto; min-width: 0; }
   .wrow .val { width: 36px; flex: none; text-align: right; font-size: 11px; }
   .wrow .chk { flex: none; margin: 0; display: flex; align-items: center; }
   .legend { font-size: 11px; margin-top: 6px; }
@@ -76,6 +77,7 @@
   <p><i>Dense → ReLU → Dense (2 → 3 → 1) nach Keup &amp; Helias (2022)</i></p>
 
   <div class="formula" id="fnet"></div>
+  <div class="formula formula-mat" id="fmat"></div>
 
   <div id="status" class="status good">…</div>
 
@@ -117,8 +119,9 @@
     <div class="wrow"><span class="wl">bias</span><input type="range" id="rb" min="-2" max="2" step="0.01" value="-0.47"><span class="val" id="vrb"></span></div>
   </div>
 
+  <button id="btnRand">🎲 Zufall</button>
+  <button id="btnTrain">🧠 Alles trainieren</button>
   <button id="btnOpt">⚡ Optimal (Paper)</button>
-  <button id="btnTrain">🧠 Readout trainieren</button>
   <button id="btnFold">🎬 Falt-Animation</button>
 
   <div class="legend">
@@ -146,6 +149,26 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ------------------ Formel ------------------ */
 temml.render(String.raw`y \;=\; A_2\, \mathrm{relu}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet'));
+let formulaDirty = true, lastFormulaAt = 0;
+function netFormulaTex(label) {
+  const P = getParams();
+  const f = v => { const t = v.toFixed(2); return t === '-0.00' ? '0.00' : t; };
+  const A2 = "\\begin{bmatrix} " + f(P.A2[0]) + " & " + f(P.A2[1]) + " & " + f(P.A2[2]) + " \\end{bmatrix}";
+  const A1 = "\\begin{bmatrix} " + f(P.A1[0][0]) + " & " + f(P.A1[0][1]) + " \\\\ " +
+             f(P.A1[1][0]) + " & " + f(P.A1[1][1]) + " \\\\ " +
+             f(P.A1[2][0]) + " & " + f(P.A1[2][1]) + " \\end{bmatrix}";
+  const B1 = "\\begin{bmatrix} " + f(P.B1[0]) + " \\\\ " + f(P.B1[1]) + " \\\\ " + f(P.B1[2]) + " \\end{bmatrix}";
+  const XY = "\\begin{bmatrix} x \\\\ y \\end{bmatrix}";
+  const lb = (m, n) => (label ? "\\underbrace{" + m + "}_{" + n + "}" : m);
+  return "\\hat{y}\\;=\\;" + lb(A2, 'A_2') + "\\;\\mathrm{relu}\\!\\big(\\;" +
+         lb(A1, 'A_1') + "\\;" + XY + "\\;+\\;" + lb(B1, 'B_1') + "\\;\\big)\\;+\\;" + lb(f(P.B2), 'B_2');
+}
+function renderFormula() {
+  const el = document.getElementById('fmat');
+  if (!el) return;
+  try { temml.render(netFormulaTex(true), el); }
+  catch (e) { try { temml.render(netFormulaTex(false), el); } catch (e2) {} }
+}
 
 /* ------------------ Daten (2D-Egg, fix 2000 Punkte) ------------------ */
 const N = 2000;
@@ -170,7 +193,7 @@ function generateData() {
 const $ = id => document.getElementById(id);
 const val = id => +$(id).value;
 const on = id => $(id).checked;
-const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; };
+const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; formulaDirty = true; };
 
 function getParams() {
   const A1 = [[val('a1x'), val('a1y')], [val('a2x'), val('a2y')], [val('a3x'), val('a3y')]];
@@ -250,6 +273,10 @@ function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
+  if (formulaDirty && performance.now() - lastFormulaAt > 120) {
+    formulaDirty = false; lastFormulaAt = performance.now();
+    renderFormula();
+  }
 }
 
 /* ------------------ Hidden Layer berechnen ------------------ */
@@ -342,49 +369,110 @@ function bestB2() {
   return -(mi + mo) / 2;
 }
 
-/* ------------------ Perzeptron trainiert das Readout (r, bias) ------------------ */
-function trainPerceptron() {
-  const m = points.length;
-  let A2 = [1, 1, 1], B2 = bestB2();
-  const lr = 0.2;
-  for (let pass = 0; pass < 300; pass++) {
-    let errs = 0;
-    for (let i = 0; i < m; i++) {
-      const h0 = H[i * 3], h1 = H[i * 3 + 1], h2 = H[i * 3 + 2];
-      const y = labels[i] === 1 ? 1 : -1;
-      if (y * (A2[0] * h0 + A2[1] * h1 + A2[2] * h2 + B2) <= 0) {
-        A2[0] += lr * y * h0; A2[1] += lr * y * h1; A2[2] += lr * y * h2; B2 += lr * y; errs++;
-      }
-    }
-    if (errs === 0) break;
-  }
-  return { A2, B2 };
+/* ------------------ Netz trainieren (Adam + Random-Restarts) ------------------ */
+const CLIP = [2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2]; // pro Parameter (entspricht den Slider-Grenzen)
+function writeW(w) {
+  set('a1x', w[0]); set('a1y', w[1]); set('a2x', w[2]); set('a2y', w[3]); set('a3x', w[4]); set('a3y', w[5]);
+  set('b1', w[6]); set('b2', w[7]); set('b3', w[8]);
+  set('r1', w[9]); set('r2', w[10]); set('r3', w[11]); set('rb', w[12]);
 }
+// Zufälliger Start: A1-Zeilen als zufällige Einheitsvektoren, Bias klein, Readout zufällig.
+function randomInit() {
+  const r = (a, b) => a + Math.random() * (b - a);
+  const row = () => { let x = r(-1, 1), y = r(-1, 1); const m = Math.hypot(x, y) || 1; return [x / m, y / m]; };
+  const r1 = row(), r2 = row(), r3 = row();
+  return [r1[0], r1[1], r2[0], r2[1], r3[0], r3[1], r(-.2, .2), r(-.2, .2), r(-.2, .2), r(-.5, .5), r(-.5, .5), r(-.5, .5), r(-.5, .5)];
+}
+function netForward(w, x, y) {
+  const z1 = [0, 0, 0], h = [0, 0, 0];
+  for (let k = 0; k < 3; k++) { z1[k] = w[k * 2] * x + w[k * 2 + 1] * y + w[6 + k]; h[k] = z1[k] > 0 ? z1[k] : 0; }
+  const z2 = w[9] * h[0] + w[10] * h[1] + w[11] * h[2] + w[12];
+  return { z1, h, z2 };
+}
+function netGrad(w) { // Backprop-Gradient + Genauigkeit in einem Durchlauf
+  const g = new Array(13).fill(0);
+  let ok = 0;
+  for (let i = 0; i < points.length; i++) {
+    const [x, y] = points[i], t = labels[i];
+    const { z1, h, z2 } = netForward(w, x, y);
+    if ((z2 > 0 ? 1 : 0) === t) ok++;
+    const dz2 = 1 / (1 + Math.exp(-z2)) - t;
+    g[9] += dz2 * h[0]; g[10] += dz2 * h[1]; g[11] += dz2 * h[2]; g[12] += dz2;
+    for (let k = 0; k < 3; k++) { const dz1 = z1[k] > 0 ? dz2 * w[9 + k] : 0; g[k * 2] += dz1 * x; g[k * 2 + 1] += dz1 * y; g[6 + k] += dz1; }
+  }
+  const inv = 1 / points.length;
+  for (let j = 0; j < 13; j++) g[j] *= inv;
+  return { g, acc: ok / points.length * 100 };
+}
+
 let training = false;
-function trainReadout() {
-  if (training || !H) return;
+// Ein Adam-Lauf (ohne Restarts) bis Plateau oder Erfolg -> liefert den besten Punkt.
+function adamRun(w0, maxSteps) {
+  const w = w0.slice();
+  const m = new Array(13).fill(0), v = new Array(13).fill(0);
+  let t = 0, best = -1, bestW = w.slice(), stuck = 0;
+  const LR = 0.05, b1 = 0.9, b2 = 0.999, eps = 1e-8;
+  for (let s = 0; s < maxSteps; s++) {
+    t++;
+    const { g, acc } = netGrad(w);
+    for (let j = 0; j < 13; j++) {
+      m[j] = b1 * m[j] + (1 - b1) * g[j];
+      v[j] = b2 * v[j] + (1 - b2) * g[j] * g[j];
+      w[j] -= LR * (m[j] / (1 - Math.pow(b1, t))) / (Math.sqrt(v[j] / (1 - Math.pow(b2, t))) + eps);
+      if (w[j] > CLIP[j]) w[j] = CLIP[j];
+      if (w[j] < -CLIP[j]) w[j] = -CLIP[j];
+    }
+    if (acc > best) { best = acc; bestW = w.slice(); stuck = 0; } else stuck++;
+    if (acc >= 99.3) return { w: bestW, acc: best };
+    if (stuck > 120) break;
+  }
+  return { w: bestW, acc: best };
+}
+// Offline-Lösung: Adam + Random-Restarts (unsichtbar), bis >= 99,3 % gefunden.
+function findSolution(w0) {
+  let best = { w: w0.slice(), acc: -1 };
+  const candidates = [w0];
+  for (let i = 0; i < 8; i++) candidates.push(randomInit());
+  for (const c of candidates) {
+    const r = adamRun(c, 240);
+    if (r.acc > best.acc) best = r;
+    if (best.acc >= 99.3) break;
+  }
+  return best.w;
+}
+function startTraining() {
+  if (training || animating || !points.length) return;
   training = true; autoFit = false;
+  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
   set('re1', true); set('re2', true); set('re3', true);
-  const target = trainPerceptron();
-  const cur = [val('r1'), val('r2'), val('r3')], curMag = Math.hypot(...cur) || 1;
-  const startW = cur.map(v => v / curMag);
-  const tMag = Math.hypot(target.A2[0], target.A2[1], target.A2[2]) || 1;
-  const endW = target.A2.map(v => v / tMag);   // Einheit-normalisiert (Ebene & Klassifizierung bleiben gleich)
-  const endB = target.B2 / tMag;
-  const startB = val('rb');
   $('btnTrain').disabled = true;
+  const W0 = randomInit();
+  writeW(W0); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+  statusEl.className = 'status bad'; statusEl.textContent = '🎲 Zufällig initialisiert – lerne …';
+  const Wf = findSolution(W0); // offline, ohne sichtbare Sprünge
   let t = 0;
-  const step = () => {
-    t += 0.06; const f = Math.min(1, t);
-    set('r1', startW[0] + (endW[0] - startW[0]) * f);
-    set('r2', startW[1] + (endW[1] - startW[1]) * f);
-    set('r3', startW[2] + (endW[2] - startW[2]) * f);
-    set('rb', startB + (endB - startB) * f);
-    refreshAll();
-    if (t < 1) requestAnimationFrame(step);
-    else { training = false; $('btnTrain').disabled = false; }
+  const frame = () => {
+    t += 0.02; const f = Math.min(1, t);
+    const W = W0.map((v, i) => v + (Wf[i] - v) * f);
+    writeW(W); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+    if (f < 1) {
+      statusEl.className = 'status bad';
+      statusEl.textContent = '🧠 Trainiere… ' + netGrad(W).acc.toFixed(1) + ' %';
+      requestAnimationFrame(frame);
+    } else {
+      writeW(Wf); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+      training = false; $('btnTrain').disabled = false; updateStatus();
+    }
   };
-  step();
+  frame();
+}
+function randomize() {
+  if (training) return;
+  autoFit = false;
+  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+  set('re1', true); set('re2', true); set('re3', true);
+  writeW(randomInit());
+  refreshAll();
 }
 
 /* ------------------ Optimal-Preset (Paper Fig. 2c) ------------------ */
@@ -404,7 +492,7 @@ function setOptimal() {
 /* ------------------ Falt-Animation ------------------ */
 let animating = false;
 function animateFold() {
-  if (animating) return;
+  if (animating || training) return;
   animating = true; autoFit = true;
   $('btnFold').disabled = true;
   set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
@@ -451,13 +539,16 @@ function refreshAll() {
 
 document.querySelectorAll('#sidebar input').forEach(inp => {
   inp.addEventListener('input', () => {
+    if (training || animating) return;
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
+    formulaDirty = true;
     refreshAll();
   });
 });
 
 $('btnOpt').addEventListener('click', setOptimal);
-$('btnTrain').addEventListener('click', trainReadout);
+$('btnTrain').addEventListener('click', startTraining);
+$('btnRand').addEventListener('click', randomize);
 $('btnFold').addEventListener('click', animateFold);
 
 /* ------------------ Start ------------------ */
