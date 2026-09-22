@@ -2227,12 +2227,23 @@ function sendHeight() {
       console.log('%c[TB-DEBUG]','font-weight:bold;font-size:13px');
       console.log('BUILD: '+report.ver);
       console.log('math='+report.env.mathLevel+' · '+report.env.vw+'x'+report.env.vh+(report.env.readerMode?' · reader-mode':'')+(report.env.reducedMotion?' · reduced-motion':'')+' · lesson='+(report.env.lessonId||''));
-      console.log('course box: '+(box?report.courseStatusBox.position+' in '+report.courseStatusBox.parent:'ABSENT'));
+      let csbInfo='ABSENT';
+      if(box){
+        const csb=report.courseStatusBox; const csp=csb.panel;
+        csbInfo=csb.position+' z='+csb.zIndex+' in '+csb.parent+' | prev='+csb.prevSibling+' next='+csb.nextSibling;
+        csbInfo+= csb.open ? (' | OPEN panel z='+(csp?csp.zIndex:'?')+' pe='+(csp?csp.pointerEvents:'?')) : ' | closed';
+      }
+      console.log('course box: '+csbInfo);
       console.log('blocks='+blocks.length+' (collapsed='+blocks.filter(b=>b.state.collapsed).length+', dimmed='+blocks.filter(b=>b.state.dimmed).length+')');
       console.log('STUCK CLIPS = '+stuckClips.length); stuckClips.forEach(s=>console.log('   · '+s.label+' -> offsetH '+s.offsetH+' vs maxH '+s.maxH));
       console.log('COVERED BADGES (tap blocked) = '+coveredBadges.length); coveredBadges.forEach(s=>console.log('   · '+s.label+' -> blocked by '+s.coveredBy));
+      blocks.filter(b=>b.recollapse&&/MISSING|STALE/.test(b.recollapse.where||'')).forEach(b=>console.log('   ! FOLD-AWAY BUTTON '+b.recollapse.where+' on '+b.label));
+      console.log('FOLD-AWAY BUTTONS = '+blocks.filter(b=>b.recollapse&&b.recollapse.rect).length+' (orphans='+recollapseEls.length+')'); recollapseEls.forEach(s=>console.log('   ! orphan fold-away button in '+(s.parent||'?')));
+      console.log('GROUP BADGES = '+groupBadges.length); groupBadges.forEach(gb=>console.log('   · '+gb.memberCount+' members ['+(gb.hit&&gb.hit.blocked?'BLOCKED by '+gb.hit.top:'hit ok')+']: '+gb.memberLabels.join(' / ')));
+      console.log('TUCKED RUNS = '+tuckedRuns.length+' (grouped='+tuckedRuns.filter(t=>t.grouped).length+')'); tuckedRuns.forEach(t=>console.log('   · size '+t.size+(t.grouped?' [GROUPED]':' [own badge]')+': '+t.labels.join(' / ')));
       console.log('OVERLAPPING PAIRS = '+overlaps.length); overlaps.slice(0,12).forEach(o=>console.log('   · '+o.a+'  x  '+o.b+'  = '+o.area+'px^2'));
       if(report.revealTest) console.log('REVEAL TEST: '+JSON.stringify(report.revealTest));
+      if(report.groupRevealTest&&report.groupRevealTest.present) console.log('GROUP REVEAL TEST: '+JSON.stringify(report.groupRevealTest));
       console.log('captured errors = '+report.errors.length); report.errors.forEach(e=>console.log('   ! '+e));
       const s=JSON.stringify(report,null,1);
       try{ await navigator.clipboard.writeText(s); console.log('%c✅ JSON kopiert -> zurückschicken','color:#10b981;font-weight:bold'); }

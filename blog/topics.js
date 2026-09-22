@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-tuck-all-demos-fade30';
+	window.__TB_VER = '2026-09-22-csb-end+recollapse-end+group-runs';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -2103,29 +2103,78 @@
 	    the badge is detached before revealing so a stale re-dispatch can
 	    never double-run. */
 	function revealGroupBadge(badge) {
+		let revealed = 0, failed = 0;
 		try {
 			const members = (badge && badge._groupMembers) ? badge._groupMembers.slice() : [];
 			if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+			// Per-member isolation: one failing member must not strand the
+			// rest — every reveal is attempted independently.
 			members.forEach(function (b) {
-				if (!b || !b.classList) return;
-				if (b.classList.contains('topic-block-revealed')) return;
-				b._tbUserRevealed = true; // reader chose to see it → keep it revealed
-				revealBlock(b, true);
+				try {
+					if (!b || !b.classList) { failed++; return; }
+					if (b.classList.contains('topic-block-revealed')) return;
+					b._tbUserRevealed = true; // reader chose to see it → keep it revealed
+					revealBlock(b, true);
+					revealed++;
+				} catch (mb) {
+					failed++;
+					if (DEBUG) derr('revealGroupBadge member failed:', mb);
+				}
 			});
-			if (DEBUG) dlog('group badge revealed ' + members.length + ' sections');
-			// Safety net: if any member refused to reveal (state drift), a
-			// fresh rebuild will re-badges the remainder instead of leaving
-			// it unreachable.
-			rebuildGroupBadges();
+			if (DEBUG) dlog('group badge: revealed ' + revealed + ' of ' + members.length
+				+ (failed ? ' (' + failed + ' FAILED)' : '') + ' sections');
 		} catch (e) {
+			failed++;
 			if (DEBUG) derr('revealGroupBadge:', e);
 		}
+		// Safety net — ALWAYS runs (outside the try): if any member refused
+		// to reveal (state drift, exception), a fresh rebuild re-badges the
+		// remainder (group or solo) instead of leaving it unreachable.
+		try { rebuildGroupBadges(); } catch (e) {
+			if (DEBUG) derr('revealGroupBadge rebuild:', e);
+		}
+	}
+
+	/** Reveal every tucked section that contains `el`. Anchor links (TOC
+	    entries, footnote/source jumps, in-text references) must never land
+	    on hidden content: the reader navigated to a specific spot, so each
+	    covering section is unfolded and STAYS unfolded (with its fold-away
+	    button) until they fold it again. Returns the number of sections
+	    unfolded, so callers can delay their scroll until the clip animation
+	    has settled (~240 ms). */
+	function revealAncestorsOf(el) {
+		let revealed = 0;
+		try {
+			let node = (el && el.closest) ? el.closest('.topic-block') : null;
+			while (node) {
+				if (node.classList.contains('topic-block-collapsed')
+						&& !node.classList.contains('topic-block-revealed')) {
+					node._tbUserRevealed = true;
+					revealBlock(node, true);
+					revealed++;
+				}
+				node = node.parentElement ? node.parentElement.closest('.topic-block') : null;
+			}
+			if (revealed) {
+				// A revealed member may have broken up a grouped run —
+				// rebuild so the remaining run keeps one correct badge.
+				try { rebuildGroupBadges(); } catch (e) {
+					if (DEBUG) derr('revealAncestorsOf rebuild:', e);
+				}
+			}
+		} catch (e) {
+			if (DEBUG) derr('revealAncestorsOf:', e);
+		}
+		return revealed;
 	}
 
 	/** Rebuild ALL grouped badges from the current block states. Safe to
 	    call any time; a no-op when fewer than two tucked sections are
 	    consecutive. Member badges are only removed from blocks that end up
 	    in a run of ≥2, so single tucked sections keep their own badge. */
+	let _gVisTok = 0, _gGrpTok = 0; // per-pass element markers (object-key
+	// collision guard: plain {} keyed by element objects would alias every
+	// element to "[object Object]")
 	function rebuildGroupBadges() {
 		try {
 			document.querySelectorAll('.topic-block-group-badge').forEach(function (g) {
@@ -2133,26 +2182,49 @@
 			});
 			const collapsed = Array.prototype.slice.call(
 				document.querySelectorAll('.topic-block.topic-block-collapsed'));
-			if (collapsed.length < 2) return 0;
-			const grouped = {};
+			const vTok = ++_gVisTok, gTok = ++_gGrpTok;
+			const isVisited = function (n) { return n.__gvis === vTok; };
+			const markVisited = function (n) { n.__gvis = vTok; };
+			const inGroup = function (n) { return n.__ggrp === gTok; };
+			const markGroup = function (n) { n.__ggrp = gTok; };
 			let groups = 0;
-			collapsed.forEach(function (first) {
-				if (grouped[first]) return;
-				grouped[first] = true;
-				const run = [first];
-				let nxt = nextTuckedInRun(first);
-				while (nxt) {
-					if (grouped[nxt]) break; // already absorbed (defensive)
-					grouped[nxt] = true;
-					run.push(nxt);
-					nxt = nextTuckedInRun(nxt);
-				}
-				if (run.length < 2) return; // single section → its own badge
-				run.forEach(function (b) {
-					const badge = b.querySelector ? b.querySelector(':scope > .topic-block-fade-badge') : null;
-					if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+			if (collapsed.length >= 2) {
+				collapsed.forEach(function (first) {
+					if (isVisited(first)) return;
+					markVisited(first);
+					const run = [first];
+					let nxt = nextTuckedInRun(first);
+					while (nxt) {
+						if (isVisited(nxt)) break; // already absorbed (defensive)
+						markVisited(nxt);
+						run.push(nxt);
+						nxt = nextTuckedInRun(nxt);
+					}
+					if (run.length < 2) return; // single section → its own badge
+					run.forEach(function (b) {
+						markGroup(b);
+						const badge = b.querySelector ? b.querySelector(':scope > .topic-block-fade-badge') : null;
+						if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+					});
+					if (placeGroupBadge(run)) groups++;
 				});
-				if (placeGroupBadge(run)) groups++;
+			}
+			// Self-heal: every collapsed block that is NOT inside a grouped
+			// run must carry its own reveal badge. Guards against state drift
+			// and against a failed group reveal leaving a section unreachable
+			// (badge removed for the group, but the block still collapsed).
+			collapsed.forEach(function (b) {
+				if (inGroup(b)) return;
+				const hasBadge = b.querySelector ? !!b.querySelector(':scope > .topic-block-fade-badge') : true;
+				if (hasBadge) return;
+				try {
+					const spec = b._tbSpec || blockSpec(b);
+					const score = b._tbScore || { state: 'off', why: b._tbWhy || 'category', reason: b._tbReason || 'tucked away' };
+					setBanner(b, spec, score);
+					if (DEBUG) dlog('self-healed missing reveal badge:', (spec && spec.label) || b.tagName);
+				} catch (he) {
+					if (DEBUG) derr('self-heal badge failed:', he);
+				}
 			});
 			if (DEBUG && groups) dlog('rebuildGroupBadges: ' + groups + ' grouped run(s)');
 			return groups;
@@ -2167,7 +2239,7 @@
 	    get desynced from the live badge element; a delegated bubble handler on
 	    document always fires when a `.topic-block-fade-badge` is actually
 	    clicked, so "tap to reveal" can never be a dead button. */
-		function ensureBadgeDelegation() {
+	function ensureBadgeDelegation() {
 		if (document.__tbBadgeDeleg) return;
 		document.__tbBadgeDeleg = true;
 		document.addEventListener('click', function (ev) {
@@ -2433,6 +2505,30 @@
 			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]');
 		managed.forEach(function (block) {
 			if (block.classList.contains('optional')) return; // the manual .optional system owns these
+			if (block.classList.contains('course-tile')) {
+				// Index tiles carry data-mathlevel too, but they are NOT
+				// sections: tucking them would clip them to the 168px
+				// section height and cut off their text. Their own path is
+				// regroupTuckedTiles() (off tiles move to the per-part
+				// "Not shown" box) + dimCourseTiles() (partial match).
+				// One-time cleanup of stale tuck state left behind by older
+				// versions of this file (clipped box, injected badges):
+				block.classList.remove('topic-block-collapsed', 'topic-block--clipped',
+					'topic-block-revealed', 'topic-block-dimmed', 'topic-block-partial',
+					'topic-block-alt-active');
+				clearClipInline(block);
+				['.topic-block-fade-badge', '.topic-block-alt-reveal', '.topic-block-recollapse']
+					.forEach(function (sel) {
+						const stale = block.querySelector(':scope > ' + sel);
+						if (stale) stale.remove();
+					});
+				let sib = block.nextElementSibling; // stale sibling button (up to 2 ahead)
+				for (let i = 0; i < 2 && sib; i++, sib = sib.nextElementSibling) {
+					if (sib.classList && sib.classList.contains('topic-block-recollapse')) { sib.remove(); break; }
+					if (sib.classList && sib.classList.contains('course-tile')) break;
+				}
+				return;
+			}
 			if (!block.classList.contains('topic-block')) block.classList.add('topic-block');
 			const isMd = block.classList.contains('md');
 			if (isMd && !tuckMd) {
@@ -2722,8 +2818,7 @@
 		body.textContent = '';
 		const GROUPS = [
 			{ why: 'math',      label: 'Needs more math comfort', icon: '∫' },
-			{ why: 'interests', label: 'Outside your interests',  icon: '✦' },
-			{ why: 'category',  label: 'Tone switched off',       icon: '✕' }
+			{ why: 'interests', label: 'Outside your interests',  icon: '✦' }
 		];
 		const buckets = GROUPS.map(function (g) { return { g: g, list: [] }; });
 		const fallback = { label: 'Not quite matching your settings', icon: '…', list: [] };
@@ -3306,9 +3401,33 @@
 		isLearned: isLearned,
 		depsMet: depsMet,
 		toggleLearned: toggleLearned,
+		revealAncestorsOf: revealAncestorsOf,
 		courseOrder: courseOrder,
 		courseIndexOf: courseIndexOf,
 		countLearned: countLearned,
-		onChange: function (fn) { document.addEventListener('topics:change', fn); }
+		onChange: function (fn) { document.addEventListener('topics:change', fn); },
+		// Test/diagnostic hooks (private by convention). Lets the Node
+		// integration test — and future tbDebug tooling — drive the tuck /
+		// reveal / placement code without a browser. NOT part of the public
+		// contract; page code must not depend on it.
+		_internals: {
+			applyVisibility: applyVisibility,
+			showLearnedUI: showLearnedUI,
+			settleLearnedButton: settleLearnedButton,
+			settleCourseStatusBox: settleCourseStatusBox,
+			rebuildGroupBadges: rebuildGroupBadges,
+			ensureRecollapse: ensureRecollapse,
+			removeRecollapse: removeRecollapse,
+			findRecollapse: findRecollapse,
+			sectionEndBefore: sectionEndBefore,
+			nextTuckedInRun: nextTuckedInRun,
+			isTuckTransparent: isTuckTransparent,
+			revealGroupBadge: revealGroupBadge,
+			placeGroupBadge: placeGroupBadge,
+			revealBlock: revealBlock,
+			collapseBlock: collapseBlock,
+			setBanner: setBanner,
+			blockSpec: blockSpec
+		}
 	};
 })();

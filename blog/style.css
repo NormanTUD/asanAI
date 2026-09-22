@@ -5106,7 +5106,7 @@ html.dark .course-hero {
 
 .course-tiles {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 1rem;
 }
 
@@ -11067,7 +11067,7 @@ math {
 }
 .tph-group-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 10px;
 }
 .ta-part-hidden-body .course-tile { opacity: 1; filter: none; pointer-events: auto; }

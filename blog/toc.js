@@ -302,7 +302,20 @@ function toc() {
 			if (typeof revealAncestorOptionalBlocks === 'function') {
 				revealAncestorOptionalBlocks(header);
 			}
-			header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			// A TOC entry pointing into a tucked section must unfold it
+			// first; the ~240 ms clip animation needs to settle before the
+			// smooth scroll, otherwise the target lands on the fold.
+			var unfolded = 0;
+			if (window.BlogTopics && window.BlogTopics.revealAncestorsOf) {
+				unfolded = window.BlogTopics.revealAncestorsOf(header) || 0;
+			}
+			if (unfolded) {
+				setTimeout(function () {
+					header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}, 280);
+			} else {
+				header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
 		});
 
 		row.appendChild(link);

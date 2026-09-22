@@ -589,6 +589,15 @@ function bindIframeSafeLinks() {
 			// --- 2. Reveal any ancestor category blocks that were toggled off ---
 			revealAncestorCategoryBlocks(targetEl);
 
+			// --- 2b. Unfold any ancestor tucked section (math/interests
+			// gate) — a source/citation jump must never land on hidden text.
+			// The ~240 ms unfold animation needs to settle before the
+			// smooth scroll, so the wait below is lengthened when this fired.
+			let unfoldedTucked = 0;
+			if (window.BlogTopics && window.BlogTopics.revealAncestorsOf) {
+				unfoldedTucked = window.BlogTopics.revealAncestorsOf(targetEl) || 0;
+			}
+
 			// --- 3. Force-run any lazy-init section that contains the target ---
 			forceInitLazySections(targetEl);
 
@@ -604,8 +613,9 @@ function bindIframeSafeLinks() {
 				scrollTarget = ancestorQuote;
 			}
 
-			// Small delay to let DOM reflow after reveals
-			requestAnimationFrame(() => {
+			// Small delay to let DOM reflow after reveals (longer when a
+			// tucked section is still unfolding).
+			const afterReveals = () => {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 				sonarWhenVisible(targetEl);
@@ -656,7 +666,12 @@ function bindIframeSafeLinks() {
 						});
 					}, 850);
 				}, 1800);
-			});
+			};
+			if (unfoldedTucked) {
+				setTimeout(afterReveals, 280);
+			} else {
+				requestAnimationFrame(afterReveals);
+			}
 		} else {
 			console.warn(`Target element #${link.getAttribute('data-target')} not found — link has no valid destination and is being hidden.`);
 			// GUARDRAIL: a citation/backlink that points nowhere is
