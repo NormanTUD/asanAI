@@ -2468,17 +2468,14 @@
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 
-		// Keep the "mark as learned" button + course status box at the end
-		// of the lesson body now that footnotes/sources may have been
-		// appended after them (post-render). No-op if already in place, so
-		// a click never shifts either element.
-		settleLearnedButton();
-		settleCourseStatusBox();
-
 		// Group consecutive tucked sections behind one "reveal all" badge
 		// (lists the section headings it covers). Must run AFTER all block
-		// states are settled and badge titles are filled in.
+		// states are settled and badge titles are filled in — and BEFORE the
+		// end-of-article settle calls, so the learned button / course box
+		// re-pin themselves to the very end if a group badge landed there.
 		rebuildGroupBadges();
+		settleLearnedButton();
+		settleCourseStatusBox();
 	}
 
 	/* ── 6b. Math alternative text ──────────────────────────────

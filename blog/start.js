@@ -2074,8 +2074,25 @@ function sendHeight() {
           reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches, readerMode:html.classList.contains('reader-mode'), dark:html.classList.contains('dark'),
           mathLevel:(window.BlogTopics&&BlogTopics.getMathLevel)?BlogTopics.getMathLevel():null,
           navCurrent:nav.current, navTotal:(nav.modules||[]).length, ua:navigator.userAgent },
-        courseStatusBox: box ? { position:getComputedStyle(box).position, parent:box.parentElement?(box.parentElement.id||box.parentElement.tagName):null, rect:rect(box) } : { present:false }
+        courseStatusBox: box ? {
+          position:getComputedStyle(box).position,
+          zIndex:getComputedStyle(box).zIndex,
+          parent:box.parentElement?(box.parentElement.id||box.parentElement.tagName):null,
+          prevSibling:box.previousElementSibling?(box.previousElementSibling.id||box.previousElementSibling.tagName):null,
+          nextSibling:box.nextElementSibling?(box.nextElementSibling.id||box.nextElementSibling.tagName):null,
+          open:box.classList.contains('is-open'),
+          panel: (function(){ const p=box.querySelector('.csb-panel'); if(!p) return null;
+            const cs=getComputedStyle(p); const h=p.getBoundingClientRect().height;
+            return { position:cs.position, zIndex:cs.zIndex, pointerEvents:cs.pointerEvents, height:r(h), visible: h>0&&cs.opacity!=='0', hit: h>0?hitTop(p):null }; })(),
+          rect:rect(box)
+        } : { present:false }
       };
+      const NO_TUCK_IDS={ 'footnotes':1,'sources':1,'footnotes-section':1,'sources-section':1,'contents':1,'loader':1,'toc':1,'course-status':1,'course-status-box':1,'topic-learned-btn':1,'sidenotes-rail':1,'curiosity-score':1 };
+      const isTuckedB=el=>!!(el&&el.classList&&el.classList.contains('topic-block')&&el.classList.contains('topic-block-collapsed'));
+      const isTransparent=el=>!!(el&&((el.tagName==='SCRIPT'||el.tagName==='STYLE'||el.tagName==='TEMPLATE')||(el.classList&&el.classList.contains('topic-demo-tucked'))));
+      const runEndOf=b=>{ let s=b.nextElementSibling; while(s){ if(s.tagName==='SCRIPT'||s.tagName==='STYLE'||s.tagName==='TEMPLATE'){s=s.nextElementSibling;continue;} if(s.tagName==='SECTION') return s; if(s.id&&NO_TUCK_IDS[s.id]) return s; if(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]')) return s; if(s.matches&&s.matches('h1,h2,h3,h4,h5,h6')) return s; s=s.nextElementSibling; } return null; };
+      const nextInRun=b=>{ let s=b.nextElementSibling; while(s){ if(isTransparent(s)){s=s.nextElementSibling;continue;} return isTuckedB(s)?s:null; } return null; };
+      const recollapseEls=[], groupBadges=[], tuckedRuns=[];
       const sel='.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]';
       const refs=[]; document.querySelectorAll(sel).forEach(el=>{ if(el.classList) refs.push(el); });
       document.querySelectorAll('canvas, .hott-plot, [id$="-plot"], #vector-plot, #movable-vector-plot, #section-bw, #toc').forEach(el=>{ if(!refs.includes(el)) refs.push(el); });
@@ -2092,6 +2109,24 @@ function sendHeight() {
         if(badgeEl){ badge={ present:true, text:badgeEl.textContent.trim().slice(0,64), rect:rect(badgeEl), hidden:getComputedStyle(badgeEl).visibility==='hidden', pe:getComputedStyle(badgeEl).pointerEvents, hit:hitTop(badgeEl) }; if(badge.hit&&badge.hit.blocked) coveredBadges.push({label:name(el), coveredBy:badge.hit.top}); }
         const offsetH=el.offsetHeight, scrollH=el.scrollHeight, clientH=el.clientHeight;
         const clipBroken = clipped && maxH!=='none' && offsetH > (parseFloat(maxH)||0)+2;
+        // Fold-away button audit: it must live as a SIBLING at the section
+        // end (after the block's trailing demos, before the next heading).
+        // A copy still INSIDE the block div is stale (mid-section bug).
+        let rec=null;
+        try{
+          const asChild=el.querySelector(':scope > .topic-block-recollapse');
+          let sibBtn=null, s=el.nextElementSibling;
+          while(s){
+            if(s.classList&&s.classList.contains('topic-block-recollapse')){ sibBtn=s; break; }
+            if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])) break;
+            if(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]')) break;
+            if(s.matches&&s.matches('h1,h2,h3,h4,h5,h6')) break;
+            s=s.nextElementSibling;
+          }
+          const found=asChild||sibBtn;
+          if(found) rec={ where:asChild?'STALE-child-of-block':(sibBtn?'section-end':'?'), rect:rect(found), hit:hitTop(found) };
+          else if(el._tbUserRevealed===true) rec={ where:'MISSING (user-revealed block has no fold-away button)' };
+        }catch(re){ rec={ where:'error: '+(re&&re.message) }; }
         const e={ label:name(el), md:cls.includes('md'),
           mathlevel:el.getAttribute('data-mathlevel')||el.getAttribute('data-math-level')||null, title:el.getAttribute('data-optionaltitle')||null,
           state:{collapsed, clipped, dimmed:cls.includes('topic-block-dimmed'), revealed:cls.includes('topic-block-revealed'), alt:cls.includes('topic-block-alt-active')},
@@ -2099,11 +2134,51 @@ function sendHeight() {
           computed:{ maxH, overflow:c.overflow, opacity:c.opacity, position:c.position },
           rect:rect(el), offsetH, scrollH, clientH,
           clipBroken, contentOverflows:scrollH>clientH+2,
+          sectionEnd:runEndOf(el)?name(runEndOf(el)):null,
           media:{ canvas:!!el.querySelector('canvas'), svg:!!el.querySelector('svg'), media:!!el.querySelector('iframe,video,audio,embed,object') },
-          badge };
+          badge, recollapse:rec };
         blocks.push(e);
         if(clipBroken) stuckClips.push({label:e.label, offsetH, maxH});
       });
+      // Recollapse buttons that are detached from any section (orphans)
+      document.querySelectorAll('.topic-block-recollapse').forEach(el=>{
+        const asChild=el.parentElement&&el.parentElement.querySelector(':scope > .topic-block-recollapse')===el;
+        const block=asChild?el.parentElement:null;
+        let owned=false;
+        if(!asChild){ let s=el.previousElementSibling;
+          while(s){ if(s.classList&&s.classList.contains('topic-block')){ owned=true; break; }
+            if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])||(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]'))||(s.matches&&s.matches('h1,h2,h3,h4,h5,h6'))) break;
+            s=s.previousElementSibling; } }
+        if(owned||block) return;
+        recollapseEls.push({ kind:'orphan', parent:el.parentElement?(el.parentElement.id||el.parentElement.tagName):null, rect:rect(el) });
+      });
+      // Grouped reveal badges: members, titles, placement, hit-test
+      document.querySelectorAll('.topic-block-group-badge').forEach(el=>{
+        const members=(el._groupMembers||[]);
+        groupBadges.push({
+          text:el.textContent.trim().slice(0,160),
+          memberCount:members.length,
+          memberLabels:members.map(name),
+          parent:el.parentElement?(el.parentElement.id||el.parentElement.tagName):null,
+          boundaryAfter:(function(){ let s=el.nextElementSibling;
+            const seen=[];
+            while(s){ seen.push(name(s)); if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])||(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]'))||(s.matches&&s.matches('h1,h2,h3,h4,h5,h6'))) return s&&name(s); s=s.nextElementSibling; }
+            return 'END-OF-PARENT (after: '+seen.slice(0,3).join(', ')+')'; })(),
+          rect:rect(el), hit:hitTop(el)
+        });
+      });
+      // Tucked runs (consecutive collapsed sections) — the grouping unit
+      {
+        const collapsed=[...document.querySelectorAll('.topic-block.topic-block-collapsed')];
+        const seen={};
+        collapsed.forEach(b=>{
+          if(seen[b]) return;
+          const run=[b]; let n=nextInRun(b);
+          while(n){ if(seen[n]) break; seen[n]=1; run.push(n); n=nextInRun(n); }
+          seen[b]=1;
+          tuckedRuns.push({ size:run.length, grouped:run.length>=2, labels:run.map(name) });
+        });
+      }
       const lm=[]; refs.forEach(el=>lm.push({name:name(el), rect:rect(el)}));
       if(box) lm.push({name:'#course-status-box', rect:rect(box)});
       const overlaps=[];
@@ -2133,9 +2208,21 @@ function sendHeight() {
             clickChanged:(before.state!==afterClick.state)||before.h!==afterClick.h,
             afterManual, manualWorked:afterManual.h>before.h+50
           };
-        } else report.revealTest={note:'no collapsed block with a badge found'};
+          } else report.revealTest={note:'no collapsed block with a badge found'};
+        // Grouped badge test (if present): one tap must reveal the WHOLE run.
+        const g=document.querySelector('.topic-block-group-badge');
+        if(g){
+          const countC=()=>document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+          const beforeG=countC();
+          g.click(); await sleep(900);
+          const afterG=countC();
+          report.groupRevealTest={ present:true, members:g._groupMembers?g._groupMembers.length:null,
+            collapsedBefore:beforeG, collapsedAfter:afterG, revealed:beforeG-afterG,
+            ok:afterG<beforeG };
+        } else report.groupRevealTest={present:false};
       }
       report.blocks=blocks; report.stuckClips=stuckClips; report.coveredBadges=coveredBadges;
+      report.recollapseOrphans=recollapseEls; report.groupBadges=groupBadges; report.tuckedRuns=tuckedRuns;
       report.overlaps=overlaps.slice(0,30); report.errors=window.__tbErrs.slice(-40);
       console.log('%c[TB-DEBUG]','font-weight:bold;font-size:13px');
       console.log('BUILD: '+report.ver);

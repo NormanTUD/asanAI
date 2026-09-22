@@ -176,7 +176,7 @@
   <div class="btnrow">
     <button id="btnFold">🎬 Falt-Animation</button>
     <button id="btnOpt">⚡ Optimal</button>
-    <button id="btnTrain">🧠 Alles trainieren</button>
+    <button id="btnTrain">🧠 Trainieren</button>
     <button id="btnRand">🎲 Zufall</button>
   </div>
 
@@ -948,7 +948,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v13'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v14'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -962,17 +962,29 @@ function bestB2for(w) { // besten Readout-Bias (analytischer Mittelpunkt, O(n)) 
   if (mi === -Infinity || mo === Infinity) return 0;
   return -(mi + mo) / 2;
 }
+function setTrainBtn(running) { $('btnTrain').textContent = running ? '⏹ Stop' : '🧠 Trainieren'; }
+function stopTraining() { // Training abbrechen – das Netz bleibt an der Stelle, an der es stoppt
+  if (!trainRaf) return;
+  cancelAnimationFrame(trainRaf); trainRaf = 0;
+  training = false;
+  $('btnTrain').disabled = false;
+  setTrainBtn(false);
+  refreshAll();
+}
 function startTraining() {
+  // Toggle: läuft es gerade -> stoppen; sonst -> starten.
+  if (training && trainRaf) { stopTraining(); return; }
   // ReLU  -> verlässlicher Morph zur Paper-Lösung (klar getrennt, 100 %).
   // Sonst -> echtes Adam-Backprop (bewegt die Gewichte, senkt den Loss).
   if (!points.length) return;
   if (anyAnim()) return;
   animating = false; training = false;
-  $('btnFold').disabled = false; $('btnTrain').disabled = false;
+  $('btnFold').disabled = false;
   training = true; autoFit = false;
-  $('btnTrain').disabled = true;
+  $('btnTrain').disabled = false; // bleibt klickbar = Stop
+  setTrainBtn(true);
   const W = currentW();
-  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
+  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; setTrainBtn(false); };
   if (useLayer2) { trainAdam2(done); return; } // 25 Parameter (Layer 1 + Layer 2 + Readout)
   if (actName() === 'relu') trainMorph(W, done);
   else trainAdam(W, done);
