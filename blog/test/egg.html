@@ -25,7 +25,7 @@
     background: #1a1a1f; color: #eaeaea; display: flex; height: 100vh; overflow: hidden;
   }
   #sidebar {
-    width: 600px; padding: 16px; background: #23232b;
+    width: 640px; padding: 16px; background: #23232b;
     overflow-y: auto; overflow-x: hidden; border-right: 1px solid #333;
   }
   #main { flex: 1; display: flex; flex-direction: column; }
@@ -38,7 +38,7 @@
     margin: 0; padding: 8px 12px; background: #2a2a33;
     font-size: 13px; font-weight: 500; border-bottom: 1px solid #333;
   }
-  canvas.plot2d { flex: 1; width: 100%; background: #fff; }
+  canvas.plot2d { flex: 1; width: 100%; background: #0f0f14; }
   #three-container { flex: 1; }
   h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
   h2 { font-size: 12.5px; margin: 16px 0 6px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
@@ -46,21 +46,34 @@
   .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
   .lossline { font-size: 11.5px; color: #8be9fd; font-family: monospace; margin: 2px 0 6px; }
   .fmat {
-    background: #111; padding: 10px 8px; border-radius: 4px; margin: 6px 0;
-    display: flex; align-items: center; flex-wrap: wrap; gap: 3px 4px; row-gap: 8px;
+    background: #111; padding: 10px 6px; border-radius: 4px; margin: 6px 0;
+    display: flex; align-items: center; flex-wrap: nowrap; gap: 2px 3px; overflow-x: auto;
   }
   .matbox { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; }
   .mat {
     display: grid; gap: 3px 5px; align-items: center;
     border-left: 2px solid #8be9fd; border-right: 2px solid #8be9fd; padding: 4px 6px;
   }
-  .matlbl { font-size: 10px; color: #ffb86c; font-style: italic; }
+  .ub {
+    position: relative; margin-top: 4px; padding-top: 9px;
+    border-bottom: 2px solid #8be9fd;
+  }
+  .ub::before {
+    content: ''; position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 6px solid #8be9fd;
+  }
+  .ub-lbl { font-size: 10px; color: #ffb86c; font-style: italic; text-align: center; }
+  .rowlbl {
+    font-size: 10px; font-style: italic; text-align: right; padding-right: 5px;
+    border-right: 1px solid #3a3a44; align-self: center;
+  }
   .fm-pre, .fm-op, .fm-fn { font-family: "Cambria Math", "STIX Two Math", Georgia, serif; color: #eaeaea; font-size: 14px; }
   .fm-pre { font-weight: 600; }
   .fm-fn { color: #50fa7b; }
   .matstatic { font-family: "Cambria Math", Georgia, serif; font-style: italic; color: #eaeaea; font-size: 13px; min-width: 10px; text-align: center; }
   .cell {
-    width: 46px; font-size: 11px; text-align: right; font-family: monospace;
+    width: 36px; font-size: 11px; text-align: right; font-family: monospace;
     background: #1b1b22; color: #50fa7b; border: 1px solid #333; border-radius: 2px; padding: 2px 3px;
   }
   .cell:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
@@ -147,8 +160,8 @@
   <button id="btnFold">🎬 Falt-Animation</button>
 
   <div class="legend">
-    <span class="dot" style="background:#e67e22"></span> innere Klasse (Kreis) &nbsp;
-    <span class="dot" style="background:#16a085"></span> äußere Klasse (Ring)
+    <span class="dot" style="background:#ffb142"></span> innere Klasse (Kreis) &nbsp;
+    <span class="dot" style="background:#19d3b5"></span> äußere Klasse (Ring)
   </div>
 </div>
 
@@ -173,29 +186,54 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 temml.render(String.raw`y \;=\; A_2\, \mathrm{relu}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet'));
 const EDITABLE = new Set(['a1x','a1y','a2x','a2y','a3x','a3y','b1','b2','b3','r1','r2','r3','rb']);
 function mkTok(t) { const s = document.createElement('span'); s.className = 'matstatic'; s.textContent = t; return s; }
+function applyCell(c) {
+  const param = c.dataset.param;
+  const v = parseFloat(c.value);
+  if (isNaN(v)) return;
+  if (['r1', 'r2', 'r3', 'rb'].includes(param)) autoFit = false;
+  set(param, v);
+  if (!training && !animating) refreshAll();
+}
 function cellInput(param) {
   const c = document.createElement('input');
   c.type = 'number'; c.step = '0.01'; c.min = '-2'; c.max = '2';
   c.className = 'cell'; c.id = 'cell-' + param; c.dataset.param = param;
-  c.addEventListener('input', () => {
-    const v = parseFloat(c.value);
-    if (isNaN(v)) return;
-    if (['r1', 'r2', 'r3', 'rb'].includes(param)) autoFit = false;
-    set(param, v);
-    if (!training && !animating) refreshAll();
+  c.addEventListener('input', () => applyCell(c));
+  c.addEventListener('keydown', (e) => {
+    const up = e.key === 'ArrowUp' || e.key === 'ArrowRight';
+    const dn = e.key === 'ArrowDown' || e.key === 'ArrowLeft';
+    if (!up && !dn) return;
+    e.preventDefault();
+    const d = (e.shiftKey ? 0.5 : 0.1) * (up ? 1 : -1);
+    const base = parseFloat(c.value); const cur = isNaN(base) ? 0 : base;
+    c.value = (Math.round((cur + d) * 100) / 100).toFixed(2);
+    applyCell(c);
   });
   return c;
 }
-function matBox(label, rows, cols, cells) {
+const NEURON_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
+function matBox(label, rows, cols, cells, rowLabels) {
   const box = document.createElement('div'); box.className = 'matbox';
   const grid = document.createElement('div'); grid.className = 'mat';
-  grid.style.gridTemplateColumns = 'repeat(' + cols + ',auto)';
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const tok = cells[r][c];
-    grid.append(EDITABLE.has(tok) ? cellInput(tok) : mkTok(tok));
+  grid.style.gridTemplateColumns = (rowLabels ? 'auto ' : '') + 'repeat(' + cols + ',auto)';
+  for (let r = 0; r < rows; r++) {
+    if (rowLabels) {
+      const lb = document.createElement('span'); lb.className = 'rowlbl';
+      lb.textContent = rowLabels[r]; lb.style.color = NEURON_COLORS[r] || '#ffb86c';
+      grid.append(lb);
+    }
+    for (let c = 0; c < cols; c++) {
+      const tok = cells[r][c];
+      grid.append(EDITABLE.has(tok) ? cellInput(tok) : mkTok(tok));
+    }
   }
   box.append(grid);
-  if (label) { const l = document.createElement('div'); l.className = 'matlbl'; l.textContent = label; box.append(l); }
+  if (label) {
+    const ub = document.createElement('div'); ub.className = 'ub';
+    const lbl = document.createElement('div'); lbl.className = 'ub-lbl'; lbl.textContent = label;
+    ub.append(lbl);
+    box.append(ub);
+  }
   return box;
 }
 function buildFormulaDOM() {
@@ -206,10 +244,10 @@ function buildFormulaDOM() {
   sp('ŷ = ', 'fm-pre');
   frag.append(matBox('A2', 1, 3, [['r1','r2','r3']]));
   sp('· ', 'fm-op'); sp('relu(', 'fm-fn');
-  frag.append(matBox('A1', 3, 2, [['a1x','a1y'],['a2x','a2y'],['a3x','a3y']]));
+  frag.append(matBox('A1', 3, 2, [['a1x','a1y'],['a2x','a2y'],['a3x','a3y']], ['N1','N2','N3']));
   frag.append(matBox('', 2, 1, [['x'],['y']]));
   sp(' + ', 'fm-op');
-  frag.append(matBox('B1', 3, 1, [['b1'],['b2'],['b3']]));
+  frag.append(matBox('B1', 3, 1, [['b1'],['b2'],['b3']], ['N1','N2','N3']));
   sp(') + ', 'fm-op');
   frag.append(matBox('B2', 1, 1, [['rb']]));
   el.append(frag);
@@ -258,7 +296,7 @@ const HP_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
 function draw2D() {
   const w = c2.width = c2.clientWidth;
   const h = c2.height = c2.clientHeight;
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#0f0f14';
   ctx.fillRect(0, 0, w, h);
   const scale = Math.min(w, h) * 0.4;
   const cx = w / 2, cy = h / 2;
@@ -266,7 +304,7 @@ function draw2D() {
 
   for (let i = 0; i < points.length; i++) {
     const [px, py] = toPx(points[i][0], points[i][1]);
-    ctx.fillStyle = labels[i] === 0 ? '#e67e22' : '#16a085';
+    ctx.fillStyle = labels[i] === 0 ? '#ffb142' : '#19d3b5';
     ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 2 * Math.PI); ctx.fill();
   }
 
