@@ -470,16 +470,34 @@ function patternCode(x, y, P, B1) { // Aktivierungsmuster = Vorzeichen der Prä-
   }
   return code;
 }
-// Gerader Pfad Γ → Hamming-Walk (π₁..πₙ). r1 = max dH zu Start, r2 = Summe der Bit-Flips, χ = 1 − r1/r2.
-function foldMetrics(x1, y1, x2, y2, st, P, B1) {
-  const codes = [];
-  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(patternCode(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1)); }
+// Hamming-Walk über eine Muster-Folge: r1 = max dH zu Start, r2 = Summe der Bit-Flips, χ = 1 − r1/r2.
+function foldMetricsFrom(codes) {
   const dh = codes.map(c => hamming(c, codes[0]));
   const dhstep = []; for (let i = 0; i < codes.length - 1; i++) dhstep.push(hamming(codes[i], codes[i + 1]));
   const r2 = dhstep.reduce((a, b) => a + b, 0);
   let r1 = 0, foldIdx = -1;
   for (let i = 0; i < dh.length; i++) { if (dh[i] > r1) r1 = dh[i]; if (i > 0 && dh[i] < dh[i - 1] && foldIdx < 0) foldIdx = i; }
   return { codes, dh, dhstep, r1, r2, chi: r2 > 0 ? 1 - r1 / r2 : 0, foldIdx };
+}
+// χ①: gerader Pfad im Input → Muster Layer 1 (konvex, Lemma 1 ⇒ χ≈0)
+function foldMetrics(x1, y1, x2, y2, st, P, B1) {
+  const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(patternCode(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1)); }
+  return foldMetricsFrom(codes);
+}
+function h1At(x, y, P, B1) { const B = B1 || P.B1; const o = [0, 0, 0]; for (let k = 0; k < 3; k++) { let v = P.A1[k][0] * x + P.A1[k][1] * y + B[k]; v = applyAct(v); o[k] = P.neuronOn[k] ? v : 0; } return o; }
+function pat2At(h1) { let c = 0; for (let k = 0; k < 3; k++) { const z = W2m[k * 3] * h1[0] + W2m[k * 3 + 1] * h1[1] + W2m[k * 3 + 2] * h1[2] + B2m[k]; if (neuronOn2[k] && z > 0) c |= (1 << (2 - k)); } return c; }
+// χ①∘② (Gesamt): gerader Pfad im Input → beide Layer → Muster Layer 2 (echter Space-Fold)
+function chiTotal(x1, y1, x2, y2, st, P, B1) {
+  const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(pat2At(h1At(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1))); }
+  return foldMetricsFrom(codes);
+}
+// χ② (Layer 2 isoliert): gerade Linie im H1-Raum → Muster Layer 2
+function chiLayer2(x1, y1, x2, y2, st, P, B1) {
+  const a = h1At(x1, y1, P, B1), b = h1At(x2, y2, P, B1); const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(pat2At([a[0] + (b[0] - a[0]) * lam, a[1] + (b[1] - a[1]) * lam, a[2] + (b[2] - a[2]) * lam])); }
+  return foldMetricsFrom(codes);
 }
 function regionCount(P, B1) { // Anzahl der Linear-Regionen (distincte Aktivierungsmuster) im Domain-Grid
   const seen = new Set(); const G = 40, lo = -1.2, hi = 1.2;
