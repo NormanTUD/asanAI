@@ -185,7 +185,7 @@ function bootAtlas() {
 	var renderer, scene, camera, earth, earthTex, moon, sun, planets = [];
 	var dotMesh, dotInstance = [];
 	var threadGroup, threadObjs = [];
-	var starField, galaxyGroup, atmosphere;
+	var starField, galaxyGroup, atmosphere, sunSp;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -406,9 +406,9 @@ function bootAtlas() {
 		scene.add(galaxyGroup);
 
 		// sun
-		var sunSp = new THREE.Sprite(new THREE.SpriteMaterial({
+		sunSp = new THREE.Sprite(new THREE.SpriteMaterial({
 			map: makeRadialTexture('rgba(255,250,230,1)', 'rgba(255,190,90,.5)', 256),
-			transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
 		}));
 		sunSp.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
 		sunSp.scale.set(26, 26, 1);
@@ -421,7 +421,7 @@ function bootAtlas() {
 			var pr = 0.5 + Math.random() * 1.6;
 			var pm = new THREE.Mesh(
 				new THREE.SphereGeometry(pr, 20, 14),
-				new THREE.MeshPhongMaterial({ color: palette[pi], shininess: 6 })
+				new THREE.MeshPhongMaterial({ color: palette[pi], shininess: 6, transparent: true, opacity: 0 })
 			);
 			var pa = Math.random() * Math.PI * 2;
 			var pd = 30 + pi * 9 + Math.random() * 6;
@@ -734,8 +734,11 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		var showPlanets = d > 12 && d < 380;
-		planets.forEach(function (p) { p.visible = showPlanets; });
+		// the solar system (sun + planets) is a mid-zoom view: it fades in
+		// as we pull off the Moon and is fully gone before the galaxies stop
+		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
+		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarO > 0.01; }
+		planets.forEach(function (p) { p.material.opacity = solarO; p.visible = solarO > 0.01; });
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
 		if (atmosphere) { atmosphere.material.opacity = atmO; }
 	}
