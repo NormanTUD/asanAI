@@ -311,4 +311,6 @@ html:not(.dark) #atlas-stage {
 *Starfield backdrop:* ESO's all-sky panorama of the Milky Way, \cite[ESO, 2009]{starfield_eso_image} — ESO / S. Brunier, CC BY 4.0 ([file](https://commons.wikimedia.org/wiki/File:ESO_-_Milky_Way.jpg)).
 
 *Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
+
+*Easter egg:* the faint "asparagus" drifting in the final question-mark slide nods to Junior Asparagus, a VeggieTales character who makes a brief cameo in \cite["Arrgh!", SpongeBob SquarePants (2000)]{spongebob_arrgh_asparagus}.
 </div>

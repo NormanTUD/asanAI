@@ -7881,6 +7881,18 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope planet textures (solsys_*.jpg)"
 	},
+	/* Easter egg in the Atlas question-mark world (map.js buildQuestionWorld):
+	 * a faint "asparagus" in the background nods to Junior Asparagus, the
+	 * VeggieTales character who makes a brief cameo in the SpongeBob
+	 * SquarePants episode "Arrgh!" (S1E17, aired 2000). A few question marks
+	 * are tinted red as part of the same gag. */
+	"spongebob_arrgh_asparagus": {
+		url: "https://en.wikipedia.org/wiki/List_of_SpongeBob_SquarePants_episodes",
+		title: "SpongeBob SquarePants, 'Arrgh!' (S1E17, aired 2000) — a VeggieTales parody featuring Junior Asparagus",
+		author: "Stephen Hillenburg (creator), Nickelodeon",
+		year: 2000,
+		alternativetitle: "'Arrgh!' — the 'asparagus' easter egg in the Atlas question world"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */

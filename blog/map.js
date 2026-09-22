@@ -228,79 +228,6 @@ function bootAtlas() {
 		return new THREE.CanvasTexture(c);
 	}
 
-	function drawEarthCanvas() {
-		var W = 2048, H = 1024;
-		var c = document.createElement('canvas');
-		c.width = W; c.height = H;
-		var g = c.getContext('2d');
-		g.fillStyle = THEME.ocean;
-		g.fillRect(0, 0, W, H);
-		var world = window.ATLAS_WORLD || { land: [], borders: [] };
-
-		function project(lat, lng) {
-			return [(lng + 180) / 360 * W, (90 - lat) / 180 * H];
-		}
-		function drawRing(ring, fill) {
-			// date-line aware: keep x continuous by shifting whole run when a
-			// segment jumps more than half the map.
-			var pts = ring.map(function (p) { return project(p[1], p[0]); });
-			var off = 0, prevX = null;
-			g.beginPath();
-			for (var i = 0; i < pts.length; i++) {
-				var x = pts[i][0] + off, y = pts[i][1];
-				if (prevX !== null) {
-					var dx = x - prevX;
-					if (dx > W / 2) { off -= W; x -= W; }
-					else if (dx < -W / 2) { off += W; x += W; }
-				}
-				if (i === 0) { g.moveTo(x, y); } else { g.lineTo(x, y); }
-				prevX = x;
-			}
-			g.closePath();
-			if (fill) { g.fill(); }
-		}
-		// land
-		g.fillStyle = THEME.land;
-		(world.land || []).forEach(function (poly) {
-			poly.forEach(function (ring, ri) { drawRing(ring, ri === 0); });
-		});
-		// borders
-		g.strokeStyle = THEME.border;
-		g.lineWidth = 1;
-		(world.borders || []).forEach(function (ring) {
-			var pts = ring.map(function (p) { return project(p[1], p[0]); });
-			var off = 0, prevX = null;
-			g.beginPath();
-			for (var i = 0; i < pts.length; i++) {
-				var x = pts[i][0] + off, y = pts[i][1];
-				if (prevX !== null) {
-					var dx = x - prevX;
-					if (dx > W / 2) { off -= W; x -= W; }
-					else if (dx < -W / 2) { off += W; x += W; }
-				}
-				if (i === 0) { g.moveTo(x, y); } else { g.lineTo(x, y); }
-				prevX = x;
-			}
-			g.stroke();
-		});
-		// graticule
-		g.strokeStyle = THEME.graticule;
-		g.lineWidth = 1;
-		for (var la = -60; la <= 60; la += 30) {
-			var y = (90 - la) / 180 * H;
-			g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke();
-		}
-		for (var lo = -150; lo <= 150; lo += 30) {
-			var x = (lo + 180) / 360 * W;
-			g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke();
-		}
-		if (earthTex) {
-			earthTex.image = c;
-			earthTex.needsUpdate = true;
-		}
-		return c;
-	}
-
 	function buildScene() {
 		scene = new THREE.Scene();
 		var sz = stageSize();
@@ -342,10 +269,15 @@ function bootAtlas() {
 	}
 
 	function buildEarth() {
-		earthTex = new THREE.CanvasTexture(drawEarthCanvas());
 		var geo = new THREE.SphereGeometry(EARTH_R, 64, 48);
 		var mat = new THREE.MeshPhongMaterial({
-			map: earthTex, shininess: 8, specular: new THREE.Color(0x1a2333)
+			color: 0x14315a, shininess: 8, specular: new THREE.Color(0x1a2333)
+		});
+		new THREE.TextureLoader().load('earth_texture.png', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			mat.map = tex;
+			mat.color.set(0xffffff);
+			mat.needsUpdate = true;
 		});
 		earth = new THREE.Mesh(geo, mat);
 		scene.add(earth);
@@ -362,8 +294,10 @@ function bootAtlas() {
 		// grey fallback first so the Moon is always visible even if the
 		// Ranger 7 texture is missing or fails to load
 		var mat = new THREE.MeshPhongMaterial({ color: 0x8a8f9a, shininess: 2 });
-		new THREE.TextureLoader().load('ranger7_moon.jpg', function (tex) {
+		new THREE.TextureLoader().load('moon_texture.png', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
 			mat.map = tex;
+			mat.color.set(0xffffff);
 			mat.needsUpdate = true;
 		});
 		var geo = new THREE.SphereGeometry(MOON_R, 40, 30);
@@ -468,7 +402,7 @@ function bootAtlas() {
 	var filamentGroup, filamentLines, filamentNodes = [];
 	var webPhoto;
 	var cmbPhoto;
-	var questionGroup, questionSprites = [];
+	var questionGroup, questionSprites = [], asparagusSprite;
 
 	function buildFilaments() {
 		// a procedurally generated cosmic web: ~110 glowing nodes in a
@@ -560,6 +494,18 @@ function bootAtlas() {
 		return new THREE.CanvasTexture(c);
 	}
 
+	function makeAsparagusTexture() {
+		var c = document.createElement('canvas');
+		c.width = 512; c.height = 128;
+		var g = c.getContext('2d');
+		g.font = '500 58px Georgia, serif';
+		g.textAlign = 'center';
+		g.textBaseline = 'middle';
+		g.fillStyle = '#ffffff';
+		g.fillText('asparagus', 256, 64);
+		return new THREE.CanvasTexture(c);
+	}
+
 	function buildQuestionWorld() {
 		// the final zoom: a field of question marks, one giant "?" where
 		// everything used to be
@@ -572,7 +518,7 @@ function bootAtlas() {
 			var s = Math.sqrt(1 - u * u);
 			var r = QUESTION_R[0] + Math.random() * (QUESTION_R[1] - QUESTION_R[0]);
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
-				map: qTex, color: 0x9fb4ff,
+				map: qTex, color: (Math.random() < 0.03 ? 0xff5a5a : 0x9fb4ff),
 				transparent: true, opacity: 0, depthWrite: false
 			}));
 			sp.position.set(s * Math.cos(a) * r, u * r * 0.8, s * Math.sin(a) * r);
@@ -588,6 +534,15 @@ function bootAtlas() {
 		big.scale.set(140, 140, 1);
 		questionSprites.push(big);
 		questionGroup.add(big);
+
+		asparagusSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: makeAsparagusTexture(), color: 0x9fb4ff,
+			transparent: true, opacity: 0, depthWrite: false
+		}));
+		asparagusSprite.position.set(0, 24, -560);
+		asparagusSprite.scale.set(92, 23, 1);
+		questionGroup.add(asparagusSprite);
+
 		scene.add(questionGroup);
 	}
 
@@ -794,6 +749,7 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
+		if (asparagusSprite) { asparagusSprite.material.opacity = qO * 0.22; }
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
@@ -1270,10 +1226,6 @@ function bootAtlas() {
 		window.__MN_DARK.onChange(function () {
 			readTheme();
 			if (renderer) { renderer.setClearColor(new THREE.Color(THEME.bg), 1); }
-			if (earthTex) {
-				earthTex.image = drawEarthCanvas();
-				earthTex.needsUpdate = true;
-			}
 		});
 	}
 

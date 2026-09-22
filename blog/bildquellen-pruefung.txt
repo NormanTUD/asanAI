@@ -271,3 +271,20 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Genutzt in: map.js § buildCelestial (Material-Map der acht Planeten)
     Status: OK - CC BY 4.0, Quelle via \cite{solsys_planet_textures} im
              Credit (map.php Intro) zitiert.
+
+26. spongebob_arrgh_asparagus (Easter-Egg, Fragezeichen-Welt)
+    URL (Quelle): https://en.wikipedia.org/wiki/List_of_SpongeBob_SquarePants_episodes
+             (geprüft HTTP 200)
+    Was: In der letzten "Warum?"-Diashow schwebt ein sehr schwaches
+             "asparagus"-Wort im Hintergrund; zusätzlich sind ein paar der
+             Fragezeichen rot statt blau gefärbt.
+    Bezug: Anspielung auf Junior Asparagus (VeggieTales-Charakter, seit 1993),
+             der in der SpongeBob-Folge "Arrgh!" (Staffel 1, Folge 17,
+             Sendung 2000) in einem kurzen VeggieTales-Parodieauftritt zu sehen
+             ist.
+    Lizenz: Urheberrecht (TV-Serie, Nickelodeon). Reine Text-/Zitat-Anspielung
+             im Code, keine Bild- oder Datei-Nutzung — daher kein CC-Download.
+    Genutzt in: map.js § buildQuestionWorld (schwaches "asparagus"-Sprite bei
+             ~0.22 Deckkraft; ~3% der Fragezeichen in 0xff5a5a rot)
+    Status: OK - Quelle via \cite{spongebob_arrgh_asparagus} im Credit
+             (map.php, Sektion unter der Karte) zitiert.
