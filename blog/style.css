@@ -9721,18 +9721,25 @@ a.tdp-chip.tdp-chip-met:hover {
    Lives in the top bar next to the dark / reader-mode toggles. A small
    always-visible capsule shows "Lesson N of M"; tapping it opens a
    panel with Next-up / Builds-on / Unlocks detail. */
+/* In-flow, right-aligned, at the top of the reading column. It was a
+   position:fixed veil that floated over the centered content — covering the
+   TOC at the top and, while scrolling, wide plots / text. In-flow it reserves
+   its own space, so it can never overlap anything and there is no layout
+   shift when it fades in. `position:relative` anchors the dropdown panel. */
 #course-status-box {
-	position: fixed;
-	top: 16px;
-	right: 244px;
-	z-index: 9998;
-	max-width: min(46vw, 440px);
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+	padding: 2px 0 0;
 	font-family: inherit;
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity .35s ease, visibility .35s ease;
 }
 html.is-ready #course-status-box { opacity: 1; visibility: visible; }
+html.reader-mode #course-status-box { display: none; }
 .csb-toggle {
 	display: inline-flex;
 	align-items: center;
@@ -9800,7 +9807,6 @@ html.is-ready #course-status-box { opacity: 1; visibility: visible; }
 .csb-line-unlocks { font-size: 0.82rem; opacity: 0.92; }
 .csb-line-unlocks .csb-ico { color: var(--mn-accent); }
 @media (max-width: 720px) {
-	#course-status-box { right: auto; left: 16px; top: 64px; max-width: calc(100vw - 32px); }
 	.csb-toggle .csb-bar { display: none; }
 	.csb-panel { left: 0; right: auto; }
 }

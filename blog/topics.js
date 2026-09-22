@@ -642,7 +642,9 @@
 						showLearnedUI();   // refresh the box + button
 					});
 
-					document.body.appendChild(box);
+					// In-flow at the top of the reading column (not a floating
+					// body overlay) so it can never cover the TOC or plots.
+					contents.insertBefore(box, contents.firstChild);
 				}
 
 				const toggle = box.querySelector('#csb-toggle');
@@ -1715,6 +1717,20 @@
 		};
 	}
 
+	/** True when a block wraps interactive / plot / media content that does
+	    NOT tolerate a hard 120px clip: clipping (max-height + overflow:hidden)
+	    hides a tall canvas/plot and, in the worst case, lets an absolutely or
+	    oversized-positioned child escape the fold and overlap the content
+	    below. Such blocks dim (fade) instead of collapsing, so their layout —
+	    and any JS that sizes the plot — keeps working. Prose + math blocks
+	    (no canvas/svg-widget) still get the full collapse + "tap to reveal". */
+	function isFragile(block) {
+		return !!(block.querySelector && block.querySelector(
+			'canvas, iframe, video, audio, embed, object, [data-interactive], ' +
+			'.hott-plot, .hott-canvas, .interactive, .widget'
+		));
+	}
+
 	/** collapse a block: content stays visible but gets a gradient fade
 	    via CSS class. A small badge appears at the bottom and the block is
 	    clipped to TUCK_H (eased when `animate`). */
@@ -1794,6 +1810,12 @@
 
 	/** expand (reveal) a block: remove the fade + badge + alt mode, then
 	    ease the clip open (or jump instantly when not animating). */
+	function clearClipInline(block) {
+		block.style.overflow = '';
+		block.style.maxHeight = '';
+		block.style.transition = '';
+	}
+
 	function revealBlock(block, animate) {
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
 		if (badge) badge.remove();
@@ -1802,11 +1824,22 @@
 		block.classList.remove('topic-block-collapsed');
 		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
-		if (animate && !prefersReducedMotion()) {
-			const fromH = Math.min(TUCK_H, block.getBoundingClientRect().height || TUCK_H);
-			animateClip(block, fromH, block.scrollHeight, false);
+		const fullH = block.scrollHeight || block.offsetHeight || 0;
+		const canAnimate = animate && !prefersReducedMotion() && fullH > TUCK_H;
+		if (canAnimate) {
+			animateClip(block, TUCK_H, fullH, false);
+			// Hard guarantee: a reveal must never leave the block stuck
+			// clipped — if the transitionend is missed (or the clip's
+			// `overflow:hidden !important` wins the fight), force the unclip.
+			setTimeout(function () {
+				if (block.classList.contains('topic-block--clipped')) {
+					block.classList.remove('topic-block--clipped');
+					clearClipInline(block);
+				}
+			}, 520);
 		} else {
 			block.classList.remove('topic-block--clipped');
+			clearClipInline(block);
 		}
 	}
 
@@ -1845,7 +1878,11 @@
 		// "masking"), so it no longer depends on having an explicit title.
 		// Titled blocks (or blocks with a first heading) collapse for any
 		// reason; untitled non-math blocks only dim, as before.
-		const collapsible = !!spec.label || score.why === 'math';
+		// EXCEPTION: blocks wrapping interactive / plot / media content
+		// (`isFragile`) are never hard-clipped — clipping breaks their layout
+		// (math_iii's canvases). They dim instead, staying fully functional.
+		const fragile = isFragile(block);
+		const collapsible = !fragile && (!!spec.label || score.why === 'math');
 		const alt = block.querySelector(':scope > .topic-block-alt');
 
 		// A block the reader manually revealed stays revealed for the whole
