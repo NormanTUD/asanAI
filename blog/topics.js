@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-csb-end+recollapse-end+group-runs';
+	window.__TB_VER = '2026-09-22-group-badge-run-start';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -2008,12 +2008,13 @@
 
 	/* ── Grouped reveal badge ────────────────────────────────────
 	   Several sections tucked in a row used to show a "tap to reveal"
-	   badge per section, forcing N taps. One grouped badge at the end of
-	   the run reveals the whole run at once and LISTS EVERY SECTION
-	   HEADING it covers, so the reader knows exactly what a single tap
-	   opens. Rebuilt from scratch on every applyVisibility pass (a single
-	   cheap DOM walk), so it can never desync from block states. Runs of
-	   one block keep the ordinary per-block badge. */
+	   badge per section, forcing N taps. One grouped badge at the START
+	   of the run (right where the folded region begins) reveals the whole
+	   run at once and LISTS EVERY SECTION HEADING it covers, so the reader
+	   sees the bar immediately and knows exactly what a single tap opens.
+	   Rebuilt from scratch on every applyVisibility pass (a single cheap
+	   DOM walk), so it can never desync from block states. Runs of one
+	   block keep the ordinary per-block badge. */
 
 	/** Elements that do not visually separate two tucked sections:
 	    script/style/template (not rendered) and tucked demos (display:none). */
@@ -2063,8 +2064,8 @@
 	    tucked blocks). Placed in-flow at the end of the run — after the last
 	    member's trailing demos, before the next heading/section boundary. */
 	function placeGroupBadge(run) {
-		const last = run[run.length - 1];
-		const parent = last && last.parentNode;
+		const first = run[0];
+		const parent = first && first.parentNode;
 		if (!parent) return null;
 		const badge = document.createElement('button');
 		badge.type = 'button';
@@ -2090,10 +2091,8 @@
 			ev.stopPropagation();
 			revealGroupBadge(badge);
 		});
-		const boundary = sectionEndBefore(last);
-		if (boundary && boundary !== badge) parent.insertBefore(badge, boundary);
-		else parent.appendChild(badge);
-		if (DEBUG) dlog('group badge placed for ' + n + ' sections:',
+		parent.insertBefore(badge, first);
+		if (DEBUG) dlog('group badge placed at run start for ' + n + ' sections:',
 			titles.length ? titles.join(' / ') : '(no titles found)');
 		return badge;
 	}
