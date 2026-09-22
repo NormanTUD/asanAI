@@ -22,6 +22,15 @@ math: 50
 		--og-amber: #ffd166;
 		--og-grad: linear-gradient(90deg, var(--mn-emerald), var(--mn-coral) 55%, var(--og-amber));
 	}
+	.og-card {
+		background: linear-gradient(180deg, var(--mn-surface), var(--mn-bg-subtle));
+		border: 1px solid var(--mn-border);
+		border-radius: 18px;
+		padding: 22px 22px 26px;
+		margin: 22px 0;
+		box-shadow: 0 10px 40px rgba(0,0,0,.12);
+	}
+	.og-card > .og-h2:first-child { margin-top: 0; }
 	.og-h2 { margin: 34px 0 10px; font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px;
 		background: var(--og-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 	.og-lead { color: var(--mn-text-secondary); margin: .2rem 0 14px; }
@@ -30,12 +39,11 @@ math: 50
 	@media (max-width: 820px) { .og-grid2 { grid-template-columns: 1fr; } }
 
 	.og-demo {
-		background: linear-gradient(180deg, var(--mn-surface), var(--mn-bg-subtle));
+		background: var(--mn-bg-subtle);
 		border: 1px solid var(--mn-border);
-		border-radius: 16px;
-		padding: 18px 20px;
-		margin: 20px 0;
-		box-shadow: 0 10px 40px rgba(0,0,0,.16);
+		border-radius: 12px;
+		padding: 16px 18px;
+		margin: 14px 0;
 	}
 	.og-demo h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--mn-coral); }
 	.og-canvas-wrap { position: relative; margin: 12px 0; text-align: center; }
@@ -349,18 +357,20 @@ one. Drag to look around the folded representation:
 
 <div class="og-card">
 	<h2 class="og-h2">The Circle-in-Circle Lift — Seeing the Fold in 3-D</h2>
-	<p class="og-lead">Watch the inner class rise out of the plane. Toggle between 2-D and 3-D views, adjust the lift height, and slide the separating plane.</p>
+	<p class="og-lead">Watch the inner class rise out of the flat plane into a third dimension. Adjust the <em>lift</em> height, slide the separating <em>plane</em>, and switch the fold from a smooth radial dome to a real <em>N</em>-neuron ReLU stack.</p>
 
 	<div class="og-demo">
 		<h3>2-D → 3-D: the fold lifts the inner class</h3>
 		<p class="og-small">The inner ring (pink) is lifted into a third dimension by the ReLU fold. In 2-D no flat line can separate the classes; in 3-D a single horizontal plane does the job. Drag the <b>lift</b> slider to control how high the inner class rises, and the <b>plane</b> slider to position the separating hyperplane.</p>
 		<div class="og-controls">
-			<div class="og-control"><label>Lift height: <span class="val" id="og-egg-lift-v">1.0</span></label><input type="range" id="og-egg-lift" min="0" max="2" step="0.1" value="1"></div>
-			<div class="og-control"><label>Separating plane z: <span class="val" id="og-egg-plane-v">0.5</span></label><input type="range" id="og-egg-plane" min="0" max="2" step="0.05" value="0.5"></div>
-			<div class="og-control"><label>View</label>
+			<div class="og-control"><label>Lift height: <span class="val" id="og-egg-lift-v">0.60</span></label><input type="range" id="og-egg-lift" min="0" max="1.5" step="0.05" value="0.6"></div>
+			<div class="og-control"><label>Separating plane z = c: <span class="val" id="og-egg-plane-v">0.10</span></label><input type="range" id="og-egg-plane" min="0" max="1" step="0.05" value="0.1"></div>
+			<div class="og-control"><label>Fold model</label>
 				<select id="og-egg-mode">
-					<option value="3d">3-D (Plotly)</option>
-					<option value="2d">2-D (canvas)</option>
+					<option value="radial">Radial dome (the idea)</option>
+					<option value="3">3 neurons (real)</option>
+					<option value="6">6 neurons (real)</option>
+					<option value="12">12 neurons (real)</option>
 				</select>
 			</div>
 		</div>

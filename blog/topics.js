@@ -544,16 +544,24 @@
 		}, 0);
 	}
 
-	/** Keep the learned button pinned to the END of the lesson content.
-	    Called after every applyVisibility (which runs post-renderMarkdown,
-	    once #sources-section / #footnotes-section exist) and on init. It is a
-	    no-op when the button is already the last child, so re-calling it on
-	    click never moves the element → no scroll jump. */
+	/** Keep the learned button pinned to the END OF THE LESSON BODY —
+	    right before #footnotes-section / #sources-section, never after them.
+	    The button is created once (on init, before bibtexify has appended
+	    those sections), so "settling" means: if the footnotes/sources now
+	    exist, sit immediately before the first of them; otherwise (no
+	    citations at all) stay the last child of #contents. Either way it is
+	    a no-op once in place, so re-calling it on click never moves the
+	    element → no scroll jump. */
 	function settleLearnedButton() {
 		const btn = document.getElementById('topic-learned-btn');
 		const contents = document.getElementById('contents');
 		if (!btn || !contents) return;
-		if (contents.lastElementChild !== btn) contents.appendChild(btn);
+		const anchor = contents.querySelector('#footnotes-section, #sources-section');
+		if (anchor) {
+			if (anchor.previousElementSibling !== btn) anchor.parentNode.insertBefore(btn, anchor);
+		} else if (contents.lastElementChild !== btn) {
+			contents.appendChild(btn);
+		}
 	}
 
 	function showLearnedUI() {
@@ -628,9 +636,9 @@
 			}
 
 			// "Mark as learned" button (bottom of content). Created once and
-			// pinned to the end of #contents (after footnotes/sources). We
-			// only update its label/state here; position is handled by
-			// settleLearnedButton() so a click never moves it (no scroll jump).
+			// kept at the end of the lesson body — before footnotes/sources —
+			// by settleLearnedButton(). We only update its label/state here,
+			// so a click never moves it (no scroll jump).
 			const learned = isLearned(lessonId);
 			let btn = document.getElementById('topic-learned-btn');
 			if (!btn) {
@@ -642,7 +650,7 @@
 					showLearnedUI();
 				});
 				contents.appendChild(btn);   // attach it; getElementById can't find a detached node
-				settleLearnedButton();        // then pin to the end (after footnotes/sources)
+				settleLearnedButton();        // then keep it before footnotes/sources, if any
 			}
 			btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
 			btn.innerHTML = learned
@@ -1787,10 +1795,10 @@
 			});
 			if (isIndexPage()) dimCourseTiles();
 			updateSkipIndicator();
-			// Still pin the learned button past any sources/footnotes that
-			// renderMarkdown() appends later (this early-return path skips
-			// the settle call at the bottom of the function).
-			settleLearnedButton();
+		// Still keep the learned button at the end of the lesson body in
+		// case footnotes/sources were appended after it (this early-return
+		// path skips the settle call at the bottom of the function).
+		settleLearnedButton();
 			return;
 		}
 
@@ -1829,9 +1837,10 @@
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 
-		// Pin the "mark as learned" button to the end of the content now
-		// that footnotes/sources may have been appended (post-render).
-		// No-op if it is already last, so a click never shifts it.
+		// Keep the "mark as learned" button at the end of the lesson body
+		// now that footnotes/sources may have been appended after it
+		// (post-render). No-op if it is already in place, so a click never
+		// shifts it.
 		settleLearnedButton();
 	}
 
