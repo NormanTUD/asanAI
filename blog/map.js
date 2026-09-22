@@ -1056,11 +1056,12 @@ function bootAtlas() {
 		tourEls().prev.addEventListener('click', prevStep);
 		tourEls().next.addEventListener('click', nextStep);
 		tourEls().close.addEventListener('click', stopTour);
+		tourEls().earth.addEventListener('click', stopTour);
 	}
 
 	// ── cosmic journey ────────────────────────────────────────
 	var JOURNEY = [
-		{ d: 1.7, era: 'Earth', text: 'The home of every idea in this course. Drag to look around, click any dot to see where it is cited.' },
+		{ d: 3.2, era: 'Earth', text: 'The home of every idea in this course.' },
 		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Use the time slider to travel through history.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
@@ -1081,7 +1082,8 @@ function bootAtlas() {
 			fill: document.getElementById('tour-timer-fill'),
 			prev: document.getElementById('tour-prev'),
 			next: document.getElementById('tour-next'),
-			close: document.getElementById('tour-close')
+			close: document.getElementById('tour-close'),
+			earth: document.getElementById('tour-earth')
 		};
 	}
 	function buildTourDots() {
@@ -1130,6 +1132,7 @@ function bootAtlas() {
 		tour.active = false;
 		state.touring = false;
 		tourEls().root.classList.remove('open');
+		state.tD = 3.2; state.tTheta = -0.4; state.tPhi = 1.15;
 	}
 	function nextStep() {
 		if (tour.step < JOURNEY.length - 1) { goStep(tour.step + 1); }
@@ -1140,9 +1143,10 @@ function bootAtlas() {
 	}
 	function tickTour() {
 		if (!tour.active) { return; }
-		var p = (performance.now() - tour.startedAt) / TOUR_STEP_MS;
+		var last = tour.step === JOURNEY.length - 1;
+		var p = last ? 1 : (performance.now() - tour.startedAt) / TOUR_STEP_MS;
 		tourEls().fill.style.width = Math.min(100, p * 100) + '%';
-		if (p >= 1) { nextStep(); }
+		if (!last && p >= 1) { nextStep(); }
 	}
 
 	// ── theme reactivity ──────────────────────────────────────
