@@ -120,6 +120,9 @@
   .cbox-hd h3 { margin: 0; font-size: 13px; font-weight: 500; }
   .rtgl { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; color: #9aa7b5; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; }
   .foldpath { width: 100%; height: 120px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; margin: 4px 0 6px; display: block; }
+  .foldrow { display: flex; gap: 6px; margin: 4px 0 2px; }
+  .foldcanv { flex: 1 1 0; min-width: 0; height: 132px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; display: block; }
+  .foldlegend { font-size: 9.5px; color: #7f8ea0; margin: 2px 0 4px; display: flex; gap: 10px; flex-wrap: wrap; }
   .foldinfo { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; font-family: monospace; color: #c7d0dc; }
   .foldinfo b { color: #50fa7b; font-weight: 600; }
   .foldseq { font-family: monospace; font-size: 11px; color: #9aa7b5; margin-top: 5px; line-height: 1.5; word-break: break-word; }
@@ -218,7 +221,11 @@
   </div>
 
   <div class="sechd"><span class="sechd-t">Space-Folding · Lewandowski et al. 2025</span></div>
-  <canvas id="foldPath" class="foldpath"></canvas>
+  <div class="foldrow">
+    <canvas id="foldCube" class="foldcanv"></canvas>
+    <canvas id="foldPath" class="foldcanv"></canvas>
+  </div>
+  <div class="foldlegend"><span>◆ Hamming-Kubus · gold = Pfad Γ</span><span>rot = Falzrückgang</span><span>┄ dH(π₁,·)</span></div>
   <div class="foldinfo">
     <span>χ(Γ) = <b id="foldChi">–</b></span>
     <span>r1 = <b id="foldR1">–</b></span>
@@ -283,12 +290,16 @@ function actDeriv(z, name) { // Ableitung der Aktivierung (für Backpropagation)
     default:        return z > 0 ? 1 : 0;
   }
 }
-let renderedAct = null;
+let renderedAct = null, renderedL2 = false;
 function updateActFormula() {
   const a = actName();
   const span = $('fmact'); if (span) span.textContent = ACTS[a].short + '(';
-  if (renderedAct !== a) {
-    try { temml.render(String.raw`y \;=\; A_2\, ${ACTS[a].tex}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet')); renderedAct = a; }
+  if (renderedAct !== a || renderedL2 !== useLayer2) {
+    const f = ACTS[a].tex;
+    const tex = useLayer2
+      ? String.raw`y \;=\; A_3\, ${f}\!\left(A_2\, ${f}\!\left(A_1 x + B_1\right) + B_2\right) + B_3`
+      : String.raw`y \;=\; A_2\, ${f}\!\left(A_1 x + B_1\right) + B_2`;
+    try { temml.render(tex, document.getElementById('fnet')); renderedAct = a; renderedL2 = useLayer2; }
     catch (err) { console.warn('[egg] Formel-Rendering', err); }
   }
 }
@@ -569,6 +580,28 @@ function drawFoldPath(m) { // Fig. 6: dH(π₁,·) (gestrichelt-punktig) + dH(π
   fctx.fillStyle = '#19d3b5'; fctx.fillText('dH(πᵢ,πᵢ₊₁)', padL + 4, padT + 20);
   fctx.fillStyle = '#7f8ea0'; fctx.fillText('Γ: λ = 0 → 1 (gerade Sehne im Eingaberaum)', padL + 4, h - 5);
 }
+const fcvCube = $('foldCube'); const fctxC = fcvCube.getContext('2d');
+// Fig. 1: der gerade Pfad Γ als Bit-Flip-Walk auf dem Hamming-Kubus (8 Muster für 3 Neuronen)
+function drawCubeWalk(codes) {
+  const w = fcvCube.width = fcvCube.clientWidth || 280, h = fcvCube.height = fcvCube.clientHeight || 132;
+  fctxC.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2 + 2, s = Math.min(w, h) * 0.30;
+  const projV = v => { const x = ((v >> 2) & 1) - 0.5, y = ((v >> 1) & 1) - 0.5, z = (v & 1) - 0.5; return [cx + (x - z) * 0.866 * s, cy + ((x + z) * 0.5 - y) * s]; };
+  fctxC.lineWidth = 1; fctxC.strokeStyle = '#2b2b34';
+  for (let v = 0; v < 8; v++) for (let b = 0; b < 3; b++) if (v & (1 << b)) { const v2 = v ^ (1 << b); if (v2 < v) { const p = projV(v), q = projV(v2); fctxC.beginPath(); fctxC.moveTo(p[0], p[1]); fctxC.lineTo(q[0], q[1]); fctxC.stroke(); } }
+  const walk = []; for (const c of codes) if (!walk.length || walk[walk.length - 1] !== c) walk.push(c);
+  const visited = new Set(walk);
+  for (let i = 0; i < walk.length - 1; i++) {
+    const p = projV(walk[i]), q = projV(walk[i + 1]);
+    const back = i > 0 && hamming(walk[i + 1], walk[0]) < hamming(walk[i], walk[0]);
+    fctxC.strokeStyle = back ? '#ff6b6b' : '#ffd866'; fctxC.lineWidth = 2.2;
+    fctxC.beginPath(); fctxC.moveTo(p[0], p[1]); fctxC.lineTo(q[0], q[1]); fctxC.stroke();
+  }
+  for (let v = 0; v < 8; v++) { const p = projV(v); const inW = visited.has(v); fctxC.fillStyle = inW ? '#50fa7b' : '#3a3a44'; fctxC.beginPath(); fctxC.arc(p[0], p[1], inW ? 3 : 1.6, 0, 2 * Math.PI); fctxC.fill(); }
+  if (walk.length) { const p0 = projV(walk[0]); fctxC.strokeStyle = '#50fa7b'; fctxC.lineWidth = 2; fctxC.beginPath(); fctxC.arc(p0[0], p0[1], 5, 0, 2 * Math.PI); fctxC.stroke(); }
+  fctxC.fillStyle = '#7f8ea0'; fctxC.font = '10px monospace'; fctxC.fillText('Hamming-Kubus', 6, 12);
+}
+
 function updateFoldPanel(B1o) {
   const P = getParams();
   const chord = chooseChord(P, B1o);
@@ -585,14 +618,14 @@ function updateFoldPanel(B1o) {
     $('foldL2').style.display = '';
     $('foldSeq2').style.display = '';
     $('foldSeq2').textContent = 'Muster Layer ② (Gesamt): ' + mt.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
-    drawFoldPath(mt);
+    drawFoldPath(mt); drawCubeWalk(mt.codes);
     $('foldNote').textContent = mt.chi < 0.02
       ? 'Kein Space-Fold auf diesem Pfad — W2/B2 anpassen (eine „hump"-Zeile erzeugt einen Falzrückgang).'
       : 'Space-Fold! dH(π₁,·) sinkt zwischendurch (nicht-konvex, Fig. 4). Gesamtfaltung χ①∘② = ' + mt.chi.toFixed(3) + '.';
   } else {
     $('foldL2').style.display = 'none';
     $('foldSeq2').style.display = 'none';
-    drawFoldPath(m);
+    drawFoldPath(m); drawCubeWalk(m.codes);
     $('foldNote').textContent = '1 Hidden-Layer ⇒ dH(π₁,·) monoton ⇒ χ① ≈ 0 (konvex, Lemma 1). Schalte den 2. Hidden-Layer ein für echte Space-Folds.';
   }
 }
@@ -807,7 +840,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v6'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v7'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
