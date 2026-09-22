@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-group-badge-run-start';
+	window.__TB_VER = '2026-09-22-per-section-badges';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -414,6 +414,13 @@
 		const cur = activePref();
 		cur.mathLevel = clampMath(value);
 		dlog('mathLevel →', cur.mathLevel, '(comfort with math, 0–100)');
+		// Master-control coupling: at the extremes the math-comfort dial also
+		// drives the 'math-heavy' tone so "slider up = all math shows". Max
+		// stop → tone ON; min stop → tone OFF; between the stops the reader's
+		// explicit tone choice is kept. Mutating the pref in place keeps this
+		// one persistPref → one fireChange (no double render, no loop).
+		if (cur.mathLevel >= MATH_MAX) cur.categories['math-heavy'] = true;
+		else if (cur.mathLevel <= MATH_MIN) cur.categories['math-heavy'] = false;
 		persistPref(cur);
 	}
 
@@ -2006,15 +2013,13 @@
 		}
 	}
 
-	/* ── Grouped reveal badge ────────────────────────────────────
-	   Several sections tucked in a row used to show a "tap to reveal"
-	   badge per section, forcing N taps. One grouped badge at the START
-	   of the run (right where the folded region begins) reveals the whole
-	   run at once and LISTS EVERY SECTION HEADING it covers, so the reader
-	   sees the bar immediately and knows exactly what a single tap opens.
-	   Rebuilt from scratch on every applyVisibility pass (a single cheap
-	   DOM walk), so it can never desync from block states. Runs of one
-	   block keep the ordinary per-block badge. */
+	/* ── Reveal badges ───────────────────────────────────────────
+	   Every tucked section shows its OWN "tap to reveal" badge — the reader
+	   opens one section at a time. The helpers below used to build a single
+	   grouped "N sections tucked away" badge for a run of consecutive tucked
+	   sections; that grouping is retired (the reader preferred one button per
+	   section), but the helpers stay exported via _internals so the test
+	   harness and any stray-badge cleanup keep working. */
 
 	/** Elements that do not visually separate two tucked sections:
 	    script/style/template (not rendered) and tucked demos (display:none). */
@@ -2167,13 +2172,12 @@
 		return revealed;
 	}
 
-	/** Rebuild ALL grouped badges from the current block states. Safe to
-	    call any time; a no-op when fewer than two tucked sections are
-	    consecutive. Member badges are only removed from blocks that end up
-	    in a run of ≥2, so single tucked sections keep their own badge. */
-	let _gVisTok = 0, _gGrpTok = 0; // per-pass element markers (object-key
-	// collision guard: plain {} keyed by element objects would alias every
-	// element to "[object Object]")
+	/** Rebuild reveal badges from the current block states. Every tucked
+	    section carries its OWN "tap to reveal" badge — the reader opens one
+	    section at a time (no grouped "N sections" badge). Safe to call any
+	    time. Two jobs: remove any legacy/stray grouped badge so the two
+	    affordances never co-exist, and self-heal — a collapsed section with
+	    no badge of its own (state drift after a failed reveal) gets one back. */
 	function rebuildGroupBadges() {
 		try {
 			document.querySelectorAll('.topic-block-group-badge').forEach(function (g) {
@@ -2181,39 +2185,7 @@
 			});
 			const collapsed = Array.prototype.slice.call(
 				document.querySelectorAll('.topic-block.topic-block-collapsed'));
-			const vTok = ++_gVisTok, gTok = ++_gGrpTok;
-			const isVisited = function (n) { return n.__gvis === vTok; };
-			const markVisited = function (n) { n.__gvis = vTok; };
-			const inGroup = function (n) { return n.__ggrp === gTok; };
-			const markGroup = function (n) { n.__ggrp = gTok; };
-			let groups = 0;
-			if (collapsed.length >= 2) {
-				collapsed.forEach(function (first) {
-					if (isVisited(first)) return;
-					markVisited(first);
-					const run = [first];
-					let nxt = nextTuckedInRun(first);
-					while (nxt) {
-						if (isVisited(nxt)) break; // already absorbed (defensive)
-						markVisited(nxt);
-						run.push(nxt);
-						nxt = nextTuckedInRun(nxt);
-					}
-					if (run.length < 2) return; // single section → its own badge
-					run.forEach(function (b) {
-						markGroup(b);
-						const badge = b.querySelector ? b.querySelector(':scope > .topic-block-fade-badge') : null;
-						if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
-					});
-					if (placeGroupBadge(run)) groups++;
-				});
-			}
-			// Self-heal: every collapsed block that is NOT inside a grouped
-			// run must carry its own reveal badge. Guards against state drift
-			// and against a failed group reveal leaving a section unreachable
-			// (badge removed for the group, but the block still collapsed).
 			collapsed.forEach(function (b) {
-				if (inGroup(b)) return;
 				const hasBadge = b.querySelector ? !!b.querySelector(':scope > .topic-block-fade-badge') : true;
 				if (hasBadge) return;
 				try {
@@ -2225,8 +2197,7 @@
 					if (DEBUG) derr('self-heal badge failed:', he);
 				}
 			});
-			if (DEBUG && groups) dlog('rebuildGroupBadges: ' + groups + ' grouped run(s)');
-			return groups;
+			return 0;
 		} catch (e) {
 			if (DEBUG) derr('rebuildGroupBadges:', e);
 			return 0;

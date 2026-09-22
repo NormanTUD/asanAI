@@ -303,7 +303,7 @@ function directChild(e, cls) {
 	return e.children.find(function (c) { return c._cls && c._cls[cls]; }) || null;
 }
 
-/* ── initial pass: tuck + grouping ───────────────────────────── */
+/* ── initial pass: tuck, every section gets its OWN badge ─────── */
 BT.applyVisibility({ animate: false });
 
 check(blkA.classList.contains('topic-block-collapsed'), 'T2: blkA tucked (math gate)');
@@ -312,32 +312,31 @@ check(blkC.classList.contains('topic-block-collapsed'), 'T2: blkC tucked');
 check(demoA.classList.contains('topic-demo-tucked'), 'T2: demoA tucked with its section');
 check(demoB.classList.contains('topic-demo-tucked'), 'T2: demoB tucked with its section');
 
-let groups = allGroupBadges();
-check(groups.length === 1, 'T2: exactly ONE group badge for the 3-run (got ' + groups.length + ')');
-const gb = groups[0];
-check(!!gb && (gb._groupMembers || []).length === 3, 'T2: group badge covers 3 members');
-check(!!gb && gb._groupMembers[0] === blkA && gb._groupMembers[1] === blkB && gb._groupMembers[2] === blkC, 'T2: group members in document order');
-check(!!gb && /Sec A/.test(gb.innerHTML) && /Sec B/.test(gb.innerHTML) && /Sec C/.test(gb.innerHTML), 'T2: group badge lists all three section headings');
-check(!!gb && gb.parentNode === contents && gb.nextElementSibling === blkA, 'T2: group badge sits at the run start (before first member)');
-check(!!gb && gb.previousElementSibling === null, 'T2: group badge not left at the run end');
-check(!blkA.querySelector(':scope > .topic-block-fade-badge'), 'T2: member badge removed from blkA');
-check(!blkB.querySelector(':scope > .topic-block-fade-badge'), 'T2: member badge removed from blkB');
-check(!blkC.querySelector(':scope > .topic-block-fade-badge'), 'T2: member badge removed from blkC');
+// Per-section badges: NO grouped "N sections" badge — each tucked section
+// carries its own "tap to reveal" button, even when tucked in a row.
+check(allGroupBadges().length === 0, 'T2: NO group badge (per-section badges only)');
+check(!!directChild(blkA, 'topic-block-fade-badge'), 'T2: blkA keeps its own reveal badge');
+check(!!directChild(blkB, 'topic-block-fade-badge'), 'T2: blkB keeps its own reveal badge');
+check(!!directChild(blkC, 'topic-block-fade-badge'), 'T2: blkC keeps its own reveal badge');
 
-// visible sub-heading breaks the D/E run → two solo badges, no group
+// the D/E pair (split by a visible sub-heading) each keep their own badge too
 check(blkD.classList.contains('topic-block-collapsed') && blkE.classList.contains('topic-block-collapsed'), 'T4: blkD + blkE tucked');
 check(!!directChild(blkD, 'topic-block-fade-badge'), 'T4: blkD keeps its own badge');
 check(!!directChild(blkE, 'topic-block-fade-badge'), 'T4: blkE keeps its own badge');
-check(allGroupBadges().length === 1, 'T4: no extra group badge for the separated D/E pair');
 
-/* ── T3: tap the group badge → whole run reveals ─────────────── */
-gb.click();
+/* ── T3: tap each per-section badge → one section reveals at a time ── */
+directChild(blkA, 'topic-block-fade-badge').click();
 check(!blkA.classList.contains('topic-block-collapsed') && blkA.classList.contains('topic-block-revealed'), 'T3: blkA revealed');
+check(blkC.classList.contains('topic-block-collapsed'), 'T3: untapped neighbour blkC stays tucked');
+
+directChild(blkB, 'topic-block-fade-badge').click();
 check(!blkB.classList.contains('topic-block-collapsed') && blkB.classList.contains('topic-block-revealed'), 'T3: blkB revealed');
+
+directChild(blkC, 'topic-block-fade-badge').click();
 check(!blkC.classList.contains('topic-block-collapsed') && blkC.classList.contains('topic-block-revealed'), 'T3: blkC revealed');
-check(!demoA.classList.contains('topic-demo-tucked'), 'T3: demoA un-tucked');
-check(!demoB.classList.contains('topic-demo-tucked'), 'T3: demoB un-tucked');
-check(allGroupBadges().length === 0, 'T3: group badge removed after reveal');
+check(!demoA.classList.contains('topic-demo-tucked'), 'T3: demoA un-tucked with its section');
+check(!demoB.classList.contains('topic-demo-tucked'), 'T3: demoB un-tucked with its section');
+check(allGroupBadges().length === 0, 'T3: still no group badge after reveals');
 
 const recA = I.findRecollapse(blkA);
 const recB = I.findRecollapse(blkB);

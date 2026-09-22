@@ -258,6 +258,19 @@ check(BT.snapMath(NaN) === 50 && BT.snapMath('x') === 50 && BT.snapMath(null) ==
 check(BT.mathLevelLabel(0) === 'No math' && BT.mathLevelLabel(25) === 'High school' && BT.mathLevelLabel(50) === 'University' && BT.mathLevelLabel(75) === 'Graduate' && BT.mathLevelLabel(100) === 'Research', 'mathLevelLabel maps each stop to its name');
 check(BT.mathLevelLabel(60) === 'University' && BT.mathLevelLabel(90) === 'Research' && BT.mathLevelLabel(NaN) === 'University', 'mathLevelLabel snaps arbitrary/invalid values');
 
+/* ── math level ↔ math-heavy tone coupling ───────────────────── */
+// At the extremes the math-comfort dial drives the 'math-heavy' tone so
+// "slider up = all math shows" and "slider down = all math tucked".
+// Between the stops the reader's explicit tone choice is preserved.
+withPref({ mathLevel: 50, categories: { 'math-heavy': false } });
+BT.setMathLevel(100, { pushHistory: false });
+check(BT.getMathLevel() === 100 && BT.isCatEnabled('math-heavy') === true, 'max stop forces math-heavy tone ON');
+BT.setMathLevel(0, { pushHistory: false });
+check(BT.getMathLevel() === 0 && BT.isCatEnabled('math-heavy') === false, 'min stop forces math-heavy tone OFF');
+BT.setMathLevel(50, { pushHistory: false });
+check(BT.getMathLevel() === 50 && BT.isCatEnabled('math-heavy') === false, 'mid stop keeps the reader’s explicit tone choice');
+withPref(null);
+
 /* ── CORE_PERSONAS ───────────────────────────────────────────── */
 check(Array.isArray(BT.CORE_PERSONAS), 'CORE_PERSONAS is an array');
 check(BT.CORE_PERSONAS.length === 4, 'CORE_PERSONAS has exactly 4 entries');
