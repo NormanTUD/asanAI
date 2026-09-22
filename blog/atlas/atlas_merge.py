@@ -308,7 +308,22 @@ def merge_entities(entries, valid_slugs, bib_keys, report):
         if bad:
             report["entity_dropped_refs"].append({"name": e["name"], "type": e["type"], "dropped": bad})
         kept.append(e)
+    for e in kept:
+        e["bg"] = is_background_place(e)
     return kept
+
+
+def is_background_place(e):
+    """A place dot that is a bare list-mention — no blurb, no works, and
+    cited only from the Global AI Ecosystem roundup (country names that
+    appear as section headings, e.g. 'Canada') — is background context:
+    the UI hides it by default behind its own checkbox."""
+    return (
+        e["type"] == "place"
+        and not e["blurb"]
+        and not e["bibkeys"]
+        and e["cited_in"] == ["global_ai_ecosystem"]
+    )
 
 
 # ---------------------------------------------------------------------------
