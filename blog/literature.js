@@ -14874,5 +14874,24 @@ window.bibData = {
 		year: 1989,
 		url: "https://doi.org/10.11588/ger.1989.76355",
 		alternativetitle: "Neugebauer-Maresch, 1989 (Germania 67:551-559)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  From body to face  (untold_history.php)
+	 *  The first recognisable faces: the Dolni Věstonice ivory head and
+	 *  the engraved human figures of La Marche.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"dolnivestonice": {
+		title: "Dolní Věstonice (archaeological site)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Doln%C3%AD_V%C4%9Bstonice_(archaeological_site)",
+		alternativetitle: "Dolní Věstonice (Wikipedia)"
+	},
+	"lamarchecave": {
+		title: "La Marche (cave)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/La_Marche_(cave)",
+		alternativetitle: "La Marche engravings (Wikipedia)"
 	}
 };
