@@ -1717,18 +1717,33 @@
 		};
 	}
 
-	/** True when a block wraps interactive / plot / media content that does
-	    NOT tolerate a hard 120px clip: clipping (max-height + overflow:hidden)
-	    hides a tall canvas/plot and, in the worst case, lets an absolutely or
-	    oversized-positioned child escape the fold and overlap the content
-	    below. Such blocks dim (fade) instead of collapsing, so their layout —
-	    and any JS that sizes the plot — keeps working. Prose + math blocks
-	    (no canvas/svg-widget) still get the full collapse + "tap to reveal". */
+	/** True when a block wraps a real interactive / plot / media widget that
+	    does NOT tolerate a hard 120px clip: clipping hides a tall plot and can
+	    let an oversized / absolutely-positioned child break the layout below
+	    (the math_iii HoTT plots). Such blocks dim (fade) instead of collapsing,
+	    so their layout — and the JS that draws the plot — keeps working.
+
+	    Small static previews do NOT count: math_ii's 180px pixelated 3×3
+	    tensor previews must still get the full collapse + "tap to reveal". A
+	    canvas only counts as a plot when it is large (a real plot), not a tiny
+	    bitmap preview. */
 	function isFragile(block) {
-		return !!(block.querySelector && block.querySelector(
-			'canvas, iframe, video, audio, embed, object, [data-interactive], ' +
-			'.hott-plot, .hott-canvas, .interactive, .widget'
-		));
+		if (!block.querySelector) return false;
+		// Explicit interactive / plot / media markers always count.
+		if (block.querySelector('iframe, video, audio, embed, object, [data-interactive], .hott-plot, .hott-canvas, .interactive, .widget')) {
+			return true;
+		}
+		// A canvas counts only if it is a large plot, not a tiny preview.
+		const canvases = block.querySelectorAll('canvas');
+		for (let i = 0; i < canvases.length; i++) {
+			const c = canvases[i];
+			const bw = parseInt(c.getAttribute('width'), 10) || 0;
+			const bh = parseInt(c.getAttribute('height'), 10) || 0;
+			const w = c.offsetWidth || bw;
+			const h = c.offsetHeight || bh;
+			if (w > 320 || h > 240) return true;
+		}
+		return false;
 	}
 
 	/** collapse a block: content stays visible but gets a gradient fade

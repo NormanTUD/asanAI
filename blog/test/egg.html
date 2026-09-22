@@ -116,6 +116,14 @@
   .wrow .chk { flex: none; margin: 0; display: flex; align-items: center; }
   .legend { font-size: 11px; margin-top: 6px; }
   .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+  .cbox-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; background: #2a2a33; border-bottom: 1px solid #333; }
+  .cbox-hd h3 { margin: 0; font-size: 13px; font-weight: 500; }
+  .rtgl { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; color: #9aa7b5; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; }
+  .foldpath { width: 100%; height: 120px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; margin: 4px 0 6px; display: block; }
+  .foldinfo { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; font-family: monospace; color: #c7d0dc; }
+  .foldinfo b { color: #50fa7b; font-weight: 600; }
+  .foldseq { font-family: monospace; font-size: 11px; color: #9aa7b5; margin-top: 5px; line-height: 1.5; word-break: break-word; }
+  .foldnote { font-size: 11px; color: #7f8ea0; margin-top: 5px; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -185,6 +193,18 @@
     <button id="btnRand">🎲 Zufall</button>
   </div>
 
+  <div class="sechd"><span class="sechd-t">Space-Folding · Lewandowski et al. 2025</span></div>
+  <canvas id="foldPath" class="foldpath"></canvas>
+  <div class="foldinfo">
+    <span>χ(Γ) = <b id="foldChi">–</b></span>
+    <span>r1 = <b id="foldR1">–</b></span>
+    <span>r2 = <b id="foldR2">–</b></span>
+    <span>Regionen <b id="foldReg">–</b></span>
+    <label class="rtgl" style="margin-left:auto"><input type="checkbox" id="showWorst"> schlimmster Falz</label>
+  </div>
+  <div id="foldSeq" class="foldseq">–</div>
+  <div class="foldnote" id="foldNote">Gerader Pfad Γ im Eingaberaum → Bit-Flip-Walk im Hamming-Raum. Jede Faltlinie, die gekreuzt wird, flippt genau ein Bit.</div>
+
   <div class="legend">
     <span class="dot" style="background:#ffb142"></span> innere Klasse (Kreis) &nbsp;
     <span class="dot" style="background:#19d3b5"></span> äußere Klasse (Ring)
@@ -194,7 +214,7 @@
 <div id="main">
   <div id="canvas-row">
     <div class="canvas-box">
-      <h3>Eingaberaum (2D) — Faltlinien wᵢ·x + bᵢ = 0</h3>
+      <div class="cbox-hd"><h3>Eingaberaum (2D) — Faltlinien wᵢ·x + bᵢ = 0</h3><label class="rtgl"><input type="checkbox" id="showRegions"> Falt-Regionen</label></div>
       <canvas class="plot2d" id="input2d"></canvas>
     </div>
     <div class="canvas-box">
@@ -376,6 +396,20 @@ function draw2D(B1o) {
   const scale = Math.min(w, h) * 0.4;
   const cx = w / 2, cy = h / 2;
   const toPx = (x, y) => [cx + x * scale, cy - y * scale];
+  const P = getParams();
+  const B1 = B1o || P.B1; // Guard 3: Faltlinien vom expliziten B1
+
+  // Space-Folding: Linear-Regionen nach Aktivierungsmuster einfärben (hinten, halbtransparent)
+  if (showRegions) {
+    const G = 44, lo = -1.25, hi = 1.25;
+    for (let i = 0; i < G; i++) for (let j = 0; j < G; j++) {
+      const xa = lo + (hi - lo) * i / G, xb = lo + (hi - lo) * (i + 1) / G;
+      const ya = lo + (hi - lo) * j / G, yb = lo + (hi - lo) * (j + 1) / G;
+      const code = patternCode((xa + xb) / 2, (ya + yb) / 2, P, B1);
+      ctx.fillStyle = PATTERN_COLORS[code] + '26';
+      ctx.fillRect(cx + xa * scale, cy - yb * scale, (xb - xa) * scale, (yb - ya) * scale);
+    }
+  }
 
   for (let i = 0; i < points.length; i++) {
     const [px, py] = toPx(points[i][0], points[i][1]);
@@ -383,8 +417,6 @@ function draw2D(B1o) {
     ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 2 * Math.PI); ctx.fill();
   }
 
-  const P = getParams();
-  const B1 = B1o || P.B1; // Guard 3: Faltlinien vom expliziten B1
   ctx.lineWidth = 2.5;
   for (let k = 0; k < 3; k++) {
     const [wx, wy] = P.A1[k], b = B1[k];
@@ -401,6 +433,109 @@ function draw2D(B1o) {
     ctx.beginPath(); ctx.moveTo(mid[0], mid[1]); ctx.lineTo(tip[0], tip[1]); ctx.stroke();
   }
   ctx.setLineDash([]);
+
+  // Space-Folding-Pfad Γ (gerade Sehne) + rote Bit-Flip-Kreuze an jeder Faltlinie
+  if (foldChord) {
+    const [gx1, gy1, gx2, gy2] = foldChord;
+    const a = toPx(gx1, gy1), b = toPx(gx2, gy2);
+    ctx.strokeStyle = '#ffd866'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    ctx.fillStyle = '#ffd866'; ctx.beginPath(); ctx.arc(a[0], a[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    const st = 64; let prev = patternCode(gx1, gy1, P, B1);
+    for (let i = 1; i <= st; i++) {
+      const lam = i / st, x = gx1 + (gx2 - gx1) * lam, y = gy1 + (gy2 - gy1) * lam;
+      const c = patternCode(x, y, P, B1);
+      if (c !== prev) {
+        const p = toPx(x, y);
+        ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(p[0] - 4, p[1] - 4); ctx.lineTo(p[0] + 4, p[1] + 4);
+        ctx.moveTo(p[0] + 4, p[1] - 4); ctx.lineTo(p[0] - 4, p[1] + 4); ctx.stroke();
+      }
+      prev = c;
+    }
+  }
+}
+
+/* ------------------ Space-Folding (Lewandowski et al. 2025, arXiv:2502.09954) ------------------ */
+const PATTERN_COLORS = ['#e74c3c', '#27ae60', '#3498db', '#e0a100', '#9b59b6', '#1abc9c', '#e76f51', '#8a8f98'];
+let showRegions = false, showWorst = false;
+let foldChord = null; // [x1,y1,x2,y2] – aktuelle gerade Sehne Γ im Eingaberaum
+function popcount(n) { let c = 0; while (n) { c += n & 1; n >>= 1; } return c; }
+const hamming = (a, b) => popcount(a ^ b);
+function patternCode(x, y, P, B1) { // Aktivierungsmuster = Vorzeichen der Prä-Aktivierung (für ReLU = binarisierter Output)
+  const B = B1 || P.B1; let code = 0;
+  for (let k = 0; k < 3; k++) {
+    const z = P.A1[k][0] * x + P.A1[k][1] * y + B[k];
+    if (P.neuronOn[k] && z > 0) code |= (1 << (2 - k));
+  }
+  return code;
+}
+// Gerader Pfad Γ → Hamming-Walk (π₁..πₙ). r1 = max dH zu Start, r2 = Summe der Bit-Flips, χ = 1 − r1/r2.
+function foldMetrics(x1, y1, x2, y2, st, P, B1) {
+  const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(patternCode(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1)); }
+  const dh = codes.map(c => hamming(c, codes[0]));
+  const dhstep = []; for (let i = 0; i < codes.length - 1; i++) dhstep.push(hamming(codes[i], codes[i + 1]));
+  const r2 = dhstep.reduce((a, b) => a + b, 0);
+  let r1 = 0, foldIdx = -1;
+  for (let i = 0; i < dh.length; i++) { if (dh[i] > r1) r1 = dh[i]; if (i > 0 && dh[i] < dh[i - 1] && foldIdx < 0) foldIdx = i; }
+  return { codes, dh, dhstep, r1, r2, chi: r2 > 0 ? 1 - r1 / r2 : 0, foldIdx };
+}
+function regionCount(P, B1) { // Anzahl der Linear-Regionen (distincte Aktivierungsmuster) im Domain-Grid
+  const seen = new Set(); const G = 40, lo = -1.2, hi = 1.2;
+  for (let i = 0; i < G; i++) for (let j = 0; j < G; j++)
+    seen.add(patternCode(lo + (hi - lo) * i / (G - 1), lo + (hi - lo) * j / (G - 1), P, B1));
+  return seen.size;
+}
+const CHORDS = (function () {
+  const c = [];
+  for (const y of [-0.6, -0.3, 0, 0.3, 0.6]) c.push([-1, y, 1, y]);
+  for (const x of [-0.6, -0.3, 0, 0.3, 0.6]) c.push([x, -1, x, 1]);
+  c.push([-0.85, -0.85, 0.85, 0.85], [0.85, -0.85, -0.85, 0.85]);
+  return c;
+})();
+const DEFAULT_CHORD = [-1, 0.3, 1, 0.3];
+function chooseChord(P, B1) { // "schlimmster Falz" ≈ Φ̂ = max über eine feste Sehnen-Familie
+  if (!showWorst) return DEFAULT_CHORD.slice();
+  let best = null, bc = -1;
+  for (const c of CHORDS) { const m = foldMetrics(c[0], c[1], c[2], c[3], 20, P, B1); if (m.chi > bc) { bc = m.chi; best = c; } }
+  return (best || DEFAULT_CHORD).slice();
+}
+const fcv = $('foldPath'); const fctx = fcv.getContext('2d');
+function drawFoldPath(m) { // Fig. 6: dH(π₁,·) (gestrichelt-punktig) + dH(πᵢ,πᵢ₊₁) (gestrichelt)
+  const w = fcv.width = fcv.clientWidth || 600, h = fcv.height = fcv.clientHeight || 120;
+  fctx.clearRect(0, 0, w, h);
+  const padL = 20, padR = 10, padT = 10, padB = 18, n = m.dh.length, maxDh = Math.max(3, m.r1);
+  const X = i => padL + (w - padL - padR) * (i / (n - 1));
+  const Y = v => padT + (h - padT - padB) * (1 - v / maxDh);
+  fctx.strokeStyle = '#333'; fctx.lineWidth = 1;
+  fctx.beginPath(); fctx.moveTo(padL, h - padB); fctx.lineTo(w - padR, h - padB); fctx.stroke();
+  for (let d = 1; d <= maxDh; d++) { fctx.strokeStyle = '#1c1c24'; fctx.beginPath(); fctx.moveTo(padL, Y(d)); fctx.lineTo(w - padR, Y(d)); fctx.stroke(); }
+  fctx.strokeStyle = '#19d3b5'; fctx.setLineDash([4, 3]); fctx.lineWidth = 1.5; fctx.beginPath();
+  for (let i = 0; i < m.dhstep.length; i++) { const x0 = X(i), x1 = X(i + 1), yv = m.dhstep[i]; if (i === 0) fctx.moveTo(x0, Y(yv)); fctx.lineTo(x1, Y(yv)); }
+  fctx.stroke();
+  fctx.strokeStyle = '#ffb142'; fctx.setLineDash([2, 2]); fctx.lineWidth = 2; fctx.beginPath();
+  for (let i = 0; i < n; i++) { const x = X(i), y = Y(m.dh[i]); if (i === 0) fctx.moveTo(x, y); else fctx.lineTo(x, y); }
+  fctx.stroke(); fctx.setLineDash([]);
+  if (m.foldIdx > 0) { const x = X(m.foldIdx); fctx.strokeStyle = '#ff6b6b'; fctx.lineWidth = 1.5; fctx.beginPath(); fctx.moveTo(x, Y(m.dh[m.foldIdx])); fctx.lineTo(x, h - padB); fctx.stroke(); }
+  fctx.font = '10px monospace';
+  fctx.fillStyle = '#ffb142'; fctx.fillText('dH(π₁,·)', padL + 4, padT + 9);
+  fctx.fillStyle = '#19d3b5'; fctx.fillText('dH(πᵢ,πᵢ₊₁)', padL + 4, padT + 20);
+  fctx.fillStyle = '#7f8ea0'; fctx.fillText('Γ: λ = 0 → 1 (gerade Sehne im Eingaberaum)', padL + 4, h - 5);
+}
+function updateFoldPanel(B1o) {
+  const P = getParams();
+  const chord = chooseChord(P, B1o);
+  foldChord = chord;
+  const m = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
+  $('foldChi').textContent = m.chi.toFixed(3);
+  $('foldR1').textContent = m.r1; $('foldR2').textContent = m.r2;
+  $('foldReg').textContent = regionCount(P, B1o);
+  $('foldSeq').textContent = 'Aktivierungsmuster: ' + m.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+  $('foldNote').textContent = m.chi < 0.02
+    ? '1 Hidden-Layer ⇒ dH(π₁,·) monoton ⇒ χ ≈ 0 (konvex, Lemma 1). Echte Space-Folds brauchen ≥ 2 Hidden-Layer.'
+    : 'Pfad ist nicht-konvex — dH(π₁,·) sinkt zwischendurch (Space-Fold, Fig. 4).';
+  drawFoldPath(m);
 }
 
 /* ------------------ 3D Szene (Three.js) ------------------ */
@@ -577,7 +712,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v4'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v5'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -728,6 +863,7 @@ function animateFold() {
     }
     updateAllLabels();
     computeHidden([b, b, b]);
+    updateFoldPanel([b, b, b]);
     drawPointCloud(); drawPlane(); draw2D([b, b, b]);
   };
   const endFold = () => { cancelAnimationFrame(foldRaf); foldRaf = 0; animating = false; $('btnFold').disabled = false; refreshAll(); };
@@ -774,6 +910,7 @@ function updateAllLabels() {
 function refreshAll() {
   updateAllLabels();
   updateActFormula();
+  updateFoldPanel();
   draw2D();
   computeHidden();
   drawPointCloud();
@@ -790,10 +927,12 @@ function refreshAll() {
 document.querySelectorAll('#sidebar input').forEach(inp => {
   inp.addEventListener('input', () => {
     if (training || animating) return;
+    if (inp.id === 'showWorst') { showWorst = inp.checked; refreshAll(); return; }
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
     refreshAll();
   });
 });
+$('showRegions').addEventListener('change', () => { if (training || animating) return; showRegions = $('showRegions').checked; refreshAll(); });
 $('actfn').addEventListener('change', () => {
   if (training || animating) return;
   refreshAll();
