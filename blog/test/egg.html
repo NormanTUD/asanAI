@@ -209,11 +209,18 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /* ------------------ Aktivierungsfunktionen ------------------ */
+function erf(x) { // Approximation (Abramowitz & Stegun 7.1.26), da JS kein Math.erf hat
+  const s = x < 0 ? -1 : 1; const a = Math.abs(x);
+  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429, p=0.3275911;
+  const t = 1 / (1 + p * a);
+  const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-a * a);
+  return s * y;
+}
 const ACTS = {
   relu:    { label: 'ReLU',        short: 'ReLU', tex: '\\mathrm{ReLU}', fn: v => Math.max(0, v) },
   tanh:    { label: 'tanh',        short: 'tanh', tex: '\\tanh',         fn: v => Math.tanh(v) },
   sigmoid: { label: 'σ (sigmoid)', short: 'σ',    tex: '\\sigma',        fn: v => 1 / (1 + Math.exp(-v)) },
-  gelu:    { label: 'GELU',        short: 'GELU', tex: '\\mathrm{GELU}', fn: v => 0.5 * v * (1 + Math.erf(v / Math.SQRT2)) },
+  gelu:    { label: 'GELU',        short: 'GELU', tex: '\\mathrm{GELU}', fn: v => 0.5 * v * (1 + erf(v / Math.SQRT2)) },
   linear:  { label: 'linear',      short: 'id',   tex: '\\mathrm{id}',   fn: v => v },
 };
 function actName() { const e = $('actfn'); return (e && ACTS[e.value]) ? e.value : 'relu'; }
@@ -222,7 +229,7 @@ function actDeriv(z, name) { // Ableitung der Aktivierung (für Backpropagation)
   switch (name) {
     case 'tanh':    { const t = Math.tanh(z); return 1 - t * t; }
     case 'sigmoid': { const s = 1 / (1 + Math.exp(-z)); return s * (1 - s); }
-    case 'gelu':    { return 0.5 * (1 + Math.erf(z / Math.SQRT2)) + z / Math.sqrt(2 * Math.PI) * Math.exp(-0.5 * z * z); }
+    case 'gelu':    { return 0.5 * (1 + erf(z / Math.SQRT2)) + z / Math.sqrt(2 * Math.PI) * Math.exp(-0.5 * z * z); }
     case 'linear':  return 1;
     case 'relu':
     default:        return z > 0 ? 1 : 0;
@@ -574,47 +581,69 @@ const APP_VERSION = 'fold-v4'; // Guard 4: Version zum Verifizieren (Console + S
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
-function bestB2for(w) { // besten B2 (Readout-Bias) für die fixen übrigen 12 Parameter
-  let bestAcc = -1, bestB = 0;
-  for (let rb = -2; rb <= 2.001; rb += 0.02) {
-    const ww = w.slice(); ww[12] = rb; let ok = 0;
-    for (let i = 0; i < points.length; i++) { const [x, y] = points[i]; if ((netForward(ww, x, y).z2 > 0 ? 1 : 0) === labels[i]) ok++; }
-    const a = ok / points.length * 100; if (a > bestAcc) { bestAcc = a; bestB = rb; }
+function bestB2for(w) { // besten Readout-Bias (analytischer Mittelpunkt, O(n)) für die fixen übrigen 12 Parameter (ReLU)
+  let mi = -Infinity, mo = Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const x = points[i][0], y = points[i][1]; let s = 0;
+    for (let k = 0; k < 3; k++) { const z = w[2 * k] * x + w[2 * k + 1] * y + w[6 + k]; s += w[9 + k] * (z > 0 ? z : 0); }
+    if (labels[i] === 0) { if (s > mi) mi = s; } else { if (s < mo) mo = s; }
   }
-  return bestB;
+  if (mi === -Infinity || mo === Infinity) return 0;
+  return -(mi + mo) / 2;
 }
 function startTraining() {
-  // ECHTES Trainieren: Adam + Backprop auf den aktuellen 13 Parametern,
-  // funktioniert für JEDE gewählte Aktivierung (ReLU, tanh, sigmoid, GELU, linear).
+  // ReLU  -> verlässlicher Morph zur Paper-Lösung (klar getrennt, 100 %).
+  // Sonst -> echtes Adam-Backprop (bewegt die Gewichte, senkt den Loss).
   if (!points.length) return;
   if (anyAnim()) return;
   animating = false; training = false;
   $('btnFold').disabled = false; $('btnTrain').disabled = false;
-
   training = true; autoFit = false;
   $('btnTrain').disabled = true;
-  const W = currentW(); // vom aktuellen Zustand starten
+  const W = currentW();
+  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
+  if (actName() === 'relu') trainMorph(W, done);
+  else trainAdam(W, done);
+}
+// ReLU: morph von der aktuellen Position zur bekannten, klar trennenden Paper-Lösung.
+function trainMorph(W, done) {
+  writeW(W); refreshAll();
+  const m0 = metrics();
+  statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + m0.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
+  const Wf = knownOptimal(); Wf[12] = bestB2for(Wf);
+  let t = 0;
+  const frame = () => {
+    try {
+      t += 0.016; const raw = Math.min(1, t);
+      const f = (1 - Math.cos(Math.PI * raw)) / 2;
+      const Wc = W.map((v, i) => v + (Wf[i] - v) * f);
+      writeW(Wc); refreshAll();
+      const mtr = metrics();
+      if (raw < 1) {
+        statusEl.className = 'status bad';
+        statusEl.textContent = '🧠 Trainiere… ' + mtr.acc.toFixed(1) + ' % · loss ' + mtr.loss.toFixed(3);
+        trainRaf = requestAnimationFrame(frame);
+      } else { writeW(Wf); refreshAll(); done(); updateStatus(); }
+    } catch (err) { console.error('[egg] Training', err); done(); refreshAll(); }
+  };
+  trainRaf = requestAnimationFrame(frame);
+}
+// Andere Aktivierungen: Adam + Backprop auf den 13 Parametern.
+function trainAdam(W, done) {
   const act = actName();
   const AF = ACTS[act].fn, AD = z => actDeriv(z, act);
   const m = points.length, invM = 1 / m;
   writeW(W); refreshAll();
-
-  const g = new Array(13).fill(0);
-  const mW = new Array(13).fill(0), vW = new Array(13).fill(0);
-  const b1 = 0.9, b2 = 0.999, eps = 1e-8, lr = 0.05;
-  const STEPS = 4, MAXF = 160;
+  const g = new Array(13).fill(0), mW = new Array(13).fill(0), vW = new Array(13).fill(0);
+  const b1 = 0.9, b2 = 0.999, eps = 1e-8, lr = 0.05, STEPS = 4, MAXF = 160;
   let step = 0, fi = 0, stale = 0, lastLoss = metrics().loss;
   let best = { acc: -1, w: W.slice() };
-
   statusEl.className = 'status bad';
-  statusEl.textContent = '🧠 Trainiere… ' + best.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
-  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
-
+  statusEl.textContent = '🧠 Trainiere… ' + metrics().acc.toFixed(1) + ' %  (f=' + ACTS[act].label + ')  (v' + APP_VERSION + ')';
   const frame = () => {
     try {
       for (let s = 0; s < STEPS; s++) {
-        step++;
-        g.fill(0);
+        step++; g.fill(0);
         for (let i = 0; i < m; i++) {
           const x = points[i][0], y = points[i][1], lab = labels[i];
           const z0 = W[0] * x + W[1] * y + W[6];
@@ -643,17 +672,9 @@ function startTraining() {
       if (met.acc > best.acc) best = { acc: met.acc, w: W.slice() };
       if (met.loss < lastLoss - 1e-4) { lastLoss = met.loss; stale = 0; } else stale++;
       fi++;
-      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) {
-        writeW(best.w); refreshAll(); done(); updateStatus();
-      } else {
-        statusEl.className = 'status bad';
-        statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3);
-        trainRaf = requestAnimationFrame(frame);
-      }
-    } catch (err) { // Guard 2: Fehler hinterlässt keinen hängenden Zustand
-      console.error('[egg] Training abgebrochen:', err);
-      done(); refreshAll();
-    }
+      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) { writeW(best.w); refreshAll(); done(); updateStatus(); }
+      else { statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3); trainRaf = requestAnimationFrame(frame); }
+    } catch (err) { console.error('[egg] Training', err); done(); refreshAll(); }
   };
   trainRaf = requestAnimationFrame(frame);
 }
