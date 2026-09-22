@@ -1,1 +1,0 @@
-<html><body><pre id="o">x</pre><script>setTimeout(function(){document.getElementById("o").textContent="PROBE ok "+new Date().getTime()},2000)</script></body></html>

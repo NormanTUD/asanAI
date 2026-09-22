@@ -277,6 +277,7 @@ html:not(.dark) #atlas-stage {
 				<div class="cap-text" id="tour-text"></div>
 			</div>
 			<div class="tour-bar">
+				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
 				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
 				<div class="tour-dots" id="tour-dots"></div>
 				<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
