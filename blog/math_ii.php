@@ -1232,6 +1232,139 @@ With other methods of making numbers from data (like Embeddings to create number
 </div>
 </div>
 
+<style>
+.tcalc-card{background:var(--mn-surface,#fff);border:1px solid var(--mn-border,#e6e6e6);border-radius:var(--mn-radius-lg,14px);padding:18px 18px 20px;margin:18px 0;box-shadow:var(--mn-shadow-sm,0 1px 3px rgba(0,0,0,.06));}
+.tcalc-card-title{font-weight:700;font-size:1.02rem;margin-bottom:4px;color:var(--mn-text,#111);}
+.tcalc-hint{margin:0 0 14px;font-size:.9rem;color:var(--mn-text-secondary,#666);line-height:1.5;}
+.tcalc-bcast-row,.tcalc-contr-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;}
+.tcalc-gridwrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.tcalc-cap{font-size:.82rem;color:var(--mn-text-secondary,#666);font-family:var(--mn-font-mono,monospace);}
+.tcalc-sym{font-size:1.5rem;font-weight:700;color:var(--mn-accent,#2b6cb0);padding:0 2px;}
+.tcalc-grid{display:grid;gap:4px;}
+.tcalc-cell{min-width:42px;padding:5px 6px;text-align:center;font-family:var(--mn-font-mono,monospace);font-size:.9rem;border-radius:var(--mn-radius-sm,6px);border:1px solid var(--mn-border,#e0e0e0);background:var(--mn-bg-subtle,#fafafa);color:var(--mn-text,#111);box-sizing:border-box;}
+.tcalc-cell.input{width:52px;-moz-appearance:textfield;}
+.tcalc-cell.input::-webkit-outer-spin-button,.tcalc-cell.input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.tcalc-cell.result{background:var(--mn-accent-lighter,#eaf1fb);border-color:var(--mn-accent-light,#cdddf5);font-weight:600;}
+.tcalc-cell.result.click{cursor:pointer;}
+.tcalc-cell.result.click:hover{outline:2px solid var(--mn-accent-light,#cdddf5);}
+.tcalc-cell.result.sel{background:var(--mn-accent,#2b6cb0);border-color:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-cell.hl{background:var(--mn-sky-light,#e2f0ff);border-color:var(--mn-sky,#7cc0ff);}
+.tcalc-bcast-foot{margin-top:14px;display:flex;flex-direction:column;gap:8px;align-items:center;}
+.tcalc-shapes{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.tcalc-shape-row{display:flex;gap:4px;align-items:center;}
+.tcalc-shape-row .lbl{width:14px;font-family:var(--mn-font-mono,monospace);font-size:.8rem;color:var(--mn-text-secondary,#666);text-align:right;}
+.tcalc-dim{min-width:30px;text-align:center;padding:2px 5px;font-size:.82rem;font-family:var(--mn-font-mono,monospace);border:1px dashed var(--mn-border,#ccc);border-radius:4px;color:var(--mn-text,#111);}
+.tcalc-dim.stretch{border-style:solid;border-color:var(--mn-emerald,#2f9e6f);color:var(--mn-emerald,#2f9e6f);font-weight:700;}
+.tcalc-dim.bad{border-style:solid;border-color:var(--mn-coral,#e0654a);color:var(--mn-coral,#e0654a);font-weight:700;}
+.tcalc-status{font-size:.85rem;font-family:var(--mn-font-mono,monospace);}
+.tcalc-status.ok{color:var(--mn-emerald,#2f9e6f);}
+.tcalc-status.err{color:var(--mn-coral,#e0654a);}
+.tcalc-controls{margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--mn-border-light,#eee);}
+.tcalc-ctl-lbl{font-size:.85rem;color:var(--mn-text-secondary,#666);}
+.tcalc-controls select{font:inherit;font-size:.9rem;padding:5px 8px;border-radius:6px;border:1px solid var(--mn-border,#ddd);background:var(--mn-bg,#fff);color:var(--mn-text,#111);}
+.tcalc-op{display:inline-flex;border:1px solid var(--mn-border,#ddd);border-radius:6px;overflow:hidden;}
+.tcalc-op button{font:inherit;font-size:.95rem;line-height:1;padding:6px 12px;border:none;cursor:pointer;background:var(--mn-bg,#fff);color:var(--mn-text-secondary,#555);}
+.tcalc-op button + button{border-left:1px solid var(--mn-border,#ddd);}
+.tcalc-op button.active{background:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-detail{margin-top:14px;text-align:center;font-size:.95rem;min-height:1.4em;}
+.tcalc-history{background:var(--mn-bg-subtle,#f7f7f5);border:1px solid var(--mn-border,#e6e6e6);border-left:4px solid var(--mn-accent,#2b6cb0);border-radius:var(--mn-radius-md,10px);padding:6px 20px;margin:18px 0;}
+.tcalc-history .md{margin:8px 0;}
+.tcalc-history h4{margin:10px 0 6px;font-size:1rem;}
+.tcalc-history p{margin:8px 0;font-size:.92rem;line-height:1.55;}
+@media (max-width:560px){.tcalc-cell{min-width:34px;padding:4px;}.tcalc-cell.input{width:44px;}.tcalc-sym{font-size:1.25rem;}}
+</style>
+
+<div class="md" data-mathlevel="40">
+## Doing arithmetic with tensors
+
+So far a tensor was just *data* — numbers arranged in a shape. But you can also *compute* with it, and two operations power almost everything that follows.
+
+**Element-wise.** Combine the matching entries of two tensors, one by one. The tensors do not even need the same shape: shapes are lined up from the right, an axis of length $1$ stretches to match, and a missing leading axis counts as $1$. This rule is called **broadcasting** \cite[Broadcasting, NumPy]{numpy_broadcasting} — and it quietly explains the $\mathbf{x}+b$ of every affine layer.
+
+**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} C_{ij}\,D_{jk}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 \cite[Einstein, 1916]{einstein1916annalen}. Contraction is the single most important operation in both linear algebra and deep learning.
+
+Try both below.
+</div>
+
+<div class="tcalc-card" id="tcalc-bcast">
+  <div class="tcalc-card-title">Broadcasting, hands-on</div>
+  <p class="tcalc-hint">A fixed $3\times3$ tensor $A$ meets a second tensor $B$ of any shape. Right-align the shapes; an axis of $1$ stretches. Pick $B$'s shape and operator — and try the one shape that fails, $B$ of length $4$.</p>
+  <div class="tcalc-bcast-row">
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">A (3, 3)</div>
+      <div class="tcalc-grid" id="tcalc-bcast-a"></div>
+    </div>
+    <div class="tcalc-sym" id="tcalc-bcast-sym">+</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap" id="tcalc-bcast-bcap">B (3)</div>
+      <div class="tcalc-grid" id="tcalc-bcast-b"></div>
+    </div>
+    <div class="tcalc-sym">=</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">result</div>
+      <div class="tcalc-grid" id="tcalc-bcast-res"></div>
+    </div>
+  </div>
+  <div class="tcalc-bcast-foot">
+    <div class="tcalc-shapes" id="tcalc-bcast-shapes"></div>
+    <div class="tcalc-status ok" id="tcalc-bcast-status"></div>
+  </div>
+  <div class="tcalc-controls">
+    <span class="tcalc-ctl-lbl">shape of B</span>
+    <select id="tcalc-bcast-bshape">
+      <option value="3" selected>row — (3)</option>
+      <option value="1x3">row vector — (1, 3)</option>
+      <option value="3x1">column vector — (3, 1)</option>
+      <option value="sc">scalar — ()</option>
+      <option value="4">row — (4)</option>
+    </select>
+    <span class="tcalc-ctl-lbl">operator</span>
+    <div class="tcalc-op" id="tcalc-bcast-op">
+      <button type="button" data-op="+" class="active">+</button>
+      <button type="button" data-op="-">&#8722;</button>
+      <button type="button" data-op="*">&#215;</button>
+    </div>
+  </div>
+</div>
+
+<div class="tcalc-card" id="tcalc-contraction">
+  <div class="tcalc-card-title">Contraction — the matrix product</div>
+  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them. The matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product light up the matching row of $C$ and column of $D$.</p>
+  <div class="tcalc-contr-row">
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">C (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-c"></div>
+    </div>
+    <div class="tcalc-sym">&#215;</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">D (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-d"></div>
+    </div>
+    <div class="tcalc-sym">=</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">M = C&#183;D (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-m"></div>
+    </div>
+  </div>
+  <div class="tcalc-detail" id="tcalc-contr-detail"></div>
+</div>
+
+<div class="tcalc-history">
+<div class="md">
+#### Where the words come from
+All four words are old, and each arrived differently:
+
+- **Matrix** — long used for a womb or mold, Sylvester made *matrix* a math word in 1850 for "an oblong arrangement of terms … a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix}; Cayley gave matrices their own arithmetic two years later \cite[Cayley, 1858]{cayleymemoirmatrices}.
+- **Tensor, vector, scalar** — Hamilton's 1846 quaternion vocabulary: a quaternion is a *scalar* plus a *vector*, and its length is the *tensor* \cite[Tensor, History]{tensor_wiki}, a term he defines in "On some Extensions of Quaternions" \cite[Hamilton, 1854]{hamiltonextensionsquaternions}. The modern physical *tensor* is Voigt's 1898 coinage \cite[Voigt, 1898]{voigt1898krystalle}; the calculus that makes them work is Ricci-Curbastro's and Levi-Civita's, 1900 \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}.
+- **Summation convention** — a repeated index is summed over, silently. Einstein wrote it down in 1916 \cite[Einstein, 1916]{einstein1916annalen}; it is why the matrix product writes out $\sum_{j}$ and then hides the $j$.
+</div>
+</div>
+
+<script>
+  if (typeof initTcalcBroadcast === 'function') initTcalcBroadcast();
+  if (typeof initTcalcContraction === 'function') initTcalcContraction();
+</script>
+
 <div class="md" data-mathlevel="40" data-optionaltitle="Chaining Functions (Composition)">
 ## Chaining Functions (Composition)
 
