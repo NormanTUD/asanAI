@@ -7826,12 +7826,23 @@ window.bibData = {
 	 *  anchor for the "cosmic-web intuition".
 	 * ───────────────────────────────────────────────────────────────────── */
 	"cosmic_web_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Structure_of_the_Universe.jpg",
+		title: "Structure of the Universe — a slice of the cosmic web: filaments and nodes of galaxies and dark matter, and the vast voids between them",
+		author: "NASA, ESA, and E. Hallman (University of Colorado, Boulder)",
+		year: 2008,
+		license: "Public domain (NASA)",
+		alternativetitle: "Structure of the Universe (the cosmic web)"
+	},
+	/* The flat "cosmic foam" photograph floating in the Atlas (map.php)
+	 * during the cosmic-web stage of the Cosmic journey: a frame from the
+	 * MPA Garching visualization movies (local file cosmic_web_foam.jpg). */
+	"cosmic_web_foam_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg",
-		title: "Cosmic web — a frame from the Max-Planck-Institute for Astrophysics' visualization movies of large-scale structure in the Universe",
+		title: "Cosmic web — a frame from the Max-Planck-Institute for Astrophysics' movies of large-scale structure in the Universe",
 		author: "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)",
 		year: 2019,
 		license: "CC BY-SA 4.0",
-		alternativetitle: "Movies of large-scale structure in the Universe"
+		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
 	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of

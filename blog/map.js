@@ -508,7 +508,7 @@ function bootAtlas() {
 	function buildWebPhoto() {
 		// a real large-scale-structure render (Springel / MPA Garching) shown
 		// as a flat photograph at the cosmic-web stage
-		var tex = new THREE.TextureLoader().load('cosmic_web.jpg');
+		var tex = new THREE.TextureLoader().load('cosmic_web_foam.jpg');
 		webPhoto = new THREE.Mesh(
 			new THREE.PlaneGeometry(720, 480),
 			new THREE.MeshBasicMaterial({

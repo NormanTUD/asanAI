@@ -206,3 +206,17 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Status: UNCLEAR - Quellseite via \cite[Kowitz, 2017]{ronkowitz2017perceptron}
              im Caption zitiert; Original-Smithsonian-Lizenz vor Weiterverwendung
              ggf. klären.
+
+22. cosmic_web_foam
+    URL: https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)
+    Hinweis: Frame aus den Data-Visualization-Movies "Movies of large-scale
+             structure in the Universe" (https://wwwmpa.mpa-garching.mpg.de/galform/data_vis/,
+             geprüft HTTP 200). Commons-Upload-Datum 2019-12-13 (Jahr im
+             literature.js-Eintrag cosmic_web_foam_image).
+    Lokal: cosmic_web_foam.jpg (678x452)
+    Genutzt in: map.php § The Atlas (flaches Foto im "Cosmic web"-Zoom der
+             Cosmic journey)
+    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
+             Quelle via \cite{cosmic_web_foam_image} zitiert.
