@@ -183,7 +183,7 @@ function bootAtlas() {
 
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, earthTex, moon, sun, planets = [];
-	var dotMesh, dotInstance = [], dotBaseColor = [];
+	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp;
 	var raycaster = new THREE.Raycaster();
