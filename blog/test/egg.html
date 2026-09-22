@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Origami in N Dimensions – 2D-Egg Folding Visualization</title>
+
+<!-- Temml für Formel-Rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<!-- Three.js für 3D (ES Modules) -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, "Segoe UI", sans-serif;
+    background: #1a1a1f; color: #eaeaea; display: flex; height: 100vh; overflow: hidden;
+  }
+  #sidebar {
+    width: 380px; padding: 18px; background: #23232b;
+    overflow-y: auto; border-right: 1px solid #333;
+  }
+  #main { flex: 1; display: flex; flex-direction: column; }
+  #canvas-row { flex: 1; display: flex; }
+  .canvas-box {
+    flex: 1; border: 1px solid #333; position: relative;
+    display: flex; flex-direction: column; background: #111;
+  }
+  .canvas-box h3 {
+    margin: 0; padding: 8px 12px; background: #2a2a33;
+    font-size: 13px; font-weight: 500; border-bottom: 1px solid #333;
+  }
+  canvas.plot2d { flex: 1; width: 100%; background: #fff; }
+  #three-container { flex: 1; }
+  h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
+  h2 { font-size: 13px; margin: 18px 0 8px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
+  p, label { font-size: 12.5px; line-height: 1.5; }
+  .slider-group { margin: 10px 0; padding: 8px; background: #1a1a22; border-radius: 6px; }
+  .slider-group label { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .slider-group input[type=range] { width: 100%; }
+  .val { color: #50fa7b; font-family: monospace; }
+  .hp-h1 { color: #ff5555; }
+  .hp-h2 { color: #50fa7b; }
+  .hp-h3 { color: #8be9fd; }
+  .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 14px;}
+  button {
+    background: #6272a4; color: white; border: none;
+    padding: 6px 12px; border-radius: 4px; cursor: pointer; margin: 3px;
+  }
+  button:hover { background: #7b8cbf; }
+  .legend { font-size: 11px; margin-top: 4px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle;}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h1>🥚 Origami in N Dimensions</h1>
+  <p><i>Interaktive Visualisierung nach Keup & Helias (2022), Fig. 2c/d</i></p>
+
+  <h2>Die Transformation</h2>
+  <p>Drei Hyperebenen mit Normalen <span id="fw"></span> (Zeilen von <span id="fW"></span>) berechnen je:</p>
+  <div class="formula" id="f1"></div>
+  <p>mit ReLU:</p>
+  <div class="formula" id="f2"></div>
+  <p>Im 120°-Abstand <b>falten</b> sie die 2D-Eidaten in eine 3. Dimension — danach ist die innere Klasse (orange) linear vom Ring (grün) trennbar.</p>
+
+  <h2>Daten &amp; Faltung</h2>
+  <div class="slider-group">
+    <label>Punktzahl: <span class="val" id="vN">2000</span></label>
+    <input type="range" id="sN" min="200" max="5000" step="100" value="2000">
+    <label>Falttiefe (Bias b): <span class="val" id="vB">0.00</span></label>
+    <input type="range" id="sB" min="-1" max="0" step="0.01" value="0">
+  </div>
+  <p class="legend">
+    <span class="dot" style="background:#e74c3c"></span>
+    <span class="dot" style="background:#27ae60"></span>
+    <span class="dot" style="background:#3498db"></span>
+    &nbsp;= 3 Faltlinien im 120°-Abstand
+  </p>
+
+  <h2>Trenn-Hyperebene (Readout)</h2>
+  <div class="slider-group">
+    <label style="justify-content:flex-start; gap:6px"><input type="checkbox" id="sPlane" checked> Trennebene anzeigen</label>
+    <label>Verschieben: <span class="val" id="vOff">0.00</span></label>
+    <input type="range" id="sOff" min="-0.2" max="0.2" step="0.01" value="0">
+  </div>
+  <p class="legend">Bei 0 trennt die Ebene beide Klassen perfekt — verschieben, um den Bruch zu sehen.</p>
+
+  <button onclick="animateFold()">🎬 Falt-Animation</button>
+
+  <div class="legend">
+    <span class="dot" style="background:#e67e22"></span> innere Klasse (Kreis) &nbsp;
+    <span class="dot" style="background:#16a085"></span> äußere Klasse (Ring)
+  </div>
+</div>
+
+<div id="main">
+  <div id="canvas-row">
+    <div class="canvas-box">
+      <h3>Eingaberaum (2D) — Hyperebenen als Linien</h3>
+      <canvas class="plot2d" id="input2d"></canvas>
+    </div>
+    <div class="canvas-box">
+      <h3>Nach ReLU-Faltung (3D versteckter Layer) — drehbar</h3>
+      <div id="three-container"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ------------------ Formeln mit Temml ------------------ */
+temml.render(String.raw`x_i^{(l)} = \Phi\!\left(W_{ij}^{(l)}\, x_j^{(l-1)} + b_i^{(l)}\right)`, document.getElementById('f1'));
+temml.render(String.raw`\Phi(\tilde x) = \mathrm{ReLU}(\tilde x) = \max(0,\tilde x)`, document.getElementById('f2'));
+temml.render(String.raw`W \in \mathbb{R}^{3\times 2}`, document.getElementById('fW'));
+temml.render(String.raw`\vec w_i`, document.getElementById('fw'));
+
+/* ------------------ Daten (2D-Egg) ------------------ */
+let points = [], labels = []; // labels: 0=innen, 1=außen
+
+function generateData() {
+  const N = +document.getElementById('sN').value;
+  const r1 = 0.45, r2 = 1.0;
+  points = []; labels = [];
+  for (let i = 0; i < N; i++) {
+    if (Math.random() < 0.4) {
+      // innere Klasse
+      const r = r1 * Math.sqrt(Math.random());
+      const t = Math.random() * 2 * Math.PI;
+      points.push([r * Math.cos(t), r * Math.sin(t)]);
+      labels.push(0);
+    } else {
+      // äußerer Ring: shell zwischen r1+0.1 und r2
+      const t = Math.random() * 2 * Math.PI;
+      const rr = r1 + 0.1 + Math.random() * (r2 - r1 - 0.1);
+      points.push([rr * Math.cos(t), rr * Math.sin(t)]);
+      labels.push(1);
+    }
+  }
+}
+
+/* ------------------ Hyperebenen-Parameter ------------------ */
+const HP_ANGLES = [90, 210, 330]; // fix: 120°-Abstand (Paper Fig. 2c)
+function getHyperplanes() {
+  const b = +document.getElementById('sB').value;
+  return HP_ANGLES.map(deg => {
+    const ang = deg * Math.PI / 180;
+    return { w: [Math.cos(ang), Math.sin(ang)], b: b };
+  });
+}
+
+/* ------------------ 2D Plot ------------------ */
+const c2 = document.getElementById('input2d');
+const ctx = c2.getContext('2d');
+const HP_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
+
+function draw2D() {
+  const w = c2.width = c2.clientWidth;
+  const h = c2.height = c2.clientHeight;
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, w, h);
+
+  const scale = Math.min(w, h) * 0.4;
+  const cx = w / 2, cy = h / 2;
+  const toPx = (x, y) => [cx + x * scale, cy - y * scale];
+
+  // Punkte
+  for (let i = 0; i < points.length; i++) {
+    const [px, py] = toPx(points[i][0], points[i][1]);
+    ctx.fillStyle = labels[i] === 0 ? '#e67e22' : '#16a085';
+    ctx.beginPath();
+    ctx.arc(px, py, 1.8, 0, 2*Math.PI);
+    ctx.fill();
+  }
+
+  // Hyperebenen als Linien: w·x + b = 0  =>  wx*x + wy*y = -b
+  const hps = getHyperplanes();
+  ctx.lineWidth = 2.5;
+  hps.forEach((hp, i) => {
+    ctx.strokeStyle = HP_COLORS[i];
+    const [wx, wy] = hp.w, b = hp.b;
+    // finde zwei Punkte der Linie
+    let p1, p2;
+    if (Math.abs(wy) > 1e-6) {
+      p1 = toPx(-2, (-b - wx*(-2)) / wy);
+      p2 = toPx( 2, (-b - wx*( 2)) / wy);
+    } else {
+      p1 = toPx(-b/wx, -2);
+      p2 = toPx(-b/wx,  2);
+    }
+    ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+
+    // kleiner Normalenvektor-Pfeil
+    const mid = toPx(-b*wx*0.3, -b*wy*0.3);
+    const tip = toPx(-b*wx*0.3 + wx*0.15, -b*wy*0.3 + wy*0.15);
+    ctx.beginPath(); ctx.moveTo(mid[0], mid[1]); ctx.lineTo(tip[0], tip[1]); ctx.stroke();
+  });
+}
+
+/* ------------------ 3D Szene (Three.js) ------------------ */
+let scene, camera, renderer, controls, pointCloud, planeMesh;
+const container = document.getElementById('three-container');
+
+function initThree() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0f0f14);
+
+  camera = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.01, 100);
+  camera.position.set(2.5, 2, 2.5);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  // Achsen
+  const axes = new THREE.AxesHelper(1.5);
+  scene.add(axes);
+
+  // Grid (Boden)
+  const grid = new THREE.GridHelper(3, 15, 0x444444, 0x222222);
+  grid.rotation.x = Math.PI/2; // in xy-Ebene? Nein, wir lassen ihn in xz
+  scene.add(grid);
+
+  animate();
+  window.addEventListener('resize', onResize);
+}
+
+function onResize() {
+  camera.aspect = container.clientWidth/container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  // 2D canvas kümmert sich selbst
+  draw2D();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/* ------------------ ReLU-Faltung berechnen und rendern ------------------ */
+function relu(x) { return Math.max(0, x); }
+
+let perfectSum = 0; // Schwellwert, bei dem die Readout-Ebene perfekt trennt
+
+function updateHiddenLayer() {
+  const hps = getHyperplanes();
+
+  const positions = new Float32Array(points.length * 3);
+  const colors = new Float32Array(points.length * 3);
+  let maxInner = -Infinity, minOuter = Infinity;
+
+  for (let i = 0; i < points.length; i++) {
+    const [x, y] = points[i];
+    let sum = 0;
+    for (let k = 0; k < 3; k++) {
+      const hk = relu(hps[k].w[0]*x + hps[k].w[1]*y + hps[k].b);
+      sum += hk;
+      positions[i*3+k] = hk - 0.5;
+    }
+    if (labels[i] === 0) { // innen -> orange
+      if (sum > maxInner) maxInner = sum;
+      colors[i*3] = 0.9; colors[i*3+1] = 0.5; colors[i*3+2] = 0.15;
+    } else { // außen -> grün
+      if (sum < minOuter) minOuter = sum;
+      colors[i*3] = 0.08; colors[i*3+1] = 0.63; colors[i*3+2] = 0.52;
+    }
+  }
+  perfectSum = (maxInner + minOuter) / 2;
+
+  if (pointCloud) {
+    scene.remove(pointCloud);
+    pointCloud.geometry.dispose();
+    pointCloud.material.dispose();
+  }
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const mat = new THREE.PointsMaterial({ size: 0.025, vertexColors: true });
+  pointCloud = new THREE.Points(geom, mat);
+  scene.add(pointCloud);
+
+  // Trennebene (readout hyperplane): x+y+z = const
+  updateSeparatingPlane();
+}
+
+function updateSeparatingPlane() {
+  if (planeMesh) {
+    scene.remove(planeMesh);
+    planeMesh.geometry.dispose();
+    planeMesh.material.dispose();
+    planeMesh = null;
+  }
+  if (!document.getElementById('sPlane').checked) return;
+
+  const off = +document.getElementById('sOff').value;
+  // Normale (1,1,1)/√3. Ein Punkt hat n·p = (sum-1.5)/√3, also trennt
+  // d = (perfectSum-1.5)/√3 beide Klassen; off verschiebt die Ebene.
+  const d = (perfectSum - 1.5) / Math.sqrt(3) + off;
+  const geom = new THREE.PlaneGeometry(2.5, 2.5);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0xffff66, transparent: true, opacity: 0.25,
+    side: THREE.DoubleSide
+  });
+  planeMesh = new THREE.Mesh(geom, mat);
+  const n = new THREE.Vector3(1,1,1).normalize();
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), n);
+  planeMesh.quaternion.copy(q);
+  planeMesh.position.copy(n.clone().multiplyScalar(d));
+  scene.add(planeMesh);
+}
+
+/* ------------------ UI-Verkabelung ------------------ */
+function updateAllLabels() {
+  document.getElementById('vN').textContent = document.getElementById('sN').value;
+  document.getElementById('vB').textContent = (+document.getElementById('sB').value).toFixed(2);
+  document.getElementById('vOff').textContent = (+document.getElementById('sOff').value).toFixed(2);
+}
+
+function refreshAll(regen=true) {
+  updateAllLabels();
+  if (regen) generateData();
+  draw2D();
+  updateHiddenLayer();
+}
+
+document.querySelectorAll('#sidebar input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    const dataChange = inp.id === 'sN';
+    refreshAll(dataChange);
+  });
+});
+
+/* ------------------ Animation ------------------ */
+let animating = false;
+function animateFold() {
+  if (animating) return;
+  animating = true;
+  document.getElementById('sOff').value = 0; // Ebene zurück auf perfekte Trennung
+  let t = 0;
+  const start = -1, end = 0;
+  const step = () => {
+    t += 0.02;
+    const b = start + (end - start) * Math.min(1, t);
+    document.getElementById('sB').value = b;
+    refreshAll(false);
+    if (t < 1) requestAnimationFrame(step);
+    else animating = false;
+  };
+  step();
+}
+
+/* ------------------ Start ------------------ */
+initThree();
+refreshAll(true);
+</script>
+</body>
+</html>
