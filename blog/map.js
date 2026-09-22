@@ -749,6 +749,12 @@ function bootAtlas() {
 			pick(e.clientX, e.clientY, true);
 		});
 		window.addEventListener('resize', resizeToStage);
+		if (typeof ResizeObserver !== 'undefined') {
+			new ResizeObserver(function () {
+				if (!wrap.clientWidth) { return; }
+				requestAnimationFrame(resizeToStage);
+			}).observe(wrap);
+		}
 		// touch
 		var tId = null, pinch = null;
 		canvas.addEventListener('touchstart', function (e) {
