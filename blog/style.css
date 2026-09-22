@@ -1777,6 +1777,9 @@ html.theme-transition *::after {
 	outline: 3px solid #f59e0b !important;
 	outline-offset: 3px !important;
 }
+/* Math guardrail (debug only) — flag + flash for untitled / raw-math blocks. */
+.mg-overflow-flag { outline: 3px dashed #f59e0b; outline-offset: 2px; cursor: crosshair; }
+.mg-flash { outline: 3px solid #f59e0b !important; outline-offset: 3px !important; }
 
 /* ── Prose vs. chrome ───────────────────────────────────────
    #contents inherits the reading serif; everything interactive
@@ -9542,13 +9545,17 @@ html.dark .topics-preset-fun {
 	border-radius: 12px;
 	transition: background 0.25s, border 0.25s, padding 0.25s, opacity 0.3s ease, filter 0.3s ease;
 }
-.topic-block.topic-block-collapsed {
+/* The height clip lives in its own class so JS can animate max-height
+   freely between the folded (120px) and full states. `.topic-block-
+   collapsed` keeps the gradient fade + badge + click-through state. */
+.topic-block--clipped {
 	max-height: 120px;
-	overflow: hidden !important; /* beat `.md { overflow: visible !important }` so the 120px clip holds */
+	overflow: hidden !important; /* beat `.md { overflow: visible !important }` so the clip holds */
 }
 .topic-block.topic-block-collapsed .topic-block-inner {
 	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
 	mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+	pointer-events: none; /* faded content must never intercept the badge tap */
 }
 .topic-block.topic-block-collapsed .topic-block-fade-badge {
 	position: absolute;
@@ -9561,7 +9568,10 @@ html.dark .topics-preset-fun {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	padding: 6px 14px;
+	padding: 8px 16px;
+	min-height: 40px;
+	box-sizing: border-box;
+	max-width: min(92%, 520px);
 	border-radius: 99px;
 	border: 1px solid var(--mn-border);
 	background: var(--mn-surface);
@@ -9572,6 +9582,7 @@ html.dark .topics-preset-fun {
 	transition: border-color 0.18s, box-shadow 0.18s;
 	z-index: 2;
 }
+.topic-block-fade-badge .tbf-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .topic-block-fade-badge:hover {
 	border-color: var(--mn-accent);
 	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -9706,6 +9717,97 @@ a.tdp-chip.tdp-chip-met:hover {
 	color: var(--mn-emerald, #10b981);
 	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, transparent);
 }
+/* ── Top-bar course status box (compact + expandable) ────────────
+   Lives in the top bar next to the dark / reader-mode toggles. A small
+   always-visible capsule shows "Lesson N of M"; tapping it opens a
+   panel with Next-up / Builds-on / Unlocks detail. */
+#course-status-box {
+	position: fixed;
+	top: 16px;
+	right: 244px;
+	z-index: 9998;
+	max-width: min(46vw, 440px);
+	font-family: inherit;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .35s ease, visibility .35s ease;
+}
+html.is-ready #course-status-box { opacity: 1; visibility: visible; }
+.csb-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 14px;
+	border-radius: 99px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text-secondary);
+	font-size: 0.82rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.18s, box-shadow 0.18s, color 0.18s;
+}
+.csb-toggle:hover {
+	border-color: var(--mn-accent);
+	color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+.csb-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+.csb-toggle .csb-label { white-space: nowrap; }
+.csb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mn-border); flex-shrink: 0; }
+.csb-dot-progress { background: var(--mn-accent); }
+.csb-dot-met { background: var(--mn-emerald, #10b981); }
+.csb-dot-unmet { background: var(--mn-coral, #f97316); }
+.csb-bar {
+	display: inline-block; width: 46px; height: 5px;
+	border-radius: 99px; background: var(--mn-border);
+	overflow: hidden; flex-shrink: 0;
+}
+.csb-bar-fill { display: block; height: 100%; border-radius: 99px; background: var(--mn-accent); transition: width 0.3s ease; }
+.csb-caret { font-size: 0.7rem; line-height: 1; opacity: 0.8; transition: transform 0.22s ease; }
+.csb.is-open .csb-caret { transform: rotate(180deg); }
+.csb-panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	min-width: 260px;
+	max-width: min(88vw, 460px);
+	padding: 12px 14px;
+	border-radius: 14px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+	opacity: 0;
+	transform: translateY(-6px) scale(0.98);
+	transform-origin: top right;
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	z-index: 9999;
+}
+.csb.is-open .csb-panel { opacity: 1; transform: none; pointer-events: auto; }
+.csb-line { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; line-height: 1.55; }
+.csb-line + .csb-line { margin-top: 10px; }
+.csb-line .csb-ico { flex-shrink: 0; font-size: 1rem; line-height: 1.55; }
+.csb-line .csb-txt { min-width: 0; }
+.csb-line-next .csb-ico { color: var(--mn-accent); }
+.csb-line-met .csb-ico { color: var(--mn-emerald, #10b981); }
+.csb-line-unmet .csb-ico { color: var(--mn-text-muted); }
+.csb-line-unlocks { font-size: 0.82rem; opacity: 0.92; }
+.csb-line-unlocks .csb-ico { color: var(--mn-accent); }
+@media (max-width: 720px) {
+	#course-status-box { right: auto; left: 16px; top: 64px; max-width: calc(100vw - 32px); }
+	.csb-toggle .csb-bar { display: none; }
+	.csb-panel { left: 0; right: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.csb-toggle, .csb-caret, .csb-panel, .csb-bar-fill { transition: none !important; }
+}
+
 /* Learned / dependency pills — a stack of labelled lines */
 .topic-deps-pill {
 	display: flex;

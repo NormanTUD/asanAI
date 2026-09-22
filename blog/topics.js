@@ -589,50 +589,96 @@
 			const nMet = deps.filter(function (d) { return isLearned(d); }).length;
 			const unlocks = isSpine ? unlocksOf(lessonId) : [];
 
-			// Status pill (top of content). Idempotent: created once, only
-			// its class/text are swapped afterwards, so it never reflows the
-			// top of the page on re-render.
-			let pill = document.getElementById('topic-deps-pill');
-			if (inCourse || deps.length > 0 || unlocks.length > 0) {
-				if (!pill) {
-					pill = document.createElement('div');
-					pill.id = 'topic-deps-pill';
-					contents.insertBefore(pill, contents.firstChild);
-					pill.addEventListener('click', function (e) {
+			// Course-status box in the TOP BAR (next to dark / reader mode),
+			// not at the top of the content. Compact "Lesson N of M" status
+			// is always visible; the Builds-on / Next-up / Unlocks detail
+			// lives in a panel that opens on tap. Idempotent: the box is
+			// created once and only its content/classes are swapped after.
+			const legacyPill = document.getElementById('topic-deps-pill');
+			if (legacyPill) legacyPill.remove();
+
+			const showStatus = inCourse || deps.length > 0 || unlocks.length > 0;
+			if (!showStatus) {
+				const oldBox = document.getElementById('course-status-box');
+				if (oldBox) oldBox.remove();
+			} else {
+				let box = document.getElementById('course-status-box');
+				if (!box) {
+					box = document.createElement('div');
+					box.id = 'course-status-box';
+					box.className = 'csb';
+
+					const toggle = document.createElement('button');
+					toggle.type = 'button';
+					toggle.id = 'csb-toggle';
+					toggle.className = 'csb-toggle';
+					toggle.setAttribute('aria-expanded', 'false');
+					toggle.innerHTML =
+						'<span class="csb-dot" aria-hidden="true"></span>'
+						+ '<span class="csb-label"></span>'
+						+ '<span class="csb-bar" aria-hidden="true"><span class="csb-bar-fill"></span></span>'
+						+ '<span class="csb-caret" aria-hidden="true">▾</span>';
+
+					const panel = document.createElement('div');
+					panel.id = 'csb-panel';
+					panel.className = 'csb-panel';
+					panel.setAttribute('role', 'region');
+					panel.setAttribute('aria-label', 'Course progress and prerequisites');
+
+					box.appendChild(toggle);
+					box.appendChild(panel);
+
+					toggle.addEventListener('click', function () {
+						const open = box.classList.toggle('is-open');
+						toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+					});
+					// Tap a prerequisite chip's ✓ to mark it learned (was on the pill).
+					box.addEventListener('click', function (e) {
 						const mark = (e.target && e.target.closest) ? e.target.closest('.tdp-mark') : null;
 						if (!mark) return;
 						const d = mark.getAttribute('data-mark-dep');
 						if (!d || isLearned(d)) return;
 						toggleLearned(d);   // → fireChange → applyVisibility (re-reveals gated blocks)
-						showLearnedUI();   // refresh the pill + button
+						showLearnedUI();   // refresh the box + button
 					});
+
+					document.body.appendChild(box);
 				}
-				pill.className = 'topic-deps-pill '
-					+ (isSpine && deps.length > 0 ? (met ? 'topic-deps-met' : 'topic-deps-unmet') : 'topic-deps-progress');
-				let html = '';
+
+				const toggle = box.querySelector('#csb-toggle');
+				const panel = box.querySelector('#csb-panel');
+
+				const pct = (inCourse && total > 0) ? Math.round((done / total) * 100) : 0;
+				const dotState = (isSpine && deps.length > 0)
+					? (met ? 'met' : 'unmet')
+					: (inCourse ? 'progress' : 'none');
+				toggle.querySelector('.csb-dot').className = 'csb-dot csb-dot-' + dotState;
+				toggle.querySelector('.csb-label').textContent =
+					inCourse ? ('Lesson ' + (pos + 1) + ' of ' + total) : 'Course';
+				toggle.querySelector('.csb-bar').style.display = inCourse ? '' : 'none';
+				toggle.querySelector('.csb-bar-fill').style.width = pct + '%';
+
+				let phtml = '';
 				if (inCourse) {
-					const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-					html += '<span class="tdp-line tdp-line-progress"><span class="tdp-icon" aria-hidden="true">\u25B8</span><span class="tdp-body">'
-						+ '<span class="tdp-pos">Lesson ' + (pos + 1) + ' of ' + total + '</span> '
-						+ '<span class="tdp-bar" aria-hidden="true"><span class="tdp-bar-fill" style="width:' + pct + '%"></span></span> '
-						+ (next
-							? 'Next up: <a class="tdp-chip" href="' + escAttr(next.url) + '">' + escAttr(next.title) + '</a>'
-							: 'You&rsquo;re at the end of the course.')
-						+ '</span></span>';
+					phtml += next
+						? '<div class="csb-line csb-line-next"><span class="csb-ico" aria-hidden="true">▸</span><span class="csb-txt">Next up: <a class="tdp-chip" href="' + escAttr(next.url) + '">' + escAttr(next.title) + '</a></span></div>'
+						: '<div class="csb-line csb-line-next"><span class="csb-ico" aria-hidden="true">✓</span><span class="csb-txt">You&rsquo;re at the end of the course.</span></div>';
 				}
 				if (isSpine && deps.length > 0) {
-					html += met
-						? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
-						: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap the <b>✓</b> next to each to unlock the full depth.</span></span>';
+					phtml += met
+						? '<div class="csb-line csb-line-met"><span class="csb-ico" aria-hidden="true">✓</span><span class="csb-txt">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></div>'
+						: '<div class="csb-line csb-line-unmet"><span class="csb-ico" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="csb-txt">Builds on ' + depChips(lessonId) + ' — tap the <b>✓</b> next to each to unlock the full depth.</span></div>';
 				}
 				if (isSpine && unlocks.length > 0) {
-					html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
+					phtml += '<div class="csb-line csb-line-unlocks"><span class="csb-ico" aria-hidden="true">↳</span><span class="csb-txt">'
 						+ (isLearned(lessonId) ? 'You&rsquo;ve unlocked ' : 'Once marked learned, this unlocks ')
-						+ unlocks.map(lessonLink).join(' ') + '.</span></span>';
+						+ unlocks.map(lessonLink).join(' ') + '.</span></div>';
 				}
-				pill.innerHTML = html;
-			} else if (pill) {
-				pill.remove();
+				panel.innerHTML = phtml;
+
+				const hasDetail = phtml.trim().length > 0;
+				toggle.classList.toggle('csb-has-detail', hasDetail);
+				toggle.querySelector('.csb-caret').style.display = hasDetail ? '' : 'none';
 			}
 
 			// "Mark as learned" button (bottom of content). Created once and
@@ -1757,7 +1803,8 @@
 		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
 		if (animate && !prefersReducedMotion()) {
-			animateClip(block, TUCK_H, block.scrollHeight, false);
+			const fromH = Math.min(TUCK_H, block.getBoundingClientRect().height || TUCK_H);
+			animateClip(block, fromH, block.scrollHeight, false);
 		} else {
 			block.classList.remove('topic-block--clipped');
 		}

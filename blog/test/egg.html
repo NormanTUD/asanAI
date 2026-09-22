@@ -41,7 +41,18 @@
   canvas.plot2d { flex: 1; width: 100%; background: #0f0f14; }
   #three-container { flex: 1; }
   h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
-  h2 { font-size: 12.5px; margin: 16px 0 6px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
+  h2 { font-size: 11px; margin: 12px 0 5px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
+  .sechd { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0 5px 0; }
+  .sechd-t { font-size: 11px; font-weight: 700; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
+  .actpick { font-size: 11px; color: #9aa7b5; display: flex; align-items: center; gap: 5px; }
+  .actpick select {
+    background: #1b1b22; color: #50fa7b; border: 1px solid #3a3a44; border-radius: 4px;
+    font: 11px monospace; padding: 2px 5px; cursor: pointer;
+  }
+  .actpick select:hover { border-color: #8be9fd; }
+  .actpick select:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
+  .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 12px 0 8px; }
+  .btnrow button { margin: 0; width: 100%; padding: 7px 10px; font-size: 12.5px; }
   p, label { font-size: 12.5px; line-height: 1.5; }
   .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
   .lossline { font-size: 11.5px; color: #8be9fd; font-family: monospace; margin: 2px 0 6px; }
@@ -83,10 +94,12 @@
   .val { color: #50fa7b; font-family: monospace; }
   button {
     background: #6272a4; color: white; border: none;
-    padding: 6px 11px; border-radius: 4px; cursor: pointer; margin: 3px 3px 3px 0;
+    padding: 6px 11px; border-radius: 5px; cursor: pointer; margin: 3px 3px 3px 0;
+    transition: background .12s, transform .05s, box-shadow .12s;
   }
-  button:hover { background: #7b8cbf; }
-  button:disabled { opacity: 0.5; cursor: default; }
+  button:hover { background: #7b8cbf; box-shadow: 0 1px 6px rgba(0,0,0,0.35); }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
   .status { font-size: 12.5px; padding: 8px 10px; border-radius: 5px; margin: 8px 0; font-weight: 600; }
   .status.good { background: #10331a; color: #50fa7b; }
   .status.bad  { background: #331111; color: #ff6b6b; }
@@ -109,7 +122,7 @@
 
 <div id="sidebar">
   <h1>🥚 Origami in N Dimensions</h1>
-  <p><i>Dense → ReLU → Dense (2 → 3 → 1) nach Keup &amp; Helias (2022)</i></p>
+  <p><i>Dense → f(·) → Dense · 2 → 3 → 1 · nach Keup &amp; Helias (2022)</i></p>
 
   <div class="formula" id="fnet"></div>
   <div id="fmat" class="fmat"></div>
@@ -117,8 +130,18 @@
 
   <div id="status" class="status good">…</div>
 
-  <h2>Versteckter Layer (Dense → ReLU)</h2>
-  <label class="glb"><input type="checkbox" id="relu" checked> ReLU-Aktivierung an/aus</label>
+  <div class="sechd">
+    <span class="sechd-t">Versteckter Layer</span>
+    <label class="actpick">f(x)
+      <select id="actfn">
+        <option value="relu" selected>ReLU</option>
+        <option value="tanh">tanh</option>
+        <option value="sigmoid">σ (sigmoid)</option>
+        <option value="gelu">GELU</option>
+        <option value="linear">linear</option>
+      </select>
+    </label>
+  </div>
 
   <div class="neuron" data-i="1">
     <label class="nhead"><input type="checkbox" id="n1" checked> <b>Neuron 1</b> <span class="dot" style="background:#e74c3c"></span></label>
@@ -147,7 +170,7 @@
     <div class="wrow"><span class="wl">bias</span><input type="range" id="b3" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb3"></span></div>
   </div>
 
-  <h2>Readout (Dense, linear)</h2>
+  <div class="sechd"><span class="sechd-t">Readout (linear)</span></div>
   <div class="neuron">
     <div class="wrow"><span class="wl">r₁</span><input type="range" id="r1" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr1"></span><label class="chk"><input type="checkbox" id="re1" checked></label></div>
     <div class="wrow"><span class="wl">r₂</span><input type="range" id="r2" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr2"></span><label class="chk"><input type="checkbox" id="re2" checked></label></div>
@@ -155,10 +178,12 @@
     <div class="wrow"><span class="wl">bias</span><input type="range" id="rb" min="-2" max="2" step="0.01" value="-0.47"><span class="val" id="vrb"></span></div>
   </div>
 
-  <button id="btnRand">🎲 Zufall</button>
-  <button id="btnTrain">🧠 Alles trainieren</button>
-  <button id="btnOpt">⚡ Optimal (Paper)</button>
-  <button id="btnFold">🎬 Falt-Animation</button>
+  <div class="btnrow">
+    <button id="btnFold">🎬 Falt-Animation</button>
+    <button id="btnOpt">⚡ Optimal</button>
+    <button id="btnTrain">🧠 Alles trainieren</button>
+    <button id="btnRand">🎲 Zufall</button>
+  </div>
 
   <div class="legend">
     <span class="dot" style="background:#ffb142"></span> innere Klasse (Kreis) &nbsp;
@@ -183,8 +208,27 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+/* ------------------ Aktivierungsfunktionen ------------------ */
+const ACTS = {
+  relu:    { label: 'ReLU',        short: 'ReLU', tex: '\\mathrm{ReLU}', fn: v => Math.max(0, v) },
+  tanh:    { label: 'tanh',        short: 'tanh', tex: '\\tanh',         fn: v => Math.tanh(v) },
+  sigmoid: { label: 'σ (sigmoid)', short: 'σ',    tex: '\\sigma',        fn: v => 1 / (1 + Math.exp(-v)) },
+  gelu:    { label: 'GELU',        short: 'GELU', tex: '\\mathrm{GELU}', fn: v => 0.5 * v * (1 + Math.erf(v / Math.SQRT2)) },
+  linear:  { label: 'linear',      short: 'id',   tex: '\\mathrm{id}',   fn: v => v },
+};
+function actName() { const e = $('actfn'); return (e && ACTS[e.value]) ? e.value : 'relu'; }
+function applyAct(v) { return ACTS[actName()].fn(v); }
+let renderedAct = null;
+function updateActFormula() {
+  const a = actName();
+  const span = $('fmact'); if (span) span.textContent = ACTS[a].short + '(';
+  if (renderedAct !== a) {
+    try { temml.render(String.raw`y \;=\; A_2\, ${ACTS[a].tex}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet')); renderedAct = a; }
+    catch (err) { console.warn('[egg] Formel-Rendering', err); }
+  }
+}
+
 /* ------------------ Formel (abstrakt) + editierbare Matrizen ------------------ */
-temml.render(String.raw`y \;=\; A_2\, \mathrm{relu}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet'));
 const EDITABLE = new Set(['a1x','a1y','a2x','a2y','a3x','a3y','b1','b2','b3','r1','r2','r3','rb']);
 function mkTok(t) { const s = document.createElement('span'); s.className = 'matstatic'; s.textContent = t; return s; }
 function applyCell(c) {
@@ -255,7 +299,9 @@ function buildFormulaDOM() {
   const sp = (t, cls) => { const s = document.createElement('span'); s.className = cls; s.textContent = t; frag.append(s); };
   sp('ŷ = ', 'fm-pre');
   frag.append(matBox('A2', 1, 3, [['r1','r2','r3']], null, ['N1','N2','N3'], 'Readout'));
-  sp('· ', 'fm-op'); sp('relu(', 'fm-fn');
+  sp('· ', 'fm-op');
+  const actSpan = document.createElement('span'); actSpan.className = 'fm-fn'; actSpan.id = 'fmact';
+  actSpan.textContent = ACTS[actName()].short + '('; frag.append(actSpan);
   frag.append(matBox('A1', 3, 2, [['a1x','a1y'],['a2x','a2y'],['a3x','a3y']], ['N1','N2','N3'], null, 'Falten 2D → 3D'));
   frag.append(matBox('', 2, 1, [['x'],['y']]));
   sp(' + ', 'fm-op');
@@ -295,9 +341,9 @@ function getParams() {
   const B1 = [val('b1'), val('b2'), val('b3')];
   const A2 = [val('r1') * (on('re1') ? 1 : 0), val('r2') * (on('re2') ? 1 : 0), val('r3') * (on('re3') ? 1 : 0)];
   const B2 = val('rb');
-  const relu = on('relu');
+  const act = actName();
   const neuronOn = [on('n1'), on('n2'), on('n3')];
-  return { A1, B1, A2, B2, relu, neuronOn };
+  return { A1, B1, A2, B2, act, neuronOn };
 }
 
 /* ------------------ 2D Plot (Faltlinien) ------------------ */
@@ -382,7 +428,7 @@ function computeHidden(B1o) {
     const [x, y] = points[i];
     for (let k = 0; k < 3; k++) {
       let v = P.A1[k][0] * x + P.A1[k][1] * y + B1[k];
-      if (P.relu) v = Math.max(0, v);
+      v = applyAct(v);
       if (!P.neuronOn[k]) v = 0;
       H[i * 3 + k] = v;
       if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
@@ -447,7 +493,7 @@ function updateStatus() {
   if (m.acc >= 100 - 1e-9) { statusEl.className = 'status good'; statusEl.textContent = '✓ Klar getrennt · 100 %'; }
   else {
     statusEl.className = 'status bad';
-    statusEl.textContent = '✗ Trennt nicht klar · ' + m.acc.toFixed(1) + ' % korrekt' + (P.relu ? '' : '  (ReLU aus ⇒ linear)');
+    statusEl.textContent = '✗ Trennt nicht klar · ' + m.acc.toFixed(1) + ' % korrekt  (f=' + ACTS[P.act].label + ')';
   }
 }
 
@@ -496,7 +542,7 @@ function metrics() { // Genauigkeit + Loss (BCE) des aktuellen, toggled Netzwerk
     let z2 = P.B2;
     for (let k = 0; k < 3; k++) {
       let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
-      if (P.relu) v = Math.max(0, v);
+      v = applyAct(v);
       if (!P.neuronOn[k]) v = 0;
       z2 += P.A2[k] * v;
     }
@@ -514,7 +560,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v3'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v4'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -568,7 +614,7 @@ function startTraining() {
 function randomize() {
   if (training) return;
   autoFit = false;
-  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+  set('n1', true); set('n2', true); set('n3', true); // Aktivierung bleibt, wie gewählt
   set('re1', true); set('re2', true); set('re3', true);
   writeW(randomInit());
   refreshAll();
@@ -580,7 +626,7 @@ function setOptimal() {
   set('a2x', -0.87); set('a2y', -0.5);
   set('a3x', 0.87); set('a3y', -0.5);
   set('b1', 0); set('b2', 0); set('b3', 0);
-  set('relu', true);
+  set('actfn', 'relu');
   set('n1', true); set('n2', true); set('n3', true);
   set('r1', 1); set('r2', 1); set('r3', 1);
   set('re1', true); set('re2', true); set('re3', true);
@@ -601,7 +647,7 @@ function animateFold() {
   $('btnFold').disabled = true;
   // Optimaler Falz; Bias startet bei [1,1,1] (flacher Slice) -> [0,0,0] (voll gefaltet)
   set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
-  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+  set('actfn', 'relu'); set('n1', true); set('n2', true); set('n3', true);
   set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
   set('rb', bestB2for(knownOptimal()));
 
@@ -660,6 +706,7 @@ function updateAllLabels() {
 
 function refreshAll() {
   updateAllLabels();
+  updateActFormula();
   draw2D();
   computeHidden();
   drawPointCloud();
@@ -679,6 +726,10 @@ document.querySelectorAll('#sidebar input').forEach(inp => {
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
     refreshAll();
   });
+});
+$('actfn').addEventListener('change', () => {
+  if (training || animating) return;
+  refreshAll();
 });
 
 $('btnOpt').addEventListener('click', setOptimal);
@@ -703,7 +754,7 @@ buildFormulaDOM();
 set('a1x', 0); set('a1y', 1);
 set('a2x', -0.87); set('a2y', -0.5);
 set('a3x', 0.87); set('a3y', -0.5);
-set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+set('actfn', 'relu'); set('n1', true); set('n2', true); set('n3', true);
 set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
 set('b1', 1); set('b2', 1); set('b3', 1);
 refreshAll();

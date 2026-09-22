@@ -1231,7 +1231,7 @@ When you type numbers into the grid, the computer organises them into a structur
 Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
 </div>
 
-<div class="topic-block" data-optionaltitle="A colour image as a 3-axis tensor" data-mathlevel="45">
+<div class="md topic-block" data-optionaltitle="A colour image as a 3-axis tensor" data-mathlevel="45">
 $$
 \mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
 \begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
