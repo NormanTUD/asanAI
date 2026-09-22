@@ -17041,26 +17041,6 @@
   "source": "out_part6"
  },
  {
-  "id": "event-y2k",
-  "name": "Y2K",
-  "type": "event",
-  "loc": "",
-  "lat": 20.0,
-  "lng": 0.0,
-  "years": "2000-2000",
-  "active": [
-   2000.0,
-   2000.0
-  ],
-  "blurb": "",
-  "cited_in": [
-   "untold_history"
-  ],
-  "bibkeys": [],
-  "conf": "inferred",
-  "source": "out_part6"
- },
- {
   "id": "event-alexnet-imagenet-victory",
   "name": "AlexNet ImageNet victory",
   "type": "event",

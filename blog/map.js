@@ -6,11 +6,24 @@
    the course is a dot; every influence / journey / signal is a
    thread. Drag to look around, scroll to zoom, click to explore.
    ============================================================ */
-(function () {
+var __atlasBooted = false;
+
+function bootAtlas() {
 	'use strict';
 
+	var stage = document.getElementById('atlas-stage');
 	var canvas = document.getElementById('atlas-canvas');
-	if (!canvas || !window.THREE) { return; }
+	if (!stage || !canvas || !window.THREE) { return Promise.resolve(); }
+
+	function stageSize() {
+		return { w: stage.clientWidth || 800, h: stage.clientHeight || 600 };
+	}
+	function resizeToStage() {
+		var s = stageSize();
+		camera.aspect = s.w / s.h;
+		camera.updateProjectionMatrix();
+		renderer.setSize(s.w, s.h);
+	}
 
 	// ── constants ─────────────────────────────────────────────
 	var DEG = Math.PI / 180;
@@ -24,15 +37,24 @@
 
 	var THEME = {};
 	function readTheme() {
-		var light = document.documentElement.classList.contains('light');
-		THEME.light = light;
-		THEME.ocean = light ? '#b8d4e6' : '#0d1b2e';
-		THEME.land = light ? '#dce8d0' : '#20344c';
-		THEME.border = light ? '#ffffff' : '#3c557a';
-		THEME.graticule = light ? 'rgba(60,90,120,.18)' : 'rgba(120,150,200,.10)';
-		THEME.bg = light ? '#eef2f8' : '#05070d';
+		// UI chrome (panels, text) follows the course theme; the 3D scene
+		// itself is always "space" — dark around the Earth in both themes,
+		// with an earth-like blue/green palette.
+		THEME.light = !document.documentElement.classList.contains('dark');
+		THEME.ocean = '#123a5e';
+		THEME.land = '#3f5d3a';
+		THEME.border = 'rgba(200,220,240,.35)';
+		THEME.graticule = 'rgba(140,170,210,.12)';
+		THEME.bg = '#05070d';
 	}
 	readTheme();
+
+	var lessonTitle = {};
+	(function () {
+		var nav = window.__moduleNavData && window.__moduleNavData.modules;
+		if (!nav) { return; }
+		for (var i = 0; i < nav.length; i++) { lessonTitle[nav[i].slug] = nav[i].title; }
+	})();
 
 	var TYPE_COLOR = {
 		person: '#ff7a6b',
@@ -75,7 +97,7 @@
 	}
 	function start() {
 		readTheme();
-		Promise.all([
+		return Promise.all([
 			loadJSON('atlas/entities.json'),
 			loadJSON('atlas/authors.json'),
 			loadJSON('atlas/world.json'),
@@ -91,6 +113,7 @@
 			requestAnimationFrame(tick);
 			setTimeout(function () { loader.classList.add('hide'); }, 300);
 		}).catch(function (err) {
+			console.error('[atlas] failed to start:', err);
 			loader.querySelector('p').textContent =
 				'Could not load atlas data (' + err.message + ').';
 		});
@@ -266,13 +289,14 @@
 	}
 
 	function buildScene() {
+		scene = new THREE.Scene();
+		var sz = stageSize();
+		camera = new THREE.PerspectiveCamera(48, sz.w / sz.h, 0.01, 4000);
+
 		renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-		renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.setClearColor(new THREE.Color(THEME.bg), 1);
-
-		scene = new THREE.Scene();
-		camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.01, 4000);
+		resizeToStage();
 		scene.add(new THREE.AmbientLight(0xffffff, 0.85));
 		var sun = new THREE.DirectionalLight(0xffffff, 0.9);
 		sun.position.set(2, 1.4, 1.6);
@@ -304,9 +328,14 @@
 	}
 
 	function buildMoon() {
-		var tex = new THREE.TextureLoader().load('ranger7_moon.jpg');
+		// grey fallback first so the Moon is always visible even if the
+		// Ranger 7 texture is missing or fails to load
+		var mat = new THREE.MeshPhongMaterial({ color: 0x8a8f9a, shininess: 2 });
+		new THREE.TextureLoader().load('ranger7_moon.jpg', function (tex) {
+			mat.map = tex;
+			mat.needsUpdate = true;
+		});
 		var geo = new THREE.SphereGeometry(MOON_R, 40, 30);
-		var mat = new THREE.MeshPhongMaterial({ map: tex, shininess: 2 });
 		moon = new THREE.Mesh(geo, mat);
 		moon.position.set(MOON_POS[0], MOON_POS[1], MOON_POS[2]);
 		scene.add(moon);
@@ -331,10 +360,10 @@
 		}));
 		scene.add(starField);
 
-		// CMB backdrop
+		// CMB backdrop (equirectangular 2:1 map on a UV sphere)
 		var cmbTex = new THREE.TextureLoader().load('wmap_cmb.png');
 		cmb = new THREE.Mesh(
-			new THREE.SphereGeometry(CMB_R, 48, 32),
+			new THREE.SphereGeometry(CMB_R, 64, 48),
 			new THREE.MeshBasicMaterial({
 				map: cmbTex, side: THREE.BackSide, transparent: true,
 				opacity: 0, depthWrite: false
@@ -342,14 +371,12 @@
 		);
 		scene.add(cmb);
 
-		// galaxies
+		// galaxies (stylized spirals)
 		galaxyGroup = new THREE.Group();
-		var webTex = new THREE.TextureLoader().load('cosmic_web.jpg');
 		var spiralTex = makeSpiralTexture();
 		for (var gi = 0; gi < 9; gi++) {
-			var tex = (gi % 3 === 0) ? webTex : spiralTex;
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
-				map: tex, transparent: true, opacity: 0, depthWrite: false
+				map: spiralTex, transparent: true, opacity: 0, depthWrite: false
 			}));
 			var u = Math.random() * 2 - 1;
 			var a = Math.random() * Math.PI * 2;
@@ -538,12 +565,15 @@
 	}
 	function updateZoomFade() {
 		var d = state.d;
-		var cmbO = THREE.MathUtils.smoothstep(d, 120, 320);
-		if (cmb) { cmb.material.opacity = cmbO * 0.9; }
+		// CMB fades in only for the final stretch, so it never bleeds into
+		// the galaxy / solar-system views
+		var cmbO = THREE.MathUtils.smoothstep(d, 300, 430);
+		if (cmb) { cmb.material.opacity = cmbO; }
 		var starO = 0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40);
 		if (starField) { starField.material.opacity = starO; }
-		var galO = THREE.MathUtils.smoothstep(d, 24, 120) * (1 - THREE.MathUtils.smoothstep(d, 360, 470));
-		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.7; });
+		// galaxies are a mid-zoom view; fully gone well before the CMB
+		var galO = THREE.MathUtils.smoothstep(d, 24, 90) * (1 - THREE.MathUtils.smoothstep(d, 160, 280));
+		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
 		var sunO = THREE.MathUtils.smoothstep(d, 14, 40) * (1 - THREE.MathUtils.smoothstep(d, 400, 470));
 		var showPlanets = d > 12 && d < 400;
 		planets.forEach(function (p) { p.visible = showPlanets; });
@@ -580,11 +610,7 @@
 			if (moved > 6) { return; }
 			pick(e.clientX, e.clientY, true);
 		});
-		window.addEventListener('resize', function () {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize(window.innerWidth, window.innerHeight);
-		});
+		window.addEventListener('resize', resizeToStage);
 		// touch
 		var tId = null, pinch = null;
 		canvas.addEventListener('touchstart', function (e) {
@@ -629,8 +655,9 @@
 		pick(e.clientX, e.clientY, false);
 	}
 	function pick(px, py, isClick) {
-		mouseNDC.x = (px / window.innerWidth) * 2 - 1;
-		mouseNDC.y = -(py / window.innerHeight) * 2 + 1;
+		var rect = canvas.getBoundingClientRect();
+		mouseNDC.x = ((px - rect.left) / rect.width) * 2 - 1;
+		mouseNDC.y = -((py - rect.top) / rect.height) * 2 + 1;
 		raycaster.setFromCamera(mouseNDC, camera);
 		raycaster.params.Points = { threshold: 0.02 };
 		var hits = raycaster.intersectObject(dotMesh);
@@ -673,7 +700,8 @@
 		if (slugs.length) {
 			html += '<div class="d-label">Cited in these lessons</div><div class="d-links">';
 			slugs.forEach(function (s) {
-				html += '<a class="d-link" href="' + esc(s) + '.php">' + esc(s) + '</a>';
+				html += '<a class="d-link" href="' + esc(s) + '.php">' +
+					esc(lessonTitle[s] || s) + '</a>';
 			});
 			html += '</div>';
 		}
@@ -882,10 +910,6 @@
 		document.getElementById('atlas-reset').addEventListener('click', function () {
 			state.tD = 3.2; state.tPhi = 1.15;
 		});
-		document.getElementById('atlas-theme').addEventListener('click', function () {
-			var light = document.documentElement.classList.contains('light');
-			window.__atlasSetTheme(light ? 'dark' : 'light');
-		});
 		document.getElementById('atlas-journey').addEventListener('click', startJourney);
 	}
 
@@ -895,8 +919,8 @@
 		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Use the time slider to travel through history.' },
 		{ d: 9, era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 60, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 220, era: 'The galaxies', text: '13.8 billion years of cosmic structure — the stage on which everything happened.' },
-		{ d: 460, era: 'The Big Bang', text: 'The cosmic microwave background: the oldest light in the universe, 380,000 years after the beginning. It all starts here.' }
+		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure, the stage on which everything happened.' },
+		{ d: 430, era: 'The Big Bang', text: 'The cosmic microwave background: the oldest light in the universe, 380,000 years after the beginning. It all starts here.' }
 	];
 	var tourStep = -1;
 	function startJourney() {
@@ -922,14 +946,16 @@
 	}
 
 	// ── theme reactivity ──────────────────────────────────────
-	window.__atlasOnTheme = function () {
-		readTheme();
-		if (renderer) { renderer.setClearColor(new THREE.Color(THEME.bg), 1); }
-		if (earthTex) {
-			earthTex.image = drawEarthCanvas();
-			earthTex.needsUpdate = true;
-		}
-	};
+	if (window.__MN_DARK && window.__MN_DARK.onChange) {
+		window.__MN_DARK.onChange(function () {
+			readTheme();
+			if (renderer) { renderer.setClearColor(new THREE.Color(THEME.bg), 1); }
+			if (earthTex) {
+				earthTex.image = drawEarthCanvas();
+				earthTex.needsUpdate = true;
+			}
+		});
+	}
 
 	// ── main loop ─────────────────────────────────────────────
 	var frame = 0;
@@ -950,5 +976,14 @@
 		renderer.render(scene, camera);
 	}
 
-	start();
-})();
+	return start();
+}
+
+async function loadMapModule() {
+	if (__atlasBooted) { return Promise.resolve(); }
+	__atlasBooted = true;
+	if (typeof updateLoadingStatus === 'function') {
+		updateLoadingStatus("Loading section about The Atlas...");
+	}
+	return bootAtlas();
+}

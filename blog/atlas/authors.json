@@ -6997,10 +6997,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_ddim_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -22602,10 +22602,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "eisgalgen_mittenwald"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
