@@ -274,6 +274,26 @@ const mathOk = BT.scoreUnit(['math-i'], { mathReq: 70 });
 check(mathOk.state === 'full', 'mathLevel 80 + mathReq 70 → full');
 withPref(null);
 
+/* ── math gate → masking (tuck) contract ──────────────────────
+   A math-gated block is tucked when its comfort is below the
+   requirement. `why === 'math'` is the signal the block state uses to
+   collapse (mask) the block rather than merely dim it, and the reason
+   string is what the reveal badge shows. */
+withPref({ mathLevel: 0, topics: {} });
+const mathMask = BT.scoreUnit(['math-i', 'math-ii'], { mathReq: 45 });
+check(mathMask.state === 'off' && mathMask.why === 'math', 'math gate tucks the block (why=math) even with all interests on');
+check(/needs .*math \(you are at .*\)/.test(mathMask.reason), 'math-off reason reads "needs … math (you are at …)" for the badge');
+
+// boundary: comfort exactly at the requirement is NOT tucked (gate is <)
+withPref({ mathLevel: 45, topics: {} });
+check(BT.scoreUnit(['math-i'], { mathReq: 45 }).state === 'full', 'mathLevel == mathReq → full (gate is strictly below)');
+
+// a switched-off suppress category is the binding reason before math
+withPref({ mathLevel: 0, topics: {}, categories: { 'math-heavy': false } });
+const catWins = BT.scoreUnit(['math-i', 'math-heavy'], { mathReq: 99 });
+check(catWins.state === 'off' && catWins.why === 'category', 'a switched-off suppress category outranks the math gate');
+withPref(null);
+
 /* ── learned state + course progress ─────────────────────────── */
 check(Array.isArray(BT.courseOrder()) && BT.courseOrder().length === 4, 'courseOrder() exposes the course modules');
 check(BT.courseIndexOf('math_i') === 0, 'courseIndexOf by underscore slug');

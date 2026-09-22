@@ -218,6 +218,16 @@ const ACTS = {
 };
 function actName() { const e = $('actfn'); return (e && ACTS[e.value]) ? e.value : 'relu'; }
 function applyAct(v) { return ACTS[actName()].fn(v); }
+function actDeriv(z, name) { // Ableitung der Aktivierung (für Backpropagation)
+  switch (name) {
+    case 'tanh':    { const t = Math.tanh(z); return 1 - t * t; }
+    case 'sigmoid': { const s = 1 / (1 + Math.exp(-z)); return s * (1 - s); }
+    case 'gelu':    { return 0.5 * (1 + Math.erf(z / Math.SQRT2)) + z / Math.sqrt(2 * Math.PI) * Math.exp(-0.5 * z * z); }
+    case 'linear':  return 1;
+    case 'relu':
+    default:        return z > 0 ? 1 : 0;
+  }
+}
 let renderedAct = null;
 function updateActFormula() {
   const a = actName();
@@ -574,7 +584,8 @@ function bestB2for(w) { // besten B2 (Readout-Bias) für die fixen übrigen 12 P
   return bestB;
 }
 function startTraining() {
-  // Guard 1: rAF-Id als Wahrheit; hängende Flags zurücksetzen statt Early-Return
+  // ECHTES Trainieren: Adam + Backprop auf den aktuellen 13 Parametern,
+  // funktioniert für JEDE gewählte Aktivierung (ReLU, tanh, sigmoid, GELU, linear).
   if (!points.length) return;
   if (anyAnim()) return;
   animating = false; training = false;
@@ -582,27 +593,62 @@ function startTraining() {
 
   training = true; autoFit = false;
   $('btnTrain').disabled = true;
-  const W0 = currentW(); // vom aktuellen Zustand starten – nichts resetten, keine Toggles ändern
-  writeW(W0); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-  const m0 = metrics(); updateLossLine(m0.acc, m0.loss);
-  statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + m0.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
-  const Wf = knownOptimal(); Wf[12] = bestB2for(Wf); // verifizierte, klar trennende Lösung
-  let t = 0;
+  const W = currentW(); // vom aktuellen Zustand starten
+  const act = actName();
+  const AF = ACTS[act].fn, AD = z => actDeriv(z, act);
+  const m = points.length, invM = 1 / m;
+  writeW(W); refreshAll();
+
+  const g = new Array(13).fill(0);
+  const mW = new Array(13).fill(0), vW = new Array(13).fill(0);
+  const b1 = 0.9, b2 = 0.999, eps = 1e-8, lr = 0.05;
+  const STEPS = 4, MAXF = 160;
+  let step = 0, fi = 0, stale = 0, lastLoss = metrics().loss;
+  let best = { acc: -1, w: W.slice() };
+
+  statusEl.className = 'status bad';
+  statusEl.textContent = '🧠 Trainiere… ' + best.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
   const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
+
   const frame = () => {
     try {
-      t += 0.016; const raw = Math.min(1, t);
-      const f = (1 - Math.cos(Math.PI * raw)) / 2; // ease-in-out: init -> lernend -> konvergiert
-      const W = W0.map((v, i) => v + (Wf[i] - v) * f);
-      writeW(W); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-      const m = metrics(); updateLossLine(m.acc, m.loss);
-      if (raw < 1) {
-        statusEl.className = 'status bad';
-        statusEl.textContent = '🧠 Trainiere… ' + m.acc.toFixed(1) + ' %  ·  loss ' + m.loss.toFixed(3);
-        trainRaf = requestAnimationFrame(frame);
+      for (let s = 0; s < STEPS; s++) {
+        step++;
+        g.fill(0);
+        for (let i = 0; i < m; i++) {
+          const x = points[i][0], y = points[i][1], lab = labels[i];
+          const z0 = W[0] * x + W[1] * y + W[6];
+          const z1 = W[2] * x + W[3] * y + W[7];
+          const z2 = W[4] * x + W[5] * y + W[8];
+          const h0 = AF(z0), h1 = AF(z1), h2 = AF(z2);
+          const zo = W[9] * h0 + W[10] * h1 + W[11] * h2 + W[12];
+          const dzo = (1 / (1 + Math.exp(-zo)) - lab) * invM;
+          g[9] += dzo * h0; g[10] += dzo * h1; g[11] += dzo * h2; g[12] += dzo;
+          let d;
+          d = dzo * W[9] * AD(z0);  g[0] += d * x; g[1] += d * y; g[6] += d;
+          d = dzo * W[10] * AD(z1); g[2] += d * x; g[3] += d * y; g[7] += d;
+          d = dzo * W[11] * AD(z2); g[4] += d * x; g[5] += d * y; g[8] += d;
+        }
+        for (let j = 0; j < 13; j++) {
+          mW[j] = b1 * mW[j] + (1 - b1) * g[j];
+          vW[j] = b2 * vW[j] + (1 - b2) * g[j] * g[j];
+          const mh = mW[j] / (1 - Math.pow(b1, step));
+          const vh = vW[j] / (1 - Math.pow(b2, step));
+          const nv = W[j] - lr * mh / (Math.sqrt(vh) + eps);
+          W[j] = Math.max(-CLIP[j], Math.min(CLIP[j], nv));
+        }
+      }
+      writeW(W); refreshAll();
+      const met = metrics();
+      if (met.acc > best.acc) best = { acc: met.acc, w: W.slice() };
+      if (met.loss < lastLoss - 1e-4) { lastLoss = met.loss; stale = 0; } else stale++;
+      fi++;
+      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) {
+        writeW(best.w); refreshAll(); done(); updateStatus();
       } else {
-        writeW(Wf); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-        done(); updateStatus();
+        statusEl.className = 'status bad';
+        statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3);
+        trainRaf = requestAnimationFrame(frame);
       }
     } catch (err) { // Guard 2: Fehler hinterlässt keinen hängenden Zustand
       console.error('[egg] Training abgebrochen:', err);
