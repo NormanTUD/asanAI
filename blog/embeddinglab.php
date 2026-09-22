@@ -102,7 +102,7 @@ In the history of linguistics, the work of \citeauthor{firth1957distributive} (\
 
 Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of “how parallel are these two arrows” we still use for semantic search. Their paper, “\citetitle{salton1975vectorspace}”, is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
 
-Proximity is what makes that geometry *useful*, not merely descriptive. Once similar words sit near each other, a model that has memorized a handful of sentences can **generalize** to a whole class of new ones, because swapping a word for a spatial neighbor keeps the sentence plausible — and doing that at several positions at once multiplies the number of sentences one embedding covers. You need to see each word used at least once, but never every sentence you will ever understand: the network, like a reader, has met all the words before, just not all their combinations \cite[Olah, 2014]{colah2014nlp}.
+Proximity is what makes that geometry *useful*, not merely descriptive. Once similar words sit near each other, a model that has memorized a handful of sentences can **generalize** to a whole class of new ones, because swapping a word for a spatial neighbor keeps the sentence plausible — and doing that at several positions at once multiplies the number of sentences one embedding covers. You need to see each word used at least once, but never every sentence you will ever understand: the network, like a reader, has met all the words before, just not all their combinations \cite[Olah, 2014]{colah2014nlp}. Why that transfer falls off with distance, and how the sparse “foam” of clusters, filaments, and voids makes it work, is the subject of <a href="foam_of_meaning">The foam of meaning</a>.
 </div>
 
 <div class="md">
@@ -203,7 +203,7 @@ $$ d(\mathbf{A}, \mathbf{B}) = \sqrt{\sum_{i=1}^{n} (B_i - A_i)^2} $$
 </div>
 
 <div class="smart-quote" data-cite="heraclitus500fragments">
-War (as in 'the tension between opposites') is the father of all things.
+War (as in: 'the tension between opposites') is the father of all things.
 </div>
 
 <div class="md" data-mathlevel="55">

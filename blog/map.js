@@ -419,7 +419,9 @@
 		for (var i = 0; i < state.dots.length; i++) {
 			var d = dotInstance[i];
 			var on = state.show[d.type] && yearRange(d.yearA, d.yearB);
-			if (d.isAuthor) { on = on && (state.year >= (d.year || 0) - 2); }
+			if (d.isAuthor && state.year < 2026) {
+				on = on && (state.year >= (d.year || 0) - 2);
+			}
 			if (on) {
 				var r = d.isMoon ? MOON_R : EARTH_R;
 				var base = latLngToVec3(d.lat, d.lng, r + 0.004);
