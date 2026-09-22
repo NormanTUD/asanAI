@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Origami in N Dimensions – 2D-Egg Folding Visualization</title>
+<title>Origami in N Dimensions – Dense–ReLU–Dense Network</title>
 
 <!-- Temml für Formel-Rendering -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
@@ -25,7 +25,7 @@
     background: #1a1a1f; color: #eaeaea; display: flex; height: 100vh; overflow: hidden;
   }
   #sidebar {
-    width: 380px; padding: 18px; background: #23232b;
+    width: 400px; padding: 16px; background: #23232b;
     overflow-y: auto; border-right: 1px solid #333;
   }
   #main { flex: 1; display: flex; flex-direction: column; }
@@ -41,61 +41,85 @@
   canvas.plot2d { flex: 1; width: 100%; background: #fff; }
   #three-container { flex: 1; }
   h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
-  h2 { font-size: 13px; margin: 18px 0 8px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
+  h2 { font-size: 12.5px; margin: 16px 0 6px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 1px;}
   p, label { font-size: 12.5px; line-height: 1.5; }
-  .slider-group { margin: 10px 0; padding: 8px; background: #1a1a22; border-radius: 6px; }
-  .slider-group label { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  .slider-group input[type=range] { width: 100%; }
+  .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
   .val { color: #50fa7b; font-family: monospace; }
-  .hp-h1 { color: #ff5555; }
-  .hp-h2 { color: #50fa7b; }
-  .hp-h3 { color: #8be9fd; }
-  .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 14px;}
   button {
     background: #6272a4; color: white; border: none;
-    padding: 6px 12px; border-radius: 4px; cursor: pointer; margin: 3px;
+    padding: 6px 11px; border-radius: 4px; cursor: pointer; margin: 3px 3px 3px 0;
   }
   button:hover { background: #7b8cbf; }
-  .legend { font-size: 11px; margin-top: 4px; }
-  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle;}
+  button:disabled { opacity: 0.5; cursor: default; }
+  .status { font-size: 12.5px; padding: 8px 10px; border-radius: 5px; margin: 8px 0; font-weight: 600; }
+  .status.good { background: #10331a; color: #50fa7b; }
+  .status.bad  { background: #331111; color: #ff6b6b; }
+  .glb { display: flex; gap: 6px; align-items: center; margin: 8px 0 2px; font-weight: 600; cursor: pointer; }
+  .neuron { margin: 6px 0; padding: 7px 8px; background: #16161c; border-radius: 5px; border-left: 2px solid #3a3a44; transition: opacity .15s; }
+  .neuron.off { opacity: 0.4; }
+  .nhead { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 12.5px; }
+  .nhead input { cursor: pointer; }
+  .wgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; }
+  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .wrow .wl { width: 30px; flex: none; font-size: 11px; color: #8be9fd; }
+  .wrow input[type=range] { flex: 1; width: auto; }
+  .wrow .val { width: 36px; flex: none; text-align: right; font-size: 11px; }
+  .wrow .chk { flex: none; margin: 0; display: flex; align-items: center; }
+  .legend { font-size: 11px; margin-top: 6px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
 </style>
 </head>
 <body>
 
 <div id="sidebar">
   <h1>🥚 Origami in N Dimensions</h1>
-  <p><i>Interaktive Visualisierung nach Keup & Helias (2022), Fig. 2c/d</i></p>
+  <p><i>Dense → ReLU → Dense (2 → 3 → 1) nach Keup &amp; Helias (2022)</i></p>
 
-  <h2>Die Transformation</h2>
-  <p>Drei Hyperebenen mit Normalen <span id="fw"></span> (Zeilen von <span id="fW"></span>) berechnen je:</p>
-  <div class="formula" id="f1"></div>
-  <p>mit ReLU:</p>
-  <div class="formula" id="f2"></div>
-  <p>Im 120°-Abstand <b>falten</b> sie die 2D-Eidaten in eine 3. Dimension — danach ist die innere Klasse (orange) linear vom Ring (grün) trennbar.</p>
+  <div class="formula" id="fnet"></div>
 
-  <h2>Daten &amp; Faltung</h2>
-  <div class="slider-group">
-    <label>Punktzahl: <span class="val" id="vN">2000</span></label>
-    <input type="range" id="sN" min="200" max="5000" step="100" value="2000">
-    <label>Falttiefe (Bias b): <span class="val" id="vB">0.00</span></label>
-    <input type="range" id="sB" min="-1" max="0" step="0.01" value="0">
+  <div id="status" class="status good">…</div>
+
+  <h2>Versteckter Layer (Dense → ReLU)</h2>
+  <label class="glb"><input type="checkbox" id="relu" checked> ReLU-Aktivierung an/aus</label>
+
+  <div class="neuron" data-i="1">
+    <label class="nhead"><input type="checkbox" id="n1" checked> <b>Neuron 1</b> <span class="dot" style="background:#e74c3c"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a1x" min="-2" max="2" step="0.01" value="0"><span class="val" id="va1x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a1y" min="-2" max="2" step="0.01" value="1"><span class="val" id="va1y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b1" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb1"></span></div>
   </div>
-  <p class="legend">
-    <span class="dot" style="background:#e74c3c"></span>
-    <span class="dot" style="background:#27ae60"></span>
-    <span class="dot" style="background:#3498db"></span>
-    &nbsp;= 3 Faltlinien im 120°-Abstand
-  </p>
 
-  <h2>Trenn-Hyperebene (Readout)</h2>
-  <div class="slider-group">
-    <label style="justify-content:flex-start; gap:6px"><input type="checkbox" id="sPlane" checked> Trennebene anzeigen</label>
-    <label>Verschieben: <span class="val" id="vOff">0.00</span></label>
-    <input type="range" id="sOff" min="-0.2" max="0.2" step="0.01" value="0">
+  <div class="neuron" data-i="2">
+    <label class="nhead"><input type="checkbox" id="n2" checked> <b>Neuron 2</b> <span class="dot" style="background:#27ae60"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a2x" min="-2" max="2" step="0.01" value="-0.87"><span class="val" id="va2x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a2y" min="-2" max="2" step="0.01" value="-0.5"><span class="val" id="va2y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b2" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb2"></span></div>
   </div>
-  <p class="legend">Bei 0 trennt die Ebene beide Klassen perfekt — verschieben, um den Bruch zu sehen.</p>
 
-  <button onclick="animateFold()">🎬 Falt-Animation</button>
+  <div class="neuron" data-i="3">
+    <label class="nhead"><input type="checkbox" id="n3" checked> <b>Neuron 3</b> <span class="dot" style="background:#3498db"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a3x" min="-2" max="2" step="0.01" value="0.87"><span class="val" id="va3x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a3y" min="-2" max="2" step="0.01" value="-0.5"><span class="val" id="va3y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b3" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb3"></span></div>
+  </div>
+
+  <h2>Readout (Dense, linear)</h2>
+  <div class="neuron">
+    <div class="wrow"><span class="wl">r₁</span><input type="range" id="r1" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr1"></span><label class="chk"><input type="checkbox" id="re1" checked></label></div>
+    <div class="wrow"><span class="wl">r₂</span><input type="range" id="r2" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr2"></span><label class="chk"><input type="checkbox" id="re2" checked></label></div>
+    <div class="wrow"><span class="wl">r₃</span><input type="range" id="r3" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr3"></span><label class="chk"><input type="checkbox" id="re3" checked></label></div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="rb" min="-2" max="2" step="0.01" value="-0.47"><span class="val" id="vrb"></span></div>
+  </div>
+
+  <button id="btnOpt">⚡ Optimal (Paper)</button>
+  <button id="btnTrain">🧠 Readout trainieren</button>
+  <button id="btnFold">🎬 Falt-Animation</button>
 
   <div class="legend">
     <span class="dot" style="background:#e67e22"></span> innere Klasse (Kreis) &nbsp;
@@ -106,11 +130,11 @@
 <div id="main">
   <div id="canvas-row">
     <div class="canvas-box">
-      <h3>Eingaberaum (2D) — Hyperebenen als Linien</h3>
+      <h3>Eingaberaum (2D) — Faltlinien wᵢ·x + bᵢ = 0</h3>
       <canvas class="plot2d" id="input2d"></canvas>
     </div>
     <div class="canvas-box">
-      <h3>Nach ReLU-Faltung (3D versteckter Layer) — drehbar</h3>
+      <h3>Hidden-Layer-Ausgabe (3D) — drehbar, gelb = Readout-Ebene</h3>
       <div id="three-container"></div>
     </div>
   </div>
@@ -120,48 +144,46 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-/* ------------------ Formeln mit Temml ------------------ */
-temml.render(String.raw`x_i^{(l)} = \Phi\!\left(W_{ij}^{(l)}\, x_j^{(l-1)} + b_i^{(l)}\right)`, document.getElementById('f1'));
-temml.render(String.raw`\Phi(\tilde x) = \mathrm{ReLU}(\tilde x) = \max(0,\tilde x)`, document.getElementById('f2'));
-temml.render(String.raw`W \in \mathbb{R}^{3\times 2}`, document.getElementById('fW'));
-temml.render(String.raw`\vec w_i`, document.getElementById('fw'));
+/* ------------------ Formel ------------------ */
+temml.render(String.raw`y \;=\; A_2\, \mathrm{relu}\!\left(A_1 x + B_1\right) + B_2`, document.getElementById('fnet'));
 
-/* ------------------ Daten (2D-Egg) ------------------ */
-let points = [], labels = []; // labels: 0=innen, 1=außen
-
+/* ------------------ Daten (2D-Egg, fix 2000 Punkte) ------------------ */
+const N = 2000;
+let points = [], labels = []; // 0 = innen, 1 = außen
 function generateData() {
-  const N = +document.getElementById('sN').value;
   const r1 = 0.45, r2 = 1.0;
   points = []; labels = [];
   for (let i = 0; i < N; i++) {
     if (Math.random() < 0.4) {
-      // innere Klasse
       const r = r1 * Math.sqrt(Math.random());
       const t = Math.random() * 2 * Math.PI;
-      points.push([r * Math.cos(t), r * Math.sin(t)]);
-      labels.push(0);
+      points.push([r * Math.cos(t), r * Math.sin(t)]); labels.push(0);
     } else {
-      // äußerer Ring: shell zwischen r1+0.1 und r2
       const t = Math.random() * 2 * Math.PI;
       const rr = r1 + 0.1 + Math.random() * (r2 - r1 - 0.1);
-      points.push([rr * Math.cos(t), rr * Math.sin(t)]);
-      labels.push(1);
+      points.push([rr * Math.cos(t), rr * Math.sin(t)]); labels.push(1);
     }
   }
 }
 
-/* ------------------ Hyperebenen-Parameter ------------------ */
-const HP_ANGLES = [90, 210, 330]; // fix: 120°-Abstand (Paper Fig. 2c)
-function getHyperplanes() {
-  const b = +document.getElementById('sB').value;
-  return HP_ANGLES.map(deg => {
-    const ang = deg * Math.PI / 180;
-    return { w: [Math.cos(ang), Math.sin(ang)], b: b };
-  });
+/* ------------------ Parameter lesen/schreiben ------------------ */
+const $ = id => document.getElementById(id);
+const val = id => +$(id).value;
+const on = id => $(id).checked;
+const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; };
+
+function getParams() {
+  const A1 = [[val('a1x'), val('a1y')], [val('a2x'), val('a2y')], [val('a3x'), val('a3y')]];
+  const B1 = [val('b1'), val('b2'), val('b3')];
+  const A2 = [val('r1') * (on('re1') ? 1 : 0), val('r2') * (on('re2') ? 1 : 0), val('r3') * (on('re3') ? 1 : 0)];
+  const B2 = val('rb');
+  const relu = on('relu');
+  const neuronOn = [on('n1'), on('n2'), on('n3')];
+  return { A1, B1, A2, B2, relu, neuronOn };
 }
 
-/* ------------------ 2D Plot ------------------ */
-const c2 = document.getElementById('input2d');
+/* ------------------ 2D Plot (Faltlinien) ------------------ */
+const c2 = $('input2d');
 const ctx = c2.getContext('2d');
 const HP_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
 
@@ -170,204 +192,278 @@ function draw2D() {
   const h = c2.height = c2.clientHeight;
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, w, h);
-
   const scale = Math.min(w, h) * 0.4;
   const cx = w / 2, cy = h / 2;
   const toPx = (x, y) => [cx + x * scale, cy - y * scale];
 
-  // Punkte
   for (let i = 0; i < points.length; i++) {
     const [px, py] = toPx(points[i][0], points[i][1]);
     ctx.fillStyle = labels[i] === 0 ? '#e67e22' : '#16a085';
-    ctx.beginPath();
-    ctx.arc(px, py, 1.8, 0, 2*Math.PI);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 2 * Math.PI); ctx.fill();
   }
 
-  // Hyperebenen als Linien: w·x + b = 0  =>  wx*x + wy*y = -b
-  const hps = getHyperplanes();
+  const P = getParams();
   ctx.lineWidth = 2.5;
-  hps.forEach((hp, i) => {
-    ctx.strokeStyle = HP_COLORS[i];
-    const [wx, wy] = hp.w, b = hp.b;
-    // finde zwei Punkte der Linie
+  for (let k = 0; k < 3; k++) {
+    const [wx, wy] = P.A1[k], b = P.B1[k];
+    ctx.strokeStyle = HP_COLORS[k];
+    ctx.setLineDash(P.neuronOn[k] ? [] : [6, 5]);
     let p1, p2;
-    if (Math.abs(wy) > 1e-6) {
-      p1 = toPx(-2, (-b - wx*(-2)) / wy);
-      p2 = toPx( 2, (-b - wx*( 2)) / wy);
-    } else {
-      p1 = toPx(-b/wx, -2);
-      p2 = toPx(-b/wx,  2);
-    }
+    if (Math.abs(wy) > 1e-6) { p1 = toPx(-2, (-b - wx * -2) / wy); p2 = toPx(2, (-b - wx * 2) / wy); }
+    else if (Math.abs(wx) > 1e-6) { p1 = toPx(-b / wx, -2); p2 = toPx(-b / wx, 2); }
+    else { ctx.setLineDash([]); continue; }
     ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
 
-    // kleiner Normalenvektor-Pfeil
-    const mid = toPx(-b*wx*0.3, -b*wy*0.3);
-    const tip = toPx(-b*wx*0.3 + wx*0.15, -b*wy*0.3 + wy*0.15);
+    const mid = toPx(-b * wx * 0.3, -b * wy * 0.3);
+    const tip = toPx(-b * wx * 0.3 + wx * 0.15, -b * wy * 0.3 + wy * 0.15);
     ctx.beginPath(); ctx.moveTo(mid[0], mid[1]); ctx.lineTo(tip[0], tip[1]); ctx.stroke();
-  });
+  }
+  ctx.setLineDash([]);
 }
 
 /* ------------------ 3D Szene (Three.js) ------------------ */
 let scene, camera, renderer, controls, pointCloud, planeMesh;
-const container = document.getElementById('three-container');
-
+const container = $('three-container');
 function initThree() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0f0f14);
-
-  camera = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.01, 100);
-  camera.position.set(2.5, 2, 2.5);
-
+  camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.01, 100);
+  camera.position.set(2.6, 2, 2.6);
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
-
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
-
-  // Achsen
-  const axes = new THREE.AxesHelper(1.5);
-  scene.add(axes);
-
-  // Grid (Boden)
+  scene.add(new THREE.AxesHelper(1.6));
   const grid = new THREE.GridHelper(3, 15, 0x444444, 0x222222);
-  grid.rotation.x = Math.PI/2; // in xy-Ebene? Nein, wir lassen ihn in xz
   scene.add(grid);
-
   animate();
   window.addEventListener('resize', onResize);
 }
-
 function onResize() {
-  camera.aspect = container.clientWidth/container.clientHeight;
+  camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(container.clientWidth, container.clientHeight);
-  // 2D canvas kümmert sich selbst
   draw2D();
 }
-
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 }
 
-/* ------------------ ReLU-Faltung berechnen und rendern ------------------ */
-function relu(x) { return Math.max(0, x); }
-
-let perfectSum = 0; // Schwellwert, bei dem die Readout-Ebene perfekt trennt
-
-function updateHiddenLayer() {
-  const hps = getHyperplanes();
-
-  const positions = new Float32Array(points.length * 3);
-  const colors = new Float32Array(points.length * 3);
-  let maxInner = -Infinity, minOuter = Infinity;
-
-  for (let i = 0; i < points.length; i++) {
+/* ------------------ Hidden Layer berechnen ------------------ */
+let H = null, cent = [0, 0, 0];
+function computeHidden() {
+  const P = getParams(), m = points.length;
+  H = new Float32Array(m * 3);
+  let cx = 0, cy = 0, cz = 0;
+  for (let i = 0; i < m; i++) {
     const [x, y] = points[i];
-    let sum = 0;
     for (let k = 0; k < 3; k++) {
-      const hk = relu(hps[k].w[0]*x + hps[k].w[1]*y + hps[k].b);
-      sum += hk;
-      positions[i*3+k] = hk - 0.5;
-    }
-    if (labels[i] === 0) { // innen -> orange
-      if (sum > maxInner) maxInner = sum;
-      colors[i*3] = 0.9; colors[i*3+1] = 0.5; colors[i*3+2] = 0.15;
-    } else { // außen -> grün
-      if (sum < minOuter) minOuter = sum;
-      colors[i*3] = 0.08; colors[i*3+1] = 0.63; colors[i*3+2] = 0.52;
+      let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
+      if (P.relu) v = Math.max(0, v);
+      if (!P.neuronOn[k]) v = 0;
+      H[i * 3 + k] = v;
+      if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
     }
   }
-  perfectSum = (maxInner + minOuter) / 2;
+  cent = [cx / m, cy / m, cz / m];
+}
 
-  if (pointCloud) {
-    scene.remove(pointCloud);
-    pointCloud.geometry.dispose();
-    pointCloud.material.dispose();
+function drawPointCloud() {
+  const m = points.length;
+  const positions = new Float32Array(m * 3);
+  const colors = new Float32Array(m * 3);
+  for (let i = 0; i < m; i++) {
+    for (let k = 0; k < 3; k++) positions[i * 3 + k] = H[i * 3 + k] - cent[k];
+    if (labels[i] === 0) { colors[i * 3] = 0.9; colors[i * 3 + 1] = 0.5; colors[i * 3 + 2] = 0.15; }
+    else { colors[i * 3] = 0.08; colors[i * 3 + 1] = 0.63; colors[i * 3 + 2] = 0.52; }
   }
+  if (pointCloud) { scene.remove(pointCloud); pointCloud.geometry.dispose(); pointCloud.material.dispose(); }
   const geom = new THREE.BufferGeometry();
   geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  const mat = new THREE.PointsMaterial({ size: 0.025, vertexColors: true });
-  pointCloud = new THREE.Points(geom, mat);
+  pointCloud = new THREE.Points(geom, new THREE.PointsMaterial({ size: 0.025, vertexColors: true }));
   scene.add(pointCloud);
-
-  // Trennebene (readout hyperplane): x+y+z = const
-  updateSeparatingPlane();
 }
 
-function updateSeparatingPlane() {
-  if (planeMesh) {
-    scene.remove(planeMesh);
-    planeMesh.geometry.dispose();
-    planeMesh.material.dispose();
-    planeMesh = null;
-  }
-  if (!document.getElementById('sPlane').checked) return;
-
-  const off = +document.getElementById('sOff').value;
-  // Normale (1,1,1)/√3. Ein Punkt hat n·p = (sum-1.5)/√3, also trennt
-  // d = (perfectSum-1.5)/√3 beide Klassen; off verschiebt die Ebene.
-  const d = (perfectSum - 1.5) / Math.sqrt(3) + off;
+/* ------------------ Readout (lineares Neuron) ------------------ */
+function readoutScore(i) {
+  const P = getParams();
+  return P.A2[0] * H[i * 3] + P.A2[1] * H[i * 3 + 1] + P.A2[2] * H[i * 3 + 2] + P.B2;
+}
+function drawPlane() {
+  if (planeMesh) { scene.remove(planeMesh); planeMesh.geometry.dispose(); planeMesh.material.dispose(); planeMesh = null; }
+  const P = getParams();
+  const mag = Math.hypot(P.A2[0], P.A2[1], P.A2[2]);
+  if (mag < 1e-6) return; // keine gültige Normale -> keine Ebene
+  const n = new THREE.Vector3(P.A2[0], P.A2[1], P.A2[2]).normalize();
+  const constTerm = P.A2[0] * cent[0] + P.A2[1] * cent[1] + P.A2[2] * cent[2] + P.B2;
+  const dist = -constTerm / mag; // Ebene: A2·(p+cent)+B2=0  =>  n·p = dist
   const geom = new THREE.PlaneGeometry(2.5, 2.5);
-  const mat = new THREE.MeshBasicMaterial({
-    color: 0xffff66, transparent: true, opacity: 0.25,
-    side: THREE.DoubleSide
-  });
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffff66, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
   planeMesh = new THREE.Mesh(geom, mat);
-  const n = new THREE.Vector3(1,1,1).normalize();
-  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), n);
-  planeMesh.quaternion.copy(q);
-  planeMesh.position.copy(n.clone().multiplyScalar(d));
+  planeMesh.quaternion.copy(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n));
+  planeMesh.position.copy(n.clone().multiplyScalar(dist));
   scene.add(planeMesh);
 }
 
-/* ------------------ UI-Verkabelung ------------------ */
-function updateAllLabels() {
-  document.getElementById('vN').textContent = document.getElementById('sN').value;
-  document.getElementById('vB').textContent = (+document.getElementById('sB').value).toFixed(2);
-  document.getElementById('vOff').textContent = (+document.getElementById('sOff').value).toFixed(2);
+function misclassified() {
+  const P = getParams();
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) return points.length;
+  let mis = 0;
+  for (let i = 0; i < points.length; i++) if ((readoutScore(i) > 0 ? 1 : 0) !== labels[i]) mis++;
+  return mis;
 }
 
-function refreshAll(regen=true) {
-  updateAllLabels();
-  if (regen) generateData();
-  draw2D();
-  updateHiddenLayer();
+const statusEl = $('status');
+function updateStatus() {
+  const P = getParams();
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) { statusEl.className = 'status bad'; statusEl.textContent = '– Kein Readout (r-Gewichte = 0)'; return; }
+  const mis = misclassified();
+  const acc = (1 - mis / points.length) * 100;
+  if (mis === 0) { statusEl.className = 'status good'; statusEl.textContent = '✓ Klar getrennt · 100 %'; }
+  else {
+    statusEl.className = 'status bad';
+    statusEl.textContent = '✗ Trennt nicht klar · ' + acc.toFixed(1) + ' % korrekt' + (P.relu ? '' : '  (ReLU aus ⇒ linear)');
+  }
 }
 
-document.querySelectorAll('#sidebar input').forEach(inp => {
-  inp.addEventListener('input', () => {
-    const dataChange = inp.id === 'sN';
-    refreshAll(dataChange);
-  });
-});
+// Besten Readout-Bias für die aktuellen r-Gewichte -> perfekte Trennung.
+function bestB2() {
+  const P = getParams();
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) return P.B2;
+  let mi = -Infinity, mo = Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const s = P.A2[0] * H[i * 3] + P.A2[1] * H[i * 3 + 1] + P.A2[2] * H[i * 3 + 2];
+    if (labels[i] === 0) { if (s > mi) mi = s; } else { if (s < mo) mo = s; }
+  }
+  return -(mi + mo) / 2;
+}
 
-/* ------------------ Animation ------------------ */
-let animating = false;
-function animateFold() {
-  if (animating) return;
-  animating = true;
-  document.getElementById('sOff').value = 0; // Ebene zurück auf perfekte Trennung
+/* ------------------ Perzeptron trainiert das Readout (r, bias) ------------------ */
+function trainPerceptron() {
+  const m = points.length;
+  let A2 = [1, 1, 1], B2 = bestB2();
+  const lr = 0.2;
+  for (let pass = 0; pass < 300; pass++) {
+    let errs = 0;
+    for (let i = 0; i < m; i++) {
+      const h0 = H[i * 3], h1 = H[i * 3 + 1], h2 = H[i * 3 + 2];
+      const y = labels[i] === 1 ? 1 : -1;
+      if (y * (A2[0] * h0 + A2[1] * h1 + A2[2] * h2 + B2) <= 0) {
+        A2[0] += lr * y * h0; A2[1] += lr * y * h1; A2[2] += lr * y * h2; B2 += lr * y; errs++;
+      }
+    }
+    if (errs === 0) break;
+  }
+  return { A2, B2 };
+}
+let training = false;
+function trainReadout() {
+  if (training || !H) return;
+  training = true; autoFit = false;
+  set('re1', true); set('re2', true); set('re3', true);
+  const target = trainPerceptron();
+  const cur = [val('r1'), val('r2'), val('r3')], curMag = Math.hypot(...cur) || 1;
+  const startW = cur.map(v => v / curMag);
+  const tMag = Math.hypot(target.A2[0], target.A2[1], target.A2[2]) || 1;
+  const endW = target.A2.map(v => v / tMag);   // Einheit-normalisiert (Ebene & Klassifizierung bleiben gleich)
+  const endB = target.B2 / tMag;
+  const startB = val('rb');
+  $('btnTrain').disabled = true;
   let t = 0;
-  const start = -1, end = 0;
   const step = () => {
-    t += 0.02;
-    const b = start + (end - start) * Math.min(1, t);
-    document.getElementById('sB').value = b;
-    refreshAll(false);
+    t += 0.06; const f = Math.min(1, t);
+    set('r1', startW[0] + (endW[0] - startW[0]) * f);
+    set('r2', startW[1] + (endW[1] - startW[1]) * f);
+    set('r3', startW[2] + (endW[2] - startW[2]) * f);
+    set('rb', startB + (endB - startB) * f);
+    refreshAll();
     if (t < 1) requestAnimationFrame(step);
-    else animating = false;
+    else { training = false; $('btnTrain').disabled = false; }
   };
   step();
 }
 
+/* ------------------ Optimal-Preset (Paper Fig. 2c) ------------------ */
+function setOptimal() {
+  set('a1x', 0); set('a1y', 1);
+  set('a2x', -0.87); set('a2y', -0.5);
+  set('a3x', 0.87); set('a3y', -0.5);
+  set('b1', 0); set('b2', 0); set('b3', 0);
+  set('relu', true);
+  set('n1', true); set('n2', true); set('n3', true);
+  set('r1', 1); set('r2', 1); set('r3', 1);
+  set('re1', true); set('re2', true); set('re3', true);
+  autoFit = true;
+  refreshAll();
+}
+
+/* ------------------ Falt-Animation ------------------ */
+let animating = false;
+function animateFold() {
+  if (animating) return;
+  animating = true; autoFit = true;
+  $('btnFold').disabled = true;
+  set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
+  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+  set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
+  let t = 0; const s = -1, e = 0;
+  const step = () => {
+    t += 0.02;
+    const b = s + (e - s) * Math.min(1, t);
+    set('b1', b); set('b2', b); set('b3', b);
+    refreshAll();
+    if (t < 1) requestAnimationFrame(step);
+    else { animating = false; $('btnFold').disabled = false; }
+  };
+  step();
+}
+
+/* ------------------ UI-Verkabelung ------------------ */
+let autoFit = true; // Readout-Bias automatisch auf perfekte Trennung halten
+
+function updateAllLabels() {
+  for (const id of ['a1x', 'a1y', 'b1', 'a2x', 'a2y', 'b2', 'a3x', 'a3y', 'b3', 'r1', 'r2', 'r3', 'rb']) {
+    $('v' + id).textContent = val(id).toFixed(2);
+  }
+  for (let i = 1; i <= 3; i++) {
+    document.querySelector('.neuron[data-i="' + i + '"]').classList.toggle('off', !on('n' + i));
+  }
+}
+
+function refreshAll() {
+  updateAllLabels();
+  draw2D();
+  computeHidden();
+  drawPointCloud();
+  drawPlane();
+  updateStatus();
+  if (autoFit) {
+    set('rb', bestB2());
+    updateAllLabels();
+    drawPlane();
+    updateStatus();
+  }
+}
+
+document.querySelectorAll('#sidebar input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
+    refreshAll();
+  });
+});
+
+$('btnOpt').addEventListener('click', setOptimal);
+$('btnTrain').addEventListener('click', trainReadout);
+$('btnFold').addEventListener('click', animateFold);
+
 /* ------------------ Start ------------------ */
 initThree();
-refreshAll(true);
+generateData();
+setOptimal();
 </script>
 </body>
 </html>
