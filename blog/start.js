@@ -1712,16 +1712,30 @@ function initGlossary() {
 	// GUARDRAIL (causes 3 + 5) — drop-cap geometry canary.
 	//
 	// The drop cap's size (--cl-dc-size / --cl-dc-lines) is measured
-	// once by polish.js. Anything that later re-sizes the cap — the
+	// by polish.js. Anything that later re-sizes the cap — the
 	// MutationObserver re-measure loop, a stray inline write, a
 	// font-swap — reflows the justified text wrapping the float, i.e.
 	// "the stuff around the drop cap moves". We cache the paragraph's
 	// document-space geometry after the first settled reading and, on
 	// every sweep, verify it is unchanged unless the viewport itself
 	// changed (the one legitimate re-size trigger). On drift we re-pin
-	// the last known-good --cl-dc-* values and log loudly.
+	// the last known-good --cl-dc-* values and log loudly — UNLESS
+	// polish.js's own measurement key (p.dataset.dcKey) changed since
+	// our baseline, which marks a legitimate re-measure (its inputs —
+	// font-size / line-height / width / text length — really did
+	// change, e.g. the display:none -> block reveal), in which case
+	// the new values are the correct ones and we re-baseline quietly.
 	// ─────────────────────────────────────────────────────────────────
-	var dcCanary = { p: null, w: 0, h: 0, vw: 0, vh: 0, vars: null, settled: false };
+	// `key` mirrors polish.js's per-paragraph measurement key
+	// (p.dataset.dcKey = font-size | line-height | clientWidth | text
+	// length). polish.js itself only re-measures a locked cap when that
+	// key changes (or on a viewport-breakpoint force), so a key change
+	// since our baseline marks a LEGITIMATE re-measure (e.g. #contents
+	// going display:none -> block, reader-mode font-size changes).
+	var dcCanary = { p: null, w: 0, h: 0, vw: 0, vh: 0, vars: null, key: null, settled: false };
+	function dcKeyOf(p) {
+		return (p.dataset && p.dataset.dcKey) || null;
+	}
 	function dropcapCanary() {
 		var p = document.querySelector('.cl-dropcap');
 		if (!p || p.classList.contains('cl-dc-pending')) return; // not sized yet
@@ -1737,6 +1751,7 @@ function initGlossary() {
 				lines: cs.getPropertyValue('--cl-dc-lines'),
 				size: cs.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			dcCanary.settled = true;
 			return;
 		}
@@ -1753,6 +1768,7 @@ function initGlossary() {
 				lines: cs2.getPropertyValue('--cl-dc-lines'),
 				size: cs2.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			return;
 		}
 		if (dcCanary.p !== p) {
@@ -1766,35 +1782,47 @@ function initGlossary() {
 				lines: cs3.getPropertyValue('--cl-dc-lines'),
 				size: cs3.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			return;
 		}
 		var w = p.offsetWidth, h = p.offsetHeight;
 		if (w === dcCanary.w && h === dcCanary.h) return;
-		// Geometry changed without a viewport resize. Two cases:
-		//  • the --cl-dc-* vars themselves drifted (a stray re-measure
-		//    or stray inline write re-sized the cap) — re-pin them to
-		//    the last known-good values and log loudly;
+		// Geometry changed without a viewport resize. Cases:
+		//  • the --cl-dc-* vars drifted AND polish.js's measurement key
+		//    changed since our baseline — a legitimate re-measure (the
+		//    inputs the size is computed from really did change: reveal
+		//    from display:none, reader mode, content swap). The NEW
+		//    values are the correct ones; re-baseline quietly.
+		//  • the --cl-dc-* vars drifted with the measurement key intact
+		//    (a stray re-measure loop or stray inline write) — re-pin
+		//    them to the last known-good values and log loudly;
 		//  • the vars are intact and only the paragraph reflowed
-		//    (legitimate: reader mode, dark-mode metrics, content
-		//    swap) — re-baseline quietly.
+		//    (legitimate: dark-mode metrics, content swap) — re-baseline
+		//    quietly.
 		var csNow = window.getComputedStyle(p);
 		var varsNow = {
 			lines: csNow.getPropertyValue('--cl-dc-lines'),
 			size: csNow.getPropertyValue('--cl-dc-size')
 		};
 		if (JSON.stringify(varsNow) !== JSON.stringify(dcCanary.vars)) {
-			try {
-				console.error('[glossary] DROP-CAP DRIFT: --cl-dc-* changed ' +
-					JSON.stringify(dcCanary.vars) + ' -> ' + JSON.stringify(varsNow) +
-					' without a viewport resize. Re-pinning last known good values.');
-			} catch (e) {}
-			if (dcCanary.vars && dcCanary.vars.lines) p.style.setProperty('--cl-dc-lines', dcCanary.vars.lines);
-			if (dcCanary.vars && dcCanary.vars.size) p.style.setProperty('--cl-dc-size', dcCanary.vars.size);
-			try {
-				console.error('[glossary] DROP-CAP DRIFT: paragraph geometry ' +
-					dcCanary.w + 'x' + dcCanary.h + ' -> ' + w + 'x' + h);
-			} catch (e) {}
-			// Keep the last known-good values as the canary baseline.
+			var keyNow = dcKeyOf(p);
+			if (keyNow && dcCanary.key && keyNow !== dcCanary.key) {
+				dcCanary.vars = varsNow;
+				dcCanary.key = keyNow;
+			} else {
+				try {
+					console.error('[glossary] DROP-CAP DRIFT: --cl-dc-* changed ' +
+						JSON.stringify(dcCanary.vars) + ' -> ' + JSON.stringify(varsNow) +
+						' without a viewport resize. Re-pinning last known good values.');
+				} catch (e) {}
+				if (dcCanary.vars && dcCanary.vars.lines) p.style.setProperty('--cl-dc-lines', dcCanary.vars.lines);
+				if (dcCanary.vars && dcCanary.vars.size) p.style.setProperty('--cl-dc-size', dcCanary.vars.size);
+				try {
+					console.error('[glossary] DROP-CAP DRIFT: paragraph geometry ' +
+						dcCanary.w + 'x' + dcCanary.h + ' -> ' + w + 'x' + h);
+				} catch (e) {}
+				// Keep the last known-good values as the canary baseline.
+			}
 		} else {
 			dcCanary.vars = varsNow;
 		}

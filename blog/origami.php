@@ -30,7 +30,6 @@ math: 50
 		margin: 22px 0;
 		box-shadow: 0 10px 40px rgba(0,0,0,.12);
 	}
-	.og-card > .og-h2:first-child { margin-top: 0; }
 	.og-h2 { margin: 34px 0 10px; font-size: 1.5rem; font-weight: 800; letter-spacing: -.5px;
 		background: var(--og-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 	.og-lead { color: var(--mn-text-secondary); margin: .2rem 0 14px; }
@@ -105,14 +104,18 @@ math: 50
 
 <button id="og-regen-fab" class="og-regen-fab" title="Resample the random data in this chapter" aria-label="Resample random data">🎲</button>
 
-<div class="og-card">
 	<h2 class="og-h2">Fold-and-Cut — Origami meets Neural Networks</h2>
-	<p class="og-lead">Paper cranes — the most familiar object in the art of the fold.</p>
+
+	<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
+		<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
+	</figure>
 
 	<div class="md">
 Here is the surprising fact at the heart of this chapter: **you can cut out any shape made of straight lines from a single sheet of paper with just one straight cut** — provided you fold the paper correctly first. Stated the way a ten-year-old would take it in: a *shape* is any closed outline (a triangle, a star, even your own signature), and *cutting* just means the scissors follow that outline to free the shape from the rest of the paper. The catch is that one straight snip can only ever remove a straight line, so a jagged star seems impossible from a single flat cut. The trick is to **fold** the paper until every edge of the shape lies exactly on top of every other edge; then one straight cut passes through all the stacked layers at once, and when you unfold, the shape falls out perfectly. That same move — *fold first, then one flat cut* — is exactly what a stack of ReLU layers does to the data before the final linear readout.
 </div>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3 style="text-align:center">The Fold-and-Cut Theorem</h3>
 		<p class="og-small" style="text-align:center">Fold the paper so that all edges of your shape lie exactly on top of each other. Then, make one straight cut.</p>
@@ -129,14 +132,8 @@ Here is the surprising fact at the heart of this chapter: **you can cut out any 
 		</div>
 		<div class="og-formula"><div class="cap">The Fold-and-Cut Theorem (Demaine et al. 1998):</div><div id="og-fc-formula"></div></div>
 	</div>
-
-	<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
-		<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
-		<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
-	</figure>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">Motivation — Why a Straight Line Is Not Enough</h2>
 	<p class="og-lead">The raw data almost never is linearly separable. The hidden layers must <em>manufacture</em> separability — here is the gap they must close.</p>
 
@@ -181,6 +178,7 @@ efficient? The answer they arrive at is a beautiful one — the network is, in e
 Below you can drag the separating line yourself and feel why the egg resists it.
 </div>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3>Try it: no single line can separate the egg</h3>
 		<p class="og-small">Pick a dataset, then drag the <b>angle</b> and <b>offset</b> of a straight line and watch the best accuracy it can reach. The "inner" class is always trapped by the "outer" one, so a flat boundary plateaus well below 100%.</p>
@@ -207,7 +205,6 @@ Below you can drag the separating line yourself and feel why the egg resists it.
 	</div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The Building Block — The Anvil and the Hammer</h2>
 	<p class="og-lead">Every layer does two things in sequence: position the data (affine), then fold it (ReLU). The affine step is the anvil; the ReLU is the hammer.</p>
 
@@ -235,6 +232,7 @@ everything outside it first. In other words, the nonlinearity can only reshape t
 class. So how does a network ever get at an "island" class that is completely surrounded?
 </div>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3>The affine step: positioning on the anvil</h3>
 		<p class="og-small">Drag the parameters and watch the live $W$-matrix update. The data cloud rotates, scales, shears, and translates — but its *shape* (and separability) is preserved.</p>
@@ -275,7 +273,6 @@ class. So how does a network ever get at an "island" class that is completely su
 	</div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The Key Idea — Fold, Don't Crush</h2>
 	<p class="og-lead">The magic is in the <em>unused dimensions</em>. A ReLU hyperplane hitting the data from an unoccupied direction doesn't flatten — it <em>folds</em>, lifting the data off into a new axis.</p>
 
@@ -298,6 +295,7 @@ into the unused second dimension, and the middle pops *up* while the ends stay *
 Suddenly a flat horizontal line separates them.
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>Folding a 1-D "egg" into 2-D</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">The data lives on a line (the
@@ -319,7 +317,6 @@ Suddenly a flat horizontal line separates them.
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The 2-D Egg in 3-D — Three Neurons, One Plane</h2>
 	<p class="og-lead">The classic 2D egg (ring inside ring) can be solved by a single layer of just <em>three</em> ReLU neurons. Each is a hyperplane tilted 120° apart; their outputs stack into a third dimension that lifts the inner ring into a tent.</p>
 
@@ -333,6 +330,7 @@ separates them — recall of $100\%$ for the inner class and $\approx 97\%$ for 
 one. Drag to look around the folded representation:
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>3-D view: three neurons fold the 2-D egg apart</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Three hyperplanes (one per
@@ -355,10 +353,10 @@ one. Drag to look around the folded representation:
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The Circle-in-Circle Lift — Seeing the Fold in 3-D</h2>
 	<p class="og-lead">Watch the inner class rise out of the flat plane into a third dimension. Adjust the <em>lift</em> height, slide the separating <em>plane</em>, and switch the fold from a smooth radial dome to a real <em>N</em>-neuron ReLU stack.</p>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3>2-D → 3-D: the fold lifts the inner class</h3>
 		<p class="og-small">The inner ring (pink) is lifted into a third dimension by the ReLU fold. In 2-D no flat line can separate the classes; in 3-D a single horizontal plane does the job. Drag the <b>lift</b> slider to control how high the inner class rises, and the <b>plane</b> slider to position the separating hyperplane.</p>
@@ -383,10 +381,10 @@ one. Drag to look around the folded representation:
 	</div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">Learned Rotation — The Hammer Finds Its Angle</h2>
 	<p class="og-lead">A single ReLU neuron can learn the optimal rotation angle for the data. Watch the hyperplane rotate until the fold aligns with the data's structure.</p>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3>One neuron, one rotation: finding the fold angle</h3>
 		<p class="og-small">Drag the <b>angle</b> of the ReLU hyperplane. In 2-D you can see the fold line rotate; in 3-D you see the data cloud tilt. The "miscount" readout shows how many points are on the wrong side — the network's loss for this single neuron.</p>
@@ -403,10 +401,10 @@ one. Drag to look around the folded representation:
 	</div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The 3-Neuron Egg — From Dense to Separable</h2>
 	<p class="og-lead">Three ReLU neurons, three hyperplanes, one fold. The top view shows the fold lines; the 3-D view shows the resulting basin. Adjust the number of neurons and fold strength to see how the separability emerges.</p>
 
+<div class="og-card">
 	<div class="og-demo">
 		<h3>Top view + 3-D basin</h3>
 		<p class="og-small">Top: the three fold lines in the 2-D input plane. Bottom (3-D): the folded data surface — the inner ring lifts into a basin that a single horizontal plane can now separate. Adjust <b>neurons</b> and <b>fold strength</b> to see the effect.</p>
@@ -488,7 +486,6 @@ Lang's page maps the tools and people — TreeMaker, ReferenceFinder, ORIPA, and
 **Why it matters here.** Every one of these is a *piecewise-isometric fold of space* — exactly what a ReLU layer does. Computational origami proves what a fold can and can't do; the network borrows the vocabulary and turns it into a classifier.
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">Deep Networks — An Origami Cascade</h2>
 	<p class="og-lead">Each layer folds the already-folded object again. The creases compound: the number of linear regions grows exponentially with depth.</p>
 
@@ -501,6 +498,7 @@ a deep ReLU network is a **piecewise-linear** function whose number of linear re
 a wide but shallow net cannot match.
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>Progressive folding: regions multiply with depth</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Each colour is a distinct
@@ -515,7 +513,6 @@ a wide but shallow net cannot match.
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The Inefficient Alternative — Shear (Peeling the Orange)</h2>
 	<p class="og-lead">When there's no room to fold, the network must shear: nudging one thin slice of the outer class to the side, per layer. Like peeling an orange, not a sheet.</p>
 
@@ -533,6 +530,7 @@ plays only a minor role in real, wide networks — and it is consistent with the
 \cite{johnson2018skinny}.
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>Peeling, one layer at a time</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Each step peels off one slice
@@ -547,7 +545,6 @@ plays only a minor role in real, wide networks — and it is consistent with the
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">Reading the Folds — The Fingerprint in a Trained Network</h2>
 	<p class="og-lead">How do we verify a trained network actually *did* the folding? The authors define three observables: dimensionality expansion, bimodal tuning curves, and hyperplane angle.</p>
 
@@ -614,6 +611,7 @@ unspent. That gap between the exponential upper bound and the sparse realized ge
 the polyhedral view makes precise (see *The polyhedral backbone* below).
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>The fingerprint of a fold: bimodal tuning</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">A single neuron's preactivation
@@ -630,7 +628,6 @@ the polyhedral view makes precise (see *The polyhedral backbone* below).
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">Validation — The Poker-Hand Task</h2>
 	<p class="og-lead">A real (if small) test: a 3-layer ReLU net on the poker-hand dataset shows exactly the predicted folding signature — dimensionality expansion, bimodal tuning, and causal dependence on the folding neurons.</p>
 
@@ -655,6 +652,7 @@ curves), and — most tellingly — a **causality test** in which silencing ten 
 barely does:
 </div>
 
+<div class="og-card">
 <div class="og-demo">
 	<h3>What the trained network found</h3>
 	<p style="margin:0 0 4px; color: var(--mn-text-secondary)">Left: effective
@@ -670,7 +668,6 @@ barely does:
 </div>
 </div>
 
-<div class="og-card">
 	<h2 class="og-h2">The Answer — What a Hidden Layer Is For</h2>
 	<p class="og-lead">Put all the pieces together: a stack of dense ReLU layers manufactures linear separability by progressively folding the data manifold into unoccupied, higher dimensions. It is, in effect, doing <em>N</em>-dimensional origami.</p>
 
@@ -709,7 +706,6 @@ The vocabulary is worth keeping:
 This is more than a picture. It reframes a mechanistic question — *what is a hidden layer
 for?* — in terms you can draw, measure, and (as the poker experiment shows) causally
 verify.
-</div>
 </div>
 
 <div class="optional md" data-headline="Scope and open questions">

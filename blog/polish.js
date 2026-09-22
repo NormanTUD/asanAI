@@ -839,12 +839,27 @@
 		// applied — no visible fallback-size -> measured-size jump.
 		p.classList.add('cl-dc-pending');
 		if (!p.__dcPendingTimer) {
-			p.__dcPendingTimer = setTimeout(function () {
-				// Font API never settled — reveal the CSS fallback size
-				// rather than leaving the first letter invisible.
-				p.__dcPendingTimer = null;
-				if (p.classList.contains('cl-dc-pending')) finishDropcapSizing(p);
-			}, 2000);
+			const arm = function () {
+				p.__dcPendingTimer = setTimeout(function () {
+					p.__dcPendingTimer = null;
+					if (!p.classList.contains('cl-dc-pending')) return;
+					// Still not laid out (#contents is display:none until
+					// revealContent()). The user cannot see a missing
+					// letter yet, so re-arm instead of locking the CSS
+					// fallback size — the deferred fit() will apply the
+					// real size as soon as the paragraph is laid out, and
+					// a fallback->measured jump would be visible on reveal.
+					if (p.clientWidth === 0 && (p.__dcPendingArms || 0) < 6) {
+						p.__dcPendingArms = (p.__dcPendingArms || 0) + 1;
+						arm();
+						return;
+					}
+					// Font API never settled — reveal the CSS fallback
+					// size rather than leaving the first letter invisible.
+					finishDropcapSizing(p);
+				}, 2000);
+			};
+			arm();
 		}
 		if (DC_NATIVE) {
 			// The @supports block in style.css does the layout; just say
@@ -884,6 +899,17 @@
 			} catch (e) { return DC_LINES_MAX; }
 		};
 		const fit = function (ratio) {
+			// #contents is display:none until revealContent(). A Range over
+			// a hidden subtree yields ZERO line boxes, which would step the
+			// fit loop down to the 3-line minimum and lock a bogus small cap
+			// (with a dcKey of clientWidth=0) that a later legitimate
+			// re-measure must then undo. Defer until the paragraph is
+			// actually laid out — cl-dc-pending keeps the cap hidden meanwhile.
+			if (p.clientWidth === 0 && (p.__dcFitRetries || 0) < 300) {
+				p.__dcFitRetries = (p.__dcFitRetries || 0) + 1;
+				p.__dcFitRaf = requestAnimationFrame(function () { fit(ratio); });
+				return;
+			}
 			const cs = getComputedStyle(p);
 			const fs = parseFloat(cs.fontSize) || 18;
 			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
@@ -918,6 +944,11 @@
 			p.classList.remove('cl-dropcap', 'cl-dc-pending', 'cl-dc-sized');
 			p.style.removeProperty('--cl-dc-size');
 			delete p.dataset.dcLocked;
+			// cancel any in-flight deferred fit; the re-tag below starts
+			// a fresh sizing pass for the new paragraph
+			if (p.__dcFitRaf) { cancelAnimationFrame(p.__dcFitRaf); p.__dcFitRaf = null; }
+			p.__dcFitRetries = 0;
+			p.__dcPendingArms = 0;
 		});
 		// Walk every .md block in document order — the page may OPEN with
 		// a figure row, heading or anchor wrapper that holds no <p> at all
