@@ -1427,13 +1427,17 @@ Try both below.
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Where the words come from">
 ### Where the words come from
-All four words are old, and each still carries its original meaning:
+Each word is old, and each was coined to solve a concrete problem.
 
-- **Matrix** — from Latin *matrix*, "womb or mold" (from *māter*, "mother"). Sylvester coined the math word in 1850 for "an oblong arrangement of terms … a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix} — a mold that *births* determinants. Cayley developed the arithmetic of matrices in 1858 \cite[Cayley, 1858]{cayleymemoirmatrices}.
-- **Vector** — from Latin *vĕctōr*, "carrier" (from *vĕhĕre*, "to carry"): it carries a direction and a magnitude.
-- **Scalar** — from Latin *scāla*, "ladder" (a single step): one lone number that *scales* a vector. Hamilton set the two apart in his 1846 quaternions — a quaternion is a *scalar* plus a *vector*, and its length is the *tensor* \cite[Tensor, History]{tensor_wiki}, defined in "On some Extensions of Quaternions" \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
-- **Tensor** — from Latin *tendere*, "to stretch." Voigt named the modern physical "Tensoren" in 1898 \cite[Voigt, 1898]{voigt1898krystalle}; the calculus that makes them work is Ricci-Curbastro's and Levi-Civita's, 1900 \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}.
-- **Summation convention** — a repeated index is summed over, silently. Einstein wrote it down in 1916 \cite[Einstein, 1916]{einstein1916annalen}; it is why the matrix product writes out $\sum_{j}$ and then hides the $j$.
+- **Matrix** — from Latin *mātrix*, "womb or mold," ultimately *māter*, "mother" \cite[matrix, Etymonline]{etymonline_matrix}. Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — "a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix}. Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 "arithmetic of matrices" gave them exactly that \cite[Cayley, 1858]{cayleymemoirmatrices}.
+
+- **Vector** — from Latin *vĕctōr*, "a carrier," from *vĕhĕre*, "to carry" \cite[vector, Etymonline]{etymonline_vector}. Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a "calculus of direction" that adds and rotates directed line segments in space without writing out every component \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
+
+- **Scalar** — from Latin *scalaris*, "of a ladder" (*scala*, a single step) \cite[scalar, Etymonline]{etymonline_scalar}. It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
+
+- **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, "to stretch" \cite[tensor, Etymonline]{etymonline_tensor}. Hamilton gave it a mathematical life, using it for the length of a quaternion. The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his "Tensoren," 1898 \cite[Voigt, 1898]{voigt1898krystalle}. Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900} \cite[Einstein, 1916]{einstein1916annalen}.
+
+- **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page \cite[Einstein, 1916]{einstein1916annalen}.
 </div>
 
 <script>

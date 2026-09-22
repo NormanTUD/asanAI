@@ -3927,6 +3927,34 @@ window.bibData = {
 		url: "https://en.wikisource.org/wiki/The_Foundation_of_the_Generalised_Theory_of_Relativity",
 		alternativetitle: "Einstein (1916) — introduces the summation convention (a repeated index implies a sum)"
 	},
+	"etymonline_matrix": {
+		title: "matrix (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/matrix",
+		alternativetitle: "Etymonline — matrix: from Old French matrice 'womb' and Latin mātrix, from māter 'mother'"
+	},
+	"etymonline_vector": {
+		title: "vector (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/vector",
+		alternativetitle: "Etymonline — vector: from Latin vector, from the past-participle stem of vehĕre 'to carry'"
+	},
+	"etymonline_scalar": {
+		title: "scalar (adj. & n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/scalar",
+		alternativetitle: "Etymonline — scalar: from Latin scalaris 'of or pertaining to a ladder,' from scalae"
+	},
+	"etymonline_tensor": {
+		title: "tensor (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/tensor",
+		alternativetitle: "Etymonline — tensor: 1704, Modern Latin agent noun from Latin tendere 'to stretch'"
+	},
 	"gpt2": {
 		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
 		title: "Language Models are Unsupervised Multitask Learners",
