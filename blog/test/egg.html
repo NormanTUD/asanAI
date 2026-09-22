@@ -123,6 +123,11 @@
   .foldrow { display: flex; gap: 6px; margin: 4px 0 2px; }
   .foldcanv { flex: 1 1 0; min-width: 0; height: 132px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; display: block; }
   .foldlegend { font-size: 9.5px; color: #7f8ea0; margin: 2px 0 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .foldpathrow { display: flex; align-items: center; gap: 5px; margin: 5px 0 2px; }
+  .pmlabel { font-size: 10.5px; color: #7f8ea0; }
+  .pm { background: #1b1b22; color: #9aa7b5; border: 1px solid #3a3a44; border-radius: 4px; font: 10.5px monospace; padding: 2px 8px; cursor: pointer; }
+  .pm.on { background: #2a3550; color: #8be9fd; border-color: #8be9fd; }
+  .foldstats { font-size: 10.5px; font-family: monospace; color: #ffb86c; margin: 4px 0; line-height: 1.4; }
   .foldinfo { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; font-family: monospace; color: #c7d0dc; }
   .foldinfo b { color: #50fa7b; font-weight: 600; }
   .foldseq { font-family: monospace; font-size: 11px; color: #9aa7b5; margin-top: 5px; line-height: 1.5; word-break: break-word; }
@@ -231,8 +236,14 @@
     <span>r1 = <b id="foldR1">–</b></span>
     <span>r2 = <b id="foldR2">–</b></span>
     <span>Regionen <b id="foldReg">–</b></span>
-    <label class="rtgl" style="margin-left:auto"><input type="checkbox" id="showWorst"> schlimmster Falz</label>
   </div>
+  <div class="foldpathrow">
+    <span class="pmlabel">Pfad Γ:</span>
+    <button id="pmStd" class="pm on">Standard</button>
+    <button id="pmWorst" class="pm">Φ̂ Max</button>
+    <button id="pmPick" class="pm">✏️ wählen</button>
+  </div>
+  <div id="foldStats" class="foldstats" style="display:none">–</div>
   <div id="foldL2" class="foldinfo foldl2" style="display:none">–</div>
   <div id="foldSeq" class="foldseq">–</div>
   <div id="foldSeq2" class="foldseq" style="display:none">–</div>
@@ -480,6 +491,7 @@ function draw2D(B1o) {
     ctx.strokeStyle = '#ffd866'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
     ctx.fillStyle = '#ffd866'; ctx.beginPath(); ctx.arc(a[0], a[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#19d3b5'; ctx.beginPath(); ctx.arc(b[0], b[1], 3.5, 0, 2 * Math.PI); ctx.fill();
     const st = 64; let prev = patternCode(gx1, gy1, P, B1);
     for (let i = 1; i <= st; i++) {
       const lam = i / st, x = gx1 + (gx2 - gx1) * lam, y = gy1 + (gy2 - gy1) * lam;
@@ -497,7 +509,7 @@ function draw2D(B1o) {
 
 /* ------------------ Space-Folding (Lewandowski et al. 2025, arXiv:2502.09954) ------------------ */
 const PATTERN_COLORS = ['#e74c3c', '#27ae60', '#3498db', '#e0a100', '#9b59b6', '#1abc9c', '#e76f51', '#8a8f98'];
-let showRegions = false, showWorst = false;
+let showRegions = false;
 let foldChord = null; // [x1,y1,x2,y2] – aktuelle gerade Sehne Γ im Eingaberaum
 function popcount(n) { let c = 0; while (n) { c += n & 1; n >>= 1; } return c; }
 const hamming = (a, b) => popcount(a ^ b);
@@ -538,25 +550,32 @@ function chiLayer2(x1, y1, x2, y2, st, P, B1) {
   for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(pat2At([a[0] + (b[0] - a[0]) * lam, a[1] + (b[1] - a[1]) * lam, a[2] + (b[2] - a[2]) * lam])); }
   return foldMetricsFrom(codes);
 }
-function regionCount(P, B1) { // Anzahl der Linear-Regionen (distincte Aktivierungsmuster) im Domain-Grid
-  const seen = new Set(); const G = 40, lo = -1.2, hi = 1.2;
+function fullPatternAt(x, y, P, B1) { // kombiniertes Muster (Layer1 ⋃ Layer2) = Linear-Region des Gesamtnetzes
+  const p1 = patternCode(x, y, P, B1);
+  if (!useLayer2) return p1;
+  return p1 * 8 + pat2At(h1At(x, y, P, B1));
+}
+function regionCount(P, B1) { // Anzahl der Linear-Regionen (Expressivität, Montúfar et al.) im Domain-Grid
+  const seen = new Set(); const G = 44, lo = -1.2, hi = 1.2;
   for (let i = 0; i < G; i++) for (let j = 0; j < G; j++)
-    seen.add(patternCode(lo + (hi - lo) * i / (G - 1), lo + (hi - lo) * j / (G - 1), P, B1));
+    seen.add(fullPatternAt(lo + (hi - lo) * i / (G - 1), lo + (hi - lo) * j / (G - 1), P, B1));
   return seen.size;
 }
-const CHORDS = (function () {
-  const c = [];
-  for (const y of [-0.6, -0.3, 0, 0.3, 0.6]) c.push([-1, y, 1, y]);
-  for (const x of [-0.6, -0.3, 0, 0.3, 0.6]) c.push([x, -1, x, 1]);
-  c.push([-0.85, -0.85, 0.85, 0.85], [0.85, -0.85, -0.85, 0.85]);
-  return c;
-})();
 const DEFAULT_CHORD = [-1, 0.3, 1, 0.3];
-function chooseChord(P, B1) { // "schlimmster Falz" ≈ Φ̂ = max über eine feste Sehnen-Familie
-  if (!showWorst) return DEFAULT_CHORD.slice();
-  let best = null, bc = -1;
-  for (const c of CHORDS) { const m = foldMetrics(c[0], c[1], c[2], c[3], 20, P, B1); if (m.chi > bc) { bc = m.chi; best = c; } }
-  return (best || DEFAULT_CHORD).slice();
+let pathMode = 'std'; // 'std' | 'worst' | 'pick'
+let pickA = null, pickB = null; // vom Nutzer im 2D-Plot gewählte Endpunkte
+let scanCache = null;
+function chiForChord(x1, y1, x2, y2, st, P, B1) { return useLayer2 ? chiTotal(x1, y1, x2, y2, st, P, B1) : foldMetrics(x1, y1, x2, y2, st, P, B1); }
+// Paper (Φ̂, Eq. 5 + MNIST): max/Ø/Anteil der χ über inter-class-Strecken zwischen echten Datenpunkten
+function scanPaths(P, B1) {
+  const inner = [], outer = [];
+  for (let i = 0; i < points.length; i++) { if (labels[i] === 0) inner.push(points[i]); else outer.push(points[i]); }
+  const chords = [[-1, 0.3, 1, 0.3], [0.3, -1, 0.3, 1], [-0.85, -0.85, 0.85, 0.85], [0.85, -0.85, -0.85, 0.85]];
+  const NI = 12, NO = 12;
+  for (let i = 0; i < NI; i++) { const a = inner[Math.floor(i * inner.length / NI)]; for (let j = 0; j < NO; j++) { const b = outer[Math.floor(j * outer.length / NO)]; chords.push([a[0], a[1], b[0], b[1]]); } }
+  let maxChi = -1, sum = 0, folded = 0, worst = DEFAULT_CHORD.slice();
+  for (const c of chords) { const m = chiForChord(c[0], c[1], c[2], c[3], 20, P, B1); if (m.chi > maxChi) { maxChi = m.chi; worst = c.slice(); } sum += m.chi; if (m.chi > 0.02) folded++; }
+  return { worst, maxChi, meanChi: sum / chords.length, fracFold: folded / chords.length, n: chords.length };
 }
 const fcv = $('foldPath'); const fctx = fcv.getContext('2d');
 function drawFoldPath(m) { // Fig. 6: dH(π₁,·) (gestrichelt-punktig) + dH(πᵢ,πᵢ₊₁) (gestrichelt)
@@ -604,29 +623,41 @@ function drawCubeWalk(codes) {
 
 function updateFoldPanel(B1o) {
   const P = getParams();
-  const chord = chooseChord(P, B1o);
+  const B1 = B1o || P.B1;
+  if (useLayer2) scanCache = scanPaths(P, B1); // Φ̂-Verteilung immer aktuell
+  let chord;
+  if (pathMode === 'pick' && pickA && pickB) chord = [pickA[0], pickA[1], pickB[0], pickB[1]];
+  else if (pathMode === 'worst' && scanCache) chord = scanCache.worst;
+  else chord = DEFAULT_CHORD.slice();
   foldChord = chord;
-  const m = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1o); // χ① (Layer 1)
-  $('foldChi').textContent = m.chi.toFixed(3);
-  $('foldR1').textContent = m.r1; $('foldR2').textContent = m.r2;
-  $('foldReg').textContent = regionCount(P, B1o);
-  $('foldSeq').textContent = 'Muster Layer ①: ' + m.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+  const m1 = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1); // χ① (Layer 1)
+  const main = useLayer2 ? chiTotal(chord[0], chord[1], chord[2], chord[3], 28, P, B1) : m1;
+  $('foldChi').textContent = main.chi.toFixed(3);
+  $('foldR1').textContent = main.r1; $('foldR2').textContent = main.r2;
+  $('foldReg').textContent = regionCount(P, B1);
+  $('foldSeq').textContent = 'Muster Layer ①: ' + m1.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
   if (useLayer2) {
-    const mt = chiTotal(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
-    const ml2 = chiLayer2(chord[0], chord[1], chord[2], chord[3], 28, P, B1o);
-    $('foldL2').textContent = 'χ① = ' + m.chi.toFixed(3) + '   ·   χ② = ' + ml2.chi.toFixed(3) + '   ·   χ①∘② = ' + mt.chi.toFixed(3);
+    const ml2 = chiLayer2(chord[0], chord[1], chord[2], chord[3], 28, P, B1);
+    $('foldL2').textContent = 'χ① = ' + m1.chi.toFixed(3) + '   ·   χ② = ' + ml2.chi.toFixed(3) + '   ·   χ①∘② = ' + main.chi.toFixed(3);
     $('foldL2').style.display = '';
     $('foldSeq2').style.display = '';
-    $('foldSeq2').textContent = 'Muster Layer ② (Gesamt): ' + mt.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
-    drawFoldPath(mt); drawCubeWalk(mt.codes);
-    $('foldNote').textContent = mt.chi < 0.02
-      ? 'Kein Space-Fold auf diesem Pfad — W2/B2 anpassen (eine „hump"-Zeile erzeugt einen Falzrückgang).'
-      : 'Space-Fold! dH(π₁,·) sinkt zwischendurch (nicht-konvex, Fig. 4). Gesamtfaltung χ①∘② = ' + mt.chi.toFixed(3) + '.';
+    $('foldSeq2').textContent = 'Muster Layer ② (Gesamt): ' + main.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+    if (scanCache) { $('foldStats').textContent = 'Φ̂ über ' + scanCache.n + ' inter-class-Pfade:  max χ = ' + scanCache.maxChi.toFixed(3) + '   ·   Ø χ = ' + scanCache.meanChi.toFixed(3) + '   ·   ' + (scanCache.fracFold * 100).toFixed(0) + '% der Pfade falten'; $('foldStats').style.display = ''; }
+    else $('foldStats').style.display = 'none';
+    drawFoldPath(main); drawCubeWalk(main.codes);
+    $('foldNote').textContent = (pathMode === 'pick' && (!pickA || !pickB))
+      ? '✏️ Klicke zwei Punkte im 2D-Plot, um den Pfad Γ zu wählen.'
+      : (main.chi < 0.02
+        ? 'Kein Space-Fold auf diesem Pfad — „Φ̂ Max" findet den stärksten Falz, „✏️ wählen" für eigene Pfade.'
+        : 'Space-Fold! dH(π₁,·) sinkt (nicht-konvex, Fig. 4). Gesamtfaltung χ①∘② = ' + main.chi.toFixed(3) + '.');
   } else {
     $('foldL2').style.display = 'none';
     $('foldSeq2').style.display = 'none';
-    drawFoldPath(m); drawCubeWalk(m.codes);
-    $('foldNote').textContent = '1 Hidden-Layer ⇒ dH(π₁,·) monoton ⇒ χ① ≈ 0 (konvex, Lemma 1). Schalte den 2. Hidden-Layer ein für echte Space-Folds.';
+    $('foldStats').style.display = 'none';
+    drawFoldPath(main); drawCubeWalk(main.codes);
+    $('foldNote').textContent = (pathMode === 'pick' && (!pickA || !pickB))
+      ? '✏️ Klicke zwei Punkte im 2D-Plot, um den Pfad Γ zu wählen.'
+      : '1 Hidden-Layer ⇒ χ① ≈ 0 (konvex, Lemma 1). Layer 2 ein für echte Space-Folds + Φ̂-Scan.';
   }
 }
 
@@ -840,7 +871,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v7'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v8'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -1148,7 +1179,6 @@ function refreshAll() {
 document.querySelectorAll('#sidebar input').forEach(inp => {
   inp.addEventListener('input', () => {
     if (training || animating) return;
-    if (inp.id === 'showWorst') { showWorst = inp.checked; refreshAll(); return; }
     if (/^(w2_|b2_|n2_)/.test(inp.id) || inp.id === 'useLayer2') return; // eigene Listener
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
     refreshAll();
@@ -1175,6 +1205,21 @@ $('l2rand').addEventListener('click', e => {
   W2m = [1, -1, -1, 1, 0, 0, 0, 1, 0]; B2m = [0, 0, 0];
   buildL2UI(); refreshAll();
 });
+
+// Interaktive Pfad-Analyse: zwei Punkte im 2D-Plot klicken → Γ
+function px2data(px, py) { const w = c2.width, h = c2.height, scale = Math.min(w, h) * 0.4, cx = w / 2, cy = h / 2; return [(px - cx) / scale, (cy - py) / scale]; }
+c2.addEventListener('click', e => {
+  if (pathMode !== 'pick' || training || animating) return;
+  const r = c2.getBoundingClientRect();
+  const d = px2data(e.clientX - r.left, e.clientY - r.top);
+  if (!pickA || (pickA && pickB)) { pickA = d; pickB = null; }
+  else pickB = d;
+  refreshAll();
+});
+function syncPathSel() { $('pmStd').classList.toggle('on', pathMode === 'std'); $('pmWorst').classList.toggle('on', pathMode === 'worst'); $('pmPick').classList.toggle('on', pathMode === 'pick'); c2.style.cursor = pathMode === 'pick' ? 'crosshair' : 'default'; }
+$('pmStd').addEventListener('click', () => { if (training || animating) return; pathMode = 'std'; pickA = pickB = null; syncPathSel(); refreshAll(); });
+$('pmWorst').addEventListener('click', () => { if (training || animating) return; pathMode = 'worst'; syncPathSel(); refreshAll(); });
+$('pmPick').addEventListener('click', () => { if (training || animating) return; pathMode = 'pick'; pickA = pickB = null; syncPathSel(); refreshAll(); });
 
 $('btnOpt').addEventListener('click', setOptimal);
 $('btnTrain').addEventListener('click', startTraining);

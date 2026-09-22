@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-inflow-fragile-bulletproof';
+	window.__TB_VER = '2026-09-22-badge-delegation';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -1836,6 +1836,13 @@
 	}
 
 	function revealBlock(block, animate) {
+		// Idempotent: a double-trigger (per-badge handler + the document
+		// delegation fallback both firing) must not re-run the animation.
+		if (block.classList.contains('topic-block-revealed')) {
+			block.classList.remove('topic-block--clipped');
+			clearClipInline(block);
+			return;
+		}
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
 		if (badge) badge.remove();
 		const altRev = block.querySelector(':scope > .topic-block-alt-reveal');
@@ -1866,6 +1873,26 @@
 		if (block._tbScore && block._tbSpec) {
 			applyBlockState(block, block._tbSpec, block._tbScore, true);
 		}
+	}
+
+	/** Fallback reveal path. Some pages carry document/body click handlers
+	    (lightbox, provenance, bindIframeSafeLinks) and per-badge handlers can
+	    get desynced from the live badge element; a delegated bubble handler on
+	    document always fires when a `.topic-block-fade-badge` is actually
+	    clicked, so "tap to reveal" can never be a dead button. */
+	function ensureBadgeDelegation() {
+		if (document.__tbBadgeDeleg) return;
+		document.__tbBadgeDeleg = true;
+		document.addEventListener('click', function (ev) {
+			const t = ev.target;
+			if (!t || !t.closest) return;
+			const badge = t.closest('.topic-block-fade-badge');
+			if (!badge) return;
+			const block = badge.closest('.topic-block') || badge.parentElement;
+			if (!block || !block.classList.contains('topic-block-collapsed')) return;
+			block._tbUserRevealed = true;
+			revealBlock(block, true);
+		}, false);
 	}
 
 	/** slim chip shown on a PARTIAL section: it stays readable, just
@@ -2793,6 +2820,7 @@
 		applyVisibility({ animate: false, tuckMd: false });
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 		showLearnedUI();
+		ensureBadgeDelegation();
 		if (DEBUG) dlog('ready — dump state with BlogTopics.dump()');
 	}
 

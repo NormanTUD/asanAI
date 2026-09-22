@@ -2113,10 +2113,26 @@ function sendHeight() {
         const target=refs.find(el=>el.classList&&el.classList.contains('topic-block-collapsed')&&el.querySelector(':scope > .topic-block-fade-badge'));
         if(target){ const be=target.querySelector(':scope > .topic-block-fade-badge');
           const stateStr=x=>[...x.classList].filter(c=>c.indexOf('topic-block')===0).join(' ');
-          const before={state:stateStr(target), h:target.offsetHeight, badgeHit:hitTop(be)};
-          be.click(); await sleep(850);
-          const after={state:stateStr(target), h:target.offsetHeight, badgeStill:!!target.querySelector(':scope > .topic-block-fade-badge'), userRevealed:target._tbUserRevealed, overflow:getComputedStyle(target).overflow};
-          report.revealTest={target:name(target), before, after, changed:(before.state!==after.state)||before.h!==after.h};
+          const badges=[...target.querySelectorAll(':scope > .topic-block-fade-badge')];
+          const before={state:stateStr(target), h:target.offsetHeight, inView:hitTop(be)};
+          // 1) Click the badge (the real user path).
+          be.click(); await sleep(900);
+          const afterClick={state:stateStr(target), h:target.offsetHeight, badgeStill:!!target.querySelector(':scope > .topic-block-fade-badge'), userRevealed:target._tbUserRevealed};
+          // 2) Manual reveal: bypass the handler, unclip directly -> proves the
+          //    clip/CSS/DOM mechanism itself works (independent of the click).
+          target._tbUserRevealed = true;
+          target.classList.remove('topic-block-collapsed','topic-block--clipped','topic-block-dimmed');
+          target.classList.add('topic-block-revealed');
+          target.style.overflow=''; target.style.maxHeight=''; target.style.transition='';
+          await sleep(80);
+          const afterManual={state:stateStr(target), h:target.offsetHeight, userRevealed:target._tbUserRevealed};
+          report.revealTest={
+            target:name(target),
+            badges:{count:badges.length, beParentIsTarget:be.parentElement===target, beTag:be.tagName, beType:be.type, beDisabled:be.disabled},
+            before, afterClick,
+            clickChanged:(before.state!==afterClick.state)||before.h!==afterClick.h,
+            afterManual, manualWorked:afterManual.h>before.h+50
+          };
         } else report.revealTest={note:'no collapsed block with a badge found'};
       }
       report.blocks=blocks; report.stuckClips=stuckClips; report.coveredBadges=coveredBadges;
