@@ -572,20 +572,36 @@ function setOptimal() {
 /* ------------------ Falt-Animation ------------------ */
 let animating = false;
 function animateFold() {
-  if (animating || training) return;
+  if (animating || training || !points.length) return;
   animating = true; autoFit = true;
   $('btnFold').disabled = true;
-  set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
+  const Wopt = knownOptimal(); Wopt[12] = bestB2for(Wopt);
+  writeW(Wopt);
   set('relu', true); set('n1', true); set('n2', true); set('n3', true);
-  set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
-  let t = 0; const s = -1, e = 0;
+  set('re1', true); set('re2', true); set('re3', true);
+  updateAllLabels(); draw2D();
+  const P = getParams(); const m = points.length;
+  const Hf = new Float32Array(m * 3); // gefaltete Hidden-Werte (Ziel)
+  for (let i = 0; i < m; i++) { const [x, y] = points[i]; for (let k = 0; k < 3; k++) { let v = P.A1[k][0]*x + P.A1[k][1]*y + P.B1[k]; if (P.relu) v = Math.max(0, v); Hf[i*3+k] = v; } }
+  const Ht = new Float32Array(m * 3);
+  let t = 0;
   const step = () => {
-    t += 0.02;
-    const b = s + (e - s) * Math.min(1, t);
-    set('b1', b); set('b2', b); set('b3', b);
-    refreshAll();
-    if (t < 1) requestAnimationFrame(step);
-    else { animating = false; $('btnFold').disabled = false; }
+    t += 0.015; const raw = Math.min(1, t); const f = (1 - Math.cos(Math.PI * raw)) / 2;
+    let cx = 0, cy = 0, cz = 0;
+    for (let i = 0; i < m; i++) {
+      const [x, y] = points[i];
+      for (let k = 0; k < 3; k++) {
+        const flat = k === 0 ? x : (k === 1 ? y : 0); // Start: flacher Slice in der Eingabenebene
+        const v = flat + (Hf[i*3+k] - flat) * f;
+        Ht[i*3+k] = v;
+        if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
+      }
+    }
+    cent = [cx/m, cy/m, cz/m];
+    drawPointCloud(Ht);
+    drawPlane();
+    if (raw < 1) requestAnimationFrame(step);
+    else { animating = false; $('btnFold').disabled = false; computeHidden(); drawPointCloud(); drawPlane(); updateStatus(); }
   };
   step();
 }
