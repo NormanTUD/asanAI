@@ -14752,5 +14752,101 @@ window.bibData = {
 		year: 2026,
 		url: "https://scads.ai/transfer-and-service/software/omniopt/",
 		alternativetitle: "OmniOpt"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Polar Program  (untold_history.php)
+	 *  Ice cores, polar/climate computing, cryogenics -> superconducting
+	 *  qubits, and AI-for-weather: the poles' displaced prerequisites.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"charney1947longwaves": {
+		title: "The Dynamics of Long Waves in a Baroclinic Westerly Current",
+		author: "Jule G. Charney",
+		year: 1947,
+		url: "https://doi.org/10.1175/1520-0469(1947)004<0136:TDOLWI>2.0.CO;2",
+		alternativetitle: "Charney, 1947 (J. Meteorology)"
+	},
+	"charney1979report": {
+		title: "Carbon dioxide and climate: A scientific assessment",
+		author: "National Research Council (Charney et al.)",
+		year: 1979,
+		url: "https://web.archive.org/web/20110813231807/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf",
+		alternativetitle: "Charney Report (1979)"
+	},
+	"charneywiki": {
+		title: "Jule Gregory Charney",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Jule_Gregory_Charney",
+		alternativetitle: "Charney (Wikipedia)"
+	},
+	"onnes1913nobel": {
+		title: "The Nobel Prize in Physics 1913 — Heike Kamerlingh Onnes",
+		author: "Nobel Foundation",
+		year: 1913,
+		url: "https://www.nobelprize.org/prizes/physics/1913/summary/",
+		alternativetitle: "Onnes Nobel Prize (1913)"
+	},
+	"icecorewiki": {
+		title: "Ice core",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Ice_core",
+		alternativetitle: "Ice core (Wikipedia)"
+	},
+	"vostokstation": {
+		title: "Vostok Station",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Vostok_Station",
+		alternativetitle: "Vostok Station (Wikipedia)"
+	},
+	"dilutionfridge": {
+		title: "Dilution refrigerator",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Dilution_refrigerator",
+		alternativetitle: "Dilution refrigerator (Wikipedia)"
+	},
+	"superconductingqubit": {
+		title: "Superconducting quantum computing",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Superconducting_quantum_computing",
+		alternativetitle: "Superconducting quantum computing (Wikipedia)"
+	},
+	"arute2019quantum": {
+		title: "Quantum supremacy using a programmable superconducting processor",
+		author: "F. Arute et al.",
+		year: 2019,
+		url: "https://www.nature.com/articles/s41586-019-1667-2",
+		alternativetitle: "Arute et al., 2019 (Nature)"
+	},
+	"kjaergaard2020": {
+		title: "Superconducting Qubits: Success and Challenges",
+		author: "M. Kjaergaard et al.",
+		year: 2020,
+		url: "https://doi.org/10.1103/RevModPhys.92.025005",
+		alternativetitle: "Kjaergaard et al., 2020 (Rev. Mod. Phys.)"
+	},
+	"lam2023graphcast": {
+		title: "GraphCast: AI model for faster and more accurate global weather forecasting",
+		author: "Remi Lam et al.",
+		year: 2023,
+		url: "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/",
+		alternativetitle: "Lam et al., 2023 (Google DeepMind)"
+	},
+	"graphcast_github": {
+		title: "GraphCast (open-source model)",
+		author: "Google DeepMind",
+		year: 2023,
+		url: "https://github.com/google-deepmind/graphcast",
+		alternativetitle: "GraphCast on GitHub"
+	},
+	"ecmwf": {
+		title: "European Centre for Medium-Range Weather Forecasts (ECMWF)",
+		author: "ECMWF",
+		year: 2026,
+		url: "https://www.ecmwf.int/",
+		alternativetitle: "ECMWF"
 	}
 };

@@ -1088,6 +1088,38 @@
   "label": "Guidance and imagery"
  },
  {
+  "kind": "influence",
+  "from": "person-heike-kamerlingh-onnes",
+  "to": "event-quantum-supremacy-2019",
+  "y1": 1913,
+  "y2": 2019,
+  "label": "Liquid helium to qubits"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jule-charney",
+  "to": "event-first-nwp-1950",
+  "y1": 1947,
+  "y2": 1950,
+  "label": "The theory to the first forecast"
+ },
+ {
+  "kind": "influence",
+  "from": "event-first-nwp-1950",
+  "to": "institution-ecmwf",
+  "y1": 1950,
+  "y2": 1975,
+  "label": "NWP to the world's forecast centre"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-ecmwf",
+  "to": "event-graphcast-2023",
+  "y1": 1975,
+  "y2": 2023,
+  "label": "HRES and reanalysis to ML forecasts"
+ },
+ {
   "kind": "signal",
   "from": "place-england",
   "to": "place-canada",
@@ -1182,6 +1214,22 @@
   "y1": -3250,
   "y2": -3250,
   "label": "The earliest Egyptian writing"
+ },
+ {
+  "kind": "signal",
+  "from": "place-vostok-station",
+  "to": "place-summit-camp-greenland",
+  "y1": 1957,
+  "y2": 1995,
+  "label": "The polar ice-core network"
+ },
+ {
+  "kind": "signal",
+  "from": "institution-ecmwf",
+  "to": "event-graphcast-2023",
+  "y1": 2020,
+  "y2": 2023,
+  "label": "ERA5 data to GraphCast"
  },
  {
   "kind": "journey",

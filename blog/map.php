@@ -13,7 +13,7 @@ topics: history, philosophy, society
 <div class="md">
 This is the map of everything. Every person, place, institution, artifact, event and cited author that appears anywhere in this course is a dot on this globe. The threads between them show who influenced whom, who traveled where, and which signals crossed which borders — and the time slider lets you watch the web of ideas grow, year by year.
 
-**How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the lessons that mention it. When the whole planet feels small, keep zooming out — the Moon, the solar system, the galaxies, and finally the oldest light in the universe.
+**How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the lessons that mention it. When the whole planet feels small, keep zooming out — or press **Cosmic journey** and let the camera fly.
 </div>
 
 <style>
@@ -21,13 +21,12 @@ This is the map of everything. Every person, place, institution, artifact, event
    stage spans the viewport (still in the normal vertical flow). */
 .lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); }
 #atlas-stage {
-	position: relative;
+	display: flex;
 	width: 100%;
-	height: clamp(480px, 76vh, 900px);
+	height: clamp(520px, 78vh, 920px);
 	border-radius: 14px;
 	overflow: hidden;
-	background: var(--atlas-bg);
-	--atlas-bg: #05070d;
+	background: #05070d;
 	--atlas-card: rgba(13,20,36,.86);
 	--atlas-card-solid: #0d1424;
 	--atlas-line: rgba(120,145,210,.16);
@@ -39,7 +38,6 @@ This is the map of everything. Every person, place, institution, artifact, event
 	--atlas-shadow: 0 20px 60px rgba(0,0,0,.55);
 }
 html:not(.dark) #atlas-stage {
-	--atlas-bg: #eef2f8;
 	--atlas-card: rgba(255,255,255,.92);
 	--atlas-card-solid: #ffffff;
 	--atlas-line: rgba(30,50,90,.14);
@@ -52,43 +50,22 @@ html:not(.dark) #atlas-stage {
 }
 #atlas-stage * { box-sizing: border-box; }
 
-#atlas-canvas { position: absolute; inset: 0; display: block; cursor: grab; }
-#atlas-canvas.dragging { cursor: grabbing; }
-
-.atlas-top {
-	position: absolute; top: 0; left: 0; right: 0; z-index: 20;
-	display: flex; align-items: center; gap: 12px;
-	padding: 10px 14px;
-	background: linear-gradient(180deg, var(--atlas-card) 0%, rgba(0,0,0,0) 100%);
-	pointer-events: none;
-}
-.atlas-top > * { pointer-events: auto; }
-.atlas-title { font-size: .95rem; font-weight: 700; letter-spacing: .01em; color: var(--atlas-ink); }
-.atlas-title small { display: block; font-size: .66rem; font-weight: 500; color: var(--atlas-ink-mute); letter-spacing: .14em; text-transform: uppercase; }
-.atlas-spacer { flex: 1; }
-.atlas-btn {
-	background: var(--atlas-card); color: var(--atlas-ink-soft);
-	border: 1px solid var(--atlas-line); border-radius: 10px;
-	padding: 7px 12px; font-size: .8rem; cursor: pointer;
-	backdrop-filter: blur(8px);
-}
-.atlas-btn:hover { color: var(--atlas-ink); border-color: var(--atlas-line-strong); }
-.atlas-btn.primary { color: var(--atlas-ink); border-color: var(--atlas-line-strong); background: var(--atlas-card-solid); }
-
-.atlas-panel {
-	position: absolute; top: 58px; left: 12px; z-index: 15;
-	width: 272px; max-height: calc(100% - 120px);
+/* ── left sidebar (never overlaps the globe) ── */
+#atlas-side {
+	flex: 0 0 300px;
+	width: 300px;
 	overflow-y: auto;
-	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-radius: 14px;
+	border-right: 1px solid var(--atlas-line);
+	background: var(--atlas-card);
 	backdrop-filter: blur(12px);
-	box-shadow: var(--atlas-shadow);
 	padding: 14px;
+	color: var(--atlas-ink);
 }
-.atlas-panel h3 {
+#atlas-side h3 {
 	margin: 0 0 8px; font-size: .66rem; letter-spacing: .16em;
 	text-transform: uppercase; color: var(--atlas-ink-mute); font-weight: 700;
 }
-.atlas-panel .sect { margin-bottom: 16px; }
+#atlas-side .sect { margin-bottom: 16px; }
 .atlas-search {
 	width: 100%; background: var(--atlas-card-solid); color: var(--atlas-ink);
 	border: 1px solid var(--atlas-line); border-radius: 10px;
@@ -126,6 +103,32 @@ html:not(.dark) #atlas-stage {
 }
 .atlas-year small { font-size: .66rem; color: var(--atlas-ink-mute); font-weight: 500; display: block; letter-spacing: .1em; text-transform: uppercase; }
 
+/* ── canvas area (globe is centered in THIS box) ── */
+#atlas-canvas-wrap { position: relative; flex: 1 1 auto; min-width: 0; }
+#atlas-canvas { position: absolute; inset: 0; display: block; cursor: grab; }
+#atlas-canvas.dragging { cursor: grabbing; }
+
+.atlas-top {
+	position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+	display: flex; align-items: center; gap: 12px;
+	padding: 10px 14px;
+	background: linear-gradient(180deg, var(--atlas-card) 0%, rgba(0,0,0,0) 100%);
+	pointer-events: none;
+}
+.atlas-top > * { pointer-events: auto; }
+.atlas-title { font-size: .95rem; font-weight: 700; letter-spacing: .01em; color: var(--atlas-ink); }
+.atlas-title small { display: block; font-size: .66rem; font-weight: 500; color: var(--atlas-ink-mute); letter-spacing: .14em; text-transform: uppercase; }
+.atlas-spacer { flex: 1; }
+.atlas-btn {
+	background: var(--atlas-card); color: var(--atlas-ink-soft);
+	border: 1px solid var(--atlas-line); border-radius: 10px;
+	padding: 7px 12px; font-size: .8rem; cursor: pointer;
+	backdrop-filter: blur(8px);
+}
+.atlas-btn:hover { color: var(--atlas-ink); border-color: var(--atlas-line-strong); }
+.atlas-btn.primary { color: var(--atlas-ink); border-color: var(--atlas-line-strong); background: var(--atlas-card-solid); }
+
+/* ── detail panel ── */
 .atlas-detail {
 	position: absolute; top: 58px; right: 12px; z-index: 15;
 	width: 320px; max-height: calc(100% - 90px);
@@ -164,6 +167,7 @@ html:not(.dark) #atlas-stage {
 	border: 1px solid currentColor; margin-bottom: 8px;
 }
 
+/* ── tooltip ── */
 .atlas-tip {
 	position: fixed; z-index: 30; pointer-events: none;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line-strong);
@@ -173,25 +177,48 @@ html:not(.dark) #atlas-stage {
 .atlas-tip .t-name { font-weight: 700; }
 .atlas-tip .t-sub { color: var(--atlas-ink-mute); font-size: .68rem; margin-top: 2px; }
 
-.atlas-caption {
+/* ── journey (tour) UI ── */
+.atlas-tour {
 	position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-	z-index: 18; width: min(640px, calc(100% - 40px));
-	text-align: center; pointer-events: none;
-	opacity: 0; transition: opacity .8s ease;
+	z-index: 18; width: min(620px, calc(100% - 32px));
+	display: none;
 }
-.atlas-caption.show { opacity: 1; }
-.atlas-caption .cap-card {
+.atlas-tour.open { display: block; }
+.atlas-tour .tour-card {
 	background: var(--atlas-card); border: 1px solid var(--atlas-line);
-	border-radius: 16px; padding: 16px 22px; backdrop-filter: blur(14px);
-	box-shadow: var(--atlas-shadow);
+	border-radius: 16px 16px 0 0; padding: 14px 20px 16px;
+	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
+	text-align: center;
 }
-.atlas-caption .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
-.atlas-caption .cap-text { font-size: .95rem; line-height: 1.6; margin-top: 6px; color: var(--atlas-ink); }
+.atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
+.atlas-tour .cap-text { font-size: .9rem; line-height: 1.55; margin-top: 6px; color: var(--atlas-ink); }
+.atlas-tour .tour-bar {
+	display: flex; align-items: center; gap: 10px;
+	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
+	border-top: none; border-radius: 0 0 16px 16px;
+	padding: 10px 12px;
+}
+.tour-dots { display: flex; gap: 5px; align-items: center; }
+.tour-dot {
+	width: 8px; height: 8px; border-radius: 50%;
+	background: var(--atlas-line-strong); border: none; padding: 0;
+	cursor: pointer;
+}
+.tour-dot.on { background: var(--atlas-accent); transform: scale(1.35); }
+.tour-timer {
+	flex: 1; height: 4px; border-radius: 999px;
+	background: var(--atlas-line); overflow: hidden;
+}
+.tour-timer-fill {
+	height: 100%; width: 0%;
+	background: var(--atlas-accent); border-radius: 999px;
+}
 
+/* ── loader ── */
 .atlas-loader {
 	position: absolute; inset: 0; z-index: 50;
 	display: flex; flex-direction: column; align-items: center; justify-content: center;
-	gap: 14px; background: var(--atlas-bg);
+	gap: 14px; background: #05070d;
 	transition: opacity .6s ease;
 }
 .atlas-loader.hide { opacity: 0; pointer-events: none; }
@@ -204,24 +231,16 @@ html:not(.dark) #atlas-stage {
 .atlas-loader p { font-size: .8rem; color: var(--atlas-ink-mute); letter-spacing: .06em; }
 
 @media (max-width: 860px) {
-	.atlas-panel { width: calc(100% - 24px); max-height: 38%; top: auto; bottom: 12px; }
+	#atlas-stage { flex-direction: column; height: auto; }
+	#atlas-side { flex: 0 0 auto; width: 100%; max-height: 36vh; border-right: none; border-bottom: 1px solid var(--atlas-line); }
+	#atlas-canvas-wrap { height: 62vh; }
 	.atlas-detail { width: calc(100% - 24px); right: 12px; left: 12px; max-height: 46%; }
-	.atlas-caption { bottom: auto; top: 58px; }
 }
 </style>
 
 <div class="lg-widescroll lg-widescroll--center">
 <div id="atlas-stage">
-	<canvas id="atlas-canvas" aria-label="Interactive atlas of the history of AI"></canvas>
-
-	<div class="atlas-top">
-		<div class="atlas-title">The Atlas<small>From Big Bang to ChatGPT</small></div>
-		<div class="atlas-spacer"></div>
-		<button class="atlas-btn primary" id="atlas-journey" type="button">&#9656; Cosmic journey</button>
-		<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982; Earth</button>
-	</div>
-
-	<div class="atlas-panel" id="atlas-panel">
+	<aside id="atlas-side">
 		<div class="sect">
 			<h3>Find</h3>
 			<input class="atlas-search" id="atlas-search" type="text"
@@ -239,21 +258,39 @@ html:not(.dark) #atlas-stage {
 			<div id="atlas-legend"></div>
 			<div class="atlas-count" id="atlas-count"></div>
 		</div>
-	</div>
+	</aside>
 
-	<div class="atlas-detail" id="atlas-detail"></div>
-	<div class="atlas-tip" id="atlas-tip"></div>
+	<div id="atlas-canvas-wrap">
+		<canvas id="atlas-canvas" aria-label="Interactive atlas of the history of AI"></canvas>
 
-	<div class="atlas-caption" id="atlas-caption">
-		<div class="cap-card">
-			<div class="cap-era" id="cap-era"></div>
-			<div class="cap-text" id="cap-text"></div>
+		<div class="atlas-top">
+			<div class="atlas-title">The Atlas<small>From Big Bang to ChatGPT</small></div>
+			<div class="atlas-spacer"></div>
+			<button class="atlas-btn primary" id="atlas-journey" type="button">&#9656; Cosmic journey</button>
+			<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982; Earth</button>
 		</div>
-	</div>
 
-	<div class="atlas-loader" id="atlas-loader">
-		<div class="spin" aria-hidden="true"></div>
-		<p>Charting the history of AI…</p>
+		<div class="atlas-detail" id="atlas-detail"></div>
+		<div class="atlas-tip" id="atlas-tip"></div>
+
+		<div class="atlas-tour" id="atlas-tour">
+			<div class="tour-card">
+				<div class="cap-era" id="tour-era"></div>
+				<div class="cap-text" id="tour-text"></div>
+			</div>
+			<div class="tour-bar">
+				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
+				<div class="tour-dots" id="tour-dots"></div>
+				<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
+				<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
+				<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
+			</div>
+		</div>
+
+		<div class="atlas-loader" id="atlas-loader">
+			<div class="spin" aria-hidden="true"></div>
+			<p>Charting the history of AI…</p>
+		</div>
 	</div>
 </div>
 </div>

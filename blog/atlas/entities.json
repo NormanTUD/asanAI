@@ -17646,5 +17646,204 @@
   "bibkeys": [],
   "conf": "inferred",
   "source": "out_part6"
+ },
+ {
+  "id": "person-jule-charney",
+  "name": "Jule Charney",
+  "type": "person",
+  "loc": "Princeton, New Jersey, USA",
+  "lat": 40.347,
+  "lng": -74.657,
+  "years": "1917-1981",
+  "active": [
+   1917.0,
+   1981.0
+  ],
+  "blurb": "Father of dynamical meteorology; with von Neumann, first numerical weather forecast on the ENIAC, 1950.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "charney1947longwaves",
+   "charney1979report",
+   "charneywiki"
+  ],
+  "conf": "stated",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "person-heike-kamerlingh-onnes",
+  "name": "Heike Kamerlingh Onnes",
+  "type": "person",
+  "loc": "Leiden, Netherlands",
+  "lat": 52.16,
+  "lng": 4.487,
+  "years": "1853-1926",
+  "active": [
+   1853.0,
+   1926.0
+  ],
+  "blurb": "Liquefied helium (1908) and discovered superconductivity (1911); Nobel 1913 — the root of cryogenic computing.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "onnes1913nobel"
+  ],
+  "conf": "stated",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "place-vostok-station",
+  "name": "Vostok Station, Antarctica",
+  "type": "place",
+  "loc": "East Antarctica",
+  "lat": -78.45,
+  "lng": 106.82,
+  "years": "est. 1957",
+  "active": [
+   1957.0,
+   2026.0
+  ],
+  "blurb": "Soviet Antarctic base; site of the deepest ice core (3,769 m, ~420,000 years) and the -89 C Earth record.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "place-dome-c-epica",
+  "name": "Dome C (EPICA), Antarctica",
+  "type": "place",
+  "loc": "East Antarctic plateau",
+  "lat": -75.1,
+  "lng": 123.35,
+  "years": "est. 1996",
+  "active": [
+   1996.0,
+   2026.0
+  ],
+  "blurb": "Antarctic plateau site of the EPICA core — ~800,000 years of trapped CO2 and temperature.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "icecorewiki"
+  ],
+  "conf": "known",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "place-summit-camp-greenland",
+  "name": "Summit Camp (GRIP/NEEM), Greenland",
+  "type": "place",
+  "loc": "Greenland Ice Sheet",
+  "lat": 72.575,
+  "lng": -38.58,
+  "years": "est. 1989",
+  "active": [
+   1989.0,
+   2026.0
+  ],
+  "blurb": "Greenland Summit ice-core site (GRIP/NEEM); a ~100,000-year climate record.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "icecorewiki"
+  ],
+  "conf": "known",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "institution-ecmwf",
+  "name": "ECMWF",
+  "type": "institution",
+  "loc": "Reading, England, UK",
+  "lat": 51.442,
+  "lng": -0.942,
+  "years": "founded 1975",
+  "active": [
+   1975.0,
+   2026.0
+  ],
+  "blurb": "Runs the world's gold-standard numerical weather model, HRES — the system GraphCast beat.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "ecmwf"
+  ],
+  "conf": "stated",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "event-first-nwp-1950",
+  "name": "First numerical weather forecast, 1950",
+  "type": "event",
+  "loc": "Philadelphia, Pennsylvania, USA",
+  "lat": 39.952,
+  "lng": -75.193,
+  "years": "1950-1950",
+  "active": [
+   1950.0,
+   1950.0
+  ],
+  "blurb": "Charney, Fjortoft and von Neumann's 5-day forecast on the ENIAC — the first digital weather prediction.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "eniac1946"
+  ],
+  "conf": "known",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "event-quantum-supremacy-2019",
+  "name": "Quantum supremacy (Sycamore), 2019",
+  "type": "event",
+  "loc": "Mountain View, California, USA",
+  "lat": 37.386,
+  "lng": -122.084,
+  "years": "2019-2019",
+  "active": [
+   2019.0,
+   2019.0
+  ],
+  "blurb": "Google's 53-qubit Sycamore processor — the first claimed quantum supremacy, run at millikelvin temperatures.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "arute2019quantum"
+  ],
+  "conf": "stated",
+  "source": "out_part7_polar"
+ },
+ {
+  "id": "event-graphcast-2023",
+  "name": "GraphCast global weather AI, 2023",
+  "type": "event",
+  "loc": "London, UK",
+  "lat": 51.507,
+  "lng": -0.128,
+  "years": "2023-2023",
+  "active": [
+   2023.0,
+   2023.0
+  ],
+  "blurb": "DeepMind's graph-network weather forecaster; beat ECMWF's HRES in under a minute on one TPU.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "lam2023graphcast",
+   "graphcast_github"
+  ],
+  "conf": "stated",
+  "source": "out_part7_polar"
  }
 ]

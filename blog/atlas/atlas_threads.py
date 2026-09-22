@@ -208,6 +208,11 @@ INFLUENCE = [
     ("influence", "Thomas Etter", "JPL", 1960, 1964, "Enhancing Ranger 7 images"),
     ("influence", "NASA", "JPL", 1958, 1964, "The space program"),
     ("influence", "JPL", "Apollo 11 Moon landing", 1961, 1969, "Guidance and imagery"),
+    # polar / cryo (untold history)
+    ("influence", "Heike Kamerlingh Onnes", "Quantum supremacy (Sycamore), 2019", 1913, 2019, "Liquid helium to qubits"),
+    ("influence", "Jule Charney", "First numerical weather forecast, 1950", 1947, 1950, "The theory to the first forecast"),
+    ("influence", "First numerical weather forecast, 1950", "ECMWF", 1950, 1975, "NWP to the world's forecast centre"),
+    ("influence", "ECMWF", "GraphCast global weather AI, 2023", 1975, 2023, "HRES and reanalysis to ML forecasts"),
 ]
 
 # (person_name, [stop names], y1, y2)
@@ -262,6 +267,8 @@ SIGNALS = [
     ("Mesopotamia", "Egypt", -3000, -2000, "Cuneiform and trade"),
     ("Sumer", "Mesopotamia", -3500, -2500, "The first writing"),
     ("Wadi el-Hol", "Egypt", -3250, -3250, "The earliest Egyptian writing"),
+    ("Vostok Station, Antarctica", "Summit Camp (GRIP/NEEM), Greenland", 1957, 1995, "The polar ice-core network"),
+    ("ECMWF", "GraphCast global weather AI, 2023", 2020, 2023, "ERA5 data to GraphCast"),
 ]
 
 
