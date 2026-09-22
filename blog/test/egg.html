@@ -54,16 +54,15 @@
     display: grid; gap: 3px 5px; align-items: center;
     border-left: 2px solid #8be9fd; border-right: 2px solid #8be9fd; padding: 4px 6px;
   }
-  .ub {
-    position: relative; margin-top: 4px; padding-top: 9px;
-    border-bottom: 2px solid #8be9fd;
-  }
-  .ub::before {
-    content: ''; position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
-    width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
-    border-top: 6px solid #8be9fd;
-  }
-  .ub-lbl { font-size: 10px; color: #ffb86c; font-style: italic; text-align: center; }
+  .ub { position: relative; width: 100%; height: 18px; margin-top: 3px; }
+  .ub-line { position: absolute; top: 0; left: 0; right: 0; border-bottom: 2px solid #8be9fd; }
+  .ub-line::before, .ub-line::after { content: ''; position: absolute; bottom: 0; width: 2px; height: 7px; background: #8be9fd; }
+  .ub-line::before { left: 0; }
+  .ub-line::after { right: 0; }
+  .ub-tip { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 0;
+    border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #8be9fd; }
+  .ub-lbl { position: absolute; top: 11px; left: 0; right: 0; text-align: center;
+    font-size: 11px; font-weight: 600; font-family: Georgia, "Times New Roman", serif; color: #ffb86c; letter-spacing: .5px; }
   .rowlbl {
     font-size: 10px; font-style: italic; text-align: right; padding-right: 5px;
     border-right: 1px solid #3a3a44; align-self: center;
@@ -206,7 +205,7 @@ function cellInput(param) {
     e.preventDefault();
     const d = (e.shiftKey ? 0.5 : 0.1) * (up ? 1 : -1);
     const base = parseFloat(c.value); const cur = isNaN(base) ? 0 : base;
-    c.value = (Math.round((cur + d) * 100) / 100).toFixed(2);
+    c.value = Math.max(-2, Math.min(2, Math.round((cur + d) * 100) / 100)).toFixed(2);
     applyCell(c);
   });
   return c;
@@ -230,8 +229,10 @@ function matBox(label, rows, cols, cells, rowLabels) {
   box.append(grid);
   if (label) {
     const ub = document.createElement('div'); ub.className = 'ub';
-    const lbl = document.createElement('div'); lbl.className = 'ub-lbl'; lbl.textContent = label;
-    ub.append(lbl);
+    const line = document.createElement('i'); line.className = 'ub-line';
+    const tip = document.createElement('i'); tip.className = 'ub-tip';
+    const lbl = document.createElement('span'); lbl.className = 'ub-lbl'; lbl.textContent = label;
+    ub.append(line, tip, lbl);
     box.append(ub);
   }
   return box;

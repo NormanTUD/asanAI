@@ -3887,6 +3887,46 @@ window.bibData = {
 		url: "https://numpy.org/doc/stable/user/basics.broadcasting.html",
 		alternativetitle: "NumPy user guide — Broadcasting: how arrays with different shapes combine"
 	},
+	"sylvester1850matrix": {
+		title: "Additions to the Articles … on Pascal's Theorem",
+		author: "James Joseph Sylvester",
+		year: 1850,
+		publisher: "Philosophical Magazine 37: 363–370",
+		url: "https://archive.org/download/londonedinburg3371850lond/londonedinburg3371850lond.pdf",
+		alternativetitle: "Sylvester (1850), Phil. Mag. 37:363–370 — the first use of the word 'matrix' (p. 369)"
+	},
+	"hamiltonextensionsquaternions": {
+		title: "On some Extensions of Quaternions",
+		author: "William Rowan Hamilton",
+		year: 1854,
+		publisher: "Philosophical Magazine, 7–9",
+		url: "http://www.emis.de/classics/Hamilton/ExtQuat.pdf",
+		alternativetitle: "Hamilton — where he defines the 'tensor' of a quaternion (p. 498)"
+	},
+	"voigt1898krystalle": {
+		title: "Die fundamentalen physikalischen Eigenschaften der Krystalle in elementarer Darstellung",
+		author: "Woldemar Voigt",
+		year: 1898,
+		publisher: "Von Veit, Leipzig",
+		url: "https://archive.org/download/bub_gb__Ps4AAAAMAAJ/bub_gb__Ps4AAAAMAAJ.pdf",
+		alternativetitle: "Voigt (1898) — introduces the modern use of the word 'Tensoren' (p. 20)"
+	},
+	"riccilevicivita1900": {
+		title: "Méthodes de calcul différentiel absolu et leurs applications",
+		author: "Gregorio Ricci-Curbastro; Tullio Levi-Civita",
+		year: 1900,
+		publisher: "Mathematische Annalen 54(1–2): 125–201",
+		url: "https://doi.org/10.1007/BF01454201",
+		alternativetitle: "Ricci-Curbastro & Levi-Civita (1900) — the absolute differential calculus, i.e. tensor analysis"
+	},
+	"einstein1916annalen": {
+		title: "The Foundation of the Generalised Theory of Relativity",
+		author: "Albert Einstein",
+		year: 1916,
+		publisher: "Annalen der Physik 354(7): 769–782 (English translation by S. N. Bose)",
+		url: "https://en.wikisource.org/wiki/The_Foundation_of_the_Generalised_Theory_of_Relativity",
+		alternativetitle: "Einstein (1916) — introduces the summation convention (a repeated index implies a sum)"
+	},
 	"gpt2": {
 		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
 		title: "Language Models are Unsupervised Multitask Learners",
