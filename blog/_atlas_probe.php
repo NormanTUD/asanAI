@@ -18,14 +18,15 @@ function measure(d, w) {
 }
 var t0 = Date.now();
 var iv = setInterval(function () {
-	if (Date.now() - t0 > 50000) { clearInterval(iv); finish('PROBE TIMEOUT'); return; }
+	if (Date.now() - t0 > 80000) { clearInterval(iv); finish('PROBE TIMEOUT'); return; }
 	try {
 		var f = document.getElementById('f');
 		var d = f.contentDocument;
 		var w = f.contentWindow;
 		var wrap = d.getElementById('atlas-canvas-wrap');
 		var cv = d.getElementById('atlas-canvas');
-		if (!wrap || !cv || !cv.style.width) { return; }
+		if (!wrap || !cv) { return; }
+		if (Date.now() - t0 > 75000) { clearInterval(iv); finish('PROBE DIAG ready=' + d.readyState + ' booted=' + w.__atlasBooted + ' three=' + (typeof w.THREE) + ' canvasStyle=' + (cv.style && cv.style.width)); return; }
 		var before = measure(d, w);
 		w.dispatchEvent(new w.Event('resize'));
 		setTimeout(function () {
