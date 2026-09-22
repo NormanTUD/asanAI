@@ -2261,6 +2261,97 @@ const parallelogramState = {
     }
 };
 
+// ============================================================
+// Difference-Vector Analogy (Olah 2014)
+// A *relationship* is a direction: W(female) - W(male) is one
+// constant vector shared by every male/female pair.
+// ============================================================
+const diffVecPairs = {
+    'Uncle': [-20, -10], 'Aunt':  [-20, 10],
+    'Man':     [0, -10],  'Woman': [0, 10],
+    'King':    [20, -10],  'Queen': [20, 10]
+};
+const diffVecConcept = [
+    { from: 'Man',   to: 'Woman' },
+    { from: 'Uncle', to: 'Aunt'  },
+    { from: 'King',  to: 'Queen' }
+];
+const diffVecFemale = ['Woman', 'Aunt', 'Queen'];
+
+function renderDiffVec() {
+    const plotDiv = document.getElementById('plot-diff-vec');
+    if (!plotDiv) return;
+
+    const genderColor = '#ec4899';
+    const traces = [];
+    const annotations = [];
+
+    Object.keys(diffVecPairs).forEach(word => {
+        const v = diffVecPairs[word];
+        const isFemale = diffVecFemale.includes(word);
+        traces.push({
+            type: 'scatter',
+            x: [v[0]], y: [v[1]],
+            mode: 'markers+text',
+            name: word, text: [word],
+            textposition: isFemale ? 'top center' : 'bottom center',
+            marker: {
+                size: 11,
+                color: isFemale ? genderColor : themeColor('#64748b'),
+                line: { color: themeColor('#fff'), width: 1.5 }
+            },
+            hovertemplate: '<b>%{text}</b><extra></extra>',
+            cliponaxis: false
+        });
+    });
+
+    diffVecConcept.forEach(pair => {
+        const a = diffVecPairs[pair.from];
+        const b = diffVecPairs[pair.to];
+        annotations.push({
+            ax: a[0], ay: a[1], axref: 'x', ayref: 'y',
+            x: b[0], y: b[1], xref: 'x', yref: 'y',
+            showarrow: true, arrowhead: 3, arrowsize: 1.75,
+            arrowwidth: 3.5, arrowcolor: genderColor
+        });
+    });
+
+    annotations.push({
+        x: 0.5, y: 0.985, xref: 'paper', yref: 'paper',
+        xanchor: 'center', yanchor: 'top',
+        text: 'Same arrow for every pair:  <i>W(female) − W(male)</i>  = one constant “gender” vector',
+        showarrow: false, align: 'center',
+        font: { color: themeColor('#475569'), size: 12 },
+        bgcolor: themeColor('#fff'), bordercolor: genderColor,
+        borderwidth: 1, borderpad: 6
+    });
+
+    Plotly.react(plotDiv, traces, {
+        margin: { l: 45, r: 30, b: 50, t: 45 },
+        showlegend: false,
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff'),
+        font: { color: themeColor('#1e293b'), family: 'system-ui, sans-serif' },
+        xaxis: {
+            range: [-30, 32],
+            title: { text: 'Power (→)', font: { color: themeColor('#475569') } },
+            gridcolor: themeColor('#e2e8f0'), zerolinecolor: themeColor('#cbd5e1'),
+            tickfont: { color: themeColor('#64748b') }, showticklabels: false
+        },
+        yaxis: {
+            range: [-24, 24],
+            title: { text: 'Gender (↑)', font: { color: themeColor('#475569') } },
+            gridcolor: themeColor('#e2e8f0'), zerolinecolor: themeColor('#cbd5e1'),
+            tickfont: { color: themeColor('#64748b') }, showticklabels: false
+        },
+        annotations,
+        hovermode: 'closest'
+    }).then(() => {
+        const loader = plotDiv.querySelector('.plot-loading');
+        if (loader) loader.remove();
+    });
+}
+
 function setParallelogramConcept(concept) {
     parallelogramState.currentConcept = concept;
 
@@ -8503,6 +8594,11 @@ function loadEmbeddingModule() {
     // 8. Parallelogram Law
     _embLazyRegister('plot-parallelogram', () => {
         setParallelogramConcept('royalty');
+    });
+
+    // 8b. Difference-Vector Analogy (constant "gender" direction, Olah 2014)
+    _embLazyRegister('plot-diff-vec', () => {
+        renderDiffVec();
     });
 
     // 9. Dual Manifolds (3D translation surfaces)

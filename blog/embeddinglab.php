@@ -101,6 +101,8 @@ Even though in this example, we treat tokens as words, they can also be parts of
 In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, “You shall know a word by the company it keeps” (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthorlastnameand{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
 
 Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of “how parallel are these two arrows” we still use for semantic search. Their paper, “\citetitle{salton1975vectorspace}”, is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
+
+Proximity is what makes that geometry *useful*, not merely descriptive. Once similar words sit near each other, a model that has memorized a handful of sentences can **generalize** to a whole class of new ones, because swapping a word for a spatial neighbor keeps the sentence plausible — and doing that at several positions at once multiplies the number of sentences one embedding covers. You need to see each word used at least once, but never every sentence you will ever understand: the network, like a reader, has met all the words before, just not all their combinations \cite[Olah, 2014]{colah2014nlp}.
 </div>
 
 <div class="md">
@@ -135,15 +137,30 @@ Human language is far too nuanced for a single axis. To capture independent feat
 Because these positions are derived from logical relationships in data, the space itself becomes “computable”. We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
-<div class="topic-block" data-optionaltitle="Vector arithmetic: the word2vec analogy" data-mathlevel="50">
-<div style="text-align: center; margin: 1.5em 0; font-size: 1.2em;">
-$$\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}}$$
+<div class="topic-block" data-optionaltitle="Analogies as a constant difference vector" data-mathlevel="50">
+<div style="text-align: center; margin: 1em 0; font-size: 1.05em; line-height: 2.2;">
+$$\vec{v}_{\text{woman}} - \vec{v}_{\text{man}} \;\approx\; \vec{v}_{\text{aunt}} - \vec{v}_{\text{uncle}}$$
+$$\vec{v}_{\text{woman}} - \vec{v}_{\text{man}} \;\approx\; \vec{v}_{\text{queen}} - \vec{v}_{\text{king}}$$
 </div>
 </div>
 
-<div class="md" data-mathlevel="45">
-This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec. What makes it remarkable is *how* it arises: Olah stresses that none of these regularities — similar words landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was trained only to do a simple task, and the structures "popped out of the optimization process" as a side effect \cite[Olah, 2014]{colah2014nlp}.
+<div class="md" data-mathlevel="45" data-optionaltitle="A relationship is a direction">
+The deeper point is that a *relationship* is itself a vector. The arrow from “man” to “woman” is the same arrow as from “uncle” to “aunt”, or from “king” to “queen”: gender, in this space, is one fixed direction. Carry it to any male word and you land on the matching female word — apply it to “king” and you get “queen”, to “uncle” and you get “aunt”. A relationship is not a *point* you look up; it is a *direction* you can reuse, and that reusability is what lets you *do arithmetic* with meaning.
+
+No one programmed this. \citeauthor{mikolov2013word2vec} popularized these analogies with Word2Vec, but what makes them remarkable is *how* they arise: \citeauthor{colah2014nlp} stresses that none of these regularities — synonyms landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was only trained to do a simple task, and the whole geometric structure “popped out of the optimization process” as a side effect \cite[Olah, 2014]{colah2014nlp}.
 </div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-diff-vec" style="height: 440px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Three male→female pairs.
+        The <span style="color:#ec4899; font-weight:bold;">pink arrows</span> are the difference vectors
+        $\vec{v}_{\text{female}} - \vec{v}_{\text{male}}$: Woman−Man, Aunt−Uncle, Queen−King.
+        All three are the <b>identical arrow</b> — the “gender” direction.
+        Pick it up at any male word and it drops you on the matching female word.
+        That single reusable direction is what makes the arithmetic above work.
+    </div>
+</section>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div id="plot-2d" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
