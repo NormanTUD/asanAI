@@ -124,6 +124,22 @@
   .foldinfo b { color: #50fa7b; font-weight: 600; }
   .foldseq { font-family: monospace; font-size: 11px; color: #9aa7b5; margin-top: 5px; line-height: 1.5; word-break: break-word; }
   .foldnote { font-size: 11px; color: #7f8ea0; margin-top: 5px; line-height: 1.45; }
+  .foldl2 { margin-top: 5px; color: #ffb86c; }
+  .foldl2 b { color: #50fa7b; }
+  .viewsel { display: flex; gap: 4px; }
+  .vsel { background: #1b1b22; color: #9aa7b5; border: 1px solid #3a3a44; border-radius: 4px; font: 11px monospace; padding: 2px 8px; cursor: pointer; }
+  .vsel.on { background: #2a3550; color: #8be9fd; border-color: #8be9fd; }
+  .vsel:disabled { opacity: 0.4; cursor: default; }
+  .l2box { margin: 4px 0 8px; padding: 8px; background: #16161c; border-radius: 5px; border-left: 2px solid #9b59b6; }
+  .l2box.off { opacity: 0.55; }
+  .l2cap { font-size: 10.5px; color: #9aa7b5; margin-bottom: 6px; }
+  .l2rand { color: #ffb86c; text-decoration: none; cursor: pointer; }
+  .l2rand:hover { text-decoration: underline; }
+  .w2grid { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 3px 6px; align-items: center; }
+  .w2grid .wl { font-size: 10px; color: #8be9fd; }
+  .w2grid .cell { width: 100%; }
+  .l2nrow { display: flex; gap: 14px; margin-top: 5px; }
+  .nchk { font-size: 10px; color: #c7d0dc; display: flex; align-items: center; gap: 3px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -186,6 +202,14 @@
     <div class="wrow"><span class="wl">bias</span><input type="range" id="rb" min="-2" max="2" step="0.01" value="-0.47"><span class="val" id="vrb"></span></div>
   </div>
 
+  <div class="sechd"><span class="sechd-t">2. Hidden-Layer (optional)</span>
+    <label class="rtgl"><input type="checkbox" id="useLayer2"> an</label>
+  </div>
+  <div id="l2box" class="l2box">
+    <div class="l2cap">W2 (3×3) falt H1 → H2 &nbsp;·&nbsp; <a href="#" id="l2rand" class="l2rand">🎲 Demo-Werte</a></div>
+    <div id="w2grid" class="w2grid"></div>
+  </div>
+
   <div class="btnrow">
     <button id="btnFold">🎬 Falt-Animation</button>
     <button id="btnOpt">⚡ Optimal</button>
@@ -202,7 +226,9 @@
     <span>Regionen <b id="foldReg">–</b></span>
     <label class="rtgl" style="margin-left:auto"><input type="checkbox" id="showWorst"> schlimmster Falz</label>
   </div>
+  <div id="foldL2" class="foldinfo foldl2" style="display:none">–</div>
   <div id="foldSeq" class="foldseq">–</div>
+  <div id="foldSeq2" class="foldseq" style="display:none">–</div>
   <div class="foldnote" id="foldNote">Gerader Pfad Γ im Eingaberaum → Bit-Flip-Walk im Hamming-Raum. Jede Faltlinie, die gekreuzt wird, flippt genau ein Bit.</div>
 
   <div class="legend">
@@ -218,7 +244,9 @@
       <canvas class="plot2d" id="input2d"></canvas>
     </div>
     <div class="canvas-box">
-      <h3>Hidden-Layer-Ausgabe (3D) — drehbar, gelb = Readout-Ebene</h3>
+      <div class="cbox-hd"><h3>Hidden-Layer-Ausgabe (3D) — drehbar, gelb = Readout-Ebene</h3>
+        <div class="viewsel"><button id="viewH1" class="vsel on">Fold ①</button><button id="viewH2" class="vsel" disabled>Fold ②</button></div>
+      </div>
       <div id="three-container"></div>
     </div>
   </div>
@@ -779,7 +807,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v5'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v6'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -1016,6 +1044,41 @@ function animateFold() {
   foldRaf = requestAnimationFrame(step);
 }
 
+/* ------------------ 2. Hidden-Layer: UI (3×3 W2 + Biases + Neuronen) ------------------ */
+function l2cell(id, val) {
+  const c = document.createElement('input');
+  c.type = 'number'; c.step = '0.05'; c.min = '-3'; c.max = '3';
+  c.className = 'cell'; c.id = 'cell-' + id; c.value = (+val).toFixed(2);
+  c.addEventListener('input', () => {
+    if (training || animating) return;
+    const v = parseFloat(c.value); if (isNaN(v)) return;
+    const idx = +id.replace(/^w2_/, '').replace(/^b2_/, '');
+    if (id.startsWith('w2_')) W2m[idx] = v; else B2m[idx] = v;
+    refreshAll();
+  });
+  return c;
+}
+function buildL2UI() {
+  const g = $('w2grid'); if (!g) return; g.textContent = '';
+  for (let r = 0; r < 3; r++) {
+    const lbl = document.createElement('span'); lbl.className = 'wl'; lbl.textContent = 'N2-' + (r + 1); lbl.style.color = NEURON_COLORS[r]; g.appendChild(lbl);
+    for (let c = 0; c < 3; c++) g.appendChild(l2cell('w2_' + (r * 3 + c), W2m[r * 3 + c]));
+  }
+  const bl = document.createElement('span'); bl.className = 'wl'; bl.textContent = 'bias'; g.appendChild(bl);
+  for (let c = 0; c < 3; c++) g.appendChild(l2cell('b2_' + c, B2m[c]));
+  const nr = document.createElement('div'); nr.className = 'l2nrow';
+  for (let k = 0; k < 3; k++) {
+    const l = document.createElement('label'); l.className = 'nchk';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'n2_' + (k + 1); cb.checked = neuronOn2[k];
+    cb.addEventListener('change', e => { if (training || animating) return; neuronOn2[k] = e.target.checked; refreshAll(); });
+    l.appendChild(cb); l.appendChild(document.createTextNode(' N2-' + (k + 1)));
+    nr.appendChild(l);
+  }
+  g.appendChild(nr);
+}
+function setViewSel(v) { viewSel = v; syncViewSel(); refreshAll(); }
+function syncViewSel() { if ($('viewH1')) { $('viewH1').classList.toggle('on', viewSel === 'h1'); $('viewH2').classList.toggle('on', viewSel === 'h2'); } }
+
 /* ------------------ UI-Verkabelung ------------------ */
 let autoFit = true; // Readout-Bias automatisch auf perfekte Trennung halten
 
@@ -1053,6 +1116,7 @@ document.querySelectorAll('#sidebar input').forEach(inp => {
   inp.addEventListener('input', () => {
     if (training || animating) return;
     if (inp.id === 'showWorst') { showWorst = inp.checked; refreshAll(); return; }
+    if (/^(w2_|b2_|n2_)/.test(inp.id) || inp.id === 'useLayer2') return; // eigene Listener
     if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
     refreshAll();
   });
@@ -1061,6 +1125,22 @@ $('showRegions').addEventListener('change', () => { if (training || animating) r
 $('actfn').addEventListener('change', () => {
   if (training || animating) return;
   refreshAll();
+});
+
+$('useLayer2').addEventListener('change', e => {
+  if (training || animating) return;
+  useLayer2 = e.target.checked;
+  $('l2box').classList.toggle('off', !useLayer2);
+  $('viewH2').disabled = !useLayer2;
+  if (useLayer2) computeH2();
+  refreshAll();
+});
+$('viewH1').addEventListener('click', () => { if (training || animating) return; setViewSel('h1'); });
+$('viewH2').addEventListener('click', () => { if (training || animating || !useLayer2) return; setViewSel('h2'); });
+$('l2rand').addEventListener('click', e => {
+  e.preventDefault(); if (training || animating) return;
+  W2m = [1, -1, -1, 1, 0, 0, 0, 1, 0]; B2m = [0, 0, 0];
+  buildL2UI(); refreshAll();
 });
 
 $('btnOpt').addEventListener('click', setOptimal);
@@ -1080,6 +1160,8 @@ console.info('[egg] egg.html version ' + APP_VERSION); // Guard 4: zeigt im Cons
 initThree();
 generateData();
 buildFormulaDOM();
+buildL2UI();
+$('l2box').classList.add('off');
 // Startzustand: FLACHER Slice (B1 = 1,1,1) mit optimalem Falz + Readout an
 // -> Faltlinie zeigt 1,1,1 beim Laden; 🎬 Falt-Animation falzt sie auf 0,0,0
 set('a1x', 0); set('a1y', 1);
