@@ -423,21 +423,25 @@ function bootAtlas() {
 		sunSp.scale.set(26, 26, 1);
 		scene.add(sunSp);
 
-		// planets (stylized, not to scale)
-		var palette = [0x9c8f84, 0xe8c46a, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
-		var names = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
-		for (var pi = 0; pi < names.length; pi++) {
-			var pr = 0.5 + Math.random() * 1.6;
+		// planets: real order, log-scaled orbits around the sun, sizes by
+		// radius^0.45 (stylized but ordered); coplanar orbits through SUN_POS
+		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
+		var radii = [0.58, 0.88, 0.9, 0.68, 2.65, 2.44, 1.67, 1.66];
+		var orbits = [16.5, 19.8, 21.5, 23.8, 30.4, 33.6, 37.3, 39.7];
+		for (var pi = 0; pi < 8; pi++) {
 			var pm = new THREE.Mesh(
-				new THREE.SphereGeometry(pr, 20, 14),
+				new THREE.SphereGeometry(radii[pi], 20, 14),
 				new THREE.MeshPhongMaterial({ color: palette[pi], shininess: 6, transparent: true, opacity: 0 })
 			);
-			var pa = Math.random() * Math.PI * 2;
-			var pd = 30 + pi * 9 + Math.random() * 6;
-			pm.position.set(Math.cos(pa) * pd, (Math.random() - 0.5) * 14, Math.sin(pa) * pd);
+			var pa = pi * 2.399963;
+			pm.position.set(
+				SUN_POS[0] + Math.cos(pa) * orbits[pi],
+				SUN_POS[1],
+				SUN_POS[2] + Math.sin(pa) * orbits[pi]
+			);
 			pm.userData.angle = pa;
-			pm.userData.dist = pd;
-			pm.userData.speed = 0.02 / (pi + 2);
+			pm.userData.dist = orbits[pi];
+			pm.userData.speed = 0.02 * Math.pow(16.5 / orbits[pi], 1.5);
 			pm.visible = false;
 			planets.push(pm);
 			scene.add(pm);
@@ -1216,8 +1220,8 @@ function bootAtlas() {
 			planets.forEach(function (p) {
 				if (!p.visible) { return; }
 				p.userData.angle += p.userData.speed * 0.01;
-				p.position.x = Math.cos(p.userData.angle) * p.userData.dist;
-				p.position.z = Math.sin(p.userData.angle) * p.userData.dist;
+				p.position.x = SUN_POS[0] + Math.cos(p.userData.angle) * p.userData.dist;
+				p.position.z = SUN_POS[2] + Math.sin(p.userData.angle) * p.userData.dist;
 			});
 			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
 			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
