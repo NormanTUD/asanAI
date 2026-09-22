@@ -69,6 +69,34 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  # Fast, dependency-free node unit tests for the client-side interactivity:
+  # topic/interest registry, tone picker, learned state + course progress,
+  # math-comfort 5-stop snapping, math-alternative text, keypoint cards, search.
+  # No browser required — completes in well under a minute.
+  js-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run topics / learned / progress tests
+        run: node blog/tests/topics_test.js
+
+      - name: Run math-alt tests
+        run: node blog/tests/math_alt_test.js
+
+      - name: Run keypoint tests
+        run: node blog/tests/keypoint_test.js
+
+      - name: Run search tests
+        run: node blog/tests/search_js_test.js
+
   php-render-validation:
     runs-on: ubuntu-latest
     steps:

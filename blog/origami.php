@@ -84,7 +84,18 @@ math: 50
 
 	.og-fc-wrap { position: relative; }
 	.og-fc-status { position: absolute; top: 8px; left: 12px; z-index: 2; font-size: .85rem; color: var(--og-amber); background: var(--mn-bg-glass); padding: 2px 8px; border-radius: 6px; }
+
+	.og-regen-fab {
+		position: fixed; right: 18px; bottom: 18px; z-index: 900;
+		background: var(--mn-emerald); color: #fff; border: none; cursor: pointer;
+		width: 48px; height: 48px; border-radius: 50%; font-size: 1.35rem; line-height: 1;
+		box-shadow: 0 8px 24px rgba(0,0,0,.28); transition: transform .15s, filter .15s;
+		display: flex; align-items: center; justify-content: center;
+	}
+	.og-regen-fab:hover { transform: scale(1.08) rotate(90deg); filter: brightness(1.1); }
 </style>
+
+<button id="og-regen-fab" class="og-regen-fab" title="Resample the random data in this chapter" aria-label="Resample random data">🎲</button>
 
 <div class="og-card">
 	<h2 class="og-h2">Fold-and-Cut — Origami meets Neural Networks</h2>

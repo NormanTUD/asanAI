@@ -111,6 +111,19 @@ global.marked = {
 	}
 };
 
+// PHP ships the linear course as window.__moduleNavData on every lesson page.
+// Model a tiny course so the learned/progress helpers have data to read.
+// (window === global in this harness, so global.__moduleNavData is window's.)
+global.__moduleNavData = {
+	current: 1,
+	modules: [
+		{ slug: 'math_i',  title: 'Math I',   url: '/math_i.php',  part: 1, order: 1 },
+		{ slug: 'math_ii', title: 'Math II',  url: '/math_ii.php', part: 1, order: 2 },
+		{ slug: 'history', title: 'History',  url: '/history.php', part: 2, order: 1 },
+		{ slug: 'turing',  title: 'Turing',   url: '/turing.php',  part: 3, order: 1 }
+	]
+};
+
 require('../topics.js');
 
 var pass = 0, fail = 0;
@@ -259,6 +272,50 @@ check(mathHigh.why === 'math', 'math gate reason is "math"');
 withPref({ mathLevel: 80 });
 const mathOk = BT.scoreUnit(['math-i'], { mathReq: 70 });
 check(mathOk.state === 'full', 'mathLevel 80 + mathReq 70 → full');
+withPref(null);
+
+/* ── learned state + course progress ─────────────────────────── */
+check(Array.isArray(BT.courseOrder()) && BT.courseOrder().length === 4, 'courseOrder() exposes the course modules');
+check(BT.courseIndexOf('math_i') === 0, 'courseIndexOf by underscore slug');
+check(BT.courseIndexOf('math-i') === 0, 'courseIndexOf by hyphen lesson id');
+check(BT.courseIndexOf('turing') === 3, 'courseIndexOf last module');
+check(BT.courseIndexOf('nope') === -1, 'courseIndexOf unknown → -1');
+
+check(BT.depsMet('math-i') === true, 'depsMet base lesson (no deps) → true');
+check(BT.depsMet('math-ii') === false, 'depsMet math-ii (needs math-i) → false');
+
+withPref(null);
+check(BT.countLearned() === 0, 'countLearned() 0 when nothing learned');
+
+// seed learned state directly (needs a v2 pref so `learned` is preserved)
+withPref({ topics: {}, learned: { 'math_i': true } });
+check(BT.isLearned('math_i') === true, 'isLearned (slug form) from stored pref');
+check(BT.countLearned() === 1, 'countLearned counts a learned module (slug form)');
+
+withPref({ topics: {}, learned: { 'math-ii': true } });
+check(BT.countLearned() === 1, 'countLearned counts a learned module (hyphen form)');
+
+// toggleLearned round-trip on a LESSON_DEPS key
+withPref(null);
+check(BT.isLearned('math-i') === false, 'math-i not learned initially');
+BT.toggleLearned('math-i');
+check(BT.isLearned('math-i') === true, 'toggleLearned marks math-i learned');
+check(BT.depsMet('math-ii') === true, 'depsMet math-ii after learning math-i');
+check(BT.countLearned() === 1, 'countLearned 1 after toggling math-i');
+BT.toggleLearned('math-i');
+check(BT.isLearned('math-i') === false, 'toggleLearned again un-learns math-i');
+check(BT.countLearned() === 0, 'countLearned 0 after un-learning');
+
+// toggleLearned accepts ANY real course lesson (not just LESSON_DEPS keys)
+BT.toggleLearned('turing');
+check(BT.isLearned('turing') === true, 'toggleLearned accepts a plain course lesson');
+check(BT.countLearned() === 1, 'countLearned counts the course lesson');
+
+// guard: an id that is neither a LESSON_DEPS key nor a course lesson is a no-op
+const before = BT.countLearned();
+BT.toggleLearned('definitely-not-a-lesson');
+check(BT.isLearned('definitely-not-a-lesson') === false, 'toggleLearned rejects unknown id (no-op)');
+check(BT.countLearned() === before, 'countLearned unchanged after rejected toggle');
 withPref(null);
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');

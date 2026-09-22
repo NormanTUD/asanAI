@@ -841,6 +841,9 @@ async function loadOrigamiModule() {
 	OG.register('og-dim', ogInitPoker);
 	OG.start();
 
+	const regenBtn = document.getElementById('og-regen-fab');
+	if (regenBtn) regenBtn.onclick = () => { OG.regen.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); };
+
 	if (window.__MN_DARK) {
 		window.__MN_DARK.onChange(() => { OG.redos.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); });
 	}

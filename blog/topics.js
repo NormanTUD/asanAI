@@ -2662,6 +2662,9 @@
 		isLearned: isLearned,
 		depsMet: depsMet,
 		toggleLearned: toggleLearned,
+		courseOrder: courseOrder,
+		courseIndexOf: courseIndexOf,
+		countLearned: countLearned,
 		onChange: function (fn) { document.addEventListener('topics:change', fn); }
 	};
 })();
