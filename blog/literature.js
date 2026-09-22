@@ -7893,6 +7893,18 @@ window.bibData = {
 		year: 2000,
 		alternativetitle: "'Arrgh!' — the 'asparagus' easter egg in the Atlas question world"
 	},
+	/* The Atlas main-globe Earth and Moon surfaces (map.js buildEarth /
+	 * buildMoon): equirectangular maps from the Solar System Scope project,
+	 * based on NASA imagery/elevation; local files earth_texture.png and
+	 * moon_texture.png. */
+	"earth_moon_cc_textures": {
+		url: "https://www.solarsystemscope.com/textures/",
+		title: "Solar System Scope — Earth (daymap) and Moon surface texture maps",
+		author: "Solar System Scope (based on NASA imagery and elevation data)",
+		year: 2014,
+		license: "CC BY 4.0",
+		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.png, moon_texture.png)"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */

@@ -312,5 +312,7 @@ html:not(.dark) #atlas-stage {
 
 *Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
 
+*Earth and Moon surfaces (the main globe):* equirectangular maps from \cite[Solar System Scope]{earth_moon_cc_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
+
 *Easter egg:* the faint "asparagus" drifting in the final question-mark slide nods to Junior Asparagus, a VeggieTales character who makes a brief cameo in \cite["Arrgh!", SpongeBob SquarePants (2000)]{spongebob_arrgh_asparagus}.
 </div>

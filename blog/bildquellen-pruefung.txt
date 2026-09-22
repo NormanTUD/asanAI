@@ -264,8 +264,9 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Hinweis: Äquirektangulare 2K-Oberflächentexturen (2048x1024) der acht
              Planeten. Lokale Dateien von 2048x1024 auf 1024x512
              heruntergerechnet (kleineres Dateivolumen; Planeten sind in der
-             Solar-System-Ansicht klein). Sonne bleibt Glow-Sprite, Mond nutzt
-             weiterhin ranger7_moon.jpg (Ranger-7-Foto, s. Eintrag oben).
+             Solar-System-Ansicht klein). Sonne bleibt Glow-Sprite. Der
+             Hauptglobus (Erde + Mond) nutzt inzwischen earth_texture.png /
+             moon_texture.png, s. Eintrag 27.
     Lokal: solsys_{mercury,venus,earth,mars,jupiter,saturn,uranus,neptune}.jpg
              (je 1024x512)
     Genutzt in: map.js § buildCelestial (Material-Map der acht Planeten)
@@ -288,3 +289,18 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              ~0.22 Deckkraft; ~3% der Fragezeichen in 0xff5a5a rot)
     Status: OK - Quelle via \cite{spongebob_arrgh_asparagus} im Credit
              (map.php, Sektion unter der Karte) zitiert.
+
+27. earth_moon_cc_textures (Hauptglobus: Erde + Mond)
+    URL (Quelle): https://www.solarsystemscope.com/textures/ (geprüft HTTP 200)
+    Dateien (geprüft HTTP 200): 2k_earth_daymap.jpg, 2k_moon.jpg
+    Lizenz: CC BY 4.0 (Solar System Scope, basierend auf NASA-Daten)
+    Autor: Solar System Scope
+    Hinweis: Äquirektangulare Oberflächentexturen. Lokale Dateien:
+             earth_texture.png (2048x1024) und moon_texture.png (1024x512, von
+             2048x1024 heruntergerechnet; der Mond ist klein im Bild). Beide von
+             .jpg nach .png konvertiert. Ersetzen die frühere prozedurale
+             Erd-Karte (drawEarthCanvas, entfernt) bzw. ranger7_moon.jpg.
+    Lokal: earth_texture.png, moon_texture.png
+    Genutzt in: map.js § buildEarth (Erde) + § buildMoon (Mond)
+    Status: OK - CC BY 4.0, Quelle via \cite{earth_moon_cc_textures} im
+             Credit (map.php, Sektion unter der Karte) zitiert.
