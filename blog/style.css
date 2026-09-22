@@ -9573,17 +9573,19 @@ html.dark .topics-preset-fun {
 .topic-block.topic-block-collapsed .topic-block-inner {
 	pointer-events: none;
 }
-/* Smooth bottom fade: a gradient from transparent to the page paper, sitting
-   in the band between the (fully visible) heading and the reveal badge. Makes
-   the preview recede like the rest of the design instead of hard-cutting. */
+/* Smooth recede: a gradient from transparent (just under the heading) to the
+   page paper, running to the very bottom of the 168px window. It reaches full
+   opacity well before the reveal badge so the badge band — and any table rows,
+   which carry their own lighter --mn-bg-subtle fill — are fully covered rather
+   than showing through a half-fade. Only the heading stays crisp. */
 .topic-block.topic-block-collapsed::after {
 	content: '';
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: 56px;
-	height: 44px;
-	background: linear-gradient(to bottom, transparent, var(--mn-bg));
+	top: 60px;
+	bottom: 0;
+	background: linear-gradient(to bottom, transparent 0%, var(--mn-bg) 30%, var(--mn-bg) 100%);
 	pointer-events: none;
 	z-index: 1;
 }

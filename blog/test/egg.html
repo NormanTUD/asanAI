@@ -42,7 +42,7 @@
   #three-container { flex: 1; }
   h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
   h2 { font-size: 11px; margin: 12px 0 5px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
-  .sechd { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0 5px 0; }
+  .sechd { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 9px 0 4px 0; }
   .sechd-t { font-size: 11px; font-weight: 700; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
   .actpick { font-size: 11px; color: #9aa7b5; display: flex; align-items: center; gap: 5px; }
   .actpick select {
@@ -53,6 +53,16 @@
   .actpick select:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
   .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 12px 0 8px; }
   .btnrow button { margin: 0; width: 100%; padding: 7px 10px; font-size: 12.5px; }
+  .acc { margin: 10px 0 4px; }
+  .acc-hd { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; padding: 6px 2px; user-select: none; border-top: 1px solid #2c2c35; }
+  .acc-hd:hover { color: #a8ecfd; }
+  .caret { color: #7f8ea0; font-size: 11px; transition: transform .15s ease; }
+  .acc.open .caret { transform: rotate(90deg); }
+  .acc-bd { display: none; }
+  .acc.open .acc-bd { display: block; }
+  .togglerow { margin: 8px 0 2px; }
+  .togglerow a { font-size: 11px; color: #8be9fd; text-decoration: none; cursor: pointer; }
+  .togglerow a:hover { text-decoration: underline; }
   p, label { font-size: 12.5px; line-height: 1.5; }
   .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
   .lossline { font-size: 11.5px; color: #8be9fd; font-family: monospace; margin: 2px 0 6px; }
@@ -104,12 +114,12 @@
   .status.good { background: #10331a; color: #50fa7b; }
   .status.bad  { background: #331111; color: #ff6b6b; }
   .glb { display: flex; gap: 6px; align-items: center; margin: 8px 0 2px; font-weight: 600; cursor: pointer; }
-  .neuron { margin: 6px 0; padding: 7px 8px; background: #16161c; border-radius: 5px; border-left: 2px solid #3a3a44; transition: opacity .15s; }
+  .neuron { margin: 4px 0; padding: 5px 8px 6px; background: #16161c; border-radius: 5px; border-left: 2px solid #3a3a44; transition: opacity .15s; }
   .neuron.off { opacity: 0.4; }
-  .nhead { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 12.5px; }
+  .nhead { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; font-size: 12px; }
   .nhead input { cursor: pointer; }
   .wgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; min-width: 0; }
-  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; min-width: 0; }
+  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; min-width: 0; }
   .wrow .wl { width: 30px; flex: none; font-size: 11px; color: #8be9fd; }
   .wrow input[type=range] { flex: 1 1 0; width: auto; min-width: 0; }
   .wrow .val { width: 36px; flex: none; text-align: right; font-size: 11px; }
@@ -159,12 +169,23 @@
   <p><i>Dense → f(·) → Dense · 2 → 3 → 1 · nach Keup &amp; Helias (2022)</i></p>
 
   <div class="formula" id="fnet"></div>
+  <div class="togglerow"><a href="#" id="matToggle">▾ Gewichtsmatrix</a></div>
   <div id="fmat" class="fmat"></div>
   <div id="lossline" class="lossline">Loss: – · Acc: –</div>
 
   <div id="status" class="status good">…</div>
 
-  <div class="sechd">
+  <div class="btnrow">
+    <button id="btnFold">🎬 Falt-Animation</button>
+    <button id="btnOpt">⚡ Optimal</button>
+    <button id="btnTrain">🧠 Alles trainieren</button>
+    <button id="btnRand">🎲 Zufall</button>
+  </div>
+
+  <div class="acc open" id="acc-net">
+  <div class="acc-hd" data-acc>Netzwerk-Gewichte <span class="caret">▸</span></div>
+  <div class="acc-bd">
+  <div class="sechd" style="margin-top:4px">
     <span class="sechd-t">Versteckter Layer</span>
     <label class="actpick">f(x)
       <select id="actfn">
@@ -215,24 +236,20 @@
   <div class="sechd"><span class="sechd-t">2. Hidden-Layer (optional)</span>
     <label class="rtgl"><input type="checkbox" id="useLayer2"> an</label>
   </div>
-  <div id="l2box" class="l2box">
+  <div id="l2box" class="l2box" style="display:none">
     <div class="l2cap">W2 (3×3) falt H1 → H2 &nbsp;·&nbsp; <a href="#" id="l2rand" class="l2rand">🎲 Demo-Werte</a></div>
     <div id="w2grid" class="w2grid"></div>
   </div>
-
-  <div class="btnrow">
-    <button id="btnFold">🎬 Falt-Animation</button>
-    <button id="btnOpt">⚡ Optimal</button>
-    <button id="btnTrain">🧠 Alles trainieren</button>
-    <button id="btnRand">🎲 Zufall</button>
+  </div>
   </div>
 
-  <div class="sechd"><span class="sechd-t">Space-Folding · Lewandowski et al. 2025</span></div>
+  <div class="acc open" id="acc-fold">
+  <div class="acc-hd" data-acc>Space-Folding · Lewandowski 2025 <span class="caret">▸</span></div>
+  <div class="acc-bd">
   <div class="foldrow">
     <canvas id="foldCube" class="foldcanv"></canvas>
     <canvas id="foldPath" class="foldcanv"></canvas>
   </div>
-  <div class="foldlegend"><span>◆ Hamming-Kubus · gold = Pfad Γ</span><span>rot = Falzrückgang</span><span>┄ dH(π₁,·)</span></div>
   <div class="foldinfo">
     <span>χ(Γ) = <b id="foldChi">–</b></span>
     <span>r1 = <b id="foldR1">–</b></span>
@@ -246,11 +263,17 @@
     <button id="pmPick" class="pm">✏️ wählen</button>
     <button id="pmWalk" class="pm pmwalk">▶ Walk</button>
   </div>
-  <div id="foldStats" class="foldstats" style="display:none">–</div>
-  <div id="foldL2" class="foldinfo foldl2" style="display:none">–</div>
-  <div id="foldSeq" class="foldseq">–</div>
-  <div id="foldSeq2" class="foldseq" style="display:none">–</div>
-  <div class="foldnote" id="foldNote">Gerader Pfad Γ im Eingaberaum → Bit-Flip-Walk im Hamming-Raum. Jede Faltlinie, die gekreuzt wird, flippt genau ein Bit.</div>
+  <div class="togglerow"><a href="#" id="foldDetailsToggle">▸ Details (Muster · Φ̂ · Legende)</a></div>
+  <div id="foldDetails" style="display:none">
+    <div class="foldlegend"><span>◆ Hamming-Kubus · gold = Pfad Γ</span><span>rot = Falzrückgang</span><span>┄ dH(π₁,·)</span></div>
+    <div id="foldL2" class="foldinfo foldl2" style="display:none">–</div>
+    <div id="foldStats" class="foldstats" style="display:none">–</div>
+    <div id="foldSeq" class="foldseq">–</div>
+    <div id="foldSeq2" class="foldseq" style="display:none">–</div>
+  </div>
+  <div class="foldnote" id="foldNote">Gerader Pfad Γ → Bit-Flip-Walk im Hamming-Raum. Jede gekreuzte Faltlinie flippt ein Bit.</div>
+  </div>
+  </div>
 
   <div class="legend">
     <span class="dot" style="background:#ffb142"></span> innere Klasse (Kreis) &nbsp;
@@ -924,7 +947,7 @@ function updateLossLine(acc, loss) {
 
 let training = false;
 let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
-const APP_VERSION = 'fold-v9'; // Guard 4: Version zum Verifizieren (Console + Status)
+const APP_VERSION = 'fold-v12'; // Guard 4: Version zum Verifizieren (Console + Status)
 function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
@@ -1247,7 +1270,7 @@ $('actfn').addEventListener('change', () => {
 $('useLayer2').addEventListener('change', e => {
   if (training || animating) return;
   useLayer2 = e.target.checked;
-  $('l2box').classList.toggle('off', !useLayer2);
+  $('l2box').style.display = useLayer2 ? '' : 'none';
   $('viewH2').disabled = !useLayer2;
   if (useLayer2) computeH2();
   refreshAll();
@@ -1276,6 +1299,11 @@ $('pmWorst').addEventListener('click', () => { if (training || animating) return
 $('pmPick').addEventListener('click', () => { if (training || animating) return; pathMode = 'pick'; pickA = pickB = null; syncPathSel(); refreshAll(); });
 $('pmWalk').addEventListener('click', () => { if (training || animating) return; if (walkRaf) stopWalk(); else startWalk(); });
 
+// Aufklappbare Abschnitte (weniger Clutter): Netzwerk-Gewichte + Space-Folding
+document.querySelectorAll('[data-acc]').forEach(hd => hd.addEventListener('click', () => { hd.parentElement.classList.toggle('open'); }));
+$('matToggle').addEventListener('click', e => { e.preventDefault(); const m = $('fmat'); const show = m.style.display === 'none'; m.style.display = show ? '' : 'none'; e.target.textContent = (show ? '▾' : '▸') + ' Gewichtsmatrix'; });
+$('foldDetailsToggle').addEventListener('click', e => { e.preventDefault(); const d = $('foldDetails'); const show = d.style.display === 'none'; d.style.display = show ? '' : 'none'; e.target.textContent = (show ? '▾' : '▸') + ' Details (Muster · Φ̂ · Legende)'; });
+
 $('btnOpt').addEventListener('click', setOptimal);
 $('btnTrain').addEventListener('click', startTraining);
 $('btnRand').addEventListener('click', randomize);
@@ -1294,7 +1322,6 @@ initThree();
 generateData();
 buildFormulaDOM();
 buildL2UI();
-$('l2box').classList.add('off');
 // Startzustand: FLACHER Slice (B1 = 1,1,1) mit optimalem Falz + Readout an
 // -> Faltlinie zeigt 1,1,1 beim Laden; 🎬 Falt-Animation falzt sie auf 0,0,0
 set('a1x', 0); set('a1y', 1);

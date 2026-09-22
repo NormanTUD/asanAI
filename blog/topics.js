@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-168-preview-recollapse';
+	window.__TB_VER = '2026-09-22-tuck-all-demos-fade30';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -1937,17 +1937,41 @@
 	    interactive widgets (vector plots, matrix canvases, …) sit in their own
 	    un-gated divs right after the gated prose; when the prose is masked the
 	    widgets should recede with it instead of floating out on their own. */
+	// Page furniture the tuck must stop before. Footnotes and the source
+	// bibliography are appended as trailing <section> elements; masking them
+	// is a hard no (the reader's citation trail must never disappear), so we
+	// stop at any <section> and at these ids regardless of what else follows.
+	const TB_NO_TUCK_IDS = {
+		'footnotes': 1, 'sources': 1, 'footnotes-section': 1, 'sources-section': 1,
+		'contents': 1, 'loader': 1, 'toc': 1, 'course-status': 1,
+		'course-status-box': 1, 'topic-learned-btn': 1, 'sidenotes-rail': 1,
+		'curiosity-score': 1
+	};
+
 	function tuckFollowingDemos(block) {
 		const hidden = [];
 		let sib = block.nextElementSibling;
 		while (sib) {
+			// Hard stops: page furniture / structural sections (never tuck).
+			if (sib.tagName === 'SECTION') break;
+			if (sib.id && TB_NO_TUCK_IDS[sib.id]) break;
+			// A new section: a gated / titled managed block. Match the data-*
+			// attributes (present in the source) rather than the .topic-block
+			// class, so this is reliable even before applyVisibility has tagged
+			// the block. Plain (ungated) .md prose and .optional boxes that sit
+			// between the demos belong to the current section and tuck with it —
+			// only a gated block starts a new section.
+			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
+			// A bare heading that starts a new section.
 			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
-			if (sib.querySelector && sib.querySelector('h1,h2,h3,h4,h5,h6')) break;
-			if (sib.classList && (sib.classList.contains('topic-block') || sib.classList.contains('optional'))) break;
-			if (sib.id === 'footnotes' || sib.id === 'sources' || sib.id === 'contents') break;
-			if (!sib.classList) { sib = sib.nextElementSibling; continue; }
-			sib.classList.add('topic-demo-tucked');
-			hidden.push(sib);
+			// Skip non-rendered nodes without tucking them.
+			if (sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE' || sib.tagName === 'TEMPLATE') {
+				sib = sib.nextElementSibling; continue;
+			}
+			if (sib.classList) {
+				sib.classList.add('topic-demo-tucked');
+				hidden.push(sib);
+			}
 			sib = sib.nextElementSibling;
 		}
 		return hidden;
@@ -1955,10 +1979,12 @@
 
 	function untuckDemos(demos) {
 		(demos || []).forEach(function (d) { d.classList.remove('topic-demo-tucked'); });
-		if (demos && demos.length) {
-			// Let any canvases that were sized while hidden re-measure.
-			window.dispatchEvent(new Event('resize'));
-		}
+		// No global resize here: Plotly.resize() throws on a plot div that is
+		// still display:none (a still-tucked or not-yet-inited demo). The
+		// demos' own lazyInit IntersectionObserver re-renders them the moment
+		// they are unhidden and scrolled into view, so a forced resize is both
+		// unnecessary and the source of the "Resize must be passed a displayed
+		// plot div" promise errors.
 	}
 
 	function syncDemoTucking(block) {
