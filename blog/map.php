@@ -14,8 +14,6 @@ topics: history, philosophy, society
 This is the map of everything. Every person, place, institution, artifact, event and cited author that appears anywhere in this course is a dot on this globe. The threads between them show who influenced whom, who traveled where, and which signals crossed which borders — and the time slider lets you watch the web of ideas grow, year by year.
 
 **How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the Chautauqua pages that mention it. When the whole planet feels small, keep zooming out — or press **Cosmic journey** and let the camera fly.
-
-*Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 </div>
 
 <style>
@@ -26,6 +24,7 @@ This is the map of everything. Every person, place, institution, artifact, event
 	display: flex;
 	width: 100%;
 	height: clamp(520px, 78vh, 920px);
+	min-height: 800px;
 	border-radius: 14px;
 	overflow: hidden;
 	background: #05070d;
@@ -274,7 +273,7 @@ html:not(.dark) #atlas-stage {
 			<div class="atlas-title">The Atlas<small>From Big Bang to ChatGPT</small></div>
 			<div class="atlas-spacer"></div>
 			<button class="atlas-btn primary" id="atlas-journey" type="button">&#9656; Cosmic journey</button>
-			<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982; Earth</button>
+			<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982;</button>
 		</div>
 
 		<div class="atlas-detail" id="atlas-detail"></div>
@@ -302,4 +301,14 @@ html:not(.dark) #atlas-stage {
 		</div>
 	</div>
 </div>
+</div>
+
+<div class="md" style="margin-top:14px">
+*Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
+
+*The transformer figure in the journey:* Figure 1 (the encoder–decoder architecture) from \cite[Vaswani et al., 2017]{transformer_attention_figure} — Ashish Vaswani and colleagues, Google, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png)).
+
+*Starfield backdrop:* ESO's all-sky panorama of the Milky Way, \cite[ESO, 2009]{starfield_eso_image} — ESO / S. Brunier, CC BY 4.0 ([file](https://commons.wikimedia.org/wiki/File:ESO_-_Milky_Way.jpg)).
+
+*Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
 </div>

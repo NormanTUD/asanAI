@@ -7844,6 +7844,43 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
 	},
+	/* Figure 1 from "Attention Is All You Need" (Vaswani et al. 2017) — the
+	 * canonical transformer encoder–decoder diagram — shown in the Atlas
+	 * "transformer" stop of the Cosmic journey (local file
+	 * transformer_architecture.png). CC BY-SA 4.0 (Google); Wikimedia Commons
+	 * hosts it with Google's permission to reproduce the paper's figures when
+	 * proper attribution is given. */
+	"transformer_attention_figure": {
+		url: "https://arxiv.org/abs/1706.03762",
+		title: "Attention Is All You Need — Figure 1: the transformer encoder–decoder architecture",
+		author: "Ashish Vaswani and colleagues (Google)",
+		year: 2017,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Figure 1 from 'Attention Is All You Need', via Wikimedia Commons"
+	},
+	/* The all-sky starfield backdrop of the Atlas (map.php): ESO's 360°
+	 * Aitoff panorama of the whole celestial sphere (the Milky Way band across
+	 * the frame), local file starfield_eso.jpg. */
+	"starfield_eso_image": {
+		url: "https://www.eso.org/public/images/eso0932a/",
+		title: "ESO all-sky panorama — the Milky Way arching across the whole celestial sphere",
+		author: "ESO / S. Brunier",
+		year: 2009,
+		license: "CC BY 4.0",
+		alternativetitle: "ESO Milky Way panorama (GigaGalaxy Zoom)"
+	},
+	/* The solar-system planet surface maps (Mercury, Venus, Earth, Mars,
+	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (map.js buildCelestial):
+	 * equirectangular 2K maps from the Solar System Scope project, based on
+	 * NASA imagery/elevation, local files solsys_*.jpg. */
+	"solsys_planet_textures": {
+		url: "https://www.solarsystemscope.com/textures/",
+		title: "Solar System Scope — planet surface texture maps (Mercury–Neptune)",
+		author: "Solar System Scope (based on NASA imagery and elevation data)",
+		year: 2014,
+		license: "CC BY 4.0",
+		alternativetitle: "Solar System Scope planet textures (solsys_*.jpg)"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */

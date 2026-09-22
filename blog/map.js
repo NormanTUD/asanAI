@@ -309,6 +309,10 @@ function bootAtlas() {
 		renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 		renderer.setClearColor(new THREE.Color(THEME.bg), 1);
+		new THREE.TextureLoader().load('starfield_eso.jpg', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			scene.background = tex;
+		});
 		resizeToStage();
 		scene.add(new THREE.AmbientLight(0xffffff, 0.85));
 		var sun = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -324,6 +328,7 @@ function bootAtlas() {
 
 		window.__ATLAS_DEBUG = {
 			state: state,
+			scene: function () { return scene; },
 			sun: function () { return sunSp; },
 			planets: planets,
 			goStep: goStep,
@@ -432,11 +437,18 @@ function bootAtlas() {
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
 		var radii = [0.58, 0.88, 0.9, 0.68, 2.65, 2.44, 1.67, 1.66];
 		var orbits = [16.5, 19.8, 21.5, 23.8, 30.4, 33.6, 37.3, 39.7];
+		var planetTex = ['solsys_mercury.jpg', 'solsys_venus.jpg', 'solsys_earth.jpg', 'solsys_mars.jpg', 'solsys_jupiter.jpg', 'solsys_saturn.jpg', 'solsys_uranus.jpg', 'solsys_neptune.jpg'];
+		var texLoader = new THREE.TextureLoader();
 		for (var pi = 0; pi < 8; pi++) {
-			var pm = new THREE.Mesh(
-				new THREE.SphereGeometry(radii[pi], 20, 14),
-				new THREE.MeshPhongMaterial({ color: palette[pi], shininess: 6, transparent: true, opacity: 0 })
-			);
+			var pmat = new THREE.MeshPhongMaterial({ color: palette[pi], shininess: 6, transparent: true, opacity: 0 });
+			texLoader.load(planetTex[pi], (function (m) {
+				return function (tex) {
+					if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+					m.map = tex;
+					m.needsUpdate = true;
+				};
+			})(pmat));
+			var pm = new THREE.Mesh(new THREE.SphereGeometry(radii[pi], 20, 14), pmat);
 			var pa = pi * 2.399963;
 			pm.position.set(
 				SUN_POS[0] + Math.cos(pa) * orbits[pi],
@@ -797,6 +809,7 @@ function bootAtlas() {
 		canvas.addEventListener('mousedown', function (e) {
 			dragging = true; moved = 0; lastX = e.clientX; lastY = e.clientY;
 			canvas.classList.add('dragging');
+			resetTourTimer();
 		});
 		window.addEventListener('mouseup', function () {
 			dragging = false; canvas.classList.remove('dragging');
@@ -808,6 +821,7 @@ function bootAtlas() {
 				state.tTheta -= dx * 0.005;
 				state.tPhi = THREE.MathUtils.clamp(state.tPhi - dy * 0.005, 0.15, Math.PI - 0.15);
 				lastX = e.clientX; lastY = e.clientY;
+				resetTourTimer();
 			}
 			onMove(e);
 		});
@@ -1129,13 +1143,21 @@ function bootAtlas() {
 		tourEls().next.addEventListener('click', nextStep);
 		tourEls().close.addEventListener('click', stopTour);
 		tourEls().earth.addEventListener('click', stopTour);
+		document.addEventListener('keydown', function (e) {
+			if (!tour.active) { return; }
+			var t = e.target;
+			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) { return; }
+			if (e.key === 'Escape') { stopTour(); }
+			else if (e.key === 'ArrowRight') { nextStep(); }
+			else if (e.key === 'ArrowLeft') { prevStep(); }
+		});
 	}
 
 	// ── cosmic journey ────────────────────────────────────────
 	var JOURNEY = [
 		{ d: 3.2, era: 'Earth', text: 'The home of almost every idea in this course.' },
 		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Before we pull away, a tiny selection — only a handful of the thousands of steps that led to language models, but the ones that matter most.' },
-		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), dot: 'person-ashish-vaswani', era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
+		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), dot: 'person-ashish-vaswani', img: 'transformer_architecture.png', era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
 		{ d: 3.2, face: latLngToVec3(42.44, -76.5, EARTH_R), dot: 'person-dean-edmonds', img: 'FrankRosenblattWiringPerceptron.jpg', era: 'The perceptron · 1958', text: 'Frank Rosenblatt’s Perceptron at Cornell — the first machine that learns from its own mistakes by adjusting its weights. The ancestor of every neural network.' },
 		{ d: 3.2, face: latLngToVec3(40.72, -74.41, EARTH_R), dot: 'person-john-bardeen', img: 'first_transistor.jpg', era: 'The transistor · 1947', text: 'Bell Labs, New Jersey. Bardeen, Brattain and Shockley’s transistor shrinks computation from a room to a grain — and lets it scale to billions on a chip.' },
 		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
@@ -1213,6 +1235,11 @@ function bootAtlas() {
 		var els = tourEls();
 		els.root.classList.add('open');
 		goStep(0);
+	}
+	function resetTourTimer() {
+		if (!tour.active) { return; }
+		tour.startedAt = performance.now();
+		tourEls().fill.style.width = '0%';
 	}
 	function stopTour() {
 		tour.active = false;

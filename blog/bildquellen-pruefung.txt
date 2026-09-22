@@ -220,3 +220,54 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              Cosmic journey)
     Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
              Quelle via \cite{cosmic_web_foam_image} zitiert.
+
+23. transformer_architecture
+    URL (Quelle): https://arxiv.org/abs/1706.03762 (geprüft HTTP 200)
+    URL (Datei):  https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png (geprüft HTTP 200)
+    Lizenz: CC BY-SA 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: Ashish Vaswani et al. (Google)
+    Hinweis: Figur 1 (Encoder-Decoder-Architektur) aus dem Paper "Attention
+             Is All You Need" (arXiv:1706.03762, 2017). Commons-Credit:
+             "Provided proper attribution is provided, Google hereby grants
+             permission to reproduce the tables and figures in this paper
+             solely for use in journalistic or scholarly works."
+    Lokal: transformer_architecture.png (1520x2239)
+    Genutzt in: map.php § The Atlas (Bild im "The transformer"-Stopp der
+             Cosmic journey)
+    Status: OK - CC BY-SA 4.0, Autor (Google) + Commons-Link im Credit
+             (map.php Intro), Quelle via \cite{transformer_attention_figure}
+             zitiert.
+
+24. starfield_eso
+    URL (Quelle): https://www.eso.org/public/images/eso0932a/ (geprüft HTTP 200)
+    URL (Datei):  https://commons.wikimedia.org/wiki/File:ESO_-_Milky_Way.jpg (geprüft HTTP 200)
+    Lizenz: CC BY 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: ESO / S. Brunier
+    Hinweis: 360°-Aitoff-Panorama der gesamten Himmelskugel (Milky-Way-Band
+             quer über das Bild), Teil des GigaGalaxy-Zoom-Projekts (IYA2009).
+             ESO-Lizenz: Abbildungen frei nutzbar mit klarer, sichtbarer
+             Quellenangabe. Lokale Datei ist von 6000x3000 auf 2048x1024
+             heruntergerechnet (Hintergrundtextur, kleineres Dateivolumen).
+    Lokal: starfield_eso.jpg (2048x1024)
+    Genutzt in: map.php § The Atlas (scene.background — Sternenhimmel als
+             Hintergrund statt flachem Schwarz)
+    Status: OK - CC BY 4.0, Autor (ESO/S. Brunier) + Commons-Link im Credit
+             (map.php Intro), Quelle via \cite{starfield_eso_image} zitiert.
+
+25. solsys_planet_textures
+    URL (Quelle): https://www.solarsystemscope.com/textures/ (geprüft HTTP 200)
+    Dateien (Commons, je geprüft HTTP 200): Solarsystemscope texture 2k
+             <planet>.jpg — mercury, venus_surface, earth_daymap, mars,
+             jupiter, saturn, uranus, neptune
+    Lizenz: CC BY 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: Solar System Scope (basierend auf NASA-Impact-/Elevationsdaten)
+    Hinweis: Äquirektangulare 2K-Oberflächentexturen (2048x1024) der acht
+             Planeten. Lokale Dateien von 2048x1024 auf 1024x512
+             heruntergerechnet (kleineres Dateivolumen; Planeten sind in der
+             Solar-System-Ansicht klein). Sonne bleibt Glow-Sprite, Mond nutzt
+             weiterhin ranger7_moon.jpg (Ranger-7-Foto, s. Eintrag oben).
+    Lokal: solsys_{mercury,venus,earth,mars,jupiter,saturn,uranus,neptune}.jpg
+             (je 1024x512)
+    Genutzt in: map.js § buildCelestial (Material-Map der acht Planeten)
+    Status: OK - CC BY 4.0, Quelle via \cite{solsys_planet_textures} im
+             Credit (map.php Intro) zitiert.
