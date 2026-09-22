@@ -9546,55 +9546,78 @@ html.dark .topics-preset-fun {
 	transition: background 0.25s, border 0.25s, padding 0.25s, opacity 0.3s ease, filter 0.3s ease;
 }
 /* The height clip lives in its own class so JS can animate max-height
-   freely between the folded (120px) and full states. `.topic-block-
-   collapsed` keeps the gradient fade + badge + click-through state. */
+   freely between the folded (168px) and full states. `.topic-block-
+   collapsed` keeps the gradient fade + badge + click-through state. The
+   preview is tall enough that a section heading sits clearly ABOVE the
+   2-line reveal badge (no overlap) with room for a fade in between. */
 .topic-block--clipped {
-	max-height: 120px;
+	max-height: 168px;
 	overflow: hidden !important;
 }
 /* The clip MUST win the overflow fight. `.md` (and the glossary invariant
    near the bottom of the sheet) set `overflow: visible !important` at the
    same single-class specificity but LATER, so by source order they would win
-   and let a clipped markdown block's MathJax/text bleed out the 120px box and
+   and let a clipped markdown block's MathJax/text bleed out the 168px box and
    paint over the next element (the "texts + plots overlap" bug). Re-assert the
    clip at two-class specificity so it always wins regardless of order. Every
    clipped block also carries `.topic-block` (added by applyVisibility). */
 .topic-block.topic-block--clipped,
 .md.topic-block--clipped {
-	max-height: 120px;
+	max-height: 168px;
 	overflow: hidden !important;
 }
+/* Faded content must never intercept the badge tap. (The old full-height mask
+   was a no-op — the inner is as tall as its content, so nothing faded inside
+   the 168px window and the body hard-cut behind the badge. The fade now lives
+   in the `::after` below, which is sized to the visible window.) */
 .topic-block.topic-block-collapsed .topic-block-inner {
-	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
-	mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
-	pointer-events: none; /* faded content must never intercept the badge tap */
+	pointer-events: none;
+}
+/* Smooth bottom fade: a gradient from transparent to the page paper, sitting
+   in the band between the (fully visible) heading and the reveal badge. Makes
+   the preview recede like the rest of the design instead of hard-cutting. */
+.topic-block.topic-block-collapsed::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 56px;
+	height: 44px;
+	background: linear-gradient(to bottom, transparent, var(--mn-bg));
+	pointer-events: none;
+	z-index: 1;
 }
 .topic-block.topic-block-collapsed .topic-block-fade-badge {
 	position: absolute;
-	bottom: 8px;
-	left: 50%;
-	transform: translateX(-50%);
+	bottom: 10px;
+	left: 12px;
+	right: 12px;
+	width: auto;
+	transform: none;
 }
 
 .topic-block-fade-badge {
-	display: inline-flex;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 16px;
-	min-height: 40px;
+	gap: 6px 10px;
+	padding: 10px 14px;
 	box-sizing: border-box;
-	max-width: min(92%, 520px);
-	border-radius: 99px;
+	border-radius: 12px;
 	border: 1px solid var(--mn-border);
 	background: var(--mn-surface);
 	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-	font-size: 0.78rem;
+	font-size: 0.8rem;
+	line-height: 1.35;
 	color: var(--mn-text-secondary);
 	cursor: pointer;
 	transition: border-color 0.18s, box-shadow 0.18s;
 	z-index: 2;
+	text-align: left;
 }
-.topic-block-fade-badge .tbf-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topic-block-fade-badge .tbf-icon { flex: 0 0 auto; }
+.topic-block-fade-badge .tbf-title { flex: 0 1 auto; font-weight: 600; color: var(--mn-text); }
+.topic-block-fade-badge .tbf-text { flex: 1 1 auto; white-space: normal; overflow: visible; text-overflow: clip; }
 .topic-block-fade-badge:hover {
 	border-color: var(--mn-accent);
 	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -9607,6 +9630,37 @@ html.dark .topics-preset-fun {
 	font-size: 0.7rem;
 	color: var(--mn-text-muted);
 	font-weight: 600;
+}
+/* Fold-away control for a section the reader pried open. Sits in the normal
+   flow at the end of the revealed block (no overlap) so a user-revealed,
+   still-gated section can be tucked away again without touching the dial. */
+.topic-block-recollapse {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 18px 0 6px;
+	padding: 6px 12px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-family: var(--mn-font-body);
+	color: var(--mn-text-muted);
+	background: transparent;
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.topic-block-recollapse:hover {
+	color: var(--mn-text);
+	border-color: var(--mn-accent);
+	background: var(--mn-bg-subtle);
+}
+
+/* Demos / plot containers that follow a collapsed math section recede with it
+   (hidden until the section is revealed). Kept out of flow so the next section
+   slides up instead of leaving a gap. */
+.topic-demo-tucked {
+	display: none !important;
 }
 
 /* ── block-level math alternative ────────────────────────────

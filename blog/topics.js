@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-badge-delegation';
+	window.__TB_VER = '2026-09-22-168-preview-recollapse';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -1663,8 +1663,16 @@
 		const label = score.why === 'math'
 			? score.reason || ''
 			: (score.reason || 'outside your interests');
+		// Section title: prefer the author's data-optionaltitle, else the first
+		// heading inside the block (available once Markdown has rendered).
+		let title = block.getAttribute('data-optionaltitle') || '';
+		if (!title) {
+			const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+			if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+		}
 		badge.innerHTML =
 			'<span class="tbf-icon" aria-hidden="true">' + escAttr(icon) + '</span>'
+			+ (title ? '<span class="tbf-title">' + escAttr(title) + '</span>' : '')
 			+ '<span class="tbf-text">' + escAttr(label) + '</span>'
 			+ '<span class="tbf-action">tap to reveal ↓</span>';
 		badge.addEventListener('click', function (ev) {
@@ -1791,7 +1799,7 @@
 		return btn;
 	}
 
-	const TUCK_H = 120; // must match `.topic-block--clipped` max-height
+	const TUCK_H = 168; // must match `.topic-block--clipped` max-height
 
 	/** Smoothly animate a block's clip between `fromH` and `toH` by easing
 	    its max-height. `isCollapse` keeps the rest-state clip class on the
@@ -1841,6 +1849,8 @@
 		if (block.classList.contains('topic-block-revealed')) {
 			block.classList.remove('topic-block--clipped');
 			clearClipInline(block);
+			syncDemoTucking(block);
+			if (block._tbUserRevealed === true) ensureRecollapse(block);
 			return;
 		}
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
@@ -1867,12 +1877,39 @@
 			block.classList.remove('topic-block--clipped');
 			clearClipInline(block);
 		}
+		syncDemoTucking(block);
+		if (block._tbUserRevealed === true) ensureRecollapse(block);
 	}
 
 	function reapplyBlock(block) {
 		if (block._tbScore && block._tbSpec) {
 			applyBlockState(block, block._tbSpec, block._tbScore, true);
 		}
+	}
+
+	/** A section the reader pried open (still gated) stays open only while they
+	    want it. This fold-away control lets them tuck it back without touching
+	    the math dial. Shown in-flow at the end of a user-revealed block; the
+	    delegation-free per-button handler is enough here (no competing
+	    document-level handler targets this class). */
+	function ensureRecollapse(block) {
+		if (block.querySelector(':scope > .topic-block-recollapse')) return;
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'topic-block-recollapse';
+		btn.setAttribute('aria-label', 'Fold this section away');
+		btn.textContent = '\u25B2 \u00A0Fold this section away';
+		btn.addEventListener('click', function (e) {
+			e.stopPropagation();
+			block._tbUserRevealed = false;
+			block._tbState = 'off';
+			reapplyBlock(block);
+		});
+		block.appendChild(btn);
+	}
+	function removeRecollapse(block) {
+		const btn = block.querySelector(':scope > .topic-block-recollapse');
+		if (btn) btn.remove();
 	}
 
 	/** Fallback reveal path. Some pages carry document/body click handlers
@@ -1895,6 +1932,68 @@
 		}, false);
 	}
 
+	/** Hide the demo/plot containers that follow a collapsed block, up to (not
+	    including) the next heading or the next managed block. A math section's
+	    interactive widgets (vector plots, matrix canvases, …) sit in their own
+	    un-gated divs right after the gated prose; when the prose is masked the
+	    widgets should recede with it instead of floating out on their own. */
+	function tuckFollowingDemos(block) {
+		const hidden = [];
+		let sib = block.nextElementSibling;
+		while (sib) {
+			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+			if (sib.querySelector && sib.querySelector('h1,h2,h3,h4,h5,h6')) break;
+			if (sib.classList && (sib.classList.contains('topic-block') || sib.classList.contains('optional'))) break;
+			if (sib.id === 'footnotes' || sib.id === 'sources' || sib.id === 'contents') break;
+			if (!sib.classList) { sib = sib.nextElementSibling; continue; }
+			sib.classList.add('topic-demo-tucked');
+			hidden.push(sib);
+			sib = sib.nextElementSibling;
+		}
+		return hidden;
+	}
+
+	function untuckDemos(demos) {
+		(demos || []).forEach(function (d) { d.classList.remove('topic-demo-tucked'); });
+		if (demos && demos.length) {
+			// Let any canvases that were sized while hidden re-measure.
+			window.dispatchEvent(new Event('resize'));
+		}
+	}
+
+	function syncDemoTucking(block) {
+		const wasTucked = !!(block._tbTuckedDemos && block._tbTuckedDemos.length);
+		const shouldTuck = block.classList.contains('topic-block-collapsed') && block._tbWhy === 'math';
+		if (shouldTuck) {
+			block._tbTuckedDemos = tuckFollowingDemos(block);
+		} else {
+			untuckDemos(block._tbTuckedDemos);
+			block._tbTuckedDemos = null;
+		}
+		return shouldTuck || wasTucked;
+	}
+
+	/** Fill in the section title on badges that were created before Markdown
+	    rendered (blocks without a data-optionaltitle). Idempotent. */
+	function refreshBadgeTitles() {
+		document.querySelectorAll('.topic-block.topic-block-collapsed .topic-block-fade-badge').forEach(function (badge) {
+			if (badge.querySelector('.tbf-title')) return;
+			const block = badge.parentElement;
+			let title = block.getAttribute('data-optionaltitle') || '';
+			if (!title) {
+				const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+				if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			}
+			if (!title) return;
+			const span = document.createElement('span');
+			span.className = 'tbf-title';
+			span.textContent = title;
+			const icon = badge.querySelector('.tbf-icon');
+			if (icon) badge.insertBefore(span, icon.nextSibling);
+			else badge.insertBefore(span, badge.firstChild);
+		});
+	}
+
 	/** slim chip shown on a PARTIAL section: it stays readable, just
 	    dimmed, with the reason it's only a partial match. */
 	function ensurePartialChip(block, score) {
@@ -1915,9 +2014,10 @@
 	/** reconcile one managed block to its target `score.state`, animating
 	    only when the state actually changed and `animate` is set. */
 	function applyBlockState(block, spec, score, animate) {
-		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; return; }
+		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; block._tbWhy = score.why; return; }
 		block._tbScore = score;
 		block._tbSpec = spec;
+		block._tbWhy = score.why;
 		const wasCollapsed = block.classList.contains('topic-block-collapsed');
 		const nowOff = score.state === 'off';
 		// A math-gated block always collapses when its math is off (strong
@@ -1942,6 +2042,8 @@
 			block.classList.remove('topic-block-alt-active');
 			block.classList.add('topic-block-revealed');
 			block._tbReason = 'user-revealed';
+			syncDemoTucking(block);
+			ensureRecollapse(block);
 			return;
 		}
 
@@ -1956,6 +2058,8 @@
 			block.classList.add('topic-block-alt-active');
 			setAltReveal(block, spec, score);
 			block._tbReason = 'alt';
+			syncDemoTucking(block);
+			removeRecollapse(block);
 			return;
 		}
 
@@ -1980,6 +2084,8 @@
 				block.classList.add('topic-block-dimmed');
 			}
 			block._tbReason = score.reason;
+			syncDemoTucking(block);
+			removeRecollapse(block);
 			return;
 		}
 		block.classList.remove('topic-block-dimmed');
@@ -1988,6 +2094,8 @@
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);
 		block._tbReason = score.state;
+		syncDemoTucking(block);
+		removeRecollapse(block);
 	}
 
 	/** (re)build visibility for every managed block + tiles + indicators.
@@ -2032,6 +2140,10 @@
 			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq });
 			applyBlockState(block, spec, score, animate);
 		});
+
+		// Post-render: now that Markdown is live, fill in section titles on
+		// badges for blocks that had no data-optionaltitle.
+		refreshBadgeTitles();
 
 		// Inline skipped markers (for ad-hoc skipped-in-place text)
 		document.querySelectorAll('.topic-inline').forEach(function (el) {
