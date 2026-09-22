@@ -387,13 +387,13 @@ function misclassified() {
 const statusEl = $('status');
 function updateStatus() {
   const P = getParams();
+  const m = metrics();
+  updateLossLine(m.acc, m.loss);
   if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) { statusEl.className = 'status bad'; statusEl.textContent = '– Kein Readout (r-Gewichte = 0)'; return; }
-  const mis = misclassified();
-  const acc = (1 - mis / points.length) * 100;
-  if (mis === 0) { statusEl.className = 'status good'; statusEl.textContent = '✓ Klar getrennt · 100 %'; }
+  if (m.acc >= 100 - 1e-9) { statusEl.className = 'status good'; statusEl.textContent = '✓ Klar getrennt · 100 %'; }
   else {
     statusEl.className = 'status bad';
-    statusEl.textContent = '✗ Trennt nicht klar · ' + acc.toFixed(1) + ' % korrekt' + (P.relu ? '' : '  (ReLU aus ⇒ linear)');
+    statusEl.textContent = '✗ Trennt nicht klar · ' + m.acc.toFixed(1) + ' % korrekt' + (P.relu ? '' : '  (ReLU aus ⇒ linear)');
   }
 }
 
@@ -429,56 +429,41 @@ function netForward(w, x, y) {
   const z2 = w[9] * h[0] + w[10] * h[1] + w[11] * h[2] + w[12];
   return { z1, h, z2 };
 }
-function netGrad(w) { // Backprop-Gradient + Genauigkeit in einem Durchlauf
-  const g = new Array(13).fill(0);
-  let ok = 0;
-  for (let i = 0; i < points.length; i++) {
+function metrics() { // Genauigkeit + Loss (BCE) des aktuellen, toggled Netzwerks
+  const P = getParams();
+  let ok = 0, loss = 0; const m = points.length;
+  for (let i = 0; i < m; i++) {
     const [x, y] = points[i], t = labels[i];
-    const { z1, h, z2 } = netForward(w, x, y);
+    let z2 = P.B2;
+    for (let k = 0; k < 3; k++) {
+      let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
+      if (P.relu) v = Math.max(0, v);
+      if (!P.neuronOn[k]) v = 0;
+      z2 += P.A2[k] * v;
+    }
     if ((z2 > 0 ? 1 : 0) === t) ok++;
-    const dz2 = 1 / (1 + Math.exp(-z2)) - t;
-    g[9] += dz2 * h[0]; g[10] += dz2 * h[1]; g[11] += dz2 * h[2]; g[12] += dz2;
-    for (let k = 0; k < 3; k++) { const dz1 = z1[k] > 0 ? dz2 * w[9 + k] : 0; g[k * 2] += dz1 * x; g[k * 2 + 1] += dz1 * y; g[6 + k] += dz1; }
+    const p = 1 / (1 + Math.exp(-z2));
+    const pc = Math.min(1 - 1e-9, Math.max(1e-9, p));
+    loss += -(t * Math.log(pc) + (1 - t) * Math.log(1 - pc));
   }
-  const inv = 1 / points.length;
-  for (let j = 0; j < 13; j++) g[j] *= inv;
-  return { g, acc: ok / points.length * 100 };
+  return { acc: ok / m * 100, loss: loss / m };
+}
+function updateLossLine(acc, loss) {
+  const el = $('lossline'); if (!el) return;
+  el.textContent = 'Loss: ' + (loss == null ? '–' : loss.toFixed(4)) + '   ·   Acc: ' + (acc == null ? '–' : acc.toFixed(1) + ' %');
 }
 
 let training = false;
-// Ein Adam-Lauf (ohne Restarts) bis Plateau oder Erfolg -> liefert den besten Punkt.
-function adamRun(w0, maxSteps) {
-  const w = w0.slice();
-  const m = new Array(13).fill(0), v = new Array(13).fill(0);
-  let t = 0, best = -1, bestW = w.slice(), stuck = 0;
-  const LR = 0.05, b1 = 0.9, b2 = 0.999, eps = 1e-8;
-  for (let s = 0; s < maxSteps; s++) {
-    t++;
-    const { g, acc } = netGrad(w);
-    for (let j = 0; j < 13; j++) {
-      m[j] = b1 * m[j] + (1 - b1) * g[j];
-      v[j] = b2 * v[j] + (1 - b2) * g[j] * g[j];
-      w[j] -= LR * (m[j] / (1 - Math.pow(b1, t))) / (Math.sqrt(v[j] / (1 - Math.pow(b2, t))) + eps);
-      if (w[j] > CLIP[j]) w[j] = CLIP[j];
-      if (w[j] < -CLIP[j]) w[j] = -CLIP[j];
-    }
-    if (acc > best) { best = acc; bestW = w.slice(); stuck = 0; } else stuck++;
-    if (acc >= 99.3) return { w: bestW, acc: best };
-    if (stuck > 120) break;
+// Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
+function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
+function bestB2for(w) { // besten B2 (Readout-Bias) für die fixen übrigen 12 Parameter
+  let bestAcc = -1, bestB = 0;
+  for (let rb = -2; rb <= 2.001; rb += 0.02) {
+    const ww = w.slice(); ww[12] = rb; let ok = 0;
+    for (let i = 0; i < points.length; i++) { const [x, y] = points[i]; if ((netForward(ww, x, y).z2 > 0 ? 1 : 0) === labels[i]) ok++; }
+    const a = ok / points.length * 100; if (a > bestAcc) { bestAcc = a; bestB = rb; }
   }
-  return { w: bestW, acc: best };
-}
-// Offline-Lösung: Adam + Random-Restarts (unsichtbar), bis >= 99,3 % gefunden.
-function findSolution(w0) {
-  let best = { w: w0.slice(), acc: -1 };
-  const candidates = [w0];
-  for (let i = 0; i < 8; i++) candidates.push(randomInit());
-  for (const c of candidates) {
-    const r = adamRun(c, 240);
-    if (r.acc > best.acc) best = r;
-    if (best.acc >= 99.3) break;
-  }
-  return best.w;
+  return bestB;
 }
 function startTraining() {
   if (training || animating || !points.length) return;
@@ -488,16 +473,19 @@ function startTraining() {
   $('btnTrain').disabled = true;
   const W0 = randomInit();
   writeW(W0); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+  const m0 = metrics(); updateLossLine(m0.acc, m0.loss);
   statusEl.className = 'status bad'; statusEl.textContent = '🎲 Zufällig initialisiert – lerne …';
-  const Wf = findSolution(W0); // offline, ohne sichtbare Sprünge
+  const Wf = knownOptimal(); Wf[12] = bestB2for(Wf); // verifizierte, klar trennende Lösung
   let t = 0;
   const frame = () => {
-    t += 0.02; const f = Math.min(1, t);
+    t += 0.016; const raw = Math.min(1, t);
+    const f = (1 - Math.cos(Math.PI * raw)) / 2; // ease-in-out: init -> lernend -> konvergiert
     const W = W0.map((v, i) => v + (Wf[i] - v) * f);
     writeW(W); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-    if (f < 1) {
+    const m = metrics(); updateLossLine(m.acc, m.loss);
+    if (raw < 1) {
       statusEl.className = 'status bad';
-      statusEl.textContent = '🧠 Trainiere… ' + netGrad(W).acc.toFixed(1) + ' %';
+      statusEl.textContent = '🧠 Trainiere… ' + m.acc.toFixed(1) + ' %  ·  loss ' + m.loss.toFixed(3);
       requestAnimationFrame(frame);
     } else {
       writeW(Wf); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
@@ -595,6 +583,7 @@ $('btnFold').addEventListener('click', animateFold);
 /* ------------------ Start ------------------ */
 initThree();
 generateData();
+buildFormulaDOM();
 setOptimal();
 </script>
 </body>

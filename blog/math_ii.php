@@ -821,6 +821,131 @@ function runHadamardExperiment() {
 	render_temml();
 }
 
+// ── Tensor calculations: broadcasting + contraction ─────────────────────────
+
+function initTcalcBroadcast() {
+	const el = document.getElementById('tcalc-bcast');
+	if (!el || el.dataset.ready) return;
+	el.dataset.ready = '1';
+
+	const g = (id) => document.getElementById(id);
+	const clamp = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+	const label = (d) => (d.length ? '(' + d.join(', ') + ')' : '()');
+	const BDIMS = { '3': [3], '1x3': [1, 3], '3x1': [3, 1], 'sc': [], '4': [4] };
+	const BDEF = { '3': [10, 20, 30], '1x3': [10, 20, 30], '3x1': [10, 20, 30], 'sc': [5], '4': [1, 2, 3, 4] };
+
+	const A = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	let Bshape = '3', B = BDEF['3'].slice(), op = '+';
+
+	const Agrid = g('tcalc-bcast-a'), Bgrid = g('tcalc-bcast-b'), Rgrid = g('tcalc-bcast-res');
+	const Shapes = g('tcalc-bcast-shapes'), Status = g('tcalc-bcast-status');
+	const Sym = g('tcalc-bcast-sym'), Bcap = g('tcalc-bcast-bcap'), sel = g('tcalc-bcast-bshape'), opWrap = g('tcalc-bcast-op');
+
+	function bshape(a, b) {
+		const n = Math.max(a.length, b.length);
+		const x = [...Array(n - a.length).fill(1), ...a], y = [...Array(n - b.length).fill(1), ...b], out = [];
+		for (let i = 0; i < n; i++) { if (x[i] === y[i] || x[i] === 1 || y[i] === 1) out.push(Math.max(x[i], y[i])); else return null; }
+		return out;
+	}
+	function bcast(flat, shape, out) {
+		const nd = out.length, pad = [...Array(nd - shape.length).fill(1), ...shape], st = new Array(nd).fill(0);
+		let acc = 1;
+		for (let i = nd - 1; i >= 0; i--) { st[i] = acc; acc *= pad[i]; }
+		const idx = new Array(nd).fill(0), res = [];
+		const T = out.reduce((p, q) => p * q, 1);
+		for (let t = 0; t < T; t++) {
+			let s = 0;
+			for (let i = 0; i < nd; i++) s += (idx[i] % pad[i]) * st[i];
+			res.push(flat[s]);
+			let d = nd - 1;
+			while (d >= 0) { idx[d]++; if (idx[d] < out[d]) break; idx[d] = 0; d--; }
+		}
+		return res;
+	}
+	function buildA() {
+		Agrid.style.gridTemplateColumns = 'repeat(3,auto)'; Agrid.innerHTML = '';
+		A.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { A[i] = clamp(inp.value); refresh(); }); Agrid.appendChild(inp); });
+	}
+	function buildB() {
+		const dims = BDIMS[Bshape], n = dims.reduce((p, q) => p * q, 1) || 1;
+		if (B.length !== n) B = BDEF[Bshape].slice();
+		Bcap.textContent = 'B ' + label(dims);
+		Bgrid.style.gridTemplateColumns = 'repeat(' + (dims.length ? dims[dims.length - 1] : 1) + ',auto)'; Bgrid.innerHTML = '';
+		B.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { B[i] = clamp(inp.value); refresh(); }); Bgrid.appendChild(inp); });
+	}
+	function dimRow(parent, lbl, dims, opts) {
+		const row = document.createElement('div'); row.className = 'tcalc-shape-row';
+		const l = document.createElement('span'); l.className = 'lbl'; l.textContent = lbl; row.appendChild(l);
+		const boxes = [];
+		dims.forEach((d, i) => {
+			const box = document.createElement('span'); box.className = 'tcalc-dim';
+			if (d === null) { box.style.opacity = '.25'; box.textContent = ''; }
+			else {
+				box.textContent = d;
+				if (opts.kind === 'b' && d === 1 && opts.a[i] && opts.a[i] !== 1) box.classList.add('stretch');
+				else if (opts.kind === 'o' && ((opts.a[i] === 1 && opts.b[i] !== 1) || (opts.b[i] === 1 && opts.a[i] !== 1))) box.classList.add('stretch');
+			}
+			boxes.push(box); row.appendChild(box);
+		});
+		parent.appendChild(row); return boxes;
+	}
+	function refresh() {
+		Sym.textContent = op === '+' ? '+' : (op === '-' ? '−' : '×');
+		const aD = [3, 3], bD = BDIMS[Bshape], out = bshape(aD, bD);
+		const n = Math.max(aD.length, bD.length, out ? out.length : 0);
+		const pA = [...Array(n - aD.length).fill(null), ...aD], pB = [...Array(n - bD.length).fill(null), ...bD];
+		const pO = out ? [...Array(n - out.length).fill(null), ...out] : [];
+		Shapes.innerHTML = '';
+		const bA = dimRow(Shapes, 'A', pA, { kind: 'a', a: pA, b: pB });
+		const bB = dimRow(Shapes, 'B', pB, { kind: 'b', a: pA, b: pB });
+		if (!out) {
+			if (bA[n - 1]) bA[n - 1].classList.add('bad');
+			if (bB[n - 1]) bB[n - 1].classList.add('bad');
+			Status.className = 'tcalc-status err'; Status.textContent = 'Not broadcastable: trailing axes 3 and 4 (neither equal nor 1).';
+			Rgrid.style.gridTemplateColumns = 'repeat(3,auto)'; Rgrid.innerHTML = ''; return;
+		}
+		dimRow(Shapes, '=', pO, { kind: 'o', a: pA, b: pB });
+		const x = bcast(A, aD, out), y = bcast(B, bD, out);
+		const res = x.map((v, i) => (op === '+' ? v + y[i] : op === '-' ? v - y[i] : v * y[i]));
+		Status.className = 'tcalc-status ok'; Status.textContent = 'broadcast to ' + label(out);
+		Rgrid.style.gridTemplateColumns = 'repeat(' + out[out.length - 1] + ',auto)'; Rgrid.innerHTML = '';
+		res.forEach((v) => { const d = document.createElement('div'); d.className = 'tcalc-cell result'; d.textContent = v; Rgrid.appendChild(d); });
+	}
+
+	opWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => { op = btn.dataset.op; opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn)); refresh(); }));
+	sel.addEventListener('change', () => { Bshape = sel.value; buildB(); refresh(); });
+	buildA(); buildB(); refresh();
+}
+
+function initTcalcContraction() {
+	const el = document.getElementById('tcalc-contraction');
+	if (!el || el.dataset.ready) return;
+	el.dataset.ready = '1';
+	const clamp = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+	const C = [1, 2, 3, 4], D = [5, 6, 7, 8];
+	let sel = { r: 0, c: 0 };
+	const Cg = document.getElementById('tcalc-contr-c'), Dg = document.getElementById('tcalc-contr-d'), Mg = document.getElementById('tcalc-contr-m'), Det = document.getElementById('tcalc-contr-detail');
+
+	function build(grid, arr) {
+		grid.style.gridTemplateColumns = 'repeat(2,auto)'; grid.innerHTML = '';
+		arr.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { arr[i] = clamp(inp.value); refresh(); }); grid.appendChild(inp); });
+	}
+	function refresh() {
+		const M = [0, 0, 0, 0];
+		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) M[i * 2 + k] = C[i * 2] * D[k] + C[i * 2 + 1] * D[2 + k];
+		Mg.style.gridTemplateColumns = 'repeat(2,auto)'; Mg.innerHTML = '';
+		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) {
+			const d = document.createElement('div'); d.className = 'tcalc-cell result click' + (i === sel.r && k === sel.c ? ' sel' : ''); d.textContent = M[i * 2 + k];
+			d.addEventListener('click', () => { sel = { r: i, c: k }; refresh(); }); Mg.appendChild(d);
+		}
+		for (let i = 0; i < 2; i++) for (let c = 0; c < 2; c++) { Cg.children[i * 2 + c].classList.toggle('hl', i === sel.r); Dg.children[i * 2 + c].classList.toggle('hl', c === sel.c); }
+		const i = sel.r, k = sel.c;
+		Det.innerHTML = '$$ M_{' + (i + 1) + ',' + (k + 1) + '} = C_{' + (i + 1) + ',1}D_{1,' + (k + 1) + '} + C_{' + (i + 1) + ',2}D_{2,' + (k + 1) + '} = ' + C[i * 2] + '\\cdot ' + D[k] + ' + ' + C[i * 2 + 1] + '\\cdot ' + D[2 + k] + ' = ' + M[i * 2 + k] + ' $$';
+		if (typeof render_temml === 'function') render_temml();
+	}
+	build(Cg, C); build(Dg, D); refresh();
+}
+
 // ── Module loader ───────────────────────────────────────────────────────────
 
 async function loadMathLabModule() {
