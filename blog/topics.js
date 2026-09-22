@@ -23,6 +23,10 @@
 (function () {
 	'use strict';
 
+	// Build fingerprint for tbDebug() — bump on each masking/reveal change
+	// so a stale/cached/production page is obvious in the debug report.
+	window.__TB_VER = '2026-09-22-inflow-fragile-bulletproof';
+
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
 	   ii = undergrad, iii = grad / research) so a reader can opt in
