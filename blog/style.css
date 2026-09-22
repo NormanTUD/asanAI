@@ -9544,7 +9544,7 @@ html.dark .topics-preset-fun {
 }
 .topic-block.topic-block-collapsed {
 	max-height: 120px;
-	overflow: hidden;
+	overflow: hidden !important; /* beat `.md { overflow: visible !important }` so the 120px clip holds */
 }
 .topic-block.topic-block-collapsed .topic-block-inner {
 	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);

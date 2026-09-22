@@ -305,7 +305,7 @@ const c2 = $('input2d');
 const ctx = c2.getContext('2d');
 const HP_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
 
-function draw2D() {
+function draw2D(B1o) {
   const w = c2.width = c2.clientWidth;
   const h = c2.height = c2.clientHeight;
   ctx.fillStyle = '#0f0f14';
@@ -321,9 +321,10 @@ function draw2D() {
   }
 
   const P = getParams();
+  const B1 = B1o || P.B1; // Guard 3: Faltlinien vom expliziten B1
   ctx.lineWidth = 2.5;
   for (let k = 0; k < 3; k++) {
-    const [wx, wy] = P.A1[k], b = P.B1[k];
+    const [wx, wy] = P.A1[k], b = B1[k];
     ctx.strokeStyle = HP_COLORS[k];
     ctx.setLineDash(P.neuronOn[k] ? [] : [6, 5]);
     let p1, p2;
@@ -372,14 +373,15 @@ function animate() {
 
 /* ------------------ Hidden Layer berechnen ------------------ */
 let H = null, cent = [0, 0, 0];
-function computeHidden() {
+function computeHidden(B1o) {
   const P = getParams(), m = points.length;
+  const B1 = B1o || P.B1; // Guard 3: explizites B1 trennt die Animation vom Slider-Roundtrip
   H = new Float32Array(m * 3);
   let cx = 0, cy = 0, cz = 0;
   for (let i = 0; i < m; i++) {
     const [x, y] = points[i];
     for (let k = 0; k < 3; k++) {
-      let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
+      let v = P.A1[k][0] * x + P.A1[k][1] * y + B1[k];
       if (P.relu) v = Math.max(0, v);
       if (!P.neuronOn[k]) v = 0;
       H[i * 3 + k] = v;
@@ -468,6 +470,11 @@ function writeW(w) {
   set('b1', w[6]); set('b2', w[7]); set('b3', w[8]);
   set('r1', w[9]); set('r2', w[10]); set('r3', w[11]); set('rb', w[12]);
 }
+// Aktuelle (13) Parameter aus dem DOM lesen.
+function currentW() {
+  return [val('a1x'), val('a1y'), val('a2x'), val('a2y'), val('a3x'), val('a3y'),
+          val('b1'), val('b2'), val('b3'), val('r1'), val('r2'), val('r3'), val('rb')];
+}
 // Zufälliger Start: A1-Zeilen als zufällige Einheitsvektoren, Bias klein, Readout zufällig.
 function randomInit() {
   const r = (a, b) => a + Math.random() * (b - a);
@@ -506,6 +513,9 @@ function updateLossLine(acc, loss) {
 }
 
 let training = false;
+let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
+const APP_VERSION = 'fold-v3'; // Guard 4: Version zum Verifizieren (Console + Status)
+function anyAnim() { return !!(trainRaf || foldRaf); }
 // Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
 function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
 function bestB2for(w) { // besten B2 (Readout-Bias) für die fixen übrigen 12 Parameter
@@ -518,33 +528,42 @@ function bestB2for(w) { // besten B2 (Readout-Bias) für die fixen übrigen 12 P
   return bestB;
 }
 function startTraining() {
-  if (training || animating || !points.length) return;
+  // Guard 1: rAF-Id als Wahrheit; hängende Flags zurücksetzen statt Early-Return
+  if (!points.length) return;
+  if (anyAnim()) return;
+  animating = false; training = false;
+  $('btnFold').disabled = false; $('btnTrain').disabled = false;
+
   training = true; autoFit = false;
-  set('relu', true); set('n1', true); set('n2', true); set('n3', true);
-  set('re1', true); set('re2', true); set('re3', true);
   $('btnTrain').disabled = true;
-  const W0 = randomInit();
+  const W0 = currentW(); // vom aktuellen Zustand starten – nichts resetten, keine Toggles ändern
   writeW(W0); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
   const m0 = metrics(); updateLossLine(m0.acc, m0.loss);
-  statusEl.className = 'status bad'; statusEl.textContent = '🎲 Zufällig initialisiert – lerne …';
+  statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + m0.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
   const Wf = knownOptimal(); Wf[12] = bestB2for(Wf); // verifizierte, klar trennende Lösung
   let t = 0;
+  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
   const frame = () => {
-    t += 0.016; const raw = Math.min(1, t);
-    const f = (1 - Math.cos(Math.PI * raw)) / 2; // ease-in-out: init -> lernend -> konvergiert
-    const W = W0.map((v, i) => v + (Wf[i] - v) * f);
-    writeW(W); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-    const m = metrics(); updateLossLine(m.acc, m.loss);
-    if (raw < 1) {
-      statusEl.className = 'status bad';
-      statusEl.textContent = '🧠 Trainiere… ' + m.acc.toFixed(1) + ' %  ·  loss ' + m.loss.toFixed(3);
-      requestAnimationFrame(frame);
-    } else {
-      writeW(Wf); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
-      training = false; $('btnTrain').disabled = false; updateStatus();
+    try {
+      t += 0.016; const raw = Math.min(1, t);
+      const f = (1 - Math.cos(Math.PI * raw)) / 2; // ease-in-out: init -> lernend -> konvergiert
+      const W = W0.map((v, i) => v + (Wf[i] - v) * f);
+      writeW(W); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+      const m = metrics(); updateLossLine(m.acc, m.loss);
+      if (raw < 1) {
+        statusEl.className = 'status bad';
+        statusEl.textContent = '🧠 Trainiere… ' + m.acc.toFixed(1) + ' %  ·  loss ' + m.loss.toFixed(3);
+        trainRaf = requestAnimationFrame(frame);
+      } else {
+        writeW(Wf); updateAllLabels(); draw2D(); computeHidden(); drawPointCloud(); drawPlane();
+        done(); updateStatus();
+      }
+    } catch (err) { // Guard 2: Fehler hinterlässt keinen hängenden Zustand
+      console.error('[egg] Training abgebrochen:', err);
+      done(); refreshAll();
     }
   };
-  frame();
+  trainRaf = requestAnimationFrame(frame);
 }
 function randomize() {
   if (training) return;
@@ -572,38 +591,57 @@ function setOptimal() {
 /* ------------------ Falt-Animation ------------------ */
 let animating = false;
 function animateFold() {
-  if (animating || training || !points.length) return;
+  // Guard 1: rAF-Id als Quelle der Wahrheit – hängende Flags zurücksetzen statt Early-Return
+  if (!points.length) return;
+  if (anyAnim()) return;
+  animating = false; training = false;
+  $('btnFold').disabled = false; $('btnTrain').disabled = false;
+
   animating = true; autoFit = true;
   $('btnFold').disabled = true;
-  const Wopt = knownOptimal(); Wopt[12] = bestB2for(Wopt);
-  writeW(Wopt);
+  // Optimaler Falz; Bias startet bei [1,1,1] (flacher Slice) -> [0,0,0] (voll gefaltet)
+  set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
   set('relu', true); set('n1', true); set('n2', true); set('n3', true);
-  set('re1', true); set('re2', true); set('re3', true);
-  updateAllLabels(); draw2D();
-  const P = getParams(); const m = points.length;
-  const Hf = new Float32Array(m * 3); // gefaltete Hidden-Werte (Ziel)
-  for (let i = 0; i < m; i++) { const [x, y] = points[i]; for (let k = 0; k < 3; k++) { let v = P.A1[k][0]*x + P.A1[k][1]*y + P.B1[k]; if (P.relu) v = Math.max(0, v); Hf[i*3+k] = v; } }
-  const Ht = new Float32Array(m * 3);
-  let t = 0;
-  const step = () => {
-    t += 0.015; const raw = Math.min(1, t); const f = (1 - Math.cos(Math.PI * raw)) / 2;
-    let cx = 0, cy = 0, cz = 0;
-    for (let i = 0; i < m; i++) {
-      const [x, y] = points[i];
-      for (let k = 0; k < 3; k++) {
-        const flat = k === 0 ? x : (k === 1 ? y : 0); // Start: flacher Slice in der Eingabenebene
-        const v = flat + (Hf[i*3+k] - flat) * f;
-        Ht[i*3+k] = v;
-        if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
-      }
+  set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
+  set('rb', bestB2for(knownOptimal()));
+
+  const HOLD = 0.45;
+  // Guard 3: Geometrie/2D vom EXPLIZITEN b treiben, nicht vom Slider-Roundtrip
+  const setFrame = (b) => {
+    set('b1', b); set('b2', b); set('b3', b);
+    for (const id of ['b1', 'b2', 'b3']) { // Diagnose: großer Widerspruch = echter Slider-Fehler
+      const e = $(id);
+      if (e && Math.abs(+e.value - b) > 0.05) console.error('[egg] Slider', id, 'akzeptiert', b, 'nicht →', e.value);
     }
-    cent = [cx/m, cy/m, cz/m];
-    drawPointCloud(Ht);
-    drawPlane();
-    if (raw < 1) requestAnimationFrame(step);
-    else { animating = false; $('btnFold').disabled = false; computeHidden(); drawPointCloud(); drawPlane(); updateStatus(); }
+    updateAllLabels();
+    computeHidden([b, b, b]);
+    drawPointCloud(); drawPlane(); draw2D([b, b, b]);
   };
-  step();
+  const endFold = () => { cancelAnimationFrame(foldRaf); foldRaf = 0; animating = false; $('btnFold').disabled = false; refreshAll(); };
+
+  // Guard 2: flachen b=1-Frame SYNCHRON zeichnen, bevor rAF überhaupt startet
+  setFrame(1);
+  // Guard 5: Status zeigt den echten Bias-Wert → Start ist eindeutig b=1,1,1
+  statusEl.className = 'status good';
+  statusEl.textContent = '🎬 flacher Slice · b=1.00, 1.00, 1.00  (v' + APP_VERSION + ')';
+
+  let p = 0;
+  const step = () => {
+    try {
+      p += 0.010; const raw = Math.min(1, p);
+      let b;
+      if (raw < HOLD) b = 1; // flacher Slice sichtbar halten
+      else { const q = (raw - HOLD) / (1 - HOLD); const e = (1 - Math.cos(Math.PI * q)) / 2; b = 1 - e; }
+      setFrame(b);
+      if (raw >= HOLD) { statusEl.className = 'status bad'; statusEl.textContent = '🎬 faltend · b=' + b.toFixed(2); }
+      if (raw < 1) foldRaf = requestAnimationFrame(step);
+      else endFold();
+    } catch (err) { // Guard 2: Fehler hinterlässt keinen hängenden Zustand
+      console.error('[egg] Falt-Animation abgebrochen:', err);
+      endFold();
+    }
+  };
+  foldRaf = requestAnimationFrame(step);
 }
 
 /* ------------------ UI-Verkabelung ------------------ */
@@ -649,6 +687,7 @@ $('btnRand').addEventListener('click', randomize);
 $('btnFold').addEventListener('click', animateFold);
 
 /* ------------------ Start ------------------ */
+console.info('[egg] egg.html version ' + APP_VERSION); // Guard 4: zeigt im Console, welche Version läuft
 initThree();
 generateData();
 buildFormulaDOM();

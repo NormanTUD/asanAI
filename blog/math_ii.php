@@ -831,15 +831,23 @@ function initTcalcBroadcast() {
 	const g = (id) => document.getElementById(id);
 	const clamp = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
 	const label = (d) => (d.length ? '(' + d.join(', ') + ')' : '()');
-	const BDIMS = { '3': [3], '1x3': [1, 3], '3x1': [3, 1], 'sc': [], '4': [4] };
-	const BDEF = { '3': [10, 20, 30], '1x3': [10, 20, 30], '3x1': [10, 20, 30], 'sc': [5], '4': [1, 2, 3, 4] };
+	const SDIMS = { 'sc': [], '3': [3], '1x3': [1, 3], '3x1': [3, 1], '3x3': [3, 3], '2x3': [2, 3], '4': [4] };
+	const SDEF = { 'sc': [5], '3': [10, 20, 30], '1x3': [10, 20, 30], '3x1': [10, 20, 30], '3x3': [1, 2, 3, 4, 5, 6, 7, 8, 9], '2x3': [1, 2, 3, 4, 5, 6], '4': [1, 2, 3, 4] };
+	const PRESETS = {
+		bias: { a: '3x3', b: '3', op: '+' },
+		rows: { a: '3x3', b: '3x1', op: '*' },
+		shift: { a: '3x3', b: 'sc', op: '+' },
+		batch: { a: '2x3', b: '3', op: '+' },
+		clash: { a: '3x3', b: '4', op: '*' }
+	};
 
-	const A = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-	let Bshape = '3', B = BDEF['3'].slice(), op = '+';
+	let Ashape = '3x3', Bshape = '3', op = '+';
+	let A = SDEF[Ashape].slice(), B = SDEF[Bshape].slice();
 
 	const Agrid = g('tcalc-bcast-a'), Bgrid = g('tcalc-bcast-b'), Rgrid = g('tcalc-bcast-res');
 	const Shapes = g('tcalc-bcast-shapes'), Status = g('tcalc-bcast-status');
-	const Sym = g('tcalc-bcast-sym'), Bcap = g('tcalc-bcast-bcap'), sel = g('tcalc-bcast-bshape'), opWrap = g('tcalc-bcast-op');
+	const Sym = g('tcalc-bcast-sym'), Acap = g('tcalc-bcast-acap'), Bcap = g('tcalc-bcast-bcap');
+	const asel = g('tcalc-bcast-ashape'), bsel = g('tcalc-bcast-bshape'), opWrap = g('tcalc-bcast-op'), presetWrap = g('tcalc-bcast-presets');
 
 	function bshape(a, b) {
 		const n = Math.max(a.length, b.length);
@@ -862,16 +870,22 @@ function initTcalcBroadcast() {
 		}
 		return res;
 	}
+	function gridFor(grid, arr, onEdit) {
+		const dims = grid === Agrid ? SDIMS[Ashape] : SDIMS[Bshape];
+		grid.style.gridTemplateColumns = 'repeat(' + (dims.length ? dims[dims.length - 1] : 1) + ',auto)'; grid.innerHTML = '';
+		arr.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { onEdit(i, inp.value); }); grid.appendChild(inp); });
+	}
 	function buildA() {
-		Agrid.style.gridTemplateColumns = 'repeat(3,auto)'; Agrid.innerHTML = '';
-		A.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { A[i] = clamp(inp.value); refresh(); }); Agrid.appendChild(inp); });
+		const dims = SDIMS[Ashape], n = dims.reduce((p, q) => p * q, 1) || 1;
+		if (A.length !== n) A = SDEF[Ashape].slice();
+		if (Acap) Acap.textContent = 'A ' + label(dims);
+		gridFor(Agrid, A, (i, v) => { A[i] = clamp(v); refresh(); });
 	}
 	function buildB() {
-		const dims = BDIMS[Bshape], n = dims.reduce((p, q) => p * q, 1) || 1;
-		if (B.length !== n) B = BDEF[Bshape].slice();
+		const dims = SDIMS[Bshape], n = dims.reduce((p, q) => p * q, 1) || 1;
+		if (B.length !== n) B = SDEF[Bshape].slice();
 		Bcap.textContent = 'B ' + label(dims);
-		Bgrid.style.gridTemplateColumns = 'repeat(' + (dims.length ? dims[dims.length - 1] : 1) + ',auto)'; Bgrid.innerHTML = '';
-		B.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { B[i] = clamp(inp.value); refresh(); }); Bgrid.appendChild(inp); });
+		gridFor(Bgrid, B, (i, v) => { B[i] = clamp(v); refresh(); });
 	}
 	function dimRow(parent, lbl, dims, opts) {
 		const row = document.createElement('div'); row.className = 'tcalc-shape-row';
@@ -879,29 +893,45 @@ function initTcalcBroadcast() {
 		const boxes = [];
 		dims.forEach((d, i) => {
 			const box = document.createElement('span'); box.className = 'tcalc-dim';
+			const a = opts.a[i], b = opts.b[i];
 			if (d === null) { box.style.opacity = '.25'; box.textContent = ''; }
 			else {
 				box.textContent = d;
-				if (opts.kind === 'b' && d === 1 && opts.a[i] && opts.a[i] !== 1) box.classList.add('stretch');
-				else if (opts.kind === 'o' && ((opts.a[i] === 1 && opts.b[i] !== 1) || (opts.b[i] === 1 && opts.a[i] !== 1))) box.classList.add('stretch');
+				const conflict = a != null && b != null && a !== b && a !== 1 && b !== 1;
+				if (conflict) box.classList.add('bad');
+				else if (d === 1 && (a || b) && Math.max(a || 1, b || 1) !== 1) box.classList.add('stretch');
 			}
 			boxes.push(box); row.appendChild(box);
 		});
 		parent.appendChild(row); return boxes;
 	}
+	function markPreset(name) {
+		if (!presetWrap) return;
+		presetWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.preset === name));
+	}
+	function applyPreset(name) {
+		const p = PRESETS[name]; if (!p) return;
+		Ashape = p.a; Bshape = p.b; op = p.op;
+		A = SDEF[Ashape].slice(); B = SDEF[Bshape].slice();
+		if (asel) asel.value = Ashape;
+		if (bsel) bsel.value = Bshape;
+		opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.op === op));
+		buildA(); buildB(); refresh();
+		markPreset(name);
+	}
 	function refresh() {
 		Sym.textContent = op === '+' ? '+' : (op === '-' ? '−' : '×');
-		const aD = [3, 3], bD = BDIMS[Bshape], out = bshape(aD, bD);
+		const aD = SDIMS[Ashape], bD = SDIMS[Bshape], out = bshape(aD, bD);
 		const n = Math.max(aD.length, bD.length, out ? out.length : 0);
 		const pA = [...Array(n - aD.length).fill(null), ...aD], pB = [...Array(n - bD.length).fill(null), ...bD];
 		const pO = out ? [...Array(n - out.length).fill(null), ...out] : [];
 		Shapes.innerHTML = '';
-		const bA = dimRow(Shapes, 'A', pA, { kind: 'a', a: pA, b: pB });
-		const bB = dimRow(Shapes, 'B', pB, { kind: 'b', a: pA, b: pB });
+		dimRow(Shapes, 'A', pA, { kind: 'a', a: pA, b: pB });
+		dimRow(Shapes, 'B', pB, { kind: 'b', a: pA, b: pB });
 		if (!out) {
-			if (bA[n - 1]) bA[n - 1].classList.add('bad');
-			if (bB[n - 1]) bB[n - 1].classList.add('bad');
-			Status.className = 'tcalc-status err'; Status.textContent = 'Not broadcastable: trailing axes 3 and 4 (neither equal nor 1).';
+			Status.className = 'tcalc-status err';
+			const fail = (function () { for (let i = n - 1; i >= 0; i--) { const a = pA[i], b = pB[i]; if (a != null && b != null && a !== b && a !== 1 && b !== 1) return [a, b]; } return [pA[n - 1], pB[n - 1]]; })();
+			Status.textContent = 'Not broadcastable: axes ' + fail[0] + ' and ' + fail[1] + ' (neither equal nor 1).';
 			Rgrid.style.gridTemplateColumns = 'repeat(3,auto)'; Rgrid.innerHTML = ''; return;
 		}
 		dimRow(Shapes, '=', pO, { kind: 'o', a: pA, b: pB });
@@ -912,9 +942,12 @@ function initTcalcBroadcast() {
 		res.forEach((v) => { const d = document.createElement('div'); d.className = 'tcalc-cell result'; d.textContent = v; Rgrid.appendChild(d); });
 	}
 
-	opWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => { op = btn.dataset.op; opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn)); refresh(); }));
-	sel.addEventListener('change', () => { Bshape = sel.value; buildB(); refresh(); });
+	opWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => { op = btn.dataset.op; opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn)); markPreset(''); refresh(); }));
+	if (asel) asel.addEventListener('change', () => { Ashape = asel.value; A = SDEF[Ashape].slice(); markPreset(''); buildA(); refresh(); });
+	if (bsel) bsel.addEventListener('change', () => { Bshape = bsel.value; B = SDEF[Bshape].slice(); markPreset(''); buildB(); refresh(); });
+	if (presetWrap) presetWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => applyPreset(btn.dataset.preset)));
 	buildA(); buildB(); refresh();
+	markPreset('bias');
 }
 
 function initTcalcContraction() {
@@ -930,18 +963,31 @@ function initTcalcContraction() {
 		grid.style.gridTemplateColumns = 'repeat(2,auto)'; grid.innerHTML = '';
 		arr.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { arr[i] = clamp(inp.value); refresh(); }); grid.appendChild(inp); });
 	}
+	function chip(cls, html) { const s = document.createElement('span'); s.className = cls; s.innerHTML = html; return s; }
+	function op(txt) { const s = document.createElement('span'); s.className = 'tcalc-plus'; s.textContent = txt; return s; }
 	function refresh() {
 		const M = [0, 0, 0, 0];
 		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) M[i * 2 + k] = C[i * 2] * D[k] + C[i * 2 + 1] * D[2 + k];
 		Mg.style.gridTemplateColumns = 'repeat(2,auto)'; Mg.innerHTML = '';
 		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) {
 			const d = document.createElement('div'); d.className = 'tcalc-cell result click' + (i === sel.r && k === sel.c ? ' sel' : ''); d.textContent = M[i * 2 + k];
-			d.addEventListener('click', () => { sel = { r: i, c: k }; refresh(); }); Mg.appendChild(d);
+			d.addEventListener('click', () => { sel = { r: i, c: k }; refresh(); const c = Mg.children[i * 2 + k]; if (c) { c.classList.add('tcalc-pulse'); setTimeout(() => c.classList.remove('tcalc-pulse'), 750); } });
+			Mg.appendChild(d);
 		}
 		for (let i = 0; i < 2; i++) for (let c = 0; c < 2; c++) { Cg.children[i * 2 + c].classList.toggle('hl', i === sel.r); Dg.children[i * 2 + c].classList.toggle('hl', c === sel.c); }
 		const i = sel.r, k = sel.c;
-		Det.innerHTML = '$$ M_{' + (i + 1) + ',' + (k + 1) + '} = C_{' + (i + 1) + ',1}D_{1,' + (k + 1) + '} + C_{' + (i + 1) + ',2}D_{2,' + (k + 1) + '} = ' + C[i * 2] + '\\cdot ' + D[k] + ' + ' + C[i * 2 + 1] + '\\cdot ' + D[2 + k] + ' = ' + M[i * 2 + k] + ' $$';
-		if (typeof render_temml === 'function') render_temml();
+		const t1 = C[i * 2] * D[k], t2 = C[i * 2 + 1] * D[2 + k];
+		Det.innerHTML = '';
+		const row = document.createElement('div'); row.className = 'tcalc-contr-terms';
+		row.appendChild(chip('tcalc-chip', 'C<sub>' + (i + 1) + ',1</sub>&middot;D<sub>1,' + (k + 1) + '</sub> = ' + C[i * 2] + '&times;' + D[k] + ' = ' + t1));
+		row.appendChild(op('+'));
+		row.appendChild(chip('tcalc-chip', 'C<sub>' + (i + 1) + ',2</sub>&middot;D<sub>2,' + (k + 1) + '</sub> = ' + C[i * 2 + 1] + '&times;' + D[2 + k] + ' = ' + t2));
+		row.appendChild(op('='));
+		row.appendChild(chip('tcalc-chip result', 'M<sub>' + (i + 1) + ',' + (k + 1) + '</sub> = ' + (t1 + t2)));
+		Det.appendChild(row);
+		const cap = document.createElement('div'); cap.className = 'tcalc-contr-cap';
+		cap.textContent = 'One row of C dotted with one column of D — multiply along the shared index and add. That single step is the whole matrix product.';
+		Det.appendChild(cap);
 	}
 	build(Cg, C); build(Dg, D); refresh();
 }
@@ -1267,11 +1313,20 @@ With other methods of making numbers from data (like Embeddings to create number
 .tcalc-op button + button{border-left:1px solid var(--mn-border,#ddd);}
 .tcalc-op button.active{background:var(--mn-accent,#2b6cb0);color:#fff;}
 .tcalc-detail{margin-top:14px;text-align:center;font-size:.95rem;min-height:1.4em;}
-.tcalc-history{background:var(--mn-bg-subtle,#f7f7f5);border:1px solid var(--mn-border,#e6e6e6);border-left:4px solid var(--mn-accent,#2b6cb0);border-radius:var(--mn-radius-md,10px);padding:6px 20px;margin:18px 0;}
-.tcalc-history .md{margin:8px 0;}
-.tcalc-history h4{margin:10px 0 6px;font-size:1rem;}
-.tcalc-history p{margin:8px 0;font-size:.92rem;line-height:1.55;}
-@media (max-width:560px){.tcalc-cell{min-width:34px;padding:4px;}.tcalc-cell.input{width:44px;}.tcalc-sym{font-size:1.25rem;}}
+.tcalc-presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0;padding-top:12px;border-top:1px solid var(--mn-border-light,#eee);}
+.tcalc-preset{font:inherit;font-size:.82rem;line-height:1;padding:6px 11px;border-radius:99px;border:1px solid var(--mn-border,#ddd);background:var(--mn-bg,#fff);color:var(--mn-text-secondary,#555);cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+.tcalc-preset:hover{border-color:var(--mn-accent,#2b6cb0);color:var(--mn-accent,#2b6cb0);}
+.tcalc-preset.active{background:var(--mn-accent,#2b6cb0);border-color:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-contr-axis{margin-top:12px;text-align:center;font-size:.85rem;color:var(--mn-text-secondary,#666);font-family:var(--mn-font-mono,monospace);}
+.tcalc-contr-terms{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;}
+.tcalc-chip{display:inline-flex;align-items:center;gap:1px;padding:6px 10px;border-radius:8px;border:1px solid var(--mn-border,#e0e0e0);background:var(--mn-bg-subtle,#fafafa);font-family:var(--mn-font-mono,monospace);font-size:.88rem;color:var(--mn-text,#111);}
+.tcalc-chip sub{font-size:.7em;}
+.tcalc-chip.result{background:var(--mn-accent-lighter,#eaf1fb);border-color:var(--mn-accent-light,#cdddf5);font-weight:700;}
+.tcalc-plus{font-size:1.05rem;font-weight:700;color:var(--mn-accent,#2b6cb0);padding:0 1px;}
+.tcalc-contr-cap{margin-top:10px;font-size:.85rem;color:var(--mn-text-secondary,#666);text-align:center;}
+@keyframes tcalcPulse{0%{box-shadow:0 0 0 0 rgba(43,108,176,.5);}100%{box-shadow:0 0 0 8px rgba(43,108,176,0);}}
+.tcalc-pulse{animation:tcalcPulse .7s ease-out;}
+@media (max-width:560px){.tcalc-cell{min-width:34px;padding:4px;}.tcalc-cell.input{width:44px;}.tcalc-sym{font-size:1.25rem;}.tcalc-chip{padding:5px 7px;font-size:.8rem;}}
 </style>
 
 <div class="md" data-mathlevel="40">
@@ -1288,10 +1343,10 @@ Try both below.
 
 <div class="tcalc-card" id="tcalc-bcast">
   <div class="tcalc-card-title">Broadcasting, hands-on</div>
-  <p class="tcalc-hint">A fixed $3\times3$ tensor $A$ meets a second tensor $B$ of any shape. Right-align the shapes; an axis of $1$ stretches. Pick $B$'s shape and operator — and try the one shape that fails, $B$ of length $4$.</p>
+  <p class="tcalc-hint">Two tensors combine one entry at a time, but they need not share a shape: right-align the shapes, an axis of $1$ stretches, and a missing leading axis counts as $1$. Tap a scenario, or set both shapes yourself — and find the one that fails.</p>
   <div class="tcalc-bcast-row">
     <div class="tcalc-gridwrap">
-      <div class="tcalc-cap">A (3, 3)</div>
+      <div class="tcalc-cap" id="tcalc-bcast-acap">A (3, 3)</div>
       <div class="tcalc-grid" id="tcalc-bcast-a"></div>
     </div>
     <div class="tcalc-sym" id="tcalc-bcast-sym">+</div>
@@ -1309,14 +1364,34 @@ Try both below.
     <div class="tcalc-shapes" id="tcalc-bcast-shapes"></div>
     <div class="tcalc-status ok" id="tcalc-bcast-status"></div>
   </div>
+  <div class="tcalc-presets" id="tcalc-bcast-presets">
+    <span class="tcalc-ctl-lbl">try:</span>
+    <button type="button" class="tcalc-preset" data-preset="bias">bias per column</button>
+    <button type="button" class="tcalc-preset" data-preset="rows">scale each row</button>
+    <button type="button" class="tcalc-preset" data-preset="shift">shift every cell</button>
+    <button type="button" class="tcalc-preset" data-preset="batch">batch of 2</button>
+    <button type="button" class="tcalc-preset" data-preset="clash">shape clash</button>
+  </div>
   <div class="tcalc-controls">
+    <span class="tcalc-ctl-lbl">shape of A</span>
+    <select id="tcalc-bcast-ashape">
+      <option value="sc">scalar ()</option>
+      <option value="3">row (3)</option>
+      <option value="1x3">row (1, 3)</option>
+      <option value="3x1">col (3, 1)</option>
+      <option value="3x3" selected>matrix (3, 3)</option>
+      <option value="2x3">matrix (2, 3)</option>
+      <option value="4">row (4)</option>
+    </select>
     <span class="tcalc-ctl-lbl">shape of B</span>
     <select id="tcalc-bcast-bshape">
-      <option value="3" selected>row — (3)</option>
-      <option value="1x3">row vector — (1, 3)</option>
-      <option value="3x1">column vector — (3, 1)</option>
-      <option value="sc">scalar — ()</option>
-      <option value="4">row — (4)</option>
+      <option value="sc">scalar ()</option>
+      <option value="3" selected>row (3)</option>
+      <option value="1x3">row (1, 3)</option>
+      <option value="3x1">col (3, 1)</option>
+      <option value="3x3">matrix (3, 3)</option>
+      <option value="2x3">matrix (2, 3)</option>
+      <option value="4">row (4)</option>
     </select>
     <span class="tcalc-ctl-lbl">operator</span>
     <div class="tcalc-op" id="tcalc-bcast-op">
@@ -1329,7 +1404,7 @@ Try both below.
 
 <div class="tcalc-card" id="tcalc-contraction">
   <div class="tcalc-card-title">Contraction — the matrix product</div>
-  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them. The matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product light up the matching row of $C$ and column of $D$.</p>
+  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$.</p>
   <div class="tcalc-contr-row">
     <div class="tcalc-gridwrap">
       <div class="tcalc-cap">C (2, 2)</div>
@@ -1346,18 +1421,19 @@ Try both below.
       <div class="tcalc-grid" id="tcalc-contr-m"></div>
     </div>
   </div>
+  <div class="tcalc-contr-axis">contract the shared axis: (2, 2) &middot; (2, 2) &rarr; (2, 2)</div>
   <div class="tcalc-detail" id="tcalc-contr-detail"></div>
 </div>
 
-<div class="tcalc-history">
-<div class="md">
-#### Where the words come from
-All four words are old, and each arrived differently:
+<div class="md" data-mathlevel="40" data-optionaltitle="Where the words come from">
+### Where the words come from
+All four words are old, and each still carries its original meaning:
 
-- **Matrix** — long used for a womb or mold, Sylvester made *matrix* a math word in 1850 for "an oblong arrangement of terms … a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix}; Cayley gave matrices their own arithmetic two years later \cite[Cayley, 1858]{cayleymemoirmatrices}.
-- **Tensor, vector, scalar** — Hamilton's 1846 quaternion vocabulary: a quaternion is a *scalar* plus a *vector*, and its length is the *tensor* \cite[Tensor, History]{tensor_wiki}, a term he defines in "On some Extensions of Quaternions" \cite[Hamilton, 1854]{hamiltonextensionsquaternions}. The modern physical *tensor* is Voigt's 1898 coinage \cite[Voigt, 1898]{voigt1898krystalle}; the calculus that makes them work is Ricci-Curbastro's and Levi-Civita's, 1900 \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}.
+- **Matrix** — from Latin *matrix*, "womb or mold" (from *māter*, "mother"). Sylvester coined the math word in 1850 for "an oblong arrangement of terms … a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix} — a mold that *births* determinants. Cayley developed the arithmetic of matrices in 1858 \cite[Cayley, 1858]{cayleymemoirmatrices}.
+- **Vector** — from Latin *vĕctōr*, "carrier" (from *vĕhĕre*, "to carry"): it carries a direction and a magnitude.
+- **Scalar** — from Latin *scāla*, "ladder" (a single step): one lone number that *scales* a vector. Hamilton set the two apart in his 1846 quaternions — a quaternion is a *scalar* plus a *vector*, and its length is the *tensor* \cite[Tensor, History]{tensor_wiki}, defined in "On some Extensions of Quaternions" \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
+- **Tensor** — from Latin *tendere*, "to stretch." Voigt named the modern physical "Tensoren" in 1898 \cite[Voigt, 1898]{voigt1898krystalle}; the calculus that makes them work is Ricci-Curbastro's and Levi-Civita's, 1900 \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}.
 - **Summation convention** — a repeated index is summed over, silently. Einstein wrote it down in 1916 \cite[Einstein, 1916]{einstein1916annalen}; it is why the matrix product writes out $\sum_{j}$ and then hides the $j$.
-</div>
 </div>
 
 <script>
