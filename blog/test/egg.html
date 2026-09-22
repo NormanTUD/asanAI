@@ -180,6 +180,7 @@ function cellInput(param) {
   c.addEventListener('input', () => {
     const v = parseFloat(c.value);
     if (isNaN(v)) return;
+    if (['r1', 'r2', 'r3', 'rb'].includes(param)) autoFit = false;
     set(param, v);
     if (!training && !animating) refreshAll();
   });
