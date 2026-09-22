@@ -1,0 +1,6916 @@
+[
+ {
+  "id": "person-heron-of-alexandria",
+  "name": "Heron of Alexandria",
+  "type": "person",
+  "loc": "Alexandria, Egypt",
+  "lat": 31.2,
+  "lng": 29.92,
+  "years": "c. 10-70",
+  "active": [
+   10,
+   70
+  ],
+  "blurb": "Greek engineer whose automata and steam aeolipile mechanized task sequences.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-wheeler",
+  "name": "David Wheeler",
+  "type": "person",
+  "loc": "United Kingdom",
+  "lat": 54.0,
+  "lng": -2.0,
+  "years": "1923-2004",
+  "active": [
+   1951,
+   1980
+  ],
+  "blurb": "British computer scientist credited with the 'extra level of indirection' maxim.",
+  "cited_in": [
+   "history",
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ramon-llull",
+  "name": "Ramon Llull",
+  "type": "person",
+  "loc": "Mallorca, Spain",
+  "lat": 39.57,
+  "lng": 2.65,
+  "years": "c. 1232-1316",
+  "active": [
+   1276,
+   1316
+  ],
+  "blurb": "Majorcan mystic whose combinatorial wheels first attempted to mechanize thought.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-gottfried-wilhelm-leibniz",
+  "name": "Gottfried Wilhelm Leibniz",
+  "type": "person",
+  "loc": "Hanover, Germany",
+  "lat": 52.37,
+  "lng": 9.73,
+  "years": "1646-1716",
+  "active": [
+   1672,
+   1716
+  ],
+  "blurb": "Formalized binary notation and dreamed of a universal calculus of reasoning.",
+  "cited_in": [
+   "history",
+   "math-i",
+   "intro"
+  ],
+  "bibkeys": [
+   "leibniz1686calculus"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-charles-babbage",
+  "name": "Charles Babbage",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1791-1871",
+  "active": [
+   1822,
+   1871
+  ],
+  "blurb": "Pioneered the Analytical Engine, a general-purpose programmable computing design.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ada-lovelace",
+  "name": "Ada Lovelace",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1815-1852",
+  "active": [
+   1833,
+   1852
+  ],
+  "blurb": "Wrote the first complex algorithm intended for a machine (Bernoulli numbers).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-boole",
+  "name": "George Boole",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1815-1864",
+  "active": [
+   1847,
+   1864
+  ],
+  "blurb": "Reduced Aristotelian logic to algebra, the origin of boolean true/false.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [
+   "bool1854"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-konrad-zuse",
+  "name": "Konrad Zuse",
+  "type": "person",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "1910-1995",
+  "active": [
+   1936,
+   1995
+  ],
+  "blurb": "Built the first binary programmable computers (Z1-Z3) in his parents' home.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-santiago-ramon-y-cajal",
+  "name": "Santiago Ramón y Cajal",
+  "type": "person",
+  "loc": "Madrid, Spain",
+  "lat": 40.42,
+  "lng": -3.7,
+  "years": "1852-1934",
+  "active": [
+   1872,
+   1934
+  ],
+  "blurb": "Established the Neuron Doctrine, the blueprint for the artificial neuron.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-camillo-golgi",
+  "name": "Camillo Golgi",
+  "type": "person",
+  "loc": "Milan, Italy",
+  "lat": 45.46,
+  "lng": 9.19,
+  "years": "1843-1926",
+  "active": [
+   1870,
+   1926
+  ],
+  "blurb": "Invented the silver stain Cajal used; shared the 1906 Nobel Prize.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-zeno-of-elea",
+  "name": "Zeno of Elea",
+  "type": "person",
+  "loc": "Elea, Italy",
+  "lat": 40.02,
+  "lng": 14.78,
+  "years": "c. 490-430 BC",
+  "active": [
+   -490,
+   -430
+  ],
+  "blurb": "First 'logician', known for reductio paradoxes.",
+  "cited_in": [
+   "history",
+   "math-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-socrates",
+  "name": "Socrates",
+  "type": "person",
+  "loc": "Athens, Greece",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "c. 470-399 BC",
+  "active": [
+   -470,
+   -399
+  ],
+  "blurb": "Dialectic method that fed the pre-Aristotelian logic tradition.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-plato",
+  "name": "Plato",
+  "type": "person",
+  "loc": "Athens, Greece",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "c. 428-348 BC",
+  "active": [
+   -428,
+   -348
+  ],
+  "blurb": "Categorized ideas; part of the logic tradition leading to Aristotle.",
+  "cited_in": [
+   "history",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-aristotle",
+  "name": "Aristotle",
+  "type": "person",
+  "loc": "Athens, Greece",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "384-322 BC",
+  "active": [
+   -384,
+   -322
+  ],
+  "blurb": "Father of formal logic; syllogisms seeded mechanical reasoning.",
+  "cited_in": [
+   "history",
+   "language",
+   "geometry-i"
+  ],
+  "bibkeys": [
+   "aristotle_categories"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-panini",
+  "name": "Pāṇini",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "c. 4th century BC",
+  "active": [
+   -350,
+   -300
+  ],
+  "blurb": "Built the first fully generative formal system (Ashtadhyayi) for Sanskrit.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [
+   "panini_ashtadhyayi"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-pingala",
+  "name": "Pingala",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "c. 3rd-1st century BC",
+  "active": [
+   -200,
+   -100
+  ],
+  "blurb": "Indian prosodist whose metre-counting anticipates binary and the binomial theorem.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-simon-stevin",
+  "name": "Simon Stevin",
+  "type": "person",
+  "loc": "Bruges, Belgium",
+  "lat": 51.21,
+  "lng": 3.22,
+  "years": "1548-1620",
+  "active": [
+   1581,
+   1620
+  ],
+  "blurb": "Introduced decimal fractions (De Thiende, 1585).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-brahmagupta",
+  "name": "Brahmagupta",
+  "type": "person",
+  "loc": "Ujjain, India",
+  "lat": 25.2,
+  "lng": 75.78,
+  "years": "598-668",
+  "active": [
+   620,
+   668
+  ],
+  "blurb": "First to treat zero as a digit and a number with arithmetic rules.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [
+   "brahmagupta628"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-alkindi",
+  "name": "al-Kindi",
+  "type": "person",
+  "loc": "Baghdad, Iraq",
+  "lat": 33.31,
+  "lng": 44.36,
+  "years": "c. 801-873",
+  "active": [
+   830,
+   873
+  ],
+  "blurb": "Invented frequency analysis, a ninth-century statistical model of language.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "alkindi_cryptanalysis"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-gottlob-frege",
+  "name": "Gottlob Frege",
+  "type": "person",
+  "loc": "Jena, Germany",
+  "lat": 50.93,
+  "lng": 11.59,
+  "years": "1848-1925",
+  "active": [
+   1879,
+   1925
+  ],
+  "blurb": "Founded analytic philosophy and modern symbolic logic.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "uebersinnundbedeutung"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-leonardo-torres-quevedo",
+  "name": "Leonardo Torres Quevedo",
+  "type": "person",
+  "loc": "Madrid, Spain",
+  "lat": 40.42,
+  "lng": -3.7,
+  "years": "1852-1936",
+  "active": [
+   1875,
+   1936
+  ],
+  "blurb": "Built El Ajedrecista, the first working AI (1914 chess endgame player).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "torres1914"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-louis-lapicque",
+  "name": "Louis Lapicque",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1866-1952",
+  "active": [
+   1900,
+   1952
+  ],
+  "blurb": "Introduced the integrate-and-fire neuron model (1907).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "lapicque1907"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-wilhelm-lenz",
+  "name": "Wilhelm Lenz",
+  "type": "person",
+  "loc": "Germany",
+  "lat": 51.17,
+  "lng": 10.45,
+  "years": "1888-1957",
+  "active": [
+   1910,
+   1957
+  ],
+  "blurb": "Co-created the Lenz-Ising recurrent lattice model.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ernst-ising",
+  "name": "Ernst Ising",
+  "type": "person",
+  "loc": "Germany",
+  "lat": 51.17,
+  "lng": 10.45,
+  "years": "1900-1998",
+  "active": [
+   1920,
+   1998
+  ],
+  "blurb": "Lenz's student; the Ising model is the first recurrent network architecture.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "ising1925"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-shunichi-amari",
+  "name": "Shunichi Amari",
+  "type": "person",
+  "loc": "Tokyo, Japan",
+  "lat": 35.68,
+  "lng": 139.69,
+  "years": "b. 1943",
+  "active": [
+   1967,
+   2020
+  ],
+  "blurb": "Made the Ising recurrent architecture adaptive; adaptive pattern classification.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "amari1972",
+   "adaptivepattern"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-warren-mcculloch",
+  "name": "Warren McCulloch",
+  "type": "person",
+  "loc": "Chicago, USA",
+  "lat": 41.88,
+  "lng": -87.63,
+  "years": "1898-1969",
+  "active": [
+   1930,
+   1969
+  ],
+  "blurb": "Co-authored the first logical neuron (McCulloch-Pitts, 1943).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "mccullochpitts1943"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-walter-pitts",
+  "name": "Walter Pitts",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.99,
+  "years": "1923-1969",
+  "active": [
+   1940,
+   1969
+  ],
+  "blurb": "Co-authored the McCulloch-Pitts logical neuron.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "mccullochpitts1943"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-norbert-wiener",
+  "name": "Norbert Wiener",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "1894-1964",
+  "active": [
+   1930,
+   1964
+  ],
+  "blurb": "Coined and defined cybernetics.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "wiener1948cybernetics"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-von-neumann",
+  "name": "John von Neumann",
+  "type": "person",
+  "loc": "Princeton, NJ, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "1903-1957",
+  "active": [
+   1925,
+   1957
+  ],
+  "blurb": "Proposed the stored-program (von Neumann) architecture.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-alan-turing",
+  "name": "Alan Turing",
+  "type": "person",
+  "loc": "Manchester, England",
+  "lat": 53.48,
+  "lng": -2.24,
+  "years": "1912-1954",
+  "active": [
+   1936,
+   1954
+  ],
+  "blurb": "Formalized computation (Turing Machine) and proposed the Imitation Game.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "turing1937",
+   "turing1950computing"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-howard-aiken",
+  "name": "Howard Aiken",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "1900-1973",
+  "active": [
+   1937,
+   1973
+  ],
+  "blurb": "Designed the Harvard Mark I, the first large-scale automatic digital computer.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-marcus-minsky",
+  "name": "Marvin Minsky",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "1927-2016",
+  "active": [
+   1949,
+   2016
+  ],
+  "blurb": "Co-built SNARC; co-authored the Perceptrons critique.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "minsky1954",
+   "minskyperceptrons"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-dean-edmonds",
+  "name": "Dean Edmonds",
+  "type": "person",
+  "loc": "Ithaca, NY, USA",
+  "lat": 42.44,
+  "lng": -76.5,
+  "years": "b. c. 1925",
+  "active": [
+   1951,
+   1970
+  ],
+  "blurb": "Co-built the SNARC neural network with Minsky.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "inferred"
+ },
+ {
+  "id": "person-w-ross-ashby",
+  "name": "W. Ross Ashby",
+  "type": "person",
+  "loc": "United Kingdom",
+  "lat": 54.0,
+  "lng": -2.0,
+  "years": "1903-1972",
+  "active": [
+   1930,
+   1972
+  ],
+  "blurb": "Built the Homeostat; Law of Requisite Variety.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "ashbyintrocybernetics1956"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-roger-conant",
+  "name": "Roger Conant",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "1911-1994",
+  "active": [
+   1940,
+   1994
+  ],
+  "blurb": "Co-authored the Good Regulator Theorem with Ashby.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "conantashby1970"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-gregory-bateson",
+  "name": "Gregory Bateson",
+  "type": "person",
+  "loc": "Los Angeles, USA",
+  "lat": 34.05,
+  "lng": -118.24,
+  "years": "1904-1980",
+  "active": [
+   1930,
+   1980
+  ],
+  "blurb": "'The difference which makes a difference'; second-order cybernetics.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "batesonesteps1972"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-claude-shannon",
+  "name": "Claude Shannon",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "1916-2001",
+  "active": [
+   1937,
+   2001
+  ],
+  "blurb": "Father of information theory and of digital switching logic (1937).",
+  "cited_in": [
+   "history",
+   "language",
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "shannon1948communication",
+   "shannon1937switching"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-mccarthy",
+  "name": "John McCarthy",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "1927-2011",
+  "active": [
+   1950,
+   2011
+  ],
+  "blurb": "Coined 'Artificial Intelligence' and created LISP.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-nathaniel-rochester",
+  "name": "Nathaniel Rochester",
+  "type": "person",
+  "loc": "Yorktown Heights, NY, USA",
+  "lat": 41.34,
+  "lng": -73.88,
+  "years": "1916-2001",
+  "active": [
+   1940,
+   2001
+  ],
+  "blurb": "Co-organizer of the 1956 Dartmouth workshop.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-allen-newell",
+  "name": "Allen Newell",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.99,
+  "years": "1927-1992",
+  "active": [
+   1950,
+   1992
+  ],
+  "blurb": "Co-created the Logic Theorist and the General Problem Solver.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "newell1956logictheorist",
+   "newell1957gps"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-cliff-shaw",
+  "name": "John Cliff Shaw",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.99,
+  "years": "1927-2014",
+  "active": [
+   1950,
+   2014
+  ],
+  "blurb": "Co-created the Logic Theorist with Newell and Simon.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-herbert-a-simon",
+  "name": "Herbert A. Simon",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.99,
+  "years": "1916-2001",
+  "active": [
+   1940,
+   2001
+  ],
+  "blurb": "Co-created the Logic Theorist and GPS.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "newell1956logictheorist"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-arthur-samuel",
+  "name": "Arthur Samuel",
+  "type": "person",
+  "loc": "Yorktown Heights, NY, USA",
+  "lat": 41.34,
+  "lng": -73.88,
+  "years": "1901-2001",
+  "active": [
+   1940,
+   2001
+  ],
+  "blurb": "Developed the self-improving checker program (reinforcement learning).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "samuel1959checkers"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-william-chamberlain",
+  "name": "William Chamberlain",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "b. c. 1945",
+  "active": [
+   1970,
+   2010
+  ],
+  "blurb": "Co-created Racter, generator of the first computer-written book.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "inferred"
+ },
+ {
+  "id": "person-thomas-etter",
+  "name": "Thomas Etter",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "",
+  "active": [
+   1970,
+   2010
+  ],
+  "blurb": "Co-created Racter.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "inferred"
+ },
+ {
+  "id": "person-christopher-strachey",
+  "name": "Christopher Strachey",
+  "type": "person",
+  "loc": "Oxford, England",
+  "lat": 51.75,
+  "lng": -1.26,
+  "years": "1916-1975",
+  "active": [
+   1940,
+   1975
+  ],
+  "blurb": "Produced the earliest computer-generated literary text (Lovers, 1952).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "strachey1952"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-theo-lutz",
+  "name": "Theo Lutz",
+  "type": "person",
+  "loc": "Stuttgart, Germany",
+  "lat": 48.78,
+  "lng": 9.18,
+  "years": "1932-2010",
+  "active": [
+   1950,
+   2010
+  ],
+  "blurb": "Pioneer of digital / stochastic poetry.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "lutz1959"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-max-bense",
+  "name": "Max Bense",
+  "type": "person",
+  "loc": "Stuttgart, Germany",
+  "lat": 48.78,
+  "lng": 9.18,
+  "years": "1910-1995",
+  "active": [
+   1940,
+   1995
+  ],
+  "blurb": "Philosopher-cyberneticist and Lutz's teacher.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-seppo-linnainmaa",
+  "name": "Seppo Linnainmaa",
+  "type": "person",
+  "loc": "Helsinki, Finland",
+  "lat": 60.17,
+  "lng": 24.94,
+  "years": "b. 1938",
+  "active": [
+   1970,
+   2010
+  ],
+  "blurb": "Invented reverse-mode automatic differentiation (1970).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "linnainmaa1970"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-alexey-ivakhnenko",
+  "name": "Alexey Ivakhnenko",
+  "type": "person",
+  "loc": "Dnipropetrovsk, Ukraine",
+  "lat": 48.46,
+  "lng": 35.04,
+  "years": "1928-1979",
+  "active": [
+   1950,
+   1979
+  ],
+  "blurb": "Published the first deep multi-layer learning algorithms (GMDH).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "ivakhnenko1965"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-kaiming-he",
+  "name": "Kaiming He",
+  "type": "person",
+  "loc": "Beijing, China",
+  "lat": 39.9,
+  "lng": 116.4,
+  "years": "b. 1984",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "Developed ResNet (2015).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-richard-socher",
+  "name": "Richard Socher",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "b. 1985",
+  "active": [
+   2005,
+   2026
+  ],
+  "blurb": "Developed recursive neural networks for language structure.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-rajat-raina",
+  "name": "Rajat Raina",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "b. 1983",
+  "active": [
+   2005,
+   2020
+  ],
+  "blurb": "Demonstrated GPU deep learning (2009).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "raina2009large"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrew-ng",
+  "name": "Andrew Ng",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "b. 1976",
+  "active": [
+   2000,
+   2026
+  ],
+  "blurb": "Co-authored the GPU deep-learning paper; co-founded Coursera.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-dan-ciresan",
+  "name": "Dan Cireșan",
+  "type": "person",
+  "loc": "Lugano, Switzerland",
+  "lat": 46.0,
+  "lng": 8.95,
+  "years": "b. 1985",
+  "active": [
+   2005,
+   2020
+  ],
+  "blurb": "First pure-GPU CNN (DanNet) to win pattern-recognition contests.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "ciresan2011flexible"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-juergen-schmidhuber",
+  "name": "Jürgen Schmidhuber",
+  "type": "person",
+  "loc": "Lugano, Switzerland",
+  "lat": 46.0,
+  "lng": 8.95,
+  "years": "b. 1963",
+  "active": [
+   1987,
+   2026
+  ],
+  "blurb": "Co-invented LSTM and neural language models; documents deep-learning prior art.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "lstm"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-sepp-hochreiter",
+  "name": "Sepp Hochreiter",
+  "type": "person",
+  "loc": "Graz, Austria",
+  "lat": 47.07,
+  "lng": 15.44,
+  "years": "b. 1966",
+  "active": [
+   1991,
+   2026
+  ],
+  "blurb": "Identified the vanishing-gradient problem (1991); co-developed LSTM.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "hochreiter1991vanishing",
+   "lstm"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-yann-lecun",
+  "name": "Yann LeCun",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "b. 1960",
+  "active": [
+   1985,
+   2026
+  ],
+  "blurb": "Developed LeNet / CNNs; deep-learning Turing Award winner.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "lecun1989backpropagation",
+   "lecun1998gradientbased"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-kunihiko-fukushima",
+  "name": "Kunihiko Fukushima",
+  "type": "person",
+  "loc": "Tokyo, Japan",
+  "lat": 35.68,
+  "lng": 139.69,
+  "years": "b. 1939",
+  "active": [
+   1969,
+   2020
+  ],
+  "blurb": "Invented the Neocognitron (1975) and ReLUs.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "neocognitron",
+   "fukushima1969relu"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-hubel",
+  "name": "David Hubel",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1926-2013",
+  "active": [
+   1950,
+   2013
+  ],
+  "blurb": "Mapped the visual cortex; inspiration for CNNs.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-torsten-wiesel",
+  "name": "Torsten Wiesel",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "b. 1929",
+  "active": [
+   1950,
+   2026
+  ],
+  "blurb": "Co-mapped the visual cortex (with Hubel).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-alex-waibel",
+  "name": "Alex Waibel",
+  "type": "person",
+  "loc": "Osaka, Japan",
+  "lat": 34.69,
+  "lng": 135.5,
+  "years": "b. 1955",
+  "active": [
+   1980,
+   2026
+  ],
+  "blurb": "Trained the first convolutional NNs for speech (TDNN, 1987).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "waibel1987tdnn"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-wei-zhang",
+  "name": "Wei Zhang",
+  "type": "person",
+  "loc": "Osaka, Japan",
+  "lat": 34.69,
+  "lng": 135.5,
+  "years": "",
+  "active": [
+   1988,
+   2010
+  ],
+  "blurb": "Built the first backprop-trained 2D CNN (1988), before LeCun.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "zhang1988cnn"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-yoshua-bengio",
+  "name": "Yoshua Bengio",
+  "type": "person",
+  "loc": "Montreal, Canada",
+  "lat": 45.5,
+  "lng": -73.57,
+  "years": "b. 1964",
+  "active": [
+   1995,
+   2026
+  ],
+  "blurb": "Revived neural language modeling with word embeddings (2003).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "neuralprobabilistic"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-tomas-mikolov",
+  "name": "Tomáš Mikolov",
+  "type": "person",
+  "loc": "Prague, Czech Republic",
+  "lat": 50.08,
+  "lng": 14.42,
+  "years": "b. 1979",
+  "active": [
+   2005,
+   2026
+  ],
+  "blurb": "word2vec embeddings (2013).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "mikolov2013word2vec"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-dzmitry-bahdanau",
+  "name": "Dzmitry Bahdanau",
+  "type": "person",
+  "loc": "Toronto, Canada",
+  "lat": 43.65,
+  "lng": -79.38,
+  "years": "b. 1985",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "Introduced the attention mechanism (2014).",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [
+   "bahdanau2014"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-geoffrey-hinton",
+  "name": "Geoffrey Hinton",
+  "type": "person",
+  "loc": "Toronto, Canada",
+  "lat": 43.65,
+  "lng": -79.38,
+  "years": "b. 1947",
+  "active": [
+   1970,
+   2026
+  ],
+  "blurb": "Popularized backprop; deep-learning revival; 2024 Nobel laureate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "rumelhart1986"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-alex-krizhevsky",
+  "name": "Alex Krizhevsky",
+  "type": "person",
+  "loc": "Toronto, Canada",
+  "lat": 43.65,
+  "lng": -79.38,
+  "years": "b. 1983",
+  "active": [
+   2005,
+   2020
+  ],
+  "blurb": "Led AlexNet (2012).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "krizhevsky2012imagenet"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-garry-kasparov",
+  "name": "Garry Kasparov",
+  "type": "person",
+  "loc": "Baku, Azerbaijan",
+  "lat": 40.41,
+  "lng": 49.87,
+  "years": "b. 1963",
+  "active": [
+   1980,
+   2026
+  ],
+  "blurb": "World chess champion defeated by Deep Blue (1997).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-frederick-jelinek",
+  "name": "Frederick Jelinek",
+  "type": "person",
+  "loc": "Yorktown Heights, NY, USA",
+  "lat": 41.34,
+  "lng": -73.88,
+  "years": "1926-2021",
+  "active": [
+   1950,
+   2021
+  ],
+  "blurb": "Champion of statistical language modeling at IBM.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-richard-s-sutton",
+  "name": "Richard S. Sutton",
+  "type": "person",
+  "loc": "Edmonton, Canada",
+  "lat": 53.55,
+  "lng": -113.49,
+  "years": "b. 1954",
+  "active": [
+   1975,
+   2026
+  ],
+  "blurb": "Wrote The Bitter Lesson; father of reinforcement learning.",
+  "cited_in": [
+   "history",
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "sutton2019bitter"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrej-karpathy",
+  "name": "Andrej Karpathy",
+  "type": "person",
+  "loc": "San Francisco, CA, USA",
+  "lat": 37.77,
+  "lng": -122.42,
+  "years": "b. 1986",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "OpenAI co-founder, ex-Tesla AI; wrote 'A Recipe for Training Neural Nets'.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "karpathy2019recipe"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-searle",
+  "name": "John Searle",
+  "type": "person",
+  "loc": "Berkeley, CA, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "b. 1932",
+  "active": [
+   1960,
+   2026
+  ],
+  "blurb": "Chinese Room argument (1980).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "searle1980minds"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-hubert-dreyfus",
+  "name": "Hubert Dreyfus",
+  "type": "person",
+  "loc": "Berkeley, CA, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "1929-2017",
+  "active": [
+   1960,
+   2017
+  ],
+  "blurb": "Heideggerian philosopher who critiqued symbolic AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "dreyfus1972what"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-patrick-hayes",
+  "name": "Patrick Hayes",
+  "type": "person",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "b. 1951",
+  "active": [
+   1975,
+   2026
+  ],
+  "blurb": "Knowledge-representation researcher (neats vs scruffies).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-gordon-moore",
+  "name": "Gordon Moore",
+  "type": "person",
+  "loc": "Santa Clara, CA, USA",
+  "lat": 37.35,
+  "lng": -121.96,
+  "years": "b. 1929",
+  "active": [
+   1958,
+   2026
+  ],
+  "blurb": "Formulated Moore's Law.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ed-roberts",
+  "name": "Ed Roberts",
+  "type": "person",
+  "loc": "Albuquerque, NM, USA",
+  "lat": 35.08,
+  "lng": -106.65,
+  "years": "1941-2010",
+  "active": [
+   1969,
+   2010
+  ],
+  "blurb": "Built the Altair 8800, the first successful personal computer.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "edroberts"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-bill-gates",
+  "name": "Bill Gates",
+  "type": "person",
+  "loc": "Albuquerque, NM, USA",
+  "lat": 35.08,
+  "lng": -106.65,
+  "years": "b. 1955",
+  "active": [
+   1975,
+   2026
+  ],
+  "blurb": "Co-founded Microsoft with the Altair BASIC.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-paul-allen",
+  "name": "Paul Allen",
+  "type": "person",
+  "loc": "Albuquerque, NM, USA",
+  "lat": 35.08,
+  "lng": -106.65,
+  "years": "1953-2018",
+  "active": [
+   1975,
+   2018
+  ],
+  "blurb": "Co-founded Microsoft.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-chuck-peddle",
+  "name": "Chuck Peddle",
+  "type": "person",
+  "loc": "Scottsdale, AZ, USA",
+  "lat": 33.49,
+  "lng": -111.93,
+  "years": "b. 1938",
+  "active": [
+   1965,
+   2019
+  ],
+  "blurb": "Designed the MOS 6502 microprocessor and the Commodore PET.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-andre-truong-trong-thi",
+  "name": "André Truong Trong Thi",
+  "type": "person",
+  "loc": "France",
+  "lat": 46.6,
+  "lng": 2.0,
+  "years": "",
+  "active": [
+   1972,
+   2010
+  ],
+  "blurb": "Co-created the Micral N microcomputer (1972).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-dan-bricklin",
+  "name": "Dan Bricklin",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "b. 1946",
+  "active": [
+   1975,
+   2026
+  ],
+  "blurb": "Created VisiCalc, the first 'killer app'.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "visicalc"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-algirdas-avizienis",
+  "name": "Algirdas Avizienis",
+  "type": "person",
+  "loc": "Pasadena, CA, USA",
+  "lat": 34.21,
+  "lng": -118.16,
+  "years": "1922-2017",
+  "active": [
+   1950,
+   2017
+  ],
+  "blurb": "Invented selective redundancy (STAR) at JPL.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-donald-michie",
+  "name": "Donald Michie",
+  "type": "person",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "1931-2007",
+  "active": [
+   1950,
+   2007
+  ],
+  "blurb": "Defended AI in the 1973 Lighthill debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-richard-gregory",
+  "name": "Richard Gregory",
+  "type": "person",
+  "loc": "Bristol, England",
+  "lat": 51.45,
+  "lng": -2.59,
+  "years": "1937-2020",
+  "active": [
+   1960,
+   2020
+  ],
+  "blurb": "Psychologist in the 1973 Lighthill debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-seymour-papert",
+  "name": "Seymour Papert",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "1928-2016",
+  "active": [
+   1955,
+   2016
+  ],
+  "blurb": "Co-authored Perceptrons with Minsky.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "minskyperceptrons"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-rumelhart",
+  "name": "David Rumelhart",
+  "type": "person",
+  "loc": "San Diego, CA, USA",
+  "lat": 32.72,
+  "lng": -117.16,
+  "years": "1942-2011",
+  "active": [
+   1970,
+   2011
+  ],
+  "blurb": "Popularized backpropagation (1986).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "rumelhart1986"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-mcclelland",
+  "name": "James McClelland",
+  "type": "person",
+  "loc": "San Diego, CA, USA",
+  "lat": 32.72,
+  "lng": -117.16,
+  "years": "b. 1954",
+  "active": [
+   1980,
+   2026
+  ],
+  "blurb": "PDP group; parallel distributed processing.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ashish-vaswani",
+  "name": "Ashish Vaswani",
+  "type": "person",
+  "loc": "Mountain View, CA, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "b. 1984",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "Co-authored the Transformer (2017).",
+  "cited_in": [
+   "intuition",
+   "language",
+   "history"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-wendell-kelley",
+  "name": "Wendell Kelley",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "b. c. 1925",
+  "active": [
+   1955,
+   2010
+  ],
+  "blurb": "Proposed the direct / steepest-descent method for optimal flight paths.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "inferred"
+ },
+ {
+  "id": "person-arthur-bryson",
+  "name": "Arthur E. Bryson",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "1922-2014",
+  "active": [
+   1945,
+   2014
+  ],
+  "blurb": "Control theory and dynamic programming.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-lewis-fry-richardson",
+  "name": "Lewis Fry Richardson",
+  "type": "person",
+  "loc": "Oxford, England",
+  "lat": 51.75,
+  "lng": -1.26,
+  "years": "1881-1953",
+  "active": [
+   1910,
+   1953
+  ],
+  "blurb": "Pioneered numerical weather prediction (the 'Weather Factory').",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-piazzi",
+  "name": "Giuseppe Piazzi",
+  "type": "person",
+  "loc": "Palermo, Italy",
+  "lat": 38.12,
+  "lng": 13.36,
+  "years": "1777-1866",
+  "active": [
+   1801,
+   1866
+  ],
+  "blurb": "Discovered Ceres (1801), which Gauss tracked by least squares.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "ceresdiscovery"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-gerolamo-cardano",
+  "name": "Gerolamo Cardano",
+  "type": "person",
+  "loc": "Bologna, Italy",
+  "lat": 44.49,
+  "lng": 11.34,
+  "years": "1501-1576",
+  "active": [
+   1530,
+   1576
+  ],
+  "blurb": "First systematic treatment of dice probabilities.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "liberludo"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-chevalier-de-mere",
+  "name": "Chevalier de Méré",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1602-1685",
+  "active": [
+   1640,
+   1685
+  ],
+  "blurb": "Posed the 'problem of points' to Pascal.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-blaise-pascal",
+  "name": "Blaise Pascal",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1623-1662",
+  "active": [
+   1640,
+   1662
+  ],
+  "blurb": "Co-founded probability theory (correspondence with Fermat).",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "arsconjectandi"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-pierre-de-fermat",
+  "name": "Pierre de Fermat",
+  "type": "person",
+  "loc": "Toulouse, France",
+  "lat": 43.6,
+  "lng": 1.44,
+  "years": "1607-1665",
+  "active": [
+   1630,
+   1665
+  ],
+  "blurb": "Co-founded probability theory.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-abraham-de-moivre",
+  "name": "Abraham de Moivre",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1667-1754",
+  "active": [
+   1693,
+   1754
+  ],
+  "blurb": "First proved the Central Limit Theorem for sums of trials.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-pierre-simon-laplace",
+  "name": "Pierre-Simon Laplace",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1749-1827",
+  "active": [
+   1770,
+   1827
+  ],
+  "blurb": "Generalized the CLT; praised logarithms for astronomers.",
+  "cited_in": [
+   "math-i",
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "laplace1821",
+   "laplace1810clt"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-adrien-marie-legendre",
+  "name": "Adrien-Marie Legendre",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1752-1833",
+  "active": [
+   1782,
+   1833
+  ],
+  "blurb": "Published the least-squares method (1805).",
+  "cited_in": [
+   "statistics-i",
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "legendre1805",
+   "legendre1786"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-carl-friedrich-gauss",
+  "name": "Carl Friedrich Gauss",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1777-1855",
+  "active": [
+   1795,
+   1855
+  ],
+  "blurb": "Least squares, the normal distribution, and finding Ceres.",
+  "cited_in": [
+   "math-iv",
+   "geometry-ii",
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "gauss1809"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-emil-gumbel",
+  "name": "Emil Gumbel",
+  "type": "person",
+  "loc": "Bonn, Germany",
+  "lat": 50.73,
+  "lng": 7.1,
+  "years": "1890-1966",
+  "active": [
+   1920,
+   1966
+  ],
+  "blurb": "Developed the extreme-value (Gumbel) distribution.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-simeon-denis-poisson",
+  "name": "Siméon Denis Poisson",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1781-1840",
+  "active": [
+   1800,
+   1840
+  ],
+  "blurb": "Derived the Poisson (rare-events) distribution.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "poisson"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ladislaus-bortkiewicz",
+  "name": "Ladislaus Bortkiewicz",
+  "type": "person",
+  "loc": "Kaliningrad, Russia",
+  "lat": 54.71,
+  "lng": 20.51,
+  "years": "1868-1931",
+  "active": [
+   1890,
+   1931
+  ],
+  "blurb": "'Law of small numbers' from horse-kick data.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "gesetzderkleinenzahlen"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-francis-galton",
+  "name": "Francis Galton",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1822-1911",
+  "active": [
+   1860,
+   1911
+  ],
+  "blurb": "Father-son height data used by Pearson.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "galton"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-karl-pearson",
+  "name": "Karl Pearson",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1857-1936",
+  "active": [
+   1880,
+   1936
+  ],
+  "blurb": "Defined the correlation coefficient; father of modern statistics.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "pearson1895correlation"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-thomas-bayes",
+  "name": "Thomas Bayes",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "c. 1701-1761",
+  "active": [
+   1730,
+   1761
+  ],
+  "blurb": "Founded Bayesian inference (1763 essay).",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "bayes1763essay"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-peter-gustav-lejeune-dirichlet",
+  "name": "Peter Gustav Lejeune Dirichlet",
+  "type": "person",
+  "loc": "Breslau, Germany",
+  "lat": 51.1,
+  "lng": 17.03,
+  "years": "1805-1859",
+  "active": [
+   1827,
+   1859
+  ],
+  "blurb": "The Dirichlet distribution bears his name.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-polya",
+  "name": "George Pólya",
+  "type": "person",
+  "loc": "Budapest, Hungary",
+  "lat": 47.5,
+  "lng": 19.04,
+  "years": "1887-1985",
+  "active": [
+   1910,
+   1985
+  ],
+  "blurb": "The Pólya urn model.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-arthur-dempster",
+  "name": "Arthur Dempster",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "1907-1967",
+  "active": [
+   1940,
+   1967
+  ],
+  "blurb": "Co-authored the EM algorithm.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-naim-laird",
+  "name": "Naim Laird",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "b. 1934",
+  "active": [
+   1960,
+   2026
+  ],
+  "blurb": "Co-authored the EM algorithm.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-donald-rubin",
+  "name": "Donald Rubin",
+  "type": "person",
+  "loc": "Princeton, NJ, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "b. 1953",
+  "active": [
+   1977,
+   2026
+  ],
+  "blurb": "Co-authored the EM algorithm.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrey-markov",
+  "name": "Andrey Markov",
+  "type": "person",
+  "loc": "Kazan, Russia",
+  "lat": 55.79,
+  "lng": 49.12,
+  "years": "1856-1922",
+  "active": [
+   1884,
+   1922
+  ],
+  "blurb": "Markov chains (1906).",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-clerk-maxwell",
+  "name": "James Clerk Maxwell",
+  "type": "person",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "1831-1879",
+  "active": [
+   1856,
+   1879
+  ],
+  "blurb": "First derived the Maxwell-Boltzmann velocity distribution.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ludwig-boltzmann",
+  "name": "Ludwig Boltzmann",
+  "type": "person",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1844-1906",
+  "active": [
+   1867,
+   1906
+  ],
+  "blurb": "Statistical mechanics; the Boltzmann distribution.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "boltzmann"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ronald-fisher",
+  "name": "Ronald Fisher",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1890-1962",
+  "active": [
+   1915,
+   1962
+  ],
+  "blurb": "Popularized maximum-likelihood estimation.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "fisher1922"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrey-kolmogorov",
+  "name": "Andrey Kolmogorov",
+  "type": "person",
+  "loc": "Moscow, Russia",
+  "lat": 55.75,
+  "lng": 37.62,
+  "years": "1903-1987",
+  "active": [
+   1925,
+   1987
+  ],
+  "blurb": "Axiomatized probability (1933); Kolmogorov complexity.",
+  "cited_in": [
+   "intuition",
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "kolmogorov1933"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ray-solomonoff",
+  "name": "Ray Solomonoff",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "1934-1996",
+  "active": [
+   1956,
+   1996
+  ],
+  "blurb": "Theory of inductive inference / algorithmic information.",
+  "cited_in": [
+   "intuition"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-solomon-kullback",
+  "name": "Solomon Kullback",
+  "type": "person",
+  "loc": "Arlington, VA, USA",
+  "lat": 38.89,
+  "lng": -77.08,
+  "years": "1905-1993",
+  "active": [
+   1940,
+   1993
+  ],
+  "blurb": "NSA cryptanalyst; developed KL divergence.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "leiblerkullback"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-robert-leibler",
+  "name": "Robert Leibler",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "1922-1999",
+  "active": [
+   1950,
+   1999
+  ],
+  "blurb": "Co-developed KL divergence.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "leiblerkullback"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-chris-olah",
+  "name": "Chris Olah",
+  "type": "person",
+  "loc": "San Francisco, CA, USA",
+  "lat": 37.77,
+  "lng": -122.42,
+  "years": "b. 1992",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "Visual explanation of information theory / KL divergence.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "colah2015visualinfo"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-zellig-harris",
+  "name": "John Zellig Harris",
+  "type": "person",
+  "loc": "Philadelphia, USA",
+  "lat": 39.95,
+  "lng": -75.16,
+  "years": "1909-1991",
+  "active": [
+   1930,
+   1991
+  ],
+  "blurb": "Popularized the distributional hypothesis.",
+  "cited_in": [
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "zelligharris"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-kingsley-zipf",
+  "name": "George Kingsley Zipf",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "1902-1950",
+  "active": [
+   1930,
+   1950
+  ],
+  "blurb": "Zipf's law of word frequency.",
+  "cited_in": [
+   "statistics-i",
+   "language",
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "zipf1949human"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-friedrich-nietzsche",
+  "name": "Friedrich Nietzsche",
+  "type": "person",
+  "loc": "Naumburg, Germany",
+  "lat": 51.21,
+  "lng": 12.01,
+  "years": "1844-1900",
+  "active": [
+   1870,
+   1900
+  ],
+  "blurb": "Zarathustra corpus used in the statistics labs; early arbitrariness of the sign.",
+  "cited_in": [
+   "statistics-i",
+   "statistics-ii",
+   "language"
+  ],
+  "bibkeys": [
+   "nietzsche1883zarathustra"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-joy-buolamwini",
+  "name": "Joy Buolamwini",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "b. 1984",
+  "active": [
+   2010,
+   2026
+  ],
+  "blurb": "Documented facial-recognition bias.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "buolamwini2018gender"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-vladimir-vapnik",
+  "name": "Vladimir Vapnik",
+  "type": "person",
+  "loc": "Murray Hill, NJ, USA",
+  "lat": 40.84,
+  "lng": -74.42,
+  "years": "b. 1936",
+  "active": [
+   1960,
+   2026
+  ],
+  "blurb": "Statistical learning theory.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [
+   "vapnik"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-leonhard-euler",
+  "name": "Leonhard Euler",
+  "type": "person",
+  "loc": "Basel, Switzerland",
+  "lat": 47.56,
+  "lng": 7.59,
+  "years": "1707-1783",
+  "active": [
+   1727,
+   1783
+  ],
+  "blurb": "Introduced the summation symbol; e bears his name; bridges of Königsberg.",
+  "cited_in": [
+   "math-i",
+   "math-iv",
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "euler1755",
+   "euler1748introductio",
+   "eulerbridges",
+   "eulersolids"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-karl-wilhelm-kramp",
+  "name": "Karl Wilhelm Kramp",
+  "type": "person",
+  "loc": "Germany",
+  "lat": 51.17,
+  "lng": 10.45,
+  "years": "1763-1846",
+  "active": [
+   1780,
+   1846
+  ],
+  "blurb": "Introduced the factorial notation n! (1808).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [
+   "kramp1808"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-johannes-kepler",
+  "name": "Johannes Kepler",
+  "type": "person",
+  "loc": "Linz, Austria",
+  "lat": 48.31,
+  "lng": 14.29,
+  "years": "1571-1630",
+  "active": [
+   1591,
+   1630
+  ],
+  "blurb": "Laws of planetary motion; motivated log tables.",
+  "cited_in": [
+   "math-i",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-napier",
+  "name": "John Napier",
+  "type": "person",
+  "loc": "Jedburgh, Scotland",
+  "lat": 55.55,
+  "lng": -2.49,
+  "years": "1550-1617",
+  "active": [
+   1580,
+   1617
+  ],
+  "blurb": "Invented logarithms (1614).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [
+   "napier1614"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-gerardus-mercator",
+  "name": "Gerardus Mercator",
+  "type": "person",
+  "loc": "Ostend, Belgium",
+  "lat": 51.22,
+  "lng": 2.93,
+  "years": "1512-1594",
+  "active": [
+   1538,
+   1594
+  ],
+  "blurb": "The Mercator series for the natural logarithm (1668).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-wallis",
+  "name": "John Wallis",
+  "type": "person",
+  "loc": "Oxford, England",
+  "lat": 51.75,
+  "lng": -1.26,
+  "years": "1616-1703",
+  "active": [
+   1640,
+   1703
+  ],
+  "blurb": "Used the infinity symbol (1655).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-isaac-newton",
+  "name": "Isaac Newton",
+  "type": "person",
+  "loc": "Cambridge, England",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "1643-1727",
+  "active": [
+   1665,
+   1727
+  ],
+  "blurb": "Calculus and the general power-series method.",
+  "cited_in": [
+   "math-i",
+   "math-iii",
+   "geometry-i"
+  ],
+  "bibkeys": [
+   "newtonquadratura"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-gregory",
+  "name": "James Gregory",
+  "type": "person",
+  "loc": "Aberdeen, Scotland",
+  "lat": 57.15,
+  "lng": -2.09,
+  "years": "1638-1675",
+  "active": [
+   1660,
+   1675
+  ],
+  "blurb": "Discovered the general Maclaurin series before publication.",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [
+   "gregoryachievements"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-brook-taylor",
+  "name": "Brook Taylor",
+  "type": "person",
+  "loc": "Cambridge, England",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "1685-1731",
+  "active": [
+   1700,
+   1731
+  ],
+  "blurb": "Published the first general Taylor-series method (1715).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [
+   "taylor1715"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-colin-maclaurin",
+  "name": "Colin Maclaurin",
+  "type": "person",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "1698-1746",
+  "active": [
+   1714,
+   1746
+  ],
+  "blurb": "The Maclaurin series (1742).",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-madhava-of-sangamagrama",
+  "name": "Madhava of Sangamagrama",
+  "type": "person",
+  "loc": "Kerala, India",
+  "lat": 10.0,
+  "lng": 76.0,
+  "years": "c. 1350-1425",
+  "active": [
+   1370,
+   1425
+  ],
+  "blurb": "Earliest known Taylor series for sine, cosine, arctan.",
+  "cited_in": [
+   "math-i",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-rene-descartes",
+  "name": "René Descartes",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1596-1650",
+  "active": [
+   1620,
+   1650
+  ],
+  "blurb": "Cartesian coordinates and the variable x (La Géométrie, 1637).",
+  "cited_in": [
+   "math-i",
+   "math-iv"
+  ],
+  "bibkeys": [
+   "lageometrie"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-haskell-curry",
+  "name": "Haskell Curry",
+  "type": "person",
+  "loc": "Madison, WI, USA",
+  "lat": 43.07,
+  "lng": -89.4,
+  "years": "1900-1982",
+  "active": [
+   1930,
+   1982
+  ],
+  "blurb": "Lambda calculus is named in his honor.",
+  "cited_in": [
+   "math-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-cybenko",
+  "name": "George Cybenko",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "",
+  "active": [
+   1989,
+   2026
+  ],
+  "blurb": "Universal Approximation Theorem (1989).",
+  "cited_in": [
+   "math-iii"
+  ],
+  "bibkeys": [],
+  "conf": "inferred"
+ },
+ {
+  "id": "person-bonaventura-cavalieri",
+  "name": "Bonaventura Cavalieri",
+  "type": "person",
+  "loc": "Bologna, Italy",
+  "lat": 44.49,
+  "lng": 11.34,
+  "years": "1598-1647",
+  "active": [
+   1620,
+   1647
+  ],
+  "blurb": "Method of indivisibles (integration precursor).",
+  "cited_in": [
+   "math-iii",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-archimedes",
+  "name": "Archimedes",
+  "type": "person",
+  "loc": "Syracuse, Italy",
+  "lat": 37.07,
+  "lng": 15.29,
+  "years": "c. 287-212 BC",
+  "active": [
+   -287,
+   -212
+  ],
+  "blurb": "Method of exhaustion; early integration and quadrature.",
+  "cited_in": [
+   "math-i",
+   "math-iii",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-hermann-grassmann",
+  "name": "Hermann Grassmann",
+  "type": "person",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "1809-1877",
+  "active": [
+   1830,
+   1877
+  ],
+  "blurb": "Ausdehnungslehre: vector and multilinear-algebra foundations.",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-august-mobius",
+  "name": "August Ferdinand Möbius",
+  "type": "person",
+  "loc": "Halle, Germany",
+  "lat": 51.49,
+  "lng": 11.97,
+  "years": "1790-1868",
+  "active": [
+   1810,
+   1868
+  ],
+  "blurb": "Barycentric coordinates.",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-bernhard-riemann",
+  "name": "Bernhard Riemann",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1826-1866",
+  "active": [
+   1850,
+   1866
+  ],
+  "blurb": "1854 habilitation; manifolds and curvature.",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [
+   "riemann1854raum"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-felix-klein",
+  "name": "Felix Klein",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1849-1925",
+  "active": [
+   1872,
+   1925
+  ],
+  "blurb": "Erlangen program; survey of geometry.",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-gerard-desargues",
+  "name": "Gérard Desargues",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "c. 1591-1661",
+  "active": [
+   1620,
+   1661
+  ],
+  "blurb": "Projective geometry (Brouillon, 1639).",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-jean-victor-poncelet",
+  "name": "Jean-Victor Poncelet",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1781-1840",
+  "active": [
+   1810,
+   1840
+  ],
+  "blurb": "Founding treatise of projective geometry (1822).",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-heinz-hopf",
+  "name": "Heinz Hopf",
+  "type": "person",
+  "loc": "Basel, Switzerland",
+  "lat": 47.56,
+  "lng": 7.59,
+  "years": "1894-1971",
+  "active": [
+   1920,
+   1971
+  ],
+  "blurb": "Studied the Hopf two-ring link (1931).",
+  "cited_in": [
+   "math-iv",
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "hopf1931fibration"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-l-e-j-brouwer",
+  "name": "L. E. J. Brouwer",
+  "type": "person",
+  "loc": "Amsterdam, Netherlands",
+  "lat": 52.37,
+  "lng": 4.9,
+  "years": "1881-1966",
+  "active": [
+   1908,
+   1966
+  ],
+  "blurb": "Invariance of domain; fixed-point theorem.",
+  "cited_in": [
+   "math-iv",
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-jakob-listing",
+  "name": "Jakob Listing",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1808-1882",
+  "active": [
+   1830,
+   1882
+  ],
+  "blurb": "Vorstudien zur Topologie (1847).",
+  "cited_in": [
+   "math-iv"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-henri-poincare",
+  "name": "Henri Poincaré",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1854-1912",
+  "active": [
+   1880,
+   1912
+  ],
+  "blurb": "Analysis Situs (1895); founded topology.",
+  "cited_in": [
+   "math-iv",
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "poincareanalysissitus"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-bernhard-scholkopf",
+  "name": "Bernhard Schölkopf",
+  "type": "person",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "b. 1968",
+  "active": [
+   1995,
+   2026
+  ],
+  "blurb": "Representer theorem / kernel methods.",
+  "cited_in": [
+   "geometry-ii"
+  ],
+  "bibkeys": [
+   "scholkopf2002learning"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-mercer",
+  "name": "James Mercer",
+  "type": "person",
+  "loc": "United Kingdom",
+  "lat": 54.0,
+  "lng": -2.0,
+  "years": "1848-1936",
+  "active": [
+   1870,
+   1936
+  ],
+  "blurb": "Mercer's theorem (1909).",
+  "cited_in": [
+   "math-ii",
+   "geometry-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-augustin-louis-cauchy",
+  "name": "Augustin-Louis Cauchy",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1789-1857",
+  "active": [
+   1810,
+   1857
+  ],
+  "blurb": "Gradient-descent method (1847).",
+  "cited_in": [
+   "geometry-ii"
+  ],
+  "bibkeys": [
+   "cauchy1847"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-carl-gustav-jacobi",
+  "name": "Carl Gustav Jacobi",
+  "type": "person",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "1804-1851",
+  "active": [
+   1825,
+   1851
+  ],
+  "blurb": "1842 work on least squares and determinants.",
+  "cited_in": [
+   "geometry-ii",
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "jacobi1842"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jean-baptiste-fourier",
+  "name": "Jean-Baptiste Joseph Fourier",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1768-1830",
+  "active": [
+   1795,
+   1830
+  ],
+  "blurb": "Fourier analysis (1822).",
+  "cited_in": [
+   "geometry-ii"
+  ],
+  "bibkeys": [
+   "fourier1822"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-cooley",
+  "name": "James Cooley",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1920-2017",
+  "active": [
+   1950,
+   2017
+  ],
+  "blurb": "Co-invented the fast Fourier transform (1965).",
+  "cited_in": [
+   "geometry-ii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-joost-joordens",
+  "name": "J. Peter Joordens",
+  "type": "person",
+  "loc": "Netherlands",
+  "lat": 52.13,
+  "lng": 5.29,
+  "years": "b. 1978",
+  "active": [
+   2005,
+   2026
+  ],
+  "blurb": "Blombos ochre-engraving study.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-hippocrates-of-chios",
+  "name": "Hippocrates of Chios",
+  "type": "person",
+  "loc": "Chios, Greece",
+  "lat": 38.42,
+  "lng": 26.14,
+  "years": "c. 470-410 BC",
+  "active": [
+   -470,
+   -410
+  ],
+  "blurb": "First known geometric quadratures.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-eudoxus-of-cnidus",
+  "name": "Eudoxus of Cnidus",
+  "type": "person",
+  "loc": "Kos, Greece",
+  "lat": 36.72,
+  "lng": 27.35,
+  "years": "c. 408-355 BC",
+  "active": [
+   -408,
+   -355
+  ],
+  "blurb": "Method of exhaustion and proportion theory.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-thales-of-miletus",
+  "name": "Thales of Miletus",
+  "type": "person",
+  "loc": "Miletus, Turkey",
+  "lat": 37.53,
+  "lng": 27.28,
+  "years": "c. 585-480 BC",
+  "active": [
+   -585,
+   -480
+  ],
+  "blurb": "Early Greek geometry.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-pythagoras",
+  "name": "Pythagoras",
+  "type": "person",
+  "loc": "Samos, Greece",
+  "lat": 37.75,
+  "lng": 26.96,
+  "years": "c. 570-495 BC",
+  "active": [
+   -570,
+   -495
+  ],
+  "blurb": "First school to study mathematics for its own sake.",
+  "cited_in": [
+   "geometry-i",
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-euclid",
+  "name": "Euclid",
+  "type": "person",
+  "loc": "Alexandria, Egypt",
+  "lat": 31.2,
+  "lng": 29.92,
+  "years": "c. 300 BC",
+  "active": [
+   -300,
+   -250
+  ],
+  "blurb": "Elements; axiomatic geometry.",
+  "cited_in": [
+   "geometry-i",
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-claudius-ptolemy",
+  "name": "Claudius Ptolemy",
+  "type": "person",
+  "loc": "Alexandria, Egypt",
+  "lat": 31.2,
+  "lng": 29.92,
+  "years": "c. 100-170",
+  "active": [
+   120,
+   170
+  ],
+  "blurb": "Almagest; geocentric astronomy.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-apollo-nius-of-perga",
+  "name": "Apollonius of Perga",
+  "type": "person",
+  "loc": "Pergamon, Turkey",
+  "lat": 39.13,
+  "lng": 29.25,
+  "years": "c. 262-190 BC",
+  "active": [
+   -262,
+   -190
+  ],
+  "blurb": "Conic sections.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-menelaus-of-alexandria",
+  "name": "Menelaus of Alexandria",
+  "type": "person",
+  "loc": "Alexandria, Egypt",
+  "lat": 31.2,
+  "lng": 29.92,
+  "years": "c. 70 BC",
+  "active": [
+   -70,
+   10
+  ],
+  "blurb": "Menelaus' theorem.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-al-khwarizmi",
+  "name": "al-Khwārizmī",
+  "type": "person",
+  "loc": "Baghdad, Iraq",
+  "lat": 33.31,
+  "lng": 44.36,
+  "years": "c. 780-850",
+  "active": [
+   809,
+   850
+  ],
+  "blurb": "Father of algebra.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ibn-al-haytham",
+  "name": "Ibn al-Haytham (Alhazen)",
+  "type": "person",
+  "loc": "Basra, Iraq",
+  "lat": 30.51,
+  "lng": 47.81,
+  "years": "c. 965-1040",
+  "active": [
+   990,
+   1040
+  ],
+  "blurb": "Book of Optics; experimental geometry.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-hipparchus",
+  "name": "Hipparchus of Nicaea",
+  "type": "person",
+  "loc": "Nicaea, Turkey",
+  "lat": 40.19,
+  "lng": 29.16,
+  "years": "c. 190-120 BC",
+  "active": [
+   -190,
+   -120
+  ],
+  "blurb": "First trigonometric tables.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-aryabhata",
+  "name": "Āryabhaṭa",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "476-550",
+  "active": [
+   499,
+   550
+  ],
+  "blurb": "Indian astronomy and sine tables.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-nasir-al-din-al-tusi",
+  "name": "Nasir al-Din al-Tusi",
+  "type": "person",
+  "loc": "Mashhad, Iran",
+  "lat": 36.26,
+  "lng": 59.61,
+  "years": "1201-1274",
+  "active": [
+   1230,
+   1274
+  ],
+  "blurb": "Tusi couple; trigonometry.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-bhaskara-i",
+  "name": "Bhāskara I",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "c. 600-680",
+  "active": [
+   620,
+   680
+  ],
+  "blurb": "Indian mathematician of the sine tables.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-baudhayana",
+  "name": "Baudhāyana",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "c. 8th century BC",
+  "active": [
+   -750,
+   -700
+  ],
+  "blurb": "Baudhāyana Sulba Sutra (early geometry).",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-enrico-betti",
+  "name": "Enrico Betti",
+  "type": "person",
+  "loc": "Florence, Italy",
+  "lat": 43.77,
+  "lng": 11.26,
+  "years": "1842-1892",
+  "active": [
+   1860,
+   1892
+  ],
+  "blurb": "Betti numbers.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-emmy-noether",
+  "name": "Emmy Noether",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1882-1935",
+  "active": [
+   1915,
+   1935
+  ],
+  "blurb": "Noether's theorem.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-karel-cech",
+  "name": "Karel Čech",
+  "type": "person",
+  "loc": "Prague, Czech Republic",
+  "lat": 50.08,
+  "lng": 14.42,
+  "years": "1893-1960",
+  "active": [
+   1920,
+   1960
+  ],
+  "blurb": "Čech homology / covers.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-james-alexander",
+  "name": "James Alexander",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1888-1971",
+  "active": [
+   1915,
+   1971
+  ],
+  "blurb": "Algebraic topology.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-marquis-de-condorcet",
+  "name": "Marquis de Condorcet",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1744-1794",
+  "active": [
+   1770,
+   1794
+  ],
+  "blurb": "Early topological ideas.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-grigori-perelman",
+  "name": "Grigori Perelman",
+  "type": "person",
+  "loc": "Saint Petersburg, Russia",
+  "lat": 59.93,
+  "lng": 30.37,
+  "years": "b. 1966",
+  "active": [
+   1995,
+   2026
+  ],
+  "blurb": "Proved the Poincaré conjecture (2003).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-giuseppe-peano",
+  "name": "Giuseppe Peano",
+  "type": "person",
+  "loc": "Turin, Italy",
+  "lat": 45.07,
+  "lng": 7.69,
+  "years": "1858-1932",
+  "active": [
+   1880,
+   1932
+  ],
+  "blurb": "Gave the topological glyphs in 1895.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-walther-mayer",
+  "name": "Walther Mayer",
+  "type": "person",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1894-1943",
+  "active": [
+   1915,
+   1943
+  ],
+  "blurb": "Homotopy theory.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-leopold-vietoris",
+  "name": "Leopold Vietoris",
+  "type": "person",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1891-1979",
+  "active": [
+   1915,
+   1979
+  ],
+  "blurb": "Vietoris-Rips complexes.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-albert-einstein",
+  "name": "Albert Einstein",
+  "type": "person",
+  "loc": "Princeton, NJ, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "1879-1955",
+  "active": [
+   1905,
+   1955
+  ],
+  "blurb": "Relativity geometry referenced in the topology chapter.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-hermann-seifert",
+  "name": "Hermann Seifert",
+  "type": "person",
+  "loc": "Göttingen, Germany",
+  "lat": 51.54,
+  "lng": 9.93,
+  "years": "1900-1979",
+  "active": [
+   1925,
+   1979
+  ],
+  "blurb": "Seifert surfaces and 3-manifold classification (1931).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-egbert-van-kampen",
+  "name": "Egbert van Kampen",
+  "type": "person",
+  "loc": "Amsterdam, Netherlands",
+  "lat": 52.37,
+  "lng": 4.9,
+  "years": "1910-1995",
+  "active": [
+   1930,
+   1995
+  ],
+  "blurb": "Van Kampen theorem (1933).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-ronald-brown",
+  "name": "Ronald Brown",
+  "type": "person",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "b. 1936",
+  "active": [
+   1960,
+   2026
+  ],
+  "blurb": "Categorical homotopy.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-witold-hurewicz",
+  "name": "Witold Hurewicz",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1904-1958",
+  "active": [
+   1928,
+   1958
+  ],
+  "blurb": "Hurewicz theorem.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "hurewicz1935"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jean-pierre-serre",
+  "name": "Jean-Pierre Serre",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "b. 1926",
+  "active": [
+   1950,
+   2026
+  ],
+  "blurb": "Algebraic topology and étale cohomology.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-jean-leray",
+  "name": "Jean Leray",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1906-1998",
+  "active": [
+   1930,
+   1998
+  ],
+  "blurb": "Sheaf theory, worked out in a WWII POW camp.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-j-h-c-whitehead",
+  "name": "J. H. C. Whitehead",
+  "type": "person",
+  "loc": "Cambridge, England",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "1906-1991",
+  "active": [
+   1930,
+   1991
+  ],
+  "blurb": "Algebraic topology (1949).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "whitehead1949"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-samuel-eilenberg",
+  "name": "Samuel Eilenberg",
+  "type": "person",
+  "loc": "Ann Arbor, MI, USA",
+  "lat": 42.28,
+  "lng": -83.74,
+  "years": "1913-1998",
+  "active": [
+   1940,
+   1998
+  ],
+  "blurb": "Co-founded category theory (1945).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-saunders-mac-lane",
+  "name": "Saunders Mac Lane",
+  "type": "person",
+  "loc": "Cambridge, MA, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "1909-2005",
+  "active": [
+   1940,
+   2005
+  ],
+  "blurb": "Co-founded category theory.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-rudolf-carnap",
+  "name": "Rudolf Carnap",
+  "type": "person",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "1891-1970",
+  "active": [
+   1920,
+   1970
+  ],
+  "blurb": "Philosopher, source of a terminology used in the chapter.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-norman-steenrod",
+  "name": "Norman Steenrod",
+  "type": "person",
+  "loc": "Ann Arbor, MI, USA",
+  "lat": 42.28,
+  "lng": -83.74,
+  "years": "1910-1971",
+  "active": [
+   1935,
+   1971
+  ],
+  "blurb": "Characteristic classes.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "steenrod1947"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-j-f-adams",
+  "name": "J. F. Adams",
+  "type": "person",
+  "loc": "Cambridge, England",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "1930-2015",
+  "active": [
+   1950,
+   2015
+  ],
+  "blurb": "Hopf invariant one theorem.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "adams1960"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-raoul-bott",
+  "name": "Raoul Bott",
+  "type": "person",
+  "loc": "Princeton, NJ, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "1923-2005",
+  "active": [
+   1950,
+   2005
+  ],
+  "blurb": "Bott periodicity.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-kurt-reidemeister",
+  "name": "Kurt Reidemeister",
+  "type": "person",
+  "loc": "Germany",
+  "lat": 51.17,
+  "lng": 10.45,
+  "years": "1907-1990",
+  "active": [
+   1930,
+   1990
+  ],
+  "blurb": "Reidemeister moves (1935).",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "reidemeister1935"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-georges-de-ram",
+  "name": "Georges de Rham",
+  "type": "person",
+  "loc": "Geneva, Switzerland",
+  "lat": 46.2,
+  "lng": 6.14,
+  "years": "1903-1970",
+  "active": [
+   1925,
+   1970
+  ],
+  "blurb": "de Rham cohomology.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-milnor",
+  "name": "John Milnor",
+  "type": "person",
+  "loc": "Princeton, NJ, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "b. 1931",
+  "active": [
+   1955,
+   2026
+  ],
+  "blurb": "1962/1966 topology; Fields Medal.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [
+   "milnor1962additivity"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-herbert-edelsbrunner",
+  "name": "Herbert Edelsbrunner",
+  "type": "person",
+  "loc": "Ann Arbor, MI, USA",
+  "lat": 42.28,
+  "lng": -83.74,
+  "years": "b. 1962",
+  "active": [
+   1990,
+   2026
+  ],
+  "blurb": "Persistent homology (2002).",
+  "cited_in": [
+   "geometry-iii",
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "edelsbrunner2002persistent"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-gunnar-carlsson",
+  "name": "Gunnar Carlsson",
+  "type": "person",
+  "loc": "Stockholm, Sweden",
+  "lat": 59.33,
+  "lng": 18.07,
+  "years": "b. 1964",
+  "active": [
+   1990,
+   2026
+  ],
+  "blurb": "Topological data analysis (2009).",
+  "cited_in": [
+   "geometry-iii",
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "carlsson2009tda"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-mathieu-cohen-steiner",
+  "name": "Mathieu Cohen-Steiner",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "b. 1980",
+  "active": [
+   2005,
+   2026
+  ],
+  "blurb": "Persistence diagrams.",
+  "cited_in": [
+   "geometry-iii",
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "cohensteiner2007"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-eilhard-mitscherlich",
+  "name": "Eilhard Mitscherlich",
+  "type": "person",
+  "loc": "Germany",
+  "lat": 51.17,
+  "lng": 10.45,
+  "years": "1794-1863",
+  "active": [
+   1820,
+   1863
+  ],
+  "blurb": "The dose-response (Mitscherlich) law.",
+  "cited_in": [
+   "geometry-iii"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-alfred-tarski",
+  "name": "Alfred Tarski",
+  "type": "person",
+  "loc": "Berkeley, CA, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "1902-1983",
+  "active": [
+   1925,
+   1983
+  ],
+  "blurb": "Model theory and the semantic conception of truth (1935).",
+  "cited_in": [
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "tarski1935wahrheitsbegriff"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-roger-shepard",
+  "name": "Roger Shepard",
+  "type": "person",
+  "loc": "Stanford, CA, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "1914-2012",
+  "active": [
+   1940,
+   2012
+  ],
+  "blurb": "Universal law of generalization.",
+  "cited_in": [
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "shepard1987universal"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ludwig-wittgenstein",
+  "name": "Ludwig Wittgenstein",
+  "type": "person",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1889-1951",
+  "active": [
+   1918,
+   1951
+  ],
+  "blurb": "Logical space (Tractatus, 1921).",
+  "cited_in": [
+   "foam-of-meaning"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-george-lakoff",
+  "name": "George Lakoff",
+  "type": "person",
+  "loc": "Berkeley, CA, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "b. 1941",
+  "active": [
+   1970,
+   2026
+  ],
+  "blurb": "Conceptual metaphor theory.",
+  "cited_in": [
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "lakoff1993metaphor"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-s-i-hayakawa",
+  "name": "S. I. Hayakawa",
+  "type": "person",
+  "loc": "Boston, MA, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "1901-1989",
+  "active": [
+   1930,
+   1989
+  ],
+  "blurb": "The 'Ladder of Abstraction' framework.",
+  "cited_in": [
+   "intro"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-alcmaeon-of-croton",
+  "name": "Alcmaeon of Croton",
+  "type": "person",
+  "loc": "Croton, Italy",
+  "lat": 39.08,
+  "lng": 17.72,
+  "years": "c. 500-450 BC",
+  "active": [
+   -500,
+   -450
+  ],
+  "blurb": "First to practice animal dissection; the poroi.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "alcmaeon"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-leonardo-da-vinci",
+  "name": "Leonardo da Vinci",
+  "type": "person",
+  "loc": "Florence, Italy",
+  "lat": 43.77,
+  "lng": 11.26,
+  "years": "1452-1519",
+  "active": [
+   1472,
+   1519
+  ],
+  "blurb": "Mapped the larynx and vocal tract (c. 1510).",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "davinci_anatomical"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-milman-parry",
+  "name": "Milman Parry",
+  "type": "person",
+  "loc": "New York, NY, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1902-1935",
+  "active": [
+   1920,
+   1935
+  ],
+  "blurb": "Oral-formulaic theory of Homeric epic.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-albert-lord",
+  "name": "Albert Lord",
+  "type": "person",
+  "loc": "New Haven, USA",
+  "lat": 41.31,
+  "lng": -72.92,
+  "years": "1912-1991",
+  "active": [
+   1940,
+   1991
+  ],
+  "blurb": "Co-developed oral-formulaic theory.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-sushruta",
+  "name": "Sushruta",
+  "type": "person",
+  "loc": "India",
+  "lat": 21.0,
+  "lng": 78.0,
+  "years": "c. 300 BC",
+  "active": [
+   -300,
+   -250
+  ],
+  "blurb": "Sushruta Samhita (early anatomy).",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "sushruta"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-wilkins",
+  "name": "John Wilkins",
+  "type": "person",
+  "loc": "Cambridge, England",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "1614-1672",
+  "active": [
+   1637,
+   1672
+  ],
+  "blurb": "Dreamed of a universal language / taxonomy.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "wilkins_real_character"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-wolfgang-von-kempelen",
+  "name": "Wolfgang von Kempelen",
+  "type": "person",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1737-1804",
+  "active": [
+   1775,
+   1804
+  ],
+  "blurb": "Built the Speaking Machine (text-to-speech).",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "kempelen_speaking_machine"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-j-r-firth",
+  "name": "J. R. Firth",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1901-1990",
+  "active": [
+   1930,
+   1990
+  ],
+  "blurb": "Distributional hypothesis ('the company it keeps').",
+  "cited_in": [
+   "language",
+   "statistics-ii"
+  ],
+  "bibkeys": [
+   "firth_context"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ferdinand-de-saussure",
+  "name": "Ferdinand de Saussure",
+  "type": "person",
+  "loc": "Geneva, Switzerland",
+  "lat": 46.2,
+  "lng": 6.14,
+  "years": "1857-1913",
+  "active": [
+   1880,
+   1913
+  ],
+  "blurb": "Structural linguistics; arbitrariness of the sign.",
+  "cited_in": [
+   "language",
+   "foam-of-meaning"
+  ],
+  "bibkeys": [
+   "saussure1916"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andre-martinet",
+  "name": "André Martinet",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1902-1979",
+  "active": [
+   1930,
+   1979
+  ],
+  "blurb": "Principle of the duality of patterning.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "dualitypattern"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-alan-gardiner",
+  "name": "Alan Gardiner",
+  "type": "person",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1879-1951",
+  "active": [
+   1900,
+   1951
+  ],
+  "blurb": "Egyptologist; the acrophonic principle (1916).",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "acrophonic"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jean-francois-champollion",
+  "name": "Jean-François Champollion",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "1790-1832",
+  "active": [
+   1810,
+   1832
+  ],
+  "blurb": "Deciphered Egyptian hieroglyphics (1822).",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [
+   "hieroglyphsdeciphered"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-joseph-marie-jacquard",
+  "name": "Joseph-Marie Jacquard",
+  "type": "person",
+  "loc": "Lyon, France",
+  "lat": 45.76,
+  "lng": 4.84,
+  "years": "1752-1834",
+  "active": [
+   1790,
+   1834
+  ],
+  "blurb": "Punched-card loom that inspired Babbage.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-norman-koch",
+  "name": "Norman Koch",
+  "type": "person",
+  "loc": "Dresden, Germany",
+  "lat": 51.05,
+  "lng": 13.74,
+  "years": "",
+  "active": [
+   2020,
+   2026
+  ],
+  "blurb": "Author of the course (TU Dresden contact).",
+  "cited_in": [
+   "intro"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-cueva-de-las-manos",
+  "name": "Cueva de las Manos",
+  "type": "place",
+  "loc": "Patagonia, Argentina",
+  "lat": -47.23,
+  "lng": -69.19,
+  "years": "c. 7300 BC-700 AD",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Cave with over 2,000 hand stencils, an early act of self-referential symbolic displacement.",
+  "cited_in": [
+   "intro",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-antikythera",
+  "name": "Antikythera",
+  "type": "place",
+  "loc": "Cyclades, Greece",
+  "lat": 35.83,
+  "lng": 24.1,
+  "years": "ancient island",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Greek island whose 1st-century BCE shipwreck yielded the Antikythera mechanism.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-athens",
+  "name": "Athens",
+  "type": "place",
+  "loc": "Attica, Greece",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "ancient city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Home of the Epigraphical Museum that preserves the Salamis counting tablet.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-lebombo-mountains",
+  "name": "Lebombo Mountains",
+  "type": "place",
+  "loc": "Eswatini",
+  "lat": -25.9,
+  "lng": 31.52,
+  "years": "prehistoric range",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Mountain range where the Lebombo bone, a prehistoric tally, was found.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-dolni-vestonice",
+  "name": "Dolni Vestonice",
+  "type": "place",
+  "loc": "Moravia, Czech Republic",
+  "lat": 49.26,
+  "lng": 17.08,
+  "years": "c. 27,000-20,000 BC",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Gravettian site that produced the notched wolf bone and a fired-clay Venus figurine.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-mount-devin",
+  "name": "Mount Devin",
+  "type": "place",
+  "loc": "Moravia, Czech Republic",
+  "lat": 49.25,
+  "lng": 17.06,
+  "years": "mountain",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Mountain at whose base the Dolni Vestonice Paleolithic site lies.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-apollo-11-rockshelter",
+  "name": "Apollo 11 Rockshelter",
+  "type": "place",
+  "loc": "Otavi, Namibia",
+  "lat": -20.57,
+  "lng": 16.47,
+  "years": "c. 80,000 years old",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Namibian rockshelter with notched bones up to 80,000 years old.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-blombos-cave",
+  "name": "Blombos Cave",
+  "type": "place",
+  "loc": "Western Cape, South Africa",
+  "lat": -34.41,
+  "lng": 21.2,
+  "years": "c. 75,000 years ago",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Cave with engraved ochre, among the oldest abstract geometric patterns.",
+  "cited_in": [
+   "history",
+   "language",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-borneo",
+  "name": "Borneo",
+  "type": "place",
+  "loc": "Indonesian Maritime Islands",
+  "lat": -0.55,
+  "lng": 117.0,
+  "years": "island",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Island where the ~52,000-year-old Lubang Jeriji Saleh cave art was found.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-sulawesi",
+  "name": "Sulawesi",
+  "type": "place",
+  "loc": "Indonesian Maritime Islands",
+  "lat": -2.3,
+  "lng": 120.2,
+  "years": "island",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Island holding some of the oldest narrative cave paintings (Leang caves).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-spain",
+  "name": "Spain",
+  "type": "place",
+  "loc": "Iberian Peninsula, Europe",
+  "lat": 40.46,
+  "lng": -3.75,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Site of cave art possibly over 64,800 years old, of Neanderthal origin.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-hanover",
+  "name": "Hanover",
+  "type": "place",
+  "loc": "Lower Saxony, Germany",
+  "lat": 52.37,
+  "lng": 9.73,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where Leibniz developed and built his mechanical calculator.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-cambridge-england",
+  "name": "Cambridge",
+  "type": "place",
+  "loc": "England, UK",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where the Ratio Club debated cybernetics over dinner.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-london",
+  "name": "London",
+  "type": "place",
+  "loc": "England, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Host of the Royal Institution, venue of the 1973 Lighthill AI debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-stockholm",
+  "name": "Stockholm",
+  "type": "place",
+  "loc": "Sweden",
+  "lat": 59.33,
+  "lng": 18.07,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where the 1906 Nobel Prize on the neuron doctrine was awarded.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-paris",
+  "name": "Paris",
+  "type": "place",
+  "loc": "Ile-de-France, France",
+  "lat": 48.86,
+  "lng": 2.35,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Site of the 1951 calculating-machines conference where Wiener played El Ajedrecista.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-berlin",
+  "name": "Berlin",
+  "type": "place",
+  "loc": "Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where Zuse built his first binary computers in his parents' living room.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-bletchley-park",
+  "name": "Bletchley Park",
+  "type": "place",
+  "loc": "Buckinghamshire, England",
+  "lat": 51.99,
+  "lng": -0.66,
+  "years": "WWII site",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Site of Turing's wartime codebreaking with the Bombe.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-manchester",
+  "name": "Manchester",
+  "type": "place",
+  "loc": "England, UK",
+  "lat": 53.48,
+  "lng": -2.24,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where Turing worked and where the Manchester Mark I ran early programs.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-dartmouth",
+  "name": "Dartmouth",
+  "type": "place",
+  "loc": "New Hampshire, USA",
+  "lat": 43.7,
+  "lng": -72.28,
+  "years": "town",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Town hosting Dartmouth College, venue of the 1956 workshop that named AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-munich",
+  "name": "Munich",
+  "type": "place",
+  "loc": "Bavaria, Germany",
+  "lat": 48.14,
+  "lng": 11.58,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City of TU Munich, where Schmidhuber's lab produced the 1990-91 deep-learning burst.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-edinburgh",
+  "name": "Edinburgh",
+  "type": "place",
+  "loc": "Scotland, UK",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where Donald Michie, an AI researcher, worked at the time of the Lighthill debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-bristol",
+  "name": "Bristol",
+  "type": "place",
+  "loc": "England, UK",
+  "lat": 51.45,
+  "lng": -2.59,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where the psychologist Richard Gregory debated Lighthill in 1973.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-berkeley",
+  "name": "Berkeley",
+  "type": "place",
+  "loc": "California, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City of UC Berkeley, where Dreyfus critiqued symbolic AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-osaka",
+  "name": "Osaka",
+  "type": "place",
+  "loc": "Kansai, Japan",
+  "lat": 34.69,
+  "lng": 135.5,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City where Wei Zhang built an early two-dimensional CNN.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-toronto",
+  "name": "Toronto",
+  "type": "place",
+  "loc": "Ontario, Canada",
+  "lat": 43.65,
+  "lng": -79.38,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City of the University of Toronto, where Hinton's group built AlexNet.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-new-york",
+  "name": "New York",
+  "type": "place",
+  "loc": "New York, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City referenced in the re-popularization of deep learning and the 1997 Deep Blue rematch.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-ukraine",
+  "name": "Ukraine",
+  "type": "place",
+  "loc": "Eastern Europe",
+  "lat": 48.38,
+  "lng": 31.17,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country named in the Anglosphere-omission pattern for prior deep-learning work.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-finland",
+  "name": "Finland",
+  "type": "place",
+  "loc": "Nordic Europe",
+  "lat": 61.92,
+  "lng": 25.75,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country named in the pattern of uncredited non-Anglophone deep-learning contributions.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-switzerland",
+  "name": "Switzerland",
+  "type": "place",
+  "loc": "Central Europe",
+  "lat": 46.82,
+  "lng": 8.23,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country named in the pattern of uncredited non-Anglophone deep-learning contributions.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-soviet-union",
+  "name": "Soviet Union",
+  "type": "place",
+  "loc": "Europe/Asia",
+  "lat": 56.0,
+  "lng": 60.0,
+  "years": "1922-1991",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "State where early deep learning (Ivakhnenko) continued through the AI winter.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-japan",
+  "name": "Japan",
+  "type": "place",
+  "loc": "East Asia",
+  "lat": 36.2,
+  "lng": 138.25,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country where Amari and Fukushima advanced neural networks during the AI winter.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-egypt",
+  "name": "Egypt",
+  "type": "place",
+  "loc": "North Africa",
+  "lat": 26.82,
+  "lng": 30.8,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Region of the Wadi el-Hol proto-alphabetic inscriptions and Egyptian-Semitic contact.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-serabit-el-khadim",
+  "name": "Serabit el-Khadim",
+  "type": "place",
+  "loc": "Sinai, Egypt",
+  "lat": 29.52,
+  "lng": 33.92,
+  "years": "c. 1700-1550 BCE",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Turquoise mines yielding some of the earliest Proto-Sinaitic alphabetic inscriptions.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-wadi-el-hol",
+  "name": "Wadi el-Hol",
+  "type": "place",
+  "loc": "Upper Egypt",
+  "lat": 25.85,
+  "lng": 32.65,
+  "years": "c. 1850 BCE",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Site of inscriptions possibly the oldest alphabetic texts yet found.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-mesopotamia",
+  "name": "Mesopotamia",
+  "type": "place",
+  "loc": "Near East (Iraq/Syria)",
+  "lat": 33.31,
+  "lng": 44.36,
+  "years": "ancient region",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Region where clay tokens and cuneiform accounting gave rise to writing.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-sumer",
+  "name": "Sumer",
+  "type": "place",
+  "loc": "Southern Mesopotamia",
+  "lat": 31.32,
+  "lng": 45.64,
+  "years": "c. 3200 BCE",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Early civilization whose pictographic tablets (Kish) predate phonetic writing.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-kish",
+  "name": "Kish",
+  "type": "place",
+  "loc": "Sumer, Iraq",
+  "lat": 32.48,
+  "lng": 44.7,
+  "years": "ancient city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City of the Kish tablet, among the earliest proto-cuneiform pictographs.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-vinca",
+  "name": "Vinca",
+  "type": "place",
+  "loc": "Serbia, Southeast Europe",
+  "lat": 44.78,
+  "lng": 20.41,
+  "years": "c. 4500-4000 BC",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Site of the debated Vinca symbols, a pre-phonetic inscribed corpus.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-india",
+  "name": "India",
+  "type": "place",
+  "loc": "South Asia",
+  "lat": 20.59,
+  "lng": 78.96,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country of Pingala's binary metrical counting and Brahmagupta's zero.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-china",
+  "name": "China",
+  "type": "place",
+  "loc": "East Asia",
+  "lat": 35.86,
+  "lng": 104.19,
+  "years": "country",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Country whose Han-dynasty mathematics first recorded negative numbers.",
+  "cited_in": [
+   "history",
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-kerala",
+  "name": "Kerala (Sangamagrama)",
+  "type": "place",
+  "loc": "South India",
+  "lat": 11.35,
+  "lng": 75.65,
+  "years": "14th c. school",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Region of the Kerala school that gave early Taylor-series expansions.",
+  "cited_in": [
+   "math-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-croton",
+  "name": "Croton (Crotone)",
+  "type": "place",
+  "loc": "Calabria, Italy",
+  "lat": 39.08,
+  "lng": 17.12,
+  "years": "ancient city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City of Alcmaeon, an early practitioner of anatomical dissection.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-lake-tanganyika",
+  "name": "Lake Tanganyika region",
+  "type": "place",
+  "loc": "DR Congo / East Africa",
+  "lat": -2.5,
+  "lng": 29.0,
+  "years": "prehistoric lake",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Region where the Ishango bone, a notched baboon fibula, was discovered.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-the-alps",
+  "name": "The Alps",
+  "type": "place",
+  "loc": "Central Europe",
+  "lat": 46.56,
+  "lng": 9.5,
+  "years": "mountain range",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Range where Zuse hid the Z4 computer to survive World War II.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-kaliningrad",
+  "name": "Kaliningrad (Koenigsberg)",
+  "type": "place",
+  "loc": "Russia / Baltic",
+  "lat": 54.71,
+  "lng": 20.51,
+  "years": "city",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "City whose seven bridges inspired Euler's founding paper in graph theory.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-indus-valley",
+  "name": "Indus Valley",
+  "type": "place",
+  "loc": "Pakistan / NW India",
+  "lat": 27.0,
+  "lng": 68.0,
+  "years": "ancient region",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "Region of an early urban culture with its own geometry and number system.",
+  "cited_in": [
+   "geometry-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "place-washington-dc",
+  "name": "Washington, D.C.",
+  "type": "place",
+  "loc": "USA",
+  "lat": 38.89,
+  "lng": -77.02,
+  "years": "capital",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "US capital, home of NASA, the Navy, and DARPA in the AI hardware story.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-epigraphical-museum-athens",
+  "name": "Epigraphical Museum (Athens)",
+  "type": "institution",
+  "loc": "Athens, Greece",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "founded 1874",
+  "active": [
+   1874,
+   2026
+  ],
+  "blurb": "Museum preserving the Salamis Tablet, the oldest surviving counting board.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-cornell-university",
+  "name": "Cornell University",
+  "type": "institution",
+  "loc": "Ithaca, New York, USA",
+  "lat": 42.45,
+  "lng": -76.48,
+  "years": "founded 1865",
+  "active": [
+   1865,
+   2026
+  ],
+  "blurb": "University where Rosenblatt built the Mark I Perceptron.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-cornell-aeronautical-laboratory",
+  "name": "Cornell Aeronautical Laboratory",
+  "type": "institution",
+  "loc": "Buffalo, New York, USA",
+  "lat": 42.89,
+  "lng": -78.88,
+  "years": "1929-1991",
+  "active": [
+   1929,
+   1991
+  ],
+  "blurb": "Lab in Buffalo where the Mark I Perceptron's racks were hand-soldered.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-office-of-naval-research",
+  "name": "Office of Naval Research",
+  "type": "institution",
+  "loc": "Arlington, Virginia, USA",
+  "lat": 38.89,
+  "lng": -77.08,
+  "years": "founded 1946",
+  "active": [
+   1946,
+   2026
+  ],
+  "blurb": "US agency that funded Rosenblatt's Perceptron under Project Para.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-mit",
+  "name": "MIT",
+  "type": "institution",
+  "loc": "Cambridge, Massachusetts, USA",
+  "lat": 42.36,
+  "lng": -71.09,
+  "years": "founded 1861",
+  "active": [
+   1861,
+   2026
+  ],
+  "blurb": "Institute behind the Apollo Guidance Computer, Shannon's thesis, and ELIZA.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-raytheon",
+  "name": "Raytheon",
+  "type": "institution",
+  "loc": "Waltham, Massachusetts, USA",
+  "lat": 42.37,
+  "lng": -71.24,
+  "years": "founded 1922",
+  "active": [
+   1922,
+   2026
+  ],
+  "blurb": "Company whose operators hand-wove the AGC's core rope memory.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-nasa",
+  "name": "NASA",
+  "type": "institution",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.01,
+  "years": "founded 1958",
+  "active": [
+   1958,
+   2026
+  ],
+  "blurb": "Agency whose spaceflight programs forced real-time, fault-tolerant computing.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-jpl",
+  "name": "JPL",
+  "type": "institution",
+  "loc": "Pasadena, California, USA",
+  "lat": 34.22,
+  "lng": -118.1,
+  "years": "founded 1936",
+  "active": [
+   1936,
+   2026
+  ],
+  "blurb": "Lab where Avizienis's STAR computer invented the fault-tolerance toolkit.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-ibm",
+  "name": "IBM",
+  "type": "institution",
+  "loc": "Armonk, New York, USA",
+  "lat": 41.04,
+  "lng": -73.76,
+  "years": "founded 1911",
+  "active": [
+   1911,
+   2026
+  ],
+  "blurb": "Company behind the Mark I, the 702, the PC, and Deep Blue.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-bell-labs",
+  "name": "Bell Labs",
+  "type": "institution",
+  "loc": "Murray Hill, New Jersey, USA",
+  "lat": 40.74,
+  "lng": -74.4,
+  "years": "founded 1925",
+  "active": [
+   1925,
+   2026
+  ],
+  "blurb": "Lab where LeCun's 1989 convolutional-network paper originated.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-university-of-toronto",
+  "name": "University of Toronto",
+  "type": "institution",
+  "loc": "Toronto, Ontario, Canada",
+  "lat": 43.66,
+  "lng": -79.4,
+  "years": "founded 1827",
+  "active": [
+   1827,
+   2026
+  ],
+  "blurb": "University where Hinton's group trained AlexNet on GPUs in 2012.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-stanford-university",
+  "name": "Stanford University",
+  "type": "institution",
+  "loc": "California, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "founded 1891",
+  "active": [
+   1891,
+   2026
+  ],
+  "blurb": "University where McCarthy led the logicist wing and Raina/Ng used GPUs.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-harvard-university",
+  "name": "Harvard University",
+  "type": "institution",
+  "loc": "Cambridge, Massachusetts, USA",
+  "lat": 42.38,
+  "lng": -71.12,
+  "years": "founded 1636",
+  "active": [
+   1636,
+   2026
+  ],
+  "blurb": "University where Aiken built the Mark I and Minsky built the SNARC.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-mits",
+  "name": "MITS",
+  "type": "institution",
+  "loc": "Albuquerque, New Mexico, USA",
+  "lat": 35.08,
+  "lng": -106.65,
+  "years": "1968-1985",
+  "active": [
+   1968,
+   1985
+  ],
+  "blurb": "Kit company that sold the Altair 8800, the first successful personal computer.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-intel",
+  "name": "Intel",
+  "type": "institution",
+  "loc": "Santa Clara, California, USA",
+  "lat": 37.35,
+  "lng": -121.95,
+  "years": "founded 1968",
+  "active": [
+   1968,
+   2026
+  ],
+  "blurb": "Chipmaker whose 8080/8088 microprocessors powered early PCs.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-microsoft",
+  "name": "Microsoft",
+  "type": "institution",
+  "loc": "Redmond, Washington, USA",
+  "lat": 47.67,
+  "lng": -122.13,
+  "years": "founded 1975",
+  "active": [
+   1975,
+   2026
+  ],
+  "blurb": "Company founded when Gates and Allen wrote Altair BASIC.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-apple",
+  "name": "Apple",
+  "type": "institution",
+  "loc": "Cupertino, California, USA",
+  "lat": 37.33,
+  "lng": -122.03,
+  "years": "founded 1976",
+  "active": [
+   1976,
+   2026
+  ],
+  "blurb": "Company whose Apple II was sold by VisiCalc and whose iPhone ran Quicktype.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-texas-instruments",
+  "name": "Texas Instruments",
+  "type": "institution",
+  "loc": "Dallas, Texas, USA",
+  "lat": 32.78,
+  "lng": -96.8,
+  "years": "founded 1951",
+  "active": [
+   1951,
+   2026
+  ],
+  "blurb": "Chipmaker whose calculator price war drove Ed Roberts into personal computers.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-mos-technology",
+  "name": "MOS Technology",
+  "type": "institution",
+  "loc": "Fremont, California, USA",
+  "lat": 37.55,
+  "lng": -121.98,
+  "years": "1969-1975",
+  "active": [
+   1969,
+   1975
+  ],
+  "blurb": "Company that produced the MOS 6502 microprocessor.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-commodore",
+  "name": "Commodore",
+  "type": "institution",
+  "loc": "West Chester, Pennsylvania, USA",
+  "lat": 39.89,
+  "lng": -75.6,
+  "years": "1954-1994",
+  "active": [
+   1954,
+   1994
+  ],
+  "blurb": "Company behind the Commodore PET, one of the 1977 home-computer Trinity.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-remington-rand",
+  "name": "Remington Rand",
+  "type": "institution",
+  "loc": "Allentown, Pennsylvania, USA",
+  "lat": 40.61,
+  "lng": -75.48,
+  "years": "1925-1991",
+  "active": [
+   1925,
+   1991
+  ],
+  "blurb": "Company whose UNIVAC prompted IBM's first commercial business computer.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-digital-research",
+  "name": "Digital Research",
+  "type": "institution",
+  "loc": "Bellevue, Washington, USA",
+  "lat": 47.61,
+  "lng": -122.2,
+  "years": "1973-2020",
+  "active": [
+   1973,
+   2020
+  ],
+  "blurb": "Company whose CP/M IBM failed to license, leading to PC-DOS.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-openai",
+  "name": "OpenAI",
+  "type": "institution",
+  "loc": "San Francisco, California, USA",
+  "lat": 37.77,
+  "lng": -122.42,
+  "years": "founded 2015",
+  "active": [
+   2015,
+   2026
+  ],
+  "blurb": "Company pursuing the decoder-only Transformer path that produced GPT and ChatGPT.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-google",
+  "name": "Google",
+  "type": "institution",
+  "loc": "Mountain View, California, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "founded 1998",
+  "active": [
+   1998,
+   2026
+  ],
+  "blurb": "Company whose CTC-LSTM, TensorFlow, and Translate used these methods at scale.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-facebook",
+  "name": "Facebook",
+  "type": "institution",
+  "loc": "Menlo Park, California, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "founded 2004",
+  "active": [
+   2004,
+   2026
+  ],
+  "blurb": "Company whose machine translation ran on LSTM by 2017.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-amazon",
+  "name": "Amazon",
+  "type": "institution",
+  "loc": "Seattle, Washington, USA",
+  "lat": 47.61,
+  "lng": -122.33,
+  "years": "founded 1994",
+  "active": [
+   1994,
+   2026
+  ],
+  "blurb": "Company whose Alexa voice assistant was powered by LSTM.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-nvidia",
+  "name": "NVIDIA",
+  "type": "institution",
+  "loc": "Santa Clara, California, USA",
+  "lat": 37.35,
+  "lng": -121.95,
+  "years": "founded 1993",
+  "active": [
+   1993,
+   2026
+  ],
+  "blurb": "Company whose CUDA (2006) unlocked GPUs for deep learning.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-idsia",
+  "name": "IDSIA",
+  "type": "institution",
+  "loc": "Lugano, Switzerland",
+  "lat": 46.0,
+  "lng": 8.95,
+  "years": "founded 1993",
+  "active": [
+   1993,
+   2026
+  ],
+  "blurb": "Lab where Ciresan and Schmidhuber built the first GPU CNN to win contests.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-bbn",
+  "name": "BBN Technologies",
+  "type": "institution",
+  "loc": "Cambridge, Massachusetts, USA",
+  "lat": 42.37,
+  "lng": -71.12,
+  "years": "founded 1958",
+  "active": [
+   1958,
+   2026
+  ],
+  "blurb": "Company where Cosell's Lisp clone of ELIZA supplanted the original.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-project-mac",
+  "name": "Project MAC",
+  "type": "institution",
+  "loc": "Cambridge, Massachusetts, USA",
+  "lat": 42.36,
+  "lng": -71.09,
+  "years": "1959-1971",
+  "active": [
+   1959,
+   1971
+  ],
+  "blurb": "MIT project where Weizenbaum wrote the original ELIZA in MAD-SLIP.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-macy-foundation",
+  "name": "Josiah Macy Jr. Foundation",
+  "type": "institution",
+  "loc": "New York, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "founded 1931",
+  "active": [
+   1931,
+   2026
+  ],
+  "blurb": "Foundation that funded the cybernetics Macy Conferences of 1946-1953.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-royal-institution",
+  "name": "Royal Institution",
+  "type": "institution",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.12,
+  "years": "founded 1799",
+  "active": [
+   1799,
+   2026
+  ],
+  "blurb": "London venue of the 9 May 1973 Lighthill AI debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-bbc",
+  "name": "BBC",
+  "type": "institution",
+  "loc": "London, England",
+  "lat": 51.53,
+  "lng": -0.13,
+  "years": "founded 1922",
+  "active": [
+   1922,
+   2026
+  ],
+  "blurb": "Broadcaster that televised the 1973 Lighthill debate on AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-darpa",
+  "name": "DARPA",
+  "type": "institution",
+  "loc": "Arlington, Virginia, USA",
+  "lat": 38.89,
+  "lng": -77.07,
+  "years": "founded 1958",
+  "active": [
+   1958,
+   2026
+  ],
+  "blurb": "US agency that slashed AI research budgets after the Lighthill report.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-src-uk",
+  "name": "Science Research Council (UK)",
+  "type": "institution",
+  "loc": "London, England",
+  "lat": 51.51,
+  "lng": -0.12,
+  "years": "1964-1984",
+  "active": [
+   1964,
+   1984
+  ],
+  "blurb": "UK body that moved to cut AI funding after the Lighthill debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-us-navy",
+  "name": "United States Navy",
+  "type": "institution",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.01,
+  "years": "founded 1775",
+  "active": [
+   1775,
+   2026
+  ],
+  "blurb": "US Navy that held the 1958 Perceptron press conference and dreamed of space robots.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-pentagon",
+  "name": "The Pentagon",
+  "type": "institution",
+  "loc": "Arlington, Virginia, USA",
+  "lat": 38.87,
+  "lng": -77.06,
+  "years": "built 1943",
+  "active": [
+   1943,
+   2026
+  ],
+  "blurb": "Pentagon mission the Mark I Perceptron was meant to serve (spotting missile sites).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-university-of-manitoba",
+  "name": "University of Manitoba",
+  "type": "institution",
+  "loc": "Winnipeg, Canada",
+  "lat": 49.9,
+  "lng": -97.14,
+  "years": "founded 1877",
+  "active": [
+   1877,
+   2026
+  ],
+  "blurb": "University where Thomas Osborn, an assembler of the Mark I, became a physicist.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-th-stuttgart",
+  "name": "TH Stuttgart",
+  "type": "institution",
+  "loc": "Stuttgart, Germany",
+  "lat": 48.76,
+  "lng": 9.19,
+  "years": "founded 1829",
+  "active": [
+   1829,
+   2026
+  ],
+  "blurb": "Institute whose computer center ran Lutz's 1959 stochastic text program on a Z22.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-usps",
+  "name": "U.S. Postal Service",
+  "type": "institution",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.01,
+  "years": "founded 1792",
+  "active": [
+   1792,
+   2026
+  ],
+  "blurb": "Agency whose ZIP-code recognition was the first commercial CNN deployment (LeNet).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-sorbonne",
+  "name": "Sorbonne",
+  "type": "institution",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "founded 1257",
+  "active": [
+   1257,
+   2026
+  ],
+  "blurb": "Paris university where Lapicque developed the integrate-and-fire neuron.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-princeton-university",
+  "name": "Princeton University",
+  "type": "institution",
+  "loc": "Princeton, New Jersey, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "founded 1847",
+  "active": [
+   1847,
+   2026
+  ],
+  "blurb": "University where Minsky wrote his dissertation on the SNARC's learning ideas.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-university-of-edinburgh",
+  "name": "University of Edinburgh",
+  "type": "institution",
+  "loc": "Edinburgh, Scotland",
+  "lat": 55.94,
+  "lng": -3.19,
+  "years": "founded 1583",
+  "active": [
+   1583,
+   2026
+  ],
+  "blurb": "University where Donald Michie was based during the Lighthill debate.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-university-of-bristol",
+  "name": "University of Bristol",
+  "type": "institution",
+  "loc": "Bristol, England",
+  "lat": 51.45,
+  "lng": -2.6,
+  "years": "founded 1945",
+  "active": [
+   1945,
+   2026
+  ],
+  "blurb": "University where the psychologist Richard Gregory debated Lighthill.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-uc-berkeley",
+  "name": "University of California, Berkeley",
+  "type": "institution",
+  "loc": "Berkeley, California, USA",
+  "lat": 37.87,
+  "lng": -122.26,
+  "years": "founded 1868",
+  "active": [
+   1868,
+   2026
+  ],
+  "blurb": "University where Dreyfus taught and attacked symbolic AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-tu-munich",
+  "name": "TU Munich",
+  "type": "institution",
+  "loc": "Munich, Germany",
+  "lat": 48.14,
+  "lng": 11.58,
+  "years": "founded 1868",
+  "active": [
+   1868,
+   2026
+  ],
+  "blurb": "Bavarian technical university of Schmidhuber's 1990-91 deep-learning lab.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-british-museum",
+  "name": "British Museum",
+  "type": "institution",
+  "loc": "London, England",
+  "lat": 51.52,
+  "lng": -0.12,
+  "years": "founded 1753",
+  "active": [
+   1753,
+   2026
+  ],
+  "blurb": "Museum that now houses the Rosetta Stone.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-science-museum-london",
+  "name": "Science Museum",
+  "type": "institution",
+  "loc": "London, England",
+  "lat": 51.49,
+  "lng": -0.17,
+  "years": "founded 1857",
+  "active": [
+   1857,
+   2026
+  ],
+  "blurb": "Museum that now holds Ashby's Homeostat.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-moravian-museum",
+  "name": "Moravian Museum",
+  "type": "institution",
+  "loc": "Brno, Czech Republic",
+  "lat": 49.2,
+  "lng": 16.61,
+  "years": "founded 1822",
+  "active": [
+   1822,
+   2026
+  ],
+  "blurb": "Museum that holds the Venus of Dolni Vestonice figurine.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-dartmouth-workshop-1956",
+  "name": "Dartmouth Workshop, 1956",
+  "type": "event",
+  "loc": "Dartmouth, New Hampshire, USA",
+  "lat": 43.7,
+  "lng": -72.28,
+  "years": "1956",
+  "active": [
+   1956,
+   1956
+  ],
+  "blurb": "Summer workshop where McCarthy, Minsky, Rochester and Shannon coined 'Artificial Intelligence'.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-apollo-11-landing-1969",
+  "name": "Apollo 11 lunar landing, 1969",
+  "type": "event",
+  "loc": "Sea of Tranquility, Moon",
+  "lat": 0.67,
+  "lng": 23.42,
+  "years": "1969",
+  "active": [
+   1969,
+   1969
+  ],
+  "blurb": "Landing whose AGC 1201/1202 alarms are a textbook fault-tolerant computing case.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-deep-blue-kasparov-1997",
+  "name": "Deep Blue defeats Kasparov, 1997",
+  "type": "event",
+  "loc": "New York, USA",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "1997",
+  "active": [
+   1997,
+   1997
+  ],
+  "blurb": "Rematch in which IBM's Deep Blue beat the world chess champion.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-lighthill-debate-1973",
+  "name": "Lighthill AI debate, 9 May 1973",
+  "type": "event",
+  "loc": "Royal Institution, London",
+  "lat": 51.51,
+  "lng": -0.12,
+  "years": "1973",
+  "active": [
+   1973,
+   1973
+  ],
+  "blurb": "Broadcast debate that sharpened the British funding cut and the first AI winter.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-ceres-discovery-1801",
+  "name": "Discovery of Ceres, 1801",
+  "type": "event",
+  "loc": "Palermo, Sicily",
+  "lat": 38.12,
+  "lng": 13.36,
+  "years": "1801",
+  "active": [
+   1801,
+   1801
+  ],
+  "blurb": "Discovery of the dwarf planet that drove Gauß to develop least squares.",
+  "cited_in": [
+   "statistics-i"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-perceptron-press-1958",
+  "name": "Perceptron Navy press conference, 1958",
+  "type": "event",
+  "loc": "United States",
+  "lat": 38.89,
+  "lng": -77.01,
+  "years": "1958",
+  "active": [
+   1958,
+   1958
+  ],
+  "blurb": "Press event that hyped the Perceptron as a machine that would walk, talk and be conscious.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-paris-calculating-machines-1951",
+  "name": "Paris conference on calculating machines, 1951",
+  "type": "event",
+  "loc": "Paris, France",
+  "lat": 48.86,
+  "lng": 2.35,
+  "years": "1951",
+  "active": [
+   1951,
+   1951
+  ],
+  "blurb": "Conference where Norbert Wiener played Torres Quevedo's chess machine.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-turing-award-2018",
+  "name": "Turing Award for deep learning, 2018",
+  "type": "event",
+  "loc": "United States",
+  "lat": 40.71,
+  "lng": -74.01,
+  "years": "2018",
+  "active": [
+   2018,
+   2018
+  ],
+  "blurb": "Award to Bengio, Hinton and LeCun recognizing the connectionist revival.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-nobel-physics-2024",
+  "name": "Nobel Prize in Physics, 2024",
+  "type": "event",
+  "loc": "Stockholm, Sweden",
+  "lat": 59.33,
+  "lng": 18.07,
+  "years": "2024",
+  "active": [
+   2024,
+   2024
+  ],
+  "blurb": "Prize to Hopfield and Hinton for neural-network foundations, cited by Schmidhuber.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-nobel-medicine-1906",
+  "name": "Nobel Prize in Medicine, 1906",
+  "type": "event",
+  "loc": "Stockholm, Sweden",
+  "lat": 59.33,
+  "lng": 18.07,
+  "years": "1906",
+  "active": [
+   1906,
+   1906
+  ],
+  "blurb": "Cajal and Golgi shared it, cementing the neuron doctrine underpinning AI.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-ibm-pc-1981",
+  "name": "IBM PC release, 1981",
+  "type": "event",
+  "loc": "Boca Raton, Florida, USA",
+  "lat": 26.37,
+  "lng": -80.12,
+  "years": "1981",
+  "active": [
+   1981,
+   1981
+  ],
+  "blurb": "Release of the IBM PC that established the Wintel standard.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-antikythera-recovery-1901",
+  "name": "Antikythera shipwreck recovery, 1901",
+  "type": "event",
+  "loc": "Antikythera, Greece",
+  "lat": 35.83,
+  "lng": 24.1,
+  "years": "1901",
+  "active": [
+   1901,
+   1901
+  ],
+  "blurb": "Salvage that recovered the ancient geared analog computer.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-ibm-702-1953",
+  "name": "IBM 702 debut, 1953",
+  "type": "event",
+  "loc": "United States",
+  "lat": 41.04,
+  "lng": -73.76,
+  "years": "1953",
+  "active": [
+   1953,
+   1953
+  ],
+  "blurb": "Debut of IBM's first commercial business computer with magnetic-core memory.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-hieroglyphs-deciphered-1822",
+  "name": "Decipherment of Egyptian hieroglyphs, 1822",
+  "type": "event",
+  "loc": "Paris, France",
+  "lat": 48.86,
+  "lng": 2.35,
+  "years": "1822",
+  "active": [
+   1822,
+   1822
+  ],
+  "blurb": "Champollion's alignment-based decipherment, a prototype of alignment-based NLP.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "event-wadi-el-hol-discovery-1993",
+  "name": "Wadi el-Hol inscriptions discovered, 1993",
+  "type": "event",
+  "loc": "Upper Egypt, Egypt",
+  "lat": 25.85,
+  "lng": 32.65,
+  "years": "1993",
+  "active": [
+   1993,
+   1993
+  ],
+  "blurb": "Discovery pushing the origin of the alphabet back to ~1850 BCE.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-antikythera-mechanism",
+  "name": "Antikythera Mechanism",
+  "type": "artifact",
+  "loc": "National Archaeological Museum, Athens",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "c. 200-60 BC",
+  "active": [
+   -100,
+   null
+  ],
+  "blurb": "Ancient geared analog computer, the world's oldest, modeling the cosmos.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-ishango-bone",
+  "name": "Ishango Bone",
+  "type": "artifact",
+  "loc": "Lake Tanganyika region, DR Congo",
+  "lat": -2.5,
+  "lng": 29.0,
+  "years": "c. 18,000 BCE",
+  "active": [
+   -18000,
+   null
+  ],
+  "blurb": "Notched baboon fibula, a prehistoric counting/calculus device.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-lebombo-bone",
+  "name": "Lebombo Bone",
+  "type": "artifact",
+  "loc": "Lebombo Mountains, Eswatini",
+  "lat": -25.9,
+  "lng": 31.52,
+  "years": "c. 41,000 BCE",
+  "active": [
+   -41000,
+   null
+  ],
+  "blurb": "Oldest known object used for mathematical purposes, a 29-notch tally.",
+  "cited_in": [
+   "history",
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-salamis-tablet",
+  "name": "Salamis Tablet",
+  "type": "artifact",
+  "loc": "Epigraphical Museum, Athens",
+  "lat": 37.98,
+  "lng": 23.73,
+  "years": "c. 300 BC",
+  "active": [
+   -300,
+   null
+  ],
+  "blurb": "Oldest surviving counting board, an early external memory for arithmetic.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-leibniz-calculating-machine",
+  "name": "Leibniz's calculating machine",
+  "type": "artifact",
+  "loc": "Hanover, Germany",
+  "lat": 52.37,
+  "lng": 9.73,
+  "years": "built 1700",
+  "active": [
+   1672,
+   null
+  ],
+  "blurb": "First mechanical working automatic calculating machine (stepped drum).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-rosetta-stone",
+  "name": "Rosetta Stone",
+  "type": "artifact",
+  "loc": "British Museum, London",
+  "lat": 51.52,
+  "lng": -0.12,
+  "years": "196 BCE",
+  "active": [
+   -196,
+   null
+  ],
+  "blurb": "Trilingual decree, the first multilingual parallel corpus for NLP.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-mark-i-perceptron",
+  "name": "Mark I Perceptron",
+  "type": "artifact",
+  "loc": "Smithsonian, Washington, D.C.",
+  "lat": 38.89,
+  "lng": -77.02,
+  "years": "1958",
+  "active": [
+   1958,
+   null
+  ],
+  "blurb": "Rosenblatt's hardware perceptron, the ancestor of the modern neural network.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-snarc",
+  "name": "SNARC",
+  "type": "artifact",
+  "loc": "Cambridge, Massachusetts, USA",
+  "lat": 42.38,
+  "lng": -71.12,
+  "years": "1951",
+  "active": [
+   1951,
+   null
+  ],
+  "blurb": "First physical artificial neural network, built by Minsky and Edmonds.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-homeostat",
+  "name": "Homeostat",
+  "type": "artifact",
+  "loc": "Science Museum, London",
+  "lat": 51.49,
+  "lng": -0.17,
+  "years": "1948",
+  "active": [
+   1948,
+   null
+  ],
+  "blurb": "Ashby's self-organizing feedback machine demonstrating homeostasis.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-altair-8800",
+  "name": "Altair 8800",
+  "type": "artifact",
+  "loc": "Albuquerque, New Mexico, USA",
+  "lat": 35.08,
+  "lng": -106.65,
+  "years": "1974",
+  "active": [
+   1974,
+   null
+  ],
+  "blurb": "First commercially successful personal computer, a mail-order kit.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-deep-blue",
+  "name": "Deep Blue",
+  "type": "artifact",
+  "loc": "Armonk, New York, USA",
+  "lat": 41.04,
+  "lng": -73.76,
+  "years": "1997",
+  "active": [
+   1997,
+   null
+  ],
+  "blurb": "IBM chess machine that defeated the world champion in 1997.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-venus-of-dolni-vestonice",
+  "name": "Venus of Dolni Vestonice",
+  "type": "artifact",
+  "loc": "Moravian Museum, Brno",
+  "lat": 49.2,
+  "lng": 16.61,
+  "years": "c. 27,000 years ago",
+  "active": [
+   -27000,
+   null
+  ],
+  "blurb": "Among the oldest fired-clay figurines, found beside the notched wolf bone.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-zuse-z3",
+  "name": "Zuse Z3",
+  "type": "artifact",
+  "loc": "Deutsches Museum, Munich",
+  "lat": 48.14,
+  "lng": 11.58,
+  "years": "1941",
+  "active": [
+   1941,
+   null
+  ],
+  "blurb": "World's first functional programmable digital computer (relay-based).",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ },
+ {
+  "id": "artifact-kempelen-speaking-machine",
+  "name": "Kempelen's Speaking Machine",
+  "type": "artifact",
+  "loc": "Vienna, Austria",
+  "lat": 48.21,
+  "lng": 16.37,
+  "years": "1791",
+  "active": [
+   1791,
+   null
+  ],
+  "blurb": "Mechanical text-to-speech device, a forerunner of speech synthesis.",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "stated"
+ }
+]

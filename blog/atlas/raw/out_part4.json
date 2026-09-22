@@ -1,0 +1,3984 @@
+[
+  {
+    "id": "person-george-kingsley-zipf",
+    "name": "George Kingsley Zipf",
+    "type": "person",
+    "loc": "Cambridge, MA, US",
+    "lat": 42.38,
+    "lng": -71.12,
+    "years": "1902-1973",
+    "active": [
+      1926,
+      1973
+    ],
+    "blurb": "American mathematician whose principle of least effort describes the power-law distribution of word frequencies.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "zipf1949human"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrei-markov",
+    "name": "Andrei Andreyevich Markov",
+    "type": "person",
+    "loc": "St. Petersburg, Russia",
+    "lat": 59.93,
+    "lng": 30.37,
+    "years": "1856-1922",
+    "active": [
+      1881,
+      1922
+    ],
+    "blurb": "Russian mathematician who formalized stochastic processes, giving his name to the Markov chains used in language modeling.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "markov1913ngram"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-claude-shannon",
+    "name": "Claude Elwood Shannon",
+    "type": "person",
+    "loc": "Murray Hill, NJ, US",
+    "lat": 40.74,
+    "lng": -74.4,
+    "years": "1916-2001",
+    "active": [
+      1938,
+      2001
+    ],
+    "blurb": "Father of information theory, whose 1948 paper quantified entropy and established the mathematical basis for data compression.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "shannon1948communication"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-ilya-sutskever",
+    "name": "Ilya Sutskever",
+    "type": "person",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "1986-",
+    "active": [
+      2010,
+      2024
+    ],
+    "blurb": "AI researcher at University of Toronto and OpenAI, known for early RNN language models and deep learning breakthroughs.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "sutskever2011generating"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-geoffrey-hinton",
+    "name": "Geoffrey Everest Hinton",
+    "type": "person",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "1947-",
+    "active": [
+      1970,
+      2024
+    ],
+    "blurb": "Turing Award-winning AI researcher who pioneered autoencoders, deep learning, and warned about AI existential risk.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "hinton1989autoencoder",
+      "sutskever2011generating"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-philip-gage",
+    "name": "Philip Gage",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      1990,
+      2000
+    ],
+    "blurb": "British computer scientist who independently discovered Byte-Pair Encoding in 1994 for data compression.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "gage1994bpe"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-rico-sennrich",
+    "name": "Rico Sennrich",
+    "type": "person",
+    "loc": "Edinburgh, UK",
+    "lat": 55.95,
+    "lng": -3.19,
+    "years": "",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "NLP researcher at University of Edinburgh who applied subword units to neural machine translation.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "sennrich2016subword"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-mike-schuster",
+    "name": "Mike Schuster",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "Google engineer who co-invented the WordPiece subword tokenization algorithm in 2012.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "schuster2012wordpiece"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kaisuke-nakajima",
+    "name": "Kaisuke Nakajima",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "Google engineer who co-invented the WordPiece subword tokenization algorithm for Japanese and Korean voice search.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [
+      "schuster2012wordpiece"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-george-spencer-brown",
+    "name": "George Spencer-Brown",
+    "type": "person",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1925-2010",
+    "active": [
+      1950,
+      2010
+    ],
+    "blurb": "British mathematician and author of Laws of Form, a formal system based on the act of drawing a distinction.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "spencerbrown1969form"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-heraclitus",
+    "name": "Heraclitus",
+    "type": "person",
+    "loc": "Ephesus, Turkey",
+    "lat": 37.94,
+    "lng": 27.34,
+    "years": "-535--475",
+    "active": [
+      -500,
+      -475
+    ],
+    "blurb": "Pre-Socratic Greek philosopher who held that change and the unity of opposites are fundamental to reality.",
+    "cited_in": [
+      "coherent_difference",
+      "transformer"
+    ],
+    "bibkeys": [
+      "heraclitus500fragments"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alfred-north-whitehead",
+    "name": "Alfred North Whitehead",
+    "type": "person",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1861-1947",
+    "active": [
+      1890,
+      1947
+    ],
+    "blurb": "British philosopher and mathematician whose process philosophy emphasized events and relations over static substances.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "whitehead_process"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-henri-bergson",
+    "name": "Henri Bergson",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1859-1941",
+    "active": [
+      1889,
+      1941
+    ],
+    "blurb": "French philosopher and Nobel laureate who emphasized duration and the flow of experience over static analysis.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "bergson1889essai"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-f-william-lawvere",
+    "name": "F. William Lawvere",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "1937-",
+    "active": [
+      1960,
+      2020
+    ],
+    "blurb": "American mathematician who founded topos theory and category-theoretic foundations of mathematics and logic.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "lawvere1993categories"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hermann-weyl",
+    "name": "Hermann Weyl",
+    "type": "person",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.38,
+    "lng": 8.54,
+    "years": "1895-1955",
+    "active": [
+      1913,
+      1955
+    ],
+    "blurb": "German-Swiss mathematician who worked on group theory, quantum mechanics, and the philosophy of mathematics.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "weyl1949philosophy",
+      "weylriemann"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-wilfrid-sellars",
+    "name": "Wilfrid Sellars",
+    "type": "person",
+    "loc": "Minneapolis, MN, US",
+    "lat": 44.98,
+    "lng": -93.27,
+    "years": "1912-1989",
+    "active": [
+      1940,
+      1989
+    ],
+    "blurb": "American philosopher who critiqued the 'Myth of the Given' and shaped inferentialist philosophy of language and mind.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "sellars1956empiricism"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robert-brandom",
+    "name": "Robert B. Brandom",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "1950-",
+    "active": [
+      1980,
+      2020
+    ],
+    "blurb": "American philosopher whose inferentialist account of meaning and reasoning influenced contemporary philosophy of language.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "brandom1994making"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-anaxagoras",
+    "name": "Anaxagoras",
+    "type": "person",
+    "loc": "Clazomenae, Turkey",
+    "lat": 38.47,
+    "lng": 27.21,
+    "years": "-500--428",
+    "active": [
+      -480,
+      -428
+    ],
+    "blurb": "Pre-Socratic Greek philosopher who argued that 'everything is in everything' and that mind (Nous) orders the cosmos.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "anaxagoras450fragments"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-spinoza",
+    "name": "Benedictus de Spinoza",
+    "type": "person",
+    "loc": "Amsterdam, Netherlands",
+    "lat": 52.37,
+    "lng": 4.9,
+    "years": "1632-1677",
+    "active": [
+      1656,
+      1677
+    ],
+    "blurb": "Dutch philosopher whose geometric Ethics presents a monist metaphysics where God and Nature are one substance.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "spinoza1677ethics"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alexander-grothendieck",
+    "name": "Alexander Grothendieck",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1928-2014",
+    "active": [
+      1948,
+      1988
+    ],
+    "blurb": "French mathematician who revolutionized algebraic geometry and gave his name to Grothendieck topoi.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "grothendieck_sheaf"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jean-leray",
+    "name": "Jean Leray",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1906-1998",
+    "active": [
+      1930,
+      1998
+    ],
+    "blurb": "French mathematician who invented sheaf theory during World War II to study cohomology on analytic varieties.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "leray1948calcul"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-plato",
+    "name": "Plato",
+    "type": "person",
+    "loc": "Athens, Greece",
+    "lat": 37.98,
+    "lng": 23.73,
+    "years": "-428--348",
+    "active": [
+      -390,
+      -348
+    ],
+    "blurb": "Ancient Greek philosopher whose dialogues on the Forms, knowledge, and the soul shaped Western metaphysics for millennia.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "plato380republic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-laozi",
+    "name": "Laozi",
+    "type": "person",
+    "loc": "China",
+    "lat": 34.34,
+    "lng": 108.94,
+    "years": "-571--471",
+    "active": [
+      -500,
+      -400
+    ],
+    "blurb": "Chinese philosopher and semi-legendary author of the Tao Te Ching, foundational text of Daoism.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "laozi400taoteching"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gotthard-gunther",
+    "name": "Gotthard G\u00fcnther",
+    "type": "person",
+    "loc": "Rheineck, Germany",
+    "lat": 47.64,
+    "lng": 9.59,
+    "years": "1900-2000",
+    "active": [
+      1925,
+      2000
+    ],
+    "blurb": "German philosopher and mathematician who developed a non-Aristotelian logic based on the distinction of distinction.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "gunther1978idee"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-david-spivak",
+    "name": "David I. Spivak",
+    "type": "person",
+    "loc": "Ithaca, NY, US",
+    "lat": 42.44,
+    "lng": -76.5,
+    "years": "",
+    "active": [
+      2000,
+      2020
+    ],
+    "blurb": "American mathematician at Cornell who applied category theory to the sciences and knowledge representation.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "spivak2012ologs",
+      "spivak2014cts"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robert-kent",
+    "name": "Robert E. Kent",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "",
+    "active": [
+      2000,
+      2015
+    ],
+    "blurb": "American mathematician who co-authored the Ologs framework for categorical knowledge representation with Spivak.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "spivak2012ologs"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-steve-awodey",
+    "name": "Steve Awodey",
+    "type": "person",
+    "loc": "Coventry, UK",
+    "lat": 52.41,
+    "lng": -1.52,
+    "years": "",
+    "active": [
+      1990,
+      2020
+    ],
+    "blurb": "British mathematician at University of Warwick who wrote a standard textbook on category theory for logicians.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "awodey2010category"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-saunders-mac-lane",
+    "name": "Saunders Mac Lane",
+    "type": "person",
+    "loc": "Chicago, IL, US",
+    "lat": 41.88,
+    "lng": -87.63,
+    "years": "1909-2005",
+    "active": [
+      1930,
+      2005
+    ],
+    "blurb": "American mathematician who, with Eilenberg, founded category theory and wrote the classic 'Categories for the Working Mathematician'.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "maclane1998categories",
+      "eilenberglane1945",
+      "maclanemoerdijk1992"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-samuel-eilenberg",
+    "name": "Samuel Eilenberg",
+    "type": "person",
+    "loc": "New York, NY, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1913-1998",
+    "active": [
+      1936,
+      1998
+    ],
+    "blurb": "Polish-American mathematician who, with Mac Lane, founded category theory in 1945.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "eilenberglane1945"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robert-goldblatt",
+    "name": "Robert Goldblatt",
+    "type": "person",
+    "loc": "Buffalo, NY, US",
+    "lat": 42.89,
+    "lng": -78.88,
+    "years": "1943-",
+    "active": [
+      1965,
+      2020
+    ],
+    "blurb": "American mathematician and logician who wrote the standard reference on topos theory and its application to logic.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "goldblatt1979topoi"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-peter-johnstone",
+    "name": "Peter T. Johnstone",
+    "type": "person",
+    "loc": "Coventry, UK",
+    "lat": 52.41,
+    "lng": -1.52,
+    "years": "1944-",
+    "active": [
+      1965,
+      2020
+    ],
+    "blurb": "British mathematician at University of Warwick who authored the multi-volume topos theory reference 'Sketches of an Elephant'.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "johnstone_elephant"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ieke-moerdijk",
+    "name": "Ieke Moerdijk",
+    "type": "person",
+    "loc": "Utrecht, Netherlands",
+    "lat": 52.09,
+    "lng": 5.12,
+    "years": "1950-",
+    "active": [
+      1975,
+      2020
+    ],
+    "blurb": "Dutch mathematician who co-authored the standard textbook on sheaves and topos theory with Mac Lane.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "maclanemoerdijk1992"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-olivia-caramello",
+    "name": "Olivia Caramello",
+    "type": "person",
+    "loc": "Pisa, Italy",
+    "lat": 43.72,
+    "lng": 10.4,
+    "years": "1958-",
+    "active": [
+      1980,
+      2020
+    ],
+    "blurb": "Italian mathematician who wrote the definitive reference on theories, sites, and toposes.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "caramello2017theories"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jean-giraud",
+    "name": "Jean Giraud",
+    "type": "person",
+    "loc": "France",
+    "lat": 46.6,
+    "lng": 2.47,
+    "years": "1933-",
+    "active": [
+      1955,
+      2020
+    ],
+    "blurb": "French mathematician who proved Giraud's theorem characterizing Grothendieck topoi in terms of descent.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "giraud1964descente"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michael-barr",
+    "name": "Michael Barr",
+    "type": "person",
+    "loc": "Waterloo, Canada",
+    "lat": 43.47,
+    "lng": -80.54,
+    "years": "1945-",
+    "active": [
+      1968,
+      2020
+    ],
+    "blurb": "Canadian mathematician who proved Barr's theorem on locally cartesian closed categories and toposes.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "barr1974toposes"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-radu-diaconescu",
+    "name": "Radu Diaconescu",
+    "type": "person",
+    "loc": "Bucharest, Romania",
+    "lat": 44.43,
+    "lng": 26.1,
+    "years": "1945-2011",
+    "active": [
+      1968,
+      2011
+    ],
+    "blurb": "Romanian-American mathematician who proved that in any topos, the axiom of choice implies the law of excluded middle.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "diaconescu1975"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hermann-schmitz",
+    "name": "Hermann Schmitz",
+    "type": "person",
+    "loc": "Rostock, Germany",
+    "lat": 54.09,
+    "lng": 12.09,
+    "years": "1919-2002",
+    "active": [
+      1945,
+      2002
+    ],
+    "blurb": "German philosopher who founded neo-phenomenology, a radical critique of Husserl's phenomenology.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "schmitz_neo_phenomenology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-maurice-merleau-ponty",
+    "name": "Maurice Merleau-Ponty",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1908-1961",
+    "active": [
+      1945,
+      1961
+    ],
+    "blurb": "French phenomenologist whose Phenomenology of Perception emphasized the embodied body as the ground of experience.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "merleauponty1945phenomenologie"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ferdinand-de-saussure",
+    "name": "Ferdinand de Saussure",
+    "type": "person",
+    "loc": "Geneva, Switzerland",
+    "lat": 46.2,
+    "lng": 6.14,
+    "years": "1857-1913",
+    "active": [
+      1878,
+      1913
+    ],
+    "blurb": "Swiss linguist whose posthumous Cours de linguistique g\u00e9n\u00e9rale founded structural linguistics and semiotics.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "saussure1916"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gottfried-leibniz",
+    "name": "Gottfried Wilhelm Leibniz",
+    "type": "person",
+    "loc": "Hanover, Germany",
+    "lat": 52.38,
+    "lng": 9.74,
+    "years": "1646-1716",
+    "active": [
+      1667,
+      1716
+    ],
+    "blurb": "German polymath who invented calculus independently, developed the monadology, and envisioned a universal characteristic.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "leibniz1714monadology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-parmenides",
+    "name": "Parmenides",
+    "type": "person",
+    "loc": "Elea, Italy",
+    "lat": 40.06,
+    "lng": 15.31,
+    "years": "-515--450",
+    "active": [
+      -490,
+      -450
+    ],
+    "blurb": "Pre-Socratic Greek philosopher who argued that change is illusion and Being is one, unchanging, and eternal.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "parmenides480fragments"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-plotinus",
+    "name": "Plotinus",
+    "type": "person",
+    "loc": "Rome, Italy",
+    "lat": 41.9,
+    "lng": 12.5,
+    "years": "204-270",
+    "active": [
+      243,
+      270
+    ],
+    "blurb": "Greek-Roman Neoplatonist philosopher whose Enneads explored the One, the Intellect, and the Soul.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "plotinus250enneads"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nagarjuna",
+    "name": "Nagarjuna",
+    "type": "person",
+    "loc": "India",
+    "lat": 20.59,
+    "lng": 78.96,
+    "years": "150-250",
+    "active": [
+      180,
+      250
+    ],
+    "blurb": "Indian Buddhist philosopher who founded the Madhyamaka school and articulated the doctrine of emptiness (sunyata).",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "nagarjuna150mmk"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nicholas-of-cusa",
+    "name": "Nicholas of Cusa",
+    "type": "person",
+    "loc": "Kues, Germany",
+    "lat": 49.93,
+    "lng": 6.63,
+    "years": "1401-1464",
+    "active": [
+      1425,
+      1464
+    ],
+    "blurb": "German philosopher and Cardinal who argued for the learned ignorance and the coincidence of opposites in God.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "cusanus1440docta"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gilles-deleuze",
+    "name": "Gilles Deleuze",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1925-1995",
+    "active": [
+      1955,
+      1995
+    ],
+    "blurb": "French philosopher whose Difference and Repetition challenged Hegelian dialectics with a philosophy of difference.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "deleuze1968difference"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-carl-linnaeus",
+    "name": "Carl Linnaeus",
+    "type": "person",
+    "loc": "Uppsala, Sweden",
+    "lat": 59.86,
+    "lng": 17.64,
+    "years": "1707-1778",
+    "active": [
+      1730,
+      1778
+    ],
+    "blurb": "Swedish botanist and taxonomist who formulated binomial nomenclature and the principle that nature does not make jumps.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "naturanonfacitsaltus"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-martin-heidegger",
+    "name": "Martin Heidegger",
+    "type": "person",
+    "loc": "Freiburg, Germany",
+    "lat": 47.99,
+    "lng": 7.85,
+    "years": "1889-1976",
+    "active": [
+      1919,
+      1976
+    ],
+    "blurb": "German philosopher whose Being and Time and later works explored the question of Being and the history of metaphysics.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "heidegger1935metaphysics"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-bertrand-russell",
+    "name": "Bertrand Russell",
+    "type": "person",
+    "loc": "Cambridge, UK",
+    "lat": 52.21,
+    "lng": 0.12,
+    "years": "1872-1970",
+    "active": [
+      1890,
+      1970
+    ],
+    "blurb": "British philosopher and logician who, with Whitehead, wrote Principia Mathematica and developed logical atomism.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "russell1903principia"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-l-e-j-brouwer",
+    "name": "L. E. J. Brouwer",
+    "type": "person",
+    "loc": "Amsterdam, Netherlands",
+    "lat": 52.37,
+    "lng": 4.9,
+    "years": "1881-1966",
+    "active": [
+      1907,
+      1966
+    ],
+    "blurb": "Dutch mathematician and founder of mathematical intuitionism, who rejected the law of excluded middle.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [
+      "brouwer1911fixed"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alfred-tarski",
+    "name": "Alfred Tarski",
+    "type": "person",
+    "loc": "Warsaw, Poland",
+    "lat": 52.23,
+    "lng": 21.01,
+    "years": "1902-1983",
+    "active": [
+      1925,
+      1983
+    ],
+    "blurb": "Polish-American logician who formalized the semantic conception of truth and founded modern model theory.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "tarski1935wahrheitsbegriff",
+      "tarski1944semantic",
+      "tarski1956logic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-f-h-bradley",
+    "name": "F. H. Bradley",
+    "type": "person",
+    "loc": "Oxford, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1846-1924",
+    "active": [
+      1870,
+      1924
+    ],
+    "blurb": "British idealist philosopher whose Appearance and Reality developed the coherence theory of truth.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "bradley1893appearance"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-brand-blanshard",
+    "name": "Brand Blanshard",
+    "type": "person",
+    "loc": "New York, NY, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1893-1955",
+    "active": [
+      1920,
+      1955
+    ],
+    "blurb": "American philosopher and journalist who defended the coherence theory of truth against correspondence theory.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "blanshard1939nature"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-laurence-bonjour",
+    "name": "Laurence BonJour",
+    "type": "person",
+    "loc": "Los Angeles, CA, US",
+    "lat": 34.05,
+    "lng": -118.24,
+    "years": "1946-",
+    "active": [
+      1975,
+      2020
+    ],
+    "blurb": "American philosopher who provided a modern defense of the coherence theory of truth in The Structure of Empirical Knowledge.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "bonjour1985structure"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-h-h-joachim",
+    "name": "H. H. Joachim",
+    "type": "person",
+    "loc": "Oxford, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1857-1935",
+    "active": [
+      1882,
+      1935
+    ],
+    "blurb": "British idealist philosopher who wrote The Nature of Truth, a major work in British idealism.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "joachim1906nature"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nelson-goodman",
+    "name": "Nelson Goodman",
+    "type": "person",
+    "loc": "New York, NY, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1906-1998",
+    "active": [
+      1930,
+      1998
+    ],
+    "blurb": "American philosopher of art and science who explored worldmaking, the problem of induction, and aesthetics.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "goodman1978ways"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nancy-cartwright",
+    "name": "Nancy Cartwright",
+    "type": "person",
+    "loc": "Edinburgh, UK",
+    "lat": 55.95,
+    "lng": -3.19,
+    "years": "1932-",
+    "active": [
+      1960,
+      2020
+    ],
+    "blurb": "British philosopher of science who argued that the laws of physics are idealized fictions, not literal truths.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "cartwright1983laws"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ian-hacking",
+    "name": "Ian Hacking",
+    "type": "person",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "1936-2023",
+    "active": [
+      1960,
+      2023
+    ],
+    "blurb": "Canadian philosopher of science known for his work on representation, intervention, and looping effects in social categories.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "hacking1983representing"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-ladyman",
+    "name": "John Ladyman",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1958-",
+    "active": [
+      1985,
+      2020
+    ],
+    "blurb": "British philosopher of science who developed ontic structural realism, the view that only structure, not objects, is fundamental.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "ladyman1998what"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-don-ross",
+    "name": "Don Ross",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      1990,
+      2020
+    ],
+    "blurb": "British philosopher who co-authored Everything Must Go with Ladyman, developing ontic structural realism.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "ladymanross2007everything"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-worrall",
+    "name": "John Worrall",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1954-",
+    "active": [
+      1980,
+      2020
+    ],
+    "blurb": "British philosopher of science who articulated epistemic structural realism as a response to the pessimistic meta-induction.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "worrall1989structural"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-mark-walker",
+    "name": "Mark Walker",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      2000,
+      2020
+    ],
+    "blurb": "British philosopher who wrote the Stanford Encyclopedia of Philosophy entry on the coherence theory of truth.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "walker2019coherence"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-wilfrid-hodges",
+    "name": "Wilfrid Hodges",
+    "type": "person",
+    "loc": "Cambridge, UK",
+    "lat": 52.21,
+    "lng": 0.12,
+    "years": "1943-",
+    "active": [
+      1965,
+      2020
+    ],
+    "blurb": "British model theorist who wrote the standard textbook on model theory and the SEP entry on Tarski's truth definitions.",
+    "cited_in": [
+      "coherent_world_models"
+    ],
+    "bibkeys": [
+      "hodges1993modeltheory",
+      "hodges2007tarski"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ludwig-wittgenstein",
+    "name": "Ludwig Wittgenstein",
+    "type": "person",
+    "loc": "Cambridge, UK",
+    "lat": 52.21,
+    "lng": 0.12,
+    "years": "1889-1951",
+    "active": [
+      1911,
+      1951
+    ],
+    "blurb": "Austrian-British philosopher whose Philosophical Investigations introduced the concept of language games and family resemblance.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "wittgenstein1953investigations"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-friedrich-nietzsche",
+    "name": "Friedrich Wilhelm Nietzsche",
+    "type": "person",
+    "loc": "Naumburg, Germany",
+    "lat": 51.8,
+    "lng": 11.96,
+    "years": "1844-1900",
+    "active": [
+      1870,
+      1900
+    ],
+    "blurb": "German philosopher who challenged objective truth and moral absolutes, influencing postmodern thought on perspectivism.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "ueberwahrheitundluege"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-bernhard-riemann",
+    "name": "Bernhard Riemann",
+    "type": "person",
+    "loc": "G\u00f6ttingen, Germany",
+    "lat": 51.54,
+    "lng": 9.94,
+    "years": "1826-1866",
+    "active": [
+      1849,
+      1866
+    ],
+    "blurb": "German mathematician whose 1854 inaugural lecture on the hypotheses underlying geometry founded differential geometry and general relativity.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "hypothesengeometrie"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-carl-friedrich-gauss",
+    "name": "Carl Friedrich Gauss",
+    "type": "person",
+    "loc": "G\u00f6ttingen, Germany",
+    "lat": 51.54,
+    "lng": 9.94,
+    "years": "1777-1855",
+    "active": [
+      1792,
+      1855
+    ],
+    "blurb": "German mathematician who proved the Theorema Egregium, establishing that curvature is an intrinsic property of surfaces.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "gauscurvas"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-david-hilbert",
+    "name": "David Hilbert",
+    "type": "person",
+    "loc": "G\u00f6ttingen, Germany",
+    "lat": 51.54,
+    "lng": 9.94,
+    "years": "1862-1943",
+    "active": [
+      1885,
+      1943
+    ],
+    "blurb": "German mathematician who axiomatized geometry and led the G\u00f6ttingen school that shaped 20th-century mathematics.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "hilbert1903grundlagen"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hassler-whitney",
+    "name": "Hassler Whitney",
+    "type": "person",
+    "loc": "Princeton, NJ, US",
+    "lat": 40.35,
+    "lng": -74.66,
+    "years": "1907-1989",
+    "active": [
+      1930,
+      1989
+    ],
+    "blurb": "American mathematician who gave the first rigorous definition of differentiable manifolds and co-founded algebraic topology.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "whitney1936manifolds"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-charles-ehresmann",
+    "name": "Charles Ehresmann",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1911-1979",
+    "active": [
+      1935,
+      1979
+    ],
+    "blurb": "French mathematician who introduced the concept of a connection on a fiber bundle, foundational for gauge theory.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "ehresmann1950connexions"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-rupert-firth",
+    "name": "John Rupert Firth",
+    "type": "person",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1906-1990",
+    "active": [
+      1930,
+      1990
+    ],
+    "blurb": "British linguist whose distributional hypothesis ('you shall know a word by the company it keeps') underlies modern word embeddings.",
+    "cited_in": [
+      "embeddinglab",
+      "attentionlab"
+    ],
+    "bibkeys": [
+      "firth1957distributive"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gerard-salton",
+    "name": "Gerard Salton",
+    "type": "person",
+    "loc": "Ithaca, NY, US",
+    "lat": 42.44,
+    "lng": -76.5,
+    "years": "1928-1993",
+    "active": [
+      1955,
+      1993
+    ],
+    "blurb": "American computer scientist at Cornell who developed the vector space model for information retrieval.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "salton1975vectorspace"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tomas-mikolov",
+    "name": "Tom\u00e1\u0161 Mikolov",
+    "type": "person",
+    "loc": "Prague, Czech Republic",
+    "lat": 50.08,
+    "lng": 14.44,
+    "years": "1977-",
+    "active": [
+      2007,
+      2020
+    ],
+    "blurb": "Czech-American AI researcher at Google who co-invented word2vec, showing that word vectors capture semantic and syntactic structure.",
+    "cited_in": [
+      "embeddinglab",
+      "attentionlab"
+    ],
+    "bibkeys": [
+      "mikolov2013word2vec"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-christopher-olah",
+    "name": "Christopher Olah",
+    "type": "person",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "1987-",
+    "active": [
+      2010,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who created the colah.github.io visualizations and pioneered mechanistic interpretability.",
+    "cited_in": [
+      "embeddinglab",
+      "recurrent_networks",
+      "attentionlab",
+      "transformer",
+      "mechanistic_interpretability",
+      "fact_lookup",
+      "alternative_architectures"
+    ],
+    "bibkeys": [
+      "colah2014nlp",
+      "colah2015types",
+      "colah2015lstm",
+      "colah2014conv",
+      "colah2015backprop"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yoshua-bengio",
+    "name": "Yoshua Bengio",
+    "type": "person",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "1964-",
+    "active": [
+      1989,
+      2024
+    ],
+    "blurb": "Turing Award-winning Canadian AI researcher who proved the vanishing gradient problem and co-invented the GRU and word2vec-era neural NLP.",
+    "cited_in": [
+      "recurrent_networks",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "bengio1994learning",
+      "bengio2013representation"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-josef-hochreiter",
+    "name": "Josef Hochreiter",
+    "type": "person",
+    "loc": "Graz, Austria",
+    "lat": 47.07,
+    "lng": 15.44,
+    "years": "1959-",
+    "active": [
+      1985,
+      2020
+    ],
+    "blurb": "Austrian-German AI researcher who, with Schmidhuber, invented the Long Short-Term Memory network to solve the vanishing gradient problem.",
+    "cited_in": [
+      "recurrent_networks"
+    ],
+    "bibkeys": [
+      "hochreiter1991vanishing",
+      "lstm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jurgen-schmidhuber",
+    "name": "J\u00fcrgen Schmidhuber",
+    "type": "person",
+    "loc": "T\u00fcbingen, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "1963-",
+    "active": [
+      1985,
+      2025
+    ],
+    "blurb": "German AI researcher who co-invented LSTM, GRU, and modern Hopfield networks, and pioneered algorithmic information theory in AI.",
+    "cited_in": [
+      "recurrent_networks",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "lstm",
+      "greff2015lstm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kyunghyun-cho",
+    "name": "Kyunghyun Cho",
+    "type": "person",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "1987-",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "Korean-Canadian AI researcher who co-invented the Gated Recurrent Unit (GRU) and the attention mechanism for neural machine translation.",
+    "cited_in": [
+      "recurrent_networks",
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "cho2014gru",
+      "bahdanau2014"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-klaus-greff",
+    "name": "Klaus Greff",
+    "type": "person",
+    "loc": "T\u00fcbingen, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "German AI researcher who systematically compared LSTM variants and established best practices for recurrent network design.",
+    "cited_in": [
+      "recurrent_networks"
+    ],
+    "bibkeys": [
+      "greff2015lstm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ashish-vaswani",
+    "name": "Ashish Vaswani",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2014,
+      2020
+    ],
+    "blurb": "AI researcher at Google who led the team that invented the Transformer architecture in the paper 'Attention Is All You Need'.",
+    "cited_in": [
+      "positionalembeddingslab",
+      "transformer",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "vaswani2017attention",
+      "shaw2018relative"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-aryabhata",
+    "name": "\u0100ryabha\u1e6da",
+    "type": "person",
+    "loc": "Kusumapura, India",
+    "lat": 25.61,
+    "lng": 85.1,
+    "years": "476-550",
+    "active": [
+      499,
+      550
+    ],
+    "blurb": "Indian mathematician-astronomer who constructed the first trigonometric sine table in his \u0100ryabha\u1e6d\u012bya (499 CE).",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "indianastronomer"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robert-of-chester",
+    "name": "Robert of Chester",
+    "type": "person",
+    "loc": "Chester, England, UK",
+    "lat": 53.2,
+    "lng": -2.89,
+    "years": "c. 1075-c. 1149",
+    "active": [
+      1100,
+      1149
+    ],
+    "blurb": "English Benedictine monk who translated al-Khwarizmi's algebra into Latin, transmitting algebra to medieval Europe.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "chester1145"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-al-khwarizmi",
+    "name": "Muhammad ibn Musa al-Khwarizmi",
+    "type": "person",
+    "loc": "Baghdad, Iraq",
+    "lat": 33.31,
+    "lng": 44.36,
+    "years": "780-850",
+    "active": [
+      800,
+      850
+    ],
+    "blurb": "Persian mathematician at the House of Wisdom who wrote the foundational book on algebra, giving his name to the word 'algorithm'.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "alkwarizma"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-edmund-gunter",
+    "name": "Edmund Gunter",
+    "type": "person",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1581-1626",
+    "active": [
+      1607,
+      1626
+    ],
+    "blurb": "English mathematician and astronomer who invented the sector, an analog computing instrument that inspired the slide rule.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "gunter1620"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jeffrey-elman",
+    "name": "Jeffrey L. Elman",
+    "type": "person",
+    "loc": "Ithaca, NY, US",
+    "lat": 42.44,
+    "lng": -76.5,
+    "years": "1958-",
+    "active": [
+      1985,
+      2020
+    ],
+    "blurb": "American cognitive scientist who showed that simple recurrent networks can learn temporal structure in language.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "elman1990finding"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jonas-gehring",
+    "name": "Jonas Gehring",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "",
+    "active": [
+      2013,
+      2020
+    ],
+    "blurb": "German AI researcher at Facebook AI Research who co-authored the convolutional seq2seq model that preceded the Transformer.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "gehring2017convs2s"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-peter-shaw",
+    "name": "Peter Shaw",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "AI researcher at Google who developed relative position representations for self-attention, a key component of the Transformer.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "shaw2018relative"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jianlin-su",
+    "name": "Jianlin Su",
+    "type": "person",
+    "loc": "China",
+    "lat": 34.34,
+    "lng": 108.94,
+    "years": "",
+    "active": [
+      2019,
+      2025
+    ],
+    "blurb": "Chinese AI researcher who co-developed Rotary Position Embeddings (RoPE), now standard in modern LLMs.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "rope2021"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ofir-press",
+    "name": "Ofir Press",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at BigScience who co-developed ALiBi, a method for length extrapolation in transformers using linear biases.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "alibi2022"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-dzmitry-bahdanau",
+    "name": "Dzmitry Bahdanau",
+    "type": "person",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "",
+    "active": [
+      2010,
+      2020
+    ],
+    "blurb": "Canadian AI researcher who co-invented the attention mechanism for neural machine translation with Cho and Bengio.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [
+      "bahdanau2014"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-adam-paszke",
+    "name": "Adam Paszke",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "AI researcher at Facebook AI Research who led the development of PyTorch, the dominant deep learning framework.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "pytorch"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrej-karpathy",
+    "name": "Andrej Karpathy",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "1986-",
+    "active": [
+      2012,
+      2025
+    ],
+    "blurb": "AI researcher and educator who created nanoGPT and the 'Zero to Hero' series, making transformer training accessible to millions.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "nanogpt"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alec-radford",
+    "name": "Alec Radford",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "AI researcher at OpenAI who led the development of GPT-1 and GPT-2, establishing the generative pre-training paradigm.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "gpt2"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kaiming-he",
+    "name": "Kaiming He",
+    "type": "person",
+    "loc": "Palo Alto, CA, US",
+    "lat": 37.44,
+    "lng": -122.14,
+    "years": "1985-",
+    "active": [
+      2010,
+      2025
+    ],
+    "blurb": "Chinese-American AI researcher at FAIR who co-invented ResNet and the Random Projection Transformer, advancing deep and efficient architectures.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "he2015resnet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-naftali-tishby",
+    "name": "Naftali Tishby",
+    "type": "person",
+    "loc": "Rehovot, Israel",
+    "lat": 31.9,
+    "lng": 34.81,
+    "years": "1961-",
+    "active": [
+      1985,
+      2025
+    ],
+    "blurb": "Israeli-American physicist and information theorist who developed the Information Bottleneck method for understanding representation learning.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "tishby2000informationbottleneck"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ruibin-xiong",
+    "name": "Ruibin Xiong",
+    "type": "person",
+    "loc": "Beijing, China",
+    "lat": 39.9,
+    "lng": 116.41,
+    "years": "",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "Chinese AI researcher who analyzed the role of layer normalization in the Transformer architecture.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [
+      "xiong2020"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-neel-nanda",
+    "name": "Neel Nanda",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the mathematical framework for transformer circuits and progress measures for grokking.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "algorithms"
+    ],
+    "bibkeys": [
+      "nanda2023grokking",
+      "elhage2021mathematical"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-catherine-olsson",
+    "name": "Catherine Olsson",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the induction heads paper and the mathematical framework for transformer circuits.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "olsson2022induction"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kevin-wang",
+    "name": "Kevin Wang",
+    "type": "person",
+    "loc": "Berkeley, CA, US",
+    "lat": 37.87,
+    "lng": -122.27,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at UC Berkeley who mapped the indirect object identification circuit in GPT-2 small.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "wang2022interpretability"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-arthur-conmy",
+    "name": "Arthur Conmy",
+    "type": "person",
+    "loc": "UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "AI researcher who developed automated circuit discovery methods for mechanistic interpretability.",
+    "cited_in": [
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [
+      "conmy2023automated"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hoagy-cunningham",
+    "name": "Hoagy Cunningham",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the sparse autoencoder paper that found highly interpretable features in language models.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "cunningham2023sparse"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kevin-meng",
+    "name": "Kevin Meng",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher who demonstrated that factual knowledge in GPT is stored in specific neurons and can be edited with ROME.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "meng2022locating"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jack-lindsey",
+    "name": "Jack Lindsey",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the monosemanticity and biology of LLM papers, advancing feature-level interpretability.",
+    "cited_in": [
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [
+      "lindsey2025biology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nehel-nanda",
+    "name": "Nelson Elhage",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the mathematical framework for transformer circuits and the superposition paper.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup",
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "elhage2021mathematical",
+      "elhage2022superposition",
+      "elhage2022solu",
+      "elhage2023privileged"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jack-merullo",
+    "name": "Jack Merullo",
+    "type": "person",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "AI researcher who developed the Talking Heads method for analyzing inter-layer communication in transformer language models.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "algorithms",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "merullo2024talkingheads"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-adly-templeton",
+    "name": "Adly Templeton",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the monosemanticity and scaling papers on extracting interpretable features from Claude 3 Sonnet.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "templeton2024scaling"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-emmanuel-ameisen",
+    "name": "Emmanuel Ameisen",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the circuit tracing paper revealing computational graphs in language models.",
+    "cited_in": [
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [
+      "ameisen2025circuit"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-martin-wattenberg",
+    "name": "Martin Wattenberg",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2010,
+      2025
+    ],
+    "blurb": "AI researcher at Google Brain who co-created the projectors visualization tool and the Othello-GPT world model experiments.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "li2022othello_iclr"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kenneth-li",
+    "name": "Kenneth Li",
+    "type": "person",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Google Brain who co-authored the Othello-GPT paper showing emergent world representations in sequence models.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "algorithms",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "li2022othello_iclr"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kaho-park",
+    "name": "Kiho Park",
+    "type": "person",
+    "loc": "Waterloo, Canada",
+    "lat": 43.47,
+    "lng": -80.54,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher who formalized the linear representation hypothesis for the geometry of large language model activations.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "algorithms",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "park2024linear"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-angeliki-giannou",
+    "name": "Angeliki Giannou",
+    "type": "person",
+    "loc": "Princeton, NJ, US",
+    "lat": 40.35,
+    "lng": -74.66,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "AI researcher at Princeton who showed that looped transformers can be programmable computers.",
+    "cited_in": [
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [
+      "giannou2023looped"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-trenton-bricken",
+    "name": "Trenton Bricken",
+    "type": "person",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Anthropic who co-authored the monosemanticity paper on decomposing language models with dictionary learning.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "bricken2023monosemanticity"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nora-belrose",
+    "name": "Nora Belrose",
+    "type": "person",
+    "loc": "US",
+    "lat": 39.83,
+    "lng": -98.58,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher who developed the Tuned Lens for eliciting latent predictions from intermediate transformer layers.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "belrose2023tunedlens"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-eric-todd",
+    "name": "Eric Todd",
+    "type": "person",
+    "loc": "Pittsburgh, PA, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "AI researcher at Carnegie Mellon who demonstrated that function vectors in LLMs can modify model behavior.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "todd2024functionvectors"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-damai-dai",
+    "name": "Damai Dai",
+    "type": "person",
+    "loc": "Beijing, China",
+    "lat": 39.9,
+    "lng": 116.41,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "AI researcher at Peking University who identified knowledge neurons in pretrained transformers.",
+    "cited_in": [
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "dai2022knowledgeneurons"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-mor-geva",
+    "name": "Mor Geva",
+    "type": "person",
+    "loc": "Ramat Gan, Israel",
+    "lat": 31.92,
+    "lng": 34.86,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Israeli AI researcher who showed that transformer feed-forward layers function as key-value memory stores.",
+    "cited_in": [
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "keyvalmem"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hubert-ramsauer",
+    "name": "Hubert Ramsauer",
+    "type": "person",
+    "loc": "Graz, Austria",
+    "lat": 47.07,
+    "lng": 15.44,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Austrian AI researcher at JKU who showed that modern Hopfield networks are equivalent to transformers.",
+    "cited_in": [
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "ramsauer2020hopfield"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-hopfield",
+    "name": "John J. Hopfield",
+    "type": "person",
+    "loc": "Princeton, NJ, US",
+    "lat": 40.35,
+    "lng": -74.66,
+    "years": "1933-2024",
+    "active": [
+      1957,
+      2024
+    ],
+    "blurb": "Nobel Prize-winning physicist who developed the Hopfield network, an associative memory model that inspired modern neural networks.",
+    "cited_in": [
+      "fact_lookup"
+    ],
+    "bibkeys": [
+      "hopfield1982"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ann-sophie-barwich",
+    "name": "Ann-Sophie Barwich",
+    "type": "person",
+    "loc": "T\u00fcbingen, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "",
+    "active": [
+      2005,
+      2020
+    ],
+    "blurb": "German philosopher of science who wrote about the history and significance of grandmother neurons in neuroscience.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "grandmotherneuron"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-minyoung-huh",
+    "name": "Minyoung Huh",
+    "type": "person",
+    "loc": "Berkeley, CA, US",
+    "lat": 37.87,
+    "lng": -122.27,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Korean-American AI researcher at UC Berkeley who co-proposed the Platonic Representation Hypothesis.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "huh2024platonic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yuxi-li",
+    "name": "Yuxi Li",
+    "type": "person",
+    "loc": "China",
+    "lat": 34.34,
+    "lng": 108.94,
+    "years": "",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "Chinese AI researcher who co-authored the glitch tokens paper on detecting and categorizing anomalous tokens in LLMs.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "glitchtokens"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alexis-conneau",
+    "name": "Alexis Conneau",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "",
+    "active": [
+      2014,
+      2025
+    ],
+    "blurb": "French AI researcher at Meta AI who co-developed the MUSE bilingual dictionary induction method.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "conneau2018word"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-anders-sogaard",
+    "name": "Anders S\u00f8gaard",
+    "type": "person",
+    "loc": "Aarhus, Denmark",
+    "lat": 56.16,
+    "lng": 10.2,
+    "years": "",
+    "active": [
+      2005,
+      2025
+    ],
+    "blurb": "Danish NLP researcher who demonstrated limitations of unsupervised bilingual dictionary induction using linear assignments.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "sogaard2018limitations"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-maximilian-nickel",
+    "name": "Maximilian Nickel",
+    "type": "person",
+    "loc": "Freiburg, Germany",
+    "lat": 47.99,
+    "lng": 7.85,
+    "years": "",
+    "active": [
+      2010,
+      2025
+    ],
+    "blurb": "German ML researcher who co-invented Poincar\u00e9 embeddings for learning hierarchical representations in hyperbolic space.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "nickel2017poincare"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kawin-ethayarajh",
+    "name": "Kawin Ethayarajh",
+    "type": "person",
+    "loc": "Oxford, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Indian-British NLP researcher who compared the geometry of BERT, ELMo, and GPT-2 contextual embeddings.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "ethayarajh2019contextual"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gottlob-frege",
+    "name": "Gottlob Frege",
+    "type": "person",
+    "loc": "Jena, Germany",
+    "lat": 50.93,
+    "lng": 11.59,
+    "years": "1848-1925",
+    "active": [
+      1878,
+      1925
+    ],
+    "blurb": "German logician and philosopher who founded modern logic and distinguished sense from reference in \u00dcber Sinn und Bedeutung.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "uebersinnundbedeutung"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michael-polanyi",
+    "name": "Michael Polanyi",
+    "type": "person",
+    "loc": "Oxford, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1891-1976",
+    "active": [
+      1925,
+      1976
+    ],
+    "blurb": "Hungarian-British philosopher and chemist who articulated the concept of tacit knowledge in The Tacit Dimension.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "thetacitdimension"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-lewis-fry-richardson",
+    "name": "Lewis Fry Richardson",
+    "type": "person",
+    "loc": "Westbury, UK",
+    "lat": 51.48,
+    "lng": -0.86,
+    "years": "1881-1953",
+    "active": [
+      1909,
+      1953
+    ],
+    "blurb": "British mathematician and pacifist who pioneered numerical weather prediction and game theory of arms races.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "weatherfactory"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-adrien-marie-legendre",
+    "name": "Adrien-Marie Legendre",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1752-1833",
+    "active": [
+      1772,
+      1833
+    ],
+    "blurb": "French mathematician who developed the method of least squares and foundational work in number theory and geometry.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "legendre1786",
+      "legendre1805"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-pierre-de-fermat",
+    "name": "Pierre de Fermat",
+    "type": "person",
+    "loc": "Toulouse, France",
+    "lat": 43.6,
+    "lng": 1.44,
+    "years": "1607-1665",
+    "active": [
+      1629,
+      1665
+    ],
+    "blurb": "French mathematician who independently invented calculus and formulated Fermat's Last Theorem.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [
+      "oevresdeformat"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jean-pierre-serre",
+    "name": "Jean-Pierre Serre",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1926-",
+    "active": [
+      1945,
+      2025
+    ],
+    "blurb": "French mathematician and Fields Medalist who made foundational contributions to algebraic geometry, topology, and number theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-pierre-deligne",
+    "name": "Pierre Deligne",
+    "type": "person",
+    "loc": "Brussels, Belgium",
+    "lat": 50.85,
+    "lng": 4.35,
+    "years": "1944-",
+    "active": [
+      1965,
+      2025
+    ],
+    "blurb": "Belgian mathematician and Fields Medalist who proved the Weil conjectures and made major contributions to \u00e9tale cohomology and topos theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-alfred-wegener",
+    "name": "Alfred Wegener",
+    "type": "person",
+    "loc": "Breslau, Germany",
+    "lat": 51.11,
+    "lng": 17.03,
+    "years": "1880-1930",
+    "active": [
+      1904,
+      1930
+    ],
+    "blurb": "German meteorologist who proposed continental drift in 1912, providing an analogy for how local structures cohere globally.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-myles-tierney",
+    "name": "Myles Tierney",
+    "type": "person",
+    "loc": "Coventry, UK",
+    "lat": 52.41,
+    "lng": -1.52,
+    "years": "",
+    "active": [
+      1990,
+      2020
+    ],
+    "blurb": "British mathematician at University of Warwick who worked on categorical logic and topos theory with Lawvere.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-ephesus",
+    "name": "Ephesus",
+    "type": "place",
+    "loc": "Ephesus, Turkey",
+    "lat": 37.94,
+    "lng": 27.34,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Ancient Greek city on the Aegean coast, birthplace of Heraclitus and site of the Library of Celsus.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-clazomenae",
+    "name": "Clazomenae",
+    "type": "place",
+    "loc": "Clazomenae, Turkey",
+    "lat": 38.47,
+    "lng": 27.21,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Ancient Ionian city in modern-day Turkey, birthplace of the pre-Socratic philosopher Anaxagoras.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-amsterdam",
+    "name": "Amsterdam",
+    "type": "place",
+    "loc": "Amsterdam, Netherlands",
+    "lat": 52.37,
+    "lng": 4.9,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Dutch capital where Spinoza wrote the Ethics and Brouwer developed intuitionism.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-gottingen",
+    "name": "G\u00f6ttingen",
+    "type": "place",
+    "loc": "G\u00f6ttingen, Germany",
+    "lat": 51.54,
+    "lng": 9.94,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "German university city where Riemann delivered his 1854 inaugural lecture and Hilbert led the mathematical revolution.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "place-baghdad",
+    "name": "Baghdad",
+    "type": "place",
+    "loc": "Baghdad, Iraq",
+    "lat": 33.31,
+    "lng": 44.36,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Medieval Islamic capital where al-Khwarizmi wrote the foundational book on algebra at the House of Wisdom.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-chester",
+    "name": "Chester",
+    "type": "place",
+    "loc": "Chester, England, UK",
+    "lat": 53.2,
+    "lng": -2.89,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "English city where the Benedictine monk Robert of Chester translated al-Khwarizmi's algebra into Latin.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-kusumapura",
+    "name": "Kusumapura",
+    "type": "place",
+    "loc": "Patna, India",
+    "lat": 25.61,
+    "lng": 85.1,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Ancient city on the Ganges (modern Patna) where Aryabhata composed his \u0100ryabha\u1e6d\u012bya in 499 CE.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "inferred"
+  },
+  {
+    "id": "place-geneva",
+    "name": "Geneva",
+    "type": "place",
+    "loc": "Geneva, Switzerland",
+    "lat": 46.2,
+    "lng": 6.14,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Swiss city where Ferdinand de Saussure taught linguistics and developed the foundations of structural linguistics.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-hanover",
+    "name": "Hanover",
+    "type": "place",
+    "loc": "Hanover, Germany",
+    "lat": 52.37,
+    "lng": 9.74,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "German city where Leibniz served as court librarian and developed the monadology and binary arithmetic.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-freiburg",
+    "name": "Freiburg",
+    "type": "place",
+    "loc": "Freiburg, Germany",
+    "lat": 47.99,
+    "lng": 7.85,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "German university city where Heidegger taught and wrote Being and Time, and where Nickel works on hyperbolic embeddings.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-athens",
+    "name": "Athens",
+    "type": "place",
+    "loc": "Athens, Greece",
+    "lat": 37.98,
+    "lng": 23.73,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Ancient Greek city where Plato founded the Academy and Aristotle taught, shaping Western philosophy.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-elea",
+    "name": "Elea",
+    "type": "place",
+    "loc": "Elea, Italy",
+    "lat": 40.06,
+    "lng": 15.31,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Ancient Greek colony in southern Italy (modern Velia) where Parmenides founded the Eleatic school.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-rome",
+    "name": "Rome",
+    "type": "place",
+    "loc": "Rome, Italy",
+    "lat": 41.9,
+    "lng": 12.5,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Italian capital where Plotinus taught and wrote the Enneads, and where Aquinas was born.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-kues",
+    "name": "Kues",
+    "type": "place",
+    "loc": "Kues, Germany",
+    "lat": 49.93,
+    "lng": 6.63,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Small town on the Mosel river in Germany, birthplace of Nicholas of Cusa.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-upsala",
+    "name": "Uppsala",
+    "type": "place",
+    "loc": "Uppsala, Sweden",
+    "lat": 59.86,
+    "lng": 17.64,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Swedish university city where Linnaeus worked as professor and developed his system of biological classification.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-warwick",
+    "name": "Warwick",
+    "type": "place",
+    "loc": "Coventry, UK",
+    "lat": 52.41,
+    "lng": -1.52,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "UK university town home to the University of Warwick, where Awodey and Johnstone work on category theory and topos theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-utrecht",
+    "name": "Utrecht",
+    "type": "place",
+    "loc": "Utrecht, Netherlands",
+    "lat": 52.09,
+    "lng": 5.12,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Dutch city home to Utrecht University, where Ieke Moerdijk works on topos theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-pisa",
+    "name": "Pisa",
+    "type": "place",
+    "loc": "Pisa, Italy",
+    "lat": 43.72,
+    "lng": 10.4,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Italian university city where Olivia Caramello works on topos theory and mathematical logic.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-waterloo",
+    "name": "Waterloo",
+    "type": "place",
+    "loc": "Waterloo, Canada",
+    "lat": 43.47,
+    "lng": -80.54,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Canadian city home to the University of Waterloo, where Michael Barr works on category theory and topos theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-toronto",
+    "name": "Toronto",
+    "type": "place",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Canadian city home to the University of Toronto, where Hinton, Bengio, Sutskever, and Hacking have worked.",
+    "cited_in": [
+      "tokenizerlab",
+      "recurrent_networks",
+      "coherent_world_models"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-montreal",
+    "name": "Montreal",
+    "type": "place",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Canadian city home to MILA and Universit\u00e9 de Montr\u00e9al, a global hub for deep learning research.",
+    "cited_in": [
+      "recurrent_networks",
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-murray-hill",
+    "name": "Murray Hill",
+    "type": "place",
+    "loc": "Murray Hill, NJ, US",
+    "lat": 40.74,
+    "lng": -74.4,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "New Jersey township home to Bell Labs, where Claude Shannon developed information theory.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "place-mountain-view",
+    "name": "Mountain View",
+    "type": "place",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "California city home to Google and OpenAI offices, where Schuster, Vaswani, and Shaw developed key transformer components.",
+    "cited_in": [
+      "tokenizerlab",
+      "positionalembeddingslab",
+      "transformer"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-edinburgh",
+    "name": "Edinburgh",
+    "type": "place",
+    "loc": "Edinburgh, UK",
+    "lat": 55.95,
+    "lng": -3.19,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Scottish city home to the University of Edinburgh, where Sennrich worked on subword tokenization and Cartwright on philosophy of science.",
+    "cited_in": [
+      "tokenizerlab",
+      "coherent_world_models"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-cambridge-us",
+    "name": "Cambridge",
+    "type": "place",
+    "loc": "Cambridge, MA, US",
+    "lat": 42.38,
+    "lng": -71.12,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Massachusetts city home to Harvard and MIT, where Zipf worked and Russell studied.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-prague",
+    "name": "Prague",
+    "type": "place",
+    "loc": "Prague, Czech Republic",
+    "lat": 50.08,
+    "lng": 14.44,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Czech capital where Tom\u00e1\u0161 Mikolov was born and did early work on statistical language modeling.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-ithaca",
+    "name": "Ithaca",
+    "type": "place",
+    "loc": "Ithaca, NY, US",
+    "lat": 42.44,
+    "lng": -76.5,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "New York city home to Cornell University, where Spivak, Salton, and Elman have worked.",
+    "cited_in": [
+      "embeddinglab",
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-graz",
+    "name": "Graz",
+    "type": "place",
+    "loc": "Graz, Austria",
+    "lat": 47.07,
+    "lng": 15.44,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Austrian city home to the University of Graz, where Hochreiter and Ramsauer work on neural networks and Hopfield networks.",
+    "cited_in": [
+      "recurrent_networks",
+      "fact_lookup"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-tuebingen",
+    "name": "T\u00fcbingen",
+    "type": "place",
+    "loc": "T\u00fcbingen, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "German university city home to the University of T\u00fcbingen, where Schmidhuber works on AI and Barwich on philosophy of science.",
+    "cited_in": [
+      "recurrent_networks",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-novosibirsk",
+    "name": "Novosibirsk",
+    "type": "place",
+    "loc": "Novosibirsk, Russia",
+    "lat": 55.03,
+    "lng": 82.92,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Russian city where Markov's mathematical legacy continues through the Novosibirsk School of Mathematics.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "inferred"
+  },
+  {
+    "id": "institution-bell-labs",
+    "name": "Bell Labs",
+    "type": "institution",
+    "loc": "Murray Hill, NJ, US",
+    "lat": 40.74,
+    "lng": -74.4,
+    "years": "1925-2015",
+    "active": [
+      1925,
+      2015
+    ],
+    "blurb": "American research laboratory where Claude Shannon developed information theory and where key communications breakthroughs occurred.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-google",
+    "name": "Google",
+    "type": "institution",
+    "loc": "Mountain View, CA, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "1998-",
+    "active": [
+      1998,
+      2026
+    ],
+    "blurb": "American technology company where Schuster, Nakajima, Vaswani, Shaw, and Mikolov developed WordPiece, BERT, and the Transformer.",
+    "cited_in": [
+      "tokenizerlab",
+      "positionalembeddingslab",
+      "transformer",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-ibm",
+    "name": "IBM",
+    "type": "institution",
+    "loc": "Armonk, NY, US",
+    "lat": 41.07,
+    "lng": -73.72,
+    "years": "1911-",
+    "active": [
+      1911,
+      2026
+    ],
+    "blurb": "American technology company whose alignment models and research lab have contributed to NLP and AI.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-anthropic",
+    "name": "Anthropic",
+    "type": "institution",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2021-",
+    "active": [
+      2021,
+      2026
+    ],
+    "blurb": "American AI research company founded by ex-OpenAI researchers, known for mechanistic interpretability and the Claude model family.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-university-of-toronto",
+    "name": "University of Toronto",
+    "type": "institution",
+    "loc": "Toronto, Canada",
+    "lat": 43.66,
+    "lng": -79.4,
+    "years": "1827-",
+    "active": [
+      1827,
+      2026
+    ],
+    "blurb": "Canadian university where Hinton, Sutskever, and Bengio trained and made foundational deep learning contributions.",
+    "cited_in": [
+      "tokenizerlab",
+      "recurrent_networks"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-edinburgh",
+    "name": "University of Edinburgh",
+    "type": "institution",
+    "loc": "Edinburgh, UK",
+    "lat": 55.94,
+    "lng": -3.19,
+    "years": "1583-",
+    "active": [
+      1583,
+      2026
+    ],
+    "blurb": "Scottish university where Sennrich worked on subword units and where the School of Informatics is a major NLP center.",
+    "cited_in": [
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-cornell-university",
+    "name": "Cornell University",
+    "type": "institution",
+    "loc": "Ithaca, NY, US",
+    "lat": 42.45,
+    "lng": -76.48,
+    "years": "1865-",
+    "active": [
+      1865,
+      2026
+    ],
+    "blurb": "American Ivy League university where Spivak, Salton, and Elman have worked, and where the Information Science lab was founded.",
+    "cited_in": [
+      "coherent_difference",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-warwick",
+    "name": "University of Warwick",
+    "type": "institution",
+    "loc": "Coventry, UK",
+    "lat": 52.38,
+    "lng": -1.57,
+    "years": "1965-",
+    "active": [
+      1965,
+      2026
+    ],
+    "blurb": "UK university where Awodey, Johnstone, and Tierney work on category theory, logic, and topos theory.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-eth-zurich",
+    "name": "ETH Zurich",
+    "type": "institution",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.38,
+    "lng": 8.55,
+    "years": "1855-",
+    "active": [
+      1855,
+      2026
+    ],
+    "blurb": "Swiss federal institute of technology where Hermann Weyl worked and where key mathematical physics research has been conducted.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-gottingen",
+    "name": "University of G\u00f6ttingen",
+    "type": "institution",
+    "loc": "G\u00f6ttingen, Germany",
+    "lat": 51.54,
+    "lng": 9.94,
+    "years": "1378-",
+    "active": [
+      1378,
+      2026
+    ],
+    "blurb": "German university where Riemann, Gauss, and Hilbert worked, making it the center of 19th-century mathematics.",
+    "cited_in": [
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-university-of-montreal",
+    "name": "Universit\u00e9 de Montr\u00e9al",
+    "type": "institution",
+    "loc": "Montreal, Canada",
+    "lat": 45.51,
+    "lng": -73.56,
+    "years": "1878-",
+    "active": [
+      1878,
+      2026
+    ],
+    "blurb": "Canadian university home to MILA, where Bengio, Cho, and Bahdanau made foundational contributions to deep learning and NLP.",
+    "cited_in": [
+      "recurrent_networks",
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-graz",
+    "name": "University of Graz",
+    "type": "institution",
+    "loc": "Graz, Austria",
+    "lat": 47.07,
+    "lng": 15.43,
+    "years": "1364-",
+    "active": [
+      1364,
+      2026
+    ],
+    "blurb": "Austrian university where Hochreiter and Ramsauer work on neural networks, LSTM, and Hopfield networks.",
+    "cited_in": [
+      "recurrent_networks",
+      "fact_lookup"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-tuebingen",
+    "name": "University of T\u00fcbingen",
+    "type": "institution",
+    "loc": "T\u00fcbingen, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "1477-",
+    "active": [
+      1477,
+      2026
+    ],
+    "blurb": "German university where Schmidhuber works on AI and algorithmic information theory, and where Barwich works on philosophy of science.",
+    "cited_in": [
+      "recurrent_networks",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-openai",
+    "name": "OpenAI",
+    "type": "institution",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2015-",
+    "active": [
+      2015,
+      2026
+    ],
+    "blurb": "American AI research company where Radford developed GPT-1 and GPT-2, establishing the generative pre-training paradigm.",
+    "cited_in": [
+      "transformer"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-uc-berkeley",
+    "name": "UC Berkeley",
+    "type": "institution",
+    "loc": "Berkeley, CA, US",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "1868-",
+    "active": [
+      1868,
+      2026
+    ],
+    "blurb": "American public research university where Wang, Huh, and Li have worked on interpretability and representation learning.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-princeton-university",
+    "name": "Princeton University",
+    "type": "institution",
+    "loc": "Princeton, NJ, US",
+    "lat": 40.34,
+    "lng": -74.66,
+    "years": "1746-",
+    "active": [
+      1746,
+      2026
+    ],
+    "blurb": "American Ivy League university where Hopfield, Whitney, and Giannou have worked on neural networks and mathematics.",
+    "cited_in": [
+      "fact_lookup",
+      "mechanistic_interpretability",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-pittsburgh",
+    "name": "Carnegie Mellon University",
+    "type": "institution",
+    "loc": "Pittsburgh, PA, US",
+    "lat": 40.44,
+    "lng": -79.94,
+    "years": "1900-",
+    "active": [
+      1900,
+      2026
+    ],
+    "blurb": "American research university where Todd works on function vectors and mechanistic interpretability.",
+    "cited_in": [
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-university-of-waterloo",
+    "name": "University of Waterloo",
+    "type": "institution",
+    "loc": "Waterloo, Canada",
+    "lat": 43.47,
+    "lng": -80.54,
+    "years": "1957-",
+    "active": [
+      1957,
+      2026
+    ],
+    "blurb": "Canadian university where Barr works on category theory and where Park works on the linear representation hypothesis.",
+    "cited_in": [
+      "coherent_difference",
+      "mechanistic_interpretability"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-bigscience",
+    "name": "BigScience",
+    "type": "institution",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "2021-",
+    "active": [
+      2021,
+      2025
+    ],
+    "blurb": "Collaborative AI research initiative where Press developed ALiBi for length extrapolation in transformers.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-house-of-wisdom",
+    "name": "House of Wisdom",
+    "type": "institution",
+    "loc": "Baghdad, Iraq",
+    "lat": 33.31,
+    "lng": 44.36,
+    "years": "832-1258",
+    "active": [
+      832,
+      1258
+    ],
+    "blurb": "Baghdad library and translation center during the Islamic Golden Age where al-Khwarizmi wrote his algebra treatise.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-london",
+    "name": "London",
+    "type": "place",
+    "loc": "London, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "UK capital where Spencer-Brown, Firth, Gage, Whitehead, Russell, and many others worked in mathematics, philosophy, and linguistics.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models",
+      "embeddinglab",
+      "tokenizerlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-paris",
+    "name": "Paris",
+    "type": "place",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "French capital where Bergson, Grothendieck, Leray, Merleau-Ponty, Deleuze, Giraud, and Ehresmann worked.",
+    "cited_in": [
+      "coherent_difference",
+      "coherent_world_models",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-oxford",
+    "name": "Oxford",
+    "type": "place",
+    "loc": "Oxford, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "English university city where Bradley, Joachim, Polanyi, and Ethayarajh have worked in philosophy and NLP.",
+    "cited_in": [
+      "coherent_world_models",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-berkeley",
+    "name": "Berkeley",
+    "type": "place",
+    "loc": "Berkeley, CA, US",
+    "lat": 37.87,
+    "lng": -122.27,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "California city home to UC Berkeley, where Huh, Wang, and Li have worked on interpretability and representation learning.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "embeddinglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-san-francisco",
+    "name": "San Francisco",
+    "type": "place",
+    "loc": "San Francisco, CA, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "California city home to Anthropic and OpenAI, centers of mechanistic interpretability and LLM research.",
+    "cited_in": [
+      "mechanistic_interpretability",
+      "transformer"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-zurich",
+    "name": "Zurich",
+    "type": "place",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.38,
+    "lng": 8.54,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Swiss city home to ETH Zurich, where Hermann Weyl worked on mathematics and mathematical physics.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-bucharest",
+    "name": "Bucharest",
+    "type": "place",
+    "loc": "Bucharest, Romania",
+    "lat": 44.43,
+    "lng": 26.1,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Romanian capital where Radu Diaconescu was born and did early work in mathematics and logic.",
+    "cited_in": [
+      "coherent_difference"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-ujjain",
+    "name": "Ujjain",
+    "type": "place",
+    "loc": "Ujjain, India",
+    "lat": 23.18,
+    "lng": 75.78,
+    "years": "",
+    "active": [
+      null,
+      null
+    ],
+    "blurb": "Indian city associated with Aryabhata's astronomical and mathematical work in the 5th century CE.",
+    "cited_in": [
+      "positionalembeddingslab"
+    ],
+    "bibkeys": [],
+    "conf": "inferred"
+  }
+]

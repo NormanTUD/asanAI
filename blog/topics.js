@@ -25,7 +25,7 @@
 
 	// Build fingerprint for tbDebug() — bump on each masking/reveal change
 	// so a stale/cached/production page is obvious in the debug report.
-	window.__TB_VER = '2026-09-22-per-section-badges';
+	window.__TB_VER = '2026-09-22-overview-dial-only';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
@@ -932,7 +932,13 @@
 		//    needs more math than the reader is comfortable with, it is
 		//    tucked — UNLESS the reader has already learned all
 		//    prerequisites of the current lesson (depsMet bypasses it).
-		const lessonId = getLessonId();
+		//    The bypass is a per-LESSON "you earned this by learning the
+		//    prereqs" signal, so it only applies on a real lesson page. On
+		//    the index there is no current lesson — getLessonId()'s URL-slug
+		//    fallback would otherwise read "blog" as a dep-less lesson,
+		//    depsMet() would return true, and the gate would be silently
+		//    suppressed for every tile (the slider's level never applied).
+		const lessonId = isIndexPage() ? null : getLessonId();
 		const depsOK = lessonId ? depsMet(lessonId) : false;
 		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
@@ -2842,10 +2848,14 @@
 				tiles.forEach(function (tile) {
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
-					const cats = (tile.getAttribute('data-tags') || '').split(',')
-						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
-					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
+					// Overview = the math-comfort dial (+ interests). The
+					// "feels heavy" tone tags (data-tags: math-heavy, code-heavy,
+					// …) are an in-lesson density preference and deliberately do
+					// NOT hide whole lessons here — otherwise switching a tone
+					// off would make a third of the course vanish from the
+					// overview regardless of the dial.
+					const score = scoreUnit(interests, { mathReq: mathReq });
 					tile.classList.remove('ta-tile-off');
 					if (score.state === 'off') offInfo.push({ tile: tile, score: score });
 				});

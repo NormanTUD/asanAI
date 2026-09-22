@@ -1,0 +1,66 @@
+{
+ "entity_merges": 168,
+ "entity_rejects": [],
+ "entity_repairs": {
+  "slugs-normalized": 130,
+  "years-from-active": 185,
+  "nested-location": 217,
+  "id-generated": 217,
+  "active-missing": 85,
+  "loc-from-name": 81,
+  "conf-defaulted": 75,
+  "year->active": 32
+ },
+ "author_merges": 15,
+ "author_row_rejects": [
+  {
+   "row": [
+    "2017)",
+    null,
+    null,
+    "",
+    1969,
+    0
+   ],
+   "reason": "implausible-name:'2017)'"
+  },
+  {
+   "row": [
+    "2024)",
+    null,
+    null,
+    "",
+    1990,
+    0
+   ],
+   "reason": "implausible-name:'2024)'"
+  },
+  {
+   "row": [
+    "et al.",
+    null,
+    null,
+    "",
+    2020,
+    0
+   ],
+   "reason": "implausible-name:'et al.'"
+  },
+  {
+   "row": [
+    "J3n6",
+    null,
+    null,
+    "",
+    0,
+    0
+   ],
+   "reason": "implausible-name:'J3n6'"
+  }
+ ],
+ "author_repairs": {},
+ "load_errors": [],
+ "missing_files": [],
+ "coverage_missing": [],
+ "entity_dropped_refs": []
+}
