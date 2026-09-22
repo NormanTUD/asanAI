@@ -589,13 +589,38 @@ function computeHidden(B1o) {
   cent = [cx / m, cy / m, cz / m];
 }
 
-function drawPointCloud(src) {
+/* ------------------ 2. Hidden-Layer (optional, additive) ------------------ */
+let useLayer2 = false, viewSel = 'h1';
+let W2m = [1, -1, -1, 1, 0, 0, 0, 1, 0], B2m = [0, 0, 0], neuronOn2 = [true, true, true];
+let H2 = null, H2cent = [0, 0, 0];
+function computeH2() {
+  if (!useLayer2 || !H) return;
+  const m = points.length;
+  H2 = new Float32Array(m * 3);
+  let cx = 0, cy = 0, cz = 0;
+  for (let i = 0; i < m; i++) {
+    for (let k = 0; k < 3; k++) {
+      let v = W2m[k * 3] * H[i * 3] + W2m[k * 3 + 1] * H[i * 3 + 1] + W2m[k * 3 + 2] * H[i * 3 + 2] + B2m[k];
+      v = applyAct(v);
+      if (!neuronOn2[k]) v = 0;
+      H2[i * 3 + k] = v;
+      if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
+    }
+  }
+  H2cent = [cx / m, cy / m, cz / m];
+}
+function activeH() { return useLayer2 ? H2 : H; }
+function activeCent() { return useLayer2 ? H2cent : cent; }
+function displayState() { return (useLayer2 && viewSel === 'h2') ? { H: H2, cent: H2cent } : { H, cent }; }
+
+function drawPointCloud(src, cs) {
   const Hsrc = src || H;
+  const c = cs || cent;
   const m = points.length;
   const positions = new Float32Array(m * 3);
   const colors = new Float32Array(m * 3);
   for (let i = 0; i < m; i++) {
-    for (let k = 0; k < 3; k++) positions[i * 3 + k] = Hsrc[i * 3 + k] - cent[k];
+    for (let k = 0; k < 3; k++) positions[i * 3 + k] = Hsrc[i * 3 + k] - c[k];
     if (labels[i] === 0) { colors[i * 3] = 0.9; colors[i * 3 + 1] = 0.5; colors[i * 3 + 2] = 0.15; }
     else { colors[i * 3] = 0.08; colors[i * 3 + 1] = 0.63; colors[i * 3 + 2] = 0.52; }
   }
@@ -609,16 +634,17 @@ function drawPointCloud(src) {
 
 /* ------------------ Readout (lineares Neuron) ------------------ */
 function readoutScore(i) {
-  const P = getParams();
-  return P.A2[0] * H[i * 3] + P.A2[1] * H[i * 3 + 1] + P.A2[2] * H[i * 3 + 2] + P.B2;
+  const P = getParams(); const Hh = activeH();
+  return P.A2[0] * Hh[i * 3] + P.A2[1] * Hh[i * 3 + 1] + P.A2[2] * Hh[i * 3 + 2] + P.B2;
 }
 function drawPlane() {
   if (planeMesh) { scene.remove(planeMesh); planeMesh.geometry.dispose(); planeMesh.material.dispose(); planeMesh = null; }
-  const P = getParams();
+  if (useLayer2 && viewSel !== 'h2') return; // Readout-Ebene nur im Readout-Raum (H2) anzeigen
+  const P = getParams(); const cc = activeCent();
   const mag = Math.hypot(P.A2[0], P.A2[1], P.A2[2]);
   if (mag < 1e-6) return; // keine gültige Normale -> keine Ebene
   const n = new THREE.Vector3(P.A2[0], P.A2[1], P.A2[2]).normalize();
-  const constTerm = P.A2[0] * cent[0] + P.A2[1] * cent[1] + P.A2[2] * cent[2] + P.B2;
+  const constTerm = P.A2[0] * cc[0] + P.A2[1] * cc[1] + P.A2[2] * cc[2] + P.B2;
   const dist = -constTerm / mag; // Ebene: A2·(p+cent)+B2=0  =>  n·p = dist
   const geom = new THREE.PlaneGeometry(2.5, 2.5);
   const mat = new THREE.MeshBasicMaterial({ color: 0xffff66, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
@@ -651,11 +677,11 @@ function updateStatus() {
 
 // Besten Readout-Bias für die aktuellen r-Gewichte -> perfekte Trennung.
 function bestB2() {
-  const P = getParams();
+  const P = getParams(); const Hh = activeH();
   if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) return P.B2;
   let mi = -Infinity, mo = Infinity;
   for (let i = 0; i < points.length; i++) {
-    const s = P.A2[0] * H[i * 3] + P.A2[1] * H[i * 3 + 1] + P.A2[2] * H[i * 3 + 2];
+    const s = P.A2[0] * Hh[i * 3] + P.A2[1] * Hh[i * 3 + 1] + P.A2[2] * Hh[i * 3 + 2];
     if (labels[i] === 0) { if (s > mi) mi = s; } else { if (s < mo) mo = s; }
   }
   return -(mi + mo) / 2;
@@ -686,18 +712,28 @@ function netForward(w, x, y) {
   const z2 = w[9] * h[0] + w[10] * h[1] + w[11] * h[2] + w[12];
   return { z1, h, z2 };
 }
-function metrics() { // Genauigkeit + Loss (BCE) des aktuellen, toggled Netzwerks
+function metrics() { // Genauigkeit + Loss (BCE) des aktuellen, toggled Netzwerks (optional durch Layer 2)
   const P = getParams();
   let ok = 0, loss = 0; const m = points.length;
   for (let i = 0; i < m; i++) {
     const [x, y] = points[i], t = labels[i];
-    let z2 = P.B2;
+    const h1 = [0, 0, 0];
     for (let k = 0; k < 3; k++) {
       let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
       v = applyAct(v);
-      if (!P.neuronOn[k]) v = 0;
-      z2 += P.A2[k] * v;
+      h1[k] = P.neuronOn[k] ? v : 0;
     }
+    let out = h1;
+    if (useLayer2) {
+      out = [0, 0, 0];
+      for (let k = 0; k < 3; k++) {
+        let v = W2m[k * 3] * h1[0] + W2m[k * 3 + 1] * h1[1] + W2m[k * 3 + 2] * h1[2] + B2m[k];
+        v = applyAct(v);
+        out[k] = neuronOn2[k] ? v : 0;
+      }
+    }
+    let z2 = P.B2;
+    for (let k = 0; k < 3; k++) z2 += P.A2[k] * out[k];
     if ((z2 > 0 ? 1 : 0) === t) ok++;
     const p = 1 / (1 + Math.exp(-z2));
     const pc = Math.min(1 - 1e-9, Math.max(1e-9, p));
@@ -737,6 +773,7 @@ function startTraining() {
   $('btnTrain').disabled = true;
   const W = currentW();
   const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; $('btnTrain').disabled = false; };
+  if (useLayer2) { trainAdam2(done); return; } // 25 Parameter (Layer 1 + Layer 2 + Readout)
   if (actName() === 'relu') trainMorph(W, done);
   else trainAdam(W, done);
 }
@@ -813,6 +850,59 @@ function trainAdam(W, done) {
   };
   trainRaf = requestAnimationFrame(frame);
 }
+// 2. Hidden-Layer: Adam-Backprop über alle 25 Parameter (A1,B1,W2,B2,Readout).
+function trainAdam2(done) {
+  const act = actName();
+  const AF = ACTS[act].fn, AD = z => actDeriv(z, act);
+  const m = points.length, invM = 1 / m;
+  let W = currentW().concat(W2m.slice(), B2m.slice()); // [13 | 9 (W2) | 3 (B2)]
+  const CLIP25 = CLIP.concat([2, 2, 2, 2, 2, 2, 2, 2, 2, 1.5, 1.5, 1.5]);
+  const g = new Array(25).fill(0), mW = new Array(25).fill(0), vW = new Array(25).fill(0);
+  const b1c = 0.9, b2c = 0.999, eps = 1e-8, lr = 0.05, STEPS = 4, MAXF = 220;
+  let step = 0, fi = 0, stale = 0, lastLoss = metrics().loss;
+  let best = { acc: -1, w: W.slice() };
+  statusEl.className = 'status bad';
+  statusEl.textContent = '🧠 Trainiere… ' + metrics().acc.toFixed(1) + ' % (2 Layer)  (v' + APP_VERSION + ')';
+  const syncL2 = () => {
+    for (let i = 0; i < 9; i++) { const c = $('cell-w2_' + i); if (c && document.activeElement !== c) c.value = W2m[i].toFixed(2); }
+    for (let i = 0; i < 3; i++) { const c = $('cell-b2_' + i); if (c && document.activeElement !== c) c.value = B2m[i].toFixed(2); }
+  };
+  const writeW25 = (w) => { writeW(w.slice(0, 13)); for (let i = 0; i < 9; i++) W2m[i] = w[13 + i]; for (let i = 0; i < 3; i++) B2m[i] = w[22 + i]; syncL2(); };
+  const paint = () => { computeHidden(); computeH2(); updateFoldPanel(); const d = displayState(); draw2D(); drawPointCloud(d.H, d.cent); drawPlane(); updateAllLabels(); };
+  const frame = () => {
+    try {
+      for (let s = 0; s < STEPS; s++) {
+        step++; g.fill(0);
+        for (let i = 0; i < m; i++) {
+          const x = points[i][0], y = points[i][1], lab = labels[i];
+          const z1 = [W[0] * x + W[1] * y + W[6], W[2] * x + W[3] * y + W[7], W[4] * x + W[5] * y + W[8]];
+          const h1 = [AF(z1[0]), AF(z1[1]), AF(z1[2])];
+          const z2 = [W[13] * h1[0] + W[14] * h1[1] + W[15] * h1[2] + W[22], W[16] * h1[0] + W[17] * h1[1] + W[18] * h1[2] + W[23], W[19] * h1[0] + W[20] * h1[1] + W[21] * h1[2] + W[24]];
+          const h2 = [AF(z2[0]), AF(z2[1]), AF(z2[2])];
+          const zo = W[9] * h2[0] + W[10] * h2[1] + W[11] * h2[2] + W[12];
+          const dzo = (1 / (1 + Math.exp(-zo)) - lab) * invM;
+          g[9] += dzo * h2[0]; g[10] += dzo * h2[1]; g[11] += dzo * h2[2]; g[12] += dzo;
+          for (let j = 0; j < 3; j++) { const d2 = dzo * W[9 + j] * AD(z2[j]); g[13 + j * 3] += d2 * h1[0]; g[14 + j * 3] += d2 * h1[1]; g[15 + j * 3] += d2 * h1[2]; g[22 + j] += d2; }
+          for (let k = 0; k < 3; k++) { let d1 = 0; for (let j = 0; j < 3; j++) d1 += dzo * W[9 + j] * AD(z2[j]) * W[13 + j * 3 + k]; d1 *= AD(z1[k]); g[2 * k] += d1 * x; g[2 * k + 1] += d1 * y; g[6 + k] += d1; }
+        }
+        for (let j = 0; j < 25; j++) {
+          mW[j] = b1c * mW[j] + (1 - b1c) * g[j];
+          vW[j] = b2c * vW[j] + (1 - b2c) * g[j] * g[j];
+          const mh = mW[j] / (1 - Math.pow(b1c, step)), vh = vW[j] / (1 - Math.pow(b2c, step));
+          W[j] = Math.max(-CLIP25[j], Math.min(CLIP25[j], W[j] - lr * mh / (Math.sqrt(vh) + eps)));
+        }
+      }
+      writeW25(W); paint();
+      const met = metrics();
+      if (met.acc > best.acc) best = { acc: met.acc, w: W.slice() };
+      if (met.loss < lastLoss - 1e-4) { lastLoss = met.loss; stale = 0; } else stale++;
+      fi++;
+      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) { writeW25(best.w); paint(); done(); updateStatus(); }
+      else { statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3) + ' (2 Layer)'; trainRaf = requestAnimationFrame(frame); }
+    } catch (err) { console.error('[egg] Training2', err); done(); refreshAll(); }
+  };
+  trainRaf = requestAnimationFrame(frame);
+}
 function randomize() {
   if (training) return;
   autoFit = false;
@@ -863,8 +953,10 @@ function animateFold() {
     }
     updateAllLabels();
     computeHidden([b, b, b]);
+    if (useLayer2) computeH2();
     updateFoldPanel([b, b, b]);
-    drawPointCloud(); drawPlane(); draw2D([b, b, b]);
+    const d = displayState();
+    drawPointCloud(d.H, d.cent); drawPlane(); draw2D([b, b, b]);
   };
   const endFold = () => { cancelAnimationFrame(foldRaf); foldRaf = 0; animating = false; $('btnFold').disabled = false; refreshAll(); };
 
@@ -910,10 +1002,12 @@ function updateAllLabels() {
 function refreshAll() {
   updateAllLabels();
   updateActFormula();
+  computeHidden();
+  if (useLayer2) computeH2();
   updateFoldPanel();
   draw2D();
-  computeHidden();
-  drawPointCloud();
+  const d = displayState();
+  drawPointCloud(d.H, d.cent);
   drawPlane();
   updateStatus();
   if (autoFit) {

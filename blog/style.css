@@ -9550,7 +9550,19 @@ html.dark .topics-preset-fun {
    collapsed` keeps the gradient fade + badge + click-through state. */
 .topic-block--clipped {
 	max-height: 120px;
-	overflow: hidden !important; /* beat `.md { overflow: visible !important }` so the clip holds */
+	overflow: hidden !important;
+}
+/* The clip MUST win the overflow fight. `.md` (and the glossary invariant
+   near the bottom of the sheet) set `overflow: visible !important` at the
+   same single-class specificity but LATER, so by source order they would win
+   and let a clipped markdown block's MathJax/text bleed out the 120px box and
+   paint over the next element (the "texts + plots overlap" bug). Re-assert the
+   clip at two-class specificity so it always wins regardless of order. Every
+   clipped block also carries `.topic-block` (added by applyVisibility). */
+.topic-block.topic-block--clipped,
+.md.topic-block--clipped {
+	max-height: 120px;
+	overflow: hidden !important;
 }
 .topic-block.topic-block-collapsed .topic-block-inner {
 	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);

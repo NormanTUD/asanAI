@@ -2021,3 +2021,122 @@ function sendHeight() {
 		}, '*');
 	}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   tbDebug — DIAGNOSTIC TOOL (masking / reveal / overlap).
+   Not part of the course runtime; it only defines `window.tbDebug`
+   and installs a light error collector so the exact DOM state of the
+   topic-blocks (clip, overflow, badge hit-test, overlaps) can be
+   dumped from the browser console. Run:
+       tbDebug()                  read-only report
+       tbDebug({reveal:true})     also taps the first collapsed block's
+                                  badge and measures before/after
+   The report is copied to the clipboard + logged to the console.
+   ════════════════════════════════════════════════════════════════ */
+(async function installTBDebug(){
+  "use strict";
+  const r = n => Math.round((+n||0)*100)/100;
+  const sleep = ms => new Promise(res => setTimeout(res, ms));
+  const rect = el => { if(!el) return null; const b=el.getBoundingClientRect(); return {t:r(b.top),l:r(b.left),w:r(b.width),h:r(b.height)}; };
+  const name = el => {
+    if(!el) return '?';
+    if(el.id) return '#'+el.id;
+    const cls=((el.className||'')+'').trim().split(/\s+/).filter(Boolean);
+    let lab='';
+    try{ const h=el.querySelector&&el.querySelector('h1,h2,h3,h4,h5,h6'); if(h) lab=h.textContent.trim().slice(0,28); else if(el.dataset&&el.dataset.optionaltitle) lab=String(el.dataset.optionaltitle).slice(0,28); }catch(e){}
+    return (cls[0]||el.tagName.toLowerCase())+(lab?(' "'+lab+'"'):'');
+  };
+  const ovArea = (a,b)=>{ if(!a||!b) return 0; const ox=Math.max(0,Math.min(a.l+a.w,b.l+b.w)-Math.max(a.l,b.l)); const oy=Math.max(0,Math.min(a.t+a.h,b.t+b.h)-Math.max(a.t,b.t)); return r(ox*oy); };
+  const hitTop = el => {
+    if(!el) return null;
+    const b=el.getBoundingClientRect(); const x=b.left+b.width/2, y=b.top+b.height/2;
+    if(x<0||y<0||x>innerWidth||y>innerHeight) return {offscreen:true};
+    const t=document.elementFromPoint(x,y);
+    return { top:t?name(t):null, blocked:t?!(t===el||el.contains(t)):false, x:r(x), y:r(y) };
+  };
+  if(!window.__tbErrs){
+    window.__tbErrs=[];
+    const oe=window.onerror;
+    window.onerror=function(m,s,l){ try{window.__tbErrs.push(String(m)+(s?(' @'+String(s).split('/').pop()+':'+l):''));}catch(_){} return oe?oe.apply(this,arguments):false; };
+    window.addEventListener('unhandledrejection',e=>{ try{window.__tbErrs.push('promise: '+(e.reason&&e.reason.message||e.reason));}catch(_){} });
+  }
+  window.tbDebug = async function(opts){
+    opts=opts||{};
+    try{
+      const html=document.documentElement;
+      const box=document.getElementById('course-status-box');
+      const lessonEl=document.querySelector('[data-lesson-id]');
+      const nav=window.__moduleNavData||{};
+      const report={
+        ver: window.__TB_VER || 'OLD/unknown -> stale cache or production (my fixes NOT loaded)',
+        at: new Date().toISOString(),
+        env:{ url:location.href, lessonId: lessonEl?lessonEl.getAttribute('data-lesson-id'):null, vw:innerWidth, vh:innerHeight, dpr:window.devicePixelRatio||1,
+          reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches, readerMode:html.classList.contains('reader-mode'), dark:html.classList.contains('dark'),
+          mathLevel:(window.BlogTopics&&BlogTopics.getMathLevel)?BlogTopics.getMathLevel():null,
+          navCurrent:nav.current, navTotal:(nav.modules||[]).length, ua:navigator.userAgent },
+        courseStatusBox: box ? { position:getComputedStyle(box).position, parent:box.parentElement?(box.parentElement.id||box.parentElement.tagName):null, rect:rect(box) } : { present:false }
+      };
+      const sel='.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]';
+      const refs=[]; document.querySelectorAll(sel).forEach(el=>{ if(el.classList) refs.push(el); });
+      document.querySelectorAll('canvas, .hott-plot, [id$="-plot"], #vector-plot, #movable-vector-plot, #section-bw, #toc').forEach(el=>{ if(!refs.includes(el)) refs.push(el); });
+      const blocks=[], stuckClips=[], coveredBadges=[];
+      document.querySelectorAll(sel).forEach(el=>{
+        if(!el.classList) return;
+        const cls=[...el.classList];
+        const c=getComputedStyle(el);
+        const maxH=c.maxHeight;
+        const clipped=cls.includes('topic-block--clipped');
+        const collapsed=cls.includes('topic-block-collapsed');
+        const badgeEl=el.querySelector(':scope > .topic-block-fade-badge');
+        let badge=null;
+        if(badgeEl){ badge={ present:true, text:badgeEl.textContent.trim().slice(0,64), rect:rect(badgeEl), hidden:getComputedStyle(badgeEl).visibility==='hidden', pe:getComputedStyle(badgeEl).pointerEvents, hit:hitTop(badgeEl) }; if(badge.hit&&badge.hit.blocked) coveredBadges.push({label:name(el), coveredBy:badge.hit.top}); }
+        const offsetH=el.offsetHeight, scrollH=el.scrollHeight, clientH=el.clientHeight;
+        const clipBroken = clipped && maxH!=='none' && offsetH > (parseFloat(maxH)||0)+2;
+        const e={ label:name(el), md:cls.includes('md'),
+          mathlevel:el.getAttribute('data-mathlevel')||el.getAttribute('data-math-level')||null, title:el.getAttribute('data-optionaltitle')||null,
+          state:{collapsed, clipped, dimmed:cls.includes('topic-block-dimmed'), revealed:cls.includes('topic-block-revealed'), alt:cls.includes('topic-block-alt-active')},
+          tb:{ userRevealed:el._tbUserRevealed??null, reason:el._tbReason??null, score:el._tbScore?(el._tbScore.state+'/'+(el._tbScore.why||'')+'/'+(el._tbScore.reason||'')):null },
+          computed:{ maxH, overflow:c.overflow, opacity:c.opacity, position:c.position },
+          rect:rect(el), offsetH, scrollH, clientH,
+          clipBroken, contentOverflows:scrollH>clientH+2,
+          media:{ canvas:!!el.querySelector('canvas'), svg:!!el.querySelector('svg'), media:!!el.querySelector('iframe,video,audio,embed,object') },
+          badge };
+        blocks.push(e);
+        if(clipBroken) stuckClips.push({label:e.label, offsetH, maxH});
+      });
+      const lm=[]; refs.forEach(el=>lm.push({name:name(el), rect:rect(el)}));
+      if(box) lm.push({name:'#course-status-box', rect:rect(box)});
+      const overlaps=[];
+      for(let i=0;i<lm.length;i++) for(let j=i+1;j<lm.length;j++){ const A=ovArea(lm[i].rect,lm[j].rect); if(A>600) overlaps.push({a:lm[i].name, b:lm[j].name, area:A}); }
+      overlaps.sort((x,y)=>y.area-x.area);
+      if(opts.reveal){
+        const target=refs.find(el=>el.classList&&el.classList.contains('topic-block-collapsed')&&el.querySelector(':scope > .topic-block-fade-badge'));
+        if(target){ const be=target.querySelector(':scope > .topic-block-fade-badge');
+          const stateStr=x=>[...x.classList].filter(c=>c.indexOf('topic-block')===0).join(' ');
+          const before={state:stateStr(target), h:target.offsetHeight, badgeHit:hitTop(be)};
+          be.click(); await sleep(850);
+          const after={state:stateStr(target), h:target.offsetHeight, badgeStill:!!target.querySelector(':scope > .topic-block-fade-badge'), userRevealed:target._tbUserRevealed, overflow:getComputedStyle(target).overflow};
+          report.revealTest={target:name(target), before, after, changed:(before.state!==after.state)||before.h!==after.h};
+        } else report.revealTest={note:'no collapsed block with a badge found'};
+      }
+      report.blocks=blocks; report.stuckClips=stuckClips; report.coveredBadges=coveredBadges;
+      report.overlaps=overlaps.slice(0,30); report.errors=window.__tbErrs.slice(-40);
+      console.log('%c[TB-DEBUG]','font-weight:bold;font-size:13px');
+      console.log('BUILD: '+report.ver);
+      console.log('math='+report.env.mathLevel+' · '+report.env.vw+'x'+report.env.vh+(report.env.readerMode?' · reader-mode':'')+(report.env.reducedMotion?' · reduced-motion':'')+' · lesson='+(report.env.lessonId||''));
+      console.log('course box: '+(box?report.courseStatusBox.position+' in '+report.courseStatusBox.parent:'ABSENT'));
+      console.log('blocks='+blocks.length+' (collapsed='+blocks.filter(b=>b.state.collapsed).length+', dimmed='+blocks.filter(b=>b.state.dimmed).length+')');
+      console.log('STUCK CLIPS = '+stuckClips.length); stuckClips.forEach(s=>console.log('   · '+s.label+' -> offsetH '+s.offsetH+' vs maxH '+s.maxH));
+      console.log('COVERED BADGES (tap blocked) = '+coveredBadges.length); coveredBadges.forEach(s=>console.log('   · '+s.label+' -> blocked by '+s.coveredBy));
+      console.log('OVERLAPPING PAIRS = '+overlaps.length); overlaps.slice(0,12).forEach(o=>console.log('   · '+o.a+'  x  '+o.b+'  = '+o.area+'px^2'));
+      if(report.revealTest) console.log('REVEAL TEST: '+JSON.stringify(report.revealTest));
+      console.log('captured errors = '+report.errors.length); report.errors.forEach(e=>console.log('   ! '+e));
+      const s=JSON.stringify(report,null,1);
+      try{ await navigator.clipboard.writeText(s); console.log('%c✅ JSON kopiert -> zurückschicken','color:#10b981;font-weight:bold'); }
+      catch(e){ console.log('⚠️ clipboard blockiert (http) -> kopiere die JSON-String-Zeile darunter'); }
+      console.log(s);
+      return s;
+    }catch(err){ console.error('[TB-DEBUG] failed:', err&&err.stack||err); return 'TB-DEBUG error: '+(err&&err.message||err); }
+  };
+  console.log('%c[TB-DEBUG] bereit -> tbDebug()  oder  tbDebug({reveal:true})','font-weight:bold;color:#6366f1');
+})();
