@@ -175,7 +175,7 @@ function bootAtlas() {
 	var renderer, scene, camera, earth, earthTex, moon, sun, planets = [];
 	var dotMesh, dotInstance = [];
 	var threadGroup, threadObjs = [];
-	var starField, cmb, galaxyGroup, atmosphere;
+	var starField, galaxyGroup, atmosphere;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -674,9 +674,11 @@ function bootAtlas() {
 
 	// ── camera ────────────────────────────────────────────────
 	function applyCamera() {
-		state.theta += (state.tTheta - state.theta) * 0.12;
-		state.phi += (state.tPhi - state.phi) * 0.12;
-		state.d += (state.tD - state.d) * 0.12;
+		// the tour flies slower and more cinematically than hand control
+		var k = state.touring ? 0.04 : 0.12;
+		state.theta += (state.tTheta - state.theta) * k;
+		state.phi += (state.tPhi - state.phi) * k;
+		state.d += (state.tD - state.d) * k;
 		var sp = Math.sin(state.phi);
 		camera.position.set(
 			state.d * sp * Math.cos(state.theta),
@@ -705,7 +707,6 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		var sunO = THREE.MathUtils.smoothstep(d, 14, 40) * (1 - THREE.MathUtils.smoothstep(d, 280, 380));
 		var showPlanets = d > 12 && d < 380;
 		planets.forEach(function (p) { p.visible = showPlanets; });
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
@@ -1037,41 +1038,103 @@ function bootAtlas() {
 	}
 	function bindButtons() {
 		document.getElementById('atlas-reset').addEventListener('click', function () {
-			state.tD = 3.2; state.tPhi = 1.15;
+			stopTour();
+			state.tD = 3.2; state.tTheta = -0.4; state.tPhi = 1.15;
 		});
-		document.getElementById('atlas-journey').addEventListener('click', startJourney);
+		document.getElementById('atlas-journey').addEventListener('click', function () {
+			if (tour.active) { stopTour(); } else { startTour(); }
+		});
+		buildTourDots();
+		tourEls().prev.addEventListener('click', prevStep);
+		tourEls().next.addEventListener('click', nextStep);
+		tourEls().close.addEventListener('click', stopTour);
 	}
 
 	// ── cosmic journey ────────────────────────────────────────
 	var JOURNEY = [
 		{ d: 1.7, era: 'Earth', text: 'The home of every idea in this course. Drag to look around, click any dot to see where it is cited.' },
 		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Use the time slider to travel through history.' },
-		{ d: 9, era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
-		{ d: 60, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure, the stage on which everything happened.' },
-		{ d: 430, era: 'The Big Bang', text: 'The cosmic microwave background: the oldest light in the universe, 380,000 years after the beginning. It all starts here.' }
+		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
+		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
+		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
+		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into filaments and voids — the largest structures that exist.' },
+		{ d: 400, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
+		{ d: 560, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
 	];
-	var tourStep = -1;
-	function startJourney() {
-		state.touring = true;
-		tourStep = 0;
-		nextTourStep();
+	var TOUR_STEP_MS = 9000;
+	var tour = { active: false, step: 0, startedAt: 0 };
+
+	function tourEls() {
+		return {
+			root: document.getElementById('atlas-tour'),
+			era: document.getElementById('tour-era'),
+			text: document.getElementById('tour-text'),
+			dots: document.getElementById('tour-dots'),
+			fill: document.getElementById('tour-timer-fill'),
+			prev: document.getElementById('tour-prev'),
+			next: document.getElementById('tour-next'),
+			close: document.getElementById('tour-close')
+		};
 	}
-	function nextTourStep() {
-		if (tourStep >= JOURNEY.length) {
-			state.touring = false;
-			var cap = document.getElementById('atlas-caption');
-			setTimeout(function () { cap.classList.remove('show'); }, 2500);
-			return;
+	function buildTourDots() {
+		var els = tourEls();
+		els.dots.innerHTML = '';
+		JOURNEY.forEach(function (s, i) {
+			var b = document.createElement('button');
+			b.className = 'tour-dot';
+			b.type = 'button';
+			b.title = s.era;
+			b.addEventListener('click', function () { goStep(i); });
+			els.dots.appendChild(b);
+		});
+	}
+	function goStep(i) {
+		tour.step = i;
+		var s = JOURNEY[i];
+		state.tD = s.d;
+		if (s.face) {
+			var v = (s.face === 'moon')
+				? moon.position.clone()
+				: new THREE.Vector3(s.face[0], s.face[1], s.face[2]);
+			state.tTheta = Math.atan2(v.z, v.x);
+			state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		}
-		var step = JOURNEY[tourStep];
-		state.tD = step.d;
-		var cap = document.getElementById('atlas-caption');
-		document.getElementById('cap-era').textContent = step.era;
-		document.getElementById('cap-text').textContent = step.text;
-		cap.classList.add('show');
-		tourStep++;
-		setTimeout(nextTourStep, 6500);
+		var els = tourEls();
+		els.era.textContent = s.era;
+		els.text.textContent = s.text;
+		var dotEls = els.dots.children;
+		for (var k = 0; k < dotEls.length; k++) {
+			dotEls[k].classList.toggle('on', k === i);
+		}
+		els.prev.style.visibility = i === 0 ? 'hidden' : 'visible';
+		els.next.textContent = (i === JOURNEY.length - 1) ? 'Finish' : 'Next →';
+		tour.startedAt = performance.now();
+		els.fill.style.width = '0%';
+	}
+	function startTour() {
+		tour.active = true;
+		state.touring = true;
+		var els = tourEls();
+		els.root.classList.add('open');
+		goStep(0);
+	}
+	function stopTour() {
+		tour.active = false;
+		state.touring = false;
+		tourEls().root.classList.remove('open');
+	}
+	function nextStep() {
+		if (tour.step < JOURNEY.length - 1) { goStep(tour.step + 1); }
+		else { stopTour(); }
+	}
+	function prevStep() {
+		if (tour.step > 0) { goStep(tour.step - 1); }
+	}
+	function tickTour() {
+		if (!tour.active) { return; }
+		var p = (performance.now() - tour.startedAt) / TOUR_STEP_MS;
+		tourEls().fill.style.width = Math.min(100, p * 100) + '%';
+		if (p >= 1) { nextStep(); }
 	}
 
 	// ── theme reactivity ──────────────────────────────────────
@@ -1091,7 +1154,15 @@ function bootAtlas() {
 	function tick() {
 		requestAnimationFrame(tick);
 		applyCamera();
-		// slow planet orbits
+		tickTour();
+		// the CMB photo hovers in front of the camera, photo-parallel
+		if (cmbPhoto) {
+			var fwd = new THREE.Vector3();
+			camera.getWorldDirection(fwd);
+			cmbPhoto.position.copy(camera.position).addScaledVector(fwd, CMB_PHOTO_DIST);
+			cmbPhoto.quaternion.copy(camera.quaternion);
+		}
+		// slow cosmic drift
 		if (frame % 2 === 0) {
 			planets.forEach(function (p) {
 				if (!p.visible) { return; }
@@ -1099,7 +1170,8 @@ function bootAtlas() {
 				p.position.x = Math.cos(p.userData.angle) * p.userData.dist;
 				p.position.z = Math.sin(p.userData.angle) * p.userData.dist;
 			});
-			// keep hover tooltip in place
+			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
+			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
 		}
 		frame++;
 		renderer.render(scene, camera);
