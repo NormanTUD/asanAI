@@ -9634,8 +9634,9 @@ html.dark .topics-preset-fun {
 	font-weight: 600;
 }
 /* Fold-away control for a section the reader pried open. Sits in the normal
-   flow at the end of the revealed block (no overlap) so a user-revealed,
-   still-gated section can be tucked away again without touching the dial. */
+   flow at the END OF THE SECTION — after the block's trailing demos, right
+   before the next heading (no overlap) — so a user-revealed, still-gated
+   section can be tucked away again without touching the dial. */
 .topic-block-recollapse {
 	display: inline-flex;
 	align-items: center;
@@ -9656,6 +9657,35 @@ html.dark .topics-preset-fun {
 	color: var(--mn-text);
 	border-color: var(--mn-accent);
 	background: var(--mn-bg-subtle);
+}
+
+/* Grouped reveal badge: one in-flow badge standing in for a run of
+   consecutive tucked sections. Lists every section heading it covers so
+   the reader sees exactly what one tap will reveal. */
+.topic-block-group-badge {
+	width: 100%;
+	box-sizing: border-box;
+	margin-top: 8px;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: flex-start;
+	gap: 5px;
+}
+.topic-block-group-badge .tbf-group-titles {
+	flex: 1 1 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 8px;
+	font-size: 0.78rem;
+	line-height: 1.4;
+}
+.topic-block-group-badge .tbf-group-title {
+	color: var(--mn-text);
+	font-weight: 600;
+}
+.topic-block-group-badge .tbf-group-sep {
+	color: var(--mn-text-muted);
 }
 
 /* Demos / plot containers that follow a collapsed math section recede with it
@@ -9785,17 +9815,23 @@ a.tdp-chip.tdp-chip-met:hover {
 	color: var(--mn-emerald, #10b981);
 	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, transparent);
 }
-/* ── Top-bar course status box (compact + expandable) ────────────
-   Lives in the top bar next to the dark / reader-mode toggles. A small
-   always-visible capsule shows "Lesson N of M"; tapping it opens a
-   panel with Next-up / Builds-on / Unlocks detail. */
-/* In-flow, right-aligned, at the top of the reading column. It was a
-   position:fixed veil that floated over the centered content — covering the
-   TOC at the top and, while scrolling, wide plots / text. In-flow it reserves
-   its own space, so it can never overlap anything and there is no layout
-   shift when it fades in. `position:relative` anchors the dropdown panel. */
+/* ── Course status box at the end of the article (compact + expandable) ──
+   A small always-visible capsule at the end of the lesson body shows
+   "Lesson N of M" + progress; tapping it opens a panel with Next-up /
+   Builds-on / Unlocks detail. */
+/* In-flow, right-aligned, at the END of the reading column (after the
+   learned button, before footnotes/sources). It was a position:fixed veil
+   that floated over the centered content — covering the TOC at the top and,
+   while scrolling, wide plots / text. In-flow it reserves its own space, so
+   there is no layout shift when it fades in. `position:relative` anchors the
+   dropdown panel. The z-index makes the WHOLE box subtree — including the
+   opened panel, which paints over the footnotes/sources below — win the
+   stacking contest against every in-flow article element (the column's
+   positioned content tops out at z-index 10; fixed chrome sits at 9000+,
+   which must stay above the panel). */
 #course-status-box {
 	position: relative;
+	z-index: 60;
 	width: 100%;
 	box-sizing: border-box;
 	display: flex;

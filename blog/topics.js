@@ -560,11 +560,45 @@
 		const btn = document.getElementById('topic-learned-btn');
 		const contents = document.getElementById('contents');
 		if (!btn || !contents) return;
+		// The course status box now lives at the END of the article body;
+		// the learned button sits right before it (see settleCourseStatusBox).
+		const box = document.getElementById('course-status-box');
+		if (box && box.parentNode === contents && box.previousElementSibling !== btn) {
+			box.parentNode.insertBefore(btn, box);
+			return;
+		}
 		const anchor = contents.querySelector('#footnotes-section, #sources-section');
 		if (anchor) {
 			if (anchor.previousElementSibling !== btn) anchor.parentNode.insertBefore(btn, anchor);
 		} else if (contents.lastElementChild !== btn) {
 			contents.appendChild(btn);
+		}
+	}
+
+	/** Pin the course-status box ("Lesson N of M") to the END of the lesson
+	    body: right before #footnotes-section / #sources-section when present,
+	    otherwise the last child of #contents — always after the learned
+	    button. Idempotent: a no-op once in place, so re-calling never shifts
+	    the element → no scroll jump. Safe to call before the box exists
+	    (guarded) or before the learned button exists (order is re-asserted
+	    whichever of the two settles last). */
+	function settleCourseStatusBox() {
+		try {
+			const box = document.getElementById('course-status-box');
+			const contents = document.getElementById('contents');
+			if (!box || !contents || box.parentNode !== contents) return;
+			const anchor = contents.querySelector('#footnotes-section, #sources-section');
+			if (anchor) {
+				if (anchor.previousElementSibling !== box) anchor.parentNode.insertBefore(box, anchor);
+			} else if (contents.lastElementChild !== box) {
+				contents.appendChild(box);
+			}
+			const btn = document.getElementById('topic-learned-btn');
+			if (btn && btn.parentNode === contents && box.previousElementSibling !== btn) {
+				box.parentNode.insertBefore(btn, box);
+			}
+		} catch (e) {
+			if (DEBUG) derr('settleCourseStatusBox:', e);
 		}
 	}
 
@@ -593,11 +627,12 @@
 			const nMet = deps.filter(function (d) { return isLearned(d); }).length;
 			const unlocks = isSpine ? unlocksOf(lessonId) : [];
 
-			// Course-status box in the TOP BAR (next to dark / reader mode),
-			// not at the top of the content. Compact "Lesson N of M" status
-			// is always visible; the Builds-on / Next-up / Unlocks detail
-			// lives in a panel that opens on tap. Idempotent: the box is
-			// created once and only its content/classes are swapped after.
+			// Course-status box at the END of the article (after the
+			// "mark as learned" button, before footnotes/sources) — see
+			// settleCourseStatusBox(). Compact "Lesson N of M" status is
+			// always visible; the Builds-on / Next-up / Unlocks detail lives
+			// in a panel that opens on tap. Idempotent: the box is created
+			// once and only its content/classes are swapped after.
 			const legacyPill = document.getElementById('topic-deps-pill');
 			if (legacyPill) legacyPill.remove();
 
@@ -646,9 +681,12 @@
 						showLearnedUI();   // refresh the box + button
 					});
 
-					// In-flow at the top of the reading column (not a floating
+					// In-flow, at the END of the reading column (not a floating
 					// body overlay) so it can never cover the TOC or plots.
-					contents.insertBefore(box, contents.firstChild);
+					// Attach first (a detached node can't be settled), then pin
+					// it before footnotes/sources / after the learned button.
+					contents.appendChild(box);
+					settleCourseStatusBox();
 				}
 
 				const toggle = box.querySelector('#csb-toggle');
@@ -708,6 +746,11 @@
 			btn.innerHTML = learned
 				? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
 				: '<span aria-hidden="true">○</span> Mark this lesson as learned';
+
+			// Re-assert the end-of-article order (learned button → course
+			// status box → footnotes/sources) now that both elements exist.
+			// No-op once settled, so this never causes a scroll jump.
+			settleCourseStatusBox();
 		} catch (e) {
 			if (DEBUG) dlog('showLearnedUI error:', e);
 		}
@@ -1889,27 +1932,234 @@
 
 	/** A section the reader pried open (still gated) stays open only while they
 	    want it. This fold-away control lets them tuck it back without touching
-	    the math dial. Shown in-flow at the end of a user-revealed block; the
-	    delegation-free per-button handler is enough here (no competing
-	    document-level handler targets this class). */
+	    the math dial. It is placed in-flow at the END OF THE SECTION — after
+	    the demos that follow the block, right before the next heading / managed
+	    block — because "the section" is the block plus its trailing demos, not
+	    just the block's div. The delegation-free per-button handler is enough
+	    here (no competing document-level handler targets this class). */
 	function ensureRecollapse(block) {
-		if (block.querySelector(':scope > .topic-block-recollapse')) return;
-		const btn = document.createElement('button');
-		btn.type = 'button';
-		btn.className = 'topic-block-recollapse';
-		btn.setAttribute('aria-label', 'Fold this section away');
-		btn.textContent = '\u25B2 \u00A0Fold this section away';
-		btn.addEventListener('click', function (e) {
-			e.stopPropagation();
-			block._tbUserRevealed = false;
-			block._tbState = 'off';
-			reapplyBlock(block);
-		});
-		block.appendChild(btn);
+		try {
+			let btn = findRecollapse(block);
+			if (!btn) {
+				btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'topic-block-recollapse';
+				btn.setAttribute('aria-label', 'Fold this section away');
+				btn.textContent = '\u25B2 \u00A0Fold this section away';
+				btn.addEventListener('click', function (e) {
+					e.stopPropagation();
+					block._tbUserRevealed = false;
+					block._tbState = 'off';
+					reapplyBlock(block);
+					// Re-tucking this block may have created a new run of
+					// consecutive tucked sections → regroup behind one badge.
+					rebuildGroupBadges();
+				});
+			}
+			const parent = block.parentNode;
+			if (!parent) return btn;
+			const boundary = sectionEndBefore(block);
+			if (boundary && boundary !== btn) {
+				// insertBefore on an already-correct node is a no-op (no
+				// reflow, no scroll jump); it also migrates a stale copy
+				// that is still a child of the block.
+				parent.insertBefore(btn, boundary);
+			} else if (parent.lastElementChild !== btn) {
+				parent.appendChild(btn);
+			}
+			return btn;
+		} catch (e) {
+			if (DEBUG) derr('ensureRecollapse:', e);
+			return null;
+		}
+	}
+	/** Locate the recollapse button for `block` at EITHER of its possible
+	    home positions: a (stale) direct child of the block, or the in-flow
+	    sibling at the section end (after the block's trailing demos). */
+	function findRecollapse(block) {
+		if (!block) return null;
+		try {
+			if (block.querySelector) {
+				const asChild = block.querySelector(':scope > .topic-block-recollapse');
+				if (asChild) return asChild;
+			}
+			let sib = block.nextElementSibling;
+			while (sib) {
+				if (sib.classList && sib.classList.contains('topic-block-recollapse')) return sib;
+				if (sib.tagName === 'SECTION') break;
+				if (sib.id && TB_NO_TUCK_IDS[sib.id]) break;
+				if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
+				if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+				sib = sib.nextElementSibling;
+			}
+		} catch (e) {
+			if (DEBUG) derr('findRecollapse:', e);
+		}
+		return null;
 	}
 	function removeRecollapse(block) {
-		const btn = block.querySelector(':scope > .topic-block-recollapse');
-		if (btn) btn.remove();
+		try {
+			const btn = findRecollapse(block);
+			if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+		} catch (e) {
+			if (DEBUG) derr('removeRecollapse:', e);
+		}
+	}
+
+	/* ── Grouped reveal badge ────────────────────────────────────
+	   Several sections tucked in a row used to show a "tap to reveal"
+	   badge per section, forcing N taps. One grouped badge at the end of
+	   the run reveals the whole run at once and LISTS EVERY SECTION
+	   HEADING it covers, so the reader knows exactly what a single tap
+	   opens. Rebuilt from scratch on every applyVisibility pass (a single
+	   cheap DOM walk), so it can never desync from block states. Runs of
+	   one block keep the ordinary per-block badge. */
+
+	/** Elements that do not visually separate two tucked sections:
+	    script/style/template (not rendered) and tucked demos (display:none). */
+	function isTuckTransparent(el) {
+		if (!el || !el.tagName) return false;
+		if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'TEMPLATE') return true;
+		if (el.classList && el.classList.contains('topic-demo-tucked')) return true;
+		return false;
+	}
+
+	function isTuckedBlock(el) {
+		return !!(el && el.classList
+			&& el.classList.contains('topic-block')
+			&& el.classList.contains('topic-block-collapsed'));
+	}
+
+	/** The next tucked block that continues the run started by `block`, or
+	    null the moment any VISIBLE content separates them. A bare heading or
+	    a plain (unmanaged) prose div between two tucked blocks is visible
+	    content → the sections are no longer "directly in a row". */
+	function nextTuckedInRun(block) {
+		let sib = block ? block.nextElementSibling : null;
+		while (sib) {
+			if (isTuckTransparent(sib)) { sib = sib.nextElementSibling; continue; }
+			if (isTuckedBlock(sib)) return sib;
+			return null;
+		}
+		return null;
+	}
+
+	/** Best-effort title for a tucked block: the author's data-optionaltitle,
+	    else the first heading inside (post-Markdown), else empty. */
+	function tuckedTitle(block) {
+		try {
+			let t = block.getAttribute ? (block.getAttribute('data-optionaltitle') || '') : '';
+			if (!t && block.querySelector) {
+				const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+				if (h) t = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			}
+			return (t || '').slice(0, 80);
+		} catch (e) {
+			return '';
+		}
+	}
+
+	/** One grouped badge standing in for `run` (an array of ≥2 consecutive
+	    tucked blocks). Placed in-flow at the end of the run — after the last
+	    member's trailing demos, before the next heading/section boundary. */
+	function placeGroupBadge(run) {
+		const last = run[run.length - 1];
+		const parent = last && last.parentNode;
+		if (!parent) return null;
+		const badge = document.createElement('button');
+		badge.type = 'button';
+		badge.className = 'topic-block-fade-badge topic-block-group-badge';
+		badge.setAttribute('aria-label', 'Reveal all tucked sections in this group');
+		badge._groupMembers = run.slice();
+		const titles = run.map(tuckedTitle).filter(Boolean);
+		const n = run.length;
+		const anyMath = run.some(function (b) { return b._tbWhy === 'math'; });
+		badge.innerHTML =
+			'<span class="tbf-icon" aria-hidden="true">' + (anyMath ? '\u222B' : '\u2726') + '</span>'
+			+ '<span class="tbf-title">' + n + (n === 1 ? ' section' : ' sections') + ' tucked away</span>'
+			+ (titles.length
+				? '<span class="tbf-group-titles">'
+					+ titles.map(function (t) {
+						return '<span class="tbf-group-title">' + escAttr(t) + '</span>';
+					}).join('<span class="tbf-group-sep" aria-hidden="true">\u00B7</span>')
+					+ '</span>'
+				: '')
+			+ '<span class="tbf-action">tap to reveal all \u2193</span>';
+		badge.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			revealGroupBadge(badge);
+		});
+		const boundary = sectionEndBefore(last);
+		if (boundary && boundary !== badge) parent.insertBefore(badge, boundary);
+		else parent.appendChild(badge);
+		if (DEBUG) dlog('group badge placed for ' + n + ' sections:',
+			titles.length ? titles.join(' / ') : '(no titles found)');
+		return badge;
+	}
+
+	/** Reveal every block of a group at once and remove the badge.
+	    Idempotent per member (revealBlock guards on topic-block-revealed);
+	    the badge is detached before revealing so a stale re-dispatch can
+	    never double-run. */
+	function revealGroupBadge(badge) {
+		try {
+			const members = (badge && badge._groupMembers) ? badge._groupMembers.slice() : [];
+			if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+			members.forEach(function (b) {
+				if (!b || !b.classList) return;
+				if (b.classList.contains('topic-block-revealed')) return;
+				b._tbUserRevealed = true; // reader chose to see it → keep it revealed
+				revealBlock(b, true);
+			});
+			if (DEBUG) dlog('group badge revealed ' + members.length + ' sections');
+			// Safety net: if any member refused to reveal (state drift), a
+			// fresh rebuild will re-badges the remainder instead of leaving
+			// it unreachable.
+			rebuildGroupBadges();
+		} catch (e) {
+			if (DEBUG) derr('revealGroupBadge:', e);
+		}
+	}
+
+	/** Rebuild ALL grouped badges from the current block states. Safe to
+	    call any time; a no-op when fewer than two tucked sections are
+	    consecutive. Member badges are only removed from blocks that end up
+	    in a run of ≥2, so single tucked sections keep their own badge. */
+	function rebuildGroupBadges() {
+		try {
+			document.querySelectorAll('.topic-block-group-badge').forEach(function (g) {
+				if (g.parentNode) g.parentNode.removeChild(g);
+			});
+			const collapsed = Array.prototype.slice.call(
+				document.querySelectorAll('.topic-block.topic-block-collapsed'));
+			if (collapsed.length < 2) return 0;
+			const grouped = {};
+			let groups = 0;
+			collapsed.forEach(function (first) {
+				if (grouped[first]) return;
+				grouped[first] = true;
+				const run = [first];
+				let nxt = nextTuckedInRun(first);
+				while (nxt) {
+					if (grouped[nxt]) break; // already absorbed (defensive)
+					grouped[nxt] = true;
+					run.push(nxt);
+					nxt = nextTuckedInRun(nxt);
+				}
+				if (run.length < 2) return; // single section → its own badge
+				run.forEach(function (b) {
+					const badge = b.querySelector ? b.querySelector(':scope > .topic-block-fade-badge') : null;
+					if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+				});
+				if (placeGroupBadge(run)) groups++;
+			});
+			if (DEBUG && groups) dlog('rebuildGroupBadges: ' + groups + ' grouped run(s)');
+			return groups;
+		} catch (e) {
+			if (DEBUG) derr('rebuildGroupBadges:', e);
+			return 0;
+		}
 	}
 
 	/** Fallback reveal path. Some pages carry document/body click handlers
@@ -1917,7 +2167,7 @@
 	    get desynced from the live badge element; a delegated bubble handler on
 	    document always fires when a `.topic-block-fade-badge` is actually
 	    clicked, so "tap to reveal" can never be a dead button. */
-	function ensureBadgeDelegation() {
+		function ensureBadgeDelegation() {
 		if (document.__tbBadgeDeleg) return;
 		document.__tbBadgeDeleg = true;
 		document.addEventListener('click', function (ev) {
@@ -1925,6 +2175,10 @@
 			if (!t || !t.closest) return;
 			const badge = t.closest('.topic-block-fade-badge');
 			if (!badge) return;
+			// Grouped badges carry the same base class for styling but cover
+			// MANY blocks and sit OUTSIDE any of them — their own handler
+			// (revealGroupBadge) is the only valid path.
+			if (badge.classList.contains('topic-block-group-badge')) return;
 			const block = badge.closest('.topic-block') || badge.parentElement;
 			if (!block || !block.classList.contains('topic-block-collapsed')) return;
 			block._tbUserRevealed = true;
@@ -1947,6 +2201,29 @@
 		'course-status-box': 1, 'topic-learned-btn': 1, 'sidenotes-rail': 1,
 		'curiosity-score': 1
 	};
+
+	/** The element that ends `block`'s SECTION: the next page-furniture id,
+	    <section>, managed block, or bare heading — exactly the same boundary
+	    rules tuckFollowingDemos() walks with, so "end of section" always
+	    means "where the demos stop". Returns null when the section runs to
+	    the end of the parent. Used to place controls (recollapse button,
+	    grouped reveal badge) at the true end of a section rather than at the
+	    end of the block's own div — which, when demos follow, is mid-section. */
+	function sectionEndBefore(block) {
+		if (!block || !block.nextElementSibling) return null;
+		let sib = block.nextElementSibling;
+		while (sib) {
+			if (sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE' || sib.tagName === 'TEMPLATE') {
+				sib = sib.nextElementSibling; continue;
+			}
+			if (sib.tagName === 'SECTION') return sib;
+			if (sib.id && TB_NO_TUCK_IDS[sib.id]) return sib;
+			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) return sib;
+			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) return sib;
+			sib = sib.nextElementSibling;
+		}
+		return null;
+	}
 
 	function tuckFollowingDemos(block) {
 		const hidden = [];
@@ -2143,10 +2420,12 @@
 			});
 			if (isIndexPage()) dimCourseTiles();
 			updateSkipIndicator();
-		// Still keep the learned button at the end of the lesson body in
-		// case footnotes/sources were appended after it (this early-return
-		// path skips the settle call at the bottom of the function).
+		// Still keep the learned button + course status box at the end of
+		// the lesson body in case footnotes/sources were appended after
+		// them (this early-return path skips the settle calls at the bottom
+		// of the function).
 		settleLearnedButton();
+		settleCourseStatusBox();
 			return;
 		}
 
@@ -2189,11 +2468,17 @@
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 
-		// Keep the "mark as learned" button at the end of the lesson body
-		// now that footnotes/sources may have been appended after it
-		// (post-render). No-op if it is already in place, so a click never
-		// shifts it.
+		// Keep the "mark as learned" button + course status box at the end
+		// of the lesson body now that footnotes/sources may have been
+		// appended after them (post-render). No-op if already in place, so
+		// a click never shifts either element.
 		settleLearnedButton();
+		settleCourseStatusBox();
+
+		// Group consecutive tucked sections behind one "reveal all" badge
+		// (lists the section headings it covers). Must run AFTER all block
+		// states are settled and badge titles are filled in.
+		rebuildGroupBadges();
 	}
 
 	/* ── 6b. Math alternative text ──────────────────────────────
