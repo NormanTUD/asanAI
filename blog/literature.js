@@ -14765,6 +14765,13 @@ window.bibData = {
 		url: "https://doi.org/10.1175/1520-0469(1947)004<0136:TDOLWI>2.0.CO;2",
 		alternativetitle: "Charney, 1947 (J. Meteorology)"
 	},
+	"charney1950nwp": {
+		title: "Numerical Integration of the Barotropic Vorticity Equation",
+		author: "Jule G. Charney, Ragnar Fjørtoft, John von Neumann",
+		year: 1950,
+		url: "https://doi.org/10.3402/tellusa.v2i4.8607",
+		alternativetitle: "Charney, Fjørtoft & von Neumann, 1950 (Tellus)"
+	},
 	"charney1979report": {
 		title: "Carbon dioxide and climate: A scientific assessment",
 		author: "National Research Council (Charney et al.)",

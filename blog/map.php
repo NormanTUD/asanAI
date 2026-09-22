@@ -253,9 +253,7 @@ html:not(.dark) #atlas-stage {
 			<div class="atlas-year" id="atlas-year">2026<small>all time</small></div>
 			<input class="atlas-time" id="atlas-time" type="range" min="-5000" max="2026" step="1" value="2026">
 		</div>
-		<div class="sect">
-			<h3>Legend</h3>
-			<div id="atlas-legend"></div>
+		<div class="sect" style="margin-bottom:0">
 			<div class="atlas-count" id="atlas-count"></div>
 		</div>
 	</aside>

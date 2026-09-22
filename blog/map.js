@@ -84,6 +84,7 @@ function bootAtlas() {
 		tTheta: -0.4, tPhi: 1.15, tD: 3.2,
 		year: 2026,
 		show: { person: true, place: true, institution: true, event: true, artifact: true, author: true },
+		showBg: false,
 		tshow: { influence: true, journey: true, signal: true },
 		selected: null,
 		hovered: null,
@@ -146,6 +147,13 @@ function bootAtlas() {
 		var a = e.active || [null, null];
 		return yearRange(a[0], a[1]);
 	}
+	function dotVisible(d) {
+		if (!state.show[d.type]) { return false; }
+		if (d.bg && !state.showBg) { return false; }
+		if (!yearRange(d.yearA, d.yearB)) { return false; }
+		if (d.isAuthor && state.year < 2026 && state.year < (d.year || 0) - 2) { return false; }
+		return true;
+	}
 
 	function buildDots() {
 		state.dots = [];
@@ -156,7 +164,8 @@ function bootAtlas() {
 				yearA: (e.active || [null, null])[0],
 				yearB: (e.active || [null, null])[1],
 				isMoon: isMoonEntity(e),
-				isAuthor: false
+				isAuthor: false,
+				bg: e.type === 'place' && e.bg === true
 			});
 		});
 		state.authors.forEach(function (a) {
@@ -562,10 +571,7 @@ function bootAtlas() {
 		var shown = 0;
 		for (var i = 0; i < state.dots.length; i++) {
 			var d = dotInstance[i];
-			var on = state.show[d.type] && yearRange(d.yearA, d.yearB);
-			if (d.isAuthor && state.year < 2026) {
-				on = on && (state.year >= (d.year || 0) - 2);
-			}
+			var on = dotVisible(d);
 			if (on) {
 				var base = dotWorldPos(d, 0.004);
 				dummy.position.copy(base);
@@ -798,7 +804,7 @@ function bootAtlas() {
 			var iid = hits[i].instanceId;
 			if (iid === undefined) { continue; }
 			var d = dotInstance[iid];
-			if (state.show[d.type] && yearRange(d.yearA, d.yearB)) { found = d; break; }
+			if (dotVisible(d)) { found = d; break; }
 		}
 		if (isClick) {
 			if (found) { selectDot(found); }
@@ -928,12 +934,14 @@ function bootAtlas() {
 	// ── UI ────────────────────────────────────────────────────
 	function buildUI() {
 		var filters = document.getElementById('atlas-filters');
-		var html = '<h3>Layer</h3>';
+		var html = '<h3>Legend</h3>';
 		Object.keys(TYPE_LABEL).forEach(function (k) {
 			html += '<label class="atlas-check"><input type="checkbox" data-t="' + k +
 				'" checked><span class="sw" style="background:' + TYPE_COLOR[k] +
 				'"></span>' + TYPE_LABEL[k] + '</label>';
 		});
+		html += '<label class="atlas-check" style="margin-top:6px"><input type="checkbox" id="atlas-bg-places">' +
+			'<span class="sw" style="background:#8892a8"></span>Background places</label>';
 		html += '<h3 style="margin-top:12px">Threads</h3>';
 		Object.keys(THREAD_LABEL).forEach(function (k) {
 			html += '<label class="atlas-check"><input type="checkbox" data-th="' + k +
@@ -953,21 +961,15 @@ function bootAtlas() {
 				updateThreads();
 			});
 		});
-		buildLegend();
+		document.getElementById('atlas-bg-places').addEventListener('change', function () {
+			state.showBg = this.checked;
+			updateDots();
+		});
 		buildSearch();
 		bindTime();
 		bindButtons();
 		bindInput();
 		updateDots();
-	}
-	function buildLegend() {
-		var lg = document.getElementById('atlas-legend');
-		var html = '';
-		Object.keys(TYPE_LABEL).forEach(function (k) {
-			html += '<label class="atlas-check"><span class="sw" style="background:' +
-				TYPE_COLOR[k] + '"></span>' + TYPE_LABEL[k] + '</label>';
-		});
-		lg.innerHTML = html;
 	}
 	function updateCount(shown) {
 		var el = document.getElementById('atlas-count');
