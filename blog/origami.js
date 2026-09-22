@@ -326,20 +326,21 @@ function ogInitCascade() {
 		let seed = 12345; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280 - 0.5; }
 		const layers = [];
 		for (let l = 0; l < L; l++) { const inS = l === 0 ? 2 : N, Wt = [], b = []; for (let i = 0; i < N; i++) { const row = []; for (let j = 0; j < inS; j++) row.push(rnd() * 2); Wt.push(row); b.push(rnd() * 0.8); } layers.push({ W: Wt, b }); }
-		const wOut = []; for (let i = 0; i < N; i++) wOut.push(rnd() * 2);
-		function forward(x, y) { let a = [x, y]; for (const { W, b } of layers) { const na = []; for (let i = 0; i < W.length; i++) { let s = b[i]; for (let j = 0; j < W[i].length; j++) s += W[i][j] * a[j]; na.push(Math.max(0, s)); } a = na; } let s = 0; for (let i = 0; i < a.length; i++) s += wOut[i] * a[i]; return s; }
+		const BASE = 1 << N;
+		function regionKey(x, y) { let a = [x, y], key = 0; for (const { W, b } of layers) { let bits = 0; const na = []; for (let i = 0; i < W.length; i++) { let s = b[i]; for (let j = 0; j < W[i].length; j++) s += W[i][j] * a[j]; if (s > 0) bits |= (1 << i); na.push(Math.max(0, s)); } key = key * BASE + bits; a = na; } return key; }
 		const p = OG.pal();
 		const img = ctx.createImageData(W, H);
 		const cx = W / 2, cy = H / 2, SC = 120;
+		const seen = new Set();
 		for (let py = 0; py < H; py += 2) for (let px = 0; px < W; px += 2) {
-			const x = (px - cx) / SC, y = (cy - py) / SC, v = forward(x, y);
-			const hue = ((Math.floor(v * 3) * 47) % 360 + 360) % 360;
-			const rgb = hsv2rgb(hue / 360, p.dark ? 0.5 : 0.4, v > 0 ? (p.dark ? 0.55 : 0.7) : (p.dark ? 0.16 : 0.9));
+			const x = (px - cx) / SC, y = (cy - py) / SC;
+			const key = regionKey(x, y); seen.add(key);
+			const hue = ((key * 0.6180339887) % 1) * 360;
+			const rgb = hsv2rgb(hue / 360, 0.55, p.dark ? 0.6 : 0.75);
 			for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) { const idx = ((py + dy) * W + (px + dx)) * 4; img.data[idx] = rgb[0]; img.data[idx + 1] = rgb[1]; img.data[idx + 2] = rgb[2]; img.data[idx + 3] = 255; }
 		}
 		ctx.putImageData(img, 0, 0);
-		const regions = Math.pow(N, L);
-		document.getElementById('og-cas-out').innerHTML = 'Upper bound on linear regions ≈ N<sup>L</sup> = ' + N + '<sup>' + L + '</sup> = <b>' + regions + '</b> — depth multiplies boundaries exponentially, not additively.';
+		document.getElementById('og-cas-out').innerHTML = 'Distinct linear regions in view: <b>' + seen.size + '</b> of at most ' + N + '<sup>' + L + '</sup> = ' + Math.pow(N, L) + ' — each flat colour is one region where the net is a single linear map. Depth multiplies boundaries exponentially, not additively.';
 	}
 	document.getElementById('og-cas-l').oninput = drawCascade;
 	document.getElementById('og-cas-n').oninput = drawCascade;
@@ -831,9 +832,9 @@ async function loadOrigamiModule() {
 	OG.register('og-relu1d', ogInitRelu1d);
 	OG.register('og-before', ogInitRelu);
 	OG.register('og-fold1d', ogInitFold1d);
-	OG.register('og-egg', ogInitEgg);
-	OG.register('og-rot', ogInitRot);
-	OG.register('og-egg3', ogInitEgg3);
+	OG.register('og-egg2d', ogInitEgg);
+	OG.register('og-rot2d', ogInitRot);
+	OG.register('og-egg3top', ogInitEgg3);
 	OG.register('og-fold3d', ogInitFold3d);
 	OG.register('og-cascade', ogInitCascade);
 	OG.register('og-shear', ogInitShear);

@@ -271,7 +271,11 @@ window.bibData = {
 		alternativetitle: "Small modular origami structure (Icyshadowking, CC0)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
+	 *  Origami in N dimensions: the neural-network fold  (origami.php)
+	 *  The feed-forward space-warping picture, its 3-D fold demos, the
+	 *  fold-and-cut theorem, the depth/width theory, and the polyhedral
+	 *  backbone that makes the linear-region count precise.
+	 * ───────────────────────────────────────────────────────────────────── */
 	"foldandcut_wiki": {
 		title: "Fold-and-cut theorem",
 		author: "Wikipedia contributors",

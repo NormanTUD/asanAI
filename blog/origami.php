@@ -106,14 +106,14 @@ math: 50
 
 	<h2 class="og-h2">Fold-and-Cut — Origami meets Neural Networks</h2>
 
+	<div class="md">
+Here is the surprising fact at the heart of this chapter: **you can cut out any shape made of straight lines from a single sheet of paper with just one straight cut** — provided you fold the paper correctly first. Stated the way a ten-year-old would take it in: a *shape* is any closed outline (a triangle, a star, even your own signature), and *cutting* just means the scissors follow that outline to free the shape from the rest of the paper. The catch is that one straight snip can only ever remove a straight line, so a jagged star seems impossible from a single flat cut. The trick is to **fold** the paper until every edge of the shape lies exactly on top of every other edge; then one straight cut passes through all the stacked layers at once, and when you unfold, the shape falls out perfectly. That same move — *fold first, then one flat cut* — is exactly what a stack of ReLU layers does to the data before the final linear readout.
+</div>
+
 	<figure style="max-width:640px; margin:1.2em auto; text-align:center;">
 		<img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Origami_made_by_Brighton_University_to_support_Japan%3B_April_2011.jpg" alt="Hundreds of folded paper cranes" style="width:100%; height:auto; border-radius:8px;" />
 		<figcaption class="md">Paper cranes — the most familiar object in the art of the fold. \cite[Image: Dominic Alves, origami cranes (Wikimedia Commons, CC BY 2.0)]{origami_cranes_img}.</figcaption>
 	</figure>
-
-	<div class="md">
-Here is the surprising fact at the heart of this chapter: **you can cut out any shape made of straight lines from a single sheet of paper with just one straight cut** — provided you fold the paper correctly first. Stated the way a ten-year-old would take it in: a *shape* is any closed outline (a triangle, a star, even your own signature), and *cutting* just means the scissors follow that outline to free the shape from the rest of the paper. The catch is that one straight snip can only ever remove a straight line, so a jagged star seems impossible from a single flat cut. The trick is to **fold** the paper until every edge of the shape lies exactly on top of every other edge; then one straight cut passes through all the stacked layers at once, and when you unfold, the shape falls out perfectly. That same move — *fold first, then one flat cut* — is exactly what a stack of ReLU layers does to the data before the final linear readout.
-</div>
 
 <div class="og-card">
 	<div class="og-demo">
