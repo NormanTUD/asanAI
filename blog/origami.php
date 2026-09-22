@@ -92,17 +92,8 @@ math: 50
 	.og-fc-wrap { position: relative; }
 	.og-fc-status { position: absolute; top: 8px; left: 12px; z-index: 2; font-size: .85rem; color: var(--og-amber); background: var(--mn-bg-glass); padding: 2px 8px; border-radius: 6px; }
 
-	.og-regen-fab {
-		position: fixed; right: 18px; bottom: 18px; z-index: 900;
-		background: var(--mn-emerald); color: #fff; border: none; cursor: pointer;
-		width: 48px; height: 48px; border-radius: 50%; font-size: 1.35rem; line-height: 1;
-		box-shadow: 0 8px 24px rgba(0,0,0,.28); transition: transform .15s, filter .15s;
-		display: flex; align-items: center; justify-content: center;
-	}
-	.og-regen-fab:hover { transform: scale(1.08) rotate(90deg); filter: brightness(1.1); }
+	.og-regen-btn { margin-top: 12px; }
 </style>
-
-<button id="og-regen-fab" class="og-regen-fab" title="Resample the random data in this chapter" aria-label="Resample random data">🎲</button>
 
 	<h2 class="og-h2">Fold-and-Cut — Origami meets Neural Networks</h2>
 
@@ -130,7 +121,7 @@ Here is the surprising fact at the heart of this chapter: **you can cut out any 
 			<button id="og-fc-cut" class="og-btn">✂ Cut!</button>
 			<button id="og-fc-print" class="og-btn sec">🖨 Print</button>
 		</div>
-		<div class="og-formula"><div class="cap">The Fold-and-Cut Theorem (Demaine et al. 1998):</div><div id="og-fc-formula"></div></div>
+		<div class="og-formula lg-scroll"><div class="cap">The Fold-and-Cut Theorem (Demaine et al. 1998):</div><div id="og-fc-formula"></div></div>
 	</div>
 </div>
 
@@ -246,7 +237,7 @@ class. So how does a network ever get at an "island" class that is completely su
 			<div class="og-control"><label>Append ReLU: <span class="val" id="og-aff-relu-v">off</span></label><input type="checkbox" id="og-aff-relu"></div>
 		</div>
 		<div class="og-canvas-wrap"><canvas id="og-affine" width="560" height="400"></canvas></div>
-		<div class="og-formula live"><div class="cap">Live weight matrix (rot · scale · shear):</div><div id="og-aff-live"></div></div>
+		<div class="og-formula live lg-scroll"><div class="cap">Live weight matrix (rot · scale · shear):</div><div id="og-aff-live"></div></div>
 	</div>
 
 	<div class="og-demo">
@@ -256,7 +247,7 @@ class. So how does a network ever get at an "island" class that is completely su
 			<div class="og-control" style="min-width:260px"><label>Input $x$: <span class="val" id="og-relu-xv">-1.0</span></label><input type="range" id="og-relu-x" min="-3" max="3" step="0.1" value="-1"></div>
 		</div>
 		<div class="og-canvas-wrap"><canvas id="og-relu1d" width="560" height="280"></canvas></div>
-		<div class="og-formula live"><div id="og-relu-live"></div></div>
+		<div class="og-formula live lg-scroll"><div id="og-relu-live"></div></div>
 	</div>
 
 	<div class="og-demo">
@@ -375,9 +366,9 @@ one. Drag to look around the folded representation:
 		<div class="og-canvas-wrap"><canvas id="og-egg2d" width="640" height="400"></canvas></div>
 		<div id="og-egg3d" class="og-plot" style="height:420px"></div>
 		<div id="og-egg-verdict" class="og-verdict no" style="display:none"></div>
-		<div class="og-formula"><div id="og-egg-f1"></div></div>
-		<div class="og-formula"><div id="og-egg-f2"></div></div>
-		<div class="og-formula"><div id="og-egg-f3"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-egg-f1"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-egg-f2"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-egg-f3"></div></div>
 	</div>
 </div>
 
@@ -396,8 +387,8 @@ one. Drag to look around the folded representation:
 			<div id="og-rot3d" class="og-plot" style="height:360px"></div>
 		</div>
 		<div id="og-rot-verdict" class="og-verdict no" style="display:none"></div>
-		<div class="og-formula"><div id="og-rot-f1"></div></div>
-		<div class="og-formula"><div id="og-rot-f2"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-rot-f1"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-rot-f2"></div></div>
 	</div>
 </div>
 
@@ -416,8 +407,8 @@ one. Drag to look around the folded representation:
 		<div class="og-canvas-wrap"><canvas id="og-egg3top" width="640" height="320"></canvas></div>
 		<div id="og-egg3fold" class="og-plot" style="height:420px"></div>
 		<div id="og-egg3-verdict" class="og-verdict no" style="display:none"></div>
-		<div class="og-formula"><div id="og-egg3-dense"></div></div>
-		<div class="og-formula"><div id="og-egg3-sep"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-egg3-dense"></div></div>
+		<div class="og-formula lg-scroll"><div id="og-egg3-sep"></div></div>
 	</div>
 </div>
 

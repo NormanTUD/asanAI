@@ -8,7 +8,6 @@ const OG = {
 	registry: [],
 	observer: null,
 	redos: [],
-	regen: [],
 
 	isDark() { return (typeof isDarkMode === 'function') ? isDarkMode() : false; },
 
@@ -65,6 +64,18 @@ const OG = {
 			});
 		}, { rootMargin: margin });
 		this.registry.forEach((r) => { if (!r.done) this.observer.observe(r.el); });
+	},
+
+	addRegen(el, fn) {
+		const block = el && (el.closest('.og-demo') || el.closest('.og-card'));
+		if (!block || block.querySelector('.og-regen-btn')) return;
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'og-btn og-btn-sec og-regen-btn';
+		btn.title = 'Neue Zufallsdaten generieren (Resample)';
+		btn.textContent = '🎲 Neu würfeln';
+		btn.addEventListener('click', (e) => { e.stopPropagation(); try { fn(); } catch (err) { console.error('origami resample failed:', err); } });
+		block.appendChild(btn);
 	}
 };
 
@@ -164,6 +175,7 @@ function ogInitNonsep() {
 	const setupSel = document.getElementById('og-setup');
 	gen(setupSel ? setupSel.value : 'egg'); drawNonsep();
 	OG.redos.push(drawNonsep);
+	OG.addRegen(c, () => { gen(setupSel ? setupSel.value : 'egg'); drawNonsep(); });
 }
 
 /* ------------------------------------------------------------------ Demo 2 */
@@ -172,8 +184,9 @@ function ogInitRelu() {
 	if (!cb || !ca) return;
 	const bx = cb.getContext('2d'), ax = ca.getContext('2d');
 	const W = 360, H = 320, cx = 190, cy = 160, SC = 62;
-	const pts = [];
-	for (let i = 0; i < 220; i++) { const a = Math.random() * OGT, r = 0.4 + Math.random() * 0.9; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
+	let pts = [];
+	function fillRelu() { pts.length = 0; for (let i = 0; i < 220; i++) { const a = Math.random() * OGT, r = 0.4 + Math.random() * 0.9; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } }
+	fillRelu();
 	function drawGrid(g) {
 		const p = OG.pal();
 		g.fillStyle = p.bg; g.fillRect(0, 0, W, H);
@@ -207,6 +220,7 @@ function ogInitRelu() {
 	document.getElementById('og-hp-b').oninput = drawRelu;
 	drawRelu();
 	OG.redos.push(drawRelu);
+	OG.addRegen(cb, () => { fillRelu(); drawRelu(); });
 }
 
 /* ------------------------------------------------------------------ Demo 3 */
@@ -255,9 +269,9 @@ function ogInitFold3d() {
 	const ctx = c.getContext('2d');
 	const W = c.width, H = c.height, scale = 100;
 	let yaw = 0.7, pitch = 0.42;
-	const inner = [], outer = [];
-	for (let i = 0; i < 320; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.25; inner.push([Math.cos(a) * r, Math.sin(a) * r]); }
-	for (let i = 0; i < 620; i++) { const a = Math.random() * OGT, r = 0.9 + Math.random() * 0.4; outer.push([Math.cos(a) * r, Math.sin(a) * r]); }
+	let inner = [], outer = [];
+	function fillFold3d() { inner.length = 0; outer.length = 0; for (let i = 0; i < 320; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.25; inner.push([Math.cos(a) * r, Math.sin(a) * r]); } for (let i = 0; i < 620; i++) { const a = Math.random() * OGT, r = 0.9 + Math.random() * 0.4; outer.push([Math.cos(a) * r, Math.sin(a) * r]); } }
+	fillFold3d();
 	const normals = [0, 1, 2].map((k) => { const a = k * OGT / 3; return [Math.cos(a), Math.sin(a)]; });
 	const C = 0.6, PLANE = 0.3;
 	function foldHeight(x, y, t) { let z = 0; for (const [nx, ny] of normals) z += Math.max(0, nx * x + ny * y - C); return z * t; }
@@ -312,6 +326,7 @@ function ogInitFold3d() {
 	};
 	drawFold3d();
 	OG.redos.push(drawFold3d);
+	OG.addRegen(c, () => { fillFold3d(); drawFold3d(); });
 }
 
 /* ------------------------------------------------------------------ Demo 5 */
@@ -353,9 +368,9 @@ function ogInitShear() {
 	const c = document.getElementById('og-shear'); if (!c) return;
 	const ctx = c.getContext('2d');
 	const W = c.width, H = c.height, cx = W / 2, cy = H / 2, SC = 95;
-	const inner = [], outer = [];
-	for (let i = 0; i < 80; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.15; inner.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
-	for (let i = 0; i < 210; i++) { const a = Math.random() * OGT, r = 0.65 + Math.random() * 0.32; outer.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
+	let inner = [], outer = [];
+	function fillShear() { inner.length = 0; outer.length = 0; for (let i = 0; i < 80; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.15; inner.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } for (let i = 0; i < 210; i++) { const a = Math.random() * OGT, r = 0.65 + Math.random() * 0.32; outer.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } }
+	fillShear();
 	let step = 0;
 	function peel(pt, L) {
 		let x = pt.x, y = pt.y;
@@ -382,13 +397,15 @@ function ogInitShear() {
 	document.getElementById('og-shear-step').onclick = () => { step = (step % 12) + 1; document.getElementById('og-shear-l').value = step; drawShear(); };
 	drawShear();
 	OG.redos.push(drawShear);
+	OG.addRegen(c, () => { fillShear(); drawShear(); });
 }
 
 /* ------------------------------------------------------------------ Demo 7 */
 function ogInitTuning() {
 	const el = document.getElementById('og-tuning'); if (!el) return;
-	const N = 900, data = [];
-	for (let i = 0; i < N; i++) { const a = Math.random() * OGT; let r, cls; const u = Math.random(); if (u < 0.25) { r = 0.15 + Math.random() * 0.15; cls = 0; } else if (u < 0.55) { r = 0.45 + Math.random() * 0.15; cls = 1; } else { r = 0.8 + Math.random() * 0.3; cls = 2; } data.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cls }); }
+	const N = 900; let data = [];
+	function fillTuning() { data.length = 0; for (let i = 0; i < N; i++) { const a = Math.random() * OGT; let r, cls; const u = Math.random(); if (u < 0.25) { r = 0.15 + Math.random() * 0.15; cls = 0; } else if (u < 0.55) { r = 0.45 + Math.random() * 0.15; cls = 1; } else { r = 0.8 + Math.random() * 0.3; cls = 2; } data.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cls }); } }
+	fillTuning();
 	const colors = ['#ff6b9d', '#ffe66d', '#4ecdc4'], names = ['inner', 'middle', 'outer'];
 	function drawTuning() {
 		const p = OG.pal(), pp = OG.plotPal();
@@ -415,6 +432,7 @@ function ogInitTuning() {
 	document.getElementById('og-tune-b').oninput = drawTuning;
 	drawTuning();
 	OG.redos.push(drawTuning);
+	OG.addRegen(el, () => { fillTuning(); drawTuning(); });
 }
 
 /* ------------------------------------------------------------------ Demo 8 */
@@ -649,7 +667,7 @@ function ogInitAffine() {
 	}
 	['og-aff-rot', 'og-aff-sx', 'og-aff-sy', 'og-aff-sh', 'og-aff-bx', 'og-aff-by', 'og-aff-relu'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawAff; });
 	OG.redos.push(drawAff);
-	OG.regen.push(() => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); drawAff(); });
+	OG.addRegen(c, () => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); drawAff(); });
 	drawAff();
 }
 
@@ -719,7 +737,7 @@ function ogInitEgg() {
 	['og-egg-lift', 'og-egg-plane'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawEgg3d; });
 	const modeEl = document.getElementById('og-egg-mode'); if (modeEl) modeEl.onchange = drawEgg3d;
 	OG.redos.push(() => { draw2d(); drawEgg3d(); });
-	OG.regen.push(() => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); drawEgg3d(); });
+	OG.addRegen(c, () => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); drawEgg3d(); });
 	draw2d(); drawEgg3d();
 }
 
@@ -768,7 +786,7 @@ function ogInitRot() {
 	}
 	const sl = document.getElementById('og-rot-th'); if (sl) sl.oninput = drawRot;
 	OG.redos.push(drawRot);
-	OG.regen.push(() => { genPts(); drawRot(); });
+	OG.addRegen(c, () => { genPts(); drawRot(); });
 	drawRot();
 }
 
@@ -818,7 +836,7 @@ function ogInitEgg3() {
 	const fsSl = document.getElementById('og-egg3-fs'); if (fsSl) fsSl.oninput = () => { fs = +fsSl.value; drawEgg3f(); };
 	const plSl = document.getElementById('og-egg3-plane'); if (plSl) plSl.oninput = drawEgg3f;
 	OG.redos.push(drawEgg3f);
-	OG.regen.push(() => { pts = ogMakeEgg(400, 700, 0, 0.22, 0.70, 0.92); drawEgg3f(); });
+	OG.addRegen(top, () => { pts = ogMakeEgg(400, 700, 0, 0.22, 0.70, 0.92); drawEgg3f(); });
 	drawEgg3f();
 }
 
@@ -841,9 +859,6 @@ async function loadOrigamiModule() {
 	OG.register('og-tuning', ogInitTuning);
 	OG.register('og-dim', ogInitPoker);
 	OG.start();
-
-	const regenBtn = document.getElementById('og-regen-fab');
-	if (regenBtn) regenBtn.onclick = () => { OG.regen.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); };
 
 	if (window.__MN_DARK) {
 		window.__MN_DARK.onChange(() => { OG.redos.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); });
