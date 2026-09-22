@@ -328,7 +328,11 @@ function bootAtlas() {
 			planets: planets,
 			goStep: goStep,
 			startTour: startTour,
-			stopTour: stopTour
+			stopTour: stopTour,
+			dotMesh: function () { return dotMesh; },
+			findDot: findDot,
+			setSpotHighlight: setSpotHighlight,
+			clearSpotHighlight: clearSpotHighlight
 		};
 	}
 
