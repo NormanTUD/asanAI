@@ -836,7 +836,7 @@ function bootAtlas() {
 		// lessons it is cited from
 		var slugs = ref.cited_in || [];
 		if (slugs.length) {
-			html += '<div class="d-label">Cited in these lessons</div><div class="d-links">';
+			html += '<div class="d-label">Cited in this Chautauqua</div><div class="d-links">';
 			slugs.forEach(function (s) {
 				html += '<a class="d-link" href="' + esc(s) + '.php">' +
 					esc(lessonTitle[s] || s) + '</a>';

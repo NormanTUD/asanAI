@@ -27,6 +27,10 @@ While most modern discussions about Artificial Intelligence focus on its current
 
 This is a journey through the evolution of human thought where technical milestones are inseparable from their historical and philosophical environments.
 
+## A Note on "Chautauqua"
+
+The units of this course are called *Chautauquas*. The name comes from the American Chautauqua movement, a tradition of outdoor assemblies for shared learning that began in 1874 on the shore of Chautauqua Lake, New York, and that took its name from that place. \citeauthor{pirsig} used the word in *Zen and the Art of Motorcycle Maintenance* for the long philosophical digressions that break up a motorcycle ride; a Chautauqua here is the same idea in miniature — one self-contained session in which a single idea is taken apart until you can see how it works.
+
 ## What This Course Is — and What It Isn't
 
 **This is** a long, free, interactive digital textbook that traces the ideas behind modern AI from Stone Age tools and the history of mathematics all the way to how large language models actually work inside. It is hands-on and often mathematically demanding: you build intuition by doing, and by the end you understand the *why* and the *how*, not just the *what*.

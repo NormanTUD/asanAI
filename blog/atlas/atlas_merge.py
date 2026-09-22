@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Atlas data merge — turns raw subworker outputs into clean, deduplicated JSON.
 
+Pipeline (run in this order from blog/):
+  python3 atlas/atlas_parse_bib.py          literature.js -> raw/bib_parsed.json
+  python3 atlas/atlas_merge.py --merge      raw/ -> entities.json, authors.json,
+                                            bibliography.json, world.json
+  python3 atlas/atlas_threads.py --build    entities.json -> threads.json
+  python3 atlas/atlas_check.py             independent audit (must pass)
+
 Usage:
   python3 atlas_merge.py --test    run the self-test suite (fixtures + asserts)
   python3 atlas_merge.py --merge   read raw/ (or /tmp/opencode/atlas), merge,
@@ -8,10 +15,14 @@ Usage:
                                    bibliography.json and world.json next to this file.
 
 The raw inputs are worker outputs:
-  out_part1..6.json   entity lists (people/places/institutions/events/artifacts)
-  placed_1..6.json    author placement rows  [name, lat, lng, city, year, conf]
+  out_part*.json      entity lists (people/places/institutions/events/artifacts);
+                      any file matching out_part*.json is picked up (out_part1.json,
+                      out_part7_polar.json, ...) — add new parts freely
+  placed_*.json       author placement rows  [name, lat, lng, city, year, conf];
+                      any file matching placed_*.json is picked up
   authors_chunk_1..6.json  the 3,403 unique bibliography author names (coverage check)
-  bib_parsed.json     parsed literature.js (entries + cite map)
+  bib_parsed.json     parsed literature.js (entries + cite map); regenerate with
+                      atlas_parse_bib.py whenever literature.js changes
 
 Rules enforced (and tested):
   - entities: schema-normalized (accepts flat lat/lng AND nested location.lat/lon),
@@ -23,6 +34,7 @@ Rules enforced (and tested):
     dropped with a report; conf-1 rows win over conf-0 rows.
 """
 
+import glob
 import json
 import os
 import re
@@ -544,6 +556,29 @@ def run_tests():
                        {"history"}, set(), rep6)
     check("no-coords-rejected", len(m6) == 0 and len(rep6["entity_rejects"]) == 1)
 
+    print("== is_background_place ==")
+    bg_yes = norm_entity({"type": "place", "name": "Canada", "id": "place-canada",
+                          "lat": 56.0, "lng": -106.0, "loc": "Canada", "conf": "known",
+                          "cited_in": ["global_ai_ecosystem"], "bibkeys": [],
+                          "years": "", "active": [None, None], "blurb": ""}, "t7")[0]
+    check("bg-list-mention", is_background_place(bg_yes))
+    bg_no = norm_entity({"type": "place", "name": "China", "id": "place-china",
+                         "lat": 35.0, "lng": 103.0, "loc": "China", "conf": "known",
+                         "cited_in": ["global_ai_ecosystem"], "bibkeys": [],
+                         "years": "", "active": [None, None],
+                         "blurb": "Han-dynasty mathematics."}, "t8")[0]
+    check("bg-blurb-exempts", not is_background_place(bg_no))
+    bg_no2 = norm_entity({"type": "place", "name": "Zurich", "id": "place-zurich",
+                          "lat": 47.4, "lng": 8.5, "loc": "Zurich", "conf": "known",
+                          "cited_in": ["global_ai_ecosystem", "history"], "bibkeys": [],
+                          "years": "", "active": [None, None], "blurb": ""}, "t9")[0]
+    check("bg-second-cite-exempts", not is_background_place(bg_no2))
+    bg_no3 = norm_entity({"type": "person", "name": "C", "id": "p-c",
+                          "lat": 1.0, "lng": 2.0, "loc": "C", "conf": "known",
+                          "cited_in": ["global_ai_ecosystem"], "bibkeys": [],
+                          "years": "", "active": [None, None], "blurb": ""}, "t10")[0]
+    check("bg-places-only", not is_background_place(bg_no3))
+
     print("== authors ==")
     rep2 = {"author_row_rejects": [], "author_merges": 0}
     bib = {"authors": {"Ada Lovelace": {"count": 2, "keys": ["lovelace1843", "lovelace1843b"]},
@@ -632,21 +667,21 @@ def main(argv):
                     slugs.add(f[:-4])
     valid_slugs = slugs
 
-    # --- entities ---
+    # --- entities --- (any out_part*.json: out_part1.json, out_part7_polar.json, ...)
     entries = []
-    for i in range(1, 7):
-        p = os.path.join(raw_dir, "out_part%d.json" % i)
-        if not os.path.exists(p):
-            report["missing_files"].append(p)
-            continue
-        data = load_json(p, report, "out_part%d.json" % i)
+    entity_files = sorted(glob.glob(os.path.join(raw_dir, "out_part*.json")))
+    if not entity_files:
+        report["missing_files"].append(os.path.join(raw_dir, "out_part*.json"))
+    for p in entity_files:
+        fname = os.path.basename(p)
+        data = load_json(p, report, fname)
         if data is None:
             continue
         for e in data:
-            ne, repairs = norm_entity(e, "out_part%d" % i)
+            ne, repairs = norm_entity(e, fname)
             if ne is None:
                 report["entity_rejects"].append({"name": e.get("name") if isinstance(e, dict) else None,
-                                                 "reason": repairs, "source": "out_part%d" % i})
+                                                 "reason": repairs, "source": fname})
             else:
                 for r in repairs:
                     report["entity_repairs"][r] = report["entity_repairs"].get(r, 0) + 1
@@ -656,18 +691,18 @@ def main(argv):
     print("entities merged: %d (rejected: %d, merges: %d)" %
           (len(entities), len(report["entity_rejects"]), report["entity_merges"]))
 
-    # --- authors ---
+    # --- authors --- (any placed_*.json)
     rows = []
-    for i in range(1, 7):
-        p = os.path.join(raw_dir, "placed_%d.json" % i)
-        if not os.path.exists(p):
-            report["missing_files"].append(p)
-            continue
-        data = load_json(p, report, "placed_%d.json" % i)
+    placed_files = sorted(glob.glob(os.path.join(raw_dir, "placed_*.json")))
+    if not placed_files:
+        report["missing_files"].append(os.path.join(raw_dir, "placed_*.json"))
+    for p in placed_files:
+        fname = os.path.basename(p)
+        data = load_json(p, report, fname)
         if data is None:
             continue
         for row in data:
-            rows.append((row, "placed_%d" % i))
+            rows.append((row, fname))
     print("author rows raw: %d" % len(rows))
     authors = merge_authors(rows, bib, report)
     print("authors merged: %d (rejected rows: %d, merges: %d)" %

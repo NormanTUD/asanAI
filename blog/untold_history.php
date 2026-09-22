@@ -972,7 +972,7 @@ The poles gave AI three things it could not get anywhere else: the oldest data o
 
 \marginfig{eniac_1946.jpg}{Two of the ENIAC's programmers, Jean "Betty" Jennings and Frances Bilas, setting up the machine in 1946 — the computer that, with Charney's team, produced the first numerical weather forecast. [Photo: U.S. Army, public domain](https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg)}
 
-**The cold had to be beaten.** Vostok has recorded −89 °C, the coldest reliably measured on Earth \cite{vostokstation}. Beating that cold is the hidden prerequisite of the next compute substrate: Kamerlingh Onnes liquefied helium and found superconductivity (1911; Nobel 1913) \cite{onnes1913nobel}, the dilution refrigerator (1964) pushed to 2 mK \cite{dilutionfridge}, and **superconducting qubits now run below 15 mK** in IBM and Google processors \cite{superconductingqubit} \cite[Kjaergaard et al., 2020]{kjaergaard2020}.
+**The cold had to be beaten.** Vostok has recorded −89 °C, the coldest reliably measured on Earth \cite{vostokstation}. Beating that cold is the hidden prerequisite of the next compute substrate: Kamerlingh Onnes liquefied helium and found superconductivity (1911; Nobel 1913) \cite{onnes1913nobel}, the dilution refrigerator (1964) pushed to 2 mK \cite{dilutionfridge}, and **superconducting qubits now run below 15 mK** in IBM and Google processors \cite{superconductingqubit}.
 
 \marginfig{qubit_cryostat.jpg}{The FMN Laboratory team (Bauman University, Moscow) assembling the cryogenic stage of a superconducting quantum computer, cooled to near absolute zero. [Photo: Sergey Kushlevich, CC BY 4.0](https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg)}
 

@@ -1266,6 +1266,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/2201.11903"
   },
+  "schick2023toolformer": {
+   "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+   "author": "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2302.04761"
+  },
   "park2023generativeagents": {
    "title": "Generative Agents: Interactive Simulacra of Human Behavior",
    "author": "Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein",
@@ -1326,6 +1332,12 @@
    "year": "",
    "url": "https://ieeexplore.ieee.org/document/5633486"
   },
+  "robertson2009bm25": {
+   "title": "The Probabilistic Relevance Framework: BM25 and Beyond",
+   "author": "Stephen Robertson, Hugo Zaragoza",
+   "year": "",
+   "url": "https://doi.org/10.1561/1500000019"
+  },
   "johnson2017faiss": {
    "title": "Billion-scale similarity search with GPUs",
    "author": "Jeff Johnson, Matthijs Douze, Hervé Jégou",
@@ -1355,12 +1367,6 @@
    "author": "Nils Reimers, Iryna Gurevych",
    "year": "",
    "url": "https://arxiv.org/abs/1908.10084"
-  },
-  "robertson2009bm25": {
-   "title": "The Probabilistic Relevance Framework: BM25 and Beyond",
-   "author": "Stephen Robertson, Hugo Zaragoza",
-   "year": "",
-   "url": "https://doi.org/10.1561/1500000019"
   },
   "barbaresi2021trafilatura": {
    "title": "Trafilatura: A Web Scraping Library and Command-Line Tool for Text Discovery and Extraction",
@@ -1680,6 +1686,12 @@
    "year": "",
    "url": "https://www.unicog.org/publications/DehaeneNaccache_WorkspaceModel_Cognition2001.pdf"
   },
+  "tononi2004iit": {
+   "title": "An information integration theory of consciousness",
+   "author": "Giulio Tononi",
+   "year": "",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15522121/"
+  },
   "lamme2000rpt": {
    "title": "The distinct modes of vision offered by feedforward and recurrent processing",
    "author": "Victor A.F. Lamme, Pieter R. Roelfsema",
@@ -1740,17 +1752,23 @@
    "year": "",
    "url": "https://arxiv.org/abs/2508.18302"
   },
+  "garg2022incontext": {
+   "title": "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
+   "author": "Shivam Garg, Dimitris Tsipras, Percy Liang, Gregory Valiant",
+   "year": "",
+   "url": "https://arxiv.org/abs/2208.01066"
+  },
   "zhou2022algorithmic": {
    "title": "Teaching Algorithmic Reasoning via In-context Learning",
    "author": "Hattie Zhou and Azade Nova and Hugo Larochelle and Aaron Courville and Behnam Neyshabur and Hanie Sedghi",
    "year": "",
    "url": "https://arxiv.org/abs/2211.09066"
   },
-  "garg2022incontext": {
-   "title": "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
-   "author": "Shivam Garg, Dimitris Tsipras, Percy Liang, Gregory Valiant",
+  "olsson2022induction": {
+   "title": "In-Context Learning and Induction Heads",
+   "author": "Jacob Olsson, Nelson Elhage, Neel Nanda, Tom H. B., et al.",
    "year": "",
-   "url": "https://arxiv.org/abs/2208.01066"
+   "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/"
   },
   "wang2022interpretability": {
    "title": "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
@@ -1781,6 +1799,18 @@
    "author": "Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, Jacob Steinhardt",
    "year": "",
    "url": "https://arxiv.org/abs/2301.05217"
+  },
+  "power2022grokking": {
+   "title": "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
+   "author": "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+   "year": "",
+   "url": "https://arxiv.org/abs/2201.02177"
+  },
+  "belrose2023tunedlens": {
+   "title": "Eliciting Latent Predictions from Transformers with the Tuned Lens",
+   "author": "Nick Belrose, Zach Kenton, Mike Schneider, Brian Chen, Sam McCandlish",
+   "year": "",
+   "url": "https://arxiv.org/abs/2303.08112"
   },
   "elhage2022solu": {
    "title": "Softmax Linear Units",
@@ -2310,6 +2340,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/2404.02156"
   },
+  "dettmers2022llmint8": {
+   "title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+   "author": "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
+   "year": "",
+   "url": "https://arxiv.org/abs/2208.07339"
+  },
   "pope2023efficiently": {
    "title": "Efficiently Scaling Transformer Inference",
    "author": "Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, Jeff Dean",
@@ -2796,6 +2832,12 @@
    "year": "",
    "url": "https://web.stanford.edu/~paulsko/papers/PutnamNMS.pdf"
   },
+  "nagel1974bat": {
+   "title": "What Is It Like to Be a Bat?",
+   "author": "Thomas Nagel",
+   "year": "",
+   "url": "https://doi.org/10.2307/2183914"
+  },
   "chalmers1995hard": {
    "title": "Facing Up the Problem of Consciousness",
    "author": "David J. Chalmers",
@@ -2807,12 +2849,6 @@
    "author": "David Hume",
    "year": "",
    "url": "https://davidhume.org/texts/t/"
-  },
-  "tononi2004iit": {
-   "title": "An information integration theory of consciousness",
-   "author": "Giulio Tononi",
-   "year": "",
-   "url": "https://pubmed.ncbi.nlm.nih.gov/15522121/"
   },
   "earlyl2": {
    "title": "On the Stability of Inverse Problems",
@@ -3227,6 +3263,12 @@
    "author": "Kawin Ethayarajh",
    "year": "",
    "url": "https://aclanthology.org/D19-1006/"
+  },
+  "elhage2022superposition": {
+   "title": "Toy Models of Superposition",
+   "author": "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom H. B., et al.",
+   "year": "",
+   "url": "https://transformer-circuits.pub/2022/toy_model/"
   },
   "plato380republic": {
    "title": "The Republic",
@@ -3713,6 +3755,12 @@
    "author": "Carl David Tolmé Runge",
    "year": "",
    "url": "https://archive.org/details/zeitschriftfrma12runggoog"
+  },
+  "ouyang2022instructgpt": {
+   "title": "Training language models to follow instructions with human feedback",
+   "author": "Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe",
+   "year": "",
+   "url": "https://arxiv.org/abs/2203.02155"
   },
   "bahdanau2014": {
    "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
@@ -4698,6 +4746,12 @@
    "year": "2009",
    "url": ""
   },
+  "searle1980minds": {
+   "title": "Minds, Brains, and Programs",
+   "author": "John R. Searle",
+   "year": "1980",
+   "url": "https://doi.org/10.1017/S0140525X00005756"
+  },
   "shumailov2023modelcollapse": {
    "title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
    "author": "Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Yarin Gal, Nicolas Papernot, Ross Anderson",
@@ -4835,12 +4889,6 @@
    "author": "Hubert L. Dreyfus",
    "year": "1972",
    "url": ""
-  },
-  "searle1980minds": {
-   "title": "Minds, Brains, and Programs",
-   "author": "John R. Searle",
-   "year": "1980",
-   "url": "https://doi.org/10.1017/S0140525X00005756"
   },
   "karpathy2019recipe": {
    "title": "A Recipe for Training Neural Networks",
@@ -5004,6 +5052,12 @@
    "year": "",
    "url": "https://unfinishablemap.org/concepts/fitness-beats-truth/"
   },
+  "wei2022cot": {
+   "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+   "author": "Jason Wei, Xuezhi Wang, Dale Schuurmans, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2201.11903"
+  },
   "sharma2023sycophancy": {
    "title": "Towards Understanding Sycophancy in Language Models",
    "author": "Mrinank Sharma, Meg Tong, Tomasz Korbak, David Duvenaud, Amanda Askell, et al.",
@@ -5129,6 +5183,12 @@
    "author": "David Hilbert, Wilhelm Ackermann",
    "year": "",
    "url": ""
+  },
+  "frege1879begriffsschrift": {
+   "title": "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
+   "author": "Gottlob Frege",
+   "year": "",
+   "url": "https://archive.org/details/Begriffsschrift1879"
   },
   "nyquist1924certain": {
    "title": "Certain Factors Affecting Telegraph Speed",
@@ -5478,6 +5538,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/2103.00020"
   },
+  "dosovitskiy2021vit": {
+   "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+   "author": "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2010.11929"
+  },
   "liu2023llava": {
    "title": "Visual Instruction Tuning",
    "author": "Haotian Liu, Chunyuan Li, Qingyang Wu, Yong Jae Lee",
@@ -5513,6 +5579,18 @@
    "author": "Jonathan Ho, Ajay Jain, Pieter Abbeel",
    "year": "",
    "url": "https://arxiv.org/abs/2006.11239"
+  },
+  "sohl2015deep": {
+   "title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+   "author": "Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli",
+   "year": "",
+   "url": "https://arxiv.org/abs/1503.03585"
+  },
+  "song2019score": {
+   "title": "Generative Modeling by Estimating Gradients of the Data Distribution",
+   "author": "Yang Song, Stefano Ermon",
+   "year": "",
+   "url": "https://arxiv.org/abs/1907.05600"
   },
   "ho2022cfg": {
    "title": "Classifier-Free Diffusion Guidance",
@@ -5640,6 +5718,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/2111.00396"
   },
+  "gu2023mamba": {
+   "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+   "author": "Albert Gu, Tri Dao",
+   "year": "",
+   "url": "https://arxiv.org/abs/2312.00752"
+  },
   "dao2024mamba2": {
    "title": "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
    "author": "Tri Dao, Albert Gu",
@@ -5687,12 +5771,6 @@
    "author": "Opher Lieber, Barak Lenz, Hofit Bata, et al.",
    "year": "",
    "url": "https://arxiv.org/abs/2403.19887"
-  },
-  "wei2022cot": {
-   "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
-   "author": "Jason Wei, Xuezhi Wang, Dale Schuurmans, et al.",
-   "year": "",
-   "url": "https://arxiv.org/abs/2201.11903"
   },
   "wang2022selfconsistency": {
    "title": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
@@ -5814,6 +5892,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/2412.04604"
   },
+  "carlini2021extracting": {
+   "title": "Extracting Training Data from Large Language Models",
+   "author": "Nicholas Carlini, Florian Tramèr, Eric Wallace, Matthew Jagielski, Ariel Herbert-Voss, Katherine Lee, Adam Roberts, Tom Brown, Dawn Song, Úlfar Erlingsson, Alina Oprea, Colin Raffel",
+   "year": "",
+   "url": "https://arxiv.org/abs/2012.07805"
+  },
   "liang2023helm": {
    "title": "Holistic Evaluation of Language Models (HELM)",
    "author": "Percy Liang, Rishi Bommasani, Tony Lee, et al.",
@@ -5837,6 +5921,18 @@
    "author": "Volodymyr Mnih, Adria Puigdomènech Badia, Mehdi Mirza, et al.",
    "year": "",
    "url": "https://arxiv.org/abs/1602.01783"
+  },
+  "schulman2017ppo": {
+   "title": "Proximal Policy Optimization Algorithms",
+   "author": "John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov",
+   "year": "",
+   "url": "https://arxiv.org/abs/1707.06347"
+  },
+  "williams1992reinforce": {
+   "title": "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning",
+   "author": "Ronald J. Williams",
+   "year": "",
+   "url": "https://www-anw.cs.umass.edu/~barto/courses/cs687/Williams92.pdf"
   },
   "watkins1989qlearning": {
    "title": "Learning from Delayed Rewards",
@@ -6078,12 +6174,6 @@
    "year": "",
    "url": "https://arxiv.org/abs/2310.01889"
   },
-  "gu2023mamba": {
-   "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
-   "author": "Albert Gu, Tri Dao",
-   "year": "",
-   "url": "https://arxiv.org/abs/2312.00752"
-  },
   "leviathan2023spec": {
    "title": "Fast Inference from Transformers via Speculative Decoding",
    "author": "Yaniv Leviathan, Matan Kalman, Yossi Matias",
@@ -6107,12 +6197,6 @@
    "author": "Guangxuan Xiao, Ji Lin, Mickael Seznec, et al.",
    "year": "",
    "url": "https://arxiv.org/abs/2211.10438"
-  },
-  "dettmers2022llmint8": {
-   "title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
-   "author": "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
-   "year": "",
-   "url": "https://arxiv.org/abs/2208.07339"
   },
   "gerganov2023llamacpp": {
    "title": "llama.cpp: LLM inference in C/C++",
@@ -6156,6 +6240,18 @@
    "year": "",
    "url": "https://arxiv.org/abs/1902.10197"
   },
+  "trouillon2016complex": {
+   "title": "Complex Embeddings for Simple Link Prediction",
+   "author": "Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, Guillaume Bouchard",
+   "year": "",
+   "url": "https://arxiv.org/abs/1606.06357"
+  },
+  "schlichtkrull2018rgcn": {
+   "title": "Modeling Relational Data with Graph Convolutional Networks",
+   "author": "Michael Schlichtkrull, Thomas N. Kipf, Peter Bloem, Rianne van den Berg, Ivan Titov, Max Welling",
+   "year": "",
+   "url": "https://arxiv.org/abs/1703.06103"
+  },
   "blesch2024neurokgc": {
    "title": "Neural-Symbolic Knowledge Graphs",
    "author": "Conference Proceedings",
@@ -6179,12 +6275,6 @@
    "author": "DeepMind",
    "year": "",
    "url": "https://deepmind.google/discover/blog/alphaproof-and-ai-paris-our-new-frontier-for-mathematical-reasoning/"
-  },
-  "schick2023toolformer": {
-   "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
-   "author": "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, et al.",
-   "year": "",
-   "url": "https://arxiv.org/abs/2302.04761"
   },
   "patil2023gorilla": {
    "title": "Gorilla: Large Language Model Connected with Massive APIs",
@@ -6486,12 +6576,6 @@
    "year": "",
    "url": "https://arxiv.org/abs/2008.00723"
   },
-  "power2022grokking": {
-   "title": "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
-   "author": "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
-   "year": "",
-   "url": "https://arxiv.org/abs/2201.02177"
-  },
   "huang2018gpipe": {
    "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
    "author": "Yanping Huang, Youlong Cheng, Ankur Bapna, et al.",
@@ -6558,6 +6642,12 @@
    "year": "",
    "url": "https://www.jmlr.org/papers/v3/blei03a.html"
   },
+  "zou2023repeng": {
+   "title": "Representation Engineering: A Top-Down Approach to AI Transparency",
+   "author": "Andy Zou, Ansh Radha, Shashwat Garg, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2310.01405"
+  },
   "oldowan": {
    "title": "Oldowan stone tools (re-dating of earliest known systematic stone-tool production)",
    "author": "Erella Hovers, Avraham Ronen",
@@ -6611,6 +6701,12 @@
    "author": "Wikipedia contributors",
    "year": "",
    "url": "https://en.wikipedia.org/wiki/Commodore_PET"
+  },
+  "visicalc": {
+   "title": "VisiCalc",
+   "author": "Computer History Museum",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:VisiCalc.jpg"
   },
   "ibmpc": {
    "title": "IBM Personal Computer — Wikipedia",
@@ -6810,12 +6906,6 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:WorldWideWeb.png"
   },
-  "visicalc": {
-   "title": "VisiCalc",
-   "author": "Computer History Museum",
-   "year": "",
-   "url": "https://commons.wikimedia.org/wiki/File:VisiCalc.jpg"
-  },
   "mendeleev_periodic_table": {
    "title": "Mendeleev's Periodic Table (First Edition, 1869)",
    "author": "Dmitri Ivanovich Mendeleev",
@@ -6876,6 +6966,12 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Artificial_neural_network.svg"
   },
+  "wave_interference_diagram": {
+   "title": "Interactive Wave Interference Demo",
+   "author": "Self-generated (Plotly)",
+   "year": "",
+   "url": ""
+  },
   "alphago_leesedol_image": {
    "title": "Lee Sedol vs AlphaGo, Game 4",
    "author": "Korea Baduk Association",
@@ -6887,12 +6983,6 @@
    "author": "ai.lect",
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif"
-  },
-  "wave_interference_diagram": {
-   "title": "Interactive Wave Interference Demo",
-   "author": "Self-generated (Plotly)",
-   "year": "",
-   "url": ""
   },
   "eisgalgen_mittenwald": {
    "title": "Eisgalgen in Mittenwald auf dem Dekan-Karl-Platz",
@@ -7571,12 +7661,6 @@
    "author": "Hyung Won Chung, Le Hou, Shayne Longpre, Barret Zoph, Yi Tay, William Fedus, Yunxuan Li, Xuezhi Wang, Mostafa Dehghani, Siddhartha Brahma, Albert Webson, Shixiang Shane Gu, Zhuyun Dai, Mirac Suzgun, Xinyun Chen, Aakanksha Chowdhery, Alex Castro-Ros, Marie Pellat, Kevin Robinson, Dasha Valter, Sharan Narang, Gaurav Mishra, Adams Yu, Vincent Zhao, Yanping Huang, Andrew Dai, Hongkun Yu, Slav Petrov, Ed H. Chi, Jeff Dean, Jacob Devlin, Adam Roberts, Denny Zhou, Quoc V. Le, Jason Wei",
    "year": "",
    "url": "https://arxiv.org/abs/2210.11416"
-  },
-  "carlini2021extracting": {
-   "title": "Extracting Training Data from Large Language Models",
-   "author": "Nicholas Carlini, Florian Tramèr, Eric Wallace, Matthew Jagielski, Ariel Herbert-Voss, Katherine Lee, Adam Roberts, Tom Brown, Dawn Song, Úlfar Erlingsson, Alina Oprea, Colin Raffel",
-   "year": "",
-   "url": "https://arxiv.org/abs/2012.07805"
   },
   "kadavath2022selfknowledge": {
    "title": "Language Models (Mostly) Know What They Know",
@@ -8310,12 +8394,6 @@
    "year": "",
    "url": "https://www.nature.com/articles/nature14236"
   },
-  "williams1992reinforce": {
-   "title": "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning",
-   "author": "Ronald J. Williams",
-   "year": "",
-   "url": "https://www-anw.cs.umass.edu/~barto/courses/cs687/Williams92.pdf"
-  },
   "konda2000ac": {
    "title": "Actor-Critic Algorithms",
    "author": "Vijay R. Konda, John N. Tsitsiklis",
@@ -8327,12 +8405,6 @@
    "author": "John Schulman, Sergey Levine, Philipp Moritz, Michael Jordan, Pieter Abbeel",
    "year": "",
    "url": "https://arxiv.org/abs/1502.05477"
-  },
-  "schulman2017ppo": {
-   "title": "Proximal Policy Optimization Algorithms",
-   "author": "John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov",
-   "year": "",
-   "url": "https://arxiv.org/abs/1707.06347"
   },
   "sutton1991dyna": {
    "title": "Dyna, an Integrated Architecture for Learning, Planning, and Reacting Based on Approximating Dynamic Programming",
@@ -8393,18 +8465,6 @@
    "author": "Pieter Abbeel, Andrew Y. Ng",
    "year": "",
    "url": "https://www.cs.berkeley.edu/~russell/papers/icml04.pdf"
-  },
-  "ouyang2022instructgpt": {
-   "title": "Training language models to follow instructions with human feedback",
-   "author": "Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe",
-   "year": "",
-   "url": "https://arxiv.org/abs/2203.02155"
-  },
-  "frege1879begriffsschrift": {
-   "title": "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
-   "author": "Gottlob Frege",
-   "year": "",
-   "url": "https://archive.org/details/Begriffsschrift1879"
   },
   "russell1910pm": {
    "title": "Principia Mathematica",
@@ -8537,18 +8597,6 @@
    "author": "Antoine Bordes, Nicolas Usunier, Alberto Garcia-Durán, Jason Weston, Oksana Yakhnenko",
    "year": "",
    "url": "https://proceedings.neurips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html"
-  },
-  "trouillon2016complex": {
-   "title": "Complex Embeddings for Simple Link Prediction",
-   "author": "Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, Guillaume Bouchard",
-   "year": "",
-   "url": "https://arxiv.org/abs/1606.06357"
-  },
-  "schlichtkrull2018rgcn": {
-   "title": "Modeling Relational Data with Graph Convolutional Networks",
-   "author": "Michael Schlichtkrull, Thomas N. Kipf, Peter Bloem, Rianne van den Berg, Ivan Titov, Max Welling",
-   "year": "",
-   "url": "https://arxiv.org/abs/1703.06103"
   },
   "koren2009mf": {
    "title": "Matrix Factorization Techniques for Recommender Systems",
@@ -8880,18 +8928,6 @@
    "year": "",
    "url": "https://arxiv.org/abs/1710.09829"
   },
-  "sohl2015deep": {
-   "title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
-   "author": "Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli",
-   "year": "",
-   "url": "https://arxiv.org/abs/1503.03585"
-  },
-  "song2019score": {
-   "title": "Generative Modeling by Estimating Gradients of the Data Distribution",
-   "author": "Yang Song, Stefano Ermon",
-   "year": "",
-   "url": "https://arxiv.org/abs/1907.05600"
-  },
   "oord2016wavenet": {
    "title": "WaveNet: A Generative Model for Raw Audio",
    "author": "Aaron van den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, Koray Kavukcuoglu",
@@ -9018,6 +9054,12 @@
    "year": "",
    "url": "https://arxiv.org/abs/1904.02639"
   },
+  "shwartz2017opening": {
+   "title": "Opening the Black Box of Deep Neural Networks via Information",
+   "author": "Ravid Shwartz-Ziv, Naftali Tishby",
+   "year": "",
+   "url": "https://arxiv.org/abs/1703.00810"
+  },
   "jaynes1957maxent": {
    "title": "Information Theory and Statistical Mechanics",
    "author": "Edwin T. Jaynes",
@@ -9113,12 +9155,6 @@
    "author": "David H. Wolpert",
    "year": "",
    "url": "https://www.researchgate.net/publication/222482730_Stacked_Generalization"
-  },
-  "shwartz2017opening": {
-   "title": "Opening the Black Box of Deep Neural Networks via Information",
-   "author": "Ravid Shwartz-Ziv, Naftali Tishby",
-   "year": "",
-   "url": "https://arxiv.org/abs/1703.00810"
   },
   "pearl1995book": {
    "title": "Biometrika article on Causal Diagrams (Pearl's seminal causal inference paper)",
@@ -10464,12 +10500,6 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Mirror_Self-Recognition.jpg"
   },
-  "nagel1974bat": {
-   "title": "What Is It Like to Be a Bat?",
-   "author": "Thomas Nagel",
-   "year": "",
-   "url": "https://doi.org/10.2307/2183914"
-  },
   "chalmers1995consciousmind": {
    "title": "The Conscious Mind: In Search of a Fundamental Theory",
    "author": "David J. Chalmers",
@@ -10805,12 +10835,6 @@
    "author": "Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, et al.",
    "year": "",
    "url": "https://arxiv.org/abs/2304.02643"
-  },
-  "dosovitskiy2021vit": {
-   "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
-   "author": "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
-   "year": "",
-   "url": "https://arxiv.org/abs/2010.11929"
   },
   "he2021mae": {
    "title": "Masked Autoencoders Are Scalable Vision Learners",
@@ -11940,12 +11964,6 @@
    "year": "",
    "url": "https://arxiv.org/abs/2202.05262"
   },
-  "belrose2023tunedlens": {
-   "title": "Eliciting Latent Predictions from Transformers with the Tuned Lens",
-   "author": "Nick Belrose, Zach Kenton, Mike Schneider, Brian Chen, Sam McCandlish",
-   "year": "",
-   "url": "https://arxiv.org/abs/2303.08112"
-  },
   "todd2023emergent": {
    "title": "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
    "author": "Michael Todd, Michael Nanda, Tomer Wattenberg",
@@ -11957,12 +11975,6 @@
    "author": "Brenner, Knösche, Scherf",
    "year": "",
    "url": "https://arxiv.org/abs/2603.16689"
-  },
-  "olsson2022induction": {
-   "title": "In-Context Learning and Induction Heads",
-   "author": "Jacob Olsson, Nelson Elhage, Neel Nanda, Tom H. B., et al.",
-   "year": "",
-   "url": "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/"
   },
   "gould2023successor": {
    "title": "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",
@@ -11976,23 +11988,11 @@
    "year": "",
    "url": "https://transformer-circuits.pub/2021/framework/"
   },
-  "elhage2022superposition": {
-   "title": "Toy Models of Superposition",
-   "author": "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom H. B., et al.",
-   "year": "",
-   "url": "https://transformer-circuits.pub/2022/toy_model/"
-  },
   "garg2026features": {
    "title": "How Many Features Can a Language Model Store Under the Linear Representation Hypothesis?",
    "author": "Garg, Kleinberg, Peng",
    "year": "",
    "url": "https://arxiv.org/abs/2602.11246"
-  },
-  "zou2023repeng": {
-   "title": "Representation Engineering: A Top-Down Approach to AI Transparency",
-   "author": "Andy Zou, Ansh Radha, Shashwat Garg, et al.",
-   "year": "",
-   "url": "https://arxiv.org/abs/2310.01405"
   },
   "searle1980chineseroom": {
    "title": "Minds, Brains, and Programs",
@@ -12273,86 +12273,80 @@
   "charney1947longwaves": {
    "title": "The Dynamics of Long Waves in a Baroclinic Westerly Current",
    "author": "Jule G. Charney",
-   "year": "1947",
+   "year": "",
    "url": "https://doi.org/10.1175/1520-0469(1947)004<0136:TDOLWI>2.0.CO;2"
+  },
+  "charney1950nwp": {
+   "title": "Numerical Integration of the Barotropic Vorticity Equation",
+   "author": "Jule G. Charney, Ragnar Fjørtoft, John von Neumann",
+   "year": "",
+   "url": "https://doi.org/10.3402/tellusa.v2i4.8607"
   },
   "charney1979report": {
    "title": "Carbon dioxide and climate: A scientific assessment",
    "author": "National Research Council (Charney et al.)",
-   "year": "1979",
-   "url": "https://web.archive.org/web/20110813231807/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf"
+   "year": "",
+   "url": "https://web.archive.org/web/20110813231807id_/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf"
   },
   "charneywiki": {
    "title": "Jule Gregory Charney",
    "author": "Wikipedia contributors",
-   "year": "2026",
+   "year": "",
    "url": "https://en.wikipedia.org/wiki/Jule_Gregory_Charney"
   },
   "onnes1913nobel": {
    "title": "The Nobel Prize in Physics 1913 — Heike Kamerlingh Onnes",
    "author": "Nobel Foundation",
-   "year": "1913",
+   "year": "",
    "url": "https://www.nobelprize.org/prizes/physics/1913/summary/"
   },
   "icecorewiki": {
    "title": "Ice core",
    "author": "Wikipedia contributors",
-   "year": "2026",
+   "year": "",
    "url": "https://en.wikipedia.org/wiki/Ice_core"
   },
   "vostokstation": {
    "title": "Vostok Station",
    "author": "Wikipedia contributors",
-   "year": "2026",
+   "year": "",
    "url": "https://en.wikipedia.org/wiki/Vostok_Station"
   },
   "dilutionfridge": {
    "title": "Dilution refrigerator",
    "author": "Wikipedia contributors",
-   "year": "2026",
+   "year": "",
    "url": "https://en.wikipedia.org/wiki/Dilution_refrigerator"
   },
   "superconductingqubit": {
    "title": "Superconducting quantum computing",
    "author": "Wikipedia contributors",
-   "year": "2026",
+   "year": "",
    "url": "https://en.wikipedia.org/wiki/Superconducting_quantum_computing"
   },
   "arute2019quantum": {
    "title": "Quantum supremacy using a programmable superconducting processor",
    "author": "F. Arute et al.",
-   "year": "2019",
-   "url": "https://www.nature.com/articles/s41586-019-1667-2"
-  },
-  "kjaergaard2020": {
-   "title": "Superconducting Qubits: Success and Challenges",
-   "author": "M. Kjaergaard et al.",
-   "year": "2020",
-   "url": "https://doi.org/10.1103/RevModPhys.92.025005"
+   "year": "",
+   "url": "https://arxiv.org/abs/1910.11333"
   },
   "lam2023graphcast": {
    "title": "GraphCast: AI model for faster and more accurate global weather forecasting",
    "author": "Remi Lam et al.",
-   "year": "2023",
+   "year": "",
    "url": "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/"
   },
   "graphcast_github": {
    "title": "GraphCast (open-source model)",
    "author": "Google DeepMind",
-   "year": "2023",
+   "year": "",
    "url": "https://github.com/google-deepmind/graphcast"
   },
   "ecmwf": {
    "title": "European Centre for Medium-Range Weather Forecasts (ECMWF)",
    "author": "ECMWF",
-   "year": "2026",
+   "year": "",
    "url": "https://www.ecmwf.int/"
-  },
-  "charney1950nwp": {
-   "title": "Numerical Integration of the Barotropic Vorticity Equation",
-   "author": "Jule G. Charney, Ragnar Fjørtoft, John von Neumann",
-   "year": "1950",
-   "url": "https://doi.org/10.3402/tellusa.v2i4.8607"
   }
  },
  "cites": {
@@ -12679,7 +12673,6 @@
   "colah2015types": [
    "alternative_architectures",
    "computer_vision",
-   "deep_theory",
    "embeddinglab",
    "math_ii",
    "transformer"
@@ -12843,79 +12836,6 @@
   "vonoswald2022indc": [
    "algorithms"
   ],
-  "belkin2019": [
-   "deep_theory",
-   "embeddinglab"
-  ],
-  "colah2014nlp": [
-   "deep_theory",
-   "embeddinglab"
-  ],
-  "nakkiran2019deepdd": [
-   "deep_theory"
-  ],
-  "bartlett_benign_overfitting": [
-   "deep_theory"
-  ],
-  "montanari_interpolation": [
-   "deep_theory"
-  ],
-  "draxler_mode_connectivity": [
-   "deep_theory"
-  ],
-  "foret2021sam": [
-   "deep_theory"
-  ],
-  "progressive_sharpening": [
-   "deep_theory"
-  ],
-  "edge_of_stability": [
-   "deep_theory"
-  ],
-  "nlab_neural_network": [
-   "deep_theory"
-  ],
-  "jacot2018ntk": [
-   "beyond_llms",
-   "deep_theory"
-  ],
-  "yang_hu_feature_learning": [
-   "deep_theory"
-  ],
-  "implicit_reg_deep": [
-   "deep_theory"
-  ],
-  "rahaman2019spectral": [
-   "deep_theory"
-  ],
-  "neural_collapse": [
-   "deep_theory"
-  ],
-  "coherent_difference": [
-   "ai_for_science",
-   "deep_theory"
-  ],
-  "principles_dl_theory": [
-   "deep_theory"
-  ],
-  "wakhloo2024population": [
-   "deep_theory"
-  ],
-  "morales2021reservoir": [
-   "beyond_llms",
-   "deep_theory"
-  ],
-  "frankle2019lottery": [
-   "activationlab",
-   "deep_theory"
-  ],
-  "power2022grokking": [
-   "deep_theory",
-   "mechanistic_interpretability"
-  ],
-  "grokking_effective": [
-   "deep_theory"
-  ],
   "rajbhandari2019zero": [
    "training_infrastructure"
   ],
@@ -13012,6 +12932,9 @@
    "activationlab",
    "computer_vision",
    "history"
+  ],
+  "frankle2019lottery": [
+   "activationlab"
   ],
   "hendrycks2016gelu": [
    "activationlab"
@@ -13782,6 +13705,9 @@
    "beyond_llms"
   ],
   "lecun2022jepa": [
+   "ai_for_science"
+  ],
+  "coherent_difference": [
    "ai_for_science"
   ],
   "deeplearningfirstuse": [
@@ -15033,6 +14959,9 @@
   "cortes1995svm": [
    "beyond_llms"
   ],
+  "jacot2018ntk": [
+   "beyond_llms"
+  ],
   "cover1967knn": [
    "beyond_llms"
   ],
@@ -15465,6 +15394,9 @@
    "beyond_llms"
   ],
   "rossi2021bread": [
+   "beyond_llms"
+  ],
+  "morales2021reservoir": [
    "beyond_llms"
   ],
   "hinton2011capsules": [
@@ -16555,6 +16487,36 @@
   "lecun2006": [
    "untold_history"
   ],
+  "icecorewiki": [
+   "untold_history"
+  ],
+  "vostokstation": [
+   "untold_history"
+  ],
+  "charney1947longwaves": [
+   "untold_history"
+  ],
+  "charney1950nwp": [
+   "untold_history"
+  ],
+  "ecmwf": [
+   "untold_history"
+  ],
+  "onnes1913nobel": [
+   "untold_history"
+  ],
+  "dilutionfridge": [
+   "untold_history"
+  ],
+  "superconductingqubit": [
+   "untold_history"
+  ],
+  "lam2023graphcast": [
+   "untold_history"
+  ],
+  "graphcast_github": [
+   "untold_history"
+  ],
   "eniac1946": [
    "untold_history"
   ],
@@ -17004,6 +16966,9 @@
   "lu2023doublehelix": [
    "mechanistic_interpretability"
   ],
+  "power2022grokking": [
+   "mechanistic_interpretability"
+  ],
   "todd2024functionvectors": [
    "fact_lookup",
    "mechanistic_interpretability"
@@ -17308,6 +17273,9 @@
    "embeddinglab",
    "geometry_i"
   ],
+  "colah2014nlp": [
+   "embeddinglab"
+  ],
   "glitchtokens": [
    "embeddinglab"
   ],
@@ -17339,6 +17307,9 @@
    "embeddinglab"
   ],
   "hendel2023incontext": [
+   "embeddinglab"
+  ],
+  "belkin2019": [
    "embeddinglab"
   ],
   "kassner2020negated": [
@@ -18544,8 +18515,8 @@
     "firstgpt",
     "radford2021clip",
     "radford2023whisper",
-    "radford2019language",
-    "schulman2017ppo"
+    "schulman2017ppo",
+    "radford2019language"
    ]
   },
   "Alexander Mordvintsev": {
@@ -18586,7 +18557,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 127,
+   "count": 132,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -18716,7 +18687,12 @@
     "aiwinter_wiki",
     "ai_music_wiki",
     "predictive_coding_wiki",
-    "deadinternet_wiki"
+    "deadinternet_wiki",
+    "charneywiki",
+    "icecorewiki",
+    "vostokstation",
+    "dilutionfridge",
+    "superconductingqubit"
    ]
   },
   "Thomas C. Hull": {
@@ -20859,6 +20835,172 @@
     "chung2022flan"
    ]
   },
+  "Timo Schick": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schick2023toolformer",
+    "mialon2023augmented"
+   ]
+  },
+  "Jane Dwivedi-Yu": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schick2023toolformer",
+    "mialon2023augmented"
+   ]
+  },
+  "Roberto Dessì": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schick2023toolformer",
+    "mialon2023augmented"
+   ]
+  },
+  "et al.": {
+   "count": 132,
+   "minyear": 2017,
+   "maxyear": 2020,
+   "keys": [
+    "schick2023toolformer",
+    "olsson2022induction",
+    "jouppi2017tpu",
+    "wallace2024hierarchy",
+    "hoffmann2022chinchilla",
+    "perez2022emergent",
+    "elhage2022superposition",
+    "hendrycks2020winograd",
+    "johnson2017clevr",
+    "wei2022cot",
+    "sharma2023sycophancy",
+    "brown2020gpt3",
+    "radford2021clip",
+    "dosovitskiy2021vit",
+    "alayrac2022flamingo",
+    "fu2023mme",
+    "yue2024mmmu",
+    "lipman2023flow",
+    "ma2024bitnet",
+    "radford2023whisper",
+    "wang2023neuralcodec",
+    "gulati2020conformer",
+    "chen2023vallx",
+    "gresser2023jukebox",
+    "copet2023musicgen",
+    "chen2024qwen2audio",
+    "wu2023audiolm",
+    "wang2024seamless",
+    "choromanski2021performer",
+    "sun2023retnet",
+    "peng2023rwkv",
+    "poli2023hyena",
+    "ma2022mega",
+    "raposo2024mod",
+    "lieber2024jamba",
+    "wang2022selfconsistency",
+    "yao2023tot",
+    "zhang2024mathshepherd",
+    "shao2024grpo",
+    "guo2025deepseekr1",
+    "hendrycks2021mmlu",
+    "cobbe2021gsm8k",
+    "hendrycks2021math",
+    "chen2021humaneval",
+    "austin2021mbpp",
+    "zellers2019hellaswag",
+    "clark2018arc",
+    "srivastava2022bigbench",
+    "zheng2023lmsys",
+    "rein2024gpqa",
+    "liang2023helm",
+    "mnih2013dqn",
+    "mnih2016a3c",
+    "rafailov2023dpo",
+    "azar2023ipo",
+    "ethayarajh2024kto",
+    "hu2021lora",
+    "liu2024dora",
+    "raffel2020t5",
+    "rae2021gopher",
+    "gao2020pile",
+    "penedo2024fineweb",
+    "abbas2023semdedup",
+    "soldaini2024dolma",
+    "shumailov2024collapse",
+    "chen2021codex",
+    "li2022alphacode",
+    "ma2023codereasoning",
+    "roziere2023codellama",
+    "gao2022pal",
+    "wang2024codeact",
+    "guo2024deepseekcoder",
+    "jimenez2024swebench",
+    "shoeybi2019megatron",
+    "ning2016distmult",
+    "rasley2020deepspeed",
+    "kwon2023vllm",
+    "dao2022flashattention",
+    "dao2024flashattention3",
+    "ainslie2023gqa",
+    "lin2023awq",
+    "xiao2022smoothquant",
+    "patil2023gorilla",
+    "wei2022emergent",
+    "bai2022constitutional",
+    "anthropic2023sparse",
+    "anthropic2024goldengate",
+    "sun2024ttt",
+    "mialon2023gaia",
+    "elhoushi2024early",
+    "bubeck2023moeoverview",
+    "lecun2022jepa",
+    "brown2020scaling",
+    "sakurai2024skrr",
+    "houlsby2019adapters",
+    "liu2022ia3",
+    "nguyen2025minp",
+    "huang2018gpipe",
+    "wang2024entropy",
+    "cai2024medusa",
+    "zou2023repeng",
+    "verma2023autonomy",
+    "francis2017aegis",
+    "ariane501_report",
+    "mach",
+    "fortran2",
+    "kirillov2023sam",
+    "jumper2021alphafold",
+    "pathak2022fourcastnet",
+    "zhao2023survey",
+    "funsearch",
+    "alphatensor",
+    "alphageometry2",
+    "alphafold3",
+    "alphamissense",
+    "montanari_interpolation",
+    "grokking_effective",
+    "weak_to_strong",
+    "verify_step_by_step",
+    "alignment_faking",
+    "reward_tampering",
+    "treacherous_turn",
+    "rogue_agents",
+    "ai_control",
+    "rlaif",
+    "orpo",
+    "horning2016rpr",
+    "weiss2016luca",
+    "elalbani2010gabon",
+    "zhu2016multicellular",
+    "lakretz2020nested",
+    "elhage2021framework"
+   ]
+  },
   "Joon Sung Park": {
    "count": 1,
    "minyear": null,
@@ -21180,15 +21322,6 @@
     "mialon2023gaia"
    ]
   },
-  "Roberto Dessì": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "mialon2023augmented",
-    "schick2023toolformer"
-   ]
-  },
   "Maria Lomeli": {
    "count": 1,
    "minyear": null,
@@ -21229,24 +21362,6 @@
     "mialon2023augmented",
     "touvron2023llama",
     "roziere2023codellama"
-   ]
-  },
-  "Timo Schick": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "mialon2023augmented",
-    "schick2023toolformer"
-   ]
-  },
-  "Jane Dwivedi-Yu": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "mialon2023augmented",
-    "schick2023toolformer"
    ]
   },
   "Asli Celikyilmaz": {
@@ -21392,9 +21507,9 @@
    "maxyear": null,
    "keys": [
     "lewis2020rag",
+    "dettmers2022llmint8",
     "alibi2022",
     "bart",
-    "dettmers2022llmint8",
     "press2022alibi",
     "fan2018topk",
     "press2022compositionality",
@@ -21517,6 +21632,22 @@
    "maxyear": null,
    "keys": [
     "jegou2011pq"
+   ]
+  },
+  "Stephen Robertson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "robertson2009bm25"
+   ]
+  },
+  "Hugo Zaragoza": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "robertson2009bm25"
    ]
   },
   "Jeff Johnson": {
@@ -21699,22 +21830,6 @@
    "maxyear": null,
    "keys": [
     "reimers2019sentencebert"
-   ]
-  },
-  "Stephen Robertson": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "robertson2009bm25"
-   ]
-  },
-  "Hugo Zaragoza": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "robertson2009bm25"
    ]
   },
   "Adrien Barbaresi": {
@@ -22331,14 +22446,6 @@
     "bansal2025syntheticself"
    ]
   },
-  "Hattie Zhou and Azade Nova and Hugo Larochelle and Aaron Courville and Behnam Neyshabur and Hanie Sedghi": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zhou2022algorithmic"
-   ]
-  },
   "Shivam Garg": {
    "count": 1,
    "minyear": null,
@@ -22361,6 +22468,62 @@
    "maxyear": null,
    "keys": [
     "garg2022incontext"
+   ]
+  },
+  "Hattie Zhou and Azade Nova and Hugo Larochelle and Aaron Courville and Behnam Neyshabur and Hanie Sedghi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zhou2022algorithmic"
+   ]
+  },
+  "Jacob Olsson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "olsson2022induction"
+   ]
+  },
+  "Nelson Elhage": {
+   "count": 8,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "olsson2022induction",
+    "elhage2022solu",
+    "elhage2023privileged",
+    "incontextlearninghead",
+    "elhage2022superposition",
+    "elhage2021mathematical",
+    "kadavath2022selfknowledge",
+    "elhage2021framework"
+   ]
+  },
+  "Neel Nanda": {
+   "count": 8,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "olsson2022induction",
+    "nanda2023grokking",
+    "copysuppression",
+    "incontextlearninghead",
+    "elhage2022superposition",
+    "elhage2021mathematical",
+    "kissane2024attention",
+    "elhage2021framework"
+   ]
+  },
+  "Tom H. B.": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "olsson2022induction",
+    "elhage2022superposition",
+    "elhage2021framework"
    ]
   },
   "Kevin Wang": {
@@ -22520,21 +22683,6 @@
     "meng2022rome"
    ]
   },
-  "Neel Nanda": {
-   "count": 8,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "nanda2023grokking",
-    "copysuppression",
-    "incontextlearninghead",
-    "elhage2021mathematical",
-    "kissane2024attention",
-    "olsson2022induction",
-    "elhage2021framework",
-    "elhage2022superposition"
-   ]
-  },
   "Lawrence Chan": {
    "count": 1,
    "minyear": null,
@@ -22559,19 +22707,99 @@
     "nanda2023grokking"
    ]
   },
-  "Nelson Elhage": {
-   "count": 8,
+  "Alethea Power": {
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
+    "power2022grokking",
+    "grokking"
+   ]
+  },
+  "Yuri Burda": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "power2022grokking",
+    "grokking"
+   ]
+  },
+  "Harri Edwards": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "power2022grokking",
+    "grokking"
+   ]
+  },
+  "Igor Babuschkin": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "power2022grokking",
+    "grokking"
+   ]
+  },
+  "Vedant Misra": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "power2022grokking",
+    "grokking"
+   ]
+  },
+  "Nick Belrose": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "belrose2023tunedlens"
+   ]
+  },
+  "Zach Kenton": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "belrose2023tunedlens"
+   ]
+  },
+  "Mike Schneider": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "belrose2023tunedlens"
+   ]
+  },
+  "Brian Chen": {
+   "count": 7,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "belrose2023tunedlens",
+    "bricken2023monosemanticity",
+    "templeton2024scaling",
+    "lindsey2025biology",
+    "ameisen2025circuit",
+    "goldengateclaude",
+    "monosemanticity"
+   ]
+  },
+  "Sam McCandlish": {
+   "count": 5,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "belrose2023tunedlens",
     "elhage2022solu",
-    "elhage2023privileged",
     "incontextlearninghead",
-    "elhage2021mathematical",
-    "kadavath2022selfknowledge",
-    "olsson2022induction",
-    "elhage2021framework",
-    "elhage2022superposition"
+    "kaplan2020scaling",
+    "kadavath2022selfknowledge"
    ]
   },
   "Tristan Hume": {
@@ -22594,10 +22822,10 @@
     "elhage2022solu",
     "bricken2023monosemanticity",
     "incontextlearninghead",
+    "elhage2022superposition",
     "elhage2021mathematical",
     "kadavath2022selfknowledge",
-    "elhage2021framework",
-    "elhage2022superposition"
+    "elhage2021framework"
    ]
   },
   "Nicholas Schiefer": {
@@ -22690,18 +22918,6 @@
     "ameisen2025circuit"
    ]
   },
-  "Sam McCandlish": {
-   "count": 5,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "elhage2022solu",
-    "incontextlearninghead",
-    "kaplan2020scaling",
-    "kadavath2022selfknowledge",
-    "belrose2023tunedlens"
-   ]
-  },
   "Jared Kaplan": {
    "count": 8,
    "minyear": 2024,
@@ -22774,20 +22990,6 @@
     "anthropic2023sparse"
    ]
   },
-  "Brian Chen": {
-   "count": 7,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "bricken2023monosemanticity",
-    "templeton2024scaling",
-    "lindsey2025biology",
-    "ameisen2025circuit",
-    "goldengateclaude",
-    "monosemanticity",
-    "belrose2023tunedlens"
-   ]
-  },
   "Adam Jermyn": {
    "count": 4,
    "minyear": null,
@@ -22849,10 +23051,10 @@
     "bricken2023monosemanticity",
     "incontextlearninghead",
     "monosemanticity",
+    "ouyang2022instructgpt",
     "sharma2023sycophancy",
     "elhage2021mathematical",
-    "kadavath2022selfknowledge",
-    "ouyang2022instructgpt"
+    "kadavath2022selfknowledge"
    ]
   },
   "Yuntao Bai": {
@@ -24538,145 +24740,6 @@
     "jouppi2017tpu"
    ]
   },
-  "et al.": {
-   "count": 132,
-   "minyear": 2017,
-   "maxyear": 2020,
-   "keys": [
-    "jouppi2017tpu",
-    "wallace2024hierarchy",
-    "hoffmann2022chinchilla",
-    "perez2022emergent",
-    "hendrycks2020winograd",
-    "johnson2017clevr",
-    "sharma2023sycophancy",
-    "brown2020gpt3",
-    "radford2021clip",
-    "alayrac2022flamingo",
-    "fu2023mme",
-    "yue2024mmmu",
-    "lipman2023flow",
-    "ma2024bitnet",
-    "radford2023whisper",
-    "wang2023neuralcodec",
-    "gulati2020conformer",
-    "chen2023vallx",
-    "gresser2023jukebox",
-    "copet2023musicgen",
-    "chen2024qwen2audio",
-    "wu2023audiolm",
-    "wang2024seamless",
-    "choromanski2021performer",
-    "sun2023retnet",
-    "peng2023rwkv",
-    "poli2023hyena",
-    "ma2022mega",
-    "raposo2024mod",
-    "lieber2024jamba",
-    "wei2022cot",
-    "wang2022selfconsistency",
-    "yao2023tot",
-    "zhang2024mathshepherd",
-    "shao2024grpo",
-    "guo2025deepseekr1",
-    "hendrycks2021mmlu",
-    "cobbe2021gsm8k",
-    "hendrycks2021math",
-    "chen2021humaneval",
-    "austin2021mbpp",
-    "zellers2019hellaswag",
-    "clark2018arc",
-    "srivastava2022bigbench",
-    "zheng2023lmsys",
-    "rein2024gpqa",
-    "liang2023helm",
-    "mnih2013dqn",
-    "mnih2016a3c",
-    "rafailov2023dpo",
-    "azar2023ipo",
-    "ethayarajh2024kto",
-    "hu2021lora",
-    "liu2024dora",
-    "raffel2020t5",
-    "rae2021gopher",
-    "gao2020pile",
-    "penedo2024fineweb",
-    "abbas2023semdedup",
-    "soldaini2024dolma",
-    "shumailov2024collapse",
-    "chen2021codex",
-    "li2022alphacode",
-    "ma2023codereasoning",
-    "roziere2023codellama",
-    "gao2022pal",
-    "wang2024codeact",
-    "guo2024deepseekcoder",
-    "jimenez2024swebench",
-    "shoeybi2019megatron",
-    "ning2016distmult",
-    "rasley2020deepspeed",
-    "kwon2023vllm",
-    "dao2022flashattention",
-    "dao2024flashattention3",
-    "ainslie2023gqa",
-    "lin2023awq",
-    "xiao2022smoothquant",
-    "schick2023toolformer",
-    "patil2023gorilla",
-    "wei2022emergent",
-    "bai2022constitutional",
-    "anthropic2023sparse",
-    "anthropic2024goldengate",
-    "sun2024ttt",
-    "mialon2023gaia",
-    "elhoushi2024early",
-    "bubeck2023moeoverview",
-    "lecun2022jepa",
-    "brown2020scaling",
-    "sakurai2024skrr",
-    "houlsby2019adapters",
-    "liu2022ia3",
-    "nguyen2025minp",
-    "huang2018gpipe",
-    "wang2024entropy",
-    "cai2024medusa",
-    "verma2023autonomy",
-    "francis2017aegis",
-    "ariane501_report",
-    "mach",
-    "fortran2",
-    "kirillov2023sam",
-    "dosovitskiy2021vit",
-    "jumper2021alphafold",
-    "pathak2022fourcastnet",
-    "zhao2023survey",
-    "funsearch",
-    "alphatensor",
-    "alphageometry2",
-    "alphafold3",
-    "alphamissense",
-    "montanari_interpolation",
-    "grokking_effective",
-    "weak_to_strong",
-    "verify_step_by_step",
-    "alignment_faking",
-    "reward_tampering",
-    "treacherous_turn",
-    "rogue_agents",
-    "ai_control",
-    "rlaif",
-    "orpo",
-    "horning2016rpr",
-    "weiss2016luca",
-    "elalbani2010gabon",
-    "zhu2016multicellular",
-    "lakretz2020nested",
-    "olsson2022induction",
-    "elhage2021framework",
-    "elhage2022superposition",
-    "zou2023repeng"
-   ]
-  },
   "Walter Guyton Cady": {
    "count": 1,
    "minyear": null,
@@ -25035,6 +25098,34 @@
    "maxyear": null,
    "keys": [
     "chen2024ibprotector"
+   ]
+  },
+  "Tim Dettmers": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dettmers2022llmint8",
+    "dettmers2023qlora"
+   ]
+  },
+  "Younes Belkada": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dettmers2022llmint8"
+   ]
+  },
+  "Luke Zettlemoyer": {
+   "count": 4,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dettmers2022llmint8",
+    "bart",
+    "elmo",
+    "dettmers2023qlora"
    ]
   },
   "Reiner Pope": {
@@ -26145,6 +26236,14 @@
     "putnam1981reason"
    ]
   },
+  "Thomas Nagel": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nagel1974bat"
+   ]
+  },
   "David Hume": {
    "count": 3,
    "minyear": null,
@@ -26968,51 +27067,6 @@
     "weatherfactory"
    ]
   },
-  "Alethea Power": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "grokking",
-    "power2022grokking"
-   ]
-  },
-  "Yuri Burda": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "grokking",
-    "power2022grokking"
-   ]
-  },
-  "Harri Edwards": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "grokking",
-    "power2022grokking"
-   ]
-  },
-  "Igor Babuschkin": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "grokking",
-    "power2022grokking"
-   ]
-  },
-  "Vedant Misra": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "grokking",
-    "power2022grokking"
-   ]
-  },
   "Nova DasSarma": {
    "count": 3,
    "minyear": null,
@@ -27207,25 +27261,14 @@
     "bart"
    ]
   },
-  "Luke Zettlemoyer": {
-   "count": 4,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "bart",
-    "elmo",
-    "dettmers2023qlora",
-    "dettmers2022llmint8"
-   ]
-  },
   "Colin Raffel": {
    "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "tfive",
-    "raffel2020t5",
-    "carlini2021extracting"
+    "carlini2021extracting",
+    "raffel2020t5"
    ]
   },
   "Adam Roberts": {
@@ -27234,9 +27277,9 @@
    "maxyear": null,
    "keys": [
     "tfive",
+    "carlini2021extracting",
     "raffel2020t5",
-    "chung2022flan",
-    "carlini2021extracting"
+    "chung2022flan"
    ]
   },
   "Katherine Lee": {
@@ -28545,6 +28588,164 @@
     "rungesphenomenon"
    ]
   },
+  "Long Ouyang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Jeff Wu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Xu Jiang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Diogo Almeida": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Carroll L. Wainwright": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Pamela Mishkin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Chong Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Sandhini Agarwal": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Katarina Slama": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Alex Ray": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "John Schulman": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt",
+    "schulman2017ppo",
+    "schulman2015trpo"
+   ]
+  },
+  "Jacob Hilton": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt",
+    "lin2021truthful",
+    "lin2022uncertainty"
+   ]
+  },
+  "Fraser Kelton": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Luke Miller": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Maddie Simens": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Peter Welinder": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
+  "Paul Christiano": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt",
+    "ai_safety_debate"
+   ]
+  },
+  "Jan Leike": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt",
+    "christiano2017rlhf"
+   ]
+  },
+  "Ryan Lowe": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ouyang2022instructgpt"
+   ]
+  },
   "Benjamin Chess": {
    "count": 1,
    "minyear": null,
@@ -29348,13 +29549,14 @@
    ]
   },
   "John von Neumann": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "vonneumann",
     "vonneumann_morgenstern1944",
-    "eckert1946eniac"
+    "eckert1946eniac",
+    "charney1950nwp"
    ]
   },
   "Howard Aiken": {
@@ -30418,6 +30620,15 @@
     "clark1998extended"
    ]
   },
+  "John R. Searle": {
+   "count": 2,
+   "minyear": 1980,
+   "maxyear": 1980,
+   "keys": [
+    "searle1980minds",
+    "searle1980chineseroom"
+   ]
+  },
   "Ilia Shumailov": {
    "count": 2,
    "minyear": 2023,
@@ -30795,15 +31006,6 @@
    "maxyear": 1972,
    "keys": [
     "dreyfus1972what"
-   ]
-  },
-  "John R. Searle": {
-   "count": 2,
-   "minyear": 1980,
-   "maxyear": 1980,
-   "keys": [
-    "searle1980minds",
-    "searle1980chineseroom"
    ]
   },
   "Stuart J. Russell": {
@@ -31356,6 +31558,15 @@
     "hilbert1928entscheidung"
    ]
   },
+  "Gottlob Frege": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "frege1879begriffsschrift",
+    "uebersinnundbedeutung"
+   ]
+  },
   "Harry Nyquist": {
    "count": 1,
    "minyear": null,
@@ -31421,15 +31632,6 @@
    "maxyear": null,
    "keys": [
     "christiano2017rlhf"
-   ]
-  },
-  "Jan Leike": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "christiano2017rlhf",
-    "ouyang2022instructgpt"
    ]
   },
   "Miljan Martic": {
@@ -31923,15 +32125,6 @@
     "ueberwahrheitundluege"
    ]
   },
-  "Gottlob Frege": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "uebersinnundbedeutung",
-    "frege1879begriffsschrift"
-   ]
-  },
   "Hugo Touvron": {
    "count": 1,
    "minyear": null,
@@ -32330,6 +32523,32 @@
     "radford2021clip"
    ]
   },
+  "Alexey Dosovitskiy": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dosovitskiy2021vit"
+   ]
+  },
+  "Lucas Beyer": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dosovitskiy2021vit",
+    "zhai2023siglip"
+   ]
+  },
+  "Alexander Kolesnikov": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dosovitskiy2021vit",
+    "zhai2023siglip"
+   ]
+  },
   "Haotian Liu": {
    "count": 1,
    "minyear": null,
@@ -32401,24 +32620,6 @@
    "maxyear": null,
    "keys": [
     "zhai2023siglip"
-   ]
-  },
-  "Alexander Kolesnikov": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zhai2023siglip",
-    "dosovitskiy2021vit"
-   ]
-  },
-  "Lucas Beyer": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zhai2023siglip",
-    "dosovitskiy2021vit"
    ]
   },
   "Chaoyou Fu": {
@@ -32499,6 +32700,48 @@
     "abbeel2004irl",
     "levine2016guidance",
     "openai2021dota"
+   ]
+  },
+  "Jascha Sohl-Dickstein": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sohl2015deep",
+    "dinh2017realnvp"
+   ]
+  },
+  "Eric A. Weiss": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sohl2015deep"
+   ]
+  },
+  "Niru Maheswaranathan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sohl2015deep"
+   ]
+  },
+  "Yang Song": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "song2019score"
+   ]
+  },
+  "Stefano Ermon": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "song2019score",
+    "dao2022flashattention"
    ]
   },
   "Robin Rombach": {
@@ -32904,8 +33147,8 @@
    "maxyear": null,
    "keys": [
     "gu2021s4",
-    "dao2024mamba2",
-    "gu2023mamba"
+    "gu2023mamba",
+    "dao2024mamba2"
    ]
   },
   "Karan Goel": {
@@ -32937,9 +33180,9 @@
    "minyear": null,
    "maxyear": null,
    "keys": [
+    "gu2023mamba",
     "dao2024mamba2",
-    "dao2022flashattention",
-    "gu2023mamba"
+    "dao2022flashattention"
    ]
   },
   "Krzysztof Choromanski": {
@@ -33467,6 +33710,54 @@
     "chollet2024arcagi"
    ]
   },
+  "Nicholas Carlini": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
+  "Florian Tramèr": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
+  "Matthew Jagielski": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
+  "Ariel Herbert-Voss": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
+  "Úlfar Erlingsson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
+  "Alina Oprea": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carlini2021extracting"
+   ]
+  },
   "Rishi Bommasani": {
    "count": 2,
    "minyear": null,
@@ -33556,6 +33847,22 @@
    "keys": [
     "mnih2016a3c",
     "goodfellow2014gan"
+   ]
+  },
+  "Filip Wolski": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schulman2017ppo"
+   ]
+  },
+  "Oleg Klimov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schulman2017ppo"
    ]
   },
   "Christopher J. C. H. Watkins": {
@@ -33680,15 +33987,6 @@
    "maxyear": null,
    "keys": [
     "meng2024simpo"
-   ]
-  },
-  "Tim Dettmers": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dettmers2023qlora",
-    "dettmers2022llmint8"
    ]
   },
   "Artidoro Pagnoni": {
@@ -34210,15 +34508,6 @@
     "dao2022flashattention"
    ]
   },
-  "Stefano Ermon": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dao2022flashattention",
-    "song2019score"
-   ]
-  },
   "Jay Shah": {
    "count": 1,
    "minyear": null,
@@ -34331,14 +34620,6 @@
    "maxyear": null,
    "keys": [
     "xiao2022smoothquant"
-   ]
-  },
-  "Younes Belkada": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dettmers2022llmint8"
    ]
   },
   "Georgi Gerganov": {
@@ -34464,6 +34745,81 @@
    "maxyear": null,
    "keys": [
     "yang2014rotate"
+   ]
+  },
+  "Théo Trouillon": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "trouillon2016complex"
+   ]
+  },
+  "Johannes Welbl": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "trouillon2016complex"
+   ]
+  },
+  "Éric Gaussier": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "trouillon2016complex"
+   ]
+  },
+  "Guillaume Bouchard": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "trouillon2016complex"
+   ]
+  },
+  "Michael Schlichtkrull": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schlichtkrull2018rgcn"
+   ]
+  },
+  "Thomas N. Kipf": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schlichtkrull2018rgcn",
+    "kipf2017gcn"
+   ]
+  },
+  "Peter Bloem": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schlichtkrull2018rgcn"
+   ]
+  },
+  "Rianne van den Berg": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schlichtkrull2018rgcn"
+   ]
+  },
+  "Max Welling": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schlichtkrull2018rgcn",
+    "kingma2014vae",
+    "kipf2017gcn"
    ]
   },
   "Conference Proceedings": {
@@ -35497,6 +35853,22 @@
     "blei2017vi"
    ]
   },
+  "Ansh Radha": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zou2023repeng"
+   ]
+  },
+  "Shashwat Garg": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zou2023repeng"
+   ]
+  },
   "Erella Hovers": {
    "count": 1,
    "minyear": null,
@@ -35527,6 +35899,15 @@
    "maxyear": null,
    "keys": [
     "ibm702image"
+   ]
+  },
+  "Computer History Museum": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "visicalc",
+    "chm"
    ]
   },
   "The Univalent Foundations Program": {
@@ -35755,15 +36136,6 @@
     "first_web_browser"
    ]
   },
-  "Computer History Museum": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "visicalc",
-    "chm"
-   ]
-  },
   "Alexf": {
    "count": 1,
    "minyear": null,
@@ -35823,6 +36195,14 @@
     "neural_network_diagram"
    ]
   },
+  "Self-generated (Plotly)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wave_interference_diagram"
+   ]
+  },
   "Korea Baduk Association": {
    "count": 1,
    "minyear": null,
@@ -35837,14 +36217,6 @@
    "maxyear": null,
    "keys": [
     "shrdlu_image"
-   ]
-  },
-  "Self-generated (Plotly)": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "wave_interference_diagram"
    ]
   },
   "HubertSt (Wikimedia Commons)": {
@@ -37088,16 +37460,6 @@
     "lin2022uncertainty"
    ]
   },
-  "Jacob Hilton": {
-   "count": 3,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "lin2021truthful",
-    "ouyang2022instructgpt",
-    "lin2022uncertainty"
-   ]
-  },
   "Haotian Ye": {
    "count": 1,
    "minyear": null,
@@ -37396,54 +37758,6 @@
     "chung2022flan"
    ]
   },
-  "Nicholas Carlini": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
-  "Florian Tramèr": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
-  "Matthew Jagielski": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
-  "Ariel Herbert-Voss": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
-  "Úlfar Erlingsson": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
-  "Alina Oprea": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "carlini2021extracting"
-   ]
-  },
   "Eli Tran-Johnson": {
    "count": 1,
    "minyear": null,
@@ -37560,31 +37874,12 @@
     "bornschein2014reweighted"
    ]
   },
-  "Max Welling": {
-   "count": 3,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "kingma2014vae",
-    "schlichtkrull2018rgcn",
-    "kipf2017gcn"
-   ]
-  },
   "Laurent Dinh": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "dinh2017realnvp"
-   ]
-  },
-  "Jascha Sohl-Dickstein": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dinh2017realnvp",
-    "sohl2015deep"
    ]
   },
   "Ian J. Goodfellow": {
@@ -39264,16 +39559,6 @@
     "konda2000ac"
    ]
   },
-  "John Schulman": {
-   "count": 3,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schulman2015trpo",
-    "schulman2017ppo",
-    "ouyang2022instructgpt"
-   ]
-  },
   "Sergey Levine": {
    "count": 2,
    "minyear": null,
@@ -39297,22 +39582,6 @@
    "maxyear": null,
    "keys": [
     "schulman2015trpo"
-   ]
-  },
-  "Filip Wolski": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schulman2017ppo"
-   ]
-  },
-  "Oleg Klimov": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schulman2017ppo"
    ]
   },
   "Thomas Hubert": {
@@ -39402,135 +39671,6 @@
    "maxyear": null,
    "keys": [
     "ng2000irl"
-   ]
-  },
-  "Long Ouyang": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Jeff Wu": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Xu Jiang": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Diogo Almeida": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Carroll L. Wainwright": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Pamela Mishkin": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Chong Zhang": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Sandhini Agarwal": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Katarina Slama": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Alex Ray": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Fraser Kelton": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Luke Miller": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Maddie Simens": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Peter Welinder": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
-   ]
-  },
-  "Paul Christiano": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt",
-    "ai_safety_debate"
-   ]
-  },
-  "Ryan Lowe": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "ouyang2022instructgpt"
    ]
   },
   "Armin Biere": {
@@ -39847,71 +39987,6 @@
    "keys": [
     "miller1995wordnet",
     "miller1956magicalnumber"
-   ]
-  },
-  "Théo Trouillon": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "trouillon2016complex"
-   ]
-  },
-  "Johannes Welbl": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "trouillon2016complex"
-   ]
-  },
-  "Éric Gaussier": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "trouillon2016complex"
-   ]
-  },
-  "Guillaume Bouchard": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "trouillon2016complex"
-   ]
-  },
-  "Michael Schlichtkrull": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schlichtkrull2018rgcn"
-   ]
-  },
-  "Thomas N. Kipf": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schlichtkrull2018rgcn",
-    "kipf2017gcn"
-   ]
-  },
-  "Peter Bloem": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schlichtkrull2018rgcn"
-   ]
-  },
-  "Rianne van den Berg": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "schlichtkrull2018rgcn"
    ]
   },
   "Yehuda Koren": {
@@ -41294,30 +41369,6 @@
     "sabour2017capsules"
    ]
   },
-  "Eric A. Weiss": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "sohl2015deep"
-   ]
-  },
-  "Niru Maheswaranathan": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "sohl2015deep"
-   ]
-  },
-  "Yang Song": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "song2019score"
-   ]
-  },
   "Aaron van den Oord": {
    "count": 1,
    "minyear": null,
@@ -41759,6 +41810,14 @@
     "gong2019memoryae"
    ]
   },
+  "Ravid Shwartz-Ziv": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "shwartz2017opening"
+   ]
+  },
   "Edwin T. Jaynes": {
    "count": 1,
    "minyear": null,
@@ -42151,14 +42210,6 @@
    "maxyear": null,
    "keys": [
     "wang2024ensemble"
-   ]
-  },
-  "Ravid Shwartz-Ziv": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "shwartz2017opening"
    ]
   },
   "Yoav Freund": {
@@ -43555,14 +43606,6 @@
     "mirrorselfrecognition_image"
    ]
   },
-  "Thomas Nagel": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "nagel1974bat"
-   ]
-  },
   "Paul M. Churchland": {
    "count": 1,
    "minyear": null,
@@ -44102,14 +44145,6 @@
    "maxyear": null,
    "keys": [
     "kirillov2023sam"
-   ]
-  },
-  "Alexey Dosovitskiy": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dosovitskiy2021vit"
    ]
   },
   "Xinlei Chen": {
@@ -46663,30 +46698,6 @@
     "davies2023unifying"
    ]
   },
-  "Nick Belrose": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "belrose2023tunedlens"
-   ]
-  },
-  "Zach Kenton": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "belrose2023tunedlens"
-   ]
-  },
-  "Mike Schneider": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "belrose2023tunedlens"
-   ]
-  },
   "Michael Todd": {
    "count": 1,
    "minyear": null,
@@ -46735,24 +46746,6 @@
     "brenner2026gridwalkers"
    ]
   },
-  "Jacob Olsson": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "olsson2022induction"
-   ]
-  },
-  "Tom H. B.": {
-   "count": 3,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "olsson2022induction",
-    "elhage2021framework",
-    "elhage2022superposition"
-   ]
-  },
   "Shayne Gould": {
    "count": 1,
    "minyear": null,
@@ -46799,22 +46792,6 @@
    "maxyear": null,
    "keys": [
     "garg2026features"
-   ]
-  },
-  "Ansh Radha": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zou2023repeng"
-   ]
-  },
-  "Shashwat Garg": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zou2023repeng"
    ]
   },
   "Vernor Vinge": {
@@ -46946,6 +46923,71 @@
    "maxyear": null,
    "keys": [
     "omniopt"
+   ]
+  },
+  "Jule G. Charney": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "charney1947longwaves",
+    "charney1950nwp"
+   ]
+  },
+  "Ragnar Fjørtoft": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "charney1950nwp"
+   ]
+  },
+  "National Research Council (Charney et al.)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "charney1979report"
+   ]
+  },
+  "Nobel Foundation": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "onnes1913nobel"
+   ]
+  },
+  "F. Arute et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "arute2019quantum"
+   ]
+  },
+  "Remi Lam et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lam2023graphcast"
+   ]
+  },
+  "Google DeepMind": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "graphcast_github"
+   ]
+  },
+  "ECMWF": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ecmwf"
    ]
   }
  }

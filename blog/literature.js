@@ -3013,6 +3013,13 @@ window.bibData = {
 		author: "Samuel Ichiye Hayakawa",
 		year: 1939
 	},
+	"pirsig": {
+		url: "https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance",
+		title: "Zen and the Art of Motorcycle Maintenance: An Inquiry into Values",
+		author: "Robert M. Pirsig",
+		year: 1974,
+		alternativetitle: "Pirsig, Zen and the Art of Motorcycle Maintenance (1974)"
+	},
 	"maclaurin": {
 		url: "https://archive.org/details/atreatiseonflux01maclgoog",
 		title: "A Treatise on Fluxions",
@@ -14776,7 +14783,7 @@ window.bibData = {
 		title: "Carbon dioxide and climate: A scientific assessment",
 		author: "National Research Council (Charney et al.)",
 		year: 1979,
-		url: "https://web.archive.org/web/20110813231807/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf",
+		url: "https://web.archive.org/web/20110813231807id_/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf",
 		alternativetitle: "Charney Report (1979)"
 	},
 	"charneywiki": {
@@ -14825,15 +14832,8 @@ window.bibData = {
 		title: "Quantum supremacy using a programmable superconducting processor",
 		author: "F. Arute et al.",
 		year: 2019,
-		url: "https://www.nature.com/articles/s41586-019-1667-2",
-		alternativetitle: "Arute et al., 2019 (Nature)"
-	},
-	"kjaergaard2020": {
-		title: "Superconducting Qubits: Success and Challenges",
-		author: "M. Kjaergaard et al.",
-		year: 2020,
-		url: "https://doi.org/10.1103/RevModPhys.92.025005",
-		alternativetitle: "Kjaergaard et al., 2020 (Rev. Mod. Phys.)"
+		url: "https://arxiv.org/abs/1910.11333",
+		alternativetitle: "Arute et al., 2019 (arXiv:1910.11333)"
 	},
 	"lam2023graphcast": {
 		title: "GraphCast: AI model for faster and more accurate global weather forecasting",

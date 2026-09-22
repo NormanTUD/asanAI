@@ -288,7 +288,6 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "deep_theory",
    "embeddinglab",
    "transformer"
   ]
@@ -628,9 +627,9 @@
   "works": 4,
   "keys": [
    "tfive",
+   "carlini2021extracting",
    "raffel2020t5",
-   "chung2022flan",
-   "carlini2021extracting"
+   "chung2022flan"
   ],
   "cited_in": [
    "evaluation",
@@ -1626,8 +1625,8 @@
   "works": 3,
   "keys": [
    "gu2021s4",
-   "dao2024mamba2",
-   "gu2023mamba"
+   "gu2023mamba",
+   "dao2024mamba2"
   ],
   "cited_in": [
    "alternative_architectures",
@@ -1647,9 +1646,7 @@
   "keys": [
    "wakhloo2024population"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Albert Madotto",
@@ -1742,8 +1739,8 @@
    "firstgpt",
    "radford2021clip",
    "radford2023whisper",
-   "radford2019language",
-   "schulman2017ppo"
+   "schulman2017ppo",
+   "radford2019language"
   ],
   "cited_in": [
    "beyond_llms",
@@ -1872,12 +1869,11 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "grokking",
-   "power2022grokking"
+   "power2022grokking",
+   "grokking"
   ],
   "cited_in": [
    "appendix",
-   "deep_theory",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -2262,8 +2258,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "zhai2023siglip",
-   "dosovitskiy2021vit"
+   "dosovitskiy2021vit",
+   "zhai2023siglip"
   ],
   "cited_in": [
    "computer_vision",
@@ -2439,9 +2435,7 @@
   "keys": [
    "bartlett_benign_overfitting"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Alexander Tuzhilin",
@@ -3077,10 +3071,10 @@
    "bricken2023monosemanticity",
    "incontextlearninghead",
    "monosemanticity",
+   "ouyang2022instructgpt",
    "sharma2023sycophancy",
    "elhage2021mathematical",
-   "kadavath2022selfknowledge",
-   "ouyang2022instructgpt"
+   "kadavath2022selfknowledge"
   ],
   "cited_in": [
    "alignment",
@@ -3112,9 +3106,7 @@
   "keys": [
    "draxler_mode_connectivity"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "AMD",
@@ -3214,9 +3206,7 @@
   "keys": [
    "neural_collapse"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Amirhosein Toosi",
@@ -3587,9 +3577,7 @@
   "keys": [
    "montanari_interpolation"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Andreas Blattmann",
@@ -3987,9 +3975,7 @@
   "keys": [
    "bartlett_benign_overfitting"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Andrew M. Saxe",
@@ -5322,9 +5308,7 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Aristide Baratin",
@@ -5339,9 +5323,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Aristotle",
@@ -5680,8 +5662,7 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -5909,7 +5890,6 @@
   ],
   "cited_in": [
    "ai_for_science",
-   "deep_theory",
    "promptengineering"
   ]
  },
@@ -6731,9 +6711,7 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Beidi Chen",
@@ -7651,9 +7629,7 @@
   "keys": [
    "nakkiran2019deepdd"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Bob Carpenter",
@@ -7772,9 +7748,7 @@
   "keys": [
    "principles_dl_theory"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Boris N. Oreshkin",
@@ -8054,13 +8028,13 @@
   "conf": 0,
   "works": 7,
   "keys": [
+   "belrose2023tunedlens",
    "bricken2023monosemanticity",
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
    "goldengateclaude",
-   "monosemanticity",
-   "belrose2023tunedlens"
+   "monosemanticity"
   ],
   "cited_in": [
    "embeddinglab",
@@ -9013,10 +8987,10 @@
    "elhage2022solu",
    "bricken2023monosemanticity",
    "incontextlearninghead",
+   "elhage2022superposition",
    "elhage2021mathematical",
    "kadavath2022selfknowledge",
-   "elhage2021framework",
-   "elhage2022superposition"
+   "elhage2021framework"
   ],
   "cited_in": [
    "alignment",
@@ -9974,7 +9948,6 @@
    "autodiff",
    "computer_vision",
    "deconvolution",
-   "deep_theory",
    "embeddinglab",
    "fact_lookup",
    "losslab",
@@ -10797,8 +10770,7 @@
    "morales2021reservoir"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -10898,8 +10870,7 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -10981,8 +10952,8 @@
   "works": 3,
   "keys": [
    "tfive",
-   "raffel2020t5",
-   "carlini2021extracting"
+   "carlini2021extracting",
+   "raffel2020t5"
   ],
   "cited_in": [
    "evaluation",
@@ -11600,9 +11571,7 @@
   "keys": [
    "edge_of_stability"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Dan Alistarh",
@@ -11763,9 +11732,7 @@
   "keys": [
    "principles_dl_theory"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Daniel Aloise",
@@ -11902,7 +11869,6 @@
    "belkin2019reconciling"
   ],
   "cited_in": [
-   "deep_theory",
    "deeplearninglab",
    "embeddinglab"
   ]
@@ -12635,9 +12601,7 @@
   "keys": [
    "draxler_mode_connectivity"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "David Dunning",
@@ -13977,9 +13941,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Devin Jung",
@@ -14652,9 +14614,7 @@
   "keys": [
    "neural_collapse"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Dora Warth",
@@ -15316,7 +15276,6 @@
    "yang_hu_feature_learning"
   ],
   "cited_in": [
-   "deep_theory",
    "diffusion",
    "finetuninglab",
    "geometry_ii",
@@ -17239,9 +17198,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Felix Klein",
@@ -17650,9 +17607,7 @@
   "keys": [
    "edge_of_stability"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Francis Song",
@@ -17704,8 +17659,7 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -17900,9 +17854,7 @@
   "keys": [
    "draxler_mode_connectivity"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Franziska Weindel",
@@ -17990,9 +17942,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Fred Cummins",
@@ -18375,9 +18325,7 @@
   "keys": [
    "nakkiran2019deepdd"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Galileo Galilei",
@@ -19849,8 +19797,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "uebersinnundbedeutung",
-   "frege1879begriffsschrift"
+   "frege1879begriffsschrift",
+   "uebersinnundbedeutung"
   ],
   "cited_in": [
    "beyond_llms",
@@ -20045,9 +19993,7 @@
   "keys": [
    "yang_hu_feature_learning"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Gregorio Ricci-Curbastro; Tullio Levi-Civita",
@@ -20380,8 +20326,7 @@
    "morales2021reservoir"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -20537,9 +20482,7 @@
   "keys": [
    "bartlett_benign_overfitting"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Gérard Desargues",
@@ -21331,12 +21274,11 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "grokking",
-   "power2022grokking"
+   "power2022grokking",
+   "grokking"
   ],
   "cited_in": [
    "appendix",
-   "deep_theory",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -22450,9 +22392,7 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Hou Pong Chan",
@@ -23187,12 +23127,11 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "grokking",
-   "power2022grokking"
+   "power2022grokking",
+   "grokking"
   ],
   "cited_in": [
    "appendix",
-   "deep_theory",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -23357,7 +23296,6 @@
    "ai_for_science",
    "beyond_llms",
    "computer_vision",
-   "deep_theory",
    "embeddinglab",
    "history",
    "overandunderfittinglab",
@@ -24665,8 +24603,8 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "lin2021truthful",
    "ouyang2022instructgpt",
+   "lin2021truthful",
    "lin2022uncertainty"
   ],
   "cited_in": [
@@ -25528,8 +25466,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "christiano2017rlhf",
-   "ouyang2022instructgpt"
+   "ouyang2022instructgpt",
+   "christiano2017rlhf"
   ],
   "cited_in": [
    "alignment",
@@ -25551,8 +25489,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "mialon2023augmented",
-   "schick2023toolformer"
+   "schick2023toolformer",
+   "mialon2023augmented"
   ],
   "cited_in": [
    "frontier",
@@ -25658,8 +25596,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dinh2017realnvp",
-   "sohl2015deep"
+   "sohl2015deep",
+   "dinh2017realnvp"
   ],
   "cited_in": [
    "beyond_llms",
@@ -26795,9 +26733,7 @@
   "keys": [
    "progressive_sharpening"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Jian Sun",
@@ -28259,9 +28195,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "schulman2015trpo",
+   "ouyang2022instructgpt",
    "schulman2017ppo",
-   "ouyang2022instructgpt"
+   "schulman2015trpo"
   ],
   "cited_in": [
    "alignment",
@@ -28350,11 +28286,12 @@
   "city": "Princeton, United States",
   "year": 1945.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "vonneumann",
    "vonneumann_morgenstern1944",
-   "eckert1946eniac"
+   "eckert1946eniac",
+   "charney1950nwp"
   ],
   "cited_in": [
    "history",
@@ -28677,8 +28614,7 @@
    "frankle2019lottery"
   ],
   "cited_in": [
-   "activationlab",
-   "deep_theory"
+   "activationlab"
   ]
  },
  {
@@ -28801,9 +28737,7 @@
   "keys": [
    "edge_of_stability"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Jonathan Schwarz",
@@ -28869,10 +28803,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "metropolis_hastings_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -33436,8 +33370,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "zhai2023siglip",
-   "dosovitskiy2021vit"
+   "dosovitskiy2021vit",
+   "zhai2023siglip"
   ],
   "cited_in": [
    "computer_vision",
@@ -33683,10 +33617,10 @@
   "conf": 1,
   "works": 4,
   "keys": [
+   "dettmers2022llmint8",
    "bart",
    "elmo",
-   "dettmers2023qlora",
-   "dettmers2022llmint8"
+   "dettmers2023qlora"
   ],
   "cited_in": [
    "finetuninglab",
@@ -34199,9 +34133,7 @@
   "keys": [
    "draxler_mode_connectivity"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Manfredo Perdigão do Carmo",
@@ -36120,8 +36052,8 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "kingma2014vae",
    "schlichtkrull2018rgcn",
+   "kingma2014vae",
    "kipf2017gcn"
   ],
   "cited_in": [
@@ -36563,8 +36495,7 @@
    "frankle2019lottery"
   ],
   "cited_in": [
-   "activationlab",
-   "deep_theory"
+   "activationlab"
   ]
  },
  {
@@ -37335,8 +37266,7 @@
    "morales2021reservoir"
   ],
   "cited_in": [
-   "beyond_llms",
-   "deep_theory"
+   "beyond_llms"
   ]
  },
  {
@@ -37402,9 +37332,9 @@
   "works": 8,
   "keys": [
    "lewis2020rag",
+   "dettmers2022llmint8",
    "alibi2022",
    "bart",
-   "dettmers2022llmint8",
    "press2022alibi",
    "fan2018topk",
    "press2022compositionality",
@@ -37488,7 +37418,6 @@
    "belkin2019reconciling"
   ],
   "cited_in": [
-   "deep_theory",
    "deeplearninglab",
    "embeddinglab"
   ]
@@ -37610,9 +37539,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Ming Zhang",
@@ -38355,9 +38282,7 @@
   "keys": [
    "implicit_reg_deep"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Naftali Tishby",
@@ -38713,9 +38638,7 @@
   "keys": [
    "rahaman2019spectral"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Nasir al-Din al-Tusi",
@@ -38868,14 +38791,14 @@
   "conf": 1,
   "works": 8,
   "keys": [
+   "olsson2022induction",
    "nanda2023grokking",
    "copysuppression",
    "incontextlearninghead",
+   "elhage2022superposition",
    "elhage2021mathematical",
    "kissane2024attention",
-   "olsson2022induction",
-   "elhage2021framework",
-   "elhage2022superposition"
+   "elhage2021framework"
   ],
   "cited_in": [
    "algorithms",
@@ -38985,14 +38908,14 @@
   "conf": 1,
   "works": 8,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "elhage2023privileged",
    "incontextlearninghead",
+   "elhage2022superposition",
    "elhage2021mathematical",
    "kadavath2022selfknowledge",
-   "olsson2022induction",
-   "elhage2021framework",
-   "elhage2022superposition"
+   "elhage2021framework"
   ],
   "cited_in": [
    "algorithms",
@@ -39948,9 +39871,7 @@
   "keys": [
    "nlab_neural_network"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "nLab contributors",
@@ -41952,9 +41873,7 @@
   "keys": [
    "bartlett_benign_overfitting"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Peter Lee",
@@ -42436,9 +42355,7 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Pierre Hansen",
@@ -42815,9 +42732,7 @@
   "keys": [
    "nakkiran2019deepdd"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Preyas Popat",
@@ -45256,8 +45171,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "mialon2023augmented",
-   "schick2023toolformer"
+   "schick2023toolformer",
+   "mialon2023augmented"
   ],
   "cited_in": [
    "frontier",
@@ -46761,11 +46676,11 @@
   "conf": 1,
   "works": 5,
   "keys": [
+   "belrose2023tunedlens",
    "elhage2022solu",
    "incontextlearninghead",
    "kaplan2020scaling",
-   "kadavath2022selfknowledge",
-   "belrose2023tunedlens"
+   "kadavath2022selfknowledge"
   ],
   "cited_in": [
    "alignment",
@@ -47176,9 +47091,7 @@
    "arora2017gan",
    "implicit_reg_deep"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Sanjoy Mitter",
@@ -48710,9 +48623,7 @@
   "keys": [
    "principles_dl_theory"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Sholto Douglas",
@@ -49283,9 +49194,7 @@
   "keys": [
    "grokking_effective"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Siméon-Denis Poisson",
@@ -49319,7 +49228,6 @@
    "belkin2019"
   ],
   "cited_in": [
-   "deep_theory",
    "embeddinglab"
   ]
  },
@@ -49636,7 +49544,6 @@
    "belkin2019"
   ],
   "cited_in": [
-   "deep_theory",
    "embeddinglab"
   ]
  },
@@ -50038,8 +49945,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dao2022flashattention",
-   "song2019score"
+   "song2019score",
+   "dao2022flashattention"
   ],
   "cited_in": [
    "beyond_llms",
@@ -50597,9 +50504,7 @@
   "keys": [
    "wakhloo2024population"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Sumit Chopra",
@@ -52371,8 +52276,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dettmers2023qlora",
-   "dettmers2022llmint8"
+   "dettmers2022llmint8",
+   "dettmers2023qlora"
   ],
   "cited_in": [
    "finetuninglab",
@@ -52492,8 +52397,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "mialon2023augmented",
-   "schick2023toolformer"
+   "schick2023toolformer",
+   "mialon2023augmented"
   ],
   "cited_in": [
    "frontier",
@@ -52803,8 +52708,8 @@
   "works": 3,
   "keys": [
    "olsson2022induction",
-   "elhage2021framework",
-   "elhage2022superposition"
+   "elhage2022superposition",
+   "elhage2021framework"
   ],
   "cited_in": [
    "algorithms",
@@ -53260,9 +53165,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
+   "gu2023mamba",
    "dao2024mamba2",
-   "dao2022flashattention",
-   "gu2023mamba"
+   "dao2022flashattention"
   ],
   "cited_in": [
    "alternative_architectures",
@@ -53343,9 +53248,7 @@
   "keys": [
    "nakkiran2019deepdd"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Tsung-Han Lin",
@@ -53848,12 +53751,11 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "grokking",
-   "power2022grokking"
+   "power2022grokking",
+   "grokking"
   ],
   "cited_in": [
    "appendix",
-   "deep_theory",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -54835,9 +54737,7 @@
   "keys": [
    "neural_collapse"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Wei He",
@@ -54867,9 +54767,7 @@
   "keys": [
    "implicit_reg_deep"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Wei Li",
@@ -55312,7 +55210,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 127,
+  "works": 132,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -55440,7 +55338,12 @@
    "aiwinter_wiki",
    "ai_music_wiki",
    "predictive_coding_wiki",
-   "deadinternet_wiki"
+   "deadinternet_wiki",
+   "charneywiki",
+   "icecorewiki",
+   "vostokstation",
+   "dilutionfridge",
+   "superconductingqubit"
   ],
   "cited_in": [
    "coherent_difference",
@@ -55559,9 +55462,7 @@
   "keys": [
    "wakhloo2024population"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Willem Zuidema",
@@ -57060,9 +56961,7 @@
   "keys": [
    "nakkiran2019deepdd"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Yan Li",
@@ -58377,7 +58276,6 @@
    "activationlab",
    "autodiff",
    "beyond_llms",
-   "deep_theory",
    "deeplearninglab",
    "embeddinglab",
    "history",
@@ -58475,9 +58373,7 @@
   "keys": [
    "implicit_reg_deep"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Yu Meng",
@@ -58996,12 +58892,11 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "grokking",
-   "power2022grokking"
+   "power2022grokking",
+   "grokking"
   ],
   "cited_in": [
    "appendix",
-   "deep_theory",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -59935,9 +59830,7 @@
   "keys": [
    "progressive_sharpening"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Zhuangzi",
@@ -60092,9 +59985,7 @@
   "keys": [
    "progressive_sharpening"
   ],
-  "cited_in": [
-   "deep_theory"
-  ]
+  "cited_in": []
  },
  {
   "name": "Ziyu Wang",
@@ -60294,6 +60185,139 @@
   ],
   "cited_in": [
    "language"
+  ]
+ },
+ {
+  "name": "Jule G. Charney",
+  "canon": "Jule G. Charney",
+  "alias": null,
+  "lat": 42.36,
+  "lng": -71.09,
+  "city": "Cambridge, USA",
+  "year": 1950.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "charney1947longwaves",
+   "charney1950nwp"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Ragnar Fjørtoft",
+  "canon": "Ragnar Fjørtoft",
+  "alias": null,
+  "lat": 42.36,
+  "lng": -71.09,
+  "city": "Cambridge, USA",
+  "year": 1950.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "charney1950nwp"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "National Research Council (Charney et al.)",
+  "canon": "National Research Council",
+  "alias": "Charney",
+  "lat": 38.89,
+  "lng": -77.05,
+  "city": "Washington, USA",
+  "year": 1955.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "charney1979report"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Nobel Foundation",
+  "canon": "Nobel Foundation",
+  "alias": null,
+  "lat": 59.33,
+  "lng": 18.07,
+  "city": "Stockholm, Sweden",
+  "year": 1913.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "onnes1913nobel"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "F. Arute et al.",
+  "canon": "F. Arute",
+  "alias": null,
+  "lat": 37.39,
+  "lng": -122.08,
+  "city": "Mountain View, USA",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "arute2019quantum"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Remi Lam et al.",
+  "canon": "Remi Lam",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, UK",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "lam2023graphcast"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Google DeepMind",
+  "canon": "Google DeepMind",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, UK",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "graphcast_github"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "ECMWF",
+  "canon": "ECMWF",
+  "alias": null,
+  "lat": 51.43,
+  "lng": -0.97,
+  "city": "Reading, UK",
+  "year": 1979.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ecmwf"
+  ],
+  "cited_in": [
+   "untold_history"
   ]
  }
 ]

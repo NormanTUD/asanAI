@@ -2232,6 +2232,7 @@ function addConsoleEasterEggs() {
    GLOSSARY — auto-linked term definitions
    ════════════════════════════════════════════════════════ */
 const GLOSSARY = {
+	'chautauqua': 'One of the self-contained units of this course. The name comes from the Chautauqua, an outdoor tradition of shared learning that began in 1874 at Chautauqua Lake, New York; Robert Pirsig used the word for the philosophical digressions that punctuate his book Zen and the Art of Motorcycle Maintenance.',
 	'tensor': 'A multi-dimensional array of numbers — the fundamental data structure in ML frameworks like TensorFlow and PyTorch.',
 	'logit': 'The raw, unnormalized output of a model layer before softmax is applied. Logits can be any real number.',
 	'softmax': 'A function that converts a vector of logits into a probability distribution where values sum to 1.',

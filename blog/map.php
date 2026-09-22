@@ -13,7 +13,7 @@ topics: history, philosophy, society
 <div class="md">
 This is the map of everything. Every person, place, institution, artifact, event and cited author that appears anywhere in this course is a dot on this globe. The threads between them show who influenced whom, who traveled where, and which signals crossed which borders — and the time slider lets you watch the web of ideas grow, year by year.
 
-**How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the lessons that mention it. When the whole planet feels small, keep zooming out — or press **Cosmic journey** and let the camera fly.
+**How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the Chautauqua pages that mention it. When the whole planet feels small, keep zooming out — or press **Cosmic journey** and let the camera fly.
 </div>
 
 <style>

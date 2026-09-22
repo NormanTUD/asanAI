@@ -17,7 +17,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-david-wheeler",
@@ -38,7 +39,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ramon-llull",
@@ -58,7 +60,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gottfried-wilhelm-leibniz",
@@ -89,7 +92,8 @@
    "leibniz1714monadology"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-charles-babbage",
@@ -111,7 +115,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ada-lovelace",
@@ -132,7 +137,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-boole",
@@ -158,7 +164,8 @@
    "boole1847analysis"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-konrad-zuse",
@@ -178,7 +185,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-santiago-ramon-y-cajal",
@@ -198,7 +206,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-camillo-golgi",
@@ -218,7 +227,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-zeno-of-elea",
@@ -239,7 +249,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-socrates",
@@ -260,7 +271,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-plato",
@@ -286,7 +298,8 @@
    "plato380republic"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-aristotle",
@@ -316,7 +329,8 @@
    "aristotlemetaphysics"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-panini",
@@ -339,7 +353,8 @@
    "panini_ashtadhyayi"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-pingala",
@@ -359,7 +374,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-simon-stevin",
@@ -379,7 +395,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-brahmagupta",
@@ -402,7 +419,8 @@
    "brahmagupta628"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alkindi",
@@ -424,7 +442,8 @@
    "alkindi_cryptanalysis"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gottlob-frege",
@@ -447,7 +466,8 @@
    "uebersinnundbedeutung"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-leonardo-torres-quevedo",
@@ -469,7 +489,8 @@
    "torres1914"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-louis-lapicque",
@@ -491,7 +512,8 @@
    "lapicque1907"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-wilhelm-lenz",
@@ -511,7 +533,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ernst-ising",
@@ -533,7 +556,8 @@
    "ising1925"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-shunichi-amari",
@@ -556,7 +580,8 @@
    "adaptivepattern"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-warren-mcculloch",
@@ -578,7 +603,8 @@
    "mccullochpitts1943"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-walter-pitts",
@@ -600,7 +626,8 @@
    "mccullochpitts1943"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-norbert-wiener",
@@ -622,7 +649,8 @@
    "wiener1948cybernetics"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-von-neumann",
@@ -645,7 +673,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alan-turing",
@@ -673,7 +702,8 @@
    "turing1950computing"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-howard-aiken",
@@ -693,7 +723,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-marcus-minsky",
@@ -719,7 +750,8 @@
    "minskyperceptrons"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-dean-edmonds",
@@ -739,7 +771,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-w-ross-ashby",
@@ -763,7 +796,8 @@
    "conantashby1970"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-roger-conant",
@@ -785,7 +819,8 @@
    "conantashby1970"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gregory-bateson",
@@ -807,7 +842,8 @@
    "batesonesteps1972"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-claude-shannon",
@@ -836,7 +872,8 @@
    "shannon1938relay"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-mccarthy",
@@ -859,7 +896,8 @@
    "mccarthy1969some"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-nathaniel-rochester",
@@ -879,7 +917,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-allen-newell",
@@ -904,7 +943,8 @@
    "newell1957gps"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-cliff-shaw",
@@ -924,7 +964,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-herbert-a-simon",
@@ -948,7 +989,8 @@
    "newell1956logictheorist"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-arthur-samuel",
@@ -970,7 +1012,8 @@
    "samuel1959checkers"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-william-chamberlain",
@@ -990,7 +1033,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-thomas-etter",
@@ -1010,7 +1054,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-christopher-strachey",
@@ -1032,7 +1077,8 @@
    "strachey1952"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-theo-lutz",
@@ -1054,7 +1100,8 @@
    "lutz1959"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-max-bense",
@@ -1074,7 +1121,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-seppo-linnainmaa",
@@ -1097,7 +1145,8 @@
    "linnainmaa1970"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alexey-ivakhnenko",
@@ -1119,7 +1168,8 @@
    "ivakhnenko1965"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-kaiming-he",
@@ -1151,7 +1201,8 @@
    "he2021mae"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-richard-socher",
@@ -1171,7 +1222,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-rajat-raina",
@@ -1193,7 +1245,8 @@
    "raina2009large"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andrew-ng",
@@ -1215,7 +1268,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-dan-ciresan",
@@ -1237,7 +1291,8 @@
    "ciresan2011flexible"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-juergen-schmidhuber",
@@ -1266,7 +1321,8 @@
    "greff2015lstm"
   ],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-sepp-hochreiter",
@@ -1289,7 +1345,8 @@
    "lstm"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-yann-lecun",
@@ -1316,7 +1373,8 @@
    "dauphin2014saddle"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-kunihiko-fukushima",
@@ -1342,7 +1400,8 @@
    "relufirst"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-david-hubel",
@@ -1365,7 +1424,8 @@
    "hubelwiesel"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-torsten-wiesel",
@@ -1388,7 +1448,8 @@
    "hubelwiesel"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alex-waibel",
@@ -1410,7 +1471,8 @@
    "waibel1987tdnn"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-wei-zhang",
@@ -1432,7 +1494,8 @@
    "zhang1988cnn"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-yoshua-bengio",
@@ -1464,7 +1527,8 @@
    "bengio2013representation"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-tomas-mikolov",
@@ -1488,7 +1552,8 @@
    "mikolov2013word2vec"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-dzmitry-bahdanau",
@@ -1512,7 +1577,8 @@
    "bahdanau2014"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-geoffrey-hinton",
@@ -1549,7 +1615,8 @@
    "hinton2007baby"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alex-krizhevsky",
@@ -1573,7 +1640,8 @@
    "srivastava2014dropout"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-garry-kasparov",
@@ -1593,7 +1661,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-frederick-jelinek",
@@ -1613,7 +1682,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-richard-s-sutton",
@@ -1636,7 +1706,8 @@
    "sutton2019bitter"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andrej-karpathy",
@@ -1662,7 +1733,8 @@
    "nanogpt"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-searle",
@@ -1687,7 +1759,8 @@
    "searle1980minds"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-hubert-dreyfus",
@@ -1709,7 +1782,8 @@
    "dreyfus1972what"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-patrick-hayes",
@@ -1732,7 +1806,8 @@
    "mccarthy1969some"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gordon-moore",
@@ -1752,7 +1827,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ed-roberts",
@@ -1774,7 +1850,8 @@
    "edroberts"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-bill-gates",
@@ -1794,7 +1871,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-paul-allen",
@@ -1814,7 +1892,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-chuck-peddle",
@@ -1834,7 +1913,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andre-truong-trong-thi",
@@ -1854,7 +1934,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-dan-bricklin",
@@ -1876,7 +1957,8 @@
    "visicalc"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-algirdas-avizienis",
@@ -1896,7 +1978,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-donald-michie",
@@ -1916,7 +1999,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-richard-gregory",
@@ -1936,7 +2020,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-seymour-papert",
@@ -1958,7 +2043,8 @@
    "minskyperceptrons"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-david-rumelhart",
@@ -1984,7 +2070,8 @@
    "rumelhart1986"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-mcclelland",
@@ -2004,7 +2091,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ashish-vaswani",
@@ -2034,7 +2122,8 @@
    "shaw2018relative"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-wendell-kelley",
@@ -2054,7 +2143,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-arthur-bryson",
@@ -2074,7 +2164,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-lewis-fry-richardson",
@@ -2097,7 +2188,8 @@
    "weatherfactory"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-piazzi",
@@ -2119,7 +2211,8 @@
    "ceresdiscovery"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gerolamo-cardano",
@@ -2141,7 +2234,8 @@
    "liberludo"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-chevalier-de-mere",
@@ -2161,7 +2255,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-blaise-pascal",
@@ -2184,7 +2279,8 @@
    "arsconjectandi"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-pierre-de-fermat",
@@ -2209,7 +2305,8 @@
    "oevresdeformat"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-abraham-de-moivre",
@@ -2229,7 +2326,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-pierre-simon-laplace",
@@ -2253,7 +2351,8 @@
    "laplace1810clt"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-adrien-marie-legendre",
@@ -2281,7 +2380,8 @@
    "legendre1786"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-carl-friedrich-gauss",
@@ -2308,7 +2408,8 @@
    "gauscurvas"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-emil-gumbel",
@@ -2328,7 +2429,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-simeon-denis-poisson",
@@ -2350,7 +2452,8 @@
    "poisson"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ladislaus-bortkiewicz",
@@ -2372,7 +2475,8 @@
    "gesetzderkleinenzahlen"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-francis-galton",
@@ -2395,7 +2499,8 @@
    "galton"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-karl-pearson",
@@ -2418,7 +2523,8 @@
    "pearson1895correlation"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-thomas-bayes",
@@ -2440,7 +2546,8 @@
    "bayes1763essay"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-peter-gustav-lejeune-dirichlet",
@@ -2460,7 +2567,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-polya",
@@ -2481,7 +2589,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-arthur-dempster",
@@ -2501,7 +2610,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-naim-laird",
@@ -2521,7 +2631,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-donald-rubin",
@@ -2541,7 +2652,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andrey-markov",
@@ -2561,7 +2673,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-clerk-maxwell",
@@ -2581,7 +2694,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ludwig-boltzmann",
@@ -2603,7 +2717,8 @@
    "boltzmann"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ronald-fisher",
@@ -2625,7 +2740,8 @@
    "fisher1922"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andrey-kolmogorov",
@@ -2648,7 +2764,8 @@
    "kolmogorov1933"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ray-solomonoff",
@@ -2668,7 +2785,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-solomon-kullback",
@@ -2690,7 +2808,8 @@
    "leiblerkullback"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-robert-leibler",
@@ -2712,7 +2831,8 @@
    "leiblerkullback"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-chris-olah",
@@ -2745,7 +2865,8 @@
    "mordvintsev2015inceptionism"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-zellig-harris",
@@ -2767,7 +2888,8 @@
    "zelligharris"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-kingsley-zipf",
@@ -2793,7 +2915,8 @@
    "zipf1949human"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-friedrich-nietzsche",
@@ -2818,7 +2941,8 @@
    "nietzsche1883zarathustra"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-joy-buolamwini",
@@ -2840,7 +2964,8 @@
    "buolamwini2018gender"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-vladimir-vapnik",
@@ -2863,7 +2988,8 @@
    "vapnik"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-leonhard-euler",
@@ -2891,7 +3017,8 @@
    "eulersolids"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-karl-wilhelm-kramp",
@@ -2913,7 +3040,8 @@
    "kramp1808"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-johannes-kepler",
@@ -2935,7 +3063,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-napier",
@@ -2957,7 +3086,8 @@
    "napier1614"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gerardus-mercator",
@@ -2977,7 +3107,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-wallis",
@@ -3000,7 +3131,8 @@
    "wallis1655"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-isaac-newton",
@@ -3028,7 +3160,8 @@
    "newtonprincipia"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-gregory",
@@ -3050,7 +3183,8 @@
    "gregoryachievements"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-brook-taylor",
@@ -3072,7 +3206,8 @@
    "taylor1715"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-colin-maclaurin",
@@ -3092,7 +3227,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-madhava-of-sangamagrama",
@@ -3113,7 +3249,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-rene-descartes",
@@ -3140,7 +3277,8 @@
    "lageometrie"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-haskell-curry",
@@ -3160,7 +3298,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-cybenko",
@@ -3184,7 +3323,8 @@
    "cybenko1989"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-bonaventura-cavalieri",
@@ -3206,7 +3346,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-archimedes",
@@ -3228,7 +3369,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-hermann-grassmann",
@@ -3248,7 +3390,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-august-mobius",
@@ -3268,7 +3411,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-bernhard-riemann",
@@ -3292,7 +3436,8 @@
    "hypothesengeometrie"
   ],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-felix-klein",
@@ -3312,7 +3457,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gerard-desargues",
@@ -3332,7 +3478,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jean-victor-poncelet",
@@ -3352,7 +3499,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-heinz-hopf",
@@ -3375,7 +3523,8 @@
    "hopf1931fibration"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-l-e-j-brouwer",
@@ -3399,7 +3548,8 @@
    "brouwer1911fixed"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jakob-listing",
@@ -3419,7 +3569,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-henri-poincare",
@@ -3443,7 +3594,8 @@
    "poincareanalysissitus"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-bernhard-scholkopf",
@@ -3465,7 +3617,8 @@
    "scholkopf2002learning"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-mercer",
@@ -3486,7 +3639,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-augustin-louis-cauchy",
@@ -3511,7 +3665,8 @@
    "cauchy1847"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-carl-gustav-jacobi",
@@ -3534,7 +3689,8 @@
    "jacobi1842"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jean-baptiste-fourier",
@@ -3556,7 +3712,8 @@
    "fourier1822"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-cooley",
@@ -3576,7 +3733,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-joost-joordens",
@@ -3596,7 +3754,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-hippocrates-of-chios",
@@ -3616,7 +3775,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-eudoxus-of-cnidus",
@@ -3636,7 +3796,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-thales-of-miletus",
@@ -3657,7 +3818,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-pythagoras",
@@ -3678,7 +3840,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-euclid",
@@ -3699,7 +3862,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-claudius-ptolemy",
@@ -3719,7 +3883,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-apollo-nius-of-perga",
@@ -3739,7 +3904,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-menelaus-of-alexandria",
@@ -3759,7 +3925,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-al-khwarizmi",
@@ -3779,7 +3946,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ibn-al-haytham",
@@ -3799,7 +3967,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-hipparchus",
@@ -3819,7 +3988,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-aryabhata",
@@ -3842,7 +4012,8 @@
    "indianastronomer"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-nasir-al-din-al-tusi",
@@ -3862,7 +4033,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-bhaskara-i",
@@ -3882,7 +4054,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-baudhayana",
@@ -3902,7 +4075,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-enrico-betti",
@@ -3922,7 +4096,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-emmy-noether",
@@ -3942,7 +4117,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-karel-cech",
@@ -3962,7 +4138,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-james-alexander",
@@ -3982,7 +4159,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-marquis-de-condorcet",
@@ -4006,7 +4184,8 @@
    "condorcet1770"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-grigori-perelman",
@@ -4026,7 +4205,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-giuseppe-peano",
@@ -4046,7 +4226,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-walther-mayer",
@@ -4066,7 +4247,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-leopold-vietoris",
@@ -4086,7 +4268,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-albert-einstein",
@@ -4106,7 +4289,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-hermann-seifert",
@@ -4126,7 +4310,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-egbert-van-kampen",
@@ -4146,7 +4331,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ronald-brown",
@@ -4166,7 +4352,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-witold-hurewicz",
@@ -4188,7 +4375,8 @@
    "hurewicz1935"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jean-pierre-serre",
@@ -4209,7 +4397,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jean-leray",
@@ -4232,7 +4421,8 @@
    "leray1948calcul"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-j-h-c-whitehead",
@@ -4254,7 +4444,8 @@
    "whitehead1949"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-samuel-eilenberg",
@@ -4277,7 +4468,8 @@
    "eilenberglane1945"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-saunders-mac-lane",
@@ -4302,7 +4494,8 @@
    "maclanemoerdijk1992"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-rudolf-carnap",
@@ -4322,7 +4515,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-norman-steenrod",
@@ -4344,7 +4538,8 @@
    "steenrod1947"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-j-f-adams",
@@ -4366,7 +4561,8 @@
    "adams1960"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-raoul-bott",
@@ -4386,7 +4582,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-kurt-reidemeister",
@@ -4408,7 +4605,8 @@
    "reidemeister1935"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-georges-de-ram",
@@ -4428,7 +4626,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-milnor",
@@ -4450,7 +4649,8 @@
    "milnor1962additivity"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-herbert-edelsbrunner",
@@ -4473,7 +4673,8 @@
    "edelsbrunner2002persistent"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-gunnar-carlsson",
@@ -4496,7 +4697,8 @@
    "carlsson2009tda"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-mathieu-cohen-steiner",
@@ -4519,7 +4721,8 @@
    "cohensteiner2007"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-eilhard-mitscherlich",
@@ -4539,7 +4742,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alfred-tarski",
@@ -4565,7 +4769,8 @@
    "tarski1956logic"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-roger-shepard",
@@ -4587,7 +4792,8 @@
    "shepard1987universal"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ludwig-wittgenstein",
@@ -4611,7 +4817,8 @@
    "wittgenstein1953investigations"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-george-lakoff",
@@ -4634,7 +4841,8 @@
    "lakoff1993metaphor"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-s-i-hayakawa",
@@ -4654,7 +4862,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alcmaeon-of-croton",
@@ -4676,7 +4885,8 @@
    "alcmaeon"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-leonardo-da-vinci",
@@ -4698,7 +4908,8 @@
    "davinci_anatomical"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-milman-parry",
@@ -4718,7 +4929,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-albert-lord",
@@ -4738,7 +4950,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-sushruta",
@@ -4760,7 +4973,8 @@
    "sushruta"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-john-wilkins",
@@ -4782,7 +4996,8 @@
    "wilkins_real_character"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-wolfgang-von-kempelen",
@@ -4804,7 +5019,8 @@
    "kempelen_speaking_machine"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-j-r-firth",
@@ -4827,7 +5043,8 @@
    "firth_context"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-ferdinand-de-saussure",
@@ -4852,7 +5069,8 @@
    "saussure1916"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-andre-martinet",
@@ -4874,7 +5092,8 @@
    "dualitypattern"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-alan-gardiner",
@@ -4896,7 +5115,8 @@
    "acrophonic"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-jean-francois-champollion",
@@ -4918,7 +5138,8 @@
    "hieroglyphsdeciphered"
   ],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-joseph-marie-jacquard",
@@ -4938,7 +5159,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-norman-koch",
@@ -4958,7 +5180,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-cueva-de-las-manos",
@@ -4979,7 +5202,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-antikythera",
@@ -4999,7 +5223,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-athens",
@@ -5020,7 +5245,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-lebombo-mountains",
@@ -5041,7 +5267,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-dolni-vestonice",
@@ -5061,7 +5288,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-mount-devin",
@@ -5081,7 +5309,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-apollo-11-rockshelter",
@@ -5101,7 +5330,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-blombos-cave",
@@ -5123,7 +5353,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-borneo",
@@ -5143,7 +5374,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-sulawesi",
@@ -5163,7 +5395,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-spain",
@@ -5183,7 +5416,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-hanover",
@@ -5205,7 +5439,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-cambridge-england",
@@ -5226,7 +5461,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-london",
@@ -5253,7 +5489,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-stockholm",
@@ -5273,7 +5510,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-paris",
@@ -5299,7 +5537,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-berlin",
@@ -5321,7 +5560,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-bletchley-park",
@@ -5341,7 +5581,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-manchester",
@@ -5361,7 +5602,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-dartmouth",
@@ -5381,7 +5623,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-munich",
@@ -5402,7 +5645,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-edinburgh",
@@ -5424,7 +5668,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-bristol",
@@ -5444,7 +5689,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-berkeley",
@@ -5466,7 +5712,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-osaka",
@@ -5486,7 +5733,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-toronto",
@@ -5510,7 +5758,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-new-york",
@@ -5530,7 +5779,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-ukraine",
@@ -5550,7 +5800,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-finland",
@@ -5570,7 +5821,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-switzerland",
@@ -5590,7 +5842,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-soviet-union",
@@ -5610,7 +5863,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-japan",
@@ -5631,7 +5885,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-egypt",
@@ -5651,7 +5906,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-serabit-el-khadim",
@@ -5671,7 +5927,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-wadi-el-hol",
@@ -5691,7 +5948,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-mesopotamia",
@@ -5712,7 +5970,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-sumer",
@@ -5732,7 +5991,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-kish",
@@ -5752,7 +6012,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-vinca",
@@ -5772,7 +6033,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-india",
@@ -5794,7 +6056,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-china",
@@ -5817,7 +6080,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-kerala",
@@ -5837,7 +6101,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-croton",
@@ -5857,7 +6122,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-lake-tanganyika",
@@ -5877,7 +6143,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-the-alps",
@@ -5897,7 +6164,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-kaliningrad",
@@ -5917,7 +6185,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-indus-valley",
@@ -5937,7 +6206,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "place-washington-dc",
@@ -5957,7 +6227,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-epigraphical-museum-athens",
@@ -5977,7 +6248,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-cornell-university",
@@ -5999,7 +6271,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-cornell-aeronautical-laboratory",
@@ -6019,7 +6292,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-office-of-naval-research",
@@ -6039,7 +6313,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-mit",
@@ -6064,7 +6339,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-raytheon",
@@ -6084,7 +6360,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-nasa",
@@ -6104,7 +6381,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-jpl",
@@ -6124,7 +6402,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-ibm",
@@ -6146,7 +6425,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-bell-labs",
@@ -6169,7 +6449,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-toronto",
@@ -6192,7 +6473,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-stanford-university",
@@ -6214,7 +6496,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-harvard-university",
@@ -6234,7 +6517,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-mits",
@@ -6254,7 +6538,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-intel",
@@ -6275,7 +6560,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-microsoft",
@@ -6299,7 +6585,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-apple",
@@ -6322,7 +6609,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-texas-instruments",
@@ -6342,7 +6630,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-mos-technology",
@@ -6362,7 +6651,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-commodore",
@@ -6382,7 +6672,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-remington-rand",
@@ -6402,7 +6693,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-digital-research",
@@ -6422,7 +6714,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-openai",
@@ -6452,7 +6745,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-google",
@@ -6482,7 +6776,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-facebook",
@@ -6502,7 +6797,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-amazon",
@@ -6524,7 +6820,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-nvidia",
@@ -6547,7 +6844,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-idsia",
@@ -6569,7 +6867,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-bbn",
@@ -6589,7 +6888,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-project-mac",
@@ -6609,7 +6909,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-macy-foundation",
@@ -6629,7 +6930,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-royal-institution",
@@ -6649,7 +6951,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-bbc",
@@ -6669,7 +6972,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-darpa",
@@ -6689,7 +6993,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-src-uk",
@@ -6709,7 +7014,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-us-navy",
@@ -6729,7 +7035,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-pentagon",
@@ -6749,7 +7056,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-manitoba",
@@ -6769,7 +7077,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-th-stuttgart",
@@ -6789,7 +7098,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-usps",
@@ -6810,7 +7120,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-sorbonne",
@@ -6830,7 +7141,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-princeton-university",
@@ -6853,7 +7165,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-edinburgh",
@@ -6874,7 +7187,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-bristol",
@@ -6894,7 +7208,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-uc-berkeley",
@@ -6914,7 +7229,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-tu-munich",
@@ -6934,7 +7250,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-british-museum",
@@ -6954,7 +7271,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-science-museum-london",
@@ -6974,7 +7292,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "institution-moravian-museum",
@@ -6994,7 +7313,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-dartmouth-workshop-1956",
@@ -7014,7 +7334,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-apollo-11-landing-1969",
@@ -7034,7 +7355,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-deep-blue-kasparov-1997",
@@ -7054,7 +7376,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-lighthill-debate-1973",
@@ -7074,7 +7397,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-ceres-discovery-1801",
@@ -7094,7 +7418,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-perceptron-press-1958",
@@ -7114,7 +7439,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-paris-calculating-machines-1951",
@@ -7134,7 +7460,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-turing-award-2018",
@@ -7154,7 +7481,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-nobel-physics-2024",
@@ -7174,7 +7502,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-nobel-medicine-1906",
@@ -7194,7 +7523,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-ibm-pc-1981",
@@ -7214,7 +7544,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-antikythera-recovery-1901",
@@ -7234,7 +7565,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-ibm-702-1953",
@@ -7254,7 +7586,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-hieroglyphs-deciphered-1822",
@@ -7274,7 +7607,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "event-wadi-el-hol-discovery-1993",
@@ -7294,7 +7628,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-antikythera-mechanism",
@@ -7315,7 +7650,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-ishango-bone",
@@ -7335,7 +7671,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-lebombo-bone",
@@ -7356,7 +7693,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-salamis-tablet",
@@ -7376,7 +7714,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-leibniz-calculating-machine",
@@ -7396,7 +7735,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-rosetta-stone",
@@ -7417,7 +7757,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-mark-i-perceptron",
@@ -7437,7 +7778,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-snarc",
@@ -7457,7 +7799,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-homeostat",
@@ -7477,7 +7820,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-altair-8800",
@@ -7497,7 +7841,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-deep-blue",
@@ -7517,7 +7862,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-venus-of-dolni-vestonice",
@@ -7537,7 +7883,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-zuse-z3",
@@ -7557,7 +7904,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "artifact-kempelen-speaking-machine",
@@ -7577,7 +7925,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part1"
+  "source": "out_part1.json",
+  "bg": false
  },
  {
   "id": "person-charles-goodhart",
@@ -7599,7 +7948,8 @@
    "goodhartslaw"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-marcus-hutter",
@@ -7621,7 +7971,8 @@
    "hutter2006universal"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-carl-gustav-jacob-jacobi",
@@ -7642,7 +7993,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-joseph-louis-lagrange",
@@ -7664,7 +8016,8 @@
    "lagrange1797theorie"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-ronald-j-williams",
@@ -7688,7 +8041,8 @@
    "rumelhart1986"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-werner-wengert",
@@ -7710,7 +8064,8 @@
    "wengert1964"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-paul-werbos",
@@ -7733,7 +8088,8 @@
    "werbos1974"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-vinod-nair",
@@ -7756,7 +8112,8 @@
    "relupaper"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-josef-hochreiter",
@@ -7781,7 +8138,8 @@
    "lstm"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jimmy-ba",
@@ -7803,7 +8161,8 @@
    "ba2016layernorm"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-herbert-robbins",
@@ -7825,7 +8184,8 @@
    "sgd"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jared-kaplan",
@@ -7847,7 +8207,8 @@
    "kaplan2020scaling"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-james-bergstra",
@@ -7871,7 +8232,8 @@
    "hyperopt"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jasper-snoek",
@@ -7893,7 +8255,8 @@
    "snoek2012practical"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jordan-hoffmann",
@@ -7916,7 +8279,8 @@
    "hoffmann2022chinchilla"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-frank-rosenblatt",
@@ -7939,7 +8303,8 @@
    "rosenblatt1958perceptron"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-alston-scott-householder",
@@ -7961,7 +8326,8 @@
    "steadystates"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-xavier-glorot",
@@ -7983,7 +8349,8 @@
    "glorot2011deep"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-dan-hendrycks",
@@ -8010,7 +8377,8 @@
    "hendrycks2021math"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-prajit-ramachandran",
@@ -8032,7 +8400,8 @@
    "ramachandran2017swish"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jonathan-frankle",
@@ -8054,7 +8423,8 @@
    "frankle2019lottery"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-christopher-watkins",
@@ -8076,7 +8446,8 @@
    "watkins1989qlearning"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-volodymyr-mnih",
@@ -8099,7 +8470,8 @@
    "mnih2016a3c"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-richard-sutton",
@@ -8125,7 +8497,8 @@
    "sutton2019bitter"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-andrew-barto",
@@ -8147,7 +8520,8 @@
    "sutton2018reinforcement"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-john-schulman",
@@ -8169,7 +8543,8 @@
    "schulman2017ppo"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-paul-christiano",
@@ -8191,7 +8566,8 @@
    "christiano2017rlhf"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-long-ouyang",
@@ -8215,7 +8591,8 @@
    "ouyang2022instructgpt"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-yuntao-bai",
@@ -8237,7 +8614,8 @@
    "bai2022constitutional"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-rafael-rafailov",
@@ -8260,7 +8638,8 @@
    "rafailov2023dpo"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-mohammad-gheshlaghi-azar",
@@ -8282,7 +8661,8 @@
    "azar2023ipo"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-kawin-ethayarajh",
@@ -8306,7 +8686,8 @@
    "ethayarajh2019contextual"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-jiwoo-hong",
@@ -8328,7 +8709,8 @@
    "hong2024orpo"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-zhihong-shao",
@@ -8352,7 +8734,8 @@
    "shao2024grpo"
   ],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-yilun-du",
@@ -8374,7 +8757,8 @@
    "du2023multiagent"
   ],
   "conf": "inferred",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-deepseek",
@@ -8401,7 +8785,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-anthropic",
@@ -8428,7 +8813,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-atari",
@@ -8448,7 +8834,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-tu-dresden",
@@ -8468,7 +8855,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-scads-ai",
@@ -8488,7 +8876,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "institution-nature",
@@ -8508,7 +8897,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "place-england",
@@ -8528,7 +8918,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "place-continental-europe",
@@ -8548,7 +8939,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "place-dresden",
@@ -8568,7 +8960,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "place-leipzig",
@@ -8588,7 +8981,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part2"
+  "source": "out_part2.json",
+  "bg": false
  },
  {
   "id": "person-rina-dechter",
@@ -8610,7 +9004,8 @@
    "deeplearningfirstuse"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-igor-aizenberg",
@@ -8632,7 +9027,8 @@
    "aizenberg2000"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-kurt-hornik",
@@ -8657,7 +9053,8 @@
    "hornik"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-maksym-telgarsky",
@@ -8679,7 +9076,8 @@
    "telgarsky2016wars"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-guido-montufar",
@@ -8702,7 +9100,8 @@
    "montufar2014regions"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-nelson-elhage",
@@ -8731,7 +9130,8 @@
    "elhage2023privileged"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-neel-nanda",
@@ -8757,7 +9157,8 @@
    "elhage2021mathematical"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-hao-li",
@@ -8779,7 +9180,8 @@
    "li2018losslandscape"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-yann-dauphin",
@@ -8801,7 +9203,8 @@
    "dauphin2014saddle"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alethea-power",
@@ -8823,7 +9226,8 @@
    "grokking"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alexander-davies",
@@ -8845,7 +9249,8 @@
    "davies2023unifying"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-mikhail-belkin",
@@ -8867,7 +9272,8 @@
    "belkin2019reconciling"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-christian-keup",
@@ -8889,7 +9295,8 @@
    "keup2022origami"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-moritz-helias",
@@ -8911,7 +9318,8 @@
    "keup2022origami"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-michal-lewandowski",
@@ -8934,7 +9342,8 @@
    "lewandowski2025spacebetween"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-asaf-amrami",
@@ -8956,7 +9365,8 @@
    "amrami2021depth"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-joav-goldberg",
@@ -8978,7 +9388,8 @@
    "amrami2021depth"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-harry-houdini",
@@ -9000,7 +9411,8 @@
    "houdini1922papermagic"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-margherita-piazzola-beloch",
@@ -9020,7 +9432,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-koji-huzita",
@@ -9040,7 +9453,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-robert-lang",
@@ -9060,7 +9474,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-erik-demaine",
@@ -9080,7 +9495,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-martin-demaine",
@@ -9100,7 +9516,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-greg-egan",
@@ -9122,7 +9539,8 @@
    "foldedkoch_img"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-thomas-hull",
@@ -9145,7 +9563,8 @@
    "hull1997origametry"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-martin-grotschel",
@@ -9167,7 +9586,8 @@
    "groetschel2005polyhedral"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-mor-geva",
@@ -9190,7 +9610,8 @@
    "keyvalmem"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-karen-simonyan",
@@ -9212,7 +9633,8 @@
    "simonyan2014vgg"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-martin-bern",
@@ -9232,7 +9654,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-gregor-hayes",
@@ -9252,7 +9675,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-diederik-kingma",
@@ -9274,7 +9698,8 @@
    "adam"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-jimmy-ba-2",
@@ -9298,7 +9723,8 @@
    "ba2016layernorm"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-carl-runge",
@@ -9320,7 +9746,8 @@
    "rungesphenomenon"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-robert-tibshirani",
@@ -9342,7 +9769,8 @@
    "tibshirani1996lasso"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-arthur-hoerl",
@@ -9364,7 +9792,8 @@
    "hoerl1970ridge"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-andrei-tikhonov",
@@ -9386,7 +9815,8 @@
    "earlyl2"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-nitish-srivastava",
@@ -9408,7 +9838,8 @@
    "srivastava2014dropout"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-rupesh-srivastava",
@@ -9430,7 +9861,8 @@
    "highway2015"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-irwin-sobel",
@@ -9450,7 +9882,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-ross-girshick",
@@ -9475,7 +9908,8 @@
    "he2021mae"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-shaoqing-ren",
@@ -9498,7 +9932,8 @@
    "ren2015faster"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-joseph-redmon",
@@ -9520,7 +9955,8 @@
    "redmon2016yolo"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-olaf-ronneberger",
@@ -9542,7 +9978,8 @@
    "ronneberger2015unet"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alexander-kirillov",
@@ -9564,7 +10001,8 @@
    "kirillov2023sam"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alexey-dosovitskiy",
@@ -9586,7 +10024,8 @@
    "dosovitskiy2021vit"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alec-radford",
@@ -9611,7 +10050,8 @@
    "gpt2"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-gabriel-goh",
@@ -9633,7 +10073,8 @@
    "goh2021multimodal"
   ],
   "conf": "inferred",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-augustus-odena",
@@ -9655,7 +10096,8 @@
    "odena2016deconvolution"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-alexander-mordvintsev",
@@ -9677,7 +10119,8 @@
    "mordvintsev2015inceptionism"
   ],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "institution-google-2",
@@ -9697,7 +10140,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-brighton",
@@ -9717,7 +10161,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "place-victoria-australia",
@@ -9737,7 +10182,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "event-usps-cnn-1989",
@@ -9757,7 +10203,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part3"
+  "source": "out_part3.json",
+  "bg": false
  },
  {
   "id": "person-andrei-markov",
@@ -9779,7 +10226,8 @@
    "markov1913ngram"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-claude-shannon-2",
@@ -9801,7 +10249,8 @@
    "shannon1948communication"
   ],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ilya-sutskever",
@@ -9823,7 +10272,8 @@
    "sutskever2011generating"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-geoffrey-hinton-2",
@@ -9847,7 +10297,8 @@
    "sutskever2011generating"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-philip-gage",
@@ -9869,7 +10320,8 @@
    "gage1994bpe"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-rico-sennrich",
@@ -9891,7 +10343,8 @@
    "sennrich2016subword"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-mike-schuster",
@@ -9913,7 +10366,8 @@
    "schuster2012wordpiece"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kaisuke-nakajima",
@@ -9935,7 +10389,8 @@
    "schuster2012wordpiece"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-george-spencer-brown",
@@ -9957,7 +10412,8 @@
    "spencerbrown1969form"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-heraclitus",
@@ -9980,7 +10436,8 @@
    "heraclitus500fragments"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-alfred-north-whitehead",
@@ -10002,7 +10459,8 @@
    "whitehead_process"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-henri-bergson",
@@ -10024,7 +10482,8 @@
    "bergson1889essai"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-f-william-lawvere",
@@ -10046,7 +10505,8 @@
    "lawvere1993categories"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-hermann-weyl",
@@ -10070,7 +10530,8 @@
    "weylriemann"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-wilfrid-sellars",
@@ -10092,7 +10553,8 @@
    "sellars1956empiricism"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-robert-brandom",
@@ -10114,7 +10576,8 @@
    "brandom1994making"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-anaxagoras",
@@ -10136,7 +10599,8 @@
    "anaxagoras450fragments"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-spinoza",
@@ -10158,7 +10622,8 @@
    "spinoza1677ethics"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-alexander-grothendieck",
@@ -10181,7 +10646,8 @@
    "grothendieck_sheaf"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-laozi",
@@ -10203,7 +10669,8 @@
    "laozi400taoteching"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-gotthard-gunther",
@@ -10225,7 +10692,8 @@
    "gunther1978idee"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-david-spivak",
@@ -10249,7 +10717,8 @@
    "spivak2014cts"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-robert-kent",
@@ -10271,7 +10740,8 @@
    "spivak2012ologs"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-steve-awodey",
@@ -10293,7 +10763,8 @@
    "awodey2010category"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-robert-goldblatt",
@@ -10315,7 +10786,8 @@
    "goldblatt1979topoi"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-peter-johnstone",
@@ -10337,7 +10809,8 @@
    "johnstone_elephant"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ieke-moerdijk",
@@ -10359,7 +10832,8 @@
    "maclanemoerdijk1992"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-olivia-caramello",
@@ -10381,7 +10855,8 @@
    "caramello2017theories"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jean-giraud",
@@ -10403,7 +10878,8 @@
    "giraud1964descente"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-michael-barr",
@@ -10425,7 +10901,8 @@
    "barr1974toposes"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-radu-diaconescu",
@@ -10447,7 +10924,8 @@
    "diaconescu1975"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-hermann-schmitz",
@@ -10470,7 +10948,8 @@
    "schmitz_neo_phenomenology"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-maurice-merleau-ponty",
@@ -10492,7 +10971,8 @@
    "merleauponty1945phenomenologie"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-parmenides",
@@ -10514,7 +10994,8 @@
    "parmenides480fragments"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-plotinus",
@@ -10536,7 +11017,8 @@
    "plotinus250enneads"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-nagarjuna",
@@ -10558,7 +11040,8 @@
    "nagarjuna150mmk"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-nicholas-of-cusa",
@@ -10580,7 +11063,8 @@
    "cusanus1440docta"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-gilles-deleuze",
@@ -10602,7 +11086,8 @@
    "deleuze1968difference"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-carl-linnaeus",
@@ -10624,7 +11109,8 @@
    "naturanonfacitsaltus"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-martin-heidegger",
@@ -10649,7 +11135,8 @@
    "heidegger1927beingandtime"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-bertrand-russell",
@@ -10671,7 +11158,8 @@
    "russell1903principia"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-f-h-bradley",
@@ -10693,7 +11181,8 @@
    "bradley1893appearance"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-brand-blanshard",
@@ -10715,7 +11204,8 @@
    "blanshard1939nature"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-laurence-bonjour",
@@ -10737,7 +11227,8 @@
    "bonjour1985structure"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-h-h-joachim",
@@ -10759,7 +11250,8 @@
    "joachim1906nature"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-nelson-goodman",
@@ -10781,7 +11273,8 @@
    "goodman1978ways"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-nancy-cartwright",
@@ -10803,7 +11296,8 @@
    "cartwright1983laws"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ian-hacking",
@@ -10825,7 +11319,8 @@
    "hacking1983representing"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-john-ladyman",
@@ -10847,7 +11342,8 @@
    "ladyman1998what"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-don-ross",
@@ -10869,7 +11365,8 @@
    "ladymanross2007everything"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-john-worrall",
@@ -10891,7 +11388,8 @@
    "worrall1989structural"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-mark-walker",
@@ -10913,7 +11411,8 @@
    "walker2019coherence"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-wilfrid-hodges",
@@ -10936,7 +11435,8 @@
    "hodges2007tarski"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-friedrich-nietzsche-2",
@@ -10958,7 +11458,8 @@
    "ueberwahrheitundluege"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-david-hilbert",
@@ -10980,7 +11481,8 @@
    "hilbert1903grundlagen"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-hassler-whitney",
@@ -11002,7 +11504,8 @@
    "whitney1936manifolds"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-charles-ehresmann",
@@ -11024,7 +11527,8 @@
    "ehresmann1950connexions"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-john-rupert-firth",
@@ -11047,7 +11551,8 @@
    "firth1957distributive"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-gerard-salton",
@@ -11069,7 +11574,8 @@
    "salton1975vectorspace"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-christopher-olah",
@@ -11101,7 +11607,8 @@
    "colah2015backprop"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kyunghyun-cho",
@@ -11125,7 +11632,8 @@
    "bahdanau2014"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-klaus-greff",
@@ -11147,7 +11655,8 @@
    "greff2015lstm"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-robert-of-chester",
@@ -11169,7 +11678,8 @@
    "chester1145"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-al-khwarizmi-2",
@@ -11191,7 +11701,8 @@
    "alkwarizma"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-edmund-gunter",
@@ -11213,7 +11724,8 @@
    "gunter1620"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jeffrey-elman",
@@ -11235,7 +11747,8 @@
    "elman1990finding"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jonas-gehring",
@@ -11257,7 +11770,8 @@
    "gehring2017convs2s"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-peter-shaw",
@@ -11279,7 +11793,8 @@
    "shaw2018relative"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jianlin-su",
@@ -11301,7 +11816,8 @@
    "rope2021"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ofir-press",
@@ -11323,7 +11839,8 @@
    "alibi2022"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-adam-paszke",
@@ -11345,7 +11862,8 @@
    "pytorch"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-naftali-tishby",
@@ -11367,7 +11885,8 @@
    "tishby2000informationbottleneck"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ruibin-xiong",
@@ -11389,7 +11908,8 @@
    "xiong2020"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-catherine-olsson",
@@ -11412,7 +11932,8 @@
    "olsson2022induction"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kevin-wang",
@@ -11435,7 +11956,8 @@
    "wang2022interpretability"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-arthur-conmy",
@@ -11457,7 +11979,8 @@
    "conmy2023automated"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-hoagy-cunningham",
@@ -11481,7 +12004,8 @@
    "cunningham2023sparse"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kevin-meng",
@@ -11504,7 +12028,8 @@
    "meng2022locating"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jack-lindsey",
@@ -11526,7 +12051,8 @@
    "lindsey2025biology"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-jack-merullo",
@@ -11550,7 +12076,8 @@
    "merullo2024talkingheads"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-adly-templeton",
@@ -11573,7 +12100,8 @@
    "templeton2024scaling"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-emmanuel-ameisen",
@@ -11595,7 +12123,8 @@
    "ameisen2025circuit"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-martin-wattenberg",
@@ -11618,7 +12147,8 @@
    "li2022othello_iclr"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kenneth-li",
@@ -11642,7 +12172,8 @@
    "li2022othello_iclr"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-kaho-park",
@@ -11666,7 +12197,8 @@
    "park2024linear"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-angeliki-giannou",
@@ -11688,7 +12220,8 @@
    "giannou2023looped"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-trenton-bricken",
@@ -11711,7 +12244,8 @@
    "bricken2023monosemanticity"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-nora-belrose",
@@ -11734,7 +12268,8 @@
    "belrose2023tunedlens"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-eric-todd",
@@ -11757,7 +12292,8 @@
    "todd2024functionvectors"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-damai-dai",
@@ -11779,7 +12315,8 @@
    "dai2022knowledgeneurons"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-hubert-ramsauer",
@@ -11801,7 +12338,8 @@
    "ramsauer2020hopfield"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-john-hopfield",
@@ -11823,7 +12361,8 @@
    "hopfield1982"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-ann-sophie-barwich",
@@ -11845,7 +12384,8 @@
    "grandmotherneuron"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-minyoung-huh",
@@ -11867,7 +12407,8 @@
    "huh2024platonic"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-yuxi-li",
@@ -11889,7 +12430,8 @@
    "glitchtokens"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-alexis-conneau",
@@ -11911,7 +12453,8 @@
    "conneau2018word"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-anders-sogaard",
@@ -11933,7 +12476,8 @@
    "sogaard2018limitations"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-maximilian-nickel",
@@ -11955,7 +12499,8 @@
    "nickel2017poincare"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-michael-polanyi",
@@ -11977,7 +12522,8 @@
    "thetacitdimension"
   ],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-pierre-deligne",
@@ -11997,7 +12543,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-alfred-wegener",
@@ -12017,7 +12564,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-myles-tierney",
@@ -12037,7 +12585,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-ephesus",
@@ -12057,7 +12606,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-clazomenae",
@@ -12077,7 +12627,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-amsterdam",
@@ -12097,7 +12648,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-gottingen",
@@ -12117,7 +12669,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-baghdad",
@@ -12138,7 +12691,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-chester",
@@ -12158,7 +12712,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-kusumapura",
@@ -12178,7 +12733,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-geneva",
@@ -12198,7 +12754,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-freiburg",
@@ -12219,7 +12776,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-elea",
@@ -12239,7 +12797,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-rome",
@@ -12260,7 +12819,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-kues",
@@ -12280,7 +12840,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-upsala",
@@ -12300,7 +12861,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-warwick",
@@ -12320,7 +12882,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-utrecht",
@@ -12340,7 +12903,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-pisa",
@@ -12360,7 +12924,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-waterloo",
@@ -12380,7 +12945,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-montreal",
@@ -12402,7 +12968,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-murray-hill",
@@ -12422,7 +12989,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-mountain-view",
@@ -12444,7 +13012,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-prague",
@@ -12464,7 +13033,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-ithaca",
@@ -12485,7 +13055,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-graz",
@@ -12506,7 +13077,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-tuebingen",
@@ -12527,7 +13099,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-novosibirsk",
@@ -12547,7 +13120,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-warwick",
@@ -12567,7 +13141,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-eth-zurich",
@@ -12587,7 +13162,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-gottingen",
@@ -12607,7 +13183,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-montreal",
@@ -12628,7 +13205,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-graz",
@@ -12649,7 +13227,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-tuebingen",
@@ -12670,7 +13249,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-uc-berkeley-2",
@@ -12692,7 +13272,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-pittsburgh",
@@ -12712,7 +13293,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-waterloo",
@@ -12733,7 +13315,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-bigscience",
@@ -12753,7 +13336,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "institution-house-of-wisdom",
@@ -12773,7 +13357,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-oxford",
@@ -12794,7 +13379,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-san-francisco",
@@ -12815,7 +13401,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-zurich",
@@ -12835,7 +13422,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-bucharest",
@@ -12855,7 +13443,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "place-ujjain",
@@ -12875,7 +13464,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part4"
+  "source": "out_part4.json",
+  "bg": false
  },
  {
   "id": "person-harry-frankfurt",
@@ -12897,7 +13487,8 @@
    "frankfurt2005onbullshit"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-gerd-gigerenzer",
@@ -12917,7 +13508,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-robert-trivers",
@@ -12937,7 +13529,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-emily-bender",
@@ -12959,7 +13552,8 @@
    "bender2021stochasticparrots"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-valentina-tereshkova",
@@ -12980,7 +13574,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-lee-sedol",
@@ -13000,7 +13595,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-aja-huang",
@@ -13020,7 +13616,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-georgi-gerganov",
@@ -13043,7 +13640,8 @@
    "gerganov2023llamacpp"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-terry-winograd",
@@ -13063,7 +13661,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-giovanni-domenico-tiepolo",
@@ -13083,7 +13682,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-shunyu-yao",
@@ -13109,7 +13709,8 @@
    "yao2023tot"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-jason-wei",
@@ -13133,7 +13734,8 @@
    "wei2022cot"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-takeshi-kojima",
@@ -13155,7 +13757,8 @@
    "kojima2022zeroshot"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-patrick-lewis",
@@ -13178,7 +13781,8 @@
    "lewis2020rag"
   ],
   "conf": "inferred",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-yury-malkov",
@@ -13201,7 +13805,8 @@
    "malkov2018hnsw"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-tim-dettmers",
@@ -13226,7 +13831,8 @@
    "dettmers2022llmint8"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-edward-hu",
@@ -13249,7 +13855,8 @@
    "hu2021lora"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-mohammad-shoeybi",
@@ -13271,7 +13878,8 @@
    "shoeybi2019megatron"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-samyam-rajbhandari",
@@ -13293,7 +13901,8 @@
    "rajbhandari2019zero"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-yanping-huang",
@@ -13315,7 +13924,8 @@
    "huang2018gpipe"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-tri-dao",
@@ -13338,7 +13948,8 @@
    "dao2022flashattention"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-joshua-ainslie",
@@ -13362,7 +13973,8 @@
    "ainslie2023gqa"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-noam-shazeer",
@@ -13385,7 +13997,8 @@
    "shazeer2019mqa"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-karl-cobbe",
@@ -13407,7 +14020,8 @@
    "cobbe2021gsm8k"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-lianmin-zheng",
@@ -13429,7 +14043,8 @@
    "zheng2023lmsys"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-aarohi-srivastava",
@@ -13451,7 +14066,8 @@
    "srivastava2022bigbench"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-jacob-austin",
@@ -13473,7 +14089,8 @@
    "austin2021mbpp"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-peter-clark",
@@ -13495,7 +14112,8 @@
    "clark2018arc"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-rowan-zellers",
@@ -13517,7 +14135,8 @@
    "zellers2019hellaswag"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-kai-greshake",
@@ -13540,7 +14159,8 @@
    "greshake2023injection"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-aman-madaan",
@@ -13563,7 +14183,8 @@
    "madaan2023selfrefine"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-noah-shinn",
@@ -13586,7 +14207,8 @@
    "shinn2023reflexion"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-jeff-johnson",
@@ -13608,7 +14230,8 @@
    "johnson2017faiss"
   ],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-france",
@@ -13630,7 +14253,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-germany",
@@ -13650,7 +14274,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-italy",
@@ -13670,7 +14295,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-tokyo",
@@ -13691,7 +14317,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-seoul",
@@ -13711,7 +14338,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-pompeii",
@@ -13731,7 +14359,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-troy",
@@ -13751,7 +14380,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-colorado",
@@ -13771,7 +14401,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-high-plains",
@@ -13791,7 +14422,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-rocky-mountains",
@@ -13811,7 +14443,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "place-assyria",
@@ -13831,7 +14464,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-meta",
@@ -13856,7 +14490,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-deepmind",
@@ -13880,7 +14515,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-huggingface",
@@ -13905,7 +14541,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-amd",
@@ -13926,7 +14563,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-cerebras",
@@ -13948,7 +14586,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-together-ai",
@@ -13968,7 +14607,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-allen-institute-ai",
@@ -13989,7 +14629,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-epoch-ai",
@@ -14010,7 +14651,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-baai",
@@ -14030,7 +14672,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-common-crawl",
@@ -14051,7 +14694,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-w3c",
@@ -14071,7 +14715,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-brave",
@@ -14091,7 +14736,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-perplexity",
@@ -14111,7 +14757,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-langchain",
@@ -14132,7 +14779,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-groq",
@@ -14152,7 +14800,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-sambanova",
@@ -14172,7 +14821,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-mozilla",
@@ -14192,7 +14842,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-spotify",
@@ -14212,7 +14863,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-pinecone",
@@ -14233,7 +14885,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-weaviate",
@@ -14254,7 +14907,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-qdrant",
@@ -14275,7 +14929,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-chroma",
@@ -14296,7 +14951,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-jina-ai",
@@ -14316,7 +14972,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-wikimedia",
@@ -14336,7 +14993,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "institution-youcom",
@@ -14356,7 +15014,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "event-alphago-leesedol-2016",
@@ -14376,7 +15035,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "event-imo-2024",
@@ -14396,7 +15056,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part5"
+  "source": "out_part5.json",
+  "bg": false
  },
  {
   "id": "person-sigmund-freud",
@@ -14416,7 +15077,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-carl-gustav-jung",
@@ -14436,7 +15098,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-roger-penrose",
@@ -14460,7 +15123,8 @@
    "penrose1989emperor"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-thomas-nagel",
@@ -14482,7 +15146,8 @@
    "nagel1974bat"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-david-chalmers",
@@ -14504,7 +15169,8 @@
    "chalmers1995consciousmind"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-paul-churchland",
@@ -14524,7 +15190,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-patricia-churchland",
@@ -14544,7 +15211,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-daniel-dennett",
@@ -14564,7 +15232,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-richard-dawkins",
@@ -14587,7 +15256,8 @@
    "dawkins1976selfishgene"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-noam-chomsky",
@@ -14608,7 +15278,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-stanislas-dehaene",
@@ -14628,7 +15299,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-karl-friston",
@@ -14651,7 +15323,8 @@
    "friston2010freeenergy"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-george-a-miller",
@@ -14673,7 +15346,8 @@
    "miller1956magicalnumber"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-eleanor-rosch",
@@ -14693,7 +15367,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-dedre-gentner",
@@ -14713,7 +15388,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-michael-tomasello",
@@ -14733,7 +15409,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-christopher-henshilwood",
@@ -14754,7 +15431,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-lorraine-daston",
@@ -14776,7 +15454,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-galileo-galilei",
@@ -14798,7 +15477,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-andy-clark",
@@ -14818,7 +15498,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-gordon-gallup",
@@ -14838,7 +15519,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-humberto-maturana",
@@ -14858,7 +15540,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-francisco-varela",
@@ -14878,7 +15561,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-wolfram-schultz",
@@ -14898,7 +15582,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-steven-loewenstein",
@@ -14918,7 +15603,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-marcus-raichle",
@@ -14938,7 +15624,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-william-g-chase",
@@ -14958,7 +15645,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-scott-mednick",
@@ -14978,7 +15666,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-john-flavell",
@@ -14998,7 +15687,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-i-j-good",
@@ -15021,7 +15711,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-stanisław-ulam",
@@ -15041,7 +15732,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-nicholas-metropolis",
@@ -15061,7 +15753,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-nick-bostrom",
@@ -15086,7 +15779,8 @@
    "bostrom2014superintelligence"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-bill-joy",
@@ -15106,7 +15800,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-doina-precup",
@@ -15126,7 +15821,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-david-silver",
@@ -15150,7 +15846,8 @@
    "silver2018zero"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-judea-pearl",
@@ -15170,7 +15867,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-john-holland",
@@ -15190,7 +15888,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-kenneth-koza",
@@ -15210,7 +15909,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-herbert-jaeger",
@@ -15230,7 +15930,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-wolfgang-maass",
@@ -15250,7 +15951,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-richard-bellman",
@@ -15270,7 +15972,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-sergey-brin",
@@ -15290,7 +15993,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-larry-page",
@@ -15310,7 +16014,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-stuart-russell",
@@ -15333,7 +16038,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-gary-tesauro",
@@ -15353,7 +16059,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-corinna-cortes",
@@ -15373,7 +16080,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-ronald-a-fisher",
@@ -15393,7 +16101,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-j-ross-quinlan",
@@ -15413,7 +16122,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-leo-breiman",
@@ -15433,7 +16143,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-david-lewis",
@@ -15453,7 +16164,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-guido-imbens",
@@ -15473,7 +16185,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-nikola-tesla",
@@ -15495,7 +16208,8 @@
    "teslaelectricmotor"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-michael-faraday",
@@ -15515,7 +16229,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-alessandro-volta",
@@ -15535,7 +16250,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-thomas-edison",
@@ -15555,7 +16271,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-charles-k-kao",
@@ -15575,7 +16292,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-joseph-nicéphore-niépce",
@@ -15597,7 +16315,8 @@
    "niepce_le_gras"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-eadweard-muybridge",
@@ -15617,7 +16336,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-samuel-morse",
@@ -15639,7 +16359,8 @@
    "morsetelegraph"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-john-harrison",
@@ -15661,7 +16382,8 @@
    "harrisonh4"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-nicolaus-copernicus",
@@ -15684,7 +16406,8 @@
    "copernicus1543revolutionibus"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-edmond-halley",
@@ -15704,7 +16427,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-francis-bacon",
@@ -15724,7 +16448,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-archimedes-of-syracuse",
@@ -15744,7 +16469,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-johannes-gutenberg",
@@ -15767,7 +16493,8 @@
    "gutenbergpress"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-john-bardeen",
@@ -15787,7 +16514,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-jack-kilby",
@@ -15809,7 +16537,8 @@
    "kilbyic"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-robert-noyce",
@@ -15831,7 +16560,8 @@
    "noyceic"
   ],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-united-arab-emirates",
@@ -15851,7 +16581,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-abu-dhabi",
@@ -15871,7 +16602,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-hangzhou",
@@ -15891,7 +16623,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-bengaluru",
@@ -15911,7 +16644,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-nairobi",
@@ -15931,7 +16665,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-accra",
@@ -15951,7 +16686,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-south-africa",
@@ -15971,7 +16707,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-nigeria",
@@ -15991,7 +16728,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-uganda",
@@ -16011,7 +16749,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-ethiopia",
@@ -16031,7 +16770,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-tunisia",
@@ -16051,7 +16791,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-singapore",
@@ -16071,7 +16812,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-israel",
@@ -16091,7 +16833,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-russia",
@@ -16111,7 +16854,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-south-korea",
@@ -16131,7 +16875,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-canada",
@@ -16151,7 +16896,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-united-kingdom",
@@ -16171,7 +16917,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-lagos",
@@ -16191,7 +16938,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-são-paulo",
@@ -16211,7 +16959,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": true
  },
  {
   "id": "place-miletus",
@@ -16231,7 +16980,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-abdera",
@@ -16251,7 +17001,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-stagira",
@@ -16271,7 +17022,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-syracuse",
@@ -16291,7 +17043,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-cairo",
@@ -16311,7 +17064,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-toruń",
@@ -16331,7 +17085,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-florence",
@@ -16351,7 +17106,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-como",
@@ -16371,7 +17127,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-magdeburg",
@@ -16391,7 +17148,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-mainz",
@@ -16411,7 +17169,8 @@
   ],
   "bibkeys": [],
   "conf": "known",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "place-lisbon",
@@ -16431,7 +17190,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-alibaba",
@@ -16451,7 +17211,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-mistral-ai",
@@ -16471,7 +17232,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-mila",
@@ -16491,7 +17253,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-cohere",
@@ -16511,7 +17274,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-g42",
@@ -16531,7 +17295,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-mbzuai",
@@ -16551,7 +17316,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-ai4bharat",
@@ -16571,7 +17337,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-iit-madras",
@@ -16591,7 +17358,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-aims",
@@ -16611,7 +17379,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-data-science-africa",
@@ -16631,7 +17400,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-deep-learning-indaba",
@@ -16651,7 +17421,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-google-ai-research-accra",
@@ -16671,7 +17442,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-lesan-ai",
@@ -16691,7 +17463,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-instadeep",
@@ -16711,7 +17484,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-sakana-ai",
@@ -16731,7 +17505,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-ai-singapore",
@@ -16751,7 +17526,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-ai21-labs",
@@ -16771,7 +17547,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-european-ai-office",
@@ -16792,7 +17569,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-xerox-parc",
@@ -16813,7 +17591,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-att",
@@ -16833,7 +17612,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-mit-lincoln-laboratory",
@@ -16853,7 +17633,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-los-alamos-national-laboratory",
@@ -16874,7 +17655,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-jet-propulsion-laboratory",
@@ -16894,7 +17676,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-cern",
@@ -16915,7 +17698,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-cambridge",
@@ -16936,7 +17720,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-university-of-oxford",
@@ -16957,7 +17742,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "institution-google-research",
@@ -16977,7 +17763,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-invention-of-the-transistor",
@@ -16998,7 +17785,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-first-integrated-circuit",
@@ -17018,7 +17806,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-apollo-11-moon-landing",
@@ -17038,7 +17827,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-alexnet-imagenet-victory",
@@ -17059,7 +17849,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-alphago-versus-lee-sedol",
@@ -17079,7 +17870,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-chatgpt-launch",
@@ -17099,7 +17891,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-eu-ai-act-entry-into-force",
@@ -17120,7 +17913,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-eu-gdpr",
@@ -17140,7 +17934,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-schrems-cjeu-ruling",
@@ -17160,7 +17955,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-casp14",
@@ -17180,7 +17976,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-nobel-prize-in-chemistry-for-alphafold",
@@ -17200,7 +17997,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-publication-of-heliocentrism",
@@ -17221,7 +18019,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-newtons-principia",
@@ -17242,7 +18041,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-shannon-information-theory",
@@ -17263,7 +18063,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-eniac-unveiled",
@@ -17283,7 +18084,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-turings-computing-paper",
@@ -17304,7 +18106,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-manhattan-project",
@@ -17324,7 +18127,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-first-transatlantic-telegraph",
@@ -17344,7 +18148,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-voltaic-pile",
@@ -17364,7 +18169,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-faraday-electromagnetic-induction",
@@ -17384,7 +18190,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-tesla-alternating-current-system",
@@ -17404,7 +18211,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-first-permanent-photograph",
@@ -17424,7 +18232,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-daguerreotype",
@@ -17444,7 +18253,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-jacquard-loom",
@@ -17464,7 +18274,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-babbage-difference-engine",
@@ -17484,7 +18295,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-gutenberg-printing-press",
@@ -17505,7 +18317,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-hollerith-tabulating-machine",
@@ -17525,7 +18338,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-first-arpanet-message",
@@ -17545,7 +18359,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-world-wide-web",
@@ -17565,7 +18380,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-colossus-breaks-lorenz",
@@ -17585,7 +18401,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "event-trinity-nuclear-test",
@@ -17605,7 +18422,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "artifact-ktesiphon-jar",
@@ -17625,7 +18443,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "artifact-voynich-manuscript",
@@ -17645,7 +18464,8 @@
   ],
   "bibkeys": [],
   "conf": "inferred",
-  "source": "out_part6"
+  "source": "out_part6.json",
+  "bg": false
  },
  {
   "id": "person-jule-charney",
@@ -17670,7 +18490,8 @@
    "charneywiki"
   ],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "person-heike-kamerlingh-onnes",
@@ -17692,7 +18513,8 @@
    "onnes1913nobel"
   ],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "place-vostok-station",
@@ -17712,7 +18534,8 @@
   ],
   "bibkeys": [],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "place-dome-c-epica",
@@ -17734,7 +18557,8 @@
    "icecorewiki"
   ],
   "conf": "known",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "place-summit-camp-greenland",
@@ -17756,7 +18580,8 @@
    "icecorewiki"
   ],
   "conf": "known",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "institution-ecmwf",
@@ -17778,7 +18603,8 @@
    "ecmwf"
   ],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "event-first-nwp-1950",
@@ -17800,7 +18626,8 @@
    "eniac1946"
   ],
   "conf": "known",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "event-quantum-supremacy-2019",
@@ -17822,7 +18649,8 @@
    "arute2019quantum"
   ],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  },
  {
   "id": "event-graphcast-2023",
@@ -17845,6 +18673,7 @@
    "graphcast_github"
   ],
   "conf": "stated",
-  "source": "out_part7_polar"
+  "source": "out_part7_polar.json",
+  "bg": false
  }
 ]
