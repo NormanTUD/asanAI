@@ -688,17 +688,25 @@ function bootAtlas() {
 	}
 	function updateZoomFade() {
 		var d = state.d;
-		// CMB fades in only for the final stretch, so it never bleeds into
-		// the galaxy / solar-system views
-		var cmbO = THREE.MathUtils.smoothstep(d, 300, 430);
-		if (cmb) { cmb.material.opacity = cmbO; }
-		var starO = 0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40);
+		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
+			* (1 - THREE.MathUtils.smoothstep(d, 470, 560));
 		if (starField) { starField.material.opacity = starO; }
-		// galaxies are a mid-zoom view; fully gone well before the CMB
+		// galaxies are a mid-zoom view; fully gone well before the web
 		var galO = THREE.MathUtils.smoothstep(d, 24, 90) * (1 - THREE.MathUtils.smoothstep(d, 160, 280));
 		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
-		var sunO = THREE.MathUtils.smoothstep(d, 14, 40) * (1 - THREE.MathUtils.smoothstep(d, 400, 470));
-		var showPlanets = d > 12 && d < 400;
+		// the cosmic web sits between the galaxies and the CMB photo
+		var filO = THREE.MathUtils.smoothstep(d, 120, 220) * (1 - THREE.MathUtils.smoothstep(d, 330, 430));
+		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
+		filamentNodes.forEach(function (s) { s.material.opacity = filO * 0.85; });
+		// the CMB photo appears only at the very end, and gives way to
+		// the question world
+		var cmbO = THREE.MathUtils.smoothstep(d, 320, 400) * (1 - THREE.MathUtils.smoothstep(d, 480, 560));
+		if (cmbPhoto) { cmbPhoto.material.opacity = cmbO; }
+		// the question-mark world is the final stop
+		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
+		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
+		var sunO = THREE.MathUtils.smoothstep(d, 14, 40) * (1 - THREE.MathUtils.smoothstep(d, 280, 380));
+		var showPlanets = d > 12 && d < 380;
 		planets.forEach(function (p) { p.visible = showPlanets; });
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
 		if (atmosphere) { atmosphere.material.opacity = atmO; }
@@ -893,12 +901,10 @@ function bootAtlas() {
 	}
 	function flyTo(d) {
 		// orient so the dot faces the camera, at a comfortable distance
-		state.tTheta = -((d.lng + 180) * DEG) ;
-		// derive from latLngToVec3: position angle = atan2(z, x)
-		var v = latLngToVec3(d.lat, d.lng, 1);
+		var v = dotWorldPos(d, 0);
 		state.tTheta = Math.atan2(v.z, v.x);
-		state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y, -1, 1));
-		state.tD = d.isMoon ? 4.5 : 3.1;
+		state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
+		state.tD = d.isMoon ? 4.8 : 3.1;
 	}
 	function setHover(d, px, py) {
 		state.hovered = d;
