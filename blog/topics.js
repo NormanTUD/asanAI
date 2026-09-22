@@ -1618,6 +1618,7 @@
 		badge.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
+			block._tbUserRevealed = true; // reader chose to see it → keep it revealed
 			revealBlock(block, true);
 		});
 		block.appendChild(badge);
@@ -1640,31 +1641,52 @@
 		return inner;
 	}
 
-	/** read everything a managed block tells us about itself */
+	/** read everything a managed block tells us about itself.
+	    `label` is the banner title: the explicit `data-optionaltitle` if
+	    present, otherwise the first H1–H6 heading inside the block (after
+	    Markdown has rendered). A math-gated block always collapses when off;
+	    `label` just makes the banner read like the section rather than bare
+	    "needs … math". `hasHeading` is used by the authoring guardrail. */
 	function blockSpec(block) {
 		const topicIds = readTopicAttr(block);
 		const tags = (block.getAttribute('data-tags') || '').split(',')
 			.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 		const scoreIds = topicIds.concat(tags);
 		const mathReq = block.getAttribute('data-mathlevel') || block.getAttribute('data-math-level');
+		const title = block.getAttribute('data-optionaltitle') || '';
+		let derived = '';
+		if (!title) {
+			const h = block.querySelector('h1, h2, h3, h4, h5, h6');
+			if (h) derived = (h.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+		}
 		return {
 			topicIds: topicIds,
 			scoreIds: scoreIds,
 			mathReq: mathReq,
-			title: block.getAttribute('data-optionaltitle') || ''
+			title: title,
+			label: title || derived,
+			hasHeading: !!derived
 		};
 	}
 
 	/** collapse a block: content stays visible but gets a gradient fade
-	    via CSS class. A small badge appears at the bottom. */
+	    via CSS class. A small badge appears at the bottom and the block is
+	    clipped to TUCK_H (eased when `animate`). */
 	function collapseBlock(block, spec, score, animate) {
 		const chip = block.querySelector(':scope > .topic-partial-chip');
 		if (chip) chip.remove();
 		ensureInner(block);
 		block.classList.remove('topic-block-revealed');
 		block.classList.remove('topic-block-partial');
+		block.classList.remove('topic-block--clipped');
 		block.classList.add('topic-block-collapsed');
 		setBanner(block, spec, score);
+		if (animate && !prefersReducedMotion()) {
+			const fromH = block.getBoundingClientRect().height || block.scrollHeight;
+			animateClip(block, fromH, TUCK_H, true);
+		} else {
+			block.classList.add('topic-block--clipped');
+		}
 	}
 
 	/** small "show the full math" affordance shown while a block is in
@@ -1681,13 +1703,51 @@
 		btn.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
+			block._tbUserRevealed = true;
 			revealBlock(block, true);
 		});
 		block.appendChild(btn);
 		return btn;
 	}
 
-	/** expand (reveal) a block: remove the fade + badge + alt mode. */
+	const TUCK_H = 120; // must match `.topic-block--clipped` max-height
+
+	/** Smoothly animate a block's clip between `fromH` and `toH` by easing
+	    its max-height. `isCollapse` keeps the rest-state clip class on the
+	    tucked end and drops it on the expanded end. Falls back to an instant
+	    jump on any failure or under reduced-motion. */
+	function animateClip(block, fromH, toH, isCollapse) {
+		try {
+			block.style.overflow = 'hidden';
+			block.style.maxHeight = fromH + 'px';
+			void block.offsetHeight; // commit the start height before easing
+			block.style.transition = 'max-height 240ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+			block.style.maxHeight = toH + 'px';
+			let done = false;
+			const finish = function () {
+				if (done) return;
+				done = true;
+				block.style.transition = '';
+				block.style.overflow = '';
+				block.style.maxHeight = '';
+				block.removeEventListener('transitionend', handler);
+				if (isCollapse) block.classList.add('topic-block--clipped');
+				else block.classList.remove('topic-block--clipped');
+			};
+			const handler = function (e) {
+				if (e.target === block && e.propertyName === 'max-height') finish();
+			};
+			block.addEventListener('transitionend', handler);
+			setTimeout(finish, 420); // safety net if transitionend is missed
+		} catch (e) {
+			block.style.maxHeight = ''; block.style.overflow = ''; block.style.transition = '';
+			if (isCollapse) block.classList.add('topic-block--clipped');
+			else block.classList.remove('topic-block--clipped');
+		}
+	}
+
+	/** expand (reveal) a block: remove the fade + badge + alt mode, then
+	    ease the clip open (or jump instantly when not animating). */
 	function revealBlock(block, animate) {
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
 		if (badge) badge.remove();
@@ -1696,6 +1756,11 @@
 		block.classList.remove('topic-block-collapsed');
 		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
+		if (animate && !prefersReducedMotion()) {
+			animateClip(block, TUCK_H, block.scrollHeight, false);
+		} else {
+			block.classList.remove('topic-block--clipped');
+		}
 	}
 
 	function reapplyBlock(block) {
@@ -1729,8 +1794,26 @@
 		block._tbSpec = spec;
 		const wasCollapsed = block.classList.contains('topic-block-collapsed');
 		const nowOff = score.state === 'off';
-		const hasTitle = !!spec.title;
+		// A math-gated block always collapses when its math is off (strong
+		// "masking"), so it no longer depends on having an explicit title.
+		// Titled blocks (or blocks with a first heading) collapse for any
+		// reason; untitled non-math blocks only dim, as before.
+		const collapsible = !!spec.label || score.why === 'math';
 		const alt = block.querySelector(':scope > .topic-block-alt');
+
+		// A block the reader manually revealed stays revealed for the whole
+		// session — a later re-score (slider tick, Markdown re-render,
+		// optional-block pass) must not tuck it back. This wins over the
+		// math-alternative path too, so "show the full math" sticks.
+		if (nowOff && block._tbUserRevealed === true) {
+			block.classList.remove('topic-block-collapsed');
+			block.classList.remove('topic-block--clipped');
+			block.classList.remove('topic-block-dimmed');
+			block.classList.remove('topic-block-alt-active');
+			block.classList.add('topic-block-revealed');
+			block._tbReason = 'user-revealed';
+			return;
+		}
 
 		// Math alternative: the block is too math-heavy for the reader and
 		// the author supplied a plain-language twin. Show the twin instead
@@ -1754,15 +1837,15 @@
 		if (staleAltReveal) staleAltReveal.remove();
 
 		if (nowOff) {
-			if (hasTitle) {
-				// Explicitly titled optional block → full collapse + banner
+			if (collapsible) {
+				// Titled / headed / math-gated block → full collapse + banner
 				if (!wasCollapsed) {
 					collapseBlock(block, spec, score, !!animate);
 				} else if (block._tbReason !== score.reason) {
 					setBanner(block, spec, score);
 				}
 			} else {
-				// No title → just dim, keep content visible
+				// No title and not a math gate → just dim, keep content visible
 				if (wasCollapsed) revealBlock(block, !!animate);
 				block.classList.add('topic-block-dimmed');
 			}
@@ -1770,6 +1853,7 @@
 			return;
 		}
 		block.classList.remove('topic-block-dimmed');
+		block.classList.remove('topic-block--clipped');
 		if (wasCollapsed) revealBlock(block, !!animate);
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);

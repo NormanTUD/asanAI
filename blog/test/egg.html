@@ -688,10 +688,25 @@ $('btnFold').addEventListener('click', animateFold);
 
 /* ------------------ Start ------------------ */
 console.info('[egg] egg.html version ' + APP_VERSION); // Guard 4: zeigt im Console, welche Version läuft
+// Guard 4: immer sichtbares Versions-Badge (unten rechts) – so siehst du auf einen Blick, ob der Cache aktuell ist
+(function () {
+  const b = document.createElement('div');
+  b.textContent = APP_VERSION;
+  b.style.cssText = 'position:fixed;bottom:6px;right:8px;font:11px monospace;color:#50fa7b;background:#1b1b22;border:1px solid #333;padding:2px 6px;border-radius:3px;z-index:9999;opacity:0.85';
+  document.body.appendChild(b);
+})();
 initThree();
 generateData();
 buildFormulaDOM();
-setOptimal();
+// Startzustand: FLACHER Slice (B1 = 1,1,1) mit optimalem Falz + Readout an
+// -> Faltlinie zeigt 1,1,1 beim Laden; 🎬 Falt-Animation falzt sie auf 0,0,0
+set('a1x', 0); set('a1y', 1);
+set('a2x', -0.87); set('a2y', -0.5);
+set('a3x', 0.87); set('a3y', -0.5);
+set('relu', true); set('n1', true); set('n2', true); set('n3', true);
+set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
+set('b1', 1); set('b2', 1); set('b3', 1);
+refreshAll();
 </script>
 </body>
 </html>
