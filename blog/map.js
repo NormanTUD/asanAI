@@ -34,6 +34,7 @@ function bootAtlas() {
 	var GALAXY_R = 210;
 	var FILAMENT_R = [260, 440]; // cosmic-web shell
 	var QUESTION_R = [380, 600]; // "?" world shell
+	var WEB_PHOTO_DIST = 300;    // flat cosmic-web photo, in front of camera
 	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
 	var STAR_R = 470;
 	var MIN_D = 1.45, MAX_D = 620;
@@ -382,6 +383,7 @@ function bootAtlas() {
 		scene.add(starField);
 
 		buildFilaments();
+		buildWebPhoto();
 		buildCmbPhoto();
 		buildQuestionWorld();
 
@@ -435,6 +437,7 @@ function bootAtlas() {
 
 	// ── deep space: filaments, CMB photo, the question world ──
 	var filamentGroup, filamentLines, filamentNodes = [];
+	var webPhoto;
 	var cmbPhoto;
 	var questionGroup, questionSprites = [];
 
@@ -500,6 +503,20 @@ function bootAtlas() {
 			})
 		);
 		scene.add(cmbPhoto);
+	}
+
+	function buildWebPhoto() {
+		// a real large-scale-structure render (Springel / MPA Garching) shown
+		// as a flat photograph at the cosmic-web stage
+		var tex = new THREE.TextureLoader().load('cosmic_web.jpg');
+		webPhoto = new THREE.Mesh(
+			new THREE.PlaneGeometry(720, 480),
+			new THREE.MeshBasicMaterial({
+				map: tex, transparent: true, opacity: 0,
+				depthWrite: false, side: THREE.DoubleSide
+			})
+		);
+		scene.add(webPhoto);
 	}
 
 	function makeQuestionTexture() {
@@ -706,6 +723,10 @@ function bootAtlas() {
 		var filO = THREE.MathUtils.smoothstep(d, 120, 220) * (1 - THREE.MathUtils.smoothstep(d, 330, 430));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
 		filamentNodes.forEach(function (s) { s.material.opacity = filO * 0.85; });
+		// the real cosmic-web photo appears at the web stage, then gives
+		// way to the CMB photo
+		var webO = THREE.MathUtils.smoothstep(d, 150, 240) * (1 - THREE.MathUtils.smoothstep(d, 330, 380));
+		if (webPhoto) { webPhoto.material.opacity = webO; }
 		// the CMB photo appears only at the very end, and gives way to
 		// the question world
 		var cmbO = THREE.MathUtils.smoothstep(d, 320, 400) * (1 - THREE.MathUtils.smoothstep(d, 480, 560));
@@ -1167,10 +1188,14 @@ function bootAtlas() {
 		requestAnimationFrame(tick);
 		applyCamera();
 		tickTour();
-		// the CMB photo hovers in front of the camera, photo-parallel
-		if (cmbPhoto) {
+		// the web + CMB photos hover in front of the camera, photo-parallel
+		if (webPhoto || cmbPhoto) {
 			var fwd = new THREE.Vector3();
 			camera.getWorldDirection(fwd);
+			if (webPhoto) {
+				webPhoto.position.copy(camera.position).addScaledVector(fwd, WEB_PHOTO_DIST);
+				webPhoto.quaternion.copy(camera.quaternion);
+			}
 			cmbPhoto.position.copy(camera.position).addScaledVector(fwd, CMB_PHOTO_DIST);
 			cmbPhoto.quaternion.copy(camera.quaternion);
 		}
