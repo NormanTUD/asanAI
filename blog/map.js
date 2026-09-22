@@ -109,8 +109,9 @@
 			t.indexOf('tranquility') !== -1 || t.indexOf('apollo') !== -1;
 	}
 	function yearRange(a, b) {
-		// overlap of [a,b] (nulls open) with "exists at state.year"
+		// "exists at state.year"; the slider's max position means "all time"
 		var T = state.year;
+		if (T >= 2026) { return true; }
 		if (a !== null && a !== undefined && a > T) { return false; }
 		if (b !== null && b !== undefined && b < T) { return false; }
 		return true;

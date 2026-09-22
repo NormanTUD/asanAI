@@ -1,0 +1,1517 @@
+[
+ {
+  "kind": "influence",
+  "from": "person-thales-of-miletus",
+  "to": "person-pythagoras",
+  "y1": -585,
+  "y2": -500,
+  "label": "Greek geometry begins"
+ },
+ {
+  "kind": "influence",
+  "from": "person-pythagoras",
+  "to": "person-euclid",
+  "y1": -530,
+  "y2": -300,
+  "label": "Number and proof"
+ },
+ {
+  "kind": "influence",
+  "from": "person-euclid",
+  "to": "person-claudius-ptolemy",
+  "y1": -300,
+  "y2": -150,
+  "label": "The Elements carried forward"
+ },
+ {
+  "kind": "influence",
+  "from": "person-archimedes-of-syracuse",
+  "to": "person-galileo-galilei",
+  "y1": -212,
+  "y2": 1564,
+  "label": "Mathematics applied to nature"
+ },
+ {
+  "kind": "influence",
+  "from": "place-syracuse",
+  "to": "person-archimedes-of-syracuse",
+  "y1": -289,
+  "y2": -212,
+  "label": "Home of Archimedes"
+ },
+ {
+  "kind": "influence",
+  "from": "person-madhava-of-sangamagrama",
+  "to": "person-isaac-newton",
+  "y1": 1400,
+  "y2": 1665,
+  "label": "Kerala series foreshadow calculus"
+ },
+ {
+  "kind": "influence",
+  "from": "person-brahmagupta",
+  "to": "person-bhaskara-i",
+  "y1": 628,
+  "y2": 650,
+  "label": "Indian algebra and zero"
+ },
+ {
+  "kind": "influence",
+  "from": "person-aryabhata",
+  "to": "person-bhaskara-i",
+  "y1": 499,
+  "y2": 600,
+  "label": "Indian astronomy"
+ },
+ {
+  "kind": "influence",
+  "from": "place-kusumapura",
+  "to": "person-aryabhata",
+  "y1": 400,
+  "y2": 500,
+  "label": "School of Nalanda"
+ },
+ {
+  "kind": "influence",
+  "from": "place-india",
+  "to": "place-baghdad",
+  "y1": 700,
+  "y2": 800,
+  "label": "Numerals and zero travel west"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alkindi",
+  "to": "person-al-khwarizmi",
+  "y1": 800,
+  "y2": 830,
+  "label": "House of Wisdom circle"
+ },
+ {
+  "kind": "influence",
+  "from": "person-al-khwarizmi",
+  "to": "place-continental-europe",
+  "y1": 830,
+  "y2": 1150,
+  "label": "Algebra and algorithms arrive"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-house-of-wisdom",
+  "to": "place-continental-europe",
+  "y1": 830,
+  "y2": 1150,
+  "label": "Translation movement"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ibn-al-haytham",
+  "to": "person-johannes-kepler",
+  "y1": 1011,
+  "y2": 1600,
+  "label": "Optics across centuries"
+ },
+ {
+  "kind": "influence",
+  "from": "place-china",
+  "to": "place-baghdad",
+  "y1": 100,
+  "y2": 751,
+  "label": "Paper reaches the Islamic world"
+ },
+ {
+  "kind": "influence",
+  "from": "place-baghdad",
+  "to": "place-continental-europe",
+  "y1": 800,
+  "y2": 1200,
+  "label": "Knowledge flows to Europe"
+ },
+ {
+  "kind": "influence",
+  "from": "person-nicolaus-copernicus",
+  "to": "person-johannes-kepler",
+  "y1": 1543,
+  "y2": 1600,
+  "label": "Heliocentrism to orbits"
+ },
+ {
+  "kind": "influence",
+  "from": "person-johannes-kepler",
+  "to": "person-isaac-newton",
+  "y1": 1609,
+  "y2": 1687,
+  "label": "Laws of motion and gravity"
+ },
+ {
+  "kind": "influence",
+  "from": "person-isaac-newton",
+  "to": "person-gottfried-wilhelm-leibniz",
+  "y1": 1666,
+  "y2": 1675,
+  "label": "Calculus in parallel"
+ },
+ {
+  "kind": "influence",
+  "from": "person-isaac-newton",
+  "to": "person-leonhard-euler",
+  "y1": 1687,
+  "y2": 1727,
+  "label": "Analysis matures"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gottfried-wilhelm-leibniz",
+  "to": "person-leonhard-euler",
+  "y1": 1684,
+  "y2": 1727,
+  "label": "Notation and methods"
+ },
+ {
+  "kind": "influence",
+  "from": "person-leonhard-euler",
+  "to": "person-joseph-louis-lagrange",
+  "y1": 1748,
+  "y2": 1766,
+  "label": "The calculus of variations"
+ },
+ {
+  "kind": "influence",
+  "from": "person-joseph-louis-lagrange",
+  "to": "person-pierre-simon-laplace",
+  "y1": 1774,
+  "y2": 1795,
+  "label": "Analysis and probability"
+ },
+ {
+  "kind": "influence",
+  "from": "person-pierre-simon-laplace",
+  "to": "person-augustin-louis-cauchy",
+  "y1": 1795,
+  "y2": 1820,
+  "label": "Rigorous analysis"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jean-baptiste-fourier",
+  "to": "person-augustin-louis-cauchy",
+  "y1": 1822,
+  "y2": 1829,
+  "label": "Series and convergence"
+ },
+ {
+  "kind": "influence",
+  "from": "person-augustin-louis-cauchy",
+  "to": "person-bernhard-riemann",
+  "y1": 1829,
+  "y2": 1854,
+  "label": "Foundations of analysis"
+ },
+ {
+  "kind": "influence",
+  "from": "person-hermann-grassmann",
+  "to": "person-david-hilbert",
+  "y1": 1844,
+  "y2": 1900,
+  "label": "Abstract algebraic structure"
+ },
+ {
+  "kind": "influence",
+  "from": "person-august-mobius",
+  "to": "person-bernhard-riemann",
+  "y1": 1827,
+  "y2": 1854,
+  "label": "Topology is born"
+ },
+ {
+  "kind": "influence",
+  "from": "person-bernhard-riemann",
+  "to": "person-egbert-van-kampen",
+  "y1": 1854,
+  "y2": 1930,
+  "label": "Geometry to topology"
+ },
+ {
+  "kind": "influence",
+  "from": "person-enrico-betti",
+  "to": "person-karel-cech",
+  "y1": 1878,
+  "y2": 1930,
+  "label": "Homology across generations"
+ },
+ {
+  "kind": "influence",
+  "from": "person-karel-cech",
+  "to": "person-jean-leray",
+  "y1": 1930,
+  "y2": 1945,
+  "label": "Sheaf theory"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jean-leray",
+  "to": "person-jean-pierre-serre",
+  "y1": 1945,
+  "y2": 1953,
+  "label": "Algebraic topology"
+ },
+ {
+  "kind": "influence",
+  "from": "person-samuel-eilenberg",
+  "to": "person-saunders-mac-lane",
+  "y1": 1945,
+  "y2": 1960,
+  "label": "Category theory"
+ },
+ {
+  "kind": "influence",
+  "from": "person-saunders-mac-lane",
+  "to": "person-steve-awodey",
+  "y1": 1960,
+  "y2": 2010,
+  "label": "Categories and logic"
+ },
+ {
+  "kind": "influence",
+  "from": "person-haskell-curry",
+  "to": "person-steve-awodey",
+  "y1": 1930,
+  "y2": 2000,
+  "label": "Curry-Howard correspondence"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gottlob-frege",
+  "to": "person-alfred-tarski",
+  "y1": 1879,
+  "y2": 1936,
+  "label": "Logic and truth"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alfred-tarski",
+  "to": "person-alan-turing",
+  "y1": 1936,
+  "y2": 1936,
+  "label": "Logic to computability"
+ },
+ {
+  "kind": "influence",
+  "from": "person-bertrand-russell",
+  "to": "person-alan-turing",
+  "y1": 1910,
+  "y2": 1936,
+  "label": "Foundations and machines"
+ },
+ {
+  "kind": "influence",
+  "from": "person-george-boole",
+  "to": "person-claude-shannon",
+  "y1": 1854,
+  "y2": 1938,
+  "label": "Boolean algebra to circuits"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ada-lovelace",
+  "to": "person-alan-turing",
+  "y1": 1843,
+  "y2": 1936,
+  "label": "The first algorithm"
+ },
+ {
+  "kind": "influence",
+  "from": "person-charles-babbage",
+  "to": "person-ada-lovelace",
+  "y1": 1833,
+  "y2": 1843,
+  "label": "The difference engine"
+ },
+ {
+  "kind": "influence",
+  "from": "person-charles-babbage",
+  "to": "person-howard-aiken",
+  "y1": 1837,
+  "y2": 1937,
+  "label": "Mechanics to the Mark I"
+ },
+ {
+  "kind": "influence",
+  "from": "person-wolfgang-von-kempelen",
+  "to": "person-charles-babbage",
+  "y1": 1770,
+  "y2": 1822,
+  "label": "The mechanical thinking machine"
+ },
+ {
+  "kind": "influence",
+  "from": "event-jacquard-loom",
+  "to": "person-charles-babbage",
+  "y1": 1804,
+  "y2": 1837,
+  "label": "Punch cards program the engine"
+ },
+ {
+  "kind": "influence",
+  "from": "person-johannes-gutenberg",
+  "to": "place-continental-europe",
+  "y1": 1440,
+  "y2": 1500,
+  "label": "The printing press spreads ideas"
+ },
+ {
+  "kind": "influence",
+  "from": "person-claude-shannon",
+  "to": "person-alan-turing",
+  "y1": 1938,
+  "y2": 1936,
+  "label": "Information meets computation"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alan-turing",
+  "to": "person-john-von-neumann",
+  "y1": 1936,
+  "y2": 1945,
+  "label": "Computation to architecture"
+ },
+ {
+  "kind": "influence",
+  "from": "person-konrad-zuse",
+  "to": "person-john-von-neumann",
+  "y1": 1941,
+  "y2": 1945,
+  "label": "Binary computing, independently"
+ },
+ {
+  "kind": "influence",
+  "from": "person-howard-aiken",
+  "to": "event-ibm-702-1953",
+  "y1": 1944,
+  "y2": 1953,
+  "label": "From Mark I to commercial machines"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-von-neumann",
+  "to": "event-eniac-unveiled",
+  "y1": 1945,
+  "y2": 1946,
+  "label": "The stored-program idea"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alan-turing",
+  "to": "event-dartmouth-workshop-1956",
+  "y1": 1950,
+  "y2": 1956,
+  "label": "The Imitation Game to AI"
+ },
+ {
+  "kind": "influence",
+  "from": "person-camillo-golgi",
+  "to": "person-santiago-ramon-y-cajal",
+  "y1": 1873,
+  "y2": 1888,
+  "label": "The neuron doctrine"
+ },
+ {
+  "kind": "influence",
+  "from": "person-santiago-ramon-y-cajal",
+  "to": "person-walter-pitts",
+  "y1": 1899,
+  "y2": 1943,
+  "label": "Neuroscience to neurons"
+ },
+ {
+  "kind": "influence",
+  "from": "person-louis-lapicque",
+  "to": "person-walter-pitts",
+  "y1": 1907,
+  "y2": 1943,
+  "label": "Excitable membranes"
+ },
+ {
+  "kind": "influence",
+  "from": "person-warren-mcculloch",
+  "to": "person-frank-rosenblatt",
+  "y1": 1943,
+  "y2": 1958,
+  "label": "The McCulloch-Pitts neuron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-walter-pitts",
+  "to": "person-frank-rosenblatt",
+  "y1": 1943,
+  "y2": 1958,
+  "label": "The formal neuron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-frank-rosenblatt",
+  "to": "person-marcus-minsky",
+  "y1": 1958,
+  "y2": 1962,
+  "label": "Perceptrons to their critics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-frank-rosenblatt",
+  "to": "event-perceptron-press-1958",
+  "y1": 1957,
+  "y2": 1958,
+  "label": "The perceptron announced"
+ },
+ {
+  "kind": "influence",
+  "from": "person-marcus-minsky",
+  "to": "event-dartmouth-workshop-1956",
+  "y1": 1950,
+  "y2": 1956,
+  "label": "Co-organizer of AI"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-mccarthy",
+  "to": "event-dartmouth-workshop-1956",
+  "y1": 1955,
+  "y2": 1956,
+  "label": "Named the field"
+ },
+ {
+  "kind": "influence",
+  "from": "person-claude-shannon",
+  "to": "person-marcus-minsky",
+  "y1": 1948,
+  "y2": 1956,
+  "label": "Information theory to AI"
+ },
+ {
+  "kind": "influence",
+  "from": "person-wilhelm-lenz",
+  "to": "person-ernst-ising",
+  "y1": 1920,
+  "y2": 1925,
+  "label": "The Ising model"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ernst-ising",
+  "to": "person-john-hopfield",
+  "y1": 1925,
+  "y2": 1982,
+  "label": "Statistical physics to memories"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-hopfield",
+  "to": "person-geoffrey-hinton",
+  "y1": 1982,
+  "y2": 1986,
+  "label": "Boltzmann machines"
+ },
+ {
+  "kind": "influence",
+  "from": "person-seppo-linnainmaa",
+  "to": "person-paul-werbos",
+  "y1": 1973,
+  "y2": 1974,
+  "label": "Reverse-mode autodiff"
+ },
+ {
+  "kind": "influence",
+  "from": "person-paul-werbos",
+  "to": "person-david-rumelhart",
+  "y1": 1974,
+  "y2": 1986,
+  "label": "Backpropagation rediscovered"
+ },
+ {
+  "kind": "influence",
+  "from": "person-david-rumelhart",
+  "to": "person-geoffrey-hinton",
+  "y1": 1986,
+  "y2": 1986,
+  "label": "Backpropagation to deep learning"
+ },
+ {
+  "kind": "influence",
+  "from": "person-geoffrey-hinton",
+  "to": "person-yoshua-bengio",
+  "y1": 1986,
+  "y2": 2006,
+  "label": "The deep learning trio"
+ },
+ {
+  "kind": "influence",
+  "from": "person-geoffrey-hinton",
+  "to": "person-yann-lecun",
+  "y1": 1986,
+  "y2": 1998,
+  "label": "Convolutional networks"
+ },
+ {
+  "kind": "influence",
+  "from": "person-geoffrey-hinton",
+  "to": "person-ilya-sutskever",
+  "y1": 2009,
+  "y2": 2012,
+  "label": "Deep learning at Google"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kunihiko-fukushima",
+  "to": "person-yann-lecun",
+  "y1": 1980,
+  "y2": 1998,
+  "label": "Neocognitron to LeNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-david-hubel",
+  "to": "person-kunihiko-fukushima",
+  "y1": 1962,
+  "y2": 1980,
+  "label": "Visual cortex to neocognitron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-torsten-wiesel",
+  "to": "person-david-hubel",
+  "y1": 1958,
+  "y2": 1962,
+  "label": "Feature detectors in the cortex"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alex-krizhevsky",
+  "to": "event-alexnet-imagenet-victory",
+  "y1": 2012,
+  "y2": 2012,
+  "label": "Deep vision wins"
+ },
+ {
+  "kind": "influence",
+  "from": "person-geoffrey-hinton",
+  "to": "event-alexnet-imagenet-victory",
+  "y1": 2012,
+  "y2": 2012,
+  "label": "The deep learning turning point"
+ },
+ {
+  "kind": "influence",
+  "from": "person-karen-simonyan",
+  "to": "person-kaiming-he",
+  "y1": 2014,
+  "y2": 2015,
+  "label": "VGG to ResNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ashish-vaswani",
+  "to": "person-alec-radford",
+  "y1": 2017,
+  "y2": 2018,
+  "label": "Attention to GPT"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alec-radford",
+  "to": "event-chatgpt-launch",
+  "y1": 2018,
+  "y2": 2022,
+  "label": "GPT to ChatGPT"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ilya-sutskever",
+  "to": "person-ashish-vaswani",
+  "y1": 2012,
+  "y2": 2017,
+  "label": "The Transformer team"
+ },
+ {
+  "kind": "influence",
+  "from": "person-yoshua-bengio",
+  "to": "person-ilya-sutskever",
+  "y1": 2006,
+  "y2": 2012,
+  "label": "Sequence models"
+ },
+ {
+  "kind": "influence",
+  "from": "person-tomas-mikolov",
+  "to": "person-dzmitry-bahdanau",
+  "y1": 2013,
+  "y2": 2014,
+  "label": "word2vec to attention"
+ },
+ {
+  "kind": "influence",
+  "from": "person-dzmitry-bahdanau",
+  "to": "person-kyunghyun-cho",
+  "y1": 2014,
+  "y2": 2014,
+  "label": "Attention and the GRU"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kyunghyun-cho",
+  "to": "person-ashish-vaswani",
+  "y1": 2014,
+  "y2": 2017,
+  "label": "Sequence modeling to Transformers"
+ },
+ {
+  "kind": "influence",
+  "from": "person-noam-shazeer",
+  "to": "person-ashish-vaswani",
+  "y1": 2015,
+  "y2": 2017,
+  "label": "Building the Transformer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-volodymyr-mnih",
+  "to": "person-richard-sutton",
+  "y1": 2013,
+  "y2": 2015,
+  "label": "Deep reinforcement learning"
+ },
+ {
+  "kind": "influence",
+  "from": "person-richard-sutton",
+  "to": "person-volodymyr-mnih",
+  "y1": 1988,
+  "y2": 2013,
+  "label": "RL theory to DQN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-andrew-barto",
+  "to": "person-richard-sutton",
+  "y1": 1977,
+  "y2": 1988,
+  "label": "Reinforcement learning"
+ },
+ {
+  "kind": "influence",
+  "from": "person-richard-bellman",
+  "to": "person-andrew-barto",
+  "y1": 1957,
+  "y2": 1977,
+  "label": "Dynamic programming to RL"
+ },
+ {
+  "kind": "influence",
+  "from": "person-george-a-miller",
+  "to": "person-herbert-a-simon",
+  "y1": 1952,
+  "y2": 1956,
+  "label": "The cognitive revolution"
+ },
+ {
+  "kind": "influence",
+  "from": "person-allen-newell",
+  "to": "person-herbert-a-simon",
+  "y1": 1955,
+  "y2": 1956,
+  "label": "The Logic Theorist"
+ },
+ {
+  "kind": "influence",
+  "from": "person-george-cybenko",
+  "to": "person-david-rumelhart",
+  "y1": 1989,
+  "y2": 1986,
+  "label": "Universal approximation"
+ },
+ {
+  "kind": "influence",
+  "from": "person-vladimir-vapnik",
+  "to": "person-bernhard-scholkopf",
+  "y1": 1995,
+  "y2": 1997,
+  "label": "Kernel methods"
+ },
+ {
+  "kind": "influence",
+  "from": "person-chevalier-de-mere",
+  "to": "person-blaise-pascal",
+  "y1": 1654,
+  "y2": 1654,
+  "label": "The problem of points"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gerolamo-cardano",
+  "to": "person-blaise-pascal",
+  "y1": 1564,
+  "y2": 1654,
+  "label": "Games of chance"
+ },
+ {
+  "kind": "influence",
+  "from": "person-blaise-pascal",
+  "to": "person-pierre-de-fermat",
+  "y1": 1654,
+  "y2": 1654,
+  "label": "The birth of probability"
+ },
+ {
+  "kind": "influence",
+  "from": "person-thomas-bayes",
+  "to": "person-pierre-simon-laplace",
+  "y1": 1763,
+  "y2": 1774,
+  "label": "Bayesian reasoning"
+ },
+ {
+  "kind": "influence",
+  "from": "person-andrey-markov",
+  "to": "person-richard-bellman",
+  "y1": 1906,
+  "y2": 1957,
+  "label": "Markov chains to MDPs"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ludwig-boltzmann",
+  "to": "person-andrey-markov",
+  "y1": 1877,
+  "y2": 1906,
+  "label": "Statistical mechanics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-james-clerk-maxwell",
+  "to": "person-ludwig-boltzmann",
+  "y1": 1860,
+  "y2": 1877,
+  "label": "Kinetic theory"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ronald-fisher",
+  "to": "person-claude-shannon",
+  "y1": 1918,
+  "y2": 1948,
+  "label": "Inference to information"
+ },
+ {
+  "kind": "influence",
+  "from": "person-claude-shannon",
+  "to": "person-solomon-kullback",
+  "y1": 1948,
+  "y2": 1951,
+  "label": "Entropy to divergence"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ray-solomonoff",
+  "to": "person-marcus-hutter",
+  "y1": 1964,
+  "y2": 2000,
+  "label": "Algorithmic induction"
+ },
+ {
+  "kind": "influence",
+  "from": "person-i-j-good",
+  "to": "person-claude-shannon",
+  "y1": 1946,
+  "y2": 1948,
+  "label": "Bell Labs statistics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-panini",
+  "to": "person-noam-chomsky",
+  "y1": -400,
+  "y2": 1957,
+  "label": "Grammar across millennia"
+ },
+ {
+  "kind": "influence",
+  "from": "person-pingala",
+  "to": "person-panini",
+  "y1": -300,
+  "y2": -400,
+  "label": "Meter to combinatorics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ferdinand-de-saussure",
+  "to": "person-noam-chomsky",
+  "y1": 1916,
+  "y2": 1957,
+  "label": "Structural linguistics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-noam-chomsky",
+  "to": "person-george-a-miller",
+  "y1": 1957,
+  "y2": 1957,
+  "label": "The psychology of language"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-zellig-harris",
+  "to": "person-frederick-jelinek",
+  "y1": 1954,
+  "y2": 1973,
+  "label": "Distributional semantics to statistics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-j-r-firth",
+  "to": "person-john-zellig-harris",
+  "y1": 1957,
+  "y2": 1954,
+  "label": "Corpus linguistics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-george-kingsley-zipf",
+  "to": "person-john-zellig-harris",
+  "y1": 1949,
+  "y2": 1954,
+  "label": "Zipf's law"
+ },
+ {
+  "kind": "influence",
+  "from": "person-frederick-jelinek",
+  "to": "person-tomas-mikolov",
+  "y1": 1973,
+  "y2": 2013,
+  "label": "Statistical NLP to word2vec"
+ },
+ {
+  "kind": "influence",
+  "from": "artifact-rosetta-stone",
+  "to": "person-jean-francois-champollion",
+  "y1": 1799,
+  "y2": 1822,
+  "label": "The key to hieroglyphs"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jean-francois-champollion",
+  "to": "event-hieroglyphs-deciphered-1822",
+  "y1": 1814,
+  "y2": 1822,
+  "label": "The decipherment"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alessandro-volta",
+  "to": "event-voltaic-pile",
+  "y1": 1800,
+  "y2": 1800,
+  "label": "The first battery"
+ },
+ {
+  "kind": "influence",
+  "from": "event-voltaic-pile",
+  "to": "person-michael-faraday",
+  "y1": 1800,
+  "y2": 1831,
+  "label": "Electricity to electromagnetism"
+ },
+ {
+  "kind": "influence",
+  "from": "person-michael-faraday",
+  "to": "event-faraday-electromagnetic-induction",
+  "y1": 1831,
+  "y2": 1831,
+  "label": "Induction discovered"
+ },
+ {
+  "kind": "influence",
+  "from": "person-michael-faraday",
+  "to": "person-nikola-tesla",
+  "y1": 1831,
+  "y2": 1882,
+  "label": "Fields to alternating current"
+ },
+ {
+  "kind": "influence",
+  "from": "person-nikola-tesla",
+  "to": "event-tesla-alternating-current-system",
+  "y1": 1882,
+  "y2": 1888,
+  "label": "The AC system"
+ },
+ {
+  "kind": "influence",
+  "from": "person-samuel-morse",
+  "to": "event-first-transatlantic-telegraph",
+  "y1": 1844,
+  "y2": 1858,
+  "label": "The telegraph"
+ },
+ {
+  "kind": "influence",
+  "from": "person-joseph-nicéphore-niépce",
+  "to": "event-first-permanent-photograph",
+  "y1": 1826,
+  "y2": 1826,
+  "label": "The first photograph"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-bardeen",
+  "to": "event-invention-of-the-transistor",
+  "y1": 1947,
+  "y2": 1947,
+  "label": "The transistor"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jack-kilby",
+  "to": "event-first-integrated-circuit",
+  "y1": 1958,
+  "y2": 1958,
+  "label": "The IC, Texas Instruments"
+ },
+ {
+  "kind": "influence",
+  "from": "person-robert-noyce",
+  "to": "event-first-integrated-circuit",
+  "y1": 1958,
+  "y2": 1959,
+  "label": "The IC, Fairchild"
+ },
+ {
+  "kind": "influence",
+  "from": "event-invention-of-the-transistor",
+  "to": "event-first-integrated-circuit",
+  "y1": 1947,
+  "y2": 1958,
+  "label": "Transistor to IC"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ed-roberts",
+  "to": "artifact-altair-8800",
+  "y1": 1974,
+  "y2": 1975,
+  "label": "The first personal computer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-bill-gates",
+  "to": "artifact-altair-8800",
+  "y1": 1975,
+  "y2": 1975,
+  "label": "Altair BASIC"
+ },
+ {
+  "kind": "influence",
+  "from": "person-paul-allen",
+  "to": "artifact-altair-8800",
+  "y1": 1975,
+  "y2": 1975,
+  "label": "Altair BASIC"
+ },
+ {
+  "kind": "influence",
+  "from": "event-ibm-pc-1981",
+  "to": "person-bill-gates",
+  "y1": 1981,
+  "y2": 1981,
+  "label": "MS-DOS"
+ },
+ {
+  "kind": "influence",
+  "from": "person-dan-bricklin",
+  "to": "event-ibm-pc-1981",
+  "y1": 1979,
+  "y2": 1981,
+  "label": "VisiCalc"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-cern",
+  "to": "event-world-wide-web",
+  "y1": 1989,
+  "y2": 1991,
+  "label": "The web is proposed"
+ },
+ {
+  "kind": "influence",
+  "from": "event-first-arpanet-message",
+  "to": "event-world-wide-web",
+  "y1": 1969,
+  "y2": 1991,
+  "label": "Network to web"
+ },
+ {
+  "kind": "influence",
+  "from": "event-world-wide-web",
+  "to": "event-chatgpt-launch",
+  "y1": 1991,
+  "y2": 2022,
+  "label": "The web becomes LLM training data"
+ },
+ {
+  "kind": "influence",
+  "from": "person-william-chamberlain",
+  "to": "person-thomas-etter",
+  "y1": 1960,
+  "y2": 1964,
+  "label": "Lunar image processing at JPL"
+ },
+ {
+  "kind": "influence",
+  "from": "person-thomas-etter",
+  "to": "institution-jpl",
+  "y1": 1960,
+  "y2": 1964,
+  "label": "Enhancing Ranger 7 images"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-nasa",
+  "to": "institution-jpl",
+  "y1": 1958,
+  "y2": 1964,
+  "label": "The space program"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-jpl",
+  "to": "event-apollo-11-moon-landing",
+  "y1": 1961,
+  "y2": 1969,
+  "label": "Guidance and imagery"
+ },
+ {
+  "kind": "signal",
+  "from": "place-england",
+  "to": "place-canada",
+  "y1": 1858,
+  "y2": 1858,
+  "label": "First transatlantic telegraph cable"
+ },
+ {
+  "kind": "signal",
+  "from": "institution-cern",
+  "to": "event-world-wide-web",
+  "y1": 1989,
+  "y2": 1991,
+  "label": "The web is proposed at CERN"
+ },
+ {
+  "kind": "signal",
+  "from": "institution-bbn",
+  "to": "institution-project-mac",
+  "y1": 1969,
+  "y2": 1969,
+  "label": "First ARPANET message"
+ },
+ {
+  "kind": "signal",
+  "from": "institution-nasa",
+  "to": "institution-jpl",
+  "y1": 1964,
+  "y2": 1964,
+  "label": "Ranger 7 lunar images to JPL"
+ },
+ {
+  "kind": "signal",
+  "from": "institution-jpl",
+  "to": "event-apollo-11-moon-landing",
+  "y1": 1969,
+  "y2": 1969,
+  "label": "Apollo 11 telemetry"
+ },
+ {
+  "kind": "signal",
+  "from": "place-china",
+  "to": "place-india",
+  "y1": 100,
+  "y2": 700,
+  "label": "Paper and numerals along the Silk Road"
+ },
+ {
+  "kind": "signal",
+  "from": "place-antikythera",
+  "to": "place-athens",
+  "y1": 1901,
+  "y2": 1902,
+  "label": "The mechanism to the museum"
+ },
+ {
+  "kind": "signal",
+  "from": "artifact-antikythera-mechanism",
+  "to": "place-athens",
+  "y1": 1901,
+  "y2": 1902,
+  "label": "Recovered and studied"
+ },
+ {
+  "kind": "signal",
+  "from": "place-kusumapura",
+  "to": "place-baghdad",
+  "y1": 600,
+  "y2": 800,
+  "label": "Indian numerals travel west"
+ },
+ {
+  "kind": "signal",
+  "from": "place-mesopotamia",
+  "to": "place-egypt",
+  "y1": -3000,
+  "y2": -2000,
+  "label": "Cuneiform and trade"
+ },
+ {
+  "kind": "signal",
+  "from": "place-sumer",
+  "to": "place-mesopotamia",
+  "y1": -3500,
+  "y2": -2500,
+  "label": "The first writing"
+ },
+ {
+  "kind": "signal",
+  "from": "place-wadi-el-hol",
+  "to": "place-egypt",
+  "y1": -3250,
+  "y2": -3250,
+  "label": "The earliest Egyptian writing"
+ },
+ {
+  "kind": "journey",
+  "person": "person-aryabhata",
+  "path": [
+   "place-kusumapura"
+  ],
+  "y1": 476,
+  "y2": 550
+ },
+ {
+  "kind": "journey",
+  "person": "person-al-khwarizmi",
+  "path": [
+   "place-baghdad"
+  ],
+  "y1": 780,
+  "y2": 850
+ },
+ {
+  "kind": "journey",
+  "person": "person-ibn-al-haytham",
+  "path": [
+   "place-cairo"
+  ],
+  "y1": 965,
+  "y2": 1040
+ },
+ {
+  "kind": "journey",
+  "person": "person-madhava-of-sangamagrama",
+  "path": [
+   "place-kerala"
+  ],
+  "y1": 1350,
+  "y2": 1425
+ },
+ {
+  "kind": "journey",
+  "person": "person-archimedes-of-syracuse",
+  "path": [
+   "place-syracuse"
+  ],
+  "y1": -289,
+  "y2": -212
+ },
+ {
+  "kind": "journey",
+  "person": "person-galileo-galilei",
+  "path": [
+   "place-florence",
+   "place-rome"
+  ],
+  "y1": 1564,
+  "y2": 1642
+ },
+ {
+  "kind": "journey",
+  "person": "person-rene-descartes",
+  "path": [
+   "place-france",
+   "place-amsterdam"
+  ],
+  "y1": 1596,
+  "y2": 1650
+ },
+ {
+  "kind": "journey",
+  "person": "person-isaac-newton",
+  "path": [
+   "place-cambridge-england",
+   "place-london"
+  ],
+  "y1": 1643,
+  "y2": 1727
+ },
+ {
+  "kind": "journey",
+  "person": "person-gottfried-wilhelm-leibniz",
+  "path": [
+   "place-hanover",
+   "place-paris",
+   "place-berlin"
+  ],
+  "y1": 1646,
+  "y2": 1716
+ },
+ {
+  "kind": "journey",
+  "person": "person-leonhard-euler",
+  "path": [
+   "place-stockholm",
+   "place-berlin"
+  ],
+  "y1": 1707,
+  "y2": 1783
+ },
+ {
+  "kind": "journey",
+  "person": "person-joseph-louis-lagrange",
+  "path": [
+   "place-como",
+   "place-paris",
+   "place-berlin"
+  ],
+  "y1": 1736,
+  "y2": 1813
+ },
+ {
+  "kind": "journey",
+  "person": "person-carl-friedrich-gauss",
+  "path": [
+   "place-gottingen"
+  ],
+  "y1": 1777,
+  "y2": 1855
+ },
+ {
+  "kind": "journey",
+  "person": "person-bernhard-riemann",
+  "path": [
+   "place-gottingen"
+  ],
+  "y1": 1826,
+  "y2": 1866
+ },
+ {
+  "kind": "journey",
+  "person": "person-ada-lovelace",
+  "path": [
+   "place-london"
+  ],
+  "y1": 1815,
+  "y2": 1852
+ },
+ {
+  "kind": "journey",
+  "person": "person-charles-babbage",
+  "path": [
+   "place-london"
+  ],
+  "y1": 1791,
+  "y2": 1871
+ },
+ {
+  "kind": "journey",
+  "person": "person-alan-turing",
+  "path": [
+   "place-manchester",
+   "place-cambridge-england",
+   "place-bletchley-park",
+   "place-manchester"
+  ],
+  "y1": 1912,
+  "y2": 1954
+ },
+ {
+  "kind": "journey",
+  "person": "person-john-von-neumann",
+  "path": [
+   "place-berlin",
+   "place-washington-dc"
+  ],
+  "y1": 1903,
+  "y2": 1957
+ },
+ {
+  "kind": "journey",
+  "person": "person-konrad-zuse",
+  "path": [
+   "place-berlin"
+  ],
+  "y1": 1910,
+  "y2": 1945
+ },
+ {
+  "kind": "journey",
+  "person": "person-claude-shannon",
+  "path": [
+   "place-new-york",
+   "place-murray-hill"
+  ],
+  "y1": 1916,
+  "y2": 1956
+ },
+ {
+  "kind": "journey",
+  "person": "person-marcus-minsky",
+  "path": [
+   "institution-princeton-university",
+   "institution-mit"
+  ],
+  "y1": 1919,
+  "y2": 1958
+ },
+ {
+  "kind": "journey",
+  "person": "person-frank-rosenblatt",
+  "path": [
+   "institution-cornell-university"
+  ],
+  "y1": 1928,
+  "y2": 1958
+ },
+ {
+  "kind": "journey",
+  "person": "person-john-mccarthy",
+  "path": [
+   "institution-uc-berkeley-2",
+   "institution-mit"
+  ],
+  "y1": 1927,
+  "y2": 1958
+ },
+ {
+  "kind": "journey",
+  "person": "person-herbert-a-simon",
+  "path": [
+   "institution-university-of-pittsburgh"
+  ],
+  "y1": 1916,
+  "y2": 1957
+ },
+ {
+  "kind": "journey",
+  "person": "person-allen-newell",
+  "path": [
+   "institution-university-of-pittsburgh"
+  ],
+  "y1": 1927,
+  "y2": 1956
+ },
+ {
+  "kind": "journey",
+  "person": "person-john-hopfield",
+  "path": [
+   "institution-princeton-university"
+  ],
+  "y1": 1933,
+  "y2": 1984
+ },
+ {
+  "kind": "journey",
+  "person": "person-david-rumelhart",
+  "path": [
+   "institution-uc-berkeley-2"
+  ],
+  "y1": 1942,
+  "y2": 1986
+ },
+ {
+  "kind": "journey",
+  "person": "person-geoffrey-hinton",
+  "path": [
+   "place-edinburgh",
+   "place-toronto",
+   "place-mountain-view",
+   "place-toronto"
+  ],
+  "y1": 1947,
+  "y2": 2017
+ },
+ {
+  "kind": "journey",
+  "person": "person-yoshua-bengio",
+  "path": [
+   "place-paris",
+   "place-montreal"
+  ],
+  "y1": 1964,
+  "y2": 2020
+ },
+ {
+  "kind": "journey",
+  "person": "person-yann-lecun",
+  "path": [
+   "place-paris",
+   "place-murray-hill",
+   "place-new-york"
+  ],
+  "y1": 1960,
+  "y2": 2013
+ },
+ {
+  "kind": "journey",
+  "person": "person-ilya-sutskever",
+  "path": [
+   "place-mountain-view",
+   "place-san-francisco"
+  ],
+  "y1": 1986,
+  "y2": 2020
+ },
+ {
+  "kind": "journey",
+  "person": "person-ashish-vaswani",
+  "path": [
+   "place-mountain-view",
+   "place-paris"
+  ],
+  "y1": 2015,
+  "y2": 2024
+ },
+ {
+  "kind": "journey",
+  "person": "person-volodymyr-mnih",
+  "path": [
+   "place-toronto",
+   "place-london"
+  ],
+  "y1": 2010,
+  "y2": 2016
+ },
+ {
+  "kind": "journey",
+  "person": "person-johannes-kepler",
+  "path": [
+   "place-prague"
+  ],
+  "y1": 1571,
+  "y2": 1630
+ },
+ {
+  "kind": "journey",
+  "person": "person-jean-baptiste-fourier",
+  "path": [
+   "place-como",
+   "place-paris"
+  ],
+  "y1": 1768,
+  "y2": 1830
+ }
+]

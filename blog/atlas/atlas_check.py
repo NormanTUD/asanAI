@@ -35,6 +35,7 @@ def main():
     authors = load("authors.json")
     bib = load("bibliography.json")
     world = load("world.json")
+    threads = load("threads.json")
     if ents is None or authors is None or bib is None or world is None:
         print("cannot continue, missing files")
         return 1
@@ -145,6 +146,29 @@ def main():
         return True
     check("land polys in range", all(in_range(p) for p in land), "%d polys" % len(land))
     check("borders in range", all(in_range([b]) for b in borders), "%d lines" % len(borders))
+
+    print("== threads.json ==")
+    if threads is not None:
+        eid = {e["id"] for e in ents}
+        n = len(threads)
+        bad_refs = 0
+        ok_shape = 0
+        for t in threads:
+            refs = [t.get("from"), t.get("to"), t.get("person")]
+            refs += t.get("path", [])
+            if all(r in eid for r in refs if r is not None) and "kind" in t:
+                ok_shape += 1
+            else:
+                bad_refs += 1
+        check("threads present", n >= 100, str(n))
+        check("thread refs resolve to entities", bad_refs == 0, "%d bad" % bad_refs)
+        check("thread shape valid", ok_shape == n, "%d/%d" % (ok_shape, n))
+        kinds = {}
+        for t in threads:
+            kinds[t.get("kind")] = kinds.get(t.get("kind"), 0) + 1
+        print("   kinds:", kinds)
+    else:
+        check("threads present", False)
 
     print("== provenance ==")
     raw = os.path.join(HERE, "raw")
