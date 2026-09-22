@@ -14,6 +14,8 @@ topics: history, philosophy, society
 This is the map of everything. Every person, place, institution, artifact, event and cited author that appears anywhere in this course is a dot on this globe. The threads between them show who influenced whom, who traveled where, and which signals crossed which borders — and the time slider lets you watch the web of ideas grow, year by year.
 
 **How to use it:** drag to look around, scroll (or pinch) to zoom, hover for a name, click for the full story with links back to the Chautauqua pages that mention it. When the whole planet feels small, keep zooming out — or press **Cosmic journey** and let the camera fly.
+
+*Photographs in the deep-space view:* the cosmic web — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 </div>
 
 <style>
