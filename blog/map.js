@@ -256,6 +256,36 @@ function bootAtlas() {
 		buildThreads();
 		applyCamera();
 
+		// ── Guardrails: catch the 5 most common texture/visibility bugs ──
+		(function guardrails() {
+			// 1. Inverted visibility: objects must be VISIBLE at d=3.2 (Earth view)
+			var d = state.d;
+			if (earth && !earth.visible && d < 10) {
+				console.error('[atlas] GUARDRAIL 1: earth.visible=false at d=' + d + ' — visibility logic is inverted');
+			}
+			if (moon && !moon.visible && d < 10) {
+				console.error('[atlas] GUARDRAIL 1: moon.visible=false at d=' + d + ' — visibility logic is inverted');
+			}
+			// 2. Opacity-0 materials: planets start at opacity 0, must be >0 at solar-system zoom
+			planets.forEach(function (p, i) {
+				if (p.material.transparent && p.material.opacity === 0 && d >= 14 && d <= 135) {
+					console.warn('[atlas] GUARDRAIL 2: planet[' + i + '] opacity=0 in solar-system range (d=' + d + ')');
+				}
+			});
+			// 3. needsUpdate: material.map must have triggered a recompile
+			[earth, moon].forEach(function (obj, i) {
+				if (obj && obj.material && obj.material.map && !obj.material.map.image) {
+					console.warn('[atlas] GUARDRAIL 3: ' + (i === 0 ? 'earth' : 'moon') + ' texture assigned but image not loaded');
+				}
+			});
+			// 4. Encoding mismatch: if textures use sRGBEncoding, renderer must match
+			if (THREE.sRGBEncoding !== undefined && renderer.outputEncoding !== THREE.sRGBEncoding) {
+				console.error('[atlas] GUARDRAIL 4: renderer.outputEncoding is not sRGBEncoding but textures use sRGB — colors will be wrong');
+			}
+			// 5. Texture 404: TextureLoader errors are silent by default — add onError
+			// (applied inline in buildEarth/buildMoon/buildCelestial via onError callbacks)
+		})();
+
 		window.__ATLAS_DEBUG = {
 			state: state,
 			scene: function () { return scene; },
@@ -757,6 +787,10 @@ function bootAtlas() {
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
 			* (1 - THREE.MathUtils.smoothstep(d, 470, 560));
 		if (starField) { starField.material.opacity = starO; }
+		// question world: black background instead of starfield
+		var qBg = THREE.MathUtils.smoothstep(d, 480, 540);
+		if (qBg > 0.5) { scene.background = new THREE.Color(0x000000); }
+		else if (bgTexture) { scene.background = bgTexture; }
 		// galaxies are a mid-zoom view; fully gone well before the web
 		var galO = THREE.MathUtils.smoothstep(d, 24, 90) * (1 - THREE.MathUtils.smoothstep(d, 160, 280));
 		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
@@ -789,15 +823,15 @@ function bootAtlas() {
 		}
 
 		// Hide terrestrial/solar bodies when zoom is extreme (cosmic/Big Bang/Question)
-		var celestialO = THREE.MathUtils.smoothstep(d, 180, 250);
-		if (earth) { earth.visible = celestialO > 0.01; }
-		if (moon) { moon.visible = celestialO > 0.01; }
-		if (atmosphere) { atmosphere.visible = celestialO > 0.01; }
+		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 180, 250);
+		if (earth) { earth.visible = celestialVis > 0.01; }
+		if (moon) { moon.visible = celestialVis > 0.01; }
+		if (atmosphere) { atmosphere.visible = celestialVis > 0.01; }
 
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
-		var solarVis = (celestialO > 0.01) && (solarO > 0.01);
+		var solarVis = (celestialVis > 0.01) && (solarO > 0.01);
 		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; }
 		planets.forEach(function (p) { p.material.opacity = solarO; p.visible = solarVis; });
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
