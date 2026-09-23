@@ -185,7 +185,7 @@ function bootAtlas() {
 	var renderer, scene, camera, earth, moon, sun, planets = [];
 	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
-	var starField, galaxyGroup, atmosphere, sunSp;
+	var starField, galaxyGroup, atmosphere, sunSp, bgTexture = null;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -240,6 +240,7 @@ function bootAtlas() {
 		renderer.setClearColor(new THREE.Color(THEME.bg), 1);
 		new THREE.TextureLoader().load('starfield_eso.jpg', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			bgTexture = tex;
 			scene.background = tex;
 		});
 		resizeToStage();
