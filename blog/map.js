@@ -613,6 +613,22 @@ function bootAtlas() {
 			blending: THREE.AdditiveBlending, depthWrite: false
 		}));
 		bhGroup.add(bhNebula);
+		// Crab Nebula sprite (SN 1054 remnant) — fades in at end of supernova phase
+		var crabTex = new THREE.TextureLoader().load('crab_nebula.jpg');
+		bhCrab = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: crabTex, transparent: true, opacity: 0, depthWrite: false
+		}));
+		bhCrab.scale.set(80, 80, 1);
+		bhCrab.visible = false;
+		bhGroup.add(bhCrab);
+		// M87 black hole photo — crossfade target at the very end
+		var m87Tex = new THREE.TextureLoader().load('m87_real.jpg');
+		bhM87 = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: m87Tex, transparent: true, opacity: 0, depthWrite: false
+		}));
+		bhM87.scale.set(120, 120, 1);
+		bhM87.visible = false;
+		bhGroup.add(bhM87);
 		scene.add(bhGroup);
 
 		// sun: 3D sphere body + glow sprite
