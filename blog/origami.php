@@ -264,6 +264,21 @@ class. So how does a network ever get at an "island" class that is completely su
 	</div>
 </div>
 
+	<h2 class="og-h2">The Geometry of the Crease — What the Hammer Does to Space</h2>
+	<p class="og-lead">The affine step (the anvil) only moves and stretches space — it cannot change what is separable. The nonlinearity is where space is actually <em>reshaped</em>. Which nonlinearity a layer uses decides what <em>class of deformation</em> it applies — and, in a precise topological sense, what the network is allowed to do to the data.</p>
+
+	<div class="md">
+The hammer comes in several shapes, and they are not interchangeable:
+
+* **ReLU** $\Phi(x)=\max(0,x)$ is piecewise-linear and, crucially, *not invertible* \cite[ReLU]{relu_wiki}: the entire negative half-space is pressed flat onto the fold. It is a **non-homeomorphism**, so it can *change the topology* of the data — close a hole, merge two components, drop a Betti number. That power to destroy structure is exactly what lets it untangle, and it is also where information is irrecoverably lost.
+* **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$ with $0<\alpha<1$ is a different animal: it is **bi-Lipschitz**, hence a *homeomorphism*. It bends the space at the crease but never crushes it — the map is invertible and the data's topology is preserved. This is why it is the activation of choice for invertible networks.
+* **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ are *smooth* ($C^\infty$) and non-monotone (they dip slightly on the negative side). Where the Jacobian has full rank they are **local diffeomorphisms** — the space is bent with no sharp crease. But they are *not* global diffeomorphisms: a non-monotone function is not one-to-one, so the layer still folds, just gently. *Smooth buys you no corners — not no folding.*
+* **Tanh** and the **sigmoid** are smooth but *saturating*: they compactify the unbounded space $\mathbb{R}^d$ into a bounded open box $(-1,1)^d$ or $(0,1)^d$. Near the origin the map is nearly linear; far out it presses the space flat against the boundary, its derivative collapsing to $0$. That is, geometrically, *exactly* the vanishing-gradient problem — the outer regions are compressed so hard that a signal cannot be read back out of them.
+* **Softmax** is the only *global* map in the list: it projects the logit vector onto the **probability simplex** $\Delta^{d-1}$, a curved $(d-1)$-dimensional object \cite{softmax_wiki}. Distances between two outputs are not Euclidean but are naturally measured by the Kullback–Leibler divergence (equivalently, the Fisher–Rao metric) — the language of *information geometry*.
+
+The ReLU's non-homeomorphism is not a defect — it is the mechanism. In the *high-dimensional underpinnings* section below we make this precise: it is exactly the activations that are **not** homeomorphisms that reduce the data's Betti numbers and manufacture the separability this chapter is about.
+</div>
+
 	<h2 class="og-h2">The Key Idea — Fold, Don't Crush</h2>
 	<p class="og-lead">The magic is in the <em>unused dimensions</em>. A ReLU hyperplane hitting the data from an unoccupied direction doesn't flatten — it <em>folds</em>, lifting the data off into a new axis.</p>
 
@@ -659,6 +674,50 @@ barely does:
 </div>
 </div>
 
+	<h2 class="og-h2">The High-Dimensional Underpinnings — Why More Dimensions Make Data Separable</h2>
+	<p class="og-lead">Folding is the <em>mechanism</em>. But why should lifting data into more dimensions make it separable at all? A body of high-dimensional mathematics says exactly this — and it is the same mathematics that makes the embedding chapters of this book work.</p>
+
+	<div class="md">
+The folding story has a quantitative backbone, and it has five load-bearing facts.
+
+**1. Cover's counting function — the arithmetic of separability** \cite[Cover, 1965]{cover1965}.
+A linear readout with $d$ weights can realize only some of the $2^N$ possible two-colourings of $N$ data points. Cover counted exactly how many, for $N$ points in general position in $\mathbb{R}^d$:
+$$C(N,d) \;=\; 2\sum_{k=0}^{d-1}\binom{N-1}{k}.$$
+When $N\le d$ this sum saturates at $2^N$: *every* dichotomy is separable — the points are "shattered" (a $d$-weight linear classifier has VC dimension $d$; add a bias and you gain one dimension, hence up to $d+1$ points). Once $N$ outnumbers $d$, only a fraction $C(N,d)/2^N$ is separable — but for fixed $N$ that fraction **rises monotonically with $d$**, tending to $1$. In Cover's own words: *"A complex pattern-classification problem, cast in a high-dimensional space nonlinearly, is more likely to be linearly separable than in a low-dimensional space, provided that the space is not densely populated."* This is the rigorous statement of this chapter's central move: a layer *wider than the data* opens dimensions in which classes that were entangled in the input become separable. Folding into unused dimensions is precisely the mechanism that pushes $d$ past the entanglement threshold.
+
+**2. Concentration of measure — the new directions are really new** \cite[Vershynin, 2018]{vershynin2018hd}.
+Why do the unused dimensions help at all? Because in $\mathbb{R}^d$ two random unit vectors are, with overwhelming probability, almost orthogonal: the inner product $\langle u,v\rangle$ concentrates at $0$ with a sub-Gaussian tail,
+$$\Pr\!\big(|\langle u,v\rangle|\ge \varepsilon\big)\;\le\;2\,e^{-c\,d\,\varepsilon^{2}}\qquad(0<\varepsilon<1),$$
+for a universal constant $c>0$. This is the *concentration of measure* on the sphere — the "curse of dimensionality" in its benign form. A ReLU opening a fold along an unoccupied direction is adding a direction that is, almost surely, independent of every existing data direction. The unused dimensions are not merely empty; they are *orthogonal* space, so the fold genuinely separates rather than shuffles. That is the geometric reason the anvil has room to fold.
+
+**3. The Johnson–Lindenstrauss lemma — the geometry survives compression** \cite[Johnson & Lindenstrauss, 1984]{johnson1984lindenstrauss}.
+There is a converse fact, and it is the one that links this chapter to the embeddings chapters. The **Johnson–Lindenstrauss lemma** says: for any $N$ points $X\subset\mathbb{R}^n$ and any $0<\varepsilon<1$, there is a linear map $f:\mathbb{R}^n\to\mathbb{R}^k$ with
+$$k \;=\; O\!\left(\frac{\log N}{\varepsilon^{2}}\right)$$
+that preserves *all* pairwise distances up to a factor of $(1\pm\varepsilon)$,
+$$(1-\varepsilon)\,\|u-v\| \;\le\; \|f(u)-f(v)\| \;\le\; (1+\varepsilon)\,\|u-v\|\qquad\text{for every }u,v\in X.$$
+The $\log N$ dependence is **tight** — optimal up to a constant factor: in general you cannot keep the *relational structure* of $N$ points in sub-logarithmically many dimensions. Read it both directions. (i) You can *throw away* most of the high dimensions and keep the geometry (which is why an embedding can be compact). (ii) The *pattern of distances and angles* — not the coordinates — is the invariant object. This is the quantitative proof of the embeddings chapter's claim that *the neighbourhood structure is the geometry, not the coordinates*. Cover's theorem and the JL lemma are two faces of one high-dimensional fact: the distance/angle structure is the load-bearing content, and enough dimensions make any finite set of points sit in a well-separated, general-position configuration.
+
+**4. Neural collapse — what the folded data looks like at the end** \cite[Papyan, Han & Donoho, 2020]{papyan2020neuralcollapse}.
+Where does all this folding *terminate*? Papyan, Han and Donoho showed that a well-trained classifier settles into a strikingly symmetric geometry. In the terminal phase of training, (i) every data point of a class collapses onto that class's mean, and (ii) the class means arrange themselves as the vertices of a **simplex equiangular tight frame** (ETF): all pairwise angles equal, every point as far from the others as the geometry allows. The ETF is the *maximally symmetric, maximally separated* configuration of $K$ points. So the "one flat cut" (or one readout per class) does not find some arbitrary separating arrangement — it lands on the most separable one the space admits. Folding, in the end, is a process of driving the data toward the most symmetric configuration a hyperplane can read off cleanly.
+
+**5. Folding is topological untangling** \cite[Naitzat, Zhitnikov & Lim, 2020]{naitzat2020topology}.
+The "egg" is literally a topological object: the inner class is a *hole* in the outer class's distribution. Topological data analysis measures such holes with **Betti numbers** ($b_0$: connected components, $b_1$: loops, $b_2$: voids). Naitzat, Zhitnikov and Lim measured what a trained network does to them: layer by layer the Betti numbers of both classes drop, nearly always all the way to the minimum ($b_0=1$ and $b_{k}=0$ for $k\ge1$, per class). And ReLU does this *faster* than a smooth activation such as $\tanh$ — because ReLU is a non-homeomorphism that *changes* topology, while $\tanh$ is a homeomorphism that *preserves* it. A deep network spreads this untangling across its layers, and deep ReLU nets turn out to be *exponentially* more powerful than shallow ones at topological simplification \cite[Ergen & Grillo, 2024]{ergengrillo2024topological}. This is the folding story stated topologically: creases close holes and glue components.
+
+Together these facts land on the **manifold hypothesis** \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}: real data sit on a low-dimensional, knotted manifold inside the high-dimensional input space, and the network's job is to unfold that knotted manifold — *through the unused dimensions* — until a single hyperplane suffices.
+</div>
+
+	<div class="og-note">
+<b>One thread through the book.</b> The same high-dimensional facts that make *folding* work make *embeddings* work. Concentration of measure is why a high-dimensional space is "spread out" enough to separate what is entangled; the Johnson–Lindenstrauss lemma is why that spread-out geometry is carried by *distances*, which survive compression — the reason a word's meaning is its <em>position in the web of its neighbours</em>, not the numbers in its coordinates. See <a href="coherent_difference">Coherent Difference</a> and <a href="embeddinglab">Embeddings</a> for the full development of that idea.
+</div>
+
+	<div class="optional md" data-headline="The precise statements, collected">
+Cover's counting function (homogeneous separators, $N$ points in general position in $\mathbb{R}^d$):
+$$C(N,d)=2\sum_{k=0}^{\min(d-1,\,N-1)}\binom{N-1}{k},\qquad C(N,d)=2^{N}\ \text{iff}\ N\le d.$$
+Johnson–Lindenstrauss: for $0<\varepsilon<1$, a random Gaussian (or sparse) $k\times n$ projection with $k\ge C\,\varepsilon^{-2}\log N$ satisfies
+$$(1-\varepsilon)\,\|u-v\|^{2}\ \le\ \|f(u)-f(v)\|^{2}\ \le\ (1+\varepsilon)\,\|u-v\|^{2}\quad\text{for all pairs},$$
+and $\Omega(\varepsilon^{-2}\log N)$ dimensions are necessary. Concentration on the sphere: for a uniform unit vector $u\in S^{d-1}$ the coordinate $d\,u_1$ is sub-Gaussian with variance of order $1$, giving $\Pr(|\langle u,v\rangle|\ge\varepsilon)\le 2e^{-c d\varepsilon^{2}}$. Neural collapse (balanced classes, cross-entropy, terminal phase): within-class features obey $\|x-\mu_{y(x)}\|\to0$, and the class means satisfy $\mu_k^{\top}\mu_{\ell}\to-\tfrac{1}{K-1}\,\|\mu_k\|^{2}$ for $k\ne\ell$ — the simplex equiangular tight frame.
+</div>
+
 	<h2 class="og-h2">The Answer — What a Hidden Layer Is For</h2>
 	<p class="og-lead">Put all the pieces together: a stack of dense ReLU layers manufactures linear separability by progressively folding the data manifold into unoccupied, higher dimensions. It is, in effect, doing <em>N</em>-dimensional origami.</p>
 
@@ -692,7 +751,10 @@ The vocabulary is worth keeping:
 * **One flat cut** = the final linear readout; in a multi-class head this is *one flat cut
   per class*, with a softmax over them picking the winner \cite{softmax_wiki}.
 * And the bridge to theory: **universal approximation $\approx$ origami + one flat cut**,
-  echoing the **fold-and-cut theorem** \cite{foldandcut_wiki}.
+   echoing the **fold-and-cut theorem** \cite{foldandcut_wiki}.
+* **The high-dimensional underpinnings** — Cover's counting function, concentration of
+  measure, the Johnson–Lindenstrauss lemma, neural collapse, and topological untangling:
+  the quantitative *why* behind every one of the above, detailed in the section just before.
 
 This is more than a picture. It reframes a mechanistic question — *what is a hidden layer
 for?* — in terms you can draw, measure, and (as the poker experiment shows) causally
@@ -747,7 +809,13 @@ This chapter is a deep dive that pays off across the book:
   finding: individual units are *not* "one class = one neuron"; the class is computed
   *across* the population.
 * **Why Do Networks Generalize?** — the fold-and-cut picture is a concrete candidate for
-  *what kind of functions the architecture's prior favours*.
+   *what kind of functions the architecture's prior favours*.
+* **Embeddings & coherent difference** — the Johnson–Lindenstrauss lemma and the
+  concentration of measure are not only what make *folding* work; they are what make an
+  *embedding space* a space at all. The distance/angle structure that a fold manufactures
+  is the same structure the <a href="embeddinglab">Embeddings</a> chapter reads as meaning,
+  and the same "the neighbourhood structure is the geometry, not the coordinates" claim
+  that <a href="coherent_difference">Coherent Difference</a> argues at the level of whole models.
 </div>
 
 <div class="optional md" data-headline="The polyhedral backbone">
