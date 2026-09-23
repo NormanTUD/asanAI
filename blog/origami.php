@@ -271,7 +271,7 @@ class. So how does a network ever get at an "island" class that is completely su
 The hammer comes in several shapes, and they are not interchangeable:
 
 * **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the whole negative half-space is pressed onto the fold. It is a **non-homeomorphism**, so it can *change the topology* of the data — close a hole, merge components, drop a Betti number \cite[Olah, 2014]{colah2014manifolds}\cite[Naitzat et al. 2020]{naitzat2020topology}. That power to destroy structure is what untangles — and where information is irrecoverably lost.
-* **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $0<\alpha<1$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so it is invertible and the topology is preserved. The activation of choice for invertible networks.
+* **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $\alpha\in(0,1)$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so it is invertible and the topology is preserved. The activation of choice for invertible networks.
 * **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ \cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu} and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ \cite[Ramachandran et al. 2017]{ramachandran2017swish} — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms**; but a non-monotone map is not one-to-one, so they are *not* global diffeomorphisms — the layer still folds, gently. *Smooth buys you no corners — not no folding.*
 * **Tanh** and the **sigmoid** — smooth but *saturating*: they compactify $\mathbb{R}^d$ into a bounded box $(-1,1)^d$ or $(0,1)^d$, pressing the space flat against the boundary where the derivative $\to 0$. Geometrically that is *exactly* the vanishing-gradient problem \cite[Olah, 2015]{colah2015backprop}.
 * **Softmax** — the only *global* map: it projects the logits onto the **probability simplex** $\Delta^{d-1}$, a curved $(d-1)$-manifold \cite{softmax_wiki}. Distances there are not Euclidean but measured by the KL divergence / Fisher–Rao metric — *information geometry* \cite[Information geometry]{info_geometry_nlab}.
@@ -691,7 +691,7 @@ $$\Pr\!\big(|\langle u,v\rangle|\ge \varepsilon\big)\;\le\;2\,e^{-c\,d\,\varepsi
 for a universal $c>0$ — the curse of dimensionality in its benign form. A fold opened along an unoccupied direction is, almost surely, independent of every existing data direction. The unused dimensions are not merely empty but *orthogonal* space, so the fold genuinely separates rather than shuffles. That is why the anvil has room to fold.
 
 **3. The Johnson–Lindenstrauss lemma — the geometry survives compression** \cite[Johnson & Lindenstrauss, 1984]{johnson1984lindenstrauss}.
-The converse, and the link to the embedding chapters. For any $N$ points $X\subset\mathbb{R}^n$ and $0<\varepsilon<1$, a linear map into $k=O(\log N/\varepsilon^{2})$ dimensions preserves *all* pairwise distances within $(1\pm\varepsilon)$:
+The converse, and the link to the embedding chapters. For any $N$ points $X\subset\mathbb{R}^n$ and $\varepsilon\in(0,1)$, a linear map into $k=O(\log N/\varepsilon^{2})$ dimensions preserves *all* pairwise distances within $(1\pm\varepsilon)$:
 $$(1-\varepsilon)\,\|u-v\| \;\le\; \|f(u)-f(v)\| \;\le\; (1+\varepsilon)\,\|u-v\|\qquad(u,v\in X).$$
 The $\log N$ bound is **tight**. Read it both ways: (i) most high dimensions can be dropped while the geometry survives — which is why an embedding can be compact; (ii) the *distance/angle pattern*, not the coordinates, is the invariant. This is the quantitative proof that *neighbourhood structure is the geometry, not the coordinates*. Cover and JL are two faces of one fact: the relational structure is the load-bearing content, and enough dimensions put any finite set into a well-separated general-position configuration.
 
@@ -711,7 +711,7 @@ Together these facts land on the **manifold hypothesis** \cite[Fefferman, Mitter
 	<div class="optional md" data-headline="The precise statements, collected">
 Cover's counting function (homogeneous separators, $N$ points in general position in $\mathbb{R}^d$):
 $$C(N,d)=2\sum_{k=0}^{\min(d-1,\,N-1)}\binom{N-1}{k},\qquad C(N,d)=2^{N}\ \text{iff}\ N\le d.$$
-Johnson–Lindenstrauss: for $0<\varepsilon<1$, a random Gaussian (or sparse) $k\times n$ projection with $k\ge C\,\varepsilon^{-2}\log N$ satisfies
+Johnson–Lindenstrauss: for $\varepsilon\in(0,1)$, a random Gaussian (or sparse) $k\times n$ projection with $k\ge C\,\varepsilon^{-2}\log N$ satisfies
 $$(1-\varepsilon)\,\|u-v\|^{2}\ \le\ \|f(u)-f(v)\|^{2}\ \le\ (1+\varepsilon)\,\|u-v\|^{2}\quad\text{for all pairs},$$
 and $\Omega(\varepsilon^{-2}\log N)$ dimensions are necessary. Concentration on the sphere: for a uniform unit vector $u\in S^{d-1}$ the coordinate $d\,u_1$ is sub-Gaussian with variance of order $1$, giving $\Pr(|\langle u,v\rangle|\ge\varepsilon)\le 2e^{-c d\varepsilon^{2}}$. Neural collapse (balanced classes, cross-entropy, terminal phase): within-class features obey $\|x-\mu_{y(x)}\|\to0$, and the class means satisfy $\mu_k^{\top}\mu_{\ell}\to-\tfrac{1}{K-1}\,\|\mu_k\|^{2}$ for $k\ne\ell$ — the simplex equiangular tight frame.
 </div>
