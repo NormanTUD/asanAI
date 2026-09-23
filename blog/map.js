@@ -472,11 +472,13 @@ function bootAtlas() {
 		var galaxySprites = [];
 		for (var gi = 0; gi < 40; gi++) {
 			var texIdx = gi % galaxyFiles.length;
+			var tint = new THREE.Color().setHSL(0.55 + Math.random() * 0.15, 0.2 + Math.random() * 0.3, 0.7 + Math.random() * 0.3);
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
 				map: spFallback, transparent: true, opacity: 0, depthWrite: false,
-				blending: THREE.AdditiveBlending
+				blending: THREE.AdditiveBlending, color: tint
 			}));
 			sp.userData.texIdx = texIdx;
+			sp.userData.rot = Math.random() * Math.PI * 2;
 			var u = Math.random() * 2 - 1;
 			var a = Math.random() * Math.PI * 2;
 			var s = Math.sqrt(1 - u * u);
@@ -965,7 +967,7 @@ function bootAtlas() {
 		});
 		// galaxies: appear after the solar system fades, gone before the web
 		var galO = THREE.MathUtils.smoothstep(d, 250, 300) * (1 - THREE.MathUtils.smoothstep(d, 380, 450));
-		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
+		galaxyGroup.children.forEach(function (sp) { sp.material.opacity = galO * (0.5 + (sp.userData.texIdx % 3) * 0.15); sp.material.rotation = sp.userData.rot || 0; });
 		// the cosmic web sits between the galaxies and the CMB photo
 		var filO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 560));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
@@ -1433,10 +1435,10 @@ function bootAtlas() {
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 30, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 180, phi: 0.1, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 300, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
+		{ d: 300, era: 'The galaxies', text: 'Each galaxy is an island of hundreds of billions of stars — the Milky Way alone holds 100–400 billion. They form from vast clouds of hydrogen and helium that collapse under gravity after the Big Bang, with the first stars igniting in dense cores and pulling in more gas until a rotating disk settles. Dark matter provides the gravitational scaffolding that holds them together. Every pixel of light you have ever seen on a screen was forged inside one of these stellar furnaces.' },
 		{ d: 450, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 550, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
-		{ d: 650, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
+		{ d: 650, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power. And from that something: stars forge the silicon in your GPU, galaxies provide the atoms, the cosmic web provides the structure, and Earth provides the water, the oxygen, and the curiosity. Every layer of this journey — from the Big Bang to the first transistor to the first perceptron — was a necessary condition for you to be reading this. AI is not separate from cosmology. It is cosmology, sufficiently evolved, beginning to ask questions back.' }
 	];
 	var TOUR_STEP_MS = 18000;
 	var tour = { active: false, step: 0, startedAt: 0 };
