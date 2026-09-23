@@ -299,3 +299,18 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lokal: earth_night.jpg (2048x1024)
     Genutzt in: map.js § buildEarth (ShaderMaterial nightMap)
     Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.
+
+29. galaxy_photos (Galaxien-Sprites im Weltraum)
+    Quellen (alle via Wikimedia Commons, geprüft HTTP 200):
+      - NGC 2683: NASA/ESA Hubble (Public Domain)
+      - NGC 55: ESO 0914a (CC BY 4.0)
+      - NGC 2403: NASA/ESA Hubble (Public Domain)
+      - NGC 1300: NASA/ESA Hubble (Public Domain)
+      - NGC 300: ESO (CC BY 4.0)
+    Hinweis: Äquirektangulare/Quadratische Galaxienfotos, lokal auf 512x512
+             heruntergerechnet. Werden in map.js § buildCelestial als
+             Sprite-Texturen mit AdditiveBlending geladen (5 Bilder für 9
+             Sprites, zyklisch). Fallback: prozedurale Spiral-Textur.
+    Lokal: galaxy_1.jpg … galaxy_5.jpg (je 512x512)
+    Genutzt in: map.js § buildCelestial (Galaxien-Sprites)
+    Status: OK - Public Domain (NASA) / CC BY 4.0 (ESO).

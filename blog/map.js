@@ -448,14 +448,19 @@ function bootAtlas() {
 		buildCmbPhoto();
 		buildQuestionWorld();
 
-		// galaxies (stylized spirals, additive blend for dark-bg blending)
+		// galaxies (real photos, additive blend for dark-bg blending)
 		galaxyGroup = new THREE.Group();
-		var spiralTex = makeSpiralTexture();
+		var galaxyFiles = ['galaxy_1.jpg', 'galaxy_2.jpg', 'galaxy_3.jpg', 'galaxy_4.jpg', 'galaxy_5.jpg'];
+		var galaxyTexs = [];
+		var spFallback = makeSpiralTexture();
+		var galaxySprites = [];
 		for (var gi = 0; gi < 9; gi++) {
+			var texIdx = gi % galaxyFiles.length;
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
-				map: spiralTex, transparent: true, opacity: 0, depthWrite: false,
+				map: spFallback, transparent: true, opacity: 0, depthWrite: false,
 				blending: THREE.AdditiveBlending
 			}));
+			sp.userData.texIdx = texIdx;
 			var u = Math.random() * 2 - 1;
 			var a = Math.random() * Math.PI * 2;
 			var s = Math.sqrt(1 - u * u);
@@ -464,6 +469,22 @@ function bootAtlas() {
 			var sc = 40 + Math.random() * 70;
 			sp.scale.set(sc, sc, 1);
 			galaxyGroup.add(sp);
+			galaxySprites.push(sp);
+		}
+		for (var ti = 0; ti < galaxyFiles.length; ti++) {
+			(function (idx) {
+				new THREE.TextureLoader().load(galaxyFiles[idx], function (tex) {
+					if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+					tex.needsUpdate = true;
+					galaxyTexs[idx] = tex;
+					galaxySprites.forEach(function (sp) {
+						if (sp.userData.texIdx === idx) {
+							sp.material.map = tex;
+							sp.material.needsUpdate = true;
+						}
+					});
+				});
+			})(ti);
 		}
 		scene.add(galaxyGroup);
 
