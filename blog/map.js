@@ -319,21 +319,58 @@ function bootAtlas() {
 		};
 	}
 
+	var earthDayNightMat = null;
+
 	function buildEarth() {
 		var geo = new THREE.SphereGeometry(EARTH_R, 64, 48);
-		var mat = new THREE.MeshPhongMaterial({
-			color: 0x14315a, shininess: 8, specular: new THREE.Color(0x1a2333)
+		earthDayNightMat = new THREE.ShaderMaterial({
+			uniforms: {
+				dayMap: { value: null },
+				nightMap: { value: null },
+				sunDir: { value: new THREE.Vector3(0, 0, 1) }
+			},
+			vertexShader: [
+				'varying vec3 vNormal;',
+				'varying vec2 vUv;',
+				'void main() {',
+				'  vNormal = normalize(normal);',
+				'  vUv = uv;',
+				'  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+				'}'
+			].join('\n'),
+			fragmentShader: [
+				'uniform sampler2D dayMap;',
+				'uniform sampler2D nightMap;',
+				'uniform vec3 sunDir;',
+				'varying vec3 vNormal;',
+				'varying vec2 vUv;',
+				'void main() {',
+				'  vec3 n = normalize(vNormal);',
+				'  float sunDot = dot(n, sunDir);',
+				'  float dayFactor = smoothstep(-0.12, 0.12, sunDot);',
+				'  vec3 day = texture2D(dayMap, vUv).rgb;',
+				'  vec3 night = texture2D(nightMap, vUv).rgb;',
+				'  vec3 color = day * dayFactor + night * (1.0 - dayFactor) * 2.5;',
+				'  color += day * 0.04;',
+				'  gl_FragColor = vec4(color, 1.0);',
+				'}'
+			].join('\n')
 		});
 		new THREE.TextureLoader().load('earth_texture.png', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
 			tex.needsUpdate = true;
-			mat.map = tex;
-			mat.color.set(0xffffff);
-			mat.needsUpdate = true;
+			earthDayNightMat.uniforms.dayMap.value = tex;
 		}, undefined, function (err) {
 			console.error('[atlas] GUARDRAIL 5: earth_texture.png failed to load:', err);
 		});
-		earth = new THREE.Mesh(geo, mat);
+		new THREE.TextureLoader().load('earth_night.jpg', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			tex.needsUpdate = true;
+			earthDayNightMat.uniforms.nightMap.value = tex;
+		}, undefined, function (err) {
+			console.error('[atlas] earth_night.jpg failed to load:', err);
+		});
+		earth = new THREE.Mesh(geo, earthDayNightMat);
 		scene.add(earth);
 
 		atmosphere = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -342,6 +379,21 @@ function bootAtlas() {
 		}));
 		atmosphere.scale.set(2.9, 2.9, 1);
 		scene.add(atmosphere);
+	}
+
+	function updateSunDirection() {
+		if (!earthDayNightMat) { return; }
+		var now = new Date();
+		var utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+		var start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
+		var dayOfYear = Math.floor((now - start) / 86400000);
+		var declination = 23.44 * Math.PI / 180 * Math.sin(2 * Math.PI * (dayOfYear - 81) / 365.25);
+		var subsolarLon = (12 - utcHours) * Math.PI / 12;
+		earthDayNightMat.uniforms.sunDir.value.set(
+			Math.cos(declination) * Math.sin(subsolarLon),
+			Math.sin(declination),
+			Math.cos(declination) * Math.cos(subsolarLon)
+		);
 	}
 
 	function buildMoon() {
@@ -1402,6 +1454,7 @@ function bootAtlas() {
 		requestAnimationFrame(tick);
 		applyCamera();
 		tickTour();
+		updateSunDirection();
 		// the web + CMB photos hover in front of the camera, photo-parallel
 		if (webPhoto || cmbPhoto) {
 			var fwd = new THREE.Vector3();

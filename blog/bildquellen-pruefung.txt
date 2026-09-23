@@ -285,5 +285,17 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              Erd-Karte (drawEarthCanvas, entfernt) bzw. ranger7_moon.jpg.
     Lokal: earth_texture.png, moon_texture.png
     Genutzt in: map.js § buildEarth (Erde) + § buildMoon (Mond)
-    Status: OK - CC BY 4.0, Quelle via \cite{earth_moon_cc_textures} im
-             Credit (map.php, Sektion unter der Karte) zitiert.
+     Status: OK - CC BY 4.0, Quelle via \cite{earth_moon_cc_textures} im
+              Credit (map.php, Sektion unter der Karte) zitiert.
+
+28. earth_night_lights (Erd-Tags/Nachts-Zyklus: Stadtlichter)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:City_Lights_2012_-_Flat_map.jpg
+    Lizenz: Public Domain (NASA VIIRS Day/Night Band, 2012-Composite)
+    Autor: NASA / NOAA
+    Hinweis: Äquirektanguläre Nachtlicht-Karte (12150x6075, lokal auf
+             2048x1024 heruntergerechnet). Wird in map.js § buildEarth als
+             nightMap im ShaderMaterial geladen; blendet mit der Tag-Textur
+             basierend auf der Sonnenrichtung (UTC-synchronisiert).
+    Lokal: earth_night.jpg (2048x1024)
+    Genutzt in: map.js § buildEarth (ShaderMaterial nightMap)
+    Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.

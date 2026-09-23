@@ -2,26 +2,14 @@
 
 ## High Priority
 
-### 1. Earth day/night cycle with real-time terminator
-- **Goal:** Earth shows city lights on the night side; the shadow (terminator) matches current UTC time so the dark side is geographically accurate.
-- **Needs:**
-  - CC-licensed night-lights Earth texture (NASA Black Marble / VIIRS, public domain)
-  - Custom `ShaderMaterial` blending day + night textures based on dot product of surface normal and sun direction
-  - Sun direction computed from current UTC time (subsolar point: latitude from solar declination, longitude from solar time)
-  - Update sun direction each frame so the terminator moves in real time
-- **Files:** `map.js` (buildEarth → replace MeshPhongMaterial with ShaderMaterial), new `earth_night.png`
-- **Status:** Not started
-
-### 2. Run full validators
-- `uv run blog/tests/js_validator.py blog/`
-- `uv run blog/tests/php_validator.py blog/`
+### 1. Run full validator suite
+- `uv run blog/tests/js_validator.py blog/` (full, not just map.js)
 - `uv run blog/tests/link_checker.py blog/`
-- `php -l blog/map.php`
-- **Status:** Not yet run on full suite
+- **Status:** map.js + map.php pass clean; full suite not yet run
 
 ## Medium Priority
 
-### 3. Download real CC galaxy images
+### 2. Download real CC galaxy images
 - **Goal:** Replace procedural spiral textures with actual photos of galaxies (Andromeda, Whirlpool, Sombrero, Pinwheel).
 - **Blocker:** NASA/Hubble/ESO sites block automated downloads (bot protection). Need to download manually via browser.
 - **When images are available:**
@@ -31,20 +19,20 @@
   - Add to `bildquellen-pruefung.txt` + `literature.js` if cited
 - **Status:** Blocked (manual download needed)
 
-### 4. CDP regression test
-- Single script: tour start/stop, dot click, asparagus reveal/close, toggle visibility, deep-time hiding, texture presence, celestialVis at key zoom levels.
+### 3. CDP regression test
+- Single script: tour start/stop, dot click, asparagus reveal/close, toggle visibility, deep-time hiding, texture presence, celestialVis at key zoom levels, day/night terminator position.
 - **Status:** Not started
 
 ## Low Priority / Polish
 
-### 5. Mobile responsiveness
+### 4. Mobile responsiveness
 - Verify at 375px and 768px. Check tour dots, panels, toggles don't overflow.
 
-### 6. Performance on low-end devices
+### 5. Performance on low-end devices
 - Profile FPS on mid-range phone. Consider reducing star count / galaxy count on mobile.
 
-### 7. Update AGENTS.md
-- Reflect new module vars (`bgTexture`), new behavior (question-world black bg, day/night shader, solar system repositioning).
+### 6. Update AGENTS.md
+- Reflect new module vars (`bgTexture`, `earthDayNightMat`), new behavior (question-world black bg, day/night shader, solar system repositioning).
 
 ---
 
@@ -59,3 +47,4 @@
 - Map top border: `border-radius: 0 0 14px 14px`, `margin-top: -1px`
 - TOC: skipped entirely on `map.php`
 - Texture error handlers on Earth/Moon loaders
+- **Earth day/night cycle:** custom `ShaderMaterial` blending day (`earth_texture.png`) + night (`earth_night.jpg`, NASA VIIRS 2012, public domain) textures. Sun direction computed from UTC time each frame (subsolar longitude from solar time, declination from day-of-year). Terminator moves in real time. Night lights glow at 2.5× brightness.
