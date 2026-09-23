@@ -906,6 +906,15 @@ function bootAtlas() {
 		var el = document.getElementById('atlas-easter');
 		if (el) { el.style.display = 'block'; }
 	}
+	function closeAsparagus() {
+		asparagusFound = false;
+		var el = document.getElementById('atlas-easter');
+		if (el) { el.style.display = 'none'; }
+		if (asparagusSprite) {
+			asparagusSprite.material.color.set(0xcdeab4);
+			asparagusSprite.scale.set(100, 25, 1);
+		}
+	}
 
 	// ── selection / detail ────────────────────────────────────
 	var detail = document.getElementById('atlas-detail');
@@ -1144,6 +1153,8 @@ function bootAtlas() {
 		tourEls().next.addEventListener('click', nextStep);
 		tourEls().close.addEventListener('click', stopTour);
 		tourEls().earth.addEventListener('click', stopTour);
+		var easterClose = document.getElementById('atlas-easter-close');
+		if (easterClose) { easterClose.addEventListener('click', closeAsparagus); }
 		document.addEventListener('keydown', function (e) {
 			if (!tour.active) { return; }
 			var t = e.target;

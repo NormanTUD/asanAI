@@ -253,6 +253,12 @@ html:not(.dark) #atlas-stage {
 	color: var(--atlas-ink); font-size: .8rem; line-height: 1.45; text-align: center;
 	display: none; z-index: 30; pointer-events: none;
 }
+	.atlas-easter-close {
+		position: absolute; top: 2px; right: 5px;
+		background: none; border: none; cursor: pointer; pointer-events: auto;
+		color: var(--atlas-ink-mute); font-size: 1.1rem; line-height: 1; padding: 2px 4px;
+	}
+	.atlas-easter-close:hover { color: var(--atlas-ink); }
 
 @media (max-width: 860px) {
 	#atlas-stage { flex-direction: column; height: auto; }
@@ -317,7 +323,8 @@ html:not(.dark) #atlas-stage {
 			<p>Charting the history of AI…</p>
 		</div>
 		<div class="atlas-easter" id="atlas-easter">
-			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine breaks down, the word flashes on its screen.
+			<button class="atlas-easter-close" id="atlas-easter-close" type="button" aria-label="Close">&times;</button>
+			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine powers down, the word flashes on its screen.
 		</div>
 	</div>
 </div>
