@@ -269,6 +269,8 @@ SIGNALS = [
     ("Wadi el-Hol", "Egypt", -3250, -3250, "The earliest Egyptian writing"),
     ("Vostok Station, Antarctica", "Summit Camp (GRIP/NEEM), Greenland", 1957, 1995, "The polar ice-core network"),
     ("ECMWF", "GraphCast global weather AI, 2023", 2020, 2023, "ERA5 data to GraphCast"),
+    ("Vostok Station, Antarctica", "GraphCast global weather AI, 2023", 1957, 2023, "The deep-time ice record the climate AI reads"),
+    ("Dome C (EPICA), Antarctica", "Vostok Station, Antarctica", 1957, 2004, "The worldwide deep-core drilling program"),
 ]
 
 

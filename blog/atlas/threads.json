@@ -1232,6 +1232,22 @@
   "label": "ERA5 data to GraphCast"
  },
  {
+  "kind": "signal",
+  "from": "place-vostok-station",
+  "to": "event-graphcast-2023",
+  "y1": 1957,
+  "y2": 2023,
+  "label": "The deep-time ice record the climate AI reads"
+ },
+ {
+  "kind": "signal",
+  "from": "place-dome-c-epica",
+  "to": "place-vostok-station",
+  "y1": 1957,
+  "y2": 2004,
+  "label": "The worldwide deep-core drilling program"
+ },
+ {
   "kind": "journey",
   "person": "person-aryabhata",
   "path": [
