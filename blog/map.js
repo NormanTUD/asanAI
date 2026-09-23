@@ -232,6 +232,7 @@ function bootAtlas() {
 		scene = new THREE.Scene();
 		var sz = stageSize();
 		camera = new THREE.PerspectiveCamera(48, sz.w / sz.h, 0.01, 4000);
+		scene.add(camera);
 
 		renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -266,7 +267,8 @@ function bootAtlas() {
 			setSpotHighlight: setSpotHighlight,
 			clearSpotHighlight: clearSpotHighlight,
 			asparagus: function () { return asparagusSprite; },
-			revealAsparagus: revealAsparagus
+			revealAsparagus: revealAsparagus,
+			camera: function () { return camera; }
 		};
 	}
 
@@ -538,12 +540,12 @@ function bootAtlas() {
 		questionGroup.add(big);
 
 		asparagusSprite = new THREE.Sprite(new THREE.SpriteMaterial({
-			map: makeAsparagusTexture(), color: 0x9fb4ff,
+			map: makeAsparagusTexture(), color: 0xcdeab4,
 			transparent: true, opacity: 0, depthWrite: false
 		}));
-		asparagusSprite.position.set(0, 24, -560);
-		asparagusSprite.scale.set(112, 28, 1);
-		questionGroup.add(asparagusSprite);
+		asparagusSprite.position.set(0, 40, -460);
+		asparagusSprite.scale.set(100, 25, 1);
+		camera.add(asparagusSprite);
 
 		scene.add(questionGroup);
 	}
@@ -751,7 +753,7 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		if (asparagusSprite) { asparagusSprite.material.opacity = qO * (asparagusFound ? 0.95 : 0.42); }
+		if (asparagusSprite) { asparagusSprite.material.opacity = qO * (asparagusFound ? 1.0 : 0.8); }
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
@@ -1268,8 +1270,8 @@ function bootAtlas() {
 			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
 			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
 			if (asparagusSprite) {
-				asparagusSprite.position.x = 330 * Math.sin(frame * 0.0016);
-				asparagusSprite.position.y = 26 + 48 * Math.sin(frame * 0.0011 + 1.3);
+				asparagusSprite.position.x = 110 * Math.sin(frame * 0.0016);
+				asparagusSprite.position.y = 40 + 28 * Math.sin(frame * 0.0011 + 1.3);
 			}
 		}
 		frame++;
