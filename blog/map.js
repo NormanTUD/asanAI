@@ -185,7 +185,7 @@ function bootAtlas() {
 	var renderer, scene, camera, earth, moon, sun, planets = [];
 	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
-	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
+	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null, skySphere = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
 	var bhHole, bhPhotonRing, bhDisk, bhParticles, bhStar, bhStarGlow, bhNebula, bhCrab, bhM87;
 	var bhGeo, bhVel = [], nebGeo, nebVel = [];
@@ -273,7 +273,12 @@ function bootAtlas() {
 		new THREE.TextureLoader().load('starfield_eso.jpg', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
 			bgTexture = tex;
-			scene.background = tex;
+			skySphere = new THREE.Mesh(
+				new THREE.SphereGeometry(2000, 32, 16),
+				new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, depthWrite: false })
+			);
+			skySphere.visible = true;
+			scene.add(skySphere);
 		});
 		resizeToStage();
 		scene.add(new THREE.AmbientLight(0xffffff, 0.85));
@@ -614,17 +619,50 @@ function bootAtlas() {
 		}));
 		bhGroup.add(bhNebula);
 		// Crab Nebula sprite (SN 1054 remnant) — fades in at end of supernova phase
-		var crabTex = new THREE.TextureLoader().load('crab_nebula.jpg');
+		var crabCanvas = document.createElement('canvas');
+		crabCanvas.width = 512; crabCanvas.height = 512;
+		var crabCtx = crabCanvas.getContext('2d');
+		var crabCanvasTex = new THREE.CanvasTexture(crabCanvas);
+		var crabImg = new Image();
+		crabImg.onload = function () {
+			crabCtx.drawImage(crabImg, 0, 0, 512, 512);
+			var grad = crabCtx.createRadialGradient(256, 256, 100, 256, 256, 256);
+			grad.addColorStop(0, 'rgba(0,0,0,1)');
+			grad.addColorStop(0.6, 'rgba(0,0,0,0.8)');
+			grad.addColorStop(1, 'rgba(0,0,0,0)');
+			crabCtx.globalCompositeOperation = 'destination-in';
+			crabCtx.fillStyle = grad;
+			crabCtx.fillRect(0, 0, 512, 512);
+			crabCanvasTex.needsUpdate = true;
+		};
+		crabImg.src = 'crab_nebula.jpg';
+		var crabCanvasTex = new THREE.CanvasTexture(crabCanvas);
 		bhCrab = new THREE.Sprite(new THREE.SpriteMaterial({
-			map: crabTex, transparent: true, opacity: 0, depthWrite: false
+			map: crabCanvasTex, transparent: true, opacity: 0, depthWrite: false
 		}));
 		bhCrab.scale.set(80, 80, 1);
 		bhCrab.visible = false;
 		bhGroup.add(bhCrab);
 		// M87 black hole photo — crossfade target at the very end
-		var m87Tex = new THREE.TextureLoader().load('m87_real.jpg');
+		var m87Canvas = document.createElement('canvas');
+		m87Canvas.width = 512; m87Canvas.height = 512;
+		var m87Ctx = m87Canvas.getContext('2d');
+		var m87CanvasTex = new THREE.CanvasTexture(m87Canvas);
+		var m87Img = new Image();
+		m87Img.onload = function () {
+			m87Ctx.drawImage(m87Img, 0, 0, 512, 512);
+			var grad = m87Ctx.createRadialGradient(256, 256, 120, 256, 256, 256);
+			grad.addColorStop(0, 'rgba(0,0,0,1)');
+			grad.addColorStop(0.7, 'rgba(0,0,0,0.7)');
+			grad.addColorStop(1, 'rgba(0,0,0,0)');
+			m87Ctx.globalCompositeOperation = 'destination-in';
+			m87Ctx.fillStyle = grad;
+			m87Ctx.fillRect(0, 0, 512, 512);
+			m87CanvasTex.needsUpdate = true;
+		};
+		m87Img.src = 'm87_real.jpg';
 		bhM87 = new THREE.Sprite(new THREE.SpriteMaterial({
-			map: m87Tex, transparent: true, opacity: 0, depthWrite: false
+			map: m87CanvasTex, transparent: true, opacity: 0, depthWrite: false
 		}));
 		bhM87.scale.set(120, 120, 1);
 		bhM87.visible = false;
@@ -1076,11 +1114,11 @@ function bootAtlas() {
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
 			* (1 - THREE.MathUtils.smoothstep(d, 180, 250));
 		if (starField) { starField.material.opacity = starO; }
-		// background: Milky Way panorama until galaxy view, then dark
+		// background: Milky Way sky sphere until galaxy view, then dark
 		var qBg = THREE.MathUtils.smoothstep(d, 600, 660);
 		var galBg = THREE.MathUtils.smoothstep(d, 195, 230);
-		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
-		else if (bgTexture) { scene.background = bgTexture; }
+		if (skySphere) { skySphere.visible = (qBg < 0.5 && galBg < 0.5); }
+		scene.background = new THREE.Color(0x05070d);
 		// solar system: fully visible at the solar-system stop, gone before galaxies
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 185, 220));
 		var solarVis = solarO > 0.01;
@@ -1561,7 +1599,7 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
-		{ d: 30, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
+		{ d: 50, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 180, phi: 0.1, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 240, era: 'A star is born — and dies', text: 'A cloud of hydrogen and helium collapses under its own gravity. Conservation of angular momentum flattens it into a spinning accretion disk — gas spirals inward, heats to millions of degrees, and ignites fusion. For millions of years the star burns in equilibrium. When the fuel runs out, the iron core collapses in a quarter-second. The outer layers rebound in a supernova — for a brief moment, brighter than the entire galaxy. If the remnant exceeds three solar masses, nothing halts the collapse. Space itself curves into an event horizon: a black hole, ringed by the last light that will ever escape.' },
 		{ d: 300, era: 'The galaxies', text: 'Each galaxy is an island of hundreds of billions of stars — the Milky Way alone holds 100–400 billion. They form from vast clouds of hydrogen and helium that collapse under gravity after the Big Bang, with the first stars igniting in dense cores and pulling in more gas until a rotating disk settles. Dark matter provides the gravitational scaffolding that holds them together. Every pixel of light you have ever seen on a screen was forged inside one of these stellar furnaces.' },

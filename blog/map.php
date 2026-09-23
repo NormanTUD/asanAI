@@ -190,15 +190,19 @@ html:not(.dark) #atlas-stage {
 	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
 	border-radius: 12px 12px 0 0; padding: 10px 20px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
-	text-align: left;
+	display: flex; gap: 16px; align-items: center;
 }
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
 .atlas-tour .cap-text { font-size: .85rem; line-height: 1.5; margin-top: 4px; color: var(--atlas-ink); }
 .atlas-tour .cap-text a { color: var(--atlas-accent); text-decoration: underline; text-underline-offset: 2px; }
 .atlas-tour .cap-phase { font-size: .72rem; font-style: italic; color: var(--atlas-ink-soft); margin-top: 3px; }
 .atlas-tour .tour-img {
-	display: none;
+	width: 160px; height: 160px;
+	object-fit: cover; border-radius: 10px;
+	border: 1px solid var(--atlas-line); box-shadow: var(--atlas-shadow);
+	flex-shrink: 0;
 }
+.atlas-tour .tour-text-wrap { flex: 1; min-width: 0; }
 .atlas-tour .tour-bar {
 	display: flex; align-items: center; gap: 8px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
@@ -303,10 +307,12 @@ html:not(.dark) #atlas-stage {
 
 		<div class="atlas-tour" id="atlas-tour">
 			<div class="tour-card">
-				<div class="cap-era" id="tour-era"></div>
 				<img class="tour-img" id="tour-img" alt="" style="display:none">
-				<div class="cap-text" id="tour-text"></div>
-				<div class="cap-phase" id="bh-phase-label"></div>
+				<div class="tour-text-wrap">
+					<div class="cap-era" id="tour-era"></div>
+					<div class="cap-text" id="tour-text"></div>
+					<div class="cap-phase" id="bh-phase-label"></div>
+				</div>
 			</div>
 			<div class="tour-bar">
 				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
