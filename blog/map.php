@@ -308,7 +308,7 @@ html:not(.dark) #atlas-stage {
 			<p>Charting the history of AI…</p>
 		</div>
 		<div class="atlas-easter" id="atlas-easter">
-			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine powers down, the word flashes on its screen.
+			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine breaks down, the word flashes on its screen.
 		</div>
 	</div>
 </div>
