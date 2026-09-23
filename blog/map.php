@@ -3,7 +3,7 @@
 COURSE_METADATA:
 title: The Atlas
 description: Every person, place, institution, author and event of this course as a living globe — zoom out from Earth, past the Moon and the solar system, to the Big Bang.
-icon: &#128500;
+icon: 🌐
 part: 6
 order: 13
 color: sky
