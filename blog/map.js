@@ -186,8 +186,9 @@ function bootAtlas() {
 	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
-	var bhGroup, bhParticles, bhStar, bhShock, bhHole, bhDisk, bhTime = -1, bhVel = [], bhGeo = null;
-	var bhStarGlow, bhPhotonRing, bhHalo;
+	var bhGroup, bhSprites = [], bhPhaseLabel = null;
+	var bhHole, bhPhotonRing, bhDisk, bhHalo, bhParticles, bhStar, bhStarGlow, bhNebula;
+	var bhGeo, bhVel = [], nebGeo, nebVel = [];
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -319,8 +320,11 @@ function bootAtlas() {
 		if (bhGroup && d >= 220 && d <= 260 && !bhGroup.visible) {
 			console.error('[atlas] GUARDRAIL 6: bhGroup.visible=false at d=' + d + ' — black hole should be visible');
 		}
-		if (bhGroup && bhGroup.visible && bhParticles && bhParticles.material.opacity === 0) {
-			console.warn('[atlas] GUARDRAIL 6: bhParticles opacity=0 while bhGroup visible — tickBlackHole not running?');
+		if (bhGroup && bhGroup.visible) {
+			var anyBhVisible = (bhHole && bhHole.visible) || (bhStar && bhStar.material.opacity > 0.01) || (bhNebula && bhNebula.material.opacity > 0.01);
+			if (!anyBhVisible) {
+				console.warn('[atlas] GUARDRAIL 6: no BH objects visible while bhGroup visible — tickBlackHole not running?');
+			}
 		}
 	})();
 
@@ -516,81 +520,106 @@ function bootAtlas() {
 		}
 		scene.add(galaxyGroup);
 
-		// ── stellar life cycle / black hole sequence ──────────────
+		// ── stellar life cycle / black hole (3D geometry) ─────────
 		bhGroup = new THREE.Group();
-		bhGroup.position.set(0, 0, 0);
-		bhGroup.scale.setScalar(8);
 		bhGroup.visible = false;
-		// molecular cloud particles
-		var BH_PARTS = 600;
-		bhGeo = new THREE.BufferGeometry();
-		var bhPos = new Float32Array(BH_PARTS * 3);
-		bhVel = [];
-		for (var bi = 0; bi < BH_PARTS; bi++) {
-			var ba = Math.random() * Math.PI * 2;
-			var br = 2 + Math.random() * 10;
-			bhPos[bi * 3] = Math.cos(ba) * br;
-			bhPos[bi * 3 + 1] = (Math.random() - 0.5) * 5;
-			bhPos[bi * 3 + 2] = Math.sin(ba) * br;
-			bhVel.push({ angle: ba, radius: br, speed: 0.3 + Math.random() * 0.7, ySpread: (Math.random() - 0.5) * 5 });
-		}
-		bhGeo.setAttribute('position', new THREE.BufferAttribute(bhPos, 3));
-		bhParticles = new THREE.Points(bhGeo, new THREE.PointsMaterial({
-			color: 0x6688cc, size: 0.3, sizeAttenuation: true, transparent: true, opacity: 0,
-			blending: THREE.AdditiveBlending, depthWrite: false
-		}));
-		bhGroup.add(bhParticles);
-		// star (protostar → main sequence → red giant)
-		bhStar = new THREE.Mesh(
-			new THREE.SphereGeometry(1, 32, 24),
-			new THREE.MeshBasicMaterial({ color: 0xffffcc, transparent: true, opacity: 0 })
-		);
-		bhGroup.add(bhStar);
-		// star glow (sprite)
-		var starGlow = new THREE.Sprite(new THREE.SpriteMaterial({
-			map: makeRadialTexture('rgba(255,255,220,1)', 'rgba(255,180,50,0)', 128),
-			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
-		}));
-		starGlow.scale.set(12, 12, 1);
-		bhGroup.add(starGlow);
-		bhStarGlow = starGlow;
-		// supernova shockwave shell
-		bhShock = new THREE.Mesh(
-			new THREE.SphereGeometry(1, 48, 32),
-			new THREE.MeshBasicMaterial({ color: 0x88bbff, transparent: true, opacity: 0, side: THREE.BackSide })
-		);
-		bhGroup.add(bhShock);
-		// black hole event horizon
+		bhSprites = [];
+		// event horizon (black sphere)
 		bhHole = new THREE.Mesh(
-			new THREE.SphereGeometry(2, 32, 24),
+			new THREE.SphereGeometry(12, 48, 32),
 			new THREE.MeshBasicMaterial({ color: 0x000000 })
 		);
 		bhHole.visible = false;
 		bhGroup.add(bhHole);
 		// photon ring (thin bright ring at event horizon)
-		var photonRing = new THREE.Mesh(
-			new THREE.TorusGeometry(2.2, 0.08, 8, 64),
-			new THREE.MeshBasicMaterial({ color: 0xffdd88, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
+		bhPhotonRing = new THREE.Mesh(
+			new THREE.TorusGeometry(13, 0.4, 8, 128),
+			new THREE.MeshBasicMaterial({ color: 0xffffcc, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
 		);
-		bhPhotonRing = photonRing;
 		bhPhotonRing.visible = false;
 		bhGroup.add(bhPhotonRing);
-		// accretion disk (flat ring, tilted)
-		var diskGeo = new THREE.RingGeometry(2.5, 8, 64, 1);
+		// accretion disk (flat ring with gradient)
+		var diskGeo = new THREE.RingGeometry(16, 50, 128, 1);
+		// create gradient texture for disk (hot center → cool edge)
+		var diskCanvas = document.createElement('canvas');
+		diskCanvas.width = 256; diskCanvas.height = 1;
+		var dctx = diskCanvas.getContext('2d');
+		var grad = dctx.createLinearGradient(0, 0, 256, 0);
+		grad.addColorStop(0, 'rgba(255,255,240,1)');
+		grad.addColorStop(0.2, 'rgba(255,200,100,1)');
+		grad.addColorStop(0.5, 'rgba(255,100,30,0.8)');
+		grad.addColorStop(0.8, 'rgba(200,50,10,0.4)');
+		grad.addColorStop(1, 'rgba(100,20,5,0.1)');
+		dctx.fillStyle = grad;
+		dctx.fillRect(0, 0, 256, 1);
+		var diskTex = new THREE.CanvasTexture(diskCanvas);
 		bhDisk = new THREE.Mesh(diskGeo, new THREE.MeshBasicMaterial({
-			color: 0xff6622, transparent: true, opacity: 0, side: THREE.DoubleSide,
-			blending: THREE.AdditiveBlending
+			map: diskTex, transparent: true, opacity: 0, side: THREE.DoubleSide,
+			blending: THREE.AdditiveBlending, depthWrite: false
 		}));
-		bhDisk.rotation.x = Math.PI / 2.5;
+		bhDisk.rotation.x = -Math.PI / 2.5;
 		bhDisk.visible = false;
 		bhGroup.add(bhDisk);
-		// gravitational lensing halo (vertical ring — light from back of disk bent over top/bottom)
-		var haloGeo = new THREE.TorusGeometry(3.5, 0.6, 12, 64);
-		bhHalo = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
-			color: 0xffaa44, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
-		}));
+		// gravitational lensing halo (light from back of disk bent over top/bottom)
+		bhHalo = new THREE.Mesh(
+			new THREE.TorusGeometry(22, 4, 16, 128),
+			new THREE.MeshBasicMaterial({ color: 0xffaa44, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
+		);
 		bhHalo.visible = false;
 		bhGroup.add(bhHalo);
+		// orbiting particles in the disk plane
+		var BH_PARTS = 500;
+		bhGeo = new THREE.BufferGeometry();
+		var bhPos = new Float32Array(BH_PARTS * 3);
+		bhVel = [];
+		for (var bi = 0; bi < BH_PARTS; bi++) {
+			var ba = Math.random() * Math.PI * 2;
+			var br = 16 + Math.random() * 34;
+			bhPos[bi*3] = Math.cos(ba) * br;
+			bhPos[bi*3+1] = (Math.random() - 0.5) * 1.5;
+			bhPos[bi*3+2] = Math.sin(ba) * br;
+			bhVel.push({ angle: ba, radius: br, speed: 0.5 + (50 - br) * 0.03 });
+		}
+		bhGeo.setAttribute('position', new THREE.BufferAttribute(bhPos, 3));
+		bhParticles = new THREE.Points(bhGeo, new THREE.PointsMaterial({
+			color: 0xffaa33, size: 0.8, sizeAttenuation: true, transparent: true, opacity: 0,
+			blending: THREE.AdditiveBlending, depthWrite: false
+		}));
+		bhParticles.visible = false;
+		bhGroup.add(bhParticles);
+		// star (for formation phases)
+		bhStar = new THREE.Mesh(
+			new THREE.SphereGeometry(1, 32, 24),
+			new THREE.MeshBasicMaterial({ color: 0xffffcc, transparent: true, opacity: 0 })
+		);
+		bhGroup.add(bhStar);
+		bhStarGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: makeRadialTexture('rgba(255,255,220,0.8)', 'rgba(255,150,50,0)', 128),
+			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
+		}));
+		bhStarGlow.scale.set(40, 40, 1);
+		bhGroup.add(bhStarGlow);
+		// nebula particles (for cloud phase)
+		var NEB_PARTS = 400;
+		nebGeo = new THREE.BufferGeometry();
+		var nebPos = new Float32Array(NEB_PARTS * 3);
+		nebVel = [];
+		for (var ni = 0; ni < NEB_PARTS; ni++) {
+			var nu = Math.random() * 2 - 1;
+			var na = Math.random() * Math.PI * 2;
+			var ns = Math.sqrt(1 - nu * nu);
+			var nr = 10 + Math.random() * 30;
+			nebPos[ni*3] = ns * Math.cos(na) * nr;
+			nebPos[ni*3+1] = nu * nr * 0.6;
+			nebPos[ni*3+2] = ns * Math.sin(na) * nr;
+			nebVel.push({ x: nebPos[ni*3], y: nebPos[ni*3+1], z: nebPos[ni*3+2], r: nr });
+		}
+		nebGeo.setAttribute('position', new THREE.BufferAttribute(nebPos, 3));
+		bhNebula = new THREE.Points(nebGeo, new THREE.PointsMaterial({
+			color: 0x4466aa, size: 1.2, sizeAttenuation: true, transparent: true, opacity: 0,
+			blending: THREE.AdditiveBlending, depthWrite: false
+		}));
+		bhGroup.add(bhNebula);
 		scene.add(bhGroup);
 
 		// sun: 3D sphere body + glow sprite
@@ -1496,6 +1525,7 @@ function bootAtlas() {
 			if (tour.active) { stopTour(); } else { startTour(); }
 		});
 		buildTourDots();
+		bhPhaseLabel = document.getElementById('bh-phase-label');
 		tourEls().prev.addEventListener('click', prevStep);
 		tourEls().next.addEventListener('click', nextStep);
 		tourEls().close.addEventListener('click', stopTour);
@@ -1657,159 +1687,195 @@ function bootAtlas() {
 		});
 	}
 
-	// ── stellar life cycle animation ────────────────────────────
+	// ── stellar life cycle animation (sprite crossfade) ─────────
+	var BH_PHASES = [
+		{ start: 0, end: 4, label: 'Molecular cloud collapses under gravity' },
+		{ start: 4, end: 8, label: 'Angular momentum flattens it into a spinning disk' },
+		{ start: 8, end: 12, label: 'Core reaches 10 MK — hydrogen fusion ignites' },
+		{ start: 12, end: 14.5, label: 'Fuel exhausted. Envelope swells. Red supergiant.' },
+		{ start: 14.5, end: 15.5, label: 'Iron core collapses in 0.25 seconds' },
+		{ start: 15.5, end: 16.5, label: 'Supernova — brighter than the entire galaxy' },
+		{ start: 16.5, end: 22, label: 'Remnant > 3 M\u2609. Event horizon forms.' }
+	];
+	var bhLabelSprite = null;
+	var bhLabelCanvas, bhLabelCtx, bhLabelTex;
+	function makeBhLabel(text) {
+		if (!bhLabelCanvas) {
+			bhLabelCanvas = document.createElement('canvas');
+			bhLabelCanvas.width = 1024; bhLabelCanvas.height = 128;
+			bhLabelCtx = bhLabelCanvas.getContext('2d');
+			bhLabelTex = new THREE.CanvasTexture(bhLabelCanvas);
+			bhLabelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: bhLabelTex, transparent: true, opacity: 0.9 }));
+			bhLabelSprite.scale.set(60, 7.5, 1);
+			bhLabelSprite.position.set(0, -30, 0);
+			bhGroup.add(bhLabelSprite);
+		}
+		bhLabelCtx.clearRect(0, 0, 1024, 128);
+		bhLabelCtx.font = 'italic 48px Georgia, serif';
+		bhLabelCtx.fillStyle = 'rgba(200, 210, 240, 0.95)';
+		bhLabelCtx.textAlign = 'center';
+		bhLabelCtx.textBaseline = 'middle';
+		bhLabelCtx.fillText(text, 512, 64);
+		bhLabelTex.needsUpdate = true;
+	}
 	function tickBlackHole() {
 		var t = tour.active ? (performance.now() - tour.startedAt) / 1000 : (frame * 0.016);
-		var pos = bhGeo.attributes.position.array;
+		var activeLabel = '';
 		var i, v;
 		if (t < 4) {
-			// Phase 1: molecular cloud contracts, flattens
-			var contract = 1 - t / 4 * 0.5;
-			var flatten = 1 - t / 4 * 0.8;
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var r = v.radius * contract;
-				var a = v.angle + t * 0.15 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = v.ySpread * flatten;
-				pos[i*3+2] = Math.sin(a) * r;
+			// Phase 1: molecular cloud contracts and flattens
+			var contract = 1 - t / 4 * 0.35;
+			var flatten = 1 - t / 4 * 0.75;
+			var npos = nebGeo.attributes.position.array;
+			for (i = 0; i < nebVel.length; i++) {
+				v = nebVel[i];
+				var angle = Math.atan2(v.z, v.x) + t * 0.08;
+				var r = v.r * contract;
+				npos[i*3] = Math.cos(angle) * r;
+				npos[i*3+1] = v.y * flatten;
+				npos[i*3+2] = Math.sin(angle) * r;
 			}
-			bhParticles.material.opacity = 0.7;
-			bhParticles.material.color.setHex(0x5566aa);
-			bhParticles.material.size = 0.3;
+			nebGeo.attributes.position.needsUpdate = true;
+			bhNebula.material.opacity = 0.8;
+			bhNebula.material.color.setHex(0x4466aa);
+			bhNebula.material.size = 1.5;
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = 0;
-			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
+			bhParticles.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '1. ' + BH_PHASES[0].label;
 		} else if (t < 8) {
-			// Phase 2: accretion disk forms, protostar ignites
-			var diskT = (t - 4) / 4;
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var r = (v.radius * 0.5) * (1 - diskT * 0.2);
-				var a = v.angle + t * 0.5 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = v.ySpread * 0.1 * (1 - diskT);
-				pos[i*3+2] = Math.sin(a) * r;
+			// Phase 2: disk forms, protostar ignites
+			var dT = (t - 4) / 4;
+			var npos2 = nebGeo.attributes.position.array;
+			for (i = 0; i < nebVel.length; i++) {
+				v = nebVel[i];
+				var angle2 = Math.atan2(v.z, v.x) + t * 0.3 * (1 + dT);
+				var r2 = v.r * 0.55 * (1 - dT * 0.2);
+				npos2[i*3] = Math.cos(angle2) * r2;
+				npos2[i*3+1] = v.y * 0.15 * (1 - dT);
+				npos2[i*3+2] = Math.sin(angle2) * r2;
 			}
-			bhParticles.material.opacity = 0.8;
-			bhParticles.material.color.setHex(0xff8833);
-			bhParticles.material.size = 0.25;
-			bhStar.material.opacity = diskT * 0.95;
-			bhStar.scale.setScalar(0.5 + diskT * 2.5);
+			nebGeo.attributes.position.needsUpdate = true;
+			bhNebula.material.opacity = 0.7 * (1 - dT * 0.4);
+			bhNebula.material.color.setHex(0xff8833);
+			bhNebula.material.size = 1.0;
+			bhStar.material.opacity = dT * 0.9;
+			bhStar.scale.setScalar(3 + dT * 8);
 			bhStar.material.color.setHex(0xffeecc);
-			bhStarGlow.material.opacity = diskT * 0.8;
-			bhStarGlow.scale.setScalar(4 + diskT * 8);
-			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
+			bhStarGlow.material.opacity = dT * 0.8;
+			bhStarGlow.scale.setScalar(20 + dT * 20);
+			bhParticles.visible = true;
+			bhParticles.material.opacity = dT * 0.6;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '2. ' + BH_PHASES[1].label;
 		} else if (t < 12) {
-			// Phase 3: main sequence — stable, bright, tight disk
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var r = v.radius * 0.2;
-				var a = v.angle + t * 0.8 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = v.ySpread * 0.02;
-				pos[i*3+2] = Math.sin(a) * r;
+			// Phase 3: main sequence — stable, bright
+			var npos3 = nebGeo.attributes.position.array;
+			for (i = 0; i < nebVel.length; i++) {
+				v = nebVel[i];
+				var angle3 = Math.atan2(v.z, v.x) + t * 0.8;
+				var r3 = v.r * 0.2;
+				npos3[i*3] = Math.cos(angle3) * r3;
+				npos3[i*3+1] = v.y * 0.02;
+				npos3[i*3+2] = Math.sin(angle3) * r3;
 			}
-			bhParticles.material.opacity = 0.3;
-			bhParticles.material.color.setHex(0xffcc66);
-			bhParticles.material.size = 0.15;
+			nebGeo.attributes.position.needsUpdate = true;
+			bhNebula.material.opacity = 0.2;
+			bhNebula.material.color.setHex(0xffcc66);
+			bhNebula.material.size = 0.6;
 			bhStar.material.opacity = 1;
-			bhStar.scale.setScalar(3);
+			bhStar.scale.setScalar(11);
 			bhStar.material.color.setHex(0xffffee);
 			bhStarGlow.material.opacity = 0.9;
-			bhStarGlow.scale.setScalar(14);
-			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
+			bhStarGlow.scale.setScalar(45);
+			bhStarGlow.material.color.setHex(0xffffcc);
+			bhParticles.visible = true;
+			bhParticles.material.opacity = 0.3;
+			bhParticles.material.color.setHex(0xffcc66);
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '3. ' + BH_PHASES[2].label;
 		} else if (t < 14.5) {
 			// Phase 4: red supergiant — swells, cools
 			var rgT = (t - 12) / 2.5;
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var r = v.radius * 0.25;
-				var a = v.angle + t * 0.15 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = v.ySpread * 0.01;
-				pos[i*3+2] = Math.sin(a) * r;
-			}
-			bhParticles.material.opacity = 0.2;
-			bhParticles.material.color.setHex(0xcc3311);
-			bhParticles.material.size = 0.12;
+			bhNebula.material.opacity = 0.1;
 			bhStar.material.opacity = 1;
-			bhStar.scale.setScalar(3 + rgT * 5);
+			bhStar.scale.setScalar(11 + rgT * 12);
 			bhStar.material.color.setHex(0xcc2200);
 			bhStarGlow.material.opacity = 0.7;
-			bhStarGlow.scale.setScalar(14 + rgT * 10);
+			bhStarGlow.scale.setScalar(45 + rgT * 20);
 			bhStarGlow.material.color.setHex(0xff3300);
-			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
+			bhParticles.material.opacity = 0.15;
+			bhParticles.material.color.setHex(0xcc3311);
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '4. ' + BH_PHASES[3].label;
 		} else if (t < 15.5) {
 			// Phase 5: core collapse — violent shrink
-			var ccT = (t - 14.5) / 1;
-			bhStar.material.opacity = 1 - ccT * 0.8;
-			bhStar.scale.setScalar(8 - ccT * 7.5);
+			var ccT = (t - 14.5);
+			bhStar.material.opacity = Math.max(0, 1 - ccT * 1.5);
+			bhStar.scale.setScalar(Math.max(0.5, 23 - ccT * 22));
 			bhStar.material.color.setHex(0xffffff);
-			bhStarGlow.material.opacity = 0.3;
-			bhStarGlow.scale.setScalar(10);
-			bhStarGlow.material.color.setHex(0xffffff);
-			bhParticles.material.opacity = 0.15;
-			bhHole.visible = false; bhDisk.visible = false;
-			bhShock.material.opacity = 0;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
-		} else if (t < 17) {
-			// Phase 6: supernova — expanding shockwave, debris
-			var snT = (t - 15.5) / 1.5;
-			bhStar.material.opacity = Math.max(0, 0.2 - snT * 0.2);
-			bhStar.scale.setScalar(0.5);
-			bhStarGlow.material.opacity = Math.max(0, 0.5 - snT);
-			bhShock.material.opacity = (1 - snT) * 0.85;
-			bhShock.scale.setScalar(1 + snT * 18);
-			bhShock.material.color.setHex(0x66aaff);
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var r = v.radius * 0.3 + snT * v.radius * 2;
-				var a = v.angle + t * 0.15 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = v.ySpread * 0.4 * snT;
-				pos[i*3+2] = Math.sin(a) * r;
-			}
-			bhParticles.material.opacity = 0.6 * (1 - snT * 0.4);
+			bhStarGlow.material.opacity = Math.max(0, 0.5 - ccT);
+			bhStarGlow.scale.setScalar(20);
+			bhNebula.material.opacity = 0.05;
+			bhParticles.material.opacity = 0.1;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '5. ' + BH_PHASES[4].label;
+		} else if (t < 16.5) {
+			// Phase 6: supernova flash
+			var snT = (t - 15.5);
+			bhStar.material.opacity = Math.max(0, 0.3 - snT);
+			bhStar.scale.setScalar(1);
+			bhStarGlow.material.opacity = Math.max(0, 1 - snT * 2);
+			bhStarGlow.scale.setScalar(30 + snT * 60);
+			bhStarGlow.material.color.setHex(0xaaccff);
+			bhNebula.material.opacity = Math.max(0, 0.5 - snT * 0.5);
+			bhNebula.material.color.setHex(0x88ccff);
+			bhNebula.material.size = 2.0;
+			bhParticles.material.opacity = Math.max(0, 0.7 - snT * 0.5);
 			bhParticles.material.color.setHex(0x88ccff);
-			bhParticles.material.size = 0.2;
-			bhHole.visible = false; bhDisk.visible = false;
-			bhPhotonRing.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			activeLabel = '6. ' + BH_PHASES[5].label;
 		} else {
-			// Phase 7: black hole — event horizon + accretion disk + lensing halo
-			var bhT = Math.min(1, (t - 17) / 3);
+			// Phase 7: black hole with accretion disk
+			var bhT = Math.min(1, (t - 16.5) / 3);
 			bhStar.material.opacity = 0;
-			bhStarGlow.material.opacity = 0;
-			bhShock.material.opacity = Math.max(0, 0.85 - (t - 17) * 0.4);
-			bhShock.scale.setScalar(19);
+			bhStarGlow.material.opacity = Math.max(0, 0.5 - (t - 16.5) * 0.5);
+			bhNebula.material.opacity = Math.max(0, 0.3 - (t - 16.5) * 0.2);
 			bhHole.visible = true;
 			bhHole.scale.setScalar(bhT);
-			bhDisk.visible = true;
-			bhDisk.material.opacity = bhT * 0.7;
-			bhDisk.rotation.z += 0.008;
 			bhPhotonRing.visible = true;
 			bhPhotonRing.material.opacity = bhT * 0.9;
-			bhPhotonRing.rotation.y += 0.02;
+			bhPhotonRing.rotation.y += 0.03;
+			bhDisk.visible = true;
+			bhDisk.material.opacity = bhT * 0.7;
+			bhDisk.rotation.z += 0.005;
 			bhHalo.visible = true;
-			bhHalo.material.opacity = bhT * 0.5;
-			bhHalo.rotation.y += 0.005;
+			bhHalo.material.opacity = bhT * 0.4;
+			bhHalo.rotation.y += 0.008;
+			// particles orbit in disk plane
+			bhParticles.visible = true;
+			bhParticles.material.opacity = bhT * 0.6;
+			bhParticles.material.color.setHex(0xff6622);
+			bhParticles.material.size = 0.8;
+			var ppos = bhGeo.attributes.position.array;
 			for (i = 0; i < bhVel.length; i++) {
 				v = bhVel[i];
-				var r = 3.5 + Math.sin(v.angle * 2 + t * 0.3) * 1.5;
-				var a = v.angle + t * 1.5 * v.speed;
-				pos[i*3] = Math.cos(a) * r;
-				pos[i*3+1] = (Math.random() - 0.5) * 0.1;
-				pos[i*3+2] = Math.sin(a) * r;
+				var a7 = v.angle + t * v.speed * 0.5;
+				ppos[i*3] = Math.cos(a7) * v.radius;
+				ppos[i*3+1] = (Math.random() - 0.5) * 0.5;
+				ppos[i*3+2] = Math.sin(a7) * v.radius;
 			}
-			bhParticles.material.opacity = bhT * 0.4;
-			bhParticles.material.color.setHex(0xff4400);
-			bhParticles.material.size = 0.15;
+			bhGeo.attributes.position.needsUpdate = true;
+			activeLabel = '7. ' + BH_PHASES[6].label;
 		}
-		bhGeo.attributes.position.needsUpdate = true;
+		if (bhLabelSprite) {
+			if (activeLabel && activeLabel !== bhLabelSprite.userData.last) {
+				bhLabelSprite.userData.last = activeLabel;
+				makeBhLabel(activeLabel);
+			}
+			bhLabelSprite.material.opacity = bhGroup.visible ? 0.9 : 0;
+		}
 	}
 
 	// ── main loop ─────────────────────────────────────────────

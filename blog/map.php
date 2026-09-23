@@ -20,7 +20,6 @@ This is the map of everything. Every person, place, institution, artifact, event
 /* the one sanctioned full-width exception on this page: the Atlas
    stage spans the viewport (still in the normal vertical flow). */
 .lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); }
-.atlas-credits { max-width: 100% !important; width: 100% !important; margin-left: calc(50% - 50vw) !important; font-size: .82rem; color: var(--atlas-ink-mute, #6b7aa8); }
 #atlas-stage {
 	display: flex;
 	width: 100%;
@@ -189,13 +188,14 @@ html:not(.dark) #atlas-stage {
 .atlas-tour.open { display: block; }
 .atlas-tour .tour-card {
 	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
-	border-radius: 16px 16px 0 0; padding: 12px 24px 14px;
+	border-radius: 12px 12px 0 0; padding: 8px 20px 10px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
 	text-align: center;
 }
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
 .atlas-tour .cap-text { font-size: .9rem; line-height: 1.55; margin-top: 6px; color: var(--atlas-ink); }
 .atlas-tour .cap-text a { color: var(--atlas-accent); text-decoration: underline; text-underline-offset: 2px; }
+.atlas-tour .cap-phase { font-size: .78rem; font-style: italic; color: var(--atlas-ink-soft); margin-top: 8px; min-height: 1.2em; }
 .atlas-tour .tour-img {
 	display: block; margin: 10px auto 0;
 	width: 210px; max-width: 62%; height: 120px;
@@ -307,6 +307,7 @@ html:not(.dark) #atlas-stage {
 				<div class="cap-era" id="tour-era"></div>
 				<img class="tour-img" id="tour-img" alt="" style="display:none">
 				<div class="cap-text" id="tour-text"></div>
+				<div class="cap-phase" id="bh-phase-label"></div>
 			</div>
 			<div class="tour-bar">
 				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
@@ -331,7 +332,7 @@ html:not(.dark) #atlas-stage {
 </div>
 </div>
 
-<div class="md atlas-credits" style="margin-top:14px">
+<div class="md" style="margin-top:14px">
 *Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 
 *The transformer figure in the journey:* Figure 1 (the encoder–decoder architecture) from \cite[Vaswani et al., 2017]{transformer_attention_figure} — Ashish Vaswani and colleagues, Google, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png)).
