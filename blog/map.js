@@ -542,9 +542,33 @@ function bootAtlas() {
 			pm.userData.angle = pa;
 			pm.userData.dist = orbits[pi];
 			pm.userData.speed = 0.02 * Math.pow(11 / orbits[pi], 1.5);
+			pm.userData.name = ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'][pi];
 			pm.visible = false;
 			planets.push(pm);
 			scene.add(pm);
+			if (pi === 5) {
+				var ringGeo = new THREE.RingGeometry(radii[5] * 1.4, radii[5] * 2.4, 48);
+				var ringMat = new THREE.MeshBasicMaterial({ color: 0xc8b89a, side: THREE.DoubleSide, transparent: true, opacity: 0 });
+				var ring = new THREE.Mesh(ringGeo, ringMat);
+				ring.rotation.x = Math.PI / 2.3;
+				ring.position.copy(pm.position);
+				ring.userData.isRing = true;
+				ring.userData.planetIdx = 5;
+				scene.add(ring);
+				planets[5] = pm;
+				pm.userData.ring = ring;
+			}
+			if (pi === 6) {
+				var ringGeo2 = new THREE.RingGeometry(radii[6] * 1.5, radii[6] * 1.9, 48);
+				var ringMat2 = new THREE.MeshBasicMaterial({ color: 0x7ab8c4, side: THREE.DoubleSide, transparent: true, opacity: 0 });
+				var ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+				ring2.rotation.x = Math.PI / 1.8;
+				ring2.position.copy(pm.position);
+				ring2.userData.isRing = true;
+				ring2.userData.planetIdx = 6;
+				scene.add(ring2);
+				pm.userData.ring = ring2;
+			}
 		}
 	}
 
@@ -895,7 +919,7 @@ function bootAtlas() {
 	function updateZoomFade() {
 		var d = state.d;
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
-			* (1 - THREE.MathUtils.smoothstep(d, 470, 560));
+			* (1 - THREE.MathUtils.smoothstep(d, 100, 160));
 		if (starField) { starField.material.opacity = starO; }
 		// question world: black background instead of starfield
 		var qBg = THREE.MathUtils.smoothstep(d, 480, 540);
@@ -945,7 +969,10 @@ function bootAtlas() {
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
 		var solarVis = (celestialVis > 0.01) && (solarO > 0.01);
 		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; }
-		planets.forEach(function (p) { p.material.opacity = solarO; p.visible = solarVis; });
+		planets.forEach(function (p) {
+			p.material.opacity = solarO; p.visible = solarVis;
+			if (p.userData.ring) { p.userData.ring.material.opacity = solarO * 0.7; p.userData.ring.visible = solarVis; }
+		});
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
 		if (atmosphere) { atmosphere.material.opacity = atmO; }
 	}
@@ -1076,6 +1103,19 @@ function bootAtlas() {
 			if (iid === undefined) { continue; }
 			var d = dotInstance[iid];
 			if (dotVisible(d)) { found = d; break; }
+		}
+		if (!found && !isClick) {
+			var pHits = raycaster.intersectObjects(planets);
+			if (pHits.length && pHits[0].object.visible) {
+				var pName = pHits[0].object.userData.name;
+				tip.innerHTML = '<div class="t-name"></div>';
+				tip.querySelector('.t-name').textContent = pName;
+				tip.style.display = 'block';
+				tip.style.left = (px + 14) + 'px';
+				tip.style.top = (py + 14) + 'px';
+				canvas.style.cursor = 'pointer';
+				return;
+			}
 		}
 		if (isClick) {
 			if (found) { selectDot(found); }
@@ -1363,14 +1403,14 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
-		{ d: 25, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
+		{ d: 45, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
 		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 400, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
 		{ d: 560, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
 	];
-	var TOUR_STEP_MS = 9000;
+	var TOUR_STEP_MS = 18000;
 	var tour = { active: false, step: 0, startedAt: 0 };
 
 	function tourEls() {
@@ -1516,6 +1556,7 @@ function bootAtlas() {
 				p.userData.angle += p.userData.speed * 0.01;
 				p.position.x = SUN_POS[0] + Math.cos(p.userData.angle) * p.userData.dist;
 				p.position.z = SUN_POS[2] + Math.sin(p.userData.angle) * p.userData.dist;
+				if (p.userData.ring) { p.userData.ring.position.copy(p.position); }
 			});
 			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
 			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
