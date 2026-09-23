@@ -269,6 +269,7 @@ function bootAtlas() {
 			asparagus: function () { return asparagusSprite; },
 			revealAsparagus: revealAsparagus,
 			asparagusSetGate: function (ms) { qWorldEnteredAt = Date.now() - ms; },
+			updateToggleVisibility: updateAtlasToggleVisibility,
 			camera: function () { return camera; }
 		};
 	}
@@ -793,6 +794,26 @@ function bootAtlas() {
 
 	// ── interaction ───────────────────────────────────────────
 	var dragging = false, lastX = 0, lastY = 0, moved = 0;
+	function atlasOverlapBand() {
+		var t = document.getElementById('search-trigger') || document.getElementById('theme-toggle');
+		if (t) {
+			var tr = t.getBoundingClientRect();
+			if (tr.width > 0) { return [tr.top, tr.bottom]; }
+		}
+		var narrow = window.matchMedia && window.matchMedia('(max-width:720px)').matches;
+		return narrow ? [10, 48] : [16, 56];
+	}
+	function updateAtlasToggleVisibility() {
+		var stage = document.getElementById('atlas-stage');
+		if (!stage) { return; }
+		var r = stage.getBoundingClientRect();
+		var overlapping = false;
+		if (r.width > 0 && r.height > 0) {
+			var band = atlasOverlapBand();
+			overlapping = r.top < band[1] && r.bottom > band[0];
+		}
+		document.documentElement.classList.toggle('atlas-overlap', overlapping);
+	}
 	function bindInput() {
 		canvas.addEventListener('mousedown', function (e) {
 			dragging = true; moved = 0; lastX = e.clientX; lastY = e.clientY;
@@ -829,6 +850,19 @@ function bootAtlas() {
 				requestAnimationFrame(resizeToStage);
 			}).observe(wrap);
 		}
+		// hide the fixed top chrome (search/theme/topics/reader) while the
+		// full-bleed stage scrolls under it; reappear when it no longer overlaps
+		var atlasOverlapRaf = null;
+		window.addEventListener('scroll', function () {
+			if (atlasOverlapRaf) { return; }
+			atlasOverlapRaf = requestAnimationFrame(function () { atlasOverlapRaf = null; updateAtlasToggleVisibility(); });
+		}, { passive: true });
+		window.addEventListener('resize', updateAtlasToggleVisibility);
+		if (typeof MutationObserver !== 'undefined') {
+			new MutationObserver(function () { updateAtlasToggleVisibility(); })
+				.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+		}
+		updateAtlasToggleVisibility();
 		// touch
 		var tId = null, pinch = null;
 		canvas.addEventListener('touchstart', function (e) {
