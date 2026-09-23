@@ -6822,6 +6822,12 @@
    "year": "",
    "url": "https://www.solarsystemscope.com/textures/"
   },
+  "earth_night_lights": {
+   "title": "City Lights 2012 — Flat map (VIIRS Day/Night Band composite)",
+   "author": "NASA / NOAA (Suomi NPP VIIRS)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:City_Lights_2012_-_Flat_map.jpg"
+  },
   "greatwallpaper": {
    "title": "Mapping the Universe",
    "author": "Margaret J. Geller and John P. Huchra",
@@ -7121,6 +7127,78 @@
    "author": "Claude Berrou, Alain Glavieux",
    "year": "",
    "url": "https://ieeexplore.ieee.org/document/209582"
+  },
+  "wiki_single_event_effect": {
+   "title": "Single-event effect",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Single-event_effect"
+  },
+  "wiki_tmr": {
+   "title": "Triple modular redundancy",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Triple_modular_redundancy"
+  },
+  "arxiv_sdc_llm": {
+   "title": "Understanding Silent Data Corruption in LLM Training",
+   "author": "Jeffrey Ma et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2502.12340"
+  },
+  "wiki_lunar_laser_ranging": {
+   "title": "Lunar laser ranging",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Lunar_laser_ranging"
+  },
+  "wiki_lidar": {
+   "title": "Lidar",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Lidar"
+  },
+  "wiki_delay_tolerant_networking": {
+   "title": "Delay-tolerant networking",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Delay-tolerant_networking"
+  },
+  "wiki_jpeg2000": {
+   "title": "JPEG 2000",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/JPEG_2000"
+  },
+  "wiki_kepler_space_telescope": {
+   "title": "Kepler space telescope",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Kepler_space_telescope"
+  },
+  "wiki_deep_space_1": {
+   "title": "Deep Space 1",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Deep_Space_1"
+  },
+  "wiki_galaxy_zoo": {
+   "title": "Galaxy Zoo",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Galaxy_Zoo"
+  },
+  "wiki_richardson_lucy": {
+   "title": "Richardson–Lucy deconvolution",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Richardson%E2%80%93Lucy_deconvolution"
+  },
+  "wiki_diffusion_model": {
+   "title": "Diffusion model",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Diffusion_model"
   },
   "nasa2021perseverance": {
    "title": "Mars 2020 Perseverance Rover — Selfie at Rochette",
@@ -15267,6 +15345,46 @@
   "ariane501_report": [
    "untold_history"
   ],
+  "wiki_single_event_effect": [
+   "untold_history"
+  ],
+  "wiki_tmr": [
+   "untold_history"
+  ],
+  "arxiv_sdc_llm": [
+   "untold_history"
+  ],
+  "wiki_lunar_laser_ranging": [
+   "untold_history"
+  ],
+  "wiki_lidar": [
+   "untold_history"
+  ],
+  "wiki_deep_space_1": [
+   "untold_history"
+  ],
+  "wiki_delay_tolerant_networking": [
+   "untold_history"
+  ],
+  "wiki_jpeg2000": [
+   "untold_history"
+  ],
+  "wiki_galaxy_zoo": [
+   "untold_history"
+  ],
+  "sutton2019bitter": [
+   "history",
+   "statistics",
+   "statistics_i",
+   "transformer",
+   "untold_history"
+  ],
+  "wiki_richardson_lucy": [
+   "untold_history"
+  ],
+  "wiki_diffusion_model": [
+   "untold_history"
+  ],
   "zusebook": [
    "history",
    "software",
@@ -15332,13 +15450,6 @@
   "wikimediadumps": [
    "untold_history"
   ],
-  "sutton2019bitter": [
-   "history",
-   "statistics",
-   "statistics_i",
-   "transformer",
-   "untold_history"
-  ],
   "cosmic_web_foam_image": [
    "map"
   ],
@@ -15352,6 +15463,9 @@
    "map"
   ],
   "earth_moon_cc_textures": [
+   "map"
+  ],
+  "earth_night_lights": [
    "map"
   ],
   "colah2015backprop": [
@@ -18647,7 +18761,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 134,
+   "count": 145,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -18726,6 +18840,17 @@
     "ibmscamp",
     "micral",
     "wikipedia_reason",
+    "wiki_single_event_effect",
+    "wiki_tmr",
+    "wiki_lunar_laser_ranging",
+    "wiki_lidar",
+    "wiki_delay_tolerant_networking",
+    "wiki_jpeg2000",
+    "wiki_kepler_space_telescope",
+    "wiki_deep_space_1",
+    "wiki_galaxy_zoo",
+    "wiki_richardson_lucy",
+    "wiki_diffusion_model",
     "spencerbrown_wiki",
     "distinction_philosophy",
     "sheaf_mathematics",
@@ -36101,6 +36226,14 @@
     "earth_moon_cc_textures"
    ]
   },
+  "NASA / NOAA (Suomi NPP VIIRS)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "earth_night_lights"
+   ]
+  },
   "Margaret J. Geller and John P. Huchra": {
    "count": 1,
    "minyear": null,
@@ -36568,6 +36701,14 @@
    "maxyear": null,
    "keys": [
     "berrou1993turbo"
+   ]
+  },
+  "Jeffrey Ma et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "arxiv_sdc_llm"
    ]
   },
   "NASA / JPL-Caltech / MSSS": {
