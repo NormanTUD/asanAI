@@ -1194,10 +1194,25 @@ function bootAtlas() {
 			var b = document.createElement('button');
 			b.className = 'tour-dot';
 			b.type = 'button';
-			b.title = s.era;
+			b.setAttribute('aria-label', s.era);
 			b.addEventListener('click', function () { goStep(i); });
+			b.addEventListener('mouseenter', function () { showTourDotTip(b, s.era); });
+			b.addEventListener('mouseleave', hideTourDotTip);
 			els.dots.appendChild(b);
 		});
+	}
+	function showTourDotTip(dotEl, label) {
+		var tip = document.getElementById('tour-dot-tip');
+		if (!tip) { return; }
+		tip.textContent = label;
+		var r = dotEl.getBoundingClientRect();
+		tip.style.left = (r.left + r.width / 2) + 'px';
+		tip.style.top = (r.top) + 'px';
+		tip.hidden = false;
+	}
+	function hideTourDotTip() {
+		var tip = document.getElementById('tour-dot-tip');
+		if (tip) { tip.hidden = true; }
 	}
 	function goStep(i) {
 		tour.step = i;

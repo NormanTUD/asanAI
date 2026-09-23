@@ -212,7 +212,15 @@ html:not(.dark) #atlas-stage {
 	background: var(--atlas-line-strong); border: none; padding: 0;
 	cursor: pointer;
 }
-.tour-dot.on { background: var(--atlas-accent); transform: scale(1.35); }
+	.tour-dot.on { background: var(--atlas-accent); transform: scale(1.35); }
+	.tour-dot:hover { background: var(--atlas-ink); transform: scale(1.5); }
+	.tour-dot-tip {
+		position: fixed; z-index: 60; transform: translate(-50%, calc(-100% - 8px));
+		background: var(--atlas-card-solid); border: 1px solid var(--atlas-line-strong);
+		color: var(--atlas-ink); font-size: .72rem; font-weight: 600;
+		padding: 5px 9px; border-radius: 8px; white-space: nowrap;
+		pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.25);
+	}
 .tour-timer {
 	flex: 1; height: 4px; border-radius: 999px;
 	background: var(--atlas-line); overflow: hidden;
@@ -302,6 +310,7 @@ html:not(.dark) #atlas-stage {
 				<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
 			</div>
 		</div>
+		<div class="tour-dot-tip" id="tour-dot-tip" role="tooltip" hidden></div>
 
 		<div class="atlas-loader" id="atlas-loader">
 			<div class="spin" aria-hidden="true"></div>
