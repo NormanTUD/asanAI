@@ -858,10 +858,6 @@ function bootAtlas() {
 			atlasOverlapRaf = requestAnimationFrame(function () { atlasOverlapRaf = null; updateAtlasToggleVisibility(); });
 		}, { passive: true });
 		window.addEventListener('resize', updateAtlasToggleVisibility);
-		if (typeof MutationObserver !== 'undefined') {
-			new MutationObserver(function () { updateAtlasToggleVisibility(); })
-				.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-		}
 		updateAtlasToggleVisibility();
 		// touch
 		var tId = null, pinch = null;
