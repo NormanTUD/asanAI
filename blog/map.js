@@ -406,7 +406,7 @@ function bootAtlas() {
 	var filamentGroup, filamentLines, filamentNodes = [];
 	var webPhoto;
 	var cmbPhoto;
-	var questionGroup, questionSprites = [], asparagusSprite, asparagusFound = false;
+	var questionGroup, questionSprites = [], asparagusSprite, asparagusFound = false, qWorldEnteredAt = null;
 
 	function buildFilaments() {
 		// a procedurally generated cosmic web: ~110 glowing nodes in a
@@ -502,11 +502,27 @@ function bootAtlas() {
 		var c = document.createElement('canvas');
 		c.width = 512; c.height = 128;
 		var g = c.getContext('2d');
-		g.font = '500 58px Georgia, serif';
+		g.font = '700 40px Georgia, "Times New Roman", serif';
 		g.textAlign = 'center';
 		g.textBaseline = 'middle';
 		g.fillStyle = '#ffffff';
-		g.fillText('asparagus', 256, 64);
+		var word = 'ASPARAGUS';
+		var n = word.length;
+		var margin = 42, midY = 66, amp = 15;
+		var totalW = 512 - margin * 2;
+		var step = totalW / (n - 1);
+		for (var i = 0; i < n; i++) {
+			var t = i / (n - 1);
+			var phase = Math.PI * t;
+			var x = margin + i * step;
+			var y = midY - amp * Math.sin(phase);
+			var ang = Math.atan2(-amp * Math.PI * Math.cos(phase), totalW);
+			g.save();
+			g.translate(x, y);
+			g.rotate(ang);
+			g.fillText(word.charAt(i), 0, 0);
+			g.restore();
+		}
 		return new THREE.CanvasTexture(c);
 	}
 
@@ -753,7 +769,18 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		if (asparagusSprite) { asparagusSprite.material.opacity = qO; }
+		if (asparagusSprite) {
+			if (qO > 0.1) {
+				if (qWorldEnteredAt === null) { qWorldEnteredAt = Date.now(); }
+			} else if (qO < 0.05) {
+				qWorldEnteredAt = null;
+			}
+			var asparagusGate = 0;
+			if (qWorldEnteredAt !== null) {
+				asparagusGate = THREE.MathUtils.clamp((Date.now() - qWorldEnteredAt - 30000) / 2000, 0, 1);
+			}
+			asparagusSprite.material.opacity = qO * asparagusGate;
+		}
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));

@@ -308,7 +308,7 @@ html:not(.dark) #atlas-stage {
 			<p>Charting the history of AI…</p>
 		</div>
 		<div class="atlas-easter" id="atlas-easter">
-			<b>Asparagus.</b> A nod to <b>Junior Asparagus</b>, the VeggieTales character who makes a brief cameo in \cite["Arrgh!", SpongeBob SquarePants (2000)]{spongebob_arrgh_asparagus}.
+			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine powers down, the word flashes on its screen.
 		</div>
 	</div>
 </div>
