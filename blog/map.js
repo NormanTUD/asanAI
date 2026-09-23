@@ -303,6 +303,7 @@ function bootAtlas() {
 		var mat = new THREE.MeshPhongMaterial({ color: 0x8a8f9a, shininess: 2 });
 		new THREE.TextureLoader().load('moon_texture.png', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			tex.needsUpdate = true;
 			mat.map = tex;
 			mat.color.set(0xffffff);
 			mat.needsUpdate = true;
