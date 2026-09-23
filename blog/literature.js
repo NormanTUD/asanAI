@@ -431,6 +431,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2310.11130",
 		alternativetitle: "Ergen & Grillo, topological expressivity of ReLU nets (COLT 2024, arXiv:2310.11130)"
 	},
+	"info_geometry_nlab": {
+		title: "information geometry",
+		author: "nLab contributors (Fisher–Rao metric; Amari; Rao 1945)",
+		year: 2026,
+		url: "https://nlab.org/nlab/show/information+geometry",
+		alternativetitle: "Information geometry (nLab) — Fisher–Rao metric on the space of distributions"
+	},
 	"black2022polytopelens": {
 		title: "Interpreting Neural Networks through the Polytope Lens",
 		author: "Sid Black, Lee Sharkey, Leo Grinsztajn, Eric Winsor, Dan Braun, Jacob Merizian, Kip Parker, Carlos Ramón Guevara, Beren Millidge, Gabriel Alfour, Connor Leahy",
