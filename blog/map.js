@@ -297,7 +297,7 @@ function bootAtlas() {
 			}
 			// 2. Opacity-0 materials: planets start at opacity 0, must be >0 at solar-system zoom
 			planets.forEach(function (p, i) {
-				if (p.material.transparent && p.material.opacity === 0 && d >= 14 && d <= 135) {
+				if (p.material.transparent && p.material.opacity === 0 && d >= 14 && d <= 200) {
 					console.warn('[atlas] GUARDRAIL 2: planet[' + i + '] opacity=0 in solar-system range (d=' + d + ')');
 				}
 			});
@@ -507,7 +507,7 @@ function bootAtlas() {
 
 		// sun: 3D sphere body + glow sprite
 		sunBody = new THREE.Mesh(
-			new THREE.SphereGeometry(10, 32, 24),
+			new THREE.SphereGeometry(5, 32, 24),
 			new THREE.MeshBasicMaterial({ color: 0xffdd44, transparent: true, opacity: 0 })
 		);
 		sunBody.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
@@ -517,7 +517,7 @@ function bootAtlas() {
 			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
 		}));
 		sunSp.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
-		sunSp.scale.set(40, 40, 1);
+		sunSp.scale.set(20, 20, 1);
 		scene.add(sunSp);
 
 		// planets: real order, orbits scaled by a_AU^0.4 (power-law compression
@@ -525,8 +525,8 @@ function bootAtlas() {
 		// Jupiter, then progressively larger gaps outward). Sizes by
 		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
-		var radii = [0.4, 0.8, 0.9, 0.5, 8.0, 7.0, 3.5, 3.4];
-		var orbits = [7.5, 9.5, 11, 13, 21.5, 27.5, 37, 46];
+		var radii = [0.2, 0.4, 0.45, 0.25, 4.0, 3.5, 1.75, 1.7];
+		var orbits = [7.5, 10.2, 12, 14.8, 27.4, 37.1, 52.6, 65.8];
 		var planetData = [
 			{ name: 'Mercury', au: 0.387, period: '88 d', diam: '4,879 km' },
 			{ name: 'Venus', au: 0.723, period: '225 d', diam: '12,104 km' },
@@ -948,31 +948,38 @@ function bootAtlas() {
 	function updateZoomFade() {
 		var d = state.d;
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
-			* (1 - THREE.MathUtils.smoothstep(d, 100, 160));
+			* (1 - THREE.MathUtils.smoothstep(d, 150, 200));
 		if (starField) { starField.material.opacity = starO; }
-		// background: Milky Way panorama for Earth/solar-system views,
-		// black for galaxy view and beyond (galaxies float in dark space)
-		var qBg = THREE.MathUtils.smoothstep(d, 480, 540);
-		var galBg = THREE.MathUtils.smoothstep(d, 70, 100) * (1 - THREE.MathUtils.smoothstep(d, 280, 350));
+		// background: Milky Way panorama until galaxy view, then dark
+		var qBg = THREE.MathUtils.smoothstep(d, 520, 580);
+		var galBg = THREE.MathUtils.smoothstep(d, 180, 230);
 		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
-		// galaxies are a mid-zoom view; fully gone well before the web
-		var galO = THREE.MathUtils.smoothstep(d, 24, 90) * (1 - THREE.MathUtils.smoothstep(d, 160, 280));
+		// solar system: fully visible at the solar-system stop, gone before galaxies
+		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 150, 200));
+		var solarVis = solarO > 0.01;
+		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.material.opacity = solarO; sunBody.visible = solarVis; }
+		planets.forEach(function (p) {
+			p.material.opacity = solarO; p.visible = solarVis;
+			if (p.userData.ring) { p.userData.ring.material.opacity = solarO * 0.7; p.userData.ring.visible = solarVis; }
+		});
+		// galaxies: appear after the solar system fades, gone before the web
+		var galO = THREE.MathUtils.smoothstep(d, 200, 250) * (1 - THREE.MathUtils.smoothstep(d, 320, 400));
 		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
 		// the cosmic web sits between the galaxies and the CMB photo
-		var filO = THREE.MathUtils.smoothstep(d, 120, 220) * (1 - THREE.MathUtils.smoothstep(d, 330, 430));
+		var filO = THREE.MathUtils.smoothstep(d, 320, 380) * (1 - THREE.MathUtils.smoothstep(d, 440, 500));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
 		filamentNodes.forEach(function (s) { s.material.opacity = filO * 0.85; });
 		// the real cosmic-web photo appears at the web stage, then gives
 		// way to the CMB photo
-		var webO = THREE.MathUtils.smoothstep(d, 150, 240) * (1 - THREE.MathUtils.smoothstep(d, 330, 380));
+		var webO = THREE.MathUtils.smoothstep(d, 340, 400) * (1 - THREE.MathUtils.smoothstep(d, 460, 520));
 		if (webPhoto) { webPhoto.material.opacity = webO; }
 		// the CMB photo appears only at the very end, and gives way to
 		// the question world
-		var cmbO = THREE.MathUtils.smoothstep(d, 320, 400) * (1 - THREE.MathUtils.smoothstep(d, 480, 560));
+		var cmbO = THREE.MathUtils.smoothstep(d, 440, 500) * (1 - THREE.MathUtils.smoothstep(d, 520, 580));
 		if (cmbPhoto) { cmbPhoto.material.opacity = cmbO; }
 		// the question-mark world is the final stop
-		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
+		var qO = THREE.MathUtils.smoothstep(d, 520, 580);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
 		if (asparagusSprite) {
 			if (qO > 0.1) {
@@ -987,23 +994,11 @@ function bootAtlas() {
 			asparagusSprite.material.opacity = qO * asparagusGate;
 		}
 
-		// Hide terrestrial bodies once we zoom past the solar system.
-		// Fade out alongside the solar system (d=90–135) so Earth is gone
-		// before the galaxy view begins (d>90).
-		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 70, 120);
+		// Hide terrestrial bodies (Earth, Moon) once we zoom past the solar system
+		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 100, 160);
 		if (earth) { earth.visible = celestialVis > 0.01; }
 		if (moon) { moon.visible = celestialVis > 0.01; }
 		if (atmosphere) { atmosphere.visible = celestialVis > 0.01; }
-
-		// the solar system (sun + planets) is a mid-zoom view: it fades in
-		// as we pull off the Moon and is fully gone before the galaxies stop
-		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 110, 150));
-		var solarVis = solarO > 0.01;
-		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.material.opacity = solarO; sunBody.visible = solarVis; }
-		planets.forEach(function (p) {
-			p.material.opacity = solarO; p.visible = solarVis;
-			if (p.userData.ring) { p.userData.ring.material.opacity = solarO * 0.7; p.userData.ring.visible = solarVis; }
-		});
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
 		if (atmosphere) { atmosphere.material.opacity = atmO; }
 	}
@@ -1436,11 +1431,11 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
-		{ d: 45, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
-		{ d: 100, phi: 0.25, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
-		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
-		{ d: 400, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
+		{ d: 30, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
+		{ d: 140, phi: 0.2, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
+		{ d: 250, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
+		{ d: 380, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
+		{ d: 500, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
 		{ d: 560, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
 	];
 	var TOUR_STEP_MS = 18000;
