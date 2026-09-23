@@ -177,7 +177,7 @@
     "years": "unknown",
     "active": [2018, 2026],
     "blurb": "DeepMind researcher; lead author of 'Grokking: Generalization Beyond Overfitting' (delayed generalization).",
-    "cited_in": ["deeplearninglab"],
+    "cited_in": ["deeplearninglab", "algorithms"],
     "bibkeys": ["grokking"],
     "conf": "known"
   },

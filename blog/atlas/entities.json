@@ -83,8 +83,7 @@
    "differentiation",
    "coherent_difference",
    "coherent_world_models",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "leibniz1686calculus",
@@ -156,8 +155,7 @@
   "cited_in": [
    "history",
    "language",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "bool1854",
@@ -321,8 +319,7 @@
    "symbolic_ai",
    "human_mind",
    "untold_history",
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [
    "aristotle_categories",
@@ -694,8 +691,7 @@
    "human_mind",
    "beyond_llms",
    "philosophy",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "turing1937",
@@ -863,8 +859,7 @@
    "language",
    "statistics_ii",
    "losslab",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "shannon1948communication",
@@ -1312,8 +1307,7 @@
    "resnetlab",
    "recurrent_networks",
    "fact_lookup",
-   "global_ai_ecosystem",
-   "appendix"
+   "global_ai_ecosystem"
   ],
   "bibkeys": [
    "lstm",
@@ -1600,8 +1594,7 @@
    "optimizerlab",
    "deeplearninglab",
    "global_ai_ecosystem",
-   "beyond_llms",
-   "appendix"
+   "beyond_llms"
   ],
   "bibkeys": [
    "rumelhart1986",
@@ -1752,8 +1745,7 @@
   "cited_in": [
    "history",
    "human_mind",
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [
    "searle1980minds"
@@ -3152,8 +3144,7 @@
    "math_iii",
    "geometry_i",
    "differentiation",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "newtonquadratura",
@@ -3270,8 +3261,7 @@
    "math_iv",
    "human_mind",
    "philosophy",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "lageometrie"
@@ -5640,8 +5630,7 @@
   ],
   "blurb": "City of TU Munich, where Schmidhuber's lab produced the 1990-91 deep-learning burst.",
   "cited_in": [
-   "history",
-   "appendix"
+   "history"
   ],
   "bibkeys": [],
   "conf": "stated",
@@ -6444,8 +6433,7 @@
   "cited_in": [
    "history",
    "tokenizerlab",
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "stated",
@@ -6862,8 +6850,7 @@
   "blurb": "Lab where Ciresan and Schmidhuber built the first GPU CNN to win contests.",
   "cited_in": [
    "history",
-   "global_ai_ecosystem",
-   "appendix"
+   "global_ai_ecosystem"
   ],
   "bibkeys": [],
   "conf": "stated",
@@ -9220,7 +9207,8 @@
   ],
   "blurb": "DeepMind researcher; lead author of 'Grokking: Generalization Beyond Overfitting' (delayed generalization).",
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "algorithms"
   ],
   "bibkeys": [
    "grokking"
@@ -11127,8 +11115,7 @@
   "blurb": "German philosopher whose Being and Time and later works explored the question of Being and the history of metaphysics.",
   "cited_in": [
    "coherent_difference",
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [
    "heidegger1935metaphysics",
@@ -15116,8 +15103,7 @@
   "blurb": "",
   "cited_in": [
    "human_mind",
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [
    "penrose1989emperor"
@@ -15249,8 +15235,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "human_mind",
-   "appendix"
+   "human_mind"
   ],
   "bibkeys": [
    "dawkins1976selfishgene"
@@ -15449,8 +15434,7 @@
   "blurb": "",
   "cited_in": [
    "human_mind",
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [],
   "conf": "known",
@@ -15772,8 +15756,7 @@
   "cited_in": [
    "human_mind",
    "philosophy",
-   "ai_existential_risk",
-   "appendix"
+   "ai_existential_risk"
   ],
   "bibkeys": [
    "bostrom2014superintelligence"
@@ -16399,8 +16382,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "copernicus1543revolutionibus"
@@ -16486,8 +16468,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [
    "gutenbergpress"
@@ -17737,8 +17718,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "philosophy",
-   "appendix"
+   "philosophy"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -17780,8 +17760,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -17844,8 +17823,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "beyond_llms",
-   "appendix"
+   "beyond_llms"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -18014,8 +17992,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -18036,8 +18013,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -18058,8 +18034,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "inferred",
@@ -18312,8 +18287,7 @@
   ],
   "blurb": "",
   "cited_in": [
-   "untold_history",
-   "appendix"
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "inferred",

@@ -83,7 +83,7 @@ Three facts we'll lean on repeatedly:
 
 - **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map.
 - **Three points determine it.** Since lines and ratios are preserved, telling an affine map where three non-collinear points go fixes it everywhere.
-- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $>1$ expands; $<1$ compresses; $<0$ mirrors; $=0$ collapses a dimension.
+- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension.
 </div>
 
 <div class="optional md" data-headline="History: where the word comes from">
@@ -412,6 +412,52 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 - **Data augmentation** teaches models what the affine group leaves *invariant* (rotations, crops, flips are affine).
 - **Camera + robotics + graphics** live in $4\times 4$ homogeneous matrices; document scanners + AR live in $3\times 3$ homographies (the projective cousin).
 - **Interpretability probes** (logit lens, tuned lens) are literally learned affine maps from a hidden state to the output (see the <a href="fact_lookup">Fact Lookup</a> and <a href="mechanistic_interpretability">Mechanistic Interpretability</a> chapters).
+</div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="Group Structure: The Algebra of Symmetry">
+## Group Structure: The Algebra of Symmetry
+
+The affine maps above include the rotations — and all the rotations of a plane together form a **group**, one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
+
+| Axiom | Statement | Example in $\mathbb{Z}_{12}$ |
+|---|---|---|
+| **Closure** | If $a, b \in G$ then $a \cdot b \in G$ | $5 + 9 = 14 \equiv 2 \pmod{12}$, still a valid hour |
+| **Associativity** | $(a \cdot b) \cdot c = a \cdot (b \cdot c)$ | $(2+3)+4 = 2+(3+4) = 9 \pmod{12}$ |
+| **Identity** | $\exists\; e$ such that $e \cdot a = a \cdot e = a$ | $+0$: adding 0 hours changes nothing |
+| **Inverse** | $\forall\; a$, $\exists\; a^{-1}$ with $a \cdot a^{-1} = e$ | $+5$ has inverse $+7$, since $5+7\equiv0$ |
+
+The simplest everyday example is **clock arithmetic**: the 12 hours form a group under addition mod 12. Going forward 5 hours then 9 hours is the same as going forward 2 hours ($5+9=14\equiv2\pmod{12}$). The identity is $+0$ hours, and the inverse of $+5$ is $+7$ (since $5+7\equiv0$). The first interactive below lets you explore this directly.
+
+\citeauthor{galoisgroup} introduced the concept of a group to decode the hidden structural properties of algebraic equations. His primary objective was to determine why equations of the fifth degree and higher lack general solutions involving radicals (roots). He discovered that an equation is solvable by radicals if and only if the **symmetry group of its roots**, now known as the Galois group, possesses a specific internal architecture, categorized today as a **solvable group**. The same algebra that classifies solvable equations is the one that makes the rotation matrices of positional encoding compose so cleanly (see the <a href="positionalembeddingslab">Positional Embeddings</a> lesson).
+</div>
+
+<!-- ── Group Axioms Interactive ── -->
+<div style="margin: 20px 0; font-family: sans-serif;">
+    <strong>Explore: Group Axioms on a Clock (ℤ₁₂)</strong>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+        <div>
+            <label><b>Element a:</b></label>
+            <input type="range" id="group-a-slider" min="0" max="11" value="3" style="width:130px;vertical-align:middle;">
+            <span id="group-a-label" style="font-weight:bold;">3</span>
+        </div>
+        <div>
+            <label><b>Element b:</b></label>
+            <input type="range" id="group-b-slider" min="0" max="11" value="5" style="width:130px;vertical-align:middle;">
+            <span id="group-b-label" style="font-weight:bold;">5</span>
+        </div>
+    </div>
+</div>
+<div id="group-axioms-chart" style="width:100%; height:460px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="The Cayley Table">
+**\cite[Cayley Table]{cayleygroups}** — the group multiplication (Cayley) table for $\mathbb{Z}_{12}$, showing every possible composition at a glance.
+</div>
+<div id="group-cayley-chart" style="width:100%; max-width:600px; height:520px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="Reading the Cayley Table">
+### Reading the Cayley Table
+
+The heatmap shows every possible composition of two of the 12 elements, $M_i \cdot M_j = M_{(i+j)\bmod 12}$. Notice the **diagonal stripe pattern**: each row is just the previous row shifted one step to the left. That perfect regularity *is* the group structure, it means the combining rule is completely uniform, with no exceptions or special cases. Hover over any cell to see the composition.
 </div>
 
 <div class="af-callout md" data-mathlevel="45">

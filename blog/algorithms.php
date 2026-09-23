@@ -51,10 +51,12 @@ $$\text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cdot \underbrace{\
 This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms equal 1 simultaneously.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Connection to Grokking">
 ## Connection to Grokking
 
-This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
+This algorithm is not present at the start of training. The phenomenon is called **grokking**\cite[]{grokking}: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued. Originally identified by \cite[Power et al., 2022][]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
+
+Here the network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the addition pattern, test accuracy jumping from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
 ## Interactive Exploration
 

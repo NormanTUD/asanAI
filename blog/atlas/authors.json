@@ -1873,7 +1873,7 @@
    "grokking"
   ],
   "cited_in": [
-   "appendix",
+   "algorithms",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -5578,8 +5578,8 @@
    "cayleymemoirmatrices"
   ],
   "cited_in": [
-   "appendix",
    "math_ii",
+   "math_iv",
    "untold_history"
   ]
  },
@@ -6975,10 +6975,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_ddim_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -16688,7 +16688,7 @@
    "galoisgroup"
   ],
   "cited_in": [
-   "appendix"
+   "math_iv"
   ]
  },
  {
@@ -21278,7 +21278,7 @@
    "grokking"
   ],
   "cited_in": [
-   "appendix",
+   "algorithms",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -23131,7 +23131,7 @@
    "grokking"
   ],
   "cited_in": [
-   "appendix",
+   "algorithms",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -28803,10 +28803,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "metropolis_hastings_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -36180,8 +36180,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "mozillareadability",
-   "javascript_mdn"
+   "javascript_mdn",
+   "mozillareadability"
   ],
   "cited_in": [
    "software",
@@ -51298,9 +51298,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
+   "go_lang",
    "puppeteer",
-   "googlecustomsearch",
-   "go_lang"
+   "googlecustomsearch"
   ],
   "cited_in": [
    "software",
@@ -52510,10 +52510,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "monte_carlo_animation_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -53755,7 +53755,7 @@
    "grokking"
   ],
   "cited_in": [
-   "appendix",
+   "algorithms",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -54412,10 +54412,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_astronaut_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -58898,7 +58898,7 @@
    "grokking"
   ],
   "cited_in": [
-   "appendix",
+   "algorithms",
    "deeplearninglab",
    "mechanistic_interpretability"
   ]
@@ -60385,6 +60385,61 @@
   "works": 1,
   "keys": [
    "cosmic_web_foam_image"
+  ],
+  "cited_in": [
+   "map"
+  ]
+ },
+ {
+  "name": "Ashish Vaswani and colleagues (Google)",
+  "canon": "Ashish Vaswani and colleagues",
+  "alias": "Google",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017.0,
+  "conf": 0,
+  "works": 3,
+  "keys": [
+   "transformer_attention_figure",
+   "puppeteer",
+   "googlecustomsearch"
+  ],
+  "cited_in": [
+   "map",
+   "websearch"
+  ]
+ },
+ {
+  "name": "ESO / S. Brunier",
+  "canon": "ESO / S. Brunier",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2009.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "starfield_eso_image"
+  ],
+  "cited_in": [
+   "map"
+  ]
+ },
+ {
+  "name": "Solar System Scope (based on NASA imagery and elevation data)",
+  "canon": "Solar System Scope",
+  "alias": "based on NASA imagery and elevation data",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2014.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "solsys_planet_textures",
+   "earth_moon_cc_textures"
   ],
   "cited_in": [
    "map"

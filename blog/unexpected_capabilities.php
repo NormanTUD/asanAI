@@ -11,6 +11,10 @@ topics: emergence, reasoning, interpretability, philosophy
 tags: logic-heavy
 -->
 
+<div class="md" data-mathlevel="40" data-optionaltitle="A note on scope">
+This chapter is the curated companion to the deep-structure material scattered through the course: **grokking** (memorization-to-generalization, now in the <a href="algorithms">How Transformers Execute Algorithms</a> lesson), the **wave geometry of transformer layers**, the **isosurface / “truth tunnel”** picture of how probability collapses as context tightens (now in <a href="foam_of_meaning">The Foam of Meaning</a>), and the **group structure of positional embeddings** (<a href="math_iv">Basic Math IV</a> and <a href="positionalembeddingslab">Positional Embeddings</a>). It catalogues the most striking discoveries researchers did not anticipate from next-token prediction, emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
+</div>
+
 <div class="md">
 LLMs were trained on a single, well-defined objective: **next-token prediction**. The architecture is a stack of attention layers, the data is text. Everything else, reasoning, world-modelling, theory of mind, tool use, was not specified, not rewarded, and in many cases not even expected to be possible. Yet, capability after capability kept *emerging* during scaling. The list below catalogues the most striking of these discoveries, each with a citation to the paper that first reported it and a short note on *why* it was unexpected.
 
