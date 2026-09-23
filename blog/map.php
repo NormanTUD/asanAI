@@ -238,6 +238,14 @@ html:not(.dark) #atlas-stage {
 @keyframes atlasSpin { to { transform: rotate(360deg); } }
 .atlas-loader p { font-size: .8rem; color: var(--atlas-ink-mute); letter-spacing: .06em; }
 
+.atlas-easter {
+	position: absolute; left: 50%; top: 64px; transform: translateX(-50%);
+	max-width: 440px; padding: 10px 14px; border-radius: 10px;
+	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line-strong);
+	color: var(--atlas-ink); font-size: .8rem; line-height: 1.45; text-align: center;
+	display: none; z-index: 30; pointer-events: none;
+}
+
 @media (max-width: 860px) {
 	#atlas-stage { flex-direction: column; height: auto; }
 	#atlas-side { flex: 0 0 auto; width: 100%; max-height: 36vh; border-right: none; border-bottom: 1px solid var(--atlas-line); }
@@ -299,6 +307,9 @@ html:not(.dark) #atlas-stage {
 			<div class="spin" aria-hidden="true"></div>
 			<p>Charting the history of AI…</p>
 		</div>
+		<div class="atlas-easter" id="atlas-easter">
+			<b>Asparagus.</b> A nod to <b>Junior Asparagus</b>, the VeggieTales character who makes a brief cameo in \cite["Arrgh!", SpongeBob SquarePants (2000)]{spongebob_arrgh_asparagus}.
+		</div>
 	</div>
 </div>
 </div>
@@ -313,6 +324,4 @@ html:not(.dark) #atlas-stage {
 *Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
 
 *Earth and Moon surfaces (the main globe):* equirectangular maps from \cite[Solar System Scope]{earth_moon_cc_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
-
-*Easter egg:* the faint "asparagus" drifting in the final question-mark slide nods to Junior Asparagus, a VeggieTales character who makes a brief cameo in \cite["Arrgh!", SpongeBob SquarePants (2000)]{spongebob_arrgh_asparagus}.
 </div>

@@ -264,7 +264,9 @@ function bootAtlas() {
 			dotMesh: function () { return dotMesh; },
 			findDot: findDot,
 			setSpotHighlight: setSpotHighlight,
-			clearSpotHighlight: clearSpotHighlight
+			clearSpotHighlight: clearSpotHighlight,
+			asparagus: function () { return asparagusSprite; },
+			revealAsparagus: revealAsparagus
 		};
 	}
 
@@ -402,7 +404,7 @@ function bootAtlas() {
 	var filamentGroup, filamentLines, filamentNodes = [];
 	var webPhoto;
 	var cmbPhoto;
-	var questionGroup, questionSprites = [], asparagusSprite;
+	var questionGroup, questionSprites = [], asparagusSprite, asparagusFound = false;
 
 	function buildFilaments() {
 		// a procedurally generated cosmic web: ~110 glowing nodes in a
@@ -540,7 +542,7 @@ function bootAtlas() {
 			transparent: true, opacity: 0, depthWrite: false
 		}));
 		asparagusSprite.position.set(0, 24, -560);
-		asparagusSprite.scale.set(92, 23, 1);
+		asparagusSprite.scale.set(112, 28, 1);
 		questionGroup.add(asparagusSprite);
 
 		scene.add(questionGroup);
@@ -749,7 +751,7 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		if (asparagusSprite) { asparagusSprite.material.opacity = qO * 0.22; }
+		if (asparagusSprite) { asparagusSprite.material.opacity = qO * (asparagusFound ? 0.95 : 0.42); }
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
@@ -846,6 +848,9 @@ function bootAtlas() {
 		mouseNDC.y = -((py - rect.top) / rect.height) * 2 + 1;
 		raycaster.setFromCamera(mouseNDC, camera);
 		raycaster.params.Points = { threshold: 0.02 };
+		if (isClick && asparagusSprite && asparagusSprite.material.opacity > 0.05) {
+			if (raycaster.intersectObject(asparagusSprite).length) { revealAsparagus(); }
+		}
 		var hits = raycaster.intersectObject(dotMesh);
 		var found = null;
 		for (var i = 0; i < hits.length; i++) {
@@ -860,6 +865,12 @@ function bootAtlas() {
 		} else {
 			setHover(found, px, py);
 		}
+	}
+	function revealAsparagus() {
+		if (asparagusFound) { return; }
+		asparagusFound = true;
+		var el = document.getElementById('atlas-easter');
+		if (el) { el.style.display = 'block'; }
 	}
 
 	// ── selection / detail ────────────────────────────────────
@@ -1256,6 +1267,10 @@ function bootAtlas() {
 			});
 			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
 			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
+			if (asparagusSprite) {
+				asparagusSprite.position.x = 330 * Math.sin(frame * 0.0016);
+				asparagusSprite.position.y = 26 + 48 * Math.sin(frame * 0.0011 + 1.3);
+			}
 		}
 		frame++;
 		renderer.render(scene, camera);
