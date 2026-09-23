@@ -753,7 +753,7 @@ function bootAtlas() {
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 490, 570);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
-		if (asparagusSprite) { asparagusSprite.material.opacity = qO * (asparagusFound ? 1.0 : 0.8); }
+		if (asparagusSprite) { asparagusSprite.material.opacity = qO; }
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
@@ -871,6 +871,10 @@ function bootAtlas() {
 	function revealAsparagus() {
 		if (asparagusFound) { return; }
 		asparagusFound = true;
+		if (asparagusSprite) {
+			asparagusSprite.material.color.set(0xffffff);
+			asparagusSprite.scale.set(120, 30, 1);
+		}
 		var el = document.getElementById('atlas-easter');
 		if (el) { el.style.display = 'block'; }
 	}
