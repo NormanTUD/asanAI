@@ -19,10 +19,12 @@ This is the map of everything. Every person, place, institution, artifact, event
 <style>
 /* the one sanctioned full-width exception on this page: the Atlas
    stage spans the viewport (still in the normal vertical flow). */
-.lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); display: flex; flex-direction: column; height: clamp(520px, 78vh, 920px); min-height: 800px; }
+.lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); }
 #atlas-stage {
-	display: flex; flex: 1; min-height: 0;
+	display: flex;
 	width: 100%;
+	height: clamp(520px, 78vh, 920px);
+	min-height: 800px;
 	border-radius: 0 0 14px 14px;
 	overflow: hidden;
 	background: #05070d;
@@ -179,31 +181,28 @@ html:not(.dark) #atlas-stage {
 
 /* ── journey (tour) UI ── */
 .atlas-tour {
-	flex-shrink: 0;
-	z-index: 18; width: 100%;
+	position: absolute; left: 0; bottom: 0;
+	z-index: 18; width: 100%; height: 200px;
 	display: none;
 }
 .atlas-tour.open { display: block; }
 .atlas-tour .tour-card {
-	background: var(--atlas-card); border: 1px solid var(--atlas-line);
-	border-radius: 12px 12px 0 0; padding: 12px 20px;
+	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
+	border-radius: 12px 12px 0 0; padding: 10px 20px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
-	text-align: center;
+	text-align: left;
 }
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
-.atlas-tour .cap-text { font-size: .9rem; line-height: 1.55; margin-top: 6px; color: var(--atlas-ink); }
+.atlas-tour .cap-text { font-size: .85rem; line-height: 1.5; margin-top: 4px; color: var(--atlas-ink); }
 .atlas-tour .cap-text a { color: var(--atlas-accent); text-decoration: underline; text-underline-offset: 2px; }
-.atlas-tour .cap-phase { font-size: .78rem; font-style: italic; color: var(--atlas-ink-soft); margin-top: 8px; min-height: 1.2em; }
+.atlas-tour .cap-phase { font-size: .72rem; font-style: italic; color: var(--atlas-ink-soft); margin-top: 3px; }
 .atlas-tour .tour-img {
-	display: block; margin: 10px auto 0;
-	width: 210px; max-width: 62%; height: 120px;
-	object-fit: cover; border-radius: 10px;
-	border: 1px solid var(--atlas-line); box-shadow: var(--atlas-shadow);
+	display: none;
 }
 .atlas-tour .tour-bar {
-	display: flex; align-items: center; gap: 10px;
+	display: flex; align-items: center; gap: 8px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
-	border-top: none; padding: 10px 16px;
+	border-top: none; padding: 6px 12px;
 }
 .tour-dots { display: flex; gap: 5px; align-items: center; }
 .tour-dot {
@@ -302,6 +301,23 @@ html:not(.dark) #atlas-stage {
 
 		<div class="tour-dot-tip" id="tour-dot-tip" role="tooltip" hidden></div>
 
+		<div class="atlas-tour" id="atlas-tour">
+			<div class="tour-card">
+				<div class="cap-era" id="tour-era"></div>
+				<img class="tour-img" id="tour-img" alt="" style="display:none">
+				<div class="cap-text" id="tour-text"></div>
+				<div class="cap-phase" id="bh-phase-label"></div>
+			</div>
+			<div class="tour-bar">
+				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
+				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
+				<div class="tour-dots" id="tour-dots"></div>
+				<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
+				<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
+				<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
+			</div>
+		</div>
+
 		<div class="atlas-loader" id="atlas-loader">
 			<div class="spin" aria-hidden="true"></div>
 			<p>Charting the history of AI…</p>
@@ -309,23 +325,6 @@ html:not(.dark) #atlas-stage {
 		<div class="atlas-easter" id="atlas-easter">
 			<button class="atlas-easter-close" id="atlas-easter-close" type="button" aria-label="Close">&times;</button>
 			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine powers down, the word flashes on its screen.
-		</div>
-	</div>
-
-	<div class="atlas-tour" id="atlas-tour">
-		<div class="tour-card">
-			<div class="cap-era" id="tour-era"></div>
-			<img class="tour-img" id="tour-img" alt="" style="display:none">
-			<div class="cap-text" id="tour-text"></div>
-			<div class="cap-phase" id="bh-phase-label"></div>
-		</div>
-		<div class="tour-bar">
-			<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
-			<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
-			<div class="tour-dots" id="tour-dots"></div>
-			<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
-			<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
-			<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
 		</div>
 	</div>
 </div>
