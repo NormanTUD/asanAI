@@ -5326,15 +5326,15 @@ html.is-ready #topics-toggle {
 	visibility: visible;
 }
 /* Atlas: while the full-bleed map stage scrolls under the fixed top chrome,
-   hide those toggles. map.js toggles .atlas-overlap on <html>. Kept after the
-   is-ready rule so it wins the equal-specificity tie. */
+   hide those toggles. map.js toggles .atlas-overlap on <html>. !important so
+   it beats the later per-toggle is-ready rules (e.g. #topics-toggle @9016). */
 html.atlas-overlap #search-trigger,
 html.atlas-overlap #theme-toggle,
 html.atlas-overlap #topics-toggle,
 html.atlas-overlap #reader-toggle {
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
+	opacity: 0 !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
 }
 
 /* ════════════════════════════════════════════════════════════
