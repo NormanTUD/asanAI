@@ -323,6 +323,18 @@
 	   For backwards compatibility, an old flat topics-only map is
 	   recognised and treated as `{ topics: <that map> }`. */
 	function readRawPref() {
+		// localStorage is the primary store and always holds the full state;
+		// the cookie is a size-limited fallback (writePref stops updating it
+		// once the payload outgrows ~4 KB). Read localStorage first, so a stale
+		// cookie can't mask newer localStorage state — that made persona / topic
+		// changes appear to do nothing once the saved state grew past ~4 KB.
+		try {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				if (parsed && typeof parsed === 'object') return parsed;
+			}
+		} catch (e) { /* private mode -> fall through to cookie */ }
 		const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE_NAME + '=([^;]*)'));
 		if (m) {
 			try {
@@ -330,13 +342,6 @@
 				if (parsed && typeof parsed === 'object') return parsed;
 			} catch (e) { /* fall through */ }
 		}
-		try {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (raw) {
-				const parsed = JSON.parse(raw);
-				if (parsed && typeof parsed === 'object') return parsed;
-			}
-		} catch (e) { /* fall through */ }
 		return null;
 	}
 
