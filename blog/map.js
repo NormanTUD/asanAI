@@ -317,6 +317,8 @@ function bootAtlas() {
 			mat.map = tex;
 			mat.color.set(0xffffff);
 			mat.needsUpdate = true;
+		}, undefined, function (err) {
+			console.error('[atlas] GUARDRAIL 5: earth_texture.png failed to load:', err);
 		});
 		earth = new THREE.Mesh(geo, mat);
 		scene.add(earth);
@@ -339,6 +341,8 @@ function bootAtlas() {
 			mat.map = tex;
 			mat.color.set(0xffffff);
 			mat.needsUpdate = true;
+		}, undefined, function (err) {
+			console.error('[atlas] GUARDRAIL 5: moon_texture.png failed to load:', err);
 		});
 		var geo = new THREE.SphereGeometry(MOON_R, 40, 30);
 		moon = new THREE.Mesh(geo, mat);
