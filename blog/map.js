@@ -256,7 +256,7 @@ function bootAtlas() {
 		buildThreads();
 		applyCamera();
 
-		// ── Guardrails: catch the 5 most common texture/visibility bugs ──
+		// ── Guardrails: catch the 5 most common texture/visibility issues ──
 		(function guardrails() {
 			// 1. Inverted visibility: objects must be VISIBLE at d=3.2 (Earth view)
 			var d = state.d;
@@ -826,8 +826,10 @@ function bootAtlas() {
 			asparagusSprite.material.opacity = qO * asparagusGate;
 		}
 
-		// Hide terrestrial/solar bodies when zoom is extreme (cosmic/Big Bang/Question)
-		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 180, 250);
+		// Hide terrestrial bodies once we zoom past the solar system.
+		// Fade out alongside the solar system (d=90–135) so Earth is gone
+		// before the galaxy view begins (d>90).
+		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 70, 120);
 		if (earth) { earth.visible = celestialVis > 0.01; }
 		if (moon) { moon.visible = celestialVis > 0.01; }
 		if (atmosphere) { atmosphere.visible = celestialVis > 0.01; }
