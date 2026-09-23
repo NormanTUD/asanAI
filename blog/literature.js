@@ -8410,11 +8410,11 @@ window.bibData = {
 	},
 	"img_curiosity_panorama": {
 		title: "Curiosity at Rock Nest, Mars panorama",
-		author: "NASA / JPL-Calltech / MSSS",
+		author: "NASA / JPL-Caltech / MSSS",
 		year: 2012,
 		url: "https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg",
 		license: "Public Domain",
-		alternativetitle: "A Curiosity Mars panorama — the scene a rover's camera compresses and sends home over a radio link (NASA/JPL-Calltech/MSSS, public domain)"
+		alternativetitle: "A Curiosity Mars panorama — the scene a rover's camera compresses and sends home over a radio link (NASA/JPL-Caltech/MSSS, public domain)"
 	},
 	"img_data_center": {
 		title: "Data center server aisle",

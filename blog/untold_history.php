@@ -1248,6 +1248,11 @@ The displacement is startling. The same bit-flip problem now lives not in the vo
 
 When Apollo 11, 14, and 15 landed, the astronauts left behind small arrays of **corner-cube retroreflectors**, mirrors that reflect a beam of light straight back to whoever aimed it, regardless of the angle. Since 1969, observatories have fired a laser at those cubes and *timed the round trip of the pulse* to measure the Earth–Moon distance to the millimetre \cite[Lunar laser ranging]{wiki_lunar_laser_ranging}. The whole trick is one line of arithmetic: distance is the speed of light times the round-trip time, divided by two.
 
+<figure>
+    <img style="width: 55%; height: auto; display: block; margin: 1em auto;" src="apollo_alrr.jpg" alt="A corner-cube retroreflector array of the kind Apollo left on the Moon" />
+    <figcaption class="md">The \citealternativetitle{img_apollo_alrr} (CC0): a corner-cube retroreflector array of the kind the Apollo crews set down on the Moon. Aim a laser at it and the light comes straight back to you no matter the angle — the trick that lets a ground telescope measure the Earth–Moon distance to the millimetre, and the same trick at the heart of LIDAR. Source: [Mark Avino, CC0](https://commons.wikimedia.org/wiki/File:Laser_Ranging_Retro-Reflector,_Apollo_(NASM2020-00366).jpg).</figcaption>
+</figure>
+
 That single idea — send out light, time the echo, and the range is known — is the entire operating principle of **LIDAR**, the laser-radar that now lets a self-driving car paint a millimetre-precise three-dimensional map of the street around it in real time \cite[Lidar]{wiki_lidar}. And the corner cube itself, the device that bounces light faithfully home, is the same class of hardware now bolted onto survey targets, road signs, and drones as a LIDAR registration reference. A piece of hardware engineered to measure the Moon is the conceptual ancestor of the sensor that lets a car decide, in a fraction of a second, how far away a pedestrian is.
 
 ### Forty Minutes of Silence: The Light-Delay That Invented "Autonomy" and a New Kind of Network
@@ -1258,9 +1263,19 @@ Talk to a rover on Mars and the reply takes three to twenty-two minutes one way,
 
 * **Delay-tolerant networking.** A space link is slow, lossy, and periodically *simply disconnected* (a spacecraft slides behind the Sun and loses contact). The NASA/JPL **DTN** working group answered with the **Bundle Protocol**: cut the data into self-contained "bundles," store them, and forward them opportunistically, passing custody from node to node, with no end-to-end connection assumed at all \cite[Delay-tolerant networking]{wiki_delay_tolerant_networking}. Standardized by the IETF, that "store, carry, forward" logic now underpins the Internet of Things, disaster-recovery communications, and military networks — precisely the places where the old "always connected, end-to-end" assumption breaks down. A network was designed around the silence between worlds, and the same design is now what keeps data moving where any link can vanish.
 
+<figure>
+    <img style="width: 30%; height: auto; display: block; margin: 1em auto;" src="deep_space_1_spacecraft.jpg" alt="The Deep Space 1 spacecraft" />
+    <figcaption class="md">The \citealternativetitle{img_deep_space_1} (Public Domain): *Deep Space 1* (1998), the first spacecraft to carry an AI that planned its own actions and diagnosed and worked around its own faults — the flight proof that a machine could get work done without waiting for a reply from Earth. Source: [NASA/JPL, public domain](https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg).</figcaption>
+</figure>
+
 ### Fitting a Mountain in a Matchbox: The Compression Standard Chosen for a Mars Radio Link
 
 A rover's camera can produce megabytes a picture, but the radio link home carries kilobits a second. To get a scene across that pipe, the space-agency standards body (CCSDS) chose **JPEG 2000** for planetary imaging. Its core is not a discrete cosine transform but a **discrete wavelet transform**: decompose the image into a set of frequency sub-bands, discard the fine detail the eye and the science can least afford, and entropy-code what remains. Crucially it *degrades gracefully* — lose a chunk of the bitstream and you get a blurry image, not a broken one, which a lossy radio link prizes above everything \cite[JPEG 2000]{wiki_jpeg2000}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block; margin: 1em auto;" src="curiosity_panorama.jpg" alt="A panoramic view of the Martian surface from the Curiosity rover" />
+    <figcaption class="md">The \citealternativetitle{img_curiosity_panorama} (Public Domain): a panorama from the Curiosity rover — the kind of scene a spacecraft camera has to compress hard enough to squeeze across a radio link carrying kilobits a second. The wavelet decomposition that JPEG 2000 uses for exactly this job is the fixed, hand-designed ancestor of the learned basis a neural autoencoder finds. Source: [NASA/JPL-Caltech/MSSS, public domain](https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg).</figcaption>
+</figure>
 
 The displacement is mathematical. That three-step recipe — *transform into a compact basis, keep only the coefficients that matter, re-encode the rest* — is exactly what a neural **autoencoder** does, except it *learns* the transform instead of fixing it in advance. The "latent code" that you can later decode back into a full image is the direct successor of the wavelet sub-bands an engineer squeezed into a packet so a picture of Mars would arrive before the spacecraft rounded the planet. The question "how do I fit the whole scene into a handful of numbers and get it back?" was tuned on a radio link, and it is the same question behind every representation a model learns: how many numbers do I actually need to hold a face, a word, a protein?
 
@@ -1268,11 +1283,21 @@ The displacement is mathematical. That three-step recipe — *transform into a c
 
 By 2007 the Sloan Digital Sky Survey had imaged roughly nine hundred thousand galaxies, and the honest state of the art was that the automated image-analysis programs of the day **could not** classify them reliably — in the words of one of the founders, "the human brain is actually much better than a computer at these pattern-recognition tasks." So a group of astrophysicists did something that had never been done at that scale: they put the galaxies on the public web and let people click. **Galaxy Zoo**, launched on 11 July 2007, drew in more than one hundred thousand volunteers who produced over forty million classifications in their first six months — one hundred and twenty-five million in all, feeding more than sixty peer-reviewed papers and eventually the Zooniverse \cite[Galaxy Zoo]{wiki_galaxy_zoo}.
 
+<figure>
+    <img style="width: 72%; height: auto; display: block; margin: 1em auto;" src="mice_galaxies.jpg" alt="NGC 4676, two galaxies colliding and winding each other's stars into tails" />
+    <figcaption class="md">The \citealternativetitle{img_mice_galaxies} (Public Domain): NGC 4676, "The Mice" — two galaxies colliding and flinging stars into long tails, exactly the sort of interacting oddity that Galaxy Zoo's volunteers flagged by the million and that the automated classifiers of the day kept getting wrong. Source: [NASA/ESA, public domain](https://commons.wikimedia.org/wiki/File:The_Mice_(NGC_4676)-_Colliding_Galaxies_With_Tails_of_Stars_and_Gas_(2002-11-1191).jpg).</figcaption>
+</figure>
+
 The loop is the point, and it is the origin story of a whole subfield. The *data deluge* that machine learning could not solve was solved by crowd-sourcing; and those millions of human labels became precisely the training data that let deep learning finally learn to classify galaxies better than the crowd ever could. The space survey created the dataset, the crowd made it *labelled*, and the labelled set became the thing that taught the model. "AI for science" began, in one of its first great successes, not with a clever algorithm but with a pile of images no algorithm could handle and a forum full of volunteers — the same data-beats-hands rule that the \cite[Bitter Lesson]{sutton2019bitter} would later name.
 
 ### Unblurring the Sky: The Inverse Problem That Became the Denoising Step
 
 A telescope image is never the object. It is the object smeared by the optics and the atmosphere (a "point-spread function"), plus noise, on top. Recovering the sharp image is an **inverse problem**. The canonical tool, **Richardson–Lucy** deconvolution (Richardson 1972, Lucy 1974), is an iterative maximum-likelihood loop: guess the sharp image, smear it the way the optics would, compare the smear to the measurement you actually made, nudge the guess, and repeat until the smear matches the sky \cite[Richardson–Lucy deconvolution]{wiki_richardson_lucy}. At its heart is one repeated gesture: *given a corrupted measurement, work backward toward the clean signal.*
+
+<figure>
+    <img style="width: 58%; height: auto; display: block; margin: 1em auto;" src="hubble_ultra_deep_field.jpg" alt="The Hubble Ultra Deep Field, thousands of galaxies in a tiny patch of sky" />
+    <figcaption class="md">The \citealternativetitle{img_hubble_udf} (Public Domain): the Hubble Ultra Deep Field, thousands of galaxies in a grain-of-rice patch of sky — a picture recovered from smear and noise by exactly the iterative "clean the corrupted measurement" reflex that Richardson–Lucy deconvolution made standard, and that denoising diffusion models now learn to perform on their own. Source: [NASA/ESA, public domain](https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg).</figcaption>
+</figure>
 
 That gesture is the single most important idea in modern generative AI. A **denoising diffusion model** (Ho et al., 2020) is built on exactly this move, only *learned*: a forward process gradually adds noise to real data until it is pure static, and a network is trained to reverse one tiny bit of that noise at a time \cite[Diffusion model]{wiki_diffusion_model}. Sampling begins from pure static and *denoises* it, step by step, until a face, a molecule, or a protein emerges. The iterative un-blurring of a fuzzy astronomical plate and the iterative un-noising of a diffusion sample are the same reflex in two centuries — and the score-based view that ties them together makes the resemblance exact, not just poetic.
 

@@ -132,7 +132,7 @@ def main():
           str(sorted(missing)[:10]))
 
     print("== bibliography.json ==")
-    check("entries == 2081", len(bib["entries"]) == 2081, str(len(bib["entries"])))
+    check("entries == 2087", len(bib["entries"]) == 2087, str(len(bib["entries"])))
     cites_ok = all(all(s in slugs for s in v) for v in bib["cites"].values())
     check("cites slugs exist", cites_ok)
 

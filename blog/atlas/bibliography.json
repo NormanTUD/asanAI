@@ -7200,6 +7200,42 @@
    "year": "",
    "url": "https://en.wikipedia.org/wiki/Diffusion_model"
   },
+  "img_apollo_alrr": {
+   "title": "Apollo Laser Ranging Retroreflector (corner-cube array)",
+   "author": "Mark Avino (Smithsonian National Air and Space Museum)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Laser_Ranging_Retro-Reflector,_Apollo_(NASM2020-00366).jpg"
+  },
+  "img_deep_space_1": {
+   "title": "Deep Space 1 spacecraft",
+   "author": "NASA",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg"
+  },
+  "img_mice_galaxies": {
+   "title": "The Mice (NGC 4676), colliding galaxies",
+   "author": "NASA and ESA",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:The_Mice_(NGC_4676)-_Colliding_Galaxies_With_Tails_of_Stars_and_Gas_(2002-11-1191).jpg"
+  },
+  "img_hubble_udf": {
+   "title": "Hubble Ultra Deep Field",
+   "author": "NASA and ESA",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg"
+  },
+  "img_curiosity_panorama": {
+   "title": "Curiosity at Rock Nest, Mars panorama",
+   "author": "NASA / JPL-Caltech / MSSS",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg"
+  },
+  "img_data_center": {
+   "title": "Data center server aisle",
+   "author": "Christopher Bowns",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg"
+  },
   "nasa2021perseverance": {
    "title": "Mars 2020 Perseverance Rover — Selfie at Rochette",
    "author": "NASA / JPL-Caltech / MSSS",
@@ -15348,6 +15384,9 @@
   "wiki_single_event_effect": [
    "untold_history"
   ],
+  "img_data_center": [
+   "untold_history"
+  ],
   "wiki_tmr": [
    "untold_history"
   ],
@@ -15355,6 +15394,9 @@
    "untold_history"
   ],
   "wiki_lunar_laser_ranging": [
+   "untold_history"
+  ],
+  "img_apollo_alrr": [
    "untold_history"
   ],
   "wiki_lidar": [
@@ -15366,10 +15408,19 @@
   "wiki_delay_tolerant_networking": [
    "untold_history"
   ],
+  "img_deep_space_1": [
+   "untold_history"
+  ],
   "wiki_jpeg2000": [
    "untold_history"
   ],
+  "img_curiosity_panorama": [
+   "untold_history"
+  ],
   "wiki_galaxy_zoo": [
+   "untold_history"
+  ],
+  "img_mice_galaxies": [
    "untold_history"
   ],
   "sutton2019bitter": [
@@ -15380,6 +15431,9 @@
    "untold_history"
   ],
   "wiki_richardson_lucy": [
+   "untold_history"
+  ],
+  "img_hubble_udf": [
    "untold_history"
   ],
   "wiki_diffusion_model": [
@@ -36162,11 +36216,12 @@
    ]
   },
   "NASA": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "cosmic_web_image"
+    "cosmic_web_image",
+    "img_deep_space_1"
    ]
   },
   "ESA": {
@@ -36711,12 +36766,38 @@
     "arxiv_sdc_llm"
    ]
   },
-  "NASA / JPL-Caltech / MSSS": {
+  "Mark Avino (Smithsonian National Air and Space Museum)": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
+    "img_apollo_alrr"
+   ]
+  },
+  "NASA and ESA": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_mice_galaxies",
+    "img_hubble_udf"
+   ]
+  },
+  "NASA / JPL-Caltech / MSSS": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_curiosity_panorama",
     "nasa2021perseverance"
+   ]
+  },
+  "Christopher Bowns": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_data_center"
    ]
   },
   "Vandi Verma": {
