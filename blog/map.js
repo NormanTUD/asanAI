@@ -236,6 +236,7 @@ function bootAtlas() {
 
 		renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+		if (THREE.sRGBEncoding !== undefined) { renderer.outputEncoding = THREE.sRGBEncoding; }
 		renderer.setClearColor(new THREE.Color(THEME.bg), 1);
 		new THREE.TextureLoader().load('starfield_eso.jpg', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
