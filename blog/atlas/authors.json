@@ -22542,10 +22542,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "eisgalgen_mittenwald"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -51298,9 +51298,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "go_lang",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "go_lang"
   ],
   "cited_in": [
    "software",
@@ -55210,7 +55210,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 134,
+  "works": 145,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -55287,6 +55287,17 @@
    "ibmscamp",
    "micral",
    "wikipedia_reason",
+   "wiki_single_event_effect",
+   "wiki_tmr",
+   "wiki_lunar_laser_ranging",
+   "wiki_lidar",
+   "wiki_delay_tolerant_networking",
+   "wiki_jpeg2000",
+   "wiki_kepler_space_telescope",
+   "wiki_deep_space_1",
+   "wiki_galaxy_zoo",
+   "wiki_richardson_lucy",
+   "wiki_diffusion_model",
    "spencerbrown_wiki",
    "distinction_philosophy",
    "sheaf_mathematics",
@@ -60401,9 +60412,9 @@
   "conf": 0,
   "works": 3,
   "keys": [
-   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "transformer_attention_figure"
   ],
   "cited_in": [
    "map",
@@ -60443,6 +60454,23 @@
   ],
   "cited_in": [
    "map"
+  ]
+ },
+ {
+  "name": "Jeffrey Ma",
+  "canon": "Jeffrey Ma",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "arxiv_sdc_llm"
+  ],
+  "cited_in": [
+   "untold_history"
   ]
  }
 ]
