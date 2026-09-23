@@ -20,6 +20,7 @@ This is the map of everything. Every person, place, institution, artifact, event
 /* the one sanctioned full-width exception on this page: the Atlas
    stage spans the viewport (still in the normal vertical flow). */
 .lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); }
+.atlas-credits { max-width: 100% !important; width: 100% !important; margin-left: calc(50% - 50vw) !important; font-size: .82rem; color: var(--atlas-ink-mute, #6b7aa8); }
 #atlas-stage {
 	display: flex;
 	width: 100%;
@@ -181,14 +182,14 @@ html:not(.dark) #atlas-stage {
 
 /* ── journey (tour) UI ── */
 .atlas-tour {
-	position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-	z-index: 18; width: min(620px, calc(100% - 32px));
+	position: absolute; left: 0; bottom: 0;
+	z-index: 18; width: 100%;
 	display: none;
 }
 .atlas-tour.open { display: block; }
 .atlas-tour .tour-card {
-	background: var(--atlas-card); border: 1px solid var(--atlas-line);
-	border-radius: 16px 16px 0 0; padding: 14px 20px 16px;
+	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
+	border-radius: 16px 16px 0 0; padding: 12px 24px 14px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
 	text-align: center;
 }
@@ -204,8 +205,7 @@ html:not(.dark) #atlas-stage {
 .atlas-tour .tour-bar {
 	display: flex; align-items: center; gap: 10px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
-	border-top: none; border-radius: 0 0 16px 16px;
-	padding: 10px 12px;
+	border-top: none; padding: 10px 16px;
 }
 .tour-dots { display: flex; gap: 5px; align-items: center; }
 .tour-dot {
@@ -331,7 +331,7 @@ html:not(.dark) #atlas-stage {
 </div>
 </div>
 
-<div class="md" style="margin-top:14px">
+<div class="md atlas-credits" style="margin-top:14px">
 *Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 
 *The transformer figure in the journey:* Figure 1 (the encoder–decoder architecture) from \cite[Vaswani et al., 2017]{transformer_attention_figure} — Ashish Vaswani and colleagues, Google, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png)).
