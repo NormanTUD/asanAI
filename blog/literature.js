@@ -374,6 +374,63 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2305.00241",
 		alternativetitle: "Huchette et al., IJOC 2026 (arXiv:2305.00241), DOI 10.1287/ijoc.2024.0902"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  High-dimensional underpinnings of the origami chapter (origami.php):
+	 *  why folding data into unoccupied higher dimensions manufactures linear
+	 *  separability. Cover's counting function, concentration of measure (why
+	 *  new directions are nearly orthogonal), the Johnson–Lindenstrauss lemma
+	 *  (why the relational geometry of an embedding survives compression),
+	 *  neural collapse (the symmetric end-state geometry), and the topological
+	 *  (Betti-number) view of ReLU folding.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"cover1965": {
+		title: "Geometrical and Statistical Properties of Systems of Linear Inequalities with Applications in Pattern Recognition",
+		author: "Thomas M. Cover",
+		year: 1965,
+		journal: "IEEE Transactions on Electronic Computers",
+		volume: "EC-14",
+		number: 3,
+		pages: "326–334",
+		url: "https://doi.org/10.1109/pgec.1965.264137",
+		alternativetitle: "Cover, 1965 (the counting function behind 'Cover's theorem'), IEEE EC-14(3)"
+	},
+	"johnson1984lindenstrauss": {
+		title: "Extensions of Lipschitz Mappings into a Hilbert Space",
+		author: "William B. Johnson, Joram Lindenstrauss",
+		year: 1984,
+		journal: "Conference on Modern Analysis and Probability (New Haven, Conn., 1982); Contemporary Mathematics 26, American Mathematical Society",
+		url: "https://www.ams.org/books/conm/026",
+		alternativetitle: "Johnson & Lindenstrauss, 1984 (origin of the Johnson–Lindenstrauss lemma), AMS Contemporary Math 26"
+	},
+	"vershynin2018hd": {
+		title: "High-Dimensional Probability: An Introduction with Applications in Data Science",
+		author: "Roman Vershynin",
+		year: 2018,
+		publisher: "Cambridge University Press",
+		url: "https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-2.pdf",
+		alternativetitle: "Vershynin, High-Dimensional Probability (2018) — concentration of measure"
+	},
+	"papyan2020neuralcollapse": {
+		title: "Prevalence of Neural Collapse during the Terminal Phase of Deep Learning Training",
+		author: "Vardan Papyan, X. Y. Han, David L. Donoho",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.08186",
+		alternativetitle: "Papyan, Han & Donoho, neural collapse (arXiv:2008.08186)"
+	},
+	"naitzat2020topology": {
+		title: "Topology of Deep Neural Networks",
+		author: "Gregory Naitzat, Andrey Zhitnikov, Lek-Heng Lim",
+		year: 2020,
+		url: "https://arxiv.org/abs/2004.06093",
+		alternativetitle: "Naitzat, Zhitnikov & Lim, topology of deep networks (arXiv:2004.06093)"
+	},
+	"ergengrillo2024topological": {
+		title: "Topological Expressivity of ReLU Neural Networks",
+		author: "Ekin Ergen, Moritz Grillo",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.11130",
+		alternativetitle: "Ergen & Grillo, topological expressivity of ReLU nets (COLT 2024, arXiv:2310.11130)"
+	},
 	"black2022polytopelens": {
 		title: "Interpreting Neural Networks through the Polytope Lens",
 		author: "Sid Black, Lee Sharkey, Leo Grinsztajn, Eric Winsor, Dan Braun, Jacob Merizian, Kip Parker, Carlos Ramón Guevara, Beren Millidge, Gabriel Alfour, Connor Leahy",
