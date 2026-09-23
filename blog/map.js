@@ -30,7 +30,7 @@ function bootAtlas() {
 	var EARTH_R = 1;
 	var MOON_R = 0.27;
 	var MOON_DIST = 3.4;         // Moon's distance from Earth's center
-	var SUN_POS = [35, 0, 0];
+	var SUN_POS = [0, 0, 0];
 	var GALAXY_R = 210;
 	var FILAMENT_R = [260, 440]; // cosmic-web shell
 	var QUESTION_R = [380, 600]; // "?" world shell
@@ -185,7 +185,7 @@ function bootAtlas() {
 	var renderer, scene, camera, earth, moon, sun, planets = [];
 	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
-	var starField, galaxyGroup, atmosphere, sunSp, bgTexture = null;
+	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -505,13 +505,19 @@ function bootAtlas() {
 		}
 		scene.add(galaxyGroup);
 
-		// sun
+		// sun: 3D sphere body + glow sprite
+		sunBody = new THREE.Mesh(
+			new THREE.SphereGeometry(10, 32, 24),
+			new THREE.MeshBasicMaterial({ color: 0xffdd44, transparent: true, opacity: 0 })
+		);
+		sunBody.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
+		scene.add(sunBody);
 		sunSp = new THREE.Sprite(new THREE.SpriteMaterial({
 			map: makeRadialTexture('rgba(255,250,230,1)', 'rgba(255,190,90,.5)', 256),
 			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
 		}));
 		sunSp.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
-		sunSp.scale.set(26, 26, 1);
+		sunSp.scale.set(40, 40, 1);
 		scene.add(sunSp);
 
 		// planets: real order, orbits scaled by a_AU^0.4 (power-law compression
@@ -519,7 +525,7 @@ function bootAtlas() {
 		// Jupiter, then progressively larger gaps outward). Sizes by
 		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
-		var radii = [0.36, 0.67, 0.70, 0.45, 3.80, 3.37, 1.85, 1.81];
+		var radii = [0.4, 0.8, 0.9, 0.5, 8.0, 7.0, 3.5, 3.4];
 		var orbits = [7.5, 9.5, 11, 13, 21.5, 27.5, 37, 46];
 		var planetData = [
 			{ name: 'Mercury', au: 0.387, period: '88 d', diam: '4,879 km' },
@@ -911,12 +917,25 @@ function bootAtlas() {
 	}
 
 	// ── camera ────────────────────────────────────────────────
+	var tourTrans = { active: false, fromD: 0, fromTheta: 0, fromPhi: 0, start: 0, dur: 3500 };
+	function easeInOutCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 	function applyCamera() {
-		// the tour flies slower and more cinematically than hand control
-		var k = state.touring ? 0.04 : 0.12;
-		state.theta += (state.tTheta - state.theta) * k;
-		state.phi += (state.tPhi - state.phi) * k;
-		state.d += (state.tD - state.d) * k;
+		if (tourTrans.active) {
+			var t = Math.min(1, (performance.now() - tourTrans.start) / tourTrans.dur);
+			var e = easeInOutCubic(t);
+			state.d = tourTrans.fromD + (state.tD - tourTrans.fromD) * e;
+			var dTheta = state.tTheta - tourTrans.fromTheta;
+			if (dTheta > Math.PI) { dTheta -= 2 * Math.PI; }
+			if (dTheta < -Math.PI) { dTheta += 2 * Math.PI; }
+			state.theta = tourTrans.fromTheta + dTheta * e;
+			state.phi = tourTrans.fromPhi + (state.tPhi - tourTrans.fromPhi) * e;
+			if (t >= 1) { tourTrans.active = false; }
+		} else {
+			var k = state.touring ? 0.06 : 0.12;
+			state.theta += (state.tTheta - state.theta) * k;
+			state.phi += (state.tPhi - state.phi) * k;
+			state.d += (state.tD - state.d) * k;
+		}
 		var sp = Math.sin(state.phi);
 		camera.position.set(
 			state.d * sp * Math.cos(state.theta),
@@ -934,7 +953,7 @@ function bootAtlas() {
 		// background: Milky Way panorama for Earth/solar-system views,
 		// black for galaxy view and beyond (galaxies float in dark space)
 		var qBg = THREE.MathUtils.smoothstep(d, 480, 540);
-		var galBg = THREE.MathUtils.smoothstep(d, 90, 140) * (1 - THREE.MathUtils.smoothstep(d, 280, 350));
+		var galBg = THREE.MathUtils.smoothstep(d, 70, 100) * (1 - THREE.MathUtils.smoothstep(d, 280, 350));
 		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
 		// galaxies are a mid-zoom view; fully gone well before the web
@@ -978,9 +997,9 @@ function bootAtlas() {
 
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
-		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
-		var solarVis = (celestialVis > 0.01) && (solarO > 0.01);
-		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; }
+		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 110, 150));
+		var solarVis = solarO > 0.01;
+		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.material.opacity = solarO; sunBody.visible = solarVis; }
 		planets.forEach(function (p) {
 			p.material.opacity = solarO; p.visible = solarVis;
 			if (p.userData.ring) { p.userData.ring.material.opacity = solarO * 0.7; p.userData.ring.visible = solarVis; }
@@ -1418,7 +1437,7 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 45, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
-		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
+		{ d: 100, phi: 0.25, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
 		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 400, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
@@ -1481,6 +1500,12 @@ function bootAtlas() {
 			state.tTheta = Math.atan2(v.z, v.x);
 			state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		}
+		if (s.phi !== undefined) { state.tPhi = s.phi; }
+		tourTrans.active = true;
+		tourTrans.fromD = state.d;
+		tourTrans.fromTheta = state.theta;
+		tourTrans.fromPhi = state.phi;
+		tourTrans.start = performance.now();
 		var els = tourEls();
 		els.era.textContent = s.era;
 		els.text.innerHTML = s.text;
