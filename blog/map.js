@@ -268,6 +268,7 @@ function bootAtlas() {
 			clearSpotHighlight: clearSpotHighlight,
 			asparagus: function () { return asparagusSprite; },
 			revealAsparagus: revealAsparagus,
+			asparagusSetGate: function (ms) { qWorldEnteredAt = Date.now() - ms; },
 			camera: function () { return camera; }
 		};
 	}
