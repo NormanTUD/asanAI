@@ -30,7 +30,7 @@ function bootAtlas() {
 	var EARTH_R = 1;
 	var MOON_R = 0.27;
 	var MOON_DIST = 3.4;         // Moon's distance from Earth's center
-	var SUN_POS = [85, 6, -20];
+	var SUN_POS = [35, 0, 0];
 	var GALAXY_R = 210;
 	var FILAMENT_R = [260, 440]; // cosmic-web shell
 	var QUESTION_R = [380, 600]; // "?" world shell
@@ -414,7 +414,7 @@ function bootAtlas() {
 		// radius^0.45 (stylized but ordered); coplanar orbits through SUN_POS
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
 		var radii = [0.58, 0.88, 0.9, 0.68, 2.65, 2.44, 1.67, 1.66];
-		var orbits = [16.5, 19.8, 21.5, 23.8, 30.4, 33.6, 37.3, 39.7];
+		var orbits = [6, 8, 9, 10, 14, 16, 18, 19.5];
 		var planetTex = ['solsys_mercury.jpg', 'solsys_venus.jpg', 'solsys_earth.jpg', 'solsys_mars.jpg', 'solsys_jupiter.jpg', 'solsys_saturn.jpg', 'solsys_uranus.jpg', 'solsys_neptune.jpg'];
 		var texLoader = new THREE.TextureLoader();
 		for (var pi = 0; pi < 8; pi++) {
@@ -435,7 +435,7 @@ function bootAtlas() {
 			);
 			pm.userData.angle = pa;
 			pm.userData.dist = orbits[pi];
-			pm.userData.speed = 0.02 * Math.pow(16.5 / orbits[pi], 1.5);
+			pm.userData.speed = 0.02 * Math.pow(6 / orbits[pi], 1.5);
 			pm.visible = false;
 			planets.push(pm);
 			scene.add(pm);

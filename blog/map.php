@@ -25,9 +25,10 @@ This is the map of everything. Every person, place, institution, artifact, event
 	width: 100%;
 	height: clamp(520px, 78vh, 920px);
 	min-height: 800px;
-	border-radius: 14px;
+	border-radius: 0 0 14px 14px;
 	overflow: hidden;
 	background: #05070d;
+	margin-top: -1px;
 	--atlas-card: rgba(13,20,36,.86);
 	--atlas-card-solid: #0d1424;
 	--atlas-line: rgba(120,145,210,.16);
