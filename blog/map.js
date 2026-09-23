@@ -186,6 +186,7 @@ function bootAtlas() {
 	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
+	var bhGroup, bhParticles, bhStar, bhShock, bhHole, bhDisk, bhTime = -1;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
 
@@ -506,6 +507,53 @@ function bootAtlas() {
 			})(ti);
 		}
 		scene.add(galaxyGroup);
+
+		// ── stellar life cycle / black hole sequence ──────────────
+		bhGroup = new THREE.Group();
+		bhGroup.position.set(0, 0, 0);
+		bhGroup.visible = false;
+		var BH_PARTS = 800;
+		var bhGeo = new THREE.BufferGeometry();
+		var bhPos = new Float32Array(BH_PARTS * 3);
+		var bhVel = [];
+		for (var bi = 0; bi < BH_PARTS; bi++) {
+			var ba = Math.random() * Math.PI * 2;
+			var br = 2 + Math.random() * 12;
+			bhPos[bi * 3] = Math.cos(ba) * br;
+			bhPos[bi * 3 + 1] = (Math.random() - 0.5) * 6;
+			bhPos[bi * 3 + 2] = Math.sin(ba) * br;
+			bhVel.push({ angle: ba, radius: br, speed: 0.5 + Math.random() * 0.5, ySpread: (Math.random() - 0.5) * 6 });
+		}
+		bhGeo.setAttribute('position', new THREE.BufferAttribute(bhPos, 3));
+		bhParticles = new THREE.Points(bhGeo, new THREE.PointsMaterial({
+			color: 0xffaa44, size: 0.15, sizeAttenuation: true, transparent: true, opacity: 0,
+			blending: THREE.AdditiveBlending, depthWrite: false
+		}));
+		bhGroup.add(bhParticles);
+		bhStar = new THREE.Mesh(
+			new THREE.SphereGeometry(1, 24, 16),
+			new THREE.MeshBasicMaterial({ color: 0xffffcc, transparent: true, opacity: 0 })
+		);
+		bhGroup.add(bhStar);
+		bhShock = new THREE.Mesh(
+			new THREE.SphereGeometry(1, 32, 24),
+			new THREE.MeshBasicMaterial({ color: 0xaaccff, transparent: true, opacity: 0, side: THREE.BackSide })
+		);
+		bhGroup.add(bhShock);
+		bhHole = new THREE.Mesh(
+			new THREE.SphereGeometry(2.5, 32, 24),
+			new THREE.MeshBasicMaterial({ color: 0x000000 })
+		);
+		bhHole.visible = false;
+		bhGroup.add(bhHole);
+		bhDisk = new THREE.Mesh(
+			new THREE.TorusGeometry(5, 1.2, 16, 64),
+			new THREE.MeshBasicMaterial({ color: 0xff6622, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
+		);
+		bhDisk.rotation.x = Math.PI / 2.3;
+		bhDisk.visible = false;
+		bhGroup.add(bhDisk);
+		scene.add(bhGroup);
 
 		// sun: 3D sphere body + glow sprite
 		sunBody = new THREE.Mesh(
@@ -954,7 +1002,7 @@ function bootAtlas() {
 		if (starField) { starField.material.opacity = starO; }
 		// background: Milky Way panorama until galaxy view, then dark
 		var qBg = THREE.MathUtils.smoothstep(d, 600, 660);
-		var galBg = THREE.MathUtils.smoothstep(d, 240, 290);
+		var galBg = THREE.MathUtils.smoothstep(d, 195, 230);
 		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
 		// solar system: fully visible at the solar-system stop, gone before galaxies
@@ -968,6 +1016,9 @@ function bootAtlas() {
 		// galaxies: appear after the solar system fades, gone before the web
 		var galO = THREE.MathUtils.smoothstep(d, 250, 300) * (1 - THREE.MathUtils.smoothstep(d, 380, 450));
 		galaxyGroup.children.forEach(function (sp) { sp.material.opacity = galO * (0.5 + (sp.userData.texIdx % 3) * 0.15); sp.material.rotation = sp.userData.rot || 0; });
+		// black hole sequence: visible between solar system and galaxies
+		var bhO = THREE.MathUtils.smoothstep(d, 195, 215) * (1 - THREE.MathUtils.smoothstep(d, 270, 290));
+		bhGroup.visible = bhO > 0.01;
 		// the cosmic web sits between the galaxies and the CMB photo
 		var filO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 560));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
@@ -1435,6 +1486,7 @@ function bootAtlas() {
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 30, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 180, phi: 0.1, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
+		{ d: 240, era: 'A star is born — and dies', text: 'A cloud of hydrogen and helium collapses under its own gravity. Conservation of angular momentum flattens it into a spinning accretion disk — gas spirals inward, heats to millions of degrees, and ignites fusion. For millions of years the star burns in equilibrium. When the fuel runs out, the iron core collapses in a quarter-second. The outer layers rebound in a supernova — for a brief moment, brighter than the entire galaxy. If the remnant exceeds three solar masses, nothing halts the collapse. Space itself curves into an event horizon: a black hole, ringed by the last light that will ever escape.' },
 		{ d: 300, era: 'The galaxies', text: 'Each galaxy is an island of hundreds of billions of stars — the Milky Way alone holds 100–400 billion. They form from vast clouds of hydrogen and helium that collapse under gravity after the Big Bang, with the first stars igniting in dense cores and pulling in more gas until a rotating disk settles. Dark matter provides the gravitational scaffolding that holds them together. Every pixel of light you have ever seen on a screen was forged inside one of these stellar furnaces.' },
 		{ d: 450, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 550, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
@@ -1567,6 +1619,127 @@ function bootAtlas() {
 		});
 	}
 
+	// ── stellar life cycle animation ────────────────────────────
+	function tickBlackHole() {
+		var t = tour.active ? (performance.now() - tour.startedAt) / 1000 : (frame * 0.016);
+		var pos = bhGeo.attributes.position.array;
+		var i, v;
+		if (t < 4) {
+			// Phase 1: molecular cloud contracts
+			var contract = 1 - t / 4 * 0.4;
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = v.radius * contract;
+				var a = v.angle + t * 0.1 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * contract * (1 - t/4 * 0.7);
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = 0.6;
+			bhParticles.material.color.setHex(0x8899bb);
+			bhStar.material.opacity = 0;
+			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
+		} else if (t < 8) {
+			// Phase 2: accretion disk forms, protostar grows
+			var diskT = (t - 4) / 4;
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = (v.radius * 0.6) * (1 - diskT * 0.3);
+				var a = v.angle + t * 0.4 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * 0.3 * (1 - diskT);
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = 0.8;
+			bhParticles.material.color.setHex(0xffaa44);
+			bhStar.material.opacity = diskT * 0.9;
+			bhStar.scale.setScalar(1 + diskT * 3);
+			bhStar.material.color.setHex(0xffffcc);
+			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
+		} else if (t < 12) {
+			// Phase 3: main sequence star (stable, bright)
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = v.radius * 0.25;
+				var a = v.angle + t * 0.6 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * 0.05;
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = 0.4;
+			bhParticles.material.color.setHex(0xffcc66);
+			bhStar.material.opacity = 1;
+			bhStar.scale.setScalar(4);
+			bhStar.material.color.setHex(0xffffee);
+			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
+		} else if (t < 14.5) {
+			// Phase 4: red supergiant (expands, turns red)
+			var rgT = (t - 12) / 2.5;
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = v.radius * 0.3;
+				var a = v.angle + t * 0.2 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * 0.02;
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = 0.3;
+			bhParticles.material.color.setHex(0xff4422);
+			bhStar.material.opacity = 1;
+			bhStar.scale.setScalar(4 + rgT * 6);
+			bhStar.material.color.setHex(0xff4422);
+			bhHole.visible = false; bhDisk.visible = false; bhShock.material.opacity = 0;
+		} else if (t < 15.5) {
+			// Phase 5: core collapse (rapid shrink)
+			var ccT = (t - 14.5) / 1;
+			bhStar.material.opacity = 1 - ccT;
+			bhStar.scale.setScalar(10 - ccT * 9);
+			bhStar.material.color.setHex(0xffffff);
+			bhParticles.material.opacity = 0.2;
+			bhHole.visible = false; bhDisk.visible = false;
+			bhShock.material.opacity = 0;
+		} else if (t < 16.5) {
+			// Phase 6: supernova flash (expanding shockwave)
+			var snT = (t - 15.5) / 1;
+			bhStar.material.opacity = 0;
+			bhShock.material.opacity = (1 - snT) * 0.9;
+			bhShock.scale.setScalar(2 + snT * 20);
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = v.radius * 0.3 + snT * v.radius * 1.5;
+				var a = v.angle + t * 0.2 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * 0.5 * snT;
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = 0.7 * (1 - snT * 0.5);
+			bhParticles.material.color.setHex(0xaaccff);
+			bhHole.visible = false; bhDisk.visible = false;
+		} else {
+			// Phase 7: black hole with accretion disk
+			var bhT = Math.min(1, (t - 16.5) / 2);
+			bhStar.material.opacity = 0;
+			bhShock.material.opacity = Math.max(0, 0.9 - (t - 16.5) * 0.5);
+			bhShock.scale.setScalar(22);
+			bhHole.visible = true;
+			bhHole.scale.setScalar(bhT * 2.5);
+			bhDisk.visible = true;
+			bhDisk.material.opacity = bhT * 0.8;
+			bhDisk.rotation.z += 0.01;
+			for (i = 0; i < bhVel.length; i++) {
+				v = bhVel[i];
+				var r = 4 + Math.sin(v.angle * 3) * 1.5;
+				var a = v.angle + t * 1.2 * v.speed;
+				pos[i*3] = Math.cos(a) * r;
+				pos[i*3+1] = v.ySpread * 0.05 * Math.cos(a * 2);
+				pos[i*3+2] = Math.sin(a) * r;
+			}
+			bhParticles.material.opacity = bhT * 0.6;
+			bhParticles.material.color.setHex(0xff6622);
+		}
+		bhGeo.attributes.position.needsUpdate = true;
+	}
+
 	// ── main loop ─────────────────────────────────────────────
 	var frame = 0;
 	function tick() {
@@ -1589,6 +1762,8 @@ function bootAtlas() {
 		if (frame % 2 === 0) {
 			if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth) {
 				earth.rotation.y += 0.003;
+				if (dotMesh) { dotMesh.rotation.y += 0.003; }
+				if (atmosphere) { atmosphere.rotation.y += 0.003; }
 			}
 			planets.forEach(function (p) {
 				if (!p.visible) { return; }
@@ -1597,6 +1772,7 @@ function bootAtlas() {
 				p.position.z = SUN_POS[2] + Math.sin(p.userData.angle) * p.userData.dist;
 				if (p.userData.ring) { p.userData.ring.position.copy(p.position); }
 			});
+			if (bhGroup && bhGroup.visible) { tickBlackHole(); }
 			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
 			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
 			if (asparagusSprite) {
