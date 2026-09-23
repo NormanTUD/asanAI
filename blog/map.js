@@ -560,13 +560,6 @@ function bootAtlas() {
 		bhDisk.rotation.x = -Math.PI / 2.5;
 		bhDisk.visible = false;
 		bhGroup.add(bhDisk);
-		// gravitational lensing halo (light from back of disk bent over top/bottom)
-		bhHalo = new THREE.Mesh(
-			new THREE.TorusGeometry(22, 4, 16, 128),
-			new THREE.MeshBasicMaterial({ color: 0xffaa44, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
-		);
-		bhHalo.visible = false;
-		bhGroup.add(bhHalo);
 		// orbiting particles in the disk plane
 		var BH_PARTS = 500;
 		bhGeo = new THREE.BufferGeometry();
@@ -1700,23 +1693,7 @@ function bootAtlas() {
 	var bhLabelSprite = null;
 	var bhLabelCanvas, bhLabelCtx, bhLabelTex;
 	function makeBhLabel(text) {
-		if (!bhLabelCanvas) {
-			bhLabelCanvas = document.createElement('canvas');
-			bhLabelCanvas.width = 1024; bhLabelCanvas.height = 128;
-			bhLabelCtx = bhLabelCanvas.getContext('2d');
-			bhLabelTex = new THREE.CanvasTexture(bhLabelCanvas);
-			bhLabelSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: bhLabelTex, transparent: true, opacity: 0.9 }));
-			bhLabelSprite.scale.set(60, 7.5, 1);
-			bhLabelSprite.position.set(0, -30, 0);
-			bhGroup.add(bhLabelSprite);
-		}
-		bhLabelCtx.clearRect(0, 0, 1024, 128);
-		bhLabelCtx.font = 'italic 48px Georgia, serif';
-		bhLabelCtx.fillStyle = 'rgba(200, 210, 240, 0.95)';
-		bhLabelCtx.textAlign = 'center';
-		bhLabelCtx.textBaseline = 'middle';
-		bhLabelCtx.fillText(text, 512, 64);
-		bhLabelTex.needsUpdate = true;
+		if (bhPhaseLabel) { bhPhaseLabel.textContent = text; }
 	}
 	function tickBlackHole() {
 		var t = tour.active ? (performance.now() - tour.startedAt) / 1000 : (frame * 0.016);
@@ -1869,12 +1846,9 @@ function bootAtlas() {
 			bhGeo.attributes.position.needsUpdate = true;
 			activeLabel = '7. ' + BH_PHASES[6].label;
 		}
-		if (bhLabelSprite) {
-			if (activeLabel && activeLabel !== bhLabelSprite.userData.last) {
-				bhLabelSprite.userData.last = activeLabel;
-				makeBhLabel(activeLabel);
-			}
-			bhLabelSprite.material.opacity = bhGroup.visible ? 0.9 : 0;
+		if (activeLabel && activeLabel !== bhGroup.userData.lastLabel) {
+			bhGroup.userData.lastLabel = activeLabel;
+			makeBhLabel(activeLabel);
 		}
 	}
 
