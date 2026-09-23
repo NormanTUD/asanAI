@@ -332,6 +332,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Softmax_function",
 		alternativetitle: "Softmax function (Wikipedia)"
 	},
+	"inverse_function_theorem_wiki": {
+		title: "Inverse function theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Inverse_function_theorem",
+		alternativetitle: "Inverse function theorem (Wikipedia) — full-rank Jacobian implies local diffeomorphism"
+	},
 	"lewandowski2025spacefolds": {
 		title: "On Space Folds of ReLU Neural Networks",
 		author: "Michal Lewandowski, Hamid Eghbalzadeh, Bernhard Heinzl, Raphael Pisoni, Bernhard A. Moser",
