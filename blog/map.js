@@ -187,7 +187,7 @@ function bootAtlas() {
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
-	var bhHole, bhPhotonRing, bhDisk, bhHalo, bhParticles, bhStar, bhStarGlow, bhNebula;
+	var bhHole, bhPhotonRing, bhDisk, bhParticles, bhStar, bhStarGlow, bhNebula;
 	var bhGeo, bhVel = [], nebGeo, nebVel = [];
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
@@ -533,7 +533,7 @@ function bootAtlas() {
 		bhGroup.add(bhHole);
 		// photon ring (thin bright ring at event horizon)
 		bhPhotonRing = new THREE.Mesh(
-			new THREE.TorusGeometry(13, 0.4, 8, 128),
+			new THREE.TorusGeometry(13, 0.8, 8, 128),
 			new THREE.MeshBasicMaterial({ color: 0xffffcc, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
 		);
 		bhPhotonRing.visible = false;
@@ -1719,7 +1719,7 @@ function bootAtlas() {
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = 0;
 			bhParticles.visible = false;
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '1. ' + BH_PHASES[0].label;
 		} else if (t < 8) {
 			// Phase 2: disk forms, protostar ignites
@@ -1744,7 +1744,7 @@ function bootAtlas() {
 			bhStarGlow.scale.setScalar(20 + dT * 20);
 			bhParticles.visible = true;
 			bhParticles.material.opacity = dT * 0.6;
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '2. ' + BH_PHASES[1].label;
 		} else if (t < 12) {
 			// Phase 3: main sequence — stable, bright
@@ -1770,7 +1770,7 @@ function bootAtlas() {
 			bhParticles.visible = true;
 			bhParticles.material.opacity = 0.3;
 			bhParticles.material.color.setHex(0xffcc66);
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '3. ' + BH_PHASES[2].label;
 		} else if (t < 14.5) {
 			// Phase 4: red supergiant — swells, cools
@@ -1784,7 +1784,7 @@ function bootAtlas() {
 			bhStarGlow.material.color.setHex(0xff3300);
 			bhParticles.material.opacity = 0.15;
 			bhParticles.material.color.setHex(0xcc3311);
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '4. ' + BH_PHASES[3].label;
 		} else if (t < 15.5) {
 			// Phase 5: core collapse — violent shrink
@@ -1796,7 +1796,7 @@ function bootAtlas() {
 			bhStarGlow.scale.setScalar(20);
 			bhNebula.material.opacity = 0.05;
 			bhParticles.material.opacity = 0.1;
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '5. ' + BH_PHASES[4].label;
 		} else if (t < 16.5) {
 			// Phase 6: supernova flash
@@ -1811,7 +1811,7 @@ function bootAtlas() {
 			bhNebula.material.size = 2.0;
 			bhParticles.material.opacity = Math.max(0, 0.7 - snT * 0.5);
 			bhParticles.material.color.setHex(0x88ccff);
-			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false; bhHalo.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '6. ' + BH_PHASES[5].label;
 		} else {
 			// Phase 7: black hole with accretion disk
@@ -1827,9 +1827,6 @@ function bootAtlas() {
 			bhDisk.visible = true;
 			bhDisk.material.opacity = bhT * 0.7;
 			bhDisk.rotation.z += 0.005;
-			bhHalo.visible = true;
-			bhHalo.material.opacity = bhT * 0.4;
-			bhHalo.rotation.y += 0.008;
 			// particles orbit in disk plane
 			bhParticles.visible = true;
 			bhParticles.material.opacity = bhT * 0.6;
