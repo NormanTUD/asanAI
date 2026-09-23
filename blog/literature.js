@@ -402,6 +402,13 @@ window.bibData = {
 		url: "https://www.ams.org/books/conm/026",
 		alternativetitle: "Johnson & Lindenstrauss, 1984 (origin of the Johnson–Lindenstrauss lemma), AMS Contemporary Math 26"
 	},
+	"larsen2014jloptimal": {
+		title: "The Johnson-Lindenstrauss lemma is optimal for linear dimensionality reduction",
+		author: "Kasper Green Larsen, Jelani Nelson",
+		year: 2014,
+		url: "https://arxiv.org/abs/1411.2404",
+		alternativetitle: "Larsen & Nelson 2014 — matching lower bound: k = Omega(eps^{-2} log N) is tight for linear maps (arXiv:1411.2404)"
+	},
 	"vershynin2018hd": {
 		title: "High-Dimensional Probability: An Introduction with Applications in Data Science",
 		author: "Roman Vershynin",
