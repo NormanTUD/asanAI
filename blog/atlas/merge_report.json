@@ -61,8 +61,6 @@
  "author_repairs": {},
  "load_errors": [],
  "missing_files": [],
- "coverage_missing": [
-  "NASA / NOAA (Suomi NPP VIIRS)"
- ],
+ "coverage_missing": [],
  "entity_dropped_refs": []
 }
