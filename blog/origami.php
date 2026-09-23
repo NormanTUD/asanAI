@@ -265,18 +265,18 @@ class. So how does a network ever get at an "island" class that is completely su
 </div>
 
 	<h2 class="og-h2">The Geometry of the Crease — What the Hammer Does to Space</h2>
-	<p class="og-lead">The affine step (the anvil) only moves and stretches space — it cannot change what is linearly separable. The nonlinearity is where space is <em>reshaped</em>, and which nonlinearity a layer uses decides what <em>class of deformation</em> it applies — and, topologically, what the network is allowed to do to the data.</p>
+	<p class="og-lead">The affine step (the anvil) only moves and stretches space — it cannot change what is linearly separable. The nonlinearity reshapes it, and which one a layer uses fixes the <em>class of deformation</em> applied — and, topologically, what the network may do to the data.</p>
 
 	<div class="md">
 The hammer comes in several shapes, and they are not interchangeable:
 
-* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the whole negative half-space is pressed onto the fold. It is a **non-homeomorphism**, so it can *change the topology* of the data — close a hole, merge components, drop a Betti number \cite[Olah, 2014]{colah2014manifolds}\cite[Naitzat et al. 2020]{naitzat2020topology}. That power to destroy *ambient* structure is what untangles: the pointwise ReLU identifies the negative half-space with the fold, yet a crease that meets the data from an unoccupied direction stays injective *on the data* — its relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
-* **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $\alpha\in(0,1)$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so it is invertible and the topology is preserved. The activation of choice for invertible networks.
-* **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ \cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu} and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ \cite[Ramachandran et al. 2017]{ramachandran2017swish} — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms**; but a non-monotone map is not one-to-one, so they are *not* global diffeomorphisms — the layer still folds, gently. *Smooth buys you no corners — not no folding.*
+* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the negative half-space is identified with the fold. As a **non-homeomorphism** it can *change the data's topology* — close a hole, merge components, drop a Betti number \cite[Olah, 2014]{colah2014manifolds}\cite[Naitzat et al. 2020]{naitzat2020topology}; that is what untangles. The pointwise map is non-injective, but a crease hitting the data from an unoccupied direction is injective *on the data* — the relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
+* **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $\alpha\in(0,1)$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so the topology is preserved. The activation of choice for invertible networks.
+* **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ \cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu} and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ \cite[Ramachandran et al. 2017]{ramachandran2017swish} — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms**; being non-monotone, they are *not* one-to-one, hence *not* global diffeomorphisms. Smoothing removes corners but not folding.
 * **Tanh** and the **sigmoid** — smooth but *saturating*: they squash $\mathbb{R}^d$ into a bounded open box $(-1,1)^d$ or $(0,1)^d$, pressing the space flat against the boundary where the derivative $\to 0$. Geometrically that is *exactly* the vanishing-gradient problem \cite[Olah, 2015]{colah2015backprop}.
 * **Softmax** — the only map in the list that is not *pointwise*: it reads the whole logit vector at once and lands it in the **probability simplex** $\Delta^{d-1}$, the $(d{-}1)$-dimensional set of all probability distributions \cite{softmax_wiki}. Distances there are not Euclidean but measured by the KL divergence / Fisher–Rao metric — *information geometry* \cite[Information geometry]{info_geometry_nlab}.
 
-The ReLU's non-homeomorphism is not a defect — it is the mechanism. The high-dimensional section below makes it precise: it is exactly the non-homeomorphic activations that reduce Betti numbers and manufacture the separability this chapter is about \cite[Naitzat et al. 2020]{naitzat2020topology}.
+The ReLU's non-homeomorphism is the mechanism, not a defect: the high-dimensional section below shows it is exactly the non-homeomorphic activations that reduce Betti numbers and produce the separability this chapter is about \cite[Naitzat et al. 2020]{naitzat2020topology}.
 </div>
 
 	<h2 class="og-h2">The Key Idea — Fold, Don't Crush</h2>
@@ -675,10 +675,10 @@ barely does:
 </div>
 
 	<h2 class="og-h2">The High-Dimensional Underpinnings — Why More Dimensions Make Data Separable</h2>
-	<p class="og-lead">Folding is the <em>mechanism</em>. Why does lifting data into more dimensions make it separable at all? High-dimensional mathematics says exactly this — and it is the same mathematics that makes the book's embedding chapters work.</p>
+	<p class="og-lead">Folding is the <em>mechanism</em>. Why does lifting data into more dimensions make it separable at all? High-dimensional mathematics answers — and it is the same mathematics that makes the book's embedding chapters work.</p>
 
 	<div class="md">
-The folding story has a quantitative backbone, in five load-bearing facts.
+Five facts give it a quantitative backbone:
 
 **1. Cover's counting function — the arithmetic of separability** \cite[Cover, 1965]{cover1965}.
 A $d$-weight linear readout realizes only some of the $2^N$ two-colourings of $N$ points. Cover counted exactly how many, for $N$ points in general position in $\mathbb{R}^d$:
