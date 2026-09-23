@@ -134,7 +134,8 @@ function bootAtlas() {
 	function isMoonEntity(e) {
 		var t = (e.name + ' ' + (e.loc || '')).toLowerCase();
 		return t.indexOf('moon') !== -1 || t.indexOf('lunar') !== -1 ||
-			t.indexOf('tranquility') !== -1 || t.indexOf('apollo') !== -1;
+			t.indexOf('tranquility') !== -1 || t.indexOf('apollo 1') !== -1 ||
+			t.indexOf('apollo 2') !== -1;
 	}
 	function yearRange(a, b) {
 		// "exists at state.year"; the slider's max position means "all time"
