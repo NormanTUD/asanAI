@@ -1704,7 +1704,8 @@ function bootAtlas() {
 		{ start: 12, end: 14.5, label: 'Fuel exhausted. Envelope swells. Red supergiant.' },
 		{ start: 14.5, end: 15.5, label: 'Iron core collapses in 0.25 seconds' },
 		{ start: 15.5, end: 16.5, label: 'Supernova — brighter than the entire galaxy' },
-		{ start: 16.5, end: 22, label: 'Remnant > 3 M\u2609. Event horizon forms.' }
+		{ start: 16.5, end: 26, label: 'Remnant > 3 M\u2609. Event horizon forms.' },
+		{ start: 26, end: 36, label: 'M87* — first image of a black hole (EHT, 2019)' }
 	];
 	var bhLabelSprite = null;
 	var bhLabelCanvas, bhLabelCtx, bhLabelTex;
@@ -1815,7 +1816,7 @@ function bootAtlas() {
 			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			activeLabel = '5. ' + BH_PHASES[4].label;
 		} else if (t < 16.5) {
-			// Phase 6: supernova flash
+			// Phase 6: supernova flash → Crab Nebula fades in
 			var snT = (t - 15.5);
 			bhStar.material.opacity = Math.max(0, 0.3 - snT);
 			bhStar.scale.setScalar(1);
@@ -1828,13 +1829,20 @@ function bootAtlas() {
 			bhParticles.material.opacity = Math.max(0, 0.7 - snT * 0.5);
 			bhParticles.material.color.setHex(0x88ccff);
 			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
+			// Crab Nebula fades in during last half of supernova
+			var crabO = THREE.MathUtils.smoothstep(snT, 0.3, 1.0);
+			bhCrab.visible = crabO > 0.01;
+			bhCrab.material.opacity = crabO * 0.85;
+			bhM87.visible = false;
 			activeLabel = '6. ' + BH_PHASES[5].label;
-		} else {
+		} else if (t < 26) {
 			// Phase 7: black hole with accretion disk
 			var bhT = Math.min(1, (t - 16.5) / 3);
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = Math.max(0, 0.5 - (t - 16.5) * 0.5);
 			bhNebula.material.opacity = Math.max(0, 0.3 - (t - 16.5) * 0.2);
+			bhCrab.visible = true;
+			bhCrab.material.opacity = Math.max(0, 0.85 - (t - 16.5) * 0.05);
 			bhHole.visible = true;
 			bhHole.scale.setScalar(bhT);
 			bhPhotonRing.visible = true;
@@ -1843,7 +1851,6 @@ function bootAtlas() {
 			bhDisk.visible = true;
 			bhDisk.material.opacity = bhT * 0.7;
 			bhDisk.rotation.z += 0.005;
-			// particles orbit in disk plane
 			bhParticles.visible = true;
 			bhParticles.material.opacity = bhT * 0.6;
 			bhParticles.material.color.setHex(0xff6622);
@@ -1857,7 +1864,23 @@ function bootAtlas() {
 				ppos[i*3+2] = Math.sin(a7) * v.radius;
 			}
 			bhGeo.attributes.position.needsUpdate = true;
+			bhM87.visible = false;
 			activeLabel = '7. ' + BH_PHASES[6].label;
+		} else {
+			// Phase 8: crossfade to real M87 black hole photo (10s)
+			var m87T = THREE.MathUtils.smoothstep(Math.min(1, (t - 26) / 10), 0, 1);
+			bhStar.material.opacity = 0;
+			bhStarGlow.material.opacity = 0;
+			bhNebula.material.opacity = 0;
+			bhCrab.material.opacity = Math.max(0, 0.85 - (t - 16.5) * 0.05);
+			bhHole.visible = true;
+			bhHole.scale.setScalar(1);
+			bhPhotonRing.material.opacity = Math.max(0, 0.9 - m87T);
+			bhDisk.material.opacity = Math.max(0, 0.7 - m87T);
+			bhParticles.material.opacity = Math.max(0, 0.6 - m87T);
+			bhM87.visible = m87T > 0.01;
+			bhM87.material.opacity = m87T;
+			activeLabel = '8. ' + BH_PHASES[6].label + ' — EHT image of M87*';
 		}
 		if (activeLabel && activeLabel !== bhGroup.userData.lastLabel) {
 			bhGroup.userData.lastLabel = activeLabel;

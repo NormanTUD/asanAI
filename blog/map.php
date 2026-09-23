@@ -181,14 +181,14 @@ html:not(.dark) #atlas-stage {
 
 /* ── journey (tour) UI ── */
 .atlas-tour {
-	position: absolute; left: 0; bottom: 0;
+	position: relative; margin-top: 16px;
 	z-index: 18; width: 100%;
 	display: none;
 }
 .atlas-tour.open { display: block; }
 .atlas-tour .tour-card {
-	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
-	border-radius: 12px 12px 0 0; padding: 8px 20px 10px;
+	background: var(--atlas-card); border: 1px solid var(--atlas-line);
+	border-radius: 12px 12px 0 0; padding: 12px 20px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
 	text-align: center;
 }
@@ -302,22 +302,6 @@ html:not(.dark) #atlas-stage {
 		<div class="atlas-detail" id="atlas-detail"></div>
 		<div class="atlas-tip" id="atlas-tip"></div>
 
-		<div class="atlas-tour" id="atlas-tour">
-			<div class="tour-card">
-				<div class="cap-era" id="tour-era"></div>
-				<img class="tour-img" id="tour-img" alt="" style="display:none">
-				<div class="cap-text" id="tour-text"></div>
-				<div class="cap-phase" id="bh-phase-label"></div>
-			</div>
-			<div class="tour-bar">
-				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
-				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
-				<div class="tour-dots" id="tour-dots"></div>
-				<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
-				<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
-				<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
-			</div>
-		</div>
 		<div class="tour-dot-tip" id="tour-dot-tip" role="tooltip" hidden></div>
 
 		<div class="atlas-loader" id="atlas-loader">
@@ -332,6 +316,23 @@ html:not(.dark) #atlas-stage {
 </div>
 </div>
 
+<div class="atlas-tour" id="atlas-tour">
+	<div class="tour-card">
+		<div class="cap-era" id="tour-era"></div>
+		<img class="tour-img" id="tour-img" alt="" style="display:none">
+		<div class="cap-text" id="tour-text"></div>
+		<div class="cap-phase" id="bh-phase-label"></div>
+	</div>
+	<div class="tour-bar">
+		<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
+		<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
+		<div class="tour-dots" id="tour-dots"></div>
+		<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
+		<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
+		<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
+	</div>
+</div>
+
 <div class="md" style="margin-top:14px">
 *Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 
@@ -344,4 +345,8 @@ html:not(.dark) #atlas-stage {
 *Earth and Moon surfaces (the main globe):* equirectangular maps from \cite[Solar System Scope]{earth_moon_cc_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
 
 *Earth night side (city lights):* \cite[VIIRS 2012 composite]{earth_night_lights} — NASA / NOAA, Public Domain.
+
+*Black hole image (M87*):* \cite[EHT image of M87*]{m87_blackhole_image} — Event Horizon Telescope Collaboration, CC BY 4.0 ([file](https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg)).
+
+*Crab Nebula (SN 1054 remnant):* \cite[Crab Nebula, SN 1054]{crab_nebula_image} — NASA / ESA / Hubble Space Telescope, Public Domain.
 </div>
