@@ -281,6 +281,7 @@ function bootAtlas() {
 		});
 		new THREE.TextureLoader().load('earth_texture.png', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			tex.needsUpdate = true;
 			mat.map = tex;
 			mat.color.set(0xffffff);
 			mat.needsUpdate = true;
