@@ -8376,6 +8376,54 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Diffusion_model",
 		alternativetitle: "Diffusion model (Wikipedia): generative models that learn to reverse noise, one denoising step at a time"
 	},
+	"img_apollo_alrr": {
+		title: "Apollo Laser Ranging Retroreflector (corner-cube array)",
+		author: "Mark Avino (Smithsonian National Air and Space Museum)",
+		year: 2020,
+		url: "https://commons.wikimedia.org/wiki/File:Laser_Ranging_Retro-Reflector,_Apollo_(NASM2020-00366).jpg",
+		license: "CC0",
+		alternativetitle: "The corner-cube retroreflector array the Apollo crews left on the Moon, the target of lunar laser ranging (CC0)"
+	},
+	"img_deep_space_1": {
+		title: "Deep Space 1 spacecraft",
+		author: "NASA",
+		year: 2000,
+		url: "https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg",
+		license: "Public Domain",
+		alternativetitle: "Deep Space 1, the first spacecraft whose on-board AI planned and repaired itself (NASA/JPL, public domain)"
+	},
+	"img_mice_galaxies": {
+		title: "The Mice (NGC 4676), colliding galaxies",
+		author: "NASA and ESA",
+		year: 2002,
+		url: "https://commons.wikimedia.org/wiki/File:The_Mice_(NGC_4676)-_Colliding_Galaxies_With_Tails_of_Stars_and_Gas_(2002-11-1191).jpg",
+		license: "Public Domain",
+		alternativetitle: "NGC 4676, 'The Mice', two galaxies colliding and winding each other's stars into tails — the kind of object Galaxy Zoo volunteers classified by the million (NASA/ESA, public domain)"
+	},
+	"img_hubble_udf": {
+		title: "Hubble Ultra Deep Field",
+		author: "NASA and ESA",
+		year: 2004,
+		url: "https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg",
+		license: "Public Domain",
+		alternativetitle: "The Hubble Ultra Deep Field, thousands of galaxies in a grain-of-rice patch of sky (NASA/ESA, public domain)"
+	},
+	"img_curiosity_panorama": {
+		title: "Curiosity at Rock Nest, Mars panorama",
+		author: "NASA / JPL-Caltech / MSSS",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg",
+		license: "Public Domain",
+		alternativetitle: "A Curiosity Mars panorama — the scene a rover's camera compresses and sends home over a radio link (NASA/JPL-Caltech/MSSS, public domain)"
+	},
+	"img_data_center": {
+		title: "Data center server aisle",
+		author: "Christopher Bowns",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "A data center, where the bit flips that radiation once caused in orbit now threaten large training runs (Christopher Bowns, CC BY-SA 2.0)"
+	},
 	"nasa2021perseverance": {
 		title: "Mars 2020 Perseverance Rover — Selfie at Rochette",
 		author: "NASA / JPL-Caltech / MSSS",

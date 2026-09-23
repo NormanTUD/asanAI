@@ -36180,8 +36180,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "javascript_mdn",
-   "mozillareadability"
+   "mozillareadability",
+   "javascript_mdn"
   ],
   "cited_in": [
    "software",
@@ -38513,12 +38513,14 @@
   "city": "Washington, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "cosmic_web_image"
+   "cosmic_web_image",
+   "img_deep_space_1"
   ],
   "cited_in": [
-   "foam_of_meaning"
+   "foam_of_meaning",
+   "untold_history"
   ]
  },
  {
@@ -38565,8 +38567,9 @@
   "city": "Pasadena, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "img_curiosity_panorama",
    "nasa2021perseverance"
   ],
   "cited_in": [
@@ -60412,9 +60415,9 @@
   "conf": 0,
   "works": 3,
   "keys": [
-   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "transformer_attention_figure"
   ],
   "cited_in": [
    "map",
@@ -60488,6 +60491,58 @@
   ],
   "cited_in": [
    "map"
+  ]
+ },
+ {
+  "name": "Mark Avino",
+  "canon": "Mark Avino",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_apollo_alrr"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "NASA and ESA",
+  "canon": "NASA and ESA",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "img_mice_galaxies",
+   "img_hubble_udf"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Christopher Bowns",
+  "canon": "Christopher Bowns",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_data_center"
+  ],
+  "cited_in": [
+   "untold_history"
   ]
  }
 ]
