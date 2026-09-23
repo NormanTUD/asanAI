@@ -470,7 +470,7 @@ function bootAtlas() {
 		var galaxyTexs = [];
 		var spFallback = makeSpiralTexture();
 		var galaxySprites = [];
-		for (var gi = 0; gi < 9; gi++) {
+		for (var gi = 0; gi < 25; gi++) {
 			var texIdx = gi % galaxyFiles.length;
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
 				map: spFallback, transparent: true, opacity: 0, depthWrite: false,
@@ -519,8 +519,18 @@ function bootAtlas() {
 		// Jupiter, then progressively larger gaps outward). Sizes by
 		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
-		var radii = [0.56, 0.88, 0.90, 0.66, 3.01, 2.77, 1.80, 1.77];
+		var radii = [0.36, 0.67, 0.70, 0.45, 3.80, 3.37, 1.85, 1.81];
 		var orbits = [7.5, 9.5, 11, 13, 21.5, 27.5, 37, 46];
+		var planetData = [
+			{ name: 'Mercury', au: 0.387, period: '88 d', diam: '4,879 km' },
+			{ name: 'Venus', au: 0.723, period: '225 d', diam: '12,104 km' },
+			{ name: 'Earth', au: 1.0, period: '365 d', diam: '12,742 km' },
+			{ name: 'Mars', au: 1.524, period: '687 d', diam: '6,779 km' },
+			{ name: 'Jupiter', au: 5.203, period: '11.9 yr', diam: '139,820 km' },
+			{ name: 'Saturn', au: 9.537, period: '29.5 yr', diam: '116,460 km' },
+			{ name: 'Uranus', au: 19.19, period: '84.0 yr', diam: '50,724 km' },
+			{ name: 'Neptune', au: 30.07, period: '164.8 yr', diam: '49,244 km' }
+		];
 		var planetTex = ['solsys_mercury.jpg', 'solsys_venus.jpg', 'solsys_earth.jpg', 'solsys_mars.jpg', 'solsys_jupiter.jpg', 'solsys_saturn.jpg', 'solsys_uranus.jpg', 'solsys_neptune.jpg'];
 		var texLoader = new THREE.TextureLoader();
 		for (var pi = 0; pi < 8; pi++) {
@@ -542,7 +552,7 @@ function bootAtlas() {
 			pm.userData.angle = pa;
 			pm.userData.dist = orbits[pi];
 			pm.userData.speed = 0.02 * Math.pow(11 / orbits[pi], 1.5);
-			pm.userData.name = ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'][pi];
+			pm.userData.info = planetData[pi];
 			pm.visible = false;
 			planets.push(pm);
 			scene.add(pm);
@@ -921,9 +931,11 @@ function bootAtlas() {
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
 			* (1 - THREE.MathUtils.smoothstep(d, 100, 160));
 		if (starField) { starField.material.opacity = starO; }
-		// question world: black background instead of starfield
+		// background: Milky Way panorama for Earth/solar-system views,
+		// black for galaxy view and beyond (galaxies float in dark space)
 		var qBg = THREE.MathUtils.smoothstep(d, 480, 540);
-		if (qBg > 0.5) { scene.background = new THREE.Color(0x000000); }
+		var galBg = THREE.MathUtils.smoothstep(d, 90, 140) * (1 - THREE.MathUtils.smoothstep(d, 280, 350));
+		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
 		// galaxies are a mid-zoom view; fully gone well before the web
 		var galO = THREE.MathUtils.smoothstep(d, 24, 90) * (1 - THREE.MathUtils.smoothstep(d, 160, 280));
@@ -1107,9 +1119,11 @@ function bootAtlas() {
 		if (!found && !isClick) {
 			var pHits = raycaster.intersectObjects(planets);
 			if (pHits.length && pHits[0].object.visible) {
-				var pName = pHits[0].object.userData.name;
-				tip.innerHTML = '<div class="t-name"></div>';
-				tip.querySelector('.t-name').textContent = pName;
+				var pInfo = pHits[0].object.userData.info;
+				tip.innerHTML = '<div class="t-name"></div><div class="t-sub"></div>';
+				tip.querySelector('.t-name').textContent = pInfo.name;
+				tip.querySelector('.t-sub').textContent =
+					pInfo.au + ' AU · ' + pInfo.period + ' · ' + pInfo.diam;
 				tip.style.display = 'block';
 				tip.style.left = (px + 14) + 'px';
 				tip.style.top = (py + 14) + 'px';
