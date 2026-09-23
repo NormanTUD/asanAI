@@ -8292,6 +8292,90 @@ window.bibData = {
 		url: "https://ieeexplore.ieee.org/document/209582",
 		alternativetitle: "Berrou & Glavieux's 1993 paper introducing turbo codes"
 	},
+	"wiki_single_event_effect": {
+		title: "Single-event effect",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Single-event_effect",
+		alternativetitle: "Single-event effect (Wikipedia): how one high-energy particle flips a stored bit"
+	},
+	"wiki_tmr": {
+		title: "Triple modular redundancy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Triple_modular_redundancy",
+		alternativetitle: "Triple modular redundancy (Wikipedia): run three copies and take the majority"
+	},
+	"arxiv_sdc_llm": {
+		title: "Understanding Silent Data Corruption in LLM Training",
+		author: "Jeffrey Ma et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.12340",
+		alternativetitle: "Ma et al. on silent data corruption quietly corrupting large-scale LLM training runs"
+	},
+	"wiki_lunar_laser_ranging": {
+		title: "Lunar laser ranging",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lunar_laser_ranging",
+		alternativetitle: "Lunar laser ranging (Wikipedia): timing a laser pulse bounced off the Apollo corner-cube arrays left on the Moon"
+	},
+	"wiki_lidar": {
+		title: "Lidar",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lidar",
+		alternativetitle: "Lidar (Wikipedia): ranging by timing a reflected laser pulse"
+	},
+	"wiki_delay_tolerant_networking": {
+		title: "Delay-tolerant networking",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Delay-tolerant_networking",
+		alternativetitle: "Delay-tolerant networking (Wikipedia): the Bundle Protocol built for disconnected, high-light-delay space links"
+	},
+	"wiki_jpeg2000": {
+		title: "JPEG 2000",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/JPEG_2000",
+		alternativetitle: "JPEG 2000 (Wikipedia): wavelet-based image compression adopted for space telemetry"
+	},
+	"wiki_kepler_space_telescope": {
+		title: "Kepler space telescope",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Kepler_space_telescope",
+		alternativetitle: "Kepler space telescope (Wikipedia): the transit survey that turned exoplanet hunting into classification at scale"
+	},
+	"wiki_deep_space_1": {
+		title: "Deep Space 1",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deep_Space_1",
+		alternativetitle: "Deep Space 1 (Wikipedia): the first spacecraft whose AI planned and repaired itself"
+	},
+	"wiki_galaxy_zoo": {
+		title: "Galaxy Zoo",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Galaxy_Zoo",
+		alternativetitle: "Galaxy Zoo (Wikipedia): the crowd that labelled the very data deep learning later learned from"
+	},
+	"wiki_richardson_lucy": {
+		title: "Richardson–Lucy deconvolution",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Richardson%E2%80%93Lucy_deconvolution",
+		alternativetitle: "Richardson–Lucy deconvolution (Wikipedia): iteratively unblurring an image, the inverse-problem ancestor of denoising"
+	},
+	"wiki_diffusion_model": {
+		title: "Diffusion model",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Diffusion_model",
+		alternativetitle: "Diffusion model (Wikipedia): generative models that learn to reverse noise, one denoising step at a time"
+	},
 	"nasa2021perseverance": {
 		title: "Mars 2020 Perseverance Rover — Selfie at Rochette",
 		author: "NASA / JPL-Caltech / MSSS",
