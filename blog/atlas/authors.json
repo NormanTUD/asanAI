@@ -60412,9 +60412,9 @@
   "conf": 0,
   "works": 3,
   "keys": [
+   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch",
-   "transformer_attention_figure"
+   "googlecustomsearch"
   ],
   "cited_in": [
    "map",
@@ -60471,6 +60471,23 @@
   ],
   "cited_in": [
    "untold_history"
+  ]
+ },
+ {
+  "name": "NASA / NOAA (Suomi NPP VIIRS)",
+  "canon": "NASA / NOAA",
+  "alias": "Suomi NPP VIIRS",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "earth_night_lights"
+  ],
+  "cited_in": [
+   "map"
   ]
  }
 ]
