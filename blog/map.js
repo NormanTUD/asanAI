@@ -37,7 +37,7 @@ function bootAtlas() {
 	var WEB_PHOTO_DIST = 300;    // flat cosmic-web photo, in front of camera
 	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
 	var STAR_R = 470;
-	var MIN_D = 1.45, MAX_D = 620;
+	var MIN_D = 1.45, MAX_D = 700;
 
 	var THEME = {};
 	function readTheme() {
@@ -470,7 +470,7 @@ function bootAtlas() {
 		var galaxyTexs = [];
 		var spFallback = makeSpiralTexture();
 		var galaxySprites = [];
-		for (var gi = 0; gi < 25; gi++) {
+		for (var gi = 0; gi < 40; gi++) {
 			var texIdx = gi % galaxyFiles.length;
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
 				map: spFallback, transparent: true, opacity: 0, depthWrite: false,
@@ -507,8 +507,8 @@ function bootAtlas() {
 
 		// sun: 3D sphere body + glow sprite
 		sunBody = new THREE.Mesh(
-			new THREE.SphereGeometry(5, 32, 24),
-			new THREE.MeshBasicMaterial({ color: 0xffdd44, transparent: true, opacity: 0 })
+			new THREE.SphereGeometry(10, 32, 24),
+			new THREE.MeshBasicMaterial({ color: 0xffdd44 })
 		);
 		sunBody.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
 		scene.add(sunBody);
@@ -517,7 +517,7 @@ function bootAtlas() {
 			transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
 		}));
 		sunSp.position.set(SUN_POS[0], SUN_POS[1], SUN_POS[2]);
-		sunSp.scale.set(20, 20, 1);
+		sunSp.scale.set(30, 30, 1);
 		scene.add(sunSp);
 
 		// planets: real order, orbits scaled by a_AU^0.4 (power-law compression
@@ -526,7 +526,7 @@ function bootAtlas() {
 		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
 		var radii = [0.2, 0.4, 0.45, 0.25, 4.0, 3.5, 1.75, 1.7];
-		var orbits = [7.5, 10.2, 12, 14.8, 27.4, 37.1, 52.6, 65.8];
+		var orbits = [14, 18, 22, 26, 38, 50, 66, 78];
 		var planetData = [
 			{ name: 'Mercury', au: 0.387, period: '88 d', diam: '4,879 km' },
 			{ name: 'Venus', au: 0.723, period: '225 d', diam: '12,104 km' },
@@ -754,7 +754,7 @@ function bootAtlas() {
 
 	// ── dots (instanced) ──────────────────────────────────────
 	function buildDotsMesh() {
-		var geo = new THREE.SphereGeometry(0.012, 8, 6);
+		var geo = new THREE.SphereGeometry(0.02, 8, 6);
 		var mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 		dotMesh = new THREE.InstancedMesh(geo, mat, state.dots.length);
 		dotMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -948,38 +948,38 @@ function bootAtlas() {
 	function updateZoomFade() {
 		var d = state.d;
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
-			* (1 - THREE.MathUtils.smoothstep(d, 150, 200));
+			* (1 - THREE.MathUtils.smoothstep(d, 180, 250));
 		if (starField) { starField.material.opacity = starO; }
 		// background: Milky Way panorama until galaxy view, then dark
-		var qBg = THREE.MathUtils.smoothstep(d, 520, 580);
-		var galBg = THREE.MathUtils.smoothstep(d, 180, 230);
+		var qBg = THREE.MathUtils.smoothstep(d, 600, 660);
+		var galBg = THREE.MathUtils.smoothstep(d, 240, 290);
 		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
 		// solar system: fully visible at the solar-system stop, gone before galaxies
-		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 150, 200));
+		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 190, 250));
 		var solarVis = solarO > 0.01;
-		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.material.opacity = solarO; sunBody.visible = solarVis; }
+		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.visible = solarVis; }
 		planets.forEach(function (p) {
 			p.material.opacity = solarO; p.visible = solarVis;
 			if (p.userData.ring) { p.userData.ring.material.opacity = solarO * 0.7; p.userData.ring.visible = solarVis; }
 		});
 		// galaxies: appear after the solar system fades, gone before the web
-		var galO = THREE.MathUtils.smoothstep(d, 200, 250) * (1 - THREE.MathUtils.smoothstep(d, 320, 400));
+		var galO = THREE.MathUtils.smoothstep(d, 250, 300) * (1 - THREE.MathUtils.smoothstep(d, 380, 450));
 		galaxyGroup.children.forEach(function (s) { s.material.opacity = galO * 0.8; });
 		// the cosmic web sits between the galaxies and the CMB photo
-		var filO = THREE.MathUtils.smoothstep(d, 320, 380) * (1 - THREE.MathUtils.smoothstep(d, 440, 500));
+		var filO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 560));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
 		filamentNodes.forEach(function (s) { s.material.opacity = filO * 0.85; });
 		// the real cosmic-web photo appears at the web stage, then gives
 		// way to the CMB photo
-		var webO = THREE.MathUtils.smoothstep(d, 340, 400) * (1 - THREE.MathUtils.smoothstep(d, 460, 520));
+		var webO = THREE.MathUtils.smoothstep(d, 420, 480) * (1 - THREE.MathUtils.smoothstep(d, 530, 580));
 		if (webPhoto) { webPhoto.material.opacity = webO; }
 		// the CMB photo appears only at the very end, and gives way to
 		// the question world
-		var cmbO = THREE.MathUtils.smoothstep(d, 440, 500) * (1 - THREE.MathUtils.smoothstep(d, 520, 580));
+		var cmbO = THREE.MathUtils.smoothstep(d, 500, 550) * (1 - THREE.MathUtils.smoothstep(d, 580, 640));
 		if (cmbPhoto) { cmbPhoto.material.opacity = cmbO; }
 		// the question-mark world is the final stop
-		var qO = THREE.MathUtils.smoothstep(d, 520, 580);
+		var qO = THREE.MathUtils.smoothstep(d, 580, 650);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
 		if (asparagusSprite) {
 			if (qO > 0.1) {
@@ -995,7 +995,7 @@ function bootAtlas() {
 		}
 
 		// Hide terrestrial bodies (Earth, Moon) once we zoom past the solar system
-		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 100, 160);
+		var celestialVis = 1 - THREE.MathUtils.smoothstep(d, 120, 180);
 		if (earth) { earth.visible = celestialVis > 0.01; }
 		if (moon) { moon.visible = celestialVis > 0.01; }
 		if (atmosphere) { atmosphere.visible = celestialVis > 0.01; }
@@ -1139,8 +1139,8 @@ function bootAtlas() {
 				tip.querySelector('.t-sub').textContent =
 					pInfo.au + ' AU · ' + pInfo.period + ' · ' + pInfo.diam;
 				tip.style.display = 'block';
-				tip.style.left = (px + 14) + 'px';
-				tip.style.top = (py + 14) + 'px';
+				tip.style.left = (px + 12) + 'px';
+				tip.style.top = (py - 36) + 'px';
 				canvas.style.cursor = 'pointer';
 				return;
 			}
@@ -1280,8 +1280,8 @@ function bootAtlas() {
 			tip.querySelector('.t-sub').textContent =
 				TYPE_LABEL[d.type] + (sub ? ' · ' + sub : '');
 			tip.style.display = 'block';
-			tip.style.left = (px + 14) + 'px';
-			tip.style.top = (py + 14) + 'px';
+			tip.style.left = (px + 12) + 'px';
+			tip.style.top = (py - 36) + 'px';
 			canvas.style.cursor = 'pointer';
 		} else {
 			tip.style.display = 'none';
@@ -1424,7 +1424,7 @@ function bootAtlas() {
 	// ── cosmic journey ────────────────────────────────────────
 	var JOURNEY = [
 		{ d: 3.2, era: 'Earth', text: 'The home of almost every idea in this course.' },
-		{ d: 3.4, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Before we pull away, a tiny selection — only a handful of the thousands of steps that led to language models, but the ones that matter most.' },
+		{ d: 3.4, spin: true, era: 'The whole planet', text: 'Threads of influence cross continents and millennia. Before we pull away, a tiny selection — only a handful of the thousands of steps that led to language models, but the ones that matter most.' },
 		{ d: 3.2, face: latLngToVec3(37.39, -122.08, EARTH_R), dot: 'person-ashish-vaswani', img: 'transformer_architecture.png', era: 'The transformer · 2017', text: '“Attention is all you need” — Vaswani and colleagues, Mountain View. Replacing sequential memory with attention is what finally made language models possible.' },
 		{ d: 3.2, face: latLngToVec3(42.44, -76.5, EARTH_R), dot: 'person-dean-edmonds', img: 'FrankRosenblattWiringPerceptron.jpg', era: 'The perceptron · 1958', text: 'Frank Rosenblatt’s Perceptron at Cornell — the first machine that learns from its own mistakes by adjusting its weights. The ancestor of every neural network.' },
 		{ d: 3.2, face: latLngToVec3(40.72, -74.41, EARTH_R), dot: 'person-john-bardeen', img: 'first_transistor.jpg', era: 'The transistor · 1947', text: 'Bell Labs, New Jersey. Bardeen, Brattain and Shockley’s transistor shrinks computation from a room to a grain — and lets it scale to billions on a chip.' },
@@ -1432,11 +1432,11 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 30, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
-		{ d: 140, phi: 0.2, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 250, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
-		{ d: 380, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
-		{ d: 500, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
-		{ d: 560, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
+		{ d: 180, phi: 0.1, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
+		{ d: 300, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
+		{ d: 450, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
+		{ d: 550, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
+		{ d: 650, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power.' }
 	];
 	var TOUR_STEP_MS = 18000;
 	var tour = { active: false, step: 0, startedAt: 0 };
@@ -1585,6 +1585,9 @@ function bootAtlas() {
 		}
 		// slow cosmic drift
 		if (frame % 2 === 0) {
+			if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth) {
+				earth.rotation.y += 0.003;
+			}
 			planets.forEach(function (p) {
 				if (!p.visible) { return; }
 				p.userData.angle += p.userData.speed * 0.01;
