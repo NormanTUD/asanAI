@@ -1,9 +1,9 @@
 {
- "entity_merges": 168,
+ "entity_merges": 207,
  "entity_rejects": [],
  "entity_repairs": {
   "slugs-normalized": 130,
-  "years-from-active": 184,
+  "years-from-active": 194,
   "nested-location": 216,
   "id-generated": 216,
   "active-missing": 85,
@@ -11,7 +11,7 @@
   "conf-defaulted": 74,
   "year->active": 31
  },
- "author_merges": 15,
+ "author_merges": 275,
  "author_row_rejects": [
   {
    "row": [
@@ -62,5 +62,13 @@
  "load_errors": [],
  "missing_files": [],
  "coverage_missing": [],
- "entity_dropped_refs": []
+ "entity_dropped_refs": [
+  {
+   "name": "European Space Agency",
+   "type": "institution",
+   "dropped": [
+    "bibkey:crab_nebula_image"
+   ]
+  }
+ ]
 }

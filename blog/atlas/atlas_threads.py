@@ -213,6 +213,18 @@ INFLUENCE = [
     ("influence", "Jule Charney", "First numerical weather forecast, 1950", 1947, 1950, "The theory to the first forecast"),
     ("influence", "First numerical weather forecast, 1950", "ECMWF", 1950, 1975, "NWP to the world's forecast centre"),
     ("influence", "ECMWF", "GraphCast global weather AI, 2023", 1975, 2023, "HRES and reanalysis to ML forecasts"),
+    # hardware / software lineage (untold history)
+    ("influence", "Alan Turing", "Joseph Weizenbaum", 1950, 1966, "The imitation game meets ELIZA"),
+    ("influence", "Donald Hebb", "John J. Hopfield", 1949, 1982, "Hebbian learning to associative memory"),
+    ("influence", "Paul Baran", "Vint Cerf", 1964, 1974, "Survivable networks to TCP/IP"),
+    ("influence", "Vint Cerf", "Tim Berners-Lee", 1983, 1989, "A packet internet under the web"),
+    ("influence", "Tim Berners-Lee", "CERN", 1989, 1991, "The web proposed at CERN"),
+    ("influence", "Robert Metcalfe", "Xerox PARC", 1973, 1979, "Ethernet at PARC"),
+    ("influence", "John Backus", "New York", 1957, 1957, "FORTRAN at IBM"),
+    ("influence", "Edgar F. Codd", "New York", 1970, 1970, "The relational model at IBM"),
+    ("influence", "Luca Pacioli", "Venice", 1494, 1494, "Double-entry bookkeeping"),
+    ("influence", "Margaret Hamilton", "MIT", 1962, 1969, "Apollo guidance software at MIT"),
+    ("influence", "Wernher von Braun", "Huntsville", 1950, 1969, "Saturn V from Redstone Arsenal"),
 ]
 
 # (person_name, [stop names], y1, y2)
@@ -251,6 +263,10 @@ JOURNEYS = [
     ("Volodymyr Mnih", ["Toronto", "London"], 2010, 2016),
     ("Johannes Kepler", ["Prague"], 1571, 1630),
     ("Jean-Baptiste Joseph Fourier", ["Como", "Paris"], 1768, 1830),
+    ("Wernher von Braun", ["Huntsville"], 1950, 1969),
+    ("Helmut Hölzer", ["Peenemünde"], 1941, 1945),
+    ("Robert Metcalfe", ["Xerox PARC"], 1973, 1979),
+    ("Luca Pacioli", ["Venice"], 1494, 1494),
 ]
 
 # (from_name, to_name, y1, y2, label)
@@ -271,6 +287,8 @@ SIGNALS = [
     ("ECMWF", "GraphCast global weather AI, 2023", 2020, 2023, "ERA5 data to GraphCast"),
     ("Vostok Station, Antarctica", "GraphCast global weather AI, 2023", 1957, 2023, "The deep-time ice record the climate AI reads"),
     ("Dome C (EPICA), Antarctica", "Vostok Station, Antarctica", 1957, 2004, "The worldwide deep-core drilling program"),
+    ("Bletchley Park", "Colossus", 1943, 1944, "Colossus breaks the Lorenz cipher"),
+    ("Los Alamos", "New York", 1946, 1947, "Monte Carlo method goes civilian"),
 ]
 
 

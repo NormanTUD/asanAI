@@ -1120,6 +1120,94 @@
   "label": "HRES and reanalysis to ML forecasts"
  },
  {
+  "kind": "influence",
+  "from": "person-alan-turing",
+  "to": "person-joseph-weizenbaum",
+  "y1": 1950,
+  "y2": 1966,
+  "label": "The imitation game meets ELIZA"
+ },
+ {
+  "kind": "influence",
+  "from": "person-donald-hebb",
+  "to": "person-john-hopfield",
+  "y1": 1949,
+  "y2": 1982,
+  "label": "Hebbian learning to associative memory"
+ },
+ {
+  "kind": "influence",
+  "from": "person-paul-baran",
+  "to": "person-vint-cerf",
+  "y1": 1964,
+  "y2": 1974,
+  "label": "Survivable networks to TCP/IP"
+ },
+ {
+  "kind": "influence",
+  "from": "person-vint-cerf",
+  "to": "person-tim-berners-lee",
+  "y1": 1983,
+  "y2": 1989,
+  "label": "A packet internet under the web"
+ },
+ {
+  "kind": "influence",
+  "from": "person-tim-berners-lee",
+  "to": "institution-cern",
+  "y1": 1989,
+  "y2": 1991,
+  "label": "The web proposed at CERN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-robert-metcalfe",
+  "to": "institution-xerox-parc",
+  "y1": 1973,
+  "y2": 1979,
+  "label": "Ethernet at PARC"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-backus",
+  "to": "place-new-york",
+  "y1": 1957,
+  "y2": 1957,
+  "label": "FORTRAN at IBM"
+ },
+ {
+  "kind": "influence",
+  "from": "person-edgar-f-codd",
+  "to": "place-new-york",
+  "y1": 1970,
+  "y2": 1970,
+  "label": "The relational model at IBM"
+ },
+ {
+  "kind": "influence",
+  "from": "person-luca-pacioli",
+  "to": "place-venice",
+  "y1": 1494,
+  "y2": 1494,
+  "label": "Double-entry bookkeeping"
+ },
+ {
+  "kind": "influence",
+  "from": "person-margaret-hamilton",
+  "to": "institution-mit",
+  "y1": 1962,
+  "y2": 1969,
+  "label": "Apollo guidance software at MIT"
+ },
+ {
+  "kind": "influence",
+  "from": "person-wernher-von-braun",
+  "to": "place-huntsville",
+  "y1": 1950,
+  "y2": 1969,
+  "label": "Saturn V from Redstone Arsenal"
+ },
+ {
   "kind": "signal",
   "from": "place-england",
   "to": "place-canada",
@@ -1246,6 +1334,22 @@
   "y1": 1957,
   "y2": 2004,
   "label": "The worldwide deep-core drilling program"
+ },
+ {
+  "kind": "signal",
+  "from": "place-bletchley-park",
+  "to": "event-colossus-breaks-lorenz",
+  "y1": 1943,
+  "y2": 1944,
+  "label": "Colossus breaks the Lorenz cipher"
+ },
+ {
+  "kind": "signal",
+  "from": "place-los-alamos",
+  "to": "place-new-york",
+  "y1": 1946,
+  "y2": 1947,
+  "label": "Monte Carlo method goes civilian"
  },
  {
   "kind": "journey",
@@ -1577,5 +1681,41 @@
   ],
   "y1": 1768,
   "y2": 1830
+ },
+ {
+  "kind": "journey",
+  "person": "person-wernher-von-braun",
+  "path": [
+   "place-huntsville"
+  ],
+  "y1": 1950,
+  "y2": 1969
+ },
+ {
+  "kind": "journey",
+  "person": "person-helmut-holzer",
+  "path": [
+   "place-penemunde"
+  ],
+  "y1": 1941,
+  "y2": 1945
+ },
+ {
+  "kind": "journey",
+  "person": "person-robert-metcalfe",
+  "path": [
+   "institution-xerox-parc"
+  ],
+  "y1": 1973,
+  "y2": 1979
+ },
+ {
+  "kind": "journey",
+  "person": "person-luca-pacioli",
+  "path": [
+   "place-venice"
+  ],
+  "y1": 1494,
+  "y2": 1494
  }
 ]

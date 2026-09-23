@@ -396,8 +396,8 @@ def merge_authors(rows, bib, report):
             report["author_merges"] += 1
             if rec["conf"] == 1 and cur["conf"] == 0:
                 groups[key] = rec
-                if cur["name"] not in rec["variants"]:
-                    rec.setdefault("variants", [])
+                if cur["name"] != rec["name"] and cur["name"] not in rec.get("variants", []):
+                    rec.setdefault("variants", []).append(cur["name"])
             if rec["alias"] and rec["alias"] not in cur.get("variants", []):
                 cur.setdefault("variants", []).append(rec["alias"])
             if cur["alias"] and cur["alias"] != rec["alias"] and cur["alias"] not in rec.get("variants", []):

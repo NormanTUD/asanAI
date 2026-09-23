@@ -174,9 +174,10 @@ def main():
     raw = os.path.join(HERE, "raw")
     for f in ("out_part1.json", "out_part2.json", "out_part3.json", "out_part4.json",
               "out_part5.json", "out_part6.json", "out_part7_polar.json",
-              "out_part8.json", "placed_1.json", "placed_2.json",
+              "out_part8.json", "out_part9.json", "out_part10.json",
+              "placed_1.json", "placed_2.json",
               "placed_3.json", "placed_4.json", "placed_5.json", "placed_6.json",
-              "placed_7.json", "placed_8.json",
+              "placed_7.json", "placed_8.json", "placed_9.json",
               "authors_chunk_1.json", "authors_chunk_2.json", "authors_chunk_3.json",
               "authors_chunk_4.json", "authors_chunk_5.json", "authors_chunk_6.json",
               "bib_parsed.json", "ne110_land.geojson", "ne110_borders.geojson"):
