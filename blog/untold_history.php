@@ -1231,7 +1231,7 @@ Spaceflight's gift to computing is not only success. On 4 June 1996 the maiden f
 
 The machines above are the visible lineage: the guidance computer, the fly-by-wire law, the autonomous rover. But the space program's deeper legacy is a set of ideas that migrated into AI *sideways*, through problems no one was trying to solve for computation. The vacuum, the light-delay, the radiation, and the sheer size of a sky survey each forced an invention that, decades later, turned out to be load-bearing for a model.
 
-### Space Radiation: The Bit Flip That Now Haunts the Data Center
+#### Space Radiation: The Bit Flip That Now Haunts the Data Center
 
 A single high-energy particle, a fragment of a cosmic ray that no atmosphere is left to stop, can strike a memory cell and flip one stored bit. This **single-event upset** (SEU) is a constant, unavoidable background in orbit, so a spacecraft's electronics have to be built to *expect* its own memory to lie \cite[Single-event effect]{wiki_single_event_effect}.
 
@@ -1244,7 +1244,7 @@ The toolkit is old and blunt: **error-correcting codes** detect and repair singl
 
 The displacement is startling. The same bit-flip problem now lives not in the void but in the data center. A single corrupted word in a GPU's high-bandwidth memory, or a **silent data corruption** — the hardware returning a wrong result *without* raising a single error flag — can quietly poison a training run that has already consumed weeks of compute and millions of dollars, and the corruption is often invisible until a loss curve suddenly goes wrong \cite[Ma et al., 2025]{arxiv_sdc_llm}. The discipline "the machine may lie to you without telling you, so run it three times and cross-check" was invented for a computer hanging in space, and it is the same discipline — ECC, redundancy, checkpointing, and replication — that keeps a ten-thousand-GPU cluster from training on garbage. The radiation belt above a low orbit is the reason a data center on the ground is taught to doubt its own silicon.
 
-### The Corner Cubes on the Moon: How a Range Finder Became the Car's Eyes
+#### The Corner Cubes on the Moon: How a Range Finder Became the Car's Eyes
 
 When Apollo 11, 14, and 15 landed, the astronauts left behind small arrays of **corner-cube retroreflectors**, mirrors that reflect a beam of light straight back to whoever aimed it, regardless of the angle. Since 1969, observatories have fired a laser at those cubes and *timed the round trip of the pulse* to measure the Earth–Moon distance to the millimetre \cite[Lunar laser ranging]{wiki_lunar_laser_ranging}. The whole trick is one line of arithmetic: distance is the speed of light times the round-trip time, divided by two.
 
@@ -1255,7 +1255,7 @@ When Apollo 11, 14, and 15 landed, the astronauts left behind small arrays of **
 
 That single idea — send out light, time the echo, and the range is known — is the entire operating principle of **LIDAR**, the laser-radar that now lets a self-driving car paint a millimetre-precise three-dimensional map of the street around it in real time \cite[Lidar]{wiki_lidar}. And the corner cube itself, the device that bounces light faithfully home, is the same class of hardware now bolted onto survey targets, road signs, and drones as a LIDAR registration reference. A piece of hardware engineered to measure the Moon is the conceptual ancestor of the sensor that lets a car decide, in a fraction of a second, how far away a pedestrian is.
 
-### Forty Minutes of Silence: The Light-Delay That Invented "Autonomy" and a New Kind of Network
+#### Forty Minutes of Silence: The Light-Delay That Invented "Autonomy" and a New Kind of Network
 
 Talk to a rover on Mars and the reply takes three to twenty-two minutes one way, depending on where the two planets are in their orbits; at the outer planets it is hours. You cannot run a mission on a request–reply loop when a single "ping" is an hour of silence. That constraint forced two of the most consequential ideas in modern autonomy and networking.
 
@@ -1268,7 +1268,7 @@ Talk to a rover on Mars and the reply takes three to twenty-two minutes one way,
     <figcaption class="md">The \citealternativetitle{img_deep_space_1} (Public Domain): *Deep Space 1* (1998), the first spacecraft to carry an AI that planned its own actions and diagnosed and worked around its own faults — the flight proof that a machine could get work done without waiting for a reply from Earth. Source: [NASA/JPL, public domain](https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg).</figcaption>
 </figure>
 
-### Fitting a Mountain in a Matchbox: The Compression Standard Chosen for a Mars Radio Link
+#### Fitting a Mountain in a Matchbox: The Compression Standard Chosen for a Mars Radio Link
 
 A rover's camera can produce megabytes a picture, but the radio link home carries kilobits a second. To get a scene across that pipe, the space-agency standards body (CCSDS) chose **JPEG 2000** for planetary imaging. Its core is not a discrete cosine transform but a **discrete wavelet transform**: decompose the image into a set of frequency sub-bands, discard the fine detail the eye and the science can least afford, and entropy-code what remains. Crucially it *degrades gracefully* — lose a chunk of the bitstream and you get a blurry image, not a broken one, which a lossy radio link prizes above everything \cite[JPEG 2000]{wiki_jpeg2000}.
 
@@ -1279,7 +1279,7 @@ A rover's camera can produce megabytes a picture, but the radio link home carrie
 
 The displacement is mathematical. That three-step recipe — *transform into a compact basis, keep only the coefficients that matter, re-encode the rest* — is exactly what a neural **autoencoder** does, except it *learns* the transform instead of fixing it in advance. The "latent code" that you can later decode back into a full image is the direct successor of the wavelet sub-bands an engineer squeezed into a packet so a picture of Mars would arrive before the spacecraft rounded the planet. The question "how do I fit the whole scene into a handful of numbers and get it back?" was tuned on a radio link, and it is the same question behind every representation a model learns: how many numbers do I actually need to hold a face, a word, a protein?
 
-### A Deluge of Galaxies: When the Data Was Bigger Than the Algorithm
+#### A Deluge of Galaxies: When the Data Was Bigger Than the Algorithm
 
 By 2007 the Sloan Digital Sky Survey had imaged roughly nine hundred thousand galaxies, and the honest state of the art was that the automated image-analysis programs of the day **could not** classify them reliably — in the words of one of the founders, "the human brain is actually much better than a computer at these pattern-recognition tasks." So a group of astrophysicists did something that had never been done at that scale: they put the galaxies on the public web and let people click. **Galaxy Zoo**, launched on 11 July 2007, drew in more than one hundred thousand volunteers who produced over forty million classifications in their first six months — one hundred and twenty-five million in all, feeding more than sixty peer-reviewed papers and eventually the Zooniverse \cite[Galaxy Zoo]{wiki_galaxy_zoo}.
 
@@ -1290,7 +1290,7 @@ By 2007 the Sloan Digital Sky Survey had imaged roughly nine hundred thousand ga
 
 The loop is the point, and it is the origin story of a whole subfield. The *data deluge* that machine learning could not solve was solved by crowd-sourcing; and those millions of human labels became precisely the training data that let deep learning finally learn to classify galaxies better than the crowd ever could. The space survey created the dataset, the crowd made it *labelled*, and the labelled set became the thing that taught the model. "AI for science" began, in one of its first great successes, not with a clever algorithm but with a pile of images no algorithm could handle and a forum full of volunteers — the same data-beats-hands rule that the \cite[Bitter Lesson]{sutton2019bitter} would later name.
 
-### Unblurring the Sky: The Inverse Problem That Became the Denoising Step
+#### Unblurring the Sky: The Inverse Problem That Became the Denoising Step
 
 A telescope image is never the object. It is the object smeared by the optics and the atmosphere (a "point-spread function"), plus noise, on top. Recovering the sharp image is an **inverse problem**. The canonical tool, **Richardson–Lucy** deconvolution (Richardson 1972, Lucy 1974), is an iterative maximum-likelihood loop: guess the sharp image, smear it the way the optics would, compare the smear to the measurement you actually made, nudge the guess, and repeat until the smear matches the sky \cite[Richardson–Lucy deconvolution]{wiki_richardson_lucy}. At its heart is one repeated gesture: *given a corrupted measurement, work backward toward the clean signal.*
 
