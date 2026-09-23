@@ -652,7 +652,7 @@ function bootAtlas() {
 		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
 		var radii = [0.2, 0.4, 0.45, 0.25, 4.0, 3.5, 1.75, 1.7];
-		var orbits = [14, 18, 22, 26, 38, 50, 66, 78];
+		var orbits = [17, 25, 30, 36, 53, 61, 71, 77];
 		var planetData = [
 			{ name: 'Mercury', au: 0.387, period: '88 d', diam: '4,879 km' },
 			{ name: 'Venus', au: 0.723, period: '225 d', diam: '12,104 km' },
@@ -683,7 +683,7 @@ function bootAtlas() {
 			);
 			pm.userData.angle = pa;
 			pm.userData.dist = orbits[pi];
-			pm.userData.speed = 0.02 * Math.pow(11 / orbits[pi], 1.5);
+			pm.userData.speed = 0.02 * Math.pow(13 / orbits[pi], 1.5);
 			pm.userData.info = planetData[pi];
 			pm.visible = false;
 			planets.push(pm);

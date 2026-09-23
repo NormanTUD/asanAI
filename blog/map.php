@@ -19,12 +19,10 @@ This is the map of everything. Every person, place, institution, artifact, event
 <style>
 /* the one sanctioned full-width exception on this page: the Atlas
    stage spans the viewport (still in the normal vertical flow). */
-.lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); }
+.lg-widescroll.lg-widescroll--center { margin-left: calc(50% - 50vw); display: flex; flex-direction: column; height: clamp(520px, 78vh, 920px); min-height: 800px; }
 #atlas-stage {
-	display: flex;
+	display: flex; flex: 1; min-height: 0;
 	width: 100%;
-	height: clamp(520px, 78vh, 920px);
-	min-height: 800px;
 	border-radius: 0 0 14px 14px;
 	overflow: hidden;
 	background: #05070d;
@@ -181,7 +179,7 @@ html:not(.dark) #atlas-stage {
 
 /* ── journey (tour) UI ── */
 .atlas-tour {
-	position: relative; margin-top: 16px;
+	flex-shrink: 0;
 	z-index: 18; width: 100%;
 	display: none;
 }
@@ -262,7 +260,7 @@ html:not(.dark) #atlas-stage {
 	.atlas-easter-close:hover { color: var(--atlas-ink); }
 
 @media (max-width: 860px) {
-	#atlas-stage { flex-direction: column; height: auto; }
+	#atlas-stage { flex-direction: column; }
 	#atlas-side { flex: 0 0 auto; width: 100%; max-height: 36vh; border-right: none; border-bottom: 1px solid var(--atlas-line); }
 	#atlas-canvas-wrap { height: 62vh; }
 	.atlas-detail { width: calc(100% - 24px); right: 12px; left: 12px; max-height: 46%; }
@@ -313,24 +311,24 @@ html:not(.dark) #atlas-stage {
 			<b>ASPARAGUS</b> &mdash; a blink-and-you'll-miss-it gag from <b>SB-129</b>, a <i>SpongeBob SquarePants</i> time-travel episode: as Squidward's time machine powers down, the word flashes on its screen.
 		</div>
 	</div>
-</div>
-</div>
 
-<div class="atlas-tour" id="atlas-tour">
-	<div class="tour-card">
-		<div class="cap-era" id="tour-era"></div>
-		<img class="tour-img" id="tour-img" alt="" style="display:none">
-		<div class="cap-text" id="tour-text"></div>
-		<div class="cap-phase" id="bh-phase-label"></div>
+	<div class="atlas-tour" id="atlas-tour">
+		<div class="tour-card">
+			<div class="cap-era" id="tour-era"></div>
+			<img class="tour-img" id="tour-img" alt="" style="display:none">
+			<div class="cap-text" id="tour-text"></div>
+			<div class="cap-phase" id="bh-phase-label"></div>
+		</div>
+		<div class="tour-bar">
+			<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
+			<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
+			<div class="tour-dots" id="tour-dots"></div>
+			<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
+			<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
+			<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
+		</div>
 	</div>
-	<div class="tour-bar">
-		<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
-		<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
-		<div class="tour-dots" id="tour-dots"></div>
-		<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
-		<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
-		<button class="atlas-btn" id="tour-close" type="button" title="Exit journey">&times;</button>
-	</div>
+</div>
 </div>
 
 <div class="md" style="margin-top:14px">
