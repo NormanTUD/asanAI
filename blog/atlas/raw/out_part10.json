@@ -1,0 +1,737 @@
+[
+ {
+  "id": "place-lomekwi-3",
+  "name": "Lomekwi 3",
+  "type": "place",
+  "loc": "West Turkana, Kenya",
+  "lat": 3.55,
+  "lng": 35.53,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "history",
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-kenya",
+  "name": "Kenya",
+  "type": "place",
+  "loc": "Nairobi, Kenya",
+  "lat": 0.0,
+  "lng": 37.8,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i",
+   "history",
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-columbia-university",
+  "name": "Columbia University",
+  "type": "institution",
+  "loc": "New York, USA",
+  "lat": 40.81,
+  "lng": -73.96,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-national-museum-of-scotland",
+  "name": "National Museum of Scotland",
+  "type": "institution",
+  "loc": "Edinburgh, UK",
+  "lat": 55.95,
+  "lng": -3.19,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-lagash",
+  "name": "Lagash",
+  "type": "place",
+  "loc": "Telloh, Iraq",
+  "lat": 31.86,
+  "lng": 46.12,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-iraq",
+  "name": "Iraq",
+  "type": "place",
+  "loc": "Baghdad, Iraq",
+  "lat": 33.0,
+  "lng": 43.7,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-iraq-museum",
+  "name": "Iraq Museum",
+  "type": "institution",
+  "loc": "Baghdad, Iraq",
+  "lat": 33.34,
+  "lng": 44.39,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "language"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-memphis",
+  "name": "Memphis",
+  "type": "place",
+  "loc": "Mit Rahina, Egypt",
+  "lat": 29.85,
+  "lng": 31.25,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-louvain",
+  "name": "Louvain",
+  "type": "place",
+  "loc": "Louvain, Belgium",
+  "lat": 50.88,
+  "lng": 4.7,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "beyond_llms"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-leiden",
+  "name": "Leiden",
+  "type": "place",
+  "loc": "Leiden, Netherlands",
+  "lat": 52.16,
+  "lng": 4.5,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "beyond_llms"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-telefunken",
+  "name": "Telefunken",
+  "type": "institution",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.4,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-susa",
+  "name": "Susa",
+  "type": "place",
+  "loc": "Susa, Iran",
+  "lat": 32.19,
+  "lng": 48.26,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-gorodomlya-island",
+  "name": "Gorodomlya Island",
+  "type": "place",
+  "loc": "Gorodomlya Island, Russia",
+  "lat": 60.25,
+  "lng": 32.33,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-java",
+  "name": "Java",
+  "type": "place",
+  "loc": "Java, Indonesia",
+  "lat": -7.0,
+  "lng": 109.5,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i",
+   "software"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-bali",
+  "name": "Bali",
+  "type": "place",
+  "loc": "Bali, Indonesia",
+  "lat": -8.45,
+  "lng": 115.25,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "alternative_architectures",
+   "contextwindows",
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-northern-cape",
+  "name": "Northern Cape",
+  "type": "place",
+  "loc": "Northern Cape, South Africa",
+  "lat": -29.5,
+  "lng": 21.5,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-moscow",
+  "name": "Moscow",
+  "type": "place",
+  "loc": "Moscow, Russia",
+  "lat": 55.76,
+  "lng": 37.62,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-jebel-irhoud",
+  "name": "Jebel Irhoud",
+  "type": "place",
+  "loc": "Jebel Irhoud, Morocco",
+  "lat": 31.45,
+  "lng": -9.55,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-garmisch",
+  "name": "Garmisch",
+  "type": "place",
+  "loc": "Garmisch-Partenkirchen, Germany",
+  "lat": 47.47,
+  "lng": 11.17,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "software"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-delhi",
+  "name": "Delhi",
+  "type": "place",
+  "loc": "Delhi, India",
+  "lat": 28.61,
+  "lng": 77.21,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "math_i",
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-united-states",
+  "name": "United States",
+  "type": "place",
+  "loc": "United States",
+  "lat": 39.83,
+  "lng": -98.58,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-olduvai-gorge",
+  "name": "Olduvai Gorge",
+  "type": "place",
+  "loc": "Olduvai Gorge, Tanzania",
+  "lat": -2.99,
+  "lng": 35.35,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-persia",
+  "name": "Persia",
+  "type": "place",
+  "loc": "Persia, Iran",
+  "lat": 32.43,
+  "lng": 53.69,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-boston",
+  "name": "Boston",
+  "type": "place",
+  "loc": "Boston, USA",
+  "lat": 42.36,
+  "lng": -71.06,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "philosophy"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-board-of-longitude",
+  "name": "Board of Longitude",
+  "type": "institution",
+  "loc": "London, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-iso",
+  "name": "ISO",
+  "type": "institution",
+  "loc": "Geneva, Switzerland",
+  "lat": 46.21,
+  "lng": 6.14,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "attentionlab",
+   "beyond_llms",
+   "coherent_difference",
+   "embeddinglab",
+   "fact_lookup",
+   "history",
+   "human_mind",
+   "language",
+   "math_iv",
+   "origami",
+   "statistics",
+   "statistics_i",
+   "symbolic_ai",
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-iec",
+  "name": "IEC",
+  "type": "institution",
+  "loc": "Geneva, Switzerland",
+  "lat": 46.23,
+  "lng": 6.14,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "coherent_difference",
+   "geometry_i",
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-imperial-academy-of-sciences-saint-petersburg",
+  "name": "Imperial Academy of Sciences (Saint Petersburg)",
+  "type": "institution",
+  "loc": "Saint Petersburg, Russia",
+  "lat": 59.93,
+  "lng": 30.36,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-avianca",
+  "name": "Avianca",
+  "type": "institution",
+  "loc": "Bogotá, Colombia",
+  "lat": 4.71,
+  "lng": -74.07,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "myths"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-brighton-university",
+  "name": "Brighton University",
+  "type": "institution",
+  "loc": "Brighton, UK",
+  "lat": 50.83,
+  "lng": -0.14,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "origami"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-italian-garante",
+  "name": "Italian Garante",
+  "type": "institution",
+  "loc": "Rome, Italy",
+  "lat": 41.9,
+  "lng": 12.5,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-madrid",
+  "name": "Madrid",
+  "type": "place",
+  "loc": "Madrid, Spain",
+  "lat": 40.4168,
+  "lng": -3.7038,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-las-vegas",
+  "name": "Las Vegas",
+  "type": "place",
+  "loc": "Las Vegas, United States",
+  "lat": 36.1699,
+  "lng": -115.1398,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "human_mind"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-boxgrove",
+  "name": "Boxgrove",
+  "type": "place",
+  "loc": "Boxgrove, United Kingdom",
+  "lat": 50.99,
+  "lng": -0.55,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-yoho-national-park",
+  "name": "Yoho National Park",
+  "type": "place",
+  "loc": "Yoho National Park, Canada",
+  "lat": 51.3,
+  "lng": -116.5,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "place-brno",
+  "name": "Brno",
+  "type": "place",
+  "loc": "Brno, Czech Republic",
+  "lat": 49.1951,
+  "lng": 16.6068,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-netflix",
+  "name": "Netflix",
+  "type": "institution",
+  "loc": "Los Gatos, United States",
+  "lat": 37.21,
+  "lng": -121.94,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "beyond_llms"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "institution-institut-royal-des-sciences-naturelles-de-belgique",
+  "name": "Institut Royal des Sciences Naturelles de Belgique",
+  "type": "institution",
+  "loc": "Brussels, Belgium",
+  "lat": 50.83,
+  "lng": 4.31,
+  "years": "",
+  "active": [
+   null,
+   null
+  ],
+  "blurb": "",
+  "cited_in": [
+   "geometry_i",
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ }
+]

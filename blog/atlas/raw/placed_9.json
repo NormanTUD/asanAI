@@ -1,0 +1,2082 @@
+[
+ [
+  "Brian Chen",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Andy Jones",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Callum McDougall",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "Antoine Bordes",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2013,
+  1
+ ],
+ [
+  "Eric J. Michaud",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Afra Zomorodian",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2005,
+  1
+ ],
+ [
+  "Alex Andonian",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2022,
+  1
+ ],
+ [
+  "Anna Chen",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2022,
+  1
+ ],
+ [
+  "Augustus Odena",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2021,
+  1
+ ],
+ [
+  "Baptiste Rozière",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2023,
+  1
+ ],
+ [
+  "Carson Denison",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Aja Huang",
+  51.5074,
+  -0.1278,
+  "London, UK",
+  2016,
+  1
+ ],
+ [
+  "Alethea Power",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2022,
+  1
+ ],
+ [
+  "Andrew Kelley",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "Archit Sharma",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2023,
+  1
+ ],
+ [
+  "Arnab Sen Sharma",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2022,
+  1
+ ],
+ [
+  "Bastian Hossel",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "Benjamin Mann",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2020,
+  1
+ ],
+ [
+  "Benoit Steiner",
+  37.3861,
+  -122.0839,
+  "Mountain View, USA",
+  2016,
+  1
+ ],
+ [
+  "C. Daniel Freeman",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Cem Anil",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2023,
+  1
+ ],
+ [
+  "Chris D. Freeman",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "David Abrahams",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "David Arthur",
+  47.6594,
+  -122.3074,
+  "Seattle, USA",
+  2007,
+  1
+ ],
+ [
+  "David Letscher",
+  34.0689,
+  -118.4452,
+  "Los Angeles, USA",
+  2002,
+  1
+ ],
+ [
+  "Dennis V. Kent",
+  36.9932,
+  -122.0598,
+  "Santa Cruz, USA",
+  2002,
+  1
+ ],
+ [
+  "Dian Yu",
+  40.3431,
+  -74.6551,
+  "Princeton, USA",
+  2023,
+  1
+ ],
+ [
+  "Dorsa Sadigh",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2020,
+  1
+ ],
+ [
+  "Eric Wallace",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2021,
+  1
+ ],
+ [
+  "Geoffrey Irving",
+  51.5074,
+  -0.1278,
+  "London, UK",
+  2019,
+  1
+ ],
+ [
+  "I. J. Good",
+  50.8225,
+  -0.1372,
+  "Brighton, UK",
+  1965,
+  1
+ ],
+ [
+  "Jianlin Su",
+  37.3541,
+  -121.9552,
+  "Santa Clara, USA",
+  2021,
+  1
+ ],
+ [
+  "John Hewitt",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2019,
+  1
+ ],
+ [
+  "Joseph Berkson",
+  37.8715,
+  -122.2585,
+  "Berkeley, USA",
+  1944,
+  1
+ ],
+ [
+  "Katherine Lee",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2021,
+  1
+ ],
+ [
+  "Lionel Naccache",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2001,
+  1
+ ],
+ [
+  "Long Phan",
+  37.8715,
+  -122.2585,
+  "Berkeley, USA",
+  2023,
+  1
+ ],
+ [
+  "Ludwig Schubert",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2021,
+  1
+ ],
+ [
+  "Matan Kalman",
+  37.3861,
+  -122.0839,
+  "Mountain View, USA",
+  2023,
+  1
+ ],
+ [
+  "Matthew D. Hoffman",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2014,
+  1
+ ],
+ [
+  "Michael Petrov",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2021,
+  1
+ ],
+ [
+  "Michael Sklar",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "Monte MacDiarmid",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2024,
+  1
+ ],
+ [
+  "Nabil Imam",
+  37.3541,
+  -121.9552,
+  "Santa Clara, USA",
+  2014,
+  1
+ ],
+ [
+  "Nathaniel Li",
+  37.8715,
+  -122.2585,
+  "Berkeley, USA",
+  2023,
+  1
+ ],
+ [
+  "Nick Ryder",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2020,
+  1
+ ],
+ [
+  "Nicolas Usunier",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2013,
+  1
+ ],
+ [
+  "Ricardo J. G. B. Campello",
+  41.1579,
+  -8.6291,
+  "Porto, Portugal",
+  2013,
+  1
+ ],
+ [
+  "Sonia Harmand",
+  48.2082,
+  16.3738,
+  "Vienna, Austria",
+  2009,
+  1
+ ],
+ [
+  "Thomas Lukasiewicz",
+  48.2082,
+  16.3738,
+  "Vienna, Austria",
+  2020,
+  1
+ ],
+ [
+  "Thomas N. Kipf",
+  52.3676,
+  4.9041,
+  "Amsterdam, Netherlands",
+  2017,
+  1
+ ],
+ [
+  "Timo Schick",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2023,
+  1
+ ],
+ [
+  "U.S. Army",
+  38.8977,
+  -77.0365,
+  "Washington, USA",
+  1946,
+  1
+ ],
+ [
+  "Wilfrid Hodges",
+  53.4808,
+  -2.2426,
+  "Manchester, UK",
+  1993,
+  1
+ ],
+ [
+  "Xipeng Qiu",
+  31.2989,
+  121.5028,
+  "Shanghai, China",
+  2023,
+  1
+ ],
+ [
+  "Yehuda Koren",
+  37.2029,
+  -121.966,
+  "Los Gatos, USA",
+  2009,
+  1
+ ],
+ [
+  "Yunfeng Liu",
+  37.3541,
+  -121.9552,
+  "Santa Clara, USA",
+  2021,
+  1
+ ],
+ [
+  "Zhihong Shao",
+  30.2741,
+  120.1552,
+  "Hangzhou, China",
+  2024,
+  1
+ ],
+ [
+  "Adam Zsolt Wagner",
+  51.5074,
+  -0.1278,
+  "London, UK",
+  2025,
+  1
+ ],
+ [
+  "Alex Alemi",
+  37.3861,
+  -122.0839,
+  "Mountain View, USA",
+  2017,
+  1
+ ],
+ [
+  "Alex Ray",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2022,
+  1
+ ],
+ [
+  "Alexander Rush",
+  42.3736,
+  -71.1097,
+  "Cambridge, USA",
+  2018,
+  1
+ ],
+ [
+  "Alexander Sergeev",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2018,
+  1
+ ],
+ [
+  "Alexander T. R. Cooper",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2025,
+  1
+ ],
+ [
+  "Ashish Vaswani and colleagues (Google)",
+  37.3861,
+  -122.0839,
+  "Mountain View, USA",
+  2017,
+  1
+ ],
+ [
+  "Ananya Ganesh",
+  37.4275,
+  -122.1697,
+  "Palo Alto, USA",
+  2019,
+  1
+ ],
+ [
+  "Adrià Garriga-Alonso",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2023,
+  1
+ ],
+ [
+  "Aengus Lynch",
+  37.7749,
+  -122.4194,
+  "San Francisco, USA",
+  2023,
+  1
+ ],
+ [
+  "Alberto Garcia-Durán",
+  41.3874,
+  2.1686,
+  "Barcelona, Spain",
+  2013,
+  1
+ ],
+ [
+  "and Xiaoqiang Zheng",
+  37.3861,
+  -122.0838,
+  "Mountain View, USA",
+  2016,
+  1
+ ],
+ [
+  "Anders Johan Andreassen",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2021,
+  1
+ ],
+ [
+  "Anders Søgaard",
+  55.65,
+  12.58,
+  "Copenhagen, Denmark",
+  2018,
+  1
+ ],
+ [
+  "Andre Botha",
+  -33.9577,
+  18.4904,
+  "Cape Town, South Africa",
+  2012,
+  1
+ ],
+ [
+  "Andre F. T. Martins",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2024,
+  1
+ ],
+ [
+  "Andrea Montanari",
+  48.8462,
+  2.3509,
+  "Paris, France",
+  2019,
+  1
+ ],
+ [
+  "Andrei A. Rusu",
+  51.5129,
+  -0.1323,
+  "London, UK",
+  2015,
+  1
+ ],
+ [
+  "Andrei Giurgiu",
+  52.35,
+  4.88,
+  "Utrecht, Netherlands",
+  2019,
+  1
+ ],
+ [
+  "Andrew M. Saxe",
+  40.8075,
+  -73.9626,
+  "New York, USA",
+  2014,
+  1
+ ],
+ [
+  "Andy Clark and David J. Chalmers",
+  55.9471,
+  -3.1882,
+  "Edinburgh, UK",
+  1998,
+  1
+ ],
+ [
+  "Angelos Katharopoulos",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2020,
+  1
+ ],
+ [
+  "Ann G Wintle",
+  -33.9577,
+  18.4904,
+  "Cape Town, South Africa",
+  2011,
+  1
+ ],
+ [
+  "Artidoro Pagnoni",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2023,
+  1
+ ],
+ [
+  "Ariel Herbert-Voss",
+  37.3861,
+  -122.0838,
+  "Mountain View, USA",
+  2021,
+  1
+ ],
+ [
+  "Artur Dubrawski",
+  41.49,
+  -81.61,
+  "Ann Arbor, USA",
+  2023,
+  1
+ ],
+ [
+  "Aurelien Rodriguez",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2023,
+  1
+ ],
+ [
+  "Avi Schwarzschild",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2023,
+  1
+ ],
+ [
+  "Aviral Kumar",
+  37.3861,
+  -122.0838,
+  "Mountain View, USA",
+  2024,
+  1
+ ],
+ [
+  "Azalia Mirhoseini",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2017,
+  1
+ ],
+ [
+  "Bernard Vauquois",
+  45.18,
+  5.72,
+  "Grenoble, France",
+  1967,
+  1
+ ],
+ [
+  "Bernard Widrow",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  1960,
+  1
+ ],
+ [
+  "Bernhard Boser",
+  51.5129,
+  -0.1323,
+  "London, UK",
+  1992,
+  1
+ ],
+ [
+  "Bin Fu",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2017,
+  1
+ ],
+ [
+  "Bing Xu",
+  40.4406,
+  -79.9414,
+  "Pittsburgh, USA",
+  2014,
+  1
+ ],
+ [
+  "Blake Richards",
+  43.4723,
+  -80.5449,
+  "Toronto, Canada",
+  2024,
+  1
+ ],
+ [
+  "Bob Carpenter",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2017,
+  1
+ ],
+ [
+  "Bob Harvey",
+  37.3869,
+  -122.0838,
+  "Los Altos, USA",
+  1949,
+  1
+ ],
+ [
+  "Bradley C. A. Brown",
+  41.49,
+  -81.61,
+  "Ann Arbor, USA",
+  2023,
+  1
+ ],
+ [
+  "Brendan Leigh Ross",
+  41.49,
+  -81.61,
+  "Ann Arbor, USA",
+  2023,
+  1
+ ],
+ [
+  "Bryan L. Jackson",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2014,
+  1
+ ],
+ [
+  "Charles Goodyear",
+  42.3601,
+  -71.0942,
+  "New Haven, USA",
+  1839,
+  1
+ ],
+ [
+  "Charles Sutton",
+  43.6629,
+  -79.3957,
+  "Toronto, Canada",
+  2021,
+  1
+ ],
+ [
+  "Chelsea Voss",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2021,
+  1
+ ],
+ [
+  "Chris Fields",
+  32.2251,
+  -110.9541,
+  "Tucson, USA",
+  2021,
+  1
+ ],
+ [
+  "Christopher Fonnesbeck",
+  47.6594,
+  -122.3043,
+  "Seattle, USA",
+  2016,
+  1
+ ],
+ [
+  "Courtney K. Brain",
+  52.2,
+  0.12,
+  "Cambridge, UK",
+  2012,
+  1
+ ],
+ [
+  "Craig S. Feibel",
+  32.88,
+  -117.23,
+  "San Diego, USA",
+  2011,
+  1
+ ],
+ [
+  "Daphne Ippolito",
+  47.61,
+  -122.33,
+  "Seattle, Washington, USA",
+  2025,
+  1
+ ],
+ [
+  "David D. Lewis",
+  53.38,
+  -1.47,
+  "Sheffield, UK",
+  1998,
+  1
+ ],
+ [
+  "David Duvenaud",
+  43.66,
+  -79.39,
+  "Toronto, Canada",
+  2023,
+  1
+ ],
+ [
+  "David Forsyth",
+  55.95,
+  -3.19,
+  "Edinburgh, UK",
+  2024,
+  1
+ ],
+ [
+  "David Hoag",
+  42.36,
+  -71.09,
+  "Cambridge, Massachusetts, USA",
+  1976,
+  1
+ ],
+ [
+  "David I. Spivak",
+  37.87,
+  -122.26,
+  "Berkeley, California, USA",
+  2014,
+  1
+ ],
+ [
+  "David J. Hand",
+  51.51,
+  -0.13,
+  "London, UK",
+  2001,
+  1
+ ],
+ [
+  "David J. Lunn",
+  52.2,
+  0.12,
+  "Cambridge, UK",
+  2000,
+  1
+ ],
+ [
+  "David K. Duvenaud",
+  43.66,
+  -79.39,
+  "Toronto, Canada",
+  2015,
+  1
+ ],
+ [
+  "David M. Rosenthal",
+  40.71,
+  -74.0,
+  "New York, New York, USA",
+  2005,
+  1
+ ],
+ [
+  "David R. Cox",
+  52.2,
+  0.12,
+  "Cambridge, UK",
+  1958,
+  1
+ ],
+ [
+  "David Raposo",
+  51.51,
+  -0.13,
+  "London, UK",
+  2024,
+  1
+ ],
+ [
+  "David Rosenthal",
+  40.71,
+  -74.0,
+  "New York, New York, USA",
+  2011,
+  1
+ ],
+ [
+  "David W. Sumners",
+  53.48,
+  -2.24,
+  "Manchester, UK",
+  2017,
+  1
+ ],
+ [
+  "Dennis Kibler",
+  42.37,
+  -72.52,
+  "Amherst, Massachusetts, USA",
+  1991,
+  1
+ ],
+ [
+  "Derek G. Murray",
+  37.39,
+  -122.08,
+  "Mountain View, California, USA",
+  2016,
+  1
+ ],
+ [
+  "Dimitris Tsipras",
+  42.36,
+  -71.09,
+  "Cambridge, Massachusetts, USA",
+  2022,
+  1
+ ],
+ [
+  "Dmitry Yashunin",
+  55.75,
+  37.62,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Don Ross",
+  -33.86,
+  151.21,
+  "Sydney, Australia",
+  2007,
+  1
+ ],
+ [
+  "Edgar F. Codd",
+  41.07,
+  -73.7,
+  "Armonk, New York, USA",
+  1970,
+  1
+ ],
+ [
+  "Edwin T. Jaynes",
+  30.28,
+  -97.74,
+  "Austin, Texas, USA",
+  1957,
+  1
+ ],
+ [
+  "Elias Frantar",
+  48.21,
+  16.37,
+  "Vienna, Austria",
+  2022,
+  1
+ ],
+ [
+  "Emma Strubell",
+  47.66,
+  -122.31,
+  "Seattle, Washington, USA",
+  2019,
+  1
+ ],
+ [
+  "Epictetus",
+  37.92,
+  29.11,
+  "Pamukkale, Turkey",
+  125,
+  1
+ ],
+ [
+  "Erella Hovers",
+  31.77,
+  35.21,
+  "Jerusalem, Israel",
+  2012,
+  1
+ ],
+ [
+  "Erich Schubert",
+  48.14,
+  11.58,
+  "Munich, Germany",
+  2017,
+  1
+ ],
+ [
+  "Erik Asphaug",
+  36.97,
+  -122.03,
+  "Santa Cruz, California, USA",
+  2001,
+  1
+ ],
+ [
+  "Ernst Kapp",
+  49.41,
+  8.71,
+  "Heidelberg, Germany",
+  1877,
+  1
+ ],
+ [
+  "Ferdinand Braun",
+  47.99,
+  7.85,
+  "Freiburg, Germany",
+  1895,
+  1
+ ],
+ [
+  "Fran\\u00e7ois Chollet",
+  37.39,
+  -122.08,
+  "Mountain View, California, USA",
+  2019,
+  1
+ ],
+ [
+  "Franziska Hamprecht",
+  48.14,
+  11.58,
+  "Munich, Germany",
+  2018,
+  1
+ ],
+ [
+  "Fred A. Hamprecht",
+  48.14,
+  11.58,
+  "Munich, Germany",
+  2019,
+  1
+ ],
+ [
+  "Fujio Masuoka",
+  35.68,
+  139.69,
+  "Tokyo, Japan",
+  1987,
+  1
+ ],
+ [
+  "Gal Kaplun",
+  42.36,
+  -71.09,
+  "Cambridge, Massachusetts, USA",
+  2019,
+  1
+ ],
+ [
+  "Gaël Varoquaux",
+  48.85,
+  2.35,
+  "Paris, France",
+  2022,
+  1
+ ],
+ [
+  "George E. Fox",
+  34.02,
+  -118.28,
+  "Los Angeles, California, USA",
+  1977,
+  1
+ ],
+ [
+  "George Logemann",
+  34.01,
+  -118.49,
+  "Santa Monica, California, USA",
+  1962,
+  1
+ ],
+ [
+  "Georgius Agricola",
+  50.75,
+  6.13,
+  "Stolberg, Germany",
+  1556,
+  1
+ ],
+ [
+  "Guillaume Klein",
+  -37.8136,
+  144.9631,
+  "Melbourne, Australia",
+  2018,
+  1
+ ],
+ [
+  "Greg Yang",
+  40.3431,
+  -74.6551,
+  "Princeton, USA",
+  2020,
+  1
+ ],
+ [
+  "Gregory Valiant",
+  42.3736,
+  -71.1097,
+  "Cambridge, USA",
+  2022,
+  1
+ ],
+ [
+  "H. F. Levison",
+  38.8951,
+  -77.0364,
+  "Washington, USA",
+  2005,
+  1
+ ],
+ [
+  "Hans Freudenthal",
+  52.0907,
+  5.1214,
+  "Utrecht, Netherlands",
+  1937,
+  1
+ ],
+ [
+  "Iain Young",
+  52.2044,
+  0.1149,
+  "Cambridge, UK",
+  2012,
+  1
+ ],
+ [
+  "ISO/IEC JTC 1/SC 22/WG 14",
+  46.2044,
+  6.1432,
+  "Geneva, Switzerland",
+  1999,
+  1
+ ],
+ [
+  "J. C. A. Joordens",
+  51.752,
+  -1.2577,
+  "Oxford, UK",
+  2014,
+  1
+ ],
+ [
+  "J. D. Sutherland",
+  51.752,
+  -1.2577,
+  "Oxford, UK",
+  2009,
+  1
+ ],
+ [
+  "J. J. Brocks",
+  -33.8688,
+  151.2093,
+  "Sydney, Australia",
+  2017,
+  1
+ ],
+ [
+  "J.A.J. Gowlett",
+  52.2044,
+  0.1149,
+  "Cambridge, UK",
+  2016,
+  1
+ ],
+ [
+  "Jakob von Uexküll",
+  53.5511,
+  9.9937,
+  "Hamburg, Germany",
+  1910,
+  1
+ ],
+ [
+  "Jan Czochralski",
+  52.52,
+  13.405,
+  "Berlin, Germany",
+  1918,
+  1
+ ],
+ [
+  "JEDEC",
+  38.8816,
+  -77.091,
+  "Arlington, USA",
+  2013,
+  1
+ ],
+ [
+  "Jeffrey R. Weeks",
+  34.0689,
+  -118.4452,
+  "Los Angeles, USA",
+  2010,
+  1
+ ],
+ [
+  "Jesse J. Prinz",
+  40.7506,
+  -73.9812,
+  "New York, USA",
+  2012,
+  1
+ ],
+ [
+  "Jiawei Han",
+  40.1106,
+  -88.2273,
+  "Urbana-Champaign, USA",
+  2022,
+  1
+ ],
+ [
+  "Joaquin Quiñonero-Candela",
+  51.752,
+  -1.2577,
+  "Oxford, UK",
+  2005,
+  1
+ ],
+ [
+  "Jochen J. Brocks",
+  -33.8688,
+  151.2093,
+  "Sydney, Australia",
+  2017,
+  1
+ ],
+ [
+  "Joe H. Ward Jr.",
+  38.8951,
+  -77.0364,
+  "Washington, USA",
+  1963,
+  1
+ ],
+ [
+  "John B. Carlin",
+  -27.4698,
+  153.0251,
+  "Brisbane, Australia",
+  2013,
+  1
+ ],
+ [
+  "John Coleman Darnell",
+  39.1031,
+  -84.512,
+  "Cincinnati, USA",
+  2016,
+  1
+ ],
+ [
+  "John H. Flavell",
+  44.9778,
+  -93.265,
+  "Minneapolis, USA",
+  1979,
+  1
+ ],
+ [
+  "John Hatcher",
+  42.4446,
+  -76.4855,
+  "Ithaca, USA",
+  2002,
+  1
+ ],
+ [
+  "John Wilkins",
+  51.752,
+  -1.2577,
+  "Oxford, UK",
+  1668,
+  1
+ ],
+ [
+  "Johnny Mariéthoz",
+  37.4419,
+  -122.143,
+  "Palo Alto, USA",
+  2002,
+  1
+ ],
+ [
+  "Jonas Močkus",
+  54.6872,
+  25.2797,
+  "Vilnius, Lithuania",
+  1978,
+  1
+ ],
+ [
+  "Jonathan Frankle",
+  42.3601,
+  -71.0942,
+  "Cambridge, USA",
+  2019,
+  1
+ ],
+ [
+  "Jonathan P. H. Pennington",
+  37.4275,
+  -122.1697,
+  "Stanford, USA",
+  2020,
+  1
+ ],
+ [
+  "Joseph Maria Bocheński",
+  46.7962,
+  7.2598,
+  "Fribourg, Switzerland",
+  1970,
+  1
+ ],
+ [
+  "João P. Marques-Silva",
+  38.7223,
+  -9.1393,
+  "Lisbon, Portugal",
+  1996,
+  1
+ ],
+ [
+  "K. Mizushima",
+  40.791,
+  -74.311,
+  "Murray Hill, USA",
+  1980,
+  1
+ ],
+ [
+  "Kai Ming Ting",
+  33.4255,
+  -111.9397,
+  "Tempe, USA",
+  2008,
+  1
+ ],
+ [
+  "Karel Absolon",
+  50.0755,
+  14.4378,
+  "Prague, Czech Republic",
+  1930,
+  1
+ ],
+ [
+  "Karem A. Sakallah",
+  42.2808,
+  -83.743,
+  "Ann Arbor, USA",
+  1996,
+  1
+ ],
+ [
+  "Kurt Reidemeister",
+  51.54,
+  9.93,
+  "Göttingen, Germany",
+  1935,
+  1
+ ],
+ [
+  "Luca M. Gambardella",
+  46.23,
+  6.05,
+  "Geneva, Switzerland",
+  2011,
+  1
+ ],
+ [
+  "Mahesan Niranjan",
+  50.93,
+  -1.4,
+  "Southampton, UK",
+  1994,
+  1
+ ],
+ [
+  "Manfredo Perdigão do Carmo",
+  42.36,
+  -71.06,
+  "Boston, USA",
+  1976,
+  1
+ ],
+ [
+  "Marco Tulio Ribeiro",
+  42.36,
+  -71.09,
+  "Cambridge, MA, USA",
+  2023,
+  1
+ ],
+ [
+  "Marcus Hutter",
+  -33.87,
+  151.21,
+  "Sydney, Australia",
+  2006,
+  1
+ ],
+ [
+  "Marijn Heule",
+  41.05,
+  -73.84,
+  "Yorktown Heights, NY, USA",
+  2009,
+  1
+ ],
+ [
+  "Mark W. Maimone",
+  34.21,
+  -118.15,
+  "Pasadena, CA, USA",
+  2023,
+  1
+ ],
+ [
+  "Meredith Ringel Morris",
+  42.37,
+  -71.11,
+  "Cambridge, MA, USA",
+  2023,
+  1
+ ],
+ [
+  "Michael D. Rich",
+  41.82,
+  -71.4,
+  "Providence, RI, USA",
+  2018,
+  1
+ ],
+ [
+  "Michael Morley",
+  41.99,
+  -87.65,
+  "Evanston, IL, USA",
+  1965,
+  1
+ ],
+ [
+  "Michael P. Georgeff",
+  -33.87,
+  151.21,
+  "Sydney, Australia",
+  1995,
+  1
+ ],
+ [
+  "Michael R. Walter",
+  52.37,
+  4.9,
+  "Amsterdam, Netherlands",
+  1986,
+  1
+ ],
+ [
+  "Miguel C. Soriano",
+  50.73,
+  7.1,
+  "Bonn, Germany",
+  2021,
+  1
+ ],
+ [
+  "Mike Schuster",
+  37.39,
+  -122.08,
+  "Mountain View, CA, USA",
+  2012,
+  1
+ ],
+ [
+  "Mu-ming Poo",
+  37.43,
+  -122.17,
+  "Stanford, CA, USA",
+  1998,
+  1
+ ],
+ [
+  "Nicholas Taylor",
+  51.45,
+  -2.59,
+  "Bristol, UK",
+  2015,
+  1
+ ],
+ [
+  "Nikolaus Hansen",
+  48.69,
+  2.17,
+  "Saclay, France",
+  2001,
+  1
+ ],
+ [
+  "Nils Bohr",
+  55.68,
+  12.57,
+  "Copenhagen, Denmark",
+  1913,
+  1
+ ],
+ [
+  "Nitesh V. Chawla",
+  35.23,
+  -80.84,
+  "Charlotte, NC, USA",
+  2017,
+  1
+ ],
+ [
+  "Norman Richard Draper",
+  43.07,
+  -89.4,
+  "Madison, WI, USA",
+  1987,
+  1
+ ],
+ [
+  "Peter B. Beaumont",
+  -26.2,
+  28.05,
+  "Johannesburg, South Africa",
+  1994,
+  1
+ ],
+ [
+  "Peter Beaumont",
+  -26.2,
+  28.05,
+  "Johannesburg, South Africa",
+  2000,
+  1
+ ],
+ [
+  "Peter Meer",
+  42.37,
+  -72.52,
+  "Amherst, USA",
+  2002,
+  1
+ ],
+ [
+  "Ralph Hartley",
+  40.71,
+  -74.01,
+  "New York, USA",
+  1928,
+  1
+ ],
+ [
+  "Rong Ge",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  2017,
+  1
+ ],
+ [
+  "Rex Ying",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2017,
+  1
+ ],
+ [
+  "Rina Dechter",
+  32.87,
+  -117.24,
+  "San Diego, USA",
+  1988,
+  1
+ ],
+ [
+  "Robert M. Gray",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2006,
+  1
+ ],
+ [
+  "Robin Jia",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2026,
+  1
+ ],
+ [
+  "Shanghang Zhang",
+  31.03,
+  121.44,
+  "Shanghai, China",
+  2021,
+  1
+ ],
+ [
+  "Stuart P. Lloyd",
+  40.78,
+  -74.42,
+  "Murray Hill, USA",
+  1982,
+  1
+ ],
+ [
+  "Sutton Monro",
+  40.78,
+  -74.42,
+  "Murray Hill, USA",
+  1951,
+  1
+ ],
+ [
+  "Tengyu Ma",
+  39.95,
+  -75.17,
+  "Philadelphia, USA",
+  2017,
+  1
+ ],
+ [
+  "Takeshi Kojima",
+  35.68,
+  139.65,
+  "Tokyo, Japan",
+  2022,
+  1
+ ],
+ [
+  "Tetsuo Komuro",
+  35.68,
+  139.65,
+  "Tokyo, Japan",
+  1987,
+  1
+ ],
+ [
+  "Theo Lutz",
+  47.66,
+  9.18,
+  "Konstanz, Germany",
+  1959,
+  1
+ ],
+ [
+  "Ted Petrie",
+  40.78,
+  -74.42,
+  "Murray Hill, USA",
+  1966,
+  1
+ ],
+ [
+  "Reiner Pope",
+  47.38,
+  8.54,
+  "Zurich, Switzerland",
+  2023,
+  1
+ ],
+ [
+  "Raghu Ramakrishnan",
+  34.42,
+  -119.86,
+  "Santa Barbara, USA",
+  1996,
+  1
+ ],
+ [
+  "Thomas Haigh",
+  52.41,
+  -1.51,
+  "Coventry, United Kingdom",
+  2006,
+  1
+ ],
+ [
+  "Thomas Natschläger",
+  47.8,
+  13.05,
+  "Salzburg, Austria",
+  2002,
+  1
+ ],
+ [
+  "Thomas V. Wiecki",
+  51.34,
+  12.37,
+  "Leipzig, Germany",
+  2016,
+  1
+ ],
+ [
+  "Thorsten Holz",
+  49.23,
+  6.99,
+  "Saarbrücken, Germany",
+  2023,
+  1
+ ],
+ [
+  "Timothy Hirzel",
+  38.03,
+  -78.49,
+  "Charlottesville, USA",
+  2015,
+  1
+ ],
+ [
+  "Tom Lieberum",
+  51.51,
+  -0.13,
+  "London, United Kingdom",
+  2023,
+  1
+ ],
+ [
+  "Tongzhou Wang",
+  42.36,
+  -71.09,
+  "Cambridge, USA",
+  2024,
+  1
+ ],
+ [
+  "Télemaque Jégou",
+  45.19,
+  5.72,
+  "Grenoble, France",
+  2011,
+  1
+ ],
+ [
+  "Ueli Meier",
+  47.37,
+  8.54,
+  "Zurich, Switzerland",
+  2011,
+  1
+ ],
+ [
+  "Tian Zhang",
+  30.27,
+  -97.74,
+  "Austin, USA",
+  1996,
+  1
+ ],
+ [
+  "Trevor Killeen",
+  37.45,
+  -122.18,
+  "Menlo Park, USA",
+  2019,
+  1
+ ],
+ [
+  "Vandi Verma",
+  34.15,
+  -118.15,
+  "Pasadena, USA",
+  2023,
+  1
+ ],
+ [
+  "Victor Bapst",
+  42.36,
+  -71.09,
+  "Cambridge, USA",
+  2020,
+  1
+ ],
+ [
+  "Vikas Sindhwani",
+  28.61,
+  77.21,
+  "New Delhi, India",
+  2006,
+  1
+ ],
+ [
+  "Vin de Silva",
+  43.07,
+  -89.4,
+  "Madison, USA",
+  2000,
+  1
+ ],
+ [
+  "Walter Guyton Cady",
+  38.91,
+  -77.04,
+  "Washington, USA",
+  1922,
+  1
+ ],
+ [
+  "Wayne Xin Zhao",
+  39.9,
+  116.4,
+  "Beijing, China",
+  2023,
+  1
+ ],
+ [
+  "Wei-Lin Chiang",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2023,
+  1
+ ],
+ [
+  "Weihua Hu",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2019,
+  1
+ ],
+ [
+  "Weiming Lu",
+  31.82,
+  117.23,
+  "Hefei, China",
+  2023,
+  1
+ ],
+ [
+  "William K. Hartmann",
+  33.42,
+  -111.94,
+  "Tempe, USA",
+  1975,
+  1
+ ],
+ [
+  "William R. Thompson",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  1933,
+  1
+ ],
+ [
+  "Woosuk Kwon",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2023,
+  1
+ ],
+ [
+  "Xianguang Hou",
+  30.57,
+  104.07,
+  "Chengdu, China",
+  2003,
+  1
+ ],
+ [
+  "Xiaodong He",
+  39.9,
+  116.4,
+  "Beijing, China",
+  2014,
+  1
+ ],
+ [
+  "Xuanjing Huang",
+  39.9,
+  116.4,
+  "Beijing, China",
+  2023,
+  1
+ ],
+ [
+  "Xiang Wang",
+  31.82,
+  117.23,
+  "Hefei, China",
+  2020,
+  1
+ ],
+ [
+  "Yiming Yang",
+  47.66,
+  -122.33,
+  "Seattle, USA",
+  2023,
+  1
+ ],
+ [
+  "Ying Sheng",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2023,
+  1
+ ],
+ [
+  "Yingyu Liang",
+  37.39,
+  -122.08,
+  "Mountain View, USA",
+  2017,
+  1
+ ],
+ [
+  "Yunfei Chu",
+  30.27,
+  120.15,
+  "Hangzhou, China",
+  2024,
+  1
+ ],
+ [
+  "Yury Malkov",
+  55.75,
+  37.62,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Yusuke Iwasawa",
+  35.68,
+  139.69,
+  "Tokyo, Japan",
+  2022,
+  1
+ ],
+ [
+  "Yuxiong He",
+  47.67,
+  -122.12,
+  "Redmond, USA",
+  2019,
+  1
+ ],
+ [
+  "Zhifang Sui",
+  39.9,
+  116.4,
+  "Beijing, China",
+  2022,
+  1
+ ],
+ [
+  "Zhiheng Xi",
+  39.9,
+  116.4,
+  "Beijing, China",
+  2023,
+  1
+ ],
+ [
+  "Zhi-Hong Deng",
+  31.82,
+  117.23,
+  "Hefei, China",
+  2019,
+  1
+ ],
+ [
+  "Zhuohan Li",
+  42.36,
+  -71.09,
+  "Cambridge, USA",
+  2023,
+  1
+ ],
+ [
+  "Volodymyr Kuleshov",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2024,
+  1
+ ],
+ [
+  "ESO / S. Brunier",
+  48.26,
+  11.67,
+  "Garching, Germany",
+  2000,
+  1
+ ],
+ [
+  "NASA / NOAA (Suomi NPP VIIRS)",
+  38.99,
+  -77.0,
+  "Washington, USA",
+  2012,
+  1
+ ]
+]
