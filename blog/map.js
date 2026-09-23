@@ -208,22 +208,35 @@ function bootAtlas() {
 		c.width = c.height = 256;
 		var g = c.getContext('2d');
 		g.translate(128, 128);
-		for (var arm = 0; arm < 4; arm++) {
-			g.beginPath();
-			for (var t = 0; t < 90; t++) {
-				var a = t * 0.13 + arm * (Math.PI / 2);
-				var r = 2 + t * 1.35;
-				var x = Math.cos(a) * r, y = Math.sin(a) * r;
-				if (t === 0) { g.moveTo(x, y); } else { g.lineTo(x, y); }
+		// bright elliptical core
+		var core = g.createRadialGradient(0, 0, 0, 0, 0, 50);
+		core.addColorStop(0, 'rgba(255,245,230,.95)');
+		core.addColorStop(0.3, 'rgba(255,230,200,.6)');
+		core.addColorStop(0.7, 'rgba(200,180,255,.2)');
+		core.addColorStop(1, 'rgba(100,120,255,0)');
+		g.fillStyle = core;
+		g.fillRect(-128, -128, 256, 256);
+		// spiral arms with varying thickness and brightness
+		for (var arm = 0; arm < 2; arm++) {
+			for (var pass = 0; pass < 3; pass++) {
+				g.beginPath();
+				for (var t = 0; t < 100; t++) {
+					var a = t * 0.11 + arm * Math.PI + pass * 0.3;
+					var r = 4 + t * 1.2 + pass * 2;
+					var x = Math.cos(a) * r, y = Math.sin(a) * r * 0.75;
+					if (t === 0) { g.moveTo(x, y); } else { g.lineTo(x, y); }
+				}
+				var alpha = 0.35 - pass * 0.1;
+				g.strokeStyle = 'rgba(140,160,255,' + alpha + ')';
+				g.lineWidth = 4 - pass;
+				g.stroke();
 			}
-			g.strokeStyle = 'rgba(150,170,255,.5)';
-			g.lineWidth = 3;
-			g.stroke();
 		}
-		var grad = g.createRadialGradient(0, 0, 0, 0, 0, 60);
-		grad.addColorStop(0, 'rgba(255,240,220,.9)');
-		grad.addColorStop(1, 'rgba(255,240,220,0)');
-		g.fillStyle = grad;
+		// outer disk glow
+		var disk = g.createRadialGradient(0, 0, 20, 0, 0, 120);
+		disk.addColorStop(0, 'rgba(120,140,255,.15)');
+		disk.addColorStop(1, 'rgba(60,80,200,0)');
+		g.fillStyle = disk;
 		g.fillRect(-128, -128, 256, 256);
 		return new THREE.CanvasTexture(c);
 	}
@@ -383,12 +396,13 @@ function bootAtlas() {
 		buildCmbPhoto();
 		buildQuestionWorld();
 
-		// galaxies (stylized spirals)
+		// galaxies (stylized spirals, additive blend for dark-bg blending)
 		galaxyGroup = new THREE.Group();
 		var spiralTex = makeSpiralTexture();
 		for (var gi = 0; gi < 9; gi++) {
 			var sp = new THREE.Sprite(new THREE.SpriteMaterial({
-				map: spiralTex, transparent: true, opacity: 0, depthWrite: false
+				map: spiralTex, transparent: true, opacity: 0, depthWrite: false,
+				blending: THREE.AdditiveBlending
 			}));
 			var u = Math.random() * 2 - 1;
 			var a = Math.random() * Math.PI * 2;
