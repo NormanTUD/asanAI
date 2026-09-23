@@ -249,7 +249,7 @@ function bootAtlas() {
 
 		buildEarth();
 		buildMoon();
-	buildCelestial();
+		buildCelestial();
 		buildDotsMesh();
 		buildThreads();
 		applyCamera();
@@ -785,19 +785,17 @@ function bootAtlas() {
 		}
 
 		// Hide terrestrial/solar bodies when zoom is extreme (cosmic/Big Bang/Question)
-		// threshold d=200 is safe for transition
 		var celestialO = THREE.MathUtils.smoothstep(d, 180, 250);
 		if (earth) { earth.visible = celestialO > 0.01; }
 		if (moon) { moon.visible = celestialO > 0.01; }
 		if (atmosphere) { atmosphere.visible = celestialO > 0.01; }
-		planets.forEach(function (p) { p.visible = celestialO > 0.01; });
-		if (sunSp) { sunSp.visible = (celestialO > 0.01) && (solarO > 0.01); }
 
 		// the solar system (sun + planets) is a mid-zoom view: it fades in
 		// as we pull off the Moon and is fully gone before the galaxies stop
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 90, 135));
-		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarO > 0.01; }
-		planets.forEach(function (p) { p.material.opacity = solarO; p.visible = solarO > 0.01; });
+		var solarVis = (celestialO > 0.01) && (solarO > 0.01);
+		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; }
+		planets.forEach(function (p) { p.material.opacity = solarO; p.visible = solarVis; });
 		var atmO = 1 - THREE.MathUtils.smoothstep(d, 2.6, 6);
 		if (atmosphere) { atmosphere.material.opacity = atmO; }
 	}
