@@ -1006,7 +1006,7 @@ function bootAtlas() {
 		if (qBg > 0.5 || galBg > 0.5) { scene.background = new THREE.Color(0x05070d); }
 		else if (bgTexture) { scene.background = bgTexture; }
 		// solar system: fully visible at the solar-system stop, gone before galaxies
-		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 190, 250));
+		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 185, 220));
 		var solarVis = solarO > 0.01;
 		if (sunSp) { sunSp.material.opacity = solarO; sunSp.visible = solarVis; sunBody.visible = solarVis; }
 		planets.forEach(function (p) {
