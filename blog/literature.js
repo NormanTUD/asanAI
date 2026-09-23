@@ -7893,6 +7893,17 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.png, moon_texture.png)"
 	},
+	/* The Atlas Earth night-lights layer (map.js buildEarth ShaderMaterial
+	 * nightMap): NASA/NOAA VIIRS Day/Night Band 2012 composite,
+	 * equirectangular; local file earth_night.jpg. */
+	"earth_night_lights": {
+		url: "https://commons.wikimedia.org/wiki/File:City_Lights_2012_-_Flat_map.jpg",
+		title: "City Lights 2012 — Flat map (VIIRS Day/Night Band composite)",
+		author: "NASA / NOAA (Suomi NPP VIIRS)",
+		year: 2012,
+		license: "Public Domain",
+		alternativetitle: "NASA VIIRS 2012 night-lights equirectangular map (earth_night.jpg)"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */

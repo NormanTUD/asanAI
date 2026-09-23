@@ -341,4 +341,6 @@ html:not(.dark) #atlas-stage {
 *Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
 
 *Earth and Moon surfaces (the main globe):* equirectangular maps from \cite[Solar System Scope]{earth_moon_cc_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
+
+*Earth night side (city lights):* \cite[VIIRS 2012 composite]{earth_night_lights} — NASA / NOAA, Public Domain.
 </div>

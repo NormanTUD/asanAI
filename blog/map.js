@@ -241,6 +241,22 @@ function bootAtlas() {
 		return new THREE.CanvasTexture(c);
 	}
 
+	function makeRadialMaskTexture(img, w, h) {
+		var c = document.createElement('canvas');
+		c.width = w; c.height = h;
+		var g = c.getContext('2d');
+		g.drawImage(img, 0, 0, w, h);
+		g.globalCompositeOperation = 'destination-in';
+		var grad = g.createRadialGradient(w/2, h/2, 0, w/2, h/2, w/2);
+		grad.addColorStop(0, 'rgba(0,0,0,1)');
+		grad.addColorStop(0.5, 'rgba(0,0,0,1)');
+		grad.addColorStop(0.8, 'rgba(0,0,0,0.4)');
+		grad.addColorStop(1, 'rgba(0,0,0,0)');
+		g.fillStyle = grad;
+		g.fillRect(0, 0, w, h);
+		return new THREE.CanvasTexture(c);
+	}
+
 	function buildScene() {
 		scene = new THREE.Scene();
 		var sz = stageSize();
@@ -474,12 +490,13 @@ function bootAtlas() {
 		for (var ti = 0; ti < galaxyFiles.length; ti++) {
 			(function (idx) {
 				new THREE.TextureLoader().load(galaxyFiles[idx], function (tex) {
-					if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
-					tex.needsUpdate = true;
-					galaxyTexs[idx] = tex;
+					var masked = makeRadialMaskTexture(tex.image, 512, 512);
+					if (THREE.sRGBEncoding !== undefined) { masked.encoding = THREE.sRGBEncoding; }
+					masked.needsUpdate = true;
+					galaxyTexs[idx] = masked;
 					galaxySprites.forEach(function (sp) {
 						if (sp.userData.texIdx === idx) {
-							sp.material.map = tex;
+							sp.material.map = masked;
 							sp.material.needsUpdate = true;
 						}
 					});
@@ -497,11 +514,13 @@ function bootAtlas() {
 		sunSp.scale.set(26, 26, 1);
 		scene.add(sunSp);
 
-		// planets: real order, log-scaled orbits around the sun, sizes by
-		// radius^0.45 (stylized but ordered); coplanar orbits through SUN_POS
+		// planets: real order, orbits scaled by a_AU^0.4 (power-law compression
+		// preserves the correct visual story: inner 4 clustered, big gap to
+		// Jupiter, then progressively larger gaps outward). Sizes by
+		// radius^0.5 (Jupiter is visibly largest without dwarfing the scene).
 		var palette = [0x9c8f84, 0xe8c46a, 0x4a90d9, 0xc1440e, 0xd8a25a, 0xe0c9a6, 0x9ad1e8, 0x4a6fd0];
-		var radii = [0.58, 0.88, 0.9, 0.68, 2.65, 2.44, 1.67, 1.66];
-		var orbits = [6, 8, 9, 10, 14, 16, 18, 19.5];
+		var radii = [0.56, 0.88, 0.90, 0.66, 3.01, 2.77, 1.80, 1.77];
+		var orbits = [7.5, 9.5, 11, 13, 21.5, 27.5, 37, 46];
 		var planetTex = ['solsys_mercury.jpg', 'solsys_venus.jpg', 'solsys_earth.jpg', 'solsys_mars.jpg', 'solsys_jupiter.jpg', 'solsys_saturn.jpg', 'solsys_uranus.jpg', 'solsys_neptune.jpg'];
 		var texLoader = new THREE.TextureLoader();
 		for (var pi = 0; pi < 8; pi++) {
@@ -522,7 +541,7 @@ function bootAtlas() {
 			);
 			pm.userData.angle = pa;
 			pm.userData.dist = orbits[pi];
-			pm.userData.speed = 0.02 * Math.pow(6 / orbits[pi], 1.5);
+			pm.userData.speed = 0.02 * Math.pow(11 / orbits[pi], 1.5);
 			pm.visible = false;
 			planets.push(pm);
 			scene.add(pm);
@@ -1344,6 +1363,7 @@ function bootAtlas() {
 		{ d: 3.2, face: latLngToVec3(52.52, 13.4, EARTH_R), dot: 'person-konrad-zuse', img: 'zuse.jpg', era: 'The computer · 1941', text: 'Konrad Zuse’s Z3 in Berlin — the first working, programmable, fully automatic digital computer, built from telephone relays. The machine that made computation physical.' },
 		{ d: 3.2, face: latLngToVec3(-25.9, 31.52, EARTH_R), dot: 'place-lebombo-mountains', img: 'lebombo.jpg', era: 'Counting · c. 42,000 BCE', text: 'The Lebombo bone, Eswatini — a baboon fibula with 29 notches, the oldest known counting tool. No counting, no mathematics, no code, no model.' },
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
+		{ d: 25, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 60, face: SUN_POS, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
 		{ d: 140, era: 'The galaxies', text: 'Island universes drifting in the dark — 13.8 billion years of cosmic structure.' },
 		{ d: 260, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
@@ -1401,7 +1421,9 @@ function bootAtlas() {
 		if (s.face) {
 			var v = (s.face === 'moon')
 				? moon.position.clone()
-				: (s.face.isVector3 ? s.face : new THREE.Vector3(s.face[0], s.face[1], s.face[2]));
+				: (s.face === 'mars')
+					? planets[3].position.clone()
+					: (s.face.isVector3 ? s.face : new THREE.Vector3(s.face[0], s.face[1], s.face[2]));
 			state.tTheta = Math.atan2(v.z, v.x);
 			state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		}
