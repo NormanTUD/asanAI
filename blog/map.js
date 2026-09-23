@@ -187,7 +187,7 @@ function bootAtlas() {
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
-	var bhHole, bhPhotonRing, bhDisk, bhParticles, bhStar, bhStarGlow, bhNebula;
+	var bhHole, bhPhotonRing, bhDisk, bhParticles, bhStar, bhStarGlow, bhNebula, bhCrab, bhM87;
 	var bhGeo, bhVel = [], nebGeo, nebVel = [];
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();

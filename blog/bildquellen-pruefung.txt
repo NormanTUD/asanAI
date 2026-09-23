@@ -314,3 +314,26 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lokal: galaxy_1.jpg … galaxy_5.jpg (je 512x512)
     Genutzt in: map.js § buildCelestial (Galaxien-Sprites)
     Status: OK - Public Domain (NASA) / CC BY 4.0 (ESO).
+
+30. m87_blackhole_image (Event Horizon Telescope: Schwarzes Loch M87*)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg
+    Lizenz: CC BY 4.0 (Event Horizon Telescope Collaboration)
+    Autor: Event Horizon Telescope Collaboration
+    Hinweis: Erstes direktes Bild eines Schwarzen-Loch-Schattens (2019).
+             Wird in map.js § tickBlackHole als Crossfade-Ziel am Ende der
+             Stern-Todes-Phase gezeigt.
+    Lokal: m87_real.jpg (2,4 MB)
+    Genutzt in: map.js § tickBlackHole (Crossfade-Phase)
+    Status: OK - CC BY 4.0, Quelle via \cite{m87_blackhole_image} im
+             Credit (map.php) zitiert.
+
+31. crab_nebula_image (Krabbennebula, Überrest von SN 1054)
+    URL (Quelle): https://en.wikipedia.org/wiki/SN_1054
+    Lizenz: Public Domain (NASA / ESA / Hubble Space Telescope)
+    Autor: NASA / ESA / Hubble Space Telescope
+    Hinweis: Supernova-Überrest von SN 1054 (beobachtet 1054 n. Chr.).
+             Wird in map.js § tickBlackHole am Ende der Supernova-Phase
+             gezeigt, um den sichtbaren Überrest eines Sterns darzustellen.
+    Lokal: crab_nebula.jpg (14 MB)
+    Genutzt in: map.js § tickBlackHole (Supernova-Überrest-Phase)
+    Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.

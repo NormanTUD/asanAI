@@ -7904,6 +7904,29 @@ window.bibData = {
 		license: "Public Domain",
 		alternativetitle: "NASA VIIRS 2012 night-lights equirectangular map (earth_night.jpg)"
 	},
+	/* The Event Horizon Telescope image of the black hole in Messier 87
+	 * (M87*), the first direct image of a black hole shadow, shown in the
+	 * Atlas (map.js) as the crossfade target for the stellar death phase.
+	 * Local file m87_real.jpg. */
+	"m87_blackhole_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg",
+		title: "Black hole — Messier 87 (M87*): the first direct image of a black hole shadow",
+		author: "Event Horizon Telescope Collaboration",
+		year: 2019,
+		license: "CC BY 4.0",
+		alternativetitle: "EHT image of M87* (m87_real.jpg)"
+	},
+	/* The Crab Nebula (M1), the supernova remnant of SN 1054, shown in the
+	 * Atlas (map.js) at the end of the stellar death phase to illustrate
+	 * what remains after a star explodes. Local file crab_nebula.jpg. */
+	"crab_nebula_image": {
+		url: "https://en.wikipedia.org/wiki/SN_1054",
+		title: "Crab Nebula (M1) — supernova remnant of SN 1054",
+		author: "NASA / ESA / Hubble Space Telescope",
+		year: 2005,
+		license: "Public Domain (NASA)",
+		alternativetitle: "Crab Nebula, SN 1054 remnant (crab_nebula.jpg)"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */
