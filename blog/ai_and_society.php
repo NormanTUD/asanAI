@@ -233,7 +233,7 @@ In a controlled experiment with **GitHub Copilot**, recruited developers were as
 
 ### The "Jagged Frontier" (2023)
 
-A field experiment with ca. 250 **BCG consultants** doing a business case with GPT-4 (Dell'Acqua et al., Stanford/Wharton/BCG) found that AI helped on *some* tasks (consultants completed ca. 12% more work, ca. 25% faster) but **quality dropped on the hardest, most creative tasks**. On the most difficult problems, GPT-4 was *worse* than the human working alone. The authors called this the **"jagged frontier"**: AI is a good tool for some tasks and a bad tool for others, and you cannot easily predict which in advance \cite[Dell'Acqua et al., 2023]{dellaquila2023jagged}.
+A field experiment with ca. 250 **BCG consultants** doing a business case with GPT-4 (Dell'Acqua et al., Stanford/Wharton/BCG) found that AI helped on *some* tasks (consultants completed ca. 12% more work, ca. 25% faster) but **quality dropped on the hardest, most creative tasks**. On the most difficult problems, GPT-4 was *worse* than the human working alone. The authors called this the **"jagged frontier"**: AI is a good tool for some tasks and a bad tool for others, and you cannot easily predict which in advance.
 
 ### The Speedup Illusion (2026)
 
