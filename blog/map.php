@@ -171,7 +171,7 @@ html:not(.dark) #atlas-stage {
 
 /* ── tooltip ── */
 .atlas-tip {
-	position: fixed; z-index: 30; pointer-events: none;
+	position: absolute; z-index: 30; pointer-events: none;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line-strong);
 	border-radius: 9px; padding: 7px 10px; font-size: .76rem; color: var(--atlas-ink);
 	box-shadow: var(--atlas-shadow); display: none; max-width: 260px;

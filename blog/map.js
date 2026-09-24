@@ -1314,6 +1314,8 @@ function bootAtlas() {
 	}
 	function pick(px, py, isClick) {
 		var rect = canvas.getBoundingClientRect();
+		var relX = px - rect.left;
+		var relY = py - rect.top;
 		mouseNDC.x = ((px - rect.left) / rect.width) * 2 - 1;
 		mouseNDC.y = -((py - rect.top) / rect.height) * 2 + 1;
 		raycaster.setFromCamera(mouseNDC, camera);
@@ -1338,8 +1340,8 @@ function bootAtlas() {
 				tip.querySelector('.t-sub').textContent =
 					pInfo.au + ' AU · ' + pInfo.period + ' · ' + pInfo.diam;
 				tip.style.display = 'block';
-				tip.style.left = (px + 12) + 'px';
-				tip.style.top = (py - 36) + 'px';
+				tip.style.left = (relX + 14) + 'px';
+				tip.style.top = (relY - tip.offsetHeight - 12) + 'px';
 				canvas.style.cursor = 'pointer';
 				return;
 			}
@@ -1348,7 +1350,7 @@ function bootAtlas() {
 			if (found) { selectDot(found); }
 			else { clearSelection(); }
 		} else {
-			setHover(found, px, py);
+			setHover(found, relX, relY);
 		}
 	}
 	function revealAsparagus() {
@@ -1470,7 +1472,7 @@ function bootAtlas() {
 		state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		state.tD = d.isMoon ? 4.8 : 3.1;
 	}
-	function setHover(d, px, py) {
+	function setHover(d, lx, ly) {
 		state.hovered = d;
 		if (d) {
 			var sub = d.isAuthor ? '~' + d.year : (d.ref.years || '');
@@ -1479,8 +1481,8 @@ function bootAtlas() {
 			tip.querySelector('.t-sub').textContent =
 				TYPE_LABEL[d.type] + (sub ? ' · ' + sub : '');
 			tip.style.display = 'block';
-			tip.style.left = (px + 12) + 'px';
-			tip.style.top = (py - 36) + 'px';
+			tip.style.left = (lx + 14) + 'px';
+			tip.style.top = (ly - tip.offsetHeight - 12) + 'px';
 			canvas.style.cursor = 'pointer';
 		} else {
 			tip.style.display = 'none';
