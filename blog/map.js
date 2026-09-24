@@ -183,7 +183,7 @@ function bootAtlas() {
 
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, moon, sun, planets = [];
-	var dotMesh, dotGeo = null, dotHighlight = null, hoverGlow = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1, hoverIdx = -1;
+	var dotMesh, ringMesh, ringGeo = null, dotGeo = null, dotHighlight = null, hoverGlow = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1, hoverIdx = -1;
 	var DOT_SIZE = 0.056, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.13, HOVER_SCALE = 0.15;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null, skySphere = null;
@@ -922,17 +922,30 @@ function bootAtlas() {
 		var c = document.createElement('canvas');
 		var s = 64; c.width = c.height = s;
 		var g = c.getContext('2d');
-		// crisp "pin": solid core + faint body + a bright hard-edged ring at
-		// the edge + a faint outer glow. The hard ring keeps the marker
-		// readable even over the dark night side of the globe.
+		// solid type-colored core with a soft fade — the bright edge is drawn
+		// as a separate white ring layer (see makeRingTexture) so it stays a
+		// different color from the dot and reads clearly over the dark side.
 		var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
 		grad.addColorStop(0.00, 'rgba(255,255,255,1)');
-		grad.addColorStop(0.30, 'rgba(255,255,255,1)');
-		grad.addColorStop(0.44, 'rgba(255,255,255,0.30)');
-		grad.addColorStop(0.52, 'rgba(255,255,255,0.35)');
-		grad.addColorStop(0.56, 'rgba(255,255,255,0.98)');
-		grad.addColorStop(0.66, 'rgba(255,255,255,0.98)');
-		grad.addColorStop(0.72, 'rgba(255,255,255,0.12)');
+		grad.addColorStop(0.42, 'rgba(255,255,255,1)');
+		grad.addColorStop(0.52, 'rgba(255,255,255,0.20)');
+		grad.addColorStop(0.66, 'rgba(255,255,255,0.06)');
+		grad.addColorStop(1.00, 'rgba(255,255,255,0)');
+		g.fillStyle = grad;
+		g.fillRect(0, 0, s, s);
+		return new THREE.CanvasTexture(c);
+	}
+
+	function makeRingTexture() {
+		var c = document.createElement('canvas');
+		var s = 64; c.width = c.height = s;
+		var g = c.getContext('2d');
+		var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+		grad.addColorStop(0.00, 'rgba(255,255,255,0)');
+		grad.addColorStop(0.44, 'rgba(255,255,255,0)');
+		grad.addColorStop(0.48, 'rgba(255,255,255,0.98)');
+		grad.addColorStop(0.62, 'rgba(255,255,255,0.98)');
+		grad.addColorStop(0.66, 'rgba(255,255,255,0)');
 		grad.addColorStop(1.00, 'rgba(255,255,255,0)');
 		g.fillStyle = grad;
 		g.fillRect(0, 0, s, s);
@@ -942,12 +955,14 @@ function bootAtlas() {
 	function buildDotsMesh() {
 		var n = state.dots.length;
 		var pos = new Float32Array(n * 3);
+		var ringPos = new Float32Array(n * 3);
 		var col = new Float32Array(n * 3);
 		var cc = new THREE.Color();
 		for (var i = 0; i < n; i++) {
 			var d = state.dots[i];
 			dotInstance[i] = d;
 			pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = -9999;
+			ringPos[i * 3] = 0; ringPos[i * 3 + 1] = 0; ringPos[i * 3 + 2] = -9999;
 			cc.set(TYPE_COLOR[d.type] || '#ffffff');
 			dotBaseColor[i] = cc.clone();
 			col[i * 3] = cc.r; col[i * 3 + 1] = cc.g; col[i * 3 + 2] = cc.b;
@@ -964,6 +979,17 @@ function bootAtlas() {
 			vertexColors: true, transparent: true, depthWrite: false
 		}));
 		dotMesh.frustumCulled = false;
+		ringGeo = new THREE.BufferGeometry();
+		var ringAttr = new THREE.BufferAttribute(ringPos, 3);
+		ringAttr.setUsage(THREE.DynamicDrawUsage);
+		ringGeo.setAttribute('position', ringAttr);
+		ringMesh = new THREE.Points(ringGeo, new THREE.PointsMaterial({
+			size: DOT_SIZE, sizeAttenuation: true, map: makeRingTexture(),
+			color: 0xffffff, transparent: true, opacity: 0.95, depthWrite: false
+		}));
+		ringMesh.frustumCulled = false;
+		ringMesh.renderOrder = 2;
+		dotMesh.add(ringMesh);
 		dotHighlight = new THREE.Sprite(new THREE.SpriteMaterial({
 			map: dotMesh.material.map, color: 0xffffff, transparent: true,
 			opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending
@@ -981,19 +1007,23 @@ function bootAtlas() {
 
 	function updateDots() {
 		var pos = dotGeo.attributes.position.array;
+		var rpos = ringGeo.attributes.position.array;
 		var shown = 0;
 		for (var i = 0; i < state.dots.length; i++) {
 			var d = dotInstance[i];
 			if (dotVisible(d)) {
 				var base = dotWorldPos(d, DOT_PAD);
 				pos[i * 3] = base.x; pos[i * 3 + 1] = base.y; pos[i * 3 + 2] = base.z;
+				rpos[i * 3] = base.x; rpos[i * 3 + 1] = base.y; rpos[i * 3 + 2] = base.z;
 				shown++;
 			} else {
 				pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = -9999;
+				rpos[i * 3] = 0; rpos[i * 3 + 1] = 0; rpos[i * 3 + 2] = -9999;
 			}
 		}
 		dotGeo.attributes.position.needsUpdate = true;
 		dotGeo.attributes.color.needsUpdate = true;
+		ringGeo.attributes.position.needsUpdate = true;
 		updateCount(shown);
 	}
 
