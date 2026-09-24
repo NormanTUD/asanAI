@@ -3129,12 +3129,13 @@
   "type": "artifact",
   "name": "Rosetta Stone",
   "location": {
-   "lat": 51.52,
-   "lon": -0.13
+   "lat": 31.4014,
+   "lon": 30.4184
   },
   "cited_in": [
    "untold_history"
-  ]
+  ],
+  "loc": "Rashid, Egypt"
  },
  {
   "type": "artifact",

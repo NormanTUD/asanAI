@@ -28803,10 +28803,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "metropolis_hastings_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -36180,8 +36180,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "mozillareadability",
-   "javascript_mdn"
+   "javascript_mdn",
+   "mozillareadability"
   ],
   "cited_in": [
    "software",
@@ -54412,10 +54412,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_astronaut_img"
   ],
   "cited_in": [
    "ai_for_science",
