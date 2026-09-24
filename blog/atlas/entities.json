@@ -233,8 +233,8 @@
   "name": "Zeno of Elea",
   "type": "person",
   "loc": "Elea, Italy",
-  "lat": 40.02,
-  "lng": 14.78,
+  "lat": 40.06,
+  "lng": 15.31,
   "years": "c. 490-430 BC",
   "active": [
    -490.0,
@@ -3881,8 +3881,8 @@
   "name": "Apollonius of Perga",
   "type": "person",
   "loc": "Pergamon, Turkey",
-  "lat": 39.13,
-  "lng": 29.25,
+  "lat": 39.1189,
+  "lng": 27.1774,
   "years": "c. 262-190 BC",
   "active": [
    -262.0,
@@ -3965,8 +3965,8 @@
   "name": "Hipparchus of Nicaea",
   "type": "person",
   "loc": "Nicaea, Turkey",
-  "lat": 40.19,
-  "lng": 29.16,
+  "lat": 40.4303,
+  "lng": 29.7224,
   "years": "c. 190-120 BC",
   "active": [
    -190.0,
@@ -8028,8 +8028,8 @@
   "name": "Iraq",
   "type": "place",
   "loc": "Baghdad, Iraq",
-  "lat": 33.0,
-  "lng": 43.7,
+  "lat": 33.315,
+  "lng": 44.365,
   "years": "",
   "active": [
    null,
@@ -11824,8 +11824,8 @@
   "name": "Nagarjuna",
   "type": "person",
   "loc": "India",
-  "lat": 20.59,
-  "lng": 78.96,
+  "lat": 21.0,
+  "lng": 78.0,
   "years": "150-250",
   "active": [
    180.0,
@@ -17701,7 +17701,7 @@
   "type": "place",
   "loc": "United Kingdom",
   "lat": 54.0,
-  "lng": -2.5,
+  "lng": -2.0,
   "years": "",
   "active": [
    null,
@@ -17763,7 +17763,7 @@
   "name": "Miletus",
   "type": "place",
   "loc": "Miletus",
-  "lat": 38.43,
+  "lat": 37.53,
   "lng": 27.28,
   "years": "",
   "active": [
@@ -27965,8 +27965,8 @@
   "name": "Ishango",
   "type": "place",
   "loc": "Ishango, DR Congo",
-  "lat": 1.17,
-  "lng": 29.6,
+  "lat": -0.136,
+  "lng": 29.6012,
   "years": "",
   "active": [
    null,
@@ -29952,7 +29952,7 @@
   "name": "Ptolemy V Epiphanes",
   "type": "person",
   "loc": "Alexandria, Egypt",
-  "lat": 31.63,
+  "lat": 31.2,
   "lng": 29.92,
   "years": "c. 210-181 BC",
   "active": [
@@ -29973,7 +29973,7 @@
   "name": "Cleopatra VII",
   "type": "person",
   "loc": "Alexandria, Egypt",
-  "lat": 31.63,
+  "lat": 31.2,
   "lng": 29.92,
   "years": "c. 69-30 BC",
   "active": [

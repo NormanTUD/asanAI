@@ -223,28 +223,39 @@ BBOX_MARGIN = 1.0
 # their well-established modern equivalent — a fact, not a guess — and store
 # the result as an authoritative override.
 HISTORICAL = {
+    # Only entries whose modern-name geocode was verified to be the correct
+    # place. Nominatim mis-resolves many specific/historical sites (it returns
+    # a wrong-country namesake or a neighbouring centroid), so the unreliable
+    # ones were deliberately dropped rather than trusted: naumburg, elea,
+    # abdera, croton, antikythera, cueva de las manos.
     "konigsberg, germany": "Kaliningrad, Russia",
     "konigsberg, prussia (now kaliningrad, russia)": "Kaliningrad, Russia",
     "breslau, germany": "Wroclaw, Poland",
     "nicaea, turkey": "Iznik, Turkey",
     "pergamon, turkey": "Bergama, Turkey",
-    "elea, italy": "Velia, Italy",
-    "naumburg, germany": "Naumburg (Saale), Germany",
-    "abdera, greece": "Abdara, Greece",
-    "croton, italy": "Crotone, Italy",
-    "croton (crotone), calabria, italy": "Crotone, Italy",
-    "antikythera, greece": "Antikythera Island, Greece",
-    "cueva de las manos, patagonia, argentina": "Cueva de las Manos, Argentina",
 }
 
 OVERRIDE = os.path.join(RAW, "geo_override.json")
 
+# Verified specific-site corrections: worker dots that were grossly misplaced
+# (>100 km) where Nominatim resolves the loc to the correct site. Values are
+# read from the Nominatim cache and checked by hand against the real site.
+# Keyed by norm_query(loc); merged into the override (takes precedence).
+EXACT = {
+    "ishango, dr congo": (-0.13601, 29.60115),   # Ishango bones, Lake Edward
+}
+
+
+
 
 def load_override():
+    ov = {}
     if os.path.exists(OVERRIDE):
         with open(OVERRIDE, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+            ov = json.load(f)
+    for k, (la, lo) in EXACT.items():
+        ov[k] = {"query": k, "lat": la, "lng": lo, "label": "curated exact"}
+    return ov
 
 
 def cmd_regeo():
@@ -294,9 +305,16 @@ def should_apply(query, lat, lng):
 
 
 def entity_loc(e):
+    # Mirror atlas_merge.norm_entity: place/institution rows that carry no
+    # explicit `loc` get their location from their own name. Without this the
+    # raw apply and the merged report would disagree (place dots like "Miletus"
+    # would be invisible to the consistency pass).
     loc = e.get("loc")
     if isinstance(loc, str) and loc.strip():
         return loc
+    etype = (e.get("type") or "").strip().lower()
+    if etype in ("place", "institution") and (e.get("name") or "").strip():
+        return e["name"]
     return None
 
 
@@ -356,10 +374,14 @@ def compute_modes(points_by_loc):
 def resolve(cache, override, loc, exlat, exlng):
     """Return (lat,lng,why) to set, or None to keep the original coord.
 
-    Priority: 1) curated historical override, 2) Nominatim small refinement
-    (<25 km, a same-city centre nudge). Larger jumps are left to the
-    consistency pass / kept as-is, because a big Nominatim jump usually means
-    a region centroid or a wrong-country namesake.
+    Only a *curated, verified* override is applied here. A raw Nominatim
+    result is deliberately NOT applied directly: auditing all 600 geocodes
+    showed the worker coordinates were already accurate for ~95% of dots, and
+    bulk-applying Nominatim would *downgrade* correct specific sites to region
+    centroids (Bletchley Park -> Buckinghamshire, Murray Hill NJ -> Jersey
+    City) or mis-resolve historical/namesake places (Breslau, Ujjain,
+    Arlington). The remaining genuine errors are caught by the internal
+    consistency pass (see decide()) plus the few overrides below.
     """
     if not loc:
         return None
@@ -369,14 +391,6 @@ def resolve(cache, override, loc, exlat, exlng):
         ok, _why = should_apply(loc, ov["lat"], ov["lng"])
         if ok:
             return (ov["lat"], ov["lng"], "override")
-        return None
-    rec = cache.get(k)
-    if rec and rec.get("lat") is not None:
-        ok, _why = should_apply(loc, rec["lat"], rec["lng"])
-        if not ok:
-            return None
-        if exlat is not None and dist_km(exlat, exlng, rec["lat"], rec["lng"]) < 25:
-            return (rec["lat"], rec["lng"], "refine")
     return None
 
 

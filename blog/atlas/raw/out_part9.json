@@ -7848,8 +7848,8 @@
   "name": "Ishango",
   "type": "place",
   "loc": "Ishango, DR Congo",
-  "lat": 1.17,
-  "lng": 29.6,
+  "lat": -0.136,
+  "lng": 29.6012,
   "years": "",
   "active": [
    null,
@@ -9807,7 +9807,7 @@
   "name": "Ptolemy V Epiphanes",
   "type": "person",
   "loc": "Alexandria, Egypt",
-  "lat": 31.63,
+  "lat": 31.2,
   "lng": 29.92,
   "years": "c. 210-181 BC",
   "active": [
@@ -9826,7 +9826,7 @@
   "name": "Cleopatra VII",
   "type": "person",
   "loc": "Alexandria, Egypt",
-  "lat": 31.63,
+  "lat": 31.2,
   "lng": 29.92,
   "years": "c. 69-30 BC",
   "active": [

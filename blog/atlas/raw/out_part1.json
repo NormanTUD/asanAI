@@ -203,8 +203,8 @@
   "name": "Zeno of Elea",
   "type": "person",
   "loc": "Elea, Italy",
-  "lat": 40.02,
-  "lng": 14.78,
+  "lat": 40.06,
+  "lng": 15.31,
   "years": "c. 490-430 BC",
   "active": [
    -490,
@@ -3365,8 +3365,8 @@
   "name": "Apollonius of Perga",
   "type": "person",
   "loc": "Pergamon, Turkey",
-  "lat": 39.13,
-  "lng": 29.25,
+  "lat": 39.1189,
+  "lng": 27.1774,
   "years": "c. 262-190 BC",
   "active": [
    -262,
@@ -3441,8 +3441,8 @@
   "name": "Hipparchus of Nicaea",
   "type": "person",
   "loc": "Nicaea, Turkey",
-  "lat": 40.19,
-  "lng": 29.16,
+  "lat": 40.4303,
+  "lng": 29.7224,
   "years": "c. 190-120 BC",
   "active": [
    -190,

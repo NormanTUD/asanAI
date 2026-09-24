@@ -102,8 +102,8 @@
   "name": "Iraq",
   "type": "place",
   "loc": "Baghdad, Iraq",
-  "lat": 33.0,
-  "lng": 43.7,
+  "lat": 33.315,
+  "lng": 44.365,
   "years": "",
   "active": [
    null,
