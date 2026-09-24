@@ -1344,10 +1344,14 @@ function setupCanvas(cv){
   const rect=cv.getBoundingClientRect();
   const w=rect.width||cv.clientWidth||600;
   const h=parseInt(cv.getAttribute('height'))||300;
-  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  const MAX=8192;
+  const tw=Math.min(MAX,Math.max(1,Math.round(w*dpr)));
+  const th=Math.min(MAX,Math.max(1,Math.round(h*dpr)));
+  if(cv.width!==tw) cv.width=tw;
+  if(cv.height!==th) cv.height=th;
   cv.style.height=h+'px';
   const ctx=cv.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.setTransform(tw/w,0,0,th/h,0,0);
   return {ctx,w,h};
 }
 
@@ -2073,7 +2077,7 @@ function renderLift(){
   if(showProj){
     traces.push({type:'scatter3d',mode:'lines',
       x:np.concat([np[0]]).map(p=>p[0]),y:np.concat([np[0]]).map(p=>p[1]),
-      z:np.map(()=>zmin).concat([zmin],
+      z:np.map(()=>zmin).concat([zmin]),
       line:{color:'rgba(120,150,220,.55)',width:3},name:'Newton-Polygon Δ(f)',hoverinfo:'skip'});
     // vertical drop lines
     const dx=[],dy=[],dz=[];
@@ -2653,7 +2657,7 @@ function drawDual(){
     const a=parseInt($('#fgA').value),b=parseFloat($('#fgB').value),t=parseFloat($('#fgT').value);
     $('#fgAv').textContent=a;$('#fgBv').textContent=fmt(b,1);$('#fgTv').textContent=fmt(t,1);
     const ap=Math.max(a,0),am=Math.max(-a,0);
-    const F=x=>Math.max(Math.max(ap*x+b, am*x+t);
+    const F=x=>Math.max(ap*x+b, am*x+t);
     const G=x=>am*x;
     const NU=x=>Math.max(a*x+b,t);
     const {ctx,w,h}=setupCanvas(cv);
