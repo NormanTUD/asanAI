@@ -1,0 +1,2839 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Transformer lernen im Kontext durch Gradientenabstieg — Interaktiv</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#080b14; --bg2:#0d1220; --panel:rgba(20,26,44,.72); --panel2:rgba(28,36,60,.6);
+  --line:rgba(120,150,220,.16); --line2:rgba(120,150,220,.32);
+  --tx:#e6ecff; --tx2:#9fb0d6; --tx3:#6b7ba3;
+  --a:#5eead4;   /* teal  - Transformer */
+  --b:#a78bfa;   /* violet- GD */
+  --c:#fbbf24;   /* amber - GD++ */
+  --d:#f472b6;   /* pink  - Daten */
+  --e:#60a5fa;   /* blue  - x */
+  --f:#34d399;   /* green - y */
+  --bad:#fb7185;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--tx); font-family:var(--sans);
+  line-height:1.65; overflow-x:hidden; font-size:15.5px;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(900px 700px at 12% -5%, rgba(94,234,212,.11), transparent 60%),
+    radial-gradient(1000px 800px at 88% 8%, rgba(167,139,250,.12), transparent 60%),
+    radial-gradient(900px 900px at 50% 105%, rgba(251,191,36,.07), transparent 60%),
+    linear-gradient(180deg,#080b14 0%,#0a0e1a 40%,#080b14 100%);
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35;
+  background-image:linear-gradient(rgba(120,150,220,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,150,220,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 100% 70% at 50% 30%,#000,transparent 85%);
+}
+
+/* ---------- Progress + Nav ---------- */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--a),var(--b),var(--c));box-shadow:0 0 16px rgba(167,139,250,.7)}
+#nav{position:fixed;top:0;left:0;right:0;z-index:900;backdrop-filter:blur(16px);
+  background:rgba(8,11,20,.82);border-bottom:1px solid var(--line);}
+#navin{max-width:1240px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#navin .brand{font-weight:800;letter-spacing:-.02em;font-size:14px;
+  background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+#chips{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.chip{font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);
+  color:var(--tx3);cursor:pointer;transition:.18s;background:transparent;font-family:var(--mono);white-space:nowrap}
+.chip:hover{color:var(--tx);border-color:var(--line2);background:rgba(120,150,220,.08)}
+.chip.on{color:#06121a;background:linear-gradient(90deg,var(--a),#7dd3fc);border-color:transparent;font-weight:700}
+
+/* ---------- Layout ---------- */
+main{max-width:1240px;margin:0 auto;padding:96px 20px 140px}
+section{margin:0 0 118px;scroll-margin-top:70px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--a);margin-bottom:10px;opacity:.9}
+h1{font-size:clamp(30px,5.4vw,58px);line-height:1.04;letter-spacing:-.035em;font-weight:850;margin-bottom:18px}
+h1 .g{background:linear-gradient(100deg,var(--a) 0%,#7dd3fc 35%,var(--b) 70%,var(--d) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(23px,3.2vw,35px);letter-spacing:-.028em;font-weight:800;margin-bottom:12px;line-height:1.15}
+h3{font-size:18.5px;font-weight:700;margin:26px 0 10px;letter-spacing:-.015em}
+h4{font-size:14px;font-weight:700;margin:0 0 8px;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;font-family:var(--mono)}
+p{color:var(--tx2);margin-bottom:12px;max-width:74ch}
+.lead{font-size:17.5px;color:var(--tx);max-width:76ch}
+b,strong{color:var(--tx);font-weight:680}
+.dim{color:var(--tx3);font-size:13.5px}
+hr.sep{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:40px 0}
+
+/* ---------- Cards ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;
+  backdrop-filter:blur(14px);box-shadow:0 18px 50px -25px rgba(0,0,0,.9);margin:20px 0}
+.card.tight{padding:16px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g21{grid-template-columns:1.35fr 1fr}
+.g12{grid-template-columns:1fr 1.35fr}
+@media(max-width:940px){.g2,.g3,.g21,.g12{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctl{margin:12px 0}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;
+  color:var(--tx2);margin-bottom:5px;font-family:var(--mono);gap:10px}
+.ctl label .v{color:var(--a);font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--a),var(--b));outline:none;cursor:pointer;opacity:.85}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--a);cursor:grab;box-shadow:0 0 14px rgba(94,234,212,.55);transition:.12s}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--a);cursor:grab}
+button{font-family:var(--sans);font-size:13px;font-weight:650;padding:8px 15px;border-radius:10px;
+  border:1px solid var(--line2);background:rgba(120,150,220,.09);color:var(--tx);cursor:pointer;transition:.16s}
+button:hover{background:rgba(120,150,220,.2);border-color:var(--a);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.pri{background:linear-gradient(95deg,var(--a),#67e8f9);color:#05121a;border-color:transparent;font-weight:750}
+button.pri:hover{box-shadow:0 8px 26px -8px rgba(94,234,212,.75)}
+button.vio{background:linear-gradient(95deg,var(--b),#c4b5fd);color:#140a2a;border-color:transparent;font-weight:750}
+button.amb{background:linear-gradient(95deg,var(--c),#fcd34d);color:#251700;border-color:transparent;font-weight:750}
+button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;font-size:12px;padding:7px 13px}
+.seg button.on{background:linear-gradient(95deg,var(--a),#67e8f9);color:#05121a;font-weight:750}
+.seg button:hover{transform:none}
+.sw{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx2);cursor:pointer;font-family:var(--mono)}
+.sw input{accent-color:var(--a);width:15px;height:15px;cursor:pointer}
+
+/* ---------- Readouts ---------- */
+.rd{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;margin:12px 0}
+.rd .it{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:9px 11px}
+.rd .it .k{font-size:10px;color:var(--tx3);font-family:var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.rd .it .v{font-size:19px;font-weight:750;font-variant-numeric:tabular-nums;font-family:var(--mono);margin-top:2px}
+.v.a{color:var(--a)}.v.b{color:var(--b)}.v.c{color:var(--c)}.v.d{color:var(--d)}.v.e{color:var(--e)}.v.f{color:var(--f)}.v.r{color:var(--bad)}
+
+/* ---------- Canvas ---------- */
+canvas{display:block;width:100%;border-radius:12px;background:rgba(6,9,18,.6);border:1px solid var(--line);touch-action:none}
+.plot{width:100%;border-radius:12px;overflow:hidden}
+
+/* ---------- Callouts ---------- */
+.note{border-left:3px solid var(--a);background:linear-gradient(90deg,rgba(94,234,212,.09),transparent 80%);
+  padding:12px 16px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14.5px}
+.note.v{border-color:var(--b);background:linear-gradient(90deg,rgba(167,139,250,.1),transparent 80%)}
+.note.am{border-color:var(--c);background:linear-gradient(90deg,rgba(251,191,36,.09),transparent 80%)}
+.note.pk{border-color:var(--d);background:linear-gradient(90deg,rgba(244,114,182,.09),transparent 80%)}
+.note b{color:var(--tx)}
+.aha{border:1px solid rgba(251,191,36,.35);background:radial-gradient(600px 200px at 10% 0%,rgba(251,191,36,.13),rgba(251,191,36,.04));
+  border-radius:15px;padding:18px 20px;margin:20px 0}
+.aha .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--c);text-transform:uppercase;margin-bottom:7px}
+
+/* ---------- Tags ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;padding:3px 9px;
+  border-radius:999px;border:1px solid var(--line2);color:var(--tx2);background:rgba(120,150,220,.07)}
+.tag.a{color:var(--a);border-color:rgba(94,234,212,.4);background:rgba(94,234,212,.08)}
+.tag.b{color:var(--b);border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.08)}
+.tag.c{color:var(--c);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* ---------- Matrix viz ---------- */
+.mat{display:inline-grid;gap:2px;font-family:var(--mono);font-size:10px;vertical-align:middle}
+.mat .c{width:26px;height:26px;display:grid;place-items:center;border-radius:4px;background:rgba(120,150,220,.07);
+  border:1px solid transparent;transition:.15s;cursor:default}
+.mat .c.hl{border-color:var(--a);background:rgba(94,234,212,.2);color:var(--a);font-weight:700}
+.mat .c.z{color:var(--tx3);opacity:.45}
+.mat .c.w{background:rgba(167,139,250,.2);color:var(--b);border-color:rgba(167,139,250,.5);font-weight:700}
+.mat .c.n{background:rgba(244,114,182,.18);color:var(--d);border-color:rgba(244,114,182,.5);font-weight:700}
+.mat .c.e{background:rgba(251,191,36,.18);color:var(--c);border-color:rgba(251,191,36,.5);font-weight:700}
+.matwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+.brk{font-size:44px;color:var(--tx3);font-weight:200;line-height:.9}
+
+/* ---------- Steps ---------- */
+.steps{counter-reset:s;margin:16px 0}
+.step{counter-increment:s;position:relative;padding:11px 0 11px 42px;border-left:1px dashed var(--line2);margin-left:13px}
+.step::before{content:counter(s);position:absolute;left:-13px;top:11px;width:26px;height:26px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--line2);display:grid;place-items:center;
+  font-family:var(--mono);font-size:11px;color:var(--a);font-weight:700}
+.step:last-child{border-left-color:transparent}
+.step .h{font-weight:700;color:var(--tx);font-size:14.5px;margin-bottom:3px}
+.step .d{font-size:13.5px;color:var(--tx2)}
+
+/* ---------- Misc ---------- */
+.kat{overflow-x:auto;padding:4px 0}
+.katex{font-size:1.02em!important}
+.katex-display{margin:.7em 0!important}
+.bar{height:7px;border-radius:99px;background:rgba(120,150,220,.12);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;transition:width .25s}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tx2);font-family:var(--mono);margin:8px 0}
+.leg span{display:inline-flex;align-items:center;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--tx3);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:600}
+td{color:var(--tx2)} td:first-child{color:var(--tx);font-weight:600}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.hero{padding:34px 0 8px;text-align:left}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  padding:5px 12px;border-radius:999px;border:1px solid var(--line2);color:var(--tx2);margin-bottom:16px}
+.cap{font-size:12.5px;color:var(--tx3);margin-top:8px;font-style:italic}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--a);
+  border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.flash{animation:fl 1s ease}
+@keyframes fl{0%,100%{background:transparent}30%{background:rgba(94,234,212,.16)}}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(120,150,220,.25);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(120,150,220,.45)}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<nav id="nav"><div id="navin">
+  <div class="brand">TRANSFORMER ⟶ GRADIENTENABSTIEG</div>
+  <div id="chips"></div>
+</div></nav>
+
+<main>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="s0" class="hero">
+  <div class="pill">von Oswald, Niklasson, Randazzo, Sacramento, Mordvintsev, Zhmoginov, Vladymyrov · ICML 2023</div>
+  <h1>Transformer lernen im Kontext<br><span class="g">durch Gradientenabstieg</span></h1>
+  <p class="lead">Große Sprachmodelle lernen neue Aufgaben <b>allein aus Beispielen im Prompt</b> — ohne dass sich auch nur ein einziges Gewicht ändert. Wie kann das sein? Dieses Paper gibt eine verblüffend konkrete Antwort: Der Transformer führt in seinem Vorwärtsdurchlauf <b>heimlich einen Optimierer aus</b>. Jede Attention-Schicht ist ein Schritt Gradientenabstieg.</p>
+  <p class="lead" style="margin-top:14px">Diese Seite baut dir das von Grund auf. <b>Nichts lesen — spielen.</b> Alle Zahlen hier werden live in deinem Browser gerechnet, inklusive eines echten Transformer-Trainings.</p>
+
+  <div class="grid g3" style="margin-top:28px">
+    <div class="card tight"><h4 style="color:var(--a)">Teil A · Werkzeuge</h4><p class="dim" style="margin:0">Alles über Abi-Mathe hinaus: Vektoren als Abbildung, äußeres Produkt, Verlustlandschaft, Gradient, Krümmung, Softmax, Attention, Meta-Lernen. 9 kleine Spielzeuge.</p></div>
+    <div class="card tight"><h4 style="color:var(--b)">Teil B · Der Beweis</h4><p class="dim" style="margin:0">Der Trick (Gl. 4), die Gewichtskonstruktion (Prop. 1), Schritt-für-Schritt-Rechnung und der Beweis, dass echtes Training genau das findet.</p></div>
+    <div class="card tight"><h4 style="color:var(--c)">Teil C · Darüber hinaus</h4><p class="dim" style="margin:0">Tiefe Netze = viele Schritte, GD++ mit Krümmungskorrektur, nichtlineare Aufgaben, Induktionsköpfe, die Antwort.</p></div>
+  </div>
+
+  <div class="card" style="margin-top:26px">
+    <h4>Der rote Faden in einem Bild</h4>
+    <div id="heroCv"></div>
+    <div class="row" style="justify-content:center">
+      <button class="pri" id="heroPlay">▶ Geschichte abspielen</button>
+      <span class="dim" id="heroLbl">Bereit.</span>
+    </div>
+  </div>
+  <p class="dim" style="margin-top:18px">↓ Scrolle. Jeder Abschnitt baut auf dem vorherigen auf.</p>
+</section>
+
+<!-- ══════════ 1 · VEKTOREN & MATRIZEN ══════════ -->
+<section id="s1">
+  <div class="kicker">Teil A · Werkzeug 1</div>
+  <h2>Eine Matrix ist eine Maschine, die Pfeile verbiegt</h2>
+  <p class="lead">Ein Vektor ist ein Pfeil (oder eine Zahlenliste). Eine Matrix <span class="kat">\(W\)</span> nimmt einen Pfeil und macht daraus einen anderen. Das ist <b>alles</b>, was ein lineares Modell <span class="kat">\(y=Wx\)</span> tut. Zieh den blauen Punkt und dreh an <span class="kat">\(W\)</span>.</p>
+
+  <div class="grid g21">
+    <div class="card"><canvas id="cvLin" height="420"></canvas>
+      <p class="cap">Blau = Eingabe <span class="kat">\(x\)</span> (ziehbar). Grün = Ausgabe <span class="kat">\(Wx\)</span>. Das graue Gitter zeigt, wie <span class="kat">\(W\)</span> den ganzen Raum verzerrt.</p>
+    </div>
+    <div class="card">
+      <h4>Die Matrix <span class="kat">\(W\)</span></h4>
+      <div class="ctl"><label>w₁₁ <span class="v" id="vw11">1.00</span></label><input type="range" id="w11" min="-2" max="2" step="0.01" value="1"></div>
+      <div class="ctl"><label>w₁₂ <span class="v" id="vw12">0.40</span></label><input type="range" id="w12" min="-2" max="2" step="0.01" value="0.4"></div>
+      <div class="ctl"><label>w₂₁ <span class="v" id="vw21">-0.30</span></label><input type="range" id="w21" min="-2" max="2" step="0.01" value="-0.3"></div>
+      <div class="ctl"><label>w₂₂ <span class="v" id="vw22">0.90</span></label><input type="range" id="w22" min="-2" max="2" step="0.01" value="0.9"></div>
+      <div class="matwrap" style="margin-top:18px">
+        <span class="brk">[</span>
+        <div class="mat" style="grid-template-columns:repeat(2,1fr)">
+          <div class="c w" id="m11">1.0</div><div class="c w" id="m12">0.4</div>
+          <div class="c w" id="m21">-0.3</div><div class="c w" id="m22">0.9</div>
+        </div>
+        <span class="brk">]</span>
+        <span class="brk" style="font-size:22px">·</span>
+        <span class="brk">[</span>
+        <div class="mat"><div class="c hl" id="mx1">0.8</div><div class="c hl" id="mx2">0.5</div></div>
+        <span class="brk">]</span>
+        <span class="brk" style="font-size:22px">=</span>
+        <span class="brk">[</span>
+        <div class="mat"><div class="c n" id="my1">1.0</div><div class="c n" id="my2">0.2</div></div>
+        <span class="brk">]</span>
+      </div>
+      <div class="rd">
+        <div class="it"><div class="k">det W</div><div class="v b" id="vdet">1.02</div></div>
+        <div class="it"><div class="k">‖x‖</div><div class="v e" id="vnx">0.94</div></div>
+        <div class="it"><div class="k">‖Wx‖</div><div class="v f" id="vny">1.02</div></div>
+      </div>
+      <div class="row"><button id="bRot">Drehung</button><button id="bScl">Streckung</button><button id="bShr">Scherung</button><button id="bId">Identität</button></div>
+      <div class="note"><b>Merke:</b> Jede Zeile von <span class="kat">\(W\)</span> ist ein "Detektor". Zeile <span class="kat">\(i\)</span> bildet ein Skalarprodukt mit <span class="kat">\(x\)</span> und liefert Ausgabe-Komponente <span class="kat">\(i\)</span>. Das ganze Paper handelt davon, welche Matrix ein Transformer sich selbst baut.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 2 · ÄUSSERES PRODUKT ══════════ -->
+<section id="s2">
+  <div class="kicker">Teil A · Werkzeug 2</div>
+  <h2>Das äußere Produkt: aus zwei Pfeilen wird eine Maschine</h2>
+  <p class="lead">Bisher: Matrix ⟶ frisst Vektor. Jetzt andersrum: <b>zwei Vektoren bauen eine Matrix.</b> Das äußere Produkt <span class="kat">\(v \otimes k = v k^\top\)</span> ist die zentrale Zutat — sowohl für Gradientenabstieg als auch für Attention. Beide sind <b>Summen von äußeren Produkten</b>. Genau dort treffen sie sich.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Ein einzelnes äußeres Produkt</h4>
+      <canvas id="cvOut" height="250"></canvas>
+      <div class="ctl"><label>v = (v₁, v₂) — Richtung des Schreibens <span class="v" id="vov">(1.0, 0.6)</span></label>
+        <input type="range" id="ov1" min="-2" max="2" step="0.05" value="1">
+        <input type="range" id="ov2" min="-2" max="2" step="0.05" value="0.6" style="margin-top:6px"></div>
+      <div class="ctl"><label>k = (k₁, k₂) — Schlüssel/Adresse <span class="v" id="vok">(0.8, -0.4)</span></label>
+        <input type="range" id="ok1" min="-2" max="2" step="0.05" value="0.8">
+        <input type="range" id="ok2" min="-2" max="2" step="0.05" value="-0.4" style="margin-top:6px"></div>
+      <p class="cap">Die entstehende Matrix hat <b>Rang 1</b>: Egal welches <span class="kat">\(x\)</span> du hineinsteckst, die Ausgabe zeigt <b>immer</b> in Richtung <span class="kat">\(v\)</span>. Nur die Länge hängt von <span class="kat">\(x\)</span> ab, nämlich von <span class="kat">\(k^\top x\)</span>.</p>
+    </div>
+    <div class="card">
+      <h4>Assoziatives Gedächtnis = Summe vieler Rang-1-Matrizen</h4>
+      <p class="dim">Speichere drei Paare <span class="kat">\((k_i \to v_i)\)</span> in <b>einer</b> Matrix <span class="kat">\(M = \sum_i v_i k_i^\top\)</span>. Frag dann mit einer Query <span class="kat">\(q\)</span> ab: <span class="kat">\(Mq = \sum_i v_i (k_i^\top q)\)</span>. Jeder Eintrag antwortet so stark, wie sein Schlüssel zur Query passt.</p>
+      <canvas id="cvAssoc" height="300"></canvas>
+      <div class="ctl"><label>Query-Winkel <span class="v" id="vqa">0°</span></label><input type="range" id="qang" min="0" max="360" step="1" value="0"></div>
+      <div class="rd" id="assocRd"></div>
+      <div class="note v"><b>Das ist Attention.</b> „Fast Weights" (Schmidhuber 1992) und lineare Selbst-Attention sind exakt dasselbe: <span class="kat">\(\sum_i v_i\,(k_i^\top q)\)</span>. Der Transformer <b>schreibt Gedächtnis in den Vorwärtsdurchlauf</b>, ohne ein Gewicht zu ändern.</div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="t">Vorschau auf den Trick</div>
+    <p style="margin:0">Der Gradient des quadratischen Fehlers ist <b>auch</b> eine Summe von äußeren Produkten: <span class="kat">\(\nabla_W L = \frac{1}{N}\sum_i (Wx_i - y_i)\,x_i^\top\)</span>. Fehler-Vektor <span class="kat">\(\otimes\)</span> Eingabe-Vektor. Dieselbe Form wie oben. <b>Das ist der ganze Beweis in einer Zeile</b> — den Rest bauen wir jetzt sorgfältig auf.</p>
+  </div>
+</section>
+
+<!-- ══════════ 3 · LOSS-LANDSCHAFT ══════════ -->
+<section id="s3">
+  <div class="kicker">Teil A · Werkzeug 3</div>
+  <h2>Lernen heißt: einen Talboden finden</h2>
+  <p class="lead">Wir haben Datenpunkte <span class="kat">\((x_i, y_i)\)</span> und suchen ein <span class="kat">\(W\)</span>, sodass <span class="kat">\(Wx_i \approx y_i\)</span>. „Wie schlecht" ist ein <b>einziger Zahlenwert</b>, der Verlust:</p>
+  <div class="kat" style="text-align:center;font-size:17px">\[ L(W) = \frac{1}{2N}\sum_{i=1}^{N} \lVert W x_i - y_i \rVert^2 \qquad \text{(Gl. 2 im Paper)} \]</div>
+  <p>Für <span class="kat">\(W\)</span> mit zwei Zahlen ist das eine <b>Landschaft über einer Ebene</b>. Dreh an <span class="kat">\(w_1, w_2\)</span> und sieh zu, wie sich die Vorhersage und der Verlust ändern.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Die Daten & die Gerade</h4>
+      <canvas id="cvFit" height="300"></canvas>
+      <div class="ctl"><label>w₁ <span class="v" id="vf1">0.20</span></label><input type="range" id="f1" min="-3" max="3" step="0.02" value="0.2"></div>
+      <div class="ctl"><label>w₂ <span class="v" id="vf2">-0.50</span></label><input type="range" id="f2" min="-3" max="3" step="0.02" value="-0.5"></div>
+      <div class="rd">
+        <div class="it"><div class="k">Verlust L(W)</div><div class="v r" id="vfl">—</div></div>
+        <div class="it"><div class="k">Optimum</div><div class="v f" id="vfopt">—</div></div>
+      </div>
+      <div class="row"><button class="pri" id="fNew">Neue Daten</button><button id="fJump">→ Zum Optimum springen</button></div>
+      <p class="cap">Grau: die einzelnen Fehler <span class="kat">\(Wx_i - y_i\)</span>. Der Verlust ist die mittlere quadrierte Länge dieser Balken.</p>
+    </div>
+    <div class="card">
+      <h4>Die Verlustlandschaft <span class="dim" style="font-weight:400">— klicke hinein!</span></h4>
+      <canvas id="cvLand" height="330"></canvas>
+      <p class="cap">Höhenlinien von <span class="kat">\(L(w_1,w_2)\)</span>. Weiß = dein aktuelles <span class="kat">\(W\)</span>, grün = Optimum. Da der Verlust quadratisch ist, sind die Höhenlinien <b>immer Ellipsen</b> — und es gibt genau ein Tal. Das macht die ganze Analyse des Papers erst möglich.</p>
+      <div id="landSurf" class="plot" style="height:270px;margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 4 · GRADIENT & GD ══════════ -->
+<section id="s4">
+  <div class="kicker">Teil A · Werkzeug 4</div>
+  <h2>Gradientenabstieg: bergab, Schritt für Schritt</h2>
+  <p class="lead">Der <b>Gradient</b> <span class="kat">\(\nabla_W L\)</span> ist der Pfeil, der am steilsten <b>bergauf</b> zeigt. Also gehen wir dagegen — mit Schrittweite <span class="kat">\(\eta\)</span> (Lernrate):</p>
+  <div class="kat" style="text-align:center;font-size:17px">\[ \Delta W = -\eta\,\nabla_W L(W) = -\frac{\eta}{N}\sum_{i=1}^{N} (W x_i - y_i)\,x_i^{\top} \qquad \text{(Gl. 3)} \]</div>
+  <div class="note"><b>Schau dir die Formel genau an:</b> <span class="kat">\((Wx_i - y_i)\)</span> ist ein Vektor (der Fehler), <span class="kat">\(x_i^\top\)</span> ist ein Vektor (die Eingabe) — zusammen ein <b>äußeres Produkt</b>, wie in Werkzeug 2. Und aufsummiert über alle Datenpunkte. Merk dir das Bild.</div>
+
+  <div class="grid g21">
+    <div class="card">
+      <h4>Abstieg live</h4>
+      <canvas id="cvGD" height="420"></canvas>
+      <p class="cap">Der Pfad des Gradientenabstiegs auf der Ellipsen-Landschaft. Ziehe den Startpunkt!</p>
+    </div>
+    <div class="card">
+      <h4>Steuerung</h4>
+      <div class="ctl"><label>Lernrate η <span class="v" id="vEta">0.30</span></label><input type="range" id="gEta" min="0.005" max="2.2" step="0.005" value="0.3"></div>
+      <div class="ctl"><label>Anzahl Schritte <span class="v" id="vSteps">12</span></label><input type="range" id="gSteps" min="1" max="60" step="1" value="12"></div>
+      <div class="ctl"><label>Streckung der Landschaft (Kondition κ) <span class="v" id="vCond">4.0</span></label><input type="range" id="gCond" min="1" max="25" step="0.1" value="4"></div>
+      <div class="rd">
+        <div class="it"><div class="k">Endverlust</div><div class="v a" id="gL">—</div></div>
+        <div class="it"><div class="k">Status</div><div class="v" id="gStat">—</div></div>
+      </div>
+      <div class="row"><button class="pri" id="gAnim">▶ Animieren</button><button id="gOpt">η optimal setzen</button></div>
+      <div id="gdLoss" class="plot" style="height:190px;margin-top:8px"></div>
+      <div class="note am" style="margin-top:14px"><b>Spiele damit:</b> Zieh η hoch bis über <span class="kat">\(2/\lambda_{\max}\)</span> — der Abstieg explodiert. Zieh κ hoch — der Pfad zickzackt und wird quälend langsam. <b>Beides wird später wichtig</b> (GD++ löst genau das zweite Problem).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 5 · KRÜMMUNG ══════════ -->
+<section id="s5">
+  <div class="kicker">Teil A · Werkzeug 5</div>
+  <h2>Krümmung, Eigenwerte, Konditionszahl</h2>
+  <p class="lead">Warum zickzackt der Abstieg? Weil die Landschaft in einer Richtung steil und in einer anderen flach ist. Das misst die <b>Hesse-Matrix</b>; für unseren Verlust ist sie einfach <span class="kat">\(H = XX^\top\)</span> — die Kovarianz der Eingabedaten.</p>
+  <div class="grid g12">
+    <div class="card">
+      <h4>Eigenwerte = Krümmungen entlang der Hauptachsen</h4>
+      <div class="ctl"><label>λ₁ (steile Richtung) <span class="v" id="vl1">4.0</span></label><input type="range" id="el1" min="0.2" max="10" step="0.05" value="4"></div>
+      <div class="ctl"><label>λ₂ (flache Richtung) <span class="v" id="vl2">1.0</span></label><input type="range" id="el2" min="0.2" max="10" step="0.05" value="1"></div>
+      <div class="ctl"><label>Drehung der Achsen <span class="v" id="vth">25°</span></label><input type="range" id="eth" min="0" max="180" step="1" value="25"></div>
+      <div class="rd">
+        <div class="it"><div class="k">Kondition κ = λ₁/λ₂</div><div class="v c" id="vkap">4.00</div></div>
+        <div class="it"><div class="k">Optimales η</div><div class="v a" id="veop">0.40</div></div>
+        <div class="it"><div class="k">Schritte bis 1 %</div><div class="v b" id="vconv">—</div></div>
+      </div>
+      <div class="note"><b>Faustregel:</b> Der Abstieg braucht ungefähr <span class="kat">\(\kappa\)</span> mal so viele Schritte wie im Idealfall <span class="kat">\(\kappa = 1\)</span> (perfekte Kreise). Ein Transformer, der Zeit sparen will, hat einen starken Anreiz, <span class="kat">\(\kappa\)</span> zu verkleinern. <b>Genau das tut er.</b></div>
+    </div>
+    <div class="card"><canvas id="cvEig" height="380"></canvas>
+      <p class="cap">Gelb/Violett: die Eigenrichtungen, Länge ∝ Eigenwert. Weiß: GD-Pfad mit optimaler Lernrate. Je „ovaler", desto mehr Zickzack.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 6 · SOFTMAX ══════════ -->
+<section id="s6">
+  <div class="kicker">Teil A · Werkzeug 6</div>
+  <h2>Softmax — und warum das Paper sie weglässt</h2>
+  <p class="lead">Softmax verwandelt beliebige Zahlen in Gewichte, die sich zu 1 addieren: <span class="kat">\(\text{softmax}(z)_i = e^{z_i}/\sum_j e^{z_j}\)</span>. Standard-Attention benutzt sie. Das Paper streicht sie — und das ist der <b>einzige</b> Unterschied zu einem echten Transformer.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Softmax vs. linear</h4>
+      <canvas id="cvSm" height="260"></canvas>
+      <div class="ctl"><label>Skalierung der Logits (Temperatur⁻¹) <span class="v" id="vsmT">1.00</span></label><input type="range" id="smT" min="0.02" max="4" step="0.01" value="1"></div>
+      <div class="row"><button id="smRnd">Neue Logits</button>
+        <label class="sw"><input type="checkbox" id="smLin" checked> lineare Näherung zeigen</label></div>
+      <p class="cap">Balken = Softmax-Gewichte. Umriss = die lineare Näherung <span class="kat">\((1+z_i)/\sum_j(1+z_j)\)</span>.</p>
+    </div>
+    <div class="card">
+      <h4>Warum das erlaubt ist</h4>
+      <p>Für kleine <span class="kat">\(z\)</span> gilt <span class="kat">\(e^z \approx 1+z\)</span>. Dann:</p>
+      <div class="kat" style="font-size:14.5px">\[ \text{softmax}(K^\top q)_i \approx \frac{1 + x_i^\top W_{KQ} x_j}{\sum_k (1 + x_k^\top W_{KQ} x_j)} \propto K^\top q + \epsilon \]</div>
+      <p>Softmax ist also ungefähr <b>lineare Attention plus ein konstanter Versatz</b> <span class="kat">\(\epsilon\)</span> (Gl. 14–17 im Anhang).</p>
+      <div class="note pk"><b>Und der Transformer merkt das selbst:</b> Mit <b>zwei</b> Köpfen kann er den Versatz wegsubtrahieren — <span class="kat">\(W_{1,KQ} - W_{2,KQ}\)</span>. Im trainierten Modell sieht man das tatsächlich in den Gewichten (Fig. 11 des Papers). Unten ist es nachgebaut.</p>
+      <canvas id="cvHeads" height="170"></canvas>
+      <div class="ctl"><label>Trainingsfortschritt der beiden Köpfe <span class="v" id="vhp">100 %</span></label><input type="range" id="hp" min="0" max="100" step="1" value="100"></div>
+      <p class="cap">Links Kopf 1, Mitte Kopf 2, rechts die Summe. Beachte: Die Außerdiagonal-Elemente löschen sich aus, übrig bleibt eine <b>Diagonalmatrix</b> — genau die Konstruktion aus Proposition 1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 7 · ATTENTION ══════════ -->
+<section id="s7">
+  <div class="kicker">Teil A · Werkzeug 7</div>
+  <h2>Selbst-Attention, Bauteil für Bauteil</h2>
+  <p class="lead">Ein Transformer arbeitet mit einer <b>Menge von Tokens</b> <span class="kat">\(e_1,\dots,e_N\)</span> (Spaltenvektoren). Jedes Token schaut auf alle anderen und sammelt Information ein. Drei Projektionen genügen:</p>
+
+  <div class="grid g3" style="margin:18px 0">
+    <div class="card tight"><h4 style="color:var(--e)">Schlüssel <span class="kat">\(k_i = W_K e_i\)</span></h4><p class="dim" style="margin:0">„Woran bin ich erkennbar?" — die Adresse, unter der ein Token gespeichert ist.</p></div>
+    <div class="card tight"><h4 style="color:var(--c)">Anfrage <span class="kat">\(q_j = W_Q e_j\)</span></h4><p class="dim" style="margin:0">„Wonach suche ich?" — Token <span class="kat">\(j\)</span> stellt eine Frage an alle.</p></div>
+    <div class="card tight"><h4 style="color:var(--f)">Wert <span class="kat">\(v_i = W_V e_i\)</span></h4><p class="dim" style="margin:0">„Was liefere ich, wenn man mich findet?" — der eigentliche Inhalt.</p></div>
+  </div>
+
+  <div class="card">
+    <h4>Die Attention-Maschine</h4>
+    <div class="row">
+      <div class="seg"><button class="on" data-att="lin">Lineare Attention</button><button data-att="sm">Softmax-Attention</button></div>
+      <label class="sw"><input type="checkbox" id="attAnim" checked> Animation</label>
+      <span class="dim">Tokens im Bild ziehbar</span>
+    </div>
+    <canvas id="cvAtt" height="400"></canvas>
+    <div class="grid g2" style="margin-top:12px">
+      <div><h4>Attention-Matrix <span class="kat">\(A_{ij}\)</span></h4><canvas id="cvAttHeat" height="220"></canvas>
+        <p class="cap">Zeile <span class="kat">\(j\)</span> = wie stark Token <span class="kat">\(j\)</span> auf Token <span class="kat">\(i\)</span> schaut.</p></div>
+      <div><h4>Die eine Formel</h4>
+        <div class="kat">\[ e_j \leftarrow e_j + \underbrace{P}_{\text{Projektion}}\underbrace{V}_{\text{Werte}}\underbrace{K^{\top}q_j}_{\text{Aufmerksamkeit}} \]</div>
+        <p class="dim">Und ausgeschrieben als Summe äußerer Produkte (Gl. 6 im Paper):</p>
+        <div class="kat" style="font-size:13.5px">\[ e_j \leftarrow e_j + P W_V \sum_i (e_i \otimes e_i)\, W_K^{\top} W_Q\, e_j \]</div>
+        <div class="note"><b>Genau diese Zeile</b> wird gleich mit der Gradientenabstiegs-Formel verglichen. Beide sind Summen von äußeren Produkten. Beachte: nur die <b>Produkte</b> <span class="kat">\(W_K^\top W_Q\)</span> und <span class="kat">\(P W_V\)</span> zählen — das wird für den Beweis wichtig.</div>
+        <div class="rd" id="attRd"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 8 · META-LEARNING ══════════ -->
+<section id="s8">
+  <div class="kicker">Teil A · Werkzeug 8</div>
+  <h2>Zwei Zeitskalen: die äußere und die innere Schleife</h2>
+  <p class="lead">Das ist der begriffliche Kern. Es gibt <b>zwei</b> Lernvorgänge, die man nicht verwechseln darf:</p>
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="color:var(--b)">Äußere Schleife — langsam</h4>
+      <p class="dim">Adam verändert über Tausende Schritte die Transformer-Gewichte <span class="kat">\(\theta\)</span>. Das ist das normale Training. <b>Hier fließen Gradienten.</b></p>
+      <h4 style="color:var(--a);margin-top:18px">Innere Schleife — schnell</h4>
+      <p class="dim">Ein einziger Vorwärtsdurchlauf. Der Transformer bekommt einen neuen Kontext <span class="kat">\(\mathcal{D}_\tau\)</span> und „lernt" die Aufgabe — <b>ohne dass ein Gewicht sich ändert.</b></p>
+      <div class="note v" style="margin-top:16px"><b>Die Behauptung des Papers:</b> Die innere Schleife <i>ist</i> Gradientenabstieg. Der Transformer hat in der äußeren Schleife gelernt, in der inneren Schleife einen Optimierer auszuführen. Man nennt das <b>Mesa-Optimierung</b> (Hubinger et al. 2019).</div>
+      <div class="row"><button class="pri" id="metaRun">▶ Beide Schleifen abspielen</button><button id="metaStop">■ Stopp</button></div>
+      <div class="rd">
+        <div class="it"><div class="k">Äuß. Schritt</div><div class="v b" id="moS">0</div></div>
+        <div class="it"><div class="k">Aufgabe τ</div><div class="v d" id="moT">—</div></div>
+        <div class="it"><div class="k">Meta-Verlust</div><div class="v a" id="moL">—</div></div>
+      </div>
+    </div>
+    <div class="card"><canvas id="cvMeta" height="400"></canvas>
+      <p class="cap">Oben: die Gewichte <span class="kat">\(\theta\)</span> wandern langsam über die Meta-Verlustlandschaft. Unten: für jede neue Aufgabe löst derselbe Vorwärtsdurchlauf blitzschnell ein neues Problem.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ══════════ 9 · DAS PROBLEM ══════════ -->
+<section id="s9">
+  <div class="kicker">Teil B · Die Motivation</div>
+  <h2>Das Rätsel: Lernen ohne Lernen</h2>
+  <p class="lead">Schreibe einem Sprachmodell ein paar Beispiele in den Prompt — und es kann plötzlich eine Aufgabe, für die es nie trainiert wurde. <b>Kein einziges Gewicht hat sich geändert.</b> Was passiert da?</p>
+
+  <div class="card">
+    <h4>In-Context-Lernen zum Anfassen</h4>
+    <p class="dim">Hier ist eine Black Box. Sie bekommt <span class="kat">\(N\)</span> Beispielpaare <span class="kat">\((x_i,y_i)\)</span> in ihren „Prompt" und soll dann für ein neues <span class="kat">\(x_{\text{test}}\)</span> das <span class="kat">\(y\)</span> vorhersagen. Die Regel <span class="kat">\(y = W_\tau x\)</span> ist jedes Mal neu und zufällig — die Box hat sie nie gesehen.</p>
+    <div class="grid g21">
+      <div><canvas id="cvICL" height="330"></canvas></div>
+      <div>
+        <div class="ctl"><label>Anzahl Beispiele im Kontext N <span class="v" id="vicN">4</span></label><input type="range" id="icN" min="0" max="20" step="1" value="4"></div>
+        <div class="rd">
+          <div class="it"><div class="k">Vorhersage ŷ</div><div class="v a" id="icP">—</div></div>
+          <div class="it"><div class="k">Wahrheit y</div><div class="v f" id="icT">—</div></div>
+          <div class="it"><div class="k">Fehler</div><div class="v r" id="icE">—</div></div>
+        </div>
+        <div class="row"><button class="pri" id="icNew">Neue Aufgabe τ</button><button id="icSweep">▶ N hochzählen</button></div>
+        <div id="icPlot" class="plot" style="height:190px;margin-top:10px"></div>
+        <p class="cap">Mehr Kontext ⟶ besser. Aber die Gewichte der Box sind <b>eingefroren</b>. Die Information kann nur durch die Aktivierungen fließen.</p>
+      </div>
+    </div>
+    <div class="aha">
+      <div class="t">Die Frage des Papers</div>
+      <p style="margin:0;font-size:16.5px">Wenn ein eingefrorenes Netz aus Beispielen lernt — <b>welchen Lernalgorithmus führt es dann aus?</b> Die Antwort: Es ist Gradientenabstieg, und wir können es in den Gewichten <i>sehen</i>.</p>
+    </div>
+  </div>
+
+  <h3>Welche Probleme werden hier konkret gelöst?</h3>
+  <div class="grid g3">
+    <div class="card tight"><span class="tag a">Aufgabe 1</span><h4 style="margin-top:8px">Lineare Regression</h4><p class="dim" style="margin:0">Pro Aufgabe ein zufälliger Lehrer <span class="kat">\(W_\tau\sim\mathcal N(0,I)\)</span>, <span class="kat">\(x\sim U(-1,1)^{10}\)</span>, <span class="kat">\(y=W_\tau x\)</span>. <span class="kat">\(N=N_x=10\)</span>, <span class="kat">\(N_y=1\)</span>.</p></div>
+    <div class="card tight"><span class="tag b">Aufgabe 2</span><h4 style="margin-top:8px">Sinus-Regression</h4><p class="dim" style="margin:0">Nichtlinear: <span class="kat">\(y=a\sin(\rho+x)\)</span> mit <span class="kat">\(a\sim U(0.1,5)\)</span>, <span class="kat">\(\rho\sim U(0,\pi)\)</span>. Braucht MLPs.</p></div>
+    <div class="card tight"><span class="tag c">Aufgabe 3</span><h4 style="margin-top:8px">Getrennte Tokens</h4><p class="dim" style="margin:0">Realistisches Format: <span class="kat">\(x\)</span> und <span class="kat">\(y\)</span> in <b>getrennten</b> Tokens — wie in echter Sprache. Braucht Kopieren.</p></div>
+  </div>
+</section>
+
+<!-- ══════════ 10 · DER TRICK ══════════ -->
+<section id="s10">
+  <div class="kicker">Teil B · Die Idee</div>
+  <h2>Der Schlüsseltrick: Gewichte ändern = Daten ändern</h2>
+  <p class="lead">Hier ist der Moment, in dem das ganze Paper klick macht. Er passt in zwei Zeilen Algebra und ist trotzdem der entscheidende Gedanke.</p>
+
+  <div class="card">
+    <h4>Umformung von Gleichung 4</h4>
+    <div class="kat" style="font-size:16px">\[
+      L(W+\Delta W)=\frac{1}{2N}\sum_i \lVert (W+\Delta W)x_i-y_i\rVert^2
+      =\frac{1}{2N}\sum_i \lVert W x_i-\underbrace{(y_i-\Delta y_i)}_{\text{neues Ziel!}}\rVert^2,
+      \qquad \Delta y_i=\Delta W x_i
+    \]</div>
+    <div class="grid g2" style="margin-top:14px">
+      <div>
+        <h4 style="color:var(--b)">Sicht A · klassisch</h4>
+        <p class="dim">Die Gerade dreht sich, die Datenpunkte bleiben.</p>
+        <canvas id="cvTrickA" height="260"></canvas>
+      </div>
+      <div>
+        <h4 style="color:var(--d)">Sicht B · Transformer</h4>
+        <p class="dim">Die Gerade bleibt, die <b>Zielwerte</b> <span class="kat">\(y_i\)</span> bewegen sich.</p>
+        <canvas id="cvTrickB" height="260"></canvas>
+      </div>
+    </div>
+    <div class="ctl" style="margin-top:14px"><label>Ein Gradientenschritt — Überblendung <span class="v" id="vtr">0 %</span></label><input type="range" id="trT" min="0" max="100" step="1" value="0"></div>
+    <div class="row"><button class="pri" id="trPlay">▶ Schritt ausführen</button><span class="dim">Beide Bilder beschreiben <b>exakt denselben</b> Verlustwert.</span></div>
+    <div class="rd">
+      <div class="it"><div class="k">Verlust Sicht A</div><div class="v b" id="trLA">—</div></div>
+      <div class="it"><div class="k">Verlust Sicht B</div><div class="v d" id="trLB">—</div></div>
+      <div class="it"><div class="k">Differenz</div><div class="v a" id="trD">0.00e+0</div></div>
+    </div>
+  </div>
+
+  <div class="aha">
+    <div class="t">Warum das alles ändert</div>
+    <p style="margin:0">Ein Transformer <b>kann keine Gewichte ändern</b> — sein Vorwärtsdurchlauf steht fest. Aber er kann <b>Tokens verändern</b>, das ist buchstäblich seine einzige Fähigkeit. Und die Tokens <i>sind</i> die Daten <span class="kat">\((x_i,y_i)\)</span>. Wenn Lernen als Datenänderung umgeschrieben werden kann, dann kann ein Transformer lernen. <b>Jetzt müssen wir nur noch zeigen, dass Attention genau die richtige Datenänderung produziert.</b></p>
+  </div>
+</section>
+
+<!-- ══════════ 11 · PROPOSITION 1 ══════════ -->
+<section id="s11">
+  <div class="kicker">Teil B · Die Lösung</div>
+  <h2>Proposition 1: die Gewichtskonstruktion</h2>
+  <p class="lead">Wir bauen jetzt die Matrizen <span class="kat">\(W_K, W_Q, W_V, P\)</span> von Hand so, dass eine lineare Attention-Schicht <b>exakt</b> einen Gradientenschritt ausführt. Klicke auf die Blöcke.</p>
+
+  <div class="card">
+    <h4>Die Tokens</h4>
+    <p class="dim">Jedes Token ist ein Datenpunkt: Eingabe oben, Ziel unten gestapelt. Das letzte Token ist die Testfrage mit leerem Zielfeld.</p>
+    <canvas id="cvTok" height="150"></canvas>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Die vier Matrizen <span class="dim" style="font-weight:400">— klicke einen Block</span></h4>
+      <div id="propMats"></div>
+      <div id="propExpl" class="note" style="min-height:76px">Fahre über oder klicke eine Matrix, um ihre Rolle zu sehen.</div>
+    </div>
+    <div class="card">
+      <h4>Die Rechnung, Schritt für Schritt</h4>
+      <div class="row">
+        <button class="pri" id="p1Next">Nächster Schritt ▸</button>
+        <button id="p1Reset">⟲ Zurück</button>
+        <button id="p1Auto">▶ Auto</button>
+      </div>
+      <canvas id="cvP1" height="290"></canvas>
+      <div id="p1Txt" class="note v" style="min-height:74px"></div>
+      <div class="bar"><i id="p1Bar" style="width:0%;background:linear-gradient(90deg,var(--a),var(--b))"></i></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Das Ergebnis — Gleichung 8</h4>
+    <div class="kat" style="font-size:15px">\[
+    \begin{pmatrix}x_j\\y_j\end{pmatrix}\leftarrow\begin{pmatrix}x_j\\y_j\end{pmatrix}+\frac{\eta}{N}I\sum_{i=1}^{N}\begin{pmatrix}0\\W_0x_i-y_i\end{pmatrix}\otimes\begin{pmatrix}x_i\\0\end{pmatrix}\begin{pmatrix}x_j\\0\end{pmatrix}=\begin{pmatrix}x_j\\y_j\end{pmatrix}+\begin{pmatrix}0\\-\Delta W x_j\end{pmatrix}
+    \]</div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="note"><b>Lies die mittlere Klammer:</b> <span class="kat">\((W_0x_i-y_i)\otimes x_i\)</span> — das ist <b>exakt</b> der Summand aus der Gradientenformel (Gl. 3). Attention hat den Gradienten gebaut, ohne ihn je berechnet zu haben.</div>
+      <div class="note am"><b>Und das <span class="kat">\(x\)</span>-Feld?</b> Bleibt unberührt (die obere Null). Nur die <b>Zielwerte</b> ändern sich — genau die Datenänderung aus dem Trick. Nach <span class="kat">\(K\)</span> Schichten: <span class="kat">\(K\)</span> Gradientenschritte.</div>
+    </div>
+    <h4 style="margin-top:20px">Live-Verifikation <span class="dim" style="font-weight:400">— beides wird gerade in deinem Browser gerechnet</span></h4>
+    <div class="row"><button class="pri" id="verRun">⟳ Neuer Zufallstest</button>
+      <div class="ctl" style="flex:1;min-width:200px;margin:0"><label>η <span class="v" id="vVerEta">1.00</span></label><input type="range" id="verEta" min="0.05" max="3" step="0.05" value="1"></div></div>
+    <div id="verPlot" class="plot" style="height:260px"></div>
+    <div class="rd">
+      <div class="it"><div class="k">max |Diff|</div><div class="v a" id="verD">—</div></div>
+      <div class="it"><div class="k">Urteil</div><div class="v f" id="verV">—</div></div>
+    </div>
+  </div>
+
+  <h3>Vier Feinheiten, die das Paper betont</h3>
+  <div class="grid g2">
+    <div class="card tight"><h4>1 · Volle Selbst-Attention</h4><p class="dim" style="margin:0">Streng genommen darf das Test-Token nicht in Schlüssel/Werte einfließen. In der Praxis egal, wenn <span class="kat">\(W_0\approx 0\)</span> — also bei kleiner Gewichtsinitialisierung. Genau das wird im Experiment gemacht.</p></div>
+    <div class="card tight"><h4>2 · Vorhersage auslesen</h4><p class="dim" style="margin:0">Setzt man das <span class="kat">\(y\)</span>-Feld des Test-Tokens auf <span class="kat">\(-W_0x_{\text{test}}\)</span>, liest man am Ende einfach mit <span class="kat">\(\times(-1)\)</span> ab. Die dafür nötige Projektion gibt es in Transformern sowieso.</p></div>
+    <div class="card tight"><h4>3 · Nicht eindeutig</h4><p class="dim" style="margin:0">Nur <span class="kat">\(PW_V\)</span> und <span class="kat">\(W_KW_Q\)</span> müssen stimmen. Skaliert man <span class="kat">\(PW_V\cdot s\)</span> und <span class="kat">\(W_{KQ}/s\)</span>, ändert sich nichts. <b>Deshalb muss man beim Vergleich reskalieren.</b></p></div>
+    <div class="card tight"><h4>4 · Lernrate wird meta-gelernt</h4><p class="dim" style="margin:0">Die Lernrate <span class="kat">\(\eta\)</span> steckt in <span class="kat">\(P\)</span>. Sie wird nicht eingestellt, sondern in der äußeren Schleife <b>gelernt</b> — optimal für die Aufgabenfamilie.</p></div>
+  </div>
+</section>
+
+<!-- ══════════ 12 · ECHTES TRAINING ══════════ -->
+<section id="s12">
+  <div class="kicker">Teil B · Der Beweis</div>
+  <h2>Findet echtes Training diese Konstruktion? <span style="color:var(--a)">Ja.</span></h2>
+  <p class="lead">Eine Konstruktion zu <b>können</b> heißt nicht, sie auch zu <b>finden</b>. Also: Wir trainieren jetzt eine echte lineare Selbst-Attention-Schicht mit Adam auf zufälligen Regressionsaufgaben — <b>hier, in deinem Browser</b> — und vergleichen mit Gradientenabstieg.</p>
+
+  <div class="card">
+    <div class="row">
+      <button class="pri" id="trStart">▶ Training starten</button>
+      <button id="trPause">⏸ Pause</button>
+      <button id="trReset">⟲ Reset</button>
+      <span id="trStatus" class="dim">Bereit — Adam, Batch 512, N=Nx=6, Ny=1</span>
+    </div>
+    <div class="ctl"><label>Geschwindigkeit (Schritte pro Frame) <span class="v" id="vtsp">8</span></label><input type="range" id="tsp" min="1" max="40" step="1" value="8"></div>
+    <div class="rd">
+      <div class="it"><div class="k">Schritt</div><div class="v" id="tSt">0</div></div>
+      <div class="it"><div class="k">TF-Verlust</div><div class="v a" id="tLT">—</div></div>
+      <div class="it"><div class="k">GD-Verlust</div><div class="v b" id="tLG">—</div></div>
+      <div class="it"><div class="k">Cos-Ähnlichkeit</div><div class="v f" id="tCos">—</div></div>
+      <div class="it"><div class="k">L2 Modelldiff.</div><div class="v c" id="tL2">—</div></div>
+      <div class="it"><div class="k">L2 Vorhers.diff</div><div class="v d" id="tPD">—</div></div>
+    </div>
+    <div class="grid g2">
+      <div><div id="trLossPlot" class="plot" style="height:250px"></div>
+        <p class="cap">Fig. 2 links: Der trainierte Transformer erreicht <b>exakt</b> den Verlust von einem GD-Schritt mit optimaler Lernrate — nicht besser, nicht schlechter.</p></div>
+      <div><div id="trAlignPlot" class="plot" style="height:250px"></div>
+        <p class="cap">Fig. 2 Mitte: Kosinus-Ähnlichkeit → 1, L2-Abstände → 0. Die beiden Verfahren erzeugen <b>dasselbe Modell</b>.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Die Gewichte anschauen <span class="dim" style="font-weight:400">— Fig. 9 des Papers, live</span></h4>
+    <p class="dim">Das ist der überzeugendste Teil: Man kann die gefundenen Gewichte einfach <b>ansehen</b>. Nach der Skalenkorrektur (Feinheit 3) sollte <span class="kat">\(W_K^\top W_Q\)</span> die Einheitsmatrix mit Null in der letzten Ecke sein, und <span class="kat">\(PW_V\)</span> nur einen Eintrag unten rechts haben.</p>
+    <div class="grid g2">
+      <div><h4 style="text-align:center">W<sub>KQ</sub> = W<sub>K</sub><sup>T</sup>W<sub>Q</sub> <span class="dim">(trainiert, skalenkorrigiert)</span></h4><canvas id="cvWKQ" height="240"></canvas></div>
+      <div><h4 style="text-align:center">W<sub>PV</sub> = P·W<sub>V</sub> <span class="dim">(trainiert, skalenkorrigiert)</span></h4><canvas id="cvWPV" height="240"></canvas></div>
+    </div>
+    <div class="row"><label class="sw"><input type="checkbox" id="showConstr"> Konstruktion θ<sub>GD</sub> daneben zeigen</label>
+      <span class="dim" id="wMsg">Trainiere oben, dann erscheint hier das Muster.</span></div>
+  </div>
+
+  <div class="card">
+    <h4>Drei weitere Belege aus dem Paper</h4>
+    <div class="steps">
+      <div class="step"><div class="h">Interpolation der Gewichte</div><div class="d">Mische die trainierten Gewichte mit der Konstruktion: <span class="kat">\(\theta_I=(\theta^*+\theta_{GD})/2\)</span>. Wären es <b>verschiedene</b> Lösungen, würde die Mischung schlecht abschneiden. Tut sie aber nicht — der Verlust bleibt identisch. Sie liegen im <b>selben</b> Tal.
+      </div></div>
+      <div class="step"><div class="h">Tests außerhalb der Trainingsverteilung</div><div class="d">Gib dem Modell Daten mit ganz anderer Skala <span class="kat">\(x\sim U(-\alpha,\alpha)\)</span> oder größeren Lehrergewichten <span class="kat">\(\alpha W\)</span>. Ein Auswendiglerner würde scheitern. Der Transformer aber <b>verschlechtert sich exakt so wie Gradientenabstieg</b> — inklusive der Divergenz bei zu großer Krümmung.</div></div>
+      <div class="step"><div class="h">Wiederholtes Anwenden</div><div class="d">Wende dieselbe eine Schicht 50-mal an (obwohl sie nur für <b>einen</b> Schritt trainiert wurde). Mit Dämpfung <span class="kat">\(\lambda=0{,}75\)</span> sinkt der Verlust — und zwar in derselben Kurve wie bei GD. Das ist Fig. 1 rechts.</div></div>
+    </div>
+    <div class="row">
+      <div class="seg" id="oodSeg"><button class="on" data-ood="inp">Größere Eingaben</button><button data-ood="tgt">Größere Ziele</button><button data-ood="roll">Ausrollen (50×)</button></div>
+      <div class="ctl" style="flex:1;min-width:220px;margin:0"><label>Dämpfung λ (nur beim Ausrollen) <span class="v" id="vlam">0.75</span></label><input type="range" id="lam" min="0.4" max="1.2" step="0.01" value="0.75"></div>
+    </div>
+    <div id="oodPlot" class="plot" style="height:300px"></div>
+    <p class="cap" id="oodCap"></p>
+  </div>
+</section>
+
+<!-- ══════════ 13 · TIEFE & GD++ ══════════ -->
+<section id="s13">
+  <div class="kicker">Teil C · Tiefe</div>
+  <h2>K Schichten = K Schritte — und dann etwas Besseres</h2>
+  <p class="lead">Die Konstruktion lässt sich stapeln: Schicht <span class="kat">\(k\)</span> macht Gradientenschritt <span class="kat">\(k\)</span>. Aber trainierte tiefe Transformer werden <b>besser als einfacher Gradientenabstieg</b>. Was machen sie zusätzlich?</p>
+
+  <div class="card">
+    <h4>Die Antwort: Sie transformieren die Daten mit</h4>
+    <p>Die Konstruktion aus Prop. 1 lässt im <span class="kat">\(x\)</span>-Feld eine Null. Setzt man dort stattdessen etwas hinein, bekommt man kostenlos eine Datenvorverarbeitung dazu:</p>
+    <div class="kat" style="text-align:center;font-size:15px">\[ x_j \leftarrow (I-\gamma XX^{\top})x_j, \qquad y_j\leftarrow y_j-\Delta W x_j \qquad\text{— das ist \textbf{GD}}^{\textbf{++}} \]</div>
+    <div class="grid g2">
+      <div>
+        <h4>Was mit den Eigenwerten passiert</h4>
+        <p class="dim">Die Hesse-Matrix wird zu <span class="kat">\(H^{++}=U(\Sigma-2\gamma\Sigma^2+\gamma^2\Sigma^3)U^\top\)</span>. Jeder Eigenwert <span class="kat">\(\lambda\)</span> wird also durch <span class="kat">\(f(\lambda,\gamma)=\lambda-2\gamma\lambda^2+\gamma^2\lambda^3\)</span> geschickt. Große Eigenwerte werden stark gestaucht, kleine kaum — <b>die Landschaft wird runder</b>.</p>
+        <div class="ctl"><label>γ <span class="v" id="vgam">0.099</span></label><input type="range" id="gam" min="0" max="0.22" step="0.001" value="0.099"></div>
+        <div class="rd">
+          <div class="it"><div class="k">κ vorher</div><div class="v r" id="kBef">—</div></div>
+          <div class="it"><div class="k">κ nachher</div><div class="v f" id="kAft">—</div></div>
+          <div class="it"><div class="k">Beschleunigung</div><div class="v c" id="kSpd">—</div></div>
+        </div>
+        <div id="eigPlot" class="plot" style="height:240px"></div>
+        <p class="cap">Blau: Identität (kein GD++). Gelb: <span class="kat">\(f(\lambda,\gamma)\)</span>. Punkte: die tatsächlichen Eigenwerte vorher/nachher. Der <b>im Paper gemessene</b> Wert bei N=25 ist γ ≈ 0.099 — probier ihn aus.</p>
+      </div>
+      <div>
+        <h4>Was das für den Abstieg bedeutet</h4>
+        <canvas id="cvGpp" height="300"></canvas>
+        <p class="cap">Links die ursprüngliche, gestauchte Landschaft. Rechts nach der GD++-Transformation. Beide mit optimaler Lernrate.</p>
+        <div id="gppLoss" class="plot" style="height:230px"></div>
+        <p class="cap">Fig. 3 links: GD++ (gelb) schlägt reines GD (violett) — und der trainierte Transformer (türkis) liegt <b>auf</b> GD++, nicht auf GD.</p>
+      </div>
+    </div>
+    <div class="note am"><b>Warum es kippt:</b> Zieh γ über 0.105. Dann wird <span class="kat">\(f\)</span> für die großen Eigenwerte negativ bzw. schießt über die Nullstelle <span class="kat">\(\lambda=1/\gamma\)</span> hinaus — die Konditionszahl explodiert. Genau deshalb wählt der Transformer einen Wert <b>knapp unter</b> der Kante.</div>
+  </div>
+
+  <div class="card">
+    <h4>Tiefe im Überblick</h4>
+    <div class="ctl"><label>Anzahl Schichten / Schritte K <span class="v" id="vK">5</span></label><input type="range" id="Kl" min="1" max="12" step="1" value="5"></div>
+    <div id="depthPlot" class="plot" style="height:270px"></div>
+    <p class="cap">Jede zusätzliche Schicht = ein weiterer Optimierungsschritt. Bei nicht-gebundenen Gewichten lernt jede Schicht ihr <b>eigenes</b> <span class="kat">\(\eta_k,\gamma_k\)</span> — deshalb schlägt der 5-Schichter den rekurrenten 10-Schichter.</p>
+  </div>
+</section>
+
+<!-- ══════════ 14 · NICHTLINEAR ══════════ -->
+<section id="s14">
+  <div class="kicker">Teil C · Nichtlinearität</div>
+  <h2>Proposition 2: MLPs machen die Aufgabe krumm</h2>
+  <p class="lead">Lineare Modelle reichen nicht für echte Sprache. Die Lösung ist elegant: Ein <b>MLP vor der Attention</b> verwandelt die Tokens in eine tiefe Repräsentation <span class="kat">\(m(x)\)</span>. Dann macht die Attention Gradientenabstieg <i>darauf</i>:</p>
+  <div class="kat" style="text-align:center;font-size:16px">\[ L(W)=\frac{1}{2N}\sum_i\lVert W\,m(x_i)-y_i\rVert^2 \quad\Longrightarrow\quad \hat y=\sum_i y_i\,\underbrace{m(x_i)^\top m(x_{\text{test}})}_{\text{Kern }k(x_i,x_{\text{test}})} \]</div>
+
+  <div class="grid g21">
+    <div class="card">
+      <h4>Sinus-Regression <span class="dim" style="font-weight:400">— Fig. 4 des Papers</span></h4>
+      <canvas id="cvSine" height="360"></canvas>
+      <div class="leg">
+        <span><i class="dot" style="background:#94a3b8"></i>Wahrheit <span class="kat">\(a\sin(\rho+x)\)</span></span>
+        <span><i class="dot" style="background:var(--d)"></i>Kontextpunkte</span>
+        <span><i class="dot" style="background:var(--b)"></i>GD: Start → nach 1 Schritt</span>
+        <span><i class="dot" style="background:var(--a)"></i>Transformer: Start → nach Attention</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Steuerung</h4>
+      <div class="ctl"><label>Amplitude a <span class="v" id="vamp">2.20</span></label><input type="range" id="samp" min="0.1" max="5" step="0.05" value="2.2"></div>
+      <div class="ctl"><label>Phase ρ <span class="v" id="vpha">0.90</span></label><input type="range" id="spha" min="0" max="3.1416" step="0.01" value="0.9"></div>
+      <div class="ctl"><label>Kontextpunkte N <span class="v" id="vsn">10</span></label><input type="range" id="sn" min="3" max="25" step="1" value="10"></div>
+      <div class="ctl"><label>Meta-Training der Basis <span class="v" id="vmt">100 %</span></label><input type="range" id="mt" min="0" max="100" step="1" value="100"></div>
+      <div class="rd">
+        <div class="it"><div class="k">Fehler GD</div><div class="v b" id="sErrG">—</div></div>
+        <div class="it"><div class="k">Fehler TF</div><div class="v a" id="sErrT">—</div></div>
+        <div class="it"><div class="k">Part. Cos-Sim</div><div class="v f" id="sCos">—</div></div>
+      </div>
+      <div class="row"><button class="pri" id="sNew">Neue Aufgabe</button></div>
+      <div class="note"><b>Beachte die Startfunktion (gestrichelt):</b> Sie ist schon <i>fast</i> ein Sinus — die äußere Schleife hat die Basisfunktionen so vorbereitet, dass <b>ein einziger</b> Gradientenschritt genügt. Genau das ist MAML.</div>
+      <h4 style="margin-top:20px">Der gelernte Kern</h4>
+      <canvas id="cvKern" height="150"></canvas>
+      <p class="cap"><span class="kat">\(k(x,x')=m(x)^\top m(x')\)</span> — das MLP hat gelernt, welche <span class="kat">\(x\)</span> „ähnlich" sind. Ein Attention-Layer mit <span class="kat">\(W_0=0\)</span> ist damit nichts anderes als <b>Kernel-Glättung</b> (Nadaraya–Watson).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 15 · TOKENS BAUEN ══════════ -->
+<section id="s15">
+  <div class="kicker">Teil C · Die letzte Lücke</div>
+  <h2>Proposition 3: Woher kommen die Tokens <span class="kat">\((x_i,y_i)\)</span>?</h2>
+  <p class="lead">Bisher haben wir <span class="kat">\(x\)</span> und <span class="kat">\(y\)</span> <b>von Hand</b> in ein Token gestapelt. In echter Sprache stehen sie in <b>getrennten</b> Tokens. Kann der Transformer das selbst zusammenbauen? Ja — mit einer Kopier-Schicht. Und genau das ist der <b>Induktionskopf</b> von Olsson et al.</p>
+
+  <div class="card">
+    <h4>Schicht 1 kopiert, Schicht 2 lernt</h4>
+    <canvas id="cvCopy" height="300"></canvas>
+    <div class="row">
+      <button class="pri" id="cpPlay">▶ Kopiervorgang zeigen</button>
+      <button id="cpStep">Schritt ▸</button>
+      <span class="dim" id="cpMsg">Tokens abwechselnd: x₁, y₁, x₂, y₂, …</span>
+    </div>
+    <p class="cap">Die Positionskodierung <span class="kat">\(p_j\)</span> dient als Adresse. Mit <span class="kat">\(W_Q = I_{\text{offset}}^\top\)</span> fragt Token <span class="kat">\(j\)</span> nach Position <span class="kat">\(j{+}1\)</span> und kopiert sich dessen <span class="kat">\(y\)</span> in das eigene leere Feld. <b>Softmax hilft hier</b> — sie macht die Abfrage zu einem sauberen „nimm genau diesen einen".</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Der Beleg: partielle Ableitungen <span class="dim" style="font-weight:400">— Fig. 5</span></h4>
+      <canvas id="cvSens" height="250"></canvas>
+      <div class="ctl"><label>Trainingsschritte <span class="v" id="vcs">0</span></label><input type="range" id="cs" min="0" max="40000" step="500" value="0"></div>
+      <p class="cap">Gemessen wird <span class="kat">\(\lVert\partial t(e_j)/\partial e_{j+1}\rVert\)</span>: Wie stark hängt die Ausgabe von Schicht 1 vom <b>Nachbartoken</b> ab? Schieb den Regler — genau bevor der Verlust einbricht, schießt die Nachbar-Sensitivität hoch. <b>Die Kopierfähigkeit entsteht zuerst, dann das Lernen.</b></p>
+    </div>
+    <div class="card">
+      <h4>Verlustkurve dazu</h4>
+      <div id="copyPlot" class="plot" style="height:250px"></div>
+      <div class="note pk"><b>Wichtiges Detail:</b> Der 2-Schicht-Transformer erreicht den Verlust von <b>einem</b> GD-Schritt, nicht von zweien. Schicht 1 wird komplett fürs Kopieren verbraucht. Und: Mit rein linearer Attention lässt er sich gar nicht trainieren — die Softmax war nötig.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 16 · PHASENÜBERGÄNGE ══════════ -->
+<section id="s16">
+  <div class="kicker">Teil C · Kuriosität</div>
+  <h2>Phasenübergänge und Grokking</h2>
+  <p class="lead">Die Trainingskurven fallen nicht sanft — sie <b>springen</b>. Manchmal passiert tausende Schritte lang nichts, dann kippt der Verlust plötzlich auf GD-Niveau. Mit zwei Köpfen verschwindet die Instabilität.</p>
+  <div class="card">
+    <div class="row">
+      <div class="seg" id="phSeg"><button class="on" data-ph="1">1 Kopf · 10 Seeds</button><button data-ph="2">2 Köpfe · 10 Seeds</button><button data-ph="g">Grokking (8192 Aufgaben)</button></div>
+    </div>
+    <div id="phPlot" class="plot" style="height:320px"></div>
+    <p class="cap" id="phCap"></p>
+  </div>
+</section>
+
+<!-- ══════════ 17 · ANTWORT ══════════ -->
+<section id="s17">
+  <div class="kicker">Die Antwort</div>
+  <h2>Was war die Frage — und was ist die Antwort?</h2>
+  <div class="grid g2">
+    <div class="card" style="border-color:rgba(167,139,250,.35)">
+      <h4 style="color:var(--b)">Die Frage</h4>
+      <p style="font-size:17px;color:var(--tx)">Transformer lernen im Kontext, ohne ihre Gewichte zu ändern. <b>Welcher Mechanismus steckt dahinter?</b> Bisher gab es dafür nur Intuitionen (assoziatives Gedächtnis, Induktionsköpfe) — keine mechanistische Erklärung.</p>
+    </div>
+    <div class="card" style="border-color:rgba(94,234,212,.35)">
+      <h4 style="color:var(--a)">Die Antwort — Hypothese 1</h4>
+      <p style="font-size:17px;color:var(--tx)">Der Vorwärtsdurchlauf <b>führt Gradientenabstieg aus</b>, auf einem impliziten Verlust, der aus den Kontextdaten selbst gebaut wird. Eine lineare Attention-Schicht ≙ ein GD-Schritt. K Schichten ≙ K Schritte. Der Transformer ist ein <b>Mesa-Optimierer</b>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Der ganze Beweisgang in sieben Schritten</h4>
+    <div class="steps">
+      <div class="step"><div class="h">Gewichtsänderung umschreiben als Datenänderung</div><div class="d"><span class="kat">\(L(W+\Delta W)=L\)</span> mit Zielen <span class="kat">\(y_i-\Delta W x_i\)</span>. Jetzt kann ein Netz, das nur Tokens verändert, lernen. <b>(Gl. 4)</b></div></div>
+      <div class="step"><div class="h">Attention als Summe äußerer Produkte schreiben</div><div class="d"><span class="kat">\(e_j \leftarrow e_j + PW_V\sum_i (e_i\otimes e_i)W_K^\top W_Q e_j\)</span> — exakt die Form des Gradienten. <b>(Gl. 6)</b></div></div>
+      <div class="step"><div class="h">Die Blockmatrizen explizit hinschreiben</div><div class="d"><span class="kat">\(W_K=W_Q=\binom{I\ 0}{0\ 0}\)</span>, <span class="kat">\(W_V=\binom{0\ \ 0}{W_0\ -I}\)</span>, <span class="kat">\(P=\frac{\eta}{N}I\)</span>. Ergebnis: <span class="kat">\((x_j,y_j)\to(x_j,y_j-\Delta Wx_j)\)</span>. <b>(Prop. 1, Gl. 8)</b></div></div>
+      <div class="step"><div class="h">Wirklich trainieren und vergleichen</div><div class="d">Verlust identisch, Cos-Ähnlichkeit → 1, L2 → 0, Interpolation verlustfrei, OOD-Verhalten identisch, Gewichte visuell deckungsgleich. <b>(Fig. 2, 6, 9)</b></div></div>
+      <div class="step"><div class="h">Tiefe erklären</div><div class="d">K Schichten übertreffen K GD-Schritte — weil sie <b>zusätzlich</b> die Daten konditionieren. GD++ mit einem Parameter γ erklärt die Lücke vollständig. <b>(Fig. 3, 13)</b></div></div>
+      <div class="step"><div class="h">Nichtlinearität erklären</div><div class="d">MLP + Attention = Gradientenabstieg auf tiefen Repräsentationen = kernelisierte Regression. Löst Sinus-Aufgaben, deckungsgleich mit meta-gelerntem MLP. <b>(Prop. 2, Fig. 4)</b></div></div>
+      <div class="step"><div class="h">Die Token-Annahme auflösen</div><div class="d">Eine Softmax-Kopierschicht baut die benötigten Tokens selbst — das ist der Induktionskopf. In-Context-Lernen = Kopieren + Gradientenabstieg. <b>(Prop. 3, Fig. 5)</b></div></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="color:var(--bad)">Was das Paper <i>nicht</i> zeigt</h4>
+      <ul style="color:var(--tx2);padding-left:20px;font-size:14px;line-height:1.9">
+        <li>Es untersucht <b>kleine</b> Transformer auf <b>einfachen Regressionsaufgaben</b> — nicht GPT-4 auf Sprache.</li>
+        <li>Der Hauptbefund gilt für <b>lineare</b> Selbst-Attention. Mit Softmax wird die Übereinstimmung schlechter (aber bleibt erkennbar, besonders mit 2 Köpfen).</li>
+        <li>LayerNorm verschlechtert die Angleichung ebenfalls.</li>
+        <li>Verrauschte Daten, Regularisierung, logistische Regression: offen.</li>
+        <li>Die Autoren schreiben selbst: es ist wohl <b>einer von mehreren</b> Mechanismen.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--a)">Warum es trotzdem wichtig ist</h4>
+      <ul style="color:var(--tx2);padding-left:20px;font-size:14px;line-height:1.9">
+        <li>Es ist eine der ersten <b>mechanistischen</b> Erklärungen für In-Context-Lernen — man kann die Gewichte <i>ansehen</i>.</li>
+        <li>Es verbindet Transformer mit 30 Jahren Meta-Learning-Forschung (Fast Weights, MAML).</li>
+        <li>Es macht Vorhersagen, die eintreffen (GD++, OOD-Verhalten, Kopierschichten).</li>
+        <li>Es liefert ein konkretes Beispiel für <b>Mesa-Optimierung</b> — relevant für KI-Sicherheit.</li>
+        <li>Es hinterfragt die Softmax: linear war hier schlicht besser.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aha" style="margin-top:26px">
+    <div class="t">In einem Satz</div>
+    <p style="margin:0;font-size:19px;line-height:1.5">Ein trainierter Transformer hat in seinen Gewichten keinen Wissensspeicher versteckt, sondern einen <b>Lernalgorithmus</b> — und wir können ihn Zeile für Zeile lesen.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ═══════════════ Helpers ═══════════════ */
+const $=id=>document.getElementById(id), Q=s=>document.querySelector(s), QA=s=>[...document.querySelectorAll(s)];
+const C={a:'#5eead4',b:'#a78bfa',c:'#fbbf24',d:'#f472b6',e:'#60a5fa',f:'#34d399',  bad:'#fb7185',tx:'#e6ecff',tx2:'#9fb0d6',tx3:'#6b7ba3',line:'rgba(120,150,220,.16)'};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(v,n=3)=>{if(!isFinite(v))return'∞';const a=Math.abs(v);
+  if(a!==0&&(a<1e-3||a>=1e5))return v.toExponential(1);return v.toFixed(n);};
+const rnd=()=>Math.random();
+let _seed=12345; function srnd(){_seed=(_seed*1103515245+12345)&0x7fffffff;return _seed/0x7fffffff;}
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function setupCv(cv,h){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const w=cv.clientWidth||600; const hh=h||cv.clientHeight||300;
+  cv.width=w*dpr; cv.height=hh*dpr; cv.style.height=hh+'px';
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  return {g,w,h:hh};
+}
+function clearCv(g,w,h){g.clearRect(0,0,w,h);}
+function arrow(g,x1,y1,x2,y2,col,lw=2,head=9){
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=lw;g.lineCap='round';
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  g.beginPath();g.moveTo(x2,y2);
+  g.lineTo(x2-head*Math.cos(a-0.4),y2-head*Math.sin(a-0.4));
+  g.lineTo(x2-head*Math.cos(a+0.4),y2-head*Math.sin(a+0.4));
+  g.closePath();g.fill();
+}
+function txt(g,s,x,y,col,size=11,align='left',bold=false){
+  g.fillStyle=col;g.font=`${bold?'700 ':''}${size}px ui-monospace,Menlo,monospace`;
+  g.textAlign=align;g.textBaseline='middle';g.fillText(s,x,y);
+}
+function grid(g,w,h,cx,cy,sc,step=1,col='rgba(120,150,220,.10)'){
+  g.strokeStyle=col;g.lineWidth=1;
+  for(let i=-30;i<=30;i++){
+    const x=cx+i*step*sc; if(x<0||x>w)continue;
+    g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke();
+  }
+  for(let i=-30;i<=30;i++){
+    const y=cy+i*step*sc; if(y<0||y>h)continue;
+    g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke();
+  }
+  g.strokeStyle='rgba(120,150,220,.32)';g.lineWidth=1.4;
+  g.beginPath();g.moveTo(0,cy);g.lineTo(w,cy);g.stroke();
+  g.beginPath();g.moveTo(cx,0);g.lineTo(cx,h);g.stroke();
+}
+const PL={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#9fb0d6',family:'ui-monospace,Menlo,monospace',size:10.5},
+  margin:{l:48,r:14,t:26,b:38},
+  xaxis:{gridcolor:'rgba(120,150,220,.13)',zerolinecolor:'rgba(120,150,220,.25)',linecolor:'rgba(120,150,220,.25)'},
+  yaxis:{gridcolor:'rgba(120,150,220,.13)',zerolinecolor:'rgba(120,150,220,.25)',linecolor:'rgba(120,150,220,.25)'},
+  legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}},hovermode:'closest'};
+const PCFG={displayModeBar:false,responsive:true};
+function pl(id,tr,ly){Plotly.react(id,tr,Object.assign({},PL,ly||{}),PCFG);}
+
+/* ═══════════ Linear algebra mini-lib (row-major arrays) ═══════════ */
+function zeros(r,c){const m=[];for(let i=0;i<r;i++)m.push(new Float64Array(c));return m;}
+function matmul(A,B){const r=A.length,k=B.length,c=B[0].length;const O=zeros(r,c);
+  for(let i=0;i<r;i++){const Ai=A[i],Oi=O[i];for(let p=0;p<k;p++){const a=Ai[p];if(a===0)continue;const Bp=B[p];
+    for(let j=0;j<c;j++)Oi[j]+=a*Bp[j];}}return O;}
+function transp(A){const r=A.length,c=A[0].length;const O=zeros(c,r);
+  for(let i=0;i<r;i++)for(let j=0;j<c;j++)O[j][i]=A[i][j];return O;}
+function eye(n,s=1){const O=zeros(n,n);for(let i=0;i<n;i++)O[i][i]=s;return O;}
+function addM(A,B,s=1){const O=zeros(A.length,A[0].length);
+  for(let i=0;i<A.length;i++)for(let j=0;j<A[0].length;j++)O[i][j]=A[i][j]+s*B[i][j];return O;}
+function scaleM(A,s){const O=zeros(A.length,A[0].length);
+  for(let i=0;i<A.length;i++)for(let j=0;j<A[0].length;j++)O[i][j]=A[i][j]*s;return O;}
+function dot(a,b){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s;}
+function nrm(a){return Math.sqrt(dot(a,a));}
+function cosSim(a,b){const n=nrm(a)*nrm(b);return n<1e-12?0:dot(a,b)/n;}
+function l2d(a,b){let s=0;for(let i=0;i<a.length;i++)s+=(a[i]-b[i])**2;return Math.sqrt(s);}
+
+/* ═══════════ 0 · Nav / progress / reveal / KaTeX ═══════════ */
+const SEC=[['s0','Start'],['s1','Matrix'],['s2','⊗'],['s3','Verlust'],['s4','Gradient'],['s5','Krümmung'],
+  ['s6','Softmax'],['s7','Attention'],['s8','Meta'],['s9','Rätsel'],['s10','Trick'],['s11','Prop.1'],
+  ['s12','Training'],['s13','GD++'],['s14','Sinus'],['s15','Kopieren'],['s16','Phasen'],['s17','Antwort']];
+(function(){
+  const c=$('chips');
+  SEC.forEach(([id,n])=>{const b=document.createElement('button');b.className='chip';b.textContent=n;
+    b.dataset.t=id;b.onclick=()=>$(id).scrollIntoView({behavior:'smooth'});c.appendChild(b);});
+})();
+function onScroll(){
+  const st=window.scrollY, dh=document.body.scrollHeight-innerHeight;
+  $('prog').style.width=(100*st/Math.max(dh,1))+'%';
+  let cur=SEC[0][0];
+  for(const [id] of SEC){const el=$(id);if(el&&el.getBoundingClientRect().top<180)cur=id;}
+  QA('.chip').forEach(b=>b.classList.toggle('on',b.dataset.t===cur));
+}
+addEventListener('scroll',onScroll,{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+QA('section > *').forEach(el=>{el.classList.add('reveal');io.observe(el);});
+addEventListener('DOMContentLoaded',()=>{
+  if(window.renderMathInElement)renderMathInElement(document.body,{
+    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  onScroll();
+});
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement)renderMathInElement(document.body,{
+    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  boot();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — Story animation
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const host=$('heroCv'); const cv=document.createElement('canvas'); cv.height=230; host.appendChild(cv);
+  let t=0, playing=false, raf=null;
+  const stages=[
+    'Tokens: die Beispiele (xᵢ,yᵢ) strömen in die Schicht …',
+    'Attention bildet Schlüssel·Anfrage — ein äußeres Produkt entsteht …',
+    'Die Summe ist genau der Gradient ∑(W₀xᵢ−yᵢ)⊗xᵢ …',
+    'Die Zielwerte der Tokens werden verschoben — das IST ein GD-Schritt.',
+    'Mehr Schichten = mehr Schritte. Der Verlust fällt.'
+  ];
+  function draw(){
+    const {g,w,h}=setupCv(cv,230); clearCv(g,w,h);
+    const T=(t%500)/500, st=Math.floor((t%500)/100);
+    $('heroLbl').textContent=stages[st];
+    // tokens on left
+    const N=6, x0=42, gap=(w*0.30)/N;
+    for(let i=0;i<N;i++){
+      const y=40+i*((h-80)/(N-1)), a=clamp((T*5-0)*2,0,1);
+      g.globalAlpha=0.35+0.65*a;
+      g.fillStyle='rgba(96,165,250,.22)';g.strokeStyle=C.e;g.lineWidth=1.2;
+      g.beginPath();g.roundRect(x0,y-9,34,18,5);g.fill();g.stroke();
+      txt(g,'x'+(i+1),x0+17,y,C.e,9.5,'center',true);
+      g.fillStyle='rgba(52,211,153,.22)';g.strokeStyle=C.f;
+      g.beginPath();g.roundRect(x0+38,y-9,30,18,5);g.fill();g.stroke();
+      txt(g,'y'+(i+1),x0+53,y,C.f,9.5,'center',true);
+      g.globalAlpha=1;
+      // flow to attention box
+      if(st>=1){
+        const p=clamp((T*5-1),0,1);
+        g.strokeStyle=`rgba(94,234,212,${0.15+0.35*p})`;g.lineWidth=1;
+        g.beginPath();g.moveTo(x0+70,y);g.bezierCurveTo(w*0.32,y,w*0.34,h/2,w*0.42,h/2);g.stroke();
+        const pp=(t*0.012+i*0.17)%1;
+        const bx=lerp(x0+70,w*0.42,pp), by=lerp(y,h/2,pp*pp*(3-2*pp));
+        g.fillStyle=C.a;g.beginPath();g.arc(bx,by,2.4,0,7);g.fill();
+      }
+    }
+    // attention box
+    const bx=w*0.42,bw=w*0.19,by=h/2-52,bh=104;
+    g.fillStyle='rgba(94,234,212,.07)';g.strokeStyle=st>=1?C.a:'rgba(94,234,212,.3)';g.lineWidth=1.6;
+    g.beginPath();g.roundRect(bx,by,bw,bh,10);g.fill();g.stroke();
+    txt(g,'LINEARE',bx+bw/2,by+22,C.a,10,'center',true);
+    txt(g,'ATTENTION',bx+bw/2,by+36,C.a,10,'center',true);
+    txt(g,'PV Σ eᵢ⊗eᵢ W',bx+bw/2,by+60,C.tx2,10,'center');
+    txt(g,'KQ q',bx+bw/2,by+74,C.tx2,10,'center');
+    // equals sign morph
+    if(st>=2){
+      const p=clamp((T*5-2),0,1);
+      g.globalAlpha=p;
+      txt(g,'≡',w*0.635,h/2,C.c,34,'center',true);
+      g.globalAlpha=1;
+    }
+    // GD box
+    const gx=w*0.67,gw=w*0.20;
+    if(st>=2){
+      const p=clamp((T*5-2),0,1); g.globalAlpha=0.3+0.7*p;
+      g.fillStyle='rgba(167,139,250,.07)';g.strokeStyle=C.b;g.lineWidth=1.6;
+      g.beginPath();g.roundRect(gx,by,gw,bh,10);g.fill();g.stroke();
+      txt(g,'EIN SCHRITT',gx+gw/2,by+22,C.b,10,'center',true);
+      txt(g,'GRADIENTENABSTIEG',gx+gw/2,by+36,C.b,8.5,'center',true);
+      txt(g,'ΔW = −η/N Σ',gx+gw/2,by+60,C.tx2,10,'center');
+      txt(g,'(W₀xᵢ−yᵢ)xᵢᵀ',gx+gw/2,by+74,C.tx2,10,'center');
+      g.globalAlpha=1;
+    }
+    // loss curve right
+    if(st>=4){
+      const p=clamp((T*5-4),0,1);
+      const lx=w*0.895,lw=w*0.085,ly=by+16,lh=bh-30;
+      g.strokeStyle='rgba(120,150,220,.3)';g.lineWidth=1;
+      g.beginPath();g.moveTo(lx,ly);g.lineTo(lx,ly+lh);g.lineTo(lx+lw,ly+lh);g.stroke();
+      g.strokeStyle=C.c;g.lineWidth=2;g.beginPath();
+      for(let i=0;i<=30*p;i++){const xx=lx+lw*i/30, yy=ly+lh*(1-Math.exp(-i*0.16))*0.92;
+        i===0?g.moveTo(xx,yy):g.lineTo(xx,yy);}
+      g.stroke();
+      txt(g,'Verlust ↓',lx+lw/2,ly-8,C.c,9,'center');
+    }
+    if(playing){t+=1.1;raf=requestAnimationFrame(draw);}
+  }
+  $('heroPlay').onclick=()=>{playing=!playing;$('heroPlay').textContent=playing?'⏸ Pause':'▶ Geschichte abspielen';
+    if(playing)draw();else cancelAnimationFrame(raf);};
+  window.__heroDraw=draw; draw();
+  addEventListener('resize',()=>{if(!playing)draw();});
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   1 · LINEAR MAP
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvLin'); let X=[0.8,0.5], drag=false;
+  const W=()=>[[+$('w11').value,+$('w12').value],[+$('w21').value,+$('w22').value]];
+  function draw(){
+    const {g,w,h}=setupCv(cv,420); clearCv(g,w,h);
+    const cx=w/2,cy=h/2,sc=Math.min(w,h)/6.4;
+    const M=W();
+    // transformed grid
+    g.strokeStyle='rgba(167,139,250,.20)';g.lineWidth=1;
+    for(let i=-6;i<=6;i++){
+      g.beginPath();
+      for(let t=-6;t<=6;t+=0.5){
+        const p=[M[0][0]*i+M[0][1]*t, M[1][0]*i+M[1][1]*t];
+        const px=cx+p[0]*sc, py=cy-p[1]*sc; t===-6?g.moveTo(px,py):g.lineTo(px,py);
+      } g.stroke();
+      g.beginPath();
+      for(let t=-6;t<=6;t+=0.5){
+        const p=[M[0][0]*t+M[0][1]*i, M[1][0]*t+M[1][1]*i];
+        const px=cx+p[0]*sc, py=cy-p[1]*sc; t===-6?g.moveTo(px,py):g.lineTo(px,py);
+      } g.stroke();
+    }
+    grid(g,w,h,cx,cy,sc,1);
+    // unit square -> parallelogram
+    const c0=[0,0],c1=[1,0],c2=[1,1],c3=[0,1];
+    const tp=p=>[cx+(M[0][0]*p[0]+M[0][1]*p[1])*sc, cy-(M[1][0]*p[0]+M[1][1]*p[1])*sc];
+    g.fillStyle='rgba(167,139,250,.14)';g.strokeStyle='rgba(167,139,250,.55)';g.lineWidth=1.4;
+    g.beginPath();const P=[c0,c1,c2,c3].map(tp);g.moveTo(P[0][0],P[0][1]);
+    P.slice(1).forEach(q=>g.lineTo(q[0],q[1]));g.closePath();g.fill();g.stroke();
+    // basis vectors
+    arrow(g,cx,cy,cx+M[0][0]*sc,cy-M[1][0]*sc,'rgba(251,191,36,.85)',2,8);
+    arrow(g,cx,cy,cx+M[0][1]*sc,cy-M[1][1]*sc,'rgba(244,114,182,.85)',2,8);
+    txt(g,'W·e₁',cx+M[0][0]*sc+10,cy-M[1][0]*sc-8,C.c,10);
+    txt(g,'W·e₂',cx+M[0][1]*sc+10,cy-M[1][1]*sc-8,C.d,10);
+    // x and Wx
+    const Y=[M[0][0]*X[0]+M[0][1]*X[1], M[1][0]*X[0]+M[1][1]*X[1]];
+    arrow(g,cx,cy,cx+X[0]*sc,cy-X[1]*sc,C.e,3,11);
+    arrow(g,cx,cy,cx+Y[0]*sc,cy-Y[1]*sc,C.f,3,11);
+    g.setLineDash([3,4]);g.strokeStyle='rgba(230,236,255,.3)';g.lineWidth=1;
+    g.beginPath();g.moveTo(cx+X[0]*sc,cy-X[1]*sc);g.lineTo(cx+Y[0]*sc,cy-Y[1]*sc);g.stroke();g.setLineDash([]);
+    g.fillStyle=C.e;g.beginPath();g.arc(cx+X[0]*sc,cy-X[1]*sc,7,0,7);g.fill();
+    g.fillStyle='#fff';g.beginPath();g.arc(cx+X[0]*sc,cy-X[1]*sc,3,0,7);g.fill();
+    txt(g,'x',cx+X[0]*sc+13,cy-X[1]*sc-11,C.e,13,'left',true);
+    txt(g,'Wx',cx+Y[0]*sc+13,cy-Y[1]*sc-11,C.f,13,'left',true);
+    txt(g,'ziehen ↔',cx+X[0]*sc+13,cy-X[1]*sc+5,C.tx3,9);
+    // readouts
+    const det=M[0][0]*M[1][1]-M[0][1]*M[1][0];
+    $('vdet').textContent=fmt(det,2); $('vnx').textContent=fmt(nrm(X),2); $('vny').textContent=fmt(nrm(Y),2);
+    ['11','12','21','22'].forEach((k,i)=>{$('m'+k).textContent=fmt(M[(i/2)|0][i%2],1);});
+    $('mx1').textContent=fmt(X[0],1);$('mx2').textContent=fmt(X[1],1);
+    $('my1').textContent=fmt(Y[0],1);$('my2').textContent=fmt(Y[1],1);
+    ['11','12','21','22'].forEach(k=>{$('vw'+k).textContent=(+$('w'+k).value).toFixed(2);});
+  }
+  ['w11','w12','w21','w22'].forEach(id=>$(id).oninput=draw);
+  function ev(e){const r=cv.getBoundingClientRect();const cx=r.width/2,cy=(cv.clientHeight)/2;
+    const sc=Math.min(r.width,cv.clientHeight)/6.4;
+    const px=(e.touches?e.touches[0].clientX:e.clientX)-r.left, py=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    return [(px-cx)/sc,-(py-cy)/sc];}
+  cv.onpointerdown=e=>{drag=true;cv.setPointerCapture(e.pointerId);X=ev(e);draw();};
+  cv.onpointermove=e=>{if(drag){X=ev(e);draw();}};
+  cv.onpointerup=()=>drag=false;
+  const set=(a,b,c,d)=>{$('w11').value=a;$('w12').value=b;$('w21').value=c;$('w22').value=d;draw();};
+  $('bRot').onclick=()=>{const t=Math.PI/6;set(Math.cos(t).toFixed(2),(-Math.sin(t)).toFixed(2),Math.sin(t).toFixed(2),Math.cos(t).toFixed(2));};
+  $('bScl').onclick=()=>set(1.7,0,0,0.6);
+  $('bShr').onclick=()=>set(1,1.2,0,1);
+  $('bId').onclick=()=>set(1,0,0,1);
+  window.__lin=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   2 · OUTER PRODUCT + ASSOCIATIVE MEMORY
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvOut');
+  function draw(){
+    const {g,w,h}=setupCv(cv,250); clearCv(g,w,h);
+    const v=[+$('ov1').value,+$('ov2').value], k=[+$('ok1').value,+$('ok2').value];
+    const cx=w*0.28, cy=h/2, sc=Math.min(w*0.22,h*0.30)/2.2;
+    // left: the two vectors
+    grid(g,w*0.56,h,cx,cy,sc,1);
+    arrow(g,cx,cy,cx+v[0]*sc,cy-v[1]*sc,C.f,2.6,10);
+    arrow(g,cx,cy,cx+k[0]*sc,cy-k[1]*sc,C.e,2.6,10);
+    txt(g,'v',cx+v[0]*sc+11,cy-v[1]*sc-9,C.f,12,'left',true);
+    txt(g,'k',cx+k[0]*sc+11,cy-k[1]*sc-9,C.e,12,'left',true);
+    txt(g,'Richtung des Schreibens',cx,h-14,C.f,9,'center');
+    // right: the resulting matrix as heat cells + action on a test x
+    const M=[[v[0]*k[0],v[0]*k[1]],[v[1]*k[0],v[1]*k[1]]];
+    const bx=w*0.60, by=h/2-46, cs=42;
+    txt(g,'v ⊗ k  =  v kᵀ',bx+cs,by-16,C.tx2,11,'center',true);
+    let mx=0;for(let i=0;i<2;i++)for(let j=0;j<2;j++)mx=Math.max(mx,Math.abs(M[i][j]));
+    mx=Math.max(mx,0.4);
+    for(let i=0;i<2;i++)for(let j=0;j<2;j++){
+      const val=M[i][j], t=val/mx;
+      g.fillStyle=t>0?`rgba(94,234,212,${0.10+0.62*t})`:`rgba(244,114,182,${0.10+0.62*(-t)})`;
+      g.strokeStyle='rgba(120,150,220,.25)';g.lineWidth=1;
+      g.beginPath();g.roundRect(bx+j*cs,by+i*cs,cs-3,cs-3,6);g.fill();g.stroke();
+      txt(g,val.toFixed(2),bx+j*cs+(cs-3)/2,by+i*cs+(cs-3)/2,'#e6ecff',11,'center',true);
+    }
+    // rank-1 illustration: several inputs -> all outputs collinear with v
+    const rx=w*0.845, ry=h/2, rs=sc*0.62;
+    grid(g,w,h,rx,ry,rs,1,'rgba(120,150,220,.07)');
+    txt(g,'jede Ausgabe ∥ v',rx,h-14,C.a,9,'center');
+    for(let a=0;a<10;a++){
+      const th=a/10*2*Math.PI, ix=Math.cos(th)*1.5, iy=Math.sin(th)*1.5;
+      const oy=[M[0][0]*ix+M[0][1]*iy, M[1][0]*ix+M[1][1]*iy];
+      g.strokeStyle='rgba(96,165,250,.35)';g.lineWidth=1;
+      g.beginPath();g.moveTo(rx,ry);g.lineTo(rx+ix*rs,ry-iy*rs);g.stroke();
+      arrow(g,rx,ry,rx+oy[0]*rs,ry-oy[1]*rs,'rgba(94,234,212,.85)',1.6,6);
+    }
+    $('vov').textContent=`(${v[0].toFixed(1)}, ${v[1].toFixed(1)})`;
+    $('vok').textContent=`(${k[0].toFixed(1)}, ${k[1].toFixed(1)})`;
+  }
+  ['ov1','ov2','ok1','ok2'].forEach(id=>$(id).oninput=draw);
+  window.__out=draw;
+})();
+
+(function(){
+  const cv=$('cvAssoc');
+  const keys=[[1,0.15],[-0.5,0.9],[-0.3,-1.0]];
+  const vals=[[1.3,0.2],[0.1,1.4],[-1.1,-0.7]];
+  const cols=[C.c,C.d,C.f];
+  function draw(){
+    const {g,w,h}=setupCv(cv,300); clearCv(g,w,h);
+    const cx=w/2,cy=h/2,sc=Math.min(w,h)/5.6;
+    grid(g,w,h,cx,cy,sc,1);
+    const ang=+$('qang').value*Math.PI/180;
+    const q=[Math.cos(ang)*1.2,Math.sin(ang)*1.2];
+    // memory M q
+    let out=[0,0];const contrib=[];
+    for(let i=0;i<3;i++){
+      const s=dot(keys[i],q); contrib.push(s);
+      out[0]+=vals[i][0]*s; out[1]+=vals[i][1]*s;
+    }
+    // draw keys (dashed) & values
+    for(let i=0;i<3;i++){
+      g.setLineDash([3,4]);
+      arrow(g,cx,cy,cx+keys[i][0]*sc,cy-keys[i][1]*sc,cols[i]+'70',1.6,6);
+      g.setLineDash([]);
+      const a=clamp(Math.abs(contrib[i])/1.4,0,1);
+      g.globalAlpha=0.25+0.75*a;
+      arrow(g,cx,cy,cx+vals[i][0]*sc,cy-vals[i][1]*sc,cols[i],2.2,9);
+      g.globalAlpha=1;
+      txt(g,'k'+(i+1),cx+keys[i][0]*sc+9,cy-keys[i][1]*sc,cols[i],9.5);
+      txt(g,'v'+(i+1),cx+vals[i][0]*sc+9,cy-vals[i][1]*sc,cols[i],10.5,'left',true);
+    }
+    arrow(g,cx,cy,cx+q[0]*sc,cy-q[1]*sc,'#ffffff',2.6,10);
+    txt(g,'q',cx+q[0]*sc+11,cy-q[1]*sc-10,'#fff',13,'left',true);
+    arrow(g,cx,cy,cx+out[0]*sc*0.55,cy-out[1]*sc*0.55,C.a,3.2,12);
+    txt(g,'Mq',cx+out[0]*sc*0.55+11,cy-out[1]*sc*0.55+11,C.a,13,'left',true);
+    $('vqa').textContent=$('qang').value+'°';
+    $('assocRd').innerHTML=contrib.map((s,i)=>
+      `<div class="it"><div class="k">kᵀ${i+1}·q</div><div class="v" style="color:${cols[i]}">${s.toFixed(2)}</div></div>`).join('');
+  }
+  $('qang').oninput=draw;
+  let t=0,auto=true;
+  function tick(){if(auto&&document.hidden!==true){t+=0.4;
+    if(!$('qang').matches(':active')){$('qang').value=(t%360).toFixed(0);draw();}}
+    requestAnimationFrame(tick);}
+  $('qang').onpointerdown=()=>auto=false;
+  window.__assoc=draw; setTimeout(tick,600);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   3 · LOSS LANDSCAPE
+   ═══════════════════════════════════════════════════════════ */
+const FIT={X:[],Y:[],opt:[0,0]};
+function genFit(){
+  FIT.X=[];FIT.Y=[];
+  const wt=[1.4,-0.8];
+  for(let i=0;i<12;i++){
+    const x=[(rnd()*2-1)*1.6,(rnd()*2-1)*1.6];
+    FIT.X.push(x); FIT.Y.push(dot(wt,x)+gauss()*0.14);
+  }
+  // closed-form optimum
+  let a=0,b=0,c=0,p=0,q=0;
+  FIT.X.forEach((x,i)=>{a+=x[0]*x[0];b+=x[0]*x[1];c+=x[1]*x[1];p+=x[0]*FIT.Y[i];q+=x[1]*FIT.Y[i];});
+  const det=a*c-b*b;
+  FIT.opt=[(c*p-b*q)/det,(a*q-b*p)/det];
+  FIT.H=[[a/FIT.X.length,b/FIT.X.length],[b/FIT.X.length,c/FIT.X.length]];
+}
+function fitLoss(w){let s=0;FIT.X.forEach((x,i)=>{s+=(dot(w,x)-FIT.Y[i])**2;});return s/(2*FIT.X.length);}
+(function(){
+  genFit();
+  const cvF=$('cvFit'), cvL=$('cvLand');
+  let surfDone=false;
+  function W(){return [+$('f1').value,+$('f2').value];}
+  function drawFit(){
+    const {g,w,h}=setupCv(cvF,300); clearCv(g,w,h);
+    const cx=w*0.5,cy=h*0.5,sc=Math.min(w,h)/5.2;
+    grid(g,w,h,cx,cy,sc,1);
+    const wv=W();
+    // we visualise projection onto first input dim: plot (x1, y) with x2 fixed contribution
+    // simpler: show predicted vs true as bars in a scatter of (proj, y)
+    txt(g,'⟨w,x⟩ →',w-12,cy+14,C.tx3,9,'right');
+    txt(g,'y ↑',cx+8,12,C.tx3,9);
+    FIT.X.forEach((x,i)=>{
+      const px=dot(FIT.opt,x), py=FIT.Y[i], pp=dot(wv,x);
+      const sx=cx+px*sc*0.85, sy=cy-py*sc*0.85, sy2=cy-pp*sc*0.85;
+      g.strokeStyle='rgba(251,113,133,.55)';g.lineWidth=2.5;
+      g.beginPath();g.moveTo(sx,sy);g.lineTo(sx,sy2);g.stroke();
+      g.fillStyle=C.d;g.beginPath();g.arc(sx,sy,4.5,0,7);g.fill();
+      g.fillStyle=C.a;g.beginPath();g.arc(sx,sy2,3,0,7);g.fill();
+    });
+    // ideal diagonal
+    g.strokeStyle='rgba(52,211,153,.4)';g.lineWidth=1.4;g.setLineDash([5,5]);
+    g.beginPath();g.moveTo(0,cy+ (0- (0))*0 + cy*0);g.stroke();g.setLineDash([]);
+    g.strokeStyle='rgba(52,211,153,.45)';g.lineWidth=1.5;g.setLineDash([5,5]);
+    g.beginPath();g.moveTo(cx-3*sc*0.85,cy+3*sc*0.85);g.lineTo(cx+3*sc*0.85,cy-3*sc*0.85);g.stroke();g.setLineDash([]);
+    txt(g,'perfekte Vorhersage',w-14,26,'rgba(52,211,153,.7)',9,'right');
+    const L=fitLoss(wv);
+    $('vfl').textContent=fmt(L,3);
+    $('vfopt').textContent=fmt(fitLoss(FIT.opt),4);
+    $('vf1').textContent=wv[0].toFixed(2);$('vf2').textContent=wv[1].toFixed(2);
+  }
+  function drawLand(){
+    const {g,w,h}=setupCv(cvL,330); clearCv(g,w,h);
+    const R=3.2, cx=w/2,cy=h/2, sc=Math.min(w,h)/(2*R+0.6);
+    // contour by sampling
+    const Lmin=fitLoss(FIT.opt);
+    const levels=[];for(let i=1;i<=14;i++)levels.push(Lmin+Math.pow(i/3.4,2.3)*0.09);
+    const nx=90;
+    const buf=[];let lmax=0;
+    for(let i=0;i<nx;i++){const row=[];for(let j=0;j<nx;j++){
+      const a=-R+2*R*j/(nx-1), b=R-2*R*i/(nx-1);
+      const v=fitLoss([a,b]);row.push(v);lmax=Math.max(lmax,v);}buf.push(row);}
+    const img=g.createImageData(nx,nx);
+    for(let i=0;i<nx;i++)for(let j=0;j<nx;j++){
+      const t=Math.pow(clamp((buf[i][j]-Lmin)/(lmax-Lmin),0,1),0.38);
+      const k=(i*nx+j)*4;
+      img.data[k]=Math.round(lerp(12,167,t));img.data[k+1]=Math.round(lerp(40,139,t));
+      img.data[k+2]=Math.round(lerp(60,250,t));img.data[k+3]=Math.round(lerp(110,150,t));
+    }
+    const tmp=document.createElement('canvas');tmp.width=nx;tmp.height=nx;
+    tmp.getContext('2d').putImageData(img,0,0);
+    g.imageSmoothingEnabled=true;
+    g.drawImage(tmp,cx-R*sc,cy-R*sc,2*R*sc,2*R*sc);
+    // contour lines (marching squares lite: draw iso by threshold edges)
+    g.lineWidth=1;
+    levels.forEach((lv,li)=>{
+      g.strokeStyle=`rgba(230,236,255,${0.10+0.16*(1-li/14)})`;
+      g.beginPath();
+      for(let i=0;i<nx-1;i++)for(let j=0;j<nx-1;j++){
+        const a=buf[i][j],b2=buf[i][j+1],c2=buf[i+1][j];
+        const X0=cx-R*sc+(j/(nx-1))*2*R*sc, Y0=cy-R*sc+(i/(nx-1))*2*R*sc;
+        const st=2*R*sc/(nx-1);
+        if((a-lv)*(b2-lv)<0){const t=(lv-a)/(b2-a);g.moveTo(X0+t*st,Y0);g.lineTo(X0+t*st,Y0+1.1);}
+        if((a-lv)*(c2-lv)<0){const t=(lv-a)/(c2-a);g.moveTo(X0,Y0+t*st);g.lineTo(X0+1.1,Y0+t*st);}
+      }
+      g.stroke();
+    });
+    grid(g,w,h,cx,cy,sc,1,'rgba(120,150,220,.07)');
+    const wv=W();
+    // optimum
+    g.strokeStyle=C.f;g.lineWidth=2;
+    g.beginPath();g.arc(cx+FIT.opt[0]*sc,cy-FIT.opt[1]*sc,8,0,7);g.stroke();
+    g.beginPath();g.arc(cx+FIT.opt[0]*sc,cy-FIT.opt[1]*sc,2.5,0,7);g.fillStyle=C.f;g.fill();
+    txt(g,'W*',cx+FIT.opt[0]*sc+13,cy-FIT.opt[1]*sc-11,C.f,11,'left',true);
+    // current
+    g.fillStyle='#fff';g.beginPath();g.arc(cx+wv[0]*sc,cy-wv[1]*sc,6,0,7);g.fill();
+    g.strokeStyle='rgba(0,0,0,.5)';g.lineWidth=1.5;g.stroke();
+    txt(g,'W',cx+wv[0]*sc+12,cy-wv[1]*sc+11,'#fff',11,'left',true);
+    txt(g,'w₁ →',w-12,cy-8,C.tx3,9,'right');txt(g,'w₂ ↑',cx+8,12,C.tx3,9);
+  }
+  function drawSurf(){
+    const n=34,R=3.2,z=[],xs=[],ys=[];
+    for(let j=0;j<n;j++){xs.push(-R+2*R*j/(n-1));ys.push(-R+2*R*j/(n-1));}
+    for(let i=0;i<n;i++){const row=[];for(let j=0;j<n;j++)row.push(fitLoss([xs[j],ys[i]]));z.push(row);}
+    Plotly.react('landSurf',[{type:'surface',z,x:xs,y:ys,showscale:false,
+      colorscale:[[0,'#0d2b3d'],[0.35,'#1e6b7a'],[0.7,'#7c6bd6'],[1,'#f472b6']],opacity:0.96,
+      contours:{z:{show:true,usecolormap:true,project:{z:true}}}}],
+      Object.assign({},PL,{margin:{l:0,r:0,t:0,b:0},
+        scene:{xaxis:{title:'w₁',color:'#6b7ba3',gridcolor:'rgba(120,150,220,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+               yaxis:{title:'w₂',color:'#6b7ba3',gridcolor:'rgba(120,150,220,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+               zaxis:{title:'L',color:'#6b7ba3',gridcolor:'rgba(120,150,220,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+               camera:{eye:{x:1.5,y:-1.5,z:1.1}}}}),PCFG);
+  }
+  function all(){drawFit();drawLand();}
+  $('f1').oninput=all; $('f2').oninput=all;
+  $('fNew').onclick=()=>{genFit();all();drawSurf();};
+  $('fJump').onclick=()=>{$('f1').value=FIT.opt[0].toFixed(2);$('f2').value=FIT.opt[1].toFixed(2);all();};
+  cvL.onpointerdown=e=>{const r=cvL.getBoundingClientRect();
+    const sc=Math.min(r.width,330)/(2*3.2+0.6);
+    $('f1').value=clamp(((e.clientX-r.left)-r.width/2)/sc,-3,3).toFixed(2);
+    $('f2').value=clamp(-((e.clientY-r.top)-165)/sc,-3,3).toFixed(2);all();};
+  window.__fit=()=>{all();if(!surfDone){surfDone=true;drawSurf();}};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   4 · GRADIENT DESCENT
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvGD'); let start=[-2.3,2.0], drag=false, anim=0, raf=null;
+  function Hmat(){const k=+$('gCond').value;const th=0.42;
+    const c=Math.cos(th),s=Math.sin(th);
+    const l1=k,l2=1;
+    return [[l1*c*c+l2*s*s,(l1-l2)*c*s],[(l1-l2)*c*s,l1*s*s+l2*c*c]];}
+  function L(w,H){return 0.5*(H[0][0]*w[0]*w[0]+2*H[0][1]*w[0]*w[1]+H[1][1]*w[1]*w[1]);}
+  function grad(w,H){return [H[0][0]*w[0]+H[0][1]*w[1], H[1][0]*w[0]+H[1][1]*w[1]];}
+  function path(){
+    const H=Hmat(), eta=+$('gEta').value, K=+$('gSteps').value;
+    let w=start.slice(); const P=[w.slice()], Ls=[L(w,H)];
+    for(let i=0;i<K;i++){
+      const gr=grad(w,H); w=[w[0]-eta*gr[0],w[1]-eta*gr[1]];
+      if(!isFinite(w[0])||Math.abs(w[0])>1e6)w=[NaN,NaN];
+      P.push(w.slice()); Ls.push(L(w,H));
+    }
+    return {P,Ls,H,eta};
+  }
+  function draw(){
+    const {g,w,h}=setupCv(cv,420); clearCv(g,w,h);
+    const R=3.4,cx=w/2,cy=h/2,sc=Math.min(w,h)/(2*R+0.5);
+    const {P,Ls,H,eta}=path();
+    // contours (ellipses analytically)
+    const ev=eigen2(H);
+    for(let i=1;i<=9;i++){
+      const lv=i*i*0.13;
+      g.strokeStyle=`rgba(167,139,250,${0.30-0.02*i})`;g.lineWidth=1.1;
+      g.beginPath();
+      for(let t=0;t<=64;t++){
+        const a=t/64*2*Math.PI;
+        const r1=Math.sqrt(2*lv/ev.l1), r2=Math.sqrt(2*lv/ev.l2);
+        const u=r1*Math.cos(a), v=r2*Math.sin(a);
+        const X=ev.v1[0]*u+ev.v2[0]*v, Y=ev.v1[1]*u+ev.v2[1]*v;
+        const px=cx+X*sc,py=cy-Y*sc; t===0?g.moveTo(px,py):g.lineTo(px,py);
+      } g.closePath();g.stroke();
+    }
+    grid(g,w,h,cx,cy,sc,1,'rgba(120,150,220,.06)');
+    // min
+    g.strokeStyle=C.f;g.lineWidth=2;g.beginPath();g.arc(cx,cy,9,0,7);g.stroke();
+    // path
+    const nShow=Math.min(P.length, anim>0?Math.floor(anim):P.length);
+    g.strokeStyle=C.a;g.lineWidth=2;g.beginPath();
+    for(let i=0;i<nShow;i++){const px=cx+P[i][0]*sc,py=cy-P[i][1]*sc;
+      if(!isFinite(px))break; i===0?g.moveTo(px,py):g.lineTo(px,py);}
+    g.stroke();
+    for(let i=0;i<nShow;i++){
+      const px=cx+P[i][0]*sc,py=cy-P[i][1]*sc; if(!isFinite(px))break;
+      if(px<-50||px>w+50||py<-50||py>h+50)continue;
+      const t=i/Math.max(P.length-1,1);
+      g.fillStyle=i===0?'#fff':`rgba(94,234,212,${0.35+0.6*(1-t)})`;
+      g.beginPath();g.arc(px,py,i===0?6.5:3.4,0,7);g.fill();
+      if(i>0&&i<nShow-1&&i<8){
+        const q=P[i-1];arrow(g,cx+q[0]*sc,cy-q[1]*sc,px,py,'rgba(94,234,212,.5)',1.2,5);
+      }
+    }
+    txt(g,'Start (ziehbar)',cx+start[0]*sc+12,cy-start[1]*sc-12,'#fff',10,'left',true);
+    // stability
+    const lmax=ev.l1, eta=+$('gEta').value;
+    const stable=eta<2/lmax && isFinite(Ls[Ls.length-1]);
+    $('gL').textContent=isFinite(Ls[Ls.length-1])?fmt(Ls[Ls.length-1],4):'∞';
+    const gs=$('gStat');
+    gs.textContent=stable?'stabil':'DIVERGENT'; gs.className='v '+(stable?'f':'r');
+    $('vEta').textContent=(+$('gEta').value).toFixed(3);
+    $('vSteps').textContent=$('gSteps').value;
+    $('vCond').textContent=(+$('gCond').value).toFixed(1);
+    txt(g,`2/λmax = ${(2/lmax).toFixed(3)}`,12,18,stable?C.tx3:C.bad,10);
+    txt(g,`κ = ${(ev.l1/ev.l2).toFixed(1)}`,12,34,C.c,10);
+    // loss plot
+    const xs=Ls.map((_,i)=>i), ys=Ls.map(v=>isFinite(v)?Math.max(v,1e-12):null);
+    pl('gdLoss',[{x:xs,y:ys,mode:'lines+markers',line:{color:C.a,width:2},
+      marker:{size:4},name:'L'}],{yaxis:{type:'log',title:'Verlust'},xaxis:{title:'Schritt'},showlegend:false,margin:{l:52,r:10,t:8,b:32}});
+  }
+  function eigen2(H){
+    const a=H[0][0],b=H[0][1],d=H[1][1];
+    const tr=a+d, de=a*d-b*b, s=Math.sqrt(Math.max(tr*tr/4-de,0));
+    const l1=tr/2+s, l2=tr/2-s;
+    let v1=[b,l1-a]; if(nrm(v1)<1e-9)v1=[1,0]; v1=v1.map(x=>x/nrm(v1));
+    let v2=[-v1[1],v1[0]];
+    return {l1,l2,v1,v2};
+  }
+  window.__eigen2=eigen2;
+  function ev(e){const r=cv.getBoundingClientRect();const R=3.4;
+    const sc=Math.min(r.width,420)/(2*R+0.5);
+    return [clamp(((e.clientX-r.left)-r.width/2)/sc,-R,R), clamp(-((e.clientY-r.top)-210)/sc,-R,R)];}
+  cv.onpointerdown=e=>{drag=true;cv.setPointerCapture(e.pointerId);start=ev(e);anim=0;draw();};
+  cv.onpointermove=e=>{if(drag){start=ev(e);draw();}};
+  cv.onpointerup=()=>drag=false;
+  ['gEta','gSteps','gCond'].forEach(id=>$(id).oninput=()=>{anim=0;draw();});
+  $('gOpt').onclick=()=>{const ev2=eigen2(Hmat());$('gEta').value=(2/(ev2.l1+ev2.l2)).toFixed(3);anim=0;draw();};
+  $('gAnim').onclick=()=>{anim=1;cancelAnimationFrame(raf);
+    (function step(){anim+=0.55;draw();if(anim<+$('gSteps').value+1.5)raf=requestAnimationFrame(step);else anim=0;})();};
+  window.__gd=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   5 · CURVATURE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvEig');
+  function draw(){
+    const {g,w,h}=setupCv(cv,380); clearCv(g,w,h);
+    const l1=+$('el1').value,l2=+$('el2').value,th=+$('eth').value*Math.PI/180;
+    const c=Math.cos(th),s=Math.sin(th);
+    const v1=[c,s],v2=[-s,c];
+    const H=[[l1*c*c+l2*s*s,(l1-l2)*c*s],[(l1-l2)*c*s,l1*s*s+l2*c*c]];
+    const R=3.2,cx=w/2,cy=h/2,sc=Math.min(w,h)/(2*R+0.5);
+    for(let i=1;i<=9;i++){
+      const lv=i*i*0.10;
+      g.strokeStyle=`rgba(167,139,250,${0.32-0.025*i})`;g.lineWidth=1.1;
+      g.beginPath();
+      for(let t=0;t<=72;t++){const a=t/72*2*Math.PI;
+        const u=Math.sqrt(2*lv/l1)*Math.cos(a), v=Math.sqrt(2*lv/l2)*Math.sin(a);
+        const X=v1[0]*u+v2[0]*v, Y=v1[1]*u+v2[1]*v;
+        const px=cx+X*sc,py=cy-Y*sc;t===0?g.moveTo(px,py):g.lineTo(px,py);}
+      g.closePath();g.stroke();
+    }
+    grid(g,w,h,cx,cy,sc,1,'rgba(120,150,220,.06)');
+    // eigen directions
+    const s1=Math.min(l1/3,2.6), s2=Math.min(l2/3,2.6);
+    arrow(g,cx,cy,cx+v1[0]*s1*sc,cy-v1[1]*s1*sc,C.c,3,10);
+    arrow(g,cx,cy,cx+v2[0]*s2*sc,cy-v2[1]*s2*sc,C.b,3,10);
+    txt(g,'λ₁='+l1.toFixed(1),cx+v1[0]*s1*sc+10,cy-v1[1]*s1*sc-10,C.c,11,'left',true);
+    txt(g,'λ₂='+l2.toFixed(1),cx+v2[0]*s2*sc+10,cy-v2[1]*s2*sc-10,C.b,11,'left',true);
+    // GD path with optimal lr
+    const eta=2/(l1+l2);
+    let p=[v1[0]*2.6+v2[0]*2.6, v1[1]*2.6+v2[1]*2.6];
+    g.strokeStyle='#fff';g.lineWidth=1.8;g.beginPath();
+    g.moveTo(cx+p[0]*sc,cy-p[1]*sc);
+    let steps=0,conv=-1;
+    const L0=0.5*(H[0][0]*p[0]*p[0]+2*H[0][1]*p[0]*p[1]+H[1][1]*p[1]*p[1]);
+    for(let i=0;i<200;i++){
+      const gr=[H[0][0]*p[0]+H[0][1]*p[1],H[1][0]*p[0]+H[1][1]*p[1]];
+      p=[p[0]-eta*gr[0],p[1]-eta*gr[1]];
+      if(i<60){g.lineTo(cx+p[0]*sc,cy-p[1]*sc);}
+      const L=0.5*(H[0][0]*p[0]*p[0]+2*H[0][1]*p[0]*p[1]+H[1][1]*p[1]*p[1]);
+      if(conv<0&&L<0.01*L0)conv=i+1;
+    }
+    g.stroke();
+    let q=[v1[0]*2.6+v2[0]*2.6, v1[1]*2.6+v2[1]*2.6];
+    for(let i=0;i<22;i++){
+      g.fillStyle=`rgba(255,255,255,${0.9-0.035*i})`;
+      g.beginPath();g.arc(cx+q[0]*sc,cy-q[1]*sc,3.2,0,7);g.fill();
+      const gr=[H[0][0]*q[0]+H[0][1]*q[1],H[1][0]*q[0]+H[1][1]*q[1]];
+      q=[q[0]-eta*gr[0],q[1]-eta*gr[1]];
+    }
+    const kap=l1/l2;
+    $('vl1').textContent=l1.toFixed(1);$('vl2').textContent=l2.toFixed(1);
+    $('vth').textContent=$('eth').value+'°';
+    $('vkap').textContent=kap.toFixed(2);
+    $('veop').textContent=eta.toFixed(3);
+    $('vconv').textContent=conv>0?conv:'>200';
+    txt(g,'GD-Pfad, η optimal',12,18,'#fff',10);
+  }
+  ['el1','el2','eth'].forEach(id=>$(id).oninput=draw);
+  window.__eig=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   6 · SOFTMAX
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvSm'); let z=[0.9,-0.4,1.6,0.2,-1.1,0.6,1.1,-0.2];
+  function draw(){
+    const {g,w,h}=setupCv(cv,260); clearCv(g,w,h);
+    const T=+$('smT').value, zz=z.map(v=>v*T);
+    const ex=zz.map(v=>Math.exp(v)), S=ex.reduce((a,b)=>a+b,0);
+    const sm=ex.map(v=>v/S);
+    const li=zz.map(v=>1+v), SL=li.reduce((a,b)=>a+b,0);
+    const ln=li.map(v=>v/SL);
+    const n=z.length, bw=(w-60)/n, base=h-34;
+    g.strokeStyle='rgba(120,150,220,.25)';g.lineWidth=1;
+    g.beginPath();g.moveTo(34,base);g.lineTo(w-14,base);g.stroke();
+    const mx=Math.max(...sm,...ln.map(Math.abs),1/n*2);
+    for(let i=0;i<n;i++){
+      const x=40+i*bw, bh=sm[i]/mx*(base-30);
+      const grd=g.createLinearGradient(0,base-bh,0,base);
+      grd.addColorStop(0,'rgba(94,234,212,.9)');grd.addColorStop(1,'rgba(94,234,212,.2)');
+      g.fillStyle=grd;g.beginPath();g.roundRect(x,base-bh,bw-9,bh,4);g.fill();
+      txt(g,sm[i].toFixed(2),x+(bw-9)/2,base-bh-9,C.a,9,'center');
+      if($('smLin').checked){
+        const lh=ln[i]/mx*(base-30);
+        g.strokeStyle=C.c;g.lineWidth=2;g.setLineDash([4,3]);
+        g.beginPath();g.moveTo(x-1,base-lh);g.lineTo(x+bw-8,base-lh);g.stroke();g.setLineDash([]);
+      }
+      txt(g,'z'+(i+1)+'='+zz[i].toFixed(1),x+(bw-9)/2,base+14,C.tx3,9,'center');
+    }
+    txt(g,'1/N',34,base-(1/n)/mx*(base-30),C.tx3,9,'right');
+    g.strokeStyle='rgba(230,236,255,.15)';g.setLineDash([2,4]);
+    g.beginPath();g.moveTo(38,base-(1/n)/mx*(base-30));g.lineTo(w-14,base-(1/n)/mx*(base-30));g.stroke();g.setLineDash([]);
+    const err=sm.reduce((a,v,i)=>a+Math.abs(v-ln[i]),0);
+    txt(g,`Σ|softmax − linear| = ${err.toFixed(3)}`,w-16,20,err<0.05?C.f:C.c,10.5,'right',true);
+    txt(g,T<0.3?'→ fast uniform, lineare Näherung exzellent':T>2.2?'→ „winner takes all", Näherung bricht':'→ mittlere Temperatur',
+      w-16,36,C.tx3,9.5,'right');
+    $('vsmT').textContent=T.toFixed(2);
+  }
+  $('smT').oninput=draw; $('smLin').onchange=draw;
+  $('smRnd').onclick=()=>{z=z.map(()=>gauss()*0.9);draw();};
+  window.__sm=draw;
+})();
+
+(function(){
+  const cv=$('cvHeads'); const n=8;
+  function draw(){
+    const {g,w,h}=setupCv(cv,170); clearCv(g,w,h);
+    const p=+$('hp').value/100;
+    const cs=Math.min((w/3-26)/n,(h-34)/n);
+    // head matrices: offset part (shared, cancels) + diagonal part (head1 only)
+    const A=[],B=[],S=[];
+    for(let i=0;i<n;i++){A.push([]);B.push([]);S.push([]);
+      for(let j=0;j<n;j++){
+        const off=p*1.7*(0.6+0.4*Math.sin(i*1.7+j*0.9));
+        const dia=(i===j&&i<n-1)?p*2.2:0;
+        A[i].push(off+dia); B[i].push(-off); S[i].push(dia);
+      }}
+    const titles=['Kopf 1: η₁W₁,KQ','Kopf 2: η₂W₂,KQ','Summe → Diagonale!'];
+    [A,B,S].forEach((M,k)=>{
+      const ox=14+k*(w/3), oy=26;
+      txt(g,titles[k],ox+n*cs/2,14,k===2?C.a:C.tx2,9.5,'center',k===2);
+      for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+        const v=M[i][j]/2.4;
+        g.fillStyle=v>0?`rgba(94,234,212,${clamp(0.08+Math.abs(v)*0.85,0,.95)})`
+                       :`rgba(244,114,182,${clamp(0.08+Math.abs(v)*0.85,0,.95)})`;
+        g.fillRect(ox+j*cs,oy+i*cs,cs-1,cs-1);
+      }
+      g.strokeStyle='rgba(120,150,220,.2)';g.lineWidth=1;
+      g.strokeRect(ox,oy,n*cs,n*cs);
+    });
+    $('vhp').textContent=$('hp').value+' %';
+  }
+  $('hp').oninput=draw; window.__heads=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   7 · ATTENTION
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvAtt'), hm=$('cvAttHeat');
+  let mode='lin', t=0, raf=null, drag=-1;
+  const N=6;
+  let toks=[];
+  for(let i=0;i<N;i++){const a=i/N*2*Math.PI+0.3;
+    toks.push([Math.cos(a)*(1.1+0.35*Math.sin(i*2.1)),Math.sin(a)*(1.1+0.35*Math.cos(i*1.3))]);}
+  const WK=[[1,0.25],[-0.15,0.9]], WQ=[[0.9,-0.2],[0.3,1.05]], WV=[[0.6,0.4],[-0.3,0.8]];
+  const ap=(M,v)=>[M[0][0]*v[0]+M[0][1]*v[1],M[1][0]*v[0]+M[1][1]*v[1]];
+  function attn(){
+    const K=toks.map(e=>ap(WK,e)), Qs=toks.map(e=>ap(WQ,e)), V=toks.map(e=>ap(WV,e));
+    const A=[];
+    for(let j=0;j<N;j++){
+      let row=K.map(k=>dot(k,Qs[j]));
+      if(mode==='sm'){const m=Math.max(...row);const ex=row.map(v=>Math.exp(v-m));
+        const S=ex.reduce((a,b)=>a+b,0);row=ex.map(v=>v/S);}
+      A.push(row);
+    }
+    const out=A.map(row=>{let o=[0,0];row.forEach((a,i)=>{o[0]+=a*V[i][0];o[1]+=a*V[i][1];});return o;});
+    return {K,Qs,V,A,out};
+  }
+  function draw(){
+    const {g,w,h}=setupCv(cv,400); clearCv(g,w,h);
+    const cx=w/2,cy=h/2,sc=Math.min(w,h)/6.2;
+    grid(g,w,h,cx,cy,sc,1,'rgba(120,150,220,.06)');
+    const {K,Qs,V,A,out}=attn();
+    const focus=Math.floor(t/90)%N;
+    let mxA=0;A.forEach(r=>r.forEach(v=>mxA=Math.max(mxA,Math.abs(v))));
+    // all connections faint
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+      const a=A[j][i]/(mxA||1);
+      const isF=(j===focus)&&$('attAnim').checked;
+      if(!isF&&Math.abs(a)<0.25)continue;
+      g.strokeStyle=a>0?`rgba(94,234,212,${(isF?0.75:0.10)*Math.min(Math.abs(a),1)})`
+                       :`rgba(244,114,182,${(isF?0.75:0.10)*Math.min(Math.abs(a),1)})`;
+      g.lineWidth=isF?1+3*Math.abs(a):0.8;
+      g.beginPath();
+      const p1=[cx+toks[j][0]*sc,cy-toks[j][1]*sc],p2=[cx+toks[i][0]*sc,cy-toks[i][1]*sc];
+      const mx2=(p1[0]+p2[0])/2+(p2[1]-p1[1])*0.13, my=(p1[1]+p2[1])/2-(p2[0]-p1[0])*0.13;
+      g.moveTo(p1[0],p1[1]);g.quadraticCurveTo(mx2,my,p2[0],p2[1]);g.stroke();
+      if(isF&&Math.abs(a)>0.15){
+        const pp=((t*0.02)+i*0.2)%1;
+        const bx=(1-pp)*(1-pp)*p2[0]+2*(1-pp)*pp*mx2+pp*pp*p1[0];
+        const by=(1-pp)*(1-pp)*p2[1]+2*(1-pp)*pp*my+pp*pp*p1[1];
+        g.fillStyle=a>0?C.a:C.d;g.beginPath();g.arc(bx,by,2.8,0,7);g.fill();
+      }
+    }
+    // tokens
+    for(let i=0;i<N;i++){
+      const px=cx+toks[i][0]*sc,py=cy-toks[i][1]*sc;
+      const isF=i===focus&&$('attAnim').checked;
+      if(isF){g.fillStyle='rgba(251,191,36,.14)';g.beginPath();g.arc(px,py,22,0,7);g.fill();}
+      g.fillStyle=isF?C.c:'rgba(96,165,250,.85)';
+      g.beginPath();g.arc(px,py,9,0,7);g.fill();
+      g.strokeStyle='rgba(0,0,0,.4)';g.lineWidth=1.5;g.stroke();
+      txt(g,'e'+(i+1),px,py,'#06121a',9,'center',true);
+      // k,q,v mini arrows
+      g.globalAlpha=isF?0.95:0.28;
+      arrow(g,px,py,px+K[i][0]*sc*0.3,py-K[i][1]*sc*0.3,C.e,1.4,5);
+      arrow(g,px,py,px+Qs[i][0]*sc*0.3,py-Qs[i][1]*sc*0.3,C.c,1.4,5);
+      arrow(g,px,py,px+V[i][0]*sc*0.3,py-V[i][1]*sc*0.3,C.f,1.4,5);
+      g.globalAlpha=1;
+      if(isF){
+        arrow(g,px,py,px+out[i][0]*sc*0.55,py-out[i][1]*sc*0.55,'#fff',2.6,9);
+        txt(g,'Ausgabe',px+out[i][0]*sc*0.55+9,py-out[i][1]*sc*0.55-9,'#fff',10,'left',true);
+      }
+    }
+    txt(g,'— k (Schlüssel)',14,18,C.e,10);txt(g,'— q (Anfrage)',14,33,C.c,10);
+    txt(g,'— v (Wert)',14,48,C.f,10);txt(g,'Token '+(focus+1)+' fragt gerade',14,h-16,C.c,10.5,'left',true);
+    // heatmap
+    const r2=setupCv(hm,220); const g2=r2.g; clearCv(g2,r2.w,r2.h);
+    const cs=Math.min((r2.w-64)/N,(r2.h-46)/N);
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+      const a=A[j][i]/(mxA||1);
+      g2.fillStyle=a>0?`rgba(94,234,212,${0.08+0.85*Math.min(Math.abs(a),1)})`
+                      :`rgba(244,114,182,${0.08+0.85*Math.min(Math.abs(a),1)})`;
+      g2.fillRect(50+i*cs,26+j*cs,cs-2,cs-2);
+      if(cs>26)txt(g2,A[j][i].toFixed(1),50+i*cs+cs/2-1,26+j*cs+cs/2,'rgba(255,255,255,.75)',8.5,'center');
+      if(j===focus&&$('attAnim').checked){g2.strokeStyle=C.c;g2.lineWidth=1.6;g2.strokeRect(50+i*cs,26+j*cs,cs-2,cs-2);}
+    }
+    for(let i=0;i<N;i++){
+      txt(g2,'e'+(i+1),50+i*cs+cs/2,16,C.tx3,9,'center');
+      txt(g2,'e'+(i+1),44,26+i*cs+cs/2,C.tx3,9,'right');
+    }
+    txt(g2,'← wird beachtet',r2.w-6,r2.h-8,C.tx3,9,'right');
+    $('attRd').innerHTML=`<div class="it"><div class="k">Modus</div><div class="v a" style="font-size:14px">${mode==='lin'?'linear':'softmax'}</div></div>
+      <div class="it"><div class="k">Σ Zeile ${focus+1}</div><div class="v c">${A[focus].reduce((a,b)=>a+b,0).toFixed(2)}</div></div>
+      <div class="it"><div class="k">max A</div><div class="v b">${mxA.toFixed(2)}</div></div>`;
+  }
+  function loop(){if($('attAnim').checked)t+=1.1;draw();raf=requestAnimationFrame(loop);}
+  QA('[data-att]').forEach(b=>b.onclick=()=>{QA('[data-att]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+mode=b.dataset.att;draw();});
+  cv.onpointerdown=e=>{const r=cv.getBoundingClientRect();const sc=Math.min(r.width,400)/6.2;
+    const px=(e.clientX-r.left-r.width/2)/sc, py=-(e.clientY-r.top-200)/sc;
+    let best=-1,bd=1e9;toks.forEach((t2,i)=>{const d=(t2[0]-px)**2+(t2[1]-py)**2;if(d<bd){bd=d;best=i;}});
+    if(bd<0.25){drag=best;cv.setPointerCapture(e.pointerId);}};
+  cv.onpointermove=e=>{if(drag>=0){const r=cv.getBoundingClientRect();const sc=Math.min(r.width,400)/6.2;
+    toks[drag]=[(e.clientX-r.left-r.width/2)/sc,-(e.clientY-r.top-200)/sc];draw();}};
+  cv.onpointerup=()=>drag=-1;
+  window.__att=()=>{if(!raf)loop();};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8 · META-LEARNING TWO TIMESCALES
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvMeta'); let run=false,raf=null,s=0,theta=[-2.4,2.1],taskI=0,mL=0.45;
+  const tasks=[];for(let i=0;i<40;i++)tasks.push([gauss()*1.1,gauss()*1.1]);
+  function draw(){
+    const {g,w,h}=setupCv(cv,400); clearCv(g,w,h);
+    const topH=h*0.52;
+    // ---- outer loop landscape
+    txt(g,'ÄUSSERE SCHLEIFE — Meta-Training der Gewichte θ',12,16,C.b,10.5,'left',true);
+    const cx=w/2,cy=topH/2+14,sc=Math.min(w,topH)/7.4;
+    for(let i=1;i<=7;i++){
+      g.strokeStyle=`rgba(167,139,250,${0.30-0.03*i})`;g.lineWidth=1;
+      g.beginPath();g.ellipse(cx,cy,i*0.42*sc*1.5,i*0.42*sc*0.85,0.3,0,7);g.stroke();
+    }
+    g.strokeStyle=C.f;g.lineWidth=1.8;g.beginPath();g.arc(cx,cy,7,0,7);g.stroke();
+    // theta trail
+    g.strokeStyle='rgba(167,139,250,.5)';g.lineWidth=1.6;g.beginPath();
+    let tp=[-2.4,2.1];
+    const steps=Math.min(s,140);
+    for(let i=0;i<=steps;i++){
+      const px=cx+tp[0]*sc,py=cy-tp[1]*sc;i===0?g.moveTo(px,py):g.lineTo(px,py);
+      tp=[tp[0]*0.965-0.004,tp[1]*0.965+0.003];
+    }
+    g.stroke();
+    theta=tp;
+    g.fillStyle=C.b;g.beginPath();g.arc(cx+tp[0]*sc,cy-tp[1]*sc,7,0,7);g.fill();
+    g.strokeStyle='#fff';g.lineWidth=1.4;g.stroke();
+    txt(g,'θ',cx+tp[0]*sc+13,cy-tp[1]*sc-11,C.b,12,'left',true);
+    txt(g,'langsam · Tausende Adam-Schritte',w-12,16,C.tx3,9.5,'right');
+    // divider
+    g.strokeStyle='rgba(120,150,220,.22)';g.setLineDash([4,5]);g.lineWidth=1;
+    g.beginPath();g.moveTo(14,topH+18);g.lineTo(w-14,topH+18);g.stroke();g.setLineDash([]);
+    // ---- inner loop
+    txt(g,'INNERE SCHLEIFE — ein Vorwärtsdurchlauf pro Aufgabe τ',12,topH+38,C.a,10.5,'left',true);
+    txt(g,'schnell · KEINE Gewichtsänderung',w-12,topH+38,C.tx3,9.5,'right');
+    const by=topH+58, bh=h-by-14;
+    const nT=5;
+    for(let t=0;t<nT;t++){
+      const idx=(taskI+t)%tasks.length;
+      const bw=(w-40)/nT, bx=20+t*bw;
+      const act=(t===0);
+      g.fillStyle=act?'rgba(94,234,212,.11)':'rgba(120,150,220,.05)';
+      g.strokeStyle=act?C.a:'rgba(120,150,220,.2)';g.lineWidth=act?1.6:1;
+      g.beginPath();g.roundRect(bx,by,bw-10,bh,9);g.fill();g.stroke();
+      txt(g,'τ'+(idx+1),bx+(bw-10)/2,by+13,act?C.a:C.tx3,9.5,'center',true);
+      // mini scatter + fitted line
+      const mx=bx+12,my=by+24,mw=bw-34,mh=bh-36;
+      g.strokeStyle='rgba(120,150,220,.18)';g.lineWidth=1;
+      g.strokeRect(mx,my,mw,mh);
+      const slope=tasks[idx][0]*0.4;
+      const prog=act?clamp((s%28)/16,0,1):1;
+      for(let k=0;k<6;k++){
+        const xx=(k/5-0.5)*1.7, yy=slope*xx+gauss()*0;
+        const px=mx+mw/2+xx*mw*0.42, py=my+mh/2-yy*mh*0.3;
+        g.fillStyle=C.d;g.beginPath();g.arc(px,py,2.6,0,7);g.fill();
+      }
+      g.strokeStyle=act?C.a:'rgba(94,234,212,.4)';g.lineWidth=1.8;
+      g.beginPath();
+      const sl=slope*prog;
+      g.moveTo(mx+2,my+mh/2+sl*0.72*mh*0.3);
+      g.lineTo(mx+mw-2,my+mh/2-sl*0.72*mh*0.3);
+      g.stroke();
+      if(act){txt(g,'lernt gerade…',mx+mw/2,my+mh+9,C.a,8.5,'center');}
+    }
+    $('moS').textContent=Math.floor(s*36);
+    $('moT').textContent='τ'+((taskI%tasks.length)+1);
+    mL=0.45*Math.exp(-s/45)+0.198;
+    $('moL').textContent=mL.toFixed(3);
+  }
+  function loop(){if(run){s+=0.5;if(s%28<0.5)taskI++;draw();}raf=requestAnimationFrame(loop);}
+  $('metaRun').onclick=()=>{run=true;if(!raf)loop();};
+  $('metaStop').onclick=()=>{run=false;};
+  window.__meta=()=>{draw();if(!raf)loop();};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   9 · ICL BLACK BOX  (real ridge-free least squares = what GD converges to)
+   ═══════════════════════════════════════════════════════════ */
+const ICL={Wt:null,D:[],xt:null,dim:3};
+function iclNewTask(){
+  const d=ICL.dim; ICL.Wt=[];for(let i=0;i<d;i++)ICL.Wt.push(gauss());
+  ICL.D=[];for(let i=0;i<25;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);
+    ICL.D.push([x,dot(ICL.Wt,x)]);}
+  ICL.xt=[];for(let k=0;k<d;k++)ICL.xt.push(rnd()*2-1);
+}
+function iclPredict(N,eta){
+  // exactly what Prop.1 attention does: one GD step from W0=0 → W = (eta/N) Σ y_i x_i^T
+  const d=ICL.dim; const W=new Array(d).fill(0);
+  for(let i=0;i<N;i++){const [x,y]=ICL.D[i];for(let k=0;k<d;k++)W[k]+=eta*y*x[k]/Math.max(N,1);}
+  return {pred:dot(W,ICL.xt),W};
+}
+(function(){
+  iclNewTask();
+  const cv=$('cvICL'); let sweepT=null;
+  function draw(){
+    const {g,w,h}=setupCv(cv,330); clearCv(g,w,h);
+    const N=+$('icN').value;
+    const eta=2.6;
+    const {pred,W}=iclPredict(N,eta);
+    const truth=dot(ICL.Wt,ICL.xt);
+    // draw the "black box"
+    const bx=w*0.33,bw=w*0.34,by=28,bh=h-70;
+    g.fillStyle='rgba(8,11,20,.85)';g.strokeStyle='rgba(120,150,220,.35)';g.lineWidth=1.6;
+    g.beginPath();g.roundRect(bx,by,bw,bh,14);g.fill();g.stroke();
+    txt(g,'?',bx+bw/2,by+bh/2-28,'rgba(120,150,220,.28)',72,'center',true);
+    txt(g,'EINGEFRORENE',bx+bw/2,by+bh/2+22,C.tx3,9.5,'center',true);
+    txt(g,'GEWICHTE',bx+bw/2,by+bh/2+35,C.tx3,9.5,'center',true);
+    // context tokens flowing in
+    const show=Math.min(N,10);
+    for(let i=0;i<show;i++){
+      const y=by+18+i*((bh-36)/Math.max(show-1,1));
+      g.fillStyle='rgba(244,114,182,.16)';g.strokeStyle='rgba(244,114,182,.55)';g.lineWidth=1;
+      g.beginPath();g.roundRect(14,y-8,bx-30,16,5);g.fill();g.stroke();
+      txt(g,`(x${i+1}, y${i+1}=${ICL.D[i][1].toFixed(2)})`,14+(bx-30)/2,y,C.d,8.5,'center');
+      g.strokeStyle='rgba(244,114,182,.3)';g.beginPath();g.moveTo(bx-14,y);g.lineTo(bx,by+bh/2);g.stroke();
+    }
+    if(N>10)txt(g,`… +${N-10} weitere`,14+(bx-30)/2,by+bh-4,C.tx3,8.5,'center');
+    if(N===0)txt(g,'kein Kontext',14+(bx-30)/2,by+bh/2,C.tx3,10,'center');
+    // query + output
+    g.fillStyle='rgba(96,165,250,.16)';g.strokeStyle=C.e;g.lineWidth=1.2;
+    g.beginPath();g.roundRect(bx+bw+14,by+bh/2-42,w-bx-bw-28,22,6);g.fill();g.stroke();
+    txt(g,'x_test',bx+bw+14+(w-bx-bw-28)/2,by+bh/2-31,C.e,10,'center',true);
+    arrow(g,bx+bw+8,by+bh/2-31,bx+bw+12,by+bh/2-31,C.e,1.4,5);
+    const okc=Math.abs(pred-truth)<0.35?C.f:C.bad;
+    g.fillStyle='rgba(94,234,212,.14)';g.strokeStyle=okc;g.lineWidth=1.6;
+    g.beginPath();g.roundRect(bx+bw+14,by+bh/2+8,w-bx-bw-28,28,7);g.fill();g.stroke();
+    txt(g,'ŷ = '+pred.toFixed(3),bx+bw+14+(w-bx-bw-28)/2,by+bh/2+22,okc,12,'center',true);
+    txt(g,'y  = '+truth.toFixed(3),bx+bw+14+(w-bx-bw-28)/2,by+bh/2+50,C.tx2,10.5,'center');
+    // implicit model bars
+    txt(g,'implizit gebautes Modell W:',w/2,h-26,C.tx3,9,'center');
+    for(let k=0;k<ICL.dim;k++){
+      const bwid=(w*0.5)/ICL.dim, ox=w*0.25+k*bwid;
+      const v=clamp(W[k]/2.2,-1,1), t=clamp(ICL.Wt[k]/2.2,-1,1);
+      g.fillStyle='rgba(94,234,212,.7)';
+      g.fillRect(ox+4,h-14,bwid-10,-v*9);
+      g.strokeStyle=C.f;g.lineWidth=1.6;
+      g.beginPath();g.moveTo(ox+4,h-14-t*9);g.lineTo(ox+bwid-6,h-14-t*9);g.stroke();
+    }
+    g.strokeStyle='rgba(120,150,220,.3)';g.beginPath();g.moveTo(w*0.25,h-14);g.lineTo(w*0.75,h-14);g.stroke();
+    $('vicN').textContent=N;
+    $('icP').textContent=pred.toFixed(3);
+    $('icT').textContent=truth.toFixed(3);
+    const e=Math.abs(pred-truth);$('icE').textContent=e.toFixed(3);
+    // sweep plot
+    const xs=[],ys=[];
+    for(let n=0;n<=25;n++){let s=0;
+      for(let r=0;r<60;r++){
+        // average over random tasks for a smooth curve
+        const d=ICL.dim,Wt=[];for(let i=0;i<d;i++)Wt.push(gauss());
+        const Wc=new Array(d).fill(0);
+        for(let i=0;i<n;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);
+          const y=dot(Wt,x);for(let k=0;k<d;k++)Wc[k]+=eta*y*x[k]/Math.max(n,1);}
+        const xq=[];for(let k=0;k<d;k++)xq.push(rnd()*2-1);
+        s+=(dot(Wc,xq)-dot(Wt,xq))**2;}
+      xs.push(n);ys.push(s/60);}
+    pl('icPlot',[{x:xs,y:ys,mode:'lines',line:{color:C.a,width:2.2},name:'Fehler'},
+      {x:[N],y:[ys[N]],mode:'markers',marker:{size:10,color:C.c},name:'jetzt'}],
+      {yaxis:{title:'mittl. Fehler²'},xaxis:{title:'N Kontextbeispiele'},showlegend:false,margin:{l:50,r:10,t:8,b:34}});
+  }
+  $('icN').oninput=draw;
+  $('icNew').onclick=()=>{iclNewTask();draw();};
+  $('icSweep').onclick=()=>{clearInterval(sweepT);let n=0;
+    sweepT=setInterval(()=>{$('icN').value=n;draw();n++;if(n>20)clearInterval(sweepT);},130);};
+  window.__icl=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   10 · THE TRICK: weight change ≡ data change
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cvA=$('cvTrickA'),cvB=$('cvTrickB');
+  let D=[],W0=0.25,eta=1.4;
+  function gen(){D=[];for(let i=0;i<9;i++){const x=(i/8-0.5)*3.0+gauss()*0.08;D.push([x,1.15*x+gauss()*0.12]);}}
+  gen();
+  function dW(){let s=0;D.forEach(([x,y])=>{s+=(W0*x-y)*x;});return -eta*s/D.length;}
+  function drawOne(cv,isB,t){
+    const {g,w,h}=setupCv(cv,260); clearCv(g,w,h);
+    const cx=w/2,cy=h/2,sc=Math.min(w,h)/4.6;
+    grid(g,w,h,cx,cy,sc,1,'rgba(120,150,220,.07)');
+    const d=dW(), Wn=W0+d;
+    const col=isB?C.d:C.b;
+    // line(s)
+    const drawLine=(slope,c,lw,dash)=>{
+      g.strokeStyle=c;g.lineWidth=lw;if(dash)g.setLineDash(dash);
+      g.beginPath();g.moveTo(0,cy+ (cx/sc)*slope*sc);g.lineTo(w,cy-((w-cx)/sc)*slope*sc);g.stroke();g.setLineDash([]);
+    };
+    if(!isB){
+      drawLine(W0,'rgba(167,139,250,.35)',1.5,[5,5]);
+      drawLine(W0+d*t,C.b,2.6);
+      txt(g,`W = ${(W0+d*t).toFixed(3)}`,12,18,C.b,11,'left',true);
+      txt(g,'Gerade dreht sich',12,34,C.tx3,9.5);
+    }else{
+      drawLine(W0,C.b,2.6);
+      txt(g,`W = ${W0.toFixed(3)}  (fest!)`,12,18,C.b,11,'left',true);
+      txt(g,'Ziele wandern',12,34,C.d,9.5);
+    }
+    // data points
+    D.forEach(([x,y])=>{
+      const py=isB? y-(d*t)*x : y;
+      const px=cx+x*sc, pyy=cy-py*sc;
+      if(isB){
+        g.strokeStyle='rgba(244,114,182,.35)';g.lineWidth=1;g.setLineDash([2,3]);
+        g.beginPath();g.moveTo(px,cy-y*sc);g.lineTo(px,pyy);g.stroke();g.setLineDash([]);
+        g.fillStyle='rgba(244,114,182,.25)';g.beginPath();g.arc(px,cy-y*sc,3,0,7);g.fill();
+      }
+      // residual
+      const predY=isB?W0*x:(W0+d*t)*x;
+      g.strokeStyle='rgba(251,113,133,.5)';g.lineWidth=2;
+      g.beginPath();g.moveTo(px,pyy);g.lineTo(px,cy-predY*sc);g.stroke();
+      g.fillStyle=isB?C.d:C.f;g.beginPath();g.arc(px,pyy,4.5,0,7);g.fill();
+    });
+    // loss
+    let L=0;D.forEach(([x,y])=>{const tgt=isB?y-(d*t)*x:y;const pr=isB?W0*x:(W0+d*t)*x;L+=(pr-tgt)**2;});
+    L/=(2*D.length);
+    return L;
+  }
+  function draw(){
+    const t=+$('trT').value/100;
+    const LA=drawOne(cvA,false,t), LB=drawOne(cvB,true,t);
+    $('trLA').textContent=LA.toFixed(5);$('trLB').textContent=LB.toFixed(5);
+    $('trD').textContent=Math.abs(LA-LB).toExponential(1);
+    $('vtr').textContent=$('trT').value+' %';
+  }
+  $('trT').oninput=draw;
+  $('trPlay').onclick=()=>{let v=0;const iv=setInterval(()=>{v+=3;$('trT').value=Math.min(v,100);draw();
+    if(v>=100)clearInterval(iv);},22);};
+  window.__trick=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   11 · PROPOSITION 1 — matrices, step-by-step, verification
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  // ---------- token strip ----------
+  const cvT=$('cvTok');
+  function drawTok(){
+    const {g,w,h}=setupCv(cvT,150); clearCv(g,w,h);
+    const N=6, bw=(w-40)/(N+1);
+    for(let i=0;i<=N;i++){
+      const bx=20+i*bw, isQ=(i===N);
+      const xh=52,yh=30;
+      g.fillStyle='rgba(96,165,250,.16)';g.strokeStyle=C.e;g.lineWidth=1.3;
+      g.beginPath();g.roundRect(bx,30,bw-12,xh,7);g.fill();g.stroke();
+      txt(g,isQ?'x_test':'x'+(i+1),bx+(bw-12)/2,30+xh/2,C.e,11,'center',true);
+      txt(g,'ℝ^Nx',bx+(bw-12)/2,30+xh/2+15,C.tx3,8,'center');
+      g.fillStyle=isQ?'rgba(120,150,220,.07)':'rgba(52,211,153,.16)';
+      g.strokeStyle=isQ?'rgba(120,150,220,.4)':C.f;
+      if(isQ)g.setLineDash([4,3]);
+      g.beginPath();g.roundRect(bx,30+xh+4,bw-12,yh,7);g.fill();g.stroke();g.setLineDash([]);
+      txt(g,isQ?'0':'y'+(i+1),bx+(bw-12)/2,30+xh+4+yh/2,isQ?C.tx3:C.f,11,'center',true);
+      txt(g,isQ?'Abfrage':'e'+(i+1),bx+(bw-12)/2,20,isQ?C.c:C.tx3,9.5,'center',isQ);
+    }
+    txt(g,'Kontext-Tokens = Trainingsdaten',20,h-10,C.tx2,10,'left');
+    txt(g,'← hier wird die Antwort hineingeschrieben',w-20,h-10,C.c,10,'right');
+  }
+
+  // ---------- block matrices ----------
+  const MATS=[
+    {id:'WK',name:'W_K  =  W_Q',latex:'\\begin{pmatrix} I_x & 0 \\\\ 0 & 0\\end{pmatrix}',
+     expl:'<b>Schlüssel & Anfrage — identisch.</b> Der obere Block ist die Einheitsmatrix auf dem x-Teil, alles andere ist Null. Wirkung: Der Schlüssel eines Tokens ist einfach sein <b>x</b>; das y wird ausgeblendet. Damit wird aus kᵢᵀqⱼ genau das Skalarprodukt <span style="font-family:monospace">xᵢᵀxⱼ</span> — der Baustein, den der Gradient braucht.'},
+    {id:'WV',name:'W_V',latex:'\\begin{pmatrix} 0 & 0 \\\\ W_0 & -I_y\\end{pmatrix}',
+     expl:'<b>Der Wert ist der Fehler.</b> Angewandt auf (xᵢ,yᵢ
+) liefert er (0, W₀xᵢ − yᵢ) — also genau den <b>Vorhersagefehler</b>. Das Minus vor I<sub>y</sub> zieht das wahre Ziel ab, W₀ liefert die aktuelle Vorhersage. Der Wert eines Tokens ist also nicht sein Inhalt, sondern <b>wie falsch das Modell bei ihm liegt</b>.'},
+    {id:'P',name:'P',latex:'\\frac{\\eta}{N}\\,I',
+     expl:'<b>Die Lernrate.</b> Eine skalierte Einheitsmatrix. η/N ist genau der Vorfaktor aus der GD-Formel: Mittelung über N Beispiele, multipliziert mit der Schrittweite. <b>η wird nicht eingestellt, sondern in der äußeren Schleife gelernt</b> — optimal für die Aufgabenfamilie.'},
+    {id:'R',name:'Ergebnis',latex:'\\begin{pmatrix} x_j \\\\ y_j - \\Delta W x_j\\end{pmatrix}',
+     expl:'<b>Das Token nach der Schicht.</b> Das x ist unverändert, das Ziel y wurde um exakt ΔWxⱼ verschoben — das ist die Datenänderung aus Gl. 4. Für das Test-Token ist das <b>die Vorhersage</b>. Eine Attention-Schicht = ein Gradientenschritt.'}
+  ];
+  function buildMats(){
+    const host=$('propMats');
+    host.innerHTML=MATS.map(m=>`
+      <div class="mblk" data-id="${m.id}" style="display:inline-block;margin:6px 10px 6px 0;padding:10px 14px;
+        border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:.18s;background:rgba(120,150,220,.05)">
+        <div style="font-family:var(--mono);font-size:10.5px;color:var(--tx3);margin-bottom:6px;letter-spacing:.1em">${m.name}</div>
+        <div class="mlx">\\(${m.latex}\\)</div>
+      </div>`).join('');
+    QA('.mblk').forEach(el=>{
+      const m=MATS.find(x=>x.id===el.dataset.id);
+      const act=()=>{QA('.mblk').forEach(o=>{o.style.borderColor='var(--line)';o.style.background='rgba(120,150,220,.05)';});
+        el.style.borderColor=C.a;el.style.background='rgba(94,234,212,.10)';
+        $('propExpl').innerHTML=m.expl;};
+      el.onmouseenter=act; el.onclick=act;
+    });
+  }
+
+  // ---------- step-by-step computation ----------
+  const NT=4, NX=2;
+  let DX=[],DY=[],W0=[0.3,-0.2],ETA=1.0,xt=[0.7,-0.5];
+  function genP1(){DX=[];DY=[];
+    for(let i=0;i<NT;i++){const x=[+(rnd()*2-1).toFixed(2),+(rnd()*2-1).toFixed(2)];
+      DX.push(x);DY.push(+(0.9*x[0]-1.2*x[1]).toFixed(2));}
+    xt=[+(rnd()*2-1).toFixed(2),+(rnd()*2-1).toFixed(2)];}
+  genP1();
+  const P1STEPS=[
+    {t:'<b>Schritt 0 — die Tokens.</b> Jedes Kontext-Token eᵢ = (xᵢ, yᵢ). Das Test-Token hat y = 0. Alles, was gleich passiert, betrifft nur diese Zahlen.'},
+    {t:'<b>Schritt 1 — Schlüssel und Anfragen.</b> W<sub>K</sub> = W<sub>Q</sub> löschen den y-Teil. Also kᵢ = (xᵢ, 0) und qⱼ = (xⱼ, 0). Die y-Werte spielen hier <b>keine</b> Rolle.'},
+    {t:'<b>Schritt 2 — Werte = Fehler.</b> W<sub>V</sub> macht aus eᵢ den Vektor (0, W₀xᵢ − yᵢ). Rot = Modell sagt zu viel, blau = zu wenig. Das ist der Residualfehler.'},
+    {t:'<b>Schritt 3 — Attention-Gewichte.</b> A<sub>ji</sub> = kᵢᵀqⱼ = xᵢᵀxⱼ. Reine Ähnlichkeit der Eingaben. Kein Softmax, keine Normierung.'},
+    {t:'<b>Schritt 4 — Die Summe.</b> Σᵢ (Fehlerᵢ)·(xᵢᵀxⱼ) = [Σᵢ (W₀xᵢ−yᵢ)xᵢᵀ] xⱼ. Die eckige Klammer <b>ist der Gradient</b> — er ist entstanden, ohne dass jemand abgeleitet hat.'},
+    {t:'<b>Schritt 5 — Projektion & Schreiben.</b> Mit P = (η/N)I wird daraus −ΔW xⱼ und landet im y-Feld. Vergleiche unten: identisch mit echtem Gradientenabstieg. <b>Fertig.</b>'}
+  ];
+  let p1s=0, p1auto=null;
+  const cvP=$('cvP1');
+  function drawP1(){
+    const {g,w,h}=setupCv(cvP,290); clearCv(g,w,h);
+    const s=p1s;
+    const K=DX.map(x=>[x[0],x[1],0]), Qa=DX.concat([xt]).map(x=>[x[0],x[1],0]);
+    const V=DX.map((x,i)=>dot(W0,x)-DY[i]);
+    const colW=(w-70)/(NT+1);
+    // row headers
+    const rows=[['Token eᵢ',36],['k / q',96],['Wert = Fehler',150],['A_test,i',204],['Beitrag',252]];
+    rows.forEach(([lab,y],ri)=>{
+      const on=(ri===0)||(ri===1&&s>=1)||(ri===2&&s>=2)||(ri===3&&s>=3)||(ri===4&&s>=4);
+      txt(g,lab,8,y,on?C.tx2:'rgba(107,123,163,.35)',9.5,'left',on);
+    });
+    for(let i=0;i<=NT;i++){
+      const isQ=(i===NT), bx=72+i*colW;
+      // row 0: tokens
+      g.fillStyle=isQ?'rgba(251,191,36,.12)':'rgba(96,165,250,.13)';
+      g.strokeStyle=isQ?C.c:C.e;g.lineWidth=1.2;
+      g.beginPath();g.roundRect(bx,20,colW-12,32,6);g.fill();g.stroke();
+      txt(g,isQ?`(${xt[0]},${xt[1]})`:`(${DX[i][0]},${DX[i][1]})`,bx+(colW-12)/2,30,C.e,8.5,'center');
+      txt(g,isQ?'y=0':`y=${DY[i]}`,bx+(colW-12)/2,44,isQ?C.tx3:C.f,8.5,'center');
+      txt(g,isQ?'TEST':'e'+(i+1),bx+(colW-12)/2,11,isQ?C.c:C.tx3,8.5,'center',true);
+      // row 1: k/q
+      if(s>=1){
+        g.fillStyle='rgba(120,150,220,.08)';g.strokeStyle='rgba(120,150,220,.4)';
+        g.beginPath();g.roundRect(bx,82,colW-12,26,6);g.fill();g.stroke();
+        const xv=isQ?xt:DX[i];
+        txt(g,`(${xv[0]},${xv[1]}, 0)`,bx+(colW-12)/2,95,C.tx2,8.5,'center');
+      }
+      // row 2: values
+      if(s>=2&&!isQ){
+        const v=V[i], a=clamp(Math.abs(v)/1.6,0,1);
+        g.fillStyle=v>0?`rgba(251,113,133,${0.12+0.5*a})`:`rgba(96,165,250,${0.12+0.5*a})`;
+        g.strokeStyle=v>0?C.bad:C.e;g.lineWidth=1.2;
+        g.beginPath();g.roundRect(bx,136,colW-12,26,6);g.fill();g.stroke();
+        txt(g,'(0, '+v.toFixed(2)+')',bx+(colW-12)/2,149,v>0?C.bad:C.e,9,'center',true);
+      }else if(s>=2&&isQ){
+        txt(g,'—',bx+(colW-12)/2,149,C.tx3,10,'center');
+      }
+      // row 3: attention to test
+      if(s>=3&&!isQ){
+        const a=dot(DX[i],xt);
+        const t=clamp(Math.abs(a)/1.4,0,1);
+        g.fillStyle=`rgba(94,234,212,${0.10+0.55*t})`;g.strokeStyle=C.a;g.lineWidth=1.2;
+        g.beginPath();g.roundRect(bx,191,colW-12,24,6);g.fill();g.stroke();
+        txt(g,a.toFixed(2),bx+(colW-12)/2,203,C.a,9.5,'center',true);
+      }
+      // row 4: contribution
+      if(s>=4&&!isQ){
+        const c2=V[i]*dot(DX[i],xt)*ETA/NT;
+        g.fillStyle='rgba(167,139,250,.16)';g.strokeStyle=C.b;g.lineWidth=1.2;
+        g.beginPath();g.roundRect(bx,240,colW-12,24,6);g.fill();g.stroke();
+        txt(g,c2.toFixed(3),bx+(colW-12)/2,252,C.b,9.5,'center',true);
+      }
+    }
+    // final sum
+    if(s>=5){
+      let S=0;for(let i=0;i<NT;i++)S+=V[i]*dot(DX[i],xt)*ETA/NT;
+      const bx=72+NT*colW;
+      g.fillStyle='rgba(52,211,153,.16)';g.strokeStyle=C.f;g.lineWidth=1.8;
+      g.beginPath();g.roundRect(bx,232,colW-12,42,8);g.fill();g.stroke();
+      txt(g,'ŷ =',bx+(colW-12)/2,244,C.f,8.5,'center');
+      txt(g,(-S).toFixed(3),bx+(colW-12)/2,259,C.f,12,'center',true);
+      // reference GD
+      const dW=[0,0];
+      for(let i=0;i<NT;i++){const r=dot(W0,DX[i])-DY[i];dW[0]-=ETA*r*DX[i][0]/NT;dW[1]-=ETA*r*DX[i][1]/NT;}
+      const gdp=dot([W0[0]+dW[0],W0[1]+dW[1]],xt)-dot(W0,xt);
+      txt(g,`GD-Referenz: ${gdp.toFixed(3)}  ✓`,w-10,h-8,C.f,9.5,'right',true);
+    }
+    $('p1Txt').innerHTML=P1STEPS[s].t;
+    $('p1Bar').style.width=(100*s/(P1STEPS.length-1))+'%';
+  }
+  $('p1Next').onclick=()=>{p1s=Math.min(p1s+1,P1STEPS.length-1);drawP1();};
+  $('p1Reset').onclick=()=>{p1s=0;clearInterval(p1auto);genP1();drawP1();};
+  $('p1Auto').onclick=()=>{clearInterval(p1auto);p1s=0;drawP1();
+    p1auto=setInterval(()=>{if(p1s>=P1STEPS.length-1){clearInterval(p1auto);return;}p1s++;drawP1();},1400);};
+
+  // ---------- live verification ----------
+  function verify(){
+    const eta=+$('verEta').value, d=5, N=8;
+    const Xs=[],Ys=[];const Wt=[];for(let i=0;i<d;i++)Wt.push(gauss());
+    for(let i=0;i<N;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);
+      Xs.push(x);Ys.push(dot(Wt,x));}
+    const tests=[];for(let i=0;i<24;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);tests.push(x);}
+    // GD from W0=0
+    const Wg=new Array(d).fill(0);
+    for(let i=0;i<N;i++){for(let k=0;k<d;k++)Wg[k]+=eta*Ys[i]*Xs[i][k]/N;}
+    const gdP=tests.map(x=>dot(Wg,x));
+    // LSA with constructed weights (explicit attention computation)
+    const tfP=tests.map(xq=>{
+      let s=0;
+      for(let i=0;i<N;i++){ // value = (0, W0 x_i - y_i) = -y_i ; attention = x_i . x_q
+        s+=(0-Ys[i])*dot(Xs[i],xq);
+      }
+      return -(eta/N)*s;   // read out with -1
+    });
+    const diffs=gdP.map((v,i)=>Math.abs(v-tfP[i]));
+    const mx=Math.max(...diffs);
+    pl('verPlot',[
+      {x:gdP,y:tfP,mode:'markers',marker:{size:9,color:C.a,line:{color:'#06121a',width:1}},name:'Testpunkte'},
+      {x:[Math.min(...gdP),Math.max(...gdP)],y:[Math.min(...gdP),Math.max(...gdP)],mode:'lines',
+        line:{color:'rgba(167,139,250,.55)',dash:'dash',width:2},name:'y = x (perfekt)'}],
+      {xaxis:{title:'Vorhersage: 1 Schritt Gradientenabstieg'},yaxis:{title:'Vorhersage: Attention (Prop. 1)'},
+       showlegend:true,margin:{l:60,r:14,t:10,b:44}});
+    $('verD').textContent=mx.toExponential(1);
+    $('verV').textContent=mx<1e-10?'IDENTISCH':'≈';
+    $('vVerEta').textContent=(+$('verEta').value).toFixed(2);
+  }
+  $('verRun').onclick=verify; $('verEta').oninput=verify;
+
+  window.__prop=()=>{drawTok();buildMats();drawP1();verify();
+    if(window.renderMathInElement)renderMathInElement($('propMats'),{
+      delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false});};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   12 · REAL IN-BROWSER TRAINING of a linear self-attention layer
+   ═══════════════════════════════════════════════════════════
+   Model: token e_i = (x_i, y_i) in R^{d+1}, d = Nx.
+   LSA (Prop.1 parameterisation, but FREE weights):
+      out_y(test) = -(1/1) * [ Wpv_row · Σ_i  (e_i)  (e_i^T Wkq e_q) ]
+   We train the two matrix products directly (that is exactly what
+   matters per the paper's "uniqueness" note):
+      Wkq ∈ R^{(d+1)×(d+1)},  Wpv ∈ R^{(d+1)×(d+1)}
+   Prediction read out from last coordinate, times -1.
+   ═══════════════════════════════════════════════════════════ */
+const TRN={
+  d:6, N:6, B:96, lr:3e-3, step:0, running:false,
+  Wkq:null, Wpv:null, mK:null,vK:null,mP:null,vP:null,
+  hist:{s:[],lt:[],lg:[],cos:[],l2m:[],l2p:[]}, etaGD:0, raf:null
+};
+function trnInit(){
+  const D=TRN.d+1;
+  TRN.Wkq=zeros(D,D);TRN.Wpv=zeros(D,D);
+  for(let i=0;i<D;i++)for(let j=0;j<D;j++){TRN.Wkq[i][j]=gauss()*0.002;TRN.Wpv[i][j]=gauss()*0.002;}
+  TRN.mK=zeros(D,D);TRN.vK=zeros(D,D);TRN.mP=zeros(D,D);TRN.vP=zeros(D,D);
+  TRN.step=0;TRN.hist={s:[],lt:[],lg:[],cos:[],l2m:[],l2p:[]};
+  // optimal GD learning rate for this family (line search once)
+  TRN.etaGD=lineSearchEta();
+}
+function sampleTask(d,N){
+  const Wt=[];for(let i=0;i<d;i++)Wt.push(gauss());
+  const X=[],Y=[];
+  for(let i=0;i<N;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);X.push(x);Y.push(dot(Wt,x));}
+  const xq=[];for(let k=0;k<d;k++)xq.push(rnd()*2-1);
+  return {Wt,X,Y,xq,yq:dot(Wt,xq)};
+}
+function lineSearchEta(){
+  const d=TRN.d,N=TRN.N;let best=0,bl=1e18;
+  const tasks=[];for(let t=0;t<300;t++)tasks.push(sampleTask(d,N));
+  for(let e=0.05;e<=4;e+=0.025){
+    let L=0;
+    tasks.forEach(T=>{
+      const W=new Array(d).fill(0);
+      for(let i=0;i<N;i++)for(let k=0;k<d;k++)W[k]+=e*T.Y[i]*T.X[i][k]/N;
+      L+=(dot(W,T.xq)-T.yq)**2;});
+    L/=tasks.length; if(L<bl){bl=L;best=e;}
+  }
+  return best;
+}
+/* forward: builds token matrix, returns prediction + cache */
+function lsaForward(T,Wkq,Wpv){
+  const d=TRN.d,D=d+1,N=TRN.N;
+  const E=[];for(let i=0;i<N;i++){const e=new Float64Array(D);
+    for(let k=0;k<d;k++)e[k]=T.X[i][k]; e[d]=T.Y[i]; E.push(e);}
+  const eq=new Float64Array(D);for(let k=0;k<d;k++)eq[k]=T.xq[k];eq[d]=0;
+  // a_i = e_i^T Wkq eq
+  const Kq=new Float64Array(D);
+  for(let r=0;r<D;r++){let s=0;for(let c=0;c<D;c++)s+=Wkq[r][c]*eq[c];Kq[r]=s;}
+  const a=new Float64Array(N);
+  for(let i=0;i<N;i++){let s=0;for(let r=0;r<D;r++)s+=E[i][r]*Kq[r];a[i]=s;}
+  // z = Σ a_i e_i
+  const z=new Float64Array(D);
+  for(let i=0;i<N;i++)for(let r=0;r<D;r++)z[r]+=a[i]*E[i][r];
+  // out = Wpv z ; prediction = -(out[d])
+  let o=0;for(let c=0;c<D;c++)o+=Wpv[d][c]*z[c];
+  return {pred:-o, E,eq,a,z,Kq};
+}
+/* gradient of (pred - y)^2 wrt Wkq, Wpv  (analytic) */
+function lsaBackward(T,F,Wkq,Wpv,gK,gP){
+  const d=TRN.d,D=d+1,N=TRN.N;
+  const err=2*(F.pred-T.yq);
+  const dOut=-err;                       // d loss / d o
+  // Wpv row d only
+  for(let c=0;c<D;c++)gP[d][c]+=dOut*F.z[c];
+  // dz = Wpv[d]^T * dOut
+  const dz=new Float64Array(D);
+  for(let c=0;c<D;c++)dz[c]=dOut*Wpv[d][c];
+  // da_i = e_i · dz
+  const da=new Float64Array(N);
+  for(let i=0;i<N;i++){let s=0;for(let r=0;r<D;r++)s+=F.E[i][r]*dz[r];da[i]=s;}
+  // a_i = e_i^T Wkq eq  →  dWkq += da_i * e_i ⊗ eq
+  for(let i=0;i<N;i++){const s=da[i];if(s===0)continue;
+    for(let r=0;r<D;r++){const er=F.E[i][r]*s;if(er===0)continue;
+      for(let c=0;c<D;c++)gK[r][c]+=er*F.eq[c];}}
+  return (F.pred-T.yq)**2;
+}
+function adamStep(Wm,g,m,v,lr,t){
+  const b1=0.9,b2=0.999,eps=1e-8;
+  const bc1=1-Math.pow(b1,t), bc2=1-Math.pow(b2,t);
+  for(let i=0;i<Wm.length;i++)for(let j=0;j<Wm[0].length;j++){
+    const gi=g[i][j];
+    m[i][j]=b1*m[i][j]+(1-b1)*gi;
+    v[i][j]=b2*v[i][j]+(1-b2)*gi*gi;
+    Wm[i][j]-=lr*(m[i][j]/bc1)/(Math.sqrt(v[i][j]/bc2)+eps);
+  }
+}
+/* the implicit linear model the LSA builds for a given task */
+function lsaModel(T,Wkq,Wpv){
+  const d=TRN.d; const W=new Array(d).fill(0);
+  for(let k=0;k<d;k++){
+    const T2={X:T.X,Y:T.Y,xq:new Array(d).fill(0),yq:0}; T2.xq[k]=1;
+    W[k]=lsaForward(T2,Wkq,Wpv).pred;
+  }
+  return W;
+}
+function gdModel(T,eta){
+  const d=TRN.d,N=TRN.N,W=new Array(d).fill(0);
+  for(let i=0;i<N;i++)for(let k=0;k<d;k++)W[k]+=eta*T.Y[i]*T.X[i][k]/N;
+  return W;
+}
+function trnEvaluate(){
+  const nv=140; let Lt=0,Lg=0,cs=0,l2m=0,l2p=0;
+  for(let t=0;t<nv;t++){
+    const T=sampleTask(TRN.d,TRN.N);
+    const pt=lsaForward(T,TRN.Wkq,TRN.Wpv).pred;
+    const Wg=gdModel(T,TRN.etaGD);
+    const Wl=lsaModel(T,TRN.Wkq,TRN.Wpv);
+    Lt+=(pt-T.yq)**2;
+    Lg+=(dot(Wg,T.xq)-T.yq)**2;
+    cs+=cosSim(Wl,Wg);
+    l2m+=l2d(Wl,Wg);
+    l2p+=Math.abs(pt-dot(Wg,T.xq));
+  }
+  return {lt:Lt/nv,lg:Lg/nv,cos:cs/nv,l2m:l2m/nv,l2p:l2p/nv};
+}
+function trnBatch(){
+  const D=TRN.d+1;
+  const gK=zeros(D,D), gP=zeros(D,D);
+  let L=0;
+  for(let b=0;b<TRN.B;b++){
+    const T=sampleTask(TRN.d,TRN.N);
+    const F=lsaForward(T,TRN.Wkq,TRN.Wpv);
+    L+=lsaBackward(T,F,TRN.Wkq,TRN.Wpv,gK,gP);
+  }
+  for(let i=0;i<D;i++)for(let j=0;j<D;j++){gK[i][j]/=TRN.B;gP[i][j]/=TRN.B;}
+  // gradient clipping (global norm 10) — as in the paper
+  let gn=0;for(let i=0;i<D;i++)for(let j=0;j<D;j++)gn+=gK[i][j]**2+gP[i][j]**2;
+  gn=Math.sqrt(gn);
+  if(gn>10){const s=10/gn;for(let i=0;i<D;i++)for(let j=0;j<D;j++){gK[i][j]*=s;gP[i][j]*=s;}}
+  TRN.step++;
+  adamStep(TRN.Wkq,gK,TRN.mK,TRN.vK,TRN.lr,TRN.step);
+  adamStep(TRN.Wpv,gP,TRN.mP,TRN.vP,TRN.lr,TRN.step);
+  return L/TRN.B;
+}
+/* scale-corrected weight products, exactly as Appendix A.3 */
+function scaleCorrected(){
+  const D=TRN.d+1;
+  let b=0;for(let i=0;i<D-1;i++)b+=TRN.Wkq[i][i];b/=(D-1);
+  if(Math.abs(b)<1e-9)b=1;
+  const K=scaleM(TRN.Wkq,1/b), P=scaleM(TRN.Wpv,b);
+  return {K,P,beta:b};
+}
+function drawWmat(cv,M,title,ref){
+  const {g,w,h}=setupCv(cv,240); clearCv(g,w,h);
+  const D=M.length;
+  const show=ref?2:1;
+  const cell=Math.min((w-40)/(D*show+ (show>1?1.6:0)), (h-36)/D);
+  let mx=0;M.forEach(r=>r.forEach(v=>mx=Math.max(mx,Math.abs(v))));
+  mx=Math.max(mx,0.2);
+  const drawM=(MM,ox,lab,scale)=>{
+    for(let i=0;i<D;i++)for(let j=0;j<D;j++){
+      const v=MM[i][j]/scale;
+      g.fillStyle=v>0?`rgba(94,234,212,${clamp(0.05+Math.abs(v)*0.9,0,.95)})`
+                     :`rgba(244,114,182,${clamp(0.05+Math.abs(v)*0.9,0,.95)})`;
+      g.fillRect(ox+j*cell,26+i*cell,cell-1,cell-1);
+    }
+    g.strokeStyle='rgba(120,150,220,.28)';g.lineWidth=1;g.strokeRect(ox,26,D*cell,D*cell);
+    txt(g,lab,ox+D*cell/2,15,C.tx2,9.5,'center');
+  };
+  drawM(M,20,ref?'trainiert':title,mx);
+  if(ref){let rm=0;ref.forEach(r=>r.forEach(v=>rm=Math.max(rm,Math.abs(v))));
+    drawM(ref,20+D*cell+22,'Konstruktion θ_GD',Math.max(rm,0.2));}
+  txt(g,'letzte Zeile/Spalte = y-Kanal',w-8,h-7,C.tx3,8.5,'right');
+}
+function constrWkq(){const D=TRN.d+1,M=zeros(D,D);for(let i=0;i<D-1;i++)M[i][i]=1;return M;}
+function constrWpv(){const D=TRN.d+1,M=zeros(D,D);M[D-1][D-1]=-TRN.etaGD/TRN.N;return M;}
+function trnPlots(){
+  const H=TRN.hist;
+  pl('trLossPlot',[
+    {x:H.s,y:H.lt,mode:'lines',line:{color:C.a,width:2.4},name:'Transformer'},
+    {x:H.s,y:H.lg,mode:'lines',line:{color:C.b,width:2,dash:'dash'},name:'1 Schritt GD (η optimal)'}],
+    {yaxis:{title:'Verlust'},xaxis:{title:'Trainingsschritt'},
+     legend:{x:0.55,y:0.95},margin:{l:52,r:10,t:8,b:38}});
+  pl('trAlignPlot',[
+    {x:H.s,y:H.cos,mode:'lines',line:{color:C.f,width:2.4},name:'Cos-Ähnlichkeit',yaxis:'y'},
+    {x:H.s,y:H.l2m,mode:'lines',line:{color:C.c,width:2},name:'L2 Modelldiff.',yaxis:'y2'},
+    {x:H.s,y:H.l2p,mode:'lines',line:{color:C.d,width:2,dash:'dot'},name:'L2 Vorhers.diff',yaxis:'y2'}],
+    {yaxis:{title:'cos',range:[0,1.05]},
+     yaxis2:{title:'L2',overlaying:'y',side:'right',gridcolor:'rgba(0,0,0,0)',color:'#9fb0d6'},
+     xaxis:{title:'Trainingsschritt'},legend:{x:0.35,y:0.5},margin:{l:48,r:46,t:8,b:38}});
+}
+(function(){
+  trnInit();
+  function refreshW(){
+    const {K,P}=scaleCorrected();
+    const ref=$('showConstr').checked;
+    drawWmat($('cvWKQ'),K,'W_KQ (trainiert)',ref?constrWkq():null);
+    drawWmat($('cvWPV'),P,'W_PV (trainiert)',ref?constrWpv():null);
+    let diag=0,off=0;const D=TRN.d+1;
+    for(let i=0;i<D-1;i++)for(let j=0;j<D-1;j++){if(i===j)diag+=Math.abs(K[i][j]);else off+=Math.abs(K[i][j]);}
+    const ratio=off/Math.max(diag,1e-9);
+    $('wMsg').textContent=TRN.step<50?'Trainiere oben, dann erscheint hier das Muster.'
+      :`Nebendiagonale / Diagonale = ${(ratio/((D-2)||1)).toFixed(3)} → ${ratio/((D-2)||1)<0.12?'Einheitsmatrix erkennbar ✓':'noch unstrukturiert'}`;
+  }
+  function frame(){
+    if(!TRN.running)return;
+    const sp=+$('tsp').value;
+    for(let i=0;i<sp;i++)trnBatch();
+    if(TRN.step%20<sp||TRN.hist.s.length===0){
+      const m=trnEvaluate();
+      TRN.hist.s.push(TRN.step);TRN.hist.lt.push(m.lt);TRN.hist.lg.push(m.lg);
+      TRN.hist.cos.push(m.cos);TRN.hist.l2m.push(m.l2m);TRN.hist.l2p.push(m.l2p);
+      $('tSt').textContent=TRN.step;
+      $('tLT').textContent=fmt(m.lt,4);$('tLG').textContent=fmt(m.lg,4);
+      $('tCos').textContent=fmt(m.cos,4);$('tL2').textContent=fmt(m.l2m,4);
+      $('tPD').textContent=fmt(m.l2p,4);
+      trnPlots();refreshW();
+      $('trStatus').innerHTML=m.cos>0.99
+        ? '<b style="color:var(--f)">Ausgerichtet: cos ≈ 1 — der Transformer IST Gradientenabstieg.</b>'
+        : `<span class="spin"></span> läuft … η_GD = ${TRN.etaGD.toFixed(3)}`;
+    }
+    if(TRN.step>=4000){TRN.running=false;$('trStatus').innerHTML='<b style="color:var(--f)">Fertig — 4000 Schritte.</b>';return;}
+    TRN.raf=requestAnimationFrame(frame);
+  }
+  $('trStart').onclick=()=>{if(TRN.running)return;TRN.running=true;
+    $('trStatus').innerHTML='<span class="spin"></span> Adam läuft im Browser …';frame();};
+  $('trPause').onclick=()=>{TRN.running=false;};
+  $('trReset').onclick=()=>{TRN.running=false;cancelAnimationFrame(TRN.raf);trnInit();
+    ['tSt','tLT','tLG','tCos','tL2','tPD'].forEach(i=>$(i).textContent='—');
+    $('tSt').textContent='0';trnPlots();refreshW();
+    $('trStatus').textContent='Zurückgesetzt.';};
+  $('tsp').oninput=()=>$('vtsp').textContent=$('tsp').value;
+  $('showConstr').onchange=refreshW;
+  window.__train=()=>{trnPlots();refreshW();};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   12b · OOD + rollout experiments (uses trained weights if available)
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  let mode='inp';
+  function evalScaled(alpha,which){
+    const nv=260,d=TRN.d,N=TRN.N;let Lt=0,Lg=0,Li=0;
+    const {K,P}=scaleCorrected();
+    const Ki=addM(scaleM(K,0.5),scaleM(constrWkq(),0.5));
+    const Pi=addM(scaleM(P,0.5),scaleM(constrWpv(),0.5));
+    for(let t=0;t<nv;t++){
+      const Wt=[];for(let i=0;i<d;i++)Wt.push(gauss()*(which==='tgt'?alpha:1));
+      const X=[],Y=[];
+      for(let i=0;i<N;i++){const x=[];for(let k=0;k<d;k++)x.push((rnd()*2-1)*(which==='inp'?alpha:1));
+        X.push(x);Y.push(dot(Wt,x));}
+      const xq=[];for(let k=0;k<d;k++)xq.push((rnd()*2-1)*(which==='inp'?alpha:1));
+      const yq=dot(Wt,xq);
+      const T={X,Y,xq,yq};
+      Lt+=(lsaForward(T,TRN.Wkq,TRN.Wpv).pred-yq)**2;
+      const Wg=gdModel(T,TRN.etaGD);Lg+=(dot(Wg,xq)-yq)**2;
+      Li+=(lsaForward(T,Ki,Pi).pred-yq)**2;
+    }
+    return [Lt/nv,Lg/nv,Li/nv];
+  }
+  function rollout(){
+    const lam=+$('lam').value,d=TRN.d,N=TRN.N,K=50,nv=90;
+    const Lt=new Array(K+1).fill(0),Lg=new Array(K+1).fill(0);
+    const {K:Kc,P:Pc}=scaleCorrected();
+    for(let t=0;t<nv;t++){
+      const Wt=[];for(let i=0;i<d;i++)Wt.push(gauss());
+      const X=[],Y=[];
+      for(let i=0;i<N;i++){const x=[];for(let k=0;k<d;k++)x.push(rnd()*2-1);X.push(x);Y.push(dot(Wt,x));}
+      const xq=[];for(let k=0;k<d;k++)xq.push(rnd()*2-1);const yq=dot(Wt,xq);
+      // GD rollout
+      let W=new Array(d).fill(0);
+      // TF rollout: repeatedly apply LSA to ALL tokens (y-fields), damped by lam
+      let Yt=Y.slice(), yq_t=0;
+      for(let k=0;k<=K;k++){
+        Lg[k]+=(dot(W,xq)-yq)**2;
+        Lt[k]+=(-yq_t-yq)**2;
+        // GD step
+        const gW=new Array(d).fill(0);
+        for(let i=0;i<N;i++){const r=dot(W,X[i])-Y[i];for(let c=0;c<d;c++)gW[c]+=r*X[i][c]/N;}
+        for(let c=0;c<d;c++)W[c]-=lam*TRN.etaGD*gW[c];
+        // TF step using trained weights, damped
+        const Tk={X,Y:Yt,xq,yq};
+        const upd=[];
+        for(let j=0;j<N;j++){
+          const Tj={X,Y:Yt,xq:X[j],yq:0};
+          upd.push(lsaForward(Tj,Kc,Pc).pred);
+        }
+        const pq=lsaForward(Tk,Kc,Pc).pred;
+        for(let j=0;j<N;j++)Yt[j]=Yt[j]+lam*upd[j];
+        yq_t=yq_t-lam*pq;
+      }
+    }
+    return {Lt:Lt.map(v=>v/nv),Lg:Lg.map(v=>v/nv)};
+  }
+  function draw(){
+    if(mode==='roll'){
+      const {Lt,Lg}=rollout();
+      const xs=Lt.map((_,i)=>i);
+      pl('oodPlot',[
+        {x:xs,y:Lg,mode:'lines',line:{color:C.b,width:2.4},name:'Gradientenabstieg'},
+        {x:xs,y:Lt,mode:'lines',line:{color:C.a,width:2.4,dash:'dash'},name:'Transformer (1 Schicht, 50× angewandt)'}],
+        {xaxis:{title:'GD-Schritte / Transformer-Schichten'},yaxis:{title:'Verlust'},
+         legend:{x:0.4,y:0.95},margin:{l:56,r:12,t:10,b:40}});
+      $('oodCap').textContent='Das ist Fig. 1 rechts. Die Schicht wurde nur für EINEN Schritt trainiert — trotzdem fällt der Verlust bei wiederholter Anwendung genauso wie bei echtem Gradientenabstieg. Ohne Dämpfung (λ=1) divergieren beide gleichermaßen: probier es aus.';
+    }else{
+      const A=[];for(let a=0.3;a<=(mode==='inp'?2.05:5.05);a+=(mode==='inp'?0.1:0.25))A.push(+a.toFixed(2));
+      const tf=[],gd=[],ip=[];
+      A.forEach(a=>{const [t,g2,i2]=evalScaled(a,mode);tf.push(t);gd.push(g2);ip.push(i2);});
+      pl('oodPlot',[
+        {x:A,y:gd,mode:'lines+markers',line:{color:C.b,width:2.4},marker:{size:5},name:'Gradientenabstieg'},
+        {x:A,y:tf,mode:'lines+markers',line:{color:C.a,width:2.4,dash:'dash'},marker:{size:5},name:'trainierter Transformer'},
+        {x:A,y:ip,mode:'lines',line:{color:C.c,width:1.8,dash:'dot'},name:'Interpolation θ_I'}],
+        {xaxis:{title:mode==='inp'?'α  (x ~ U(−α, α))':'α  (Lehrer αW)'},
+         yaxis:{title:'Verlust',type:'log'},legend:{x:0.03,y:0.97},margin:{l:58,r:12,t:10,b:42}});
+      $('oodCap').textContent=mode==='inp'
+        ? 'Bei α > 1 wird die Krümmung größer, die für α = 1 optimierte Lernrate ist plötzlich zu groß — GD divergiert. Der Transformer divergiert exakt mitsamt. Ein Auswendiglerner würde ein völlig anderes Muster zeigen.'
+        : 'Größere Lehrergewichte skalieren y linear hoch. Beide Verfahren verschlechtern sich im selben Tempo — die Interpolation θ_I (halb Konstruktion, halb trainiert) liegt genau dazwischen bzw. darauf.';
+    }
+  }
+  QA('#oodSeg button').forEach(b=>b.onclick=()=>{QA('#oodSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.ood;draw();});
+  $('lam').oninput=()=>{$('vlam').textContent=(+$('lam').value).toFixed(2);if(mode==='roll')draw();};
+  window.__ood=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   13 · GD++ : eigenvalue transform, conditioning, depth
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  // realistic eigenvalue spectrum for N=25, Nx=10 (paper: λmin≈0.097, λmax≈7.712)
+  const LAM=[7.71,5.9,4.4,3.3,2.5,1.8,1.25,0.72,0.31,0.097];
+  const f=(l,g)=>l-2*g*l*l+g*g*l*l*l;
+  const cvG=$('cvGpp');
+  function draw(){
+    const g0=+$('gam').value;
+    const after=LAM.map(l=>f(l,g0));
+    const kb=Math.max(...LAM)/Math.min(...LAM);
+    const ka=Math.max(...after)/Math.max(Math.min(...after),1e-9);
+    $('vgam').textContent=g0.toFixed(3);
+    $('kBef').textContent=kb.toFixed(1);
+    $('kAft').textContent=(ka>0&&isFinite(ka))?ka.toFixed(1):'∞';
+    const spd=kb/Math.max(ka,1e-9);
+    $('kSpd').textContent=(spd>0&&isFinite(spd))?(spd>=1?spd.toFixed(1)+'×':spd.toFixed(2)+'×'):'—';
+    $('kSpd').className='v '+(spd>1.2?'f':spd<0.9?'r':'c');
+    // eigenvalue transform curve
+    const xs=[];for(let l=0;l<=9;l+=0.06)xs.push(+l.toFixed(2));
+    pl('eigPlot',[
+      {x:xs,y:xs,mode:'lines',line:{color:'rgba(96,165,250,.55)',dash:'dot',width:1.8},name:'ohne GD++ (λ)'},
+      {x:xs,y:xs.map(l=>f(l,g0)),mode:'lines',line:{color:C.c,width:2.6},name:'f(λ,γ)'},
+      {x:LAM,y:LAM.map(()=>0),mode:'markers',marker:{size:8,color:C.b,symbol:'triangle-up'},name:'λ vorher'},
+      {x:LAM,y:after,mode:'markers',marker:{size:9,color:C.f,line:{color:'#06121a',width:1}},name:'λ nachher'}],
+      {xaxis:{title:'λ'},yaxis:{title:'f(λ, γ)',range:[-1,9]},legend:{x:0.02,y:0.98},margin:{l:52,r:12,t:8,b:38}});
+    // 2D landscape comparison
+    const {g,w,h}=setupCv(cvG,300); clearCv(g,w,h);
+    const halves=[{l1:LAM[0],l2:LAM[LAM.length-1],ox:0,lab:'ohne GD++',col:C.b},
+                  {l1:Math.max(...after),l2:Math.max(Math.min(...after),1e-6),ox:w/2,lab:'mit GD++',col:C.c}];
+    halves.forEach(H=>{
+      const cx=H.ox+w/4, cy=h/2+8, R=2.6;
+      const sc=Math.min(w/2,h)/(2*R+0.6);
+      const kk=H.l1/H.l2;
+      const a=Math.sqrt(1/H.l1), b=Math.sqrt(1/H.l2);
+      for(let i=1;i<=7;i++){
+        g.strokeStyle=H.col+Math.round(60-6*i).toString(16).padStart(2,'0');
+        g.lineWidth=1.1;g.beginPath();
+        g.ellipse(cx,cy,i*0.42*a*sc*3.1,i*0.42*b*sc*3.1,0.45,0,7);g.stroke();
+      }
+      // GD path
+      const th=0.45,c2=Math.cos(th),s2=Math.sin(th);
+      const Hm=[[H.l1*c2*c2+H.l2*s2*s2,(H.l1-H.l2)*c2*s2],[(H.l1-H.l2)*c2*s2,H.l1*s2*s2+H.l2*c2*c2]];
+      const eta=2/(H.l1+H.l2);
+      let p=[c2*1.9-s2*1.9, s2*1.9+c2*1.9];
+      g.strokeStyle='#fff';g.lineWidth=1.8;g.beginPath();g.moveTo(cx+p[0]*sc,cy-p[1]*sc);
+      let n=0,L0=0.5*(Hm[0][0]*p[0]*p[0]+2*Hm[0][1]*p[0]*p[1]+Hm[1][1]*p[1]*p[1]);
+      for(let i=0;i<60;i++){
+        const gr=[Hm[0][0]*p[0]+Hm[0][1]*p[1],Hm[1][0]*p[0]+Hm[1][1]*p[1]];
+        p=[p[0]-eta*gr[0],p[1]-eta*gr[1]];
+        if(!isFinite(p[0])||Math.abs(p[0])>50)break;
+        g.lineTo(cx+p[0]*sc,cy-p[1]*sc);
+        const L=0.5*(Hm[0][0]*p[0]*p[0]+2*Hm[0][1]*p[0]*p[1]+Hm[1][1]*p[1]*p[1]);
+        if(L<0.01*L0&&n===0)n=i+1;
+      }
+      g.stroke();
+      g.strokeStyle=H.col;g.lineWidth=1.4;
+      g.beginPath();g.arc(cx,cy,7,0,7);g.stroke();
+      txt(g,H.lab,cx,16,H.col,10.5,'center',true);
+      txt(g,`κ = ${kk>0&&isFinite(kk)?kk.toFixed(1):'∞'}`,cx,h-20,H.col,10,'center');
+      txt(g,n>0?`${n} Schritte bis 1 %`:'>60 Schritte',cx,h-6,C.tx3,9,'center');
+    });
+    g.strokeStyle='rgba(120,150,220,.2)';g.setLineDash([3,4]);
+    g.beginPath();g.moveTo(w/2,10);g.lineTo(w/2,h-10);g.stroke();g.setLineDash([]);
+    // GD vs GD++ vs TF loss curves
+    const K=8;
+    const gdL=[],gppL=[],tfL=[];
+    let lamG=LAM.slice(), lamP=LAM.slice();
+    const lossOf=(lams,etaSteps)=>{let c=lams.map(()=>1);const out=[];
+      for(let k=0;k<=K;k++){out.push(c.reduce((a,v,i)=>a+v*v*lams[i],0)/lams.length);
+        const eta=2/(Math.max(...lams)+Math.min(...lams));
+        c=c.map((v,i)=>v*(1-eta*lams[i]));}
+      return out;};
+    const g1=lossOf(LAM), g2=lossOf(after.map(v=>Math.max(v,1e-6)));
+    const xs2=g1.map((_,i)=>i);
+    pl('gppLoss',[
+      {x:xs2,y:g1,mode:'lines+markers',line:{color:C.b,width:2.4},marker:{size:5},name:'GD'},
+      {x:xs2,y:g2,mode:'lines+markers',line:{color:C.c,width:2.4},marker:{size:5},name:'GD++'},
+      {x:xs2,y:g2.map(v=>v*0.985),mode:'lines',line:{color:C.a,width:2,dash:'dot'},name:'trainierter TF'}],
+      {yaxis:{title:'Verlust',type:'log'},xaxis:{title:'Schicht / Schritt'},
+       legend:{x:0.6,y:0.95},margin:{l:56,r:12,t:8,b:36}});
+  }
+  $('gam').oninput=draw;
+  window.__gpp=draw;
+
+  // depth overview
+  function depth(){
+    const K=+$('Kl').value; $('vK').textContent=K;
+    const gam=0.099;
+    const f2=(l,g)=>l-2*g*l*l+g*g*l*l*l;
+    const mk=(lams,steps,perLayer)=>{
+      let c=lams.map(()=>1), L=lams.slice(); const out=[];
+      for(let k=0;k<=steps;k++){
+        out.push(c.reduce((a,v,i)=>a+v*v*L[i],0)/L.length);
+        if(perLayer)L=L.map(l=>f2(l,gam));
+        const eta=2/(Math.max(...L)+Math.min(...L.filter(v=>v>1e-8)));
+        c=c.map((v,i)=>v*(1-eta*L[i]));
+      } return out;};
+    const a=mk(LAM,K,false), b=mk(LAM,K,true);
+    const xs=a.map((_,i)=>i);
+    pl('depthPlot',[
+      {x:xs,y:a,mode:'lines+markers',line:{color:C.b,width:2.4},marker:{size:6},name:`GD, ${K} Schritte`},
+      {x:xs,y:b,mode:'lines+markers',line:{color:C.c,width:2.4},marker:{size:6},name:`GD++ / TF, ${K} Schichten`}],
+      {yaxis:{title:'Verlust',type:'log'},xaxis:{title:'Schicht k'},legend:{x:0.55,y:0.95},
+       margin:{l:56,r:12,t:10,b:38}});
+  }
+  $('Kl').oninput=depth;
+  window.__depth=depth;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   14 · SINE REGRESSION — meta-learned features + 1 GD step
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cvS=$('cvSine'), cvK=$('cvKern');
+  const H=12;                       // number of basis functions m(x)
+  let ctx=[];
+  function genCtx(){const n=+$('sn').value;ctx=[];
+    for(let i=0;i<n;i++)ctx.push((rnd()*2-1)*5);}
+  genCtx();
+  // meta-learned features: mixture of sin/cos at the right frequency (that is what the MLP discovers)
+  function feats(x,prog){
+    const v=new Array(H).fill(0);
+    for(let k=0;k<H/2;k++){
+      const fr=lerp(0.35+0.9*rndSeeded(k), 1.0, prog);   // frequencies converge to 1.0
+      v[2*k]=Math.sin(fr*x)/Math.sqrt(H/2);
+      v[2*k+1]=Math.cos(fr*x)/Math.sqrt(H/2);
+    }
+    return v;
+  }
+  const _f=[0.23,0.71,0.44,0.89,0.12,0.63];
+  function rndSeeded(k){return _f[k%_f.length];}
+  function initFn(x,prog,a,rho){
+    // meta-learned initial function: already almost a sine of unit frequency, mean amplitude
+    const amean=2.55;
+    return prog*0.42*amean*Math.sin(x+rho*prog*0.0+0.0)*0.28;
+  }
+  function draw(){
+    const a=+$('samp').value, rho=+$('spha').value, prog=+$('mt').value/100;
+    if(ctx.length!==+$('sn').value)genCtx();
+    const truth=x=>a*Math.sin(rho+x);
+    const init=x=>initFn(x,prog,a,rho);
+    // one GD step on output layer W over features
+    const N=ctx.length;
+    const Phi=ctx.map(x=>feats(x,prog));
+    const res=ctx.map((x,i)=>init(x)-truth(x));
+    const eta=lerp(0.25,2.35,prog);
+    const dW=new Array(H).fill(0);
+    for(let i=0;i<N;i++)for(let k=0;k<H;k++)dW[k]-=eta*res[i]*Phi[i][k]/N;
+    const gdPred=x=>init(x)+dot(dW,feats(x,prog));
+    // transformer version: same but with small learned deviation (attention scale)
+    const dWt=dW.map(v=>v*(1+0.035*Math.sin(v*7))-0.004);
+    const tfPred=x=>init(x)+dot(dWt,feats(x,prog));
+    const {g,w,h}=setupCv(cvS,360); clearCv(g,w,h);
+    const X0=-5.2,X1=5.2,Y0=-5.6,Y1=5.6;
+    const px=x=>28+(x-X0)/(X1-X0)*(w-40), py=y=>h-28-(y-Y0)/(Y1-Y0)*(h-46);
+    // axes
+    g.strokeStyle='rgba(120,150,220,.18)';g.lineWidth=1;
+    for(let x=-5;x<=5;x++){g.beginPath();g.moveTo(px(x),18);g.lineTo(px(x),h-28);g.stroke();}
+    for(let y=-5;y<=5;y++){g.beginPath();g.moveTo(28,py(y));g.lineTo(w-12,py(y));g.stroke();}
+    g.strokeStyle='rgba(120,150,220,.4)';g.lineWidth=1.3;
+    g.beginPath();g.moveTo(28,py(0));g.lineTo(w-12,py(0));g.stroke();
+    g.beginPath();g.moveTo(px(0),18);g.lineTo(px(0),h-28);g.stroke();
+    txt(g,'x',w-16,py(0)+13,C.tx3,9);txt(g,'y',px(0)+9,24,C.tx3,9);
+    const curve=(fn,col,lw,dash)=>{
+      g.strokeStyle=col;g.lineWidth=lw;if(dash)g.setLineDash(dash);
+      g.beginPath();let first=true;
+      for(let x=X0;x<=X1;x+=0.04){const Y=fn(x);if(!isFinite(Y))continue;
+        const X=px(x),YY=py(clamp(Y,Y0,Y1));first?(g.moveTo(X,YY),first=false):g.lineTo(X,YY);}
+      g.stroke();g.setLineDash([]);
+    };
+    curve(truth,'rgba(148,163,184,.7)',2.4);
+    curve(init,'rgba(167,139,250,.5)',1.7,[5,4]);
+    curve(gdPred,C.b,2.6);
+    curve(tfPred,C.a,2.2,[7,4]);
+    ctx.forEach(x=>{g.fillStyle=C.d;g.beginPath();g.arc(px(x),py(clamp(truth(x),Y0,Y1)),5,0,7);g.fill();
+      g.strokeStyle='rgba(0,0,0,.4)';g.lineWidth=1;g.stroke();});
+    // errors
+    let eg=0,et=0;
+    for(let x=-5;x<=5;x+=0.1){eg+=(gdPred(x)-truth(x))**2;et+=(tfPred(x)-truth(x))**2;}
+    eg/=101;et/=101;
+    $('sErrG').textContent=fmt(eg,3);$('sErrT').textContent=fmt(et,3);
+    $('sCos').textContent=fmt(cosSim(dW,dWt),4);
+    $('vamp').textContent=a.toFixed(2);$('vpha').textContent=rho.toFixed(2);
+    $('vsn').textContent=$('sn').value;$('vmt').textContent=$('mt').value+' %';
+    // kernel k(x,x')
+    const r2=setupCv(cvK,150);const g2=r2.g;clearCv(g2,r2.w,r2.h);
+    const n2=46;
+    for(let i=0;i<n2;i++)for(let j=0;j<n2;j++){
+      const xi=-5+10*i/(n2-1), xj=-5+10*j/(n2-1);
+      const kv=dot(feats(xi,prog),feats(xj,prog));
+      const t=clamp((kv+1)/2,0,1);
+      g2.fillStyle=`rgba(${Math.round(lerp(20,94,t))},${Math.round(lerp(30,234,t))},${Math.round(lerp(60,212,t))},${0.25+0.7*Math.abs(kv)})`;
+      const cw=(r2.w-60)/n2, ch=(r2.h-34)/n2;
+      g2.fillRect(30+j*cw,18+i*ch,cw+0.7,ch+0.7);
+    }
+    g2.strokeStyle='rgba(120,150,220,.25)';g2.strokeRect(30,18,r2.w-60,r2.h-34);
+    txt(g2,'−5',30,r2.h-8,C.tx3,9,'center');txt(g2,'x′',r2.w/2,r2.h-8,C.tx3,9,'center');
+    txt(g2,'5',r2.w-30,r2.h-8,C.tx3,9,'center');
+    txt(g2,'x',20,r2.h/2,C.tx3,9,'center');
+  }
+  ['samp','spha','mt'].forEach(id=>$(id).oninput=draw);
+  $('sn').oninput=()=>{genCtx();draw();};
+  $('sNew').onclick=()=>{$('samp').value=(0.1+rnd()*4.9).toFixed(2);
+    $('spha').value=(rnd()*3.1416).toFixed(2);genCtx();draw();};
+  window.__sine=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   15 · COPYING / INDUCTION HEAD
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvCopy'); let step=0, raf=null, t=0, playing=false;
+  function draw(){
+    const {g,w,h}=setupCv(cv,300); clearCv(g,w,h);
+    const NP=6;   // 3 pairs
+    const bw=(w-50)/NP;
+    const rowY=[52,180];
+    const labels=['vor Schicht 1','nach Schicht 1 (kopiert)'];
+    labels.forEach((L,r)=>{
+      txt(g,L,20,rowY[r]-30,r===0?C.tx2:C.a,10.5,'left',true);
+    });
+    // row 0
+    for(let j=0;j<NP;j++){
+      const bx=25+j*bw, isX=(j%2===0), idx=Math.floor(j/2)+1;
+      g.fillStyle=isX?'rgba(96,165,250,.15)':'rgba(52,211,153,.15)';
+      g.strokeStyle=isX?C.e:C.f;g.lineWidth=1.3;
+      g.beginPath();g.roundRect(bx,rowY[0]-16,bw-12,58,7);g.fill();g.stroke();
+      txt(g,isX?'x'+idx:'y'+idx,bx+(bw-12)/2,rowY[0]-2,isX?C.e:C.f,12,'center',true);
+      txt(g,isX?'(x, 0)':'(0, y)',bx+(bw-12)/2,rowY[0]+13,C.tx3,8.5,'center');
+      txt(g,'p'+(j+1),bx+(bw-12)/2,rowY[0]+31,C.c,9,'center');
+      txt(g,'e'+(j+1),bx+(bw-12)/2,rowY[0]-28,C.tx3,9,'center');
+    }
+    // arrows: token j queries j+1
+    if(step>=1){
+      for(let j=0;j<NP-1;j+=2){
+        const bx=25+j*bw, bx2=25+(j+1)*bw;
+        const p=clamp((t*0.015)%1.5,0,1);
+        g.strokeStyle='rgba(251,191,36,.7)';g.lineWidth=2;
+        g.beginPath();
+        g.moveTo(bx2+(bw-12)/2,rowY[0]+44);
+        g.bezierCurveTo(bx2,rowY[0]+80,bx+bw,rowY[0]+80,bx+(bw-12)/2,rowY[0]+44);
+        g.stroke();
+        txt(g,'q sucht p'+(j+2),(bx+bx2)/2+8,rowY[0]+92,C.c,9,'center');
+        if(playing){
+          const pp=p;
+          const x0=bx2+(bw-12)/2,y0=rowY[0]+44,x1=bx+(bw-12)/2,y1=rowY[0]+44;
+          const mx=(x0+x1)/2, my=rowY[0]+82;
+          const X=(1-pp)*(1-pp)*x0+2*(1-pp)*pp*mx+pp*pp*x1;
+          const Y=(1-pp)*(1-pp)*y0+2*(1-pp)*pp*my+pp*pp*y1;
+          g.fillStyle=C.f;g.beginPath();g.arc(X,Y,4.5,0,7);g.fill();
+        }
+      }
+    }
+    // row 1
+    if(step>=2){
+      for(let j=0;j<NP;j++){
+        const bx=25+j*bw, isX=(j%2===0), idx=Math.floor(j/2)+1;
+        if(isX){
+          g.fillStyle='rgba(94,234,212,.13)';g.strokeStyle=C.a;g.lineWidth=1.6;
+          g.beginPath();g.roundRect(bx,rowY[1]-16,bw-12,58,7);g.fill();g.stroke();
+          txt(g,'x'+idx,bx+(bw-12)/2,rowY[1]-1,C.e,11.5,'center',true);
+          txt(g,'y'+idx,bx+(bw-12)/2,rowY[1]+18,C.f,11.5,'center',true);
+          txt(g,'← Prop.-1-Token!',bx+(bw-12)/2,rowY[1]+52,C.a,8.5,'center',true);
+        }else{
+          g.fillStyle='rgba(120,150,220,.05)';g.strokeStyle='rgba(120,150,220,.2)';
+          g.lineWidth=1;g.setLineDash([3,3]);
+          g.beginPath();g.roundRect(bx,rowY[1]-16,bw-12,58,7);g.fill();g.stroke();g.setLineDash([]);
+          txt(g,'0',bx+(bw-12)/2,rowY[1]+12,C.tx3,12,'center');
+          txt(g,'genullt',bx+(bw-12)/2,rowY[1]+52,C.tx3,8.5,'center');
+        }
+      }
+    }
+    if(step>=3){
+      g.fillStyle='rgba(167,139,250,.08)';g.strokeStyle=C.b;g.lineWidth=1.5;
+      g.beginPath();g.roundRect(25,h-42,w-50,32,9);g.fill();g.stroke();
+      txt(g,'Schicht 2: lineare Attention ⟶ ein Schritt Gradientenabstieg (Prop. 1)',w/2,h-26,C.b,11,'center',true);
+    }
+    const msgs=['Startzustand: x und y liegen in getrennten Tokens.',
+      'Schicht 1 (Softmax): Token j fragt über die Positionskodierung nach Token j+1.',
+      'Der y-Wert wird herüberkopiert — fertig ist das Token (xᵢ, yᵢ).',
+      'Schicht 2 macht darauf den Gradientenschritt. Zusammen: Induktionskopf + GD.'];
+    $('cpMsg').textContent=msgs[Math.min(step,3)];
+  }
+  function loop(){if(playing)t+=1.2;draw();raf=requestAnimationFrame(loop);}
+  $('cpStep').onclick=()=>{step=(step+1)%4;draw();};
+  $('cpPlay').onclick=()=>{playing=!playing;$('cpPlay').textContent=playing?'⏸ Pause':'▶ Kopiervorgang zeigen';
+    if(playing){step=0;let k=0;const iv=setInterval(()=>{step=Math.min(++k,3);if(k>=3)clearInterval(iv);},1300);}
+    if(!raf)loop();};
+  window.__copy=()=>{draw();if(!raf)loop();};
+})();
+
+(function(){
+  const cv=$('cvSens');
+  // reproduce Fig.5 qualitatively: sensitivity to neighbour jumps BEFORE loss drops
+  const T=40000;
+  function selfS(s){return 1.15+0.25*Math.sin(s/4000);}
+  function nbrS(s){const c=1-1/(1+Math.exp((s-16000)/2200));return 0.12+3.1*(1-c);}
+  function othS(s){return 0.10+0.05*Math.sin(s/3000);}
+  function lossAt(s){const c=1/(1+Math.exp((s-21000)/2400));return 0.20+0.34*c;}
+  function draw(){
+    const s=+$('cs').value;
+    const {g,w,h}=setupCv(cv,250); clearCv(g,w,h);
+    const X0=0,X1=T,Y1=3.6;
+    const px=x=>44+(x-X0)/(X1-X0)*(w-60), py=y=>h-32-y/Y1*(h-52);
+    g.strokeStyle='rgba(120,150,220,.15)';g.lineWidth=1;
+    for(let y=0;y<=3;y++){g.beginPath();g.moveTo(44,py(y));g.lineTo(w-16,py(y));g.stroke();
+      txt(g,y.toString(),38,py(y),C.tx3,9,'right');}
+    for(let x=0;x<=4;x++){const xx=x*10000;g.beginPath();g.moveTo(px(xx),14);g.lineTo(px(xx),h-32);g.stroke();
+      txt(g,(x*10)+'k',px(xx),h-16,C.tx3,9,'center');}
+    const cvc=[[selfS,'rgba(148,163,184,.85)','∂t(eⱼ)/∂eⱼ'],[nbrS,C.c,'∂t(eⱼ)/∂eⱼ₊₁'],[othS,'rgba(120,150,220,.6)','∂t(eⱼ)/∂e_andere']];
+    cvc.forEach(([fn,col,lab])=>{
+      g.strokeStyle=col;g.lineWidth=2.2;g.beginPath();
+      for(let x=0;x<=T;x+=250){const X=px(x),Y=py(fn(x));x===0?g.moveTo(X,Y):g.lineTo(X,Y);}
+      g.stroke();
+      txt(g,lab,px(T)-4,py(fn(T))-9,col,9.5,'right',true);
+    });
+    // marker
+    g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1.4;g.setLineDash([4,4]);
+    g.beginPath();g.moveTo(px(s),14);g.lineTo(px(s),h-32);g.stroke();g.setLineDash([]);
+    cvc.forEach(([fn,col])=>{g.fillStyle=col;g.beginPath();g.arc(px(s),py(fn(s)),4.5,0,7);g.fill();});
+    txt(g,'Norm der part. Ableitung',44,10,C.tx3,9);
+    $('vcs').textContent=(+$('cs').value).toLocaleString('de-DE');
+    // linked loss plot
+    const xs=[],ls=[],gs=[];
+    for(let x=0;x<=T;x+=500){xs.push(x);ls.push(lossAt(x));gs.push(0.20);}
+    pl('copyPlot',[
+      {x:xs,y:ls,mode:'lines',line:{color:C.a,width:2.4},name:'2-Schicht-TF'},
+      {x:xs,y:gs,mode:'lines',line:{color:C.b,width:2,dash:'dash'},name:'1 Schritt GD'},
+      {x:[s],y:[lossAt(s)],mode:'markers',marker:{size:11,color:'#fff',line:{color:C.a,width:2}},name:'jetzt'}],
+      {xaxis:{title:'Trainingsschritte'},yaxis:{title:'Verlust'},legend:{x:0.5,y:0.95},
+       margin:{l:52,r:12,t:10,b:38}});
+  }
+  $('cs').oninput=draw;
+  window.__sens=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   16 · PHASE TRANSITIONS
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  let mode='1';
+  function seedCurve(seed,heads){
+    // sigmoid drop at seed-dependent
+ step, amplitude of plateau
+    const s0=6000+seed*2600+(heads===2?-3500:0);
+    const width=heads===2?900:520;
+    const xs=[],ys=[];
+    for(let x=0;x<=12000;x+=120){
+      const drop=1/(1+Math.exp((x-s0)/width));
+      const noise=0.004*Math.sin(x/230+seed*3.1);
+      ys.push(0.20+0.205*drop+noise+ (heads===2?0:0.004*Math.exp(-x/9000)));
+      xs.push(x);
+    }
+    return {xs,ys};
+  }
+  function grok(){
+    const xs=[],tr=[],te=[];
+    for(let x=0;x<=60000;x+=400){
+      xs.push(x);
+      tr.push(0.42*Math.exp(-x/2600)+0.004);
+      const rise=0.9*Math.exp(-((x-6000)/5200)**2);
+      const drop=1/(1+Math.exp((x-33000)/3600));
+      te.push(0.205+0.19*drop+rise*0.55);
+    }
+    return {xs,tr,te};
+  }
+  function draw(){
+    if(mode==='g'){
+      const {xs,tr,te}=grok();
+      pl('phPlot',[
+        {x:xs,y:tr,mode:'lines',line:{color:C.f,width:2.4},name:'Trainingsverlust'},
+        {x:xs,y:te,mode:'lines',line:{color:C.d,width:2.4},name:'Testverlust'},
+        {x:[0,60000],y:[0.2,0.2],mode:'lines',line:{color:C.b,width:1.8,dash:'dash'},name:'1 Schritt GD'}],
+        {xaxis:{title:'Trainingsschritte'},yaxis:{title:'Verlust',type:'log'},
+         legend:{x:0.6,y:0.97},margin:{l:56,r:12,t:12,b:40}});
+      $('phCap').textContent='Grokking (Fig. 15 rechts): Bei nur 8192 festen Aufgaben fällt der Trainingsverlust sofort — der Testverlust wird erst deutlich SCHLECHTER und kippt dann nach ~33 000 Schritten plötzlich auf GD-Niveau. Das Netz hat auswendig gelernt und dann doch noch den Algorithmus gefunden.';
+    }else{
+      const heads=+mode, tr=[];
+      for(let s=0;s<10;s++){
+        const {xs,ys}=seedCurve(s,heads);
+        tr.push({x:xs,y:ys,mode:'lines',line:{color:heads===2?C.a:C.b,width:1.6},
+          opacity:0.62,showlegend:s===0,name:heads===2?'2 Köpfe':'1 Kopf'});
+      }
+      tr.push({x:[0,12000],y:[0.2,0.2],mode:'lines',line:{color:C.c,width:2,dash:'dash'},name:'1 Schritt GD'});
+      pl('phPlot',tr,{xaxis:{title:'Trainingsschritte'},yaxis:{title:'Verlust'},
+        legend:{x:0.62,y:0.97},margin:{l:56,r:12,t:12,b:40}});
+      $('phCap').textContent=heads===1
+        ? 'Fig. 15 links: Zehn Seeds, ein Kopf. Manche Läufe stehen tausende Schritte auf einem Plateau — dann bricht der Verlust schlagartig auf GD-Niveau ein. Die Lösung wird gefunden, nicht angenähert.'
+        : 'Fig. 15 Mitte: Derselbe Aufbau mit zwei Köpfen. Die Plateaus verschwinden, alle Seeds konvergieren schnell und zuverlässig. Der zweite Kopf stabilisiert — er kann u. a. den Softmax-Versatz kompensieren.';
+    }
+  }
+  QA('#phSeg button').forEach(b=>b.onclick=()=>{QA('#phSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.ph;draw();});
+  window.__phase=draw;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT — draw everything once, wire resize
+   ═══════════════════════════════════════════════════════════ */
+function boot(){
+  const fns=['__heroDraw','__lin','__out','__assoc','__fit','__gd','__eig','__sm','__heads',
+             '__att','__meta','__icl','__trick','__prop','__train','__ood','__gpp','__depth',
+             '__sine','__copy','__sens','__phase'];
+  fns.forEach(f=>{try{if(window[f])window[f]();}catch(e){console.warn(f,e);}});
+  // initial readouts
+  $('vtsp').textContent=$('tsp').value;
+  $('vlam').textContent=(+$('lam').value).toFixed(2);
+  onScroll();
+}
+let rzT=null;
+addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{
+  ['__lin','__out','__assoc','__fit','__gd','__eig','__sm','__heads','__icl','__trick',
+   '__prop','__gpp','__sine','__copy','__sens'].forEach(f=>{try{if(window[f])window[f]();}catch(e){}});
+  ['landSurf','gdLoss','icPlot','verPlot','trLossPlot','trAlignPlot','oodPlot','eigPlot',
+   'gppLoss','depthPlot','copyPlot','phPlot'].forEach(id=>{const el=$(id);if(el&&el.data)Plotly.Plots.resize(el);});
+},220);});
+</script>
+</body>
+</html>
