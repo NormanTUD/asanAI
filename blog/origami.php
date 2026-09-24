@@ -212,7 +212,9 @@ $$x_i^{(l)} \;=\; \Phi\!\left(\sum_j W^{(l)}_{ij}\, x_j^{(l-1)} \;+\; b_i^{(l)}\
    $\Phi(x) = \max(0, x)$ \cite{relu_wiki}, this is the **hammer**: every neuron is a
    hyperplane, and all the data on its *negative* side gets **pressed flat onto that
    hyperplane** (those preactivations become $0$). The combined effect of all neurons in a
-   layer is to jam the data distribution into **the corner of an $N$-dimensional room**.
+       layer is to jam the data distribution into **the corner of an $N$-dimensional room**.
+
+**Name the primitive, because the rest of the chapter is made of it.** Step 2 is not only a bend — it is a *cut*. Each ReLU neuron is a single **line** (a hyperplane) that divides the space into two halves: the side that stays put, and the side that is folded over. That is exactly the first axiom of *Laws of Form* \cite[Spencer-Brown, 1969]{spencerbrown1969form} — *draw a distinction*: draw one line across the unmarked space, and it becomes two regions, one marked and one unmarked. Everything this chapter does to the data — the whole *spatiality* of a deep network — is built by repeating that one move. The book returns to "draw a distinction" as the foundation of a calculus of space in <a href="coherent_difference">Coherent Difference</a>; here you meet it first in geometry you can draw.
 
 This is not just intuition — it has been made rigorous. The affine step is precisely the part that preserves convexity (straight lines stay straight); the ReLU is what breaks it. Map a straight line in the input to the network's activation ("Hamming") space and its image is generally a *non-convex* path whose distance can even decrease. This convexity-breaking has been proved and quantified \cite{lewandowski2025spacefolds}.
 
@@ -503,6 +505,8 @@ a deep ReLU network is a **piecewise-linear** function whose number of linear re
 **grows exponentially with depth**. Depth buys a combinatorial explosion of boundaries that
 a wide but shallow net cannot match. The bound is tight: a depth-$L$ network of width 2 in one input dimension produces exactly $2^L$ regions (a "sawtooth" with $2^L$ spikes) \cite{petersen2024mathdl}.
 
+**Many small separations, in a high-dimensional space, *are* the space.** Each crease is one straight cut; a deep network is a large arrangement of such cuts, and the cells they enclose — the **linear regions** — are the pieces the network's space is actually made of. Read those cells the way the book later defines a space (<a href="coherent_difference">Coherent Difference</a>): not as a container that already exists waiting to be filled, but as *distinguishable local data that cohere on their overlaps into an invariant global whole*. Here the local data are the affine regions, the overlaps are the creases they share, and the coherence is the fact that the network is continuous across every crease. So the spatiality a deep net has is not bought by adding dimensions alone; it is *assembled*, crease by crease, out of distinctions.
+
 <div class="smart-quote" data-cite="petersen2024mathdl" data-after="Ch. 6, after Thm 6.3">
 It is noteworthy that the effects of the depth and the width of a neural network are vastly different. While increasing the width can polynomially increase the number of pieces, increasing the depth can result in exponential increase.
 </div>
@@ -711,7 +715,7 @@ Together these facts land on the **manifold hypothesis** \cite[Fefferman, Mitter
 </div>
 
 	<div class="og-note">
-<b>One thread through the book.</b> The same facts that make *folding* work make *embeddings* work: concentration of measure is why high-dimensional space separates what is entangled, and the Johnson–Lindenstrauss lemma is why that geometry is carried by *distances*, which survive compression — a word's meaning is its <em>position in the web of its neighbours</em>, not its coordinates. See <a href="coherent_difference">Coherent Difference</a> and <a href="embeddinglab">Embeddings</a> for the full development.
+<b>One thread through the book.</b> The same facts that make *folding* work make *embeddings* work: concentration of measure is why high-dimensional space separates what is entangled, and the Johnson–Lindenstrauss lemma is why that geometry is carried by *distances*, which survive compression — a word's meaning is its <em>position in the web of its neighbours</em>, not its coordinates. See <a href="coherent_difference">Coherent Difference</a> and <a href="embeddinglab">Embeddings</a> for the full development. There is a second, more structural thread: the crease is a <em>distinction</em>, the linear regions are a <em>space</em>, and the whole they glue into is a <em>world model</em> — the local-to-global principle formalised in <a href="coherent_difference">Coherent Difference</a> and <a href="coherent_world_models">Coherent World Models</a>.
 </div>
 
 	<div class="optional md" data-headline="The precise statements, collected">
@@ -759,6 +763,13 @@ The vocabulary is worth keeping:
 * **The high-dimensional underpinnings** — Cover's counting function, concentration of
   measure, the Johnson–Lindenstrauss lemma, neural collapse, and topological untangling:
   the quantitative *why* behind every one of the above, detailed in the section just before.
+* **Origami as a world model** = the deeper reading of the whole chapter: a stack of creases
+  is a *cover* of the input space, each linear region is a *local affine model* (a section),
+  the creases are the *overlaps* where neighbouring regions meet, continuity is the
+  *compatibility* that lets them agree, and the network's global function is the *section they
+  glue into* — local-to-global descent, held at the strength of an analogy.
+
+**And a deeper reading of what the folding is *for*.** The separability it manufactures is the goal of the classifier; the *method* is creasing. But creasing is precisely how a model is *assembled out of local pieces*. On every linear region the network is exactly one affine map — a **local model** — and the regions tile the input space, agreeing with their neighbours across the shared crease. Glue those compatible local affine sections together and you have the network's global function, recovered from its parts on the cover of its regions. In the vocabulary the book develops in <a href="coherent_difference">Coherent Difference</a> and, one chapter later, <a href="coherent_world_models">Coherent World Models</a>, that is *descent*: a global object recovered from compatible local data on an admissible cover — a **world model**. The regions are the cover, the creases are the seams, continuity is the compatibility condition, and the whole is the descended section. The local models are only *semi-coherent*: they glue continuously (hence coherent), but each is a flat piece with a kink at its edge, and the whole fits the task's distribution rather than the world as such. That is the honest shape of the claim — origami is a piecewise-linear, approximate instance of local-to-global gluing, the most concrete one in this book because you can draw every crease.
 
 This is more than a picture. It reframes a mechanistic question — *what is a hidden layer
 for?* — in terms you can draw, measure, and (as the poker experiment shows) causally
@@ -820,6 +831,7 @@ This chapter is a deep dive that pays off across the book:
   is the same structure the <a href="embeddinglab">Embeddings</a> chapter reads as meaning,
   and the same "the neighbourhood structure is the geometry, not the coordinates" claim
   that <a href="coherent_difference">Coherent Difference</a> argues at the level of whole models.
+* **Coherent world models (the structural thread).** Beyond the metric/embedding bridge above, this chapter is where you first *see* the local-to-global principle the book formalises later: a crease is a <em>distinction</em>, the linear regions are the <em>local patches</em> of a cover, their shared edges are the <em>overlaps</em> on which the pieces agree, and the network's global function is the <em>section they glue into</em>. That is the shape of <a href="coherent_difference">Coherent Difference</a> and, one chapter on, <a href="coherent_world_models">Coherent World Models</a> — descent, drawn.
 </div>
 
 <div class="optional md" data-headline="The polyhedral backbone">
