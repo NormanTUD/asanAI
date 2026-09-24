@@ -458,9 +458,9 @@ The cultural impact: the **language barrier**, one of the oldest and most persis
 
 ### Education: The 4-Dollar Tutor
 
-**Khan Academy** (a 501(c)(3) nonprofit) offers **Khanmigo**, a GPT-4-based AI tutor for math, science, humanities, and coding, at **4 dollars/month** for users 18+. By March 2024, it had reached ca. 65,000 students across 53 school districts. The content is **free** worldwide, available in 14 fully-supported languages, with offline versions distributed to rural areas in Asia, Latin America, and Africa. A 2026 PNAS study found that computer-assisted learning via Khan Academy was associated with improved student math performance.
+**Khan Academy** (a 501(c)(3) nonprofit) offers **Khanmigo**, a GPT-4-based AI tutor for math, science, humanities, and coding, at **4 dollars/month** for users 18+. By March 2024, it had reached ca. 65,000 students across 53 school districts. The content is **free** worldwide, available in 14 fully-supported languages, with offline versions distributed to rural areas in Asia, Latin America, and Africa. A 2026 PNAS study found that computer-assisted learning via Khan Academy was associated with improved student math performance \cite[Khan Academy, 2026]{khanacademy_wiki}.
 
-**Duolingo**, founded in 2011 by Luis von Ahn (motivated by seeing how expensive English learning was in his community in Guatemala), now has **130 million monthly active users**, **10.9 million paying subscribers**, and offers **42 languages** including endangered and indigenous languages (Hawaiian, Māori, Navajo). In **April 2025**, it launched **148 new language courses** developed using generative AI — a scale of content creation that would have been impossible with human writers alone.
+**Duolingo**, founded in 2011 by Luis von Ahn (motivated by seeing how expensive English learning was in his community in Guatemala), now has **130 million monthly active users**, **10.9 million paying subscribers**, and offers **42 languages** including endangered and indigenous languages (Hawaiian, Māori, Navajo). In **April 2025**, it launched **148 new language courses** developed using generative AI — a scale of content creation that would have been impossible with human writers alone \cite[Duolingo, 2026]{duolingo_wiki}.
 
 ### Science, Free
 
