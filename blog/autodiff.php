@@ -79,6 +79,13 @@ Since training always reduces to minimizing a single scalar loss $L$, reverse mo
 </div>
 
 <div class="md">
+## Before the name existed: a machine that differentiated
+
+Forward-mode AD is older than it sounds. In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \cite[Babbage's Difference Engine]{differenceengine}. You loaded it with a function's value and its successive differences at one starting point — which, for a smooth function, are just its **derivatives at that point** — and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all. In the vocabulary of this chapter, the engine was a **forward-mode automatic-differentiation machine**. It carried the function *together with* its derivative state forward in lockstep, and read each new value off that state, more than a century before the term "automatic differentiation" was ever coined. The tape that reverse-mode AD records a hundred and fifty years later is the same idea, turned around.
+
+</div>
+
+<div class="md">
 ## The Tape: Recording the Computation
 
 The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.

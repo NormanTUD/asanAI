@@ -15324,5 +15324,32 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/La_Marche_(cave)",
 		alternativetitle: "La Marche engravings (Wikipedia)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Deep geometric identities of the core machinery:
+	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport),
+	 *  optimization (edge of stability) and automatic differentiation
+	 *  (Babbage's method of finite differences).
+	 * ───────────────────────────────────────────────────────────────────── */
+	"cuturi2013sinkhorn": {
+		title: "Sinkhorn Distances: Lightspeed Computation of Optimal Transportation Distances",
+		author: "Marco Cuturi",
+		year: 2013,
+		url: "https://arxiv.org/abs/1306.0895",
+		alternativetitle: "entropic optimal transport via the Sinkhorn–Knopp matrix-scaling iteration"
+	},
+	"arora2022edgeofstability": {
+		title: "Understanding Gradient Descent on Edge of Stability in Deep Learning",
+		author: "Sanjeev Arora, Zhiyuan Li, Abhishek Panigrahi",
+		year: 2022,
+		url: "https://arxiv.org/abs/2205.09745",
+		alternativetitle: "the knife-edge learning-rate regime where sharpness locks to 2/η"
+	},
+	"differenceengine": {
+		title: "Difference engine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Difference_engine",
+		alternativetitle: "Babbage's method of finite differences as a forward-differentiation machine"
 	}
 };
