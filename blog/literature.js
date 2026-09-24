@@ -741,6 +741,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Concentration_of_measure",
 		alternativetitle: "Concentration of measure (Wikipedia)"
 	},
+	"vyshnyvetska2025infogravity": {
+		title: "Information Gravity: A Field-Theoretic Model for Token Selection in Large Language Models",
+		author: "Maryna Vyshnyvetska",
+		year: 2025,
+		url: "https://arxiv.org/abs/2504.20951",
+		alternativetitle: "Information Gravity (Vyshnyvetska, 2025)"
+	},
 	"saxe2014deep": {
 		title: "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
 		author: "Andrew M. Saxe, James L. McClelland, Surya Ganguli",
