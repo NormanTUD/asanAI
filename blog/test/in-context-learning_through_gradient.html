@@ -1939,8 +1939,7 @@ function iclPredict(N,eta){
     {id:'WK',name:'W_K  =  W_Q',latex:'\\begin{pmatrix} I_x & 0 \\\\ 0 & 0\\end{pmatrix}',
      expl:'<b>Schlüssel & Anfrage — identisch.</b> Der obere Block ist die Einheitsmatrix auf dem x-Teil, alles andere ist Null. Wirkung: Der Schlüssel eines Tokens ist einfach sein <b>x</b>; das y wird ausgeblendet. Damit wird aus kᵢᵀqⱼ genau das Skalarprodukt <span style="font-family:monospace">xᵢᵀxⱼ</span> — der Baustein, den der Gradient braucht.'},
     {id:'WV',name:'W_V',latex:'\\begin{pmatrix} 0 & 0 \\\\ W_0 & -I_y\\end{pmatrix}',
-     expl:'<b>Der Wert ist der Fehler.</b> Angewandt auf (xᵢ,yᵢ
-) liefert er (0, W₀xᵢ − yᵢ) — also genau den <b>Vorhersagefehler</b>. Das Minus vor I<sub>y</sub> zieht das wahre Ziel ab, W₀ liefert die aktuelle Vorhersage. Der Wert eines Tokens ist also nicht sein Inhalt, sondern <b>wie falsch das Modell bei ihm liegt</b>.'},
+           expl:'<b>Der Wert ist der Fehler.</b> Angewandt auf (xᵢ,yᵢ) liefert er (0, W₀xᵢ − yᵢ) — also genau den <b>Vorhersagefehler</b>. Das Minus vor I<sub>y</sub> zieht das wahre Ziel ab, W₀ liefert die aktuelle Vorhersage. Der Wert eines Tokens ist also nicht sein Inhalt, sondern <b>wie falsch das Modell bei ihm liegt</b>.'},
     {id:'P',name:'P',latex:'\\frac{\\eta}{N}\\,I',
      expl:'<b>Die Lernrate.</b> Eine skalierte Einheitsmatrix. η/N ist genau der Vorfaktor aus der GD-Formel: Mittelung über N Beispiele, multipliziert mit der Schrittweite. <b>η wird nicht eingestellt, sondern in der äußeren Schleife gelernt</b> — optimal für die Aufgabenfamilie.'},
     {id:'R',name:'Ergebnis',latex:'\\begin{pmatrix} x_j \\\\ y_j - \\Delta W x_j\\end{pmatrix}',
