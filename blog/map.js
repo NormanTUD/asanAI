@@ -184,7 +184,7 @@ function bootAtlas() {
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, moon, sun, planets = [];
 	var dotMesh, dotGeo = null, dotHighlight = null, hoverGlow = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1, hoverIdx = -1;
-	var DOT_SIZE = 0.05, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.12, HOVER_SCALE = 0.14;
+	var DOT_SIZE = 0.056, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.13, HOVER_SCALE = 0.15;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null, skySphere = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
@@ -922,13 +922,18 @@ function bootAtlas() {
 		var c = document.createElement('canvas');
 		var s = 64; c.width = c.height = s;
 		var g = c.getContext('2d');
+		// crisp "pin": solid core + faint body + a bright hard-edged ring at
+		// the edge + a faint outer glow. The hard ring keeps the marker
+		// readable even over the dark night side of the globe.
 		var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-		grad.addColorStop(0.0, 'rgba(255,255,255,1)');
-		grad.addColorStop(0.32, 'rgba(255,255,255,1)');
-		grad.addColorStop(0.46, 'rgba(255,255,255,0.82)');
-		grad.addColorStop(0.55, 'rgba(255,255,255,0.92)');
-		grad.addColorStop(0.7, 'rgba(255,255,255,0.22)');
-		grad.addColorStop(1.0, 'rgba(255,255,255,0)');
+		grad.addColorStop(0.00, 'rgba(255,255,255,1)');
+		grad.addColorStop(0.30, 'rgba(255,255,255,1)');
+		grad.addColorStop(0.44, 'rgba(255,255,255,0.30)');
+		grad.addColorStop(0.52, 'rgba(255,255,255,0.35)');
+		grad.addColorStop(0.56, 'rgba(255,255,255,0.98)');
+		grad.addColorStop(0.66, 'rgba(255,255,255,0.98)');
+		grad.addColorStop(0.72, 'rgba(255,255,255,0.12)');
+		grad.addColorStop(1.00, 'rgba(255,255,255,0)');
 		g.fillStyle = grad;
 		g.fillRect(0, 0, s, s);
 		return new THREE.CanvasTexture(c);
