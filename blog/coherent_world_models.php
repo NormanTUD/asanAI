@@ -736,6 +736,8 @@ $$
 \underbrace{P(z \mid x_1,\dots,x_n)}_{\text{latent structure integrating them}}.
 $$
 
+**A concrete instance you have already met: the Origami chapter is descent, drawn.** The master diagram is not only for calibrated thermometers. A trained deep ReLU network *is* a worked example of it, in a form you can draw. Its **linear regions** are the patches of the cover; on each one the network is exactly an affine map, a **local section**; the **creases** (the ReLU hyperplanes) are the **overlaps** where two regions meet; the network's *continuity* across every crease is the **compatibility** condition; and the network's global, piecewise-affine function is the **global section** the local pieces glue into. In the notation of the sheaf condition above: the regions are the $c_i$, the affine formula on each region is a section $s_i \in F(c_i)$, the shared crease is the overlap $c_i \times_c c_j$, and the fact that two affine pieces meet without a jump is the agreement $d_0 s_1 = d_1 s_2$. Hold it at the strength this chapter always holds such analogies: it is a *piecewise-linear, approximate* sheaf — the compatibility is continuity, not smoothness (there is a kink on every crease), and the "world" the model describes is the task's data distribution, not $W$ itself. But the *shape* is exactly the master diagram. See the <a href="origami">Origami</a> chapter, where every crease can be drawn.
+
 **Hallucination** = internal coherence without descent from a grounded cover. Two sub-types:
 
 1. **Locally incoherent presheaf.** The model's outputs contradict each other on overlapping local patches (e.g. three different answers to the same factual question in one conversation). The presheaf is broken: local sections do not agree on overlaps.
