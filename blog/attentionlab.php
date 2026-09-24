@@ -1612,6 +1612,16 @@ In matrix form, the entire operation for the sequence is computed efficiently as
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
 
+<div class="topic-block" data-mathlevel="70" data-optionaltitle="Softmax is also a transport plan">
+<div class="md">
+## A hidden identity: the softmax is the Sinkhorn iteration
+
+The $\text{Softmax}$ that turns the score matrix $QK^T$ into attention weights is doing more than normalizing. **Alternately rescaling the rows and columns of a positive matrix by their softmaxes is exactly the *Sinkhorn–Knopp* matrix-scaling algorithm** \cite[Cuturi, 2013]{cuturi2013sinkhorn} — the "lightspeed" method for computing **entropic optimal transport**. Optimal transport asks how to move one distribution of mass into the shape of another at minimal cost; add an entropy penalty and the answer is obtained by *repeatedly* normalizing rows, then columns, and so on — each pass being a soft, entropy-regularized softmax.
+
+So a single attention layer is quietly instantiating a problem with a long history in analysis. Each query's attention — a row of unit probability mass spread over the whole sequence — is a soft **transport plan**: the most "spread out" (maximum-entropy) assignment of that query's attention to the keys that is still consistent with their scores. This is why the $\sqrt{d_k}$ scaling and the softmax feel so load-bearing: they keep the "transport" well-conditioned, for exactly the reason the entropic regularization keeps the Sinkhorn iteration stable.
+</div>
+</div>
+
         <h2>The Connectivity Web</h2>
         <p>Hover over the words to see the invisible threads of meaning.</p>
         
