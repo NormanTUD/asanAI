@@ -414,58 +414,70 @@ async function retrain_neural_network() {
 async function train_neural_network() {
 	reset_math_history();
 
-	// Synchronous guard: a rapid double-click (touch devices, impatient users)
-	// can fire train_neural_network() twice before the button is disabled in
-	// gui_in_training() (which only runs after several awaits inside
-	// _train_neural_network_start). Disabling the button synchronously here
-	// closes that window: the second click hits the disabled check below.
-	// IMPORTANT: do NOT set started_training here. _train_neural_network()
-	// uses started_training to distinguish "start training" (false) from
-	// "user clicked the stop button during training" (true).
+	// Re-entrancy guard: a run re-enables its own button mid-way (for the "Stop"
+	// affordance, see prepare_gui_for_training) and there are alternate entry
+	// points the button-disabled check never covers (ribbon icon span, keyboard
+	// shortcuts, mobile button). A counter held for the whole run is the
+	// authoritative "a run is in flight" signal. While one is in flight we only
+	// let a deliberate Stop click through — i.e. only when the model is actually
+	// inside the fit loop (model.isTraining). Rapid re-clicks landing during the
+	// setup/data-load phase are ignored: treating one as a Stop would flip
+	// started_training to false mid-run, making the in-flight run skip fit_model
+	// and jump to the predict tab without training.
+	if (training_run_count > 0 && !(model && model.isTraining)) {
+		dbg('[train_neural_network] run already active (pre-fit) — ignoring click');
+		return null;
+	}
+
 	if ($($(".train_neural_network_button")[0]).prop("disabled")) {
 		dbg('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
 
 	$(".train_neural_network_button").prop("disabled", true);
+	training_run_count++;
 
 	if (!started_training && !$("#canvas_grid_visualization").children().length) {
 		_grid_visualization_height = 0;
 	}
 
-	// Ensure backend is ready before starting any scoped operations
-	await tf.ready();
-
-	let scopeStarted = false;
 	try {
-		tf.engine().startScope();
-		scopeStarted = true;
+		// Ensure backend is ready before starting any scoped operations
+		await tf.ready();
 
-		var ret = await _train_neural_network();
+		let scopeStarted = false;
+		try {
+			tf.engine().startScope();
+			scopeStarted = true;
 
-		return ret;
-	} catch (e) {
-		err("[train_neural_network] Unexpected error:", e);
-		return null;
-	} finally {
-		// Only end scope if we started it and it's still active
-		if (scopeStarted) {
-			try {
-				if (tf.engine().state.activeScope !== null) {
-					if (typeof xy_data_global !== "undefined" && xy_data_global) {
-						if (xy_data_global.x && typeof xy_data_global.x.isDisposed !== "undefined" && !xy_data_global.x.isDisposed) {
-							tf.keep(xy_data_global.x);
+			var ret = await _train_neural_network();
+
+			return ret;
+		} catch (e) {
+			err("[train_neural_network] Unexpected error:", e);
+			return null;
+		} finally {
+			// Only end scope if we started it and it's still active
+			if (scopeStarted) {
+				try {
+					if (tf.engine().state.activeScope !== null) {
+						if (typeof xy_data_global !== "undefined" && xy_data_global) {
+							if (xy_data_global.x && typeof xy_data_global.x.isDisposed !== "undefined" && !xy_data_global.x.isDisposed) {
+								tf.keep(xy_data_global.x);
+							}
+							if (xy_data_global.y && typeof xy_data_global.y.isDisposed !== "undefined" && !xy_data_global.y.isDisposed) {
+								tf.keep(xy_data_global.y);
+							}
 						}
-						if (xy_data_global.y && typeof xy_data_global.y.isDisposed !== "undefined" && !xy_data_global.y.isDisposed) {
-							tf.keep(xy_data_global.y);
-						}
+						tf.engine().endScope();
 					}
-					tf.engine().endScope();
+				} catch (e) {
+					console.warn("[train_neural_network] Error ending scope:", e);
 				}
-			} catch (e) {
-				console.warn("[train_neural_network] Error ending scope:", e);
 			}
 		}
+	} finally {
+		training_run_count--;
 	}
 }
 
@@ -540,9 +552,13 @@ async function _train_neural_network_start () {
 	if (training_logs_epoch["loss"] && training_logs_epoch["loss"]["x"] && training_logs_epoch["loss"]["x"].length > 0) {
 		save_training_history(training_logs_epoch, training_logs_batch, _last_multi_run_results);
 		_last_multi_run_results = null;
-	}
 
-	await show_tab_label("predict_tab_label", jump_to_interesting_tab());
+		// Only switch to the "interesting" (predict) tab when training actually
+		// produced results. If the run was skipped/aborted (e.g. a concurrent
+		// click flipped started_training, or the data load failed) we stay put
+		// instead of misleadingly jumping to the predict tab.
+		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
+	}
 
 	if(got_images_from_webcam) {
 		if(cam && !cam.isClosed) {
@@ -1789,6 +1805,22 @@ async function run_neural_network (recursive=0) {
 
 	if(!x_and_y) {
 		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
+		return;
+	}
+
+	var _run_x_shape = get_shape_from_array_or_tensor(x_and_y["x"]);
+	var _run_y_shape = get_shape_from_array_or_tensor(x_and_y["y"]);
+	dbg('[run_neural_network] training_run_count=' + training_run_count +
+		', model.isTraining=' + (model && model.isTraining) +
+		', started_training=' + started_training +
+		', x_shape=[' + (_run_x_shape || []) + '], y_shape=[' + (_run_y_shape || []) + ']');
+
+	// Abort if the data loaded as zero samples (e.g. a silent data-fetch
+	// failure that fell back to empty tensors). Fitting on empty data would run
+	// zero epochs and silently "complete", then mislead by jumping to the
+	// predict tab. Surface it instead.
+	if (!_run_x_shape || !_run_x_shape.length || !_run_x_shape[0] || !_run_y_shape || !_run_y_shape.length || !_run_y_shape[0]) {
+		err('[run_neural_network] training data is empty (0 samples) — aborting fit');
 		return;
 	}
 

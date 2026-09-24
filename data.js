@@ -814,6 +814,7 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 				if (e !== null && e !== undefined) {
 					if(Object.keys(e).includes("readyState")) {
 						show_error = false;
+						wrn('[get_x_and_y_from_txt_files] data fetch aborted/failed (readyState) — x/y will be empty');
 					}
 				} else {
 					errorContent = `Non-Error Object:\n${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
@@ -828,6 +829,7 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 			console.trace();
 		}
 
+		wrn('[get_x_and_y_from_txt_files] falling back to empty x/y tensors');
 		x = tensor([]);
 		y = tensor([]);
 	}

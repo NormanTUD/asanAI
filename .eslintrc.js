@@ -248,6 +248,7 @@ module.exports = {
 		"parse_int": "readonly",
 		"labels": "writable",
 		"started_training": "writable",
+		"training_run_count": "writable",
 		"training_history": "writable",
 		"training_history_counter": "writable",
 		"last_model_fingerprint": "writable",
