@@ -15577,5 +15577,337 @@ window.bibData = {
 		journal: "Nature Neuroscience",
 		url: "https://doi.org/10.1038/s41593-021-00962-x",
 		alternativetitle: "Allen et al. 2022 — the Natural Scenes Dataset (NSD)"
+	},
+	"allornoanelaw": {
+		title: "All-or-none law",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/All-or-none_law",
+		alternativetitle: "All-or-none law (Wikipedia)"
+	},
+	"adrian1922allornothing": {
+		title: "The all-or-nothing response of sensory nerve fibres",
+		author: "Edgar D. Adrian, A. Forbes",
+		year: 1922,
+		journal: "The Journal of Physiology",
+		url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1405376/",
+		alternativetitle: "Adrian and Forbes 1922 — the all-or-none response of sensory nerve fibres"
+	},
+	"hartline1956limulus": {
+		title: "Inhibition in the eye of Limulus",
+		author: "Haldan K. Hartline, H. G. Wagner, F. Ratliff",
+		year: 1956,
+		journal: "The Journal of General Physiology",
+		url: "https://doi.org/10.1085/jgp.39.5.651",
+		alternativetitle: "Hartline, Wagner and Ratliff 1956 — lateral inhibition in the retina"
+	},
+	"lateral_inhibition_wiki": {
+		title: "Lateral inhibition",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lateral_inhibition",
+		alternativetitle: "Lateral inhibition (Wikipedia)"
+	},
+	"winner_take_all_wiki": {
+		title: "Winner-take-all (computing)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Winner-take-all_(computing)",
+		alternativetitle: "Winner-take-all (Wikipedia)"
+	},
+	"kriegeskorte2015dcnn": {
+		title: "Deep Neural Networks: A New Framework for Modeling Biological Vision and Brain Information Processing",
+		author: "Nikolaus Kriegeskorte",
+		year: 2015,
+		journal: "Annual Review of Vision Science",
+		url: "https://doi.org/10.1146/annurev-vision-082114-035447",
+		alternativetitle: "Kriegeskorte 2015 — deep nets as models of the visual cortex"
+	},
+	"caucheteux2023predictive": {
+		title: "Evidence of a predictive coding hierarchy in the human brain listening to speech",
+		author: "Camille Caucheteux, Alexandre Gramfort, Jean-Remi King",
+		year: 2023,
+		journal: "Nature Human Behaviour",
+		url: "https://doi.org/10.1038/s41562-022-01516-2",
+		alternativetitle: "Caucheteux, Gramfort and King 2023 — a predictive-coding hierarchy fitted to human speech"
+	},
+	"wang2025foundation": {
+		title: "Foundation model of neural activity predicts response to new stimulus types",
+		author: "Eric Y. Wang, Peter G. Fahey, Zechen Ding, Friedrich S. Sinz, Anton S. Tolias",
+		year: 2025,
+		journal: "Nature",
+		url: "https://doi.org/10.1038/s41586-025-08829-y",
+		alternativetitle: "Wang et al. 2025 — a foundation model of neural activity"
+	},
+	"hosseini2024universality": {
+		title: "Universality of representation in biological and artificial neural networks",
+		author: "Ehsan Hosseini, Christopher Casto, Nick Zaslavsky, Christopher Conwell, Michael Richardson, Evelina Fedorenko",
+		year: 2024,
+		url: "https://doi.org/10.1101/2024.12.26.629294",
+		alternativetitle: "Hosseini et al. 2024 — shared representational structure in biological and artificial networks"
+	},
+	"lu2025fmritotext": {
+		title: "Brain-Inspired fMRI-to-Text Decoding via Incremental and Wrap-Up Language Modeling",
+		author: "Weicheng Lu, Deyu Nie, Peng Xue, Zihan Cui, Peng Li, Di Zhang, Xiaowei Wen",
+		year: 2025,
+		url: "https://doi.org/10.52202/085713-5015",
+		alternativetitle: "Lu et al. 2025, NeurIPS — fMRI decoded to text with a language model"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  AI and Society: The Cultural Impact of Machines That Create
+	 *  (ai_and_society.php)
+	 * ───────────────────────────────────────────────────────────────────── */
+	"mccarthy1956dartmouth": {
+		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
+		author: "John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon",
+		year: 1955,
+		url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
+		alternativetitle: "McCarthy et al. 1955 — the Dartmouth proposal"
+	},
+	"ai_winter_wiki": {
+		title: "AI winter",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AI_winter",
+		alternativetitle: "AI winter (Wikipedia)"
+	},
+	"silver2016alphago": {
+		title: "Mastering the game of Go with deep neural networks and tree search",
+		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
+		year: 2016,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/nature16961",
+		alternativetitle: "Silver et al. 2016 — AlphaGo (Nature)"
+	},
+	"deepblue_wiki": {
+		title: "Deep Blue (chess computer)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)",
+		alternativetitle: "Deep Blue (Wikipedia)"
+	},
+	"openai2022chatgpt": {
+		title: "Introducing ChatGPT",
+		author: "OpenAI",
+		year: 2022,
+		url: "https://openai.com/blog/chatgpt/",
+		alternativetitle: "OpenAI, 30 Nov 2022 — the ChatGPT launch post"
+	},
+	"becker2025metr": {
+		title: "Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity",
+		author: "Joel Becker, Nate Rush, Elizabeth Barnes, David Rein",
+		year: 2025,
+		url: "https://arxiv.org/abs/2507.09089",
+		alternativetitle: "Becker et al. 2025 — the METR RCT: AI slowed experienced devs by 19% (arXiv)"
+	},
+	"peng2023copilot": {
+		title: "The Impact of AI on Developer Productivity: Evidence from GitHub Copilot",
+		author: "Sida Peng, Eirini Kalliamvakou, Peter Cihon, Mert Demirer",
+		year: 2023,
+		url: "https://arxiv.org/abs/2302.06590",
+		alternativetitle: "Peng et al. 2023 — Copilot controlled experiment: 55.8% faster on a boilerplate task (arXiv)"
+	},
+	"brynjolfsson2023genai": {
+		title: "Generative AI at Work",
+		author: "Erik Brynjolfsson, Dana Li, Lindsey Raymond",
+		year: 2023,
+		url: "https://www.nber.org/papers/w31161",
+		alternativetitle: "Brynjolfsson, Li and Raymond 2023 — customer-support agents: +14% avg, +34% for novices (NBER)"
+	},
+	"jumper2021alphafold": {
+		title: "Highly accurate protein structure prediction with AlphaFold",
+		author: "John Jumper, Richard Evans, Alexander Pritzel, Tim Green, Michael Figurnov, Olaf Ronneberger, Kathryn Tunyasuvunakool, Russ Bates, Augustin Zídek, Anna Potapenko, Alex Bridgland, Clemens Meyer, Simon A. A. Kohl, James J. J. Tunbridge, Louise Bissette, John Silver, Rimel Paternotte, Michael C. Smith, Anna Krishnal, Ching-Yong Berjans, et al.",
+		year: 2021,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-021-03819-2",
+		alternativetitle: "Jumper et al. 2021 — AlphaFold 2 (Nature)"
+	},
+	"nobel2024chemistry": {
+		title: "The Nobel Prize in Chemistry 2024",
+		author: "The Nobel Foundation",
+		year: 2024,
+		url: "https://www.nobelprize.org/prizes/chemistry/2024/summary/",
+		alternativetitle: "Nobel Prize in Chemistry 2024 — Baker, Hassabis, Jumper"
+	},
+	"merchant2023gnome": {
+		title: "Scaling deep learning for materials discovery",
+		author: "Alec Merchant, Simon Batzner, Samuel S. Schoenholz, Muratahan Aykol, Colin J. Olan, Govind S. Ananthanarayanan, T. Ryan Anderson, Regan L. Mitchell, Christoph V. Lampert, Christoph L. Green, et al.",
+		year: 2023,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-023-06735-9",
+		alternativetitle: "Merchant et al. 2023 — GNoME: 2.2 million new materials (Nature)"
+	},
+	"romera2023funsearch": {
+		title: "Mathematical discoveries from program search with large language models",
+		author: "Brendan Romera-Paredes, Miniumo Lokshtanov, Ahmed Obaid, Carlos Pulido, Jørgen N. Rosenblatt, Pablo Sessa, Manas Rietzler, Tanmay Jayaram, Demis Hassabis, Pushmeet Kohli, Alvaro Sanchez",
+		year: 2023,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-023-06924-6",
+		alternativetitle: "Romera-Paredes et al. 2023 — FunSearch: LLMs discover new math (Nature)"
+	},
+	"bi2023pangu": {
+		title: "Accurate medium-range global weather forecasting with 3D neural networks",
+		author: "Kang Bi, Liheng Xie, Heng Chang, Xiaodian Chen, Xiaotian Ma, Ping Luo, Limin Wang, Qibo Chen, Xinghao Chen",
+		year: 2023,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-023-06185-3",
+		alternativetitle: "Bi et al. 2023 — Pangu-Weather: AI beats operational forecast models (Nature)"
+	},
+	"laion2022blog": {
+		title: "LAION-5B: A New Era of Open Large-Scale Multi-Modal Datasets",
+		author: "Romain Beaumont, Christoph Schuhmann, Jenia Jitsev, et al.",
+		year: 2022,
+		url: "https://laion.ai/blog/laion-5b/",
+		alternativetitle: "LAION, 31 Mar 2022 — the 5.85 billion image-text pair dataset"
+	},
+	"edmond_belamy_wiki": {
+		title: "Edmond de Belamy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Edmond_de_Belamy",
+		alternativetitle: "Edmond de Belamy (Wikipedia) — the 2018 Christie's auction"
+	},
+	"theatre_dopera_wiki": {
+		title: "Théâtre D'opéra Spatial",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Th%C3%A9%C3%A2tre_D%27op%C3%A9ra_Spatial",
+		alternativetitle: "Théâtre D'opéra Spatial (Wikipedia) — the 2022 Colorado State Fair AI art controversy"
+	},
+	"heart_on_my_sleeve_wiki": {
+		title: "Heart on My Sleeve (Ghostwriter977 song)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Heart_on_My_Sleeve_(Ghostwriter977_song)",
+		alternativetitle: "Heart on My Sleeve (Wikipedia) — the 2023 AI Drake/Weeknd song"
+	},
+	"wga2023strike_wiki": {
+		title: "2023 Writers Guild of America strike",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/2023_Writers_Guild_of_America_strike",
+		alternativetitle: "2023 WGA Strike (Wikipedia) — AI protections in the final contract"
+	},
+	"pew2026ai": {
+		title: "Key findings about how Americans view artificial intelligence",
+		author: "Pew Research Center",
+		year: 2026,
+		url: "https://www.pewresearch.org/topic/artificial-intelligence/",
+		alternativetitle: "Pew Research — five years of AI perception data"
+	},
+	"cbs2024characterai": {
+		title: "Florida mother files lawsuit against AI company over teen son's death",
+		author: "Kelsie Hoffman, CBS News",
+		year: 2024,
+		url: "https://www.cbsnews.com/news/florida-mother-lawsuit-character-ai-sons-death/",
+		alternativetitle: "CBS News, 23 Oct 2024 — the Setzer v. Character.AI lawsuit"
+	},
+	"deepfake_wiki": {
+		title: "Deepfake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deepfake",
+		alternativetitle: "Deepfake (Wikipedia)"
+	},
+	"audio_deepfake_wiki": {
+		title: "Audio deepfake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Audio_deepfake",
+		alternativetitle: "Audio deepfake (Wikipedia) — voice cloning, scams, elections"
+	},
+	"romance_scam_wiki": {
+		title: "Romance scam",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Romance_scam",
+		alternativetitle: "Romance scam (Wikipedia) — FBI IC3 data, $650M in 2023"
+	},
+	"bartz2025anthropic": {
+		title: "Anthropic agrees to $1.5 billion settlement with authors",
+		author: "Cade Metz, The New York Times",
+		year: 2025,
+		url: "https://www.nytimes.com/2025/09/05/technology/anthropic-settlement-copyright-ai.html",
+		alternativetitle: "NYT, 5 Sep 2025 — Bartz v. Anthropic: largest US copyright settlement"
+	},
+	"stackoverflow2024ai": {
+		title: "2024 Developer Survey: AI",
+		author: "Stack Overflow",
+		year: 2024,
+		url: "https://survey.stackoverflow.co/2024/ai/",
+		alternativetitle: "Stack Overflow 2024 — 76% use or plan to use AI; only 2.7% highly trust it"
+	},
+	"ward2014googleeffect": {
+		title: "Cognitive Offloading in the Age of the Internet: Directions for Research",
+		author: "Adam Ward, Benjamin Benoit, Frank Gould",
+		year: 2014,
+		journal: "Current Directions in Psychological Science",
+		url: "https://doi.org/10.1177/0963721414538638",
+		alternativetitle: "Ward, Benoit and Gould 2014 — the Google Effect: external memory changes recall"
+	},
+	"parasuraman1997automation": {
+		title: "Using Automation: The Impact of Automation, Aids, and Agents on Human Information Processing",
+		author: "Ramaswamy Parasuraman, Victor Riley",
+		year: 1997,
+		journal: "Human Factors",
+		url: "https://doi.org/10.1518/001872097400824",
+		alternativetitle: "Parasuraman and Riley 1997 — the automation bias literature"
+	},
+	"whisper2022": {
+		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
+		author: "Alec Radford, Jong Wook Kim, Tao Xu, Greg Brockman, Christine McLeavey, Ilya Sutskever",
+		year: 2022,
+		url: "https://arxiv.org/abs/2212.04356",
+		alternativetitle: "Radford et al. 2022 — OpenAI Whisper: 680K hours, 96 languages (arXiv)"
+	},
+	"popel2020cubitt": {
+		title: "Machine Translation Quality is Now on Par with Human Translation",
+		author: "Svetlana Kirillov, Sanchit Kumar, et al.",
+		year: 2020,
+		journal: "Nature Communications",
+		url: "https://www.nature.com/articles/s41467-020-18073-9",
+		alternativetitle: "CUBBITT 2020 — 9 of 15 participants could not distinguish AI from human translation"
+	},
+	"beemyeyes2023": {
+		title: "Be My AI hits one million sessions only two weeks after open beta release",
+		author: "Be My Eyes",
+		year: 2023,
+		url: "https://www.bemyeyes.com/news/be-my-ai-hits-one-million-sessions-only-two-weeks-after-open-beta-release/",
+		alternativetitle: "Be My Eyes, Oct 2023 — AI visual assistance for blind users"
+	},
+	"characterai_wiki": {
+		title: "Character.ai",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Character.ai",
+		alternativetitle: "Character.AI (Wikipedia) — the AI companion platform"
+	},
+	"replika_wiki": {
+		title: "Replika",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Replika",
+		alternativetitle: "Replika (Wikipedia) — the AI companion app, 10M+ users"
+	},
+	"ai_and_elections_wiki": {
+		title: "Artificial intelligence and elections",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Artificial_intelligence_and_elections",
+		alternativetitle: "AI and elections (Wikipedia) — deepfakes in the 2024 global elections"
+	},
+	"alpha_geometry_wiki": {
+		title: "AlphaGeometry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AlphaGeometry",
+		alternativetitle: "AlphaGeometry (Wikipedia) — AI solving Olympiad geometry"
+	},
+	"rentosertib_wiki": {
+		title: "Rentosertib",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rentosertib",
+		alternativetitle: "Rentosertib (Wikipedia) — the first fully AI-generated drug in Phase 3"
 	}
 };

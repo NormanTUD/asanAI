@@ -6,10 +6,11 @@
 <title>Tropische Geometrie tiefer neuronaler Netze — Interaktiv</title>
 
 <!-- Plotly für 3D-Polytope und Flächen -->
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
 <!-- Temml für LaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
-<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css"></noscript>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js" defer></script>
 
 <style>
 :root{
@@ -1321,6 +1322,13 @@ Eine Schicht ist <math><mrow><mi>ν</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo>
 </main>
 
 <script>
+function __asanaiInit(){
+if(!window.Plotly){
+  window.Plotly={
+    react:function(el){ if(el){ el.style.minHeight='220px'; el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:220px;padding:1rem;text-align:center;color:var(--muted);font-size:.82rem">3D-Plot nicht verfügbar — Plotly konnte nicht vom CDN geladen werden.<br><span style="opacity:.7">Seite neu laden, sobald die Verbindung wieder steht.</span></div>'; } },
+    Plots:{resize:function(){}}
+  };
+}
 /* ============================================================
    GLOBAL HELPERS
    ============================================================ */
@@ -4200,6 +4208,14 @@ window.addEventListener('load',()=>{
   setTimeout(()=>{ window.dispatchEvent(new Event('resize')); },120);
   setTimeout(()=>{ window.dispatchEvent(new Event('resize')); },600);
 });
+}
+(function(){
+  let started=false;
+  function start(){ if(!started){ started=true; __asanaiInit(); } }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start);
+  else start();
+  setTimeout(start,6000);
+})();
 </script>
 
 </body>
