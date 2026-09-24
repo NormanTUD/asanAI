@@ -1460,7 +1460,7 @@ function renderStaticMath(){
   const cv=$('#compCanvas');
   $$('#compSeg button').forEach(b=>b.onclick=()=>{
     $$('#compSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-    cur=+b.dataset.i;shown=0;draw();
+    cur=+b.dataset.i;shown=3;draw();
   });
   $('#compPlay').onclick=()=>{clearInterval(timer);shown=0;timer=setInterval(()=>{shown++;draw();if(shown>=4)clearInterval(timer);},650);draw();};
   $('#compAll').onclick=()=>{clearInterval(timer);shown=3;draw();};
