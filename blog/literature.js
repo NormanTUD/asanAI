@@ -15443,5 +15443,115 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Difference_engine",
 		alternativetitle: "Babbage's method of finite differences as a forward-differentiation machine"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Mirror in the Machine  (mirror_in_machine.php)
+	 *  How the brain's mechanisms and vocabulary became AI's — and how the
+	 *  machine has become a mirror we use to read the brain back.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"rao1999predictive": {
+		title: "Predictive coding in the visual cortex: A functional interpretation of some extra-classical receptive-field effects",
+		author: "Rajesh P. N. Rao, Dana H. Ballard",
+		year: 1999,
+		url: "https://doi.org/10.1038/4580",
+		alternativetitle: "Rao & Ballard 1999, Nature Neuroscience — predictive coding"
+	},
+	"clark2013whatevernext": {
+		title: "Whatever next? Predictive brains, situated agents, and the future of cognitive science",
+		author: "Andy Clark",
+		year: 2013,
+		url: "https://doi.org/10.1017/S0140525X12000477",
+		alternativetitle: "Clark 2013, Behavioral and Brain Sciences"
+	},
+	"whittington2019backprop": {
+		title: "Theories of Error Back-Propagation in the Brain",
+		author: "James C. R. Whittington, Rafal Bogacz",
+		year: 2019,
+		url: "https://doi.org/10.1016/j.tics.2018.12.005",
+		alternativetitle: "Whittington & Bogacz 2019, Trends in Cognitive Sciences"
+	},
+	"okeefe1971place": {
+		title: "The hippocampus as a spatial map. Preliminary evidence from unit activity in the freely-moving rat",
+		author: "John O'Keefe, Jonathan Dostrovsky",
+		year: 1971,
+		url: "https://doi.org/10.1016/0006-8993(71)90358-1",
+		alternativetitle: "O'Keefe & Dostrovsky 1971, Brain Research — place cells"
+	},
+	"nobel2014spatial": {
+		title: "The 2014 Nobel Prize in Physiology or Medicine: the brain's sense of place",
+		author: "Nobel Assembly, Karolinska Institute",
+		year: 2014,
+		url: "https://www.nobelprize.org/prizes/medicine/2014/summary/",
+		alternativetitle: "Nobel Prize 2014: O'Keefe, May-Britt Moser & Edvard Moser"
+	},
+	"stachenfeld2017predictivemap": {
+		title: "The hippocampus as a predictive map",
+		author: "Kimberly L. Stachenfeld, Matthew M. Botvinick, Samuel J. Gershman",
+		year: 2017,
+		url: "https://www.nature.com/articles/nn.4650",
+		alternativetitle: "Stachenfeld, Botvinick & Gershman 2017, Nature Neuroscience"
+	},
+	"ungerleider1982twostreams": {
+		title: "Two cortical visual systems",
+		author: "Leslie G. Ungerleider, Margaret Mishkin",
+		year: 1982,
+		url: "https://en.wikipedia.org/wiki/Visual_agnosia",
+		alternativetitle: "Ungerleider & Mishkin 1982, J. Comp. Neurol. — the what/where streams"
+	},
+	"baddeley1986workingmemory": {
+		title: "Working Memory",
+		author: "Alan D. Baddeley",
+		year: 1986,
+		url: "https://en.wikipedia.org/wiki/Working_memory",
+		alternativetitle: "Baddeley 1986, Oxford University Press"
+	},
+	"cowan2001magical4": {
+		title: "The 'Magical Number 4' in Short-Term Memory: A Reconsideration of Mental Storage Capacity",
+		author: "Neil Cowan",
+		year: 2001,
+		url: "https://doi.org/10.1017/S0140525X01003922",
+		alternativetitle: "Cowan 2001, Behavioral and Brain Sciences"
+	},
+	"fechner1860psychophysics": {
+		title: "Elemente der Psychophysik (Elements of Psychophysics)",
+		author: "Gustav Theodor Fechner",
+		year: 1860,
+		url: "https://en.wikipedia.org/wiki/Gustav_Fechner",
+		alternativetitle: "Fechner 1860 — the founding text of psychophysics"
+	},
+	"berridge2006dopamine": {
+		title: "Incentive salience, dopamine, and reward learning",
+		author: "Kent C. Berridge, Donald A. Waterhouse",
+		year: 2006,
+		url: "https://www.nature.com/articles/nrn1923",
+		alternativetitle: "Berridge & Waterhouse 2006, Nature Reviews Neuroscience"
+	},
+	"keller2018canonical": {
+		title: "Predictive Processing: A Canonical Cortical Computation",
+		author: "Georg B. Keller, Thomas D. Mrsić-Flogel",
+		year: 2018,
+		url: "https://doi.org/10.1016/j.neuron.2018.10.003",
+		alternativetitle: "Keller & Mrsić-Flogel 2018, Neuron"
+	},
+	"bastos2012microcircuit": {
+		title: "Canonical Microcircuits for Predictive Coding",
+		author: "Andre M. Bastos, W. Martin Usrey, Rick A. Adams, George R. Mangun, Pascal Fries, Karl J. Friston",
+		year: 2012,
+		url: "https://doi.org/10.1016/j.neuron.2012.10.038",
+		alternativetitle: "Bastos et al. 2012, Neuron"
+	},
+	"affolter2020brain2word": {
+		title: "Brain2Word: Decoding Brain Activity for Language Generation",
+		author: "Nicolas Affolter, Beni Egressy, Damian Pascual, Roger Wattenhofer",
+		year: 2020,
+		url: "https://arxiv.org/abs/2009.04765",
+		alternativetitle: "Affolter et al. 2020 — fMRI decoded to the word being read"
+	},
+	"schwartz2019brainbias": {
+		title: "Inducing brain-relevant bias in natural language processing models",
+		author: "Dan Schwartz, Mariya Toneva, Leila Wehbe",
+		year: 2019,
+		url: "https://arxiv.org/abs/1911.03268",
+		alternativetitle: "Schwartz, Toneva & Wehbe 2019, NeurIPS — fine-tuning a language model to predict the brain"
 	}
 };

@@ -1343,7 +1343,8 @@ function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const rect=cv.getBoundingClientRect();
   const w=rect.width||cv.clientWidth||600;
-  const h=parseInt(cv.getAttribute('height'))||300;
+  if(cv._lh===undefined) cv._lh=parseInt(cv.getAttribute('height'))||300;
+  const h=cv._lh;
   const MAX=8192;
   const tw=Math.min(MAX,Math.max(1,Math.round(w*dpr)));
   const th=Math.min(MAX,Math.max(1,Math.round(h*dpr)));
@@ -1354,6 +1355,7 @@ function setupCanvas(cv){
   ctx.setTransform(tw/w,0,0,th/h,0,0);
   return {ctx,w,h};
 }
+function cH(cv){ return cv._lh || (parseInt(cv.getAttribute('height'))||300); }
 
 /* temml render */
 function tex(el,s,display=true){
@@ -2320,7 +2322,7 @@ function drawDual(){
   function loop(){ if(anim){t+=0.006; draw();} requestAnimationFrame(loop); }
   cv.addEventListener('mousedown',e=>{
     const r=cv.getBoundingClientRect();
-    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     const l1=parseFloat($('#mkL1').value),l2=parseFloat($('#mkL2').value);
     let best=null,bd=0.45;
     P1.forEach((p,i)=>{const d=Math.hypot(p[0]*l1-x,p[1]*l1-y);if(d<bd){bd=d;best={arr:P1,i,l:l1};}});
@@ -2330,7 +2332,7 @@ function drawDual(){
   window.addEventListener('mousemove',e=>{
     if(!drag)return;
     const r=cv.getBoundingClientRect();
-    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     drag.arr[drag.i]=[x/drag.l,y/drag.l];
     if(drag.arr.length>2){const hh=hull2(drag.arr);if(hh.length===drag.arr.length){drag.arr.length=0;hh.forEach(p=>drag.arr.push(p));}}
     draw();
@@ -2469,7 +2471,7 @@ function drawDual(){
   }
   cv.addEventListener('mousedown',e=>{
     const r=cv.getBoundingClientRect();
-    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     let bd=0.7,best=null;
     segs.forEach((s,i)=>{const d=Math.hypot(s[0]/2-x,s[1]/2-y);if(d<bd){bd=d;best=i;}});
     drag=best;
@@ -2477,7 +2479,7 @@ function drawDual(){
   window.addEventListener('mousemove',e=>{
     if(drag===null)return;
     const r=cv.getBoundingClientRect();
-    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=invS(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     segs[drag]=[x*2,y*2];draw();
   });
   window.addEventListener('mouseup',()=>drag=null);
@@ -3050,7 +3052,7 @@ const PAPER_C2 = {
   }
   cv.addEventListener('mousedown',e=>{
     const r=cv.getBoundingClientRect();
-    const [x,y]=inv(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=inv(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     let bd=0.5,best=null;
     pts.forEach((p,i)=>{const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;best=i;}});
     drag=best;
@@ -3058,7 +3060,7 @@ const PAPER_C2 = {
   window.addEventListener('mousemove',e=>{
     if(drag===null)return;
     const r=cv.getBoundingClientRect();
-    const [x,y]=inv(e.clientX-r.left,e.clientY-r.top,r.width,parseInt(cv.getAttribute('height')));
+    const [x,y]=inv(e.clientX-r.left,e.clientY-r.top,r.width,cH(cv));
     pts[drag]=[clamp(x,X0+.2,X1-.2),clamp(y,Y0+.2,Y1-.2)];draw();
   });
   window.addEventListener('mouseup',()=>drag=null);
@@ -3496,7 +3498,7 @@ const PAPER_C2 = {
     const r=cvA.getBoundingClientRect();
     const pad=cvA._pad||20;
     const x=lerp(L,U,(e.clientX-r.left-pad)/(r.width-2*pad));
-    const y=lerp(U,L,(e.clientY-r.top-pad)/(parseInt(cvA.getAttribute('height'))-2*pad));
+    const y=lerp(U,L,(e.clientY-r.top-pad)/(cH(cvA)-2*pad));
     let p=0;planes.forEach(pl=>{p=p*2+((pl.a[0]*x+pl.a[1]*y+pl.b)>0?1:0);});
     if(p!==hoverPattern){hoverPattern=p;drawArr();}
   });
