@@ -1618,7 +1618,8 @@ function fit(cv){
   const dpr = window.devicePixelRatio||1;
   const r = cv.getBoundingClientRect();
   if(r.width===0) return cv.getContext('2d');
-  const h = cv.getAttribute('height')|0;
+  if(cv._lh===undefined) cv._lh = cv.clientHeight || (cv.getAttribute('height')|0);
+  const h = cv._lh;
   cv.width = Math.round(r.width*dpr);
   cv.height= Math.round(h*dpr);
   cv.style.height = h+'px';
@@ -1631,7 +1632,7 @@ function clear(ctx,cv){
   ctx.clearRect(0,0,cv.width/dpr,cv.height/dpr);
 }
 function CW(cv){ return cv.getBoundingClientRect().width; }
-function CH(cv){ return cv.getAttribute('height')|0; }
+function CH(cv){ return cv._lh || (cv.getAttribute('height')|0); }
 
 /* --- drawing primitives --- */
 function rr(ctx,x,y,w,h,r){
