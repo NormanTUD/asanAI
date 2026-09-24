@@ -52578,10 +52578,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "monte_carlo_animation_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -54478,10 +54478,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_astronaut_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -60481,9 +60481,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "transformer_attention_figure"
   ],
   "cited_in": [
    "map",
@@ -60627,6 +60627,800 @@
   "cited_in": [
    "attentionlab",
    "reinforcement_learning"
+  ]
+ },
+ {
+  "name": "Abhishek Panigrahi",
+  "canon": "Abhishek Panigrahi",
+  "alias": null,
+  "lat": 40.34,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "arora2022edgeofstability"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Andrey Zhitnikov",
+  "canon": "Andrey Zhitnikov",
+  "alias": null,
+  "lat": 51.75,
+  "lng": -1.26,
+  "city": "Oxford, UK",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "naitzat2020topology"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Ben Poole",
+  "canon": "Ben Poole",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "raghu2017expressive"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "David L. Donoho",
+  "canon": "David L. Donoho",
+  "alias": null,
+  "lat": 35.99,
+  "lng": -78.89,
+  "city": "Durham, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "papyan2020neuralcollapse"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "David Rolnick",
+  "canon": "David Rolnick",
+  "alias": null,
+  "lat": 40.44,
+  "lng": -79.99,
+  "city": "Pittsburgh, USA",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "hanin2019linearregions"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Ephy R. Love",
+  "canon": "Ephy R. Love",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, UK",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "love2021topdeepsurvey"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Eric Nalisnick",
+  "canon": "Eric Nalisnick",
+  "alias": null,
+  "lat": 45.5,
+  "lng": -73.57,
+  "city": "Montreal, Canada",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "papamakarios2019flows"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "George Papamakarios",
+  "canon": "George Papamakarios",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "papamakarios2019flows"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Gregory Naitzat",
+  "canon": "Gregory Naitzat",
+  "alias": null,
+  "lat": 40.44,
+  "lng": -79.99,
+  "city": "Pittsburgh, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "naitzat2020topology"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Haim Sompolinsky",
+  "canon": "Haim Sompolinsky",
+  "alias": null,
+  "lat": 40.34,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chung2017perceptual"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Jesse Bettencourt",
+  "canon": "Jesse Bettencourt",
+  "alias": null,
+  "lat": 33.75,
+  "lng": -84.39,
+  "city": "Atlanta, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chen2018neuralode"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Jon Kleinberg",
+  "canon": "Jon Kleinberg",
+  "alias": null,
+  "lat": 42.45,
+  "lng": -76.49,
+  "city": "Ithaca, USA",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "raghu2017expressive"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Jong Chul Ye",
+  "canon": "Jong Chul Ye",
+  "alias": null,
+  "lat": 37.57,
+  "lng": 126.98,
+  "city": "Seoul, South Korea",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "lee2023topologywidth"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Joram Lindenstrauss",
+  "canon": "Joram Lindenstrauss",
+  "alias": null,
+  "lat": 40.34,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 1984.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "johnson1984lindenstrauss"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Kasper Green Larsen",
+  "canon": "Kasper Green Larsen",
+  "alias": null,
+  "lat": 56.16,
+  "lng": 10.01,
+  "city": "Aarhus, Denmark",
+  "year": 2014.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "larsen2014jloptimal"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Jelani Nelson",
+  "canon": "Jelani Nelson",
+  "alias": null,
+  "lat": 43.07,
+  "lng": -89.4,
+  "city": "Madison, USA",
+  "year": 2014.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "larsen2014jloptimal"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Lek-Heng Lim",
+  "canon": "Lek-Heng Lim",
+  "alias": null,
+  "lat": 1.35,
+  "lng": 103.82,
+  "city": "Singapore",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "naitzat2020topology"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Maithra Raghu",
+  "canon": "Maithra Raghu",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "raghu2017expressive"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Robert Wu",
+  "canon": "Robert Wu",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2024.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "wu2024linguisticcollapse"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Roman Vershynin",
+  "canon": "Roman Vershynin",
+  "alias": null,
+  "lat": 34.14,
+  "lng": -118.13,
+  "city": "Pasadena, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "vershynin2018hd"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Thomas M. Cover",
+  "canon": "Thomas M. Cover",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 1965.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "cover1965"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Vardan Papyan",
+  "canon": "Vardan Papyan",
+  "alias": null,
+  "lat": 29.76,
+  "lng": -95.37,
+  "city": "Houston, USA",
+  "year": 2024.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "papyan2020neuralcollapse",
+   "wu2024linguisticcollapse"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Vasileios Maroulas",
+  "canon": "Vasileios Maroulas",
+  "alias": null,
+  "lat": 37.98,
+  "lng": 23.73,
+  "city": "Athens, Greece",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "love2021topdeepsurvey"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "William B. Johnson",
+  "canon": "William B. Johnson",
+  "alias": null,
+  "lat": 40.34,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 1984.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "johnson1984lindenstrauss"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Yulia Rubanova",
+  "canon": "Yulia Rubanova",
+  "alias": null,
+  "lat": 40.71,
+  "lng": -74.01,
+  "city": "New York, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chen2018neuralode"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Zhiyuan Li",
+  "canon": "Zhiyuan Li",
+  "alias": null,
+  "lat": 40.34,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "arora2022edgeofstability"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Benjamin Filippenko",
+  "canon": "Benjamin Filippenko",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "love2021topdeepsurvey"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Ekin Ergen",
+  "canon": "Ekin Ergen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ergengrillo2024topological"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Event Horizon Telescope Collaboration",
+  "canon": "Event Horizon Telescope Collaboration",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "m87_blackhole_image"
+  ],
+  "cited_in": [
+   "map"
+  ]
+ },
+ {
+  "name": "Isao Ishikawa",
+  "canon": "Isao Ishikawa",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "teshima2020inndiffeo"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "J. Elisenda Grigsby",
+  "canon": "J. Elisenda Grigsby",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grigsby2020transversality"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Jakob Zech",
+  "canon": "Jakob Zech",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "petersen2024mathdl"
+  ],
+  "cited_in": [
+   "activationlab",
+   "beyond_llms",
+   "coherent_world_models",
+   "computer_vision",
+   "deeplearninglab",
+   "embeddinglab",
+   "foam_of_meaning",
+   "math_iii",
+   "math_iv",
+   "origami",
+   "overandunderfittinglab",
+   "resnetlab",
+   "security_inference",
+   "statistics_i",
+   "transformer"
+  ]
+ },
+ {
+  "name": "John Alexander Cruz Morales",
+  "canon": "John Alexander Cruz Morales",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cruzmorales2021grothendieck"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Kathryn Lindsey",
+  "canon": "Kathryn Lindsey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grigsby2020transversality"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Koichi Tojo",
+  "canon": "Koichi Tojo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "teshima2020inndiffeo"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Lechao Xiao",
+  "canon": "Lechao Xiao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lee2019widelinear"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Marco Cuturi",
+  "canon": "Marco Cuturi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cuturi2013sinkhorn"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Maryna Vyshnyvetska",
+  "canon": "Maryna Vyshnyvetska",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vyshnyvetska2025infogravity"
+  ],
+  "cited_in": [
+   "foam_of_meaning"
+  ]
+ },
+ {
+  "name": "Moritz Grillo",
+  "canon": "Moritz Grillo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ergengrillo2024topological"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "NASA / ESA / Hubble Space Telescope",
+  "canon": "NASA / ESA / Hubble Space Telescope",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1999.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "crab_nebula_image"
+  ],
+  "cited_in": [
+   "map"
+  ]
+ },
+ {
+  "name": "Philipp Petersen",
+  "canon": "Philipp Petersen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "petersen2024mathdl"
+  ],
+  "cited_in": [
+   "activationlab",
+   "beyond_llms",
+   "coherent_world_models",
+   "computer_vision",
+   "deeplearninglab",
+   "embeddinglab",
+   "foam_of_meaning",
+   "math_iii",
+   "math_iv",
+   "origami",
+   "overandunderfittinglab",
+   "resnetlab",
+   "security_inference",
+   "statistics_i",
+   "transformer"
+  ]
+ },
+ {
+  "name": "Rasa Hosseinzadeh",
+  "canon": "Rasa Hosseinzadeh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "loaizaganem2024manifoldsurvey"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Sangmin Lee",
+  "canon": "Sangmin Lee",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lee2023topologywidth"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "Takeshi Teshima",
+  "canon": "Takeshi Teshima",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "teshima2020inndiffeo"
+  ],
+  "cited_in": [
+   "origami"
+  ]
+ },
+ {
+  "name": "X. Y. Han",
+  "canon": "X. Y. Han",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "papyan2020neuralcollapse"
+  ],
+  "cited_in": [
+   "origami"
   ]
  }
 ]

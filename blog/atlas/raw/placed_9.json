@@ -2086,5 +2086,365 @@
   "Stanford, USA",
   2025,
   1
+ ],
+ [
+  "Abhishek Panigrahi",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  2022,
+  1
+ ],
+ [
+  "Andrey Zhitnikov",
+  51.75,
+  -1.26,
+  "Oxford, UK",
+  2020,
+  1
+ ],
+ [
+  "Ben Poole",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2017,
+  1
+ ],
+ [
+  "David L. Donoho",
+  35.99,
+  -78.89,
+  "Durham, USA",
+  2020,
+  1
+ ],
+ [
+  "David Rolnick",
+  40.44,
+  -79.99,
+  "Pittsburgh, USA",
+  2019,
+  1
+ ],
+ [
+  "Ephy R. Love",
+  51.51,
+  -0.13,
+  "London, UK",
+  2021,
+  1
+ ],
+ [
+  "Eric Nalisnick",
+  45.5,
+  -73.57,
+  "Montreal, Canada",
+  2019,
+  1
+ ],
+ [
+  "George Papamakarios",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2019,
+  1
+ ],
+ [
+  "Gregory Naitzat",
+  40.44,
+  -79.99,
+  "Pittsburgh, USA",
+  2020,
+  1
+ ],
+ [
+  "Haim Sompolinsky",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  2017,
+  1
+ ],
+ [
+  "Jesse Bettencourt",
+  33.75,
+  -84.39,
+  "Atlanta, USA",
+  2018,
+  1
+ ],
+ [
+  "Jon Kleinberg",
+  42.45,
+  -76.49,
+  "Ithaca, USA",
+  2017,
+  1
+ ],
+ [
+  "Jong Chul Ye",
+  37.57,
+  126.98,
+  "Seoul, South Korea",
+  2023,
+  1
+ ],
+ [
+  "Joram Lindenstrauss",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  1984,
+  1
+ ],
+ [
+  "Kasper Green Larsen",
+  56.16,
+  10.01,
+  "Aarhus, Denmark",
+  2014,
+  1
+ ],
+ [
+  "Jelani Nelson",
+  43.07,
+  -89.4,
+  "Madison, USA",
+  2014,
+  1
+ ],
+ [
+  "Lek-Heng Lim",
+  1.35,
+  103.82,
+  "Singapore",
+  2020,
+  1
+ ],
+ [
+  "Maithra Raghu",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2017,
+  1
+ ],
+ [
+  "Robert Wu",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2024,
+  1
+ ],
+ [
+  "Roman Vershynin",
+  34.14,
+  -118.13,
+  "Pasadena, USA",
+  2018,
+  1
+ ],
+ [
+  "Thomas M. Cover",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  1965,
+  1
+ ],
+ [
+  "Vardan Papyan",
+  29.76,
+  -95.37,
+  "Houston, USA",
+  2024,
+  1
+ ],
+ [
+  "Vasileios Maroulas",
+  37.98,
+  23.73,
+  "Athens, Greece",
+  2021,
+  1
+ ],
+ [
+  "William B. Johnson",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  1984,
+  1
+ ],
+ [
+  "Yulia Rubanova",
+  40.71,
+  -74.01,
+  "New York, USA",
+  2018,
+  1
+ ],
+ [
+  "Zhiyuan Li",
+  40.34,
+  -74.66,
+  "Princeton, USA",
+  2022,
+  1
+ ],
+ [
+  "Benjamin Filippenko",
+  null,
+  null,
+  "",
+  2021,
+  0
+ ],
+ [
+  "Ekin Ergen",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "Event Horizon Telescope Collaboration",
+  null,
+  null,
+  "",
+  2019,
+  0
+ ],
+ [
+  "Isao Ishikawa",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "J. Elisenda Grigsby",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Jakob Zech",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "John Alexander Cruz Morales",
+  null,
+  null,
+  "",
+  2021,
+  0
+ ],
+ [
+  "Kathryn Lindsey",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Koichi Tojo",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Lechao Xiao",
+  null,
+  null,
+  "",
+  2019,
+  0
+ ],
+ [
+  "Marco Cuturi",
+  null,
+  null,
+  "",
+  2013,
+  0
+ ],
+ [
+  "Maryna Vyshnyvetska",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Moritz Grillo",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "NASA / ESA / Hubble Space Telescope",
+  null,
+  null,
+  "",
+  1999,
+  0
+ ],
+ [
+  "Philipp Petersen",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "Rasa Hosseinzadeh",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "Sangmin Lee",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Takeshi Teshima",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "X. Y. Han",
+  null,
+  null,
+  "",
+  2020,
+  0
  ]
 ]
