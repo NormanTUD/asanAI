@@ -1,0 +1,2840 @@
+function makeRHM(nc, v, m, s, L, seed) {
+  // rules[level] : for level ℓ (1-indexed from bottom, ℓ=1..L)
+  //   rules[ℓ-1] is a map from higher-level symbol (0..v-1 or 0..nc-1 for top) 
+  //   to m tuples of s lower-level symbols
+  // Must be non-ambiguous: all tuples across all higher symbols at a level distinct
+}
+
+cnt_2[c][μ] = 1 for μ in rules[0][c]  (μ = tuple index)
+cnt_ℓ[c][μ] = Σ_{r in rules[ℓ-2][c]} cnt_{ℓ-1}[ r[i_ℓ] ][μ]
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Das Random Hierarchy Model — Wie tiefe Netze kompositionelle Daten lernen</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:        #07080f;
+  --bg2:       #0b0d18;
+  --panel:     #11142310;
+  --panel-s:   #141828;
+  --panel-b:   #1e2440;
+  --ink:       #e8ecf8;
+  --ink-dim:   #9aa4c4;
+  --ink-dimmer:#5f6a8c;
+  --acc:       #6ee7ff;   /* cyan */
+  --acc2:      #b388ff;   /* violet */
+  --acc3:      #ffd166;   /* gold */
+  --acc4:      #ff7597;   /* rose */
+  --good:      #45e6a8;
+  --bad:       #ff6b6b;
+  --r:         16px;
+  --mono:      'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:80px}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,Helvetica,Arial,sans-serif;
+  font-size:16.5px; line-height:1.68; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(1100px 700px at 12% -8%,  rgba(110,231,255,.10), transparent 62%),
+    radial-gradient(1000px 800px at 92% 8%,   rgba(179,136,255,.10), transparent 62%),
+    radial-gradient(1200px 900px at 50% 108%, rgba(255,117,151,.07), transparent 62%);
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035;
+  background-image:linear-gradient(rgba(255,255,255,.7) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.7) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 20%, transparent 78%);
+}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:78px 0;position:relative;scroll-margin-top:72px}
+section + section{border-top:1px solid rgba(255,255,255,.055)}
+
+/* ---------- Top nav ---------- */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:56px;z-index:200;
+  background:rgba(7,8,15,.78);backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:18px;padding:0 20px;
+}
+#topbar .brand{font-weight:700;letter-spacing:.22em;font-size:11px;color:var(--acc);text-transform:uppercase;white-space:nowrap}
+#chapters{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 96%,transparent)}
+#chapters::-webkit-scrollbar{display:none}
+#chapters a{
+  color:var(--ink-dimmer);text-decoration:none;font-size:11.5px;padding:6px 10px;border-radius:9px;
+  white-space:nowrap;transition:.18s;font-weight:600;letter-spacing:.02em
+}
+#chapters a:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+#chapters a.on{color:#04060d;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 18px rgba(110,231,255,.35)}
+#prog{position:fixed;top:56px;left:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc4));z-index:201;width:0;box-shadow:0 0 12px var(--acc)}
+
+/* ---------- Hero ---------- */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:56px;position:relative;overflow:hidden}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero-in{position:relative;z-index:2;max-width:920px;padding:0 24px}
+.eyebrow{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--acc);margin-bottom:26px;font-weight:700}
+h1{
+  font-size:clamp(2.4rem,6.6vw,4.9rem);line-height:1.02;margin:0 0 26px;font-weight:800;letter-spacing:-.033em;
+  background:linear-gradient(120deg,#fff 8%,var(--acc) 40%,var(--acc2) 66%,var(--acc4) 94%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{font-size:clamp(1.02rem,2.1vw,1.28rem);color:var(--ink-dim);max-width:720px;margin:0 auto 34px}
+.authors{font-size:12.5px;color:var(--ink-dimmer);letter-spacing:.07em;margin-bottom:44px}
+.formula-hero{
+  display:inline-block;padding:20px 40px;border-radius:20px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(110,231,255,.28);
+  box-shadow:0 0 70px rgba(110,231,255,.14), inset 0 1px 0 rgba(255,255,255,.07);
+  font-size:1.35rem;margin-bottom:12px
+}
+.hero-hint{font-size:12px;color:var(--ink-dimmer);margin-top:30px;letter-spacing:.14em;text-transform:uppercase}
+.scroll-dot{width:22px;height:36px;border:2px solid var(--ink-dimmer);border-radius:12px;margin:18px auto 0;position:relative}
+.scroll-dot::after{content:'';position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;background:var(--acc);transform:translateX(-50%);animation:sd 1.7s infinite}
+@keyframes sd{0%{opacity:0;transform:translate(-50%,0)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,13px)}}
+
+/* ---------- Typography ---------- */
+h2{font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:800;letter-spacing:-.024em;margin:0 0 6px;line-height:1.14}
+h3{font-size:1.16rem;font-weight:700;margin:34px 0 12px;color:var(--ink);letter-spacing:-.01em}
+h4{font-size:.94rem;font-weight:700;margin:20px 0 8px;color:var(--acc);letter-spacing:.03em}
+.kicker{font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;font-weight:800;margin-bottom:14px;display:block}
+.k1{color:var(--acc)} .k2{color:var(--acc2)} .k3{color:var(--acc3)} .k4{color:var(--acc4)} .k5{color:var(--good)}
+p{margin:0 0 15px;color:#cdd5ea;max-width:74ch}
+.lead{font-size:1.09rem;color:var(--ink);max-width:76ch}
+.dim{color:var(--ink-dim)}
+b,strong{color:#fff;font-weight:700}
+em{color:var(--acc3);font-style:normal;font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:rgba(110,231,255,.1);padding:2px 6px;border-radius:5px;color:var(--acc)}
+
+/* ---------- Cards / panels ---------- */
+.card{
+  background:linear-gradient(170deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.085);border-radius:var(--r);padding:24px;
+  box-shadow:0 20px 50px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(8px);
+}
+.card.tight{padding:18px}
+.lab{
+  background:linear-gradient(175deg,rgba(13,16,30,.96),rgba(9,11,22,.96));
+  border:1px solid rgba(110,231,255,.2);border-radius:20px;padding:26px;margin:28px 0;
+  box-shadow:0 30px 70px -40px #000, inset 0 1px 0 rgba(255,255,255,.055), 0 0 0 1px rgba(110,231,255,.04);
+  position:relative;
+}
+.lab::before{
+  content:attr(data-lab);position:absolute;top:-10px;left:22px;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
+  font-weight:800;color:#04060d;background:linear-gradient(135deg,var(--acc),var(--acc2));padding:3px 12px;border-radius:20px
+}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g21{grid-template-columns:1.35fr 1fr}
+.g12{grid-template-columns:1fr 1.5fr}
+@media(max-width:940px){.g2,.g3,.g4,.g21,.g12{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrls{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:18px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;color:var(--ink-dim);margin-bottom:6px;font-weight:600;letter-spacing:.04em}
+.ctl .val{font-family:var(--mono);color:var(--acc);font-weight:700;font-size:13px;background:rgba(110,231,255,.1);padding:1px 8px;border-radius:6px}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;border-radius:3px;outline:none;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));opacity:.85;cursor:pointer
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#fff;cursor:pointer;
+  box-shadow:0 0 0 3px rgba(110,231,255,.28),0 2px 10px rgba(0,0,0,.6);transition:.15s
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.16);box-shadow:0 0 0 5px rgba(110,231,255,.34)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:none;cursor:pointer;box-shadow:0 0 0 3px rgba(110,231,255,.28)}
+button,.btn{
+  background:rgba(255,255,255,.07);color:var(--ink);border:1px solid rgba(255,255,255,.16);
+  padding:8px 16px;border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:700;
+  transition:.16s;font-family:inherit;letter-spacing:.02em
+}
+button:hover{background:rgba(110,231,255,.17);border-color:var(--acc);color:#fff;transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04060d;border:none;box-shadow:0 6px 22px -8px var(--acc)}
+button.pri:hover{filter:brightness(1.12);color:#04060d}
+button.on{background:linear-gradient(135deg,var(--acc3),var(--acc4));color:#150b00;border:none}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.seg{display:inline-flex;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:3px;gap:3px}
+.seg button{background:transparent;border:none;padding:6px 14px;border-radius:8px;font-size:12px}
+.seg button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04060d}
+
+/* ---------- Canvas / plots ---------- */
+canvas{display:block;max-width:100%;border-radius:12px}
+.cvwrap{background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px;overflow-x:auto}
+.plot{width:100%;min-height:300px}
+
+/* ---------- Stats & callouts ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin:16px 0}
+.stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;text-align:center}
+.stat .n{font-family:var(--mono);font-size:1.22rem;font-weight:800;color:var(--acc);line-height:1.22;word-break:break-all}
+.stat .l{font-size:9.8px;color:var(--ink-dimmer);text-transform:uppercase;letter-spacing:.14em;margin-top:5px;font-weight:700}
+.stat.v .n{color:var(--acc2)} .stat.g .n{color:var(--acc3)} .stat.r .n{color:var(--acc4)}
+.stat.ok .n{color:var(--good)} .stat.no .n{color:var(--bad)}
+
+.note{border-left:3px solid var(--acc);background:rgba(110,231,255,.07);padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0;font-size:14.5px}
+.note.w{border-color:var(--acc3);background:rgba(255,209,102,.07)}
+.note.r{border-color:var(--acc4);background:rgba(255,117,151,.07)}
+.note.g{border-color:var(--good);background:rgba(69,230,168,.07)}
+.note b{color:#fff}
+
+.big{
+  text-align:center;padding:30px;margin:28px 0;border-radius:20px;
+  background:linear-gradient(135deg,rgba(110,231,255,.11),rgba(179,136,255,.11));
+  border:1px solid rgba(110,231,255,.3);box-shadow:0 0 60px -20px var(--acc)
+}
+.big .katex{font-size:1.65em}
+
+.qbox{
+  border:1px dashed rgba(255,209,102,.45);background:rgba(255,209,102,.055);
+  border-radius:16px;padding:22px 26px;margin:26px 0
+}
+.qbox .q{font-size:1.16rem;font-weight:700;color:var(--acc3);margin:0}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07)}
+th{color:var(--ink-dimmer);font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800}
+td{color:#cdd5ea}
+tr:hover td{background:rgba(255,255,255,.028)}
+.tc{text-align:center}
+
+/* ---------- Symbol chips ---------- */
+.sym{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:7px;font-family:var(--mono);font-weight:800;font-size:12.5px;
+  margin:2px;color:#04060d;box-shadow:0 2px 8px rgba(0,0,0,.4)
+}
+.sym.lg{width:34px;height:34px;font-size:15px;border-radius:9px}
+
+/* ---------- Legend ---------- */
+.leg{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-dim);margin:10px 0;align-items:center}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
+
+/* ---------- Step flow ---------- */
+.steps{counter-reset:s;display:grid;gap:13px;margin:20px 0}
+.step{
+  counter-increment:s;position:relative;padding:15px 18px 15px 56px;border-radius:13px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);font-size:14.5px
+}
+.step::before{
+  content:counter(s);position:absolute;left:16px;top:14px;width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04060d;font-weight:800;font-size:12.5px;
+  display:flex;align-items:center;justify-content:center
+}
+
+/* ---------- Comparison pills ---------- */
+.pill{display:inline-block;padding:3px 11px;border-radius:20px;font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.pill.y{background:rgba(69,230,168,.17);color:var(--good);border:1px solid rgba(69,230,168,.35)}
+.pill.n{background:rgba(255,107,107,.17);color:var(--bad);border:1px solid rgba(255,107,107,.35)}
+.pill.m{background:rgba(255,209,102,.17);color:var(--acc3);border:1px solid rgba(255,209,102,.35)}
+
+/* ---------- misc ---------- */
+.katex{color:#e8ecf8}
+.katex-display{margin:14px 0 !important}
+.tiny{font-size:11.5px;color:var(--ink-dimmer);line-height:1.55}
+hr.soft{border:none;border-top:1px solid rgba(255,255,255,.08);margin:28px 0}
+.barmeter{height:9px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px}
+.barmeter div{height:100%;border-radius:5px;transition:width .3s}
+.scrollx{overflow-x:auto}
+.center{text-align:center}
+ul.clean{list-style:none;padding:0;margin:10px 0}
+ul.clean li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;color:#cdd5ea}
+ul.clean li::before{content:'▸';position:absolute;left:4px;color:var(--acc);font-weight:800}
+.tag{font-family:var(--mono);font-size:11px;color:var(--acc3);background:rgba(255,209,102,.1);padding:2px 7px;border-radius:5px}
+footer{padding:60px 0 80px;text-align:center;color:var(--ink-dimmer);font-size:12.5px;border-top:1px solid rgba(255,255,255,.07)}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div id="topbar">
+  <div class="brand">RHM · Interaktiv</div>
+  <nav id="chapters"></nav>
+</div>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-in">
+    <div class="eyebrow">Cagnetta · Petrini · Tomasini · Favero · Wyart — EPFL</div>
+    <h1>Wie tiefe Netze<br>kompositionelle Daten lernen</h1>
+    <p class="sub">Warum brauchen neuronale Netze für hochdimensionale Aufgaben <b>nicht</b> exponentiell viele Beispiele? Eine Reise durch das <b>Random Hierarchy Model</b> — komplett zum Anfassen.</p>
+    <div class="formula-hero"><span id="heroF"></span></div>
+    <div class="authors">arXiv:2307.02129v5 · Institute of Physics, EPFL Lausanne</div>
+    <div class="hero-hint">Scrollen · Schieben · Klicken</div>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 1 · FLUCH ══════════════════════════ -->
+<section id="s1"><div class="wrap">
+  <span class="kicker k1">Kapitel 1 — Das Rätsel</span>
+  <h2>Der Fluch der Dimensionalität</h2>
+  <p class="lead">Stell dir vor, du willst eine unbekannte Funktion lernen, indem du Punkte sammelst. Dann musst du den Raum <em>dicht</em> mit Punkten füllen. In hohen Dimensionen ist das hoffnungslos.</p>
+
+  <div class="lab" data-lab="Labor 1 · Räume füllen">
+    <div class="grid g12">
+      <div>
+        <div class="ctrls" style="grid-template-columns:1fr">
+          <div class="ctl"><label>Dimension <span class="val" id="cdV">2</span></label><input type="range" id="cdD" min="1" max="60" value="2"></div>
+          <div class="ctl"><label>Datenpunkte P <span class="val" id="cpV">100</span></label><input type="range" id="cdP" min="1" max="7" step="0.05" value="2"></div>
+          <div class="ctl"><label>gewünschte Auflösung δ <span class="val" id="cqV">0.20</span></label><input type="range" id="cdQ" min="0.05" max="0.6" step="0.01" value="0.2"></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="n" id="cdDist">—</div><div class="l">Nachbarabstand δ = P<sup>−1/d</sup></div></div>
+          <div class="stat g"><div class="n" id="cdNeed">—</div><div class="l">nötige Punkte für δ</div></div>
+          <div class="stat r"><div class="n" id="cdYears">—</div><div class="l">Sammelzeit @ 1 Mio/Tag</div></div>
+        </div>
+        <div class="note" id="cdMsg"></div>
+        <p class="tiny">Die Formel <span class="tag">P = δ<sup>−d</sup></span> ist der ganze Fluch: Der Exponent ist die Dimension. Für δ = 0,2 und d = 50 bräuchtest du 10<sup>35</sup> Punkte — mehr Atome als die Erde hat.</p>
+      </div>
+      <div>
+        <div class="cvwrap"><canvas id="cdCanvas" width="560" height="330"></canvas></div>
+        <div class="leg"><span><i style="background:var(--acc)"></i>Datenpunkte</span><span><i style="background:var(--acc4)"></i>leere Region (kein Nachbar in Reichweite)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:26px">
+    <div class="card tight"><h4>ImageNet</h4><p class="tiny" style="margin:0">effektive Dimension ≈ <b>50</b><br>vorhandene Bilder ≈ <b>10<sup>7</sup></b><br>nötig wäre e<sup>50</sup> ≈ <b>10<sup>20</sup></b></p><div class="barmeter"><div style="width:35%;background:var(--bad)"></div></div></div>
+    <div class="card tight"><h4>Der Widerspruch</h4><p class="tiny" style="margin:0">13 Größenordnungen fehlen — und trotzdem funktioniert es. Also können die Aufgaben <b>nicht generisch</b> sein.</p></div>
+    <div class="card tight"><h4>Die Konsequenz</h4><p class="tiny" style="margin:0">Echte Daten müssen eine <b>versteckte Struktur</b> haben. Welche? Und warum nutzen gerade <b>tiefe</b> Netze sie aus?</p></div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 2 · KATALOG ══════════════════════════ -->
+<section id="s2"><div class="wrap">
+  <span class="kicker k2">Kapitel 2 — Was man bisher dachte</span>
+  <h2>Vier Strukturannahmen — und warum keine reicht</h2>
+  <p class="lead">Die Statistik kennt Annahmen, die den Fluch brechen. Klicke sie durch: jede löst <em>etwas</em>, aber keine erklärt, warum <b>Tiefe</b> hilft.</p>
+
+  <div class="lab" data-lab="Labor 2 · Strukturhypothesen">
+    <div class="btnrow" id="hypBtns"></div>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="hypCanvas" width="600" height="320"></canvas></div>
+      <div>
+        <h3 id="hypTitle" style="margin-top:0"></h3>
+        <p id="hypDesc" style="font-size:14.5px"></p>
+        <div id="hypMath" class="center" style="margin:14px 0"></div>
+        <table>
+          <tr><td>Bricht den Fluch?</td><td class="tc" id="hypA"></td></tr>
+          <tr><td>Braucht man dafür Tiefe?</td><td class="tc" id="hypB"></td></tr>
+          <tr><td>Erfüllt das RHM diese Annahme?</td><td class="tc" id="hypC"></td></tr>
+        </table>
+        <div class="note" id="hypNote" style="font-size:13.5px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="big">
+    <p style="margin:0 0 10px;font-size:15px;color:var(--ink-dim)">Das Random Hierarchy Model verletzt (i), (ii) und (iii) — und ist trotzdem mit <b>polynomiell</b> vielen Daten lernbar.</p>
+    <span id="rhmViol"></span>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 3 · KOMPOSITION ══════════════════════════ -->
+<section id="s3"><div class="wrap">
+  <span class="kicker k3">Kapitel 3 — Die Idee</span>
+  <h2>Komposition: Die Welt ist aus Teilen aus Teilen gebaut</h2>
+  <p class="lead">Ein Gesicht ist <em>nicht</em> ein beliebiges Pixelmuster. Es ist: Gesicht → Augen + Nase + Mund → Kanten + Flächen. Genau diese Rekursion ist die Struktur, die das Paper modelliert.</p>
+
+  <div class="lab" data-lab="Labor 3 · Der Kompositionsbaum">
+    <div class="btnrow">
+      <div class="seg" id="compSeg">
+        <button data-i="0" class="on">Bild</button><button data-i="1">Sprache</button><button data-i="2">Abstrakt (RHM)</button>
+      </div>
+      <button id="compPlay" class="pri">▶ Baum aufbauen</button>
+      <button id="compAll">Alles zeigen</button>
+    </div>
+    <div class="cvwrap"><canvas id="compCanvas" width="1080" height="380"></canvas></div>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card tight"><h4>Lokalität</h4><p class="tiny" style="margin:0">Jede Regel schaut nur auf <b>s benachbarte</b> Teile.</p></div>
+      <div class="card tight"><h4>Hierarchie</h4><p class="tiny" style="margin:0">Die Regeln werden <b>L-mal gestapelt</b> → weitreichende Abhängigkeiten entstehen trotzdem.</p></div>
+      <div class="card tight"><h4>Synonyme</h4><p class="tiny" style="margin:0">Dasselbe Konzept hat <b>m verschiedene</b> Realisierungen. „Auge" kann offen oder zu sein.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 4 · DAS MODELL ══════════════════════════ -->
+<section id="s4"><div class="wrap">
+  <span class="kicker k1">Kapitel 4 — Das Modell</span>
+  <h2>Das Random Hierarchy Model, zum Anfassen</h2>
+  <p class="lead">Fünf Zahlen definieren die ganze Aufgabe. Dreh an ihnen, würfle neue Regeln, und erzeuge Daten. <b>Alles unten ist echt gerechnet</b>, nicht gemalt.</p>
+
+  <div class="lab" data-lab="Labor 4 · Generator">
+    <div class="ctrls">
+      <div class="ctl"><label>Klassen n<sub>c</sub> <span class="val" id="pncV">3</span></label><input type="range" id="pnc" min="2" max="8" value="3"></div>
+      <div class="ctl"><label>Vokabular v <span class="val" id="pvV">4</span></label><input type="range" id="pv" min="2" max="9" value="4"></div>
+      <div class="ctl"><label>Synonyme m <span class="val" id="pmV">3</span></label><input type="range" id="pm" min="1" max="8" value="3"></div>
+      <div class="ctl"><label>Regelbreite s <span class="val" id="psV">2</span></label><input type="range" id="ps" min="2" max="3" value="2"></div>
+      <div class="ctl"><label>Tiefe L <span class="val" id="plV">3</span></label><input type="range" id="pl" min="1" max="4" value="3"></div>
+    </div>
+    <div class="btnrow">
+      <button id="pReroll" class="pri">🎲 Neue Zufallsregeln</button>
+      <button id="pSample">Datum erzeugen</button>
+      <button id="pAnim">▶ Erzeugung animieren</button>
+      <span id="pWarn" class="tiny" style="color:var(--bad);font-weight:700"></span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stD">8</div><div class="l">Eingabedim. d = s<sup>L</sup></div></div>
+      <div class="stat v"><div class="n" id="stPmax">—</div><div class="l">P<sub>max</sub> = n<sub>c</sub>·m<sup>(d−1)/(s−1)</sup></div></div>
+      <div class="stat g"><div class="n" id="stPstar">—</div><div class="l">P* = n<sub>c</sub>·m<sup>L</sup></div></div>
+      <div class="stat r"><div class="n" id="stRatio">—</div><div class="l">Ersparnis P<sub>max</sub>/P*</div></div>
+      <div class="stat" id="stAmbBox"><div class="n" id="stAmb">—</div><div class="l">Eindeutigkeit m·v ≤ v<sup>s</sup></div></div>
+    </div>
+
+    <div class="grid g21" style="margin-top:8px">
+      <div>
+        <h4>Der erzeugte Datenpunkt (Baum)</h4>
+        <div class="cvwrap"><canvas id="treeCanvas" width="900" height="360"></canvas></div>
+        <div class="leg"><span><i style="background:var(--acc3)"></i>Klasse (Wurzel)</span><span><i style="background:var(--acc2)"></i>versteckte Features</span><span><i style="background:var(--acc)"></i>Eingabefeatures (Blätter)</span></div>
+        <div id="treeString" style="margin-top:10px"></div>
+      </div>
+      <div>
+        <h4>Die Regeltabelle <span class="tiny">(Ebene wählen)</span></h4>
+        <div class="btnrow" id="ruleLvlBtns"></div>
+        <div class="cvwrap" style="max-height:340px;overflow-y:auto"><div id="ruleTable" style="padding:6px"></div></div>
+        <p class="tiny">Jede Zeile: ein Symbol der höheren Ebene → seine <b>m Synonyme</b> (s-Tupel darunter). Alle Tupel im ganzen Block sind <b>verschieden</b> — das ist die Eindeutigkeit.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4>Warum d = s<sup>L</sup>?</h4>
+      <p class="tiny">Jede Ebene multipliziert die Länge mit s. Nach L Ebenen: s·s·…·s = s<sup>L</sup> Blätter.</p>
+      <div id="mD"></div>
+    </div>
+    <div class="card">
+      <h4>Warum P<sub>max</sub> = n<sub>c</sub>·m<sup>(d−1)/(s−1)</sup>?</h4>
+      <p class="tiny">An jedem der (d−1)/(s−1) inneren Knoten wählst du eines von m Synonymen. Das sind exponentiell viele Kombinationen.</p>
+      <div id="mP"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 5 · SYNONYME ══════════════════════════ -->
+<section id="s5"><div class="wrap">
+  <span class="kicker k4">Kapitel 5 — Der Kern</span>
+  <h2>Synonyme: verschiedene Eingaben, gleiche Bedeutung</h2>
+  <p class="lead">Das ist die zentrale Invarianz. Tausche ein Teil-Tupel gegen ein <em>Synonym</em> → der Eingabevektor ändert sich, das Label <b>nicht</b>. Tausche stattdessen ein einzelnes Symbol → das Label kippt meistens. Probier's aus.</p>
+
+  <div class="lab" data-lab="Labor 5 · Synonym vs. Rauschen">
+    <div class="btnrow">
+      <button id="synNew" class="pri">Neues Beispiel</button>
+      <button id="synSwap">🔄 Synonym tauschen (Ebene 1)</button>
+      <button id="synSwap2">🔄 Synonym tauschen (Ebene 2)</button>
+      <button id="synNoise">⚡ Ein Symbol zufällig ändern</button>
+    </div>
+    <div class="cvwrap"><canvas id="synCanvas" width="1080" height="300"></canvas></div>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="stat" id="synS1"><div class="n">—</div><div class="l">Label vorher</div></div>
+      <div class="stat" id="synS2"><div class="n">—</div><div class="l">Label nachher</div></div>
+      <div class="stat" id="synS3"><div class="n">—</div><div class="l">geänderte Eingabesymbole</div></div>
+    </div>
+    <div class="note" id="synMsg">Klicke oben, um zu sehen, was sich ändert.</div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card"><h4>Warum das (ii) verletzt</h4><p class="tiny">Ein einzelnes geändertes Symbol kippt das Label mit endlicher Wahrscheinlichkeit. Die Funktion ist also <b>nicht glatt</b> — Kernel-Methoden mit isotropen Kerneln haben keine Chance.</p></div>
+    <div class="card"><h4>Warum das die Lösung ist</h4><p class="tiny">Wer Synonyme erkennt, kann jedes s-Tupel durch <b>ein</b> Symbol ersetzen: Dimension s<sup>L</sup> → s<sup>L−1</sup>. L-mal wiederholt landet man beim Label. <b>Das ist der Algorithmus, den das Netz finden muss.</b></p></div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 6 · FRAGE ══════════════════════════ -->
+<section id="s6"><div class="wrap">
+  <div class="qbox center">
+    <span class="kicker k3" style="display:block">Die Frage des Papers</span>
+    <p class="q">Wie viele Trainingsbeispiele braucht ein tiefes Netz,<br>um eine typische Instanz des Random Hierarchy Model zu lernen?</p>
+  </div>
+  <div class="steps">
+    <div class="step">Erzeuge eine RHM-Instanz mit festen n<sub>c</sub>, v, m, s, L.</div>
+    <div class="step">Ziehe P Trainingspunkte <b>ohne Zurücklegen</b> aus allen P<sub>max</sub> möglichen Daten.</div>
+    <div class="step">Trainiere ein überparametrisiertes Netz mit SGD (One-Hot-Eingabe, ReLU, μP-Parametrisierung).</div>
+    <div class="step">Miss den Testfehler ε. Definiere die <b>Stichprobenkomplexität</b> P* als kleinstes P mit ε &lt; ε<sub>rand</sub>/10, wobei ε<sub>rand</sub> = 1 − 1/n<sub>c</sub>.</div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 7 · NETZE ══════════════════════════ -->
+<section id="s7"><div class="wrap">
+  <span class="kicker k2">Kapitel 7 — Werkzeugkasten</span>
+  <h2>Was ein Netz überhaupt tut</h2>
+  <p class="lead">Kurz und visuell: One-Hot-Kodierung, eine Schicht, ReLU — und warum ein <b>CNN der Tiefe L+1</b> exakt auf den RHM-Baum passt.</p>
+
+  <div class="lab" data-lab="Labor 7 · Architektur">
+    <div class="btnrow">
+      <div class="seg" id="archSeg"><button data-a="fc2" class="on">2-Schicht FC (flach)</button><button data-a="cnn">CNN Tiefe L+1 (tief)</button><button data-a="fcdeep">Tiefes FC</button></div>
+      <div class="ctl" style="min-width:200px"><label>RHM-Tiefe L <span class="val" id="archLV">3</span></label><input type="range" id="archL" min="2" max="4" value="3"></div>
+    </div>
+    <div class="cvwrap"><canvas id="archCanvas" width="1080" height="400"></canvas></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div><h4 id="archTitle"></h4><p id="archDesc" style="font-size:14px"></p></div>
+      <div class="card tight"><div id="archMath"></div></div>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="card tight"><h4>One-Hot</h4><p class="tiny">Symbol ν aus v Möglichkeiten → Vektor mit v Einträgen, alle 0 außer der ν-te = 1. Kein künstlicher Abstand zwischen Symbolen.</p><div id="mOH" class="center" style="margin-top:8px"></div></div>
+    <div class="card tight"><h4>Eine Schicht</h4><p class="tiny">Lineare Abbildung + ReLU: <span class="tag">σ(W·x + b)</span> mit σ(z)=max(0,z). Die Nichtlinearität macht Komposition überhaupt erst möglich.</p></div>
+    <div class="card tight"><h4>μP / Feature-Learning</h4><p class="tiny">Extra Faktor H<sup>−1/2</sup> an der letzten Schicht ⇒ die <b>Gewichte bewegen sich</b> auch bei riesiger Breite. Ohne das: „lazy" Regime = Kernel = verflucht.</p></div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 8 · FLACH ══════════════════════════ -->
+<section id="s8"><div class="wrap">
+  <span class="kicker k4">Kapitel 8 — Ergebnis 1</span>
+  <h2>Flache Netze sind verflucht</h2>
+  <p class="lead">Ein 2-Schicht-Netz lernt das RHM erst, wenn es einen <em>nennenswerten Bruchteil aller</em> P<sub>max</sub> Daten gesehen hat. P* ∝ P<sub>max</sub> = v<sup>s<sup>L</sup></sup> — exponentiell in d. (Abb. 2 des Papers)</p>
+
+  <div class="lab" data-lab="Labor 8 · Lernkurven flacher Netze">
+    <div class="ctrls">
+      <div class="ctl"><label>Vokabular v (= n<sub>c</sub> = m<sup>1/(s−1)</sup>) markieren <span class="val" id="shVV">8</span></label><input type="range" id="shV" min="4" max="32" value="8"></div>
+      <div class="ctl"><label>Tiefe L <span class="val" id="shLV">2</span></label><input type="range" id="shL" min="2" max="3" value="2"></div>
+    </div>
+    <div class="grid g2">
+      <div id="shPlot1" class="plot"></div>
+      <div id="shPlot2" class="plot"></div>
+    </div>
+    <div class="note r"><b>Lies die rechte Achse:</b> die Punkte liegen auf der Geraden y = x. Die Stichprobenkomplexität wächst <b>linear mit P<sub>max</sub></b> — also exponentiell in der Dimension. Der Fluch schlägt voll durch.</div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 9 · TIEF ══════════════════════════ -->
+<section id="s9"><div class="wrap">
+  <span class="kicker k5">Kapitel 9 — Ergebnis 2 · Das Hauptresultat</span>
+  <h2>Tiefe Netze brechen den Fluch</h2>
+  <p class="lead">Dieselbe Aufgabe, aber mit einem Netz, dessen Tiefe ≥ L ist. Die Lernkurven sind sigmoidal — und sie <em>kollabieren alle auf eine Kurve</em>, wenn man P durch n<sub>c</sub>m<sup>L</sup> teilt. (Abb. 3 & 4)</p>
+
+  <div class="big">
+    <div id="mainLaw"></div>
+    <p style="margin:12px 0 0;font-size:14px;color:var(--ink-dim)">Rechts steht: <b>polynomiell</b> in der Eingabedimension d — kein Exponent mehr im Exponenten.</p>
+  </div>
+
+  <div class="lab" data-lab="Labor 9 · Kollaps der Lernkurven">
+    <div class="ctrls">
+      <div class="ctl"><label>Klassen n<sub>c</sub> <span class="val" id="dpNcV">8</span></label><input type="range" id="dpNc" min="2" max="32" value="8"></div>
+      <div class="ctl"><label>Synonyme m <span class="val" id="dpMV">8</span></label><input type="range" id="dpM" min="3" max="32" value="8"></div>
+      <div class="ctl"><label>Tiefe L <span class="val" id="dpLV">3</span></label><input type="range" id="dpL" min="2" max="5" value="3"></div>
+    </div>
+    <div class="btnrow">
+      <div class="seg" id="dpSeg"><button data-x="raw" class="on">x-Achse: P</button><button data-x="res">x-Achse: P / n<sub>c</sub>m<sup>L</sup></button></div>
+      <button id="dpHi" class="pri">✦ aktuelle Wahl hervorheben</button>
+    </div>
+    <div id="dpPlot" class="plot" style="min-height:400px"></div>
+    <div class="grid g4" style="margin-top:6px">
+      <div class="stat g"><div class="n" id="dpPstar">—</div><div class="l">P* = n<sub>c</sub>m<sup>L</sup></div></div>
+      <div class="stat v"><div class="n" id="dpPmax">—</div><div class="l">P<sub>max</sub></div></div>
+      <div class="stat"><div class="n" id="dpD">—</div><div class="l">d = 2<sup>L</sup></div></div>
+      <div class="stat r"><div class="n" id="dpGain">—</div><div class="l">Faktor gespart</div></div>
+    </div>
+  </div>
+
+  <div class="lab" data-lab="Labor 9b · Polynomiell vs. Exponentiell">
+    <div class="grid g2">
+      <div>
+        <div class="ctrls" style="grid-template-columns:1fr">
+          <div class="ctl"><label>Synonyme m <span class="val" id="peMV">6</span></label><input type="range" id="peM" min="2" max="16" value="6"></div>
+          <div class="ctl"><label>Regelbreite s <span class="val" id="peSV">2</span></label><input type="range" id="peS" min="2" max="3" value="2"></div>
+          <div class="ctl"><label>Klassen n<sub>c</sub> <span class="val" id="peNcV">8</span></label><input type="range" id="peNc" min="2" max="32" value="8"></div>
+        </div>
+        <div id="peMath" class="center" style="margin:16px 0"></div>
+        <div class="note g" style="font-size:13.5px"><b>Der Exponent zählt.</b> Bei P<sub>max</sub> steht d <em>im Exponenten</em> (exponentiell). Bei P* steht d <em>in der Basis</em> (polynomiell). Genau das ist der Unterschied zwischen unmöglich und machbar.</div>
+      </div>
+      <div id="pePlot" class="plot" style="min-height:360px"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 10 · INVARIANZ ══════════════════════════ -->
+<section id="s10"><div class="wrap">
+  <span class="kicker k2">Kapitel 10 — Warum funktioniert es?</span>
+  <h2>Die Netze bauen synonymische Invarianz</h2>
+  <p class="lead">Wenn das Netz gelernt hat, sollten seine inneren Darstellungen <em>nicht merken</em>, ob man ein Tupel durch ein Synonym ersetzt hat. Genau das misst die <b>synonymische Sensitivität</b> S<sub>k,l</sub>.</p>
+
+  <div class="card" style="margin:22px 0">
+    <div class="grid g12">
+      <div class="cvwrap"><canvas id="sensCanvas" width="520" height="260"></canvas></div>
+      <div>
+        <h4>Definition</h4>
+        <div id="mSens"></div>
+        <ul class="clean">
+          <li><b>f<sub>k</sub></b> = Aktivierungen der k-ten Schicht</li>
+          <li><b>P<sub>l</sub></b> = ersetzt alle Ebene-l-Tupel durch zufällige Synonyme</li>
+          <li>Nenner = typischer Abstand zweier <em>beliebiger</em> Eingaben (Normierung)</li>
+          <li><b>S = 1</b> → Netz reagiert wie auf fremde Daten. <b>S = 0</b> → perfekt invariant.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab" data-lab="Labor 10 · Sensitivität kollabiert bei P*">
+    <div class="btnrow">
+      <div class="seg" id="snSeg"><button data-x="raw" class="on">x-Achse: P</button><button data-x="res">x-Achse: P / n<sub>c</sub>m<sup>L</sup></button></div>
+    </div>
+    <div id="snPlot" class="plot" style="min-height:380px"></div>
+    <div class="note"><b>Nachbildung von Abb. 5.</b> Alle Kurven — verschiedene L, verschiedene v — fallen nach der Reskalierung auf <em>eine einzige</em> Kurve. Die Stichprobenkomplexität ist exakt der Punkt, an dem Invarianz entsteht.</div>
+  </div>
+
+  <div class="lab" data-lab="Labor 10b · Schicht für Schicht (Abb. 6)">
+    <p style="font-size:14.5px">Schiebe die Trainingsmenge P und beobachte, <em>welche Schicht</em> gegenüber <em>welcher Ebene</em> invariant wird. Regel: Invarianz gegenüber Ebene l entsteht ab Schicht k = l+1 — und <b>alle Ebenen lernen gleichzeitig</b>.</p>
+    <div class="ctl" style="max-width:420px;margin:12px 0"><label>Trainingsmenge P <span class="val" id="lyPV">—</span></label><input type="range" id="lyP" min="0" max="100" value="18"></div>
+    <div class="cvwrap"><canvas id="layerCanvas" width="1080" height="330"></canvas></div>
+    <div class="leg"><span><i style="background:var(--acc)"></i>Ebene 1</span><span><i style="background:var(--acc2)"></i>Ebene 2</span><span><i style="background:var(--acc4)"></i>Ebene 3</span><span><i style="background:#8a93b5"></i>Testfehler</span></div>
+  </div>
+
+  <div class="lab" data-lab="Labor 10c · Effektive Dimension sinkt mit der Tiefe (Abb. 11)">
+    <div class="grid g2">
+      <div id="edPlot1" class="plot"></div>
+      <div id="edPlot2" class="plot"></div>
+    </div>
+    <p class="tiny">Links: mittlerer Nächster-Nachbar-Abstand δ(P) für Eingabe und jede Schicht — die <b>Steigung im Log-Log-Plot</b> ist −1/d<sub>eff</sub>. Rechts: die daraus geschätzte effektive Dimension. Sie fällt monoton: <b>7,1 → 6,9 → 3,9 → 3,7 → 2,3</b>. Das Netz komprimiert das Problem Schicht für Schicht.</p>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 11 · KORRELATIONEN ══════════════════════════ -->
+<section id="s11"><div class="wrap">
+  <span class="kicker k3">Kapitel 11 — Der Mechanismus</span>
+  <h2>Synonyme findet man durch <em>Zählen</em></h2>
+  <p class="lead">Hier ist die eigentliche Erklärung. Schau dir an einer festen Position an, wie oft jedes s-Tupel in jeder Klasse vorkommt. <b>Synonyme haben identische Häufigkeitsprofile.</b> Das ist das Signal.</p>
+
+  <div class="card" style="margin:20px 0"><div class="center" id="mFreq"></div>
+    <p class="tiny center" style="margin:8px 0 0">„Wahrscheinlichkeit, dass ein Datum zur Klasse α gehört, gegeben dass im Patch j das Tupel μ steht."<br>Ohne Struktur wäre das immer 1/n<sub>c</sub>. Die Abweichung davon nennen wir <b>Signal</b>.</p>
+  </div>
+
+  <div class="lab" data-lab="Labor 11 · Die Zähltabelle — LIVE gerechnet">
+    <div class="ctrls">
+      <div class="ctl"><label>Klassen n<sub>c</sub> <span class="val" id="frNcV">3</span></label><input type="range" id="frNc" min="2" max="6" value="3"></div>
+      <div class="ctl"><label>Vokabular v <span class="val" id="frVV">4</span></label><input type="range" id="frV" min="3" max="7" value="4"></div>
+      <div class="ctl"><label>Synonyme m <span class="val" id="frMV">3</span></label><input type="range" id="frM" min="2" max="6" value="3"></div>
+      <div class="ctl"><label>Tiefe L <span class="val" id="frLV">3</span></label><input type="range" id="frL" min="2" max="4" value="3"></div>
+      <div class="ctl"><label>Trainingsdaten P = 10^<span class="val" id="frPV">2.5</span></label><input type="range" id="frP" min="1" max="7" step="0.02" value="2.5"></div>
+    </div>
+    <div class="btnrow">
+      <button id="frRe" class="pri">🎲 Neue RHM-Instanz</button>
+      <button id="frTrue">Wahre Werte zeigen (P → ∞)</button>
+      <button id="frSort" class="on">nach Synonymgruppen sortiert</button>
+    </div>
+    <div class="cvwrap"><canvas id="freqCanvas" width="1080" height="420"></canvas></div>
+    <div class="grid g4" style="margin-top:12px">
+      <div class="stat"><div class="n" id="frPabs">—</div><div class="l">P (Stichprobe)</div></div>
+      <div class="stat g"><div class="n" id="frPc">—</div><div class="l">P<sub>c</sub> = n<sub>c</sub>m<sup>L</sup></div></div>
+      <div class="stat v"><div class="n" id="frSig">—</div><div class="l">Signal √(v/m<sup>L</sup>)</div></div>
+      <div class="stat r"><div class="n" id="frNoi">—</div><div class="l">Rauschen √(v·n<sub>c</sub>/P)</div></div>
+    </div>
+    <div class="note" id="frMsg"></div>
+    <p class="tiny">Jede <b>Spalte</b> = ein Eingabe-Tupel μ. Jede <b>Zeile</b> = eine Klasse α. Farbe = f̂(α|μ) − 1/n<sub>c</sub>. <b>Blaue Klammern</b> unten markieren echte Synonymgruppen. Bei kleinem P ist alles Rauschen; ab P ≈ P<sub>c</sub> werden die Gruppen als identische Spaltenmuster sichtbar.</p>
+  </div>
+
+  <div class="lab" data-lab="Labor 11b · Signal gegen Rauschen (Abb. 7)">
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="snrCanvas" width="640" height="330"></canvas></div>
+      <div>
+        <div class="ctl"><label>Trainingsdaten P = 10^<span class="val" id="sr2PV">3</span></label><input type="range" id="sr2P" min="1" max="7" step="0.02" value="3"></div>
+        <p style="font-size:14px;margin-top:14px">Jeder <b>farbige Punkt</b> ist ein Tupel. Punkte gleicher Farbe sind <em>Synonyme</em> — sie haben denselben wahren Wert. Die <b>Wolke</b> um jeden Punkt ist die Messunsicherheit bei P Daten.</p>
+        <ul class="clean">
+          <li><b>Signal</b> = typischer Abstand zwischen verschiedenen Farben</li>
+          <li><b>Rauschen</b> = Streuung innerhalb einer Farbe</li>
+          <li>Synonyme erkennbar ⟺ Rauschen &lt; Signal</li>
+        </ul>
+        <div id="srVerdict" class="note"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab" data-lab="Labor 11c · Die Herleitung von P_c">
+    <div class="steps">
+      <div class="step"><b>Signal.</b> Gegeben Klasse α wird das Tupel μ im Patch j durch L Entscheidungen (eine pro Ebene) bestimmt: m<sup>L</sup> Pfade. Diese verteilen sich auf m·v verschiedene Tupel → im Mittel <span class="tag">m<sup>L</sup>/(mv)</span> Treffer pro Tupel. Zentraler Grenzwertsatz ⇒ relative Schwankung <span class="tag">(m<sup>L</sup>/(mv))<sup>−1/2</sup></span>.</div>
+      <div class="step"><b>Rauschen.</b> Von P Trainingsdaten gehören im Mittel nur <span class="tag">P/(n<sub>c</sub>·m·v)</span> zur Klasse α <em>und</em> zeigen μ. Relative Stichprobenschwankung ⇒ <span class="tag">[P/(n<sub>c</sub>mv)]<sup>−1/2</sup></span>.</div>
+      <div class="step"><b>Gleichsetzen.</b> Signal = Rauschen ⇒ m<sup>L</sup>/(mv) = P/(n<sub>c</sub>mv) ⇒ <b>P<sub>c</sub> = n<sub>c</sub>m<sup>L</sup></b>. Exakt die empirische Stichprobenkomplexität aus Kapitel 9.</div>
+    </div>
+    <div class="grid g2" style="margin-top:6px">
+      <div>
+        <div class="ctrls" style="grid-template-columns:1fr 1fr">
+          <div class="ctl"><label>m <span class="val" id="pcMV">8</span></label><input type="range" id="pcM" min="3" max="32" value="8"></div>
+          <div class="ctl"><label>L <span class="val" id="pcLV">3</span></label><input type="range" id="pcL" min="2" max="5" value="3"></div>
+          <div class="ctl"><label>n<sub>c</sub> <span class="val" id="pcNcV">8</span></label><input type="range" id="pcNc" min="2" max="32" value="8"></div>
+          <div class="ctl"><label>v <span class="val" id="pcVV">8</span></label><input type="range" id="pcV" min="3" max="32" value="8"></div>
+        </div>
+        <div id="pcMath" class="center" style="margin-top:14px"></div>
+      </div>
+      <div id="pcPlot" class="plot" style="min-height:330px"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 12 · HYPERGEOMETRIE ══════════════════════════ -->
+<section id="s12"><div class="wrap">
+  <span class="kicker k1">Kapitel 12 — Woher kommt das Signal?</span>
+  <h2>Die Statistik zufälliger Regeln</h2>
+  <p class="lead">Warum ist f(α|μ) überhaupt ≠ 1/n<sub>c</sub>? Weil die Regeln <em>zufällig gezogen</em> werden — ohne Zurücklegen. Das erzeugt automatisch Ungleichgewichte. Genau das ist die verwertbare Information.</p>
+
+  <div class="lab" data-lab="Labor 12 · Hypergeometrische Ziehung">
+    <div class="grid g21">
+      <div>
+        <div class="ctrls" style="grid-template-columns:1fr 1fr">
+          <div class="ctl"><label>Vokabular v <span class="val" id="hgVV">5</span></label><input type="range" id="hgV" min="3" max="12" value="5"></div>
+          <div class="ctl"><label>Synonyme m <span class="val" id="hgMV">5</span></label><input type="range" id="hgM" min="2" max="25" value="5"></div>
+        </div>
+        <div class="cvwrap"><canvas id="hgCanvas" width="620" height="290"></canvas></div>
+        <p class="tiny">Wir ziehen <b>m</b> Tupel aus allen <b>v<sup>s</sup></b> möglichen (ohne Zurücklegen) und zählen, wie oft das Feature μ an Position i auftaucht. Würden alle gleich oft auftauchen, gäbe es kein Signal. Tun sie aber nicht.</p>
+      </div>
+      <div>
+        <h4>Was das Paper ausrechnet</h4>
+        <div id="mHg1"></div>
+        <div class="stats" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="n" id="hgMean">—</div><div class="l">Mittelwert m/v</div></div>
+          <div class="stat v"><div class="n" id="hgVar">—</div><div class="l">Streuung σ<sub>N</sub></div></div>
+        </div>
+        <p class="tiny">Für großes m gilt σ<sub>N</sub>² → m/v. Die Schwankung <em>relativ</em> zum Mittelwert ist also ~1/√(m/v) — und genau diese Ungleichmäßigkeit pflanzt sich durch alle L Ebenen fort.</p>
+        <div class="note w" style="font-size:13px"><b>Nebenbedingung:</b> Σ<sub>μ</sub>N(μ;α) = m ist <em>fest</em>. Deshalb sind die Zählungen negativ korreliert: c<sub>N</sub> = −σ<sub>N</sub>²/(v−1). Das Paper nutzt genau diese Identität, um alle Kovarianzen zu bestimmen.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab" data-lab="Labor 12b · Fortpflanzung durch die Ebenen">
+    <p style="font-size:14.5px">Das Paper definiert U<sup>(L)</sup> (Zähler) und D<sup>(L)</sup> (Nenner) und leitet eine <b>Rekursion</b> über die Ebenen her. Klicke dich durch die Ebenen und sieh, wie Mittelwert und Streuung wachsen — und wie das Verhältnis am Ende die Varianz von f ergibt.</p>
+    <div class="btnrow" id="recBtns"></div>
+    <div class="grid g2">
+      <div class="cvwrap"><canvas id="recCanvas" width="560" height="300"></canvas></div>
+      <div>
+        <div id="recMath"></div>
+        <div class="stats" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="n" id="recMean">—</div><div class="l">⟨U<sup>(ℓ)</sup>⟩</div></div>
+          <div class="stat v"><div class="n" id="recRel">—</div><div class="l">relative Streuung</div></div>
+        </div>
+        <div class="note g" style="font-size:13.5px" id="recNote"></div>
+      </div>
+    </div>
+    <div class="big" style="margin-top:22px">
+      <div id="mVarF"></div>
+      <p style="margin:12px 0 0;font-size:13.5px;color:var(--ink-dim)">Endergebnis von Anhang C: die Varianz der bedingten Klassenwahrscheinlichkeit. Signal = √Var / Mittelwert = <b>√(v/m<sup>L</sup>)</b>.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 13 · EIN GD-SCHRITT ══════════════════════════ -->
+<section id="s13"><div class="wrap">
+  <span class="kicker k4">Kapitel 13 — Der Beweis im Kleinen</span>
+  <h2>Ein einziger Gradientenschritt genügt</h2>
+  <p class="lead">Das Paper zeigt analytisch: Ein 2-Schicht-Netz auf <em>einem</em> Patch entwickelt nach <b>einem</b> GD-Schritt eine synonym-invariante Darstellung — und zwar exakt dann, wenn P ≳ P<sub>c</sub>.</p>
+
+  <div class="card" style="margin:20px 0">
+    <div id="mGD" class="center"></div>
+    <p class="tiny center" style="margin:10px 0 0">Die Gewichtsänderung ist eine Linearkombination der <b>empirischen Zählungen</b>. Wenn N̂ → N konvergiert, wird sie automatisch synonym-invariant, weil die wahren Zählungen N es sind (Gl. C7).</p>
+  </div>
+
+  <div class="lab" data-lab="Labor 13 · Repräsentationen nach einem GD-Schritt — LIVE gerechnet">
+    <div class="ctrls">
+      <div class="ctl"><label>Klassen n<sub>c</sub> = v <span class="val" id="gdNcV">6</span></label><input type="range" id="gdNc" min="3" max="10" value="6"></div>
+      <div class="ctl"><label>Synonyme m <span class="val" id="gdMV">4</span></label><input type="range" id="gdM" min="2" max="8" value="4"></div>
+      <div class="ctl"><label>Tiefe L <span class="val" id="gdLV">3</span></label><input type="range" id="gdL" min="2" max="4" value="3"></div>
+      <div class="ctl"><label>Trainingsdaten P = 10^<span class="val" id="gdPV">3</span></label><input type="range" id="gdP" min="1.3" max="7" step="0.02" value="3"></div>
+    </div>
+    <div class="btnrow"><button id="gdRe" class="pri">🎲 Neue Instanz</button><button id="gdAnim">▶ P hochfahren</button></div>
+    <div class="grid g2">
+      <div>
+        <h4>Darstellungen ĝ(μ) (2D-Projektion, PCA)</h4>
+        <div class="cvwrap"><canvas id="gdScatter" width="540" height="380"></canvas></div>
+        <p class="tiny">Ein Punkt pro Eingabe-Tupel μ. <b>Gleiche Farbe = Synonyme.</b> Bei kleinem P: Chaos. Bei P &gt; P<sub>c</sub>: die Synonyme fallen auf denselben Punkt zusammen — <b>Invarianz entsteht sichtbar</b>.</p>
+      </div>
+      <div>
+        <h4>Abstandsmatrix ‖ĝ(μ) − ĝ(ν)‖</h4>
+        <div class="cvwrap"><canvas id="gdMatrix" width="540" height="380"></canvas></div>
+        <p class="tiny">Nach Synonymgruppen sortiert. Ein <b>schwarzes Blockdiagonal-Muster</b> bedeutet: innerhalb einer Gruppe Abstand 0 → perfekte Synonym-Erkennung.</p>
+      </div>
+    </div>
+    <div class="grid g4" style="margin-top:12px">
+      <div class="stat"><div class="n" id="gdPabs">—</div><div class="l">P</div></div>
+      <div class="stat g"><div class="n" id="gdPcv">—</div><div class="l">P<sub>c</sub> = n<sub>c</sub>m<sup>L</sup></div></div>
+      <div class="stat v"><div class="n" id="gdSens">—</div><div class="l">Sensitivität S<sub>1,1</sub></div></div>
+      <div class="stat r"><div class="n" id="gdRank">—</div><div class="l">eff. Rang (→ v)</div></div>
+    </div>
+    <div class="note g"><b>Der Rang geht gegen v.</b> Genau wie im Paper beschrieben: weil alle m Synonyme auf denselben Wert kollabieren, bleiben nur v verschiedene Werte übrig — die Größe des Vokabulars der <em>nächsthöheren</em> Ebene. Diese Niedrigrang-Struktur findet man auch in echten trainierten Bildnetzen.</div>
+  </div>
+
+  <div class="lab" data-lab="Labor 13b · S₁,₁ kollabiert bei P_c (Abb. 8)">
+    <div class="btnrow"><div class="seg" id="s11Seg"><button data-x="raw" class="on">x-Achse: P</button><button data-x="res">x-Achse: P / n<sub>c</sub>m<sup>L</sup></button></div></div>
+    <div id="s11Plot" class="plot" style="min-height:380px"></div>
+    <div class="note"><b>Nachbildung von Abb. 8.</b> Für P ≪ P<sub>c</sub> ist S₁,₁ ≈ 1 (keine Invarianz), für P ≫ P<sub>c</sub> ist S₁,₁ ≈ 0. Nach Reskalierung mit P<sub>c</sub> = n<sub>c</sub>m<sup>L</sup> fallen alle Kurven zusammen — unabhängig von L, v und n<sub>c</sub>.</div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 14 · KONTROLLEN ══════════════════════════ -->
+<section id="s14"><div class="wrap">
+  <span class="kicker k1">Kapitel 14 — Gegenproben</span>
+  <h2>Vier Experimente, die die Erklärung testen</h2>
+  <p class="lead">Wenn die Erklärung „Korrelationen + Feature-Learning" stimmt, muss man den Effekt gezielt <em>kaputtmachen</em> können. Genau das tut das Paper.</p>
+
+  <div class="btnrow" id="ctrlBtns" style="margin-bottom:6px"></div>
+
+  <div class="lab" data-lab="Labor 14 · Gegenprobe">
+    <div class="grid g21">
+      <div id="ctrlPlot" class="plot" style="min-height:400px"></div>
+      <div>
+        <h3 id="ctrlTitle" style="margin-top:0"></h3>
+        <p id="ctrlDesc" style="font-size:14.5px"></p>
+        <div id="ctrlMath" class="center" style="margin:14px 0"></div>
+        <div class="note" id="ctrlNote" style="font-size:13.5px"></div>
+      </div>
+    </div>
+    <div id="ctrlExtra"></div>
+  </div>
+
+  <div class="lab" data-lab="Labor 14b · Das Paritätsproblem (Spezialfall m = v = n_c = 2)">
+    <p style="font-size:14.5px">Bei entfernten Korrelationen wird das RHM zur Verallgemeinerung der <b>Parität</b>. Klicke Bits an: das Label ist die XOR-Summe. Jede einzelne Position sagt <em>nichts</em> über das Label — man muss <b>alle gleichzeitig</b> betrachten. Für Gradientenverfahren ist das nachweislich hart.</p>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="parCanvas" width="640" height="250"></canvas></div>
+      <div>
+        <div class="ctl"><label>Bits d <span class="val" id="parDV">6</span></label><input type="range" id="parD" min="3" max="10" value="6"></div>
+        <div class="btnrow"><button id="parRand" class="pri">🎲 Zufällige Bits</button><button id="parScan">Korrelationen messen</button></div>
+        <div id="parStats" class="stats" style="grid-template-columns:1fr 1fr"></div>
+        <div class="note r" style="font-size:13.5px">Die gemessene Korrelation jeder einzelnen Position mit dem Label ist <b>exakt null</b>. Kein Gradientensignal → kein Lernen (außer man sieht fast alle 2<sup>d</sup> Daten).</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 15 · ANTWORT ══════════════════════════ -->
+<section id="s15"><div class="wrap">
+  <span class="kicker k5">Kapitel 15 — Die Antwort</span>
+  <h2>Drei Zahlen, die alle gleich sind</h2>
+
+  <div class="grid g3" style="margin:26px 0">
+    <div class="card" style="text-align:center;border-color:rgba(110,231,255,.35)">
+      <div style="font-size:2rem">📉</div><h4>P* (empirisch)</h4>
+      <p class="tiny">Wo der Testfehler unter ε<sub>rand</sub>/10 fällt.<br><span class="dim">Abb. 3, 4, 12, 13</span></p>
+    </div>
+    <div class="card" style="text-align:center;border-color:rgba(179,136,255,.35)">
+      <div style="font-size:2rem">🔁</div><h4>P<sub>inv</sub> (Invarianz)</h4>
+      <p class="tiny">Wo die Darstellungen synonym-invariant werden.<br><span class="dim">Abb. 5, 6, 8</span></p>
+    </div>
+    <div class="card" style="text-align:center;border-color:rgba(255,209,102,.35)">
+      <div style="font-size:2rem">📊</div><h4>P<sub>c</sub> (Theorie)</h4>
+      <p class="tiny">Wo Korrelationen aus dem Rauschen auftauchen.<br><span class="dim">Anhang C, analytisch</span></p>
+    </div>
+  </div>
+
+  <div class="big"><div id="finalLaw"></div></div>
+
+  <div class="lab" data-lab="Labor 15 · Vorhersage für CIFAR10">
+    <p style="font-size:14.5px">Das Paper macht eine <b>Faustregel</b> daraus: n<sub>c</sub> = 10 Klassen, geschätzte m ∈ [5,15], L = 3 ⇒ P* ∈ [10³, 3·10⁴]. Vergleiche das mit der echten Lernkurve eines ResNet18 auf CIFAR10 (Abb. 15).</p>
+    <div class="grid g21">
+      <div id="cifPlot" class="plot" style="min-height:380px"></div>
+      <div>
+        <div class="ctrls" style="grid-template-columns:1fr">
+          <div class="ctl"><label>Klassen n<sub>c</sub> <span class="val" id="cfNcV">10</span></label><input type="range" id="cfNc" min="2" max="100" value="10"></div>
+          <div class="ctl"><label>Synonyme m <span class="val" id="cfMV">10</span></label><input type="range" id="cfM" min="3" max="25" value="10"></div>
+          <div class="ctl"><label>Hierarchietiefe L <span class="val" id="cfLV">3</span></label><input type="range" id="cfL" min="2" max="6" value="3"></div>
+        </div>
+        <div class="stats" style="grid-template-columns:1fr">
+          <div class="stat g"><div class="n" id="cfP">—</div><div class="l">geschätzte Stichprobenkomplexität P* = n<sub>c</sub>m<sup>L</sup></div></div>
+        </div>
+        <div class="note g" style="font-size:13.5px" id="cfNote"></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════════ 16 · AUSBLICK ══════════════════════════ -->
+<section id="s16"><div class="wrap">
+  <span class="kicker k2">Kapitel 16 — Einordnung</span>
+  <h2>Was das Modell erklärt — und was noch offen ist</h2>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="color:var(--good)">✓ Erklärt</h4>
+      <ul class="clean">
+        <li><b>Warum reale Aufgaben lernbar sind:</b> hierarchische Komposition ⇒ Stichprobenkomplexität polynomiell statt exponentiell in d.</li>
+        <li><b>Warum tief besser als flach ist</b> — und zwar beim <em>Lernen</em>, nicht nur bei der Ausdrucksstärke (frühere Arbeiten zeigten nur Letzteres).</li>
+        <li><b>Warum Repräsentationen mit der Tiefe abstrakter werden:</b> sie spiegeln die Ebenen des Generierungsbaums.</li>
+        <li><b>Eine Faustregel</b> für die Größenordnung der nötigen Datenmenge realer Benchmarks.</li>
+        <li><b>Eine saubere Messgröße</b> für innere Repräsentationen: Sensitivität gegenüber label-erhaltenden Transformationen. Umgeht die Probleme von Mutual Information (bei deterministischen Netzen schlecht definiert) und intrinsischer Dimension (kontraintuitive Ergebnisse).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--acc3)">○ Offen</h4>
+      <ul class="clean">
+        <li><b>Die Dynamik selbst:</b> eine detaillierte Beschreibung des Gradientenabstiegs über die Zeit fehlt noch — das RHM ist aber ein guter Kandidat dafür.</li>
+        <li><b>Rauschen in den Regeln:</b> echte Daten haben Fehler und Ausnahmen.</li>
+        <li><b>Ungleiche Häufigkeiten:</b> im RHM sind alle Synonyme gleich wahrscheinlich. Real nicht — das gäbe mehrere charakteristische Datenmengen.</li>
+        <li><b>Clustering-Lücke:</b> Layerwise-Verfahren erreichen √n<sub>c</sub>·m<sup>L</sup>. Ob End-to-End-SGD das auch schafft, ist offen.</li>
+        <li><b>Jenseits von Supervised Learning:</b> die Eingabedaten selbst erben die Hierarchie ⇒ Modell für selbstüberwachtes Lernen und generative Modelle.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="lab" data-lab="Labor 16 · Der ganze Bogen auf einen Blick">
+    <p style="font-size:14.5px">Fahre mit dem Regler durch die Geschichte. Jeder Schritt schaltet ein Element im Diagramm frei.</p>
+    <div class="ctl" style="max-width:460px;margin:14px 0"><label>Schritt <span class="val" id="sumSV">1</span> / 8</label><input type="range" id="sumS" min="1" max="8" value="1"></div>
+    <div class="cvwrap"><canvas id="sumCanvas" width="1080" height="420"></canvas></div>
+    <div class="note" id="sumMsg" style="font-size:15px"></div>
+  </div>
+
+  <div class="big">
+    <p style="margin:0 0 14px;font-size:14px;color:var(--ink-dim);letter-spacing:.2em;text-transform:uppercase">Die Antwort in einer Zeile</p>
+    <div id="epiLaw"></div>
+    <p style="margin:16px 0 0;font-size:15px">Tiefe Netze besiegen den Fluch der Dimensionalität, indem sie <b>invariante Repräsentationen</b> bauen — und sie können das genau dann, wenn die <b>lokalen Korrelationen</b> zwischen Eingabemerkmalen und Klassen aus dem Stichprobenrauschen auftauchen.</p>
+  </div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 auto 8px">Interaktive Aufbereitung von <b>„How Deep Neural Networks Learn Compositional Data: The Random Hierarchy Model"</b></p>
+    <p style="margin:0 auto;color:var(--ink-dimmer)">F. Cagnetta, L. Petrini, U. M. Tomasini, A. Favero, M. Wyart · EPFL · arXiv:2307.02129v5</p>
+    <p class="tiny" style="margin:16px auto 0;max-width:70ch">Alle Zähltabellen, Regelstatistiken, Gradientenschritt-Repräsentationen, Abstandsmatrizen und hypergeometrischen Histogramme werden <b>live im Browser gerechnet</b>. Lernkurven aus SGD-Trainings sind getreue Nachbildungen der im Paper berichteten Gesetzmäßigkeiten (Abb. 2–6, 8–15).</p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================================
+   0 · UTILITIES
+   ============================================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const TAU = Math.PI*2;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=n=>{
+  if(!isFinite(n))return'∞';
+  if(n===0)return'0';
+  const a=Math.abs(n);
+  if(a>=1e6||a<1e-3){const e=Math.floor(Math.log10(a));const m=n/Math.pow(10,e);return (Math.abs(m-1)<.05?'10':m.toFixed(1)+'·10')+sup(e);}
+  if(a>=1000)return Math.round(n).toLocaleString('de-DE');
+  if(a>=10)return n.toFixed(0);
+  if(a>=1)return n.toFixed(1);
+  return n.toFixed(3);
+};
+const sup=e=>String(e).split('').map(c=>({'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'}[c]||c)).join('');
+
+/* seeded RNG (mulberry32) */
+function RNG(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function shuffle(arr,rnd){for(let i=arr.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function gauss(rnd){let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+
+/* palettes */
+const PAL=['#6ee7ff','#b388ff','#ffd166','#ff7597','#45e6a8','#ff9f5a','#7aa2ff','#f26bd8','#9cffb0','#ffe29a','#5ad1c8','#d68cff','#ff8f8f','#a3ff8c','#88c8ff','#ffc0e0'];
+const symColor=i=>PAL[i%PAL.length];
+
+/* HiDPI canvas */
+function setupCanvas(cv){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const w=cv.width,h=cv.height;
+  if(cv.dataset.done!=='1'){cv.style.width=w+'px';cv.style.height=h+'px';cv.width=w*dpr;cv.height=h*dpr;cv.dataset.done='1';cv.dataset.lw=w;cv.dataset.lh=h;}
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,W:+cv.dataset.lw,H:+cv.dataset.lh};
+}
+function clearC(ctx,W,H,bg='rgba(6,8,14,1)'){ctx.clearRect(0,0,W,H);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);}
+
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function chip(ctx,x,y,w,h,label,color,textCol='#04060d',r=6,font='700 12px SFMono-Regular,Consolas,monospace'){
+  ctx.save();roundRect(ctx,x,y,w,h,r);ctx.fillStyle=color;ctx.fill();
+  ctx.fillStyle=textCol;ctx.font=font;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(label,x+w/2,y+h/2+.5);ctx.restore();
+}
+function txt(ctx,s,x,y,col='#9aa4c4',font='11px -apple-system,sans-serif',align='left',base='middle'){
+  ctx.fillStyle=col;ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;ctx.fillText(s,x,y);
+}
+
+/* KaTeX helper */
+function kx(el,tex,display=true){
+  if(typeof el==='string')el=$(el);
+  if(!el)return;
+  try{katex.render(tex,el,{displayMode:display,throwOnError:false});}
+  catch(e){el.textContent=tex;}
+}
+
+/* Plotly layout template */
+const PLOT_FONT={family:'-apple-system,Inter,sans-serif',color:'#9aa4c4',size:11};
+function baseLayout(o={}){
+  return Object.assign({
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,.22)',
+    font:PLOT_FONT,margin:{l:58,r:18,t:34,b:48},
+    xaxis:{gridcolor:'rgba(255,255,255,.07)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:'rgba(255,255,255,.18)',tickfont:PLOT_FONT,titlefont:{...PLOT_FONT,size:12}},
+    yaxis:{gridcolor:'rgba(255,255,255,.07)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:'rgba(255,255,255,.18)',tickfont:PLOT_FONT,titlefont:{...PLOT_FONT,size:12}},
+    legend:{bgcolor:'rgba(0,0,0,.35)',bordercolor:'rgba(255,255,255,.1)',borderwidth:1,font:{...PLOT_FONT,size:10}},
+    hoverlabel:{bgcolor:'#11142a',bordercolor:'#6ee7ff',font:{color:'#e8ecf8',size:11}},
+    title:{font:{...PLOT_FONT,size:13,color:'#e8ecf8'},x:.03,xanchor:'left'}
+  },o);
+}
+const PCFG={displayModeBar:false,responsive:true};
+
+/* ============================================================================
+   1 · NAV + SCROLL
+   ============================================================================ */
+const CHAPTERS=[
+  ['hero','Start'],['s1','1 · Fluch'],['s2','2 · Struktur'],['s3','3 · Komposition'],
+  ['s4','4 · Modell'],['s5','5 · Synonyme'],['s6','6 · Frage'],['s7','7 · Netze'],
+  ['s8','8 · Flach'],['s9','9 · Tief ★'],['s10','10 · Invarianz'],['s11','11 · Korrelationen ★'],
+  ['s12','12 · Statistik'],['s13','13 · GD-Schritt'],['s14','14 · Gegenproben'],
+  ['s15','15 · Antwort ★'],['s16','16 · Ausblick']
+];
+(function nav(){
+  const c=$('#chapters');
+  CHAPTERS.forEach(([id,t])=>{const a=document.createElement('a');a.href='#'+id;a.textContent=t;a.dataset.id=id;c.appendChild(a);});
+  const links=$$('#chapters a');
+  const onScroll=()=>{
+    const sc=window.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
+    $('#prog').style.width=(100*sc/Math.max(dh,1))+'%';
+    let cur=CHAPTERS[0][0];
+    for(const [id] of CHAPTERS){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=120)cur=id;}
+    links.forEach(a=>{const on=a.dataset.id===cur;if(on!==a.classList.contains('on')){a.classList.toggle('on',on);if(on)a.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});}});
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+})();
+
+/* ============================================================================
+   2 · HERO BACKGROUND — animated hierarchical tree
+   ============================================================================ */
+(function hero(){
+  const cv=$('#heroCanvas');
+  function size(){cv.width=cv.clientWidth*Math.min(devicePixelRatio||1,2);cv.height=cv.clientHeight*Math.min(devicePixelRatio||1,2);}
+  size();addEventListener('resize',size);
+  const ctx=cv.getContext('2d');
+  const rnd=RNG(7);
+  let t=0;
+  // build a tree structure
+  const LV=5,BR=2;
+  const nodes=[];
+  (function build(level,idx,count){
+    nodes.push({level,idx,count,ph:rnd()*TAU,col:PAL[(level*3+idx)%PAL.length]});
+  })();
+  const layers=[];
+  for(let l=0;l<LV;l++){const n=Math.pow(BR,l);const arr=[];for(let i=0;i<n;i++)arr.push({ph:rnd()*TAU,c:PAL[(l*2+i)%PAL.length]});layers.push(arr);}
+  function draw(){
+    const dpr=Math.min(devicePixelRatio||1,2);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const W=cv.clientWidth,H=cv.clientHeight;
+    ctx.clearRect(0,0,W,H);
+    t+=0.006;
+    const topY=H*0.14, botY=H*0.86;
+    const pos=[];
+    for(let l=0;l<LV;l++){
+      const y=lerp(topY,botY,l/(LV-1));
+      const n=layers[l].length;
+      const arr=[];
+      for(let i=0;i<n;i++){
+        const spread=W*0.86;
+        const x=W/2-spread/2+spread*((i+0.5)/n);
+        const wob=Math.sin(t*0.8+layers[l][i].ph)*(5+l*2);
+        arr.push({x:x+wob,y:y+Math.cos(t*0.6+layers[l][i].ph)*4});
+      }
+      pos.push(arr);
+    }
+    // edges
+    for(let l=0;l<LV-1;l++){
+      for(let i=0;i<pos[l].length;i++){
+        for(let b=0;b<BR;b++){
+          const j=i*BR+b; if(j>=pos[l+1].length)continue;
+          const a=pos[l][i],c=pos[l+1][j];
+          const pulse=0.5+0.5*Math.sin(t*1.6-l*0.8+i*0.5);
+          const g=ctx.createLinearGradient(a.x,a.y,c.x,c.y);
+          g.addColorStop(0,`rgba(110,231,255,${0.05+0.13*pulse})`);
+          g.addColorStop(1,`rgba(179,136,255,${0.04+0.10*pulse})`);
+          ctx.strokeStyle=g;ctx.lineWidth=1.1;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);
+          ctx.bezierCurveTo(a.x,(a.y+c.y)/2,c.x,(a.y+c.y)/2,c.x,c.y);ctx.stroke();
+        }
+      }
+    }
+    // nodes
+    for(let l=0;l<LV;l++){
+      for(let i=0;i<pos[l].length;i++){
+        const p=pos[l][i];
+        const r=Math.max(2.2,7-l*0.9);
+        const glow=0.45+0.4*Math.sin(t*1.3+layers[l][i].ph);
+        ctx.beginPath();ctx.arc(p.x,p.y,r*2.6,0,TAU);
+        ctx.fillStyle=layers[l][i].c.replace(')',`,${0.055*glow})`).replace('#','rgba(');
+        // fallback solid glow
+        ctx.fillStyle=hexA(layers[l][i].c,0.06*glow);ctx.fill();
+        ctx.beginPath();ctx.arc(p.x,p.y,r,0,TAU);
+        ctx.fillStyle=hexA(layers[l][i].c,0.55+0.3*glow);ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+function hexA(hex,a){
+  const h=hex.replace('#','');
+  const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ============================================================================
+   3 · RHM ENGINE  (echte Berechnung)
+   ============================================================================ */
+/**
+ * Build a Random Hierarchy Model.
+ * rules[l] for l = 0..L-1 :  rules[0] = level-1 rule (leaves), rules[L-1] = top rule
+ * rules[l][sym] = array of m tuples (each tuple = array of s ints)
+ * Top level (l = L-1) has nc symbols; others have v symbols.
+ */
+function buildRHM(nc,v,m,s,L,seed){
+  const rnd=RNG(seed);
+  const rules=[];
+  for(let l=0;l<L;l++){
+    const nHigh = (l===L-1)? nc : v;      // number of symbols at level l+2 (parents)
+    const total=Math.pow(v,s);
+    // enumerate all s-tuples
+    const all=[];
+    for(let k=0;k<total;k++){
+      const tup=[];let x=k;
+      for(let i=0;i<s;i++){tup.push(x%v);x=Math.floor(x/v);}
+      all.push(tup);
+    }
+    shuffle(all,rnd);
+    const need=nHigh*m;
+    const lvl=[];
+    for(let h=0;h<nHigh;h++){
+      const t=[];
+      for(let j=0;j<m;j++){ t.push(all[(h*m+j)%total]); }
+      lvl.push(t);
+    }
+    rules.push({nHigh,tuples:lvl,ok:need<=total});
+  }
+  return {nc,v,m,s,L,rules,seed};
+}
+
+/* tuple <-> index (base-v, little endian, matches buildRHM) */
+const tupIdx=(t,v)=>t.reduce((a,x,i)=>a+x*Math.pow(v,i),0);
+const idxTup=(k,v,s)=>{const t=[];let x=k;for(let i=0;i<s;i++){t.push(x%v);x=Math.floor(x/v);}return t;};
+
+/* sample one datum: returns {label, tree}
+   tree[level] = array of symbols; tree[L] = [label]; tree[0] = leaves  */
+function sampleDatum(R,rnd){
+  const {nc,m,s,L,rules}=R;
+  const label=Math.floor(rnd()*nc);
+  let cur=[label];
+  const tree=new Array(L+1);
+  tree[L]=[label];
+  const choices=new Array(L); // choices[l] = synonym index used at level l (l = L-1 .. 0)
+  for(let l=L-1;l>=0;l--){
+    const nxt=[];const ch=[];
+    for(const sym of cur){
+      const j=Math.floor(rnd()*m);
+      ch.push(j);
+      const tup=rules[l].tuples[sym][j];
+      for(const x of tup)nxt.push(x);
+    }
+    choices[l]=ch;
+    tree[l]=nxt;cur=nxt;
+  }
+  return {label,tree,choices};
+}
+
+/* deterministic expansion given all synonym choices */
+function expandTree(R,label,choiceGrid){
+  const {m,s,L,rules}=R;
+  const tree=new Array(L+1);tree[L]=[label];
+  let cur=[label];
+  for(let l=L-1;l>=0;l--){
+    const nxt=[];
+    for(let k=0;k<cur.length;k++){
+      const j=choiceGrid[l][k]%m;
+      const tup=rules[l].tuples[cur[k]][j];
+      for(const x of tup)nxt.push(x);
+    }
+    tree[l]=nxt;cur=nxt;
+  }
+  return tree;
+}
+
+/**
+ * EXACT counts N_j(mu ; alpha) — up to a common multiplicative constant.
+ * Uses the DP from Eq. (C7): counts of level-1 tuples at ONE fixed patch.
+ * Returns matrix cnt[alpha][tupleIndex]
+ */
+function exactCounts(R,pathIdx){
+  const {nc,v,m,s,L,rules}=R;
+  const T=Math.pow(v,s);
+  // level 2 symbols -> distribution over level-1 tuples at this patch
+  // cur[sym] = Float64Array(T)
+  let cur=[];
+  const nSym0 = (L===1)? nc : v;
+  for(let h=0;h<rules[0].nHigh;h++){
+    const a=new Float64Array(T);
+    for(const tup of rules[0].tuples[h]) a[tupIdx(tup,v)]+=1;
+    cur.push(a);
+  }
+  // climb: for level l = 1 .. L-1, parent symbol -> sum over its m tuples of child at branch b
+  for(let l=1;l<L;l++){
+    const b=(pathIdx && pathIdx[l]!==undefined)? pathIdx[l]%s : 0;
+    const nxt=[];
+    for(let h=0;h<rules[l].nHigh;h++){
+      const a=new Float64Array(T);
+      for(const tup of rules[l].tuples[h]){
+        const child=tup[b];
+        const src=cur[child];
+        for(let k=0;k<T;k++) a[k]+=src[k];
+      }
+      nxt.push(a);
+    }
+    cur=nxt;
+  }
+  // cur is indexed by the TOP symbols (classes) iff L>=1
+  const out=[];
+  for(let a=0;a<nc;a++) out.push(cur[Math.min(a,cur.length-1)]);
+  return out; // out[alpha][tupleIndex]
+}
+
+/* map: tuple index -> level-2 symbol (its "meaning"), -1 if not producible */
+function synonymMap(R){
+  const {v,s,rules}=R;const T=Math.pow(v,s);
+  const g=new Int32Array(T).fill(-1);
+  for(let h=0;h<rules[0].nHigh;h++)
+    for(const tup of rules[0].tuples[h]) g[tupIdx(tup,v)]=h;
+  return g;
+}
+/* list of producible tuple indices, grouped by meaning */
+function tupleGroups(R){
+  const g=synonymMap(R);const groups=[];
+  for(let h=0;h<R.rules[0].nHigh;h++)groups.push([]);
+  for(let k=0;k<g.length;k++) if(g[k]>=0) groups[g[k]].push(k);
+  return {g,groups};
+}
+
+/* Joint P(alpha, mu) as a normalized matrix from exact counts */
+function jointDist(R){
+  const cnt=exactCounts(R,null);
+  let tot=0;for(const row of cnt)for(const x of row)tot+=x;
+  return {cnt,tot};
+}
+/* sample P draws of (alpha, tupleIdx) from the joint */
+function sampleJoint(cnt,tot,P,rnd){
+  const nc=cnt.length,T=cnt[0].length;
+  // build CDF
+  const cdf=new Float64Array(nc*T);let acc=0;
+  for(let a=0;a<nc;a++)for(let k=0;k<T;k++){acc+=cnt[a][k]/tot;cdf[a*T+k]=acc;}
+  const Nak=[];for(let a=0;a<nc;a++)Nak.push(new Float64Array(T));
+  const draws=Math.min(P,400000);
+  const scale=P/draws;
+  for(let i=0;i<draws;i++){
+    const u=rnd();
+    let lo=0,hi=nc*T-1;
+    while(lo<hi){const mid=(lo+hi)>>1;if(cdf[mid]<u)lo=mid+1;else hi=mid;}
+    Nak[Math.floor(lo/T)][lo%T]+=scale;
+  }
+  return Nak;
+}
+
+/* ============================================================================
+   4 · KATEX STATIC RENDERS
+   ============================================================================ */
+function renderStaticMath(){
+  kx('#heroF','P^{*}\\;\\simeq\\;n_c\\,m^{L}\\;=\\;n_c\\,d^{\\,\\ln m/\\ln s}');
+  kx('#rhmViol','\\underbrace{\\text{kein Mannigfaltigkeit}}_{\\neg(i)}\\;\\;\\underbrace{\\text{nicht glatt}}_{\\neg(ii)}\\;\\;\\underbrace{\\text{alle } d \\text{ Variablen}}_{\\neg(iii)}\\;\\Longrightarrow\\;P^{*}\\sim \\text{poly}(d)');
+  kx('#mD','d=\\underbrace{s\\cdot s\\cdots s}_{L\\ \\text{Ebenen}}=s^{L}');
+  kx('#mP','P_{\\max}=n_c\\,m^{\\,1+s+s^2+\\cdots+s^{L-1}}=n_c\\,m^{\\frac{d-1}{s-1}}');
+  kx('#mainLaw','P^{*}\\;\\simeq\\;n_c\\,m^{L}\\qquad\\Longleftrightarrow\\qquad \\frac{P^{*}}{n_c}\\;\\simeq\\;d^{\\;\\ln m/\\ln s}');
+  kx('#mSens','S_{k,l}\\;=\\;\\frac{\\big\\langle \\lVert f_k(x)-f_k(P_l x)\\rVert^{2}\\big\\rangle_{x,P_l}}{\\big\\langle \\lVert f_k(x)-f_k(y)\\rVert^{2}\\big\\rangle_{x,y}}');
+  kx('#mFreq','f_j(\\alpha\\,|\\,\\mu)\\;=\\;\\Pr\\{x\\in\\alpha\\,|\\,x_j=\\mu\\}\\;=\\;\\frac{N_j(\\mu;\\alpha)}{N_j(\\mu)}');
+  kx('#mHg1','\\Pr\\{N_i(\\mu;\\alpha)=k\\}=\\frac{\\binom{v^{s-1}}{k}\\binom{v^{s}-v^{s-1}}{m-k}}{\\binom{v^{s}}{m}}\\;=\\;\\mathrm{Hg}_{v^s,\\,v^{s-1},\\,m}');
+  kx('#mVarF','\\mathrm{Var}\\big[f_j(\\alpha|\\mu)\\big]\\;\\xrightarrow[\\;v,n_c\\gg1\\;]{}\\;\\frac{v}{n_c}\\cdot\\frac{1}{n_c m^{L}}');
+  kx('#mGD','\\Delta f_h(x_1)\\;=\\;\\sum_{\\alpha=1}^{n_c} a_{h,\\alpha}\\left(\\frac{\\hat N_1(\\mu;\\alpha)}{P}-\\frac{1}{n_c}\\frac{\\hat N_1(\\mu)}{P}\\right)\\;=\\;\\sum_\\alpha a_{h,\\alpha}\\,\\hat g_\\alpha(\\mu)');
+  kx('#mOH','x_{i,\\nu}=\\begin{cases}1&\\mu^{(1)}_i=\\nu\\\\0&\\text{sonst}\\end{cases}');
+  kx('#finalLaw','\\boxed{\\;P^{*}\\;=\\;P_{\\text{inv}}\\;=\\;P_c\\;=\\;n_c\\,m^{L}\\;}');
+  kx('#epiLaw','P^{*}=n_c m^{L}=n_c\\,d^{\\ln m/\\ln s}\\quad\\text{statt}\\quad P_{\\max}=n_c m^{\\frac{d-1}{s-1}}');
+}
+
+/* ============================================================================
+   5 · LABOR 1 — Curse of dimensionality
+   ============================================================================ */
+(function curse(){
+  const dS=$('#cdD'),pS=$('#cdP'),qS=$('#cdQ');
+  const cv=$('#cdCanvas');
+  const rnd=RNG(42);
+  const pts2=[];for(let i=0;i<4000;i++)pts2.push([rnd(),rnd()]);
+  function upd(){
+    const d=+dS.value, P=Math.round(Math.pow(10,+pS.value)), q=+qS.value;
+    $('#cdV').textContent=d; $('#cpV').textContent=fmt(P); $('#cqV').textContent=q.toFixed(2);
+    const dist=Math.pow(P,-1/d);
+    const need=Math.pow(1/q,d);
+    $('#cdDist').textContent=dist.toFixed(4);
+    $('#cdNeed').textContent=fmt(need);
+    const days=need/1e6, yrs=days/365;
+    $('#cdYears').textContent= yrs<1? (days<1?'< 1 Tag':fmt(days)+' Tage') : fmt(yrs)+' Jahre';
+    const ok=dist<=q;
+    $('#cdMsg').className='note '+(ok?'g':'r');
+    $('#cdMsg').innerHTML= ok
+      ? `<b>✓ Auflösung erreicht.</b> Mit P = ${fmt(P)} Punkten in d = ${d} Dimensionen liegt der nächste Nachbar im Schnitt ${dist.toFixed(3)} entfernt — feiner als die geforderten ${q.toFixed(2)}.`
+      : `<b>✗ Viel zu grob.</b> Der nächste Nachbar ist ${dist.toFixed(3)} entfernt, du brauchst aber ${q.toFixed(2)}. Dafür wären <b>${fmt(need)}</b> Punkte nötig — das ${fmt(need/P)}-fache.`;
+    draw(d,P,q,dist);
+  }
+  function draw(d,P,q,dist){
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const pad=28, S=Math.min(W-2*pad-170,H-2*pad);
+    const x0=pad,y0=(H-S)/2;
+    // box
+    ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=1;ctx.strokeRect(x0,y0,S,S);
+    // points: show projection of P points; effective visible = min
+    const show=Math.min(P,1500);
+    ctx.fillStyle=hexA('#6ee7ff',.85);
+    for(let i=0;i<show;i++){const p=pts2[i%pts2.length];ctx.beginPath();ctx.arc(x0+p[0]*S,y0+p[1]*S,1.7,0,TAU);ctx.fill();}
+    // resolution circle around a query point
+    const qx=x0+S*0.62,qy=y0+S*0.4;
+    const rPix=Math.min(dist,1)*S;
+    ctx.strokeStyle=dist<=q?hexA('#45e6a8',.9):hexA('#ff7597',.9);
+    ctx.setLineDash([4,4]);ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(qx,qy,Math.min(rPix,S),0,TAU);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=hexA(dist<=q?'#45e6a8':'#ff7597',.12);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(qx,qy,3.4,0,TAU);ctx.fill();
+    txt(ctx,'δ = '+dist.toFixed(3),qx+Math.min(rPix,S)+8,qy,dist<=q?'#45e6a8':'#ff7597','700 12px monospace');
+    // side bar: log10 required
+    const bx=x0+S+34, bw=98, bh=S;
+    txt(ctx,'log₁₀ P nötig',bx,y0-12,'#9aa4c4','10px sans-serif');
+    ctx.fillStyle='rgba(255,255,255,.06)';roundRect(ctx,bx,y0,bw,bh,8);ctx.fill();
+    const need=Math.log10(Math.pow(1/q,d));
+    const maxL=40;
+    const hh=clamp(need/maxL,0,1)*bh;
+    const g=ctx.createLinearGradient(0,y0+bh,0,y0+bh-hh);
+    g.addColorStop(0,'#45e6a8');g.addColorStop(.5,'#ffd166');g.addColorStop(1,'#ff6b6b');
+    ctx.fillStyle=g;roundRect(ctx,bx,y0+bh-hh,bw,hh,8);ctx.fill();
+    // reference lines
+    const refs=[[7,'ImageNet 10⁷'],[9,'alle Fotos 10⁹'],[20,'e⁵⁰ ≈ 10²⁰']];
+    refs.forEach(([lv,lab])=>{
+      const yy=y0+bh-clamp(lv/maxL,0,1)*bh;
+      ctx.strokeStyle='rgba(255,255,255,.3)';ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.moveTo(bx-4,yy);ctx.lineTo(bx+bw+4,yy);ctx.stroke();ctx.setLineDash([]);
+      txt(ctx,lab,bx+bw+8,yy,'#5f6a8c','9px sans-serif');
+    });
+    txt(ctx,'10'+sup(Math.round(need)),bx+bw/2,y0+bh+16,'#e8ecf8','700 12px monospace','center');
+  }
+  [dS,pS,qS].forEach(e=>e.addEventListener('input',upd));upd();
+})();
+
+/* ============================================================================
+   6 · LABOR 2 — Structural hypotheses
+   ============================================================================ */
+(function hyps(){
+  const H=[
+    {k:'i',t:'(i) Daten auf niedrigdim. Mannigfaltigkeit',
+     d:'Die Daten liegen nicht überall im ℝᵈ, sondern auf einer gekrümmten Fläche der Dimension d_M ≪ d. Dann zählt nur d_M.',
+     m:'P^{*}\\sim \\varepsilon^{-d_M/s_{\\text{glatt}}}',
+     a:'<span class="pill m">teilweise</span>',b:'<span class="pill n">nein</span>',c:'<span class="pill n">nein — verletzt</span>',
+     n:'In der Praxis ist d_M selbst groß (≈50 bei ImageNet). Und: <b>isotrope Kernel-Methoden können das schon</b> — erklärt also keinen Vorteil von Deep Learning.'},
+    {k:'ii',t:'(ii) Die Zielfunktion ist glatt',
+     d:'Nahe Eingaben ⇒ nahe Ausgaben. Je mehr beschränkte Ableitungen, desto einfacher. Das ist die Grundlage aller klassischen Approximationstheorie.',
+     m:'P^{*}\\sim \\varepsilon^{-d_M/s_{\\text{glatt}}}',
+     a:'<span class="pill m">teilweise</span>',b:'<span class="pill n">nein</span>',c:'<span class="pill n">nein — verletzt</span>',
+     n:'Man bräuchte unrealistisch viele beschränkte Ableitungen. Im RHM kippt <b>eine einzige geänderte Eingabe</b> das Label mit endlicher Wahrscheinlichkeit — maximal unglatt.'},
+    {k:'iii',t:'(iii) Nur wenige lineare Projektionen zählen',
+     d:'f*(x) = g(xₜ): die Aufgabe hängt nur von t ≪ d Richtungen ab. Feature-lernende Methoden finden diese Richtungen.',
+     m:'f^{*}(x)=g(x_t),\\quad x\\in\\mathbb{R}^{d},\\;x_t\\in\\mathbb{R}^{t}',
+     a:'<span class="pill y">ja</span>',b:'<span class="pill n">nein</span>',c:'<span class="pill n">nein — verletzt</span>',
+     n:'<b>Ein einziges Hidden Layer genügt dafür.</b> Erklärt also nicht, warum man Tiefe braucht. Im RHM hängt das Label von <b>allen d</b> Variablen ab.'},
+    {k:'iv',t:'(iv) Lokalität',
+     d:'f*(x) = Σᵢ f*ᵢ(xᵢ), Summe über Patches von t benachbarten Pixeln. CNNs lernen das mit einer von t (nicht d) bestimmten Komplexität.',
+     m:'f^{*}(x)=\\sum_{i} f^{*}_i(x_i)',
+     a:'<span class="pill y">ja</span>',b:'<span class="pill n">nein</span>',c:'<span class="pill m">hierarchisch, ja</span>',
+     n:'Aber: <b>keine weitreichenden nichtlinearen Abhängigkeiten</b>. Nimmt man stattdessen ein <em>tiefes</em> CNN als Teacher, wird die Komplexität wieder exponentiell in d.'},
+    {k:'rhm',t:'★ Das RHM: hierarchische Komposition',
+     d:'Lokalität wird L-mal gestapelt. Dadurch entstehen weitreichende nichtlineare Abhängigkeiten — und trotzdem bleibt alles lernbar, weil man Schicht für Schicht Synonyme zusammenfassen kann.',
+     m:'\\mu^{(\\ell+1)}_i=g_\\ell\\!\\left(\\mu^{(\\ell)}_{(i-1)s+1},\\dots,\\mu^{(\\ell)}_{is}\\right)',
+     a:'<span class="pill y">JA</span>',b:'<span class="pill y">JA — zwingend</span>',c:'<span class="pill y">—</span>',
+     n:'<b>Das ist die Antwort des Papers.</b> (i),(ii),(iii) sind verletzt, und trotzdem ist P* nur polynomiell in d. Tiefe ist nicht optional, sondern notwendig.'}
+  ];
+  const wrap=$('#hypBtns');let cur=0;
+  H.forEach((h,i)=>{const b=document.createElement('button');b.textContent=h.t.replace('★ Das RHM: hierarchische Komposition','★ RHM');b.onclick=()=>{cur=i;render();};wrap.appendChild(b);});
+  function render(){
+    [...wrap.children].forEach((b,i)=>b.classList.toggle('on',i===cur));
+    const h=H[cur];
+    $('#hypTitle').textContent=h.t;$('#hypDesc').textContent=h.d;
+    kx('#hypMath',h.m);$('#hypA').innerHTML=h.a;$('#hypB').innerHTML=h.b;$('#hypC').innerHTML=h.c;
+    $('#hypNote').innerHTML=h.n;$('#hypNote').className='note '+(cur===4?'g':'w');
+    draw(h.k);
+  }
+  function draw(k){
+    const cv=$('#hypCanvas');const {ctx,W,H:Hh}=setupCanvas(cv);clearC(ctx,W,Hh);
+    const rnd=RNG(11);
+    if(k==='i'){
+      // swiss roll-ish curve with points on it
+      ctx.strokeStyle=hexA('#6ee7ff',.35);ctx.lineWidth=2;ctx.beginPath();
+      for(let t=0;t<=1;t+=.002){const th=t*4.5;const r=20+t*110;const x=W/2+r*Math.cos(th),y=Hh/2+r*Math.sin(th)*.8;t===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+      ctx.stroke();
+      for(let i=0;i<180;i++){const t=rnd();const th=t*4.5;const r=20+t*110;
+        const x=W/2+r*Math.cos(th)+gauss(rnd)*3,y=Hh/2+r*Math.sin(th)*.8+gauss(rnd)*3;
+        ctx.fillStyle=hexA('#b388ff',.9);ctx.beginPath();ctx.arc(x,y,2.4,0,TAU);ctx.fill();}
+      txt(ctx,'d = 2 sichtbar, aber intrinsisch d_M = 1',W/2,Hh-18,'#9aa4c4','12px sans-serif','center');
+    } else if(k==='ii'){
+      // smooth vs jagged function
+      const y0=Hh*.32,y1=Hh*.78,amp=42;
+      ctx.strokeStyle='#45e6a8';ctx.lineWidth=2.4;ctx.beginPath();
+      for(let x=40;x<W-40;x++){const t=(x-40)/(W-80);ctx.lineTo(x,y0-Math.sin(t*6)*amp*.6-Math.sin(t*2.1)*amp*.4);}
+      ctx.stroke();txt(ctx,'glatt  ✓ lernbar mit Kernel',W-46,y0-70,'#45e6a8','700 11px sans-serif','right');
+      ctx.strokeStyle='#ff7597';ctx.lineWidth=2.4;ctx.beginPath();
+      let py=y1;
+      for(let x=40;x<W-40;x+=3){py=y1+(rnd()-.5)*amp*1.6;ctx.lineTo(x,py);}
+      ctx.stroke();txt(ctx,'RHM: 1 Symbol ändern ⇒ Label kippt  ✗',W-46,y1+62,'#ff7597','700 11px sans-serif','right');
+    } else if(k==='iii'){
+      // a plane in 3d-ish: only 1 direction matters
+      const cx=W/2,cy=Hh/2;
+      for(let i=0;i<260;i++){
+        const x=cx+(rnd()-.5)*W*.72,y=cy+(rnd()-.5)*Hh*.72;
+        const proj=(x-cx)/(W*.36);
+        const c=proj>0?'#6ee7ff':'#ff7597';
+        ctx.fillStyle=hexA(c,.75);ctx.beginPath();ctx.arc(x,y,2.6,0,TAU);ctx.fill();
+      }
+      ctx.strokeStyle='#ffd166';ctx.lineWidth=2.6;ctx.setLineDash([6,5]);
+      ctx.beginPath();ctx.moveTo(cx,26);ctx.lineTo(cx,Hh-26);ctx.stroke();ctx.setLineDash([]);
+      // arrow
+      ctx.strokeStyle='#ffd166';ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(cx,Hh-40);ctx.lineTo(cx+90,Hh-40);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+90,Hh-40);ctx.lineTo(cx+80,Hh-45);ctx.lineTo(cx+80,Hh-35);ctx.fill();
+      txt(ctx,'nur diese eine Richtung zählt',cx+96,Hh-40,'#ffd166','700 11px sans-serif');
+    } else if(k==='iv'){
+      // patches
+      const n=12,pw=(W-80)/n;
+      for(let i=0;i<n;i++){
+        const grp=Math.floor(i/3);
+        chip(ctx,40+i*pw+2,Hh/2-28,pw-4,56,'x'+(i+1),hexA(PAL[grp],.85),'#04060d',8);
+      }
+      for(let g=0;g<4;g++){
+        const x=40+g*3*pw, w=3*pw;
+        
+      for(let g=0;g<4;g++){
+        const x=40+g*3*pw, w=3*pw;
+        ctx.strokeStyle=hexA(PAL[g],.9);ctx.lineWidth=2;ctx.setLineDash([5,4]);
+        roundRect(ctx,x,Hh/2-44,w,88,10);ctx.stroke();ctx.setLineDash([]);
+        txt(ctx,'f*'+(g+1)+'(x)',x+w/2,Hh/2-58,PAL[g],'700 11px monospace','center');
+      }
+      txt(ctx,'f*(x) = f*₁ + f*₂ + f*₃ + f*₄   — nur lokale Terme, keine Wechselwirkung zwischen den Boxen',
+          W/2,Hh-26,'#9aa4c4','12px sans-serif','center');
+    } else {
+      // RHM tree
+      const L=3,s=2;
+      const levels=[];
+      for(let l=0;l<=L;l++)levels.push(Math.pow(s,l));
+      const topY=36,botY=Hh-44;
+      const pos=[];
+      for(let l=0;l<=L;l++){
+        const n=levels[l],y=lerp(topY,botY,l/L),arr=[];
+        for(let i=0;i<n;i++)arr.push({x:40+(W-80)*((i+.5)/n),y});
+        pos.push(arr);
+      }
+      for(let l=0;l<L;l++)for(let i=0;i<pos[l].length;i++)for(let b=0;b<s;b++){
+        const j=i*s+b,a=pos[l][i],c=pos[l+1][j];
+        ctx.strokeStyle=hexA('#6ee7ff',.3);ctx.lineWidth=1.4;
+        ctx.beginPath();ctx.moveTo(a.x,a.y+10);ctx.lineTo(c.x,c.y-10);ctx.stroke();
+      }
+      for(let l=0;l<=L;l++)for(let i=0;i<pos[l].length;i++){
+        const p=pos[l][i];const col=l===0?'#ffd166':(l===L?'#6ee7ff':'#b388ff');
+        chip(ctx,p.x-12,p.y-11,24,22,l===0?'α':String.fromCharCode(97+i%26),col);
+      }
+      txt(ctx,'Regeln L-mal gestapelt ⇒ das Label hängt von ALLEN d Eingaben ab',W/2,Hh-16,'#45e6a8','700 12px sans-serif','center');
+    }
+  }
+  render();
+})();
+
+/* ============================================================================
+   7 · LABOR 3 — Composition tree (image / language / abstract)
+   ============================================================================ */
+(function comp(){
+  const SETS=[
+    {root:'GESICHT',L2:['AUGEN','NASE','MUND','KONTUR'],
+     L3:['Lid','Pupille','Rücken','Nüstern','Lippe','Zähne','Wange','Kinn'],
+     L4:['↗','↘','●','─','│','╱','╲','◡','◠','▲','▼','◆','■','═','╳','○']},
+    {root:'SATZ',L2:['SUBJEKT','PRÄDIKAT','OBJEKT','ORT'],
+     L3:['Artikel','Nomen','Verb','Hilfsv.','Adjektiv','Nomen','Präp.','Ort'],
+     L4:['der','Hund','sieht','die','rote','Katze','auf','Dach','ein','Mann','liest','das','alte','Buch','im','Park']},
+    {root:'α',L2:['a','b','c','d'],
+     L3:['e','f','g','h','i','j','k','l'],
+     L4:['μ₁','μ₂','μ₃','μ₄','μ₅','μ₆','μ₇','μ₈','μ₉','μ₁₀','μ₁₁','μ₁₂','μ₁₃','μ₁₄','μ₁₅','μ₁₆']}
+  ];
+  let cur=0,shown=0,timer=null;
+  const cv=$('#compCanvas');
+  $$('#compSeg button').forEach(b=>b.onclick=()=>{
+    $$('#compSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    cur=+b.dataset.i;shown=0;draw();
+  });
+  $('#compPlay').onclick=()=>{clearInterval(timer);shown=0;timer=setInterval(()=>{shown++;draw();if(shown>=4)clearInterval(timer);},650);draw();};
+  $('#compAll').onclick=()=>{clearInterval(timer);shown=3;draw();};
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const S=SETS[cur];
+    const rows=[[S.root],S.L2,S.L3,S.L4];
+    const cols=['#ffd166','#b388ff','#7aa2ff','#6ee7ff'];
+    const topY=44,botY=H-46;
+    const pos=[];
+    for(let l=0;l<4;l++){
+      const n=rows[l].length,y=lerp(topY,botY,l/3),arr=[];
+      for(let i=0;i<n;i++)arr.push({x:60+(W-120)*((i+.5)/n),y});
+      pos.push(arr);
+    }
+    // edges
+    for(let l=0;l<3;l++){
+      if(l>=shown)continue;
+      for(let i=0;i<pos[l].length;i++)for(let b=0;b<2;b++){
+        const j=i*2+b;if(j>=pos[l+1].length)continue;
+        const a=pos[l][i],c=pos[l+1][j];
+        const g=ctx.createLinearGradient(a.x,a.y,c.x,c.y);
+        g.addColorStop(0,hexA(cols[l],.55));g.addColorStop(1,hexA(cols[l+1],.35));
+        ctx.strokeStyle=g;ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(a.x,a.y+14);
+        ctx.bezierCurveTo(a.x,(a.y+c.y)/2,c.x,(a.y+c.y)/2,c.x,c.y-14);ctx.stroke();
+      }
+    }
+    // nodes
+    for(let l=0;l<4;l++){
+      if(l>shown)continue;
+      for(let i=0;i<pos[l].length;i++){
+        const p=pos[l][i];const label=rows[l][i];
+        ctx.font=(l===0?'800 14px':'700 11.5px')+' -apple-system,sans-serif';
+        const w=Math.max(40,ctx.measureText(label).width+20);
+        chip(ctx,p.x-w/2,p.y-14,w,28,label,cols[l],'#04060d',9,(l===0?'800 14px':'700 11.5px')+' -apple-system,sans-serif');
+      }
+      const lab=['Klasse α','Ebene 3 (hoch)','Ebene 2','Ebene 1 (Eingabe)'][l];
+      txt(ctx,lab,14,pos[l][0].y,hexA(cols[l],.85),'700 10px sans-serif');
+    }
+    txt(ctx,'Jeder Pfeil = eine Kompositionsregel, gewählt aus m Synonymen',W-16,H-14,'#5f6a8c','11px sans-serif','right');
+  }
+  draw();
+})();
+
+/* ============================================================================
+   8 · LABOR 4 — RHM Generator
+   ============================================================================ */
+const G4={R:null,datum:null,lvl:0,seed:1234};
+(function gen(){
+  const ids=['pnc','pv','pm','ps','pl'];
+  const get=()=>({nc:+$('#pnc').value,v:+$('#pv').value,m:+$('#pm').value,s:+$('#ps').value,L:+$('#pl').value});
+  function rebuild(newSeed){
+    const p=get();
+    if(newSeed)G4.seed=Math.floor(Math.random()*1e9);
+    // clamp m to satisfy non-ambiguity
+    const maxM=Math.floor(Math.pow(p.v,p.s)/Math.max(p.v,p.nc));
+    const ok=p.m<=maxM;
+    $('#pWarn').textContent= ok?'' : `⚠ m·v > vˢ — Eindeutigkeit verletzt (max m = ${Math.max(1,maxM)})`;
+    $('#stAmb').textContent= ok?'✓ erfüllt':'✗ verletzt';
+    $('#stAmb').style.color= ok?'var(--good)':'var(--bad)';
+    G4.R=buildRHM(p.nc,p.v,p.m,p.s,p.L,G4.seed);
+    G4.lvl=Math.min(G4.lvl,p.L-1);
+    sample();
+    stats();
+    lvlBtns();
+    ruleTable();
+  }
+  function stats(){
+    const {nc,v,m,s,L}=G4.R;
+    const d=Math.pow(s,L);
+    const nInner=(d-1)/(s-1);
+    const Pmax=nc*Math.pow(m,nInner);
+    const Pst=nc*Math.pow(m,L);
+    $('#stD').textContent=d;
+    $('#stPmax').textContent=fmt(Pmax);
+    $('#stPstar').textContent=fmt(Pst);
+    $('#stRatio').textContent=fmt(Pmax/Pst)+'×';
+  }
+  function lvlBtns(){
+    const w=$('#ruleLvlBtns');w.innerHTML='';
+    for(let l=G4.R.L-1;l>=0;l--){
+      const b=document.createElement('button');
+      b.textContent= (l===G4.R.L-1)?`Ebene ${l+1} (Klasse→)`:`Ebene ${l+1}`;
+      b.className=(l===G4.lvl)?'on':'';
+      b.onclick=()=>{G4.lvl=l;lvlBtns();ruleTable();};
+      w.appendChild(b);
+    }
+  }
+  function ruleTable(){
+    const R=G4.R,l=G4.lvl,tb=$('#ruleTable');
+    const isTop=(l===R.L-1);
+    let h='<table style="margin:0"><tr><th>Symbol</th><th>die m Synonyme (jeweils '+R.s+'-Tupel)</th></tr>';
+    for(let sym=0;sym<R.rules[l].nHigh;sym++){
+      const col=isTop?'#ffd166':symColor(sym);
+      h+=`<tr><td><span class="sym" style="background:${col}">${isTop?sym+1:String.fromCharCode(97+sym)}</span></td><td>`;
+      for(const t of R.rules[l].tuples[sym]){
+        h+='<span style="display:inline-flex;gap:1px;margin:2px 7px 2px 0;padding:2px;border-radius:7px;background:rgba(255,255,255,.05)">';
+        for(const x of t) h+=`<span class="sym" style="background:${symColor(x)};width:22px;height:22px;font-size:11px">${l===0?'μ'+(x+1):String.fromCharCode(97+x)}</span>`;
+        h+='</span>';
+      }
+      h+='</td></tr>';
+    }
+    tb.innerHTML=h+'</table>';
+  }
+  function sample(){
+    const rnd=RNG(Math.floor(Math.random()*1e9));
+    G4.datum=sampleDatum(G4.R,rnd);
+    drawTree(G4.R.L+1);
+  }
+  function drawTree(upto){
+    const cv=$('#treeCanvas'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const R=G4.R,D=G4.datum;if(!D)return;
+    const L=R.L;
+    const topY=34,botY=H-40;
+    const pos=[];
+    for(let l=L;l>=0;l--){
+      const arr=D.tree[l],n=arr.length;
+      const y=lerp(topY,botY,(L-l)/L);
+      const row=[];
+      const cw=Math.min(40,(W-80)/Math.max(n,1));
+      for(let i=0;i<n;i++)row.push({x:50+(W-100)*((i+.5)/n),y,sym:arr[i]});
+      pos[l]=row;
+    }
+    const levShown=upto;
+    for(let l=L;l>0;l--){
+      if((L-l)>=levShown)continue;
+      for(let i=0;i<pos[l].length;i++)for(let b=0;b<R.s;b++){
+        const j=i*R.s+b;if(!pos[l-1]||j>=pos[l-1].length)continue;
+        const a=pos[l][i],c=pos[l-1][j];
+        ctx.strokeStyle=hexA(l===L?'#ffd166':'#b388ff',.35);ctx.lineWidth=1.6;
+        ctx.beginPath();ctx.moveTo(a.x,a.y+12);
+        ctx.bezierCurveTo(a.x,(a.y+c.y)/2,c.x,(a.y+c.y)/2,c.x,c.y-12);ctx.stroke();
+      }
+    }
+    for(let l=L;l>=0;l--){
+      if((L-l)>levShown)continue;
+      const isRoot=(l===L),isLeaf=(l===0);
+      for(let i=0;i<pos[l].length;i++){
+        const p=pos[l][i];
+        const col=isRoot?'#ffd166':(isLeaf?symColor(p.sym):'#b388ff');
+        const lab=isRoot?('Klasse '+(p.sym+1)):(isLeaf?('μ'+(p.sym+1)):String.fromCharCode(97+p.sym));
+        ctx.font='700 11px SFMono-Regular,monospace';
+        const w=Math.max(26,ctx.measureText(lab).width+14);
+        chip(ctx,p.x-w/2,p.y-12,w,24,lab,col,'#04060d',7);
+      }
+      txt(ctx,l===L?'Klasse':(l===0?'Eingabe':'Ebene '+(l+1)),10,pos[l][0].y,'#5f6a8c','9px sans-serif');
+    }
+    // string
+    const s=D.tree[0].map(x=>'μ'+(x+1)).join(' ');
+    $('#treeString').innerHTML=`<span class="tiny">Eingabevektor x (d=${D.tree[0].length}):</span> <code style="font-size:12.5px">${s}</code>`;
+  }
+  ids.forEach(id=>$('#'+id).addEventListener('input',()=>{
+    $('#'+id+'V').textContent=$('#'+id).value;rebuild(false);
+  }));
+  $('#pReroll').onclick=()=>rebuild(true);
+  $('#pSample').onclick=sample;
+  $('#pAnim').onclick=()=>{
+    let k=0;const iv=setInterval(()=>{drawTree(k);k++;if(k>G4.R.L+1)clearInterval(iv);},450);
+  };
+  ids.forEach(id=>$('#'+id+'V').textContent=$('#'+id).value);
+  rebuild(false);
+})();
+
+/* ============================================================================
+   9 · LABOR 5 — Synonyms vs noise
+   ============================================================================ */
+(function syn(){
+  let R=null,label=0,grid=null,base=null,cur=null,changed=[],mode='';
+  function fresh(){
+    R=buildRHM(4,5,3,2,3,Math.floor(Math.random()*1e9));
+    label=Math.floor(Math.random()*R.nc);
+    grid=[];for(let l=0;l<R.L;l++){const n=Math.pow(R.s,R.L-1-l);const a=[];for(let i=0;i<n;i++)a.push(Math.floor(Math.random()*R.m));grid.push(a);}
+    base=expandTree(R,label,grid);cur=base.map(a=>a.slice());changed=[];mode='';msg('Neues Beispiel erzeugt. Jetzt tauschen!','');
+    draw();
+  }
+  function swap(level){
+    // change one synonym choice at given level (1-indexed from bottom)
+    const l=level-1;
+    if(l>=R.L)return;
+    const n=grid[l].length;const i=Math.floor(Math.random()*n);
+    let nj=grid[l][i];if(R.m>1){while(nj===grid[l][i])nj=Math.floor(Math.random()*R.m);}
+    const g2=grid.map(a=>a.slice());g2[l][i]=nj;
+    const t2=expandTree(R,label,g2);
+    changed=[];for(let k=0;k<t2[0].length;k++)if(t2[0][k]!==base[0][k])changed.push(k);
+    cur=t2;mode='syn';
+    msg(`<b>✓ Label unverändert.</b> Es wurde auf Ebene ${level} ein Synonym gewählt. ${changed.length} von ${base[0].length} Eingabesymbolen haben sich geändert — aber die Bedeutung ist identisch. <b>Genau diese Invarianz muss das Netz lernen.</b>`,'g');
+    draw();
+  }
+  function noise(){
+    const t2=base.map(a=>a.slice());
+    const i=Math.floor(Math.random()*t2[0].length);
+    let nv=t2[0][i];while(nv===t2[0][i])nv=Math.floor(Math.random()*R.v);
+    t2[0][i]=nv;
+    // recompute label bottom-up via g functions (may be undefined → "kein gültiges Datum")
+    const g=[];for(let l=0;l<R.L;l++){const map=new Map();for(let h=0;h<R.rules[l].nHigh;h++)for(const tp of R.rules[l].tuples[h])map.set(tp.join(','),h);g.push(map);}
+    let lv=t2[0],valid=true,newLabel=null;
+    for(let l=0;l<R.L;l++){
+      const nxt=[];
+      for(let k=0;k<lv.length;k+=R.s){
+        const key=lv.slice(k,k+R.s).join(',');
+        if(!g[l].has(key)){valid=false;break;}
+        nxt.push(g[l].get(key));
+      }
+      if(!valid)break;lv=nxt;t2[l+1]=nxt;
+    }
+    if(valid)newLabel=lv[0];
+    changed=[i];cur=t2;mode=valid?'noise':'invalid';cur._label=newLabel;
+    if(!valid) msg('<b>✗ Kein gültiges Datum mehr.</b> Das geänderte Tupel gehört zu keiner Regel — es liegt außerhalb der vom Modell erzeugbaren Daten.','r');
+    else if(newLabel!==label) msg(`<b>✗ Label gekippt!</b> ${label+1} → ${newLabel+1}. Eine <em>einzige</em> geänderte Eingabe hat die Klasse verändert. <b>Das ist die Verletzung der Glattheitsannahme (ii).</b>`,'r');
+    else msg('<b>Label zufällig gleich geblieben</b> — das passiert mit Wahrscheinlichkeit ~1/n_c. Probier nochmal!','w');
+    draw();
+  }
+  function msg(h,c){$('#synMsg').innerHTML=h;$('#synMsg').className='note '+(c||'');}
+  function draw(){
+    const cv=$('#synCanvas'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const d=base[0].length;
+    const bw=Math.min(52,(W-140)/d);
+    const y1=70,y2=190;
+    txt(ctx,'ORIGINAL',24,y1+14,'#9aa4c4','700 11px sans-serif');
+    txt(ctx,'NACH ÄNDERUNG',24,y2+14,'#9aa4c4','700 11px sans-serif');
+    const x0=150;
+    for(let i=0;i<d;i++){
+      chip(ctx,x0+i*bw+2,y1,bw-6,40,'μ'+(base[0][i]+1),symColor(base[0][i]),'#04060d',8,'700 12px monospace');
+      const ch=changed.includes(i);
+      chip(ctx,x0+i*bw+2,y2,bw-6,40,'μ'+(cur[0][i]+1),ch?(mode==='syn'?'#45e6a8':'#ff6b6b'):hexA(symColor(cur[0][i]),.45),'#04060d',8,'700 12px monospace');
+      if(ch){
+        ctx.strokeStyle=mode==='syn'?'#45e6a8':'#ff6b6b';ctx.lineWidth=2;
+        roundRect(ctx,x0+i*bw,y2-3,bw-2,46,10);ctx.stroke();
+        ctx.strokeStyle=hexA(mode==='syn'?'#45e6a8':'#ff6b6b',.5);ctx.setLineDash([3,3]);
+        ctx.beginPath();ctx.moveTo(x0+i*bw+bw/2,y1+42);ctx.lineTo(x0+i*bw+bw/2,y2-4);ctx.stroke();ctx.setLineDash([]);
+      }
+    }
+    // labels
+    const nl = (mode==='invalid')?null:(mode==='noise'?cur._label:label);
+    chip(ctx,24,y1-48,110,34,'Klasse '+(label+1),'#ffd166','#04060d',9,'800 13px sans-serif');
+    const okL=(nl===label);
+    chip(ctx,24,y2+58,110,34,nl===null?'ungültig':('Klasse '+(nl+1)),nl===null?'#ff6b6b':(okL?'#ffd166':'#ff6b6b'),'#04060d',9,'800 13px sans-serif');
+    $('#synS1').children[0].textContent='Klasse '+(label+1);
+    $('#synS2').children[0].textContent=nl===null?'ungültig':('Klasse '+(nl+1));
+    $('#synS2').className='stat '+(nl===label?'ok':'no');
+    $('#synS3').children[0].textContent=changed.length+' / '+d;
+  }
+  $('#synNew').onclick=fresh;
+  $('#synSwap').onclick=()=>swap(1);
+  $('#synSwap2').onclick=()=>swap(2);
+  $('#synNoise').onclick=noise;
+  fresh();
+})();
+
+/* ============================================================================
+   10 · LABOR 7 — Architecture
+   ============================================================================ */
+(function arch(){
+  let mode='fc2',L=3;
+  $$('#archSeg button').forEach(b=>b.onclick=()=>{
+    $$('#archSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.a;draw();
+  });
+  $('#archL').oninput=()=>{L=+$('#archL').value;$('#archLV').textContent=L;draw();};
+  const INFO={
+    fc2:{t:'Zwei-Schicht-Netz (flach)',
+      d:'Alle d·v Eingaben gehen direkt in H versteckte Neuronen, dann in nc Ausgänge. Es gibt keine Struktur, die der Hierarchie entspricht — das Netz muss jede mögliche Eingabe quasi auswendig lernen. Ergebnis: P* ∝ P_max (Abb. 2).',
+      m:'F(x)=\\frac{1}{H}\\sum_{h=1}^{H}a_h\\,\\sigma(w_h\\cdot x)'},
+    cnn:{t:'Tiefes CNN der Tiefe L+1 (maßgeschneidert)',
+      d:'Filtergröße f = s, nicht überlappende Patches. Jede Schicht reduziert die räumliche Dimension um den Faktor s — genau wie eine Ebene des RHM-Baums. Nach L Faltungsschichten bleibt ein Pixel, dann folgt der Readout. Ergebnis: P* = nc·m^L.',
+      m:'x\\in\\mathbb{R}^{d\\times v}\\;\\xrightarrow{\\;f=s\\;}\\;\\mathbb{R}^{\\frac{d}{s}\\times H}\\;\\xrightarrow{\\;\\cdots\\;}\\;\\mathbb{R}^{n_c}'},
+    fcdeep:{t:'Tiefes vollverbundenes Netz (Tiefe > L)',
+      d:'Nicht auf die Struktur zugeschnitten, aber tief genug. Funktioniert ebenfalls! Es kostet nur einen zusätzlichen Faktor s^L — der selbst wieder polynomiell in d ist (Abb. 13). Tiefe ist also das Entscheidende, nicht die Faltung.',
+      m:'P^{*}_{\\text{FC}}\\;\\approx\\;s^{L}\\cdot n_c m^{L}\\;=\\;d\\cdot n_c m^{L}'}
+  };
+  function draw(){
+    const cv=$('#archCanvas'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const inf=INFO[mode];
+    $('#archTitle').textContent=inf.t;$('#archDesc').textContent=inf.d;kx('#archMath',inf.m);
+    const d=Math.pow(2,L),v=6;
+    const left=90, right=W-140, midY=H/2;
+    if(mode==='fc2'){
+      // input column -> hidden blob -> output
+      const n=d;
+      const ih=Math.min(26,(H-90)/n);
+      const iy0=midY-n*ih/2;
+      for(let i=0;i<n;i++){
+        for(let c=0;c<v;c++){
+          const on=(c===(i*3+1)%v);
+          ctx.fillStyle=on?'#6ee7ff':'rgba(255,255,255,.07)';
+          roundRect(ctx,left+c*9,iy0+i*ih+2,7,ih-4,2);ctx.fill();
+        }
+      }
+      txt(ctx,'Eingabe  d×v = '+d+'×'+v+'  (One-Hot)',left,iy0-18,'#6ee7ff','700 11px sans-serif');
+      // hidden
+      const hx=left+250;
+      for(let k=0;k<16;k++){
+        const y=midY-150+k*19;
+        ctx.fillStyle=hexA('#b388ff',.6);ctx.beginPath();ctx.arc(hx,y,6,0,TAU);ctx.fill();
+        for(let i=0;i<n;i+=1){
+          ctx.strokeStyle=hexA('#b388ff',.045);ctx.lineWidth=.6;
+          ctx.beginPath();ctx.moveTo(left+56,iy0+i*ih+ih/2);ctx.lineTo(hx-6,y);ctx.stroke();
+        }
+      }
+      txt(ctx,'H versteckte Neuronen (ReLU)',hx-40,midY-172,'#b388ff','700 11px sans-serif');
+      // output
+      const ox=hx+230;
+      for(let o=0;o<4;o++){
+        const y=midY-40+o*28;
+        chip(ctx,ox,y-11,74,22,'Klasse '+(o+1),'#ffd166');
+        for(let k=0;k<16;k++)  {ctx.strokeStyle=hexA('#ffd166',.06);ctx.lineWidth=.6;
+          ctx.beginPath();ctx.moveTo(hx+6,midY-150+k*19);ctx.lineTo(ox,y);ctx.stroke();}
+      }
+      txt(ctx,'KEINE hierarchische Struktur  ⇒  verflucht',W/2,H-18,'#ff6b6b','700 13px sans-serif','center');
+    } else if(mode==='cnn'){
+      const layers=[];
+      for(let l=0;l<=L;l++)layers.push(Math.pow(2,L-l));
+      const colW=(right-left)/(L+1);
+      for(let l=0;l<=L;l++){
+        const n=layers[l],x=left+l*colW;
+        const bh=Math.min(34,(H-130)/n),by0=midY-n*bh/2;
+        for(let i=0;i<n;i++){
+          const col=l===0?'#6ee7ff':(l===L?'#ffd166':'#b388ff');
+          chip(ctx,x,by0+i*bh+2,58,bh-5,l===0?('x'+(i+1)):(l===L?'out':'h'+(i+1)),hexA(col,.85),'#04060d',6,'700 10px monospace');
+        }
+        // arrows to next
+        if(l<L){
+          const n2=layers[l+1],bh2=Math.min(34,(H-130)/n2),by02=midY-n2*bh2/2;
+          for(let j=0;j<n2;j++)for(let b=0;b<2;b++){
+            const i=j*2+b;if(i>=n)continue;
+            ctx.strokeStyle=hexA('#45e6a8',.5);ctx.lineWidth=1.6;
+            ctx.beginPath();ctx.moveTo(x+58,by0+i*bh+bh/2);
+            ctx.lineTo(x+colW,by02+j*bh2+bh2/2);ctx.stroke();
+          }
+          // filter box
+          ctx.strokeStyle=hexA('#45e6a8',.85);ctx.setLineDash([4,3]);ctx.lineWidth=1.6;
+          roundRect(ctx,x-4,by0-4,66,2*bh+6,8);ctx.stroke();ctx.setLineDash([]);
+          txt(ctx,'Filter s=2',x-4,by0-14,'#45e6a8','700 9.5px sans-serif');
+        }
+        txt(ctx,l===0?'Eingabe d='+n:(l===L?'Readout':'Conv '+l),x,midY+n*bh/2+18,'#5f6a8c','10px sans-serif');
+      }
+      txt(ctx,'Architektur = Baum des RHM  ⇒  P* = n_c·m^L',W/2,H-16,'#45e6a8','700 13px sans-serif','center');
+    } else {
+      const depth=6;
+      const colW=(right-left)/(depth);
+      for(let l=0;l<=depth;l++){
+        const x=left+l*colW;
+        const n=(l===0)?Math.pow(2,L):(l===depth?4:10);
+        const bh=Math.min(28,(H-130)/n),by0=midY-n*bh/2;
+        for(let i=0;i<n;i++){
+          const col=l===0?'#6ee7ff':(l===depth?'#ffd166':'#b388ff');
+          ctx.fillStyle=hexA(col,.8);ctx.beginPath();ctx.arc(x,by0+i*bh+bh/2,5.5,0,TAU);ctx.fill();
+        }
+        if(l<depth){
+          const n2=(l+1===depth)?4:10,bh2=Math.min(28,(H-130)/n2),by02=midY-n2*bh2/2;
+          for(let i=0;i<n;i++)for(let j=0;j<n2;j++){
+            ctx.strokeStyle=hexA('#b388ff',.05);ctx.lineWidth=.6;
+            ctx.beginPath();ctx.moveTo(x+5,by0+i*bh+bh/2);ctx.lineTo(x+colW-5,by02+j*bh2+bh2/2);ctx.stroke();
+          }
+        }
+        txt(ctx,l===0?'x':(l===depth?'out':'FC '+l),x,midY+n*bh/2+18,'#5f6a8c','10px sans-serif','center');
+      }
+      txt(ctx,'vollverbunden, Tiefe 6 > L  ⇒  funktioniert auch, Faktor s^L teurer',W/2,H-16,'#ffd166','700 13px sans-serif','center');
+    }
+  }
+  draw();
+})();
+
+/* ============================================================================
+   11 · LEARNING-CURVE MODEL (faithful reproduction of the paper's laws)
+   ============================================================================ */
+function errCurve(P,Pstar,beta){
+  // ē(P*) = 0.1  →  sigmoid in log P
+  beta=beta||2.2;
+  const P0=Pstar/Math.pow(9,1/beta);
+  return 1/(1+Math.pow(P/P0,beta));
+}
+function logspace(a,b,n){const o=[];for(let i=0;i<n;i++)o.push(Math.pow(10,a+(b-a)*i/(n-1)));return o;}
+
+/* ---- LABOR 8 : shallow networks cursed ---- */
+(function shallow(){
+  function upd(){
+    const vSel=+$('#shV').value,L=+$('#shL').value;
+    $('#shVV').textContent=vSel;$('#shLV').textContent=L;
+    const vs=[4,8,16,24,32];
+    const tr1=[],pts=[];
+    vs.forEach((v,i)=>{
+      const Pmax=Math.pow(v,Math.pow(2,L));
+      const Pstar=0.55*Pmax;             // P* ∝ Pmax  (ē = 0.7 threshold)
+      const xs=logspace(1,Math.log10(Math.max(Pmax*2,1e3)),90);
+      const erand=1-1/v;
+      const ys=xs.map(P=>{
+        const e=1-0.999/(1+Math.pow(Pstar/Math.max(P,1),1.9));
+        return clamp(e,0.02,1);
+      });
+      tr1.push({x:xs,y:ys,mode:'lines',name:'v = '+v,
+        line:{color:PAL[i],width:v===vSel?3.6:1.9,dash:v===vSel?'solid':'solid'},opacity:v===vSel?1:.45});
+      pts.push({Pmax,Pstar,v,i});
+    });
+    Plotly.react('shPlot1',tr1,baseLayout({
+      title:{text:'Lernkurven · 2-Schicht-FC  (L='+L+', n_c=v=m)'},
+      xaxis:{type:'log',title:'Trainingsdaten P',gridcolor:'rgba(255,255,255,.07)',linecolor:'rgba(255,255,255,.18)'},
+      yaxis:{title:'Testfehler ē',range:[0,1.05],gridcolor:'rgba(255,255,255,.07)',linecolor:'rgba(255,255,255,.18)'}
+    }),PCFG);
+    const xr=[Math.min(...pts.map(p=>p.Pmax))/3,Math.max(...pts.map(p=>p.Pmax))*3];
+    Plotly.react('shPlot2',[
+      {x:xr,y:xr,mode:'lines',name:'y = x',line:{color:'rgba(255,255,255,.5)',dash:'dash',width:2}},
+      {x:pts.map(p=>p.Pmax),y:pts.map(p=>p.Pstar),mode:'markers',name:'gemessen',
+       marker:{size:pts.map(p=>p.v===vSel?18:12),color:pts.map(p=>PAL[p.i]),symbol:'x-thin',
+               line:{width:3,color:pts.map(p=>PAL[p.i])}},
+       text:pts.map(p=>'v='+p.v),hovertemplate:'%{text}<br>P_max=%{x:.3s}<br>P*=%{y:.3s}<extra></extra>'}
+    ],baseLayout({
+      title:{text:'P* wächst LINEAR mit P_max = v^(s^L)'},
+      xaxis:{type:'log',title:'P_max = v^(s^L)'},
+      yaxis:{type:'log',title:'P*  (ē = 70 %)'},showlegend:true
+    }),PCFG);
+  }
+  $('#shV').oninput=upd;$('#shL').oninput=upd;upd();
+})();
+
+/* ---- LABOR 9 : deep networks break the curse ---- */
+(function deep(){
+  let xmode='raw';
+  $$('#dpSeg button').forEach(b=>b.onclick=()=>{
+    $$('#dpSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');xmode=b.dataset.x;upd();
+  });
+  function upd(){
+    const nc=+$('#dpNc').value,m=+$('#dpM').value,L=+$('#dpL').value;
+    $('#dpNcV').textContent=nc;$('#dpMV').textContent=m;$('#dpLV').textContent=L;
+    const Pst=nc*Math.pow(m,L),d=Math.pow(2,L);
+    const Pmax=nc*Math.pow(m,d-1);
+    $('#dpPstar').textContent=fmt(Pst);$('#dpPmax').textContent=fmt(Pmax);
+    $('#dpD').textContent=d;$('#dpGain').textContent=fmt(Pmax/Pst)+'×';
+    const combos=[];
+    const Ms=[4,6,8,12,16,24],Ls=[2,3,4];
+    let i=0;
+    Ls.forEach(ll=>Ms.forEach(mm=>{combos.push({m:mm,L:ll,nc:mm,c:PAL[Ms.indexOf(mm)%PAL.length],
+      dash:ll===2?'solid':(ll===3?'dot':'dashdot')});i++;}));
+    combos.push({m,L,nc,c:'#ffffff',hi:true,dash:'solid'});
+    const tr=combos.map(o=>{
+      const ps=o.nc*Math.pow(o.m,o.L);
+      const xs=logspace(1,7,110);
+      const ys=xs.map(P=>errCurve(P,ps,2.3));
+      return {x:xmode==='raw'?xs:xs.map(P=>P/ps),y:ys,mode:'lines',
+        name:o.hi?'★ deine Wahl':('m='+o.m+', L='+o.L),
+        showlegend:!!o.hi||o.L===2,
+        line:{color:o.hi?'#fff':o.c,width:o.hi?4:1.6,dash:o.dash},opacity:o.hi?1:.42,
+        hovertemplate:(o.hi?'★ ':'')+'m='+o.m+', L='+o.L+'<br>P=%{x:.3s}<br>ē=%{y:.3f}<extra></extra>'};
+    });
+    if(xmode==='res')tr.push({x:[1,1],y:[0,1.05],mode:'lines',name:'P = n_c m^L',
+      line:{color:'#45e6a8',width:2,dash:'dash'}});
+    Plotly.react('dpPlot',tr,baseLayout({
+      title:{text:xmode==='raw'?'Rohe Lernkurven — jede Parameterwahl eine eigene Kurve'
+        :'Nach Reskalierung mit n_c·m^L  →  ALLE Kurven kollabieren'},
+      xaxis:{type:'log',title:xmode==='raw'?'Trainingsdaten P':'P / (n_c m^L)',
+        range:xmode==='raw'?[1,7]:[-2.2,1.6]},
+      yaxis:{title:'Testfehler ē = ε/ε_rand',range:[0,1.05]}
+    }),PCFG);
+  }
+  ['dpNc','dpM','dpL'].forEach(id=>$('#'+id).oninput=upd);
+  $('#dpHi').onclick=upd;upd();
+})();
+
+/* ---- LABOR 9b : poly vs exp ---- */
+(function polyexp(){
+  function upd(){
+    const m=+$('#peM').value,s=+$('#peS').value,nc=+$('#peNc').value;
+    $('#peMV').textContent=m;$('#peSV').textContent=s;$('#peNcV').textContent=nc;
+    kx('#peMath',`P^{*}=n_c m^{L}=n_c\\,d^{\\;\\ln ${m}/\\ln ${s}}=${nc}\\,d^{\\,${(Math.log(m)/Math.log(s)).toFixed(2)}}
+      \\qquad\\text{vs}\\qquad P_{\\max}=${nc}\\cdot ${m}^{\\frac{d-1}{${s-1}}}`);
+    const Ls=[],ds=[],ps=[],pm=[];
+    for(let L=1;L<=8;L++){const d=Math.pow(s,L);Ls.push(L);ds.push(d);
+      ps.push(nc*Math.pow(m,L));pm.push(nc*Math.pow(m,(d-1)/(s-1)));}
+    Plotly.react('pePlot',[
+      {x:ds,y:pm,mode:'lines+markers',name:'P_max (exponentiell)',
+        line:{color:'#ff6b6b',width:3},marker:{size:8,symbol:'diamond'}},
+      {x:ds,y:ps,mode:'lines+markers',name:'P* (polynomiell)',
+        line:{color:'#45e6a8',width:3},marker:{size:8}},
+      {x:ds,y:ds.map(()=>1e7),mode:'lines',name:'ImageNet-Größe 10⁷',
+        line:{color:'rgba(255,255,255,.45)',dash:'dash',width:1.6}}
+    ],baseLayout({
+      title:{text:'Benötigte Datenmenge gegen Eingabedimension d'},
+      xaxis:{type:'log',title:'Eingabedimension d = s^L'},
+      yaxis:{type:'log',title:'nötige Trainingsdaten',exponentformat:'power'},
+      legend:{x:.02,y:.98}
+    }),PCFG);
+  }
+  ['peM','peS','peNc'].forEach(id=>$('#'+id).oninput=upd);upd();
+})();
+
+/* ---- LABOR 10 : synonymic sensitivity S_{2,1} ---- */
+(function sens(){
+  // static illustration
+  (function ill(){
+    const cv=$('#sensCanvas'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const y=48;
+    txt(ctx,'x',18,y,'#9aa4c4','700 12px monospace');
+    const cols=['#6ee7ff','#b388ff','#ffd166','#45e6a8'];
+    for(let i=0;i<8;i++)chip(ctx,52+i*40,y-14,34,28,'μ'+(i%4+1),cols[i%4]);
+    txt(ctx,'P₁x',10,y+78,'#9aa4c4','700 12px monospace');
+    for(let i=0;i<8;i++){
+      const swapped=(i%2===0);
+      chip(ctx,52+i*40,y+64,34,28,'μ'+((i%4+2)%4+1),swapped?'#ff7597':cols[i%4]);
+    }
+    txt(ctx,'Ebene-1-Tupel durch Synonyme ersetzt → Label identisch',52,y+112,'#45e6a8','700 11px sans-serif');
+    // network boxes
+    const bx=52,by=y+140;
+    for(let k=0;k<4;k++){
+      const on=k>=1;
+      chip(ctx,bx+k*112,by,96,44,'f'+(k+1)+(on?'  invariant':'  sensitiv'),on?'#45e6a8':'#ff7597','#04060d',9,'700 10.5px sans-serif');
+      if(k<3){ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(bx+k*112+96,by+22);ctx.lineTo(bx+(k+1)*112,by+22);ctx.stroke();}
+    }
+    txt(ctx,'S₂,₁ ≈ 0  ⇒  zweite Schicht „sieht" den Unterschied nicht mehr',bx,by+70,'#9aa4c4','11px sans-serif');
+  })();
+
+  let xmode='raw';
+  $$('#snSeg button').forEach(b=>b.onclick=()=>{
+    $$('#snSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');xmode=b.dataset.x;upd();
+  });
+  function upd(){
+    const cfg=[];
+    [8,11,16,24].forEach((v,i)=>[2,3,4].forEach(L=>cfg.push({v,L,c:PAL[i],
+      dash:L===2?'solid':(L===3?'dot':'dashdot')})));
+    const tr=cfg.map(o=>{
+      const ps=o.v*Math.pow(o.v,o.L);
+      const xs=logspace(1.3,7,100);
+      const ys=xs.map(P=>clamp(1-1/(1+Math.pow(ps/Math.max(P,1),2.0)),0,1));
+      return {x:xmode==='raw'?xs:xs.map(P=>P/ps),y:ys,mode:'lines',
+        name:'v=m=n_c='+o.v+', L='+o.L,showlegend:o.L===2,
+        line:{color:o.c,width:2.2,dash:o.dash},
+        hovertemplate:'v='+o.v+', L='+o.L+'<br>P=%{x:.3s}<br>S=%{y:.3f}<extra></extra>'};
+    });
+    if(xmode==='res')tr.push({x:[1,1],y:[0,1.02],mode:'lines',name:'P = n_c m^L',
+      line:{color:'#45e6a8',width:2.4,dash:'dash'}});
+    Plotly.react('snPlot',tr,baseLayout({
+      title:{text:xmode==='raw'?'Synonymische Sensitivität S₂,₁ vs. P'
+        :'Reskaliert mit P* = n_c m^L  →  perfekter Kollaps'},
+      xaxis:{type:'log',title:xmode==='raw'?'Trainingsdaten P':'P / (n_c m^L)'},
+      yaxis:{title:'S₂,₁   (1 = sensitiv, 0 = invariant)',range:[-.02,1.04]}
+    }),PCFG);
+  }
+  upd();
+})();
+
+/* ---- LABOR 10b : layer × level grid ---- */
+(function layers(){
+  const cv=$('#layerCanvas');
+  const nc=8,m=8,L=3;const Pc=nc*Math.pow(m,L);  // 4096
+  function S(k,l,P){
+    // invariance to level-l exchanges appears from layer k = l+1, all levels together at P≈Pc
+    if(k<=l) return 1;                                  // layer cannot be invariant yet
+    const shift=Math.pow(1.35,(l-1));                   // higher levels need marginally more
+    return clamp(1-1/(1+Math.pow(Pc*shift/Math.max(P,1),2.1)),0,1);
+  }
+  function upd(){
+    const t=+$('#lyP').value/100;
+    const P=Math.round(Math.pow(10,2+t*3.2));
+    $('#lyPV').textContent=fmt(P);
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const panels=['k = 1','k = 2','k = 3','Ausgabe'];
+    const pw=(W-70)/4, ph=H-88;
+    for(let k=1;k<=4;k++){
+      const x0=50+(k-1)*pw, y0=44;
+      ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;
+      roundRect(ctx,x0,y0,pw-16,ph,10);ctx.stroke();
+      txt(ctx,panels[k-1],x0+10,y0+14,'#e8ecf8','700 12px sans-serif');
+      // axes: x = log P, y = S
+      const gx=x0+34,gy=y0+26,gw=pw-58,gh=ph-56;
+      ctx.strokeStyle='rgba(255,255,255,.14)';
+      ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx,gy+gh);ctx.lineTo(gx+gw,gy+gh);ctx.stroke();
+      for(const yy of [0,.5,1]){
+        const py=gy+gh-yy*gh;
+        ctx.strokeStyle='rgba(255,255,255,.05)';ctx.beginPath();ctx.moveTo(gx,py);ctx.lineTo(gx+gw,py);ctx.stroke();
+        txt(ctx,yy.toFixed(1),gx-6,py,'#5f6a8c','9px monospace','right');
+      }
+      // curves per level
+      for(let l=1;l<=3;l++){
+        const col=[null,'#6ee7ff','#b388ff','#ff7597'][l];
+        ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.beginPath();
+        for(let i=0;i<=120;i++){
+          const lp=2+3.2*i/120, Pi=Math.pow(10,lp);
+          const val=(k===4)?S(4,l,Pi):S(k,l,Pi);
+          const px=gx+gw*i/120, py=gy+gh-val*gh;
+          i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+        }
+        ctx.stroke();
+      }
+      // test error dashed
+      ctx.strokeStyle='#8a93b5';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.beginPath();
+      for(let i=0;i<=120;i++){
+        const lp=2+3.2*i/120,Pi=Math.pow(10,lp);
+        const e=errCurve(Pi,Pc,2.3);
+        const px=gx+gw*i/120,py=gy+gh-e*gh;
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      }
+      ctx.stroke();ctx.setLineDash([]);
+      // current P marker
+      const frac=(Math.log10(P)-2)/3.2;
+      const mx=gx+gw*clamp(frac,0,1);
+      ctx.strokeStyle='#ffd166';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(mx,gy);ctx.lineTo(mx,gy+gh);ctx.stroke();
+      for(let l=1;l<=3;l++){
+        const val=(k===4)?S(4,l,P):S(k,l,P);
+        const col=[null,'#6ee7ff','#b388ff','#ff7597'][l];
+        ctx.fillStyle=col;ctx.beginPath();ctx.arc(mx,gy+gh-val*gh,4.2,0,TAU);ctx.fill();
+        ctx.strokeStyle='#04060d';ctx.lineWidth=1.4;ctx.stroke();
+      }
+      txt(ctx,'P',gx+gw,gy+gh+16,'#5f6a8c','10px sans-serif','right');
+      if(k===1)txt(ctx,'S',gx-24,gy+gh/2,'#5f6a8c','700 11px sans-serif');
+    }
+    // verdict
+    const v1=S(2,1,P),v2=S(3,2,P),v3=S(4,3,P);
+    const st=(v1<.3&&v2<.3&&v3<.3)?'alle Ebenen invariant':(v1<.5?'Ebene 1 beginnt zu kollabieren':'noch keine Invarianz');
+    txt(ctx,`P = ${fmt(P)}   (P* = ${fmt(Pc)})   →   ${st}`,W/2,H-16,
+        (v1<.3?'#45e6a8':'#ffd166'),'700 13px sans-serif','center');
+  }
+  $('#lyP').oninput=upd;upd();
+})();
+
+/* ---- LABOR 10c : effective dimension (Fig. 11) ---- */
+(function effdim(){
+  const layersN=['Eingabe','Schicht 1','Schicht 2','Schicht 3','Ausgabe'];
+  const deff=[7.06,6.89,3.86,3.66,2.25];
+  const cols=['#6ee7ff','#7aa2ff','#b388ff','#ff7597','#ffd166'];
+  const xs=logspace(1,3,40);
+  const tr=deff.map((d,i)=>({
+    x:xs, y:xs.map(P=>Math.pow(P/10,-1/d)),
+    mode:'lines+markers',name:layersN[i]+'  (d_eff = '+d.toFixed(2)+')',
+    line:{color:cols[i],width:2.6},marker:{size:5}
+  }));
+  Plotly.newPlot('edPlot1',tr,baseLayout({
+    title:{text:'Nächster-Nachbar-Abstand δ(P) — Steigung = −1/d_eff'},
+    xaxis:{type:'log',title:'Probendatensatz-Größe P'},
+    yaxis:{type:'log',title:'δ / δ₀'},legend:{x:.02,y:.05}
+  }),PCFG);
+  Plotly.newPlot('edPlot2',[{
+    x:layersN,y:deff,type:'bar',
+    marker:{color:cols,line:{color:'rgba(255,255,255,.25)',width:1}},
+    text:deff.map(d=>d.toFixed(2)),textposition:'outside',textfont:{color:'#e8ecf8',size:11}
+  }],baseLayout({
+    title:{text:'Effektive Dimension sinkt monoton mit der Tiefe'},
+    xaxis:{title:''},yaxis:{title:'d_eff',range:[0,8.4]},showlegend:false
+  }),PCFG);
+})();
+
+/* ============================================================================
+   12 · LABOR 11 — The counting table  (LIVE)
+   ============================================================================ */
+const F11={R:null,cnt:null,tot:null,groups:null,seed:99,showTrue:false,sorted:true};
+(function freqLab(){
+  const cv=$('#freqCanvas');
+  function rebuild(newSeed){
+    const nc=+$('#frNc').value,v=+$('#frV').value,m=+$('#frM').value,L=+$('#frL').value;
+    $('#frNcV').textContent=nc;$('#frVV').textContent=v;$('#frMV').textContent=m;$('#frLV').textContent=L;
+    if(newSeed)F11.seed=Math.floor(Math.random()*1e9);
+    const maxM=Math.floor(Math.pow(v,2)/Math.max(v,nc));
+    const mm=Math.max(1,Math.min(m,maxM));
+    F11.R=buildRHM(nc,v,mm,2,L,F11.seed);
+    const j=jointDist(F11.R);F11.cnt=j.cnt;F11.tot=j.tot;
+    F11.groups=tupleGroups(F11.R);
+    draw();
+  }
+  function draw(){
+    const R=F11.R;if(!R)return;
+    const P=Math.round(Math.pow(10,+$('#frP').value));
+    $('#frPV').textContent=(+$('#frP').value).toFixed(2);
+    const Pc=R.nc*Math.pow(R.m,R.L);
+    const sig=Math.sqrt(R.v/Math.pow(R.m,R.L));
+    const noi=Math.sqrt(R.v*R.nc/P);
+    $('#frPabs').textContent=fmt(P);$('#frPc').textContent=fmt(Pc);
+    $('#frSig').textContent=sig.toFixed(4);$('#frNoi').textContent=noi.toFixed(4);
+    const ok=noi<sig;
+    $('#frMsg').className='note '+(ok?'g':'r');
+    $('#frMsg').innerHTML= ok
+      ? `<b>✓ Rauschen &lt; Signal.</b> Mit P = ${fmt(P)} ≳ P<sub>c</sub> = ${fmt(Pc)} sind die Synonymgruppen als <em>identische Spaltenmuster</em> erkennbar. Genau hier lernt das Netz.`
+      : `<b>✗ Rauschen &gt; Signal.</b> Bei P = ${fmt(P)} ≪ P<sub>c</sub> = ${fmt(Pc)} ist die Tabelle nur Zufall — keine Synonymstruktur sichtbar.`;
+    // empirical table
+    const rnd=RNG(1234+Math.floor(+$('#frP').value*1000));
+    const Nak = F11.showTrue ? F11.cnt.map(r=>Float64Array.from(r)) : sampleJoint(F11.cnt,F11.tot,P,rnd);
+    // column order
+    let cols=[];
+    if(F11.sorted){ F11.groups.groups.forEach(g=>g.forEach(k=>cols.push(k))); }
+    else { for(let k=0;k<F11.cnt[0].length;k++) if(F11.groups.g[k]>=0) cols.push(k); }
+    const nc=R.nc;
+    // compute f - 1/nc
+    const vals=[];
+    for(let a=0;a<nc;a++){
+      const row=[];
+      for(const k of cols){
+        let tt=0;for(let b=0;b<nc;b++)tt+=Nak[b][k];
+        row.push(tt>0? Nak[a][k]/tt-1/nc : 0);
+      }
+      vals.push(row);
+    }
+    let mx=1e-9;vals.forEach(r=>r.forEach(x=>mx=Math.max(mx,Math.abs(x))));
+    // draw
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const left=110,top=52,bot=H-96;
+    const cw=Math.min(40,(W-left-40)/cols.length), chh=Math.min(46,(bot-top)/nc);
+    for(let a=0;a<nc;a++){
+      txt(ctx,'Klasse '+(a+1),left-10,top+a*chh+chh/2,'#9aa4c4','700 11px sans-serif','right');
+      for(let c=0;c<cols.length;c++){
+        const x=vals[a][c]/mx;
+        const col = x>0 ? hexA('#45e6a8',clamp(Math.abs(x),.05,1)) : hexA('#ff6b6b',clamp(Math.abs(x),.05,1));
+        ctx.fillStyle=col;roundRect(ctx,left+c*cw+1,top+a*chh+1,cw-2,chh-2,4);ctx.fill();
+      }
+    }
+    // column labels
+    for(let c=0;c<cols.length;c++){
+      const t=idxTup(cols[c],R.v,R.s);
+      txt(ctx,t.map(x=>x+1).join(''),left+c*cw+cw/2,top-14,'#5f6a8c','9px monospace','center');
+    }
+    txt(ctx,'Eingabe-Tupel μ  →',left,top-32,'#9aa4c4','700 11px sans-serif');
+    // synonym brackets
+    let cpos=0;
+    if(F11.sorted){
+      F11.groups.groups.forEach((g,gi)=>{
+        if(g.length===0)return;
+        const x0=left+cpos*cw, x1=left+(cpos+g.length)*cw;
+        const y=top+nc*chh+12;
+        ctx.strokeStyle=symColor(gi);ctx.lineWidth=2.6;
+        ctx.beginPath();ctx.moveTo(x0+2,y);ctx.lineTo(x1-2,y);
+        ctx.moveTo(x0+2,y);ctx.lineTo(x0+2,y-5);ctx.moveTo(x1-2,y);ctx.lineTo(x1-2,y-5);ctx.stroke();
+        txt(ctx,String.fromCharCode(97+gi),(x0+x1)/2,y+13,symColor(gi),'700 11px monospace','center');
+        cpos+=g.length;
+      });
+      txt(ctx,'↑ Synonymgruppen (gleiche Bedeutung auf Ebene 2)',left,top+nc*chh+42,'#45e6a8','700 11px sans-serif');
+    } else {
+      txt(ctx,'unsortiert — Synonyme über die Tabelle verstreut',left,top+nc*chh+24,'#ffd166','700 11px sans-serif');
+    }
+    // colorbar
+    const bx=W-36,by=top,bh=nc*chh;
+    for(let i=0;i<40;i++){
+      const t=1-i/39;const val=(t*2-1);
+      ctx.fillStyle=val>0?hexA('#45e6a8',Math.abs(val)):hexA('#ff6b6b',Math.abs(val));
+      ctx.fillRect(bx,by+i*bh/40,16,bh/40+1);
+    }
+    txt(ctx,'+',bx+22,by+6,'#45e6a8','700 11px monospace');
+    txt(ctx,'0',bx+22,by+bh/2,'#9aa4c4','10px monospace');
+    txt(ctx,'−',bx+22,by+bh-6,'#ff6b6b','700 11px monospace');
+    txt(ctx,'f̂(α|μ) − 1/n_c',bx+10,by-18,'#9aa4c4','9px sans-serif','center');
+    // footer status
+    txt(ctx, F11.showTrue? 'WAHRE Wahrscheinlichkeiten (P → ∞)' : `empirisch aus P = ${fmt(P)} Beispielen`,
+        left, H-18, F11.showTrue?'#ffd166':'#6ee7ff','700 12px sans-serif');
+  }
+  ['frNc','frV','frM','frL'].forEach(id=>$('#'+id).oninput=()=>rebuild(false));
+  $('#frP').oninput=draw;
+  $('#frRe').onclick=()=>rebuild(true);
+  $('#frTrue').onclick=function(){F11.showTrue=!F11.showTrue;this.classList.toggle('on',F11.showTrue);
+    this.textContent=F11.showTrue?'Empirische Werte zeigen':'Wahre Werte zeigen (P → ∞)';draw();};
+  $('#frSort').onclick=function(){F11.sorted=!F11.sorted;this.classList.toggle('on',F11.sorted);
+    this.textContent=F11.sorted?'nach Synonymgruppen sortiert':'unsortiert';draw();};
+  rebuild(false);
+})();
+
+/* ---- LABOR 11b : signal vs noise picture (Fig. 7) ---- */
+(function snr(){
+  const cv=$('#snrCanvas');
+  const nc=8,m=8,L=3,v=8;const Pc=nc*Math.pow(m,L);
+  const sig=Math.sqrt(v/Math.pow(m,L));
+  const rnd0=RNG(5);
+  const groups=6, perG=3;
+  const centers=[];for(let g=0;g<groups;g++)centers.push(gauss(rnd0));
+  function draw(){
+    const P=Math.round(Math.pow(10,+$('#sr2P').value));
+    $('#sr2PV').textContent=(+$('#sr2P').value).toFixed(2);
+    const noi=Math.sqrt(v*nc/P);
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const y0=H*0.42;
+    // distribution curve (the RHM signal distribution)
+    ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,4]);ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let px=50;px<W-50;px++){
+      const z=(px-W/2)/(W*0.16);
+      const y=y0-120*Math.exp(-z*z/2);
+      px===50?ctx.moveTo(px,y):ctx.lineTo(px,y);
+    }
+    ctx.stroke();ctx.setLineDash([]);
+    txt(ctx,'Verteilung von f(α|μ) über RHM-Realisierungen',W/2,y0-135,'#9aa4c4','11px sans-serif','center');
+    const X=z=>W/2+z*(W*0.16);
+    const rnd=RNG(777);
+    // true points + noisy clouds
+    for(let g=0;g<groups;g++){
+      const cx=X(centers[g]);
+      const col=PAL[g];
+      // noisy replicas (synonyms)
+      for(let k=0;k<perG;k++){
+        const off=gauss(rnd)*noi/sig*(W*0.16)*0.35;
+        const yy=y0+34+k*16;
+        ctx.fillStyle=hexA(col,.42);
+        ctx.beginPath();ctx.arc(cx+off,yy,6.5,0,TAU);ctx.fill();
+      }
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx,y0,7.5,0,TAU);ctx.fill();
+      ctx.strokeStyle='#04060d';ctx.lineWidth=2;ctx.stroke();
+    }
+    // signal arrow
+    const a=X(centers[0]),b=X(centers[1]);
+    ctx.strokeStyle='#ffd166';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(Math.min(a,b),y0-22);ctx.lineTo(Math.max(a,b),y0-22);ctx.stroke();
+    txt(ctx,'Signal',(a+b)/2,y0-34,'#ffd166','700 11px sans-serif','center');
+    // noise arrow
+    const nw=noi/sig*(W*0.16)*0.7;
+    const cx0=X(centers[3]);
+    ctx.strokeStyle='#ff7597';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx0-nw/2,y0+96);ctx.lineTo(cx0+nw/2,y0+96);ctx.stroke();
+    txt(ctx,'Rauschen',cx0,y0+110,'#ff7597','700 11px sans-serif','center');
+    txt(ctx,'volle Punkte = wahre Werte   ·   blasse Punkte = gemessen bei P Daten',W/2,H-14,'#5f6a8c','10.5px sans-serif','center');
+    const ok=noi<sig;
+    $('#srVerdict').className='note '+(ok?'g':'r');
+    $('#srVerdict').innerHTML= ok
+      ? `<b>✓ Synonyme trennbar.</b> Rauschen ${noi.toFixed(3)} &lt; Signal ${sig.toFixed(3)}. P = ${fmt(P)} ≥ P<sub>c</sub> = ${fmt(Pc)}.`
+      : `<b>✗ Wolken überlappen.</b> Rauschen ${noi.toFixed(3)} &gt; Signal ${sig.toFixed(3)}. Man kann Synonyme nicht von Nicht-Synonymen unterscheiden.`;
+  }
+  $('#sr2P').oninput=draw;draw();
+})();
+
+/* ---- LABOR 11c : P_c derivation plot ---- */
+(function pcplot(){
+  function upd(){
+    const m=+$('#pcM').value,L=+$('#pcL').value,nc=+$('#pcNc').value,v=+$('#pcV').value;
+    ['pcM','pcL','pcNc','pcV'].forEach(id=>$('#'+id+'V').textContent=$('#'+id).value);
+    const Pc=nc*Math.pow(m,L);
+    const sig=Math.sqrt(v/Math.pow(m,L));
+    kx('#pcMath',`\\underbrace{\\sqrt{\\tfrac{v}{m^{L}}}}_{\\text{Signal}=${sig.toFixed(4)}}
+      =\\underbrace{\\sqrt{\\tfrac{v\\,n_c}{P}}}_{\\text{Rauschen}}
+      \\;\\Longrightarrow\\;P_c=n_c m^{L}=${fmt(Pc)}`);
+    const xs=logspace(1,8,120);
+    Plotly.react('pcPlot',[
+      {x:xs,y:xs.map(()=>sig),mode:'lines',name:'Signal √(v/m^L)',
+        line:{color:'#ffd166',width:3}},
+      {x:xs,y:xs.map(P=>Math.sqrt(v*nc/P)),mode:'lines',name:'Rauschen √(v·n_c/P)',
+        line:{color:'#ff7597',width:3}},
+      {x:[Pc],y:[sig],mode:'markers+text',name:'P_c = n_c m^L',
+        marker:{size:16,color:'#45e6a8',symbol:'star',line:{width:2,color:'#04060d'}},
+        text:['  P_c = '+fmt(Pc)],textposition:'top right',textfont:{color:'#45e6a8',size:12}}
+    ],baseLayout({
+      title:{text:'Der Schnittpunkt ist die Stichprobenkomplexität'},
+      xaxis:{type:'log',title:'Trainingsdaten P'},
+      yaxis:{type:'log',title:'relative Größe'},legend:{x:.55,y:.98}
+    }),PCFG);
+  }
+  ['pcM','pcL','pcNc','pcV'].forEach(id=>$('#'+id).oninput=upd);upd();
+})();
+
+/* ============================================================================
+   13 · LABOR
+/* ============================================================================
+   13 · LABOR 13 — One gradient step: representations & distance matrix (LIVE)
+   ============================================================================ */
+/* tiny symmetric eigensolver (Jacobi) for PCA */
+function jacobiEig(Ain,n,iters){
+  const A=[];for(let i=0;i<n;i++)A.push(Float64Array.from(Ain[i]));
+  const V=[];for(let i=0;i<n;i++){const r=new Float64Array(n);r[i]=1;V.push(r);}
+  for(let sweep=0;sweep<(iters||24);sweep++){
+    let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=A[i][j]*A[i][j];
+    if(off<1e-14)break;
+    for(let p=0;p<n-1;p++)for(let q=p+1;q<n;q++){
+      if(Math.abs(A[p][q])<1e-13)continue;
+      const theta=(A[q][q]-A[p][p])/(2*A[p][q]);
+      const t=Math.sign(theta||1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+      const c=1/Math.sqrt(t*t+1), s=t*c;
+      for(let k=0;k<n;k++){
+        const akp=A[k][p],akq=A[k][q];
+        A[k][p]=c*akp-s*akq; A[k][q]=s*akp+c*akq;
+      }
+      for(let k=0;k<n;k++){
+        const apk=A[p][k],aqk=A[q][k];
+        A[p][k]=c*apk-s*aqk; A[q][k]=s*apk+c*aqk;
+      }
+      for(let k=0;k<n;k++){
+        const vkp=V[k][p],vkq=V[k][q];
+        V[k][p]=c*vkp-s*vkq; V[k][q]=s*vkp+c*vkq;
+      }
+    }
+  }
+  const ev=[];for(let i=0;i<n;i++)ev.push({val:A[i][i],vec:V.map(r=>r[i])});
+  ev.sort((a,b)=>b.val-a.val);
+  return ev;
+}
+
+const G13={R:null,cnt:null,tot:null,groups:null,seed:2024,anim:null};
+(function gdLab(){
+  function rebuild(newSeed){
+    const nc=+$('#gdNc').value,m=+$('#gdM').value,L=+$('#gdL').value;
+    $('#gdNcV').textContent=nc;$('#gdMV').textContent=m;$('#gdLV').textContent=L;
+    if(newSeed)G13.seed=Math.floor(Math.random()*1e9);
+    const v=nc;
+    const maxM=Math.floor(Math.pow(v,2)/Math.max(v,nc));
+    const mm=Math.max(1,Math.min(m,maxM));
+    G13.R=buildRHM(nc,v,mm,2,L,G13.seed);
+    const j=jointDist(G13.R);G13.cnt=j.cnt;G13.tot=j.tot;
+    G13.groups=tupleGroups(G13.R);
+    draw();
+  }
+  function compute(){
+    const R=G13.R;
+    const P=Math.round(Math.pow(10,+$('#gdP').value));
+    const rnd=RNG(4242+Math.floor(+$('#gdP').value*997));
+    const Nak=sampleJoint(G13.cnt,G13.tot,P,rnd);
+    // ĝ_α(μ) = N̂(μ;α)/P − (1/nc)·N̂(μ)/P      (Eq. 13 / D2)
+    const cols=[];G13.groups.groups.forEach((g,gi)=>g.forEach(k=>cols.push({k,gi})));
+    const nc=R.nc;
+    const G=[];
+    for(const c of cols){
+      let tot=0;for(let a=0;a<nc;a++)tot+=Nak[a][c.k];
+      const row=new Float64Array(nc);
+      for(let a=0;a<nc;a++) row[a]=Nak[a][c.k]/P - (1/nc)*(tot/P);
+      G.push(row);
+    }
+    return {P,cols,G,nc};
+  }
+  function draw(){
+    const R=G13.R;if(!R)return;
+    const {P,cols,G,nc}=compute();
+    $('#gdPV').textContent=(+$('#gdP').value).toFixed(2);
+    const Pc=R.nc*Math.pow(R.m,R.L);
+    $('#gdPabs').textContent=fmt(P);$('#gdPcv').textContent=fmt(Pc);
+
+    /* ---- PCA to 2D ---- */
+    const n=cols.length;
+    const mean=new Float64Array(nc);
+    G.forEach(r=>{for(let a=0;a<nc;a++)mean[a]+=r[a]/n;});
+    const Xc=G.map(r=>{const o=new Float64Array(nc);for(let a=0;a<nc;a++)o[a]=r[a]-mean[a];return o;});
+    const C=[];for(let a=0;a<nc;a++)C.push(new Float64Array(nc));
+    for(const r of Xc)for(let a=0;a<nc;a++)for(let b=0;b<nc;b++)C[a][b]+=r[a]*r[b]/n;
+    const ev=jacobiEig(C,nc,26);
+    const p1=ev[0].vec,p2=ev[1]?ev[1].vec:ev[0].vec;
+    const pts=Xc.map(r=>{
+      let x=0,y=0;for(let a=0;a<nc;a++){x+=r[a]*p1[a];y+=r[a]*p2[a];}
+      return [x,y];
+    });
+    /* effective rank from eigen-spectrum (participation ratio) */
+    let s1=0,s2=0;ev.forEach(e=>{const l=Math.max(e.val,0);s1+=l;s2+=l*l;});
+    const erank=s2>0?(s1*s1/s2):0;
+    $('#gdRank').textContent=erank.toFixed(1)+' / '+R.v;
+
+    /* ---- sensitivity S_{1,1}: within-group vs overall distance ---- */
+    let within=0,wn=0,all=0,an=0;
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      let d2=0;for(let a=0;a<nc;a++){const t=G[i][a]-G[j][a];d2+=t*t;}
+      all+=d2;an++;
+      if(cols[i].gi===cols[j].gi){within+=d2;wn++;}
+    }
+    const S11=(an>0&&all>0)?clamp((within/Math.max(wn,1))/(all/an),0,1):0;
+    $('#gdSens').textContent=S11.toFixed(3);
+
+    /* ---- scatter ---- */
+    (function(){
+      const cv=$('#gdScatter'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+      let mx=1e-12;pts.forEach(p=>{mx=Math.max(mx,Math.abs(p[0]),Math.abs(p[1]));});
+      const S=Math.min(W,H)*0.40;
+      const X=x=>W/2+x/mx*S, Y=y=>H/2-y/mx*S;
+      // axes
+      ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(W/2,14);ctx.lineTo(W/2,H-14);ctx.moveTo(14,H/2);ctx.lineTo(W-14,H/2);ctx.stroke();
+      // group centroids + halos
+      const cent={};
+      cols.forEach((c,i)=>{ (cent[c.gi]=cent[c.gi]||[]).push(pts[i]); });
+      Object.keys(cent).forEach(gi=>{
+        const arr=cent[gi];let cx=0,cy=0;arr.forEach(p=>{cx+=p[0]/arr.length;cy+=p[1]/arr.length;});
+        let rad=0;arr.forEach(p=>rad=Math.max(rad,Math.hypot(p[0]-cx,p[1]-cy)));
+        ctx.fillStyle=hexA(symColor(+gi),.09);
+        ctx.beginPath();ctx.arc(X(cx),Y(cy),Math.max(10,rad/mx*S+8),0,TAU);ctx.fill();
+        ctx.strokeStyle=hexA(symColor(+gi),.35);ctx.setLineDash([3,3]);ctx.lineWidth=1.2;ctx.stroke();ctx.setLineDash([]);
+      });
+      cols.forEach((c,i)=>{
+        ctx.fillStyle=symColor(c.gi);
+        ctx.beginPath();ctx.arc(X(pts[i][0]),Y(pts[i][1]),5.4,0,TAU);ctx.fill();
+        ctx.strokeStyle='rgba(4,6,13,.85)';ctx.lineWidth=1.5;ctx.stroke();
+      });
+      txt(ctx,'PC1',W-16,H/2-8,'#5f6a8c','10px sans-serif','right');
+      txt(ctx,'PC2',W/2+8,18,'#5f6a8c','10px sans-serif');
+      txt(ctx,`P = ${fmt(P)}   ·   S₁,₁ = ${S11.toFixed(3)}`,14,16,
+          S11<.25?'#45e6a8':'#ff7597','700 12px monospace');
+      txt(ctx, S11<.25?'✓ Synonyme kollabiert':'✗ noch verrauscht',14,H-14,
+          S11<.25?'#45e6a8':'#ff7597','700 12px sans-serif');
+    })();
+
+    /* ---- distance matrix ---- */
+    (function(){
+      const cv=$('#gdMatrix'),{ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+      const pad=42, S=Math.min(W-pad-22,H-pad-32);
+      const cell=S/n;
+      let mxd=1e-12;
+      const D=[];
+      for(let i=0;i<n;i++){const row=new Float64Array(n);
+        for(let j=0;j<n;j++){let d2=0;for(let a=0;a<nc;a++){const t=G[i][a]-G[j][a];d2+=t*t;}
+          row[j]=Math.sqrt(d2);mxd=Math.max(mxd,row[j]);}
+        D.push(row);}
+      for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+        const t=D[i][j]/mxd;
+        // dark = close, bright = far
+        const r=Math.round(20+t*220), g=Math.round(24+t*120), b=Math.round(50+t*180);
+        ctx.fillStyle=`rgb(${r},${Math.round(g*.6+t*100)},${b})`;
+        ctx.fillRect(pad+j*cell,pad+i*cell,Math.ceil(cell),Math.ceil(cell));
+      }
+      // group separators
+      let acc=0;
+      G13.groups.groups.forEach((g,gi)=>{
+        if(!g.length)return;
+        const x=pad+acc*cell;
+        ctx.strokeStyle=hexA(symColor(gi),.95);ctx.lineWidth=2;
+        ctx.strokeRect(x,pad+acc*cell,g.length*cell,g.length*cell);
+        // tick colours
+        ctx.fillStyle=symColor(gi);
+        ctx.fillRect(x,pad-9,g.length*cell-1,6);
+        ctx.fillRect(pad-9,pad+acc*cell,6,g.length*cell-1);
+        acc+=g.length;
+      });
+      txt(ctx,'Tupel ν  →',pad,pad-20,'#9aa4c4','10px sans-serif');
+      ctx.save();ctx.translate(14,pad+S/2);ctx.rotate(-Math.PI/2);
+      txt(ctx,'Tupel μ',0,0,'#9aa4c4','10px sans-serif','center');ctx.restore();
+      txt(ctx,'dunkel = nahe (Synonyme)      hell = weit',pad,pad+S+20,'#5f6a8c','10.5px sans-serif');
+    })();
+  }
+  ['gdNc','gdM','gdL'].forEach(id=>$('#'+id).oninput=()=>rebuild(false));
+  $('#gdP').oninput=draw;
+  $('#gdRe').onclick=()=>rebuild(true);
+  $('#gdAnim').onclick=function(){
+    if(G13.anim){clearInterval(G13.anim);G13.anim=null;this.textContent='▶ P hochfahren';return;}
+    this.textContent='⏸ stoppen';
+    let val=1.3;
+    G13.anim=setInterval(()=>{
+      val+=0.055;if(val>7){val=1.3;}
+      $('#gdP').value=val.toFixed(2);draw();
+    },70);
+  };
+  rebuild(false);
+})();
+
+/* ---- LABOR 13b : S_{1,1} collapse (Fig. 8) ---- */
+(function s11(){
+  let xmode='raw';
+  $$('#s11Seg button').forEach(b=>b.onclick=()=>{
+    $$('#s11Seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');xmode=b.dataset.x;upd();
+  });
+  function upd(){
+    const cfg=[];
+    [8,11,16,24].forEach((v,i)=>[2,3,4].forEach(L=>cfg.push({v,L,c:PAL[i],
+      dash:L===2?'solid':(L===3?'dot':'dashdot')})));
+    const tr=cfg.map(o=>{
+      const Pc=o.v*Math.pow(o.v,o.L);
+      const xs=logspace(2,6.4,100);
+      const ys=xs.map(P=>clamp(1-1/(1+Math.pow(Pc/Math.max(P,1),1.7)),0,1));
+      return {x:xmode==='raw'?xs:xs.map(P=>P/Pc),y:ys,mode:'lines',
+        name:'m=v='+o.v+', L='+o.L,showlegend:o.L===2,
+        line:{color:o.c,width:2.2,dash:o.dash},
+        hovertemplate:'m=v='+o.v+', L='+o.L+'<br>P=%{x:.3s}<br>S₁,₁=%{y:.3f}<extra></extra>'};
+    });
+    if(xmode==='res')tr.push({x:[1,1],y:[0,1.02],mode:'lines',name:'P = P_c',
+      line:{color:'#45e6a8',width:2.4,dash:'dash'}});
+    Plotly.react('s11Plot',tr,baseLayout({
+      title:{text:xmode==='raw'?'Sensitivität S₁,₁ nach EINEM Gradientenschritt'
+        :'Reskaliert mit P_c = n_c m^L  →  Kollaps'},
+      xaxis:{type:'log',title:xmode==='raw'?'Trainingsdaten P':'P / (n_c m^L)'},
+      yaxis:{title:'S₁,₁',range:[-.02,1.04]}
+    }),PCFG);
+  }
+  upd();
+})();
+
+/* ============================================================================
+   14 · LABOR 14 — Control experiments
+   ============================================================================ */
+(function controls(){
+  const C=[
+    {
+      id:'uncorr', btn:'A · Korrelationen entfernen',
+      t:'Ohne Korrelationen kehrt der Fluch zurück',
+      d:'Man erzwingt, dass jedes Tupel μ auf jeder Ebene mit Wahrscheinlichkeit exakt 1/n_c zu jeder Klasse gehört. Die Hierarchie bleibt, das Signal verschwindet. Ergebnis (Abb. 9): Der Testfehler bleibt auch bei P/P_max > 0,9 nahe ε_rand.',
+      m:'f_j(\\alpha|\\mu)\\;\\equiv\\;\\frac{1}{n_c}\\quad\\forall\\,\\mu,j,\\ell,\\alpha',
+      note:'<b>Das ist der schärfste Test.</b> Architektur, Tiefe, Hierarchie — alles unverändert. Nur die Korrelationen fehlen. Und sofort ist das Problem unlernbar. Die Korrelationen sind also <em>die</em> Ursache.',
+      cls:'r',
+      plot(){
+        const tr=[];
+        [2,3,4].forEach((v,i)=>{
+          [2,3].forEach(L=>{
+            const xs=[];for(let f=0.45;f<=0.95;f+=0.02)xs.push(f);
+            const erand=1-1/v;
+            const ys=xs.map(f=>erand*(1-0.10*Math.pow(f,6))*(v===2?0.62:1));
+            tr.push({x:xs,y:ys,mode:'lines+markers',name:'v='+v+', L='+L,
+              line:{color:PAL[i],width:2.4,dash:L===2?'solid':'dot'},marker:{size:5}});
+            tr.push({x:[0.45,0.95],y:[erand,erand],mode:'lines',showlegend:false,
+              line:{color:hexA(PAL[i],.35),width:1,dash:'dash'}});
+          });
+        });
+        return [tr,{title:{text:'Unkorreliertes RHM: kein Lernen, selbst bei P ≈ P_max'},
+          xaxis:{title:'P / P_max',range:[.44,.96]},
+          yaxis:{title:'Testfehler ε',range:[0,.8]}}];
+      }
+    },
+    {
+      id:'lazy', btn:'B · Lazy- statt Feature-Regime',
+      t:'Ohne Feature-Learning kein Durchbruch',
+      d:'Skaliert man alle Schichten (inkl. der letzten) mit H^(−1/2), wird das unendlich breite CNN zu einem Kernel (NTK). Es bewegt seine Gewichte nicht mehr und kann keine Repräsentation aufbauen. Ergebnis (Abb. 14): Der Fehler bleibt endlich, sogar bei P ≈ P_max.',
+      m:'\\text{Lazy: } H^{-1/2}\\ \\text{überall}\\;\\Rightarrow\\;\\text{Kernel}\\quad\\text{vs}\\quad \\mu P:\\ \\text{extra } H^{-1/2}\\;\\Rightarrow\\;\\text{Feature-Learning}',
+      note:'Interessant: Für <b>kleine</b> P sind beide Kurven gleich — auch der Kernel nutzt die <em>lokalen</em> Korrelationen. Aber nur das Feature-Regime kann daraus eine <b>hierarchische</b> Repräsentation bauen und gegen null gehen.',
+      cls:'w',
+      plot(){
+        const tr=[];
+        [4,6,8,12,16].forEach((v,i)=>{
+          const Pmax=Math.pow(v,4);
+          const Pst=v*v*v;   // nc m^L with nc=m=v, L=2
+          const xs=logspace(1,Math.log10(Pmax*1.1),80);
+          const feat=xs.map(P=>errCurve(P,Pst,2.2));
+          const floor=0.16+0.022*v;
+          const lazy=xs.map((P,k)=>Math.max(feat[k],Math.min(1,floor)));
+          tr.push({x:xs,y:feat,mode:'lines',name:'v='+v+' · Feature',
+            line:{color:PAL[i],width:2.4,dash:'dot'}});
+          tr.push({x:xs,y:lazy,mode:'lines',name:'v='+v+' · Lazy',
+            line:{color:PAL[i],width:2.8}});
+          tr.push({x:[Pmax,Pmax],y:[0,1],mode:'lines',showlegend:false,
+            line:{color:hexA(PAL[i],.3),width:1,dash:'dash'}});
+        });
+        return [tr,{title:{text:'Lazy (durchgezogen) vs. Feature-Regime (gepunktet) · L=2'},
+          xaxis:{type:'log',title:'Trainingsdaten P   (senkrechte Linien = P_max)'},
+          yaxis:{title:'Testfehler ē',range:[0,1.05]}}];
+      }
+    },
+    {
+      id:'depth', btn:'C · Generisches tiefes FC-Netz',
+      t:'Tiefe genügt — die Faltung ist Bonus',
+      d:'Ein vollverbundenes Netz der Tiefe 6, das nichts von der RHM-Struktur weiß, lernt genauso. Es zahlt nur einen zusätzlichen Faktor s^L = d (Abb. 13) — der ist selbst polynomiell in d und ändert nichts am Kernresultat.',
+      m:'P^{*}_{\\text{FC}}\\;\\approx\\;s^{L}\\,n_c m^{L}\\;=\\;d\\cdot n_c m^{L}',
+      note:'<b>Wichtige Botschaft:</b> Es ist nicht die eingebaute Lokalität der Architektur, die den Fluch bricht — es ist <b>Tiefe + Feature-Learning</b>. Das Netz <em>entdeckt</em> die Hierarchie selbst.',
+      cls:'g',
+      plot(){
+        const tr=[];
+        const Ms=[6,8,11,16,23];
+        [2,3].forEach(L=>{
+          const xs=[],y1=[],y2=[];
+          Ms.forEach(m=>{const base=m*Math.pow(m,L);xs.push(base);y1.push(base);y2.push(base*Math.pow(2,L));});
+          tr.push({x:xs,y:y1,mode:'markers',name:'CNN Tiefe L+1 (L='+L+')',
+            marker:{size:13,color:L===2?'#6ee7ff':'#45e6a8',symbol:'x-thin',line:{width:3,color:L===2?'#6ee7ff':'#45e6a8'}}});
+          tr.push({x:xs,y:y2,mode:'markers',name:'FC Tiefe 6 (L='+L+')',
+            marker:{size:11,color:L===2?'#b388ff':'#ffd166',symbol:'circle-open',line:{width:2.6}}});
+        });
+        tr.push({x:[3e2,3e5],y:[3e2,3e5],mode:'lines',name:'y = x',
+          line:{color:'rgba(255,255,255,.45)',dash:'dash',width:2}});
+        return [tr,{title:{text:'P* gegen n_c m^L — beide Architekturen folgen dem Gesetz'},
+          xaxis:{type:'log',title:'n_c m^L'},yaxis:{type:'log',title:'P*  (ē = 10 %)'}}];
+      }
+    },
+    {
+      id:'clust', btn:'D · Clustering verbessert auf √n_c·m^L',
+      t:'Ein besserer Algorithmus schafft √n_c·m^L',
+      d:'Statt End-to-End-SGD kann man schichtweise arbeiten: ein GD-Schritt, dann k-Means-Clustering der entstandenen Darstellungen, orthogonalisieren, und das Ganze L-mal wiederholen. Weil man den ganzen n_c-dimensionalen Vektor ĝ(μ) statt eines Skalars benutzt, wird das Signal um n_c verstärkt, das Rauschen aber nur um √n_c.',
+      m:'\\frac{\\text{Signal}}{\\text{Rauschen}}\\;\\propto\\;\\frac{n_c}{\\sqrt{n_c}}=\\sqrt{n_c}\\quad\\Longrightarrow\\quad P\\simeq\\frac{P_c}{\\sqrt{n_c}}=\\sqrt{n_c}\\,m^{L}',
+      note:'Im maximalen Fall (n_c = v, m = v^(s−1)) heißt das P ≈ v^(L+1/2) statt v^(L+1). Die Kurven kollabieren tatsächlich besser mit v^(L+1/2) (Abb. 10). <b>Offene Frage:</b> Kann normales End-to-End-Training das auch?',
+      cls:'w',
+      plot(){
+        const tr=[];
+        [6,8,10,12,16,20,24].forEach((v,i)=>{
+          const L=3;
+          const Pstar=Math.pow(v,L+0.5);
+          const xs=logspace(2.6,6.2,90);
+          tr.push({x:xs.map(P=>P/Pstar),y:xs.map(P=>errCurve(P,Pstar,2.3)),
+            mode:'lines',name:'v='+v,line:{color:PAL[i],width:2.4}});
+        });
+        tr.push({x:[1,1],y:[0,1.05],mode:'lines',name:'P = √n_c·m^L',
+          line:{color:'#45e6a8',width:2.4,dash:'dash'}});
+        return [tr,{title:{text:'Schichtweises GD + Clustering · reskaliert mit v^(L+1/2)'},
+          xaxis:{type:'log',title:'P / v^(L+1/2)'},
+          yaxis:{title:'Testfehler ē',range:[0,1.05]}}];
+      }
+    }
+  ];
+  let cur=0;
+  const wrap=$('#ctrlBtns');
+  C.forEach((c,i)=>{const b=document.createElement('button');b.textContent=c.btn;
+    b.onclick=()=>{cur=i;render();};wrap.appendChild(b);});
+  function render(){
+    [...wrap.children].forEach((b,i)=>b.classList.toggle('on',i===cur));
+    const c=C[cur];
+    $('#ctrlTitle').textContent=c.t;$('#ctrlDesc').textContent=c.d;
+    kx('#ctrlMath',c.m);
+    $('#ctrlNote').innerHTML=c.note;$('#ctrlNote').className='note '+c.cls;
+    const [tr,lay]=c.plot();
+    Plotly.react('ctrlPlot',tr,baseLayout(lay),PCFG);
+    // extra content
+    const ex=$('#ctrlExtra');
+    if(c.id==='uncorr'){
+      ex.innerHTML=`<div class="grid g2" style="margin-top:16px">
+        <div class="card tight"><h4 style="color:var(--good)">Normales RHM</h4>
+          <p class="tiny">f(α|μ) streut um 1/n_c herum → <b>Signal vorhanden</b> → Synonyme durch Zählen erkennbar → P* = n_c m^L.</p>
+          <div class="barmeter"><div style="width:85%;background:linear-gradient(90deg,var(--good),var(--acc))"></div></div></div>
+        <div class="card tight"><h4 style="color:var(--bad)">Unkorreliertes RHM</h4>
+          <p class="tiny">f(α|μ) ≡ 1/n_c exakt → <b>kein Signal</b> → Zählen bringt nichts → P* ∝ P_max, exponentiell.</p>
+          <div class="barmeter"><div style="width:4%;background:var(--bad)"></div></div></div>
+      </div>`;
+    } else ex.innerHTML='';
+  }
+  render();
+})();
+
+/* ---- LABOR 14b : parity ---- */
+(function parity(){
+  let bits=[1,0,1,1,0,0];
+  const cv=$('#parCanvas');
+  function upd(){
+    const d=+$('#parD').value;$('#parDV').textContent=d;
+    while(bits.length<d)bits.push(Math.round(Math.random()));
+    bits=bits.slice(0,d);draw();
+  }
+  function draw(scan){
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const d=bits.length;
+    const bw=Math.min(62,(W-70)/d);
+    const y=62;
+    for(let i=0;i<d;i++){
+      const on=bits[i]===1;
+      chip(ctx,35+i*bw+3,y,bw-8,52,String(bits[i]),on?'#6ee7ff':'#2a3050',on?'#04060d':'#9aa4c4',10,'800 20px monospace');
+      txt(ctx,'x'+(i+1),35+i*bw+bw/2,y+64,'#5f6a8c','10px monospace','center');
+    }
+    const par=bits.reduce((a,b)=>a^b,0);
+    txt(ctx,'XOR aller Bits  =',35,y+108,'#9aa4c4','700 14px sans-serif');
+    chip(ctx,195,y+92,92,34,'Klasse '+par,par?'#ffd166':'#b388ff','#04060d',9,'800 15px sans-serif');
+    txt(ctx,'Klicke die Bits, um sie umzuschalten',35,H-20,'#5f6a8c','11px sans-serif');
+    // per-position correlation (exactly 0)
+    const st=$('#parStats');
+    st.innerHTML=`<div class="stat"><div class="n">${Math.pow(2,d).toLocaleString('de-DE')}</div><div class="l">mögliche Eingaben 2^d</div></div>
+      <div class="stat no"><div class="n">0.000</div><div class="l">Korrelation pro Position</div></div>`;
+    if(scan){
+      // draw correlation bars
+      for(let i=0;i<d;i++){
+        const cx=35+i*bw+bw/2;
+        ctx.strokeStyle='#ff6b6b';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(cx,H-70);ctx.lineTo(cx,H-70);ctx.stroke();
+        ctx.fillStyle=hexA('#ff6b6b',.8);ctx.beginPath();ctx.arc(cx,H-70,5,0,TAU);ctx.fill();
+      }
+      ctx.strokeStyle='rgba(255,255,255,.2)';ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.moveTo(35,H-70);ctx.lineTo(W-35,H-70);ctx.stroke();ctx.setLineDash([]);
+      txt(ctx,'Korrelation(x_i , Label) = 0  für ALLE i',W-35,H-84,'#ff6b6b','700 12px sans-serif','right');
+    }
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left);const d=bits.length;
+    const bw=Math.min(62,(+cv.dataset.lw-70)/d);
+    const i=Math.floor((x-35)/bw);
+    if(i>=0&&i<d){bits[i]^=1;draw();}
+  });
+  $('#parD').oninput=upd;
+  $('#parRand').onclick=()=>{bits=bits.map(()=>Math.round(Math.random()));draw();};
+  $('#parScan').onclick=()=>draw(true);
+  upd();
+})();
+
+/* ============================================================================
+   15 · LABOR 15 — CIFAR10 prediction
+   ============================================================================ */
+(function cifar(){
+  // digitised ResNet18 learning curve on CIFAR10 subsamples (Fig. 15)
+  const rx=[100,200,400,800,1600,3200,6400,12800,25600,50000];
+  const ry=[0.78,0.70,0.62,0.545,0.47,0.395,0.325,0.255,0.195,0.145];
+  function upd(){
+    const nc=+$('#cfNc').value,m=+$('#cfM').value,L=+$('#cfL').value;
+    $('#cfNcV').textContent=nc;$('#cfMV').textContent=m;$('#cfLV').textContent=L;
+    const P=nc*Math.pow(m,L);
+    $('#cfP').textContent=fmt(P);
+    const lo=10*Math.pow(5,3), hi=10*Math.pow(15,3);
+    const inRange=(P>=1e3&&P<=3e4);
+    $('#cfNote').innerHTML= inRange
+      ? `<b>✓ Im vorhergesagten Bereich.</b> Das Paper schätzt für CIFAR10 mit m ∈ [5,15] und L = 3: P* ∈ [10³, 3·10⁴] — vergleichbar mit der Datenmenge, ab der ein ResNet18 gut wird.`
+      : `Dein P* = ${fmt(P)} liegt außerhalb des vom Paper genannten Bereichs [10³, 3·10⁴]. Realistische Werte für CIFAR10: n_c = 10, m ≈ 5–15, L = 3.`;
+    $('#cfNote').className='note '+(inRange?'g':'w');
+    Plotly.react('cifPlot',[
+      {x:rx,y:ry,mode:'lines+markers',name:'ResNet18 auf CIFAR10 (Abb. 15)',
+        line:{color:'#6ee7ff',width:3},marker:{size:7}},
+      {x:[lo,hi,hi,lo,lo],y:[0,0,0.85,0.85,0],fill:'toself',
+        fillcolor:'rgba(69,230,168,.11)',line:{color:'rgba(69,230,168,.45)',width:1.4},
+        name:'RHM-Vorhersage [10³, 3·10⁴]',hoverinfo:'skip'},
+      {x:[P,P],y:[0,0.85],mode:'lines',name:'★ deine Schätzung n_c m^L',
+        line:{color:'#ffd166',width:3,dash:'dash'}}
+    ],baseLayout({
+      title:{text:'Vorhersage der Stichprobenkomplexität für CIFAR10'},
+      xaxis:{type:'log',title:'Trainingsdaten P'},
+      yaxis:{title:'Testfehler',range:[0,.85]},
+      legend:{x:.02,y:.05}
+    }),PCFG);
+  }
+  ['cfNc','cfM','cfL'].forEach(id=>$('#'+id).oninput=upd);upd();
+})();
+
+/* ============================================================================
+   16 · LABOR 16 — Summary arc
+   ============================================================================ */
+(function summary(){
+  const STEPS=[
+    {t:'<b>Problem.</b> In d Dimensionen braucht eine generische Aufgabe P ~ e^d Daten. ImageNet hat d_eff ≈ 50, aber nur 10⁷ Bilder. Etwas stimmt nicht.',n:1},
+    {t:'<b>Hypothese.</b> Reale Daten sind <em>hierarchisch kompositionell</em>: Klasse → Merkmale → Teilmerkmale → Kanten. Das RHM macht daraus ein exakt lösbares Modell.',n:2},
+    {t:'<b>Modell.</b> n_c Klassen, L Ebenen, s-Tupel-Regeln, m Synonyme pro Symbol, zufällig gezogen. Eingabedimension d = s^L, Datenmenge P_max = n_c·m^((d−1)/(s−1)).',n:3},
+    {t:'<b>Befund 1.</b> Flache Netze brauchen P* ∝ P_max — exponentiell. Der Fluch bleibt.',n:4},
+    {t:'<b>Befund 2.</b> Tiefe Netze (CNN oder FC, Tiefe > L, im Feature-Regime) brauchen nur P* = n_c·m^L = n_c·d^(ln m/ln s) — polynomiell.',n:5},
+    {t:'<b>Warum.</b> Genau bei P* werden die inneren Darstellungen <em>synonym-invariant</em> (Sensitivität S → 0), Schicht k wird invariant gegenüber Ebene k−1, und die effektive Dimension sinkt mit der Tiefe.',n:6},
+    {t:'<b>Mechanismus.</b> Synonyme haben identische Häufigkeitsprofile f(α|μ). Signal √(v/m^L) vs. Rauschen √(v·n_c/P). Gleichsetzen ⇒ P_c = n_c·m^L. Ein einziger GD-Schritt reicht, um das auszunutzen.',n:7},
+    {t:'<b>Beweis durch Zerstörung.</b> Entfernt man die Korrelationen (unkorreliertes RHM ⊃ Parität), kehrt der Fluch zurück. Nimmt man das Feature-Learning weg (Lazy/NTK), ebenfalls. Die Korrelationen <em>sind</em> die Ursache.',n:8}
+  ];
+  const cv=$('#sumCanvas');
+  function upd(){
+    const k=+$('#sumS').value;$('#sumSV').textContent=k;
+    $('#sumMsg').innerHTML=STEPS[k-1].t;
+    $('#sumMsg').className='note '+(k>=7?'g':(k===4?'r':''));
+    const {ctx,W,H}=setupCanvas(cv);clearC(ctx,W,H);
+    const boxes=[
+      {x:.06,y:.16,w:.17,h:.20,t:'Fluch der\nDimensionalität',c:'#ff6b6b'},
+      {x:.06,y:.62,w:.17,h:.20,t:'Hierarchische\nKomposition',c:'#ffd166'},
+      {x:.30,y:.39,w:.17,h:.22,t:'Random\nHierarchy Model',c:'#b388ff'},
+      {x:.545,y:.10,w:.16,h:.18,t:'flach:\nP* ∝ P_max',c:'#ff6b6b'},
+      {x:.545,y:.40,w:.16,h:.18,t:'tief:\nP* = n_c m^L',c:'#45e6a8'},
+      {x:.545,y:.70,w:.16,h:.18,t:'Synonymische\nInvarianz S→0',c:'#6ee7ff'},
+      {x:.79,y:.39,w:.17,h:.22,t:'Korrelationen\nSignal = Rauschen\nP_c = n_c m^L',c:'#45e6a8'},
+      {x:.79,y:.76,w:.17,h:.16,t:'Gegenprobe:\nkeine Korr. ⇒ Fluch',c:'#ff7597'}
+    ];
+    const edges=[[0,2],[1,2],[2,3],[2,4],[4,5],[5,6],[4,6],[6,7]];
+    const vis=i=>{
+      const map=[1,2,3,4,5,6,7,8];
+      return k>=[1,2,3,4,5,6,7,8][i];
+    };
+    // edges
+    edges.forEach(([a,b])=>{
+      if(!(vis(a)&&vis(b)))return;
+      const A=boxes[a],B=boxes[b];
+      const ax=(A.x+A.w)*W, ay=(A.y+A.h/2)*H, bx=B.x*W, by=(B.y+B.h/2)*H;
+      const g=ctx.createLinearGradient(ax,ay,bx,by);
+      g.addColorStop(0,hexA(A.c,.5));g.addColorStop(1,hexA(B.c,.5));
+      ctx.strokeStyle=g;ctx.lineWidth=2.2;
+      ctx.beginPath();ctx.moveTo(ax,ay);
+      ctx.bezierCurveTo(ax+40,ay,bx-40,by,bx,by);ctx.stroke();
+      // arrowhead
+      ctx.fillStyle=hexA(B.c,.75);
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx-9,by-5);ctx.lineTo(bx-9,by+5);ctx.fill();
+    });
+    boxes.forEach((b,i)=>{
+      if(!vis(i))return;
+      const isNew=(k===i+1);
+      const x=b.x*W,y=b.y*H,w=b.w*W,h=b.h*H;
+      ctx.save();
+      if(isNew){ctx.shadowColor=b.c;ctx.shadowBlur=26;}
+      roundRect(ctx,x,y,w,h,12);
+      ctx.fillStyle=hexA(b.c,isNew?.22:.11);ctx.fill();
+      ctx.strokeStyle=hexA(b.c,isNew?1:.5);ctx.lineWidth=isNew?2.4:1.4;ctx.stroke();
+      ctx.restore();
+      const lines=b.t.split('\n');
+      lines.forEach((ln,j)=>{
+        txt(ctx,ln,x+w/2,y+h/2+(j-(lines.length-1)/2)*15,isNew?'#fff':hexA(b.c,.92),
+          '700 11.5px -apple-system,sans-serif','center');
+      });
+    });
+    txt(ctx,'Schritt '+k+' / 8',W-16,18,'#5f6a8c','700 11px sans-serif','right');
+  }
+  $('#sumS').oninput=upd;upd();
+})();
+
+/* ============================================================================
+   17 · BOOT
+   ============================================================================ */
+window.addEventListener('DOMContentLoaded',()=>{
+  const tryRender=()=>{
+    if(window.katex){renderStaticMath();}
+    else setTimeout(tryRender,120);
+  };
+  tryRender();
+});
+if(window.katex)renderStaticMath();
+else window.addEventListener('load',()=>{if(window.katex)renderStaticMath();});
+</script>
+</body>
+</html>
