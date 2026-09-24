@@ -2776,7 +2776,7 @@ function trnPlots(){
     for(let x=0;x<=60000;x+=400){
       xs.push(x);
       tr.push(0.42*Math.exp(-x/2600)+0.004);
-      const rise=0.9*Math.exp(-((x-6000)/5200)**2);
+      const rise=0.9*Math.exp(-(((x-6000)/5200)**2));
       const drop=1/(1+Math.exp((x-33000)/3600));
       te.push(0.205+0.19*drop+rise*0.55);
     }
