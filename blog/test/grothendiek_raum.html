@@ -968,12 +968,12 @@ function arrow(ctx,x1,y1,x2,y2,col,lw=1.5,head=7){
 function glow(ctx,fn,col,b=14){ ctx.save();ctx.shadowColor=col;ctx.shadowBlur=b;fn();ctx.restore(); }
 
 function bind(id,fn){
-  const el=$('#'+id); if(!el)return;
+  const el=$('input#'+id)||$('#'+id); if(!el)return;
   const lab=$('#'+id.replace(/^/,'')+'');
   el.addEventListener('input',fn);
   return el;
 }
-function sv(id){ return parseFloat($('#'+id).value); }
+function sv(id){ const el=$('input#'+id)||$('#'+id); return el?parseFloat(el.value):NaN; }
 function setLab(id,val){ const e=document.getElementById(id); if(e && e.tagName!=='INPUT') e.textContent=val; }
 // labels share ids with inputs -> use span lookup by querySelector on label
 function lab(id,val){
@@ -1136,10 +1136,10 @@ const MAP=[
          ? `<b>Keine Überlappung.</b> Die Stücke berühren sich nur. Es gibt nichts zu prüfen — und damit auch keine Garantie für Stetigkeit. Lokalisierung braucht <em>echte</em> Überdeckung.`
          : `<b>Verklebung erfolgreich.</b> Auf allen ${n-1} Überschneidungen stimmen die lokalen Definitionen überein (grün) ⇒ es existiert <em>genau eine</em> globale Funktion <em>f : X → ℝ</em>.<br>Deligne: „Ein Raum ist etwas, worauf Lokalisierung Sinn ergibt.“`);
   }
-  ['l-n','l-ov','l-mis'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['l-n','l-ov','l-mis'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   $('#l-glue').onclick=()=>{glued=true;$('#l-glue').classList.add('on');$('#l-sep').classList.remove('on');draw();};
   $('#l-sep').onclick =()=>{glued=false;$('#l-sep').classList.add('on');$('#l-glue').classList.remove('on');draw();};
-  $('#l-reset').onclick=()=>{$('#l-n').value=4;$('#l-ov').value=.35;$('#l-mis').value=0;draw();};
+  $('#l-reset').onclick=()=>{$('input#l-n').value=4;$('input#l-ov').value=.35;$('input#l-mis').value=0;draw();};
   draw();
 })();
 
@@ -1197,7 +1197,7 @@ const MAP=[
         ? `Umgebung schrumpft: die Funktionen nähern sich einander an. Wir bewegen uns auf den <b>Halm</b> zu: <em>lim</em><sub>U∋x</sub> ℱ(U).`
         : `<b>Halm ℱₓ erreicht.</b> Alle Funktionen, die bei <em>x</em> gleich aussehen, sind jetzt <em>derselbe Keim</em>. Bei einem Schema ist dieser Halm der <b>lokale Ring A<sub>𝔭</sub></b> — das ist die algebraische Form von „unendlich nah bei x“.`);
   }
-  ['st-r','st-x'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['st-r','st-x'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   draw();
 })();
 
@@ -1297,7 +1297,7 @@ const RINGS={
       ? `<b>n = ${n} ist prim.</b> Keine Nullteiler ⇒ ℤ/${n}ℤ ist ein <em>Körper</em> ⇒ (0) ist prim ⇒ <b>Spec(ℤ/${n}ℤ) hat genau einen Punkt</b>. Das ist eine „Faser“ von Spec(ℤ) über der Primzahl ${n}.`
       : `<b>n = ${n} ist zusammengesetzt.</b> ${zd} Nullteiler-Zellen (rot) ⇒ ℤ/${n}ℤ ist <em>kein</em> Integritätsring ⇒ (0) ist <em>nicht</em> prim ⇒ kein generischer Punkt. Spec zerfällt in mehrere Punkte (einen pro Primfaktor).`;
   }
-  $('#mt-n').addEventListener('input',draw); draw();
+  $('input#mt-n').addEventListener('input',draw); draw();
 })();
 
 /* ============================================================
@@ -1398,7 +1398,7 @@ const EQS={
     }
   }
   ['vr-eq','vr-field'].forEach(id=>$('#'+id).addEventListener('change',draw));
-  $('#vr-p').addEventListener('input',draw); draw();
+  $('input#vr-p').addEventListener('input',draw); draw();
 })();
 
 /* ============================================================
@@ -1449,7 +1449,7 @@ const EQS={
       ? `<b>Der generische Punkt (0).</b> Sein <em>topologischer Abschluss ist ganz Spec(ℤ)</em> — er „wohnt überall“. Es gibt in klassischer Geometrie nichts Vergleichbares. Ein Punkt, der kein Ort ist, sondern ein <em>Standpunkt</em>.<br>Restklassenkörper: ℚ.`
       : `<b>Der abgeschlossene Punkt (${primes[sel-1]}).</b> Abschluss = nur er selbst. Restklassenkörper: 𝔽<sub>${primes[sel-1]}</sub>.<br>Über diesem Punkt liegt die ganze Geometrie in Charakteristik ${primes[sel-1]} — z.B. die Punktgitter aus dem vorigen Plot. <em>Spec(ℤ) ist die „Basis“, über der Arithmetik zur Geometrie wird.</em>`;
   }
-  ['sz-n','sz-sel'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+  ['sz-n','sz-sel'].forEach(id=>$('input#'+id).addEventListener('input',draw)); draw();
 })();
 
 /* ============================================================
@@ -1542,7 +1542,7 @@ const EQS={
         ? `Sie werden über den Überlappungen verklebt: <b>y = 1/x</b> auf D(x) ∩ D(y).`
         : `<b>Fertig: ℙ¹.</b> Ein Schema, das <em>nicht</em> affin ist — es entstand rein durch <b>Lokalisierung + Verkleben</b>, exakt wie die Funktion in §1. Die Idee ist identisch, nur die Bausteine sind Ringe statt Zahlen.`);
   }
-  $('#gl-t').addEventListener('input',draw); draw();
+  $('input#gl-t').addEventListener('input',draw); draw();
 })();
 
 /* ============================================================
@@ -1600,7 +1600,7 @@ const EQS={
         ? `<b>Übergang.</b> Eine Teilmenge <em>U ⊆ X</em> ist dasselbe wie ein injektiver Pfeil <em>U → X</em>. Aber ein Pfeil muss <b>nicht</b> injektiv sein …`
         : `<b>Kategorial.</b> Jetzt darf <em>jeder</em> Morphismus nach X als „Stück von X“ zählen — z.B. eine <b>Überlagerung</b> (nicht-injektiv!). Das ist ein <b>Sieb</b>. Damit hat man plötzlich <em>sehr viel mehr</em> Überdeckungen. Das ist die Geburt der Grothendieck-Topologie.`);
   }
-  ['sv-m','sv-k'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+  ['sv-m','sv-k'].forEach(id=>$('input#'+id).addEventListener('input',draw)); draw();
 })();
 
 /* ============================================================
@@ -1746,7 +1746,7 @@ const EQS={
         <em>Das ist der Grund, warum Grothendieck Topoi brauchte:</em> um Überdeckungen zuzulassen, die keine Teilmengen sind. Ergebnis: <b>étale Kohomologie</b> → Weil-Vermutungen.`;
     }
   }
-  ['et-n','et-t'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['et-n','et-t'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   $('#et-mode').addEventListener('change',draw); draw();
 })();
 
@@ -1893,7 +1893,7 @@ const EQS={
   $$('#wild-btns button').forEach(b=>{
     b.onclick=()=>{mode=b.dataset.w;$$('#wild-btns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
   });
-  ['wd-d','wd-z'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['wd-d','wd-z'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   draw();
 })();
 
@@ -1950,7 +1950,7 @@ const EQS={
   $$('#sa-ops button').forEach(b=>{
     b.onclick=()=>{op=b.dataset.op;$$('#sa-ops button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
   });
-  ['sa-a','sa-b','sa-r'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['sa-a','sa-b','sa-r'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   draw();
 })();
 
@@ -2021,7 +2021,7 @@ const EQS={
         <em>Grothendiecks Ausgangsproblem</em> (Esquisse): „eine Theorie des <b>dévissage</b> für stratifizierte Strukturen, um sie durch einen kanonischen Prozess aus Bausteinen wieder aufzubauen, die kanonisch aus der ursprünglichen Struktur gewonnen werden.“`
       : `Ein <b>stratifizierter Raum</b>: die Filtrierung X₀ ⊂ X₁ ⊂ X₂. Zieh „Explosion“ auf, um die Bausteine zu trennen. Genau diese Zerlegung ist in der klassischen allgemeinen Topologie <em>nicht</em> verfügbar — sie braucht Zahmheit.`;
   }
-  ['sf-d','sf-e'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['sf-d','sf-e'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   $('#sf-obj').addEventListener('change',draw); draw();
 })();
 
@@ -2089,10 +2089,10 @@ const TL=[
     wrap('→ '+e.i,bx+24,yy+8,bw-48,19,C.acc3,'13px Inter, sans-serif');
     out.innerHTML=`<b>${e.y} — ${e.t}</b><br>${e.m}<br><em>${e.i}</em>`;
   }
-  $('#tl-y').addEventListener('input',draw);
+  $('input#tl-y').addEventListener('input',draw);
   const jr=$('#tl-jump');
   TL.forEach(e=>{const b=document.createElement('button');b.textContent=e.y;
-    b.onclick=()=>{$('#tl-y').value=e.y;draw();};jr.appendChild(b);});
+    b.onclick=()=>{$('input#tl-y').value=e.y;draw();};jr.appendChild(b);});
   draw();
 })();
 
@@ -2377,7 +2377,7 @@ const TL=[
     out.innerHTML=`<b>${LN}</b> — ${INFO[obj][lens]}`;
   }
   ['sb-obj','sb-lens'].forEach(id=>$('#'+id).addEventListener('change',draw));
-  ['sb-n','sb-rot'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['sb-n','sb-rot'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   draw();
 })();
 
@@ -2427,7 +2427,7 @@ const TL=[
         : `<b>N sehr groß.</b> Grothendieck: „Denk an 10<sup>100</sup> oder 10<sup>1000</sup> Punkte, dicht auf der Einheitskugel — weit mehr als für jede denkbare physikalische Messung nötig. Niemand (außer vielleicht Gott) könnte den umgebenden ‚kontinuierlichen‘ Raum von diesem Netz unterscheiden.“<br>
         <em>Und dann die Umkehrung:</em> „In Wirklichkeit scheint mir das Gegenteil wahrscheinlicher: <b>das Kontinuum ist der Begriff, der das schwer fassbare — aber sehr große — endliche Aggregat approximiert.</b>“`);
   }
-  ['fi-n','fi-jit'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  ['fi-n','fi-jit'].forEach(id=>$('input#'+id).addEventListener('input',draw));
   $('#fi-mode').addEventListener('change',draw); draw();
 })();
 
@@ -2485,7 +2485,7 @@ const TL=[
          Grothendieck (Brief an A.Y., 24.6.1991): „…eine Art <em>unscharfe</em> Differentialgeometrie, in der alle numerischen Begriffe nur <b>bis auf ε</b> definiert sind, für eine gegebene Approximationsordnung ε.“`
       : `<b>Fehler > ε.</b> Das Gitter ist zu grob (oder ε zu streng). In Grothendieks Bild heißt das <em>nicht</em>: „der Grenzwert existiert nicht“ — sondern: „die vorgeschriebene Genauigkeit wurde überschritten“. Der Grenzübergang ist ein <b>endlicher Prozess</b> mit vorgeschriebener Schrittweite und vorgeschriebener Fehlermarge.`;
   }
-  ['ep-e','ep-n','ep-x'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+  ['ep-e','ep-n','ep-x'].forEach(id=>$('input#'+id).addEventListener('input',draw)); draw();
 })();
 
 /* ============================================================
@@ -2516,7 +2516,7 @@ const TL=[
       ? `Wenige Messpunkte — die Punkte sehen aus wie eine <em>Näherung</em> der Kurve. Das ist die <b>klassische</b> Lesart.`
       : `Sehr viele Punkte — jetzt ist die Kurve von den Punkten nicht mehr unterscheidbar.<br><b>Grothendiecks Umkehrung:</b> vielleicht ist nicht das Diskrete eine Näherung des Kontinuums, sondern <em>das Kontinuum eine bequeme Fiktion</em>, die das unfassbare, sehr große endliche Aggregat approximiert. Er schreibt diese Idee Riemann zu — fand sie aber nie wörtlich bei ihm: „vielleicht habe ich sie nur <em>zwischen den Zeilen</em> gefunden.“`;
   }
-  const s=$('#dc-n'); if(s)s.addEventListener('input',build);
+  const s=$('input#dc-n'); if(s)s.addEventListener('input',build);
   build();
 })();
 
