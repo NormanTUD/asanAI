@@ -117,7 +117,7 @@ Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods
 
 A neural network is, mathematically, a **function approximator**. Given a function $f^*: X \to Y$, the network learns parameters $\theta$ such that $f_\theta(x) \approx f^*(x)$ for the inputs in the training distribution.
 
-The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989} states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists.
+The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989} states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The integral and the closed integral">
@@ -249,7 +249,7 @@ This is why deep learning is so effective on images, audio, and text: each of th
 A surprising property of well-behaved approximations: errors don't necessarily compound.
 
 * **Forward stability** (numerical analysis): small perturbations in input cause bounded perturbations in output.
-* **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\!\left(\sqrt{V / n}\right)$. More data reduces the bound; more parameters increases it.
+* **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\!\left(\sqrt{V / n}\right)$. More data reduces the bound; more parameters increases it. The derivation proceeds via **covering numbers**: one bounds how many $\varepsilon$-balls are needed to cover the set of all functions a $V$-parameter network can compute, then applies a uniform-concentration inequality. The full derivation is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 14.
 * **Smoothness priors**: most natural signals are smooth, adjacent pixels in an image, adjacent tokens in text, are correlated. Neural networks encode this prior through their architecture.
 
 These guarantees are why training a 70B model on 15T tokens can produce a model that generalizes to novel inputs, even though the model has never seen them before.
