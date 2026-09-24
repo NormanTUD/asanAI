@@ -15327,8 +15327,9 @@ window.bibData = {
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Deep geometric identities of the core machinery:
-	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport),
-	 *  optimization (edge of stability) and automatic differentiation
+	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport;
+	 *  SDPA as one-sided entropic optimal transport), optimization
+	 *  (edge of stability) and automatic differentiation
 	 *  (Babbage's method of finite differences).
 	 * ───────────────────────────────────────────────────────────────────── */
 	"cuturi2013sinkhorn": {
@@ -15337,6 +15338,13 @@ window.bibData = {
 		year: 2013,
 		url: "https://arxiv.org/abs/1306.0895",
 		alternativetitle: "entropic optimal transport via the Sinkhorn–Knopp matrix-scaling iteration"
+	},
+	"litman2025sdpaot": {
+		title: "Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport",
+		author: "Elon Litman",
+		year: 2025,
+		url: "https://arxiv.org/abs/2508.08369",
+		alternativetitle: "attention as the exact one-sided entropic optimal transport solution; its backprop gradient as an advantage-based policy gradient"
 	},
 	"arora2022edgeofstability": {
 		title: "Understanding Gradient Descent on Edge of Stability in Deep Learning",

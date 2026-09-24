@@ -106,6 +106,8 @@ where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is 
 ### REINFORCE
 
 REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
+
+The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Actor-Critic Methods">
