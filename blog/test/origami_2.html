@@ -1715,10 +1715,10 @@ window.addEventListener('load',()=>{
 
     const o=$('d1bout');
     o.className='out '+(same&&wDiff?'warn':'');
-    o.textContent = same&&wDiff        ? `‚ö†  UNUNTERSCHEIDBARKEIT!\nWelt A ‚â† Welt B  (A=${fmt(A1,2)}√ó${F1} Hz,  B=${fmt(A2,2)}√ó${F2} Hz)\nSpur A ‚âà Spur B  (mittlere Differenz: ${fmt(d,4)})\n\n‚Üí Der Sensor kann die beiden Welten NICHT unterscheiden.\n‚Üí Aus der Spur allein ist die Welt nicht rekonstruierbar.`
+    o.textContent = same&&wDiff        ? `⚠  UNUNTERSCHEIDBARKEIT!\nWelt A ≠ Welt B  (A=${fmt(A1,2)}×${F1} Hz,  B=${fmt(A2,2)}×${F2} Hz)\nSpur A ≈ Spur B  (mittlere Differenz: ${fmt(d,4)})\n\n→ Der Sensor kann die beiden Welten NICHT unterscheiden.\n→ Aus der Spur allein ist die Welt nicht rekonstruierbar.`
       : d<0.06
-        ? `Beide Welten sind (nahezu) identisch ‚Äî kein interessanter Fall.\nMach sie verschieden und versuche trotzdem gleiche Spuren zu erzeugen.`
-        : `Die Spuren sind unterscheidbar (Differenz: ${fmt(d,4)}).\nTipp: Setze eine Frequenz √ºber die Grenzfrequenz ${fc} ‚Äî dann wird sie weggefiltert.`;
+        ? `Beide Welten sind (nahezu) identisch — kein interessanter Fall.\nMach sie verschieden und versuche trotzdem gleiche Spuren zu erzeugen.`
+        : `Die Spuren sind unterscheidbar (Differenz: ${fmt(d,4)}).\nTipp: Setze eine Frequenz über die Grenzfrequenz ${fc} — dann wird sie weggefiltert.`;
   }
   ['d1bA1','d1bF1','d1bA2','d1bF2','d1bC'].forEach(id=>{
     const map={d1bA1:v=>A1=v,d1bF1:v=>F1=v,d1bA2:v=>A2=v,d1bF2:v=>F2=v,d1bC:v=>fc=v};
@@ -1727,9 +1727,9 @@ window.addEventListener('load',()=>{
   draw();
 })();
 
-/* ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
-   DEMO 2 ‚Äî Diagnose-Simulator
-   ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê */
+/* ════════════════════════════════════════════════════════════════════
+   DEMO 2 — Diagnose-Simulator
+   ═══════════════════════════════════════════════════════════════════ */
 (function(){
   if(!$('d2'))return;
   let W=0,C=0,I=0;
@@ -1743,31 +1743,31 @@ window.addEventListener('load',()=>{
     const rep1=t1+c1+i1, rep2=t2+c2+i2;
 
     // Welt-Ebene
-    txt(g,'‚ë† WELT-EBENE',60,26,{c:COL.rose,f:'bold 12px ui-sans-serif'});
+    txt(g,'① WELT-EBENE',60,26,{c:COL.rose,f:'bold 12px ui-sans-serif'});
     const y1=44;
     roundRect(g,60,y1,170,54,9,'rgba(251,113,133,.08)',COL.rose,1.4);
-    txt(g,'W‚ÇÅ',145,y1+22,{c:COL.txt,f:'bold 14px ui-sans-serif',a:'center'});
-    txt(g,fmt(t1,2)+' ¬∞C',145,y1+42,{c:COL.rose,f:'13px ui-monospace',a:'center'});
+    txt(g,'W₁',145,y1+22,{c:COL.txt,f:'bold 14px ui-sans-serif',a:'center'});
+    txt(g,fmt(t1,2)+' °C',145,y1+42,{c:COL.rose,f:'13px ui-monospace',a:'center'});
     roundRect(g,300,y1,170,54,9,'rgba(251,113,133,.08)',COL.rose,1.4);
-    txt(g,'W‚ÇÇ',385,y1+22,{c:COL.txt,f:'bold 14px ui-sans-serif',a:'center'});
-    txt(g,fmt(t2,2)+' ¬∞C',385,y1+42,{c:COL.rose,f:'13px ui-monospace',a:'center'});
-    txt(g,W>0.02?`ŒîW = ${fmt(t2-t1,2)}`:'W‚ÇÅ = W‚ÇÇ  (derselbe Gegenstand)',
+    txt(g,'W₂',385,y1+22,{c:COL.txt,f:'bold 14px ui-sans-serif',a:'center'});
+    txt(g,fmt(t2,2)+' °C',385,y1+42,{c:COL.rose,f:'13px ui-monospace',a:'center'});
+    txt(g,W>0.02?`ΔW = ${fmt(t2-t1,2)}`:'W₁ = W₂  (derselbe Gegenstand)',
         265,y1+74,{c:W>0.02?COL.rose:COL.emer,f:'12px ui-monospace',a:'center'});
 
     // Kanal-Ebene
-    txt(g,'‚ë° KANAL-EBENE (Instrument)',60,146,{c:COL.amber,f:'bold 12px ui-sans-serif'});
+    txt(g,'② KANAL-EBENE (Instrument)',60,146,{c:COL.amber,f:'bold 12px ui-sans-serif'});
     const y2=164;
-    [['I‚ÇÅ',145,c1],['I‚ÇÇ',385,c2]].forEach(([lab,x,off])=>{
+    [['I₁',145,c1],['I₂',385,c2]].forEach(([lab,x,off])=>{
       roundRect(g,x-85,y2,170,50,9,'rgba(251,191,36,.08)',COL.amber,1.4);
       txt(g,lab,x,y2+20,{c:COL.txt,f:'bold 13px ui-sans-serif',a:'center'});
-      txt(g,(off>=0?'+':'')+fmt(off,2)+' ¬∞C Offset',x,y2+38,
+      txt(g,(off>=0?'+':'')+fmt(off,2)+' °C Offset',x,y2+38,
           {c:COL.amber,f:'12px ui-monospace',a:'center'});
     });
 
     // Deutungs-Ebene
-    txt(g,'‚ë¢ DEUTUNGS-EBENE',60,246,{c:COL.sky,f:'bold 12px ui-sans-serif'});
+    txt(g,'③ DEUTUNGS-EBENE',60,246,{c:COL.sky,f:'bold 12px ui-sans-serif'});
     const y3=264;
-    [['Œ΢ÅÅ',145,i1],['Œ΢ÇÇ',385,i2]].forEach(([lab,x,off])=>{
+    [['ν₁',145,i1],['ν₂',385,i2]].forEach(([lab,x,off])=>{
       roundRect(g,x-85,y3,170,50,9,'rgba(96,165,250,.08)',COL.sky,1.4);
       txt(g,lab,x,y3+20,{c:COL.txt,f:'bold 13px ui-sans-serif',a:'center'});
       txt(g,(off>=0?'+':'')+fmt(off,2)+' Drift',x,y3+38,
@@ -1781,14 +1781,14 @@ window.addEventListener('load',()=>{
     [['Bericht A',rep1,64,COL.acc],['Bericht B',rep2,132,COL.acc2]].forEach(([lab,v,yy,col])=>{
       roundRect(g,bx,yy,210,56,10,'rgba(0,0,0,.35)',col,1.6);
       txt(g,lab,bx+105,yy+21,{c:col,f:'bold 12px ui-sans-serif',a:'center'});
-      txt(g,fmt(v,2)+' ¬∞C',bx+105,yy+43,{c:COL.txt,f:'bold 17px ui-monospace',a:'center'});
+      txt(g,fmt(v,2)+' °C',bx+105,yy+43,{c:COL.txt,f:'bold 17px ui-monospace',a:'center'});
     });
     const ok=diff<0.5;
     roundRect(g,bx,208,210,50,10,ok?'rgba(52,211,153,.12)':'rgba(251,113,133,.12)',
               ok?COL.emer:COL.rose,1.6);
-    txt(g,ok?'‚úì Berichte stimmen √ºberein':'‚úó Berichte widersprechen',
+    txt(g,ok?'✓ Berichte stimmen überein':'✗ Berichte widersprechen',
         bx+105,228,{c:ok?COL.emer:COL.rose,f:'bold 12px ui-sans-serif',a:'center'});
-    txt(g,'Œî = '+fmt(diff,2)+' ¬∞C',bx+105,248,
+    txt(g,'Δ = '+fmt(diff,2)+' °C',bx+105,248,
         {c:ok?COL.emer:COL.rose,f:'12px ui-monospace',a:'center'});
 
     // Frage
@@ -1796,18 +1796,18 @@ window.addEventListener('load',()=>{
     txt(g,'Kannst du von hier aus',bx+105,306,{c:COL.txt2,f:'12px ui-sans-serif',a:'center'});
     txt(g,'sagen, WELCHE Ebene',bx+105,324,{c:COL.txt2,f:'12px ui-sans-serif',a:'center'});
     txt(g,'schuld ist?',bx+105,342,{c:COL.txt2,f:'12px ui-sans-serif',a:'center'});
-    txt(g,'‚Üí  NEIN.',bx+105,370,{c:COL.amber,f:'bold 17px ui-sans-serif',a:'center'});
+    txt(g,'→  NEIN.',bx+105,370,{c:COL.amber,f:'bold 17px ui-sans-serif',a:'center'});
 
     // Diagnose
     const causes=[];
-    if(W>0.02) causes.push('‚ë† Welt (verschiedene Gegenst√§nde)');
-    if(C>0.02) causes.push('‚ë° Kanal (Instrument dekalibriert)');
-    if(I>0.02) causes.push('‚ë¢ Deutung (Interpretations-Drift)');
+    if(W>0.02) causes.push('① Welt (verschiedene Gegenstände)');
+    if(C>0.02) causes.push('② Kanal (Instrument dekalibriert)');
+    if(I>0.02) causes.push('③ Deutung (Interpretations-Drift)');
     const o=$('d2out');
     o.className='out '+(ok?'':'bad');
     o.textContent = causes.length===0
-      ? `ALLES SAUBER.\nBeide Berichte: ${fmt(rep1,2)} ¬∞C.\nKein Unterschied auf irgendeiner Ebene.`
-      : `TATS√ÑCHLICHE URSACHE(N):\n  ${causes.join('\n  ')}\n\nBEOBACHTBARES SYMPTOM:\n  Zwei Berichte mit Œî = ${fmt(diff,2)} ¬∞C.\n\n‚Üí Aus dem Symptom allein ist die Ebene NICHT bestimmbar.\n‚Üí Deshalb: jede Ebene braucht ihre eigene Reparatur.`;
+      ? `ALLES SAUBER.\nBeide Berichte: ${fmt(rep1,2)} °C.\nKein Unterschied auf irgendeiner Ebene.`
+      : `TATSÄCHLICHE URSACHE(N):\n  ${causes.join('\n  ')}\n\nBEOBACHTBARES SYMPTOM:\n  Zwei Berichte mit Δ = ${fmt(diff,2)} °C.\n\n→ Aus dem Symptom allein ist die Ebene NICHT bestimmbar.\n→ Deshalb: jede Ebene braucht ihre eigene Reparatur.`;
   }
   bind('d2w','d2wL',v=>{W=v;draw();},v=>v<0.02?'nein':'ja ('+fmt(v,2)+')');
   bind('d2c','d2cL',v=>{C=v;draw();});
@@ -1831,41 +1831,41 @@ window.addEventListener('load',()=>{
   draw();
 })();
 
-/* ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
-   DEMO 3 ‚Äî Leiter der Gleichheit
-   ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê */
+/* ════════════════════════════════════════════════════════════════════
+   DEMO 3 — Leiter der Gleichheit
+   ═══════════════════════════════════════════════════════════════════ */
 (function(){
   if(!$('d3ladder'))return;
   const RUNGS=[
-    {sym:'x = y', name:'Identit√§t', col:COL.emer,
+    {sym:'x = y', name:'Identität', col:COL.emer,
      wit:'Eine Identifikation', tex:'x = y',
-     ex:'2 + 2 = 4  ¬∑  derselbe Stab  ¬∑  zwei Uhren, gleicher Tick',
+     ex:'2 + 2 = 4  ·  derselbe Stab  ·  zwei Uhren, gleicher Tick',
      may:'Alles. Volle Ersetzbarkeit in jedem Kontext.',
-     not:'‚Äî (st√§rkste Stufe)'},
-    {sym:'x ‚âÖ y', name:'Isomorphie', col:COL.acc,
+     not:'— (stärkste Stufe)'},
+    {sym:'x ≅ y', name:'Isomorphie', col:COL.acc,
      wit:'Eine invertierbare Abbildung', tex:'x \\cong y',
-     ex:'‚Ñ§/6 ‚âÖ ‚Ñ§/2 √ó ‚Ñ§/3  ¬∑  zwei gleiche M√ºnzen',
-     may:'Strukturelle Aussagen √ºbertragen.',
-     not:'NICHT: sie sind dasselbe Objekt. Tausche sie ‚Äî die Welt √§ndert sich, wenn etwas vom Tausch abh√§ngt.'},
-    {sym:'x ‚âÉ y', name:'Homotopie', col:COL.sky,
-     wit:'Eine koh√§rente Deformation', tex:'x \\simeq y',
-     ex:'Tasse ‚âÉ Donut  ¬∑  Blitz und Donner  ¬∑  zwei Wege, ein Ergebnis',
-     may:'Topologische Invarianten √ºbertragen.',
+     ex:'ℤ/6 ≅ ℤ/2 × ℤ/3  ·  zwei gleiche Münzen',
+     may:'Strukturelle Aussagen übertragen.',
+     not:'NICHT: sie sind dasselbe Objekt. Tausche sie — die Welt ändert sich, wenn etwas vom Tausch abhängt.'},
+    {sym:'x ≃ y', name:'Homotopie', col:COL.sky,
+     wit:'Eine kohärente Deformation', tex:'x \\simeq y',
+     ex:'Tasse ≃ Donut  ·  Blitz und Donner  ·  zwei Wege, ein Ergebnis',
+     may:'Topologische Invarianten übertragen.',
      not:'NICHT: sie sind isomorph. Die Deformation ist echte Zusatzdaten.'},
-    {sym:'d(x,y) ‚â§ Œµ', name:'N√§herung', col:COL.amber,
+    {sym:'d(x,y) ≤ ε', name:'Näherung', col:COL.amber,
      wit:'Eine quantifizierte Schranke', tex:'d(x, y) \\le \\varepsilon',
-     ex:'20,01 vs 20,02 ¬∞C  ¬∑  innerhalb Toleranz  ¬∑  ‚Äñf‚Çô ‚àí f‚Äñ < Œµ',
-     may:'Aussagen, die stetig in Œµ sind.',
-     not:'NICHT: sie sind gleich. Der Rest Œµ ist genau das, was sp√§ter explodiert.'},
+     ex:'20,01 vs 20,02 °C  ·  innerhalb Toleranz  ·  ‖fₙ − f‖ < ε',
+     may:'Aussagen, die stetig in ε sind.',
+     not:'NICHT: sie sind gleich. Der Rest ε ist genau das, was später explodiert.'},
     {sym:'P hoch', name:'Statistisch', col:COL.acc2,
-     wit:'Eine Likelihood unter ‚Ñ≥', tex:'P(D_1, D_2 \\mid \\mathcal{M}) \\text{ hoch}',
-     ex:'Zwei Studien verwerfen dasselbe H‚ÇÄ  ¬∑  Monte-Carlo ‚âà Satz',
-     may:'Probabilistische Schl√ºsse unter dem Modell ‚Ñ≥.',
-     not:'NICHT: es ist bewiesen. Die Annahmen k√∂nnen differieren.'},
-    {sym:'‚àÉM', name:'Modelltheoretisch', col:COL.rose,
+     wit:'Eine Likelihood unter ℳ', tex:'P(D_1, D_2 \\mid \\mathcal{M}) \\text{ hoch}',
+     ex:'Zwei Studien verwerfen dasselbe H₀  ·  Monte-Carlo ≈ Satz',
+     may:'Probabilistische Schlüsse unter dem Modell ℳ.',
+     not:'NICHT: es ist bewiesen. Die Annahmen können differieren.'},
+    {sym:'∃M', name:'Modelltheoretisch', col:COL.rose,
      wit:'Ein gemeinsames Modell', tex:'\\exists M : M \\models \\mathcal{S}_{\\text{alle}}',
-     ex:'Zwei Axiomensysteme, ein Modell  ¬∑  zwei Labore, ein Modell',
-     may:'Widerspruchsfreiheit ‚Äî beide sind erf√ºllbar.',
+     ex:'Zwei Axiomensysteme, ein Modell  ·  zwei Labore, ein Modell',
+     may:'Widerspruchsfreiheit — beide sind erfüllbar.',
      not:'NICHT: es ist wahr. Ein konsistentes Modell kann das falsche sein.'}
   ];
   let sel=0, p=0.5, eps=0.1;
@@ -1905,9 +1905,9 @@ window.addEventListener('load',()=>{
   function drawDemo(){
     const s=setup('d3demo'); if(!s)return; const {g,W,H}=s; bg(g,W,H);
     const r=RUNGS[sel];
-    txt(g,r.name+' ‚Äî Beispiel',W/2,24,{c:r.col,f:'bold 14px ui-sans-serif',a:'center'});
+    txt(g,r.name+' — Beispiel',W/2,24,{c:r.col,f:'bold 14px ui-sans-serif',a:'center'});
     const cy=H/2+10;
-    if(sel===0){ // Identit√§t
+    if(sel===0){ // Identität
       circ(g,W/2,cy,40,r.col);
       txt(g,'x = y',W/2,cy+6,{c:'#07141b',f:'bold 16px ui-monospace',a:'center'});
       txt(g,'Ein Objekt, zwei Namen.',W/2,cy+72,{c:COL.txt2,f:'12px ui-sans-serif',a:'center'});
@@ -1916,7 +1916,7 @@ window.addEventListener('load',()=>{
       arrow(g,W/2-52,cy,W/2+52,cy,COL.txt2,2);
       arrow(g,W/2+52,cy+16,W/2-52,cy+16,COL.txt2,2);
       txt(g,'f',W/2,cy-10,{c:COL.txt2,f:'13px ui-monospace',a:'center'});
-      txt(g,'f‚Å»¬π',W/2,cy+34,{c:COL.txt2,f:'13px ui-monospace',a:'center'});
+      txt(g,'f⁻¹',W/2,cy+34,{c:COL.txt2,f:'13px ui-monospace',a:'center'});
       txt(g,'x',W/2-90,cy+6,{c:'#07141b',f:'bold 15px ui-monospace',a:'center'});
       txt(g,'y',W/2+90,cy+6,{c:'#07141b',f:'bold 15px ui-monospace',a:'center'});
       txt(g,'Invertierbare Abbildung.',W/2,cy+80,{c:COL.txt2,f:'12px ui-sans-serif',a:'center'});
@@ -1930,7 +1930,7 @@ window.addEventListener('load',()=>{
       g.beginPath();g.moveTo(W/2-100,cy);
       g.bezierCurveTo(W/2-40,cy+60-p*40,W/2+40,cy+60-p*40,W/2+100,cy);
       g.stroke();
-      // Fl√§che
+      // Fläche
       g.fillStyle='rgba(96,165,250,.10)';
       g.beginPath();g.moveTo(W/2-100,cy);
       g.bezierCurveTo(W/2-40,cy-60+p*40,W/2+40,cy-60+p*40,W/2+100,cy);
@@ -3411,17 +3411,17 @@ DREI BELEGE:
 
 ② KONZENTRATION:  P(|⟨u,v⟩| ≥ ${fmt(eps,2
 )}`,
-        `   in R^${d}  â‰¤  2Â·exp(âˆ’dÎµÂ²/2)  =  ${pOrth<1e-4?pOrth.toExponential(2):fmt(pOrth,4)}
-   â†’ In hohen Dimensionen sind zwei zufÃ¤llige Richtungen fast sicher
+        `   in R^${d}  ≤  2·exp(−dε²/2)  =  ${pOrth<1e-4?pOrth.toExponential(2):fmt(pOrth,4)}
+   → In hohen Dimensionen sind zwei zufällige Richtungen fast sicher
      nahezu orthogonal. Eine Falte in eine unbesetzte Richtung ist
-     damit fast sicher unabhÃ¤ngig von allem Bisherigen â€” sie TRENNT.
+     damit fast sicher unabhängig von allem Bisherigen — sie TRENNT.
 
-â‘¢ JOHNSONâ€“LINDENSTRAUSS:  N=${N} Punkte, Toleranz Îµ=${fmt(eps,2)}
-   BenÃ¶tigte Zieldimension:  k â‰ˆ 8Â·ln(N)/ÎµÂ² = ${kJL}
-   â†’ Alle paarweisen AbstÃ¤nde bleiben in (1Â±Îµ) erhalten â€” UNABHÃ„NGIG
+③ JOHNSON–LINDENSTRAUSS:  N=${N} Punkte, Toleranz ε=${fmt(eps,2)}
+   Benötigte Zieldimension:  k ≈ 8·ln(N)/ε² = ${kJL}
+   → Alle paarweisen Abstände bleiben in (1±ε) erhalten — UNABHÄNGIG
      von der Ausgangsdimension. Man kann 999.999 von einer Million
-     Dimensionen wegwerfen und die Geometrie Ã¼berlebt.
-   â†’ Die Bedeutung steckt in den ABSTÃ„NDEN, nicht in den Koordinaten.`
+     Dimensionen wegwerfen und die Geometrie überlebt.
+   → Die Bedeutung steckt in den ABSTÄNDEN, nicht in den Koordinaten.`
       ].join('');
   }
   bind('d20N','d20NL',v=>{N=v;draw();},v=>v|0);
@@ -3430,24 +3430,24 @@ DREI BELEGE:
   draw();
 })();
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   DEMO 9 â€” Das Tarski-Quadrat
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════════════════════
+   DEMO 9 — Das Tarski-Quadrat
+   ═══════════════════════════════════════════════════════════════════════ */
 (function(){
   if(!$('d21'))return;
   const EDGES=[
-    {k:'t',  n:'Konvention T (das â€žgdw."-Band)'},
-    {k:'q',  n:'AnfÃ¼hrung (Satz â†’ Name)'},
-    {k:'r',  n:'Referenz (Tatsache â†’ Welt)'},
-    {k:'br', n:'Lizenzierte BrÃ¼cke T âˆˆ ð’¯'}
+    {k:'t',  n:'Konvention T (das „gdw."-Band)'},
+    {k:'q',  n:'Anführung (Satz → Name)'},
+    {k:'r',  n:'Referenz (Tatsache → Welt)'},
+    {k:'br', n:'Lizenzierte Brücke T ∈ 𝒯'}
   ];
   const off={t:false,q:false,r:false,br:false};
   const btns=$('d21btns');
   EDGES.forEach(e=>{
     const b=document.createElement('button');
-    b.className='btn ghost'; b.textContent='âœ• '+e.n;
+    b.className='btn ghost'; b.textContent='✕ '+e.n;
     b.onclick=()=>{off[e.k]=!off[e.k];b.classList.toggle('on',off[e.k]);
-      b.textContent=(off[e.k]?'âœ— ':'âœ• ')+e.n; draw();};
+      b.textContent=(off[e.k]?'✗ ':'✕ ')+e.n; draw();};
     btns.appendChild(b);
   });
   function draw(){
@@ -3455,10 +3455,10 @@ DREI BELEGE:
     const bw=210,bh=60;
     const x1=W*0.22-bw/2, x2=W*0.78-bw/2, y1=60, y2=250;
 
-    box(g,x1,y1,bw,bh,'Satz S','â€žSchnee ist weiÃŸ"',off.t?'#3a4358':COL.acc);
-    box(g,x2,y1,bw,bh,'Tatsache p','Schnee ist weiÃŸ',off.t?'#3a4358':COL.emer);
-    box(g,x1,y2,bw,bh,'âŒœSâŒ (Name)','der AnfÃ¼hrungsname',off.q?'#3a4358':COL.acc2);
-    box(g,x2,y2,bw,bh,'Welt W','wie es tatsÃ¤chlich ist',off.r?'#3a4358':COL.rose);
+    box(g,x1,y1,bw,bh,'Satz S','„Schnee ist weiß"',off.t?'#3a4358':COL.acc);
+    box(g,x2,y1,bw,bh,'Tatsache p','Schnee ist weiß',off.t?'#3a4358':COL.emer);
+    box(g,x1,y2,bw,bh,'⌜S⌝ (Name)','der Anführungsname',off.q?'#3a4358':COL.acc2);
+    box(g,x2,y2,bw,bh,'Welt W','wie es tatsächlich ist',off.r?'#3a4358':COL.rose);
 
     // Konvention T
     const tc=off.t?'#3a4358':COL.amber;
@@ -3466,21 +3466,21 @@ DREI BELEGE:
     roundRect(g,W/2-72,y1+bh/2-16,144,32,8,'rgba(11,15,22,.9)',tc,1.6);
     txt(g,'ist wahr gdw.',W/2,y1+bh/2+5,{c:tc,f:'bold 13px ui-sans-serif',a:'center'});
 
-    // AnfÃ¼hrung
+    // Anführung
     const qc=off.q?'#3a4358':COL.acc2;
     arrow(g,x1+bw/2,y1+bh,x1+bw/2,y2,qc,2);
-    txt(g,'AnfÃ¼hrung',x1+bw/2-8,(y1+bh+y2)/2,{c:qc,f:'11px ui-sans-serif',a:'right'});
+    txt(g,'Anführung',x1+bw/2-8,(y1+bh+y2)/2,{c:qc,f:'11px ui-sans-serif',a:'right'});
 
     // Referenz
     const rc=off.r?'#3a4358':COL.rose;
     arrow(g,x2+bw/2,y1+bh,x2+bw/2,y2,rc,2);
     txt(g,'Referenz',x2+bw/2+8,(y1+bh+y2)/2,{c:rc,f:'11px ui-sans-serif'});
 
-    // Lizenzierte BrÃ¼cke
+    // Lizenzierte Brücke
     const bc=off.br?'#3a4358':COL.sky;
     arrow(g,x1+bw,y2+bh/2,x2,y2+bh/2,bc,2.6);
     roundRect(g,W/2-78,y2+bh/2-16,156,32,8,'rgba(11,15,22,.9)',bc,1.6);
-    txt(g,'T âˆˆ ð’¯',W/2,y2+bh/2+5,{c:bc,f:'bold 13px ui-monospace',a:'center'});
+    txt(g,'T ∈ 𝒯',W/2,y2+bh/2+5,{c:bc,f:'bold 13px ui-monospace',a:'center'});
 
     const broken=Object.entries(off).filter(([,v])=>v).map(([k])=>k);
     const o=$('d21out');
@@ -3489,19 +3489,19 @@ DREI BELEGE:
       o.textContent=
 `DAS QUADRAT KOMMUTIERT.
 
-Der Satz S hat einen Namen âŒœSâŒ (AnfÃ¼hrung).
+Der Satz S hat einen Namen ⌜S⌝ (Anführung).
 Die Tatsache p hat eine Referenz in der Welt W.
-Die lizenzierte BrÃ¼cke T âˆˆ ð’¯ verbindet Name und Welt.
-Konvention T sagt: S ist wahr âŸº p.
+Die lizenzierte Brücke T ∈ 𝒯 verbindet Name und Welt.
+Konvention T sagt: S ist wahr ⟺ p.
 
-â†’ Die Wahrheitsbedingung ist geerdet. Korrespondenz gilt
+→ Die Wahrheitsbedingung ist geerdet. Korrespondenz gilt
   an diesem Kontaktpunkt.`;
     } else {
       const msgs={
-        t:'â€¢ Ohne Konvention T gibt es kein WahrheitsprÃ¤dikat.\n  Wahrheit wÃ¤re wieder ein undefinierter Grundbegriff.',
-        q:'â€¢ Ohne AnfÃ¼hrung kann man den Satz nicht von auÃŸen greifen.\n  Man kÃ¶nnte ihn nur BENUTZEN, nie Ã¼ber ihn REDEN.',
-        r:'â€¢ Ohne Referenz hÃ¤ngt die Tatsache in der Luft.\n  Die rechte Seite von â€žgdw." zeigt auf nichts.',
-        br:'â€¢ Ohne lizenzierte BrÃ¼cke schwebt das â€žgdw." frei.\n  Es zertifiziert gar nichts â€” das ist die selbstkonsistente Fantasie.'
+        t:'• Ohne Konvention T gibt es kein Wahrheitsprädikat.\n  Wahrheit wäre wieder ein undefinierter Grundbegriff.',
+        q:'• Ohne Anführung kann man den Satz nicht von außen greifen.\n  Man könnte ihn nur BENUTZEN, nie über ihn REDEN.',
+        r:'• Ohne Referenz hängt die Tatsache in der Luft.\n  Die rechte Seite von „gdw." zeigt auf nichts.',
+        br:'• Ohne lizenzierte Brücke schwebt das „gdw." frei.\n  Es zertifiziert gar nichts — das ist die selbstkonsistente Fantasie.'
       };
       o.textContent='GEBROCHEN:\n\n'+broken.map(k=>msgs[k]).join('\n\n');
     }
@@ -3509,9 +3509,9 @@ Konvention T sagt: S ist wahr âŸº p.
   draw();
 })();
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   DEMO 9b â€” Wahrheitstabelle
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════════════════════
+   DEMO 9b — Wahrheitstabelle
+   ═══════════════════════════════════════════════════════════════════════ */
 (function(){
   if(!$('d22'))return;
   let C=0.85,T=0.85,N=6;
@@ -3525,11 +3525,11 @@ Konvention T sagt: S ist wahr âŸº p.
       {x:0,y:0,w:.5,h:.5,c:'rgba(251,113,133,.08)',bc:COL.rose,
        t:'Faktenbuch',s:'wahre Einzelfakten,\nkeine Synthese'},
       {x:.5,y:0,w:.5,h:.5,c:'rgba(52,211,153,.10)',bc:COL.emer,
-       t:'âœ“ Guter Indikator',s:'kohÃ¤rent + geerdet\n(kein Zertifikat!)'},
+       t:'✓ Guter Indikator',s:'kohärent + geerdet\n(kein Zertifikat!)'},
       {x:0,y:.5,w:.5,h:.5,c:'rgba(107,125,153,.06)',bc:COL.txt3,
-       t:'Chaos',s:'weder kohÃ¤rent\nnoch geerdet'},
+       t:'Chaos',s:'weder kohärent\nnoch geerdet'},
       {x:.5,y:.5,w:.5,h:.5,c:'rgba(167,139,250,.08)',bc:COL.acc2,
-       t:'Selbstkonsistente\nFantasie',s:'kohÃ¤rent, aber\nungeerdet'}
+       t:'Selbstkonsistente\nFantasie',s:'kohärent, aber\nungeerdet'}
     ];
     quads.forEach(q=>{
       const qx=x0+q.x*sz, qy=y0+q.y*sz, qw=q.w*sz, qh=q.h*sz;
@@ -3546,9 +3546,9 @@ Konvention T sagt: S ist wahr âŸº p.
     // Achsen
     g.strokeStyle=COL.line;g.lineWidth=1.6;
     g.strokeRect(x0,y0,sz,sz);
-    txt(g,'KohÃ¤renz â†’',x0+sz/2,y0+sz+26,{c:COL.txt2,f:'bold 12px ui-sans-serif',a:'center'});
+    txt(g,'Kohärenz →',x0+sz/2,y0+sz+26,{c:COL.txt2,f:'bold 12px ui-sans-serif',a:'center'});
     g.save();g.translate(x0-30,y0+sz/2);g.rotate(-Math.PI/2);
-    txt(g,'Kontakt â†’',0,0,{c:COL.txt2,f:'bold 12px ui-sans-serif',a:'center'});
+    txt(g,'Kontakt →',0,0,{c:COL.txt2,f:'bold 12px ui-sans-serif',a:'center'});
     g.restore();
     txt(g,'0',x0,y0+sz+14,{c:COL.txt3,f:'10px ui-monospace',a:'center'});
     txt(g,'1',x0+sz,y0+sz+14,{c:COL.txt3,f:'10px ui-monospace',a:'center'});
@@ -3573,35 +3573,35 @@ Konvention T sagt: S ist wahr âŸº p.
       if(ok)passed++;
       const cy=y0+38+i*22;
       circ(g,sx+9,cy,7,ok?COL.emer:COL.rose);
-      txt(g,ok?'âœ“':'âœ—',sx+9,cy+4,{c:'#07141b',f:'bold 10px ui-sans-serif',a:'center'});
+      txt(g,ok?'✓':'✗',sx+9,cy+4,{c:'#07141b',f:'bold 10px ui-sans-serif',a:'center'});
       txt(g,`Kontakt ${i+1}`,sx+24,cy+4,{c:ok?COL.emer:COL.rose,f:'11px ui-sans-serif'});
       if(i>12)break;
     }
 
     let verdict, vcol, vtext;
-    if(C>0.7&&T>0.7){verdict='âœ“ GUTER INDIKATOR';vcol=COL.emer;
-      vtext='KohÃ¤rent und geerdet. Aber:\nKEIN Zertifikat fÃ¼r Wahrheit.';}
-    else if(C>0.7&&T<=0.7){verdict='âš  SELBSTKONSISTENTE FANTASIE';vcol=COL.acc2;
+    if(C>0.7&&T>0.7){verdict='✓ GUTER INDIKATOR';vcol=COL.emer;
+      vtext='Kohärent und geerdet. Aber:\nKEIN Zertifikat für Wahrheit.';}
+    else if(C>0.7&&T<=0.7){verdict='⚠ SELBSTKONSISTENTE FANTASIE';vcol=COL.acc2;
       vtext='Die Teile passen zusammen,\naber sie treffen die Welt nicht.';}
-    else if(C<=0.7&&T>0.7){verdict='âš  FAKTENBUCH';vcol=COL.rose;
+    else if(C<=0.7&&T>0.7){verdict='⚠ FAKTENBUCH';vcol=COL.rose;
       vtext='Wahre Einzelfakten,\naber kein globales Modell.';}
-    else {verdict='âœ— CHAOS';vcol=COL.txt3;
-      vtext='Weder kohÃ¤rent noch geerdet.';}
+    else {verdict='✗ CHAOS';vcol=COL.txt3;
+      vtext='Weder kohärent noch geerdet.';}
 
     const o=$('d22out');
     o.className='out '+(C>0.7&&T>0.7?'':C>0.7||T>0.7?'warn':'bad');
     o.textContent=
 `${verdict}
 
-KohÃ¤renz  : ${fmt(C,2)}   (Descent auf der Ãœberdeckung)
-Kontakt   : ${fmt(T,2)}   (Tarski an den BerÃ¼hrungspunkten)
-Bestanden : ${passed} von ${Math.min(N,13)} geprÃ¼ften Kontakten
+Kohärenz  : ${fmt(C,2)}   (Descent auf der Überdeckung)
+Kontakt   : ${fmt(T,2)}   (Tarski an den Berührungspunkten)
+Bestanden : ${passed} von ${Math.min(N,13)} geprüften Kontakten
 
 ${vtext}
 
 DIE ASYMMETRIE:
-  Hundert bestandene Kontakte  â†’  guter Indikator, kein Beweis
-  EIN sauber gescheiterter     â†’  Modell ist FALSCH (in dieser Region)`;
+  Hundert bestandene Kontakte  →  guter Indikator, kein Beweis
+  EIN sauber gescheiterter     →  Modell ist FALSCH (in dieser Region)`;
   }
   bind('d22c','d22cL',v=>{C=v;draw();});
   bind('d22t','d22tL',v=>{T=v;draw();});
@@ -3609,9 +3609,9 @@ DIE ASYMMETRIE:
   draw();
 })();
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   DEMO 9c â€” Korrespondenz als Grenzwert
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════════════════════
+   DEMO 9c — Korrespondenz als Grenzwert
+   ═══════════════════════════════════════════════════════════════════════ */
 (function(){
   if(!$('d23'))return;
   let n=3, dfrac=0;
@@ -3625,7 +3625,7 @@ DIE ASYMMETRIE:
     g.beginPath();g.arc(cx,cy,Rc,0,TAU);g.stroke();g.setLineDash([]);
     txt(g,'c  (der volle Kontext)',cx,cy-Rc-14,{c:COL.txt3,f:'12px ui-sans-serif',a:'center'});
 
-    // c_zug wÃ¤chst mit n, aber nur durch UNABHÃ„NGIGE ZugÃ¤nge
+    // c_zug wächst mit n, aber nur durch UNABHÄNGIGE Zugänge
     const nIndep=n*(1-dfrac);
     const cov=1-Math.exp(-nIndep*0.13);
     const Rz=Rc*Math.sqrt(cov);
@@ -3636,7 +3636,7 @@ DIE ASYMMETRIE:
     txt(g,'c_zug',cx,cy+4,{c:COL.acc,f:'bold 14px ui-sans-serif',a:'center'});
     txt(g,fmt(cov*100,1)+' %',cx,cy+24,{c:COL.acc,f:'12px ui-monospace',a:'center'});
 
-    // ZugÃ¤nge als Pfeile
+    // Zugänge als Pfeile
     for(let i=0;i<Math.min(n,24);i++){
       const a=i/Math.min(n,24)*TAU;
       const derived = i >= Math.round(n*(1-dfrac));
@@ -3648,18 +3648,18 @@ DIE ASYMMETRIE:
 
     // Legende
     const lx=W*0.68;
-    txt(g,'ZugÃ¤nge',lx,54,{c:COL.txt,f:'bold 13px ui-sans-serif'});
+    txt(g,'Zugänge',lx,54,{c:COL.txt,f:'bold 13px ui-sans-serif'});
     circ(g,lx+8,76,6,COL.acc);
-    txt(g,`${Math.round(n*(1-dfrac))} unabhÃ¤ngig (weltverankert)`,lx+22,80,
+    txt(g,`${Math.round(n*(1-dfrac))} unabhängig (weltverankert)`,lx+22,80,
         {c:COL.acc,f:'12px ui-sans-serif'});
     circ(g,lx+8,100,6,COL.rose);
     txt(g,`${Math.round(n*dfrac)} abgeleitet (aus Modellen)`,lx+22,104,
         {c:COL.rose,f:'12px ui-sans-serif'});
 
-    // KohÃ¤renz vs Korrespondenz Balken
-    const coh=0.92;             // KohÃ¤renz bleibt hoch
+    // Kohärenz vs Korrespondenz Balken
+    const coh=0.92;             // Kohärenz bleibt hoch
     const corr=cov;
-    [['KohÃ¤renz (innerhalb)',coh,COL.acc2,150],
+    [['Kohärenz (innerhalb)',coh,COL.acc2,150],
      ['Korrespondenz (hinaus)',corr,COL.emer,200]].forEach(([lab,v,col,yy])=>{
       txt(g,lab,lx,yy-8,{c:COL.txt2,f:'12px ui-sans-serif'});
       roundRect(g,lx,yy,250,14,7,'rgba(255,255,255,.07)',null);
@@ -3669,7 +3669,7 @@ DIE ASYMMETRIE:
 
     // Grenzwert-Kurve
     const gy=280;
-    txt(g,'Korrespondenz = lim KohÃ¤renz',lx,gy-8,{c:COL.txt2,f:'bold 12px ui-sans-serif'});
+    txt(g,'Korrespondenz = lim Kohärenz',lx,gy-8,{c:COL.txt2,f:'bold 12px ui-sans-serif'});
     line(g,lx,gy+80,lx+250,gy+80,COL.line,1.4);
     line(g,lx,gy,lx,gy+80,COL.line,1.4);
     g.strokeStyle=COL.emer;g.lineWidth=2.4;g.beginPath();
@@ -3685,17 +3685,17 @@ DIE ASYMMETRIE:
     const px=lx+Math.min(nIndep/40,1)*250;
     const py=gy+80-cov*76;
     circ(g,px,py,6,COL.amber);
-    txt(g,'ZugÃ¤nge â†’',lx+125,gy+98,{c:COL.txt3,f:'10px ui-sans-serif',a:'center'});
+    txt(g,'Zugänge →',lx+125,gy+98,{c:COL.txt3,f:'10px ui-sans-serif',a:'center'});
 
     const o=$('d23out');
     o.className='out '+(dfrac>0.5?'bad':dfrac>0.2?'warn':'');
     o.textContent=
-`ZugÃ¤nge gesamt        : ${n}
-davon unabhÃ¤ngig      : ${Math.round(n*(1-dfrac))}
+`Zugänge gesamt        : ${n}
+davon unabhängig      : ${Math.round(n*(1-dfrac))}
 davon abgeleitet      : ${Math.round(n*dfrac)}
 Abgedeckte Region     : ${fmt(cov*100,1)} % von c
 
-KohÃ¤renz   : ${fmt(coh*100,0)} %  (bleibt hoch â€” die Teile passen zusammen)
+Kohärenz   : ${fmt(coh*100,0)} %  (bleibt hoch — die Teile passen zusammen)
 Korrespondenz: ${fmt(corr*100,0)} %  (steigt mit der Abdeckung)`;
   }
   bind('d20N','d20NL',v=>{N=v;draw();},v=>v|0);
