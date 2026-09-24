@@ -13179,6 +13179,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1912.02292",
 		alternativetitle: "Deep double descent"
 	},
+	"petersen2024mathdl": {
+		title: "Mathematical Theory of Deep Learning",
+		author: "Philipp Petersen, Jakob Zech",
+		year: 2024,
+		url: "https://arxiv.org/abs/2407.18384",
+		alternativetitle: "Petersen & Zech, Mathematical Theory of Deep Learning"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  What Machines See  (computer_vision.php)
 	 *  Detection, segmentation, ViT, MAE, SAM.
