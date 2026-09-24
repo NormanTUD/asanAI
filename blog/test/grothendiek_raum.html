@@ -602,21 +602,21 @@ ul{padding-left:20px}li{margin:.3em 0;color:#d3dcf2}
     <h3>Endliche Räume: was die allgemeine Topologie nicht kann</h3>
     <p class="small">Grothendieck: „Ich hoffe, die Sprache wird geeignet sein, <b>endliche Räume</b> zu behandeln, die
     in der allgemeinen Topologie sehr schlecht wegkommen (selbst bei nicht-Hausdorffschen Räumen).“
-    Hier: derselbe „Kreis“ mit N Punkten — links als Punktmenge (topologisch: diskret, also <em>formlos</em>),
-    rechts als Figurenkomplex (Form: ein Kreis, egal wie klein N ist).</p>
+    Hier: N Punkte dicht auf einer Scheibe — als diskretes <b>Netz</b>, als glatte <b>Scheibe</b>, oder beides überlagert.
+    Zieh N hoch: irgendwann ist das Netz nicht mehr von der Fläche zu unterscheiden.</p>
     <div class="ctrls">
-      <div class="ctrl"><label>Anzahl Punkte N <b><span id="fs-n">8</span></b></label><input type="range" id="fs-n" min="3" max="40" value="8" step="1"></div>
-      <div class="ctrl" style="flex:0 0 auto"><label>Struktur</label>
-        <select id="fs-top">
-          <option value="circle">Kreis</option>
-          <option value="line">Strecke</option>
-          <option value="theta">Theta</option>
-          <option value="two">Zwei Kreise</option>
+      <div class="ctrl"><label>Anzahl Punkte N <b><span id="fi-n">120</span></b></label><input type="range" id="fi-n" min="3" max="1000" value="120" step="1"></div>
+      <div class="ctrl"><label>Unordnung (Jitter) <b><span id="fi-jit">0.15</span></b></label><input type="range" id="fi-jit" min="0" max="0.6" value="0.15" step="0.01"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Darstellung</label>
+        <select id="fi-mode">
+          <option value="both">beides überlagert</option>
+          <option value="net">diskretes Netz</option>
+          <option value="cont">kontinuierliche Scheibe</option>
         </select>
       </div>
     </div>
     <div class="canvwrap"><canvas id="cFinite" width="1020" height="340"></canvas></div>
-    <div class="readout" id="fs-out"></div>
+    <div class="readout" id="fi-out"></div>
   </div>
 
   <div class="card">
