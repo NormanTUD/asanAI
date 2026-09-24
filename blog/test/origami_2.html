@@ -4611,11 +4611,10 @@ Recht verdient, Schiedsrichter dieser Pathologie bei anderen zu sein.`;
     const x0=(W-sz)/2, y0=42;
     ['rgba(251,113,133,.06)','rgba(52,211,153,.10)',
      'rgba(107,125,153,.05)','rgba(167,139,250,.07)']
-      .forEach((c,i)=>{
-        g.fillStyle=c;
-        g.fillRect(x0+(i%2)*sz/2, y0      g.fillStyle=c;
-        g.fillRect(x0+(i%2)*sz/2, y0+((i>1)?sz/2:0), sz/2, sz/2);
-      });
+       .forEach((c,i)=>{
+         g.fillStyle=c;
+         g.fillRect(x0+(i%2)*sz/2, y0+((i>1)?sz/2:0), sz/2, sz/2);
+       });
     g.strokeStyle=COL.line;g.lineWidth=1.4;g.strokeRect(x0,y0,sz,sz);
     line(g,x0+sz/2,y0,x0+sz/2,y0+sz,'rgba(255,255,255,.1)',1,[4,3]);
     line(g,x0,y0+sz/2,x0+sz,y0+sz/2,'rgba(255,255,255,.1)',1,[4,3]);
