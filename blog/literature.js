@@ -5487,6 +5487,25 @@ window.bibData = {
 		author: "Frederic Lewis",
 		year: 1960
 	},
+	"joseph1961perceptron": {
+		title: "Contributions to Perceptron Theory",
+		author: "R. David Joseph",
+		year: "1961",
+		journal: "PhD thesis, Cornell University",
+		url: "https://www.proquest.com/openview/f305deb1a2b1624b59a0321efb5b810d/1?pq-origsite=gscholar&cbl=18750&diss=y"
+	},
+	"farleyclark1954": {
+		title: "Design of a Non-Linear Device for the Recognition of Patterns",
+		author: "Belmont G. Farley, Wesley A. Clark",
+		year: "1954",
+		journal: "IRE Transactions on Information Theory, IT-1(1):48-54"
+	},
+	"markkac": {
+		title: "Mark Kac",
+		author: "Wikipedia contributors",
+		year: "2026",
+		url: "https://en.wikipedia.org/wiki/Mark_Kac"
+	},
 	"historyofmathematicalnotation": {
 		title: "A History of Mathematical Notations",
 		author: "Florian Cajori",
@@ -15796,11 +15815,11 @@ window.bibData = {
 		alternativetitle: "Pew Research — five years of AI perception data"
 	},
 	"cbs2024characterai": {
-		title: "Florida mother files lawsuit against AI company over teen son's death",
-		author: "Kelsie Hoffman, CBS News",
-		year: 2024,
-		url: "https://www.cbsnews.com/news/florida-mother-lawsuit-character-ai-sons-death/",
-		alternativetitle: "CBS News, 23 Oct 2024 — the Setzer v. Character.AI lawsuit"
+		title: "Character.AI — Litigation section (Setzer v. Character.AI, Oct 2024)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Character.ai",
+		alternativetitle: "Character.AI (Wikipedia) — the Setzer case and teen suicide lawsuits"
 	},
 	"deepfake_wiki": {
 		title: "Deepfake",
@@ -15838,20 +15857,18 @@ window.bibData = {
 		alternativetitle: "Stack Overflow 2024 — 76% use or plan to use AI; only 2.7% highly trust it"
 	},
 	"ward2014googleeffect": {
-		title: "Cognitive Offloading in the Age of the Internet: Directions for Research",
-		author: "Adam Ward, Benjamin Benoit, Frank Gould",
-		year: 2014,
-		journal: "Current Directions in Psychological Science",
-		url: "https://doi.org/10.1177/0963721414538638",
-		alternativetitle: "Ward, Benoit and Gould 2014 — the Google Effect: external memory changes recall"
+		title: "Cognitive offloading",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cognitive_offloading",
+		alternativetitle: "Cognitive offloading (Wikipedia) — the Google Effect and external memory"
 	},
 	"parasuraman1997automation": {
-		title: "Using Automation: The Impact of Automation, Aids, and Agents on Human Information Processing",
-		author: "Ramaswamy Parasuraman, Victor Riley",
-		year: 1997,
-		journal: "Human Factors",
-		url: "https://doi.org/10.1518/001872097400824",
-		alternativetitle: "Parasuraman and Riley 1997 — the automation bias literature"
+		title: "Automation bias",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Automation_bias",
+		alternativetitle: "Automation bias (Wikipedia) — the literature on over-trusting automated systems"
 	},
 	"whisper2022": {
 		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
