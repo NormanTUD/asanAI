@@ -1408,9 +1408,6 @@ function renderStaticMath(){
       }
       for(let g=0;g<4;g++){
         const x=40+g*3*pw, w=3*pw;
-        
-      for(let g=0;g<4;g++){
-        const x=40+g*3*pw, w=3*pw;
         ctx.strokeStyle=hexA(PAL[g],.9);ctx.lineWidth=2;ctx.setLineDash([5,4]);
         roundRect(ctx,x,Hh/2-44,w,88,10);ctx.stroke();ctx.setLineDash([]);
         txt(ctx,'f*'+(g+1)+'(x)',x+w/2,Hh/2-58,PAL[g],'700 11px monospace','center');

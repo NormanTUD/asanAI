@@ -16080,5 +16080,54 @@ window.bibData = {
 		year: 2026,
 		url: "https://arxiv.org/abs/2605.18143",
 		alternativetitle: "Idan & Anand 2026 — AI complementarity in education (arXiv)"
+	},
+	"chatgpt_wiki": {
+		title: "ChatGPT",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ChatGPT",
+		alternativetitle: "ChatGPT (Wikipedia) — including cultural impact, bans, and public response"
+	},
+	"stable_diffusion_wiki": {
+		title: "Stable Diffusion",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Stable_Diffusion",
+		alternativetitle: "Stable Diffusion (Wikipedia) — training data, compute costs, LAION subsets"
+	},
+	"google_translate_wiki": {
+		title: "Google Translate",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Google_Translate",
+		alternativetitle: "Google Translate (Wikipedia) — 249 languages, 500M daily users"
+	},
+	"deepl_wiki": {
+		title: "DeepL",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/DeepL",
+		alternativetitle: "DeepL (Wikipedia) — 2017 launch, 2024 valuation"
+	},
+	"insilico_wiki": {
+		title: "Insilico Medicine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Insilico_Medicine",
+		alternativetitle: "Insilico Medicine (Wikipedia) — Pharma.AI platform, rentosertib"
+	},
+	"alphafold_wiki": {
+		title: "AlphaFold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AlphaFold",
+		alternativetitle: "AlphaFold (Wikipedia) — CASP14, database, citation count, downstream discoveries"
+	},
+	"erdos_problems_wiki": {
+		title: "Erdős problems",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Erd%C5%91s_problems",
+		alternativetitle: "Erdős problems (Wikipedia) — including the 1,000-dollar Sidon set problem"
 	}
 };
