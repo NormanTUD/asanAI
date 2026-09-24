@@ -12,7 +12,7 @@ tags: code-heavy
 -->
 
 <div class="md">
-LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional software where bugs are deterministic, LLM vulnerabilities are *probabilistic*, an attacker crafts inputs that shift the model's output distribution toward harmful behavior.
+LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional software where bugs are deterministic, LLM vulnerabilities are *probabilistic*, an attacker crafts inputs that shift the model's output distribution toward harmful behavior. The theoretical foundation — why adversarial examples are *inevitable* for non-linear classifiers in high dimensions, and what this implies for robustness guarantees — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 16.
 
 ## Prompt Injection
 

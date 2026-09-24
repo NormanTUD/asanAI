@@ -202,7 +202,7 @@ To find Ceres, Gauß worked from the **errors** of the measurements. He assumed 
         * **Structural Risk Minimization (SRM):** Instead of minimizing only the training error (Empirical Risk Minimization), SRM minimizes a combination of training error and model complexity. This is the theoretical justification for regularization techniques like weight decay and dropout.
         * **The Bias-Variance Tradeoff:** Models with low capacity (high bias) underfit; models with high capacity (low bias, but high variance in predictions across different training sets) overfit. The optimal model balances both.
 
-        It remains an active area of theoretical research to reconcile this framework with the fact that large neural networks often generalize despite having far more parameters than training examples, a phenomenon known as **“benign overfitting”**.
+        A significant step toward reconciling this framework with practice: \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}) derive generalization bounds from the covering number of the network class (Ch.\ 14) and show that in the overparameterized regime, small weights (as initialization provides) make the relevant function class Lipschitz-bounded independently of the parameter count — so the bound no longer degrades as you add parameters (Ch.\ 15). This is the theoretical content behind **“benign overfitting”**.
     </div>
 </div>
 
