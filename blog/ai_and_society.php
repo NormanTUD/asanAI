@@ -337,7 +337,7 @@ The honest state of play in 2026: AI in education is a **genuine good for access
 
 By 2024–2025, the volume of AI-generated content on the internet had reached a scale that broke existing verification infrastructure. The term **"AI slop"** — low-value, AI-generated content (text, image, video) flooding social feeds — entered common usage.
 
-The **Pew Research Center** published a data essay in **August 2026** titled "How Much of the Internet Is Written With AI?" — the first authoritative, large-scale measurement of the share of new web text that is AI-generated \cite[Pew Research, 2026]{pew2026ai}. The precise percentage is contested and methodology-dependent, but the trend is unambiguous: the share is rising rapidly, and the *economic incentive* to produce AI-generated content (near-zero marginal cost, SEO value, ad revenue) ensures it will continue to rise.
+The **Pew Research Center** published a data essay in **August 2026** — \citetitle{pew2026ai} — the first authoritative, large-scale measurement of the share of new web text that is AI-generated \cite[Pew Research, 2026]{pew2026ai}. The precise percentage is contested and methodology-dependent, but the trend is unambiguous: the share is rising rapidly, and the *economic incentive* to produce AI-generated content (near-zero marginal cost, SEO value, ad revenue) ensures it will continue to rise.
 
 The cultural effects are cumulative:
 
