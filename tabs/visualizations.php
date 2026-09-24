@@ -6,7 +6,9 @@
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Feature Maps</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation Function</a></li>
 		<li><a href="#weight_surfaces" onclick="create_weight_surfaces(true)" id="weight_surfaces_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
+		<!-- Space Warps tab parked in todo/ (see todo/space_warps_tab_snippets.txt)
 		<li style="display: none"><a onclick="if(typeof NeuralSpaceWarps!=='undefined'){NeuralSpaceWarps.refresh();}" id="space_warps_tab_label" href="#space_warps_tab" style="display: none"><span class="TRANSLATEME_space_warps"></span></a></li>
+		-->
 		<li><a id="health_status_tab_label" href="#health_status"><span class="TRANSLATEME_health_status"></span></a></li>
 		<li><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
@@ -77,9 +79,11 @@
 		<div id="weight_surfaces_content"></div>
 	</div>
 
+	<!-- Space Warps tab content parked in todo/ (see todo/space_warps_tab_snippets.txt)
 	<div id="space_warps_tab" class="tab">
 		<div id="space_warps_content"></div>
 	</div>
+	-->
 
 	<div id="health_status" class="tab">
 		<div class="TRANSLATEME_no_health_status_data"></div>

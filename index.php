@@ -146,7 +146,7 @@
 		_js("plot_predict.js");
 		_js("my_temml.js");
 		_js("weight_surfaces.js");
-		_js("fold_lens.js");
+		// _js("fold_lens.js"); // parked in todo/fold_lens.js
 
 		_js("layer_descriptions.js");
 		_js("loss_landscape.js");
