@@ -2096,6 +2096,8 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 			return;
 		}
 
+		existing_table.remove();
+
 		var str = "<table class='predict_table'>";
 
 		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
