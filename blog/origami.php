@@ -701,7 +701,7 @@ The $\log N$ bound is **tight**. Read it both ways: (i) most high dimensions can
 A well-trained classifier settles into a maximally symmetric geometry: in the terminal phase of training, each class's features collapse onto its class mean, and the $K$ class means form a **simplex equiangular tight frame** (ETF) — all pairwise angles equal, each point as far as possible from the others. The "one flat cut" therefore lands on the most separable configuration the space admits, not an arbitrary one.
 
 **5. Folding is topological untangling** \cite[Naitzat, Zhitnikov & Lim, 2020]{naitzat2020topology}.
-The "egg" is literally a topological object: the inner class is a *hole* in the outer class's distribution. Topological data analysis counts such holes with **Betti numbers** ($b_0$ components, $b_1$ loops, $b_2$ voids). Layer by layer a trained net drives them to the minimum per class, and ReLU does it *faster* than $\tanh$ — ReLU is a non-homeomorphism that *changes* topology, $\tanh$ a homeomorphism that preserves it. Deep ReLU nets are *exponentially* more efficient than shallow ones at this simplification \cite[Ergen & Grillo, 2024]{ergengrillo2024topological}.
+The "egg" is literally a topological object: the inner class is a *hole* in the outer class's distribution. Topological data analysis counts such holes with **Betti numbers** ($b_0$ components, $b_1$ loops, $b_2$ voids). Layer by layer a trained net drives them to the minimum per class, and ReLU does it *faster* than $\tanh$ — ReLU is a non-homeomorphism that *changes* topology, $\tanh$ a homeomorphism that preserves it. Deep ReLU nets are *exponentially* more efficient than shallow ones at this simplification \cite[Ergen & Grillo, 2024]{ergengrillo2024topological}. Lee and Ye go one step further and prove the width a net needs is bounded by the topology of the labels \cite[Lee & Ye, 2023]{lee2023topologywidth}.
 
 Together these facts land on the **manifold hypothesis** \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}: real data sit on a low-dimensional, knotted manifold in the high-dimensional input space, and the network's job is to unfold it — *through the unused dimensions* — until one hyperplane suffices.
 </div>
@@ -841,4 +841,41 @@ LP/MILP when you want integer or otherwise structured weights
 \cite{huchette2026polyhedral}; and why folding — which merely changes *which* inequalities bind
 — is such an efficient lever. The geometry of the fold and the algebra of the polyhedron are
 the same object.
+</div>
+
+<div class="optional md" data-headline="The geometric literature — further reading">
+The "origami" picture sits inside a large body of work that studies neural networks as
+geometric, topological, and differential objects. A curated map of it, grouped by the idea
+each serves:
+
+**Data that is a shape — topology & TDA.**
+* \cite[Carlsson, 2009]{carlsson2009topologydata} — the founding "shape of data" paper: a point cloud carries stable features (components, loops, voids) you can read out of noise.
+* \cite[Love et al., 2021]{love2021topdeepsurvey} — a survey of topological deep learning in both directions (topology for features; learning for topology).
+* \cite[Lee & Ye, 2023]{lee2023topologywidth} — the width a net needs to separate data is bounded by the *topology* (holes) of the labels: interlocking classes provably need a wider net. The "inner class is a hole" claim, made rigorous.
+
+**The fold — piecewise-linear / hyperplane geometry.**
+* \cite[Montúfar et al., 2014]{montufar2014regions} — each ReLU is a hyperplane; a net is the cells of a hyperplane arrangement, and the count grows with depth.
+* \cite[Hanin & Rolnick, 2019]{hanin2019linearregions} — the *typical* (not just maximal) number of linear regions.
+* \cite[Raghu et al., 2017]{raghu2017expressive} — *trajectory length*: sweep a 1-D path through the input and the output crosses its boundary exponentially many times in depth — depth is exponential folding power.
+* \cite[Grigsby & Lindsey, 2020]{grigsby2020transversality} — ReLU folds as *bent hyperplane arrangements*; transversality shows the fold pattern is generically stable.
+
+**The map as a flow — diffeomorphisms & invertible nets.**
+* \cite[Chen et al., 2018]{chen2018neuralode} — a continuous-depth net is the time-$T$ flow of an ODE, i.e. a diffeomorphism; depth becomes time.
+* \cite[Papamakarios et al., 2019]{papamakarios2019flows} — normalizing flows: a base density pushed forward by a diffeomorphism.
+* \cite[Teshima et al., 2020]{teshima2020inndiffeo} — coupling-based invertible nets are *universal diffeomorphism approximators*: the invertibility constraint costs nothing in expressivity.
+* \cite[Dinh et al., 2016]{dinh2016realnvp} — RealNVP: the concrete invertible block, the mirror image of the non-invertible ReLU crease.
+
+**Data that is a manifold — unfolding & higher dimensions.**
+* \cite[Tenenbaum et al., 2000]{tenenbaum2000isomap} — the true distance between data points is the *geodesic* on the manifold, not the straight line: flatten without tearing.
+* \cite[Chung et al., 2017]{chung2017perceptual} — each class is a low-dim *perceptual manifold*; classification is the geometry of separating them.
+* \cite[Loaiza-Ganem et al., 2024]{loaizaganem2024manifoldsurvey} — the manifold hypothesis as a *live* deep/generative-learning assumption.
+
+**Meaning as position — the namesake, made precise.**
+* \cite[Yoneda embedding]{yoneda_nlab} — an object is fully determined by its relationships to everything else; the exact math of "meaning is position in the web of neighbours."
+* \cite[Cruz Morales, 2021]{cruzmorales2021grothendieck} — Grothendieck's notion of *space* (schemes → toposes → forms), the philosophical home of the chapter's namesake (a secondary account).
+
+**Very wide nets & the terminal geometry.**
+* \cite[Jacot et al., 2018]{jacot2018ntk} — a wide net trained by gradient descent follows a *linear* kernel gradient flow in function space.
+* \cite[Lee et al., 2019]{lee2019widelinear} — at infinite width, *any* depth acts linearly on the initial features: the nonlinearity's whole job is to choose a feature geometry, after which learning is linear.
+* \cite[Wu & Papyan, 2024]{wu2024linguisticcollapse} — the same simplex-ETF terminal geometry that governs image classifiers also governs **language models**.
 </div>

@@ -452,6 +452,119 @@ window.bibData = {
 		url: "https://nlab.org/nlab/show/information+geometry",
 		alternativetitle: "Information geometry (nLab) — Fisher–Rao metric on the space of distributions"
 	},
+	"hanin2019linearregions": {
+		title: "Complexity of Linear Regions in Deep Networks",
+		author: "Boris Hanin, David Rolnick",
+		year: 2019,
+		url: "https://arxiv.org/abs/1901.09021",
+		alternativetitle: "Hanin & Rolnick, typical complexity of linear regions (COLT 2019, arXiv:1901.09021)"
+	},
+	"raghu2017expressive": {
+		title: "On the Expressive Power of Deep Neural Networks",
+		author: "Maithra Raghu, Ben Poole, Jon Kleinberg, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1606.05336",
+		alternativetitle: "Raghu et al. 2017 — trajectory length: a 1-D sweep crosses the boundary exponentially many times in depth (COLT 2017, arXiv:1606.05336)"
+	},
+	"grigsby2020transversality": {
+		title: "On transversality of bent hyperplane arrangements and the topological expressiveness of ReLU neural networks",
+		author: "J. Elisenda Grigsby, Kathryn Lindsey",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.09052",
+		alternativetitle: "Grigsby & Lindsey — ReLU folds as bent hyperplane arrangements; generic nets have stable decision-region topology (arXiv:2008.09052)"
+	},
+	"lee2023topologywidth": {
+		title: "Data Topology-Dependent Upper Bounds of Neural Network Widths",
+		author: "Sangmin Lee, Jong Chul Ye",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.16375",
+		alternativetitle: "Lee & Ye 2023 — the width a net needs to separate data is bounded by the topology (holes) of the labels (ICLR 2023, arXiv:2305.16375)"
+	},
+	"carlsson2009topologydata": {
+		title: "Topology and Data",
+		author: "Gunnar Carlsson",
+		year: 2009,
+		journal: "Bulletin of the American Mathematical Society 46(2)",
+		url: "https://projecteuclid.org/journals/bulletin-of-the-american-mathematical-society/volume-46/issue-2/Bull-Amer-Math-Soc-46-2009-46.2/S0273-0952-09-01241-7",
+		alternativetitle: "Carlsson 2009 — the founding 'shape of data' topological-data-analysis paper (BAMS 46(2))"
+	},
+	"love2021topdeepsurvey": {
+		title: "Topological Deep Learning",
+		author: "Ephy R. Love, Benjamin Filippenko, Vasileios Maroulas, Gunnar Carlsson",
+		year: 2021,
+		url: "https://arxiv.org/abs/2101.05778",
+		alternativetitle: "Love et al. 2021 — a survey of topological deep learning (arXiv:2101.05778)"
+	},
+	"chen2018neuralode": {
+		title: "Neural Ordinary Differential Equations",
+		author: "Ricky T. Q. Chen, Yulia Rubanova, Jesse Bettencourt, David Duvenaud",
+		year: 2018,
+		url: "https://arxiv.org/abs/1806.07366",
+		alternativetitle: "Chen et al. 2018 — a continuous-depth net is the time-T flow (a diffeomorphism) of an ODE (NeurIPS 2018, arXiv:1806.07366)"
+	},
+	"teshima2020inndiffeo": {
+		title: "Coupling-based Invertible Neural Networks Are Universal Diffeomorphism Approximators",
+		author: "Takeshi Teshima, Isao Ishikawa, Koichi Tojo, et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/2006.11469",
+		alternativetitle: "Teshima et al. 2020 — invertible nets approximate any diffeomorphism (arXiv:2006.11469)"
+	},
+	"papamakarios2019flows": {
+		title: "Normalizing Flows for Probabilistic Modeling and Inference",
+		author: "George Papamakarios, Eric Nalisnick, Danilo Jimenez Rezende, et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1912.02762",
+		alternativetitle: "Papamakarios et al. — normalizing flows as diffeomorphisms pushing a base density forward (arXiv:1912.02762)"
+	},
+	"dinh2016realnvp": {
+		title: "Density Estimation Using Real-NVP",
+		author: "Laurent Dinh, Jascha Sohl-Dickstein, Samy Bengio",
+		year: 2016,
+		url: "https://arxiv.org/abs/1605.08803",
+		alternativetitle: "Dinh et al. 2016 — RealNVP: invertible coupling blocks, the mirror of the non-invertible ReLU fold (NeurIPS 2016, arXiv:1605.08803)"
+	},
+	"chung2017perceptual": {
+		title: "Classification and Geometry of General Perceptual Manifolds",
+		author: "SueYeon Chung, Daniel D. Lee, Haim Sompolinsky",
+		year: 2017,
+		url: "https://arxiv.org/abs/1710.06487",
+		alternativetitle: "Chung, Lee & Sompolinsky — each class is a low-dim perceptual manifold; classification = separating them (arXiv:1710.06487)"
+	},
+	"loaizaganem2024manifoldsurvey": {
+		title: "Deep Generative Models through the Lens of the Manifold Hypothesis: A Survey and New Connections",
+		author: "Gabriel Loaiza-Ganem, Brendan Leigh Ross, Rasa Hosseinzadeh, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.02954",
+		alternativetitle: "Loaiza-Ganem et al. 2024 — the manifold hypothesis as a live deep-learning assumption (arXiv:2404.02954)"
+	},
+	"yoneda_nlab": {
+		title: "Yoneda embedding",
+		author: "nLab contributors (Yoneda lemma; Yoneda 1965)",
+		year: 2026,
+		url: "https://nlab.org/nlab/show/Yoneda+embedding",
+		alternativetitle: "Yoneda embedding (nLab) — an object is fully determined by its relationships to everything else"
+	},
+	"cruzmorales2021grothendieck": {
+		title: "The notion of space in Grothendieck: from schemes to a geometry of forms",
+		author: "John Alexander Cruz Morales",
+		year: 2021,
+		url: "https://arxiv.org/abs/2105.08799",
+		alternativetitle: "Cruz Morales 2021 (secondary) — Grothendieck's philosophy of the notion of space (arXiv:2105.08799)"
+	},
+	"lee2019widelinear": {
+		title: "Wide Neural Networks of Any Depth Evolve as Linear Models Under Gradient Descent",
+		author: "Jaehoon Lee, Lechao Xiao, Samuel S. Schoenholz, et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1902.06720",
+		alternativetitle: "Lee et al. 2019 — at infinite width any depth acts linearly on the initial features (NeurIPS 2019, arXiv:1902.06720)"
+	},
+	"wu2024linguisticcollapse": {
+		title: "Linguistic Collapse: Neural Collapse in (Large) Language Models",
+		author: "Robert Wu, Vardan Papyan",
+		year: 2024,
+		url: "https://arxiv.org/abs/2405.17767",
+		alternativetitle: "Wu & Papyan 2024 — the simplex-ETF terminal geometry also governs LLMs (arXiv:2405.17767)"
+	},
 	"black2022polytopelens": {
 		title: "Interpreting Neural Networks through the Polytope Lens",
 		author: "Sid Black, Lee Sharkey, Leo Grinsztajn, Eric Winsor, Dan Braun, Jacob Merizian, Kip Parker, Carlos Ramón Guevara, Beren Millidge, Gabriel Alfour, Connor Leahy",
