@@ -442,7 +442,7 @@ It would be a distortion to present only the dangers. AI has also produced **gen
 
 ### Accessibility: Seeing Without Eyes
 
-**Be My Eyes**, an app that connects blind and visually impaired users to sighted volunteers via live video, launched **Be My AI** in **March 2023** — a GPT-4-powered visual assistant that lets a blind user photograph an object and get an interactive, conversational description with follow-up questions \cite[Be My Eyes, 2023]{beemyeyes2023}. It hit **1 million sessions within two weeks** of its open beta release. It was named among **Time's Best Inventions of 2023**.
+**Be My Eyes**, an app that connects blind and visually impaired users to sighted volunteers via live video, launched **Be My AI** in **March 2023** — a GPT-4-powered visual assistant that lets a blind user photograph an object and get an interactive, conversational description with follow-up questions \cite[Be My Eyes, 2023]{beemyeyes2023} \cite[Be My Eyes]{beemyeyes_site}. It hit **1 million sessions within two weeks** of its open beta release. It was named among **Time's Best Inventions of 2023**.
 
 By 2024, Be My Eyes had integrated with **Ray-Ban Meta smart glasses** (hands-free, real-time visual descriptions via voice commands) and partnered with **Hilton** (live video assistance for blind hotel guests) and, in October 2025, with **Tesco** (in-store visual assistance in UK supermarkets, launched on World Sight Day). A blind person can now independently read a menu, identify a face, navigate a hotel room, or shop for groceries — tasks that previously required a human helper.
 

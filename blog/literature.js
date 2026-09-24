@@ -15892,6 +15892,13 @@ window.bibData = {
 		url: "https://www.bemyeyes.com/news/be-my-ai-hits-one-million-sessions-only-two-weeks-after-open-beta-release/",
 		alternativetitle: "Be My Eyes, Oct 2023 — AI visual assistance for blind users"
 	},
+	"beemyeyes_site": {
+		title: "Be My Eyes",
+		author: "Be My Eyes",
+		year: 2026,
+		url: "https://www.bemyeyes.com/",
+		alternativetitle: "Be My Eyes — AI-powered visual assistance for blind and low-vision users"
+	},
 	"characterai_wiki": {
 		title: "Character.ai",
 		author: "Wikipedia contributors",
