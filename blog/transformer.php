@@ -882,6 +882,8 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 </div>
 
+<span class="glossary-tooltip" data-tooltip-id="tt-mesa-optimizer">An optimizer that emerges inside the weights of a trained model — the inner, "found" optimizer, as opposed to a meta-optimizer, the outer training process that finds or builds optimizers. It pursues its own mesa-objective, which can differ from the training loss, so aligning the outer system says nothing by itself about what the inner one will do.</span>
+
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
 	<details id="tda-live-details">
 	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
