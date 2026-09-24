@@ -1,0 +1,2792 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Informationsgravitation · Interaktive Reise durch das Paper</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+:root{
+  --bg:#05060c; --bg2:#0a0d18; --panel:rgba(18,22,38,.72); --panel2:rgba(26,31,52,.6);
+  --line:rgba(120,140,220,.18); --txt:#e8ecff; --dim:#98a3c9; --dim2:#6b7699;
+  --a:#6ee7ff; --b:#a78bfa; --c:#ff8ab8; --d:#7dffb3; --e:#ffd479; --f:#ff6b6b;
+  --glow:0 0 40px rgba(110,231,255,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+#starfield{position:fixed;inset:0;z-index:0;opacity:.55;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px 140px}
+
+/* ── Header ── */
+header{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative}
+.kicker{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--a);opacity:.8;margin-bottom:22px}
+h1{font-size:clamp(2.4rem,6.4vw,4.6rem);line-height:1.04;font-weight:800;letter-spacing:-.03em;
+   background:linear-gradient(120deg,#fff 5%,var(--a) 38%,var(--b) 64%,var(--c) 92%);
+   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+.sub{font-size:clamp(1rem,2vw,1.22rem);color:var(--dim);max-width:720px;margin-bottom:14px}
+.paperref{font-size:.85rem;color:var(--dim2);margin-bottom:38px}
+.scrollhint{position:absolute;bottom:34px;font-size:.78rem;color:var(--dim2);animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(9px);opacity:1}}
+
+/* ── Sections ── */
+section{margin:120px 0;scroll-margin-top:80px}
+.stepno{display:inline-flex;align-items:center;gap:10px;font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--b);margin-bottom:14px}
+.stepno::before{content:'';width:34px;height:1px;background:linear-gradient(90deg,var(--b),transparent)}
+h2{font-size:clamp(1.8rem,3.6vw,2.7rem);font-weight:750;letter-spacing:-.022em;margin-bottom:16px;line-height:1.15}
+h3{font-size:1.2rem;font-weight:650;margin:30px 0 12px;color:#fff}
+h4{font-size:1rem;font-weight:620;margin:20px 0 8px;color:var(--a)}
+p{color:var(--dim);margin-bottom:14px;max-width:820px}
+p strong,li strong{color:var(--txt);font-weight:600}
+.lead{font-size:1.08rem;color:#c3cbe8}
+ul{margin:0 0 16px 20px;color:var(--dim)} li{margin-bottom:7px}
+
+/* ── Panels ── */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin:26px 0;
+  backdrop-filter:blur(14px);box-shadow:var(--glow)}
+.panel.tight{padding:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gridS{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+@media(max-width:900px){.grid2,.grid3,.gridS{grid-template-columns:1fr}}
+
+/* ── Controls ── */
+.ctl{margin-bottom:17px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--dim);margin-bottom:7px;font-weight:500}
+.ctl .val{font-family:'SF Mono',ui-monospace,Menlo,monospace;color:var(--a);font-size:.84rem;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:4px;
+  background:linear-gradient(90deg,var(--a),var(--b));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 0 12px rgba(110,231,255,.9);cursor:pointer;transition:transform .12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.22)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#fff;border:none;box-shadow:0 0 12px rgba(110,231,255,.9)}
+button{background:rgba(110,231,255,.1);border:1px solid rgba(110,231,255,.34);color:var(--a);
+  padding:9px 16px;border-radius:9px;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:inherit}
+button:hover{background:rgba(110,231,255,.22);transform:translateY(-1px)}
+button.alt{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.34);color:var(--b)}
+button.alt:hover{background:rgba(167,139,250,.22)}
+button.on{background:var(--a);color:#05060c}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+select,input[type=text]{background:rgba(10,13,24,.85);border:1px solid var(--line);color:var(--txt);
+  padding:8px 11px;border-radius:8px;font-family:inherit;font-size:.86rem;width:100%}
+
+/* ── Canvas / plots ── */
+canvas{display:block;width:100%;border-radius:12px;background:rgba(5,7,14,.65)}
+.plot{width:100%;height:330px}
+
+/* ── Callouts ── */
+.note{border-left:3px solid var(--a);background:rgba(110,231,255,.055);padding:14px 18px;border-radius:0 11px 11px 0;margin:18px 0;font-size:.92rem}
+.note.warn{border-color:var(--e);background:rgba(255,212,121,.055)}
+.note.crit{border-color:var(--f);background:rgba(255,107,107,.055)}
+.note.good{border-color:var(--d);background:rgba(125,255,179,.055)}
+.note b{color:#fff}
+.eq{background:rgba(5,7,14,.6);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;overflow-x:auto;text-align:center}
+.eqlbl{font-size:.72rem;color:var(--dim2);text-align:right;margin-top:6px;letter-spacing:.08em}
+.mono{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.86rem}
+.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.tag.pre{background:rgba(167,139,250,.16);color:var(--b)}
+.tag.pap{background:rgba(110,231,255,.16);color:var(--a)}
+.tag.crit{background:rgba(255,107,107,.16);color:var(--f)}
+
+/* readout cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:11px;margin:16px 0}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center}
+.card .k{font-size:.68rem;color:var(--dim2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+.card .v{font-size:1.32rem;font-weight:730;font-family:'SF Mono',ui-monospace,monospace}
+.card .u{font-size:.68rem;color:var(--dim2);margin-top:2px}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,6,12,.82);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);padding:9px 0;transform:translateY(-100%);transition:transform .32s}
+nav.show{transform:translateY(0)}
+.navin{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.navin::-webkit-scrollbar{display:none}
+nav a{color:var(--dim2);text-decoration:none;font-size:.74rem;padding:6px 10px;border-radius:7px;white-space:nowrap;transition:all .16s;font-weight:500}
+nav a:hover,nav a.act{color:var(--a);background:rgba(110,231,255,.1)}
+.prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--a),var(--b),var(--c));z-index:101;transition:width .1s}
+
+/* misc */
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--a);font-weight:640;font-size:.76rem;text-transform:uppercase;letter-spacing:.1em}
+td{color:var(--dim)}
+.tokenbar{display:flex;align-items:center;gap:9px;margin-bottom:5px;font-size:.82rem}
+.tokenbar .nm{width:88px;text-align:right;color:var(--dim);font-family:ui-monospace,monospace;flex-shrink:0}
+.tokenbar .bar{height:16px;border-radius:4px;transition:width .28s cubic-bezier(.4,0,.2,1);min-width:1px}
+.tokenbar .pc{font-family:ui-monospace,monospace;color:var(--dim2);font-size:.74rem;width:52px}
+.out{background:rgba(5,7,14,.7);border:1px solid var(--line);border-radius:10px;padding:13px;
+  font-family:ui-monospace,monospace;font-size:.84rem;min-height:56px;line-height:1.85;word-break:break-word}
+.hl{color:var(--e)} .hl2{color:var(--f);font-weight:600} .hl3{color:var(--d)}
+.quiz{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:18px;margin:16px 0}
+.qopt{display:block;width:100%;text-align:left;margin-bottom:7px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);color:var(--dim);padding:10px 13px;border-radius:9px;cursor:pointer;font-size:.88rem}
+.qopt:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.qopt.ok{border-color:var(--d);background:rgba(125,255,179,.13);color:var(--d)}
+.qopt.no{border-color:var(--f);background:rgba(255,107,107,.13);color:var(--f)}
+.fin{text-align:center;padding:60px 26px;background:linear-gradient(135deg,rgba(110,231,255,.07),rgba(167,139,250,.07));
+  border:1px solid var(--line);border-radius:22px}
+details{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:13px 16px;margin:12px 0}
+summary{cursor:pointer;color:var(--a);font-weight:600;font-size:.9rem}
+details[open] summary{margin-bottom:10px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.76rem;color:var(--dim2);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<nav id="nav"><div class="navin" id="navin"></div></nav>
+<canvas id="starfield"></canvas>
+
+<div class="wrap">
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <div class="kicker">Interaktives Paper-Erlebnis</div>
+  <h1>Informations&shy;gravitation</h1>
+  <p class="sub">Was, wenn deine Frage an ein Sprachmodell eine <em>Masse</em> hätte — und damit den Bedeutungsraum krümmt, durch den das Modell beim Antworten „fällt“?</p>
+  <p class="paperref">Maryna Vyshnyvetska · „Information Gravity: A Field-Theoretic Model for Token Selection in LLMs“ · arXiv:2504.20951v1 (2025)</p>
+  <div class="btnrow"><button onclick="document.getElementById('s1').scrollIntoView()">Reise starten ↓</button></div>
+  <div class="scrollhint">scrollen · schieben · spielen</div>
+</header>
+
+<!-- ═══════════ 1 · PROBLEM ═══════════ -->
+<section id="s1">
+  <div class="stepno">Schritt 1 · Das Problem</div>
+  <h2>Drei Rätsel, die niemand erklären kann</h2>
+  <p class="lead">Bevor wir irgendeine Theorie bauen: Wofür brauchen wir sie überhaupt? Das Paper startet bei drei konkreten, <b>gemessenen</b> Beobachtungen an echten Sprachmodellen. Probier sie hier selbst aus.</p>
+
+  <div class="panel">
+    <h3>Rätsel A · Der „Zufalls"-Generator, der nicht zufällig ist</h3>
+    <p>Bitte ein LLM um eine Zufallszahl von 1–10. Intuitiv erwartest du eine Gleichverteilung. Bekommst du aber nicht. Zhang et al. (2024) fanden: Llama-2-13B-chat bevorzugt massiv die <b>5</b>; Mistral-7B wählt den Namen „Avery" <b>40× häufiger</b> als erwartet.</p>
+    <div class="btnrow">
+      <button id="rndIdeal" class="on">Erwartung (gleichverteilt)</button>
+      <button id="rndReal" class="alt">Realität (gemessen)</button>
+      <button id="rndRoll">🎲 100× würfeln lassen</button>
+    </div>
+    <canvas id="cRandom" height="260"></canvas>
+    <div class="note" id="rndNote"><b>Die Frage:</b> Woher kommt der „Sog" zur 5? Reine Statistik der Trainingsdaten erklärt das Ausmaß nicht. Das Paper nennt so etwas einen versteckten <b>Attraktor</b>.</div>
+  </div>
+
+  <div class="panel">
+    <h3>Rätsel B · Ein Komma ändert 56 Prozentpunkte</h3>
+    <p>Sclar et al. (2023): Bei <b>identischer Aufgabe</b>, nur anderem Prompt-<em>Format</em>, schwankte die Qualität um bis zu <b>56 Prozentpunkte</b>. Fahr über die Varianten:</p>
+    <div id="promptList"></div>
+    <canvas id="cPrompt" height="200"></canvas>
+    <div class="note warn">Ein rein „statistisches Textvorhersage"-Bild sagt: gleiche Semantik → gleiches Ergebnis. Die Messung sagt: <b>nein</b>. Es muss eine <em>Landschaft</em> geben, auf der das Modell je nach Startpunkt woandershin rutscht.</div>
+  </div>
+
+  <div class="panel">
+    <h3>Rätsel C · Halluzinationen kommen nicht zufällig</h3>
+    <p>Modelle erfinden Fakten — aber nicht gleichmäßig verteilt. Sie tun es <b>systematisch</b> bei bestimmten Fragetypen. Klick die Fragen an und sieh, was passiert:</p>
+    <div id="halluQs" class="btnrow"></div>
+    <div class="out" id="halluOut">↑ Eine Frage wählen.</div>
+    <div class="note crit">Was haben die Halluzinations-Fälle gemeinsam? Genau das versucht das Paper zu <b>formalisieren</b> — und nennt es später „hohe Informationsmasse trifft auf semantische Leere".</div>
+  </div>
+
+  <div class="note good"><b>Ziel des Papers:</b> Nicht drei separate Erklärungen, sondern <b>eine einzige Sprache</b>, in der alle drei Rätsel derselbe Effekt in verschiedenen Parameterbereichen sind. Diese Sprache leiht sich die Autorin aus der Physik.</div>
+</section>
+
+<!-- ═══════════ 2 · IDEE ═══════════ -->
+<section id="s2">
+  <div class="stepno">Schritt 2 · Die Idee</div>
+  <h2>Die Analogie: Masse krümmt Raum</h2>
+  <p class="lead">In Einsteins Bild bewegt sich ein Planet nicht, weil eine Kraft an ihm zieht — er folgt einfach der <em>Krümmung</em> des Raums, die eine Masse erzeugt. Die Autorin überträgt genau dieses Bild.</p>
+
+  <div class="panel">
+    <h3>Erst die Physik zum Anfassen</h3>
+    <p>Zieh die Masse hoch und sieh, wie das Gummituch sich verformt — und wie eine Testkugel darauf reagiert.</p>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Masse M <span class="val" id="vMass">1.0</span></label><input type="range" id="sMass" min="0" max="3" step="0.05" value="1"></div>
+        <div class="ctl"><label>Startgeschwindigkeit der Kugel <span class="val" id="vVel">0.9</span></label><input type="range" id="sVel" min="0" max="2" step="0.02" value="0.9"></div>
+        <div class="btnrow"><button id="gravRun">▶ Kugel loslassen</button><button id="gravReset" class="alt">Reset</button></div>
+        <div class="note tight"><b>Beobachtung:</b> größere Masse → tiefere Delle → stärkere Ablenkung. Bei zu langsamer Kugel: <b>Einfang</b> (sie kommt nicht mehr raus).</div>
+      </div>
+      <canvas id="cGrav" height="380"></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Jetzt die Übersetzung</h3>
+    <table>
+      <tr><th>Physik</th><th>→</th><th>Sprachmodell</th></tr>
+      <tr><td>Raumzeit</td><td>→</td><td><b>Latenter Raum</b> ℒ — der n-dimensionale Raum der internen Repräsentationen (Embeddings, Attention-Vektoren)</td></tr>
+      <tr><td>Masse M</td><td>→</td><td><b>Informationsmasse M(Q)</b> der Nutzerfrage</td></tr>
+      <tr><td>Gravitationspotential Φ</td><td>→</td><td><b>Semantisches Potential</b> Φ(t,Q) = −log P(t|Q)</td></tr>
+      <tr><td>Gravitationskraft g = −∇Φ</td><td>→</td><td><b>Informationsgravitation</b> — zeigt zum wahrscheinlichsten Token</td></tr>
+      <tr><td>Temperatur / Wärmebewegung</td><td>→</td><td><b>Sampling-Temperatur T</b></td></tr>
+      <tr><td>Bahn kleinster Wirkung</td><td>→</td><td><b>Generierungstrajektorie</b> τ = t₁,t₂,…,tₙ</td></tr>
+      <tr><td>Schwarzes Loch</td><td>→</td><td><b>Informations-Schwarzloch</b> (Alignment-Zwangsantworten)</td></tr>
+      <tr><td>Kosmische Leere (Void)</td><td>→</td><td><b>Semantische Leere</b> → Halluzination</td></tr>
+    </table>
+    <div class="note warn"><b>Wichtige Warnung — auch die Autorin betont sie (Abschnitt 4.4):</b> Das ist eine <b>konzeptuelle Landkarte</b>, kein wörtliches physikalisches Modell. Es gibt keine echte Gravitation in einem Transformer. Der Wert liegt darin, dass die Sprache <em>präzise Fragen</em> und <em>testbare Vorhersagen</em> erzeugt.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 3 · PREREQUISITE: ENTROPIE ═══════════ -->
+<section id="s3">
+  <div class="stepno">Schritt 3 · Vorwissen <span class="tag pre" style="margin-left:10px">über Abi hinaus</span></div>
+  <h2>Baustein 1: Entropie H — „Wie unsicher ist das Modell?“</h2>
+  <p class="lead">Das Paper braucht drei mathematische Werkzeuge, die im Abi nicht vorkommen. Wir bauen sie einzeln, spielerisch. Das erste ist die <b>Shannon-Entropie</b>.</p>
+
+  <div class="panel">
+    <h3>Intuition: Entropie = erwartete Überraschung</h3>
+    <p>Stell dir vor, du bekommst eine Nachricht. Wie viel <b>Information</b> steckt drin? Shannons Antwort: Je unwahrscheinlicher ein Ereignis, desto überraschender — desto mehr Information. Die Überraschung eines Ereignisses mit Wahrscheinlichkeit <span class="mono">p</span> ist <span class="mono">−log₂(p)</span> Bits.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctl"><label>Wahrscheinlichkeit p des Ereignisses <span class="val" id="vSurpP">0.50</span></label><input type="range" id="sSurpP" min="0.001" max="1" step="0.001" value="0.5"></div>
+        <div class="cards">
+          <div class="card"><div class="k">Überraschung</div><div class="v" style="color:var(--c)" id="oSurp">1.00</div><div class="u">Bits = −log₂ p</div></div>
+          <div class="card"><div class="k">Bedeutung</div><div class="v" style="font-size:.9rem;color:var(--e)" id="oSurpTxt">Münzwurf</div><div class="u"> </div></div>
+        </div>
+        <div class="note tight">p = 1 (sicheres Ereignis) → 0 Bits Überraschung. „Die Sonne ging auf“ sagt dir nichts Neues. p = 1/1000 → ~10 Bits. „Du hast im Lotto gewonnen“ ist hochinformativ.</div>
+      </div>
+      <canvas id="cSurprise" height="270"></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Entropie = Durchschnitt der Überraschungen</h3>
+    <div class="eq" id="eqEntropy"></div>
+    <div class="eqlbl">Gleichung (2) im Paper</div>
+    <p>Zieh an den Balken und beobachte: Entropie ist <b>maximal</b> bei Gleichverteilung (das Modell weiß gar nichts) und <b>null</b>, wenn ein Token die ganze Wahrscheinlichkeit hat (das Modell ist absolut sicher).</p>
+    <div class="gridS">
+      <div>
+        <div id="entSliders"></div>
+        <div class="btnrow">
+          <button id="entUni">⚖️ Gleichverteilt</button>
+          <button id="entPeak" class="alt">🎯 Spitz</button>
+          <button id="entRand" class="alt">🎲 Zufällig</button>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="k">Entropie H</div><div class="v" style="color:var(--a)" id="oEnt">2.32</div><div class="u">Bits</div></div>
+          <div class="card"><div class="k">Maximum</div><div class="v" style="color:var(--dim2)" id="oEntMax">2.32</div><div class="u">log₂(5)</div></div>
+          <div class="card"><div class="k">Perplexität</div><div class="v" style="color:var(--b)" id="oPerp">5.0</div><div class="u">2^H</div></div>
+        </div>
+      </div>
+      <div><canvas id="cEnt" height="300"></canvas>
+        <div class="legend"><span><i class="dot" style="background:var(--a)"></i>Wahrscheinlichkeit p</span><span><i class="dot" style="background:var(--c)"></i>Beitrag zur Entropie</span></div>
+      </div>
+    </div>
+    <div class="note good"><b>Merksatz fürs Paper:</b> H(Q) misst die <b>Mehrdeutigkeit</b> einer Frage. „Erzähl mir was“ → hohe Entropie. „Was ist 2+2?“ → nahezu null. Hohe Entropie = starke Krümmung des semantischen Raums (Paper, §2.2.1).</div>
+  </div>
+</section>
+
+<!-- ═══════════ 4 · PREREQUISITE: KL & MI ═══════════ -->
+<section id="s4">
+  <div class="stepno">Schritt 4 · Vorwissen <span class="tag pre" style="margin-left:10px">über Abi hinaus</span></div>
+  <h2>Baustein 2: KL-Divergenz und Mutual Information</h2>
+
+  <div class="panel">
+    <h3>KL-Divergenz D<sub>KL</sub>(P‖Q) — „Wie fremd ist P gegenüber Q?“</h3>
+    <p>Die Kullback-Leibler-Divergenz misst, wie sehr sich eine Verteilung P von einer Referenzverteilung Q unterscheidet. Im Paper: wie weit ist deine Frage von den <b>Trainingsdaten</b> entfernt? Das ist die <b>Novelty N(Q)</b>.</p>
+    <div class="eq" id="eqKL"></div>
+    <div class="eqlbl">Gleichung (4) im Paper</div>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Position der Anfrage-Verteilung μ<sub>P</sub> <span class="val" id="vKLmu">0.0</span></label><input type="range" id="sKLmu" min="-4" max="4" step="0.05" value="0"></div>
+        <div class="ctl"><label>Breite der Anfrage-Verteilung σ<sub>P</sub> <span class="val" id="vKLsig">1.00</span></label><input type="range" id="sKLsig" min="0.25" max="3" step="0.02" value="1"></div>
+        <div class="cards">
+          <div class="card"><div class="k">D<sub>KL</sub>(P‖P<sub>train</sub>)</div><div class="v" style="color:var(--c)" id="oKL">0.00</div><div class="u">nats</div></div>
+          <div class="card"><div class="k">Novelty N(Q)</div><div class="v" style="font-size:.95rem" id="oKLtxt">vertraut</div><div class="u"> </div></div>
+        </div>
+        <div class="note tight"><b>Achtung, unsymmetrisch:</b> D<sub>KL</sub>(P‖Q) ≠ D<sub>KL</sub>(Q‖P). Deshalb ist sie eine <em>Divergenz</em>, keine Distanz. Sie ist immer ≥ 0 und genau dann 0, wenn P = P<sub>train</sub>.</div>
+      </div>
+      <canvas id="cKL" height="300"></canvas>
+      <div class="legend" style="grid-column:1/-1"><span><i class="dot" style="background:var(--b)"></i>P<sub>train</sub> (Trainingsverteilung)</span><span><i class="dot" style="background:var(--a)"></i>P(Q) (deine Frage)</span><span><i class="dot" style="background:var(--c)"></i>punktweiser KL-Beitrag</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Mutual Information I(X;Y) — „Wie viel verrät der Kontext über die Frage?“</h3>
+    <p>MI misst die geteilte Information zweier Größen: Um wie viel sinkt meine Unsicherheit über Y, wenn ich X kenne? Im Paper ist die <b>Kontexttiefe D(Q)</b> die Summe der MI zwischen Frage und allen vorherigen Kontextteilen.</p>
+    <div class="eq" id="eqMI"></div>
+    <div class="eqlbl">Gleichung (3) im Paper</div>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Überlappung / Korrelation ρ <span class="val" id="vMI">0.60</span></label><input type="range" id="sMI" min="0" max="0.98" step="0.01" value="0.6"></div>
+        <div class="cards">
+          <div class="card"><div class="k">H(Q)</div><div class="v" style="color:var(--a)" id="oMIa">2.00</div></div>
+          <div class="card"><div class="k">H(C)</div><div class="v" style="color:var(--b)" id="oMIb">2.00</div></div>
+          <div class="card"><div class="k">I(Q;C)</div><div class="v" style="color:var(--d)" id="oMIi">0.32</div></div>
+        </div>
+        <div class="note tight">ρ = 0 → Frage und Kontext sind unabhängig, I = 0 (flache Landschaft, kein Sog). ρ → 1 → tiefe Verzahnung, I groß. Das Paper: hohe Kontexttiefe erzeugt <b>ausgedehnte Gravitationsfelder mit vielen lokalen Minima</b>.</div>
+      </div>
+      <canvas id="cMI" height="300"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 5 · INFORMATIONSMASSE ═══════════ -->
+<section id="s5">
+  <div class="stepno">Schritt 5 · Kernkonzept <span class="tag pap" style="margin-left:10px">Paper §2.2</span></div>
+  <h2>Die Informationsmasse M(Q)</h2>
+  <p class="lead">Jetzt setzen wir die drei Bausteine zusammen. Das ist Gleichung (1) — das Herzstück des Papers.</p>
+  <div class="eq" id="eqMass"></div>
+  <div class="eqlbl">Gleichung (1) im Paper</div>
+
+  <div class="panel">
+    <h3>Massen-Labor</h3>
+    <p>Wähle eine Beispielfrage <em>oder</em> stelle die drei Komponenten selbst ein. Die Kugel rechts zeigt die resultierende Masse und die Delle, die sie im Bedeutungsraum erzeugt.</p>
+    <div class="gridS">
+      <div>
+        <label style="font-size:.82rem;color:var(--dim);display:block;margin-bottom:7px">Beispiel-Anfrage laden</label>
+        <select id="qPreset"></select>
+        <div style="margin-top:18px"></div>
+        <div class="ctl"><label><span style="color:var(--a)">H(Q)</span> · Entropie / Mehrdeutigkeit <span class="val" id="vH">0.40</span></label><input type="range" id="sH" min="0" max="1" step="0.01" value="0.4"></div>
+        <div class="ctl"><label><span style="color:var(--b)">D(Q)</span> · Kontexttiefe <span class="val" id="vD">0.30</span></label><input type="range" id="sD" min="0" max="1" step="0.01" value="0.3"></div>
+        <div class="ctl"><label><span style="color:var(--c)">N(Q)</span> · Novelty vs. Trainingsdaten <span class="val" id="vN">0.20</span></label><input type="range" id="sN" min="0" max="1" step="0.01" value="0.2"></div>
+        <details>
+          <summary>Gewichte α, β, γ anpassen</summary>
+          <div class="ctl"><label>α (Entropie-Gewicht) <span class="val" id="vA">1.00</span></label><input type="range" id="sA" min="0" max="2" step="0.05" value="1"></div>
+          <div class="ctl"><label>β (Tiefe-Gewicht) <span class="val" id="vB">1.00</span></label><input type="range" id="sB" min="0" max="2" step="0.05" value="1"></div>
+          <div class="ctl"><label>γ (Novelty-Gewicht) <span class="val" id="vG">1.00</span></label><input type="range" id="sG" min="0" max="2" step="0.05" value="1"></div>
+          <p style="font-size:.84rem;margin:8px 0 0">Das Paper lässt α,β,γ bewusst offen — sie sind aufgabenabhängig zu kalibrieren. Genau das ist eine der offenen Schwächen (§4.4).</p>
+        </details>
+      </div>
+      <div>
+        <canvas id="cMass" height="300"></canvas>
+        <div class="cards">
+          <div class="card"><div class="k">Informationsmasse M(Q)</div><div class="v" id="oMass" style="color:var(--e)">0.90</div></div>
+          <div class="card"><div class="k">Regime</div><div class="v" style="font-size:.88rem" id="oRegime">stabil</div></div>
+        </div>
+        <div class="out" id="massVerdict"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note warn"><b>Kritische Ehrlichkeit:</b> H, D und N sind nicht unabhängig — eine neuartige Frage hat oft auch hohe Entropie. Das Paper nennt genau diese Verschränkung als Messproblem (§4.4, §7.3) und schlägt in §5 vor, die drei Faktoren experimentell zu <b>entkoppeln</b>.</div>
+</section>
+
+<!-- ═══════════ 6 · POTENTIAL ═══════════ -->
+<section id="s6">
+  <div class="stepno">Schritt 6 · Kernkonzept <span class="tag pap" style="margin-left:10px">Paper §2.3–2.4</span></div>
+  <h2>Semantisches Potential Φ und der Gradient</h2>
+  <p class="lead">Wahrscheinlichkeit wird zu Höhe. Das ist der eine Trick, der alles zusammenhält.</p>
+  <div class="eq" id="eqPhi"></div>
+  <div class="eqlbl">Gleichungen (5) und (6) im Paper</div>
+
+  <div class="panel">
+    <h3>Von Wahrscheinlichkeit zu Landschaft</h3>
+    <p>Links: die Wahrscheinlichkeiten, die das Modell den nächsten Tokens gibt. Rechts: dieselbe Information als <b>Potentiallandschaft</b> Φ = −log P. Hohe Wahrscheinlichkeit = tiefes Tal. Der Ball rollt immer ins tiefste erreichbare Tal.</p>
+    <div class="grid2">
+      <div><canvas id="cProb" height="250"></canvas><p style="text-align:center;font-size:.8rem;color:var(--dim2)">Wahrscheinlichkeit P(t|Q)</p></div>
+      <div><canvas id="cPot" height="250"></canvas><p style="text-align:center;font-size:.8rem;color:var(--dim2)">Potential Φ = −log P — <span style="color:var(--e)">Ball rollt bergab</span></p></div>
+    </div>
+    <div class="btnrow">
+      <button id="potA" class="on">Klare Frage („Hauptstadt von Frankreich“)</button>
+      <button id="potB" class="alt">Mehrdeutige Frage</button>
+      <button id="potC" class="alt">Leere-Fall (Halluzinationsrisiko)</button>
+      <button id="potDrop">⚽ Ball rollen lassen</button>
+    </div>
+    <div class="note" id="potNote"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Gradient −∇Φ: die „Informationsgravitation“</h3>
+    <p>Der Gradient ist der Vektor der steilsten Steigung. Mit Minuszeichen zeigt er bergab — also zum wahrscheinlichsten Token. Bewege die Maus über die Landschaft: der Pfeil zeigt dir die lokale Gravitationsrichtung und -stärke.</p>
+    <canvas id="cGradient" height="320"></canvas>
+    <div class="cards">
+      <div class="card"><div class="k">Position x</div><div class="v" id="oGx">—</div></div>
+      <div class="card"><div class="k">Φ(x)</div><div class="v" style="color:var(--b)" id="oGphi">—</div></div>
+      <div class="card"><div class="k">g = −dΦ/dx</div><div class="v" style="color:var(--d)" id="oGg">—</div></div>
+      <div class="card"><div class="k">Richtung</div><div class="v" style="font-size:1rem" id="oGdir">—</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 7 · 3D-LANDSCHAFT ═══════════ -->
+<section id="s7">
+  <div class="stepno">Schritt 7 · Zusammenführung</div>
+  <h2>Die Landschaft in 3D — Frage krümmt Raum</h2>
+  <p class="lead">Jetzt sehen wir, was das Paper in Abbildung 1 zeichnet: Die Anfrage erzeugt eine Gravitationsdelle. Dreh die Landschaft mit der Maus.</p>
+
+  <div class="panel">
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Informationsmasse M(Q) <span class="val" id="v3M">1.0</span></label><input type="range" id="s3M" min="0.1" max="3" step="0.05" value="1"></div>
+        <div class="ctl"><label>Zerklüftung (viele lokale Minima) <span class="val" id="v3R">0.30</span></label><input type="range" id="s3R" min="0" max="1.2" step="0.02" value="0.3"></div>
+        <div class="ctl"><label>Semantische Leere (Void-Tiefe) <span class="val" id="v3V">0.00</span></label><input type="range" id="s3V" min="0" max="1" step="0.02" value="0"></div>
+        <div class="ctl"><label>Alignment-Attraktor („Schwarzes Loch“) <span class="val" id="v3B">0.00</span></label><input type="range" id="s3B" min="0" max="2.5" step="0.05" value="0"></div>
+        <div class="btnrow"><button id="b3Reset" class="alt">Reset</button></div>
+        <div class="note tight" id="n3">Drehe die Fläche. <b>Tief = wahrscheinlich.</b> Zerklüftung erzeugt Fallen; die Leere ist ein flaches Plateau ohne klaren Sog; das schwarze Loch ist ein extrem tiefer, schmaler Trichter.</div>
+      </div>
+      <div id="p3d" class="plot" style="height:440px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 8 · TEMPERATUR ═══════════ -->
+<section id="s8">
+  <div class="stepno">Schritt 8 · Dynamik <span class="tag pap" style="margin-left:10px">Paper §3, §4.3</span></div>
+  <h2>Boltzmann-Verteilung: Temperatur als Wärmebewegung</h2>
+  <p class="lead">Jetzt wird das Potential wieder in Wahrscheinlichkeit zurückübersetzt — aber mit einem Regler: der Temperatur T. Das ist exakt die Softmax-Formel, die jedes LLM beim Sampling benutzt.</p>
+  <div class="eq" id="eqBoltz"></div>
+  <div class="eqlbl">Gleichungen (7), (8) im Paper — Boltzmann-Verteilung / Softmax</div>
+
+  <div class="panel">
+    <h3>Temperatur-Labor</h3>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Temperatur T <span class="val" id="vT">1.00</span></label><input type="range" id="sT" min="0.02" max="3" step="0.01" value="1"></div>
+        <div class="cards">
+          <div class="card"><div class="k">Entropie H</div><div class="v" style="color:var(--a)" id="oTH">—</div><div class="u">Bits</div></div>
+          <div class="card"><div class="k">Max. möglich</div><div class="v" style="color:var(--dim2)" id="oTHmax">—</div><div class="u">log₂|V|</div></div>
+          <div class="card"><div class="k">Top-Token</div><div class="v" style="font-size:.95rem;color:var(--e)" id="oTTop">—</div></div>
+        </div>
+        <div class="note tight" id="tNote"></div>
+        <div class="btnrow"><button id="tSample">🎲 20 Tokens ziehen</button></div>
+        <div class="out" id="tSampleOut">—</div>
+      </div>
+      <div><div id="tokenBars"></div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Grenzwerte aus Gleichung (12)</h3>
+    <p>Das Paper macht zwei präzise Vorhersagen. Der Plot zeigt sie live: H(T) startet bei 0 und läuft gegen log|V|.</p>
+    <div id="pTemp" class="plot"></div>
+    <div class="grid2">
+      <div class="note"><b>T → 0:</b> H → 0. Das Modell folgt strikt dem Gradienten, wählt immer denselben Token. <em>„Gravitational capture“</em> — deterministisch, aber stereotyp.</div>
+      <div class="note"><b>T → ∞:</b> H → log|V|. Die Gravitation verschwindet gegenüber der Wärmebewegung, alle Tokens werden gleich wahrscheinlich. Kreativ, aber chaotisch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 9 · TRAJEKTORIE ═══════════ -->
+<section id="s9">
+  <div class="stepno">Schritt 9 · Dynamik <span class="tag pap" style="margin-left:10px">Paper §3.1</span></div>
+  <h2>Die Generierungs-Trajektorie und das Wirkungsintegral</h2>
+  <p class="lead">Ein Text ist in diesem Bild eine <b>Bahn</b> durch die gekrümmte Landschaft — analog zur Bahn kleinster Wirkung in der Mechanik.</p>
+  <div class="eq" id="eqAction"></div>
+  <div class="eqlbl">Gleichung (9) im Paper</div>
+  <p>Die Wirkung S[τ] ist die aufsummierte „Höhe“ entlang des Weges. Ein Weg mit kleiner Wirkung ist ein Weg durch die Täler — also eine Folge hochwahrscheinlicher Tokens. <b>Greedy Decoding</b> minimiert S schrittweise, <b>Beam Search</b> versucht globalere Minima zu finden.</p>
+
+  <div class="panel">
+    <h3>Trajektorien-Simulator</h3>
+    <p>Jeder gewählte Token verändert den Kontext und damit    die Landschaft für den nächsten Schritt — das Paper nennt das eine <b>bewegliche Gravitationsquelle</b> (§3.1). Starte den Lauf und beobachte, wie sich die Potentialkurve unter dem Ball neu formt.</p>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Temperatur T <span class="val" id="vTrT">0.80</span></label><input type="range" id="sTrT" min="0.02" max="2.5" step="0.02" value="0.8"></div>
+        <div class="ctl"><label>Informationsträgheit (Inertia) <span class="val" id="vTrI">0.60</span></label><input type="range" id="sTrI" min="0" max="1" step="0.02" value="0.6"></div>
+        <div class="ctl"><label>Zerklüftung der Landschaft <span class="val" id="vTrR">0.35</span></label><input type="range" id="sTrR" min="0" max="1.2" step="0.02" value="0.35"></div>
+        <div class="btnrow">
+          <button id="trRun">▶ Generieren</button>
+          <button id="trStep" class="alt">1 Schritt</button>
+          <button id="trReset" class="alt">Reset</button>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="k">Wirkung S[τ]</div><div class="v" style="color:var(--e)" id="oAct">0.00</div></div>
+          <div class="card"><div class="k">Schritte</div><div class="v" id="oSteps">0</div></div>
+          <div class="card"><div class="k">Ø Φ pro Token</div><div class="v" style="color:var(--b)" id="oAvgPhi">—</div></div>
+        </div>
+        <div class="note tight"><b>Informationsträgheit:</b> Schon gewählte Tokens erzeugen zusätzliche Anziehung in ihre Richtung. Das erklärt laut Paper, warum Modelle Stil und Thema durchhalten — und warum sie in Wiederholungsschleifen hängen bleiben können.</div>
+      </div>
+      <div>
+        <canvas id="cTraj" height="300"></canvas>
+        <div class="out" id="trOut" style="margin-top:12px">Noch nichts generiert.</div>
+      </div>
+    </div>
+    <div class="legend"><span><i class="dot" style="background:var(--a)"></i>aktuelles Potential Φ</span><span><i class="dot" style="background:var(--dim2)"></i>vorheriges Potential</span><span><i class="dot" style="background:var(--e)"></i>Trajektorie τ</span></div>
+  </div>
+
+  <div class="panel tight">
+    <h4>Warum „minimale Wirkung“ ≠ „beste Antwort“</h4>
+    <p>Greedy Decoding minimiert S nur <em>lokal</em>, Schritt für Schritt. Es kann also in einem Tal landen, das bergauf verlassen werden müsste, um ein tieferes Tal zu erreichen. Genau hier greift Temperatur: thermische Fluktuationen können das System aus einem lokalen Minimum „herauswerfen“ (Paper, §3.1).</p>
+  </div>
+</section>
+
+<!-- ═══════════ 10 · HALLUZINATIONEN ═══════════ -->
+<section id="s10">
+  <div class="stepno">Schritt 10 · Vorhersage 1 <span class="tag pap" style="margin-left:10px">Paper §4.1</span></div>
+  <h2>Halluzinationen: Hessematrix, Leeren und schwarze Löcher</h2>
+  <p class="lead">Das ist die wichtigste konkrete Vorhersage des Papers — und sie ist mathematisch scharf formuliert.</p>
+
+  <div class="panel tight">
+    <h4><span class="tag pre">Vorwissen</span>Die Hessematrix H<sub>ij</sub></h4>
+    <p>Die erste Ableitung sagt dir die <em>Steigung</em>. Die zweite Ableitung sagt dir die <em>Krümmung</em>. In mehreren Dimensionen sammelt die Hessematrix alle zweiten partiellen Ableitungen. Ihre <b>Eigenwerte</b> verraten die Krümmung entlang der Hauptrichtungen:</p>
+    <div class="eq" id="eqHess"></div>
+    <div class="eqlbl">Gleichung (10) im Paper</div>
+    <ul>
+      <li>Alle Eigenwerte <b>positiv</b> → Schüssel nach oben → <b>lokales Minimum</b> (eine Falle).</li>
+      <li>Alle <b>negativ</b> → Kuppe → lokales Maximum.</li>
+      <li><b>Gemischt</b> → Sattelpunkt.</li>
+      <li><b>Große</b> positive Eigenwerte auf <b>kleinem</b> Gebiet → ein enger, steiler Trichter. Leicht hineinzufallen, schwer wieder heraus.</li>
+    </ul>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Eigenwert λ₁ (x-Richtung) <span class="val" id="vL1">1.0</span></label><input type="range" id="sL1" min="-3" max="6" step="0.1" value="1"></div>
+        <div class="ctl"><label>Eigenwert λ₂ (y-Richtung) <span class="val" id="vL2">1.0</span></label><input type="range" id="sL2" min="-3" max="6" step="0.1" value="1"></div>
+        <div class="cards">
+          <div class="card"><div class="k">Typ</div><div class="v" style="font-size:.95rem" id="oHessType">Minimum</div></div>
+          <div class="card"><div class="k">Det(H)</div><div class="v" id="oHessDet">1.0</div></div>
+        </div>
+        <div class="note tight" id="hessNote"></div>
+      </div>
+      <div id="pHess" class="plot" style="height:320px"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Instabilitätsbedingung des Papers</h3>
+    <div class="note crit" style="font-size:1rem">
+      <b>Wenn</b> die Hessematrix von Φ <b>hohe Eigenwerte auf kleinen Gebieten</b> hat<br>
+      <b>und</b> die globale Token-Wahrscheinlichkeit P(t) ≪ 1 ist,<br>
+      <b>dann</b> neigt das System dazu, in ein <b>falsches lokales Minimum</b> eingefangen zu werden → plausibel klingender, aber faktisch falscher Text.
+    </div>
+
+    <h3>Leere vs. Schwarzes Loch — zwei Gegenpole</h3>
+    <div class="grid2">
+      <div class="panel tight" style="margin:0;border-color:rgba(255,107,107,.3)">
+        <h4 style="color:var(--f)">Semantische Leere (Void)</h4>
+        <p style="font-size:.9rem">Geringe semantische Dichte, kaum Verbindungen zu den Trainingsdaten. Kein starker Sog in irgendeine Richtung. Das Modell muss <em>irgendetwas</em> wählen — und greift den nächstbesten, schwach verbundenen Token. <b>→ Halluzination.</b></p>
+      </div>
+      <div class="panel tight" style="margin:0;border-color:rgba(167,139,250,.3)">
+        <h4 style="color:var(--b)">Informations-Schwarzloch</h4>
+        <p style="font-size:.9rem">Künstlich erzeugte Region extrem hoher Dichte und niedriger Entropie — durch Alignment-Training, Sicherheitsinstruktionen oder repetitive Prompts. Der Sog ist übermächtig. <b>→ vorhersagbare Standardantwort</b> („Als KI-Modell kann ich …“).</p>
+      </div>
+    </div>
+
+    <h3>Halluzinations-Simulator</h3>
+    <p>Stell Masse und Wissensdichte ein. Die Kurve zeigt die Landschaft, die Punkte zeigen 40 Generierungsläufe: <span style="color:var(--d)">grün = korrekt</span>, <span style="color:var(--f)">rot = halluziniert</span>.</p>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Informationsmasse M(Q) <span class="val" id="vHM">1.2</span></label><input type="range" id="sHM" min="0.1" max="3" step="0.05" value="1.2"></div>
+        <div class="ctl"><label>Lokale Wissensdichte des Modells <span class="val" id="vHK">0.70</span></label><input type="range" id="sHK" min="0.02" max="1" step="0.01" value="0.7"></div>
+        <div class="ctl"><label>Temperatur T <span class="val" id="vHT">0.70</span></label><input type="range" id="sHT" min="0.02" max="2.5" step="0.02" value="0.7"></div>
+        <div class="ctl"><label>Alignment-Druck (Schwarzloch-Stärke) <span class="val" id="vHB">0.00</span></label><input type="range" id="sHB" min="0" max="2.5" step="0.05" value="0"></div>
+        <div class="cards">
+          <div class="card"><div class="k">Halluzinationsrate</div><div class="v" id="oHrate" style="color:var(--f)">—</div><div class="u">von 40 Läufen</div></div>
+          <div class="card"><div class="k">Regime</div><div class="v" style="font-size:.9rem" id="oHreg">—</div></div>
+        </div>
+        <div class="btnrow"><button id="hRun">🔁 Neu simulieren</button></div>
+      </div>
+      <div><canvas id="cHallu" height="320"></canvas>
+      <div class="out" id="hOut" style="margin-top:10px"></div></div>
+    </div>
+    <div class="note warn"><b>Vorhersage des Papers (§5.2):</b> Hohe Entropie + tiefer Kontext + hohe Novelty → deutlich mehr Halluzinationen, <b>besonders bei niedriger Temperatur</b>, weil das Modell dann keine Möglichkeit hat, Alternativpfade zu „erkunden“. Genau das kannst du oben nachstellen: M hoch, Wissensdichte runter, T ganz klein.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 11 · PROMPT-SENSITIVITÄT ═══════════ -->
+<section id="s11">
+  <div class="stepno">Schritt 11 · Vorhersage 2 <span class="tag pap" style="margin-left:10px">Paper §4.2</span></div>
+  <h2>Prompt-Sensitivität: ΔΦ und der Sprung zwischen Attraktoren</h2>
+  <div class="eq" id="eqDelta"></div>
+  <div class="eqlbl">Gleichung (11) im Paper</div>
+  <p>Je größer |ΔΦ|, desto stärker verändert eine minimale Prompt-Änderung die Antwortverteilung — bis hin zu einem abrupten Wechsel zwischen völlig verschiedenen Attraktoren. Genau das erklärt die 56 Prozentpunkte von Sclar et al.</p>
+
+  <div class="panel">
+    <h3>Perturbations-Labor</h3>
+    <p>Schiebe die Anfrage minimal — und sieh zu, wie die Landschaft kippt und der Ball plötzlich in ein <em>anderes</em> Tal fällt.</p>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Prompt-Perturbation ε <span class="val" id="vEps">0.00</span></label><input type="range" id="sEps" min="-1" max="1" step="0.005" value="0"></div>
+        <div class="ctl"><label>Landschafts-Sprödigkeit (wie nah beieinander liegen die Attraktoren) <span class="val" id="vFrag">0.55</span></label><input type="range" id="sFrag" min="0" max="1" step="0.01" value="0.55"></div>
+        <div class="cards">
+          <div class="card"><div class="k">max |ΔΦ|</div><div class="v" style="color:var(--c)" id="oDphi">0.00</div></div>
+          <div class="card"><div class="k">Gewählter Attraktor</div><div class="v" style="font-size:.95rem" id="oAttr">A</div></div>
+          <div class="card"><div class="k">Qualität</div><div class="v" id="oQual" style="color:var(--d)">—</div><div class="u">%</div></div>
+        </div>
+      </div>
+      <div><canvas id="cPert" height="300"></canvas></div>
+    </div>
+    <div class="legend"><span><i class="dot" style="background:var(--dim2)"></i>Original Φ(t,Q)</span><span><i class="dot" style="background:var(--a)"></i>perturbiert Φ(t,Q′)</span><span><i class="dot" style="background:var(--c)"></i>|ΔΦ|</span></div>
+    <div class="note" id="pertNote"></div>
+  </div>
+
+  <div class="panel tight">
+    <h4>Rückblick auf Rätsel B</h4>
+    <p>Die Qualitätskurve oben ist keine glatte Funktion von ε — sie hat <b>Sprünge</b>. Das ist die Modellantwort auf „warum ändert ein Komma 56 Prozentpunkte“: nicht weil die Semantik sich ändert, sondern weil ein <em>Bifurkationspunkt</em> überschritten wird, an dem ein anderes Tal das tiefste erreichbare wird.</p>
+  </div>
+</section>
+
+<!-- ═══════════ 12 · TEMPERATUR-EFFEKTE / RÄTSEL A ═══════════ -->
+<section id="s12">
+  <div class="stepno">Schritt 12 · Vorhersage 3 <span class="tag pap" style="margin-left:10px">Paper §4.3</span></div>
+  <h2>Warum die 5 gewinnt: Attraktoren im „Zufalls“-Raum</h2>
+  <p class="lead">Zurück zu Rätsel A. Das Modell erklärt es so: Die Bitte um eine Zufallszahl erzeugt <em>keine</em> flache Landschaft. Trainingsdaten haben eine Delle bei 5 hinterlassen — und der Gradient zieht dorthin.</p>
+
+  <div class="panel">
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Temperatur T <span class="val" id="vZT">1.00</span></label><input type="range" id="sZT" min="0.05" max="4" step="0.02" value="1"></div>
+        <div class="ctl"><label>Tiefe des 5-Attraktors <span class="val" id="vZA">1.00</span></label><input type="range" id="sZA" min="0" max="2.5" step="0.05" value="1"></div>
+        <div class="cards">
+          <div class="card"><div class="k">P(„5“)</div><div class="v" style="color:var(--e)" id="oZ5">—</div><div class="u">ideal: 10%</div></div>
+          <div class="card"><div class="k">Entropie H</div><div class="v" style="color:var(--a)" id="oZH">—</div><div class="u">max 3.32 Bit</div></div>
+          <div class="card"><div class="k">Diffusität</div><div class="v" id="oZD" style="color:var(--d)">—</div><div class="u">H / H<sub>max</sub></div></div>
+        </div>
+        <div class="note tight" id="zNote"></div>
+      </div>
+      <div><canvas id="cZhang" height="300"></canvas></div>
+    </div>
+    <div class="note good"><b>Das Aha:</b> Mit steigender Temperatur flacht die Delle relativ ab, die Verteilung wird diffuser — genau Gleichung (12). Aber: reine Temperaturerhöhung macht auch alles andere chaotischer. Das Paper schlägt deshalb in §6.2 stattdessen <b>adaptive Temperatur</b> T(Q) = f(M(Q)) vor.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 13 · LÖSUNGSWEG / METHODIK ═══════════ -->
+<section id="s13">
+  <div class="stepno">Schritt 13 · Der Lösungsweg</div>
+  <h2>Wie die Autorin vorgegangen ist — und was sie noch nicht getan hat</h2>
+  <p class="lead">Wichtig für die ehrliche Einordnung: Dieses Paper ist eine <b>theoretische Arbeit</b>. Es enthält keine eigenen Experimente. Es baut ein Gerüst und schlägt vor, wie man es testet.</p>
+
+  <div class="panel">
+    <h3>Die Argumentationskette — klick dich durch</h3>
+    <div id="chainSteps"></div>
+    <canvas id="cChain" height="130"></canvas>
+    <div class="out" id="chainOut" style="margin-top:12px"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Die drei vorgeschlagenen Experimente (§5)</h3>
+    <div class="grid3">
+      <div class="panel tight" style="margin:0">
+        <h4>1 · Landschaft sichtbar machen</h4>
+        <p style="font-size:.88rem">Logit-Vektoren <em>vor</em> Softmax sammeln, mit t-SNE/UMAP auf 2–3D projizieren, als Potentialkarte einfärben (dunkel = niedriges Φ = hohe Wahrscheinlichkeit).</p>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <h4>2 · Masse ↔ Halluzination</h4>
+        <p style="font-size:.88rem">H, D, N <b>getrennt</b> variieren, pro Anfrage mehrere Antworten bei verschiedenen T, Halluzinationsrate messen, Korrelation prüfen.</p>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <h4>3 · Temperatur-Sweep</h4>
+        <p style="font-size:.88rem">Feste Anfragen, T von ≈0 bis sehr hoch. Messen: Shannon-Entropie, Diversität, Kohärenz, Halluzinationsrate.</p>
+      </div>
+    </div>
+    <h4 style="margin-top:22px">Mini-Nachbau von Experiment 1</h4>
+    <p>Hier siehst du, was dabei herauskäme: dieselben Logits, einmal als Punktwolke, einmal als Potentialkarte.</p>
+    <div class="btnrow">
+      <button id="tsneA" class="on">Einfache Anfrage</button>
+      <button id="tsneB" class="alt">Mehrdeutige Anfrage</button>
+      <button id="tsneC" class="alt">Neuartige Anfrage</button>
+    </div>
+    <div id="pTsne" class="plot" style="height:400px"></div>
+  </div>
+</section>
+
+<!-- ═══════════ 14 · ANWENDUNGEN ═══════════ -->
+<section id="s14">
+  <div class="stepno">Schritt 14 · Die Antwort <span class="tag pap" style="margin-left:10px">Paper §6</span></div>
+  <h2>Was man damit praktisch anfangen kann</h2>
+  <p class="lead">Wenn das Modell stimmt, folgen daraus konkrete Hebel. Das ist die eigentliche Antwort auf die Eingangsfrage „wozu eine Theorie?“.</p>
+
+  <div class="panel">
+    <h3>Hebel 1–3: Informationsmasse steuern</h3>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Entropie-Balancing: H(Q) <span class="val" id="vOH">0.75</span></label><input type="range" id="sOH" min="0" max="1" step="0.01" value="0.75"></div>
+        <div class="ctl"><label>Kontext-Stabilisierung: D(Q) <span class="val" id="vOD">0.60</span></label><input type="range" id="sOD" min="0" max="1" step="0.01" value="0.6"></div>
+        <div class="ctl"><label>Novelty N(Q) <span class="val" id="vON">0.70</span></label><input type="range" id="sON" min="0" max="1" step="0.01" value="0.7"></div>
+        <div class="ctl"><label>Anchoring: bekannte Ankerfragmente hinzufügen <span class="val" id="vOA">0.00</span></label><input type="range" id="sOA" min="0" max="1" step="0.01" value="0"></div>
+        <div class="btnrow"><button id="optAuto">✨ Automatisch optimieren</button></div>
+      </div>
+      <div>
+        <canvas id="cOpt" height="240"></canvas>
+        <div class="cards">
+          <div class="card"><div class="k">M(Q) effektiv</div><div class="v" style="color:var(--e)" id="oOM">—</div></div>
+          <div class="card"><div class="k">Halluz.-Risiko</div><div class="v" style="color:var(--f)" id="oOR">—</div><div class="u">%</div></div>
+          <div class="card"><div class="k">Kreativität</div><div class="v" style="color:var(--d)" id="oOC">—</div><div class="u">%</div></div>
+        </div>
+        <div class="out" id="optOut"></div>
+      </div>
+    </div>
+    <div class="note"><b>Anchoring erklärt:</b> Hohe Novelty heißt, das Modell hat keine Bezugspunkte. Ankerfragmente („bekannte Begriffe mit einbauen“) verbinden die neuartige Anfrage mit vertrautem Terrain und senken das Risiko des „gravitativen Kollapses“ in falsche Regionen (§6.1).</div>
+  </div>
+
+  <div class="panel">
+    <h3>Hebel 4: Adaptive Temperatur T(Q) = f(M(Q))</h3>
+    <div class="eq" id="eqAdaptive"></div>
+    <div class="eqlbl">Gleichung (13) im Paper</div>
+    <p>Die Logik: Anfragen mit <b>hoher</b> Informationsmasse brauchen <b>höhere</b> Temperatur, um aus Gravitationsfallen herauszukommen. Einfache Anfragen laufen effizient bei niedriger Temperatur. Zieh die Kurve zurecht:</p>
+    <div class="gridS">
+      <div>
+        <div class="ctl"><label>Basistemperatur T₀ <span class="val" id="vF0">0.30</span></label><input type="range" id="sF0" min="0.05" max="1" step="0.01" value="0.3"></div>
+        <div class="ctl"><label>Steigung k <span class="val" id="vFk">0.55</span></label><input type="range" id="sFk" min="0" max="1.5" step="0.01" value="0.55"></div>
+        <div class="ctl"><label>Aktuelle Anfrage-Masse M(Q) <span class="val" id="vFM">1.00</span></label><input type="range" id="sFM" min="0.1" max="3" step="0.05" value="1"></div>
+        <div class="cards">
+          <div class="card"><div class="k">T<sub>adaptiv</sub></div><div class="v" style="color:var(--e)" id="oFT">—</div></div>
+          <div class="card"><div class="k">Empfehlung</div><div class="v" style="font-size:.88rem" id="oFR">—</div></div>
+        </div>
+        <div class="note tight">Das Paper lässt die Funktion f bewusst offen. Hier ist sie als <span class="mono">T = T₀ + k·M</span> modelliert — sättigend, damit T nicht unbegrenzt wächst.</div>
+      </div>
+      <div><canvas id="cAdaptive" height="280"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Hebel 5: Drei neue Qualitätsmetriken (§6.3)</h3>
+    <p>Aus der Theorie folgen direkt messbare Kennzahlen. Wähle ein Szenario und sieh, wie die drei Metriken reagieren:</p>
+    <div class="btnrow" id="metricBtns"></div>
+    <div class="grid3">
+      <div class="panel tight" style="margin:0">
+        <h4>Gravitational Curvature</h4>
+        <p style="font-size:.86rem">Wie uneinheitlich ist das Feld (Varianz des Gradienten)? <b>Hoch = instabil, halluzinationsanfällig.</b></p>
+        <div class="card" style="margin-top:8px"><div class="v" style="color:var(--f)" id="mCurv">—</div></div>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <h4>Information Conductivity</h4>
+        <p style="font-size:.86rem">Wie effizient wandert Information von Frage zu Antwort? Gemessen über MI oder Kreuzentropie.</p>
+        <div class="card" style="margin-top:8px"><div class="v" style="color:var(--d)" id="mCond">—</div></div>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <h4>Semantic Field Stability</h4>
+        <p style="font-size:.86rem">Wie robust bleibt Φ gegen kleine Frageänderungen? Direkt aus ΔΦ ableitbar.</p>
+        <div class="card" style="margin-top:8px"><div class="v" style="color:var(--a)" id="mStab">—</div></div>
+      </div>
+    </div>
+    <canvas id="cMetrics" height="220"></canvas>
+  </div>
+</section>
+
+<!-- ═══════════ 15 · GRENZEN ═══════════ -->
+<section id="s15">
+  <div class="stepno">Schritt 15 · Ehrliche Bilanz <span class="tag crit" style="margin-left:10px">Paper §4.4, §7.3</span></div>
+  <h2>Was das Paper <em>nicht</em> leistet</h2>
+  <p class="lead">Eine Theorie ist nur so gut wie ihre Fehlerliste. Die Autorin nennt sie selbst — hier sind sie mit Einschätzung.</p>
+
+  <div class="panel">
+    <div id="limitList"></div>
+  </div>
+
+  <div class="panel tight">
+    <h4>Die zentrale Einordnung</h4>
+    <p>Dieses Paper ist eine <b>konzeptuelle Rahmenarbeit</b>, keine empirische Studie. Es enthält keine Experimente, keine Datensätze, keine Messungen. Es nimmt bekannte Befunde anderer (Zhang et al., Sclar et al., Cox et al.) und bietet eine <b>gemeinsame Sprache</b> dafür an. Sein Wert steht und fällt damit, ob die vorgeschlagenen Experimente aus §5 tatsächlich durchgeführt werden und die Vorhersagen bestätigen.</p>
+    <p>Bemerkenswert ehrlich: In den Danksagungen steht „Mit unlogischer Zärtlichkeit an ChatGPT und Claude für ihre Rolle bei der Vorbereitung des Manuskripts.“</p>
+  </div>
+</section>
+
+<!-- ═══════════ 16 · SANDBOX ═══════════ -->
+<section id="s16">
+  <div class="stepno">Schritt 16 · Alles zusammen</div>
+  <h2>Die große Sandbox</h2>
+  <p class="lead">Alle Konzepte in einem einzigen lebendigen System. Änderungen propagieren durch die ganze Kette: Masse → Potential → Gravitation → Sampling → Ergebnis.</p>
+
+  <div class="panel">
+    <div class="grid2">
+      <div>
+        <h4>Eingaben</h4>
+        <div class="ctl"><label>H(Q) Entropie <span class="val" id="vXH">0.50</span></label><input type="range" id="sXH" min="0" max="1" step="0.01" value="0.5"></div>
+        <div class="ctl"><label>D(Q) Kontexttiefe <span class="val" id="vXD">0.40</span></label><input type="range" id="sXD" min="0" max="1" step="0.01" value="0.4"></div>
+        <div class="ctl"><label>N(Q) Novelty <span class="val" id="vXN">0.30</span></label><input type="range" id="sXN" min="0" max="1" step="0.01" value="0.3"></div>
+        <div class="ctl"><label>Temperatur T <span class="val" id="vXT">0.80</span></label><input type="range" id="sXT" min="0.05" max="2.5" step="0.02" value="0.8"></div>
+        <div class="ctl"><label>Alignment-Druck <span class="val" id="vXB">0.20</span></label><input type="range" id="sXB" min="0" max="2" step="0.02" value="0.2"></div>
+        <div class="ctl"><label>Wissensdichte des Modells <span class="val" id="vXK">0.70</span></label><input type="range" id="sXK" min="0.02" max="1" step="0.01" value="0.7"></div>
+      </div>
+      <div>
+        <h4>Systemzustand</h4>
+        <div class="cards">
+          <div class="card"><div class="k">M(Q)</div><div class="v" style="color:var(--e)" id="xM">—</div></div>
+          <div class="card"><div class="k">Entropie out</div><div class="v" style="color:var(--a)" id="xH">—</div><div class="u">Bits</div></div>
+          <div class="card"><div class="k">Halluz.-Risiko</div><div class="v" style="color:var(--f)" id="xR">—</div><div class="u">%</div></div>
+          <div class="card"><div class="k">Kohärenz</div><div class="v" style="color:var(--d)" id="xC">—</div><div class="u">%</div></div>
+          <div class="card"><div class="k">Diversität</div><div class="v" style="color:var(--b)" id="xV">—</div><div class="u">%</div></div>
+          <div class="card"><div class="k">Regime</div><div class="v" style="font-size:.82rem" id="xReg">—</div></div>
+        </div>
+        <canvas id="cSandRadar" height="230"></canvas>
+      </div>
+    </div>
+    <canvas id="cSandLand" height="250" style="margin-top:16px"></canvas>
+    <div class="legend"><span><i class="dot" style="background:var(--a)"></i>Potential Φ</span><span><i class="dot" style="background:var(--e)"></i>Sampling-Verteilung</span><span><i class="dot" style="background:var(--f)"></i>Leere-Zone</span></div>
+    <div class="btnrow" id="sandPresets"></div>
+    <div class="out" id="xOut" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<!-- ═══════════ 17 · QUIZ ═══════════ -->
+<section id="s17">
+  <div class="stepno">Schritt 17 · Selbsttest</div>
+  <h2>Hast du's?</h2>
+  <div id="quizBox"></div>
+  <div class="panel tight" style="text-align:center">
+    <div class="v" style="font-size:1.6rem;font-weight:800" id="quizScore">0 / 7</div>
+    <div style="font-size:.85rem;color:var(--dim2)" id="quizMsg">Beantworte die Fragen oben.</div>
+  </div>
+</section>
+
+<!-- ═══════════ 18 · FINALE ═══════════ -->
+<section id="s18">
+  <div class="fin">
+    <div class="kicker" style="margin-bottom:16px">Die Antwort in einem Satz</div>
+    <h2 style="max-width:860px;margin:0 auto 22px">Eine Anfrage ist ein massebehaftetes Objekt, das den Bedeutungsraum des Modells krümmt — und alle drei Rätsel sind derselbe Effekt, nur in verschiedenen Parameterbereichen.</h2>
+    <p style="max-width:780px;margin:0 auto 26px">Der „5“-Attraktor ist eine Delle aus den Trainingsdaten. Die 56 Prozentpunkte sind ein Sprung über einen Bifurkationspunkt zwischen zwei Tälern. Halluzinationen sind Einfänge in falschen lokalen Minima, wo hohe Masse auf semantische Leere trifft. Die Temperatur entscheidet, ob das Modell in den Tälern gefangen bleibt oder herausspringen kann.</p>
+    <div class="cards" style="max-width:820px;margin:0 auto">
+      <div class="card"><div class="k">Motivation</div><div class="v" style="font-size:.85rem">Black-Box-Problem</div></div>
+      <div class="card"><div class="k">Idee</div><div class="v" style="font-size:.85rem">Masse krümmt Raum</div></div>
+      <div class="card"><div class="k">Lösung</div><div class="v" style="font-size:.85rem">M, Φ, g, T</div></div>
+      <div class="card"><div class="k">Status</div><div class="v" style="font-size:.85rem">ungetestet</div></div>
+    </div>
+    <p style="max-width:780px;margin:28px auto 0;font-size:.9rem;color:var(--dim2)">Maryna Vyshnyvetska · arXiv:2504.20951v1 · 29. April 2025 · 12 Seiten, 13 Gleichungen, 13 Referenzen, 0 Experimente.</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const fmt = (v,n=2) => v.toFixed(n);
+const C = {a:'#6ee7ff', b:'#a78bfa', c:'#ff8ab8', d:'#7dffb3', e:'#ffd479', f:'#ff6b6b', dim:'#98a3c9', dim2:'#6b7699'};
+
+function dpi(cv){
+  const r = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'))||260;
+  cv.width = w*r; cv.height = h*r;
+  cv.style.height = h+'px';
+  const g = cv.getContext('2d');
+  g.setTransform(r,0,0,r,0,0);
+  return {g, w, h};
+}
+function axes(g,w,h,pad,xl,yl){
+  g.strokeStyle='rgba(120,140,220,.22)'; g.lineWidth=1;
+  g.beginPath(); g.moveTo(pad.l,pad.t); g.lineTo(pad.l,h-pad.b); g.lineTo(w-pad.r,h-pad.b); g.stroke();
+  g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace';
+  if(xl){g.textAlign='center'; g.fillText(xl, (pad.l+w-pad.r)/2, h-4);}
+  if(yl){g.save(); g.translate(11,(pad.t+h-pad.b)/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.fillText(yl,0,0); g.restore();}
+}
+function gridlines(g,w,h,pad,n=4){
+  g.strokeStyle='rgba(120,140,220,.08)'; g.lineWidth=1;
+  for(let i=1;i<=n;i++){const y=pad.t+(h-pad.t-pad.b)*i/n; g.beginPath(); g.moveTo(pad.l,y); g.lineTo(w-pad.r,y); g.stroke();}
+}
+function softmax(logits,T){
+  const s=logits.map(l=>-l/Math.max(T,1e-6));
+  const m=Math.max(...s);
+  const e=s.map(v=>Math.exp(v-m));
+  const z=e.reduce((a,b)=>a+b,0);
+  return e.map(v=>v/z);
+}
+function entropyBits(p){
+  return -p.reduce((a,x)=> x>1e-12 ? a + x*Math.log2(x) : a, 0);
+}
+// deterministic PRNG
+function mulberry(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed>>>15, 1 | seed);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
+}
+function bind(sliderId, labelId, cb, digits=2){
+  const s=$(sliderId), l=$(labelId);
+  const upd=()=>{ if(l) l.textContent=fmt(parseFloat(s.value),digits); cb(parseFloat(s.value)); };
+  s.addEventListener('input',upd); upd();
+}
+function tex(id, str){
+  const el=$(id); if(!el) return;
+  try{ el.innerHTML = temml.renderToString(str,{displayMode:true}); }
+  catch(e){ el.innerHTML = '<span class="mono">'+str+'</span>'; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STARFIELD
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('starfield'), g=cv.getContext('2d');
+  let stars=[], W,H;
+  function init(){
+    W=cv.width=innerWidth; H=cv.height=innerHeight;
+    stars=[];
+    const n=Math.min(230, Math.floor(W*H/9000));
+    for(let i=0;i<n;i++) stars.push({
+      x:Math.random()*W, y:Math.random()*H, z:Math.random()*.9+.1,
+      r:Math.random()*1.3+.2, ph:Math.random()*Math.PI*2
+    });
+  }
+  let t=0;
+  function draw(){
+    t+=0.008;
+    g.clearRect(0,0,W,H);
+    const sc=window.scrollY||0;
+    for(const s of stars){
+      const y=(s.y - sc*s.z*0.14) % H;
+      const yy = y<0 ? y+H : y;
+      const tw=0.45+0.55*Math.sin(t*1.6+s.ph);
+      g.globalAlpha=tw*s.z*0.85;
+      g.fillStyle = s.z>0.72 ? '#a9c4ff' : '#ffffff';
+      g.beginPath(); g.arc(s.x,yy,s.r*s.z*1.5,0,7); g.fill();
+    }
+    g.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  init(); draw();
+  addEventListener('resize',init);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   NAV + PROGRESS
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const items=[
+    ['s1','Problem'],['s2','Idee'],['s3','Entropie'],['s4','KL & MI'],['s5','Masse M(Q)'],
+    ['s6','Potential Φ'],['s7','3D-Landschaft'],['s8','Temperatur'],['s9','Trajektorie'],
+    ['s10','Halluzination'],['s11','Prompt-Sens.'],['s12','Attraktoren'],['s13','Methodik'],
+    ['s14','Anwendung'],['s15','Grenzen'],['s16','Sandbox'],['s17','Quiz'],['s18','Fazit']
+  ];
+  const nv=$('navin');
+  items.forEach(([id,label])=>{
+    const a=document.createElement('a');
+    a.href='#'+id; a.textContent=label; a.dataset.t=id;
+    nv.appendChild(a);
+  });
+  const links=[...nv.querySelectorAll('a')];
+  addEventListener('scroll',()=>{
+    const sc=scrollY, dh=document.body.scrollHeight-innerHeight;
+    $('prog').style.width=(sc/dh*100)+'%';
+    $('nav').classList.toggle('show', sc>innerHeight*0.72);
+    let cur=items[0][0];
+    for(const [id] of items){
+      const el=$(id); if(el && el.getBoundingClientRect().top < innerHeight*0.42) cur=id;
+    }
+    links.forEach(a=>a.classList.toggle('act', a.dataset.t===cur));
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   FORMULAS
+   ═══════════════════════════════════════════════════════════ */
+tex('eqEntropy', 'H(Q) = -\\sum_{t \\in Q} P(t|Q)\\,\\log P(t|Q)');
+tex('eqKL', 'N(Q) = D_{KL}\\big(P(Q)\\,\\|\\,P_{train}(Q)\\big) = \\sum_x P(x)\\log\\frac{P(x)}{P_{train}(x)}');
+tex('eqMI', 'D(Q) = \\sum_{i=1}^{k} I(Q; C_i), \\qquad I(X;Y) = H(X) + H(Y) - H(X,Y)');
+tex('eqMass', 'M(Q) = \\alpha\\cdot H(Q) + \\beta\\cdot D(Q) + \\gamma\\cdot N(Q)');
+tex('eqPhi', '\\Phi(t,Q) = -\\log P(t|Q) \\qquad\\qquad \\mathbf{g}(t) = -\\nabla\\Phi(t)');
+tex('eqBoltz', 'P(t|Q) = \\frac{\\exp(-\\Phi(t)/T)}{Z}, \\qquad Z = \\sum_t \\exp(-\\Phi(t)/T)');
+tex('eqAction', 'S[\\tau] = \\int_\\tau \\Phi\\big(t(\\tau), Q\\big)\\, d\\tau');
+tex('eqHess', 'H_{ij} = \\frac{\\partial^2 \\Phi}{\\partial x_i \\partial x_j}');
+tex('eqDelta', '\\Delta\\Phi(t) = \\Phi(t, Q\') - \\Phi(t, Q)');
+tex('eqAdaptive', 'T_{adaptive}(Q) = f\\big(M(Q)\\big)');
+
+/* ═══════════════════════════════════════════════════════════
+   §1A · RANDOM NUMBER PUZZLE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cRandom');
+  const ideal=Array(10).fill(0.1);
+  // Approximation of the Llama-2-13B-chat skew reported by Zhang et al.
+  const real=[0.03,0.05,0.09,0.06,0.42,0.05,0.16,0.09,0.03,0.02];
+  let mode='ideal', counts=Array(10).fill(0), rolling=false;
+  const labels=['1','2','3','4','5','6','7','8','9','10'];
+
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:42,r:14,t:18,b:34};
+    const dist = mode==='ideal'?ideal:real;
+    const maxY = 0.48;
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'gewählte Zahl','P');
+    const bw=(w-pad.l-pad.r)/10;
+    for(let i=0;i<10;i++){
+      const x=pad.l+i*bw+bw*0.16, bwv=bw*0.68;
+      const v=dist[i], bh=(h-pad.t-pad.b)*(v/maxY);
+      const hot = mode==='real' && v>0.15;
+      const grd=g.createLinearGradient(0,h-pad.b-bh,0,h-pad.b);
+      grd.addColorStop(0, hot?C.f:C.a); grd.addColorStop(1, hot?'rgba(255,107,107,.18)':'rgba(110,231,255,.18)');
+      g.fillStyle=grd; g.fillRect(x,h-pad.b-bh,bwv,bh);
+      // sampled overlay
+      if(counts.some(c=>c>0)){
+        const tot=counts.reduce((a,b)=>a+b,0)||1;
+        const sv=counts[i]/tot, sh=(h-pad.t-pad.b)*(sv/maxY);
+        g.strokeStyle=C.e; g.lineWidth=2;
+        g.strokeRect(x,h-pad.b-sh,bwv,sh);
+      }
+      g.fillStyle=hot?C.f:C.dim; g.font='11px ui-monospace,monospace'; g.textAlign='center';
+      g.fillText(labels[i], x+bwv/2, h-pad.b+15);
+      g.fillStyle=hot?'#fff':C.dim2; g.font='10px ui-monospace,monospace';
+      g.fillText((v*100).toFixed(0)+'%', x+bwv/2, h-pad.b-bh-5);
+    }
+    // ideal reference line
+    g.strokeStyle='rgba(125,255,179,.5)'; g.setLineDash([5,4]); g.lineWidth=1.5;
+    const yi=h-pad.b-(h-pad.t-pad.b)*(0.1/maxY);
+    g.beginPath(); g.moveTo(pad.l,yi); g.lineTo(w-pad.r,yi); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.d; g.font='10px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('10% = gleichverteilt', pad.l+6, yi-6);
+  }
+  function setMode(m){
+    mode=m; counts=Array(10).fill(0);
+    $('rndIdeal').classList.toggle('on', m==='ideal');
+    $('rndReal').classList.toggle('on', m==='real');
+    $('rndNote').innerHTML = m==='      'ideal'
+      ? '<b>Die Erwartung:</b> Wenn du nach einer Zufallszahl fragst, sollte jede Zahl mit 10&nbsp;% kommen. Eine flache Landschaft — kein Token zieht stärker als ein anderer.'
+      : '<b>Die Realität (Zhang et al., 2024):</b> Llama-2-13B-chat bevorzugt die <span class="hl2">5</span> massiv. Das ist keine flache Landschaft, sondern eine <b>Delle</b>. Genau das nennt das Paper einen versteckten <b>Attraktor</b>.';
+    draw();
+  }
+  $('rndIdeal').onclick=()=>setMode('ideal');
+  $('rndReal').onclick=()=>setMode('real');
+  $('rndRoll').onclick=()=>{
+    if(rolling) return; rolling=true;
+    counts=Array(10).fill(0);
+    const dist = mode==='ideal'?ideal:real;
+    let n=0;
+    const iv=setInterval(()=>{
+      for(let k=0;k<5;k++){
+        let r=Math.random(), acc=0, pick=9;
+        for(let i=0;i<10;i++){acc+=dist[i]; if(r<acc){pick=i;break;}}
+        counts[pick]++; n++;
+      }
+      draw();
+      if(n>=100){clearInterval(iv); rolling=false;}
+    },45);
+  };
+  setMode('ideal');
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §1B · PROMPT FORMAT PUZZLE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const variants=[
+    {t:'Passage: {x}\\nAnswer:',            q:34},
+    {t:'Passage: {x}\\nAnswer: ',           q:51},
+    {t:'passage: {x} answer:',              q:29},
+    {t:'Passage:: {x} || Answer::',         q:72},
+    {t:'PASSAGE - {x} - ANSWER -',          q:85},
+    {t:'Passage - {x}\\n\\nAnswer -',       q:63},
+    {t:'[Passage] {x} [Answer]',            q:47}
+  ];
+  const wrap=$('promptList'), cv=$('cPrompt');
+  let sel=-1;
+  variants.forEach((v,i)=>{
+    const b=document.createElement('button');
+    b.className='qopt'; b.style.fontFamily='ui-monospace,monospace'; b.style.fontSize='.8rem';
+    b.innerHTML='<span style="color:var(--dim2)">Format '+(i+1)+':</span> '+v.t.replace(/\\n/g,'<span style="color:var(--b)">\\n</span>');
+    b.onmouseenter=()=>{sel=i; draw();};
+    b.onclick=()=>{sel=i; draw();};
+    wrap.appendChild(b);
+  });
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:42,r:14,t:20,b:30};
+    gridlines(g,w,h,pad,5); axes(g,w,h,pad,'Prompt-Format','Qualität %');
+    const bw=(w-pad.l-pad.r)/variants.length;
+    const mn=Math.min(...variants.map(v=>v.q)), mx=Math.max(...variants.map(v=>v.q));
+    variants.forEach((v,i)=>{
+      const x=pad.l+i*bw+bw*0.2, bwv=bw*0.6;
+      const bh=(h-pad.t-pad.b)*(v.q/100);
+      const act=i===sel;
+      g.fillStyle = act ? C.e : (v.q===mx?'rgba(125,255,179,.75)': v.q===mn?'rgba(255,107,107,.75)':'rgba(110,231,255,.4)');
+      g.fillRect(x,h-pad.b-bh,bwv,bh);
+      g.fillStyle=act?'#fff':C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+      g.fillText(v.q+'%', x+bwv/2, h-pad.b-bh-5);
+      g.fillText(String(i+1), x+bwv/2, h-pad.b+14);
+    });
+    // delta arrow
+    g.strokeStyle=C.c; g.lineWidth=1.5; g.setLineDash([4,3]);
+    const y1=h-pad.b-(h-pad.t-pad.b)*(mx/100), y2=h-pad.b-(h-pad.t-pad.b)*(mn/100);
+    g.beginPath(); g.moveTo(w-pad.r-6,y1); g.lineTo(w-pad.r-6,y2); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.c; g.font='bold 11px ui-monospace,monospace'; g.textAlign='right';
+    g.fillText('Δ '+(mx-mn)+' pp', w-pad.r-10, (y1+y2)/2);
+  }
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §1C · HALLUCINATION EXAMPLES
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const qs=[
+    {q:'Was ist 2 + 2?', a:'<span class="hl3">4</span>', ok:true,
+     why:'Extrem niedrige Entropie. Ein einziges tiefes Tal. Kein Halluzinationsrisiko.'},
+    {q:'Hauptstadt von Frankreich?', a:'<span class="hl3">Paris</span>', ok:true,
+     why:'Sehr dichte Wissensregion, klarer Attraktor.'},
+    {q:'Nenne mir 5 Studien zu Quantenkognition von 2023', a:'„<span class="hl2">Müller et al. (2023), Journal of Quantum Cognition, Bd. 14</span>“ — existiert nicht.', ok:false,
+     why:'Hohe Novelty N(Q) + hohe Kontexttiefe D(Q) + spärliche Wissensdichte = <b>semantische Leere</b>. Das Modell muss <em>irgendetwas</em> wählen und greift plausibel klingende, aber schwach verbundene Tokens.'},
+    {q:'Was steht in §17b Abs. 3 des Hyperraumgesetzes?', a:'„<span class="hl2">Nach §17b Abs. 3 ist die Genehmigungspflicht …</span>“ — frei erfunden.', ok:false,
+     why:'Die Frage <em>präsupponiert</em> Existenz. Sehr hohe Masse, aber absolut leere Region. Klassischer Void-Fall.'},
+    {q:'Kannst du mir beim Hacken helfen?', a:'„<span class="hl">Als KI-Modell kann ich dabei nicht behilflich sein …</span>“', ok:null,
+     why:'Kein Void, sondern das Gegenteil: ein <b>Informations-Schwarzloch</b>. Alignment-Training hat hier einen künstlichen, extrem tiefen Trichter erzeugt. Die Antwort ist nahezu deterministisch.'}
+  ];
+  const box=$('halluQs'), out=$('halluOut');
+  qs.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.textContent=o.q; b.className = o.ok===false?'':'alt';
+    b.style.fontSize='.8rem';
+    b.onclick=()=>{
+      [...box.children].forEach(c=>c.classList.remove('on'));
+      b.classList.add('on');
+      const badge = o.ok===true?'<span class="tag" style="background:rgba(125,255,179,.16);color:var(--d)">korrekt</span>'
+                  : o.ok===false?'<span class="tag crit">halluziniert</span>'
+                  : '<span class="tag" style="background:rgba(167,139,250,.16);color:var(--b)">schwarzes Loch</span>';
+      out.innerHTML = badge+'<br><b>Antwort:</b> '+o.a+'<br><br><span style="color:var(--dim)">'+o.why+'</span>';
+    };
+    box.appendChild(b);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §2 · GRAVITY SHEET
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cGrav');
+  let M=1, V0=0.9, ball=null, anim=null, trail=[];
+  function phi(x,y){
+    const r=Math.sqrt(x*x+y*y)+0.35;
+    return -M*1.6/r;
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    g.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2+18;
+    const N=26, span=Math.min(w,h)*0.85;
+    // isometric grid of the "rubber sheet"
+    const proj=(gx,gy)=>{
+      const z=phi(gx,gy);
+      const sx=cx+(gx-gy)*span*0.031;
+      const sy=cy+(gx+gy)*span*0.016 + z*26;
+      return [sx,sy];
+    };
+    g.lineWidth=1;
+    for(let i=0;i<=N;i++){
+      // lines along x
+      g.beginPath();
+      for(let j=0;j<=N;j++){
+        const gx=(i/N-0.5)*11, gy=(j/N-0.5)*11;
+        const [sx,sy]=proj(gx,gy);
+        j?g.lineTo(sx,sy):g.moveTo(sx,sy);
+      }
+      const d=Math.abs(i/N-0.5);
+      g.strokeStyle='rgba(110,231,255,'+(0.35-d*0.35)+')'; g.stroke();
+      // lines along y
+      g.beginPath();
+      for(let j=0;j<=N;j++){
+        const gx=(j/N-0.5)*11, gy=(i/N-0.5)*11;
+        const [sx,sy]=proj(gx,gy);
+        j?g.lineTo(sx,sy):g.moveTo(sx,sy);
+      }
+      g.strokeStyle='rgba(167,139,250,'+(0.3-d*0.3)+')'; g.stroke();
+    }
+    // central mass
+    const [mx,my]=proj(0,0);
+    const grd=g.createRadialGradient(mx,my-4,1,mx,my-4,10+M*13);
+    grd.addColorStop(0,'#fff'); grd.addColorStop(.35,C.e); grd.addColorStop(1,'rgba(255,212,121,0)');
+    g.fillStyle=grd; g.beginPath(); g.arc(mx,my-4,10+M*13,0,7); g.fill();
+    // trail
+    if(trail.length>1){
+      g.strokeStyle='rgba(255,138,184,.7)'; g.lineWidth=1.8; g.beginPath();
+      trail.forEach(([tx,ty],k)=>{const [sx,sy]=proj(tx,ty); k?g.lineTo(sx,sy):g.moveTo(sx,sy);});
+      g.stroke();
+    }
+    if(ball){
+      const [bx,by]=proj(ball.x,ball.y);
+      g.fillStyle=C.a; g.beginPath(); g.arc(bx,by-3,5,0,7); g.fill();
+      g.strokeStyle='rgba(110,231,255,.5)'; g.lineWidth=1; g.beginPath(); g.arc(bx,by-3,9,0,7); g.stroke();
+    }
+    g.fillStyle=C.dim2; g.font='11px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('M = '+fmt(M,2), 12, 18);
+    if(ball) g.fillText(ball.captured?'⟳ EINGEFANGEN':'→ frei', 12, 34);
+  }
+  function step(){
+    if(!ball) return;
+    const dt=0.032;
+    for(let s=0;s<3;s++){
+      const r2=ball.x*ball.x+ball.y*ball.y, r=Math.sqrt(r2)+0.35;
+      const a=-M*1.6/(r*r*r);
+      ball.vx+=a*ball.x*dt; ball.vy+=a*ball.y*dt;
+      ball.x+=ball.vx*dt; ball.y+=ball.vy*dt;
+    }
+    trail.push([ball.x,ball.y]); if(trail.length>260) trail.shift();
+    const rr=Math.hypot(ball.x,ball.y);
+    ball.captured = rr<4.2 && trail.length>60;
+    if(rr>9){ ball=null; }
+    draw();
+    anim=requestAnimationFrame(step);
+  }
+  function run(){
+    cancelAnimationFrame(anim);
+    trail=[];
+    ball={x:-4.6,y:-2.4,vx:V0*0.95,vy:V0*0.42,captured:false};
+    step();
+  }
+  bind('sMass','vMass',v=>{M=v; if(!ball) draw(); },2);
+  bind('sVel','vVel',v=>{V0=v;},2);
+  $('gravRun').onclick=run;
+  $('gravReset').onclick=()=>{cancelAnimationFrame(anim); ball=null; trail=[]; draw();};
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §3A · SURPRISE CURVE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cSurprise');
+  let p=0.5;
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:44,r:16,t:16,b:32};
+    gridlines(g,w,h,pad,5); axes(g,w,h,pad,'Wahrscheinlichkeit p','Überraschung (Bits)');
+    const maxS=10;
+    const X=v=>pad.l+(w-pad.l-pad.r)*v;
+    const Y=v=>h-pad.b-(h-pad.t-pad.b)*clamp(v/maxS,0,1);
+    g.strokeStyle=C.c; g.lineWidth=2.4; g.beginPath();
+    for(let i=0;i<=300;i++){
+      const pv=0.001+ (1-0.001)*i/300;
+      const s=-Math.log2(pv);
+      i?g.lineTo(X(pv),Y(s)):g.moveTo(X(pv),Y(s));
+    }
+    g.stroke();
+    // marker
+    const s=-Math.log2(p);
+    g.strokeStyle='rgba(255,212,121,.5)'; g.setLineDash([4,3]); g.lineWidth=1;
+    g.beginPath(); g.moveTo(X(p),h-pad.b); g.lineTo(X(p),Y(s)); g.lineTo(pad.l,Y(s)); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.e; g.beginPath(); g.arc(X(p),Y(s),5.5,0,7); g.fill();
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    [0,0.25,0.5,0.75,1].forEach(v=>g.fillText(v.toFixed(2),X(v),h-pad.b+14));
+  }
+  bind('sSurpP','vSurpP',v=>{
+    p=v;
+    const s=-Math.log2(p);
+    $('oSurp').textContent=fmt(s,2);
+    let t;
+    if(p>0.95) t='fast sicher'; else if(p>0.6) t='erwartbar';
+    else if(p>0.4) t='Münzwurf'; else if(p>0.12) t='überraschend';
+    else if(p>0.01) t='sehr selten'; else t='Lottogewinn';
+    $('oSurpTxt').textContent=t;
+    draw();
+  },3);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §3B · ENTROPY PLAYGROUND
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const names=['der','ein','Paris','Haus','Katze'];
+  let raw=[3,3,3,3,3];
+  const cv=$('cEnt'), sl=$('entSliders');
+  names.forEach((n,i)=>{
+    const d=document.createElement('div'); d.className='ctl';
+    d.innerHTML='<label>'+n+' <span class="val" id="ew'+i+'">3.0</span></label>'+
+                '<input type="range" id="es'+i+'" min="0.02" max="10" step="0.02" value="3">';
+    sl.appendChild(d);
+  });
+  function probs(){ const s=raw.reduce((a,b)=>a+b,0); return raw.map(v=>v/s); }
+  function draw(){
+    const p=probs(), H=entropyBits(p), Hm=Math.log2(names.length);
+    $('oEnt').textContent=fmt(H,2);
+    $('oEntMax').textContent=fmt(Hm,2);
+    $('oPerp').textContent=fmt(Math.pow(2,H),2);
+    const {g,w,h}=dpi(cv);
+    const pad={l:42,r:16,t:18,b:34};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'Token','p  /  −p·log₂p');
+    const bw=(w-pad.l-pad.r)/names.length;
+    p.forEach((v,i)=>{
+      const contrib = v>1e-12 ? -v*Math.log2(v) : 0;
+      const x=pad.l+i*bw;
+      const bh=(h-pad.t-pad.b)*v;
+      g.fillStyle='rgba(110,231,255,.65)';
+      g.fillRect(x+bw*0.12, h-pad.b-bh, bw*0.36, bh);
+      const ch=(h-pad.t-pad.b)*(contrib/0.6);
+      g.fillStyle='rgba(255,138,184,.65)';
+      g.fillRect(x+bw*0.52, h-pad.b-Math.min(ch,h-pad.t-pad.b), bw*0.36, Math.min(ch,h-pad.t-pad.b));
+      g.fillStyle=C.dim; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+      g.fillText(names[i], x+bw/2, h-pad.b+14);
+      g.fillStyle=C.a; g.fillText((v*100).toFixed(0)+'%', x+bw*0.3, h-pad.b-bh-4);
+    });
+    // H bar at top
+    g.fillStyle='rgba(255,255,255,.06)'; g.fillRect(pad.l,4,w-pad.l-pad.r,7);
+    g.fillStyle=C.d; g.fillRect(pad.l,4,(w-pad.l-pad.r)*(H/Hm),7);
+    g.fillStyle=C.d; g.font='9px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('H / H_max = '+fmt(H/Hm,2), pad.l+3, 20);
+  }
+  names.forEach((n,i)=>{
+    $('es'+i).addEventListener('input',e=>{
+      raw[i]=parseFloat(e.target.value);
+      $('ew'+i).textContent=fmt(raw[i],1);
+      draw();
+    });
+  });
+  function setAll(arr){ raw=arr.slice(); arr.forEach((v,i)=>{$('es'+i).value=v; $('ew'+i).textContent=fmt(v,1);}); draw(); }
+  $('entUni').onclick=()=>setAll([3,3,3,3,3]);
+  $('entPeak').onclick=()=>setAll([0.05,0.05,9.8,0.05,0.05]);
+  $('entRand').onclick=()=>setAll(Array.from({length:5},()=>+(Math.random()*9+0.3).toFixed(2)));
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §4A · KL DIVERGENCE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cKL');
+  let mu=0, sig=1;
+  const xs=[]; for(let i=0;i<=200;i++) xs.push(-6+12*i/200);
+  const gauss=(x,m,s)=>Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI));
+  function calc(){
+    let kl=0, dx=12/200;
+    const contrib=[];
+    for(const x of xs){
+      const pq=Math.max(gauss(x,mu,sig),1e-12);
+      const pt=Math.max(gauss(x,0,1),1e-12);
+      const c=pq*Math.log(pq/pt);
+      contrib.push(c); kl+=c*dx;
+    }
+    return {kl:Math.max(kl,0), contrib};
+  }
+  function draw(){
+    const {kl,contrib}=calc();
+    $('oKL').textContent=fmt(kl,3);
+    let t;
+    if(kl<0.05) t='vertraut'; else if(kl<0.4) t='leicht neu';
+    else if(kl<1.5) t='deutlich neu'; else t='stark neuartig';
+    $('oKLtxt').textContent=t;
+    $('oKLtxt').style.color = kl<0.4?C.d : kl<1.5?C.e : C.f;
+
+    const {g,w,h}=dpi(cv);
+    const pad={l:40,r:16,t:16,b:32};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'semantische Achse x','Dichte');
+    const X=v=>pad.l+(w-pad.l-pad.r)*(v+6)/12;
+    const maxY=0.62;
+    const Y=v=>h-pad.b-(h-pad.t-pad.b)*clamp(v/maxY,-1,1);
+    // contrib area
+    g.fillStyle='rgba(255,138,184,.22)'; g.beginPath(); g.moveTo(X(-6),Y(0));
+    xs.forEach((x,i)=>g.lineTo(X(x),Y(clamp(contrib[i]*0.6,-maxY,maxY))));
+    g.lineTo(X(6),Y(0)); g.closePath(); g.fill();
+    // train dist
+    g.strokeStyle=C.b; g.lineWidth=2; g.beginPath();
+    xs.forEach((x,i)=>{const y=Y(gauss(x,0,1)); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke();
+    g.fillStyle='rgba(167,139,250,.12)'; g.lineTo(X(6),Y(0)); g.lineTo(X(-6),Y(0)); g.fill();
+    // query dist
+    g.strokeStyle=C.a; g.lineWidth=2.4; g.beginPath();
+    xs.forEach((x,i)=>{const y=Y(gauss(x,mu,sig)); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke();
+    // labels
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    [-6,-3,0,3,6].forEach(v=>g.fillText(String(v),X(v),h-pad.b+14));
+    g.textAlign='left'; g.fillStyle=C.b; g.fillText('P_train', X(-5.6), pad.t+12);
+    g.fillStyle=C.a; g.fillText('P(Q)', X(-5.6), pad.t+26);
+  }
+  bind('sKLmu','vKLmu',v=>{mu=v; draw();},2);
+  bind('sKLsig','vKLsig',v=>{sig=v; draw();},2);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §4B · MUTUAL INFORMATION (Venn)
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cMI');
+  let rho=0.6;
+  function draw(){
+    const HQ=2.0, HC=2.0;
+    // I = -0.5*log2(1-rho^2) for bivariate gaussian, scaled to fit
+    const I=Math.min(-0.5*Math.log2(1-rho*rho), HQ);
+    $('oMIa').textContent=fmt(HQ,2);
+    $('oMIb').textContent=fmt(HC,2);
+    $('oMIi').textContent=fmt(I,2);
+    const {g,w,h}=dpi(cv);
+    g.clearRect(0,0,w,h);
+    const R=Math.min(w,h)*0.27;
+    const frac=I/HQ;
+    const d=R*2*(1-frac*0.92);
+    const cx=w/2, cy=h/2;
+    const x1=cx-d/2, x2=cx+d/2;
+    // circles
+    g.globalCompositeOperation='lighter';
+    g.fillStyle='rgba(110,231,255,.28)'; g.beginPath(); g.arc(x1,cy,R,0,7); g.fill();
+    g.fillStyle='rgba(167,139,250,.28)'; g.beginPath(); g.arc(x2,cy,R,0,7); g.fill();
+    g.globalCompositeOperation='source-over';
+    g.strokeStyle=C.a; g.lineWidth=2; g.beginPath(); g.arc(x1,cy,R,0,7); g.stroke();
+    g.strokeStyle=C.b; g.beginPath(); g.arc(x2,cy,R,0,7); g.stroke();
+    // labels
+    g.font='bold 13px Inter,sans-serif'; g.textAlign='center';
+    g.fillStyle=C.a; g.fillText('H(Q)', x1-R*0.45, cy-R*0.85);
+    g.fillStyle=C.b; g.fillText('H(C)', x2+R*0.45, cy-R*0.85);
+    if(d<R*2){
+      g.fillStyle=C.d; g.font='bold 14px ui-monospace,monospace';
+      g.fillText('I = '+fmt(I,2), cx, cy+4);
+      g.font='10px Inter,sans-serif'; g.fillStyle='rgba(125,255,179,.7)';
+      g.fillText('geteilte Information', cx, cy+20);
+    } else {
+      g.fillStyle=C.dim2; g.font='11px Inter,sans-serif';
+      g.fillText('unabhängig · I = 0', cx, cy+R+26);
+    }
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('ρ = '+fmt(rho,2), 12, 18);
+  }
+  bind('sMI','vMI',v=>{rho=v; draw();},2);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §5 · INFORMATION MASS LAB
+   ═══════════════════════════════════════════════════════════ */
+const MassLab = (function(){
+  const cv=$('cMass');
+  let H=0.4,D=0.3,N=0.2,A=1,B=1,G=1;
+  const presets=[
+    {n:'„Was ist 2 + 2?"',                                  h:0.03,d:0.02,nv:0.02},
+    {n:'„Hauptstadt von Frankreich?"',                      h:0.06,d:0.05,nv:0.03},
+    {n:'„Erzähl mir was Interessantes."',                   h:0.95,d:0.10,nv:0.25},
+    {n:'„Fasse unser bisheriges Gespräch zusammen."',       h:0.45,d:0.92,nv:0.15},
+    {n:'„Erkläre Quanten-Gravitations-Ethik im Jahr 2087."',h:0.80,d:0.55,nv:0.95},
+    {n:'„Nenne 5 Studien zu Quantenkognition von 2023."',   h:0.62,d:0.60,nv:0.88},
+    {n:'„Was steht in §17b des Hyperraumgesetzes?"',        h:0.70,d:0.40,nv:0.97},
+    {n:'„Gib mir eine Zufallszahl von 1 bis 10."',          h:0.88,d:0.05,nv:0.08}
+  ];
+  const sel=$('qPreset');
+  presets.forEach((p,i)=>{const o=document.createElement('option'); o.value=i; o.textContent=p.n; sel.appendChild(o);});
+  sel.selectedIndex=1;
+  sel.onchange=()=>{
+    const p=presets[sel.value];
+    $('sH').value=p.h; $('sD').value=p.d; $('sN').value=p.nv;
+    ['sH','sD','sN'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+  };
+  function mass(){ return A*H + B*D + G*N; }
+  function draw(){
+    const M=mass();
+    $('oMass').textContent=fmt(M,2);
+    let reg,col,verdict;
+    if(M<0.35){reg='leicht'; col=C.d;
+      verdict='<span class="hl3">Geringe Masse.</span> Flache, klar strukturierte Landschaft mit einem dominanten Tal. Das Modell antwortet deterministisch und zuverlässig. Niedrige Temperatur ist hier optimal.';}
+    else if(M<1.0){reg='stabil'; col=C.a;
+      verdict='<span style="color:var(--a)">Moderate Masse.</span> Deutliche Delle, aber noch ein klarer Hauptattraktor. Gute Balance zwischen Zuverlässigkeit und Ausdruck.';}
+    else if(M<1.8){reg='zerklüftet'; col=C.e;
+      verdict='<span class="hl">Hohe Masse.</span> Die Landschaft wird zerklüftet: mehrere lokale Minima konkurrieren. Erhöhtes Risiko, in einem suboptimalen Tal hängen zu bleiben. Laut Paper §6.2: <b>Temperatur anheben</b>.';}
+    else {reg='kritisch'; col=C.f;
+      verdict='<span class="hl2">Kritische Masse.</span> Starke Krümmung bei gleichzeitig dünner Wissensdichte. Das ist genau die Konstellation, die das Paper als <b>Halluzinations-Regime</b> identifiziert (§4.1): hohe Masse trifft auf semantische Leere.';}
+    $('oRegime').textContent=reg; $('oRegime').style.color=col;
+    $('massVerdict').innerHTML=verdict;
+
+    const {g,w,h}=dpi(cv);
+    g.clearRect(0,0,w,h);
+    const pad={l:40,r:16,t:16,b:44};
+    // stacked contribution bar
+    const barY=pad.t, barH=26, barW=w-pad.l-pad.r;
+    const tot=Math.max(mass(),1e-6), maxTot=A+B+G;
+    const parts=[[A*H,C.a,'αH'],[B*D,C.b,'βD'],[G*N,C.c,'γN']];
+    let cx=pad.l;
+    g.fillStyle='rgba(255,255,255,.05)'; g.fillRect(pad.l,barY,barW,barH);
+    parts.forEach(([v,col,lbl])=>{
+      const pw=barW*(v/Math.max(maxTot,1e-6));
+      g.fillStyle=col; g.globalAlpha=.75; g.fillRect(cx,barY,pw,barH); g.globalAlpha=1;
+      if(pw>26){g.fillStyle='#05060c'; g.font='bold 10px ui-monospace,monospace'; g.textAlign='center';
+        g.fillText(lbl, cx+pw/2, barY+17);}
+      cx+=pw;
+    });
+    g.strokeStyle='rgba(255,255,255,.2)'; g.strokeRect(pad.l,barY,barW,barH);
+
+    // curvature well
+    const wy0=barY+barH+30, wh=h-pad.b-wy0+18;
+    const X=v=>pad.l+barW*(v+3)/6;
+    g.strokeStyle='rgba(120,140,220,.15)'; g.beginPath();
+    g.moveTo(pad.l,wy0); g.lineTo(w-pad.r,wy0); g.stroke();
+    const depth=Math.min(M/2.6,1)*wh;
+    g.strokeStyle=col; g.lineWidth=2.6; g.beginPath();
+    for(let i=0;i<=160;i++){
+      const x=-3+6*i/160;
+      const y=wy0+depth*Math.exp(-x*x/(0.9+M*0.35));
+      i?g.lineTo(X(x),y):g.moveTo(X(x),y);
+    }
+    g.stroke();
+    g.fillStyle=col.replace(')',',.12)').replace('#','rgba(').length>0?'rgba(255,255,255,.04)':'';
+    g.fillStyle='rgba(255,255,255,.035)';
+    g.lineTo(X(3),wy0); g.lineTo(X(-3),wy0); g.closePath(); g.fill();
+    // ball
+    g.fillStyle=C.e; g.beginPath(); g.arc(X(0), wy0+depth-5, 5.5, 0, 7); g.fill();
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    g.fillText('Krümmung des Bedeutungsraums durch M(Q)', w/2, h-10);
+    return M;
+  }
+  bind('sH','vH',v=>{H=v; draw(); Sync();},2);
+  bind('sD','vD',v=>{D=v; draw(); Sync();},2);
+  bind('sN','vN',v=>{N=v; draw(); Sync();},2);
+  bind('sA','vA',v=>{A=v; draw();},2);
+  bind('sB','vB',v=>{B=v; draw();},2);
+  bind('sG','vG',v=>{G=v; draw();},2);
+  function Sync(){}
+  draw(); addEventListener('resize',draw);
+  return {mass, draw};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §6A · PROBABILITY ↔ POTENTIAL
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cvP=$('cProb'), cvV=$('cPot');
+  const toks=['Paris','Lyon','Berlin','Rom','die','ein','xyz','Madrid'];
+  const sets={
+    A:{p:[0.82,0.05,0.04,0.03,0.02,0.02,0.005,0.015],
+       note:'<b>Klare Frage.</b> Ein tiefes, dominantes Tal. Φ(„Paris") ≈ 0.20, alle anderen liegen hoch oben. Egal wo der Ball startet — er landet im selben Tal. <span class="hl3">Deterministisch und korrekt.</span>'},
+    B:{p:[0.26,0.22,0.19,0.16,0.07,0.05,0.02,0.03],
+       note:'<b>Mehrdeutige Frage.</b> Mehrere fast gleich tiefe Täler. Kleine Änderungen am Prompt entscheiden, in welches der Ball fällt. <span class="hl">Das ist die Ursache von Prompt-Sensitivität.</span>'},
+    C:{p:[0.14,0.13,0.13,0.12,0.12,0.12,0.12,0.12],
+       note:'<b>Semantische Leere.</b> Fast flach — kein Token hat starken Sog. Das Modell muss trotzdem wählen und greift einen schwach verbundenen Token. <span class="hl2">Genau hier entstehen Halluzinationen (§4.1).</span>'}
+  };
+  let cur='A', ball=null, anim=null;
+  function P(){ return sets[cur].p; }
+  function phiArr(){ return P().map(v=>-Math.log(v)); }
+  function drawProb(){
+    const {g,w,h}=dpi(cvP);
+    const pad={l:34,r:12,t:16,b:38};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'','P');
+    const p=P(), bw=(w-pad.l-pad.r)/toks.length, mx=Math.max(...p)*1.15;
+    p.forEach((v,i)=>{
+      const x=pad.l+i*bw+bw*0.15, bh=(h-pad.t-pad.b)*(v/mx);
+      const grd=g.createLinearGradient(0,h-pad.b-bh,0,h-pad.b);
+      grd.addColorStop(0,C.a); grd.addColorStop(1,'rgba(110,231,255,.15)');
+      g.fillStyle=grd; g.fillRect(x,h-pad.b-bh,bw*0.7,bh);
+      g.save(); g.translate(x+bw*0.35,h-pad.b+6); g.rotate(-Math.PI/4);
+      g.fillStyle=C.dim2; g.font='9px ui-monospace,monospace'; g.textAlign='right';
+      g.fillText(toks[i],0,0); g.restore();
+    });
+  }
+  function drawPot(){
+    const {g,w,h}=dpi(cvV);
+    const pad={l:34,r:12,t:16,b:38};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'','Φ = −log P');
+    const ph=phiArr(), mx=Math.max(...ph)*1.12;
+    const X=i=>pad.l+(w-pad.l-pad.r)*(i+0.5)/toks.length;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*(v/mx);
+    // smooth landscape via interpolation
+    g.strokeStyle=C.b; g.lineWidth=2.4; g.beginPath();
+    const pts=[];
+    for(let i=0;i<toks.length;i++) pts.push([X(i),Y(ph[i])]);
+    g.moveTo(pts[0][0],pts[0][1]);
+    for(let i=0;i<pts.length-1;i++){
+      const [x0,y0]=pts[i],[x1,y1]=pts[i+1];
+      g.bezierCurveTo((x0+x1)/2,y0,(x0+x1)/2,y1,x1,y1);
+    }
+    g.stroke();
+    g.lineTo(X(toks.length-1),h-pad.b); g.lineTo(X(0),h-pad.b); g.closePath();
+    g.fillStyle='rgba(167,139,250,.1)'; g.fill();
+    ph.forEach((v,i)=>{
+      g.fillStyle= v===Math.min(...ph)?C.d:C.b;
+      g.beginPath(); g.arc(X(i),Y(v),4,0,7); g.fill();
+      g.save(); g.translate(X(i),h-pad.b+6); g.rotate(-Math.PI/4);
+      g.fillStyle=C.dim2; g.font='9px ui-monospace,monospace'; g.textAlign='right';
+      g.fillText(toks[i],0,0); g.restore();
+    });
+    if(ball){
+      g.fillStyle=C.e; g.beginPath(); g.arc(ball.px,ball.py-6,6,0,7); g.fill();
+      g.strokeStyle='rgba(255,212,121,.4)'; g.beginPath(); g.arc(ball.px,ball.py-6,11,0,7); g.stroke();
+    }
+    // annotate minimum
+    const mi=ph.indexOf(Math.min(...ph));
+    g.fillStyle=C.d; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    g.fillText('↓ tiefstes Tal', X(mi), Y(ph[mi])+18);
+  }
+  function drop(){
+    cancelAnimationFrame(anim);
+    const {w,h}=dpi(cvV);
+    const pad={l:34,r:12,t:16,b:38};
+    const ph=phiArr(), mx=Math.max(...ph)*1.12;
+    const X=i=>pad.l+(w-pad.l-pad.r)*(i+0.5)/toks.length;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*(v/mx);
+    let t=0;
+    const start=0.5, target=ph.indexOf(Math.min(...ph));
+    function frame(){
+      t+=0.022;
+      const e=t<1?(1-Math.pow(1-t,3)):1;
+      const pos=lerp(start,target,e);
+      const i0=Math.floor(pos), i1=Math.min(i0+1,ph.length-1), f=pos-i0;
+      const phv=lerp(ph[i0],ph[i1],f);
+      const bounce = t>=1 ? Math.abs(Math.sin((t-1)*9))*Math.exp(-(t-1)*4)*14 : 0;
+      ball={px:lerp(X(i0),X(i1),f), py:Y(phv)-bounce};
+      drawPot();
+      if(t<2.4) anim=requestAnimationFrame(frame);
+    }
+    frame();
+  }
+  function setSet(k){
+    cur=k; ball=null;
+    ['potA','potB','potC'].forEach((id,i)=>$(id).classList.toggle('on','ABC'[i]===k));
+    $('potNote').innerHTML=sets[k].note;
+    drawProb(); drawPot();
+  }
+  $('potA').onclick=()=>setSet('A');
+  $('potB').onclick=()=>setSet('B');
+  $('potC').onclick=()=>setSet('C');
+  $('potDrop').onclick=drop;
+  setSet('A');
+  addEventListener('resize',()=>{drawProb(); drawPot();});
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §6B · GRADIENT EXPLORER
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cGradient');
+  let mx=null;
+  const phi = x => 1.9 + 0.28*x*x - 1.35*Math.exp(-((x+2.1)**2)/0.55)
+                  - 2.05*Math.exp(-((x-0.6)**2)/0.85)
+                  - 0.85*Math.exp(-((x-3.0)**2)/0.38);
+  const dphi = x => {
+    const e=0.001; return (phi(x+e)-phi(x-e))/(2*e);
+  };
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:46,r:20,t:20,b:36};
+    gridlines(g,w,h,pad,5); axes(g,w,h,pad,'Position im latenten Raum ℒ','Φ(x)');
+    const X=v=>pad.l+(w-pad.l-pad.r)*(v+5)/10;
+    const lo=-1.0, hi=3.4;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*clamp((v-lo)/(hi-lo),0,1);
+    // fill under curve
+    g.beginPath(); g.moveTo(X(-5),h-pad.b);
+    for(let i=0;i<=400;i++){const x=-5+10*i/400; g.lineTo(X(x),Y(phi(x)));}
+    g.lineTo(X(5),h-pad.b); g.closePath();
+    const grd=g.createLinearGradient(0,pad.t,0,h-pad.b);
+    grd.addColorStop(0,'rgba(167,139,250,.02)'); grd.addColorStop(1,'rgba(110,231,255,.16)');
+    g.fillStyle=grd; g.fill();
+    // curve
+    g.strokeStyle=C.a; g.lineWidth=2.6; g.beginPath();
+    for(let i=0;i<=400;i++){const x=-5+10*i/400; const y=Y(phi(x)); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}
+    g.stroke();
+    // gradient field arrows along the bottom
+    for(let i=0;i<=28;i++){
+      const x=-4.8+9.6*i/28;
+      const gr=-dphi(x);
+      const ax=X(x), ay=h-pad.b-8;
+      const len=clamp(gr*11,-17,17);
+      g.strokeStyle = gr>0?'rgba(125,255,179,.55)':'rgba(255,138,184,.55)';
+      g.lineWidth=1.6; g.beginPath(); g.moveTo(ax,ay); g.lineTo(ax+len,ay); g.stroke();
+      g.beginPath(); g.moveTo(ax+len,ay);
+      g.lineTo(ax+len-Math.sign(len)*4, ay-3);
+      g.lineTo(ax+len-Math.sign(len)*4, ay+3); g.closePath();
+      g.fillStyle = gr>0?'rgba(125,255,179,.65)':'rgba(255,138,184,.65)'; g.fill();
+    }
+    // minima markers
+    [-2.1,0.6,3.0].forEach(m=>{
+      let x=m; for(let k=0;k<200;k++) x-=dphi(x)*0.02;
+      g.fillStyle='rgba(255,212,121,.85)'; g.beginPath(); g.arc(X(x),Y(phi(x)),3.5,0,7); g.fill();
+    });
+    // hover
+    if(mx!==null){
+      const x=mx, p=phi(x), gr=-dphi(x);
+      g.strokeStyle='rgba(255,255,255,.2)'; g.setLineDash([3,3]);
+      g.beginPath(); g.moveTo(X(x),pad.t); g.lineTo(X(x),h-pad.b); g.stroke(); g.setLineDash([]);
+      // tangent
+      const dx=1.2;
+      g.strokeStyle=C.e; g.lineWidth=2;
+      g.beginPath(); g.moveTo(X(x-dx),Y(p-dx*dphi(x))); g.lineTo(X(x+dx),Y(p+dx*dphi(x))); g.stroke();
+      // gravity arrow
+      const ax=X(x), ay=Y(p);
+      const L=clamp(Math.abs(gr)*26,6,60);
+      const dir = gr>0?1:-1;
+      g.strokeStyle=C.d; g.lineWidth=3; g.lineCap='round';
+      g.beginPath(); g.moveTo(ax,ay-14); g.lineTo(ax+dir*L,ay-14); g.stroke();
+      g.beginPath(); g.moveTo(ax+dir*L,ay-14);
+      g.lineTo(ax+dir*L-dir*8, ay-19); g.lineTo(ax+dir*L-dir*8, ay-9);
+      g.closePath(); g.fillStyle=C.d; g.fill();
+      g.lineCap='butt';
+      g.fillStyle='#fff'; g.beginPath(); g.arc(ax,ay,5.5,0,7); g.fill();
+      g.strokeStyle=C.a; g.lineWidth=2; g.beginPath(); g.arc(ax,ay,5.5,0,7); g.stroke();
+
+      $('oGx').textContent=fmt(x,2);
+      $('oGphi').textContent=fmt(p,2);
+      $('oGg').textContent=(gr>0?'+':'')+fmt(gr,2);
+      $('oGdir').innerHTML = Math.abs(gr)<0.06
+        ? '<span style="color:var(--e)">⊙ Minimum</span>'
+        : (gr>0?'<span style="color:var(--d)">→ rechts</span>':'<span style="color:var(--c)">← links</span>');
+    }
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('Pfeile unten = Gravitationsfeld g(t) = −∇Φ', pad.l+4, pad.t+12);
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const pad={l:46,r:20};
+    const frac=(e.clientX-r.left-pad.l)/(r.width-pad.l-pad.r);
+    mx=clamp(-5+10*frac,-4.9,4.9); draw();
+  });
+  cv.addEventListener('mouseleave',()=>{mx=null; draw();});
+  cv.addEventListener('touchmove',e=>{
+    const r=cv.getBoundingClientRect(); const pad={l:46,r:20};
+    const frac=(e.touches[0].clientX-r.left-pad.l)/(r.width-pad.l-pad.r);
+    mx=clamp(-5+10*frac,-4.9,4.9); draw(); e.preventDefault();
+  },{passive:false});
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §7 · 3D LANDSCAPE (Plotly)
+   ═══════════════════════════════════════════════════════════ */
+const Land3D = (function(){
+  let M=1, R=0.3, V=0, B=0;
+  const N=56, span=6;
+  function surf(){
+    const x=[],y=[],z=[];
+    for(let i=0;i<N;i++){ x.push(-span/2+span*i/(N-1)); y.push(-span/2+span*i/(N-1)); }
+    for(let j=0;j<N;j++){
+      const row=[];
+      for(let i=0;i<N;i++){
+        const X=x[i], Y=y[j];
+        const r2=X*X+Y*Y;
+        let v = 0.18*r2;                                     // global bowl
+        v -= M*2.4*Math.exp(-r2/1.5);                        // main well from mass
+        v += R*1.5*(Math.sin(X*2.6)*Math.cos(Y*2.3));        // ruggedness → local minima
+        // void: flat plateau on the right
+        const dv=(X-2.0)**2+(Y-1.6)**2;
+        v = v*(1-V*Math.exp(-dv/1.1)) - V*0.05*Math.exp(-dv/1.1);
+        // black hole: narrow deep funnel on the left
+        const db=(X+2.1)**2+(Y+1.5)**2;
+        v -= B*3.2*Math.exp(-db/0.16);
+        row.push(v);
+      }
+      z.push(row);
+    }
+    return {x,y,z};
+  }
+  function render(){
+    const {x,y,z}=surf();
+    const data=[{
+      type:'surface', x, y, z,
+      colorscale:[[0,'#1a0b2e'],[0.2,'#3b1f6b'],[0.42,'#6d4bb5'],[0.62,'#6ee7ff'],[0.82,'#7dffb3'],[1,'#ffd479']],
+      showscale:false, opacity:0.97,
+      contours:{z:{show:true,usecolormap:true,project:{z:true},width:1.5}},
+      lighting:{ambient:.55,diffuse:.85,specular:.22,roughness:.55},
+      hovertemplate:'Φ = %{z:.2f}<extra></extra>'
+    }];
+    const layout={
+      paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+      margin:{l:0,r:0,t:0,b:0},
+      scene:{
+        xaxis:{title:{text:'ℒ₁',font:{color:'#6b7699',size:10}},gridcolor:'rgba(120,140,220,.13)',
+               zerolinecolor:'rgba(120,140,220,.2)',color:'#6b7699',showbackground:false},
+        yaxis:{title:{text:'ℒ₂',font:{color:'#6b7699',size:10}},gridcolor:'rgba(120,140,220,.13)',
+               zerolinecolor:'rgba(120,140,220,.2)',color:'#6b7699',showbackground:false},
+        zaxis:{title:{text:'Φ',font:{color:'#6b7699',size:10}},gridcolor:'rgba(120,140,220,.13)',
+               color:'#6b7699',showbackground:false},
+        camera:{eye:{x:1.55,y:-1.55,z:1.05}},
+        aspectratio:{x:1,y:1,z:0.62}
+      }
+    };
+    Plotly.react('p3d',data,layout,{displayModeBar:false,responsive:true});
+    let n='Drehe die Fläche. <b>Tief = wahrscheinlich.</b>';
+    if(B>0.8) n='<b style="color:var(--b)">Schwarzes Loch aktiv:</b> Der schmale Trichter links zieht alles an. Kaum eine Trajektorie entkommt — das Modell gibt die Standardantwort.';
+    else if(V>0.5) n='<b style="color:var(--f)">Leere aktiv:</b> Das Plateau rechts ist flach. Kein Sog, keine Führung. Das Modell muss raten → Halluzination.';
+    else if(R>0.75) n='<b style="color:var(--e)">Stark zerklüftet:</b> Viele lokale Minima. Greedy Decoding bleibt im erstbesten Tal hängen, auch wenn ein tieferes existiert.';
+    else if(M>2.2) n='<b>Hohe Masse:</b> Eine einzige dominante Delle. Starker, aber einseitiger Sog.';
+    $('n3').innerHTML=n;
+  }
+  bind('s3M','v3M',v=>{M=v; render();},2);
+  bind('s3R','v3R',v=>{R=v; render();},2);
+  bind('s3V','v3V',v=>{V=v; render();},2);
+  bind('s3B','v3B',v=>{B=v; render();},2);
+  $('b3Reset').onclick=()=>{
+    $('s3M').value=1; $('s3R').value=0.3; $('s3V').value=0; $('s3B').value=0;
+    ['s3M','s3R','s3V','s3B'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+  };
+  render();
+  return {render};
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §8 · TEMPERATURE LAB
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const toks=['Paris','die','Frankreich','Stadt','Hauptstadt','Lyon','Berlin','xyz'];
+  const phi=[0.22,1.35,1.55,1.85,2.10,2.55,3.05,4.60];
+  const cols=[C.d,C.a,C.a,C.b,C.b,C.c,C.c,C.f];
+  let T=1;
+  function draw(){
+    const p=softmax(phi,T);
+    const H=entropyBits(p), Hm=Math.log2(toks.length);
+    $('oTH').textContent=fmt(H,2);
+    $('oTHmax').textContent=fmt(Hm,2);
+    const ti=p.indexOf(Math.max(...p));
+    $('oTTop').textContent=toks[ti]+' ('+(p[ti]*100).toFixed(0)+'%)';
+    // bars
+    const box=$('tokenBars'); box.innerHTML='';
+    toks.forEach((t,i)=>{
+      const d=document.createElement('div'); d.className='tokenbar';
+      d.innerHTML='<span class="nm">'+t+'</span>'+
+        '<div class="bar" style="width:'+(p[i]*100*2.1)+'%;background:'+cols[i]+';opacity:.8"></div>'+
+        '<span class="pc">'+(p[i]*100).toFixed(1)+'%</span>';
+      box.appendChild(d);
+    });
+    let n;
+    if(T<0.15) n='<b style="color:var(--b)">T → 0 · Gravitational Capture.</b> H ≈ 0. Das Modell folgt strikt dem Gradienten. Immer dasselbe Token. Deterministisch, aber stereotyp — und bei einer falschen Delle unrettbar gefangen.';
+    else if(T<0.75) n='<b>Niedrige Temperatur.</b> Die Gravitation dominiert. Gut für Fakten, schlecht für Kreativität.';
+    else if(T<1.4) n='<b style="color:var(--d)">Ausgewogen.</b> Gravitation und Wärmebewegung im Gleichgewicht. Der Standardbereich der meisten Modelle.';
+    else if(T<2.2) n='<b style="color:var(--e)">Hohe Temperatur.</b> Thermische Fluktuationen können das System aus lokalen Minima werfen — mehr Kreativität, mehr Risiko.';
+    else n='<b style="color:var(--f)">T → ∞.</b> H → log₂|V| = '+fmt(Hm,2)+'. Die Gravitation ist irrelevant, alles wird gleich wahrscheinlich. Reines Rauschen.';
+    $('tNote').innerHTML=n;
+    updCurve(T);
+  }
+  let curveInit=false;
+  function updCurve(Tc){
+    const Ts=[], Hs=[];
+    for(let i=0;i<=160;i++){
+      const t=0.02+3.5*i/160;
+      Ts.push(t); Hs.push(entropyBits(softmax(phi,t)));
+    }
+    const Hm=Math.log2(toks.length);
+    const data=[
+      {x:Ts,y:Hs,type:'scatter',mode:'lines',line:{color:C.a,width:3},name:'H(T)',
+       hovertemplate:'T=%{x:.2f} → H=%{y:.2f}<extra></extra>'},
+      {x:[0.02,3.5],y:[Hm,Hm],type:'scatter',mode:'lines',line:{color:C.f,width:1.5,dash:'dash'},name:'log₂|V|'},
+      {x:[Tc],y:[entropyBits(softmax(phi,Tc))],type:'scatter',mode:'markers',
+       marker:{color:C.e,size:13,line:{color:'#fff',width:2}},name:'aktuell'}
+    ];
+    const layout={
+      paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(5,7,14,.45)',
+      font:{color:'#98a3c9',size:11}, margin:{l:52,r:16,t:16,b:44},
+      xaxis:{title:'Temperatur T',gridcolor:'rgba(120,140,220,.1)',zerolinecolor:'rgba(120,140,220,.2)'},
+      yaxis:{title:'Entropie H (Bits)',gridcolor:'rgba(120,140,220,.1)',range:[-0.1,Hm+0.35]},
+      showlegend:true, legend:{orientation:'h',y:-0.26,font:{size:10}},
+      annotations:[
+        {x:0.12,y:0.15,text:'T→0: H→0',showarrow:false,font:{color:C.b,size:10}},
+        {x:3.0,y:Hm-0.22,text:'T→∞: H→log|V|',showarrow:false,font:{color:C.f,size:10}}
+      ]
+    };
+    Plotly[curveInit?'react':'newPlot']('pTemp',data,layout,{displayModeBar:false,responsive:true});
+    curveInit=true;
+  }
+  $('tSample').onclick=()=>{
+    const p=softmax(phi,T); const out=[];
+    for(let k=0;k<20;k++){
+      let r=Math.random(), acc=0, pick=toks.length-1;
+      for(let i=0;i<p.length;i++){acc+=p[i]; if(r<acc){pick=i;break;}}
+      const col = pick===0?'var(--d)' : pick>=6?'var(--f)':'var(--dim)';
+      out.push('<span style="color:'+col+'">'+toks[pick]+'</span>');
+    }
+    const uniq=new Set(out).size;
+    $('tSampleOut').innerHTML=out.join(' · ')+
+      '<br><span style="color:var(--dim2);font-size:.78rem">→ '+uniq+' verschiedene Tokens von 20 Ziehungen</span>';
+  };
+  bind('sT','vT',v=>{T=v; draw();},2);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §9 · TRAJECTORY SIMULATOR
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cTraj');
+  const VOCAB=['der','Himmel','ist','blau','weil','Licht','sich','bricht','und','Luft',
+               'Moleküle','streuen','Wellen','kurz','dann','sehr','oft','Farbe','wird','blau'];
+  let T=0.8, INERT=0.6, RUG=0.35;
+  let traj=[], action=0, prevPhi=null, ctx=0, anim=null, rng=mulberry(7);
+
+  function phiAt(x, step, lastIdx){
+    // base landscape shifts with context
+    let v = 1.6 + 0.22*Math.sin(x*1.1 + step*0.55)
+          + RUG*1.1*Math.sin(x*2.9 + step*0.9)
+          + 0.16*x*x*0.12;
+    // inertia: pull toward last chosen position
+    if(lastIdx!==null) v -= INERT*1.1*Math.exp(-((x-lastIdx)**2)/2.2);
+    return v;
+  }
+  function currentPhis(step,lastIdx){
+    return VOCAB.map((_,i)=>phiAt((i-VOCAB.length/2)*0.55, step, lastIdx===null?null:(lastIdx-VOCAB.length/2)*0.55));
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:44,r:14,t:16,b:40};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'Token-Index (latente Achse)','Φ');
+    const last = traj.length?traj[traj.length-1]:null;
+    const ph = currentPhis(traj.length, last);
+    const all = prevPhi ? ph.concat(prevPhi) : ph;
+    const lo=Math.min(...all)-0.25, hi=Math.max(...all)+0.25;
+    const X=i=>pad.l+(w-pad.l-pad.r)*(i+0.5)/VOCAB.length;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*clamp((v-lo)/(hi-lo),0,1);
+    if(prevPhi){
+      g.strokeStyle='rgba(107,118,153,.45)'; g.lineWidth=1.4; g.setLineDash([4,3]); g.beginPath();
+      prevPhi.forEach((v,i)=>{i?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v));}); g.stroke(); g.setLineDash([]);
+    }
+    g.strokeStyle=C.a; g.lineWidth=2.4; g.beginPath();
+    ph.forEach((v,i)=>{i?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v));}); g.stroke();
+    g.lineTo(X(VOCAB.length-1),h-pad.b); g.lineTo(X(0),h-pad.b); g.closePath();
+    g.fillStyle='rgba(110,231,255,.09)'; g.fill();
+    // trajectory path
+    if(traj.length){
+      g.strokeStyle=C.e; g.lineWidth=2; g.beginPath();
+      traj.forEach((t,k)=>{const yy=Y(t.phi); k?g.lineTo(X(t.i),yy):g.moveTo(X(t.i),yy);});
+      g.stroke();
+      traj.forEach((t,k)=>{
+        g.fillStyle = k===traj.length-1?'#fff':C.e;
+        g.beginPath(); g.arc(X(t.i),Y(t.phi), k===traj.length-1?6:3.5, 0, 7); g.fill();
+      });
+    }
+    g.fillStyle=C.dim2; g.font='9px ui-monospace,monospace'; g.textAlign='center';
+    for(let i=0;i<VOCAB.length;i+=2) g.fillText(String(i), X(i), h-pad.b+13);
+  }
+  function step(){
+    const last = traj.length?traj[traj.length-1].i:null;
+    const ph = currentPhis(traj.length, last);
+    prevPhi = ph.slice();
+    const p = softmax(ph, T);
+    let r=rng(), acc=0, pick=p.length-1;
+    for(let i=0;i<p.length;i++){acc+=p[i]; if(r<acc){pick=i;break;}}
+    traj.push({i:pick, phi:ph[pick], tok:VOCAB[pick]});
+    action += ph[pick];
+    $('oAct').textContent=fmt(action,2);
+    $('oSteps').textContent=traj.length;
+    $('oAvgPhi').textContent=fmt(action/traj.length,2);
+    $('trOut').innerHTML = traj.map((t,k)=>{
+      const op = 0.45+0.55*(k/Math.max(traj.length-1,1));
+      return '<span style="color:var(--e);opacity:'+op+'">'+t.tok+'</span>';
+    }).join(' ') + ' <span style="color:var(--dim2)">▌</span>';
+    draw();
+  }
+  function reset(){
+    cancelAnimationFrame(anim);
+    traj=[]; action=0; prevPhi=null; rng=mulberry(Math.floor(Math.random()*9999));
+    $('oAct').textContent='0.00'; $('oSteps').textContent='0'; $('oAvgPhi').textContent='—';
+    $('trOut').textContent='Noch nichts generiert.';
+    draw();
+  }
+  let running=false;
+  function run(){
+    if(running) return; running=true; reset();
+    let n=0;
+    (function loop(){
+      step(); n++;
+      if(n<16) setTimeout(()=>{anim=requestAnimationFrame(loop);}, 230);
+      else running=false;
+    })();
+  }
+  bind('sTrT','vTrT',v=>{T=v; draw();},2);
+  bind('sTrI','vTrI',v=>{INERT=v; draw();},2);
+  bind('sTrR','vTrR',v=>{RUG=v; draw();},2);
+  $('trRun').onclick=run;
+  $('trStep').onclick=()=>{if(traj.length<30) step();};
+  $('trReset').onclick=reset;
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §10A · HESSIAN
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  let l1=1, l2=1;
+  let init=false;
+  function render(){
+    const N=40, s=2.2;
+    const x=[],y=[],z=[];
+    for(let i=0;i<N;i++){x.push(-s+2*s*i/(N-1)); y.push(-s+2*s*i/(N-1));}
+    for(let j=0;j<N;j++){
+      const row=[];
+      for(let i=0;i<N;i++) row.push(0.5*(l1*x[i]*x[i] + l2*y[j]*y[j]));
+      z.push(row);
+    }
+    const data=[{type:'surface',x,y,z,showscale:false,
+      colorscale:[[0,'#2a1b4e'],[0.5,'#6ee7ff'],[1,'#ffd479']],
+      contours:{z:{show:true,usecolormap:true,project:{z:true}}},
+      lighting:{ambient:.6,diffuse:.8},hovertemplate:'Φ=%{z:.2f}<extra></extra>'}];
+    const ax={gridcolor:'rgba(120,140,220,.12)',color:'#6b7699',showbackground:false,title:{font:{size:9}}};
+    Plotly[init?'react':'newPlot']('pHess',data,{
+      paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},
+      scene:{xaxis:{...ax,title:{text:'x₁',font:{color:'#6b7699',size:10}}},
+             yaxis:{...ax,title:{text:'x₂',font:{color:'#6b7699',size:10}}},
+             zaxis:{...ax,title:{text:'Φ',font:{color:'#6b7699',size:10}}},
+             camera:{eye:{x:1.5,y:-1.5,z:1.0}},aspectratio:{x:1,y:1,z:.7}}
+    },{displayModeBar:false,responsive:true});
+    init=true;
+    const det=l1*l2;
+    $('oHessDet').textContent=fmt(det,2);
+    let t,n,col;
+    if(l1>0.05&&l2>0.05){
+      t='Minimum'; col=C.d;
+      const steep=Math.max(l1,l2);
+      n = steep>3.5
+        ? '<b style="color:var(--f)">Steiles, enges Minimum.</b> Genau die Bedingung aus Gl. (10): hohe Eigenwerte auf kleinem Gebiet. Leicht hineinzufallen, sehr schwer wieder heraus. <b>→ Falle.</b>'
+        : '<b style="color:var(--d)">Sanftes Minimum.</b> Beide Eigenwerte positiv, aber moderat. Das System kann bei genügend Temperatur wieder entkommen.';
+    } else if(l1<-0.05&&l2<-0.05){
+      t='Maximum'; col=C.f;
+      n='<b style="color:var(--f)">Lokales Maximum.</b> Beide Eigenwerte negativ. Ein instabiler Punkt — jede kleine Störung lässt das System abrutschen.';
+    } else if((l1>0.05&&l2<-0.05)||(l1<-0.05&&l2>0.05)){
+      t='Sattelpunkt'; col=C.e;
+      n='<b style="color:var(--e)">Sattelpunkt.</b> Gemischte Eigenwerte: in einer Richtung Tal, in der anderen Kamm. Das System ist entlang einer Achse gefangen und entlang der anderen frei — typisch für mehrdeutige Kontexte.';
+    } else {
+      t='entartet'; col=C.dim2;
+      n='<b>Fast flach.</b> Eigenwerte nahe null, keine Krümmung. Das ist die mathematische Signatur einer <b style="color:var(--f)">semantischen Leere</b>: kein Sog in irgendeine Richtung.';
+    }
+    $('oHessType').textContent=t; $('oHessType').style.color=col;
+    $('hessNote').innerHTML=n;
+  }
+  bind('sL1','vL1',v=>{l1=v; render();},1);
+  bind('sL2','vL2',v=>{l2=v; render();},1);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §10B · HALLUCINATION SIMULATOR
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cHallu');
+  let M=1.2, K=0.7, T=0.7, BH=0;
+  let runs=[];
+  const NX=220, span=8;
+  function phi(x){
+    // knowledge wells: dense region left-of-center, void on the right
+    let v = 0.08*x*x;
+    v -= K*2.6*Math.exp(-((x+1.4)**2)/0.8);        // true-knowledge well
+    v -= K*1.5*Math.exp(-((x+3.2)**2)/0.5);        // secondary correct well
+    v -= (1-K)*0.9*Math.exp(-((x-2.4)**2)/1.6);    // shallow false attractor in the void
+    v -= (1-K)*0.7*Math.exp(-((x-3.6)**2)/0.7);
+    v += M*0.30*Math.sin(x*2.4)*(0.4+M*0.3);       // mass-driven ruggedness
+    v -= BH*3.0*Math.exp(-((x+0.1)**2)/0.09);      // alignment black hole
+    return v;
+  }
+  function classify(x){
+    if(BH>0.6 && Math.abs(x+0.1)<0.7) return 'bh';
+    return x > 0.6 ? 'hallu' : 'ok';
+  }
+  function simulate(){
+    runs=[];
+    const rng=mulberry(Math.floor(Math.random()*99999));
+    for(let r=0;r<40;r++){
+      let x = -span/2 + span*rng();
+      for(let s=0;s<170;s++){
+        const e=0.02;
+        const grad=(phi(x+e)-phi(x-e))/(2*e);
+        const noise=(rng()-0.5)*T*0.85;
+        x = clamp(x - grad*0.09 + noise, -span/2, span/2);
+      }
+      runs.push({x, phi:phi(x), type:classify(x)});
+    }
+    const bad=runs.filter(r=>r.type==='hallu').length;
+    const bh=runs.filter(r=>r.type==='bh').length;
+    const rate=bad/runs.length*100;
+    $('oHrate').textContent=rate.toFixed(0)+'%';
+    $('oHrate').style.color = rate>45?C.f : rate>20?C.e : C.d;
+    let reg,txt;
+    if(BH>0.8 && bh>12){
+      reg='Schwarzes Loch'; $('oHreg').style.color=C.b;
+      txt='<b style="color:var(--b)">Informations-Schwarzloch dominiert.</b> '+bh+' von 40 Läufen enden im Alignment-Trichter. Das Modell antwortet nahezu deterministisch mit der Standardformel — unabhängig davon, was du eigentlich gefragt hast. Keine Halluzination, aber auch kein Informationsgehalt.';
+    } else if(K<0.35 && M>1.4){
+      reg='Leere + hohe Masse'; $('oHreg').style.color=C.f;
+      txt='<b class="hl2">Das Halluzinations-Regime aus §4.1.</b> Hohe Informationsmasse trifft auf dünne Wissensdichte. Die echten Täler sind flach, die falschen Attraktoren rechts fangen die Trajektorien ein. Plausibel klingender, faktisch falscher Text.';
+    } else if(T<0.2 && rate>25){
+      reg='Gravitational Capture'; $('oHreg').style.color=C.e;
+      txt='<b class="hl">Gefangen bei T→0.</b> Ohne thermische Fluktuationen kann das System das erstbeste Tal nicht mehr verlassen — auch wenn es das falsche ist. Genau die Vorhersage aus §5.2: Halluzinationen sind bei <em>niedriger</em> Temperatur besonders hartnäckig.';
+    } else if(rate<15){
+      reg='stabil'; $('oHreg').style.color=C.d;
+      txt='<b class="hl3">Stabiles Regime.</b> Das Wissenstal links ist tief genug, fast alle Trajektorien landen dort. Zuverlässige Antworten.';
+    } else {
+      reg='gemischt'; $('oHreg').style.color=C.a;
+      txt='<b>Gemischtes Regime.</b> Echte und falsche Attraktoren konkurrieren. Das Ergebnis hängt stark vom Startpunkt ab — also von der exakten Prompt-Formulierung.';
+    }
+    $('oHreg').textContent=reg;
+    $('hOut').innerHTML=txt;
+    draw();
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:44,r:16,t:18,b:36};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'latente Achse','Φ');
+    const xs=[], ys=[];
+    for(let i=0;i<=NX;i++){const x=-span/2+span*i/NX; xs.push(x); ys.push(phi(x));}
+    const lo=Math.min(...ys)-0.3, hi=Math.max(...ys)+0.3;
+    const X=v=>pad.l+(w-pad.l-pad.r)*(v+span/2)/span;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*clamp((v-lo)/(hi-lo),0,1);
+    // void shading
+    g.fillStyle='rgba(255,107,107,.07)';
+    g.fillRect(X(0.6),pad.t,X(span/2)-X(0.6),h-pad.t-pad.b);
+    g.fillStyle='rgba(255,107,107,.45)'; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    g.fillText('semantische Leere', (X(0.6)+X(span/2))/2, pad.t+13);
+    g.fillStyle='rgba(125,255,179,.4)';
+    g.fillText('Wissensregion', (X(-span/2)+X(0.6))/2, pad.t+13);
+    // curve
+    g.strokeStyle=C.a; g.lineWidth=2.4; g.beginPath();
+    xs.forEach((x,i)=>{const y=Y(ys[i]); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke();
+    g.lineTo(X(span/2),h-pad.b); g.lineTo(X(-span/2),h-pad.b); g.closePath();
+    g.fillStyle='rgba(110,231,255,.07)'; g.fill();
+    // runs
+    runs.forEach(r=>{
+      const col = r.type==='hallu'?C.f : r.type==='bh'?C.b : C.d;
+      g.fillStyle=col; g.globalAlpha=.8;
+      g.beginPath(); g.arc(X(r.x)+(Math.random()-0.5)*4, Y(r.phi)-6, 3.4, 0, 7); g.fill();
+      g.globalAlpha=1;
+    });
+  }
+  bind('sHM','vHM',v=>{M=v; simulate();},2);
+  bind('sHK','vHK',v=>{K=v; simulate();},2);
+  bind('sHT','vHT',v=>{T=v; simulate();},2);
+  bind('sHB','vHB',v=>{BH=v; simulate();},2);
+  $('hRun').onclick=simulate;
+  simulate(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §11 · PROMPT PERTURBATION
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cPert');
+  let eps=0, frag=0.55;
+  const span=7;
+  function phiBase(x, e){
+    // two competing attractors A (left) and B (right); eps tilts the balance
+    const sep = lerp(3.4, 1.7, frag);
+    const dA = 1.9 + e*1.15;
+    const dB = 1.9 - e*1.15;
+    return 0.10*x*x
+         - dA*Math.exp(-((x+sep/2)**2)/0.85)
+         - dB*Math.exp(-((x-sep/2)**2)/0.85)
+         + frag*0.45*Math.sin(x*3.4);
+  }
+  function findMin(e){
+    let best=null;
+    for(let i=0;i<=300;i++){
+      const x=-span/2+span*i/300, v=phiBase(x,e);
+      if(!best||v<best.v) best={x,v};
+    }
+    return best;
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:44,r:16,t:18,b:36};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'latente Achse','Φ');
+    const xs=[],y0=[],y1=[],dd=[];
+    for(let i=0;i<=260;i++){
+      const x=-span/2+span*i/260;
+      xs.push(x); y0.push(phiBase(x,0)); y1.push(phiBase(x,eps));
+      dd.push(Math.abs(phiBase(x,eps)-phiBase(x,0)));
+    }
+    const all=y0.concat(y1);
+    const lo=Math.min(...all)-0.3, hi=Math.max(...all)+0.3;
+    const X=v=>pad.l+(w-pad.l-pad.r)*(v+span/2)/span;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*clamp((v-lo)/(hi-lo),0,1);
+    // |ΔΦ| area
+    g.fillStyle='rgba(255,138,184,.18)'; g.beginPath(); g.moveTo(X(-span/2),h-pad.b);
+    xs.forEach((x,i)=>g.lineTo(X(x), h-pad.b-dd[i]*40));
+    g.lineTo(X(span/2),h-pad.b); g.closePath(); g.fill();
+    // original
+    g.strokeStyle='rgba(107,118,153,.7)'; g.lineWidth=1.6; g.setLineDash([5,4]); g.beginPath();
+    xs.forEach((x,i)=>{const y=Y(y0[i]); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke(); g.setLineDash([]);
+    // perturbed
+    g.strokeStyle=C.a; g.lineWidth=2.6; g.beginPath();
+    xs.forEach((x,i)=>{const y=Y(y1[i]); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke();
+    // global min ball
+    const m=findMin(eps);
+    g.fillStyle=C.e; g.beginPath(); g.arc(X(m.x),Y(m.v)-6,6.5,0,7); g.fill();
+    g.strokeStyle='rgba(255,212,121,.35)'; g.lineWidth=1.5;
+    g.beginPath(); g.arc(X(m.x),Y(m.v)-6,12,0,7); g.stroke();
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    g.fillText('Attraktor A', X(-lerp(3.4,1.7,frag)/2), h-pad.b-6);
+    g.fillText('Attraktor B', X( lerp(3.4,1.7,frag)/2), h-pad.b-6);
+
+    const maxD=Math.max(...dd);
+    $('oDphi').textContent=fmt(maxD,2);
+    const attr = m.x<0?'A':'B';
+    $('oAttr').textContent=attr;
+    $('oAttr').style.color = attr==='A'?C.a:C.c;
+    const qual = attr==='A' ? 85 - Math.abs(eps)*11 : 29 + Math.abs(eps)*9;
+    $('oQual').textContent=qual.toFixed(0);
+    $('oQual').style.color = qual>60?C.d:C.f;
+
+    let n;
+    if(Math.abs(eps)<0.03) n='<b>Unveränderter Prompt.</b> Beide Attraktoren sind symmetrisch. Der Ball liegt im linken Tal.';
+    else if(maxD<0.35) n='<b>Kleine Perturbation, kleine Wirkung.</b> |ΔΦ| ist gering, das System bleibt im selben Tal. Stabiler Bereich.';
+    else if(attr==='B') n='<b class="hl2">Attraktorwechsel!</b> Eine <em>minimale</em> Änderung hat gereicht, um den Bifurkationspunkt zu überschreiten. Das Modell fällt jetzt in ein völlig anderes Tal — die Antwort ändert sich radikal. <b>Das sind die 56 Prozentpunkte von Sclar et al.</b>';
+    else n='<b class="hl">Landschaft kippt.</b> |ΔΦ| = '+fmt(maxD,2)+'. Noch im selben Tal, aber der Vorsprung schmilzt. Ein kleines Stück weiter und das System springt.';
+    $('pertNote').innerHTML=n;
+  }
+  bind('sEps','vEps',v=>{eps=v; draw();},3);
+  bind('sFrag','vFrag',v=>{frag=v; draw();},2);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §12 · ZHANG ATTRACTOR (random number)
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cZhang');
+  let T=1, A=1;
+  const labels=['1','2','3','4','5','6','7','8','9','10'];
+  function phis(){
+    return labels.map((_,i)=>{
+      const n=i+1;
+      let v=0;
+      v -= A*Math.exp(-((n-5)**2)/0.55)*1.9;       // the "5" attractor
+      v -= A*0.55*Math.exp(-((n-7)**2)/0.8);       // weaker 7 attractor
+      v += 0.20*Math.abs(n-5.5)*0.25;
+      v += (n===1||n===10)?0.32:0;                 // edge aversion
+      return v+2.2;
+    });
+  }
+  function draw(){
+    const ph=phis(), p=softmax(ph,T);
+    const H=entropyBits(p), Hm=Math.log2(10);
+    $('oZ5').textContent=(p[4]*100).toFixed(1)+'%';
+    $('oZ5').style.color = p[4]>0.25?C.f : p[4]>0.15?C.e : C.d;
+    $('oZH').textContent=fmt(H,2);
+    $('oZD').textContent=fmt(H/Hm,2);
+    let n;
+    if(p[4]>0.35) n='<b class="hl2">Starker Attraktor.</b> Die „5" saugt über ein Drittel der Wahrscheinlichkeit auf — genau das gemessene Verhalten von Llama-2-13B-chat. Von Gleichverteilung keine Spur.';
+    else if(H/Hm>0.95) n='<b class="hl3">Fast gleichverteilt.</b> Die Delle ist relativ zur Temperatur bedeutungslos geworden. Das wäre das gewünschte Verhalten — aber um den Preis, dass <em>alle</em> Generierungen chaotischer werden.';
+    else n='<b>Teilweise abgeflacht.</b> Die Delle wirkt noch, aber schwächer. Die Diffusität steigt mit T — Gleichung (12) in Aktion.';
+    $('zNote').innerHTML=n;
+
+    const {g,w,h}=dpi(cv);
+    const pad={l:42,r:16,t:18,b:52};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'','P / Φ');
+    const bw=(w-pad.l-pad.r)/10, maxP=Math.max(0.5,Math.max(...p)*1.15);
+    // ideal line
+    const yi=h-pad.b-(h-pad.t-pad.b)*(0.1/maxP);
+    g.strokeStyle='rgba(125,255,179,.45)'; g.setLineDash([5,4]); g.lineWidth=1.4;
+    g.beginPath(); g.moveTo(pad.l,yi); g.lineTo(w-pad.r,yi); g.stroke(); g.setLineDash([]);
+    p.forEach((v,i)=>{
+      const x=pad.l+i*bw+bw*0.18, bwv=bw*0.64;
+      const bh=(h-pad.t-pad.b)*(v/maxP);
+      const hot=v>0.2;
+      const grd=g.createLinearGradient(0,h-pad.b-bh,0,h-pad.b);
+      grd.addColorStop(0,hot?C.f:C.a); grd.addColorStop(1,'rgba(110,231,255,.12)');
+      g.fillStyle=grd; g.fillRect(x,h-pad.b-bh,bwv,bh);
+      g.fillStyle=hot?'#fff':C.dim2; g.font='9px ui-monospace,monospace'; g.textAlign='center';
+      g.fillText((v*100).toFixed(0)+'%', x+bwv/2, h-pad.b-bh-4);
+      g.fillStyle=hot?C.f:C.dim; g.font='11px ui-monospace,monospace';
+      g.fillText(labels[i], x+bwv/2, h-pad.b+14);
+    });
+    // potential curve overlay
+    const lo=Math.min(...ph)-0.2, hi=Math.max(...ph)+0.2;
+    g.strokeStyle='rgba(167,139,250,.75)'; g.lineWidth=2; g.beginPath();
+    ph.forEach((v,i)=>{
+      const x=pad.l+i*bw+bw*0.5;
+      const y=pad.t+(h-pad.t-pad.b-14)*((v-lo)/(hi-lo));
+      i?g.lineTo(x,y):g.moveTo(x,y);
+    }); g.stroke();
+    g.fillStyle=C.b; g.font='10px ui-monospace,monospace'; g.textAlign='left';
+    g.fillText('Φ (Potential, lila)', pad.l+4, h-14);
+    g.fillStyle=C.d; g.textAlign='right';
+    g.fillText('10% = ideal', w-pad.r-4, yi-5);
+  }
+  bind('sZT','vZT',v=>{T=v; draw();},2);
+  bind('sZA','vZA',v=>{A=v; draw();},2);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §13A · ARGUMENT CHAIN
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const steps=[
+    {t:'Beobachtung', d:'Drei empirische Befunde anderer Forscher: der „5"-Bias (Zhang et al.), 56 pp Format-Sensitivität (Sclar et al.), Prompt-Unsicherheit (Cox et al.). Keine bestehende Theorie erklärt alle drei gemeinsam.'},
+    {t:'Diagnose', d:'Bestehende Interpretierbarkeits-Ansätze — mechanistische Interpretierbarkeit, Attention-Analyse — sind <b>fragmentarisch</b>. Sie liefern Bausteine, aber keine einheitliche Erklärungsstruktur für das System als Ganzes.'},
+    {t:'Analogie wählen', d:'Physikalische Feldtheorie und Raumzeitgeometrie. Begründung: es gibt Vorarbeiten in verwandten Feldern (Informational Gravity Hypothesis, Cognitive Gravitation Model, Semantic Landscape Paradigm).'},
+    {t:'Formalisieren', d:'Vier Definitionen aufstellen: <b>M(Q)</b> = αH + βD + γN (Gl. 1), <b>Φ</b> = −log P (Gl. 5), <b>g</b> = −∇Φ (Gl. 6), <b>P</b> = exp(−Φ/T)/Z (Gl. 7).'},
+    {t:'Dynamik ableiten', d:'Generierung als Bahn minimaler Wirkung S[τ] = ∫Φ dτ (Gl. 9). Jeder Token verschiebt die Quelle → bewegliches Gravitationsfeld → <b>Informationsträgheit</b>.'},
+    {t:'Vorhersagen machen', d:'Halluzination via Hesse-Instabilität (Gl. 10), Prompt-Sensitivität via ΔΦ (Gl. 11), Temperatur-Grenzwerte (Gl. 12). Alle drei Eingangsrätsel fallen unter dieselbe Beschreibung.'},
+    {t:'Tests vorschlagen', d:'Drei konkrete Experimente (§5): Landschaftsvisualisierung mit t-SNE/UMAP auf Logits, Masse↔Halluzination-Korrelation, Temperatur-Sweep. <b>Noch nicht durchgeführt.</b>'},
+    {t:'Anwendungen ableiten', d:'Entropy Balancing, Kontext-Stabilisierung, Anchoring, adaptive Temperatur T(Q) = f(M(Q)) (Gl. 13), drei neue Metriken.'},
+    {t:'Grenzen benennen', d:'Empirische Verifikation aufwendig; M-Komponenten sind verschränkt und schwer unabhängig messbar; hochdimensionale Visualisierung schwierig; <b>
+Diskretheit vs. Kontinuität</b> der Token; Kopplung zwischen Attention-Layern nicht formalisiert.'}
+  ];
+  const wrap=$('chainSteps'), cv=$('cChain'), out=$('chainOut');
+  let sel=0;
+  steps.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.className='qopt'; b.style.display='inline-block'; b.style.width='auto';
+    b.style.marginRight='6px'; b.style.fontSize='.8rem';
+    b.textContent=(i+1)+'. '+s.t;
+    b.onclick=()=>{sel=i; upd();};
+    wrap.appendChild(b);
+  });
+  function upd(){
+    [...wrap.children].forEach((c,i)=>{
+      c.classList.toggle('ok', i<=sel);
+    });
+    out.innerHTML='<b style="color:var(--a)">'+steps[sel].t+'</b><br>'+steps[sel].d;
+    draw();
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    g.clearRect(0,0,w,h);
+    const n=steps.length, pad=34;
+    const y=h/2;
+    const gap=(w-pad*2)/(n-1);
+    g.strokeStyle='rgba(120,140,220,.2)'; g.lineWidth=2;
+    g.beginPath(); g.moveTo(pad,y); g.lineTo(w-pad,y); g.stroke();
+    g.strokeStyle=C.a; g.lineWidth=3;
+    g.beginPath(); g.moveTo(pad,y); g.lineTo(pad+gap*sel,y); g.stroke();
+    steps.forEach((s,i)=>{
+      const x=pad+gap*i;
+      const act=i<=sel, cur=i===sel;
+      g.fillStyle = cur?'#fff' : act?C.a : 'rgba(107,118,153,.5)';
+      g.beginPath(); g.arc(x,y, cur?9:6, 0, 7); g.fill();
+      if(cur){ g.strokeStyle='rgba(110,231,255,.45)'; g.lineWidth=2; g.beginPath(); g.arc(x,y,15,0,7); g.stroke(); }
+      g.save(); g.translate(x, y+ (i%2?24:-18));
+      g.fillStyle = cur?'#fff' : act?C.dim : C.dim2;
+      g.font=(cur?'bold ':'')+'9px Inter,sans-serif'; g.textAlign='center';
+      g.fillText(s.t, 0, 0); g.restore();
+    });
+  }
+  upd(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §13B · SEMANTIC LANDSCAPE PROJECTION (Experiment 1)
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  let mode='A', init=false;
+  const cfg={
+    A:{wells:[[0,0,3.2,1.1]], noise:0.45, seed:11,
+       t:'<b>Einfache Anfrage:</b> ein einziger tiefer Trichter. Alle Logit-Vektoren clustern eng um eine Region — die Antwort ist stabil.'},
+    B:{wells:[[-1.7,0.4,2.1,0.9],[1.6,-0.5,2.0,0.9],[0.1,1.9,1.4,0.7]], noise:0.6, seed:23,
+       t:'<b>Mehrdeutige Anfrage:</b> drei konkurrierende Becken. Welches gewinnt, hängt von winzigen Prompt-Details ab.'},
+    C:{wells:[[-2.2,-1.4,2.4,0.8],[2.3,1.5,0.55,1.9]], noise:1.05, seed:37,
+       t:'<b>Neuartige Anfrage:</b> ein echtes Wissensbecken links, rechts ein breites, flaches Plateau — die <span class="hl2">semantische Leere</span>. Punkte, die dort landen, sind Halluzinationen.'}
+  };
+  function field(x,y,c){
+    let v=0.14*(x*x+y*y);
+    c.wells.forEach(([wx,wy,d,s])=>{ v -= d*Math.exp(-(((x-wx)**2)+((y-wy)**2))/(2*s*s)); });
+    return v;
+  }
+  function render(){
+    const c=cfg[mode];
+    const N=52, s=4.2, xs=[], ys=[], z=[];
+    for(let i=0;i<N;i++){ xs.push(-s+2*s*i/(N-1)); ys.push(-s+2*s*i/(N-1)); }
+    for(let j=0;j<N;j++){ const r=[]; for(let i=0;i<N;i++) r.push(field(xs[i],ys[j],c)); z.push(r); }
+    // sampled logit points falling into wells
+    const rng=mulberry(c.seed), px=[],py=[],pc=[],ptxt=[];
+    for(let k=0;k<160;k++){
+      let x=(rng()-0.5)*2*s, y=(rng()-0.5)*2*s;
+      for(let st=0;st<120;st++){
+        const e=0.03;
+        const gx=(field(x+e,y,c)-field(x-e,y,c))/(2*e);
+        const gy=(field(x,y+e,c)-field(x,y-e,c))/(2*e);
+        x=clamp(x-gx*0.11+(rng()-0.5)*c.noise*0.14,-s,s);
+        y=clamp(y-gy*0.11+(rng()-0.5)*c.noise*0.14,-s,s);
+      }
+      px.push(x); py.push(y);
+      const v=field(x,y,c);
+      const isVoid = mode==='C' && x>0.6 && v>-1.2;
+      pc.push(isVoid?C.f:C.e);
+      ptxt.push('Φ = '+v.toFixed(2)+(isVoid?' · Leere':''));
+    }
+    const data=[
+      {type:'contour', x:xs, y:ys, z, showscale:false,
+       colorscale:[[0,'#0d0620'],[0.25,'#2f1a5c'],[0.5,'#4a3a95'],[0.72,'#3f86b8'],[1,'#6ee7ff']],
+       contours:{coloring:'heatmap'}, opacity:0.95,
+       hovertemplate:'Φ=%{z:.2f}<extra></extra>', name:'Φ'},
+      {type:'scatter', x:px, y:py, mode:'markers',
+       marker:{color:pc, size:6, line:{color:'rgba(5,6,12,.7)',width:1}, opacity:.85},
+       text:ptxt, hovertemplate:'%{text}<extra></extra>', name:'Logit-Projektionen'}
+    ];
+    const layout={
+      paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(5,7,14,.5)',
+      font:{color:'#98a3c9',size:11}, margin:{l:46,r:16,t:16,b:44}, showlegend:false,
+      xaxis:{title:'t-SNE Dim 1', gridcolor:'rgba(120,140,220,.08)', zeroline:false},
+      yaxis:{title:'t-SNE Dim 2', gridcolor:'rgba(120,140,220,.08)', zeroline:false, scaleanchor:'x'}
+    };
+    Plotly[init?'react':'newPlot']('pTsne',data,layout,{displayModeBar:false,responsive:true});
+    init=true;
+    let box=$('pTsne').parentNode.querySelector('.tsneNote');
+    if(!box){ box=document.createElement('div'); box.className='note tsneNote'; $('pTsne').after(box); }
+    box.innerHTML=c.t+' <span style="color:var(--dim2);font-size:.85rem">Dunkel = niedriges Φ = hohe Wahrscheinlichkeit. Genau die „Potentialkarte“ aus §5.1.</span>';
+  }
+  ['tsneA','tsneB','tsneC'].forEach((id,i)=>{
+    $(id).onclick=()=>{
+      mode='ABC'[i];
+      ['tsneA','tsneB','tsneC'].forEach((j,k)=>$(j).classList.toggle('on', k===i));
+      render();
+    };
+  });
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §14A · OPTIMISATION LEVERS
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cOpt');
+  let H=0.75, D=0.6, N=0.7, A=0;
+  function calc(){
+    const Neff = N*(1-A*0.72);                 // anchoring reduces effective novelty
+    const Deff = D;
+    const M = H + Deff + Neff;
+    // hallucination risk: peaks with high entropy + high effective novelty
+    const risk = clamp( (0.42*H + 0.20*Deff + 0.62*Neff) * 100 * (1 - A*0.30), 0, 100);
+    // creativity: needs some entropy & novelty, dies when everything is clamped
+    const crea = clamp( (0.58*H + 0.42*Neff) * 100 * (1 - Math.max(0,(M-2.0))*0.28), 0, 100);
+    return {M, Neff, risk, crea};
+  }
+  function draw(){
+    const {M,Neff,risk,crea}=calc();
+    $('oOM').textContent=fmt(M,2);
+    $('oOR').textContent=risk.toFixed(0);
+    $('oOR').style.color = risk>55?C.f : risk>30?C.e : C.d;
+    $('oOC').textContent=crea.toFixed(0);
+    const score = crea - risk;
+    let t;
+    if(risk>60) t='<span class="hl2">Zu riskant.</span> Effektive Novelty ist hoch und es gibt kaum Anker. Das Paper (§6.1) empfiehlt: <b>Anchoring erhöhen</b> — bekannte Begriffe einbauen, um die Anfrage mit vertrautem Terrain zu verbinden.';
+    else if(crea<25) t='<span style="color:var(--dim)">Zu eng.</span> Sicher, aber ausdrucksarm. Entropie H(Q) darf höher sein — das ist <b>Entropy Balancing</b>: genug für kreative Generierung, zu wenig um Halluzinationen zu provozieren.';
+    else if(score>28) t='<span class="hl3">Guter Arbeitspunkt.</span> Kreativität deutlich über Risiko. Die Landschaft hat einen klaren Hauptattraktor, aber genug Struktur für ausdrucksstarke Antworten.';
+    else t='<b>Brauchbar.</b> Kreativität und Risiko halten sich die Waage. Über Anchoring oder Kontext-Stabilisierung lässt sich die Bilanz noch verbessern.';
+    $('optOut').innerHTML=t;
+
+    const {g,w,h}=dpi(cv);
+    const pad={l:44,r:16,t:16,b:34};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'Anchoring-Stärke','%');
+    const X=v=>pad.l+(w-pad.l-pad.r)*v;
+    const Y=v=>h-pad.b-(h-pad.t-pad.b)*v/100;
+    function curve(fn,col,lw){
+      g.strokeStyle=col; g.lineWidth=lw; g.beginPath();
+      for(let i=0;i<=120;i++){
+        const a=i/120;
+        const nE=N*(1-a*0.72), mm=H+D+nE;
+        const val=fn(a,nE,mm);
+        i?g.lineTo(X(a),Y(val)):g.moveTo(X(a),Y(val));
+      }
+      g.stroke();
+    }
+    curve((a,nE)=>clamp((0.42*H+0.20*D+0.62*nE)*100*(1-a*0.30),0,100), C.f, 2.6);
+    curve((a,nE,mm)=>clamp((0.58*H+0.42*nE)*100*(1-Math.max(0,(mm-2.0))*0.28),0,100), C.d, 2.6);
+    // marker
+    g.strokeStyle='rgba(255,255,255,.22)'; g.setLineDash([4,3]);
+    g.beginPath(); g.moveTo(X(A),pad.t); g.lineTo(X(A),h-pad.b); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.f; g.beginPath(); g.arc(X(A),Y(risk),5,0,7); g.fill();
+    g.fillStyle=C.d; g.beginPath(); g.arc(X(A),Y(crea),5,0,7); g.fill();
+    g.font='10px ui-monospace,monospace'; g.textAlign='left';
+    g.fillStyle=C.f; g.fillText('Halluzinationsrisiko', pad.l+5, pad.t+12);
+    g.fillStyle=C.d; g.fillText('Kreativität', pad.l+5, pad.t+26);
+  }
+  bind('sOH','vOH',v=>{H=v; draw();},2);
+  bind('sOD','vOD',v=>{D=v; draw();},2);
+  bind('sON','vON',v=>{N=v; draw();},2);
+  bind('sOA','vOA',v=>{A=v; draw();},2);
+  $('optAuto').onclick=()=>{
+    let best=null;
+    for(let h=0;h<=20;h++) for(let d=0;d<=10;d++) for(let a=0;a<=20;a++){
+      const H2=h/20, D2=d/10, A2=a/20;
+      const nE=N*(1-A2*0.72), M2=H2+D2+nE;
+      const r=clamp((0.42*H2+0.20*D2+0.62*nE)*100*(1-A2*0.30),0,100);
+      const c=clamp((0.58*H2+0.42*nE)*100*(1-Math.max(0,(M2-2.0))*0.28),0,100);
+      const sc=c-r*1.15;
+      if(!best||sc>best.sc) best={sc,H2,D2,A2};
+    }
+    $('sOH').value=best.H2; $('sOD').value=best.D2; $('sOA').value=best.A2;
+    ['sOH','sOD','sOA'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+  };
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §14B · ADAPTIVE TEMPERATURE
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cAdaptive');
+  let T0=0.3, k=0.55, M=1.0;
+  const f=m=>T0 + k*m*(1.9/(1.9+m*0.55));
+  function draw(){
+    const T=f(M);
+    $('oFT').textContent=fmt(T,2);
+    let r;
+    if(T<0.35) r='<span style="color:var(--d)">deterministisch</span>';
+    else if(T<0.8) r='<span style="color:var(--a)">präzise</span>';
+    else if(T<1.3) r='<span style="color:var(--e)">explorativ</span>';
+    else r='<span style="color:var(--f)">stark explorativ</span>';
+    $('oFR').innerHTML=r;
+    const {g,w,h}=dpi(cv);
+    const pad={l:46,r:16,t:16,b:36};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'Informationsmasse M(Q)','T_adaptiv');
+    const X=v=>pad.l+(w-pad.l-pad.r)*v/3;
+    const Y=v=>h-pad.b-(h-pad.t-pad.b)*clamp(v/2.2,0,1);
+    // zones
+    g.fillStyle='rgba(125,255,179,.05)'; g.fillRect(pad.l,pad.t,X(1)-pad.l,h-pad.t-pad.b);
+    g.fillStyle='rgba(255,212,121,.05)'; g.fillRect(X(1),pad.t,X(2)-X(1),h-pad.t-pad.b);
+    g.fillStyle='rgba(255,107,107,.05)'; g.fillRect(X(2),pad.t,X(3)-X(2),h-pad.t-pad.b);
+    g.font='9px ui-monospace,monospace'; g.textAlign='center';
+    g.fillStyle='rgba(125,255,179,.5)'; g.fillText('leicht', (pad.l+X(1))/2, pad.t+12);
+    g.fillStyle='rgba(255,212,121,.5)'; g.fillText('komplex', (X(1)+X(2))/2, pad.t+12);
+    g.fillStyle='rgba(255,107,107,.5)'; g.fillText('kritisch', (X(2)+X(3))/2, pad.t+12);
+    // fixed-T reference
+    g.strokeStyle='rgba(107,118,153,.55)'; g.setLineDash([5,4]); g.lineWidth=1.5;
+    g.beginPath(); g.moveTo(pad.l,Y(0.7)); g.lineTo(w-pad.r,Y(0.7)); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.dim2; g.textAlign='left'; g.fillText('fixes T = 0.7 (heute üblich)', pad.l+5, Y(0.7)-5);
+    // adaptive curve
+    g.strokeStyle=C.e; g.lineWidth=2.8; g.beginPath();
+    for(let i=0;i<=180;i++){ const m=3*i/180; const y=Y(f(m)); i?g.lineTo(X(m),y):g.moveTo(X(m),y); }
+    g.stroke();
+    // marker
+    g.strokeStyle='rgba(255,255,255,.2)'; g.setLineDash([3,3]);
+    g.beginPath(); g.moveTo(X(M),h-pad.b); g.lineTo(X(M),Y(T)); g.lineTo(pad.l,Y(T)); g.stroke(); g.setLineDash([]);
+    g.fillStyle='#fff'; g.beginPath(); g.arc(X(M),Y(T),6,0,7); g.fill();
+    g.strokeStyle=C.e; g.lineWidth=2; g.beginPath(); g.arc(X(M),Y(T),6,0,7); g.stroke();
+    g.fillStyle=C.dim2; g.font='10px ui-monospace,monospace'; g.textAlign='center';
+    [0,1,2,3].forEach(v=>g.fillText(String(v),X(v),h-pad.b+14));
+  }
+  bind('sF0','vF0',v=>{T0=v; draw();},2);
+  bind('sFk','vFk',v=>{k=v; draw();},2);
+  bind('sFM','vFM',v=>{M=v; draw();},2);
+  addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §14C · METRICS
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const scen=[
+    {n:'Faktenfrage',        curv:0.14, cond:0.91, stab:0.94,
+     d:'Glattes Feld, hoher Informationsdurchsatz, robust gegen Umformulierungen. Der Idealfall.'},
+    {n:'Mehrdeutige Frage',  curv:0.58, cond:0.62, stab:0.38,
+     d:'Mehrere konkurrierende Attraktoren → hohe Krümmung, niedrige Stabilität. Prompt-Formulierung entscheidet.'},
+    {n:'Neuartige Frage',    curv:0.83, cond:0.31, stab:0.29,
+     d:'<span class="hl2">Halluzinations-Kandidat.</span> Hohe Krümmung bei schlechter Leitfähigkeit: die Frage kommt nicht bei brauchbarem Wissen an.'},
+    {n:'Langer Kontext',     curv:0.66, cond:0.74, stab:0.52,
+     d:'Tiefer Kontext erzeugt ausgedehnte Felder mit vielen lokalen Minima (§2.2.2) — mittlere Krümmung, aber gute Leitfähigkeit.'},
+    {n:'Alignment-Trigger',  curv:0.22, cond:0.11, stab:0.97,
+     d:'<b style="color:var(--b)">Schwarzes Loch.</b> Extrem stabil (immer dieselbe Antwort), aber die Leitfähigkeit ist fast null — von deiner Frage kommt nichts an.'}
+  ];
+  const cv=$('cMetrics'), btns=$('metricBtns');
+  let sel=0;
+  scen.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.textContent=s.n; b.className=i?'alt':'';
+    b.onclick=()=>{sel=i; [...btns.children].forEach((c,k)=>c.classList.toggle('on',k===i)); upd();};
+    btns.appendChild(b);
+  });
+  btns.children[0].classList.add('on');
+  function upd(){
+    const s=scen[sel];
+    $('mCurv').textContent=fmt(s.curv,2);
+    $('mCond').textContent=fmt(s.cond,2);
+    $('mStab').textContent=fmt(s.stab,2);
+    draw();
+  }
+  function draw(){
+    const {g,w,h}=dpi(cv);
+    const pad={l:120,r:26,t:20,b:26};
+    g.clearRect(0,0,w,h);
+    const rows=[['Gravitational Curvature','curv',C.f,true],
+                ['Information Conductivity','cond',C.d,false],
+                ['Semantic Field Stability','stab',C.a,false]];
+    const bh=26, gap=(h-pad.t-pad.b-bh*3)/2;
+    rows.forEach(([lbl,key,col,inv],i)=>{
+      const y=pad.t+i*(bh+gap);
+      g.fillStyle=C.dim; g.font='11px Inter,sans-serif'; g.textAlign='right';
+      g.fillText(lbl, pad.l-10, y+17);
+      g.fillStyle='rgba(255,255,255,.05)'; g.fillRect(pad.l,y,w-pad.l-pad.r,bh);
+      const v=scen[sel][key];
+      const grd=g.createLinearGradient(pad.l,0,pad.l+(w-pad.l-pad.r)*v,0);
+      grd.addColorStop(0,'rgba(255,255,255,.1)'); grd.addColorStop(1,col);
+      g.fillStyle=grd; g.fillRect(pad.l,y,(w-pad.l-pad.r)*v,bh);
+      g.fillStyle='#fff'; g.font='bold 11px ui-monospace,monospace'; g.textAlign='left';
+      g.fillText(fmt(v,2), pad.l+(w-pad.l-pad.r)*v+8, y+17);
+      if(inv){
+        g.fillStyle='rgba(255,107,107,.5)'; g.font='9px ui-monospace,monospace'; g.textAlign='right';
+        g.fillText('↑ hoch = instabil', w-pad.r, y-5);
+      }
+    });
+    g.fillStyle=C.dim; g.font='11px Inter,sans-serif'; g.textAlign='left';
+    g.fillText(scen[sel].n+':', pad.l, h-6);
+    g.fillStyle=C.dim2; g.font='10px Inter,sans-serif';
+    const plain=scen[sel].d.replace(/<[^>]+>/g,'');
+    g.fillText(plain.slice(0,96)+(plain.length>96?'…':''), pad.l+g.measureText(scen[sel].n+': ').width+4, h-6);
+  }
+  upd(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §16 · GRAND SANDBOX
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const cvR=$('cSandRadar'), cvL=$('cSandLand');
+  let H=0.5,D=0.4,N=0.3,T=0.8,BH=0.2,K=0.7;
+  const presets=[
+    ['Faktenfrage',      {H:.05,D:.05,N:.03,T:.3,BH:.05,K:.95}],
+    ['Kreatives Schreiben',{H:.8,D:.35,N:.45,T:1.3,BH:.05,K:.7}],
+    ['Langer Dialog',    {H:.45,D:.9,N:.2,T:.7,BH:.15,K:.75}],
+    ['Halluzinationsfalle',{H:.75,D:.6,N:.95,T:.15,BH:.05,K:.15}],
+    ['Alignment-Trigger',{H:.4,D:.3,N:.3,T:.7,BH:1.8,K:.6}],
+    ['Zufallszahl',      {H:.9,D:.05,N:.08,T:1.0,BH:.1,K:.5}]
+  ];
+  const pb=$('sandPresets');
+  presets.forEach(([n,cfg])=>{
+    const b=document.createElement('button'); b.textContent=n; b.className='alt'; b.style.fontSize='.78rem';
+    b.onclick=()=>{
+      $('sXH').value=cfg.H; $('sXD').value=cfg.D; $('sXN').value=cfg.N;
+      $('sXT').value=cfg.T; $('sXB').value=cfg.BH; $('sXK').value=cfg.K;
+      ['sXH','sXD','sXN','sXT','sXB','sXK'].forEach(id=>$(id).dispatchEvent(new Event('input')));
+    };
+    pb.appendChild(b);
+  });
+
+  function phi(x){
+    let v=0.10*x*x;
+    v -= K*2.5*Math.exp(-((x+1.5)**2)/(0.7+D*0.5));
+    v -= (1-K)*1.0*Math.exp(-((x-2.3)**2)/1.5);
+    v += (H*0.7+N*0.5)*0.55*Math.sin(x*2.7);
+    v -= BH*2.8*Math.exp(-((x+0.1)**2)/0.1);
+    return v;
+  }
+  function state(){
+    const M=H+D+N;
+    const xs=[],ph=[];
+    for(let i=0;i<=120;i++){const x=-4+8*i/120; xs.push(x); ph.push(phi(x));}
+    const p=softmax(ph,T);
+    const Hout=entropyBits(p);
+    const voidMass=p.reduce((a,v,i)=>xs[i]>0.6?a+v:a,0);
+    const bhMass=p.reduce((a,v,i)=>Math.abs(xs[i]+0.1)<0.6?a+v:a,0);
+    const risk=clamp(voidMass*100*(1-K*0.35)+(N*22)-(T>0.5?0:12)*-1,0,100);
+    const coher=clamp(100 - Hout/Math.log2(121)*62 - voidMass*45 + K*18,0,100);
+    const div=clamp(Hout/Math.log2(121)*100*(1-bhMass*0.8),0,100);
+    return {M,xs,ph,p,Hout,risk:clamp(risk,0,100),coher,div,voidMass,bhMass};
+  }
+  function draw(){
+    const s=state();
+    $('xM').textContent=fmt(s.M,2);
+    $('xH').textContent=fmt(s.Hout,2);
+    $('xR').textContent=s.risk.toFixed(0); $('xR').style.color=s.risk>50?C.f:s.risk>25?C.e:C.d;
+    $('xC').textContent=s.coher.toFixed(0);
+    $('xV').textContent=s.div.toFixed(0);
+    let reg,txt;
+    if(s.bhMass>0.45){reg='Schwarzes Loch'; txt='<b style="color:var(--b)">Informations-Schwarzloch.</b> '+(s.bhMass*100).toFixed(0)+'% der Wahrscheinlichkeitsmasse sitzt im Alignment-Trichter. Maximal stabil, minimal informativ.';}
+    else if(s.risk>55){reg='Halluzination'; txt='<b class="hl2">Halluzinations-Regime.</b> M(Q) = '+fmt(s.M,2)+' bei Wissensdichte '+fmt(K,2)+'. '+(s.voidMass*100).toFixed(0)+'% der Masse liegt in der semantischen Leere. Genau §4.1 des Papers.';}
+    else if(T<0.2){reg='Capture'; txt='<b class="hl">Gravitational Capture.</b> T→0: das System folgt strikt dem Gradienten und kann kein lokales Minimum mehr verlassen.';}
+    else if(T>1.8){reg='thermisch'; txt='<b style="color:var(--f)">Thermisches Regime.</b> Die Wärmebewegung dominiert die Gravitation. H = '+fmt(s.Hout,2)+' Bits — Diversität hoch, Kohärenz niedrig.';}
+    else if(s.coher>65&&s.risk<25){reg='optimal'; txt='<b class="hl3">Optimaler Arbeitspunkt.</b> Ein klarer Hauptattraktor, genug Temperatur für Variation, wenig Masse in der Leere.';}
+    else {reg='gemischt'; txt='<b>Gemischtes Regime.</b> Mehrere Attraktoren konkurrieren. Das Ergebnis reagiert empfindlich auf die exakte Formulierung.';}
+    $('xReg').textContent=reg;
+    $('xOut').innerHTML=txt;
+    drawRadar(s); drawLand(s);
+  }
+  function drawRadar(s){
+    const {g,w,h}=dpi(cvR);
+    g.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2+4, R=Math.min(w,h)*0.35;
+    const ax=[['H',H],['D',D],['N',N],['T',T/2.5],['Risiko',s.risk/100],['Kohärenz',s.coher/100]];
+    const n=ax.length;
+    for(let r=1;r<=4;r++){
+      g.strokeStyle='rgba(120,140,220,.13)'; g.lineWidth=1; g.beginPath();
+      for(let i=0;i<=n;i++){
+        const a=-Math.PI/2+i*2*Math.PI/n, rr=R*r/4;
+        const x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr;
+        i?g.lineTo(x,y):g.moveTo(x,y);
+      }
+      g.stroke();
+    }
+    g.strokeStyle='rgba(120,140,220,.13)';
+    ax.forEach((_,i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n;
+      g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R); g.stroke();
+    });
+    g.beginPath();
+    ax.forEach(([,v],i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n, rr=R*clamp(v,0,1);
+      const x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr;
+      i?g.lineTo(x,y):g.moveTo(x,y);
+    });
+    g.closePath();
+    g.fillStyle='rgba(110,231,255,.2)'; g.fill();
+    g.strokeStyle=C.a; g.lineWidth=2; g.stroke();
+    ax.forEach(([lbl,v],i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n, rr=R*clamp(v,0,1);
+      g.fillStyle=C.e; g.beginPath(); g.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,3.2,0,7); g.fill();
+      g.fillStyle=C.dim2; g.font='9px Inter,sans-serif'; g.textAlign='center';
+      g.fillText(lbl, cx+Math.cos(a)*(R+14), cy+Math.sin(a)*(R+14)+3);
+    });
+  }
+  function drawLand(s){
+    const {g,w,h}=dpi(cvL);
+    const pad={l:44,r:16,t:16,b:32};
+    gridlines(g,w,h,pad,4); axes(g,w,h,pad,'latente Achse ℒ','Φ  /  P');
+    const lo=Math.min(...s.ph)-0.3, hi=Math.max(...s.ph)+0.3;
+    const X=v=>pad.l+(w-pad.l-pad.r)*(v+4)/8;
+    const Y=v=>pad.t+(h-pad.t-pad.b)*clamp((v-lo)/(hi-lo),0,1);
+    g.fillStyle='rgba(255,107,107,.06)'; g.fillRect(X(0.6),pad.t,X(4)-X(0.6),h-pad.t-pad.b);
+    g.strokeStyle=C.a; g.lineWidth=2.4; g.beginPath();
+    s.xs.forEach((x,i)=>{const y=Y(s.ph[i]); i?g.lineTo(X(x),y):g.moveTo(X(x),y);}); g.stroke();
+    const mp=Math.max(...s.p);
+    g.fillStyle='rgba(255,212,121,.3)'; g.beginPath(); g.moveTo(X(-4),h-pad.b);
+    s.xs.forEach((x,i)=>g.lineTo(X(x), h-pad.b-(h-pad.t-pad.b)*0.72*(s.p[i]/mp)));
+    g.lineTo(X(4),h-pad.b); g.closePath(); g.fill();
+    g.strokeStyle=C.e; g.lineWidth=1.8; g.beginPath();
+    s.xs.forEach((x,i)=>{const y=h-pad.b-(h-pad.t-pad.b)*0.72*(s.p[i]/mp); i?g.lineTo(X(x),y):g.moveTo(X(x),y);});
+    g.stroke();
+  }
+  bind('sXH','vXH',v=>{H=v; draw();},2);
+  bind('sXD','vXD',v=>{D=v; draw();},2);
+  bind('sXN','vXN',v=>{N=v; draw();},2);
+  bind('sXT','vXT',v=>{T=v; draw();},2);
+  bind('sXB','vXB',v=>{BH=v; draw();},2);
+  bind('sXK','vXK',v=>{K=v; draw();},2);
+  draw(); addEventListener('resize',draw);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §15 · LIMITATIONS
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const lims=[
+    ['Keine eigenen Experimente','Das Paper enthält <b>null</b> Messungen. Alle zitierten Zahlen (56 pp, die „5", „Avery" 40×) stammen von anderen Autoren. §5 <em>schlägt</em> Experimente nur vor.','crit'],
+    ['α, β, γ sind unbestimmt','Die Gewichte in Gl. (1) werden nie beziffert. Ohne sie ist M(Q) nicht berechenbar — das Modell ist damit nicht direkt falsifizierbar.','crit'],
+    ['Komponenten sind verschränkt','H, D und N korrelieren stark. Eine neuartige Frage hat meist auch hohe Entropie. Die Autorin nennt das selbst (§4.4, §7.3) als Hauptmessproblem.','warn'],
+    ['Diskret vs. kontinuierlich','Tokens sind diskret, Gravitation ist kontinuierlich. Das Paper löst das über Embeddings (§2.3) — eine plausible, aber nicht bewiesene Brücke.','warn'],
+    ['Attention-Layer nicht formalisiert','Jede Attention-Schicht bildet ein eigenes Feld. Wie diese „geschachtelten Gravitationsfelder" (§2.4) zusammenwirken, bleibt offen.','warn'],
+    ['Hochdimensionale Visualisierung','t-SNE/UMAP verzerren Abstände. Eine „Potentialkarte" in 2D aus einem 4096-dimensionalen Raum kann Artefakte zeigen.','warn'],
+    ['Metapher-Risiko','§4.4 warnt ausdrücklich: Die Physik-Analogie darf nicht wörtlich genommen werden. Es gibt keine Erhaltungssätze, keine Feldgleichungen, keine Einheiten.','warn'],
+    ['Erklärt post hoc','Das Modell wurde <em>nach</em> den Beobachtungen konstruiert. Eine echte Bewährungsprobe wäre eine Vorhersage, die vorher niemand kannte.','crit']
+  ];
+  const box=$('limitList');
+  lims.forEach(([t,d,k])=>{
+    const el=document.createElement('details');
+    el.innerHTML='<summary><span class="tag '+(k==='crit'?'crit':'pre')+'">'+(k==='crit'?'schwer':'offen')+'</span>'+t+'</summary><p style="margin:0">'+d+'</p>';
+    box.appendChild(el);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   §17 · QUIZ
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  const qs=[
+    {q:'Was bedeutet Φ(t,Q) = −log P(t|Q) anschaulich?',
+     o:['Wahrscheinliche Tokens liegen in tiefen Tälern','Wahrscheinliche Tokens liegen auf hohen Gipfeln','Φ ist die Temperatur','Φ misst die Satzlänge'],a:0,
+     e:'Hohe Wahrscheinlichkeit → −log P klein → tiefes Tal. Der „Ball" rollt dorthin.'},
+    {q:'Aus welchen drei Größen setzt sich die Informationsmasse M(Q) zusammen?',
+     o:['Länge, Sprache, Ton','Entropie H, Kontexttiefe D, Novelty N','Temperatur, Top-k, Top-p','Gewicht, Bias, Aktivierung'],a:1,
+     e:'Gleichung (1): M(Q) = α·H(Q) + β·D(Q) + γ·N(Q).'},
+    {q:'Was passiert laut Gleichung (12) für T → 0?',
+     o:['H → log|V|','H → 0','H bleibt konstant','H wird negativ'],a:1,
+     e:'Bei T→0 wählt das Modell immer den Token mit minimalem Φ. Entropie null — „gravitational capture".'},
+    {q:'Wie erklärt das Paper Halluzinationen?',
+     o:['Durch zu viele Trainingsdaten','Durch hohe Masse bei semantischer Leere und Einfang in falschen lokalen Minima','Durch zu kleine Modelle','Durch Tokenizer-Fehler'],a:1,
+     e:'§4.1: Wenn die Hessematrix hohe Eigenwerte auf kleinen Gebieten hat und P(t)≪1, wird das System in einem falschen Minimum gefangen.'},
+    {q:'Was unterscheidet ein „Informations-Schwarzloch" von einer „semantischen Leere"?',
+     o:['Nichts, Synonyme','Schwarzloch = extrem hohe Dichte/niedrige Entropie; Leere = geringe Dichte/schwache Verbindungen','Leere ist gut, Schwarzloch schlecht','Beide entstehen durch hohe Temperatur'],a:1,
+     e:'Sie sind Gegenpole: der Trichter zieht übermächtig an (Standardantwort), das Plateau zieht gar nicht (Halluzination).'},
+    {q:'Warum ändert ein Komma die Qualität um bis zu 56 Prozentpunkte?',
+     o:['Weil der Tokenizer abstürzt','Weil |ΔΦ| groß genug wird, um einen Sprung zwischen Attraktoren auszulösen','Weil die Temperatur sich ändert','Weil das Modell Kommas nicht kennt'],a:1,
+     e:'Gleichung (11): ΔΦ(t) = Φ(t,Q′) − Φ(t,Q). Bei spröder Landschaft reicht eine Winzigkeit, um den Bifurkationspunkt zu überschreiten.'},
+    {q:'Welchen Status hat das Paper wissenschaftlich?',
+     o:['Bestätigte empirische Studie','Theoretisches Rahmenwerk ohne eigene Experimente','Reproduzierte Benchmark-Arbeit','Mathematischer Beweis'],a:1,
+     e:'Es formuliert Konzepte und Vorhersagen und schlägt in §5 Tests vor — durchgeführt wurden sie nicht.'}
+  ];
+  const box=$('quizBox');
+  let score=0, done=new Set();
+  qs.forEach((q,qi)=>{
+    const d=document.createElement('div'); d.className='quiz';
+    d.innerHTML='<p style="color:#fff;font-weight:600;margin-bottom:12px">'+(qi+1)+'. '+q.q+'</p>';
+    const exp=document.createElement('div');
+    exp.style.cssText='display:none;margin-top:10px;font-size:.86rem;color:var(--dim);border-left:2px solid var(--a);padding-left:12px';
+    q.o.forEach((o,oi)=>{
+      const b=document.createElement('button'); b.className='qopt'; b.textContent=o;
+      b.onclick=()=>{
+        if(done.has(qi)) return;
+        done.add(qi);
+        [...d.querySelectorAll('.qopt')].forEach((c,k)=>{
+          if(k===q.a) c.classList.add('ok');
+          else if(k===oi) c.classList.add('no');
+          c.style.cursor='default';
+        });
+        if(oi===q.a) score++;
+        exp.style.display='block'; exp.innerHTML='<b>'+(oi===q.a?'Richtig.':'Nicht ganz.')+'</b> '+q.e;
+        $('quizScore').textContent=score+' / '+qs.length;
+        const pct=score/qs.length;
+        $('quizScore').style.color = done.size<qs.length?C.a : pct>0.85?C.d : pct>0.5?C.e : C.f;
+        if(done.size===qs.length){
+          $('quizMsg').innerHTML = pct>0.85
+            ? '<span style="color:var(--d)">Exzellent — du hast das Modell verstanden.</span>'
+            : pct>0.5 ? '<span style="color:var(--e)">Solide. Schau dir die markierten Abschnitte noch mal an.</span>'
+            : '<span style="color:var(--f)">Geh die Schritte 5 bis 11 noch einmal durch.</span>';
+        } else $('quizMsg').textContent = (qs.length-done.size)+' Fragen offen.';
+      };
+      d.appendChild(b);
+    });
+    d.appendChild(exp);
+    box.appendChild(d);
+  });
+})();
+
+/* final layout pass after fonts/plots settle */
+setTimeout(()=>window.dispatchEvent(new Event('resize')), 400);
+</script>
+</body>
+</html>
