@@ -2875,8 +2875,12 @@ pre code {
 
 /* Same guardrail for every descendant of optional content — animations
    sometimes apply transform/filter to individual children, which would
-   re-introduce the containing-block bug. */
-.optional-content *,
+   re-introduce the containing-block bug.
+   SVG subtrees are exempt: the `transform` presentation attribute on SVG
+   elements (e.g. the flip matrix inside the citation "open in new" icon)
+   is essential to the icon's orientation, and a transform inside an SVG
+   cannot create a containing block for fixed-positioned HTML descendants. */
+.optional-content *:not(svg, svg *),
 .optional-content *::before,
 .optional-content *::after {
 	transform: none !important;
