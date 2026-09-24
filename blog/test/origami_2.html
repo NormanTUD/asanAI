@@ -3696,18 +3696,7 @@ davon abgeleitet      : ${Math.round(n*dfrac)}
 Abgedeckte Region     : ${fmt(cov*100,1)} % von c
 
 KohÃ¤renz   : ${fmt(coh*100,0)} %  (bleibt hoch â€” die Teile passen zusammen)
-Korrespondenz: ${fmt(corr*100,0)} %  (hÃ
-)}   in R^${d}  ≤  2·exp(−dε²/2)  =  ${pOrth<1e-4?pOrth.toExponential(2):fmt(pOrth,4)}
-   → In hohen Dimensionen sind zwei zufällige Richtungen fast sicher
-     nahezu orthogonal. Eine Falte in eine unbesetzte Richtung ist
-     damit fast sicher unabhängig von allem Bisherigen — sie TRENNT.
-
-③ JOHNSON–LINDENSTRAUSS:  N=${N} Punkte, Toleranz ε=${fmt(eps,2)}
-   Benötigte Zieldimension:  k ≈ 8·ln(N)/ε² = ${kJL}
-   → Alle paarweisen Abstände bleiben in (1±ε) erhalten — UNABHÄNGIG
-     von der Ausgangsdimension. Man kann 999.999 von einer Million
-     Dimensionen wegwerfen und die Geometrie überlebt.
-   → Die Bedeutung steckt in den ABSTÄNDEN, nicht in den Koordinaten.`;
+Korrespondenz: ${fmt(corr*100,0)} %  (steigt mit der Abdeckung)`;
   }
   bind('d20N','d20NL',v=>{N=v;draw();},v=>v|0);
   bind('d20d','d20dL',v=>{d=v;draw();},v=>v|0);
