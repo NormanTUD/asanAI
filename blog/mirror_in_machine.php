@@ -84,9 +84,9 @@ For a century the current ran one way — brain to machine. Now it runs back, an
 <div class="md">
 ## V. The Divergence: What the Mirror Refuses to Show
 
-A mirror that shows everything shows nothing. The useful thing the comparison does is mark where the reflection breaks.
+The most useful thing the comparison does is mark where the reflection breaks — the places where the two machines genuinely differ.
 
-There are places the **brain beats the machine**, and each is a feature of you no model has: **one-shot learning** (you see a rhinoceros once); **energy** (about twenty watts, not a data centre); **robustness** (you read a word with half the letters gone); **grounding** (your concepts are tied to a body that can be hurt); and the **"aha"**, the answer that surfaces when you stop looking — the slow, offline search the Mind chapter ties to the default-mode network \cite{raichle2007defaultmode}. And places the **machine beats the brain**: exact recall, scale, tireless uptime, and the willingness to *optimize*, where a human mind only **satisfices** — settles for good enough \cite{simon1955bounded}.
+There are places the **brain beats the machine**. **Energy** is the sharpest: your whole mind runs on about twenty watts, not a data centre. **Grounding**: your concepts are tied to a body that can be hurt — the symbol-grounding problem no model has solved. And the **"aha"**: the answer that surfaces when you stop looking, the slow offline search the Mind chapter ties to the default-mode network \cite{raichle2007defaultmode}. (Learning is *not* on this list — modern models already do one-shot and even zero-shot learning from context; they just do it in a very different way from a hippocampus.) And places the **machine beats the brain**: exact recall, scale, tireless uptime, and the willingness to *optimize*, where a human mind only **satisfices** — settles for good enough \cite{simon1955bounded}.
 
 That divergence is the map of what you are. Where the brain wins, you are *more than a model*; where the machine wins, you are, unavoidably, **bounded**. The mirror does not flatter; it measures.
 </div>
