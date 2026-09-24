@@ -2759,8 +2759,7 @@ function trnPlots(){
 (function(){
   let mode='1';
   function seedCurve(seed,heads){
-    // sigmoid drop at seed-dependent
- step, amplitude of plateau
+    // sigmoid drop at seed-dependent step, amplitude of plateau
     const s0=6000+seed*2600+(heads===2?-3500:0);
     const width=heads===2?900:520;
     const xs=[],ys=[];
