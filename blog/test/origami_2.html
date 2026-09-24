@@ -2297,7 +2297,10 @@ ${pct>97
     });
 
     // Überlappungen prüfen
-    const ovl=[[0,1],[1,2? `KEIN GLOBALES MODELL — die Berichte widersprechen sich.\nWiderspruch auf ${bad.length} von ${ovl.length} Überlappungen.\n${bad.map(([i,j,d])=>`  U${i+1}∩U${j+1}:  |${fmt(vals[i],2)} − ${fmt(vals[j],2)}| = ${fmt(d,3)}  >  ε=${fmt(eps,2)}`).join('\n')}\n\n→ Die Prägarbe klebt NICHT. Es existiert kein Schnitt über c.`
+    const ovl=[[0,1],[1,2],[2,3]];
+    const bad=ovl.filter(([i,j])=>Math.abs(vals[i]-vals[j])>eps).map(([i,j])=>[i,j,Math.abs(vals[i]-vals[j])]);
+    $('d7out').textContent=bad.length
+      ? `KEIN GLOBALES MODELL — die Berichte widersprechen sich.\nWiderspruch auf ${bad.length} von ${ovl.length} Überlappungen.\n${bad.map(([i,j,d])=>`  U${i+1}∩U${j+1}:  |${fmt(vals[i],2)} − ${fmt(vals[j],2)}| = ${fmt(d,3)}  >  ε=${fmt(eps,2)}`).join('\n')}\n\n→ Die Prägarbe klebt NICHT. Es existiert kein Schnitt über c.`
       : `DESCENT GILT.\nAlle ${ovl.length} Überlappungen sind verträglich (Δ ≤ ε=${fmt(eps,2)}).\nEindeutiger globaler Schnitt: ${fmt(vals.reduce((a,b)=>a+b)/4,3)}\n\n→ Aus vier lokalen Berichten wird genau EIN Ganzes.`;
   }
   IDS.forEach((id,i)=>bind(id,id+'L',v=>{vals[i]=v;draw();}));
