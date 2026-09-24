@@ -181,16 +181,17 @@ html:not(.dark) #atlas-stage {
 
 /* ── journey (tour) UI ── */
 .atlas-tour {
-	position: absolute; left: 0; bottom: 0;
-	z-index: 18; width: 100%; height: 200px;
+	position: absolute; left: 0; right: 0; bottom: 0;
+	z-index: 18; width: 100%; max-height: 80%;
 	display: none;
 }
-.atlas-tour.open { display: block; }
+.atlas-tour.open { display: flex; flex-direction: column; }
 .atlas-tour .tour-card {
 	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-bottom: none;
 	border-radius: 12px 12px 0 0; padding: 10px 20px;
 	backdrop-filter: blur(14px); box-shadow: var(--atlas-shadow);
 	display: flex; gap: 16px; align-items: center;
+	min-height: 0; overflow-y: auto;
 }
 .atlas-tour .cap-era { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--atlas-accent); font-weight: 700; }
 .atlas-tour .cap-text { font-size: .85rem; line-height: 1.5; margin-top: 4px; color: var(--atlas-ink); }
@@ -204,11 +205,11 @@ html:not(.dark) #atlas-stage {
 }
 .atlas-tour .tour-text-wrap { flex: 1; min-width: 0; }
 .atlas-tour .tour-bar {
-	display: flex; align-items: center; gap: 8px;
+	display: flex; align-items: center; flex-wrap: wrap; gap: 8px; row-gap: 6px;
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line);
-	border-top: none; padding: 6px 12px;
+	border-top: none; padding: 6px 12px; flex-shrink: 0;
 }
-.tour-dots { display: flex; gap: 5px; align-items: center; }
+.tour-dots { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 .tour-dot {
 	width: 8px; height: 8px; border-radius: 50%;
 	background: var(--atlas-line-strong); border: none; padding: 0;
@@ -268,6 +269,12 @@ html:not(.dark) #atlas-stage {
 	#atlas-canvas-wrap { height: 62vh; }
 	.atlas-detail { width: calc(100% - 24px); right: 12px; left: 12px; max-height: 46%; }
 }
+
+@media (max-width: 600px) {
+	.atlas-tour .tour-img { width: 72px; height: 72px; }
+	.atlas-tour .tour-timer { display: none; }
+	.tour-dots { order: -1; flex-basis: 100%; overflow-x: auto; overflow-y: hidden; justify-content: flex-start; padding-bottom: 3px; }
+}
 </style>
 
 <div class="lg-widescroll lg-widescroll--center">
@@ -316,7 +323,7 @@ html:not(.dark) #atlas-stage {
 			</div>
 			<div class="tour-bar">
 				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
-				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;</button>
+				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;&nbsp;Previous</button>
 				<div class="tour-dots" id="tour-dots"></div>
 				<div class="tour-timer" aria-hidden="true"><div class="tour-timer-fill" id="tour-timer-fill"></div></div>
 				<button class="atlas-btn primary" id="tour-next" type="button">Next &rarr;</button>
