@@ -136,10 +136,11 @@ html:not(.dark) #atlas-stage {
 	width: 320px; max-height: calc(100% - 90px);
 	overflow-y: auto;
 	background: var(--atlas-card); border: 1px solid var(--atlas-line); border-radius: 14px;
-	backdrop-filter: blur(12px); box-shadow: var(--atlas-shadow);
+	backdrop-filter: blur(12px);
+	box-shadow: var(--atlas-shadow), inset 0 3px 0 0 var(--d-accent, transparent);
 	padding: 16px; display: none;
 }
-.atlas-detail.open { display: block; }
+.atlas-detail.open { display: block; animation: detailIn .22s ease; }
 .atlas-detail .d-close {
 	position: absolute; top: 10px; right: 10px;
 	background: none; border: none; color: var(--atlas-ink-mute);
@@ -175,6 +176,7 @@ html:not(.dark) #atlas-stage {
 	background: var(--atlas-card-solid); border: 1px solid var(--atlas-line-strong);
 	border-radius: 9px; padding: 7px 10px; font-size: .76rem; color: var(--atlas-ink);
 	box-shadow: var(--atlas-shadow); display: none; max-width: 260px;
+	animation: tipIn .14s ease;
 }
 .atlas-tip .t-name { font-weight: 700; }
 .atlas-tip .t-sub { color: var(--atlas-ink-mute); font-size: .68rem; margin-top: 2px; }
@@ -210,6 +212,7 @@ html:not(.dark) #atlas-stage {
 	border-top: none; padding: 6px 12px; flex-shrink: 0;
 }
 .tour-dots { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.tour-count { font-size: .72rem; font-weight: 700; letter-spacing: .06em; color: var(--atlas-ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tour-dot {
 	width: 8px; height: 8px; border-radius: 50%;
 	background: var(--atlas-line-strong); border: none; padding: 0;
@@ -247,6 +250,8 @@ html:not(.dark) #atlas-stage {
 	animation: atlasSpin .9s linear infinite;
 }
 @keyframes atlasSpin { to { transform: rotate(360deg); } }
+@keyframes tipIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes detailIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .atlas-loader p { font-size: .8rem; color: var(--atlas-ink-mute); letter-spacing: .06em; }
 
 .atlas-easter {
@@ -313,7 +318,7 @@ html:not(.dark) #atlas-stage {
 		<div class="tour-dot-tip" id="tour-dot-tip" role="tooltip" hidden></div>
 
 		<div class="atlas-tour" id="atlas-tour">
-			<div class="tour-card">
+			<div class="tour-card" id="tour-card">
 				<img class="tour-img" id="tour-img" alt="" style="display:none">
 				<div class="tour-text-wrap">
 					<div class="cap-era" id="tour-era"></div>
@@ -322,6 +327,7 @@ html:not(.dark) #atlas-stage {
 				</div>
 			</div>
 			<div class="tour-bar">
+				<span class="tour-count" id="tour-count" aria-hidden="true"></span>
 				<button class="atlas-btn" id="tour-earth" type="button" title="Back to Earth">&#8617; Earth</button>
 				<button class="atlas-btn" id="tour-prev" type="button" title="Previous stop">&larr;&nbsp;Previous</button>
 				<div class="tour-dots" id="tour-dots"></div>

@@ -1417,6 +1417,7 @@ function bootAtlas() {
 		var html = '';
 		html += '<button class="d-close" id="d-close" title="Close">&times;</button>';
 		var tcol = TYPE_COLOR[d.type] || '#fff';
+		detail.style.setProperty('--d-accent', tcol);
 		html += '<span class="type-chip" style="color:' + tcol + '">' +
 			TYPE_LABEL[d.type] + '</span>';
 		html += '<h2></h2>';
@@ -1498,6 +1499,7 @@ function bootAtlas() {
 	function clearSelection() {
 		state.selected = null;
 		detail.classList.remove('open');
+		detail.style.removeProperty('--d-accent');
 		highlightThreads(null);
 	}
 	function flyTo(d) {
@@ -1648,14 +1650,23 @@ function bootAtlas() {
 		tourEls().next.addEventListener('click', nextStep);
 		tourEls().close.addEventListener('click', stopTour);
 		tourEls().earth.addEventListener('click', stopTour);
+		var tourCard = tourEls().card;
+		if (tourCard) {
+			tourCard.addEventListener('mouseenter', function () { tour.paused = true; });
+			tourCard.addEventListener('mouseleave', function () { tour.paused = false; resetTourTimer(); });
+		}
 		var easterClose = document.getElementById('atlas-easter-close');
 		if (easterClose) { easterClose.addEventListener('click', closeAsparagus); }
 		document.addEventListener('keydown', function (e) {
-			if (!tour.active) { return; }
 			var t = e.target;
 			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) { return; }
-			if (e.key === 'Escape') { stopTour(); }
-			else if (e.key === 'ArrowRight') { nextStep(); }
+			if (e.key === 'Escape') {
+				if (tour.active) { stopTour(); }
+				else if (state.selected) { clearSelection(); }
+				return;
+			}
+			if (!tour.active) { return; }
+			if (e.key === 'ArrowRight') { nextStep(); }
 			else if (e.key === 'ArrowLeft') { prevStep(); }
 		});
 	}
@@ -1679,7 +1690,7 @@ function bootAtlas() {
 		{ d: 650, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power. And from that something: stars forge the silicon in your GPU, galaxies provide the atoms, the cosmic web provides the structure, and Earth provides the water, the oxygen, and the curiosity. Every layer of this journey — from the Big Bang to the first transistor to the first perceptron — was a necessary condition for you to be reading this. AI is not separate from cosmology. It is cosmology, sufficiently evolved, beginning to ask questions back.' }
 	];
 	var TOUR_STEP_MS = 18000;
-	var tour = { active: false, step: 0, startedAt: 0 };
+	var tour = { active: false, step: 0, startedAt: 0, paused: false };
 
 	function tourEls() {
 		return {
@@ -1692,7 +1703,9 @@ function bootAtlas() {
 			prev: document.getElementById('tour-prev'),
 			next: document.getElementById('tour-next'),
 			close: document.getElementById('tour-close'),
-			earth: document.getElementById('tour-earth')
+			earth: document.getElementById('tour-earth'),
+			count: document.getElementById('tour-count'),
+			card: document.getElementById('tour-card')
 		};
 	}
 	function buildTourDots() {
@@ -1758,6 +1771,7 @@ function bootAtlas() {
 		}
 		els.prev.style.visibility = i === 0 ? 'hidden' : 'visible';
 		els.next.textContent = (i === JOURNEY.length - 1) ? 'Finish' : 'Next →';
+		if (els.count) { els.count.textContent = (i + 1) + ' / ' + JOURNEY.length; }
 		tour.startedAt = performance.now();
 		els.fill.style.width = '0%';
 	}
@@ -1777,10 +1791,12 @@ function bootAtlas() {
 	function stopTour() {
 		tour.active = false;
 		state.touring = false;
+		tour.paused = false;
 		tourEls().root.classList.remove('open');
 		var img = tourEls().img;
 		if (img) { img.style.display = 'none'; }
 		clearSpotHighlight();
+		clearHoverHighlight();
 		state.tD = 3.2; state.tTheta = -0.4; state.tPhi = 1.15;
 	}
 	function nextStep() {
@@ -1792,6 +1808,7 @@ function bootAtlas() {
 	}
 	function tickTour() {
 		if (!tour.active) { return; }
+		if (tour.paused) { return; }
 		var last = tour.step === JOURNEY.length - 1;
 		var p = last ? 1 : (performance.now() - tour.startedAt) / TOUR_STEP_MS;
 		tourEls().fill.style.width = Math.min(100, p * 100) + '%';
@@ -2037,6 +2054,15 @@ function bootAtlas() {
 				asparagusSprite.position.x = 110 * Math.sin(frame * 0.0016);
 				asparagusSprite.position.y = 40 + 28 * Math.sin(frame * 0.0011 + 1.3);
 			}
+		}
+		if (hoverGlow && hoverGlow.material.opacity > 0) {
+			var hp = 1 + 0.16 * Math.sin(frame * 0.14);
+			hoverGlow.scale.set(HOVER_SCALE * hp, HOVER_SCALE * hp, 1);
+			hoverGlow.material.opacity = 0.82 + 0.18 * (0.5 + 0.5 * Math.sin(frame * 0.14));
+		}
+		if (dotHighlight && dotHighlight.material.opacity > 0) {
+			var sp = 1 + 0.1 * Math.sin(frame * 0.12);
+			dotHighlight.scale.set(DOT_HL_SCALE * sp, DOT_HL_SCALE * sp, 1);
 		}
 		frame++;
 		renderer.render(scene, camera);
