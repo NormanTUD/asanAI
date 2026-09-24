@@ -3403,7 +3403,7 @@ DREI BELEGE:
     const pOrth=2*Math.exp(-d*eps*eps/2);
     const o=$('d20out');
     o.className='out';
-    o.textContent =
+    o.textContent = [
 `① COVER (1965):  N=${N} Punkte, d=${d} Gewichte
    Anteil linear trennbarer Zweifärbungen: ${fmt(frac*100,2)} %
    ${N<=d?'→ d ≥ N: JEDE Färbung ist trennbar (Sättigung bei 100 %).'
