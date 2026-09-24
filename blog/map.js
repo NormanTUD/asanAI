@@ -183,8 +183,8 @@ function bootAtlas() {
 
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, moon, sun, planets = [];
-	var dotMesh, dotGeo = null, dotHighlight = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
-	var DOT_SIZE = 0.042, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.12;
+	var dotMesh, dotGeo = null, dotHighlight = null, hoverGlow = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1, hoverIdx = -1;
+	var DOT_SIZE = 0.05, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.12, HOVER_SCALE = 0.14;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null, skySphere = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
@@ -924,9 +924,10 @@ function bootAtlas() {
 		var g = c.getContext('2d');
 		var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
 		grad.addColorStop(0.0, 'rgba(255,255,255,1)');
-		grad.addColorStop(0.35, 'rgba(255,255,255,0.95)');
-		grad.addColorStop(0.5, 'rgba(255,255,255,0.45)');
-		grad.addColorStop(0.75, 'rgba(255,255,255,0.12)');
+		grad.addColorStop(0.32, 'rgba(255,255,255,1)');
+		grad.addColorStop(0.46, 'rgba(255,255,255,0.82)');
+		grad.addColorStop(0.55, 'rgba(255,255,255,0.92)');
+		grad.addColorStop(0.7, 'rgba(255,255,255,0.22)');
 		grad.addColorStop(1.0, 'rgba(255,255,255,0)');
 		g.fillStyle = grad;
 		g.fillRect(0, 0, s, s);
@@ -964,6 +965,12 @@ function bootAtlas() {
 		}));
 		dotHighlight.scale.set(DOT_HL_SCALE, DOT_HL_SCALE, 1);
 		dotMesh.add(dotHighlight);
+		hoverGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: dotMesh.material.map, color: 0xffffff, transparent: true,
+			opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending
+		}));
+		hoverGlow.scale.set(HOVER_SCALE, HOVER_SCALE, 1);
+		dotMesh.add(hoverGlow);
 		scene.add(dotMesh);
 	}
 
@@ -1110,6 +1117,34 @@ function bootAtlas() {
 		dotGeo.attributes.color.needsUpdate = true;
 		if (dotHighlight) { dotHighlight.material.opacity = 0; }
 		updateDots();
+	}
+	function restoreDotColor(i) {
+		var base = dotBaseColor[i];
+		if (!base || !dotGeo) { return; }
+		var col = dotGeo.attributes.color.array;
+		col[i * 3] = base.r; col[i * 3 + 1] = base.g; col[i * 3 + 2] = base.b;
+		dotGeo.attributes.color.needsUpdate = true;
+	}
+	function setHoverHighlight(d) {
+		if (!d || !dotGeo) { clearHoverHighlight(); return; }
+		var idx = state.dots.indexOf(d);
+		if (idx < 0) { clearHoverHighlight(); return; }
+		if (hoverIdx >= 0 && hoverIdx !== idx) { restoreDotColor(hoverIdx); }
+		hoverIdx = idx;
+		var col = dotGeo.attributes.color.array;
+		var hi = dotBaseColor[idx].clone().lerp(new THREE.Color(0xffffff), 0.4);
+		col[idx * 3] = hi.r; col[idx * 3 + 1] = hi.g; col[idx * 3 + 2] = hi.b;
+		dotGeo.attributes.color.needsUpdate = true;
+		if (hoverGlow) {
+			hoverGlow.position.copy(dotWorldPos(d, DOT_PAD));
+			hoverGlow.material.color.copy(dotBaseColor[idx]).lerp(new THREE.Color(0xffffff), 0.35);
+			hoverGlow.material.opacity = 1;
+		}
+	}
+	function clearHoverHighlight() {
+		if (hoverIdx >= 0) { restoreDotColor(hoverIdx); }
+		hoverIdx = -1;
+		if (hoverGlow) { hoverGlow.material.opacity = 0; }
 	}
 
 	// ── camera ────────────────────────────────────────────────
@@ -1484,9 +1519,11 @@ function bootAtlas() {
 			tip.style.left = (lx + 14) + 'px';
 			tip.style.top = (ly - tip.offsetHeight - 12) + 'px';
 			canvas.style.cursor = 'pointer';
+			if (!tour.active) { setHoverHighlight(d); }
 		} else {
 			tip.style.display = 'none';
 			canvas.style.cursor = 'grab';
+			if (!tour.active) { clearHoverHighlight(); }
 		}
 	}
 
@@ -1727,6 +1764,7 @@ function bootAtlas() {
 	function startTour() {
 		tour.active = true;
 		state.touring = true;
+		clearHoverHighlight();
 		var els = tourEls();
 		els.root.classList.add('open');
 		goStep(0);
