@@ -501,7 +501,11 @@ again**, exactly like real origami. After a few folds a sheet has exponentially 
 than the number of folds you actually made — the creases compound. The same is true here:
 a deep ReLU network is a **piecewise-linear** function whose number of linear regions
 **grows exponentially with depth**. Depth buys a combinatorial explosion of boundaries that
-a wide but shallow net cannot match.
+a wide but shallow net cannot match. The bound is tight: a depth-$L$ network of width 2 in one input dimension produces exactly $2^L$ regions (a "sawtooth" with $2^L$ spikes) \cite{petersen2024mathdl}.
+
+<div class="smart-quote" data-cite="petersen2024mathdl" data-after="Ch. 6, after Thm 6.3">
+It is noteworthy that the effects of the depth and the width of a neural network are vastly different. While increasing the width can polynomially increase the number of pieces, increasing the depth can result in exponential increase.
+</div>
 </div>
 
 <div class="og-card">
