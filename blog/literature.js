@@ -15597,12 +15597,12 @@ window.bibData = {
 		url: "https://doi.org/10.1038/s41593-021-00962-x",
 		alternativetitle: "Allen et al. 2022 — the Natural Scenes Dataset (NSD)"
 	},
-	"allornoanelaw": {
-		title: "All-or-none law",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/All-or-none_law",
-		alternativetitle: "All-or-none law (Wikipedia)"
+	"bales2024catastrophic": {
+		title: "Artificial Intelligence: Arguments for Catastrophic Risk",
+		author: "Adam Bales, William D'Alessandro, Cameron Domenico Kirk-Giannini",
+		year: 2024,
+		url: "https://arxiv.org/abs/2401.15487",
+		alternativetitle: "Bales et al. 2024 — Arguments for Catastrophic Risk (arXiv)"
 	},
 	"adrian1922allornothing": {
 		title: "The all-or-nothing response of sensory nerve fibres",
