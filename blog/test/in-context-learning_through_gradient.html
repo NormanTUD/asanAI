@@ -951,12 +951,12 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targe
 QA('section > *').forEach(el=>{el.classList.add('reveal');io.observe(el);});
 addEventListener('DOMContentLoaded',()=>{
   if(window.renderMathInElement)renderMathInElement(document.body,{
-    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false,output:'html'});
   onScroll();
 });
 window.addEventListener('load',()=>{
   if(window.renderMathInElement)renderMathInElement(document.body,{
-    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+    delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false,output:'html'});
   boot();
 });
 
@@ -2091,7 +2091,7 @@ function iclPredict(N,eta){
 
   window.__prop=()=>{drawTok();buildMats();drawP1();verify();
     if(window.renderMathInElement)renderMathInElement($('propMats'),{
-      delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false});};
+      delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false,output:'html'});};
 })();
 
 /* ═══════════════════════════════════════════════════════════
