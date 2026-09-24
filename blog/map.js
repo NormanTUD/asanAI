@@ -133,7 +133,7 @@ function bootAtlas() {
 	}
 	function isMoonEntity(e) {
 		var t = ((e.loc || '') + ' ' + (e.name || '')).toLowerCase();
-		return t.indexOf('moon') !== -1 || t.indexOf('lunar') !== -1 ||
+		return /\bmoon\b/.test(t) || t.indexOf('lunar') !== -1 ||
 			t.indexOf('tranquility') !== -1;
 	}
 	function yearRange(a, b) {
