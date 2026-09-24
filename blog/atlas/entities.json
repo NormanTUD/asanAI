@@ -29767,7 +29767,9 @@
   "cited_in": [
    "map"
   ],
-  "bibkeys": [],
+  "bibkeys": [
+   "crab_nebula_image"
+  ],
   "conf": "known",
   "source": "out_part9.json",
   "bg": false

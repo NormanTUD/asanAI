@@ -2300,7 +2300,8 @@
   "cited_in": [
    "algorithms",
    "computer_vision",
-   "inceptionism"
+   "inceptionism",
+   "transformer"
   ]
  },
  {
@@ -4216,7 +4217,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -5662,7 +5664,8 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -6535,6 +6538,7 @@
   "cited_in": [
    "activationlab",
    "frontier",
+   "origami",
    "unexpected_capabilities"
   ]
  },
@@ -6975,10 +6979,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_ddim_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -7744,11 +7748,14 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "hanin2019linearregions",
    "principles_dl_theory"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Boris N. Oreshkin",
@@ -7996,11 +8003,14 @@
   "city": "Ann Arbor, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "loaizaganem2024manifoldsurvey",
    "brown2023union"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Brenner",
@@ -9361,7 +9371,9 @@
   "keys": [
    "fefferman2016testing"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Charles Goodyear",
@@ -9953,6 +9965,7 @@
    "losslab",
    "math_ii",
    "mechanistic_interpretability",
+   "origami",
    "promptengineering",
    "recurrent_networks",
    "reliability",
@@ -10870,7 +10883,8 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -11662,6 +11676,7 @@
    "activationlab",
    "evaluation",
    "mechanistic_interpretability",
+   "origami",
    "philosophy",
    "reasoning",
    "security_inference",
@@ -11794,12 +11809,14 @@
   "city": "Daejeon, South Korea",
   "year": 1999.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "chung2017perceptual",
    "lee1999nmf"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -12071,12 +12088,14 @@
   "city": "London, United Kingdom",
   "year": 2015.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "papamakarios2019flows",
    "rezende2015nf"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -12629,12 +12648,14 @@
   "city": "Toronto, Canada",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "chen2018neuralode",
    "sharma2023sycophancy"
   ],
   "cited_in": [
-   "hallucinations"
+   "hallucinations",
+   "origami"
   ]
  },
  {
@@ -16525,7 +16546,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -16705,7 +16727,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -17659,7 +17682,8 @@
    "jacot2018ntk"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -18257,11 +18281,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "loaizaganem2024manifoldsurvey",
    "brown2023union"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Gabriel Synnaeve",
@@ -19217,6 +19244,7 @@
   ],
   "cited_in": [
    "coherent_difference",
+   "origami",
    "promptengineering"
   ]
  },
@@ -20338,8 +20366,10 @@
   "city": "Pasadena, United States",
   "year": 2009.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
+   "carlsson2009topologydata",
+   "love2021topdeepsurvey",
    "zomorodian2005",
    "carlsson2009tda",
    "singh2007mapper"
@@ -20347,7 +20377,8 @@
   "cited_in": [
    "beyond_llms",
    "foam_of_meaning",
-   "geometry_iii"
+   "geometry_iii",
+   "origami"
   ]
  },
  {
@@ -21244,7 +21275,9 @@
   "keys": [
    "fefferman2016testing"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Harold Hotelling",
@@ -22542,10 +22575,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "eisgalgen_mittenwald"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -24741,11 +24774,13 @@
   "city": "Mountain View, United States",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "lee2019widelinear",
    "snell2024testtime"
   ],
   "cited_in": [
+   "origami",
    "reasoning"
   ]
  },
@@ -25594,14 +25629,16 @@
   "city": "San Jose, United States",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "dinh2016realnvp",
    "sohl2015deep",
    "dinh2017realnvp"
   ],
   "cited_in": [
    "beyond_llms",
-   "diffusion"
+   "diffusion",
+   "origami"
   ]
  },
  {
@@ -27460,7 +27497,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -27613,7 +27651,8 @@
    "tenenbaum2000isomap"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -28803,10 +28842,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "metropolis_hastings_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -29249,6 +29288,7 @@
    "beyond_llms",
    "frontier",
    "law_regulation",
+   "origami",
    "reinforcement_learning"
   ]
  },
@@ -29411,7 +29451,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -30979,7 +31020,8 @@
    "hendrycks2016gelu"
   ],
   "cited_in": [
-   "activationlab"
+   "activationlab",
+   "origami"
   ]
  },
  {
@@ -31945,12 +31987,14 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "dinh2016realnvp",
    "dinh2017realnvp"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -33475,6 +33519,7 @@
    "boltzmann"
   ],
   "cited_in": [
+   "samplinglab",
    "statistics",
    "statistics_ii"
   ]
@@ -36038,7 +36083,8 @@
    "vonoswald2022indc"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "transformer"
   ]
  },
  {
@@ -39885,7 +39931,7 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 20,
+  "works": 22,
   "keys": [
    "nlab_phasespace",
    "nlab_configspace_physics",
@@ -39906,11 +39952,14 @@
    "internal_logic_wiki",
    "nlab_group",
    "nlab_groupoid",
-   "nlab_infinity_groupoid"
+   "nlab_infinity_groupoid",
+   "info_geometry_nlab",
+   "yoneda_nlab"
   ],
   "cited_in": [
    "coherent_difference",
-   "math_iv"
+   "math_iv",
+   "origami"
   ]
  },
  {
@@ -42666,7 +42715,8 @@
    "ramachandran2017swish"
   ],
   "cited_in": [
-   "activationlab"
+   "activationlab",
+   "origami"
   ]
  },
  {
@@ -43102,6 +43152,7 @@
    "activationlab",
    "beyond_llms",
    "embeddinglab",
+   "origami",
    "philosophy",
    "unexpected_capabilities"
   ]
@@ -44470,12 +44521,14 @@
   "city": "",
   "year": 2023.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "chen2018neuralode",
    "lipman2023flow"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "origami"
   ]
  },
  {
@@ -46923,12 +46976,14 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "lee2019widelinear",
    "merchant2023gnome"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_for_science",
+   "origami"
   ]
  },
  {
@@ -46940,14 +46995,16 @@
   "city": "Montréal, Canada",
   "year": 2002.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "dinh2016realnvp",
    "collobert2002",
    "dinh2017realnvp"
   ],
   "cited_in": [
    "beyond_llms",
-   "history"
+   "history",
+   "origami"
   ]
  },
  {
@@ -47089,12 +47146,15 @@
   "city": "Princeton, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "arora2017gan",
-   "implicit_reg_deep"
+   "implicit_reg_deep",
+   "arora2022edgeofstability"
   ],
-  "cited_in": []
+  "cited_in": [
+   "optimizerlab"
+  ]
  },
  {
   "name": "Sanjoy Mitter",
@@ -47109,7 +47169,9 @@
   "keys": [
    "fefferman2016testing"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Sanmi Koyejo",
@@ -50503,11 +50565,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "chung2017perceptual",
    "wakhloo2024population"
   ],
-  "cited_in": []
+  "cited_in": [
+   "origami"
+  ]
  },
  {
   "name": "Sumit Chopra",
@@ -51301,9 +51366,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
+   "go_lang",
    "puppeteer",
-   "googlecustomsearch",
-   "go_lang"
+   "googlecustomsearch"
   ],
   "cited_in": [
    "software",
@@ -52513,10 +52578,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "monte_carlo_animation_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -54046,7 +54111,8 @@
    "tenenbaum2000isomap"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "origami"
   ]
  },
  {
@@ -54412,10 +54478,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_astronaut_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -55210,7 +55276,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 145,
+  "works": 147,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -55226,6 +55292,7 @@
    "relu_wiki",
    "convex_hull_wiki",
    "softmax_wiki",
+   "inverse_function_theorem_wiki",
    "canonical_ensemble_wiki",
    "partition_function_wiki",
    "boltzmann_distribution_wiki",
@@ -55356,9 +55423,11 @@
    "dilutionfridge",
    "superconductingqubit",
    "dolnivestonice",
-   "lamarchecave"
+   "lamarchecave",
+   "differenceengine"
   ],
   "cited_in": [
+   "autodiff",
    "coherent_difference",
    "foam_of_meaning",
    "geometry_i",
@@ -60540,6 +60609,24 @@
   ],
   "cited_in": [
    "untold_history"
+  ]
+ },
+ {
+  "name": "Elon Litman",
+  "canon": "Elon Litman",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2025.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "litman2025sdpaot"
+  ],
+  "cited_in": [
+   "attentionlab",
+   "reinforcement_learning"
   ]
  }
 ]
