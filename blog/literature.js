@@ -16066,5 +16066,12 @@ window.bibData = {
 		year: 2026,
 		url: "https://artificialintelligenceact.eu/transparency-rules-article-50/",
 		alternativetitle: "EU AI Act Art. 50 — mandatory AI content labeling"
+	},
+	"idan2026complementarity": {
+		title: "Generative AI and the Productivity Divide: Human-AI Complementarities in Education",
+		author: "Lihi Idan, Bharat Anand",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.18143",
+		alternativetitle: "Idan & Anand 2026 — AI complementarity in education (arXiv)"
 	}
 };
