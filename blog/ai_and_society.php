@@ -104,13 +104,13 @@ The second great cultural shock of the generative AI era was the discovery that 
 
 In **March 2022**, the German non-profit **LAION** released **LAION-5B**: a dataset of **5.85 billion image-text pairs** scraped from the web using Common Crawl, filtered by CLIP similarity scores \cite[LAION, 2022]{laion2022blog}. The dataset was funded by **Doodlebot, Hugging Face, and Stability AI**. It did not contain the images themselves — only URLs. But those URLs pointed to the work of millions of artists, photographers, and designers who had posted their work on the internet. No one asked them. No one told them. No one paid them.
 
-Stable Diffusion, released by Stability AI in **August 2022**, was trained on subsets of LAION-5B (specifically `laion2B-en`, `laion-high-resolution`, and `laion-aesthetics v2 5+`, the last a ~600 million image "aesthetic ≥ 5/10" subset). The training cost approximately **600,000 dollars** in GPU compute (256 Nvidia A100s on AWS, 150,000 GPU-hours). A third-party analysis of a 12 million image subset found that **~47%** of images came from just **100 domains**, with **Pinterest** alone contributing 8.5%.
+Stable Diffusion, released by Stability AI in **August 2022**, was trained on subsets of LAION-5B (specifically `laion2B-en`, `laion-high-resolution`, and `laion-aesthetics v2 5+`, the last a ca. 600 million image "aesthetic ≥ 5/10" subset). The training cost approximately **600,000 dollars** in GPU compute (256 Nvidia A100s on AWS, 150,000 GPU-hours). A third-party analysis of a 12 million image subset found that **ca. 47%** of images came from just **100 domains**, with **Pinterest** alone contributing 8.5%.
 
 The question this raised was not "can AI learn from data?" — of course it can. The question was: **whose data, and by what right?**
 
 ### The Cultural Flashpoints
 
-**October 25, 2018**: A GAN-generated portrait, *Edmond de Belamy*, by the Paris collective **Obvious**, sold at Christie's for **432,500 dollars** — against an estimate of 7,000–10,000 dollars. It was the first AI artwork to sell at a major auction house. The piece was from a series of 20 portraits trained on ~15,000 14th–19th century paintings from WikiArt. The artist **Robbie Barrat**, whose open-source GAN code Obvious used "with little modification" (by their own admission), publicly called out the uncredited use of his work. The Guardian's art critic Jonathan Jones refused to call it art \cite[Edmond de Belamy, 2026]{edmond_belamy_wiki}.
+**October 25, 2018**: A GAN-generated portrait, *Edmond de Belamy*, by the Paris collective **Obvious**, sold at Christie's for **432,500 dollars** — against an estimate of 7,000–10,000 dollars. It was the first AI artwork to sell at a major auction house. The piece was from a series of 20 portraits trained on ca. 15,000 14th–19th century paintings from WikiArt. The artist **Robbie Barrat**, whose open-source GAN code Obvious used "with little modification" (by their own admission), publicly called out the uncredited use of his work. The Guardian's art critic Jonathan Jones refused to call it art \cite[Edmond de Belamy, 2026]{edmond_belamy_wiki}.
 
 **August 29, 2022**: **Jason M. Allen**'s Midjourney image, *Théâtre D'opéra Spatial*, won first place in the "Digital Arts/Digitally-Manipulated Photography" category at the **Colorado State Fair** fine-arts competition. The prize was 300 dollars. Allen had used at least 624 prompts and then post-processed in Photoshop. The backlash went viral within hours. Two judges said they would have awarded it regardless of the AI involvement. The Colorado Department of Agriculture compared it to Maurizio Cattelan's banana. Starting in 2023, the Fair required AI disclosure. In **September 2023**, the US Copyright Office Review Board **denied** registration of the image, finding that the human input was *de minimis* and the AI content dominant \cite[Théâtre D'opéra Spatial, 2026]{theatre_dopera_wiki}.
 
@@ -132,7 +132,7 @@ The legal fight over AI training data has produced some of the most consequentia
 | **Getty Images v. Stability AI** (UK) | Jan 2023 | Copyright + trademark for scraping | Training/jurisdiction claims to be tried; Getty "largely lost" as of Nov 2025 |
 | **New York Times v. Microsoft & OpenAI** | Dec 2023, S.D.N.Y. | Verbatim reproduction in outputs; fair use invalid because it competes | Ongoing; fair-use question still before the court |
 | **Kadrey v. Meta** | Dec 2023 | Training on 50,000+ of the author's works | All but one claim thrown out (Feb 2024); fair-use summary judgment for Meta (June 2025) on output-harm grounds |
-| **Bartz v. Anthropic** | Aug 2024, N.D. Cal. | Training on **pirated books** (Project Panama, 7M+ copies) | **June 2025**: training on *purchased* books = fair use; *pirated* copies = not fair use. **Sept 2025**: **1.5-billion-dollar settlement** (~3,000 dollars per book, ~500,000 authors) — the largest US copyright settlement in history \cite[Bartz v. Anthropic, 2025]{bartz2025anthropic} |
+| **Bartz v. Anthropic** | Aug 2024, N.D. Cal. | Training on **pirated books** (Project Panama, 7M+ copies) | **June 2025**: training on *purchased* books = fair use; *pirated* copies = not fair use. **Sept 2025**: **1.5-billion-dollar settlement** (ca. 3,000 dollars per book, ca. 500,000 authors) — the largest US copyright settlement in history \cite[Bartz v. Anthropic, 2025]{bartz2025anthropic} |
 | **RIAA (UMG, Sony, Warner) v. Suno & Udio** | June 2024 | Models trained on label catalogs without consent | **Settled Nov 2025**: UMG–Udio (19 Nov), UMG–Suno (25 Nov) — first major label to settle; AI firms agreed to launch **licensed/opt-in** training platforms |
 
 The emerging legal picture is **nuanced, not absolute**:
@@ -190,7 +190,7 @@ In **July 2023**, Huawei's **Pangu-Weather** — a 3D neural network trained on 
 
 In **June 2023**, **Insilico Medicine** announced that **ISM001-055** (now named **rentosertib**) — a TNIK inhibitor for idiopathic pulmonary fibrosis whose target and molecule were generated by its Pharma.AI platform — had received **FDA Orphan Drug Designation** and entered Phase 1/2 trials. It was described as the "first fully AI-generated drug" to reach the clinic. By **March 2025**, it had received its USAN name and entered **Phase 3** (GENESIS-IPF-3, NCT07687459) \cite[Rentosertib, 2026]{rentosertib_wiki}.
 
-The timeline: from target discovery through Phase 0/1 in **under 30 months**, at a reported cost of **~2.6 million dollars** — versus the industry average of ~4.5 years and ~2.6 billion dollars to reach the same stage. No AI-designed drug has yet received full regulatory approval, but the pipeline is real and moving.
+The timeline: from target discovery through Phase 0/1 in **under 30 months**, at a reported cost of **ca. 2.6 million dollars** — versus the industry average of ca. 4.5 years and ca. 2.6 billion dollars to reach the same stage. No AI-designed drug has yet received full regulatory approval, but the pipeline is real and moving.
 
 ### The Pattern
 
@@ -233,11 +233,11 @@ In a controlled experiment with **GitHub Copilot**, recruited developers were as
 
 ### The "Jagged Frontier" (2023)
 
-A field experiment with ~250 **BCG consultants** doing a business case with GPT-4 (Dell'Acqua et al., Stanford/Wharton/BCG) found that AI helped on *some* tasks (consultants completed ~12% more work, ~25% faster) but **quality dropped on the hardest, most creative tasks**. On the most difficult problems, GPT-4 was *worse* than the human working alone. The authors called this the **"jagged frontier"**: AI is a good tool for some tasks and a bad tool for others, and you cannot easily predict which in advance.
+A field experiment with ca. 250 **BCG consultants** doing a business case with GPT-4 (Dell'Acqua et al., Stanford/Wharton/BCG) found that AI helped on *some* tasks (consultants completed ca. 12% more work, ca. 25% faster) but **quality dropped on the hardest, most creative tasks**. On the most difficult problems, GPT-4 was *worse* than the human working alone. The authors called this the **"jagged frontier"**: AI is a good tool for some tasks and a bad tool for others, and you cannot easily predict which in advance.
 
 ### The Speedup Illusion (2026)
 
-A preregistered study with **N = 1,237** (arXiv:2605.23177) found that on simple cognitive tasks, **actual completion times did NOT differ** between doing a task alone vs. AI-assisted — but participants **predicted** AI would be significantly faster. The bias did **not** appear when they imagined a *human* helper. AI specifically triggers a "speedup illusion": people report lower subjective effort despite identical completion times. "Feels faster" ≠ "is faster."
+A preregistered study with **N = 1,237** found that on simple cognitive tasks, **actual completion times did NOT differ** between doing a task alone vs. AI-assisted — but participants **predicted** AI would be significantly faster. The bias did **not** appear when they imagined a *human* helper. AI specifically triggers a "speedup illusion": people report lower subjective effort despite identical completion times. "Feels faster" ≠ "is faster" \cite[Yu et al., 2025]{speedup_illusion2025}.
 
 ### The Synthesis
 
@@ -261,7 +261,7 @@ In **2014**, Ward, Benoit, and Gould published "The Google Effect": when people 
 
 Generative AI makes this effect **structural, not situational**. When an AI assistant can answer any question in any domain, on demand, in natural language, the incentive to *retain* information drops to near zero. You do not need to memorize the capital of France when ChatGPT will tell you in 200 milliseconds. You do not need to learn the syntax of a programming language when Copilot will autocomplete it. The "offloading" is no longer about a single fact — it is about **entire skill domains**.
 
-A 2026 theoretical model (arXiv:2604.03501, "The Augmentation Trap") formalizes the risk: AI lifts short-run productivity, but **sustained offloading erodes the worker's own skill** — which is the very skill the AI depends on for direction and verification. The result is an **"augmentation trap"**: even a rational, fully-anticipating employer can end up *lowering* long-run productivity. Low-skill workers can **permanently deskill** while high-skill workers pull away.
+A 2026 theoretical model formalizes the risk: AI lifts short-run productivity, but **sustained offloading erodes the worker's own skill** — which is the very skill the AI depends on for direction and verification. The result is an **"augmentation trap"**: even a rational, fully-anticipating employer can end up *lowering* long-run productivity. Low-skill workers can **permanently deskill** while high-skill workers pull away \cite[Caosun & Aral, 2026]{caosun2026augmentation}.
 
 ### Automation Bias: Trusting the Machine
 
@@ -281,11 +281,55 @@ A 2025 University of Chicago working paper (Kaplan, "Can AI Make You Dumber?") f
 
 The evidence from the 2023–2025 period is consistent:
 
-* **AI tutoring can be effective**, particularly for students who lack access to human tutors. Khan Academy's **Khanmigo** (GPT-4-based, launched March 2023) reached ~65,000 students across 53 school districts by March 2024. A 2026 PNAS study found computer-assisted learning via Khan Academy associated with improved student math performance.
+* **AI tutoring can be effective**, particularly for students who lack access to human tutors. Khan Academy's **Khanmigo** (GPT-4-based, launched March 2023) reached ca. 65,000 students across 53 school districts by March 2024. A 2026 PNAS study found computer-assisted learning via Khan Academy associated with improved student math performance.
 * **But**: AI-written admissions essays are **detectable and scored lower**. LLM-assisted writing in scholarly publications is rising, with studies showing a "publish and perish" dynamic where AI-accelerated writing without proportional verification degrades the knowledge base.
-* The **complementarity finding** (arXiv:2605.18143): gains depend on baseline skill. Students who already understand the material benefit from AI tutoring; those who do not risk **cognitive passivity** — accepting the AI's answer without the struggle that builds understanding.
+* The **complementarity finding**: gains depend on baseline skill. Students who already understand the material benefit from AI tutoring; those who do not risk **cognitive passivity** — accepting the AI's answer without the struggle that builds understanding \cite[Idan & Anand, 2026]{idan2026complementarity}.
 
 The honest summary: AI is a **magnifier**. It magnifies the existing skill gap. The student who already understands the material gets a powerful study partner. The student who does not yet understand gets a confident, fluent, wrong answer that *feels* like understanding.
+</div>
+
+<div class="md">
+## The Learning Paradox: AI as Tutor and as Crutch
+
+The cognitive effects described above have a direct consequence in the classroom: AI is simultaneously the most powerful personal tutor ever built and the most effective tool for *avoiding* the struggle that produces learning.
+
+### The Evidence That AI Helps
+
+The positive case is real and not trivial. In **December 2025**, Google and Eedi published a randomized controlled trial of **LearnLM**, an AI tutoring system deployed in 5 UK secondary schools (N = 165). Tutors in the AI-assisted group approved **76.4%** of AI-drafted feedback messages with zero or minimal edits, and students in the AI group were **5.5 percentage points more likely** to solve novel problems correctly (66.2% vs. 60.7%) \cite[LearnLM, 2025]{learnlm2025rct}. The mechanism: the AI handles the low-level feedback loop (checking arithmetic, restating the question, hinting at the next step) so the human tutor can focus on conceptual understanding.
+
+**Khanmigo** (Khan Academy, GPT-4-based, launched March 2023) is the largest deployment: ca. 65,000 students across 53 US school districts by early 2024, at 4 dollars per month. A **2026 PNAS study** found that computer-assisted learning via Khan Academy was associated with improved student math performance \cite[Khan Academy, 2026]{khanacademy_wiki}. The critical detail: the gains are concentrated in students who *lack access to human tutors* — the tool democratizes what was previously a privilege of the well-funded.
+
+In **coding education**, the picture is more nuanced. The first controlled study of introductory CS students using **GitHub Copilot** (Prather et al., 2023, published in *ACM TOCHI*) found that students completed the assignment faster but showed **reduced metacognitive awareness**: they accepted autocomplete suggestions without verifying them, and could not explain *why* the suggested code worked \cite[Prather et al., 2023]{prather2023copilot}. The tool that writes the code also removes the struggle of writing it — and the struggle is where the learning lives.
+
+### The Evidence That AI Hurts
+
+In **June 2025**, Georgiou published a randomized experiment measuring **cognitive engagement** — mental effort, sustained attention, deep processing, strategic thinking — while participants solved reasoning problems with and without ChatGPT access. The ChatGPT group scored **significantly lower** on every cognitive-engagement measure. The paper's title is blunt: *"ChatGPT produces more 'lazy' thinkers"* \cite[Georgiou, 2025]{georgiou2025lazy}.
+
+In **February 2026**, Guti et al. analyzed 701 classroom questions from primary schools in Zambia and India and found a **"jagged frontier" for education**: large language models excel at static, procedural skills (counting, scaling, arithmetic) but hit a hard **"spatial ceiling"** on dynamic operations requiring physical intuition (folding paper, reflecting shapes, rotating objects in 3D) \cite[Guti et al., 2026]{huti2026jagged}. The implication: AI tutoring is genuinely helpful for some mathematical domains and actively misleading in others, and the boundary between the two is not obvious to the student.
+
+The **augmentation trap** (Caosun & Aral, 2026) formalizes the worst case: a rational, fully-informed decision-maker will *choose* to adopt an AI assistant even when it erodes their long-run skill, because the front-loaded productivity gain outweighs the deferred cost of skill atrophy. The employer who knows the team will deskill still deploys the tool, because the quarterly metric improves. The student who knows they will not retain the material still uses the tool, because the grade improves this semester. The trap is not irrationality. It is rationality applied to the wrong time horizon \cite[Caosun & Aral, 2026]{caosun2026augmentation}.
+
+### The Coding Paradox
+
+The most acute case is programming. A 2025 METR study found that AI's ability to complete long-horizon software tasks **doubles every 7 months** \cite[Becker et al., 2025]{becker2025metr}. The tool is improving faster than the skill it replaces. The paradox: the more capable the coding assistant becomes, the less reason the junior developer has to write code by hand, and the less they learn the craft. The "vibe coding" phenomenon — generating software by describing what you want in natural language, without reading or understanding the output — is the educational endpoint of this trajectory \cite[Vibe coding, 2026]{vibe_coding_wiki}.
+
+This is not a new structural problem. In the **1980s**, the introduction of affordable pocket calculators into classrooms produced the identical anxiety: "if children can compute, they will never learn arithmetic." The resolution that emerged over the following decades was a shift in educational goals: from *performing* calculations to *reasoning about* them. The calculator did not make arithmetic irrelevant; it made *fluency in manual computation* irrelevant, and made *numerical reasoning and problem formulation* more important \cite[Calculator, 2026]{calculator_wiki}.
+
+The AI-coding parallel is suggestive but not identical. Arithmetic has a finite, well-understood structure. Software design does not. The "reasoning about code" that replaces "writing code" is itself a skill that must be learned — and it is unclear whether it can be learned *from* an AI that writes the code for you, any more than a student learns to drive by riding in the back seat of an autonomous car.
+
+### The Language Learning Case
+
+Language learning is the domain where the evidence is most clearly positive. **Duolingo** (130 million monthly active users) launched **Duolingo Max** in **March 2023**, adding AI-powered conversation practice (Roleplay, Video Call with an AI character) and in **April 2025** launched **148 new language courses** generated with AI — including endangered and indigenous languages (Hawaiian, Māori, Navajo) that would have been uneconomical to produce with human writers alone \cite[Duolingo, 2026]{duolingo_wiki}. The CUBBITT study (Popel et al., 2020, *Nature Communications*) demonstrated that machine translation outperformed professional human translators in adequacy for news translation, with 9 of 15 participants in a Turing test unable to distinguish machine from human output \cite[Popel et al., 2020]{popel2020cubitt}.
+
+The cultural impact: the **language barrier**, one of the oldest and most persistent obstacles to human communication, is being lowered at a rate with no historical precedent. A researcher in Lagos can read a paper in German. A developer in São Paulo can debug code documented in Japanese. The "lingua franca" problem that shaped human history for millennia is being solved, incrementally but irrevocably, by a neural network.
+
+### The Academic Integrity Crisis
+
+The "publish and perish" problem is the dark side of AI in learning. In **August 2026**, Kokkas et al. showed that GPT-5 could extract evidence from research papers **indistinguishably from human domain experts** (24 papers, 77 evaluation items), with hallucinations rare but methodological appraisal remaining a weakness \cite[Kokkas et al., 2026]{kokkas2026evidence}. The implication: the peer-review process, already stretched thin, now faces a workforce in which a meaningful fraction of submissions may be AI-drafted without disclosure.
+
+A **February 2026** study (Kubota et al.) demonstrated that LLM systems can **replicate quantitative social-science analyses** and flag statistical problems, positioning AI as "assistive infrastructure" for the replication crisis \cite[Kubota et al., 2026]{kubota2026replication}. The same capability that verifies results can also generate them — and the line between "AI-assisted analysis" and "AI-fabricated result" is not yet policed by any institution.
+
+The honest state of play in 2026: AI in education is a **genuine good for access** (the student in rural Guatemala, the blind student, the self-taught programmer) and a **genuine risk for depth** (the student who never struggles, the researcher who never reads the primary source, the reviewer who never checks the derivation). The tool does not know which student it is serving. The teacher does. The question is whether the teacher's judgment can scale to meet the tool's reach.
 </div>
 
 <div class="md">
@@ -306,17 +350,78 @@ This is not a problem that will be solved by "better detection." It is a structu
 </div>
 
 <div class="md">
+## The Propaganda Machine: AI as a Tool of Power
+
+The verification crisis described above is not merely an epistemic inconvenience. It is a **strategic asset** for actors who want to manipulate populations at scale. AI has transformed propaganda from a *broadcast* activity (one message, many receivers) into an **industrial, personalized, and effectively un-debunkable** one.
+
+### The Firehose, Upgraded
+
+In **2016**, the RAND Corporation documented Russia's propaganda strategy and named it the **"Firehose of Falsehood"**: a model with four distinguishing features — high-volume and multichannel, rapid and continuous, no commitment to objective reality, and no commitment to consistency \cite[RAND, 2016]{rand2016firehose}. The goal is not to convince anyone of a specific claim. The goal is to **flood the information environment with so many contradictory narratives that the audience gives up on distinguishing truth from fabrication entirely.** RAND's warning was explicit: "Don't expect to counter the firehose of falsehood with the squirt gun of truth."
+
+The operational arm was the **Internet Research Agency** (IRA), founded in **2013** by Yevgeny Prigozhin in Saint Petersburg. By 2015 it employed over 1,000 people. A 2024 investigation revealed internal documents from its successor, the "Agency of Social Design," showing nearly **40,000 content units** (memes, images, comments) produced over a single 4-month period, targeted at the governments of France, Poland, Germany, and Ukraine \cite[IRA, 2026]{ira_wiki}. The IRA was formally shut down in **July 2023** following the Wagner Group rebellion, but the operational model persisted.
+
+AI has not replaced the firehose. It has **removed the production bottleneck.** Where the IRA required 1,000 human operators to generate 40,000 content units in 4 months, a single operator with access to generative AI can produce the same volume in a weekend — in any language, in any visual style, with no need for stock photography or human illustration. The marginal cost of a propaganda unit has dropped to near zero, while the marginal cost of *debunking* it has increased (because the fake is now indistinguishable from the real thing).
+
+### The India-Pakistan Case (May 2025)
+
+A concrete demonstration of the new dynamics came during the **May 7–8, 2025** India-Pakistan military standoff. A deepfake video of Pakistani General Ahmed Sharif Chaudhry claiming Pakistan had lost two fighter jets was **shared nearly 700,000 times on X** before being debunked. Multiple major Indian news outlets (NDTV, The Free Press Journal, The Statesman, Firstpost) ran the story based on the fake. Bellingcat's debunking relied on finding a 2024 Facebook clip of the same press conference — identical microphone positions, identical body language, different audio \cite[Bellingcat, 2025]{bellingcat2025india}.
+
+The structural problem: the debunking took **hours**. The fake was already mainstream. As Rachel Moran (University of Washington) noted: "In crisis periods, the information environment is already muddied as we try to distinguish rumours from facts at speed. The fact that we now have high-quality fake videos in the mix only makes this process more taxing, less certain and can distract us from important true information."
+
+### Personalized Propaganda at Scale
+
+The **Cambridge Analytica** scandal (2018) demonstrated the *targeting* half of the equation: psychological profiling at scale, using 87 million Facebook users' data, to deliver tailored political messages. CEO Alexander Nix claimed the firm modeled "the personality of every adult across the United States, some 230 million people" \cite[Cambridge Analytica, 2026]{cambridge_analytica_wiki}. But Cambridge Analytica was limited by a **production bottleneck**: it could only select from a finite set of pre-made ad variants.
+
+Generative AI removes that bottleneck. The system can now generate *unlimited* content variants, each tailored to a specific psychological profile, in the local dialect, referencing local events, in the visual style the target demographic finds most credible. The targeting and the production are no longer separate steps. They are the same step.
+
+In **March 2026**, Bellingcat documented the **BJP's** use of AI-generated imagery in anti-Muslim and anti-Bangladeshi hate speech ahead of elections in Assam and West Bengal. Of 499 social media posts analyzed, 194 met the UN definition of hate speech, and **31 (about 1 in 6)** contained obvious AI-generated imagery — including a video of a state chief minister "shooting" an AI-generated image of an opposition leader in a skull cap, captioned "Foreigner-free Assam" \cite[Bellingcat, 2026]{bellingcat2026bjp}. The same pattern appeared in **October 2025** (an AI-generated video shared from Andrew Cuomo's official X account depicting the NYC mayoral candidate Zohran Mamdani eating rice with his hands) and in **April 2025** (Italy's League party publishing AI-generated images depicting men of colour attacking women).
+
+As Joyojeet Pal (University of Michigan) summarized: "AI is helping cement polarised opinions by giving you the kind of content you have already decided you want to engage with."
+
+### The Liar's Dividend, Institutionalized
+
+The **"liar's dividend"** — the phenomenon by which *real* incriminating footage can be dismissed as "probably AI" — has moved from theoretical concern to documented reality \cite[Deepfake, 2026]{deepfake_wiki}:
+
+* **February 2025, US**: A fabricated video of an ICE raid went viral on TikTok. The subsequent flood of AI-generated ICE raid videos created a dynamic in which *real* ICE raid footage could be dismissed as synthetic.
+* **March 2026**: AI-generated war videos and fake satellite imagery about the US-Israel-Iran conflict went viral, making genuine conflict footage harder to authenticate \cite[Synthetic media, 2026]{synthetic_media_wiki}.
+* **Legal proceedings**: The epistemic shift is structural. Previously, the question in court was "did this happen?" Now the threshold question is "is this video *real*?" — and the burden of proof has shifted to the party offering the evidence.
+
+### The Historical Pattern
+
+Each media revolution has changed the economics of propaganda:
+
+| Era | Medium | Propaganda capability |
+|-----|--------|----------------------|
+| ca. 1500 | Printing press | First ruler to use print for propaganda: Maximilian I. One-sided battle reports for the mass. |
+| 1914 | Radio + mass print | WWI: first large-scale organized state propaganda (US Creel Committee, UK Ministry of Information). |
+| 1933 | Radio + film | WWII "Golden Age": Goebbels' ministry, *Triumph of the Will*, Soviet agitprop cinema. |
+| 1947 | TV + radio | Cold War: CIA's Bedford Publishing disseminated 1 million+ books to Soviet readers. |
+| 2013 | Social media + algorithms | Computational propaganda: bots, fake accounts, the IRA, Cambridge Analytica. |
+| 2022+ | Generative AI | Synthetic media: unlimited, personalized, indistinguishable from reality. |
+
+The structural break with AI is this: **every previous medium reduced the cost of *both* production and verification** (print made books cheaper to produce *and* to copy; TV made broadcasts cheaper *and* to record). AI has broken the symmetry: the cost of producing a convincing fake has dropped to near zero, while the cost of verification has *increased* because the fake is now indistinguishable from the real thing by human perception.
+
+### Institutional Responses (and Their Limits)
+
+* **C2PA / Content Credentials**: A coalition including Adobe, Amazon, BBC, Google, Meta, Microsoft, OpenAI, Sony, and TikTok maintains an open standard for content provenance metadata — a "nutrition label" for digital content. Led by 500+ companies. The limitation: it is **opt-in**. A bad actor simply does not embed the metadata, or strips it \cite[C2PA, 2026]{c2pa_wiki}.
+* **EU AI Act, Article 50** (in force **August 2, 2026**): Mandates that AI-generated synthetic content be marked in **machine-readable format** and made **detectable as AI-generated**. Deepfakes and AI-generated public-interest text require **disclosure** to the audience. A standardized EU "AI" label (localized: "KI" in German, "IA" in French) is in final development. The limitation: enforcement jurisdiction, and the act applies to the *deployer*, not the generator — a deepfake produced outside the EU and shared on a global platform is in a legal gray zone \cite[EU AI Act, 2026]{eu_ai_act_wiki}.
+* **Platform labeling**: Meta announced "AI info" labels in **April 2024**. In practice, Bellingcat's analysis of the BJP posts found that **only 5 of hundreds** of AI-generated visuals carried any AI disclaimer — and none from the BJP itself. Voluntary platform enforcement is insufficient against state-adjacent actors \cite[Bellingcat, 2026]{bellingcat2026bjp}.
+
+The honest assessment: the institutional response is a **cat's game** in which the defenders are always reacting to the last generation of the technology, while the attackers have already moved to the next one. The firehose model's core insight remains true and has only been strengthened: **the goal was never to convince. The goal is to make the concept of "fact" inoperative.** AI has made that goal achievable at a scale and speed that no fact-checking organization can match.
+</div>
+
+<div class="md">
 ## The Labor Question: Jobs at Risk, Jobs Created
 
 ### The "300 Million" Headline
 
-In **March 2023**, **Goldman Sachs Research** published "The Potentially Large Effects of Artificial Intelligence on the Global Economy," estimating that **~300 million full-time jobs globally** are *exposed* to automation from LLMs — approximately **25% of current US employment** and **~40%** in developed Europe and India.
+In **March 2023**, **Goldman Sachs Research** published "The Potentially Large Effects of Artificial Intelligence on the Global Economy," estimating that **ca. 300 million full-time jobs globally** are *exposed* to automation from LLMs — approximately **25% of current US employment** and **ca. 40%** in developed Europe and India.
 
 The critical nuance: "exposed to automation" ≠ "jobs lost." It is a **task-exposure model**, not a forecast of 300 million layoffs. It means 300 million jobs contain tasks that *could* be automated. Whether they *will* be — and how fast — depends on economic, institutional, and political factors.
 
 ### What Has Actually Happened (2024–2025)
 
-* **Aggregate US unemployment** stayed near ~4% through 2024–2025. No mass AI-driven job loss is visible in headline BLS numbers.
+* **Aggregate US unemployment** stayed near ca. 4% through 2024–2025. No mass AI-driven job loss is visible in headline BLS numbers.
 * **Composition shift**: the clearest early signal is **entry-level softness** in AI-exposed roles (customer service, entry-level coding, writing/translation), while **AI-related job postings grew**. The pattern is **reallocation**, not net destruction.
 * **The WGA strike** (2023) was, in part, a preemptive labor action: writers codified AI protections *before* displacement occurred. The strategy: accept AI as a tool, reject it as a substitute, and protect the training-data pipeline.
 * **Stack Overflow 2024**: **70%** of professional developers do *not* see AI as a threat to their job. Only **11.7%** said "yes." The majority see it as a productivity aid that creates more work, not less.
@@ -353,7 +458,7 @@ The cultural impact: the **language barrier**, one of the oldest and most persis
 
 ### Education: The 4-Dollar Tutor
 
-**Khan Academy** (a 501(c)(3) nonprofit) offers **Khanmigo**, a GPT-4-based AI tutor for math, science, humanities, and coding, at **4 dollars/month** for users 18+. By March 2024, it had reached ~65,000 students across 53 school districts. The content is **free** worldwide, available in 14 fully-supported languages, with offline versions distributed to rural areas in Asia, Latin America, and Africa. A 2026 PNAS study found that computer-assisted learning via Khan Academy was associated with improved student math performance.
+**Khan Academy** (a 501(c)(3) nonprofit) offers **Khanmigo**, a GPT-4-based AI tutor for math, science, humanities, and coding, at **4 dollars/month** for users 18+. By March 2024, it had reached ca. 65,000 students across 53 school districts. The content is **free** worldwide, available in 14 fully-supported languages, with offline versions distributed to rural areas in Asia, Latin America, and Africa. A 2026 PNAS study found that computer-assisted learning via Khan Academy was associated with improved student math performance.
 
 **Duolingo**, founded in 2011 by Luis von Ahn (motivated by seeing how expensive English learning was in his community in Guatemala), now has **130 million monthly active users**, **10.9 million paying subscribers**, and offers **42 languages** including endangered and indigenous languages (Hawaiian, Māori, Navajo). In **April 2025**, it launched **148 new language courses** developed using generative AI — a scale of content creation that would have been impossible with human writers alone.
 
@@ -373,7 +478,7 @@ One of the most culturally novel and least understood impacts of generative AI i
 
 **Replika**, launched in **June 2017** by Luka Inc., reached **10 million+ users** at its peak. It is an AI "companion" that maintains a persistent, personalized conversation with the user, remembers details, and simulates emotional responsiveness. In **February–March 2023**, Italy's data-protection authority (Garante) **temporarily banned** Replika over improper collection of minors' data and unlawful psychological profiling \cite[Replika, 2026]{replika_wiki}.
 
-**Character.AI**, founded in **November 2021** by Noam Shazeer and Daniel de Freitas (ex-Google LaMDA team), reached **1.7 million app downloads in its first week** (May 2023) and ~**3.5 million daily visitors** by January 2024, the majority aged **16–30**. The platform lets users create and interact with AI characters — fictional, historical, or celebrity-based \cite[Character.AI, 2026]{characterai_wiki}.
+**Character.AI**, founded in **November 2021** by Noam Shazeer and Daniel de Freitas (ex-Google LaMDA team), reached **1.7 million app downloads in its first week** (May 2023) and ca. **3.5 million daily visitors** by January 2024, the majority aged **16–30**. The platform lets users create and interact with AI characters — fictional, historical, or celebrity-based \cite[Character.AI, 2026]{characterai_wiki}.
 
 The **Sewell Setzer case** (2024) was the first high-profile legal challenge: a **14-year-old** Florida boy died by suicide in February 2024 after a months-long relationship with a **Daenerys Targaryn** character on Character.AI. His mother filed suit in **October 2024**, alleging the platform was "addictive and manipulative" by design \cite[CBS News, 2024]{cbs2024characterai}. Related cases followed: a 13-year-old in Colorado (November 2023), and two Texas families (December 2024). In **October 2025**, Character.AI began **barring under-18s** from creating or talking to chatbots.
 

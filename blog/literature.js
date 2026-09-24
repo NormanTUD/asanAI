@@ -15926,5 +15926,145 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Rentosertib",
 		alternativetitle: "Rentosertib (Wikipedia) — the first fully AI-generated drug in Phase 3"
+	},
+	"speedup_illusion2025": {
+		title: "Cognitive offloading and the speedup illusion in human-AI interaction",
+		author: "Sunny Yu, Myra Cheng, Ahmad Jabbar, Ilia Sucholutsky, Katherine M. Collins, Dan Jurafsky, Robert D. Hawkins",
+		year: 2025,
+		url: "https://arxiv.org/abs/2605.23177",
+		alternativetitle: "Yu et al. 2025 — Speedup illusion (arXiv)"
+	},
+	"learnlm2025rct": {
+		title: "LearnLM: A Randomized Controlled Trial of AI Tutoring in UK Secondary Schools",
+		author: "Google and Eedi",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.23633",
+		alternativetitle: "LearnLM RCT (arXiv) — AI tutoring in 5 UK schools"
+	},
+	"khanacademy_wiki": {
+		title: "Khan Academy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Khan_Academy",
+		alternativetitle: "Khan Academy (Wikipedia)"
+	},
+	"prather2023copilot": {
+		title: "An Observational Study of Novice Programmers Using GitHub Copilot",
+		author: "Brett Prather, Jey Hong, Thomas D. LaToza",
+		year: 2023,
+		url: "https://arxiv.org/abs/2304.02491",
+		alternativetitle: "Prather et al. 2023 — Copilot and novice CS students (arXiv)"
+	},
+	"georgiou2025lazy": {
+		title: "ChatGPT produces more 'lazy' thinkers",
+		author: "George Georgiou",
+		year: 2025,
+		url: "https://arxiv.org/abs/2507.00181",
+		alternativetitle: "Georgiou 2025 — Cognitive engagement decline (arXiv)"
+	},
+	"huti2026jagged": {
+		title: "The Jagged Frontier of Large Language Models in Primary Education",
+		author: "Guti et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.12196",
+		alternativetitle: "Guti et al. 2026 — Jagged frontier in education (arXiv)"
+	},
+	"caosun2026augmentation": {
+		title: "The Augmentation Trap: AI Adoption and Long-Run Skill Erosion",
+		author: "Caosun, Sun and Aral, Seda",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.03501",
+		alternativetitle: "Caosun & Aral 2026 — The augmentation trap (arXiv)"
+	},
+	"vibe_coding_wiki": {
+		title: "Vibe coding",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Vibe_coding",
+		alternativetitle: "Vibe coding (Wikipedia) — AI-generated code without deep understanding"
+	},
+	"calculator_wiki": {
+		title: "Calculator",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Calculator",
+		alternativetitle: "Calculator (Wikipedia) — including the educational debate"
+	},
+	"duolingo_wiki": {
+		title: "Duolingo",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Duolingo",
+		alternativetitle: "Duolingo (Wikipedia)"
+	},
+	"kokkas2026evidence": {
+		title: "AI Can Match Domain Experts in Evidence Extraction",
+		author: "Kokkas et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2608.07250",
+		alternativetitle: "Kokkas et al. 2026 — AI matches experts in evidence extraction (arXiv)"
+	},
+	"kubota2026replication": {
+		title: "LLM-Assisted Replication for Quantitative Social Science",
+		author: "Kubota et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.18453",
+		alternativetitle: "Kubota et al. 2026 — LLM replication infrastructure (arXiv)"
+	},
+	"rand2016firehose": {
+		title: "Firehose of falsehood",
+		author: "Wikipedia contributors (original: Paul & Matthews, RAND Corporation, 2016)",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Firehose_of_falsehood",
+		alternativetitle: "Firehose of falsehood (Wikipedia) — RAND's model of Russian propaganda"
+	},
+	"ira_wiki": {
+		title: "Internet Research Agency",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Internet_Research_Agency",
+		alternativetitle: "Internet Research Agency (Wikipedia) — Russian troll farm"
+	},
+	"bellingcat2025india": {
+		title: "India-Pakistan conflict: How a deepfake video made it mainstream",
+		author: "Bellingcat",
+		year: 2025,
+		url: "https://www.bellingcat.com/news/2025/05/09/india-pakistan-conflict-how-a-deepfake-video-made-it-mainstream/",
+		alternativetitle: "Bellingcat 2025 — Deepfake general video, 700k shares"
+	},
+	"bellingcat2026bjp": {
+		title: "How India's BJP is using AI-generated hate speech ahead of elections",
+		author: "Bellingcat",
+		year: 2026,
+		url: "https://www.bellingcat.com/news/2026/03/31/india-bjp-hate-speech-ai/",
+		alternativetitle: "Bellingcat 2026 — BJP AI hate speech analysis"
+	},
+	"cambridge_analytica_wiki": {
+		title: "Cambridge Analytica",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cambridge_Analytica",
+		alternativetitle: "Cambridge Analytica (Wikipedia)"
+	},
+	"synthetic_media_wiki": {
+		title: "Synthetic media",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Synthetic_media",
+		alternativetitle: "Synthetic media (Wikipedia) — deepfakes, legal and epistemic implications"
+	},
+	"c2pa_wiki": {
+		title: "Coalition for Content Provenance and Authenticity (C2PA)",
+		author: "C2PA Steering Committee",
+		year: 2026,
+		url: "https://c2pa.org/",
+		alternativetitle: "C2PA — content provenance standard"
+	},
+	"eu_ai_act_wiki": {
+		title: "EU Artificial Intelligence Act — Article 50 Transparency Rules",
+		author: "Future of Life Institute",
+		year: 2026,
+		url: "https://artificialintelligenceact.eu/transparency-rules-article-50/",
+		alternativetitle: "EU AI Act Art. 50 — mandatory AI content labeling"
 	}
 };
