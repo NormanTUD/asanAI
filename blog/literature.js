@@ -6775,6 +6775,106 @@ window.bibData = {
 		alternativetitle: "SeamlessM4T"
 	},
 
+	// AI Music & Video Generation
+	"ha2018worldmodels": {
+		url: "https://arxiv.org/abs/1803.10122",
+		title: "World Models",
+		author: "David Ha, Jürgen Schmidhuber",
+		year: 2018,
+		alternativetitle: "World Models (Ha & Schmidhuber)"
+	},
+	"unterthiner2018fvd": {
+		url: "https://arxiv.org/abs/1812.01717",
+		title: "Towards Accurate Generative Models of Video: A New Metric & Challenges",
+		author: "Thomas Unterthiner, Sjoerd van Steenkiste, Karol Kurach, et al.",
+		year: 2018,
+		alternativetitle: "Fréchet Video Distance (FVD)"
+	},
+	"tulyakov2018mocogan": {
+		url: "https://arxiv.org/abs/1707.04993",
+		title: "MoCoGAN: Decomposing Motion and Content for Video Generation",
+		author: "Sergey Tulyakov, Ming-Yu Liu, Xiaodong Yang, Jan Kautz",
+		year: 2018,
+		alternativetitle: "MoCoGAN"
+	},
+	"yan2021videogpt": {
+		url: "https://arxiv.org/abs/2104.10157",
+		title: "VideoGPT: Video Generation using VQ-VAE and Transformers",
+		author: "Wilson Yan, Yunzhi Zhang, Pieter Abbeel, Aravind Srinivas",
+		year: 2021,
+		alternativetitle: "VideoGPT"
+	},
+	"bain2021webvid": {
+		url: "https://arxiv.org/abs/2104.00650",
+		title: "Frozen in Time: A Joint Video and Image Encoder for End-to-End Retrieval",
+		author: "Max Bain, Arsha Nagrani, Gül Varol, Andrew Zisserman",
+		year: 2021,
+		alternativetitle: "WebVid-10M"
+	},
+	"singer2022makeavideo": {
+		url: "https://arxiv.org/abs/2209.14792",
+		title: "Make-A-Video: Text-to-Video Generation without Text-Video Data",
+		author: "Uriel Singer, Adam Polyak, Thomas Hayes, et al.",
+		year: 2022,
+		alternativetitle: "Make-A-Video (Meta)"
+	},
+	"ho2022imagenvideo": {
+		url: "https://arxiv.org/abs/2210.02303",
+		title: "Imagen Video: High Definition Video Generation with Diffusion Models",
+		author: "Jonathan Ho, William Chan, Chitwan Saharia, et al.",
+		year: 2022,
+		alternativetitle: "Imagen Video (Google)"
+	},
+	"peebles2023dit": {
+		url: "https://arxiv.org/abs/2212.09748",
+		title: "Scalable Diffusion Models with Transformers",
+		author: "William Peebles, Saining Xie",
+		year: 2023,
+		alternativetitle: "DiT (Diffusion Transformer)"
+	},
+	"blattmann2023svid": {
+		url: "https://arxiv.org/abs/2311.15127",
+		title: "Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets",
+		author: "Andreas Blattmann, Tim Dockhorn, Sumith Kulal, et al.",
+		year: 2023,
+		alternativetitle: "Stable Video Diffusion"
+	},
+	"brooks2024sora": {
+		url: "https://openai.com/index/video-generation-models-as-world-simulators/",
+		title: "Video Generation Models as World Simulators",
+		author: "Tim Brooks, Bill Peebles, Connor Holmes, et al. (OpenAI)",
+		year: 2024,
+		alternativetitle: "Sora technical report"
+	},
+	"zeghidour2021soundstream": {
+		url: "https://arxiv.org/abs/2107.03312",
+		title: "SoundStream: An End-to-End Neural Audio Codec",
+		author: "Neil Zeghidour, Alejandro Luebs, Ahmed Omran, Jan Skoglund, Marco Tagliasacchi",
+		year: 2021,
+		alternativetitle: "SoundStream (neural audio codec)"
+	},
+	"borsos2023audiolm": {
+		url: "https://arxiv.org/abs/2209.03143",
+		title: "AudioLM: a Language Modeling Approach to Audio Generation",
+		author: "Zalán Borsos, Raphaël Marinier, Damien Vincent, et al.",
+		year: 2023,
+		alternativetitle: "AudioLM (Google)"
+	},
+	"liu2023audioldm": {
+		url: "https://arxiv.org/abs/2301.12503",
+		title: "AudioLDM: Text-to-Audio Generation with Latent Diffusion Models",
+		author: "Haohe Liu, Zehua Chen, Yi Yuan, et al.",
+		year: 2023,
+		alternativetitle: "AudioLDM"
+	},
+	"agostinelli2023musiqlm": {
+		url: "https://arxiv.org/abs/2301.11325",
+		title: "MusicLM: Generating Music From Text",
+		author: "Andrea Agostinelli, Timo I. Denk, Zalán Borsos, et al.",
+		year: 2023,
+		alternativetitle: "MusicLM (Google)"
+	},
+
 	// Alternative Architectures
 	"gu2021s4": {
 		url: "https://arxiv.org/abs/2111.00396",
