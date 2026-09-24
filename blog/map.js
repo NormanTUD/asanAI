@@ -37,7 +37,7 @@ function bootAtlas() {
 	var WEB_PHOTO_DIST = 300;    // flat cosmic-web photo, in front of camera
 	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
 	var STAR_R = 470;
-	var MIN_D = 1.45, MAX_D = 700;
+	var MIN_D = 1.1, MAX_D = 750;
 
 	var THEME = {};
 	function readTheme() {
@@ -89,6 +89,7 @@ function bootAtlas() {
 		tshow: { influence: true, journey: true, signal: true },
 		selected: null,
 		hovered: null,
+		threadFocus: null,
 		touring: false
 	};
 
@@ -1096,23 +1097,30 @@ function bootAtlas() {
 		scene.add(threadGroup);
 		updateThreads();
 	}
-	function updateThreads() {
-		threadObjs.forEach(function (ln) {
-			var t = ln.userData.thread;
-			var ok = state.tshow[t.kind || 'influence'] &&
-				yearRange(t.y1, t.y2) && state.d < 26;
-			ln.visible = ok;
-			if (ok) {
-				ln.material.opacity = 0.5 * (1 - THREE.MathUtils.smoothstep(state.d, 18, 26));
-			}
-		});
+	function threadMatches(t, id) {
+		return t.person === id || t.from === id || t.to === id ||
+			(t.path && t.path.indexOf(id) !== -1);
 	}
-	function highlightThreads(id) {
+	function updateThreads() {
+		var focus = state.threadFocus;
 		threadObjs.forEach(function (ln) {
 			var t = ln.userData.thread;
-			var hit = t.person === id || t.from === id || t.to === id ||
-				(t.path && t.path.indexOf(id) !== -1);
-			ln.material.opacity = hit ? 0.95 : (ln.visible ? 0.15 : 0.15);
+			var base = state.tshow[t.kind || 'influence'] &&
+				yearRange(t.y1, t.y2) && state.d < 26;
+			if (focus) {
+				var hit = threadMatches(t, focus);
+				// force the focused threads on (even just above the zoom gate)
+				// and dim the rest so they read as "the ones that connect here"
+				ln.visible = base || hit;
+				if (ln.visible) {
+					ln.material.opacity = hit ? 0.95 : 0.12;
+				}
+			} else {
+				ln.visible = base;
+				if (base) {
+					ln.material.opacity = 0.5 * (1 - THREE.MathUtils.smoothstep(state.d, 18, 26));
+				}
+			}
 		});
 	}
 
@@ -1448,6 +1456,7 @@ function bootAtlas() {
 	var tip = document.getElementById('atlas-tip');
 	function selectDot(d) {
 		state.selected = d;
+		state.threadFocus = null;
 		var ref = d.ref;
 		var html = '';
 		html += '<button class="d-close" id="d-close" title="Close">&times;</button>';
@@ -1497,11 +1506,16 @@ function bootAtlas() {
 		detail.querySelector('#d-close').addEventListener('click', clearSelection);
 		var tb = detail.querySelector('#d-threads');
 		if (tb) {
+			var syncThreadsBtn = function () {
+				tb.textContent = (state.threadFocus === ref.id) ? 'Hide threads' : 'Show threads';
+			};
 			tb.addEventListener('click', function () {
-				highlightThreads(ref.id);
-				if (state.d > 8) { state.tD = 3.4; }
+				state.threadFocus = (state.threadFocus === ref.id) ? null : ref.id;
+				if (state.threadFocus === ref.id && state.d > 8) { state.tD = 3.4; }
+				syncThreadsBtn();
+				updateThreads();
 			});
-			setTimeout(function () { highlightThreads(null); }, 4000);
+			syncThreadsBtn();
 		}
 		if (keys.length) { loadWorks(keys); }
 		flyTo(d);
@@ -1533,9 +1547,9 @@ function bootAtlas() {
 	}
 	function clearSelection() {
 		state.selected = null;
+		state.threadFocus = null;
 		detail.classList.remove('open');
 		detail.style.removeProperty('--d-accent');
-		highlightThreads(null);
 	}
 	function flyTo(d) {
 		// orient so the dot faces the camera, at a comfortable distance
@@ -2055,6 +2069,17 @@ function bootAtlas() {
 	function tick() {
 		requestAnimationFrame(tick);
 		applyCamera();
+		updateThreads();
+		// keep dots a readable size as the camera closes in: shrink the world
+		// size near the surface so nearby points spread out instead of merging
+		// into a single glowing blob (full size at the default d=3.2 view).
+		if (dotMesh && ringMesh) {
+			var h = Math.max(0, state.d - EARTH_R);
+			var s = THREE.MathUtils.clamp(h / 2.2, 0.15, 1);
+			var sz = DOT_SIZE * (0.45 + 0.55 * s);
+			dotMesh.material.size = sz;
+			ringMesh.material.size = sz;
+		}
 		tickTour();
 		updateSunDirection();
 		// the web + CMB photos hover in front of the camera, photo-parallel
