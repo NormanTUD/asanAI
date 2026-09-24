@@ -6446,6 +6446,20 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "Quiet-STaR"
 	},
+	"hao2025coconut": {
+		url: "https://arxiv.org/abs/2412.06769",
+		title: "Training Large Language Models to Reason in a Continuous Latent Space",
+		author: "Shibo Hao, Sainbayar Sukhbaatar, DiJia Su, Xian Li, Zhiting Hu, Jason Weston, Yuandong Tian",
+		year: 2025,
+		alternativetitle: "Coconut, Chain of Continuous Thought"
+	},
+	"rizvimartel2026illusion": {
+		url: "https://arxiv.org/abs/2604.06374",
+		title: "The Illusion of Superposition? A Principled Analysis of Latent Thinking in Language Models",
+		author: "Michael Rizvi-Martel, Guillaume Rabusseau, Marius Mosbach",
+		year: 2026,
+		alternativetitle: "when latent-CoT superposition collapses"
+	},
 	"ameisen2025circuittracing": {
 		url: "https://arxiv.org/abs/2503.12495",
 		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
@@ -14372,6 +14386,27 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2309.17453",
 		alternativetitle: "StreamingLLM, attention sinks"
+	},
+	"darcet2024registers": {
+		title: "Vision Transformers Need Registers",
+		author: "Timothée Darcet, Maxime Oquab, Julien Mairal, Piotr Bojanowski",
+		year: 2024,
+		url: "https://arxiv.org/abs/2309.16588",
+		alternativetitle: "register tokens as ViT working memory"
+	},
+	"cancedda2024sinks": {
+		title: "Spectral Filters, Dark Signals, and Attention Sinks",
+		author: "Nicola Cancedda",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.09221",
+		alternativetitle: "attention sinks as low-frequency dark signals"
+	},
+	"wong2025sinks": {
+		title: "On the Existence and Behavior of Secondary Attention Sinks",
+		author: "Jeffrey T. H. Wong, Cheng Zhang, Louis Mahon, Wayne Luk, Anton Isopoussu, Yiren Zhao",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.22213",
+		alternativetitle: "MLPs that synthesize sink vectors"
 	},
 	"levy2024numbers": {
 		title: "Language Models Encode Numbers Using Digit Representations in Base 10",
