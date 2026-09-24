@@ -841,7 +841,8 @@ const C = {a:'#6ee7ff', b:'#a78bfa', c:'#ff8ab8', d:'#7dffb3', e:'#ffd479', f:'#
 
 function dpi(cv){
   const r = window.devicePixelRatio || 1;
-  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'))||260;
+  if(cv._baseH===undefined) cv._baseH=parseInt(cv.getAttribute('height'))||260;
+  const w = cv.clientWidth || 600, h = cv._baseH;
   cv.width = w*r; cv.height = h*r;
   cv.style.height = h+'px';
   const g = cv.getContext('2d');
@@ -1015,7 +1016,7 @@ tex('eqAdaptive', 'T_{adaptive}(Q) = f\\big(M(Q)\\big)');
     mode=m; counts=Array(10).fill(0);
     $('rndIdeal').classList.toggle('on', m==='ideal');
     $('rndReal').classList.toggle('on', m==='real');
-    $('rndNote').innerHTML = m==='      'ideal'
+    $('rndNote').innerHTML = m==='ideal'
       ? '<b>Die Erwartung:</b> Wenn du nach einer Zufallszahl fragst, sollte jede Zahl mit 10&nbsp;% kommen. Eine flache Landschaft — kein Token zieht stärker als ein anderer.'
       : '<b>Die Realität (Zhang et al., 2024):</b> Llama-2-13B-chat bevorzugt die <span class="hl2">5</span> massiv. Das ist keine flache Landschaft, sondern eine <b>Delle</b>. Genau das nennt das Paper einen versteckten <b>Attraktor</b>.';
     draw();
@@ -2265,8 +2266,7 @@ const Land3D = (function(){
     {t:'Vorhersagen machen', d:'Halluzination via Hesse-Instabilität (Gl. 10), Prompt-Sensitivität via ΔΦ (Gl. 11), Temperatur-Grenzwerte (Gl. 12). Alle drei Eingangsrätsel fallen unter dieselbe Beschreibung.'},
     {t:'Tests vorschlagen', d:'Drei konkrete Experimente (§5): Landschaftsvisualisierung mit t-SNE/UMAP auf Logits, Masse↔Halluzination-Korrelation, Temperatur-Sweep. <b>Noch nicht durchgeführt.</b>'},
     {t:'Anwendungen ableiten', d:'Entropy Balancing, Kontext-Stabilisierung, Anchoring, adaptive Temperatur T(Q) = f(M(Q)) (Gl. 13), drei neue Metriken.'},
-    {t:'Grenzen benennen', d:'Empirische Verifikation aufwendig; M-Komponenten sind verschränkt und schwer unabhängig messbar; hochdimensionale Visualisierung schwierig; <b>
-Diskretheit vs. Kontinuität</b> der Token; Kopplung zwischen Attention-Layern nicht formalisiert.'}
+    {t:'Grenzen benennen', d:'Empirische Verifikation aufwendig; M-Komponenten sind verschränkt und schwer unabhängig messbar; hochdimensionale Visualisierung schwierig; <b>Diskretheit vs. Kontinuität</b> der Token; Kopplung zwischen Attention-Layern nicht formalisiert.'}
   ];
   const wrap=$('chainSteps'), cv=$('cChain'), out=$('chainOut');
   let sel=0;
