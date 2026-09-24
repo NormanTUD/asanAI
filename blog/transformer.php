@@ -505,7 +505,7 @@ This is why simple deep networks without residual connections and normalization 
 
 $$\frac{\partial x_{l+1}}{\partial x_l} = I + \frac{\partial F}{\partial x_l}$$
 
-The identity term $I$ ensures that the gradient has a “highway” that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth.
+The identity term $I$ ensures that the gradient has a “highway” that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth. The formal backpropagation analysis — showing that the gradient recursion through a residual block involves the factor $\mathbf{I} + J_F$ rather than $J_F$ alone — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.1.
 </div>
 
 <div class="optional md" data-headline="What the heads actually react to">
