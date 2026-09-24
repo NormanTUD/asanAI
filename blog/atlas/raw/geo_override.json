@@ -1,0 +1,75 @@
+{
+ "abdera, greece": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Abdara, Greece"
+ },
+ "antikythera, greece": {
+  "label": "Αντικύθηρα, Δημοτική Ενότητα Αντικυθήρων, Δήμος Κυθήρων, Περιφερειακή Ενότητα Νή",
+  "lat": 35.8644182,
+  "lng": 23.3037898,
+  "query": "Antikythera Island, Greece"
+ },
+ "breslau, germany": {
+  "label": "Wrocław, województwo dolnośląskie, Polska",
+  "lat": 51.1263106,
+  "lng": 16.9781963,
+  "query": "Wroclaw, Poland"
+ },
+ "croton (crotone), calabria, italy": {
+  "label": "Crotone, Calabria, Italia",
+  "lat": 39.1873894,
+  "lng": 16.8782819,
+  "query": "Crotone, Italy"
+ },
+ "croton, italy": {
+  "label": "Crotone, Calabria, Italia",
+  "lat": 39.1873894,
+  "lng": 16.8782819,
+  "query": "Crotone, Italy"
+ },
+ "cueva de las manos, patagonia, argentina": {
+  "label": "Cueva de las Manos, Sendero Cueva de las Manos, Lago Buenos Aires, Santa Cruz, A",
+  "lat": -47.1552731,
+  "lng": -70.6559679,
+  "query": "Cueva de las Manos, Argentina"
+ },
+ "elea, italy": {
+  "label": "Novi Velia, Salerno, Campania, Italia",
+  "lat": 40.225105,
+  "lng": 15.288361,
+  "query": "Velia, Italy"
+ },
+ "konigsberg, germany": {
+  "label": "Калининград, городской округ Калининград, Калининградская область, Северо-Западн",
+  "lat": 54.710128,
+  "lng": 20.5105838,
+  "query": "Kaliningrad, Russia"
+ },
+ "konigsberg, prussia (now kaliningrad, russia)": {
+  "label": "Калининград, городской округ Калининград, Калининградская область, Северо-Западн",
+  "lat": 54.710128,
+  "lng": 20.5105838,
+  "query": "Kaliningrad, Russia"
+ },
+ "naumburg, germany": {
+  "label": "Naumburg (Saale), Burgenlandkreis, Sachsen-Anhalt, Deutschland",
+  "lat": 51.1525648,
+  "lng": 11.8099186,
+  "query": "Naumburg (Saale), Germany"
+ },
+ "nicaea, turkey": {
+  "label": "İznik, Bursa, Marmara Bölgesi, 16860, Türkiye",
+  "lat": 40.4303445,
+  "lng": 29.7223732,
+  "query": "Iznik, Turkey"
+ },
+ "pergamon, turkey": {
+  "label": "Bergama, İzmir, Ege Bölgesi, 35700, Türkiye",
+  "lat": 39.1189476,
+  "lng": 27.1773642,
+  "query": "Bergama, Turkey"
+ }
+}
