@@ -15553,5 +15553,29 @@ window.bibData = {
 		year: 2019,
 		url: "https://arxiv.org/abs/1911.03268",
 		alternativetitle: "Schwartz, Toneva & Wehbe 2019, NeurIPS — fine-tuning a language model to predict the brain"
+	},
+	"nishimoto2011reconstruct": {
+		title: "Reconstructing Visual Experiences from Brain Activity Evoked by Natural Movies",
+		author: "Shinji Nishimoto, An T. Vu, Thomas Naselaris, Yuval Benjamini, Bin Yu, Jack L. Gallant",
+		year: 2011,
+		journal: "Current Biology",
+		url: "https://doi.org/10.1016/j.cub.2011.08.031",
+		alternativetitle: "Nishimoto et al. 2011 — reconstructing the movie you watched from fMRI"
+	},
+	"huth2016semanticmaps": {
+		title: "Natural Speech Reveals the Semantic Maps that Tile Human Cerebral Cortex",
+		author: "Alexander G. Huth, Wendy A. de Heer, Thomas L. Griffiths, Frédéric E. Theunissen, Jack L. Gallant",
+		year: 2016,
+		journal: "Nature",
+		url: "https://doi.org/10.1038/nature17637",
+		alternativetitle: "Huth et al. 2016 — one model mapping natural speech to activity across the cortex"
+	},
+	"allen2022nsd": {
+		title: "A Massive 7T fMRI Dataset to Bridge Cognitive Neuroscience and Artificial Intelligence",
+		author: "Emily J. Allen, Ghislain St-Yves, Yihan Wu, Jesse L. Breedlove, Jacob S. Prince",
+		year: 2022,
+		journal: "Nature Neuroscience",
+		url: "https://doi.org/10.1038/s41593-021-00962-x",
+		alternativetitle: "Allen et al. 2022 — the Natural Scenes Dataset (NSD)"
 	}
 };
