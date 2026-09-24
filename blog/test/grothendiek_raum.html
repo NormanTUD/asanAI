@@ -1,0 +1,2530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grothendieck — Der Raum: von Schemata zur Geometrie der Formen</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.30/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.30/dist/temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0b1020;
+  --panel:rgba(18,24,42,.72);
+  --panel2:rgba(12,17,32,.85);
+  --line:rgba(120,150,220,.18);
+  --txt:#e6ecff;
+  --dim:#9aa9c9;
+  --acc:#63d2ff;
+  --acc2:#b57bff;
+  --acc3:#ffd166;
+  --acc4:#6ef3a5;
+  --red:#ff7a8a;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+    radial-gradient(1200px 800px at 15% -10%, #16224a 0%, transparent 60%),
+    radial-gradient(1000px 700px at 90% 10%, #2a1246 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 110%, #07283a 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.62;letter-spacing:.005em;
+  overflow-x:hidden;
+}
+#stars{position:fixed;inset:0;z-index:-2;opacity:.55}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 140px}
+
+/* ---------- Header ---------- */
+header{padding:86px 0 40px;text-align:center;position:relative}
+header h1{
+  font-size:clamp(2.1rem,5.2vw,3.9rem);margin:0 0 .25em;font-weight:800;
+  background:linear-gradient(100deg,#7ee0ff,#b57bff 42%,#ffd166 78%,#6ef3a5);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1.08;letter-spacing:-.02em;
+}
+header .sub{color:var(--dim);font-size:1.06rem;max-width:760px;margin:0 auto}
+.kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.32em;text-transform:uppercase;color:var(--acc);opacity:.85;margin-bottom:1.1em}
+
+/* ---------- Nav ---------- */
+nav{
+  position:sticky;top:0;z-index:60;backdrop-filter:blur(16px);
+  background:linear-gradient(180deg,rgba(7,10,18,.94),rgba(7,10,18,.70));
+  border-bottom:1px solid var(--line);margin-bottom:34px;
+}
+nav .inner{max-width:1180px;margin:0 auto;padding:9px 18px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav .inner::-webkit-scrollbar{display:none}
+nav a{
+  color:var(--dim);text-decoration:none;font-size:.79rem;padding:7px 12px;border-radius:9px;
+  white-space:nowrap;font-family:var(--mono);transition:.18s;border:1px solid transparent;
+}
+nav a:hover{color:var(--txt);background:rgba(99,210,255,.10)}
+nav a.on{color:#041018;background:linear-gradient(90deg,var(--acc),var(--acc2));font-weight:700}
+
+/* ---------- Sections ---------- */
+section{margin:72px 0;scroll-margin-top:66px}
+.sechead{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.num{font-family:var(--mono);font-size:2.5rem;font-weight:800;color:transparent;-webkit-text-stroke:1.4px var(--acc);opacity:.6;line-height:1}
+h2{font-size:clamp(1.5rem,3.2vw,2.15rem);margin:0;font-weight:750;letter-spacing:-.01em}
+h3{font-size:1.14rem;margin:30px 0 10px;color:var(--acc);font-weight:700}
+h4{font-size:.97rem;margin:18px 0 6px;color:var(--acc3);font-weight:700}
+p{margin:.65em 0;color:#d3dcf2}
+.lead{font-size:1.07rem;color:#c3cfe8}
+small,.small{font-size:.83rem;color:var(--dim)}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin:20px 0;
+  backdrop-filter:blur(10px);box-shadow:0 18px 50px -28px rgba(0,0,0,.9);
+}
+.card.tight{padding:16px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.quote{
+  border-left:3px solid var(--acc2);padding:12px 18px;margin:18px 0;
+  background:linear-gradient(90deg,rgba(181,123,255,.09),transparent);
+  border-radius:0 12px 12px 0;font-style:italic;color:#cfd8f0;font-size:.95rem;
+}
+.quote .who{display:block;font-style:normal;font-family:var(--mono);font-size:.74rem;color:var(--acc2);margin-top:8px;letter-spacing:.06em}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:.68rem;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--dim);margin:2px 4px 2px 0}
+.tag.a{color:var(--acc);border-color:rgba(99,210,255,.4)}
+.tag.b{color:var(--acc2);border-color:rgba(181,123,255,.4)}
+.tag.c{color:var(--acc3);border-color:rgba(255,209,102,.4)}
+.tag.d{color:var(--acc4);border-color:rgba(110,243,165,.4)}
+
+/* ---------- Controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:14px 0 6px}
+.ctrl{display:flex;flex-direction:column;gap:4px;min-width:190px;flex:1}
+.ctrl label{font-family:var(--mono);font-size:.72rem;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label b{color:var(--acc3);font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;height:5px;border-radius:9px;background:rgba(140,170,230,.22);outline:none;width:100%;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 12px rgba(99,210,255,.65);
+}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--acc),var(--acc2))}
+button{
+  font-family:var(--mono);font-size:.78rem;padding:8px 14px;border-radius:9px;cursor:pointer;
+  background:rgba(99,210,255,.10);color:var(--txt);border:1px solid rgba(99,210,255,.34);transition:.16s;
+}
+button:hover{background:rgba(99,210,255,.22);transform:translateY(-1px)}
+button.on{background:linear-gradient(90deg,var(--acc),var(--acc2));color:#05121c;font-weight:700;border-color:transparent}
+select{font-family:var(--mono);font-size:.78rem;padding:7px 10px;border-radius:9px;background:#131a2e;color:var(--txt);border:1px solid var(--line)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+
+canvas{display:block;max-width:100%;border-radius:13px;background:rgba(6,9,17,.62);border:1px solid var(--line)}
+.canvwrap{display:flex;justify-content:center;margin:10px 0}
+
+.readout{
+  font-family:var(--mono);font-size:.82rem;background:rgba(6,10,20,.66);border:1px solid var(--line);
+  border-radius:11px;padding:11px 14px;margin-top:12px;color:var(--acc4);min-height:2.6em;
+}
+.readout em{color:var(--acc3);font-style:normal}
+.readout b{color:var(--acc)}
+
+.stepper{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.stepper button{flex:1;min-width:110px}
+
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:.73rem;color:var(--acc);text-transform:uppercase;letter-spacing:.09em}
+td b{color:var(--acc3)}
+
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:22px 0}
+.fnode{
+  padding:9px 15px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);
+  font-family:var(--mono);font-size:.78rem;cursor:pointer;transition:.18s;text-align:center;
+}
+.fnode:hover{border-color:var(--acc);transform:translateY(-2px)}
+.fnode.on{background:linear-gradient(135deg,rgba(99,210,255,.22),rgba(181,123,255,.22));border-color:var(--acc);color:#fff}
+.farrow{color:var(--acc2);font-size:1.2rem;opacity:.7}
+
+.pill{display:inline-flex;gap:6px;align-items:center;font-family:var(--mono);font-size:.72rem;color:var(--dim)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+.hint{font-family:var(--mono);font-size:.73rem;color:var(--acc2);opacity:.8;margin-top:6px}
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:46px 0}
+
+.big{font-size:1.5rem;font-weight:700;color:var(--acc3);font-family:var(--mono)}
+.mathblock{margin:14px 0;text-align:center;font-size:1.05rem;overflow-x:auto}
+ul{padding-left:20px}li{margin:.3em 0;color:#d3dcf2}
+.kbd{font-family:var(--mono);font-size:.74rem;background:#1a2238;padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+.warn{border-left:3px solid var(--acc3);background:rgba(255,209,102,.07);padding:10px 16px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.9rem}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<nav><div class="inner" id="nav"></div></nav>
+
+<div class="wrap">
+
+<header>
+  <div class="kicker">J. A. Cruz Morales · arXiv:2105.08799</div>
+  <h1>Der Raumbegriff bei Grothendieck</h1>
+  <p class="sub">Von Schemata über Topoi und zahmer Topologie bis zu einer <em>Geometrie der Formen</em> —
+  eine interaktive Reise durch 40 Jahre der Frage: <b>Was ist ein Raum?</b></p>
+  <div style="margin-top:22px" class="small">Alles zum Anfassen. Schieben, klicken, ausprobieren — lesen ist optional.</div>
+</header>
+
+<!-- ======================= 0 · FRAGE ======================= -->
+<section id="s0">
+  <div class="sechead"><span class="num">00</span><h2>Die Frage &amp; der rote Faden</h2></div>
+  <p class="lead">Der Essay stellt <b>keine</b> Rechnung an. Er verfolgt <b>eine einzige Frage</b> durch Grothendiecks Leben —
+  und zeigt, wie sich die Antwort fünfmal häutete.</p>
+
+  <div class="card">
+    <h3>Die Landkarte — klick auf jede Station</h3>
+    <div class="flow" id="mapflow"></div>
+    <div class="readout" id="mapout"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Die Frage</h3>
+      <p class="big">Was ist ein Raum?</p>
+      <p>Seit Platon, Aristoteles, Leibniz, Newton, Riemann, Einstein. Grothendieck stellt sich in diese Reihe —
+      und liefert nicht <em>eine</em> Antwort, sondern eine Folge von <b>Metamorphosen</b> des Begriffs.</p>
+      <div class="quote">„Die Vorstellung des ‚Raums‘ ist zweifellos eine der ältesten in der Mathematik …
+      vielgestaltig, mit hundert und tausend Gesichtern.“<span class="who">Grothendieck, Récoltes et Semailles</span></div>
+    </div>
+    <div class="card">
+      <h3>Delignes Umformulierung</h3>
+      <p>Pierre Deligne schrieb dem Autor: Ein Raum ist etwas, <b>worauf Lokalisierung Sinn ergibt</b>.</p>
+      <div class="mathblock" data-tex="\text{Was ist ein Raum?}\;\rightsquigarrow\;\text{Was heißt Lokalisierung?}"></div>
+      <p>Das ist der <b>Schlüssel des ganzen Essays</b>. Wir bauen ihn in §1 interaktiv auf — und danach ist jede
+      weitere Station nur noch eine Variation davon.</p>
+    </div>
+  </div>
+
+  <div class="card tight">
+    <h4>Zwei Motive, die nie verschwinden</h4>
+    <div class="grid2">
+      <div><span class="tag a">Motiv 1</span> <b>Punktlosigkeit.</b> Punkte sind nur <em>Markierungen</em>, die man auf einen Raum setzen kann — nicht sein Baustoff.</div>
+      <div><span class="tag b">Motiv 2</span> <b>Überdeckung.</b> Das Lokale bestimmt das Globale. Daraus wächst später die ganze Diskret/Kontinuum-Debatte.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 1 · LOKALISIERUNG ======================= -->
+<section id="s1">
+  <div class="sechead"><span class="num">01</span><h2>Voraussetzung: Lokalisierung &amp; Garben</h2></div>
+  <p class="lead">Bevor irgendein „Schema“ Sinn ergibt, brauchst du <b>eine</b> Idee — sonst nichts.
+  Sie geht über Abi-Mathe hinaus, ist aber in 60 Sekunden spielbar.</p>
+
+  <div class="card">
+    <h3>Das Deligne-Beispiel: eine Funktion aus Stücken bauen</h3>
+    <p>Um eine stetige Funktion <span class="mathblock" style="display:inline-block;margin:0" data-tex="f:X\to\mathbb{R}"></span> zu definieren, genügt es,
+    sie auf offenen Mengen <span class="mathblock" style="display:inline-block;margin:0" data-tex="U_i"></span> zu definieren, die <span class="mathblock" style="display:inline-block;margin:0" data-tex="X"></span> überdecken —
+    und zu prüfen, dass sie auf den Überschneidungen <b>übereinstimmen</b>.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl der Stücke <b><span id="l-n">4</span></b></label><input type="range" id="l-n" min="2" max="7" value="4" step="1"></div>
+      <div class="ctrl"><label>Überlappung <b><span id="l-ov">0.35</span></b></label><input type="range" id="l-ov" min="0" max="0.6" value="0.35" step="0.01"></div>
+      <div class="ctrl"><label>Fehlanpassung auf Stück #3 <b><span id="l-mis">0.0</span></b></label><input type="range" id="l-mis" min="0" max="1.6" value="0" step="0.01"></div>
+    </div>
+    <div class="btnrow">
+      <button id="l-glue" class="on">Verklebt zeigen</button>
+      <button id="l-sep">Stücke getrennt</button>
+      <button id="l-reset">Zurücksetzen</button>
+    </div>
+    <div class="canvwrap"><canvas id="cLoc" width="1020" height="380"></canvas></div>
+    <div class="readout" id="l-out"></div>
+    <div class="hint">↑ Zieh „Fehlanpassung“ hoch: die Verklebung bricht. <b>Genau das</b> ist die Garbenbedingung.</div>
+  </div>
+
+  <div class="grid3">
+    <div class="card tight">
+      <h4>Prägarbe</h4>
+      <p class="small">Jedem offenen <span data-tex="U"></span> ein Datensatz <span data-tex="\mathcal{F}(U)"></span> zuordnen + Einschränkungs­abbildungen <span data-tex="\mathcal{F}(U)\to\mathcal{F}(V)"></span> für <span data-tex="V\subseteq U"></span>.</p>
+    </div>
+    <div class="card tight">
+      <h4>Garbe = Prägarbe + 2 Axiome</h4>
+      <p class="small"><b>Eindeutigkeit:</b> stimmen zwei Schnitte lokal überein, sind sie gleich.<br>
+      <b>Verklebung:</b> lokal kompatible Schnitte ergeben genau einen globalen.</p>
+    </div>
+    <div class="card tight">
+      <h4>Halm <span data-tex="\mathcal{F}_x"></span></h4>
+      <p class="small">Alles, was „unendlich nah bei <span data-tex="x"></span>“ passiert. Das <em>lokale</em> Objekt. Bei Schemata: ein <b>lokaler Ring</b>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Halm anschaulich: der Limes über schrumpfende Umgebungen</h3>
+    <p class="small">Schrumpfe die Umgebung um <span data-tex="x"></span>. Der Halm ist, was am Ende übrig bleibt: die Menge aller Funktionskeime bei <span data-tex="x"></span>.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Radius der Umgebung <b><span id="st-r">0.9</span></b></label><input type="range" id="st-r" min="0.03" max="1" value="0.9" step="0.01"></div>
+      <div class="ctrl"><label>Position x <b><span id="st-x">0.5</span></b></label><input type="range" id="st-x" min="0.08" max="0.92" value="0.5" step="0.01"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cStalk" width="1020" height="300"></canvas></div>
+    <div class="readout" id="st-out"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 2 · RINGE ======================= -->
+<section id="s2">
+  <div class="sechead"><span class="num">02</span><h2>Voraussetzung: Ringe, Ideale, Primideale</h2></div>
+  <p class="lead">Ein Schema ist <em>ein Ring, geometrisch angeschaut</em>. Dafür genau drei Begriffe — hier spielbar.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Ring <span data-tex="A"></span></h3>
+      <p>Menge mit <b>+</b> und <b>·</b>, beides „vernünftig“ (kommutativ, mit 1). Beispiele:
+      <span class="tag a">ℤ</span><span class="tag a">ℝ[x]</span><span class="tag a">ℂ[x,y]</span><span class="tag a">ℤ/6ℤ</span></p>
+      <h4>Ideal <span data-tex="I\subseteq A"></span></h4>
+      <p class="small">Abgeschlossen unter + und unter Multiplikation mit <em>allem</em> aus <span data-tex="A"></span>. „Ein schwarzes Loch“ der Multiplikation.</p>
+      <h4>Primideal <span data-tex="\mathfrak{p}"></span></h4>
+      <div class="mathblock" data-tex="ab\in\mathfrak{p}\;\Longrightarrow\;a\in\mathfrak{p}\ \text{oder}\ b\in\mathfrak{p}"></div>
+      <p class="small">Verallgemeinerung von „Primzahl“. <b>Das wird der Punkt eines Schemas.</b></p>
+    </div>
+    <div class="card">
+      <h3>Primideal-Detektor</h3>
+      <p class="small">Wähle Ring und Ideal — prüfe, ob es prim ist.</p>
+      <div class="ctrls">
+        <div class="ctrl" style="flex:0 0 auto;min-width:0">
+          <label>Ring</label>
+          <select id="pd-ring">
+            <option value="Z">ℤ (ganze Zahlen)</option>
+            <option value="Z6">ℤ/6ℤ</option>
+            <option value="Rx">ℝ[x] (Polynome)</option>
+            <option value="Cxy">ℂ[x,y]</option>
+          </select>
+        </div>
+        <div class="ctrl" style="flex:0 0 auto;min-width:0">
+          <label>Ideal</label>
+          <select id="pd-ideal"></select>
+        </div>
+      </div>
+      <div class="canvwrap"><canvas id="cPrime" width="500" height="250"></canvas></div>
+      <div class="readout" id="pd-out"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multiplikationstabelle: wo Primalität sichtbar wird</h3>
+    <p class="small">Wir zeigen <span data-tex="\mathbb{Z}/n\mathbb{Z}"></span>. Jede Zelle = <span data-tex="a\cdot b \bmod n"></span>.
+    <b style="color:var(--red)">Rote Nullen abseits von Zeile/Spalte 0</b> sind <em>Nullteiler</em> — das heißt: <span data-tex="(0)"></span> ist <b>nicht</b> prim.
+    Keine roten Nullen ⇒ Integritätsring ⇒ <span data-tex="(0)"></span> ist prim ⇒ ein „generischer Punkt“ existiert.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Modul n <b><span id="mt-n">6</span></b></label><input type="range" id="mt-n" min="2" max="16" value="6" step="1"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cMul" width="560" height="560"></canvas></div>
+    <div class="readout" id="mt-out"></div>
+  </div>
+
+  <div class="warn"><b>Merke für §3:</b> <span data-tex="\operatorname{Spec}(A)"></span> = Menge <em>aller</em> Primideale von <span data-tex="A"></span>.
+  Das ist der radikale Schritt: der Raum wird <em>aus der Algebra erzeugt</em>, nicht umgekehrt.</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 3 · SPEC ======================= -->
+<section id="s3">
+  <div class="sechead"><span class="num">03</span><h2>Schemata: die Metamorphose der Varietät</h2></div>
+  <p class="lead">Grothendiecks „kindlich einfache“ Idee (seine Worte): <b>Jeder kommutative Ring ist ein Raum.</b>
+  Punkte = Primideale. Funktionen = Ringelemente. Topologie = Nullstellenmengen.</p>
+
+  <div class="card">
+    <h3>Die Motivation: <span data-tex="V(f)"></span> versus <span data-tex="\operatorname{Spec}"></span></h3>
+    <p class="small">Klassisch: eine <b>Varietät</b> ist die Nullstellenmenge von Polynomen über einem festen Körper.
+    Problem: über <span data-tex="\mathbb{R}"></span>, <span data-tex="\mathbb{C}"></span>, <span data-tex="\mathbb{F}_p"></span>, <span data-tex="\mathbb{Z}"></span> bekommt man <em>jedes Mal eine andere Theorie</em>.
+    Grothendieck wollte <b>eine</b> Sprache für alle.</p>
+    <div class="ctrls">
+      <div class="ctrl" style="flex:0 0 auto"><label>Gleichung</label>
+        <select id="vr-eq">
+          <option value="c">y² = x³ − 3x + 3 &nbsp;(elliptisch)</option>
+          <option value="p">y² = x³</option>
+          <option value="k">y² = x³ − x</option>
+          <option value="q">x² + y² = 1 &nbsp;(Kreis)</option>
+        </select>
+      </div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Grundkörper</label>
+        <select id="vr-field">
+          <option value="R">ℝ — Kurve im Kontinuum</option>
+          <option value="Fp">𝔽ₚ — endliches Punktgitter</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Primzahl p <b><span id="vr-p">11</span></b></label><input type="range" id="vr-p" min="2" max="20" value="11" step="1"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cVar" width="1020" height="430"></canvas></div>
+    <div class="readout" id="vr-out"></div>
+    <div class="hint">↑ Schiebe p: <b>dieselbe Gleichung</b>, völlig andere „Räume“. Das Schema <span data-tex="\operatorname{Spec}\mathbb{Z}[x,y]/(y^2-x^3+3x-3)"></span> enthält sie <b>alle gleichzeitig</b> — als Fasern über <span data-tex="\operatorname{Spec}\mathbb{Z}"></span>.</div>
+  </div>
+
+  <div class="card">
+    <h3><span data-tex="\operatorname{Spec}(\mathbb{Z})"></span> — der arithmetische Raum</h3>
+    <p class="small">Punkte: ein Punkt <span data-tex="(p)"></span> pro Primzahl <b>+</b> ein <b>generischer Punkt</b> <span data-tex="(0)"></span>,
+    dessen Abschluss <em>alles</em> ist. Die Topologie ist <b>nicht</b> Hausdorff — Punkte sind nicht trennbar. Genau das ist gewollt.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Sichtbare Primzahlen <b><span id="sz-n">12</span></b></label><input type="range" id="sz-n" min="4" max="30" value="12" step="1"></div>
+      <div class="ctrl"><label>Abschluss von <b><span id="sz-lab">generisch (0)</span></b></label><input type="range" id="sz-sel" min="0" max="12" value="0" step="1"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cSpecZ" width="1020" height="260"></canvas></div>
+    <div class="readout" id="sz-out"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Die Strukturgarbe <span data-tex="\widetilde{A}"></span></h3>
+      <p class="small">Über jedem Punkt <span data-tex="\mathfrak{p}"></span> sitzt der <b>lokale Ring</b> <span data-tex="A_\mathfrak{p}"></span> als Halm.
+      Basis der Topologie: die <b>distinguierten Offenen</b></p>
+      <div class="mathblock" data-tex="D(f)=\{\mathfrak{p}: f\notin\mathfrak{p}\}=\{x: f(x)\neq 0\}"></div>
+      <p class="small">Klick auf <span data-tex="f"></span>, sieh <span data-tex="D(f)"></span> und <span data-tex="V(f)"></span>:</p>
+      <div class="btnrow" id="df-btns"></div>
+      <div class="canvwrap"><canvas id="cDf" width="500" height="180"></canvas></div>
+      <div class="readout" id="df-out"></div>
+    </div>
+    <div class="card">
+      <h3>Affines Schema → allgemeines Schema</h3>
+      <p class="small">Ein <b>geringter Raum</b> ist ein Paar <span data-tex="(X,\mathcal{O}_X)"></span>.
+      Ist es isomorph zu <span data-tex="(\operatorname{Spec}A,\widetilde{A})"></span>, heißt es <b>affines Schema</b>.
+      Allgemeine Schemata entstehen durch <b>Verkleben</b> affiner — exakt die Lokalisierung aus §1.</p>
+      <div class="ctrls">
+        <div class="ctrl"><label>Verklebungs-Parameter <b><span id="gl-t">0.0</span></b></label><input type="range" id="gl-t" min="0" max="1" value="0" step="0.01"></div>
+      </div>
+      <div class="canvwrap"><canvas id="cGlue" width="500" height="260"></canvas></div>
+      <div class="readout" id="gl-out"></div>
+      <div class="hint">Zwei Kopien von <span data-tex="\mathbb{A}^1"></span> verkleben zu <span data-tex="\mathbb{P}^1"></span>.</div>
+    </div>
+  </div>
+
+  <div class="quote">„Die Idee des Schemas ist von kindlicher Einfachheit — so einfach, so bescheiden, dass niemand vor mir
+  daran gedacht hatte, sich so tief hinabzubeugen.“<span class="who">Grothendieck, Récoltes et Semailles</span></div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 4 · KATEGORIEN ======================= -->
+<section id="s4">
+  <div class="sechead"><span class="num">04</span><h2>Voraussetzung: Kategorien, Funktoren, Siebe</h2></div>
+  <p class="lead">Für Topoi brauchst du genau drei Zutaten. Alle drei sind Bilder, keine Formeln.</p>
+
+  <div class="grid3">
+    <div class="card tight"><h4>Kategorie</h4><p class="small">Objekte (Punkte) + Morphismen (Pfeile) + Verkettung. Mehr nicht.</p></div>
+    <div class="card tight"><h4>Funktor</h4><p class="small">Übersetzt eine Kategorie in eine andere, <em>pfeiltreu</em>.</p></div>
+    <div class="card tight"><h4>Sieb <span data-tex="R"></span> auf <span data-tex="X"></span></h4><p class="small">Eine Menge von Pfeilen <em>nach</em> <span data-tex="X"></span>, abgeschlossen unter Vorkomposition. Ersatz für „offene Überdeckung“.</p></div>
+  </div>
+
+  <div class="card">
+    <h3>Vom offenen Set zum Sieb — der Übergang live</h3>
+    <p class="small">Links: klassische Topologie (offene Mengen ⊆ X). Rechts: Kategorie (Pfeile → X).
+    Schiebe den Regler und sieh, wie das eine ins andere übergeht.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Topologie ⟷ Kategorie <b><span id="sv-m">0.00</span></b></label><input type="range" id="sv-m" min="0" max="1" value="0" step="0.01"></div>
+      <div class="ctrl"><label>Anzahl Überdeckungs-Stücke <b><span id="sv-k">4</span></b></label><input type="range" id="sv-k" min="2" max="6" value="4" step="1"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cSieve" width="1020" height="400"></canvas></div>
+    <div class="readout" id="sv-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Die drei Axiome eines Situs — klick sie durch</h3>
+    <p class="small">Eine Kategorie <span data-tex="\mathcal{C}"></span> mit einer Zuordnung „Objekt <span data-tex="X"></span> ↦ Menge von Sieben <span data-tex="J(X)"></span>“
+    heißt <b>Situs</b>, wenn gilt:</p>
+    <div class="stepper" id="ax-btns">
+      <button data-ax="1">① Rückzug (Basiswechsel)</button>
+      <button data-ax="2">② Lokalität</button>
+      <button data-ax="3">③ Maximalsieb</button>
+    </div>
+    <div class="canvwrap"><canvas id="cAx" width="1020" height="330"></canvas></div>
+    <div class="readout" id="ax-out"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 5 · TOPOS ======================= -->
+<section id="s5">
+  <div class="sechead"><span class="num">05</span><h2>Topoi: Räume ohne Punkte</h2></div>
+  <p class="lead">Ein <b>Topos</b> ist die Kategorie <em>aller Garben</em> auf einem Situs.
+  Die Metamorphose des topologischen Raums — so wie das Schema die Metamorphose der Varietät war.</p>
+
+  <div class="card">
+    <div class="mathblock" data-tex="\text{Topos} \;=\; \mathbf{Sh}(\mathcal{C},J)"></div>
+    <div class="grid2">
+      <div>
+        <h4>Was löst das?</h4>
+        <ul>
+          <li>Über <span data-tex="\mathbb{F}_p"></span> gibt es <b>zu wenige offene Mengen</b> (Zariski-Topologie ist grob) → keine brauchbare Kohomologie.</li>
+          <li>Lösung: ersetze „offene Teilmenge“ durch <b>étale Morphismus</b>. Das ist keine Teilmenge mehr — aber ein Sieb!</li>
+          <li>Ergebnis: <b>étale Kohomologie</b> → Beweis der Weil-Vermutungen.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Das Entscheidende</h4>
+        <p class="small">Verschiedene Situs können <b>denselben</b> Topos ergeben. Der Topos ist also ein Raum, der
+        <em>von seiner Beschreibung unabhängig</em> ist — und der keine Punkte braucht, um zu existieren.</p>
+        <div class="quote" style="margin:8px 0">„Das Thema des Topos … ist jenes ‚Bett‘, jener ‚tiefe Fluss‘, in dem
+        Geometrie und Algebra, Topologie und Arithmetik, die Welt des Kontinuierlichen und die der diskreten Strukturen
+        sich vermählen.“<span class="who">Grothendieck</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Zariski vs. étale: warum man mehr Überdeckungen braucht</h3>
+    <p class="small">Beispiel: der Kreis <span data-tex="x^2+y^2=1"></span> bzw. <span data-tex="\mathbb{G}_m"></span>.
+    Eine <b>Zariski-Überdeckung</b> kann eine Schleife nicht „aufwickeln“. Eine <b>étale Überdeckung</b> (unverzweigte Überlagerung) kann es.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Grad der Überlagerung n <b><span id="et-n">3</span></b></label><input type="range" id="et-n" min="1" max="6" value="3" step="1"></div>
+      <div class="ctrl"><label>Abwicklung <b><span id="et-t">0.0</span></b></label><input type="range" id="et-t" min="0" max="1" value="0" step="0.01"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Modus</label>
+        <select id="et-mode"><option value="et">étale (Überlagerung)</option><option value="za">Zariski (nur Löcher)</option></select>
+      </div>
+    </div>
+    <div class="canvwrap"><canvas id="cEtale" width="1020" height="400"></canvas></div>
+    <div class="readout" id="et-out"></div>
+    <div class="hint">Die Zariski-Topologie kennt nur „Gerade minus endlich viele Punkte“ — damit siehst du nie eine Windung. Étale schon.</div>
+  </div>
+
+  <div class="card">
+    <h3>Die Landschaft der Topoi</h3>
+    <p class="small">Fahr über die Knoten: welcher Situs erzeugt welchen Topos, und was ist dort ein „Punkt“?</p>
+    <div class="canvwrap"><canvas id="cToposMap" width="1020" height="440"></canvas></div>
+    <div class="readout" id="tm-out">Bewege die Maus über einen Knoten.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 6 · ZAHME TOPOLOGIE ======================= -->
+<section id="s6">
+  <div class="sechead"><span class="num">06</span><h2>Zahme Topologie: Schluss mit den Monstern</h2></div>
+  <p class="lead">1980er. Grothendieck kritisiert: Die allgemeine Topologie wurde <b>von Analytikern für die Analysis</b> gebaut —
+  nicht für das Studium von <em>Gestalten</em>. Sie erzeugt „falsche Probleme“ und pathologische Monster.</p>
+
+  <div class="card">
+    <h3>Das Problem: wilde Räume</h3>
+    <p class="small">Klick die Monster an. Alle sind topologisch legitim — und alle haben mit „Form“ nichts zu tun.</p>
+    <div class="btnrow" id="wild-btns">
+      <button data-w="topo" class="on">Topologensinus</button>
+      <button data-w="cantor">Cantor-Menge</button>
+      <button data-w="koch">Koch-Kurve (∞ Länge)</button>
+      <button data-w="hawaii">Hawaiische Ohrringe</button>
+      <button data-w="tame">✔ zahm: Polygon</button>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl"><label>Detailtiefe / Iterationen <b><span id="wd-d">5</span></b></label><input type="range" id="wd-d" min="1" max="9" value="5" step="1"></div>
+      <div class="ctrl"><label>Zoom <b><span id="wd-z">1.0</span></b></label><input type="range" id="wd-z" min="1" max="8" value="1" step="0.05"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cWild" width="1020" height="400"></canvas></div>
+    <div class="readout" id="wd-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Die Lösung: semianalytische Mengen als lokale Modelle</h3>
+    <p class="small">Grothendieck ging <b>axiomatisch</b> vor. Sein lokales Modell:
+    Mengen, die lokal aus <span data-tex="\{f>0\}"></span> (mit <span data-tex="f"></span> reell-analytisch) durch
+    <b>endliche</b> Schnitte, Vereinigungen und Komplemente entstehen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>a — Koeffizient <b><span id="sa-a">1.00</span></b></label><input type="range" id="sa-a" min="-2" max="2" value="1" step="0.01"></div>
+      <div class="ctrl"><label>b — Koeffizient <b><span id="sa-b">0.60</span></b></label><input type="range" id="sa-b" min="-2" max="2" value="0.6" step="0.01"></div>
+      <div class="ctrl"><label>Radius r <b><span id="sa-r">0.75</span></b></label><input type="range" id="sa-r" min="0.15" max="1.3" value="0.75" step="0.01"></div>
+    </div>
+    <div class="btnrow" id="sa-ops">
+      <button data-op="and" class="on">f&gt;0 ∧ g&gt;0</button>
+      <button data-op="or">f&gt;0 ∨ g&gt;0</button>
+      <button data-op="not">f&gt;0 ∧ ¬(g&gt;0)</button>
+      <button data-op="f">nur f&gt;0</button>
+    </div>
+    <div class="canvwrap"><canvas id="cSemi" width="1020" height="420"></canvas></div>
+    <div class="readout" id="sa-out"></div>
+    <div class="hint">Wichtig: <b>endlich</b> viele Operationen ⇒ die Menge hat <b>endlich viele Zusammenhangskomponenten</b> ⇒ keine Monster.</div>
+  </div>
+
+  <div class="card">
+    <h3>Dévissage: Stratifizierung — ein Raum aus Bausteinen</h3>
+    <p class="small">Grothendiecks Ausgangsproblem: eine <b>Theorie des „Dévissage“</b> (Aufschraubens) für stratifizierte Strukturen:
+    zerlege einen Raum kanonisch in Schichten <span data-tex="X_0\subset X_1\subset\dots\subset X_n"></span>, wobei jede Differenz eine Mannigfaltigkeit ist.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Schicht anzeigen bis Dim <b><span id="sf-d">2</span></b></label><input type="range" id="sf-d" min="0" max="2" value="2" step="1"></div>
+      <div class="ctrl"><label>Explosion (Auseinanderziehen) <b><span id="sf-e">0.0</span></b></label><input type="range" id="sf-e" min="0" max="1" value="0" step="0.01"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Objekt</label>
+        <select id="sf-obj"><option value="wedge">Keil (Whitney)</option><option value="cube">Würfel-Rand</option><option value="cone">Kegel mit Spitze</option></select>
+      </div>
+    </div>
+    <div class="canvwrap"><canvas id="cStrat" width="1020" height="420"></canvas></div>
+    <div class="readout" id="sf-out"></div>
+  </div>
+
+  <div class="warn"><b>Wichtige Nuance des Essays:</b> Ein zahmer Raum <em>verallgemeinert</em> den topologischen Raum <b>nicht</b> (so wie Topoi es tun) —
+  er gibt ihm ein <b>neues Verständnis</b>. Es ist ein neuer <em>Typ</em> von Raum. Der Raumbegriff ist bei Grothendieck <b>proteisch</b>.</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 7 · GEOMETRIE DER FORMEN ======================= -->
+<section id="s7">
+  <div class="sechead"><span class="num">07</span><h2>Geometrie der Formen (1986)</h2></div>
+  <p class="lead">Juni 1986, Brief an Yamashita: Grothendieck beginnt <b>ganz neue Grundlagen der Topologie</b> —
+  nicht mit Punkten und Grenzwerten, sondern <b>mit „Figuren“</b>.</p>
+
+  <div class="quote">„… Grundlagen der ‚Topologie‘, ausgehend von den ‚geometrischen  Objekte‘ oder ‚Figuren‘, statt mit einer Menge von ‚Punkten‘ und irgendeiner Art von ‚Grenzwert‘ oder
+  (gleichbedeutend) ‚Umgebungen‘. Wie die Sprache der Topoi … ist es eine Art Topologie <b>ohne Punkte</b> —
+  ein direkter Zugang zur ‚Gestalt‘.“<span class="who">Grothendieck an Yamashita, 9. Juli 1986</span></div>
+
+  <div class="card">
+    <h3>Punkte → Figuren: der Paradigmenwechsel</h3>
+    <p class="small">Links der klassische Zugang: ein Raum ist eine <em>Punktmenge</em> mit Umgebungen.
+    Rechts Grothendiecks Zugang: die <em>Figuren</em> (Kanten, Flächen, Zellen) sind primär, Punkte fallen als Nebenprodukt ab.
+    Schiebe den Regler durch den Paradigmenwechsel.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte ⟷ Figuren <b><span id="gf-m">0.00</span></b></label><input type="range" id="gf-m" min="0" max="1" value="0" step="0.005"></div>
+      <div class="ctrl"><label>Auflösung <b><span id="gf-n">180</span></b></label><input type="range" id="gf-n" min="30" max="500" value="180" step="1"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Gestalt</label>
+        <select id="gf-shape">
+          <option value="torus">Torus (Genus 1)</option>
+          <option value="disk">Scheibe</option>
+          <option value="annulus">Kreisring</option>
+          <option value="theta">Theta-Graph</option>
+        </select>
+      </div>
+    </div>
+    <div class="canvwrap"><canvas id="cForms" width="1020" height="440"></canvas></div>
+    <div class="readout" id="gf-out"></div>
+    <div class="hint">Beachte: die <b>Invarianten</b> (Zusammenhangskomponenten, Löcher, Euler-Charakteristik) bleiben beim Übergang <em>identisch</em>. Die Form überlebt, die Punkte nicht.</div>
+  </div>
+
+  <div class="card">
+    <h3>Endliche Räume: was die allgemeine Topologie nicht kann</h3>
+    <p class="small">Grothendieck: „Ich hoffe, die Sprache wird geeignet sein, <b>endliche Räume</b> zu behandeln, die
+    in der allgemeinen Topologie sehr schlecht wegkommen (selbst bei nicht-Hausdorffschen Räumen).“
+    Hier: derselbe „Kreis“ mit N Punkten — links als Punktmenge (topologisch: diskret, also <em>formlos</em>),
+    rechts als Figurenkomplex (Form: ein Kreis, egal wie klein N ist).</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl Punkte N <b><span id="fs-n">8</span></b></label><input type="range" id="fs-n" min="3" max="40" value="8" step="1"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Struktur</label>
+        <select id="fs-top">
+          <option value="circle">Kreis</option>
+          <option value="line">Strecke</option>
+          <option value="theta">Theta</option>
+          <option value="two">Zwei Kreise</option>
+        </select>
+      </div>
+    </div>
+    <div class="canvwrap"><canvas id="cFinite" width="1020" height="340"></canvas></div>
+    <div class="readout" id="fs-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Die Kapitel des Manuskripts <em>Vers une géométrie des formes</em> (1986)</h3>
+    <p class="small">Handschriftlich, lange nahezu unbekannt, heute im Grothendieck-Archiv Montpellier. Klick auf ein Kapitel:</p>
+    <div class="flow" id="chapflow"></div>
+    <div class="readout" id="chap-out"></div>
+    <div class="hint">„Analysis situs“ — der Ausdruck ruft <b>Leibniz</b> und <b>Poincaré</b> auf. Grothendieck versuchte viermal, ihn neu zu begründen.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 8 · DISKRET / KONTINUUM ======================= -->
+<section id="s8">
+  <div class="sechead"><span class="num">08</span><h2>Die Umkehrung: Kontinuum als Fiktion</h2></div>
+  <p class="lead">Der radikalste Gedanke des ganzen Essays. Nicht: „Das Diskrete nähert das Kontinuum an.“
+  Sondern: <b>Das Kontinuum ist eine bequeme Fiktion, die das (sehr große) Endliche annähert.</b></p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="quote" style="margin-top:0">„… während in Wirklichkeit mir das Gegenteil wahrscheinlicher scheint:
+      <b>das Kontinuum ist der Begriff, der das schwer fassbare endliche — aber sehr große — Aggregat annähert</b>.“
+      <span class="who">Grothendieck an Yamashita, 9. Juni 1986</span></div>
+      <p class="small">Denk an <span data-tex="10^{100}"></span> oder <span data-tex="10^{1000}"></span> Punkte, dicht auf der Einheitskugel.
+      Weit mehr, als jede physikalische Messung je unterscheiden könnte. Niemand — „außer Gott selbst“ —
+      könnte dieses Netz vom Kontinuum unterscheiden.</p>
+    </div>
+    <div class="card">
+      <h3>Die drei Möglichkeiten (aus <em>Récoltes et Semailles</em>)</h3>
+      <table>
+        <tr><th>Struktur</th><th>Idee</th></tr>
+        <tr><td><b>diskret</b></td><td>Der Raum ist ein sehr feines Netz endlich vieler Punkte.</td></tr>
+        <tr><td><b>kontinuierlich</b></td><td>Klassisches Modell seit den Griechen bis Relativität/QM.</td></tr>
+        <tr><td><b>gemischt</b></td><td>„Innigere Symbiose“ — genau das, was Topoi bereits andeuten.</td></tr>
+      </table>
+      <p class="small">Grothendieck hielt die dritte Option für die wahrscheinlichste — und die schwerste.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Der Ununterscheidbarkeits-Test</h3>
+    <p class="small">Ein Netz aus N Punkten auf der Kugel. Ab wann kannst <b>du</b> es nicht mehr von einer glatten Fläche unterscheiden?
+    Die Messauflösung <span data-tex="\varepsilon"></span> begrenzt, was überhaupt sichtbar sein kann.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punktzahl N = 10^<b><span id="dc-e">2.0</span></b></label><input type="range" id="dc-e" min="1" max="6" value="2" step="0.02"></div>
+      <div class="ctrl"><label>Messauflösung ε <b><span id="dc-eps">0.060</span></b></label><input type="range" id="dc-eps" min="0.004" max="0.2" value="0.06" step="0.002"></div>
+      <div class="ctrl"><label>Rotation <b><span id="dc-rot">0.0</span></b></label><input type="range" id="dc-rot" min="0" max="6.283" value="0.6" step="0.01"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cSphere" width="1020" height="440"></canvas></div>
+    <div class="readout" id="dc-out"></div>
+    <div class="hint">Kriterium: ist der mittlere Punktabstand kleiner als ε, ist das Netz <b>physikalisch identisch</b> mit dem Kontinuum.</div>
+  </div>
+
+  <div class="card">
+    <h3>„Unscharfe Differentialrechnung“ — Ableitung mit vorgeschriebenem Fehler</h3>
+    <p class="small">Grothendiecks Vorschlag: „Grenzübergang“ heißt jetzt ein <b>endlicher</b> Prozess —
+    man geht zu <em>kleinen</em> Parameterwerten, deren Kleinheit <b>genau vorgeschrieben</b> ist,
+    mit einer ebenso vorgeschriebenen <b>Fehlermarge</b>. Alle numerischen Begriffe gelten nur „bis auf ε“.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Gitterweite h <b><span id="fd-h">0.250</span></b></label><input type="range" id="fd-h" min="0.005" max="0.6" value="0.25" step="0.005"></div>
+      <div class="ctrl"><label>Rauschen (Messfehler) <b><span id="fd-nz">0.000</span></b></label><input type="range" id="fd-nz" min="0" max="0.05" value="0" step="0.0005"></div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Funktion</label>
+        <select id="fd-f"><option value="sin">sin(3x)</option><option value="poly">x³ − 2x</option><option value="gauss">Gauß-Glocke</option></select>
+      </div>
+    </div>
+    <div id="plotFD" style="height:400px"></div>
+    <div class="readout" id="fd-out"></div>
+    <div class="hint">↑ <b>Der Clou:</b> Bei Rauschen &gt; 0 gibt es ein <em>optimales</em> h. Zu klein ist <b>schlechter</b>.
+    Der klassische Limes <span data-tex="h\to 0"></span> existiert physikalisch <b>nicht</b>. Genau Grothendiecks Punkt.</div>
+  </div>
+
+  <div class="card">
+    <h3>Riemanns „Erbe“ — und ein Rätsel</h3>
+    <div class="grid2">
+      <div>
+        <p>Grothendieck schrieb die Idee <b>Riemann</b> zu (Habilitationsschrift 1854, Schluss). Als er später
+        die genaue Stelle suchte — fand er sie <b>nicht</b>.</p>
+        <div class="quote">„Vielleicht habe ich seine Idee nur <b>zwischen den Zeilen</b> seiner tatsächlichen Worte gefunden.“
+        <span class="who">Grothendieck an Yamashita, 16. September 1986</span></div>
+        <div class="quote">„Es wäre fast so, als hätte es eine Art ‚telepathische‘ Kommunikation gegeben —
+        von Riemanns Gedankenwelt in meine.“<span class="who">Ebenda</span></div>
+      </div>
+      <div>
+        <p class="small">Fahr über die Zeitachse:</p>
+        <div class="canvwrap"><canvas id="cRiemann" width="500" height="300"></canvas></div>
+        <div class="readout" id="rm-out">Bewege die Maus über die Zeitachse.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 9 · TRIADE ======================= -->
+<section id="s9">
+  <div class="sechead"><span class="num">09</span><h2>Zahl · Größe · Form — und der Raum-Zahl</h2></div>
+  <p class="lead">Grothendieck: Es gibt drei Gebiete mathematischer Reflexion. Der Autor argumentiert:
+  <b>Zahl und Größe sind selbst Manifestationen der Form.</b></p>
+
+  <div class="card">
+    <h3>Die fundamentale Triade — klick auf eine Ecke</h3>
+    <div class="canvwrap"><canvas id="cTriad" width="1020" height="440"></canvas></div>
+    <div class="readout" id="tr-out">Klick auf eine Ecke des Dreiecks.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Zalameas „Raum-Zahl“ (<em>espacio-número</em>)</h3>
+      <p>Analog zur <b>Raum-Zeit</b> der Physik: Grothendiecks Projekt ist die Verschmelzung von
+      <b>Arithmetik</b> und <b>Geometrie</b> zu <em>einer</em> Entität.</p>
+      <div class="ctrls">
+        <div class="ctrl"><label>Arithmetik ⟷ Geometrie <b><span id="sn-m">0.50</span></b></label><input type="range" id="sn-m" min="0" max="1" value="0.5" step="0.005"></div>
+      </div>
+      <div class="canvwrap"><canvas id="cSpNum" width="500" height="300"></canvas></div>
+      <div class="readout" id="sn-out"></div>
+    </div>
+    <div class="card">
+      <h3>Alles zusammen: <span data-tex="\operatorname{Spec}\mathbb{Z}[x]"></span></h3>
+      <p class="small">Das kanonische Bild des Raum-Zahl: eine <b>arithmetische Fläche</b>.
+      Horizontal die Primzahlen (diskret, Arithmetik), vertikal die Polynomvariable (kontinuierlich, Geometrie).</p>
+      <div class="ctrls">
+        <div class="ctrl"><label>Primzahlen bis <b><span id="sz2-n">7</span></b></label><input type="range" id="sz2-n" min="2" max="14" value="7" step="1"></div>
+        <div class="ctrl"><label>Höhe / Grad <b><span id="sz2-h">4</span></b></label><input type="range" id="sz2-h" min="2" max="9" value="4" step="1"></div>
+      </div>
+      <div class="canvwrap"><canvas id="cArith" width="500" height="300"></canvas></div>
+      <div class="readout" id="sz2-out"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 10 · NATURPHILOSOPHIE ======================= -->
+<section id="s10">
+  <div class="sechead"><span class="num">10</span><h2>Naturphilosophie: das eigentliche Problem</h2></div>
+  <p class="lead">Grothendiecks Schlussdiagnose: Das Raumproblem ist <b>kein technisches</b>.
+  Es ist ein Grundproblem der <em>Naturphilosophie</em>.</p>
+
+  <div class="card">
+    <div class="quote" style="margin-top:0">„Zusammengefasst: Ich sehe voraus, dass die erwartete Erneuerung
+    eher von einem <b>Mathematiker in der Seele</b> kommen wird, der über die großen Probleme der Physik gut informiert ist,
+    als von einem Physiker. Vor allem aber braucht es einen Menschen mit der <b>philosophischen Offenheit</b>,
+    den Knoten des Problems zu erfassen. Dieser ist keineswegs technischer Natur, sondern ein fundamentales
+    Problem der <b>‚Philosophie der Natur‘</b>.“<span class="who">Grothendieck, Récoltes et Semailles</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Grothendiecks zwei Ebenen — und die zwei stillschweigenden Axiome</h3>
+    <p class="small">Er fordert: <b>erst</b> Ebene 1 (philosophisch), <b>dann</b> Ebene 2 (technisch). Klick die Axiome an, um sie zu „zerbrechen“:</p>
+    <div class="btnrow" id="ax2-btns">
+      <button data-a="1">Axiom 1: Es gibt <em>das eine</em> mathematische Modell</button>
+      <button data-a="2">Axiom 2: Raum &amp; Zeit sind kontinuierlich</button>
+    </div>
+    <div class="canvwrap"><canvas id="cPhil" width="1020" height="400"></canvas></div>
+    <div class="readout" id="ph-out"></div>
+    <div class="hint">Grothendieck nennt Axiom 1 ein „fossiles Überbleibsel“ von Pythagoras’ <em>„Alles ist Zahl“</em> —
+    ein <b>„neuer unsichtbarer Kreis“</b>, der das Universum des Physikers begrenzt.</div>
+  </div>
+
+  <div class="card">
+    <h3>Modell-Pluralismus statt <em>der</em> Theorie</h3>
+    <p class="small">Schiebe die Gültigkeitsbereiche: vielleicht gibt es <b>kein einziges</b> rigoroses Modell für alle Phänomene —
+    sondern eine Familie sich überlappender Modelle, „so befriedigend wie möglich aneinandergefügt“.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl Modelle <b><span id="mp-n">4</span></b></label><input type="range" id="mp-n" min="1" max="7" value="4" step="1"></div>
+      <div class="ctrl"><label>Überlappung <b><span id="mp-ov">0.30</span></b></label><input type="range" id="mp-ov" min="-0.2" max="0.6" value="0.3" step="0.01"></div>
+      <div class="ctrl"><label>Fehlermarge <b><span id="mp-er">0.15</span></b></label><input type="range" id="mp-er" min="0.02" max="0.45" value="0.15" step="0.005"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cModels" width="1020" height="360"></canvas></div>
+    <div class="readout" id="mp-out"></div>
+    <div class="hint">Erkennst du es? <b>Das ist wieder §1</b> — Lokalisierung. Grothendiecks Antwort auf das physikalische
+    Raumproblem hat exakt die Struktur einer <em>Garbe</em>.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 11 · SYNTHESE ======================= -->
+<section id="s11">
+ 
+  <div class="sechead"><span class="num">11</span><h2>Synthese: die Antwort auf die Frage</h2></div>
+  <p class="lead">Jetzt läuft alles zusammen. Wir haben fünf Metamorphosen gesehen — und jede war eine
+  neue Antwort auf <b>dieselbe</b> Frage.</p>
+
+  <div class="card">
+    <h3>Die Zeitachse — zieh den Regler durch 40 Jahre</h3>
+    <p class="small">Jede Station: Motivation → Idee → Lösung → was dadurch möglich wurde. Alles auf einer Linie.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Jahr <b><span id="tl-y">1955</span></b></label><input type="range" id="tl-y" min="1955" max="1991" value="1955" step="1"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cTimeline" width="1020" height="440"></canvas></div>
+    <div class="readout" id="tl-out"></div>
+    <div class="btnrow" id="tl-jump"></div>
+  </div>
+
+  <div class="card">
+    <h3>Die eine Invariante: Lokalisierung in fünf Gewändern</h3>
+    <p class="small">Klick auf eine Spalte: dieselbe Struktur, fünfmal neu realisiert. <b>Das ist die Antwort des Essays.</b></p>
+    <div class="canvwrap"><canvas id="cInvariant" width="1020" height="420"></canvas></div>
+    <div class="readout" id="iv-out">Klicke auf eine der fünf Säulen.</div>
+  </div>
+
+  <table>
+    <tr><th>Station</th><th>Metamorphose von</th><th>Was ist ein „Punkt“?</th><th>Was ist eine „Überdeckung“?</th><th>Motivation</th></tr>
+    <tr><td><b>Schema</b></td><td>algebraische Varietät</td><td>Primideal <span data-tex="\mathfrak{p}"></span> (inkl. generischer Punkt)</td><td>distinguierte Offene <span data-tex="D(f)"></span></td><td>eine Sprache für ℝ, ℂ, 𝔽ₚ, ℤ zugleich</td></tr>
+    <tr><td><b>Topos</b></td><td>topologischer Raum</td><td>gar keiner nötig</td><td>Sieb in einem Situs</td><td>Kohomologie über 𝔽ₚ → Weil-Vermutungen</td></tr>
+    <tr><td><b>Zahmer Raum</b></td><td>— <em>kein</em> Verallgemeinern, neues Verständnis</td><td>Stratum-Zelle</td><td>lokale semianalytische Modelle</td><td>Dévissage; Monster loswerden; Gestalt</td></tr>
+    <tr><td><b>Geometrie der Formen</b></td><td>Topologie selbst</td><td>„Figur“ statt Punkt</td><td>Netz/Zerlegung</td><td>endliche Räume, Form direkt fassen</td></tr>
+    <tr><td><b>Raum-Zahl</b></td><td>Arithmetik ⊕ Geometrie</td><td>Zahl <em>ist</em> Form</td><td>philosophisch offen</td><td>Naturphilosophie des Raums</td></tr>
+  </table>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Die Triade: Zahl — Größe — Form</h3>
+      <p class="small">Grothendieck: drei Reflexionsgebiete der Mathematik.
+      Cruz Morales' These: <b>Zahl und Größe sind selbst Formen</b> — arithmetische bzw. analytische.
+      Klick die Ecken.</p>
+      <div class="canvwrap"><canvas id="cTriad" width="500" height="420"></canvas></div>
+      <div class="readout" id="tr-out"></div>
+    </div>
+    <div class="card">
+      <h3>Die Antwort — in einem Satz</h3>
+      <div class="quote" style="font-size:1.02rem;border-left-color:var(--acc3)">
+        Ein Raum ist <b>kein Behälter aus Punkten</b>, sondern <b>dasjenige, worauf Lokalisierung Sinn ergibt</b> —
+        und weil es viele Arten gibt, „lokal“ zu sagen, gibt es viele Arten von Raum.
+        Der Raumbegriff ist <b>proteisch</b>.
+      </div>
+      <h4>Und Grothendiecks letztes Wort dazu?</h4>
+      <p class="small">Dass die <em>technische</em> Frage erst nach der <em>philosophischen</em> Sinn ergibt.
+      Er hat sie nicht beantwortet. Er hat sie <b>richtig gestellt</b> — und das nach 40 Jahren Arbeit.</p>
+      <div class="mathblock" data-tex="\textsf{Mathematik}\;\oplus\;\textsf{Physik}\;\oplus\;\textsf{Philosophie}\;=\;\textsf{Naturphilosophie}"></div>
+      <p class="small"><span class="tag c">offen</span> Was ist die Beziehung zwischen Poincaré-Vermutung und
+      Geometrie der Formen? Grothendieck fragte es 1986. Niemand weiß es.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================= 12 · SANDKASTEN ======================= -->
+<section id="s12">
+  <div class="sechead"><span class="num">12</span><h2>Sandkasten: alles auf einmal</h2></div>
+  <p class="lead">Ein letztes Spielzeug. Nimm ein Objekt und schau es durch <b>jede der fünf Brillen</b> an.</p>
+
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl" style="flex:0 0 auto"><label>Objekt</label>
+        <select id="sb-obj">
+          <option value="circle">Der Kreis / 𝔾ₘ</option>
+          <option value="line">Die Gerade 𝔸¹</option>
+          <option value="ell">Elliptische Kurve</option>
+          <option value="pt">Ein einzelner Punkt</option>
+        </select>
+      </div>
+      <div class="ctrl" style="flex:0 0 auto"><label>Brille</label>
+        <select id="sb-lens">
+          <option value="class">Klassisch (Varietät)</option>
+          <option value="scheme">Schema</option>
+          <option value="topos">Topos</option>
+          <option value="tame">Zahmer Raum</option>
+          <option value="form">Geometrie der Formen</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Auflösung / Feinheit N <b><span id="sb-n">60</span></b></label><input type="range" id="sb-n" min="6" max="300" value="60" step="1"></div>
+      <div class="ctrl"><label>Rotation <b><span id="sb-rot">0.0</span></b></label><input type="range" id="sb-rot" min="0" max="6.28" value="0" step="0.01"></div>
+    </div>
+    <div class="canvwrap"><canvas id="cSandbox" width="1020" height="470"></canvas></div>
+    <div class="readout" id="sb-out"></div>
+  </div>
+
+  <div class="card tight">
+    <h4>Was du jetzt weißt</h4>
+    <div class="grid3">
+      <div><span class="tag a">§1–2</span> Lokalisierung, Garben, Halme, Ringe, Primideale</div>
+      <div><span class="tag b">§3–5</span> Spec, Strukturgarbe, Situs, Siebe, Topoi, étale</div>
+      <div><span class="tag c">§6–8</span> Zahme Topologie, semianalytisch, Dévissage, Formen</div>
+      <div><span class="tag d">§9–10</span> Diskret ⟷ Kontinuum, Riemann, ε-Differentialrechnung</div>
+      <div><span class="tag">§11</span> Raum-Zahl, Triade, Naturphilosophie</div>
+      <div><span class="tag">Kern</span> Raum = worauf Lokalisierung Sinn ergibt</div>
+    </div>
+  </div>
+</section>
+
+<footer style="text-align:center;color:var(--dim);font-size:.83rem;padding:50px 0 20px;border-top:1px solid var(--line);margin-top:50px">
+  Interaktiver Begleiter zu <b>J. A. Cruz Morales</b>, „The notion of space in Grothendieck: from schemes to a geometry of forms“, arXiv:2105.08799.<br>
+  Alle Zitate stammen aus dem Essay bzw. den dort zitierten Quellen (Récoltes et Semailles, Esquisse d'un programme, Briefe an Yamashita/Tsuji).
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============================================================
+   GLOBAL HELPERS
+   ============================================================ */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const TAU = Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const C = {acc:'#63d2ff',acc2:'#b57bff',acc3:'#ffd166',acc4:'#6ef3a5',red:'#ff7a8a',dim:'#9aa9c9',txt:'#e6ecff'};
+
+/* ---- Temml rendering ---- */
+function renderMath(){
+  if(typeof temml==='undefined')return;
+  $$('[data-tex]').forEach(el=>{
+    if(el.dataset.done)return;
+    try{ temml.render(el.dataset.tex, el, {displayMode: el.classList.contains('mathblock')}); el.dataset.done=1; }
+    catch(e){ el.textContent=el.dataset.tex; }
+  });
+}
+window.addEventListener('load',renderMath);
+setTimeout(renderMath,400);
+
+/* ---- HiDPI canvas ---- */
+function hd(cv){
+  const r = window.devicePixelRatio||1;
+  if(cv._hd===r)return cv.getContext('2d');
+  const w=cv.width,h=cv.height;
+  if(!cv._lw){cv._lw=w;cv._lh=h;}
+  cv.style.width=cv._lw+'px'; cv.style.height=cv._lh+'px';
+  cv.width=cv._lw*r; cv.height=cv._lh*r;
+  const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0); cv._hd=r; cv._ctx=ctx;
+  return ctx;
+}
+function ctxOf(cv){ return cv._ctx || hd(cv); }
+function W(cv){return cv._lw;} function H(cv){return cv._lh;}
+function clear(ctx,cv){ ctx.clearRect(0,0,W(cv),H(cv)); }
+
+function txt(ctx,s,x,y,{c=C.txt,f='12px JetBrains Mono, monospace',al='left',bl='alphabetic'}={}){
+  ctx.fillStyle=c; ctx.font=f; ctx.textAlign=al; ctx.textBaseline=bl; ctx.fillText(s,x,y);
+}
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=1.5,head=7){
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.fillStyle=col;ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-.4),y2-head*Math.sin(a-.4));
+  ctx.lineTo(x2-head*Math.cos(a+.4),y2-head*Math.sin(a+.4));
+  ctx.closePath();ctx.fill();
+}
+function glow(ctx,fn,col,b=14){ ctx.save();ctx.shadowColor=col;ctx.shadowBlur=b;fn();ctx.restore(); }
+
+function bind(id,fn){
+  const el=$('#'+id); if(!el)return;
+  const lab=$('#'+id.replace(/^/,'')+'');
+  el.addEventListener('input',fn);
+  return el;
+}
+function sv(id){ return parseFloat($('#'+id).value); }
+function setLab(id,val){ const e=document.getElementById(id); if(e && e.tagName!=='INPUT') e.textContent=val; }
+// labels share ids with inputs -> use span lookup by querySelector on label
+function lab(id,val){
+  const spans=$$('span#'+id);
+  spans.forEach(s=>{ if(s.tagName==='SPAN') s.textContent=val; });
+}
+
+/* ============================================================
+   STARFIELD
+   ============================================================ */
+(function(){
+  const cv=$('#stars'); const ctx=cv.getContext('2d');
+  let stars=[];
+  function resize(){
+    cv.width=innerWidth;cv.height=innerHeight;
+    stars=[];
+    const n=Math.round(innerWidth*innerHeight/9000);
+    for(let i=0;i<n;i++)stars.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.3+.2,p:Math.random()*TAU,s:Math.random()*.5+.2});
+  }
+  resize();addEventListener('resize',resize);
+  let t=0;
+  (function loop(){
+    t+=.012; ctx.clearRect(0,0,cv.width,cv.height);
+    for(const s of stars){
+      const a=.25+.55*(.5+.5*Math.sin(t*s.s*3+s.p));
+      ctx.fillStyle=`rgba(180,205,255,${a})`;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,TAU);ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ============================================================
+   NAV
+   ============================================================ */
+const SECTIONS=[
+  ['s0','00 · Die Frage'],['s1','01 · Lokalisierung'],['s2','02 · Ringe'],['s3','03 · Schemata'],
+  ['s4','04 · Kategorien'],['s5','05 · Topoi'],['s6','06 · Zahme Topologie'],['s7','07 · Formen'],
+  ['s8','08 · Endliche Räume'],['s9','09 · Diskret/Kontinuum'],['s10','10 · Riemann'],
+  ['s11','11 · Synthese'],['s12','12 · Sandkasten']
+];
+(function(){
+  const n=$('#nav');
+  SECTIONS.forEach(([id,t])=>{
+    if(!document.getElementById(id))return;
+    const a=document.createElement('a');a.href='#'+id;a.textContent=t;a.dataset.id=id;n.appendChild(a);
+  });
+  const links=$$('#nav a');
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ links.forEach(l=>l.classList.toggle('on',l.dataset.id===e.target.id)); }});
+  },{rootMargin:'-45% 0px -50% 0px'});
+  SECTIONS.forEach(([id])=>{const el=document.getElementById(id); if(el)io.observe(el);});
+})();
+
+/* ============================================================
+   §0  MAP FLOW
+   ============================================================ */
+const MAP=[
+  ['Varietät','Klassisch: Nullstellenmenge von Polynomen über <em>einem</em> Körper. Problem: jede Charakteristik ⇒ eigene Theorie.'],
+  ['Schema','<b>Metamorphose der Varietät.</b> Jeder kommutative Ring <b>ist</b> ein Raum: Spec(A). Punkte = Primideale.'],
+  ['Topos','<b>Metamorphose des topologischen Raums.</b> Kategorie aller Garben auf einem Situs. Räume <em>ohne Punkte</em>. → étale Kohomologie, Weil-Vermutungen.'],
+  ['Zahmer Raum','Kein Verallgemeinern — ein <em>neuer Typ</em>. Ziel: Gestalten statt Analysis-Pathologien. Lokales Modell: semianalytische Mengen.'],
+  ['Geometrie der Formen','1986. Topologie ausgehend von <b>Figuren</b>, nicht Punkten. Soll auch <em>endliche</em> Räume erfassen.'],
+  ['Raum-Zahl','Zalameas Lesart: Arithmetik + Geometrie in <em>einer</em> Entität — analog zur Raumzeit. Naturphilosophie.']
+];
+(function(){
+  const f=$('#mapflow'), out=$('#mapout');
+  MAP.forEach(([t,d],i)=>{
+    if(i)  { const a=document.createElement('span');a.className='farrow';a.textContent='→';f.appendChild(a); }
+    const b=document.createElement('div');b.className='fnode';b.textContent=t;
+    b.onclick=()=>{ $$('.fnode',f).forEach(x=>x.classList.remove('on')); b.classList.add('on'); out.innerHTML='<b>'+t+'</b> — '+d; };
+    f.appendChild(b);
+    if(i===0)setTimeout(()=>b.click(),50);
+  });
+})();
+
+/* ============================================================
+   §1  LOKALISIERUNG / VERKLEBEN
+   ============================================================ */
+(function(){
+  const cv=$('#cLoc'); const ctx=hd(cv); const out=$('#l-out');
+  let glued=true;
+  function F(x){ return Math.sin(x*5.2)*0.55 + Math.sin(x*2.1+0.7)*0.35; }
+  function draw(){
+    const n=Math.round(sv('l-n')), ov=sv('l-ov'), mis=sv('l-mis');
+    lab('l-n',n); lab('l-ov',ov.toFixed(2)); lab('l-mis',mis.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), L=70,R=w-40, TOP=40, BOT=h-70;
+    const midY=(TOP+BOT)/2, amp=(BOT-TOP)/2.6;
+    // axes
+    ctx.strokeStyle='rgba(140,170,230,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(L,midY);ctx.lineTo(R,midY);ctx.stroke();
+    txt(ctx,'X',R+10,midY+4,{c:C.dim});
+    const X=t=>L+t*(R-L);
+    const Y=v=>midY-v*amp;
+    // interval pieces
+    const seg=[];
+    for(let i=0;i<n;i++){
+      const a=i/n, b=(i+1)/n;
+      const e=(ov/n)*0.5;
+      seg.push([Math.max(0,a-e),Math.min(1,b+e)]);
+    }
+    // overlap shading
+    seg.forEach((s,i)=>{
+      const hue=[C.acc,C.acc2,C.acc3,C.acc4,C.red,'#7fb0ff','#ff9ad5'][i%7];
+      ctx.fillStyle=hue+'18';
+      ctx.fillRect(X(s[0]),TOP-14,X(s[1])-X(s[0]),BOT-TOP+28);
+      ctx.strokeStyle=hue+'70';ctx.lineWidth=1;
+      ctx.strokeRect(X(s[0]),TOP-14,X(s[1])-X(s[0]),BOT-TOP+28);
+      txt(ctx,'U'+(i+1),X((s[0]+s[1])/2),BOT+34,{c:hue,al:'center',f:'11px JetBrains Mono, monospace'});
+    });
+    // functions per piece
+    let broken=false;
+    const off=i=> (i===2? mis : 0);
+    seg.forEach((s,i)=>{
+      const hue=[C.acc,C.acc2,C.acc3,C.acc4,C.red,'#7fb0ff','#ff9ad5'][i%7];
+      const dy = glued?0:(i-(n-1)/2)*16;
+      ctx.strokeStyle=hue;ctx.lineWidth=2.6;ctx.beginPath();
+      for(let k=0;k<=160;k++){
+        const t=s[0]+(s[1]-s[0])*k/160;
+        const v=F(t*6)+off(i);
+        const x=X(t),y=Y(v)+dy;
+        k?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      glow(ctx,()=>ctx.stroke(),hue,10);
+    });
+    // check agreement on overlaps
+    for(let i=0;i<n-1;i++){
+      const a=seg[i][1],b=seg[i+1][0];
+      if(b>=a)continue;
+      const mid=(a+b)/2;
+      const v1=F(mid*6)+off(i), v2=F(mid*6)+off(i+1);
+      const d=Math.abs(v1-v2);
+      const ok=d<0.02;
+      if(!ok)broken=true;
+      const x=X(mid);
+      ctx.fillStyle=ok?C.acc4:C.red;
+      ctx.beginPath();ctx.arc(x,Y((v1+v2)/2),5,0,TAU);ctx.fill();
+      if(!ok){
+        ctx.strokeStyle=C.red;ctx.setLineDash([4,3]);ctx.lineWidth=1.6;
+        ctx.beginPath();ctx.moveTo(x,Y(v1));ctx.lineTo(x,Y(v2));ctx.stroke();ctx.setLineDash([]);
+        txt(ctx,'≠',x+8,(Y(v1)+Y(v2))/2,{c:C.red,f:'14px JetBrains Mono, monospace'});
+      }else{
+        txt(ctx,'=',x+7,Y(v1)-8,{c:C.acc4,f:'12px JetBrains Mono, monospace'});
+      }
+    }
+    // global glued function
+    if(glued && mis<0.02){
+      ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;ctx.setLineDash([2,4]);
+      ctx.beginPath();
+      for(let k=0;k<=400;k++){const t=k/400;const x=X(t),y=Y(F(t*6));k?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.stroke();ctx.setLineDash([]);
+      txt(ctx,'f : X → ℝ  (global)',L+4,TOP-22,{c:'rgba(255,255,255,.55)'});
+    }
+    txt(ctx,glued?'verklebt':'Stücke getrennt gezeichnet',L+4,H(cv)-14,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+
+    out.innerHTML = broken
+      ? `<b>Verklebung fehlgeschlagen.</b> Auf mindestens einer Überschneidung stimmen die lokalen Daten <em>nicht</em> überein (rot). Es gibt <em>keine</em> globale Funktion <em>f</em>. — Das ist genau die Garbenbedingung, die verletzt ist.`
+      : (ov<0.005
+         ? `<b>Keine Überlappung.</b> Die Stücke berühren sich nur. Es gibt nichts zu prüfen — und damit auch keine Garantie für Stetigkeit. Lokalisierung braucht <em>echte</em> Überdeckung.`
+         : `<b>Verklebung erfolgreich.</b> Auf allen ${n-1} Überschneidungen stimmen die lokalen Definitionen überein (grün) ⇒ es existiert <em>genau eine</em> globale Funktion <em>f : X → ℝ</em>.<br>Deligne: „Ein Raum ist etwas, worauf Lokalisierung Sinn ergibt.“`);
+  }
+  ['l-n','l-ov','l-mis'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  $('#l-glue').onclick=()=>{glued=true;$('#l-glue').classList.add('on');$('#l-sep').classList.remove('on');draw();};
+  $('#l-sep').onclick =()=>{glued=false;$('#l-sep').classList.add('on');$('#l-glue').classList.remove('on');draw();};
+  $('#l-reset').onclick=()=>{$('#l-n').value=4;$('#l-ov').value=.35;$('#l-mis').value=0;draw();};
+  draw();
+})();
+
+/* ============================================================
+   §1  HALM / STALK
+   ============================================================ */
+(function(){
+  const cv=$('#cStalk'); const ctx=hd(cv); const out=$('#st-out');
+  function F(x,k){ return Math.sin(x*6+k*1.7)*0.5 + Math.cos(x*3.3-k)*0.3; }
+  function draw(){
+    const r=sv('st-r'), px=sv('st-x');
+    lab('st-r',r.toFixed(2)); lab('st-x',px.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),L=60,R=w-50,TOP=30,BOT=h-50, midY=(TOP+BOT)/2, amp=(BOT-TOP)/2.4;
+    const X=t=>L+t*(R-L), Y=v=>midY-v*amp;
+    ctx.strokeStyle='rgba(140,170,230,.2)';ctx.beginPath();ctx.moveTo(L,midY);ctx.lineTo(R,midY);ctx.stroke();
+    const a=clamp(px-r/2,0,1), b=clamp(px+r/2,0,1);
+    // neighbourhood
+    const g=ctx.createLinearGradient(X(a),0,X(b),0);
+    g.addColorStop(0,'rgba(99,210,255,.02)');g.addColorStop(.5,'rgba(99,210,255,.16)');g.addColorStop(1,'rgba(99,210,255,.02)');
+    ctx.fillStyle=g;ctx.fillRect(X(a),TOP,X(b)-X(a),BOT-TOP);
+    ctx.strokeStyle='rgba(99,210,255,.5)';ctx.setLineDash([5,4]);
+    ctx.strokeRect(X(a),TOP,X(b)-X(a),BOT-TOP);ctx.setLineDash([]);
+    txt(ctx,'U',X((a+b)/2),TOP-8,{c:C.acc,al:'center'});
+    // several germs — they coincide near x as r shrinks
+    const cols=[C.acc2,C.acc3,C.acc4,C.red,'#7fb0ff'];
+    for(let k=0;k<5;k++){
+      ctx.strokeStyle=cols[k];ctx.lineWidth=1.9;ctx.globalAlpha=.9;ctx.beginPath();
+      for(let i=0;i<=200;i++){
+        const t=a+(b-a)*i/200;
+        const base=F(t,0);
+        const dev=(t-px); // germs differ away from x
+        const v=base + dev*dev*dev*40*(k-2)*0.02 + (k-2)*0.0;
+        const x=X(t),y=Y(v); i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      ctx.stroke();ctx.globalAlpha=1;
+    }
+    // point x
+    ctx.fillStyle='#fff';glow(ctx,()=>{ctx.beginPath();ctx.arc(X(px),Y(F(px,0)),5,0,TAU);ctx.fill();},'#fff',14);
+    txt(ctx,'x',X(px)+9,Y(F(px,0))-9,{c:'#fff',f:'13px JetBrains Mono, monospace'});
+    // stalk tower
+    const sx=R+16;
+    ctx.strokeStyle='rgba(181,123,255,.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(sx,TOP);ctx.lineTo(sx,BOT);ctx.stroke();
+    const spread = r*70;
+    for(let k=0;k<5;k++){
+      ctx.fillStyle=cols[k];
+      ctx.beginPath();ctx.arc(sx, midY + (k-2)*spread*0.28, 4,0,TAU);ctx.fill();
+    }
+    txt(ctx,'ℱₓ',sx-4,TOP-8,{c:C.acc2,al:'center'});
+
+    out.innerHTML = r>0.45
+      ? `Große Umgebung: die fünf Funktionen sind <em>verschieden</em> — sie tragen noch globale Information. <b>ℱ(U)</b> ist groß.`
+      : (r>0.12
+        ? `Umgebung schrumpft: die Funktionen nähern sich einander an. Wir bewegen uns auf den <b>Halm</b> zu: <em>lim</em><sub>U∋x</sub> ℱ(U).`
+        : `<b>Halm ℱₓ erreicht.</b> Alle Funktionen, die bei <em>x</em> gleich aussehen, sind jetzt <em>derselbe Keim</em>. Bei einem Schema ist dieser Halm der <b>lokale Ring A<sub>𝔭</sub></b> — das ist die algebraische Form von „unendlich nah bei x“.`);
+  }
+  ['st-r','st-x'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ============================================================
+   §2  PRIMIDEAL-DETEKTOR
+   ============================================================ */
+const RINGS={
+  Z:{name:'ℤ',ideals:[
+     {n:'(2)',prime:true, why:'2 ist prim: 2 | ab ⇒ 2|a oder 2|b.',geo:'ein Punkt in Spec(ℤ)'},
+     {n:'(6)',prime:false,why:'6 = 2·3, aber weder 2 noch 3 liegt in (6). ⇒ nicht prim.',geo:'kein Punkt'},
+     {n:'(0)',prime:true, why:'ℤ ist nullteilerfrei ⇒ (0) ist prim.',geo:'der generische Punkt'},
+     {n:'(7)',prime:true, why:'7 prim.',geo:'ein Punkt in Spec(ℤ)'}]},
+  Z6:{name:'ℤ/6ℤ',ideals:[
+     {n:'(0)',prime:false,why:'2·3 = 0 in ℤ/6ℤ, aber 2≠0 und 3≠0. Nullteiler! ⇒ (0) nicht prim.',geo:'kein generischer Punkt'},
+     {n:'(2)',prime:true, why:'ℤ/6ℤ ÷ (2) ≅ ℤ/2ℤ, ein Körper ⇒ (2) maximal ⇒ prim.',geo:'ein Punkt'},
+     {n:'(3)',prime:true, why:'Quotient ≅ ℤ/3ℤ, Körper ⇒ prim.',geo:'ein Punkt'}]},
+  Rx:{name:'ℝ[x]',ideals:[
+     {n:'(x)',prime:true, why:'Quotient ≅ ℝ ⇒ Integritätsring ⇒ prim. Entspricht dem Punkt x = 0.',geo:'der Punkt x = 0'},
+     {n:'(x²)',prime:false,why:'x·x ∈ (x²), aber x ∉ (x²). ⇒ nicht prim. Es ist ein „Fettpunkt“ (nilpotent).',geo:'Doppelpunkt — nur in Schemasprache sichtbar!'},
+     {n:'(x²+1)',prime:true,why:'über ℝ irreduzibel ⇒ prim. Quotient ≅ ℂ.',geo:'ein Punkt mit Restklassenkörper ℂ'},
+     {n:'(0)',prime:true, why:'ℝ[x] nullteilerfrei ⇒ prim.',geo:'generischer Punkt der Geraden 𝔸¹'}]},
+  Cxy:{name:'ℂ[x,y]',ideals:[
+     {n:'(x,y)',prime:true, why:'Quotient ≅ ℂ ⇒ Körper ⇒ maximal ⇒ prim.',geo:'der Ursprung (0,0)'},
+     {n:'(y − x²)',prime:true,why:'y−x² irreduzibel ⇒ prim.',geo:'die Parabel — eine Kurve, also ein „dicker“ Punkt'},
+     {n:'(xy)',prime:false,why:'x·y ∈ (xy), aber x ∉ (xy) und y ∉ (xy). ⇒ nicht prim.',geo:'Vereinigung zweier Geraden — reduzibel'},
+     {n:'(0)',prime:true, why:'Integritätsring ⇒ prim.',geo:'generischer Punkt der Ebene 𝔸²'}]}
+};
+(function(){
+  const cv=$('#cPrime'); const ctx=hd(cv); const out=$('#pd-out');
+  const rs=$('#pd-ring'), is=$('#pd-ideal');
+  function fill(){
+    const R=RINGS[rs.value]; is.innerHTML='';
+    R.ideals.forEach((I,i)=>{const o=document.createElement('option');o.value=i;o.textContent=I.n;is.appendChild(o);});
+    draw();
+  }
+  function draw(){
+    const R=RINGS[rs.value], I=R.ideals[+is.value||0];
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    // ring box
+    ctx.strokeStyle='rgba(140,170,230,.3)';ctx.lineWidth=1.4;
+    rr(ctx,26,26,w-52,h-58,16);ctx.stroke();
+    ctx.fillStyle='rgba(99,210,255,.05)';ctx.fill();
+    txt(ctx,'Ring A = '+R.name,38,18,{c:C.acc,f:'13px JetBrains Mono, monospace'});
+    // ideal blob
+    const cx=w*0.36, cy=h*0.52;
+    const col=I.prime?C.acc4:C.red;
+    ctx.fillStyle=col+'26';ctx.strokeStyle=col;ctx.lineWidth=1.8;
+    ctx.beginPath();
+    for(let i=0;i<=80;i++){const a=i/80*TAU;const rr2=54+8*Math.sin(a*3)+5*Math.cos(a*5);
+      const x=cx+rr2*Math.cos(a), y=cy+rr2*0.8*Math.sin(a); i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.closePath();glow(ctx,()=>{ctx.fill();ctx.stroke();},col,12);
+    txt(ctx,I.n,cx,cy+4,{c:col,al:'center',f:'15px JetBrains Mono, monospace'});
+    // verdict
+    const vx=w-150;
+    ctx.fillStyle=col+'1a';rr(ctx,vx-10,cy-46,140,92,12);ctx.fill();
+    ctx.strokeStyle=col;ctx.lineWidth=1.2;rr(ctx,vx-10,cy-46,140,92,12);ctx.stroke();
+    txt(ctx,I.prime?'✓ PRIM':'✗ NICHT PRIM',vx+60,cy-18,{c:col,al:'center',f:'13px JetBrains Mono, monospace'});
+    txt(ctx,I.prime?'→ ein Punkt':'→ kein Punkt',vx+60,cy+6,{c:C.dim,al:'center',f:'11px JetBrains Mono, monospace'});
+    txt(ctx,'in Spec(A)',vx+60,cy+24,{c:C.dim,al:'center',f:'11px JetBrains Mono, monospace'});
+    arrow(ctx,cx+70,cy,vx-16,cy,col,1.4);
+    out.innerHTML=`<b>${I.n} ⊂ ${R.name}</b> — ${I.why}<br><em>Geometrisch:</em> ${I.geo}`;
+  }
+  rs.onchange=fill; is.onchange=draw; fill();
+})();
+
+/* ============================================================
+   §2  MULTIPLIKATIONSTABELLE
+   ============================================================ */
+(function(){
+  const cv=$('#cMul'); const ctx=hd(cv); const out=$('#mt-out');
+  function draw(){
+    const n=Math.round(sv('mt-n')); lab('mt-n',n);
+    clear(ctx,cv);
+    const w=W(cv), pad=38, cell=(w-pad*2)/n;
+    let zd=0;
+    for(let a=0;a<n;a++)for(let b=0;b<n;b++){
+      const v=(a*b)%n;
+      const x=pad+b*cell, y=pad+a*cell;
+      const bad = (v===0 && a!==0 && b!==0);
+      if(bad)zd++;
+      ctx.fillStyle = bad? 'rgba(255,122,138,.55)'
+                    : v===0? 'rgba(90,110,160,.22)'
+                    : `hsla(${190+v/n*130},70%,${28+v/n*26}%,.7)`;
+      ctx.fillRect(x+1,y+1,cell-2,cell-2);
+      if(cell>20) txt(ctx,v,x+cell/2,y+cell/2+4,{c:bad?'#fff':'rgba(230,236,255,.8)',al:'center',f:Math.min(13,cell*0.42)+'px JetBrains Mono, monospace'});
+    }
+    for(let i=0;i<n;i++){
+      if(cell>16){
+        txt(ctx,i,pad+i*cell+cell/2,pad-8,{c:C.dim,al:'center',f:'10px JetBrains Mono, monospace'});
+        txt(ctx,i,pad-8,pad+i*cell+cell/2+4,{c:C.dim,al:'right',f:'10px JetBrains Mono, monospace'});
+      }
+    }
+    txt(ctx,'a · b  mod '+n,pad,H(cv)-14,{c:C.acc,f:'12px JetBrains Mono, monospace'});
+    const isPrime=(k)=>{if(k<2)return false;for(let i=2;i*i<=k;i++)if(k%i===0)return false;return true;};
+    out.innerHTML = zd===0
+      ? `<b>n = ${n} ist prim.</b> Keine Nullteiler ⇒ ℤ/${n}ℤ ist ein <em>Körper</em> ⇒ (0) ist prim ⇒ <b>Spec(ℤ/${n}ℤ) hat genau einen Punkt</b>. Das ist eine „Faser“ von Spec(ℤ) über der Primzahl ${n}.`
+      : `<b>n = ${n} ist zusammengesetzt.</b> ${zd} Nullteiler-Zellen (rot) ⇒ ℤ/${n}ℤ ist <em>kein</em> Integritätsring ⇒ (0) ist <em>nicht</em> prim ⇒ kein generischer Punkt. Spec zerfällt in mehrere Punkte (einen pro Primfaktor).`;
+  }
+  $('#mt-n').addEventListener('input',draw); draw();
+})();
+
+/* ============================================================
+   §3  VARIETÄT über ℝ / 𝔽p
+   ============================================================ */
+const EQS={
+  c:{f:(x,y)=>y*y-(x*x*x-3*x+3), tex:'y² = x³ − 3x + 3', a:-3,b:3, kind:'ell'},
+  p:{f:(x,y)=>y*y-(x*x*x),        tex:'y² = x³',          a:0, b:0, kind:'ell'},
+  k:{f:(x,y)=>y*y-(x*x*x-x),      tex:'y² = x³ − x',      a:-1,b:0, kind:'ell'},
+  q:{f:(x,y)=>x*x+y*y-1,          tex:'x² + y² = 1',      kind:'circ'}
+};
+(function(){
+  const cv=$('#cVar'); const ctx=hd(cv); const out=$('#vr-out');
+  function nextPrime(k){const ip=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;};while(!ip(k))k++;return k;}
+  function draw(){
+    const eq=EQS[$('#vr-eq').value], field=$('#vr-field').value;
+    let p=nextPrime(Math.round(sv('vr-p'))); lab('vr-p',p);
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), cx=w/2, cy=h/2, S=Math.min(w,h)/7;
+    // grid
+    ctx.strokeStyle='rgba(140,170,230,.08)';ctx.lineWidth=1;
+    for(let i=-14;i<=14;i++){
+      ctx.beginPath();ctx.moveTo(cx+i*S,0);ctx.lineTo(cx+i*S,h);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,cy+i*S);ctx.lineTo(w,cy+i*S);ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(140,170,230,.3)';
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+
+    if(field==='R'){
+      // marching squares on f
+      const N=460;
+      ctx.lineWidth=2.6;ctx.strokeStyle=C.acc;
+      ctx.beginPath();
+      const step=(w)/N;
+      for(let i=0;i<N;i++){
+        for(let j=0;j<N*0.6;j++){
+          const x0=(i*step-cx)/S, y0=(j*(h/(N*0.6))-cy)/S;
+        }
+      }
+      // simpler: plot y = ±sqrt(...) or circle
+      if(eq.kind==='ell'){
+        const a=eq.a,b=eq.b;
+        const pts=[];
+        for(let i=0;i<=1400;i++){
+          const x=-3+ i/1400*7;
+          const r=x*x*x+a*x+b;
+          if(r>=0)pts.push([x,Math.sqrt(r)]);
+        }
+        // split into components
+        let comps=[[]];
+        for(let i=0;i<pts.length;i++){
+          if(i>0 && pts[i][0]-pts[i-1][0]>0.02)comps.push([]);
+          comps[comps.length-1].push(pts[i]);
+        }
+        comps.forEach(cp=>{
+          if(cp.length<2)return;
+          ctx.beginPath();
+          cp.forEach(([x,y],i)=>{const X=cx+x*S,Y=cy-y*S;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+          for(let i=cp.length-1;i>=0;i--){const[x,y]=cp[i];ctx.lineTo(cx+x*S,cy+y*S);}
+          glow(ctx,()=>ctx.stroke(),C.acc,12);
+        });
+      }else{
+        ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);glow(ctx,()=>ctx.stroke(),C.acc,12);
+      }
+      txt(ctx,eq.tex+'  über ℝ',20,28,{c:C.acc,f:'15px JetBrains Mono, monospace'});
+      txt(ctx,'kontinuierliche Kurve — überabzählbar viele Punkte',20,50,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+      out.innerHTML=`Über <b>ℝ</b>: eine glatte Kurve. „Punkt“ = Paar reeller Zahlen. So sah Geometrie <em>vor</em> Grothendieck aus. Aber: diese Beschreibung funktioniert <em>nur</em> über ℝ.`;
+    } else {
+      // Fp point set
+      const M=Math.min(w,h)-90, ox=(w-M)/2, oy=(h-M)/2, u=M/p;
+      ctx.strokeStyle='rgba(140,170,230,.10)';
+      for(let i=0;i<=p;i++){
+        ctx.beginPath();ctx.moveTo(ox+i*u,oy);ctx.lineTo(ox+i*u,oy+M);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(ox,oy+i*u);ctx.lineTo(ox+M,oy+i*u);ctx.stroke();
+      }
+      const mod=(a,m)=>((a%m)+m)%m;
+      let cnt=0;
+      for(let x=0;x<p;x++)for(let y=0;y<p;y++){
+        let ok=false;
+        if(eq.kind==='ell'){
+          const a=mod(eq.a,p), b=mod(eq.b,p);
+          ok = mod(y*y,p) === mod(x*x*x + a*x + b, p);
+        } else {
+          ok = mod(x*x+y*y,p) === mod(1,p);
+        }
+        if(ok){
+          cnt++;
+          const cxp=ox+(x+.5)*u, cyp=oy+M-(y+.5)*u;
+          ctx.fillStyle=C.acc3;
+          glow(ctx,()=>{ctx.beginPath();ctx.arc(cxp,cyp,Math.min(8,u*0.32),0,TAU);ctx.fill();},C.acc3,10);
+        }
+      }
+      txt(ctx,eq.tex+'  über 𝔽'+p,20,28,{c:C.acc3,f:'15px JetBrains Mono, monospace'});
+      txt(ctx,cnt+' Punkte — endlich, diskret',20,50,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+      out.innerHTML=`Über <b>𝔽<sub>${p}</sub></b>: nur <b>${cnt}</b> Punkte. Eine völlig andere „Gestalt“ — <em>dieselbe Gleichung</em>.<br>
+      Grothendieck: statt für jede Charakteristik eine eigene Theorie zu bauen, nimm den Ring <b>ℤ[x,y]/(…)</b> und bilde <b>Spec</b>. Dann sind ℝ-Kurve und alle 𝔽<sub>p</sub>-Punktmengen <em>Fasern eines einzigen Objekts</em>. Genau das nannte er die <em>Metamorphose der Varietät</em>.`;
+    }
+  }
+  ['vr-eq','vr-field'].forEach(id=>$('#'+id).addEventListener('change',draw));
+  $('#vr-p').addEventListener('input',draw); draw();
+})();
+
+/* ============================================================
+   §3  SPEC(Z)
+   ============================================================ */
+(function(){
+  const cv=$('#cSpecZ'); const ctx=hd(cv); const out=$('#sz-out');
+  const primes=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113];
+  function draw(){
+    const n=Math.round(sv('sz-n'));
+    $('#sz-sel').max=n;
+    const sel=Math.min(Math.round(sv('sz-sel')),n);
+    lab('sz-n',n);
+    lab('sz-lab', sel===0? 'generisch (0)' : '('+primes[sel-1]+')');
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), L=70,R=w-70, y=h*0.56;
+    // the "line"
+    const gg=ctx.createLinearGradient(L,0,R,0);
+    gg.addColorStop(0,'rgba(181,123,255,.65)');gg.addColorStop(1,'rgba(99,210,255,.25)');
+    ctx.strokeStyle=gg;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();
+    // generic point = whole line highlighted if selected
+    if(sel===0){
+      ctx.strokeStyle='rgba(255,209,102,.5)';ctx.lineWidth=16;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();ctx.lineCap='butt';
+    }
+    for(let i=0;i<n;i++){
+      const x=L+(i+.5)/n*(R-L), p=primes[i];
+      const on = (sel===i+1)||(sel===0);
+      ctx.fillStyle= (sel===i+1)?C.acc3:(sel===0?'rgba(255,209,102,.85)':C.acc);
+      const rad=(sel===i+1)?8:5;
+      glow(ctx,()=>{ctx.beginPath();ctx.arc(x,y,rad,0,TAU);ctx.fill();},ctx.fillStyle,on?16:6);
+      txt(ctx,'('+p+')',x,y+26,{c:on?C.acc3:C.dim,al:'center',f:'11px JetBrains Mono, monospace'});
+      if(sel===i+1){
+        txt(ctx,'𝔽'+p,x,y-20,{c:C.acc3,al:'center',f:'12px JetBrains Mono, monospace'});
+      }
+    }
+    // generic point marker
+    const gx=L-34;
+    ctx.fillStyle=sel===0?C.acc3:C.acc2;
+    glow(ctx,()=>{ctx.beginPath();ctx.arc(gx,y,sel===0?9:6,0,TAU);ctx.fill();},ctx.fillStyle,sel===0?18:8);
+    txt(ctx,'(0)',gx,y+26,{c:sel===0?C.acc3:C.acc2,al:'center',f:'11px JetBrains Mono, monospace'});
+    txt(ctx,'generischer Punkt',gx,y-22,{c:C.acc2,al:'center',f:'10px JetBrains Mono, monospace'});
+    txt(ctx,'Spec(ℤ)',L,30,{c:C.acc,f:'15px JetBrains Mono, monospace'});
+    txt(ctx,'… (unendlich viele Primzahlen)',R-6,y+50,{c:C.dim,al:'right',f:'10px JetBrains Mono, monospace'});
+
+    out.innerHTML = sel===0
+      ? `<b>Der generische Punkt (0).</b> Sein <em>topologischer Abschluss ist ganz Spec(ℤ)</em> — er „wohnt überall“. Es gibt in klassischer Geometrie nichts Vergleichbares. Ein Punkt, der kein Ort ist, sondern ein <em>Standpunkt</em>.<br>Restklassenkörper: ℚ.`
+      : `<b>Der abgeschlossene Punkt (${primes[sel-1]}).</b> Abschluss = nur er selbst. Restklassenkörper: 𝔽<sub>${primes[sel-1]}</sub>.<br>Über diesem Punkt liegt die ganze Geometrie in Charakteristik ${primes[sel-1]} — z.B. die Punktgitter aus dem vorigen Plot. <em>Spec(ℤ) ist die „Basis“, über der Arithmetik zur Geometrie wird.</em>`;
+  }
+  ['sz-n','sz-sel'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   §3  D(f)  distinguierte Offene
+   ============================================================ */
+(function(){
+  const cv=$('#cDf'); const ctx=hd(cv); const out=$('#df-out');
+  const FS=[
+    {n:'f = x',  z:[0],      d:'D(x) = 𝔸¹ ∖ {0}'},
+    {n:'f = x−1',z:[1],      d:'D(x−1) = 𝔸¹ ∖ {1}'},
+    {n:'f = x²−1',z:[-1,1],  d:'D(x²−1) = 𝔸¹ ∖ {±1}'},
+    {n:'f = 1',  z:[],       d:'D(1) = ganz 𝔸¹'},
+    {n:'f = 0',  z:'all',    d:'D(0) = ∅'}
+  ];
+  let cur=0;
+  const bw=$('#df-btns');
+  FS.forEach((f,i)=>{const b=document.createElement('button');b.textContent=f.n;
+    b.onclick=()=>{cur=i;$$('button',bw).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+    if(i===0)b.classList.add('on'); bw.appendChild(b);});
+  function draw(){
+    const f=FS[cur]; clear(ctx,cv);
+    const w=W(cv),h=H(cv),L=40,R=w-40,y=h*0.5, S=(R-L)/6;
+    const X=t=>(L+R)/2+t*S;
+    if(f.z!=='all'){
+      ctx.strokeStyle='rgba(110,243,165,.85)';ctx.lineWidth=10;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);glow(ctx,()=>ctx.stroke(),C.acc4,12);ctx.lineCap='butt';
+      // punch holes
+      f.z.forEach(z=>{
+        ctx.save();ctx.globalCompositeOperation='destination-out';
+        ctx.beginPath();ctx.arc(X(z),y,8,0,TAU);ctx.fill();ctx.restore();
+        ctx.strokeStyle=C.red;ctx.lineWidth=2;ctx.beginPath();ctx.arc(X(z),y,7,0,TAU);ctx.stroke();
+        txt(ctx,z,X(z),y+26,{c:C.red,al:'center',f:'11px JetBrains Mono, monospace'});
+      });
+    }else{
+      ctx.strokeStyle='rgba(255,122,138,.7)';ctx.lineWidth=10;ctx.lineCap='round';
+      ctx.setLineDash([2,10]);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();ctx.setLineDash([]);ctx.lineCap='butt';
+    }
+    ctx.strokeStyle='rgba(140,170,230,.25)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(L-14,y);ctx.lineTo(R+14,y);ctx.stroke();
+    txt(ctx,'Spec ℝ[x] = 𝔸¹',L-10,26,{c:C.acc,f:'12px JetBrains Mono, monospace'});
+    txt(ctx,f.d,L-10,h-14,{c:C.acc4,f:'12px JetBrains Mono, monospace'});
+    out.innerHTML = f.z==='all'
+      ? `<b>D(0) = ∅.</b> Die Nullfunktion verschwindet überall. Extremfall — aber die Formel bleibt gültig.`
+      : (f.z.length===0
+        ? `<b>D(1) = alles.</b> Die Einheit verschwindet nirgends. Der ganze Raum ist ein distinguiertes Offenes.`
+        : `<b>${f.d}</b> — der Ring der Funktionen darauf ist die <em>Lokalisierung</em> ℝ[x]<sub>${f.n.slice(4)}</sub>: man darf jetzt durch <em>f</em> teilen. <br>Genau so liefert Algebra die Topologie: <b>weniger Nullstellen ⇒ größeres Offenes ⇒ größerer Funktionenring</b>.`);
+  }
+  draw();
+})();
+
+/* ============================================================
+   §3  GLUING A^1 ∪ A^1 = P^1
+   ============================================================ */
+(function(){
+  const cv=$('#cGlue'); const ctx=hd(cv); const out=$('#gl-out');
+  function draw(){
+    const t=sv('gl-t'); lab('gl-t',t.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),cx=w/2,cy=h/2+18,R=Math.min(w,h)*0.30;
+    // two charts as straight lines morphing into two arcs of a circle
+    for(let s=0;s<2;s++){
+      const col=s?C.acc2:C.acc;
+      ctx.strokeStyle=col;ctx.lineWidth=3.2;ctx.beginPath();
+      for(let i=0;i<=160;i++){
+        const u=i/160; // 0..1 along chart
+        // line version
+        const lx = lerp(w*0.12,w*0.88,u), ly = cy + (s? 46 : -46);
+        // circle version: chart s covers angle range
+        const a0 = s? Math.PI*0.05 : Math.PI*1.05;
+        const a1 = s? Math.PI*1.15 : Math.PI*2.15;
+        const a = lerp(a0,a1,u);
+        const ccx = cx + R*Math.cos(a), ccy = cy + R*Math.sin(a);
+        const X=lerp(lx,ccx,t), Y=lerp(ly,ccy,t);
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      }
+      glow(ctx,()=>ctx.stroke(),col,10);
+    }
+    // overlap markers
+    ctx.fillStyle=C.acc3;
+    const marks=[[Math.PI*0.10],[Math.PI*1.10]];
+    if(t>0.4){
+      marks.forEach(([a])=>{ctx.beginPath();ctx.arc(cx+R*Math.cos(a),cy+R*Math.sin(a),5,0,TAU);ctx.fill();});
+    }
+    txt(ctx,'Karte U₀ ≅ Spec ℝ[x]',w*0.10,cy-46-lerp(16,0,t)-10,{c:C.acc,f:'11px JetBrains Mono, monospace'});
+    txt(ctx,'Karte U₁ ≅ Spec ℝ[y]',w*0.10,cy+46+26,{c:C.acc2,f:'11px JetBrains Mono, monospace'});
+    txt(ctx, t<0.5?'zwei affine Schemata':'ein Schema: ℙ¹', w/2, h-16,{c:C.acc3,al:'center',f:'13px JetBrains Mono, monospace'});
+    out.innerHTML = t<0.1
+      ? `Zwei getrennte <b>affine</b> Schemata Spec ℝ[x] und Spec ℝ[y].`
+      : (t<0.9
+        ? `Sie werden über den Überlappungen verklebt: <b>y = 1/x</b> auf D(x) ∩ D(y).`
+        : `<b>Fertig: ℙ¹.</b> Ein Schema, das <em>nicht</em> affin ist — es entstand rein durch <b>Lokalisierung + Verkleben</b>, exakt wie die Funktion in §1. Die Idee ist identisch, nur die Bausteine sind Ringe statt Zahlen.`);
+  }
+  $('#gl-t').addEventListener('input',draw); draw();
+})();
+
+/* ============================================================
+   §4  OFFENE MENGE → SIEB
+   ============================================================ */
+(function(){
+  const cv=$('#cSieve'); const ctx=hd(cv); const out=$('#sv-out');
+  function draw(){
+    const m=sv('sv-m'), k=Math.round(sv('sv-k'));
+    lab('sv-m',m.toFixed(2)); lab('sv-k',k);
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    // Left: X as a blob with open subsets
+    const bx=w*0.27, by=h*0.52, BR=Math.min(w,h)*0.30;
+    // target X node (right layout position when m=1)
+    const tx=w*0.72, ty=h*0.24;
+    ctx.globalAlpha=1;
+    // big X
+    const Xx=lerp(bx,tx,m), Xy=lerp(by,ty,m), XR=lerp(BR,26,m);
+    ctx.fillStyle='rgba(99,210,255,.08)';ctx.strokeStyle='rgba(99,210,255,.55)';ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.arc(Xx,Xy,XR,0,TAU);ctx.fill();ctx.stroke();
+    txt(ctx,'X',Xx,Xy+(m>0.5?4:-XR-10),{c:C.acc,al:'center',f:'14px JetBrains Mono, monospace'});
+
+    const cols=[C.acc2,C.acc3,C.acc4,C.red,'#7fb0ff','#ff9ad5'];
+    for(let i=0;i<k;i++){
+      const a=i/k*TAU;
+      // topological position: inside blob
+      const ox=bx+Math.cos(a)*BR*0.45, oy=by+Math.sin(a)*BR*0.45, orr=BR*0.46;
+      // categorical position: node below X
+      const nx=w*0.72 + (i-(k-1)/2)*98, ny=h*0.76, nr=22;
+      const px=lerp(ox,nx,m), py=lerp(oy,ny,m), pr=lerp(orr,nr,m);
+      ctx.fillStyle=cols[i%6]+'22';ctx.strokeStyle=cols[i%6];ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.arc(px,py,pr,0,TAU);ctx.fill();ctx.stroke();
+      txt(ctx,'U'+(i+1),px,py+4,{c:cols[i%6],al:'center',f:'11px JetBrains Mono, monospace'});
+      // arrow appears as m grows
+      if(m>0.15){
+        ctx.globalAlpha=(m-0.15)/0.85;
+        const ang=Math.atan2(Xy-py,Xx-px);
+        arrow(ctx,px+Math.cos(ang)*pr,py+Math.sin(ang)*pr,Xx-Math.cos(ang)*(XR+4),Xy-Math.sin(ang)*(XR+4),cols[i%6],1.5,7);
+        ctx.globalAlpha=1;
+      }
+    }
+    // labels
+    ctx.globalAlpha=1-m;
+    txt(ctx,'TOPOLOGIE:  Uᵢ ⊆ X   (Teilmengen)',30,34,{c:C.acc,f:'12px JetBrains Mono, monospace'});
+    txt(ctx,'Überdeckung: ⋃ Uᵢ = X',30,54,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+    ctx.globalAlpha=m;
+    txt(ctx,'KATEGORIE:  Uᵢ → X   (Morphismen)',30,34,{c:C.acc2,f:'12px JetBrains Mono, monospace'});
+    txt(ctx,'Sieb R = Menge dieser Pfeile, abgeschlossen unter Vorkomposition',30,54,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+    ctx.globalAlpha=1;
+
+    out.innerHTML = m<0.15
+      ? `<b>Klassisch.</b> Eine Überdeckung ist eine Familie <em>Teilmengen</em>. Problem: über 𝔽<sub>p</sub> gibt es davon viel zu wenige.`
+      : (m<0.85
+        ? `<b>Übergang.</b> Eine Teilmenge <em>U ⊆ X</em> ist dasselbe wie ein injektiver Pfeil <em>U → X</em>. Aber ein Pfeil muss <b>nicht</b> injektiv sein …`
+        : `<b>Kategorial.</b> Jetzt darf <em>jeder</em> Morphismus nach X als „Stück von X“ zählen — z.B. eine <b>Überlagerung</b> (nicht-injektiv!). Das ist ein <b>Sieb</b>. Damit hat man plötzlich <em>sehr viel mehr</em> Überdeckungen. Das ist die Geburt der Grothendieck-Topologie.`);
+  }
+  ['sv-m','sv-k'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   §4  SITUS-AXIOME
+   ============================================================ */
+(function(){
+  const cv=$('#cAx'); const ctx=hd(cv); const out=$('#ax-out');
+  let ax=1;
+  const AXT={
+    1:['① Rückzug (Basiswechsel)','Ist R ein Überdeckungssieb von X und f : Y → X <em>irgendein</em> Morphismus, so ist das zurückgezogene Sieb <b>R ×<sub>X</sub> Y</b> ein Überdeckungssieb von Y.<br><em>Anschaulich:</em> Schneidet man eine Überdeckung mit einem kleineren Stück, bleibt es eine Überdeckung.'],
+    2:['② Lokalität','Ist R überdeckend, und ist ein zweites Sieb R′ <em>lokal auf jedem Stück von R</em> überdeckend, dann ist R′ selbst überdeckend.<br><em>Anschaulich:</em> Überdeckung einer Überdeckung ist Überdeckung. Feiner geht immer.'],
+    3:['③ Maximalsieb','Das Sieb aller Morphismen nach X (insbesondere id<sub>X</sub>) überdeckt X.<br><em>Anschaulich:</em> X überdeckt sich selbst. Die Triviale ist erlaubt.']
+  };
+  function draw(){
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    const node=(x,y,r,l,c)=>{ctx.fillStyle=c+'1f';ctx.strokeStyle=c;ctx.lineWidth=1.7;
+      ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.stroke();
+      txt(ctx,l,x,y+4,{c:c,al:'center',f:'12px JetBrains Mono, monospace'});};
+    if(ax===1){
+      const X=[w*0.68,h*0.28], Y=[w*0.30,h*0.28];
+      node(...X,26,'X',C.acc); node(...Y,26,'Y',C.acc2);
+      arrow(ctx,Y[0]+28,Y[1],X[0]-30,X[1],C.acc2,1.8); txt(ctx,'f',(X[0]+Y[0])/2,Y[1]-12,{c:C.acc2,al:'center'});
+      for(let i=0;i<3;i++){
+        const ux=X[0]-70+i*70, uy=h*0.74;
+        node(ux,uy,22,'U'+(i+1),C.acc3);
+        arrow(ctx,ux,uy-24,X[0]+(ux-X[0])*0.25,X[1]+28,C.acc3,1.4);
+        const vx=Y[0]-70+i*70, vy=h*0.74;
+        node(vx,vy,22,'V'+(i+1),C.acc4);
+        arrow(ctx,vx,vy-24,Y[0]+(vx-Y[0])*0.25,Y[1]+28,C.acc4,1.4);
+        ctx.setLineDash([3,4]);arrow(ctx,vx+22,vy,ux-22,uy,'rgba(255,255,255,.28)',1.1,5);ctx.setLineDash([]);
+      }
+      txt(ctx,'Sieb R auf X',X[0]+70,h*0.74+40,{c:C.acc3,al:'center',f:'11px JetBrains Mono, monospace'});
+      txt(ctx,'R ×ₓ Y  auf Y',Y[0]-70,h*0.74+40,{c:C.acc4,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    if(ax===2){
+      const X=[w*0.5,h*0.20];
+      node(...X,26,'X',C.acc);
+      for(let i=0;i<3;i++){
+        const ux=w*0.5+(i-1)*150, uy=h*0.52;
+        node(ux,uy,22,'U'+(i+1),C.acc3);
+        arrow(ctx,ux,uy-24,X[0]+(ux-X[0])*0.2,X[1]+28,C.acc3,1.5);
+        for(let j=0;j<2;j++){
+          const vx=ux+(j-0.5)*64, vy=h*0.84;
+          node(vx,vy,17,'V',C.acc4);
+          arrow(ctx,vx,vy-19,ux+(vx-ux)*0.35,uy+24,C.acc4,1.2,5);
+        }
+      }
+      txt(ctx,'R überdeckt X  —  und jedes Uᵢ wird von R′ überdeckt  ⇒  R′ überdeckt X',w/2,h-12,{c:C.acc2,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    if(ax===3){
+      const X=[w*0.5,h*0.45];
+      node(...X,34,'X',C.acc);
+      ctx.strokeStyle=C.acc4;ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(X[0]+52,X[1],26,Math.PI*0.7,Math.PI*2.5);ctx.stroke();
+      arrow(ctx,X[0]+52+26*Math.cos(Math.PI*2.5),X[1]+26*Math.sin(Math.PI*2.5),X[0]+36,X[1]-8,C.acc4,2,7);
+      txt(ctx,'id_X',X[0]+98,X[1]+4,{c:C.acc4,f:'12px JetBrains Mono, monospace'});
+      for(let i=0;i<5;i++){
+        const a=Math.PI*0.6+i*0.28;
+        const px=X[0]-190, py=h*0.20+i*42;
+        node(px,py,15,'',C.acc3);
+        arrow(ctx,px+16,py,X[0]-38,X[1]+(py-X[1])*0.15,C.acc3,1.1,5);
+      }
+      txt(ctx,'Maximalsieb: alle Pfeile nach X — überdeckt X trivialerweise',w/2,h-12,{c:C.acc2,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    out.innerHTML='<b>'+AXT[ax][0]+'</b> — '+AXT[ax][1];
+  }
+  $$('#ax-btns button').forEach(b=>{
+    b.onclick=()=>{ax=+b.dataset.ax;$$('#ax-btns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+  });
+  $$('#ax-btns button')[0].classList.add('on');
+  draw();
+})();
+
+/* ============================================================
+   §5  ZARISKI vs ÉTALE
+   ============================================================ */
+(function(){
+  const cv=$('#cEtale'); const ctx=hd(cv); const out=$('#et-out');
+  function draw(){
+    const n=Math.round(sv('et-n')), t=sv('et-t'), mode=$('#et-mode').value;
+    lab('et-n',n); lab('et-t',t.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    const bx=w*0.26, by=h*0.68, BR=Math.min(w,h)*0.20;
+    const tx=w*0.72, ty=h*0.34, TR=Math.min(w,h)*0.22;
+    // base circle
+    ctx.strokeStyle=C.acc;ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(bx,by,BR,0,TAU);glow(ctx,()=>ctx.stroke(),C.acc,12);
+    txt(ctx,'Basis: 𝔾ₘ (Kreis)',bx,by+BR+26,{c:C.acc,al:'center',f:'12px JetBrains Mono, monospace'});
+
+    if(mode==='za'){
+      // Zariski: circle with punctures, cover = complements of finite sets
+      const k=n+1;
+      for(let i=0;i<k;i++){
+        const a=i/k*TAU;
+        ctx.fillStyle='#0b1020';ctx.beginPath();ctx.arc(bx+BR*Math.cos(a),by+BR*Math.sin(a),6,0,TAU);ctx.fill();
+        ctx.strokeStyle=C.red;ctx.lineWidth=2;ctx.beginPath();ctx.arc(bx+BR*Math.cos(a),by+BR*Math.sin(a),6,0,TAU);ctx.stroke();
+      }
+      // "cover" = same circle minus points
+      for(let s=0;s<3;s++){
+        const col=[C.acc2,C.acc3,C.acc4][s];
+        ctx.strokeStyle=col;ctx.lineWidth=2.4;
+        ctx.beginPath();ctx.arc(tx,ty,TR-s*0,s/3*TAU+0.12,(s+1)/3*TAU-0.12);ctx.stroke();
+      }
+      arrow(ctx,tx-TR-16,ty+40,bx+BR+18,by-30,'rgba(255,255,255,.4)',1.6);
+      txt(ctx,'Zariski-Überdeckung',tx,ty-TR-18,{c:C.dim,al:'center',f:'12px JetBrains Mono, monospace'});
+      txt(ctx,'nur „Kreis minus endlich viele Punkte“',tx,ty+TR+26,{c:C.dim,al:'center',f:'11px JetBrains Mono, monospace'});
+      out.innerHTML=`<b>Zariski reicht nicht.</b> Alle offenen Mengen sind „Kreis minus endlich viele Punkte“ — sie sind <em>riesig</em> und sehen alle gleich aus. Man kann damit die Windung nie auflösen ⇒ die Kohomologie ist trivial und nutzlos. <em>Genau dieses Problem</em> hatte Grothendieck über 𝔽<sub>p</sub>.`;
+    } else {
+      // étale: n-fold cover drawn as helix unwinding
+      ctx.lineWidth=2.6;
+      for(let s=0;s<n;s++){
+        const col=`hsl(${190+s*40},80%,62%)`;
+        ctx.strokeStyle=col;ctx.beginPath();
+        for(let i=0;i<=240;i++){
+          const u=i/240;
+          const a=u*TAU;
+          // wound state: same circle
+          const wx=tx+TR*Math.cos(a+s*TAU/n), wy=ty+TR*Math.sin(a+s*TAU/n);
+          // unwound helix
+          const hx=tx-TR*1.3 + u*TR*2.6, hy=ty - (n-1)*16/2 + s*16 + Math.sin(a)*10;
+          const X=lerp(wx,hx,t), Y=lerp(wy,hy,t);
+          i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+        }
+        glow(ctx,()=>ctx.stroke(),col,8);
+      }
+      // projection arrows
+      for(let i=0;i<8;i++){
+        const a=i/8*TAU;
+        const px=tx+TR*Math.cos(a), py=ty+TR*Math.sin(a);
+        const qx=bx+BR*Math.cos(a), qy=by+BR*Math.sin(a);
+        ctx.globalAlpha=.35;
+        arrow(ctx,px,py,qx,qy,'rgba(255,255,255,.5)',1,4);
+        ctx.globalAlpha=1;
+      }
+      txt(ctx,'étale: '+n+'-fache Überlagerung  z ↦ zⁿ',tx,ty-TR-24,{c:C.acc2,al:'center',f:'12px JetBrains Mono, monospace'});
+      txt(ctx,'π',(tx+bx)/2,(ty+by)/2,{c:'#fff',al:'center',f:'14px JetBrains Mono, monospace'});
+      out.innerHTML = n===1
+        ? `n = 1: triviale Überlagerung — nichts Neues.`
+        : `<b>Eine étale Überdeckung.</b> Der Morphismus <em>z ↦ z<sup>${n}</sup></em> ist <b>nicht injektiv</b> — also keine Teilmenge, aber trotzdem ein legitimes „Stück“ von 𝔾ₘ im Sinne eines <b>Siebs</b>.<br>
+        Damit sieht die Theorie die ${n} Blätter ⇒ sie sieht die <em>Fundamentalgruppe</em> ⇒ sie sieht Kohomologie.<br>
+        <em>Das ist der Grund, warum Grothendieck Topoi brauchte:</em> um Überdeckungen zuzulassen, die keine Teilmengen sind. Ergebnis: <b>étale Kohomologie</b> → Weil-Vermutungen.`;
+    }
+  }
+  ['et-n','et-t'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  $('#et-mode').addEventListener('change',draw); draw();
+})();
+
+/* ============================================================
+   §5  TOPOS-LANDKARTE
+   ============================================================ */
+(function(){
+  const cv=$('#cToposMap'); const ctx=hd(cv); const out=$('#tm-out');
+  const N=[
+    {x:.16,y:.26,r:40,l:'Sh(X)',c:C.acc,   t:'<b>Garben auf einem Raum X.</b> Situs = offene Mengen von X. „Punkt“ = echter Punkt von X. Der klassischste Topos — hier ist alles wie gewohnt.'},
+    {x:.42,y:.16,r:40,l:'Xét',  c:C.acc2,  t:'<b>Étaler Topos.</b> Situs = étale Morphismen nach X. Liefert ℓ-adische Kohomologie über beliebigen Körpern. <em>Das Werkzeug für die Weil-Vermutungen.</em>'},
+    {x:.70,y:.28,r:40,l:'BG',   c:C.acc3,  t:'<b>Klassifizierender Topos einer Gruppe G.</b> Objekte = G-Mengen. Hier gibt es <em>überhaupt keinen</em> vernünftigen Punktbegriff — und trotzdem ist es ein Raum.'},
+    {x:.88,y:.60,r:38,l:'Set',  c:C.acc4,  t:'<b>Die Kategorie der Mengen.</b> Der Topos des <em>einen Punkts</em>. Die Endstation jeder Vereinfachung.'},
+    {x:.62,y:.72,r:40,l:'Xcris',c:'#ff9ad5',t:'<b>Kristalliner Topos.</b> Für Charakteristik p. Auch er ist ein „Raum ohne Punkte“, rein aus einem Situs gebaut.'},
+    {x:.30,y:.68,r:44,l:'Sh(C,J)',c:'#7fb0ff',t:'<b>Der allgemeine Fall.</b> Ein beliebiger Situs (𝒞, J) erzeugt einen Topos. <em>Verschiedene Situs können denselben Topos liefern</em> — der Topos ist unabhängig von seiner Beschreibung.'}
+  ];
+  let hov=-1;
+  function draw(){
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    // connections
+    ctx.strokeStyle='rgba(140,170,230,.16)';ctx.lineWidth=1.3;
+    const E=[[5,0],[5,1],[5,2],[5,4],[0,1],[1,4],[2,3],[0,3]];
+    E.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(N[a].x*w,N[a].y*h);ctx.lineTo(N[b].x*w,N[b].y*h);ctx.stroke();});
+    N.forEach((n,i)=>{
+      const x=n.x*w,y=n.y*h,r=n.r*(hov===i?1.16:1);
+      ctx.fillStyle=n.c+(hov===i?'38':'1c');ctx.strokeStyle=n.c;ctx.lineWidth=hov===i?2.4:1.5;
+      glow(ctx,()=>{ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.stroke();},n.c,hov===i?20:6);
+      txt(ctx,n.l,x,y+4,{c:hov===i?'#fff':n.c,al:'center',f:'13px JetBrains Mono, monospace'});
+    });
+    txt(ctx,'Alle sind „Räume“. Nur einer hat klassische Punkte.',18,h-16,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+  }
+  cv.addEventListener('mousemove',e=>{
+    const rct=cv.getBoundingClientRect();
+    const mx=(e.clientX-rct.left), my=(e.clientY-rct.top);
+    let f=-1;
+    N.forEach((n,i)=>{ if(Math.hypot(mx-n.x*W(cv),my-n.y*H(cv))<n.r+6) f=i; });
+    if(f!==hov){hov=f;draw();out.innerHTML=f<0?'Bewege die Maus über einen Knoten.':N[f].t;}
+  });
+  cv.addEventListener('mouseleave',()=>{hov=-1;draw();});
+  draw();
+})();
+
+/* ============================================================
+   §6  WILDE RÄUME
+   ============================================================ */
+(function(){
+  const cv=$('#cWild'); const ctx=hd(cv); const out=$('#wd-out');
+  let mode='topo';
+  const TXT={
+    topo:['Topologensinus  sin(1/x)','Zusammenhängend, aber <b>nicht wegzusammenhängend</b>. Unendlich viele Oszillationen auf endlichem Intervall. Zoom hinein: es hört nie auf. <em>Für „Gestalt“ völlig wertlos.</em>'],
+    cantor:['Cantor-Menge','Überabzählbar viele Punkte, <b>Maß null</b>, total unzusammenhängend, keine isolierten Punkte. Ein legitimer topologischer Raum, aber keine Form.'],
+    koch:['Koch-Kurve','<b>Unendliche Länge</b> auf endlichem Gebiet, nirgends differenzierbar. Dimension log4/log3 ≈ 1,26.'],
+    hawaii:['Hawaiische Ohrringe','Unendlich viele Kreise mit gemeinsamem Punkt. Die Fundamentalgruppe ist <b>überabzählbar</b> und monströs.'],
+    tame:['Zahmer Raum: Polygon','<b>Endlich</b> viele Ecken, endlich viele Zusammenhangskomponenten, endliche Stratifizierung. Zoom ändert nichts Wesentliches. <em>Genau das will Grothendieck.</em>']
+  };
+  function draw(){
+    const d=Math.round(sv('wd-d')), z=sv('wd-z');
+    lab('wd-d',d); lab('wd-z',z.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv);
+    ctx.save();
+    if(mode==='topo'){
+      const L=60,R=w-60,cy=h/2;
+      ctx.strokeStyle='rgba(140,170,230,.18)';ctx.beginPath();ctx.moveTo(L,cy);ctx.lineTo(R,cy);ctx.stroke();
+      ctx.strokeStyle=C.acc2;ctx.lineWidth=1.6;ctx.beginPath();
+      const span=1/z;
+      for(let i=1;i<=6000;i++){
+        const x=i/6000*span;
+        const y=Math.sin(1/x);
+        const X=L+(x/span)*(R-L), Y=cy-y*(h*0.35);
+        i===1?ctx.moveTo(X,Y):ctx.lineTo(X,Y);
+      }
+      glow(ctx,()=>ctx.stroke(),C.acc2,8);
+      ctx.fillStyle=C.red;ctx.beginPath();ctx.arc(L,cy,5,0,TAU);ctx.fill();
+      txt(ctx,'x = 0  (unerreichbar per Weg)',L+8,cy+26,{c:C.red,f:'11px JetBrains Mono, monospace'});
+    }
+    if(mode==='cantor'){
+      const L=60,R=w-60;
+      let segs=[[0,1]];
+      for(let k=0;k<Math.min(d,8);k++){
+        const nx=[];
+        segs.forEach(([a,b])=>{const t=(b-a)/3;nx.push([a,a+t]);nx.push([b-t,b]);});
+        segs=nx;
+        const y=60+k*38;
+        ctx.lineWidth=10;
+        segs.forEach(([a,b],i)=>{
+          ctx.strokeStyle=`hsl(${190+k*18},80%,62%)`;
+          ctx.beginPath();ctx.moveTo(L+a*(R-L),y);ctx.lineTo(L+b*(R-L),y);ctx.stroke();
+        });
+        txt(ctx,'C'+(k+1)+'  ('+segs.length+' Intervalle)',L-46,y+4,{c:C.dim,al:'right',f:'10px JetBrains Mono, monospace'});
+      }
+    }
+    if(mode==='koch'){
+      const L=80,R=w-80,cy=h*0.72;
+      let pts=[[L,cy],[R,cy]];
+      for(let k=0;k<Math.min(d,6);k++){
+        const nx=[];
+        for(let i=0;i<pts.length-1;i++){
+          const [x1,y1]=pts[i],[x2,y2]=pts[i+1];
+          const dx=(x2-x1)/3, dy=(y2-y1)/3;
+          const ax=x1+dx, ay=y1+dy, bx=x1+2*dx, by=y1+2*dy;
+          const mx=(ax+bx)/2-(by-ay)*Math.sqrt(3)/2, my=(ay+by)/2+(bx-ax)*Math.sqrt(3)/2;
+          nx.push([x1,y1],[ax,ay],[mx,my],[bx,by]);
+        }
+        nx.push(pts[pts.length-1]); pts=nx;
+      }
+      ctx.strokeStyle=C.acc3;ctx.lineWidth=1.6;ctx.beginPath();
+      pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+      glow(ctx,()=>ctx.stroke(),C.acc3,8);
+      let len=0;for(let i=0;i<pts.length-1;i++)len+=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);
+      txt(ctx,'Länge ≈ '+Math.round(len)+' px  (Ausgangslinie: '+(R-L)+' px)',80,h-22,{c:C.acc3,f:'11px JetBrains Mono, monospace'});
+    }
+    if(mode==='hawaii'){
+      const cx=w/2,cy=h/2,BIG=Math.min(w,h)*0.38;
+      for(let k=1;k<=Math.min(d*4,40);k++){
+        const r=BIG/k;
+        ctx.strokeStyle=`hsla(${280-k*4},75%,${68-k*0.8}%,.9)`;ctx.lineWidth=1.4;
+        ctx.beginPath();ctx.arc(cx-BIG+r,cy,r,0,TAU);ctx.stroke();
+      }
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx-BIG,cy,4,0,TAU);ctx.fill();
+      txt(ctx,'gemeinsamer Punkt',cx-BIG,cy+24,{c:'#fff',al:'center',f:'10px JetBrains Mono, monospace'});
+    }
+    if(mode==='tame'){
+      const cx=w/2,cy=h/2,R=Math.min(w,h)*0.33;
+      const k=Math.max(3,d+2);
+      ctx.strokeStyle=C.acc4;ctx.lineWidth=3;ctx.fillStyle='rgba(110,243,165,.09)';
+      ctx.beginPath();
+      for(let i=0;i<=k;i++){const a=i/k*TAU-Math.PI/2;
+        const x=cx+R*Math.cos(a)*(i%2?0.62:1), y=cy+R*Math.sin(a)*(i%2?0.62:1);
+        i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.closePath();ctx.fill();glow(ctx,()=>ctx.stroke(),C.acc4,12);
+      for(let i=0;i<k;i++){const a=i/k*TAU-Math.PI/2;
+        const x=cx+R*Math.cos(a)*(i%2?0.62:1), y=cy+R*Math.sin(a)*(i%2?0.62:1);
+        ctx.fillStyle=C.acc3;ctx.beginPath();ctx.arc(x,y,4,0,TAU);ctx.fill();}
+      txt(ctx,k+' Ecken, '+k+' Kanten, 1 Fläche — endliche Stratifizierung',cx,h-22,{c:C.acc4,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    ctx.restore();
+    txt(ctx,TXT[mode][0],22,30,{c:mode==='tame'?C.acc4:C.red,f:'14px JetBrains Mono, monospace'});
+    out.innerHTML=TXT[mode][1] + (mode==='tame'
+      ? '<br><em>Grothendieck:</em> „Die allgemeine Topologie wurde von Analytikern für die Analysis entwickelt — nicht für das Studium topologischer Eigenschaften geometrischer Gestalten.“'
+      : '<br><span style="color:var(--acc3)">→ In der zahmen Topologie ist so etwas per Definition ausgeschlossen.</span>');
+  }
+  $$('#wild-btns button').forEach(b=>{
+    b.onclick=()=>{mode=b.dataset.w;$$('#wild-btns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+  });
+  ['wd-d','wd-z'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ============================================================
+   §6  SEMIANALYTISCHE MENGEN
+   ============================================================ */
+(function(){
+  const cv=$('#cSemi'); const ctx=hd(cv); const out=$('#sa-out');
+  let op='and';
+  function draw(){
+    const a=sv('sa-a'), b=sv('sa-b'), r=sv('sa-r');
+    lab('sa-a',a.toFixed(2)); lab('sa-b',b.toFixed(2)); lab('sa-r',r.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), cx=w/2, cy=h/2, S=Math.min(w,h)/3.1;
+    const img=ctx.createImageData(w,h);
+    const D=img.data;
+    const f=(x,y)=> a*Math.sin(2.4*x)+b*y - x*x*0.9 + 0.35;   // real-analytic
+    const g=(x,y)=> r*r - (x*x+y*y);                          // disc
+    for(let py=0;py<h;py++)for(let px=0;px<w;px++){
+      const x=(px-cx)/S, y=(cy-py)/S;
+      const F=f(x,y)>0, G=g(x,y)>0;
+      let inside=false;
+      if(op==='and')inside = F&&G;
+      if(op==='or') inside = F||G;
+      if(op==='not')inside = F&&!G;
+      if(op==='f')  inside = F;
+      const i=(py*w+px)*4;
+      if(inside){ D[i]=99;D[i+1]=210;D[i+2]=255;D[i+3]=58; }
+      else { D[i]=0;D[i+1]=0;D[i+2]=0;D[i+3]=0; }
+    }
+    ctx.putImageData(img,0,0);
+    // boundaries
+    function contour(fn,col){
+      ctx.strokeStyle=col;ctx.lineWidth=2;
+      const N=300;
+      for(let py=0;py<h;py+=2)for(let px=0;px<w;px+=2){
+        const x=(px-cx)/S,y=(cy-py)/S;
+        const v0=fn(x,y), v1=fn(x+2/S,y), v2=fn(x,y-2/S);
+        if(v0*v1<0||v0*v2<0){ctx.fillStyle=col;ctx.fillRect(px,py,2,2);}
+      }
+    }
+    contour(f,C.acc3); contour(g,C.acc2);
+    // axes
+    ctx.strokeStyle='rgba(140,170,230,.18)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    txt(ctx,'f(x,y) = a·sin(2.4x) + b·y − 0.9x² + 0.35   > 0',20,28,{c:C.acc3,f:'12px JetBrains Mono, monospace'});
+    txt(ctx,'g(x,y) = r² − x² − y²   > 0',20,48,{c:C.acc2,f:'12px JetBrains Mono, monospace'});
+    const opn={and:'{f>0} ∩ {g>0}',or:'{f>0} ∪ {g>0}',not:'{f>0} ∖ {g>0}',f:'{f>0}'}[op];
+    txt(ctx,'Ergebnis: '+opn,20,h-20,{c:C.acc4,f:'14px JetBrains Mono, monospace'});
+    out.innerHTML=`<b>Semianalytische Menge.</b> Entstanden aus <em>{f&gt;0}</em> und <em>{g&gt;0}</em> durch <b>endlich viele</b> Operationen (∩, ∪, Komplement) — genau die Familie <em>S(𝒪(U))</em> aus Hironakas Definition, die Grothendieck als <b>lokales Modell</b> für „zahme Räume“ nahm.<br>
+    <em>Entscheidend:</em> Egal wie du die Regler stellst — das Resultat hat immer <b>endlich viele Zusammenhangskomponenten</b> und eine <b>endliche Stratifizierung</b>. Ein Topologensinus oder eine Cantor-Menge kann hier prinzipiell nicht entstehen.`;
+  }
+  $$('#sa-ops button').forEach(b=>{
+    b.onclick=()=>{op=b.dataset.op;$$('#sa-ops button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+  });
+  ['sa-a','sa-b','sa-r'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ============================================================
+   §6  DÉVISSAGE / STRATIFIZIERUNG
+   ============================================================ */
+(function(){
+  const cv=$('#cStrat'); const ctx=hd(cv); const out=$('#sf-out');
+  function draw(){
+    const dmax=Math.round(sv('sf-d')), e=sv('sf-e'), obj=$('#sf-obj').value;
+    lab('sf-d',dmax); lab('sf-e',e.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),cx=w/2,cy=h/2+14,S=Math.min(w,h)*0.30;
+    const off=(d)=>({x:(d-1)*e*190, y:(d===0? -e*70 : d===2? e*50 : 0)});
+
+    let strata={0:[],1:[],2:[]};
+    if(obj==='wedge'){
+      // Whitney umbrella-ish wedge: 2D face + 1D edges + 0D vertex
+      strata[2]=[[[-1,-.6],[1,-.6],[.4,.5],[-.5,.5]]];
+      strata[1]=[[[-1,-.6],[1,-.6]],[[1,-.6],[.4,.5]],[[.4,.5],[-.5,.5]],[[-.5,.5],[-1,-.6]],[[-1,-.6],[.4,.5]]];
+      strata[0]=[[-1,-.6],[1,-.6],[.4,.5],[-.5,.5]];
+    }
+    if(obj==='cube'){
+      const p=[[-.7,-.7],[.7,-.7],[.7,.7],[-.7,.7]], q=[[-.3,-.3],[1.1,-.3],[1.1,1.1],[-.3,1.1]];
+      strata[2]=[p,q];
+      strata[1]=[];
+      for(let i=0;i<4;i++){strata[1].push([p[i],p[(i+1)%4]]);strata[1].push([q[i],q[(i+1)%4]]);strata[1].push([p[i],q[i]]);}
+      strata[0]=[...p,...q];
+    }
+    if(obj==='cone'){
+      const N=14, base=[];
+      for(let i=0;i<N;i++){const a=i/N*TAU;base.push([Math.cos(a)*0.9,0.55+Math.sin(a)*0.22]);}
+      strata[2]=[base];
+      strata[1]=base.map((p,i)=>[p,base[(i+1)%N]]);
+      base.forEach(p=>strata[1].push([p,[0,-0.8]]));
+      strata[0]=[[0,-0.8]];
+    }
+    const P=(p,d)=>{const o=off(d);return [cx+p[0]*S+o.x, cy+p[1]*S+o.y];};
+    // 2-strata
+    if(dmax>=2){
+      strata[2].forEach((poly,k)=>{
+        ctx.fillStyle=k?'rgba(181,123,255,.18)':'rgba(99,210,255,.18)';
+        ctx.strokeStyle=k?'rgba(181,123,255,.5)':'rgba(99,210,255,.5)';
+        ctx.lineWidth=1;ctx.beginPath();
+        poly.forEach((p,i)=>{const[x,y]=P(p,2);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+        ctx.closePath();ctx.fill();ctx.stroke();
+      });
+    }
+    if(dmax>=1){
+      ctx.strokeStyle=C.acc3;ctx.lineWidth=2.2;
+      strata[1].forEach(([a,b])=>{const A=P(a,1),B=P(b,1);
+        ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();});
+    }
+    if(dmax>=0){
+      strata[0].forEach(p=>{const[x,y]=P(p,0);
+        ctx.fillStyle=C.acc4;glow(ctx,()=>{ctx.beginPath();ctx.arc(x,y,5,0,TAU);ctx.fill();},C.acc4,10);});
+    }
+    // legend
+    const lg=[['X₀ — Punkte (0-dim)',C.acc4],['X₁ ∖ X₀ — Kanten (1-dim)',C.acc3],['X₂ ∖ X₁ — Flächen (2-dim)',C.acc]];
+    lg.forEach((l,i)=>{
+      if(i>dmax)return;
+      ctx.fillStyle=l[1];ctx.beginPath();ctx.arc(28,30+i*22,5,0,TAU);ctx.fill();
+      txt(ctx,l[0],42,34+i*22,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+    });
+    txt(ctx,'X₀ ⊂ X₁ ⊂ X₂   —   jede Differenz ist eine Mannigfaltigkeit',w/2,h-16,{c:C.acc2,al:'center',f:'12px JetBrains Mono, monospace'});
+    out.innerHTML = e>0.3
+      ? `<b>Dévissage („Aufschrauben“).</b> Der Raum wird <em>kanonisch</em> in seine Bausteine zerlegt: ${strata[0].length} Punkte, ${strata[1].length} Kanten, ${strata[2].length} Flächen.<br>
+        <em>Grothendiecks Ausgangsproblem</em> (Esquisse): „eine Theorie des <b>dévissage</b> für stratifizierte Strukturen, um sie durch einen kanonischen Prozess aus Bausteinen wieder aufzubauen, die kanonisch aus der ursprünglichen Struktur gewonnen werden.“`
+      : `Ein <b>stratifizierter Raum</b>: die Filtrierung X₀ ⊂ X₁ ⊂ X₂. Zieh „Explosion“ auf, um die Bausteine zu trennen. Genau diese Zerlegung ist in der klassischen allgemeinen Topologie <em>nicht</em> verfügbar — sie braucht Zahmheit.`;
+  }
+  ['sf-d','sf-e'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  $('#sf-obj').addEventListener('change',draw); draw();
+})();
+
+/* ============================================================
+   §11  ZEITACHSE
+   ============================================================ */
+const TL=[
+  {y:1955,t:'Kansas: die Wende',m:'Grothendieck verlässt die Analysis (nukleare Räume) und geht zur algebraischen Geometrie über. Tôhoku, Riemann-Roch.',i:'Die Suche nach dem Raumbegriff beginnt explizit.',c:C.acc},
+  {y:1958,t:'ICM: das Programm',m:'Beim ICM kündigt er seine Generalisierung der algebraischen Geometrie an.',i:'Problem: jede Charakteristik ⇒ eigene Varietätentheorie.',c:C.acc},
+  {y:1960,t:'Schemata (EGA)',m:'Jeder kommutative Ring A wird ein Raum: Spec(A) mit Strukturgarbe Ã. Allgemeine Schemata durch Verkleben.',i:'Lösung: „Metamorphose der algebraischen Varietät“. Punkte sind irrelevant — Lokalisierung ist alles.',c:C.acc},
+  {y:1963,t:'Topoi & étale Kohomologie (SGA)',m:'Situs = Kategorie + Grothendieck-Topologie (Siebe). Topos = Kategorie aller Garben darauf.',i:'„Metamorphose des topologischen Raums.“ Räume ohne Punkte. Werkzeug für die Weil-Vermutungen.',c:C.acc2},
+  {y:1966,t:'Fields-Medaille',m:'Für die Neugründung der algebraischen Geometrie.',i:'Höhepunkt der „technischen“ Phase.',c:C.acc2},
+  {y:1970,t:'Bruch mit dem IHES',m:'Rücktritt aus ethischen Gründen (Militärfinanzierung). Survivre et Vivre.',i:'Er verlässt das Establishment — nicht die Mathematik.',c:C.dim},
+  {y:1984,t:'Esquisse d’un programme',m:'Zahme Topologie, Dessins d’enfants, anabelsche Geometrie, Teichmüller-Turm.',i:'Neue Motivation: nicht mehr Kohomologie, sondern <b>Gestalt</b>. Kritik an der allgemeinen Topologie als „von Analytikern für die Analysis“ gemacht.',c:C.acc3},
+  {y:1986,t:'Geometrie der Formen',m:'Briefe an Yamashita, Tsuji, Brown. Manuskript „Vers une géométrie des formes“. Topologie ausgehend von <b>Figuren</b> statt Punkten.',i:'Ziel: auch <b>endliche</b> Räume erfassen. Das Kontinuum als „bequeme Fiktion“ — Approximation des Diskreten, nicht umgekehrt.',c:C.acc4},
+  {y:1991,t:'Lasserre / Brief an A.Y.',m:'Vor dem Rückzug: Skizze einer „unscharfen“ Differentialrechnung auf sehr großen endlichen Mengen, alles nur „bis auf ε“ definiert.',i:'Schlussfolgerung: Das Raumproblem ist ein Problem der <b>Naturphilosophie</b> — die technische Frage ergibt erst nach der begrifflichen Sinn.',c:'#ff9ad5'}
+];
+(function(){
+  const cv=$('#cTimeline'); const ctx=hd(cv); const out=$('#tl-out');
+  function nearest(y){ let best=0,bd=1e9; TL.forEach((e,i)=>{const d=Math.abs(e.y-y);if(d<bd){bd=d;best=i;}}); return best; }
+  function draw(){
+    const y=Math.round(sv('tl-y')); lab('tl-y',y);
+    const k=nearest(y);
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), L=70,R=w-70, ay=h*0.30;
+    ctx.strokeStyle='rgba(140,170,230,.25)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(L,ay);ctx.lineTo(R,ay);ctx.stroke();
+    const X=yy=>L+(yy-1955)/(1991-1955)*(R-L);
+    // phase bands
+    const bands=[[1955,1970,'Algebraische Geometrie',C.acc],[1970,1984,'Rückzug & Reifung',C.dim],[1984,1991,'Formen & Naturphilosophie',C.acc4]];
+    bands.forEach(([a,b,l,c])=>{
+      ctx.fillStyle=c+'12';ctx.fillRect(X(a),ay-46,X(b)-X(a),24);
+      txt(ctx,l,(X(a)+X(b))/2,ay-30,{c:c,al:'center',f:'10px JetBrains Mono, monospace'});
+    });
+    TL.forEach((e,i)=>{
+      const x=X(e.y), on=(i===k);
+      ctx.strokeStyle=on?e.c:'rgba(140,170,230,.3)';ctx.lineWidth=on?2:1;
+      ctx.beginPath();ctx.moveTo(x,ay-10);ctx.lineTo(x,ay+10);ctx.stroke();
+      ctx.fillStyle=on?e.c:'rgba(140,170,230,.5)';
+      glow(ctx,()=>{ctx.beginPath();ctx.arc(x,ay,on?9:4.5,0,TAU);ctx.fill();},e.c,on?18:0);
+      txt(ctx,e.y,x,ay+30,{c:on?e.c:C.dim,al:'center',f:(on?'12px':'10px')+' JetBrains Mono, monospace'});
+    });
+    // marker
+    const mx=X(y);
+    ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([3,4]);ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(mx,ay-52);ctx.lineTo(mx,h-150);ctx.stroke();ctx.setLineDash([]);
+    // card
+    const e=TL[k];
+    const bx=90,by=h*0.48,bw=w-180,bh=h*0.40;
+    ctx.fillStyle=e.c+'12';rr(ctx,bx,by,bw,bh,16);ctx.fill();
+    ctx.strokeStyle=e.c+'66';ctx.lineWidth=1.4;rr(ctx,bx,by,bw,bh,16);ctx.stroke();
+    txt(ctx,e.y+'  ·  '+e.t,bx+24,by+34,{c:e.c,f:'17px JetBrains Mono, monospace'});
+    // wrap text
+    function wrap(s,x,yy,maxw,lh,col,font){
+      ctx.font=font;ctx.fillStyle=col;ctx.textAlign='left';
+      const words=s.replace(/<[^>]+>/g,'').split(' ');let line='';let cy2=yy;
+      words.forEach(wd=>{
+        const test=line+wd+' ';
+        if(ctx.measureText(test).width>maxw){ctx.fillText(line,x,cy2);line=wd+' ';cy2+=lh;}
+        else line=test;
+      });
+      ctx.fillText(line,x,cy2); return cy2+lh;
+    }
+    let yy=wrap(e.m,bx+24,by+62,bw-48,19,'#d3dcf2','13px Inter, sans-serif');
+    wrap('→ '+e.i,bx+24,yy+8,bw-48,19,C.acc3,'13px Inter, sans-serif');
+    out.innerHTML=`<b>${e.y} — ${e.t}</b><br>${e.m}<br><em>${e.i}</em>`;
+  }
+  $('#tl-y').addEventListener('input',draw);
+  const jr=$('#tl-jump');
+  TL.forEach(e=>{const b=document.createElement('button');b.textContent=e.y;
+    b.onclick=()=>{$('#tl-y').value=e.y;draw();};jr.appendChild(b);});
+  draw();
+})();
+
+/* ============================================================
+   §11  DIE INVARIANTE
+   ============================================================ */
+(function(){
+  const cv=$('#cInvariant'); const ctx=hd(cv); const out=$('#iv-out');
+  const COL=[
+    {l:'Garbe auf X',s:'offene Menge U ⊆ X',p:'Punkt von X',c:C.acc,
+     t:'<b>Klassisch.</b> Lokalisierung = Einschränkung auf offene Teilmengen. Verkleben auf Durchschnitten. Alles wie in §1.'},
+    {l:'Schema',s:'D(f) = {f ≠ 0}',p:'Primideal 𝔭',c:C.acc2,
+     t:'<b>Schema.</b> Lokalisierung = Übergang zum Ring A<sub>f</sub> (man darf durch f teilen). Der Halm ist der lokale Ring A<sub>𝔭</sub>. Verkleben affiner Stücke ergibt allgemeine Schemata.'},
+    {l:'Topos',s:'Sieb R ∈ J(X)',p:'— entbehrlich —',c:C.acc3,
+     t:'<b>Topos.</b> Lokalisierung = Überdeckungssiebe eines Situs. Die „Stücke“ müssen keine Teilmengen sein (z.B. étale Überlagerungen). Die Garbenbedingung bleibt <em>wörtlich dieselbe</em>.'},
+    {l:'Zahmer Raum',s:'semianalytisches lokales Modell',p:'Stratum-Zelle',c:C.acc4,
+     t:'<b>Zahmer Raum.</b> Lokalisierung = lokale Modelle aus endlich vielen Ungleichungen {f>0}. Das Lokale ist jetzt <em>endlich beschreibbar</em> — genau das verbietet die Monster.'},
+    {l:'Geometrie der Formen',s:'Netz / Zerlegung',p:'Figur (kein Punkt)',c:'#ff9ad5',
+     t:'<b>Geometrie der Formen.</b> Lokalisierung = Zerlegung einer Figur in Teilfiguren. Kein Punkt, kein Limes, kein Umgebungsbegriff. Soll auch für <em>endliche</em> Räume funktionieren.'}
+  ];
+  let sel=-1;
+  function draw(){
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv), n=COL.length, pad=30, cw=(w-pad*2)/n;
+    txt(ctx,'Dieselbe Struktur — fünfmal realisiert',pad,26,{c:C.dim,f:'12px JetBrains Mono, monospace'});
+    // shared band
+    ctx.fillStyle='rgba(255,209,102,.08)';rr(ctx,pad,h*0.14,w-pad*2,44,12);ctx.fill();
+    ctx.strokeStyle='rgba(255,209,102,.4)';ctx.setLineDash([4,4]);rr(ctx,pad,h*0.14,w-pad*2,44,12);ctx.stroke();ctx.setLineDash([]);
+    txt(ctx,'LOKALISIERUNG:  lokal definieren  →  auf Überschneidungen vergleichen  →  global verkleben',
+      w/2,h*0.14+28,{c:C.acc3,al:'center',f:'12px JetBrains Mono, monospace'});
+    COL.forEach((c,i)=>{
+      const x=pad+i*cw, y=h*0.28, bw=cw-14, bh=h*0.58;
+      const on=(sel===i);
+      ctx.fillStyle=c.c+(on?'2e':'12');
+      rr(ctx,x+7,y,bw,bh,14);ctx.fill();
+      ctx.strokeStyle=c.c+(on?'':'55');ctx.lineWidth=on?2.2:1.2;
+      rr(ctx,x+7,y,bw,bh,14);ctx.stroke();
+      // connector to band
+      ctx.strokeStyle=c.c+'44';ctx.setLineDash([3,3]);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x+7+bw/2,h*0.14+44);ctx.lineTo(x+7+bw/2,y);ctx.stroke();ctx.setLineDash([]);
+      // title (wrap 2 lines max)
+      const words=c.l.split(' ');
+      let l1=words[0], l2=words.slice(1).join(' ');
+      txt(ctx,l1,x+7+bw/2,y+30,{c:on?'#fff':c.c,al:'center',f:'12px JetBrains Mono, monospace'});
+      if(l2)txt(ctx,l2,x+7+bw/2,y+47,{c:on?'#fff':c.c,al:'center',f:'12px JetBrains Mono, monospace'});
+      // rows
+      const rows=[['„lokales Stück“',c.s],['„Punkt“',c.p]];
+      let ry=y+80;
+      rows.forEach(([k,v])=>{
+        txt(ctx,k,x+7+bw/2,ry,{c:C.dim,al:'center',f:'9.5px JetBrains Mono, monospace'});
+        // wrap value
+        ctx.font='10.5px JetBrains Mono, monospace';
+        const ws=v.split(' ');let line='',yy=ry+16;
+        ws.forEach(wd=>{
+          const t2=line+wd+' ';
+          if(ctx.measureText(t2).width>bw-16){txt(ctx,line,x+7+bw/2,yy,{c:C.txt,al:'center',f:'10.5px JetBrains Mono, monospace'});line=wd+' ';yy+=14;}
+          else line=t2;
+        });
+        txt(ctx,line,x+7+bw/2,yy,{c:C.txt,al:'center',f:'10.5px JetBrains Mono, monospace'});
+        ry=yy+30;
+      });
+      // "glue" icon
+      ctx.strokeStyle=c.c+'88';ctx.lineWidth=1.6;
+      const gy=y+bh-34;
+      ctx.beginPath();ctx.arc(x+7+bw/2-16,gy,8,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.arc(x+7+bw/2+16,gy,8,0,TAU);ctx.stroke();
+      ctx.fillStyle=c.c+'44';
+      ctx.beginPath();ctx.arc(x+7+bw/2,gy,8,0,TAU);ctx.fill();
+      txt(ctx,'∩',x+7+bw/2,gy+4,{c:c.c,al:'center',f:'11px JetBrains Mono, monospace'});
+    });
+    txt(ctx,'→ klicke eine Säule',pad,h-12,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect(); const mx=e.clientX-r.left;
+    const pad=30,cw=(W(cv)-pad*2)/COL.length;
+    const i=clamp(Math.floor((mx-pad)/cw),0,COL.length-1);
+    sel=i;draw();out.innerHTML=COL[i].t;
+  });
+  draw();
+})();
+
+/* ============================================================
+   §11  TRIADE Zahl — Größe — Form
+   ============================================================ */
+(function(){
+  const cv=$('#cTriad'); const ctx=hd(cv); const out=$('#tr-out');
+  const V=[
+    {l:'ZAHL',s:'Arithmetik',c:C.acc,  t:'<b>Zahl → Arithmetik.</b> Grothendieck: eines der drei Reflexionsgebiete. Cruz Morales: die Zahl ist eine <em>arithmetische Form</em>. Diskret.'},
+    {l:'GRÖSSE',s:'Analysis',c:C.acc2, t:'<b>Größe → Analysis.</b> Das Kontinuierliche, das Messbare. Cruz Morales: eine <em>analytische Form</em>. Kontinuum.'},
+    {l:'FORM',s:'Geometrie',c:C.acc3,  t:'<b>Form → Geometrie.</b> Für Grothendieck die zentrale Kategorie der Geometrie. These des Essays: Zahl und Größe sind <em>Spezialfälle</em> von Form. Deshalb heißt das Programm „Geometrie der <b>Formen</b>“ — es soll alle drei umfassen.'}
+  ];
+  let sel=2;
+  function draw(){
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),cx=w/2,cy=h*0.52,R=Math.min(w,h)*0.32;
+    const P=i=>[cx+R*Math.cos(-Math.PI/2+i*TAU/3), cy+R*Math.sin(-Math.PI/2+i*TAU/3)];
+    // triangle
+    ctx.strokeStyle='rgba(140,170,230,.3)';ctx.lineWidth=1.4;
+    ctx.beginPath();for(let i=0;i<3;i++){const[x,y]=P(i);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.stroke();
+    // center: space-number
+    ctx.fillStyle='rgba(255,255,255,.06)';ctx.beginPath();ctx.arc(cx,cy,42,0,TAU);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.3)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(cx,cy,42,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    txt(ctx,'RAUM-',cx,cy-4,{c:'#fff',al:'center',f:'12px JetBrains Mono, monospace'});
+    txt(ctx,'ZAHL',cx,cy+12,{c:'#fff',al:'center',f:'12px JetBrains Mono, monospace'});
+    V.forEach((v,i)=>{
+      const[x,y]=P(i), on=(sel===i);
+      ctx.fillStyle=v.c+(on?'33':'16');ctx.strokeStyle=v.c;ctx.lineWidth=on?2.4:1.4;
+      glow(ctx,()=>{ctx.beginPath();ctx.arc(x,y,on?44:38,0,TAU);ctx.fill();ctx.stroke();},v.c,on?18:5);
+      txt(ctx,v.l,x,y-2,{c:on?'#fff':v.c,al:'center',f:'12px JetBrains Mono, monospace'});
+      txt(ctx,v.s,x,y+14,{c:C.dim,al:'center',f:'9.5px JetBrains Mono, monospace'});
+    });
+    txt(ctx,'Zalamea: „Raum-Zahl“ — analog zur Raumzeit',cx,h-16,{c:C.dim,al:'center',f:'10.5px JetBrains Mono, monospace'});
+    out.innerHTML=V[sel].t;
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;
+    const w=W(cv),h=H(cv),cx=w/2,cy=h*0.52,R=Math.min(w,h)*0.32;
+    for(let i=0;i<3;i++){
+      const x=cx+R*Math.cos(-Math.PI/2+i*TAU/3), y=cy+R*Math.sin(-Math.PI/2+i*TAU/3);
+      if(Math.hypot(mx-x,my-y)<46){sel=i;draw();return;}
+    }
+  });
+  draw();
+})();
+
+/* ============================================================
+   §12  SANDKASTEN
+   ============================================================ */
+(function(){
+  const cv=$('#cSandbox'); const ctx=hd(cv); const out=$('#sb-out');
+  const INFO={
+    circle:{
+      class:'Der Kreis als <b>reelle Varietät</b> {x²+y²=1} ⊂ ℝ². Überabzählbar viele Punkte. Klassische Topologie: π₁ = ℤ.',
+      scheme:'<b>Spec ℤ[x,y]/(x²+y²−1)</b>. Über jeder Primzahl p eine andere Faser — mal ein Kegelschnitt mit p+1 Punkten, mal entartet (p = 2). Plus ein generischer Punkt.',
+      topos:'<b>Étaler Topos.</b> Die n-fachen Überlagerungen z ↦ zⁿ sind Überdeckungssiebe. Daraus liest man π₁<sup>ét</sup> und die ℓ-adische Kohomologie ab — auch über 𝔽<sub>p</sub>, wo Zariski versagt.',
+      tame:'<b>Zahm.</b> Semianalytisch: {1−x²−y² = 0}. Endlich viele Strata: eine 1-dim Komponente, null 0-dim Strata. Keine Pathologie möglich.',
+      form:'<b>Als Figur.</b> Ein Netz aus N Bögen und N Ecken. Die „Form Kreis“ ist die kombinatorische Klasse dieses Netzes — <em>kein</em> Punktmenge nötig. Funktioniert auch für endliches N.'
+    },
+    line:{
+      class:'Die affine Gerade 𝔸¹ über ℝ: einfach ℝ. Langweilig, aber die Basis von allem.',
+      scheme:'<b>Spec ℝ[x]</b>: ein abgeschlossener Punkt pro irreduziblem Polynom (also pro reeller Zahl <em>und</em> pro Paar konjugiert-komplexer), <b>plus</b> der generische Punkt (0). Und Fettpunkte wie (x²) — nilpotente Struktur, in der klassischen Varietät unsichtbar.',
+      topos:'<b>Sh(𝔸¹).</b> Basis der Topologie: die D(f). Der Topos der Garben darüber kennt keine Punkte im naiven Sinn — er kennt nur Schnitte über Sieben.',
+      tame:'<b>Zahm.</b> Ein einziges 1-dim Stratum. Triviale Stratifizierung — das Musterbeispiel für „keine Monster“.',
+      form:'<b>Als Figur.</b> Ein Weg mit N Knoten. Für N → sehr groß ununterscheidbar vom Kontinuum. Grothendieck 1986: „das Kontinuum ist der Begriff, der das schwer fassbare endliche — aber sehr große — Aggregat approximiert.“'
+    },
+    ell:{
+      class:'Elliptische Kurve über ℝ: ein oder zwei Ovale. Über ℂ: ein Torus.',
+      scheme:'<b>Spec ℤ[x,y]/(y²−x³+3x−3)</b>. Ein <em>einziges</em> Objekt, dessen Fasern über Spec(ℤ) alle Reduktionen mod p sind. Genau das war Grothendiecks Ziel: eine Sprache statt unendlich vieler Theorien.',
+      topos:'<b>Étale.</b> Die Torsionspunkte E[n] liefern Überdeckungen. Daraus: Galois-Darstellungen, Tate-Modul, Weil-Vermutungen (#E(𝔽<sub>p</sub>) liegt in der Hasse-Schranke).',
+      tame:'<b>Zahm.</b> Endlich viele Zusammenhangskomponenten, endliche Stratifizierung, alles semianalytisch.',
+      form:'<b>Als Figur.</b> Über ℂ ein Torus = Netz aus Vierecken. Die Form ist rein kombinatorisch: Genus 1. Keine Analysis nötig.'
+    },
+    pt:{
+      class:'Ein Punkt. Nichts zu sehen.',
+      scheme:'<b>Spec(k)</b> für einen Körper k. Ein einziges Primideal (0). Aber: <em>welcher</em> Körper? Spec(ℝ) und Spec(ℂ) sehen topologisch identisch aus, sind aber völlig verschiedene Schemata. Die Struktur<em>garbe</em> macht den Unterschied.',
+      topos:'<b>Der Topos Set.</b> Garben über einem Punkt = Mengen. Der einfachste Topos überhaupt — die „Endstation“ jeder Vereinfachung. Zugleich: Spec(k) hat als étalen Topos B(Gal(k̄/k)) — die Galoisgruppe wird zur Geometrie!',
+      tame:'<b>Zahm.</b> Ein 0-dim Stratum. Trivial.',
+      form:'<b>Als Figur.</b> Der leere Fall — und trotzdem Grothendiecks Testfall: „Ich hoffe, die Sprache wird geeignet sein, <em>endliche</em> Räume zu behandeln, die in der allgemeinen Topologie sehr schlecht wegkommen.“'
+    }
+  };
+  function draw(){
+    const obj=$('#sb-obj').value, lens=$('#sb-lens').value;
+    const N=Math.round(sv('sb-n')), rot=sv('sb-rot');
+    lab('sb-n',N); lab('sb-rot',rot.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),cx=w*0.36,cy=h*0.52,S=Math.min(w,h)*0.30;
+    const LC={class:C.acc,scheme:C.acc2,topos:C.acc3,tame:C.acc4,form:'#ff9ad5'}[lens];
+
+    // ---- base shape points ----
+    function shape(t){ // t in [0,1)
+      const a=t*TAU+rot;
+      if(obj==='circle')return [Math.cos(a),Math.sin(a)];
+      if(obj==='line')  return [(t*2-1)*1.15, Math.sin(rot)*0.12];
+      if(obj==='ell'){
+        // lemniscate-ish loop for visual
+        const s=Math.sin(a),c2=Math.cos(a);
+        return [c2*1.05, s*0.72*(0.6+0.4*Math.cos(a))];
+      }
+      return [0,0];
+    }
+
+    if(lens==='class'){
+      ctx.strokeStyle=LC;ctx.lineWidth=3;ctx.beginPath();
+      for(let i=0;i<=500;i++){const[x,y]=shape(i/500);const X=cx+x*S,Y=cy-y*S;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      if(obj!=='line'&&obj!=='pt')ctx.closePath();
+      glow(ctx,()=>ctx.stroke(),LC,14);
+      if(obj==='pt'){ctx.fillStyle=LC;glow(ctx,()=>{ctx.beginPath();ctx.arc(cx,cy,7,0,TAU);ctx.fill();},LC,16);}
+    }
+    if(lens==='scheme'){
+      // closed points + generic point halo
+      ctx.strokeStyle=LC+'40';ctx.lineWidth=1.5;ctx.setLineDash([4,5]);ctx.beginPath();
+      for(let i=0;i<=400;i++){const[x,y]=shape(i/400);const X=cx+x*S,Y=cy-y*S;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      if(obj!=='line'&&obj!=='pt')ctx.closePath();ctx.stroke();ctx.setLineDash([]);
+      const k=Math.max(1,Math.min(N,120));
+      for(let i=0;i<k;i++){
+        const[x,y]=shape(i/k);
+        ctx.fillStyle=LC;
+        ctx.beginPath();ctx.arc(cx+x*S,cy-y*S,3.4,0,TAU);ctx.fill();
+      }
+      // generic point: diffuse cloud
+      ctx.fillStyle='rgba(255,209,102,.10)';
+      ctx.beginPath();ctx.arc(cx,cy,S*1.25,0,TAU);ctx.fill();
+      txt(ctx,'generischer Punkt (0) — Abschluss = alles',cx,cy-S*1.32,{c:C.acc3,al:'center',f:'11px JetBrains Mono, monospace'});
+      if(obj==='pt'){ctx.fillStyle=LC;ctx.beginPath();ctx.arc(cx,cy,7,0,TAU);ctx.fill();}
+    }
+    if(lens==='topos'){
+      // base + covering sieve arrows
+      ctx.strokeStyle=LC;ctx.lineWidth=2.6;ctx.beginPath();
+      for(let i=0;i<=400;i++){const[x,y]=shape(i/400);const X=cx+x*S*0.72,Y=cy-y*S*0.72;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      if(obj!=='line'&&obj!=='pt')ctx.closePath();
+      glow(ctx,()=>ctx.stroke(),LC,10);
+      const m=clamp(Math.round(N/14),2,8);
+      for(let s=0;s<m;s++){
+        const a=s/m*TAU+rot;
+        const px=cx+Math.cos(a)*S*1.55, py=cy+Math.sin(a)*S*1.05;
+        ctx.strokeStyle=`hsla(${190+s*32},80%,66%,.85)`;ctx.lineWidth=1.8;
+        ctx.beginPath();ctx.arc(px,py,20,0,TAU);ctx.stroke();
+        txt(ctx,'U'+(s+1),px,py+4,{c:`hsl(${190+s*32},80%,70%)`,al:'center',f:'10px JetBrains Mono, monospace'});
+        const ang=Math.atan2(cy-py,cx-px);
+        arrow(ctx,px+Math.cos(ang)*22,py+Math.sin(ang)*22,cx-Math.cos(ang)*(S*0.55),cy-Math.sin(ang)*(S*0.4),`hsla(${190+s*32},80%,66%,.6)`,1.3,6);
+      }
+      txt(ctx,'Überdeckungssieb J(X) — Pfeile, keine Teilmengen',cx,h-24,{c:LC,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    if(lens==='tame'){
+      // polygonal approximation + strata
+      const k=clamp(Math.round(N/6),3,40);
+      ctx.strokeStyle=LC;ctx.lineWidth=2.6;ctx.fillStyle=LC+'14';ctx.beginPath();
+      for(let i=0;i<=k;i++){const[x,y]=shape(i/k);const X=cx+x*S,Y=cy-y*S;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      if(obj!=='line'&&obj!=='pt'){ctx.closePath();ctx.fill();}
+      glow(ctx,()=>ctx.stroke(),LC,10);
+      for(let i=0;i<k;i++){const[x,y]=shape(i/k);
+        ctx.fillStyle=C.acc3;ctx.beginPath();ctx.arc(cx+x*S,cy-y*S,3.6,0,TAU);ctx.fill();}
+      txt(ctx,'endliche Stratifizierung: '+k+' Ecken (X₀), '+k+' Kanten (X₁∖X₀)',cx,h-24,{c:LC,al:'center',f:'11px JetBrains Mono, monospace'});
+    }
+    if(lens==='form'){
+      // combinatorial network: nodes + edges, no ambient space
+      const k=clamp(Math.round(N/5),3,50);
+      // edges
+      ctx.strokeStyle=LC+'99';ctx.lineWidth=1.8;
+      for(let i=0;i<k;i++){
+        const[x1,y1]=shape(i/k), [x2,y2]=shape(((i+1)%k)/k);
+        if(obj==='line'&&i===k-1)continue;
+        ctx.beginPath();ctx.moveTo(cx+x1*S,cy-y1*S);ctx.lineTo(cx+x2*S,cy-y2*S);ctx.stroke();
+      }
+      for(let i=0;i<k;i++){const[x,y]=shape(i/k);
+        ctx.fillStyle='#fff';glow(ctx,()=>{ctx.beginPath();ctx.arc(cx+x*S,cy-y*S,4,0,TAU);ctx.fill();},LC,8);}
+      txt(ctx,'Netz: '+k+' Figuren, '+(obj==='line'?k-1:k)+' Verbindungen — rein kombinatorisch',cx,h-24,{c:LC,al:'center',f:'11px JetBrains Mono, monospace'});
+      txt(ctx,'kein Punkt, kein Limes, keine Umgebung',cx,h-8,{c:C.dim,al:'center',f:'10px JetBrains Mono, monospace'});
+    }
+
+    // side panel
+    const px=w*0.68;
+    ctx.fillStyle='rgba(6,10,20,.5)';rr(ctx,px-24,40,w-px-6,h-90,14);ctx.fill();
+    ctx.strokeStyle=LC+'55';ctx.lineWidth=1.2;rr(ctx,px-24,40,w-px-6,h-90,14);ctx.stroke();
+    const LN={class:'KLASSISCH',scheme:'SCHEMA',topos:'TOPOS',tame:'ZAHMER RAUM',form:'GEOMETRIE DER FORMEN'}[lens];
+    txt(ctx,LN,px-6,70,{c:LC,f:'14px JetBrains Mono, monospace'});
+    // key question
+    const KQ={class:'„Welche Punkte erfüllen die Gleichung?“',scheme:'„Welcher Ring? Welche Primideale?“',
+      topos:'„Welche Überdeckungen erlaube ich?“',tame:'„Ist es endlich stratifizierbar?“',form:'„Welche Figur, welches Netz?“'}[lens];
+    ctx.font='11px Inter, sans-serif';
+    let qy=96;
+    (function(){
+      const ws=KQ.split(' ');let line='';
+      ws.forEach(wd=>{
+        const t2=line+wd+' ';
+        if(ctx.measureText(t2).width>w-px-46){txt(ctx,line,px-6,qy,{c:C.acc3,f:'11px Inter, sans-serif'});line=wd+' ';qy+=16;}
+        else line=t2;
+      });
+      txt(ctx,line,px-6,qy,{c:C.acc3,f:'11px Inter, sans-serif'});qy+=26;
+    })();
+    // body text wrapped
+    const body=INFO[obj][lens].replace(/<[^>]+>/g,'');
+    ctx.font='11.5px Inter, sans-serif';
+    const ws=body.split(' ');let line='';
+    ws.forEach(wd=>{
+      const t2=line+wd+' ';
+      if(ctx.measureText(t2).width>w-px-46){txt(ctx,line,px-6,qy,{c:'#c9d4ee',f:'11.5px Inter, sans-serif'});line=wd+' ';qy+=17;}
+      else line=t2;
+    });
+    txt(ctx,line,px-6,qy,{c:'#c9d4ee',f:'11.5px Inter, sans-serif'});
+
+    out.innerHTML=`<b>${LN}</b> — ${INFO[obj][lens]}`;
+  }
+  ['sb-obj','sb-lens'].forEach(id=>$('#'+id).addEventListener('change',draw));
+  ['sb-n','sb-rot'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ============================================================
+   §8  ENDLICHE RÄUME  (Netz ⟷ Kontinuum)
+   ============================================================ */
+(function(){
+  const cv=$('#cFinite'); if(!cv)return;
+  const ctx=hd(cv); const out=$('#fi-out');
+  function draw(){
+    const N=Math.round(sv('fi-n')), jit=sv('fi-jit'), show=$('#fi-mode').value;
+    lab('fi-n',N); lab('fi-jit',jit.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),cx=w/2,cy=h/2,R=Math.min(w,h)*0.36;
+    // sample points on sphere-ish disc
+    const pts=[];
+    let seed=12345;
+    const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+    for(let i=0;i<N;i++){
+      const a=i*2.399963; const rr2=R*Math.sqrt(i/N);
+      const jx=(rnd()-.5)*jit*20, jy=(rnd()-.5)*jit*20;
+      pts.push([cx+rr2*Math.cos(a)+jx, cy+rr2*Math.sin(a)+jy]);
+    }
+    if(show==='net'||show==='both'){
+      ctx.strokeStyle='rgba(99,210,255,.22)';ctx.lineWidth=.8;
+      const K=Math.min(5,N-1);
+      for(let i=0;i<N;i++){
+        const d=pts.map((p,j)=>[Math.hypot(p[0]-pts[i][0],p[1]-pts[i][1]),j]).sort((a,b)=>a[0]-b[0]);
+        for(let k=1;k<=K&&k<d.length;k++){
+          ctx.beginPath();ctx.moveTo(pts[i][0],pts[i][1]);ctx.lineTo(pts[d[k][1]][0],pts[d[k][1]][1]);ctx.stroke();
+        }
+      }
+    }
+    if(show==='cont'||show==='both'){
+      ctx.fillStyle='rgba(181,123,255,.10)';ctx.strokeStyle='rgba(181,123,255,.45)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fill();ctx.stroke();
+    }
+    if(show!=='cont'){
+      pts.forEach(p=>{ctx.fillStyle=C.acc;ctx.beginPath();ctx.arc(p[0],p[1],Math.max(1,3.5-N/400),0,TAU);ctx.fill();});
+    }
+    txt(ctx,'N = '+N+' Punkte',22,30,{c:C.acc,f:'14px JetBrains Mono, monospace'});
+    txt(ctx,show==='cont'?'kontinuierliche Scheibe':(show==='net'?'diskretes Netz':'beides überlagert'),22,50,{c:C.dim,f:'11px JetBrains Mono, monospace'});
+    out.innerHTML = N<40
+      ? `Wenig Punkte: das Netz ist <em>sichtbar</em> diskret. Klassische Topologie hat hier fast nichts zu sagen — endliche Räume „kommen in der allgemeinen Topologie sehr schlecht weg“ (Grothendieck an Yamashita, 9.7.1986).`
+      : (N<400
+        ? `Mehr Punkte: das Netz beginnt, wie eine Fläche auszusehen. Aber es ist immer noch <em>endlich</em>.`
+        : `<b>N sehr groß.</b> Grothendieck: „Denk an 10<sup>100</sup> oder 10<sup>1000</sup> Punkte, dicht auf der Einheitskugel — weit mehr als für jede denkbare physikalische Messung nötig. Niemand (außer vielleicht Gott) könnte den umgebenden ‚kontinuierlichen‘ Raum von diesem Netz unterscheiden.“<br>
+        <em>Und dann die Umkehrung:</em> „In Wirklichkeit scheint mir das Gegenteil wahrscheinlicher: <b>das Kontinuum ist der Begriff, der das schwer fassbare — aber sehr große — endliche Aggregat approximiert.</b>“`);
+  }
+  ['fi-n','fi-jit'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  $('#fi-mode').addEventListener('change',draw); draw();
+})();
+
+/* ============================================================
+   §10  ε-DIFFERENTIALRECHNUNG
+   ============================================================ */
+(function(){
+  const cv=$('#cEps'); if(!cv)return;
+  const ctx=hd(cv); const out=$('#ep-out');
+  function draw(){
+    const eps=sv('ep-e'), N=Math.round(sv('ep-n')), x0=sv('ep-x');
+    lab('ep-e',eps.toFixed(3)); lab('ep-n',N); lab('ep-x',x0.toFixed(2));
+    clear(ctx,cv);
+    const w=W(cv),h=H(cv),L=70,R=w-70,T=40,B=h-60;
+    const f=x=>Math.sin(x*3.1)*0.6+Math.sin(x*1.3)*0.3;
+    const df=x=>3.1*Math.cos(x*3.1)*0.6+1.3*Math.cos(x*1.3)*0.3;
+    const X=t=>L+(t/ (TAU))*(R-L), Y=v=>(T+B)/2 - v*((B-T)/2.4);
+    // axes
+    ctx.strokeStyle='rgba(140,170,230,.18)';ctx.beginPath();ctx.moveTo(L,(T+B)/2);ctx.lineTo(R,(T+B)/2);ctx.stroke();
+    // continuous curve (ghost)
+    ctx.strokeStyle='rgba(181,123,255,.35)';ctx.lineWidth=1.6;ctx.setLineDash([3,4]);
+    ctx.beginPath();
+    for(let i=0;i<=500;i++){const t=i/500*TAU;const xx=X(t),yy=Y(f(t));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}
+    ctx.stroke();ctx.setLineDash([]);
+    // discrete lattice
+    for(let i=0;i<=N;i++){
+      const t=i/N*TAU;
+      ctx.fillStyle=C.acc;ctx.beginPath();ctx.arc(X(t),Y(f(t)),3,0,TAU);ctx.fill();
+    }
+    // finite difference at x0
+    const step=TAU/N;
+    const a=x0, b=x0+step;
+    const slope=(f(b)-f(a))/(b-a);
+    const exact=df(a);
+    ctx.strokeStyle=C.acc3;ctx.lineWidth=2.4;
+    const ext=1.4;
+    ctx.beginPath();
+    ctx.moveTo(X(a-step*ext),Y(f(a)-slope*step*ext));
+    ctx.lineTo(X(b+step*ext),Y(f(a)+slope*(step*(1+ext))));
+    glow(ctx,()=>ctx.stroke(),C.acc3,10);
+    ctx.fillStyle=C.red;
+    [[a,f(a)],[b,f(b)]].forEach(([xx,yy])=>{ctx.beginPath();ctx.arc(X(xx),Y(yy),5.5,0,TAU);ctx.fill();});
+    // error band
+    const err=Math.abs(slope-exact);
+    const ok=err<=eps;
+    ctx.fillStyle=ok?'rgba(110,243,165,.10)':'rgba(255,122,138,.10)';
+    ctx.fillRect(X(a)-6,T,X(b)-X(a)+12,B-T);
+    ctx.strokeStyle=ok?C.acc4:C.red;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
+    ctx.strokeRect(X(a)-6,T,X(b)-X(a)+12,B-T);ctx.setLineDash([]);
+    txt(ctx,'Gitter mit N = '+N+' Punkten  ·  Schrittweite h = '+step.toFixed(4),L,26,{c:C.acc,f:'12px JetBrains Mono, monospace'});
+    txt(ctx,'Differenzenquotient = '+slope.toFixed(4)+'   ·   „wahre“ Ableitung = '+exact.toFixed(4)+'   ·   |Fehler| = '+err.toFixed(4),
+      L,h-24,{c:ok?C.acc4:C.red,f:'12px JetBrains Mono, monospace'});
+    out.innerHTML = ok
+      ? `<b>Innerhalb der Toleranz ε = ${eps.toFixed(3)}.</b> Auf diesem endlichen Gitter ist die Ableitung „bis auf ε“ wohldefiniert — <em>ohne</em> jeden Grenzwert, ohne Kontinuum.<br>
+         Grothendieck (Brief an A.Y., 24.6.1991): „…eine Art <em>unscharfe</em> Differentialgeometrie, in der alle numerischen Begriffe nur <b>bis auf ε</b> definiert sind, für eine gegebene Approximationsordnung ε.“`
+      : `<b>Fehler > ε.</b> Das Gitter ist zu grob (oder ε zu streng). In Grothendieks Bild heißt das <em>nicht</em>: „der Grenzwert existiert nicht“ — sondern: „die vorgeschriebene Genauigkeit wurde überschritten“. Der Grenzübergang ist ein <b>endlicher Prozess</b> mit vorgeschriebener Schrittweite und vorgeschriebener Fehlermarge.`;
+  }
+  ['ep-e','ep-n','ep-x'].forEach(id=>$('#'+id).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   §9  DISKRET ⟷ KONTINUUM  (Plotly)
+   ============================================================ */
+(function(){
+  const el=document.getElementById('plotDC'); if(!el||typeof Plotly==='undefined')return;
+  function build(){
+    const N=Math.round(sv('dc-n')||64);
+    lab('dc-n',N);
+    const xs=[],ys=[],xc=[],yc=[];
+    for(let i=0;i<=600;i++){const x=i/600*10;xc.push(x);yc.push(Math.sin(x)*Math.exp(-x/9));}
+    for(let i=0;i<=N;i++){const x=i/N*10;xs.push(x);ys.push(Math.sin(x)*Math.exp(-x/9));}
+    Plotly.react(el,[
+      {x:xc,y:yc,mode:'lines',name:'Kontinuum (Fiktion?)',line:{color:'#b57bff',width:2,dash:'dot'}},
+      {x:xs,y:ys,mode:'markers',name:'endliches Aggregat (N='+N+')',marker:{color:'#63d2ff',size:Math.max(3,9-N/18)}}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(6,10,20,.4)',
+      font:{color:'#9aa9c9',family:'JetBrains Mono, monospace',size:11},
+      margin:{l:46,r:20,t:34,b:42},
+      xaxis:{gridcolor:'rgba(140,170,230,.12)',zerolinecolor:'rgba(140,170,230,.25)'},
+      yaxis:{gridcolor:'rgba(140,170,230,.12)',zerolinecolor:'rgba(140,170,230,.25)'},
+      legend:{orientation:'h',y:1.15},
+      title:{text:'Wer approximiert wen?',font:{size:13,color:'#ffd166'}}
+    },{displayModeBar:false,responsive:true});
+    const o=$('#dc-out');
+    if(o)o.innerHTML = N<25
+      ? `Wenige Messpunkte — die Punkte sehen aus wie eine <em>Näherung</em> der Kurve. Das ist die <b>klassische</b> Lesart.`
+      : `Sehr viele Punkte — jetzt ist die Kurve von den Punkten nicht mehr unterscheidbar.<br><b>Grothendiecks Umkehrung:</b> vielleicht ist nicht das Diskrete eine Näherung des Kontinuums, sondern <em>das Kontinuum eine bequeme Fiktion</em>, die das unfassbare, sehr große endliche Aggregat approximiert. Er schreibt diese Idee Riemann zu — fand sie aber nie wörtlich bei ihm: „vielleicht habe ich sie nur <em>zwischen den Zeilen</em> gefunden.“`;
+  }
+  const s=$('#dc-n'); if(s)s.addEventListener('input',build);
+  build();
+})();
+
+/* ============================================================
+   FINAL: re-render math after everything
+   ============================================================ */
+setTimeout(renderMath,900);
+window.addEventListener('resize',()=>{ /* canvases are fixed-size; Plotly is responsive */ });
+</script>
+</body>
+</html>
