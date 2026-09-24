@@ -1,0 +1,4052 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backprop als Funktor — Eine interaktive Reise</title>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#080a12;
+  --bg2:#0d1020;
+  --panel:rgba(20,24,42,0.72);
+  --panel2:rgba(28,33,58,0.6);
+  --stroke:rgba(120,140,220,0.18);
+  --text:#e8ecf8;
+  --muted:#9aa5c8;
+  --accent:#6ee7ff;
+  --accent2:#b18cff;
+  --accent3:#ff7ac6;
+  --good:#5ef2b0;
+  --warn:#ffc86b;
+  --bad:#ff6b6b;
+  --A:#6ee7ff;
+  --B:#b18cff;
+  --C:#ff7ac6;
+  --P:#ffc86b;
+  --fwd:#6ee7ff;
+  --bwd:#ff7ac6;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 800px at 12% -10%, #1a1f42 0%, transparent 55%),
+    radial-gradient(1000px 700px at 90% 10%, #2a1340 0%, transparent 50%),
+    radial-gradient(900px 900px at 50% 110%, #06283a 0%, transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(110,231,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110,231,255,0.035) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(1200px 900px at 50% 20%, #000 0%, transparent 80%);
+}
+
+/* ============ NAV ============ */
+#progressbar{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  box-shadow:0 0 18px rgba(177,140,255,.8);
+  transition:width .12s linear;
+}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  backdrop-filter:blur(18px) saturate(140%);
+  background:rgba(8,10,18,.72);
+  border-bottom:1px solid var(--stroke);
+}
+nav .inner{
+  max-width:1280px;margin:0 auto;padding:.55rem 1rem;
+  display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;
+}
+nav .brand{
+  font-weight:800;letter-spacing:.02em;font-size:.95rem;
+  background:linear-gradient(90deg,var(--accent),var(--accent2) 55%,var(--accent3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  white-space:nowrap;
+}
+nav .links{display:flex;gap:.25rem;flex-wrap:wrap;overflow-x:auto;}
+nav a{
+  color:var(--muted);text-decoration:none;font-size:.76rem;
+  padding:.3rem .55rem;border-radius:7px;white-space:nowrap;
+  border:1px solid transparent;transition:.18s;
+}
+nav a:hover{color:var(--text);background:rgba(110,231,255,.09);border-color:var(--stroke)}
+nav a.active{color:#071018;background:linear-gradient(90deg,var(--accent),var(--accent2));font-weight:700}
+
+/* ============ LAYOUT ============ */
+main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:5.2rem 1.1rem 8rem}
+section{margin:0 0 4.5rem 0;scroll-margin-top:5rem}
+.hero{
+  text-align:center;padding:3.5rem 1rem 2.5rem;
+}
+.hero h1{
+  font-size:clamp(2.1rem,5.6vw,4rem);line-height:1.05;margin:.2rem 0 .8rem;
+  font-weight:900;letter-spacing:-.025em;
+  background:linear-gradient(100deg,#fff 0%,var(--accent) 35%,var(--accent2) 62%,var(--accent3) 88%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 8px 40px rgba(177,140,255,.28));
+}
+.hero .sub{color:var(--muted);font-size:clamp(1rem,2vw,1.2rem);max-width:760px;margin:0 auto 1.2rem}
+.hero .authors{font-size:.85rem;color:#7e8ab0;letter-spacing:.06em;text-transform:uppercase}
+
+h2{
+  font-size:clamp(1.5rem,3.2vw,2.15rem);margin:0 0 .35rem;font-weight:800;letter-spacing:-.015em;
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+}
+h2 .num{
+  font-size:.72em;font-weight:900;color:#071018;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  padding:.05em .55em;border-radius:8px;letter-spacing:0;
+}
+h3{font-size:1.12rem;margin:1.6rem 0 .5rem;font-weight:700;color:#dbe3ff}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;font-weight:700;color:var(--accent)}
+p{margin:.55rem 0;color:#c8d1ea}
+.lead{font-size:1.04rem;color:#d6ddf2}
+.muted{color:var(--muted);font-size:.9rem}
+small{color:var(--muted)}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:16px;
+  padding:1.1rem 1.2rem;
+  margin:1.1rem 0;
+  backdrop-filter:blur(10px);
+  box-shadow:0 18px 50px -25px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.card.tight{padding:.85rem .95rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2-1{display:grid;grid-template-columns:1.45fr 1fr;gap:1.1rem}
+.grid-1-2{display:grid;grid-template-columns:1fr 1.45fr;gap:1.1rem}
+@media(max-width:920px){.grid2,.grid3,.grid-2-1,.grid-1-2{grid-template-columns:1fr}}
+
+.pill{
+  display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.18em .6em;border-radius:999px;font-weight:800;
+  border:1px solid var(--stroke);background:rgba(110,231,255,.08);color:var(--accent);
+}
+.pill.p2{background:rgba(177,140,255,.1);color:var(--accent2)}
+.pill.p3{background:rgba(255,122,198,.1);color:var(--accent3)}
+.pill.p4{background:rgba(94,242,176,.1);color:var(--good)}
+
+.callout{
+  border-left:3px solid var(--accent);
+  background:linear-gradient(90deg,rgba(110,231,255,.09),rgba(110,231,255,0));
+  padding:.75rem 1rem;border-radius:0 12px 12px 0;margin:1rem 0;
+}
+.callout.q{border-color:var(--accent3);background:linear-gradient(90deg,rgba(255,122,198,.1),transparent)}
+.callout.a{border-color:var(--good);background:linear-gradient(90deg,rgba(94,242,176,.1),transparent)}
+.callout.i{border-color:var(--warn);background:linear-gradient(90deg,rgba(255,200,107,.1),transparent)}
+.callout b{color:#fff}
+
+/* ============ CONTROLS ============ */
+.ctrl{margin:.55rem 0}
+.ctrl label{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.8rem;color:var(--muted);margin-bottom:.22rem;gap:.6rem;
+}
+.ctrl label .val{
+  font-variant-numeric:tabular-nums;font-weight:800;color:var(--accent);
+  background:rgba(110,231,255,.09);padding:.03em .45em;border-radius:6px;font-size:.82rem;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:#fff;border:2px solid var(--accent);cursor:pointer;
+  box-shadow:0 0 12px rgba(110,231,255,.65);
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--accent);
+  box-shadow:0 0 12px rgba(110,231,255,.65);cursor:pointer;
+}
+button,select{
+  font-family:inherit;font-size:.82rem;font-weight:600;
+  background:rgba(110,231,255,.1);color:var(--text);
+  border:1px solid var(--stroke);border-radius:9px;padding:.42rem .8rem;cursor:pointer;
+  transition:.16s;
+}
+button:hover{background:rgba(110,231,255,.22);border-color:var(--accent);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;font-weight:800;border:none}
+button.primary:hover{filter:brightness(1.12)}
+button.ghost{background:transparent}
+button.on{background:linear-gradient(135deg,var(--good),var(--accent));color:#071018;border:none;font-weight:800}
+.btnrow{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin:.6rem 0}
+select{padding:.38rem .5rem}
+.chk{display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem;color:var(--muted);cursor:pointer;user-select:none}
+input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+
+canvas{display:block;width:100%;border-radius:12px;background:rgba(6,8,16,.55);border:1px solid var(--stroke)}
+.plot{width:100%;height:330px}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.6rem 0}
+th,td{padding:.4rem .55rem;text-align:left;border-bottom:1px solid rgba(120,140,220,.12)}
+th{color:var(--accent);font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+td.mono,.mono{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-size:.82rem}
+
+.eq{margin:.7rem 0;padding:.6rem .8rem;background:rgba(6,8,16,.5);border-radius:10px;border:1px solid var(--stroke);overflow-x:auto}
+.eq.center{text-align:center}
+math{font-size:1.02em}
+
+.legend{display:flex;gap:.9rem;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin:.4rem 0}
+.legend span{display:inline-flex;align-items:center;gap:.3rem}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:.8rem 0}
+.steps li{
+  counter-increment:s;position:relative;padding:.5rem 0 .5rem 2.2rem;color:#c8d1ea;font-size:.92rem;
+}
+.steps li::before{
+  content:counter(s);position:absolute;left:0;top:.5rem;
+  width:1.5rem;height:1.5rem;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;
+  font-weight:900;font-size:.75rem;display:grid;place-items:center;
+}
+
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.7rem;border-bottom:1px solid var(--stroke);padding-bottom:.45rem}
+.tabs button{border-radius:9px 9px 0 0}
+.tabs button.act{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;border:none;font-weight:800}
+.tabpane{display:none}
+.tabpane.act{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.badge{font-size:.7rem;padding:.12em .5em;border-radius:6px;font-weight:800;letter-spacing:.04em}
+.badge.ok{background:rgba(94,242,176,.16);color:var(--good)}
+.badge.no{background:rgba(255,107,107,.16);color:var(--bad)}
+
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin:.7rem 0}
+.kpi div{
+  background:rgba(6,8,16,.5);border:1px solid var(--stroke);border-radius:10px;padding:.5rem .6rem;text-align:center;
+}
+.kpi .k{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kpi .v{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
+
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:2.5rem 0}
+
+.footer{text-align:center;color:#66708f;font-size:.8rem;padding:3rem 1rem 1rem}
+details{margin:.6rem 0;border:1px solid var(--stroke);border-radius:10px;padding:.5rem .8rem;background:rgba(6,8,16,.35)}
+summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--accent2)}
+details[open] summary{margin-bottom:.4rem}
+
+.tag{font-family:ui-monospace,monospace;font-size:.85em;background:rgba(110,231,255,.1);padding:.05em .35em;border-radius:5px;color:var(--accent)}
+.wordA{color:var(--A);font-weight:700}
+.wordB{color:var(--B);font-weight:700}
+.wordC{color:var(--C);font-weight:700}
+.wordP{color:var(--P);font-weight:700}
+.fwd{color:var(--fwd);font-weight:700}
+.bwd{color:var(--bwd);font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="progressbar"></div>
+
+<nav>
+  <div class="inner">
+    <div class="brand">◆ Backprop als Funktor</div>
+    <div class="links" id="navlinks">
+      <a href="#start">Start</a>
+      <a href="#problem">1 · Problem</a>
+      <a href="#prereq">2 · Werkzeuge</a>
+      <a href="#learn">3 · Learn</a>
+      <a href="#para">4 · Para</a>
+      <a href="#theorem">5 · Satz</a>
+      <a href="#nnet">6 · Netze</a>
+      <a href="#bimonoid">7 · Bimonoid</a>
+      <a href="#example">8 · Beispiel</a>
+      <a href="#playground">9 · Labor</a>
+      <a href="#outlook">10 · Ausblick</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- HERO -->
+<!-- ============================================================ -->
+<section id="start" class="hero">
+  <div class="authors">Fong · Spivak · Tuyéras &nbsp;—&nbsp; MIT, 2019 &nbsp;—&nbsp; arXiv:1711.10455</div>
+  <h1>Backprop als Funktor</h1>
+  <p class="sub">
+    Eine kompositionelle Perspektive auf überwachtes Lernen.<br>
+    Diese Seite erklärt das gesamte Paper durch <b>Spielen</b> statt durch Lesen.
+    Schiebe Regler, klicke Buttons, beobachte was passiert.
+  </p>
+  <div class="card" style="max-width:860px;margin:1.6rem auto;text-align:left">
+    <h4 style="margin-top:0">Was hier gleich passieren wird</h4>
+    <p class="muted" style="margin-bottom:.6rem">Ein einziger roter Faden, kein Flickenteppich:</p>
+    <ol class="steps" style="margin:0">
+      <li>Wir bauen zwei Lernsysteme und versuchen sie <b>hintereinanderzuschalten</b>. Es geht schief. Du wirst genau sehen <i>warum</i>.</li>
+      <li>Wir lernen die minimalen Werkzeuge: Gradient, Kettenregel, Kategorie, Funktor, String-Diagramm — jeweils als Spielzeug.</li>
+      <li>Wir erfinden das fehlende Teil: die <b class="bwd">Request-Funktion</b>. Plötzlich klappt die Verkettung.</li>
+      <li>Wir beweisen visuell: <b>Gradientenabstieg ist ein Funktor</b>. Zwei Rechenwege, dasselbe Ergebnis — Ziffer für Ziffer.</li>
+      <li>Wir trainieren echte Netze, zerlegen sie beliebig, und sehen die Konsequenzen.</li>
+    </ol>
+  </div>
+  <div class="btnrow" style="justify-content:center">
+    <button class="primary" onclick="document.getElementById('problem').scrollIntoView({behavior:'smooth'})">Los geht's ↓</button>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 1. DAS PROBLEM -->
+<!-- ============================================================ -->
+<section id="problem">
+  <h2><span class="num">1</span> Die Motivation: Zwei Lerner, die nicht zusammenpassen</h2>
+  <p class="lead">
+    Bevor irgendeine Kategorientheorie kommt, muss man das konkrete Problem <i>fühlen</i>.
+    Das Paper startet mit einer ganz simplen Frage — und stellt fest, dass sie nicht beantwortbar ist.
+  </p>
+
+  <h3>1.1 Was ist überhaupt ein überwachter Lerner?</h3>
+  <div class="grid-2-1">
+    <div class="card">
+      <canvas id="c_super" height="300"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--muted)"></i>Trainingspunkte (a, f(a))</span>
+        <span><i class="dot" style="background:var(--accent)"></i>Aktuelle Hypothese I(p,−)</span>
+        <span><i class="dot" style="background:var(--good)"></i>Wahre Funktion f</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Die vier Zutaten (vorläufig drei)</h4>
+      <p class="muted" style="font-size:.86rem">
+        Ein Lerner sucht in einem <b>Raum von Funktionen</b> nach der besten Näherung an ein unbekanntes <span class="wordC">f : A → B</span>.
+      </p>
+      <table>
+        <tr><td class="mono" style="color:var(--P)">P</td><td>Parameterraum — die „Stellschrauben"</td></tr>
+        <tr><td class="mono" style="color:var(--accent)">I : P×A→B</td><td>Implementierung — was das Ding rechnet</td></tr>
+        <tr><td class="mono" style="color:var(--good)">U : P×A×B→P</td><td>Update — wie es sich verbessert</td></tr>
+      </table>
+      <div class="ctrl">
+        <label>Parameter <span class="mono">p</span> (Steigung) <span class="val" id="v_sup_p">1.00</span></label>
+        <input type="range" id="s_sup_p" min="-2" max="3" step="0.01" value="1">
+      </div>
+      <div class="ctrl">
+        <label>Schrittweite ε <span class="val" id="v_sup_eps">0.10</span></label>
+        <input type="range" id="s_sup_eps" min="0.005" max="0.5" step="0.005" value="0.1">
+      </div>
+      <div class="btnrow">
+        <button id="b_sup_step">1 Update-Schritt</button>
+        <button id="b_sup_run" class="primary">Trainieren ▶</button>
+        <button id="b_sup_reset" class="ghost">Reset</button>
+      </div>
+      <div class="kpi">
+        <div><div class="k">Fehler E</div><div class="v" id="v_sup_err">—</div></div>
+        <div><div class="k">Schritte</div><div class="v" id="v_sup_n">0</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <b>Kernidee.</b> Der Lerner bekommt ein Trainingspaar <span class="mono">(a,b)</span>, schaut sich seine aktuelle Vermutung
+    <span class="mono">I(p,−)</span> an und produziert ein neues, hoffentlich besseres <span class="mono">p′ = U(p,a,b)</span>.
+    Mehr steckt erstmal nicht dahinter.
+  </div>
+
+  <h3>1.2 Jetzt die entscheidende Frage: kann man zwei davon hintereinanderschalten?</h3>
+  <div class="grid-1-2">
+    <div class="card">
+      <h4>Der naive Versuch</h4>
+      <p class="muted" style="font-size:.86rem">
+        Wir haben Lerner <span class="mono"><span class="wordA">A</span>→<span class="wordB">B</span></span>
+        mit <span class="mono"><span class="wordP">P</span>, I, U</span> und
+        Lerner <span class="mono"><span class="wordB">B</span>→<span class="wordC">C</span></span>
+        mit <span class="mono">Q, J, V</span>.
+      </p>
+      <p class="muted" style="font-size:.86rem">
+        <b style="color:var(--good)">Implementierung:</b> kein Problem. Nimm
+        <span class="mono">P×Q</span> als Parameterraum und
+        <span class="mono">(p,q,a) ↦ J(q, I(p,a))</span>.
+      </p>
+      <p class="muted" style="font-size:.86rem">
+        <b style="color:var(--bad)">Update:</b> Problem! Wir haben nur ein Trainingspaar
+        <span class="mono">(a,c)</span>. Für <span class="mono">V</span> brauchen wir ein Paar in
+        <span class="mono">B×C</span> — das geht: <span class="mono">(I(p,a), c)</span>.
+        Aber für <span class="mono">U</span> brauchen wir ein Paar in
+        <span class="mono">A×B</span>… und <b>es gibt kein b′!</b>
+      </p>
+      <div class="btnrow">
+        <button id="b_gap_a" class="on">① Daten vorhanden</button>
+        <button id="b_gap_b">② Vorwärts</button>
+        <button id="b_gap_c">③ Update hinten</button>
+        <button id="b_gap_d">④ Update vorne?</button>
+      </div>
+      <div id="gapmsg" class="callout" style="margin-top:.7rem;font-size:.88rem">
+        Klicke dich durch die vier Phasen und sieh, wo die Kette reißt.
+      </div>
+    </div>
+    <div class="card">
+      <canvas id="c_gap" height="330"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--fwd)"></i>Vorwärts-Information</span>
+        <span><i class="dot" style="background:var(--good)"></i>funktioniert</span>
+        <span><i class="dot" style="background:var(--bad)"></i>fehlt / blockiert</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout q">
+    <b>Die Frage des Papers (wörtlich).</b> „Suppose we are given two learning algorithms, one for approximating
+    functions <span class="mono">A → B</span> and the other for <span class="mono">B → C</span>.
+    Can we piece them together to make a learning algorithm for <span class="mono">A → C</span>?"<br>
+    <span style="color:var(--bad);font-weight:700">Antwort: Nein — weil etwas fehlt.</span>
+  </div>
+
+  <h3>1.3 Die Erfindung: die <span class="bwd">Request-Funktion</span></h3>
+  <p>
+    Was fehlt, ist ein Kanal <b>rückwärts</b>. Der zweite Lerner muss dem ersten sagen können:
+    „Hättest du mir statt <span class="mono">b</span> lieber <span class="mono">b′</span> gegeben, wäre ich glücklicher gewesen."
+    Diese Funktion heißt <b class="bwd">Request-Funktion</b>
+    <span class="mono">s : Q × B × C → B</span>.
+  </p>
+
+  <div class="card">
+    <canvas id="c_req" height="420"></canvas>
+    <div class="btnrow" style="justify-content:center">
+      <button id="b_req_prev" class="ghost">◀ zurück</button>
+      <button id="b_req_next" class="primary">weiter ▶</button>
+      <button id="b_req_auto">Animation ▶</button>
+      <span class="muted mono" id="v_req_step" style="margin-left:.6rem">Phase 1/4</span>
+    </div>
+    <div id="reqmsg" class="callout i" style="font-size:.9rem"></div>
+  </div>
+
+  <div class="callout a">
+    <b>Damit ist die Definition komplett.</b> Ein Lerner <span class="mono">A → B</span> ist ein Tupel
+    <span class="mono">(P, I, U, r)</span> aus <b>vier</b> Teilen:
+    <div class="eq center" id="eq_learner"></div>
+    <span class="muted" style="font-size:.86rem">
+      Die Request-Funktion ist für einen <i>einzelnen</i> Lerner überflüssig — aber ohne sie gibt es
+      <b>keine Komposition</b>. Genau das ist der Hauptbeitrag des Papers.
+    </span>
+  </div>
+
+  <details>
+    <summary>Drei Arten, die Request-Funktion zu verstehen</summary>
+    <table>
+      <tr><th>Sicht</th><th>Bedeutung</th></tr>
+      <tr><td><b>Kompositionell</b></td><td>Sie erzeugt Trainingsdaten für vorgelagerte Lerner. Ohne sie: keine Verkettung.</td></tr>
+      <tr><td><b>Experimentell</b></td><td>Fixiere <span class="mono">p</span>, wähle Wunsch-Output <span class="mono">b</span>. Dann ist <span class="mono">a′ = r(p,a,b)</span> ein „katzigeres" Bild als <span class="mono">a</span> — verwandt mit „Deep Dreaming".</td></tr>
+      <tr><td><b>Analogie</b></td><td>Sie spielt die Rolle der <span class="mono">put</span>-Funktion in einer Lens und der <span class="mono">coplay</span>-Funktion in einem Open Game.</td></tr>
+    </table>
+  </details>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 2. WERKZEUGE -->
+<!-- ============================================================ -->
+<section id="prereq">
+  <h2><span class="num">2</span> Werkzeugkasten: alles jenseits von Abi-Mathe</h2>
+  <p class="lead">
+    Hier sind <b>alle</b> Konzepte, die über Schulmathematik hinausgehen — jedes als Spielzeug, nicht als Text.
+    Klicke die Reiter durch.
+  </p>
+
+  <div class="card">
+    <div class="tabs" id="tabs_pre">
+      <button class="act" data-t="pre1">① Gradient ∇</button>
+      <button data-t="pre2">② Kettenregel</button>
+      <button data-t="pre3">③ Kategorie</button>
+      <button data-t="pre4">④ Funktor</button>
+      <button data-t="pre5">⑤ Monoidal ⊗</button>
+      <button data-t="pre6">⑥ String-Diagramme</button>
+      <button data-t="pre7">⑦ Umkehrfunktion</button>
+    </div>
+
+    <!-- 2.1 GRADIENT -->
+    <div class="tabpane act" id="pre1">
+      <div class="grid-2-1">
+        <div>
+          <div id="p_grad3d" class="plot" style="height:400px"></div>
+        </div>
+        <div>
+          <h4>Der Gradient ∇</h4>
+          <p class="muted" style="font-size:.88rem">
+            Bei einer Funktion <span class="mono">E(p₁,p₂)</span> vieler Variablen gibt es nicht <i>eine</i> Ableitung,
+            sondern einen <b>Vektor</b> aus partiellen Ableitungen:
+          </p>
+          <div class="eq" id="eq_grad"></div>
+          <p class="muted" style="font-size:.88rem">
+            Er zeigt in Richtung des <b>steilsten Anstiegs</b>. Also geht man
+            <b style="color:var(--good)">gegen</b> ihn, um zu minimieren:
+          </p>
+          <div class="eq" id="eq_gd"></div>
+          <div class="ctrl"><label>Startpunkt p₁ <span class="val" id="v_g_x">-1.60</span></label>
+            <input type="range" id="s_g_x" min="-2.2" max="2.2" step="0.01" value="-1.6"></div>
+          <div class="ctrl"><label>Startpunkt p₂ <span class="val" id="v_g_y">1.40</span></label>
+            <input type="range" id="s_g_y" min="-2.2" max="2.2" step="0.01" value="1.4"></div>
+          <div class="ctrl"><label>Schrittweite ε <span class="val" id="v_g_e">0.100</span></label>
+            <input type="range" id="s_g_e" min="0.005" max="0.45" step="0.005" value="0.1"></div>
+          <div class="btnrow">
+            <button id="b_g_run" class="primary">Abstieg ▶</button>
+            <button id="b_g_reset" class="ghost">Reset</button>
+          </div>
+          <div class="kpi">
+            <div><div class="k">E(p)</div><div class="v" id="v_g_E">—</div></div>
+            <div><div class="k">‖∇E‖</div><div class="v" id="v_g_n">—</div></div>
+          </div>
+          <p class="muted" style="font-size:.8rem">
+            ε zu groß ⇒ Überschwingen/Divergenz. ε zu klein ⇒ Schneckentempo.
+            <b>Genau dieses ε ist der Parameter des Satzes.</b>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.2 KETTENREGEL -->
+    <div class="tabpane" id="pre2">
+      <div class="grid-2-1">
+        <div class="card tight">
+          <canvas id="c_chain" height="300"></canvas>
+          <div id="p_chain" class="plot" style="height:260px;margin-top:.5rem"></div>
+        </div>
+        <div>
+          <h4>Die Kettenregel — der ganze Motor</h4>
+          <p class="muted" style="font-size:.88rem">
+            Das <i>einzige</i> mathematische Faktum hinter dem Hauptsatz. Alles andere ist Buchhaltung.
+          </p>
+          <div class="eq" id="eq_chain"></div>
+          <p class="muted" style="font-size:.88rem">
+            Sensitivität verkettet sich <b>multiplikativ</b>. Wackle am Eingang: die Wirkung am Ausgang ist
+            das Produkt der lokalen Steigungen.
+          </p>
+          <div class="ctrl"><label>Eingang a <span class="val" id="v_ch_a">0.60</span></label>
+            <input type="range" id="s_ch_a" min="-2" max="2" step="0.01" value="0.6"></div>
+          <div class="ctrl"><label>Störung δ <span class="val" id="v_ch_d">0.30</span></label>
+            <input type="range" id="s_ch_d" min="0.01" max="0.8" step="0.01" value="0.3"></div>
+          <div class="ctrl"><label>Steigung g′ bei b <span class="val" id="v_ch_g">—</span></label>
+            <input type="range" id="s_ch_k" min="0.3" max="2.5" step="0.01" value="1.3"></div>
+          <table>
+            <tr><th></th><th>Wert</th></tr>
+            <tr><td>f′(a)</td><td class="mono" id="v_ch_fp">—</td></tr>
+            <tr><td>g′(f(a))</td><td class="mono" id="v_ch_gp">—</td></tr>
+            <tr><td style="color:var(--good)">Produkt</td><td class="mono" id="v_ch_prod" style="color:var(--good)">—</td></tr>
+            <tr><td style="color:var(--accent3)">(g∘f)′(a) numerisch</td><td class="mono" id="v_ch_num" style="color:var(--accent3)">—</td></tr>
+          </table>
+          <div class="callout" style="font-size:.85rem;margin-top:.5rem">
+            Die beiden letzten Zeilen sind gleich. <b>Das</b> ist die Funktorialität im Kleinen:
+            „erst verketten, dann ableiten" = „erst ableiten, dann multiplizieren".
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.3 KATEGORIE -->
+    <div class="tabpane" id="pre3">
+      <div class="grid-2-1">
+        <div class="card tight">
+          <canvas id="c_cat" height="340"></canvas>
+          <div class="btnrow">
+            <button id="b_cat_comp" class="primary">f∘g komponieren</button>
+            <button id="b_cat_id">Identität testen</button>
+            <button id="b_cat_assoc">Assoziativität</button>
+            <button id="b_cat_reset" class="ghost">Reset</button>
+          </div>
+          <div id="catmsg" class="callout" style="font-size:.86rem"></div>
+        </div>
+        <div>
+          <h4>Was ist eine Kategorie?</h4>
+          <p class="muted" style="font-size:.88rem">Nur drei Zutaten und zwei Regeln. Mehr nicht.</p>
+          <table>
+            <tr><th>Zutat</th><th>Hier im Paper</th></tr>
+            <tr><td><b>Objekte</b></td><td>Mengen / Räume <span class="mono">ℝⁿ</span></td></tr>
+            <tr><td><b>Morphismen</b> A→B</td><td>Lerner <span class="mono">(P,I,U,r)</span></td></tr>
+            <tr><td><b>Komposition</b> ∘</td><td>Hintereinanderschalten</td></tr>
+          </table>
+          <h4>Die zwei Axiome</h4>
+          <div class="eq" id="eq_cat"></div>
+          <p class="muted" style="font-size:.85rem">
+            Die Identität in <span class="tag">Learn</span> ist
+            <span class="mono">(ℝ⁰, id, !, π₂)</span>: kein Parameter, tut nichts, gibt nach hinten einfach
+            den gewünschten Wert durch.
+          </p>
+          <div class="callout i" style="font-size:.85rem">
+            <b>Feinheit.</b> Komposition von Lernern ist nur <i>bis auf Isomorphie</i> assoziativ, denn
+            <span class="mono">(P×Q)×N ≅ P×(Q×N)</span> ist keine Gleichheit. Darum sind Morphismen in
+            <span class="tag">Learn</span> <b>Äquivalenzklassen</b> von Lernern.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.4 FUNKTOR -->
+    <div class="tabpane" id="pre4">
+      <div class="grid-2-1">
+        <div class="card tight">
+          <canvas id="c_functor" height="360"></canvas>
+          <div class="btnrow">
+            <button id="b_fn_path1" class="primary">Weg 1: erst ∘, dann F</button>
+            <button id="b_fn_path2">Weg 2: erst F, dann ∘</button>
+            <button id="b_fn_reset" class="ghost">Reset</button>
+          </div>
+        </div>
+        <div>
+          <h4>Was ist ein Funktor?</h4>
+          <p class="muted" style="font-size:.88rem">
+            Eine <b>strukturerhaltende Übersetzung</b> zwischen Kategorien.
+            <span class="mono">F</span> bildet Objekte auf Objekte, Morphismen auf Morphismen ab — und respektiert dabei:
+          </p>
+          <div class="eq" id="eq_functor"></div>
+          <p class="muted" style="font-size:.88rem">
+            Das ist eine <b>Kommutativität</b>: das Quadrat „komponieren / übersetzen" schließt sich.
+            Genau diese Aussage ist das Herz des Papers — mit
+            <span class="mono">F = L<sub>ε,e</sub></span>, dem Gradientenabstieg.
+          </p>
+          <div class="kpi">
+            <div><div class="k">treu</div><div class="v" style="font-size:.8rem">f≠g ⇒ Ff≠Fg</div></div>
+            <div><div class="k">obj-injektiv</div><div class="v" style="font-size:.8rem">ℝⁿ ↦ ℝⁿ</div></div>
+            <div><div class="k">monoidal</div><div class="v" style="font-size:.8rem">F(A⊗B)≅FA⊗FB</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.5 MONOIDAL -->
+    <div class="tabpane" id="pre5">
+      <div class="grid-2-1">
+        <div class="card tight">
+          <canvas id="c_mono" height="330"></canvas>
+          <div class="btnrow">
+            <button id="b_mono_serial">Serie ∗ (nacheinander)</button>
+            <button id="b_mono_par" class="primary">Parallel ‖ (nebeneinander)</button>
+            <button id="b_mono_inter">Austauschgesetz</button>
+          </div>
+          <div id="monomsg" class="callout" style="font-size:.86rem"></div>
+        </div>
+        <div>
+          <h4>Monoidale Struktur: nebeneinander legen</h4>
+          <p class="muted" style="font-size:.88rem">
+            Eine Kategorie kann nur <b>nacheinander</b>. Eine <b>monoidale</b> Kategorie kann zusätzlich
+            <b>nebeneinander</b>: das ist der Produkt-Operator <span class="mono">⊗</span> bzw. hier
+            <span class="mono">‖</span>.
+          </p>
+          <div class="eq" id="eq_mono"></div>
+          <p class="muted" style="font-size:.88rem">
+            <b>Austauschgesetz</b> (interchange): es ist egal, ob man erst nebeneinander legt und dann
+            hintereinander schaltet oder umgekehrt:
+          </p>
+          <div class="eq" id="eq_inter"></div>
+          <p class="muted" style="font-size:.88rem">
+            <b>Symmetrisch</b> heißt: Drähte dürfen sich kreuzen,
+            <span class="mono">σ: A⊗B → B⊗A</span>, und zweimal kreuzen ist nichts tun.
+          </p>
+          <div class="callout" style="font-size:.85rem">
+            <b>Konsequenz im Paper:</b> weil <span class="mono">L<sub>ε,e</sub></span> <i>symmetrisch monoidal</i>
+            ist, darf man ein Netz nicht nur schichtweise, sondern in <b>beliebige Blöcke</b> zerlegen —
+            auch nebeneinanderliegende — und einzeln trainieren.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.6 STRING DIAGRAMS -->
+    <div class="tabpane" id="pre6">
+      <div class="grid-1-2">
+        <div>
+          <h4>String-Diagramme</h4>
+          <p class="muted" style="font-size:.88rem">
+            Eine <b>formale</b> (nicht bloß illustrative) Schreibweise für Morphismen in monoidalen Kategorien:
+          </p>
+          <ul class="muted" style="font-size:.86rem;padding-left:1.1rem">
+            <li><b>Kästchen</b> = Morphismus</li>
+            <li><b>Draht</b> = Objekt / Datentyp</li>
+            <li><b>links→rechts</b> = Komposition ∗</li>
+            <li><b>übereinander</b> = Monoidalprodukt ‖</li>
+            <li><b>Verzweigung</b> = Diagonale <span class="mono">a↦(a,a)</span></li>
+          </ul>
+          <p class="muted" style="font-size:.86rem">
+            Zwei Diagramme, die man ineinander verbiegen kann (ohne Drähte zu durchtrennen),
+            stellen <b>denselben</b> Morphismus dar. Der Beweis der Assoziativität im Anhang ist genau so
+            ein „Verbiegen".
+          </p>
+          <div class="btnrow">
+            <button id="b_sd_1" class="on">Implementierung I</button>
+            <button id="b_sd_2">Update+Request (U,r)</button>
+            <button id="b_sd_3">Komposition I∗J</button>
+            <button id="b_sd_4">Komposition (U∗V, r∗s)</button>
+            <button id="b_sd_5">Parallel ‖</button>
+          </div>
+          <div id="sdmsg" class="callout i" style="font-size:.86rem"></div>
+        </div>
+        <div class="card tight">
+          <canvas id="c_sd" height="380"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.7 INVERSE -->
+    <div class="tabpane" id="pre7">
+      <div class="grid-2-1">
+        <div>
+          <div id="p_inv" class="plot" style="height:360px"></div>
+        </div>
+        <div>
+          <h4>Die Invertierbarkeits-Bedingung</h4>
+          <p class="muted" style="font-size:.88rem">
+            Der Satz verlangt genau <b>eine</b> Bedingung an die Fehlerfunktion
+            <span class="mono">e(x,y)</span>:
+          </p>
+          <div class="eq" id="eq_inv"></div>
+          <p class="muted" style="font-size:.88rem">
+            Also: halte das erste Argument fest, betrachte
+            <span class="mono">y ↦ ∂e/∂x (x₀,y)</span> — diese Funktion muss umkehrbar sein.
+            Die Umkehrung heißt <span class="mono">f<sub>x₀</sub></span> und wird in der Request-Funktion benutzt,
+            um einen Gradienten wieder in einen <b>Wunsch-Eingabewert</b> zu übersetzen.
+          </p>
+          <div class="ctrl"><label>Fehlerfunktion</label>
+            <select id="sel_err">
+              <option value="quad">quadratisch: e = ½(x−y)²</option>
+              <option value="prod">Produkt: e = x·y</option>
+              <option value="ce">Kreuzentropie (approx.)</option>
+              <option value="abs">|x−y| (nicht differenzierbar!)</option>
+            </select>
+          </div>
+          <div class="ctrl"><label>fixiertes x₀ <span class="val" id="v_inv_x0">0.50</span></label>
+            <input type="range" id="s_inv_x0" min="0.05" max="0.95" step="0.01" value="0.5"></div>
+          <div id="invinfo" class="callout" style="font-size:.86rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 3. LEARN -->
+<!-- ============================================================ -->
+<section id="learn">
+  <h2><span class="num">3</span> Die Kategorie <span class="tag" style="font-size:.8em">Learn</span></h2>
+  <p class="lead">
+    Jetzt haben wir alle Zutaten. Wir bauen daraus eine <b>Kategorie</b> — und das ist keine Spielerei,
+    sondern die präzise Aussage: <i>Lernalgorithmen lassen sich verketten wie Funktionen.</i>
+  </p>
+
+  <div class="callout">
+    <b>Definition II.1 (Paper).</b> Ein <b>Lerner</b> <span class="mono"><span class="wordA">A</span> → <span class="wordB">B</span></span>
+    ist ein Tupel <span class="mono">(P, I, U, r)</span>:
+    <div class="eq center" id="eq_def2"></div>
+  </div>
+
+  <h3>3.1 Die Kompositionsregel — jede Zeile einzeln nachvollziehen</h3>
+  <p>
+    Das Paper gibt drei Formeln an. Sie sehen einschüchternd aus, sind aber nur „wer bekommt welche Zahl".
+    Schalte unten die <b>Datenflüsse</b> einzeln ein und beobachte, wie sich die Formeln aufbauen.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_comp" height="400"></canvas>
+      <div class="btnrow" style="justify-content:center">
+        <button id="b_cmp_prev" class="ghost">◀</button>
+        <button id="b_cmp_next" class="primary">nächster Schritt ▶</button>
+        <button id="b_cmp_auto">Auto ▶</button>
+        <button id="b_cmp_reset" class="ghost">Reset</button>
+      </div>
+      <div class="legend" style="justify-content:center">
+        <span><i class="dot" style="background:var(--fwd)"></i>vorwärts (I)</span>
+        <span><i class="dot" style="background:var(--bwd)"></i>rückwärts (r/s)</span>
+        <span><i class="dot" style="background:var(--good)"></i>Update (U/V)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Aktueller Schritt</h4>
+      <div id="cmpmsg" class="callout" style="font-size:.9rem;margin-top:.3rem"></div>
+      <h4>Konkrete Zahlen</h4>
+      <p class="muted" style="font-size:.82rem">
+        Beispiel: <span class="mono">I(p,a)=p·a</span>, <span class="mono">J(q,b)=q·b</span>,
+        quadratischer Fehler, ε=0.1.
+      </p>
+      <div class="ctrl"><label>a (Eingabe) <span class="val" id="v_cmp_a">1.00</span></label>
+        <input type="range" id="s_cmp_a" min="-2" max="2" step="0.05" value="1"></div>
+      <div class="ctrl"><label>c (Ziel) <span class="val" id="v_cmp_c">2.00</span></label>
+        <input type="range" id="s_cmp_c" min="-3" max="3" step="0.05" value="2"></div>
+      <div class="ctrl"><label>p <span class="val" id="v_cmp_p">0.80</span></label>
+        <input type="range" id="s_cmp_p" min="-2" max="2" step="0.05" value="0.8"></div>
+      <div class="ctrl"><label>q <span class="val" id="v_cmp_q">1.50</span></label>
+        <input type="range" id="s_cmp_q" min="-2" max="2" step="0.05" value="1.5"></div>
+      <table id="t_cmp"></table>
+    </div>
+  </div>
+
+  <details>
+    <summary>Die drei Formeln im Klartext (Paper, Abschnitt II a)</summary>
+    <div class="eq" id="eq_comp"></div>
+    <p class="muted" style="font-size:.86rem">
+      Lies von innen nach außen: erst <span class="mono">I(p,a)</span> berechnen (das ist das „b"),
+      dann <span class="mono">s(q, b, c)</span> — das ist der <b class="bwd">Wunschwert b′</b> —
+      und erst damit <span class="mono">U(p,a,b′)</span> und <span class="mono">r(p,a,b′)</span> füttern.
+      <b>Genau dieses Verschachteln ist Backpropagation.</b>
+    </p>
+  </details>
+
+  <h3>3.2 Identität, Parallelität, Vertauschung — der Rest der Struktur</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="margin-top:0">Identität</h4>
+      <canvas id="c_idl" height="150"></canvas>
+      <p class="muted" style="font-size:.82rem">
+        <span class="mono">(ℝ⁰, id, !, π₂)</span> — kein Parameter, nichts zu updaten,
+        und die Anfrage gibt schlicht das gewünschte <span class="mono">b</span> zurück.
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">Monoidalprodukt ‖</h4>
+      <canvas id="c_parl" height="150"></canvas>
+      <p class="muted" style="font-size:.82rem">
+        Zwei Lerner nebeneinander: <span class="mono">(P×Q, I‖J, U‖V, r‖s)</span>.
+        Alles läuft komponentenweise, kein Informationsaustausch.
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">Braiding σ</h4>
+      <canvas id="c_brl" height="150"></canvas>
+      <p class="muted" style="font-size:.82rem">
+        <span class="mono">(ℝ⁰, σ, !, σ∘π)</span> — Drähte kreuzen. Zweimal kreuzen = nichts tun.
+        Damit ist <span class="tag">Learn</span> <b>symmetrisch</b> monoidal.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout i">
+    <b>Proposition II.4.</b> <span class="tag">Learn</span> ist eine symmetrisch monoidale Kategorie,
+    deren Objekte Mengen sind und deren Morphismen <b>Äquivalenzklassen</b> von Lernern sind.
+    <br><span class="muted" style="font-size:.86rem">
+      Äquivalenz: es gibt eine Bijektion <span class="mono">f : P → P′</span> mit
+      <span class="mono">I′(f(p),a)=I(p,a)</span>, <span class="mono">U′(f(p),a,b)=f(U(p,a,b))</span>,
+      <span class="mono">r′(f(p),a,b)=r(p,a,b)</span> — also „gleicher Lerner, nur andere Beschriftung der Stellschrauben".
+    </span>
+  </div>
+
+  <h3>3.3 Assoziativität: der Beweis <i>ist</i> ein Bild</h3>
+  <p>
+    Warum ist <span class="mono">(U∗V)∗W = U∗(V∗W)</span>? Der Anhang beweist es mit einer einzigen
+    Diagramm-Umformung: <b>zwei Kopien von I sind dasselbe wie eine Kopie plus Verzweigung.</b>
+  </p>
+  <div class="card">
+    <canvas id="c_assoc" height="330"></canvas>
+    <div class="btnrow" style="justify-content:center">
+      <button id="b_as_l" class="on">(U∗V)∗W</button>
+      <button id="b_as_key">Schlüssel-Identität</button>
+      <button id="b_as_r">U∗(V∗W)</button>
+    </div>
+    <div id="asmsg" class="callout" style="font-size:.88rem"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 4. PARA -->
+<!-- ============================================================ -->
+<section id="para">
+  <h2><span class="num">4</span> Die Kategorie <span class="tag" style="font-size:.8em">Para</span></h2>
+  <p class="lead">
+    <span class="tag">Learn</span> ist die Zielkategorie. Jetzt brauchen wir die Startkategorie:
+    <b>differenzierbare parametrisierte Funktionen</b>. Das ist die Welt, in der neuronale Netze leben —
+    <i>noch ohne jedes Lernen</i>.
+  </p>
+
+  <div class="grid-1-2">
+    <div class="card">
+      <h4>Definition III.1</h4>
+      <p class="muted" style="font-size:.88rem">
+        Objekte: euklidische Räume <span class="mono">ℝⁿ</span>.<br>
+        Morphismen <span class="mono">ℝⁿ → ℝᵐ</span>: Äquivalenzklassen von Paaren
+        <span class="mono">(P, I)</span> mit <span class="mono">I : P×ℝⁿ → ℝᵐ</span> differenzierbar.
+      </p>
+      <div class="eq" id="eq_para"></div>
+      <p class="muted" style="font-size:.86rem">
+        <b>Wichtig:</b> in <span class="tag">Para</span> gibt es <b>kein</b> Update und <b>keine</b> Anfrage.
+        Nur die Funktion. Das Lernen kommt erst durch den Funktor dazu.
+      </p>
+      <div class="btnrow">
+        <button id="b_para_1" class="on">I einzeln</button>
+        <button id="b_para_2">I ∗ J (Serie)</button>
+        <button id="b_para_3">I ‖ J (parallel)</button>
+      </div>
+    </div>
+    <div class="card tight">
+      <canvas id="c_para" height="300"></canvas>
+      <div id="paramsg" class="callout" style="font-size:.86rem"></div>
+    </div>
+  </div>
+
+  <h3>4.1 Was so eine parametrisierte Funktion tut — live</h3>
+  <p class="muted">
+    Ein Morphismus <span class="mono">(P,I)</span> ist eine <b>ganze Familie</b> von Funktionen, indiziert durch p.
+    Bewege die Parameter und sieh die Familie.
+  </p>
+  <div class="grid-2-1">
+    <div class="card tight">
+      <div id="p_para_fam" class="plot" style="height:380px"></div>
+    </div>
+    <div class="card">
+      <div class="ctrl"><label>Gewicht w₁ <span class="val" id="v_pf_w1">1.00</span></label>
+        <input type="range" id="s_pf_w1" min="-3" max="3" step="0.02" value="1"></div>
+      <div class="ctrl"><label>Bias b₁ <span class="val" id="v_pf_b1">0.00</span></label>
+        <input type="range" id="s_pf_b1" min="-3" max="3" step="0.02" value="0"></div>
+      <div class="ctrl"><label>Gewicht w₂ <span class="val" id="v_pf_w2">1.00</span></label>
+        <input type="range" id="s_pf_w2" min="-3" max="3" step="0.02" value="1"></div>
+      <div class="ctrl"><label>Bias b₂ <span class="val" id="v_pf_b2">0.00</span></label>
+        <input type="range" id="s_pf_b2" min="-3" max="3" step="0.02" value="0"></div>
+      <div class="ctrl"><label>Aktivierung σ</label>
+        <select id="sel_act">
+          <option value="sig">Sigmoid</option>
+          <option value="tanh">tanh</option>
+          <option value="relu">ReLU (glatt)</option>
+          <option value="id">Identität (linear)</option>
+        </select></div>
+      <div class="chk" style="display:block;margin-top:.5rem">
+        <label class="chk"><input type="checkbox" id="chk_fam" checked> Parameter-Familie zeigen</label>
+      </div>
+      <p class="muted" style="font-size:.82rem;margin-top:.6rem">
+        Die blasse Schar zeigt benachbarte Parameterwerte: das ist der <b>Suchraum</b>,
+        in dem der Lernalgorithmus herumwandert.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 5. THEOREM -->
+<!-- ============================================================ -->
+<section id="theorem">
+  <h2><span class="num">5</span> Der Hauptsatz: Gradientenabstieg <i>ist</i> ein Funktor</h2>
+
+  <div class="card" style="border-color:rgba(177,140,255,.5);box-shadow:0 0 60px -20px rgba(177,140,255,.5)">
+    <div class="pill p2">Theorem III.2</div>
+    <p style="margin-top:.6rem">
+      Fixiere <span class="mono">ε &gt; 0</span> und eine differenzierbare Fehlerfunktion
+      <span class="mono">e(x,y)</span>, sodass <span class="mono">∂e/∂x (x₀,−)</span> für jedes
+      <span class="mono">x₀</span> invertierbar ist. Dann gibt es einen
+      <b>treuen, objekt-injektiven, stark symmetrisch monoidalen Funktor</b>
+    </p>
+    <div class="eq center" id="eq_thm_head"></div>
+    <p>der jede parametrisierte Funktion <span class="mono">I : P×A→B</span> auf den Lerner
+      <span class="mono">(P, I, U<sub>I</sub>, r<sub>I</sub>)</span> abbildet mit</p>
+    <div class="eq center" id="eq_thm_body"></div>
+    <p class="muted" style="font-size:.88rem">
+      wobei <span class="mono">E<sub>I</sub>(p,a,b) = Σ<sub>j</sub> e(I<sub>j</sub>(p,a), b<sub>j</sub>)</span>
+      und <span class="mono">f<sub>a</sub></span> die komponentenweise Umkehrung von
+      <span class="mono">∂e/∂x(a<sub>i</sub>,−)</span> ist.
+    </p>
+  </div>
+
+  <h3>5.1 Was der Satz <i>behauptet</i> — als Quadrat</h3>
+  <p>
+    Funktorialität heißt: <b>das Diagramm kommutiert.</b> Zwei Wege, ein Ergebnis.
+    Klicke beide Wege durch und vergleiche die Zahlen — sie stimmen auf jede Nachkommastelle überein.
+  </p>
+
+  <div class="card">
+    <canvas id="c_square" height="360"></canvas>
+    <div class="btnrow" style="justify-content:center">
+      <button id="b_sq_1" class="primary">Weg A: erst komponieren, dann L</button>
+      <button id="b_sq_2">Weg B: erst L, dann komponieren</button>
+      <button id="b_sq_both">Beide vergleichen</button>
+      <button id="b_sq_reset" class="ghost">Reset</button>
+    </div>
+    <div id="sqmsg" class="callout" style="font-size:.9rem"></div>
+  </div>
+
+  <h3>5.2 Numerischer Beweis: Ziffer für Ziffer</h3>
+  <p class="muted">
+    Hier rechnen wir beide Wege wirklich aus — mit einem 2-schichtigen Netz, frei einstellbar.
+    Die letzte Spalte zeigt die Differenz. Sie ist immer <span style="color:var(--good)">≈0</span> (Maschinengenauigkeit).
+  </p>
+  <div class="grid-2-1">
+    <div class="card tight">
+      <table id="t_verify"></table>
+      <div class="kpi">
+        <div><div class="k">max |Δ|</div><div class="v" id="v_maxdiff">—</div></div>
+        <div><div class="k">Status</div><div class="v" id="v_status">—</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctrl"><label>ε (Schrittweite) <span class="val" id="v_th_eps">0.100</span></label>
+        <input type="range" id="s_th_eps" min="0.005" max="0.6" step="0.005" value="0.1"></div>
+      <div class="ctrl"><label>a₁ <span class="val" id="v_th_a1">0.70</span></label>
+        <input type="range" id="s_th_a1" min="-2" max="2" step="0.01" value="0.7"></div>
+      <div class="ctrl"><label>a₂ <span class="val" id="v_th_a2">-0.40</span></label>
+        <input type="range" id="s_th_a2" min="-2" max="2" step="0.01" value="-0.4"></div>
+      <div class="ctrl"><label>Ziel c <span class="val" id="v_th_c">0.90</span></label>
+        <input type="range" id="s_th_c" min="0" max="1" step="0.01" value="0.9"></div>
+      <div class="ctrl"><label>Fehlerfunktion</label>
+        <select id="sel_th_err">
+          <option value="quad">quadratisch ½(x−y)²</option>
+          <option value="prod">Produkt x·y</option>
+        </select></div>
+      <div class="btnrow"><button id="b_th_rand">Parameter würfeln 🎲</button></div>
+      <p class="muted" style="font-size:.82rem">
+        Würfle beliebig oft. Die Gleichheit bricht <b>nie</b>. Das ist kein Zufall — es ist die Kettenregel.
+      </p>
+    </div>
+  </div>
+
+  <h3>5.3 Warum es funktioniert: die Beweiskette, Zeile für Zeile</h3>
+  <p class="muted">
+    Der Beweis im Anhang ist eine Kette von 9 Gleichungen. Klicke dich durch — jede Zeile
+    ist nur <i>eine</i> Definition eingesetzt oder <i>einmal</i> die Kettenregel.
+  </p>
+  <div class="card">
+    <div class="btnrow">
+      <button id="b_pf_prev" class="ghost">◀</button>
+      <span class="mono muted" id="v_pf_i" style="min-width:5rem;text-align:center">1 / 9</span>
+      <button id="b_pf_next" class="primary">▶</button>
+      <button id="b_pf_all">alle zeigen</button>
+    </div>
+    <div id="proofbox" style="min-height:190px"></div>
+    <div id="proofnote" class="callout i" style="font-size:.88rem"></div>
+  </div>
+
+  <h3>5.4 Die Rolle von ε — und warum r kein ε hat</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Bemerkung III.5 (leicht zu übersehen!)</h4>
+      <p class="muted" style="font-size:.88rem">
+        Bei quadratischem Fehler sehen <span class="mono">U<sub>I</sub></span> und
+        <span class="mono">r<sub>I</sub></span> fast gleich aus — nur dass beim Request das ε fehlt.
+        Das Paper betont: <b>das ist ein Zufall</b> der quadratischen Fehlerfunktion.
+      </p>
+      <div class="eq" id="eq_quaderr"></div>
+      <p class="muted" style="font-size:.86rem">
+        Denn dort ist <span class="mono">∂e/∂x(x₀,y) = x₀ − y</span>, und diese Funktion ist
+        <b>ihre eigene Umkehrung</b>: <span class="mono">f<sub>x₀</sub>(y) = x₀ − y</span>.
+        Deshalb entsteht die Form „<span class="mono">a − ∇ₐE</span>", die wie ein
+        Gradientenschritt mit ε=1 aussieht — obwohl sie es konzeptuell nicht ist.
+      </p>
+    </div>
+    <div class="card tight">
+      <div id="p_eps" class="plot" style="height:330px"></div>
+      <div class="ctrl"><label>ε <span class="val" id="v_ep_e">0.20</span></label>
+        <input type="range" id="s_ep_e" min="0.01" max="2.2" step="0.01" value="0.2"></div>
+      <p class="muted" style="font-size:.8rem" id="epsnote"></p>
+    </div>
+  </div>
+
+  <div class="callout a">
+    <b>Die Antwort auf die Eingangsfrage.</b><br>
+    Frage war: <i>„Kann man zwei Lernalgorithmen zu einem verketten?"</i><br>
+    Antwort: <b>Ja</b> — sobald jeder Lerner eine <b class="bwd">Request-Funktion</b> hat.
+    Dann bilden Lerner eine symmetrisch monoidale Kategorie <span class="tag">Learn</span>,
+    und Gradientenabstieg ist ein Funktor <span class="mono">Para → Learn</span>.
+    <b>Backpropagation ist genau dieser Funktor, ausgewertet auf einem Netz.</b>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 6. NNET -->
+<!-- ============================================================ -->
+<section id="nnet">
+  <h2><span class="num">6</span> Von Netzen zu Funktionen: <span class="tag" style="font-size:.8em">NNet → Para</span></h2>
+  <p class="lead">
+    Wo bleiben die neuronalen Netze? Sie sind eine <b>dritte</b> Kategorie — rein kombinatorisch,
+    ohne jede Zahl. Erst die Wahl einer Aktivierungsfunktion σ macht daraus Mathematik.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_nnet" height="330"></canvas>
+      <div class="btnrow">
+        <button id="b_nn_toggle" class="primary">Kanten an/aus (klicke Kanten)</button>
+        <button id="b_nn_full">vollverbunden</button>
+        <button id="b_nn_paper">Paper-Beispiel</button>
+      </div>
+      <p class="muted" style="font-size:.82rem">
+        Klicke auf die Kreise zwischen den Knoten, um Verbindungen zu setzen/löschen.
+        Eine Schicht ist formal nur eine <b>Teilmenge</b> <span class="mono">C ⊆ [n₁]×[n₂]</span>.
+      </p>
+    </div>
+    <div class="card">
+      <h4>Proposition IV.2</h4>
+      <p class="muted" style="font-size:.88rem">
+        <span class="mono">I<sup>σ</sup> : NNet → Para</span> bildet <span class="mono">n ↦ ℝⁿ</span> und
+        eine 1-Schicht <span class="mono">C : m→n</span> auf
+      </p>
+      <div class="eq" id="eq_layer"></div>
+      <div class="kpi">
+        <div><div class="k">|C| Gewichte</div><div class="v" id="v_nn_w">—</div></div>
+        <div><div class="k">Biases</div><div class="v" id="v_nn_b">—</div></div>
+        <div><div class="k">Param-Raum</div><div class="v" id="v_nn_P" style="font-size:.85rem">—</div></div>
+      </div>
+      <p class="muted" style="font-size:.82rem">
+        Objekte sind <b>Zahlen</b>, Morphismen sind <b>Schichtfolgen</b>, Komposition ist
+        <b>Aneinanderhängen</b>. Die Identität auf <span class="mono">n</span> ist die
+        <b>0-Schicht-Netz</b> — deshalb ist Assoziativität hier trivial.
+      </p>
+      <div class="callout i" style="font-size:.85rem">
+        <b>Die ganze Kette:</b>
+        <div class="eq center" id="eq_chain3"></div>
+        Aktivierung σ wählt den ersten Funktor, (ε, e) den zweiten.
+        Ein Netz wird so <b>automatisch</b> zu einem Lernalgorithmus.
+      </div>
+    </div>
+  </div>
+
+  <h3>6.1 Die Schicht als Formel — live mitwachsend</h3>
+  <p class="muted">
+    Ändere oben die Verbindungen: die Formel unten schreibt sich neu, und die Parameterzahl ändert sich.
+  </p>
+  <div class="card">
+    <div id="nn_formula" class="eq" style="min-height:70px"></div>
+    <div class="grid2" style="margin-top:.6rem">
+      <div>
+        <div class="ctrl"><label>Eingabe a₁ <span class="val" id="v_nn_a1">0.80</span></label>
+          <input type="range" id="s_nn_a1" min="-2" max="2" step="0.01" value="0.8"></div>
+        <div class="ctrl"><label>Eingabe a₂ <span class="val" id="v_nn_a2">-0.30</span></label>
+          <input type="range" id="s_nn_a2" min="-2" max="2" step="0.01" value="-0.3"></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Aktivierung σ</label>
+          <select id="sel_nn_act">
+            <option value="sig">Sigmoid</option><option value="tanh">tanh</option>
+            <option value="relu">ReLU (glatt)</option><option value="id">Identität</option>
+          </select></div>
+        <div class="kpi"><div><div class="k">Ausgabe</div><div class="v" id="v_nn_out">—</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 7. BIMONOID -->
+<!-- ============================================================ -->
+<section id="bimonoid">
+  <h2><span class="num">7</span> Verdrahten: Bimonoide in <span class="tag" style="font-size:.8em">Learn</span></h2>
+  <p class="lead">
+    Bisher können wir nur <b>Reihe</b> und <b>parallel</b>. Echte Netze brauchen mehr:
+    Drähte müssen sich <b>aufspalten</b> und <b>zusammenlaufen</b>. Das liefert die
+    <b>Bimonoid-Struktur</b> — und sie erklärt, was ein <i>einzelnes Neuron</i> eigentlich ist.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_bim" height="340"></canvas>
+      <div class="btnrow" style="justify-content:center">
+        <button id="b_bm_mu" class="on">μ — Addition</button>
+        <button id="b_bm_de">δ — Kopie</button>
+        <button id="b_bm_et">η — Einheit</button>
+        <button id="b_bm_ep">ε — Löschen</button>
+        <button id="b_bm_ax">Axiome</button>
+      </div>
+      <div id="bimmsg" class="callout" style="font-size:.87rem"></div>
+    </div>
+    <div class="card">
+      <h4>Proposition V.1 — die vier Bausteine</h4>
+      <table>
+        <tr><th>Map</th><th>Implementierung</th><th>Request</th></tr>
+        <tr><td class="mono" style="color:var(--accent)">μ</td>
+            <td class="mono">a₁+a₂</td>
+            <td class="mono">(a₃−a₂, a₃−a₁)</td></tr>
+        <tr><td class="mono" style="color:var(--accent2)">δ</td>
+            <td class="mono">(a,a)</td>
+            <td class="mono">a₂+a₃−a₁</td></tr>
+        <tr><td class="mono" style="color:var(--good)">η</td>
+            <td class="mono">0</td><td class="mono">—</td></tr>
+        <tr><td class="mono" style="color:var(--warn)">ε</td>
+            <td class="mono">0</td><td class="mono">0</td></tr>
+      </table>
+      <p class="muted" style="font-size:.84rem">
+        Alle haben <b>trivialen</b> Parameterraum <span class="mono">ℝ⁰</span> — sie lernen nichts,
+        sie <b>verdrahten</b> nur. Sie kommen aus dem Bild von
+        <span class="mono">FVect ↪ Para → Learn</span>.
+      </p>
+      <div class="callout i" style="font-size:.84rem">
+        <b>Bemerkung V.2.</b> Es gibt <b>viele</b> Bimonoid-Strukturen — eine pro Fehlerfunktion!
+        Für <span class="mono">e(x,y)=xy</span> wird z.&nbsp;B.
+        <span class="mono">r′<sub>μ</sub>(a₁,a₂,a₃)=(a₃,a₃)</span>. Probier es unten aus.
+      </div>
+      <div class="ctrl"><label>Fehlerfunktion für Bimonoid</label>
+        <select id="sel_bim_e">
+          <option value="quad">quadratisch ½(x−y)²</option>
+          <option value="prod">Produkt x·y</option>
+        </select></div>
+    </div>
+  </div>
+
+  <h3>7.1 Ein Neuron, aus Atomen gebaut (Beispiel V.3)</h3>
+  <p>
+    Jedes Neuron ist ein Komposit aus genau <b>fünf</b> Grundlernern:
+    <span class="mono" style="color:var(--accent)">λ</span> (Skalarmultiplikation),
+    <span class="mono" style="color:var(--warn)">β</span> (Bias),
+    <span class="mono" style="color:var(--accent3)">σ</span> (Aktivierung),
+    <span class="mono">μ</span> und <span class="mono">δ</span>.
+  </p>
+  <div class="card">
+    <canvas id="c_neuron" height="330"></canvas>
+    <div class="btnrow" style="justify-content:center">
+      <button id="b_ne_prev" class="ghost">◀</button>
+      <button id="b_ne_next" class="primary">Baustein hinzufügen ▶</button>
+      <button id="b_ne_all">alles zeigen</button>
+      <button id="b_ne_reset" class="ghost">Reset</button>
+    </div>
+    <div id="nemsg" class="callout" style="font-size:.88rem"></div>
+    <details>
+      <summary>Die drei Atom-Lerner explizit</summary>
+      <table>
+        <tr><th></th><th>P</th><th>I</th><th>U</th><th>r</th></tr>
+        <tr><td class="mono" style="color:var(--accent)">λ</td><td class="mono">ℝ</td><td class="mono">wx</td>
+            <td class="mono">w − εx(wx−y)</td><td class="mono">x − w(wx−y)</td></tr>
+        <tr><td class="mono" style="color:var(--warn)">β</td><td class="mono">ℝ</td><td class="mono">w</td>
+            <td class="mono">(1−ε)w + εy</td><td class="mono">trivial</td></tr>
+        <tr><td class="mono" style="color:var(--accent3)">σ</td><td class="mono">ℝ⁰</td><td class="mono">σ(x)</td>
+            <td class="mono">trivial</td><td class="mono">x − (x−y)σ̇(x)</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <h3>7.2 Weight Tying (Beispiel V.4) — warum CNNs funktionieren</h3>
+  <div class="grid-1-2">
+    <div class="card">
+      <p class="muted" style="font-size:.88rem">
+        Jede parametrisierte Funktion lässt sich <b>zerlegen</b> in eine trivial-parametrisierte Funktion
+        <span class="mono">(ℝ⁰, I)</span> und eine <b>parametrisierte Konstante</b>
+        <span class="mono">(P, 1<sub>P</sub>)</span>:
+      </p>
+      <div class="eq center" id="eq_tie"></div>
+      <p class="muted" style="font-size:.88rem">
+        Steckt man nun <b>eine</b> Konstante über einen <span class="mono">δ</span>-Draht in
+        <b>zwei</b> Blöcke, teilen sich diese den Parameter — und die Updates
+        <b>addieren</b> sich (das sagt genau die Comonoid-Request-Regel
+        <span class="mono">a₂+a₃−a₁</span>).
+      </p>
+      <div class="btnrow">
+        <button id="b_wt_off" class="on">ohne Tying</button>
+        <button id="b_wt_on">mit Weight Tying</button>
+      </div>
+      <div id="wtmsg" class="callout" style="font-size:.86rem"></div>
+    </div>
+    <div class="card tight">
+      <canvas id="c_tie" height="300"></canvas>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 8. EXAMPLE VI -->
+<!-- ============================================================ -->
+<section id="example">
+  <h2><span class="num">8</span> Das durchgerechnete Beispiel (Abschnitt VI)</h2>
+  <p class="lead">
+    Jetzt das Herzstück: das Paper rechnet <b>ein konkretes Netz</b> komplett durch —
+    einmal als Ganzes, einmal zerlegt in zwei Schichten — und zeigt, dass beides identisch ist.
+    Hier ist es, <b>live und mit echten Zahlen</b>.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_ex_net" height="270"></canvas>
+      <div class="btnrow" style="justify-content:center">
+        <button id="b_ex_whole" class="on">A als Ganzes (2→1)</button>
+        <button id="b_ex_split">A = B ∗ C zerlegt</button>
+      </div>
+      <div id="exmsg" class="callout" style="font-size:.87rem"></div>
+    </div>
+    <div class="card">
+      <h4>Parameter des Papers</h4>
+      <div class="ctrl"><label>p₁₁ <span class="val" id="v_ex_p11">0.50</span></label>
+        <input type="range" id="s_ex_p11" min="-2" max="2" step="0.01" value="0.5"></div>
+      <div class="ctrl"><label>p₁₂ <span class="val" id="v_ex_p12">-0.80</span></label>
+        <input type="range" id="s_ex_p12" min="-2" max="2" step="0.01" value="-0.8"></div>
+      <div class="ctrl"><label>p₂₁ <span class="val" id="v_ex_p21">1.20</span></label>
+        <input type="range" id="s_ex_p21" min="-2" max="2" step="0.01" value="1.2"></div>
+      <div class="ctrl"><label>p₁b <span class="val" id="v_ex_p1b">0.10</span></label>
+        <input type="range" id="s_ex_p1b" min="-2" max="2" step="0.01" value="0.1"></div>
+      <div class="ctrl"><label>p₂b <span class="val" id="v_ex_p2b">-0.20</span></label>
+        <input type="range" id="s_ex_p2b" min="-2" max="2" step="0.01" value="-0.2"></div>
+      <div class="ctrl"><label>q₁ <span class="val" id="v_ex_q1">0.90</span></label>
+        <input type="range" id="s_ex_q1" min="-2" max="2" step="0.01" value="0.9"></div>
+      <div class="ctrl"><label>q₂ <span class="val" id="v_ex_q2">-0.60</span></label>
+        <input type="range" id="s_ex_q2" min="-2" max="2" step="0.01" value="-0.6"></div>
+      <div class="ctrl"><label>q_b <span class="val" id="v_ex_qb">0.30</span></label>
+        <input type="range" id="s_ex_qb" min="-2" max="2" step="0.01" value="0.3"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="margin-top:0">Eingabe & Ziel</h4>
+      <div class="ctrl"><label>a₁ <span class="val" id="v_ex_a1">1.00</span></label>
+        <input type="range" id="s_ex_a1" min="-2" max="2" step="0.01" value="1"></div>
+      <div class="ctrl"><label>a₂ <span class="val" id="v_ex_a2">0.50</span></label>
+        <input type="range" id="s_ex_a2" min="-2" max="2" step="0.01" value="0.5"></div>
+      <div class="ctrl"><label>Ziel c <span class="val" id="v_ex_c">0.90</span></label>
+        <input type="range" id="s_ex_c" min="0" max="1" step="0.01" value="0.9"></div>
+      <div class="ctrl"><label>ε <span class="val" id="v_ex_eps">0.50</span></label>
+        <input type="range" id="s_ex_eps" min="0.01" max="2" step="0.01" value="0.5"></div>
+      <h4>Zwischenwerte</h4>
+      <table id="t_ex_inter"></table>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">U<sub>A</sub> — beide Rechenwege</h4>
+      <table id="t_ex_U"></table>
+      <h4>r<sub>A</sub> — Request nach vorne</h4>
+      <table id="t_ex_r"></table>
+      <div class="kpi">
+        <div><div class="k">max |Δ|</div><div class="v" id="v_ex_diff">—</div></div>
+        <div><div class="k">Funktorialität</div><div class="v" id="v_ex_ok">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout a">
+    <b>Genau die Rechnung aus dem Paper</b> (Koordinate p₁₁):
+    <div class="eq" id="eq_ex_check"></div>
+    Die zweite Zeile ist die erste, in die man <span class="mono">s = r<sub>C</sub></span> eingesetzt hat.
+    <b>Das ist Backpropagation.</b> Sie fällt hier nicht vom Himmel — sie ist die
+    <i>Formel für Komposition in <span class="tag">Learn</span></i>.
+  </div>
+
+  <h3>8.1 Warum das schneller ist</h3>
+  <div class="grid-1-2">
+    <div class="card">
+      <p class="muted" style="font-size:.88rem">
+        Der Ausdruck für <span class="mono">U<sub>A</sub></span> benutzt
+        <span class="mono">γ, β₁, β₂</span> immer wieder. Die Faktorisierung, die der Funktor liefert,
+        rechnet jeden Zwischenwert <b>genau einmal</b>.
+      </p>
+      <div class="ctrl"><label>Schichten <span class="val" id="v_sp_L">6</span></label>
+        <input type="range" id="s_sp_L" min="2" max="20" step="1" value="6"></div>
+      <div class="ctrl"><label>Breite pro Schicht <span class="val" id="v_sp_W">8</span></label>
+        <input type="range" id="s_sp_W" min="2" max="40" step="1" value="8"></div>
+      <div class="kpi">
+        <div><div class="k">naiv (Ops)</div><div class="v" id="v_sp_naive">—</div></div>
+        <div><div class="k">Backprop</div><div class="v" id="v_sp_bp">—</div></div>
+        <div><div class="k">Speedup</div><div class="v" id="v_sp_x">—</div></div>
+      </div>
+    </div>
+    <div class="card tight">
+      <div id="p_speed" class="plot" style="height:320px"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 9. PLAYGROUND -->
+<!-- ============================================================ -->
+<section id="playground">
+  <h2><span class="num">9</span> Labor: trainieren, zerlegen, vergleichen</h2>
+  <p class="lead">
+    Die versprochene <b>Konsequenz 1</b> des Satzes: man darf ein Netz in <b>beliebige Blöcke</b>
+    zerlegen und jeden Block einzeln trainieren — das Ergebnis ist identisch.
+    Hier trainierst du ein echtes Netz und schaltest die Zerlegung live um.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <div id="p_fit" class="plot" style="height:340px"></div>
+      <div id="p_loss" class="plot" style="height:210px;margin-top:.5rem"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Aufgabe</h4>
+      <div class="ctrl"><label>Zielfunktion</label>
+        <select id="sel_task">
+          <option value="sin">Sinus</option>
+          <option value="step">Stufe</option>
+          <option value="abs">Betrag</option>
+          <option value="poly">Polynom</option>
+        </select></div>
+      <div class="ctrl"><label>Verborgene Neuronen <span class="val" id="v_pg_h">8</span></label>
+        <input type="range" id="s_pg_h" min="2" max="24" step="1" value="8"></div>
+      <div class="ctrl"><label>Schrittweite ε <span class="val" id="v_pg_eps">0.080</span></label>
+        <input type="range" id="s_pg_eps" min="0.001" max="0.4" step="0.001" value="0.08"></div>
+      <div class="ctrl"><label>Aktivierung</label>
+        <select id="sel_pg_act">
+          <option value="tanh">tanh</option><option value="sig">Sigmoid</option>
+          <option value="relu">ReLU (glatt)</option>
+        </select></div>
+      <div class="ctrl"><label>Fehlerfunktion e</label>
+        <select id="sel_pg_err">
+          <option value="quad">quadratisch</option>
+          <option value="prod">Produkt x·y (pathologisch!)</option>
+        </select></div>
+      <h4>Zerlegung (monoidal!)</h4>
+      <div class="btnrow">
+        <button id="b_pg_m0" class="on">monolithisch</button>
+        <button id="b_pg_m1">schichtweise</button>
+        <button id="b_pg_m2">Blöcke (μ/δ)</button>
+      </div>
+      <div class="btnrow">
+        <button id="b_pg_step">1 Epoche</button>
+        <button id="b_pg_run" class="primary">Training ▶</button>
+        <button id="b_pg_reset" class="ghost">Reset 🎲</button>
+      </div>
+      <div class="kpi">
+        <div><div class="k">Epoche</div><div class="v" id="v_pg_ep">0</div></div>
+        <div><div class="k">Verlust</div><div class="v" id="v_pg_loss">—</div></div>
+        <div><div class="k">Δ Zerlegungen</div><div class="v" id="v_pg_d">0</div></div>
+      </div>
+      <p class="muted" style="font-size:.8rem">
+        „Δ Zerlegungen" misst den Unterschied zwischen monolithischem und zerlegtem Training
+        nach identischer Initialisierung. Er bleibt bei <b>0</b> — das ist der Satz, empirisch.
+      </p>
+    </div>
+  </div>
+
+  <h3>9.1 Die Request-Funktion als „Deep Dreaming"</h3>
+  <p class="muted">
+    Bemerkung II.2, dritte Lesart: fixiere <span class="mono">p</span>, wähle Wunsch-Output
+    <span class="mono">b</span>, und <span class="mono">r(p,a,b)</span> liefert ein „passenderes" Eingabebild.
+    Hier auf einem 2D-Klassifikator.
+  </p>
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_dream" height="360"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--accent)"></i>Klasse 0</span>
+        <span><i class="dot" style="background:var(--accent3)"></i>Klasse 1</span>
+        <span><i class="dot" style="background:var(--good)"></i>Request-Trajektorie</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctrl"><label>Wunsch-Output b <span class="val" id="v_dr_b">1.00</span></label>
+        <input type="range" id="s_dr_b" min="0" max="1" step="0.01" value="1"></div>
+      <div class="ctrl"><label>Iterationen <span class="val" id="v_dr_n">12</span></label>
+        <input type="range" id="s_dr_n" min="1" max="60" step="1" value="12"></div>
+      <div class="btnrow">
+        <button id="b_dr_train" class="primary">Klassifikator trainieren</button>
+        <button id="b_dr_reset" class="ghost">Reset</button>
+      </div>
+      <p class="muted" style="font-size:.84rem">
+        Klicke in die Fläche, um einen Startpunkt <span class="mono">a</span> zu setzen.
+        Die grüne Bahn ist <span class="mono">a, r(p,a,b), r(p,r(p,a,b),b), …</span> —
+        der Punkt wandert in Richtung der gewünschten Klasse.
+      </p>
+      <div class="kpi">
+        <div><div class="k">I(p,a)</div><div class="v" id="v_dr_out">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>9.2 Fehlerfunktions-Labor: wann bricht der Satz?</h3>
+  <div class="grid2">
+    <div class="card tight">
+      <div id="p_errlab" class="plot" style="height:320px"></div>
+    </div>
+    <div class="card">
+      <table id="t_errlab"></table>
+      <div class="callout i" style="font-size:.86rem">
+        <b>Abschnitt VII-A.</b> <b>Kreuzentropie</b>
+        <span class="mono">e(x,y)=y ln x+(1−y)ln(1−x)</span> ist <i>fast</i> ein Beispiel:
+        <span class="mono">∂e/∂x(z,y)=(y−z)/(z(1−z))</span> ist invertierbar für alle
+        <span class="mono">z ≠ 0,1</span>. In der Praxis hält man
+        <span class="mono">0 &lt; I<sub>k</sub>(p,a) &lt; 1</span> ein, dann greift der Satz „lokal".
+        Zusätzlich mittelt man statt zu summieren — das modelliert der Faktor
+        <span class="mono">α<sub>B</sub> = 1/n</span> in Theorem A.1.
+      </div>
+      <div class="ctrl"><label>α-Variante (Summe ↔ Mittel) <span class="val" id="v_el_al">1.00</span></label>
+        <input type="range" id="s_el_al" min="0.1" max="1" step="0.01" value="1"></div>
+      <div class="ctrl"><label>Testpunkt z <span class="val" id="v_el_z">0.50</span></label>
+        <input type="range" id="s_el_z" min="0.01" max="0.99" step="0.005" value="0.5"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 10. OUTLOOK -->
+<!-- ============================================================ -->
+<section id="outlook">
+  <h2><span class="num">10</span> Ausblick: Lens ↪ Learn ↪ Game</h2>
+  <p class="lead">
+    Der letzte Abschnitt des Papers: <span class="tag">Learn</span> ist kein Einzelstück.
+    Es sitzt exakt zwischen zwei bekannten Strukturen — und das erklärt, <i>warum</i> die
+    Request-Funktion so natürlich wirkt.
+  </p>
+
+  <div class="grid-2-1">
+    <div class="card tight">
+      <canvas id="c_embed" height="320"></canvas>
+      <div class="btnrow" style="justify-content:center">
+        <button id="b_em_lens" class="on">Lens</button>
+        <button id="b_em_learn">Learn</button>
+        <button id="b_em_game">Open Game</button>
+      </div>
+      <div id="emmsg" class="callout" style="font-size:.88rem"></div>
+    </div>
+    <div class="card">
+      <h4>Dieselbe Idee, drei Namen</h4>
+      <table>
+        <tr><th></th><th>vorwärts</th><th>rückwärts</th><th>Zustand</th></tr>
+        <tr><td><b>Lens</b></td><td class="mono">get</td><td class="mono">put</td><td class="mono">trivial</td></tr>
+        <tr><td><b style="color:var(--accent)">Learn</b></td><td class="mono">I</td><td class="mono">r</td><td class="mono">U</td></tr>
+        <tr><td><b>Open Game</b></td><td class="mono">play</td><td class="mono">coplay</td><td class="mono">best resp.</td></tr>
+      </table>
+      <div class="eq center" id="eq_embed"></div>
+      <p class="muted" style="font-size:.85rem">
+        Ein <b>Lens</b> ist ein Lerner mit trivialem Parameterraum.
+        Ein <b>Lerner</b> ist ein Open Game, das die „singleton best response"-Bedingung erfüllt.
+        Alle drei beschreiben: <i>wie Agenten Information austauschen und darauf reagieren.</i>
+      </p>
+    </div>
+  </div>
+
+  <h3>10.1 Die fünf Kernaussagen — als Zusammenfassung zum Mitnehmen</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <div class="pill">Beitrag 1</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        Die <b class="bwd">Request-Funktion</b> ist das fehlende Puzzleteil.
+        Ohne sie gibt es keine Komposition von Lernalgorithmen.
+      </p>
+    </div>
+    <div class="card tight">
+      <div class="pill p2">Beitrag 2</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        <span class="tag">Learn</span> ist eine <b>symmetrisch monoidale Kategorie</b>.
+        Serie, Parallel, Kreuzung, Bimonoide — alles vorhanden.
+      </p>
+    </div>
+    <div class="card tight">
+      <div class="pill p3">Beitrag 3</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        <b>Gradientenabstieg ist ein Funktor</b> <span class="mono">L<sub>ε,e</sub>: Para→Learn</span>.
+        Backpropagation = Komposition in <span class="tag">Learn</span>.
+      </p>
+    </div>
+    <div class="card tight">
+      <div class="pill p4">Beitrag 4</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        <b>Hinreichende Bedingung</b> an Fehlerfunktionen:
+        <span class="mono">∂e/∂x(x₀,−)</span> invertierbar. Einfach & allgemein.
+      </p>
+    </div>
+    <div class="card tight">
+      <div class="pill">Beitrag 5</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        Backprop gilt für <b>alle</b> differenzierbaren parametrisierten Funktionen —
+        nicht nur für klassische Netze.
+      </p>
+    </div>
+    <div class="card tight">
+      <div class="pill p2">Offen</div>
+      <p class="muted" style="font-size:.86rem;margin-top:.5rem">
+        Bikategorie (Hyperparameter), Kreuzentropie mit Singularitäten,
+        Lernen auf Mannigfaltigkeiten, „well-behavedness" wie bei Lenses.
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;border-color:rgba(94,242,176,.4)">
+    <h4 style="margin-top:0;color:var(--good)">Die Frage und ihre Antwort — noch einmal nebeneinander</h4>
+    <div class="grid2">
+      <div>
+        <div class="pill p3">Frage</div>
+        <p style="font-size:.95rem">
+          Gegeben zwei Lernalgorithmen, einer für <span class="mono">A→B</span>, einer für
+          <span class="mono">B→C</span>. Kann man sie zu einem Lernalgorithmus für
+          <span class="mono">A→C</span> zusammensetzen?
+        </p>
+      </div>
+      <div>
+        <div class="pill p4">Antwort</div>
+        <p style="font-size:.95rem">
+          Nicht mit der üblichen Definition — es fehlt Trainingsinformation für den vorderen Lerner.
+          <b>Ergänzt man eine Request-Funktion</b> <span class="mono">r : P×A×B→A</span>,
+          <b>dann ja</b>, und zwar kanonisch. Die so entstehende Kategorie
+          <span class="tag">Learn</span> ist symmetrisch monoidal, und Gradientenabstieg
+          <span class="mono">L<sub>ε,e</sub></span> ist ein treuer, objekt-injektiver, stark symmetrisch
+          monoidaler Funktor <span class="mono">Para → Learn</span>.
+          <b>Backpropagation ist genau die Kompositionsregel dieses Funktorbildes.</b>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  Interaktive Aufbereitung von <b>Fong, Spivak, Tuyéras — „Backprop as Functor"</b> (arXiv:1711.10455v3).<br>
+  Alle Formeln, Zahlen und Diagramme werden live im Browser berechnet.
+</div>
+
+</main>
+
+<script>
+/* ==================================================================
+   GLOBALS & HELPERS
+   ================================================================== */
+const $  = id => document.getElementById(id);
+const TAU = Math.PI*2;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fmt=(x,n=3)=>{ if(!isFinite(x)) return "—"; return x.toFixed(n); };
+const COL={A:'#6ee7ff',B:'#b18cff',C:'#ff7ac6',P:'#ffc86b',good:'#5ef2b0',bad:'#ff6b6b',
+           txt:'#e8ecf8',mut:'#9aa5c8',grid:'rgba(120,140,220,.18)',panel:'rgba(6,8,16,.55)'};
+
+/* --- Temml rendering --- */
+function TeX(el,tex,display=true){
+  try{ el.innerHTML = temml.renderToString(tex,{displayMode:display}); }
+  catch(e){ el.textContent = tex; }
+}
+
+/* --- HiDPI canvas --- */
+function fit(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  if(r.width===0) return cv.getContext('2d');
+  const h = cv.getAttribute('height')|0;
+  cv.width = Math.round(r.width*dpr);
+  cv.height= Math.round(h*dpr);
+  cv.style.height = h+'px';
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return ctx;
+}
+function clear(ctx,cv){
+  const dpr=window.devicePixelRatio||1;
+  ctx.clearRect(0,0,cv.width/dpr,cv.height/dpr);
+}
+function CW(cv){ return cv.getBoundingClientRect().width; }
+function CH(cv){ return cv.getAttribute('height')|0; }
+
+/* --- drawing primitives --- */
+function rr(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function box(ctx,x,y,w,h,label,col,sub,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha;
+  ctx.shadowColor=col; ctx.shadowBlur=18;
+  rr(ctx,x,y,w,h,10);
+  const g=ctx.createLinearGradient(x,y,x,y+h);
+  g.addColorStop(0,col+'44'); g.addColorStop(1,col+'18');
+  ctx.fillStyle=g; ctx.fill();
+  ctx.shadowBlur=0; ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='700 14px Inter,system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(label,x+w/2, sub? y+h/2-8 : y+h/2);
+  if(sub){ ctx.fillStyle=COL.mut; ctx.font='11px ui-monospace,monospace';
+           ctx.fillText(sub,x+w/2,y+h/2+10); }
+  ctx.restore();
+}
+function wire(ctx,x1,y1,x2,y2,col,lw=2,dash=null,alpha=1,arrow=true){
+  ctx.save(); ctx.globalAlpha=alpha;
+  ctx.strokeStyle=col; ctx.lineWidth=lw;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  const dx=Math.abs(x2-x1)*0.5;
+  ctx.bezierCurveTo(x1+dx,y1,x2-dx,y2,x2,y2);
+  ctx.stroke(); ctx.setLineDash([]);
+  if(arrow){
+    const a=Math.atan2(y2-y1, dx>1?1:(x2-x1));
+    ctx.translate(x2,y2); ctx.rotate(x2>=x1?0:Math.PI);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-8,-4.5); ctx.lineTo(-8,4.5);
+    ctx.closePath(); ctx.fillStyle=col; ctx.fill();
+  }
+  ctx.restore();
+}
+function lbl(ctx,x,y,t,col=COL.mut,size=11,align='center',weight=''){
+  ctx.save(); ctx.fillStyle=col;
+  ctx.font=`${weight} ${size}px ui-monospace,SFMono-Regular,monospace`;
+  ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(t,x,y); ctx.restore();
+}
+function dotm(ctx,x,y,r,col,glow=true){
+  ctx.save();
+  if(glow){ctx.shadowColor=col;ctx.shadowBlur=14;}
+  ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill(); ctx.restore();
+}
+
+/* --- plotly theme --- */
+const PL = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(6,8,16,.35)',
+  font:{color:COL.mut,family:'Inter,system-ui,sans-serif',size:11},
+  margin:{l:48,r:16,t:26,b:40},
+  xaxis:{gridcolor:COL.grid,zerolinecolor:'rgba(120,140,220,.35)',linecolor:COL.grid},
+  yaxis:{gridcolor:COL.grid,zerolinecolor:'rgba(120,140,220,.35)',linecolor:COL.grid},
+  showlegend:true,
+  legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}}
+};
+const PLCFG={displayModeBar:false,responsive:true};
+function pl(id,data,layout){ Plotly.react(id,data,Object.assign({},PL,layout||{}),PLCFG); }
+
+/* --- math helpers --- */
+const sig = x=>1/(1+Math.exp(-clamp(x,-40,40)));
+const dsig= x=>{const s=sig(x);return s*(1-s);};
+const th  = x=>Math.tanh(x);
+const dth = x=>1-Math.tanh(x)**2;
+const srelu=x=>Math.log(1+Math.exp(clamp(x,-40,40)));
+const dsrelu=x=>sig(x);
+function ACT(name){
+  if(name==='sig')  return {f:sig,  d:dsig,  n:'σ'};
+  if(name==='tanh') return {f:th,   d:dth,   n:'tanh'};
+  if(name==='relu') return {f:srelu,d:dsrelu,n:'softplus'};
+  return {f:x=>x, d:_=>1, n:'id'};
+}
+/* error functions: e(x,y); dedx = ∂e/∂x ; finv = inverse of y ↦ ∂e/∂x(x0,y) */
+const ERR={
+  quad:{ name:'½(x−y)²',
+         e:(x,y)=>0.5*(x-y)*(x-y),
+         dedx:(x,y)=>x-y,
+         finv:(x0,g)=>x0-g,          /* solve  x0 - y = g  →  y = x0-g */
+         ok:true },
+  prod:{ name:'x·y',
+         e:(x,y)=>x*y,
+         dedx:(x,y)=>y,
+         finv:(x0,g)=>g,             /* ∂e/∂x(x0,y)=y  → inverse is identity */
+         ok:true },
+  ce:  { name:'Kreuzentropie',
+         e:(x,y)=>-(y*Math.log(clamp(x,1e-9,1))+(1-y)*Math.log(clamp(1-x,1e-9,1))),
+         dedx:(x,y)=>(clamp(x,1e-6,1-1e-6)-y)/(clamp(x,1e-6,1-1e-6)*(1-clamp(x,1e-6,1-1e-6))),
+         finv:(x0,g)=>{const z=clamp(x0,1e-6,1-1e-6); return z-g*z*(1-z);},
+         ok:'partial' },
+  abs: { name:'|x−y|',
+         e:(x,y)=>Math.abs(x-y),
+         dedx:(x,y)=>Math.sign(x-y),
+         finv:(x0,g)=>NaN,
+         ok:false }
+};
+
+/* ==================================================================
+   NAV + PROGRESS
+   ================================================================== */
+(function(){
+  const bar=$('progressbar');
+  const links=[...document.querySelectorAll('#navlinks a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  function upd(){
+    const st=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+    bar.style.width=(100*st/Math.max(1,h))+'%';
+    let idx=0;
+    secs.forEach((s,i)=>{ if(s && s.getBoundingClientRect().top<160) idx=i; });
+    links.forEach((a,i)=>a.classList.toggle('active',i===idx));
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  links.forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+  }));
+  upd();
+})();
+
+/* ==================================================================
+   TABS
+   ================================================================== */
+document.querySelectorAll('.tabs').forEach(tb=>{
+  tb.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-t]'); if(!b)return;
+    tb.querySelectorAll('button').forEach(x=>x.classList.remove('act'));
+    b.classList.add('act');
+    const parent=tb.parentElement;
+    parent.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('act'));
+    const pane=$(b.dataset.t); pane.classList.add('act');
+    window.dispatchEvent(new Event('resize'));
+    if(b.dataset.t==='pre1') drawGrad3D();
+    if(b.dataset.t==='pre2') {drawChain();}
+    if(b.dataset.t==='pre7') drawInv();
+  });
+});
+
+/* ==================================================================
+   STATIC FORMULAS
+   ================================================================== */
+function renderStatics(){
+  TeX($('eq_learner'), String.raw`(P,\ \underbrace{I:P\times A\to B}_{\text{Implementierung}},\ \underbrace{U:P\times A\times B\to P}_{\text{Update}},\ \underbrace{\color{#ff7ac6}{r:P\times A\times B\to A}}_{\text{Request}})`);
+  TeX($('eq_grad'), String.raw`\nabla E=\Bigl(\tfrac{\partial E}{\partial p_1},\ \tfrac{\partial E}{\partial p_2}\Bigr)`);
+  TeX($('eq_gd'),   String.raw`p\ \longmapsto\ p-\varepsilon\,\nabla_p E(p)`);
+  TeX($('eq_chain'),String.raw`(g\circ f)'(a)=g'\bigl(f(a)\bigr)\cdot f'(a)`);
+  TeX($('eq_cat'),  String.raw`\mathrm{id}_B\circ f=f=f\circ \mathrm{id}_A,\qquad (h\circ g)\circ f=h\circ(g\circ f)`);
+  TeX($('eq_functor'),String.raw`F(\mathrm{id})=\mathrm{id},\qquad F(g\circ f)=F(g)\circ F(f)`);
+  TeX($('eq_mono'), String.raw`(P\times Q,\ I\,\|\,J),\qquad (I\,\|\,J)(p,q,a,c)=\bigl(I(p,a),\,J(q,c)\bigr)`);
+  TeX($('eq_inter'),String.raw`(f * g)\,\|\,(h * k)\;=\;(f\,\|\,h) * (g\,\|\,k)`);
+  TeX($('eq_inv'),  String.raw`\tfrac{\partial e}{\partial x}(x_0,-):\mathbb{R}\to\mathbb{R}\quad\text{ist invertierbar für jedes }x_0`);
+  TeX($('eq_def2'), String.raw`I:P\times A\to B,\qquad U:P\times A\times B\to P,\qquad r:P\times A\times B\to A`);
+  TeX($('eq_comp'), String.raw`\begin{aligned}
+(I*J)(p,q,a)&=J\bigl(q,I(p,a)\bigr)\\[2pt]
+(U*V)(p,q,a,c)&=\Bigl(U\bigl(p,a,\underbrace{s(q,I(p,a),c)}_{b'}\bigr),\ V\bigl(q,I(p,a),c\bigr)\Bigr)\\[2pt]
+(r*s)(p,q,a,c)&=r\bigl(p,a,\,s(q,I(p,a),c)\bigr)
+\end{aligned}`);
+  TeX($('eq_para'), String.raw`(I*J)(p,q,a)=J\bigl(q,I(p,a)\bigr),\qquad \mathbb{R}^n\otimes\mathbb{R}^m=\mathbb{R}^{n+m}`);
+  TeX($('eq_thm_head'), String.raw`L_{\varepsilon,e}:\mathbf{Para}\longrightarrow\mathbf{Learn}`);
+  TeX($('eq_thm_body'), String.raw`U_I(p,a,b)=p-\varepsilon\nabla_p E_I(p,a,b),\qquad
+r_I(p,a,b)=f_a\bigl(\nabla_a E_I(p,a,b)\bigr)`);
+  TeX($('eq_quaderr'), String.raw`\begin{aligned}
+U_I(p,a,b)_k&=p_k-\varepsilon\textstyle\sum_j (I_j-b_j)\tfrac{\partial I_j}{\partial p_k}\\
+r_I(p,a,b)_i&=a_i-\textstyle\sum_j (I_j-b_j)\tfrac{\partial I_j}{\partial a_i}\quad\color{#ffc86b}{(\text{kein }\varepsilon!)}
+\end{aligned}`);
+  TeX($('eq_layer'), String.raw`I^\sigma_C\bigl((w_{ji},w_j),\,x_i\bigr)=\Bigl(\sigma\bigl(\textstyle\sum_i w_{ji}x_i+w_j\bigr)\Bigr)_{1\le j\le n},\qquad P=\mathbb{R}^{|C|+n}`);
+  TeX($('eq_chain3'), String.raw`\mathbf{NNet}\ \xrightarrow{\ I^\sigma\ }\ \mathbf{Para}\ \xrightarrow{\ L_{\varepsilon,e}\ }\ \mathbf{Learn}`);
+  TeX($('eq_tie'), String.raw`(P,I)\;=\;\bigl(P,1_P\bigr)\ \|\ \mathrm{id}_A\ \;*\;\ (\mathbb{R}^0,I)`);
+  TeX($('eq_embed'), String.raw`\mathbf{Lens}\hookrightarrow\mathbf{Learn}\hookrightarrow\mathbf{Game}`);
+  TeX($('eq_ex_check'), String.raw`\begin{aligned}
+(U_B*U_C)(p,q,a,c)_{11}&=p_{11}-\varepsilon\bigl(I(p,a)_1-\underbrace{s(q,I(p,a),c)_1}_{\text{Request von }C}\bigr)\dot\sigma(\beta_1)a_1\\
+&=p_{11}-\varepsilon\bigl(J(q,I(p,a))-c\bigr)\,\dot\sigma(\gamma)\,q_1\,\dot\sigma(\beta_1)\,a_1\;=\;U_A(p,q,a,c)_{11}
+\end{aligned}`);
+}
+renderStatics();
+
+/* ==================================================================
+   §1.1 SUPERVISED LEARNER DEMO
+   ================================================================== */
+(function(){
+  const cv=$('c_super'); if(!cv) return;
+  const TRUE = x=>1.7*x+0.3;
+  const N=14, pts=[];
+  for(let i=0;i<N;i++){ const x=-2+4*i/(N-1); pts.push([x,TRUE(x)+(Math.sin(i*7.3)*0.35)]); }
+  let p=1, eps=0.1, n=0, running=false, idx=0, traj=[];
+
+  function err(){ let s=0; for(const[a,b]of pts){const d=p*a+0.3-b; s+=0.5*d*d;} return s/pts.length; }
+  function step(){
+    const [a,b]=pts[idx%pts.length]; idx++;
+    const pred=p*a+0.3;
+    p = p - eps*(pred-b)*a;   /* U(p,a,b) = p - ε ∇_p E */
+    n++; traj.push(p); if(traj.length>400) traj.shift();
+    $('s_sup_p').value=p; $('v_sup_p').textContent=fmt(p,2);
+  }
+  function draw(){
+    const ctx=fit(cv), W=CW(cv), H=CH(cv);
+    clear(ctx,cv);
+    const pad=38, x0=pad, x1=W-14, y0=14, y1=H-pad;
+    const X=v=>x0+(v+2.2)/4.4*(x1-x0);
+    const Y=v=>y1-(v+4.5)/9*(y1-y0);
+    /* grid */
+    ctx.strokeStyle=COL.grid; ctx.lineWidth=1;
+    for(let g=-2;g<=2;g++){ctx.beginPath();ctx.moveTo(X(g),y0);ctx.lineTo(X(g),y1);ctx.stroke();}
+    for(let g=-4;g<=4;g+=2){ctx.beginPath();ctx.moveTo(x0,Y(g));ctx.lineTo(x1,Y(g));ctx.stroke();}
+    /* axes */
+    ctx.strokeStyle='rgba(120,140,220,.45)';
+    ctx.beginPath();ctx.moveTo(x0,Y(0));ctx.lineTo(x1,Y(0));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(X(0),y0);ctx.lineTo(X(0),y1);ctx.stroke();
+    /* true function */
+    ctx.strokeStyle=COL.good; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(X(-2.2),Y(TRUE(-2.2))); ctx.lineTo(X(2.2),Y(TRUE(2.2))); ctx.stroke();
+    ctx.setLineDash([]);
+    /* hypothesis */
+    ctx.strokeStyle=COL.A; ctx.lineWidth=2.8; ctx.shadowColor=COL.A; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.moveTo(X(-2.2),Y(p*-2.2+0.3)); ctx.lineTo(X(2.2),Y(p*2.2+0.3)); ctx.stroke();
+    ctx.shadowBlur=0;
+    /* residuals + points */
+    for(const[a,b]of pts){
+      ctx.strokeStyle='rgba(255,107,107,.45)'; ctx.lineWidth=1.3;
+      ctx.beginPath(); ctx.moveTo(X(a),Y(b)); ctx.lineTo(X(a),Y(p*a+0.3)); ctx.stroke();
+      dotm(ctx,X(a),Y(b),4,'#9aa5c8',false);
+    }
+    /* highlight current training datum */
+    const [ca,cb]=pts[idx%pts.length];
+    dotm(ctx,X(ca),Y(cb),7,COL.C);
+    lbl(ctx,X(ca),Y(cb)-16,'(a,b)',COL.C,11,'center','700');
+    lbl(ctx,x1-6,y0+10,'I(p,−)',COL.A,12,'right','700');
+    lbl(ctx,x1-6,y0+26,'f (wahr)',COL.good,11,'right');
+    $('v_sup_err').textContent=fmt(err(),4);
+    $('v_sup_n').textContent=n;
+  }
+  $('s_sup_p').oninput=e=>{p=+e.target.value;$('v_sup_p').textContent=fmt(p,2);draw();};
+  $('s_sup_eps').oninput=e=>{eps=+e.target.value;$('v_sup_eps').textContent=fmt(eps,2);};
+  $('b_sup_step').onclick=()=>{step();draw();};
+  $('b_sup_reset').onclick=()=>{p=1;n=0;idx=0;$('s_sup_p').value=1;$('v_sup_p').textContent='1.00';draw();};
+  $('b_sup_run').onclick=function(){
+    running=!running; this.textContent=running?'Pause ⏸':'Trainieren ▶'; this.classList.toggle('on',running);
+    (function loop(){ if(!running)return; for(let k=0;k<2;k++)step(); draw(); requestAnimationFrame(loop); })();
+  };
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==================================================================
+   §1.2 THE GAP
+   ================================================================== */
+(function(){
+  const cv=$('c_gap'); if(!cv) return;
+  let phase=0;
+  const msgs=[
+    `Wir haben ein Trainingspaar <span class="mono">(a,c)</span> — nur ganz links und ganz rechts. In der Mitte, bei <span class="wordB">B</span>, wissen wir <b>nichts</b>.`,
+    `<b class="fwd">Vorwärts kein Problem:</b> <span class="mono">b = I(p,a)</span>, dann <span class="mono">J(q,b)</span>. Die Implementierung des Komposits ist einfach.`,
+    `<b style="color:var(--good)">Update hinten geht:</b> der zweite Lerner bekommt das Paar <span class="mono">(I(p,a), c)</span> ∈ B×C. Also <span class="mono">q′ = V(q, I(p,a), c)</span>. ✓`,
+    `<b style="color:var(--bad)">Update vorne geht NICHT:</b> für <span class="mono">U(p,a,?)</span> bräuchten wir ein Paar <span class="mono">(a,b′)</span> ∈ A×B. Aber <b>woher soll b′ kommen?</b> Es gibt keine natürliche Wahl. <b>Hier reißt die Kette.</b>`
+  ];
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const yM=H*0.42, bw=Math.min(105,W*0.2), bh=54;
+    const xA=W*0.06, xI=W*0.28, xJ=W*0.60, xC=W*0.94;
+    /* wires */
+    wire(ctx,xA+16,yM,xI,yM,COL.A,2.4,null,1);
+    lbl(ctx,(xA+16+xI)/2,yM-14,'A',COL.A,13,'center','700');
+    wire(ctx,xI+bw,yM,xJ,yM,phase>=1?COL.B:'rgba(120,140,220,.25)',2.4,phase>=1?null:[5,4],1);
+    lbl(ctx,(xI+bw+xJ)/2,yM-14,'B',phase>=1?COL.B:COL.mut,13,'center','700');
+    wire(ctx,xJ+bw,yM,xC,yM,COL.C,2.4,null,1);
+    lbl(ctx,(xJ+bw+xC)/2,yM-14,'C',COL.C,13,'center','700');
+    /* boxes */
+    box(ctx,xI,yM-bh/2,bw,bh,'I(p,−)',COL.A,'P, U, ?');
+    box(ctx,xJ,yM-bh/2,bw,bh,'J(q,−)',COL.B,'Q, V, ?');
+    /* training data */
+    dotm(ctx,xA+10,yM,7,COL.P);
+    lbl(ctx,xA+10,yM-22,'a',COL.P,13,'center','700');
+    dotm(ctx,xC-6,yM,7,COL.P);
+    lbl(ctx,xC-6,yM-22,'c',COL.P,13,'center','700');
+    lbl(ctx,W/2,20,'Trainingsdatum (a, c)  —  gegeben',COL.P,12,'center','700');
+    /* phase 1: forward */
+    if(phase>=1){
+      dotm(ctx,(xI+bw+xJ)/2,yM,6,COL.fwd);
+      lbl(ctx,(xI+bw+xJ)/2,yM+20,'b = I(p,a)',COL.fwd,11);
+    }
+    /* phase 2: update back */
+    if(phase>=2){
+      const y2=yM+90;
+      box(ctx,xJ,y2-22,bw,44,'V(q,b,c)',COL.good,null,1);
+      wire(ctx,xJ+bw/2,yM+bh/2,xJ+bw/2,y2-22,COL.good,2,[4,3],1);
+      lbl(ctx,xJ+bw+66,y2,'✓ q′ berechenbar',COL.good,12,'center','700');
+    }
+    /* phase 3: broken */
+    if(phase>=3){
+      const y2=yM+90;
+      ctx.save(); ctx.setLineDash([6,5]);
+      ctx.strokeStyle=COL.bad; ctx.lineWidth=2.2;
+      rr(ctx,xI,y2-22,bw,44,10); ctx.stroke();
+      ctx.fillStyle='rgba(255,107,107,.12)'; ctx.fill(); ctx.restore();
+      lbl(ctx,xI+bw/2,y2-6,'U(p,a,b′)',COL.bad,13,'center','700');
+      lbl(ctx,xI+bw/2,y2+12,'b′ = ???',COL.bad,12,'center','700');
+      wire(ctx,xI+bw/2,yM+bh/2,xI+bw/2,y2-22,COL.bad,2,[4,3],1);
+      /* big X */
+      ctx.save(); ctx.strokeStyle=COL.bad; ctx.lineWidth=3.5; ctx.globalAlpha=.85;
+      ctx.shadowColor=COL.bad; ctx.shadowBlur=16;
+      const cx=(xI+bw+xJ)/2, cy=yM+42, s=13;
+      ctx.beginPath();ctx.moveTo(cx-s,cy-s);ctx.lineTo(cx+s,cy+s);
+      ctx.moveTo(cx+s,cy-s);ctx.lineTo(cx-s,cy+s);ctx.stroke(); ctx.restore();
+      lbl(ctx,cx,cy+30,'kein b′ verfügbar',COL.bad,11,'center','700');
+    }
+    $('gapmsg').innerHTML=msgs[phase];
+    ['b_gap_a','b_gap_b','b_gap_c','b_gap_d'].forEach((id,i)=>$(id).classList.toggle('on',i===phase));
+  }
+  ['b_gap_a','b_gap_b','b_gap_c','b_gap_d'].forEach((id,i)=>$(id).onclick=()=>{phase=i;draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §1.3 REQUEST FUNCTION — 4 PHASES (Figure 2 of paper)
+   ================================================================== */
+(function(){
+  const cv=$('c_req'); if(!cv) return;
+  let ph=0, timer=null;
+  const msgs=[
+    `<b>Ausgangslage.</b> Zwei Lerner in Reihe. Trainingsdatum <span class="mono">(a,c)</span>. Parameter <span class="mono">p</span> und <span class="mono">q</span>.`,
+    `<b class="fwd">implement.</b> <span class="mono">b := I(p,a)</span> fließt nach rechts. Der zweite Lerner sieht jetzt Eingabe <span class="mono">b</span> und Ziel <span class="mono">c</span>.`,
+    `<b class="bwd">request.</b> Der zweite Lerner antwortet: „Ich hätte lieber <span class="mono">b′ = s(q, I(p,a), c)</span> bekommen." Das ist die <b>neue Zutat</b>.`,
+    `<b style="color:var(--good)">update.</b> Jetzt hat <i>jeder</i> Lerner ein vollständiges Trainingspaar: vorne <span class="mono">(a, b′)</span>, hinten <span class="mono">(I(p,a), c)</span>. Beide können updaten. <b>Komposition gelöst.</b>`
+  ];
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const rows=4, rh=H/rows;
+    const bw=Math.min(100,W*0.19), bh=42;
+    const xI=W*0.26, xJ=W*0.58;
+    for(let r=0;r<rows;r++){
+      const y=rh*r+rh/2;
+      const active = r<=ph;
+      const al = active?1:0.18;
+      /* row label */
+      const names=['','implement','request','update'];
+      if(names[r]) lbl(ctx,10,y-rh/2+14,names[r],
+          r===1?COL.fwd:r===2?COL.C:COL.good,11,'left','700');
+      /* wires */
+      wire(ctx,W*0.10,y,xI,y,COL.A,2,null,al);
+      wire(ctx,xI+bw,y,xJ,y,COL.B,2,null,al);
+      wire(ctx,xJ+bw,y,W*0.90,y,COL.C,2,null,al);
+      box(ctx,xI,y-bh/2,bw,bh, r===3?'I(p′,−)':'I(p,−)',COL.A,null,al);
+      box(ctx,xJ,y-bh/2,bw,bh, r===3?'J(q′,−)':'J(q,−)',COL.B,null,al);
+      dotm(ctx,W*0.085,y,5,COL.P,active);
+      lbl(ctx,W*0.085,y-18,'a',COL.P,12,'center','700');
+      dotm(ctx,W*0.905,y,5,COL.P,active);
+      lbl(ctx,W*0.905,y-18,'c',COL.P,12,'center','700');
+
+      if(r>=1&&active){
+        lbl(ctx,(xI+bw+xJ)/2,y-16,'I(p,a)',COL.fwd,11,'center','700');
+        if(r===1){ dotm(ctx,(xI+bw+xJ)/2,y,5,COL.fwd); }
+      }
+      if(r===2&&active){
+        /* backward arrow under the B wire */
+        wire(ctx,xJ-6,y+22,xI+bw+6,y+22,COL.bwd,2.4,null,1);
+        lbl(ctx,(xI+bw+xJ)/2,y+38,'b′ = s(q, I(p,a), c)',COL.bwd,11,'center','700');
+      }
+      if(r===3&&active){
+        lbl(ctx,xI+bw/2,y+34,'update (a, b′)',COL.good,10.5,'center','700');
+        lbl(ctx,xJ+bw/2,y+34,'update (I(p,a), c)',COL.good,10.5,'center','700');
+        ctx.save();ctx.globalAlpha=.9;
+        lbl(ctx,xI+bw/2,y-bh/2-12,'p → p′',COL.good,11,'center','700');
+        lbl(ctx,xJ+bw/2,y-bh/2-12,'q → q′',COL.good,11,'center','700');
+        ctx.restore();
+      }
+    }
+    $('reqmsg').innerHTML=msgs[ph];
+    $('v_req_step').textContent=`Phase ${ph+1}/4`;
+  }
+  $('b_req_next').onclick=()=>{ph=(ph+1)%4;draw();};
+  $('b_req_prev').onclick=()=>{ph=(ph+3)%4;draw();};
+  $('b_req_auto').onclick=function(){
+    if(timer){clearInterval(timer);timer=null;this.textContent='Animation ▶';this.classList.remove('on');return;}
+    this.textContent='Stopp ⏸'; this.classList.add('on');
+    timer=setInterval(()=>{ph=(ph+1)%4;draw();},1600);
+  };
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §2.1 GRADIENT 3D
+   ================================================================== */
+let gradTraj=[], gradPt=[-1.6,1.4], gradRun=false;
+function Efun(x,y){ return 0.5*(x*x*0.6+y*y*1.4) + 0.9*Math.sin(1.6*x)*Math.cos(1.3*y) + 1.2; }
+function gradE(x,y){
+  const h=1e-4;
+  return [ (Efun(x+h,y)-Efun(x-h,y))/(2*h), (Efun(x,y+h)-Efun(x,y-h))/(2*h) ];
+}
+function drawGrad3D(){
+  const n=54, xs=[],ys=[],z=[];
+  for(let i=0;i<n;i++){ xs.push(-2.4+4.8*i/(n-1)); ys.push(-2.4+4.8*i/(n-1)); }
+  for(let j=0;j<n;j++){ const row=[]; for(let i=0;i<n;i++) row.push(Efun(xs[i],ys[j])); z.push(row); }
+  const [gx,gy]=gradE(gradPt[0],gradPt[1]);
+  const nrm=Math.hypot(gx,gy);
+  $('v_g_E').textContent=fmt(Efun(gradPt[0],gradPt[1]),3);
+  $('v_g_n').textContent=fmt(nrm,3);
+
+  const traces=[
+    {type:'surface',x:xs,y:ys,z:z,colorscale:[[0,'#0b1030'],[.4,'#2a3a8a'],[.7,'#7a4fd0'],[1,'#ff9ad6']],
+     opacity:.92,showscale:false,contours:{z:{show:true,usecolormap:true,project:{z:true}}}},
+  ];
+  if(gradTraj.length>1){
+    traces.push({type:'scatter3d',mode:'lines+markers',
+      x:gradTraj.map(p=>p[0]),y:gradTraj.map(p=>p[1]),
+      z:gradTraj.map(p=>Efun(p[0],p[1])+0.06),
+      line:{color:'#5ef2b0',width:5},marker:{size:2.5,color:'#5ef2b0'},name:'Abstiegspfad'});
+  }
+  traces.push({type:'scatter3d',mode:'markers',
+    x:[gradPt[0]],y:[gradPt[1]],z:[Efun(gradPt[0],gradPt[1])+0.08],
+    marker:{size:6,color:'#ff7ac6'},name:'p'});
+  /* gradient arrow */
+  const sc=0.35/Math.max(nrm,.2);
+  traces.push({type:'scatter3d',mode:'lines',
+    x:[gradPt[0],gradPt[0]-gx*sc],y:[gradPt[1],gradPt[1]-gy*sc],
+    z:[Efun(gradPt[0],gradPt[1])+0.08,Efun(gradPt[0],gradPt[1])+0.08],
+    line:{color:'#ffc86b',width:7},name:'−∇E'});
+
+  Plotly.react('p_grad3d',traces,{
+    paper_bgcolor:'rgba(0,0,0,0)',
+    font:{color:COL.mut,size:10},
+    margin:{l:0,r:0,t:0,b:0},
+    showlegend:true,legend:{x:0,y:1,font:{size:10},bgcolor:'rgba(0,0,0,0)'},
+    scene:{
+      xaxis:{title:'p₁',gridcolor:COL.grid,color:COL.mut,backgroundcolor:'rgba(6,8,16,.4)',showbackground:true},
+      yaxis:{title:'p₂',gridcolor:COL.grid,color:COL.mut,backgroundcolor:'rgba(6,8,16,.4)',showbackground:true},
+      zaxis:{title:'E',gridcolor:COL.grid,color:COL.mut,backgroundcolor:'rgba(6,8,16,.4)',showbackground:true},
+      camera:{eye:{x:1.5,y:-1.6,z:1.1}}
+    }
+  },PLCFG);
+}
+(function(){
+  if(!$('s_g_x'))return;
+  const upd=()=>{
+    gradPt=[+$('s_g_x').value, +$('s_g_y').value];
+    $('v_g_x').textContent=fmt(gradPt[0],2); $('v_g_y').textContent=fmt(gradPt[1],2);
+    gradTraj=[gradPt.slice()];
+    drawGrad3D();
+  };
+  $('s_g_x').oninput=upd; $('s_g_y').oninput=upd;
+  $('s_g_e').oninput=e=>{$('v_g_e').textContent=fmt(+e.target.value,3);};
+  $('b_g_reset').onclick=()=>{gradRun=false;$('b_g_run').textContent='Abstieg ▶';
+    $('b_g_run').classList.remove('on');upd();};
+  $('b_g_run').onclick=function(){
+    gradRun=!gradRun;
+    this.textContent=gradRun?'Stopp ⏸':'Abstieg ▶'; this.classList.toggle('on',gradRun);
+    (function loop(){
+      if(!gradRun)return;
+      const eps=+$('s_g_e').value;
+      for(let k=0;k<2;k++){
+        const [gx,gy]=gradE(gradPt[0],gradPt[1]);
+        gradPt=[clamp(gradPt[0]-eps*gx,-2.4,2.4), clamp(gradPt[1]-eps*gy,-2.4,2.4)];
+        gradTraj.push(gradPt.slice()); if(gradTraj.length>320)gradTraj.shift();
+      }
+      drawGrad3D();
+      setTimeout(()=>requestAnimationFrame(loop),60);
+    })();
+  };
+  gradTraj=[gradPt.slice()];
+  setTimeout(drawGrad3D,120);
+})();
+
+/* ==================================================================
+   §2.2 CHAIN RULE
+   ================================================================== */
+let chK=1.3;
+function chF(x){ return Math.sin(1.4*x)+0.55*x; }
+function chFp(x){ return 1.4*Math.cos(1.4*x)+0.55; }
+function chG(b){ return chK*b + 0.3*Math.sin(2.1*b); }
+function chGp(b){ return chK + 0.63*Math.cos(2.1*b); }
+function drawChain(){
+  const cv=$('c_chain'); if(!cv) return;
+  const a=+$('s_ch_a').value, d=+$('s_ch_d').value;
+  chK=+$('s_ch_k').value;
+  const b=chF(a), c=chG(b);
+  const b2=chF(a+d), c2=chG(b2);
+  const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+
+  const cols=3, cw=W/cols;
+  const axY=H-46, top=28;
+  const centers=[cw*0.5,cw*1.5,cw*2.5];
+  const names=['A  (Eingang a)','B  (Zwischenwert b)','C  (Ausgang c)'];
+  const colsC=[COL.A,COL.B,COL.C];
+  const vals=[[a,a+d],[b,b2],[c,c2]];
+  const rng=[[-2.3,2.3],[-3,3],[-5,5]];
+  for(let i=0;i<3;i++){
+    const x=centers[i];
+    ctx.strokeStyle=COL.grid; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x,top); ctx.lineTo(x,axY); ctx.stroke();
+    lbl(ctx,x,axY+20,names[i],colsC[i],11,'center','700');
+    const Y=v=>axY-(v-rng[i][0])/(rng[i][1]-rng[i][0])*(axY-top);
+    /* ticks */
+    for(let t=Math.ceil(rng[i][0]);t<=rng[i][1];t++){
+      ctx.strokeStyle='rgba(120,140,220,.28)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x-5,Y(t));ctx.lineTo(x+5,Y(t));ctx.stroke();
+    }
+    /* interval */
+    ctx.save(); ctx.strokeStyle=colsC[i]; ctx.lineWidth=7; ctx.globalAlpha=.32;
+    ctx.beginPath(); ctx.moveTo(x,Y(vals[i][0])); ctx.lineTo(x,Y(vals[i][1])); ctx.stroke();
+    ctx.restore();
+    dotm(ctx,x,Y(vals[i][0]),6,colsC[i]);
+    dotm(ctx,x,Y(vals[i][1]),5,'#fff',false);
+    lbl(ctx,x+13,Y(vals[i][0]),fmt(vals[i][0],2),colsC[i],11,'left','700');
+    const dv=vals[i][1]-vals[i][0];
+    lbl(ctx,x+13,Y(vals[i][1]),'Δ='+fmt(dv,3),'#fff',10,'left');
+    /* connecting arrow */
+    if(i<2){
+      const xm=(centers[i]+centers[i+1])/2;
+      wire(ctx,x+38,top+16,centers[i+1]-38,top+16,i===0?COL.fwd:COL.B,2,null,.9);
+      lbl(ctx,xm,top+2,i===0?'f':'g',i===0?COL.fwd:COL.B,13,'center','700');
+      lbl(ctx,xm,top+30,(i===0?"f′="+fmt(chFp(a),3):"g′="+fmt(chGp(b),3)),COL.mut,10.5);
+    }
+  }
+  /* readouts */
+  $('v_ch_a').textContent=fmt(a,2);
+  $('v_ch_d').textContent=fmt(d,2);
+  $('v_ch_g').textContent=fmt(chGp(b),3);
+  $('v_ch_fp').textContent=fmt(chFp(a),4);
+  $('v_ch_gp').textContent=fmt(chGp(b),4);
+  $('v_ch_prod').textContent=fmt(chFp(a)*chGp(b),4);
+  const h=1e-5;
+  $('v_ch_num').textContent=fmt((chG(chF(a+h))-chG(chF(a-h)))/(2*h),4);
+
+  /* plot */
+  const xs=[],y1=[],y2=[],y3=[];
+  for(let i=0;i<220;i++){const x=-2.3+4.6*i/219;xs.push(x);y1.push(chF(x));y2.push(chG(chF(x)));
+    y3.push(chFp(x)*chGp(chF(x)));}
+  pl('p_chain',[
+    {x:xs,y:y1,name:'f(a)',line:{color:COL.A,width:2}},
+    {x:xs,y:y2,name:'g(f(a))',line:{color:COL.C,width:2.6}},
+    {x:xs,y:y3,name:"(g∘f)′ = g′·f′",line:{color:COL.good,width:2,dash:'dot'}},
+    {x:[a],y:[chG(chF(a))],mode:'markers',marker:{size:10,color:'#fff'},name:'a',showlegend:false}
+  ],{margin:{l:40,r:10,t:8,b:30},height:260,legend:{orientation:'h',y:1.16}});
+}
+['s_ch_a','s_ch_d','s_ch_k'].forEach(id=>{ if($(id)) $(id).oninput=drawChain; });
+
+/* ==================================================================
+   §2.3 CATEGORY
+   ================================================================== */
+(function(){
+  const cv=$('c_cat'); if(!cv)return;
+  let mode='init';
+  const msgs={
+    init:'Drei Objekte, drei Morphismen. Klicke die Buttons, um die Axiome zu prüfen.',
+    comp:'<b>Komposition:</b> aus <span class="mono">f : A→B</span> und <span class="mono">g : B→C</span> entsteht genau <b>ein</b> Morphismus <span class="mono">g∘f : A→C</span>. In <span class="tag">Learn</span> ist das die Kompositionsregel mit der Request-Funktion.',
+    id:'<b>Identität:</b> <span class="mono">id∘f = f = f∘id</span>. In <span class="tag">Learn</span>: <span class="mono">(ℝ⁰, id, !, π₂)</span> — ändert nichts, gibt die Anfrage unverändert durch.',
+    assoc:'<b>Assoziativität:</b> <span class="mono">(h∘g)∘f = h∘(g∘f)</span>. Beide Klammerungen ergeben <b>denselben</b> Morphismus A→D.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const R=26;
+    const obj = mode==='assoc'
+      ? [[W*0.12,H*0.72,'A',COL.A],[W*0.37,H*0.26,'B',COL.B],[W*0.63,H*0.26,'C',COL.C],[W*0.88,H*0.72,'D',COL.good]]
+      : [[W*0.15,H*0.70,'A',COL.A],[W*0.50,H*0.24,'B',COL.B],[W*0.85,H*0.70,'C',COL.C]];
+    function arrow(i,j,label,col,off,dash,alpha){
+      const [x1,y1]=obj[i], [x2,y2]=obj[j];
+      const ang=Math.atan2(y2-y1,x2-x1);
+      const sx=x1+Math.cos(ang)*R, sy=y1+Math.sin(ang)*R;
+      const ex=x2-Math.cos(ang)*(R+7), ey=y2-Math.sin(ang)*(R+7);
+      const mx=(sx+ex)/2 - Math.sin(ang)*(off||0), my=(sy+ey)/2 + Math.cos(ang)*(off||0);
+      ctx.save(); ctx.globalAlpha=alpha||1;
+      ctx.strokeStyle=col; ctx.lineWidth=2.2; if(dash)ctx.setLineDash(dash);
+      ctx.beginPath(); ctx.moveTo(sx,sy); ctx.quadraticCurveTo(mx,my,ex,ey); ctx.stroke();
+      ctx.setLineDash([]);
+      const a2=Math.atan2(ey-my,ex-mx);
+      ctx.translate(ex,ey); ctx.rotate(a2);
+      ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-9,-5);ctx.lineTo(-9,5);ctx.closePath();
+      ctx.fillStyle=col;ctx.fill(); ctx.restore();
+      lbl(ctx,mx-Math.sin(ang)*14,my+Math.cos(ang)*14,label,col,13,'center','700');
+    }
+    if(mode==='assoc'){
+      arrow(0,1,'f',COL.A,0); arrow(1,2,'g',COL.B,0); arrow(2,3,'h',COL.C,0);
+      arrow(0,2,'g∘f',COL.good,-40,[6,4],.9);
+      arrow(1,3,'h∘g',COL.P,-40,[6,4],.9);
+      arrow(0,3,'h∘g∘f','#fff',72,[3,4],.75);
+    } else {
+      arrow(0,1,'f',COL.A,0); arrow(1,2,'g',COL.B,0);
+      if(mode==='comp') arrow(0,2,'g∘f',COL.good,-46,[6,4],1);
+      if(mode==='id'){
+        obj.forEach(([x,y,n,c],i)=>{
+          ctx.save();ctx.strokeStyle=COL.P;ctx.lineWidth=2;
+          ctx.beginPath();ctx.arc(x,y-R-13,15,0.7,Math.PI*2+0.2);ctx.stroke();
+          ctx.restore();
+          lbl(ctx,x,y-R-34,'id',COL.P,11,'center','700');
+        });
+      }
+    }
+    obj.forEach(([x,y,n,c])=>{
+      ctx.save(); ctx.shadowColor=c; ctx.shadowBlur=20;
+      ctx.beginPath(); ctx.arc(x,y,R,0,TAU);
+      const g=ctx.createRadialGradient(x,y-8,2,x,y,R);
+      g.addColorStop(0,c+'66');g.addColorStop(1,c+'1a');
+      ctx.fillStyle=g;ctx.fill();
+      ctx.shadowBlur=0;ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();ctx.restore();
+      lbl(ctx,x,y,n,'#fff',16,'center','800');
+    });
+    $('catmsg').innerHTML=msgs[mode];
+  }
+  $('b_cat_comp').onclick=()=>{mode='comp';draw();};
+  $('b_cat_id').onclick=()=>{mode='id';draw();};
+  $('b_cat_assoc').onclick=()=>{mode='assoc';draw();};
+  $('b_cat_reset').onclick=()=>{mode='init';draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §2.4 FUNCTOR
+   ================================================================== */
+(function(){
+  const cv=$('c_functor'); if(!cv)return;
+  let hi=0;
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const topY=H*0.26, botY=H*0.76;
+    const xs=[W*0.16,W*0.46,W*0.76];
+    lbl(ctx,W*0.5,14,'Para  (parametrisierte Funktionen)',COL.A,12,'center','700');
+    lbl(ctx,W*0.5,H-12,'Learn  (Lernalgorithmen)',COL.C,12,'center','700');
+    /* separating band */
+    ctx.save();ctx.fillStyle='rgba(120,140,220,.05)';
+    ctx.fillRect(0,topY+34,W,botY-topY-68);ctx.restore();
+
+    function node(x,y,t,c,al){
+      ctx.save();ctx.globalAlpha=al;ctx.shadowColor=c;ctx.shadowBlur=16;
+      ctx.beginPath();ctx.arc(x,y,21,0,TAU);
+      ctx.fillStyle=c+'2a';ctx.fill();ctx.shadowBlur=0;
+      ctx.strokeStyle=c;ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
+      lbl(ctx,x,y,t,'#fff',13,'center','800');
+    }
+    function harr(x1,x2,y,t,c,off,dash,al){
+      ctx.save();ctx.globalAlpha=al||1;ctx.strokeStyle=c;ctx.lineWidth=2.2;
+      if(dash)ctx.setLineDash(dash);
+      ctx.beginPath();ctx.moveTo(x1+22,y);
+      ctx.quadraticCurveTo((x1+x2)/2,y+(off||0),x2-26,y);ctx.stroke();ctx.setLineDash([]);
+      ctx.translate(x2-26,y);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-9,-5);ctx.lineTo(-9,5);
+      ctx.closePath();ctx.fillStyle=c;ctx.fill();ctx.restore();
+      lbl(ctx,(x1+x2)/2,y+(off||0)/2-13,t,c,12,'center','700');
+    }
+    const a1=(hi===1)?1:(hi===0?1:.3), a2=(hi===2)?1:(hi===0?1:.3);
+    /* top row */
+    node(xs[0],topY,'A',COL.A,1);node(xs[1],topY,'B',COL.B,1);node(xs[2],topY,'C',COL.C,1);
+    harr(xs[0],xs[1],topY,'I',COL.A,0,null,1);
+    harr(xs[1],xs[2],topY,'J',COL.B,0,null,1);
+    harr(xs[0],xs[2],topY-58,'I∗J',COL.good,0,[6,4],a1);
+    /* bottom row */
+    node(xs[0],botY,'A',COL.A,1);node(xs[1],botY,'B',COL.B,1);node(xs[2],botY,'C',COL.C,1);
+    harr(xs[0],xs[1],botY,'L(I)',COL.A,0,null,a2);
+    harr(xs[1],xs[2],botY,'L(J)',COL.B,0,null,a2);
+    harr(xs[0],xs[2],botY+58,hi===1?'L(I∗J)':'L(I)∗L(J)',COL.good,0,[6,4],1);
+    /* vertical functor arrows */
+    [0,1,2].forEach(i=>{
+      ctx.save();ctx.strokeStyle=COL.P;ctx.lineWidth=1.8;ctx.setLineDash([4,4]);
+      ctx.globalAlpha=.75;
+      ctx.beginPath();ctx.moveTo(xs[i],topY+23);ctx.lineTo(xs[i],botY-25);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.translate(xs[i],botY-25);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-5,-9);ctx.lineTo(5,-9);
+      ctx.closePath();ctx.fillStyle=COL.P;ctx.fill();ctx.restore();
+      lbl(ctx,xs[i]+12,(topY+botY)/2,'L',COL.P,12,'left','700');
+    });
+    if(hi===1){ lbl(ctx,W*0.5,(topY+botY)/2+26,'Weg A: komponieren ↓ dann übersetzen',COL.good,11.5,'center','700'); }
+    if(hi===2){ lbl(ctx,W*0.5,(topY+botY)/2+26,'Weg B: übersetzen ↓ dann komponieren',COL.good,11.5,'center','700'); }
+  }
+  $('b_fn_path1').onclick=()=>{hi=1;draw();};
+  $('b_fn_path2').onclick=()=>{hi=2;draw();};
+  $('b_fn_reset').onclick=()=>{hi=0;draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §2.5 MONOIDAL
+   ================================================================== */
+(function(){
+  const cv=$('c_mono'); if(!cv)return;
+  let mode='par';
+  const msgs={
+    ser:'<b>Serie</b> <span class="mono">f ∗ g</span>: Ausgang von f ist Eingang von g. Das kann jede Kategorie.',
+    par:'<b>Parallel</b> <span class="mono">f ‖ h</span>: zwei unabhängige Bahnen nebeneinander. Das braucht die <b>monoidale</b> Struktur.',
+    inter:'<b>Austauschgesetz:</b> <span class="mono">(f∗g) ‖ (h∗k) = (f‖h) ∗ (g‖k)</span>. Beide Bilder zeigen dasselbe Diagramm — nur anders gruppiert. Deshalb ist die Zerlegung eines Netzes <b>frei wählbar</b>.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const bw=Math.min(84,W*0.17), bh=40;
+    if(mode==='ser'){
+      const y=H*0.5;
+      wire(ctx,W*0.05,y,W*0.22,y,COL.A,2.2);
+      box(ctx,W*0.22,y-bh/2,bw,bh,'f',COL.A);
+      wire(ctx,W*0.22+bw,y,W*0.55,y,COL.B,2.2);
+      box(ctx,W*0.55,y-bh/2,bw,bh,'g',COL.B);
+      wire(ctx,W*0.55+bw,y,W*0.93,y,COL.C,2.2);
+      lbl(ctx,W*0.5,H*0.16,'f ∗ g',COL.good,16,'center','800');
+    } else if(mode==='par'){
+      [[H*0.33,'f',COL.A,COL.A,COL.B],[H*0.67,'h',COL.C,COL.C,COL.good]].forEach(([y,n,c,ci,co])=>{
+        wire(ctx,W*0.10,y,W*0.38,y,ci,2.2);
+        box(ctx,W*0.38,y-bh/2,bw,bh,n,c);
+        wire(ctx,W*0.38+bw,y,W*0.90,y,co,2.2);
+      });
+      lbl(ctx,W*0.5,H*0.10,'f ‖ h',COL.good,16,'center','800');
+      ctx.save();ctx.strokeStyle='rgba(120,140,220,.3)';ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(W*0.05,H*0.5);ctx.lineTo(W*0.95,H*0.5);ctx.stroke();ctx.restore();
+    } else {
+      const bw2=Math.min(64,W*0.12);
+      [[H*0.30,'f','g'],[H*0.68,'h','k']].forEach(([y,n1,n2],i)=>{
+        const c=i===0?COL.A:COL.C;
+        wire(ctx,W*0.06,y,W*0.22,y,c,2);
+        box(ctx,W*0.22,y-bh/2,bw2,bh,n1,c);
+        wire(ctx,W*0.22+bw2,y,W*0.55,y,COL.B,2);
+        box(ctx,W*0.55,y-bh/2,bw2,bh,n2,c);
+        wire(ctx,W*0.55+bw2,y,W*0.94,y,c,2);
+      });
+      /* grouping brackets */
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=1.6;ctx.setLineDash([5,4]);
+      /* horizontal grouping = (f*g) || (h*k) */
+      rr(ctx,W*0.19,H*0.30-bh/2-9,W*0.42,bh+18,9);ctx.stroke();
+      rr(ctx,W*0.19,H*0.68-bh/2-9,W*0.42,bh+18,9);ctx.stroke();
+      ctx.strokeStyle=COL.P;
+      rr(ctx,W*0.205,H*0.20,bw2+8,H*0.62,9);ctx.stroke();
+      rr(ctx,W*0.535,H*0.20,bw2+8,H*0.62,9);ctx.stroke();
+      ctx.restore();
+      lbl(ctx,W*0.95,H*0.30,'(f∗g)',COL.good,11,'right','700');
+      lbl(ctx,W*0.95,H*0.68,'(h∗k)',COL.good,11,'right','700');
+      lbl(ctx,W*0.24,H*0.14,'(f‖h)',COL.P,11,'center','700');
+      lbl(ctx,W*0.575,H*0.14,'(g‖k)',COL.P,11,'center','700');
+      lbl(ctx,W*0.5,H*0.96,'= dasselbe Diagramm',COL.txt,12,'center','700');
+    }
+    $('monomsg').innerHTML=msgs[mode];
+    $('b_mono_serial').classList.toggle('on',mode==='ser');
+    $('b_mono_par').classList.toggle('on',mode==='par');
+    $('b_mono_inter').classList.toggle('on',mode==='inter');
+  }
+  $('b_mono_serial').onclick=()=>{mode='ser';draw();};
+  $('b_mono_par').onclick=()=>{mode='par';draw();};
+  $('b_mono_inter').onclick=()=>{mode='inter';draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §2.6 STRING DIAGRAMS  (Remark II.3 + composition diagrams)
+   ================================================================== */
+(function(){
+  const cv=$('c_sd'); if(!cv)return;
+  let mode=1;
+  const msgs={
+    1:'<b>Implementierung I.</b> Draht <span class="mono">P</span> (Parameter) und Draht <span class="mono">A</span> gehen rein, <span class="mono">B</span> kommt raus. Genau Abb. in Bemerkung II.3.',
+    2:'<b>(U, r) kombiniert.</b> Rein: <span class="mono">P, A, B</span>. Raus: <span class="mono">P</span> (neuer Parameter) und <span class="mono">A</span> (Anfrage). Man zeichnet U und r als <i>eine</i> Box.',
+    3:'<b>Komposition der Implementierungen:</b> <span class="mono">(I∗J)(p,q,a)=J(q,I(p,a))</span>. Einfach hintereinander.',
+    4:'<b>Komposition von (U,r):</b> beachte die <b>Verzweigung</b> von I — derselbe Wert <span class="mono">I(p,a)</span> wird <i>zweimal</i> gebraucht: einmal für <span class="mono">(V,s)</span>, einmal als „b" für <span class="mono">(U,r)</span>. Der Rückkanal von <span class="mono">(V,s)</span> liefert <span class="mono">b′</span>.',
+    5:'<b>Monoidalprodukt ‖:</b> zwei Lerner übereinander, keine Drähte dazwischen. Parameter <span class="mono">P×Q</span>.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const BW=Math.min(96,W*0.19), BH=54;
+    if(mode===1){
+      const y=H*0.5, bx=W*0.42;
+      wire(ctx,W*0.08,y-18,bx,y-18,COL.P,2.2); lbl(ctx,W*0.2,y-32,'P',COL.P,12,'center','700');
+      wire(ctx,W*0.08,y+18,bx,y+18,COL.A,2.2); lbl(ctx,W*0.2,y+4,'A',COL.A,12,'center','700');
+      box(ctx,bx,y-BH/2,BW,BH,'I',COL.A);
+      wire(ctx,bx+BW,y,W*0.92,y,COL.B,2.2); lbl(ctx,W*0.78,y-14,'B',COL.B,12,'center','700');
+    } else if(mode===2){
+      const y=H*0.5, bx=W*0.40, bh=100;
+      wire(ctx,W*0.06,y-34,bx,y-34,COL.P,2.2); lbl(ctx,W*0.2,y-48,'P',COL.P,12,'center','700');
+      wire(ctx,W*0.06,y,bx,y,COL.A,2.2);       lbl(ctx,W*0.2,y-14,'A',COL.A,12,'center','700');
+      wire(ctx,W*0.06,y+34,bx,y+34,COL.B,2.2); lbl(ctx,W*0.2,y+20,'B',COL.B,12,'center','700');
+      box(ctx,bx,y-bh/2,BW,bh,'U, r',COL.good);
+      wire(ctx,bx+BW,y-20,W*0.94,y-20,COL.P,2.2); lbl(ctx,W*0.8,y-34,"P'",COL.P,12,'center','700');
+      wire(ctx,bx+BW,y+20,W*0.94,y+20,COL.A,2.2); lbl(ctx,W*0.8,y+6,"A'",COL.A,12,'center','700');
+    } else if(mode===3){
+      const bw=Math.min(74,W*0.15);
+      const x1=W*0.30,x2=W*0.60, y1=H*0.38, y2=H*0.58;
+      wire(ctx,W*0.06,y1-14,x1,y1-14,COL.P,2); lbl(ctx,W*0.16,y1-28,'P',COL.P,11);
+      wire(ctx,W*0.06,y1+14,x1,y1+14,COL.A,2); lbl(ctx,W*0.16,y1,'A',COL.A,11);
+      box(ctx,x1,y1-30,bw,60,'I',COL.A);
+      wire(ctx,W*0.06,y2+42,x2,y2+42,COL.B,2); lbl(ctx,W*0.16,y2+28,'Q',COL.B,11);
+      wire(ctx,x1+bw,y1,x2,y2+8,COL.B,2);
+      box(ctx,x2,y2-22,bw,60,'J',COL.B);
+      wire(ctx,x2+bw,y2+8,W*0.94,y2+8,COL.C,2); lbl(ctx,W*0.84,y2-6,'C',COL.C,11);
+      lbl(ctx,W*0.5,H*0.12,'(I ∗ J)(p,q,a) = J(q, I(p,a))',COL.good,13,'center','700');
+    } else if(mode===4){
+      const bw=Math.min(72,W*0.14);
+      const xI=W*0.22, xV=W*0.56, xU=W*0.56, yI=H*0.30, yV=H*0.26, yU=H*0.68;
+      /* inputs */
+      lbl(ctx,W*0.05,yI-20,'P',COL.P,11,'left','700');
+      lbl(ctx,W*0.05,yI+6,'A',COL.A,11,'left','700');
+      lbl(ctx,W*0.05,H*0.88,'Q',COL.B,11,'left','700');
+      lbl(ctx,W*0.05,H*0.94,'C',COL.C,11,'left','700');
+      /* I box */
+      box(ctx,xI,yI-26,bw,52,'I',COL.A);
+      wire(ctx,W*0.08,yI-14,xI,yI-14,COL.P,2);
+      wire(ctx,W*0.08,yI+14,xI,yI+14,COL.A,2);
+      /* branch dot */
+      const bxp=xI+bw+26;
+      wire(ctx,xI+bw,yI,bxp,yI,COL.B,2,null,1,false);
+      dotm(ctx,bxp,yI,5,COL.B);
+      lbl(ctx,bxp,yI-16,'I(p,a)',COL.B,10.5,'center','700');
+      lbl(ctx,bxp+4,yI+16,'Verzweigung δ',COL.B,9.5,'left');
+      /* to V,s */
+      wire(ctx,bxp,yI,xV,yV+4,COL.B,2);
+      box(ctx,xV,yV-30,bw,64,'V, s',COL.good);
+      wire(ctx,W*0.08,H*0.92,xV,yV+24,COL.C,2,null,.8);
+      wire(ctx,xV+bw,yV-12,W*0.95,yV-12,COL.B,2); lbl(ctx,W*0.88,yV-26,"Q'",COL.B,10.5);
+      /* request b' down to U,r */
+      wire(ctx,xV+bw,yV+18,xV+bw+26,yV+18,COL.bwd,2,null,1,false);
+      ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(xV+bw+26,yV+18);
+      ctx.bezierCurveTo(xV+bw+70,yV+18,xU+bw+70,yU,xU+bw+6,yU-10);ctx.stroke();ctx.restore();
+      lbl(ctx,xV+bw+60,(yV+yU)/2,"b′",COL.bwd,12,'center','700');
+      /* U,r box */
+      box(ctx,xU,yU-32,bw,64,'U, r',COL.good);
+      wire(ctx,bxp,yI,xU,yU-14,COL.B,2,[5,4],.85);
+      wire(ctx,W*0.08,yI+14,xU,yU+8,COL.A,2,[5,4],.6);
+      wire(ctx,xU+bw,yU-12,W*0.95,yU-12,COL.P,2); lbl(ctx,W*0.88,yU-26,"P'",COL.P,10.5);
+      wire(ctx,xU+bw,yU+18,W*0.95,yU+18,COL.A,2); lbl(ctx,W*0.88,yU+4,"A'",COL.A,10.5);
+      lbl(ctx,W*0.5,14,'(U∗V, r∗s)  —  Beachte: I wird kopiert!',COL.txt,12,'center','700');
+    } else {
+      const bw=Math.min(80,W*0.16);
+      [[H*0.30,'I',COL.A,'P','A','B'],[H*0.70,'J',COL.B,'Q','C','D']].forEach(([y,n,c,pp,ii,oo])=>{
+        wire(ctx,W*0.10,y-16,W*0.42,y-16,COL.P,2); lbl(ctx,W*0.2,y-30,pp,COL.P,11);
+        wire(ctx,W*0.10,y+16,W*0.42,y+16,c,2);     lbl(ctx,W*0.2,y+2,ii,c,11);
+        box(ctx,W*0.42,y-28,bw,56,n,c);
+        wire(ctx,W*0.42+bw,y,W*0.92,y,c,2);        lbl(ctx,W*0.8,y-14,oo,c,11);
+      });
+      lbl(ctx,W*0.5,H*0.5,'‖',COL.good,26,'center','800');
+    }
+    $('sdmsg').innerHTML=msgs[mode];
+    [1,2,3,4,5].forEach(i=>$('b_sd_'+i).classList.toggle('on',i===mode));
+  }
+  [1,2,3,4,5].forEach(i=>$('b_sd_'+i).onclick=()=>{mode=i;draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §2.7 INVERTIBILITY
+   ================================================================== */
+function drawInv(){
+  if(!$('p_inv'))return;
+  const key=$('sel_err').value, x0=+$('s_inv_x0').value;
+  $('v_inv_x0').textContent=fmt(x0,2);
+  const E=ERR[key];
+  const ys=[],ds=[],inv=[];
+  for(let i=0;i<300;i++){
+    const y=-1.5+3.5*i/299; ys.push(y);
+    ds.push(E.dedx(x0,y));
+  }
+  /* inverse curve: plot (dedx value) -> y  i.e. swap axes */
+  const gs=[],iv=[];
+  for(let i=0;i<300;i++){
+    const g=-2+4*i/299; gs.push(g);
+    iv.push(E.finv(x0,g));
+  }
+  const traces=[
+    {x:ys,y:ds,name:'y ↦ ∂e/∂x(x₀,y)',line:{color:COL.A,width:2.6}},
+    {x:gs,y:iv,name:'Umkehrung f<sub>x₀</sub>',line:{color:COL.good,width:2.4,dash:'dot'}},
+    {x:[-2,2],y:[-2,2],name:'Diagonale',line:{color:'rgba(150,160,200,.3)',width:1,dash:'dash'},showlegend:false}
+  ];
+  pl('p_inv',traces,{
+    xaxis:{title:'y   bzw.   Gradientwert',range:[-1.6,2.2]},
+    yaxis:{title:'Wert',range:[-2.2,2.6]},
+    legend:{orientation:'h',y:1.16},height:360
+  });
+  const msgs={
+    quad:`<b class="badge ok">✓ erfüllt</b> <span class="mono">∂e/∂x(x₀,y)=x₀−y</span> ist streng monoton fallend ⇒ invertierbar. Und: sie ist <b>ihre eigene Umkehrung</b>, <span class="mono">f<sub>x₀</sub>(g)=x₀−g</span>. Genau das erzeugt die bekannte Backprop-Formel.`,
+    prod:`<b class="badge ok">✓ erfüllt</b> <span class="mono">∂e/∂x(x₀,y)=y</span> — die Identität, trivially invertierbar. Erzeugt die alternative Bimonoid-Struktur aus Bemerkung V.2.`,
+    ce:`<b class="badge ok">✓ fast</b> <span class="mono">∂e/∂x(z,y)=(y−z)/(z(1−z))</span>, invertierbar für <b>z≠0,1</b>. In der Praxis bleibt <span class="mono">0&lt;I(p,a)&lt;1</span>, also greift der Satz. (Abschnitt VII-A)`,
+    abs:`<b class="badge no">✗ verletzt</b> <span class="mono">∂e/∂x=sign(x−y)</span> ist eine Treppe: nicht differenzierbar bei x=y und <b>nicht injektiv</b>. Kein Funktor möglich.`
+  };
+  $('invinfo').innerHTML=msgs[key];
+}
+if($('sel_err')){ $('sel_err').onchange=drawInv; $('s_inv_x0').oninput=drawInv; }
+
+/* ==================================================================
+   §3.1 COMPOSITION WALKTHROUGH
+   ================================================================== */
+(function(){
+  const cv=$('c_comp'); if(!cv)return;
+  let st=0, timer=null;
+  const STEPS=[
+    {t:'Ausgangslage', m:`Zwei Lerner. Gegeben: <span class="mono">p, q, a, c</span>. Gesucht: <span class="mono">p′, q′</span> und die Anfrage <span class="mono">a′</span>.`},
+    {t:'b = I(p,a)',   m:`<b class="fwd">Vorwärts.</b> <span class="mono">b = I(p,a) = p·a</span>. Dieser Wert wird <b>zweimal</b> gebraucht (Verzweigung im String-Diagramm!).`},
+    {t:'q′ = V(q,b,c)',m:`<b style="color:var(--good)">Update hinten.</b> Der zweite Lerner hat sein volles Trainingspaar <span class="mono">(b,c)</span> und macht seinen Gradientenschritt.`},
+    {t:"b′ = s(q,b,c)", m:`<b class="bwd">Request.</b> Der zweite Lerner meldet zurück, welchen Eingang er bevorzugt hätte: <span class="mono">b′ = b − (J(q,b)−c)·q</span>.`},
+    {t:"p′ = U(p,a,b′)",m:`<b style="color:var(--good)">Update vorne.</b> Jetzt hat der erste Lerner sein Paar <span class="mono">(a,b′)</span> und kann updaten. <b>Das ist Backprop.</b>`},
+    {t:"a′ = r(p,a,b′)",m:`<b class="bwd">Anfrage nach ganz vorne.</b> Fertig: das Komposit ist selbst ein vollständiger Lerner <span class="mono">(P×Q, I∗J, U∗V, r∗s)</span>. ✓`}
+  ];
+  function nums(){
+    const a=+$('s_cmp_a').value, c=+$('s_cmp_c').value,
+          p=+$('s_cmp_p').value, q=+$('s_cmp_q').value, eps=0.1;
+    const b=p*a, Jout=q*b;
+    const dq = (Jout-c)*b;           /* ∂E/∂q */
+    const qn = q - eps*dq;
+    const bp = b - (Jout-c)*q;       /* request of C: b - ∂E/∂b */
+    const dp = (b-bp)*a;             /* ∂E_I/∂p with target bp */
+    const pn = p - eps*dp;
+    const ap = a - (b-bp)*p;
+    return {a,c,p,q,eps,b,Jout,qn,bp,pn,ap,dq,dp};
+  }
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const N=nums();
+    const bw=Math.min(100,W*0.19), bh=52, y=H*0.32;
+    const xI=W*0.24, xJ=W*0.58;
+    /* base wires */
+    wire(ctx,W*0.06,y,xI,y,COL.A,2.2);
+    lbl(ctx,W*0.14,y-16,'a='+fmt(N.a,2),COL.A,11,'center','700');
+    wire(ctx,xI+bw,y,xJ,y,st>=1?COL.B:'rgba(120,140,220,.25)',2.2,st>=1?null:[5,4]);
+    wire(ctx,xJ+bw,y,W*0.94,y,COL.C,2.2);
+    lbl(ctx,W*0.88,y-16,'c='+fmt(N.c,2),COL.C,11,'center','700');
+    box(ctx,xI,y-bh/2,bw,bh,'I(p,a)=p·a',COL.A,'p='+fmt(N.p,2));
+    box(ctx,xJ,y-bh/2,bw,bh,'J(q,b)=q·b',COL.B,'q='+fmt(N.q,2));
+    if(st>=1){
+      dotm(ctx,(xI+bw+xJ)/2,y,6,COL.fwd);
+      lbl(ctx,(xI+bw+xJ)/2,y-18,'b='+fmt(N.b,3),COL.fwd,11.5,'center','700');
+    }
+    if(st>=2){
+      lbl(ctx,xJ+bw/2,y-bh/2-14,"q′="+fmt(N.qn,3),COL.good,12,'center','700');
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.moveTo(xJ+bw/2,y-bh/2-6);ctx.lineTo(xJ+bw/2,y-bh/2);ctx.stroke();ctx.restore();
+    }
+    if(st>=3){
+      wire(ctx,xJ-8,y+46,xI+bw+8,y+46,COL.bwd,2.6);
+      lbl(ctx,(xI+bw+xJ)/2,y+62,"b′="+fmt(N.bp,3),COL.bwd,12,'center','700');
+    }
+    if(st>=4){
+      lbl(ctx,xI+bw/2,y-bh/2-14,"p′="+fmt(N.pn,3),COL.good,12,'center','700');
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.moveTo(xI+bw/2,y-bh/2-6);ctx.lineTo(xI+bw/2,y-bh/2);ctx.stroke();ctx.restore();
+    }
+    if(st>=5){
+      wire(ctx,xI-8,y+46,W*0.07,y+46,COL.bwd,2.6);
+      lbl(ctx,W*0.13,y+62,"a′="+fmt(N.ap,3),COL.bwd,12,'center','700');
+    }
+    /* big composite frame */
+    if(st>=5){
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([7,5]);ctx.globalAlpha=.8;
+      rr(ctx,xI-16,y-bh/2-30,(xJ+bw)-(xI)+32,bh+112,14);ctx.stroke();ctx.restore();
+      lbl(ctx,(xI+xJ+bw)/2,y+bh/2+92,'= EIN Lerner  (P×Q, I∗J, U∗V, r∗s)',COL.good,12.5,'center','800');
+    }
+    lbl(ctx,W*0.5,16,STEPS[st].t,COL.txt,14,'center','800');
+    $('cmpmsg').innerHTML=STEPS[st].m;
+    /* table */
+    const rows=[
+      ['a',N.a,COL.A],['c',N.c,COL.C],['p',N.p,COL.P],['q',N.q,COL.P],
+      ['b = I(p,a)',N.b,st>=1?COL.fwd:'#555'],
+      ['J(q,b)',N.Jout,st>=1?COL.B:'#555'],
+      ["q′ = V(q,b,c)",N.qn,st>=2?COL.good:'#555'],
+      ["b′ = s(q,b,c)",N.bp,st>=3?COL.bwd:'#555'],
+      ["p′ = U(p,a,b′)",N.pn,st>=4?COL.good:'#555'],
+      ["a′ = r(p,a,b′)",N.ap,st>=5?COL.bwd:'#555']
+    ];
+    $('t_cmp').innerHTML='<tr><th>Größe</th><th>Wert</th></tr>'+
+      rows.map(([n,v,c])=>`<tr><td class="mono" style="color:${c}">${n}</td><td class="mono" style="color:${c}">${fmt(v,4)}</td></tr>`).join('');
+  }
+  $('b_cmp_next').onclick=()=>{st=Math.min(st+1,STEPS.length-1);draw();};
+  $('b_cmp_prev').onclick=()=>{st=Math.max(st-1,0);draw();};
+  $('b_cmp_reset').onclick=()=>{st=0;draw();};
+  $('b_cmp_auto').onclick=function(){
+    if(timer){clearInterval(timer);timer=null;this.textContent='Auto ▶';this.classList.remove('on');return;}
+    this.textContent='Stopp ⏸';this.classList.add('on');st=0;draw();
+    timer=setInterval(()=>{ if(st>=STEPS.length-1){clearInterval(timer);timer=null;
+      $('b_cmp_auto').textContent='Auto ▶';$('b_cmp_auto').classList.remove('on');return;}
+      st++;draw();},1500);
+  };
+  ['s_cmp_a','s_cmp_c','s_cmp_p','s_cmp_q'].forEach(id=>$(id).oninput=e=>{
+    $('v_'+id.slice(2)).textContent=fmt(+e.target.value,2); draw();
+  });
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §3.2 IDENTITY / PARALLEL / BRAID  (small canvases)
+   ================================================================== */
+(function(){
+  function small(id,kind){
+    const cv=$(id); if(!cv)return;
+    function draw(){
+      const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+      if(kind==='id'){
+        wire(ctx,W*0.1,H*0.5,W*0.9,H*0.5,COL.A,2.4);
+        lbl(ctx,W*0.5,H*0.5-16,'A',COL.A,12,'center','700');
+        ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+        ctx.beginPath();ctx.moveTo(W*0.9,H*0.5+22);ctx.lineTo(W*0.1,H*0.5+22);ctx.stroke();ctx.restore();
+        lbl(ctx,W*0.5,H*0.5+36,'π₂ : gibt b durch',COL.bwd,10.5,'center','700');
+        lbl(ctx,W*0.5,18,'P = ℝ⁰',COL.P,11,'center','700');
+      } else if(kind==='par'){
+        const bw=Math.min(52,W*0.2);
+        [[H*0.33,'I',COL.A],[H*0.70,'J',COL.B]].forEach(([y,n,c])=>{
+          wire(ctx,W*0.08,y,W*0.38,y,c,2);
+          box(ctx,W*0.38,y-16,bw,32,n,c);
+          wire(ctx,W*0.38+bw,y,W*0.93,y,c,2);
+        });
+        lbl(ctx,W*0.5,H*0.52,'‖',COL.good,20,'center','800');
+      } else {
+        ctx.save();ctx.lineWidth=2.6;
+        ctx.strokeStyle=COL.A;
+        ctx.beginPath();ctx.moveTo(W*0.12,H*0.32);
+        ctx.bezierCurveTo(W*0.5,H*0.32,W*0.5,H*0.70,W*0.88,H*0.70);ctx.stroke();
+        ctx.strokeStyle=COL.C;
+        ctx.beginPath();ctx.moveTo(W*0.12,H*0.70);
+        ctx.bezierCurveTo(W*0.5,H*0.70,W*0.5,H*0.32,W*0.88,H*0.32);ctx.stroke();
+        ctx.restore();
+        lbl(ctx,W*0.08,H*0.32,'A',COL.A,12,'right','700');
+        lbl(ctx,W*0.08,H*0.70,'B',COL.C,12,'right','700');
+        lbl(ctx,W*0.92,H*0.32,'B',COL.C,12,'left','700');
+        lbl(ctx,W*0.92,H*0.70,'A',COL.A,12,'left','700');
+      }
+    }
+    window.addEventListener('resize',draw); draw();
+  }
+  small('c_idl','id'); small('c_parl','par'); small('c_brl','braid');
+})();
+
+/* ==================================================================
+   §3.3 ASSOCIATIVITY — the key identity from Appendix A
+   ================================================================== */
+(function(){
+  const cv=$('c_assoc'); if(!cv)return;
+  let mode='l';
+  const msgs={
+    l:'<b>(U∗V)∗W.</b> Zuerst werden U und V verklebt, dann kommt W dazu. Beachte: <b>zwei</b> Kopien der Box I.',
+    key:'<b>Die Schlüssel-Identität.</b> Zwei Boxen <span class="mono">I</span> mit demselben Input liefern dasselbe wie <b>eine</b> Box I mit anschließender Verzweigung: <span class="mono">(I(p,a), I(p,a))</span>. Mehr braucht der Beweis nicht.',
+    r:'<b>U∗(V∗W).</b> Andere Klammerung — aber durch die Identität links ist das Diagramm <b>dasselbe</b>. ⇒ Assoziativität. ✓'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const bw=Math.min(62,W*0.12), bh=44;
+    if(mode==='key'){
+      /* left: two I boxes */
+      const y1=H*0.30,y2=H*0.62, x=W*0.14;
+      box(ctx,x,y1-bh/2,bw,bh,'I',COL.A);
+      box(ctx,x,y2-bh/2,bw,bh,'I',COL.A);
+      wire(ctx,W*0.04,y1,x,y1,COL.P,2,null,1,false);
+      wire(ctx,W*0.04,y2,x,y2,COL.P,2,null,1,false);
+      /* shared inputs shown by branch */
+      dotm(ctx,W*0.04,(y1+y2)/2,5,COL.P);
+      wire(ctx,W*0.04,(y1+y2)/2,W*0.04,y1,COL.P,2,null,.7,false);
+      wire(ctx,W*0.04,(y1+y2)/2,W*0.04,y2,COL.P,2,null,.7,false);
+      wire(ctx,x+bw,y1,W*0.36,y1,COL.B,2);
+      wire(ctx,x+bw,y2,W*0.36,y2,COL.B,2);
+      lbl(ctx,W*0.21,H*0.88,'zwei Kopien von I',COL.mut,11,'center','700');
+      /* equals */
+      lbl(ctx,W*0.47,H*0.46,'=',COL.good,32,'center','800');
+      /* right: one I + branch */
+      const x2=W*0.58, ym=H*0.46;
+      box(ctx,x2,ym-bh/2,bw,bh,'I',COL.A);
+      wire(ctx,W*0.52,ym,x2,ym,COL.P,2,null,1,false);
+      const bp=x2+bw+30;
+      wire(ctx,x2+bw,ym,bp,ym,COL.B,2,null,1,false);
+      dotm(ctx,bp,ym,6,COL.B);
+      wire(ctx,bp,ym,W*0.95,y1,COL.B,2);
+      wire(ctx,bp,ym,W*0.95,y2,COL.B,2);
+      lbl(ctx,W*0.75,H*0.88,'eine Kopie + Verzweigung δ',COL.good,11,'center','700');
+    } else {
+      const xs=[W*0.10,W*0.28,W*0.46,W*0.64,W*0.82];
+      const rowI=H*0.24, rowM=H*0.52, rowU=H*0.80;
+      /* chain of I's and update boxes, grouping depends on mode */
+      box(ctx,xs[0],rowI-bh/2,bw,bh,'I',COL.A);
+      box(ctx,xs[1],rowI-bh/2,bw,bh,'J',COL.B);
+      box(ctx,xs[3],rowM-bh/2,bw,bh,'W,t',COL.C);
+      box(ctx,xs[2],rowU-bh/2,bw,bh,'V,s',COL.good);
+      box(ctx,xs[1],rowU-bh/2,bw,bh,'U,r',COL.good);
+      wire(ctx,W*0.03,rowI,xs[0],rowI,COL.P,2);
+      wire(ctx,xs[0]+bw,rowI,xs[1],rowI,COL.B,2);
+      wire(ctx,xs[1]+bw,rowI,xs[3],rowM-10,COL.C,2);
+      wire(ctx,xs[3]+bw,rowM,W*0.96,rowM,COL.C,2);
+      /* backward */
+      ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(xs[3],rowM+18);
+      ctx.bezierCurveTo(xs[3]-40,rowM+50,xs[2]+bw+40,rowU-40,xs[2]+bw,rowU);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(xs[2],rowU);
+      ctx.bezierCurveTo(xs[2]-24,rowU,xs[1]+bw+24,rowU,xs[1]+bw,rowU);ctx.stroke();
+      ctx.restore();
+      /* I copy hint */
+      if(mode==='l'){
+        box(ctx,xs[0],rowU-bh/2-56,bw,bh,'I',COL.A,null,.85);
+        lbl(ctx,xs[0]+bw/2,rowU-bh/2-70,'2. Kopie',COL.A,10,'center','700');
+        ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([6,5]);
+        rr(ctx,xs[0]-10,rowU-bh/2-72,xs[2]+bw-xs[0]+20,bh+96,12);ctx.stroke();ctx.restore();
+        lbl(ctx,(xs[0]+xs[2])/2,rowU+46,'(U∗V) zuerst',COL.good,11.5,'center','700');
+      } else {
+        ctx.save();ctx.strokeStyle=COL.P;ctx.lineWidth=2;ctx.setLineDash([6,5]);
+        rr(ctx,xs[2]-10,rowM-bh/2-14,xs[3]+bw-xs[2]+20,(rowU-rowM)+bh+24,12);ctx.stroke();ctx.restore();
+        lbl(ctx,(xs[2]+xs[3])/2,rowU+46,'(V∗W) zuerst',COL.P,11.5,'center','700');
+        const bp=xs[0]+bw+18;
+        dotm(ctx,bp,rowI,5,COL.B);
+        wire(ctx,bp,rowI,xs[1]+bw/2,rowU-bh/2,COL.B,2,[4,3],.8);
+      }
+    }
+    $('asmsg').innerHTML=msgs[mode];
+    $('b_as_l').classList.toggle('on',mode==='l');
+    $('b_as_key').classList.toggle('on',mode==='key');
+    $('b_as_r').classList.toggle('on',mode==='r');
+  }
+  $('b_as_l').onclick=()=>{mode='l';draw();};
+  $('b_as_key').onclick=()=>{mode='key';draw();};
+  $('b_as_r').onclick=()=>{mode='r';draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §4 PARA
+   ================================================================== */
+(function(){
+  const cv=$('c_para'); if(!cv)return;
+  let mode=1;
+  const msgs={
+    1:'Ein Morphismus in <span class="tag">Para</span>: Parameterdraht <span class="mono">P</span> und Eingang <span class="mono">A</span> rein, <span class="mono">B</span> raus. <b>Kein Rückkanal.</b>',
+    2:'Komposition: <span class="mono">(I∗J)(p,q,a)=J(q,I(p,a))</span>, Parameterraum <span class="mono">P×Q</span>. Genau wie in <span class="tag">Learn</span> — aber ohne U und r.',
+    3:'Monoidalprodukt: <span class="mono">ℝⁿ ⊗ ℝᵐ = ℝⁿ⁺ᵐ</span>. Zwei unabhängige Funktionen nebeneinander.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const bw=Math.min(78,W*0.18), bh=48;
+    if(mode===1){
+      const y=H*0.5;
+      wire(ctx,W*0.08,y-16,W*0.40,y-16,COL.P,2.2); lbl(ctx,W*0.22,y-30,'P',COL.P,12,'center','700');
+      wire(ctx,W*0.08,y+16,W*0.40,y+16,COL.A,2.2); lbl(ctx,W*0.22,y+2,'A = ℝⁿ',COL.A,11.5,'center','700');
+      box(ctx,W*0.40,y-bh/2,bw,bh,'I',COL.A,'diff.bar');
+      wire(ctx,W*0.40+bw,y,W*0.92,y,COL.B,2.2); lbl(ctx,W*0.78,y-15,'B = ℝᵐ',COL.B,11.5,'center','700');
+    } else if(mode===2){
+      const y1=H*0.38,y2=H*0.58;
+      wire(ctx,W*0.05,y1-14,W*0.24,y1-14,COL.P,2); lbl(ctx,W*0.14,y1-28,'P',COL.P,11);
+      wire(ctx,W*0.05,y1+14,W*0.24,y1+14,COL.A,2); lbl(ctx,W*0.14,y1,'A',COL.A,11);
+      box(ctx,W*0.24,y1-bh/2,bw,bh,'I',COL.A);
+      wire(ctx,W*0.05,y2+40,W*0.58,y2+40,COL.B,2); lbl(ctx,W*0.16,y2+26,'Q',COL.B,11);
+      wire(ctx,W*0.24+bw,y1,W*0.58,y2+6,COL.B,2);
+      box(ctx,W*0.58,y2-bh/2+6,bw,bh,'J',COL.B);
+      wire(ctx,W*0.58+bw,y2+6,W*0.94,y2+6,COL.C,2); lbl(ctx,W*0.84,y2-8,'C',COL.C,11);
+      lbl(ctx,W*0.5,18,'(P×Q, I∗J)',COL.good,13,'center','800');
+    } else {
+      [[H*0.30,'I',COL.A,'P','ℝⁿ','ℝᵐ'],[H*0.70,'J',COL.C,'Q','ℝˡ','ℝᵏ']].forEach(([y,n,c,pp,ii,oo])=>{
+        wire(ctx,W*0.08,y-15,W*0.40,y-15,COL.P,2); lbl(ctx,W*0.20,y-29,pp,COL.P,11);
+        wire(ctx,W*0.08,y+15,W*0.40,y+15,c,2);     lbl(ctx,W*0.20,y+1,ii,c,11);
+        box(ctx,W*0.40,y-bh/2,bw,bh,n,c);
+        wire(ctx,W*0.40+bw,y,W*0.92,y,c,2);        lbl(ctx,W*0.78,y-14,oo,c,11);
+      });
+      lbl(ctx,W*0.5,H*0.5,'‖',COL.good,22,'center','800');
+    }
+    $('paramsg').innerHTML=msgs[mode];
+    [1,2,3].forEach(i=>$('b_para_'+i).classList.toggle('on',i===mode));
+  }
+  [1,2,3].forEach(i=>$('b_para_'+i).onclick=()=>{mode=i;draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* §4.1 parametrised family plot */
+function drawParaFam(){
+  if(!$('p_para_fam'))return;
+  const w1=+$('s_pf_w1').value, b1=+$('s_pf_b1').value,
+        w2=+$('s_pf_w2').value, b2=+$('s_pf_b2').value;
+  ['w1','b1','w2','b2'].forEach(k=>$('v_pf_'+k).textContent=fmt(+$('s_pf_'+k).value,2));
+  const A=ACT($('sel_act').value);
+  const f=(x,W1,B1,W2,B2)=>A.f(W2*A.f(W1*x+B1)+B2);
+  const xs=[]; for(let i=0;i<240;i++) xs.push(-3+6*i/239);
+  const traces=[];
+  if($('chk_fam').checked){
+    for(let k=-3;k<=3;k++){ if(k===0)continue;
+      const d=k*0.28;
+      traces.push({x:xs,y:xs.map(x=>f(x,w1+d,b1,w2,b2)),
+        line:{color:'rgba(177,140,255,'+(0.28-Math.abs(k)*0.055)+')',width:1.4},
+        showlegend:false,hoverinfo:'skip'});
+    }
+  }
+  traces.push({x:xs,y:xs.map(x=>f(x,w1,b1,w2,b2)),name:'I(p,−)',
+    line:{color:COL.A,width:3.2}});
+  pl('p_para_fam',traces,{
+    xaxis:{title:'a',range:[-3,3]},yaxis:{title:'I(p,a)'},
+    height:380,legend:{orientation:'h',y:1.12}});
+}
+['s_pf_w1','s_pf_b1','s_pf_w2','s_pf_b2'].forEach(id=>{if($(id))$(id).oninput=drawParaFam;});
+if($('sel_act'))$('sel_act').onchange=drawParaFam;
+if($('chk_fam'))$('chk_fam').onchange=drawParaFam;
+
+/* ==================================================================
+   §5 THEOREM — commuting square + numeric verification
+   ================================================================== */
+(function(){
+  const cv=$('c_square'); if(!cv)return;
+  let mode=0;
+  const msgs={
+    0:'Zwei Kategorien, ein Funktor. Wähle einen Weg.',
+    1:'<b>Weg A.</b> Oben in <span class="tag">Para</span> die Funktionen <b>komponieren</b>: <span class="mono">I∗J</span>. Dann <b>einmal</b> Gradientenabstieg anwenden: <span class="mono">L(I∗J)</span>.',
+    2:'<b>Weg B.</b> <b>Zuerst</b> beide einzeln in Lerner verwandeln: <span class="mono">L(I), L(J)</span>. Dann in <span class="tag">Learn</span> komponieren — mit Request-Funktion, also <b>Backprop</b>.',
+    3:'<b>Der Satz:</b> <span class="mono">L(I∗J) = L(I)∗L(J)</span>. Die beiden Wege liefern <b>identische</b> Update- und Request-Funktionen. Unten die Zahlen.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const x1=W*0.18,x2=W*0.78, yT=H*0.28, yB=H*0.76;
+    /* zone backgrounds */
+    ctx.save();
+    ctx.fillStyle='rgba(110,231,255,.05)';rr(ctx,W*0.04,H*0.08,W*0.92,H*0.33,14);ctx.fill();
+    ctx.fillStyle='rgba(255,122,198,.05)';rr(ctx,W*0.04,H*0.56,W*0.92,H*0.36,14);ctx.fill();
+    ctx.restore();
+    lbl(ctx,W*0.09,H*0.14,'Para',COL.A,13,'left','800');
+    lbl(ctx,W*0.09,H*0.62,'Learn',COL.C,13,'left','800');
+
+    const aA=(mode===1||mode===3)?1:.3, aB=(mode===2||mode===3)?1:.3;
+    /* top */
+    box(ctx,x1-52,yT-24,104,48,'I ∗ J',COL.A,'in Para',aA);
+    /* bottom */
+    box(ctx,x1-52,yB-24,104,48,'L(I∗J)',COL.good,'Weg A',aA);
+    box(ctx,x2-58,yB-24,116,48,'L(I) ∗ L(J)',COL.C,'Weg B',aB);
+    box(ctx,x2-58,yT-24,116,48,'L(I),  L(J)',COL.B,'einzeln',aB);
+    /* vertical arrows */
+    ctx.save();ctx.globalAlpha=aA;
+    wire(ctx,x1,yT+24,x1,yB-26,COL.P,2.4,[5,4]);
+    lbl(ctx,x1-16,(yT+yB)/2,'L',COL.P,13,'right','800');ctx.restore();
+    ctx.save();ctx.globalAlpha=aB;
+    wire(ctx,x2,yT+24,x2,yB-26,COL.P,2.4,[5,4]);
+    lbl(ctx,x2+16,(yT+yB)/2,'L',COL.P,13,'left','800');ctx.restore();
+    /* horizontal arrows */
+    ctx.save();ctx.globalAlpha=aA;
+    wire(ctx,x2-60,yT,x1+56,yT,COL.A,2.2);
+    lbl(ctx,(x1+x2)/2,yT-16,'komponieren (Para)',COL.A,11,'center','700');ctx.restore();
+    ctx.save();ctx.globalAlpha=aB;
+    wire(ctx,x2-62,yB,x1+56,yB,COL.C,2.2);
+    lbl(ctx,(x1+x2)/2,yB+20,'komponieren (Learn, mit Request)',COL.C,11,'center','700');ctx.restore();
+    if(mode===3){
+      lbl(ctx,x1,yB+46,'=',COL.good,26,'center','800');
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2.4;ctx.setLineDash([6,5]);
+      ctx.shadowColor=COL.good;ctx.shadowBlur=14;
+      rr(ctx,W*0.06,H*0.60,W*0.88,H*0.30,14);ctx.stroke();ctx.restore();
+      lbl(ctx,W*0.5,H*0.94,'Diagramm kommutiert  ⇒  Backprop ist funktoriell',COL.good,12.5,'center','800');
+    }
+    $('sqmsg').innerHTML=msgs[mode];
+  }
+  $('b_sq_1').onclick=()=>{mode=1;draw();};
+  $('b_sq_2').onclick=()=>{mode=2;draw();};
+  $('b_sq_both').onclick=()=>{mode=3;draw();verify();};
+  $('b_sq_reset').onclick=()=>{mode=0;draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ---------- numeric functoriality verification (2-layer net) ---------- */
+let THP = null;
+function randTH(){
+  THP = {
+    p11:(Math.random()*2-1), p12:(Math.random()*2-1), p21:(Math.random()*2-1),
+    p1b:(Math.random()*2-1), p2b:(Math.random()*2-1),
+    q1:(Math.random()*2-1),  q2:(Math.random()*2-1),  qb:(Math.random()*2-1)
+  };
+}
+randTH();
+function verify(){
+  if(!$('t_verify'))return;
+  const eps=+$('s_th_eps').value, a1=+$('s_th_a1').value, a2=+$('s_th_a2').value,
+        c=+$('s_th_c').value, E=ERR[$('sel_th_err').value];
+  $('v_th_eps').textContent=fmt(eps,3);
+  $('v_th_a1').textContent=fmt(a1,2);
+  $('v_th_a2').textContent=fmt(a2,2);
+  $('v_th_c').textContent=fmt(c,2);
+  const S=sig, dS=dsig, P=THP;
+
+  /* ---- forward ---- */
+  const b1=P.p11*a1+P.p12*a2+P.p1b;
+  const b2=P.p21*a1+P.p2b;
+  const B1=S(b1), B2=S(b2);
+  const g = P.q1*B1+P.q2*B2+P.qb;
+  const out=S(g);
+
+  /* ================= WAY A : gradient of whole net =================
+     E_A(p,q,a,c) = e(I_A(p,q,a), c)
+     numeric gradient over all 8 params + 2 inputs                     */
+  const keys=['p11','p12','p21','p1b','p2b','q1','q2','qb'];
+  function IA(pp,aa1,aa2){
+    const x1=pp.p11*aa1+pp.p12*aa2+pp.p1b;
+    const x2=pp.p21*aa1+pp.p2b;
+    return S(pp.q1*S(x1)+pp.q2*S(x2)+pp.qb);
+  }
+  function EA(pp,aa1,aa2){ return E.e(IA(pp,aa1,aa2),c); }
+  const h=1e-6, gradA={};
+  keys.forEach(k=>{
+    const up=Object.assign({},THP); up[k]+=h;
+    const dn=Object.assign({},THP); dn[k]-=h;
+    gradA[k]=(EA(up,a1,a2)-EA(dn,a1,a2))/(2*h);
+  });
+  const gA1=(EA(THP,a1+h,a2)-EA(THP,a1-h,a2))/(2*h);
+  const gA2=(EA(THP,a1,a2+h)-EA(THP,a1,a2-h))/(2*h);
+  const UA={}, rA={};
+  keys.forEach(k=>UA[k]=THP[k]-eps*gradA[k]);
+  rA.a1=E.finv(a1,gA1); rA.a2=E.finv(a2,gA2);
+
+  /* ================= WAY B : compose two learners =================
+     Layer C (second): params q, input b=(B1,B2), target c
+     Layer B (first) : params p, input a, target = r_C                */
+  /* --- second layer gradients --- */
+  function IC(q1,q2,qb,x1,x2){ return S(q1*x1+q2*x2+qb); }
+  function EC(q1,q2,qb,x1,x2){ return E.e(IC(q1,q2,qb,x1,x2),c); }
+  const dq1=(EC(P.q1+h,P.q2,P.qb,B1,B2)-EC(P.q1-h,P.q2,P.qb,B1,B2))/(2*h);
+  const dq2=(EC(P.q1,P.q2+h,P.qb,B1,B2)-EC(P.q1,P.q2-h,P.qb,B1,B2))/(2*h);
+  const dqb=(EC(P.q1,P.q2,P.qb+h,B1,B2)-EC(P.q1,P.q2,P.qb-h,B1,B2))/(2*h);
+  const db1=(EC(P.q1,P.q2,P.qb,B1+h,B2)-EC(P.q1,P.q2,P.qb,B1-h,B2))/(2*h);
+  const db2=(EC(P.q1,P.q2,P.qb,B1,B2+h)-EC(P.q1,P.q2,P.qb,B1,B2-h))/(2*h);
+  const UB_q1=P.q1-eps*dq1, UB_q2=P.q2-eps*dq2, UB_qb=P.qb-eps*dqb;
+  /* request of layer C = f_b( ∇_b E_C ) */
+  const rC1=E.finv(B1,db1), rC2=E.finv(B2,db2);
+
+  /* --- first layer, trained with target (rC1,rC2) --- */
+  function IB1(p11,p12,p1b,aa1,aa2){ return S(p11*aa1+p12*aa2+p1b); }
+  function IB2(p21,p2b,aa1){ return S(p21*aa1+p2b); }
+  function EB(pp,aa1,aa2){
+    return E.e(IB1(pp.p11,pp.p12,pp.p1b,aa1,aa2),rC1)
+         + E.e(IB2(pp.p21,pp.p2b,aa1),rC2);
+  }
+  const gradB={};
+  ['p11','p12','p21','p1b','p2b'].forEach(k=>{
+    const up=Object.assign({},THP); up[k]+=h;
+    const dn=Object.assign({},THP); dn[k]-=h;
+    gradB[k]=(EB(up,a1,a2)-EB(dn,a1,a2))/(2*h);
+  });
+  const gB1=(EB(THP,a1+h,a2)-EB(THP,a1-h,a2))/(2*h);
+  const gB2=(EB(THP,a1,a2+h)-EB(THP,a1,a2-h))/(2*h);
+  const UBc={}; ['p11','p12','p21','p1b','p2b'].forEach(k=>UBc[k]=THP[k]-eps*gradB[k]);
+  UBc.q1=UB_q1; UBc.q2=UB_q2; UBc.qb=UB_qb;
+  const rB={a1:E.finv(a1,gB1), a2:E.finv(a2,gB2)};
+
+  /* ---- table ---- */
+  let maxd=0;
+  const rows=[];
+  keys.forEach(k=>{
+    const d=Math.abs(UA[k]-UBc[k]); maxd=Math.max(maxd,d);
+    rows.push([k,UA[k],UBc[k],d]);
+  });
+  [['a₁',rA.a1,rB.a1],['a₂',rA.a2,rB.a2]].forEach(([n,x,y])=>{
+    const d=Math.abs(x-y); maxd=Math.max(maxd,d); rows.push(['r:'+n,x,y,d]);
+  });
+  $('t_verify').innerHTML =
+    '<tr><th>Koordinate</th><th>Weg A: L(I∗J)</th><th>Weg B: L(I)∗L(J)</th><th>|Δ|</th></tr>'+
+    rows.map(([n,x,y,d])=>{
+      const cc = d<1e-5?COL.good:COL.bad;
+      return `<tr><td class="mono" style="color:${COL.P}">${n}</td>
+        <td class="mono">${fmt(x,6)}</td><td class="mono">${fmt(y,6)}</td>
+        <td class="mono" style="color:${cc}">${d<1e-9?'0':d.toExponential(1)}</td></tr>`;
+    }).join('');
+  $('v_maxdiff').textContent = maxd<1e-9?'0':maxd.toExponential(1);
+  const ok = maxd<1e-4;
+  $('v_status').innerHTML = ok
+    ? '<span class="badge ok">✓ identisch</span>'
+    : '<span class="badge no">✗</span>';
+}
+['s_th_eps','s_th_a1','s_th_a2','s_th_c'].forEach(id=>{if($(id))$(id).oninput=verify;});
+if($('sel_th_err'))$('sel_th_err').onchange=verify;
+if($('b_th_rand'))$('b_th_rand').onclick=()=>{randTH();verify();};
+
+/* ==================================================================
+   §5.3 PROOF WALKTHROUGH (Appendix B, Equation 1)
+   ================================================================== */
+(function(){
+  if(!$('proofbox'))return;
+  const L=[
+    [String.raw`\nabla_p E_I\bigl(p,a,\;r_J(q,I(p,a),c)\bigr)`,
+     'Startpunkt: das ist der <b>Weg B</b> — Update des ersten Lerners, dessen Ziel die Request des zweiten ist.'],
+    [String.raw`=\nabla_p \sum_i e\bigl(I_i(p,a),\,r_J(q,I(p,a),c)_i\bigr)`,
+     'Definition der Gesamtfehlerfunktion <span class="mono">E_I = Σ e(I_i, b_i)</span> eingesetzt.'],
+    [String.raw`=\Bigl(\sum_i \tfrac{\partial e}{\partial x}\bigl(I_i(p,a),\,r_J(\cdots)_i\bigr)\tfrac{\partial I_i}{\partial p_\ell}(p,a)\Bigr)_\ell`,
+     'Gradient ausgeschrieben — Kettenregel im Inneren, koordinatenweise in ℓ.'],
+    [String.raw`=\Bigl(\sum_i \tfrac{\partial e}{\partial x}\Bigl(I_i(p,a),\,f_{I(p,a)}\bigl(\nabla_b E_J(q,I(p,a),c)\bigr)_i\Bigr)\tfrac{\partial I_i}{\partial p_\ell}\Bigr)_\ell`,
+     'Definition der Request-Funktion <span class="mono">r_J = f_b(∇_b E_J)</span> eingesetzt. <b>Hier kommt f ins Spiel.</b>'],
+    [String.raw`=\Bigl(\sum_i \bigl(\nabla_b E_J(q,I(p,a),c)\bigr)_i\;\tfrac{\partial I_i}{\partial p_\ell}\Bigr)_\ell`,
+     '<b>Der Schlüsselschritt:</b> <span class="mono">∂e/∂x(x₀,·)</span> und <span class="mono">f<sub>x₀</sub></span> heben sich auf — genau dafür brauchen wir die <b>Invertierbarkeit</b>!'],
+    [String.raw`=\Bigl(\sum_i \bigl(\nabla_b \sum_j e(J_j(q,I(p,a)),c_j)\bigr)_i\;\tfrac{\partial I_i}{\partial p_\ell}\Bigr)_\ell`,
+     'Definition von <span class="mono">E_J</span> eingesetzt.'],
+    [String.raw`=\Bigl(\sum_i \sum_j \tfrac{\partial e}{\partial x}(J_j,c_j)\,\tfrac{\partial J_j}{\partial b_i}\;\tfrac{\partial I_i}{\partial p_\ell}\Bigr)_\ell`,
+     'Gradient nach b ausgeschrieben.'],
+    [String.raw`=\Bigl(\sum_j \tfrac{\partial e}{\partial x}(J_j,c_j)\;\underbrace{\tfrac{\partial J_j}{\partial p_\ell}}_{\text{Kettenregel!}}\Bigr)_\ell`,
+     '<b>Die Kettenregel</b>: <span class="mono">Σ_i (∂J_j/∂b_i)(∂I_i/∂p_ℓ) = ∂J_j/∂p_ℓ</span>. Das ist <i>der</i> mathematische Kern des ganzen Satzes.'],
+    [String.raw`=\nabla_p E_{I*J}(p,q,a,c)`,
+     '<b>Fertig.</b> Rechts steht der Gradient des <i>Komposits</i> — also <b>Weg A</b>. Beide Wege sind gleich. ∎']
+  ];
+  let i=0, all=false;
+  function render(){
+    const box=$('proofbox');
+    if(all){
+      box.innerHTML='';
+      L.forEach(([t,n],k)=>{
+        const d=document.createElement('div'); d.className='eq';
+        d.style.opacity=.55+0.05*k;
+        TeX(d,t); box.appendChild(d);
+      });
+      $('proofnote').innerHTML='Alle neun Zeilen. Nur <b>zwei</b> davon sind nicht reine Definition: Zeile 5 (Invertierbarkeit) und Zeile 8 (Kettenregel).';
+      $('v_pf_i').textContent='alle';
+      return;
+    }
+    box.innerHTML='';
+    for(let k=0;k<=i;k++){
+      const d=document.createElement('div'); d.className='eq';
+      d.style.opacity = k===i?1:0.42;
+      if(k===i){d.style.borderColor='var(--accent)';d.style.background='rgba(110,231,255,.07)';}
+      TeX(d,L[k][0]); box.appendChild(d);
+    }
+    $('proofnote').innerHTML=L[i][1];
+    $('v_pf_i').textContent=(i+1)+' / '+L.length;
+  }
+  $('b_pf_next').onclick=()=>{all=false;i=Math.min(i+1,L.length-1);render();};
+  $('b_pf_prev').onclick=()=>{all=false;i=Math.max(i-1,0);render();};
+  $('b_pf_all').onclick=()=>{all=!all;render();};
+  render();
+})();
+
+/* ==================================================================
+   §5.4 ROLE OF EPSILON
+   ================================================================== */
+function drawEps(){
+  if(!$('p_eps'))return;
+  const eps=+$('s_ep_e').value;
+  $('v_ep_e').textContent=fmt(eps,2);
+  /* 1D quadratic-ish loss, show trajectories */
+  const Lf=x=>0.5*x*x+0.35*Math.sin(3*x);
+  const dL=x=>x+1.05*Math.cos(3*x);
+  const xs=[],ys=[];
+  for(let i=0;i<300;i++){const x=-3+6*i/299;xs.push(x);ys.push(Lf(x));}
+  let p=-2.6; const tx=[p],ty=[Lf(p)];
+  for(let k=0;k<26;k++){ p=p-eps*dL(p); if(!isFinite(p)||Math.abs(p)>8)break;
+    tx.push(p);ty.push(Lf(p)); }
+  const diverged = Math.abs(p)>3 || !isFinite(p);
+  pl('p_eps',[
+    {x:xs,y:ys,name:'E(p)',line:{color:COL.B,width:2.4}},
+    {x:tx,y:ty,mode:'lines+markers',name:'Abstieg',
+     line:{color:diverged?COL.bad:COL.good,width:2},marker:{size:5}}
+  ],{xaxis:{title:'p',range:[-3,3]},yaxis:{title:'E'},height:330,
+     legend:{orientation:'h',y:1.14}});
+  $('epsnote').innerHTML = diverged
+    ? '<span style="color:var(--bad)"><b>ε zu groß</b> — der Abstieg schwingt über und divergiert. Der Funktor existiert trotzdem: er ist für <i>jedes</i> ε&gt;0 definiert. Nur das <i>Lernverhalten</i> ist schlecht.</span>'
+    : (eps<0.06
+      ? '<span style="color:var(--warn)"><b>ε klein</b> — sicher, aber langsam. Beachte: ε steckt <b>nur</b> in U, nicht in r.</span>'
+      : '<span style="color:var(--good)"><b>ε gut gewählt</b> — zügige Konvergenz. Die Request-Funktion r bleibt von ε völlig unberührt.</span>');
+}
+if($('s_ep_e'))$('s_ep_e').oninput=drawEps;
+
+/* ==================================================================
+   §6 NNet — interactive layer
+   ================================================================== */
+(function(){
+  const cv=$('c_nnet'); if(!cv)return;
+  const n1=2,n2=3,n3=1;
+  /* connections between col0-col1 and col1-col2 */
+  let C1=[[0,0],[0,1],[1,1],[1,2]].map(x=>x.join(',')); /* i,j strings */
+  let C2=[[0,0],[1,0],[2,0]].map(x=>x.join(','));
+  let pos={};
+  function layout(){
+    const W=CW(cv),H=CH(cv);
+    const cols=[W*0.15,W*0.5,W*0.85];
+    pos={c0:[],c1:[],c2:[]};
+    for(let i=0;i<n1;i++)pos.c0.push([cols[0],H*(0.34+0.32*i)]);
+    for(let j=0;j<n2;j++)pos.c1.push([cols[1],H*(0.22+0.28*j)]);
+    for(let k=0;k<n3;k++)pos.c2.push([cols[2],H*0.5]);
+  }
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv); layout();
+    /* edges + toggle handles */
+    function edges(A,B,C,col){
+      for(let i=0;i<A.length;i++)for(let j=0;j<B.length;j++){
+        const key=i+','+j, on=C.includes(key);
+        const [x1,y1]=A[i],[x2,y2]=B[j];
+        ctx.save();
+        ctx.strokeStyle=on?col:'rgba(120,140,220,.12)';
+        ctx.lineWidth=on?2.4:1;
+        if(on){ctx.shadowColor=col;ctx.shadowBlur=8;}
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+        const mx=(x1+x2)/2,my=(y1+y2)/2;
+        ctx.save();
+        ctx.fillStyle=on?col:'rgba(20,24,42,.9)';
+        ctx.strokeStyle=on?col:'rgba(120,140,220,.35)';
+        ctx.beginPath();ctx.arc(mx,my,7,0,TAU);ctx.fill();ctx.stroke();ctx.restore();
+      }
+    }
+    edges(pos.c0,pos.c1,C1,COL.A);
+    edges(pos.c1,pos.c2,C2,COL.C);
+    /* nodes */
+    function nodes(arr,col,labels){
+      arr.forEach(([x,y],i)=>{
+        ctx.save();ctx.shadowColor=col;ctx.shadowBlur=16;
+        ctx.beginPath();ctx.arc(x,y,17,0,TAU);
+        const g=ctx.createRadialGradient(x,y-5,1,x,y,17);
+        g.addColorStop(0,col+'66');g.addColorStop(1,col+'1a');
+        ctx.fillStyle=g;ctx.fill();ctx.shadowBlur=0;
+        ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
+        if(labels)lbl(ctx,x,y,labels[i],'#fff',11,'center','700');
+      });
+    }
+    nodes(pos.c0,COL.A,['a₁','a₂']);
+    nodes(pos.c1,COL.B,['h₁','h₂','h₃']);
+    nodes(pos.c2,COL.C,['y']);
+    lbl(ctx,CW(cv)*0.15,16,'n₀=2',COL.A,11,'center','700');
+    lbl(ctx,CW(cv)*0.5,16,'n₁=3',COL.B,11,'center','700');
+    lbl(ctx,CW(cv)*0.85,16,'n₂=1',COL.C,11,'center','700');
+    update();
+  }
+  function update(){
+    const nw=C1.length+C2.length, nb=n2+n3;
+    $('v_nn_w').textContent=nw;
+    $('v_nn_b').textContent=nb;
+    $('v_nn_P').textContent='ℝ^'+(nw+nb);
+    /* formula */
+    const A=ACT($('sel_nn_act').value);
+    const terms=[];
+    for(let j=0;j<n2;j++){
+      const t=[];
+      for(let i=0;i<n1;i++) if(C1.includes(i+','+j)) t.push(`w_{${j+1}${i+1}}a_${i+1}`);
+      t.push(`w_${j+1}`);
+      terms.push(String.raw`h_${j+1}=\sigma(${t.join('+')})`);
+    }
+    const t2=[];
+    for(let j=0;j<n2;j++) if(C2.includes(j+',0')) t2.push(`v_${j+1}h_${j+1}`);
+    t2.push('v_b');
+    terms.push(String.raw`y=\sigma(${t2.join('+')})`);
+    TeX($('nn_formula'), String.raw`\begin{aligned}`+terms.map(s=>s.replace('=','&=')).join(String.raw`\\`)+String.raw`\end{aligned}`);
+    /* numeric output with fixed pseudo-weights */
+    const a=[+$('s_nn_a1').value,+$('s_nn_a2').value];
+    $('v_nn_a1').textContent=fmt(a[0],2); $('v_nn_a2').textContent=fmt(a[1],2);
+    const hs=[];
+    for(let j=0;j<n2;j++){
+      let s=0.2*(j+1);
+      for(let i=0;i<n1;i++) if(C1.includes(i+','+j)) s+= (0.8-0.3*i+0.2*j)*a[i];
+      hs.push(A.f(s));
+    }
+    let o=-0.1;
+    for(let j=0;j<n2;j++) if(C2.includes(j+',0')) o+= (0.7-0.25*j)*hs[j];
+    $('v_nn_out').textContent=fmt(A.f(o),4);
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    function test(A,B,C){
+      for(let i=0;i<A.length;i++)for(let j=0;j<B.length;j++){
+        const [x1,y1]=A[i],[x2,y2]=B[j];
+        if(Math.hypot(mx-(x1+x2)/2,my-(y1+y2)/2)<11){
+          const k=i+','+j; const ix=C.indexOf(k);
+          if(ix>=0)C.splice(ix,1); else C.push(k);
+          return true;
+        }
+      }
+      return false;
+    }
+    if(test(pos.c0,pos.c1,C1)||test(pos.c1,pos.c2,C2)) draw();
+  });
+  $('b_nn_full').onclick=()=>{
+    C1=[];for(let i=0;i<n1;i++)for(let j=0;j<n2;j++)C1.push(i+','+j);
+    C2=[];for(let j=0;j<n2;j++)C2.push(j+',0'); draw();
+  };
+  $('b_nn_paper').onclick=()=>{
+    /* Paper's example: layer B = {(1,1),(2,1),(1,2)} → p11,p12,p21 */
+    C1=['0,0','1,0','0,1']; C2=['0,0','1,0']; draw();
+  };
+  $('b_nn_toggle').onclick=()=>{ draw(); };
+  ['s_nn_a1','s_nn_a2'].forEach(id=>$(id).oninput=update);
+  $('sel_nn_act').onchange=update;
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §7 BIMONOID  (Proposition V.1)
+   ================================================================== */
+(function(){
+  const cv=$('c_bim'); if(!cv)return;
+  let mode='mu';
+  function E(){ return $('sel_bim_e').value; }
+  function msgs(){
+    const q = E()==='quad';
+    return {
+      mu:`<b>Multiplikation μ (Addition).</b> <span class="mono">I<sub>μ</sub>(a₁,a₂)=a₁+a₂</span>.<br>
+          Request: <span class="mono">${q?'r<sub>μ</sub>(a₁,a₂,a₃)=(a₃−a₂, a₃−a₁)</span> — „wenn der andere so bleibt, hätte ich gern <i>diesen</i> Wert"'
+                                        :"r′<sub>μ</sub>(a₁,a₂,a₃)=(a₃, a₃)</span> — andere Fehlerfunktion, anderes Bimonoid! (Bem. V.2)"}`,
+      de:`<b>Komultiplikation δ (Kopie).</b> <span class="mono">I<sub>δ</sub>(a)=(a,a)</span>.<br>
+          Request: <span class="mono">${q?'r<sub>δ</sub>(a₁,(a₂,a₃))=a₂+a₃−a₁</span> — die beiden Wünsche werden <b>addiert</b>. Genau das ist der Mechanismus hinter <b>Weight Tying</b>.'
+                                        :"r′<sub>δ</sub>=a₂+a₃</span> (Produkt-Fehler)."}`,
+      et:`<b>Einheit η.</b> <span class="mono">I<sub>η</sub>(0)=0</span>, <span class="mono">r<sub>η</sub>=0</span>. Erzeugt einen Draht aus dem Nichts (konstante 0).`,
+      ep:`<b>Koeinheit ε.</b> <span class="mono">I<sub>ε</sub>(a)=0</span>, <span class="mono">r<sub>ε</sub>(a)=0</span>. Löscht einen Draht.`,
+      ax:`<b>Bimonoid-Axiome.</b> Assoziativität, Koassoziativität, Einheit, Koeinheit und das <b>Bialgebra-Gesetz</b> (rechts): erst kopieren-dann-addieren = erst addieren-dann-kopieren. Diese Gleichungen machen die Netzwerk-Notation <b>eindeutig</b>: egal wie man Drähte verzweigt, das Ergebnis ist wohldefiniert.`
+    };
+  }
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const q = E()==='quad';
+    if(mode==='mu'){
+      const cx=W*0.48, cy=H*0.45;
+      wire(ctx,W*0.10,H*0.28,cx-16,cy-8,COL.A,2.4,null,1,false);
+      wire(ctx,W*0.10,H*0.62,cx-16,cy+8,COL.A,2.4,null,1,false);
+      dotm(ctx,cx,cy,9,COL.A);
+      wire(ctx,cx,cy,W*0.88,cy,COL.A,2.4);
+      lbl(ctx,W*0.08,H*0.28,'a₁',COL.A,13,'right','700');
+      lbl(ctx,W*0.08,H*0.62,'a₂',COL.A,13,'right','700');
+      lbl(ctx,W*0.90,cy,'a₁+a₂',COL.A,13,'left','700');
+      /* backward */
+      ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(W*0.86,cy+28);ctx.lineTo(cx+8,cy+28);
+      ctx.moveTo(cx+8,cy+28);ctx.lineTo(W*0.13,H*0.28+28);
+      ctx.moveTo(cx+8,cy+28);ctx.lineTo(W*0.13,H*0.62+28);ctx.stroke();ctx.restore();
+      lbl(ctx,W*0.70,cy+42,'a₃ (Wunsch)',COL.bwd,11,'center','700');
+      lbl(ctx,W*0.22,H*0.28+42, q?'a₃−a₂':'a₃',COL.bwd,12,'center','700');
+      lbl(ctx,W*0.22,H*0.62+42, q?'a₃−a₁':'a₃',COL.bwd,12,'center','700');
+      lbl(ctx,W*0.5,18,'μ : A⊗A → A',COL.A,14,'center','800');
+    } else if(mode==='de'){
+      const cx=W*0.46, cy=H*0.45;
+      wire(ctx,W*0.10,cy,cx,cy,COL.B,2.4,null,1,false);
+      dotm(ctx,cx,cy,9,COL.B);
+      wire(ctx,cx,cy,W*0.88,H*0.26,COL.B,2.4);
+      wire(ctx,cx,cy,W*0.88,H*0.64,COL.B,2.4);
+      lbl(ctx,W*0.08,cy,'a₁',COL.B,13,'right','700');
+      lbl(ctx,W*0.90,H*0.26,'a',COL.B,13,'left','700');
+      lbl(ctx,W*0.90,H*0.64,'a',COL.B,13,'left','700');
+      ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(W*0.86,H*0.26+26);ctx.lineTo(cx+8,cy+26);
+      ctx.moveTo(W*0.86,H*0.64+26);ctx.lineTo(cx+8,cy+26);
+      ctx.moveTo(cx+8,cy+26);ctx.lineTo(W*0.13,cy+26);ctx.stroke();ctx.restore();
+      lbl(ctx,W*0.70,H*0.26+40,'a₂',COL.bwd,12,'center','700');
+      lbl(ctx,W*0.70,H*0.64+40,'a₃',COL.bwd,12,'center','700');
+      lbl(ctx,W*0.24,cy+40, q?'a₂+a₃−a₁':'a₂+a₃',COL.bwd,13,'center','700');
+      lbl(ctx,W*0.5,18,'δ : A → A⊗A     (Wünsche addieren sich!)',COL.B,13.5,'center','800');
+    } else if(mode==='et'){
+      const cx=W*0.35, cy=H*0.5;
+      dotm(ctx,cx,cy,10,COL.good);
+      wire(ctx,cx,cy,W*0.85,cy,COL.good,2.4);
+      lbl(ctx,W*0.87,cy,'0',COL.good,14,'left','700');
+      lbl(ctx,W*0.5,18,'η : I → A     (Draht erzeugen)',COL.good,13.5,'center','800');
+    } else if(mode==='ep'){
+      const cx=W*0.65, cy=H*0.5;
+      wire(ctx,W*0.15,cy,cx,cy,COL.warn||COL.P,2.4,null,1,false);
+      ctx.save();ctx.fillStyle=COL.P;ctx.beginPath();ctx.arc(cx,cy,10,0,TAU);ctx.fill();ctx.restore();
+      lbl(ctx,W*0.13,cy,'a',COL.P,14,'right','700');
+      lbl(ctx,W*0.5,18,'ε : A → I     (Draht löschen)',COL.P,13.5,'center','800');
+    } else {
+      /* axioms */
+      const pairs=[
+        ['Assoziativität μ', H*0.22],
+        ['Koassoziativität δ', H*0.50],
+        ['Bialgebra-Gesetz', H*0.80]
+      ];
+      pairs.forEach(([n,y],k)=>{
+        lbl(ctx,W*0.06,y,n,COL.mut,11.5,'left','700');
+        const x0=W*0.30;
+        if(k===0){
+          wire(ctx,x0,y-18,x0+42,y,COL.A,2,null,1,false);
+          wire(ctx,x0,y,x0+42,y,COL.A,2,null,1,false);
+          dotm(ctx,x0+42,y,6,COL.A);
+          wire(ctx,x0+42,y,x0+76,y+6,COL.A,2,null,1,false);
+          wire(ctx,x0,y+20,x0+76,y+6,COL.A,2,null,1,false);
+          dotm(ctx,x0+76,y+6,6,COL.A);
+          wire(ctx,x0+76,y+6,x0+110,y+6,COL.A,2);
+          lbl(ctx,W*0.62,y,'=',COL.good,18,'center','800');
+          const x1=W*0.68;
+          wire(ctx,x1,y-18,x1+42,y+6,COL.A,2,null,1,false);
+          wire(ctx,x1,y,x1+42,y+6,COL.A,2,null,1,false);
+          wire(ctx,x1,y+20,x1+42,y+6,COL.A,2,null,1,false);
+          dotm(ctx,x1+42,y+6,6,COL.A);
+          wire(ctx,x1+42,y+6,x1+90,y+6,COL.A,2);
+        } else if(k===1){
+          wire(ctx,x0,y,x0+34,y,COL.B,2,null,1,false);
+          dotm(ctx,x0+34,y,6,COL.B);
+          wire(ctx,x0+34,y,x0+72,y-16,COL.B,2,null,1,false);
+          wire(ctx,x0+34,y,x0+72,y+14,COL.B,2,null,1,false);
+          dotm(ctx,x0+72,y+14,6,COL.B);
+          wire(ctx,x0+72,y+14,x0+110,y+4,COL.B,2,null,1,false);
+          wire(ctx,x0+72,y+14,x0+110,y+26,COL.B,2,null,1,false);
+          wire(ctx,x0+72,y-16,x0+110,y-16,COL.B,2,null,1,false);
+          lbl(ctx,W*0.62,y,'=',COL.good,18,'center','800');
+          const x1=W*0.68;
+          wire(ctx,x1,y,x1+34,y,COL.B,2,null,1,false);
+          dotm(ctx,x1+34,y,6,COL.B);
+          [-18,0,18].forEach(d=>wire(ctx,x1+34,y,x1+80,y+d,COL.B,2,null,1,false));
+        } else {
+          /* bialgebra */
+          wire(ctx,x0,y-16,x0+34,y,COL.A,2,null,1,false);
+          wire(ctx,x0,y+16,x0+34,y,COL.A,2,null,1,false);
+          dotm(ctx,x0+34,y,6,COL.A);
+          wire(ctx,x0+34,y,x0+68,y,COL.B,2,null,1,false);
+          dotm(ctx,x0+68,y,6,COL.B);
+          wire(ctx,x0+68,y,x0+104,y-16,COL.B,2,null,1,false);
+          wire(ctx,x0+68,y,x0+104,y+16,COL.B,2,null,1,false);
+          lbl(ctx,W*0.62,y,'=',COL.good,18,'center','800');
+          const x1=W*0.66;
+          [[-16],[16]].forEach(([d],ii)=>{
+            wire(ctx,x1,y+d,x1+28,y+d,COL.A,2,null,1,false);
+            dotm(ctx,x1+28,y+d,5,COL.B);
+          });
+          wire(ctx,x1+28,y-16,x1+72,y-16,COL.B,2,null,1,false);
+          wire(ctx,x1+28,y-16,x1+72,y+16,COL.B,2,null,1,false);
+          wire(ctx,x1+28,y+16,x1+72,y-16,COL.B,2,null,1,false);
+          wire(ctx,x1+28,y+16,x1+72,y+16,COL.B,2,null,1,false);
+          dotm(ctx,x1+72,y-16,5,COL.A); dotm(ctx,x1+72,y+16,5,COL.A);
+          wire(ctx,x1+72,y-16,x1+106,y-16,COL.A,2,null,1,false);
+          wire(ctx,x1+72,y+16,x1+106,y+16,COL.A,2,null,1,false);
+        }
+      });
+    }
+    $('bimmsg').innerHTML=msgs()[mode];
+    [['b_bm_mu','mu'],['b_bm_de','de'],['b_bm_et','et'],['b_bm_ep','ep'],['b_bm_ax','ax']]
+      .forEach(([id,m])=>$(id).classList.toggle('on',m===mode));
+  }
+  [['b_bm_mu','mu'],['b_bm_de','de'],['b_bm_et','et'],['b_bm_ep','ep'],['b_bm_ax','ax']]
+    .forEach(([id,m])=>$(id).onclick=()=>{mode=m;draw();});
+  $('sel_bim_e').onchange=draw;
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §7.1 NEURON FROM ATOMS (Example V.3)
+   ================================================================== */
+(function(){
+  const cv=$('c_neuron'); if(!cv)return;
+  let st=0;
+  const msgs=[
+    'Leere Leinwand. Ein Neuron mit 3 Eingängen soll entstehen — aus reinen Grundlernern.',
+    '<b class="wordA">λ (Skalarmultiplikation)</b>, dreimal parallel. <span class="mono">P=ℝ, I=wx, U=w−εx(wx−y), r=x−w(wx−y)</span>. <b>Hier sitzen die Gewichte.</b>',
+    '<b style="color:var(--warn)">β (Bias)</b> dazu — ein Lerner ohne Eingang: <span class="mono">P=ℝ, I=w, U=(1−ε)w+εy</span>.',
+    '<b>μ (Addition)</b>: alle vier Drähte werden zusammengeführt. Das ist die Bimonoid-Multiplikation.',
+    '<b class="wordC">σ (Aktivierung)</b>: trivialer Parameterraum, nur Request <span class="mono">r<sub>σ</sub>(x,y)=x−(x−y)σ̇(x)</span>.',
+    '<b>δ (Kopie)</b>: das Ergebnis wird an alle nachfolgenden Neuronen verteilt. <b>Fertig — ein vollständiges Neuron als Komposit von 5 Generatoren.</b>'
+  ];
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const ys=[H*0.16,H*0.34,H*0.52,H*0.72];
+    const bw=Math.min(52,W*0.10), bh=28;
+    const xL=W*0.18, xMu=W*0.45, xS=W*0.62, xD=W*0.78;
+    /* inputs */
+    if(st>=1){
+      for(let i=0;i<3;i++){
+        wire(ctx,W*0.05,ys[i],xL,ys[i],COL.A,2,null,1,false);
+        lbl(ctx,W*0.035,ys[i],'x'+(i+1),COL.A,11,'right','700');
+        box(ctx,xL,ys[i]-bh/2,bw,bh,'λ',COL.A);
+        wire(ctx,xL+bw,ys[i],xMu-8,ys[i],COL.A,2,null,1,false);
+        lbl(ctx,(xL+bw+xMu)/2,ys[i]-12,'w'+(i+1),COL.P,10,'center','700');
+      }
+    }
+    if(st>=2){
+      box(ctx,xL,ys[3]-bh/2,bw,bh,'β',COL.P);
+      wire(ctx,xL+bw,ys[3],xMu-8,ys[3],COL.P,2,null,1,false);
+      lbl(ctx,(xL+bw+xMu)/2,ys[3]-12,'bias',COL.P,10,'center','700');
+    }
+    if(st>=3){
+      /* merge dots */
+      let prev=null;
+      const my=H*0.45;
+      dotm(ctx,xMu,my,9,COL.good);
+      for(let i=0;i<(st>=2?4:3);i++) wire(ctx,xMu-8,ys[i],xMu,my,COL.good,1.8,null,.85,false);
+      wire(ctx,xMu,my,xS,my,COL.good,2.4,null,1,false);
+      lbl(ctx,xMu,my+22,'μ',COL.good,13,'center','800');
+      lbl(ctx,(xMu+xS)/2,my-14,'Σ',COL.good,12,'center','700');
+    }
+    if(st>=4){
+      const my=H*0.45;
+      box(ctx,xS,my-bh/2-4,bw+6,bh+8,'σ',COL.C);
+      wire(ctx,xS+bw+6,my,xD,my,COL.C,2.4,null,1,false);
+    }
+    if(st>=5){
+      const my=H*0.45;
+      dotm(ctx,xD,my,9,COL.B);
+      lbl(ctx,xD,my+22,'δ',COL.B,13,'center','800');
+      [-1,0,1].forEach(k=>wire(ctx,xD,my,W*0.95,my+k*38,COL.B,2));
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([7,5]);
+      ctx.globalAlpha=.8;ctx.shadowColor=COL.good;ctx.shadowBlur=12;
+      rr(ctx,xL-14,H*0.06,xD+16-(xL-14),H*0.84,14);ctx.stroke();ctx.restore();
+      lbl(ctx,(xL+xD)/2,H*0.94,'= 1 Neuron  (λ‖λ‖λ‖β) ∗ μ ∗ σ ∗ δ',COL.good,12,'center','800');
+    }
+    if(st===0) lbl(ctx,W*0.5,H*0.5,'→ Klicke „Baustein hinzufügen"',COL.mut,13,'center','700');
+    $('nemsg').innerHTML=msgs[st];
+  }
+  $('b_ne_next').onclick=()=>{st=Math.min(st+1,5);draw();};
+  $('b_ne_prev').onclick=()=>{st=Math.max(st-1,0);draw();};
+  $('b_ne_all').onclick=()=>{st=5;draw();};
+  $('b_ne_reset').onclick=()=>{st=0;draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §7.2 WEIGHT TYING (Example V.4)
+   ================================================================== */
+(function(){
+  const cv=$('c_tie'); if(!cv)return;
+  let on=false;
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const bw=Math.min(78,W*0.18), bh=44;
+    const y1=H*0.28, y2=H*0.72, xB=W*0.52;
+    if(!on){
+      /* two independent parameter constants */
+      [[y1,'(R⁰,I)',COL.A,'P₁'],[y2,'(R⁰,J)',COL.C,'P₂']].forEach(([y,n,c,pn])=>{
+        box(ctx,W*0.18,y-18,54,36,pn,COL.P);
+        wire(ctx,W*0.18+54,y-10,xB,y-10,COL.P,2,null,1,false);
+        wire(ctx,W*0.04,y+14,xB,y+14,c,2,null,1,false);
+        box(ctx,xB,y-bh/2,bw,bh,n,c);
+        wire(ctx,xB+bw,y,W*0.94,y,c,2);
+      });
+      lbl(ctx,W*0.5,16,'ohne Tying: zwei getrennte Parameter',COL.mut,12,'center','700');
+    } else {
+      /* one shared parameter via δ */
+      box(ctx,W*0.10,H*0.5-18,58,36,'(P,1ᴘ)',COL.P);
+      const dx=W*0.30, dy=H*0.5;
+      wire(ctx,W*0.10+58,dy,dx,dy,COL.P,2.4,null,1,false);
+      dotm(ctx,dx,dy,9,COL.B);
+      lbl(ctx,dx,dy+22,'δ',COL.B,13,'center','800');
+      [[y1,'(R⁰,I)',COL.A],[y2,'(R⁰,J)',COL.C]].forEach(([y,n,c])=>{
+        wire(ctx,dx,dy,xB,y-10,COL.P,2,null,1,false);
+        wire(ctx,W*0.04,y+14,xB,y+14,c,2,null,1,false);
+        box(ctx,xB,y-bh/2,bw,bh,n,c);
+        wire(ctx,xB+bw,y,W*0.94,y,c,2);
+      });
+      /* backward summing */
+      ctx.save();ctx.strokeStyle=COL.bwd;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(xB-6,y1+22);ctx.lineTo(dx+6,dy+8);
+      ctx.moveTo(xB-6,y2+22);ctx.lineTo(dx+6,dy+8);ctx.stroke();ctx.restore();
+      lbl(ctx,(dx+xB)/2,y1+34,'Request ↘',COL.bwd,10,'center','700');
+      lbl(ctx,(dx+xB)/2,y2+34,'Request ↗',COL.bwd,10,'center','700');
+      lbl(ctx,dx-16,dy+42,'Updates werden ADDIERT',COL.bwd,11,'center','800');
+      lbl(ctx,W*0.5,16,'mit Tying: EIN Parameter über δ an beide Blöcke',COL.good,12,'center','700');
+    }
+    $('wtmsg').innerHTML = on
+      ? '<b style="color:var(--good)">Weight Tying.</b> Die Comonoid-Request-Regel <span class="mono">a₂+a₃−a₁</span> sorgt automatisch dafür, dass die Wünsche beider Blöcke <b>summiert</b> zurückfließen. Genau so funktionieren <b>Convolutional Nets</b>: dasselbe Filter-Gewicht an vielen Bildstellen.'
+      : 'Ohne Tying: zwei unabhängige Parameter-Konstanten. Jeder Block lernt seinen eigenen Wert.';
+    $('b_wt_off').classList.toggle('on',!on);
+    $('b_wt_on').classList.toggle('on',on);
+  }
+  $('b_wt_off').onclick=()=>{on=false;draw();};
+  $('b_wt_on').onclick=()=>{on=true;draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §8 THE WORKED EXAMPLE (Section VI of the paper)
+   ================================================================== */
+(function(){
+  const cv=$('c_ex_net'); if(!cv)return;
+  let split=false;
+  function P(){
+    return {p11:+$('s_ex_p11').value,p12:+$('s_ex_p12').value,p21:+$('s_ex_p21').value,
+            p1b:+$('s_ex_p1b').value,p2b:+$('s_ex_p2b').value,
+            q1:+$('s_ex_q1').value,q2:+$('s_ex_q2').value,qb:+$('s_ex_qb').value};
+  }
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const p=P();
+    const a1=+$('s_ex_a1').value, a2=+$('s_ex_a2').value;
+    const b1=p.p11*a1+p.p12*a2+p.p1b, b2=p.p21*a1+p.p2b;
+    const B1=sig(b1),B2=sig(b2);
+    const g=p.q1*B1+p.q2*B2+p.qb, out=sig(g);
+    const cols=[W*0.14,W*0.50,W*0.86];
+    const n0=[[cols[0],H*0.33],[cols[0],H*0.70]];
+    const n1=[[cols[1],H*0.33],[cols[1],H*0.70]];
+    const n2=[[cols[2],H*0.5]];
+    /* edges: layer B has p11,p12 → node1 ; p21 → node2 */
+    const E1=[[0,0,'p₁₁',p.p11],[1,0,'p₁₂',p.p12],[0,1,'p₂₁',p.p21]];
+    E1.forEach(([i,j,n,v])=>{
+      const [x1,y1]=n0[i],[x2,y2]=n1[j];
+      ctx.save();const w=clamp(Math.abs(v)*2.2,1,6);
+      ctx.strokeStyle=v>=0?COL.A:COL.C; ctx.lineWidth=w;
+      ctx.globalAlpha=.85;ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=7;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+      lbl(ctx,(x1+x2)/2,(y1+y2)/2-9,n+'='+fmt(v,2),COL.mut,9.5,'center','700');
+    });
+    [[0,'q₁',p.q1],[1,'q₂',p.q2]].forEach(([j,n,v])=>{
+      const [x1,y1]=n1[j],[x2,y2]=n2[0];
+      ctx.save();const w=clamp(Math.abs(v)*2.2,1,6);
+      ctx.strokeStyle=v>=0?COL.B:COL.C;ctx.lineWidth=w;
+      ctx.globalAlpha=.85;ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=7;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+      lbl(ctx,(x1+x2)/2,(y1+y2)/2-9,n+'='+fmt(v,2),COL.mut,9.5,'center','700');
+    });
+    function node(x,y,t,sub,c){
+      ctx.save();ctx.shadowColor=c;ctx.shadowBlur=16;
+      ctx.beginPath();ctx.arc(x,y,20,0,TAU);
+      const gg=ctx.createRadialGradient(x,y-6,1,x,y,20);
+      gg.addColorStop(0,c+'70');gg.addColorStop(1,c+'1c');
+      ctx.fillStyle=gg;ctx.fill();ctx.shadowBlur=0;
+      ctx.strokeStyle=c;ctx.lineWidth=1.8;ctx.stroke();ctx.restore();
+      lbl(ctx,x,y-4,t,'#fff',11,'center','800');
+      lbl(ctx,x,y+8,sub,COL.mut,9,'center');
+    }
+    node(n0[0][0],n0[0][1],'a₁',fmt(a1,2),COL.A);
+    node(n0[1][0],n0[1][1],'a₂',fmt(a2,2),COL.A);
+    node(n1[0][0],n1[0][1],'σ(β₁)',fmt(B1,3),COL.B);
+    node(n1[1][0],n1[1][1],'σ(β₂)',fmt(B2,3),COL.B);
+    node(n2[0][0],n2[0][1],'σ(γ)',fmt(out,3),COL.C);
+    if(split){
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2;ctx.setLineDash([6,5]);
+      rr(ctx,W*0.05,H*0.12,W*0.47,H*0.78,12);ctx.stroke();
+      ctx.strokeStyle=COL.P;
+      rr(ctx,W*0.42,H*0.12,W*0.53,H*0.78,12);ctx.stroke();ctx.restore();
+      lbl(ctx,W*0.24,H*0.07,'B : 2 → 2',COL.good,12,'center','800');
+      lbl(ctx,W*0.72,H*0.07,'C : 2 → 1',COL.P,12,'center','800');
+    } else {
+      ctx.save();ctx.strokeStyle=COL.C;ctx.lineWidth=2;ctx.setLineDash([6,5]);
+      rr(ctx,W*0.04,H*0.12,W*0.92,H*0.78,12);ctx.stroke();ctx.restore();
+      lbl(ctx,W*0.5,H*0.07,'A : 2 → 1   (ein Morphismus in NNet)',COL.C,12,'center','800');
+    }
+    $('exmsg').innerHTML = split
+      ? '<b>A = B ∗ C.</b> Erst trainieren wir C mit Paar <span class="mono">(σ(β), c)</span>, erhalten die Request <span class="mono">r<sub>C</sub></span>, und damit trainieren wir B. Das ist Weg B.'
+      : '<b>A als Ganzes.</b> Wir bilden <span class="mono">E<sub>A</sub>=½(I<sub>A</sub>−c)²</span> und leiten nach allen 8 Parametern ab. Das ist Weg A.';
+    $('b_ex_whole').classList.toggle('on',!split);
+    $('b_ex_split').classList.toggle('on',split);
+    compute();
+  }
+  function compute(){
+    const p=P(), eps=+$('s_ex_eps').value,
+          a1=+$('s_ex_a1').value, a2=+$('s_ex_a2').value, c=+$('s_ex_c').value;
+    ['p11','p12','p21','p1b','p2b','q1','q2','qb'].forEach(k=>
+      $('v_ex_'+k).textContent=fmt(p[k],2));
+    $('v_ex_a1').textContent=fmt(a1,2);$('v_ex_a2').textContent=fmt(a2,2);
+    $('v_ex_c').textContent=fmt(c,2);$('v_ex_eps').textContent=fmt(eps,2);
+
+    const b1=p.p11*a1+p.p12*a2+p.p1b, b2=p.p21*a1+p.p2b;
+    const B1=sig(b1),B2=sig(b2);
+    const g=p.q1*B1+p.q2*B2+p.qb, IA=sig(g);
+    const dg=dsig(g), db1=dsig(b1), db2=dsig(b2);
+    const E=IA-c;
+
+    /* ---- WAY A: direct formulas from the paper ---- */
+    const UA={
+      p11:p.p11-eps*E*dg*p.q1*db1*a1,
+      p12:p.p12-eps*E*dg*p.q1*db1*a2,
+      p21:p.p21-eps*E*dg*p.q2*db2*a1,
+      p1b:p.p1b-eps*E*dg*p.q1*db1,
+      p2b:p.p2b-eps*E*dg*p.q2*db2,
+      q1:p.q1-eps*E*dg*B1,
+      q2:p.q2-eps*E*dg*B2,
+      qb:p.qb-eps*E*dg
+    };
+    const rA={
+      a1:a1 - E*dg*(p.q1*db1*p.p11 + p.q2*db2*p.p21),
+      a2:a2 - E*dg*(p.q1*db1*p.p12)
+    };
+
+    /* ---- WAY B: compose learners B and C ---- */
+    /* layer C update & request */
+    const UC={ q1:p.q1-eps*E*dg*B1, q2:p.q2-eps*E*dg*B2, qb:p.qb-eps*E*dg };
+    const rC1 = B1 - E*dg*p.q1;
+    const rC2 = B2 - E*dg*p.q2;
+    /* layer B trained with target (rC1,rC2) */
+    const e1 = B1-rC1, e2 = B2-rC2;   /* = E*dg*q1 , E*dg*q2 */
+    const UB={
+      p11:p.p11-eps*e1*db1*a1,
+      p12:p.p12-eps*e1*db1*a2,
+      p21:p.p21-eps*e2*db2*a1,
+      p1b:p.p1b-eps*e1*db1,
+      p2b:p.p2b-eps*e2*db2
+    };
+    const rB={
+      a1:a1-(e1*db1*p.p11 + e2*db2*p.p21),
+      a2:a2-(e1*db1*p.p12)
+    };
+    const UBC=Object.assign({},UB,UC);
+
+    /* intermediate table */
+    $('t_ex_inter').innerHTML=
+      '<tr><th>Größe</th><th>Wert</th><th>Bedeutung</th></tr>'+
+      [['β₁',b1,'p₁₁a₁+p₁₂a₂+p₁b'],['β₂',b2,'p₂₁a₁+p₂b'],
+       ['σ(β₁)',B1,'erste verborgene Aktivierung'],['σ(β₂)',B2,'zweite'],
+       ['γ',g,'q₁σ(β₁)+q₂σ(β₂)+q_b'],['I_A(p,q,a)',IA,'Ausgabe σ(γ)'],
+       ['σ̇(γ)',dg,'Ableitung am Ausgang'],
+       ['I_A − c',E,'Fehlerterm'],
+       ['r_C(q,b,c)₁',rC1,'Wunsch an σ(β₁)'],
+       ['r_C(q,b,c)₂',rC2,'Wunsch an σ(β₂)']
+      ].map(([n,v,d])=>`<tr><td class="mono" style="color:${COL.P}">${n}</td><td class="mono">${fmt(v,5)}</td><td class="muted" style="font-size:.78rem">${d}</td></tr>`).join('');
+
+    let maxd=0;
+    const keys=['p11','p12','p21','p1b','p2b','q1','q2','qb'];
+    $('t_ex_U').innerHTML=
+      '<tr><th>Koord.</th><th>Weg A (ganz)</th><th>Weg B (zerlegt)</th><th>Δ</th></tr>'+
+      keys.map(k=>{
+        const d=Math.abs(UA[k]-UBC[k]); maxd=Math.max(maxd,d);
+        return `<tr><td class="mono" style="color:${COL.P}">${k}</td>
+          <td class="mono">${fmt(UA[k],6)}</td><td class="mono">${fmt(UBC[k],6)}</td>
+          <td class="mono" style="color:${d<1e-9?COL.good:COL.bad}">${d<1e-12?'0':d.toExponential(1)}</td></tr>`;
+      }).join('');
+    $('t_ex_r').innerHTML=
+      '<tr><th>Koord.</th><th>Weg A</th><th>Weg B</th><th>Δ</th></tr>'+
+      [['a₁',rA.a1,rB.a1],['a₂',rA.a2,rB.a2]].map(([n,x,y])=>{
+        const d=Math.abs(x-y); maxd=Math.max(maxd,d);
+        return `<tr><td class="mono" style="color:${COL.bwd}">${n}</td>
+          <td class="mono">${fmt(x,6)}</td><td class="mono">${fmt(y,6)}</td>
+          <td class="mono" style="color:${d<1e-9?COL.good:COL.bad}">${d<1e-12?'0':d.toExponential(1)}</td></tr>`;
+      }).join('');
+    $('v_ex_diff').textContent = maxd<1e-12?'0':maxd.toExponential(1);
+    $('v_ex_ok').innerHTML = maxd<1e-8
+      ? '<span class="badge ok">✓ gilt</span>' : '<span class="badge no">✗</span>';
+  }
+  ['p11','p12','p21','p1b','p2b','q1','q2','qb','a1','a2','c','eps'].forEach(k=>{
+    const el=$('s_ex_'+k); if(el) el.oninput=draw;
+  });
+  $('b_ex_whole').onclick=()=>{split=false;draw();};
+  $('b_ex_split').onclick=()=>{split=true;draw();};
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   §8.1 SPEEDUP
+   ================================================================== */
+function drawSpeed(){
+  if(!$('p_speed'))return;
+  const L=+$('s_sp_L').value, Wd=+$('s_sp_W').value;
+  $('v_sp_L').textContent=L; $('v_sp_W').textContent=Wd;
+  /* naive: recompute full forward pass per parameter */
+  const nParam=(L-1)*Wd*Wd+L*Wd;
+  const fwdCost=(L-1)*Wd*Wd+L*Wd;
+  const naive=nParam*fwdCost;
+  const bp=3*fwdCost;
+  $('v_sp_naive').textContent=naive.toLocaleString('de-DE');
+  $('v_sp_bp').textContent=bp.toLocaleString('de-DE');
+  $('v_sp_x').textContent='×'+Math.round(naive/bp).toLocaleString('de-DE');
+  const Ls=[],na=[],bb=[];
+  for(let l=2;l<=20;l++){
+    const np=(l-1)*Wd*Wd+l*Wd, fc=np;
+    Ls.push(l); na.push(np*fc); bb.push(3*fc);
+  }
+  pl('p_speed',[
+    {x:Ls,y:na,name:'naiv (O(|P|·|Netz|))',line:{color:COL.bad,width:2.6}},
+    {x:Ls,y:bb,name:'Backprop (O(|Netz|))',line:{color:COL.good,width:2.6}},
+    {x:[L],y:[naive],mode:'markers',marker:{size:10,color:COL.bad},showlegend:false},
+    {x:[L],y:[bp],mode:'markers',marker:{size:10,color:COL.good},showlegend:false}
+  ],{xaxis:{title:'Anzahl Schichten'},yaxis:{title:'Operationen',type:'log'},
+     height:320,legend:{orientation:'h',y:1.16}});
+}
+['s_sp_L','s_sp_W'].forEach(id=>{if($(id))$(id).oninput=drawSpeed;});
+
+/* ==================================================================
+   §9 PLAYGROUND — real training with monolithic vs decomposed
+   ================================================================== */
+const PG = {
+  h:8, eps:0.08, act:'tanh', err:'quad', task:'sin',
+  mode:0, ep:0, running:false,
+  W1:null,b1:null,W2:null,b2:null,
+  M1:null,mb1:null,M2:null,mb2:null,   /* decomposed copy */
+  hist:[], diff:0
+};
+function pgTarget(x){
+  switch(PG.task){
+    case 'sin': return Math.sin(2.2*x);
+    case 'step': return x<0?-0.7:0.7;
+    case 'abs': return Math.abs(x)-0.6;
+    default: return 0.55*x*x*x-0.9*x;
+  }
+}
+function pgInit(){
+  const h=PG.h;
+  PG.W1=[];PG.b1=[];PG.W2=[];PG.b2=0;
+  for(let i=0;i<h;i++){
+    PG.W1.push((Math.random()*2-1)*1.4);
+    PG.b1.push((Math.random()*2-1)*1.0);
+    PG.W2.push((Math.random()*2-1)*0.9);
+  }
+  PG.b2=(Math.random()*2-1)*0.3;
+  PG.M1=PG.W1.slice();PG.mb1=PG.b1.slice();PG.M2=PG.W2.slice();PG.mb2=PG.b2;
+  PG.ep=0;PG.hist=[];PG.diff=0;
+}
+pgInit();
+function pgForward(W1,b1,W2,b2,x){
+  const A=ACT(PG.act);
+  const z=[],a=[];
+  for(let i=0;i<W1.length;i++){const zi=W1[i]*x+b1[i];z.push(zi);a.push(A.f(zi));}
+  let y=b2; for(let i=0;i<W2.length;i++) y+=W2[i]*a[i];
+  return {z,a,y};
+}
+/* one epoch: full batch gradient step. mode 0 = monolithic backprop,
+   mode 1 = layerwise via request function, mode 2 = block decomposition */
+function pgEpoch(){
+  const A=ACT(PG.act), E=ERR[PG.err], eps=PG.eps, h=PG.h;
+  const N=40, xs=[]; for(let i=0;i<N;i++) xs.push(-2.2+4.4*i/(N-1));
+  /* ---------- monolithic ---------- */
+  {
+    const gW1=new Array(h).fill(0),gb1=new Array(h).fill(0),
+          gW2=new Array(h).fill(0); let gb2=0;
+    for(const x of xs){
+      const t=pgTarget(x);
+      const {z,a,y}=pgForward(PG.W1,PG.b1,PG.W2,PG.b2,x);
+      const d=E.dedx(y,t);
+      gb2+=d;
+      for(let i=0;i<h;i++){
+        gW2[i]+=d*a[i];
+        const da=d*PG.W2[i]*A.d(z[i]);
+        gW1[i]+=da*x; gb1[i]+=da;
+      }
+    }
+    for(let i=0;i<h;i++){PG.W1[i]-=eps*gW1[i]/N;PG.b1[i]-=eps*gb1[i]/N;
+                         PG.W2[i]-=eps*gW2[i]/N;}
+    PG.b2-=eps*gb2/N;
+  }
+  /* ---------- decomposed (layer 2 first, then request → layer 1) ---------- */
+  {
+    const gM2=new Array(h).fill(0); let gmb2=0;
+    const gM1=new Array(h).fill(0), gmb1=new Array(h).fill(0);
+    for(const x of xs){
+      const t=pgTarget(x);
+      const {z,a,y}=pgForward(PG.M1,PG.mb1,PG.M2,PG.mb2,x);
+      const d=E.dedx(y,t);
+      /* layer C (output) */
+      gmb2+=d;
+      for(let i=0;i<h;i++) gM2[i]+=d*a[i];
+      /* request from layer C back to each hidden activation:
+         r_i = f_{a_i}( ∂E/∂a_i ) ;  for quad: a_i - dE/da_i           */
+      for(let i=0;i<h;i++){
+        const grad_ai = d*PG.M2[i];
+        const req = E.finv(a[i], grad_ai);
+        /* layer B trained with target req:  ∂e/∂x(a_i,req)=a_i-req=grad_ai */
+        const local = E.dedx(a[i],req)*A.d(z[i]);
+        gM1[i]+=local*x; gmb1[i]+=local;
+      }
+    }
+    for(let i=0;i<h;i++){PG.M1[i]-=eps*gM1[i]/N;PG.mb1[i]-=eps*gmb1[i]/N;
+                         PG.M2[i]-=eps*gM2[i]/N;}
+    PG.mb2-=eps*gmb2/N;
+  }
+  /* difference */
+  let d=0;
+  for(let i=0;i<h;i++){
+    d=Math.max(d,Math.abs(PG.W1[i]-PG.M1[i]),Math.abs(PG.b1[i]-PG.mb1[i]),
+                Math.abs(PG.W2[i]-PG.M2[i]));
+  }
+  d=Math.max(d,Math.abs(PG.b2-PG.mb2));
+  PG.diff=d;
+  /* loss */
+  let loss=0;
+  for(const x of xs){
+    const {y}=pgForward(PG.W1,PG.b1,PG.W2,PG.b2,x);
+    const t=pgTarget(x);
+    loss += 0.5*(y-t)*(y-t);
+  }
+  loss/=N;
+  PG.ep++;
+  PG.hist.push(loss);
+  if(PG.hist.length>600) PG.hist.shift();
+}
+function pgDraw(){
+  if(!$('p_fit'))return;
+  const xs=[]; for(let i=0;i<180;i++) xs.push(-2.4+4.8*i/179);
+  const ys=xs.map(x=>pgForward(PG.W1,PG.b1,PG.W2,PG.b2,x).y);
+  const ts=xs.map(pgTarget);
+  const ys2=xs.map(x=>pgForward(PG.M1,PG.mb1,PG.M2,PG.mb2,x).y);
+  const traces=[
+    {x:xs,y:ts,name:'Zielfunktion f',line:{color:COL.good,width:2.4,dash:'dash'}},
+    {x:xs,y:ys,name:'monolithisch L(I∗J)',line:{color:COL.A,width:3}},
+    {x:xs,y:ys2,name:'zerlegt L(I)∗L(J)',line:{color:COL.C,width:2,dash:'dot'}}
+  ];
+  /* show hidden unit contributions when decomposition view active */
+  if(PG.mode>=1){
+    const A=ACT(PG.act);
+    for(let i=0;i<Math.min(PG.h,10);i++){
+      traces.push({x:xs,y:xs.map(x=>PG.W2[i]*A.f(PG.W1[i]*x+PG.b1[i])),
+        line:{color:'rgba(177,140,255,.22)',width:1},showlegend:false,hoverinfo:'skip'});
+    }
+  }
+  pl('p_fit',traces,{xaxis:{title:'a'},yaxis:{title:'I(p,a)',range:[-2,2]},
+    height:340,legend:{orientation:'h',y:1.14}});
+  pl('p_loss',[
+    {y:PG.hist,name:'Verlust',line:{color:COL.P,width:2.2}}
+  ],{xaxis:{title:'Epoche'},yaxis:{title:'E',type:PG.hist.length>4?'log':'linear'},
+     height:210,showlegend:false,margin:{l:52,r:12,t:10,b:34}});
+  $('v_pg_ep').textContent=PG.ep;
+  $('v_pg_loss').textContent=PG.hist.length?fmt(PG.hist[PG.hist.length-1],5):'—';
+  $('v_pg_d').innerHTML = PG.diff<1e-10
+    ? '<span style="color:var(--good)">0</span>'
+    : (PG.diff<1e-6?'<span style="color:var(--good)">'+PG.diff.toExponential(1)+'</span>'
+                   :'<span style="color:var(--warn)">'+PG.diff.toExponential(1)+'</span>');
+}
+(function(){
+  if(!$('b_pg_run'))return;
+  $('s_pg_h').oninput=e=>{PG.h=+e.target.value;$('v_pg_h').textContent=PG.h;pgInit();pgDraw();};
+  $('s_pg_eps').oninput=e=>{PG.eps=+e.target.value;$('v_pg_eps').textContent=fmt(PG.eps,3);};
+  $('sel_task').onchange=e=>{PG.task=e.target.value;PG.hist=[];PG.ep=0;pgDraw();};
+  $('sel_pg_act').onchange=e=>{PG.act=e.target.value;pgInit();pgDraw();};
+  $('sel_pg_err').onchange=e=>{PG.err=e.target.value;pgInit();pgDraw();};
+  $('b_pg_step').onclick=()=>{pgEpoch();pgDraw();};
+  $('b_pg_reset').onclick=()=>{pgInit();pgDraw();};
+  [['b_pg_m0',0],['b_pg_m1',1],['b_pg_m2',2]].forEach(([id,m])=>{
+    $(id).onclick=()=>{PG.mode=m;
+      [['b_pg_m0',0],['b_pg_m1',1],['b_pg_m2',2]].forEach(([i2,m2])=>
+        $(i2).classList.toggle('on',m2===m));
+      pgDraw();};
+  });
+  $('b_pg_run').onclick=function(){
+    PG.running=!PG.running;
+    this.textContent=PG.running?'Stopp ⏸':'Training ▶';
+    this.classList.toggle('on',PG.running);
+    (function loop(){
+      if(!PG.running)return;
+      for(let k=0;k<4;k++) pgEpoch();
+      pgDraw();
+      requestAnimationFrame(loop);
+    })();
+  };
+  pgDraw();
+})();
+
+/* ==================================================================
+   §9.1 DEEP DREAMING via request function
+   ================================================================== */
+(function(){
+  const cv=$('c_dream'); if(!cv)return;
+  /* small 2D classifier: 2-6-1 */
+  let W1=[],B1=[],W2=[],b2=0, H=6;
+  let pts=[], start=null, traj=[];
+  function initNet(){
+    W1=[];B1=[];W2=[];
+    for(let i=0;i<H;i++){
+      W1.push([(Math.random()*2-1)*1.5,(Math.random()*2-1)*1.5]);
+      B1.push((Math.random()*2-1)*0.6);
+      W2.push((Math.random()*2-1)*0.8);
+    }
+    b2=0;
+  }
+  function makeData(){
+    pts=[];
+    for(let i=0;i<80;i++){
+      const r=0.35+Math.random()*0.35, t=Math.random()*TAU;
+      pts.push([r*Math.cos(t),r*Math.sin(t),0]);
+      const r2=0.78+Math.random()*0.32, t2=Math.random()*TAU;
+      pts.push([r2*Math.cos(t2),r2*Math.sin(t2),1]);
+    }
+  }
+  function fwd(x,y){
+    const z=[],a=[];
+    for(let i=0;i<H;i++){const zi=W1[i][0]*x+W1[i][1]*y+B1[i];z.push(zi);a.push(Math.tanh(zi));}
+    let o=b2; for(let i=0;i<H;i++)o+=W2[i]*a[i];
+    return {z,a,o,y:sig(o)};
+  }
+  function train(n){
+    const eps=0.35;
+    for(let it=0;it<n;it++){
+      for(const [x,y,t] of pts){
+        const F=fwd(x,y);
+        const d=(F.y-t)*dsig(F.o);
+        b2-=eps*d;
+        for(let i=0;i<H;i++){
+          const da=d*W2[i]*(1-F.a[i]*F.a[i]);
+          W2[i]-=eps*d*F.a[i];
+          W1[i][0]-=eps*da*x; W1[i][1]-=eps*da*y;
+          B1[i]-=eps*da;
+        }
+      }
+    }
+  }
+  /* request function: r(p,a,b) = a - ∇_a E  with quadratic error */
+  function request(x,y,target){
+    const F=fwd(x,y);
+    const d=(F.y-target)*dsig(F.o);
+    let gx=0,gy=0;
+    for(let i=0;i<H;i++){
+      const da=d*W2[i]*(1-F.a[i]*F.a[i]);
+      gx+=da*W1[i][0]; gy+=da*W1[i][1];
+    }
+    return [x-gx*1.6, y-gy*1.6];
+  }
+  function buildTraj(){
+    if(!start){traj=[];return;}
+    const b=+$('s_dr_b').value, n=+$('s_dr_n').value;
+    traj=[start.slice()];
+    let p=start.slice();
+    for(let k=0;k<n;k++){ p=request(p[0],p[1],b); 
+      if(!isFinite(p[0])||!isFinite(p[1]))break;
+      p=[clamp(p[0],-1.5,1.5),clamp(p[1],-1.5,1.5)];
+      traj.push(p.slice()); }
+    $('v_dr_out').textContent=fmt(fwd(p[0],p[1]).y,4);
+  }
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),Hc=CH(cv); clear(ctx,cv);
+    const S=Math.min(W,Hc)-20, ox=(W-S)/2, oy=(Hc-S)/2;
+    const X=v=>ox+(v+1.5)/3*S, Y=v=>oy+S-(v+1.5)/3*S;
+    /* decision field */
+    const N=42, cell=S/N;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+      const x=-1.5+3*(i+0.5)/N, y=-1.5+3*(j+0.5)/N;
+      const v=fwd(x,y).y;
+      const r=Math.round(110+145*v), g=Math.round(231-109*v), b=Math.round(255-57*v);
+      ctx.fillStyle=`rgba(${r},${g},${b},${0.10+0.20*Math.abs(v-0.5)*2})`;
+      ctx.fillRect(ox+i*cell,oy+S-(j+1)*cell,cell+1,cell+1);
+    }
+    /* border */
+    ctx.save();ctx.strokeStyle=COL.grid;ctx.lineWidth=1;
+    rr(ctx,ox,oy,S,S,10);ctx.stroke();ctx.restore();
+    /* points */
+    pts.forEach(([x,y,t])=>{
+      dotm(ctx,X(x),Y(y),3.2,t?COL.C:COL.A,false);
+    });
+    /* trajectory */
+    if(traj.length>1){
+      ctx.save();ctx.strokeStyle=COL.good;ctx.lineWidth=2.4;
+      ctx.shadowColor=COL.good;ctx.shadowBlur=10;
+      ctx.beginPath();ctx.moveTo(X(traj[0][0]),Y(traj[0][1]));
+      traj.forEach(p=>ctx.lineTo(X(p[0]),Y(p[1])));ctx.stroke();ctx.restore();
+      traj.forEach((p,i)=>dotm(ctx,X(p[0]),Y(p[1]),i===0?6:2.6,
+        i===0?'#fff':COL.good,i===0));
+      const last=traj[traj.length-1];
+      dotm(ctx,X(last[0]),Y(last[1]),6,COL.good);
+      lbl(ctx,X(last[0]),Y(last[1])-14,'r^n(p,a,b)',COL.good,10.5,'center','700');
+    } else {
+      lbl(ctx,W/2,Hc/2,'→ klicke in die Fläche',COL.mut,12,'center','700');
+    }
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const W=CW(cv),Hc=CH(cv),S=Math.min(W,Hc)-20,ox=(W-S)/2,oy=(Hc-S)/2;
+    const x=((e.clientX-r.left)-ox)/S*3-1.5;
+    const y=(1-((e.clientY-r.top)-oy)/S)*3-1.5;
+    start=[clamp(x,-1.5,1.5),clamp(y,-1.5,1.5)];
+    buildTraj(); draw();
+  });
+  $('s_dr_b').oninput=e=>{$('v_dr_b').textContent=fmt(+e.target.value,2);buildTraj();draw();};
+  $('s_dr_n').oninput=e=>{$('v_dr_n').textContent=e.target.value;buildTraj();draw();};
+  $('b_dr_train').onclick=()=>{train(90);buildTraj();draw();};
+  $('b_dr_reset').onclick=()=>{initNet();makeData();start=null;traj=[];draw();};
+  initNet();makeData();train(60);draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ==================================================================
+   §9.2 ERROR FUNCTION LAB
+   ================================================================== */
+function drawErrLab(){
+  if(!$('p_errlab'))return;
+  const al=+$('s_el_al').value, z=+$('s_el_z').value;
+  $('v_el_al').textContent=fmt(al,2);
+  $('v_el_z').textContent=fmt(z,2);
+  const ys=[]; for(let i=0;i<300;i++) ys.push(0.001+0.998*i/299);
+  const traces=[
+    {x:ys,y:ys.map(y=>ERR.quad.dedx(z,y)),name:'quadratisch: z−y',
+     line:{color:COL.A,width:2.4}},
+    {x:ys,y:ys.map(y=>ERR.prod.dedx(z,y)),name:'Produkt: y',
+     line:{color:COL.B,width:2.2}},
+    {x:ys,y:ys.map(y=>al*(y-z)/(z*(1-z))),name:'Kreuzentropie: α(y−z)/(z(1−z))',
+     line:{color:COL.C,width:2.4}},
+    {x:ys,y:ys.map(y=>Math.sign(z-y)),name:'|x−y|: sign(z−y)  ✗',
+     line:{color:COL.bad,width:2,dash:'dot'}}
+  ];
+  pl('p_errlab',traces,{
+    xaxis:{title:'y  (mit festem x₀ = z)'},
+    yaxis:{title:'∂e/∂x (z,y)',range:[-6,6]},
+    height:320,legend:{orientation:'h',y:1.22,font:{size:9.5}}});
+  const rows=[
+    ['½(x−y)²','z−y','y = z−g','✓ immer','ok'],
+    ['x·y','y','y = g','✓ immer','ok'],
+    ['Kreuzentropie','(y−z)/(z(1−z))','y = z+g·z(1−z)','✓ für z≠0,1','ok'],
+    ['|x−y|','sign(z−y)','—','✗ nicht injektiv','no']
+  ];
+  $('t_errlab').innerHTML=
+    '<tr><th>e(x,y)</th><th>∂e/∂x(z,y)</th><th>Umkehrung f<sub>z</sub>(g)</th><th>Satz?</th></tr>'+
+    rows.map(([a,b,c,d,k])=>`<tr><td class="mono">${a}</td><td class="mono">${b}</td>
+      <td class="mono">${c}</td><td><span class="badge ${k}">${d}</span></td></tr>`).join('');
+}
+['s_el_al','s_el_z'].forEach(id=>{if($(id))$(id).oninput=drawErrLab;});
+
+/* ==================================================================
+   §10 EMBEDDINGS Lens ↪ Learn ↪ Game
+   ================================================================== */
+(function(){
+  const cv=$('c_embed'); if(!cv)return;
+  let mode='lens';
+  const msgs={
+    lens:'<b>Lens.</b> <span class="mono">get : S → A</span> vorwärts, <span class="mono">put : S×A → S</span> rückwärts. <b>Kein Zustand, kein Update.</b> Ein Lens ist genau ein Lerner mit trivialem Parameterraum <span class="mono">P = ℝ⁰</span>.',
+    learn:'<b>Learner.</b> Zusätzlich zum Vor- und Rückkanal gibt es den <b>Parameter P</b>, der sich durch <span class="mono">U</span> verändert. Das ist der Unterschied: ein Lens reagiert, ein Lerner <b>lernt</b>.',
+    game:'<b>Open Game.</b> <span class="mono">play</span> / <span class="mono">coplay</span> plus <b>best response</b>. Lerner sind Open Games, deren beste Antwort immer einelementig ist („singleton best response"). Also: <span class="mono">Lens ↪ Learn ↪ Game</span>.'
+  };
+  function draw(){
+    const ctx=fit(cv),W=CW(cv),H=CH(cv); clear(ctx,cv);
+    const bw=Math.min(120,W*0.24), bh=86, y=H*0.46, bx=W*0.40;
+    const col = mode==='lens'?COL.A:mode==='learn'?COL.C:COL.P;
+    const name= mode==='lens'?'Lens':mode==='learn'?'Learner':'Open Game';
+    box(ctx,bx,y-bh/2,bw,bh,name,col);
+    /* forward */
+    wire(ctx,W*0.08,y-22,bx,y-22,COL.fwd,2.4);
+    lbl(ctx,W*0.22,y-38, mode==='lens'?'S':mode==='learn'?'A':'X',COL.fwd,12,'center','700');
+    wire(ctx,bx+bw,y-22,W*0.94,y-22,COL.fwd,2.4);
+    lbl(ctx,W*0.80,y-38, mode==='lens'?'get(s)':mode==='learn'?'I(p,a)':'play',COL.fwd,11,'center','700');
+    /* backward */
+    wire(ctx,W*0.94,y+22,bx+bw,y+22,COL.bwd,2.4);
+    lbl(ctx,W*0.80,y+38, mode==='lens'?'a′':mode==='learn'?'b (Ziel)':'Auszahlung',COL.bwd,11,'center','700');
+    wire(ctx,bx,y+22,W*0.08,y+22,COL.bwd,2.4);
+    lbl(ctx,W*0.22,y+38, mode==='lens'?'put(s,a′)':mode==='learn'?'r(p,a,b)':'coplay',COL.bwd,11,'center','700');
+    /* parameter */
+    if(mode!=='lens'){
+      ctx.save();ctx.strokeStyle=COL.P;ctx.lineWidth=2.4;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(bx+bw/2,y-bh/2);ctx.lineTo(bx+bw/2,H*0.10);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(bx+bw/2,y+bh/2);ctx.lineTo(bx+bw/2,H*0.88);ctx.stroke();
+      ctx.restore();
+      dotm(ctx,bx+bw/2,H*0.10,6,COL.P);
+      dotm(ctx,bx+bw/2,H*0.88,6,COL.P);
+      lbl(ctx,bx+bw/2,H*0.05, mode==='learn'?'P (Parameter)':'Strategie',COL.P,11,'center','700');
+      lbl(ctx,bx+bw/2,H*0.95, mode==='learn'?'U (Update)':'best response',COL.P,11,'center','700');
+    } else {
+      lbl(ctx,bx+bw/2,H*0.10,'P = ℝ⁰  (kein Parameter)',COL.mut,11,'center','700');
+    }
+    $('emmsg').innerHTML=msgs[mode];
+    [['b_em_lens','lens'],['b_em_learn','learn'],['b_em_game','game']]
+      .forEach(([id,m])=>$(id).classList.toggle('on',m===mode));
+  }
+  [['b_em_lens','lens'],['b_em_learn','learn'],['b_em_game','game']]
+    .forEach(([id,m])=>$(id).onclick=()=>{mode=m;draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ==================================================================
+   INITIALISE EVERYTHING
+   ================================================================== */
+window.addEventListener('load',()=>{
+  drawGrad3D();
+  drawChain();
+  drawInv();
+  drawParaFam();
+  verify();
+  drawEps();
+  drawSpeed();
+  drawErrLab();
+  pgDraw();
+});
+setTimeout(()=>{
+  drawChain(); drawInv(); drawParaFam(); verify(); drawEps();
+  drawSpeed(); drawErrLab();
+},200);
+
+/* re-render plots on resize */
+let rz=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(rz);
+  rz=setTimeout(()=>{
+    ['p_grad3d','p_chain','p_inv','p_para_fam','p_eps','p_speed','p_fit','p_loss','p_errlab']
+      .forEach(id=>{ const el=$(id); if(el&&el.data) Plotly.Plots.resize(el); });
+  },160);
+});
+</script>
+
+</body>
+</html>

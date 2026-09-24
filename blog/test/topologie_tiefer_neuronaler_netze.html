@@ -1544,7 +1544,7 @@ function makeNet(spec){
    ================================================================ */
 (function(){
   const {cv,ctx,w,h}=C('gtCanvas');
-  const amt=document.getElementById('gtAmt'), amt
+  const amt=document.getElementById('gtAmt');
   const amtL=document.getElementById('gtAmtL');
   const seg=document.getElementById('gtSeg')||document.getElementById('geoTopSeg');
   const verdict=document.getElementById('gtVerdict');
@@ -2904,12 +2904,8 @@ const ARCH=[
     const good=ok(k,e,ds);
     verd.className=good?'callout a':'callout warn';
     verd.innerHTML=good
-      ? `<span class="tag">✓ korrekt</span>Mit (k=${k}, ε=${e.toFixed(1)}) reproduziert VR<sub>k,ε</sub>(X) die '+
-        'wahren Betti-Zahlen der Mannigfaltigkeit. Das Paper wählt bewusst die <b>Mitte</b> des grünen Bereichs — '+
-        'dort ist das Ergebnis am robustesten gegen Rauschen.`
-      : `<span class="tag">✗ falsch</span>Mit (k=${k}, ε=${e.toFixed(1)}) stimmen die Betti-Zahlen <b>nicht</b>. '+
-        `Zu kleines k → Graph zerfällt, β₀ zu groß. Zu großes ε → alles verschmilzt, Löcher verschwinden. '+
-        `Zieh die Regler in den grünen Bereich.`;
+      ? `<span class="tag">✓ korrekt</span>Mit (k=${k}, ε=${e.toFixed(1)}) reproduziert VR<sub>k,ε</sub>(X) die wahren Betti-Zahlen der Mannigfaltigkeit. Das Paper wählt bewusst die <b>Mitte</b> des grünen Bereichs — dort ist das Ergebnis am robustesten gegen Rauschen.`
+      : `<span class="tag">✗ falsch</span>Mit (k=${k}, ε=${e.toFixed(1)}) stimmen die Betti-Zahlen <b>nicht</b>. Zu kleines k → Graph zerfällt, β₀ zu groß. Zu großes ε → alles verschmilzt, Löcher verschwinden. Zieh die Regler in den grünen Bereich.`;
   }
   seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
