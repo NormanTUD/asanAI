@@ -38,6 +38,8 @@ function bootAtlas() {
 	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
 	var STAR_R = 470;
 	var MIN_D = 1.1, MAX_D = 750;
+	var SCENE_BG = new THREE.Color(0x05070d);
+	var reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 	var THEME = {};
 	function readTheme() {
@@ -116,7 +118,8 @@ function bootAtlas() {
 			buildDots();
 			buildScene();
 			buildUI();
-			requestAnimationFrame(tick);
+			bindLoopPause();
+			startLoop();
 			setTimeout(function () { loader.classList.add('hide'); }, 300);
 		}).catch(function (err) {
 			console.error('[atlas] failed to start:', err);
@@ -193,6 +196,7 @@ function bootAtlas() {
 	var bhGeo, bhVel = [], nebGeo, nebVel = [];
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
+	var camFwd = new THREE.Vector3();
 
 	function makeRadialTexture(inner, outer, size) {
 		var c = document.createElement('canvas');
@@ -356,6 +360,7 @@ function bootAtlas() {
 	}
 
 	var earthDayNightMat = null;
+	var sunDirLast = 0;
 
 	function buildEarth() {
 		var geo = new THREE.SphereGeometry(EARTH_R, 64, 48);
@@ -419,6 +424,8 @@ function bootAtlas() {
 
 	function updateSunDirection() {
 		if (!earthDayNightMat) { return; }
+		if (Date.now() - sunDirLast < 1000) { return; }
+		sunDirLast = Date.now();
 		var now = new Date();
 		var utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
 		var start = new Date(Date.UTC(now.getUTCFullYear(), 0, 0));
@@ -1037,9 +1044,9 @@ function bootAtlas() {
 			var t = i / n;
 			var s1 = Math.sin((1 - t) * ang) / Math.sin(ang || 1e-6);
 			var s2 = Math.sin(t * ang) / Math.sin(ang || 1e-6);
-			var v = A.multiplyScalar(s1).add(B.multiplyScalar(s2)).normalize();
+			var p = A.clone().multiplyScalar(s1).add(B.clone().multiplyScalar(s2)).normalize();
 			var r = EARTH_R + 0.01 + lift * ang * Math.sin(Math.PI * t);
-			pts.push(v.multiplyScalar(r));
+			pts.push(p.multiplyScalar(r));
 		}
 		return pts;
 	}
@@ -1228,7 +1235,7 @@ function bootAtlas() {
 		var qBg = THREE.MathUtils.smoothstep(d, 600, 660);
 		var galBg = THREE.MathUtils.smoothstep(d, 195, 230);
 		if (skySphere) { skySphere.visible = (qBg < 0.5 && galBg < 0.5); }
-		scene.background = new THREE.Color(0x05070d);
+		scene.background = SCENE_BG;
 		// solar system: fully visible at the solar-system stop, gone before galaxies
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 185, 220));
 		var solarVis = solarO > 0.01;
@@ -1858,6 +1865,7 @@ function bootAtlas() {
 	function tickTour() {
 		if (!tour.active) { return; }
 		if (tour.paused) { return; }
+		if (reducedMotion) { return; }
 		var last = tour.step === JOURNEY.length - 1;
 		var p = last ? 1 : (performance.now() - tour.startedAt) / TOUR_STEP_MS;
 		tourEls().fill.style.width = Math.min(100, p * 100) + '%';
@@ -2066,7 +2074,28 @@ function bootAtlas() {
 
 	// ── main loop ─────────────────────────────────────────────
 	var frame = 0;
+	var running = false;
+	function startLoop() {
+		if (running) { return; }
+		running = true;
+		requestAnimationFrame(tick);
+	}
+	function bindLoopPause() {
+		function show() { if (tour.active) { resetTourTimer(); } startLoop(); }
+		function hide() { running = false; }
+		if (typeof IntersectionObserver !== 'undefined') {
+			new IntersectionObserver(function (es) {
+				for (var i = 0; i < es.length; i++) {
+					if (es[i].isIntersecting) { show(); } else { hide(); }
+				}
+			}, { threshold: 0.02 }).observe(wrap);
+		}
+		document.addEventListener('visibilitychange', function () {
+			if (document.hidden) { hide(); } else { show(); }
+		});
+	}
 	function tick() {
+		if (!running) { return; }
 		requestAnimationFrame(tick);
 		applyCamera();
 		updateThreads();
@@ -2084,45 +2113,55 @@ function bootAtlas() {
 		updateSunDirection();
 		// the web + CMB photos hover in front of the camera, photo-parallel
 		if (webPhoto || cmbPhoto) {
-			var fwd = new THREE.Vector3();
-			camera.getWorldDirection(fwd);
+			camera.getWorldDirection(camFwd);
 			if (webPhoto) {
-				webPhoto.position.copy(camera.position).addScaledVector(fwd, WEB_PHOTO_DIST);
+				webPhoto.position.copy(camera.position).addScaledVector(camFwd, WEB_PHOTO_DIST);
 				webPhoto.quaternion.copy(camera.quaternion);
 			}
-			cmbPhoto.position.copy(camera.position).addScaledVector(fwd, CMB_PHOTO_DIST);
+			cmbPhoto.position.copy(camera.position).addScaledVector(camFwd, CMB_PHOTO_DIST);
 			cmbPhoto.quaternion.copy(camera.quaternion);
 		}
 		// slow cosmic drift
 		if (frame % 2 === 0) {
-			if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth) {
-				earth.rotation.y += 0.003;
-				if (dotMesh) { dotMesh.rotation.y += 0.003; }
-				if (atmosphere) { atmosphere.rotation.y += 0.003; }
-			}
-			planets.forEach(function (p) {
-				if (!p.visible) { return; }
-				p.userData.angle += p.userData.speed * 0.01;
-				p.position.x = SUN_POS[0] + Math.cos(p.userData.angle) * p.userData.dist;
-				p.position.z = SUN_POS[2] + Math.sin(p.userData.angle) * p.userData.dist;
-				if (p.userData.ring) { p.userData.ring.position.copy(p.position); }
-			});
 			if (bhGroup && bhGroup.visible) { tickBlackHole(); }
-			if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
-			if (questionGroup) { questionGroup.rotation.y += 0.0002; }
-			if (asparagusSprite) {
-				asparagusSprite.position.x = 110 * Math.sin(frame * 0.0016);
-				asparagusSprite.position.y = 40 + 28 * Math.sin(frame * 0.0011 + 1.3);
+			if (!reducedMotion) {
+				if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth) {
+					earth.rotation.y += 0.003;
+					if (dotMesh) { dotMesh.rotation.y += 0.003; }
+					if (atmosphere) { atmosphere.rotation.y += 0.003; }
+				}
+				planets.forEach(function (p) {
+					if (!p.visible) { return; }
+					p.userData.angle += p.userData.speed * 0.01;
+					p.position.x = SUN_POS[0] + Math.cos(p.userData.angle) * p.userData.dist;
+					p.position.z = SUN_POS[2] + Math.sin(p.userData.angle) * p.userData.dist;
+					if (p.userData.ring) { p.userData.ring.position.copy(p.position); }
+				});
+				if (filamentGroup) { filamentGroup.rotation.y += 0.00025; }
+				if (questionGroup) { questionGroup.rotation.y += 0.0002; }
+				if (asparagusSprite) {
+					asparagusSprite.position.x = 110 * Math.sin(frame * 0.0016);
+					asparagusSprite.position.y = 40 + 28 * Math.sin(frame * 0.0011 + 1.3);
+				}
 			}
 		}
 		if (hoverGlow && hoverGlow.material.opacity > 0) {
-			var hp = 1 + 0.16 * Math.sin(frame * 0.14);
-			hoverGlow.scale.set(HOVER_SCALE * hp, HOVER_SCALE * hp, 1);
-			hoverGlow.material.opacity = 0.82 + 0.18 * (0.5 + 0.5 * Math.sin(frame * 0.14));
+			if (reducedMotion) {
+				hoverGlow.scale.set(HOVER_SCALE, HOVER_SCALE, 1);
+				hoverGlow.material.opacity = 0.9;
+			} else {
+				var hp = 1 + 0.16 * Math.sin(frame * 0.14);
+				hoverGlow.scale.set(HOVER_SCALE * hp, HOVER_SCALE * hp, 1);
+				hoverGlow.material.opacity = 0.82 + 0.18 * (0.5 + 0.5 * Math.sin(frame * 0.14));
+			}
 		}
 		if (dotHighlight && dotHighlight.material.opacity > 0) {
-			var sp = 1 + 0.1 * Math.sin(frame * 0.12);
-			dotHighlight.scale.set(DOT_HL_SCALE * sp, DOT_HL_SCALE * sp, 1);
+			if (reducedMotion) {
+				dotHighlight.scale.set(DOT_HL_SCALE, DOT_HL_SCALE, 1);
+			} else {
+				var sp = 1 + 0.1 * Math.sin(frame * 0.12);
+				dotHighlight.scale.set(DOT_HL_SCALE * sp, DOT_HL_SCALE * sp, 1);
+			}
 		}
 		frame++;
 		renderer.render(scene, camera);

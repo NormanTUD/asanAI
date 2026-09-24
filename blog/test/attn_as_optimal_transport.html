@@ -1,0 +1,3500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention als Optimaler Transport — Eine interaktive Reise</title>
+
+<!-- Plotly für hochwertige Plots -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX-Rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg-0:#05070d;
+  --bg-1:#0a0e1a;
+  --bg-2:#0f1524;
+  --bg-3:#151d31;
+  --panel:rgba(18,25,42,.72);
+  --panel-solid:#121a2a;
+  --stroke:rgba(255,255,255,.08);
+  --stroke-2:rgba(255,255,255,.14);
+  --txt:#e8edf7;
+  --txt-2:#a7b3cc;
+  --txt-3:#6b7896;
+  --acc:#5eead4;      /* teal  — Forward / OT */
+  --acc2:#a78bfa;     /* violet— Backward / RL */
+  --acc3:#fbbf24;     /* amber — Geometrie */
+  --acc4:#fb7185;     /* rose  — Kosten / negativ */
+  --acc5:#60a5fa;     /* blue  — Entropie */
+  --good:#34d399;
+  --bad:#f87171;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg-0);
+  color:var(--txt);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Ambient background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(94,234,212,.09), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 85% 25%, rgba(167,139,250,.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 80%, rgba(251,191,36,.055), transparent 60%),
+    linear-gradient(180deg,#05070d 0%,#080c16 40%,#05070d 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.017) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.017) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 100% 80% at 50% 30%, #000 20%, transparent 85%);
+}
+
+/* ============================================================
+   PROGRESS + NAV
+   ============================================================ */
+#progress{
+  position:fixed;top:0;left:0;height:2.5px;width:0;z-index:1000;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));
+  box-shadow:0 0 14px rgba(94,234,212,.6);
+  transition:width .08s linear;
+}
+nav#toc{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:900;
+  display:flex;flex-direction:column;gap:5px;
+  padding:14px 10px;border-radius:16px;
+  background:rgba(10,14,26,.62);backdrop-filter:blur(14px);
+  border:1px solid var(--stroke);
+}
+nav#toc a{
+  position:relative;display:block;width:11px;height:11px;border-radius:50%;
+  background:rgba(255,255,255,.15);transition:.28s;text-decoration:none;
+}
+nav#toc a:hover{background:var(--acc);transform:scale(1.35)}
+nav#toc a.active{background:var(--acc);box-shadow:0 0 0 4px rgba(94,234,212,.16)}
+nav#toc a span{
+  position:absolute;right:22px;top:50%;transform:translateY(-50%) translateX(8px);
+  white-space:nowrap;font-size:11.5px;letter-spacing:.03em;color:var(--txt-2);
+  background:rgba(10,14,26,.94);padding:4px 10px;border-radius:7px;
+  border:1px solid var(--stroke);opacity:0;pointer-events:none;transition:.22s;
+}
+nav#toc a:hover span{opacity:1;transform:translateY(-50%) translateX(0)}
+@media(max-width:1200px){nav#toc{display:none}}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap{max-width:1140px;margin:0 auto;padding:0 26px}
+section{padding:84px 0;position:relative}
+section+section{border-top:1px solid rgba(255,255,255,.045)}
+
+.kicker{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:16px;
+  padding:6px 13px;border-radius:99px;
+  background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.2);
+}
+.kicker.v{color:var(--acc2);background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.2)}
+.kicker.a{color:var(--acc3);background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2)}
+.kicker.r{color:var(--acc4);background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.2)}
+
+h1{font-size:clamp(2.4rem,6vw,4.3rem);font-weight:800;line-height:1.04;letter-spacing:-.033em}
+h2{font-size:clamp(1.75rem,3.6vw,2.6rem);font-weight:750;line-height:1.14;letter-spacing:-.024em;margin-bottom:16px}
+h3{font-size:1.24rem;font-weight:680;margin:30px 0 12px;letter-spacing:-.012em}
+h4{font-size:1.02rem;font-weight:650;margin:20px 0 8px;color:var(--txt)}
+p{color:var(--txt-2);margin-bottom:14px;max-width:74ch}
+p.lead{font-size:1.12rem;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;color:var(--acc)}
+
+/* Cards / Panels */
+.panel{
+  background:var(--panel);backdrop-filter:blur(16px);
+  border:1px solid var(--stroke);border-radius:20px;padding:26px;margin:26px 0;
+  box-shadow:0 18px 50px rgba(0,0,0,.34);
+}
+.panel.tight{padding:20px}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g21{grid-template-columns:1.35fr 1fr}
+.g12{grid-template-columns:1fr 1.35fr}
+@media(max-width:920px){.g2,.g3,.g21,.g12{grid-template-columns:1fr}}
+
+/* Callouts */
+.callout{
+  border-left:3px solid var(--acc);padding:16px 20px;margin:20px 0;
+  background:linear-gradient(90deg,rgba(94,234,212,.07),transparent 70%);
+  border-radius:0 12px 12px 0;
+}
+.callout.v{border-color:var(--acc2);background:linear-gradient(90deg,rgba(167,139,250,.07),transparent 70%)}
+.callout.a{border-color:var(--acc3);background:linear-gradient(90deg,rgba(251,191,36,.07),transparent 70%)}
+.callout.r{border-color:var(--acc4);background:linear-gradient(90deg,rgba(251,113,133,.07),transparent 70%)}
+.callout .ct{font-size:11px;font-weight:750;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:7px}
+.callout.v .ct{color:var(--acc2)} .callout.a .ct{color:var(--acc3)} .callout.r .ct{color:var(--acc4)}
+.callout p{margin-bottom:0}
+
+/* Controls */
+.ctrl{margin:15px 0}
+.ctrl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;font-size:13px}
+.ctrl-head .lbl{color:var(--txt-2);font-weight:520}
+.ctrl-head .val{font-family:var(--mono);color:var(--acc);font-weight:650;font-size:13px;
+  background:rgba(94,234,212,.09);padding:2px 9px;border-radius:6px;min-width:60px;text-align:right}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:rgba(255,255,255,.11);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:linear-gradient(145deg,#fff,var(--acc));cursor:pointer;
+  box-shadow:0 0 0 4px rgba(94,234,212,.17),0 2px 8px rgba(0,0,0,.5);transition:.16s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);box-shadow:0 0 0 6px rgba(94,234,212,.24)}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;border:none;
+  background:linear-gradient(145deg,#fff,var(--acc));cursor:pointer;
+  box-shadow:0 0 0 4px rgba(94,234,212,.17);
+}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 17px;border-radius:11px;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.055);border:1px solid var(--stroke-2);
+  color:var(--txt);cursor:pointer;transition:.2s;font-family:var(--sans);
+}
+.btn:hover{background:rgba(94,234,212,.14);border-color:var(--acc);color:#fff;transform:translateY(-1px)}
+.btn.on{background:rgba(94,234,212,.2);border-color:var(--acc);color:#fff}
+.btn.v:hover{background:rgba(167,139,250,.14);border-color:var(--acc2)}
+.btn.v.on{background:rgba(167,139,250,.2);border-color:var(--acc2)}
+.btn.a:hover{background:rgba(251,191,36,.14);border-color:var(--acc3)}
+.btn.a.on{background:rgba(251,191,36,.2);border-color:var(--acc3)}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+
+.seg{display:inline-flex;background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:11px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{
+  padding:7px 14px;border:none;background:transparent;color:var(--txt-2);
+  font-size:12.5px;font-weight:600;border-radius:8px;cursor:pointer;transition:.18s;font-family:var(--sans);
+}
+.seg button:hover{color:var(--txt)}
+.seg button.on{background:rgba(94,234,212,.19);color:#fff;box-shadow:0 1px 6px rgba(0,0,0,.3)}
+
+canvas{display:block;max-width:100%;border-radius:14px}
+.cvwrap{position:relative;border-radius:14px;overflow:hidden;background:rgba(5,8,15,.55);border:1px solid var(--stroke)}
+
+/* Math blocks */
+.math{
+  background:rgba(5,8,16,.55);border:1px solid var(--stroke);border-radius:13px;
+  padding:16px 20px;margin:16px 0;overflow-x:auto;text-align:center;
+}
+.math.left{text-align:left}
+.mlabel{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px;text-align:left}
+math{font-size:1.06em}
+
+/* Stat chips */
+.stats{display:flex;gap:11px;flex-wrap:wrap;margin:14px 0}
+.stat{
+  flex:1;min-width:112px;background:rgba(255,255,255,.035);border:1px solid var(--stroke);
+  border-radius:13px;padding:12px 14px;
+}
+.stat .k{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt-3);margin-bottom:4px}
+.stat .v{font-family:var(--mono);font-size:1.28rem;font-weight:700;color:var(--acc)}
+.stat.v2 .v{color:var(--acc2)} .stat.v3 .v{color:var(--acc3)} .stat.v4 .v{color:var(--acc4)}
+
+/* Table */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th{
+  text-align:left;padding:11px 13px;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--txt-3);border-bottom:1px solid var(--stroke-2);font-weight:700;
+}
+td{padding:12px 13px;border-bottom:1px solid rgba(255,255,255,.045);color:var(--txt-2);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.022)}
+td:first-child{color:var(--txt);font-weight:620}
+
+/* Step badges */
+.steps{counter-reset:s;margin:18px 0}
+.step{
+  position:relative;padding-left:46px;margin-bottom:18px;counter-increment:s;
+}
+.step::before{
+  content:counter(s);position:absolute;left:0;top:0;
+  width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.3);
+  color:var(--acc);font-weight:750;font-size:13px;font-family:var(--mono);
+}
+.step h4{margin-top:2px}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--stroke-2),transparent);margin:34px 0}
+
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:650;
+  background:rgba(255,255,255,.06);border:1px solid var(--stroke);color:var(--txt-2);margin:2px 3px}
+.pill.g{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3);color:var(--good)}
+.pill.r{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:var(--bad)}
+
+.hint{font-size:12.5px;color:var(--txt-3);font-style:italic;margin-top:9px}
+
+/* Hero */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.5}
+#hero .wrap{position:relative;z-index:1}
+.subtitle{font-size:1.2rem;color:var(--txt-2);max-width:62ch;margin:22px 0 30px;line-height:1.7}
+.eqhero{
+  display:inline-block;padding:20px 30px;border-radius:17px;margin:14px 0;
+  background:rgba(10,15,27,.7);border:1px solid var(--stroke-2);backdrop-filter:blur(10px);
+}
+.scroll-hint{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--txt-3);
+  animation:bob 2.4s ease-in-out infinite;z-index:2;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(9px);opacity:1}}
+
+/* Reveal animation */
+.rev{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1)}
+.rev.in{opacity:1;transform:none}
+
+/* Narrative connector */
+.connector{
+  display:flex;align-items:center;gap:14px;margin:40px 0 10px;
+  color:var(--txt-3);font-size:13px;font-style:italic;
+}
+.connector::before,.connector::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--stroke-2),transparent)}
+
+/* legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--txt-2);margin:10px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+.tokengrid{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.tok{
+  padding:6px 12px;border-radius:9px;font-size:12.5px;font-family:var(--mono);
+  background:rgba(255,255,255,.05);border:1px solid var(--stroke);cursor:pointer;transition:.18s;
+}
+.tok:hover{border-color:var(--acc);color:#fff}
+.tok.sel{background:rgba(94,234,212,.2);border-color:var(--acc);color:#fff}
+
+.note{font-size:13px;color:var(--txt-3);background:rgba(255,255,255,.025);padding:11px 15px;border-radius:10px;border:1px solid var(--stroke);margin:12px 0}
+
+.qbox{
+  background:linear-gradient(135deg,rgba(94,234,212,.09),rgba(167,139,250,.07));
+  border:1px solid rgba(94,234,212,.24);border-radius:17px;padding:24px 28px;margin:26px 0;
+}
+.qbox .q{font-size:1.1rem;color:#fff;font-weight:620;margin-bottom:10px}
+.qbox .a{color:var(--txt-2)}
+
+footer{padding:60px 0 80px;text-align:center;color:var(--txt-3);font-size:13px;border-top:1px solid rgba(255,255,255,.05)}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav id="toc"></nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="wrap">
+    <div class="kicker">arXiv:2508.08369v2 · Elon Litman · Stanford</div>
+    <h1>Attention ist<br><span style="background:linear-gradient(120deg,var(--acc),var(--acc2) 55%,var(--acc3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Optimaler Transport</span></h1>
+    <p class="subtitle">
+      Die Softmax-Attention aus Transformern wurde nie wirklich <em>hergeleitet</em> — sie wurde
+      geraten, und sie funktionierte. Dieses Paper zeigt: Sie ist die <strong>exakte, eindeutige Lösung</strong>
+      eines wohldefinierten Optimierungsproblems. Und der Gradient, mit dem sie lernt, ist — ohne dass
+      jemand das eingebaut hätte — ein <strong>Policy-Gradient aus dem Reinforcement Learning</strong>.
+    </p>
+    <div class="eqhero"><div id="heroEq"></div></div>
+    <p style="font-size:13.5px;color:var(--txt-3);max-width:60ch;margin-top:18px">
+      Scrolle und spiele. Jedes Konzept, das über Schulmathematik hinausgeht, wird hier interaktiv
+      aufgebaut — Simplex, Entropie, Lagrange, Dualität, Fisher-Information. Du musst nichts vorher wissen.
+    </p>
+  </div>
+  <div class="scroll-hint">↓ Scrollen</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     1 — MOTIVATION
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-motivation">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker">Kapitel 0 · Motivation</div>
+  <h2>Die Frage, die niemand beantwortet hat</h2>
+  <p class="lead">
+    Jedes große Sprachmodell der Welt führt milliardenfach pro Sekunde dieselbe Formel aus.
+    Sie wurde 2017 in „Attention Is All You Need" vorgestellt — mit einer Begründung, die im
+    Wesentlichen lautete: <em>„Das Skalarprodukt misst Ähnlichkeit, Softmax macht daraus Wahrscheinlichkeiten."</em>
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div class="mlabel">Die Formel, um die es geht</div>
+    <div id="eqSDPA" class="math"></div>
+    <p style="margin-bottom:0">
+      Warum <em>exp</em>? Warum nicht Quadrieren-und-Normieren? Warum genau diese Temperatur
+      <code>τ = √d_k</code>? Warum ist sie so unglaublich robust trainierbar? Das sind vier
+      verschiedene Fragen — und das Paper beantwortet sie alle mit <strong>einer</strong>
+      einzigen Idee: Attention ist kein Trick. Attention ist die <em>Lösung eines Optimierungsproblems</em>.
+    </p>
+  </div>
+
+  <div class="grid g2 rev">
+    <div class="panel tight">
+      <div class="kicker r" style="margin-bottom:12px">Die alte Erzählung</div>
+      <h4 style="margin-top:0">„Heuristik"</h4>
+      <p style="font-size:14px">
+        Skalarprodukt ≈ Ähnlichkeit. Softmax ≈ weiches argmax. Das <code>√d_k</code> verhindert
+        Sättigung. Alles plausibel — aber nichts davon <strong>leitet</strong> die Formel her.
+        Man hätte genauso gut etwas anderes wählen können.
+      </p>
+      <div class="hint">→ Kein Prinzip. Nur „es funktioniert".</div>
+    </div>
+    <div class="panel tight" style="border-color:rgba(94,234,212,.28)">
+      <div class="kicker" style="margin-bottom:12px">Die neue Erzählung</div>
+      <h4 style="margin-top:0">„Erste Prinzipien"</h4>
+      <p style="font-size:14px">
+        Stelle eine Frage: <em>„Wie verteile ich eine Einheit Aufmerksamkeit auf m Schlüssel,
+        so dass ich maximale Ähnlichkeit bekomme, aber mich so wenig wie möglich festlege?"</em>
+        Die eindeutige Antwort <strong>ist</strong> Softmax. Zwangsläufig.
+      </p>
+      <div class="hint">→ Softmax ist nicht gewählt. Sie ist erzwungen.</div>
+    </div>
+  </div>
+
+  <div class="connector">Bevor wir die Frage stellen können, brauchen wir eine Bühne</div>
+
+  <!-- INTERACTIVE 0: Was ist eine Attention-Zeile überhaupt -->
+  <div class="panel rev">
+    <h3 style="margin-top:0">🎮 Spiel 0 — Was macht Attention eigentlich?</h3>
+    <p>
+      Ein <strong>Query</strong> <code>q</code> (die Frage: „was suche ich?") wird mit mehreren
+      <strong>Keys</strong> <code>k_j</code> („was biete ich an?") verglichen. Jeder Vergleich ergibt
+      einen Score. Der Softmax macht daraus <em>Gewichte, die sich zu 1 addieren</em>. Damit wird
+      ein gewichteter Mittelwert der <strong>Values</strong> <code>v_j</code> gebildet.
+      Drehe den Query-Pfeil und beobachte, wie die Aufmerksamkeit wandert.
+    </p>
+    <div class="grid g21" style="margin-top:18px">
+      <div class="cvwrap"><canvas id="cv0a" width="640" height="440"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Richtung des Query θ</span><span class="val" id="v0ang">45°</span></div>
+          <input type="range" id="s0ang" min="0" max="360" step="1" value="45">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Länge ‖q‖ (Selbstsicherheit)</span><span class="val" id="v0len">1.60</span></div>
+          <input type="range" id="s0len" min="0.05" max="4" step="0.01" value="1.6">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v0tau">1.00</span></div>
+          <input type="range" id="s0tau" min="0.08" max="4" step="0.01" value="1">
+        </div>
+        <div class="cvwrap" style="margin-top:14px"><canvas id="cv0b" width="420" height="200"></canvas></div>
+        <div class="stats" style="margin-top:12px">
+          <div class="stat"><div class="k">Entropie H(p)</div><div class="v" id="v0H">—</div></div>
+          <div class="stat v3"><div class="k">Erwartete Ähnl.</div><div class="v" id="v0S">—</div></div>
+        </div>
+        <div class="hint">Kurzes τ → spitze Verteilung, hohe Ähnlichkeit, wenig Entropie. Großes τ → fast Gleichverteilung.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout rev">
+    <div class="ct">Der Kern der Spannung</div>
+    <p>
+      Da sind <strong>zwei Kräfte</strong> im Spiel, die gegeneinander ziehen: „Geh dorthin, wo die
+      Ähnlichkeit am größten ist" und „Leg dich nicht fest, bleib breit". Genau dieser Konflikt ist
+      der ganze Inhalt des Papers. Softmax ist der exakte Kompromiss.
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     2 — PREREQUISITE: DER SIMPLEX
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-simplex">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker a">Baustein 1 · Voraussetzung</div>
+  <h2>Der Simplex — der Raum aller Antworten</h2>
+  <p class="lead">
+    Bevor wir optimieren können, brauchen wir ein <em>Spielfeld</em>. Jede Attention-Verteilung
+    ist ein Vektor <code>p = (p₁,…,p_m)</code> mit <code>p_j ≥ 0</code> und <code>Σ p_j = 1</code>.
+    Die Menge all dieser Vektoren heißt <strong>Wahrscheinlichkeitssimplex Δ<sup>m−1</sup></strong>.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div class="mlabel">Definition (Gl. 2 im Paper)</div>
+    <div id="eqSimplex" class="math"></div>
+    <div class="grid g12" style="margin-top:18px">
+      <div>
+        <h4 style="margin-top:0">Warum ist das wichtig?</h4>
+        <p style="font-size:14px">
+          Der Simplex ist <strong>konvex</strong> (jede Verbindungslinie zweier Punkte bleibt drin),
+          <strong>kompakt</strong> (abgeschlossen & beschränkt) und <strong>nichtleer</strong>.
+          Genau diese drei Eigenschaften garantieren später, dass unser Optimierungsproblem
+          überhaupt eine Lösung hat — und dass sie <em>eindeutig</em> ist.
+        </p>
+        <div class="legend">
+          <span><i style="background:var(--acc3)"></i>Simplex-Fläche</span>
+          <span><i style="background:var(--acc)"></i>aktuelle Verteilung p</span>
+          <span><i style="background:var(--acc4)"></i>Ecken = One-Hot</span>
+        </div>
+        <div class="btnrow">
+          <button class="btn a on" id="b2corner">Ecke (deterministisch)</button>
+          <button class="btn a" id="b2center">Mitte (Gleichverteilung)</button>
+          <button class="btn a" id="b2rand">Zufall</button>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">p₁</span><span class="val" id="v2p1">0.33</span></div>
+          <input type="range" id="s2p1" min="0" max="1" step="0.005" value="0.333">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">p₂</span><span class="val" id="v2p2">0.33</span></div>
+          <input type="range" id="s2p2" min="0" max="1" step="0.005" value="0.333">
+        </div>
+        <div class="note" id="n2p3">p₃ = 1 − p₁ − p₂ = <b>0.334</b> &nbsp;— p₃ ist <i>nicht frei</i>: der Simplex hat nur m−1 Freiheitsgrade.</div>
+      </div>
+      <div class="cvwrap"><canvas id="cv2" width="620" height="520"></canvas></div>
+    </div>
+    <div class="hint">Ziehe im Dreieck mit der Maus. Die drei Balken rechts unten zeigen die Wahrscheinlichkeiten.</div>
+  </div>
+
+  <div class="callout a rev">
+    <div class="ct">Merke</div>
+    <p>
+      m = 3 Schlüssel ⇒ ein <strong>Dreieck</strong>. m = 4 ⇒ ein Tetraeder. m = 512 ⇒ ein
+      511-dimensionales Objekt, das wir nicht zeichnen können — aber die Logik bleibt identisch.
+      Alles, was Attention je ausgeben kann, ist ein Punkt in diesem Ding.
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     3 — PREREQUISITE: ENTROPIE
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-entropie">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker a">Baustein 2 · Voraussetzung</div>
+  <h2>Entropie — wie unentschlossen bin ich?</h2>
+  <p class="lead">
+    Die <strong>Shannon-Entropie</strong> misst, wie „breit verschmiert" eine Verteilung ist.
+    Sie ist maximal bei Gleichverteilung und null, wenn man sich ganz sicher ist.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div id="eqEnt" class="math"></div>
+    <div class="grid g2">
+      <div>
+        <h4 style="margin-top:0">Der Baustein: x·log(x)</h4>
+        <p style="font-size:14px">
+          Die ganze Magie steckt in der Funktion <code>f(x) = x log x</code>.
+          Ihre zweite Ableitung ist <code>f''(x) = 1/x > 0</code> — sie ist <strong>strikt konvex</strong>.
+          Genau das erzwingt später die <em>Eindeutigkeit</em> der Lösung.
+        </p>
+        <div class="cvwrap"><canvas id="cv3a" width="560" height="300"></canvas></div>
+        <div class="hint">Blau: x log x. Gestrichelt: eine Sehne — sie liegt <i>immer strikt oberhalb</i> der Kurve. Das ist strikte Konvexität.</div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Entropie auf dem Simplex (m = 3)</h4>
+        <p style="font-size:14px">
+          Das Höhenprofil von H(p) über dem Dreieck. Ein einziger Gipfel in der Mitte,
+          steil abfallend zu den Ecken. Perfekt „glatt genau ein Maximum".
+        </p>
+        <div class="cvwrap"><canvas id="cv3b" width="560" height="380"></canvas></div>
+        <div class="stats">
+          <div class="stat v3"><div class="k">H bei p</div><div class="v" id="v3H">1.099</div></div>
+          <div class="stat"><div class="k">H max = log m</div><div class="v" id="v3Hmax">1.099</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <h4>Zwei-Zustands-Fall: die klassische Entropiekurve</h4>
+    <div class="ctrl">
+      <div class="ctrl-head"><span class="lbl">p₁ (und p₂ = 1 − p₁)</span><span class="val" id="v3p">0.50</span></div>
+      <input type="range" id="s3p" min="0.001" max="0.999" step="0.001" value="0.5">
+    </div>
+    <div id="plot3" style="height:300px"></div>
+  </div>
+
+  <div class="callout a rev">
+    <div class="ct">Intuition</div>
+    <p>
+      Entropie = <strong>Anzahl der Optionen, die ich mir offenhalte</strong> (im Log-Maß).
+      Bei 3 Keys ist H = log 3 ≈ 1.10 das Maximum — „ich weiß gar nichts, alle gleich".
+      H = 0 heißt: „ich bin mir zu 100 % sicher, es ist Key 2."
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     4 — PREREQUISITE: OPTIMALER TRANSPORT
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-ot">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker a">Baustein 3 · Voraussetzung</div>
+  <h2>Optimaler Transport — Erdhaufen verschieben</h2>
+  <p class="lead">
+    Klassische Frage (Monge 1781, Kantorovich 1942): Du hast Sand an mehreren Orten
+    (<em>Quellmaß a</em>) und Löcher an anderen Orten (<em>Zielmaß b</em>). Verschieben kostet Geld
+    (<em>Kostenmatrix C</em>). Was ist der <strong>billigste Plan P</strong>?
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div class="mlabel">Das Kantorovich-Problem</div>
+    <div id="eqOT" class="math"></div>
+    <p style="font-size:14px">
+      Ein <strong>Transportplan P</strong> sagt: „von Quelle i geht die Menge P<sub>ij</sub> nach Ziel j."
+      Zulässig ist er, wenn die <em>Zeilensummen</em> = a und die <em>Spaltensummen</em> = b sind.
+    </p>
+
+    <div class="grid g21" style="margin-top:20px">
+      <div class="cvwrap"><canvas id="cv4" width="680" height="420"></canvas></div>
+      <div>
+        <div class="seg" style="margin-bottom:14px">
+          <button id="b4classic" class="on">Klassisch (ε→0)</button>
+          <button id="b4eot">Entropisch (ε&gt;0)</button>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Entropie-Regularisierung ε</span><span class="val" id="v4eps">0.02</span></div>
+          <input type="range" id="s4eps" min="-2.2" max="1.1" step="0.01" value="-1.7">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Quellverteilung (Schiefe)</span><span class="val" id="v4sk">0.00</span></div>
+          <input type="range" id="s4sk" min="-1" max="1" step="0.01" value="0">
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Transportkosten</div><div class="v" id="v4cost">—</div></div>
+          <div class="stat v2"><div class="k">Entropie H(P)</div><div class="v" id="v4H">—</div></div>
+        </div>
+        <div class="note">
+          <b>ε → 0:</b> scharfer, spärlicher Plan (nur wenige Pfade, exakt wie ein LP).<br>
+          <b>ε → ∞:</b> Kosten werden ignoriert, P = a·bᵀ (unabhängige Kopplung).
+        </div>
+        <div class="legend"><span><i style="background:var(--acc)"></i>Massenfluss</span><span><i style="background:var(--acc4)"></i>Kosten (dunkel = teuer)</span></div>
+      </div>
+    </div>
+    <div class="hint">Die Matrix unten links ist der Plan P (Helligkeit = Masse). Die Balken sind die Randverteilungen.</div>
+  </div>
+
+  <div class="connector">Jetzt der entscheidende Trick des Papers</div>
+
+  <div class="panel rev" style="border-color:rgba(94,234,212,.3)">
+    <div class="kicker">Die „einseitige" Degeneration</div>
+    <h3 style="margin-top:6px">Was, wenn es nur <em>eine</em> Quelle gibt — und keine Ziel-Bedingung?</h3>
+    <div class="grid g2">
+      <div>
+        <p style="font-size:14px">
+          Setze <strong>eine einzige Quelle</strong>: den Query <code>q</code>, mit genau
+          <em>einer Einheit Aufmerksamkeitsmasse</em> (Dirac-Maß <code>a = δ_q</code>).
+          Und: <strong>lass das Zielmaß b völlig frei</strong> — keine Spaltenbedingung.
+        </p>
+        <p style="font-size:14px">
+          Dann kollabiert die Matrix <code>P</code> zu einem <strong>einzigen Zeilenvektor</strong>,
+          und die Menge der zulässigen Pläne <code>U(δ_q, ·)</code> kollabiert zum
+          <strong>Simplex Δ<sup>m−1</sup></strong>. Genau dem Objekt aus Baustein 1.
+        </p>
+        <div class="callout"><div class="ct">Remark 3.5</div>
+        <p style="font-size:14px">Das ist der Grund, warum Attention <em>nicht</em> iterativ (Sinkhorn) berechnet werden muss:
+        Mit nur einer Randbedingung gibt es eine <strong>geschlossene Formel</strong>.</p></div>
+      </div>
+      <div class="cvwrap"><canvas id="cv4b" width="620" height="380"></canvas></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn on" id="b4s0">1 · Volles OT (2 Randbed.)</button>
+      <button class="btn" id="b4s1">2 · Quelle → Dirac</button>
+      <button class="btn" id="b4s2">3 · Ziel-Randbed. lösen</button>
+      <button class="btn" id="b4s3">4 · = Simplex</button>
+    </div>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Abgrenzung: Das ist <u>nicht</u> „Sinkhorn Attention"</h4>
+    <table>
+      <tr><th>Ansatz</th><th>Randbedingungen</th><th>Lösung</th><th>Beitrag</th></tr>
+      <tr><td>Sinkhorn-Attention [5,6]</td><td>Zeilen <em>und</em> Spalten fixiert (doppelt-stochastisch)</td><td>iterativ (Sinkhorn–Knopp)</td><td>neuer Mechanismus wird <i>konstruiert</i></td></tr>
+      <tr><td><strong>Dieses Paper</strong></td><td>nur Zeilen fixiert („einseitig")</td><td><strong>geschlossen, nicht-iterativ</strong></td><td>der <i>bestehende</i> Mechanismus wird <strong>erklärt</strong></td></tr>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     5 — DAS KONKRETE PROBLEM + LÖSUNG (Theorem 3.3)
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-theorem">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker">Kapitel 1 · Der Hauptsatz</div>
+  <h2>Die Frage — und ihre eindeutige Antwort</h2>
+  </div>
+
+  <div class="qbox rev">
+    <div class="q">❓ Die konkrete Frage (Definition 3.2)</div>
+    <div class="a">
+      Finde die Verteilung <code>p ∈ Δ<sup>m−1</sup></code>, die den folgenden Ausdruck
+      <strong>minimiert</strong>:
+    </div>
+    <div id="eqJ" class="math" style="background:rgba(0,0,0,.28)"></div>
+    <div class="a">
+      Erster Term: <span style="color:var(--acc4)">erwartete Kosten</span> (= negative Ähnlichkeit) — will sich auf den besten Key stürzen.<br>
+      Zweiter Term: <span style="color:var(--acc5)">−ε·Entropie</span> — will breit bleiben. <br>
+      <strong>ε steuert den Kompromiss.</strong>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE: LIVE OPTIMIZER -->
+  <div class="panel rev">
+    <h3 style="margin-top:0">🎮 Spiel 1 — Der Optimierer, live</h3>
+    <p>
+      Links siehst du die Zielfunktion <code>J(p)</code> als Höhenlandschaft über dem Simplex
+      (3 Keys). Die weiße Kugel ist ein Gradientenabstieg, der live nach unten rollt.
+      Das ⭐ ist die <strong>analytische Softmax-Lösung</strong>. Sie treffen sich immer.
+      <em>Genau das ist Theorem 3.3.</em>
+    </p>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="cv5" width="680" height="560"></canvas></div>
+      <div>
+        <h4 style="margin-top:0">Scores s_j = ⟨q, k_j⟩</h4>
+        <div class="ctrl"><div class="ctrl-head"><span class="lbl">s₁</span><span class="val" id="v5s1">2.00</span></div><input type="range" id="s5s1" min="-4" max="6" step="0.05" value="2"></div>
+        <div class="ctrl"><div class="ctrl-head"><span class="lbl">s₂</span><span class="val" id="v5s2">0.50</span></div><input type="range" id="s5s2" min="-4" max="6" step="0.05" value="0.5"></div>
+        <div class="ctrl"><div class="ctrl-head"><span class="lbl">s₃</span><span class="val" id="v5s3">-0.50</span></div><input type="range" id="s5s3" min="-4" max="6" step="0.05" value="-0.5"></div>
+        <div class="divider" style="margin:18px 0"></div>
+        <div class="ctrl"><div class="ctrl-head"><span class="lbl">Regularisierung ε = τ</span><span class="val" id="v5eps">1.00</span></div><input type="range" id="s5eps" min="-2.3" max="1.6" step="0.01" value="0"></div>
+        <div class="btnrow">
+          <button class="btn" id="b5reset">↻ Kugel neu starten</button>
+          <button class="btn on" id="b5run">⏸ Pause</button>
+        </div>
+        <div class="stats">
+          <div class="stat"
+        <div class="stats">
+          <div class="stat"><div class="k">J(p) aktuell</div><div class="v" id="v5J">—</div></div>
+          <div class="stat v2"><div class="k">J(p★) optimal</div><div class="v" id="v5Jstar">—</div></div>
+        </div>
+        <div class="stats">
+          <div class="stat v3"><div class="k">‖p − p★‖</div><div class="v" id="v5gap">—</div></div>
+          <div class="stat v4"><div class="k">Schritte</div><div class="v" id="v5it">0</div></div>
+        </div>
+        <div class="note" id="n5sol">p★ = softmax(s/τ) = (—, —, —)</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <h4>Die zwei Kräfte, aufgeschlüsselt</h4>
+    <p style="font-size:14px;margin-bottom:8px">
+      Ziehe ε von ganz links (≈0.1) nach ganz rechts (≈40) und beobachte, wie sich die Lösung von
+      „One-Hot" zu „Gleichverteilung" verwandelt — und wie sich die Landschaft von einer schiefen Ebene
+      zu einer Schüssel mit Gipfel in der Mitte verformt.
+    </p>
+    <div id="plot5" style="height:330px"></div>
+  </div>
+
+  <div class="grid g3 rev">
+    <div class="panel tight">
+      <div class="kicker" style="margin-bottom:10px">Schritt A</div>
+      <h4 style="margin-top:0">Existenz</h4>
+      <p style="font-size:13.5px">
+        Δ<sup>m−1</sup> ist <strong>nichtleer, konvex, kompakt</strong>. J ist stetig.
+        Satz vom Extremwert ⇒ ein Minimum <em>existiert</em>.
+      </p>
+    </div>
+    <div class="panel tight">
+      <div class="kicker" style="margin-bottom:10px">Schritt B</div>
+      <h4 style="margin-top:0">Eindeutigkeit</h4>
+      <p style="font-size:13.5px">
+        ⟨p,C⟩ ist linear (konvex). ε·Σ p log p ist <strong>strikt</strong> konvex (f''=1/x&gt;0).
+        Konvex + strikt konvex = strikt konvex ⇒ das Minimum ist <em>eindeutig</em>.
+      </p>
+    </div>
+    <div class="panel tight">
+      <div class="kicker" style="margin-bottom:10px">Schritt C</div>
+      <h4 style="margin-top:0">Form</h4>
+      <p style="font-size:13.5px">
+        Lagrange + KKT-Stationarität ⇒ <code>p_j ∝ exp(⟨q,k_j⟩/τ)</code>.
+        Normierung liefert den Nenner. <strong>Das ist Softmax.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- LAGRANGE WALKTHROUGH -->
+  <div class="panel rev">
+    <h3 style="margin-top:0">🔧 Baustein 4 — Lagrange-Multiplikatoren, zum Anfassen</h3>
+    <p>
+      Wir wollen ein Minimum <em>auf</em> einer Fläche finden (Σ p = 1), nicht im ganzen Raum.
+      Lagranges Idee: Am Optimum zeigt der Gradient der Zielfunktion <strong>senkrecht zur
+      Nebenbedingung</strong> — er ist parallel zum Normalenvektor der Ebene. Der Faktor heißt λ.
+    </p>
+    <div class="grid g2">
+      <div class="cvwrap"><canvas id="cv6" width="600" height="420"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Position auf der Nebenbedingung</span><span class="val" id="v6t">0.50</span></div>
+          <input type="range" id="s6t" min="0" max="1" step="0.002" value="0.5">
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--acc)"></i>−∇J (Abstiegsrichtung)</span>
+          <span><i style="background:var(--acc3)"></i>Nebenbedingung</span>
+          <span><i style="background:var(--acc4)"></i>Tangentialkomponente</span>
+        </div>
+        <div class="stats">
+          <div class="stat v4"><div class="k">Tangentialteil</div><div class="v" id="v6tan">—</div></div>
+          <div class="stat"><div class="k">λ (Normalteil)</div><div class="v" id="v6lam">—</div></div>
+        </div>
+        <div class="note">
+          <b>Optimum erreicht ⟺ Tangentialteil = 0.</b> Dann kann man sich entlang der
+          Nebenbedingung nicht mehr verbessern. Übrig bleibt nur die Normalkomponente λ —
+          der Lagrange-Multiplikator.
+        </div>
+        <div id="eqKKT" class="math left" style="font-size:.92em"></div>
+        <div class="hint">Auflösen nach p_j gibt exp(...). Die Normierung Σp=1 fixiert λ.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout rev">
+    <div class="ct">Theorem 3.3 — Antwort auf die Frage</div>
+    <p>
+      <strong>Setzt man ε = τ, so ist die eindeutige Lösung p★ exakt der SDPA-Gewichtsvektor α.</strong>
+      Softmax ist keine Designentscheidung. Sie ist die Konsequenz aus: „maximiere Ähnlichkeit,
+      bleibe maximal entropisch, bleibe eine Wahrscheinlichkeitsverteilung."
+    </p>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Remark 3.4 — Warum ausgerechnet τ = √d<sub>k</sub>?</h4>
+    <p style="font-size:14px">
+      Sind die Komponenten von q und k unabhängig, mittelwertfrei, Varianz 1, dann hat
+      ⟨q,k⟩ Mittelwert 0 und <strong>Varianz d<sub>k</sub></strong>. Teilen durch √d<sub>k</sub>
+      normiert die Score-Varianz zurück auf 1 — sonst sättigt Softmax zu One-Hot.
+      <em>Variationell gelesen:</em> τ passt die Stärke der Entropie-Regularisierung an die
+      Dimension an.
+    </p>
+    <div class="grid g2" style="margin-top:14px">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Dimension d_k</span><span class="val" id="v7d">64</span></div>
+          <input type="range" id="s7d" min="2" max="512" step="1" value="64">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" id="b7scaled">mit /√d_k</button>
+          <button class="btn" id="b7raw">ohne Skalierung</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Std(Scores)</div><div class="v" id="v7sd">—</div></div>
+          <div class="stat v3"><div class="k">Ø Entropie</div><div class="v" id="v7H">—</div></div>
+          <div class="stat v4"><div class="k">max α</div><div class="v" id="v7mx">—</div></div>
+        </div>
+        <div class="note" id="n7warn">—</div>
+      </div>
+      <div id="plot7" style="height:290px"></div>
+    </div>
+    <div class="hint">Ohne Skalierung explodiert die Score-Varianz mit d_k → Softmax sättigt → Gradienten sterben.</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     6 — GENERAL FRAMEWORK (Sec 4)
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-family">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker a">Kapitel 2 · Die Familie</div>
+  <h2>Ein Regularisierer — viele Attention-Mechanismen</h2>
+  <p class="lead">
+    Sobald man Attention als <code>argmin −⟨p,s⟩ + Ω(p)</code> versteht, wird Ω zur
+    <strong>zentralen Designentscheidung</strong>. Tauscht man die Shannon-Entropie gegen etwas
+    anderes aus, bekommt man automatisch andere bekannte Mechanismen.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div id="eqGen" class="math"></div>
+    <div class="seg" style="margin:16px 0">
+      <button id="bfSoft" class="on">Softmax · −τH(p)</button>
+      <button id="bfSparse">Sparsemax · ½‖p‖²</button>
+      <button id="bfEnt">α-entmax · Tsallis</button>
+      <button id="bfAlibi">ALiBi · +γ·Distanz</button>
+    </div>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="cv8" width="700" height="400"></canvas></div>
+      <div>
+        <div id="f8desc"></div>
+        <div class="ctrl" id="ctrlAlpha" style="display:none">
+          <div class="ctrl-head"><span class="lbl">α (Tsallis)</span><span class="val" id="v8a">1.50</span></div>
+          <input type="range" id="s8a" min="1.01" max="3" step="0.01" value="1.5">
+        </div>
+        <div class="ctrl" id="ctrlGamma" style="display:none">
+          <div class="ctrl-head"><span class="lbl">γ (Lokalitäts-Bias)</span><span class="val" id="v8g">0.60</span></div>
+          <input type="range" id="s8g" min="0" max="3" step="0.01" value="0.6">
+        </div>
+        <div class="ctrl" id="ctrlPos" style="display:none">
+          <div class="ctrl-head"><span class="lbl">Query-Position i</span><span class="val" id="v8i">6</span></div>
+          <input type="range" id="s8i" min="0" max="11" step="1" value="6">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v8t">1.00</span></div>
+          <input type="range" id="s8t" min="-1.6" max="1.6" step="0.01" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn a" id="b8new">🎲 Neue Zufalls-Scores</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Nicht-Null-Einträge</div><div class="v" id="v8nz">—</div></div>
+          <div class="stat v3"><div class="k">Entropie</div><div class="v" id="v8H">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Tabelle 1 aus dem Paper</h4>
+    <table>
+      <tr><th>Mechanismus</th><th>Regularisierer Ω(p)</th><th>Resultat</th></tr>
+      <tr><td>Softmax</td><td><span class="mono">−τ·H(p)</span></td><td>Dichte, glatte Verteilung aus Entropie-Maximierung</td></tr>
+      <tr><td>Sparsemax</td><td><span class="mono">½ Σ p<sub>j</sub>²</span></td><td>Spärlich mit <em>exakten Nullen</em> (L2-Projektion auf den Simplex)</td></tr>
+      <tr><td>α-entmax</td><td><span class="mono">1/(α(α−1)) Σ (p<sup>α</sup>−p)</span></td><td>Sparsity stufenlos über α steuerbar (Tsallis-Entropie)</td></tr>
+      <tr><td>ALiBi</td><td><span class="mono">−τH(p) + γ Σ p<sub>j</sub>|i−j|</span></td><td>Struktureller Lokalitäts-Bias durch lineare Strafe</td></tr>
+    </table>
+    <div class="callout a">
+      <div class="ct">Der ALiBi-Trick (Prop. 4.4)</div>
+      <p>
+        Die lineare Strafe <code>γ|i−j|</code> lässt sich in die Kosten <em>hineinziehen</em>:
+        <code>C'<sub>ij</sub> = −s<sub>ij</sub> + γ|i−j|</code>. Damit ist es wieder <strong>dasselbe
+        Problem</strong> wie Theorem 3.3 — nur mit anderen Kosten. Lösung: Softmax über
+        <code>(s<sub>ij</sub> − γ|i−j|)/τ</code>. Exakt ALiBi, mit <code>m = −γ</code>.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     7 — BACKWARD PASS / RL
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-backward">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker v">Kapitel 3 · Der Rückwärtspass</div>
+  <h2>Backpropagation ist heimlich Reinforcement Learning</h2>
+  <p class="lead">
+    Bisher: <em>was</em> Attention berechnet. Jetzt: <em>wie sie lernt</em>. Und hier passiert
+    etwas Verblüffendes — niemand hat das eingebaut, es fällt einfach heraus.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Erst die Begriffe (Definition 5.1)</h4>
+    <div class="grid g3">
+      <div>
+        <div class="mlabel">Kontextvektor</div>
+        <div id="eqCtx" class="math" style="margin-top:4px"></div>
+        <p style="font-size:13px">Der gewichtete Mittelwert der Values — die Ausgabe der Attention.</p>
+      </div>
+      <div>
+        <div class="mlabel">Grenznutzen („Reward")</div>
+        <div id="eqU" class="math" style="margin-top:4px"></div>
+        <p style="font-size:13px">Wie sehr würde der Loss <em>sinken</em>, wenn ich Key j mehr Gewicht gäbe?</p>
+      </div>
+      <div>
+        <div class="mlabel">Vorteil / Advantage</div>
+        <div id="eqA" class="math" style="margin-top:4px"></div>
+        <p style="font-size:13px">Wie viel <em>besser als der Durchschnitt</em> ist Key j?</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rev" style="border-color:rgba(167,139,250,.3)">
+    <div class="mlabel">Theorem 5.2 — der Gradient</div>
+    <div id="eqThm52" class="math"></div>
+    <p>
+      Lies das als RL-Update: <strong>„Erhöhe den Score von Key j proportional zu seiner
+      Wahrscheinlichkeit mal seinem Vorteil."</strong> Das ist <em>wörtlich</em> REINFORCE
+      mit Erwartungswert-Baseline [10] — die Standardtechnik, um die Varianz von
+      Policy-Gradienten zu reduzieren.
+    </p>
+  </div>
+
+  <!-- INTERACTIVE RL -->
+  <div class="panel rev">
+    <h3 style="margin-top:0">🎮 Spiel 2 — Der Attention-Bandit</h3>
+    <p>
+      Stell dir jeden Key als einen <strong>Spielautomaten-Arm</strong> vor. Die aktuelle
+      Attention-Verteilung p ist die <em>Policy</em>. Der Grenznutzen u<sub>j</sub> ist der
+      <em>Reward</em>. Die Baseline E<sub>p</sub>[u] ist der Durchschnitt.
+      Klicke <b>Ein Lernschritt</b> und schau zu, wie die Policy zu den guten Armen wandert.
+    </p>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="cv9" width="700" height="480"></canvas></div>
+      <div>
+        <h4 style="margin-top:0">Nutzen u<sub>j</sub> (per Hand einstellen)</h4>
+        <div id="uSliders"></div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Lernrate η</span><span class="val" id="v9lr">0.60</span></div>
+          <input type="range" id="s9lr" min="0.01" max="3" step="0.01" value="0.6">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v9t">1.00</span></div>
+          <input type="range" id="s9t" min="-1.2" max="1.2" step="0.01" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn v" id="b9step">▶ Ein Lernschritt</button>
+          <button class="btn v" id="b9run">⏩ Auto</button>
+          <button class="btn v" id="b9reset">↻ Reset</button>
+        </div>
+        <div class="stats">
+          <div class="stat v2"><div class="k">Baseline E[u]</div><div class="v" id="v9base">—</div></div>
+          <div class="stat"><div class="k">Erwarteter Nutzen</div><div class="v" id="v9exp">—</div></div>
+        </div>
+        <div class="note">
+          <b>Baseline an/aus:</b> Ohne Baseline würden <i>alle</i> Scores in dieselbe Richtung
+          gezogen, wenn alle Rewards positiv sind — reine Verschwendung. Die Baseline zentriert
+          das Signal: nur <i>relative</i> Qualität zählt.
+        </div>
+        <div class="btnrow">
+          <button class="btn v on" id="b9bl">Baseline: AN</button>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="grid g2">
+      <div>
+        <h4 style="margin-top:0">Lernverlauf: Policy p über die Zeit</h4>
+        <div id="plot9a" style="height:270px"></div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Erwarteter Nutzen E<sub>p</sub>[u] steigt monoton</h4>
+        <div id="plot9b" style="height:270px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Wie der Beweis läuft: die Softmax-Jacobi-Matrix</h4>
+    <p style="font-size:14px">
+      Alles hängt an einer Ableitung. Für <code>p_k = exp(s_k/τ)/Z</code> gilt:
+    </p>
+    <div id="eqJac" class="math"></div>
+    <p style="font-size:14px">
+      Setzt man das in die Kettenregel ein, kollabiert die Summe und es bleibt genau
+      <code>−(p_j/τ)(u_j − E[u])</code>. Der zweite Summand — der Erwartungswert — ist
+      <strong>die Baseline, die von ganz allein entsteht</strong>.
+    </p>
+    <div class="grid g2" style="margin-top:14px">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Wähle j (Zeile der Jacobi-Matrix)</span><span class="val" id="v10j">2</span></div>
+          <input type="range" id="s10j" min="0" max="4" step="1" value="2">
+        </div>
+        <div class="cvwrap"><canvas id="cv10" width="560" height="330"></canvas></div>
+        <div class="hint">Diagonale positiv (p_k(1−p_k)/τ), Nebendiagonalen negativ (−p_kp_j/τ). Jede Zeile summiert zu <b>0</b> — das ist der Grund für die Baseline!</div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Warum summiert jede Zeile zu Null?</h4>
+        <p style="font-size:14px">
+          Weil p immer auf dem Simplex bleibt: Σp<sub>k</sub> = 1 ist eine Invariante.
+          Eine Änderung von s darf die Gesamtmasse nicht verändern — also müssen sich alle
+          Änderungen wegheben. Dadurch verschwindet jeder <em>konstante</em> Anteil im
+          Nutzenvektor u. Genau das ist eine Baseline.
+        </p>
+        <div class="callout v">
+          <div class="ct">Elegant</div>
+          <p style="font-size:14px">
+            Die Varianzreduktion aus dem RL kommt hier <strong>geschenkt</strong> — als
+            geometrische Konsequenz der Simplex-Nebenbedingung, nicht als Trick eines Ingenieurs.
+          </p>
+        </div>
+        <div class="cvwrap" style="margin-top:12px"><canvas id="cv10b" width="560" height="220"></canvas></div>
+        <div class="hint">Konstanten-Verschiebung von u: die Gradienten bleiben identisch.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     8 — DUALITY / LSE
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-dual">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker a">Kapitel 4 · Dualität</div>
+  <h2>Das verborgene Potential: Log-Sum-Exp</h2>
+  <p class="lead">
+    Bisher wirken Vorwärts- und Rückwärtspass wie zwei getrennte Geschichten. Sie sind es nicht.
+    Es gibt <strong>eine einzige skalare Funktion</strong>, aus der beides folgt.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <h4 style="margin-top:0">Baustein 5 — Das Envelope-Theorem, visuell</h4>
+    <p style="font-size:14px">
+      <code>V(s) = min_p J(p,s)</code> ist die <em>untere Einhüllende</em> einer Schar von Geraden.
+      Das Envelope-Theorem sagt: um V abzuleiten, darf man die optimale Lösung p★ als
+      <strong>konstant behandeln</strong> — denn am Optimum ist J flach in p.
+    </p>
+    <div class="grid g2">
+      <div class="cvwrap"><canvas id="cv11" width="620" height="400"></canvas></div>
+      
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Score s₁ (das Argument)</span><span class="val" id="v11s">1.20</span></div>
+          <input type="range" id="s11s" min="-3" max="4" step="0.01" value="1.2">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Anzahl gezeigter Kandidaten-p</span><span class="val" id="v11n">9</span></div>
+          <input type="range" id="s11n" min="3" max="25" step="1" value="9">
+        </div>
+        <div class="legend">
+          <span><i style="background:rgba(255,255,255,.22)"></i>J(p,s) für festes p</span>
+          <span><i style="background:var(--acc)"></i>V(s) = untere Einhüllende</span>
+          <span><i style="background:var(--acc3)"></i>aktive Gerade bei p★</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">V(s)</div><div class="v" id="v11V">—</div></div>
+          <div class="stat v3"><div class="k">Steigung V′(s₁)</div><div class="v" id="v11g">—</div></div>
+          <div class="stat v2"><div class="k">−p★₁</div><div class="v" id="v11p">—</div></div>
+        </div>
+        <div class="note">
+          <b>Lemma 6.2:</b> Die Steigung der Einhüllenden ist exakt <code>−p★</code>. Vergleiche
+          die beiden unteren Kacheln — sie sind immer identisch. Jede graue Gerade gehört zu
+          <i>einem festen</i> p; V(s) ist deren Minimum. An jeder Stelle „berührt" genau eine
+          Gerade — und ihre Steigung ist die Ableitung.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rev" style="border-color:rgba(251,191,36,.28)">
+    <div class="mlabel">Theorem 6.3 — Das duale Potential</div>
+    <div id="eqLSE" class="math"></div>
+    <p>
+      Weil wir lieber ein Potential hätten, dessen Gradient <em>direkt</em> p★ ist (statt −p★),
+      nimmt man <code>φ★ = −V</code>. Über Lagrange-Dualität bekommt man dafür eine explizite Formel:
+      <strong>Log-Sum-Exp</strong>. Das ist die berühmte „weiche Maximum"-Funktion.
+    </p>
+    <div class="grid g2">
+      <div>
+        <h4 style="margin-top:0">LSE ist ein weiches Maximum</h4>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v12t">1.00</span></div>
+          <input type="range" id="s12t" min="-2.3" max="1.6" step="0.01" value="0">
+        </div>
+        <div id="plot12" style="height:300px"></div>
+        <div class="hint">τ → 0: LSE → max(s₁,s₂) (Knick). τ groß: glatte Wölbung. Die <b>Krümmung</b> dieser Wölbung ist gleich der Fisher-Matrix — dazu gleich mehr.</div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Der Gradient von LSE <u>ist</u> Softmax</h4>
+        <p style="font-size:14px">
+          Ableiten von <code>φ★(s) = τ log Σ exp(s_l/τ)</code> nach <code>s_k</code> liefert
+          <code>exp(s_k/τ)/Σexp(s_l/τ)</code> — die Attention-Gewichte. Ein einziges Skalarfeld
+          erzeugt die gesamte Vorwärtsrechnung.
+        </p>
+        <div class="cvwrap"><canvas id="cv12" width="560" height="330"></canvas></div>
+        <div class="hint">Oben: das Potential φ★ als Fläche über (s₁,s₂). Der Pfeil ist ∇φ★ = p★ — er zeigt immer in Richtung des dominanten Scores.</div>
+      </div>
+    </div>
+    <div class="callout a">
+      <div class="ct">Die drei Identitäten auf einen Blick</div>
+      <p>
+        <code>φ★(s) = −V(s)</code> &nbsp;·&nbsp; <code>∇φ★(s) = p★(s)</code> &nbsp;·&nbsp;
+        <code>∇²φ★(s) = τ·F(s)</code> &nbsp;— Wert, Gradient und Krümmung eines <em>einzigen</em>
+        Skalars kodieren Problem, Lösung und Lerndynamik.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     9 — INFORMATION GEOMETRY
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-geometry">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker v">Kapitel 5 · Die Vereinigung</div>
+  <h2>Informationsgeometrie — warum es so sein <em>muss</em></h2>
+  <p class="lead">
+    Jetzt kommt der eigentliche Beitrag des Papers. Vorwärts- und Rückwärtspass sind nicht
+    „zufällig beide elegant". Sie werden von <strong>derselben Matrix</strong> regiert.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <h3 style="margin-top:0">🔧 Baustein 6 — Was ist eine statistische Mannigfaltigkeit?</h3>
+    <p>
+      Die Scores <code>s ∈ ℝ<sup>m</sup></code> parametrisieren eine ganze <em>Familie</em> von
+      Wahrscheinlichkeitsverteilungen. Jeder Punkt in dieser Familie ist eine Verteilung.
+      Die entscheidende Frage: <strong>Wie weit sind zwei Verteilungen voneinander entfernt?</strong>
+    </p>
+    <div class="grid g2">
+      <div>
+        <h4 style="margin-top:0">Euklidisch gedacht (falsch)</h4>
+        <p style="font-size:14px">
+          „(0.50, 0.50) → (0.51, 0.49)" und „(0.99, 0.01) → (1.00, 0.00)" sind beide 0.01 weit.
+          <span class="pill r">Falsch</span> Die zweite Änderung ist in Wahrheit <em>unendlich</em>
+          groß: aus „fast sicher" wird „absolut sicher".
+        </p>
+        <h4>Fisher-Rao gedacht (richtig)</h4>
+        <p style="font-size:14px">
+          Die <strong>Fisher-Information</strong> misst Distanz in <em>Unterscheidbarkeit</em>.
+          Am Rand des Simplex dehnt sich der Raum enorm. Genau das macht den Simplex zu einer
+          gekrümmten Mannigfaltigkeit.
+        </p>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Verzerrungs-Anzeige</span><span class="val" id="v13m">Fisher</span></div>
+          <div class="seg" style="margin-top:6px">
+            <button id="b13e" class="on">Euklidisch</button>
+            <button id="b13f">Fisher-Rao</button>
+          </div>
+        </div>
+        <div class="hint">Umschalten: Die Kreise sind überall „gleich groß" — aber nur im jeweiligen Maßstab. In der Fisher-Metrik schrumpfen sie zum Rand hin, weil dort schon kleine Schritte riesige Informationsänderungen bedeuten.</div>
+      </div>
+      <div class="cvwrap"><canvas id="cv13" width="620" height="520"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel rev" style="border-color:rgba(167,139,250,.3)">
+    <div class="mlabel">Definition 7.2 & Theorem 7.3</div>
+    <div id="eqFIM" class="math"></div>
+    <div id="eqNat" class="math"></div>
+    <p>
+      Lies das Zweite langsam: Der <strong>gewöhnliche Backprop-Gradient</strong> ist die
+      Fisher-Matrix, angewandt auf den Nutzenvektor <code>u</code>. Und der
+      <strong>natürliche Gradient</strong> — normalerweise teuer, weil man F invertieren muss —
+      ist einfach <code>τ·u</code>. Er liegt schon da.
+    </p>
+    <div class="grid g3">
+      <div class="panel tight" style="margin:0">
+        <div class="k" style="font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt-3)">Standardgradient</div>
+        <div style="font-family:var(--mono);color:var(--acc4);font-size:1.05rem;margin:6px 0">∇<sub>s</sub>ℒ = −τ F u</div>
+        <p style="font-size:13px;margin:0">Nutzen, <em>vorkonditioniert mit</em> der Krümmung.</p>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <div class="k" style="font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt-3)">Natürlicher Gradient</div>
+        <div style="font-family:var(--mono);color:var(--acc);font-size:1.05rem;margin:6px 0">Δs<sub>nat</sub> = −F⁻¹∇ℒ = τ u</div>
+        <p style="font-size:13px;margin:0">Der rohe Nutzen selbst. Keine Inversion nötig.</p>
+      </div>
+      <div class="panel tight" style="margin:0">
+        <div class="k" style="font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt-3)">Dual zueinander</div>
+        <div style="font-family:var(--mono);color:var(--acc2);font-size:1.05rem;margin:6px 0">F ↔ F⁻¹</div>
+        <p style="font-size:13px;margin:0">Standard = Dual des natürlichen Gradienten bzgl. Fisher-Rao.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE: F u -->
+  <div class="panel rev">
+    <h3 style="margin-top:0">🎮 Spiel 3 — Die Fisher-Matrix als „Getriebe"</h3>
+    <p>
+      Links: der rohe Nutzenvektor <code>u</code> (was das Netz <em>gern hätte</em>).
+      Rechts: was nach Multiplikation mit <code>F</code> tatsächlich als Gradient ankommt.
+      Verschiebe die Verteilung zum Rand (hohe Sicherheit) und beobachte, wie F das Signal
+      <strong>dämpft</strong> — genau dort, wo große Schritte gefährlich wären.
+    </p>
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="cv14" width="700" height="440"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Konzentration der Policy</span><span class="val" id="v14c">1.00</span></div>
+          <input type="range" id="s14c" min="-1.5" max="2.6" step="0.01" value="0">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v14t">1.00</span></div>
+          <input type="range" id="s14t" min="-1" max="1" step="0.01" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn v" id="b14u">🎲 Neuer Nutzenvektor u</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">‖u‖</div><div class="v" id="v14nu">—</div></div>
+          <div class="stat v4"><div class="k">‖∇ℒ‖</div><div class="v" id="v14ng">—</div></div>
+        </div>
+        <div class="stats">
+          <div class="stat v3"><div class="k">Dämpfung</div><div class="v" id="v14d">—</div></div>
+          <div class="stat v2"><div class="k">H(p)</div><div class="v" id="v14H">—</div></div>
+        </div>
+        <div class="note">
+          <b>Beobachtung:</b> Je sicherer die Policy (niedrige Entropie), desto stärker dämpft F.
+          Ein Netz, das sich schon entschieden hat, wird nicht mehr grob herumgeschubst.
+          <em>Das ist keine Ingenieursleistung — das ist Geometrie.</em>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <h4>Die Matrix F = (1/τ²)(diag(p) − ppᵀ), live</h4>
+    <div class="grid g2">
+      <div><div class="cvwrap"><canvas id="cv14b" width="560" height="300"></canvas></div>
+      <div class="hint">Heatmap von F. Diagonale groß, Nebendiagonalen negativ. Zeilensummen = 0 (Rangdefekt 1 — der Simplex hat nur m−1 Freiheitsgrade!).</div></div>
+      <div><div id="plot14" style="height:300px"></div></div>
+    </div>
+  </div>
+
+  <div class="panel rev">
+    <h3 style="margin-top:0">🔗 Corollary 7.5 — Der Ringschluss</h3>
+    <p>
+      Die Hesse-Matrix des dualen Potentials <em>ist</em> (bis auf τ) die Fisher-Matrix:
+    </p>
+    <div id="eqCor" class="math"></div>
+    <p>
+      Drei völlig verschiedene Blickwinkel zeigen auf dasselbe Objekt
+      <code>(1/τ)(diag(p) − ppᵀ)</code>:
+    </p>
+    <div class="grid g3">
+      <div class="panel tight" style="margin:0;border-color:rgba(94,234,212,.28)">
+        <div class="kicker" style="margin-bottom:10px">① Optimaler Transport</div>
+        <p style="font-size:13.5px;margin:0">Krümmung der Wertfunktion. „Wie reagiert die optimale Verteilung auf Score-Störungen?"</p>
+      </div>
+      <div class="panel tight" style="margin:0;border-color:rgba(251,191,36,.28)">
+        <div class="kicker a" style="margin-bottom:10px">② Informationsgeometrie</div>
+        <p style="font-size:13.5px;margin:0">Riemannsche Metrik auf der Mannigfaltigkeit. „Wie weit sind zwei Verteilungen in Information?"</p>
+      </div>
+      <div class="panel tight" style="margin:0;border-color:rgba(167,139,250,.28)">
+        <div class="kicker v" style="margin-bottom:10px">③ Reinforcement Learning</div>
+        <p style="font-size:13.5px;margin:0">Der geometrische Transducer, der aus Nutzen ein Lernsignal macht — mit Baseline.</p>
+      </div>
+    </div>
+    <div class="cvwrap" style="margin-top:20px"><canvas id="cv15" width="1060" height="330"></canvas></div>
+    <div class="hint">Interaktiv: Fahre mit der Maus über die drei Knoten.</div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     10 — VOLLE MATRIX (Appendix A)
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-matrix">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker">Anhang A · Die ganze Matrix</div>
+  <h2>Von einer Zeile zur vollen Attention-Matrix</h2>
+  <p class="lead">
+    Bisher: <em>ein</em> Query. In Wahrheit hat man n Queries. Anhang A zeigt: Die
+    komplette n×m-Attention-Matrix ist die Lösung <strong>eines einzigen</strong>
+    globalen EOT-Problems — das zufällig zeilenweise zerfällt.
+  </p>
+  </div>
+
+  <div class="panel rev">
+    <div class="grid g21">
+      <div class="cvwrap"><canvas id="cv16" width="700" height="460"></canvas></div>
+      <div>
+        <h4 style="margin-top:0">Der Aufbau</h4>
+        <div class="steps">
+          <div class="step"><h4>Quellmaß</h4><p style="font-size:13.5px">Zählmaß: <code>a_i = 1</code> für jeden Query. Jeder Query hat genau eine Einheit Aufmerksamkeit zu verteilen.</p></div>
+          <div class="step"><h4>Zielmaß</h4><p style="font-size:13.5px"><strong>Frei.</strong> Keine Spaltenbedingung. Ein Key darf beliebig viel oder wenig Aufmerksamkeit bekommen.</p></div>
+          <div class="step"><h4>Zulässige Pläne</h4><p style="font-size:13.5px"><code>U(a,·) = (Δ<sup>m−1</sup>)<sup>n</sup></code> — n unabhängige Simplizes. Jede Matrix darin ist <em>zeilen-stochastisch</em>.</p></div>
+          <div class="step"><h4>Separabilität</h4><p style="font-size:13.5px">Die Lagrangefunktion zerfällt in n unabhängige Summanden ⇒ je Zeile ein eigener Multiplikator λ_i ⇒ <strong>zeilenweiser Softmax</strong>.</p></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Temperatur τ</span><span class="val" id="v16t">1.00</span></div>
+          <input type="range" id="s16t" min="-1.8" max="1.8" step="0.01" value="0">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="lbl">Kausale Maske</span><span class="val" id="v16m">aus</span></div>
+          <div class="seg" style="margin-top:6px"><button id="b16off" class="on">Aus</button><button id="b16on">An</button></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Zeilensummen</div><div class="v" id="v16rs">1.000</div></div>
+          <div class="stat v3"><div class="k">Spaltensummen</div><div class="v" id="v16cs">frei</div></div>
+        </div>
+        <div class="note">
+          Der springende Punkt: Die <b>Spaltensummen</b> sind <i>nicht</i> gleich 1 und müssen es
+          auch nicht sein. Genau deshalb braucht man kein Sinkhorn.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     11 — SYNTHESE
+     ══════════════════════════════════════════════════════════ -->
+<section id="s-synthese">
+<div class="wrap">
+  <div class="rev">
+  <div class="kicker">Zusammenfassung</div>
+  <h2>Die ganze Geschichte auf einem Blatt</h2>
+  </div>
+
+  <div class="panel rev" style="padding:18px">
+    <div class="cvwrap"><canvas id="cv17" width="1080" height="620"></canvas></div>
+    <div class="btnrow" style="justify-content:center;margin-top:16px">
+      <button class="btn on" id="b17a">① Problem</button>
+      <button class="btn" id="b17b">② Vorwärts</button>
+      <button class="btn" id="b17c">③ Potential</button>
+      <button class="btn" id="b17d">④ Geometrie</button>
+      <button class="btn" id="b17e">⑤ Rückwärts</button>
+      <button class="btn" id="b17f">⑥ Alles</button>
+    </div>
+    <div id="n17" class="note" style="margin-top:14px;min-height:56px"></div>
+  </div>
+
+  <div class="grid g2 rev">
+    <div class="panel">
+      <div class="kicker" style="margin-bottom:12px">Welche Probleme löst das?</div>
+      <table>
+        <tr><th>Frage</th><th>Antwort des Papers</th></tr>
+        <tr><td>Warum exp?</td><td>Weil Shannon-Entropie als Regularisierer die Gibbs-Form erzwingt.</td></tr>
+        <tr><td>Warum eindeutig?</td><td>x log x ist strikt konvex; Simplex ist konvex & kompakt.</td></tr>
+        <tr><td>Warum √d_k?</td><td>Passt die Regularisierungsstärke an die Score-Varianz an.</td></tr>
+        <tr><td>Warum stabil trainierbar?</td><td>Der Gradient ist advantage-basiert (Baseline = Varianzreduktion).</td></tr>
+        <tr><td>Warum keine Explosion?</td><td>F dämpft, sobald die Policy sicher ist — manifold-aware.</td></tr>
+        <tr><td>Wie neue Mechanismen bauen?</td><td>Ω austauschen: L2 → Sparsemax, Tsallis → entmax, +Distanz → ALiBi.</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="kicker v" style="margin-bottom:12px">Was ist <u>nicht</u> beansprucht</div>
+      <ul style="color:var(--txt-2);font-size:14px;padding-left:20px;line-height:1.9">
+        <li>Es wird <strong>kein neuer Mechanismus</strong> vorgeschlagen. SDPA bleibt Bit-für-Bit identisch.</li>
+        <li>Es gibt <strong>keine Experimente</strong> — es ist eine rein theoretische Arbeit.</li>
+        <li>Es ist <strong>kein Sinkhorn</strong>: nur eine Randbedingung, daher geschlossen lösbar.</li>
+        <li>Der Max-Entropie/Gibbs-Zusammenhang ist <em>klassisch</em> (Jaynes 1957). Neu ist die
+        Einbettung in EOT <em>plus</em> die Brücke zu Policy-Gradient <em>plus</em> die
+        geometrische Erklärung, warum beides zusammenhängt.</li>
+      </ul>
+      <div class="callout v" style="margin-top:18px">
+        <div class="ct">Die eine Kernaussage</div>
+        <p>
+          <strong>Der Vorwärtspass macht optimale Inferenz; der Rückwärtspass macht ein
+          rationales, mannigfaltigkeitsbewusstes Lern-Update.</strong> Und beides folgt aus
+          <em>derselben</em> Geometrie.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rev">
+    <div class="kicker a" style="margin-bottom:12px">Der Weg durch das Paper</div>
+    <div class="steps">
+      <div class="step"><h4>§3 — Vorwärtspass</h4><p style="font-size:13.5px">Attention = eindeutige Lösung eines einseitigen EOT-Problems (Theorem 3.3). Softmax folgt aus Lagrange + strikter Konvexität.</p></div>
+      <div class="step"><h4>§4 — Verallgemeinerung</h4><p style="font-size:13.5px">Ω austauschen ⇒ Sparsemax, α-entmax, ALiBi. Der Regularisierer ist die zentrale Designentscheidung (Tabelle 1).</p></div>
+      <div class="step"><h4>§5 — Rückwärtspass</h4><p style="font-size:13.5px">∂ℒ/∂s_j = −(p_j/τ)(u_j − E[u]). Das ist REINFORCE mit Erwartungswert-Baseline (Theorem 5.2).</p></div>
+      <div class="step"><h4>§6 — Dualität</h4><p style="font-size:13.5px">Envelope-Theorem: ∇V = −p★. Lagrange-Dualität: φ★ = LSE. Ein Skalarpotential erzeugt alles (Theorem 6.3).</p></div>
+      <div class="step"><h4>§7 — Vereinigung</h4><p style="font-size:13.5px">∇ℒ = −τFu, Δs_nat = τu, ∇²φ★ = τF. Drei Sichtweisen, eine Matrix (Theorem 7.3, Corollary 7.5).</p></div>
+      <div class="step"><h4>Anhang A/B</h4><p style="font-size:13.5px">Volle n×m-Matrix als ein EOT-Problem; Fenchel-Legendre als tieferer Grund für die Dualität.</p></div>
+    </div>
+  </div>
+
+  <div class="panel rev" style="text-align:center;background:linear-gradient(135deg,rgba(94,234,212,.07),rgba(167,139,250,.06),rgba(251,191,36,.05))">
+    <div class="kicker" style="margin-bottom:14px">Die Formel, neu gelesen</div>
+    <div id="eqFinal" class="math" style="background:transparent;border:none"></div>
+    <p style="margin:14px auto 0;max-width:62ch">
+      Dasselbe Bit-für-Bit identische Stück Code. Aber jetzt weißt du, <em>warum</em> es so aussieht.
+    </p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p style="max-width:none">Interaktive Aufbereitung von <strong>„Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport"</strong> · Elon Litman, Stanford University · arXiv:2508.08369v2</p>
+    <p style="max-width:none;font-size:12px;margin-top:8px">Alle Visualisierungen berechnen die Größen live und exakt nach den Formeln des Papers.</p>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(x,n=3)=>{ if(!isFinite(x))return '—'; return x.toFixed(n); };
+
+function softmax(s,tau=1){
+  const mx=Math.max(...s);
+  const e=s.map(v=>Math.exp((v-mx)/tau));
+  const Z=e.reduce((a,b)=>a+b,0);
+  return e.map(v=>v/Z);
+}
+function entropy(p){ return -p.reduce((a,x)=> a + (x>1e-12? x*Math.log(x):0),0); }
+function lse(s,tau=1){ const mx=Math.max(...s); return tau*(Math.log(s.reduce((a,v)=>a+Math.exp((v-mx)/tau),0))+mx/tau); }
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+// Color helpers
+function mix(c1,c2,t){
+  return [Math.round(lerp(c1[0],c2[0],t)),Math.round(lerp(c1[1],c2[1],t)),Math.round(lerp(c1[2],c2[2],t))];
+}
+function rgb(c,a=1){ return `rgba(${c[0]},${c[1]},${c[2]},${a})`; }
+const C_TEAL=[94,234,212], C_VIO=[167,139,250], C_AMB=[251,191,36], C_ROSE=[251,113,133],
+      C_BLUE=[96,165,250], C_DARK=[10,15,27], C_WHITE=[255,255,255];
+
+function viridis(t){
+  t=clamp(t,0,1);
+  const stops=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+  const x=t*(stops.length-1), i=Math.min(Math.floor(x),stops.length-2), f=x-i;
+  return mix(stops[i],stops[i+1],f);
+}
+function magma(t){
+  t=clamp(t,0,1);
+  const stops=[[0,0,4],[81,18,124],[183,55,121],[252,137,97],[252,253,191]];
+  const x=t*(stops.length-1), i=Math.min(Math.floor(x),stops.length-2), f=x-i;
+  return mix(stops[i],stops[i+1],f);
+}
+function tealRamp(t){
+  t=clamp(t,0,1);
+  const stops=[[8,12,22],[20,60,80],[40,140,140],[94,234,212],[220,255,250]];
+  const x=t*(stops.length-1), i=Math.min(Math.floor(x),stops.length-2), f=x-i;
+  return mix(stops[i],stops[i+1],f);
+}
+
+/* HiDPI canvas setup */
+function setup(cv){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const w=cv.width, h=cv.height;
+  cv.style.width='100%';
+  cv.style.aspectRatio = w+'/'+h;
+  cv.width=w*dpr; cv.height=h*dpr;
+  const ctx=cv.getContext('2d');
+  ctx.scale(dpr,dpr);
+  cv._w=w; cv._h=h; cv._dpr=dpr;
+  return ctx;
+}
+function clearCv(ctx,cv,bg='rgba(6,9,17,1)'){
+  ctx.clearRect(0,0,cv._w,cv._h);
+  ctx.fillStyle=bg; ctx.fillRect(0,0,cv._w,cv._h);
+}
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*head*.6,y2-Math.sin(a)*head*.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*head, y2-Math.sin(a-0.42)*head);
+  ctx.lineTo(x2-Math.cos(a+0.42)*head, y2-Math.sin(a+0.42)*head);
+  ctx.closePath(); ctx.fill();
+}
+function txt(ctx,s,x,y,{col='#a7b3cc',size=12,align='left',base='alphabetic',weight=500,font='Inter,sans-serif'}={}){
+  ctx.fillStyle=col; ctx.font=`${weight} ${size}px ${font}`;
+  ctx.textAlign=align; ctx.textBaseline=base; ctx.fillText(s,x,y);
+}
+
+/* Plotly dark layout */
+const PL={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#a7b3cc',family:'Inter,sans-serif',size:11},
+  margin:{l:52,r:18,t:22,b:42},
+  xaxis:{gridcolor:'rgba(255,255,255,.07)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:'rgba(255,255,255,.14)'},
+  yaxis:{gridcolor:'rgba(255,255,255,.07)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:'rgba(255,255,255,.14)'},
+  showlegend:true,
+  legend:{bgcolor:'rgba(10,14,26,.75)',bordercolor:'rgba(255,255,255,.1)',borderwidth:1,font:{size:10.5}}
+};
+const PLCFG={displayModeBar:false,responsive:true};
+function L(extra){ return JSON.parse(JSON.stringify(Object.assign({},PL,extra||{}))); }
+
+/* Temml render */
+function tex(el,s,display=true){
+  if(!el) return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:display}); }
+  catch(e){ el.textContent=s; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAV / PROGRESS / REVEAL
+   ═══════════════════════════════════════════════════════════════════ */
+const SECTIONS=[
+  ['hero','Start'],['s-motivation','Motivation'],['s-simplex','Simplex'],['s-entropie','Entropie'],
+  ['s-ot','Opt. Transport'],['s-theorem','Hauptsatz'],['s-family','Familie'],
+  ['s-backward','Rückwärtspass'],['s-dual','Dualität'],['s-geometry','Geometrie'],
+  ['s-matrix','Volle Matrix'],['s-synthese','Synthese']
+];
+(function buildToc(){
+  const n=$('toc');
+  SECTIONS.forEach(([id,label])=>{
+    const a=document.createElement('a');
+    a.href='#'+id; a.dataset.t=id;
+    a.innerHTML='<span>'+label+'</span>';
+    n.appendChild(a);
+  });
+})();
+window.addEventListener('scroll',()=>{
+  const st=window.scrollY, dh=document.body.scrollHeight-window.innerHeight;
+  $('progress').style.width=(st/Math.max(dh,1)*100)+'%';
+  let cur=SECTIONS[0][0];
+  SECTIONS.forEach(([id])=>{ const el=$(id); if(el && el.getBoundingClientRect().top<window.innerHeight*0.42) cur=id; });
+  document.querySelectorAll('#toc a').forEach(a=>a.classList.toggle('active',a.dataset.t===cur));
+},{passive:true});
+
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+},{threshold:.08});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════════
+   EQUATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded',()=>{
+  tex($('heroEq'),String.raw`\alpha_j=\frac{\exp(\langle q,k_j\rangle/\tau)}{\sum_l \exp(\langle q,k_l\rangle/\tau)}\;=\;\arg\min_{p\in\Delta^{m-1}}\Big\{\langle p,C\rangle-\tau H(p)\Big\}`);
+  tex($('eqSDPA'),String.raw`\mathrm{Attention}(Q,K,V)=\operatorname{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V`);
+  tex($('eqSimplex'),String.raw`\Delta^{m-1}\;\triangleq\;\Big\{\,p\in\mathbb{R}^m \;\Big|\; p_j\ge 0\ \ \forall j,\quad \textstyle\sum_{j=1}^m p_j=1 \,\Big\}`);
+  tex($('eqEnt'),String.raw`H(p)\;\triangleq\;-\sum_{j=1}^{m}p_j\log p_j\qquad\text{mit}\qquad 0\log 0 = 0`);
+  tex($('eqOT'),String.raw`\mathrm{OT}_\varepsilon(a,b)=\min_{P\in U(a,b)}\Big\{\textstyle\sum_{i,j}P_{ij}C_{ij}-\varepsilon H(P)\Big\},\quad U(a,b)=\{P\ge 0:\;P\mathbf{1}=a,\;P^{\top}\mathbf{1}=b\}`);
+  tex($('eqJ'),String.raw`J(p)\;=\;\underbrace{-\sum_{j=1}^{m}p_j\langle q,k_j\rangle}_{\text{Kosten}\;\langle p,C\rangle}\;+\;\underbrace{\varepsilon\sum_{j=1}^{m}p_j\log p_j}_{-\,\varepsilon H(p)}\;,\qquad p^{\star}=\arg\min_{p\in\Delta^{m-1}}J(p)`);
+  tex($('eqKKT'),String.raw`\frac{\partial\mathcal{L}}{\partial p_j}=-\langle q,k_j\rangle+\tau(\log p_j+1)-\lambda=0`);
+  tex($('eqGen'),String.raw`p^{\star}=\arg\min_{p\in\Delta^{m-1}}\big\{-\langle p,s\rangle+\Omega(p)\big\}`);
+  tex($('eqCtx'),String.raw`c(p)=\sum_j p_j v_j`,false);
+  tex($('eqU'),String.raw`u_j\triangleq-\frac{\partial\mathcal{L}}{\partial p_j}=-\langle\nabla_c\mathcal{L},v_j\rangle`,false);
+  tex($('eqA'),String.raw`A_j\triangleq u_j-\mathbb{E}_{p^\star}[u]`,false);
+  tex($('eqThm52'),String.raw`\frac{\partial\mathcal{L}}{\partial s_j}=-\frac{p_j^{\star}}{\tau}\Big(u_j-\mathbb{E}_{p^{\star}}[u]\Big)\;=\;-\frac{p_j^{\star}}{\tau}A_j`);
+  tex($('eqJac'),String.raw`\frac{\partial p_k}{\partial s_j}=\frac{1}{\tau}\,p_k(\delta_{kj}-p_j)\qquad\Longrightarrow\qquad \sum_k \frac{\partial p_k}{\partial s_j}=0`);
+  tex($('eqLSE'),String.raw`\phi^{\star}(s)=\tau\log\!\left(\sum_{l=1}^{m}\exp\!\frac{s_l}{\tau}\right),\qquad \nabla_s\phi^{\star}(s)=p^{\star}(s),\qquad \phi^\star=-V`);
+  tex($('eqFIM'),String.raw`F(s)=\frac{1}{\tau^{2}}\big(\operatorname{diag}(p)-pp^{\top}\big)`);
+  tex($('eqNat'),String.raw`\nabla_s\mathcal{L}=-\tau\,F(s)\,u\qquad\Longleftrightarrow\qquad \Delta s_{\text{nat}}\propto -F^{-1}\nabla_s\mathcal{L}=\tau\,u`);
+  tex($('eqCor'),String.raw`\nabla_s^{2}\phi^{\star}(s)\;=\;\tau F(s)\;=\;\frac{1}{\tau}\big(\operatorname{diag}(p^{\star})-p^{\star}(p^{\star})^{\top}\big)`);
+  tex($('eqFinal'),String.raw`\operatorname{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V\;\;\equiv\;\;\Big[\arg\min_{P\in U(\mathbf{1},\cdot)}\langle P,C\rangle-\tau H(P)\Big]\,V`);
+  init();
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO BACKGROUND — flowing transport particles
+   ═══════════════════════════════════════════════════════════════════ */
+function heroAnim(){
+  const cv=$('heroCanvas'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  let W,H,dpr;
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=W*dpr; cv.height=H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize(); window.addEventListener('resize',resize);
+  const N=140, P=[];
+  for(let i=0;i<N;i++) P.push({x:Math.random(),y:Math.random(),
+    vx:(Math.random()-.5)*.0009,vy:(Math.random()-.5)*.0009,
+    r:Math.random()*2+.7, c:Math.random()});
+  let t=0;
+  function frame(){
+    t+=0.0045;
+    ctx.clearRect(0,0,W,H);
+    // attractor keys
+    const K=[];
+    for(let i=0;i<4;i++){
+      K.push({x:.2+.2*i+.05*Math.sin(t*1.1+i), y:.5+.26*Math.sin(t*.8+i*1.8)});
+    }
+    P.forEach(p=>{
+      // softmax-weighted pull toward keys
+      const sc=K.map(k=>-(Math.hypot(p.x-k.x,p.y-k.y))*7);
+      const w=softmax(sc,1);
+      let ax=0,ay=0;
+      K.forEach((k,i)=>{ ax+=w[i]*(k.x-p.x); ay+=w[i]*(k.y-p.y); });
+      p.vx=p.vx*.985+ax*.00022; p.vy=p.vy*.985+ay*.00022;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>1){p.vx*=-1;p.x=clamp(p.x,0,1);} 
+      if(p.y<0||p.y>1){p.vy*=-1;p.y=clamp(p.y,0,1);}
+      const col = p.c<.4? C_TEAL : (p.c<.75? C_VIO : C_AMB);
+      const X=p.x*W, Y=p.y*H;
+      const g=ctx.createRadialGradient(X,Y,0,X,Y,p.r*7);
+      g.addColorStop(0,rgb(col,.75)); g.addColorStop(1,rgb(col,0));
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(X,Y,p.r*7,0,7); ctx.fill();
+      ctx.fillStyle=rgb(col,.9); ctx.beginPath(); ctx.arc(X,Y,p.r,0,7); ctx.fill();
+    });
+    K.forEach(k=>{
+      const X=k.x*W,Y=k.y*H;
+      const g=ctx.createRadialGradient(X,Y,0,X,Y,46);
+      g.addColorStop(0,'rgba(94,234,212,.19)'); g.addColorStop(1,'rgba(94,234,212,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(X,Y,46,0,7); ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [0] ATTENTION BASICS — query/key geometry
+   ═══════════════════════════════════════════════════════════════════ */
+function demo0(){
+  const cvA=$('cv0a'), cvB=$('cv0b');
+  if(!cvA) return;
+  const ca=setup(cvA), cb=setup(cvB);
+  const KEYS=[
+    {a:0.35, r:1.5, lab:'k₁ "Katze"',  col:C_TEAL},
+    {a:1.35, r:1.2, lab:'k₂ "Tier"',   col:C_AMB},
+    {a:2.55, r:1.7, lab:'k₃ "läuft"',  col:C_VIO},
+    {a:4.10, r:1.1, lab:'k₄ "blau"',   col:C_ROSE},
+    {a:5.30, r:1.45,lab:'k₅ "Haus"',   col:C_BLUE}
+  ];
+  function draw(){
+    const ang=+$('s0ang').value*Math.PI/180, len=+$('s0len').value, tau=+$('s0tau').value;
+    $('v0ang').textContent=$('s0ang').value+'°';
+    $('v0len').textContent=fmt(len,2);
+    $('v0tau').textContent=fmt(tau,2);
+    const W=cvA._w,H=cvA._h, cx=W*0.5, cy=H*0.52, R=Math.min(W,H)*0.30;
+    const scores=KEYS.map(k=>len*k.r*Math.cos(ang-k.a));
+    const p=softmax(scores,tau);
+    const Hp=entropy(p), Sexp=p.reduce((a,v,i)=>a+v*scores[i],0);
+    $('v0H').textContent=fmt(Hp,3);
+    $('v0S').textContent=fmt(Sexp,3);
+
+    clearCv(ca,cvA);
+    // grid circles
+    for(let r=0.5;r<=2.01;r+=0.5){
+      ca.beginPath(); ca.arc(cx,cy,R*r,0,7);
+      ca.strokeStyle='rgba(255,255,255,.05)'; ca.lineWidth=1; ca.stroke();
+    }
+    ca.beginPath(); ca.moveTo(cx-R*2.2,cy); ca.lineTo(cx+R*2.2,cy);
+    ca.moveTo(cx,cy-R*2.0); ca.lineTo(cx,cy+R*2.0);
+    ca.strokeStyle='rgba(255,255,255,.07)'; ca.stroke();
+
+    // keys with attention halo
+    KEYS.forEach((k,i)=>{
+      const kx=cx+Math.cos(k.a)*R*k.r, ky=cy-Math.sin(k.a)*R*k.r;
+      // halo prop to p
+      const rad=6+p[i]*80;
+      const g=ca.createRadialGradient(kx,ky,0,kx,ky,rad);
+      g.addColorStop(0,rgb(k.col,.42)); g.addColorStop(1,rgb(k.col,0));
+      ca.fillStyle=g; ca.beginPath(); ca.arc(kx,ky,rad,0,7); ca.fill();
+      // stem
+      ca.strokeStyle=rgb(k.col,.30); ca.lineWidth=1.4;
+      ca.beginPath(); ca.moveTo(cx,cy); ca.lineTo(kx,ky); ca.stroke();
+      ca.fillStyle=rgb(k.col,1); ca.beginPath(); ca.arc(kx,ky,4.6,0,7); ca.fill();
+      txt(ca,k.lab,kx+(Math.cos(k.a)>0?9:-9),ky-9,{col:rgb(k.col,.95),size:11.5,weight:650,
+        align:Math.cos(k.a)>0?'left':'right'});
+      txt(ca,(p[i]*100).toFixed(1)+'%',kx+(Math.cos(k.a)>0?9:-9),ky+7,{col:'#8892a8',size:10.5,
+        align:Math.cos(k.a)>0?'left':'right'});
+    });
+    // query
+    const qx=cx+Math.cos(ang)*R*len, qy=cy-Math.sin(ang)*R*len;
+    arrow(ca,cx,cy,qx,qy,'#ffffff',2.6,12);
+    ca.fillStyle='rgba(255,255,255,.14)'; ca.beginPath(); ca.arc(qx,qy,13,0,7); ca.fill();
+    txt(ca,'q',qx+15,qy-10,{col:'#fff',size:14,weight:750});
+    txt(ca,'Query · dreh mich',14,20,{col:'#6b7896',size:11,weight:600});
+    txt(ca,'Score sⱼ = ⟨q,kⱼ⟩  (Projektion von q auf kⱼ)',14,H-14,{col:'#55607a',size:10.5});
+
+    // bar chart
+    clearCv(cb,cvB);
+    const BW=cvB._w,BH=cvB._h, pad=30, bw=(BW-pad*2)/KEYS.length;
+    txt(cb,'Attention-Gewichte α = softmax(s/τ)',pad,16,{col:'#8892a8',size:11,weight:600});
+    // baseline for uniform
+    const uy=BH-26-(1/KEYS.length)*(BH-58);
+    cb.setLineDash([4,4]); cb.strokeStyle='rgba(255,255,255,.22)';
+    cb.beginPath(); cb.moveTo(pad,uy); cb.lineTo(BW-pad,uy); cb.stroke(); cb.setLineDash([]);
+    txt(cb,'1/m',BW-pad+2,uy+3,{col:'#55607a',size:9});
+    KEYS.forEach((k,i)=>{
+      const h=p[i]*(BH-58), x=pad+i*bw+bw*0.16, w=bw*0.68;
+      const gg=cb.createLinearGradient(0,BH-26-h,0,BH-26);
+      gg.addColorStop(0,rgb(k.col,.95)); gg.addColorStop(1,rgb(k.col,.28));
+      cb.fillStyle=gg; roundRect(cb,x,BH-26-h,w,h,4); cb.fill();
+      txt(cb,'k'+(i+1),x+w/2,BH-11,{col:'#6b7896',size:10,align:'center'});
+    });
+    cb.strokeStyle='rgba(255,255,255,.12)';
+    cb.beginPath(); cb.moveTo(pad,BH-26); cb.lineTo(BW-pad,BH-26); cb.stroke();
+  }
+  ['s0ang','s0len','s0tau'].forEach(id=>$(id).addEventListener('input',draw));
+  // drag on canvas
+  let drag=false;
+  cvA.addEventListener('pointerdown',e=>{drag=true;cvA.setPointerCapture(e.pointerId);moveQ(e);});
+  cvA.addEventListener('pointermove',e=>{if(drag)moveQ(e);});
+  cvA.addEventListener('pointerup',e=>{drag=false;});
+  function moveQ(e){
+    const r=cvA.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width*cvA._w, y=(e.clientY-r.top)/r.height*cvA._h;
+    const cx=cvA._w*0.5, cy=cvA._h*0.52, R=Math.min(cvA._w,cvA._h)*0.30;
+    let a=Math.atan2(cy-y,x-cx); if(a<0)a+=2*Math.PI;
+    $('s0ang').value=Math.round(a*180/Math.PI);
+    $('s0len').value=clamp(Math.hypot(x-cx,y-cy)/R,0.05,4).toFixed(2);
+    draw();
+  }
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [2] SIMPLEX
+   ═══════════════════════════════════════════════════════════════════ */
+let SIMP={p:[1/3,1/3,1/3]};
+function demo2(){
+  const cv=$('cv2'); if(!cv) return;
+  const ctx=setup(cv);
+  const W=cv._w,H=cv._h;
+  const cx=W*0.5, cy=H*0.46, R=Math.min(W,H)*0.33;
+  const V=[ [cx, cy-R], [cx-R*0.866, cy+R*0.5], [cx+R*0.866, cy+R*0.5] ];
+  function bary(p){ return [ p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0],
+                             p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1] ]; }
+  function inv(x,y){
+    const d=((V[1][1]-V[2][1])*(V[0][0]-V[2][0])+(V[2][0]-V[1][0])*(V[0][1]-V[2][1]));
+    const l1=((V[1][1]-V[2][1])*(x-V[2][0])+(V[2][0]-V[1][0])*(y-V[2][1]))/d;
+    const l2=((V[2][1]-V[0][1])*(x-V[2][0])+(V[0][0]-V[2][0])*(y-V[2][1]))/d;
+    return [l1,l2,1-l1-l2];
+  }
+  function draw(){
+    const p=SIMP.p;
+    clearCv(ctx,cv);
+    // fill
+    ctx.beginPath(); ctx.moveTo(V[0][0],V[0][1]); ctx.lineTo(V[1][0],V[1][1]); ctx.lineTo(V[2][0],V[2][1]); ctx.closePath();
+    const g=ctx.createLinearGradient(cx,cy-R,cx,cy+R*0.5);
+    g.addColorStop(0,'rgba(251,191,36,.13)'); g.addColorStop(1,'rgba(251,191,36,.045)');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(251,191,36,.55)'; ctx.lineWidth=1.8; ctx.stroke();
+    // iso lines
+    ctx.lineWidth=1; ctx.strokeStyle='rgba(255,255,255,.06)';
+    for(let t=0.2;t<1;t+=0.2){
+      for(let k=0;k<3;k++){
+        const a=[0,0,0],b=[0,0,0];
+        a[k]=t; a[(k+1)%3]=1-t;
+        b[k]=t; b[(k+2)%3]=1-t;
+        const A=bary(a),B=bary(b);
+        ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+      }
+    }
+    // corners
+    const names=['p₁=1 (nur k₁)','p₂=1 (nur k₂)','p₃=1 (nur k₃)'];
+    V.forEach((v,i)=>{
+      ctx.fillStyle=rgb(C_ROSE,.9); ctx.beginPath(); ctx.arc(v[0],v[1],5,0,7); ctx.fill();
+      const off = i===0? [0,-16] : (i===1? [-8,20] : [8,20]);
+      txt(ctx,names[i],v[0]+off[0],v[1]+off[1],{col:'#9aa6bd',size:11,align:i===0?'center':(i===1?'right':'left'),weight:600});
+    });
+    // center marker
+    const C=bary([1/3,1/3,1/3]);
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.arc(C[0],C[1],5,0,7); ctx.stroke(); ctx.setLineDash([]);
+    txt(ctx,'Gleichverteilung',C[0],C[1]-12,{col:'#55607a',size:9.5,align:'center'});
+    // point
+    const P=bary(p);
+    const gg=ctx.createRadialGradient(P[0],P[1],0,P[0],P[1],26);
+    gg.addColorStop(0,'rgba(94,234,212,.5)'); gg.addColorStop(1,'rgba(94,234,212,0)');
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(P[0],P[1],26,0,7); ctx.fill();
+    ctx.fillStyle=rgb(C_TEAL,1); ctx.beginPath(); ctx.arc(P[0],P[1],7,0,7); ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1.6; ctx.stroke();
+    // barycentric guide lines
+    ctx.setLineDash([2,4]); ctx.strokeStyle='rgba(94,234,212,.35)'; ctx.lineWidth=1;
+    V.forEach(v=>{ ctx.beginPath(); ctx.moveTo(P[0],P[1]); ctx.lineTo(v[0],v[1]); ctx.stroke(); });
+    ctx.setLineDash([]);
+
+    // bars bottom
+    const by=H-78, bx=30, bwid=(W-60)/3;
+    txt(ctx,'p = ('+p.map(x=>x.toFixed(3)).join(', ')+')',W/2,by-16,{col:'#e8edf7',size:13,align:'center',weight:650,font:'monospace'});
+    const cols=[C_TEAL,C_VIO,C_AMB];
+    p.forEach((pv,i)=>{
+      const x=bx+i*bwid+10, w=bwid-20;
+      ctx.fillStyle='rgba(255,255,255,.05)'; roundRect(ctx,x,by,w,18,6); ctx.fill();
+      ctx.fillStyle=rgb(cols[i],.85); roundRect(ctx,x,by,Math.max(w*pv,2),18,6); ctx.fill();
+      txt(ctx,'p'+['₁','₂','₃'][i],x,by+34,{col:'#6b7896',size:11});
+      txt(ctx,(pv*100).toFixed(1)+'%',x+w,by+34,{col:'#9aa6bd',size:11,align:'right'});
+    });
+    txt(ctx,'Σ pⱼ = '+p.reduce((a,b)=>a+b,0).toFixed(3)+'  ✓',W/2,H-14,{col:'#34d399',size:11,align:'center',weight:600});
+  }
+  function setP(p1,p2){
+    p1=clamp(p1,0,1); p2=clamp(p2,0,1-p1);
+    SIMP.p=[p1,p2,1-p1-p2];
+    $('s2p1').value=p1; $('s2p2').value=p2;
+    $('v2p1').textContent=fmt(p1,3); $('v2p2').textContent=fmt(p2,3);
+    $('n2p3').innerHTML='p₃ = 1 − p₁ − p₂ = <b>'+fmt(SIMP.p[2],3)+'</b> — p₃ ist <i>nicht frei</i>: der Simplex hat nur m−1 Freiheitsgrade.';
+    draw();
+    if(window._d3b) window._d3b();
+  }
+  $('s2p1').addEventListener('input',()=>setP(+$('s2p1').value,+$('s2p2').value));
+  $('s2p2').addEventListener('input',()=>setP(+$('s2p1').value,+$('s2p2').value));
+  $('b2corner').onclick=()=>setP(0.97,0.015);
+  $('b2center').onclick=()=>setP(1/3,1/3);
+  $('b2rand').onclick=()=>{ let a=Math.random(),b=Math.random()*(1-a); setP(a,b); };
+  let dr=false;
+  cv.addEventListener('pointerdown',e=>{dr=true;cv.setPointerCapture(e.pointerId);mv(e);});
+  cv.addEventListener('pointermove',e=>{if(dr)mv(e);});
+  cv.addEventListener('pointerup',()=>dr=false);
+  function mv(e){
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width*W, y=(e.clientY-r.top)/r.height*H;
+    let l=inv(x,y);
+    l=l.map(v=>Math.max(v,0)); const s=l[0]+l[1]+l[2];
+    if(s>0){ l=l.map(v=>v/s); setP(l[0],l[1]); }
+  }
+  setP(1/3,1/3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [3] ENTROPY
+   ═══════════════════════════════════════════════════════════════════ */
+function demo3(){
+  const cvA=$('cv3a'), cvB=$('cv3b');
+  if(!cvA) return;
+  const ca=setup(cvA), cb=setup(cvB);
+
+  // -- x log x plot
+  (function(){
+    const W=cvA._w,H=cvA._h, L=44,Rr=18,T=18,B=34;
+    clearCv(ca,cvA);
+    const x2px=x=>L+x*(W-L-Rr);
+    const y2px=y=>H-B-((y+0.42)/(0.42+0.05))*(H-T-B);
+    // grid
+    ctx_grid(ca,L,T,W-Rr,H-B);
+    ca.strokeStyle='rgba(255,255,255,.1)';
+    ca.beginPath(); ca.moveTo(L,y2px(0)); ca.lineTo(W-Rr,y2px(0)); ca.stroke();
+    // curve
+    ca.beginPath();
+    for(let i=0;i<=400;i++){ const x=i/400; const y=x<=1e-9?0:x*Math.log(x);
+      const px=x2px(x),py=y2px(y); i?ca.lineTo(px,py):ca.moveTo(px,py); }
+    ca.strokeStyle=rgb(C_BLUE,1); ca.lineWidth=2.4; ca.stroke();
+    // chord
+    const a=0.12,b=0.85;
+    const fa=a*Math.log(a), fb=b*Math.log(b);
+    ca.setLineDash([5,4]); ca.strokeStyle=rgb(C_ROSE,.85); ca.lineWidth=1.8;
+    ca.beginPath(); ca.moveTo(x2px(a),y2px(fa)); ca.lineTo(x2px(b),y2px(fb)); ca.stroke(); ca.setLineDash([]);
+    ca.fillStyle=rgb(C_ROSE,1);
+    [[a,fa],[b,fb]].forEach(([xx,yy])=>{ca.beginPath();ca.arc(x2px(xx),y2px(yy),4,0,7);ca.fill();});
+    // gap arrow at midpoint
+    const mx=(a+b)/2, chord=(fa+fb)/2, fmid=mx*Math.log(mx);
+    arrow(ca,x2px(mx),y2px(chord),x2px(mx),y2px(fmid),rgb(C_AMB,.9),1.6,7);
+    txt(ca,'Sehne liegt strikt darüber',x2px(mx)+8,y2px((chord+fmid)/2),{col:rgb(C_AMB,.95),size:10.5,weight:600});
+    txt(ca,'f(x) = x·log x',W-Rr-8,T+14,{col:rgb(C_BLUE,1),size:12,align:'right',weight:650});
+    txt(ca,"f''(x) = 1/x > 0  ⇒  strikt konvex",W-Rr-8,T+30,{col:'#6b7896',size:10.5,align:'right'});
+    txt(ca,'0',L-6,y2px(0)+4,{col:'#55607a',size:10,align:'right'});
+    txt(ca,'1',x2px(1),H-B+14,{col:'#55607a',size:10,align:'center'});
+    txt(ca,'x',W-Rr,H-B+14,{col:'#55607a',size:10,align:'right'});
+  })();
+
+  function ctx_grid(c,x0,y0,x1,y1){
+    c.strokeStyle='rgba(255,255,255,.045)'; c.lineWidth=1;
+    for(let i=0;i<=5;i++){ const y=y0+(y1-y0)*i/5; c.beginPath(); c.moveTo(x0,y); c.lineTo(x1,y); c.stroke(); }
+    for(let i=0;i<=5;i++){ const x=x0+(x1-x0)*i/5; c.beginPath(); c.moveTo(x,y0); c.lineTo(x,y1); c.stroke(); }
+  }
+
+  // -- entropy heatmap on simplex
+  function drawB(){
+    const W=cvB._w,H=cvB._h;
+    const cx=W*0.5, cy=H*0.48, R=Math.min(W,H)*0.36;
+    const V=[[cx,cy-R],[cx-R*0.866,cy+R*0.5],[cx+R*0.866,cy+R*0.5]];
+    clearCv(cb,cvB);
+    const img=cb.createImageData(W,H);
+    const d=img.data;
+    const det=((V[1][1]-V[2][1])*(V[0][0]-V[2][0])+(V[2][0]-V[1][0])*(V[0][1]-V[2][1]));
+    const Hmax=Math.log(3);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const l1=((V[1][1]-V[2][1])*(x-V[2][0])+(V[2][0]-V[1][0])*(y-V[2][1]))/det;
+      const l2=((V[2][1]-V[0][1])*(x-V[2][0])+(V[0][0]-V[2][0])*(y-V[2][1]))/det;
+      const l3=1-l1-l2;
+      const idx=(y*W+x)*4;
+      if(l1<0||l2<0||l3<0){ d[idx+3]=0; continue; }
+      const h=entropy([l1,l2,l3])/Hmax;
+      const c=viridis(h);
+      d[idx]=c[0]; d[idx+1]=c[1]; d[idx+2]=c[2]; d[idx+3]=225;
+    }
+    cb.putImageData(img,0,0);
+    // contours
+    cb.strokeStyle='rgba(0,0,0,.28)'; cb.lineWidth=1;
+    for(let lev=0.15;lev<1;lev+=0.15){
+      cb.beginPath();
+      let started=false;
+      for(let t=0;t<=360;t+=1){
+        // radial search from center
+        const ang=t*Math.PI/180;
+        let lo=0,hi=1;
+        for(let k=0;k<22;k++){
+          const mid=(lo+hi)/2;
+          const px=cx+Math.cos(ang)*R*mid, py=cy+Math.sin(ang)*R*mid;
+          const l1=((V[1][1]-V[2][1])*(px-V[2][0])+(V[2][0]-V[1][0])*(py-V[2][1]))/det;
+          const l2=((V[2][1]-V[0][1])*(px-V[2][0])+(V[0][0]-V[2][0])*(py-V[2][1]))/det;
+          const l3=1-l1-l2;
+          if(l1<0||l2<0||l3<0){ hi=mid; continue; }
+          const h=entropy([l1,l2,l3])/Hmax;
+          if(h>lev) lo=mid; else hi=mid;
+        }
+        const px=cx+Math.cos(ang)*R*lo, py=cy+Math.sin(ang)*R*lo;
+        started? cb.lineTo(px,py) : (cb.moveTo(px,py),started=true);
+      }
+      cb.closePath(); cb.stroke();
+    }
+    // border
+    cb.beginPath(); cb.moveTo(V[0][0],V[0][1]); cb.lineTo(V[1][0],V[1][1]); cb.lineTo(V[2][0],V[2][1]); cb.closePath();
+    cb.strokeStyle='rgba(255,255,255,.35)'; cb.lineWidth=1.5; cb.stroke();
+    // current p
+    const p=SIMP.p;
+    const P=[p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0], p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1]];
+    cb.fillStyle='#fff'; cb.beginPath(); cb.arc(P[0],P[1],6,0,7); cb.fill();
+    cb.strokeStyle='rgba(0,0,0,.6)'; cb.lineWidth=1.6; cb.stroke();
+    txt(cb,'p',P[0]+11,P[1]-8,{col:'#fff',size:12,weight:750});
+    // corner labels
+    txt(cb,'H=0',V[0][0],V[0][1]-8,{col:'#9aa6bd',size:10,align:'center'});
+    txt(cb,'H=0',V[1][0]-4,V[1][1]+16,{col:'#9aa6bd',size:10,align:'center'});
+    txt(cb,'H=0',V[2][0]+4,V[2][1]+16,{col:'#9aa6bd',size:10,align:'center'});
+    txt(cb,'H=log 3 (max)',cx,cy+R*0.5+34,{col:rgb(C_AMB,.95),size:11,align:'center',weight:600});
+    $('v3H').textContent=fmt(entropy(SIMP.p),3);
+    $('v3Hmax').textContent=fmt(Math.log(3),3);
+  }
+  window._d3b=drawB;
+  drawB();
+
+  // -- binary entropy plotly
+  function plotBin(){
+    const xs=[],ys=[];
+    for(let i=1;i<1000;i++){ const x=i/1000; xs.push(x); ys.push(-(x*Math.log(x)+(1-x)*Math.log(1-x))); }
+    const p1=+$('s3p').value;
+    const hy=-(p1*Math.log(p1)+(1-p1)*Math.log(1-p1));
+    $('v3p').textContent=fmt(p1,3);
+    Plotly.react('plot3',[
+      {x:xs,y:ys,mode:'lines',name:'H(p₁)',line:{color:'rgb(96,165,250)',width:3}},
+      {x:[p1],y:[hy],mode:'markers',name:'aktuell',marker:{color:'#fff',size:12,line:{color:'rgb(96,165,250)',width:2}}},
+      {x:[0,1],y:[Math.log(2),Math.log(2)],mode:'lines',name:'log 2 = Maximum',
+        line:{color:'rgba(251,191,36,.6)',width:1.5,dash:'dash'}}
+    ],L({
+      xaxis:{title:'p₁',range:[0,1],gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'H(p) [nats]',range:[0,0.78],gridcolor:'rgba(255,255,255,.07)'},
+      annotations:[{x:p1,y:hy,text:'H = '+fmt(hy,3),showarrow:true,arrowcolor:'rgba(255,255,255,.35)',
+        ax:0,ay:-34,font:{color:'#fff',size:11}}]
+    }),PLCFG);
+  }
+  $('s3p').addEventListener('input',plotBin);
+  plotBin();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [4] OPTIMAL TRANSPORT — Sinkhorn on a small grid
+   ═══════════════════════════════════════════════════════════════════ */
+function demo4(){
+  const cv=$('cv4'); if(!cv) return;
+  const ctx=setup(cv);
+  const n=6,m=6;
+  // positions on a line
+  const srcX=[], tgtX=[];
+  for(let i=0;i<n;i++) srcX.push(i/(n-1));
+  for(let j=0;j<m;j++) tgtX.push(j/(m-1));
+  // cost = squared distance
+  const C=[];
+  for(let i=0;i<n;i++){ C.push([]); for(let j=0;j<m;j++) C[i].push(Math.pow(srcX[i]-tgtX[j],2)*3); }
+
+  function sinkhorn(a,b,eps,iters=400){
+    const K=[];
+    for(let i=0;i<n;i++){ K.push([]); for(let j=0;j<m;j++) K[i].push(Math.exp(-C[i][j]/eps)); }
+    let u=new Array(n).fill(1), v=new Array(m).fill(1);
+    for(let t=0;t<iters;t++){
+      for(let i=0;i<n;i++){ let s=0; for(let j=0;j<m;j++) s+=K[i][j]*v[j]; u[i]=a[i]/Math.max(s,1e-300); }
+      for(let j=0;j<m;j++){ let s=0; for(let i=0;i<n;i++) s+=K[i][j]*u[i]; v[j]=b[j]/Math.max(s,1e-300); }
+    }
+    const P=[];
+    for(let i=0;i<n;i++){ P.push([]); for(let j=0;j<m;j++) P[i].push(u[i]*K[i][j]*v[j]); }
+    return P;
+  }
+  function draw(){
+    const eps=Math.pow(10,+$('s4eps').value);
+    const sk=+$('s4sk').value;
+    $('v4eps').textContent=eps<0.1?eps.toFixed(3):eps.toFixed(2);
+    $('v4sk').textContent=fmt(sk,2);
+    // marginals
+    let a=[],b=[];
+    for(let i=0;i<n;i++) a.push(Math.exp(-Math.pow((srcX[i]-(0.5+sk*0.35))/0.32,2)));
+    let sa=a.reduce((x,y)=>x+y,0); a=a.map(x=>x/sa);
+    for(let j=0;j<m;j++) b.push(Math.exp(-Math.pow((tgtX[j]-(0.5-sk*0.3))/0.28,2))+0.15);
+    let sb=b.reduce((x,y)=>x+y,0); b=b.map(x=>x/sb);
+    const P=sinkhorn(a,b,eps);
+    let cost=0,Hp=0;
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){ cost+=P[i][j]*C[i][j]; if(P[i][j]>1e-14) Hp-=P[i][j]*Math.log(P[i][j]); }
+    $('v4cost').textContent=fmt(cost,4);
+    $('v4H').textContent=fmt(Hp,3);
+
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    // top: source bars
+    const padL=60,padR=30,padT=40,botY=H-150;
+    const spanW=W-padL-padR;
+    const sy=padT+24, ty=botY-18;
+    txt(ctx,'Quellverteilung a  (jeder Query eine Einheit „Aufmerksamkeitsmasse")',padL,padT-14,{col:'#8892a8',size:11,weight:600});
+    // flows
+    let mxP=0; for(let i=0;i<n;i++)for(let j=0;j<m;j++) mxP=Math.max(mxP,P[i][j]);
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){
+      const w=P[i][j]/mxP;
+      if(w<0.004) continue;
+      const x1=padL+srcX[i]*spanW, x2=padL+tgtX[j]*spanW;
+      ctx.beginPath();
+      ctx.moveTo(x1,sy+10);
+      ctx.bezierCurveTo(x1,(sy+ty)/2, x2,(sy+ty)/2, x2,ty-10);
+      ctx.strokeStyle=rgb(C_TEAL,0.08+0.75*w);
+      ctx.lineWidth=0.6+w*11; ctx.lineCap='round';
+      ctx.stroke();
+    }
+    // nodes
+    for(let i=0;i<n;i++){
+      const x=padL+srcX[i]*spanW;
+      const h=a[i]*150;
+      ctx.fillStyle=rgb(C_VIO,.75); roundRect(ctx,x-11,sy-h-2,22,h,4); ctx.fill();
+      ctx.fillStyle=rgb(C_VIO,1); ctx.beginPath(); ctx.arc(x,sy+8,5,0,7); ctx.fill();
+      txt(ctx,'q'+(i+1),x,sy+26,{col:'#6b7896',size:10,align:'center'});
+    }
+    for(let j=0;j<m;j++){
+      const x=padL+tgtX[j]*spanW;
+      // mass arrived
+      let arr=0; for(let i=0;i<n;i++) arr+=P[i][j];
+      const h=arr*150;
+      ctx.fillStyle=rgb(C_AMB,.7); roundRect(ctx,x-11,ty+6,22,h,4); ctx.fill();
+      ctx.fillStyle=rgb(C_AMB,1); ctx.beginPath(); ctx.arc(x,ty-8,5,0,7); ctx.fill();
+      txt(ctx,'k'+(j+1),x,ty-18,{col:'#6b7896',size:10,align:'center'});
+    }
+    txt(ctx,'Zielverteilung b  (empfangene Masse)',padL,H-16,{col:'#8892a8',size:11,weight:600});
+    // matrix inset
+    const mx0=W-190, my0=padT+6, cell=20;
+    txt(ctx,'Plan P',mx0,my0-8,{col:'#8892a8',size:10.5,weight:600});
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){
+      const t=P[i][j]/mxP;
+      ctx.fillStyle=rgb(tealRamp(Math.pow(t,0.55)),1);
+      ctx.fillRect(mx0+j*cell, my0+i*cell, cell-1.5, cell-1.5);
+    }
+    // cost matrix inset
+    const cx0=W-190, cy0=my0+n*cell+30;
+    txt(ctx,'Kosten C',cx0,cy0-8,{col:'#8892a8',size:10.5,weight:600});
+    let mxC=0; for(let i=0;i<n;i++)for(let j=0;j<m;j++) mxC=Math.max(mxC,C[i][j]);
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){
+      const t=C[i][j]/mxC;
+      ctx.fillStyle=rgb(mix([40,16,26],C_ROSE,t),.92);
+      ctx.fillRect(cx0+j*cell, cy0+i*cell, cell-1.5, cell-1.5);
+    }
+  }
+  ['s4eps','s4sk'].forEach(id=>$(id).addEventListener('input',()=>{ 
+    $('b4classic').classList.remove('on'); $('b4eot').classList.remove('on'); draw(); }));
+  $('b4classic').onclick=()=>{ $('s4eps').value=-2.0; $('b4classic').classList.add('on'); $('b4eot').classList.remove('on'); draw(); };
+  $('b4eot').onclick=()=>{ $('s4eps').value=0.3; $('b4eot').classList.add('on'); $('b4classic').classList.remove('on'); draw(); };
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [4b] DEGENERATION TO SIMPLEX
+   ═══════════════════════════════════════════════════════════════════ */
+function demo4b(){
+  const cv=$('cv4b'); if(!cv) return;
+  const ctx=setup(cv);
+  let stage=0, anim=0;
+  function draw(){
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const n=4,m=5;
+    const cell=34;
+    const gx=70, gy=90;
+    const titles=[
+      'Volles OT: Zeilen- UND Spaltensummen fixiert',
+      'Quelle = ein einziger Query (Dirac δq)',
+      'Ziel-Randbedingung wird aufgehoben',
+      'Übrig bleibt: der Simplex Δ^(m−1)'
+    ];
+    txt(ctx,titles[stage],W/2,30,{col:'#e8edf7',size:13,align:'center',weight:650});
+
+    const rows = stage>=1 ? 1 : n;
+    const rowOff = stage>=1 ? 0 : 0;
+    // matrix
+    for(let i=0;i<rows;i++){
+      for(let j=0;j<m;j++){
+        const x=gx+j*cell, y=gy+i*cell;
+        const t=0.2+0.7*Math.abs(Math.sin(i*1.7+j*0.9+anim*0.01));
+        ctx.fillStyle= stage>=3 ? rgb(C_TEAL,0.18+0.5*t) : rgb(tealRamp(t*0.85),.9);
+        roundRect(ctx,x,y,cell-4,cell-4,4); ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1; ctx.stroke();
+      }
+    }
+    // row constraint
+    for(let i=0;i<rows;i++){
+      const y=gy+i*cell+cell/2-2;
+      ctx.strokeStyle=rgb(C_VIO,.75); ctx.lineWidth=1.6;
+      arrow(ctx,gx+m*cell+6,y,gx+m*cell+34,y,rgb(C_VIO,.85),1.6,7);
+      txt(ctx,'= 1',gx+m*cell+40,y+4,{col:rgb(C_VIO,1),size:11,weight:650});
+    }
+    txt(ctx,'Zeilen-Randbedingung',gx+m*cell+6,gy-14,{col:rgb(C_VIO,.9),size:10.5,weight:600});
+    // column constraint
+    if(stage<2){
+      for(let j=0;j<m;j++){
+        const x=gx+j*cell+cell/2-2;
+        const yb=gy+rows*cell+6;
+        arrow(ctx,x,yb,x,yb+24,rgb(C_AMB,.85),1.6,7);
+      }
+      txt(ctx,'Spalten-Randbedingung  = bⱼ',gx,gy+rows*cell+48,{col:rgb(C_AMB,.9),size:10.5,weight:600});
+    } else {
+      txt(ctx,'✕ keine Spalten-Randbedingung — Keys dürfen beliebig viel Masse bekommen',
+        gx,gy+rows*cell+34,{col:rgb(C_ROSE,.9),size:10.5,weight:600});
+    }
+    // simplex illustration at stage 3
+    if(stage>=3){
+      const cxx=W*0.5, cyy=H-100, R=52;
+      const V=[[cxx,cyy-R],[cxx-R*0.866,cyy+R*0.5],[cxx+R*0.866,cyy+R*0.5]];
+      ctx.beginPath(); ctx.moveTo(V[0][0],V[0][1]); ctx.lineTo(V[1][0],V[1][1]); ctx.lineTo(V[2][0],V[2][1]); ctx.closePath();
+      ctx.fillStyle='rgba(94,234,212,.14)'; ctx.fill();
+      ctx.strokeStyle=rgb(C_TEAL,.8); ctx.lineWidth=1.6; ctx.stroke();
+      txt(ctx,'U(δq , ·)  =  Δ^(m−1)',cxx,cyy+R*0.5+24,{col:rgb(C_TEAL,1),size:12,align:'center',weight:700});
+    } else if(stage===1||stage===2){
+      txt(ctx,'Nur noch EIN Zeilenvektor p ∈ ℝ^m mit Σpⱼ = 1',W/2,H-40,{col:'#8892a8',size:12,align:'center'});
+    }
+    anim++;
+  }
+  function setStage(s){
+    stage=s;
+    ['b4s0','b4s1','b4s2','b4s3'].forEach((id,i)=>$(id).classList.toggle('on',i===s));
+    draw();
+  }
+  ['b4s0','b4s1','b4s2','b4s3'].forEach((id,i)=>$(id).onclick=()=>setStage(i));
+  setStage(0);
+  setInterval(()=>{ if(cv.getBoundingClientRect().top<window.innerHeight && cv.getBoundingClientRect().bottom>0) draw(); },70);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [5] THE MAIN THEOREM — live optimizer on simplex
+   ═══════════════════════════════════════════════════════════════════ */
+function demo5(){
+  const cv=$('cv5'); if(!cv) return;
+  const ctx=setup(cv);
+  const W=cv._w,H=cv._h;
+  const cx=W*0.5, cy=H*0.44, R=Math.min(W,H)*0.315;
+  const V=[[cx,cy-R],[cx-R*0.866,cy+R*0.5],[cx+R*0.866,cy+R*0.5]];
+  const det=((V[1][1]-V[2][1])*(V[0][0]-V[2][0])+(V[2][0]-V[1][0])*(V[0][1]-V[2][1]));
+  let ball=[0.6,0.25,0.15], iter=0, running=true;
+  let field=null, fieldKey='';
+
+  function bary(p){ return [p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0], p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1]]; }
+  function inv(x,y){
+    const l1=((V[1][1]-V[2][1])*(x-V[2][0])+(V[2][0]-V[1][0])*(y-V[2][1]))/det;
+    const l2=((V[2][1]-V[0][1])*(x-V[2][0])+(V[0][0]-V[2][0])*(y-V[2][1]))/det;
+    return [l1,l2,1-l1-l2];
+  }
+  function getS(){ return [+$('s5s1').value,+$('s5s2').value,+$('s5s3').value]; }
+  function J(p,s,eps){
+    let v=0;
+    for(let i=0;i<3;i++){ v-=p[i]*s[i]; if(p[i]>1e-12) v+=eps*p[i]*Math.log(p[i]); }
+    return v;
+  }
+  function buildField(s,eps){
+    const key=s.join(',')+'|'+eps;
+    if(fieldKey===key && field) return field;
+    const img=ctx.createImageData(W,H);
+    const d=img.data;
+    // find range
+    let mn=1e9,mx=-1e9;
+    const vals=new Float32Array(W*H); vals.fill(NaN);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const l=inv(x,y);
+      if(l[0]<0||l[1]<0||l[2]<0) continue;
+      const e=1e-7;
+      const p=[Math.max(l[0],e),Math.max(l[1],e),Math.max(l[2],e)];
+      const sm=p[0]+p[1]+p[2];
+      const v=J([p[0]/sm,p[1]/sm,p[2]/sm],s,eps);
+      vals[y*W+x]=v;
+      if(v<mn)mn=v; if(v>mx)mx=v;
+    }
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const idx=(y*W+x)*4;
+      const v=vals[y*W+x];
+      if(isNaN(v)){ d[idx+3]=0; continue; }
+      const t=(v-mn)/Math.max(mx-mn,1e-9);
+      const c=magma(1-Math.pow(t,0.7));
+      d[idx]=c[0];d[idx+1]=c[1];d[idx+2]=c[2];d[idx+3]=232;
+    }
+    field={img,mn,mx,vals}; fieldKey=key;
+    return field;
+  }
+  function draw(){
+    const s=getS(), eps=Math.pow(10,+$('s5eps').value);
+    $('v5s1').textContent=fmt(s[0],2); $('v5s2').textContent=fmt(s[1],2); $('v5s3').textContent=fmt(s[2],2);
+    $('v5eps').textContent=eps<0.1?eps.toFixed(3):eps.toFixed(2);
+    const pstar=softmax(s,eps);
+    clearCv(ctx,cv);
+    const f=buildField(s,eps);
+    ctx.putImageData(f.img,0,0);
+    // contour lines
+    ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=1;
+    const Ps=bary(pstar);
+    for(let lev=0.08;lev<1;lev+=0.11){
+      ctx.beginPath(); let st=false;
+      for(let a=0;a<=360;a+=2){
+        const ang=a*Math.PI/180;
+        let lo=0,hi=1.2;
+        const Jstar=J(pstar,s,eps);
+        const target=Jstar+lev*(f.mx-Jstar);
+        for(let k=0;k<20;k++){
+          const mid=(lo+hi)/2;
+          const px=Ps[0]+Math.cos(ang)*R*mid, py=Ps[1]+Math.sin(ang)*R*mid;
+          const l=inv(px,py);
+          if(l[0]<0||l[1]<0||l[2]<0){ hi=mid; continue; }
+          const e=1e-7; const pp=[Math.max(l[0],e),Math.max(l[1],e),Math.max(l[2],e)];
+          const sm=pp[0]+pp[1]+pp[2];
+          const v=J([pp[0]/sm,pp[1]/sm,pp[2]/sm],s,eps);
+          if(v<target) lo=mid; else hi=mid;
+        }
+        const px=Ps[0]+Math.cos(ang)*R*lo, py=Ps[1]+Math.sin(ang)*R*lo;
+        st?ctx.lineTo(px,py):(ctx.moveTo(px,py),st=true);
+      }
+      ctx.closePath(); ctx.stroke();
+    }
+    // border
+    ctx.beginPath(); ctx.moveTo(V[0][0],V[0][1]); ctx.lineTo(V[1][0],V[1][1]); ctx.lineTo(V[2][0],V[2][1]); ctx.closePath();
+    ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1.6; ctx.stroke();
+    ['p₁ (Key 1)','p₂ (Key 2)','p₃ (Key 3)'].forEach((lab,i)=>{
+      const off=i===0?[0,-14]:(i===1?[-6,20]:[6,20]);
+      txt(ctx,lab,V[i][0]+off[0],V[i][1]+off[1],{col:'#9aa6bd',size:11,weight:600,        align:i===0?'center':(i===1?'right':'left')});
+    });
+    // star = analytic solution
+    const Pst=bary(pstar);
+    ctx.save();
+    ctx.translate(Pst[0],Pst[1]);
+    ctx.beginPath();
+    for(let k=0;k<10;k++){
+      const rr=k%2===0?11:4.6, aa=-Math.PI/2+k*Math.PI/5;
+      const px=Math.cos(aa)*rr, py=Math.sin(aa)*rr;
+      k?ctx.lineTo(px,py):ctx.moveTo(px,py);
+    }
+    ctx.closePath();
+    ctx.fillStyle=rgb(C_AMB,1); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=1.2; ctx.stroke();
+    ctx.restore();
+    txt(ctx,'p★ = softmax(s/τ)',Pst[0]+16,Pst[1]-12,{col:rgb(C_AMB,1),size:11.5,weight:700});
+
+    // gradient descent ball
+    const Pb=bary(ball);
+    // trail
+    if(trail.length>1){
+      ctx.beginPath();
+      trail.forEach((tp,i)=>{ const P=bary(tp); i?ctx.lineTo(P[0],P[1]):ctx.moveTo(P[0],P[1]); });
+      ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.6; ctx.stroke();
+    }
+    const gb=ctx.createRadialGradient(Pb[0],Pb[1],0,Pb[0],Pb[1],22);
+    gb.addColorStop(0,'rgba(255,255,255,.55)'); gb.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=gb; ctx.beginPath(); ctx.arc(Pb[0],Pb[1],22,0,7); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(Pb[0],Pb[1],6.5,0,7); ctx.fill();
+
+    // stats
+    const Jb=J(ball,s,eps), Js=J(pstar,s,eps);
+    $('v5J').textContent=fmt(Jb,4);
+    $('v5Jstar').textContent=fmt(Js,4);
+    let gap=0; for(let i=0;i<3;i++) gap+=Math.pow(ball[i]-pstar[i],2);
+    $('v5gap').textContent=fmt(Math.sqrt(gap),4);
+    $('v5it').textContent=iter;
+    $('n5sol').innerHTML='p★ = softmax(s/τ) = (<b>'+pstar.map(x=>x.toFixed(4)).join('</b>, <b>')+'</b>)';
+
+    // legend bottom
+    txt(ctx,'Höhenlandschaft J(p) — hell = niedrig (gut), dunkel = hoch (schlecht)',
+      W/2,H-16,{col:'#55607a',size:10.5,align:'center'});
+  }
+  let trail=[];
+  function step(){
+    if(!running) return;
+    const s=getS(), eps=Math.pow(10,+$('s5eps').value);
+    // mirror descent (exponentiated gradient) keeps us on the simplex
+    const lr=0.10;
+    const g=[];
+    for(let i=0;i<3;i++) g.push(-s[i]+eps*(Math.log(Math.max(ball[i],1e-12))+1));
+    let np=[];
+    for(let i=0;i<3;i++) np.push(ball[i]*Math.exp(-lr*g[i]/Math.max(eps,0.05)));
+    const Z=np.reduce((a,b)=>a+b,0);
+    ball=np.map(x=>clamp(x/Z,1e-9,1));
+    iter++;
+    trail.push(ball.slice()); if(trail.length>120) trail.shift();
+  }
+  function reset(){
+    ball=[0.05+Math.random()*0.9,0,0];
+    ball[1]=Math.random()*(1-ball[0]); ball[2]=1-ball[0]-ball[1];
+    iter=0; trail=[ball.slice()];
+  }
+  ['s5s1','s5s2','s5s3','s5eps'].forEach(id=>$(id).addEventListener('input',()=>{ draw(); plot(); }));
+  $('b5reset').onclick=()=>{ reset(); draw(); };
+  $('b5run').onclick=()=>{ running=!running; $('b5run').textContent=running?'⏸ Pause':'▶ Start';
+    $('b5run').classList.toggle('on',running); };
+  reset();
+  function loop(){
+    const r=cv.getBoundingClientRect();
+    if(r.top<window.innerHeight && r.bottom>0){ step(); draw(); }
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // Plotly: eps sweep
+  function plot(){
+    const s=getS();
+    const xs=[],y1=[],y2=[],y3=[],ycost=[],yent=[],yJ=[];
+    for(let i=0;i<=160;i++){
+      const e=Math.pow(10,-1.3+i/160*2.9);
+      const p=softmax(s,e);
+      xs.push(e); y1.push(p[0]); y2.push(p[1]); y3.push(p[2]);
+      const c=-(p[0]*s[0]+p[1]*s[1]+p[2]*s[2]);
+      const H=entropy(p);
+      ycost.push(c); yent.push(H); yJ.push(c-e*H);
+    }
+    const cur=Math.pow(10,+$('s5eps').value);
+    Plotly.react('plot5',[
+      {x:xs,y:y1,name:'p★₁',mode:'lines',line:{color:'rgb(94,234,212)',width:2.6}},
+      {x:xs,y:y2,name:'p★₂',mode:'lines',line:{color:'rgb(167,139,250)',width:2.6}},
+      {x:xs,y:y3,name:'p★₃',mode:'lines',line:{color:'rgb(251,191,36)',width:2.6}},
+      {x:xs,y:yent,name:'Entropie H(p★)',mode:'lines',yaxis:'y2',
+        line:{color:'rgba(96,165,250,.85)',width:2,dash:'dot'}},
+      {x:[cur,cur],y:[0,1],name:'aktuelles ε',mode:'lines',
+        line:{color:'rgba(255,255,255,.4)',width:1.5,dash:'dash'},showlegend:false}
+    ],L({
+      xaxis:{title:'ε = τ  (log-Skala)',type:'log',gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'Wahrscheinlichkeit',range:[0,1],gridcolor:'rgba(255,255,255,.07)'},
+      yaxis2:{title:'H(p★)',overlaying:'y',side:'right',range:[0,1.2],
+        gridcolor:'rgba(0,0,0,0)',titlefont:{color:'rgb(96,165,250)'},tickfont:{color:'rgb(96,165,250)'}},
+      margin:{l:56,r:56,t:12,b:46},
+      annotations:[
+        {x:Math.log10(0.06),y:0.94,xref:'x',yref:'y',text:'ε→0: fast one-hot (argmax)',
+          showarrow:false,font:{size:10,color:'#9aa6bd'},xanchor:'left'},
+        {x:Math.log10(18),y:0.94,xref:'x',yref:'y',text:'ε→∞: Gleichverteilung',
+          showarrow:false,font:{size:10,color:'#9aa6bd'},xanchor:'right'}
+      ]
+    }),PLCFG);
+  }
+  plot();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [6] LAGRANGE
+   ═══════════════════════════════════════════════════════════════════ */
+function demo6(){
+  const cv=$('cv6'); if(!cv) return;
+  const ctx=setup(cv);
+  const W=cv._w,H=cv._h;
+  // 2D: p1+p2=1 constraint line; J(p)=-s·p + eps*sum p log p on that line
+  const s=[2.0,0.4], eps=0.9;
+  function draw(){
+    const t=+$('s6t').value;
+    $('v6t').textContent=fmt(t,3);
+    clearCv(ctx,cv);
+    const x0=70,y0=H-70,ax=W-110,ay=H-140;
+    const X=v=>x0+v*ax, Y=v=>y0-v*ay;
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.05)';
+    for(let i=0;i<=10;i++){
+      ctx.beginPath(); ctx.moveTo(X(i/10),Y(0)); ctx.lineTo(X(i/10),Y(1)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(0),Y(i/10)); ctx.lineTo(X(1),Y(i/10)); ctx.stroke();
+    }
+    // contours of J in 2D (unconstrained)
+    const Jf=(p1,p2)=>{
+      let v=-(s[0]*p1+s[1]*p2);
+      if(p1>1e-9)v+=eps*p1*Math.log(p1); if(p2>1e-9)v+=eps*p2*Math.log(p2);
+      return v;
+    };
+    const img=ctx.createImageData(W,H);
+    const d=img.data;
+    let mn=1e9,mx=-1e9;
+    const grid=new Float32Array(W*H); grid.fill(NaN);
+    for(let py=0;py<H;py++)for(let px=0;px<W;px++){
+      const p1=(px-x0)/ax, p2=(y0-py)/ay;
+      if(p1<0.001||p2<0.001||p1>1.02||p2>1.02) continue;
+      const v=Jf(p1,p2); grid[py*W+px]=v;
+      if(v<mn)mn=v; if(v>mx)mx=v;
+    }
+    for(let py=0;py<H;py++)for(let px=0;px<W;px++){
+      const idx=(py*W+px)*4, v=grid[py*W+px];
+      if(isNaN(v)){ d[idx+3]=0; continue; }
+      const tt=(v-mn)/(mx-mn);
+      const c=magma(1-Math.pow(tt,0.8));
+      d[idx]=c[0];d[idx+1]=c[1];d[idx+2]=c[2];d[idx+3]=170;
+    }
+    ctx.putImageData(img,0,0);
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(1.02),Y(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(0),Y(1.02)); ctx.stroke();
+    txt(ctx,'p₁',X(1.02),Y(0)+18,{col:'#6b7896',size:11});
+    txt(ctx,'p₂',X(0)-20,Y(1.02),{col:'#6b7896',size:11});
+    // constraint line p1+p2=1
+    ctx.strokeStyle=rgb(C_AMB,.95); ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(X(0),Y(1)); ctx.lineTo(X(1),Y(0)); ctx.stroke();
+    txt(ctx,'Nebenbedingung  p₁ + p₂ = 1',X(0.52),Y(0.56),{col:rgb(C_AMB,1),size:11,weight:650});
+    // current point on the line
+    const p1=clamp(t,0.005,0.995), p2=1-p1;
+    const px=X(p1), py=Y(p2);
+    // gradient of J
+    const g=[-s[0]+eps*(Math.log(p1)+1), -s[1]+eps*(Math.log(p2)+1)];
+    const ng=[-g[0],-g[1]];
+    // normal to the constraint = (1,1)/sqrt2
+    const nrm=[1/Math.SQRT2,1/Math.SQRT2];
+    const dotN=ng[0]*nrm[0]+ng[1]*nrm[1];
+    const normalPart=[dotN*nrm[0],dotN*nrm[1]];
+    const tanPart=[ng[0]-normalPart[0], ng[1]-normalPart[1]];
+    const sc=44;
+    // draw arrows
+    arrow(ctx,px,py,px+ng[0]*sc,py-ng[1]*sc,rgb(C_TEAL,.95),2.4,10);
+    arrow(ctx,px,py,px+tanPart[0]*sc,py-tanPart[1]*sc,rgb(C_ROSE,.95),2.6,10);
+    ctx.setLineDash([3,3]);
+    arrow(ctx,px,py,px+normalPart[0]*sc,py-normalPart[1]*sc,'rgba(255,255,255,.55)',1.8,8);
+    ctx.setLineDash([]);
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill();
+    txt(ctx,'−∇J',px+ng[0]*sc+6,py-ng[1]*sc,{col:rgb(C_TEAL,1),size:11,weight:650});
+    txt(ctx,'tangential',px+tanPart[0]*sc+6,py-tanPart[1]*sc+12,{col:rgb(C_ROSE,1),size:11,weight:650});
+    txt(ctx,'λ·n',px+normalPart[0]*sc+6,py-normalPart[1]*sc-8,{col:'rgba(255,255,255,.8)',size:11,weight:650});
+    // optimum marker
+    const pstar=softmax(s,eps);
+    ctx.fillStyle=rgb(C_AMB,1);
+    ctx.beginPath(); ctx.arc(X(pstar[0]),Y(pstar[1]),5,0,7); ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1; ctx.stroke();
+    txt(ctx,'p★',X(pstar[0])+9,Y(pstar[1])+14,{col:rgb(C_AMB,1),size:11,weight:700});
+
+    const tnorm=Math.hypot(tanPart[0],tanPart[1]);
+    $('v6tan').textContent=fmt(tnorm,4);
+    $('v6lam').textContent=fmt(-dotN,4);
+    if(tnorm<0.02) $('v6tan').style.color='#34d399'; else $('v6tan').style.color='';
+  }
+  $('s6t').addEventListener('input',draw);
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [7] SQRT(d_k) SCALING
+   ═══════════════════════════════════════════════════════════════════ */
+function demo7(){
+  if(!$('s7d')) return;
+  let scaled=true;
+  function run(){
+    const dk=+$('s7d').value;
+    $('v7d').textContent=dk;
+    const m=16, trials=260;
+    let sumH=0,sumMax=0,sumVar=0;
+    const allScores=[];
+    for(let t=0;t<trials;t++){
+      const q=[]; for(let i=0;i<dk;i++) q.push(randn());
+      const sc=[];
+      for(let j=0;j<m;j++){
+        let dot=0; for(let i=0;i<dk;i++) dot+=q[i]*randn();
+        sc.push(scaled? dot/Math.sqrt(dk) : dot);
+      }
+      allScores.push(...sc);
+      const mean=sc.reduce((a,b)=>a+b,0)/m;
+      sumVar+=sc.reduce((a,b)=>a+(b-mean)*(b-mean),0)/m;
+      const p=softmax(sc,1);
+      sumH+=entropy(p);
+      sumMax+=Math.max(...p);
+    }
+    const sd=Math.sqrt(sumVar/trials);
+    const Hm=sumH/trials, mxm=sumMax/trials;
+    $('v7sd').textContent=fmt(sd,3);
+    $('v7H').textContent=fmt(Hm,3);
+    $('v7mx').textContent=fmt(mxm,3);
+    const warn=$('n7warn');
+    if(!scaled && dk>40){
+      warn.innerHTML='⚠️ <b style="color:#f87171">Softmax gesättigt.</b> max α ≈ '+fmt(mxm,2)+
+        ' → die Jacobi-Matrix p(1−p) ≈ 0 → <b>Gradienten verschwinden</b>. Training bricht ein.';
+    } else if(scaled){
+      warn.innerHTML='✅ <b style="color:#34d399">Stabil.</b> Score-Std bleibt ≈1 unabhängig von d_k. '+
+        'Entropie bleibt hoch (max = log 16 = '+fmt(Math.log(16),2)+'), Gradienten fließen.';
+    } else {
+      warn.innerHTML='Noch ok bei kleinem d_k — schiebe d_k nach rechts, um die Sättigung zu sehen.';
+    }
+    // histogram
+    Plotly.react('plot7',[{
+      x:allScores, type:'histogram', nbinsx:60,
+      marker:{color: scaled? 'rgba(94,234,212,.62)':'rgba(251,113,133,.62)',
+        line:{color: scaled?'rgba(94,234,212,.95)':'rgba(251,113,133,.95)',width:1}},
+      name: scaled? 'Scores /√d_k':'Scores roh'
+    }],L({
+      xaxis:{title:'Score-Wert',range:[-Math.max(6,4*sd),Math.max(6,4*sd)],gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'Häufigkeit',gridcolor:'rgba(255,255,255,.07)'},
+      showlegend:false,
+      shapes:[
+        {type:'line',x0:-1,x1:-1,y0:0,y1:1,yref:'paper',line:{color:'rgba(255,255,255,.25)',width:1,dash:'dot'}},
+        {type:'line',x0:1,x1:1,y0:0,y1:1,yref:'paper',line:{color:'rgba(255,255,255,.25)',width:1,dash:'dot'}}
+      ],
+      annotations:[{x:0,y:1.05,xref:'x',yref:'paper',text:'±1 Std-Referenz',showarrow:false,
+        font:{size:10,color:'#6b7896'}}]
+    }),PLCFG);
+  }
+  $('s7d').addEventListener('input',run);
+  $('b7scaled').onclick=()=>{scaled=true;$('b7scaled').classList.add('on');$('b7raw').classList.remove('on');run();};
+  $('b7raw').onclick=()=>{scaled=false;$('b7raw').classList.add('on');$('b7scaled').classList.remove('on');run();};
+  run();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [8] FAMILY OF MECHANISMS
+   ═══════════════════════════════════════════════════════════════════ */
+function demo8(){
+  const cv=$('cv8'); if(!cv) return;
+  const ctx=setup(cv);
+  const M=12;
+  let scores=[];
+  function newScores(){
+    scores=[];
+    for(let j=0;j<M;j++) scores.push(randn()*1.5 + 1.2*Math.exp(-Math.pow((j-4)/2.2,2)) + 0.9*Math.exp(-Math.pow((j-9)/1.5,2)));
+  }
+  newScores();
+  let mode='soft';
+  const DESC={
+    soft:`<h4 style="margin-top:0">Softmax — Ω(p) = −τ·H(p)</h4>
+      <p style="font-size:13.5px">Shannon-Entropie als Regularisierer. Ergebnis: eine <b>dichte</b>
+      Verteilung — jeder Key bekommt etwas Gewicht, egal wie schlecht er ist. Glatt und überall
+      differenzierbar. Das ist Theorem 3.3 / Prop. 4.1.</p>`,
+    sparse:`<h4 style="margin-top:0">Sparsemax — Ω(p) = ½‖p‖²</h4>
+      <p style="font-size:13.5px">Statt Entropie die quadrierte L2-Norm. Die Lösung ist die
+      <b>euklidische Projektion</b> von s auf den Simplex: p_j = max(0, s_j − θ). Ergebnis:
+      <b>exakte Nullen</b>. Schlechte Keys werden komplett ignoriert (Prop. 4.2).</p>`,
+    ent:`<h4 style="margin-top:0">α-entmax — Tsallis-Entropie</h4>
+      <p style="font-size:13.5px">Ω(p) = 1/(α(α−1)) Σ(p<sup>α</sup> − p). Interpoliert stufenlos:
+      <b>α→1 gibt Softmax</b>, <b>α=2 gibt Sparsemax</b>. Die Sparsity wird zum Hyperparameter
+      (Prop. 4.3).</p>`,
+    alibi:`<h4 style="margin-top:0">ALiBi — Entropie + Distanzstrafe</h4>
+      <p style="font-size:13.5px">Ω(p) = −τH(p) + γ Σ p_j|i−j|. Die lineare Strafe wird in die
+      Kosten absorbiert: C′ = −s + γ|i−j|. Also wieder exakt Theorem 3.3 — nur mit anderen Kosten.
+      Resultat: Softmax über <code>(s − γ|i−j|)/τ</code> (Prop. 4.4).</p>`
+  };
+  function sparsemax(s){
+    const srt=s.slice().sort((a,b)=>b-a);
+    let k=0,cum=0,theta=0;
+    for(let i=0;i<srt.length;i++){
+      cum+=srt[i];
+      if(1+(i+1)*srt[i] > cum){ k=i+1; theta=(cum-1)/(i+1); }
+    }
+    return s.map(v=>Math.max(v-theta,0));
+  }
+  function entmax(s,alpha){
+    // bisection on threshold
+    const f=th=>s.reduce((a,v)=>a+Math.pow(Math.max((alpha-1)*(v-th),0),1/(alpha-1)),0);
+    let lo=Math.min(...s)-5, hi=Math.max(...s)+5;
+    for(let it=0;it<90;it++){
+      const mid=(lo+hi)/2;
+      if(f(mid)>1) lo=mid; else hi=mid;
+    }
+    const th=(lo+hi)/2;
+    
+    const th=(lo+hi)/2;
+    return s.map(v=>Math.pow(Math.max((alpha-1)*(v-th),0),1/(alpha-1)));
+  }
+  function compute(){
+    const tau=Math.pow(10,+$('s8t').value);
+    $('v8t').textContent=tau<0.1?tau.toFixed(3):tau.toFixed(2);
+    let p, eff=scores.slice(), label='';
+    if(mode==='soft'){ p=softmax(scores,tau); label='softmax(s/τ)'; }
+    else if(mode==='sparse'){ p=sparsemax(scores.map(v=>v/tau)); label='sparsemax(s/τ)'; }
+    else if(mode==='ent'){ const al=+$('s8a').value; $('v8a').textContent=fmt(al,2);
+      p=entmax(scores.map(v=>v/tau),al); label='α-entmax(s/τ), α='+fmt(al,2); }
+    else { const g=+$('s8g').value, qi=+$('s8i').value;
+      $('v8g').textContent=fmt(g,2); $('v8i').textContent=qi;
+      eff=scores.map((v,j)=>v-g*Math.abs(qi-j));
+      p=softmax(eff,tau); label='softmax((s−γ|i−j|)/τ)'; }
+    return {p,eff,label,tau};
+  }
+  function draw(){
+    const {p,eff,label}=compute();
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const padL=52,padR=24,padT=34,mid=H*0.47,botB=34;
+    const bw=(W-padL-padR)/M;
+    // upper: scores
+    txt(ctx,'Effektive Scores s (bzw. s − γ|i−j|)',padL,20,{col:'#8892a8',size:11,weight:600});
+    const mnS=Math.min(...eff,0), mxS=Math.max(...eff,0.1);
+    const sH=mid-padT-22;
+    eff.forEach((v,j)=>{
+      const t=(v-mnS)/(mxS-mnS);
+      const h=t*sH;
+      const x=padL+j*bw+bw*0.15, w=bw*0.7;
+      ctx.fillStyle=rgb(C_BLUE,.34+.4*t);
+      roundRect(ctx,x,mid-24-h,w,h,3); ctx.fill();
+    });
+    ctx.strokeStyle='rgba(255,255,255,.12)';
+    ctx.beginPath(); ctx.moveTo(padL,mid-24); ctx.lineTo(W-padR,mid-24); ctx.stroke();
+    // lower: weights
+    txt(ctx,'Resultierende Verteilung p★  —  '+label,padL,mid+4,{col:'#e8edf7',size:11.5,weight:650});
+    const mxP=Math.max(...p,1e-6);
+    const pH=H-botB-mid-22;
+    let nz=0;
+    p.forEach((v,j)=>{
+      const h=(v/mxP)*pH;
+      const x=padL+j*bw+bw*0.15, w=bw*0.7;
+      if(v>1e-9){
+        nz++;
+        const col = mode==='sparse'? C_ROSE : (mode==='ent'? C_VIO : (mode==='alibi'? C_AMB : C_TEAL));
+        const gg=ctx.createLinearGradient(0,H-botB-h,0,H-botB);
+        gg.addColorStop(0,rgb(col,.98)); gg.addColorStop(1,rgb(col,.3));
+        ctx.fillStyle=gg; roundRect(ctx,x,H-botB-h,w,Math.max(h,1.5),3); ctx.fill();
+      } else {
+        ctx.fillStyle='rgba(255,255,255,.08)';
+        roundRect(ctx,x,H-botB-3,w,3,1.5); ctx.fill();
+        txt(ctx,'0',x+w/2,H-botB-8,{col:'#f87171',size:10,align:'center',weight:700});
+      }
+      txt(ctx,String(j),x+w/2,H-botB+14,{col:'#55607a',size:9.5,align:'center'});
+      if(v>0.04) txt(ctx,(v*100).toFixed(0)+'%',x+w/2,H-botB-(v/mxP)*pH-6,
+        {col:'#cbd5e1',size:9,align:'center'});
+    });
+    ctx.strokeStyle='rgba(255,255,255,.12)';
+    ctx.beginPath(); ctx.moveTo(padL,H-botB); ctx.lineTo(W-padR,H-botB); ctx.stroke();
+    // query position marker for alibi
+    if(mode==='alibi'){
+      const qi=+$('s8i').value;
+      const x=padL+qi*bw+bw*0.5;
+      ctx.setLineDash([3,3]); ctx.strokeStyle=rgb(C_AMB,.6);
+      ctx.beginPath(); ctx.moveTo(x,padT-10); ctx.lineTo(x,H-botB); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx,'Query i',x,padT-14,{col:rgb(C_AMB,1),size:10,align:'center',weight:650});
+    }
+    $('v8nz').textContent=nz+' / '+M;
+    $('v8H').textContent=fmt(entropy(p),3);
+    if(nz<M) $('v8nz').style.color='#f87171'; else $('v8nz').style.color='';
+  }
+  function setMode(m){
+    mode=m;
+    ['bfSoft','bfSparse','bfEnt','bfAlibi'].forEach(id=>$(id).classList.remove('on'));
+    ({soft:'bfSoft',sparse:'bfSparse',ent:'bfEnt',alibi:'bfAlibi'})[m] &&
+      $(({soft:'bfSoft',sparse:'bfSparse',ent:'bfEnt',alibi:'bfAlibi'})[m]).classList.add('on');
+    $('ctrlAlpha').style.display = m==='ent'?'block':'none';
+    $('ctrlGamma').style.display = m==='alibi'?'block':'none';
+    $('ctrlPos').style.display   = m==='alibi'?'block':'none';
+    $('f8desc').innerHTML=DESC[m];
+    draw();
+  }
+  $('bfSoft').onclick=()=>setMode('soft');
+  $('bfSparse').onclick=()=>setMode('sparse');
+  $('bfEnt').onclick=()=>setMode('ent');
+  $('bfAlibi').onclick=()=>setMode('alibi');
+  ['s8a','s8g','s8i','s8t'].forEach(id=>$(id).addEventListener('input',draw));
+  $('b8new').onclick=()=>{ newScores(); draw(); };
+  setMode('soft');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [9] THE ATTENTION BANDIT (policy gradient)
+   ═══════════════════════════════════════════════════════════════════ */
+function demo9(){
+  const cv=$('cv9'); if(!cv) return;
+  const ctx=setup(cv);
+  const M=5;
+  let s=[0.2,0.0,-0.1,0.1,0.0];
+  let u=[1.4,-0.6,0.8,-1.1,0.2];
+  let useBase=true, running=false, t=0;
+  const hist={p:[[],[],[],[],[]], exp:[]};
+  const COLS=[C_TEAL,C_VIO,C_AMB,C_ROSE,C_BLUE];
+
+  // build u sliders
+  (function(){
+    const box=$('uSliders');
+    box.innerHTML='';
+    for(let j=0;j<M;j++){
+      const d=document.createElement('div');
+      d.className='ctrl';
+      d.innerHTML=`<div class="ctrl-head"><span class="lbl">u<sub>${j+1}</sub> (Key ${j+1})</span>
+        <span class="val" id="v9u${j}">${u[j].toFixed(2)}</span></div>
+        <input type="range" id="s9u${j}" min="-2.5" max="2.5" step="0.01" value="${u[j]}">`;
+      box.appendChild(d);
+    }
+    for(let j=0;j<M;j++){
+      $('s9u'+j).addEventListener('input',()=>{ u[j]=+$('s9u'+j).value; $('v9u'+j).textContent=u[j].toFixed(2); draw(); });
+    }
+  })();
+
+  function getTau(){ return Math.pow(10,+$('s9t').value); }
+  function draw(){
+    const tau=getTau();
+    $('v9t').textContent=fmt(tau,2);
+    $('v9lr').textContent=fmt(+$('s9lr').value,2);
+    const p=softmax(s,tau);
+    const base=useBase? p.reduce((a,v,i)=>a+v*u[i],0) : 0;
+    const A=u.map(v=>v-base);
+    const grad=p.map((pv,i)=>-(pv/tau)*A[i]);  // dL/ds_j
+    const Eu=p.reduce((a,v,i)=>a+v*u[i],0);
+    $('v9base').textContent=fmt(base,3);
+    $('v9exp').textContent=fmt(Eu,3);
+
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const padL=70,padR=30;
+    const bw=(W-padL-padR)/M;
+    const rowH=(H-70)/4;
+    const rows=[
+      {y:40,  lab:'Policy  p = softmax(s/τ)', get:i=>p[i], max:Math.max(...p), col:i=>COLS[i], signed:false, fmtv:v=>(v*100).toFixed(1)+'%'},
+      {y:40+rowH, lab:'Nutzen  u  (Reward)', get:i=>u[i], max:Math.max(...u.map(Math.abs),0.1), col:i=>COLS[i], signed:true, fmtv:v=>v.toFixed(2)},
+      {y:40+rowH*2, lab:'Vorteil  A = u − E[u]   (Baseline abgezogen)', get:i=>A[i], max:Math.max(...A.map(Math.abs),0.1), col:i=>(A[i]>0?[52,211,153]:[248,113,113]), signed:true, fmtv:v=>v.toFixed(2)},
+      {y:40+rowH*3, lab:'Update  Δs = −∂ℒ/∂s = (p/τ)·A', get:i=>-grad[i], max:Math.max(...grad.map(Math.abs),1e-3), col:i=>(-grad[i]>0?[52,211,153]:[248,113,113]), signed:true, fmtv:v=>v.toFixed(3)}
+    ];
+    rows.forEach((r,ri)=>{
+      txt(ctx,r.lab,padL,r.y-8,{col:'#a7b3cc',size:11.5,weight:650});
+      const h0=rowH-34;
+      const zero = r.signed? r.y+h0/2 : r.y+h0;
+      // zero line
+      ctx.strokeStyle='rgba(255,255,255,.14)';
+      ctx.beginPath(); ctx.moveTo(padL,zero); ctx.lineTo(W-padR,zero); ctx.stroke();
+      // baseline marker on utility row
+      if(ri===1 && useBase){
+        const by=zero - (base/r.max)*(h0/2);
+        ctx.setLineDash([5,4]); ctx.strokeStyle=rgb(C_AMB,.9); ctx.lineWidth=1.6;
+        ctx.beginPath(); ctx.moveTo(padL,by); ctx.lineTo(W-padR,by); ctx.stroke(); ctx.setLineDash([]);
+        txt(ctx,'Baseline E[u] = '+fmt(base,2),W-padR,by-6,{col:rgb(C_AMB,1),size:10.5,align:'right',weight:650});
+      }
+      for(let i=0;i<M;i++){
+        const v=r.get(i);
+        const hh=(Math.abs(v)/Math.max(r.max,1e-9))*(r.signed?h0/2:h0);
+        const x=padL+i*bw+bw*0.2, w=bw*0.6;
+        const c=r.col(i);
+        if(v>=0){ ctx.fillStyle=rgb(c,.85); roundRect(ctx,x,zero-hh,w,Math.max(hh,1.5),3); ctx.fill(); }
+        else { ctx.fillStyle=rgb(c,.85); roundRect(ctx,x,zero,w,Math.max(hh,1.5),3); ctx.fill(); }
+        txt(ctx,r.fmtv(v),x+w/2,v>=0?zero-hh-5:zero+hh+13,{col:'#cbd5e1',size:9.5,align:'center'});
+      }
+    });
+    // key labels
+    for(let i=0;i<M;i++){
+      const x=padL+i*bw+bw*0.5;
+      txt(ctx,'k'+(i+1),x,H-12,{col:'#6b7896',size:11,align:'center',weight:600});
+    }
+    txt(ctx,'↑ mehr Gewicht',10,50,{col:'#55607a',size:9});
+    // history
+    hist.p.forEach((h,i)=>{ h.push(p[i]); if(h.length>200)h.shift(); });
+    hist.exp.push(Eu); if(hist.exp.length>200) hist.exp.shift();
+  }
+  function step(){
+    const tau=getTau(), lr=+$('s9lr').value;
+    const p=softmax(s,tau);
+    const base=useBase? p.reduce((a,v,i)=>a+v*u[i],0) : 0;
+    for(let j=0;j<M;j++){
+      const A=u[j]-base;
+      s[j]+= lr*(p[j]/tau)*A;   // gradient ASCENT on utility
+    }
+    t++;
+    draw(); plots();
+  }
+  function plots(){
+    const traces=[];
+    const xs=hist.p[0].map((_,i)=>i);
+    for(let i=0;i<M;i++){
+      traces.push({x:xs,y:hist.p[i],mode:'lines',name:'p'+(i+1),
+        line:{color:rgb(COLS[i],1),width:2.4}});
+    }
+    Plotly.react('plot9a',traces,L({
+      xaxis:{title:'Lernschritt',gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'p_j',range:[0,1],gridcolor:'rgba(255,255,255,.07)'},
+      margin:{l:48,r:14,t:10,b:40}
+    }),PLCFG);
+    Plotly.react('plot9b',[{x:xs,y:hist.exp,mode:'lines',name:'E_p[u]',
+      line:{color:'rgb(52,211,153)',width:3},fill:'tozeroy',fillcolor:'rgba(52,211,153,.13)'},
+      {x:xs,y:xs.map(()=>Math.max(...u)),mode:'lines',name:'max u (Optimum)',
+        line:{color:'rgba(255,255,255,.3)',width:1.4,dash:'dash'}}
+    ],L({
+      xaxis:{title:'Lernschritt',gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'erwarteter Nutzen',gridcolor:'rgba(255,255,255,.07)'},
+      margin:{l:48,r:14,t:10,b:40}
+    }),PLCFG);
+  }
+  $('b9step').onclick=step;
+  $('b9run').onclick=()=>{ running=!running; $('b9run').textContent=running?'⏸ Stop':'⏩ Auto';
+    $('b9run').classList.toggle('on',running); };
+  $('b9reset').onclick=()=>{ s=[0.2,0,-0.1,0.1,0]; t=0;
+    hist.p=[[],[],[],[],[]]; hist.exp=[]; draw(); plots(); };
+  $('b9bl').onclick=()=>{ useBase=!useBase; $('b9bl').textContent='Baseline: '+(useBase?'AN':'AUS');
+    $('b9bl').classList.toggle('on',useBase); draw(); };
+  ['s9lr','s9t'].forEach(id=>$(id).addEventListener('input',draw));
+  draw(); plots();
+  setInterval(()=>{ if(running) step(); },110);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [10] SOFTMAX JACOBIAN
+   ═══════════════════════════════════════════════════════════════════ */
+function demo10(){
+  const cv=$('cv10'), cv2=$('cv10b'); if(!cv) return;
+  const ctx=setup(cv), c2=setup(cv2);
+  const M=5;
+  const p=softmax([1.3,0.2,0.9,-0.4,0.1],1);
+  const tau=1;
+  function draw(){
+    const jsel=+$('s10j').value;
+    $('v10j').textContent=jsel+1;
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const cell=40, gx=90, gy=64;
+    txt(ctx,'Jacobi-Matrix  ∂p_k/∂s_j = (1/τ)·p_k(δ_kj − p_j)',gx,30,{col:'#e8edf7',size:12,weight:650});
+    let mxv=0;
+    const Jm=[];
+    for(let k=0;k<M;k++){ Jm.push([]); for(let j=0;j<M;j++){
+      const v=(1/tau)*p[k]*((k===j?1:0)-p[j]); Jm[k].push(v); mxv=Math.max(mxv,Math.abs(v)); } }
+    for(let k=0;k<M;k++)for(let j=0;j<M;j++){
+      const v=Jm[k][j], t=Math.abs(v)/mxv;
+      const c = v>=0? mix([10,20,30],[52,211,153],Math.pow(t,0.6))
+                    : mix([10,20,30],[248,113,113],Math.pow(t,0.6));
+      const x=gx+j*cell, y=gy+k*cell;
+      ctx.fillStyle=rgb(c,1); roundRect(ctx,x,y,cell-3,cell-3,4); ctx.fill();
+      if(j===jsel){ ctx.strokeStyle=rgb(C_AMB,.95); ctx.lineWidth=2; ctx.stroke(); }
+      txt(ctx,v.toFixed(2),x+(cell-3)/2,y+(cell-3)/2+3,{col:'rgba(255,255,255,.85)',size:8.8,align:'center'});
+    }
+    for(let j=0;j<M;j++) txt(ctx,'s'+(j+1),gx+j*cell+(cell-3)/2,gy-8,{col:'#6b7896',size:10,align:'center'});
+    for(let k=0;k<M;k++) txt(ctx,'p'+(k+1),gx-8,gy+k*cell+(cell-3)/2+4,{col:'#6b7896',size:10,align:'right'});
+    // column sum
+    let cs=0; for(let k=0;k<M;k++) cs+=Jm[k][jsel];
+    const sx=gx+jsel*cell+(cell-3)/2;
+    arrow(ctx,sx,gy+M*cell+4,sx,gy+M*cell+24,rgb(C_AMB,.9),1.6,7);
+    txt(ctx,'Σ = '+cs.toFixed(6)+'  ≈ 0  ✓',gx,gy+M*cell+44,{col:'#34d399',size:11.5,weight:650});
+    txt(ctx,'→ konstante Anteile von u fallen weg → Baseline',gx,gy+M*cell+62,{col:'#6b7896',size:10.5});
+  }
+  // baseline invariance demo
+  function draw2(){
+    const W=cv2._w,H=cv2._h;
+    clearCv(c2,cv2);
+    const u0=[1.4,-0.6,0.8,-1.1,0.2];
+    const shifts=[0,2,5];
+    const padL=54, bw=(W-padL-24)/M;
+    txt(c2,'Gradient bleibt identisch, egal wie man u verschiebt',padL,20,{col:'#8892a8',size:11,weight:600});
+    const base0=p.reduce((a,v,i)=>a+v*u0[i],0);
+    const g0=p.map((pv,i)=>(pv/tau)*(u0[i]-base0));
+    const mxg=Math.max(...g0.map(Math.abs));
+    shifts.forEach((sh,si)=>{
+      const uu=u0.map(v=>v+sh);
+      const b=p.reduce((a,v,i)=>a+v*uu[i],0);
+      const g=p.map((pv,i)=>(pv/tau)*(uu[i]-b));
+      const y0=48+si*54;
+      txt(c2,'u + '+sh,10,y0+14,{col:'#6b7896',size:10.5});
+      for(let i=0;i<M;i++){
+        const x=padL+i*bw+bw*0.2, w=bw*0.6;
+        const hh=(Math.abs(g[i])/mxg)*20;
+        ctx_bar(c2,x,y0+22,w,hh,g[i]>=0);
+      }
+      // zero line
+      c2.strokeStyle='rgba(255,255,255,.12)';
+      c2.beginPath(); c2.moveTo(padL,y0+22); c2.lineTo(W-24,y0+22); c2.stroke();
+    });
+    txt(c2,'↑ alle drei Reihen sind exakt gleich',padL,H-10,{col:'#34d399',size:10.5,weight:600});
+  }
+  function ctx_bar(c,x,zero,w,h,pos){
+    c.fillStyle= pos? 'rgba(52,211,153,.85)' : 'rgba(248,113,113,.85)';
+    if(pos) roundRect(c,x,zero-h,w,Math.max(h,1.5),2.5); else roundRect(c,x,zero,w,Math.max(h,1.5),2.5);
+    c.fill();
+  }
+  $('s10j').addEventListener('input',draw);
+  draw(); draw2();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [11] ENVELOPE THEOREM
+   ═══════════════════════════════════════════════════════════════════ */
+function demo11(){
+  const cv=$('cv11'); if(!cv) return;
+  const ctx=setup(cv);
+  const tau=1;
+  function draw(){
+    const s1=+$('s11s').value, N=+$('s11n').value;
+    $('v11s').textContent=fmt(s1,2);
+    $('v11n').textContent=N;
+    const s2=0.0; // fixed second score
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const padL=56,padR=22,padT=26,padB=42;
+    const xmin=-3,xmax=4;
+    const X=v=>padL+(v-xmin)/(xmax-xmin)*(W-padL-padR);
+    // J(p,s) for a fixed p is an affine function of s1:  J = -(p1*s1 + p2*s2) + tau*sum p log p
+    const Y=v=>{
+      const ymin=-4.6,ymax=1.2;
+      return padT+(ymax-v)/(ymax-ymin)*(H-padT-padB);
+    };
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.045)';
+    for(let i=0;i<=7;i++){ const xx=padL+i*(W-padL-padR)/7; ctx.beginPath(); ctx.moveTo(xx,padT); ctx.lineTo(xx,H-padB); ctx.stroke(); }
+    for(let i=0;i<=6;i++){ const yy=padT+i*(H-padT-padB)/6; ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(W-padR,yy); ctx.stroke(); }
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+    txt(ctx,'s₁',W-padR,H-padB+16,{col:'#6b7896',size:11,align:'right'});
+    txt(ctx,'Wert',padL-8,padT+6,{col:'#6b7896',size:11,align:'right'});
+
+    // family of lines J(p, s) for fixed p, as function of s1 (s2 fixed at 0)
+    const Jline=(p1,x)=>{
+      const p2=1-p1;
+      let ent=0;
+      if(p1>1e-12) ent+=p1*Math.log(p1);
+      if(p2>1e-12) ent+=p2*Math.log(p2);
+      return -(p1*x+p2*s2)+tau*ent;
+    };
+    const ps=[];
+    for(let i=1;i<=N;i++) ps.push(i/(N+1));
+    ps.forEach(p1=>{
+      ctx.beginPath();
+      ctx.moveTo(X(xmin),Y(Jline(p1,xmin)));
+      ctx.lineTo(X(xmax),Y(Jline(p1,xmax)));
+      ctx.strokeStyle='rgba(255,255,255,.17)'; ctx.lineWidth=1;
+      ctx.stroke();
+    });
+    // lower envelope V(s)
+    ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const x=xmin+(xmax-xmin)*i/300;
+      const v=-lse([x,s2],tau);
+      const px=X(x),py=Y(v);
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+    }
+    ctx.strokeStyle=rgb(C_TEAL,1); ctx.lineWidth=3; ctx.stroke();
+    // active line at s1
+    const pst=softmax([s1,s2],tau);
+    ctx.beginPath();
+    ctx.moveTo(X(xmin),Y(Jline(pst[0],xmin)));
+    ctx.lineTo(X(xmax),Y(Jline(pst[0],xmax)));
+    ctx.strokeStyle=rgb(C_AMB,.95); ctx.lineWidth=2.2; ctx.stroke();
+    // touch point
+    const Vv=-lse([s1,s2],tau);
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(X(s1),Y(Vv),6,0,7); ctx.fill();
+    ctx.strokeStyle=rgb(C_AMB,1); ctx.lineWidth=2; ctx.stroke();
+    // vertical guide
+    ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(255,255,255,.22)';
+    ctx.beginPath(); ctx.moveTo(X(s1),padT); ctx.lineTo(X(s1),H-padB); ctx.stroke(); ctx.setLineDash([]);
+    // slope indicator triangle
+    const dx=0.85, slope=-pst[0];
+    ctx.strokeStyle=rgb(C_ROSE,.9); ctx.lineWidth=1.8;
+    ctx.beginPath();
+    ctx.moveTo(X(s1),Y(Vv)); ctx.lineTo(X(s1+dx),Y(Vv));
+    ctx.lineTo(X(s1+dx),Y(Vv+slope*dx)); ctx.stroke();
+    txt(ctx,'Δ = −p★₁ = '+fmt(slope,3),X(s1+dx)+7,Y(Vv+slope*dx/2),{col:rgb(C_ROSE,1),size:10.5,weight:650});
+
+    txt(ctx,'V(s) = min_p J(p,s)  — untere Einhüllende',padL+8,padT+14,{col:rgb(C_TEAL,1),size:11.5,weight:700});
+    txt(ctx,'jede graue Gerade: ein festes p',padL+8,padT+30,{col:'#6b7896',size:10.5});
+
+    $('v11V').textContent=fmt(Vv,4);
+    $('v11g').textContent=fmt(slope,4);
+    $('v11p').textContent=fmt(-pst[0],4);
+  }
+  ['s11s','s11n'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [12] LSE POTENTIAL + GRADIENT FIELD
+   ═══════════════════════════════════════════════════════════════════ */
+function demo12(){
+  const cv=$('cv12'); if(!cv) return;
+  const ctx=setup(cv);
+  function plotLSE(){
+    const tau=Math.pow(10,+$('s12t').value);
+    $('v12t').textContent=tau<0.1?tau.toFixed(3):tau.toFixed(2);
+    const xs=[],ylse=[],ymax=[];
+    for(let i=0;i<=300;i++){
+      const x=-4+8*i/300;
+      xs.push(x);
+      ylse.push(lse([x,0],tau));
+      ymax.push(Math.max(x,0));
+    }
+    Plotly.react('plot12',[
+      {x:xs,y:ymax,mode:'lines',name:'hartes max(s₁,0)',
+        line:{color:'rgba(255,255,255,.35)',width:2,dash:'dash'}},
+      {x:xs,y:ylse,mode:'lines',name:'φ★ = τ·LSE(s/τ)',
+        line:{color:'rgb(251,191,36)',width:3.2}}
+    ],L({
+      xaxis:{title:'s₁   (s₂ = 0 fest)',gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'Potentialwert',gridcolor:'rgba(255,255,255,.07)'},
+      margin:{l:52,r:16,t:12,b:44}
+    }),PLCFG);
+    draw3(tau);
+  }
+  function draw3(tau){
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    // heatmap of phi* over (s1,s2)
+    const padL=52,padR=24,padT=26,padB=40;
+    const lo=-3.2,hi=3.2;
+    const img=ctx.createImageData(W,H);
+    const d=img.data;
+    const pw=W-padL-padR, ph=H-padT-padB;
+    let mn=1e9,mx=-1e9;
+    const vals=new Float32Array(W*H); vals.fill(NaN);
+    for(let y=padT;y<H-padB;y++)for(let x=padL;x<W-padR;x++){
+      const s1=lo+(x-padL)/pw*(hi-lo);
+      const s2=hi-(y-padT)/ph*(hi-lo);
+      const v=lse([s1,s2],tau);
+      vals[y*W+x]=v; if(v<mn)mn=v; if(v>mx)mx=v;
+    }
+    for(let y=padT;y<H-padB;y++)for(let x=padL;x<W-padR;x++){
+      const idx=(y*W+x)*4, v=vals[y*W+x];
+      const t=(v-mn)/Math.max(mx-mn,1e-9);
+      const c=viridis(t);
+      d[idx]=c[0];d[idx+1]=c[1];d[idx+2]=c[2];d[idx+3]=225;
+    }
+    ctx.putImageData(img,0,0);
+    // contour lines
+    ctx.strokeStyle='rgba(0,0,0,.3)'; ctx.lineWidth=1;
+    for(let lev=0.1;lev<1;lev+=0.12){
+      const target=mn+lev*(mx-mn);
+      // marching along x for each y (simple)
+      for(let y=padT;y<H-padB;y++){
+        for(let x=padL+1;x<W-padR;x++){
+          const a=vals[y*W+x-1],b=vals[y*W+x];
+          if((a-target)*(b-target)<0){ ctx.fillStyle='rgba(0,0,0,.32)'; ctx.fillRect(x,y,1.3,1.3); }
+        }
+      }
+    }
+    // gradient arrows = p*
+    for(let gy=0;gy<5;gy++)for(let gx=0;gx<5;gx++){
+      const s1=lo+(gx+0.5)/5*(hi-lo);
+      const s2=hi-(gy+0.5)/5*(hi-lo);
+      const p=softmax([s1,s2],tau);
+      const px=padL+(s1-lo)/(hi-lo)*pw;
+      const py=padT+(hi-s2)/(hi-lo)*ph;
+      const L2=Math.hypot(p[0],p[1]);
+      const sc=26;
+      arrow(ctx,px,py,px+p[0]/L2*sc,py-p[1]/L2*sc,'rgba(255,255,255,.72)',1.5,6);
+      ctx.fillStyle='rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(px,py,1.6,0,7); ctx.fill();
+    }
+    // axes labels
+    txt(ctx,'s₁ →',W-padR,H-padB+16,{col:'#8892a8',size:11,align:'right'});
+    txt(ctx,'↑ s₂',padL-8,padT+2,{col:'#8892a8',size:11,align:'right'});
+    txt(ctx,'φ★(s) = τ log Σ exp(sₗ/τ)   ·   Pfeile = ∇φ★ = p★',padL,16,{col:'#e8edf7',size:11.5,weight:650});
+  }
+  $('s12t').addEventListener('input',plotLSE);
+  plotLSE();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [13] INFORMATION GEOMETRY — Fisher distortion on the simplex
+   ═══════════════════════════════════════════════════════════════════ */
+function demo13(){
+  const cv=$('cv13'); if(!cv) return;
+  const ctx=setup(cv);
+  let mode='euclid';
+  const W=cv._w,H=cv._h;
+  const cx=W*0.5, cy=H*0.46, R=Math.min(W,H)*0.33;
+  const V=[[cx,cy-R],[cx-R*0.866,cy+R*0.5],[cx+R*0.866,cy+R*0.5]];
+  function bary(p){ return [p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0], p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1]]; }
+  function draw(){
+    clearCv(ctx,cv);
+    // simplex
+    ctx.beginPath(); ctx.moveTo(V[0][0],V[0][1]); ctx.lineTo(V[1][0],V[1][1]); ctx.lineTo(V[2][0],V[2][1]); ctx.closePath();
+    ctx.fillStyle='rgba(255,255,255,.028)'; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.26)'; ctx.lineWidth=1.5; ctx.stroke();
+    // grid of ellipses: unit balls of the metric
+    const N=7;
+    for(let i=1;i<N;i++)for(let j=1;j<N-i;j++){
+      const p1=i/N, p2=j/N, p3=1-p1-p2;
+      if(p3<0.02) continue;
+      const P=bary([p1,p2,p3]);
+      let rad;
+      if(mode==='euclid'){
+        rad=11;
+        ctx.strokeStyle='rgba(96,165,250,.7)'; ctx.fillStyle='rgba(96,165,250,.13)';
+        ctx.beginPath(); ctx.arc(P[0],P[1],rad,0,7); ctx.fill(); ctx.stroke();
+      } else {
+        // Fisher-Rao: step length scales like sqrt(p) → circles shrink near boundary
+        const minp=Math.min(p1,p2,p3);
+        rad=11*Math.sqrt(minp*3)*0.95;
+        rad=clamp(rad,2.2,15);
+        const t=1-clamp(minp*3,0,1);
+        const c=mix(C_TEAL,C_ROSE,t);
+        ctx.strokeStyle=rgb(c,.85); ctx.fillStyle=rgb(c,.16);
+        ctx.beginPath(); ctx.arc(P[0],P[1],rad,0,7); ctx.fill(); ctx.stroke();
+      }
+      ctx.fillStyle='rgba(255,255,255,.45)'; ctx.beginPath(); ctx.arc(P[0],P[1],1.5,0,7); ctx.fill();
+    }
+    // two example pairs
+    const pairs=[
+      {a:[0.34,0.33,0.33], b:[0.40,0.30,0.30], lab:'Mitte: 0.5→0.51'},
+      {a:[0.955,0.025,0.02], b:[0.985,0.008,0.007], lab:'Rand: 0.99→1.00'}
+    ];
+    pairs.forEach((pr,i)=>{
+      const A=bary(pr.a), B=bary(pr.b);
+      ctx.strokeStyle= i===0? rgb(C_AMB,.95) : rgb(C_ROSE,.95);
+      ctx.lineWidth=2.6; ctx.setLineDash([]);
+      arrow(ctx,A[0],A[1],B[0],B[1],i===0?rgb(C_AMB,.95):rgb(C_ROSE,.95),2.6,9);
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(A[0],A[1],4,0,7); ctx.fill();
+      // KL distance
+      let kl=0; for(let k=0;k<3;k++) kl+=pr.a[k]*Math.log(pr.a[k]/pr.b[k]);
+      let eu=0; for(let k=0;k<3;k++) eu+=Math.pow(pr.a[k]-pr.b[k],2); eu=Math.sqrt(eu);
+      const info = mode==='euclid'? ('euklid. ‖Δ‖ = '+fmt(eu,4))
+                                  : ('KL(a‖b) = '+fmt(kl,4));
+      txt(ctx,pr.lab,B[0]+(i===0?10:-10),B[1]-14,{col:'#e8edf7',size:11,weight:650,align:i===0?'left':'right'});
+      txt(ctx,info,B[0]+(i===0?10:-10),B[1],{col: i===0?rgb(C_AMB,1):rgb(C_ROSE,1),size:11,align:i===0?'left':'right'});
+    });
+    txt(ctx,'Beide Pfeile sind euklidisch GLEICH LANG.',W/2,H-58,{col:'#a7b3cc',size:12,align:'center',weight:600});
+    txt(ctx, mode==='euclid'
+      ? 'Euklidisch: „gleiche Distanz" — aber das ist irreführend.'
+      : 'Fisher-Rao: Der Schritt am Rand ist um Größenordnungen „weiter".',
+      W/2,H-36,{col: mode==='euclid'?'#6b7896':rgb(C_TEAL,1),size:12,align:'center',weight:650});
+    txt(ctx, mode==='euclid'
+      ? 'Kreise = gleich große Schritte in der flachen Metrik'
+      : 'Kreise = gleich große INFORMATIONS-Schritte → sie schrumpfen zum Rand',
+      W/2,H-14,{col:'#55607a',size:10.5,align:'center'});
+  }
+  $('b13e').onclick=()=>{mode='euclid';$('b13e').classList.add('on');$('b13f').classList.remove('on');
+    $('v13m').textContent='Euklidisch'; draw();};
+  $('b13f').onclick=()=>{mode='fisher';$('b13f').classList.add('on');$('b13e').classList.remove('on');
+    $('v13m').textContent='Fisher'; draw();};
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [14] FISHER AS GEARBOX:  ∇L = -τ F u
+   ═══════════════════════════════════════════════════════════════════ */
+function demo14(){
+  const cv=$('cv14'), cvb=$('cv14b'); if(!cv) return;
+  const ctx=setup(cv), cb=setup(cvb);
+  const M=6;
+  let u=[1.2,-0.8,0.5,1.6,-1.3,0.2];
+  function getP(){
+    const conc=Math.pow(10,+$('s14c').value);
+    const base=[1.6,0.4,-0.2,1.1,-0.7,0.1];
+    return softmax(base.map(v=>v*conc),1);
+  }
+  function draw(){
+    const conc=Math.pow(10,+$('s14c').value);
+    const tau=Math.pow(10,+$('s14t').value);
+    $('v14c').textContent=fmt(conc,2);
+    $('v14t').textContent=fmt(tau,2);
+    const p=getP();
+    // F u  (with F = (1/tau^2)(diag p - p p^T));  grad = -tau F u = -(1/tau)(diag p - p p^T) u
+    const Eu=p.reduce((a,v,i)=>a+v*u[i],0);
+    const grad=p.map((pv,i)=>-(pv/tau)*(u[i]-Eu));
+    const nu=Math.sqrt(u.reduce((a,v)=>a+v*v,0));
+    const ng=Math.sqrt(grad.reduce((a,v)=>a+v*v,0));
+    $('v14nu').textContent=fmt(nu,3);
+    $('v14ng').textContent=fmt(ng,4);
+    $('v14d').textContent=fmt(ng/Math.max(nu,1e-9),4);
+    $('v14H').textContent=fmt(entropy(p),3);
+
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const colW=(W-40)/3;
+    const drawCol=(x0,title,vals,colfn,sub)=>{
+      txt(ctx,title,x0+colW/2,26,{col:'#e8edf7',size:12,align:'center',weight:680});
+      txt(ctx,sub,x0+colW/2,42,{col:'#6b7896',size:10,align:'center'});
+      const bw=(colW-30)/M;
+      const zero=H*0.62;
+      const mxv=Math.max(...vals.map(Math.abs),1e-9);
+      ctx.strokeStyle='rgba(255,255,255,.13)';
+      ctx.beginPath(); ctx.moveTo(x0+12,zero); ctx.lineTo(x0+colW-12,zero); ctx.stroke();
+      vals.forEach((v,i)=>{
+        const hh=(Math.abs(v)/mxv)*(H*0.22);
+        const x=x0+16+i*bw+bw*0.18, w=bw*0.64;
+        const c=colfn(v,i);
+        ctx.fillStyle=rgb(c,.88);
+        if(v>=0) roundRect(ctx,x,zero-hh,w,Math.max(hh,1.5),3);
+        else roundRect(ctx,x,zero,w,Math.max(hh,1.5),3);
+        ctx.fill();
+      });
+      txt(ctx,'max |·| = '+fmt(mxv,4),x0+colW/2,H-22,{col:'#55607a',size:10,align:'center'});
+    };
+    drawCol(20,'① Nutzen u','was das Netz will',u,v=>v>=0?[52,211,153]:[248,113,113]);
+    drawCol(20+colW,'② Policy p','wie sicher es ist',p,()=>C_VIO,'');
+    drawCol(20+colW*2,'③ Gradient −τFu','was ankommt',grad.map(v=>-v),v=>v>=0?[52,211,153]:[248,113,113]);
+    // arrows between columns
+    arrow(ctx,20+colW-6,H*0.62,20+colW+10,H*0.62,'rgba(255,255,255,.3)',2,8);
+    arrow(ctx,20+colW*2-6,H*0.62,20+colW*2+10,H*0.62,'rgba(255,255,255,.3)',2,8);
+    txt(ctx,'× F',20+colW*2+2,H*0.62-14,{col:rgb(C_AMB,1),size:11,align:'center',weight:700});
+    // heatmap of F
+    const Wb=cvb._w,Hb=cvb._h;
+    clearCv(cb,cvb);
+    const cell=Math.min(34,(Wb-140)/M);
+    const gx=70, gy=54;
+    txt(cb,'F = (1/τ²)(diag(p) − ppᵀ)',gx,30,{col:'#e8edf7',size:12,weight:650});
+    let mxF=0; const Fm=[];
+    for(let j=0;j<M;j++){ Fm.push([]); for(let k=0;k<M;k++){
+      const v=(1/(tau*tau))*(p[j]*((j===k)?1:0)-p[j]*p[k]); Fm[j].push(v); mxF=Math.max(mxF,Math.abs(v)); } }
+    for(let j=0;j<M;j++)for(let k=0;k<M;k++){
+      const v=Fm[j][k], t=Math.abs(v)/Math.max(mxF,1e-12);
+      const c = v>=0? mix([9,16,26],C_TEAL,Math.pow(t,0.55)) : mix([9,16,26],C_ROSE,Math.pow(t,0.55));
+      cb.fillStyle=rgb(c,1);
+      roundRect(cb,gx+k*cell,gy+j*cell,cell-2.5,cell-2.5,3); cb.fill();
+    }
+    let rs=0; for(let k=0;k<M;k++) rs+=Fm[0][k];
+    txt(cb,'Zeilensumme = '+rs.toExponential(1)+'  ≈ 0',gx,gy+M*cell+26,{col:'#34d399',size:11,weight:650});
+    txt(cb,'→ Rang m−1: F ist auf dem Simplex singulär',gx,gy+M*cell+44,{col:'#6b7896',size:10.5});
+
+    // plotly: damping vs entropy
+    const xs=[],ys=[];
+    for(let i=0;i<=120;i++){
+      const c=Math.pow(10,-1.5+i/120*4.1);
+      const base=[1.6,0.4,-0.2,1.1,-0.7,0.1];
+      const pp=softmax(base.map(v=>v*c),1);
+      const E=pp.reduce((a,v,k)=>a+v*u[k],0);
+      const gr=pp.map((pv,k)=>-(pv/tau)*(u[k]-E));
+      const gn=Math.sqrt(gr.reduce((a,v)=>a+v*v,0));
+      xs.push(entropy(pp)); ys.push(gn/Math.max(nu,1e-9));
+    }
+    Plotly.react('plot14',[
+      {x:xs,y:ys,mode:'lines',name:'Dämpfung ‖∇ℒ‖/‖u‖',
+        line:{color:'rgb(251,191,36)',width:3}},
+      {x:[entropy(p)],y:[ng/Math.max(nu,1e-9)],mode:'markers',name:'aktuell',
+        marker:{color:'#fff',size:12,line:{color:'rgb(251,191,36)',width:2}}}
+    ],L({
+      xaxis:{title:'Entropie H(p)  →  unsicherer',gridcolor:'rgba(255,255,255,.07)'},
+      yaxis:{title:'Gradientenstärke / ‖u‖',gridcolor:'rgba(255,255,255,.07)'},
+      margin:{l:56,r:16,t:12,b:44},
+      annotations:[
+        {x:xs[0],y:ys[0],text:'sicher → gedämpft',showarrow:true,ax:50,ay:-26,
+          arrowcolor:'rgba(255,255,255,.3)',font:{size:10,color:'#9aa6bd'}},
+        {x:xs[xs.length-1],y:ys[ys.length-1],text:'unsicher → volles Signal',showarrow:true,ax:-56,ay:-20,
+          arrowcolor:'rgba(255,255,255,.3)',font:{size:10,color:'#9aa6bd'}}
+      ]
+    }),PLCFG);
+  }
+  $('b14u').onclick=()=>{ u=u.map(()=>randn()*1.1); draw(); };
+  ['s14c','s14t'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [15] THE TRIANGLE OF UNIFICATION
+   ═══════════════════════════════════════════════════════════════════ */
+function demo15(){
+  const cv=$('cv15'); if(!cv) return;
+  const ctx=setup(cv);
+  const W=cv._w,H=cv._h;
+  let hover=-1, t=0;
+  const nodes=[
+    {x:W*0.18,y:H*0.36,lab:'Optimaler Transport',sub:'Hesse des dualen Potentials',col:C_TEAL,
+      detail:'∇²φ★(s) = τF — Krümmung der Wertfunktion. Wie reagiert p★ auf Score-Störungen?'},
+    {x:W*0.82,y:H*0.36,lab:'Reinforcement Learning',sub:'Advantage-Policy-Gradient',col:C_VIO,
+      detail:'∇ℒ = −τFu — F macht aus rohem Nutzen ein zentriertes Lernsignal mit Baseline.'},
+    {x:W*0.50,y:H*0.80,lab:'Informationsgeometrie',sub:'Fisher-Rao-Metrik',col:C_AMB,
+      detail:'F = (1/τ²)(diag p − ppᵀ) — die Riemannsche Metrik auf der Mannigfaltigkeit.'}
+  ];
+  function draw(){
+    t+=0.02;
+    clearCv(ctx,cv);
+    // center
+    const cxx=W*0.5, cyy=H*0.48;
+    // connecting lines with flowing particles
+    nodes.forEach((n,i)=>{
+      nodes.forEach((m,j)=>{
+        if(j<=i) return;
+        ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y);
+        ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=1.4; ctx.stroke();
+        for(let k=0;k<3;k++){
+          const ph=((t*0.4+k/3)%1);
+          const px=lerp(n.x,m.x,ph), py=lerp(n.y,m.y,ph);
+          const c=mix(n.col,m.col,ph);
+          ctx.fillStyle=rgb(c,.85);
+          ctx.beginPath(); ctx.arc(px,py,2.6,0,7); ctx.fill();
+        }
+      });
+    });
+    // center matrix
+    const pulse=1+0.04*Math.sin(t*2);
+    ctx.save(); ctx.translate(cxx,cyy); ctx.scale(pulse,pulse);
+    const g=ctx.createRadialGradient(0,0,0,0,0,90);
+    g.addColorStop(0,'rgba(255,255,255,.12)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,90,0,7); ctx.fill();
+    roundRect(ctx,-132,-30,264,60,14);
+    ctx.fillStyle='rgba(8,13,24,.94)'; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.lineWidth=1.4; ctx.stroke();
+    txt(ctx,'(1/τ)( diag(p) − p pᵀ )',0,-2,{col:'#fff',size:15,align:'center',weight:750,font:'monospace'});
+    txt(ctx,'EINE Matrix',0,17,{col:'#8892a8',size:10.5,align:'center',weight:600});
+    ctx.restore();
+    // nodes
+    nodes.forEach((n,i)=>{
+      const act = hover===i;
+      const r = act? 56 : 48;
+      const gg=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*1.7);
+      gg.addColorStop(0,rgb(n.col,act?.3:.18)); gg.addColorStop(1,rgb(n.col,0));
+      ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(n.x,n.y,r*1.7,0,7); ctx.fill();
+      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,7);
+      ctx.fillStyle='rgba(10,16,28,.92)'; ctx.fill();
+      ctx.strokeStyle=rgb(n.col,act?1:.65); ctx.lineWidth=act?2.6:1.8; ctx.stroke();
+      txt(ctx,['①','②','③'][i],n.x,n.y+7,{col:rgb(n.col,1),size:24,align:'center',weight:750});
+      txt(ctx,n.lab,n.x,n.y+r+20,{col:'#e8edf7',size:12.5,align:'center',weight:680});
+      txt(ctx,n.sub,n.x,n.y+r+36,{col:'#6b7896',size:10.5,align:'center'});
+      if(act){
+        const bw=330, bh=46;
+        let bx=clamp(n.x-bw/2,10,W-bw-10), by=n.y-r-bh-16;
+        if(by<8) by=n.y+r+48;
+        roundRect(ctx,bx,by,bw,bh,10);
+        ctx.fillStyle='rgba(6,10,20,.97)'; ctx.fill();
+        ctx.strokeStyle=rgb(n.col,.5); ctx.lineWidth=1.2; ctx.stroke();
+        // wrap text
+        const words=n.detail.split(' ');
+        let line='', ly=by+18;
+        ctx.font='500 11px Inter,sans-serif';
+        words.forEach(w=>{
+          if(ctx.measureText(line+w).width>bw-24){ txt(ctx,line,bx+12,ly,{col:'#cbd5e1',size:11}); line=w+' '; ly+=15; }
+          else line+=w+' ';
+        });
+        txt(ctx,line,bx+12,ly,{col:'#cbd5e1',size:11});
+      }
+    });
+    txt(ctx,'Fahre über die Knoten',W/2,20,{col:'#55607a',size:10.5,align:'center'});
+  }
+  cv.addEventListener('pointermove',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width*W, y=(e.clientY-r.top)/r.height*H;
+    hover=-1;
+    nodes.forEach((n,i)=>{ if(Math.hypot(x-n.x,y-n.y)<56) hover=i; });
+  });
+  cv.addEventListener('pointerleave',()=>hover=-1);
+  function loop(){
+    const r=cv.getBoundingClientRect();
+    if(r.top<window.innerHeight && r.bottom>0) draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [16] FULL ATTENTION MATRIX
+   ═══════════════════════════════════════════════════════════════════ */
+function demo16(){
+  const cv=$('cv16'); if(!cv) return;
+  const ctx=setup(cv);
+  const n=10,m=10;
+  let masked=false;
+  // pseudo-random scores with structure
+  const S=[];
+  for(let i=0;i<n;i++){ S.push([]); for(let j=0;j<m;j++){
+    S[i].push(1.8*Math.exp(-Math.pow((i-j)/2.2,2)) + 1.2*Math.exp(-Math.pow((j-2)/1.3,2))
+      + 0.55*Math.sin(i*1.3+j*0.7)); } }
+  function draw(){
+    const tau=Math.pow(10,+$('s16t').value);
+    $('v16t').textContent=fmt(tau,2);
+    $('v16m').textContent=masked?'an':'aus';
+    const A=[];
+    for(let i=0;i<n;i++){
+      let row=S[i].slice();
+      if(masked) row=row.map((v,j)=> j<=i? v : -1e9);
+      A.push(softmax(row,tau));
+    }
+    const W=cv._w,H=cv._h;
+    clearCv(ctx,cv);
+    const cell=Math.min(34,(W-230)/m);
+    const gx=92, gy=64;
+    txt(ctx,'Attention-Matrix A = softmax(QKᵀ/τ), zeilenweise',gx,32,{col:'#e8edf7',size:13,weight:680});
+    let mxA=0; A.forEach(r=>r.forEach(v=>mxA=Math.max(mxA,v)));
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){
+      const t=A[i][j]/mxA;
+      ctx.fillStyle=rgb(viridis(Math.pow(t,0.6)),1);
+      roundRect(ctx,gx+j*cell,gy+i*cell,cell-2.5,cell-2.5,3); ctx.fill();
+    }
+    // labels
+    for(let j=0;j<m;j++) txt(ctx,'k'+(j+1),gx+j*cell+cell/2-1,gy-10,{col:'#6b7896',size:9.5,align:'center'});
+    for(let i=0;i<n;i++) txt(ctx,'q'+(i+1),gx-10,gy+i*cell+cell/2+3,{col:'#6b7896',size:9.5,align:'right'});
+    // row sums
+    let rsAll=0;
+    for(let i=0;i<n;i++){
+      const rs=A[i].reduce((a,b)=>a+b,0); rsAll+=rs;
+      const x=gx+m*cell+10;
+      ctx.fillStyle=rgb(C_VIO,.75);
+      roundRect(ctx,x,gy+i*cell+3,rs*46,cell-8,3); ctx.fill();
+    }
+    txt(ctx,'Σ Zeile = 1 ✓',gx+m*cell+10,gy-10,{col:rgb(C_VIO,1),size:10,weight:650});
+    // col sums
+    let csv=[];
+    for(let j=0;j<m;j++){ let cs=0; for(let i=0;i<n;i++) cs+=A[i][j]; csv.push(cs); }
+    const mxc=Math.max(...csv);
+    for(let j=0;j<m;j++){
+      const y=gy+n*cell+10;
+      const h=(csv[j]/mxc)*44;
+      ctx.fillStyle=rgb(C_AMB,.7);
+      roundRect(ctx,gx+j*cell+3,y,cell-8,h,3); ctx.fill();
+    }
+    txt(ctx,'Σ Spalte = frei (≠1!)',gx,gy+n*cell+70,{col:rgb(C_AMB,1),size:10.5,weight:650});
+    txt(ctx,'Spaltensummen: '+csv.map(v=>v.toFixed(2)).join(' · '),gx,gy+n*cell+88,{col:'#55607a',size:9.5});
+    $('v16rs').textContent=fmt(rsAll/n,3);
+    $('v16cs').textContent=fmt(Math.min(...csv),2)+'–'+fmt(mxc,2);
+  }
+  $('s16t').addEventListener('input',draw);
+  $('b16off').onclick=()=>{masked=false;$('b16off').classList.add('on');$('b16on').classList.remove('on');draw();};
+  $('b16on').onclick=()=>{masked=true;$('b16on').classList.add('on');$('b16off').classList.remove('on');draw();};
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   [17] FINAL SYNTHESIS DIAGRAM
+   ═══════════════════════════════════════════════════════════════════ */
+function demo17(){
+  const cv=$('cv17'); if(!cv) return;
+  const ctx=setup(cv);
+  const W=cv._w,H=cv._h;
+  let stage=0, t=0;
+  const TXT=[
+    '<b>① Das Problem.</b> Verteile eine Einheit Aufmerksamkeitsmasse über m Keys. Minimiere die Kosten C = −⟨q,k⟩, aber maximiere gleichzeitig die Entropie. Das ist ein einseitiges Entropic-Optimal-Transport-Problem: nur die Zeilenbedingung Σp=1 ist fixiert, die Spalten sind frei.',
+    '<b>② Der Vorwärtspass.</b> Der Simplex ist konvex & kompakt, x·log x ist strikt konvex → es gibt genau eine Lösung. Lagrange + KKT liefert p_j ∝ exp(⟨q,k_j⟩/τ). Das <i>ist</i> Softmax. Nicht gewählt — hergeleitet (Theorem 3.3).',
+    '<b>③ Das Potential.</b> Der optimale Wert V(s) ist die untere Einhüllende. Envelope-Theorem: ∇V = −p★. Lagrange-Dualität (bzw. Fenchel-Legendre) liefert die explizite Formel: φ★ = τ·log Σ exp(s/τ) — Log-Sum-Exp (Theorem 6.3).',
+    '<b>④ Die Geometrie.</b> Die Hesse-Matrix dieses Potentials ist (bis auf τ) die Fisher-Information: ∇²φ★ = τF = (1/τ)(diag p − ppᵀ). Sie ist die Riemannsche Metrik auf der Mannigfaltigkeit aller Attention-Verteilungen (Corollary 7.5).',
+    '<b>⑤ Der Rückwärtspass.</b> Genau diese Matrix erzeugt den Gradienten: ∇ℒ = −τFu. Komponentenweise: ∂ℒ/∂s_j = −(p_j/τ)(u_j − E[u]). Das ist REINFORCE mit Baseline. Der natürliche Gradient ist τ·u — er liegt schon da (Theorem 5.2 & 7.3).',
+    '<b>⑥ Das Ganze.</b> Ein einziges Optimierungsproblem erzeugt Formel, Potential, Metrik und Lernregel. Der Vorwärtspass macht <i>optimale Inferenz</i>, der Rückwärtspass ein <i>rationales, mannigfaltigkeitsbewusstes Lern-Update</i> — beides aus derselben Geometrie.'
+  ];
+  const boxes=[
+    {id:0,x:0.10,y:0.16,w:0.22,h:0.15,t:'EOT-Problem',s:'min ⟨p,C⟩ − τH(p)',c:C_TEAL,st:0},
+    {id:1,x:0.42,y:0.16,w:0.22,h:0.15,t:'Simplex Δ^(m−1)',s:'konvex · kompakt',c:C_TEAL,st:0},
+    {id:2,x:0.74,y:0.16,w:0.22,h:0.15,t:'strikte Konvexität',s:'x log x , f″=1/x>0',c:C_TEAL,st:0},
+    {id:3,x:0.42,y:0.37,w:0.22,h:0.15,t:'p★ = softmax(s/τ)',s:'Theorem 3.3',c:C_TEAL,st:1},
+    {id:4,x:0.10,y:0.58,w:0.22,h:0.15,t:'φ★ = τ·LSE(s/τ)',s:'Theorem 6.3',c:C_AMB,st:2},
+    {id:5,x:0.42,y:0.58,w:0.22,h:0.15,t:'F = (diag p − ppᵀ)/τ²',s:'Fisher · Cor. 7.5',c:C_AMB,st:3},
+    {id:6,x:0.74,y:0.58,w:0.22,h:0.15,t:'∇ℒ = −τ F u',s:'Theorem 7.3',c:C_VIO,st:4},
+    {id:7,x:0.42,y:0.79,w:0.30,h:0.15,t:'∂ℒ/∂s_j = −(p_j/τ)·A_j',s:'REINFORCE + Baseline · Thm 5.2',c:C_VIO,st:4}
+  ];
+  const edges=[
+    [0,3,0],[1,3,0],[2,3,0],
+    [3,4,2],[3,5,3],
+    [4,5,3],[5,6,4],[6,7,4]
+  ];
+  function draw(){
+    t+=0.018;
+    clearCv(ctx,cv);
+    const vis=b=> stage>=5 || b.st<=stage;
+    // edges
+    edges.forEach(([a,b,st])=>{
+      if(!(stage>=5 || st<=stage)) return;
+      const A=boxes[a],B=boxes[b];
+      const x1=(A.x+A.w/2)*W, y1=(A.y+A.h)*H;
+      const x2=(B.x+B.w/2)*W, y2=B.y*H;
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.bezierCurveTo(x1,(y1+y2)/2, x2,(y1+y2)/2, x2,y2);
+      ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.lineWidth=1.5; ctx.stroke();
+      // particle
+      const ph=(t*0.35+a*0.2)%1;
+      const bez=(p0,p1,p2,p3,u)=>{
+        const v=1-u;
+        return v*v*v*p0+3*v*v*u*p1+3*v*u*u*p2+u*u*u*p3;
+      };
+      const px=bez(x1,x1,x2,x2,ph), py=bez(y1,(y1+y2)/2,(y1+y2)/2,y2,ph);
+      ctx.fillStyle=rgb(mix(A.c,B.c,ph),.9);
+      ctx.beginPath(); ctx.arc(px,py,3,0,7); ctx.fill();
+    });
+    // boxes
+    boxes.forEach(b=>{
+      const on=vis(b);
+      const x=b.x*W, y=b.y*H, w=b.w*W, h=b.h*H;
+      roundRect(ctx,x,y,w,h,12);
+      ctx.fillStyle= on? 'rgba(12,19,33,.95)' : 'rgba(12,19,33,.35)';
+      ctx.fill();
+      ctx.strokeStyle= on? rgb(b.c,.7) : 'rgba(255,255,255,.07)';
+      ctx.lineWidth= on?1.8:1; ctx.stroke();
+      if(on){
+        const gl=ctx.createLinearGradient(x,y,x,y+h);
+        gl.addColorStop(0,rgb(b.c,.1)); gl.addColorStop(1,rgb(b.c,0));
+        ctx.fillStyle=gl; roundRect(ctx,x,y,w,h,12); ctx.fill();
+      }
+      txt(ctx,b.t,x+w/2,y+h/2-2,{col: on?'#fff':'rgba(255,255,255,.2)',size:12.5,align:'center',weight:700,font:'monospace'});
+      txt(ctx,b.s,x+w/2,y+h/2+16,{col: on?rgb(b.c,.95):'rgba(255,255,255,.15)',size:10,align:'center',weight:600});
+    });
+    // headers
+    txt(ctx,'VORAUSSETZUNGEN',W*0.5,H*0.10,{col:'#55607a',size:10,align:'center',weight:750});
+    if(stage>=1||stage>=5) txt(ctx,'VORWÄRTSPASS',W*0.18,H*0.44,{col:rgb(C_TEAL,.7),size:10,align:'center',weight:750});
+    if(stage>=3||stage>=5) txt(ctx,'GEOMETRIE',W*0.86,H*0.44,{col:rgb(C_AMB,.7),size:10,align:'center',weight:750});
+    if(stage>=4||stage>=5) txt(ctx,'RÜCKWÄRTSPASS',W*0.15,H*0.86,{col:rgb(C_VIO,.7),size:10,align:'center',weight:750});
+  }
+  function setStage(i){
+    stage=i;
+    ['b17a','b17b','b17c','b17d','b17e','b17f'].forEach((id,k)=>$(id).classList.toggle('on',k===i));
+    $('n17').innerHTML=TXT[i];
+  }
+  ['b17a','b17b','b17c','b17d','b17e','b17f'].forEach((id,i)=>$(id).onclick=()=>setStage(i));
+  setStage(0);
+  function loop(){
+    const r=cv.getBoundingClientRect();
+    if(r.top<window.innerHeight && r.bottom>0) draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════════ */
+function init(){
+  try{ heroAnim(); }catch(e){console.warn('hero',e);}
+  const boot=[demo0,demo2,demo3,demo4,demo4b,demo5,demo6,demo7,demo8,demo9,
+              demo10,demo11,demo12,demo13,demo14,demo15,demo16,demo17];
+  boot.forEach(fn=>{ try{ fn(); }catch(e){ console.warn(fn.name,e); } });
+}
+</script>
+
+</body>
+</html>
