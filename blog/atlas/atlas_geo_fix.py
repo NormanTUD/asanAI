@@ -326,10 +326,21 @@ def dist_km(a, b, c, d):
 
 def compute_modes(points_by_loc):
     """For each loc, find a dominant cluster (0.5 deg buckets) that is a clear
-    majority; return {loc_norm: (mean_lat, mean_lng)} of that cluster."""
+    majority; return {loc_norm: (mean_lat, mean_lng)} of that cluster.
+
+    A loc is only treated as ONE place if its members are tightly clustered
+    (<~150 km). A bare country/region loc shared by entities at many different
+    cities (e.g. "United States") is scattered and must NOT be collapsed to a
+    centroid.
+    """
     modes = {}
     for ln, pts in points_by_loc.items():
         if len(pts) < 3:
+            continue
+        lats = [a for a, _ in pts]
+        lngs = [b for _, b in pts]
+        # single-place guard: the whole group must be compact
+        if max(lats) - min(lats) > 1.5 or max(lngs) - min(lngs) > 2.0:
             continue
         bc = collections.Counter((round(a * 2) / 2, round(b * 2) / 2) for a, b in pts)
         (bk), cnt = bc.most_common(1)[0]
