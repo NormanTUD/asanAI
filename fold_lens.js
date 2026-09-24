@@ -109,6 +109,509 @@ function arrayEquals(a, b) {
     return true;
 }
 
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
+
+function easeInOutCubic(t) {
+    return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function maxAbsCoord(points) {
+    var max = 0;
+
+    for (var i = 0; i < points.length; i++) {
+        var p = points[i];
+
+        for (var c = 0; c < p.length; c++) {
+            var v = Math.abs(Number(p[c]) || 0);
+
+            if (v > max) {
+                max = v;
+            }
+        }
+    }
+
+    return max;
+}
+
+/*
+ * Liest die echten Eingabedaten (global_x) als Zeilen zurück — die
+ * tatsächlichen Trainingsdaten, nicht das synthetische Gitter.
+ */
+function getInputDataPoints() {
+    var x = global.global_x;
+
+    if (!x) {
+        return null;
+    }
+
+    try {
+        var rows = tensorRows(x);
+
+        return rows && rows.length ? rows : null;
+    } catch (_) {
+        return null;
+    }
+}
+
+function collectTraceXYZ(traces) {
+    var x = [];
+    var y = [];
+    var z = [];
+
+    for (var i = 0; i < traces.length; i++) {
+        x.push(traces[i].x || []);
+        y.push(traces[i].y || []);
+        z.push(traces[i].z || []);
+    }
+
+    return { x: x, y: y, z: z };
+}
+
+/*
+ * Letztes Safety-Netz vor Plotly: jeder Trace wird abgebaut und seine
+ * x/y/z-Koordinaten auf endliche Zahlen gezwungen (NaN/±Inf -> 0). So kann
+ * selbst ein numerisch kaputter Layer den Plot nie crashen oder kaputt
+ * rendern — die restlichen Felder bleiben unverändert erhalten.
+ */
+function sanitizeTraces(traces) {
+    if (!Array.isArray(traces)) {
+        return [];
+    }
+
+    return traces.map(function (t) {
+        if (!t || typeof t !== "object") {
+            return { type: "scatter3d", mode: "markers", x: [], y: [], z: [] };
+        }
+
+        var clean = Object.assign({}, t);
+
+        /*
+         * 'surface'-Traces haben ein 2D-z (Zeilen-Array). Das wäre hier
+         * falsch abgeflacht. Sie werden von uns mit garantiert endlichen
+         * Werten gebaut, also unverändert lassen.
+         */
+        if (t.type === "surface") {
+            return clean;
+        }
+
+        for (var a = 0; a < 3; a++) {
+            var axis = ["x", "y", "z"][a];
+            var arr = t[axis];
+
+            if (!Array.isArray(arr)) {
+                clean[axis] = [];
+                continue;
+            }
+
+            var sa = new Array(arr.length);
+
+            for (var j = 0; j < arr.length; j++) {
+                var v = Number(arr[j]);
+                sa[j] = isFinite(v) ? v : 0;
+            }
+
+            clean[axis] = sa;
+        }
+
+        return clean;
+    });
+}
+
+function sameXYZLength(from, to) {
+    if (!from || !to) {
+        return false;
+    }
+
+    if (from.x.length !== to.x.length) {
+        return false;
+    }
+
+    for (var i = 0; i < to.x.length; i++) {
+        if (
+            from.x[i].length !== to.x[i].length ||
+            from.y[i].length !== to.y[i].length ||
+            from.z[i].length !== to.z[i].length
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function coalesceCoord(from, to, t) {
+    /*
+     * verschachtelte Arrays (z. B. die 2D-z-Zeilen eines 'surface'-Traces)
+     * werden NICHT ge-lerpt — sie bleiben unverändert. Nur flache Zahlen
+     * werden interpoliert; nicht-endliche Werte fallen auf das Ziel zurück.
+     */
+    if (Array.isArray(from) || Array.isArray(to)) {
+        return to;
+    }
+
+    var fv = Number(from);
+    var tv = Number(to);
+
+    if (!isFinite(fv) || !isFinite(tv)) {
+        return tv;
+    }
+
+    return fv + (tv - fv) * t;
+}
+
+function lerpTraceXYZ(from, to, t) {
+    if (!sameXYZLength(from, to)) {
+        return to;
+    }
+
+    var x = [];
+    var y = [];
+    var z = [];
+
+    for (var i = 0; i < to.x.length; i++) {
+        var xi = [];
+        var yi = [];
+        var zi = [];
+
+        for (var j = 0; j < to.x[i].length; j++) {
+            xi.push(coalesceCoord(from.x[i][j], to.x[i][j], t));
+            yi.push(coalesceCoord(from.y[i][j], to.y[i][j], t));
+            zi.push(coalesceCoord(from.z[i][j], to.z[i][j], t));
+        }
+
+        x.push(xi);
+        y.push(yi);
+        z.push(zi);
+    }
+
+    return { x: x, y: y, z: z };
+}
+
+function plotStructureSig(traces, layerIndex) {
+    var parts = ["L" + layerIndex, traces.length];
+
+    for (var i = 0; i < traces.length; i++) {
+        var t = traces[i];
+
+        parts.push(
+            (t.type || "?") +
+            ":" + (t.x || []).length +
+            ":" + (t.mode === "markers" ? "p" : "l")
+        );
+    }
+
+    return parts.join("|");
+}
+
+/*
+ * Signatur der Layout-"Chrome" (Titel, Achsentitel, Annotationen) — also
+ * allem Text, das Data-Morph (restyle) NICHT aktualisiert. Wechselt sie
+ * (z. B. beim Sprachwechsel), muss ein kompletter Plotly.react laufen.
+ */
+function layoutChromeSig(layout) {
+    if (!layout) {
+        return "";
+    }
+
+    var parts = [];
+    parts.push(layout.title && layout.title.text ? layout.title.text : "");
+
+    var scene = layout.scene || {};
+    parts.push(scene.xaxis && scene.xaxis.title ? scene.xaxis.title : "");
+    parts.push(scene.yaxis && scene.yaxis.title ? scene.yaxis.title : "");
+    parts.push(scene.zaxis && scene.zaxis.title ? scene.zaxis.title : "");
+
+    var ann = layout.annotations || [];
+    for (var i = 0; i < ann.length; i++) {
+        parts.push(ann[i].text || "");
+    }
+
+    return parts.join("");
+}
+
+function identityMatrix(n) {
+    var m = [];
+
+    for (var i = 0; i < n; i++) {
+        m.push(new Array(n).fill(0));
+        m[i][i] = 1;
+    }
+
+    return m;
+}
+
+/*
+ * Zyklische Jacobi-Eigendekomposition einer symmetrischen Matrix.
+ * Liefert { values: [eig. Werte, absteigend], vectors: [Spalten = Eigenvektoren] }.
+ */
+function jacobiEigen(A, n) {
+    var M = A.map(function (row) {
+        return row.slice();
+    });
+
+    var V = identityMatrix(n);
+    var maxSweeps = 60;
+
+    for (var sweep = 0; sweep < maxSweeps; sweep++) {
+        var off = 0;
+
+        for (var p = 0; p < n; p++) {
+            for (var q = p + 1; q < n; q++) {
+                off += M[p][q] * M[p][q];
+            }
+        }
+
+        if (off < 1e-16) {
+            break;
+        }
+
+        for (var p2 = 0; p2 < n; p2++) {
+            for (var q2 = p2 + 1; q2 < n; q2++) {
+                var appq = M[p2][q2];
+
+                if (Math.abs(appq) < 1e-17) {
+                    continue;
+                }
+
+                var theta = (M[q2][q2] - M[p2][p2]) / (2 * appq);
+                var t =
+                    (theta < 0 ? -1 : 1) /
+                    (Math.abs(theta) + Math.sqrt(theta * theta + 1));
+                var c = 1 / Math.sqrt(t * t + 1);
+                var s = t * c;
+
+                for (var i = 0; i < n; i++) {
+                    var mip = M[i][p2];
+                    var miq = M[i][q2];
+                    M[i][p2] = c * mip - s * miq;
+                    M[i][q2] = s * mip + c * miq;
+                }
+
+                for (var j = 0; j < n; j++) {
+                    var mpj = M[p2][j];
+                    var mqj = M[q2][j];
+                    M[p2][j] = c * mpj - s * mqj;
+                    M[q2][j] = s * mpj + c * mqj;
+                }
+
+                for (var k = 0; k < n; k++) {
+                    var vkp = V[k][p2];
+                    var vkq = V[k][q2];
+                    V[k][p2] = c * vkp - s * vkq;
+                    V[k][q2] = s * vkp + c * vkq;
+                }
+            }
+        }
+    }
+
+    var values = [];
+
+    for (var i2 = 0; i2 < n; i2++) {
+        values.push(M[i2][i2]);
+    }
+
+    var order = values
+        .map(function (_, idx) {
+            return idx;
+        })
+        .sort(function (a, b) {
+            return values[b] - values[a];
+        });
+
+    var vectors = [];
+
+    for (var col = 0; col < n; col++) {
+        var vec = [];
+
+        for (var r = 0; r < n; r++) {
+            vec.push(V[r][order[col]]);
+        }
+
+        vectors.push(vec);
+    }
+
+    var sortedValues = order.map(function (idx) {
+        return values[idx];
+    });
+
+    return {
+        values: sortedValues,
+        vectors: vectors
+    };
+}
+
+/*
+ * Reduziert N×D Daten auf N×targetDim via PCA (Top-K-Hauptkomponenten).
+ * Bei d <= targetDim werden fehlende Dimensionen mit 0 aufgefüllt.
+ */
+function pcaReduce(rows, targetDim) {
+    if (!rows || !rows.length) {
+        return [];
+    }
+
+    targetDim = Math.max(1, Math.floor(targetDim) || 1);
+    var n = rows.length;
+    var d = (rows[0] && rows[0].length) || 0;
+
+    if (!isFinite(d) || d < 1) {
+        d = 1;
+    }
+
+    if (d <= targetDim) {
+        return rows.map(function (r) {
+            var o = [];
+
+            for (var j = 0; j < targetDim; j++) {
+                o.push(j < r.length ? Number(r[j]) || 0 : 0);
+            }
+
+            return o;
+        });
+    }
+
+    /* Ein einziger Punkt trägt keine Kovarianz (Division durch n-1=0). */
+    if (n < 2) {
+        return rows.map(function (r) {
+            var o = [];
+
+            for (var j = 0; j < targetDim; j++) {
+                o.push(j < r.length ? Number(r[j]) || 0 : 0);
+            }
+
+            return o;
+        });
+    }
+
+    var mean = new Array(d).fill(0);
+
+    for (var i = 0; i < n; i++) {
+        for (var j = 0; j < d; j++) {
+            mean[j] += (Number(rows[i][j]) || 0) / n;
+        }
+    }
+
+    var centered = rows.map(function (r) {
+        var o = [];
+
+        for (var j = 0; j < d; j++) {
+            o.push((Number(r[j]) || 0) - mean[j]);
+        }
+
+        return o;
+    });
+
+    var C = [];
+
+    for (var a = 0; a < d; a++) {
+        C.push(new Array(d).fill(0));
+    }
+
+    for (var i2 = 0; i2 < n; i2++) {
+        for (var a2 = 0; a2 < d; a2++) {
+            for (var b2 = 0; b2 < d; b2++) {
+                C[a2][b2] +=
+                    centered[i2][a2] * centered[i2][b2] / (n - 1);
+            }
+        }
+    }
+
+    var eig = jacobiEigen(C, d);
+    var out = [];
+
+    for (var i3 = 0; i3 < n; i3++) {
+        var o = [];
+
+        for (var k = 0; k < targetDim; k++) {
+            var dot = 0;
+
+            for (var j2 = 0; j2 < d; j2++) {
+                dot += centered[i3][j2] * eig.vectors[k][j2];
+            }
+
+            o.push(dot);
+        }
+
+        out.push(o);
+    }
+
+    return out;
+}
+
+/*
+ * Schnelle Dimensionsreduktion für SEHR hohe Räume (>128D, z. B. Bilder):
+ * zufällige Projektion (Johnson–Lindenstrauss) auf `targetDim`D.
+ *
+ * Jacobi-PCA wäre hier O(D^3) — für D=784 pro Render zu teuer. Eine feste,
+ * seeded Zufallsmatrix projiziert in O(N*D), erhält Abstände bis auf einen
+ * bekannten Faktor und ist über Renders hinweg stabil.
+ */
+function randomProject(rows, targetDim, seed) {
+    if (!rows || !rows.length) {
+        return [];
+    }
+
+    targetDim = Math.max(1, Math.floor(targetDim) || 1);
+    var n = rows.length;
+    var d = (rows[0] && rows[0].length) || 0;
+
+    if (!isFinite(d) || d < 1) {
+        d = 1;
+    }
+
+    if (d <= targetDim) {
+        return rows.map(function (r) {
+            var o = [];
+
+            for (var j = 0; j < targetDim; j++) {
+                o.push(j < r.length ? Number(r[j]) || 0 : 0);
+            }
+
+            return o;
+        });
+    }
+
+    var rnd = mulberry32(seed || 0x5eed1);
+    var scale = 1 / Math.sqrt(targetDim);
+
+    /* Feste Zufallsmatrix R (targetDim x d) — für alle Zeilen identisch. */
+    var R = [];
+
+    for (var k = 0; k < targetDim; k++) {
+        var rrow = new Array(d);
+
+        for (var j = 0; j < d; j++) {
+            rrow[j] = (rnd() * 2 - 1) * scale;
+        }
+
+        R.push(rrow);
+    }
+
+    var out = [];
+
+    for (var i = 0; i < n; i++) {
+        var row = rows[i];
+        var o = [];
+
+        for (var kk = 0; kk < targetDim; kk++) {
+            var dot = 0;
+
+            for (var j2 = 0; j2 < d; j2++) {
+                dot += (Number(row[j2]) || 0) * R[kk][j2];
+            }
+
+            o.push(dot);
+        }
+
+        out.push(o);
+    }
+
+    return out;
+}
+
 function shapeText(shape) {
     if (!Array.isArray(shape)) {
         return "?";
@@ -198,48 +701,62 @@ function getLayerOutputShape(layer) {
     return null;
 }
 
-function getFeatureDimension(shape) {
-    if (!Array.isArray(shape)) {
+/*
+ * Flache Feature-Dimension aus einer (batch-, …) Shape.
+ *
+ *   [batch, f]        -> f          (R^f)
+ *   [batch, H, W]     -> H * W      (Bildausschnitt)
+ *   [batch, H, W, C]  -> H * W * C  (CNN-Bild)
+ *
+ * shape[0] ist der Batch (oft null) und wird übersprungen.
+ */
+function featureDimFromShape(shape) {
+    if (!Array.isArray(shape) || shape.length < 2) {
         return null;
     }
 
-    /*
-     * Unterstützt ausschließlich:
-     *
-     *   [batch, features]
-     *
-     * Also echte kleine Vektorräume:
-     *
-     *   R¹ -> R²
-     *   R² -> R³
-     *   R³ -> R²
-     *
-     * Bild-/Sequenz-/Conv-Räume werden absichtlich nicht
-     * stillschweigend flatteniert.
-     */
-    if (shape.length !== 2) {
-        return null;
+    var dim = 1;
+
+    for (var i = 1; i < shape.length; i++) {
+        var s = shape[i];
+
+        if (
+            typeof s !== "number" ||
+            !Number.isInteger(s) ||
+            s < 1
+        ) {
+            return null;
+        }
+
+        dim *= s;
+
+        /* Overflow/absurde-Shape-Guard. */
+        if (!isFinite(dim) || dim > MAX_FEATURE_DIMENSION) {
+            return null;
+        }
     }
 
-    var featureDimension = shape[1];
-
-    if (
-        typeof featureDimension !== "number" ||
-        !Number.isInteger(featureDimension) ||
-        featureDimension < 1
-    ) {
-        return null;
-    }
-
-    return featureDimension;
+    return dim;
 }
 
-function isCompatibleSpaceDimension(dimension) {
+function getFeatureDimension(shape) {
+    return featureDimFromShape(shape);
+}
+
+/*
+ * Feature-Dimensionen jeder Größe sind plottbar: kleine (1–3D) als
+ * Gitterfläche, alles darüber als Punktwolke, per PCA (≤128D) bzw.
+ * zufälliger Projektion (>128D, Johnson–Lindenstrauss) auf 3D reduziert.
+ * Die Grenze ist nur ein saner Obergrenzen-Wert gegen abstruse Shapes.
+ */
+var MAX_FEATURE_DIMENSION = 1000000;
+
+function isCompatibleFeatureDimension(dimension) {
     return (
         typeof dimension === "number" &&
         Number.isInteger(dimension) &&
         dimension >= 1 &&
-        dimension <= 3
+        dimension <= MAX_FEATURE_DIMENSION
     );
 }
 
@@ -272,6 +789,8 @@ function getVisibleLayers(model) {
     });
 }
 
+var lastCheckLogKey = "";
+
 function inspectModel(model, options) {
     var result = {
         ok: false,
@@ -282,29 +801,38 @@ function inspectModel(model, options) {
     };
 
     if (!hasTF()) {
-        result.reason = "TensorFlow.js fehlt.";
+        result.reason = t("nsw_tf_missing", "TensorFlow.js fehlt.");
         return result;
     }
 
     if (!hasPlotly()) {
-        result.reason = "Plotly fehlt.";
+        result.reason = t("nsw_plotly_missing", "Plotly fehlt.");
         return result;
     }
 
     if (!model) {
-        result.reason = "window.model ist nicht vorhanden.";
+        result.reason = t(
+            "nsw_model_missing_msg",
+            "window.model ist nicht vorhanden."
+        );
         return result;
     }
 
     if (!Array.isArray(model.layers)) {
-        result.reason = "model.layers ist keine gültige Liste.";
+        result.reason = t(
+            "nsw_bad_layers",
+            "model.layers ist keine gültige Liste."
+        );
         return result;
     }
 
     var visibleLayers = getVisibleLayers(model);
 
     if (!visibleLayers.length) {
-        result.reason = "Das Modell besitzt keine sichtbaren Layer.";
+        result.reason = t(
+            "nsw_no_visible_layers",
+            "Das Modell besitzt keine sichtbaren Layer."
+        );
         return result;
     }
 
@@ -324,61 +852,62 @@ function inspectModel(model, options) {
             shapeText(outputShape)
         );
 
-        logDebug(
-            "Layerprüfung",
-            i,
-            layer.name,
-            "input:",
-            inputShape,
-            "output:",
-            outputShape,
-            "inputDimension:",
-            inputDimension,
-            "outputDimension:",
-            outputDimension
-        );
-
         if (!inputShape) {
-            result.reason =
-                "Layer " + i + " besitzt keine lesbare Input-Shape.";
+            result.reason = fmt(
+                "nsw_layer_no_input_shape",
+                "Layer %d besitzt keine lesbare Input-Shape.",
+                [i]
+            );
             return result;
         }
 
         if (!outputShape) {
-            result.reason =
-                "Layer " + i + " besitzt keine lesbare Output-Shape.";
+            result.reason = fmt(
+                "nsw_layer_no_output_shape",
+                "Layer %d besitzt keine lesbare Output-Shape.",
+                [i]
+            );
             return result;
         }
 
-        if (inputShape.length !== 2) {
-            result.reason =
-                "Layer " + i + " ist nicht plotbar: " +
-                "Input-Rang " + inputShape.length +
-                " statt 2. Erwartet wird [batch, features].";
+        /*
+         * Immer plottbar: Rank 2+ (Vektor, Bild, Sequenz). Kleine Räume
+         * (≤3D) werden als Gitterfläche gezeichnet, alles darüber als
+         * Punktwolke per PCA / zufälliger Projektion auf 2D reduziert.
+         */
+        if (inputShape.length < 2) {
+            result.reason = fmt(
+                "nsw_layer_input_rank",
+                "Layer %d ist nicht plotbar: Input-Rang %d (mindestens [batch, …] nötig).",
+                [i, inputShape.length]
+            );
             return result;
         }
 
-        if (outputShape.length !== 2) {
-            result.reason =
-                "Layer " + i + " ist nicht plotbar: " +
-                "Output-Rang " + outputShape.length +
-                " statt 2.";
+        if (outputShape.length < 2) {
+            result.reason = fmt(
+                "nsw_layer_output_rank",
+                "Layer %d ist nicht plotbar: Output-Rang %d (mindestens [batch, …] nötig).",
+                [i, outputShape.length]
+            );
             return result;
         }
 
-        if (!isCompatibleSpaceDimension(inputDimension)) {
-            result.reason =
-                "Layer " + i + " ist nicht plotbar: Input-Raum " +
-                "ist " + inputDimension +
-                "D. Erlaubt sind nur 1D, 2D oder 3D.";
+        if (!isCompatibleFeatureDimension(inputDimension)) {
+            result.reason = fmt(
+                "nsw_layer_input_dim",
+                "Layer %d ist nicht plotbar: Input-Dimension %d außerhalb des erlaubten Bereichs.",
+                [i, inputDimension]
+            );
             return result;
         }
 
-        if (!isCompatibleSpaceDimension(outputDimension)) {
-            result.reason =
-                "Layer " + i + " ist nicht plotbar: Output-Raum " +
-                "ist " + outputDimension +
-                "D. Erlaubt sind nur 1D, 2D oder 3D.";
+        if (!isCompatibleFeatureDimension(outputDimension)) {
+            result.reason = fmt(
+                "nsw_layer_output_dim",
+                "Layer %d ist nicht plotbar: Output-Dimension %d außerhalb des erlaubten Bereichs.",
+                [i, outputDimension]
+            );
             return result;
         }
 
@@ -388,9 +917,11 @@ function inspectModel(model, options) {
          * eines einzelnen A -> B-Raums mehrdeutig.
          */
         if (Array.isArray(layer.input)) {
-            result.reason =
-                "Layer " + i +
-                " besitzt mehrere Inputs und wird nicht automatisch geplottet.";
+            result.reason = fmt(
+                "nsw_layer_multi_input",
+                "Layer %d besitzt mehrere Inputs und wird nicht automatisch geplottet.",
+                [i]
+            );
             return result;
         }
 
@@ -407,10 +938,35 @@ function inspectModel(model, options) {
     }
 
     if (!result.layers.length) {
-        result.reason = "Keine geeigneten Layer gefunden.";
+        result.reason = t(
+            "nsw_no_suitable_layers",
+            "Keine geeigneten Layer gefunden."
+        );
         return result;
     }
 
+    /*
+     * Größte Feature-Dimension über alle Ebenen (Eingabe + Layer-Outputs).
+     * >2 bedeutet: die Ebene kann nicht nativ eingezeichnet werden und
+     * braucht eine 2D-Projektion (PCA) — das wollen wir ankündigen.
+     */
+    var maxDim = 0;
+
+    for (var m = 0; m < result.layers.length; m++) {
+        if (m === 0) {
+            maxDim = Math.max(
+                maxDim,
+                result.layers[m].inputDimension || 0
+            );
+        }
+
+        maxDim = Math.max(
+            maxDim,
+            result.layers[m].outputDimension || 0
+        );
+    }
+
+    result.maxDim = maxDim;
     result.signature = signatureParts.join("|");
     result.ok = true;
 
@@ -424,17 +980,25 @@ function inspectModel(model, options) {
 function checkCanRender(model, options) {
     var inspection = inspectModel(model, options);
 
-    if (!inspection.ok) {
-        logDebug(
-            "Visualizer bleibt verborgen.",
-            inspection.reason
-        );
-    } else {
-        logDebug(
-            "Visualizer ist kompatibel.",
-            inspection.layers.length,
-            "Layer können dargestellt werden."
-        );
+    var key = inspection.ok
+        ? "ok:" + inspection.signature
+        : "fail:" + inspection.reason;
+
+    if (key !== lastCheckLogKey) {
+        lastCheckLogKey = key;
+
+        if (!inspection.ok) {
+            logDebug(
+                "Visualizer bleibt verborgen.",
+                inspection.reason
+            );
+        } else {
+            logDebug(
+                "Visualizer ist kompatibel.",
+                inspection.layers.length,
+                "Layer können dargestellt werden."
+            );
+        }
     }
 
     return inspection;
@@ -452,7 +1016,7 @@ function createRoot() {
                     Neural Space Warps
                 </div>
                 <div class="nsw-subtitle">
-                    Layer als Funktionen f : A → B · vollständige kleine Räume
+                    <span class="TRANSLATEME_nsw_subtitle"></span>
                 </div>
             </div>
 
@@ -463,12 +1027,16 @@ function createRoot() {
 
         <div class="nsw-toolbar">
             <label>
-                Layer
-                <select class="nsw-layer"></select>
+                <span class="TRANSLATEME_nsw_dimred_label"></span>
+                <select class="nsw-dimred">
+                    <option value="pca" selected data-tr-option="nsw_dimred_pca">PCA (auto)</option>
+                    <option value="first3" data-tr-option="nsw_dimred_first3">Erste 3 Dimensionen</option>
+                    <option value="4dc" data-tr-option="nsw_dimred_4dc">4D + Farbe</option>
+                </select>
             </label>
 
             <label>
-                Raumgröße
+                <span class="TRANSLATEME_nsw_range_label"></span>
                 <input
                     class="nsw-range"
                     type="range"
@@ -480,7 +1048,7 @@ function createRoot() {
             </label>
 
             <label>
-                Gitter
+                <span class="TRANSLATEME_nsw_grid_label"></span>
                 <select class="nsw-resolution">
                     <option value="9">9 × 9</option>
                     <option value="13" selected>13 × 13</option>
@@ -489,16 +1057,40 @@ function createRoot() {
                 </select>
             </label>
 
-            <button class="nsw-play">
-                ▶ Abspielen
-            </button>
-
             <button class="nsw-refresh">
-                ↻ Jetzt prüfen
+                ↻ <span class="TRANSLATEME_nsw_refresh"></span>
             </button>
         </div>
 
         <div class="nsw-plot"></div>
+
+        <div class="nsw-pca-ask" style="display:none">
+            <div class="nsw-pca-ask-title">
+                <span class="TRANSLATEME_nsw_pca_ask_title"></span>
+            </div>
+            <div class="nsw-pca-ask-body">
+                <span class="TRANSLATEME_nsw_pca_ask_body"></span>
+            </div>
+            <div class="nsw-pca-ask-actions">
+                <button class="nsw-pca-yes">
+                    <span class="TRANSLATEME_nsw_pca_yes"></span>
+                </button>
+                <button class="nsw-pca-no">
+                    <span class="TRANSLATEME_nsw_pca_no"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="nsw-pca-declined" style="display:none">
+            <span class="TRANSLATEME_nsw_pca_declined"></span>
+            <button class="nsw-pca-yes-again">
+                <span class="TRANSLATEME_nsw_pca_yes"></span>
+            </button>
+        </div>
+
+        <div class="nsw-pca-warn" style="display:none">
+            <span class="TRANSLATEME_nsw_pca_warn"></span>
+        </div>
 
         <div class="nsw-meta">
             <div class="nsw-meta-title">
@@ -622,9 +1214,27 @@ function injectStyles() {
             width: 130px;
         }
 
-        .nsw-range-value {
+        .nsw-range-value,
+        .nsw-viewscale-value {
             color: #e8eefc;
             font-variant-numeric: tabular-nums;
+        }
+
+        .nsw-check {
+            min-width: 0;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nsw-check input[type=checkbox] {
+            accent-color: #7cf9d0;
+            width: 16px;
+            height: 16px;
+            margin: 0;
         }
 
         .nsw-plot {
@@ -636,6 +1246,57 @@ function injectStyles() {
                     #172744 0%,
                     #08101f 60%
                 );
+        }
+
+        .nsw-pca-ask,
+        .nsw-pca-declined {
+            margin: 10px 17px;
+            padding: 15px 17px;
+            border: 1px solid rgba(255, 200, 120, .4);
+            border-radius: 10px;
+            background: rgba(60, 44, 10, .5);
+            color: #f0e6d2;
+        }
+
+        .nsw-pca-ask-title {
+            font-weight: 800;
+            font-size: 14px;
+            color: #ffd27c;
+            margin-bottom: 7px;
+        }
+
+        .nsw-pca-ask-body {
+            font-size: 12.5px;
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+
+        .nsw-pca-ask-actions button,
+        .nsw-pca-declined button {
+            margin-right: 8px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(150, 172, 214, .4);
+            background: rgba(150, 172, 214, .12);
+            color: #e8eefc;
+            cursor: pointer;
+            font-size: 12.5px;
+        }
+
+        .nsw-pca-ask-actions button:hover,
+        .nsw-pca-declined button:hover {
+            background: rgba(150, 172, 214, .24);
+        }
+
+        .nsw-pca-warn {
+            margin: 8px 17px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 150, 120, .4);
+            background: rgba(70, 30, 20, .5);
+            color: #ffd0c0;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         .nsw-meta {
@@ -657,6 +1318,13 @@ function injectStyles() {
             color: #a9bad7;
             font-size: 12px;
             line-height: 1.55;
+        }
+
+        .nsw-status-body {
+            padding: 40px 22px 48px;
+            color: #c9d6ef;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         @media(max-width:760px) {
@@ -720,80 +1388,206 @@ function makeLayerFunction(layer) {
 
 function createAxisValues(dimension, range, resolution) {
     var values = [];
+    var n = Math.max(1, resolution | 0);
+    var step = n > 1 ? (2 * range) / (n - 1) : 0;
 
-    if (dimension === 1) {
-        for (var i = 0; i < resolution; i++) {
-            values.push(
-                -range + (2 * range * i) / (resolution - 1)
-            );
-        }
-
-        return values;
-    }
-
-    for (var j = 0; j < resolution; j++) {
-        values.push(
-            -range + (2 * range * j) / (resolution - 1)
-        );
+    for (var j = 0; j < n; j++) {
+        values.push(-range + step * j);
     }
 
     return values;
 }
 
-function createDomainPoints(dimension, range, resolution) {
-    var axis = createAxisValues(
-        dimension,
-        range,
-        resolution
-    );
+/*
+ * Anzahl der Probe-Punkte für hohe Eingabe-Dimensionen (Bilder, >3D).
+ * Ein Gitter ist dort nicht darstellbar, also nehmen wir eine feste,
+ * deterministische Handvoll Punkte und warp sie durch den Layer.
+ */
+var HIGH_DIM_SAMPLES = 24;
 
+/*
+ * Flaches Array (Länge = Produkt(shape)) in verschachtelte Form nach
+ * `shape` umformen. [H,W,C] -> [[[...],[...]], ...] etc.
+ */
+function reshapeInto(flat, shape, pos) {
+    pos = pos || 0;
+    flat = Array.isArray(flat) ? flat : [];
+
+    if (shape.length === 1) {
+        var n = shape[0];
+        var arr = [];
+
+        for (var k = 0; k < n; k++) {
+            var idx = pos + k;
+            arr.push(idx < flat.length ? Number(flat[idx]) || 0 : 0);
+        }
+
+        return arr;
+    }
+
+    var restCount = 1;
+
+    for (var i = 1; i < shape.length; i++) {
+        restCount *= shape[i];
+    }
+
+    var out = [];
+
+    for (var s = 0; s < shape[0]; s++) {
+        out.push(
+            reshapeInto(
+                flat,
+                shape.slice(1),
+                pos + s * restCount
+            )
+        );
+    }
+
+    return out;
+}
+
+function reshapeToShape(flat, shape) {
+    return reshapeInto(flat, shape, 0);
+}
+
+function gridPoints(dim, axis, resolution) {
     var points = [];
 
-    if (dimension === 1) {
+    if (dim === 1) {
         for (var i = 0; i < axis.length; i++) {
             points.push([axis[i]]);
         }
-
-        return {
-            points: points,
-            axis: axis,
-            resolution: resolution
-        };
-    }
-
-    if (dimension === 2) {
+    } else if (dim === 2) {
         for (var y = 0; y < resolution; y++) {
             for (var x = 0; x < resolution; x++) {
-                points.push([
-                    axis[x],
-                    axis[y]
-                ]);
+                points.push([axis[x], axis[y]]);
             }
         }
-
-        return {
-            points: points,
-            axis: axis,
-            resolution: resolution
-        };
-    }
-
-    for (var z = 0; z < resolution; z++) {
-        for (var y3 = 0; y3 < resolution; y3++) {
-            for (var x3 = 0; x3 < resolution; x3++) {
-                points.push([
-                    axis[x3],
-                    axis[y3],
-                    axis[z]
-                ]);
+    } else {
+        for (var z = 0; z < resolution; z++) {
+            for (var y = 0; y < resolution; y++) {
+                for (var x = 0; x < resolution; x++) {
+                    points.push([axis[x], axis[y], axis[z]]);
+                }
             }
         }
     }
+
+    return points;
+}
+
+/* Deterministischer PRNG (stabile Probe-Punkte über Renders hinweg). */
+function mulberry32(seed) {
+    return function () {
+        seed |= 0;
+        seed = (seed + 0x6D2B79F5) | 0;
+        var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function sampleProbePoints(flatDim, range, n) {
+    var rnd = mulberry32(0x5eed0);
+    var points = [];
+
+    for (var p = 0; p < n; p++) {
+        var row = [];
+
+        for (var d = 0; d < flatDim; d++) {
+            row.push((rnd() * 2 - 1) * range);
+        }
+
+        points.push(row);
+    }
+
+    return points;
+}
+
+/*
+ * Erzeugt die Probe-Punkte für einen Layer-Input.
+ *
+ *   - Input-Shape nativ (z. B. [null, 2] oder [null, 28, 28, 1]).
+ *   - ≤3D  → Gitter (die "Fläche"), so ein 2D-Layer eine Fläche zeigt.
+ *   - >3D  → deterministische Sample-Punkte (Bild/Sequenz-Raum).
+ *
+ * Liefert flache Punkte (für die 3D-Reduktion) UND die nativ geformten
+ * Tensor-Daten (für den echten Layer-Aufruf).
+ */
+function createDomainPoints(inputShape, range, resolution) {
+    /* Range / Resolution robust machen (Control könnte 0/NaN/leer liefern). */
+    range =
+        isFinite(Number(range)) && Number(range) > 0
+            ? Number(range)
+            : 1;
+    resolution =
+        isFinite(Number(resolution)) && Number(resolution) >= 1
+            ? Math.floor(Number(resolution))
+            : 13;
+    resolution = Math.max(1, Math.min(resolution, 40));
+
+    /* Native Shape robust: nur gültige positive Integer-Dimensionen, sonst 1D. */
+    var nativeShape = [];
+
+    if (Array.isArray(inputShape)) {
+        for (var i = 1; i < inputShape.length; i++) {
+            var s = inputShape[i];
+
+            if (
+                typeof s === "number" &&
+                Number.isInteger(s) &&
+                s >= 1
+            ) {
+                nativeShape.push(s);
+            }
+        }
+    }
+
+    if (!nativeShape.length) {
+        nativeShape = [1];
+    }
+
+    var flatDim = 1;
+
+    for (var j = 0; j < nativeShape.length; j++) {
+        flatDim *= nativeShape[j];
+    }
+
+    if (!isFinite(flatDim) || flatDim < 1) {
+        nativeShape = [1];
+        flatDim = 1;
+    }
+
+    var isGrid = flatDim <= 3;
+    var axis = isGrid ? createAxisValues(flatDim, range, resolution) : [];
+
+    /*
+     * Sample-Anzahl bei hohen D so wählen, dass N*D in Grenzen bleibt
+     * (sonst riesige Input-Tensoren / langsamer Layer-Call).
+     */
+    var sampleCount = Math.max(
+        4,
+        Math.min(
+            HIGH_DIM_SAMPLES,
+            Math.floor(200000 / Math.max(1, flatDim))
+        )
+    );
+
+    var points = isGrid
+        ? gridPoints(flatDim, axis, resolution)
+        : sampleProbePoints(flatDim, range, sampleCount);
 
     return {
         points: points,
+        nativeShape: nativeShape,
+        flatDim: flatDim,
+        isGrid: isGrid,
+        gridDim: isGrid ? flatDim : 0,
+        resolution: isGrid ? resolution : 0,
         axis: axis,
-        resolution: resolution
+        tensor: points.map(function (flat) {
+            return reshapeToShape(flat, nativeShape);
+        })
     };
 }
 
@@ -832,6 +1626,31 @@ function tensorRows(tensor) {
 
     return array.map(function (row) {
         return row.map(Number);
+    });
+}
+
+/*
+ * Like tensorRows, aber für beliebigen Rank (≥2): der Batch-Achse (Axis 0)
+ * wird jeder Sample auf einen FLACHEN Feature-Vektor gezogen.
+ *   [N, F]     -> N Zeilen à F
+ *   [N, H, W]  -> N Zeilen à H*W
+ *   [N, H, W,C]-> N Zeilen à H*W*C
+ */
+function tensorRowsFlatten(tensor) {
+    var array = tensor.arraySync();
+
+    if (!Array.isArray(array)) {
+        return [[Number(array)]];
+    }
+
+    if (tensor.shape.length === 1) {
+        return array.map(function (value) {
+            return [Number(value)];
+        });
+    }
+
+    return array.map(function (row) {
+        return flattenInto(row, []);
     });
 }
 
@@ -893,18 +1712,33 @@ function layerFingerprint(layer) {
 
 function evaluateLayerFunction(layerInfo, domain) {
     var tf = global.tf;
+
+    /* Defensive Guardrails: kaputtes Domain/Layer sofort sauber ablehnen. */
+    if (
+        !layerInfo ||
+        !layerInfo.layer ||
+        !domain ||
+        !Array.isArray(domain.points) ||
+        !domain.points.length ||
+        !Array.isArray(domain.nativeShape) ||
+        !domain.nativeShape.length
+    ) {
+        return null;
+    }
+
     var layer = layerInfo.layer;
     var inputTensor = null;
     var outputTensor = null;
     var layerModel = null;
 
     try {
+        /*
+         * Input im NATIVEN Shape bauen (nicht [N, flatDim]): ein Conv-Layer
+         * braucht z. B. [N, H, W, C], ein Dense-Layer [N, features].
+         */
         inputTensor = tf.tensor(
-            domain.points,
-            [
-                domain.points.length,
-                layerInfo.inputDimension
-            ]
+            Array.isArray(domain.tensor) ? domain.tensor : domain.points,
+            [domain.points.length].concat(domain.nativeShape)
         );
 
         /*
@@ -927,11 +1761,70 @@ function evaluateLayerFunction(layerInfo, domain) {
             outputTensor = outputTensor[0];
         }
 
-        var outputRows = tensorRows(outputTensor);
+        if (!outputTensor) {
+            return null;
+        }
 
-        var output = outputRows.map(function (row) {
-            return embed3(row);
-        });
+        /*
+         * Volldimensionale, FLACHGEZOGENE Zeilen (nicht auf 3D gekürzt):
+         * [N, H, W, C] -> [N][H*W*C]. Die Reduktion auf 3D (embed3 /
+         * PCA / Zufallsprojektion) passiert erst bei der Darstellung.
+         */
+        var rawOutput = tensorRowsFlatten(outputTensor);
+
+        /*
+         * Output harden: nicht-endliche Werte (NaN/±Inf, z. B. durch
+         * Overflow bei großen Gewichten) zu 0, Zeilen gleichlang. Wenn die
+         * Hälfte kaputt ist, halten wir den Layer für numerisch nicht
+         * evaluable (failStreak regelt den Rest).
+         */
+        var bad = 0;
+        var total = 0;
+        var outDim = 0;
+        var output = [];
+
+        for (var oi = 0; oi < rawOutput.length; oi++) {
+            var raw = Array.isArray(rawOutput[oi])
+                ? rawOutput[oi]
+                : [rawOutput[oi]];
+            outDim = Math.max(outDim, raw.length);
+
+            var cr = [];
+
+            for (var oj = 0; oj < raw.length; oj++) {
+                var v = Number(raw[oj]);
+                total++;
+
+                if (!isFinite(v)) {
+                    bad++;
+                    v = 0;
+                }
+
+                cr.push(v);
+            }
+
+            output.push(cr);
+        }
+
+        for (var oi2 = 0; oi2 < output.length; oi2++) {
+            while (output[oi2].length < outDim) {
+                output[oi2].push(0);
+            }
+        }
+
+        if (!output.length || !outDim) {
+            return null;
+        }
+
+        if (total > 0 && bad / total > 0.5) {
+            logDebug(
+                "Raum verworfen (zu viele nicht-endliche Werte):",
+                layerInfo.name,
+                bad + "/" + total
+            );
+
+            return null;
+        }
 
         logDebug(
             "Raum abgetastet:",
@@ -941,10 +1834,10 @@ function evaluateLayerFunction(layerInfo, domain) {
         );
 
         return {
-            input: domain.points.map(embed3),
+            input: domain.points,
             output: output,
             inputDimension: layerInfo.inputDimension,
-            outputDimension: layerInfo.outputDimension,
+            outputDimension: outDim,
             resolution: domain.resolution,
             axis: domain.axis
         };
@@ -1181,42 +2074,88 @@ function addGridLineTraces(
     return traces;
 }
 
-function createTraces(space, amount) {
+function createTraces(space, amount, mode) {
     var traces = [];
 
-    var animatedInput = space.input.map(function (point, index) {
-        return interpolatePoints(
-            point,
-            space.output[index],
-            amount
-        );
-    });
+    if (
+        !space ||
+        !Array.isArray(space.input) ||
+        !Array.isArray(space.output)
+    ) {
+        return traces;
+    }
 
-    traces.push(
-        addPointTrace(
-            animatedInput,
-            "Raum f(A)",
-            "#7cf9d0",
-            0.78
-        )
-    );
+    /*
+     * Input (≤3D) und Output (beliebig, per PCA/Erste-3/4D auf 3D) auf
+     * darstellbare 3D-Punkte reduzieren. Reihenfolge bleibt erhalten,
+     * damit die Gitter-Topologie weiter stimmt.
+     */
+    var input3d = reduceTo3D(
+        space.input,
+        space.inputDimension,
+        mode
+    ).xyz;
 
-    traces.push.apply(
-        traces,
-        addGridLineTraces(
-            space.input,
-            space.output,
-            space.resolution,
-            space.inputDimension,
-            space.outputDimension,
-            amount
-        )
-    );
+    var output3d = reduceTo3D(
+        space.output,
+        space.outputDimension,
+        mode
+    ).xyz;
 
-    if (amount >= 0.999) {
+    /*
+     * Animated-Input + Gitter brauchen 1:1 passende Punktanzahl. Ein Layer,
+     * der die Batch-Größe ändert, würde sonst interpolatePoints/
+     * Gitter-Indizes aus dem Ruder laufen lassen — dann nur Output zeigen.
+     */
+    var matched =
+        input3d.length > 0 &&
+        input3d.length === output3d.length;
+
+    if (matched) {
+        var animatedInput = input3d.map(function (point, index) {
+            return interpolatePoints(
+                point,
+                output3d[index],
+                amount
+            );
+        });
+
         traces.push(
             addPointTrace(
-                space.output,
+                animatedInput,
+                "Raum f(A)",
+                "#7cf9d0",
+                0.78
+            )
+        );
+
+        /*
+         * Gitterlinien nur für kleine Eingabe-Räume (≤3D, ein echtes
+         * Gitter). Hohe Dimensionen sind Sample-Punkte — da gibt es keine
+         * Gitter-Topologie, also nur die (reduzierten) Punkte.
+         */
+        if (
+            isFinite(space.inputDimension) &&
+            space.inputDimension <= 3
+        ) {
+            traces.push.apply(
+                traces,
+                addGridLineTraces(
+                    input3d,
+                    output3d,
+                    space.resolution,
+                    space.inputDimension,
+                    space.outputDimension,
+                    amount
+                )
+            );
+        }
+    }
+
+    if (amount >= 0.999 && output3d.length) {
+        traces.push(
+            addPointTrace(
+                output3d,
                 "Raum f(A) nach Layer",
                 "#ff9ec7",
                 0.92
@@ -1227,7 +2166,15 @@ function createTraces(space, amount) {
     return traces;
 }
 
-function createLayout(layerInfo, space, amount, camera) {
+function createLayout(layerInfo, space, amount, camera, halfRange) {
+    /*
+     * Symmetrische, um 0 zentrierte Achsen-Range basierend auf der Daten-
+     * Ausdehnung. Dadurch "atmet" der Raum nicht bei jedem Re-Render (kein
+     * Auto-Fit-Zoom) und der Ursprung liegt in der Mitte.
+     */
+    var h =
+        isNumber(halfRange) && halfRange > 0 ? halfRange : 1;
+
     var title =
         "<b>" + layerInfo.name + "</b>" +
         " · f : R" + layerInfo.inputDimension +
@@ -1262,7 +2209,7 @@ function createLayout(layerInfo, space, amount, camera) {
         },
         scene: {
             bgcolor: "#08101f",
-            aspectmode: "auto",
+            aspectmode: "cube",
             camera: camera || {
                 eye: {
                     x: 1.55,
@@ -1271,19 +2218,22 @@ function createLayout(layerInfo, space, amount, camera) {
                 }
             },
             xaxis: {
-                title: "Dimension 1",
+                title: t("nsw_axis_d1", "Dimension 1"),
+                range: [-h, h],
                 color: "#8fa4c9",
                 gridcolor: "#263754",
                 zerolinecolor: "#405477"
             },
             yaxis: {
-                title: "Dimension 2",
+                title: t("nsw_axis_d2", "Dimension 2"),
+                range: [-h, h],
                 color: "#8fa4c9",
                 gridcolor: "#263754",
                 zerolinecolor: "#405477"
             },
             zaxis: {
-                title: "Dimension 3",
+                title: t("nsw_axis_d3", "Dimension 3"),
+                range: [-h, h],
                 color: "#8fa4c9",
                 gridcolor: "#263754",
                 zerolinecolor: "#405477"
@@ -1307,24 +2257,979 @@ function updateMeta(layerInfo, space) {
         layerInfo.className;
 
     body.innerHTML =
-        "Abbildung: <b>f : R" +
+        t("nsw_meta_map", "Abbildung:") +
+        " <b>f : R" +
         layerInfo.inputDimension +
         " → R" +
         layerInfo.outputDimension +
         "</b><br>" +
-        "Input-Shape: " +
+        t("nsw_meta_input_shape", "Input-Shape:") + " " +
         shapeText(layerInfo.inputShape) +
         "<br>" +
-        "Output-Shape: " +
+        t("nsw_meta_output_shape", "Output-Shape:") + " " +
         shapeText(layerInfo.outputShape) +
         "<br>" +
-        "Abgetastete Raum-Punkte: " +
+        t("nsw_meta_sampled", "Abgetastete Raum-Punkte:") + " " +
         space.input.length +
         "<br>" +
-        "Darstellung: vollständiges Gitter, keine Trainingsdaten.";
+        t(
+            "nsw_meta_repr",
+            "Darstellung: vollständiges Gitter, keine Trainingsdaten."
+        );
 }
 
-function renderCurrent(amount, animate) {
+function plotConfig() {
+    return {
+        responsive: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: [
+            "toImage",
+            "sendDataToCloud"
+        ]
+    };
+}
+
+/*
+ * Echte Eingabedaten (global_x) als Punkte in den Raum legen — nur für
+ * den ersten Layer, da dort die Rohtypen mit der Input-Dimension passen.
+ */
+function buildInputDataTraces(layerInfo, space, amount) {
+    var out = [];
+
+    if (!instance || !instance.options.showData) {
+        return out;
+    }
+
+    if (instance.layerIndex !== 0) {
+        return out;
+    }
+
+    var rows = getInputDataPoints();
+
+    if (!rows || !rows.length) {
+        return out;
+    }
+
+    if (rows[0].length !== layerInfo.inputDimension) {
+        return out;
+    }
+
+    var tf = global.tf;
+    var inputTensor = null;
+    var outputTensor = null;
+    var inputPts = rows.map(embed3);
+
+    try {
+        inputTensor = tf.tensor(
+            rows,
+            [rows.length, layerInfo.inputDimension]
+        );
+
+        outputTensor =
+            typeof layerInfo.layer.call === "function"
+                ? layerInfo.layer.call(inputTensor)
+                : null;
+
+        if (Array.isArray(outputTensor)) {
+            outputTensor = outputTensor[0];
+        }
+
+        if (outputTensor) {
+            var outPts = tensorRows(outputTensor).map(embed3);
+
+            if (outPts.length === inputPts.length) {
+                out.push(
+                    addPointTrace(
+                        inputPts,
+                        "Eingabedaten x",
+                        "#ffd27c",
+                        0.95
+                    )
+                );
+
+                if (amount >= 0.999) {
+                    out.push(
+                        addPointTrace(
+                            outPts,
+                            "f(x) an Eingabedaten",
+                            "#7c9cff",
+                            0.95
+                        )
+                    );
+                }
+            }
+        }
+    } catch (_) {} finally {
+        if (inputTensor && inputTensor.dispose) {
+            inputTensor.dispose();
+        }
+
+        if (outputTensor && outputTensor.dispose) {
+            outputTensor.dispose();
+        }
+    }
+
+    return out;
+}
+
+function tweenPlotXYZ(from, to, ms, onFrame) {
+    if (!sameXYZLength(from, to)) {
+        instance.displayXYZ = to;
+        onFrame(to);
+        return;
+    }
+
+    var token = ++instance.morphToken;
+    var start = performance.now();
+    var frames = 0;
+
+    function frame(now) {
+        if (!instance || token !== instance.morphToken) {
+            return;
+        }
+
+        var t = clamp((now - start) / ms, 0, 1);
+        var e = easeInOutCubic(t);
+        var cur = lerpTraceXYZ(from, to, e);
+
+        instance.displayXYZ = cur;
+        onFrame(cur);
+
+        /*
+         * Sicherheitsdeckel: auch bei einem (ausnahmsweise) eingefrorenen
+         * Zeitstempel darf die Loop nie endlos weiterlaufen.
+         */
+        if (t < 1 && ++frames < 240) {
+            requestAnimationFrame(frame);
+        }
+    }
+
+    requestAnimationFrame(frame);
+}
+
+/*
+ * Plottet — aber clever:
+ *  - Struktur-Wechsel oder Erstplot  -> komplettes Plotly.react.
+ *  - Nur Daten geändert (morph)      -> sanftes Data-Morph via restyle
+ *                                        (Kamera + Szene bleiben stehen).
+ */
+function applyPlot(traces, layout, morph) {
+    /* Safety-Netz: endliche Koordinaten, bevor Plotly irgendwas sieht. */
+    traces = sanitizeTraces(traces);
+
+    var plot = instance.plot;
+
+    if (!plot) {
+        return false;
+    }
+
+    var sig = plotStructureSig(traces, instance.layerIndex);
+    var chromeSig = layoutChromeSig(layout);
+    var firstTime =
+        !instance.hasPlotted ||
+        instance.lastPlotSig !== sig ||
+        instance.lastLayoutSig !== chromeSig;
+
+    if (firstTime || !morph) {
+        try {
+            global.Plotly.react(plot, traces, layout, plotConfig());
+        } catch (_) {
+            return false;
+        }
+
+        instance.hasPlotted = true;
+        instance.lastPlotSig = sig;
+        instance.lastLayoutSig = chromeSig;
+        instance.lastPlotXYZ = collectTraceXYZ(traces);
+        instance.displayXYZ = collectTraceXYZ(traces);
+
+        return true;
+    }
+
+    instance.lastLayoutSig = chromeSig;
+
+    var toXYZ = collectTraceXYZ(traces);
+    var fromXYZ = instance.displayXYZ || instance.lastPlotXYZ;
+
+    if (layout && layout.scene && layout.scene.xaxis) {
+        try {
+            global.Plotly.relayout(plot, {
+                scene: {
+                    xaxis: { range: layout.scene.xaxis.range },
+                    yaxis: { range: layout.scene.yaxis.range },
+                    zaxis: { range: layout.scene.zaxis.range }
+                }
+            });
+        } catch (_) {}
+    }
+
+    tweenPlotXYZ(fromXYZ, toXYZ, 380, function (cur) {
+        try {
+            global.Plotly.restyle(plot, {
+                x: cur.x,
+                y: cur.y,
+                z: cur.z
+            });
+        } catch (_) {}
+    });
+
+    instance.lastPlotSig = sig;
+    instance.lastPlotXYZ = toXYZ;
+
+    return true;
+}
+
+var FLOW_COLORS = [
+    "#ffd27c", "#7cf9d0", "#9fb5ff", "#ff9ec7",
+    "#7c9cff", "#f9a07c", "#7cf9f0", "#d07cff"
+];
+
+/*
+ * Reduziert eine Ebene auf eine 2D-Projektion (x, y, 0). Die z-Komponente
+ * ist IMMER 0 — die Ebenen-Höhe (der Layer-Index) wird vom Caller als z
+ * gesetzt. Damit ist z im 3D-Raum rein die Layer-Ebene (diskret) und x,y
+ * sind die (reduzierten) Feature-Koordinaten.
+ *
+ *   dim <= 2 : native 2D (keine Reduktion, keine PCA-Warnung)
+ *   dim >= 3 : PCA auf 2 Komponenten (Zufallsprojektion ab 129D) — das ist
+ *              eine verlustbehaftete Projektion, also usedPca = true.
+ *
+ * usedPca signalisiert, dass die gezeigten Koordinaten NICHT die originalen
+ * Dimensionen sind (sondern eine 2D-Projektion).
+ */
+function reduceTo3D(points, dim, mode) {
+    var color4 = null;
+    var xyz;
+    var usedPca = false;
+
+    /* Defensive: keine Punkte → leeres Ergebnis, kein Crash weiter unten. */
+    if (!points || !points.length) {
+        return { xyz: [], color4: null, usedPca: false };
+    }
+
+    /* Dimension robust machen (aus Space/Shape, könnte undef/NaN sein). */
+    if (!isFinite(Number(dim)) || Number(dim) < 1) {
+        dim = (points[0] && points[0].length) || 1;
+    } else {
+        dim = Number(dim);
+    }
+
+    if (dim <= 2) {
+        xyz = points.map(function (r) {
+            return [
+                Number(r[0]) || 0,
+                Number(r[1]) || 0,
+                0
+            ];
+        });
+    } else if (mode === "first3") {
+        /* Erste zwei original-Dimensionen — deterministisch, keine PCA. */
+        xyz = points.map(function (r) {
+            return [
+                Number(r[0]) || 0,
+                Number(r[1]) || 0,
+                0
+            ];
+        });
+    } else {
+        var comps = mode === "4dc" ? 3 : 2;
+        /*
+         * >128D: Jacobi-PCA ist O(D^3) und pro Render zu teuer. Statt
+         * dessen feste Zufallsprojektion (JL) — linear in N*D, stabil.
+         * Beides ist eine Projektion → usedPca = true.
+         */
+        var reduced = dim > 128
+            ? randomProject(points, comps, 0x5eed1)
+            : pcaReduce(points, comps);
+
+        usedPca = true;
+
+        if (mode === "4dc") {
+            color4 = reduced.map(function (r) {
+                return Number(r[2]) || 0;
+            });
+        }
+
+        xyz = reduced.map(function (r) {
+            return [
+                Number(r[0]) || 0,
+                Number(r[1]) || 0,
+                0
+            ];
+        });
+    }
+
+    return { xyz: xyz, color4: color4, usedPca: usedPca };
+}
+
+/*
+ * Führt die echten Eingabedaten (global_x, sonst Beispieldaten) durch alle
+ * Layer und liefert die Zwischenräume als Ebenen:
+ *   levels[0] = Eingabe, levels[k+1] = nach Layer k.
+ */
+function buildFlowLevels(amount) {
+    var empty = {
+        levels: [[]],
+        dims: [0],
+        isGrid: false,
+        gridDim: 0,
+        resolution: 0,
+        synthetic: true
+    };
+
+    if (
+        !instance ||
+        !instance.inspection ||
+        !Array.isArray(instance.inspection.layers) ||
+        !instance.inspection.layers.length ||
+        !global.tf
+    ) {
+        return empty;
+    }
+
+    var layers = instance.inspection.layers;
+    var tf = global.tf;
+    var first = layers[0];
+
+    if (!first || !Array.isArray(first.inputShape)) {
+        return empty;
+    }
+
+    /* Control-Safe: Element/Value darf null/NaN sein. */
+    var rangeEl = instance.root.querySelector(".nsw-range");
+    var resEl = instance.root.querySelector(".nsw-resolution");
+    var range = Number(rangeEl && rangeEl.value) || 1;
+    var resolution = Number(resEl && resEl.value) || 13;
+
+    /*
+     * Start = Probe im Eingabe-Raum: ≤3D ein Gitter (→ Fläche),
+     * >3D deterministische Sample-Punkte. Dieses Gitter wird dann durch
+     * alle Layer gewarpt — jede Ebene ist damit eine (verzerrte) Fläche.
+     */
+    var domain = createDomainPoints(first.inputShape, range, resolution);
+    var current = domain.points;
+
+    if (!current || !current.length) {
+        return empty;
+    }
+
+    /*
+     * Playhead (Abspielen): bei amount < 1 nur einen Teil der Eingabepunkte
+     * zeigen — jeder Layer zeigt dann das Bild dieses Teils. So "fließt" die
+     * Eingabe sichtbar durch das Netzwerk.
+     */
+    if (typeof amount === "number" && isFinite(amount) && amount < 1) {
+        var nShow = Math.max(
+            1,
+            Math.ceil(current.length * Math.max(0, amount))
+        );
+
+        if (nShow < current.length) {
+            current = current.slice(0, nShow);
+        }
+    }
+
+    var levels = [current];
+    var dims = [domain.flatDim];
+
+    for (var k = 0; k < layers.length; k++) {
+        var tIn = null;
+        var tOut = null;
+
+        var inNative =
+            Array.isArray(layers[k].inputShape)
+                ? layers[k].inputShape.slice(1)
+                : [];
+
+        if (!inNative.length || !current.length) {
+            break;
+        }
+
+        /*
+         * Reihenlänge muss zur nativen Eingabe-Dimension passen, sonst
+         * würde der Layer-Call sinnlos fehlschlagen — dann abbrechen.
+         */
+        var flatNeed = inNative.reduce(function (a, b) { return a * b; }, 1);
+
+        if (
+            !Array.isArray(current[0]) ||
+            current[0].length !== flatNeed
+        ) {
+            break;
+        }
+
+        try {
+            tIn = tf.tensor(
+                current.map(function (flat) {
+                    return reshapeToShape(flat, inNative);
+                }),
+                [current.length].concat(inNative)
+            );
+
+            if (typeof layers[k].layer.call === "function") {
+                tOut = layers[k].layer.call(tIn);
+            }
+
+            if (Array.isArray(tOut)) {
+                tOut = tOut[0];
+            }
+
+            if (tOut) {
+                var rows = tensorRowsFlatten(tOut);
+
+                if (
+                    Array.isArray(rows) &&
+                    rows.length === current.length &&
+                    Array.isArray(rows[0])
+                ) {
+                    current = rows;
+                    levels.push(rows);
+                    dims.push(rows[0].length || 0);
+                }
+            }
+        } catch (_) {
+            break;
+        } finally {
+            if (tIn && tIn.dispose) {
+                tIn.dispose();
+            }
+
+            if (tOut && tOut.dispose) {
+                tOut.dispose();
+            }
+        }
+    }
+
+    return {
+        levels: levels,
+        dims: dims,
+        isGrid: domain.isGrid,
+        gridDim: domain.gridDim,
+        resolution: domain.resolution,
+        synthetic: !domain.isGrid
+    };
+}
+
+/*
+ * Zeichnet die (verzerrte) Gitterfläche einer Ebene als Linien, damit ein
+ * 2D-Layer nicht nur Punkte, sondern eine FLÄCHE zeigt. Die Punkte stehen
+ * in Gitter-Reihenfolge (index = y*resolution + x).
+ */
+function levelSurfaceTraces(pts, gridDim, resolution, color) {
+    var out = [];
+
+    function line(idxFn, count) {
+        var xs = [], ys = [], zs = [];
+
+        for (var t = 0; t < count; t++) {
+            var p = pts[idxFn(t)];
+            xs.push(p[0]);
+            ys.push(p[1]);
+            zs.push(p[2]);
+        }
+
+        return {
+            type: "scatter3d",
+            mode: "lines",
+            x: xs,
+            y: ys,
+            z: zs,
+            line: { color: color, width: 2 },
+            opacity: 0.5,
+            hoverinfo: "skip",
+            showlegend: false
+        };
+    }
+
+    if (gridDim === 1) {
+        out.push(line(function (t) { return t; }, pts.length));
+    } else if (gridDim === 2 && pts.length === resolution * resolution) {
+        for (var y = 0; y < resolution; y++) {
+            out.push(
+                line(
+                    function (x) { return y * resolution + x; },
+                    resolution
+                )
+            );
+        }
+
+        for (var x = 0; x < resolution; x++) {
+            out.push(
+                line(
+                    function (y) { return y * resolution + x; },
+                    resolution
+                )
+            );
+        }
+    }
+
+    return out;
+}
+
+/*
+ * GEFÜLLTE, halbtransparente 2D-Referenz-Oberfläche (Koordinaten-Ebene)
+ * für einen Layer, der nach R2 abbildet.
+ *
+ * Wichtig: Eine 1D->2D-Abbildung erzeugt mathematisch nur eine KURVE in
+ * einer Ebene — der Input hat nur eine Freiheitsgrade. Um trotzdem eine
+ * sichtbare FLÄCHE zu zeigen, zeichnen wir die 2D-Ebene des Outputs als
+ * gefüllte, durchscheinende Oberfläche; die eigentliche Kurve (das Bild des
+ * 1D-Inputs) liegt als Punkte darauf. Damit liest sich der mittlere Layer
+ * als "Fläche mit einer Kurve drin" statt als "nur eine Linie".
+ *
+ * Die Fläche bekommt eine winzige Z-Rampe (0.0005 pro Zelle), damit sie in
+ * Plotly zuverlässig gerendert wird (perfekt flache Flächen können je nach
+ * Blickwinkel verschwinden) — die Rampe ist visuell nicht wahrnehmbar.
+ */
+function referenceSurface(levelZ, size, divisions, color) {
+    if (!isFinite(levelZ) || !isFinite(size) || size <= 0) {
+        return [];
+    }
+
+    /*
+     * Absichtlich GROBES Gitter (wenige Zellen): Ein feines 10×10-Netz
+     * zeigt seine Triangulierung als "Spinnennetz". Mit wenigen Zellen ist
+     * die Fläche eine saubere, durchscheinende Platte ohne Mesh-Linien.
+     */
+    divisions = Math.max(1, Math.min(4, Math.floor(divisions) || 2));
+    var half = size / 2;
+    var n = divisions + 1;
+    var xs = [];
+    var zgrid = [];
+
+    for (var i = 0; i < n; i++) {
+        xs.push(-half + (size * i) / divisions);
+    }
+
+    for (var r = 0; r < n; r++) {
+        var row = [];
+        for (var c = 0; c < n; c++) {
+            row.push(levelZ + (r + c) * 0.0005);
+        }
+        zgrid.push(row);
+    }
+
+    return [
+        {
+            type: "surface",
+            x: xs,
+            y: xs,
+            z: zgrid,
+            opacity: 0.14,
+            showscale: false,
+            hoverinfo: "skip",
+            showsurface: true,
+            lighting: { ambient: 1, diffuse: 0, specular: 0, roughness: 1 },
+            colorscale: [[0, color], [1, color]]
+        }
+    ];
+}
+
+function buildFlowView(amount) {
+    var flow = buildFlowLevels(amount);
+
+    if (
+        !flow ||
+        !Array.isArray(flow.levels) ||
+        !flow.levels.length
+    ) {
+        return { traces: [], layout: {}, levels: 0, meta: flow || {} };
+    }
+
+    var mode =
+        instance.options && instance.options.dimReduction
+            ? instance.options.dimReduction
+            : "pca";
+    var R = 1;
+    var layers =
+        (instance.inspection && instance.inspection.layers) || [];
+
+    var numLevels = flow.levels.length;
+    var placed = [];
+    var anyPca = false;
+
+    for (var k = 0; k < numLevels; k++) {
+        var red = reduceTo3D(
+            flow.levels[k],
+            flow.dims[k],
+            mode
+        );
+
+        anyPca = anyPca || !!red.usedPca;
+
+        var xyz = red.xyz;
+        var cx = 0, cy = 0;
+
+        for (var p = 0; p < xyz.length; p++) {
+            cx += xyz[p][0];
+            cy += xyz[p][1];
+        }
+
+        if (xyz.length) {
+            cx /= xyz.length;
+            cy /= xyz.length;
+        }
+
+        var maxn = 0;
+
+        for (var p2 = 0; p2 < xyz.length; p2++) {
+            var dx = xyz[p2][0] - cx;
+            var dy = xyz[p2][1] - cy;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > maxn) {
+                maxn = dist;
+            }
+        }
+
+        var s = maxn > 1e-9 ? (R / maxn) : 1;
+        /* z ist diskret der Layer-Index: 0 = Eingabe, 1 = Layer 1, … */
+        var levelZ = k;
+
+        /* Ebene ist flach bei levelZ (z-Feature ist nach der 2D-Reduktion 0). */
+        var norm = xyz.map(function (pt) {
+            return [
+                (pt[0] - cx) * s,
+                (pt[1] - cy) * s,
+                levelZ
+            ];
+        });
+
+        placed.push({
+            xyz: norm,
+            color4: red.color4,
+            dim: flow.dims[k],
+            levelZ: levelZ,
+            pca: !!red.usedPca,
+            cx: cx,
+            cy: cy,
+            s: s
+        });
+    }
+
+    var traces = [];
+    var maxZ = Math.max(0, numLevels - 1);
+
+    var annotations = [];
+
+    for (var k2 = 0; k2 < numLevels; k2++) {
+        var color = FLOW_COLORS[k2 % FLOW_COLORS.length];
+
+        var tInput = t("nsw_input", "Eingabe");
+        var tGrid = t("nsw_grid", "Gitter");
+        var tExample = t("nsw_example", "(Beispiel)");
+        var tLayer = t("nsw_layer", "Layer");
+
+        var label =
+            k2 === 0
+                ? tInput +
+                  (flow.isGrid ? " · " + tGrid : " " + tExample) +
+                  " · R" + flow.dims[0]
+                : tLayer + " " + (k2 - 1) +
+                  " · " + (layers[k2 - 1] ? layers[k2 - 1].name : k2 - 1) +
+                  " · R" + flow.dims[k2];
+
+        traces.push(
+            addPointTrace(
+                placed[k2].xyz,
+                label,
+                color,
+                0.95
+            )
+        );
+
+        /*
+         * Gitter-Ebenen als Fläche zeichnen (Linien durchs verzerrte Gitter),
+         * damit ein 2D-Layer eine Fläche und keine Punktewolke zeigt.
+         */
+        if (flow.isGrid) {
+            var expected =
+                flow.gridDim === 1
+                    ? flow.resolution
+                    : (flow.gridDim === 2
+                        ? flow.resolution * flow.resolution
+                        : 0);
+
+            if (
+                expected > 0 &&
+                placed[k2].xyz.length === expected
+            ) {
+                traces.push.apply(
+                    traces,
+                    levelSurfaceTraces(
+                        placed[k2].xyz,
+                        flow.gridDim,
+                        flow.resolution,
+                        color
+                    )
+                );
+            }
+        }
+
+        /*
+         * Referenzebene für 2D-Abbildungen, die KEINE volle Fläche sind
+         * (z. B. 1D-Eingabe -> Kurve in der 2D-Ebene). Zeigt, dass es eine
+         * Kurve IN einer Ebene ist. Volle Gitter-Flächen zeigen wir so nicht
+         * doppelt.
+         */
+        var isFullSurface =
+            flow.isGrid &&
+            flow.gridDim === 2 &&
+            placed[k2].xyz.length === flow.resolution * flow.resolution;
+
+        if (
+            k2 >= 1 &&
+            flow.dims[k2] === 2 &&
+            placed[k2].xyz.length &&
+            !isFullSurface
+        ) {
+            traces.push.apply(
+                traces,
+                referenceSurface(
+                    placed[k2].levelZ,
+                    2.8,
+                    10,
+                    "rgba(150,172,214,1)"
+                )
+            );
+        }
+
+        annotations.push({
+            x: 1.75,
+            y: 0,
+            z: placed[k2].levelZ,
+            text: "<b>" + label + "</b>",
+            showarrow: false,
+            xanchor: "left",
+            font: { color: color, size: 13 }
+        });
+
+        if (k2 < numLevels - 1) {
+            var from = placed[k2].xyz;
+            var to = placed[k2 + 1].xyz;
+            var nConn = Math.min(from.length, to.length);
+            var lx = [];
+            var ly = [];
+            var lz = [];
+
+            /*
+             * Nur einen Ausschnitt der Verbindungslinien zeichnen (max. ~12),
+             * sonst ballen sich bei kompakten Ebenen zu viele Linien im
+             * Zentrum ("viele Punkte/Linien aus dem Zentrum"). Dünn + dezent,
+             * damit sie als Hinweis wirken und nicht dominiert.
+             */
+            var maxLines = 12;
+            var step = Math.max(1, Math.ceil(nConn / maxLines));
+
+            for (var i = 0; i < nConn; i += step) {
+                lx.push(from[i][0], to[i][0], NaN);
+                ly.push(from[i][1], to[i][1], NaN);
+                lz.push(from[i][2], to[i][2], NaN);
+            }
+
+            if (lx.length) {
+                traces.push({
+                    type: "scatter3d",
+                    mode: "lines",
+                    name: "→ " + label,
+                    x: lx,
+                    y: ly,
+                    z: lz,
+                    line: {
+                        color: "rgba(205,220,255,.20)",
+                        width: 1.5,
+                        dash: "dot"
+                    },
+                    showlegend: false,
+                    hoverinfo: "skip"
+                });
+            }
+        }
+    }
+
+    var layout = {
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        margin: { l: 0, r: 0, t: 62, b: 0 },
+        title: {
+            text:
+                "<b>" + t("nsw_flow_title", "Netzwerk-Flow") + "</b> · " +
+                fmt("nsw_layers", "%d Layer", [layers.length]) + " · " +
+                (flow.isGrid
+                    ? fmt("nsw_grid_points", "%d Gitterpunkte / Fläche", [flow.levels[0].length])
+                    : fmt("nsw_points", "%d Punkte", [flow.levels[0].length])),
+            font: { color: "#e8eefc", size: 17 }
+        },
+        legend: { font: { color: "#dbe6ff" } },
+        scene: {
+            bgcolor: "#08101f",
+            aspectmode: "cube",
+            camera: { eye: { x: 2.3, y: -1.3, z: 0.7 } },
+            xaxis: {
+                title: "D1",
+                range: [-1.7, 1.7],
+                color: "#8fa4c9",
+                gridcolor: "#263754",
+                zerolinecolor: "#405477"
+            },
+            yaxis: {
+                title: "D2",
+                range: [-1.7, 1.7],
+                color: "#8fa4c9",
+                gridcolor: "#263754",
+                zerolinecolor: "#405477"
+            },
+            zaxis: {
+                title: t("nsw_axis_layer", "Layer"),
+                range: [-0.6, maxZ + 0.6],
+                tickvals: (function () {
+                    var tv = [];
+                    for (var t = 0; t <= maxZ; t++) {
+                        tv.push(t);
+                    }
+                    return tv;
+                })(),
+                color: "#8fa4c9",
+                gridcolor: "#263754",
+                zerolinecolor: "#405477"
+            }
+        },
+        annotations: annotations,
+        transition: { duration: 650, easing: "cubic-in-out" }
+    };
+
+    return {
+        traces: traces,
+        layout: layout,
+        levels: numLevels,
+        meta: flow,
+        pca: anyPca
+    };
+}
+
+function flowNeedsPca() {
+    if (!instance || !instance.inspection) {
+        return false;
+    }
+
+    var mode =
+        (instance.options && instance.options.dimReduction) || "pca";
+
+    /*
+     * Nur die PCA-Projektions-Modi verlieren die originalen Dimensionen.
+     * "first3" zeigt echte (Teil-)Dimensionen und braucht keine Warnung.
+     */
+    var isProjection = mode === "pca" || mode === "4dc";
+    return isProjection && (instance.inspection.maxDim || 0) > 2;
+}
+
+/*
+ * PCA-Gate-UI: "ask" (Fragen), "declined" (abgelehnt), "warn" (gewarnt,
+ * Plot sichtbar) oder "none". Der Plot wird nur bei "warn"/"none" gezeigt.
+ */
+function setPcaAsk(state) {
+    if (!instance || !instance.root) {
+        return;
+    }
+
+    var root = instance.root;
+    var ask = root.querySelector(".nsw-pca-ask");
+    var declined = root.querySelector(".nsw-pca-declined");
+    var warn = root.querySelector(".nsw-pca-warn");
+    var plot = root.querySelector(".nsw-plot");
+
+    if (ask) {
+        ask.style.display = state === "ask" ? "block" : "none";
+    }
+
+    if (declined) {
+        declined.style.display = state === "declined" ? "block" : "none";
+    }
+
+    if (warn) {
+        warn.style.display = state === "warn" ? "block" : "none";
+    }
+
+    if (plot) {
+        plot.style.display =
+            (state === "ask" || state === "declined") ? "none" : "block";
+    }
+}
+
+function renderFlow(morph, amount) {
+    if (!instance || !instance.inspection.ok) {
+        return false;
+    }
+
+    /*
+     * PCA-Gate: Braucht das Modell eine Projektion (dim>2 mit PCA), fragen
+     * wir BEVOR wir rendern — die Koordinaten wären dann nicht die
+     * originalen Dimensionen. Einmal pro Modell entschieden.
+     */
+    if (flowNeedsPca()) {
+        var choice = instance.pcaChoice || "pending";
+
+        if (choice === "pending") {
+            if (!instance.pcaAskShown) {
+                setPcaAsk("ask");
+                instance.pcaAskShown = true;
+            }
+
+            return false;
+        }
+
+        if (choice === "no") {
+            if (!instance.pcaDeclinedShown) {
+                setPcaAsk("declined");
+                instance.pcaDeclinedShown = true;
+            }
+
+            return false;
+        }
+
+        /* choice === "yes": Warnung zeigen, dann normal rendern. */
+        setPcaAsk("warn");
+    } else {
+        setPcaAsk("none");
+        instance.pcaChoice = "pending";
+        instance.pcaAskShown = false;
+        instance.pcaDeclinedShown = false;
+    }
+
+    var amt =
+        typeof amount === "number" && isFinite(amount)
+            ? Math.max(0, Math.min(1, amount))
+            : 1;
+
+    var view = buildFlowView(amt);
+
+    applyPlot(view.traces, view.layout, !!morph);
+
+    var status = instance.root.querySelector(".nsw-status");
+
+    if (status) {
+        status.textContent =
+            fmt("nsw_levels", "%d Ebenen", [view.levels]) + " · " +
+            fmt("nsw_points", "%d Punkte", [view.meta.levels[0].length]) +
+            " · " + t("nsw_flow_title", "Netzwerk-Flow");
+    }
+
+    return true;
+}
+
+function flowFingerprint(inspection) {
+    var parts = ["flow:" + inspection.layers.length];
+
+    for (var i = 0; i < inspection.layers.length; i++) {
+        parts.push(
+            layerFingerprint(inspection.layers[i].layer)
+        );
+    }
+
+    return parts.join("|");
+}
+
+function renderCurrent(amount, animate, morph) {
     if (!instance || !instance.inspection.ok) {
         return false;
     }
@@ -1346,7 +3251,7 @@ function renderCurrent(amount, animate) {
         );
 
     var domain = createDomainPoints(
-        layerInfo.inputDimension,
+        layerInfo.inputShape,
         range,
         resolution
     );
@@ -1368,24 +3273,42 @@ function renderCurrent(amount, animate) {
     );
 
     if (!space) {
+        /*
+         * Einzelner Fehlschlag (z. B. kurzzeitig disposed Kernel während
+         * der App das Modell neu baut) reißt den Visualizer NICHT mehr
+         * ab — sonst flickert er bei jedem Model-Update. Erst nach
+         * anhaltendem Fehlschlag aufgeben.
+         */
+        instance.failStreak =
+            (instance.failStreak || 0) + 1;
+
         logDebug(
-            "Layer wird übersprungen, weil er numerisch nicht ausgewertet werden konnte:",
+            "Layer wird übersprungen (Fehler " +
+            instance.failStreak + "x), weil er numerisch nicht " +
+            "ausgewertet werden konnte:",
             layerInfo.name
         );
 
-        removeVisualizer(
-            "Layer " + layerInfo.name +
-            " konnte nicht numerisch ausgewertet werden."
-        );
+        if (instance.failStreak >= 8) {
+            removeVisualizer(
+                "Layer " + layerInfo.name +
+                " konnte nicht numerisch ausgewertet werden."
+            );
+        }
 
         return false;
     }
 
+    instance.failStreak = 0;
     instance.space = space;
 
     var traces = createTraces(
         space,
-        amount
+        amount,
+        instance.options.dimReduction
+    );
+    traces = traces.concat(
+        buildInputDataTraces(layerInfo, space, amount)
     );
 
     /*
@@ -1406,28 +3329,44 @@ function renderCurrent(amount, animate) {
         }
     } catch (_) {}
 
+    /*
+     * Datenbasierte, symmetrische Ansicht um 0. Gedämpft geglättet,
+     * damit der Raum nicht bei jedem Update springt; manuell über die
+     * Ansicht-Skala anpassbar.
+     */
+    var extent = maxAbsCoord(space.output);
+
+    if (instance.options.showData && instance.layerIndex === 0) {
+        var dataRows = getInputDataPoints();
+
+        if (dataRows) {
+            extent = Math.max(extent, maxAbsCoord(dataRows));
+        }
+    }
+
+    var viewScale =
+        Number(
+            instance.root.querySelector(".nsw-viewscale").value
+        ) || 1;
+
+    var targetHalf = Math.max(0.5, extent * 1.15);
+
+    instance.autoHalf =
+        isNumber(instance.autoHalf) && instance.autoHalf > 0
+            ? lerp(instance.autoHalf, targetHalf, 0.3)
+            : targetHalf;
+
+    var halfRange = instance.autoHalf * viewScale;
+
     var layout = createLayout(
         layerInfo,
         space,
         amount,
-        currentCamera
+        currentCamera,
+        halfRange
     );
 
-    var config = {
-        responsive: true,
-        displaylogo: false,
-        modeBarButtonsToRemove: [
-            "toImage",
-            "sendDataToCloud"
-        ]
-    };
-
-    global.Plotly.react(
-        instance.plot,
-        traces,
-        layout,
-        config
-    );
+    applyPlot(traces, layout, !!morph);
 
     updateMeta(layerInfo, space);
 
@@ -1435,12 +3374,11 @@ function renderCurrent(amount, animate) {
         ".nsw-status"
     );
 
-    status.textContent =
-        instance.inspection.layers.length +
-        " kompatible Layer · " +
-        "Prüfung alle " +
-        instance.options.pollInterval +
-        " ms";
+    status.textContent = fmt(
+        "nsw_status_check",
+        "%d kompatible Layer · Prüfung alle %d ms",
+        [instance.inspection.layers.length, instance.options.pollInterval]
+    );
 
     logDebug(
         "Plot aktualisiert:",
@@ -1452,16 +3390,20 @@ function renderCurrent(amount, animate) {
 
 function renderLayerImmediately() {
     instance.animationToken++;
-    var ok = renderCurrent(1, false);
+
+    /*
+     * Es gibt nur noch EINEN Blick: der vollständige Netzwerk-Flow —
+     * alle Layer übereinander, immer. Der "Layer"- und "Modus"-Selector
+     * sind entfernt; renderFlow() wird immer verwendet.
+     */
+    var ok = renderFlow(true);
 
     if (ok) {
-        var layerInfo =
-            instance.inspection.layers[instance.layerIndex];
-
         instance.lastFingerprint =
-            layerInfo
-                ? layerFingerprint(layerInfo.layer)
-                : null;
+            flowFingerprint(instance.inspection);
+
+        instance.hasRendered = true;
+        instance.lastRenderedVisible = isPlotVisible();
     }
 
     return ok;
@@ -1473,6 +3415,8 @@ function animateCurrentLayer() {
     }
 
     var token = ++instance.animationToken;
+    /* Play-Animation läuft im React-Pfad — laufendes Data-Morph stoppen. */
+    instance.morphToken++;
     var start = performance.now();
     var duration = instance.options.animationDuration;
 
@@ -1487,14 +3431,14 @@ function animateCurrentLayer() {
             1
         );
 
-        renderCurrent(amount, true);
+        renderFlow(true, amount);
 
         if (amount < 1) {
             requestAnimationFrame(frame);
         }
     }
 
-    renderCurrent(0, false);
+    renderFlow(false, 0);
     requestAnimationFrame(frame);
 }
 
@@ -1502,6 +3446,11 @@ function updateLayerSelect() {
     var select = instance.root.querySelector(
         ".nsw-layer"
     );
+
+    /* Der Layer-Selector ist entfernt — nichts mehr zu füllen. */
+    if (!select) {
+        return;
+    }
 
     select.innerHTML = "";
 
@@ -1528,16 +3477,91 @@ function updateLayerSelect() {
     select.value = instance.layerIndex;
 }
 
+/*
+ * Dim-Reduktion ist nur relevant, wenn mindestens ein Layer mehr als 3
+ * Feature-Dimensionen hat. Bei kleinen Modellen wird der Regler
+ * automatisch deaktiviert (graue out), damit nichts verwirrt.
+ */
+function syncDimReductionControl() {
+    if (!instance || !instance.root) {
+        return;
+    }
+
+    var sel = instance.root.querySelector(".nsw-dimred");
+
+    if (!sel) {
+        return;
+    }
+
+    var needs = false;
+
+    for (var i = 0; i < instance.inspection.layers.length; i++) {
+        var L = instance.inspection.layers[i];
+
+        if (
+            (L.inputDimension || 0) > 3 ||
+            (L.outputDimension || 0) > 3
+        ) {
+            needs = true;
+            break;
+        }
+    }
+
+    sel.disabled = !needs;
+    sel.style.opacity = needs ? "1" : "0.4";
+    sel.title = needs
+        ? ""
+        : t(
+            "nsw_dimred_tooltip",
+            "Nur nötig, wenn ein Layer mehr als 3 Dimensionen hat."
+        );
+}
+
+function triggerTranslations() {
+    /*
+     * Das Panel wird zur Laufzeit gebaut, also muss die Translation selbst
+     * angestoßen werden (update_translations() scannt TRANSLATEME_-Klassen).
+     */
+    try {
+        if (
+            global.update_translations &&
+            typeof global.update_translations === "function"
+        ) {
+            global.update_translations();
+        }
+    } catch (_) {}
+}
+
+/*
+ * Übersetzt einen Key über das globale Translation-System (language[lang]).
+ * Fällt auf den mitgegebenen Fallback (oder den Key selbst) zurück.
+ */
+function t(key, fallback) {
+    try {
+        if (
+            global.language &&
+            global.lang &&
+            global.language[global.lang] &&
+            global.language[global.lang][key]
+        ) {
+            return global.language[global.lang][key];
+        }
+    } catch (_) {}
+
+    return fallback != null ? fallback : key;
+}
+
+/* Wie t(), aber ersetzt %d-Platzhalter nacheinander durch nums. */
+function fmt(key, fallback, nums) {
+    var s = t(key, fallback);
+    var i = 0;
+    return String(s).replace(/%d/g, function () {
+        return i < nums.length ? String(nums[i++]) : "%d";
+    });
+}
+
 function bindEvents() {
     var root = instance.root;
-
-    root.querySelector(".nsw-layer").onchange =
-        function (event) {
-            instance.layerIndex =
-                Number(event.target.value);
-
-            renderLayerImmediately();
-        };
 
     root.querySelector(".nsw-range").oninput =
         function (event) {
@@ -1555,15 +3579,49 @@ function bindEvents() {
             renderLayerImmediately();
         };
 
-    root.querySelector(".nsw-play").onclick =
-        function () {
-            animateCurrentLayer();
+    root.querySelector(".nsw-dimred").onchange =
+        function (event) {
+            instance.options.dimReduction = event.target.value;
+            instance.pcaChoice = "pending";
+            instance.pcaAskShown = false;
+            instance.pcaDeclinedShown = false;
+            renderLayerImmediately();
         };
 
     root.querySelector(".nsw-refresh").onclick =
         function () {
-            checkNow();
+            checkNow(true);
         };
+
+    var yes = root.querySelector(".nsw-pca-yes");
+
+    if (yes) {
+        yes.onclick = function () {
+            instance.pcaChoice = "yes";
+            instance.pcaAskShown = false;
+            renderLayerImmediately();
+        };
+    }
+
+    var no = root.querySelector(".nsw-pca-no");
+
+    if (no) {
+        no.onclick = function () {
+            instance.pcaChoice = "no";
+            instance.pcaAskShown = false;
+            renderLayerImmediately();
+        };
+    }
+
+    var yesAgain = root.querySelector(".nsw-pca-yes-again");
+
+    if (yesAgain) {
+        yesAgain.onclick = function () {
+            instance.pcaChoice = "yes";
+            instance.pcaDeclinedShown = false;
+            renderLayerImmediately();
+        };
+    }
 
     /*
      * Merken, wann der Nutzer zuletzt die Kamera bedient hat, damit wir
@@ -1588,18 +3646,110 @@ function ensureMounted() {
     return false;
 }
 
-function setTabVisible(visible) {
+/*
+ * Der Tab ist IMMER sichtbar — unabhängig davon, ob das aktuelle Modell
+ * plottbar ist. Im Panel wird entweder der Plot oder eine Erklärung
+ * angezeigt. Wir zeigen ihn genau einmal (Flag), damit update_translations()
+ * nicht bei jedem Poll neu läuft. Falls beim ersten Aufruf das DOM noch
+ * nicht da ist, probiert der nächste Poll es erneut.
+ */
+var tabShownOk = false;
+
+function setTabVisible() {
+    if (tabShownOk) {
+        return;
+    }
+
     try {
-        if (visible) {
-            if (typeof global.show_tab_label === "function") {
-                global.show_tab_label("space_warps_tab_label");
-            }
-        } else {
-            if (typeof global.hide_tab_label === "function") {
-                global.hide_tab_label("space_warps_tab_label");
-            }
+        if (typeof global.show_tab_label === "function") {
+            global.show_tab_label("space_warps_tab_label");
+            tabShownOk = true;
         }
     } catch (_) {}
+}
+
+function getContainer() {
+    var target = resolveTarget(instanceOptions.target);
+
+    if (target) {
+        return target;
+    }
+
+    var c = document.createElement("div");
+    document.body.appendChild(c);
+    return c;
+}
+
+/*
+ * Zeigt eine kurze Erklärung im Panel (z. B. "Modell nicht plottbar"),
+ * wenn kein Plot erzeugt werden kann.
+ */
+function showStatusMessage(text) {
+    var container = getContainer();
+
+    if (!container) {
+        return;
+    }
+
+    /*
+     * Gleiches Text-Meldung bereits da? Dann nichts neu bauen (sonst
+     * churnen wir bei jedem Poll das DOM).
+     */
+    var existing = container.querySelector(".nsw-status-body");
+
+    if (existing && existing.textContent === text) {
+        return;
+    }
+
+    container.innerHTML = "";
+    injectStyles();
+
+    var root = document.createElement("section");
+    root.className = "nsw-root";
+
+    var head = document.createElement("div");
+    head.className = "nsw-header";
+
+    var title = document.createElement("div");
+    title.className = "nsw-title";
+    title.textContent = "Neural Space Warps";
+    head.appendChild(title);
+
+    var body = document.createElement("div");
+    body.className = "nsw-status-body";
+    body.textContent = text;
+    root.appendChild(head);
+    root.appendChild(body);
+
+    container.appendChild(root);
+}
+
+/*
+ * Ist der Plot gerade sichtbar? (Tab aktiv + nicht display:none.)
+ * Wenn nicht, rechnen wir nichts — der letzte Stand bleibt im Div.
+ */
+function isPlotVisible() {
+    if (!instance || !instance.plot) {
+        return false;
+    }
+
+    try {
+        var el = instance.plot;
+        if (el.offsetWidth <= 0 || el.offsetHeight <= 0) {
+            return false;
+        }
+
+        if (
+            global.getComputedStyle &&
+            global.getComputedStyle(el).display === "none"
+        ) {
+            return false;
+        }
+
+        return true;
+    } catch (_) {
+        return false;
+    }
 }
 
 function removeVisualizer(reason) {
@@ -1642,7 +3792,9 @@ function removeVisualizer(reason) {
 
     global[INSTANCE_KEY] = null;
 
-    setTabVisible(false);
+    /*
+     * Tab bleibt sichtbar — das Panel zeigt danach eine Erklärung.
+     */
 
     logDebug(
         "Visualizer vollständig entfernt."
@@ -1695,8 +3847,21 @@ function mountVisualizer(inspection) {
         space: null,
         pollTimer: null,
         animationToken: 0,
+        morphToken: 0,
         lastFingerprint: null,
-        userCamAt: 0
+        hasRendered: false,
+        hasPlotted: false,
+        lastPlotSig: null,
+        lastLayoutSig: null,
+        lastPlotXYZ: null,
+        displayXYZ: null,
+        autoHalf: 0,
+        lastRenderedVisible: false,
+        userCamAt: 0,
+        pcaChoice: "pending",
+        pcaAskShown: false,
+        pcaDeclinedShown: false,
+        lastLang: null
     };
 
     global[INSTANCE_KEY] = {
@@ -1707,17 +3872,44 @@ function mountVisualizer(inspection) {
     instance.plot = root.querySelector(".nsw-plot");
 
     updateLayerSelect();
+    syncDimReductionControl();
     bindEvents();
+    triggerTranslations();
+
+    /*
+     * Immer einen Erst-Paint anlegen — auch, falls der Tab gerade
+     * inaktiv ist. Sobald der Plot sichtbar wird, korrigiert der Poll
+     * das Layout (re-Render), damit nichts "leer" bleibt.
+     */
     renderLayerImmediately();
 
     lastVisibleReason = "";
-    setTabVisible(true);
+    setTabVisible();
 
     logInfo(
         "SpaceWarps aktiv: " +
         inspection.layers.length +
         " kompatible Layer. Tab 'Space Warps' eingeblendet."
     );
+
+    /*
+     * Struktur-Details einmalig beim Mount (debug) — nicht bei jedem Poll.
+     */
+    logDebug(
+        "Model-Struktur erkannt (" +
+        inspection.layers.length + " Layer):"
+    );
+
+    for (var d = 0; d < inspection.layers.length; d++) {
+        var li = inspection.layers[d];
+        logDebug(
+            "  Layer " + d + " " + li.name +
+            " " + shapeText(li.inputShape) +
+            "->" + shapeText(li.outputShape) +
+            " (" + li.inputDimension + "D -> " +
+            li.outputDimension + "D)"
+        );
+    }
 }
 
 var lastVisibleReason = "";
@@ -1731,19 +3923,32 @@ function reportReason(reason) {
     logInfo("SpaceWarps verborgen: " + reason);
 }
 
-function checkNow() {
+function checkNow(force) {
+    /*
+     * Tab immer sicherstellen — rettet auch den Fall, dass start() vor dem
+     * Tab-DOM lief. Läuft dank Flag nur einmal wirklich.
+     */
+    setTabVisible();
+
     var model = getCurrentModel(
         instanceOptions
     );
 
     if (!model) {
-        reportReason("Kein Modell vorhanden");
+        reportReason(t("nsw_no_model", "Kein Modell vorhanden"));
 
         if (instance) {
             removeVisualizer(
-                "Modell fehlt."
+                t("nsw_model_missing", "Modell fehlt.")
             );
         }
+
+        showStatusMessage(
+            t(
+                "nsw_no_model_msg",
+                "Noch kein Modell vorhanden. Baue oder lade ein Modell, um die Layer-Räume zu sehen."
+            )
+        );
 
         return false;
     }
@@ -1762,6 +3967,14 @@ function checkNow() {
             );
         }
 
+        showStatusMessage(
+            t(
+                "nsw_not_plottable",
+                "Aktuelles Modell ist hier nicht plottbar: "
+            ) +
+            inspection.reason
+        );
+
         return false;
     }
 
@@ -1773,10 +3986,15 @@ function checkNow() {
         return true;
     }
 
+    /*
+     * Nur bei echter Architektur-Änderung (Layer-Anzahl/-Namen/-Shapes)
+     * neu aufbauen. Wenn die App dasselbe Modell-Objekt neu anlegt oder
+     * nur Gewichtungs-Tensoren ersetzt (selbe Architektur), bauen wir NICHT
+     * um — sonst flickert der Plot bei jedem Model-Update/Scroll.
+     */
     var changed =
         instance.inspection.signature !==
-        inspection.signature ||
-        instance.inspection.model !== model;
+        inspection.signature;
 
     if (changed) {
         logDebug(
@@ -1801,22 +4019,84 @@ function checkNow() {
     instance.inspection = inspection;
 
     if (instance.plot) {
-        var shownLayer = inspection.layers[instance.layerIndex];
-        var fp = layerFingerprint(
-            shownLayer ? shownLayer.layer : null
-        );
+        /*
+         * Rechnen nur, wenn der Plot wirklich sichtbar und verlegt ist.
+         * Unsichtbar → letzter Stand bleibt im Div, nichts wird berechnet.
+         * `force` (Tab-Klick, Refresh-Button) zwingt nur den Fingerprint-
+         * Check, nicht das Rendern in ein 0-Size-Div.
+         */
+        if (isPlotVisible()) {
+            var shownLayer = inspection.layers[instance.layerIndex];
+            var isFlow = instance.options.viewMode === "flow";
+            var fp = isFlow
+                ? flowFingerprint(inspection)
+                : layerFingerprint(
+                    shownLayer ? shownLayer.layer : null
+                );
 
-        var userRotating =
-            instance.userCamAt &&
-            (performance.now() - instance.userCamAt) < 1200;
+            /*
+             * Gewichte kurzzeitig weg (App baut Modell neu / disposed
+             * Kernel)? Dann jetzt NICHT rendern — der Versuch würde
+             * fehlschlagen und den Visualizer reißen. Nacher Poll
+             * erneut prüfen, wenn die Gewichte wieder da sind.
+             */
+            if (fp.indexOf("fp-err") !== -1) {
+                return true;
+            }
 
-        if (fp !== instance.lastFingerprint && !userRotating) {
-            logDebug(
-                "Gewichte geändert, berechne Raum neu:" +
-                (shownLayer ? shownLayer.name : "")
-            );
+            var userRotating =
+                instance.userCamAt &&
+                (performance.now() - instance.userCamAt) < 1200;
 
-            renderLayerImmediately();
+            /*
+             * War der letzte Render im Verborgenen (Tab inaktiv)? Dann
+             * jetzt neu zeichnen, damit das Layout korrekt ist — das ist
+             * der robuste "endlich sichtbar" -Fix.
+             */
+            var needsLayoutFix =
+                instance.hasRendered &&
+                instance.lastRenderedVisible === false;
+
+            /*
+             * Sprachwechsel? Das DOM (Toolbar/Dialog) übersetzt
+             * update_translations() selbst; der Plotly-Plot (Titel, Achsen,
+             * Layer-Labels, Status) muss dafür neu aufgebaut werden.
+             */
+            var curLang = (function () {
+                try {
+                    return (global && global.lang) || "";
+                } catch (_) {
+                    return "";
+                }
+            })();
+
+            var langChanged =
+                instance.hasRendered &&
+                instance.lastLang != null &&
+                curLang !== instance.lastLang;
+
+            var needRender =
+                !instance.hasRendered ||
+                !!force ||
+                needsLayoutFix ||
+                langChanged ||
+                fp !== instance.lastFingerprint;
+
+            if (
+                needRender &&
+                (!userRotating || !instance.hasRendered || needsLayoutFix)
+            ) {
+                logDebug(
+                    (needsLayoutFix ? "Layout-Fix (jetzt sichtbar), " :
+                     langChanged ? "Sprache geändert, " :
+                     instance.hasRendered ? "Gewichte geändert, " : "Erster ") +
+                    "berechne Raum neu:" +
+                    (shownLayer ? shownLayer.name : "")
+                );
+
+                renderLayerImmediately();
+                instance.lastLang = curLang;
+            }
         }
     }
 
@@ -1829,7 +4109,10 @@ var instanceOptions = {
     debug: false,
     pollInterval: 750,
     animationDuration: 1800,
-    autoCheck: true
+    autoCheck: true,
+    showData: false,
+    viewMode: "flow",
+    dimReduction: "pca"
 };
 
 function start(options) {
@@ -1841,9 +4124,19 @@ function start(options) {
         options
     );
 
+    /*
+     * Der Tab ist immer da — sofort nach dem Start, unabhängig vom Modell.
+     */
+    setTabVisible();
+
     if (!hasTF()) {
         logDebug(
             "Start abgebrochen: TensorFlow.js fehlt."
+        );
+
+        showStatusMessage(
+            "TensorFlow.js ist nicht geladen — der Visualizer kann " +
+            "keine Layer auswerten."
         );
 
         return api;
@@ -1852,6 +4145,10 @@ function start(options) {
     if (!hasPlotly()) {
         logDebug(
             "Start abgebrochen: Plotly fehlt."
+        );
+
+        showStatusMessage(
+            "Plotly ist nicht geladen — der 3D-Plot kann nicht gezeigt werden."
         );
 
         return api;
@@ -1866,7 +4163,9 @@ function start(options) {
 
         instanceOptions.pollTimer =
             setInterval(
-                checkNow,
+                function () {
+                    checkNow(false);
+                },
                 instanceOptions.pollInterval
             );
     }
@@ -1897,7 +4196,20 @@ function stop() {
 }
 
 function refresh() {
-    return checkNow();
+    checkNow(true);
+
+    /*
+     * Tab gerade erst angeklickt? Dann ist das Panel im selben Tick oft
+     * noch nicht verlegt (jQuery UI zeigt es nach dem inline-Handler).
+     * Ein kurzer Nachlauf holt den ersten Render, sobald es layout-gegriffen hat.
+     */
+    if (instance && instance.plot && !isPlotVisible()) {
+        setTimeout(function () {
+            if (instance && instance.plot) {
+                checkNow(true);
+            }
+        }, 90);
+    }
 }
 
 function destroy() {
