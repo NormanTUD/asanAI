@@ -6460,6 +6460,27 @@ window.bibData = {
 		year: 2026,
 		alternativetitle: "when latent-CoT superposition collapses"
 	},
+	"darcet2024registers": {
+		url: "https://arxiv.org/abs/2309.16588",
+		title: "Vision Transformers Need Registers",
+		author: "Timothée Darcet, Maxime Oquab, Julien Mairal, Piotr Bojanowski",
+		year: 2024,
+		alternativetitle: "register tokens as ViT working memory"
+	},
+	"cancedda2024sinks": {
+		url: "https://arxiv.org/abs/2402.09221",
+		title: "Spectral Filters, Dark Signals, and Attention Sinks",
+		author: "Nicola Cancedda",
+		year: 2024,
+		alternativetitle: "attention sinks as low-frequency dark signals"
+	},
+	"wong2025sinks": {
+		url: "https://arxiv.org/abs/2512.22213",
+		title: "On the Existence and Behavior of Secondary Attention Sinks",
+		author: "Jeffrey T. H. Wong, Cheng Zhang, Louis Mahon, Wayne Luk, Anton Isopoussu, Yiren Zhao",
+		year: 2025,
+		alternativetitle: "MLPs that synthesize sink vectors"
+	},
 	"ameisen2025circuittracing": {
 		url: "https://arxiv.org/abs/2503.12495",
 		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
