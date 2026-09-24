@@ -858,6 +858,10 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
 
+### The model as a machine that learns *inside* its forward pass
+
+The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. \cite[von Oswald et al., 2022]{vonoswald2022indc} showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights are, to first order, the very gradient of that error with respect to the in-context examples. A trained model has learned to become a **mesa-optimizer**: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
+
 ### Inference vs. Training: Two Modes of Operation
 
 While the architecture is identical in both modes, the behavior of the model differs fundamentally between **inference** and **training**:
