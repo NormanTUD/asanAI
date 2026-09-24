@@ -15598,7 +15598,7 @@ window.bibData = {
 		author: "Haldan K. Hartline, H. G. Wagner, F. Ratliff",
 		year: 1956,
 		journal: "The Journal of General Physiology",
-		url: "https://doi.org/10.1085/jgp.39.5.651",
+		url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2147566/",
 		alternativetitle: "Hartline, Wagner and Ratliff 1956 — lateral inhibition in the retina"
 	},
 	"lateral_inhibition_wiki": {
