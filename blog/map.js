@@ -183,7 +183,8 @@ function bootAtlas() {
 
 	// ── scene ─────────────────────────────────────────────────
 	var renderer, scene, camera, earth, moon, sun, planets = [];
-	var dotMesh, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
+	var dotMesh, dotGeo = null, dotHighlight = null, dotInstance = [], dotBaseColor = [], spotTargetIdx = -1;
+	var DOT_SIZE = 0.042, DOT_PAD = 0.006, DOT_PICK = 0.03, DOT_HL_SCALE = 0.12;
 	var threadGroup, threadObjs = [];
 	var starField, galaxyGroup, atmosphere, sunSp, sunBody, bgTexture = null, skySphere = null;
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
@@ -390,12 +391,12 @@ function bootAtlas() {
 				'}'
 			].join('\n')
 		});
-		new THREE.TextureLoader().load('earth_texture.png', function (tex) {
+		new THREE.TextureLoader().load('earth_texture.jpg', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
 			tex.needsUpdate = true;
 			earthDayNightMat.uniforms.dayMap.value = tex;
 		}, undefined, function (err) {
-			console.error('[atlas] GUARDRAIL 5: earth_texture.png failed to load:', err);
+			console.error('[atlas] GUARDRAIL 5: earth_texture.jpg failed to load:', err);
 		});
 		new THREE.TextureLoader().load('earth_night.jpg', function (tex) {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
@@ -916,49 +917,71 @@ function bootAtlas() {
 		scene.add(questionGroup);
 	}
 
-	// ── dots (instanced) ──────────────────────────────────────
+	// ── dots (soft-glow points) ───────────────────────────────
+	function makeDotTexture() {
+		var c = document.createElement('canvas');
+		var s = 64; c.width = c.height = s;
+		var g = c.getContext('2d');
+		var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+		grad.addColorStop(0.0, 'rgba(255,255,255,1)');
+		grad.addColorStop(0.35, 'rgba(255,255,255,0.95)');
+		grad.addColorStop(0.5, 'rgba(255,255,255,0.45)');
+		grad.addColorStop(0.75, 'rgba(255,255,255,0.12)');
+		grad.addColorStop(1.0, 'rgba(255,255,255,0)');
+		g.fillStyle = grad;
+		g.fillRect(0, 0, s, s);
+		return new THREE.CanvasTexture(c);
+	}
+
 	function buildDotsMesh() {
-		var geo = new THREE.SphereGeometry(0.02, 8, 6);
-		var mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-		dotMesh = new THREE.InstancedMesh(geo, mat, state.dots.length);
-		dotMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-		var dummy = new THREE.Object3D();
-		var col = new THREE.Color();
-		for (var i = 0; i < state.dots.length; i++) {
+		var n = state.dots.length;
+		var pos = new Float32Array(n * 3);
+		var col = new Float32Array(n * 3);
+		var cc = new THREE.Color();
+		for (var i = 0; i < n; i++) {
 			var d = state.dots[i];
 			dotInstance[i] = d;
-			col.set(TYPE_COLOR[d.type] || '#ffffff');
-			dotBaseColor[i] = col.clone();
-			dotMesh.setColorAt(i, col);
-			dummy.position.set(0, 0, -9999);
-			dummy.updateMatrix();
-			dotMesh.setMatrixAt(i, dummy.matrix);
+			pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = -9999;
+			cc.set(TYPE_COLOR[d.type] || '#ffffff');
+			dotBaseColor[i] = cc.clone();
+			col[i * 3] = cc.r; col[i * 3 + 1] = cc.g; col[i * 3 + 2] = cc.b;
 		}
-		if (dotMesh.instanceColor) { dotMesh.instanceColor.needsUpdate = true; }
+		dotGeo = new THREE.BufferGeometry();
+		var posAttr = new THREE.BufferAttribute(pos, 3);
+		posAttr.setUsage(THREE.DynamicDrawUsage);
+		dotGeo.setAttribute('position', posAttr);
+		var colAttr = new THREE.BufferAttribute(col, 3);
+		colAttr.setUsage(THREE.DynamicDrawUsage);
+		dotGeo.setAttribute('color', colAttr);
+		dotMesh = new THREE.Points(dotGeo, new THREE.PointsMaterial({
+			size: DOT_SIZE, sizeAttenuation: true, map: makeDotTexture(),
+			vertexColors: true, transparent: true, depthWrite: false
+		}));
+		dotMesh.frustumCulled = false;
+		dotHighlight = new THREE.Sprite(new THREE.SpriteMaterial({
+			map: dotMesh.material.map, color: 0xffffff, transparent: true,
+			opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending
+		}));
+		dotHighlight.scale.set(DOT_HL_SCALE, DOT_HL_SCALE, 1);
+		dotMesh.add(dotHighlight);
 		scene.add(dotMesh);
 	}
 
 	function updateDots() {
-		var dummy = new THREE.Object3D();
+		var pos = dotGeo.attributes.position.array;
 		var shown = 0;
 		for (var i = 0; i < state.dots.length; i++) {
 			var d = dotInstance[i];
-			var on = dotVisible(d);
-			if (on) {
-				var base = dotWorldPos(d, 0.004);
-				dummy.position.copy(base);
-				var sc = d.isAuthor ? 0.7 : 1.0;
-				if (i === spotTargetIdx) { sc *= 2.8; }
-				dummy.scale.set(sc, sc, sc);
+			if (dotVisible(d)) {
+				var base = dotWorldPos(d, DOT_PAD);
+				pos[i * 3] = base.x; pos[i * 3 + 1] = base.y; pos[i * 3 + 2] = base.z;
 				shown++;
 			} else {
-				dummy.position.set(0, 0, -9999);
-				dummy.scale.set(0.0001, 0.0001, 0.0001);
+				pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = -9999;
 			}
-			dummy.updateMatrix();
-			dotMesh.setMatrixAt(i, dummy.matrix);
 		}
-		dotMesh.instanceMatrix.needsUpdate = true;
+		dotGeo.attributes.position.needsUpdate = true;
+		dotGeo.attributes.color.needsUpdate = true;
 		updateCount(shown);
 	}
 
@@ -1054,29 +1077,38 @@ function bootAtlas() {
 	var spotHi = new THREE.Color();
 	var SPOT_BG = new THREE.Color('#05070d');
 	function setSpotHighlight(id) {
-		if (!dotMesh || !dotMesh.instanceColor) { return; }
+		if (!dotGeo) { return; }
 		var hot = findDot(id);
 		spotTargetIdx = hot ? state.dots.indexOf(hot) : -1;
+		var col = dotGeo.attributes.color.array;
 		for (var i = 0; i < dotInstance.length; i++) {
 			var base = dotBaseColor[i];
 			if (!base) { continue; }
-			if (i === spotTargetIdx) {
-				spotHi.copy(base).lerp(new THREE.Color(0xffffff), 0.5);
-			} else {
-				spotHi.copy(base).lerp(SPOT_BG, 0.72);
-			}
-			dotMesh.setColorAt(i, spotHi);
+			if (i === spotTargetIdx) { spotHi.copy(base).lerp(new THREE.Color(0xffffff), 0.5); }
+			else { spotHi.copy(base).lerp(SPOT_BG, 0.72); }
+			col[i * 3] = spotHi.r; col[i * 3 + 1] = spotHi.g; col[i * 3 + 2] = spotHi.b;
 		}
-		dotMesh.instanceColor.needsUpdate = true;
+		dotGeo.attributes.color.needsUpdate = true;
+		if (dotHighlight) {
+			if (spotTargetIdx >= 0) {
+				dotHighlight.position.copy(dotWorldPos(dotInstance[spotTargetIdx], DOT_PAD));
+				dotHighlight.material.color.copy(dotBaseColor[spotTargetIdx]).lerp(new THREE.Color(0xffffff), 0.3);
+				dotHighlight.material.opacity = 1;
+			} else { dotHighlight.material.opacity = 0; }
+		}
 		updateDots();
 	}
 	function clearSpotHighlight() {
-		if (!dotMesh || !dotMesh.instanceColor) { return; }
+		if (!dotGeo) { return; }
 		spotTargetIdx = -1;
+		var col = dotGeo.attributes.color.array;
 		for (var i = 0; i < dotInstance.length; i++) {
-			if (dotBaseColor[i]) { dotMesh.setColorAt(i, dotBaseColor[i]); }
+			if (dotBaseColor[i]) {
+				col[i * 3] = dotBaseColor[i].r; col[i * 3 + 1] = dotBaseColor[i].g; col[i * 3 + 2] = dotBaseColor[i].b;
+			}
 		}
-		dotMesh.instanceColor.needsUpdate = true;
+		dotGeo.attributes.color.needsUpdate = true;
+		if (dotHighlight) { dotHighlight.material.opacity = 0; }
 		updateDots();
 	}
 
@@ -1205,7 +1237,7 @@ function bootAtlas() {
 			if (dragging) {
 				var dx = e.clientX - lastX, dy = e.clientY - lastY;
 				moved += Math.abs(dx) + Math.abs(dy);
-				state.tTheta -= dx * 0.005;
+				state.tTheta += dx * 0.005;
 				state.tPhi = THREE.MathUtils.clamp(state.tPhi - dy * 0.005, 0.15, Math.PI - 0.15);
 				lastX = e.clientX; lastY = e.clientY;
 				resetTourTimer();
@@ -1252,7 +1284,7 @@ function bootAtlas() {
 				var t = e.touches[0];
 				var dx = t.clientX - lastX, dy = t.clientY - lastY;
 				moved += Math.abs(dx) + Math.abs(dy);
-				state.tTheta -= dx * 0.006;
+				state.tTheta += dx * 0.006;
 				state.tPhi = THREE.MathUtils.clamp(state.tPhi - dy * 0.006, 0.15, Math.PI - 0.15);
 				lastX = t.clientX; lastY = t.clientY;
 			} else if (e.touches.length === 2) {
@@ -1285,17 +1317,17 @@ function bootAtlas() {
 		mouseNDC.x = ((px - rect.left) / rect.width) * 2 - 1;
 		mouseNDC.y = -((py - rect.top) / rect.height) * 2 + 1;
 		raycaster.setFromCamera(mouseNDC, camera);
-		raycaster.params.Points = { threshold: 0.02 };
+		raycaster.params.Points = { threshold: DOT_PICK };
 		if (isClick && asparagusSprite && asparagusSprite.material.opacity > 0.05) {
 			if (raycaster.intersectObject(asparagusSprite).length) { revealAsparagus(); }
 		}
 		var hits = raycaster.intersectObject(dotMesh);
 		var found = null;
 		for (var i = 0; i < hits.length; i++) {
-			var iid = hits[i].instanceId;
+			var iid = hits[i].index;
 			if (iid === undefined) { continue; }
 			var d = dotInstance[iid];
-			if (dotVisible(d)) { found = d; break; }
+			if (d && dotVisible(d)) { found = d; break; }
 		}
 		if (!found && !isClick) {
 			var pHits = raycaster.intersectObjects(planets);

@@ -8081,7 +8081,7 @@ window.bibData = {
 	},
 	/* The Atlas main-globe Earth and Moon surfaces (map.js buildEarth /
 	 * buildMoon): equirectangular maps from the Solar System Scope project,
-	 * based on NASA imagery/elevation; local files earth_texture.png and
+	 * based on NASA imagery/elevation; local files earth_texture.jpg and
 	 * moon_texture.png. */
 	"earth_moon_cc_textures": {
 		url: "https://www.solarsystemscope.com/textures/",
@@ -8089,7 +8089,7 @@ window.bibData = {
 		author: "Solar System Scope (based on NASA imagery and elevation data)",
 		year: 2014,
 		license: "CC BY 4.0",
-		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.png, moon_texture.png)"
+		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.jpg, moon_texture.png)"
 	},
 	/* The Atlas Earth night-lights layer (map.js buildEarth ShaderMaterial
 	 * nightMap): NASA/NOAA VIIRS Day/Night Band 2012 composite,
