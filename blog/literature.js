@@ -6481,6 +6481,34 @@ window.bibData = {
 		year: 2025,
 		alternativetitle: "MLPs that synthesize sink vectors"
 	},
+	"fedorenko2011language": {
+		url: "https://pubmed.ncbi.nlm.nih.gov/21949037/",
+		title: "Functional specificity for high-level linguistic processing in the human brain",
+		author: "Evelina Fedorenko, Michael K. Behr, Nancy Kanwisher",
+		year: 2011,
+		alternativetitle: "language network inactive during reasoning"
+	},
+	"amalric2019neuroimage": {
+		url: "https://doi.org/10.1016/j.neuroimage.2018.10.046",
+		title: "A distinct cortical network for mathematical knowledge in the human brain",
+		author: "Marie Amalric, Stanislas Dehaene",
+		year: 2019,
+		alternativetitle: "math network distinct from language network"
+	},
+	"monti2007neuroimage": {
+		url: "https://doi.org/10.1016/j.neuroimage.2007.05.056",
+		title: "Functional neuroanatomy of deductive inference: a language-independent distributed network",
+		author: "Martin M. Monti, Daniel N. Osherson, Michael J. Martinez, Lawrence M. Parsons",
+		year: 2007,
+		alternativetitle: "deductive reasoning uses non-language network"
+	},
+	"fedorenko2024nature": {
+		url: "https://www.nature.com/articles/s41586-024-07522-w",
+		title: "Language is primarily a tool for communication rather than thought",
+		author: "Evelina Fedorenko, Steven T. Piantadosi, Edward A. F. Gibson",
+		year: 2024,
+		alternativetitle: "language optimized for communication, not reasoning"
+	},
 	"ameisen2025circuittracing": {
 		url: "https://arxiv.org/abs/2503.12495",
 		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
