@@ -1057,6 +1057,14 @@ function createRoot() {
                 </select>
             </label>
 
+            <label class="nsw-connections-wrap">
+                <input
+                    class="nsw-connections"
+                    type="checkbox"
+                    checked>
+                <span class="TRANSLATEME_nsw_connections"></span>
+            </label>
+
             <button class="nsw-refresh">
                 ↻ <span class="TRANSLATEME_nsw_refresh"></span>
             </button>
@@ -1218,6 +1226,22 @@ function injectStyles() {
         .nsw-viewscale-value {
             color: #e8eefc;
             font-variant-numeric: tabular-nums;
+        }
+
+        .nsw-toolbar label.nsw-connections-wrap {
+            flex-direction: row;
+            align-items: center;
+            min-width: 0;
+            gap: 7px;
+            user-select: none;
+        }
+
+        .nsw-toolbar input.nsw-connections {
+            accent-color: #7cf9d0;
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            cursor: pointer;
         }
 
         .nsw-check {
@@ -2515,6 +2539,10 @@ function reduceTo3D(points, dim, mode) {
     }
 
     if (dim <= 2) {
+        /*
+         * dim <= 2: keine dritte (Höhen-)Dimension vorhanden → c3 = 0.
+         * Die Ebene ist dann flach (kein Falten im z-Raum möglich).
+         */
         xyz = points.map(function (r) {
             return [
                 Number(r[0]) || 0,
@@ -2523,24 +2551,24 @@ function reduceTo3D(points, dim, mode) {
             ];
         });
     } else if (mode === "first3") {
-        /* Erste zwei original-Dimensionen — deterministisch, keine PCA. */
+        /* Erste drei original-Dimensionen — deterministisch, keine PCA. */
         xyz = points.map(function (r) {
             return [
                 Number(r[0]) || 0,
                 Number(r[1]) || 0,
-                0
+                Number(r[2]) || 0
             ];
         });
     } else {
-        var comps = mode === "4dc" ? 3 : 2;
         /*
-         * >128D: Jacobi-PCA ist O(D^3) und pro Render zu teuer. Statt
-         * dessen feste Zufallsprojektion (JL) — linear in N*D, stabil.
-         * Beides ist eine Projektion → usedPca = true.
+         * dim >= 3: auf drei Komponenten reduzieren. c1,c2 = Raum (x,y),
+         * c3 = Datenhöhe, mit der die Ebene im z-Raum "faltet".
+         * >128D: Jacobi-PCA ist O(D^3) und pro Render zu teuer → feste
+         * Zufallsprojektion (JL). Beides ist eine Projektion → usedPca.
          */
         var reduced = dim > 128
-            ? randomProject(points, comps, 0x5eed1)
-            : pcaReduce(points, comps);
+            ? randomProject(points, 3, 0x5eed1)
+            : pcaReduce(points, 3);
 
         usedPca = true;
 
@@ -2554,7 +2582,7 @@ function reduceTo3D(points, dim, mode) {
             return [
                 Number(r[0]) || 0,
                 Number(r[1]) || 0,
-                0
+                Number(r[2]) || 0
             ];
         });
     }
@@ -2825,6 +2853,179 @@ function referenceSurface(levelZ, size, divisions, color) {
     ];
 }
 
+/*
+ * Durchgängige, halbtransparente Mesh-Fläche (mesh3d) durch ein VERFORMTES
+ * res×res-Gitter. Die Vertices sind die echten (gewarpten) Punkte der Ebene;
+ * c3 (Datenhöhe) lässt die Fläche im z-Raum falten — statt einer generischen
+ * flachen Platte. Nur für 2D-Grid-Ebenen (genau res×res Punkte in Gitter-
+ * Reihenfolge). Bei jedem Guardrail-Fehler: [] (keine Fläche, kein Crash).
+ */
+function buildMeshSurfaceTraces(pts, resolution, color) {
+    var out = [];
+    var res = Math.floor(Number(resolution));
+
+    /* G1: Auflösung muss ein gültiges Integer >= 2 sein. */
+    if (!isFinite(res) || res < 2 || res > 40) {
+        return out;
+    }
+
+    /* G2: exakt res×res Punkte, sonst kein reguläres Gitter. */
+    var expected = res * res;
+    if (!pts || !Array.isArray(pts) || pts.length !== expected) {
+        return out;
+    }
+
+    /* G3: alle Vertex-Koordinaten endlich (kein NaN/Inf in die Mesh). */
+    for (var p = 0; p < pts.length; p++) {
+        var pt = pts[p];
+        if (
+            !Array.isArray(pt) ||
+            pt.length < 3 ||
+            !isFinite(Number(pt[0])) ||
+            !isFinite(Number(pt[1])) ||
+            !isFinite(Number(pt[2]))
+        ) {
+            return out;
+        }
+    }
+
+    var xs = [], ys = [], zs = [], colors = [];
+    for (var p2 = 0; p2 < pts.length; p2++) {
+        xs.push(Number(pts[p2][0]));
+        ys.push(Number(pts[p2][1]));
+        zs.push(Number(pts[p2][2]));
+        colors.push(color);
+    }
+
+    var i3 = [], j3 = [], k3 = [];
+    var last = expected - 1;
+
+    function tri(a, b, c) {
+        /* G4: Index-Overflow-Check pro Eckpunkt. */
+        if (
+            a < 0 || a > last ||
+            b < 0 || b > last ||
+            c < 0 || c > last
+        ) {
+            return;
+        }
+        i3.push(a);
+        j3.push(b);
+        k3.push(c);
+    }
+
+    for (var r = 0; r < res - 1; r++) {
+        for (var c = 0; c < res - 1; c++) {
+            var a = r * res + c;
+            var b = r * res + (c + 1);
+            var d = (r + 1) * res + c;
+            var e = (r + 1) * res + (c + 1);
+            tri(a, b, d);
+            tri(b, e, d);
+        }
+    }
+
+    if (!i3.length) {
+        return out;
+    }
+
+    out.push({
+        type: "mesh3d",
+        x: xs,
+        y: ys,
+        z: zs,
+        i: i3,
+        j: j3,
+        k: k3,
+        color: colors,
+        opacity: 0.3,
+        flatshading: true,
+        showscale: false,
+        showsurface: true,
+        hoverinfo: "skip",
+        showlegend: false
+    });
+
+    return out;
+}
+
+/*
+ * Durchgehende VERBINDUNGSFÄDEN: jeder Eingabepunkt wird zu EINER
+ * ununterbrochenen Linie, die ALLE Ebenen durchläuft (Index i in jeder
+ * Ebene). Das ist das "durchgängig" im Gegensatz zu je-Ebene-Stücken.
+ *
+ * WICHTIG: jeder Faden ist ein EIGENER Trace (kein NaN-Trenner), weil
+ * sanitizeTraces() NaN→0 umwandelt — ein gemeinsamer Trace mit NaN-Trennern
+ * würde daher Sprunglinien durch den Ursprung zeichnen. Pro Faden ein Trace
+ * ist sauber und bleibt durchgängig. Thread-Anzahl wird auf maxThreads
+ * gedeckelt (ein 2D-Grid hätte sonst res² Fäden).
+ */
+function buildThreadTraces(placed, maxThreads, color, width) {
+    var out = [];
+
+    /* G5: mind. 2 Ebenen und konsistente Punktzahl (Minimum über alle). */
+    if (!placed || !Array.isArray(placed) || placed.length < 2) {
+        return out;
+    }
+
+    var nPoints = Infinity;
+    for (var k = 0; k < placed.length; k++) {
+        var n = placed[k] && placed[k].xyz ? placed[k].xyz.length : 0;
+        if (n < nPoints) {
+            nPoints = n;
+        }
+    }
+    if (!isFinite(nPoints) || nPoints < 1) {
+        return out;
+    }
+
+    var maxT = Math.max(1, Math.floor(Number(maxThreads)) || 16);
+    var step = Math.max(1, Math.ceil(nPoints / maxT));
+    var levels = placed.length;
+
+    for (var i = 0; i < nPoints; i += step) {
+        var xs = [], ys = [], zs = [], ok = true;
+
+        for (var k2 = 0; k2 < levels; k2++) {
+            var pt = placed[k2].xyz[i];
+            if (
+                !pt ||
+                !isFinite(Number(pt[0])) ||
+                !isFinite(Number(pt[1])) ||
+                !isFinite(Number(pt[2]))
+            ) {
+                /* G6: defekter Punkt → diesen Faden überspringen. */
+                ok = false;
+                break;
+            }
+            xs.push(Number(pt[0]));
+            ys.push(Number(pt[1]));
+            zs.push(Number(pt[2]));
+        }
+
+        if (!ok || xs.length < 2) {
+            continue;
+        }
+
+        out.push({
+            type: "scatter3d",
+            mode: "lines",
+            name: "",
+            x: xs,
+            y: ys,
+            z: zs,
+            line: {
+                color: color,
+                width: width
+            },
+            showlegend: false,
+            hoverinfo: "skip"
+        });
+    }
+
+    return out;
+}
+
 function buildFlowView(amount) {
     var flow = buildFlowLevels(amount);
 
@@ -2840,7 +3041,14 @@ function buildFlowView(amount) {
         instance.options && instance.options.dimReduction
             ? instance.options.dimReduction
             : "pca";
+
+    /* Verbindungen an/aus (Toolbar-Toggle). Default: an. */
+    var showConnections = !(
+        instance.options && instance.options.showConnections === false
+    );
+
     var R = 1;
+    var HEIGHT = 0.32;
     var layers =
         (instance.inspection && instance.inspection.layers) || [];
 
@@ -2848,6 +3056,12 @@ function buildFlowView(amount) {
     var placed = [];
     var anyPca = false;
 
+    /*
+     * Jede Ebene: auf 3 Komponenten reduzieren (c1,c2 = Raum x,y; c3 =
+     * Datenhöhe), zentrieren, auf Einheit skalieren und bei z = Layer-Index
+     * + (zentrierte, normierte) Datenhöhe anlegen. c3 lässt die Ebene im
+     * z-Raum "falten" (z. B. durch ReLU/ nicht-lineare Transformationen).
+     */
     for (var k = 0; k < numLevels; k++) {
         var red = reduceTo3D(
             flow.levels[k],
@@ -2856,42 +3070,54 @@ function buildFlowView(amount) {
         );
 
         anyPca = anyPca || !!red.usedPca;
+        var xyz = red.xyz || [];
 
-        var xyz = red.xyz;
-        var cx = 0, cy = 0;
+        /* G7: leere/defekte Ebene → leere Ebene, kein Crash. */
+        if (!xyz.length) {
+            placed.push({
+                xyz: [],
+                color4: red.color4,
+                dim: flow.dims[k],
+                levelZ: k,
+                pca: !!red.usedPca
+            });
+            continue;
+        }
 
+        var m1 = 0, m2 = 0, m3 = 0;
         for (var p = 0; p < xyz.length; p++) {
-            cx += xyz[p][0];
-            cy += xyz[p][1];
+            m1 += xyz[p][0];
+            m2 += xyz[p][1];
+            m3 += xyz[p][2];
         }
+        m1 /= xyz.length;
+        m2 /= xyz.length;
+        m3 /= xyz.length;
 
-        if (xyz.length) {
-            cx /= xyz.length;
-            cy /= xyz.length;
-        }
-
-        var maxn = 0;
-
+        var sp1 = 0, sp2 = 0, sp3 = 0;
         for (var p2 = 0; p2 < xyz.length; p2++) {
-            var dx = xyz[p2][0] - cx;
-            var dy = xyz[p2][1] - cy;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist > maxn) {
-                maxn = dist;
-            }
+            var a1 = Math.abs(xyz[p2][0] - m1);
+            var a2 = Math.abs(xyz[p2][1] - m2);
+            var a3 = Math.abs(xyz[p2][2] - m3);
+            if (a1 > sp1) { sp1 = a1; }
+            if (a2 > sp2) { sp2 = a2; }
+            if (a3 > sp3) { sp3 = a3; }
         }
 
-        var s = maxn > 1e-9 ? (R / maxn) : 1;
-        /* z ist diskret der Layer-Index: 0 = Eingabe, 1 = Layer 1, … */
+        /* G8: Skalierung nur bei endlichem, positivem Spread (sonst 1). */
+        var spread = Math.max(sp1, sp2);
+        var s = (isFinite(spread) && spread > 1e-9) ? (R / spread) : 1;
+        var hn = (isFinite(sp3) && sp3 > 1e-9) ? (HEIGHT / sp3) : 0;
         var levelZ = k;
 
-        /* Ebene ist flach bei levelZ (z-Feature ist nach der 2D-Reduktion 0). */
         var norm = xyz.map(function (pt) {
+            var nx = (pt[0] - m1) * s;
+            var ny = (pt[1] - m2) * s;
+            var nz = levelZ + (pt[2] - m3) * hn;
             return [
-                (pt[0] - cx) * s,
-                (pt[1] - cy) * s,
-                levelZ
+                isFinite(nx) ? nx : 0,
+                isFinite(ny) ? ny : 0,
+                isFinite(nz) ? nz : levelZ
             ];
         });
 
@@ -2901,150 +3127,118 @@ function buildFlowView(amount) {
             dim: flow.dims[k],
             levelZ: levelZ,
             pca: !!red.usedPca,
-            cx: cx,
-            cy: cy,
+            cx: m1,
+            cy: m2,
             s: s
         });
     }
 
     var traces = [];
     var maxZ = Math.max(0, numLevels - 1);
-
     var annotations = [];
 
-    for (var k2 = 0; k2 < numLevels; k2++) {
-        var color = FLOW_COLORS[k2 % FLOW_COLORS.length];
+    var isGrid2D = flow.isGrid && flow.gridDim === 2;
+    var isSynthetic = !flow.isGrid;
+    var res = Math.floor(Number(flow.resolution)) || 0;
+    var res2 = res * res;
 
+    function labelFor(idx) {
         var tInput = t("nsw_input", "Eingabe");
         var tGrid = t("nsw_grid", "Gitter");
         var tExample = t("nsw_example", "(Beispiel)");
         var tLayer = t("nsw_layer", "Layer");
 
-        var label =
-            k2 === 0
-                ? tInput +
-                  (flow.isGrid ? " · " + tGrid : " " + tExample) +
-                  " · R" + flow.dims[0]
-                : tLayer + " " + (k2 - 1) +
-                  " · " + (layers[k2 - 1] ? layers[k2 - 1].name : k2 - 1) +
-                  " · R" + flow.dims[k2];
+        return idx === 0
+            ? tInput +
+              (flow.isGrid ? " · " + tGrid : " " + tExample) +
+              " · R" + flow.dims[0]
+            : tLayer + " " + (idx - 1) +
+              " · " + (layers[idx - 1] ? layers[idx - 1].name : idx - 1) +
+              " · R" + flow.dims[idx];
+    }
 
-        traces.push(
-            addPointTrace(
-                placed[k2].xyz,
-                label,
-                color,
-                0.95
-            )
+    /* G9: Mesh nur, wenn die Ebene ein echtes 2D-Gitter (res×res) UND eine
+     * Ausgabe mit >= 2 Raum-Dimensionen ist. Ein 1D-Output kollabiert zu
+     * einer Linie → dort wäre eine Mesh degeneriert (Fäden zeigen sie). */
+    function hasMeshAt(idx) {
+        return (
+            isGrid2D &&
+            flow.dims[idx] >= 2 &&
+            placed[idx].xyz.length === res2
         );
+    }
 
-        /*
-         * Gitter-Ebenen als Fläche zeichnen (Linien durchs verzerrte Gitter),
-         * damit ein 2D-Layer eine Fläche und keine Punktewolke zeigt.
-         */
-        if (flow.isGrid) {
-            var expected =
-                flow.gridDim === 1
-                    ? flow.resolution
-                    : (flow.gridDim === 2
-                        ? flow.resolution * flow.resolution
-                        : 0);
-
-            if (
-                expected > 0 &&
-                placed[k2].xyz.length === expected
-            ) {
-                traces.push.apply(
-                    traces,
-                    levelSurfaceTraces(
-                        placed[k2].xyz,
-                        flow.gridDim,
-                        flow.resolution,
-                        color
-                    )
-                );
-            }
-        }
-
-        /*
-         * Referenzebene für 2D-Abbildungen, die KEINE volle Fläche sind
-         * (z. B. 1D-Eingabe -> Kurve in der 2D-Ebene). Zeigt, dass es eine
-         * Kurve IN einer Ebene ist. Volle Gitter-Flächen zeigen wir so nicht
-         * doppelt.
-         */
-        var isFullSurface =
-            flow.isGrid &&
-            flow.gridDim === 2 &&
-            placed[k2].xyz.length === flow.resolution * flow.resolution;
-
+    /* 1) Referenzebenen (Hintergrund): 2D-Abbildung ohne volle Mesh. */
+    for (var kr = 0; kr < numLevels; kr++) {
         if (
-            k2 >= 1 &&
-            flow.dims[k2] === 2 &&
-            placed[k2].xyz.length &&
-            !isFullSurface
+            kr >= 1 &&
+            flow.dims[kr] === 2 &&
+            placed[kr].xyz.length &&
+            !hasMeshAt(kr)
         ) {
             traces.push.apply(
                 traces,
                 referenceSurface(
-                    placed[k2].levelZ,
+                    placed[kr].levelZ,
                     2.8,
                     10,
                     "rgba(150,172,214,1)"
                 )
             );
         }
+    }
+
+    /* 2) Durchgehende Verbindungsfäden (jeder Punkt → alle Ebenen). */
+    if (showConnections && numLevels >= 2) {
+        traces.push.apply(
+            traces,
+            buildThreadTraces(
+                placed,
+                24,
+                "rgba(205,220,255,.24)",
+                1.5
+            )
+        );
+    }
+
+    /* 3) Flächen / Punkte (Vordergrund). */
+    for (var k2 = 0; k2 < numLevels; k2++) {
+        var color = FLOW_COLORS[k2 % FLOW_COLORS.length];
+
+        if (hasMeshAt(k2)) {
+            /* 2D-Grid-Ebene mit >= 2D-Ausgabe → transparente Mesh-Fläche. */
+            traces.push.apply(
+                traces,
+                buildMeshSurfaceTraces(
+                    placed[k2].xyz,
+                    res,
+                    color
+                )
+            );
+        } else if (isSynthetic) {
+            /* Synthetisch (hohe D, kein Gitter) → Punkte + Fäden. */
+            if (placed[k2].xyz.length) {
+                traces.push(
+                    addPointTrace(
+                        placed[k2].xyz,
+                        labelFor(k2),
+                        color,
+                        0.9
+                    )
+                );
+            }
+        }
+        /* 1D-Grid-Ebene: keine Punkte — die Fäden zeigen die Linie. */
 
         annotations.push({
             x: 1.75,
             y: 0,
             z: placed[k2].levelZ,
-            text: "<b>" + label + "</b>",
+            text: "<b>" + labelFor(k2) + "</b>",
             showarrow: false,
             xanchor: "left",
             font: { color: color, size: 13 }
         });
-
-        if (k2 < numLevels - 1) {
-            var from = placed[k2].xyz;
-            var to = placed[k2 + 1].xyz;
-            var nConn = Math.min(from.length, to.length);
-            var lx = [];
-            var ly = [];
-            var lz = [];
-
-            /*
-             * Nur einen Ausschnitt der Verbindungslinien zeichnen (max. ~12),
-             * sonst ballen sich bei kompakten Ebenen zu viele Linien im
-             * Zentrum ("viele Punkte/Linien aus dem Zentrum"). Dünn + dezent,
-             * damit sie als Hinweis wirken und nicht dominiert.
-             */
-            var maxLines = 12;
-            var step = Math.max(1, Math.ceil(nConn / maxLines));
-
-            for (var i = 0; i < nConn; i += step) {
-                lx.push(from[i][0], to[i][0], NaN);
-                ly.push(from[i][1], to[i][1], NaN);
-                lz.push(from[i][2], to[i][2], NaN);
-            }
-
-            if (lx.length) {
-                traces.push({
-                    type: "scatter3d",
-                    mode: "lines",
-                    name: "→ " + label,
-                    x: lx,
-                    y: ly,
-                    z: lz,
-                    line: {
-                        color: "rgba(205,220,255,.20)",
-                        width: 1.5,
-                        dash: "dot"
-                    },
-                    showlegend: false,
-                    hoverinfo: "skip"
-                });
-            }
-        }
     }
 
     var layout = {
@@ -3066,14 +3260,14 @@ function buildFlowView(amount) {
             aspectmode: "cube",
             camera: { eye: { x: 2.3, y: -1.3, z: 0.7 } },
             xaxis: {
-                title: "D1",
+                title: t("nsw_axis_x", "x"),
                 range: [-1.7, 1.7],
                 color: "#8fa4c9",
                 gridcolor: "#263754",
                 zerolinecolor: "#405477"
             },
             yaxis: {
-                title: "D2",
+                title: t("nsw_axis_y", "y"),
                 range: [-1.7, 1.7],
                 color: "#8fa4c9",
                 gridcolor: "#263754",
@@ -3081,11 +3275,11 @@ function buildFlowView(amount) {
             },
             zaxis: {
                 title: t("nsw_axis_layer", "Layer"),
-                range: [-0.6, maxZ + 0.6],
+                range: [-0.45, maxZ + 0.45],
                 tickvals: (function () {
                     var tv = [];
-                    for (var t = 0; t <= maxZ; t++) {
-                        tv.push(t);
+                    for (var q = 0; q <= maxZ; q++) {
+                        tv.push(q);
                     }
                     return tv;
                 })(),
@@ -3592,6 +3786,15 @@ function bindEvents() {
         function () {
             checkNow(true);
         };
+
+    var conn = root.querySelector(".nsw-connections");
+
+    if (conn) {
+        conn.onchange = function (event) {
+            instance.options.showConnections = !!event.target.checked;
+            renderLayerImmediately();
+        };
+    }
 
     var yes = root.querySelector(".nsw-pca-yes");
 
@@ -4112,7 +4315,8 @@ var instanceOptions = {
     autoCheck: true,
     showData: false,
     viewMode: "flow",
-    dimReduction: "pca"
+    dimReduction: "pca",
+    showConnections: true
 };
 
 function start(options) {
