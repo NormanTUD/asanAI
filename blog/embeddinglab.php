@@ -669,7 +669,7 @@ This is why **scaling works**: adding more parameters doesn't add proportionally
 degrees of freedom, it adds more *resolution* for describing the same
 low-dimensional structure. It's like going from a 100×100 pixel image to a
 1000×1000 pixel image of the same scene, more numbers, but the same underlying
-reality.
+reality. A precise, checkable condition under which the curse of dimensionality is provably overcome — the **Barron class**: functions whose Fourier transform has a finite first moment $\int_{\mathbb{R}^d} \|\xi\|\,|\hat{g}(\xi)|\,d\xi < \infty$ — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 8.2.
 </div>
 
 <div class="topic-block" data-optionaltitle="Intrinsic vs. ambient dimension" data-mathlevel="55">
