@@ -1422,7 +1422,7 @@ footer{padding:60px 0 80px;text-align:center;color:var(--txt-3);font-size:13px;b
    UTILITIES
    ═══════════════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const clamp=(x,a,b)=> isNaN(x)?a : Math.max(a,Math.min(b,x));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const fmt=(x,n=3)=>{ if(!isFinite(x))return '—'; return x.toFixed(n); };
 
@@ -2398,7 +2398,7 @@ function demo6(){
     for(let py=0;py<H;py++)for(let px=0;px<W;px++){
       const idx=(py*W+px)*4, v=grid[py*W+px];
       if(isNaN(v)){ d[idx+3]=0; continue; }
-      const tt=(v-mn)/(mx-mn);
+      const tt=(v-mn)/Math.max(mx-mn,1e-9);
       const c=magma(1-Math.pow(tt,0.8));
       d[idx]=c[0];d[idx+1]=c[1];d[idx+2]=c[2];d[idx+3]=170;
     }
@@ -2565,8 +2565,6 @@ function demo8(){
       const mid=(lo+hi)/2;
       if(f(mid)>1) lo=mid; else hi=mid;
     }
-    const th=(lo+hi)/2;
-    
     const th=(lo+hi)/2;
     return s.map(v=>Math.pow(Math.max((alpha-1)*(v-th),0),1/(alpha-1)));
   }
@@ -3154,12 +3152,13 @@ function demo14(){
     const drawCol=(x0,title,vals,colfn,sub)=>{
       txt(ctx,title,x0+colW/2,26,{col:'#e8edf7',size:12,align:'center',weight:680});
       txt(ctx,sub,x0+colW/2,42,{col:'#6b7896',size:10,align:'center'});
+      const arr=Array.isArray(vals)?vals:[];
       const bw=(colW-30)/M;
       const zero=H*0.62;
-      const mxv=Math.max(...vals.map(Math.abs),1e-9);
+      const mxv=Math.max(...arr.map(Math.abs),1e-9);
       ctx.strokeStyle='rgba(255,255,255,.13)';
       ctx.beginPath(); ctx.moveTo(x0+12,zero); ctx.lineTo(x0+colW-12,zero); ctx.stroke();
-      vals.forEach((v,i)=>{
+      arr.forEach((v,i)=>{
         const hh=(Math.abs(v)/mxv)*(H*0.22);
         const x=x0+16+i*bw+bw*0.18, w=bw*0.64;
         const c=colfn(v,i);
