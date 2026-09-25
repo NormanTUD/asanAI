@@ -91,7 +91,9 @@ function toc() {
 		// to spend, so the row is net free.
 		'#toc { font-family: var(--mn-font-body); color: #1f2328; padding: 0; margin: 0 0 24px; line-height: 1.55; }',
 		'#toc-toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; font-size: 0.8em; color: #656d76; }',
-		'#toc-toolbar input[type="search"] { flex: 1; min-width: 140px; padding: 4px 8px; font-size: 1em; border: none; border-bottom: 1px solid #d0d7de; border-radius: 0; background: transparent; font-family: inherit; color: #1f2328; outline: none; }',
+		// The filter field takes the full first row so the search sits on its
+		// own at the very top of the TOC; Expand/Collapse wrap below it.
+		'#toc-toolbar input[type="search"] { flex: 1 0 100%; padding: 5px 2px; font-size: 1em; border: none; border-bottom: 1px solid #d0d7de; border-radius: 0; background: transparent; font-family: inherit; color: #1f2328; outline: none; }',
 		'#toc-toolbar input[type="search"]:focus { border-bottom-color: #1f2328; }',
 		'#toc-toolbar button { padding: 4px 10px; font-size: 1em; background: transparent; border: none; cursor: pointer; font-family: inherit; color: #656d76; border-radius: 4px; }',
 		'#toc-toolbar button:hover { background: #f6f8fa; color: #1f2328; }',

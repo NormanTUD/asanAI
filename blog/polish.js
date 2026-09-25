@@ -5,7 +5,7 @@
    • ¶ anchor links on every heading, visible on hover
    • TOC scroll-spy: the section you're reading lights up
    • Code blocks show their language as a quiet corner label
-   • Keyboard shortcuts (1-9 jump, / search, ? help, j/k nav)
+   • Keyboard shortcuts (1-8 jump by 10%, 9 end, / search, ? help, j/k nav)
    • Quiet word-count + reading-time stamp at the top of each module
    • A back-to-top chevron that only appears after 60% scroll
    • Anything else that needs a pinch of JS lives here too.
@@ -139,9 +139,28 @@
 	     Esc   → close any open modal/drawer
 	     g g   → jump to top of the page
 	     G     → jump to bottom
-	     1-9   → jump to the Nth item in the TOC
+	     0     → jump to the top of the text
+	     1-8   → jump to 10% … 80% of the text
+	     9     → jump to the end of the text
 	     n / p → next / previous section in the TOC
 	   We only activate when the user is not typing in an input. */
+
+	/* Percentage of *the text*, not of the document: the loader, the chrome
+	   and the trailing margin are not part of what the reader scrolls through,
+	   so 5 has to land on the middle sentence and not in the middle pixel.
+	   Falls back to the plain scroll range if #contents is missing or empty. */
+	function jumpToReadingProgress(pct) {
+		const contents = document.getElementById('contents');
+		let top = 0;
+		let bottom = document.documentElement.scrollHeight - window.innerHeight;
+		if (contents && contents.offsetHeight > window.innerHeight) {
+			top = contents.getBoundingClientRect().top + window.scrollY;
+			bottom = top + contents.offsetHeight - window.innerHeight;
+		}
+		const y = top + (bottom - top) * (Math.min(100, Math.max(0, pct)) / 100);
+		window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+	}
+
 	function installShortcuts() {
 		const help = ensureShortcutHelp();
 		const isEditable = function (el) {
@@ -196,13 +215,12 @@
 				return;
 			}
 
-			// 1-9 → Nth TOC item
-			if (/^[1-9]$/.test(ev.key)) {
-				const links = document.querySelectorAll('#toc a');
-				if (links.length) {
-					const target = links[Math.min(links.length, parseInt(ev.key, 10)) - 1];
-					if (target) { ev.preventDefault(); target.click(); }
-				}
+			// 0 → top, 1-8 → 10% … 80%, 9 → all the way to the end
+			if (/^[0-9]$/.test(ev.key)) {
+				const k = parseInt(ev.key, 10);
+				const pct = k === 0 ? 0 : k === 9 ? 100 : k * 10;
+				ev.preventDefault();
+				jumpToReadingProgress(pct);
 				return;
 			}
 
@@ -252,7 +270,9 @@
 			'    <dt><kbd>g</kbd> <kbd>g</kbd></dt><dd>Jump to top</dd>',
 			'    <dt><kbd>G</kbd></dt><dd>Jump to bottom</dd>',
 			'    <dt><kbd>n</kbd> / <kbd>p</kbd></dt><dd>Next / previous section</dd>',
-			'    <dt><kbd>1</kbd>…<kbd>9</kbd></dt><dd>Jump to Nth section</dd>',
+			'    <dt><kbd>0</kbd></dt><dd>Jump to the top of the text</dd>',
+			'    <dt><kbd>1</kbd>…<kbd>8</kbd></dt><dd>Jump to 10% … 80% of the text</dd>',
+			'    <dt><kbd>9</kbd></dt><dd>Jump to the end of the text</dd>',
 			'  </dl>',
 			'  <div class="cl-sh-foot">Press <kbd>?</kbd> again to close</div>',
 			'</div>'
