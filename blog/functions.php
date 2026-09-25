@@ -689,6 +689,7 @@ if(!server_php_self_ends_with_index_php()) {
 
 		<div id="contents" style="display: none">
 <?php
+		render_home_link();
 		print_dynamic_title("h1");
 		$navData = get_module_nav_data();
 		echo '<script>window.__moduleNavData = ' . json_encode($navData) . ';</script>';
@@ -758,6 +759,27 @@ function render_module_nav(): void {
 		echo '<span></span>';
 	}
 	echo '</nav>';
+}
+
+/** URL of the course overview ("home"). Mirrors the convention in
+    parse_course_metadata(): a directory literally named `blog` is served
+    from the site root, any other name is reached through a `blog/` prefix. */
+function blog_home_url(): string {
+	$base_dir = basename(__DIR__);
+	return $base_dir === 'blog' ? 'index.php' : 'blog/index.php';
+}
+
+/** Emitted as the first child of #contents on every subpage (the block
+    above is skipped for index.php / index_full.php — those ARE the home).
+    toc() deliberately inserts the TOC *after* this node, so it reads as a
+    breadcrumb above the table of contents. The house is an inline SVG, not
+    the ⌂ character: the serif webfonts (Lingua Franca / CMS) have no
+    U+2302, and every other chrome button already ships an SVG icon. */
+function render_home_link(): void {
+	echo '<a id="lesson-home" class="lesson-home" href="' . htmlspecialchars(blog_home_url(), ENT_QUOTES) . '" title="Back to the course overview">'
+		. '<svg class="lesson-home-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+		. '<path d="m3 10 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h3.5v-5.5h5V21H18a1 1 0 0 0 1-1V9.5"/>'
+		. '</svg><span>Home</span></a>';
 }
 
 function render_drawer(): void {

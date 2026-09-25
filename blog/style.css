@@ -1217,7 +1217,6 @@ html.dark .stat-hint-warm {
 /* TOC overrides (toc.js injects hardcoded colors) */
 html.dark #toc {
 	background: var(--mn-bg-subtle) !important;
-	border-color: var(--mn-border) !important;
 }
 html.dark #toc a {
 	color: var(--mn-accent) !important;
@@ -5835,6 +5834,45 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	line-height: 1;
 }
 
+/* ── Home link — the quiet breadcrumb above the TOC ──
+   #lesson-home (rendered by functions.php) sits directly above the TOC
+   with no rule of its own: an overline there reads as a typographic
+   overstrike on the small caps, not as chrome. It hands back the 24px
+   margin + 18px padding toc.js spent on its own top rule, so the row
+   stays net free. */
+#contents > .lesson-home {
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	margin: 12px 0 0;
+	padding: 8px 0 10px;
+	color: var(--mn-text-muted);
+	font-family: var(--mn-font-body);
+	font-size: .68rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: .13em;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: color .16s ease;
+}
+#contents > .lesson-home:hover {
+	color: var(--mn-accent);
+	text-decoration: none;
+}
+#contents > .lesson-home:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+#contents > .lesson-home .lesson-home-ico {
+	flex: 0 0 auto;
+	opacity: .75;
+}
+#contents > .lesson-home:hover .lesson-home-ico {
+	opacity: 1;
+}
+
 @media (max-width: 600px) {
 	#theme-toggle {
 		top: 10px;
@@ -8142,11 +8180,10 @@ p:has(> .sideimage-marker:only-child) {
 .sideimage.sideimage-float img {
 	width: 100%;
 	height: auto;
-	/* Last line of defence, for the case where JS never runs: without a
-	   cap, a very tall narrow image (e.g. a 1:6 newspaper column) would
-	   render several thousand px tall at the fixed 420px width.
-	   object-fit:contain letterboxes instead of distorting. */
-	max-height: 85vh;
+	/* No height cap: the figure is allowed to be tall, and the prose
+	   below it is indented for exactly the figure's real height, so
+	   there is never an empty gutter beside a letterboxed box. */
+	max-height: none;
 	object-fit: contain;
 }
 .sideimage.sideimage-float figcaption {
@@ -8156,11 +8193,11 @@ p:has(> .sideimage-marker:only-child) {
 	margin-top: 0.6rem;
 }
 
-/* A \sideimage[float] that _placeFloat() put INLINE as its last
-   resort (too wide for the margin AND not enough prose left on the
-   page to fill a float). It renders as a centred block figure with
-   the text — a readable newspaper-column width and full natural
-   height, so nothing is letterboxed or cut off.                     */
+/* A \sideimage[float] that _placeFloat() had to put INLINE as its last
+   resort: not enough prose left on the page to fill a float. It renders
+   as a centred block figure with the text — a readable
+   newspaper-column width and full natural height, so nothing is
+   letterboxed or cut off.                                              */
 .sideimage.sideimage-inline.sideimage-tall {
 	max-width: 360px;
 }
@@ -8168,21 +8205,25 @@ p:has(> .sideimage-marker:only-child) {
 	max-height: none;
 }
 
-/* A MARGIN figure that is taller than the viewport on purpose — a
-   tall newspaper column, say. The rail normally caps figures at
-   100vh − 80px so each fits on one screen; for these the cap is
-   lifted and the image runs down the margin at full natural size,
-   scrolling with the page. Letterboxing it to 100vh would shrink a
-   269px-wide column to ~130px, which is unreadable. sidenotes.js adds
-   the class only when the figure really would overflow, and sets
-   max-height / overflow inline alongside it.                         */
-.sideimage.sideimage-tall {
-	max-height: none;
-	overflow: visible;
-}
-.sideimage.sideimage-tall img {
-	max-height: none;
-	height: auto;
+/* \sideimage[float] — let the float leave its own section.
+
+   The blanket rule above hands `contain: layout` to every element
+   inside #contents, and its specificity (1,0,6) beats the `.md` /
+   #contents guardrail's `contain: none` (0,1,0). So every .md section
+   is an independent formatting context, and a float inside one is
+   trapped by it: the section grows to the float's height and the NEXT
+   section starts underneath the image instead of flowing beside it.
+   That is exactly the "huge gap" this directive has to avoid.
+
+   A section that hosts a \sideimage[float] is therefore exempted, so
+   the float can escape and the following sections' text runs on
+   indented beside the image — including their headings, whose line
+   boxes shorten past the float. Only sections that actually host a
+   float are affected; sidenotes.js adds the class, and removes it
+   again if the figure ends up inline.                             */
+#contents .md.has-sideimage-float,
+#contents div.md.has-sideimage-float {
+	contain: none !important;
 }
 
 /* Graceful fallback when the image fails to load. We log a
