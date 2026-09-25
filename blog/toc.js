@@ -19,8 +19,25 @@ function slugify(text, usedIds) {
 	return candidate;
 }
 
+// The course index pages are themselves tables of contents (index.php lists
+// the tiles, index_full.php inlines every lesson in order), so they must not
+// grow a second one. The same page reaches the browser under several URL
+// shapes — the Apache rewrite strips `.php` (index.php → index) and a
+// directory is served by its own index.php — so match the last path segment
+// instead of a fixed suffix:
+//
+//   /  ·  /index  ·  /index.php  ·  /blog  ·  /blog/  ·  /blog/index  ·
+//   /blog/index.php  ·  /blog/index_full  ·  /blog/index_full.php
+function isCourseIndexPath(pathname) {
+	var path = String(pathname || '').replace(/\/+$/, '');
+	if (path === '') return true;
+	if (/\/(?:index|index_full)(?:\.[a-z0-9]+)?$/i.test(path)) return true;
+	// A bare course directory, without the trailing slash Apache would add.
+	return /\/blog$/i.test(path);
+}
+
 function toc() {
-	if (window.location.pathname.endsWith("index.php") || window.location.pathname.endsWith("/blog/") || window.location.pathname.endsWith("/blog")) {
+	if (isCourseIndexPath(window.location.pathname)) {
 		return;
 	}
 	if (window.location.pathname.endsWith("map.php")) {
