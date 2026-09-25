@@ -6840,11 +6840,11 @@ window.bibData = {
 		alternativetitle: "Stable Video Diffusion"
 	},
 	"brooks2024sora": {
-		url: "https://openai.com/index/video-generation-models-as-world-simulators/",
-		title: "Video Generation Models as World Simulators",
-		author: "Tim Brooks, Bill Peebles, Connor Holmes, et al. (OpenAI)",
+		url: "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)",
+		title: "Sora — Wikipedia",
+		author: "Wikipedia contributors",
 		year: 2024,
-		alternativetitle: "Sora technical report"
+		alternativetitle: "Sora (OpenAI, Feb 2024) — 'Video generation models as world simulators'"
 	},
 	"zeghidour2021soundstream": {
 		url: "https://arxiv.org/abs/2107.03312",
@@ -6873,6 +6873,186 @@ window.bibData = {
 		author: "Andrea Agostinelli, Timo I. Denk, Zalán Borsos, et al.",
 		year: 2023,
 		alternativetitle: "MusicLM (Google)"
+	},
+
+	// Audio & video formats, codecs, and music theory (encyclopedic)
+	"music_theory": {
+		url: "https://en.wikipedia.org/wiki/Music_theory",
+		title: "Music theory — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Music theory basics"
+	},
+	"midi": {
+		url: "https://en.wikipedia.org/wiki/MIDI",
+		title: "MIDI — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Musical Instrument Digital Interface"
+	},
+	"pcm": {
+		url: "https://en.wikipedia.org/wiki/Pulse-code_modulation",
+		title: "Pulse-code modulation — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "PCM (digitizing sound)"
+	},
+	"cd_digital_audio": {
+		url: "https://en.wikipedia.org/wiki/Compact_Disc_Digital_Audio",
+		title: "Compact Disc Digital Audio — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "CD-DA (Red Book, 44.1 kHz / 16-bit)"
+	},
+	"nyquist_sampling": {
+		url: "https://en.wikipedia.org/wiki/Nyquist%E2%80%93Shannon_sampling_theorem",
+		title: "Nyquist–Shannon sampling theorem — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Sampling theorem (Nyquist–Shannon)"
+	},
+	"mp3": {
+		url: "https://en.wikipedia.org/wiki/MP3",
+		title: "MP3 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MP3 (MPEG-1 Audio Layer III)"
+	},
+	"mdct": {
+		url: "https://en.wikipedia.org/wiki/Modified_discrete_cosine_transform",
+		title: "Modified discrete cosine transform — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MDCT"
+	},
+	"panharmonicon": {
+		url: "https://en.wikipedia.org/wiki/Panharmonicon",
+		title: "Panharmonicon — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Panharmonicon (Maelzel, 1805)"
+	},
+	"max_mathews": {
+		url: "https://en.wikipedia.org/wiki/Max_Mathews",
+		title: "Max Mathews — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Max Mathews (MUSIC, 1957)"
+	},
+	"illiac_suite": {
+		url: "https://en.wikipedia.org/wiki/Illiac_Suite",
+		title: "Illiac Suite — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Illiac Suite (Hiller & Isaacson, 1957)"
+	},
+	"video_compression": {
+		url: "https://en.wikipedia.org/wiki/Video_compression",
+		title: "Video compression — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Video compression (I/P/B frames)"
+	},
+	"dct": {
+		url: "https://en.wikipedia.org/wiki/Discrete_cosine_transform",
+		title: "Discrete cosine transform — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "DCT"
+	},
+	"h264": {
+		url: "https://en.wikipedia.org/wiki/H.264",
+		title: "H.264 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "H.264 / AVC"
+	},
+	"av1": {
+		url: "https://en.wikipedia.org/wiki/AV1",
+		title: "AV1 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "AV1 (royalty-free codec)"
+	},
+	"vq_vae": {
+		url: "https://arxiv.org/abs/1711.00937",
+		title: "Neural Discrete Representation Learning",
+		author: "Aaron van den Oord, Oriol Vinyals, Koray Kavukcuoglu",
+		year: 2017,
+		alternativetitle: "VQ-VAE"
+	},
+	"vhs": {
+		url: "https://en.wikipedia.org/wiki/VHS",
+		title: "VHS — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "VHS (1976)"
+	},
+
+	// Images for the AI Music & Video Generation chapter
+	"midi_keyboard_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Alesis_Q25_MIDI_Controller.jpg",
+		title: "Alesis Q25 MIDI controller",
+		author: "Melissa Ursula Dawn Goldsmith",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "MIDI controller keyboard"
+	},
+	"oscilloscope_waveform_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Oscilloscope_sine_square.jpg",
+		title: "Oscilloscope trace: sine and square waves",
+		author: "Xato",
+		year: 2019,
+		license: "Public Domain",
+		alternativetitle: "Oscilloscope waveform of sound"
+	},
+	"cd_compact_disc_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Compact_Disc.png",
+		title: "Compact disc (CD)",
+		author: "liamz2r",
+		year: 2019,
+		license: "Public Domain",
+		alternativetitle: "Compact disc"
+	},
+	"audio_spectrogram_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Audio_spectrogram_sonic_visualiser.png",
+		title: "Audio spectrogram (time–frequency view of sound)",
+		author: "Sagenat2",
+		year: 2022,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Audio spectrogram"
+	},
+	"vinyl_lp_record_img": {
+		url: "https://commons.wikimedia.org/wiki/File:12in-Vinyl-LP-Record-Angle.jpg",
+		title: "12-inch vinyl LP record",
+		author: "Evan-Amos",
+		year: 2011,
+		license: "Public Domain",
+		alternativetitle: "Vinyl LP record"
+	},
+	"film_strip_35mm_img": {
+		url: "https://commons.wikimedia.org/wiki/File:35mm_Polyester_Film_Strip_Stock.jpg",
+		title: "35 mm film strip",
+		author: "mannyisdead",
+		year: 2022,
+		license: "CC BY 3.0",
+		alternativetitle: "Cinema 35 mm film strip"
+	},
+	"vhs_cassette_img": {
+		url: "https://commons.wikimedia.org/wiki/File:VHS_videocassette_-_front.jpg",
+		title: "VHS videocassette",
+		author: "LoMit",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "VHS cassette"
+	},
+	"h264_coding_structure_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg",
+		title: "Basic coding structure of H.264/AVC for a macroblock",
+		author: "Alexandre Rebollal Lucas",
+		year: 2008,
+		license: "Public Domain",
+		alternativetitle: "H.264/AVC coding structure"
 	},
 
 	// Alternative Architectures

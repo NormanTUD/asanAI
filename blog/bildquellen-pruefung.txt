@@ -338,3 +338,69 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lokal: crab_nebula.jpg (14 MB)
     Genutzt in: map.js § tickBlackHole (Supernova-Überrest-Phase)
     Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.
+
+=== AI MUSIC & VIDEO GENERATION (music_video_generation.php, Stand: September 2026) ===
+====================================================================
+32. midi_keyboard_img (Alesis Q25 MIDI-Controller)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Alesis_Q25_MIDI_Controller.jpg
+    Lizenz: CC BY-SA 4.0
+    Autor: Melissa Ursula Dawn Goldsmith
+    Lokal: midi_keyboard.jpg (auf 1280px verkleinert, ~150 KB)
+    Genutzt in: music_video_generation.php (MIDI = Musik als Daten)
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption via \cite{midi_keyboard_img}
+
+33. oscilloscope_waveform_img (Oszilloskop-Wellenform)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Oscilloscope_sine_square.jpg
+    Lizenz: Public Domain
+    Autor: Xato
+    Lokal: oscilloscope_waveform.jpg (auf 1280px verkleinert, ~205 KB)
+    Genutzt in: music_video_generation.php (PCM / Wellenform)
+    Status: OK - Public Domain
+
+34. cd_compact_disc_img (Compact Disc)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Compact_Disc.png
+    Lizenz: Public Domain
+    Autor: liamz2r
+    Lokal: cd_compact_disc.jpg (PNG-Scan 5662x5680 -> JPG 1000px, ~100 KB)
+    Genutzt in: music_video_generation.php (CD / Red Book / 44,1 kHz)
+    Status: OK - Public Domain
+
+35. audio_spectrogram_img (Audio-Spektrogramm)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Audio_spectrogram_sonic_visualiser.png
+    Lizenz: CC BY-SA 4.0
+    Autor: Sagenat2
+    Lokal: audio_spectrogram.png (1101x569, ~263 KB)
+    Genutzt in: music_video_generation.php (MP3 / psychoakustisch / MDCT)
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption via \cite{audio_spectrogram_img}
+
+36. vinyl_lp_record_img (12-Zoll-Vinyl-LP)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:12in-Vinyl-LP-Record-Angle.jpg
+    Lizenz: Public Domain
+    Autor: Evan-Amos
+    Lokal: vinyl_lp_record.jpg (auf 1280px verkleinert, ~142 KB)
+    Genutzt in: music_video_generation.php (analoge Audioformate)
+    Status: OK - Public Domain
+
+37. film_strip_35mm_img (35-mm-Filmstreifen)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:35mm_Polyester_Film_Strip_Stock.jpg
+    Lizenz: CC BY 3.0
+    Autor: mannyisdead (DeviantArt)
+    Lokal: film_strip_35mm.jpg (auf 1400px verkleinert, ~491 KB)
+    Genutzt in: music_video_generation.php (analoges Video / Kino)
+    Status: OK - CC BY 3.0, Namensnennung im Caption via \cite{film_strip_35mm_img}
+
+38. vhs_cassette_img (VHS-Videokassette)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:VHS_videocassette_-_front.jpg
+    Lizenz: CC BY-SA 4.0
+    Autor: LoMit
+    Lokal: vhs_cassette.jpg (auf 1280px verkleinert, ~112 KB)
+    Genutzt in: music_video_generation.php (VHS / analoges Heimvideo)
+    Status: OK - CC BY-SA 4.0, Namensnennung im Caption via \cite{vhs_cassette_img}
+
+39. h264_coding_structure_img (H.264/AVC-Codierstruktur)
+    URL (Quelle): https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg
+    Lizenz: Public Domain
+    Autor: Alexandre Rebollal Lucas
+    Lokal: h264_coding_structure.jpg (~69 KB)
+    Genutzt in: music_video_generation.php (Wie Videocodecs funktionieren)
+    Status: OK - Public Domain
