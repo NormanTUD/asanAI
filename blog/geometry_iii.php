@@ -29,6 +29,11 @@ Like the history chapters, for each tool we ask the same four questions: what it
 </div>
 
 <div class="md" data-mathlevel="30" data-optionaltitle="The bridge that started it all">
+<figure>
+	<img style="width: 100%" src="konigsberg_bridges.png" alt="Euler's diagram of the seven bridges of Königsberg" />
+	<figcaption class="md">Euler's 1736 diagram of the seven bridges of Königsberg. The insight, keep only the *pattern of connections* and discard distances, is the founding act of topology, and the negative answer ("no tour crosses each bridge exactly once") the first theorem of the subject \cite{eulerbridges}.</figcaption>
+</figure>
+
 ## The bridge that started it all
 
 The seed is the oldest result in this story that is recognizably topological: **Euler's bridges of Königsberg** (1736) and, for a polyhedron, the formula (1752) \cite{eulerbridges} \cite{eulersolids},
@@ -87,11 +92,6 @@ i.e. the hole-counting characteristic is the *alternating sum* of the **ranks** 
 Before going further we need the other pillar algebraic topology stands on: not what shapes *are* (homology) but what they can be *turned into* (homotopy). Two continuous maps $f, g : X \to Y$ are **homotopic** if you can slide one into the other without ever breaking it: there is a continuous family $f_t$ with $f_0 = f$ and $f_1 = g$. Two spaces have the **same homotopy type** if maps go both ways whose compositions are homotopic to the identity, so you can continuously inflate and deflate one into the other.
 
 Homotopy is the precise version of "don't tear, don't glue": deformation under the rule that connected things stay connected. A disk shrinks to a point, and a solid ball shrinks to a point, but a circle does not and a sphere does not. The "how many times can one loop wind around a hole" count is the seed of the **fundamental group**.
-
-<figure>
-	<img style="width: 100%" src="konigsberg_bridges.png" alt="Euler's diagram of the seven bridges of Königsberg" />
-	<figcaption class="md">Euler's 1736 diagram of the seven bridges of Königsberg. The insight, keep only the *pattern of connections* and discard distances, is the founding act of topology, and the negative answer ("no tour crosses each bridge exactly once") the first theorem of the subject \cite{eulerbridges}.</figcaption>
-</figure>
 
 The fundamental group $\pi_{1}(X,x)$, read *pi-one of X at x*, collects the loops in $X$ based at a point $x \in X$ (the $\in$, read *"in,"* means "$x$ is an element of $X$"), up to homotopy, with concatenation as the group operation. (The $\pi$ is the Greek letter pi; the subscript $1$ records that we probe **1-dimensional** holes with **1-dimensional** things, loops. Higher $\pi_n$ use $n$-spheres to probe $n$-dimensional holes, and appear below.) **Poincaré** invented it in 1895 as the algebraic window into spaces \cite{poincareanalysissitus}. Its most distinctive feature is that it is not generally commutative: going around loop $A$ then $B$ can differ from $B$ then $A$ in a space with enough crossing loops. That non-commutativity makes $\pi_1$ strictly richer than the (abelian) homology groups, and it is why, as we will see in the Math III HoTT lab, modern type theory treats *proofs of equality as paths*: the structure of points and paths between them carries the meaning of the space \cite{hottbook} \cite{youvan2024}.
 </div>
