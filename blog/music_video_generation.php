@@ -125,7 +125,7 @@ It is a trick question, because "first" depends on which category you mean:
 - The first widely-adopted **digital** audio format was the **CD** (1982) — DAT (1987) was the other early digital medium, but it stayed in studios.
 - The first popular **lossy-compressed** format was the **MP3** (standardized 1993).
 
-So: *digital* in 1982, *compressed* in 1993. (And no, the **Panharmonicon** was not a format at all — it was Mälzel's self-playing 1805 instrument, a curiosity of the pre-electrical age \cite[The Panharmonicon]{panharmonicon}.)
+So: *digital* in 1982, *compressed* in 1993.
 
 ### Compression and the ear: how MP3 works
 
