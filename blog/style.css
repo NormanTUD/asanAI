@@ -8116,7 +8116,11 @@ p:has(> .sideimage-marker:only-child) {
 	float: right !important;
 	clear: right !important;
 	display: block !important;
-	width: 420px !important;
+	/* Width is JS-driven via --si-float-width so a tall image can be
+	   narrowed to keep its rendered height within budget (see
+	   _placeFloat() in sidenotes.js). Falls back to 420px when JS has
+	   not sized it. */
+	width: var(--si-float-width, 420px) !important;
 	max-width: calc(100vw - 380px) !important;
 	margin: 0.5rem 0 1.5rem 1.5rem !important;
 	margin-right: calc(400px - 50vw + 8px) !important;
@@ -8128,13 +8132,21 @@ p:has(> .sideimage-marker:only-child) {
 	padding: 0.65rem 0.65rem 0.5rem;
 	background: var(--mn-surface);
 	box-shadow: var(--mn-shadow-md);
+	/* Deliberately NOT height-capped and NOT scrollable: this float is
+	   allowed to run past its own section so the sections below wrap
+	   prose beside it, which is what removes the empty gutter. Capping
+	   it here would bring the gutter back. */
 	max-height: none !important;
 	overflow: visible !important;
 }
 .sideimage.sideimage-float img {
 	width: 100%;
 	height: auto;
-	max-height: none;
+	/* Last line of defence, for the case where JS never runs: without a
+	   cap, a very tall narrow image (e.g. a 1:6 newspaper column) would
+	   render several thousand px tall at the fixed 420px width.
+	   object-fit:contain letterboxes instead of distorting. */
+	max-height: 85vh;
 	object-fit: contain;
 }
 .sideimage.sideimage-float figcaption {
@@ -8142,6 +8154,35 @@ p:has(> .sideimage-marker:only-child) {
 	line-height: 1.45;
 	color: var(--mn-text-secondary);
 	margin-top: 0.6rem;
+}
+
+/* A \sideimage[float] that _placeFloat() put INLINE as its last
+   resort (too wide for the margin AND not enough prose left on the
+   page to fill a float). It renders as a centred block figure with
+   the text — a readable newspaper-column width and full natural
+   height, so nothing is letterboxed or cut off.                     */
+.sideimage.sideimage-inline.sideimage-tall {
+	max-width: 360px;
+}
+.sideimage.sideimage-inline.sideimage-tall img {
+	max-height: none;
+}
+
+/* A MARGIN figure that is taller than the viewport on purpose — a
+   tall newspaper column, say. The rail normally caps figures at
+   100vh − 80px so each fits on one screen; for these the cap is
+   lifted and the image runs down the margin at full natural size,
+   scrolling with the page. Letterboxing it to 100vh would shrink a
+   269px-wide column to ~130px, which is unreadable. sidenotes.js adds
+   the class only when the figure really would overflow, and sets
+   max-height / overflow inline alongside it.                         */
+.sideimage.sideimage-tall {
+	max-height: none;
+	overflow: visible;
+}
+.sideimage.sideimage-tall img {
+	max-height: none;
+	height: auto;
 }
 
 /* Graceful fallback when the image fails to load. We log a
