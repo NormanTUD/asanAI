@@ -7,8 +7,8 @@
 
 <!-- ============ CDNs ============ -->
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
 <script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -3389,7 +3389,6 @@ let hopfAPI=null;
   function build(){
     while(G.children.length){const m=G.children.pop();m.geometry&&m.geometry.dispose();m.material&&m.material.dispose();G.remove(m);}
     // surface
-    const geo=new THREE.ParametricBufferGeometry? null:null;
     const seg=48;
     const pg=new THREE.PlaneGeometry(4,4,seg,seg);
     const pos=pg.attributes.position;
