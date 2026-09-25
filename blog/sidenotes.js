@@ -1094,16 +1094,13 @@
 					logInfo('FLOAT_INSERTED',
 						'\\sideimage[float] #' + entry.id + ' inserted near marker. ' +
 						'parent=' + parent.tagName + '.' + (parent.className || ''));
-					/* Exempt this section from the site-wide
-					   `contain: layout` rule, so the float is not
-					   trapped inside it: the sections that follow flow
-					   on indented beside the image instead of starting
-					   underneath it. See the has-sideimage-float rule in
-					   style.css. Removed again if we end up inline. */
-					try {
-						const host = (fig.closest && fig.closest('.md')) || fig.parentNode;
-						if (host && host.classList) host.classList.add('has-sideimage-float');
-					} catch (_) { /* non-fatal */ }
+					/* Sections must not be independent formatting
+					   contexts while a float is on the page, or the float
+					   is trapped and a narrowed section stays narrow long
+					   after the image has ended. sidenotes.js flags the
+					   article container; see sideimage-float-active in
+					   style.css. Re-synced after every placement. */
+					_syncFloatActive();
 					/* A cached image may already be decoded and never
 					   re-fire 'load'. Place it now (rAF so layout has
 					   settled). _placeFloat() is idempotent — a later
@@ -1376,6 +1373,26 @@
 		} catch (_) { return 0; }
 	}
 
+	/* Flag the article container while any figure is actually floating.
+
+	   The site-wide rule `#contents * { contain: layout }` is what makes a
+	   section an independent formatting context, and a formatting context
+	   is a dead end for a float in two ways: it traps the float inside its
+	   own section, and it cannot shrink back to full width once the float
+	   has ended. Turning the rule off for the sections of a page that has a
+	   float restores plain float semantics: every line box beside the image
+	   is indented, and the column returns to full width the moment the
+	   image is behind us. Self-correcting — it is re-derived from the DOM
+	   after every placement decision. */
+	function _syncFloatActive() {
+		try {
+			const art = document.getElementById('contents');
+			if (!art || !art.classList) return;
+			const any = !!art.querySelector('.sideimage-float');
+			art.classList.toggle('sideimage-float-active', any);
+		} catch (_) { /* non-fatal */ }
+	}
+
 	/* Drop every float-only class/inline style from `fig`, and un-exempt
 	   the section that was hosting it. Idempotent. */
 	function _releaseFloatState(fig) {
@@ -1383,10 +1400,6 @@
 			if (!fig || !fig.classList) return;
 			fig.classList.remove('sideimage-float', 'sideimage-tall');
 			fig.style.setProperty('--si-float-width', '');
-			try {
-				const host = (fig.closest && fig.closest('.md')) || null;
-				if (host && host.classList) host.classList.remove('has-sideimage-float');
-			} catch (_) { /* non-fatal */ }
 		} catch (_) { /* non-fatal */ }
 	}
 
@@ -1402,6 +1415,7 @@
 			_releaseFloatState(fig);
 			fig.classList.add('sideimage-inline', 'sideimage-tall');
 			fig.style.display = '';
+			_syncFloatActive();
 			logWarn('FLOAT_DEMOTED',
 				'\\sideimage[float] #' + entry.id + ' rendered as an inline block ' +
 				'instead of a float: ' + reason + '. Not enough prose is left on ' +
@@ -1519,11 +1533,8 @@
 			if (fig.classList.contains('sideimage-tall')) {
 				fig.classList.remove('sideimage-inline', 'sideimage-tall');
 				fig.classList.add('sideimage-float');
-				try {
-					const host = (fig.closest && fig.closest('.md')) || null;
-					if (host && host.classList) host.classList.add('has-sideimage-float');
-				} catch (_) { /* non-fatal */ }
 			}
+			_syncFloatActive();
 			fig.style.setProperty('--si-float-width', targetW + 'px');
 			logInfo('\\sideimage[float] #' + entry.id + ' → FLOAT at ' +
 				targetW + 'px wide, ' + Math.round(targetH) + 'px tall (h/w=' +

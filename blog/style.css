@@ -8205,24 +8205,31 @@ p:has(> .sideimage-marker:only-child) {
 	max-height: none;
 }
 
-/* \sideimage[float] — let the float leave its own section.
+/* \sideimage[float] — restore plain float semantics on a page
+   that has one.
 
    The blanket rule above hands `contain: layout` to every element
    inside #contents, and its specificity (1,0,6) beats the `.md` /
    #contents guardrail's `contain: none` (0,1,0). So every .md section
-   is an independent formatting context, and a float inside one is
-   trapped by it: the section grows to the float's height and the NEXT
-   section starts underneath the image instead of flowing beside it.
-   That is exactly the "huge gap" this directive has to avoid.
+   is an independent formatting context, which breaks a float twice:
 
-   A section that hosts a \sideimage[float] is therefore exempted, so
-   the float can escape and the following sections' text runs on
-   indented beside the image — including their headings, whose line
-   boxes shorten past the float. Only sections that actually host a
-   float are affected; sidenotes.js adds the class, and removes it
-   again if the figure ends up inline.                             */
-#contents .md.has-sideimage-float,
-#contents div.md.has-sideimage-float {
+     1. it traps the float inside its own section, so the next section
+        starts *underneath* the image instead of beside it (the gap);
+     2. a formatting context cannot shrink back. The section that
+        follows the image stays narrowed for its whole height, leaving
+        a tall empty gutter below the picture long after the float has
+        ended — the same gap, lower down the page.
+
+   Turning the rule off for the sections of a page that has a float
+   fixes both at once, and in the way CSS intends: each line box beside
+   the image is indented, and the column snaps back to full width as
+   soon as the image is behind us. The inner paragraphs keep their own
+   `contain: layout`, so they stay tidy boxes of their own.
+
+   sidenotes.js adds `sideimage-float-active` to #contents while any
+   figure is really floating, and removes it again if the figure ends
+   up inline. */
+#contents.sideimage-float-active .md {
 	contain: none !important;
 }
 
