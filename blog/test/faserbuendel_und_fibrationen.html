@@ -1,0 +1,3976 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faserbündel & Fibrationen — Eine interaktive Reise</title>
+
+<!-- ============ CDNs ============ -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#07080d;
+  --bg2:#0c0e16;
+  --panel:rgba(20,23,35,.72);
+  --panel2:rgba(28,32,48,.6);
+  --stroke:rgba(255,255,255,.09);
+  --stroke2:rgba(255,255,255,.16);
+  --txt:#e8eaf2;
+  --dim:#9aa1b8;
+  --dimmer:#6d7490;
+  --acc:#66e0c8;
+  --acc2:#7aa2ff;
+  --acc3:#ff8fb1;
+  --acc4:#ffd166;
+  --purple:#c084fc;
+  --shadow:0 20px 60px rgba(0,0,0,.6);
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.72;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ambient background */
+#bgfx{position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 700px at 12% 8%, rgba(102,224,200,.10), transparent 60%),
+    radial-gradient(800px 900px at 88% 22%, rgba(122,162,255,.11), transparent 60%),
+    radial-gradient(900px 800px at 50% 90%, rgba(192,132,252,.09), transparent 60%),
+    linear-gradient(180deg,#07080d,#0a0c14 40%,#07080d);
+}
+#grain{position:fixed;inset:0;z-index:-1;opacity:.035;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* progress */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--purple));
+  box-shadow:0 0 18px rgba(122,162,255,.7);transition:width .1s linear}
+
+/* nav */
+#nav{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:900;
+  display:flex;flex-direction:column;gap:9px;align-items:flex-end}
+.navdot{display:flex;align-items:center;gap:9px;cursor:pointer;opacity:.45;transition:.25s}
+.navdot:hover,.navdot.on{opacity:1}
+.navdot span{font-size:11px;letter-spacing:.04em;color:var(--dim);
+  background:rgba(12,14,22,.85);padding:3px 9px;border-radius:20px;border:1px solid var(--stroke);
+  opacity:0;transform:translateX(8px);transition:.25s;white-space:nowrap}
+.navdot:hover span,.navdot.on span{opacity:1;transform:translateX(0)}
+.navdot i{width:9px;height:9px;border-radius:50%;background:var(--dimmer);transition:.25s;display:block}
+.navdot.on i{background:var(--acc);box-shadow:0 0 12px var(--acc);transform:scale(1.25)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+section{padding:92px 0;position:relative}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.3em;
+  color:var(--acc);text-transform:uppercase;margin-bottom:12px;opacity:.9}
+h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(2.6rem,7vw,5.2rem);
+  line-height:1.03;letter-spacing:-.025em;
+  background:linear-gradient(120deg,#fff 10%,var(--acc) 45%,var(--acc2) 72%,var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.9rem,4vw,3rem);
+  line-height:1.12;letter-spacing:-.02em;margin-bottom:18px}
+h3{font-family:'Inter';font-weight:700;font-size:1.22rem;margin:26px 0 10px;color:#fff}
+h4{font-weight:600;font-size:1rem;color:var(--acc);margin:18px 0 8px;letter-spacing:.01em}
+p{color:var(--dim);font-size:1.03rem;max-width:74ch;margin-bottom:14px}
+p.lead{font-size:1.2rem;color:#c8cee0;max-width:66ch}
+strong{color:#fff;font-weight:600}
+em{color:var(--acc);font-style:normal;font-weight:500}
+.kw{color:var(--acc2);font-weight:600}
+a{color:var(--acc2)}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);
+  backdrop-filter:blur(16px);box-shadow:var(--shadow);padding:22px;margin:26px 0}
+.card.tight{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gridA{display:grid;grid-template-columns:1.25fr .85fr;gap:22px;align-items:start}
+.gridB{display:grid;grid-template-columns:.85fr 1.25fr;gap:22px;align-items:start}
+@media(max-width:900px){.grid2,.grid3,.gridA,.gridB{grid-template-columns:1fr}}
+
+/* controls */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--dim);
+  margin-bottom:6px;font-weight:500;letter-spacing:.01em}
+.ctrl label b{font-family:'JetBrains Mono',monospace;color:var(--acc);font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--acc2),var(--purple));outline:none;opacity:.85;transition:.2s}
+input[type=range]:hover{opacity:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;cursor:pointer;box-shadow:0 0 0 4px rgba(122,162,255,.25),0 2px 8px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#fff;border:0;cursor:pointer}
+.btn{background:rgba(122,162,255,.12);border:1px solid rgba(122,162,255,.35);color:#dbe4ff;
+  padding:8px 15px;border-radius:10px;cursor:pointer;font-size:.85rem;font-weight:500;
+  font-family:inherit;transition:.2s;margin:3px 4px 3px 0}
+.btn:hover{background:rgba(122,162,255,.25);transform:translateY(-1px)}
+.btn.on{background:var(--acc);color:#04120e;border-color:var(--acc);font-weight:600}
+.btn.sm{padding:5px 11px;font-size:.78rem}
+.btnrow{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
+select{background:rgba(20,23,35,.9);color:var(--txt);border:1px solid var(--stroke2);
+  padding:7px 11px;border-radius:9px;font-family:inherit;font-size:.85rem;cursor:pointer}
+canvas{display:block;max-width:100%;border-radius:12px}
+.cvwrap{background:rgba(6,8,14,.65);border:1px solid var(--stroke);border-radius:14px;
+  padding:10px;display:flex;justify-content:center;align-items:center;overflow:hidden}
+
+/* misc */
+.hint{font-size:.83rem;color:var(--dimmer);font-style:italic;margin-top:9px}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.7rem;
+  padding:3px 9px;border-radius:20px;border:1px solid var(--stroke2);color:var(--dim);
+  margin:0 5px 5px 0;letter-spacing:.05em}
+.tag.g{border-color:rgba(102,224,200,.4);color:var(--acc);background:rgba(102,224,200,.07)}
+.tag.b{border-color:rgba(122,162,255,.4);color:var(--acc2);background:rgba(122,162,255,.07)}
+.tag.p{border-color:rgba(192,132,252,.4);color:var(--purple);background:rgba(192,132,252,.07)}
+.tag.y{border-color:rgba(255,209,102,.4);color:var(--acc4);background:rgba(255,209,102,.07)}
+.note{border-left:3px solid var(--acc);padding:12px 16px;background:rgba(102,224,200,.055);
+  border-radius:0 12px 12px 0;margin:18px 0}
+.note.b{border-color:var(--acc2);background:rgba(122,162,255,.055)}
+.note.p{border-color:var(--purple);background:rgba(192,132,252,.055)}
+.note.y{border-color:var(--acc4);background:rgba(255,209,102,.055)}
+.note p{margin:0;font-size:.95rem}
+.math{text-align:center;margin:16px 0;font-size:1.08rem;color:#dfe4f2;overflow-x:auto}
+.mathrow{display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap}
+.qa{display:flex;gap:12px;margin:12px 0;align-items:flex-start}
+.qa .b1{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  font-weight:700;font-size:.78rem;background:rgba(102,224,200,.15);color:var(--acc);
+  border:1px solid rgba(102,224,200,.35);margin-top:2px}
+hr.sep{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--stroke2),transparent);margin:56px 0}
+.stat{font-family:'JetBrains Mono',monospace;font-size:1.5rem;color:var(--acc);font-weight:600}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--dim);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--stroke)}
+th{color:var(--acc);font-weight:600;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+td{color:var(--dim)}
+td b{color:#fff}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.85rem}
+.big-q{font-family:'Fraunces',serif;font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.3;
+  color:#fff;max-width:22ch;margin:22px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:30px;
+  background:rgba(255,255,255,.04);border:1px solid var(--stroke);font-size:.8rem;color:var(--dim);margin:3px}
+.flowbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+.flowstep{background:var(--panel2);border:1px solid var(--stroke);border-radius:14px;padding:14px;
+  position:relative;transition:.3s;cursor:default}
+.flowstep:hover{border-color:var(--acc);transform:translateY(-3px)}
+.flowstep .n{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--acc);letter-spacing:.15em}
+.flowstep .t{font-weight:600;color:#fff;font-size:.95rem;margin:4px 0}
+.flowstep .d{font-size:.8rem;color:var(--dimmer);line-height:1.5}
+.scroll-x{overflow-x:auto}
+.tri{width:100%;height:auto}
+details{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:12px 16px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--acc2);font-size:.92rem;user-select:none}
+details[open] summary{margin-bottom:10px}
+.kbd{font-family:'JetBrains Mono',monospace;font-size:.75rem;background:rgba(255,255,255,.07);
+  border:1px solid var(--stroke2);border-radius:5px;padding:1px 6px}
+.center{text-align:center}
+.pill-nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+</style>
+</head>
+<body>
+<div id="bgfx"></div><div id="grain"></div>
+<div id="prog"></div>
+<div id="nav"></div>
+
+<!-- ========================================================= -->
+<!-- HERO -->
+<!-- ========================================================= -->
+<section id="s0" style="min-height:100vh;display:flex;align-items:center;padding-top:0">
+<div class="wrap">
+  <div class="sec-num">Derek Sorensen · 18. Dezember 2017</div>
+  <h1>Faserbündel<br>&amp; Fibrationen</h1>
+  <p class="lead" style="margin-top:22px">
+    Räume, die <em>lokal</em> langweilig aussehen, aber <em>global</em> verdreht sind.
+    Und warum genau diese Verdrehung uns erlaubt, eine Frage zu beantworten,
+    an der Mathematiker Jahrzehnte gescheitert sind.
+  </p>
+  <div style="margin:26px 0">
+    <span class="tag g">Vektorbündel</span>
+    <span class="tag g">Lokale Trivialisierung</span>
+    <span class="tag b">Kozykel&shy;bedingung</span>
+    <span class="tag b">Möbiusbündel</span>
+    <span class="tag p">Homotopie&shy;hochhebung</span>
+    <span class="tag p">Hopf-Fibration</span>
+    <span class="tag y">Lange exakte Sequenz</span>
+  </div>
+
+  <div class="card" style="max-width:880px">
+    <div class="grid2" style="gap:26px">
+      <div>
+        <h4>Die Frage am Horizont</h4>
+        <p style="font-size:.97rem;margin-bottom:0">
+          Kann man eine 3-dimensionale Kugeloberfläche so auf eine 2-dimensionale
+          Kugeloberfläche werfen, dass sie sich <strong>nicht</strong> zusammenziehen lässt?
+          Die naive Antwort lautet „nein". Sie ist falsch.
+        </p>
+      </div>
+      <div>
+        <h4>Das Werkzeug</h4>
+        <p style="font-size:.97rem;margin-bottom:0">
+          Eine Maschine, die aus einer geometrischen Zerlegung eines Raumes
+          eine <strong>unendliche Kette von Gleichungen</strong> macht — und in dieser Kette
+          steht die Antwort einfach da.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cvwrap" style="margin-top:30px;height:320px;position:relative">
+    <canvas id="heroCv"></canvas>
+    <div style="position:absolute;bottom:12px;left:18px;font-size:.78rem;color:var(--dimmer)">
+      ↑ ein Bündel entsteht: Fasern über einer Basis
+    </div>
+  </div>
+
+  <div class="center" style="margin-top:40px;color:var(--dimmer);font-size:.85rem">
+    ↓ scrolle · alles ist anfassbar · nichts muss man glauben
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 1. MOTIVATION -->
+<!-- ========================================================= -->
+<section id="s1">
+<div class="wrap">
+  <div class="sec-num">01 — Motivation</div>
+  <h2>Warum überhaupt „Bündel"?</h2>
+  <p class="lead">Es gibt eine Sorte von Räumen, die einen in den Wahnsinn treibt:
+    Wenn man genau hinschaut, sieht alles völlig normal aus. Wenn man weit weg geht,
+    stimmt plötzlich etwas nicht.</p>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="flex-direction:column;align-items:stretch">
+        <canvas id="motivCv"></canvas>
+      </div>
+      <div class="btnrow" style="justify-content:center">
+        <button class="btn on" data-motiv="0">Zylinder (ehrlich)</button>
+        <button class="btn" data-motiv="1">Möbiusband (verdreht)</button>
+      </div>
+      <div class="ctrl">
+        <label>Position der Lupe auf dem Kreis <b id="motivPosV">0.00</b></label>
+        <input type="range" id="motivPos" min="0" max="1" step="0.002" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Zoom der Lupe (wie „lokal" schauen wir?) <b id="motivZoomV">0.18</b></label>
+        <input type="range" id="motivZoom" min="0.02" max="1" step="0.005" value="0.18">
+      </div>
+      <p class="hint">Zieh die Lupe herum. Bei kleinem Zoom sind beide Bilder <strong>identisch</strong> —
+      ein Stück Kreis mal eine Strecke. Erst bei Zoom = 1 sieht man den Unterschied.</p>
+    </div>
+    <div>
+      <h3>Lokal identisch, global verschieden</h3>
+      <p>Links ein Zylinder: ein Kreis, an den überall ein senkrechtes Stäbchen geklebt ist.
+      Rechts ein Möbiusband: <em>dasselbe</em>, nur dass beim Herumlaufen das Stäbchen
+      einmal umgeklappt wird.</p>
+      <p>Jeder <strong>kleine Ausschnitt</strong> beider Objekte ist ein simples Rechteck.
+      Man kann mit einer Lupe nirgends entscheiden, wo man ist.</p>
+      <div class="note">
+        <p><strong>Das ist die zentrale Spannung.</strong> Ein Objekt, das aus lauter
+        langweiligen Stücken besteht, kann als Ganzes hochgradig nicht-langweilig sein.
+        Die gesamte Information steckt <em>nicht in den Stücken</em>, sondern
+        <em>darin, wie sie zusammengeklebt sind</em>.</p>
+      </div>
+      <h4>Wo das überall auftaucht</h4>
+      <div>
+        <span class="chip">🌀 Möbiusband &amp; Kleinsche Flasche</span>
+        <span class="chip">🧭 Tangentialrichtungen auf einer Kugel</span>
+        <span class="chip">🎩 Überlagerungsräume</span>
+        <span class="chip">🔬 Eichtheorien der Physik</span>
+        <span class="chip">📐 Lokal freie Garben (algebr. Geometrie)</span>
+        <span class="chip">🧬 Charakteristische Klassen</span>
+      </div>
+      <p style="margin-top:14px;font-size:.93rem">Sorensen nennt genau diese Rolle:
+      Faserbündel sind <strong>zentral in der Theorie tautologischer Ringe und
+      charakteristischer Klassen</strong>, sie <strong>verallgemeinern Überlagerungsräume</strong>
+      und <strong>hängen mit Garben zusammen</strong>.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 2. VORWISSEN -->
+<!-- ========================================================= -->
+<section id="s2">
+<div class="wrap">
+  <div class="sec-num">02 — Werkzeugkasten</div>
+  <h2>Sechs Begriffe, die über Abi-Mathe hinausgehen</h2>
+  <p class="lead">Jeder davon ist in 30 Sekunden spielbar. Danach ist der Rest des
+  Textes ohne Lücken lesbar.</p>
+
+  <div class="pill-nav" id="preNav"></div>
+
+  <!-- PRE 1: topologischer Raum / Homöomorphismus -->
+  <div class="card pre" id="pre0">
+    <div class="gridA">
+      <div>
+        
+        <h3>① Topologischer Raum &amp; Homöomorphismus</h3>
+        <p>Ein <em>topologischer Raum</em> ist eine Menge von Punkten, bei der festgelegt ist,
+        welche Teilmengen „offen" heißen — das ist die minimale Information, die man braucht,
+        um von <strong>Nähe</strong> und <strong>Stetigkeit</strong> zu reden. Keine Längen,
+        keine Winkel, keine Koordinaten.</p>
+        <p>Eine Abbildung heißt <em>stetig</em>, wenn sie nichts zerreißt. Ein
+        <em>Homöomorphismus</em> ist eine stetige Abbildung mit stetiger Umkehrung:
+        beide Räume sind dann <strong>topologisch dasselbe</strong>.</p>
+        <div class="note b"><p>Merksatz: <strong>Kneten ja, schneiden und kleben nein.</strong>
+        Ein Kaffeebecher und ein Donut sind homöomorph. Eine Kugel und ein Donut nicht.</p></div>
+        <p>Der Text schreibt Homöomorphismen mit dem Pfeil <span class="mono">≅</span> bzw.
+        <span class="mono">∼→</span>. Immer wenn du das siehst: „die beiden Dinger sind
+        ununterscheidbar, solange man nur Topologie betreibt."</p>
+      </div>
+      <div>
+        <div class="cvwrap"><canvas id="homeoCv"></canvas></div>
+        <div class="ctrl">
+          <label>Verformung <b id="homeoTV">0.00</b></label>
+          <input type="range" id="homeoT" min="0" max="1" step="0.004" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" data-homeo="0">Becher → Donut</button>
+          <button class="btn" data-homeo="1">Kreis → Ellipse → Quadrat</button>
+          <button class="btn" data-homeo="2">Schneiden (verboten!)</button>
+        </div>
+        <p class="hint">Die dritte Option zerreißt den Raum — dabei ändert sich die Topologie
+        wirklich, und der Zähler „Anzahl Zusammenhangskomponenten" springt.</p>
+        <div id="homeoInfo" class="mono" style="font-size:.8rem;color:var(--acc4);margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE 2: Faser / Urbild -->
+  <div class="card pre" id="pre1" style="display:none">
+    <div class="gridB">
+      <div>
+        <div class="cvwrap"><canvas id="fiberCv"></canvas></div>
+        <div class="ctrl">
+          <label>Punkt <span class="mono">b</span> in der Basis <b id="fibBV">0.50</b></label>
+          <input type="range" id="fibB" min="0" max="1" step="0.002" value="0.5">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" data-fib="0">π(x,y) = x &nbsp;(Projektion)</button>
+          <button class="btn" data-fib="1">f(x) = x² &nbsp;(keine Bündelabb.)</button>
+          <button class="btn" data-fib="2">3-fach Überlagerung</button>
+        </div>
+        <div id="fibInfo" class="note tight" style="margin-top:10px"><p></p></div>
+      </div>
+      <div>
+        <h3>② Urbild und Faser</h3>
+        <p>Für eine Abbildung <span class="mono">f : A → B</span> und einen Punkt
+        <span class="mono">b ∈ B</span> ist die <em>Faser über b</em> einfach die Menge aller
+        Punkte, die auf <span class="mono">b</span> geworfen werden:</p>
+        <div class="math" id="m-fiber"></div>
+        <p>Sorensen sagt es genau so: „the fiber of <span class="mono">f</span> over
+        <span class="mono">a</span> is simply the preimage <span class="mono">f⁻¹(a)</span>."</p>
+        <div class="note">
+          <p>Die entscheidende Beobachtung: Bei einer <strong>beliebigen</strong> Abbildung
+          können die Fasern über verschiedenen Punkten <em>völlig verschieden</em> aussehen —
+          mal leer, mal ein Punkt, mal zwei Punkte, mal eine ganze Kurve.</p>
+        </div>
+        <p>Ein <strong>Bündel</strong> ist genau der Spezialfall, bei dem das <em>nicht</em> passiert:
+        <strong>alle Fasern sehen gleich aus</strong>. Probier die Option
+        <span class="mono">f(x)=x²</span> — dort springt die Faser von 2 Punkten auf 1 auf 0.
+        Das ist kein Bündel.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE 3: Quotientenraum -->
+  <div class="card pre" id="pre2" style="display:none">
+    <div class="gridA">
+      <div>
+        <h3>③ Quotientenraum &amp; Äquivalenzrelation</h3>
+        <p>Man nimmt einen Raum und <strong>erklärt gewisse Punkte für identisch</strong>.
+        Das Ergebnis heißt Quotientenraum, geschrieben <span class="mono">X/∼</span>.</p>
+        <p>Beispiel aus dem Text: das <em>Möbiusbündel</em> entsteht als</p>
+        <div class="math" id="m-quot"></div>
+        <p>Man nimmt also einen Streifen <span class="mono">[0,1] × ℝ</span> und klebt die
+        linke an die rechte Kante — aber <strong>mit Vorzeichenwechsel</strong>, also um 180° gedreht.</p>
+        <div class="note p"><p>Das Minuszeichen ist die <strong>gesamte</strong> Verdrehung.
+        Ohne Minus bekommt man einen Zylinder, mit Minus ein Möbiusband. Ein einziges Zeichen
+        trennt „trivial" von „nicht-trivial".</p></div>
+        <h4>Das Klebe-Rezept</h4>
+        <table>
+          <tr><th>Klebevorschrift</th><th>Ergebnis</th></tr>
+          <tr><td class="mono">(0,x) ∼ (1, x)</td><td><b>Zylinder</b> — trivial</td></tr>
+          <tr><td class="mono">(0,x) ∼ (1,−x)</td><td><b>Möbiusband</b> — nicht trivial</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="cvwrap"><canvas id="quotCv"></canvas></div>
+        <div class="ctrl">
+          <label>Klebevorgang <b id="quotTV">0.00</b></label>
+          <input type="range" id="quotT" min="0" max="1" step="0.004" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn" data-quot="1">(0,x) ∼ (1, x) → Zylinder</button>
+          <button class="btn on" data-quot="-1">(0,x) ∼ (1,−x) → Möbius</button>
+        </div>
+        <p class="hint">Verfolge den <span style="color:var(--acc4)">gelben Punkt</span> am
+        oberen Rand: beim Möbiusband landet er nach dem Kleben <strong>unten</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE 4: Vektorraum, linearer Iso, GL(k), Aut(F) -->
+  <div class="card pre" id="pre3" style="display:none">
+    <div class="gridB">
+      <div>
+        <div class="cvwrap"><canvas id="glCv"></canvas></div>
+        <div class="grid2" style="gap:10px">
+          <div class="ctrl"><label>a <b id="gl_aV">1.00</b></label><input type="range" id="gl_a" min="-2" max="2" step="0.01" value="1"></div>
+          <div class="ctrl"><label>b <b id="gl_bV">0.00</b></label><input type="range" id="gl_b" min="-2" max="2" step="0.01" value="0"></div>
+          <div class="ctrl"><label>c <b id="gl_cV">0.00</b></label><input type="range" id="gl_c" min="-2" max="2" step="0.01" value="0"></div>
+          <div class="ctrl"><label>d <b id="gl_dV">1.00</b></label><input type="range" id="gl_d" min="-2" max="2" step="0.01" value="1"></div>
+        </div>
+        <div id="glInfo" class="note tight"><p></p></div>
+        <div class="btnrow">
+          <button class="btn sm" data-glp="1,0,0,1">Identität</button>
+          <button class="btn sm" data-glp="0,-1,1,0">Drehung 90°</button>
+          <button class="btn sm" data-glp="-1,0,0,1">Spiegelung</button>
+          <button class="btn sm" data-glp="1,0,0,0">det = 0 ✗</button>
+          <button class="btn sm" data-glp="1.4,0.6,-0.3,1.1">Scherung</button>
+        </div>
+      </div>
+      <div>
+        <h3>④ Lineare Isomorphismen, <span class="mono">GL(k)</span> und <span class="mono">Aut(F)</span></h3>
+        <p>Ein <em>linearer Isomorphismus</em> von <span class="mono">ℝᵏ</span> auf sich selbst
+        ist eine umkehrbare Matrix. Die Menge aller dieser Matrizen heißt
+        <span class="kw">GL(k)</span> — die <strong>allgemeine lineare Gruppe</strong>.</p>
+        <div class="math" id="m-gl"></div>
+        <p>„Gruppe" heißt: man kann sie verketten, es gibt eine Identität, und jede hat eine Umkehrung.
+        Genau diese drei Eigenschaften braucht man gleich für die <strong>Kozykelbedingung</strong>.</p>
+        <div class="note y"><p>Sobald <span class="mono">det = 0</span> ist, wird die Fläche
+        auf eine Linie plattgedrückt und nichts lässt sich mehr rückgängig machen — <strong>dann
+        liegt man nicht mehr in GL(k)</strong>. Probier den Knopf „det = 0".</p></div>
+        <p>Für allgemeine Fasern <span class="mono">F</span> (keine Vektorräume mehr) ersetzt man
+        <span class="mono">GL(k)</span> durch <span class="kw">Aut(F)</span>: alle Homöomorphismen
+        von <span class="mono">F</span> auf sich selbst. Dieselbe Gruppen-Idee, nur allgemeiner —
+        genau der Schritt, den Sorensen von Definition 0.1 zu Definition 0.6 macht.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE 5: offene Überdeckung -->
+  <div class="card pre" id="pre4" style="display:none">
+    <div class="gridA">
+      <div>
+        <h3>⑤ Offene Überdeckung</h3>
+        <p>Eine Familie offener Mengen <span class="mono">{U<sub>α</sub>}</span>, deren Vereinigung
+        den ganzen Raum ergibt. Bei Bündeln braucht man sie, weil man <strong>nur lokal</strong>
+        eine schöne Produktstruktur verlangt.</p>
+        <p>Sorensen betont beim Möbiusbündel: „<em>by taking any open cover of S¹ which does not
+        contain the whole space</em>" — die Überdeckung darf den ganzen Kreis nicht in einem
+        Stück enthalten, sonst wäre das Bündel global trivial. Die Verdrehung lebt in den
+        <strong>Überlappungen</strong>.</p>
+        <div class="note"><p>Zwei Karten reichen für den Kreis. Eine reicht nie.
+        Genau in diesem „nie" steckt die ganze Topologie.</p></div>
+      </div>
+      <div>
+        <div class="cvwrap"><canvas id="coverCv"></canvas></div>
+        <div class="ctrl">
+          <label>Anzahl der Karten <b id="covNV">2</b></label>
+          <input type="range" id="covN" min="1" max="8" step="1" value="2">
+        </div>
+        <div class="ctrl">
+          <label>Größe jeder Karte <b id="covWV">0.62</b></label>
+          <input type="range" id="covW" min="0.1" max="1.0" step="0.005" value="0.62">
+        </div>
+        <div id="covInfo" class="note tight" style="margin-top:8px"><p></p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE 6: Homotopie -->
+  <div class="card pre" id="pre5" style="display:none">
+    <div class="gridB">
+      <div>
+        <div class="cvwrap"><canvas id="homCv"></canvas></div>
+        <div class="ctrl">
+          <label>Homotopie-Parameter <span class="mono">s</span> <b id="homSV">0.00</b></label>
+          <input type="range" id="homS" min="0" max="1" step="0.004" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" data-hom="0">Zusammenziehbar (Ebene)</button>
+          <button class="btn" data-hom="1">Hindernis im Weg</button>
+          <button class="btn" data-hom="2">↻ animieren</button>
+        </div>
+      </div>
+      <div>
+        <h3>⑥ Homotopie, π₁ und πₙ</h3>
+        <p>Zwei Wege sind <em>homotop</em>, wenn man den einen stetig in den anderen
+        <strong>hinüberschieben</strong> kann. Eine Homotopie ist formal eine Abbildung</p>
+        <div class="math" id="m-hom"></div>
+        <p>— also für jedes <span class="mono">s ∈ [0,1]</span> ein eigener Zwischenzustand.</p>
+        <h4>Die Fundamentalgruppe π₁</h4>
+        <p>Nimm alle geschlossenen Schleifen an einem Basispunkt und fasse homotope Schleifen
+        zusammen. Das Ergebnis ist eine <strong>Gruppe</strong>: hintereinanderlaufen = multiplizieren.</p>
+        <table>
+          <tr><th>Raum</th><th>π₁</th><th>Bedeutung</th></tr>
+          <tr><td class="mono">ℝ²</td><td class="mono">0</td><td>alles zusammenziehbar</td></tr>
+          <tr><td class="mono">ℝ²∖{0}</td><td class="mono">ℤ</td><td>Windungszahl</td></tr>
+          <tr><td class="mono">S¹</td><td class="mono">ℤ</td><td>wie oft herumgelaufen</td></tr>
+          <tr><td class="mono">S²</td><td class="mono">0</td><td>jede Schleife rutscht ab</td></tr>
+        </table>
+        <h4>Höhere Homotopiegruppen πₙ</h4>
+        <p>Statt Schleifen (<span class="mono">S¹</span>) nimmt man <span class="mono">n</span>-dimensionale
+        Sphären <span class="mono">Sⁿ</span> und fragt, wie sie sich im Raum einbetten lassen.
+        <span class="mono">πₙ(X)</span> misst <strong>n-dimensionale Löcher</strong>.</p>
+        <div class="note p"><p>Genau diese <span class="mono">πₙ</span> sind das Ziel der ganzen
+        Reise. Sie sind berüchtigt schwer zu berechnen — und Fibrationen sind das Werkzeug,
+        das es möglich macht.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 3. IDEE: VEKTORBÜNDEL -->
+<!-- ========================================================= -->
+<section id="s3">
+<div class="wrap">
+  <div class="sec-num">03 — Die Idee</div>
+  <h2>Definition 0.1: Das Vektorbündel</h2>
+  <p class="lead">Sorensen beginnt bewusst nicht mit der allgemeinsten Definition, sondern
+  mit dem wichtigsten Spezialfall. Vier Bedingungen — und jede einzelne hat einen Grund.</p>
+
+  <div class="card">
+    <p style="margin-bottom:18px">Sei <span class="mono">π : E → B</span> eine stetige
+    Surjektion. Dann heißt <span class="mono">π</span> ein
+    <strong>k-dimensionales reelles Vektorbündel</strong>, wenn:</p>
+
+    <div class="flowbox" id="vbFlow">
+      <div class="flowstep" data-vb="0">
+        <div class="n">BEDINGUNG 1</div>
+        <div class="t">Alle Fasern sind ℝᵏ</div>
+        <div class="d">π⁻¹(b) ist ein k-dim. Vektorraum — für <em>jedes</em> b.</div>
+      </div>
+      <div class="flowstep" data-vb="1">
+        <div class="n">BEDINGUNG 2</div>
+        <div class="t">Lokale Trivialisierung</div>
+        <div class="d">Eine offene Überdeckung {U<sub>α</sub>} mit φ<sub>α</sub> : π⁻¹(U<sub>α</sub>) ≅ U<sub>α</sub>×ℝᵏ.</div>
+      </div>
+      <div class="flowstep" data-vb="2">
+        <div class="n">BEDINGUNG 3</div>
+        <div class="t">Übergangsfunktionen</div>
+        <div class="d">Auf Überlappungen: φ<sub>β</sub>⁻¹∘φ<sub>α</sub>(x,v) = (x, g<sub>αβ</sub>(x)v).</div>
+      </div>
+      <div class="flowstep" data-vb="3">
+        <div class="n">BEDINGUNG 4</div>
+        <div class="t">Kozykelbedingung</div>
+        <div class="d">g<sub>αα</sub>=I und g<sub>αβ</sub>g<sub>βγ</sub>g<sub>γα</sub>=I.</div>
+      </div>
+    </div>
+    <p class="hint center">Klick auf eine Bedingung — unten wird sie live gezeigt.</p>
+  </div>
+
+  <div class="card">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:400px"><canvas id="vbCv"></canvas></div>
+        <div class="ctrl">
+          <label>Position auf der Basis <b id="vbXV">0.50</b></label>
+          <input type="range" id="vbX" min="0" max="1" step="0.002" value="0.5">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" data-vbmode="cyl">Zylinderbündel</button>
+          <button class="btn" data-vbmode="mob">Möbiusbündel</button>
+          <button class="btn" data-vbmode="two">Rang 2 (ℝ²-Fasern)</button>
+        </div>
+      </div>
+      <div>
+        <div id="vbTitle"><h3>Bedingung 1 — jede Faser ist ein ℝᵏ</h3></div>
+        <div id="vbText"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note b">
+    <p><strong>Die Kernaussage in einem Satz:</strong> „Thus if a map π : E → B has a vector
+    bundle structure on it, we are saying that <em>locally π looks like a projection map of
+    the form U × ℝⁿ → U</em>." Ein Bündel ist eine Abbildung, die <strong>lokal</strong> so
+    harmlos ist wie das Vergessen der zweiten Koordinate.</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 4. KOZYKEL -->
+<!-- ========================================================= -->
+<section id="s4">
+<div class="wrap">
+  <div class="sec-num">04 — Das Klebedatum</div>
+  <h2>Übergangsfunktionen und die Kozykelbedingung</h2>
+  <p class="lead">Hier steckt die gesamte nicht-triviale Information eines Bündels.
+  Die Stücke sind alle gleich — der Unterschied liegt ausschließlich in den Klebeanweisungen.</p>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:420px"><canvas id="cocyCv"></canvas></div>
+      <div class="grid3" style="gap:10px;margin-top:10px">
+        <div class="ctrl"><label>g<sub>αβ</sub> <b id="cy_abV">1.00</b></label>
+          <input type="range" id="cy_ab" min="-2" max="2" step="0.01" value="1"></div>
+        <div class="ctrl"><label>g<sub>βγ</sub> <b id="cy_bgV">1.00</b></label>
+          <input type="range" id="cy_bg" min="-2" max="2" step="0.01" value="1"></div>
+        <div class="ctrl"><label>g<sub>γα</sub> <b id="cy_gaV">1.00</b></label>
+          <input type="range" id="cy_ga" min="-2" max="2" step="0.01" value="1"></div>
+      </div>
+      <div id="cocyVerdict" class="note tight"><p></p></div>
+      <div class="btnrow">
+        <button class="btn sm" data-cyp="1,1,1">✓ konsistent (trivial)</button>
+        <button class="btn sm" data-cyp="-1,-1,1">✓ konsistent (Möbius-artig)</button>
+        <button class="btn sm" data-cyp="2,1,1">✗ widersprüchlich</button>
+        <button class="btn sm" data-cyp="2,0.5,1">✓ konsistent (skaliert)</button>
+        <button class="btn sm" data-cyp="-1,1,1">✗ widersprüchlich</button>
+      </div>
+    </div>
+    <div>
+      <h3>Warum es diese Bedingung geben <em>muss</em></h3>
+      <p>Stell dir drei überlappende Karten <span class="mono">U<sub>α</sub>, U<sub>β</sub>,
+      U<sub>γ</sub></span> vor. Auf dem Bereich, wo alle drei sich treffen, kannst du einen
+      Vektor auf zwei Wegen von <span class="mono">α</span> nach <span class="mono">α</span> bringen:</p>
+      <div class="math" id="m-cocy1"></div>
+      <p>Wenn du am Ende <strong>nicht</strong> wieder denselben Vektor hast, ist das Objekt
+      widersprüchlich — es existiert schlicht nicht. Deshalb fordert man:</p>
+      <div class="math" id="m-cocy2"></div>
+      <p>Der Text formuliert es knapp: <span class="mono">g<sub>αα</sub> = I</span> und
+      <span class="mono">g<sub>αβ</sub>(x) g<sub>βγ</sub>(x) g<sub>γα</sub>(x) = I</span>.</p>
+      <div class="note y">
+        <p><strong>Analogie:</strong> Drei Menschen tauschen Währungen. Wenn du Euro→Dollar→Yen→Euro
+        wechselst und am Ende <em>mehr</em> Geld hast, sind die Kurse widersprüchlich.
+        Die Kozykelbedingung verbietet genau dieses Geldvermehren.</p>
+      </div>
+      <p>Spiel mit den drei Reglern: das Produkt muss <strong>exakt 1</strong> ergeben
+      (bei 1-dimensionalen Fasern ist <span class="mono">GL(1) = ℝ∖{0}</span>, also einfach Zahlen ≠ 0).</p>
+      <div class="note p">
+        <p><strong>Der springende Punkt:</strong> Das Vorzeichen-Muster
+        <span class="mono">(−1, −1, +1)</span> erfüllt die Bedingung genauso gut wie
+        <span class="mono">(1,1,1)</span>. Beides sind <em>legale</em> Bündel — aber sie sind
+        <strong>nicht dasselbe Bündel</strong>. Genau hier entsteht Topologie aus Algebra.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 5. BEISPIELE -->
+<!-- ========================================================= -->
+<section id="s5">
+<div class="wrap">
+  <div class="sec-num">05 — Die vier Beispiele</div>
+  <h2>Von langweilig bis tautologisch</h2>
+  <p class="lead">Sorensen gibt vier Beispiele (0.2 bis 0.5). Sie bilden eine perfekte
+  Steigerung: trivial → nicht-trivial → hochdimensional → abstrakt.</p>
+
+  <div class="pill-nav" id="exNav"></div>
+
+  <!-- 0.2 Trivial -->
+  <div class="card ex" id="ex0">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:330px"><canvas id="trivCv"></canvas></div>
+        <div class="ctrl">
+          <label>Schnitt: konstante Höhe t <b id="trivTV">0.60</b></label>
+          <input type="range" id="trivT" min="-1" max="1" step="0.005" value="0.6">
+        </div>
+        <div id="trivInfo" class="note tight"><p></p></div>
+      </div>
+      <div>
+        <h3>Beispiel 0.2 — Das triviale Bündel</h3>
+        <p>Die offensichtlichste Möglichkeit: nimm einfach das Produkt.</p>
+        <div class="math" id="m-triv"></div>
+        <p>„The local product structure exists <em>because of</em> the global product structure."
+        Es gibt nichts zu kleben, weil eine einzige Karte schon alles abdeckt. Alle
+        <span class="mono">g<sub>αβ</sub> = I</span>.</p>
+        <h4>Der Test: nullstellenfreie Schnitte</h4>
+        <p>Ein <em>Schnitt</em> ist eine stetige Abbildung <span class="mono">s : B → E</span>
+        mit <span class="mono">π ∘ s = Id<sub>B</sub></span> — also: „wähle in jeder Faser
+        stetig einen Punkt".</p>
+        <p>Beim trivialen Bündel gibt es die Schnitte <span class="mono">b ↦ (b,t)</span>.
+        Für <span class="mono">t ≠ 0</span> trifft dieser Schnitt <strong>nie</strong> die Null.</p>
+        <div class="note"><p>Merke dir das. Es ist gleich das Unterscheidungsmerkmal.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0.3 Möbius -->
+  <div class="card ex" id="ex1" style="display:none">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:330px"><canvas id="mobCv"></canvas></div>
+        <div class="ctrl">
+          <label>Form des Schnitts — Amplitude <b id="mobAV">0.70</b></label>
+          <input type="range" id="mobA" min="-1" max="1" step="0.005" value="0.7">
+        </div>
+        <div class="ctrl">
+          <label>Form des Schnitts — Welligkeit <b id="mobWV">0.00</b></label>
+          <input type="range" id="mobW" min="0" max="5" step="0.01" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Phase <b id="mobPV">0.00</b></label>
+          <input type="range" id="mobP" min="0" max="6.283" step="0.01" value="0">
+        </div>
+        <div id="mobInfo" class="note tight"><p></p></div>
+        <p class="hint">Versuche, einen Schnitt zu bauen, der die rote Nulllinie
+        <strong>nie</strong> berührt. Es ist unmöglich.</p>
+      </div>
+      <div>
+        <h3>Beispiel 0.3 — Das Möbiusbündel</h3>
+        <div class="math" id="m-mob"></div>
+        <p>mit der Projektion <span class="mono">(t,x) ↦ t</span> auf
+        <span class="mono">B = S¹</span>. Man nimmt „<em>any open cover of S¹ which does not
+        contain the whole space</em>" — mindestens zwei Karten.</p>
+        <h4>Der Beweis der Nicht-Trivialität</h4>
+        <div class="qa"><div class="b1">1</div><p style="margin:0">Sei <span class="mono">s</span>
+        irgendein Schnitt. Läuft man einmal um den Kreis, so wird der Wert am Ende
+        <strong>mit −1 multipliziert</strong> — wegen <span class="mono">(0,x) ∼ (1,−x)</span>.</p></div>
+        <div class="qa"><div class="b1">2</div><p style="margin:0">Die Funktion startet also bei
+        einem Wert <span class="mono">v</span> und endet bei <span class="mono">−v</span>.</p></div>
+        <div class="qa"><div class="b1">3</div><p style="margin:0">Nach dem
+        <strong>Zwischenwertsatz</strong> muss sie unterwegs <span class="mono">0</span> annehmen.</p></div>
+        <div class="qa"><div class="b1">4</div><p style="margin:0">Also hat <em>jeder</em> Schnitt
+        eine Nullstelle — beim trivialen Bündel gibt es aber nullstellenfreie Schnitte.
+        <strong>Sie sind nicht isomorph.</strong> ∎</p></div>
+        <div class="note p"><p>Das ist der erste echte Satz des Textes — und er braucht nichts
+        weiter als den Zwischenwertsatz aus der Schule.</p></div>
+        <p style="font-size:.93rem">„Note that E is homeomorphic to the Möbius strip with its
+        boundary circle deleted" — die Fasern sind ganz <span class="mono">ℝ</span>, nicht nur
+        ein Intervall. Deshalb fehlt der Rand.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0.4 Tautologisch -->
+  <div class="card ex" id="ex2" style="display:none">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:360px"><canvas id="tautCv"></canvas></div>
+        <div class="ctrl">
+          <label>Gerade V ∈ G₁(ℝ²): Winkel θ <b id="tautAV">0.00</b></label>
+          <input type="range" id="tautA" min="0" max="3.1416" step="0.004" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Vektor v ∈ V: Parameter <b id="tautVV">0.60</b></label>
+          <input type="range" id="tautV" min="-1.4" max="1.4" step="0.005" value="0.6">
+        </div>
+        <div id="tautInfo" class="note tight"><p></p></div>
+      </div>
+      <div>
+        <h3>Beispiel 0.4 — Das tautologische Bündel</h3>
+        <p>Die <em>Graßmann-Mannigfaltigkeit</em> <span class="mono">G<sub>n</sub>(ℝ<sup>n+k</sup>)</span>
+        ist die Menge <strong>aller n-dimensionalen Untervektorräume</strong> von
+        <span class="mono">ℝ<sup>n+k</sup></span>. Ein <em>Punkt</em> dieses Raumes ist selbst
+        schon ein ganzer Unterraum.</p>
+        <div class="note b"><p>Einfachster Fall: <span class="mono">G₁(ℝ²)</span> = alle Geraden
+        durch den Ursprung in der Ebene. Parametrisiert durch den Winkel
+        <span class="mono">θ ∈ [0,π)</span> — denn <span class="mono">θ</span> und
+        <span class="mono">θ+π</span> geben dieselbe Gerade. Als Raum ist das wieder ein Kreis!</p></div>
+        <p>Der Totalraum besteht aus allen Paaren</p>
+        <div class="math" id="m-taut"></div>
+        <p>und die Projektion ist „tautologisch": <span class="mono">(V,v) ↦ V</span>. Die Faser
+        über dem Punkt <span class="mono">V</span> ist <strong>die Gerade V selbst</strong>.
+        Daher der Name — das Bündel legt über jeden Punkt genau das, was der Punkt ist.</p>
+        <div class="note y"><p><strong>Pointe:</strong> Über <span class="mono">G₁(ℝ²) ≅ S¹</span>
+        ist das tautologische Bündel genau das <strong>Möbiusbündel</strong>. Dreh θ von 0 bis π
+        und beobachte, wie der Vektor umklappt — das ist dieselbe −1 wie eben.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 0.5 Garben -->
+  <div class="card ex" id="ex3" style="display:none">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:300px"><canvas id="shCv"></canvas></div>
+        <div class="ctrl">
+          <label>Offene Menge U — Position <b id="shPV">0.35</b></label>
+          <input type="range" id="shP" min="0" max="1" step="0.002" value="0.35">
+        </div>
+        <div class="ctrl">
+          <label>Offene Menge U — Breite <b id="shWV">0.30</b></label>
+          <input type="range" id="shW" min="0.05" max="0.9" step="0.005" value="0.3">
+        </div>
+        <div id="shInfo" class="note tight"><p></p></div>
+      </div>
+      <div>
+        <h3>Beispiel 0.5 — Lokal freie Garben</h3>
+        <p>Eine <em>Garbe</em> ordnet jeder offenen Menge <span class="mono">U</span> eine
+        Menge von „Daten auf U" zu — typischerweise Funktionen — so dass man
+        <strong>einschränken</strong> und lokal definierte Daten <strong>verkleben</strong> kann.</p>
+        <p>Die Garbe der <strong>Schnitte eines Vektorbündels</strong> ist das Musterbeispiel:
+        <span class="mono">U ↦ {Schnitte über U}</span>.</p>
+        <div class="note"><p><em>Lokal frei</em> heißt: lokal sehen die Schnitte aus wie
+        <span class="mono">k</span> unabhängige Funktionen — also genau wie
+        <span class="mono">U × ℝᵏ</span>. Das ist wörtlich die lokale Trivialisierung,
+        nur in der Sprache der Garben.</p></div>
+        <table>
+          <tr><th>Bündel-Sprache</th><th>Garben-Sprache</th></tr>
+          <tr><td>lokale Trivialisierung</td><td><b>lokal frei</b></td></tr>
+          <tr><td>Schnitt über U</td><td><b>Element von 𝓕(U)</b></td></tr>
+          <tr><td>Rang k</td><td><b>Rang k</b></td></tr>
+          <tr><td>Übergangsfunktion</td><td><b>Verklebedatum</b></td></tr>
+        </table>
+        <p class="hint">Sorensen erwähnt das nur in einem Satz — es ist die Brücke von der
+        Topologie zur algebraischen Geometrie.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note b" style="margin-top:26px">
+    <p><strong>Und über ℂ?</strong> „In all but Example 0.3, we did not use any specific
+    properties of ℝ beyond its vector space structure." Man ersetzt einfach
+    <span class="mono">ℝ</span> durch <span class="mono">ℂ</span> und
+    <span class="mono">GL(k,ℝ)</span> durch <span class="mono">GL(k,ℂ)</span> — alles geht durch.
+    Nur das Möbiusbündel-Argument nicht: <span class="mono">ℂ∖{0}</span> ist zusammenhängend,
+    dort gibt es keinen Zwischenwertsatz, der eine Null erzwingt.</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 6. FASERBÜNDEL -->
+<!-- ========================================================= -->
+<section id="s6">
+<div class="wrap">
+  <div class="sec-num">06 — Verallgemeinerung</div>
+  <h2>Definition 0.6: Das Faserbündel</h2>
+  <p class="lead">Derselbe Text, ein Wort ausgetauscht. Statt <span class="mono">ℝᵏ</span>
+  darf die Faser jetzt ein <strong>beliebiger topologischer Raum F</strong> sein.</p>
+
+  <div class="card">
+    <table>
+      <tr><th></th><th>Vektorbündel (0.1)</th><th>Faserbündel (0.6)</th></tr>
+      <tr><td><b>Faser</b></td><td class="mono">ℝᵏ</td><td class="mono">beliebiges F</td></tr>
+      <tr><td><b>Trivialisierung</b></td><td class="mono">π⁻¹(U<sub>α</sub>) ≅ U<sub>α</sub> × ℝᵏ</td><td class="mono">π⁻¹(U<sub>α</sub>) ≅ U<sub>α</sub> × F</td></tr>
+      <tr><td><b>Übergänge</b></td><td class="mono">g<sub>αβ</sub> : U → GL(k)</td><td class="mono">g<sub>αβ</sub> : U → Aut(F)</td></tr>
+      <tr><td><b>Kozykel</b></td><td class="mono">g<sub>αβ</sub>g<sub>βγ</sub>g<sub>γα</sub> = I</td><td class="mono">g<sub>αβ</sub>g<sub>βγ</sub>g<sub>γα</sub> = Id</td></tr>
+      <tr><td><b>Fasern sind</b></td><td>linear isomorph</td><td>homöomorph</td></tr>
+    </table>
+    <p class="hint">Die Struktur ist <strong>wortgleich</strong>. Nur „linearer Isomorphismus"
+    wird zu „Homöomorphismus" und <span class="mono">GL(k)</span> zu <span class="mono">Aut(F)</span>.</p>
+  </div>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:340px"><canvas id="fbCv"></canvas></div>
+      <div class="btnrow">
+        <button class="btn on" data-fb="R">F = ℝ (Vektorbündel)</button>
+        <button class="btn" data-fb="D">F = 3 Punkte (diskret)</button>
+        <button class="btn" data-fb="S1">F = S¹ (Kreis)</button>
+        <button class="btn" data-fb="I">F = Intervall</button>
+      </div>
+      <div class="ctrl">
+        <label>Drehung der Faser beim Herumlaufen <b id="fbTwV">0.00</b></label>
+        <input type="range" id="fbTw" min="0" max="1" step="0.004" value="0">
+      </div>
+      <div id="fbInfo" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Das Diagramm-Bild</h3>
+      <p>Sorensen zeichnet ein Faserbündel als</p>
+      <div class="cvwrap" style="background:transparent;border:none;padding:0">
+        <svg viewBox="0 0 260 130" class="tri" style="max-width:260px">
+          <text x="18" y="30" fill="#66e0c8" font-family="JetBrains Mono" font-size="18">F</text>
+          <text x="150" y="30" fill="#7aa2ff" font-family="JetBrains Mono" font-size="18">E</text>
+          <text x="150" y="112" fill="#c084fc" font-family="JetBrains Mono" font-size="18">B</text>
+          <line x1="40" y1="24" x2="140" y2="24" stroke="#9aa1b8" stroke-width="1.4" marker-end="url(#ar)"/>
+          <line x1="156" y1="40" x2="156" y2="92" stroke="#9aa1b8" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="164" y="70" fill="#9aa1b8" font-family="JetBrains Mono" font-size="12">π</text>
+          <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6" fill="none" stroke="#9aa1b8" stroke-width="1.3"/></marker></defs>
+        </svg>
+      </div>
+      <p>„which gives it the feel of a <em>short exact sequence of spaces</em>."</p>
+      <div class="note"><p>Intuition aus dem Text: Ein Faserbündel verhält sich wie ein
+      <strong>Quotient</strong>, wobei <span class="mono">F</span> dieselbe Rolle spielt wie ein
+      <strong>Normalteiler</strong> bei Gruppen. <span class="mono">B</span> ist „E modulo F".</p></div>
+      <h4>Beispiel 0.7 — Überlagerungen</h4>
+      <p>Ist <span class="mono">F</span> <strong>diskret</strong> (nur isolierte Punkte), erhält
+      man einen <em>Überlagerungsraum</em> — der vertraute Begriff aus der ersten Vorlesung
+      algebraischer Topologie. Faserbündel <strong>verallgemeinern</strong> ihn.</p>
+      <p class="hint">Probier den Knopf „3 Punkte" und dreh dann am Twist-Regler: die drei Blätter
+      permutieren sich — das ist ein Element von <span class="mono">Aut(F) = S₃</span>.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:40px">Bündelabbildungen — die Kategorie der Bündel</h3>
+  <div class="gridB">
+    <div>
+      <div class="cvwrap" style="background:transparent;border:none">
+        <svg viewBox="0 0 300 160" style="max-width:300px;width:100%">
+          <text x="30" y="35" fill="#7aa2ff" font-family="JetBrains Mono" font-size="17">E</text>
+          <text x="230" y="35" fill="#7aa2ff" font-family="JetBrains Mono" font-size="17">E′</text>
+          <text x="30" y="140" fill="#c084fc" font-family="JetBrains Mono" font-size="17">B</text>
+          <text x="230" y="140" fill="#c084fc" font-family="JetBrains Mono" font-size="17">B′</text>
+          <line x1="52" y1="29" x2="220" y2="29" stroke="#66e0c8" stroke-width="1.5" marker-end="url(#ar2)"/>
+          <line x1="52" y1="134" x2="220" y2="134" stroke="#66e0c8" stroke-width="1.5" marker-end="url(#ar2)"/>
+          <line x1="35" y1="46" x2="35" y2="120" stroke="#9aa1b8" stroke-width="1.5" marker-end="url(#ar2)"/>
+          <line x1="236" y1="46" x2="236" y2="120" stroke="#9aa1b8" stroke-width="1.5" marker-end="url(#ar2)"/>
+          <text x="14" y="88" fill="#9aa1b8" font-family="JetBrains Mono" font-size="12">π</text>
+          <text x="244" y="88" fill="#9aa1b8" font-family="JetBrains Mono" font-size="12">π′</text>
+          <text x="128" y="88" fill="#ffd166" font-family="Inter" font-size="12" text-anchor="middle">kommutiert</text>
+          <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6" fill="none" stroke="#9aa1b8" stroke-width="1.3"/></marker></defs>
+        </svg>
+      </div>
+      <div class="btnrow" style="justify-content:center">
+        <button class="btn on" data-bmap="0">gültige Bündelabbildung</button>
+        <button class="btn" data-bmap="1">ungültig (kommutiert nicht)</button>
+        <button class="btn" data-bmap="2">über festem B (Id unten)</button>
+      </div>
+      <div class="cvwrap" style="min-height:260px;margin-top:10px"><canvas id="bmapCv"></canvas></div>
+    </div>
+    <div>
+      <p>„As we might hope with any object we define, fiber bundles <strong>form a category</strong>."</p>
+      <p>Eine <em>Bündelabbildung</em> ist ein <strong>kommutierendes Quadrat</strong>: eine Abbildung
+      oben zwischen den Totalräumen, eine unten zwischen den Basen — und beide Wege durch das
+      Quadrat müssen dasselbe Ergebnis liefern.</p>
+      <div class="note b"><p>„Kommutiert" bedeutet konkret: erst hochheben, dann projizieren
+      gibt dasselbe wie erst projizieren, dann unten abbilden. Die Abbildung oben muss
+      <strong>Fasern auf Fasern</strong> werfen.</p></div>
+      
+      <p>Fixiert man die Basis <span class="mono">B</span> und verlangt, dass die untere
+      Abbildung die <strong>Identität</strong> ist, erhält man die
+      <em>Kategorie der Bündel über B</em> — genau die Kategorie, in der die Frage
+      „ist dieses Bündel trivial?" überhaupt gestellt wird [[11]].</p>
+      <div class="note"><p>In dieser Sprache sagt Beispiel 0.3 präzise: Es gibt
+      <strong>keinen</strong> Isomorphismus über <span class="mono">S¹</span> zwischen
+      Möbiusbündel und <span class="mono">S¹ × ℝ</span>.</p></div>
+      <p class="hint">Der Knopf „ungültig" zeigt, was schiefgeht: ein Punkt der Faser über
+      <span class="mono">b</span> landet in der Faser über einem <em>anderen</em> Punkt.
+      Das Quadrat kommutiert nicht.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 7. HOMOTOPIEHOCHHEBUNG -->
+<!-- ========================================================= -->
+<section id="s7">
+<div class="wrap">
+  <div class="sec-num">07 — Der Lösungsweg beginnt</div>
+  <h2>Die Homotopie&shy;hochhebungs&shy;eigenschaft</h2>
+  <p class="lead">Jetzt kommt der Begriff, der aus reiner Geometrie ein
+  <strong>Rechenwerkzeug</strong> macht. „One important feature of fiber bundles is that
+  they have the homotopy lifting property" [[11]].</p>
+
+  <div class="card">
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:430px"><canvas id="hlpCv"></canvas></div>
+        <div class="ctrl">
+          <label>Homotopie-Zeit <span class="mono">t</span> <b id="hlpTV">0.00</b></label>
+          <input type="range" id="hlpT" min="0" max="1" step="0.003" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Startwahl <span class="mono">f₀</span> (Höhe im Totalraum) <b id="hlpFV">0.00</b></label>
+          <input type="range" id="hlpF" min="-1.3" max="1.3" step="0.005" value="0">
+        </div>
+        <div class="btnrow">
+          <button class="btn on" data-hlp="0">Zylinder ℝ × S¹</button>
+          <button class="btn" data-hlp="1">Überlagerung ℝ → S¹</button>
+          <button class="btn" data-hlp="2">↻ animieren</button>
+        </div>
+        <div id="hlpInfo" class="note tight"><p></p></div>
+      </div>
+      <div>
+        <h3>Was genau gefordert wird</h3>
+        <p>Gegeben ist eine Homotopie <strong>unten</strong> in der Basis und ein
+        <strong>Startpunkt oben</strong> im Totalraum. Gesucht ist eine Homotopie oben,
+        die beides zusammenbringt.</p>
+        <div class="math" id="m-hlp1"></div>
+        <p>Formal [[11]]: <span class="mono">π : E → B</span> hat die Homotopie&shy;hochhebungs&shy;eigenschaft
+        bzgl. <span class="mono">X</span>, wenn für jede Homotopie
+        <span class="mono">h : [0,1] × X → B</span> gilt: Existiert
+        <span class="mono">f₀ : {0} × X → E</span> mit
+        <span class="mono">π ∘ f₀ = h|<sub>{0}×X</sub></span>, dann existiert
+        <span class="mono">f : [0,1] × X → E</span> mit</p>
+        <div class="math" id="m-hlp2"></div>
+
+        <div class="flowbox" style="grid-template-columns:1fr">
+          <div class="flowstep"><div class="n">GEGEBEN</div>
+            <div class="t">Eine Bewegung unten</div>
+            <div class="d">h(t,x) beschreibt, wie sich Punkte in der Basis B über die Zeit bewegen.</div></div>
+          <div class="flowstep"><div class="n">GEGEBEN</div>
+            <div class="t">Ein Startzustand oben</div>
+            <div class="d">f₀ wählt für jeden Punkt eine Position in seiner Faser — passend zum Start von h.</div></div>
+          <div class="flowstep"><div class="n">GESUCHT</div>
+            <div class="t">Die hochgehobene Bewegung</div>
+            <div class="d">f(t,x) bewegt sich oben mit, wirft sich exakt auf h herunter und startet bei f₀.</div></div>
+        </div>
+
+        <div class="note p"><p><strong>Definition.</strong> Eine <em>Fibration</em> ist eine
+        Surjektion <span class="mono">π : E → B</span>, die die Homotopie&shy;hochhebungs&shy;eigenschaft
+        <strong>bezüglich jedes Raumes X</strong> besitzt [[11]].</p></div>
+
+        <p><strong>Warum das so mächtig ist:</strong> Eine Homotopie unten hat eine
+        <em>eindeutige Fortsetzung</em> nach oben, sobald man den Start festgelegt hat.
+        Damit lassen sich Aussagen über <span class="mono">B</span> nach
+        <span class="mono">E</span> transportieren — und zurück. Genau das wird gleich zur
+        langen exakten Sequenz.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Jedes Faserbündel ist eine Fibration</h4>
+      <p style="font-size:.95rem">Zumindest über hinreichend gutartigen Basen. Das ist der Grund,
+      warum die ganze Bündel-Theorie überhaupt homotopietheoretisch nutzbar ist:
+      <strong>Geometrie ⇒ Hochhebbarkeit</strong>.</p>
+    </div>
+    <div class="card">
+      <h4>Aber nicht jede Fibration ist ein Bündel</h4>
+      <p style="font-size:.95rem">Fibrationen sind der flexiblere Begriff. Beispiel 0.9 (die
+      Homotopiefaserung) baut aus <em>jeder beliebigen</em> Abbildung eine Fibration —
+      ohne jede lokale Produktstruktur [[11]].</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 8. HOPF -->
+<!-- ========================================================= -->
+<section id="s8">
+<div class="wrap">
+  <div class="sec-num">08 — Das Herzstück</div>
+  <h2>Beispiel 0.8: Die Hopf-Fibration</h2>
+  <p class="lead">„One famous example of a fibration which is applicable to homotopy theory
+  is the Hopf fibration" [[11]]. Sie ist der Grund, warum die nächste Rechnung ein
+  überraschendes Ergebnis liefert.</p>
+
+  <div class="card">
+    <div class="mathrow" style="margin:6px 0 18px">
+      <svg viewBox="0 0 260 130" style="max-width:240px">
+        <text x="18" y="30" fill="#66e0c8" font-family="JetBrains Mono" font-size="18">S¹</text>
+        <text x="150" y="30" fill="#7aa2ff" font-family="JetBrains Mono" font-size="18">S³</text>
+        <text x="150" y="112" fill="#c084fc" font-family="JetBrains Mono" font-size="18">S²</text>
+        <line x1="48" y1="24" x2="140" y2="24" stroke="#9aa1b8" stroke-width="1.4" marker-end="url(#ar3)"/>
+        <line x1="158" y1="40" x2="158" y2="92" stroke="#9aa1b8" stroke-width="1.4" marker-end="url(#ar3)"/>
+        <text x="166" y="70" fill="#ffd166" font-family="JetBrains Mono" font-size="13">p</text>
+        <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L7,3 L0,6" fill="none" stroke="#9aa1b8" stroke-width="1.3"/></marker></defs>
+      </svg>
+      <div style="max-width:420px">
+        <p style="margin:0;font-size:.95rem">Die 3-Sphäre ist <strong>vollständig zerlegt</strong>
+        in lauter Kreise — einen für jeden Punkt der 2-Sphäre. Und diese Kreise sind alle
+        <strong>paarweise ineinander verschlungen</strong>.</p>
+      </div>
+    </div>
+
+    <h4>Die Konstruktion, Schritt für Schritt</h4>
+    <div class="grid3">
+      <div class="flowstep"><div class="n">SCHRITT 1</div><div class="t">S³ komplex sehen</div>
+        <div class="d">S³ = {(z₀,z₁) ∈ ℂ² : |z₀|² + |z₁|² = 1}. Zwei komplexe Zahlen statt vier reeller.</div></div>
+      <div class="flowstep"><div class="n">SCHRITT 2</div><div class="t">S² komplex sehen</div>
+        <div class="d">S² = {(z,x) ∈ ℂ × ℝ : |z|² + x² = 1}. Eine komplexe und eine reelle Zahl.</div></div>
+      <div class="flowstep"><div class="n">SCHRITT 3</div><div class="t">Die Abbildung p</div>
+        <div class="d">p(z₀,z₁) = (2 z₀ z₁*, |z₀|² − |z₁|²) — genau die Formel aus dem Text.</div></div>
+    </div>
+    <div class="math" id="m-hopf"></div>
+  </div>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:520px;position:relative;padding:0">
+        <div id="hopf3d" style="width:100%;height:520px;border-radius:12px"></div>
+        <div style="position:absolute;top:12px;left:16px;font-size:.76rem;color:var(--dimmer);pointer-events:none">
+          S³ stereografisch nach ℝ³ projiziert · Maus: drehen · Scroll: zoomen
+        </div>
+      </div>
+      <div class="grid2" style="gap:12px;margin-top:10px">
+        <div class="ctrl">
+          <label>Anzahl der Fasern <b id="hfNV">14</b></label>
+          <input type="range" id="hfN" min="1" max="40" step="1" value="14">
+        </div>
+        <div class="ctrl">
+          <label>Breitengrad auf S² <b id="hfLatV">0.55</b></label>
+          <input type="range" id="hfLat" min="0.04" max="0.96" step="0.005" value="0.55">
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="btn on" id="hfSpin">↻ Rotation an</button>
+        <button class="btn" id="hfRings">mehrere Breitengrade</button>
+        <button class="btn" id="hfOne">nur EINE Faser</button>
+        <button class="btn" id="hfTwo">genau ZWEI (Verschlingung)</button>
+      </div>
+    </div>
+    <div>
+      <h3>Was man hier sieht</h3>
+      <p>Jeder Punkt der 2-Sphäre unten entspricht <strong>genau einem Kreis</strong> oben.
+      Die Farbe verbindet beides: gleiche Farbe = derselbe Punkt auf <span class="mono">S²</span>.</p>
+      <div class="cvwrap" style="min-height:230px;margin-top:12px"><canvas id="hopfS2"></canvas></div>
+      <p class="hint">Der markierte Breitenkreis auf <span class="mono">S²</span> erzeugt oben
+      einen <strong>Torus</strong> aus Fasern.</p>
+      <div class="note y"><p><strong>Der Schlüssel:</strong> Klick auf „genau ZWEI". Die beiden
+      Kreise sind wie zwei Kettenglieder ineinander gehakt. Man kann sie nicht trennen, ohne zu
+      schneiden. <strong>Diese Verschlingung ist die ganze Nicht-Trivialität.</strong></p></div>
+      <p>Wäre <span class="mono">S³</span> einfach <span class="mono">S² × S¹</span>, lägen alle
+      Kreise unverschlungen nebeneinander. Sie tun es nicht — also ist die Hopf-Fibration
+      <strong>nicht das triviale Bündel</strong>. Genau dasselbe Phänomen wie beim Möbiusband,
+      nur zwei Dimensionen höher.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Die Formel zum Anfassen</h4>
+    <div class="gridA">
+      <div>
+        <div class="cvwrap" style="min-height:300px"><canvas id="hopfMapCv"></canvas></div>
+      </div>
+      <div>
+        <div class="grid2" style="gap:12px">
+          <div class="ctrl"><label>|z₀| (dann |z₁| = √(1−|z₀|²)) <b id="hm_rV">0.70</b></label>
+            <input type="range" id="hm_r" min="0" max="1" step="0.004" value="0.7"></div>
+          <div class="ctrl"><label>arg z₀ <b id="hm_a0V">0.00</b></label>
+            <input type="range" id="hm_a0" min="0" max="6.283" step="0.01" value="0"></div>
+          <div class="ctrl"><label>arg z₁ <b id="hm_a1V">0.00</b></label>
+            <input type="range" id="hm_a1" min="0" max="6.283" step="0.01" value="0"></div>
+          <div class="ctrl"><label>gemeinsame Phase e<sup>iλ</sup> <b id="hm_lV">0.00</b></label>
+            <input type="range" id="hm_l" min="0" max="6.283" step="0.01" value="0"></div>
+        </div>
+        <div id="hmOut" class="mono" style="font-size:.85rem;color:var(--acc);line-height:2"></div>
+        <div class="note b"><p>Dreh die <strong>gemeinsame Phase</strong>: beide
+        <span class="mono">z</span> drehen sich mit, aber das Bild
+        <span class="mono">p(z₀,z₁)</span> bleibt <strong>exakt stehen</strong>. Denn
+        <span class="mono">(e<sup>iλ</sup>z₀)(e<sup>iλ</sup>z₁)* = z₀z₁*</span>.
+        <em>Das</em> ist die Faser <span class="mono">S¹</span>.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 9. HOMOTOPIEFASERUNG -->
+<!-- ========================================================= -->
+<section id="s9">
+<div class="wrap">
+  <div class="sec-num">09 — Der Trick</div>
+  <h2>Beispiel 0.9: Die Homotopiefaserung</h2>
+  <p class="lead">Was macht man mit einer Abbildung, die <em>keine</em> Fibration ist?
+  Man macht eine daraus. Sorensen nennt das eine <strong>„Aufpolsterung"</strong> von E [[11]].</p>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:400px"><canvas id="hfibCv"></canvas></div>
+      <div class="ctrl">
+        <label>Punkt e ∈ E wählen <b id="hfibEV">0.35</b></label>
+        <input type="range" id="hfibE" min="0" max="1" step="0.002" value="0.35">
+      </div>
+      <div class="ctrl">
+        <label>Weg p: Endpunkt p(1) <b id="hfibPV">0.70</b></label>
+        <input type="range" id="hfibP" min="0" max="1" step="0.002" value="0.7">
+      </div>
+      <div class="ctrl">
+        <label>Deformationsretraktion: Wege zusammenziehen <b id="hfibRV">0.00</b></label>
+        <input type="range" id="hfibR" min="0" max="1" step="0.004" value="0">
+      </div>
+      <div class="btnrow">
+        <button class="btn on" data-hfib="0">E<sub>f</sub> aufbauen</button>
+        <button class="btn" data-hfib="1">Homotopiefaser über ∗ zeigen</button>
+      </div>
+      <div id="hfibInfo" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Die Konstruktion</h3>
+      <p>Gegeben eine <strong>beliebige</strong> Abbildung <span class="mono">f : E → B</span>.
+      Definiere</p>
+      <div class="math" id="m-hfib1"></div>
+      <p>Ein Punkt von <span class="mono">E<sub>f</sub></span> ist also ein
+      <strong>Paar</strong>: ein Punkt <span class="mono">e</span> oben <em>plus</em> ein Weg
+      <span class="mono">p</span> unten, der bei <span class="mono">f(e)</span> startet [[11]].</p>
+      <p>Topologisiert wird das als Unterraum von <span class="mono">E × B<sup>I</sup></span>,
+      wobei <span class="mono">B<sup>I</sup></span> der Wegeraum von <span class="mono">B</span> ist.</p>
+      <h4>Die neue Abbildung</h4>
+      <div class="math" id="m-hfib2"></div>
+      <p>Nicht <span class="mono">e</span> zählt, sondern <strong>wo der Weg endet</strong>.
+      Und genau diese Abbildung <em>ist</em> eine Fibration [[11]].</p>
+
+      <details>
+        <summary>Warum ist f′ eine Fibration? (der Beweis aus dem Text)</summary>
+        <p style="font-size:.93rem">Gegeben eine Homotopie <span class="mono">g : I × X → B</span>
+        und eine Hochhebung des Starts <span class="mono">g̃₀ : X → E<sub>f</sub></span>.
+        Schreibe <span class="mono">(e<sub>x</sub>, σ<sub>x</sub>) = g̃₀(x)</span> und sei
+        <span class="mono">γ<sub>x</sub></span> das Bild von <span class="mono">I × {x}</span>
+        unter <span class="mono">g</span>.</p>
+        <p style="font-size:.93rem">Definiere <span class="mono">g̃(t,x) = (e<sub>x</sub>,
+        γ̃<sub>x</sub>(t))</span>, wobei <span class="mono">γ̃<sub>x</sub>(t)</span> der Weg von
+        <span class="mono">f(e<sub>x</sub>)</span> nach <span class="mono">γ<sub>x</sub>(t)</span>
+        ist, der <span class="mono">γ<sub>x</sub> ∘ σ<sub>x</sub></span> folgt.</p>
+        <p style="font-size:.93rem"><strong>Die Idee in einem Satz:</strong> Der Punkt oben bleibt
+        einfach stehen — man <em>verlängert</em> nur den Weg. Hochheben wird trivial, weil man
+        den Weg immer schon dabei hat. ∎</p>
+      </details>
+
+      <div class="note"><p><strong>E und E<sub>f</sub> sind homotopieäquivalent.</strong>
+      Man bettet <span class="mono">E</span> ein via
+      <span class="mono">e ↦ (e, p<sub>const(e)</sub>)</span>, und durch Zusammenziehen der Wege
+      retrahiert <span class="mono">E<sub>f</sub></span> deformierend auf
+      <span class="mono">E</span> [[11]]. Zieh den dritten Regler!</p></div>
+
+      <div class="note p"><p>Die Faser von <span class="mono">f′</span> über einem Punkt
+      <span class="mono">∗ ∈ B</span> heißt <strong>Homotopiefaser</strong> bei
+      <span class="mono">∗</span>. Sie ist die „richtige", homotopieinvariante Version des
+      Urbilds [[11]].</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 10. GLATTE BÜNDEL / VERTIKALES TANGENTIALBÜNDEL -->
+<!-- ========================================================= -->
+<section id="s10">
+<div class="wrap">
+  <div class="sec-num">10 — Variante</div>
+  <h2>Glatte Bündel &amp; das vertikale Tangentialbündel</h2>
+  <p class="lead">Interessiert man sich für <em>Glattheit</em>, verlangt man einfach, dass alle
+  Abbildungen glatt und alle Homöomorphismen <strong>Diffeomorphismen</strong> sind [[11]].</p>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:440px;padding:0;position:relative">
+        <div id="tang3d" style="width:100%;height:440px;border-radius:12px"></div>
+        <div style="position:absolute;top:12px;left:16px;font-size:.76rem;color:var(--dimmer);pointer-events:none">
+          Tangentialräume auf einer Fläche · Maus: drehen
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="btn on" data-tg="0">Tangentialbündel TM</button>
+        <button class="btn" data-tg="1">Df: Differential</button>
+        <button class="btn" data-tg="2">ker Df = vertikales Bündel</button>
+      </div>
+      <div class="ctrl">
+        <label>Dichte der Tangentialräume <b id="tgDV">6</b></label>
+        <input type="range" id="tgD" min="3" max="12" step="1" value="6">
+      </div>
+      <div id="tgInfo" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Beispiel 0.10 — Schritt für Schritt</h3>
+      <div class="qa"><div class="b1">1</div><p style="margin:0">Sei <span class="mono">Mⁿ</span>
+      eine glatte Mannigfaltigkeit, eingebettet in <span class="mono">ℝ<sup>N</sup></span>.
+      Das <strong>Tangentialbündel</strong> ist</p></div>
+      <div class="math" id="m-tang"></div>
+      <p>„By this definition, every smooth manifold has a unique tangent bundle" [[11]].
+      </p>
+      <div class="qa"><div class="b1">2</div><p style="margin:0">Für eine glatte Abbildung
+      <span class="mono">f : X → Y</span> ist das <strong>Differential</strong>
+      <span class="mono">Df</span> eine Abbildung vom Tangentialbündel von
+      <span class="mono">X</span> zum Tangentialbündel von <span class="mono">Y</span>,
+      die sich auf den Fasern zu einer <strong>linearen Abbildung</strong> einschränkt [[11]].</p></div>
+      <div class="math" id="m-df"></div>
+      <div class="qa"><div class="b1">3</div><p style="margin:0">Ist <span class="mono">Df</span>
+      auf jedem Tangentialraum <strong>surjektiv</strong>, so existiert ein natürliches
+      Vektorbündel, das <em>vertikale Tangentialbündel</em> [[11]]:</p></div>
+      <div class="math" id="m-vert"></div>
+      <div class="note y"><p><strong>Anschauung:</strong> <span class="mono">ker Df</span>
+      besteht aus genau den Richtungen, in die man sich bewegen kann, <strong>ohne dass sich
+      das Bild unten ändert</strong>. Man bewegt sich also <em>innerhalb der Faser</em> —
+      darum heißen sie „vertikal".</p></div>
+      <p>Bei einem Faserbündel <span class="mono">π : E → B</span> ist das vertikale
+      Tangentialbündel <span class="mono">T<sub>π</sub> = ker Dπ</span> genau das Bündel
+      der <strong>Tangentialräume an die Fasern</strong>. Jede Faser trägt ihre eigene
+      Tangentialrichtung, und alle zusammen bilden wieder ein Bündel über
+      <span class="mono">E</span>.</p>
+      <div class="note b"><p>Der Text erwähnt außerdem, dass es eine weitere Variante gibt,
+      das <strong>Prinzipal-G-Bündel</strong> — dort ist die Faser die Strukturgruppe selbst.
+      Sorensen verschiebt das auf den nächsten Abschnitt [[11]].</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 11. LANGE EXAKTE SEQUENZ -->
+<!-- ========================================================= -->
+<section id="s11">
+<div class="wrap">
+  <div class="sec-num">11 — Die Lösung</div>
+  <h2>Theorem 0.11: Die lange exakte Sequenz</h2>
+  <p class="lead">Das ist die Maschine. Sie verwandelt <strong>eine geometrische Zerlegung</strong>
+  in <strong>eine unendliche Kette algebraischer Gleichungen</strong> — und darin lassen sich
+  unbekannte Größen ausrechnen.</p>
+
+  <div class="card">
+    <p>Sei <span class="mono">π : E → B</span> eine Fibration mit wegzusammenhängendem
+    <span class="mono">B</span>. Dann gibt es eine lange exakte Sequenz von
+    Homotopiegruppen [[11]]:</p>
+    <div class="math" id="m-les" style="font-size:.98rem"></div>
+  </div>
+
+  <!-- Was heißt exakt -->
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:330px"><canvas id="exactCv"></canvas></div>
+      <div class="btnrow">
+        <button class="btn on" data-ex="0">exakt ✓</button>
+        <button class="btn" data-ex="1">nicht exakt (Bild ⊊ Kern)</button>
+        <button class="btn" data-ex="2">nicht exakt (Bild ⊋ Kern)</button>
+      </div>
+      <div id="exactInfo" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Was bedeutet „exakt"?</h3>
+      <p>Eine Kette von Abbildungen</p>
+      <div class="math" id="m-exdef"></div>
+      <p>heißt <em>exakt an der Stelle B</em>, wenn gilt:</p>
+      <div class="math" id="m-exdef2"></div>
+      <p>Also: <strong>Was von links ankommt, ist genau das, was nach rechts auf Null geht.</strong>
+      Nichts geht verloren, nichts kommt dazu.</p>
+      <div class="note"><p><strong>Warum das rechnen lässt:</strong> Kennt man zwei von drei
+      benachbarten Gruppen, ist die dritte oft eindeutig bestimmt. Exaktheit ist eine
+      <em>Bilanzgleichung</em> — wie Erhaltungssätze in der Physik.</p></div>
+      <h4>Die Goldene Regel</h4>
+      <div class="note p"><p>Steht in einer exakten Sequenz</p>
+      <div class="math" id="m-golden" style="margin:8px 0"></div>
+      <p>dann ist die mittlere Abbildung ein <strong>Isomorphismus</strong>:
+      <span class="mono">G ≅ H</span>. Genau dieser Trick liefert gleich beide Ergebnisse.</p></div>
+    </div>
+  </div>
+
+  <!-- Interaktive Sequenz -->
+  <div class="card">
+    <h3>Die Sequenz zum Anfassen</h3>
+    <p>Wähle eine Fibration. Die Sequenz wird aufgebaut, und du kannst Schritt für Schritt
+    die unbekannten Gruppen erschließen.</p>
+    <div class="btnrow">
+      <button class="btn on" data-les="cov">ℤ → ℝ → S¹ &nbsp;(Überlagerung)</button>
+      <button class="btn" data-les="hopf">S¹ → S³ → S² &nbsp;(Hopf)</button>
+      <button class="btn" data-les="triv">F → B×F → B &nbsp;(trivial)</button>
+    </div>
+    <div class="scroll-x">
+      <div class="cvwrap" style="min-height:290px"><canvas id="lesCv"></canvas></div>
+    </div>
+    <div class="ctrl">
+      <label>Wie weit ist die Sequenz aufgebaut? <b id="lesStepV">0</b></label>
+      <input type="range" id="lesStep" min="0" max="8" step="1" value="0">
+    </div>
+    <div id="lesInfo" class="note tight"><p></p></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 12. ERGEBNIS 1 -->
+<!-- ========================================================= -->
+<section id="s12">
+<div class="wrap">
+  <div class="sec-num">12 — Erste Antwort</div>
+  <h2>π₁(S¹) = ℤ und πᵢ(S¹) = 0 für i ≠ 1</h2>
+  <p class="lead">„Because the universal cover of S¹ is contractible, and a covering map is a
+  fibration, it follows <strong>immediately</strong>" [[11]]. Sehen wir, warum „immediately"
+  gerechtfertigt ist.</p>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:400px"><canvas id="coverCv2"></canvas></div>
+      <div class="ctrl">
+        <label>Position auf ℝ (der Überlagerung) <b id="cv2TV">0.00</b></label>
+        <input type="range" id="cv2T" min="-3.2" max="3.2" step="0.005" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Windungszahl des Weges <b id="cv2WV">1</b></label>
+        <input type="range" id="cv2W" min="-3" max="3" step="1" value="1">
+      </div>
+      <div class="btnrow">
+        <button class="btn on" data-cv2="0">Helix ℝ → S¹</button>
+        <button class="btn" data-cv2="1">Weg hochheben</button>
+        <button class="btn" data-cv2="2">↻ animieren</button>
+      </div>
+      <div id="cv2Info" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Der Beweis in vier Zeilen</h3>
+      <div class="qa"><div class="b1">1</div><p style="margin:0">Die universelle Überlagerung
+      von <span class="mono">S¹</span> ist <span class="mono">ℝ</span> via
+      <span class="mono">t ↦ e<sup>2πit</sup></span>. Die Faser ist
+      <span class="mono">ℤ</span> — diskret [[11]].</p></div>
+      <div class="qa"><div class="b1">2</div><p style="margin:0"><span class="mono">ℝ</span> ist
+      <strong>zusammenziehbar</strong>, also <span class="mono">πₙ(ℝ) = 0</span> für alle
+      <span class="mono">n</span>.</p></div>
+      <div class="qa"><div class="b1">3</div><p style="margin:0">Eine Überlagerung ist eine
+      Fibration. Also gilt Theorem 0.11.</p></div>
+      <div class="qa"><div class="b1">4</div><p style="margin:0">Einsetzen in die Sequenz.</p></div>
+
+      <h4>Für n ≥ 2</h4>
+      <div class="math" id="m-s1a"></div>
+      <p>Da <span class="mono">ℤ</span> diskret ist, gilt <span class="mono">πₙ(ℤ) = 0</span>
+      für <span class="mono">n ≥ 1</span>. Beide Nachbarn sind Null:</p>
+      <div class="math" id="m-s1b"></div>
+      <p>Die Goldene Regel ⇒ <span class="mono">πₙ(S¹) = 0</span> für
+      <span class="mono">n ≥ 2</span>. ✓</p>
+
+      <h4>Für n = 1</h4>
+      <div class="math" id="m-s1c"></div>
+      <p>Exaktheit macht daraus eine kurze exakte Sequenz mit
+      <span class="mono">π₁(S¹) ≅ π₀(ℤ) = ℤ</span>.</p>
+      <div class="note y"><p><span class="stat">π₁(S¹) = ℤ</span><br>
+      Die Windungszahl. Jede Schleife auf dem Kreis ist durch eine <strong>ganze Zahl</strong>
+      charakterisiert: wie oft sie herumläuft. Genau das zeigt der Regler „Windungszahl".</p></div>
+      <p class="hint">Der hochgehobene Weg startet bei 0 und endet bei <span class="mono">n</span> —
+      der Endpunkt oben <em>ist</em> die Windungszahl. Deshalb ist die Überlagerung das perfekte
+      Messgerät.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 13. ERGEBNIS 2 -->
+<!-- ========================================================= -->
+<section id="s13">
+<div class="wrap">
+  <div class="sec-num">13 — Die Pointe</div>
+  <h2>πᵢ(S²) ≅ πᵢ(S³) für alle i &gt; 2</h2>
+  <p class="lead">Jetzt kommt der Satz, für den der ganze Apparat gebaut wurde. Und er hat
+  eine Konsequenz, die der gesamten Intuition widerspricht.</p>
+
+  <div class="big-q">Kann sich eine 3-Sphäre auf eine 2-Sphäre so legen, dass sie nicht
+  abrutscht?</div>
+
+  <div class="card">
+    <h3>Die Rechnung</h3>
+    <p>Hopf-Fibration: <span class="mono">S¹ → S³ → S²</span>. Einsetzen in Theorem 0.11
+    für <span class="mono">i &gt; 2</span>:</p>
+    <div class="math" id="m-hopfles"></div>
+    <p>Aus Abschnitt 12 wissen wir: <span class="mono">πᵢ(S¹) = 0</span> für alle
+    <span class="mono">i ≠ 1</span>. Für <span class="mono">i &gt; 2</span> sind also
+    <strong>beide Randterme Null</strong>:</p>
+    <div class="math" id="m-hopfles2"></div>
+    <div class="note p"><p>Goldene Regel ⇒ <span class="stat">πᵢ(S²) ≅ πᵢ(S³)</span>
+    für alle <span class="mono">i &gt; 2</span> [[11]].</p></div>
+  </div>
+
+  <div class="gridA">
+    <div>
+      <div class="cvwrap" style="min-height:360px"><canvas id="resultCv"></canvas></div>
+      <div class="ctrl">
+        <label>Grad i <b id="resIV">3</b></label>
+        <input type="range" id="resI" min="1" max="8" step="1" value="3">
+      </div>
+      <div id="resInfo" class="note tight"><p></p></div>
+    </div>
+    <div>
+      <h3>Warum das schockierend ist</h3>
+      <p>Setze <span class="mono">i = 3</span>. Es ist ein Standardresultat, dass
+      <span class="mono">π₃(S³) = ℤ</span> — die 3-Sphäre kann sich mit beliebigem
+      <strong>Abbildungsgrad</strong> auf sich selbst legen, genau wie
+      <span class="mono">π₁(S¹) = ℤ</span>.</p>
+      <div class="math" id="m-pi3"></div>
+      <div class="note y"><p><strong>Also:</strong> <span class="stat">π₃(S²) = ℤ</span></p></div>
+      <p>Die naive Erwartung war <span class="mono">0</span>. Denn eine <em>höher</em>dimensionale
+      Sphäre in eine <em>niedriger</em>dimensionale zu werfen, sollte doch immer zusammenziehbar
+      sein — so wie jede Schleife auf <span class="mono">S²</span> abrutscht
+      (<span class="mono">π₁(S²) = 0</span>).</p>
+      <p><strong>Falsch.</strong> Es gibt unendlich viele wesentlich verschiedene Arten, wie
+      sich <span class="mono">S³</span> um <span class="mono">S²</span> wickeln kann —
+      indiziert durch die <strong>Hopf-Invariante</strong> in <span class="mono">ℤ</span>.</p>
+      <div class="note b"><p>Und der geometrische Grund dafür ist genau das, was du in
+      Abschnitt 08 gesehen hast: <strong>die Fasern sind verschlungen</strong>. Die
+      Verschlingungszahl zweier Fasern <em>ist</em> die Hopf-Invariante.</p></div>
+      <p class="hint">Dieses Resultat von Heinz Hopf (1931) hat die Homotopietheorie begründet.
+      Vorher glaubte man, höhere Homotopiegruppen von Sphären seien langweilig.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die Tabelle, die daraus folgt</h3>
+    <p>Jede Zeile von <span class="mono">S³</span> überträgt sich eins zu eins auf
+    <span class="mono">S²</span>. Klick eine Zelle an.</p>
+    <div class="scroll-x"><div id="piTable"></div></div>
+    <div id="piInfo" class="note tight"><p></p></div>
+    <p class="hint">Beachte die Spalte <span class="mono">i = 2</span>: dort gilt die Aussage
+    <strong>nicht</strong> — <span class="mono">π₂(S²) = ℤ</span>, aber
+    <span class="mono">π₂(S³) = 0</span>. Genau deshalb steht im Satz „für alle i &gt; 2".</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ========================================================= -->
+<!-- 14. ZUSAMMENFASSUNG -->
+<!-- ========================================================= -->
+<section id="s14">
+<div class="wrap">
+  <div class="sec-num">14 — Der Bogen</div>
+  <h2>Die ganze Geschichte in einem Bild</h2>
+  <p class="lead">Fahre über die Stationen — jede baut auf der vorherigen auf.</p>
+
+  <div class="cvwrap" style="min-height:420px"><canvas id="arcCv"></canvas></div>
+  <div id="arcInfo" class="card" style="min-height:120px"><p></p></div>
+
+  <div class="grid2" style="margin-top:30px">
+    <div class="card">
+      <h4>Welche Probleme löst das?</h4>
+      <ul style="color:var(--dim);font-size:.95rem;padding-left:20px;line-height:1.9">
+        <li>Wann ist ein Raum global ein Produkt — und wann nur lokal?</li>
+        <li>Wie unterscheidet man Bündel, die lokal identisch aussehen?</li>
+        <li>Wie berechnet man Homotopiegruppen, die direkt unzugänglich sind?</li>
+        <li>Wie überträgt man Information zwischen Total-, Basis- und Faserraum?</li>
+        <li>Wie macht man aus <em>jeder</em> Abbildung eine Fibration?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Was konkret gemacht wurde</h4>
+      <ul style="color:var(--dim);font-size:.95rem;padding-left:20px;line-height:1.9">
+        <li>Möbiusbündel ≇ triviales Bündel (Zwischenwertsatz)</li>
+        <li>Faserbündel als Verallgemeinerung von Überlagerungen</li>
+        <li>Homotopiefaserung: jede Abbildung wird Fibration</li>
+        <li>Vertikales Tangentialbündel <span class="mono">T<sub>f</sub> = ker Df</span></li>
+        <li><span class="mono">π₁(S¹) = ℤ</span>, <span class="mono">πᵢ(S¹) = 0</span> sonst</li>
+        <li><span class="mono">πᵢ(S²) ≅ πᵢ(S³)</span> für <span class="mono">i &gt; 2</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Motivation → Idee → Lösung → Weg → Antwort</h4>
+    <div class="flowbox">
+      <div class="flowstep"><div class="n">MOTIVATION</div><div class="t">Lokal ≠ Global</div>
+        <div class="d">Räume, die aus langweiligen Stücken bestehen, aber global verdreht sind.</div></div>
+      <div class="flowstep"><div class="n">IDEE</div><div class="t">Verklebedaten</div>
+        <div class="d">Die Information liegt in den Übergangsfunktionen g<sub>αβ</sub>, nicht in den Stücken.</div></div>
+      <div class="flowstep"><div class="n">LÖSUNG</div><div class="t">Fibration</div>
+        <div class="d">Homotopiehochhebung macht die Geometrie homotopietheoretisch nutzbar.</div></div>
+      <div class="flowstep"><div class="n">WEG</div><div class="t">Lange exakte Sequenz</div>
+        <div class="d">Theorem 0.11 verbindet π<sub>n</sub>(F), π<sub>n</sub>(E), π<sub>n</sub>(B) zu einer Bilanzkette.</div></div>
+      <div class="flowstep"><div class="n">ANTWORT</div><div class="t">π₃(S²) = ℤ</div>
+        <div class="d">Über die Hopf-Fibration — und der Grund sind verschlungene Kreise.</div></div>
+    </div>
+  </div>
+
+  <div class="center" style="margin:50px 0 10px;color:var(--dimmer);font-size:.85rem">
+    Nach Derek Sorensen, <em>An Introduction to Fiber Bundles and Fibrations</em>, 18.12.2017 [[11]]<br>
+    Weiterführend: Hatcher, <em>Algebraic Topology</em> · Hatcher, <em>Vector Bundles and K-Theory</em> ·
+    Husemoller, <em>Fibre Bundles</em> [[11]]
+  </div>
+</div>
+</section>
+
+<script>
+/* ==================================================================
+   HELPERS
+================================================================== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const TAU=Math.PI*2, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const DPR=Math.min(window.devicePixelRatio||1,2);
+
+function setupCv(cv,w,h){
+  cv.width=w*DPR; cv.height=h*DPR;
+  cv.style.width=w+'px'; cv.style.height=h+'px';
+  const c=cv.getContext('2d'); c.setTransform(DPR,0,0,DPR,0,0); return c;
+}
+function fit(cv,hRatio,maxW){
+  const p=cv.parentElement;
+  let w=Math.min(p.clientWidth-22,maxW||99999); if(w<200)w=200;
+  return setupCv(cv,w,Math.round(w*hRatio));
+}
+function tex(id,s,display){
+  const el=document.getElementById(id); if(!el)return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:display!==false}); }
+  catch(e){ el.textContent=s; }
+}
+function roundRect(c,x,y,w,h,r){
+  c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r);
+  c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+}
+function arrow(c,x1,y1,x2,y2,col,lw){
+  c.strokeStyle=col; c.lineWidth=lw||1.6; c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+  const a=Math.atan2(y2-y1,x2-x1), s=7;
+  c.beginPath(); c.moveTo(x2,y2);
+  c.lineTo(x2-s*Math.cos(a-.4),y2-s*Math.sin(a-.4));
+  c.lineTo(x2-s*Math.cos(a+.4),y2-s*Math.sin(a+.4));
+  c.closePath(); c.fillStyle=col; c.fill();
+}
+function hsl(h,s,l,a){return `hsla(${h},${s}%,${l}%,${a===undefined?1:a})`;}
+const C={acc:'#66e0c8',acc2:'#7aa2ff',acc3:'#ff8fb1',acc4:'#ffd166',pur:'#c084fc',dim:'#9aa1b8',dimr:'#6d7490',txt:'#e8eaf2',
+  bg:'rgba(8,10,18,.6)',grid:'rgba(255,255,255,.07)'};
+
+/* ==================================================================
+   NAV + PROGRESS + REVEAL
+================================================================== */
+const SECS=[
+ ['s0','Start'],['s1','Motivation'],['s2','Werkzeuge'],['s3','Vektorbündel'],
+ ['s4','Kozykel'],['s5','Beispiele'],['s6','Faserbündel'],['s7','Hochhebung'],
+ ['s8','Hopf'],['s9','Homotopiefaser'],['s10','Tangential'],['s11','Exakte Sequenz'],
+ ['s12','π₁(S¹)=ℤ'],['s13','π₃(S²)=ℤ'],['s14','Überblick']
+];
+(function(){
+  const nav=$('#nav');
+  SECS.forEach(([id,label])=>{
+    const d=document.createElement('div'); d.className='navdot'; d.dataset.t=id;
+    d.innerHTML=`<span>${label}</span><i></i>`;
+    d.onclick=()=>document.getElementById(id).scrollIntoView({behavior:'smooth'});
+    nav.appendChild(d);
+  });
+})();
+function onScroll(){
+  const h=document.documentElement;
+  $('#prog').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  let cur=SECS[0][0];
+  SECS.forEach(([id])=>{const e=document.getElementById(id);
+    if(e && e.getBoundingClientRect().top<innerHeight*0.42) cur=id;});
+  $$('.navdot').forEach(d=>d.classList.toggle('on',d.dataset.t===cur));
+}
+addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+$$('section > .wrap > *').forEach(el=>el.classList.add('reveal'));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.06});
+$$('.reveal').forEach(e=>io.observe(e));
+
+/* ==================================================================
+   FORMELN (Temml)
+================================================================== */
+function renderMath(){
+ tex('m-fiber','f^{-1}(b)=\\{a\\in A \\;:\\; f(a)=b\\}');
+ tex('m-quot','E=\\bigl([0,1]\\times\\mathbb{R}\\bigr)/\\!\\sim,\\qquad (0,x)\\sim(1,-x)');
+ tex('m-gl','GL(k)=\\{A\\in\\mathbb{R}^{k\\times k}\\;:\\;\\det A\\neq 0\\}');
+ tex('m-hom','H:[0,1]\\times X\\longrightarrow Y,\\qquad H(0,\\cdot)=f,\\;\\;H(1,\\cdot)=g');
+ tex('m-cocy1','v \\;\\xrightarrow{\\;g_{\\gamma\\alpha}\\;} \\;\\cdot\\;\\xrightarrow{\\;g_{\\beta\\gamma}\\;}\\;\\cdot\\;\\xrightarrow{\\;g_{\\alpha\\beta}\\;}\\; v\\,?');
+ tex('m-cocy2','g_{\\alpha\\alpha}=I,\\qquad g_{\\alpha\\beta}(x)\\,g_{\\beta\\gamma}(x)\\,g_{\\gamma\\alpha}(x)=I');
+ tex('m-triv','\\pi:B\\times\\mathbb{R}^{n}\\longrightarrow B,\\qquad (b,v)\\mapsto b');
+ tex('m-mob','E=\\bigl([0,1]\\times\\mathbb{R}\\bigr)/\\!\\!\\sim,\\qquad \\pi(t,x)=t\\in S^{1}');
+ tex('m-taut','E=\\{(V,v)\\;:\\;V\\in G_n(\\mathbb{R}^{n+k}),\\; v\\in V\\},\\qquad \\pi(V,v)=V');
+ tex('m-hlp1','\\pi\\circ f = h,\\qquad f|_{\\{0\\}\\times X}=f_0');
+ tex('m-hlp2','\\pi\\circ f = h \\quad\\text{und}\\quad f|_{\\{0\\}\\times X}=f_0');
+ tex('m-hopf','p(z_0,z_1)=\\bigl(2z_0z_1^{*},\\;|z_0|^{2}-|z_1|^{2}\\bigr)');
+ tex('m-hfib1','E_f:=\\{(e,p)\\;:\\;e\\in E,\\;p:I\\to B \\text{ mit } p(0)=f(e)\\}');
+ tex('m-hfib2','f\':E_f\\longrightarrow B,\\qquad (e,p)\\mapsto p(1)');
+ tex('m-tang','TM=\\{(m,v)\\;:\\;m\\in M\\subset\\mathbb{R}^{N},\\; v\\in T_mM\\}');
+ tex('m-df','Df:TX\\longrightarrow TY \\quad\\text{(linear auf jeder Faser)}');
+ tex('m-vert','T_f := \\ker Df');
+ tex('m-les','\\cdots\\to\\pi_n(F,x_0)\\to\\pi_n(E,x_0)\\to\\pi_n(B,b_0)\\to\\pi_{n-1}(F,x_0)\\to\\cdots\\to\\pi_0(E,x_0)\\to 0');
+ tex('m-exdef','A\\;\\xrightarrow{\\;\\varphi\\;}\\;B\\;\\xrightarrow{\\;\\psi\\;}\\;C');
+ tex('m-exdef2','\\operatorname{im}\\varphi \\;=\\; \\ker\\psi');
+ tex('m-golden','0\\longrightarrow G\\longrightarrow H\\longrightarrow 0');
+ tex('m-s1a','\\pi_n(\\mathbb{Z})\\to\\pi_n(\\mathbb{R})\\to\\pi_n(S^1)\\to\\pi_{n-1}(\\mathbb{Z})');
+ tex('m-s1b','0\\longrightarrow \\pi_n(S^1)\\longrightarrow 0 \\quad\\Longrightarrow\\quad \\pi_n(S^1)=0');
+ tex('m-s1c','0=\\pi_1(\\mathbb{R})\\to\\pi_1(S^1)\\to\\pi_0(\\mathbb{Z})=\\mathbb{Z}\\to\\pi_0(\\mathbb{R})=0');
+ tex('m-hopfles','\\pi_i(S^1)\\to\\pi_i(S^3)\\to\\pi_i(S^2)\\to\\pi_{i-1}(S^1)');
+ tex('m-hopfles2','0\\longrightarrow\\pi_i(S^3)\\longrightarrow\\pi_i(S^2)\\longrightarrow 0');
+ tex('m-pi3','\\pi_3(S^2)\\;\\cong\\;\\pi_3(S^3)\\;=\\;\\mathbb{Z}');
+}
+renderMath();
+
+/* ==================================================================
+   HERO CANVAS — Fasern über Basis
+================================================================== */
+(function(){
+  const cv=$('#heroCv'); let c,W,H;
+  function res(){const p=cv.parentElement;W=p.clientWidth-22;H=298;c=setupCv(cv,W,H);}
+  res(); addEventListener('resize',()=>{res();});
+  let t=0;
+  function draw(){
+    t+=0.0055;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.74, rx=Math.min(W*0.36,330), ry=rx*0.22;
+    // Basis-Ellipse
+    c.strokeStyle='rgba(192,132,252,.55)'; c.lineWidth=2;
+    c.beginPath(); c.ellipse(cx,cy,rx,ry,0,0,TAU); c.stroke();
+    c.fillStyle='rgba(192,132,252,.06)'; c.fill();
+    c.fillStyle=C.pur; c.font='600 12px JetBrains Mono';
+    c.fillText('B (Basis)',cx+rx+8,cy+4);
+    const N=54;
+    const items=[];
+    for(let i=0;i<N;i++){
+      const a=i/N*TAU;
+      const x=cx+rx*Math.cos(a), y=cy+ry*Math.sin(a);
+      items.push({x,y,a,depth:Math.sin(a)});
+    }
+    items.sort((p,q)=>p.depth-q.depth);
+    items.forEach(p=>{
+      const tw=Math.sin(p.a*1+t*2)*0.5+Math.sin(p.a/2)*0.5;
+      const len=56+18*Math.sin(p.a*3+t*3);
+      const sk=tw*14;
+      const front=p.depth>0;
+      const hue=lerp(168,262,(Math.cos(p.a)+1)/2);
+      c.strokeStyle=hsl(hue,70,62,front?0.85:0.28);
+      c.lineWidth=front?2:1.2;
+      c.beginPath(); c.moveTo(p.x-sk*0.3,p.y+8); c.lineTo(p.x+sk,p.y-len); c.stroke();
+      c.fillStyle=hsl(hue,80,70,front?0.95:0.3);
+      c.beginPath(); c.arc(p.x+sk,p.y-len,front?2.6:1.6,0,TAU); c.fill();
+    });
+    c.fillStyle=C.acc; c.font='600 12px JetBrains Mono';
+    c.fillText('E (Totalraum) — Fasern F',16,26);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==================================================================
+   01 MOTIVATION — Lupe auf Zylinder / Möbius
+================================================================== */
+(function(){
+  const cv=$('#motivCv'); let c,W,H; let mode=0;
+  function res(){c=fit(cv,0.60,560);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const pos=$('#motivPos'), zoom=$('#motivZoom');
+  function bandPoint(u,v,twist){
+    // u in [0,1] around circle, v in [-1,1] across
+    const a=u*TAU, half=twist? a/2:0;
+    const R=1, w=0.34;
+    const rr=R+v*w*Math.cos(half);
+    return {x:rr*Math.cos(a), y:rr*Math.sin(a), z:v*w*Math.sin(half)};
+  }
+  function proj(p,cx,cy,s){
+    const az=0.9, el=0.55;
+    const X=p.x*Math.cos(az)-p.y*Math.sin(az);
+    const Y=p.x*Math.sin(az)+p.y*Math.cos(az);
+    return {x:cx+X*s, y:cy-(p.z*s*1.0)+Y*s*Math.sin(el)*1.0, d:Y};
+  }
+  function draw(){
+    if(!c)return;
+    c.clearRect(0,0,W,H);
+    const u0=+pos.value, z=+zoom.value, twist=mode===1;
+    // ---- left: whole object
+    const cx=W*0.30, cy=H*0.52, s=Math.min(W*0.13,H*0.30);
+    const NU=110, NV=6;
+    const tris=[];
+    for(let i=0;i<NU;i++){
+      for(let j=0;j<NV;j++){
+        const u=i/NU,u2=(i+1)/NU;
+        const v=-1+2*j/NV, v2=-1+2*(j+1)/NV;
+        const P=[bandPoint(u,v,twist),bandPoint(u2,v,twist),bandPoint(u2,v2,twist),bandPoint(u,v2,twist)]
+          .map(p=>proj(p,cx,cy,s));
+        const d=(P[0].d+P[2].d)/2;
+        // inside window?
+        let du=Math.abs(u-u0); du=Math.min(du,1-du);
+        const inWin = du < z*0.5;
+        tris.push({P,d,u,inWin});
+      }
+    }
+    tris.sort((a,b)=>a.d-b.d);
+    tris.forEach(t=>{
+      const hue=twist?290:168;
+      const light=t.inWin?70:38;
+      const alpha=t.inWin?0.95:0.42;
+      c.fillStyle=hsl(hue,t.inWin?75:45,light,alpha);
+      c.strokeStyle=hsl(hue,70,light+12,alpha*0.5);
+      c.lineWidth=0.5;
+      c.beginPath(); c.moveTo(t.P[0].x,t.P[0].y);
+      for(let k=1;k<4;k++)c.lineTo(t.P[k].x,t.P[k].y);
+      c.closePath(); c.fill(); c.stroke();
+    });
+    c.fillStyle=C.dim; c.font='600 11px JetBrains Mono';
+    c.fillText(twist?'Möbiusband':'Zylinder',cx-38,H-12);
+
+    // ---- right: magnified patch (always a rectangle)
+    const px=W*0.68, py=H*0.50, pw=W*0.26, ph=H*0.46;
+    c.save();
+    c.strokeStyle='rgba(255,255,255,.2)'; c.lineWidth=1.2;
+    roundRect(c,px-pw/2,py-ph/2,pw,ph,10); c.stroke();
+    c.clip();
+    // grid of the patch
+    const cols=9, rows=7;
+    for(let i=0;i<=cols;i++){
+      const xx=px-pw/2+pw*i/cols;
+      c.strokeStyle='rgba(255,255,255,.10)'; c.lineWidth=1;
+      c.beginPath(); c.moveTo(xx,py-ph/2); c.lineTo(xx,py+ph/2); c.stroke();
+    }
+    for(let j=0;j<=rows;j++){
+      const yy=py-ph/2+ph*j/rows;
+      c.strokeStyle='rgba(255,255,255,.10)';
+      c.beginPath(); c.moveTo(px-pw/2,yy); c.lineTo(px+pw/2,yy); c.stroke();
+    }
+    // fibers as vertical lines
+    const hue=twist?290:168;
+    for(let i=0;i<=cols;i++){
+      const uu=u0+(i/cols-0.5)*z;
+      const xx=px-pw/2+pw*i/cols;
+      // twist only visible if z large
+      const flip = twist? Math.sin(Math.PI*((uu%1+1)%1)) : 1;
+      const skew = twist? (z>0.6? ( ((uu%1+1)%1) -0.5)*z*40 : 0) : 0;
+      c.strokeStyle=hsl(hue,75,66,.95); c.lineWidth=2;
+      c.beginPath();
+      c.moveTo(xx-skew,py-ph/2+6); c.lineTo(xx+skew,py+ph/2-6); c.stroke();
+    }
+    c.restore();
+    c.fillStyle=C.acc4; c.font='600 11px JetBrains Mono';
+    c.fillText('Lupe  (Zoom '+z.toFixed(2)+')',px-pw/2,py-ph/2-8);
+    if(z<0.35){
+      c.fillStyle=C.acc; c.font='600 12px Inter';
+      c.fillText('≅ U × ℝ  — ununterscheidbar!',px-pw/2,py+ph/2+20);
+    }else{
+      c.fillStyle=twist?C.acc3:C.acc; c.font='600 12px Inter';
+      c.fillText(twist?'jetzt sieht man die Verdrehung':'immer noch ein Produkt',px-pw/2,py+ph/2+20);
+    }
+    // marker on left object
+    const mp=proj(bandPoint(u0,0,twist),cx,cy,s);
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(mp.x,mp.y,5,0,TAU); c.fill();
+    c.strokeStyle=C.acc4; c.lineWidth=1.4;
+    c.setLineDash([4,4]);
+    c.beginPath(); c.moveTo(mp.x,mp.y); c.lineTo(px-pw/2,py); c.stroke();
+    c.setLineDash([]);
+  }
+  pos.oninput=()=>{$('#motivPosV').textContent=(+pos.value).toFixed(2);draw();};
+  zoom.oninput=()=>{$('#motivZoomV').textContent=(+zoom.value).toFixed(2);draw();};
+  $$('[data-motiv]').forEach(b=>b.onclick=()=>{
+    $$('[data-motiv]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.motiv; draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   02 PRE — Navigation
+================================================================== */
+(function(){
+  const names=['① Raum & Homöomorphismus','② Faser / Urbild','③ Quotientenraum',
+               '④ GL(k) & Aut(F)','⑤ Offene Überdeckung','⑥ Homotopie & πₙ'];
+  const nav=$('#preNav');
+  names.forEach((n,i)=>{
+    const b=document.createElement('button');
+    b.className='btn'+(i===0?' on':''); b.textContent=n;
+    b.onclick=()=>{
+      [...nav.children].forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      for(let k=0;k<6;k++) $('#pre'+k).style.display = (k===i?'block':'none');
+      dispatchEvent(new Event('resize'));
+    };
+    nav.appendChild(b);
+  });
+})();
+
+/* ---- PRE1: Homöomorphismus ---- */
+(function(){
+  const cv=$('#homeoCv'); let c,W,H,mode=0;
+  function res(){c=fit(cv,0.66,420);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#homeoT');
+  function shape(t,mode,i,n){
+    const a=i/n*TAU;
+    if(mode===0){
+      // mug -> donut : parametrize as torus-ish outline morph
+      const R=1, r=lerp(0.18,0.42,t);
+      // mug: big blob + handle ; approximate with two circles morph
+      const bx=Math.cos(a)*lerp(0.75,1,t), by=Math.sin(a)*lerp(0.95,1,t);
+      const hx=Math.cos(a), hy=Math.sin(a);
+      return {x:lerp(bx,hx,t), y:lerp(by,hy,t), r:r};
+    }
+    if(mode===1){
+      const p=lerp(2,lerp(2,8,clamp((t-0.5)*2,0,1)),1);
+      const sx=lerp(1,1.6,clamp(t*2,0,1));
+      const ca=Math.cos(a), sa=Math.sin(a);
+      const k=Math.pow(Math.pow(Math.abs(ca),p)+Math.pow(Math.abs(sa),p),-1/p);
+      return {x:ca*k*sx,y:sa*k,r:0};
+    }
+    return {x:Math.cos(a),y:Math.sin(a),r:0};
+  }
+  function draw(){
+    if(!c)return; const t=+sl.value;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=Math.min(W,H)*0.30;
+    c.strokeStyle=C.grid; c.lineWidth=1;
+    for(let i=-4;i<=4;i++){c.beginPath();c.moveTo(cx+i*s/2,0);c.lineTo(cx+i*s/2,H);c.stroke();
+      c.beginPath();c.moveTo(0,cy+i*s/2);c.lineTo(W,cy+i*s/2);c.stroke();}
+    if(mode===2){
+      // cutting: circle splits into two arcs
+      const gap=t*0.9;
+      for(let seg=0;seg<2;seg++){
+        c.beginPath();
+        const a0=seg*Math.PI+gap/2, a1=(seg+1)*Math.PI-gap/2;
+        for(let i=0;i<=60;i++){
+          const a=lerp(a0,a1,i/60);
+          const off=(seg===0?1:-1)*t*s*0.35;
+          const x=cx+Math.cos(a)*s+off*0.0, y=cy+Math.sin(a)*s+off;
+          i?c.lineTo(x,y):c.moveTo(x,y);
+        }
+        c.strokeStyle=t>0.02?C.acc3:C.acc; c.lineWidth=3.2; c.stroke();
+      }
+      $('#homeoInfo').textContent = t>0.02
+        ? 'Zusammenhangskomponenten: 2  ✗ kein Homöomorphismus — die Topologie hat sich geändert!'
+        : 'Zusammenhangskomponenten: 1';
+    } else if(mode===0){
+      // draw torus-ish / mug-ish
+      const n=120; c.beginPath();
+      for(let i=0;i<=n;i++){const p=shape(t,0,i,n);
+        const x=cx+p.x*s, y=cy+p.y*s; i?c.lineTo(x,y):c.moveTo(x,y);}
+      c.closePath(); c.strokeStyle=C.acc2; c.lineWidth=3; c.stroke();
+      c.fillStyle='rgba(122,162,255,.09)'; c.fill();
+      // hole
+      const hr=lerp(0.12,0.40,t)*s;
+      const hx=cx+lerp(0.42,0,t)*s, hy=cy+lerp(-0.05,0,t)*s;
+      c.beginPath(); c.arc(hx,hy,hr,0,TAU); c.strokeStyle=C.acc; c.lineWidth=2.6; c.stroke();
+      c.fillStyle='rgba(7,8,13,1)'; c.fill();
+      c.fillStyle=C.dim; c.font='600 12px Inter';
+      c.fillText(t<0.5?'Kaffeebecher (Henkel = Loch)':'Donut',cx-34,H-14);
+      $('#homeoInfo').textContent='Genus (Anzahl Löcher): 1 — bleibt konstant ✓';
+    } else {
+      const n=160; c.beginPath();
+      for(let i=0;i<=n;i++){const p=shape(t,1,i,n);
+        const x=cx+p.x*s, y=cy+p.y*s; i?c.lineTo(x,y):c.moveTo(x,y);}
+      c.closePath(); c.strokeStyle=C.acc2; c.lineWidth=3; c.stroke();
+      c.fillStyle='rgba(122,162,255,.09)'; c.fill();
+      // sample points to show bijection
+      for(let i=0;i<12;i++){
+        const p=shape(t,1,i,12);
+        c.fillStyle=hsl(lerp(160,290,i/12),75,65,1);
+        c.beginPath(); c.arc(cx+p.x*s,cy+p.y*s,4,0,TAU); c.fill();
+      }
+      c.fillStyle=C.dim; c.font='600 12px Inter';
+      c.fillText(t<0.33?'Kreis':(t<0.66?'Ellipse':'Quadrat'),cx-22,H-14);
+      $('#homeoInfo').textContent='Stetige Bijektion mit stetiger Umkehrung ✓ — alle drei sind homöomorph';
+    }
+  }
+  sl.oninput=()=>{$('#homeoTV').textContent=(+sl.value).toFixed(2);draw();};
+  $$('[data-homeo]').forEach(b=>b.onclick=()=>{
+    $$('[data-homeo]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.homeo; draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- PRE2: Faser / Urbild ---- */
+(function(){
+  const cv=$('#fiberCv'); let c,W,H,mode=0;
+  function res(){c=fit(cv,0.72,460);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#fibB');
+  function draw(){
+    if(!c)return; const b=+sl.value;
+    c.clearRect(0,0,W,H);
+    const L=50,R=W-40,TOP=40,BOT=H-56;
+    // base line
+    c.strokeStyle='rgba(192,132,252,.8)'; c.lineWidth=2.4;
+    c.beginPath(); c.moveTo(L,BOT); c.lineTo(R,BOT); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono'; c.fillText('B',R+6,BOT+4);
+    // total space box
+    c.strokeStyle='rgba(122,162,255,.35)'; c.lineWidth=1.2;
+    roundRect(c,L,TOP,R-L,BOT-TOP-52,10); c.stroke();
+    c.fillStyle='rgba(122,162,255,.04)'; c.fill();
+    c.fillStyle=C.acc2; c.fillText('E',L+6,TOP+16);
+
+    const bx=L+(R-L)*b;
+    const eTop=TOP+8, eBot=BOT-60;
+    let fiberPts=[], desc='';
+    if(mode===0){
+      for(let i=0;i<=10;i++) fiberPts.push(lerp(eTop,eBot,i/10));
+      desc='π(x,y)=x  →  Faser = eine ganze Linie ℝ, über <b>jedem</b> Punkt gleich. ✓ Bündel';
+      // draw all fibers faint
+      for(let i=0;i<=24;i++){
+        const xx=L+(R-L)*i/24;
+        c.strokeStyle='rgba(122,162,255,.18)'; c.lineWidth=1;
+        c.beginPath(); c.moveTo(xx,eTop); c.lineTo(xx,eBot); c.stroke();
+      }
+    } else if(mode===1){
+      // f(x)=x^2 ; base value b in [0,1] mapped to y in [-1,1] domain
+      const val=(b-0.5)*2; // target
+      if(val>0.001){ fiberPts=[lerp(eBot,eTop,0.5+Math.sqrt(val)/2), lerp(eBot,eTop,0.5-Math.sqrt(val)/2)];
+        desc='f(x)=x² über '+val.toFixed(2)+'  →  Faser hat <b>2 Punkte</b>'; }
+      else if(Math.abs(val)<=0.001){ fiberPts=[lerp(eBot,eTop,0.5)];
+        desc='f(x)=x² über 0  →  Faser hat <b>1 Punkt</b> — hier bricht die Struktur!'; }
+      else { fiberPts=[]; desc='f(x)=x² über '+val.toFixed(2)+'  →  Faser ist <b>leer</b>. ✗ kein Bündel'; }
+      // parabola
+      c.strokeStyle='rgba(255,143,177,.6)'; c.lineWidth=2;
+      c.beginPath();
+      for(let i=0;i<=80;i++){
+        const u=-1+2*i/80; const v=u*u;
+        const xx=L+(R-L)*(v+1)/2, yy=lerp(eBot,eTop,(u+1)/2);
+        i?c.lineTo(xx,yy):c.moveTo(xx,yy);
+      }
+      c.stroke();
+    } else {
+      for(let k=0;k<3;k++) fiberPts.push(lerp(eTop+14,eBot-14,k/2));
+      desc='3-fache Überlagerung  →  Faser = <b>3 diskrete Punkte</b> über jedem b. ✓ Bündel (Bsp. 0.7)';
+      for(let k=0;k<3;k++){
+        c.strokeStyle=hsl([168,215,285][k],70,62,.55); c.lineWidth=2;
+        c.beginPath();
+        for(let i=0;i<=60;i++){
+          const u=i/60, xx=L+(R-L)*u;
+          const yy=lerp(eTop+14,eBot-14,k/2)+Math.sin(u*TAU+k)*6;
+          i?c.lineTo(xx,yy):c.moveTo(xx,yy);
+        }
+        c.stroke();
+      }
+    }
+    // highlight fiber
+    c.strokeStyle=C.acc4; c.lineWidth=2; c.setLineDash([5,4]);
+    c.beginPath(); c.moveTo(bx,eTop-4); c.lineTo(bx,BOT); c.stroke(); c.setLineDash([]);
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(bx,BOT,5,0,TAU); c.fill();
+    c.font='600 11px JetBrains Mono'; c.fillText('b',bx-3,BOT+20);
+    if(mode===0){
+      c.strokeStyle=C.acc; c.lineWidth=3.4;
+      c.beginPath(); c.moveTo(bx,eTop); c.lineTo(bx,eBot); c.stroke();
+    }
+    fiberPts.forEach(y=>{
+      c.fillStyle=C.acc; c.beginPath(); c.arc(bx,y,5.5,0,TAU); c.fill();
+      c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=1; c.stroke();
+    });
+    c.fillStyle=C.acc; c.font='600 11px JetBrains Mono';
+    c.fillText('π⁻¹(b)',bx+9,eTop+12);
+    $('#fibInfo').querySelector('p').innerHTML=desc;
+  }
+  sl.oninput=()=>{$('#fibBV').textContent=(+sl.value).toFixed(2);draw();};
+  $$('[data-fib]').forEach(b=>b.onclick=()=>{
+    $$('[data-fib]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.fib; draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- PRE3: Quotientenraum ---- */
+(function(){
+  const cv=$('#quotCv'); let c,W,H,sign=-1;
+  function res(){c=fit(cv,0.70,460);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#quotT');
+  function draw(){
+    if(!c)return; const t=+sl.value;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=Math.min(W*0.12,H*0.26);
+    const NU=90,NV=5;
+    const quads=[];
+    for(let i=0;i<NU;i++)for(let j=0;j<NV;j++){
+      const uu=[i/NU,(i+1)/NU], vv=[-1+2*j/NV,-1+2*(j+1)/NV];
+      const P=[[uu[0],vv[0]],[uu[1],vv[0]],[uu[1],vv[1]],[uu[0],vv[1]]].map(([u,v])=>{
+        // flat strip -> bent into circle by t
+        const a=u*TAU*t;
+        const twist=(sign<0? a/2:0);
+        const R=1/Math.max(t,0.02);
+        const w=0.34;
+        const rr=R+v*w*Math.cos(twist);
+        let X,Y,Z;
+        if(t<0.02){ X=(u-0.5)*4; Y=0; Z=v*w; }
+        else{ X=rr*Math.cos(a)-R*Math.cos(0)*0; Y=rr*Math.sin(a); Z=v*w*Math.sin(twist);
+              X=X-(R-1)* 1; }
+        // rotate for view
+        const az=0.7;
+        const X2=X*Math.cos(az)-Y*Math.sin(az), Y2=X*Math.sin(az)+Y*Math.cos(az);
+        return {x:cx+X2*s, y:cy-Z*s*1.1+Y2*s*0.45, d:Y2};
+      });
+      quads.push({P,d:(P[0].d+P[2].d)/2,u:i/NU});
+    }
+    quads.sort((a,b)=>a.d-b.d);
+    quads.forEach(q=>{
+      const hue=sign<0?290:168;
+      c.fillStyle=hsl(hue,60,lerp(34,62,q.u),.85);
+      c.strokeStyle=hsl(hue,60,72,.25); c.lineWidth=.5;
+      c.beginPath(); c.moveTo(q.P[0].x,q.P[0].y);
+      for(let k=1;k<4;k++)c.lineTo(q.P[k].x,q.P[k].y);
+      c.closePath(); c.fill(); c.stroke();
+    });
+    // marker point at v=+1, u=0 and u=1
+    function mk(u,v,col){
+      const a=u*TAU*t, twist=(sign<0? a/2:0), R=1/Math.max(t,0.02), w=0.34;
+      const rr=R+v*w*Math.cos(twist);
+      let X,Y,Z;
+      if(t<0.02){X=(u-0.5)*4;Y=0;Z=v*w;}
+      else{X=rr*Math.cos(a)-(R-1);Y=rr*Math.sin(a);Z=v*w*Math.sin(twist);}
+      const az=0.7;
+      const X2=X*Math.cos(az)-Y*Math.sin(az), Y2=X*Math.sin(az)+Y*Math.cos(az);
+      const px=cx+X2*s, py=cy-Z*s*1.1+Y2*s*0.45;
+      c.fillStyle=col; c.beginPath(); c.arc(px,py,6,0,TAU); c.fill();
+      c.strokeStyle='#000'; c.lineWidth=1; c.stroke();
+      return [px,py];
+    }
+    const A=mk(0,1,C.acc4);
+    const B=mk(0.999,sign<0?-1:1,'#ff8fb1');
+    c.strokeStyle='rgba(255,209,102,.55)'; c.lineWidth=1.5; c.setLineDash([4,4]);
+    c.beginPath(); c.moveTo(A[0],A[1]); c.lineTo(B[0],B[1]); c.stroke(); c.setLineDash([]);
+    c.fillStyle=C.dim; c.font='600 11px JetBrains Mono';
+    c.fillText(sign<0?'(0,x) ∼ (1,−x)':'(0,x) ∼ (1,x)',14,22);
+    c.fillStyle=t>0.95?(sign<0?C.acc3:C.acc):C.dimr;
+    c.fillText(t>0.95?(sign<0?'→ Möbiusband: gelb trifft auf unten':'→ Zylinder: gelb trifft auf oben'):'klebe…',14,40);
+  }
+  sl.oninput=()=>{$('#quotTV').textContent=(+sl.value).toFixed(2);draw();};
+  $$('[data-quot]').forEach(b=>b.onclick=()=>{
+    $$('[data-quot]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    sign=+b.dataset.quot; draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- PRE4: GL(k) ---- */
+(function(){
+  const cv=$('#glCv'); let c,W,H;
+  function res(){c=fit(cv,0.82,400);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const ids=['gl_a','gl_b','gl_c','gl_d'];
+  function draw(){
+    if(!c)return;
+    const a=+$('#gl_a').value,b=+$('#gl_b').value,cc=+$('#gl_c').value,d=+$('#gl_d').value;
+    const det=a*d-b*cc;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=Math.min(W,H)*0.16;
+    // grid
+    c.strokeStyle=C.grid; c.lineWidth=1;
+    for(let i=-6;i<=6;i++){
+      c.beginPath();c.moveTo(cx+i*s,0);c.lineTo(cx+i*s,H);c.stroke();
+      c.beginPath();c.moveTo(0,cy+i*s);c.lineTo(W,cy+i*s);c.stroke();
+    }
+    // transformed grid
+    function T(x,y){return [cx+(a*x+b*y)*s, cy-(cc*x+d*y)*s];}
+    c.strokeStyle='rgba(122,162,255,.30)'; c.lineWidth=1;
+    for(let i=-6;i<=6;i++){
+      let p=T(i,-6),q=T(i,6);
+      c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();
+      p=T(-6,i);q=T(6,i);
+      c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();
+    }
+    // unit square image
+    const sq=[[0,0],[1,0],[1,1],[0,1]].map(([x,y])=>T(x,y));
+    c.beginPath(); c.moveTo(sq[0][0],sq[0][1]);
+    for(let k=1;k<4;k++)c.lineTo(sq[k][0],sq[k][1]); c.closePath();
+    c.fillStyle= Math.abs(det)<0.02?'rgba(255,143,177,.28)':'rgba(102,224,200,.22)';
+    c.fill();
+    c.strokeStyle= Math.abs(det)<0.02?C.acc3:C.acc; c.lineWidth=2.2; c.stroke();
+    // basis vectors
+    const o=T(0,0), e1=T(1,0), e2=T(0,1);
+    arrow(c,o[0],o[1],e1[0],e1[1],C.acc4,2.6);
+    arrow(c,o[0],o[1],e2[0],e2[1],C.pur,2.6);
+    c.fillStyle=C.acc4; c.font='600 11px JetBrains Mono'; c.fillText('Ae₁',e1[0]+5,e1[1]-4);
+    c.fillStyle=C.pur; c.fillText('Ae₂',e2[0]+5,e2[1]-4);
+    const ok=Math.abs(det)>=0.02;
+    $('#glInfo').querySelector('p').innerHTML=
+      `det A = <b style="color:${ok?'#66e0c8':'#ff8fb1'}">${det.toFixed(3)}</b> &nbsp;·&nbsp; `+
+      (ok? 'A ∈ GL(2) ✓ umkehrbar — Flächenfaktor |det| = '+Math.abs(det).toFixed(2)
+         : 'A ∉ GL(2) ✗ Fläche kollabiert, keine Umkehrung möglich');
+  }
+  ids.forEach(id=>{ $('#'+id).oninput=()=>{ $('#'+id+'V').textContent=(+$('#'+id).value).toFixed(2); draw(); }; });
+  $$('[data-glp]').forEach(b=>b.onclick=()=>{
+    const v=b.dataset.glp.split(',').map(Number);
+    ids.forEach((id,i)=>{ $('#'+id).value=v[i]; $('#'+id+'V').textContent=v[i].toFixed(2); });
+    draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- PRE5: Offene Überdeckung ---- */
+(function(){
+  const cv=$('#coverCv'); let c,W,H;
+  function res(){c=fit(cv,0.78,420);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  function draw(){
+    if(!c)return;
+    const n=+$('#covN').value, w=+$('#covW').value;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.46, R=Math.min(W,H)*0.30;
+    c.strokeStyle='rgba(255,255,255,.22)'; c.lineWidth=2;
+    c.beginPath(); c.arc(cx,cy,R,0,TAU); c.stroke();
+    // coverage test
+    const res_=720; const cov=new Array(res_).fill(0);
+    for(let k=0;k<n;k++){
+      const a0=k/n*TAU;
+      const half=w*Math.PI/n;
+      c.strokeStyle=hsl(150+k*47,72,62,.85); c.lineWidth=11;
+      c.beginPath(); c.arc(cx,cy,R+ (k%2? 13:-13), a0-half, a0+half); c.stroke();
+      for(let i=0;i<res_;i++){
+        let ang=i/res_*TAU, d=Math.abs(((ang-a0+Math.PI*3)%TAU)-Math.PI);
+        if(d<half) cov[i]++;
+      }
+    }
+    // show coverage ring
+    for(let i=0;i<res_;i++){
+      const ang=i/res_*TAU;
+      const k=cov[i];
+      c.strokeStyle = k===0? 'rgba(255,90,120,.95)' : (k>=2? 'rgba(255,209,102,.9)':'rgba(102,224,200,.5)');
+      c.lineWidth=4;
+      c.beginPath(); c.arc(cx,cy,R,ang,ang+TAU/res_+0.004); c.stroke();
+    }
+    const holes=cov.filter(x=>x===0).length, overl=cov.filter(x=>x>=2).length;
+    c.fillStyle=C.dim; c.font='600 11px JetBrains Mono';
+    c.fillText('S¹',cx-8,cy+4);
+    let msg;
+    if(holes>0) msg=`<b style="color:#ff5a78">✗ keine Überdeckung</b> — ${(holes/res_*100).toFixed(0)}% des Kreises sind unbedeckt.`;
+    else if(n===1) msg=`<b style="color:#ffd166">⚠ eine einzige Karte</b> deckt alles — dann wäre das Bündel global trivial. Genau das schließt der Text aus.`;
+    else msg=`<b style="color:#66e0c8">✓ gültige Überdeckung</b> mit ${n} Karten · Überlappung: ${(overl/res_*100).toFixed(0)}% — <b>dort</b> leben die g<sub>αβ</sub>.`;
+    $('#covInfo').querySelector('p').innerHTML=msg;
+    // legend
+    c.font='600 10px Inter';
+    c.fillStyle='rgba(255,90,120,.95)'; c.fillText('■ unbedeckt',14,H-34);
+    c.fillStyle='rgba(102,224,200,.9)'; c.fillText('■ genau 1 Karte',14,H-20);
+    c.fillStyle='rgba(255,209,102,.9)'; c.fillText('■ Überlappung ≥ 2',14,H-6);
+  }
+  $('#covN').oninput=()=>{$('#covNV').textContent=$('#covN').value;draw();};
+  $('#covW').oninput=()=>{$('#covWV').textContent=(+$('#covW').value).toFixed(2);draw();};
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- PRE6: Homotopie ---- */
+(function(){
+  const cv=$('#homCv'); let c,W,H,mode=0,anim=false,raf=null;
+  function res(){c=fit(cv,0.74,440);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#homS');
+  function draw(){
+    if(!c)return; const s=+sl.value;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.5, R=Math.min(W,H)*0.30;
+    if(mode===1){
+      c.fillStyle='rgba(255,90,120,.18)'; c.beginPath(); c.arc(cx,cy,R*0.30,0,TAU); c.fill();
+      c.strokeStyle='rgba(255,90,120,.8)'; c.lineWidth=2; c.stroke();
+      c.fillStyle='rgba(255,143,177,.9)'; c.font='600 11px JetBrains Mono';
+      c.fillText('Loch',cx-14,cy+4);
+    }
+    // family of loops
+    const K=9;
+    for(let k=0;k<=K;k++){
+      const ss=s*k/K;
+      const shrink = mode===1? lerp(1,0.33,ss) : lerp(1,0.02,ss);
+      c.strokeStyle=hsl(lerp(200,168,k/K),75,62, k===K?0.95:0.18+0.05*k);
+      c.lineWidth=k===K?3:1.2;
+      c.beginPath();
+      for(let i=0;i<=120;i++){
+        const a=i/120*TAU;
+        const rr=R*shrink*(1+0.13*Math.sin(3*a)*(1-ss));
+        const x=cx+rr*Math.cos(a), y=cy+rr*Math.sin(a);
+        i?c.lineTo(x,y):c.moveTo(x,y);
+      }
+      c.stroke();
+    }
+    c.fillStyle=C.txt; c.font='600 12px Inter';
+    if(mode===0) c.fillText(s>0.93?'→ auf einen Punkt zusammengezogen: π₁(ℝ²)=0':'Homotopie läuft…',14,22);
+    else c
+.fillText(s>0.93?'→ bleibt am Loch hängen: π₁(ℝ²∖{0}) = ℤ ≠ 0':'Homotopie läuft…',14,22);
+    c.fillStyle=C.dimr; c.font='600 11px JetBrains Mono';
+    c.fillText('H(s,·)  ·  s = '+s.toFixed(2),14,H-12);
+  }
+  function loop(){ if(!anim)return;
+    let v=+sl.value+0.006; if(v>1)v=0; sl.value=v;
+    $('#homSV').textContent=v.toFixed(2); draw(); raf=requestAnimationFrame(loop); }
+  sl.oninput=()=>{$('#homSV').textContent=(+sl.value).toFixed(2);draw();};
+  $$('[data-hom]').forEach(b=>b.onclick=()=>{
+    if(+b.dataset.hom===2){ anim=!anim; b.classList.toggle('on',anim); if(anim)loop(); else cancelAnimationFrame(raf); return; }
+    $$('[data-hom]').forEach(x=>{if(+x.dataset.hom!==2)x.classList.remove('on')}); b.classList.add('on');
+    mode=+b.dataset.hom; draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   03 VEKTORBÜNDEL — Definition 0.1 interaktiv
+================================================================== */
+(function(){
+  const cv=$('#vbCv'); let c,W,H,cond=0,bmode='cyl';
+  function res(){c=fit(cv,0.85,560);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#vbX');
+  const TEXTS=[
+    {t:'Bedingung 1 — jede Faser ist ein ℝᵏ',
+     h:`<p>Für <b>jedes</b> b ∈ B ist π⁻¹(b) ein k-dimensionaler reeller Vektorraum [[11]].</p>
+        <p>Das ist eine starke Forderung: Es gibt in jeder Faser einen ausgezeichneten <b>Nullpunkt</b>,
+        man kann Elemente <b>addieren</b> und <b>skalieren</b>. Die Fasern sind nicht nur gleich groß,
+        sie tragen dieselbe algebraische Struktur.</p>
+        <div class="note"><p>Bewege den Regler: die hervorgehobene Faser wandert, bleibt aber
+        immer eine vollständige Kopie von ℝᵏ inklusive Null.</p></div>`},
+    {t:'Bedingung 2 — lokale Trivialisierung',
+     h:`<p>Es existiert eine offene Überdeckung {U<sub>α</sub>} von B und Homöomorphismen [[11]]</p>
+        <div class="math" id="mv2"></div>
+        <p>die π⁻¹(b) linear-isomorph auf {b} × ℝⁿ werfen.</p>
+        <div class="note b"><p>Die Karten sind <b>Koordinatensysteme für das Bündel</b>.
+        Innerhalb einer Karte ist alles ein simples Produkt — man kann von „der 3. Komponente
+        des Vektors" reden. Global geht das nicht.</p></div>`},
+    {t:'Bedingung 3 — Übergangsfunktionen',
+     h:`<p>Auf der Überlappung U<sub>α</sub> ∩ U<sub>β</sub> gilt [[11]]</p>
+        <div class="math" id="mv3"></div>
+        <p>Beachte: die <b>erste</b> Koordinate bleibt unverändert. Der Kartenwechsel
+        verschiebt keinen Punkt der Basis — er dreht nur den Vektorraum in der Faser.</p>
+        <div class="note y"><p>g<sub>αβ</sub>(x) ist eine <b>umkehrbare Matrix</b>, die stetig von
+        x abhängt: g<sub>αβ</sub> : U<sub>α</sub>∩U<sub>β</sub> → GL(k).</p></div>`},
+    {t:'Bedingung 4 — Kozykelbedingung',
+     h:`<p>Die Kartenwechsel müssen untereinander verträglich sein [[11]]:</p>
+        <div class="math" id="mv4"></div>
+        <p>Ohne diese Bedingung wäre das Verkleben widersprüchlich und der Totalraum E
+        gar nicht wohldefiniert. Mehr dazu im nächsten Abschnitt.</p>`}
+  ];
+  function draw(){
+    if(!c)return; const u0=+sl.value;
+    c.clearRect(0,0,W,H);
+    const L=54,R=W-30,BASEY=H-58,TOP=34;
+    // base circle line (S^1 as interval with identified ends)
+    c.strokeStyle='rgba(192,132,252,.85)'; c.lineWidth=2.6;
+    c.beginPath(); c.moveTo(L,BASEY); c.lineTo(R,BASEY); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono';
+    c.fillText('B = S¹  (0 und 1 identifiziert)',L,BASEY+22);
+    c.fillText('0',L-4,BASEY+36); c.fillText('1',R-4,BASEY+36);
+
+    const rank = bmode==='two'?2:1;
+    const NF=41;
+    // charts (only for cond>=2)
+    if(cond>=1){
+      const chartCol=['rgba(102,224,200,.13)','rgba(255,143,177,.13)'];
+      const chartLine=['rgba(102,224,200,.75)','rgba(255,143,177,.75)'];
+      const ranges=[[0.0,0.62],[0.42,1.0]];
+      ranges.forEach((rg,k)=>{
+        const x0=L+(R-L)*rg[0], x1=L+(R-L)*rg[1];
+        c.fillStyle=chartCol[k];
+        c.fillRect(x0,TOP,x1-x0,BASEY-TOP);
+        c.strokeStyle=chartLine[k]; c.lineWidth=1.6;
+        c.setLineDash([5,4]);
+        c.beginPath(); c.moveTo(x0,TOP);c.lineTo(x0,BASEY);c.moveTo(x1,TOP);c.lineTo(x1,BASEY);c.stroke();
+        c.setLineDash([]);
+        c.fillStyle=chartLine[k]; c.font='600 12px JetBrains Mono';
+        c.fillText('U'+(k===0?'α':'β'),x0+8,TOP+16+k*16);
+      });
+      // overlap
+      const ox0=L+(R-L)*0.42, ox1=L+(R-L)*0.62;
+      c.fillStyle='rgba(255,209,102,.13)'; c.fillRect(ox0,TOP,ox1-ox0,BASEY-TOP);
+      if(cond>=2){
+        c.fillStyle=C.acc4; c.font='600 11px JetBrains Mono';
+        c.fillText('U'+'α∩Uβ',ox0+4,BASEY-8);
+      }
+    }
+    // fibers
+    const midY=(TOP+BASEY)/2;
+    const flen=(BASEY-TOP)*0.40;
+    for(let i=0;i<NF;i++){
+      const u=i/(NF-1);
+      const x=L+(R-L)*u;
+      const hl = Math.abs(u-u0)<0.014;
+      // twist angle
+      let ang=0;
+      if(bmode==='mob') ang=u*Math.PI;
+      if(bmode==='two') ang=u*Math.PI*0.0;
+      const ca=Math.cos(ang), sa=Math.sin(ang);
+      const col = hl? C.acc4 : (bmode==='mob'?'rgba(192,132,252,':'rgba(122,162,255,')+(0.30+0.0)+')';
+      c.strokeStyle= hl? C.acc4 : (bmode==='mob'?'rgba(192,132,252,.35)':'rgba(122,162,255,.32)');
+      c.lineWidth= hl?3:1.3;
+      // fiber line (projected): rotation shows as vertical shrink + horizontal skew
+      const dx=sa*10, dy=ca*flen;
+      c.beginPath(); c.moveTo(x-dx,midY-dy); c.lineTo(x+dx,midY+dy); c.stroke();
+      if(rank===2){
+        c.strokeStyle=hl?'rgba(255,209,102,.6)':'rgba(102,224,200,.22)';
+        c.lineWidth=hl?2:1;
+        c.beginPath(); c.moveTo(x-16,midY-6); c.lineTo(x+16,midY+6); c.stroke();
+      }
+      // zero section dot
+      c.fillStyle= hl? '#fff' : (bmode==='mob'?'rgba(192,132,252,.5)':'rgba(122,162,255,.5)');
+      c.beginPath(); c.arc(x,midY,hl?3.5:1.6,0,TAU); c.fill();
+    }
+    // zero section line
+    c.strokeStyle='rgba(255,90,120,.55)'; c.lineWidth=1.6; c.setLineDash([6,5]);
+    c.beginPath(); c.moveTo(L,midY); c.lineTo(R,midY); c.stroke(); c.setLineDash([]);
+    c.fillStyle='rgba(255,90,120,.85)'; c.font='600 10px JetBrains Mono';
+    c.fillText('Nullschnitt',R-74,midY-6);
+
+    // highlighted fiber annotation
+    const hx=L+(R-L)*u0;
+    c.strokeStyle=C.acc4; c.lineWidth=1.2; c.setLineDash([3,3]);
+    c.beginPath(); c.moveTo(hx,midY); c.lineTo(hx,BASEY); c.stroke(); c.setLineDash([]);
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(hx,BASEY,5,0,TAU); c.fill();
+    c.font='600 11px JetBrains Mono'; c.fillText('b',hx-3,BASEY+16);
+    c.fillText('π⁻¹(b) ≅ ℝ'+(rank===2?'²':''),hx+10,TOP+18);
+    c.fillStyle=C.acc2; c.fillText('E',L+4,TOP+16);
+
+    // arrow pi
+    arrow(c,W-66,midY+flen*0.4,W-66,BASEY-10,'rgba(255,255,255,.4)',1.4);
+    c.fillStyle='rgba(255,255,255,.55)'; c.fillText('π',W-60,(midY+BASEY)/2);
+  }
+  function setCond(i){
+    cond=i;
+    $$('#vbFlow .flowstep').forEach((s,k)=>s.style.borderColor = k===i? C.acc:'rgba(255,255,255,.09)');
+    $('#vbTitle').innerHTML='<h3>'+TEXTS[i].t+'</h3>';
+    $('#vbText').innerHTML=TEXTS[i].h;
+    if(i===1) tex('mv2','\\varphi_\\alpha:\\pi^{-1}(U_\\alpha)\\;\\xrightarrow{\\;\\sim\\;}\\;U_\\alpha\\times\\mathbb{R}^{n}');
+    if(i===2) tex('mv3','\\varphi_\\beta^{-1}\\circ\\varphi_\\alpha(x,v)=\\bigl(x,\\;g_{\\alpha\\beta}(x)v\\bigr)');
+    if(i===3) tex('mv4','g_{\\alpha\\alpha}=I,\\qquad g_{\\alpha\\beta}(x)g_{\\beta\\gamma}(x)g_{\\gamma\\alpha}(x)=I');
+    draw();
+  }
+  $$('#vbFlow .flowstep').forEach(s=>s.onclick=()=>setCond(+s.dataset.vb));
+  sl.oninput=()=>{$('#vbXV').textContent=(+sl.value).toFixed(2);draw();};
+  $$('[data-vbmode]').forEach(b=>b.onclick=()=>{
+    $$('[data-vbmode]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    bmode=b.dataset.vbmode; draw();
+  });
+  setCond(0); res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   04 KOZYKEL
+================================================================== */
+(function(){
+  const cv=$('#cocyCv'); let c,W,H;
+  function res(){c=fit(cv,0.86,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const ids=['cy_ab','cy_bg','cy_ga'];
+  function draw(){
+    if(!c)return;
+    const gab=+$('#cy_ab').value, gbg=+$('#cy_bg').value, gga=+$('#cy_ga').value;
+    const prod=gab*gbg*gga;
+    const ok=Math.abs(prod-1)<0.02;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.42, R=Math.min(W,H)*0.26;
+    const labels=['Uα','Uβ','Uγ'], cols=[C.acc,C.acc2,C.pur];
+    const pts=[0,1,2].map(k=>{const a=-Math.PI/2+k*TAU/3;
+      return {x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)};});
+    // triple overlap region
+    c.fillStyle='rgba(255,209,102,.10)';
+    c.beginPath(); c.arc(cx,cy,R*0.52,0,TAU); c.fill();
+    c.strokeStyle='rgba(255,209,102,.35)'; c.lineWidth=1.2; c.setLineDash([4,4]); c.stroke(); c.setLineDash([]);
+    c.fillStyle='rgba(255,209,102,.8)'; c.font='600 10px JetBrains Mono';
+    c.fillText('x ∈ Uα∩Uβ∩Uγ',cx-48,cy+4);
+    // charts
+    pts.forEach((p,k)=>{
+      c.fillStyle=cols[k].replace(')',',.14)').replace('#','rgba(')||'rgba(255,255,255,.1)';
+      c.beginPath(); c.arc(p.x,p.y,34,0,TAU);
+      c.fillStyle=k===0?'rgba(102,224,200,.16)':k===1?'rgba(122,162,255,.16)':'rgba(192,132,252,.16)';
+      c.fill();
+      c.strokeStyle=cols[k]; c.lineWidth=2; c.stroke();
+      c.fillStyle=cols[k]; c.font='700 14px JetBrains Mono';
+      c.fillText(labels[k],p.x-13,p.y+5);
+    });
+    // arrows with g values  (gamma->alpha, beta->gamma, alpha->beta)
+    const gv=[gab,gbg,gga];
+    const pairs=[[0,1],[1,2],[2,0]]; // alpha->beta uses g_ab etc (visual)
+    pairs.forEach((pr,k)=>{
+      const A=pts[pr[0]],B=pts[pr[1]];
+      const dx=B.x-A.x, dy=B.y-A.y, L=Math.hypot(dx,dy);
+      const ux=dx/L, uy=dy/L;
+      const x1=A.x+ux*38, y1=A.y+uy*38, x2=B.x-ux*38, y2=B.y-uy*38;
+      const bad=Math.abs(gv[k])<0.02;
+      arrow(c,x1,y1,x2,y2, bad?'#ff5a78':'rgba(255,255,255,.5)',2);
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      c.fillStyle='rgba(8,10,18,.9)'; roundRect(c,mx-31,my-12,62,22,7); c.fill();
+      c.strokeStyle='rgba(255,255,255,.2)'; c.lineWidth=1; c.stroke();
+      c.fillStyle=bad?'#ff5a78':C.acc4; c.font='600 11px JetBrains Mono';
+      const nm=['gαβ','gβγ','gγα'][k];
+      c.fillText(gv[k].toFixed(2),mx-16,my+4);
+      c.fillStyle=C.dim; c.font='600 9px JetBrains Mono';
+      c.fillText(nm,mx-10,my-15);
+    });
+    // vector journey
+    const baseY=H-64, x0=50, span=W-110;
+    c.strokeStyle='rgba(255,255,255,.15)'; c.lineWidth=1;
+    c.beginPath(); c.moveTo(x0,baseY); c.lineTo(x0+span,baseY); c.stroke();
+    let v=1; const seq=[1,gga,gga*gbg,gga*gbg*gab];
+    const names=['v','gγα·v','gβγgγα·v','gαβgβγgγα·v'];
+    for(let k=0;k<4;k++){
+      const xx=x0+span*k/3;
+      const h=seq[k]*34;
+      c.strokeStyle= k===3? (ok?C.acc:'#ff5a78') : 'rgba(122,162,255,.9)';
+      c.lineWidth=3;
+      c.beginPath(); c.moveTo(xx,baseY); c.lineTo(xx,baseY-h); c.stroke();
+      c.fillStyle=c.strokeStyle;
+      c.beginPath(); c.arc(xx,baseY-h,4,0,TAU); c.fill();
+      c.font='600 9px JetBrains Mono'; c.fillStyle=C.dim;
+      c.fillText(names[k],xx-22,baseY+16);
+      c.fillStyle=k===3?(ok?C.acc:'#ff5a78'):C.dimr;
+      c.fillText(seq[k].toFixed(2),xx-10,baseY+30);
+    }
+    // ghost of original
+    c.strokeStyle='rgba(255,255,255,.25)'; c.setLineDash([3,3]); c.lineWidth=1.4;
+    c.beginPath(); c.moveTo(x0,baseY-34); c.lineTo(x0+span,baseY-34); c.stroke(); c.setLineDash([]);
+    c.fillStyle='rgba(255,255,255,.4)'; c.font='600 9px JetBrains Mono';
+    c.fillText('Ausgangswert v',x0+span-92,baseY-40);
+
+    $('#cocyVerdict').querySelector('p').innerHTML= ok
+      ? `<b style="color:#66e0c8">✓ Kozykelbedingung erfüllt</b> — g<sub>αβ</sub>·g<sub>βγ</sub>·g<sub>γα</sub> = ${prod.toFixed(3)} = I. Der Vektor kehrt unverändert zurück; das Bündel existiert.`
+      : `<b style="color:#ff5a78">✗ widersprüchlich</b> — Produkt = ${prod.toFixed(3)} ≠ 1. Nach einer Rundreise hat sich v verändert: <b>dieses Bündel kann es nicht geben.</b>`;
+    $('#cocyVerdict').style.borderLeftColor = ok? C.acc : '#ff5a78';
+  }
+  ids.forEach(id=>{$('#'+id).oninput=()=>{$('#'+id+'V').textContent=(+$('#'+id).value).toFixed(2);draw();};});
+  $$('[data-cyp]').forEach(b=>b.onclick=()=>{
+    const v=b.dataset.cyp.split(',').map(Number);
+    ids.forEach((id,i)=>{$('#'+id).value=v[i];$('#'+id+'V').textContent=v[i].toFixed(2);});
+    draw();
+  });
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   05 BEISPIELE — Navigation
+================================================================== */
+(function(){
+  const names=['0.2 Trivial','0.3 Möbius','0.4 Tautologisch','0.5 Garben'];
+  const nav=$('#exNav');
+  names.forEach((n,i)=>{
+    const b=document.createElement('button');
+    b.className='btn'+(i===0?' on':''); b.textContent=n;
+    b.onclick=()=>{
+      [...nav.children].forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      for(let k=0;k<4;k++) $('#ex'+k).style.display=(k===i?'block':'none');
+      dispatchEvent(new Event('resize'));
+    };
+    nav.appendChild(b);
+  });
+})();
+
+/* ---- 0.2 trivial bundle ---- */
+(function(){
+  const cv=$('#trivCv'); let c,W,H;
+  function res(){c=fit(cv,0.80,520);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#trivT');
+  function draw(){
+    if(!c)return; const t=+sl.value;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.55, rx=Math.min(W*0.33,220), ry=rx*0.26;
+    const HH=Math.min(H*0.30,110);
+    // cylinder
+    const N=64;
+    const pts=[];
+    for(let i=0;i<=N;i++){const a=i/N*TAU;
+      pts.push({x:cx+rx*Math.cos(a), y:cy+ry*Math.sin(a), a, d:Math.sin(a)});}
+    // back fibers
+    pts.forEach(p=>{ if(p.d<=0){
+      c.strokeStyle='rgba(122,162,255,.18)'; c.lineWidth=1;
+      c.beginPath(); c.moveTo(p.x,p.y-HH); c.lineTo(p.x,p.y+HH); c.stroke();}});
+    // base ellipse
+    c.strokeStyle='rgba(192,132,252,.7)'; c.lineWidth=2;
+    c.beginPath(); c.ellipse(cx,cy,rx,ry,0,0,TAU); c.stroke();
+    // front fibers
+    pts.forEach(p=>{ if(p.d>0){
+      c.strokeStyle='rgba(122,162,255,.42)'; c.lineWidth=1.2;
+      c.beginPath(); c.moveTo(p.x,p.y-HH); c.lineTo(p.x,p.y+HH); c.stroke();}});
+    // zero section
+    c.strokeStyle='rgba(255,90,120,.75)'; c.lineWidth=2; c.setLineDash([5,4]);
+    c.beginPath(); c.ellipse(cx,cy,rx,ry,0,0,TAU); c.stroke(); c.setLineDash([]);
+    // the section at height t
+    const sy=cy - t*HH*0.85;
+    c.strokeStyle=C.acc;
+ c.lineWidth=3;
+    c.beginPath(); c.ellipse(cx,sy,rx,ry,0,0,TAU); c.stroke();
+    c.fillStyle='rgba(102,224,200,.10)'; c.fill();
+    // dots on section
+    for(let i=0;i<24;i++){const a=i/24*TAU;
+      const x=cx+rx*Math.cos(a), y=sy+ry*Math.sin(a);
+      c.fillStyle=C.acc; c.beginPath(); c.arc(x,y,2.6,0,TAU); c.fill();}
+    c.fillStyle=C.acc; c.font='600 11px JetBrains Mono';
+    c.fillText('s(b) = (b, t)',cx+rx+8,sy);
+    c.fillStyle='rgba(255,90,120,.85)';
+    c.fillText('Nullschnitt t = 0',cx+rx+8,cy+4);
+    c.fillStyle=C.pur; c.fillText('B = S¹',cx-20,cy+ry+22);
+    const hit=Math.abs(t)<0.02;
+    $('#trivInfo').querySelector('p').innerHTML= hit
+      ? `t = 0 — dieser Schnitt <b>ist</b> der Nullschnitt.`
+      : `<b style="color:#66e0c8">t = ${t.toFixed(2)} ≠ 0 ⇒ nullstellenfreier Schnitt ✓</b> — beim trivialen Bündel B × ℝⁿ gibt es für jedes t ≠ 0 einen Schnitt b ↦ (b,t), der die Null <b>nie</b> trifft [[11]].`;
+  }
+  sl.oninput=()=>{$('#trivTV').textContent=(+sl.value).toFixed(2);draw();};
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- 0.3 Möbius bundle — jeder Schnitt hat eine Nullstelle ---- */
+(function(){
+  const cv=$('#mobCv'); let c,W,H;
+  function res(){c=fit(cv,0.80,520);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const A=$('#mobA'),Wv=$('#mobW'),P=$('#mobP');
+  function sec(u,amp,freq,ph){
+    // section value in local trivialization; must satisfy s(1) = -s(0) for Möbius
+    // build: f(u) = amp*cos(pi*u + ph_shift) * (1 + wiggle)
+    const base=Math.cos(Math.PI*u+0);
+    const wig=1+0.55*Math.sin(freq*TAU*u+ph)*Math.sin(Math.PI*u)*0;
+    return amp*Math.cos(Math.PI*u)+amp*0.6*Math.sin(freq*TAU*u+ph)*Math.sin(Math.PI*u);
+  }
+  function draw(){
+    if(!c)return;
+    const amp=+A.value, freq=+Wv.value, ph=+P.value;
+    c.clearRect(0,0,W,H);
+    const L=54,R=W-56,TOP=30,BOT=H-70;
+    const midY=(TOP+BOT)/2, SC=(BOT-TOP)*0.40;
+    // strip background with twist shading
+    for(let i=0;i<120;i++){
+      const u=i/120, x=L+(R-L)*u;
+      const tw=Math.cos(Math.PI*u);
+      c.strokeStyle=hsl(290,60,lerp(28,52,(tw+1)/2),.5);
+      c.lineWidth=(R-L)/120+1;
+      const half=SC*Math.abs(tw)*0.55+SC*0.45;
+      c.beginPath(); c.moveTo(x,midY-half); c.lineTo(x,midY+half); c.stroke();
+    }
+    // frame
+    c.strokeStyle='rgba(192,132,252,.5)'; c.lineWidth=1.4;
+    c.strokeRect(L,TOP,R-L,BOT-TOP);
+    // zero section
+    c.strokeStyle='rgba(255,90,120,.9)'; c.lineWidth=2.2; c.setLineDash([6,5]);
+    c.beginPath(); c.moveTo(L,midY); c.lineTo(R,midY); c.stroke(); c.setLineDash([]);
+    c.fillStyle='rgba(255,90,120,.95)'; c.font='600 11px JetBrains Mono';
+    c.fillText('Nullschnitt',R-78,midY-8);
+    // the section
+    let zeros=[],prev=null;
+    c.strokeStyle=C.acc; c.lineWidth=3.2; c.beginPath();
+    for(let i=0;i<=300;i++){
+      const u=i/300, v=sec(u,amp,freq,ph);
+      const x=L+(R-L)*u, y=midY-v*SC;
+      i?c.lineTo(x,y):c.moveTo(x,y);
+      if(prev!==null && prev*v<=0 && i>0) zeros.push(x);
+      prev=v;
+    }
+    c.stroke();
+    // zeros
+    zeros.forEach(x=>{
+      c.fillStyle='#ff5a78'; c.beginPath(); c.arc(x,midY,6,0,TAU); c.fill();
+      c.strokeStyle='#fff'; c.lineWidth=1.4; c.stroke();
+    });
+    // endpoints
+    const v0=sec(0,amp,freq,ph), v1=sec(1,amp,freq,ph);
+    c.fillStyle=C.acc4;
+    c.beginPath(); c.arc(L,midY-v0*SC,6,0,TAU); c.fill();
+    c.beginPath(); c.arc(R,midY-v1*SC,6,0,TAU); c.fill();
+    c.font='600 11px JetBrains Mono'; c.fillStyle=C.acc4;
+    c.fillText('s(0)='+v0.toFixed(2),L+8,midY-v0*SC-12);
+    c.fillText('s(1)='+v1.toFixed(2),R-96,midY-v1*SC-12);
+    // identification arrow
+    c.strokeStyle='rgba(255,209,102,.5)'; c.lineWidth=1.4; c.setLineDash([4,4]);
+    c.beginPath(); c.moveTo(L,BOT+16); c.bezierCurveTo(L,BOT+44,R,BOT+44,R,BOT+16); c.stroke(); c.setLineDash([]);
+    c.fillStyle='rgba(255,209,102,.8)'; c.font='600 10px JetBrains Mono';
+    c.fillText('(0,x) ∼ (1,−x)  —  Ränder verklebt',W/2-92,BOT+52);
+    c.fillStyle=C.pur; c.fillText('B = S¹',L,BOT+16);
+
+    $('#mobInfo').querySelector('p').innerHTML=
+      `s(0) = ${v0.toFixed(2)}, s(1) = ${v1.toFixed(2)} = −s(0) &nbsp;·&nbsp; `+
+      `<b style="color:#ff5a78">Nullstellen: ${zeros.length}</b> — `+
+      (zeros.length>0
+        ? `Zwischenwertsatz ⇒ es <b>muss</b> mindestens eine geben. Das Möbiusbündel ist <b>nicht trivial</b> [[11]].`
+        : `(numerisch nicht erfasst — mathematisch unvermeidbar)`);
+  }
+  [A,Wv,P].forEach((el,i)=>el.oninput=()=>{
+    $(['#mobAV','#mobWV','#mobPV'][i]).textContent=(+el.value).toFixed(2); draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- 0.4 tautological bundle ---- */
+(function(){
+  const cv=$('#tautCv'); let c,W,H;
+  function res(){c=fit(cv,0.86,520);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const A=$('#tautA'),V=$('#tautV');
+  function draw(){
+    if(!c)return;
+    const th=+A.value, vv=+V.value;
+    c.clearRect(0,0,W,H);
+    // LEFT: R^2 with line V
+    const cx=W*0.30, cy=H*0.44, s=Math.min(W*0.13,H*0.28);
+    c.strokeStyle=C.grid; c.lineWidth=1;
+    for(let i=-4;i<=4;i++){
+      c.beginPath();c.moveTo(cx+i*s,cy-4.2*s);c.lineTo(cx+i*s,cy+4.2*s);c.stroke();
+      c.beginPath();c.moveTo(cx-4.2*s,cy+i*s);c.lineTo(cx+4.2*s,cy+i*s);c.stroke();
+    }
+    c.strokeStyle='rgba(255,255,255,.3)'; c.lineWidth=1.4;
+    c.beginPath();c.moveTo(cx-4.2*s,cy);c.lineTo(cx+4.2*s,cy);c.stroke();
+    c.beginPath();c.moveTo(cx,cy-4.2*s);c.lineTo(cx,cy+4.2*s);c.stroke();
+    // the line V
+    const dx=Math.cos(th), dy=Math.sin(th);
+    c.strokeStyle=C.acc2; c.lineWidth=3;
+    c.beginPath(); c.moveTo(cx-dx*4*s,cy+dy*4*s); c.lineTo(cx+dx*4*s,cy-dy*4*s); c.stroke();
+    c.fillStyle=C.acc2; c.font='600 12px JetBrains Mono';
+    c.fillText('V ∈ G₁(ℝ²)',cx+dx*3.1*s+6,cy-dy*3.1*s-6);
+    // the vector v in V
+    arrow(c,cx,cy,cx+dx*vv*2.6*s,cy-dy*vv*2.6*s,C.acc4,3);
+    c.fillStyle=C.acc4; c.fillText('v ∈ V',cx+dx*vv*2.6*s+6,cy-dy*vv*2.6*s+14);
+    c.fillStyle=C.dim; c.font='600 10px JetBrains Mono';
+    c.fillText('ℝ²',cx+3.8*s,cy-3.8*s);
+
+    // RIGHT: the Grassmannian G_1(R^2) as a circle (theta in [0,pi))
+    const gx=W*0.74, gy=H*0.40, gr=Math.min(W*0.13,H*0.24);
+    c.strokeStyle='rgba(192,132,252,.7)'; c.lineWidth=2.4;
+    c.beginPath(); c.arc(gx,gy,gr,0,TAU); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono';
+    c.fillText('G₁(ℝ²) ≅ S¹',gx-34,gy+gr+22);
+    // point for theta (doubled angle: theta in [0,pi) -> full circle)
+    const pa=th*2;
+    const px=gx+gr*Math.cos(pa), py=gy-gr*Math.sin(pa);
+    c.fillStyle=C.acc2; c.beginPath(); c.arc(px,py,7,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.4; c.stroke();
+    // fiber over that point = the line V, drawn attached
+    const fl=gr*0.75;
+    c.strokeStyle=C.acc4; c.lineWidth=3;
+    const fdx=Math.cos(pa+Math.PI/2)*0, fdy=0;
+    // draw fiber as a segment rotating with th (shows the -1 after full loop)
+    const ang=th;
+    c.save(); c.translate(px,py); c.rotate(-ang);
+    c.beginPath(); c.moveTo(-fl,0); c.lineTo(fl,0); c.stroke();
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(vv*fl/1.4,0,5,0,TAU); c.fill();
+    c.restore();
+    // trail of fibers
+    for(let k=0;k<24;k++){
+      const t2=k/24*Math.PI;
+      const a2=t2*2;
+      const qx=gx+gr*Math.cos(a2), qy=gy-gr*Math.sin(a2);
+      c.save(); c.translate(qx,qy); c.rotate(-t2);
+      c.strokeStyle='rgba(255,209,102,.20)'; c.lineWidth=1.4;
+      c.beginPath(); c.moveTo(-fl*0.8,0); c.lineTo(fl*0.8,0); c.stroke();
+      c.restore();
+    }
+    // connector
+    c.strokeStyle='rgba(255,255,255,.18)'; c.setLineDash([4,4]); c.lineWidth=1.2;
+    c.beginPath(); c.moveTo(cx+dx*2.6*s,cy-dy*2.6*s); c.lineTo(px,py); c.stroke(); c.setLineDash([]);
+
+    const wrapped = th>Math.PI-0.02;
+    $('#tautInfo').querySelector('p').innerHTML=
+      `θ = ${(th/Math.PI).toFixed(2)}·π &nbsp;·&nbsp; Faser über V <b>ist die Gerade V selbst</b> — daher „tautologisch" [[11]]. `+
+      (wrapped? `<b style="color:#ffd166">Bei θ = π ist man wieder beim selben Punkt der Graßmann-Mannigfaltigkeit — aber der Vektor v ist zu −v geworden. Das ist exakt die Möbius-Verklebung.</b>`
+              : `Dreh θ bis π und beobachte den gelben Vektor.`);
+  }
+  [A,V].forEach((el,i)=>el.oninput=()=>{
+    $(['#tautAV','#tautVV'][i]).textContent=(+el.value).toFixed(2); draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- 0.5 sheaves ---- */
+(function(){
+  const cv=$('#shCv'); let c,W,H;
+  function res(){c=fit(cv,0.72,480);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const P=$('#shP'),Wd=$('#shW');
+  function draw(){
+    if(!c)return;
+    const p=+P.value, w=+Wd.value;
+    const a=clamp(p-w/2,0,1), b=clamp(p+w/2,0,1);
+    c.clearRect(0,0,W,H);
+    const L=44,R=W-30,BASEY=H-44,TOP=34;
+    c.strokeStyle='rgba(192,132,252,.8)'; c.lineWidth=2.4;
+    c.beginPath(); c.moveTo(L,BASEY); c.lineTo(R,BASEY); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono'; c.fillText('X',R+4,BASEY+4);
+    // U
+    const x0=L+(R-L)*a, x1=L+(R-L)*b;
+    c.fillStyle='rgba(102,224,200,.13)'; c.fillRect(x0,TOP,x1-x0,BASEY-TOP);
+    c.strokeStyle=C.acc; c.lineWidth=7;
+    c.beginPath(); c.moveTo(x0,BASEY); c.lineTo(x1,BASEY); c.stroke();
+    c.fillStyle=C.acc; c.font='600 12px JetBrains Mono';
+    c.fillText('U',(x0+x1)/2-5,BASEY+20);
+    // sections over U : k independent functions
+    const k=2;
+    for(let j=0;j<k;j++){
+      c.strokeStyle=[C.acc2,C.acc4][j]; c.lineWidth=2.4;
+      c.beginPath();
+      for(let i=0;i<=80;i++){
+        const u=a+(b-a)*i/80;
+        const y=lerp(BASEY-24,TOP+26,0.5+0.35*Math.sin((u*7+j*2.1))*(j?1:-1)+0.1*j);
+        const x=L+(R-L)*u;
+        i?c.lineTo(x,y):c.moveTo(x,y);
+      }
+      c.stroke();
+    }
+    c.fillStyle=C.acc2; c.font='600 10px JetBrains Mono';
+    c.fillText('𝓕(U) ≅ 𝒪(U)^k  — k unabhängige Funktionen',x0+4,TOP+16);
+    // restriction arrows
+    c.fillStyle=C.dimr; c.font='600 10px JetBrains Mono';
+    c.fillText('Einschränkung  res: 𝓕(U) → 𝓕(V)  für V ⊂ U',L,TOP-12);
+    $('#shInfo').querySelector('p').innerHTML=
+      `Über U ist die Garbe <b>frei vom Rang ${k}</b>: 𝓕(U) ≅ 𝒪(U)<sup>${k}</sup>. Das ist wörtlich die lokale Trivialisierung π⁻¹(U) ≅ U × ℝ<sup>${k}</sup> — nur in Garbensprache [[11]].`;
+  }
+  [P,Wd].forEach((el,i)=>el.oninput=()=>{
+    $(['#shPV','#shWV'][i]).textContent=(+el.value).toFixed(2); draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   06 FASERBÜNDEL — beliebige Faser F
+================================================================== */
+(function(){
+  const cv=$('#fbCv'); let c,W,H,F='R';
+  function res(){c=fit(cv,0.80,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const tw=$('#fbTw');
+  function draw(){
+    if(!c)return; const t=+tw.value;
+    c.clearRect(0,0,W,H);
+    const L=54,R=W-40,BASEY=H-54,TOP=28;
+    const midY=(TOP+BASEY)/2, SC=(BASEY-TOP)*0.36;
+    c.strokeStyle='rgba(192,132,252,.85)'; c.lineWidth=2.4;
+    c.beginPath(); c.moveTo(L,BASEY); c.lineTo(R,BASEY); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono'; c.fillText('B = S¹',L,BASEY+20);
+    const N=33;
+    for(let i=0;i<N;i++){
+      const u=i/(N-1), x=L+(R-L)*u;
+      const ang=t*u*Math.PI*2;
+      const front=true;
+      if(F==='R'){
+        const ca=Math.cos(ang/2), sa=Math.sin(ang/2);
+        c.strokeStyle=hsl(lerp(200,290,u),70,60,.6); c.lineWidth=1.6;
+        c.beginPath(); c.moveTo(x-sa*8,midY-ca*SC); c.lineTo(x+sa*8,midY+ca*SC); c.stroke();
+      } else if(F==='D'){
+        for(let k=0;k<3;k++){
+          const base=(k/3)*TAU;
+          const yy=midY+Math.cos(base+ang)*SC*0.75;
+          const xx=x+Math.sin(base+ang)*7;
+          c.fillStyle=hsl([168,215,285][k],75,62,.95);
+          c.beginPath(); c.arc(xx,yy,4,0,TAU); c.fill();
+        }
+      } else if(F==='S1'){
+        c.strokeStyle=hsl(lerp(168,290,u),70,62,.7); c.lineWidth=1.5;
+        c.beginPath();
+        for(let j=0;j<=28;j++){
+          const a=j/28*TAU;
+          const rr=SC*0.55;
+          const yy=midY+Math.cos(a)*rr;
+          const xx=x+Math.sin(a)*rr*0.30*Math.cos(ang);
+          j?c.lineTo(xx,yy):c.moveTo(xx,yy);
+        }
+        c.closePath(); c.stroke();
+      } else {
+        const ca=Math.cos(ang/2), sa=Math.sin(ang/2);
+        c.strokeStyle=hsl(lerp(40,290,u),70,60,.75); c.lineWidth=5;
+        c.beginPath(); c.moveTo(x-sa*6,midY-ca*SC*0.7); c.lineTo(x+sa*6,midY+ca*SC*0.7); c.stroke();
+      }
+    }
+    c.fillStyle=C.acc2; c.font='600 12px JetBrains Mono'; c.fillText('E',L+2,TOP+14);
+    const names={R:'F = ℝ  → Vektorbündel (Def. 0.1)',
+                 D:'F = {0,1,2} diskret → Überlagerungsraum (Bsp. 0.7)',
+                 S1:'F = S¹ → z.B. Torus- oder Hopf-artige Bündel',
+                 I:'F = [0,1] → Band-Bündel'};
+    c.fillStyle=C.acc; c.font='600 11px JetBrains Mono'; c.fillText(names[F],L,TOP-8);
+    const auts={R:'Aut(F) ⊃ GL(1) = ℝ∖{0}',D:'Aut(F) = S₃ (Permutationen von 3 Punkten)',
+                S1:'Aut(F) ⊃ O(2) (Drehungen & Spiegelungen)',I:'Aut(F) = {id, Umklappen}'};
+    $('#fbInfo').querySelector('p').innerHTML=
+      `<b>${auts[F]}</b><br>Twist = ${t.toFixed(2)} — die Übergangsfunktion g<sub>αβ</sub>(x) nimmt Werte in Aut(F) an. Bei t=0 ist das Bündel trivial (B × F) [[11]].`;
+  }
+  tw.oninput=()=>{$('#fbTwV').textContent=(+tw.value).toFixed(2);draw();};
+  $$('[data-fb]').forEach(b=>b.onclick=()=>{
+    $$('[data-fb]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    F=b.dataset.fb; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- Bündelabbildung ---- */
+(function(){
+  const cv=$('#bmapCv'); let c,W,H,mode=0;
+  function res(){c=fit(cv,0.62,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  function draw(){
+    if(!c)return;
+    c.clearRect(0,0,W,H);
+    const pad=40, colW=(W-pad*2)/2;
+    const bY=H-52, tY=52, fH=(bY-tY)*0.62;
+    function panel(ox,label,labelB,col){
+      
+      // ox = left offset of this panel
+      // base line
+      c.strokeStyle='rgba(192,132,252,.8)'; c.lineWidth=2.2;
+      c.beginPath(); c.moveTo(ox,bY); c.lineTo(ox+colW-30,bY); c.stroke();
+      c.fillStyle=C.pur; c.font='600 11px JetBrains Mono';
+      c.fillText(labelB,ox,bY+18);
+      // total space box
+      c.strokeStyle='rgba(122,162,255,.3)'; c.lineWidth=1.2;
+      roundRect(c,ox,tY,colW-30,fH,10); c.stroke();
+      c.fillStyle='rgba(122,162,255,.04)'; c.fill();
+      c.fillStyle=C.acc2; c.fillText(label,ox+6,tY+16);
+      // fibers
+      for(let i=0;i<=6;i++){
+        const x=ox+(colW-30)*i/6;
+        c.strokeStyle='rgba(122,162,255,.22)'; c.lineWidth=1.2;
+        c.beginPath(); c.moveTo(x,tY+6); c.lineTo(x,tY+fH-6); c.stroke();
+        c.fillStyle='rgba(192,132,252,.6)';
+        c.beginPath(); c.arc(x,bY,3,0,TAU); c.fill();
+        // pi arrow
+        if(i===6){ arrow(c,ox+(colW-30)+12,tY+fH/2,ox+(colW-30)+12,bY-8,'rgba(255,255,255,.35)',1.3);
+          c.fillStyle='rgba(255,255,255,.5)'; c.font='600 11px JetBrains Mono';
+          c.fillText(col,ox+(colW-30)+16,(tY+fH/2+bY)/2); }
+      }
+      return {x0:ox,x1:ox+colW-30};
+    }
+    const A=panel(pad,'E','B','π');
+    const Bp=panel(pad+colW+10, mode===2?'E′ (über B)':'E′', mode===2?'B':'B′','π′');
+
+    // pick a source point in fiber over u=0.33
+    const uA=0.33;
+    const xA=A.x0+(A.x1-A.x0)*uA;
+    const yA=tY+fH*0.35;
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(xA,yA,6,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.3; c.stroke();
+    c.fillStyle=C.acc4; c.font='600 10px JetBrains Mono'; c.fillText('e',xA+8,yA-6);
+    // its base point
+    const bA=xA;
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(bA,bY,5,0,TAU); c.fill();
+    c.fillText('π(e)',bA-10,bY+32);
+
+    // target base point
+    let uB = mode===2? uA : (mode===0? 0.62 : 0.62);
+    const bB=Bp.x0+(Bp.x1-Bp.x0)*uB;
+    // target point in E'
+    let uTop = mode===1? 0.24 : uB;     // mode 1: breaks commutativity
+    const xB=Bp.x0+(Bp.x1-Bp.x0)*uTop;
+    const yB=tY+fH*0.62;
+    c.fillStyle=mode===1?'#ff5a78':C.acc;
+    c.beginPath(); c.arc(xB,yB,6,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.3; c.stroke();
+    c.fillStyle=c.fillStyle; c.font='600 10px JetBrains Mono';
+    c.fillText('F(e)',xB+8,yB-6);
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(bB,bY,5,0,TAU); c.fill();
+    c.fillText('f(π(e))',bB-16,bY+32);
+
+    // top arrow  E -> E'
+    arrow(c,xA+10,yA,xB-10,yB,mode===1?'#ff5a78':C.acc,2);
+    c.fillStyle=mode===1?'#ff5a78':C.acc; c.font='600 10px JetBrains Mono';
+    c.fillText('F',(xA+xB)/2-4,(yA+yB)/2-8);
+    // bottom arrow B -> B'
+    arrow(c,bA+8,bY,bB-8,bY,mode===2?'rgba(255,255,255,.35)':C.acc,2);
+    c.fillStyle=mode===2?'rgba(255,255,255,.5)':C.acc;
+    c.fillText(mode===2?'Id':'f',(bA+bB)/2-4,bY-8);
+
+    // dashed: where F(e) SHOULD project
+    if(mode===1){
+      c.strokeStyle='rgba(255,90,120,.7)'; c.setLineDash([4,4]); c.lineWidth=1.4;
+      c.beginPath(); c.moveTo(xB,yB); c.lineTo(xB,bY); c.stroke(); c.setLineDash([]);
+      c.fillStyle='#ff5a78'; c.beginPath(); c.arc(xB,bY,5,0,TAU); c.fill();
+      c.font='600 10px JetBrains Mono'; c.fillText('π′(F(e)) ≠ f(π(e))  ✗',xB-56,bY+50);
+    } else {
+      c.strokeStyle='rgba(102,224,200,.6)'; c.setLineDash([4,4]); c.lineWidth=1.4;
+      c.beginPath(); c.moveTo(xB,yB); c.lineTo(bB,bY); c.stroke(); c.setLineDash([]);
+      c.fillStyle=C.acc; c.font='600 10px JetBrains Mono';
+      c.fillText('π′∘F = f∘π  ✓',xB-30,bY+50);
+    }
+  }
+  $$('[data-bmap]').forEach(b=>b.onclick=()=>{
+    $$('[data-bmap]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.bmap; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   07 HOMOTOPIEHOCHHEBUNG
+================================================================== */
+(function(){
+  const cv=$('#hlpCv'); let c,W,H,mode=0,anim=false,raf=null;
+  function res(){c=fit(cv,0.92,560);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const T=$('#hlpT'), F0=$('#hlpF');
+  // base homotopy: h(t,x) = point on S^1 at angle 2π(x + t)   (x in X=[0,1] sample pts)
+  function draw(){
+    if(!c)return;
+    const t=+T.value, f0=+F0.value;
+    c.clearRect(0,0,W,H);
+    const L=54,R=W-40;
+    const bY=H-70, tTop=40, tBot=bY-90;
+    const midY=(tTop+tBot)/2, SC=(tBot-tTop)*0.42;
+
+    // ---------- BASE (S^1 drawn as interval) ----------
+    c.strokeStyle='rgba(192,132,252,.85)'; c.lineWidth=2.6;
+    c.beginPath(); c.moveTo(L,bY); c.lineTo(R,bY); c.stroke();
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono';
+    c.fillText('B = S¹',L,bY+20); c.fillText('0',L-3,bY+34); c.fillText('1',R-3,bY+34);
+
+    // ---------- TOTAL SPACE ----------
+    c.strokeStyle='rgba(122,162,255,.3)'; c.lineWidth=1.2;
+    roundRect(c,L,tTop,R-L,tBot-tTop,12); c.stroke();
+    c.fillStyle='rgba(122,162,255,.035)'; c.fill();
+    c.fillStyle=C.acc2; c.fillText(mode===1?'E = ℝ (Überlagerung)':'E = S¹ × ℝ',L+8,tTop+16);
+
+    const NX=9;   // points of X
+    // fiber grid
+    for(let i=0;i<=24;i++){
+      const x=L+(R-L)*i/24;
+      c.strokeStyle='rgba(122,162,255,.12)'; c.lineWidth=1;
+      c.beginPath(); c.moveTo(x,tTop+8); c.lineTo(x,tBot-8); c.stroke();
+    }
+
+    // ---------- the homotopy h(t,x) downstairs ----------
+    // each x moves from x to x + t*0.55 (mod 1)
+    function hpos(x,tt){ return (x + tt*0.55)%1; }
+
+    for(let k=0;k<NX;k++){
+      const x0=k/NX;
+      const hue=lerp(160,300,k/NX);
+      // trail
+      c.strokeStyle=hsl(hue,70,60,.25); c.lineWidth=2;
+      c.beginPath();
+      for(let i=0;i<=40;i++){
+        const tt=t*i/40, u=hpos(x0,tt);
+        const px=L+(R-L)*u;
+        if(i===0)c.moveTo(px,bY); else c.lineTo(px,bY);
+      }
+      c.stroke();
+      const u=hpos(x0,t), px=L+(R-L)*u;
+      c.fillStyle=hsl(hue,75,62,1);
+      c.beginPath(); c.arc(px,bY,5,0,TAU); c.fill();
+
+      // ---------- the LIFT upstairs ----------
+      // mode 0: cylinder -> lift keeps height f0 constant
+      // mode 1: covering R -> S^1 : lift is the real number that increases monotonically
+      let ux, uy;
+      if(mode===1){
+        // real line displayed horizontally: position = x0 + t*0.55 (NO mod!)
+        const real=x0+t*0.55;
+        ux=L+(R-L)*(real%1===real? real : real); // may exceed
+        const scaled=(real)/1.6;  // squeeze so it fits
+        ux=L+(R-L)*clamp(scaled,0,1);
+        uy=lerp(tBot-14,tTop+18,k/NX);
+        // show wrap markers
+      } else {
+        ux=px; uy=midY - f0*SC;
+      }
+      c.fillStyle=hsl(hue,80,66,1);
+      c.beginPath(); c.arc(ux,uy,5.5,0,TAU); c.fill();
+      c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1; c.stroke();
+      // lift trail
+      c.strokeStyle=hsl(hue,70,62,.45); c.lineWidth=2;
+      c.beginPath();
+      for(let i=0;i<=40;i++){
+        const tt=t*i/40;
+        let qx,qy;
+        if(mode===1){ const real=x0+tt*0.55; qx=L+(R-L)*clamp(real/1.6,0,1); qy=lerp(tBot-14,tTop+18,k/NX); }
+        else { qx=L+(R-L)*hpos(x0,tt); qy=midY-f0*SC; }
+        if(i===0)c.moveTo(qx,qy); else c.lineTo(qx,qy);
+      }
+      c.stroke();
+      // projection dashed
+      c.strokeStyle=hsl(hue,60,60,.22); c.setLineDash([3,4]); c.lineWidth=1;
+      c.beginPath(); c.moveTo(ux,uy); c.lineTo(px,bY); c.stroke(); c.setLineDash([]);
+    }
+
+    // labels
+    c.fillStyle=C.acc4; c.font='600 11px JetBrains Mono';
+    c.fillText('f(t,·)  — die hochgehobene Homotopie',L+8,tTop+34);
+    c.fillStyle=C.pur;
+    c.fillText('h(t,·)  — die gegebene Homotopie unten',L+8,bY-10);
+    // pi arrow
+    arrow(c,R+14,midY,R+14,bY-6,'rgba(255,255,255,.35)',1.4);
+    c.fillStyle='rgba(255,255,255,.5)'; c.fillText('π',R+18,(midY+bY)/2);
+    // t indicator
+    c.fillStyle=C.acc; c.font='700 13px JetBrains Mono';
+    c.fillText('t = '+t.toFixed(2),W-104,tTop+18);
+
+    $('#hlpInfo').querySelector('p').innerHTML= mode===1
+      ? `<b>Überlagerung ℝ → S¹.</b> Unten laufen die Punkte im Kreis; oben laufen sie <b>geradeaus weiter</b> und kommen nie zurück. Der Startpunkt oben legt die Hochhebung <b>eindeutig</b> fest — das ist der Kern von π₁(S¹)=ℤ.`
+      : `<b>Zylinderbündel.</b> Die Höhe f₀ bleibt erhalten, die Bewegung wird 1:1 nach oben kopiert. Es gilt π∘f = h und f(0,·) = f₀ ✓ [[11]]`;
+  }
+  function loop(){ if(!anim)return; let v=+T.value+0.005; if(v>1)v=0;
+    T.value=v; $('#hlpTV').textContent=v.toFixed(2); draw(); raf=requestAnimationFrame(loop);}
+  T.oninput=()=>{$('#hlpTV').textContent=(+T.value).toFixed(2);draw();};
+  F0.oninput=()=>{$('#hlpFV').textContent=(+F0.value).toFixed(2);draw();};
+  $$('[data-hlp]').forEach(b=>b.onclick=()=>{
+    if(+b.dataset.hlp===2){anim=!anim;b.classList.toggle('on',anim);if(anim)loop();else cancelAnimationFrame(raf);return;}
+    $$('[data-hlp]').forEach(x=>{if(+x.dataset.hlp!==2)x.classList.remove('on')}); b.classList.add('on');
+    mode=+b.dataset.hlp; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   08 HOPF FIBRATION — three.js
+================================================================== */
+let hopfAPI=null;
+(function(){
+  const host=$('#hopf3d');
+  if(!window.THREE){ host.innerHTML='<div style="padding:20px;color:#9aa1b8">Three.js konnte nicht geladen werden.</div>'; return; }
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x07080d,0.035);
+  const cam=new THREE.PerspectiveCamera(52,1,0.1,600);
+  cam.position.set(7.5,5.2,8.5);
+  const ren=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  ren.setPixelRatio(Math.min(devicePixelRatio,2));
+  host.appendChild(ren.domElement);
+  let ctrls=null;
+  if(THREE.OrbitControls){ ctrls=new THREE.OrbitControls(cam,ren.domElement);
+    ctrls.enableDamping=true; ctrls.dampingFactor=.07; ctrls.minDistance=3; ctrls.maxDistance=40; }
+  scene.add(new THREE.AmbientLight(0xffffff,0.75));
+  const dl=new THREE.DirectionalLight(0xffffff,0.85); dl.position.set(5,8,6); scene.add(dl);
+
+  const group=new THREE.Group(); scene.add(group);
+
+  // stereographic projection from S^3 (in R^4) to R^3
+  function stereo(x,y,z,w){
+    const d=1-w;
+    const e=Math.abs(d)<1e-4?1e-4:d;
+    return new THREE.Vector3(x/e,y/e,z/e);
+  }
+  // Hopf fiber over point on S^2 given by (theta=polar, phi=azimuth)
+  function hopfFiber(theta,phi,N){
+    const pts=[];
+    const ct=Math.cos(theta/2), st=Math.sin(theta/2);
+    for(let i=0;i<=N;i++){
+      const psi=i/N*TAU;
+      // standard parametrisation
+      const z0re=ct*Math.cos(psi), z0im=ct*Math.sin(psi);
+      const z1re=st*Math.cos(psi+phi), z1im=st*Math.sin(psi+phi);
+      pts.push(stereo(z0re,z0im,z1re,z1im));
+    }
+    return pts;
+  }
+  function s2color(theta,phi){
+    const h=(phi/TAU*360+360)%360;
+    const l=lerp(38,72,1-theta/Math.PI);
+    return new THREE.Color().setHSL(h/360,0.72,l/100);
+  }
+  function makeTube(pts,col,rad){
+    const curve=new THREE.CatmullRomCurve3(pts,true);
+    const geo=new THREE.TubeGeometry(curve,220,rad,12,true);
+    const mat=new THREE.MeshStandardMaterial({color:col,roughness:.35,metalness:.25,
+      emissive:col.clone().multiplyScalar(0.28)});
+    return new THREE.Mesh(geo,mat);
+  }
+  let state={n:14,lat:0.55,mode:'ring',spin:true};
+  function build(){
+    while(group.children.length){const m=group.children.pop();m.geometry&&m.geometry.dispose();m.material&&m.material.dispose();group.remove(m);}
+    const lats = state.mode==='multi'? [0.22,0.42,0.62,0.82] : [state.lat];
+    let nn=state.n;
+    if(state.mode==='one')nn=1;
+    if(state.mode==='two')nn=2;
+    lats.forEach(L=>{
+      const theta=L*Math.PI;
+      const cnt= state.mode==='multi'? Math.max(4,Math.round(state.n/2)) : nn;
+      for(let k=0;k<cnt;k++){
+        const phi=(k/cnt)*TAU + (state.mode==='two'? k*Math.PI*0.5:0);
+        const pts=hopfFiber(theta,phi,180);
+        const col=s2color(theta,phi);
+        const rad = (state.mode==='one'||state.mode==='two')?0.085:0.045;
+        group.add(makeTube(pts,col,rad));
+      }
+    });
+  }
+  build();
+  function resize(){
+    const w=host.clientWidth,h=host.clientHeight||520;
+    ren.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix();
+  }
+  resize(); addEventListener('resize',resize);
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(state.spin) group.rotation.y+=0.0032;
+    ctrls&&ctrls.update();
+    ren.render(scene,cam);
+  })();
+  hopfAPI={
+    set(k,v){state[k]=v;build(); if(window.drawHopfS2)window.drawHopfS2(state);},
+    get(){return state;}
+  };
+  $('#hfN').oninput=e=>{$('#hfNV').textContent=e.target.value;hopfAPI.set('n',+e.target.value);};
+  $('#hfLat').oninput=e=>{$('#hfLatV').textContent=(+e.target.value).toFixed(2);hopfAPI.set('lat',+e.target.value);};
+  $('#hfSpin').onclick=function(){state.spin=!state.spin;this.classList.toggle('on',state.spin);
+    this.textContent=state.spin?'↻ Rotation an':'↻ Rotation aus';};
+  function modeBtn(id,m,label){
+    $(id).onclick=function(){
+      ['#hfRings','#hfOne','#hfTwo'].forEach(s=>$(s).classList.remove('on'));
+      if(state.mode===m){state.mode='ring';}
+      else{state.mode=m;this.classList.add('on');}
+      build(); if(window.drawHopfS2)window.drawHopfS2(state);
+    };
+  }
+  modeBtn('#hfRings','multi'); modeBtn('#hfOne','one'); modeBtn('#hfTwo','two');
+})();
+
+/* ---- S² companion canvas ---- */
+(function(){
+  const cv=$('#hopfS2'); let c,W,H;
+  function res(){c=fit(cv,0.80,420);W=cv.width/DPR;H=cv.height/DPR;go();}
+  function go(){ window.drawHopfS2(hopfAPI?hopfAPI.get():{n:14,lat:.55,mode:'ring'}); }
+  window.drawHopfS2=function(st){
+    if(!c)return;
+    c.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, R=Math.min(W,H)*0.36;
+    // sphere
+    const g=c.createRadialGradient(cx-R*0.3,cy-R*0.35,R*0.1,cx,cy,R);
+    g.addColorStop(0,'rgba(255,255,255,.10)'); g.addColorStop(1,'rgba(122,162,255,.05)');
+    c.fillStyle=g; c.beginPath(); c.arc(cx,cy,R,0,TAU); c.fill();
+    c.strokeStyle='rgba(255,255,255,.22)'; c.lineWidth=1.4; c.stroke();
+    // meridians/parallels
+    for(let k=1;k<5;k++){
+      const th=k/5*Math.PI;
+      const ry=R*Math.abs(Math.cos(th)), yy=cy-R*Math.cos(th)*0+0;
+      c.strokeStyle='rgba(255,255,255,.08)'; c.lineWidth=1;
+      c.beginPath(); c.ellipse(cx,cy-R*Math.cos(th),R*Math.sin(th),R*Math.sin(th)*0.26,0,0,TAU); c.stroke();
+    }
+    const lats = st.mode==='multi'? [0.22,0.42,0.62,0.82] : [st.lat];
+    let cnt = st.mode==='one'?1 : st.mode==='two'?2 : st.n;
+    lats.forEach(L=>{
+      const th=L*Math.PI;
+      const yy=cy-R*Math.cos(th);
+      const rr=R*Math.sin(th);
+      c.strokeStyle='rgba(255,209,102,.5)'; c.lineWidth=1.6; c.setLineDash([4,3]);
+      c.beginPath(); c.ellipse(cx,yy,rr,rr*0.26,0,0,TAU); c.stroke(); c.setLineDash([]);
+      const n=st.mode==='multi'?Math.max(4,Math.round(st.n/2)):cnt;
+      for(let k=0;k<n;k++){
+        const phi=(k/n)*TAU+(st.mode==='two'?k*Math.PI*0.5:0);
+        const px=cx+rr*Math.cos(phi), py=yy+rr*Math.sin(phi)*0.26;
+        const front=Math.sin(phi)>=0;
+        const col=`hsla(${(phi/TAU*360+360)%360},72%,${lerp(38,72,1-th/Math.PI)}%,${front?0.98:0.42})`;
+        c.fillStyle=col;
+        c.beginPath(); c.arc(px,py,front?5.5:4,0,TAU); c.fill();
+        c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1; c.stroke();
+      }
+    });
+    c.fillStyle=C.pur; c.font='600 11px JetBrains Mono';
+    c.fillText('S² = Basis',12,18);
+    c.fillStyle=C.dimr; c.font='600 10px JetBrains Mono';
+    c.fillText('jeder Punkt hier  ↔  ein Kreis oben',12,H-10);
+  };
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- Hopf formula playground ---- */
+(function(){
+  const cv=$('#hopfMapCv'); let c,W,H;
+  function res(){c=fit(cv,0.80,480);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const R0=$('#hm_r'),A0=$('#hm_a0'),A1=$('#hm_a1'),LA=$('#hm_l');
+  function draw(){
+    if(!c)return;
+    const r0=+R0.value, a0=+A0.value, a1=+A1.value, lam=+LA.value;
+    const r1=Math.sqrt(Math.max(0,1-r0*r0));
+    // z0 = r0 e^{i(a0+lam)},  z1 = r1 e^{i(a1+lam)}
+    const z0=[r0*Math.cos(a0+lam), r0*Math.sin(a0+lam)];
+    const z1=[r1*Math.cos(a1+lam), r1*Math.sin(a1+lam)];
+    // p = (2 z0 z1*, |z0|^2-|z1|^2)
+    const w=[2*(z0[0]*z1[0]+z0[1]*z1[1]), 2*(z0[1]*z1[0]-z0[0]*z1[1])];
+    const x=r0*r0-r1*r1;
+    c.clearRect(0,0,W,H);
+    // three mini complex planes
+    function plane(cx,cy,R,label,col){
+      c.strokeStyle='rgba(255,255,255,.14)'; c.lineWidth=1;
+      c.beginPath(); c.arc(cx,cy,R,0,TAU); c.stroke();
+      c.beginPath(); c.moveTo(cx-R,cy); c.lineTo(cx+R,cy); c.stroke();
+      c.beginPath(); c.moveTo(cx,cy-R); c.lineTo(cx,cy+R); c.stroke();
+      c.fillStyle=col; c.font='600 11px JetBrains Mono'; c.fillText(label,cx-R,cy-R-8);
+    }
+    const R=Math.min(W*0.13,H*0.30);
+    const y0=H*0.42;
+    const p1x=W*0.18,p2x=W*0.50,p3x=W*0.82;
+    plane(p1x,y0,R,'z₀ ∈ ℂ',C.acc2);
+    plane(p2x,y0,R,'z₁ ∈ ℂ',C.pur);
+    plane(p3x,y0,R,'2z₀z₁* ∈ ℂ',C.acc);
+    arrow(c,p1x+z0[0]*R,y0-z0[1]*R,p1x+z0[0]*R,y0-z0[1]*R,C.acc2,1);
+    // vectors
+    function vec(cx,cy,v,col,scale){
+      arrow(c,cx,cy,cx+v[0]*R*(scale||1),cy-v[1]*R*(scale||1),col,2.6);
+      c.fillStyle=col; c.beginPath(); c.arc(cx+v[0]*R*(scale||1),cy-v[1]*R*(scale||1),4,0,TAU); c.fill();
+    }
+    vec(p1x,y0,z0,C.acc2); vec(p2x,y0,z1,C.pur); vec(p3x,y0,w,C.acc,0.5);
+    // the S^2 result bar
+    const bx=W*0.5, by=H*0.86, bw=W*0.6;
+    c.strokeStyle='rgba(255,255,255,.15)'; c.lineWidth=8; c.lineCap='round';
+    c.beginPath(); c.moveTo(bx-bw/2,by); c.lineTo(bx+bw/2,by); c.stroke(); c.lineCap='butt';
+    const px=bx+x*bw/2;
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(px,by,7,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.4; c.stroke();
+    c.fillStyle=C.dim; c.font='600 10px JetBrains Mono';
+    c.fillText('x = |z₀|²−|z₁|²  (Höhe auf S²)',bx-bw/2,by+22);
+    c.fillText('−1',bx-bw/2-4,by-14); c.fillText('+1',bx+bw/2-8,by-14);
+    $('#hmOut').innerHTML=
+      `z₀ = ${z0[0].toFixed(3)} + ${z0[1].toFixed(3)}i<br>`+
+      `z₁ = ${z1[0].toFixed(3)} + ${z1[1].toFixed(3)}i<br>`+
+      `<span style="color:#ffd166">p(z₀,z₁) = ( ${w[0].toFixed(3)} + ${w[1].toFixed(3)}i , ${x.toFixed(3)} )</span><br>`+
+      `<span style="color:#9aa1b8">|z₀|²+|z₁}|² = ${(r0*r0+r1*r1).toFixed(3)} ✓ auf S³</span>`;
+  }
+  [R0,A0,A1,LA].forEach((el,i)=>el.oninput=()=>{
+    $(['#hm_rV','#hm_a0V','#hm_a1V','#hm_lV'][i]).textContent=(+el.value).toFixed(2); draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   09 HOMOTOPIEFASERUNG
+================================================================== */
+(function(){
+  const cv=$('#hfibCv'); let c,W,H,mode=0;
+  function res(){c=fit(cv,0.86,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const E=$('#hfibE'),P=$('#hfibP'),Rr=$('#hfibR');
+  function draw(){
+    if(!c)return;
+    const ue=+E.value, up=+P.value, rt=+Rr.value;
+    c.clearRect(0,0,W,H);
+    const L=54,R=W-40, bY=H-70, eTop=36, eBot=eTop+90;
+    // E (top strip)
+    c.strokeStyle='rgba(122,162,255,.4)'; c.lineWidth=1.4;
+    roundRect(c,L,eTop,R-L,eBot-eTop,10); c.stroke();
+    c.fillStyle='rgba(122,162,255,.05)'; c.fill();
+    c.fillStyle=C.acc2; c.font='600 12px JetBrains Mono'; c.fillText('E',L+8,eTop+18);
+    // B (bottom line)
+    c.strokeStyle='rgba(192,132,252,.85)'; c.lineWidth=2.6;
+    c.beginPath(); c.moveTo(L,bY); c.lineTo(R,bY); c.stroke();
+    c.fillStyle=C.pur; c.font='600 12px JetBrains Mono'; c.fillText('B',L,bY+20);
+
+    const xe=L+(R-L)*ue, ye=(eTop+eBot)/2;
+    const xf=xe;                    // f(e) directly below
+    const xp=L+(R-L)*up;            // p(1)
+    // point e
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(xe,ye,7,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.4; c.stroke();
+    c.fillStyle=C.acc4; c.font='600 11px JetBrains Mono'; c.fillText('e',xe-3,ye-13);
+    // f(e)
+    c.strokeStyle='rgba(255,209,102,.4)'; c.setLineDash([4,4]); c.lineWidth=1.3;
+    c.beginPath(); c.moveTo(xe,ye+8); c.lineTo(xf,bY-6); c.stroke(); c.setLineDash([]);
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(xf,bY,6,0,TAU); c.fill();
+    c.fillText('f(e) = p(0)',xf-28,bY+36);
+
+    // the path p, contracted by rt
+    const endX=lerp(xp,xf,rt);
+    c.strokeStyle=C.acc; c.lineWidth=3.4;
+    c.beginPath();
+    for(let i=0;i<=60;i++){
+      const s=i/60;
+      const xx=lerp(xf,endX,s);
+      const yy=bY-Math.sin(s*Math.PI)*34;
+      i?c.lineTo(xx,yy):c.moveTo(xx,yy);
+    }
+    c.stroke();
+    // arrowhead at p(1)
+    c.fillStyle=C.acc; c.beginPath(); c.arc(endX,bY,6,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.3; c.stroke();
+    c.fillStyle=C.acc; c.font='600 11px JetBrains Mono';
+    c.fillText("p(1) = f′(e,p)",endX-34,bY-46);
+
+    // E_f representation: pairs (e,p)
+    const efTop=eBot+40, efBot=efTop+70;
+    c.strokeStyle='rgba(102,224,200,.4)'; c.lineWidth=1.4;
+    roundRect(c,L,efTop,R-L,efBot-efTop,10); c.stroke();
+    c.fillStyle='rgba(102,224,200,.05)'; c.fill();
+    c.fillStyle=C.acc; c.font='600 12px JetBrains Mono'; c.fillText('E_f = {(e,p)}',L+8,efTop+18);
+    // several sample pairs
+    for(let k=0;k<10;k++){
+      const u=k/9;
+      const xx=L+(R-L)*(0.06+0.88*u);
+      const stretch=lerp(28,3,rt);
+      c.strokeStyle=hsl(lerp(168,290,u),70,60,.65); c.lineWidth=2;
+      c.beginPath();
+      c.moveTo(xx-stretch,efBot-18); c.lineTo(xx+stretch,efBot-18); c.stroke();
+      c.fillStyle=hsl(lerp(168,290,u),75,65,1);
+      c.beginPath(); c.arc(xx-stretch,efBot-18,3.6,0,TAU); c.fill();
+    }
+    c.fillStyle=C.dimr; c.font='600 10px JetBrains Mono';
+    c.fillText(rt>0.9?'Wege auf Punkte zusammengezogen  →  E_f ≃ E':'jeder Punkt = Punkt e + ganzer Weg p',L+8,efBot-2);
+
+    // homotopy fiber highlight
+    if(mode===1){
+      const star=L+(R-L)*0.5;
+      c.strokeStyle='rgba(255,90,120,.85)'; c.lineWidth=2; c.setLineDash([5,4]);
+      c.beginPath(); c.moveTo(star,efTop-6); c.lineTo(star,bY+6); c.stroke(); c.setLineDash([]);
+      c.fillStyle='#ff5a78'; c.beginPath(); c.arc(star,bY,7,0,TAU); c.fill();
+      c.font='600 11px JetBrains Mono'; c.fillText('∗',star-3,bY-14);
+      c.fillText('Homotopiefaser (f′)⁻¹(∗)',star+10,efTop+34);
+    }
+    // f' arrow
+    arrow(c,R+12,efTop+20,R+12,bY-6,'rgba(255,255,255,.35)',1.4);
+    c.fillStyle='rgba(255,255,255,.5)'; c.font='600 11px JetBrains Mono'; c.fillText("f′",R+16,(efTop+bY)/2);
+
+    $('#hfibInfo').querySelector('p').innerHTML = mode===1
+      ? `Die <b>Homotopiefaser</b> über ∗ besteht aus allen Paaren (e,p), deren Weg bei ∗ endet [[11]]. Sie ist die homotopieinvariante Version des Urbilds.`
+      : (rt>0.9
+        ? `<b style="color:#66e0c8">Deformationsretraktion vollzogen:</b> E<sub>f</sub> zieht sich auf E zusammen — beide sind <b>homotopieäquivalent</b> [[11]].`
+        : `E<sub>f</sub> = {(e,p) : p(0) = f(e)}. Die Abbildung f′(e,p) = p(1) ist eine <b>Fibration</b> — Hochheben heißt nur „Weg verlängern" [[11]].`);
+  }
+  [E,P,Rr].forEach((el,i)=>el.oninput=()=>{
+    $(['#hfibEV','#hfibPV','#hfibRV'][i]).textContent=(+el.value).toFixed(2); draw();});
+  $$('[data-hfib]').forEach(b=>b.onclick=()=>{
+    $$('[data-hfib]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.hfib; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   10 VERTIKALES TANGENTIALBÜNDEL — three.js
+================================================================== */
+(function(){
+  const host=$('#tang3d');
+  if(!window.THREE){ host.innerHTML='<div style="padding:20px;color:#9aa1b8">Three.js nicht verfügbar.</div>'; return; }
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(50,1,0.1,200); cam.position.set(4.2,3.4,4.6);
+  const ren=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  ren.setPixelRatio(Math.min(devicePixelRatio,2)); host.appendChild(ren.domElement);
+  let ctrls=null;
+  if(THREE.OrbitControls){ctrls=new THREE.OrbitControls(cam,ren.domElement);
+    ctrls.enableDamping=true;ctrls.dampingFactor=.08;ctrls.minDistance=2.5;ctrls.maxDistance=16;}
+  scene.add(new THREE.AmbientLight(0xffffff,.8));
+  const dl=new THREE.DirectionalLight(0xffffff,.9); dl.position.set(4,7,5); scene.add(dl);
+  const G=new THREE.Group(); scene.add(G);
+
+  function surf(u,v){ // u,v in [0,1] -> a gentle bumpy surface (M)
+    const x=(u-0.5)*4, z=(v-0.5)*4;
+    const y=0.55*Math.sin(x*1.1)*Math.cos(z*1.1);
+    return new THREE.Vector3(x,y,z);
+  }
+  let mode=0, dens=6;
+  function build(){
+    while(G.children.length){const m=G.children.pop();m.geometry&&m.geometry.dispose();m.material&&m.material.dispose();G.remove(m);}
+    // surface
+    const geo=new THREE.ParametricBufferGeometry? null:null;
+    const seg=48;
+    const pg=new THREE.PlaneGeometry(4,4,seg,seg);
+    const pos=pg.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i), z=-pos.getY(i);
+      const y=0.55*Math.sin(x*1.1)*Math.cos(z*1.1);
+      pos.setZ(i,y);
+    }
+    pg.rotateX(-Math.PI/2); pg.computeVertexNormals();
+    const mat=new THREE.MeshStandardMaterial({color:0x2a3352,roughness:.8,metalness:.1,
+      side:THREE.DoubleSide,transparent:true,opacity:.85,
+      emissive:0x0c1122});
+    G.add(new THREE.Mesh(pg,mat));
+    const wire=new THREE.Mesh(pg.clone(),new THREE.MeshBasicMaterial({color:0x7aa2ff,wireframe:true,transparent:true,opacity:.14}));
+    G.add(wire);
+
+    // tangent planes / vectors
+    const n=dens;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+      const u=(i+0.5)/n, v=(j+0.5)/n;
+      const p=surf(u,v);
+      const e=0.01;
+      const pu=surf(u+e,v).sub(surf(u-e,v)).normalize();
+      const pv=surf(u,v+e).sub(surf(u,v-e)).normalize();
+      if(mode===0){
+        // tangent plane patch
+        const pl=new THREE.PlaneGeometry(0.55,0.55);
+        const m=new THREE.Mesh(pl,new THREE.MeshBasicMaterial({color:0x66e0c8,transparent:true,opacity:.30,side:THREE.DoubleSide}));
+        const nrm=new THREE.Vector3().crossVectors(pu,pv).normalize();
+        m.position.copy(p).add(nrm.clone().multiplyScalar(0.005));
+        m.lookAt(p.clone().add(nrm));
+        G.add(m);
+      } else if(mode===1){
+        // Df: arrows projecting down to base plane
+        const dir=pu.clone();
+        const ar=new THREE.ArrowHelper(dir,p,0.42,0xffd166,0.13,0.08);
+        G.add(ar);
+        const proj=new THREE.Vector3(dir.x,0,dir.z).normalize();
+        const base=new THREE.Vector3(p.x,-1.4,p.z);
+        const ar2=new THREE.ArrowHelper(proj,base,0.42,0x9aa1b8,0.12,0.07);
+        G.add(ar2);
+      } else {
+        // kernel of Df = vertical direction
+        const ar=new THREE.ArrowHelper(new THREE.Vector3(0,1,0),p,0.55,0xc084fc,0.15,0.09);
+        G.add(ar);
+      }
+    }
+    if(mode>=1){
+      // base plane
+      const bp=new THREE.PlaneGeometry(4,4);
+      bp.rotateX(-Math.PI/2);
+      const bm=new THREE.Mesh(bp,new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:.10,side:THREE.DoubleSide}));
+      bm.position.y=-1.4; G.add(bm);
+    }
+  }
+  build();
+  function resize(){const w=host.clientWidth,h=host.clientHeight||440;
+    ren.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  resize(); addEventListener('resize',resize);
+  (function loop(){requestAnimationFrame(loop);G.rotation.y+=0.0016;ctrls&&ctrls.update();ren.render(scene,cam);})();
+
+  const INFO=[
+    `<b>TM</b> = {(m,v) : m ∈ M, v im Tangentialraum an m} [[11]]. Über jedem Punkt der Fläche liegt eine ganze <b>Ebene</b> möglicher Richtungen — das ist die Faser ℝ².`,
+    `<b>Df</b> bildet Tangentialvektoren oben auf Tangentialvektoren unten ab und ist <b>linear auf jeder Faser</b> [[11]]. Gelb: Vektor in TX. Grau: sein Bild in TY.`,
+    `<b>ker Df</b> = alle Richtungen, deren Bild unten <b>null</b> ist — Bewegung <b>innerhalb der Faser</b>. Das ist das <b>vertikale Tangentialbündel</b> T<sub>f</sub> := ker Df [[11]].`
+  ];
+  function setMode(m){mode=m;build();$('#tgInfo').querySelector('p').innerHTML=INFO[m];}
+  $$('[data-tg]').forEach(b=>b.onclick=()=>{
+    $$('[data-tg]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    setMode(+b.dataset.tg);});
+  $('#tgD').oninput=e=>{$('#tgDV').textContent=e.target.value;dens=+e.target.value;build();};
+  setMode(0);
+})();
+
+/* ==================================================================
+   11 EXAKTHEIT + LANGE EXAKTE SEQUENZ
+================================================================== */
+(function(){
+  const cv=$('#exactCv'); let c,W,H,mode=0;
+  function res(){c=fit(cv,0.78,480);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  function draw(){
+    if(!c)return;
+    c.clearRect(0,0,W,H);
+    const R=Math.min(W*0.13,H*0.26);
+    const ys=H*0.44;
+    const xs=[W*0.18,W*0.50,W*0.82];
+    const labels=['A','B','C'], cols=[C.acc2,C.acc,C.pur];
+    xs.forEach((x,k)=>{
+      c.strokeStyle=cols[k]; c.lineWidth=2;
+      c.beginPath(); c.ellipse(x,ys,R*0.85,R,0,0,TAU); c.stroke();
+      c.fillStyle=cols[k].replace('#','')&&(k===0?'rgba(122,162,255,.07)':k===1?'rgba(102,224,200,.07)':'rgba(192,132,252,.07)');
+      c.fill();
+      c.fillStyle=cols[k]; c.font='700 14px JetBrains Mono';
+      c.fillText(labels[k],x-5,ys-R-10);
+    });
+    // In B: image (from A) and kernel (to C)
+    const bx=xs[1];
+    let imgR, kerR;
+    if(mode===0){ imgR=R*0.55; kerR=R*0.55; }
+    else if(mode===1){ imgR=R*0.32; kerR=R*0.62; }
+    else { imgR=R*0.68; kerR=R*0.34; }
+    // kernel region
+    c.fillStyle='rgba(192,132,252,.22)';
+    c.beginPath(); c.ellipse(bx,ys,kerR*0.85,kerR,0,0,TAU); c.fill();
+    c.strokeStyle='rgba(192,132,252,.7)'; c.lineWidth=1.6; c.setLineDash([4,3]);
+    c.beginPath(); c.ellipse(bx,ys,kerR*0.85,kerR,0,0,TAU); c.stroke(); c.setLineDash([]);
+    // image region
+    c.fillStyle='rgba(122,162,255,.28)';
+    c.beginPath(); c.ellipse(bx,ys,imgR*0.85,imgR,0,0,TAU); c.fill();
+    c.strokeStyle='rgba(122,162,255,.85)'; c.lineWidth=1.8;
+    c.beginPath(); c.ellipse(bx,ys,imgR*0.85,imgR,0,0,TAU); c.stroke();
+    // labels inside B
+    c.font='600 10px JetBrains Mono';
+    c.fillStyle='rgba(122,162,255,.95)'; c.fillText('im φ',bx-16,ys+3);
+    c.fillStyle='rgba(192,132,252,.95)'; c.fillText('ker ψ',bx-18,ys+kerR-6);
+
+    // arrows
+    arrow(c,xs[0]+R*0.85+6,ys,xs[1]-R*0.85-6,ys,C.acc2,2);
+    arrow(c,xs[1]+R*0.85+6,ys,xs[2]-R*0.85-6,ys,C.pur,2);
+    c.fillStyle=C.acc2; c.font='600 12px JetBrains Mono';
+    c.fillText('φ',(xs[0]+xs[1])/2-4,ys-10);
+    c.fillStyle=C.pur;
+    c.fillText('ψ',(xs[1]+xs[2])/2-4,ys-10);
+    // zero element in C
+    c.fillStyle='rgba(255,255,255,.8)';
+    c.beginPath(); c.arc(xs[2],ys,5,0,TAU); c.fill();
+    c.font='600 10px JetBrains Mono'; c.fillText('0',xs[2]-3,ys+18);
+
+    // sample dots showing what maps where
+    for(let k=0;k<8;k++){
+      const a=k/8*TAU;
+      const px=bx+Math.cos(a)*imgR*0.55, py=ys+Math.sin(a)*imgR*0.62;
+      c.fillStyle='rgba(122,162,255,.9)';
+      c.beginPath(); c.arc(px,py,3,0,TAU); c.fill();
+    }
+    if(mode===1){
+      // elements in ker but not in im  -> highlighted red
+      for(let k=0;k<5;k++){
+        const a=k/5*TAU+0.3;
+        const rr=lerp(imgR,kerR,0.7);
+        c.fillStyle='#ff5a78';
+        c.beginPath(); c.arc(bx+Math.cos(a)*rr*0.85,ys+Math.sin(a)*rr,3.4,0,TAU); c.fill();
+      }
+    }
+    if(mode===2){
+      for(let k=0;k<5;k++){
+        const a=k/5*TAU+0.3;
+        const rr=lerp(kerR,imgR,0.7);
+        c.fillStyle='#ff5a78';
+        c.beginPath(); c.arc(bx+Math.cos(a)*rr*0.85,ys+Math.sin(a)*rr,3.4,0,TAU); c.fill();
+        // these map to something nonzero in C
+        const tx=xs[2]+Math.cos(a)*R*0.4, ty=ys+Math.sin(a)*R*0.45;
+        c.fillStyle='rgba(255,90,120,.85)';
+        c.beginPath(); c.arc(tx,ty,3.4,0,TAU); c.fill();
+      }
+    }
+    const MSG=[
+      `<b style="color:#66e0c8">✓ exakt:</b> im φ = ker ψ. Genau das, was von A ankommt, geht unter ψ auf 0. Keine Lücke, kein Überschuss — eine perfekte Bilanz.`,
+      `<b style="color:#ff5a78">✗ nicht exakt:</b> im φ ⊊ ker ψ. Es gibt <b>rote</b> Elemente, die ψ auf 0 schickt, die aber <b>nicht</b> aus A kommen. Information „aus dem Nichts".`,
+      `<b style="color:#ff5a78">✗ nicht exakt:</b> im φ ⊋ ker ψ. Etwas aus A landet in B und wird von ψ <b>nicht</b> auf 0 geschickt — die Kette „leckt".`
+    ];
+    $('#exactInfo').querySelector('p').innerHTML=MSG[mode];
+    $('#exactInfo').style.borderLeftColor = mode===0? C.acc:'#ff5a78';
+  }
+  $$('[data-ex]').forEach(b=>b.onclick=()=>{
+    $$('[data-ex]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=+b.dataset.ex; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ---- Die lange exakte Sequenz zum Anfassen ---- */
+(function(){
+  const cv=$('#lesCv'); let c,W,H,kind='cov';
+  function res(){c=fit(cv,0.46,1100);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const SEQ={
+    cov:{
+      title:'Überlagerung  ℤ → ℝ → S¹',
+      F:'ℤ', E:'ℝ', B:'S¹',
+      items:[
+        {l:'π₂(ℤ)',v:'0',why:'ℤ ist diskret ⇒ alle höheren Homotopiegruppen verschwinden.'},
+        {l:'π₂(ℝ)',v:'0',why:'ℝ ist zusammenziehbar ⇒ πₙ(ℝ)=0 für alle n.'},
+        {l:'π₂(S¹)',v:'0',why:'★ Eingeklemmt zwischen zwei Nullen ⇒ Goldene Regel ⇒ = 0.'},
+        {l:'π₁(ℤ)',v:'0',why:'diskret.'},
+        {l:'π₁(ℝ)',v:'0',why:'zusammenziehbar.'},
+        {l:'π₁(S¹)',v:'ℤ',why:'★ Exaktheit erzwingt π₁(S¹) ≅ π₀(ℤ) = ℤ. Das ist die Windungszahl!'},
+        {l:'π₀(ℤ)',v:'ℤ',why:'ℤ hat abzählbar unendlich viele Komponenten ⇒ π₀ = ℤ.'},
+        {l:'π₀(ℝ)',v:'0',why:'ℝ ist zusammenhängend.'},
+        {l:'0',v:'0',why:'Ende der Sequenz [[11]].'}
+      ]},
+    hopf:{
+      title:'Hopf-Fibration  S¹ → S³ → S²',
+      F:'S¹', E:'S³', B:'S²',
+      items:[
+        {l:'π₃(S¹)',v:'0',why:'Aus Abschnitt 12: πᵢ(S¹)=0 für i≠1.'},
+        {l:'π₃(S³)',v:'ℤ',why:'Standardresultat: der Abbildungsgrad.'},
+        {l:'π₃(S²)',v:'ℤ',why:'★ Eingeklemmt zwischen zwei Nullen ⇒ π₃(S²) ≅ π₃(S³) = ℤ. DAS ist die Pointe!'},
+        {l:'π₂(S¹)',v:'0',why:'πᵢ(S¹)=0 für i≠1.'},
+        {l:'π₂(S³)',v:'0',why:'S³ ist 2-zusammenhängend.'},
+        {l:'π₂(S²)',v:'ℤ',why:'Hier NICHT aus der Regel — π₁(S¹)=ℤ ist ≠ 0, der Randterm greift ein.'},
+        {l:'π₁(S¹)',v:'ℤ',why:'Die Faser trägt hier ihre eigene Windungszahl.'},
+        {l:'π₁(S³)',v:'0',why:'S³ ist einfach zusammenhängend.'},
+        {l:'π₁(S²)',v:'0',why:'Jede Schleife auf S² rutscht ab.'}
+      ]},
+    triv:{
+      title:'Triviales Bündel  F → B×F → B',
+      F:'F', E:'B×F', B:'B',
+      items:[
+        {l:'πₙ(F)',v:'πₙ(F)',why:'Die Faser bleibt, was sie ist.'},
+        {l:'πₙ(B×F)',v:'πₙ(B)⊕πₙ(F)',why:'Homotopiegruppen eines Produkts sind die direkte Summe.'},
+        {l:'πₙ(B)',v:'πₙ(B)',why:'Die Projektion ist surjektiv mit Schnitt.'},
+        {l:'πₙ₋₁(F)',v:'πₙ₋₁(F)',why:'Der Randhomomorphismus ist NULL — die Sequenz zerfällt.'},
+        {l:'πₙ₋₁(B×F)',v:'πₙ₋₁(B)⊕πₙ₋₁(F)',why:'wieder direkte Summe.'},
+        {l:'πₙ₋₁(B)',v:'πₙ₋₁(B)',why:'…'},
+        {l:'…',v:'…',why:'Beim trivialen Bündel ist die Sequenz langweilig — sie zerfällt in kurze Stücke.'},
+        {l:'π₀(B×F)',v:'π₀(B)×π₀(F)',why:'Komponenten multiplizieren sich.'},
+        {l:'0',v:'0',why:'Ende.'}
+      ]}
+  };
+  const sl=$('#lesStep');
+  function draw(){
+    if(!c)return;
+    const S=SEQ[kind], step=+sl.value;
+    c.clearRect(0,0,W,H);
+    c.fillStyle=C.acc4; c.font='700 13px Inter';
+    c.fillText(S.title,16,26);
+    // little diagram F -> E -> B
+    c.font='600 12px JetBrains Mono';
+    c.fillStyle=C.acc; c.fillText(S.F,16,52);
+    arrow(c,34,48,64,48,'rgba(255,255,255,.4)',1.4);
+    c.fillStyle=C.acc2; c.fillText(S.E,70,52);
+    arrow(c,94,48,124,48,'rgba(255,255,255,.4)',1.4);
+    c.fillStyle=C.pur; c.fillText(S.B,130,52);
+
+    const n=S.items.length;
+    const y=H*0.56;
+    const pad=30;
+    const gap=(W-pad*2)/n;
+    for(let i=0;i<n;i++){
+      const on = i<=step;
+      const x=pad+gap*i+gap/2;
+      const it=S.items[i];
+      const isStar = it.why.startsWith('★');
+      const col = !on? 'rgba(255,255,255,.12)' : (isStar? C.acc4 : (it.v==='0'?'rgba(154,161,184,.8)':C.acc));
+      // box
+      c.fillStyle= on? (isStar?'rgba(255,209,102,.13)':'rgba(255,255,255,.045)'):'rgba(255,255,255,.02)';
+      roundRect(c,x-gap*0.42,y-26,gap*0.84,52,9); c.fill();
+      c.strokeStyle= on? (isStar?'rgba(255,209,102,.6)':'rgba(255,255,255,.14)'):'rgba(255,255,255,.06)';
+      c.lineWidth=isStar&&on?2:1; c.stroke();
+      c.fillStyle= on? 'rgba(232,234,242,.95)':'rgba(255,255,255,.15)';
+      c.font='600 11px JetBrains Mono'; c.textAlign='center';
+      c.fillText(it.l,x,y-6);
+      c.fillStyle=col; c.font='700 14px JetBrains Mono';
+      c.fillText(it.v,x,y+16);
+      c.textAlign='left';
+      if(i<n-1){
+        arrow(c,x+gap*0.43,y,x+gap*0.57,y, on&&i<step?'rgba(255,255,255,.45)':'rgba(255,255,255,.1)',1.6);
+      }
+    }
+    const it=S.items[Math.min(step,n-1)];
+    $('#lesInfo').querySelector('p').innerHTML=
+      `<b>${it.l} = ${it.v}</b> — ${it.why.replace('★','<b style="color:#ffd166">Goldene Regel: </b>')}`;
+  }
+  sl.oninput=()=>{$('#lesStepV').textContent=sl.value;draw();};
+  $$('[data-les]').forEach(b=>b.onclick=()=>{
+    $$('[data-les]').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    kind=b.dataset.les; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   12 π₁(S¹) = ℤ  — Helix / Überlagerung
+================================================================== */
+(function(){
+  const cv=$('#coverCv2'); let c,W,H,mode=0,anim=false,raf=null,ph=0;
+  function res(){c=fit(cv,0.90,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const T=$('#cv2T'), Wn=$('#cv2W');
+  function draw(){
+    if(!c)return;
+    const t=+T.value, wn=+Wn.value;
+    c.clearRect(0,0,W,H);
+    const cx=W*0.50, cyTop=H*0.30, cyBot=H*0.80;
+    const R=Math.min(W*0.26,H*0.20), ry=R*0.30;
+
+    // --- base circle S^1
+    c.strokeStyle='rgba(192,132,252,.85)'; c.lineWidth=2.6;
+    c.beginPath(); c.ellipse(cx,cyBot,R,ry,0,0,TAU); c.stroke();
+    c.fillStyle=C.pur; c.font='600 12px JetBrains Mono';
+    c.fillText('S¹',cx+R+10,cyBot+4);
+
+    // --- helix R
+    const turns=3.4, hStep=(cyBot-cyTop)*0.90/(turns*2);
+    c.lineWidth=2.4;
+    const segs=520;
+    for(let i=0;i<segs;i++){
+      const s0=-turns+ (i/segs)*(2*turns);
+      const s1=-turns+ ((i+1)/segs)*(2*turns);
+      function pt(s){ const a=s*TAU;
+        return [cx+R*Math.cos(a), cyTop+(cyBot-cyTop)*0.5 - s*hStep*1.9 + ry*Math.sin(a)];}
+      const p0=pt(s0),p1=pt(s1);
+      const front=Math.sin(s0*TAU)>0;
+      c.strokeStyle=front?'rgba(122,162,255,.85)':'rgba(122,162,255,.28)';
+      c.beginPath(); c.moveTo(p0[0],p0[1]); c.lineTo(p1[0],p1[1]); c.stroke();
+    }
+    c.fillStyle=C.acc2; c.fillText('ℝ  (universelle Überlagerung)',cx-R-40,cyTop-6);
+
+    // integer marks on the helix = the fiber over the basepoint
+    for(let k=-3;k<=3;k++){
+      const a=0;
+      const y=cyTop+(cyBot-cyTop)*0.5 - k*hStep*1.9;
+      c.fillStyle= k===0? C.acc4:'rgba(102,224,200,.85)';
+      c.beginPath(); c.arc(cx+R,y,5,0,TAU); c.fill();
+      c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=1; c.stroke();
+      c.fillStyle='rgba(154,161,184,.9)'; c.font='600 9px JetBrains Mono';
+      c.fillText(k,cx+R+10,y+3);
+    }
+    c.fillStyle=C.acc; c.font='600 10px JetBrains Mono';
+    c.fillText('Faser = ℤ',cx+R+26,cyTop+(cyBot-cyTop)*0.5-hStep*1.9*3-6);
+    // basepoint on circle
+    c.fillStyle=C.acc4; c.beginPath(); c.arc(cx+R,cyBot,6,0,TAU); c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=1.3; c.stroke();
+    c.fillStyle=C.acc4; c.font='600 10px JetBrains Mono'; c.fillText('b₀',cx+R+10,cyBot+18);
+
+    if(mode>=1){
+      // a loop going round wn times, lifted
+      const prog = mode===2? ph : 1;
+      const total=Math.abs(wn);
+      const dir=Math.sign(wn)||1;
+      // downstairs loop
+      c.strokeStyle=C.acc4; c.lineWidth=3.4;
+      c.beginPath();
+      const NN=Math.max(4,Math.round(220*prog));
+      for(let i=0;i<=NN;i++){
+        const s=(i/220)*total*prog*(prog?1:0);
+        const a=dir*s*TAU;
+        const x=cx+R*Math.cos(a), y=cyBot+ry*Math.sin(a);
+        i?c.lineTo(x,y):c.moveTo(x,y);
+      }
+      c.stroke();
+      // upstairs lift
+      c.strokeStyle=C.acc; c.lineWidth=3.4;
+      c.beginPath();
+      let lastP=null;
+      for(let i=0;i<=NN;i++){
+        const s=(i/220)*total*prog;
+        const a=dir*s*TAU;
+        const x=cx+R*Math.cos(a);
+        const y=cyTop+(cyBot-cyTop)*0.5 - dir*s*hStep*1.9 + ry*Math.sin(a);
+        i?c.lineTo(x,y):c.moveTo(x,y);
+        lastP=[x,y];
+      }
+      c.stroke();
+      if(lastP){
+        c.fillStyle=C.acc; c.beginPath(); c.arc(lastP[0],lastP[1],6,0,TAU); c.fill();
+        c.strokeStyle='#fff'; c.lineWidth=1.3; c.stroke();
+      }
+    }
+    // pi arrow
+    arrow(c,cx-R-26,cyTop+40,cx-R-26,cyBot-14,'rgba(255,255,255,.35)',1.5);
+    c.fillStyle='rgba(255,255,255,.5)'; c.font='600 12px JetBrains Mono';
+    c.fillText('π',cx-R-40,(cyTop+cyBot)/2);
+    c.font='600 10px JetBrains Mono'; c.fillStyle=C.dimr;
+    c.fillText('t ↦ e²ᵖⁱᵗ',cx-R-64,(cyTop+cyBot)/2+16);
+
+    $('#cv2Info').querySelector('p').innerHTML = mode===0
+      ? `Die Faser über b₀ ist <b>ℤ</b> — diskret, daher πₙ(ℤ)=0 für n ≥ 1. ℝ ist zusammenziehbar, also πₙ(ℝ)=0 für alle n [[11]].`
+      : `Windungszahl <b>${wn}</b>: Der Weg unten schließt sich, der hochgehobene Weg oben endet bei <b>${wn} ∈ ℤ</b>. Der Endpunkt oben <b>ist</b> das Element von π₁(S¹) = ℤ.`;
+  }
+  function loop(){ if(!anim)return; ph+=0.006; if(ph>1)ph=0; draw(); raf=requestAnimationFrame(loop); }
+  T.oninput=()=>{$('#cv2TV').textContent=(+T.value).toFixed(2);draw();};
+  Wn.oninput=()=>{$('#cv2WV').textContent=Wn.value;draw();};
+  $$('[data-cv2]').forEach(b=>b.onclick=()=>{
+    if(+b.dataset.cv2===2){anim=!anim;b.classList.toggle('on',anim);mode=Math.max(mode,1);
+      if(anim)loop();else cancelAnimationFrame(raf);draw();return;}
+    $$('[data-cv2]').forEach(x=>{if(+x.dataset.cv2!==2)x.classList.remove('on')}); b.classList.add('on');
+    mode=+b.dataset.cv2; ph=1; draw();});
+  res(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   13 ERGEBNIS — πᵢ(S²) ≅ πᵢ(S³)
+================================================================== */
+const PI_TABLE={
+  1:{s1:'ℤ',s2:'0',s3:'0'},
+  2:{s1:'0',s2:'ℤ',s3:'0'},
+  3:{s1:'0',s2:'ℤ',s3:'ℤ'},
+  4:{s1:'0',s2:'ℤ₂',s3:'ℤ₂'},
+  5:{s1:'0',s2:'ℤ₂',s3:'ℤ₂'},
+  6:{s1:'0',s2:'ℤ₁₂',s3:'ℤ₁₂'},
+  7:{s1:'0',s2:'ℤ₂',s3:'ℤ₂'},
+  8:{s1:'0',s2:'ℤ₂',s3:'ℤ₂'}
+};
+(function(){
+  const cv=$('#resultCv'); let c,W,H;
+  function res(){c=fit(cv,0.80,540);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const sl=$('#resI');
+  function draw(){
+    if(!c)return;
+    const i=+sl.value; const row=PI_TABLE[i];
+    c.clearRect(0,0,W,H);
+    const y=H*0.40, boxW=Math.min(W*0.24,150), boxH=74;
+    const xs=[W*0.20,W*0.50,W*0.80];
+    const labs=[['πᵢ(S¹)',row.s1,C.dim],['πᵢ(S³)',row.s3,C.acc2],['πᵢ(S²)',row.s2,C.pur]];
+    // order in sequence: pi_i(S1) -> pi_i(S3) -> pi_i(S2) -> pi_{i-1}(S1)
+    labs.forEach((L,k)=>{
+      const x=xs[k];
+      const active = i>2;
+      c.fillStyle= k===0? 'rgba(255,255,255,.04)': (active?'rgba(102,224,200,.12)':'rgba(255,255,255,.04)');
+      roundRect(c,x-boxW/2,y-boxH/2,boxW,boxH,12); c.fill();
+      c.strokeStyle= (i>2 && k>0)? 'rgba(102,224,200,.55)' : 'rgba(255,255,255,.14)';
+      c.lineWidth= (i>2 && k>0)?2:1; c.stroke();
+      c.textAlign='center';
+      c.fillStyle=C.dim; c.font='600 11px JetBrains Mono';
+      c.fillText(L[0].replace('ᵢ','₍'+i+'₎').replace('₍','').replace('₎',''),x,y-14);
+      c.fillStyle= L[1]==='0'? 'rgba(154,161,184,.75)' : C.acc4;
+      c.font='700 22px JetBrains Mono';
+      c.fillText(L[1],x,y+20);
+      c.textAlign='left';
+    });
+    // arrows in sequence order: S1 -> S3 -> S2
+    arrow(c,xs[0]+boxW/2+6,y,xs[1]-boxW/2-6,y,'rgba(255,255,255,.35)',1.8);
+    arrow(c,xs[1]+boxW/2+6,y,xs[2]-boxW/2-6,y,'rgba(255,255,255,.35)',1.8);
+    // trailing arrow to pi_{i-1}(S^1)
+    const tailX=Math.min(W-30,xs[2]+boxW/2+52);
+    arrow(c,xs[2]+boxW/2+6,y,tailX-14,y,'rgba(255,255,255,.2)',1.4);
+    c.fillStyle='rgba(154,161,184,.65)'; c.font='600 10px JetBrains Mono';
+    c.fillText('πᵢ₋₁(S¹)='+(i-1===1?'ℤ':'0'),Math.min(W-96,tailX-8),y+4);
+
+    // verdict banner
+    const ok = i>2;
+    c.fillStyle= ok? 'rgba(102,224,200,.10)':'rgba(255,209,102,.10)';
+    roundRect(c,26,H*0.74,W-52,50,12); c.fill();
+    c.strokeStyle= ok? 'rgba(102,224,200,.4)':'rgba(255,209,102,.4)';
+    c.lineWidth=1.4; c.stroke();
+    c.textAlign='center';
+    c.fillStyle= ok? C.acc:C.acc4; c.font='700 15px JetBrains Mono';
+    c.fillText(ok? `π${sub(i)}(S²) ≅ π${sub(i)}(S³) = ${row.s3}   ✓`
+                 : `i = ${i} ≤ 2 — Satz gilt hier NICHT`, W/2, H*0.74+31);
+    c.textAlign='left';
+  }
+  function sub(n){return '₀₁₂₃₄₅₆₇₈₉'[n]||n;}
+  function info(){
+    const i=+sl.value, row=PI_TABLE[i];
+    $('#resInfo').querySelector('p').innerHTML = i>2
+      ? `Beide Randterme πᵢ(S¹) und πᵢ₋₁(S¹) sind <b>0</b> ⇒ die mittlere Abbildung ist ein Isomorphismus ⇒ <b style="color:#66e0c8">πᵢ(S²) ≅ πᵢ(S³) = ${row.s3}</b>` +
+        (i===3? ` &nbsp;<b style="color:#ffd166">← das ist π₃(S²) = ℤ, das berühmte Resultat von Hopf.</b>`:'')
+      : (i===1
+        ? `i = 1: π₁(S¹) = <b>ℤ ≠ 0</b>. Der Randterm greift ein, die Goldene Regel ist nicht anwendbar. Tatsächlich ist π₁(S²)=0 ≠ π₁(S³)=0 — hier zufällig gleich, aber nicht aus dem Satz.`
+        : `i = 2: πᵢ₋₁(S¹) = π₁(S¹) = <b>ℤ ≠ 0</b>. Deshalb gilt der Satz erst ab i > 2 [[11]] — und wirklich: π₂(S²) = ℤ, aber π₂(S³) = 0.`);
+  }
+  sl.oninput=()=>{$('#resIV').textContent=sl.value;draw();info();};
+  res(); info(); addEventListener('resize',res);
+})();
+
+/* ---- π-Tabelle ---- */
+(function(){
+  const host=$('#piTable');
+  let html='<table style="min-width:620px"><tr><th>i</th>';
+  for(let i=1;i<=8;i++) html+=`<th style="text-align:center">${i}</th>`;
+  html+='</tr>';
+  ['s1','s3','s2'].forEach(k=>{
+    const name={s1:'πᵢ(S¹)',s3:'πᵢ(S³)',s2:'πᵢ(S²)'}[k];
+    html+=`<tr><td><b>${name}</b></td>`;
+    for(let i=1;i<=8;i++){
+      const v=PI_TABLE[i][k];
+      const hl = (k!=='s1' && i>2);
+      const special = (i===3 && k==='s2');
+      html+=`<td class="picell mono" data-i="${i}" data-k="${k}" style="text-align:center;cursor:pointer;`+
+        `${hl?'background:rgba(102,224,200,.07);':''}`+
+        `${special?'background:rgba(255,209,102,.16);font-weight:700;color:#ffd166;':''}`+
+        `${v==='0'?'color:#6d7490;':'color:#e8eaf2;'}">${v}</td>`;
+    }
+    html+='</tr>';
+  });
+  html+='</table>';
+  host.innerHTML=html;
+  $$('.picell').forEach(td=>td.onclick=()=>{
+    const i=+td.dataset.i, k=td.dataset.k;
+    const r=PI_TABLE[i];
+    let msg;
+    if(i>2) msg=`<b>i = ${i} > 2:</b> πᵢ(S²) = ${r.s2} und πᵢ(S³) = ${r.s3} — <b style="color:#66e0c8">identisch ✓</b>, genau wie Theorem 0.11 über die Hopf-Fibration vorhersagt [[11]].`;
+    else if(i===2) msg=`<b>i = 2:</b> π₂(S²) = ℤ, aber π₂(S³) = 0 — <b style="color:#ff5a78">verschieden</b>. Der Randterm π₁(S¹) = ℤ verhindert den Isomorphismus. Deshalb „i > 2".`;
+    else msg=`<b>i = 1:</b> Hier lebt die Faser selbst: π₁(S¹) = ℤ. Die Sequenz ist an dieser Stelle nicht trivial.`;
+    if(i===3) msg+=` <br><b style="color:#ffd166">π₃(S²) = ℤ — die Hopf-Invariante. Zwei Fasern sind genau n-fach verschlungen.</b>`;
+    $('#piInfo').querySelector('p').innerHTML=msg;
+  });
+  $('#piInfo').querySelector('p').innerHTML='Klick auf eine Zelle für die Erklärung.';
+})();
+
+/* ==================================================================
+   14 DER BOGEN
+================================================================== */
+(function(){
+  const cv=$('#arcCv'); let c,W,H,hover=-1;
+  function res(){c=fit(cv,0.52,1100);W=cv.width/DPR;H=cv.height/DPR;draw();}
+  const NODES=[
+    {t:'Lokal ≠ Global',d:'Zylinder und Möbiusband sind lokal ununterscheidbar, global verschieden. Die Information steckt im Verkleben.',col:'#66e0c8'},
+    {t:'Vektorbündel (0.1)',d:'Lokale Trivialisierungen φ_α : π⁻¹(U_α) ≅ U_α × ℝᵏ plus Übergangsfunktionen g_αβ : U → GL(k) [[11]].',col:'#66e0c8'},
+    {t:'Kozykelbedingung',d:'g_αα = I und g_αβ g_βγ g_γα = I. Ohne sie existiert der Totalraum gar nicht [[11]].',col:'#7aa2ff'},
+    {t:'Möbius ≇ trivial',d:'Jeder Schnitt hat eine Nullstelle (Zwischenwertsatz) — beim trivialen Bündel nicht. Erster echter Satz [[11]].',col:'#7aa2ff'},
+    {t:'Faserbündel (0.6)',d:'ℝᵏ → beliebiges F, GL(k) → Aut(F). Überlagerungen sind der Fall „F diskret" [[11]].',col:'#7aa2ff'},
+    {t:'Homotopiehochhebung',d:'Bewegung unten + Startpunkt oben ⇒ eindeutige Bewegung oben. Fibration = HLP für jedes X [[11]].',col:'#c084fc'},
+    {t:'Hopf-Fibration',d:'S¹ → S³ → S² via p(z₀,z₁) = (2z₀z₁*, |z₀|²−|z₁|²). Alle Fasern paarweise verschlungen [[11]].',col:'#c084fc'},
+    {t:'Homotopiefaserung',d:'E_f = {(e,p) : p(0)=f(e)}, f′(e,p)=p(1). Aus jeder Abbildung wird eine Fibration [[11]].',col:'#c084fc'},
+    {t:'Lange exakte Sequenz',d:'Theorem 0.11: …→πₙ(F)→πₙ(E)→πₙ(B)→πₙ₋₁(F)→… Geometrie wird zu Algebra [[11]].',col:'#ffd166'},
+    {t:'π₁(S¹) = ℤ',d:'Aus ℤ → ℝ → S¹, weil ℝ zusammenziehbar ist. Die Windungszahl [[11]].',col:'#ffd166'},
+    {t:'π₃(S²) = ℤ',d:'Aus S¹ → S³ → S²: πᵢ(S²) ≅ πᵢ(S³) für i > 2. Die Antwort auf die Eingangsfrage [[11]].',col:'#ff8fb1'}
+  ];
+  let pts=[];
+  function draw(){
+    if(!c)return;
+    c.clearRect(0,0,W,H);
+    const n=NODES.length;
+    const padX=40, padY=52;
+    pts=NODES.map((nd,i)=>{
+      const u=i/(n-1);
+      const x=padX+(W-padX*2)*u;
+      const y=H*0.56 - Math.sin(u*Math.PI)*H*0.22 + Math.sin(u*Math.PI*3)*8;
+      return {x,y,nd,i};
+    });
+    // path
+    c.strokeStyle='rgba(255,255,255,.12)'; c.lineWidth=2.4;
+    c.beginPath();
+    pts.forEach((p,i)=>{ i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y); });
+    c.stroke();
+    // gradient overlay path
+    const g=c.createLinearGradient(padX,0,W-padX,0);
+    g.addColorStop(0,'#66e0c8'); g.addColorStop(.42,'#7aa2ff');
+    g.addColorStop(.72,'#c084fc'); g.addColorStop(1,'#ff8fb1');
+    c.strokeStyle=g; c.lineWidth=2.4; c.globalAlpha=.55;
+    c.beginPath(); pts.forEach((p,i)=>{i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y);}); c.stroke();
+    c.globalAlpha=1;
+    // nodes
+    pts.forEach(p=>{
+      const on = p.i===hover;
+      c.fillStyle=p.nd.col;
+      c.globalAlpha=on?1:.85;
+      c.beginPath(); c.arc(p.x,p.y,on?11:7,0,TAU); c.fill();
+      c.globalAlpha=1;
+      if(on){ c.strokeStyle='#fff'; c.lineWidth=2; c.stroke();
+        c.shadowColor=p.nd.col; c.shadowBlur=20;
+        c.beginPath(); c.arc(p.x,p.y,11,0,TAU); c.stroke(); c.shadowBlur=0; }
+      // label
+      c.save();
+      c.translate(p.x,p.y + (p.i%2? 26:-26));
+      c.rotate(p.i%2? 0.36:-0.36);
+      c.fillStyle= on? '#fff':'rgba(200,206,224,.72)';
+      c.font=(on?'700 ':'600 ')+'10.5px Inter';
+      c.textAlign=p.i%2?'left':'right';
+      c.fillText(p.nd.t, p.i%2? 0:0, 0);
+      c.restore();
+      c.textAlign='left';
+    });
+    // step numbers
+    pts.forEach(p=>{
+      c.fillStyle='rgba(8,10,18,.9)'; c.font='700 8px JetBrains Mono';
+      c.textAlign='center'; c.fillText(p.i+1,p.x,p.y+3); c.textAlign='left';
+    });
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    let best=-1,bd=1e9;
+    pts.forEach(p=>{const d=Math.hypot(p.x-mx,p.y-my); if(d<bd){bd=d;best=p.i;}});
+    const nh = bd<36? best:-1;
+    if(nh!==hover){ hover=nh; draw(); show(); }
+  });
+  cv.addEventListener('mouseleave',()=>{hover=-1;draw();show();});
+  function show(){
+    const el=$('#arcInfo').querySelector('p');
+    if(hover<0){ el.innerHTML='<b style="color:#9aa1b8">Fahre mit der Maus über die Stationen.</b> Von der Beobachtung „lokal ≠ global" bis zur Antwort π₃(S²) = ℤ — jede Station ist die logische Folge der vorherigen.'; return; }
+    const nd=NODES[hover];
+    el.innerHTML=`<b style="color:${nd.col};font-size:1.05rem">${hover+1}. ${nd.t}</b><br>${nd.d}`;
+  }
+  res(); show(); addEventListener('resize',res);
+})();
+
+/* ==================================================================
+   INITIAL RESIZE KICK
+================================================================== */
+setTimeout(()=>dispatchEvent(new Event('resize')),120);
+setTimeout(()=>dispatchEvent(new Event('resize')),600);
+</script>
+</body>
+</html>
