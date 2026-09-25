@@ -77,35 +77,23 @@
 	const WRAP_MIN_W    = 180;    /* px — never make a wrap figure narrower  */
 	const WRAP_MAX_W    = 560;    /* px — never make a wrap figure wider     */
 
-	/* \sideimage[float] placement cascade.
+	/* \sideimage[float] placement.
 
-	   A float that is much taller than the prose beside it overhangs the
-	   text column and leaves an empty gutter (the "huge gap" before the
-	   next section heading). So \sideimage[float] is NOT committed to
-	   floating. It is placed by the first option that actually fits,
-	   best-first:
+	   The figure sits at the right-hand edge of the text column and the
+	   prose runs on down the page, indented, beside it — including the
+	   sections that follow, because the float is deliberately NOT
+	   confined to its own section. That is the whole point: a float that
+	   is taller than the text in its own section used to leave an empty
+	   gutter (the "huge gap" before the next heading), because nothing
+	   was left to fill the space beside it. Letting the following
+	   sections flow beside the image is what fills it.
 
-	     1. MARGIN ("am Rand") — the image is no wider than the right
-	        margin rail, so it lives in the margin at its natural size and
-	        the text column is never squeezed. Preferred whenever it fits.
-	     2. FLOAT  ("am Rand", in the text flow) — too wide for the
-	        margin, but there is enough prose below the marker to fill the
-	        float's height. The float is deliberately NOT confined to its
-	        own section: the following sections' text wraps beside it,
-	        which is what stops the gutter from appearing at all. Width is
-	        derived from the aspect ratio (--si-float-width) so the height
-	        stays within budget.
-	     3. INLINE — neither of the above: the image is too wide for the
-	        margin AND there is not enough prose left on the page to fill
-	        a float. Only then does it sit in the text column, with the
-	        text.
-
-	   Step 1 is re-measured on every layout pass, so shrinking the
-	   window moves the figure margin → wrap → inline and back again
-	   without any hard-coded breakpoint. See _placeFloat().            */
-	const FLOAT_MAX_W     = 420;  /* px — default float width (matches CSS)  */
-	const FLOAT_MIN_W     = 220;  /* px — never fit a float narrower than this */
-	const FLOAT_HEIGHT_VH = 0.70; /* fraction of viewport height = height budget */
+	   _placeFloat() decides this once the image's natural size is
+	   known, and only demotes to an inline figure when the page has run
+	   out of prose to flow beside the image. See the helpers below. */
+	const FLOAT_MAX_W     = 420;  /* px — never float wider than this          */
+	const FLOAT_MIN_W     = 220;  /* px — never float narrower than this       */
+	const FLOAT_REACH_IN  = 90;   /* px the figure reaches into the text column, so the prose below is indented for it */
 	const FLOAT_TEXT_RATIO  = 0.60;/* need ≥ this fraction of float height as following text */
 
 	let layoutRaf      = 0;
@@ -1106,6 +1094,16 @@
 					logInfo('FLOAT_INSERTED',
 						'\\sideimage[float] #' + entry.id + ' inserted near marker. ' +
 						'parent=' + parent.tagName + '.' + (parent.className || ''));
+					/* Exempt this section from the site-wide
+					   `contain: layout` rule, so the float is not
+					   trapped inside it: the sections that follow flow
+					   on indented beside the image instead of starting
+					   underneath it. See the has-sideimage-float rule in
+					   style.css. Removed again if we end up inline. */
+					try {
+						const host = (fig.closest && fig.closest('.md')) || fig.parentNode;
+						if (host && host.classList) host.classList.add('has-sideimage-float');
+					} catch (_) { /* non-fatal */ }
 					/* A cached image may already be decoded and never
 					   re-fire 'load'. Place it now (rAF so layout has
 					   settled). _placeFloat() is idempotent — a later
@@ -1323,30 +1321,14 @@
 	}
 
 	/* ═════════════════════════════════════════════════════════════════
-	   \sideimage[float] placement — margin → float → inline.
+	   \sideimage[float] placement — float at the right edge, with the
+	   prose indented beside it and running on into the following
+	   sections; inline only as a last resort.
 
-	   See the cascade description next to the constants above. The
-	   decision is made once the image's natural size is known, and the
-	   margin step is re-checked on every layout pass so the figure
-	   follows the window.
-
-	   All helpers are fully guarded: any failure leaves the figure in its
-	   current (CSS-capped) state rather than throwing.
+	   See the description next to the constants above. All helpers are
+	   fully guarded: any failure leaves the figure floating (its CSS
+	   default) rather than throwing.
 	   ═════════════════════════════════════════════════════════════════ */
-
-	/* Usable width of the right margin rail, or 0 when there is no
-	   margin to speak of (hidden rail, missing element). */
-	function _railWidth() {
-		try {
-			const ir = document.getElementById('sideimages-rail');
-			if (!ir) return 0;
-			/* offsetParent === null means display:none (below the
-			   breakpoint) — no margin available. */
-			if (ir.offsetParent === null) return 0;
-			const w = ir.getBoundingClientRect().width;
-			return Number.isFinite(w) && w > 0 ? w : 0;
-		} catch (_) { return 0; }
-	}
 
 	/* Total in-flow height of everything that follows `fig` in the
 	   document — i.e. every scrap of prose a float could bend around,
@@ -1394,40 +1376,24 @@
 		} catch (_) { return 0; }
 	}
 
-	/* True while this \sideimage[float] should be treated like a
-	   \marginfig, i.e. handed to the rail / wrap / inline machinery.
-	   Re-measured each layout pass: rail available AND the image is no
-	   wider than the rail. */
-	function _floatFitsMarginRail(entry) {
-		try {
-			if (!entry || entry.mode !== 'float') return false;
-			const fig = document.querySelector(
-				'.sideimage[data-si-id="' + entry.id + '"]');
-			if (!fig) return false;
-			const img = fig.querySelector('img');
-			if (!img) return false;
-			const nw = img.naturalWidth || 0;
-			if (!nw) return false;              /* not decoded yet */
-			const railW = _railWidth();
-			if (railW <= 0) return false;       /* no margin right now */
-			return nw <= railW;
-		} catch (_) { return false; }
-	}
-
-	/* Drop every float-only class/inline style from `fig`, so the figure
-	   can be re-placed by the rail machinery. Idempotent. */
+	/* Drop every float-only class/inline style from `fig`, and un-exempt
+	   the section that was hosting it. Idempotent. */
 	function _releaseFloatState(fig) {
 		try {
 			if (!fig || !fig.classList) return;
 			fig.classList.remove('sideimage-float', 'sideimage-tall');
 			fig.style.setProperty('--si-float-width', '');
+			try {
+				const host = (fig.closest && fig.closest('.md')) || null;
+				if (host && host.classList) host.classList.remove('has-sideimage-float');
+			} catch (_) { /* non-fatal */ }
 		} catch (_) { /* non-fatal */ }
 	}
 
 	/* Demote a float figure to a centred inline block in the article
-	   flow — the last resort, used only when the image is too wide for
-	   the margin AND there is no prose left to fill a float. The figure
-	   is already anchored next to its marker, so only the classes and
+	   flow — the last resort, used only when the page has run out of
+	   prose to flow beside a float of this height. The figure is
+	   already anchored next to its marker, so only the classes and
 	   sizing change. Idempotent. */
 	function _demoteFloatToInline(entry, fig, reason) {
 		if (!fig || !fig.classList) return;
@@ -1438,8 +1404,8 @@
 			fig.style.display = '';
 			logWarn('FLOAT_DEMOTED',
 				'\\sideimage[float] #' + entry.id + ' rendered as an inline block ' +
-				'instead of a float: ' + reason + '. It is too wide for the ' +
-				'margin and there is not enough prose left to fill a float.');
+				'instead of a float: ' + reason + '. Not enough prose is left on ' +
+				'the page to flow beside a float of this height.');
 			if (typeof scheduleLayout === 'function') scheduleLayout(false);
 		} catch (err) {
 			logWarn('FLOAT_DEMOTE_FAIL',
@@ -1448,60 +1414,121 @@
 		}
 	}
 
-	/* Place a \sideimage[float] once its image has loaded and the
-	   natural size is known. See the cascade table above. Idempotent. */
+	/* Place a \sideimage[float] once its image has loaded. See the
+	   cascade table above. Idempotent. */
+	/* \sideimage[float] figures still waiting for the page to settle
+	   before _placeFloat() can measure them. Keyed by figure id. */
+	const pendingFloatPlacements = Object.create(null);
+	const FLOAT_PLACEMENT_DELAYS = [0, 120, 400, 900, 1800, 3000, 5000, 8000];
+
+	/* Is the document laid out well enough to measure against?
+
+	   The page is rebuilt and re-themed after load, and during that work
+	   the whole article can briefly report a height of 0. Measuring
+	   "how much prose follows this image" in that state reports nothing
+	   and would strand the figure in the wrong layout for good, so we
+	   wait for a settled document instead of trusting the reading. */
+	function _layoutIsSettled(fig) {
+		try {
+			const de = document.documentElement;
+			if (!de || de.scrollHeight <= 0) return false;
+			const par = fig && fig.parentElement;
+			/* A host that holds plenty of text but measures 0 tall is
+			   mid-rebuild, not genuinely empty. */
+			if (par && par.offsetHeight === 0 &&
+			    par.textContent && par.textContent.length > 200) return false;
+			return true;
+		} catch (_) { return false; }
+	}
+
+	/* Re-try a deferred placement after a short delay. Bounded, so a
+	   figure that never settles simply keeps its CSS default. */
+	function _queueFloatPlacement(entry, fig, img, attempt) {
+		try {
+			if (!fig) return;
+			const prev = pendingFloatPlacements[fig.id];
+			const n = (attempt === undefined) ? ((prev && prev.attempt) || 0) + 1 : attempt;
+			if (n >= FLOAT_PLACEMENT_DELAYS.length) return;
+			pendingFloatPlacements[fig.id] = { entry: entry, fig: fig, img: img, attempt: n };
+			window.setTimeout(function () {
+				const job = pendingFloatPlacements[fig.id];
+				if (!job) return;
+				try { _placeFloat(job.entry, job.fig, job.img); } catch (_) {}
+			}, FLOAT_PLACEMENT_DELAYS[n]);
+		} catch (_) { /* non-fatal */ }
+	}
+
 	function _placeFloat(entry, fig, img) {
 		try {
 			if (!fig || !img) return;
-			if (!fig.classList || !fig.classList.contains('sideimage-float')) return;
+			/* The figure must already be in the document: a cached image
+			   can fire 'load' before the figure has been inserted, and
+			   measuring an unattached node would wrongly report nothing. */
+			if (!fig.isConnected || !fig.parentElement) {
+				_queueFloatPlacement(entry, fig, img, 0);
+				return;
+			}
+			if (!fig.classList.contains('sideimage-float') &&
+			    !fig.classList.contains('sideimage-tall')) return;
 			const nw = img.naturalWidth, nh = img.naturalHeight;
 			if (!nw || !nh) return; // image not decoded yet — load handler will retry
 			const aspect = nh / nw;
-			const vh = window.innerHeight || 800;
-			const budgetPx = Math.max(320, Math.round(vh * FLOAT_HEIGHT_VH));
 
-			/* ── 1. MARGIN: fits the rail → hand it to the rail
-			   machinery (margin / wrap / inline, measured per pass). */
-			const railW = _railWidth();
-			if (railW > 0 && nw <= railW) {
-				_releaseFloatState(fig);
-				/* The figure is still in the article flow; layout()
-				   will move it into the rail on the next pass. */
-				if (typeof scheduleLayout === 'function') scheduleLayout(true);
-				logInfo('\\sideimage[float] #' + entry.id + ' → MARGIN (' +
-					nw + 'px wide fits the ' + Math.round(railW) +
-					'px rail): it will sit in the margin at its natural size.');
+			/* Only take the measurement on a settled, fully loaded
+			   document — otherwise "the prose below" is a lie. */
+			if (document.readyState !== 'complete' || !_layoutIsSettled(fig)) {
+				_queueFloatPlacement(entry, fig, img);
 				return;
 			}
 
-			/* ── 2. FLOAT: too wide for the margin, but there is
-			   enough prose left on the page to fill its height. */
-			let targetW = FLOAT_MAX_W;
-			if (aspect > 1) targetW = Math.min(FLOAT_MAX_W, Math.round(budgetPx / aspect));
-			targetW = Math.max(FLOAT_MIN_W, Math.min(FLOAT_MAX_W, targetW));
+			/* Float wide enough to reach from the viewport's right edge
+			   back into the text column, so the prose below is visibly
+			   indented for the figure instead of running under it. The
+			   margin width is measured, not assumed. */
+			let marginGap = 0;
+			try {
+				const art = document.getElementById('contents');
+				if (art) {
+					const ar = art.getBoundingClientRect();
+					marginGap = Math.max(0, Math.round(
+						(window.innerWidth || 0) - ar.right));
+				}
+			} catch (_) { marginGap = 0; }
+			const reachIn = marginGap > 0 ? marginGap + FLOAT_REACH_IN : nw;
+			const targetW = Math.max(FLOAT_MIN_W, Math.min(FLOAT_MAX_W, reachIn));
 			const targetH = targetW * aspect;
 
+			/* A float needs prose to flow beside it. Count everything
+			   still on the page below the marker, the following
+			   sections included — the float is deliberately NOT confined
+			   to its own section, which is what lets the next
+			   section's text carry on indented beside the image. */
 			const following = _followingFlowHeight(fig);
 			if (following < targetH * FLOAT_TEXT_RATIO) {
-				/* ── 3. INLINE: no margin, and not enough prose to
-				   fill a float. Last resort. */
+				/* Last resort: not enough prose left on the page to
+				   flow beside a float of this height. */
 				_demoteFloatToInline(entry, fig,
-					'insufficient prose left on the page to fill a float (' +
+					'not enough prose left on the page to flow beside it (' +
 					Math.round(following) + 'px < ' +
 					Math.round(targetH * FLOAT_TEXT_RATIO) + 'px)');
 				return;
 			}
 
-			if (targetW < FLOAT_MAX_W) {
-				fig.style.setProperty('--si-float-width', targetW + 'px');
-				logInfo('\\sideimage[float] #' + entry.id +
-					' → FLOAT at ' + targetW + 'px wide (h/w=' +
-					aspect.toFixed(2) + '); the following text wraps beside it.');
-			} else {
-				logInfo('\\sideimage[float] #' + entry.id +
-					' → FLOAT at ' + targetW + 'px wide (h/w=' +
-					aspect.toFixed(2) + '); the following text wraps beside it.');
+			/* Enough prose after all — if an earlier, premature reading
+			   had demoted this figure, put it back to being a float. */
+			if (fig.classList.contains('sideimage-tall')) {
+				fig.classList.remove('sideimage-inline', 'sideimage-tall');
+				fig.classList.add('sideimage-float');
+				try {
+					const host = (fig.closest && fig.closest('.md')) || null;
+					if (host && host.classList) host.classList.add('has-sideimage-float');
+				} catch (_) { /* non-fatal */ }
 			}
+			fig.style.setProperty('--si-float-width', targetW + 'px');
+			logInfo('\\sideimage[float] #' + entry.id + ' → FLOAT at ' +
+				targetW + 'px wide, ' + Math.round(targetH) + 'px tall (h/w=' +
+				aspect.toFixed(2) + '). The text below runs on indented ' +
+				'beside it, into the following sections.');
 		} catch (err) {
 			logWarn('FLOAT_FIT_FAIL',
 				'_placeFloat() threw for \\sideimage[float] #' + entry.id +
@@ -1543,32 +1570,23 @@
 		let sideimageCursor = 0;
 
 		store.images.forEach(function (entry) {
-			/* \marginfig figures always move between rail / wrap /
-			   inline. A \sideimage[float] joins them as soon as it is
-			   found to fit the margin rail (_floatFitsMarginRail) —
-			   from then on it is placed exactly like a \marginfig, so
-			   it follows the window: margin → wrap → inline. */
+			/* Only \marginfig figures move between rail / wrap / inline.
+			   \sideimage (inline) and \sideimage[float] stay put: a
+			   float is placed once, by _placeFloat(), and then belongs
+			   to the text flow. */
+			if (entry.mode !== 'margin') return;
+
+			/* ANGLE 9: find the figure wherever it currently is — the
+			   whole document, because it may be in the rail OR in the
+			   article flow from a previous pass. */
 			let fig;
 			try { fig = document.querySelector('.sideimage[data-si-id="' + entry.id + '"]'); }
 			catch (_) { fig = null; }
-			const isFloat = entry.mode === 'float';
-			const railFits = isFloat && _floatFitsMarginRail(entry);
-			/* A float that was living in the rail but no longer fits it
-			   (the window shrank past the breakpoint, so the rail is
-			   hidden) must be pulled back into the article flow,
-			   otherwise it would stay invisible inside a display:none
-			   rail. This is the margin → inline half of the cascade. */
-			const stranded = isFloat && !railFits && rail &&
-				fig && fig.parentElement === rail;
-			if (entry.mode !== 'margin' && !railFits && !stranded) return;
 			if (!fig) return;
 			const marker = _refreshMarker(entry, 'image');
 
 			/* ── margin: absolutely positioned in the rail ───────── */
 			if (state === 'margin') {
-				/* A figure that arrived here as a \sideimage[float] is
-				   released from its float state before it is parked. */
-				_releaseFloatState(fig);
 				if (rail && fig.parentNode !== rail) {
 					try { rail.appendChild(fig); } catch (_) { return; }
 				}
@@ -1668,7 +1686,6 @@
 				return;
 			}
 			/* Clean reset to a neutral in-flow state. */
-			_releaseFloatState(fig);
 			fig.classList.remove('sideimage-inline', 'sideimage-wrap');
 			fig.style.position    = '';
 			fig.style.top         = '';
@@ -1680,15 +1697,7 @@
 			fig.style.overflow    = '';
 			fig.style.display     = '';
 			if (state === 'wrap') fig.classList.add('sideimage-wrap');
-			else {
-				fig.classList.add('sideimage-inline');
-				/* A \sideimage[float] that fell through to inline is a
-				   tall figure by definition (it did not fit the
-				   margin and there was too little prose to float it).
-				   Let it keep its natural height instead of being
-				   letterboxed into 100vh. */
-				if (isFloat) fig.classList.add('sideimage-tall');
-			}
+			else                  fig.classList.add('sideimage-inline');
 			/* Insert after the marker's block so the following prose
 			   wraps around the float. Guard W10: layout() runs on every
 			   scroll/resize, so only touch the DOM when the figure is NOT
