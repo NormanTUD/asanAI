@@ -1,0 +1,3920 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Hopf-Faserung — Eine interaktive Reise</title>
+
+<!-- Plotly für 3D-Plots -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Three.js für die großen 3D-Szenen -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#070912;
+  --bg2:#0c0f1e;
+  --panel:rgba(20,24,44,0.72);
+  --panel2:rgba(28,33,58,0.6);
+  --stroke:rgba(120,140,220,0.18);
+  --txt:#dfe4f5;
+  --txt-dim:#98a1c4;
+  --acc:#5eead4;
+  --acc2:#a78bfa;
+  --acc3:#f472b6;
+  --acc4:#fbbf24;
+  --blue:#60a5fa;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 800px at 15% -5%, #1b1740 0%, transparent 55%),
+    radial-gradient(1000px 700px at 90% 10%, #0d2b3e 0%, transparent 50%),
+    radial-gradient(900px 900px at 50% 110%, #2a1236 0%, transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+/* ---------- Sternenhintergrund ---------- */
+#stars{position:fixed;inset:0;z-index:-2;opacity:.55;}
+/* ---------- Progress ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));
+  z-index:1000;box-shadow:0 0 14px rgba(94,234,212,.7);}
+/* ---------- Navigation ---------- */
+#nav{position:fixed;top:0;left:0;right:0;z-index:900;
+  backdrop-filter:blur(14px);background:rgba(7,9,18,.75);
+  border-bottom:1px solid var(--stroke);}
+#nav .inner{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+#nav .brand{font-weight:800;letter-spacing:.02em;margin-right:14px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;font-size:15px;}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12.5px;padding:5px 10px;border-radius:8px;transition:.2s;white-space:nowrap;}
+#nav a:hover{color:var(--acc);background:rgba(94,234,212,.08);}
+#nav a.active{color:#07131a;background:linear-gradient(90deg,var(--acc),#7dd3fc);font-weight:600;}
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
+section{padding:78px 0 40px;scroll-margin-top:72px;}
+h1{font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.05;margin:.2em 0;font-weight:800;letter-spacing:-.02em;}
+h2{font-size:clamp(1.5rem,3.4vw,2.3rem);font-weight:750;margin:0 0 6px;letter-spacing:-.01em;}
+h3{font-size:1.12rem;font-weight:650;margin:26px 0 8px;color:#eef2ff;}
+p{color:var(--txt-dim);max-width:78ch;}
+.lead{font-size:1.1rem;color:#c3cbe6;}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;}
+.gradtext{background:linear-gradient(100deg,var(--acc) 0%,#7dd3fc 30%,var(--acc2) 62%,var(--acc3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+/* ---------- Karten / Panels ---------- */
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:20px;
+  backdrop-filter:blur(10px);box-shadow:0 18px 50px rgba(0,0,0,.45);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start;}
+.split.rev{grid-template-columns:330px minmax(0,1fr);}
+@media(max-width:900px){.grid2,.grid3,.split,.split.rev{grid-template-columns:1fr;}}
+canvas.demo{width:100%;display:block;border-radius:12px;background:#05070f;cursor:crosshair;touch-action:none;}
+/* ---------- Controls ---------- */
+.ctrl{margin:12px 0;}
+.ctrl label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--txt-dim);margin-bottom:5px;font-weight:500;}
+.ctrl label b{color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600;}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc2),var(--acc));outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 4px rgba(94,234,212,.28),0 2px 8px rgba(0,0,0,.6);cursor:grab;}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:none;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px rgba(94,234,212,.28);}
+button.btn{background:rgba(94,234,212,.11);border:1px solid rgba(94,234,212,.35);color:var(--acc);
+  padding:7px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s;font-family:inherit;}
+button.btn:hover{background:rgba(94,234,212,.22);transform:translateY(-1px);}
+button.btn.alt{background:rgba(167,139,250,.11);border-color:rgba(167,139,250,.35);color:var(--acc2);}
+button.btn.alt:hover{background:rgba(167,139,250,.22);}
+button.btn.on{background:var(--acc);color:#04121a;}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.chk{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--txt-dim);cursor:pointer;margin:5px 0;}
+.chk input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;}
+/* ---------- Info-Boxen ---------- */
+.note{border-left:3px solid var(--acc);background:rgba(94,234,212,.06);padding:11px 15px;border-radius:0 11px 11px 0;margin:14px 0;font-size:14px;color:#c8d2ec;}
+.note.v{border-color:var(--acc2);background:rgba(167,139,250,.07);}
+.note.p{border-color:var(--acc3);background:rgba(244,114,182,.07);}
+.note.y{border-color:var(--acc4);background:rgba(251,191,36,.07);}
+.readout{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,.4);border:1px solid var(--stroke);
+  border-radius:9px;padding:9px 12px;color:var(--acc);margin:9px 0;white-space:pre-wrap;line-height:1.6;}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-family:'JetBrains Mono',monospace;
+  background:rgba(167,139,250,.16);color:var(--acc2);border:1px solid rgba(167,139,250,.3);margin:2px;}
+.math{overflow-x:auto;padding:8px 0;color:#e8ecfb;}
+.caption{font-size:12px;color:#7c86a8;margin-top:7px;font-style:italic;}
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:46px 0;}
+.big-num{font-size:52px;font-weight:800;line-height:1;background:linear-gradient(140deg,var(--acc),var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.tabs{display:flex;gap:5px;border-bottom:1px solid var(--stroke);margin-bottom:14px;flex-wrap:wrap;}
+.tabs button{background:none;border:none;color:var(--txt-dim);padding:8px 13px;cursor:pointer;font-size:13px;
+  border-bottom:2px solid transparent;font-family:inherit;transition:.18s;}
+.tabs button.active{color:var(--acc);border-bottom-color:var(--acc);font-weight:600;}
+.hidden{display:none!important;}
+.quote{font-style:italic;color:#aab4d4;border-left:3px solid var(--acc4);padding-left:16px;margin:18px 0;max-width:70ch;}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+table.t th,table.t td{padding:7px 10px;border-bottom:1px solid var(--stroke);text-align:left;}
+table.t th{color:var(--acc);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;}
+table.t td{color:var(--txt-dim);font-family:'JetBrains Mono',monospace;}
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;position:relative;}
+#heroCanvas{position:absolute;inset:0;z-index:-1;opacity:.85;}
+.scrolldown{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--txt-dim);font-size:12px;
+  letter-spacing:.2em;text-transform:uppercase;animation:bob 2s infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(9px);}}
+.stepper{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0;}
+.stepper button{flex:1;min-width:72px;background:rgba(255,255,255,.04);border:1px solid var(--stroke);
+  color:var(--txt-dim);padding:8px 6px;border-radius:9px;cursor:pointer;font-size:11.5px;font-family:inherit;transition:.18s;}
+.stepper button.active{background:linear-gradient(135deg,var(--acc2),var(--acc3));color:#fff;border-color:transparent;font-weight:600;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--txt-dim);margin-top:8px;}
+.legend span{display:flex;align-items:center;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+.qbox{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(94,234,212,.08));border:1px solid rgba(167,139,250,.28);
+  border-radius:15px;padding:18px 20px;margin:20px 0;}
+.qbox h4{margin:0 0 6px;color:#fff;font-size:1rem;}
+.qbox p{margin:0;color:#c5cde8;}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div id="progress"></div>
+
+<nav id="nav"><div class="inner">
+  <span class="brand">HOPF-FASERUNG</span>
+  <a href="#start">Start</a>
+  <a href="#frage">Die Frage</a>
+  <a href="#komplex">1 · Komplexe Zahlen</a>
+  <a href="#kugeln">2 · Sphären</a>
+  <a href="#stereo">3 · Projektion</a>
+  <a href="#riemann">4 · Riemann</a>
+  <a href="#torus">5 · Torus</a>
+  <a href="#quat">6 · Quaternionen</a>
+  <a href="#faserung">7 · Faserung</a>
+  <a href="#hopf">8 · DIE KARTE</a>
+  <a href="#fasern">9 · Fasern</a>
+  <a href="#tori">10 · Tori</a>
+  <a href="#haende">11 · Händigkeit</a>
+  <a href="#antwort">Antwort</a>
+  <a href="#warum">Warum wichtig</a>
+</div></nav>
+
+<!-- ===================== HERO ===================== -->
+<section id="start" class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="wrap">
+    <div class="kicker">Zachary Treisman · A Young Person's Guide to the Hopf Fibration (2009)</div>
+    <h1>Wie man eine <span class="gradtext">4-dimensionale Kugel</span><br>aus lauter Kreisen baut.</h1>
+    <p class="lead" style="max-width:66ch;margin-top:14px">
+      Nimm unendlich viele Kreise. Keine zwei berühren sich. Trotzdem ist jeder mit jedem
+      verhakt wie Kettenglieder. Und zusammen füllen sie lückenlos die 3-Sphäre.
+      Das ist die <b style="color:var(--acc)">Hopf-Faserung</b> — und diese Seite zeigt sie dir,
+      Schritt für Schritt, nur mit Schiebereglern.
+    </p>
+    <div class="btnrow" style="margin-top:22px">
+      <button class="btn" onclick="document.getElementById('frage').scrollIntoView({behavior:'smooth'})">Los geht's ↓</button>
+      <button class="btn alt" onclick="document.getElementById('hopf').scrollIntoView({behavior:'smooth'})">Direkt zum Höhepunkt ⚡</button>
+    </div>
+  </div>
+  <div class="scrolldown">scrollen</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== DIE FRAGE ===================== -->
+<section id="frage">
+<div class="wrap">
+  <div class="kicker">Motivation</div>
+  <h2>Welche Frage wird hier eigentlich beantwortet?</h2>
+  <p class="lead">1931 stellte Heinz Hopf eine Frage, von der alle dachten, die Antwort sei „nein“.</p>
+
+  <div class="grid2" style="margin-top:22px">
+    <div class="card">
+      <div class="big-num">?</div>
+      <h3 style="margin-top:8px">Die naive Erwartung</h3>
+      <p>Man kann eine Kugeloberfläche (2D) <b>nicht</b> interessant auf einen Kreis (1D) abbilden, ohne zu „reißen“.
+      Man kann einen Kreis nicht interessant auf eine Kugel abbilden — jede Schlaufe lässt sich auf der Kugel zu
+      einem Punkt zusammenziehen.</p>
+      <p><b style="color:var(--acc4)">Also dachte man:</b> Eine Abbildung von einer <i>höherdimensionalen</i> Sphäre
+      auf eine <i>niedrigerdimensionale</i> ist immer „langweilig“ — sie lässt sich immer zu einer konstanten
+      Abbildung zusammenschrumpfen.</p>
+    </div>
+    <div class="card">
+      <div class="big-num">!</div>
+      <h3 style="margin-top:8px">Hopfs Schock</h3>
+      <p>Hopf konstruierte eine Abbildung</p>
+      <div class="math" id="mFrage1"></div>
+      <p>die sich <b>nicht</b> zusammenschrumpfen lässt. Sie ist essenziell verdreht.
+      Das war die Geburtsstunde einer ganzen mathematischen Disziplin
+      (<i>Homotopietheorie</i>) und taucht heute in der Quantenphysik, Robotik und Computergrafik auf.</p>
+      <p><b style="color:var(--acc)">Und das Schönste:</b> Man kann sie <i>sehen</i>.</p>
+    </div>
+  </div>
+
+  <div class="qbox">
+    <h4>🎯 Die Leitfrage dieser Seite</h4>
+    <p>Kann man die 3-Sphäre <b>S³</b> restlos in lauter Kreise zerlegen, so dass die Menge dieser Kreise
+    selbst genau eine gewöhnliche Kugeloberfläche <b>S²</b> bildet — und wenn ja, <i>wie sieht das aus?</i></p>
+  </div>
+
+  <h3>Die Werkzeugkiste, die wir dafür bauen</h3>
+  <p>Jede Station unten ist ein Werkzeug. Spiel mit jedem — dann ist der Höhepunkt am Ende selbsterklärend.</p>
+  <div class="grid3" style="margin-top:14px" id="toolGrid"></div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 1 KOMPLEXE ZAHLEN ===================== -->
+<section id="komplex">
+<div class="wrap">
+  <div class="kicker">Werkzeug 1 · über Abi hinaus</div>
+  <h2>Komplexe Zahlen sind <span class="gradtext">Drehstreckungen</span></h2>
+  <p class="lead">Vergiss „<span style="font-family:JetBrains Mono">i = √−1</span>“. Denk stattdessen: Eine komplexe Zahl ist ein Punkt in der Ebene,
+  und Multiplizieren heißt <b>Drehen + Skalieren</b>. Das ist die einzige Idee, die wir brauchen.</p>
+
+  <div class="split" style="margin-top:20px">
+    <div class="card">
+      <canvas id="cxCanvas" class="demo" height="480"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:#5eead4"></i>a (ziehbar)</span>
+        <span><i class="dot" style="background:#f472b6"></i>b (ziehbar)</span>
+        <span><i class="dot" style="background:#fbbf24"></i>a·b</span>
+        <span><i class="dot" style="background:#60a5fa"></i>a+b</span>
+      </div>
+      <div class="caption">Zieh die Punkte a und b mit der Maus. Beachte: Die Winkel addieren sich, die Längen multiplizieren sich.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Steuerung</h3>
+      <div class="ctrl"><label>Betrag |a| <b id="vRa">1.00</b></label><input type="range" id="sRa" min="0.15" max="2.2" step="0.01" value="1"></div>
+      <div class="ctrl"><label>Winkel arg(a) <b id="vTa">45°</b></label><input type="range" id="sTa" min="0" max="360" step="1" value="45"></div>
+      <div class="ctrl"><label>Betrag |b| <b id="vRb">1.00</b></label><input type="range" id="sRb" min="0.15" max="2.2" step="0.01" value="1"></div>
+      <div class="ctrl"><label>Winkel arg(b) <b id="vTb">30°</b></label><input type="range" id="sTb" min="0" max="360" step="1" value="30"></div>
+      <label class="chk"><input type="checkbox" id="cxGrid" checked> Gitter zeigen</label>
+      <label class="chk"><input type="checkbox" id="cxTri" checked> Ähnliche Dreiecke (Multiplikation)</label>
+      <label class="chk"><input type="checkbox" id="cxSum" checked> Summe a+b (Parallelogramm)</label>
+      <label class="chk"><input type="checkbox" id="cxUnit" checked> Einheitskreis</label>
+      <div class="readout" id="cxOut"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="cxPreset(1,90,1,90)">i · i = −1</button>
+        <button class="btn" onclick="cxPreset(1,120,1,120)">3. Einheitswurzel</button>
+        <button class="btn" onclick="cxPreset(1.4,30,0.7,-50)">gemischt</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Die eine Regel:</b> <span style="font-family:JetBrains Mono">(r,θ) · (s,φ) = (r·s, θ+φ)</span>.
+    Beträge mal, Winkel plus. Daraus folgt sofort <span style="font-family:JetBrains Mono">i² = (1,90°)² = (1,180°) = −1</span>.
+  </div>
+
+  <h3>Die Eulersche Schreibweise — warum <span style="font-family:JetBrains Mono">e<sup>iθ</sup></span>?</h3>
+  <p>Wenn Multiplizieren = Winkel addieren ist, dann verhält sich der Winkel wie ein <i>Exponent</i>
+  (denn <span style="font-family:JetBrains Mono">e<sup>x</sup>·e<sup>y</sup> = e<sup>x+y</sup></span>). Genau das steckt hinter:</p>
+  <div class="math" id="mEuler"></div>
+
+  <div class="split rev" style="margin-top:18px">
+    <div class="card">
+      <h3 style="margin-top:0">Potenzreihen sichtbar</h3>
+      <p style="font-size:13px">Schieb den Regler: Wir addieren immer mehr Terme der Reihe
+      <span style="font-family:JetBrains Mono">e<sup>iθ</sup> = 1 + iθ + (iθ)²/2! + …</span>
+      als Vektoren aneinander. Die Spirale kriecht auf den Einheitskreis zu.</p>
+      <div class="ctrl"><label>Anzahl Terme N <b id="vEuN">6</b></label><input type="range" id="sEuN" min="1" max="18" step="1" value="6"></div>
+      <div class="ctrl"><label>Winkel θ <b id="vEuT">180°</b></label><input type="range" id="sEuT" min="0" max="720" step="1" value="180"></div>
+      <div class="readout" id="euOut"></div>
+      <div class="note y" style="font-size:12.5px;margin-bottom:0">
+        <b>Warum das für uns zählt:</b> Ab jetzt schreiben wir jeden Punkt auf dem Einheitskreis
+        einfach als <span style="font-family:JetBrains Mono">e<sup>iθ</sup></span>.
+        Die gesamte Hopf-Faserung wird daraus gebaut.
+      </div>
+    </div>
+    <div class="card">
+      <canvas id="euCanvas" class="demo" height="430"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:#a78bfa"></i>Teilsummen-Kette</span>
+        <span><i class="dot" style="background:#5eead4"></i>exakter Wert e<sup>iθ</sup></span>
+        <span><i class="dot" style="background:#fbbf24"></i>Näherung</span>
+      </div>
+      <div class="caption">Jeder Pfeil ist ein Reihenglied (iθ)ⁿ/n!. Die Summe landet auf dem Einheitskreis.</div>
+    </div>
+  </div>
+
+  <h3>Funktionen als Verformung der Ebene</h3>
+  <p>Eine komplexe Funktion kann man nicht als Graph zeichnen (man bräuchte 4 Dimensionen).
+  Aber man kann zusehen, <b>wie sie ein Gitter verbiegt</b>. Das ist der Trick, mit dem wir später
+  auch die Hopf-Abbildung begreifen werden.</p>
+
+  <div class="card" style="margin-top:14px">
+    <div class="tabs" id="fnTabs">
+      <button class="active" data-fn="sq">z ↦ z²</button>
+      <button data-fn="cube">z ↦ z³</button>
+      <button data-fn="inv">z ↦ 1/z</button>
+      <button data-fn="conj">z ↦ z̄</button>
+      <button data-fn="moeb">z ↦ (z−1)/(z+1)</button>
+      <button data-fn="zz2">z ↦ z(z−2)</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <canvas id="fnA" class="demo" height="360"></canvas>
+        <div class="caption">Urbildebene (z). Maus bewegen = Sonde setzen.</div>
+      </div>
+      <div>
+        <canvas id="fnB" class="demo" height="360"></canvas>
+        <div class="caption">Bildebene (w = f(z)). Beachte, wie Winkel erhalten bleiben (konform!).</div>
+      </div>
+    </div>
+    <div class="ctrl" style="margin-top:12px"><label>Verformung (Morph 0 → 1) <b id="vMorph">1.00</b></label><input type="range" id="sMorph" min="0" max="1" step="0.01" value="1"></div>
+    <div class="readout" id="fnOut">Bewege die Maus über das linke Bild.</div>
+    <div class="note v"><b>Windungszahl:</b> Läuft z einmal um 0 herum, läuft z² <b>zweimal</b> herum.
+    Diese „Wie-oft-wickelt-es-sich"-Zahl ist genau die Idee, die Hopf später in 3 Dimensionen hochhebt.</div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Windungszahl live</h3>
+    <div class="grid2">
+      <div>
+        <canvas id="wnA" class="demo" height="300"></canvas>
+        <div class="caption">Ein Kreis um den Mittelpunkt m mit Radius ρ.</div>
+      </div>
+      <div>
+        <canvas id="wnB" class="demo" height="300"></canvas>
+        <div class="caption">Sein Bild unter f. Der Zähler zählt die Umläufe um 0.</div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="ctrl"><label>Mittelpunkt m<sub>x</sub> <b id="vWx">0.00</b></label><input type="range" id="sWx" min="-2.5" max="2.5" step="0.01" value="0"></div>
+      <div class="ctrl"><label>Mittelpunkt m<sub>y</sub> <b id="vWy">0.00</b></label><input type="range" id="sWy" min="-2.5" max="2.5" step="0.01" value="0"></div>
+      <div class="ctrl"><label>Radius ρ <b id="vWr">1.00</b></label><input type="range" id="sWr" min="0.1" max="3" step="0.01" value="1"></div>
+    </div>
+    <div class="readout" id="wnOut"></div>
+    <div class="note p">Die Windungszahl <b>zählt Nullstellen</b> im Inneren des Kreises. Das beweist den
+    Fundamentalsatz der Algebra — und ist das erste Beispiel einer <i>topologischen Invariante</i>:
+    eine ganze Zahl, die sich beim stetigen Verbiegen nicht ändert. Genau so eine Zahl wird gleich die
+    Hopf-Faserung als „nicht zusammenschrumpfbar" entlarven.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 2 SPHÄREN ===================== -->
+<section id="kugeln">
+<div class="wrap">
+  <div class="kicker">Werkzeug 2</div>
+  <h2>Was ist eine <span class="gradtext">n-Sphäre</span>?</h2>
+  <p class="lead">Ganz einfach: Alle Punkte, die vom Ursprung Abstand 1 haben. Die Dimension der Sphäre ist,
+  wie viele Zahlen man braucht, um einen Punkt <i>darauf</i> zu beschreiben — nicht, in welchem Raum sie liegt.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="stepper" id="sphStep">
+      <button class="active" data-n="0">S⁰</button>
+      <button data-n="1">S¹</button>
+      <button data-n="2">S²</button>
+      <button data-n="3">S³</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <div id="sphPlot" style="height:420px"></div>
+      </div>
+      <div>
+        <div id="sphInfo"></div>
+        <div class="readout" id="sphEq"></div>
+        <div class="ctrl" id="sphCtrl1" style="display:none"><label>Parameter <b id="vSphA">0°</b></label><input type="range" id="sSphA" min="0" max="360" step="1" value="40"></div>
+        <div class="ctrl" id="sphCtrl2" style="display:none"><label>2. Parameter <b id="vSphB">0°</b></label><input type="range" id="sSphB" min="0" max="180" step="1" value="60"></div>
+        <div class="ctrl" id="sphCtrl3" style="display:none"><label>3. Parameter (4. Dimension) <b id="vSphC">0°</b></label><input type="range" id="sSphC" min="0" max="180" step="1" value="90"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Wie „sieht" man 4 Dimensionen?</h3>
+  <div class="grid3" style="margin-top:12px">
+    <div class="card">
+      <h4 style="margin:0 0 6px;color:#fff">Trick A: Zeit</h4>
+      <p style="font-size:13.5px">Eine 4D-Kugel = eine 3D-Kugel, die wächst, ihr Maximum erreicht und wieder
+      schrumpft. Drück Play unten.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 6px;color:#fff">Trick B: Farbe</h4>
+      <p style="font-size:13.5px">Die 4. Koordinate wird als Farbe gemalt. Zwei Punkte am „gleichen Ort",
+      aber verschiedenfarbig, sind <i>nicht</i> am gleichen Ort — deshalb kann man in 4D keinen Knoten knüpfen.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 6px;color:#fff">Trick C: Karte</h4>
+      <p style="font-size:13.5px">Statt eines Globus machen wir eine <b>Karte</b>: stereographische Projektion.
+      Das ist der Weg, den wir gleich gehen. ↓</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">S³ als Film von 3D-Kugeln (Trick A)</h3>
+    <div class="grid2">
+      <div><div id="sliceHyper" style="height:400px"></div></div>
+      <div>
+        <p style="font-size:13.5px">Schneide die 3-Sphäre <span style="font-family:JetBrains Mono">x₁²+x₂²+x₃²+x₄²=1</span>
+        bei festem x₄. Der Schnitt ist eine gewöhnliche Kugel mit Radius
+        <span style="font-family:JetBrains Mono">√(1−x₄²)</span>.</p>
+        <div class="ctrl"><label>Schnitthöhe x₄ <b id="vSlice">0.00</b></label><input type="range" id="sSlice" min="-0.99" max="0.99" step="0.01" value="0"></div>
+        <div class="btnrow"><button class="btn" id="slicePlay">▶ Film abspielen</button></div>
+        <div class="readout" id="sliceOut"></div>
+        <div class="note">Bei x₄ = 0 bekommen wir die <b>Äquator-Sphäre S²</b> — die wird später eine Hauptrolle spielen.
+        Bei x₄ = ±1 schrumpft alles auf einen Punkt: Nord- und Südpol von S³.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Der Knoten-Beweis (Trick B) — warum man in 4D nicht knoten kann</h3>
+    <div class="grid2">
+      <div><canvas id="knotCanvas" class="demo" height="340"></canvas></div>
+      <div>
+        <p style="font-size:13.5px">Ein Kleeblattknoten. Die <b>Farbe</b> ist die 4. Koordinate.
+        Am Kreuzungspunkt haben die beiden Stränge unterschiedliche Farbe → sie treffen sich gar nicht.
+        Also kann man den einen einfach „durch" den anderen hindurchschieben.</p>
+        <div class="ctrl"><label>Entknoten <b id="vKnot">0%</b></label><input type="range" id="sKnot" min="0" max="100" step="1" value="0"></div>
+        <div class="ctrl"><label>4. Koordinate anheben <b id="vKnot4">0.0</b></label><input type="range" id="sKnot4" min="0" max="1" step="0.01" value="0"></div>
+        <div class="legend"><span><i class="dot" style="background:#f472b6"></i>w &lt; 0</span><span><i class="dot" style="background:#5eead4"></i>w = 0</span><span><i class="dot" style="background:#60a5fa"></i>w &gt; 0</span></div>
+        <div class="note v" style="font-size:12.5px">Erst die 4. Koordinate anheben, dann entknoten — es geht ohne Zerschneiden.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 3 STEREOGRAPHISCHE PROJEKTION ===================== -->
+<section id="stereo">
+<div class="wrap">
+  <div class="kicker">Werkzeug 3 · das wichtigste!</div>
+  <h2><span class="gradtext">Stereographische Projektion</span> — die Karte der Sphäre</h2>
+  <p class="lead">Leg einen Lichtstrahl vom Nordpol durch einen Punkt der Sphäre. Wo er die Ebene trifft,
+  ist das Bild. Ein Punkt fehlt: der Nordpol selbst — er wird <b>∞</b>.</p>
+
+  <div class="split" style="margin-top:20px">
+    <div class="card">
+      <canvas id="stCanvas" class="demo" height="470"></canvas>
+      <div class="caption">2D-Querschnitt: Kreis → Gerade. Zieh den roten Punkt auf dem Kreis!</div>
+      <div class="legend">
+        <span><i class="dot" style="background:#f472b6"></i>Punkt p auf S¹</span>
+        <span><i class="dot" style="background:#fbbf24"></i>Projektionszentrum N</span>
+        <span><i class="dot" style="background:#5eead4"></i>Bild σ(p)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Was passiert wo?</h3>
+      <div class="ctrl"><label>Winkel des Punktes <b id="vStA">60°</b></label><input type="range" id="sStA" min="1" max="359" step="0.5" value="60"></div>
+      <label class="chk"><input type="checkbox" id="stTrail" checked> Spur zeichnen</label>
+      <label class="chk"><input type="checkbox" id="stGrid" checked> Gleichmäßige Punkte zeigen (Verzerrung!)</label>
+      <div class="readout" id="stOut"></div>
+      <div class="math" id="mStereo"></div>
+      <div class="note"><b>Merksatz:</b> Der Äquator bleibt <i>unverzerrt</i> (Einheitskreis).
+      Die Südhalbkugel wird ins <b>Innere</b> gequetscht, die Nordhalbkugel ins <b>unendliche Außen</b> gedehnt.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">In 3D: S² → Ebene. Kreise bleiben Kreise!</h3>
+    <div class="grid2">
+      <div><div id="st3d" style="height:460px"></div></div>
+      <div>
+        <p style="font-size:13.5px">Das ist <b>der</b> Zaubersatz: Jeder Kreis auf der Sphäre wird zu einem Kreis in der Ebene
+        (oder zu einer Geraden, wenn er durch den Nordpol geht). Genau deshalb sehen wir später die Hopf-Fasern
+        als <b>perfekte Kreise</b> in unserem 3D-Raum.</p>
+        <div class="ctrl"><label>Breitengrad des Kreises <b id="vS3Lat">30°</b></label><input type="range" id="sS3Lat" min="-85" max="85" step="1" value="30"></div>
+        <div class="ctrl"><label>Kippung des Kreises <b id="vS3Tilt">0°</b></label><input type="range" id="sS3Tilt" min="0" max="89" step="1" value="0"></div>
+        <label class="chk"><input type="checkbox" id="s3Mesh" checked> Längen-/Breitengrad-Netz projizieren</label>
+        <label class="chk"><input type="checkbox" id="s3Rays"> Projektionsstrahlen zeigen</label>
+        <div class="readout" id="s3Out"></div>
+        <div class="note p">Schieb die Kippung hoch, bis der Kreis den Nordpol berührt — das Bild wird zur <b>Geraden</b>
+        (ein Kreis mit unendlichem Radius).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Apollonische Kreise — die versteckte Struktur</h3>
+    <div class="grid2">
+      <div><canvas id="apoCanvas" class="demo" height="430"></canvas></div>
+      <div>
+        <p style="font-size:13.5px">Projizierst du die <b>Längenkreise</b> (durch Nord & Süd) und die
+        <b>Breitenkreise</b> einer Sphäre — aber von einem <i>anderen</i> Punkt als dem Pol aus —, entsteht dieses Bild:
+        zwei Kreisfamilien, die sich überall <b>rechtwinklig</b> schneiden.</p>
+        <ul style="font-size:13px;color:var(--txt-dim)">
+          <li><b style="color:var(--acc3)">Elliptische Familie:</b> alle Kreise durch beide Punkte p, p′.</li>
+          <li><b style="color:var(--acc)">Hyperbolische Familie:</b> alle Kreise, für die p und p′ invers zueinander sind.</li>
+        </ul>
+        <div class="ctrl"><label>Abstand der Pole <b id="vApo">1.00</b></label><input type="range" id="sApo" min="0.2" max="2.5" step="0.01" value="1"></div>
+        <label class="chk"><input type="checkbox" id="apoE" checked> Elliptische Familie</label>
+        <label class="chk"><input type="checkbox" id="apoH" checked> Hyperbolische Familie</label>
+        <div class="note y" style="font-size:12.5px"><b>Vorschau:</b> Wenn man die <i>hyperbolische</i> Familie um ihre
+        Gerade rotieren lässt, entstehen genau die <b>ineinander geschachtelten Tori</b> der Hopf-Faserung. Merk dir dieses Bild!</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 4 RIEMANNSCHE SPHÄRE ===================== -->
+<section id="riemann">
+<div class="wrap">
+  <div class="kicker">Werkzeug 4</div>
+  <h2>Die <span class="gradtext">Riemannsche Sphäre</span>: ℂ plus ein Punkt ∞</h2>
+  <p class="lead">Klebt man an die komplexe Ebene einen einzigen Punkt „∞" dran, wird sie zu einer Kugel.
+  Das ist das Ziel der Hopf-Abbildung. Alles, was die Hopf-Abbildung ausspuckt, lebt hier.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div><div id="riemPlot" style="height:480px"></div></div>
+      <div>
+        <h3 style="margin-top:0">Verhältnisse statt Zahlen</h3>
+        <p style="font-size:13.5px">Ein Punkt der Riemannschen Sphäre ist ein <b>Verhältnis</b> [z₁ : z₂] zweier komplexer Zahlen —
+        genau wie eine Steigung. Ist z₁ = 0, ist die „Steigung" unendlich: das ist der Nordpol.</p>
+        <div class="math" id="mRiem"></div>
+        <div class="ctrl"><label>Re(z) <b id="vRiX">0.60</b></label><input type="range" id="sRiX" min="-3" max="3" step="0.01" value="0.6"></div>
+        <div class="ctrl"><label>Im(z) <b id="vRiY">0.80</b></label><input type="range" id="sRiY" min="-3" max="3" step="0.01" value="0.8"></div>
+        <div class="readout" id="riemOut"></div>
+        <div class="tabs" id="mobTabs">
+          <button class="active" data-m="id">Identität</button>
+          <button data-m="mul_i">z ↦ i·z</button>
+          <button data-m="mul_2">z ↦ 2z</button>
+          <button data-m="inv">z ↦ 1/z</button>
+        </div>
+        <p style="font-size:12.5px;color:var(--txt-dim);margin:0">
+          <b>i·z</b> = Drehung der Kugel um die Polachse · <b>2z</b> = Verschiebung entlang der Längengrade ·
+          <b>1/z</b> = Umstülpen (Pole tauschen).</p>
+        <div class="ctrl"><label>Transformation anwenden (0→1) <b id="vMob">0.00</b></label><input type="range" id="sMob" min="0" max="1" step="0.01" value="0"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note v">
+    <b>Warum wir das brauchen:</b> Die Hopf-Abbildung nimmt einen Punkt (z₁, z₂) der 3-Sphäre und gibt das
+    Verhältnis <span style="font-family:JetBrains Mono">z₂/z₁</span> zurück. Dieses Verhältnis ist ein Punkt
+    <i>hier</i>, auf der Riemannschen Sphäre = S². Das ist der ganze Trick.
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 5 TORUS ===================== -->
+<section id="torus">
+<div class="wrap">
+  <div class="kicker">Werkzeug 5</div>
+  <h2>Der <span class="gradtext">Torus</span>: zwei Kreise in einem</h2>
+  <p class="lead">Ein Punkt auf dem Torus braucht zwei Winkel: (θ, ψ) ∈ S¹ × S¹. Deshalb heißt er T² = S¹ × S¹.
+  Auf ihm leben die Kurven, die gleich unsere Hopf-Fasern werden.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div><div id="torusPlot" style="height:480px"></div></div>
+      <div>
+        <h3 style="margin-top:0">Torus bauen & bewickeln</h3>
+        <div class="ctrl"><label>Großer Radius R <b id="vTR">2.00</b></label><input type="range" id="sTR" min="1.05" max="3.5" step="0.01" value="2"></div>
+        <div class="ctrl"><label>Kleiner Radius r <b id="vTr">0.80</b></label><input type="range" id="sTr" min="0.15" max="1.6" step="0.01" value="0.8"></div>
+        <div class="ctrl"><label>Windungszahl p (um die Achse) <b id="vTp">3</b></label><input type="range" id="sTp" min="1" max="9" step="1" value="3"></div>
+        <div class="ctrl"><label>Windungszahl q (um die Röhre) <b id="vTq">2</b></label><input type="range" id="sTq" min="1" max="9" step="1" value="2"></div>
+        <div class="ctrl"><label>Kurve zeichnen bis <b id="vTt">100%</b></label><input type="range" id="sTt" min="0" max="100" step="1" value="100"></div>
+        <label class="chk"><input type="checkbox" id="tShowGrid" checked> θ- und ψ-Kreise (schwarze Kreise aus Fig. 9)</label>
+        <label class="chk"><input type="checkbox" id="tShowCurve" checked> (p,q)-Kurve zeigen</label>
+        <div class="readout" id="torusOut"></div>
+        <div class="math" id="mTorus"></div>
+      </div>
+    </div>
+    <div class="note">
+      <b>Zwei Sorten Kreise:</b> Der eine hält die Luft drin (ψ, kleiner Ring um die Röhre),
+      der andere lässt ihn rollen (θ, großer Ring um die Achse). Jeder Punkt = ein Paar (θ, ψ).
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Der Torus als Quadrat (Asteroids!)</h3>
+    <div class="grid2">
+      <div>
+        <canvas id="astCanvas" class="demo" height="360"></canvas>
+        <div class="caption">Links raus = rechts rein. Oben raus = unten rein. Das <b>ist</b> ein Torus.</div>
+      </div>
+      <div>
+        <p style="font-size:13.5px">Klebe die gegenüberliegenden Kanten eines Quadrats zusammen → Torus.
+        Eine gerade Linie mit rationaler Steigung p/q im Quadrat wird zur <b>(p,q)-Kurve</b> auf dem Torus.
+        Genau solche Kurven werden die Hopf-Fasern sein — und zwar mit Steigung <b>±1</b>.</p>
+        <div class="ctrl"><label>Steigung der Geraden <b id="vAstS">1.00</b></label><input type="range" id="sAstS" min="-3" max="3" step="0.01" value="1"></div>
+        <div class="ctrl"><label>Länge <b id="vAstL">100%</b></label><input type="range" id="sAstL" min="0" max="100" step="1" value="100"></div>
+        <div class="btnrow">
+          <button class="btn" onclick="setAst(1)">Steigung 1 (rechtshändig)</button>
+          <button class="btn alt" onclick="setAst(-1)">Steigung −1 (linkshändig)</button>
+          <button class="btn" onclick="setAst(1.6180339)">irrational (φ)</button>
+        </div>
+        <div class="readout" id="astOut"></div>
+        <div class="note y" style="font-size:12.5px">Bei irrationaler Steigung schließt sich die Kurve <b>nie</b> —
+        sie füllt den ganzen Torus dicht aus. Die Hopf-Fasern dagegen haben Steigung exakt ±1 und schließen sich sofort.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 6 QUATERNIONEN ===================== -->
+<section id="quat">
+<div class="wrap">
+  <div class="kicker">Werkzeug 6</div>
+  <h2><span class="gradtext">Quaternionen</span>: Zahlen, die drehen</h2>
+  <p class="lead">Hamilton suchte 10 Jahre nach einer Zahl für 3D-Drehungen. Die Lösung: Man braucht
+  <b>vier</b> Zahlen, nicht drei. Am 16. Oktober 1843 ritzte er die Formel in eine Brücke in Dublin.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div>
+        <div class="math" id="mQuatRules"></div>
+        <h3>Multiplikationstafel (klick auf ein Feld!)</h3>
+        <div id="qTable"></div>
+        <div class="readout" id="qTableOut">Klick auf eine Zelle der Tabelle.</div>
+        <div class="note p" style="font-size:13px">
+          <b>Achtung:</b> <span style="font-family:JetBrains Mono">ij = k</span> aber
+          <span style="font-family:JetBrains Mono">ji = −k</span>. Die Reihenfolge zählt!
+          Genau diese Nicht-Kommutativität erzeugt später die <b>zwei</b> Hopf-Faserungen (links- und rechtshändig).
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Quaternionen-Rechner</h3>
+        <div class="grid2" style="gap:10px">
+          <div>
+            <div class="ctrl"><label>q₁: a <b id="vQ1a">1.00</b></label><input type="range" id="sQ1a" min="-2" max="2" step="0.05" value="1"></div>
+            <div class="ctrl"><label>q₁: b (i) <b id="vQ1b">0.00</b></label><input type="range" id="sQ1b" min="-2" max="2" step="0.05" value="0"></div>
+            <div class="ctrl"><label>q₁: c (j) <b id="vQ1c">0.00</b></label><input type="range" id="sQ1c" min="-2" max="2" step="0.05" value="0"></div>
+            <div class="ctrl"><label>q₁: d (k) <b id="vQ1d">0.00</b></label><input type="range" id="sQ1d" min="-2" max="2" step="0.05" value="0"></div>
+          </div>
+          <div>
+            <div class="ctrl"><label>q₂: a <b id="vQ2a">0.00</b></label><input type="range" id="sQ2a" min="-2" max="2" step="0.05" value="0"></div>
+            <div class="ctrl"><label>q₂: b (i) <b id="vQ2b">1.00</b></label><input type="range" id="sQ2b" min="-2" max="2" step="0.05" value="1"></div>
+            <div class="ctrl"><label>q₂: c (j) <b id="vQ2c">0.00</b></label><input type="range" id="sQ2c" min="-2" max="2" step="0.05" value="0"></div>
+            <div class="ctrl"><label>q₂: d (k) <b id="vQ2d">0.00</b></label><input type="range" id="sQ2d" min="-2" max="2" step="0.05" value="0"></div>
+          </div>
+        </div>
+        <div class="readout" id="qCalc"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Die Drehformel <span style="font-family:JetBrains Mono">R<sub>q</sub>(p) = q⁻¹ p q</span> live</h3>
+    <div class="grid2">
+      <div><div id="rotPlot" style="height:460px"></div></div>
+      <div>
+        <p style="font-size:13.5px">Schreib <span style="font-family:JetBrains Mono">q = cos(θ/2) + u·sin(θ/2)</span>
+        mit einem Einheits-Richtungsvektor u. Dann dreht <span style="font-family:JetBrains Mono">R<sub>q</sub></span>
+        den Raum um die Achse u um den Winkel θ. Das ist Hamiltons Entdeckung.</p>
+        <div class="ctrl"><label>Achse u: Azimut <b id="vRotAz">40°</b></label><input type="range" id="sRotAz" min="0" max="360" step="1" value="40"></div>
+        <div class="ctrl"><label>Achse u: Höhe <b id="vRotEl">35°</b></label><input type="range" id="sRotEl" min="-89" max="89" step="1" value="35"></div>
+        <div class="ctrl"><label>Drehwinkel θ <b id="vRotTh">90°</b></label><input type="range" id="sRotTh" min="0" max="720" step="1" value="90"></div>
+        <div class="readout" id="rotOut"></div>
+        <div class="note v"><b>Die Verdopplung:</b> Bei θ = 360° ist q = −1, aber die Drehung ist die Identität.
+        Erst bei θ = 720° ist q wieder = +1. Deshalb gilt
+        <span style="font-family:JetBrains Mono">S³/{±1} ≅ SO(3)</span> — <b>zwei</b> Quaternionen pro Drehung.
+        (Das ist auch der Grund für „Spin ½" in der Quantenmechanik.)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note y">
+    <b>Der entscheidende Satz für uns:</b> Die Einheits-Quaternionen (|q| = 1) erfüllen
+    <span style="font-family:JetBrains Mono">a²+b²+c²+d² = 1</span> — das ist <b>genau S³</b>!
+    Und sie bilden eine Gruppe (Produkt zweier Einheitsquaternionen ist wieder eine).
+    S³ ist also nicht nur ein Raum, sondern eine <b>Gruppe</b>. Das macht alles Weitere möglich.
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 7 FASERUNG ALLGEMEIN ===================== -->
+<section id="faserung">
+<div class="wrap">
+  <div class="kicker">Werkzeug 7 · Die Schlüsselidee</div>
+  <h2>Was ist eine <span class="gradtext">Faserung</span>?</h2>
+  <p class="lead">Eine Faserung klebt aus zwei Räumen einen dritten zusammen: über <b>jedem</b> Punkt
+  der <b>Basis</b> hängt eine Kopie der <b>Faser</b>. Lokal sieht das immer aus wie ein Produkt — global aber vielleicht verdreht.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div>
+        <canvas id="fibCanvas" class="demo" height="420"></canvas>
+        <div class="caption">Basis = Kreis (unten). Faser = Strecke [−1,1]. Zieh den Verdrehungs-Regler!</div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Zylinder vs. Möbiusband</h3>
+        <div class="ctrl"><label>Verdrehung <b id="vFibTw">0.00</b> · (0 = Zylinder, 1 = Möbius)</label><input type="range" id="sFibTw" min="0" max="1" step="0.01" value="0"></div>
+        <div class="ctrl"><label>Punkt auf der Basis <b id="vFibP">0°</b></label><input type="range" id="sFibP" min="0" max="360" step="1" value="60"></div>
+        <label class="chk"><input type="checkbox" id="fibShowFibers" checked> alle Fasern zeigen</label>
+        <div class="readout" id="fibOut"></div>
+        <table class="t">
+          <tr><th>Begriff</th><th>Zylinder</th><th>Möbiusband</th></tr>
+          <tr><td>Basis X</td><td>S¹</td><td>S¹</td></tr>
+          <tr><td>Faser Y</td><td>[−1,1]</td><td>[−1,1]</td></tr>
+          <tr><td>Totalraum Z</td><td>S¹ × [−1,1]</td><td>verdreht!</td></tr>
+          <tr><td>trivial?</td><td>ja</td><td><b style="color:var(--acc3)">nein</b></td></tr>
+        </table>
+        <div class="note"><b>Genau darum geht's:</b> Lokal (in einem kleinen Kartenstück) sind beide gleich.
+        Erst wenn man einmal <i>ganz herum</i> geht, merkt man den Unterschied. Die Hopf-Faserung ist das gleiche
+        Phänomen — nur mit Basis S², Faser S¹ und Totalraum S³.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:18px">
+    <div class="card">
+      <div class="pill">TRIVIAL</div>
+      <h4 style="margin:8px 0 6px;color:#fff">S² × S¹</h4>
+      <p style="font-size:13px">Man <i>könnte</i> über jeden Punkt von S² einfach einen Kreis hängen, ohne Verdrehung.
+      Das ergibt den Raum S² × S¹ — und der ist <b>nicht</b> S³.</p>
+    </div>
+    <div class="card" style="border-color:rgba(94,234,212,.45)">
+      <div class="pill" style="background:rgba(94,234,212,.16);color:var(--acc);border-color:rgba(94,234,212,.35)">HOPF</div>
+      <h4 style="margin:8px 0 6px;color:#fff">S³ → S²</h4>
+      <p style="font-size:13px">Hopfs Konstruktion hängt über jeden Punkt von S² einen Kreis <b>mit einer Verdrehung</b>.
+      Ergebnis: <b>S³</b>. Und das geht nicht ohne Verdrehung.</p>
+    </div>
+    <div class="card">
+      <div class="pill" style="background:rgba(244,114,182,.16);color:var(--acc3);border-color:rgba(244,114,182,.35)">FOLGE</div>
+      <h4 style="margin:8px 0 6px;color:#fff">π₃(S²) = ℤ</h4>
+      <p style="font-size:13px">Weil die Verdrehung nicht wegzubekommen ist, gibt es unendlich viele
+      wesentlich verschiedene Abbildungen S³ → S². Das war die Sensation von 1931.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 8 DIE HOPF-ABBILDUNG ===================== -->
+<section id="hopf">
+<div class="wrap">
+  <div class="kicker">★ Der Höhepunkt · Die Lösung</div>
+  <h2>Die <span class="gradtext">Hopf-Abbildung</span> — in einer Zeile</h2>
+
+  <div class="qbox" style="margin-top:16px">
+    <div class="math" id="mHopfMain" style="text-align:center;font-size:1.15em"></div>
+    <p style="text-align:center;margin-top:8px">Nimm einen Punkt der 3-Sphäre (zwei komplexe Zahlen mit |z₁|²+|z₂|² = 1)
+    und bilde einfach ihr <b>Verhältnis</b>. Das ist ein Punkt der Riemannschen Sphäre = S². Fertig.</p>
+  </div>
+
+  <h3>Warum sind die Urbilder Kreise? — Der ganze Beweis in 3 Zeilen</h3>
+  <div class="card">
+    <div class="stepper" id="proofStep">
+      <button class="active" data-s="0">Schritt 1</button>
+      <button data-s="1">Schritt 2</button>
+      <button data-s="2">Schritt 3</button>
+      <button data-s="3">Fazit</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <div id="proofText" style="min-height:190px"></div>
+      </div>
+      <div>
+        <canvas id="proofCanvas" class="demo" height="300"></canvas>
+        <div class="ctrl"><label>Phase λ = e<sup>iα</sup> · α = <b id="vProofA">0°</b></label><input type="range" id="sProofA" min="0" max="360" step="1" value="0"></div>
+        <div class="readout" id="proofOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die Abbildung in reellen Koordinaten</h3>
+  <p>Setzt man <span style="font-family:JetBrains Mono">z₁ = x₁+ix₂, z₂ = x₃+ix₄</span> und projiziert das Verhältnis
+  wieder auf die Einheitssphäre, erhält man die berühmte Formel:</p>
+  <div class="math" id="mHopfReal"></div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Der Hopf-Rechner: ein Punkt, sein Ziel, seine Faser</h3>
+    <div class="grid2">
+      <div>
+        <p style="font-size:13.5px">Wir parametrisieren S³ mit drei Winkeln:
+        <span style="font-family:JetBrains Mono">z₁ = cos(η)e<sup>iξ₁</sup>, z₂ = sin(η)e<sup>iξ₂</sup></span>.</p>
+        <div class="ctrl"><label>η (Mischung |z₁| ↔ |z₂|) <b id="vHEta">45°</b></label><input type="range" id="sHEta" min="0" max="90" step="0.5" value="45"></div>
+        <div class="ctrl"><label>ξ₁ (Phase von z₁) <b id="vHX1">0°</b></label><input type="range" id="sHX1" min="0" max="360" step="1" value="0"></div>
+        <div class="ctrl"><label>ξ₂ (Phase von z₂) <b id="vHX2">0°</b></label><input type="range" id="sHX2" min="0" max="360" step="1" value="0"></div>
+        <div class="ctrl"><label>gemeinsame Phase λ (bewegt <b>entlang</b> der Faser!) <b id="vHLam">0°</b></label><input type="range" id="sHLam" min="0" max="360" step="1" value="0"></div>
+        <div class="readout" id="hopfCalcOut"></div>
+        <div class="note p" style="font-size:12.5px"><b>Beobachte:</b> Wenn du nur λ bewegst, wandert der Punkt in S³ —
+        aber das Bild auf S² bleibt <b>eingefroren</b>. Das ist die Faser.</div>
+      </div>
+      <div>
+        <div id="hopfS2" style="height:300px"></div>
+        <div class="caption">Ziel: der Bildpunkt auf S² (Basis). Bewegt sich nur bei η, ξ₁, ξ₂ — nie bei λ.</div>
+        <div id="hopfCircleMini" style="height:200px"></div>
+        <div class="caption">Die zugehörige Faser, stereographisch nach ℝ³ projiziert.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 9 FASERN ===================== -->
+<section id="fasern">
+<div class="wrap">
+  <div class="kicker">Das Ergebnis, Teil 1</div>
+  <h2>Jede Faser ein Kreis. Je zwei <span class="gradtext">verkettet</span>.</h2>
+  <p class="lead">Jetzt bauen wir das Bild. Wähle Punkte auf S², schau dir ihre Fasern in ℝ³ an
+  (stereographisch projiziert). Keine zwei schneiden sich. Aber je zwei sind wie Kettenglieder ineinander.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div>
+        <div id="baseS2" style="height:420px"></div>
+        <div class="caption">BASIS S² — klick auf die Kugel oder nutze die Regler. Jeder Punkt ↔ eine Faser rechts.</div>
+      </div>
+      <div>
+        <div id="fiberR3" style="height:420px"></div>
+        <div class="caption">TOTALRAUM S³ (stereographisch in ℝ³). Farbe = Position auf S².</div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="ctrl"><label>Punkt A: Länge <b id="vFA1">40°</b></label><input type="range" id="sFA1" min="0" max="360" step="1" value="40"></div>
+      <div class="ctrl"><label>Punkt A: Breite <b id="vFA2">30°</b></label><input type="range" id="sFA2" min="-88" max="88" step="1" value="30"></div>
+      <div class="ctrl"><label>Punkt B: Länge <b id="vFB1">200°</b></label><input type="range" id="sFB1" min="0" max="360" step="1" value="200"></div>
+      <div class="ctrl"><label>Punkt B: Breite <b id="vFB2">-20°</b></label><input type="range" id="sFB2" min="-88" max="88" step="1" value="-20"></div>
+      <div class="ctrl"><label>Zusätzliche Zufallsfasern <b id="vFN">0</b></label><input type="range" id="sFN" min="0" max="60" step="1" value="0"></div>
+      <div class="ctrl"><label>Röhrendicke <b id="vFTube">1.0</b></label><input type="range" id="sFTube" min="0.3" max="3" step="0.1" value="1"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="btnLinkDemo">🔗 Verkettung zeigen (A & B umkreisen)</button>
+      <button class="btn alt" id="btnPoles">Pole: 0 und ∞</button>
+      <button class="btn" id="btnEquator">Fasern über dem Äquator</button>
+      <button class="btn" id="btnClear">zurücksetzen</button>
+    </div>
+    <div class="readout" id="linkOut"></div>
+    <div class="note"><b>Zwei Spezialfälle zum Anschauen:</b> Die Faser über dem <b>Südpol</b> (z = 0) wird zum
+    <b>Einheitskreis</b> in der xy-Ebene. Die Faser über dem <b>Nordpol</b> (z = ∞) wird zur <b>z-Achse</b> —
+    eine Gerade, also ein Kreis durch den Unendlichkeitspunkt. Diese beiden sind offensichtlich verkettet.
+    Und alle anderen Fasern winden sich um beide herum.</div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Warum <i>müssen</i> sie verkettet sein? (Treismans Argument, Abschn. 4.3)</h3>
+    <div class="grid2">
+      <div>
+        <canvas id="linkArg" class="demo" height="330"></canvas>
+        <div class="ctrl"><label>Animation <b id="vLinkArg">0%</b></label><input type="range" id="sLinkArg" min="0" max="100" step="1" value="0"></div>
+      </div>
+      <div>
+        <ol style="font-size:13.5px;color:var(--txt-dim);line-height:1.8">
+          <li>Betrachte den <b>Äquator E</b> von S³ — das ist eine gewöhnliche 2-Sphäre (alle Punkte mit x₄ = 0).
+          Unter stereographischer Projektion wird sie zur <b>Einheitskugel</b> in ℝ³.</li>
+          <li>Der Äquator <i>dieses</i> Äquators (zusätzlich x₃ = 0) ist selbst eine Hopf-Faser. Nenn sie
+          <b style="color:var(--acc)">F</b> — in ℝ³ ist das der Einheitskreis in der xy-Ebene.</li>
+          <li>Jede andere Faser trifft E in <b>zwei antipodalen Punkten</b> (man multipliziert (z₁,z₂) mit
+          einem passenden λ, um auf x₄ = 0 zu landen — das geht immer, und für Großkreise auch für den Gegenpunkt).</li>
+          <li>Zwischen diesen beiden Punkten verläuft ein Bogen <b>innerhalb</b> der Kugel (x₄ &lt; 0)
+          und einer <b>außerhalb</b> (x₄ &gt; 0).</li>
+          <li>Ein Kreis, der die Einheitskugel genau zweimal in antipodalen Punkten durchstößt,
+          ist <b>zwangsläufig mit F verkettet</b>. ✔</li>
+          <li>Da man S³ so drehen kann, dass <i>jede</i> gewünschte Faser dorthin kommt, wo F war:
+          <b style="color:var(--acc3)">je zwei Fasern sind verkettet.</b></li>
+        </ol>
+        <div class="note y" style="font-size:12.5px">Verkettungszahl = <b>1</b>. Immer. Für jedes Paar.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 10 TORI ===================== -->
+<section id="tori">
+<div class="wrap">
+  <div class="kicker">Das Ergebnis, Teil 2</div>
+  <h2>Die <span class="gradtext">Breitengrad-Tori</span>: S³ in Schalen</h2>
+  <p class="lead">Nimm einen Breitenkreis |z| = r auf der Riemannschen Sphäre. Alle Fasern darüber bilden
+  zusammen eine Fläche — und zwar exakt einen <b>Rotationstorus</b>. Lässt man r von 0 nach ∞ laufen,
+  schälen sich diese Tori ineinander und füllen ganz S³.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div>
+        <div id="toriPlot" style="height:520px"></div>
+        <div class="caption">Ineinander geschachtelte Hopf-Tori, stereographisch in ℝ³ projiziert.</div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Schalen aufblättern</h3>
+        <div class="ctrl"><label>Breitengrad r = |z| <b id="vTorR">1.00</b></label><input type="range" id="sTorR" min="0.08" max="12" step="0.01" value="1"></div>
+        <div class="ctrl"><label>Anzahl Fasern auf dem Torus <b id="vTorN">14</b></label><input type="range" id="sTorN" min="1" max="60" step="1" value="14"></div>
+        <div class="ctrl"><label>Zusätzliche Tori (Schalen) <b id="vTorK">3</b></label><input type="range" id="sTorK" min="0" max="7" step="1" value="3"></div>
+        <div class="ctrl"><label>Transparenz der Torusflächen <b id="vTorOp">0.25</b></label><input type="range" id="sTorOp" min="0" max="0.8" step="0.01" value="0.25"></div>
+        <label class="chk"><input type="checkbox" id="torAxis" checked> Faser über ∞ (z-Achse) zeigen</label>
+        <label class="chk"><input type="checkbox" id="torUnit" checked> Faser über 0 (Einheitskreis) zeigen</label>
+        <div class="readout" id="torOut"></div>
+        <div class="math" id="mTori"></div>
+        <div class="note"><b>Grenzfälle:</b> r → 0 quetscht den Torus auf den <b>Einheitskreis</b> zusammen
+        (die Faser über dem Südpol), r → ∞ quetscht ihn auf die <b>z-Achse</b> (die Faser über dem Nordpol).
+        Bei r = 1 ist der Torus „in der Mitte": das ist die Clifford-Fläche |z₁| = |z₂|.</div>
+        <div class="btnrow">
+          <button class="btn" onclick="setTor(0.25)">innen</button>
+          <button class="btn" onclick="setTor(1)">Clifford-Torus (r=1)</button>
+          <button class="btn" onclick="setTor(4)">außen</button>
+          <button class="btn alt" id="btnTorAnim">▶ durchschälen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Von den Apollonischen Kreisen zum Torus — die Verbindung</h3>
+    <div class="grid2">
+      <div><canvas id="apoRev" class="demo" height="360"></canvas></div>
+      <div>
+        <p style="font-size:13.5px">Schneidet man die geschachtelten Tori mit der xz-Ebene, sieht man genau die
+        <b>hyperbolische Familie apollonischer Kreise</b> aus Werkzeug 3 wieder. Die Tori entstehen durch Rotation
+        dieser Kreise um die z-Achse.</p>
+        <div class="ctrl"><label>Rotationswinkel <b id="vApoRev">0°</b></label><input type="range" id="sApoRev" min="0" max="360" step="1" value="0"></div>
+        <div class="ctrl"><label>Anzahl Kreise <b id="vApoRevN">6</b></label><input type="range" id="sApoRevN" min="1" max="12" step="1" value="6"></div>
+        <div class="readout" id="apoRevOut"></div>
+        <div class="note v" style="font-size:12.5px">Die beiden Fixpunkte der apollonischen Familie sind genau die
+        Durchstoßpunkte des Einheitskreises — also der Faser über z = 0.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Radien-Formel: welcher Torus gehört zu welchem Breitengrad?</h3>
+    <div class="grid2">
+      <div><div id="radiiPlot" style="height:330px"></div></div>
+      <div>
+        <div class="math" id="mRadii"></div>
+        <p style="font-size:13.5px">Man rechnet nach: die Faser über |z| = r projiziert auf einen Rotationstorus
+        mit den Radien oben. Für r = 1 gilt R = ... und r = ... — teste die Werte mit dem Regler.</p>
+        <div class="ctrl"><label>r <b id="vRad">1.00</b></label><input type="range" id="sRad" min="0.05" max="8" step="0.01" value="1"></div>
+        <div class="readout" id="radOut"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== 11 HÄNDIGKEIT ===================== -->
+<section id="haende">
+<div class="wrap">
+  <div class="kicker">Das Ergebnis, Teil 3</div>
+  <h2>Zwei Hopf-Faserungen: <span class="gradtext">links- und rechtshändig</span></h2>
+  <p class="lead">Weil Quaternionen nicht kommutativ sind, gibt es zwei Versionen:
+  <span style="font-family:JetBrains Mono">R<sub>q</sub>(p)=q⁻¹pq</span> und
+  <span style="font-family:JetBrains Mono">L<sub>q</sub>(p)=qpq⁻¹</span>. Sie erzeugen dieselben Tori —
+  aber die Fasern winden sich entgegengesetzt herum, wie Rechts- und Linksgewinde.</p>
+
+  <div class="card" style="margin-top:20px">
+    <div class="grid2">
+      <div>
+        <div id="handPlot" style="height:480px"></div>
+        <div class="caption">Beide Faserungen auf demselben Torus. Rechts- vs. linkshändige Gewinde.</div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Vergleich</h3>
+        <label class="chk"><input type="checkbox" id="hRight" checked> <span style="color:var(--acc)">rechtshändig</span> (g<sub>p</sub>, q⁻¹pq)</label>
+        <label class="chk"><input type="checkbox" id="hLeft" checked> <span style="color:var(--acc3)">linkshändig</span> (h<sub>p</sub>, qpq⁻¹)</label>
+        <label class="chk"><input type="checkbox" id="hTorus" checked> Torusfläche zeigen</label>
+        <div class="ctrl"><label>Anzahl Fasern je Sorte <b id="vHandN">8</b></label><input type="range" id="sHandN" min="1" max="24" step="1" value="8"></div>
+        <div class="ctrl"><label>Torus-Breitengrad r <b id="vHandR">1.00</b></label><input type="range" id="sHandR" min="0.3" max="3" step="0.01" value="1"></div>
+        <div class="readout" id="handOut"></div>
+        <div class="note p"><b>Der Unterschied in einer Zeile:</b> Rechtshändig multipliziert man mit λ
+        <i>von links</i>: (λz₁, λz₂). Linkshändig von rechts — das ergibt auf dem Torus die Steigung <b>−1</b>
+        statt <b>+1</b>. Zwei Fasern <i>verschiedener</i> Händigkeit können sich sogar schneiden;
+        zwei gleicher Händigkeit nie.</div>
+        <div class="btnrow">
+          <button class="btn" id="btnHandSpin">▶ drehen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Das Quadrat-Bild: +1 gegen −1</h3>
+    <div class="grid2">
+      <div><canvas id="handSq" class="demo" height="300"></canvas></div>
+      <div>
+        <p style="font-size:13.5px">Auf dem aufgeschnittenen Torus (dem Quadrat aus Werkzeug 5) ist alles trivial:
+        die eine Familie sind Geraden mit Steigung <b style="color:var(--acc)">+1</b>, die andere mit
+        <b style="color:var(--acc3)">−1</b>. Parallele Geraden gleicher Steigung schneiden sich nie —
+        deshalb sind die Fasern disjunkt. Geraden verschiedener Steigung schneiden sich — deshalb kreuzen sich
+        links- und rechtshändige Fasern.</p>
+        <div class="ctrl"><label>Anzahl Linien <b id="vHSqN">6</b></label><input type="range" id="sHSqN" min="1" max="14" step="1" value="6"></div>
+        <div class="readout" id="hsqOut"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== ANTWORT ===================== -->
+<section id="antwort">
+<div class="wrap">
+  <div class="kicker">Die Antwort</div>
+  <h2>Was Hopf gefragt hat — und was herauskam</h2>
+
+  <div class="card" style="margin-top:20px;border-color:rgba(94,234,212,.4)">
+    <div class="stepper" id="ansStep">
+      <button class="active" data-a="0">Das Problem</button>
+      <button data-a="1">Die Idee</button>
+      <button data-a="2">Die Lösung</button>
+      <button data-a="3">Der Lösungsweg</button>
+      <button data-a="4">Die Antwort</button>
+      <button data-a="5">Die Konsequenz</button>
+    </div>
+    <div class="grid2">
+      <div id="ansText" style="min-height:250px"></div>
+      <div><canvas id="ansCanvas" class="demo" height="340"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:20px">
+    <div class="card">
+      <div class="pill">FRAGE</div>
+      <p style="margin-top:10px;font-size:14px;color:#dfe4f5">Gibt es eine <b>nicht-triviale</b> stetige
+      Abbildung S³ → S²?</p>
+    </div>
+    <div class="card">
+      <div class="pill" style="background:rgba(94,234,212,.16);color:var(--acc);border-color:rgba(94,234,212,.35)">ANTWORT</div>
+      <p style="margin-top:10px;font-size:14px;color:#dfe4f5"><b>Ja.</b> Nämlich
+      <span style="font-family:JetBrains Mono">(z₁,z₂) ↦ z₂/z₁</span>. Ihre Fasern sind paarweise
+      verkettete Kreise — und <i>deshalb</i> kann man sie nicht zusammenschrumpfen.</p>
+    </div>
+    <div class="card">
+      <div class="pill" style="background:rgba(251,191,36,.16);color:var(--acc4);border-color:rgba(251,191,36,.35)">BONUS</div>
+      <p style="margin-top:10px;font-size:14px;color:#dfe4f5">S³ ist eine <b>Gruppe</b> (Einheitsquaternionen),
+      S³/{±1} ≅ SO(3), und es gibt <b>unendlich viele</b> Hopf-Faserungen — eine für jeden Punkt p ∈ S².</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Alles auf einen Blick: das Gesamtbild</h3>
+    <div id="finalPlot" style="height:600px"></div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="ctrl"><label>Anzahl Basispunkte <b id="vFinN">120</b></label><input type="range" id="sFinN" min="10" max="400" step="5" value="120"></div>
+      <div class="ctrl"><label>Punkte pro Faser <b id="vFinM">80</b></label><input type="range" id="sFinM" min="20" max="200" step="5" value="80"></div>
+      <div class="ctrl"><label>Verteilungsmuster <b id="vFinP">Spirale</b></label><input type="range" id="sFinP" min="0" max="3" step="1" value="0"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="btnFinRender">↻ neu zeichnen</button>
+      <button class="btn alt" id="btnFinSpin">▶ Autorotation</button>
+    </div>
+    <div class="caption">Jeder Faden ist ein Kreis in S³. Die Farbe verrät, über welchem Punkt von S² er liegt.
+    Keine zwei schneiden sich. Je zwei sind verkettet. Zusammen: die 3-Sphäre.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ===================== WARUM WICHTIG ===================== -->
+<section id="warum">
+<div class="wrap">
+  <div class="kicker">Anwendungen (Abschn. 4.6)</div>
+  <h2>Wo das in der echten Welt auftaucht</h2>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card">
+      <h3 style="margin-top:0">⚛️ Quantenmechanik: der Spin ½</h3>
+      <p style="font-size:13.5px">Der Zustand eines Qubits ist ein Punkt in S³ (zwei komplexe Amplituden mit
+      |z₁)|²+|z₂|² = 1). Physikalisch ununterscheidbar sind alle Zustände, die sich nur um eine globale Phase
+      λ = e<sup>iα</sup> unterscheiden — das ist <b>genau eine Hopf-Faser</b>. Der sichtbare Zustandsraum ist
+      die Basis S² = die <b>Bloch-Kugel</b>.</p>
+      <div id="blochPlot" style="height:300px"></div>
+      <div class="grid2">
+        <div class="ctrl"><label>θ <b id="vBlT">60°</b></label><input type="range" id="sBlT" min="0" max="180" step="1" value="60"></div>
+        <div class="ctrl"><label>φ <b id="vBlP">40°</b></label><input type="range" id="sBlP" min="0" max="360" step="1" value="40"></div>
+      </div>
+      <div class="ctrl"><label>globale Phase α (unsichtbar!) <b id="vBlA">0°</b></label><input type="range" id="sBlA" min="0" max="360" step="1" value="0"></div>
+      <div class="readout" id="blochOut"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">🎮 Grafik & Robotik: Quaternionen-Interpolation</h3>
+      <p style="font-size:13.5px">Jede Spiel-Engine speichert Drehungen als Einheitsquaternionen — also als Punkte
+      auf S³. Sanftes Überblenden zwischen zwei Orientierungen („slerp") ist eine Bewegung entlang eines
+      <b>Großkreises von S³</b>. Und weil q und −q dieselbe Drehung bedeuten, muss man aufpassen, welchen Weg
+      man nimmt.</p>
+      <div id="slerpPlot" style="height:300px"></div>
+      <div class="ctrl"><label>Interpolation t <b id="vSlT">0.00</b></label><input type="range" id="sSlT" min="0" max="1" step="0.005" value="0"></div>
+      <div class="grid2">
+        <div class="ctrl"><label>Ziel-Achse <b id="vSlAx">60°</b></label><input type="range" id="sSlAx" min="0" max="360" step="1" value="60"></div>
+        <div class="ctrl"><label>Ziel-Winkel <b id="vSlAn">160°</b></label><input type="range" id="sSlAn" min="0" max="360" step="1" value="160"></div>
+      </div>
+      <div class="readout" id="slerpOut"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">🧮 Algebraische Topologie: π₃(S²) = ℤ</h3>
+    <p style="font-size:13.5px">Die Homotopiegruppe π₃(S²) klassifiziert alle Abbildungen S³ → S² bis auf stetiges
+    Verformen. Vor Hopf glaubte man π₃(S²) = 0. Hopf zeigte: es ist <b>ℤ</b> — und die Hopf-Abbildung ist der
+    Erzeuger. Die zugehörige ganze Zahl ist genau die <b>Verkettungszahl</b> zweier Fasern.</p>
+    <div class="grid2">
+      <div><canvas id="hopfInvCanvas" class="demo" height="300"></canvas></div>
+      <div>
+        <div class="ctrl"><label>Hopf-Invariante n <b id="vHinv">1</b></label><input type="range" id="sHinv" min="-3" max="3" step="1" value="1"></div>
+        <div class="readout" id="hinvOut"></div>
+        <div class="note y" style="font-size:12.5px">Die Abbildung (z₁,z₂) ↦ z₂ⁿ/z₁ⁿ hat Hopf-Invariante n² —
+        aber zu jeder ganzen Zahl n gibt es tatsächlich eine Abbildung mit Invariante n. Visualisiert:
+        die Fasern umschlingen sich n-mal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">📚 Die Landkarte: was wir alles gebaut haben</h3>
+    <div id="mapPlot" style="height:420px"></div>
+    <div class="caption">Klick auf einen Knoten, um zum Abschnitt zu springen.</div>
+  </div>
+
+  <div class="quote" style="margin-top:30px">
+    „Das ist ein Lieblingsbeispiel vieler Mathematiker … es dient als Startpunkt und Illustration der
+    Verbindungen zwischen vielen Gebieten, von Lie-Gruppen und mathematischer Physik bis zu algebraischer
+    Topologie und Homotopietheorie."<br>
+    <span style="font-size:12.5px;color:#7c86a8">— Zachary Treisman, <i>A Young Person's Guide to the Hopf Fibration</i></span>
+  </div>
+
+  <div style="text-align:center;padding:40px 0 70px;color:#6b7characters">
+    <p style="margin:0 auto;color:#7c86a8;font-size:13px">Interaktive Aufbereitung von
+    <i>arXiv:0908.1205</i> — Zachary Treisman, 2009. Gemälde im Original: Lun-Yi Tsai.</p>
+  </div>
+</div>
+</section>
+
+<script>
+/* =======================================================================
+   GLOBALE HELFER
+   ======================================================================= */
+const TAU=Math.PI*2, PI=Math.PI;
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const deg=r=>r*180/PI, rad=d=>d*PI/180;
+function hsl(h,s,l){return `hsl(${h},${s}%,${l}%)`;}
+function fmt(x,n=2){return (Math.abs(x)<1e-10?0:x).toFixed(n);}
+
+function katex(el,tex,display=true){
+  try{ el.innerHTML=temml.renderToString(tex,{displayMode:display}); }
+  catch(e){ el.textContent=tex; }
+}
+
+/* Komplexe Arithmetik */
+const C={
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1]],
+  sub:(a,b)=>[a[0]-b[0],a[1]-b[1]],
+  mul:(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]],  div:(a,b)=>{const d=b[0]*b[0]+b[1]*b[1];return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];},
+  abs:a=>Math.hypot(a[0],a[1]),
+  arg:a=>Math.atan2(a[1],a[0]),
+  conj:a=>[a[0],-a[1]],
+  scale:(a,s)=>[a[0]*s,a[1]*s],
+  pol:(r,t)=>[r*Math.cos(t),r*Math.sin(t)],
+  pow:(a,n)=>{const r=Math.pow(C.abs(a),n),t=C.arg(a)*n;return C.pol(r,t);}
+};
+
+/* Quaternionen */
+const Q={
+  mul:(p,q)=>[
+    p[0]*q[0]-p[1]*q[1]-p[2]*q[2]-p[3]*q[3],
+    p[0]*q[1]+p[1]*q[0]+p[2]*q[3]-p[3]*q[2],
+    p[0]*q[2]-p[1]*q[3]+p[2]*q[0]+p[3]*q[1],
+    p[0]*q[3]+p[1]*q[2]-p[2]*q[1]+p[3]*q[0]],
+  conj:q=>[q[0],-q[1],-q[2],-q[3]],
+  norm:q=>Math.hypot(q[0],q[1],q[2],q[3]),
+  inv:q=>{const n=q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3];const c=Q.conj(q);return c.map(x=>x/n);},
+  unit:q=>{const n=Q.norm(q)||1;return q.map(x=>x/n);},
+  str:q=>`${fmt(q[0])} ${q[1]<0?'−':'+'} ${fmt(Math.abs(q[1]))}i ${q[2]<0?'−':'+'} ${fmt(Math.abs(q[2]))}j ${q[3]<0?'−':'+'} ${fmt(Math.abs(q[3]))}k`
+};
+/* Rotation eines Punktes p∈R³ durch q:  R_q(p)=q⁻¹ p q  (rechtshändig, wie im Paper) */
+function rotR(q,p){
+  const pq=[0,p[0],p[1],p[2]];
+  const r=Q.mul(Q.mul(Q.inv(q),pq),q);
+  return [r[1],r[2],r[3]];
+}
+function rotL(q,p){
+  const pq=[0,p[0],p[1],p[2]];
+  const r=Q.mul(Q.mul(q,pq),Q.inv(q));
+  return [r[1],r[2],r[3]];
+}
+
+/* Stereographische Projektion S³ → ℝ³ (von (0,0,0,1)) */
+function stereo4(x){
+  const d=1-x[3];
+  const k=Math.abs(d)<1e-7?1e7:1/d;
+  return [x[0]*k,x[1]*k,x[2]*k];
+}
+/* Stereographische Projektion S² → ℂ (vom Nordpol (0,0,1)) */
+function stereo3(p){
+  const d=1-p[2];
+  if(Math.abs(d)<1e-9) return [1e9,0];
+  return [p[0]/d,p[1]/d];
+}
+function invStereo3(x,y){
+  const s=x*x+y*y+1;
+  return [2*x/s,2*y/s,(x*x+y*y-1)/s];
+}
+
+/* Hopf: Punkt der Faser über z=(a,b) ∈ ℂ (Riemannsphäre), Parameter t */
+function hopfFiberPoint(z,t){
+  // Faser über z: (z1,z2) mit z2/z1 = z, |z1|²+|z2|²=1
+  // z1 = e^{it}/√(1+|z|²),  z2 = z·z1
+  const m=1/Math.sqrt(1+z[0]*z[0]+z[1]*z[1]);
+  const l=[Math.cos(t),Math.sin(t)];
+  const z1=C.scale(l,m);
+  const z2=C.mul(z,z1);
+  return [z1[0],z1[1],z2[0],z2[1]];
+}
+/* linkshändige Variante: (z1,z2)·λ statt λ·(z1,z2) → Steigung −1 */
+function hopfFiberPointLeft(z,t){
+  const m=1/Math.sqrt(1+z[0]*z[0]+z[1]*z[1]);
+  const l=[Math.cos(t),Math.sin(t)];
+  const z1=C.scale(l,m);
+  const z2=C.mul(C.conj(z),z1);
+  return [z1[0],z1[1],z2[0],-z2[1]];
+}
+/* Hopf-Abbildung: S³ → S² (reelle Koordinaten, wie in Übung 4.2) */
+function hopfMap(x){
+  const [x1,x2,x3,x4]=x;
+  return [
+    2*(x1*x3+x2*x4),
+    2*(x2*x3-x1*x4),
+    x1*x1+x2*x2-x3*x3-x4*x4
+  ];
+}
+
+/* Farbe aus Punkt auf S² */
+function s2color(p,alpha=1){
+  const lon=Math.atan2(p[1],p[0]);
+  const lat=Math.asin(clamp(p[2],-1,1));
+  const h=((lon/TAU)*360+360)%360;
+  const l=clamp(35+ (lat/(PI/2))*26, 12, 82);
+  return alpha<1?`hsla(${h},85%,${l}%,${alpha})`:`hsl(${h},85%,${l}%)`;
+}
+
+/* Canvas-Setup mit DPR */
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const h=cv.getAttribute('height')?parseInt(cv.getAttribute('height')):r.height;
+  cv.width=Math.max(10,r.width*dpr);
+  cv.height=h*dpr;
+  cv.style.height=h+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w:r.width,h:h};
+}
+
+/* Plotly Layout-Vorlage */
+function pl3d(extra={}){
+  const ax={showbackground:false,gridcolor:'rgba(120,140,220,0.13)',zerolinecolor:'rgba(120,140,220,0.3)',
+    color:'#7c86a8',tickfont:{size:9,color:'#7c86a8'},titlefont:{size:10,color:'#98a1c4'}};
+  return Object.assign({
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    margin:{l:0,r:0,t:0,b:0},showlegend:false,
+    font:{family:'Inter',color:'#98a1c4'},
+    scene:{xaxis:Object.assign({},ax),yaxis:Object.assign({},ax),zaxis:Object.assign({},ax),
+      aspectmode:'data',
+      camera:{eye:{x:1.5,y:1.5,z:1.0}},
+      bgcolor:'rgba(0,0,0,0)'}
+  },extra);
+}
+const PLCFG={displayModeBar:false,responsive:true};
+
+/* =======================================================================
+   STERNE + HERO
+   ======================================================================= */
+(function stars(){
+  const cv=$('stars');
+  function draw(){
+    const dpr=window.devicePixelRatio||1;
+    cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+    c.clearRect(0,0,innerWidth,innerHeight);
+    for(let i=0;i<260;i++){
+      const x=Math.random()*innerWidth,y=Math.random()*innerHeight;
+      const r=Math.random()*1.3;
+      const a=Math.random()*0.7+0.1;
+      c.fillStyle=`rgba(255,255,255,${a})`;
+      c.beginPath();c.arc(x,y,r,0,TAU);c.fill();
+    }
+  }
+  draw();
+  let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,250);});
+})();
+
+/* Hero: animierte Hopf-Fasern */
+(function hero(){
+  const cv=$('heroCanvas');
+  let W,H,ctx;
+  function size(){
+    const dpr=window.devicePixelRatio||1;
+    const r=cv.parentElement.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
+    ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  size();addEventListener('resize',size);
+  const fibers=[];
+  for(let i=0;i<46;i++){
+    const u=(i+0.5)/46;
+    const lat=Math.acos(1-2*u);
+    const lon=i*2.39996;
+    const p=[Math.sin(lat)*Math.cos(lon),Math.sin(lat)*Math.sin(lon),Math.cos(lat)];
+    fibers.push({z:stereo3(p),col:s2color(p,0.75)});
+  }
+  let ang=0;
+  function frame(){
+    if(!ctx){requestAnimationFrame(frame);return;}
+    ctx.clearRect(0,0,W,H);
+    ang+=0.0032;
+    const ca=Math.cos(ang),sa=Math.sin(ang);
+    const cb=Math.cos(0.5),sb=Math.sin(0.5);
+    const cx=W*0.5,cy=H*0.52,sc=Math.min(W,H)*0.20;
+    const segs=[];
+    fibers.forEach(f=>{
+      if(!isFinite(f.z[0])||Math.abs(f.z[0])>1e6)return;
+      let prev=null;
+      for(let k=0;k<=70;k++){
+        const t=k/70*TAU;
+        const p4=hopfFiberPoint(f.z,t);
+        let p=stereo4(p4);
+        if(!isFinite(p[0])||Math.hypot(p[0],p[1],p[2])>28){prev=null;continue;}
+        // rotate
+        let x=p[0]*ca-p[1]*sa, y=p[0]*sa+p[1]*ca, z=p[2];
+        let y2=y*cb-z*sb, z2=y*sb+z*cb;
+        const d=1/(1+z2*0.09);
+        const sx=cx+x*sc*d, sy=cy-y2*sc*d;
+        if(prev)segs.push({a:prev,b:[sx,sy],z:z2,c:f.col});
+        prev=[sx,sy];
+      }
+    });
+    segs.sort((a,b)=>a.z-b.z);
+    segs.forEach(s=>{
+      ctx.strokeStyle=s.c;ctx.lineWidth=1.25;ctx.globalAlpha=0.55;
+      ctx.beginPath();ctx.moveTo(s.a[0],s.a[1]);ctx.lineTo(s.b[0],s.b[1]);ctx.stroke();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* Progress + Nav */
+(function nav(){
+  const links=[...document.querySelectorAll('#nav a')];
+  const secs=links.map(a=>$(a.getAttribute('href').slice(1))).filter(Boolean);
+  function upd(){
+    const st=scrollY, dh=document.body.scrollHeight-innerHeight;
+    $('progress').style.width=(st/dh*100)+'%';
+    let cur=0;
+    secs.forEach((s,i)=>{if(s.offsetTop-120<=st)cur=i;});
+    links.forEach((l,i)=>l.classList.toggle('active',i===cur));
+  }
+  addEventListener('scroll',upd);upd();
+})();
+
+/* Tool-Grid */
+(function toolGrid(){
+  const tools=[
+    ['#komplex','① Komplexe Zahlen','Multiplizieren = Drehen + Strecken. Daraus wird e^{iθ}.'],
+    ['#kugeln','② Sphären S⁰…S³','Dimension = Anzahl der Parameter. Und: 4D sehen lernen.'],
+    ['#stereo','③ Stereographie','Die Sphäre als Landkarte. Kreise bleiben Kreise.'],
+    ['#riemann','④ Riemannsphäre','ℂ ∪ {∞} = S². Das Ziel der Hopf-Abbildung.'],
+    ['#torus','⑤ Torus','S¹×S¹. Der Träger der Fasern.'],
+    ['#quat','⑥ Quaternionen','Einheits-Quaternionen = S³ mit Gruppenstruktur.'],
+    ['#faserung','⑦ Faserung','Möbiusband vs. Zylinder: verdreht oder nicht?'],
+    ['#hopf','⑧ Die Hopf-Abbildung','(z₁,z₂) ↦ z₂/z₁. Eine Zeile, viele Folgen.'],
+    ['#antwort','⑨ Antwort & Anwendung','Verkettung, Bloch-Kugel, π₃(S²)=ℤ.']
+  ];
+  $('toolGrid').innerHTML=tools.map(t=>
+    `<a href="${t[0]}" style="text-decoration:none"><div class="card" style="height:100%;transition:.2s" onmouseover="this.style.borderColor='rgba(94,234,212,.45)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='';this.style.transform=''">
+      <h4 style="margin:0 0 6px;color:#fff;font-size:15px">${t[1]}</h4>
+      <p style="font-size:12.5px;margin:0">${t[2]}</p></div></a>`).join('');
+})();
+
+/* Formeln rendern */
+katex($('mFrage1'),'f:S^3\\longrightarrow S^2');
+katex($('mEuler'),'e^{i\\theta}=\\cos\\theta+i\\sin\\theta \\qquad z=re^{i\\theta}');
+katex($('mStereo'),'\\sigma(p_1,p_2,p_3)=\\left(\\frac{p_1}{1-p_3},\\ \\frac{p_2}{1-p_3}\\right)');
+katex($('mRiem'),'\\mathbb{P}^1_{\\mathbb{C}}=\\{[z_1:z_2]\\}\\cong\\mathbb{C}\\cup\\{\\infty\\}\\cong S^2');
+katex($('mTorus'),'\\begin{aligned}x_1&=(R+r\\cos\\psi)\\cos\\theta\\\\x_2&=(R+r\\cos\\psi)\\sin\\theta\\\\x_3&=r\\sin\\psi\\end{aligned}');
+katex($('mQuatRules'),'i^2=j^2=k^2=-1,\\quad ij=k,\\ jk=i,\\ ki=j,\\quad ji=-k');
+katex($('mHopfMain'),'f:S^3\\to S^2,\\qquad (z_1,z_2)\\longmapsto \\frac{z_2}{z_1}\\in\\mathbb{P}^1_\\mathbb{C}=S^2');
+katex($('mHopfReal'),'f(x_1,x_2,x_3,x_4)=\\big(2(x_1x_3+x_2x_4),\\ 2(x_2x_3-x_1x_4),\\ x_1^2+x_2^2-x_3^2-x_4^2\\big)');
+katex($('mTori'),'(x_1^2+x_2^2+x_3^2+R^2-r^2)^2=4R^2(x_1^2+x_2^2)');
+katex($('mRadii'),'R=\\frac{1+r^2}{2r}\\cdot\\frac{2r}{|1-r^2|}\\ \\ \\text{bzw.}\\ \\ \\big(R_{\\text{groß}},r_{\\text{klein}}\\big)=\\left(\\frac{1+r^2}{|1-r^2|},\\ \\frac{2r}{|1-r^2|}\\right)');
+
+/* =======================================================================
+   1 · KOMPLEXE ZAHLEN
+   ======================================================================= */
+(function complexDemo(){
+  const cv=$('cxCanvas');
+  let a={r:1,t:rad(45)}, b={r:1,t:rad(30)};
+  let drag=null;
+  function sync(){
+    $('vRa').textContent=fmt(a.r);$('vTa').textContent=Math.round(deg(a.t)<0?deg(a.t)+360:deg(a.t))+'°';
+    $('vRb').textContent=fmt(b.r);$('vTb').textContent=Math.round(deg(b.t)<0?deg(b.t)+360:deg(b.t))+'°';
+    $('sRa').value=a.r;$('sTa').value=((deg(a.t)%360)+360)%360;
+    $('sRb').value=b.r;$('sTb').value=((deg(b.t)%360)+360)%360;
+  }
+  window.cxPreset=(ra,ta,rb,tb)=>{a={r:ra,t:rad(ta)};b={r:rb,t:rad(tb)};sync();draw();};
+  ['sRa','sTa','sRb','sTb'].forEach(id=>$(id).addEventListener('input',()=>{
+    a.r=+$('sRa').value;a.t=rad(+$('sTa').value);
+    b.r=+$('sRb').value;b.t=rad(+$('sTb').value);sync();draw();
+  }));
+  ['cxGrid','cxTri','cxSum','cxUnit'].forEach(id=>$(id).addEventListener('change',draw));
+
+  let W,H,ctx,S,cx,cy;
+  function geo(){const o=setupCanvas(cv);ctx=o.ctx;W=o.w;H=o.h;S=Math.min(W,H)/6.4;cx=W/2;cy=H/2;}
+  const toPx=z=>[cx+z[0]*S,cy-z[1]*S];
+  const toZ=(px,py)=>[(px-cx)/S,(cy-py)/S];
+
+  function arrow(z,col,lab,lw=2){
+    const p=toPx(z);
+    ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p[0],p[1]);ctx.stroke();
+    const ang=Math.atan2(p[1]-cy,p[0]-cx);
+    ctx.beginPath();
+    ctx.moveTo(p[0],p[1]);
+    ctx.lineTo(p[0]-9*Math.cos(ang-0.4),p[1]-9*Math.sin(ang-0.4));
+    ctx.lineTo(p[0]-9*Math.cos(ang+0.4),p[1]-9*Math.sin(ang+0.4));
+    ctx.fill();
+    if(lab){ctx.font='600 13px Inter';ctx.fillText(lab,p[0]+9,p[1]-7);}
+    return p;
+  }
+  function draw(){
+    geo();
+    ctx.clearRect(0,0,W,H);
+    // Gitter
+    if($('cxGrid').checked){
+      ctx.strokeStyle='rgba(120,140,220,0.11)';ctx.lineWidth=1;
+      for(let i=-8;i<=8;i++){
+        ctx.beginPath();ctx.moveTo(cx+i*S,0);ctx.lineTo(cx+i*S,H);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(0,cy+i*S);ctx.lineTo(W,cy+i*S);ctx.stroke();
+      }
+    }
+    ctx.strokeStyle='rgba(180,195,240,0.42)';ctx.lineWidth=1.3;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    if($('cxUnit').checked){
+      ctx.strokeStyle='rgba(255,255,255,0.22)';ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    }
+    // Marken 1 und i
+    ctx.fillStyle='rgba(220,230,255,.75)';ctx.font='500 11px JetBrains Mono';
+    ctx.fillText('1',cx+S+4,cy+14);ctx.fillText('i',cx+5,cy-S-4);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx+S,cy,3,0,TAU);ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy-S,3,0,TAU);ctx.fill();
+
+    const A=C.pol(a.r,a.t), B=C.pol(b.r,b.t), P=C.mul(A,B), Sm=C.add(A,B);
+
+    if($('cxSum').checked){
+      ctx.strokeStyle='rgba(96,165,250,0.35)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
+      const pa=toPx(A),pb=toPx(B),ps=toPx(Sm);
+      ctx.beginPath();ctx.moveTo(pa[0],pa[1]);ctx.lineTo(ps[0],ps[1]);ctx.lineTo(pb[0],pb[1]);ctx.stroke();
+      ctx.setLineDash([]);
+      arrow(Sm,'#60a5fa','a+b',1.6);
+    }
+    if($('cxTri').checked){
+      // Dreieck 0,1,b  und 0,a,ab
+      const p1=toPx([1,0]),pb=toPx(B),pa=toPx(A),pp=toPx(P);
+      ctx.fillStyle='rgba(251,191,36,0.10)';
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p1[0],p1[1]);ctx.lineTo(pb[0],pb[1]);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(251,191,36,0.5)';ctx.lineWidth=1.3;ctx.stroke();
+      ctx.fillStyle='rgba(251,191,36,0.16)';
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(pa[0],pa[1]);ctx.lineTo(pp[0],pp[1]);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(251,191,36,0.85)';ctx.lineWidth=1.6;ctx.stroke();
+      // Beschriftung der ähnlichen Dreiecke
+      ctx.fillStyle='rgba(251,191,36,0.9)';ctx.font='500 10px JetBrains Mono';
+      ctx.fillText('0,1,b',(cx+p1[0]+pb[0])/3-10,(cy+p1[1]+pb[1])/3+4);
+      ctx.fillText('0,a,ab',(cx+pa[0]+pp[0])/3-12,(cy+pa[1]+pp[1])/3+4);
+      // Winkelbögen
+      ctx.strokeStyle='rgba(251,191,36,0.55)';ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.arc(cx,cy,26,-b.t,0,b.t>0);ctx.stroke();
+      ctx.beginPath();ctx.arc(cx,cy,34,-(a.t+b.t),-a.t,b.t>0);ctx.stroke();
+    }
+    arrow(A,'#5eead4','a');
+    arrow(B,'#f472b6','b');
+    arrow(P,'#fbbf24','a·b',2.4);
+    // Punkte
+    [[A,'#5eead4'],[B,'#f472b6'],[P,'#fbbf24']].forEach(([z,c])=>{
+      const p=toPx(z);ctx.fillStyle=c;ctx.beginPath();ctx.arc(p[0],p[1],5.5,0,TAU);ctx.fill();
+      ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    const dA=((deg(a.t)%360)+360)%360, dB=((deg(b.t)%360)+360)%360;
+    $('cxOut').textContent=
+`a = ${fmt(A[0])} ${A[1]<0?'−':'+'} ${fmt(Math.abs(A[1]))}i   = ${fmt(a.r)}·e^(i·${Math.round(dA)}°)
+b = ${fmt(B[0])} ${B[1]<0?'−':'+'} ${fmt(Math.abs(B[1]))}i   = ${fmt(b.r)}·e^(i·${Math.round(dB)}°)
+──────────────────────────────
+a·b = ${fmt(P[0])} ${P[1]<0?'−':'+'} ${fmt(Math.abs(P[1]))}i
+|a·b| = ${fmt(a.r)} × ${fmt(b.r)} = ${fmt(a.r*b.r)}
+arg   = ${Math.round(dA)}° + ${Math.round(dB)}° = ${Math.round((dA+dB)%360)}°`;
+  }
+  // Maus-Drag
+  function pos(e){const r=cv.getBoundingClientRect();
+    const t=e.touches?e.touches[0]:e;return [t.clientX-r.left,t.clientY-r.top];}
+  cv.addEventListener('pointerdown',e=>{
+    const [px,py]=pos(e);const z=toZ(px,py);
+    const A=C.pol(a.r,a.t),B=C.pol(b.r,b.t);
+    const dA=Math.hypot(z[0]-A[0],z[1]-A[1]),dB=Math.hypot(z[0]-B[0],z[1]-B[1]);
+    if(dA<0.35&&dA<=dB)drag='a';else if(dB<0.35)drag='b';
+    if(drag)cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const [px,py]=pos(e);const z=toZ(px,py);
+    const r=clamp(Math.hypot(z[0],z[1]),0.15,2.2), t=Math.atan2(z[1],z[0]);
+    if(drag==='a')a={r,t};else b={r,t};
+    sync();draw();
+  });
+  addEventListener('pointerup',()=>drag=null);
+  addEventListener('resize',draw);
+  sync();draw();
+})();
+
+/* Euler-Reihe */
+(function eulerDemo(){
+  const cv=$('euCanvas');
+  function draw(){
+    const N=+$('sEuN').value, th=rad(+$('sEuT').value);
+    $('vEuN').textContent=N;$('vEuT').textContent=$('sEuT').value+'°';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const S=Math.min(W,H)/3.4, cx=W/2, cy=H/2;
+    const toPx=z=>[cx+z[0]*S,cy-z[1]*S];
+    // Achsen
+    ctx.strokeStyle='rgba(120,140,220,0.13)';ctx.lineWidth=1;
+    for(let i=-6;i<=6;i++){
+      ctx.beginPath();ctx.moveTo(cx+i*S,0);ctx.lineTo(cx+i*S,H);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,cy+i*S);ctx.lineTo(W,cy+i*S);ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(180,195,240,0.35)';
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    // Einheitskreis
+    ctx.strokeStyle='rgba(94,234,212,0.30)';ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    // Reihe
+    let sum=[0,0], term=[1,0];
+    const pts=[[0,0]];
+    for(let n=0;n<N;n++){
+      sum=C.add(sum,term);
+      pts.push(sum.slice());
+      term=C.scale(C.mul(term,[0,th]),1/(n+1));
+    }
+    // Kette
+    for(let i=0;i<pts.length-1;i++){
+      const p=toPx(pts[i]),q=toPx(pts[i+1]);
+      const hue=260-i*8;
+      ctx.strokeStyle=`hsla(${hue},80%,68%,0.85)`;ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();
+      ctx.fillStyle=`hsla(${hue},80%,70%,0.9)`;
+      ctx.beginPath();ctx.arc(q[0],q[1],2.5,0,TAU);ctx.fill();
+    }
+    const exact=[Math.cos(th),Math.sin(th)];
+    const pe=toPx(exact), pa=toPx(sum);
+    // Verbindung Näherung → exakt
+    ctx.strokeStyle='rgba(255,255,255,0.28)';ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(pa[0],pa[1]);ctx.lineTo(pe[0],pe[1]);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#5eead4';ctx.beginPath();ctx.arc(pe[0],pe[1],6,0,TAU);ctx.fill();
+    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(pa[0],pa[1],5,0,TAU);ctx.fill();
+    ctx.fillStyle='#dfe4f5';ctx.font='600 11px JetBrains Mono';
+    ctx.fillText('e^(iθ)',pe[0]+9,pe[1]-8);
+    ctx.fillText('Σ',pa[0]+9,pa[1]+14);
+    const err=Math.hypot(sum[0]-exact[0],sum[1]-exact[1]);
+    $('euOut').textContent=
+`Σ (N=${N})   = ${fmt(sum[0],4)} + ${fmt(sum[1],4)}i
+e^(iθ) exakt = ${fmt(exact[0],4)} + ${fmt(exact[1],4)}i
+Fehler       = ${err.toExponential(2)}
+|Σ|          = ${fmt(Math.hypot(sum[0],sum[1]),4)}  (Ziel: 1)`;
+  }
+  ['sEuN','sEuT'].forEach(id=>$(id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* Funktionen als Gitterverformung */
+(function fnDemo(){
+  let mode='sq', probe=null;
+  const fns={
+    sq:{f:z=>C.mul(z,z), t:'z²', d:'Winkel verdoppeln, Betrag quadrieren.'},
+    cube:{f:z=>C.mul(C.mul(z,z),z), t:'z³', d:'Winkel verdreifachen.'},
+    inv:{f:z=>{const d=z[0]*z[0]+z[1]*z[1]||1e-9;return [z[0]/d,-z[1]/d];}, t:'1/z', d:'Inversion am Einheitskreis + Spiegelung.'},
+    conj:{f:z=>[z[0],-z[1]], t:'z̄', d:'Spiegelung an der reellen Achse.'},
+    moeb:{f:z=>C.div(C.sub(z,[1,0]),C.add(z,[1,0])), t:'(z−1)/(z+1)', d:'Möbiustransformation: Kreise → Kreise.'},
+    zz2:{f:z=>C.mul(z,C.sub(z,[2,0])), t:'z(z−2)', d:'Zwei Nullstellen: 0 und 2.'}
+  };
+  [...$('fnTabs').children].forEach(b=>b.addEventListener('click',()=>{
+    [...$('fnTabs').children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');mode=b.dataset.fn;draw();
+  }));
+  $('sMorph').addEventListener('input',()=>{$('vMorph').textContent=fmt(+$('sMorph').value);draw();});
+
+  function panel(cv,pts,lines,S,lab){
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2;
+    ctx.strokeStyle='rgba(180,195,240,0.28)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    ctx.strokeStyle='rgba(94,234,212,0.22)';ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    return {ctx,W,H,cx,cy};
+  }
+
+  function draw(){
+    const m=+$('sMorph').value;
+    const f=fns[mode].f;
+    const RA=2.2;
+    const oA=setupCanvas($('fnA')), oB=setupCanvas($('fnB'));
+    const SA=Math.min(oA.w,oA.h)/(2*RA+0.6);
+    // Bildbereich automatisch
+    let maxR=0;
+    const NL=13, NS=60;
+    const gridLines=[];
+    for(let i=0;i<NL;i++){
+      const u=-RA+2*RA*i/(NL-1);
+      const L1=[],L2=[];
+      for(let k=0;k<NS;k++){
+        const v=-RA+2*RA*k/(NS-1);
+        L1.push([u,v]);L2.push([v,u]);
+      }
+      gridLines.push({pts:L1,c:`hsla(${190+i*8},85%,62%,0.65)`});
+      gridLines.push({pts:L2,c:`hsla(${310+i*6},80%,66%,0.55)`});
+    }
+    const imgLines=gridLines.map(L=>({c:L.c,pts:L.pts.map(z=>{
+      const w=f(z);
+      const r=[lerp(z[0],w[0],m),lerp(z[1],w[1],m)];
+      maxR=Math.max(maxR,Math.abs(r[0]),Math.abs(r[1]));
+      return r;})}));
+    const RB=clamp(maxR,1.2,9);
+    const SB=Math.min(oB.w,oB.h)/(2*RB+0.4);
+
+    function render(o,lines,S,label,unitR){
+      const ctx=o.ctx,W=o.w,H=o.h,cx=W/2,cy=H/2;
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='rgba(180,195,240,0.25)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+      ctx.strokeStyle='rgba(94,234,212,0.20)';ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+      lines.forEach(L=>{
+        ctx.strokeStyle=L.c;ctx.lineWidth=1.1;ctx.beginPath();
+        let started=false;
+        L.pts.forEach(p=>{
+          const X=cx+p[0]*S, Y=cy-p[1]*S;
+          if(!isFinite(X)||!isFinite(Y)||Math.abs(X)>1e5||Math.abs(Y)>1e5){started=false;return;}
+          if(Math.abs(X-cx)>W*3||Math.abs(Y-cy)>H*3){started=false;return;}
+          if(!started){ctx.moveTo(X,Y);started=true;}else ctx.lineTo(X,Y);
+        });
+        ctx.stroke();
+      });
+      ctx.fillStyle='rgba(223,228,245,.6)';ctx.font='600 11px JetBrains Mono';
+      ctx.fillText(label,10,18);
+      return {cx,cy,S};
+    }
+    const gA=render(oA,gridLines,SA,'z-Ebene');
+    const gB=render(oB,imgLines,SB,'w = '+fns[mode].t);
+
+    if(probe){
+      const w=f(probe);
+      const wm=[lerp(probe[0],w[0],m),lerp(probe[1],w[1],m)];
+      const pA=[gA.cx+probe[0]*gA.S,gA.cy-probe[1]*gA.S];
+      const pB=[gB.cx+wm[0]*gB.S,gB.cy-wm[1]*gB.S];
+      oA.ctx.fillStyle='#fbbf24';oA.ctx.beginPath();oA.ctx.arc(pA[0],pA[1],6,0,TAU);oA.ctx.fill();
+      oA.ctx.strokeStyle='rgba(251,191,36,.5)';oA.ctx.lineWidth=1.3;
+      oA.ctx.beginPath();oA.ctx.moveTo(gA.cx,gA.cy);oA.ctx.lineTo(pA[0],pA[1]);oA.ctx.stroke();
+      if(isFinite(pB[0])&&isFinite(pB[1])){
+        oB.ctx.fillStyle='#fbbf24';oB.ctx.beginPath();oB.ctx.arc(pB[0],pB[1],6,0,TAU);oB.ctx.fill();
+        oB.ctx.strokeStyle='rgba(251,191,36,.5)';oB.ctx.lineWidth=1.3;
+        oB.ctx.beginPath();oB.ctx.moveTo(gB.cx,gB.cy);oB.ctx.lineTo(pB[0],pB[1]);oB.ctx.stroke();
+      }
+      const az=((deg(C.arg(probe))%360)+360)%360, aw=((deg(C.arg(w))%360)+360)%360;
+      $('fnOut').textContent=
+`${fns[mode].d}
+z = ${fmt(probe[0])} + ${fmt(probe[1])}i     |z| = ${fmt(C.abs(probe))}   arg = ${Math.round(az)}°
+w = ${fmt(w[0])} + ${fmt(w[1])}i     |w| = ${fmt(C.abs(w))}   arg = ${Math.round(aw)}°`;
+    }else{
+      $('fnOut').textContent=fns[mode].d+'\nBewege die Maus über das linke Bild.';
+    }
+  }
+  $('fnA').addEventListener('pointermove',e=>{
+    const r=$('fnA').getBoundingClientRect();
+    const o=setupCanvas($('fnA'));
+    const S=Math.min(o.w,o.h)/(2*2.2+0.6);
+    probe=[((e.clientX-r.left)-o.w/2)/S, (o.h/2-(e.clientY-r.top))/S];
+    draw();
+  });
+  $('fnA').addEventListener('pointerleave',()=>{probe=null;draw();});
+  addEventListener('resize',draw);draw();
+})();
+
+/* Windungszahl */
+(function windingDemo(){
+  function draw(){
+    const mx=+$('sWx').value,my=+$('sWy').value,rho=+$('sWr').value;
+    $('vWx').textContent=fmt(mx);$('vWy').textContent=fmt(my);$('vWr').textContent=fmt(rho);
+    const f=z=>C.mul(z,C.sub(z,[2,0])); // z(z-2)
+    const N=520;
+    const src=[],img=[];
+    for(let k=0;k<=N;k++){
+      const t=k/N*TAU;
+      const z=[mx+rho*Math.cos(t),my+rho*Math.sin(t)];
+      src.push(z);img.push(f(z));
+    }
+    // Windungszahl
+    let tot=0;
+    for(let k=0;k<N;k++){
+      let d=C.arg(img[k+1])-C.arg(img[k]);
+      while(d>PI)d-=TAU; while(d<-PI)d+=TAU;
+      tot+=d;
+    }
+    const wn=Math.round(tot/TAU);
+    function panel(cv,pts,extra){
+      const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h,cx=W/2,cy=H/2;
+      ctx.clearRect(0,0,W,H);
+      let mx2=0;pts.forEach(p=>{mx2=Math.max(mx2,Math.abs(p[0]),Math.abs(p[1]));});
+      const S=Math.min(W,H)/(2*Math.max(mx2,1.2)+0.8);
+      ctx.strokeStyle='rgba(180,195,240,0.25)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+      // Kurve, farbcodiert nach t
+      for(let k=0;k<pts.length-1;k++){
+        const h=k/pts.length*360;
+        ctx.strokeStyle=`hsl(${h},85%,62%)`;ctx.lineWidth=2.1;
+        ctx.beginPath();
+        ctx.moveTo(cx+pts[k][0]*S,cy-pts[k][1]*S);
+        ctx.lineTo(cx+pts[k+1][0]*S,cy-pts[k+1][1]*S);
+        ctx.stroke();
+      }
+      // Nullstellen markieren
+      if(extra)extra.forEach(z=>{
+        ctx.fillStyle='#fff';ctx.strokeStyle='#f472b6';ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(cx+z[0]*S,cy-z[1]*S,5,0,TAU);ctx.fill();ctx.stroke();
+      });
+      // Ursprung
+      ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(cx,cy,4.5,0,TAU);ctx.fill();
+      ctx.fillStyle='rgba(223,228,245,.55)';ctx.font='600 10px JetBrains Mono';
+      ctx.fillText('0',cx+7,cy+14);
+    }
+    panel($('wnA'),src,[[0,0],[2,0]]);
+    panel($('wnB'),img,null);
+    const inside=[[0,0],[2,0]].filter(z=>Math.hypot(z[0]-mx,z[1]-my)<rho).length;
+    $('wnOut').textContent=
+`f(z) = z(z−2)   Nullstellen bei 0 und 2
+Kreis: Mittelpunkt (${fmt(mx)}, ${fmt(my)}), Radius ${fmt(rho)}
+Nullstellen im Inneren: ${inside}
+► Windungszahl des Bildes um 0:  ${wn}`;
+  }
+  ['sWx','sWy','sWr'].forEach(id=>$(id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   2 · SPHÄREN
+   ======================================================================= */
+(function sphereDemo(){
+  let n=0;
+  const info={
+    0:{h:'S⁰ — die Null-Sphäre',t:'Zwei Punkte: {−1, +1}. Null Parameter nötig, um einen davon zu beschreiben — man muss nur „welchen?" sagen. Die einzige unzusammenhängende Sphäre.',e:'x₁² = 1   ⟹   x₁ = ±1'},
+    1:{h:'S¹ — der Kreis',t:'Ein Parameter: der Winkel θ. Als komplexe Zahlen: die „Einheiten" e^{iθ}. Das Produkt zweier Einheiten ist wieder eine Einheit — S¹ ist eine Gruppe!',e:'x₁² + x₂² = 1   ⟹   (cos θ, sin θ)'},    2:{h:'S² — die Kugeloberfläche',t:'Zwei Parameter: Länge und Breite. Die Erdoberfläche. Als Riemannsche Sphäre ist sie zugleich ℂ ∪ {∞} — die komplexe projektive Gerade ℙ¹_ℂ. Das wird die BASIS der Hopf-Faserung.',e:'x₁² + x₂² + x₃² = 1'},
+    3:{h:'S³ — die drei-Sphäre',t:'Drei Parameter. Lebt in ℝ⁴ = ℂ², also: alle Paare (z₁,z₂) komplexer Zahlen mit |z₁|²+|z₂|² = 1. Zugleich die Menge der Einheits-Quaternionen — und damit eine GRUPPE. Das wird der TOTALRAUM.',e:'x₁² + x₂² + x₃² + x₄² = 1\n   ⟺  |z₁|² + |z₂|² = 1'}
+  };
+  function pts(n,a,b,c){
+    if(n===0) return {data:[{type:'scatter3d',mode:'markers',x:[-1,1],y:[0,0],z:[0,0],
+      marker:{size:14,color:['#f472b6','#5eead4']}}]};
+    if(n===1){
+      const t=[],x=[],y=[];
+      for(let k=0;k<=200;k++){const u=k/200*TAU;x.push(Math.cos(u));y.push(Math.sin(u));}
+      return {data:[
+        {type:'scatter3d',mode:'lines',x:x,y:y,z:x.map(()=>0),line:{width:6,color:'#5eead4'}},
+        {type:'scatter3d',mode:'markers',x:[Math.cos(a)],y:[Math.sin(a)],z:[0],marker:{size:9,color:'#fbbf24'}},
+        {type:'scatter3d',mode:'lines',x:[0,Math.cos(a)],y:[0,Math.sin(a)],z:[0,0],line:{width:3,color:'rgba(251,191,36,.6)'}}
+      ]};
+    }
+    if(n===2){
+      const U=40,V=26,X=[],Y=[],Z=[];
+      for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+        for(let j=0;j<=U;j++){const th=j/U*TAU;
+          rx.push(Math.sin(ph)*Math.cos(th));ry.push(Math.sin(ph)*Math.sin(th));rz.push(Math.cos(ph));}
+        X.push(rx);Y.push(ry);Z.push(rz);}
+      const p=[Math.sin(b)*Math.cos(a),Math.sin(b)*Math.sin(a),Math.cos(b)];
+      return {data:[
+        {type:'surface',x:X,y:Y,z:Z,opacity:0.32,showscale:false,
+          colorscale:[[0,'#1e3a8a'],[0.5,'#5eead4'],[1,'#a78bfa']],
+          contours:{x:{show:false},y:{show:false},z:{show:false}}},
+        {type:'scatter3d',mode:'markers',x:[p[0]],y:[p[1]],z:[p[2]],marker:{size:9,color:'#fbbf24'}},
+        {type:'scatter3d',mode:'lines',x:[0,p[0]],y:[0,p[1]],z:[0,p[2]],line:{width:4,color:'rgba(251,191,36,.7)'}}
+      ]};
+    }
+    // n===3 : Zeige S³ als Familie von Kugeln (Farbe = x4)
+    const tr=[];
+    for(let s=-4;s<=4;s++){
+      const x4=s/5;
+      const R=Math.sqrt(Math.max(0,1-x4*x4));
+      const U=26,V=16,X=[],Y=[],Z=[];
+      for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+        for(let j=0;j<=U;j++){const th=j/U*TAU;
+          rx.push(R*Math.sin(ph)*Math.cos(th));ry.push(R*Math.sin(ph)*Math.sin(th));rz.push(R*Math.cos(ph));}
+        X.push(rx);Y.push(ry);Z.push(rz);}
+      const h=((x4+1)/2)*280;
+      tr.push({type:'surface',x:X,y:Y,z:Z,opacity:0.13,showscale:false,
+        colorscale:[[0,`hsl(${h},85%,55%)`],[1,`hsl(${h},85%,55%)`]],
+        contours:{x:{show:false},y:{show:false},z:{show:false}}});
+    }
+    const x4=Math.cos(c), rr=Math.sin(c);
+    const p=[rr*Math.sin(b)*Math.cos(a),rr*Math.sin(b)*Math.sin(a),rr*Math.cos(b)];
+    tr.push({type:'scatter3d',mode:'markers',x:[p[0]],y:[p[1]],z:[p[2]],
+      marker:{size:11,color:`hsl(${((x4+1)/2)*280},90%,62%)`,line:{color:'#fff',width:2}}});
+    return {data:tr};
+  }
+  function upd(){
+    const a=rad(+$('sSphA').value), b=rad(+$('sSphB').value), c=rad(+$('sSphC').value);
+    $('vSphA').textContent=$('sSphA').value+'°';
+    $('vSphB').textContent=$('sSphB').value+'°';
+    $('vSphC').textContent=$('sSphC').value+'°';
+    const i=info[n];
+    $('sphInfo').innerHTML=`<h3 style="margin-top:0">${i.h}</h3><p style="font-size:13.5px">${i.t}</p>`;
+    $('sphEq').textContent=i.e;
+    $('sphCtrl1').style.display=n>=1?'block':'none';
+    $('sphCtrl2').style.display=n>=2?'block':'none';
+    $('sphCtrl3').style.display=n>=3?'block':'none';
+    const o=pts(n,a,b,c);
+    Plotly.react('sphPlot',o.data,pl3d({scene:{
+      xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+      aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',camera:{eye:{x:1.5,y:1.5,z:1.1}}}}),PLCFG);
+  }
+  [...$('sphStep').children].forEach(b=>b.addEventListener('click',()=>{
+    [...$('sphStep').children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');n=+b.dataset.n;upd();
+  }));
+  ['sSphA','sSphB','sSphC'].forEach(id=>$(id).addEventListener('input',upd));
+  upd();
+})();
+
+/* S³ als Film von 3D-Kugeln */
+(function hyperSlice(){
+  let playing=false,t0=0;
+  function draw(){
+    const x4=+$('sSlice').value;
+    $('vSlice').textContent=fmt(x4);
+    const R=Math.sqrt(Math.max(0,1-x4*x4));
+    const U=44,V=28,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const th=j/U*TAU;
+        rx.push(R*Math.sin(ph)*Math.cos(th));ry.push(R*Math.sin(ph)*Math.sin(th));rz.push(R*Math.cos(ph));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    const h=((x4+1)/2)*300;
+    const data=[
+      {type:'surface',x:X,y:Y,z:Z,opacity:0.55,showscale:false,
+        colorscale:[[0,`hsl(${h},80%,42%)`],[1,`hsl(${h},90%,68%)`]],
+        contours:{x:{show:false},y:{show:false},z:{show:false}}},
+      // Referenz: Äquatorsphäre
+      {type:'scatter3d',mode:'lines',
+        x:Array.from({length:101},(_,k)=>Math.cos(k/100*TAU)),
+        y:Array.from({length:101},(_,k)=>Math.sin(k/100*TAU)),
+        z:Array.from({length:101},()=>0),line:{width:2,color:'rgba(255,255,255,.25)'}}
+    ];
+    Plotly.react('sliceHyper',data,pl3d({scene:{
+      xaxis:{range:[-1.1,1.1],visible:false},yaxis:{range:[-1.1,1.1],visible:false},
+      zaxis:{range:[-1.1,1.1],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.5,z:1.0}}}}),PLCFG);
+    let s='';
+    if(Math.abs(x4)>0.97)s='→ fast ein Punkt: der Pol von S³';
+    else if(Math.abs(x4)<0.03)s='→ die ÄQUATOR-SPHÄRE S² (Radius 1)';
+    else s=x4>0?'→ nördliche Schale':'→ südliche Schale';
+    $('sliceOut').textContent=
+`x₄ = ${fmt(x4)}
+Radius der Schnittkugel = √(1 − x₄²) = ${fmt(R,3)}
+${s}`;
+  }
+  $('sSlice').addEventListener('input',()=>{playing=false;$('slicePlay').textContent='▶ Film abspielen';draw();});
+  $('slicePlay').addEventListener('click',()=>{
+    playing=!playing;$('slicePlay').textContent=playing?'⏸ pausieren':'▶ Film abspielen';
+    if(playing){t0=performance.now();loop();}
+  });
+  function loop(){
+    if(!playing)return;
+    const t=(performance.now()-t0)/2600;
+    $('sSlice').value=(0.99*Math.sin(t*TAU)).toFixed(2);
+    draw();requestAnimationFrame(loop);
+  }
+  draw();
+})();
+
+/* Knoten in 4D */
+(function knot4d(){
+  const cv=$('knotCanvas');
+  function draw(){
+    const un=+$('sKnot').value/100, lift=+$('sKnot4').value;
+    $('vKnot').textContent=$('sKnot').value+'%';
+    $('vKnot4').textContent=fmt(lift,1);
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,S=Math.min(W,H)/5.2;
+    const N=420;
+    const segs=[];
+    for(let k=0;k<=N;k++){
+      const t=k/N*TAU;
+      // Kleeblattknoten
+      let x=Math.sin(t)+2*Math.sin(2*t);
+      let y=Math.cos(t)-2*Math.cos(2*t);
+      let z=-Math.sin(3*t);
+      // Entknoten: interpoliere zum Kreis
+      const cxx=2.2*Math.cos(t), cyy=2.2*Math.sin(t), czz=0;
+      x=lerp(x,cxx,un);y=lerp(y,cyy,un);z=lerp(z,czz,un);
+      // 4. Koordinate: nur an den "oberen" Strängen angehoben
+      const w=lift*Math.sin(3*t)*(1-un*0.15);
+      segs.push({x,y,z,w,t});
+    }
+    // zeichnen, sortiert nach z (Tiefe)
+    const lines=[];
+    for(let k=0;k<N;k++){
+      const a=segs[k],b=segs[k+1];
+      lines.push({a,b,depth:(a.z+b.z)/2});
+    }
+    lines.sort((p,q)=>p.depth-q.depth);
+    lines.forEach(L=>{
+      const {a,b}=L;
+      const da=1/(1+a.z*0.13), db=1/(1+b.z*0.13);
+      const ax=cx+a.x*S*da, ay=cy-a.y*S*da;
+      const bx=cx+b.x*S*db, by=cy-b.y*S*db;
+      // Farbe = 4. Koordinate
+      const wv=(a.w+b.w)/2;
+      let col;
+      if(Math.abs(lift)<0.02) col='#5eead4';
+      else{
+        const u=clamp((wv+1)/2,0,1);
+        col=`hsl(${lerp(330,205,u)},88%,${lerp(58,64,u)}%)`;
+      }
+      ctx.strokeStyle=col;ctx.lineWidth=5.5;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+    });
+    ctx.fillStyle='rgba(223,228,245,.65)';ctx.font='500 11px JetBrains Mono';
+    ctx.fillText(lift<0.05?'echter Knoten (3D)':'4. Koordinate aktiv → entknotbar',12,20);
+  }
+  ['sKnot','sKnot4'].forEach(id=>$(id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   3 · STEREOGRAPHISCHE PROJEKTION
+   ======================================================================= */
+(function stereo2d(){
+  const cv=$('stCanvas');
+  let drag=false;
+  function draw(){
+    const ang=rad(+$('sStA').value);
+    $('vStA').textContent=fmt(+$('sStA').value,1)+'°';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const S=Math.min(W/7.5,H/3.4);
+    const cx=W/2, cy=H*0.68;
+    const px=x=>cx+x*S, py=y=>cy-y*S;
+    // Ebene (x-Achse)
+    ctx.strokeStyle='rgba(180,195,240,0.5)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(0,py(0));ctx.lineTo(W,py(0));ctx.stroke();
+    ctx.fillStyle='rgba(180,195,240,.55)';ctx.font='500 11px JetBrains Mono';
+    ctx.fillText('Bildebene  (ℝ)',12,py(0)-8);
+    // Kreis
+    ctx.strokeStyle='rgba(94,234,212,0.85)';ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.arc(px(0),py(0),S,0,TAU);ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,.5)';ctx.fillText('S¹',px(0)-S-26,py(0)-6);
+    // Gleichmäßige Punkte → Verzerrung
+    if($('stGrid').checked){
+      for(let k=1;k<36;k++){
+        const a=k/36*TAU;
+        if(Math.abs(a-PI/2)<0.02)continue;
+        const p=[Math.cos(a),Math.sin(a)];
+        const im=p[0]/(1-p[1]);
+        if(!isFinite(im)||Math.abs(im)>40)continue;
+        ctx.fillStyle='rgba(167,139,250,.55)';
+        ctx.beginPath();ctx.arc(px(p[0]),py(p[1]),2.8,0,TAU);ctx.fill();
+        ctx.fillStyle='rgba(167,139,250,.35)';
+        ctx.beginPath();ctx.arc(px(im),py(0),2.8,0,TAU);ctx.fill();
+        ctx.strokeStyle='rgba(167,139,250,.12)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(px(0),py(1));ctx.lineTo(px(im),py(0));ctx.stroke();
+      }
+    }
+    // Spur
+    if($('stTrail').checked){
+      ctx.strokeStyle='rgba(94,234,212,.3)';ctx.lineWidth=1.5;
+      ctx.beginPath();
+      for(let k=1;k<=400;k++){
+        const a=k/400*TAU*0.999+0.001;
+        const p=[Math.cos(a),Math.sin(a)];
+        const im=p[0]/(1-p[1]);
+        if(!isFinite(im)||Math.abs(im)>40){ctx.stroke();ctx.beginPath();continue;}
+        const yy=py(0)- (Math.abs(im)<1?0:0);
+        if(k===1)ctx.moveTo(px(im),yy);else ctx.lineTo(px(im),yy);
+      }
+      ctx.stroke();
+    }
+    const p=[Math.cos(ang),Math.sin(ang)];
+    const im=p[0]/(1-p[1]);
+    // Strahl
+    ctx.strokeStyle='rgba(251,191,36,.9)';ctx.lineWidth=1.8;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(px(0),py(1));
+    if(isFinite(im)&&Math.abs(im)<200)ctx.lineTo(px(im),py(0));
+    else ctx.lineTo(px(p[0]*60),py(p[1]*60));
+    ctx.stroke();ctx.setLineDash([]);
+    // N
+    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(px(0),py(1),6,0,TAU);ctx.fill();
+    ctx.fillStyle='#fbbf24';ctx.font='600 12px JetBrains Mono';ctx.fillText('N = ∞',px(0)+10,py(1)-8);
+    // p
+    ctx.fillStyle='#f472b6';ctx.beginPath();ctx.arc(px(p[0]),py(p[1]),7,0,TAU);ctx.fill();
+    ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.6;ctx.stroke();
+    // Bild
+    if(isFinite(im)&&Math.abs(im)<200){
+      ctx.fillStyle='#5eead4';ctx.beginPath();ctx.arc(px(im),py(0),7,0,TAU);ctx.fill();
+      ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.6;ctx.stroke();
+      ctx.fillStyle='#5eead4';ctx.font='600 11px JetBrains Mono';
+      ctx.fillText('σ(p) = '+fmt(im,2),px(im)+10,py(0)+20);
+    }
+    const hemi=p[1]>0?'Nordhalbkugel → |σ| > 1 (Außenraum)':p[1]<0?'Südhalbkugel → |σ| < 1 (Innenraum)':'Äquator → |σ| = 1 (unverzerrt)';
+    $('stOut').textContent=
+`p = (${fmt(p[0])}, ${fmt(p[1])})
+σ(p) = p₁/(1 − p₂) = ${isFinite(im)?fmt(im,3):'∞'}
+${hemi}`;
+  }
+  cv.addEventListener('pointerdown',e=>{drag=true;move(e);cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(drag)move(e);});
+  addEventListener('pointerup',()=>drag=false);
+  function move(e){
+    const r=cv.getBoundingClientRect();
+    const o=setupCanvas(cv);
+    const S=Math.min(o.w/7.5,o.h/3.4);
+    const cx=o.w/2, cy=o.h*0.68;
+    const x=((e.clientX-r.left)-cx)/S, y=(cy-(e.clientY-r.top))/S;
+    let a=deg(Math.atan2(y,x));if(a<0)a+=360;
+    a=clamp(a,1,359);
+    $('sStA').value=a.toFixed(1);draw();
+  }
+  $('sStA').addEventListener('input',draw);
+  ['stTrail','stGrid'].forEach(id=>$(id).addEventListener('change',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* Stereo 3D: S² → Ebene, Kreise bleiben Kreise */
+(function stereo3d(){
+  function sphereMesh(){
+    const U=40,V=26,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const th=j/U*TAU;
+        rx.push(Math.sin(ph)*Math.cos(th));ry.push(Math.sin(ph)*Math.sin(th));rz.push(Math.cos(ph));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    return {type:'surface',x:X,y:Y,z:Z,opacity:0.18,showscale:false,
+      colorscale:[[0,'#1e3a8a'],[1,'#a78bfa']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'};
+  }
+  function draw(){
+    const lat=rad(+$('sS3Lat').value), tilt=rad(+$('sS3Tilt').value);
+    $('vS3Lat').textContent=$('sS3Lat').value+'°';
+    $('vS3Tilt').textContent=$('sS3Tilt').value+'°';
+    const data=[sphereMesh()];
+    // Ebene z=0
+    data.push({type:'surface',
+      x:[[-3,3],[-3,3]],y:[[-3,-3],[3,3]],z:[[0,0],[0,0]],
+      opacity:0.10,showscale:false,colorscale:[[0,'#5eead4'],[1,'#5eead4']],hoverinfo:'skip'});
+    // Netz projizieren
+    if($('s3Mesh').checked){
+      for(let m=0;m<12;m++){
+        const lon=m/12*TAU;
+        const sx=[],sy=[],sz=[],px=[],py=[],pz=[];
+        for(let k=0;k<=120;k++){
+          const ph=k/120*PI*0.985+0.0075;
+          const p=[Math.sin(ph)*Math.cos(lon),Math.sin(ph)*Math.sin(lon),Math.cos(ph)];
+          sx.push(p[0]);sy.push(p[1]);sz.push(p[2]);
+          const q=stereo3(p);
+          if(Math.hypot(q[0],q[1])<9){px.push(q[0]);py.push(q[1]);pz.push(0);}
+        }
+        data.push({type:'scatter3d',mode:'lines',x:sx,y:sy,z:sz,
+          line:{width:2,color:`hsla(${m*30},80%,68%,0.55)`},hoverinfo:'skip'});
+        data.push({type:'scatter3d',mode:'lines',x:px,y:py,z:pz,
+          line:{width:2.5,color:`hsla(${m*30},85%,62%,0.9)`},hoverinfo:'skip'});
+      }
+      for(let m=1;m<6;m++){
+        const ph=m/6*PI;
+        const sx=[],sy=[],sz=[],px=[],py=[],pz=[];
+        for(let k=0;k<=120;k++){
+          const th=k/120*TAU;
+          const p=[Math.sin(ph)*Math.cos(th),Math.sin(ph)*Math.sin(th),Math.cos(ph)];
+          sx.push(p[0]);sy.push(p[1]);sz.push(p[2]);
+          const q=stereo3(p);
+          if(Math.hypot(q[0],q[1])<9){px.push(q[0]);py.push(q[1]);pz.push(0);}
+        }
+        data.push({type:'scatter3d',mode:'lines',x:sx,y:sy,z:sz,
+          line:{width:2,color:'rgba(94,234,212,0.4)'},hoverinfo:'skip'});
+        data.push({type:'scatter3d',mode:'lines',x:px,y:py,z:pz,
+          line:{width:2.5,color:'rgba(94,234,212,0.8)'},hoverinfo:'skip'});
+      }
+    }
+    // Der gewählte Kreis auf der Sphäre (Breitengrad + Kippung)
+    const cs=[],ss=[],zs=[],ix=[],iy=[],iz=[];
+    const ct=Math.cos(tilt),st=Math.sin(tilt);
+    const h=Math.sin(lat); // Höhe des Kreismittelpunkts entlang der Kippachse
+    const rr=Math.sqrt(Math.max(0,1-h*h));
+    const rays=[];
+    for(let k=0;k<=240;k++){
+      const t=k/240*TAU;
+      // Kreis in der Ebene senkrecht zur gekippten Achse n=(sin tilt,0,cos tilt)
+      const n=[st,0,ct];
+      const e1=[ct,0,-st], e2=[0,1,0];
+      const p=[h*n[0]+rr*(Math.cos(t)*e1[0]+Math.sin(t)*e2[0]),
+               h*n[1]+rr*(Math.cos(t)*e1[1]+Math.sin(t)*e2[1]),
+               h*n[2]+rr*(Math.cos(t)*e1[2]+Math.sin(t)*e2[2])];
+      cs.push(p[0]);ss.push(p[1]);zs.push(p[2]);
+      const q=stereo3(p);
+      if(isFinite(q[0])&&Math.hypot(q[0],q[1])<25){ix.push(q[0]);iy.push(q[1]);iz.push(0);}
+      if(k%24===0)rays.push([p,q]);
+    }
+    data.push({type:'scatter3d',mode:'lines',x:cs,y:ss,z:zs,
+      line:{width:7,color:'#fbbf24'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'lines',x:ix,y:iy,z:iz,
+      line:{width:7,color:'#f472b6'},hoverinfo:'skip'});
+    if($('s3Rays').checked){
+      rays.forEach(([p,q])=>{
+        if(!isFinite(q[0])||Math.hypot(q[0],q[1])>25)return;
+        data.push({type:'scatter3d',mode:'lines',x:[0,q[0]],y:[0,q[1]],z:[1,0],
+          line:{width:1.4,color:'rgba(251,191,36,0.35)'},hoverinfo:'skip'});
+      });
+    }
+    data.push({type:'scatter3d',mode:'markers',x:[0],y:[0],z:[1],
+      marker:{size:7,color:'#fbbf24'},hoverinfo:'skip'});
+    Plotly.react('st3d',data,pl3d({scene:{
+      xaxis:{range:[-4,4],visible:false},yaxis:{range:[-4,4],visible:false},
+      zaxis:{range:[-1.4,1.4],visible:false},aspectmode:'manual',
+      aspectratio:{x:1,y:1,z:0.4},bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.4,y:-1.6,z:0.9}}}}),PLCFG);
+    const touchesN = Math.abs(h*ct + rr*(-st)*1) ; // grobe Prüfung
+    const dN = Math.min(...cs.map((_,k)=>Math.hypot(cs[k]-0,ss[k]-0,zs[k]-1)));
+    $('s3Out').textContent=
+`Kreis auf S²: Breitengrad ${$('sS3Lat').value}°, Kippung ${$('sS3Tilt').value}°
+Abstand zum Nordpol: ${fmt(dN,3)}
+Bild in der Ebene: ${dN<0.06?'► GERADE (Kreis durch ∞)':'► KREIS'}`;
+  }
+  ['sS3Lat','sS3Tilt'].forEach(id=>$(id).addEventListener('input',draw));
+  ['s3Mesh','s3Rays'].forEach(id=>$(id).addEventListener('change',draw));
+  draw();
+})();
+
+/* Apollonische Kreise */
+(function apollonius(){
+  const cv=$('apoCanvas');
+  function draw(){
+    const a=+$('sApo').value;
+    $('vApo').textContent=fmt(a);
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const S=Math.min(W,H)/6.2, cx=W/2, cy=H/2;
+    ctx.strokeStyle='rgba(180,195,240,0.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    // Hyperbolische Familie: Kreise mit p,p' invers → Apollonius-Kreise |z-a|/|z+a| = k
+    if($('apoH').checked){
+      for(let n=1;n<=9;n++){
+        [1,-1].forEach(sg=>{
+          const k=Math.exp(sg*n*0.42);
+          if(Math.abs(k-1)<1e-6)return;
+          const cxx=a*(k*k+1)/(k*k-1);
+          const R=Math.abs(2*a*k/(k*k-1));
+          ctx.strokeStyle=`hsla(${168+n*4},80%,${58-n*1.2}%,0.8)`;ctx.lineWidth=1.7;
+          ctx.beginPath();ctx.arc(cx+cxx*S,cy,R*S,0,TAU);ctx.stroke();
+        });
+      }
+      // Degenerierter Fall: die Mittelsenkrechte
+      ctx.strokeStyle='rgba(94,234,212,0.6)';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+      ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();ctx.setLineDash([]);
+    }
+    // Elliptische Familie: alle Kreise durch p und p'
+    if($('apoE').checked){
+      for(let n=1;n<=9;n++){
+        [1,-1].forEach(sg=>{
+          const yy=sg*a/Math.tan(n*0.30);
+          const R=Math.hypot(a,yy);
+          ctx.strokeStyle=`hsla(${322+n*3},82%,${64-n*1.4}%,0.75)`;ctx.lineWidth=1.6;
+          ctx.beginPath();ctx.arc(cx,cy-yy*S,R*S,0,TAU);ctx.stroke();
+        });
+      }
+      ctx.strokeStyle='rgba(244,114,182,0.6)';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+      ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.setLineDash([]);
+    }
+    // Pole
+    [[-a,'#fbbf24','p'],[a,'#fbbf24','p′']].forEach(([x,c,l])=>{
+      ctx.fillStyle=c;ctx.beginPath();ctx.arc(cx+x*S,cy,6,0,TAU);ctx.fill();
+      ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.6;ctx.stroke();
+      ctx.fillStyle=c;ctx.font='600 12px JetBrains Mono';ctx.fillText(l,cx+x*S+9,cy-9);
+    });
+  }
+  $('sApo').addEventListener('input',draw);
+  ['apoE','apoH'].forEach(id=>$(id).addEventListener('change',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   4 · RIEMANNSCHE SPHÄRE
+   ======================================================================= */
+(function riemann(){
+  let mob='id';
+  [...$('mobTabs').children].forEach(b=>b.addEventListener('click',()=>{
+    [...$('mobTabs').children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');mob=b.dataset.m;draw();
+  }));
+  function applyMob(z,t){
+    let w;
+    switch(mob){
+      case 'mul_i': w=C.mul(z,[Math.cos(t*PI/2),Math.sin(t*PI/2)]);break;
+      case 'mul_2': w=C.scale(z,Math.pow(2,t));break;
+      case 'inv': {
+        // interpoliere über die Sphäre: drehe um 180° um x-Achse
+        const p=invStereo3(z[0],z[1]);
+        const ang=t*PI;
+        const q=[p[0],p[1]*Math.cos(ang)-p[2]*Math.sin(ang),p[1]*Math.sin(ang)+p[2]*Math.cos(ang)];
+        w=stereo3(q);break;
+      }
+      default: w=z;
+    }
+    return w;
+  }
+  function draw(){
+    const x=+$('sRiX').value,y=+$('sRiY').value,t=+$('sMob').value;
+    $('vRiX').textContent=fmt(x);$('vRiY').textContent=fmt(y);$('vMob').textContent=fmt(t);
+    const z0=[x,y];
+    const z=applyMob(z0,t);
+    const U=48,V=30,X=[],Y=[],Z=[],CS=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[],rc=[];
+      for(let j=0;j<=U;j++){const th=j/U*TAU;
+        rx.push(Math.sin(ph)*Math.cos(th));ry.push(Math.sin(ph)*Math.sin(th));rz.push(Math.cos(ph));
+        rc.push(((Math.floor(j/U*12)+Math.floor(i/V*8))%2));}
+      X.push(rx);Y.push(ry);Z.push(rz);CS.push(rc);}
+    const data=[{type:'surface',x:X,y:Y,z:Z,surfacecolor:CS,opacity:0.5,showscale:false,
+      colorscale:[[0,'#16213e'],[1,'#2d4a7c']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'}];
+    // Ebene
+    data.push({type:'surface',x:[[-3,3],[-3,3]],y:[[-3,-3],[3,3]],z:[[-1,-1],[-1,-1]],
+      opacity:0.09,showscale:false,colorscale:[[0,'#5eead4'],[1,'#5eead4']],hoverinfo:'skip'});
+    // Punkt in der Ebene und auf der Sphäre
+    const P=invStereo3(z[0],z[1]);
+    data.push({type:'scatter3d',mode:'markers',x:[z[0]],y:[z[1]],z:[-1],
+      marker:{size:8,color:'#5eead4'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'markers',x:[P[0]],y:[P[1]],z:[P[2]],
+      marker:{size:10,color:'#fbbf24'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'lines',x:[0,z[0]],y:[0,z[1]],z:[1,-1],
+      line:{width:3,color:'rgba(251,191,36,0.55)',dash:'dot'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'markers',x:[0],y:[0],z:[1],
+      marker:{size:8,color:'#f472b6'},hoverinfo:'skip'});
+    // Bahnkurve der Transformation
+    if(mob!=='id'){
+      const bx=[],by=[],bz=[];
+      for(let k=0;k<=80;k++){
+        const w=applyMob(z0,k/80);
+        const p=invStereo3(w[0],w[1]);
+        bx.push(p[0]);by.push(p[1]);bz.push(p[2]);
+      }
+      data.push({type:'scatter3d',mode:'lines',x:bx,y:by,z:bz,
+        line:{width:4,color:'#a78bfa'},hoverinfo:'skip'});
+    }
+    Plotly.react('riemPlot',data,pl3d({scene:{
+      xaxis:{range:[-2.5,2.5],visible:false},yaxis:{range:[-2.5,2.5],visible:false},
+      zaxis:{range:[-1.2,1.3],visible:false},aspectmode:'manual',
+      aspectratio:{x:1,y:1,z:0.55},bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.4,y:-1.5,z:0.8}}}}),PLCFG);
+    $('riemOut').textContent=
+`z        = ${fmt(z[0])} + ${fmt(z[1])}i     |z| = ${fmt(C.abs(z))}
+[z₁:z₂]  = [1 : ${fmt(z[0])}+${fmt(z[1])}i]
+auf S²   = (${fmt(P[0])}, ${fmt(P[1])}, ${fmt(P[2])})
+Nordpol (0,0,1) ≙ z = ∞ ,  Südpol (0,0,−1) ≙ z = 0`;
+  }
+  ['sRiX','sRiY','sMob'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* =======================================================================
+   5 · TORUS
+   ======================================================================= */
+(function torusDemo(){
+  function draw(){
+    const R=+$('sTR').value, r=+$('sTr').value;
+    const p=+$('sTp').value, q=+$('sTq').value, frac=+$('sTt').value/100;
+    $('vTR').textContent=fmt(R);$('vTr').textContent=fmt(r);
+    $('vTp').textContent=p;$('vTq').textContent=q;$('vTt').textContent=$('sTt').value+'%';
+    const U=64,V=40,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const ps=i/V*TAU,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const th=j/U*TAU;
+        rx.push((R+r*Math.cos(ps))*Math.cos(th));
+        ry.push((R+r*Math.cos(ps))*Math.sin(th));
+        rz.push(r*Math.sin(ps));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    const data=[{type:'surface',x:X,y:Y,z:Z,opacity:0.30,showscale:false,
+      colorscale:[[0,'#1e3a8a'],[0.5,'#5eead4'],[1,'#a78bfa']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'}];
+    if($('tShowGrid').checked){
+      // θ-Kreis (groß, um die Achse)
+      const ax=[],ay=[],az=[];
+      for(let k=0;k<=160;k++){const th=k/160*TAU;
+        ax.push((R+r)*Math.cos(th));ay.push((R+r)*Math.sin(th));az.push(0);}
+      data.push({type:'scatter3d',mode:'lines',x:ax,y:ay,z:az,
+        line:{width:5,color:'#fbbf24'},hoverinfo:'skip'});
+      // ψ-Kreis (klein, um die Röhre)
+      const bx=[],by=[],bz=[];
+      for(let k=0;k<=160;k++){const ps=k/160*TAU;
+        bx.push(R+r*Math.cos(ps));by.push(0);bz.push(r*Math.sin(ps));}
+      data.push({type:'scatter3d',mode:'lines',x:bx,y:by,z:bz,
+        line:{width:5,color:'#f472b6'},hoverinfo:'skip'});
+    }
+    if($('tShowCurve').checked){
+      const N=900, lim=Math.floor(N*frac);
+      const cx=[],cy=[],cz=[];
+      for(let k=0;k<=lim;k++){
+        const t=k/N*TAU;
+        const th=p*t, ps=q*t;
+        cx.push((R+r*Math.cos(ps))*Math.cos(th));
+        cy.push((R+r*Math.cos(ps))*Math.sin(th));
+        cz.push(r*Math.sin(ps));
+      }
+      data.push({type:'scatter3d',mode:'lines',x:cx,y:cy,z:cz,
+        line:{width:6,color:'#5eead4'},hoverinfo:'skip'});
+    }
+    Plotly.react('torusPlot',data,pl3d({scene:{
+      xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+      aspectmode:'data',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.3,y:1.3,z:1.0}}}}),PLCFG);
+    const g=(function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;})(p,q);
+    $('torusOut').textContent=
+`Großer Radius R = ${fmt(R)},  kleiner Radius r = ${fmt(r)}
+(p,q) = (${p}, ${q})   ggT = ${g}
+► ${g===1?'Ein einziger geschlossener Knoten ('+p+','+q+')-Torusknoten':'Zerfällt in '+g+' getrennte Kurven'}
+Die Hopf-Fasern sind (1,1)-Kurven — Steigung ±1.`;
+  }
+  ['sTR','sTr','sTp','sTq','sTt'].forEach(id=>$(id).addEventListener('input',draw));
+  ['tShowGrid','tShowCurve'].forEach(id=>$(id).addEventListener('change',draw));
+  draw();
+})();
+
+/* Asteroids-Torus */
+(function asteroids(){
+  const cv=$('astCanvas');
+  window.setAst=s=>{$('sAstS').value=s;draw();};
+  function draw(){
+    const sl=+$('sAstS').value, L=+$('sAstL').value/100;
+    $('vAstS').textContent=fmt(sl);$('vAstL').textContent=$('sAstL').value+'%';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const M=22, S=Math.min(W-2*M,H-2*M);
+    const x0=(W-S)/2, y0=(H-S)/2;
+    // Quadrat
+    ctx.fillStyle='rgba(20,26,50,0.65)';ctx.fillRect(x0,y0,S,S);
+    ctx.strokeStyle='rgba(120,140,220,0.35)';ctx.lineWidth=1;
+    for(let i=1;i<8;i++){
+      ctx.beginPath();ctx.moveTo(x0+i*S/8,y0);ctx.lineTo(x0+i*S/8,y0+S);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x0,y0+i*S/8);ctx.lineTo(x0+S,y0+i*S/8);ctx.stroke();
+    }
+    // Kanten-Paare farbig
+    ctx.lineWidth=4;
+    ctx.strokeStyle='#fbbf24';
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0,y0+S);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0+S,y0);ctx.lineTo(x0+S,y0+S);ctx.stroke();
+    ctx.strokeStyle='#f472b6';
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+S,y0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0,y0+S);ctx.lineTo(x0+S,y0+S);ctx.stroke();
+    // Pfeile zur Identifikation
+    ctx.fillStyle='#fbbf24';ctx.font='600 10px JetBrains Mono';
+    ctx.fillText('θ →',x0+S/2-12,y0-7);
+    ctx.fillStyle='#f472b6';ctx.fillText('ψ ↑',x0-18,y0+S/2);
+    // Linie mit Steigung, wrap-around
+    const steps=1400;
+    let px=0,py=0;
+    ctx.lineWidth=2.6;ctx.lineCap='round';
+    let closed=false, firstReturn=null;
+    for(let k=0;k<steps*L;k++){
+      const dt=1/steps*Math.max(1,Math.abs(sl))*3.4;
+      let nx=px+dt, ny=py+dt*sl;
+      const hue=(k/steps*300)%360;
+      ctx.strokeStyle=`hsl(${hue},85%,64%)`;
+      // Segment ggf. splitten an den Rändern
+      const segs=[[px,py,nx,ny]];
+      ctx.beginPath();
+      const wx=a=>x0+((a%1)+1)%1*S, wy=b=>y0+S-((b%1)+1)%1*S;
+      const sx=wx(px), sy=wy(py);
+      const ex=wx(nx), ey=wy(ny);
+      // Wenn ein Wrap stattfindet, Segment abbrechen
+      const wrapped = Math.floor(nx)!==Math.floor(px) || Math.floor(ny)!==Math.floor(py);
+      if(!wrapped){
+        ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+      }
+      px=nx;py=ny;
+      if(!firstReturn && k>10 && Math.abs(((px%1)+1)%1)<0.004 && Math.abs(((py%1)+1)%1)<0.004){
+        firstReturn=k;closed=true;
+      }
+    }
+    // Startpunkt
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.arc(x0,y0+S,5,0,TAU);ctx.fill();
+    // rational?
+    let info;
+    const approx=(function(x,maxq){
+      let best=[1,1],err=1e9;
+      for(let q=1;q<=maxq;q++){const p=Math.round(x*q);const e=Math.abs(x-p/q);
+        if(e<err){err=e;best=[p,q];}}
+      return {p:best[0],q:best[1],err};
+    })(sl,40);
+    if(approx.err<1e-6){
+      info=`Steigung = ${approx.p}/${approx.q}  →  RATIONAL
+Die Kurve schließt sich nach ${Math.abs(approx.q)} Runden in θ-Richtung.
+Auf dem Torus: ein (${approx.q},${approx.p})-Torusknoten.`;
+    }else{
+      info=`Steigung ≈ ${fmt(sl,4)}  →  vermutlich IRRATIONAL
+Die Kurve schließt sich NIE und liegt dicht im ganzen Quadrat.
+(Solche Bahnen heißen „irrationale Wicklung".)`;
+    }
+    if(Math.abs(Math.abs(sl)-1)<1e-9)
+      info+=`\n★ Steigung ±1 = genau die HOPF-FASERN.`;
+    $('astOut').textContent=info;
+  }
+  ['sAstS','sAstL'].forEach(id=>$(id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   6 · QUATERNIONEN
+   ======================================================================= */
+(function quatTable(){
+  const B=['1','i','j','k'];
+  const V={'1':[1,0,0,0],'i':[0,1,0,0],'j':[0,0,1,0],'k':[0,0,0,1]};
+  function nameOf(q){
+    const idx=q.findIndex(x=>Math.abs(x)>0.5);
+    const s=q[idx]>0?'':'−';
+    return s+B[idx];
+  }
+  let html='<table class="t" style="text-align:center"><tr><th style="text-align:center">×</th>';
+  B.forEach(b=>html+=`<th style="text-align:center;color:#f472b6">${b}</th>`);
+  html+='</tr>';
+  B.forEach(a=>{
+    html+=`<tr><td style="color:#5eead4;font-weight:700">${a}</td>`;
+    B.forEach(b=>{
+      const r=Q.mul(V[a],V[b]);
+      const n=nameOf(r);
+      const anti=(a!=='1'&&b!=='1'&&a!==b);
+      html+=`<td class="qc" data-a="${a}" data-b="${b}" style="cursor:pointer;text-align:center;
+        color:${n[0]==='−'?'#f472b6':'#dfe4f5'};font-weight:600;
+        background:${anti?'rgba(167,139,250,.07)':'transparent'}">${n}</td>`;
+    });
+    html+='</tr>';
+  });
+  html+='</table>';
+  $('qTable').innerHTML=html;
+  [...document.querySelectorAll('.qc')].forEach(td=>{
+    td.addEventListener('click',()=>{
+      const a=td.dataset.a,b=td.dataset.b;
+      const r1=nameOf(Q.mul(V[a],V[b])), r2=nameOf(Q.mul(V[b],V[a]));
+      $('qTableOut').textContent=
+`${a} · ${b} = ${r1}
+${b} · ${a} = ${r2}
+${r1===r2?'► kommutiert (mindestens ein Faktor ist 1 oder beide gleich)':'► KOMMUTIERT NICHT!  Reihenfolge ändert das Vorzeichen.'}`;
+    });
+  });
+})();
+
+(function quatCalc(){
+  function get(p){return [ +$('sQ'+p+'a').value, +$('sQ'+p+'b').value, +$('sQ'+p+'c').value, +$('sQ'+p+'d').value ];}
+  function draw(){
+    ['1','2'].forEach(p=>['a','b','c','d'].forEach(c=>{
+      $('vQ'+p+c).textContent=fmt(+$('sQ'+p+c).value);
+    }));
+    const q1=get('1'), q2=get('2');
+    const pr=Q.mul(q1,q2), pr2=Q.mul(q2,q1);
+    const same=pr.every((x,i)=>Math.abs(x-pr2[i])<1e-9);
+    $('qCalc').textContent=
+`q₁ = ${Q.str(q1)}        |q₁| = ${fmt(Q.norm(q1),3)}
+q₂ = ${Q.str(q2)}        |q₂| = ${fmt(Q.norm(q2),3)}
+──────────────────────────────────────────────
+q₁·q₂ = ${Q.str(pr)}
+q₂·q₁ = ${Q.str(pr2)}
+${same?'► hier kommutieren sie zufällig':'► q₁q₂ ≠ q₂q₁ — nicht kommutativ!'}
+|q₁q₂| = ${fmt(Q.norm(pr),3)}  =  |q₁|·|q₂| = ${fmt(Q.norm(q1)*Q.norm(q2),3)}  ✔
+q₁⁻¹  = ${Q.str(Q.inv(q1))}`;
+  }
+  ['1','2'].forEach(p=>['a','b','c','d'].forEach(c=>{
+    $('sQ'+p+c).addEventListener('input',draw);
+  }));
+  draw();
+})();
+
+/* Rotation q⁻¹pq */
+(function rotDemo(){
+  function draw(){
+    const az=rad(+$('sRotAz').value), el=rad(+$('sRotEl').value), th=rad(+$('sRotTh').value);
+    $('vRotAz').textContent=$('sRotAz').value+'°';
+    $('vRotEl').textContent=$('sRotEl').value+'°';
+    $('vRotTh').textContent=$('sRotTh').value+'°';
+    const u=[Math.cos(el)*Math.cos(az),Math.cos(el)*Math.sin(az),Math.sin(el)];
+    const q=[Math.cos(th/2),u[0]*Math.sin(th/2),u[1]*Math.sin(th/2),u[2]*Math.sin(th/2)];
+    // Referenzobjekt: ein "Tetraeder-Fähnchen" + Koordinatenkreuz
+    const base=[[1,0,0],[0,1,0],[0,0,1]];
+    const cols=['#f472b6','#5eead4','#60a5fa'];
+    const data=[];
+    // Einheitskugel
+    const U=30,V=20,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const t=j/U*TAU;
+        rx.push(Math.sin(ph)*Math.cos(t));ry.push(Math.sin(ph)*Math.sin(t));rz.push(Math.cos(ph));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    data.push({type:'surface',x:X,y:Y,z:Z,opacity:0.12,showscale:false,
+      colorscale:[[0,'#1e3a8a'],[1,'#a78bfa']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'});
+    // Achse
+    data.push({type:'scatter3d',mode:'lines',
+      x:[-1.5*u[0],1.5*u[0]],y:[-1.5*u[1],1.5*u[1]],z:[-1.5*u[2],1.5*u[2]],
+      line:{width:7,color:'#fbbf24'},hoverinfo:'skip'});
+    base.forEach((b,i)=>{
+      const r=rotR(q,b);
+      data.push({type:'scatter3d',mode:'lines',x:[0,b[0]],y:[0,b[1]],z:[0,b[2]],
+        line:{width:3,color:cols[i],dash:'dot'},opacity:0.45,hoverinfo:'skip'});
+      data.push({type:'scatter3d',mode:'lines+markers',x:[0,r[0]],y:[0,r[1]],z:[0,r[2]],
+        line:{width:7,color:cols[i]},marker:{size:[0,6],color:cols[i]},hoverinfo:'skip'});
+      // Bahnkurve
+      const bx=[],by=[],bz=[];
+      for(let k=0;k<=60;k++){
+        const t2=th*k/60;
+        const qq=[Math.cos(t2/2),u[0]*Math.sin(t2/2),u[1]*Math.sin(t2/2),u[2]*Math.sin(t2/2)];
+        const p=rotR(qq,b);bx.push(p[0]);by.push(p[1]);bz.push(p[2]);
+      }
+      data.push({type:'scatter3d',mode:'lines',x:bx,y:by,z:bz,
+        line:{width:2,color:cols[i]},opacity:0.5,hoverinfo:'skip'});
+    });
+    Plotly.react('rotPlot',data,pl3d({scene:{
+      xaxis:{range:[-1.6,1.6],visible:false},yaxis:{range:[-1.6,1.6],visible:false},
+      zaxis:{range:[-1.6,1.6],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.5,z:1.0}}}}),PLCFG);
+    const eff=((+$('sRotTh').value)%360+360)%360;
+    $('rotOut').textContent=
+`u = (${fmt(u[0])}, ${fmt(u[1])}, ${fmt(u[2])})    |u| = 1
+q = cos(θ/2) + u·sin(θ/2)
+  = ${Q.str(q)}
+|q| = ${fmt(Q.norm(q),4)}   → liegt auf S³ ✔
+Drehwinkel θ = ${$('sRotTh').value}°  (wirksam: ${eff}°)
+${Math.abs(+$('sRotTh').value-360)<1?'★ q = −1, aber die Drehung ist die IDENTITÄT!':''}
+${Math.abs(+$('sRotTh').value-720)<1?'★ Erst jetzt ist q wieder = +1.':''}`;
+  }
+  ['sRotAz','sRotEl','sRotTh'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* =======================================================================
+   7 · FASERUNG (Möbius vs. Zylinder)
+   ======================================================================= */
+(function fibrationDemo(){
+  const cv=$('fibCanvas');
+  function draw(){
+    const tw=+$('sFibTw').value, pt=rad(+$('sFibP').value);
+    $('vFibTw').textContent=fmt(tw);$('vFibP').textContent=$('sFibP').value+'°';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H*0.46, R=Math.min(W,H)*0.28, hw=Math.min(W,H)*0.13;
+    // Band als Streifen zeichnen
+    const N=180;
+    const quads=[];
+    for(let k=0;k<N;k++){
+      const t0=k/N*TAU, t1=(k+1)/N*TAU;
+      function pt3(t,s){
+        const a=t*tw/2;
+        const rr=R+s*hw*Math.cos(a);
+        const zz=s*hw*Math.sin(a);
+        return [rr*Math.cos(t),rr*Math.sin(t),zz];
+      }
+      const A=pt3(t0,-1),B=pt3(t0,1),Cq=pt3(t1,1),D=pt3(t1,-1);
+      quads.push({p:[A,B,Cq,D],t:t0});
+    }
+    // Projektion
+    const el=0.55, ca=Math.cos(el), sa=Math.sin(el);
+    function proj(p){
+      const y=p[1]*ca-p[2]*sa, z=p[1]*sa+p[2]*ca;
+      return [cx+p[0],cy-y*0.75+z*0.0, z];
+    }
+    quads.sort((a,b)=>{
+      const za=a.p.reduce((s,q)=>s+proj(q)[2],0)/4;
+      const zb=b.p.reduce((s,q)=>s+proj(q)[2],0)/4;
+      return za-zb;
+    });
+    quads.forEach(q=>{
+      const P=q.p.map(proj);
+      const hue=lerp(190,320,q.t/TAU);
+      ctx.fillStyle=`hsla(${hue},80%,${lerp(38,58,(P[0][2]+hw)/(2*hw))}%,0.55)`;
+      ctx.strokeStyle=`hsla(${hue},80%,66%,0.25)`;
+      ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);
+      for(let i=1;i<4;i++)ctx.lineTo(P[i][0],P[i][1]);
+      ctx.closePath();ctx.fill();ctx.stroke();
+    });
+    // Fasern
+    if($('fibShowFibers').checked){
+      for(let m=0;m<24;m++){
+        const t=m/24*TAU;
+        const a=t*tw/2;
+        const A=[(R-hw*Math.cos(a))*Math.cos(t),(R-hw*Math.cos(a))*Math.sin(t),-hw*Math.sin(a)];
+        const B=[(R+hw*Math.cos(a))*Math.cos(t),(R+hw*Math.cos(a))*Math.sin(t),hw*Math.sin(a)];
+        const pA=proj(A),pB=proj(B);
+        ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.moveTo(pA[0],pA[1]);ctx.lineTo(pB[0],pB[1]);ctx.stroke();
+      }
+    }
+    // gewählte Faser hervorheben
+    {
+      const t=pt, a=t*tw/2;
+      const A=[(R-hw*Math.cos(a))*Math.cos(t),(R-hw*Math.cos(a))*Math.sin(t),-hw*Math.sin(a)];
+      const B=[(R+hw*Math.cos(a))*Math.cos(t),(R+hw*Math.cos(a))*Math.sin(t),hw*Math.sin(a)];
+      const pA=proj(A),pB=proj(B);
+      ctx.strokeStyle='#fbbf24';ctx.lineWidth=4;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(pA[0],pA[1]);ctx.lineTo(pB[0],pB[1]);ctx.stroke();
+    }
+    // Basiskreis unten
+    const by=H*0.87, bR=Math.min(W,H)*0.22;
+    ctx.strokeStyle='rgba(94,234,212,0.7)';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.ellipse(cx,by,bR,bR*0.28,0,0,TAU);ctx.stroke();
+    const bp=[cx+bR*Math.cos(pt),by-bR*0.28*Math.sin(pt)];
+    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(bp[0],bp[1],6,0,TAU);ctx.fill();
+    ctx.fillStyle='rgba(94,234,212,.75)';ctx.font='600 11px JetBrains Mono';
+    ctx.fillText('Basis X = S¹',cx-bR-4,by+30);
+    ctx.fillStyle='rgba(251,191,36,.9)';ctx.fillText('Faser über x',bp[0]+10,bp[1]+16);
+    $('fibOut').textContent=
+`Verdrehung = ${fmt(tw)}
+${tw<0.02?'► ZYLINDER: S¹ × [−1,1]. Trivial. Es gibt ein durchgehendes „Oben".'
+ :tw>0.98?'► MÖBIUSBAND: nach einer Runde ist Oben zu Unten geworden. NICHT trivial.'
+ :'► dazwischen: die Fasern werden verdreht ...'}
+Lokal sehen beide GLEICH aus — der Unterschied zeigt sich erst global.`;
+  }
+  ['sFibTw','sFibP'].forEach(id=>$(id).addEventListener('input',draw));
+  $('fibShowFibers').addEventListener('change',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   8 · DIE HOPF-ABBILDUNG — Beweis-Stepper
+   ======================================================================= */
+(function proofStepper(){
+  const steps=[
+    {t:`<h3 style="margin-top:0">Schritt 1 · Eine ganze Kreisfamilie landet am selben Ort</h3>
+     <p style="font-size:13.5px">Sei λ = e<sup>iα</sup> eine komplexe Zahl mit |λ| = 1.
+     Dann liegt mit (z₁, z₂) auch (λz₁, λz₂) auf S³, denn
+     |λz| = |λ|·|z| = |z|. Und das Bild ändert sich nicht:</p>
+     <div class="readout">f(λz₁, λz₂) = λz₂ / λz₁ = z₂ / z₁ = f(z₁, z₂)</div>
+     <p style="font-size:13.5px">Das λ kürzt sich einfach weg. Also liegt der <b>ganze Kreis</b>
+     {(λz₁, λz₂) : |λ| = 1} über demselben Punkt von S².</p>`},
+    {t:`<h3 style="margin-top:0">Schritt 2 · Und zwar NUR diese Kreisfamilie</h3>
+     <p style="font-size:13.5px">Umgekehrt: Angenommen f(z₁,z₂) = f(w₁,w₂).
+     Schreibe alles in Polarform: z₁ = r₁e<sup>iθ₁</sup>, z₂ = r₂e<sup>iθ₂</sup>,
+     w₁ = s₁e<sup>iφ₁</sup>, w₂ = s₂e<sup>iφ₂</sup>.</p>
+     <div class="readout">z₂/z₁ = w₂/w₁
+⟹  r₂/r₁ = s₂/s₁   und   θ₂−θ₁ = φ₂−φ₁
+zusammen mit r₁²+r₂² = s₁²+s₂² = 1
+⟹  r₁ = s₁ ,  r₂ = s₂
+⟹  λ = e^{i(φ₁−θ₁)}  leistet (w₁,w₂) = (λz₁, λz₂)</div>
+     <p style="font-size:13.5px">Die Beträge werden durch die Sphärenbedingung <i>erzwungen</i>,
+     und die Phasendifferenz ist fest — also bleibt genau <b>ein</b> freier Phasenparameter übrig.</p>`},
+    {t:`<h3 style="margin-top:0">Schritt 3 · Die Faser ist ein echter geometrischer Kreis</h3>
+     <p style="font-size:13.5px">Die Faser ist die Menge
+     {(λz₁, λz₂) : λ ∈ S¹}. In reellen Koordinaten ist das der Schnitt von S³ mit einer
+     <b>2-Ebene durch den Ursprung</b> von ℝ⁴ — also ein <b>Großkreis</b>.</p>
+     <p style="font-size:13.5px">Denn: Multiplikation mit λ = cos α + i sin α ist eine
+     <i>lineare</i> Abbildung von ℝ⁴, die die von (z₁,z₂) und (iz₁,iz₂) aufgespannte Ebene
+     in sich dreht. Schnitt Ebene ∩ Sphäre = Kreis mit Radius 1.</p>
+     <div class="readout">Faser über z  =  span_ℝ{ (z₁,z₂), (iz₁,iz₂) }  ∩  S³   =  Großkreis</div>`},
+    {t:`<h3 style="margin-top:0">Fazit</h3>
+     <p style="font-size:13.5px">Wir haben eine <b>Faserung</b>:</p>
+     <div class="readout">Faser  Y = S¹      (die Phase λ)
+Basis  X = S²      (das Verhältnis z₂/z₁)
+Total  Z = S³      (alle Paare (z₁,z₂) mit |z₁)|²+|z₂|² = 1)
+
+       S¹  ↪  S³  ──f──▶  S²</div>
+     <p style="font-size:13.5px">Über <i>jedem</i> Punkt von S² hängt genau ein Kreis.
+     Alle Kreise zusammen ergeben lückenlos S³. Und — wie wir gleich sehen — sind je zwei
+     davon <b>verkettet</b>. Deshalb ist diese Faserung <b>nicht trivial</b>:
+     S³ ≠ S² × S¹.</p>`}
+  ];
+  let cur=0;
+  function upd(){
+    $('proofText').innerHTML=steps[cur].t;
+    [...$('proofStep').children].forEach((b,i)=>b.classList.toggle('active',i===cur));
+    drawC();
+  }
+  [...$('proofStep').children].forEach(b=>b.addEventListener('click',()=>{cur=+b.dataset.s;upd();}));
+  const cv=$('proofCanvas');
+  function drawC(){
+    const al=rad(+$('sProofA').value);
+    $('vProofA').textContent=$('sProofA').value+'°';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    // Zwei komplexe Ebenen nebeneinander: z1 und z2
+    const pad=14;
+    const halfW=(W-3*pad)/2;
+    const S=Math.min(halfW,H-2*pad)/2.35;
+    const c1=[pad+halfW/2, H/2], c2=[2*pad+halfW+halfW/2, H/2];
+    // Basispunkt (fix gewählt, damit die Faser sichtbar wird)
+    const eta=rad(52), x1=rad(25), x2=rad(70);
+    const z1=C.pol(Math.cos(eta),x1+al);
+    const z2=C.pol(Math.sin(eta),x2+al);
+    function plane(c,label,z,rad0,col){
+      ctx.strokeStyle='rgba(120,140,220,0.13)';ctx.lineWidth=1;
+      for(let i=-2;i<=2;i++){
+        ctx.beginPath();ctx.moveTo(c[0]+i*S*0.5,c[1]-S*1.15);ctx.lineTo(c[0]+i*S*0.5,c[1]+S*1.15);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(c[0]-S*1.15,c[1]+i*S*0.5);ctx.lineTo(c[0]+S*1.15,c[1]+i*S*0.5);ctx.stroke();
+      }
+      ctx.strokeStyle='rgba(180,195,240,0.35)';
+      ctx.beginPath();ctx.moveTo(c[0]-S*1.15,c[1]);ctx.lineTo(c[0]+S*1.15,c[1]);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(c[0],c[1]-S*1.15);ctx.lineTo(c[0],c[1]+S*1.15);ctx.stroke();
+      // Kreis mit Radius |z| — die Bahn beim Variieren von λ
+      ctx.strokeStyle=col+'66';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.arc(c[0],c[1],rad0*S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+      const p=[c[0]+z[0]*S,c[1]-z[1]*S];
+      ctx.strokeStyle=col;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(p[0],p[1],6,0,TAU);ctx.fill();
+      ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.4;ctx.stroke();
+      ctx.fillStyle='rgba(223,228,245,.8)';ctx.font='600 12px JetBrains Mono';
+      ctx.fillText(label,c[0]-S*1.1,c[1]-S*1.22);
+    }
+    plane(c1,'z₁-Ebene',z1,Math.cos(eta),'#5eead4');
+    plane(c2,'z₂-Ebene',z2,Math.sin(eta),'#f472b6');
+    // Verbindung: beide drehen sich GLEICH schnell
+    ctx.strokeStyle='rgba(251,191,36,.45)';ctx.setLineDash([3,3]);ctx.lineWidth=1.4;
+    ctx.beginPath();
+    ctx.moveTo(c1[0]+z1[0]*S,c1[1]-z1[1]*S);
+    ctx.lineTo(c2[0]+z2[0]*S,c2[1]-z2[1]*S);
+    ctx.stroke();ctx.setLineDash([]);
+    const ratio=C.div(z2,z1);
+    $('proofOut').textContent=
+`λ = e^(i·${$('sProofA').value}°)
+z₁ = λ·cos(52°)e^(i·25°)   |z₁| = ${fmt(Math.cos(eta),3)}
+z₂ = λ·sin(52°)e^(i·70°)   |z₂| = ${fmt(Math.sin(eta),3)}
+|z₁|² + |z₂|² = ${fmt(Math.cos(eta)**2+Math.sin(eta)**2,3)}  ✔ (immer auf S³)
+──────────────────────────────
+z₂/z₁ = ${fmt(ratio[0],4)} + ${fmt(ratio[1],4)}i    ← ÄNDERT SICH NIE!`;
+  }
+  $('sProofA').addEventListener('input',drawC);
+  addEventListener('resize',drawC);
+  upd();
+})();
+
+/* Hopf-Rechner: Punkt, Ziel, Faser */
+(function hopfCalc(){
+  function draw(){
+    const eta=rad(+$('sHEta').value), x1=rad(+$('sHX1').value),
+          x2=rad(+$('sHX2').value), lam=rad(+$('sHLam').value);
+    $('vHEta').textContent=$('sHEta').value+'°';
+    $('vHX1').textContent=$('sHX1').value+'°';
+    $('vHX2').textContent=$('sHX2').value+'°';
+    $('vHLam').textContent=$('sHLam').value+'°';
+    const z1=C.pol(Math.cos(eta),x1+lam);
+    const z2=C.pol(Math.sin(eta),x2+lam);
+    const X=[z1[0],z1[1],z2[0],z2[1]];
+    const P=hopfMap(X);
+    const z=C.abs(z1)<1e-9?[1e9,0]:C.div(z2,z1);
+    // S² Plot
+    const U=34,V=22,SX=[],SY=[],SZ=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const t=j/U*TAU;
+        rx.push(Math.sin(ph)*Math.cos(t));ry.push(Math.sin(ph)*Math.sin(t));rz.push(Math.cos(ph));}
+      SX.push(rx);SY.push(ry);SZ.push(rz);}
+    const d1=[{type:'surface',x:SX,y:SY,z:SZ,opacity:0.22,showscale:false,
+      colorscale:[[0,'#1e3a8a'],[1,'#a78bfa']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'markers',x:[P[0]],y:[P[1]],z:[P[2]],
+        marker:{size:13,color:s2color(P),line:{color:'#fff',width:2}},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'lines',x:[0,P[0]*1.3],y:[0,P[1]*1.3],z:[0,P[2]*1.3],
+        line:{width:4,color:s2color(P)},hoverinfo:'skip'}];
+    Plotly.react('hopfS2',d1,pl3d({scene:{
+      xaxis:{range:[-1.3,1.3],visible:false},yaxis:{range:[-1.3,1.3],visible:false},
+      zaxis:{range:[-1.3,1.3],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.5,z:0.9}}}}),PLCFG);
+    // Faser
+    const fx=[],fy=[],fz=[];
+    for(let k=0;k<=220;k++){
+      const t=k/220*TAU;
+      const w1=C.pol(Math.cos(eta),x1+t), w2=C.pol(Math.sin(eta),x2+t);
+      const q=stereo4([w1[0],w1[1],w2[0],w2[1]]);
+      if(Math.hypot(q[0],q[1],q[2])<30){fx.push(q[0]);fy.push(q[1]);fz.push(q[2]);}
+      else{fx.push(null);fy.push(null);fz.push(null);}
+    }
+    const cur=stereo4(X);
+    const d2=[{type:'scatter3d',mode:'lines',x:fx,y:fy,z:fz,
+      line:{width:6,color:s2color(P)},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'markers',x:[cur[0]],y:[cur[1]],z:[cur[2]],
+        marker:{size:8,color:'#fbbf24'},hoverinfo:'skip'}];
+    Plotly.react('hopfCircleMini',d2,pl3d({scene:{
+      xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+      aspectmode:'data',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.4,y:1.4,z:1.0}}}}),PLCFG);
+    $('hopfCalcOut').textContent=
+`z₁ = ${fmt(z1[0],3)} + ${fmt(z1[1],3)}i
+z₂ = ${fmt(z2[0],3)} + ${fmt(z2[1],3)}i
+|z₁|²+|z₂|² = ${fmt(C.abs(z1)**2+C.abs(z2)**2,4)}   ✔ auf S³
+──────────────────────────────
+z = z₂/z₁ = ${Math.abs(z[0])>1e6?'∞':fmt(z[0],3)+' + '+fmt(z[1],3)+'i'}
+f(x) auf S² = (${fmt(P[0],3)}, ${fmt(P[1],3)}, ${fmt(P[2],3)})
+|f(x)| = ${fmt(Math.hypot(...P),4)}   ✔ auf S²`;
+  }
+  ['sHEta','sHX1','sHX2','sHLam'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* =======================================================================
+   9 · FASERN & VERKETTUNG
+   ======================================================================= */
+let fiberState={extra:[],anim:null};
+(function fibers(){
+  function sph(lon,lat){
+    const a=rad(lon),b=rad(lat);
+    return [Math.cos(b)*Math.cos(a),Math.cos(b)*Math.sin(a),Math.sin(b)];
+  }
+  function fiberTrace(p,width,name){
+    const z=stereo3(p);
+    const xs=[],ys=[],zs=[];
+    if(!isFinite(z[0])||Math.hypot(z[0],z[1])>1e5){
+      // Faser über ∞ → z-Achse
+      for(let k=-1;k<=1;k+=2){}
+      return {type:'scatter3d',mode:'lines',
+        x:[0,0],y:[0,0],z:[-18,18],
+        line:{width:width,color:s2color(p)},hoverinfo:'skip',name:name};
+    }
+    for(let k=0;k<=260;k++){
+      const t=k/260*TAU;
+      const X=hopfFiberPoint(z,t);
+      const q=stereo4(X);
+      if(Math.hypot(q[0],q[1],q[2])<60){xs.push(q[0]);ys.push(q[1]);zs.push(q[2]);}
+      else{xs.push(null);ys.push(null);zs.push(null);}
+    }
+    return {type:'scatter3d',mode:'lines',x:xs,y:ys,z:zs,
+      line:{width:width,color:s2color(p)},hoverinfo:'skip',name:name};
+  }
+  function baseSphere(pts){
+    const U=40,V=26,SX=[],SY=[],SZ=[];
+    for(let i=0;i<=V;i++){const ph=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const t=j/U*TAU;
+        rx.push(Math.sin(ph)*Math.cos(t));ry.push(Math.sin(ph)*Math.sin(t));rz.push(Math.cos(ph));}
+      SX.push(rx);SY.push(ry);SZ.push(rz);}
+    const d=[{type:'surface',x:SX,y:SY,z:SZ,opacity:0.20,showscale:false,
+      colorscale:[[0,'#16213e'],[1,'#3b2f6e']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'}];
+    pts.forEach(p=>{
+      d.push({type:'scatter3d',mode:'markers',x:[p[0]],y:[p[1]],z:[p[2]],
+        marker:{size:11,color:s2color(p),line:{color:'#fff',width:1.6}},hoverinfo:'skip'});
+    });
+    return d;
+  }
+  function draw(){
+    const A=sph(+$('sFA1').value,+$('sFA2').value);
+    const B=sph(+$('sFB1').value,+$('sFB2').value);
+    const n=+$('sFN').value, tw=+$('sFTube').value;
+    $('vFA1').textContent=$('sFA1').value+'°';$('vFA2').textContent=$('sFA2').value+'°';
+    $('vFB1').textContent=$('sFB1').value+'°';$('vFB2').textContent=$('sFB2').value+'°';
+    $('vFN').textContent=n;$('vFTube').textContent=fmt(tw,1);
+    const pts=[A,B];
+    const extras=[];
+    for(let i=0;i<n;i++){
+      const u=(i+0.5)/n;
+      const lat=Math.acos(1-2*u);
+      const lon=i*2.399963;
+      extras.push([Math.sin(lat)*Math.cos(lon),Math.sin(lat)*Math.sin(lon),Math.cos(lat)]);
+    }
+    Plotly.react('baseS2',baseSphere(pts.concat(extras)),pl3d({scene:{
+      xaxis:{range:[-1.25,1.25],visible:false},yaxis:{range:[-1.25,1.25],visible:false},
+      zaxis:{range:[-1.25,1.25],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.5,z:0.9}}}}),PLCFG);
+    const d=[];
+    extras.forEach(p=>d.push(fiberTrace(p,2.5*tw)));
+    d.push(fiberTrace(A,8*tw,'A'));
+    d.push(fiberTrace(B,8*tw,'B'));
+    Plotly.react('fiberR3',d,pl3d({scene:{
+      xaxis:{range:[-3.2,3.2],visible:false},yaxis:{range:[-3.2,3.2],visible:false},
+      zaxis:{range:[-3.2,3.2],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.4,z:1.0}}}}),PLCFG);
+    // Verkettungszahl (numerisch, Gauß-Integral, grob)
+    const zA=stereo3(A), zB=stereo3(B);
+    let lk='—';
+    if(isFinite(zA[0])&&isFinite(zB[0])&&Math.hypot(zA[0],zA[1])<1e4&&Math.hypot(zB[0],zB[1])<1e4){
+      lk=gaussLink(zA,zB).toFixed(2);
+    }
+    $('linkOut').textContent=
+`Punkt A auf S²: (${fmt(A[0])}, ${fmt(A[1])}, ${fmt(A[2])})  →  z = ${isFinite(zA[0])?fmt(zA[0])+'+'+fmt(zA[1])+'i':'∞'}
+Punkt B auf S²: (${fmt(B[0])}, ${fmt(B[1])}, ${fmt(B[2])})  →  z = ${isFinite(zB[0])?fmt(zB[0])+'+'+fmt(zB[1])+'i':'∞'}
+Verkettungszahl (numerisch berechnet): ${lk}
+► Theoretischer Wert: immer genau 1. Je zwei Fasern sind verhakt.`;
+  }
+  function gaussLink(z1,z2){
+    // Gauß'sches Verschlingungsintegral, grobe Diskretisierung
+    const N=90;
+    const A=[],B=[];
+    for(let k=0;k<N;k++){
+      A.push(stereo4(hopfFiberPoint(z1,k/N*TAU)));
+      B.push(stereo4(hopfFiberPoint(z2,k/N*TAU)));
+    }
+    let s=0;
+    for(let i=0;i<N;i++){
+      const a0=A[i],a1=A[(i+1)%N];
+      const da=[a1[0]-a0[0],a1[1]-a0[1],a1[2]-a0[2]];
+      for(let j=0;j<N;j++){
+        const b0=B[j],b1=B[(j+1)%N];
+        const db=[b1[0]-b0[0],b1[1]-b0[1],b1[2]-b0[2]];
+        const r=[a0[0]-b0[0],a0[1]-b0[1],a0[2]-b0[2]];
+        const rn=Math.hypot(r[0],r[1],r[2]);
+        if(rn<1e-6)continue;
+        const cr=[da[1]*db[2]-da[2]*db[1],da[2]*db[0]-da[0]*db[2],da[0]*db[1]-da[1]*db[0]];
+        s+=(r[0]*cr[0]+r[1]*cr[1]+r[2]*cr[2])/(rn*rn*rn);
+      }
+    }
+    return s/(4*PI);
+  }
+  ['sFA1','sFA2','sFB1','sFB2','sFN','sFTube'].forEach(id=>$(id).addEventListener('input',draw));
+  $('btnPoles').addEventListener('click',()=>{
+    $('sFA1').value=0;$('sFA2').value=-88;$('sFB1').value=0;$('sFB2').value=88;draw();});
+  $('btnEquator').addEventListener('click',()=>{
+    $('sFA1').value=0;$('sFA2').value=0;$('sFB1').value=90;$('sFB2').value=0;
+    $('sFN').value=24;draw();});
+  $('btnClear').addEventListener('click',()=>{
+    $('sFA1').value=40;$('sFA2').value=30;$('sFB1').value=200;$('sFB2').value=-20;
+    $('sFN').value=0;$('sFTube').value=1;draw();});
+  let animId=null;
+  $('btnLinkDemo').addEventListener('click',function(){
+    if(animId){cancelAnimationFrame(animId);animId=null;this.classList.remove('on');return;}
+    this.classList.add('on');
+    const t0=performance.now();
+    const loop=()=>{
+      const t=(performance.now()-t0)/45;
+      $('sFA1').value=(t%360).toFixed(0);
+      $('sFB1').value=((t*0.7+180)%360).toFixed(0);
+      $('sFA2').value=(50*Math.sin(t/90)).toFixed(0);
+      draw();
+      animId=requestAnimationFrame(loop);
+    };
+    loop();
+  });
+  draw();
+})();
+
+/* Verkettungs-Argument (2D-Skizze) */
+(function linkArgument(){
+  const cv=$('linkArg');
+  function draw(){
+    const pr=+$('sLinkArg').value/100;
+    $('vLinkArg').textContent=$('sLinkArg').value+'%';
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,R=Math.min(W,H)*0.31;
+    // Äquator-Kugel E
+    const g=ctx.createRadialGradient(cx-R*0.3,cy-R*0.3,R*0.1,cx,cy,R);
+    g.addColorStop(0,'rgba(94,234,212,0.16)');
+    g.addColorStop(1,'rgba(30,58,138,0.10)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fill();
+    ctx.strokeStyle='rgba(94,234,212,0.5)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();
+    ctx.fillStyle='rgba(94,234,212,.7)';ctx.font='600 11px JetBrains Mono';
+    ctx.fillText('E = Äquator-S² (Einheitskugel)',12,20);
+    // Faser F (Äquator des Äquators) — Ellipse
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=4;
+    ctx.beginPath();ctx.ellipse(cx,cy,R,R*0.27,0,0,TAU);ctx.stroke();
+    ctx.fillStyle='#fbbf24';ctx.fillText('F',cx+R+8,cy+4);
+    // Eine andere Faser: Kreis durch zwei antipodale Punkte von E
+    const ang=pr*TAU;
+    const th=0.65+0.5*Math.sin(pr*TAU);
+    const p1=[cx+R*Math.cos(th),cy-R*Math.sin(th)];
+    const p2=[cx-R*Math.cos(th),cy+R*Math.sin(th)];
+    // Bogen innen (durch das Innere) und außen
+    ctx.strokeStyle='#f472b6';ctx.lineWidth=3.6;
+    ctx.beginPath();
+    const mx=(p1[0]+p2[0])/2, my=(p1[1]+p2[1])/2;
+    const nx=-(p2[1]-p1[1]), ny=(p2[0]-p1[0]);
+    const nl=Math.hypot(nx,ny)||1;
+    const bulge=R*0.55;
+    ctx.moveTo(p1[0],p1[1]);
+    ctx.quadraticCurveTo(mx+nx/nl*bulge,my+ny/nl*bulge,p2[0],p2[1]);
+    ctx.stroke();
+    // außen
+    ctx.setLineDash([7,5]);
+    ctx.beginPath();
+    ctx.moveTo(p2[0],p2[1]);
+    ctx.bezierCurveTo(
+      p2[0]-nx/nl*R*2.0, p2[1]-ny/nl*R*2.0,
+      p1[0]-nx/nl*R*2.0, p1[1]-ny/nl*R*2.0,
+      p1[0],p1[1]);
+    ctx.stroke();ctx.setLineDash([]);
+    // Durchstoßpunkte
+    [p1,p2].forEach((p,i)=>{
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(p[0],p[1],6,0,TAU);ctx.fill();
+      ctx.strokeStyle='#f472b6';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='rgba(244,114,182,.9)';ctx.font='600 11px JetBrains Mono';
+      ctx.fillText(i===0?'P':'−P (antipodal)',p[0]+10,p[1]-10);
+    });
+    // Beschriftungen
+    ctx.fillStyle='rgba(244,114,182,.85)';ctx.font='500 11px JetBrains Mono';
+    ctx.fillText('Bogen innen (x₄ < 0)',cx-70,cy+R*0.62);
+    ctx.fillText('Bogen außen (x₄ > 0) — gestrichelt',12,H-14);
+    // Mitte
+    ctx.fillStyle='rgba(223,228,245,.5)';
+    ctx.beginPath();ctx.arc(cx,cy,3,0,TAU);ctx.fill();
+    $('vLinkArg').textContent=$('sLinkArg').value+'%';
+  }
+  $('sLinkArg').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   10 · LATITUDINALE TORI
+   ======================================================================= */
+/* Formeln (Übung 4.7): Faser über |z| = r projiziert auf Rotationstorus
+   mit großem Radius R = (1+r²)/|1−r²| und kleinem Radius ρ = 2r/|1−r²|.  */
+function toriRadii(r){
+  const d=Math.abs(1-r*r);
+  if(d<1e-6) return {R:Infinity,rho:Infinity};
+  return {R:(1+r*r)/d, rho:2*r/d};
+}
+window.setTor=v=>{$('sTorR').value=v;$('sTorR').dispatchEvent(new Event('input'));};
+(function toriDemo(){
+  let anim=null;
+  function fiberXYZ(z,N){
+    const xs=[],ys=[],zs=[];
+    for(let k=0;k<=N;k++){
+      const t=k/N*TAU;
+      const q=stereo4(hopfFiberPoint(z,t));
+      if(Math.hypot(q[0],q[1],q[2])<80){xs.push(q[0]);ys.push(q[1]);zs.push(q[2]);}
+      else{xs.push(null);ys.push(null);zs.push(null);}
+    }
+    return {xs,ys,zs};
+  }
+  function torusSurface(r,op,hue){
+    const {R,rho}=toriRadii(r);
+    if(!isFinite(R))return null;
+    const U=70,V=40,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const ps=i/V*TAU,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const th=j/U*TAU;
+        rx.push((R+rho*Math.cos(ps))*Math.cos(th));
+        ry.push((R+rho*Math.cos(ps))*Math.sin(th));
+        rz.push(rho*Math.sin(ps));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    return {type:'surface',x:X,y:Y,z:Z,opacity:op,showscale:false,
+      colorscale:[[0,`hsl(${hue},80%,40%)`],[1,`hsl(${hue},85%,65%)`]],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'};
+  }
+  function draw(){
+    const r=+$('sTorR').value, nF=+$('sTorN').value, K=+$('sTorK').value, op=+$('sTorOp').value;
+    $('vTorR').textContent=fmt(r);$('vTorN').textContent=nF;
+    $('vTorK').textContent=K;$('vTorOp').textContent=fmt(op);
+    const data=[];
+    // Zusätzliche Schalen
+    const shells=[];
+    for(let i=1;i<=K;i++){
+      shells.push(r*Math.pow(2.1,i/1.0));
+      shells.push(r*Math.pow(2.1,-i/1.0));
+    }
+    shells.forEach(rr=>{
+      const hue=(Math.atan(Math.log(rr))/PI+0.5)*300;
+      const s=torusSurface(rr,op*0.5,hue);
+      if(s)data.push(s);
+      // ein paar Fasern
+      for(let m=0;m<5;m++){
+        const ang=m/5*TAU;
+        const z=[rr*Math.cos(ang),rr*Math.sin(ang)];
+        const F=fiberXYZ(z,160);
+        const p=invStereo3(z[0],z[1]);
+        data.push({type:'scatter3d',mode:'lines',x:F.xs,y:F.ys,z:F.zs,
+          line:{width:2,color:s2color(p)},opacity:0.55,hoverinfo:'skip'});
+      }
+    });
+    // Haupttorus
+    const hueM=(Math.atan(Math.log(r))/PI+0.5)*300;
+    const sM=torusSurface(r,op,hueM);
+    if(sM)data.push(sM);
+    for(let m=0;m<nF;m++){
+      const ang=m/nF*TAU;
+      const z=[r*Math.cos(ang),r*Math.sin(ang)];
+      const F=fiberXYZ(z,240);
+      const p=invStereo3(z[0],z[1]);
+      data.push({type:'scatter3d',mode:'lines',x:F.xs,y:F.ys,z:F.zs,
+        line:{width:5,color:s2color(p)},hoverinfo:'skip'});
+    }
+    // Faser über 0: Einheitskreis
+    if($('torUnit').checked){
+      const xs=[],ys=[],zs=[];
+      for(let k=0;k<=180;k++){const t=k/180*TAU;xs.push(Math.cos(t));ys.push(Math.sin(t));zs.push(0);}
+      data.push({type:'scatter3d',mode:'lines',x:xs,y:ys,z:zs,
+        line:{width:9,color:'#fbbf24'},hoverinfo:'skip'});
+    }
+    // Faser über ∞: z-Achse
+    if($('torAxis').checked){
+      data.push({type:'scatter3d',mode:'lines',x:[0,0],y:[0,0],z:[-14,14],
+        line:{width:9,color:'#f472b6'},hoverinfo:'skip'});
+    }
+    const lim=clamp(toriRadii(r).R+toriRadii(r).rho+1,3,14);
+    Plotly.react('toriPlot',data,pl3d({scene:{
+      xaxis:{range:[-lim,lim],visible:false},yaxis:{range:[-lim,lim],visible:false},
+      zaxis:{range:[-lim,lim],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.35,y:1.35,z:0.95}}}}),PLCFG);
+    const {R,rho}=toriRadii(r);
+    $('torOut').textContent=
+`Breitengrad auf der Riemannsphäre: |z| = ${fmt(r)}
+Großer Radius  R = (1+r²)/|1−r²| = ${isFinite(R)?fmt(R,3):'∞'}
+Kleiner Radius ρ = 2r/|1−r²|     = ${isFinite(rho)?fmt(rho,3):'∞'}
+${Math.abs(r-1)<0.02?'★ CLIFFORD-TORUS: |z₁| = |z₂|. Er teilt S³ in zwei gleich große Volltori.':''}
+${r<0.2?'→ schrumpft auf den Einheitskreis (Faser über z = 0)':''}
+${r>5?'→ nähert sich der z-Achse (Faser über z = ∞)':''}
+Auf jedem Torus liegen die Fasern als (1,1)-Kurven.`;
+  }
+  ['sTorR','sTorN','sTorK','sTorOp'].forEach(id=>$(id).addEventListener('input',draw));
+  ['torAxis','torUnit'].forEach(id=>$(id).addEventListener('change',draw));
+  $('btnTorAnim').addEventListener('click',function(){
+    if(anim){cancelAnimationFrame(anim);anim=null;this.classList.remove('on');return;}
+    this.classList.add('on');
+    const t0=performance.now();
+    const loop=()=>{
+      const t=(performance.now()-t0)/3800;
+      const v=Math.exp(Math.sin(t*TAU)*2.3);
+      $('sTorR').value=clamp(v,0.08,12).toFixed(2);
+      draw();anim=requestAnimationFrame(loop);
+    };
+    loop();
+  });
+  draw();
+})();
+
+/* Apollonische Kreise → Rotation zu Tori */
+(function apoRev(){
+  const cv=$('apoRev');
+  function draw(){
+    const rot=rad(+$('sApoRev').value), n=+$('sApoRevN').value;
+    $('vApoRev').textContent=$('sApoRev').value+'°';
+    $('vApoRevN').textContent=n;
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,S=Math.min(W,H)/7.2;
+    // Achse (z-Achse = Faser über ∞)
+    ctx.strokeStyle='#f472b6';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    ctx.fillStyle='rgba(244,114,182,.8)';ctx.font='600 10px JetBrains Mono';
+    ctx.fillText('z-Achse = Faser über ∞',cx+8,16);
+    // Fixpunkte = Schnitt des Einheitskreises mit der Ebene
+    [[-1],[1]].forEach(([x])=>{
+      ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(cx+x*S,cy,6,0,TAU);ctx.fill();
+      ctx.strokeStyle='#0b0f1d';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    ctx.fillStyle='rgba(251,191,36,.85)';
+    ctx.fillText('Einheitskreis (Faser über 0) ⊥ zur Ebene',12,H-12);
+    // Hyperbolische Familie (Querschnitte der Tori)
+    for(let i=1;i<=n;i++){
+      [1,-1].forEach(sg=>{
+        const r=Math.exp(sg*i*0.42);
+        const {R,rho}=toriRadii(r);
+        if(!isFinite(R))return;
+        const hue=(Math.atan(Math.log(r))/PI+0.5)*300;
+        // Querschnitt: zwei Kreise bei x = ±R, Radius ρ  (rotiert um z-Achse)
+        [1,-1].forEach(side=>{
+          const xx=side*R*Math.cos(rot)* (side>0?1:1);
+          ctx.strokeStyle=`hsl(${hue},82%,62%)`;ctx.lineWidth=2;
+          ctx.beginPath();ctx.arc(cx+side*R*S,cy,rho*S,0,TAU);ctx.stroke();
+        });
+      });
+    }
+    // rotierender Radiusstrahl zur Verdeutlichung
+    ctx.strokeStyle='rgba(255,255,255,.25)';ctx.setLineDash([5,4]);ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(rot)*S*5,cy-Math.sin(rot)*S*0.0);
+    ctx.stroke();ctx.setLineDash([]);
+    $('apoRevOut').textContent=
+`Querschnitt durch die xz-Ebene.
+Jedes Kreispaar = Schnitt eines Hopf-Torus.
+Rotiert man diese Kreise um die z-Achse, entstehen die Tori.
+Die beiden Fixpunkte (gelb) sind die Durchstoßpunkte
+des Einheitskreises — der Faser über z = 0.
+Das ist EXAKT die hyperbolische Apollonische Familie.`;
+  }
+  ['sApoRev','sApoRevN'].forEach(id=>$(id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+/* Radien-Plot */
+(function radiiPlot(){
+  function draw(){
+    const r=+$('sRad').value;
+    $('vRad').textContent=fmt(r);
+    const xs=[],R=[],rho=[];
+    for(let k=1;k<=400;k++){
+      const v=0.05+k/400*7.95;
+      if(Math.abs(v-1)<0.02){xs.push(v);R.push(null);rho.push(null);continue;}
+      const t=toriRadii(v);
+      xs.push(v);R.push(Math.min(t.R,30));rho.push(Math.min(t.rho,30));
+    }
+    const cur=toriRadii(r);
+    const data=[
+      {type:'scatter',mode:'lines',x:xs,y:R,name:'R',line:{color:'#5eead4',width:3}},
+      {type:'scatter',mode:'lines',x:xs,y:rho,name:'ρ',line:{color:'#f472b6',width:3}},
+      {type:'scatter',mode:'markers',x:[r,r],y:[Math.min(cur.R,30),Math.min(cur.rho,30)],
+        marker:{size:11,color:['#5eead4','#f472b6'],line:{color:'#fff',width:2}}}
+    ];
+    Plotly.react('radiiPlot',data,{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      margin:{l:40,r:10,t:10,b:36},showlegend:true,
+      legend:{font:{color:'#98a1c4',size:11},x:0.75,y:0.95},
+      font:{family:'Inter',color:'#98a1c4',size:11},
+      xaxis:{title:{text:'r = |z|',font:{size:11}},gridcolor:'rgba(120,140,220,.12)',range:[0,8]},
+      yaxis:{title:{text:'Radius',font:{size:11}},gridcolor:'rgba(120,140,220,.12)',range:[0,16]}
+    },PLCFG);
+    $('radOut').textContent=
+`r = ${fmt(r)}
+R = (1+r²)/|1−r²| = ${isFinite(cur.R)?fmt(cur.R,3):'∞'}
+ρ = 2r/|1−r²|     = ${isFinite(cur.rho)?fmt(cur.rho,3):'∞'}
+Beachte: R² − ρ² = 1 für alle r  →  ${isFinite(cur.R)?fmt(cur.R*cur.R-cur.rho*cur.rho,4):'—'}
+Alle Tori schneiden die xz-Ebene in Kreisen,
+für die (±1,0) inverse Punkte sind — Apollonisch!`;
+  }
+  $('sRad').addEventListener('input',draw);draw();
+})();
+
+/* =======================================================================
+   11 · HÄNDIGKEIT
+   ======================================================================= */
+(function handedness(){
+  let spin=null;
+  function draw(){
+    const N=+$('sHandN').value, r=+$('sHandR').value;
+    $('vHandN').textContent=N;$('vHandR').textContent=fmt(r);
+    const data=[];
+    const {R,rho}=toriRadii(r);
+    if($('hTorus').checked&&isFinite(R)){
+      const U=64,V=36,X=[],Y=[],Z=[];
+      for(let i=0;i<=V;i++){const ps=i/V*TAU,rx=[],ry=[],rz=[];
+        for(let j=0;j<=U;j++){const th=j/U*TAU;
+          rx.push((R+rho*Math.cos(ps))*Math.cos(th));
+          ry.push((R+rho*Math.cos(ps))*Math.sin(th));
+          rz.push(rho*Math.sin(ps));}
+        X.push(rx);Y.push(ry);Z.push(rz);}
+      data.push({type:'surface',x:X,y:Y,z:Z,opacity:0.18,showscale:false,
+        colorscale:[[0,'#1e3a8a'],[1,'#3b2f6e']],
+        contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'});
+    }
+    for(let m=0;m<N;m++){
+      const ang=m/N*TAU;
+      const z=[r*Math.cos(ang),r*Math.sin(ang)];
+      if($('hRight').checked){
+        const xs=[],ys=[],zs=[];
+        for(let k=0;k<=220;k++){
+          const t=k/220*TAU;
+          const q=stereo4(hopfFiberPoint(z,t));
+          if(Math.hypot(q[0],q[1],q[2])<60){xs.push(q[0]);ys.push(q[1]);zs.push(q[2]);}
+          else{xs.push(null);ys.push(null);zs.push(null);}
+        }
+        data.push({type:'scatter3d',mode:'lines',x:xs,y:ys,z:zs,
+          line:{width:5,color:'#5eead4'},opacity:0.9,hoverinfo:'skip'});
+      }
+      if($('hLeft').checked){
+        const xs=[],ys=[],zs=[];
+        for(let k=0;k<=220;k++){
+          const t=k/220*TAU;
+          const q=stereo4(hopfFiberPointLeft(z,t));
+          if(Math.hypot(q[0],q[1],q[2])<60){xs.push(q[0]);ys.push(q[1]);zs.push(q[2]);}
+          else{xs.push(null);ys.push(null);zs.push(null);}
+        }
+        data.push({type:'scatter3d',mode:'lines',x:xs,y:ys,z:zs,
+          line:{width:5,color:'#f472b6'},opacity:0.9,hoverinfo:'skip'});
+      }
+    }
+    const lim=clamp(R+rho+1,3,12);
+    Plotly.react('handPlot',data,pl3d({scene:{
+      xaxis:{range:[-lim,lim],visible:false},yaxis:{range:[-lim,lim],visible:false},
+      zaxis:{range:[-lim,lim],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.4,y:1.3,z:0.95}}}}),PLCFG);
+    $('handOut').textContent=
+`Torus: r = ${fmt(r)}   R = ${fmt(R,2)}   ρ = ${fmt(rho,2)}
+Rechtshändig (türkis):  λ·(z₁,z₂)   → Steigung +1
+Linkshändig  (pink):    (z₁,z₂)·λ   → Steigung −1
+Beide Familien liegen auf DEMSELBEN Torus.
+Gleiche Händigkeit → nie ein Schnittpunkt.
+Verschiedene Händigkeit → sie kreuzen sich.`;
+  }
+  ['sHandN','sHandR'].forEach(id=>$(id).addEventListener('input',draw));
+  ['hRight','hLeft','hTorus'].forEach(id=>$(id).addEventListener('change',draw));
+  $('btnHandSpin').addEventListener('click',function(){
+    if(spin){cancelAnimationFrame(spin);spin=null;this.classList.remove('on');return;}
+    this.classList.add('on');
+    let a=0;
+    const loop=()=>{
+      a+=0.012;
+      Plotly.relayout('handPlot',{'scene.camera.eye':{x:1.7*Math.cos(a),y:1.7*Math.sin(a),z:0.8}});
+      spin=requestAnimationFrame(loop);
+    };
+    loop();
+  });
+  draw();
+})();
+
+/* Quadrat: +1 gegen −1 */
+(function handSquare(){
+  const cv=$('handSq');
+  function draw(){
+    const n=+$('sHSqN').value;
+    $('vHSqN').textContent=n;
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const M=20,S=Math.min(W-2*M,H-2*M);
+    const x0=(W-S)/2,y0=(H-S)/2;
+    ctx.fillStyle='rgba(20,26,50,0.6)';ctx.fillRect(x0,y0,S,S);
+    ctx.strokeStyle='rgba(120,140,220,.25)';ctx.lineWidth=1;
+    for(let i=1;i<6;i++){
+      ctx.beginPath();ctx.moveTo(x0+i*S/6,y0);ctx.lineTo(x0+i*S/6,y0+S);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x0,y0+i*S/6);ctx.lineTo(x0+S,y0+i*S/6);ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(180,195,240,.5)';ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,S,S);
+    function fam(slope,col){
+      ctx.strokeStyle=col;ctx.lineWidth=2.2;
+      for(let m=0;m<n;m++){
+        const off=m/n;
+        // y = slope*x + off  (mod 1), stückweise
+        for(let seg=-2;seg<=2;seg++){
+          ctx.beginPath();
+          let started=false;
+          for(let k=0;k<=200;k++){
+            const x=k/200;
+            const y=slope*x+off+seg;
+            if(y<0||y>1){started=false;continue;}
+            const X=x0+x*S, Y=y0+S-y*S;
+            if(!started){ctx.moveTo(X,Y);started=true;}else ctx.lineTo(X,Y);
+          }
+          ctx.stroke();
+        }
+      }
+    }
+    fam(1,'rgba(94,234,212,0.9)');
+    fam(-1,'rgba(244,114,182,0.9)');
+    // Schnittpunkte markieren
+    ctx.fillStyle='#fbbf24';
+    for(let a=0;a<n;a++)for(let b=0;b<n;b++){
+      // 1*x + a/n = -1*x + b/n  → x = (b-a)/(2n)
+      for(let s=-2;s<=2;s++){
+        const x=((b-a)/n+s)/2;
+        if(x<0||x>1)continue;
+        const y=x+a/n;
+        const yy=((y%1)+1)%1;
+        ctx.beginPath();ctx.arc(x0+x*S,y0+S-yy*S,2.6,0,TAU);ctx.fill();
+      }
+    }
+    // Beschriftung
+    ctx.fillStyle='rgba(94,234,212,.9)';ctx.font='600 11px JetBrains Mono';
+    ctx.fillText('Steigung +1 (rechts)',x0+6,y0+16);
+    ctx.fillStyle='rgba(244,114,182,.9)';
+    ctx.fillText('Steigung −1 (links)',x0+6,y0+32);
+    ctx.fillStyle='rgba(251,191,36,.9)';
+    ctx.fillText('● Schnittpunkte',x0+6,y0+S-10);
+    $('hsqOut').textContent=
+`${n} Geraden je Familie.
+Gleiche Steigung → parallel → KEIN Schnitt  (Fasern sind disjunkt)
++1 gegen −1     → ${n*n*2} Schnittpunkte im Quadrat
+► Zwei Fasern derselben Händigkeit berühren sich nie.
+► Eine links- und eine rechtshändige Faser kreuzen sich.`;
+  }
+  $('sHSqN').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+/* =======================================================================
+   ANTWORT-STEPPER
+   ======================================================================= */
+(function answerStepper(){
+  const A=[
+    {h:'Das Problem',
+     t:`<p style="font-size:13.8px">Heinz Hopf fragte 1931: <b>Gibt es eine stetige Abbildung
+     S³ → S², die man nicht zu einer konstanten Abbildung zusammenschrumpfen kann?</b></p>
+     <p style="font-size:13.8px">Bis dahin galt die Faustregel: Bildet man eine <i>höher</i>dimensionale
+     Sphäre auf eine <i>niedriger</i>dimensionale ab, ist das immer „langweilig".
+     Für Sⁿ → S¹ mit n ≥ 2 stimmt das auch. Man vermutete π₃(S²) = 0.</p>
+     <div class="note p" style="font-size:12.5px">Es geht um <b>Topologie</b>: Was bleibt gleich,
+     wenn man Formen stetig verbiegt, ohne zu reißen oder zu kleben?</div>`,
+     draw:(ctx,W,H)=>{
+       const cx=W/2,cy=H/2;
+       ctx.strokeStyle='rgba(94,234,212,.7)';ctx.lineWidth=2.5;
+       ctx.beginPath();ctx.arc(cx-W*0.2,cy,Math.min(W,H)*0.20,0,TAU);ctx.stroke();
+       ctx.fillStyle='rgba(94,234,212,.8)';ctx.font='600 13px JetBrains Mono';
+       ctx.fillText('S³',cx-W*0.2-10,cy+5);
+       ctx.strokeStyle='rgba(167,139,250,.7)';
+       ctx.beginPath();ctx.arc(cx+W*0.2,cy,Math.min(W,H)*0.20,0,TAU);ctx.stroke();
+       ctx.fillStyle='rgba(167,139,250,.8)';ctx.fillText('S²',cx+W*0.2-10,cy+5);
+       ctx.strokeStyle='#fbbf24';ctx.lineWidth=3;
+       ctx.beginPath();ctx.moveTo(cx-W*0.06,cy);ctx.lineTo(cx+W*0.05,cy);ctx.stroke();
+       ctx.beginPath();ctx.moveTo(cx+W*0.05,cy);ctx.lineTo(cx+W*0.02,cy-7);
+       ctx.lineTo(cx+W*0.02,cy+7);ctx.fill();
+       ctx.fillStyle='#fbbf24';ctx.font='600 26px Inter';
+       ctx.fillText('?',cx-6,cy-24);
+     }},
+    {h:'Die Idee',
+     t:`<p style="font-size:13.8px">Hopfs Idee: Benutze die <b>komplexe Struktur</b>.
+     Die 3-Sphäre lebt in ℝ⁴ = ℂ². Ein Punkt ist also ein <b>Paar komplexer Zahlen</b>
+     (z₁, z₂) mit |z₁|² + |z₂|² = 1.</p>
+     <p style="font-size:13.8px">Und die 2-Sphäre ist nicht irgendeine Kugel — sie ist die
+     <b>Riemannsche Sphäre</b> ℂ ∪ {∞}, also die Menge aller <b>Verhältnisse</b> [z₁ : z₂].</p>
+     <div class="note" style="font-size:12.5px">Beide Objekte sprechen dieselbe Sprache: komplexe Zahlen.
+     Damit ist die Abbildung fast schon geschenkt.</div>`,
+     draw:(ctx,W,H)=>{
+       const cx=W/2,cy=H/2,S=Math.min(W,H)*0.16;
+       ctx.strokeStyle='rgba(120,140,220,.25)';ctx.lineWidth=1;
+       [[-1,'z₁','#5eead4'],[1,'z₂','#f472b6']].forEach(([s,l,c])=>{
+         const x=cx+s*W*0.21;
+         for(let i=-2;i<=2;i++){
+           ctx.beginPath();ctx.moveTo(x+i*S*0.45,cy-S*1.1);ctx.lineTo(x+i*S*0.45,cy+S*1.1);ctx.stroke();
+           ctx.beginPath();ctx.moveTo(x-S*1.1,cy+i*S*0.45);ctx.lineTo(x+S*1.1,cy+i*S*0.45);ctx.stroke();
+         }
+         ctx.strokeStyle=c;ctx.lineWidth=2;
+         ctx.beginPath();ctx.arc(x,cy,S*0.8,0,TAU);ctx.stroke();
+         ctx.fillStyle=c;ctx.font='600 13px JetBrains Mono';ctx.fillText(l,x-8,cy-S*1.25);
+         ctx.strokeStyle='rgba(120,140,220,.25)';ctx.lineWidth=1;
+       });
+       ctx.fillStyle='#fbbf24';ctx.font='700 20px JetBrains Mono';
+       ctx.fillText('z₂ / z₁',cx-30,cy+S*1.9);
+     }},
+    {h:'Die Lösung',
+     t:`<div class="readout" style="font-size:14px;color:#fbbf24">f(z₁, z₂) = z₂ / z₁</div>
+     <p style="font-size:13.8px">Das war's. Eine Zeile. Der Wert ist eine komplexe Zahl —
+     oder ∞, falls z₁ = 0. Also ein Punkt der Riemannschen Sphäre S².</p>
+     <p style="font-size:13.8px">Der Clou: Multipliziert man <b>beide</b> Koordinaten mit derselben
+     Phase λ = e<sup>iα</sup>, kürzt sich λ heraus. Das Urbild jedes Punktes ist also ein
+     <b>ganzer Kreis</b>:</p>
+     <div class="readout">f⁻¹(z) = { (λz₁, λz₂) : |λ| = 1 }  ≅  S¹</div>`,
+     draw:(ctx,W,H)=>{
+       const cx=W/2,cy=H/2,R=Math.min(W,H)*0.3;
+       for(let k=0;k<7;k++){
+         const a=k/7*TAU;
+         ctx.strokeStyle=`hsla(${k*51},85%,62%,0.85)`;ctx.lineWidth=2.6;
+         ctx.beginPath();
+         ctx.ellipse(cx+Math.cos(a)*R*0.42,cy+Math.sin(a)*R*0.20,
+           R*0.55,R*0.20,a,0,TAU);
+         ctx.stroke();
+       }
+       ctx.fillStyle='rgba(223,228,245,.8)';ctx.font='600 12px JetBrains Mono';
+       ctx.fillText('jede Faser = ein Kreis',12,20);
+     }},
+    {h:'Der Lösungsweg',
+     t:`<ol style="font-size:13.5px;color:var(--txt-dim);line-height:1.75">
+       <li>S³ als <b>ℂ²</b> schreiben: (z₁,z₂), |z₁|²+|z₂|² = 1.</li>
+       <li>S² als <b>Riemannsphäre</b> ℙ¹_ℂ erkennen (stereographische Projektion).</li>
+       <li>Die Abbildung <b>z₂/z₁</b> definieren, mit z₂/0 := ∞.</li>
+       <li>Zeigen: f(λz₁,λz₂) = f(z₁,z₂) für |λ| = 1. → Fasern enthalten Kreise.</li>
+       <li>Umgekehrt in Polarkoordinaten nachrechnen: <b>nur</b> diese Punkte haben dasselbe Bild.</li>
+       <li>Feststellen: Die Faser ist Schnitt einer <b>ℝ-2-Ebene</b> mit S³ → <b>Großkreis</b>.</li>
+       <li>Mit stereographischer Projektion nach ℝ³ <b>hinschauen</b>: geschachtelte Tori.</li>
+       <li>Das Verkettungsargument über den Äquator führen (Abschn. 4.3).</li>
+     </ol>`,
+     draw:(ctx,W,H)=>{
+       const steps=['ℂ²','ℙ¹','z₂/z₁','λ','Kreis','Tori','Link'];
+       const n=steps.length;
+       for(let i=0;i<n;i++){
+         const x=W*0.12+ (W*0.76)*i/(n-1);
+         const y=H/2+Math.sin(i*1.1)*H*0.16;
+         ctx.fillStyle=`hsla(${170+i*22},80%,${55}%,0.9)`;
+         ctx.beginPath();ctx.arc(x,y,17,0,TAU);ctx.fill();
+         ctx.fillStyle='#07131a';ctx.font='700 10px JetBrains Mono';
+         ctx.textAlign='center';ctx.fillText(steps[i],x,y+4);ctx.textAlign='left';
+         if(i>0){
+           const px=W*0.12+(W*0.76)*(i-1)/(n-1), py=H/2+Math.sin((i-1)*1.1)*H*0.16;
+           ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;
+           ctx.beginPath();ctx.moveTo(px+18,py);ctx.lineTo(x-18,y);ctx.stroke();
+         }
+       }
+     }},
+    {h:'Die Antwort',
+     t:`<p style="font-size:13.8px"><b style="color:var(--acc)">JA — es gibt eine solche Abbildung.</b></p>
+     <p style="font-size:13.8px">Und der Grund, warum sie sich nicht zusammenschrumpfen lässt, ist
+     <b>geometrisch sichtbar</b>: Je zwei Fasern sind <b>verkettet</b> wie Kettenglieder.
+     Würde man f stetig zu einer konstanten Abbildung verformen, müssten sich irgendwann zwei
+     verkettete Kreise entwirren — das geht in 3 Dimensionen nicht ohne Zerschneiden.</p>
+     <div class="readout">S¹ ↪ S³ ──f──▶ S²      Verkettungszahl je zweier Fasern = 1</div>
+     <p style="font-size:13.8px">Damit ist die Faserung <b>nicht trivial</b>: S³ ≇ S² × S¹.</p>`,
+     draw:(ctx,W,H)=>{
+       const cx=W/2,cy=H/2,R=Math.min(W,H)*0.22;
+       // Zwei verkettete Ringe
+       ctx.lineWidth=7;ctx.lineCap='round';
+       ctx.strokeStyle='#5eead4';
+       ctx.beginPath();ctx.ellipse(cx-R*0.5,cy,R,R*0.62,0,0,TAU);ctx.stroke();
+       ctx.strokeStyle='#f472b6';
+       ctx.beginPath();ctx.ellipse(cx+R*0.5,cy,R,R*0.62,0,0,TAU);ctx.stroke();
+       // Überkreuzung korrigieren: Stück des ersten Rings drüber
+       ctx.strokeStyle='#5eead4';
+       ctx.beginPath();ctx.ellipse(cx-R*0.5,cy,R,R*0.62,0,-0.55,0.55);ctx.stroke();
+       ctx.fillStyle='rgba(223,228,245,.85)';ctx.font='600 12px JetBrains Mono';
+       ctx.fillText('Verkettungszahl = 1',cx-62,cy+R*1.5);
+     }},
+    {h:'Die Konsequenz',
+     t:`<p style="font-size:13.8px">Hopfs Entdeckung zeigte: <b>π₃(S²) = ℤ</b>. Es gibt also
+     unendlich viele wesentlich verschiedene Abbildungen S³ → S², indiziert durch eine ganze Zahl —
+     die <b>Hopf-Invariante</b> = die Verkettungszahl.</p>
+     <p style="font-size:13.8px">Das war der Startschuss für die <b>Homotopietheorie</b>. Und es gibt
+     nicht nur eine Hopf-Faserung, sondern <b>eine für jeden Punkt p ∈ S²</b> (über g<sub>p</sub>(q) = R<sub>q</sub>(p)) —
+     und zwei Händigkeiten obendrein.</p>
+     <div class="note y" style="font-size:12.5px">Verwandte Faserungen gibt es nur noch in den Dimensionen
+     1, 3, 7 — sie kommen von ℂ, ℍ (Quaternionen) und 𝕆 (Oktonionen).</div>`,
+     draw:(ctx,W,H)=>{
+       const cx=W/2,cy=H/2;
+       const labels=[['S¹→S³→S²','ℂ','#5eead4'],['S³→S⁷→S⁴','ℍ','#a78bfa'],['S⁷→S¹⁵→S⁸','𝕆','#f472b6']];
+       labels.forEach((L,i)=>{
+         const y=cy-60+i*60;
+         ctx.fillStyle=L[2]+'22';
+         ctx.strokeStyle=L[2];ctx.lineWidth=1.5;
+         ctx.beginPath();ctx.roundRect(W*0.12,y-20,W*0.76,40,10);ctx.fill();ctx.stroke();
+         ctx.fillStyle=L[2];ctx.font='700 15px JetBrains Mono';
+         ctx.fillText(L[0],W*0.18,y+5);
+         ctx.font='700 18px JetBrains Mono';
+         ctx.fillText(L[1],W*0.76,y+6);
+       });
+     }}
+  ];
+  let cur=0;
+  function upd(){
+    $('ansText').innerHTML=`<h3 style="margin-top:0">${A[cur].h}</h3>`+A[cur].t;
+    [...$('ansStep').children].forEach((b,i)=>b.classList.toggle('active',i===cur));
+    const cv=$('ansCanvas');
+    const o=setupCanvas(cv);
+    o.ctx.clearRect(0,0,o.w,o.h);
+    A[cur].draw(o.ctx,o.w,o.h);
+  }
+  [...$('ansStep').children].forEach(b=>b.addEventListener('click',()=>{cur=+b.dataset.a;upd();}));
+  addEventListener('resize',upd);
+  upd();
+})();
+
+/* =======================================================================
+   GESAMTBILD
+   ======================================================================= */
+(function finalPlot(){
+  let spin=null;
+  const patterns=['Spirale','Breitengrade','Längengrade','Zufällig'];
+  function basePoints(N,mode){
+    const P=[];
+    if(mode===0){
+      for(let i=0;i<N;i++){
+        const u=(i+0.5)/N;
+        const lat=Math.acos(1-2*u);
+        const lon=i*2.399963229;
+        P.push([Math.sin(lat)*Math.cos(lon),Math.sin(lat)*Math.sin(lon),Math.cos(lat)]);
+      }
+    }else if(mode===1){
+      const rings=Math.max(3,Math.round(Math.sqrt(N/2)));
+      const per=Math.max(3,Math.round(N/rings));
+      for(let i=0;i<rings;i++){
+        const lat=(i+0.5)/rings*PI;
+        for(let j=0;j<per;j++){
+          const lon=j/per*TAU;
+          P.push([Math.sin(lat)*Math.cos(lon),Math.sin(lat)*Math.sin(lon),Math.cos(lat)]);
+        }
+      }
+    }else if(mode===2){
+      const mer=Math.max(3,Math.round(Math.sqrt(N/2)));
+      const per=Math.max(3,Math.round(N/mer));
+      for(let i=0;i<mer;i++){
+        const lon=i/mer*TAU;
+        for(let j=1;j<=per;j++){
+          const lat=j/(per+1)*PI;
+          P.push([Math.sin(lat)*Math.cos(lon),Math.sin(lat)*Math.sin(lon),Math.cos(lat)]);
+        }
+      }
+    }else{
+      for(let i=0;i<N;i++){
+        let x,y,z,n;
+        do{x=Math.random()*2-1;y=Math.random()*2-1;z=Math.random()*2-1;
+          n=Math.hypot(x,y,z);}while(n>1||n<0.05);
+        P.push([x/n,y/n,z/n]);
+      }
+    }
+    return P;
+  }
+  function render(){
+    const N=+$('sFinN').value, M=+$('sFinM').value, mode=+$('sFinP').value;
+    $('vFinN').textContent=N;$('vFinM').textContent=M;$('vFinP').textContent=patterns[mode];
+    const P=basePoints(N,mode);
+    // Alle Fasern in EINEN Trace packen (mit null-Trennern) pro Farbgruppe
+    const groups={};
+    P.forEach(p=>{
+      const z=stereo3(p);
+      if(!isFinite(z[0])||Math.hypot(z[0],z[1])>400)return;
+      const col=s2color(p);
+      if(!groups[col])groups[col]={x:[],y:[],z:[]};
+      const g=groups[col];
+      for(let k=0;k<=M;k++){
+        const t=k/M*TAU;
+        const q=stereo4(hopfFiberPoint(z,t));
+        if(Math.hypot(q[0],q[1],q[2])<26){g.x.push(q[0]);g.y.push(q[1]);g.z.push(q[2]);}
+        else{g.x.push(null);g.y.push(null);g.z.push(null);}
+      }
+      g.x.push(null);g.y.push(null);g.z.push(null);
+    });
+    const data=Object.keys(groups).map(col=>({
+      type:'scatter3d',mode:'lines',
+      x:groups[col].x,y:groups[col].y,z:groups[col].z,
+      line:{width:2.6,color:col},opacity:0.85,hoverinfo:'skip'
+    }));
+    // Achse (Faser über ∞)
+    data.push({type:'scatter3d',mode:'lines',x:[0,0],y:[0,0],z:[-9,9],
+      line:{width:4,color:'rgba(255,255,255,.35)'},hoverinfo:'skip'});
+    Plotly.react('finalPlot',data,pl3d({scene:{
+      xaxis:{range:[-6,6],visible:false},yaxis:{range:[-6,6],visible:false},
+      zaxis:{range:[-6,6],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.25,y:1.25,z:0.85}}}}),PLCFG);
+  }
+  ['sFinN','sFinM','sFinP'].forEach(id=>$(id).addEventListener('change',render));
+  $('sFinP').addEventListener('input',()=>{$('vFinP').textContent=patterns[+$('sFinP').value];});
+  $('btnFinRender').addEventListener('click',render);
+  $('btnFinSpin').addEventListener('click',function(){
+    if(spin){cancelAnimationFrame(spin);spin=null;this.classList.remove('on');return;}
+    this.classList.add('on');
+    let a=0;
+    const loop=()=>{
+      a+=0.008;
+      Plotly.relayout('finalPlot',{'scene.camera.eye':{
+        x:1.9*Math.cos(a),y:1.9*Math.sin(a),z:0.7+0.4*Math.sin(a*0.6)}});
+      spin=requestAnimationFrame(loop);
+    };
+    loop();
+  });
+  // Lazy: erst rendern, wenn sichtbar
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){render();io.disconnect();}});
+  },{rootMargin:'200px'});
+  io.observe($('finalPlot'));
+})();
+
+/* =======================================================================
+   ANWENDUNGEN
+   ======================================================================= */
+/* Bloch-Kugel */
+(function bloch(){
+  function draw(){
+    const th=rad(+$('sBlT').value), ph=rad(+$('sBlP').value), al=rad(+$('sBlA').value);
+    $('vBlT').textContent=$('sBlT').value+'°';
+    $('vBlP').textContent=$('sBlP').value+'°';
+    $('vBlA').textContent=$('sBlA').value+'°';
+    // |ψ⟩ = cos(θ/2)|0⟩ + e^{iφ} sin(θ/2)|1⟩ , global × e^{iα}
+    const z1=C.pol(Math.cos(th/2),al);
+    const z2=C.pol(Math.sin(th/2),ph+al);
+    const P=[Math.sin(th)*Math.cos(ph),Math.sin(th)*Math.sin(ph),Math.cos(th)];
+    const U=32,V=22,X=[],Y=[],Z=[];
+    for(let i=0;i<=V;i++){const p2=i/V*PI,rx=[],ry=[],rz=[];
+      for(let j=0;j<=U;j++){const t=j/U*TAU;
+        rx.push(Math.sin(p2)*Math.cos(t));ry.push(Math.sin(p2)*Math.sin(t));rz.push(Math.cos(p2));}
+      X.push(rx);Y.push(ry);Z.push(rz);}
+    const data=[{type:'surface',x:X,y:Y,z:Z,opacity:0.18,showscale:false,
+      colorscale:[[0,'#16213e'],[1,'#3b2f6e']],
+      contours:{x:{show:false},y:{show:false},z:{show:false}},hoverinfo:'skip'}];
+    // Achsen / Basiszustände
+    data.push({type:'scatter3d',mode:'lines',x:[0,0],y:[0,0],z:[-1.25,1.25],
+      line:{width:2,color:'rgba(255,255,255,.25)'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'markers+text',x:[0,0],y:[0,0],z:[1.12,-1.12],
+      marker:{size:5,color:'#98a1c4'},text:['|0⟩','|1⟩'],
+      textposition:'middle right',textfont:{size:11,color:'#98a1c4'},hoverinfo:'skip'});
+    // Bloch-Vektor
+    data.push({type:'scatter3d',mode:'lines',x:[0,P[0]],y:[0,P[1]],z:[0,P[2]],
+      line:{width:7,color:'#fbbf24'},hoverinfo:'skip'});
+    data.push({type:'scatter3d',mode:'markers',x:[P[0]],y:[P[1]],z:[P[2]],
+      marker:{size:10,color:'#fbbf24',line:{color:'#fff',width:1.5}},hoverinfo:'skip'});
+    // Die Faser (globale Phase) als kleiner Kreis unter dem Punkt angedeutet
+    const fx=[],fy=[],fz=[];
+    for(let k=0;k<=60;k++){
+      const a2=k/60*TAU;
+      // gleiche Bloch-Position, nur Phase → Punkt bleibt stehen: wir zeigen den Kreis
+      // im "Phasenraum" als Ring um die Spitze
+      const e1=[Math.cos(th)*Math.cos(ph),Math.cos(th)*Math.sin(ph),-Math.sin(th)];
+      const e2=[-Math.sin(ph),Math.cos(ph),0];
+      const R2=0.16;
+      fx.push(P[0]+R2*(Math.cos(a2)*e1[0]+Math.sin(a2)*e2[0]));
+      fy.push(P[1]+R2*(Math.cos(a2)*e1[1]+Math.sin(a2)*e2[1]));
+      fz.push(P[2]+R2*(Math.cos(a2)*e1[2]+Math.sin(a2)*e2[2]));
+    }
+    data.push({type:'scatter3d',mode:'lines',x:fx,y:fy,z:fz,
+      line:{width:4,color:'#5eead4'},hoverinfo:'skip'});
+    const mk=Math.round(60*(+$('sBlA').value)/360)%61;
+    data.push({type:'scatter3d',mode:'markers',x:[fx[mk]],y:[fy[mk]],z:[fz[mk]],
+      marker:{size:7,color:'#5eead4'},hoverinfo:'skip'});
+    Plotly.react('blochPlot',data,pl3d({scene:{
+      xaxis:{range:[-1.3,1.3],visible:false},yaxis:{range:[-1.3,1.3],visible:false},
+      zaxis:{range:[-1.3,1.3],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.5,y:1.4,z:0.9}}}}),PLCFG);
+    $('blochOut').textContent=
+`|ψ⟩ = e^(iα)·[ cos(θ/2)|0⟩ + e^(iφ)·sin(θ/2)|1⟩ ]
+z₁ = ${fmt(z1[0],3)} + ${fmt(z1[1],3)}i        (Amplitude von |0⟩)
+z₂ = ${fmt(z2[0],3)} + ${fmt(z2[1],3)}i        (Amplitude von |1⟩)
+|z₁|²+|z₂|² = ${fmt(C.abs(z1)**2+C.abs(z2)**2,3)}  → der Zustand lebt auf S³
+Bloch-Vektor = (${fmt(P[0],3)}, ${fmt(P[1],3)}, ${fmt(P[2],3)})
+► Ändere α: der Bloch-Vektor RÜHRT SICH NICHT.
+  Die globale Phase ist die Hopf-Faser — physikalisch unsichtbar.`;
+  }
+  ['sBlT','sBlP','sBlA'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* SLERP */
+(function slerp(){
+  function draw(){
+    const t=+$('sSlT').value, ax=rad(+$('sSlAx').value), an=rad(+$('sSlAn').value);
+    $('vSlT').textContent=fmt(t);
+    $('vSlAx').textContent=$('sSlAx').value+'°';
+    $('vSlAn').textContent=$('sSlAn').value+'°';
+    const q0=[1,0,0,0];
+    const u=[Math.cos(ax),Math.sin(ax),0.35];
+    const un=Math.hypot(...u);
+    const uu=u.map(x=>x/un);
+    const q1=[Math.cos(an/2),uu[0]*Math.sin(an/2),uu[1]*Math.sin(an/2),uu[2]*Math.sin(an/2)];
+    // slerp
+    let dot=q0.reduce((s,x,i)=>s+x*q1[i],0);
+    let q1e=q1.slice();
+    if(dot<0){q1e=q1.map(x=>-x);dot=-dot;}
+    dot=clamp(dot,-1,1);
+    const om=Math.acos(dot);
+    let q;
+    if(om<1e-6)q=q0.slice();
+    else q=q0.map((x,i)=>(Math.sin((1-t)*om)*x+Math.sin(t*om)*q1e[i])/Math.sin(om));
+    // Darstellung: ein Würfel, gedreht
+    const V=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],
+             [-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]];
+    const E=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    const RV=V.map(v=>rotR(q,v));
+    const data=[];
+    E.forEach(e=>{
+      data.push({type:'scatter3d',mode:'lines',
+        x:[RV[e[0]][0],RV[e[1]][0]],y:[RV[e[0]][1],RV[e[1]][1]],z:[RV[e[0]][2],RV[e[1]][2]],
+        line:{width:5,color:'#5eead4'},hoverinfo:'skip'});
+    });
+    // Achsenkreuz
+    [[1,0,0,'#f472b6'],[0,1,0,'#fbbf24'],[0,0,1,'#60a5fa']].forEach(a=>{
+      const r=rotR(q,[a[0]*0.9,a[1]*0.9,a[2]*0.9]);
+      data.push({type:'scatter3d',mode:'lines',x:[0,r[0]],y:[0,r[1]],z:[0,r[2]],
+        line:{width:6,color:a[3]},hoverinfo:'skip'});
+    });
+    // Bahn der x-Achse während des Slerps
+    const bx=[],by=[],bz=[];
+    for(let k=0;k<=60;k++){
+      const tt=k/60;
+      let qq;
+      if(om<1e-6)qq=q0.slice();
+      else qq=q0.map((x,i)=>(Math.sin((1-tt)*om)*x+Math.sin(tt*om)*q1e[i])/Math.sin(om));
+      const r=rotR(qq,[0.9,0,0]);
+      bx.push(r[0]);by.push(r[1]);bz.push(r[2]);
+    }
+    data.push({type:'scatter3d',mode:'lines',x:bx,y:by,z:bz,
+      line:{width:3,color:'rgba(167,139,250,.75)'},hoverinfo:'skip'});
+    Plotly.react('slerpPlot',data,pl3d({scene:{
+      xaxis:{range:[-1.2,1.2],visible:false},yaxis:{range:[-1.2,1.2],visible:false},
+      zaxis:{range:[-1.2,1.2],visible:false},aspectmode:'cube',bgcolor:'rgba(0,0,0,0)',
+      camera:{eye:{x:1.6,y:1.4,z:0.9}}}}),PLCFG);
+    $('slerpOut').textContent=
+`q(t) = [sin((1−t)Ω)·q₀ + sin(tΩ)·q₁] / sin Ω       Ω = ${fmt(deg(om),1)}°
+q(t) = ${Q.str(q)}
+|q(t)| = ${fmt(Q.norm(q),4)}   → bleibt IMMER auf S³ ✔
+Der Pfad ist ein GROSSKREIS von S³ (kürzeste Verbindung).
+Hinweis: q und −q ergeben dieselbe Drehung — deshalb wird
+oben q₁ ggf. gespiegelt, damit man den kurzen Weg nimmt.`;
+  }
+  ['sSlT','sSlAx','sSlAn'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* Hopf-Invariante */
+(function hopfInv(){
+  const cv=$('hopfInvCanvas');
+  function draw(){
+    const n=+$('sHinv').value;
+    $('vHinv').textContent=n;
+    const o=setupCanvas(cv);const ctx=o.ctx,W=o.w,H=o.h;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,R=Math.min(W,H)*0.22;
+    const N=Math.abs(n);
+    if(N===0){
+      ctx.strokeStyle='#5eead4';ctx.lineWidth=6;ctx.lineCap='round';
+      ctx.beginPath();ctx.ellipse(cx-R*0.8,cy,R*0.7,R*0.45,0,0,TAU);ctx.stroke();
+      ctx.strokeStyle='#f472b6';
+      ctx.beginPath();ctx.ellipse(cx+R*0.8,cy,R*0.7,R*0.45,0,0,TAU);ctx.stroke();
+      ctx.fillStyle='rgba(223,228,245,.8)';ctx.font='600 12px JetBrains Mono';
+      ctx.fillText('nicht verkettet — trivial',cx-78,cy+R*1.5);
+    }else{
+      // Zwei Kurven, die sich n-mal umschlingen: (2,2n)-Torus-Link-Skizze
+      const draw1=(phase,col,lw)=>{
+        ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineCap='round';
+        ctx.beginPath();
+        for(let k=0;k<=600;k++){
+          const t=k/600*TAU;
+          const wind=N*t*Math.sign(n);
+          const rr=R*(1+0.34*Math.cos(wind+phase));
+          const zz=R*0.34*Math.sin(wind+phase);
+          const X=cx+rr*Math.cos(t);
+          const Y=cy-rr*Math.sin(t)*0.42-zz*0.8;
+          if(k===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);
+        }
+        ctx.stroke();
+      };
+      draw1(0,'#5eead4',4.5);
+      draw1(PI,'#f472b6',4.5);
+      ctx.fillStyle='rgba(223,228,245,.8)';ctx.font='600 12px JetBrains Mono';
+      ctx.fillText(`Verkettungszahl = ${n}`,cx-60,H-16);
+    }
+    $('hinvOut').textContent=
+`Hopf-Invariante n = ${n}
+${n===0?'► triviale Abbildung: lässt sich zusammenschrumpfen'
+ :n===1?'★ DAS ist die klassische Hopf-Faserung.'
+ :'► Fasern umschlingen sich '+Math.abs(n)+'-mal'+(n<0?' (andere Orientierung)':'')}
+π₃(S²) = ℤ  —  jede ganze Zahl kommt vor.
+Die Invariante ist genau die Verkettungszahl zweier Fasern.`;
+  }
+  $('sHinv').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+/* Landkarte */
+(function mapPlot(){
+  const nodes=[
+    {id:'ℂ',x:0,y:2,sec:'komplex',c:'#5eead4'},
+    {id:'e^{iθ}',x:1,y:2.7,sec:'komplex',c:'#5eead4'},
+    {id:'S¹',x:2,y:3,sec:'kugeln',c:'#7dd3fc'},
+    {id:'S²',x:3,y:2.4,sec:'kugeln',c:'#7dd3fc'},
+    {id:'S³',x:4,y:1.6,sec:'kugeln',c:'#7dd3fc'},
+    {id:'Stereo',x:1.5,y:1.2,sec:'stereo',c:'#a78bfa'},
+    {id:'Apollon.',x:0.8,y:0.3,sec:'stereo',c:'#a78bfa'},
+    {id:'Riemann',x:3,y:0.9,sec:'riemann',c:'#a78bfa'},
+    {id:'Torus',x:2.2,y:-0.4,sec:'torus',c:'#fbbf24'},
+    {id:'ℍ',x:5,y:2.6,sec:'quat',c:'#f472b6'},
+    {id:'SO(3)',x:6,y:2.0,sec:'quat',c:'#f472b6'},
+    {id:'Faserung',x:4.6,y:0.6,sec:'faserung',c:'#fbbf24'},
+    {id:'HOPF',x:3.6,y:-1.4,sec:'hopf',c:'#ffffff'},
+    {id:'Verkettung',x:2.3,y:-2.3,sec:'fasern',c:'#5eead4'},
+    {id:'Tori',x:4.6,y:-2.4,sec:'tori',c:'#fbbf24'},
+    {id:'Händigkeit',x:5.8,y:-1.4,sec:'haende',c:'#f472b6'},
+    {id:'π₃(S²)=ℤ',x:3.6,y:-3.3,sec:'warum',c:'#a78bfa'},
+    {id:'Bloch',x:1.2,y:-3.2,sec:'warum',c:'#60a5fa'}
+  ];
+  const edges=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[5,7],[3,7],[2,8],[4,9],[9,10],
+    [8,11],[2,11],[7,12],[4,12],[11,12],[12,13],[12,14],[8,14],[12,15],[9,15],
+    [12,16],[13,16],[12,17],[4,17]];
+  function draw(){
+    const ex=[],ey=[];
+    edges.forEach(e=>{
+      ex.push(nodes[e[0]].x,nodes[e[1]].x,null);
+      ey.push(nodes[e[0]].y,nodes[e[1]].y,null);
+    });
+    const data=[
+      {type:'scatter',mode:'lines',x:ex,y:ey,
+        line:{color:'rgba(120,140,220,.32)',width:1.5},hoverinfo:'skip'},
+      {type:'scatter',mode:'markers+text',
+        x:nodes.map(n=>n.x),y:nodes.map(n=>n.y),
+        text:nodes.map(n=>n.id),textposition:'top center',
+        textfont:{size:11,color:'#cdd5ee'},
+        marker:{size:nodes.map(n=>n.id==='HOPF'?26:15),
+          color:nodes.map(n=>n.c),
+          line:{color:'rgba(0,0,0,.5)',width:1.5},opacity:0.92},
+        hovertext:nodes.map(n=>'→ '+n.sec),hoverinfo:'text'}
+    ];
+    Plotly.react('mapPlot',data,{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      margin:{l:10,r:10,t:10,b:10},showlegend:false,
+      font:{family:'Inter'},
+      xaxis:{visible:false,range:[-0.7,6.9]},
+      yaxis:{visible:false,range:[-4,3.9],scaleanchor:'x'}
+    },PLCFG);
+    $('mapPlot').on('plotly_click',d=>{
+      const i=d.points[0].pointIndex;
+      if(nodes[i]&&$(nodes[i].sec))$(nodes[i].sec).scrollIntoView({behavior:'smooth'});
+    });
+  }
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){draw();io.disconnect();}});
+  },{rootMargin:'200px'});
+  io.observe($('mapPlot'));
+})();
+
+/* roundRect-Polyfill für ältere Browser */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number')r=[r,r,r,r];
+    this.moveTo(x+r[0],y);
+    this.lineTo(x+w-r[1],y);this.quadraticCurveTo(x+w,y,x+w,y+r[1]);
+    this.lineTo(x+w,y+h-r[2]);this.quadraticCurveTo(x+w,y+h,x+w-r[2],y+h);
+    this.lineTo(x+r[3],y+h);this.quadraticCurveTo(x,y+h,x,y+h-r[3]);
+    this.lineTo(x,y+r[0]);this.quadraticCurveTo(x,y,x+r[0],y);
+    return this;
+  };
+}
+
+/* Resize-Handler für Plotly */
+let rsT;
+addEventListener('resize',()=>{
+  clearTimeout(rsT);
+  rsT=setTimeout(()=>{
+    ['sphPlot','sliceHyper','st3d','riemPlot','torusPlot','rotPlot','hopfS2',
+     'hopfCircleMini','baseS2','fiberR3','toriPlot','radiiPlot','handPlot',
+     'finalPlot','blochPlot','slerpPlot','mapPlot'].forEach(id=>{
+      const el=$(id);
+      if(el&&el.data)Plotly.Plots.resize(el);
+    });
+  },220);
+});
+</script>
+</body>
+</html>
