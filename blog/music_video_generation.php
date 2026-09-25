@@ -52,7 +52,7 @@ A machine cannot "hear" the way you do. To generate music it first has to know w
 
 ### What a model has to capture
 
-These are the coordinates of the space a music model learns to move through \cite[Overview: music theory]{music_theory}:
+A model does not learn a list of songs; it learns a *shape*. The space it moves through is not a filing cabinet of recordings but a curved, multi-scale landscape in which meaning is a property of *position*, not of any single point. A note is not located by one number but by a small stack of them: its **form** (what it is on its own), its **relation** (what it does to the notes around it), and its **situation** (what the whole passage is about). The model's job is not to find points but to follow the thin threads that run between them, stitching local, discrete events into one coherent whole \cite[Overview: music theory]{music_theory}. The pieces it must capture — the coordinates of that space — are:
 
 - **Pitch** is how high or low a note sounds; its physical cause is **frequency** in hertz. The reference note A above middle C — "concert pitch" — is standardized at **440 Hz**.
 - An **octave** is the interval where one frequency is exactly **double** the other; a note and the note an octave up have the same name.
@@ -235,7 +235,7 @@ The other family does not write tokens in order. It **denoises**. Start from pur
 
 #### The latent space and the denoiser
 
-You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, \cite[Kingma & Welling, 2013]{kingma2014vae}) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears \cite[Rombach et al., 2022]{rombach2022ldm}.
+You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, \cite[Kingma & Welling, 2013]{kingma2014vae}) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. This is the same "space of coherent relations" from the vocabulary section, seen from the other end: the codec has folded the raw signal into the small set of coordinates the model actually reasons over. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears \cite[Rombach et al., 2022]{rombach2022ldm}.
 
 #### Classifier-free guidance: obeying the prompt
 
@@ -342,7 +342,7 @@ Either way the backbone is the same architecture that runs the chatbot you are r
 
 **Video.** Sora trains on a **web-scale** corpus of clips at their native lengths, resolutions and aspect ratios \cite[Sora (OpenAI, 2024)]{brooks2024sora}. Each clip is compressed to a latent, cut into spacetime patches, and those patches become the token sequence. One second of high-definition video can be a large grid of patch-tokens; a minute is a long sequence the transformer must hold in mind. And every clip is **re-captioned** so the words match the pixels.
 
-The common thread: **the vocabulary is not letters, it is learned codes — and the corpus is internet-scale.** The model is not a hard drive of every song and clip ever made. It is a *compressed statistical model of the space of possible sounds and scenes*, and generating is *sampling* from that space, guided by your prompt.
+The common thread: **the vocabulary is not letters, it is learned codes — and the corpus is internet-scale.** The model is not a hard drive of every song and clip ever made. It is a *compressed map of the space of possible sounds and scenes* — a landscape in which the meaningful regions form dense, well-connected clusters, joined by thin transition regions, with empty voids (nonsense) in between. Generating is not retrieving a stored item; it is *walking a path of coherence* through that landscape, one token at a time, steered by your prompt.
 
 ### The flood, and the questions it raises
 
