@@ -1264,13 +1264,15 @@ function s2color(p,alpha=1){
 function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
-  const h=cv.getAttribute('height')?parseInt(cv.getAttribute('height')):r.height;
-  cv.width=Math.max(10,r.width*dpr);
-  cv.height=h*dpr;
+  if(cv._lh===undefined) cv._lh=(parseInt(cv.getAttribute('height'))||r.height||240);
+  const h=cv._lh;
+  const w=r.width||cv.clientWidth||300;
+  cv.width=Math.max(10,Math.round(w*dpr));
+  cv.height=Math.round(h*dpr);
   cv.style.height=h+'px';
   const ctx=cv.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  return {ctx,w:r.width,h:h};
+  return {ctx,w:w,h:h};
 }
 
 /* Plotly Layout-Vorlage */
