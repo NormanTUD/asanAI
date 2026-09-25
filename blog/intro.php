@@ -29,7 +29,7 @@ This is a journey through the evolution of human thought where technical milesto
 
 ## A Note on "Chautauqua"
 
-The units of this course are called *Chautauquas*. The name comes from the American Chautauqua movement, a tradition of outdoor assemblies for shared learning that began in 1874 on the shore of Chautauqua Lake, New York, and that took its name from that place. \citeauthor{pirsig} used the word in *Zen and the Art of Motorcycle Maintenance* for the long philosophical digressions that break up a motorcycle ride; a Chautauqua here is the same idea in miniature — one self-contained session in which a single idea is taken apart until you can see how it works.
+The units of this course are called *Chautauquas*. The name comes from the American Chautauqua movement, a tradition of outdoor assemblies for shared learning that began in 1874 on the shore of Chautauqua Lake, New York, and that took its name from that place. \citeauthor{pirsig} used the word in *Zen and the Art of Motorcycle Maintenance* for the long philosophical digressions he mixes with his motorcycle ride; a Chautauqua here is the same idea in miniature — one self-contained session in which a single idea is taken apart until you can see how it works.
 
 ## What This Course Is — and What It Isn't
 
