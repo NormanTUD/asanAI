@@ -6,8 +6,6 @@
    • TOC scroll-spy: the section you're reading lights up
    • A quiet line at the left edge naming the current section, once
      the TOC itself has scrolled away
-   • Scroll memory: content that grows above you never eats the line
-     you were reading
    • Code blocks show their language as a quiet corner label
    • Keyboard shortcuts (1-8 jump by 10%, 9 end, / search, ? help, j/k nav)
    • Quiet word-count + reading-time stamp at the top of each module
@@ -1167,94 +1165,11 @@
 		} catch (e) { /* silent */ }
 	}
 
-	/* ── 9. Scroll memory — never lose your place ──
-	   Two invisible repairs, each of which only ever undoes a jump the page
-	   made on its own:
-
-	     a) A click in the article can grow something *above* the reader — a
-	        "show the solution" toggle, a math-gate reveal, a lab that mounts
-	        a canvas and pushes the rest of the lesson down. The line being
-	        read slides away and there is no way back. We sample a landmark
-	        (the topmost heading in view, else the topmost block) before the
-	        click and, if the click did not scroll the page itself, put that
-	        landmark back where it was. A late second check catches widgets
-	        that mount asynchronously.
-	     b) Overlays that lock scrolling (the audience dial sets
-	        body overflow:hidden) can drop the offset on the way out. We
-	        record scrollY when the lock goes on and restore it when it comes
-	        off — but only if it actually drifted.
-
-	   Both bail out the moment the reader scrolls, so neither can ever fight
-	   a deliberate movement. */
-	const SETTLE_MS = [250, 800];
-	const SCROLL_EPS = 2;
-	const SHIFT_EPS = 4;
-
-	function pickScrollLandmark() {
-		const contents = document.getElementById('contents');
-		if (!contents) return null;
-		const limit = window.innerHeight * 0.7;
-		let fallback = null;
-		const nodes = contents.querySelectorAll('h2, h3, h4, p, li, figure, pre, blockquote, table');
-		for (const el of nodes) {
-			const top = el.getBoundingClientRect().top;
-			if (top < -8 || top > limit) continue;
-			// Headings survive a re-render; prefer the first one in view.
-			if (/^H[2-4]$/.test(el.tagName)) return { el: el, top: top };
-			if (!fallback) fallback = { el: el, top: top };
-		}
-		return fallback;
-	}
-
-	function installScrollMemory() {
-		// (a) re-anchor around clicks that change the layout above the reader
-		document.addEventListener('click', function (ev) {
-			const t = ev.target;
-			if (!t || !t.closest) return;
-			if (!t.closest('#contents')) return;
-			// The TOC, the lightbox and the hover previews move the viewport
-			// on purpose — never second-guess them.
-			if (t.closest('#toc, #cl-lb, .cl-cite-tip, .cl-fn-tip, .cl-sn-tip, .glossary-tooltip')) return;
-
-			const mark = pickScrollLandmark();
-			if (!mark) return;
-			const y0 = window.scrollY;
-
-			SETTLE_MS.forEach(function (ms) {
-				setTimeout(function () {
-					if (Math.abs(window.scrollY - y0) > SCROLL_EPS) return;  // reader moved on
-					if (!mark.el.isConnected) return;                        // landmark re-rendered
-					const now = mark.el.getBoundingClientRect().top;
-					const shift = now - mark.top;
-					if (Math.abs(shift) < SHIFT_EPS) return;                 // nothing moved
-					window.scrollTo({ top: window.scrollY + shift, behavior: 'instant' });
-				}, ms);
-			});
-		}, true);
-
-		// (b) keep the offset across a body scroll-lock
-		let lockedAt = null;
-		const mo = new MutationObserver(function () {
-			if (document.body.style.overflow === 'hidden') {
-				if (lockedAt === null) lockedAt = window.scrollY;
-				return;
-			}
-			if (lockedAt === null) return;
-			const was = lockedAt;
-			lockedAt = null;
-			if (Math.abs(window.scrollY - was) > SCROLL_EPS) {
-				window.scrollTo({ top: was, behavior: 'instant' });
-			}
-		});
-		mo.observe(document.body, { attributes: true, attributeFilter: ['style'] });
-	}
-
 	/* bootstrap */
 	function start() {
 		run(document);
 		installMiniToc();
 		installTocScrollSpy();
-		installScrollMemory();
 		installShortcuts();
 		installReadingMeta();
 		installBackToTop();
