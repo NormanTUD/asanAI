@@ -7191,6 +7191,49 @@ span.cl-eq {
 }
 @media (max-width: 600px) { #cl-top { display: none; } }
 
+/* ── 7b. Mini-TOC — the current section, once the real TOC is off-screen ──
+   Same restraint as #cl-top: no chip, no background, no icon. One muted
+   line at the left edge that names the section you are in and takes you
+   back to the table of contents. Hidden until the TOC has scrolled away. */
+#cl-mini-toc {
+	position: fixed;
+	left: 16px;
+	top: 50%;
+	z-index: 9000;
+	max-width: 24ch;
+	background: transparent;
+	border: none;
+	padding: 4px 2px;
+	font-family: inherit;
+	font-size: .72rem;
+	font-weight: 500;
+	letter-spacing: .02em;
+	line-height: 1.35;
+	text-align: left;
+	color: var(--mn-text-muted);
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(-50%) translateX(-6px);
+	pointer-events: none;
+	transition: opacity .25s ease, transform .25s ease, color .15s ease;
+}
+#cl-mini-toc.is-visible {
+	opacity: 1;
+	transform: translateY(-50%) translateX(0);
+	pointer-events: auto;
+}
+#cl-mini-toc:hover {
+	color: var(--mn-accent);
+}
+/* Names the section, does not repeat it: one line, ellipsised. */
+#cl-mini-toc > span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+@media (max-width: 900px) { #cl-mini-toc { display: none; } }
+
 /* ── 4. Shortcut help overlay (only on `?`) ── */
 #cl-shortcut-help {
 	position: fixed;
@@ -8382,6 +8425,7 @@ html.reader-mode #search-trigger,
 html.reader-mode #topics-toggle,
 html.reader-mode .drawer-backdrop,
 html.reader-mode #cl-top,
+html.reader-mode #cl-mini-toc,
 html.reader-mode .organic-network,
 html.reader-mode .course-hero {
 	display: none !important;
@@ -8600,6 +8644,7 @@ body:has(#cl-lb.is-visible) #search-trigger,
 body:has(#cl-lb.is-visible) #topics-toggle,
 body:has(#cl-lb.is-visible) #drawer-toggle,
 body:has(#cl-lb.is-visible) #cl-top,
+body:has(#cl-lb.is-visible) #cl-mini-toc,
 body:has(#cl-lb.is-visible) #reading-progress {
 	opacity: 0 !important;
 	visibility: hidden !important;
@@ -8639,7 +8684,7 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
 	#theme-toggle, #search-trigger, #reader-toggle, #topics-toggle,
 	#toc, .km-hero, .km-lane-glow,
-	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
+	#cl-top, #cl-mini-toc, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.cl-h-anchor, .cl-progress, .cl-progress > div,
