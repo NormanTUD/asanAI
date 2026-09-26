@@ -61,7 +61,7 @@ button:hover,select:hover{border-color:var(--acc);color:var(--acc)}
 button.on{background:linear-gradient(120deg,var(--acc),var(--acc2));color:#08111c;border-color:transparent;font-weight:650}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
 canvas{display:block;width:100%;border-radius:12px;background:#080b13;border:1px solid var(--line)}
-.plot{width:100%;height:330px}
+.plot{width:100%;height:250px}
 .pill{display:inline-block;font-size:11px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--dim);background:#0d1220}
 .pill.ok{color:var(--ok);border-color:#1d4d33}.pill.bad{color:var(--hot);border-color:#5c1f33}.pill.w{color:var(--warn);border-color:#5c4a17}
 .kpi{font-family:ui-monospace,monospace;font-size:26px;color:var(--acc)}
@@ -231,7 +231,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
     <div>
       <div class="ctrl"><label>Streifenbreite (Faser) <b id="wV">0.16</b></label><input type="range" id="wW" min="0.02" max="0.6" step="0.005" value="0.16"></div>
       <div class="ctrl"><label>Radius r <b id="r5V">0.10</b></label><input type="range" id="r5" min="0.02" max="1.4" step="0.01" value="0.1"></div>
-      <div class="row"><span class="pill" id="regime">–</span><span class="pill">gemessene Steigung: <b id="s5">–</b></span></div>
+      <div class="row"><span class="pill" id="regime">–</span><span class="pill">gemessene Steigung: <b id="s5V">–</b></span></div>
       <p class="note"><b>Theorem 1</b> in einem Satz: für ein Fiber Bundle ist die log-log-Kurve <b>stückweise linear</b>,
       die Steigungen sind Dimensionen, und sie <b>dürfen nur fallen</b>, wenn r wächst (dim T → dim S).</p>
       <div class="eq" id="eqThm"></div>
@@ -284,7 +284,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <p class="note">Wichtig: H₀ <b>nicht</b> verwerfen heißt nichts („uninformative“). Nur ein
       <b>Verwerfen</b> ist eine Aussage – dann liegt bei ψ eine Irregularität.</p>
     </div>
-    <div><div id="pTest" class="plot" style="height:400px"></div></div>
+    <div><div id="pTest" class="plot" style="height:300px"></div></div>
   </div>
   <div class="card">
     <h3>Algorithmus 1 — nachvollzogen an echten Punkten</h3>
@@ -298,8 +298,8 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
         <div class="ctrl"><label>v_max <b id="vmaxV">120</b></label><input type="range" id="vmax" min="40" max="300" step="5" value="120"></div>
         <div class="ctrl"><label>Fenster W <b id="wwV">12</b></label><input type="range" id="ww" min="4" max="40" step="1" value="12"></div>
       </div>
-      <div><div id="pAlgo" class="plot" style="height:210px"></div>
-        <div id="pSlope" class="plot" style="height:180px"></div></div>
+      <div><div id="pAlgo" class="plot" style="height:165px"></div>
+        <div id="pSlope" class="plot" style="height:140px"></div></div>
     </div>
     <div class="flow"><span>1 Distanzmatrix</span><i>→</i><span>2 Spalte sortieren</span><i>→</i>
     <span>3 v_min…v_max behalten</span><i>→</i><span>4 log-log-Steigungen</span><i>→</i>
@@ -324,7 +324,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <p class="note">Mehr Daten (großes W) oder wenig Streuung ⇒ kleinerer p-Wert. Der Bündel-Test ist
       <b>einseitig</b>: nur „B größer als A“ zählt als Verletzung.</p>
     </div>
-    <div><div id="pT" class="plot" style="height:340px"></div></div>
+    <div><div id="pT" class="plot" style="height:255px"></div></div>
   </div>
   <div class="card grid g2">
     <div>
@@ -338,7 +338,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <p class="note">Die im Paper berichteten p-Werte (z.B. 3×10⁻⁸ für GPT2) sind <b>nach</b> Korrektur —
       sie sind also nicht wegzuerklären.</p>
     </div>
-    <div><div id="pHolm" class="plot" style="height:300px"></div></div>
+    <div><div id="pHolm" class="plot" style="height:225px"></div></div>
   </div>
 </section>
 
@@ -354,7 +354,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
         <div class="row"><span class="pill">Ziehen = drehen · Scrollen = Zoom</span>
           <label style="color:var(--dim);font-size:12.5px"><input type="checkbox" id="colP" checked> nach p-Wert färben</label></div>
       </div>
-      <div><div id="pSyn" class="plot" style="height:250px"></div>
+      <div><div id="pSyn" class="plot" style="height:190px"></div>
         <div id="synText"></div></div>
     </div>
     <table><thead><tr><th>Form</th><th>Was ist es?</th><th>Manifold-Test</th><th>Bündel-Test</th></tr></thead>
@@ -374,17 +374,17 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
   <h2><span class="num">09</span>Das Ergebnis: vier echte Sprachmodelle</h2>
   <p class="lead">12 h Rechenzeit pro Modell auf einer CPU, fast alles für die Distanzmatrix. Hier die Ernte.</p>
   <div class="card grid g2">
-    <div><div id="pQuart" class="plot" style="height:330px"></div>
+    <div><div id="pQuart" class="plot" style="height:250px"></div>
       <p class="note">Wäre der Raum ein zusammenhängendes Manifold, müsste die Dimension <b>überall gleich</b> sein.
       Bei GPT2 reicht sie von Q1=20 bis Q3=531. Das allein widerlegt die Manifold-Hypothese.</p></div>
-    <div><div id="pRej" class="plot" style="height:330px"></div>
+    <div><div id="pRej" class="plot" style="height:250px"></div>
       <p class="note">GPT2, Llemma7B, Mistral7B verwerfen <b>auch</b> die Bündel-Hypothese. Pythia6.9B nicht —
       es könnte ein Bündel sein oder einfach hohe Krümmung haben.</p></div>
   </div>
   <div class="card">
     <h3>Die Dimensionsverteilung bei GPT2 (Fig. 1 des Papers)</h3>
     <div class="grid g2">
-      <div><div id="pHist" class="plot" style="height:280px"></div></div>
+      <div><div id="pHist" class="plot" style="height:210px"></div></div>
       <div><p class="lead">Drei Gipfel — also drei Sorten von Tokens. Das ist eine <b>Mischverteilung</b>,
         kein einheitliches Manifold.</p>
         <table><tbody>
@@ -411,7 +411,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <h3>Zwei Modelle, identisches Vokabular, andere Geometrie</h3>
       <p class="lead">Llemma7B und Mistral7B benutzen <b>dieselben 32.016 Tokens</b> — aber völlig andere Median-Dimensionen
       (4096 vs. 48) und andere Verletzungen. Das Training hinterlässt einen Fingerabdruck („gDNA“).</p>
-      <div id="pTwin" class="plot" style="height:240px"></div>
+      <div id="pTwin" class="plot" style="height:180px"></div>
       <p class="note">Konsequenz für die Praxis: Prompts lassen sich <b>nicht einfach portieren</b> zwischen Modellen,
       wenn sie Tokens an Irregularitäten enthalten (Stichwort: Invarianz-des-Gebiets-Satz).</p>
     </div>
@@ -462,7 +462,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
         <p class="note">Faustregel: es existiert <b>immer</b> ein gültiges m, sobald 2d &lt; ℓ — die Bounding-Dimension
         kleiner als die halbe Latentdimension ist.</p>
       </div>
-      <div><div id="pThm2" class="plot" style="height:280px"></div></div>
+      <div><div id="pThm2" class="plot" style="height:210px"></div></div>
     </div>
     <table><thead><tr><th>Modell</th><th>ℓ</th><th>d klein</th><th>d groß</th><th>w</th><th>m klein</th><th>m groß</th><th>erfüllt?</th></tr></thead>
     <tbody id="thm2Tbl"></tbody></table>
@@ -484,7 +484,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
         Zusätzlich existieren Token-Nachbarschaften <b>ohne</b> wohldefinierte intrinsische Dimension —
         eine bisher unberichtete Struktur.</p>
       </div>
-      <div><div id="pFinal" class="plot" style="height:300px"></div></div>
+      <div><div id="pFinal" class="plot" style="height:225px"></div></div>
     </div>
   </div>
   <div class="grid g3">
@@ -828,7 +828,7 @@ addEventListener('scroll',()=>{const h=document.body.scrollHeight-innerHeight;
   const reg=$('regime'),h=w/2;
   const A=area(r,w),A2=area(r*1.03,w);
   const s=(Math.log(A2)-Math.log(A))/(Math.log(r*1.03)-Math.log(r));
-  $('s5').textContent=s.toFixed(2);
+  $('s5V').textContent=s.toFixed(2);
   if(r<h*0.9){reg.textContent='kleiner Radius: Ball ganz drin → Steigung ≈ dim T = 2';reg.className='pill ok'}
   else if(r<h*1.6){reg.textContent='Übergangszone: hier entsteht der Knick (Corner)';reg.className='pill w'}
   else{reg.textContent='großer Radius: ragt raus → Steigung → dim S = 1';reg.className='pill bad'}
@@ -900,7 +900,7 @@ addEventListener('scroll',()=>{const h=document.body.scrollHeight-innerHeight;
   const sc=Math.min(W,H)*0.44,cx=W/2,cy=H/2;
   const psi=PTS[sel];
   const D=PTS.map((p,i)=>({d:Math.hypot(p[0]-psi[0],p[1]-psi[1]),i})).sort((a,b)=>a.d-b.d);
-  const vmin=+$('vmin').value,vmax=Math.min(+$('vmax').value,D.length-1),Wn=+$('ww').value;
+   const vmin=Math.min(+$('vmin').value,D.length-2),vmax=Math.min(Math.max(+$('vmax').value,vmin+2),D.length-1),Wn=+$('ww').value;
   x.strokeStyle='#161d2e';for(let i=0;i<=6;i++){x.beginPath();x.moveTo(i*W/6,0);x.lineTo(i*W/6,H);x.stroke();
    x.beginPath();x.moveTo(0,i*H/6);x.lineTo(W,i*H/6);x.stroke()}
   const rmin=D[vmin].d,rmax=D[vmax].d;
@@ -949,8 +949,9 @@ addEventListener('scroll',()=>{const h=document.body.scrollHeight-innerHeight;
   let bi=0,bd=9;PTS.forEach((p,i)=>{const d=Math.hypot(p[0]-mx,p[1]-my);if(d<bd){bd=d;bi=i}});
   sel=bi;upd2()});
  $('algoShape').onclick=()=>{shp=(shp+1)%3;build();upd2()};
- [['vmin','vminV'],['vmax','vmaxV'],['ww','wwV']].forEach(([a,b])=>bind($(a),$(b),upd2,0));
- build();upd2();addEventListener('resize',upd2);
+  build();
+  [['vmin','vminV'],['vmax','vmaxV'],['ww','wwV']].forEach(([a,b])=>bind($(a),$(b),upd2,0));
+  upd2();addEventListener('resize',upd2);
 })();
 
 /* ═══════════ 07 STATISTIK ═══════════ */

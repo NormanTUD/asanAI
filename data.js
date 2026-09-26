@@ -795,6 +795,12 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 
 		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name_latex}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
 		_temml();
+
+		try {
+			show_xy_data_plot(x, y);
+		} catch (plot_e) {
+			wrn("[get_x_and_y_from_txt] data plot failed:", plot_e);
+		}
 	} catch (e) {
 		let errorContent;
 
@@ -837,6 +843,170 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	}
 
 	return [x, y];
+}
+
+var _xy_data_plot_data = null;
+var _xy_data_plot_ro = null;
+var _xy_data_plot_ro_timer = null;
+
+function _render_xy_data_plot () {
+	var $plot = $("#xy_2d_plot");
+	if (!$plot.length || !_xy_data_plot_data) return;
+	if (typeof Plotly === "undefined") return;
+	if (!$plot.is(":visible")) return;
+
+	var d = _xy_data_plot_data;
+	var is_dark = (typeof is_dark_mode !== "undefined") && is_dark_mode === true;
+	var font_color = is_dark ? "#dfe4f2" : "#1a1f30";
+	var grid_color = is_dark ? "rgba(255,255,255,0.045)" : "rgba(30,50,110,0.055)";
+	var zero_color = is_dark ? "rgba(140,165,235,0.22)" : "rgba(60,85,160,0.22)";
+	var edge_color = is_dark ? "rgba(10,13,24,0.85)" : "rgba(255,255,255,0.9)";
+	var cfg = { responsive: true, displaylogo: false, displayModeBar: false };
+
+	var trace, layout;
+
+	if (d.ndim === 1) {
+		var px = [], py = [], colors = [], text = [];
+		for (var i = 0; i < d.pts.length; i++) {
+			var p = d.pts[i];
+			px.push(p.coords[0]);
+			py.push(p.y_val);
+			colors.push(p.color);
+			text.push(p.label);
+		}
+		trace = {
+			x: px, y: py, mode: "markers", type: "scatter",
+			marker: { size: 7, color: colors, line: { width: 1, color: edge_color } },
+			text: text,
+			hovertemplate: "x: %{x}<br>z: %{y}<br>%{text}<extra></extra>",
+			showlegend: false
+		};
+		layout = {
+			margin: { l: 45, r: 20, t: 25, b: 40 },
+			paper_bgcolor: "rgba(0,0,0,0)",
+			plot_bgcolor: "rgba(0,0,0,0)",
+			font: { color: font_color },
+			xaxis: { title: "x", gridcolor: grid_color, zerolinecolor: zero_color },
+			yaxis: { title: "z", gridcolor: grid_color, zerolinecolor: zero_color },
+			showlegend: false
+		};
+	} else if (d.ndim === 2) {
+		var px2 = [], py2 = [], colors2 = [], text2 = [];
+		for (var j = 0; j < d.pts.length; j++) {
+			var q = d.pts[j];
+			px2.push(q.coords[0]);
+			py2.push(q.coords[1]);
+			colors2.push(q.color);
+			text2.push(q.label);
+		}
+		trace = {
+			x: px2, y: py2, mode: "markers", type: "scatter",
+			marker: { size: 7, color: colors2, line: { width: 1, color: edge_color } },
+			text: text2,
+			hovertemplate: "x: %{x}<br>y: %{y}<br>%{text}<extra></extra>",
+			showlegend: false
+		};
+		layout = {
+			margin: { l: 45, r: 20, t: 25, b: 40 },
+			paper_bgcolor: "rgba(0,0,0,0)",
+			plot_bgcolor: "rgba(0,0,0,0)",
+			font: { color: font_color },
+			xaxis: { gridcolor: grid_color, zerolinecolor: zero_color },
+			yaxis: { gridcolor: grid_color, zerolinecolor: zero_color },
+			showlegend: false
+		};
+	} else {
+		var x3 = [], y3 = [], z3 = [], colors3 = [], text3 = [];
+		for (var k = 0; k < d.pts.length; k++) {
+			var r = d.pts[k];
+			x3.push(r.coords[0]);
+			y3.push(r.coords[1]);
+			z3.push(r.coords[2]);
+			colors3.push(r.color);
+			text3.push(r.label);
+		}
+		trace = {
+			x: x3, y: y3, z: z3, mode: "markers", type: "scatter3d",
+			marker: { size: 3, color: colors3, line: { width: 0.5, color: edge_color } },
+			text: text3,
+			hovertemplate: "x: %{x}<br>y: %{y}<br>z: %{z}<br>%{text}<extra></extra>",
+			showlegend: false
+		};
+		layout = {
+			margin: { l: 0, r: 0, t: 0, b: 0 },
+			paper_bgcolor: "rgba(0,0,0,0)",
+			font: { color: font_color },
+			scene: {
+				xaxis: { gridcolor: grid_color, backgroundcolor: "rgba(0,0,0,0)", zerolinecolor: zero_color },
+				yaxis: { gridcolor: grid_color, backgroundcolor: "rgba(0,0,0,0)", zerolinecolor: zero_color },
+				zaxis: { gridcolor: grid_color, backgroundcolor: "rgba(0,0,0,0)", zerolinecolor: zero_color }
+			},
+			showlegend: false
+		};
+	}
+
+	Plotly.react($plot[0], [trace], layout, cfg);
+}
+
+function show_xy_data_plot (x, y) {
+	var $plot = $("#xy_2d_plot");
+	if (!$plot.length) return;
+
+	var x_shape = (x && x.shape) ? x.shape : null;
+	var ndim = (x_shape && x_shape.length === 2) ? x_shape[1] : 0;
+	if (ndim < 1 || ndim > 3) {
+		_xy_data_plot_data = null;
+		$plot.hide().empty();
+		return;
+	}
+
+	var x_arr = array_sync(x);
+	var y_arr = (y && y.shape && y.shape[0]) ? array_sync(y) : [];
+	var n = x_arr.length;
+	var y_cols = (y && y.shape && y.shape.length > 1) ? y.shape[1] : 1;
+
+	var pts = [];
+	for (var i = 0; i < n; i++) {
+		var cls = 0;
+		var y_val = 0;
+		var label = "";
+		if (y_arr.length && y_arr[i]) {
+			if (y_cols > 1) {
+				var best = -Infinity;
+				for (var c = 0; c < y_arr[i].length; c++) {
+					if (y_arr[i][c] > best) { best = y_arr[i][c]; cls = c; }
+				}
+				y_val = cls;
+				label = "z = class " + cls;
+			} else {
+				cls = Math.round(y_arr[i][0]);
+				y_val = y_arr[i][0];
+				label = "z = " + y_arr[i][0];
+			}
+		}
+
+		var color = "#8a8a8a";
+		if (typeof OrigamiFolds !== "undefined" && typeof OrigamiFolds.classColor === "function") {
+			color = OrigamiFolds.classColor(cls);
+		}
+
+		pts.push({ coords: x_arr[i].slice(0, ndim), color: color, y_val: y_val, label: label });
+	}
+
+	_xy_data_plot_data = { pts: pts, ndim: ndim };
+
+	if (typeof ResizeObserver !== "undefined" && !_xy_data_plot_ro) {
+		_xy_data_plot_ro = new ResizeObserver(function () {
+			if (_xy_data_plot_ro_timer) clearTimeout(_xy_data_plot_ro_timer);
+			_xy_data_plot_ro_timer = setTimeout(_render_xy_data_plot, 60);
+		});
+	}
+	if (_xy_data_plot_ro) {
+		_xy_data_plot_ro.observe($plot[0]);
+	}
+
+	$plot.show();
+	_render_xy_data_plot();
 }
 
 function show_data_after_loading(xy_data, x, divide_by) {
