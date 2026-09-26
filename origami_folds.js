@@ -2448,7 +2448,7 @@ var OrigamiFolds = (function (global) {
 		*/
 
 		if (!ii.length) {
-			_log("Gitterfläche: kein einziges gültiges Dreieck übrig");
+			dbg("Gitterfläche: kein einziges gültiges Dreieck übrig");
 			return [];
 		}
 
