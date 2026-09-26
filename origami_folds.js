@@ -116,8 +116,8 @@ var OrigamiFolds = (function (global) {
 			includeInputSpace:  true,
 
 			showGrid:           true,
-			gridResolution:     13,
-			gridExtend:         1.06,
+			gridResolution:     21,
+			gridExtend:         1.5,
 			gridLineWidth:      2.2,
 			gridOpacity:        0.9,
 			colorByCurvature:   true,
