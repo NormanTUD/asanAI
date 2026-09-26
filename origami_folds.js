@@ -378,11 +378,11 @@ var OrigamiFolds = (function (global) {
 
 	function _distortionScale(dark) {
 		var mid = dark ? DISTORTION_MID_D : DISTORTION_MID_L;
-		function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+		function _ofRgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
 		return [
-			[0.00, rgb(DISTORTION_COLD)],
-			[0.50, rgb(mid)],
-			[1.00, rgb(DISTORTION_WARM)]
+			[0.00, _ofRgb(DISTORTION_COLD)],
+			[0.50, _ofRgb(mid)],
+			[1.00, _ofRgb(DISTORTION_WARM)]
 		];
 	}
 
@@ -2740,16 +2740,16 @@ var OrigamiFolds = (function (global) {
 	function _scheduleRender() {
 		if (_state.rafId) return;
 		if (typeof requestAnimationFrame !== "function") {
-			_render();
+			_ofRender();
 			return;
 		}
 		_state.rafId = requestAnimationFrame(function () {
 			_state.rafId = null;
-			_render();
+			_ofRender();
 		});
 	}
 
-	function _render() {
+	function _ofRender() {
 		if (!_state.initialized || !_state.plotDiv) return;
 		if (!_state.plotDiv.parentNode) {
 			_log("plotDiv nicht im DOM, Render abgebrochen");
@@ -3054,7 +3054,7 @@ var OrigamiFolds = (function (global) {
 		var btnRow = document.createElement("div");
 		btnRow.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;";
 
-		function mkBtn(label, tip, onClick) {
+		function _ofMkBtn(label, tip, onClick) {
 			var b = document.createElement("button");
 			b.type = "button";
 			b.textContent = label;
@@ -3071,7 +3071,7 @@ var OrigamiFolds = (function (global) {
 			return b;
 		}
 
-		mkBtn("\u21BA " + _tr("origami_reset_view", "Ansicht"),
+		_ofMkBtn("\u21BA " + _tr("origami_reset_view", "Ansicht"),
 			_tr("origami_reset_view_tip",
 				"Setzt alle Kameras auf die Standardansicht zurück."),
 			function () {
@@ -3085,12 +3085,12 @@ var OrigamiFolds = (function (global) {
 				_scheduleRender();
 			});
 
-		mkBtn("\u27F3 " + _tr("origami_force", "Neu zeichnen"),
+		_ofMkBtn("\u27F3 " + _tr("origami_force", "Neu zeichnen"),
 			_tr("origami_force_tip",
 				"Erzwingt eine Neuberechnung."),
 			function () { forceUpdate(); });
 
-		mkBtn("\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
+		_ofMkBtn("\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
 			_tr("origami_toggle_cuts_tip",
 				"Zeigt/versteckt die ReLU-Hyperplanes."),
 			function () {
@@ -3098,7 +3098,7 @@ var OrigamiFolds = (function (global) {
 				_scheduleRender();
 			});
 
-		mkBtn("\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
+		_ofMkBtn("\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
 			_tr("origami_toggle_box_tip",
 				"Zeigt/versteckt die Begrenzung des Unterraums."),
 			function () {
@@ -3106,7 +3106,7 @@ var OrigamiFolds = (function (global) {
 				_scheduleRender();
 			});
 
-		mkBtn("\u229E " + _tr("origami_toggle_grid", "Gitter"),
+		_ofMkBtn("\u229E " + _tr("origami_toggle_grid", "Gitter"),
 			_tr("origami_toggle_grid_tip",
 				"Zeigt/versteckt das Raumgitter."),
 			function () {
@@ -3114,7 +3114,7 @@ var OrigamiFolds = (function (global) {
 				_scheduleRender();
 			});
 
-		mkBtn("\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
+		_ofMkBtn("\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
 			_tr("origami_toggle_surface_tip",
 				"Zeigt die gefaltete Fläche als Körper (2D)."),
 			function () {
