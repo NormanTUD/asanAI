@@ -606,6 +606,15 @@ local-only; the `.sh` guards silently SKIP (exit 0) without a served site at
   Atlas entities (`conf` field makes the honesty rule explicit), and prose.
 - Git history style is terse (`fix`, feature names); don't rewrite history,
   don't create empty commits.
+- **Don't use `git stash` / `git stash pop` as a routine tool** (e.g. to
+  A/B-test "is this pre-existing or from my change?"). The human and other
+  agents commit **mid-session**, and the branch carries **pre-existing
+  stashes**. `git stash` can find nothing (your edits already committed) while
+  the paired `git stash pop` then applies *someone else's* WIP stash and
+  drops merge conflicts into the working tree (seen in `train.js`). To
+  compare against the prior state, use read-only inspection
+  (`git show HEAD:<file>`, `git log -p -- <file>`, `git diff HEAD -- <file>`)
+  instead — never mutate the working tree or the stash stack.
 
 ## Pitfalls (verified landmines)
 
