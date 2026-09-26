@@ -90,7 +90,7 @@
 		<div style="padding: 8px 12px;">
 			<span class="TRANSLATEME_origami_folds_hint" style="font-size: 0.85em; opacity: 0.7;"></span>
 		</div>
-		<div id="origami_folds_plot" style="width: 100%; height: 500px;"></div>
+		<div id="origami_folds_plot" style="width: 100%; min-height: 500px;"></div>
 		<div id="origami_folds_info" style="display: none; padding: 8px 12px; font-size: 0.85em;"></div>
 	</div>
 

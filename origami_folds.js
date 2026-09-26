@@ -3277,7 +3277,7 @@ var OrigamiFolds = (function (global) {
 		var plot = document.createElement("div");
 		plot.id = PLOT_ID;
 		plot.style.cssText =
-			"width:100%;min-height:" + (_state.config.subplotHeight * 2 + 90) + "px;" +
+			"width:100%;min-height:500px;" +
 			"border-radius:8px;overflow:hidden;";
 		container.appendChild(plot);
 		_state.plotDiv = plot;
