@@ -8,5 +8,6 @@
 		<br><span class="TRANSLATEME_click_start_training_to_download_training_data"></span>
 	</div>
 	<div id="xy_display_data" style="display: none; padding: 10px; overflow-y: auto" class="tab reset_before_train_network"><br><span class="TRANSLATEME_click_start_training_to_download_training_data"></span></div>
+	<div id="xy_2d_plot" class="plot-container" style="display: none; height: 420px; margin: 10px 0;"></div>
 	<div class="" id="download_data" style="display: none"></div>
 </div>
