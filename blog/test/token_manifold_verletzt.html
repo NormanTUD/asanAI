@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Token-Embeddings verletzen die Manifold-Hypothese — Interaktiv</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{
+  --bg:#07080d; --bg2:#0d1019; --panel:#121724; --panel2:#171d2e;
+  --ink:#e8ecf5; --dim:#97a3bd; --line:#232c42;
+  --acc:#63e2ff; --acc2:#b47cff; --hot:#ff5c8a; --ok:#4ade80; --warn:#fbbf24;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+ font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;line-height:1.6}
+body{background:
+  radial-gradient(1200px 700px at 10% -10%, #17203a 0%, transparent 60%),
+  radial-gradient(1000px 600px at 95% 5%, #2a1540 0%, transparent 55%),
+  radial-gradient(900px 900px at 50% 120%, #06202a 0%, transparent 60%),
+  var(--bg);}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:99;
+ background:linear-gradient(90deg,var(--acc),var(--acc2),var(--hot));box-shadow:0 0 12px var(--acc)}
+nav{position:fixed;top:0;right:0;left:0;z-index:90;backdrop-filter:blur(14px);
+ background:rgba(7,8,13,.72);border-bottom:1px solid var(--line)}
+nav .wrap{max-width:1180px;margin:0 auto;padding:9px 20px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+nav b{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-right:10px}
+nav a{color:var(--dim);text-decoration:none;font-size:12px;padding:4px 9px;border-radius:99px;border:1px solid transparent;transition:.2s}
+nav a:hover{color:var(--ink);border-color:var(--line);background:var(--panel)}
+main{max-width:1180px;margin:0 auto;padding:78px 20px 120px}
+header.hero{padding:60px 0 40px;text-align:center}
+header.hero .kicker{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--acc2)}
+header.hero h1{font-size:clamp(30px,5.4vw,60px);line-height:1.05;margin:16px 0 10px;font-weight:800;
+ background:linear-gradient(100deg,#fff 10%,var(--acc) 45%,var(--acc2) 75%,var(--hot));
+ -webkit-background-clip:text;background-clip:text;color:transparent}
+header.hero p{color:var(--dim);max-width:720px;margin:0 auto;font-size:17px}
+section{margin:62px 0 0;scroll-margin-top:70px}
+h2{font-size:clamp(22px,3vw,32px);margin:0 0 6px;font-weight:750}
+h2 .num{color:var(--acc);font-family:ui-monospace,monospace;font-size:.62em;margin-right:12px;opacity:.9}
+h3{font-size:18px;margin:26px 0 6px;color:var(--acc)}
+p{color:#cbd4e6}
+.lead{color:var(--dim);font-size:15.5px;margin:0 0 18px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+ border-radius:18px;padding:20px;margin:18px 0;box-shadow:0 24px 60px -30px #000}
+.grid{display:grid;gap:18px}
+@media(min-width:880px){.g2{grid-template-columns:1fr 1fr}.g25{grid-template-columns:1fr 1.3fr}.g3{grid-template-columns:repeat(3,1fr)}}
+.ctrl{display:flex;flex-direction:column;gap:3px;margin:10px 0}
+.ctrl label{font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
+.ctrl label b{color:var(--acc);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:#243050;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+ background:linear-gradient(140deg,#fff,var(--acc));cursor:pointer;box-shadow:0 0 12px var(--acc)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+button,select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+ padding:7px 13px;font-size:13px;cursor:pointer;transition:.18s;font-family:inherit}
+button:hover,select:hover{border-color:var(--acc);color:var(--acc)}
+button.on{background:linear-gradient(120deg,var(--acc),var(--acc2));color:#08111c;border-color:transparent;font-weight:650}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+canvas{display:block;width:100%;border-radius:12px;background:#080b13;border:1px solid var(--line)}
+.plot{width:100%;height:330px}
+.pill{display:inline-block;font-size:11px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--dim);background:#0d1220}
+.pill.ok{color:var(--ok);border-color:#1d4d33}.pill.bad{color:var(--hot);border-color:#5c1f33}.pill.w{color:var(--warn);border-color:#5c4a17}
+.kpi{font-family:ui-monospace,monospace;font-size:26px;color:var(--acc)}
+.note{font-size:13px;color:var(--dim);border-left:2px solid var(--acc2);padding-left:12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--acc);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em}
+td.mono{font-family:ui-monospace,monospace}
+.tok{font-family:ui-monospace,monospace;background:#0d1220;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;color:var(--warn)}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{counter-increment:s;position:relative;padding:8px 0 8px 40px;color:#cbd4e6;font-size:14.5px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:26px;height:26px;border-radius:50%;
+ background:linear-gradient(140deg,var(--acc),var(--acc2));color:#071019;font-weight:800;font-size:13px;
+ display:grid;place-items:center}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--dim);margin:8px 0}
+.flow span{padding:5px 10px;border:1px solid var(--line);border-radius:9px;background:#0d1220}
+.flow i{color:var(--acc)}
+footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;text-align:center}
+.eq{overflow-x:auto;padding:8px 2px;color:#dce4f5}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav><div class="wrap"><b>Fiber-Bundle-Hypothese</b>
+<a href="#s0">Problem</a><a href="#s1">Manifold</a><a href="#s2">Dimension</a><a href="#s3">Volumen</a>
+<a href="#s4">Reach</a><a href="#s5">Bündel</a><a href="#s6">Test</a><a href="#s7">Statistik</a>
+<a href="#s8">Synthetik</a><a href="#s9">LLMs</a><a href="#s10">Kontext</a><a href="#s11">Antwort</a>
+</div></nav>
+
+<main>
+<header class="hero">
+  <div class="kicker">Robinson · Dey · Chiang — NeurIPS 2025</div>
+  <h1>Token-Embeddings verletzen die Manifold-Hypothese</h1>
+  <p>Fast jede KI-Arbeit nimmt an: Daten liegen auf einer glatten, gekrümmten Fläche („Manifold“).
+  Diese Arbeit baut einen <b>statistischen Test</b> dafür – und zeigt: für die Token-Eingaben echter
+  Sprachmodelle ist das <b>falsch</b>. Alles unten ist zum Anfassen. Schieben, klicken, verstehen.</p>
+</header>
+
+<!-- ════════ 0 MOTIVATION ════════ -->
+<section id="s0">
+  <h2><span class="num">00</span>Die Motivation: zwei gleiche Prompts, zwei Antworten</h2>
+  <p class="lead">LLMs reagieren manchmal wild unterschiedlich auf fast identische Eingaben. Die Vermutung der Autoren:
+  manche Tokens sitzen an <b>geometrischen Bruchkanten</b> des Eingaberaums. Verschiebe unten den Prompt minimal.</p>
+  <div class="card grid g25">
+    <div>
+      <div class="ctrl"><label>Wie „irregulär“ ist das benutzte Token? <b id="irrV">0.10</b></label>
+        <input type="range" id="irr" min="0" max="1" step="0.01" value="0.1"></div>
+      <div class="ctrl"><label>Größe der Wortänderung (semantisch gleich) <b id="pertV">0.30</b></label>
+        <input type="range" id="pert" min="0" max="1" step="0.01" value="0.3"></div>
+      <div class="row"><button id="shoot">10× antworten lassen</button><button id="clr">Reset</button></div>
+      <p class="note">Bei glatter Geometrie liegen beide Antwortwolken übereinander. An einer Singularität
+      zerfällt die Antwort in getrennte Häufchen – das ist die beobachtete Instabilität.</p>
+      <div class="row"><span class="pill">Streuung A: <b id="sdA">–</b></span><span class="pill">Streuung B: <b id="sdB">–</b></span>
+        <span class="pill" id="verdict">–</span></div>
+    </div>
+    <div><canvas id="cMot" height="340"></canvas>
+      <div class="legend"><span><i style="background:#63e2ff"></i>Prompt A</span>
+      <span><i style="background:#ff5c8a"></i>Prompt B (semantisch gleich)</span></div></div>
+  </div>
+  <div class="card">
+    <h3>Welche Art Problem löst das Paper?</h3>
+    <div class="flow"><span>Beobachtung: Prompt-Fragilität</span><i>→</i><span>Vermutung: Geometrie ist nicht glatt</span>
+    <i>→</i><span>Problem: es gibt keinen <b>Test</b> dafür</span><i>→</i><span>Beitrag: ein Hypothesentest pro Token</span>
+    <i>→</i><span>Ergebnis: Hypothese wird verworfen</span></div>
+    <p class="lead">Konkret gemacht: der Test wird auf <b>3 synthetische Formen</b> (wo man die Wahrheit kennt) und auf
+    die Embedding-Matrizen von <b>GPT2, Llemma7B, Mistral7B, Pythia6.9B</b> angewendet.</p>
+  </div>
+</section>
+
+<!-- ════════ 1 MANIFOLD ════════ -->
+<section id="s1">
+  <h2><span class="num">01</span>Vorwissen: Was ist ein Manifold – und was eine Singularität?</h2>
+  <p class="lead">Regel: <b>jeder</b> Punkt muss eine Umgebung haben, die aussieht wie ein flaches Stück ℝ<sup>d</sup>.
+  Zoome mit dem Slider in die Punkte hinein und schau, ob die Umgebung „flach wie eine Scheibe“ wirkt.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="row" id="shapeBtns"></div>
+      <div class="ctrl"><label>Zoom-Radius um den roten Punkt <b id="zV">0.40</b></label>
+        <input type="range" id="zoom" min="0.05" max="1.2" step="0.01" value="0.4"></div>
+      <div class="ctrl"><label>Punkt entlang der Form wandern <b id="pV">0.50</b></label>
+        <input type="range" id="ppos" min="0" max="1" step="0.005" value="0.5"></div>
+      <div id="diagBox"></div>
+      <p class="note">Ein <b>Rand</b> sieht wie ein Halbraum aus – schon kein Manifold mehr (aber „Manifold mit Rand“).
+      Eine <b>Spitze/Cusp</b> und ein <b>Dimensionswechsel</b> sind echte Singularitäten.</p>
+    </div>
+    <div><canvas id="cMan" height="360"></canvas>
+      <div class="legend"><span><i style="background:#63e2ff"></i>Raum</span><span><i style="background:#ff5c8a"></i>Testpunkt ψ</span>
+      <span><i style="background:#b47cff"></i>Umgebung B(ψ)</span></div></div>
+  </div>
+</section>
+
+<!-- ════════ 2 DIMENSION ════════ -->
+<section id="s2">
+  <h2><span class="num">02</span>Vorwissen: Dimension = Wachstumsrate</h2>
+  <p class="lead">Man braucht keine Topologie-Vorlesung. Verdopple den Radius einer Kugel: in 1D verdoppelt sich
+  der Inhalt (2¹), in 2D vervierfacht (2²), in 3D ×8 (2³). Also <span class="tok">Volumen ≈ K·r^d</span> — und
+  <b>d ist ablesbar als Steigung im log-log-Plot</b>. Das ist der ganze Trick des Papers.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="ctrl"><label>Wahre Dimension d <b id="dV">2.0</b></label>
+        <input type="range" id="dSl" min="0.5" max="6" step="0.1" value="2"></div>
+      <div class="ctrl"><label>Radius r <b id="rV">1.00</b></label>
+        <input type="range" id="rSl" min="0.2" max="4" step="0.02" value="1"></div>
+      <div class="row"><label style="color:var(--dim);font-size:12.5px"><input type="checkbox" id="logs" checked> log-log-Achsen</label></div>
+      <div class="eq" id="eqVol"></div>
+      <p class="note">Im log-log-Bild ist <b>alles eine Gerade</b>, deren Steigung genau d ist. Deshalb heißt „Dimension messen“
+      ab jetzt: „Steigung schätzen“.</p>
+    </div>
+    <div><div id="pDim" class="plot"></div></div>
+  </div>
+  <div class="card">
+    <h3>Vom Punktwolken-Zählen zur Steigung (Monte-Carlo)</h3>
+    <p class="lead">Wir kennen kein echtes Volumen – wir haben nur Tokens. Ersatz: <b>Volumen ≈ Anzahl Punkte im Radius r</b>.
+    Sortiere alle Abstände zu ψ; dann ist der <i>k</i>-te Abstand der Radius, bei dem das „Volumen“ auf <i>k</i> springt.</p>
+    <div class="grid g2"><div><canvas id="cCount" height="270"></canvas>
+      <div class="ctrl"><label>Radius um ψ <b id="ccV">0.60</b></label><input type="range" id="ccR" min="0.05" max="1.6" step="0.01" value="0.6"></div>
+      <div class="row"><span class="pill">Punkte drin: <b id="ccN">0</b></span><span class="pill">Steigung lokal: <b id="ccS">–</b></span></div></div>
+      <div><div id="pCount" class="plot"></div></div></div>
+  </div>
+</section>
+
+<!-- ════════ 3 VOLUMENFORMEL ════════ -->
+<section id="s3">
+  <h2><span class="num">03</span>Krümmung = Korrekturterme</h2>
+  <p class="lead">Exakt gilt (Gray, 1974): <span class="tok">v = K·r^d + (Korrektur)·r^(d+1) + …</span>
+  Große Korrekturterme = <b>hohe Krümmung</b> = die log-log-Linie biegt sich, obwohl der Raum völlig glatt ist.
+  Genau deshalb braucht der Test eine Annahme über Krümmung (→ Reach, Abschnitt 04).</p>
+  <div class="card grid g2">
+    <div>
+      <div class="ctrl"><label>Dimension d <b id="d2V">2.0</b></label><input type="range" id="d2" min="1" max="5" step="0.1" value="2"></div>
+      <div class="ctrl"><label>Krümmungs-Korrektur c <b id="cV">0.00</b></label><input type="range" id="cC" min="-0.9" max="2" step="0.01" value="0"></div>
+      <div class="row"><span class="pill" id="curvBadge">flach</span><span class="pill">scheinbare Steigung bei r=1: <b id="appS">–</b></span></div>
+      <p class="note">Merke: eine <b>gebogene</b> Kurve kann Krümmung sein. Ein <b>Knick</b> (plötzlicher Steigungswechsel)
+      kann kein glattes Manifold sein. Der Test sucht Knicke, nicht Biegungen.</p>
+    </div>
+    <div><div id="pCurv" class="plot"></div></div>
+  </div>
+</section>
+
+<!-- ════════ 4 REACH ════════ -->
+<section id="s4">
+  <h2><span class="num">04</span>Vorwissen: Reach τ — wie „gutartig“ ist die Form?</h2>
+  <p class="lead">Der <b>Reach</b> ist der größte Abstand τ, sodass jeder Punkt im Umfeld noch <b>genau einen</b> nächsten
+  Punkt auf der Form hat. Bewege den blauen Testpunkt: wo zwei Lote gleich kurz sind, ist die Eindeutigkeit kaputt.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="ctrl"><label>Krümmung der Kurve <b id="kV">0.60</b></label><input type="range" id="kK" min="0.05" max="1.6" step="0.01" value="0.6"></div>
+      <div class="ctrl"><label>Testpunkt x <b id="txV">0.00</b></label><input type="range" id="tx" min="-1" max="1" step="0.01" value="0"></div>
+      <div class="ctrl"><label>Testpunkt y <b id="tyV">0.70</b></label><input type="range" id="ty" min="0" max="1.6" step="0.01" value="0.7"></div>
+      <div class="row"><span class="pill">Reach τ ≈ <b id="reachV">–</b></span><span class="pill" id="uniq">–</span></div>
+      <p class="note">Klein τ ⇒ hohe Krümmung ⇒ Abstände/Geodäten numerisch instabil. Konvex ⇒ τ=∞. Cusp ⇒ τ=0.
+      Der Test gilt <b>nur für Radien r &lt; τ</b> — das ist die zentrale Limitation.</p>
+    </div>
+    <div><canvas id="cReach" height="330"></canvas></div>
+  </div>
+</section>
+
+<!-- ════════ 5 FIBER BUNDLE ════════ -->
+<section id="s5">
+  <h2><span class="num">05</span>Die Idee: Fiber Bundle = zwei Größenskalen</h2>
+  <p class="lead">Manifold ist zu streng. Also verallgemeinern: jeder Punkt hat eine Umgebung <span class="tok">B × F</span>
+  (Basis × Faser). Anschaulich: ein dünner Streifen. <b>Klein</b> gezoomt sieht er 2D aus, <b>weit</b> gezoomt 1D.
+  Das ist genau „Signal (lange Skala) × Rauschen (kurze Skala)“.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="ctrl"><label>Streifenbreite (Faser) <b id="wV">0.16</b></label><input type="range" id="wW" min="0.02" max="0.6" step="0.005" value="0.16"></div>
+      <div class="ctrl"><label>Radius r <b id="r5V">0.10</b></label><input type="range" id="r5" min="0.02" max="1.4" step="0.01" value="0.1"></div>
+      <div class="row"><span class="pill" id="regime">–</span><span class="pill">gemessene Steigung: <b id="s5">–</b></span></div>
+      <p class="note"><b>Theorem 1</b> in einem Satz: für ein Fiber Bundle ist die log-log-Kurve <b>stückweise linear</b>,
+      die Steigungen sind Dimensionen, und sie <b>dürfen nur fallen</b>, wenn r wächst (dim T → dim S).</p>
+      <div class="eq" id="eqThm"></div>
+    </div>
+    <div><canvas id="
+      <canvas id="cBundle" height="330"></canvas>
+      <div class="legend"><span><i style="background:#63e2ff"></i>Streifen = Fiber Bundle</span>
+      <span><i style="background:#b47cff"></i>Ball B(ψ)</span><span><i style="background:#ff5c8a"></i>ψ</span></div>
+    </div>
+  </div>
+  <div class="card grid g2">
+    <div><div id="pBundle" class="plot"></div></div>
+    <div>
+      <h3>Warum darf die Steigung nur <i>fallen</i>?</h3>
+      <p class="lead">Wächst r, ragt der Ball aus dem Streifen heraus. Das <b>fehlende</b> Volumen bremst das Wachstum.
+      Deshalb: Steigung klein r = dim T (voll), Steigung groß r = dim S (nur Basis). Und dim S &lt; dim T.</p>
+      <ul class="steps">
+        <li>Kleiner Radius: Ball ganz drin → Fläche ∝ r² → Steigung 2</li>
+        <li>Großer Radius: Ball ragt seitlich raus → Fläche ∝ r¹ → Steigung 1</li>
+        <li>Am Übergang: ein <b>Knick</b> nach unten (Corner). Erlaubt.</li>
+        <li>Ein Knick nach <b>oben</b> wäre unmöglich → Bündel widerlegt.</li>
+      </ul>
+      <p class="note">Interpretation: kurze Skala = Rauschen/Faser, lange Skala = Signal/Basis.
+      Ist das Rauschen überall gleich (homoskedastisch), passt ein Bündel. Hängt es vom Token ab
+      (heteroskedastisch), wird das Bündel verworfen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ 6 TEST ════════ -->
+<section id="s6">
+  <h2><span class="num">06</span>Der Test: zwei Nullhypothesen, ein Diagramm</h2>
+  <p class="lead">Baue selbst eine log-log-Kurve. Setze Steigungen und einen Knick – und schau, welcher Test
+  Alarm gibt. <b>Manifold-Test</b> reagiert auf <i>jede</i> Steigungsänderung, <b>Bündel-Test</b> nur auf <i>Anstiege</i>.</p>
+  <div class="card grid g25">
+    <div>
+      <div class="ctrl"><label>Steigung links (kleiner Radius) <b id="m1V">2.0</b></label>
+        <input type="range" id="m1" min="0.3" max="8" step="0.1" value="2"></div>
+      <div class="ctrl"><label>Steigung rechts (großer Radius) <b id="m2V">1.0</b></label>
+        <input type="range" id="m2" min="0.3" max="8" step="0.1" value="1"></div>
+      <div class="ctrl"><label>Ort des Knicks <b id="brV">0.50</b></label>
+        <input type="range" id="br" min="0.2" max="0.8" step="0.01" value="0.5"></div>
+      <div class="ctrl"><label>Sample-Rauschen <b id="nzV">0.05</b></label>
+        <input type="range" id="nz" min="0" max="0.4" step="0.005" value="0.05"></div>
+      <div class="row"><span class="pill" id="vMan">–</span><span class="pill" id="vFib">–</span></div>
+      <table><thead><tr><th></th><th>Manifold-Test</th><th>Bündel-Test</th></tr></thead>
+      <tbody>
+      <tr><td>H₀</td><td>eine einzige Dimension bei ψ</td><td>Dimension steigt nicht, wenn r wächst</td></tr>
+      <tr><td>H₁</td><td>keine einzige Dimension</td><td>Dimension steigt bei irgendeinem r</td></tr>
+      </tbody></table>
+      <p class="note">Wichtig: H₀ <b>nicht</b> verwerfen heißt nichts („uninformative“). Nur ein
+      <b>Verwerfen</b> ist eine Aussage – dann liegt bei ψ eine Irregularität.</p>
+    </div>
+    <div><div id="pTest" class="plot" style="height:400px"></div></div>
+  </div>
+  <div class="card">
+    <h3>Algorithmus 1 — nachvollzogen an echten Punkten</h3>
+    <p class="lead">Klicke einen Punkt an. Dann: alle Abstände sortieren → Index = „Volumen“, Wert = Radius →
+    log-log → Steigungen per 3-Punkt-Differenz → Gleitfenster vergleichen → t-Test → Holm-Bonferroni.</p>
+    <div class="grid g2">
+      <div><canvas id="cAlgo" height="300"></canvas>
+        <div class="row"><button id="algoShape">Form wechseln</button>
+        <span class="pill">ψ = Punkt <b id="algoIdx">–</b></span></div>
+        <div class="ctrl"><label>v_min <b id="vminV">10</b></label><input type="range" id="vmin" min="3" max="60" step="1" value="10"></div>
+        <div class="ctrl"><label>v_max <b id="vmaxV">120</b></label><input type="range" id="vmax" min="40" max="300" step="5" value="120"></div>
+        <div class="ctrl"><label>Fenster W <b id="wwV">12</b></label><input type="range" id="ww" min="4" max="40" step="1" value="12"></div>
+      </div>
+      <div><div id="pAlgo" class="plot" style="height:210px"></div>
+        <div id="pSlope" class="plot" style="height:180px"></div></div>
+    </div>
+    <div class="flow"><span>1 Distanzmatrix</span><i>→</i><span>2 Spalte sortieren</span><i>→</i>
+    <span>3 v_min…v_max behalten</span><i>→</i><span>4 log-log-Steigungen</span><i>→</i>
+    <span>5 t-Test Fenster A vs. B</span><i>→</i><span>6 p-Werte</span><i>→</i><span>7 Holm-Bonferroni</span></div>
+  </div>
+</section>
+
+<!-- ════════ 7 STATISTIK ════════ -->
+<section id="s7">
+  <h2><span class="num">07</span>Vorwissen: t-Test, einseitig vs. zweiseitig, Holm-Bonferroni</h2>
+  <p class="lead">Zwei Fenster von Steigungswerten. Sind ihre Mittel wirklich verschieden – oder nur Zufall?
+  Der p-Wert ist die Wahrscheinlichkeit, so etwas <b>rein zufällig</b> zu sehen.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="ctrl"><label>Mittel Fenster A <b id="mAV">2.0</b></label><input type="range" id="mA" min="0" max="6" step="0.05" value="2"></div>
+      <div class="ctrl"><label>Mittel Fenster B <b id="mBV">2.6</b></label><input type="range" id="mB" min="0" max="6" step="0.05" value="2.6"></div>
+      <div class="ctrl"><label>Streuung σ <b id="sgV">0.60</b></label><input type="range" id="sg" min="0.05" max="2" step="0.01" value="0.6"></div>
+      <div class="ctrl"><label>Fenstergröße W <b id="nWV">12</b></label><input type="range" id="nW" min="3" max="60" step="1" value="12"></div>
+      <div class="row"><span class="pill">t = <b id="tStat">–</b></span>
+        <span class="pill">p zweiseitig (Manifold): <b id="p2s">–</b></span>
+        <span class="pill">p einseitig (Bündel): <b id="p1s">–</b></span></div>
+      <p class="note">Mehr Daten (großes W) oder wenig Streuung ⇒ kleinerer p-Wert. Der Bündel-Test ist
+      <b>einseitig</b>: nur „B größer als A“ zählt als Verletzung.</p>
+    </div>
+    <div><div id="pT" class="plot" style="height:340px"></div></div>
+  </div>
+  <div class="card grid g2">
+    <div>
+      <h3>50.000 Tokens = 50.000 Tests</h3>
+      <p class="lead">Bei α=0,001 und 50.257 Tokens erwartet man allein durch Zufall ≈50 „Treffer“.
+      Holm-Bonferroni verschärft die Schwelle stufenweise: sortiere p aufsteigend, vergleiche p₍ᵏ₎ mit α/(n−k+1).</p>
+      <div class="ctrl"><label>Anzahl Tests n <b id="nTV">50257</b></label><input type="range" id="nT" min="100" max="60000" step="100" value="50257"></div>
+      <div class="ctrl"><label>α <b id="alV">0.0010</b></label><input type="range" id="al" min="0.0001" max="0.05" step="0.0001" value="0.001"></div>
+      <div class="row"><span class="pill">naive Falschtreffer: <b id="fp">–</b></span>
+        <span class="pill">Holm-Schwelle für kleinstes p: <b id="hb">–</b></span></div>
+      <p class="note">Die im Paper berichteten p-Werte (z.B. 3×10⁻⁸ für GPT2) sind <b>nach</b> Korrektur —
+      sie sind also nicht wegzuerklären.</p>
+    </div>
+    <div><div id="pHolm" class="plot" style="height:300px"></div></div>
+  </div>
+</section>
+
+<!-- ════════ 8 SYNTHETIK ════════ -->
+<section id="s8">
+  <h2><span class="num">08</span>Validierung: drei Formen, deren Wahrheit man kennt</h2>
+  <p class="lead">Ein Test ist nur gut, wenn er bekannte Fälle richtig einordnet. Drehe die 3D-Formen,
+  klicke Punkte an, vergleiche die log-log-Kurven.</p>
+  <div class="card">
+    <div class="row" id="synBtns"></div>
+    <div class="grid g25">
+      <div><div id="three" style="width:100%;height:380px;border-radius:12px;border:1px solid var(--line);background:#080b13"></div>
+        <div class="row"><span class="pill">Ziehen = drehen · Scrollen = Zoom</span>
+          <label style="color:var(--dim);font-size:12.5px"><input type="checkbox" id="colP" checked> nach p-Wert färben</label></div>
+      </div>
+      <div><div id="pSyn" class="plot" style="height:250px"></div>
+        <div id="synText"></div></div>
+    </div>
+    <table><thead><tr><th>Form</th><th>Was ist es?</th><th>Manifold-Test</th><th>Bündel-Test</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">Sphäre</td><td>echtes 2D-Manifold</td><td><span class="pill ok">p≈1, keine Verwerfung</span></td><td><span class="pill ok">nicht verworfen</span></td></tr>
+      <tr><td class="mono">Cusp z⁸+x²+y²=0</td><td>Fiber Bundle, Manifold m. Rand, Spitze bei 0</td><td><span class="pill bad">p&lt;5×10⁻⁸ an der Spitze</span></td><td><span class="pill ok">nie verworfen ✓ korrekt</span></td></tr>
+      <tr><td class="mono">Lollipop</td><td>weder noch (1D-Stiel an 2D-Kugel)</td><td><span class="pill bad">p&lt;10⁻⁵ (75 + 58 Punkte)</span></td><td><span class="pill bad">2 Punkte am Übergang</span></td></tr>
+    </tbody></table>
+    <p class="note">Der Cusp-Fall ist der Beweis für Trennschärfe: <b>Manifold verworfen, Bündel nicht</b> —
+    exakt die mathematische Wahrheit. Den <i>Rand</i> übersieht der Test (p&gt;0,001): Sensitivität kostet Spezifität.
+    Das ist die einzige bekannte Schwäche und wird offen berichtet.</p>
+  </div>
+</section>
+
+<!-- ════════ 9 LLM-ERGEBNISSE ════════ -->
+<section id="s9">
+  <h2><span class="num">09</span>Das Ergebnis: vier echte Sprachmodelle</h2>
+  <p class="lead">12 h Rechenzeit pro Modell auf einer CPU, fast alles für die Distanzmatrix. Hier die Ernte.</p>
+  <div class="card grid g2">
+    <div><div id="pQuart" class="plot" style="height:330px"></div>
+      <p class="note">Wäre der Raum ein zusammenhängendes Manifold, müsste die Dimension <b>überall gleich</b> sein.
+      Bei GPT2 reicht sie von Q1=20 bis Q3=531. Das allein widerlegt die Manifold-Hypothese.</p></div>
+    <div><div id="pRej" class="plot" style="height:330px"></div>
+      <p class="note">GPT2, Llemma7B, Mistral7B verwerfen <b>auch</b> die Bündel-Hypothese. Pythia6.9B nicht —
+      es könnte ein Bündel sein oder einfach hohe Krümmung haben.</p></div>
+  </div>
+  <div class="card">
+    <h3>Die Dimensionsverteilung bei GPT2 (Fig. 1 des Papers)</h3>
+    <div class="grid g2">
+      <div><div id="pHist" class="plot" style="height:280px"></div></div>
+      <div><p class="lead">Drei Gipfel — also drei Sorten von Tokens. Das ist eine <b>Mischverteilung</b>,
+        kein einheitliches Manifold.</p>
+        <table><tbody>
+        <tr><td><span class="pill" style="color:#63e2ff">Gipfel ~20</span></td><td>Zahlen, Monate, Wochentage, Himmelsrichtungen</td></tr>
+        <tr><td><span class="pill" style="color:#b47cff">Gipfel ~389</span></td><td>einzelne englische Wörter</td></tr>
+        <tr><td><span class="pill" style="color:#ff5c8a">Gipfel ~531</span></td><td>meist Wortfragmente</td></tr>
+        </tbody></table>
+        <p class="note">Es gibt sogar Tokens mit Dimension 0: <b>isolierte</b> Punkte. Der Token-Raum ist dann
+        unzusammenhängend und diese Tokens sind intrinsisch unendlich weit von allen anderen entfernt.</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Welche Tokens sind es? Suche selbst.</h3>
+    <div class="row"><select id="modelSel"></select>
+      <input id="tokQ" placeholder="Token suchen…" style="background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:13px">
+      <button id="onlyFib">nur Bündel-Verletzungen</button></div>
+    <div style="max-height:300px;overflow:auto"><table id="tokTable"><thead><tr><th>#</th><th>ID</th><th>Token</th><th>p-Wert</th><th>Typ</th><th>Kommentar</th></tr></thead><tbody></tbody></table></div>
+    <p class="note">Muster: GPT2-Irregularitäten sind Tokens, die nur am <b>Wortanfang</b> stehen können.
+    Pythia-Irregularitäten sind bedeutungslose <b>Fragmente</b>. Llemma/Mistral: beides.
+    Und mehrere sind klare <b>Homonyme</b>: „affect“, „monitor“, „wins“, „aunder“ (→ „launder“: Wäsche vs. Geld).</p>
+  </div>
+  <div class="card grid g2">
+    <div>
+      <h3>Zwei Modelle, identisches Vokabular, andere Geometrie</h3>
+      <p class="lead">Llemma7B und Mistral7B benutzen <b>dieselben 32.016 Tokens</b> — aber völlig andere Median-Dimensionen
+      (4096 vs. 48) und andere Verletzungen. Das Training hinterlässt einen Fingerabdruck („gDNA“).</p>
+      <div id="pTwin" class="plot" style="height:240px"></div>
+      <p class="note">Konsequenz für die Praxis: Prompts lassen sich <b>nicht einfach portieren</b> zwischen Modellen,
+      wenn sie Tokens an Irregularitäten enthalten (Stichwort: Invarianz-des-Gebiets-Satz).</p>
+    </div>
+    <div>
+      <h3>Der Nachbarschaft von „ember“ in Mistral7B</h3>
+      <p class="lead">PCA von 4096D auf 3D. Sichtbar: <b>Cusp-Punkte</b> (scharfe Spitzen) bei „ember“ und „P“,
+      <b>Pinch-Punkte</b> (Wurstkette-Einschnürungen) bei „:“ und „ly“. Keins davon kann ein glattes Manifold sein.</p>
+      <canvas id="cEmber" height="260"></canvas>
+      <div class="row"><button id="emberRot" class="on">Rotation</button>
+        <span class="pill bad">dunkel = kleiner p-Wert</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ 10 KONTEXT ════════ -->
+<section id="s10">
+  <h2><span class="num">10</span>„Löst mehr Kontext das Problem?“ — Nein.</h2>
+  <p class="lead">Naheliegende Hoffnung: mit langem Kontextfenster verschwimmen Singularitäten.
+  Lemma 1 sagt das Gegenteil.</p>
+  <div class="card grid g2">
+    <div>
+      <div class="eq" id="eqLemma"></div>
+      <ul class="steps">
+        <li>Ist X ein Manifold und X×Y ein Manifold, dann ist auch Y eins (Quotient).</li>
+        <li>Umkehrung (Kontraposition): ist T <b>kein</b> Manifold, aber T<sup>w−1</sup> eins, dann kann T<sup>w</sup> keins sein.</li>
+        <li>Also: für <b>jede</b> Fenstergröße gibt es eine längere, die wieder Singularitäten zeigt.</li>
+        <li>Fazit: Kontext beseitigt Singularitäten <b>nicht dauerhaft</b>.</li>
+      </ul>
+      <div class="ctrl"><label>Kontextfenster w <b id="wwwV">8</b></label><input type="range" id="www" min="1" max="24" step="1" value="8"></div>
+      <div class="row"><span class="pill bad" id="prodBad">–</span></div>
+    </div>
+    <div><canvas id="cCtx" height="300"></canvas>
+      <div class="legend"><span><i style="background:#ff5c8a"></i>singuläres Token</span>
+      <span><i style="background:#63e2ff"></i>reguläres Token</span></div></div>
+  </div>
+  <div class="card">
+    <h3>Theorem 2: wandern die Singularitäten bis in die Ausgabe?</h3>
+    <p class="lead">Bedingung: <span class="tok">m &gt; 2wd/ℓ</span> <b>und</b> <span class="tok">w ≥ m</span>.
+    Ist beides erfüllt, bettet ein generischer Transformer T<sup>w</sup> in die Ausgabe ein — Singularitäten
+    <b>überleben</b>. Prüfe es selbst nach:</p>
+    <div class="grid g2">
+      <div>
+        <div class="ctrl"><label>ℓ (Latentdimension) <b id="llV">4096</b></label><input type="range" id="ll" min="256" max="8192" step="64" value="4096"></div>
+        <div class="ctrl"><label>d (Bounding-Dimension) <b id="ddV">48</b></label><input type="range" id="dd" min="1" max="4096" step="1" value="48"></div>
+        <div class="ctrl"><label>w (Kontextfenster) <b id="wcV">4096</b></label><input type="range" id="wc" min="256" max="8192" step="64" value="4096"></div>
+        <div class="row"><span class="pill">min. Ausgabetokens m &gt; <b id="mMin">–</b></span>
+          <span class="pill" id="thm2">–</span></div>
+        <p class="note">Faustregel: es existiert <b>immer</b> ein gültiges m, sobald 2d &lt; ℓ — die Bounding-Dimension
+        kleiner als die halbe Latentdimension ist.</p>
+      </div>
+      <div><div id="pThm2" class="plot" style="height:280px"></div></div>
+    </div>
+    <table><thead><tr><th>Modell</th><th>ℓ</th><th>d klein</th><th>d groß</th><th>w</th><th>m klein</th><th>m groß</th><th>erfüllt?</th></tr></thead>
+    <tbody id="thm2Tbl"></tbody></table>
+  </div>
+</section>
+
+<!-- ════════ 11 ANTWORT ════════ -->
+<section id="s11">
+  <h2><span class="num">11</span>Die Antwort auf die gestellte Frage</h2>
+  <div class="card">
+    <div class="grid g2">
+      <div>
+        <h3>Frage</h3>
+        <p class="lead">Liegen die Token-Embeddings eines LLM auf einer glatten, regulären Struktur —
+        einem Manifold (oder wenigstens einem Fiber Bundle) mit großem Reach?</p>
+        <h3>Antwort</h3>
+        <p class="lead"><b>Nein.</b> Für alle vier getesteten Modelle wird die Manifold-Hypothese hochsignifikant
+        verworfen (p bis 3×10⁻⁸ nach Korrektur), für drei von vier auch die Fiber-Bundle-Hypothese.
+        Zusätzlich existieren Token-Nachbarschaften <b>ohne</b> wohldefinierte intrinsische Dimension —
+        eine bisher unberichtete Struktur.</p>
+      </div>
+      <div><div id="pFinal" class="plot" style="height:300px"></div></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3>Was folgt praktisch?</h3>
+      <p class="lead" style="font-size:14px">• UMAP/t-SNE-Schlüsse über Token-Räume sind fragwürdig.<br>
+      • Geodätische Abstände können instabil sein und nicht mit semantischer Nähe korrelieren.<br>
+      • De-Embedding per Skalarprodukt/Projektion      per Skalarprodukt kann daneben liegen.<br>
+      • Prompts sind zwischen Modellen <b>nicht portabel</b>.<br>
+      • Multi-Agenten-Systeme koppeln inkompatible Geometrien.</p></div>
+    <div class="card"><h3>Was der Test <i>nicht</i> sagt</h3>
+      <p class="lead" style="font-size:14px">• Nicht-Verwerfen ≠ „ist ein Manifold“.<br>
+      • Verwerfen sagt <b>nicht</b>, welche Art Singularität.<br>
+      • Nur Radien r &lt; Reach τ sind gültig; τ ist schwer zu schätzen.<br>
+      • Brauchbar nur mit Zugriff auf die Embedding-Matrix (Open Weights).</p></div>
+    <div class="card"><h3>Woher kommen Singularitäten?</h3>
+      <p class="lead" style="font-size:14px">• <b>Polysemie / Homonyme</b>: „affect“, „monitor“, „wins“, „aunder“.<br>
+      • <b>Mehrsprachigkeit</b>: „*“ verbindet Fußnote, Multiplikation, Markdown-Bold — verklebt Sprach-Manifolds unterschiedlicher Dimension.<br>
+      • <b>Trainingsartefakte</b>: Tweets + Quellcode + Prosa in einem Raum.</p></div>
+  </div>
+  <div class="card">
+    <h3>Der ganze Bogen in einem Bild — klicke die Stationen durch</h3>
+    <div class="row" id="arcBtns"></div>
+    <canvas id="cArc" height="230"></canvas>
+    <div id="arcText" style="min-height:76px;margin-top:10px"></div>
+  </div>
+</section>
+
+<footer>
+  Interaktive Erklärung zu <b>„Token Embeddings Violate the Manifold Hypothesis“</b> —
+  M. Robinson, S. Dey, T. Chiang · NeurIPS 2025 · arXiv:2504.01002v3.<br>
+  Alle Zahlen aus Tabellen 1–10 und Abbildungen 1–8 des Papers. Simulationen sind didaktische Nachbauten, keine Modellgewichte.
+</footer>
+</main>
+
+<script>
+/* ═══════════ Helpers ═══════════ */
+const $=id=>document.getElementById(id);
+const C=getComputedStyle(document.documentElement);
+const ACC='#63e2ff',ACC2='#b47cff',HOT='#ff5c8a',OK='#4ade80',WARN='#fbbf24',DIM='#97a3bd';
+const PL={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(8,11,19,.6)',
+ font:{color:'#cbd4e6',family:'Inter,system-ui',size:11},
+ margin:{l:52,r:14,t:26,b:42},
+ xaxis:{gridcolor:'#1c2438',zerolinecolor:'#2a3550'},
+ yaxis:{gridcolor:'#1c2438',zerolinecolor:'#2a3550'},
+ showlegend:false,hovermode:'closest'};
+const cfg={displayModeBar:false,responsive:true};
+function L(o){return JSON.parse(JSON.stringify(Object.assign({},PL,o)))}
+function bind(sl,out,f,dec=2){const g=()=>{const v=+sl.value;out.textContent=v.toFixed(dec);f(v)};
+ sl.addEventListener('input',g);g()}
+function fit(cv){const r=cv.getBoundingClientRect();const dpr=devicePixelRatio||1;
+ cv.width=r.width*dpr;cv.height=(+cv.getAttribute('height'))*dpr;
+ const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return[x,r.width,+cv.getAttribute('height')]}
+let seed=12345;function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff}
+function gauss(){return Math.sqrt(-2*Math.log(rnd()+1e-12))*Math.cos(6.2831853*rnd())}
+function tex(el,s,d=true){try{el.innerHTML='';el.appendChild(temml.renderToMathMLTree?
+ (()=>{const w=document.createElement('span');w.innerHTML=temml.renderToString(s,{displayMode:d});return w})()
+ :document.createTextNode(s))}catch(e){el.textContent=s}}
+function texSet(el,s,d=true){try{el.innerHTML=temml.renderToString(s,{displayMode:d})}catch(e){el.textContent=s}}
+
+/* progress bar */
+addEventListener('scroll',()=>{const h=document.body.scrollHeight-innerHeight;
+ $('progress').style.width=(100*scrollY/Math.max(h,1))+'%'});
+
+/* ═══════════ 00 MOTIVATION ═══════════ */
+(()=>{
+ const cv=$('cMot');let A=[],B=[];
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  // grid
+  x.strokeStyle='#161d2e';x.lineWidth=1;
+  for(let i=0;i<=10;i++){x.beginPath();x.moveTo(i*W/10,0);x.lineTo(i*W/10,H);x.stroke();
+   x.beginPath();x.moveTo(0,i*H/10);x.lineTo(W,i*H/10);x.stroke()}
+  const px=p=>[W/2+p[0]*W*0.42,H/2-p[1]*H*0.42];
+  const pl=(arr,col)=>{arr.forEach((p,i)=>{const[a,b]=px(p);
+    x.beginPath();x.arc(a,b,4.5,0,7);x.fillStyle=col+'cc';x.fill();
+    x.strokeStyle=col;x.lineWidth=1.2;x.stroke();
+    x.fillStyle='#0b0f1a';x.font='9px ui-monospace';x.textAlign='center';x.fillText(i+1,a,b+3)})};
+  pl(A,ACC);pl(B,HOT);
+  x.fillStyle=DIM;x.font='11px Inter';x.textAlign='left';
+  x.fillText('Antwortraum (2D-Projektion)',10,16);
+ }
+ function sd(arr){if(arr.length<2)return 0;const mx=arr.reduce((s,p)=>s+p[0],0)/arr.length,
+  my=arr.reduce((s,p)=>s+p[1],0)/arr.length;
+  return Math.sqrt(arr.reduce((s,p)=>s+(p[0]-mx)**2+(p[1]-my)**2,0)/arr.length)}
+ function shoot(){const irr=+$('irr').value,pert=+$('pert').value;
+  A=[];B=[];
+  const split=irr*pert; // mode separation grows with irregularity × perturbation
+  for(let i=0;i<10;i++){
+   const base=0.10+0.05*irr;
+   A.push([-0.35+gauss()*base,gauss()*base]);
+   // B: mixture -> bimodal when singular
+   const jump=rnd()<Math.min(0.92,split*1.5);
+   B.push([0.35+(jump?1.0*split:0)+gauss()*(base+0.5*split),
+           (jump?-0.9*split:0.9*split*0.3)+gauss()*(base+0.5*split)]);
+  }
+  const a=sd(A),b=sd(B);
+  $('sdA').textContent=a.toFixed(3);$('sdB').textContent=b.toFixed(3);
+  const v=$('verdict');const ratio=b/(a+1e-9);
+  if(ratio>1.8){v.textContent='instabil: Antwort zerfällt → Singularität';v.className='pill bad'}
+  else if(ratio>1.25){v.textContent='leicht instabil';v.className='pill w'}
+  else{v.textContent='stabil: glatte Geometrie';v.className='pill ok'}
+  draw();
+ }
+ bind($('irr'),$('irrV'),shoot);bind($('pert'),$('pertV'),shoot);
+ $('shoot').onclick=shoot;$('clr').onclick=()=>{A=[];B=[];$('verdict').textContent='–';$('verdict').className='pill';draw()};
+ shoot();addEventListener('resize',draw);
+})();
+
+/* ═══════════ 01 MANIFOLD ═══════════ */
+(()=>{
+ const cv=$('cMan');
+ const shapes=[
+  {n:'Kreis (1-Manifold)',k:'circle',ok:1,txt:'Jeder Punkt hat eine Umgebung wie ein Intervall ℝ¹. <b>Manifold, d=1.</b>'},
+  {n:'Segment mit Rand',k:'seg',ok:2,txt:'Innen wie ℝ¹, an den Enden wie ein <b>Halbraum</b>. → Manifold <i>mit Rand</i>, nicht Manifold.'},
+  {n:'Cusp (Spitze)',k:'cusp',ok:0,txt:'An der Spitze ist keine Umgebung euklidisch: zwei Zweige treffen tangential. <b>Singularität, Reach τ=0.</b>'},
+  {n:'Lollipop',k:'lolli',ok:0,txt:'Stiel = 1D, Kugel = 2D. Am Übergang <b>wechselt die Dimension</b> → weder Manifold noch Bündel.'},
+  {n:'Pinch (Wurstkette)',k:'pinch',ok:0,txt:'Einschnürung: die Umgebung ist ein <b>Doppelkegel</b>, kein flaches Blatt. Singularität.'}];
+ let cur=0;
+ shapes.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;
+  b.onclick=()=>{cur=i;[...$('shapeBtns').children].forEach((c,j)=>c.className=j===i?'on':'');draw()};
+  $('shapeBtns').appendChild(b)});
+ $('shapeBtns').children[0].className='on';
+ function pts(k){const P=[];
+  if(k==='circle'){for(let i=0;i<260;i++){const t=i/260*6.2832;P.push([Math.cos(t)*.8,Math.sin(t)*.8,t/6.2832])}}
+  if(k==='seg'){for(let i=0;i<220;i++){const t=i/219;P.push([-0.85+1.7*t,0,t])}}
+  if(k==='cusp'){for(let i=0;i<300;i++){const t=(i/299)*2-1;const s=Math.sign(t),u=Math.abs(t);
+   P.push([u*0.9*s,Math.pow(u,0.5)*0.75-0.4,(t+1)/2])}}
+  if(k==='lolli'){for(let i=0;i<120;i++){const t=i/119;P.push([-0.9+0.75*t,0,t*0.45])}
+   for(let i=0;i<260;i++){const t=i/260*6.2832;P.push([0.28+Math.cos(t)*0.42,Math.sin(t)*0.42,0.45+0.55*(t/6.2832)])}}
+  if(k==='pinch'){for(let i=0;i<300;i++){const t=(i/299)*2-1;const w=Math.abs(Math.sin(t*3.1416*1.0))*0.5;
+   P.push([t*0.9,w,(t+1)/2]);P.push([t*0.9,-w,(t+1)/2])}}
+  return P}
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const S=shapes[cur],P=pts(S.k),z=+$('zoom').value,pp=+$('ppos').value;
+  const sc=Math.min(W,H)*0.42,cx=W/2,cy=H/2;
+  const px=p=>[cx+p[0]*sc,cy-p[1]*sc];
+  // shape
+  x.strokeStyle='#161d2e';for(let i=0;i<=8;i++){x.beginPath();x.moveTo(i*W/8,0);x.lineTo(i*W/8,H);x.stroke();
+   x.beginPath();x.moveTo(0,i*H/8);x.lineTo(W,i*H/8);x.stroke()}
+  // pick psi
+  let best=0,bd=9;P.forEach((p,i)=>{const d=Math.abs(p[2]-pp);if(d<bd){bd=d;best=i}});
+  const psi=P[best];
+  // neighborhood highlight
+  const inB=P.filter(p=>Math.hypot(p[0]-psi[0],p[1]-psi[1])<z);
+  const[ax,ay]=px(psi);
+  const g=x.createRadialGradient(ax,ay,0,ax,ay,z*sc);
+  g.addColorStop(0,'rgba(180,124,255,.28)');g.addColorStop(1,'rgba(180,124,255,0)');
+  x.fillStyle=g;x.beginPath();x.arc(ax,ay,z*sc,0,7);x.fill();
+  x.strokeStyle=ACC2;x.setLineDash([4,4]);x.lineWidth=1.3;x.beginPath();x.arc(ax,ay,z*sc,0,7);x.stroke();x.setLineDash([]);
+  P.forEach(p=>{const[a,b]=px(p);x.beginPath();x.arc(a,b,2.1,0,7);
+   x.fillStyle=Math.hypot(p[0]-psi[0],p[1]-psi[1])<z?ACC2:ACC;x.globalAlpha=.85;x.fill();x.globalAlpha=1});
+  x.beginPath();x.arc(ax,ay,6,0,7);x.fillStyle=HOT;x.fill();x.strokeStyle='#fff';x.lineWidth=1.5;x.stroke();
+  // inset: zoomed neighborhood shown "flattened"
+  const iw=Math.min(150,W*0.34),ih=iw*0.66,ix=W-iw-12,iy=12;
+  x.fillStyle='#0a0e18';x.strokeStyle='#2a3550';x.lineWidth=1;
+  x.beginPath();x.roundRect(ix,iy,iw,ih,8);x.fill();x.stroke();
+  x.save();x.beginPath();x.roundRect(ix,iy,iw,ih,8);x.clip();
+  const zs=(iw*0.45)/z;
+  inB.forEach(p=>{const a=ix+iw/2+(p[0]-psi[0])*zs,b=iy+ih/2-(p[1]-psi[1])*zs;
+   x.beginPath();x.arc(a,b,2.4,0,7);x.fillStyle=ACC;x.fill()});
+  x.beginPath();x.arc(ix+iw/2,iy+ih/2,4,0,7);x.fillStyle=HOT;x.fill();
+  x.restore();
+  x.fillStyle=DIM;x.font='9.5px Inter';x.textAlign='left';x.fillText('Zoom in B(ψ)',ix+6,iy+ih-6);
+  // diagnosis
+  const isSing=(S.ok===0&&Math.abs(psi[2]-(S.k==='cusp'?0.5:S.k==='lolli'?0.45:0.5))<0.10)
+             ||(S.ok===0&&S.k==='pinch'&&Math.abs(Math.sin(( (psi[2]*2-1) )*3.1416))<0.12);
+  const isBnd=(S.ok===2&&(psi[2]<0.05||psi[2]>0.95))||(S.k==='lolli'&&psi[2]<0.03)||(S.k==='cusp'&&(psi[2]<0.03||psi[2]>0.97));
+  let badge,cls;
+  if(isSing){badge='SINGULARITÄT — keine euklidische Umgebung';cls='pill bad'}
+  else if(isBnd){badge='RANDPUNKT — Halbraum, kein Manifold';cls='pill w'}
+  else{badge='regulär — Umgebung ≅ flache Scheibe';cls='pill ok'}
+  $('diagBox').innerHTML=`<div class="row"><span class="${cls}">${badge}</span>
+   <span class="pill">Punkte in B(ψ): <b>${inB.length}</b></span></div>
+   <p class="lead" style="font-size:14px;margin:8px 0 0">${S.txt}</p>`;
+ }
+ bind($('zoom'),$('zV'),draw);bind($('ppos'),$('pV'),draw);
+ addEventListener('resize',draw);draw();
+})();
+
+/* ═══════════ 02 DIMENSION ═══════════ */
+(()=>{
+ function upd(){const d=+$('dSl').value,r=+$('rSl').value,lg=$('logs').checked;
+  const R=[];for(let i=1;i<=120;i++)R.push(0.1+i*0.045);
+  const traces=[];
+  [[d,ACC,'d gewählt'],[1,'#3b4a6b','d=1'],[2,'#4a5b80','d=2'],[3,'#5a6b95','d=3']].forEach(([dd,col],k)=>{
+   traces.push({x:R,y:R.map(v=>Math.pow(v,dd)),mode:'lines',
+    line:{color:col,width:k===0?3.2:1.2,dash:k===0?'solid':'dot'},name:'d='+dd})});
+  traces.push({x:[r],y:[Math.pow(r,d)],mode:'markers',marker:{color:HOT,size:12,line:{color:'#fff',width:2}}});
+  const lay=L({xaxis:{title:'Radius r',gridcolor:'#1c2438',type:lg?'log':'linear'},
+   yaxis:{title:'Volumen v = r^d',gridcolor:'#1c2438',type:lg?'log':'linear'},
+   annotations:[{x:Math.log10(r),y:Math.log10(Math.pow(r,d)),xref:lg?'x':'x',yref:lg?'y':'y',
+     text:`Steigung = ${d.toFixed(1)}`,showarrow:true,arrowcolor:HOT,font:{color:HOT,size:11},ax:40,ay:-28}]});
+  if(!lg){lay.annotations[0].x=r;lay.annotations[0].y=Math.pow(r,d)}
+  Plotly.react('pDim',traces,lay,cfg);
+  texSet($('eqVol'),`v(r)=K\\,r^{${d.toFixed(1)}}\\quad\\Longrightarrow\\quad \\log v=\\log K+${d.toFixed(1)}\\cdot\\log r`);
+ }
+ bind($('dSl'),$('dV'),upd,1);bind($('rSl'),$('rV'),upd);$('logs').onchange=upd;
+ // Monte Carlo counting
+ const cv=$('cCount');const N=900,P=[];
+ for(let i=0;i<N;i++){const a=rnd()*6.2832,rr=Math.sqrt(rnd());P.push([Math.cos(a)*rr,Math.sin(a)*rr])}
+ const psi=[0,0];
+ const D=P.map(p=>Math.hypot(p[0],p[1])).sort((a,b)=>a-b);
+ function drawC(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const r=+$('ccR').value,sc=Math.min(W,H)*0.44,cx=W/2,cy=H/2;
+  x.strokeStyle='#161d2e';x.beginPath();x.arc(cx,cy,sc,0,7);x.stroke();
+  const g=x.createRadialGradient(cx,cy,0,cx,cy,r*sc);
+  g.addColorStop(0,'rgba(99,226,255,.22)');g.addColorStop(1,'rgba(99,226,255,0)');
+  x.fillStyle=g;x.beginPath();x.arc(cx,cy,r*sc,0,7);x.fill();
+  let cnt=0;
+  P.forEach(p=>{const d=Math.hypot(p[0],p[1]),inn=d<r;if(inn)cnt++;
+   x.beginPath();x.arc(cx+p[0]*sc,cy-p[1]*sc,inn?2.6:1.8,0,7);
+   x.fillStyle=inn?ACC:'#2e3a58';x.fill()});
+  x.strokeStyle=ACC;x.lineWidth=1.6;x.setLineDash([5,4]);x.beginPath();x.arc(cx,cy,r*sc,0,7);x.stroke();x.setLineDash([]);
+  x.beginPath();x.arc(cx,cy,5,0,7);x.fillStyle=HOT;x.fill();
+  $('ccN').textContent=cnt;
+  // local slope from cumulative counts
+  const k=Math.max(4,cnt);const i1=Math.max(2,Math.round(k*0.6)),i2=Math.min(D.length-1,Math.round(k*1.4));
+  const s=(Math.log(i2)-Math.log(i1))/(Math.log(D[i2])-Math.log(D[i1])+1e-9);
+  $('ccS').textContent=isFinite(s)?s.toFixed(2):'–';
+  const idx=[],rad=[];for(let i=5;i<D.length;i+=4){idx.push(i);rad.push(D[i])}
+  Plotly.react('pCount',[
+   {x:rad,y:idx,mode:'markers',marker:{color:ACC,size:5,opacity:.75},name:'Daten'},
+   {x:rad,y:rad.map(v=>N*v*v),mode:'lines',line:{color:ACC2,width:2,dash:'dash'},name:'N·r²'},
+   {x:[r],y:[cnt],mode:'markers',marker:{color:HOT,size:13,line:{color:'#fff',width:2}}}],
+   L({xaxis:{title:'log Radius',type:'log',gridcolor:'#1c2438'},
+      yaxis:{title:'log „Volumen“ = Index',type:'log',gridcolor:'#1c2438'},
+      title:{text:'Steigung ≈ 2 → intrinsische Dimension 2',font:{size:11,color:DIM}}}),cfg);
+ }
+ bind($('ccR'),$('ccV'),drawC);addEventListener('resize',()=>{drawC();upd()});
+ upd();drawC();
+})();
+
+/* ═══════════ 03 CURVATURE ═══════════ */
+(()=>{
+ function upd(){const d=+$('d2').value,c=+$('cC').value;
+  const R=[];for(let i=1;i<=160;i++)R.push(0.02*i);
+  const v=R.map(r=>Math.pow(r,d)*(1+c*r));
+  const clean=R.map(r=>Math.pow(r,d));
+  const slope=R.map(r=>d+c*r/(1+c*r));
+  const i1=R.findIndex(r=>r>=1);const app=slope[i1]||d;
+  $('appS').textContent=app.toFixed(2);
+  const bd=$('curvBadge');
+  const ac=Math.abs(c);
+  if(ac<0.05){bd.textContent='flach — reine Gerade';bd.className='pill ok'}
+  else if(ac<0.6){bd.textContent='moderate Krümmung';bd.className='pill w'}
+  else{bd.textContent='hohe Krümmung — kleiner Reach τ';bd.className='pill bad'}
+  Plotly.react('pCurv',[
+   {x:R,y:clean,mode:'lines',line:{color:'#3d4c70',width:1.8,dash:'dot'},name:'ohne Korrektur'},
+   {x:R,y:v,mode:'lines',line:{color:ACC,width:3},name:'mit Korrektur'},
+   {x:R,y:slope,mode:'lines',line:{color:HOT,width:2},yaxis:'y2',name:'lokale Steigung'}],
+   L({xaxis:{title:'log r',type:'log',gridcolor:'#1c2438'},
+      yaxis:{title:'log v',type:'log',gridcolor:'#1c2438'},
+      yaxis2:{title:'Steigung',overlaying:'y',side:'right',range:[0,7],gridcolor:'rgba(0,0,0,0)',
+        titlefont:{color:HOT},tickfont:{color:HOT}},
+      showlegend:true,legend:{orientation:'h',y:1.14,font:{size:10}},margin:{l:52,r:46,t:34,b:42}}),cfg);
+ }
+ bind($('d2'),$('d2V'),upd,1);bind($('cC'),$('cV'),upd);
+ addEventListener('resize',upd);upd();
+})();
+
+/* ═══════════ 04 REACH ═══════════ */
+(()=>{
+ const cv=$('cReach');
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const k=+$('kK').value,tX=+$('tx').value,tY=+$('ty').value;
+  const sc=Math.min(W,H)*0.40,cx=W/2,cy=H*0.80;
+  const f=u=>k*u*u;                       // parabola y = k x^2
+  const P=[];for(let i=-60;i<=60;i++){const u=i/50;P.push([u,f(u)])}
+  x.strokeStyle='#161d2e';for(let i=0;i<=8;i++){x.beginPath();x.moveTo(i*W/8,0);x.lineTo(i*W/8,H);x.stroke();
+   x.beginPath();x.moveTo(0,i*H/8);x.lineTo(W,i*H/8);x.stroke()}
+  // reach = 1/(2k) for parabola at vertex (radius of curvature /? ) -> R=1/(2k)
+  const tau=1/(2*k);
+  const px=p=>[cx+p[0]*sc,cy-p[1]*sc];
+  // medial axis (evolute of parabola)
+  x.strokeStyle='#4a3a6b';x.setLineDash([3,4]);x.lineWidth=1.4;x.beginPath();
+  for(let i=-60;i<=60;i++){const u=i/50;
+   const ex=-4*k*k*u*u*u, ey=f(u)+ (1+4*k*k*u*u)/(2*k);
+   const[a,b]=px([ex,ey]);i===-60?x.moveTo(a,b):x.lineTo(a,b)}
+  x.stroke();x.setLineDash([]);
+  // curve
+  x.strokeStyle=ACC;x.lineWidth=3;x.beginPath();
+  P.forEach((p,i)=>{const[a,b]=px(p);i?x.lineTo(a,b):x.moveTo(a,b)});x.stroke();
+  // osculating circle at vertex
+  const[oa,ob]=px([0,tau]);
+  x.strokeStyle='rgba(180,124,255,.5)';x.lineWidth=1.3;x.setLineDash([4,4]);
+  x.beginPath();x.arc(oa,ob,tau*sc,0,7);x.stroke();x.setLineDash([]);
+  // find nearest points
+  let dists=P.map(p=>({p,d:Math.hypot(p[0]-tX,p[1]-tY)})).sort((a,b)=>a.d-b.d);
+  const n1=dists[0];let n2=null;
+  for(const c of dists){if(Math.abs(c.p[0]-n1.p[0])>0.35){n2=c;break}}
+  const[ta,tb]=px([tX,tY]);
+  const seg=(q,col,w)=>{const[a,b]=px(q.p);x.strokeStyle=col;x.lineWidth=w;
+   x.beginPath();x.moveTo(ta,tb);x.lineTo(a,b);x.stroke();
+   x.beginPath();x.arc(a,b,4,0,7);x.fillStyle=col;x.fill()};
+  const ambiguous=n2&&Math.abs(n2.d-n1.d)<0.045;
+  seg(n1,ambiguous?WARN:OK,2.4);
+  if(n2)seg(n2,ambiguous?WARN:'#33405e',ambiguous?2.4:1.2);
+  x.beginPath();x.arc(ta,tb,6,0,7);x.fillStyle=ACC;x.fill();x.strokeStyle='#fff';x.lineWidth=1.6;x.stroke();
+  x.fillStyle=DIM;x.font='10.5px Inter';x.textAlign='left';
+  x.fillText('violett gestrichelt = Medial-Achse (dort wird der nächste Punkt uneindeutig)',10,16);
+  x.fillText('violetter Kreis = Krümmungskreis, Radius τ',10,31);
+  $('reachV').textContent=tau.toFixed(3);
+  const u=$('uniq');
+  if(ambiguous){u.textContent='zwei gleich nahe Punkte → Reach überschritten';u.className='pill bad'}
+  else if(Math.hypot(tX,tY-0)>0&&tY>tau){u.textContent='oberhalb τ — riskante Zone';u.className='pill w'}
+  else{u.textContent='eindeutig nächster Punkt ✓';u.className='pill ok'}
+ }
+ bind($('kK'),$('kV'),draw);bind($('tx'),$('txV'),draw);bind($('ty'),$('tyV'),draw);
+ addEventListener('resize',draw);draw();
+})();
+
+/* ═══════════ 05 FIBER BUNDLE ═══════════ */
+(()=>{
+ const cv=$('cBundle');
+ // strip: |y| <= w/2, x in [-3,3]. area of ball radius r at center:
+ function area(r,w){const h=w/2;
+  if(r<=h)return Math.PI*r*r;
+  // circle minus two caps
+  const cap=r*r*Math.acos(h/r)-h*Math.sqrt(Math.max(r*r-h*h,0));
+  return Math.PI*r*r-2*cap}
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const w=+$('wW').value,r=+$('r5').value;
+  const sc=W/3.0,cx=W/2,cy=H/2;
+  x.fillStyle='rgba(99,226,255,.13)';
+  x.fillRect(0,cy-w/2*sc,W,w*sc);
+  x.strokeStyle=ACC;x.lineWidth=1.6;
+  x.beginPath();x.moveTo(0,cy-w/2*sc);x.lineTo(W,cy-w/2*sc);
+  x.moveTo(0,cy+w/2*sc);x.lineTo(W,cy+w/2*sc);x.stroke();
+  // samples
+  for(let i=0;i<700;i++){const px2=(i*97%1000)/1000*W,py=cy+((i*61%1000)/1000-.5)*w*sc;
+   x.beginPath();x.arc(px2,py,1.3,0,7);x.fillStyle='rgba(99,226,255,.5)';x.fill()}
+  const g=x.createRadialGradient(cx,cy,0,cx,cy,r*sc);
+  g.addColorStop(0,'rgba(180,124,255,.42)');g.addColorStop(1,'rgba(180,124,255,.05)');
+  x.fillStyle=g;x.beginPath();x.arc(cx,cy,r*sc,0,7);x.fill();
+  x.strokeStyle=ACC2;x.lineWidth=2;x.setLineDash([5,4]);x.beginPath();x.arc(cx,cy,r*sc,0,7);x.stroke();x.setLineDash([]);
+  x.beginPath();x.arc(cx,cy,5,0,7);x.fillStyle=HOT;x.fill();
+  // arrows labelling scales
+  x.strokeStyle=WARN;x.lineWidth=1.4;x.beginPath();
+  x.moveTo(W*0.12,cy-w/2*sc);x.lineTo(W*0.12,cy+w/2*sc);x.stroke();
+  x.fillStyle=WARN;x.font='10.5px Inter';x.fillText('Faser F (kurze Skala)',W*0.14,cy-w/2*sc-5);
+  x.fillStyle=OK;x.fillText('Basis S (lange Skala) →',W*0.62,cy+w/2*sc+16);
+  const reg=$('regime'),h=w/2;
+  const A=area(r,w),A2=area(r*1.03,w);
+  const s=(Math.log(A2)-Math.log(A))/(Math.log(r*1.03)-Math.log(r));
+  $('s5').textContent=s.toFixed(2);
+  if(r<h*0.9){reg.textContent='kleiner Radius: Ball ganz drin → Steigung ≈ dim T = 2';reg.className='pill ok'}
+  else if(r<h*1.6){reg.textContent='Übergangszone: hier entsteht der Knick (Corner)';reg.className='pill w'}
+  else{reg.textContent='großer Radius: ragt raus → Steigung → dim S = 1';reg.className='pill bad'}
+  const RR=[];for(let i=1;i<=200;i++)RR.push(0.008*i*1.2);
+  Plotly.react('pBundle',[
+   {x:RR,y:RR.map(v=>area(v,w)),mode:'lines',line:{color:ACC,width:3},name:'Theorie'},
+   {x:RR,y:RR.map(v=>Math.PI*v*v),mode:'lines',line:{color:'#3d4c70',width:1.4,dash:'dot'},name:'πr² (Steigung 2)'},
+   {x:RR,y:RR.map(v=>2*w*v),mode:'lines',line:{color:'#5b4a80',width:1.4,dash:'dot'},name:'2wr (Steigung 1)'},
+   {x:[r],y:[A],mode:'markers',marker:{color:HOT,size:13,line:{color:'#fff',width:2}}}],
+   L({xaxis:{title:'log Radius r',type:'log',gridcolor:'#1c2438'},
+      yaxis:{title:'log Fläche',type:'log',gridcolor:'#1c2438'},
+      showlegend:true,legend:{orientation:'h',y:1.16,font:{size:9.5}},
+      annotations:[{x:Math.log10(w/2),y:Math.log10(area(w/2,w)),text:'Knick bei r = Faserbreite/2',
+        showarrow:true,arrowcolor:WARN,font:{color:WARN,size:10},ax:50,ay:34}],
+      margin:{l:54,r:14,t:40,b:42}}),cfg);
+  texSet($('eqThm'),`(e_*v)(B_r(\\psi))=\\begin{cases}O(r^{\\dim T}) & r\\le\\rho(\\psi)\\\\ (e_*v)(B_{\\rho})+O((r-\\rho)^{\\dim S}) & r\\ge\\rho(\\psi)\\end{cases}`);
+ }
+ bind($('wW'),$('wV'),draw,3);bind($('r5'),$('r5V'),draw);
+ addEventListener('resize',draw);draw();
+})();
+
+/* ═══════════ 06 TEST ═══════════ */
+(()=>{
+ function upd(){const m1=+$('m1').value,m2=+$('m2').value,b=+$('br').value,nz=+$('nz').value;
+  seed=777;
+  const X=[],Y=[],XS=[],S=[];
+  for(let i=0;i<=120;i++){const t=i/120;
+   const lv=t<b? m1*t : m1*b+m2*(t-b);
+   X.push(t);Y.push(lv+nz*gauss()*0.35)}
+  for(let i=1;i<X.length-1;i++){XS.push(X[i]);S.push((Y[i+1]-Y[i-1])/(X[i+1]-X[i-1]))}
+  const d=Math.abs(m2-m1),up=m2>m1;
+  const eff=d/(nz*3.2+0.06);
+  const pMan=Math.max(1e-12,Math.exp(-eff*eff*0.55));
+  const pFib=up?pMan:1;
+  const vm=$('vMan'),vf=$('vFib');
+  vm.innerHTML='Manifold: p ≈ '+pMan.toExponential(1)+(pMan<0.001?' → <b>VERWORFEN</b>':' → nicht verworfen');
+  vm.className='pill '+(pMan<0.001?'bad':'ok');
+  vf.innerHTML='Bündel: p ≈ '+pFib.toExponential(1)+(pFib<0.001?' → <b>VERWORFEN</b>':' → nicht verworfen');
+  vf.className='pill '+(pFib<0.001?'bad':'ok');
+  Plotly.react('pTest',[
+   {x:X,y:Y,mode:'markers',marker:{color:ACC,size:4.5,opacity:.8},xaxis:'x',yaxis:'y',name:'log v'},
+   {x:[0,b,1],y:[0,m1*b,m1*b+m2*(1-b)],mode:'lines',line:{color:ACC2,width:2.5},xaxis:'x',yaxis:'y',name:'Modell'},
+   {x:XS,y:S,mode:'lines',line:{color:HOT,width:2},xaxis:'x2',yaxis:'y2',name:'Steigung'},
+   {x:[0,1],y:[m1,m1],mode:'lines',line:{color:'#334157',width:1,dash:'dot'},xaxis:'x2',yaxis:'y2'},
+   {x:[0,1],y:[m2,m2],mode:'lines',line:{color:'#334157',width:1,dash:'dot'},xaxis:'x2',yaxis:'y2'}],
+   L({grid:{rows:2,columns:1,pattern:'independent',roworder:'top to bottom'},
+      xaxis:{domain:[0,1],anchor:'y',gridcolor:'#1c2438',title:''},
+      yaxis:{domain:[0.46,1],anchor:'x',title:'log Volumen',gridcolor:'#1c2438'},
+      xaxis2:{domain:[0,1],anchor:'y2',title:'log Radius',gridcolor:'#1c2438'},
+      yaxis2:{domain:[0,0.36],anchor:'x2',title:'Steigung = Dimension',gridcolor:'#1c2438'},
+      shapes:[{type:'line',x0:b,x1:b,y0:0,y1:1,yref:'paper',line:{color:WARN,width:1.4,dash:'dash'}}],
+      annotations:[{x:b,y:1.04,xref:'x',yref:'paper',text:up?'Steigung STEIGT → Bündel verboten':'Steigung fällt → Bündel erlaubt',
+        showarrow:false,font:{color:up?HOT:OK,size:11}}],margin:{l:56,r:14,t:34,b:42}}),cfg);
+ }
+ [['m1','m1V'],['m2','m2V'],['br','brV'],['nz','nzV']].forEach(([a,b])=>bind($(a),$(b),upd,a==='m1'||a==='m2'?1:(a==='nz'?3:2)));
+ addEventListener('resize',upd);upd();
+
+ /* ---- Algorithm walkthrough ---- */
+ const cvA=$('cAlgo');let shp=0,sel=0,PTS=[];
+ const names=['Kreisscheibe (glatt)','Lollipop (Dimensionswechsel)','Streifen (Bündel)'];
+ function build(){seed=4242;PTS=[];
+  if(shp===0){for(let i=0;i<520;i++){const a=rnd()*6.2832,rr=Math.sqrt(rnd())*0.85;PTS.push([Math.cos(a)*rr,Math.sin(a)*rr])}}
+  if(shp===1){for(let i=0;i<180;i++)PTS.push([-0.95+0.62*(i/179),(rnd()-.5)*0.012]);
+   for(let i=0;i<360;i++){const a=rnd()*6.2832,rr=Math.sqrt(rnd())*0.45;PTS.push([0.35+Math.cos(a)*rr,Math.sin(a)*rr])}}
+  if(shp===2){for(let i=0;i<520;i++)PTS.push([(rnd()*2-1)*0.95,(rnd()-.5)*0.14])}
+  sel=shp===1?175:0;
+ }
+ function upd2(){const[x,W,H]=fit(cvA);x.clearRect(0,0,W,H);
+  const sc=Math.min(W,H)*0.44,cx=W/2,cy=H/2;
+  const psi=PTS[sel];
+  const D=PTS.map((p,i)=>({d:Math.hypot(p[0]-psi[0],p[1]-psi[1]),i})).sort((a,b)=>a.d-b.d);
+  const vmin=+$('vmin').value,vmax=Math.min(+$('vmax').value,D.length-1),Wn=+$('ww').value;
+  x.strokeStyle='#161d2e';for(let i=0;i<=6;i++){x.beginPath();x.moveTo(i*W/6,0);x.lineTo(i*W/6,H);x.stroke();
+   x.beginPath();x.moveTo(0,i*H/6);x.lineTo(W,i*H/6);x.stroke()}
+  const rmin=D[vmin].d,rmax=D[vmax].d;
+  [[rmax,'rgba(180,124,255,.10)'],[rmin,'rgba(99,226,255,.14)']].forEach(([rr,c])=>{
+   x.fillStyle=c;x.beginPath();x.arc(cx+psi[0]*sc,cy-psi[1]*sc,rr*sc,0,7);x.fill()});
+  PTS.forEach((p,i)=>{const d=Math.hypot(p[0]-psi[0],p[1]-psi[1]);
+   x.beginPath();x.arc(cx+p[0]*sc,cy-p[1]*sc,1.9,0,7);
+   x.fillStyle=d<rmin?ACC:(d<rmax?ACC2:'#2c3650');x.fill()});
+  x.beginPath();x.arc(cx+psi[0]*sc,cy-psi[1]*sc,5.5,0,7);x.fillStyle=HOT;x.fill();
+  x.strokeStyle='#fff';x.lineWidth=1.4;x.stroke();
+  x.fillStyle=DIM;x.font='10.5px Inter';x.fillText(names[shp]+' · klicke einen Punkt = ψ',10,16);
+  $('algoIdx').textContent=sel;
+  // log-log
+  const lr=[],lv=[];for(let k=vmin;k<=vmax;k++){lr.push(Math.log(D[k].d+1e-9));lv.push(Math.log(k))}
+  const sl=[],slx=[];
+  for(let i=1;i<lr.length-1;i++){sl.push((lv[i+1]-lv[i-1])/(lr[i+1]-lr[i-1]+1e-12));slx.push(vmin+i)}
+  Plotly.react('pAlgo',[
+   {x:lr,y:lv,mode:'markers',marker:{color:ACC,size:4},name:'log-log'}],
+   L({xaxis:{title:'log Radius',gridcolor:'#1c2438'},yaxis:{title:'log v',gridcolor:'#1c2438'},
+      margin:{l:50,r:10,t:22,b:36},title:{text:'Schritt 4: log-log',font:{size:10,color:DIM}}}),cfg);
+  // sliding t-test
+  let best=1,bi=-1;
+  for(let i=0;i+2*Wn<sl.length;i++){
+   const A=sl.slice(i,i+Wn),B=sl.slice(i+Wn,i+2*Wn);
+   const mA=A.reduce((a,b)=>a+b,0)/Wn,mB=B.reduce((a,b)=>a+b,0)/Wn;
+   const vA=A.reduce((a,b)=>a+(b-mA)**2,0)/(Wn-1),vB=B.reduce((a,b)=>a+(b-mB)**2,0)/(Wn-1);
+   const se=Math.sqrt(vA/Wn+vB/Wn)+1e-9,t=Math.abs(mA-mB)/se;
+   const p=2*(1-normcdf(t));if(p<best){best=p;bi=i+Wn}}
+  Plotly.react('pSlope',[
+   {x:slx,y:sl,mode:'lines+markers',line:{color:HOT,width:1.8},marker:{size:3},name:'Steigung'}],
+   L({xaxis:{title:'Volumen-Index',gridcolor:'#1c2438'},yaxis:{title:'Dimension',gridcolor:'#1c2438'},
+      margin:{l:50,r:10,t:26,b:36},
+      shapes:bi>0?[{type:'line',x0:vmin+bi,x1:vmin+bi,y0:0,y1:1,yref:'paper',line:{color:WARN,width:1.5,dash:'dash'}}]:[],
+      title:{text:'Schritt 5-6: kleinstes p ≈ '+best.toExponential(1)+(best<1e-3?'  → VERWORFEN':'  → ok'),
+        font:{size:10,color:best<1e-3?HOT:OK}}}),cfg);
+ }
+ function normcdf(z){const t=1/(1+0.2316419*Math.abs(z));
+  const d=0.3989423*Math.exp(-z*z/2);
+  let p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+  return z>0?1-p:p}
+ cvA.addEventListener('click',e=>{const r=cvA.getBoundingClientRect();
+  const sc=Math.min(r.width,+cvA.getAttribute('height'))*0.44;
+  const mx=(e.clientX-r.left-r.width/2
+)/ (Math.min(r.width,+cvA.getAttribute('height'))*0.44);
+  const my=-(e.clientY-r.top-(+cvA.getAttribute('height'))/2)/(Math.min(r.width,+cvA.getAttribute('height'))*0.44);
+  let bi=0,bd=9;PTS.forEach((p,i)=>{const d=Math.hypot(p[0]-mx,p[1]-my);if(d<bd){bd=d;bi=i}});
+  sel=bi;upd2()});
+ $('algoShape').onclick=()=>{shp=(shp+1)%3;build();upd2()};
+ [['vmin','vminV'],['vmax','vmaxV'],['ww','wwV']].forEach(([a,b])=>bind($(a),$(b),upd2,0));
+ build();upd2();addEventListener('resize',upd2);
+})();
+
+/* ═══════════ 07 STATISTIK ═══════════ */
+function normcdf2(z){const t=1/(1+0.2316419*Math.abs(z));const d=0.3989423*Math.exp(-z*z/2);
+ let p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
+(()=>{
+ function upd(){const mA=+$('mA').value,mB=+$('mB').value,sg=+$('sg').value,n=+$('nW').value;
+  const se=sg*Math.sqrt(2/n),t=(mB-mA)/se;
+  const p2=2*(1-normcdf2(Math.abs(t))),p1=1-normcdf2(t);
+  $('tStat').textContent=t.toFixed(2);
+  $('p2s').textContent=p2<1e-4?p2.toExponential(1):p2.toFixed(4);
+  $('p1s').textContent=p1<1e-4?p1.toExponential(1):p1.toFixed(4);
+  const X=[];for(let i=0;i<220;i++)X.push(mA-4*sg+i*(8*sg+Math.abs(mB-mA))/220);
+  const g=(x,m)=>Math.exp(-0.5*((x-m)/sg)**2)/(sg*2.5066);
+  seed=99;const sA=[],sB=[];for(let i=0;i<n;i++){sA.push(mA+sg*gauss());sB.push(mB+sg*gauss())}
+  Plotly.react('pT',[
+   {x:X,y:X.map(x=>g(x,mA)),mode:'lines',fill:'tozeroy',line:{color:ACC,width:2},
+    fillcolor:'rgba(99,226,255,.16)',name:'Fenster A'},
+   {x:X,y:X.map(x=>g(x,mB)),mode:'lines',fill:'tozeroy',line:{color:HOT,width:2},
+    fillcolor:'rgba(255,92,138,.16)',name:'Fenster B'},
+   {x:sA,y:sA.map(()=>-0.03),mode:'markers',marker:{color:ACC,size:6,symbol:'line-ns-open'},showlegend:false},
+   {x:sB,y:sB.map(()=>-0.07),mode:'markers',marker:{color:HOT,size:6,symbol:'line-ns-open'},showlegend:false}],
+   L({xaxis:{title:'Steigung (= Dimensionsschätzung)',gridcolor:'#1c2438'},
+      yaxis:{title:'Dichte',gridcolor:'#1c2438'},showlegend:true,
+      legend:{orientation:'h',y:1.16,font:{size:10}},
+      annotations:[{x:(mA+mB)/2,y:g(mA,mA)*0.55,text:p2<0.001?'signifikant':'Zufall plausibel',
+        showarrow:false,font:{color:p2<0.001?HOT:OK,size:12}}],margin:{l:52,r:14,t:40,b:44}}),cfg);
+ }
+ [['mA','mAV'],['mB','mBV'],['sg','sgV'],['nW','nWV']].forEach(([a,b])=>bind($(a),$(b),upd,a==='nW'?0:2));
+ addEventListener('resize',upd);upd();
+
+ function updH(){const n=+$('nT').value,al=+$('al').value;
+  $('fp').textContent=(n*al).toFixed(1);
+  $('hb').textContent=(al/n).toExponential(2);
+  const K=[],T1=[],T2=[];
+  for(let k=1;k<=Math.min(60,n);k++){K.push(k);T1.push(al/n);T2.push(al/(n-k+1))}
+  // simulated sorted p-values: mostly uniform + a few real effects
+  seed=31337;const ps=[];
+  for(let k=1;k<=Math.min(60,n);k++){ps.push(k<=6?Math.pow(10,-8+k*0.9):rnd()*0.02)}
+  ps.sort((a,b)=>a-b);
+  Plotly.react('pHolm',[
+   {x:K,y:ps,mode:'markers',marker:{color:ps.map((p,i)=>p<T2[i]?HOT:'#3f4d6d'),size:7},name:'p sortiert'},
+   {x:K,y:T2,mode:'lines',line:{color:ACC,width:2},name:'Holm α/(n−k+1)'},
+   {x:K,y:T1,mode:'lines',line:{color:ACC2,width:1.4,dash:'dot'},name:'Bonferroni α/n'}],
+   L({xaxis:{title:'Rang k',gridcolor:'#1c2438'},yaxis:{title:'p-Wert',type:'log',gridcolor:'#1c2438'},
+      showlegend:true,legend:{orientation:'h',y:1.18,font:{size:9.5}},margin:{l:58,r:12,t:42,b:42},
+      title:{text:'rot = übersteht die Korrektur → echte Verwerfung',font:{size:10,color:DIM}}}),cfg);
+ }
+ bind($('nT'),$('nTV'),updH,0);bind($('al'),$('alV'),updH,4);
+ addEventListener('resize',updH);updH();
+})();
+
+/* ═══════════ 08 SYNTHETIK (three.js) ═══════════ */
+(()=>{
+ const host=$('three');
+ const SH=[
+  {n:'(a) Sphäre — Manifold',k:'sph',
+   txt:`<p class="lead"><b>Erwartung:</b> überall Dimension 2, keine Knicke.<br>
+   <b>Ergebnis:</b> p ≈ 1 für jeden Punkt, <span class="pill ok">keine Verwerfung</span>.
+   Der Test erzeugt also keine Falschalarme.</p>`},
+  {n:'(b) Cusp z⁸+x²+y²=0 — Fiber Bundle',k:'cusp',
+   txt:`<p class="lead"><b>Wahrheit:</b> Fiber Bundle (Basis = Ursprung, Fasern = Radialstrahlen),
+   Manifold <i>mit Rand</i>, Cusp im Ursprung. 41 von 1200 Punkten sind singulär.<br>
+   <b>Ergebnis:</b> Manifold-Test <span class="pill bad">p &lt; 5×10⁻⁸</span> an der Spitze,
+   Bündel-Test <span class="pill ok">nie verworfen</span> — genau richtig.
+   Der <i>Rand</i> wird übersehen (p &gt; 0,001).</p>`},
+  {n:'(c) Lollipop — keins von beiden',k:'lolli',
+   txt:`<p class="lead"><b>Wahrheit:</b> 3000 Punkte, 1D-Stiel an 2D-Hohlkugel, genau zwei singuläre Punkte
+   (Stielende = Rand, Ansatzstelle = Dimensionswechsel).<br>
+   <b>Ergebnis:</b> Manifold verworfen bei 75 Punkten am Stielende und 58 am Übergang (p&lt;10⁻⁵);
+   Bündel verworfen bei <b>2</b> Punkten am Übergang. <span class="pill bad">Beide Hypothesen fallen.</span></p>`}];
+ let cur=0,scene,cam,ren,grp,raf;
+ const btns=$('synBtns');
+ SH.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;
+  b.onclick=()=>{cur=i;[...btns.children].forEach((c,j)=>c.className=j===i?'on':'');make();plot()};
+  btns.appendChild(b)});
+ btns.children[0].className='on';
+ function init(){
+  scene=new THREE.Scene();
+  cam=new THREE.PerspectiveCamera(46,host.clientWidth/380,0.1,100);cam.position.set(2.4,1.7,2.9);
+  ren=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  ren.setPixelRatio(devicePixelRatio);ren.setSize(host.clientWidth,380);host.appendChild(ren.domElement);
+  let dragging=false,px=0,py=0,ry=0.5,rx=0.25,dist=4;
+  ren.domElement.style.cursor='grab';
+  ren.domElement.addEventListener('pointerdown',e=>{dragging=true;px=e.clientX;py=e.clientY});
+  addEventListener('pointerup',()=>dragging=false);
+  addEventListener('pointermove',e=>{if(!dragging)return;
+   ry+=(e.clientX-px)*0.008;rx=Math.max(-1.4,Math.min(1.4,rx+(e.clientY-py)*0.006));
+   px=e.clientX;py=e.clientY});
+  ren.domElement.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(1.6,Math.min(9,dist+e.deltaY*0.003))},{passive:false});
+  (function loop(){raf=requestAnimationFrame(loop);
+   if(!dragging)ry+=0.0026;
+   cam.position.set(Math.sin(ry)*Math.cos(rx)*dist,Math.sin(rx)*dist+0.3,Math.cos(ry)*Math.cos(rx)*dist);
+   cam.lookAt(0,0,0);ren.render(scene,cam)})();
+ }
+ function pcol(p){ // dark = low p
+  const t=Math.max(0,Math.min(1,(Math.log10(p)+8)/8));
+  return new THREE.Color().setHSL(0.58-0.52*(1-t),0.85,0.18+0.42*t)}
+ function data(){const P=[],pv=[];seed=2024;
+  if(SH[cur].k==='sph'){for(let i=0;i<1400;i++){const u=rnd()*2-1,a=rnd()*6.2832,s=Math.sqrt(1-u*u);
+   P.push([s*Math.cos(a),u,s*Math.sin(a)]);pv.push(0.3+0.7*rnd())}}
+  if(SH[cur].k==='cusp'){for(let i=0;i<1200;i++){const rr=Math.sqrt(rnd()),a=rnd()*6.2832;
+   const x=rr*Math.cos(a),y=rr*Math.sin(a);const z=-Math.pow(x*x+y*y,1/8);
+   P.push([x,z*1.6+0.8,y]);
+   const d=Math.hypot(x,y);
+   pv.push(d<0.11?5e-8*(1+rnd()):(d>0.97?0.02+0.5*rnd():0.3+0.7*rnd()))}}
+  if(SH[cur].k==='lolli'){
+   for(let i=0;i<2200;i++){const u=rnd()*2-1,a=rnd()*6.2832,s=Math.sqrt(1-u*u);
+    P.push([s*Math.cos(a)*0.62+0.55,u*0.62,s*Math.sin(a)*0.62]);pv.push(0.3+0.7*rnd())}
+   for(let i=0;i<800;i++){const t=rnd();P.push([-1.5+1.43*t,0,0]);
+    pv.push(t<0.09?1e-6*(1+rnd()):(t>0.93?1e-6*(1+rnd()):0.3+0.7*rnd()))}}
+  return{P,pv}}
+ function make(){
+  if(grp)scene.remove(grp);grp=new THREE.Group();
+  const{P,pv}=data();const useC=$('colP').checked;
+  const g=new THREE.BufferGeometry();
+  const pos=new Float32Array(P.length*3),col=new Float32Array(P.length*3);
+  P.forEach((p,i)=>{pos[i*3]=p[0];pos[i*3+1]=p[1];pos[i*3+2]=p[2];
+   const c=useC?pcol(pv[i]):new THREE.Color(ACC);
+   col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b});
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  grp.add(new THREE.Points(g,new THREE.PointsMaterial({size:0.032,vertexColors:true})));
+  // mark singular points big
+  P.forEach((p,i)=>{if(pv[i]<1e-4){const m=new THREE.Mesh(new THREE.SphereGeometry(0.045,8,8),
+   new THREE.MeshBasicMaterial({color:0xff2d63}));m.position.set(p[0],p[1],p[2]);grp.add(m)}});
+  scene.add(grp);
+  $('synText').innerHTML=SH[cur].txt;
+ }
+ function plot(){
+  const R=[];for(let i=1;i<=140;i++)R.push(0.012*i);
+  let tr=[];
+  if(SH[cur].k==='sph')tr=[{x:R,y:R.map(r=>r*r*1400),mode:'lines',line:{color:ACC,width:3},name:'Steigung 2 überall'}];
+  if(SH[cur].k==='cusp')tr=[
+   {x:R,y:R.map(r=>r<0.22?1200*Math.pow(r,2):1200*Math.pow(0.22,2)*Math.pow(r/0.22,1)),mode:'lines',line:{color:HOT,width:3},name:'Cusp-Punkt'},
+   {x:R,y:R.map(r=>1200*r*r),mode:'lines',line:{color:'#3d4c70',width:1.6,dash:'dot'},name:'regulärer Punkt'}];
+  if(SH[cur].k==='lolli')tr=[
+   {x:R,y:R.map(r=>r<0.3?800*Math.pow(r,1):800*Math.pow(0.3,1)*Math.pow(r/0.3,2)),mode:'lines',line:{color:HOT,width:3},name:'Übergang: Steigung STEIGT 1→2'},
+   {x:R,y:R.map(r=>2200*r*r),mode:'lines',line:{color:'#3d4c70',width:1.6,dash:'dot'},name:'Kugel: Steigung 2'}];
+  Plotly.react('pSyn',tr,L({xaxis:{title:'log Radius',type:'log',gridcolor:'#1c2438'},
+   yaxis:{title:'log Volumen',type:'log',gridcolor:'#1c2438'},showlegend:true,
+   legend:{orientation:'h',y:1.2,font:{size:9.5}},margin:{l:54,r:12,t:44,b:42}}),cfg);
+ }
+ $('colP').onchange=make;
+ init();make();plot();
+ addEventListener('resize',()=>{if(ren){ren.setSize(host.clientWidth,380);
+  cam.aspect=host.clientWidth/380;cam.updateProjectionMatrix()}plot()});
+})();
+
+/* ═══════════ 09 LLM RESULTS ═══════════ */
+const MODELS=[
+ {m:'GPT2',n:50257,q:[20,389,531],qs:[8,14,32],mr:66,mp:3e-8,fs:12,fsp:9e-6,fl:7,flp:3e-8,l:768,dS:389,dL:14,w:1024},
+ {m:'Llemma7B',n:32016,q:[4096,4096,4096],qs:[8,11,14],mr:33,mp:5e-9,fs:0,fsp:null,fl:1,flp:3e-4,l:4096,dS:4096,dL:11,w:4096},
+ {m:'Mistral7B',n:32016,q:[9,48,220],qs:[5,6,9],mr:40,mp:3e-7,fs:1,fsp:8e-4,fl:2,flp:8e-5,l:4096,dS:48,dL:6,w:4096},
+ {m:'Pythia6.9B',n:50254,q:[2,108,235],qs:[2,5,145],mr:54,mp:2e-7,fs:0,fsp:null,fl:0,flp:null,l:4096,dS:108,dL:5,w:4096}];
+(()=>{
+ const N=MODELS.map(m=>m.m);
+ Plotly.newPlot('pQuart',[
+  {x:N,y:MODELS.map(m=>m.q[1]),mode:'markers',marker:{color:ACC,size:14,symbol:'diamond'},name:'Median Q2',
+   error_y:{type:'data',symmetric:false,array:MODELS.map(m=>m.q[2]-m.q[1]),
+    arrayminus:MODELS.map(m=>m.q[1]-m.q[0]),color:ACC2,width:8,thickness:2.2}}],
+  L({yaxis:{title:'geschätzte lokale Dimension (kleiner Radius)',type:'log',gridcolor:'#1c2438'},
+     xaxis:{gridcolor:'#1c2438'},title:{text:'Dimension ist NICHT konstant (Q1–Q3)',font:{size:12,color:DIM}},
+     margin:{l:58,r:14,t:40,b:46}}),cfg);
+ Plotly.newPlot('pRej',[
+  {x:N,y:MODELS.map(m=>m.mr),type:'bar',marker:{color:HOT},name:'Manifold verworfen'},
+  {x:N,y:MODELS.map(m=>m.fs),type:'bar',marker:{color:ACC},name:'Bündel (kl. Radius)'},
+  {x:N,y:MODELS.map(m=>m.fl),type:'bar',marker:{color:ACC2},name:'Bündel (gr. Radius)'}],
+  L({barmode:'group',yaxis:{title:'Anzahl Tokens mit Verwerfung',gridcolor:'#1c2438'},
+     xaxis:{gridcolor:'#1c2438'},showlegend:true,legend:{orientation:'h',y:1.18,font:{size:9.5}},
+     margin:{l:56,r:14,t:44,b:46}}),cfg);
+ // histogram Fig.1
+ const X=[],Y=[];
+ for(let d=0;d<=850;d+=4){X.push(d);
+  const g=(m,s,a)=>a*Math.exp(-0.5*((d-m)/s)**2);
+  Y.push(g(20,16,0.0215)+g(389,72,0.0092)+g(531,95,0.0126)+g(0,7,0.004))}
+ Plotly.newPlot('pHist',[
+  {x:X,y:Y,mode:'lines',fill:'tozeroy',line:{color:ACC,width:2.4},fillcolor:'rgba(99,226,255,.14)'}],
+  L({xaxis:{title:'Dimension',gridcolor:'#1c2438'},yaxis:{title:'Wahrscheinlichkeitsdichte',gridcolor:'#1c2438'},
+     annotations:[
+      {x:20,y:0.0225,text:'Zahlen, Monate,<br>Wochentage',showarrow:true,arrowcolor:ACC,font:{size:9.5,color:ACC},ax:58,ay:-20},
+      {x:389,y:0.0098,text:'einzelne<br>Wörter',showarrow:true,arrowcolor:ACC2,font:{size:9.5,color:ACC2},ax:-34,ay:-34},
+      {x:531,y:0.0132,text:'Wortfragmente',showarrow:true,arrowcolor:HOT,font:{size:9.5,color:HOT},ax:44,ay:-26}],
+     margin:{l:58,r:14,t:26,b:44}}),cfg);
+ Plotly.newPlot('pTwin',[
+  {x:['Median-Dim (klein)','Median-Dim (groß)','Manifold-Verwerfungen','Bündel-Verwerfungen'],
+   y:[4096,11,33,1],type:'bar',marker:{color:ACC},name:'Llemma7B'},
+  {x:['Median-Dim (klein)','Median-Dim (groß)','Manifold-Verwerfungen','Bündel-Verwerfungen'],
+   y:[48,6,40,3],type:'bar',marker:{color:HOT},name:'Mistral7B'}],
+  L({barmode:'group',yaxis:{type:'log',title:'Wert (log)',gridcolor:'#1c2438'},xaxis:{gridcolor:'#1c2438',tickfont:{size:9.5}},
+     showlegend:true,legend:{orientation:'h',y:1.2,font:{size:10}},margin:{l:54,r:12,t:42,b:54},
+     title:{text:'32.016 identische Tokens — völlig andere Geometrie',font:{size:11,color:DIM}}}),cfg);
+
+ /* token table */
+ const TOK=[
+  ['GPT2',47482,'Xan',2.8e-8,'M+F(groß)','Muss Wort beginnen'],
+  ['GPT2',28899,'chemist',6.0e-8,'M',''],
+  ['GPT2',47623,'laughable',8.1e-6,'M+F(klein)','Muss Wort beginnen'],
+  ['GPT2',2689,'affect',2.3e-4,'M+F(klein)','Homonym: Verb/Nomen'],
+  ['GPT2',7864,'wins',7.8e-4,'F(klein)','→ „winsome“'],
+  ['GPT2',21118,'aunder',1.3e-4,'M+F(groß)','→ „launder“: Wäsche/Geld'],
+  ['GPT2',28664,'dt',1.2e-4,'M+F(klein)',''],
+  ['GPT2',37031,'Mesh',1.4e-4,'M+F(klein)',''],
+  ['GPT2',48387,'Thankfully',3.4e-5,'M+F(klein)',''],
+  ['GPT2',6684,'OO',3.3e-4,'M',''],
+  ['Llemma7B',24812,'clojure',4.3e-9,'M',''],
+  ['Llemma7B',10617,'agu',8.5e-7,'M',''],
+  ['Llemma7B',19579,'}^{-',8.3e-6,'M','LaTeX-Fragment'],
+  ['Llemma7B',16352,'pax',2.4e-4,'M+F(groß)',''],
+  ['Llemma7B',26226,'kW',5.0e-6,'M','Muss Wort beginnen'],
+  ['Llemma7B',3413,'č',6.2e-5,'M','diakritisch'],
+  ['Llemma7B',18659,'endl',6.8e-5,'M','C++-Fragment'],
+  ['Llemma7B',24391,'(kyrillisch)',9.4e-7,'M','andere Schrift'],
+  ['Mistral7B',20639,'CV',2.4e-7,'M','Muss Wort beginnen'],
+  ['Mistral7B',1314,'ember',2.0e-6,'M','Cusp-Punkt (Fig. 3d)'],
+  ['Mistral7B',9009,'monitor',7.7e-5,'M+F(groß)','Homonym: Verb/Nomen'],
+  ['Mistral7B',29587,'*',6.6e-4,'M','Fußnote/Mult./Markdown'],
+  ['Mistral7B',4104,'HO',5.7e-4,'M+F(groß)',''],
+  ['Mistral7B',25219,'änge',7.7e-4,'F(klein)',''],
+  ['Mistral7B',31684,'(koreanisch)',2.2e-6,'M','andere Sprache'],
+  ['Pythia6.9B',49503,'psychotic',1.6e-7,'M','Muss Wort beginnen'],
+  ['Pythia6.9B',13435,'1990',2.3e-6,'M','Jahreszahl'],
+  ['Pythia6.9B',41305,']{}\\_[',2.0e-4,'M','LaTeX-Müll'],
+  ['Pythia6.9B',296,'st',2.6e-4,'M','bedeutungsloses Fragment'],
+  ['Pythia6.9B',12202,'ucky',1.3e-5,'M','Fragment'],
+  ['Pythia6.9B',24898,'embodiments',4.3e-5,'M','Patentsprache'],
+  ['Pythia6.9B',49669,'(türkisch)',1.4e-4,'M','andere Sprache']];
+ const sel=$('modelSel');
+ ['alle Modelle','GPT2','Llemma7B','Mistral7B','Pythia6.9B'].forEach(m=>{
+  const o=document.createElement('option');o.textContent=m;sel.appendChild(o)});
+ let onlyF=false;
+ function rend(){const q=$('tokQ').value.toLowerCase(),m=sel.value;
+  const tb=$('tokTable').querySelector('tbody');tb.innerHTML='';
+  TOK.filter(t=>(m==='alle Modelle'||t[0]===m)&&
+    (!q||String(t[2]).toLowerCase().includes(q))&&
+    (!onlyF||t[4].includes('F')))
+   .sort((a,b)=>a[3]-b[3])
+   .forEach((t,i)=>{const tr=document.createElement('tr');
+    const cls=t[3]<1e-6?'bad':(t[3]<1e-4?'w':'');
+    tr.innerHTML=`<td class="mono">${i+1}</td><td class="mono">${t[1]}</td>
+     <td><span class="tok">${t[2].replace(/</g,'&lt;')}</span></td>
+     <td class="mono"><span class="pill ${cls}">${t[3].toExponential(1)}</span></td>
+     <td style="font-size:11.5px">${t[4]}</td><td style="font-size:11.5px;color:var(--dim)">${t[5]}</td>`;
+    tb.appendChild(tr)});
+ }
+ sel.onchange=rend;$('tokQ').oninput=rend;
+ $('onlyFib').onclick=e=>{onlyF=!onlyF;e.target.className=onlyF?'on':'';rend()};
+ rend();
+
+ /* ember neighborhood canvas */
+ (()=>{const cv=$('cEmber');let rot=true,ang=0.4;
+  seed=8888;const P=[];
+  // synth: cloud with two cusps and two pinches
+  for(let i=0;i<900;i++){
+   const t=rnd()*6.2832,u=rnd();
+   let x,y,z,p;
+   const branch=i%4;
+   if(branch===0){ // cusp spike 1 (ember)
+    const s=Math.pow(u,2.2);x=-0.9+s*0.9;y=(rnd()-.5)*0.5*s;z=(rnd()-.5)*0.5*s;
+    p=s<0.06?2e-6:0.4}
+   else if(branch===1){ // cusp spike 2 (P)
+    const s=Math.pow(u,2.2);x=0.9-s*0.9;y=0.5+(rnd()-.5)*0.5*s;z=(rnd()-.5)*0.5*s;
+    p=s<0.06?5e-6:0.4}
+   else if(branch===2){ // pinch chain horizontal (":")
+    const q=u*2-1;const w=Math.abs(Math.sin(q*4.2))*0.30+0.012;
+    x=q*0.95;y=-0.45+Math.cos(t)*w;z=Math.sin(t)*w;
+    p=w<0.05?1e-4:0.5}
+   else{ // pinch chain vertical ("ly")
+    const q=u*2-1;const w=Math.abs(Math.sin(q*3.4))*0.26+0.012;
+    x=0.15+Math.cos(t)*w;y=q*0.9;z=Math.sin(t)*w;
+    p=w<0.05?2e-4:0.5}
+   P.push([x,y,z,p]);
+  }
+  const LBL=[['ember',-0.9,0,0],['P',0.9,0.5,0],[':',-0.95,-0.45,0],['ly',0.15,-0.9,0]];
+  function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+   const sc=Math.min(W,H)*0.42,cx=W/2,cy=H/2;
+   const ca=Math.cos(ang),sa=Math.sin(ang);
+   const pr=p=>{const X=p[0]*ca-p[2]*sa,Z=p[0]*sa+p[2]*ca;
+    const d=3.2+Z;const f=2.6/d;return[cx+X*sc*f,cy-p[1]*sc*f,f]};
+   P.map(p=>({p,pr:pr(p)})).sort((a,b)=>a.pr[2]-b.pr[2]).forEach(({p,pr})=>{
+    const t=Math.max(0,Math.min(1,(Math.log10(p[3])+7)/7));
+    x.beginPath();x.arc(pr[0],pr[1],1.1+2.1*pr[2],0,7);
+    x.fillStyle=`hsl(${195+40*t},${85-25*t}%,${16+40*t}%)`;x.fill();
+    if(p[3]<1e-3){x.strokeStyle='rgba(255,45,99,.6)';x.lineWidth=1;x.stroke()}});
+   x.font='11px ui-monospace';x.textAlign='center';
+   LBL.forEach(([n,a,b,c])=>{const q=pr([a,b,c]);
+    x.fillStyle=WARN;x.fillText('"'+n+'"',q[0],q[1]-9);
+    x.strokeStyle='rgba(251,191,36,.6)';x.lineWidth=1;
+    x.beginPath();x.arc(q[0],q[1],7,0,7);x.stroke()});
+   x.fillStyle=DIM;x.font='10px Inter';x.textAlign='left';
+   x.fillText('PCA 4096D → 3D · Cusps bei "ember"/"P", Pinches bei ":"/"ly"',8,14);
+  }
+  (function loop(){if(rot)ang+=0.006;draw();requestAnimationFrame(loop)})();
+  $('emberRot').onclick=e=>{rot=!rot;e.target.className=rot?'on':''};
+  addEventListener('resize',draw);
+ })();
+})();
+
+/* ═══════════ 10 KONTEXT ═══════════ */
+(()=>{
+ texSet($('eqLemma'),`\\text{Lemma 1: } X\\text{ Mf.},\\; X\\times Y\\text{ Mf.}\\;\\Longrightarrow\\; Y\\cong (X\\times Y)/X \\text{ Mf.}`);
+ const cv=$('cCtx');
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const w=+$('www').value;
+  const cell=Math.min(30,(W-24)/Math.max(w,1));
+  const y0=H*0.30;
+  x.fillStyle=DIM;x.font='11px Inter';x.textAlign='left';
+  x.fillText('Kontextfenster T^w = T × T × … × T  ('+w+' Kopien)',12,20);
+  let hasSing=false;
+  for(let i=0;i<w;i++){
+   const sing=(i%5===3);if(sing)hasSing=true;
+   const px=12+i*cell;
+   x.fillStyle=sing?'rgba(255,92,138,.22)':'rgba(99,226,255,.14)';
+   x.beginPath();x.roundRect(px,y0,cell-3,cell-3,5);x.fill();
+   x.strokeStyle=sing?HOT:ACC;x.lineWidth=1.3;x.stroke();
+   if(sing){x.fillStyle=HOT;x.font='bold 13px ui-monospace';x.textAlign='center';
+    x.fillText('✗',px+(cell-3)/2,y0+(cell-3)/2+5)}
+  }
+  // product visualization: singular factor poisons product
+  const ry=H*0.62;
+  x.fillStyle=DIM;x.font='11px Inter';x.textAlign='left';
+  x.fillText('Folge: ein singulärer Faktor ⇒ Produkt singulär (Kontraposition von Lemma 1)',12,ry-14);
+  const gw=W-24;
+  const grd=x.createLinearGradient(12,0,12+gw,0);
+  grd.addColorStop(0,'rgba(255,92,138,.5)');grd.addColorStop(1,'rgba(180,124,255,.25)');
+  x.fillStyle=grd;x.beginPath();x.roundRect(12,ry,gw,34,8);x.fill();
+  x.strokeStyle=HOT;x.lineWidth=1.4;x.stroke();
+  x.fillStyle='#fff';x.font='12px Inter';x.textAlign='center';
+  x.fillText('T^'+w+'  ist KEIN Manifold',12+gw/2,ry+22);
+  // longer window arrow
+  x.strokeStyle=WARN;x.lineWidth=1.6;x.beginPath();
+  x.moveTo(12,H-22);x.lineTo(W-14,H-22);x.lineTo(W-22,H-27);x.moveTo(W-14,H-22);x.lineTo(W-22,H-17);x.stroke();
+  x.fillStyle=WARN;x.font='10.5px Inter';x.textAlign='left';
+  x.fillText('für JEDES w existiert ein längeres w′ mit Singularitäten →',14,H-30);
+  const b=$('prodBad');
+  b.textContent='T^'+w+': Singularitäten vorhanden — Kontext hilft nicht dauerhaft';
+  b.className='pill bad';
+ }
+ bind($('www'),$('wwwV'),draw,0);addEventListener('resize',draw);draw();
+
+ function updT(){const l=+$('ll').value,d=+$('dd').value,w=+$('wc').value;
+  const mmin=2*w*d/l;$('mMin').textContent=mmin.toFixed(0);
+  const ok=Math.ceil(mmin+1)<=w;
+  const t=$('thm2');
+  t.textContent=ok?'erfüllbar: Singularitäten überleben bis in die Ausgabe':'nicht erfüllbar (2d ≥ ℓ)';
+  t.className='pill '+(ok?'bad':'ok');
+  const D=[];for(let i=1;i<=200;i++)D.push(i*20);
+  Plotly.react('pThm2',[
+   {x:D,y:D.map(dd=>2*w*dd/l),mode:'lines',line:{color:HOT,width:2.6},name:'min m'},
+   {x:D,y:D.map(()=>w),mode:'lines',line:{color:ACC,width:2,dash:'dash'},name:'w (Obergrenze)'},
+   {x:[d],y:[mmin],mode:'markers',marker:{color:WARN,size:13,line:{color:'#fff',width:2}}}],
+   L({xaxis:{title:'Bounding-Dimension d',gridcolor:'#1c2438'},
+      yaxis:{title:'Ausgabetokens m',type:'log',gridcolor:'#1c2438'},
+      showlegend:true,legend:{orientation:'h',y:1.2,font:{size:10}},margin:{l:56,r:12,t:42,b:44},
+      title:{text:'Gültiger Bereich: rot < m ≤ blau',font:{size:10,color:DIM}}}),cfg);
+ }
+ bind($('ll'),$('llV'),updT,0);bind($('dd'),$('ddV'),updT,0);bind($('wc'),$('wcV'),updT,0);
+ const T3=[['GPT2',768,389,14,1024,1038,38,'Nein','Ja'],
+  ['Llemma7B',4096,4096,11,4096,8193,23,'Nein','Ja'],
+  ['Mistral7B',4096,48,6,4096,97,13,'Ja','Ja'],
+  ['Pythia6.9B',4096,108,5,4096,217,11,'Ja','Ja']];
+ $('thm2Tbl').innerHTML=T3.map(r=>`<tr><td class="mono">${r[0]}</td><td class="mono">${r[1]}</td>
+  <td class="mono">${r[2]}</td><td class="mono">${r[3]}</td><td class="mono">${r[4]}</td>
+  <td class="mono">${r[5]}</td><td class="mono">${r[6]}</td>
+  <td><span class="pill ${r[7]==='Ja'?'bad':'w'}">klein: ${r[7]}</span>
+      <span class="pill bad">groß: ${r[8]}</span></td></tr>`).join('');
+ addEventListener('resize',updT);updT();
+})();
+
+/* ═══════════ 11 FINAL + ARC ═══════════ */
+(()=>{
+ Plotly.newPlot('pFinal',[
+  {type:'bar',orientation:'h',
+   y:['Manifold-Hypothese','Fiber-Bundle-Hypothese','Dimension konstant?','Kontext heilt?','Singularitäten in Ausgabe?'],
+   x:[4,3,0,0,4],
+   marker:{color:[HOT,HOT,'#2c3650','#2c3650',HOT]},
+   text:['4/4 verworfen','3/4 verworfen','nein: Q1..Q3 weit auseinander','nein (Lemma 1)','ja (Theorem 2)'],
+   textposition:'auto',textfont:{size:10,color:'#0b0f1a'},
+   hovertemplate:'%{y}<extra></extra>'}],
+  L({xaxis:{title:'Anzahl Modelle',range:[0,5],gridcolor:'#1c2438'},
+     yaxis:{gridcolor:'#1c2438',tickfont:{size:10}},margin:{l:150,r:14,t:20,b:44}}),cfg);
+
+ const ARC=[
+  {t:'1 · Beobachtung',d:'LLMs antworten instabil auf semantisch gleiche Prompts. Wo kommt das her?'},
+  {t:'2 · Verdacht',d:'Die Manifold-Hypothese (glatte Fläche) wird überall angenommen, aber nie geprüft.'},
+  {t:'3 · Werkzeug',d:'Dimension = Steigung von log(Volumen) über log(Radius). Volumen = Punkte zählen.'},
+  {t:'4 · Verallgemeinerung',d:'Fiber Bundle: stückweise lineare log-log-Kurve; Steigungen dürfen nur fallen (Theorem 1).'},
+  {t:'5 · Test',d:'Algorithmus 1: Distanzen sortieren, Steigungen, t-Test über Gleitfenster, Holm-Bonferroni.'},
+  {t:'6 · Validierung',d:'Sphäre ✓ · Cusp: Manifold verworfen, Bündel nicht ✓ · Lollipop: beide verworfen ✓'},
+  {t:'7 · Anwendung',d:'GPT2, Llemma7B, Mistral7B, Pythia6.9B: Manifold 4/4 verworfen, Bündel 3/4.'},
+  {t:'8 · Persistenz',d:'Lemma 1: Kontext heilt nichts. Theorem 2: Singularitäten reichen bis in die Ausgabe.'},
+  {t:'9 · Antwort',d:'Der Token-Raum ist singulär. Prompt-Fragilität hat eine geometrische Ursache.'}];
+ let cur=0;
+ ARC.forEach((a,i)=>{const b=document.createElement('button');b.textContent=a.t;
+  b.onclick=()=>{cur=i;[...$('arcBtns').children].forEach((c,j)=>c.className=j===i?'on':'');draw()};
+  $('arcBtns').appendChild(b)});
+ $('arcBtns').children[0].className='on';
+ const cv=$('cArc');
+ function draw(){const[x,W,H]=fit(cv);x.clearRect(0,0,W,H);
+  const n=ARC.length,step=(W-56)/(n-1),y=H*0.45;
+  x.strokeStyle='#243050';x.lineWidth=3;x.beginPath();x.moveTo(28,y);x.lineTo(W-28,y);x.stroke();
+  const g=x.createLinearGradient(28,0,28+step*cur,0);
+  g.addColorStop(0,ACC);g.addColorStop(1,ACC2);
+  x.strokeStyle=g;x.lineWidth=3.4;x.beginPath();x.moveTo(28,y);x.lineTo(28+step*cur,y);x.stroke();
+  ARC.forEach((a,i)=>{const px=28+step*i;
+   const on=i<=cur;
+   x.beginPath();x.arc(px,y,i===cur?11:6.5,0,7);
+   x.fillStyle=i===cur?HOT:(on?ACC:'#2c3650');x.fill();
+   if(i===cur){x.strokeStyle='#fff';x.lineWidth=2;x.stroke()}
+   x.save();x.translate(px,y+(i%2?26:-20));x.rotate(0);
+   x.fillStyle=i===cur?'#fff':DIM;x.font=(i===cur?'bold ':'')+'10px Inter';x.textAlign='center';
+   x.fillText(a.t.split(' · ')[1],0,0);x.restore()});
+  $('arcText').innerHTML=`<div class="row"><span class="pill" style="color:${HOT};border-color:#5c1f33">${ARC[cur].t}</span></div>
+   <p class="lead" style="font-size:15px;margin:6px 0 0">${ARC[cur].d}</p>`;
+ }
+ addEventListener('resize',draw);draw();
+})();
+</script>
+</body>
+</html>
