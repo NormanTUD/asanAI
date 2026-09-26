@@ -33,3 +33,4 @@ matomo/misc/DBIP-City-Lite.mmdb
 matomo/misc/DBIP-City.mmdb
 ./presentation
 todo.txt
+tests/__pycache__/

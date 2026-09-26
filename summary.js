@@ -1337,8 +1337,7 @@ function _inject_tooltip_styles() {
 
 			/* Spinner override for summary */
 			"#summary .spinner {" +
-			"  border-color: rgba(99, 102, 241, 0.2);" +
-			"  border-top-color: #6366f1;" +
+			"  background: conic-gradient(from var(--mn-spin-a), #6366f1 0turn 0.25turn, rgba(99, 102, 241, 0.2) 0.25turn 1turn);" +
 			"}" +
 
 			/* Scrollbar for tooltip content */
