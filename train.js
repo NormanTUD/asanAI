@@ -990,6 +990,8 @@ async function get_fit_data () {
 
 		gradientFlow.onEpochBoundary();
 		gradientFlowToSummary();
+
+		try { OrigamiFolds.update(); } catch (e) { /* optional */ }
 	};
 
 	callbacks["onTrainEnd"] = async function () {
@@ -1018,6 +1020,8 @@ async function get_fit_data () {
 		show_or_hide_beginner_or_expert_mode_stuff();
 
 		gradientFlow.onTrainingEnd();
+
+		try { OrigamiFolds.update(); } catch (e) { /* optional */ }
 	};
 
 	var fit_data = {
