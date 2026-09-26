@@ -28,7 +28,10 @@ Gedeckte Fälle:
   - 1D-, 4D-, Bild-Input; Regression; Softmax-Ausgabe;
   - Training mit onEpochEnd-Callback (wie train.js), Modell-Wechsel,
     Modell-Dispose, Config-Toggles, Theme-/Language-Wechsel,
-    rapid updates, destroy/re-init, fehlende Trainingsdaten.
+    rapid updates, destroy/re-init, fehlende Trainingsdaten,
+  - hidden->shown First-Render (jQuery-UI-Tab-Race: erster newPlot auf
+    display:none->visible Panel, 8x mit destroy dazwischen) und
+    Pick-Crash-Recovery (synthetischer window-error -> Plot neu aufgebaut).
 
 Aufruf (aus dem Repo-Root, braucht php + Chromium):
     uv run tests/origami_folds_test.py
@@ -193,6 +196,23 @@ async def main():
                 await page.evaluate(
                     "(a) => __setScenario(a.m, a.d, a.w)",
                     {"m": model, "d": data, "w": with_data})
+                await page.wait_for_timeout(wait)
+                return await page.evaluate("__snapshot()")
+
+            async def scenario_hidden(model, reveal_ms=40, wait=1400):
+                # Reproduziert den echten Tab-Wechsel: Panel ist display:none,
+                # init() laeuft WAEHRENDdessen (wie inline onclick vor jQuery UI),
+                # erst danach wird der Panel sichtbar.
+                await page.evaluate(
+                    """(a) => {
+                        try { OrigamiFolds.destroy(); } catch (e) {}
+                        window._state_initialised_in_tab = false;
+                        __hidePlot();
+                        __setupModel(a.m, 'cls2', true);
+                        update_origami_folds();
+                        setTimeout(function () { __showPlot(); }, a.rv);
+                    }""",
+                    {"m": model, "rv": reveal_ms})
                 await page.wait_for_timeout(wait)
                 return await page.evaluate("__snapshot()")
 
@@ -440,6 +460,42 @@ async def main():
                 bad.append("keine Neu-Init nach destroy()")
             record("destroy + re-init", not bad, "; ".join(bad))
             await new_errors("destroy/reinit")
+
+            # --------------------------------- hidden -> shown (Tab-Race)
+            # Der eigentliche Bug: erster newPlot auf einem Panel, das gerade
+            # display:none -> visible wechselt (jQuery-UI-Tab). Ohne Fix
+            # initialisiert Plotly einen nicht-gesetzten GL-Canvas und der
+            # 3D-Erst-Pick bricht ("...length, ...is undefined").
+            for i in range(8):
+                s = await scenario_hidden(SHEET, reveal_ms=40)
+                if i == 0 and s["nMesh3d"] < 1:
+                    print("DEBUG hidden#1 snapshot:")
+                    import json
+                    print(json.dumps(s, indent=1, ensure_ascii=False)[:2500])
+                expect_rendered("hidden->shown first render #%d" % (i + 1),
+                                s, need_mesh=True)
+                await new_errors("hidden->shown #%d" % (i + 1))
+
+            # ------------------------------------------------ recovery net
+            s = await scenario(SHEET)
+            expect_rendered("recovery: Ausgangszustand", s, need_mesh=True)
+            await page.evaluate(
+                "() => { window.__counts = { wrn: 0, err: 0 }; window.__logs = []; }")
+            await page.evaluate(
+                "(msg) => window.dispatchEvent(new ErrorEvent('error', { message: msg }))",
+                "can't access property \"length\", Se is undefined")
+            await page.wait_for_timeout(1300)
+            s = await page.evaluate("__snapshot()")
+            bad = []
+            if not s["hasPlot"]:
+                bad.append("Plot nach Pick-Crash-Recovery weg")
+            rec = [l for l in s["logs"] if "Pick-Crash" in l]
+            if not rec:
+                bad.append("keine Recovery-Logzeile; logs=" + str(s["logs"][-3:]))
+            if s["err"]:
+                bad.append("err=%d" % s["err"])
+            record("recovery: Pick-Crash -> Plot neu aufgebaut", not bad, "; ".join(bad))
+            await new_errors("recovery")
 
             await browser.close()
         finally:

@@ -170,7 +170,7 @@ window.__mkData = function (modelSpec, n, mode) {
 	}
 };
 
-window.__setScenario = function (modelSpec, dataMode, withData) {
+window.__setupModel = function (modelSpec, dataMode, withData) {
 	// Reset counters so each scenario starts fresh
 	window.__counts = { wrn: 0, err: 0 };
 	window.__logs = [];
@@ -193,8 +193,22 @@ window.__setScenario = function (modelSpec, dataMode, withData) {
 		window.labels = null;
 	}
 	window.started_training = false;
+	return true;
+};
+
+window.__setScenario = function (modelSpec, dataMode, withData) {
+	__setupModel(modelSpec, dataMode, withData);
 	update_origami_folds();
 	return true;
+};
+
+window.__hidePlot = function () {
+	var el = document.getElementById("origami_folds_plot");
+	if (el) el.style.display = "none";
+};
+window.__showPlot = function () {
+	var el = document.getElementById("origami_folds_plot");
+	if (el) el.style.display = "";
 };
 
 window.__snapshot = function () {

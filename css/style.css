@@ -1568,19 +1568,27 @@ input, select {
 	100% { background-position: 100% 100%; }
 }
 
-.spinner {
-	will-change: transform;
-	border: 8px solid rgba(0, 0, 0, 0.1);
-	border-left: 8px solid #3498db;
-	border-radius: 50%;
-	width: 50px;
-	height: 50px;
-	animation: spin 1s linear infinite;
+@property --mn-spin-a {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
 }
 
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+.spinner {
+	--mn-spin-a: 0deg;
+	box-sizing: border-box;
+	border-radius: 50%;
+	width: 64px;
+	height: 64px;
+	background: conic-gradient(from var(--mn-spin-a), #3498db 0turn 0.25turn, rgba(0, 0, 0, 0.1) 0.25turn 1turn);
+	-webkit-mask: radial-gradient(circle 32px at center, transparent 24px, #000 24px);
+	mask: radial-gradient(circle 32px at center, transparent 24px, #000 24px);
+	animation: mn-spin-paint 1s linear infinite;
+	flex: 0 0 auto;
+}
+
+@keyframes mn-spin-paint {
+	to { --mn-spin-a: 1turn; }
 }
 
 #load_msg_steps {
