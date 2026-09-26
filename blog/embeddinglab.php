@@ -982,6 +982,8 @@ This is not just a mathematical curiosity. The Voronoi tessellation is **mathema
 * **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
 
 Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token “owns” that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
+
+The same geometry, pushed further — the latent semantic manifold, the Voronoi *margin* as a measure of genuine ambiguity, the linear growth of the expressibility gap, and the convexity of natural properties (criterion P) — is developed in [The foam of meaning](foam_of_meaning).
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
