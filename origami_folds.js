@@ -2104,6 +2104,15 @@ var OrigamiFolds = (function (global) {
 			b.z.lo += amount;
 			b.z.hi += amount;
 		}
+		// Guardrail: sanitize bounds
+		var axes = ["x", "y", "z"];
+		for (var a = 0; a < axes.length; a++) {
+			var ax = b[axes[a]];
+			if (!_isFiniteNum(ax.lo) || !_isFiniteNum(ax.hi)) {
+				ax.lo = 0; ax.hi = 1;
+			}
+			if (ax.hi <= ax.lo) ax.hi = ax.lo + 0.1;
+		}
 		return b;
 	}
 
@@ -2129,6 +2138,33 @@ var OrigamiFolds = (function (global) {
 		act.zs = fix(act.zs);
 		if (bad > 0) _log("OrigamiFolds: " + bad + " Grid-Punkte gesättigt");
 		return act;
+	}
+
+	function _sanitizeTraces(traces) {
+		if (!traces || !traces.length) return traces;
+		var bad = 0;
+		for (var t = 0; t < traces.length; t++) {
+			var tr = traces[t];
+			var keys = ["x", "y", "z"];
+			for (var k = 0; k < keys.length; k++) {
+				var arr = tr[keys[k]];
+				if (!arr || !arr.length) continue;
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i] === null || arr[i] === undefined) continue;
+					if (!_isFiniteNum(arr[i])) { arr[i] = 0; bad++; }
+				}
+			}
+			var mk = tr.marker;
+			if (mk && mk.color && mk.color.length) {
+				for (var c = 0; c < mk.color.length; c++) {
+					if (typeof mk.color[c] === "number" && !_isFiniteNum(mk.color[c])) {
+						mk.color[c] = 0; bad++;
+					}
+				}
+			}
+		}
+		if (bad > 0) _log("OrigamiFolds: " + bad + " Trace-Werte gesäubert (NaN/Inf)");
+		return traces;
 	}
 
 	function _buildSpaceTraces(o) {
@@ -2885,6 +2921,8 @@ var OrigamiFolds = (function (global) {
 		};
 
 		_saveCameras();
+
+		traces = _sanitizeTraces(traces);
 
 		if (_state.plotDiv) _state.plotDiv.style.display = "";
 		if (_state.infoDiv)  _state.infoDiv.style.display = "none";
