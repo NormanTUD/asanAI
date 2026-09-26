@@ -3975,7 +3975,6 @@ Signierte Fläche nachher: ${fmt(arB,5)}
 det dψ₁₂(z) = ${flip?'+':'−'} |z|<sup>−2n</sup> = <b>${fmt(detExact,5)}</b>  ${detExact>0?'<b style="color:#5ef2a0">&gt; 0 ✓</b>':'<b style="color:#ff6b7f">&lt; 0 ✗</b>'}
 
 ${flip
-? `<b style="color:#5ef2a0">✓ REP      ${flip
 ? `<b style="color:#5ef2a0">✓ REPARIERT.</b> Nach der Spiegelung einer Koordinate in ψ₁ ist det dψ₁₂ > 0.
 Der neue Atlas { ψ̃₁, ψ₂ } ist <b>orientiert</b>. Da ψ̃₁ im maximalen Atlas liegt, den ψ₁, ψ₂ erzeugen,
 ist S<sup>n</sup> eine <b>orientierbare</b> Mannigfaltigkeit (Beispiel 4.3 iv).
@@ -3984,8 +3983,9 @@ ist S<sup>n</sup> eine <b>orientierbare</b> Mannigfaltigkeit (Beispiel 4.3 iv).
 : `<b style="color:#ff6b7f">✗ Umlaufsinn kippt.</b> Das kleine orientierte Quadrat kommt <b>spiegelverkehrt</b> an.
 Der Standard-Atlas { ψ₁, ψ₂ } ist damit <b>nicht orientiert</b>.
 
-Das heißt <b>nicht</b>, dass S² nicht orientierbar wäre — nur dieser konkrete Atlas taugt nicht.
-Klicke „Karte 1 spiegeln“, um die Reparatur zu sehen.`}
+Das heißt <b>nicht</b>, dass S² nicht orientierbar wäre — nur dieser konkrete Atlas taugt nicht.`}
+
+Klicke „Karte 1 spiegeln", um die Reparatur zu sehen.
 
 <b>Merke den Unterschied:</b>
 • „orientiert“  = dieser Atlas erfüllt det dψᵢⱼ > 0
@@ -4265,8 +4265,6 @@ Das ist genau die Art globaler Invariante, die Bemerkung 4.2 ankündigt!
     }
     else if(kind==='rp2'){
       // Boy surface (Bryant-Kusner-like simplified / Apery)
-      f=(u,v)=>{
-
       f=(u,v)=>{
         const U=u*Math.PI, V=v*TAU;
         const k=0.55+0.45*p;
@@ -6945,8 +6943,6 @@ Nicht-Orientierbarkeit ist ein <b>rein reelles</b> Phänomen.`;
   bind('#sIntEps',draw);
   window.addEventListener('resize',()=>{g=setupHiDPI(cv);draw()});
   function f(x,y){
-    if(kind==='gauss')return Math.
-  function f(x,y){
     if(kind==='gauss')return Math.exp(-(x*x+y*y));
     return (x*x+y*y);
   }
@@ -9053,7 +9049,7 @@ Jedes einzelne Glied dieser Kette haben wir in diesem Dokument durchgespielt.`;
       const r=n.big?30:23;
       g.beginPath();g.arc(p[0],p[1],r+(act?4:0),0,TAU);
       const grad=g.createRadialGradient(p[0],p[1],2,p[0],p[1],r+(act?4:0));
-      grad.addColorStop(0,n.c.replace(')',',0.55)').replace('rgb','rgba').      grad.addColorStop(0,n.c.replace(')',',0.55)').replace('rgb','rgba'));
+      grad.addColorStop(0,n.c.replace(')',',0.55)').replace('rgb','rgba'));
       grad.addColorStop(1,'rgba(10,15,28,0.92)');
       // fallback if color is hex
       try{ g.fillStyle=grad; }catch(e){ g.fillStyle='rgba(20,28,48,.9)'; }
