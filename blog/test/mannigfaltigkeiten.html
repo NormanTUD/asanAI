@@ -4026,9 +4026,6 @@ Klicke „Karte 1 spiegeln", um die Reparatur zu sehen.
 
   function clear(){ while(grp.children.length) grp.remove(grp.children[0]); }
   function paramMesh(f,nu,nv,colA,colB,side){
-    const geo=new THREE.ParametricBufferGeometry?
-      null:null;
-    // manual build
     const pos=[],idx=[],col=[];
     const cA=new THREE.Color(colA), cB=new THREE.Color(colB);
     for(let i=0;i<=nu;i++)for(let j=0;j<=nv;j++){
