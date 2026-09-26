@@ -253,48 +253,64 @@ var OrigamiFolds = (function (global) {
 		if (dark) {
 			return {
 				dark: true,
-				paper:      "#0c0f1c",
-				plotBg:     "#0c0f1c",
-				text:       "#d8dcea",
-				axisText:   "#9aa4c0",
-				grid:       "rgba(255,255,255,0.07)",
-				zeroline:   "rgba(255,255,255,0.18)",
-				boxColor:   "rgba(170,190,255,0.55)",
-				cutColor:   "rgba(255,160,0,1)",
-				softCut:    "rgba(255,190,90,0.35)",
+				paper:      "#0b0e1a",
+				plotBg:     "#0b0e1a",
+				sceneBg:    "rgba(13,17,32,0.92)",
+				axisPane:   "rgba(24,30,52,0.35)",
+				text:       "#dfe4f2",
+				axisText:   "#7d88a8",
+				grid:       "rgba(255,255,255,0.045)",
+				zeroline:   "rgba(140,165,235,0.22)",
+				boxColor:   "rgba(150,175,255,0.42)",
+				cutColor:   "rgba(255,168,46,1)",
+				cutGlow:    "rgba(255,150,20,0.20)",
+				softCut:    "rgba(255,205,120,0.45)",
+				softGlow:   "rgba(255,200,110,0.13)",
 				panelBg:    "linear-gradient(140deg, rgba(26,30,50,0.95), rgba(16,19,34,0.96))",
 				panelBorder:"rgba(140,160,230,0.26)",
 				panelShadow:"0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
 				btnBg:      "linear-gradient(135deg,#4a67b8,#6b7fd8)",
 				btnText:    "#ffffff",
 				infoText:   "#9aa4c0",
-				gridColor:    "rgba(150,170,220,0.45)",
-				surfaceColor: "rgba(120,150,220,0.5)",
-				textAccent:   "#c7d0ea",
-				arrowColor:   "rgba(200,215,255,0.8)"
+				gridColor:    "rgba(160,182,235,0.5)",
+				gridGlow:     "rgba(120,150,225,0.10)",
+				surfaceColor: "rgba(110,145,225,0.55)",
+				textAccent:   "#cdd6f2",
+				arrowColor:   "rgba(150,170,235,0.55)",
+				legendBg:     "rgba(16,20,36,0.72)",
+				legendBorder: "rgba(140,160,230,0.20)",
+				markerEdge:   "rgba(10,13,24,0.85)"
 			};
 		}
 		return {
 			dark: false,
 			paper:      "#ffffff",
-			plotBg:     "#fbfcff",
+			plotBg:     "#ffffff",
+			sceneBg:    "rgba(248,250,255,0.94)",
+			axisPane:   "rgba(232,238,251,0.45)",
 			text:       "#1a1f30",
-			axisText:   "#465072",
-			grid:       "rgba(0,0,0,0.07)",
-			zeroline:   "rgba(0,0,0,0.20)",
-			boxColor:   "rgba(60,80,150,0.6)",
-			cutColor:   "rgba(200,90,10,0.9)",
-			softCut:    "rgba(200,90,10,0.35)",
+			axisText:   "#7b849f",
+			grid:       "rgba(30,50,110,0.055)",
+			zeroline:   "rgba(60,85,160,0.22)",
+			boxColor:   "rgba(70,95,170,0.40)",
+			cutColor:   "rgba(226,104,16,1)",
+			cutGlow:    "rgba(230,120,30,0.18)",
+			softCut:    "rgba(214,132,52,0.5)",
+			softGlow:   "rgba(220,150,70,0.12)",
 			panelBg:    "linear-gradient(140deg, rgba(253,254,255,0.98), rgba(233,238,250,0.98))",
 			panelBorder:"rgba(60,80,140,0.2)",
 			panelShadow:"0 8px 26px rgba(60,80,140,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
 			btnBg:      "linear-gradient(135deg,#4a67b8,#5f7cc8)",
 			btnText:    "#ffffff",
 			infoText:   "#465072",
-			gridColor:    "rgba(70,90,160,0.4)",
-			surfaceColor: "rgba(90,120,200,0.5)",
-			textAccent:   "#26304d",
-			arrowColor:   "rgba(60,80,140,0.85)"
+			gridColor:    "rgba(58,80,155,0.42)",
+			gridGlow:     "rgba(90,120,200,0.09)",
+			surfaceColor: "rgba(95,125,205,0.5)",
+			textAccent:   "#1f2942",
+			arrowColor:   "rgba(80,105,175,0.45)",
+			legendBg:     "rgba(255,255,255,0.78)",
+			legendBorder: "rgba(60,80,140,0.14)",
+			markerEdge:   "rgba(255,255,255,0.9)"
 		};
 	}
 
@@ -345,45 +361,94 @@ var OrigamiFolds = (function (global) {
 	}
 
 	// ============================================================
-	// VERZERRUNGS-FARBSKALA (divergierend, 0 = neutral)
+	// VERZERRUNGS-FARBSKALA (divergierend, perzeptuell balanciert)
 	// ============================================================
 
-	var DISTORTION_COLD  = [40, 90, 200];
-	var DISTORTION_MID_L = [150, 150, 158];
-	var DISTORTION_MID_D = [120, 126, 145];
-	var DISTORTION_WARM  = [225, 70, 40];
+	// Cool → Neutral → Warm, an CIELAB-Helligkeit angenähert
+	var DIST_RAMP_LIGHT = [
+		[0.00, [ 31,  66, 145]],
+		[0.14, [ 44, 106, 190]],
+		[0.29, [ 88, 156, 219]],
+		[0.42, [139, 184, 222]],
+		[0.50, [196, 205, 219]],
+		[0.58, [228, 189, 162]],
+		[0.71, [238, 158, 116]],
+		[0.86, [217,  99,  63]],
+		[1.00, [166,  36,  33]]
+	];
 
-	function _distortionColor(v, lo, hi, dark) {
-		if (!_isFiniteNum(v)) return "rgb(128,128,128)";
-		var mid = dark ? DISTORTION_MID_D : DISTORTION_MID_L;
+	var DIST_RAMP_DARK = [
+		[0.00, [ 46,  95, 196]],
+		[0.14, [ 64, 130, 219]],
+		[0.29, [102, 165, 232]],
+		[0.42, [146, 186, 226]],
+		[0.50, [116, 124, 148]],
+		[0.58, [232, 174, 136]],
+		[0.71, [242, 138,  88]],
+		[0.86, [233,  92,  55]],
+		[1.00, [200,  48,  40]]
+	];
+
+	function _rampLookup(ramp, t) {
+		if (!_isFiniteNum(t)) t = 0.5;
+		if (t < 0) t = 0;
+		if (t > 1) t = 1;
+		for (var i = 0; i + 1 < ramp.length; i++) {
+			var a = ramp[i], b = ramp[i + 1];
+			if (t >= a[0] && t <= b[0]) {
+				var span = b[0] - a[0];
+				var f = (span > 1e-9) ? (t - a[0]) / span : 0;
+				// Smoothstep für weichere Übergänge
+				f = f * f * (3 - 2 * f);
+				return [
+					Math.round(a[1][0] + (b[1][0] - a[1][0]) * f),
+					Math.round(a[1][1] + (b[1][1] - a[1][1]) * f),
+					Math.round(a[1][2] + (b[1][2] - a[1][2]) * f)
+				];
+			}
+		}
+		var last = ramp[ramp.length - 1][1];
+		return [last[0], last[1], last[2]];
+	}
+
+	// Gamma: verstärkt kleine Verzerrungen, ohne Extreme zu sättigen
+	function _distortionT(v, lo, hi) {
+		if (!_isFiniteNum(v)) return 0.5;
 		var t;
 		if (v < 0) {
-			var denom = (lo < 0) ? -lo : 1;
-			t = -Math.min(1, (-v) / denom);
+			var dn = (lo < 0) ? -lo : 1;
+			t = 0.5 - 0.5 * Math.min(1, (-v) / dn);
 		} else {
-			var denom2 = (hi > 0) ? hi : 1;
-			t = Math.min(1, v / denom2);
+			var dp = (hi > 0) ? hi : 1;
+			t = 0.5 + 0.5 * Math.min(1, v / dp);
 		}
-		if (!_isFiniteNum(t)) t = 0;
+		if (!_isFiniteNum(t)) t = 0.5;
+		// Kontrastkurve um 0.5 herum
+		var d = (t - 0.5) * 2;
+		var s = (d < 0 ? -1 : 1) * Math.pow(Math.abs(d), 0.78);
+		return 0.5 + s * 0.5;
+	}
 
-		var a, b, f;
-		if (t < 0) { a = mid; b = DISTORTION_COLD; f = -t; }
-		else       { a = mid; b = DISTORTION_WARM; f = t; }
+	function _distortionColor(v, lo, hi, dark) {
+		var ramp = dark ? DIST_RAMP_DARK : DIST_RAMP_LIGHT;
+		var c = _rampLookup(ramp, _distortionT(v, lo, hi));
+		return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+	}
 
-		var r = Math.round(a[0] + (b[0] - a[0]) * f);
-		var g = Math.round(a[1] + (b[1] - a[1]) * f);
-		var bl = Math.round(a[2] + (b[2] - a[2]) * f);
-		return "rgb(" + r + "," + g + "," + bl + ")";
+	function _distortionColorA(v, lo, hi, dark, alpha) {
+		var ramp = dark ? DIST_RAMP_DARK : DIST_RAMP_LIGHT;
+		var c = _rampLookup(ramp, _distortionT(v, lo, hi));
+		return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + alpha + ")";
 	}
 
 	function _distortionScale(dark) {
-		var mid = dark ? DISTORTION_MID_D : DISTORTION_MID_L;
-		function _ofRgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
-		return [
-			[0.00, _ofRgb(DISTORTION_COLD)],
-			[0.50, _ofRgb(mid)],
-			[1.00, _ofRgb(DISTORTION_WARM)]
-		];
+		var ramp = dark ? DIST_RAMP_DARK : DIST_RAMP_LIGHT;
+		var out = [];
+		for (var i = 0; i < ramp.length; i++) {
+			var c = ramp[i][1];
+			out.push([ramp[i][0], "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"]);
+		}
+		return out;
 	}
 
 	// ============================================================
@@ -1586,25 +1651,57 @@ var OrigamiFolds = (function (global) {
 		var y0 = bounds.y.lo, y1 = bounds.y.hi;
 		var z0 = bounds.z.lo, z1 = bounds.z.hi;
 
+		// Anteil der Kantenlänge, der als "Ecke" gezeichnet wird
+		var F = 0.17;
+		var lx = (x1 - x0) * F;
+		var ly = (y1 - y0) * F;
+		var lz = (z1 - z0) * F;
+		if (!_isFiniteNum(lx) || lx <= 0) lx = 0.05;
+		if (!_isFiniteNum(ly) || ly <= 0) ly = 0.05;
+		if (!_isFiniteNum(lz) || lz <= 0) lz = 0.05;
+
 		if (dim === 1) {
-			seg([x0, 0, 0], [x1, 0, 0]);
-			var tick = (x1 - x0) * 0.02;
+			seg([x0, 0, 0], [x0 + lx * 2, 0, 0]);
+			seg([x1 - lx * 2, 0, 0], [x1, 0, 0]);
+			var tick = (x1 - x0) * 0.025;
 			if (!_isFiniteNum(tick) || tick <= 0) tick = 0.02;
 			seg([x0, -tick, 0], [x0, tick, 0]);
 			seg([x1, -tick, 0], [x1, tick, 0]);
-		} else if (dim === 2) {
-			seg([x0, y0, 0], [x1, y0, 0]);
-			seg([x1, y0, 0], [x1, y1, 0]);
-			seg([x1, y1, 0], [x0, y1, 0]);
-			seg([x0, y1, 0], [x0, y0, 0]);
-		} else {
-			var c = [
-				[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
-				[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]
+			return { xs: xs, ys: ys, zs: zs };
+		}
+
+		if (dim === 2) {
+			// 4 Ecken, je 2 Schenkel
+			var c2 = [
+				[x0, y0,  1,  1],
+				[x1, y0, -1,  1],
+				[x1, y1, -1, -1],
+				[x0, y1,  1, -1]
 			];
-			seg(c[0], c[1]); seg(c[1], c[2]); seg(c[2], c[3]); seg(c[3], c[0]);
-			seg(c[4], c[5]); seg(c[5], c[6]); seg(c[6], c[7]); seg(c[7], c[4]);
-			seg(c[0], c[4]); seg(c[1], c[5]); seg(c[2], c[6]); seg(c[3], c[7]);
+			for (var i = 0; i < c2.length; i++) {
+				var p = c2[i];
+				seg([p[0], p[1], 0], [p[0] + p[2] * lx, p[1], 0]);
+				seg([p[0], p[1], 0], [p[0], p[1] + p[3] * ly, 0]);
+			}
+			return { xs: xs, ys: ys, zs: zs };
+		}
+
+		// 3D: 8 Ecken, je 3 Schenkel
+		var c3 = [
+			[x0, y0, z0,  1,  1,  1],
+			[x1, y0, z0, -1,  1,  1],
+			[x1, y1, z0, -1, -1,  1],
+			[x0, y1, z0,  1, -1,  1],
+			[x0, y0, z1,  1,  1, -1],
+			[x1, y0, z1, -1,  1, -1],
+			[x1, y1, z1, -1, -1, -1],
+			[x0, y1, z1,  1, -1, -1]
+		];
+		for (var k = 0; k < c3.length; k++) {
+			var q = c3[k];
+			seg([q[0], q[1], q[2]], [q[0] + q[3] * lx, q[1], q[2]]);
+			seg([q[0], q[1], q[2]], [q[0], q[1] + q[4] * ly, q[2]]);
+			seg([q[0], q[1], q[2]], [q[0], q[1], q[2] + q[5] * lz]);
 		}
 
 		return { xs: xs, ys: ys, zs: zs };
@@ -1856,30 +1953,48 @@ var OrigamiFolds = (function (global) {
 
 		if (!drawn) return [];
 
-		var color = isHard ? theme.cutColor : theme.softCut;
-		var label = (isHard ? _tr("origami_relu_cut", "Faltkante (ReLU)")
-		                    : _tr("origami_soft_fold", "weiche Biegung")) +
-		            " (" + drawn + ")";
+		var isHardC = isHard;
+		var coreColor = isHardC ? theme.cutColor : theme.softCut;
+		var glowColor = isHardC ? theme.cutGlow  : theme.softGlow;
+		var label = (isHardC ? _tr("origami_relu_cut", "Faltkante (ReLU)")
+		                     : _tr("origami_soft_fold", "weiche Biegung")) +
+		            " \u00B7 " + drawn;
 
-		return [{
-			type: "scatter3d",
-			mode: "lines",
-			x: allXs, y: allYs, z: allZs,
-			line: { color: color, width: isHard ? 8 : 4 },
-			opacity: 0.8,
-			name: label,
-			legendgroup: "cuts",
-			showlegend: showLegend,
-			hoverinfo: "name",
-			scene: sceneName
-		}];
+		return [
+			{
+				// Weicher Halo unter der Kante
+				type: "scatter3d",
+				mode: "lines",
+				x: allXs, y: allYs, z: allZs,
+				line: { color: glowColor, width: isHardC ? 22 : 14 },
+				opacity: 1,
+				name: label,
+				legendgroup: "cuts",
+				showlegend: false,
+				hoverinfo: "skip",
+				scene: sceneName
+			},
+			{
+				// Scharfer Kern
+				type: "scatter3d",
+				mode: "lines",
+				x: allXs, y: allYs, z: allZs,
+				line: { color: coreColor, width: isHardC ? 5 : 2.5 },
+				opacity: isHardC ? 0.95 : 0.7,
+				name: label,
+				legendgroup: "cuts",
+				showlegend: showLegend,
+				hoverinfo: "name",
+				scene: sceneName
+			}
+		];
 	}
 
 	// ============================================================
 	// GITTER-TRACES
 	// ============================================================
 
-	var DISTORTION_BUCKETS = 11;
+	var DISTORTION_BUCKETS = 17;
 
 	function _buildGridTraces(grid, act, distortion, sceneName, theme,
 	                          showLegend, tagLabel, isInput) {
@@ -1895,7 +2010,7 @@ var OrigamiFolds = (function (global) {
 		if (!_isFiniteNum(lw) || lw <= 0) lw = 2;
 		var op = _state.config.gridOpacity;
 		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.9;
-		if (isInput) { op = 0.75; lw = Math.max(lw, 3); }
+		if (isInput) { op = 0.42; lw = Math.max(lw * 0.7, 1.4); }
 
 		function gx(i) { return act.xs[i]; }
 		function gy(i) { return act.ys ? act.ys[i] : 0; }
@@ -1903,6 +2018,7 @@ var OrigamiFolds = (function (global) {
 
 		var useColor = (_state.config.colorByCurvature && distortion);
 
+		// ---- Ungefärbte Variante (Input-Gitter o. deaktivierte Krümmung)
 		if (!useColor) {
 			var xs = [], ys = [], zs = [];
 			for (var l = 0; l < grid.lines.length; l++) {
@@ -1912,6 +2028,18 @@ var OrigamiFolds = (function (global) {
 				}
 				xs.push(null); ys.push(null); zs.push(null);
 			}
+			// Halo
+			traces.push({
+				type: "scatter3d",
+				mode: "lines",
+				x: xs, y: ys, z: zs,
+				line: { color: theme.gridGlow, width: lw * 4.5 },
+				opacity: 1,
+				hoverinfo: "skip",
+				showlegend: false,
+				legendgroup: "grid",
+				scene: sceneName
+			});
 			traces.push({
 				type: "scatter3d",
 				mode: "lines",
@@ -1928,6 +2056,7 @@ var OrigamiFolds = (function (global) {
 			return traces;
 		}
 
+		// ---- Nach Verzerrung eingefärbt
 		var vals = distortion.values;
 		var lo = distortion.lo, hi = distortion.hi;
 
@@ -1937,18 +2066,14 @@ var OrigamiFolds = (function (global) {
 		}
 
 		function bucketOf(v) {
-			if (!_isFiniteNum(v)) return Math.floor(DISTORTION_BUCKETS / 2);
-			var span = hi - lo;
-			if (!(span > 1e-9)) return Math.floor(DISTORTION_BUCKETS / 2);
-			var t = (v - lo) / span;
-			if (t < 0) t = 0;
-			if (t > 1) t = 1;
+			var t = _distortionT(v, lo, hi);
 			var bi = Math.round(t * (DISTORTION_BUCKETS - 1));
 			if (!_isFiniteNum(bi) || bi < 0) bi = 0;
 			if (bi >= DISTORTION_BUCKETS) bi = DISTORTION_BUCKETS - 1;
 			return bi;
 		}
 
+		var allX = [], allY = [], allZ = [];
 		var segCount = 0;
 		for (var li = 0; li < grid.lines.length; li++) {
 			var line = grid.lines[li];
@@ -1959,6 +2084,9 @@ var OrigamiFolds = (function (global) {
 				bk.x.push(gx(iA), gx(iB), null);
 				bk.y.push(gy(iA), gy(iB), null);
 				bk.z.push(gz(iA), gz(iB), null);
+				allX.push(gx(iA), gx(iB), null);
+				allY.push(gy(iA), gy(iB), null);
+				allZ.push(gz(iA), gz(iB), null);
 				segCount++;
 			}
 		}
@@ -1968,6 +2096,19 @@ var OrigamiFolds = (function (global) {
 			return traces;
 		}
 
+		// Sammel-Halo unter allen farbigen Linien → Tiefe
+		traces.push({
+			type: "scatter3d",
+			mode: "lines",
+			x: allX, y: allY, z: allZ,
+			line: { color: theme.gridGlow, width: lw * 5 },
+			opacity: 1,
+			hoverinfo: "skip",
+			showlegend: false,
+			legendgroup: "grid_dist",
+			scene: sceneName
+		});
+
 		for (var bi2 = 0; bi2 < DISTORTION_BUCKETS; bi2++) {
 			var bkt = buckets[bi2];
 			if (!bkt.x.length) continue;
@@ -1976,23 +2117,27 @@ var OrigamiFolds = (function (global) {
 			var repVal = lo + (hi - lo) * frac;
 			var col = _distortionColor(repVal, lo, hi, theme.dark);
 
+			// Extreme Buckets etwas dicker → visueller Fokus auf Faltungen
+			var edgeness = Math.abs(frac - 0.5) * 2;
+			var wHere = lw * (0.82 + 0.55 * edgeness);
+
 			var inLegend = false;
 			var legName = "";
 			if (showLegend && bi2 === 0) {
 				inLegend = true;
-				legName = _tr("origami_compressed", "gestaucht") +
-				          " (2^" + lo.toFixed(1) + ")";
+				legName = "\u25C0 " + _tr("origami_compressed", "gestaucht") +
+				          "  2^" + lo.toFixed(1);
 			} else if (showLegend && bi2 === DISTORTION_BUCKETS - 1) {
 				inLegend = true;
 				legName = _tr("origami_stretched", "gestreckt") +
-				          " (2^" + hi.toFixed(1) + ")";
+				          "  2^" + hi.toFixed(1) + " \u25B6";
 			}
 
 			traces.push({
 				type: "scatter3d",
 				mode: "lines",
 				x: bkt.x, y: bkt.y, z: bkt.z,
-				line: { color: col, width: lw },
+				line: { color: col, width: wHere },
 				opacity: op,
 				name: inLegend ? legName : "",
 				legendgroup: "grid_dist",
@@ -2051,17 +2196,36 @@ var OrigamiFolds = (function (global) {
 			showlegend: showLegend,
 			hoverinfo: "skip",
 			scene: sceneName,
-			lighting: { ambient: 0.75, diffuse: 0.5, specular: 0.08 }
+			lighting: {
+				ambient:       theme.dark ? 0.52 : 0.62,
+				diffuse:       0.82,
+				specular:      0.30,
+				roughness:     0.42,
+				fresnel:       0.85,
+				vertexnormalsepsilon: 1e-12,
+				facenormalsepsilon: 1e-6
+			}
 		};
 
 		if (_state.config.colorByCurvature && distortion) {
-			trace.intensity = Array.prototype.slice.call(distortion.values);
+			// Intensität weich remappen, damit die Fläche nicht
+			// wie ein flacher Farbklecks aussieht
+			var raw = distortion.values;
+			var inten = new Array(grid.n);
+			for (var vi = 0; vi < grid.n; vi++) {
+				var tt = _distortionT(raw[vi], distortion.lo, distortion.hi);
+				inten[vi] = _isFiniteNum(tt) ? tt : 0.5;
+			}
+			trace.intensity  = inten;
 			trace.colorscale = _distortionScale(theme.dark);
-			trace.cmin = distortion.lo;
-			trace.cmax = distortion.hi;
-			trace.showscale = false;
+			trace.cmin       = 0;
+			trace.cmax       = 1;
+			trace.showscale  = false;
+			// Fläche bewusst blasser als die Linien → Gitter bleibt Held
+			trace.opacity    = op * (theme.dark ? 0.85 : 0.78);
 		} else {
-			trace.color = theme.surfaceColor;
+			trace.color   = theme.surfaceColor;
+			trace.opacity = op * 0.9;
 		}
 
 		return [trace];
@@ -2211,8 +2375,8 @@ var OrigamiFolds = (function (global) {
 					type: "scatter3d",
 					mode: "lines",
 					x: wf.xs, y: wf.ys, z: wf.zs,
-					line: { color: theme.boxColor, width: isOut ? 2 : 1 },
-					opacity: isOut ? 1 : 0.6,
+					line: { color: theme.boxColor, width: isOut ? 2.5 : 1.2 },
+					opacity: isOut ? 0.75 : 0.35,
 					name: _tr("origami_subspace", "Unterraum") + " (" + dim + "D)",
 					legendgroup: "box",
 					showlegend: showLegend && isOut,
@@ -2291,8 +2455,8 @@ var OrigamiFolds = (function (global) {
 		var classNames = _state.cachedClassNames;
 		var isReg      = _state.cachedIsRegression;
 		var colors     = _state.cachedColors;
-		var ptOp       = isInput ? _state.config.pointOpacity * 0.4
-		                         : _state.config.pointOpacity;
+		var ptOp       = isInput ? _state.config.pointOpacity * 0.28
+		                         : Math.min(1, _state.config.pointOpacity * 1.1);
 
 		var nodeName = (node && node.name) ? node.name : "";
 
@@ -2317,10 +2481,14 @@ var OrigamiFolds = (function (global) {
 					mode: "markers",
 					x: bk.x, y: bk.y, z: bk.z,
 					marker: {
-						size: _state.config.pointSize,
+						size: isInput ? _state.config.pointSize * 0.8
+						              : _state.config.pointSize * 1.45,
 						color: _classColor(ci),
 						opacity: ptOp,
-						line: { width: 0 }
+						line: {
+							width: isInput ? 0 : 0.6,
+							color: theme.markerEdge
+						}
 					},
 					name: classNames[ci] ||
 					      (_tr("origami_class", "Klasse") + " " + ci),
@@ -2342,10 +2510,14 @@ var OrigamiFolds = (function (global) {
 				y: Array.prototype.slice.call(ys),
 				z: Array.prototype.slice.call(zs),
 				marker: {
-					size: _state.config.pointSize,
+					size: isInput ? _state.config.pointSize * 0.8
+					              : _state.config.pointSize * 1.45,
 					color: colors || "#159c72",
 					opacity: ptOp,
-					line: { width: 0 }
+					line: {
+						width: isInput ? 0 : 0.5,
+						color: theme.markerEdge
+					}
 				},
 				name: isReg ? _tr("origami_target", "Zielwert")
 				            : _tr("origami_data", "Daten"),
@@ -2420,15 +2592,21 @@ var OrigamiFolds = (function (global) {
 			paper_bgcolor: theme.paper,
 			plot_bgcolor:  theme.plotBg,
 			font: { color: theme.text, size: 11 },
-			margin: { l: 6, r: 6, t: 54, b: 8 },
+			margin: { l: 4, r: 4, t: 74, b: 6 },
 			height: totalH,
 			autosize: true,
 			showlegend: true,
 			legend: {
 				orientation: "h",
-				x: 0, y: 1.02,
+				x: 0.5, xanchor: "center",
+				y: 1.035, yanchor: "bottom",
 				font: { size: 10, color: theme.text },
-				bgcolor: "rgba(0,0,0,0)"
+				bgcolor: theme.legendBg,
+				bordercolor: theme.legendBorder,
+				borderwidth: 1,
+				itemsizing: "constant",
+				itemwidth: 30,
+				tracegroupgap: 6
 			},
 			title: {
 				text: _tr("origami_title",
@@ -2444,11 +2622,18 @@ var OrigamiFolds = (function (global) {
 		};
 
 		var axisCommon = {
-			gridcolor: theme.grid,
-			zerolinecolor: theme.zeroline,
-			color: theme.axisText,
-			tickfont: { size: 8, color: theme.axisText },
-			showspikes: false
+			showgrid:        true,
+			gridcolor:       theme.grid,
+			gridwidth:       1,
+			zeroline:        true,
+			zerolinecolor:   theme.zeroline,
+			zerolinewidth:   1.5,
+			showline:        false,
+			color:           theme.axisText,
+			tickfont:        { size: 8, color: theme.axisText },
+			showspikes:      false,
+			nticks:          5,
+			showticklabels:  true
 		};
 
 		for (var i = 0; i < nPairs; i++) {
@@ -2481,20 +2666,22 @@ var OrigamiFolds = (function (global) {
 				domain: { x: [x0, x1], y: [y0, y1] },
 				aspectmode: "auto",
 				camera: cam,
-				bgcolor: theme.plotBg,
+				bgcolor: theme.sceneBg,
+				dragmode: "orbit",
+				hovermode: "closest",
 				xaxis: Object.assign({}, axisCommon, {
-					title: { text: "d0", font: { size: 9, color: theme.axisText } }
+					title: { text: "d\u2080", font: { size: 9, color: theme.axisText } }
 				}),
 				yaxis: Object.assign({}, axisCommon, {
 					title: {
-						text: (dim >= 2 ? "d1" : ""),
+						text: (dim >= 2 ? "d\u2081" : ""),
 						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 2)
 				}),
 				zaxis: Object.assign({}, axisCommon, {
 					title: {
-						text: (dim >= 3 ? "d2" : ""),
+						text: (dim >= 3 ? "d\u2082" : ""),
 						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 3)
@@ -2515,10 +2702,10 @@ var OrigamiFolds = (function (global) {
 
 			if (col < inRow - 1) {
 				layout.annotations.push({
-					text: "\u2192",
-					x: x1, y: (y0 + y1) / 2,
-					xanchor: "left", yanchor: "middle",
-					font: { size: 18, color: theme.arrowColor },
+					text: "\u276F",
+					x: x1 + gap * 0.5, y: (y0 + y1) / 2,
+					xanchor: "center", yanchor: "middle",
+					font: { size: 15, color: theme.arrowColor },
 					showarrow: false
 				});
 			}
@@ -2550,15 +2737,21 @@ var OrigamiFolds = (function (global) {
 			paper_bgcolor: theme.paper,
 			plot_bgcolor:  theme.plotBg,
 			font: { color: theme.text, size: 11 },
-			margin: { l: 6, r: 6, t: 54, b: 8 },
+			margin: { l: 4, r: 4, t: 74, b: 6 },
 			height: totalH,
 			autosize: true,
 			showlegend: true,
 			legend: {
 				orientation: "h",
-				x: 0, y: 1.02,
+				x: 0.5, xanchor: "center",
+				y: 1.035, yanchor: "bottom",
 				font: { size: 10, color: theme.text },
-				bgcolor: "rgba(0,0,0,0)"
+				bgcolor: theme.legendBg,
+				bordercolor: theme.legendBorder,
+				borderwidth: 1,
+				itemsizing: "constant",
+				itemwidth: 30,
+				tracegroupgap: 6
 			},
 			title: {
 				text: _tr("origami_title",
@@ -2574,11 +2767,18 @@ var OrigamiFolds = (function (global) {
 		};
 
 		var axisCommon = {
-			gridcolor: theme.grid,
-			zerolinecolor: theme.zeroline,
-			color: theme.axisText,
-			tickfont: { size: 8, color: theme.axisText },
-			showspikes: false
+			showgrid:        true,
+			gridcolor:       theme.grid,
+			gridwidth:       1,
+			zeroline:        true,
+			zerolinecolor:   theme.zeroline,
+			zerolinewidth:   1.5,
+			showline:        false,
+			color:           theme.axisText,
+			tickfont:        { size: 8, color: theme.axisText },
+			showspikes:      false,
+			nticks:          5,
+			showticklabels:  true
 		};
 
 		var stateIdx = 0;
@@ -2613,20 +2813,22 @@ var OrigamiFolds = (function (global) {
 				domain: { x: [x0, x1], y: [y0, y1] },
 				aspectmode: "auto",
 				camera: cam,
-				bgcolor: theme.plotBg,
+				bgcolor: theme.sceneBg,
+				dragmode: "orbit",
+				hovermode: "closest",
 				xaxis: Object.assign({}, axisCommon, {
-					title: { text: "d0", font: { size: 9, color: theme.axisText } }
+					title: { text: "d\u2080", font: { size: 9, color: theme.axisText } }
 				}),
 				yaxis: Object.assign({}, axisCommon, {
 					title: {
-						text: (dim >= 2 ? "d1" : ""),
+						text: (dim >= 2 ? "d\u2081" : ""),
 						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 2)
 				}),
 				zaxis: Object.assign({}, axisCommon, {
 					title: {
-						text: (dim >= 3 ? "d2" : ""),
+						text: (dim >= 3 ? "d\u2082" : ""),
 						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 3)
@@ -2634,19 +2836,26 @@ var OrigamiFolds = (function (global) {
 			};
 
 			layout.annotations.push({
-				text: st.name + "  [" + dim + "D]",
-				x: xMid, y: y1,
+				text: "<b>" + st.name + "</b>",
+				x: xMid, y: y1 - 0.004,
 				xanchor: "center", yanchor: "bottom",
-				font: { size: 11, color: theme.textAccent },
+				font: { size: 11.5, color: theme.textAccent },
+				showarrow: false
+			});
+			layout.annotations.push({
+				text: dim + "D",
+				x: xMid, y: y1 - 0.030,
+				xanchor: "center", yanchor: "bottom",
+				font: { size: 9, color: theme.axisText },
 				showarrow: false
 			});
 
 			if (col < inRow - 1) {
 				layout.annotations.push({
-					text: "\u2192",
-					x: x1, y: (y0 + y1) / 2,
-					xanchor: "left", yanchor: "middle",
-					font: { size: 18, color: theme.arrowColor },
+					text: "\u276F",
+					x: x1 + gap * 0.5, y: (y0 + y1) / 2,
+					xanchor: "center", yanchor: "middle",
+					font: { size: 15, color: theme.arrowColor },
 					showarrow: false
 				});
 			}

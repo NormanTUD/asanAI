@@ -236,16 +236,16 @@ function get_empty_plotly(name) {
 
 function get_model_fingerprint() {
 	try {
-		var structure = [];
-		var num_of_layers = $(".layer_setting").length;
-		for (var i = 0; i < num_of_layers; i++) {
-			var type = $($($(".layer_setting")[i]).find(".layer_type")).val();
-			if (typeof type !== "undefined" && type) {
-				structure.push(type);
+		var values = [];
+		$("#layers_container").find("input, select").each(function (i, x) {
+			if ($(x).attr("type") == "checkbox") {
+				values.push($(x).is(":checked"));
+			} else {
+				values.push($(x).val());
 			}
-		}
+		});
 		var input_shape = get_input_shape();
-		return JSON.stringify({ layers: structure, inputShape: input_shape });
+		return JSON.stringify({ layers: values, inputShape: input_shape });
 	} catch (e) {
 		return null;
 	}
