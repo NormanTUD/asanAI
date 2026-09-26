@@ -2527,6 +2527,133 @@ var OrigamiFolds = (function (global) {
 	}
 
 
+	function _buildLayoutFromStates(states, theme) {
+		var nStates = 0;
+		for (var i = 0; i < states.length; i++) if (states[i]) nStates++;
+		var h = _state.config.subplotHeight;
+		if (!_isFiniteNum(h) || h < 300) h = 500;
+
+		var containerW = 800;
+		if (_state.plotDiv && _state.plotDiv.clientWidth) {
+			containerW = _state.plotDiv.clientWidth;
+		} else if (_state.container && _state.container.clientWidth) {
+			containerW = _state.container.clientWidth;
+		}
+		var minW = 400;
+		var maxPerRow = Math.max(1, Math.floor((containerW - 20) / minW));
+		var rows = Math.ceil(nStates / maxPerRow);
+		var perRow = rows > 1 ? Math.ceil(nStates / rows) : nStates;
+		var totalH = h * rows;
+
+		var layout = {
+			paper_bgcolor: theme.paper,
+			plot_bgcolor:  theme.plotBg,
+			font: { color: theme.text, size: 11 },
+			margin: { l: 6, r: 6, t: 54, b: 8 },
+			height: totalH,
+			autosize: true,
+			showlegend: true,
+			legend: {
+				orientation: "h",
+				x: 0, y: 1.02,
+				font: { size: 10, color: theme.text },
+				bgcolor: "rgba(0,0,0,0)"
+			},
+			title: {
+				text: _tr("origami_title",
+					"Origami: Faltung der Datenmannigfaltigkeit durch die Layer"),
+				font: { size: 13, color: theme.text },
+				x: 0.5, xanchor: "center"
+			},
+			hovermode: "closest",
+			annotations: [],
+			transition: _state.config.smoothUpdates
+				? { duration: 250, easing: "cubic-in-out" }
+				: { duration: 0 }
+		};
+
+		var axisCommon = {
+			gridcolor: theme.grid,
+			zerolinecolor: theme.zeroline,
+			color: theme.axisText,
+			tickfont: { size: 8, color: theme.axisText },
+			showspikes: false
+		};
+
+		var stateIdx = 0;
+		for (var s = 0; s < states.length; s++) {
+			var st = states[s];
+			if (!st) continue;
+			stateIdx++;
+
+			var row = Math.floor(stateIdx / perRow) - (stateIdx % perRow === 0 && stateIdx < nStates ? 1 : 0);
+			row = Math.min(row, rows - 1);
+			row = Math.floor((stateIdx - 1) / perRow);
+			var col = (stateIdx - 1) % perRow;
+			var inRow = (row === rows - 1)
+				? (nStates - row * perRow)
+				: perRow;
+
+			var gap = (inRow > 1) ? 0.02 : 0;
+			var wEach = (1 - gap * (inRow - 1)) / inRow;
+			var x0 = col * (wEach + gap);
+			var x1 = x0 + wEach;
+			if (x1 > 1) x1 = 1;
+			var xMid = (x0 + x1) / 2;
+
+			var y0 = 1 - ((row + 1) / rows);
+			var y1 = 1 - (row / rows);
+
+			var sceneName = _sceneNameFor(s);
+			var dim = st.dim;
+			var cam = _state.lastCameras[sceneName] || _defaultCamera(dim);
+
+			layout[sceneName] = {
+				domain: { x: [x0, x1], y: [y0, y1] },
+				aspectmode: "auto",
+				camera: cam,
+				bgcolor: theme.plotBg,
+				xaxis: Object.assign({}, axisCommon, {
+					title: { text: "d0", font: { size: 9, color: theme.axisText } }
+				}),
+				yaxis: Object.assign({}, axisCommon, {
+					title: {
+						text: (dim >= 2 ? "d1" : ""),
+						font: { size: 9, color: theme.axisText }
+					},
+					showticklabels: (dim >= 2)
+				}),
+				zaxis: Object.assign({}, axisCommon, {
+					title: {
+						text: (dim >= 3 ? "d2" : ""),
+						font: { size: 9, color: theme.axisText }
+					},
+					showticklabels: (dim >= 3)
+				})
+			};
+
+			layout.annotations.push({
+				text: st.name + "  [" + dim + "D]",
+				x: xMid, y: y1,
+				xanchor: "center", yanchor: "bottom",
+				font: { size: 11, color: theme.textAccent },
+				showarrow: false
+			});
+
+			if (col < inRow - 1) {
+				layout.annotations.push({
+					text: "\u2192",
+					x: x1, y: (y0 + y1) / 2,
+					xanchor: "left", yanchor: "middle",
+					font: { size: 18, color: theme.arrowColor },
+					showarrow: false
+				});
+			}
+		}
+
+		return layout;
+	}
+
 	// ============================================================
 	// KAMERA / INTERAKTION
 	// ============================================================
@@ -2866,46 +2993,63 @@ var OrigamiFolds = (function (global) {
 		var traces = [];
 		var legendDone = false;
 
+		var nStates = results.length + 1;
+		var states = [];
+
 		for (var i = 0; i < results.length; i++) {
 			var r = results[i];
-			if (!r) continue;
+			if (!r) { states.push(null); states.push(null); continue; }
+
+			states.push({
+				node: r.pair.inNode,
+				act: r.actIn,
+				bounds: r.boundsIn,
+				grid: r.grid,
+				gridAct: r.gridIn,
+				distortion: r.distortion,
+				cutLayer: r.pair.layer,
+				dim: r.pair.dimIn,
+				name: r.pair.inNode.name || ("In " + r.pair.dimIn + "D")
+			});
+
+			states.push({
+				node: r.pair.outNode,
+				act: r.actOut,
+				bounds: r.boundsOut,
+				grid: r.grid,
+				gridAct: r.gridOut,
+				distortion: r.distortion,
+				cutLayer: (i + 1 < results.length && results[i + 1])
+					? results[i + 1].pair.layer : null,
+				dim: r.pair.dimOut,
+				name: r.pair.outNode.name || ("Out " + r.pair.dimOut + "D")
+			});
+		}
+
+		for (var s = 0; s < states.length; s++) {
+			var st = states[s];
+			if (!st) continue;
 
 			var showLegend = !legendDone;
-			var sceneName = _sceneNameFor(i);
+			var sceneName = _sceneNameFor(s);
 
-			var tIn = _buildSpaceTraces({
-				node:       r.pair.inNode,
-				act:        r.actIn,
-				bounds:     r.boundsIn,
-				grid:       r.grid,
-				gridAct:    r.gridIn,
-				distortion: r.distortion,
-				cutLayer:   r.pair.layer,
-				dim:        r.pair.dimIn,
+			var tr = _buildSpaceTraces({
+				node:       st.node,
+				act:        st.act,
+				bounds:     st.bounds,
+				grid:       st.grid,
+				gridAct:    st.gridAct,
+				distortion: st.distortion,
+				cutLayer:   st.cutLayer,
+				dim:        st.dim,
 				sceneName:  sceneName,
 				theme:      theme,
 				showLegend: showLegend,
-				isOutput:   false
-			});
-
-			var tOut = _buildSpaceTraces({
-				node:       r.pair.outNode,
-				act:        r.actOut,
-				bounds:     r.boundsOut,
-				grid:       r.grid,
-				gridAct:    r.gridOut,
-				distortion: r.distortion,
-				cutLayer:   null,
-				dim:        r.pair.dimOut,
-				sceneName:  sceneName,
-				theme:      theme,
-				showLegend: false,
 				isOutput:   true
 			});
 
-			if (tIn.length || tOut.length) legendDone = true;
-			for (var a = 0; a < tIn.length; a++)  traces.push(tIn[a]);
-			for (var b = 0; b < tOut.length; b++) traces.push(tOut[b]);
+			if (tr.length) legendDone = true;
+			for (var t = 0; t < tr.length; t++) traces.push(tr[t]);
 		}
 
 		if (!traces.length) {
@@ -2913,7 +3057,7 @@ var OrigamiFolds = (function (global) {
 			return;
 		}
 
-		var layout = _buildLayout(results, theme);
+		var layout = _buildLayoutFromStates(states, theme);
 
 		var plotConfig = {
 			responsive: true,
