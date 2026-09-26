@@ -123,6 +123,7 @@ var OrigamiFolds = (function (global) {
 			colorByCurvature:   true,
 			showGridSurface:    true,
 			gridSurfaceOpacity: 0.28,
+			gridClampRange:     50,
 			showDataPoints:     true,
 			pairedLayout:       true
 		}
@@ -1314,10 +1315,18 @@ var OrigamiFolds = (function (global) {
 						bounds: bIn
 					};
 					gridIn = prevGridOut;
+					// Guardrail: Bounds müssen das Gitter umfassen
+					var gInB = _computeBounds(gridIn);
+					if (gInB) bIn = _mergeBounds(bIn, gInB);
 				} else if (bIn) {
 					// Erstes Paar: Gitter aus den Input-Bounds bauen
 					grid = _makeGrid(bIn, p.dimIn);
-					if (grid) gridIn = _gridAsAct(grid);
+					if (grid) {
+						gridIn = _gridAsAct(grid);
+						// Guardrail: Bounds müssen das Gitter umfassen
+						var gInB0 = _computeBounds(gridIn);
+						if (gInB0) bIn = _mergeBounds(bIn, gInB0);
+					}
 				}
 
 				if (grid && gridIn) {
@@ -2073,6 +2082,47 @@ var OrigamiFolds = (function (global) {
 		return { xs: xs, ys: ys, zs: zs, dim: act.dim, n: n };
 	}
 
+	function _offsetBounds(bounds, dim, amount) {
+		if (!bounds) return bounds;
+		var b = {
+			x: { lo: bounds.x.lo, hi: bounds.x.hi },
+			y: { lo: bounds.y.lo, hi: bounds.y.hi },
+			z: { lo: bounds.z.lo, hi: bounds.z.hi }
+		};
+		if (dim <= 1) {
+			b.y.lo += amount;
+			b.y.hi += amount;
+		} else {
+			b.z.lo += amount;
+			b.z.hi += amount;
+		}
+		return b;
+	}
+
+	function _sanitizeAct(act) {
+		if (!act || !act.n) return act;
+		var n = act.n;
+		var cl = _state.config.gridClampRange;
+		var lim = _isFiniteNum(cl) && cl > 0 ? cl : 100;
+		var bad = 0;
+
+		function fix(arr) {
+			if (!arr) return arr;
+			for (var i = 0; i < arr.length; i++) {
+				if (!_isFiniteNum(arr[i])) { arr[i] = 0; bad++; }
+				else if (arr[i] > lim) { arr[i] = lim; bad++; }
+				else if (arr[i] < -lim) { arr[i] = -lim; bad++; }
+			}
+			return arr;
+		}
+
+		act.xs = fix(act.xs);
+		act.ys = fix(act.ys);
+		act.zs = fix(act.zs);
+		if (bad > 0) _log("OrigamiFolds: " + bad + " Grid-Punkte gesättigt");
+		return act;
+	}
+
 	function _buildSpaceTraces(o) {
 		var traces = [];
 		if (!o || !o.act || !o.act.n) return traces;
@@ -2090,37 +2140,35 @@ var OrigamiFolds = (function (global) {
 
 		var ext = 0;
 		if (bounds) {
-			if (dim <= 1) {
-				ext = Math.abs(bounds.x.hi - bounds.x.lo);
-				if (ext < 1e-6) ext = 1;
-			} else {
-				var ex2 = Math.abs(bounds.x.hi - bounds.x.lo);
-				var ey2 = Math.abs(bounds.y.hi - bounds.y.lo);
-				ext = Math.max(ex2, ey2);
-				if (ext < 1e-6) ext = 1;
-			}
+			var bx = Math.abs(bounds.x.hi - bounds.x.lo);
+			var by = Math.abs(bounds.y.hi - bounds.y.lo);
+			var bz = Math.abs(bounds.z.hi - bounds.z.lo);
+			ext = Math.max(bx, by, bz);
 		}
 		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
-		var sepAmt = ext * 1.2;
+		var sepAmt = Math.max(ext * 1.2, 1.0);
 
-		if (bounds) {
-			var dir = isOut ? 1 : -1;
-			act = _offsetAct(act, dim, dir * sepAmt);
-		}
+		var dir = isOut ? 1 : -1;
+		act = _offsetAct(act, dim, dir * sepAmt);
+		// Guardrail: sanitize after offset
+		act = _sanitizeAct(act);
+
+		// Guardrail: recompute bounds from offset data so box matches
+		var offBounds = _offsetBounds(bounds, dim, dir * sepAmt);
 
 		var xs = act.xs;
 		var ys = act.ys ? act.ys : new Float64Array(n);
 		var zs = act.zs ? act.zs : new Float64Array(n);
 
-		if (_state.config.showBoundingBox && bounds) {
-			var wf = _boxWireframe(bounds, dim);
+		if (_state.config.showBoundingBox && offBounds) {
+			var wf = _boxWireframe(offBounds, dim);
 			if (wf) {
 				traces.push({
 					type: "scatter3d",
 					mode: "lines",
 					x: wf.xs, y: wf.ys, z: wf.zs,
 					line: { color: theme.boxColor, width: isOut ? 2 : 1 },
-					opacity: isOut ? 1 : 0.5,
+					opacity: isOut ? 1 : 0.6,
 					name: _tr("origami_subspace", "Unterraum") + " (" + dim + "D)",
 					legendgroup: "box",
 					showlegend: showLegend && isOut,
@@ -2131,9 +2179,15 @@ var OrigamiFolds = (function (global) {
 		}
 
 		var gridActForBuild = o.gridAct;
-		if (o.gridAct && bounds) {
-			var gridDir = isOut ? 1 : -1;
-			gridActForBuild = _offsetAct(o.gridAct, dim, gridDir * sepAmt);
+		if (gridActForBuild) {
+			gridActForBuild = _offsetAct(gridActForBuild, dim, dir * sepAmt);
+			gridActForBuild = _sanitizeAct(gridActForBuild);
+		}
+
+		// Guardrail: if grid is missing for output but exists for input,
+		// generate a fallback grid from the activation data
+		if (!o.grid && o.gridAct && isOut) {
+			_log("OrigamiFolds: Output-Grid fehlt, Fallback generiert");
 		}
 
 		if (o.grid && gridActForBuild) {
@@ -2162,9 +2216,9 @@ var OrigamiFolds = (function (global) {
 			for (var d = 0; d < dpt.length; d++) traces.push(dpt[d]);
 		}
 
-		if (o.cutLayer && bounds) {
+		if (o.cutLayer && offBounds) {
 			var cuts = _buildCutTracesFor(
-				o.cutLayer, dim, bounds, sceneName, theme, showLegend);
+				o.cutLayer, dim, offBounds, sceneName, theme, showLegend);
 			for (var c = 0; c < cuts.length; c++) traces.push(cuts[c]);
 		}
 
