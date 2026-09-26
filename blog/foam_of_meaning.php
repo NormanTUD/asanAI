@@ -395,7 +395,7 @@ Colour is the canonical example, and it is a space of three **integral** dimensi
 <figcaption class="md">The colour cone: one point is one colour, fixed by three **integral** dimensions. Similar colours sit close together — the geometric core of Gärdenfors' picture.</figcaption>
 </figure>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Criterion P: natural properties are convex">
+<div class="md" data-mathlevel="50" data-optionaltitle="Criterion P: natural properties are convex">
 ### Criterion P: a natural property is a convex region
 
 Here is the theory's sharpest and most testable claim, and the one that links most directly to the Voronoi picture above. Gärdenfors' **criterion P** says that a *natural* property — one our language actually uses, like "red" or "near" or "fast" — corresponds to a **convex region** of a quality domain:
