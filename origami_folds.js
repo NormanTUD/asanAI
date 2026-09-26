@@ -1866,6 +1866,7 @@ var OrigamiFolds = (function (global) {
 			mode: "lines",
 			x: allXs, y: allYs, z: allZs,
 			line: { color: color, width: isHard ? 8 : 4 },
+			opacity: 0.8,
 			name: label,
 			legendgroup: "cuts",
 			showlegend: showLegend,
