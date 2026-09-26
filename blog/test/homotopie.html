@@ -2835,6 +2835,7 @@ const C = {
 };
 const lerp=(a,b,t)=>a+(b-a)*t;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const prog=(t,t0,dur)=>clamp((t-t0)/dur,0,1);
 const smooth=t=>t*t*(3-2*t);
 const $=id=>document.getElementById(id);
 
@@ -3151,7 +3152,7 @@ function animate(sliderEl,dur,onEnd){
   const a=parseFloat(sliderEl.min), b=parseFloat(sliderEl.max);
   const t0=performance.now();
   function step(t){
-    const u=Math.min(1,(t-t0)/dur);
+    const u=prog(t,t0,dur);
     sliderEl.value=a+(b-a)*u;
     sliderEl.dispatchEvent(new Event('input'));
     if(u<1) requestAnimationFrame(step); else onEnd&&onEnd();
@@ -3255,7 +3256,7 @@ function animate(sliderEl,dur,onEnd){
   $('bMorphTear').onclick=()=>{
     const t0=performance.now();
     (function st(tm){
-      tear=Math.min(1,(tm-t0)/700); draw();
+      tear=prog(tm,t0,700); draw();
       if(tear<1) requestAnimationFrame(st);
       else setTimeout(()=>{tear=0;draw();},900);
     })(t0);
@@ -3634,7 +3635,7 @@ function animate(sliderEl,dur,onEnd){
     flood=lab[0]; floodT=0;
     const t0=performance.now();
     (function st(t){
-      floodT=Math.min(1,(t-t0)/900); draw();
+      floodT=prog(t,t0,900); draw();
       if(floodT<1) requestAnimationFrame(st);
     })(t0);
   };
@@ -3650,7 +3651,7 @@ function animate(sliderEl,dur,onEnd){
     });
     if(hit>=0){ flood=lab[hit]; floodT=0;
       const t0=performance.now();
-      (function st(t){ floodT=Math.min(1,(t-t0)/800); draw(); if(floodT<1) requestAnimationFrame(st); })(t0);
+      (function st(t){ floodT=prog(t,t0,800); draw(); if(floodT<1) requestAnimationFrame(st); })(t0);
     } else { flood=null; draw(); }
   });
   reg(draw);
@@ -4010,7 +4011,7 @@ function animate(sliderEl,dur,onEnd){
   $('bLoopComm').onclick=()=>{word=[{l:'a',i:false},{l:'b',i:false},{l:'a',i:true},{l:'b',i:true}];draw();};
   $('bLoopPlay').onclick=()=>{
     const t0=performance.now();
-    (function st(tm){ t=Math.min(1,(tm-t0)/(700*Math.max(word.length,1))); draw();
+    (function st(tm){ t=prog(tm,t0,700*Math.max(word.length,1)); draw();
       if(t<1) requestAnimationFrame(st); })(t0);
   };
   slider('sLoopHoles','vLoopHoles',v=>String(v),v=>{holes=v;
@@ -4596,7 +4597,7 @@ function animate(sliderEl,dur,onEnd){
   }
   $('bAdjFlip').onclick=()=>{
     const t0=performance.now(), a=flip;
-    (function st(t){ const v=Math.min(1,(t-t0)/700);
+    (function st(t){ const v=prog(t,t0,700);
       flip=a<0.5? v : 1-v; draw(); if(v<1) requestAnimationFrame(st); })(t0);
   };
   reg(draw);
@@ -4677,7 +4678,7 @@ function animate(sliderEl,dur,onEnd){
   slider('sLiftR','vLiftR',v=>v.toFixed(2),v=>{rot=v;draw();});
   $('bLiftPlay').onclick=()=>{
     const s=$('sLift'); const t0=performance.now();
-    (function st(t){ const u=Math.min(1,(t-t0)/2600);
+    (function st(t){ const u=prog(t,t0,2600);
       s.value=u; s.dispatchEvent(new Event('input'));
       if(u<1) requestAnimationFrame(st); })(t0);
   };
@@ -5294,7 +5295,7 @@ function drawZoo(){
   $('bTreeAnim').onclick=()=>{
     if(sel===null) sel=Math.floor(Math.random()*nodes.length);
     const t0=performance.now();
-    (function st(t){animT=Math.min(1,(t-t0)/1200);draw();if(animT<1)requestAnimationFrame(st);else show();})(t0);
+    (function st(t){animT=prog(t,t0,1200);draw();if(animT<1)requestAnimationFrame(st);else show();})(t0);
   };
   reg(draw);
 })();
