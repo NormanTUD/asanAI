@@ -119,7 +119,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <div class="row"><span class="pill">Streuung A: <b id="sdA">–</b></span><span class="pill">Streuung B: <b id="sdB">–</b></span>
         <span class="pill" id="verdict">–</span></div>
     </div>
-    <div><canvas id="cMot" height="340"></canvas>
+    <div><canvas id="cMot" height="260"></canvas>
       <div class="legend"><span><i style="background:#63e2ff"></i>Prompt A</span>
       <span><i style="background:#ff5c8a"></i>Prompt B (semantisch gleich)</span></div></div>
   </div>
@@ -149,7 +149,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <p class="note">Ein <b>Rand</b> sieht wie ein Halbraum aus – schon kein Manifold mehr (aber „Manifold mit Rand“).
       Eine <b>Spitze/Cusp</b> und ein <b>Dimensionswechsel</b> sind echte Singularitäten.</p>
     </div>
-    <div><canvas id="cMan" height="360"></canvas>
+    <div><canvas id="cMan" height="280"></canvas>
       <div class="legend"><span><i style="background:#63e2ff"></i>Raum</span><span><i style="background:#ff5c8a"></i>Testpunkt ψ</span>
       <span><i style="background:#b47cff"></i>Umgebung B(ψ)</span></div></div>
   </div>
@@ -178,7 +178,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
     <h3>Vom Punktwolken-Zählen zur Steigung (Monte-Carlo)</h3>
     <p class="lead">Wir kennen kein echtes Volumen – wir haben nur Tokens. Ersatz: <b>Volumen ≈ Anzahl Punkte im Radius r</b>.
     Sortiere alle Abstände zu ψ; dann ist der <i>k</i>-te Abstand der Radius, bei dem das „Volumen“ auf <i>k</i> springt.</p>
-    <div class="grid g2"><div><canvas id="cCount" height="270"></canvas>
+    <div class="grid g2"><div><canvas id="cCount" height="210"></canvas>
       <div class="ctrl"><label>Radius um ψ <b id="ccV">0.60</b></label><input type="range" id="ccR" min="0.05" max="1.6" step="0.01" value="0.6"></div>
       <div class="row"><span class="pill">Punkte drin: <b id="ccN">0</b></span><span class="pill">Steigung lokal: <b id="ccS">–</b></span></div></div>
       <div><div id="pCount" class="plot"></div></div></div>
@@ -217,7 +217,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <p class="note">Klein τ ⇒ hohe Krümmung ⇒ Abstände/Geodäten numerisch instabil. Konvex ⇒ τ=∞. Cusp ⇒ τ=0.
       Der Test gilt <b>nur für Radien r &lt; τ</b> — das ist die zentrale Limitation.</p>
     </div>
-    <div><canvas id="cReach" height="330"></canvas></div>
+    <div><canvas id="cReach" height="255"></canvas></div>
   </div>
 </section>
 
@@ -236,7 +236,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       die Steigungen sind Dimensionen, und sie <b>dürfen nur fallen</b>, wenn r wächst (dim T → dim S).</p>
       <div class="eq" id="eqThm"></div>
     </div>
-    <div><canvas id="cBundle" height="330"></canvas>
+    <div><canvas id="cBundle" height="255"></canvas>
       <div class="legend"><span><i style="background:#63e2ff"></i>Streifen = Fiber Bundle</span>
       <span><i style="background:#b47cff"></i>Ball B(ψ)</span><span><i style="background:#ff5c8a"></i>ψ</span></div>
     </div>
@@ -291,7 +291,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
     <p class="lead">Klicke einen Punkt an. Dann: alle Abstände sortieren → Index = „Volumen“, Wert = Radius →
     log-log → Steigungen per 3-Punkt-Differenz → Gleitfenster vergleichen → t-Test → Holm-Bonferroni.</p>
     <div class="grid g2">
-      <div><canvas id="cAlgo" height="300"></canvas>
+      <div><canvas id="cAlgo" height="230"></canvas>
         <div class="row"><button id="algoShape">Form wechseln</button>
         <span class="pill">ψ = Punkt <b id="algoIdx">–</b></span></div>
         <div class="ctrl"><label>v_min <b id="vminV">10</b></label><input type="range" id="vmin" min="3" max="60" step="1" value="10"></div>
@@ -419,7 +419,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <h3>Der Nachbarschaft von „ember“ in Mistral7B</h3>
       <p class="lead">PCA von 4096D auf 3D. Sichtbar: <b>Cusp-Punkte</b> (scharfe Spitzen) bei „ember“ und „P“,
       <b>Pinch-Punkte</b> (Wurstkette-Einschnürungen) bei „:“ und „ly“. Keins davon kann ein glattes Manifold sein.</p>
-      <canvas id="cEmber" height="260"></canvas>
+      <canvas id="cEmber" height="200"></canvas>
       <div class="row"><button id="emberRot" class="on">Rotation</button>
         <span class="pill bad">dunkel = kleiner p-Wert</span></div>
     </div>
@@ -443,7 +443,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
       <div class="ctrl"><label>Kontextfenster w <b id="wwwV">8</b></label><input type="range" id="www" min="1" max="24" step="1" value="8"></div>
       <div class="row"><span class="pill bad" id="prodBad">–</span></div>
     </div>
-    <div><canvas id="cCtx" height="300"></canvas>
+    <div><canvas id="cCtx" height="230"></canvas>
       <div class="legend"><span><i style="background:#ff5c8a"></i>singuläres Token</span>
       <span><i style="background:#63e2ff"></i>reguläres Token</span></div></div>
   </div>
@@ -507,7 +507,7 @@ footer{margin-top:90px;padding-top:24px;border-top:1px solid var(--line);color:v
   <div class="card">
     <h3>Der ganze Bogen in einem Bild — klicke die Stationen durch</h3>
     <div class="row" id="arcBtns"></div>
-    <canvas id="cArc" height="230"></canvas>
+    <canvas id="cArc" height="180"></canvas>
     <div id="arcText" style="min-height:76px;margin-top:10px"></div>
   </div>
 </section>
@@ -534,10 +534,16 @@ const cfg={displayModeBar:false,responsive:true};
 function L(o){return JSON.parse(JSON.stringify(Object.assign({},PL,o)))}
 function bind(sl,out,f,dec=2){const g=()=>{const v=+sl.value;out.textContent=v.toFixed(dec);f(v)};
  sl.addEventListener('input',g);g()}
+const _CH=new WeakMap();
 function fit(cv){const r=cv.getBoundingClientRect();const dpr=devicePixelRatio||1;
- const w=Math.min(r.width,16384/dpr);
- cv.width=Math.max(1,Math.round(w*dpr));cv.height=(+cv.getAttribute('height'))*dpr;
- const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return[x,w,+cv.getAttribute('height')]}
+ if(!_CH.has(cv))_CH.set(cv,+cv.getAttribute('height')||150);
+ const h=_CH.get(cv),w=Math.min(r.width,4096/dpr);
+ const x=cv.getContext('2d');
+ for(let s=dpr;;s*=0.5){
+  try{cv.width=Math.max(1,Math.round(w*s));cv.height=Math.max(1,Math.round(h*s));
+   x.setTransform(s,0,0,s,0,0);break}
+  catch(e){if(s<=0.5){cv.width=1;cv.height=1;x.setTransform(1,0,0,1,0,0);break}}}
+ return[x,w,h]}
 let seed=12345;function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff}
 function gauss(){return Math.sqrt(-2*Math.log(rnd()+1e-12))*Math.cos(6.2831853*rnd())}
 function tex(el,s,d=true){try{el.innerHTML='';el.appendChild(temml.renderToMathMLTree?
@@ -943,10 +949,10 @@ addEventListener('scroll',()=>{const h=document.body.scrollHeight-innerHeight;
   let p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
   return z>0?1-p:p}
  cvA.addEventListener('click',e=>{const r=cvA.getBoundingClientRect();
-  const sc=Math.min(r.width,+cvA.getAttribute('height'))*0.44;
+  const sc=Math.min(r.width,_CH.get(cvA))*0.44;
   const mx=(e.clientX-r.left-r.width/2
-)/ (Math.min(r.width,+cvA.getAttribute('height'))*0.44);
-  const my=-(e.clientY-r.top-(+cvA.getAttribute('height'))/2)/(Math.min(r.width,+cvA.getAttribute('height'))*0.44);
+ )/ (Math.min(r.width,_CH.get(cvA))*0.44);
+  const my=-(e.clientY-r.top-_CH.get(cvA)/2)/(Math.min(r.width,_CH.get(cvA))*0.44);
   let bi=0,bd=9;PTS.forEach((p,i)=>{const d=Math.hypot(p[0]-mx,p[1]-my);if(d<bd){bd=d;bi=i}});
   sel=bi;upd2()});
  $('algoShape').onclick=()=>{shp=(shp+1)%3;build();upd2()};
