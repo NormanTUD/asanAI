@@ -310,7 +310,122 @@ A **semantic phase transition** is when a small change in configuration produces
 	<p class="ps-lead">Boundaries are where meaning <em>changes</em>. Interior points are tediously uniform. If we want to understand semantics, we must study the boundaries, not the centres.</p>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Isosurfaces of Probability: Truth Tunnels">
+<div class="md" data-mathlevel="50" data-optionaltitle="The Voronoi picture">
+### The Voronoi picture: tokens tile the semantic space
+
+The claim just made — that the boundary is where meaning breaks — can be stated precisely, and the object that does the stating is older than deep learning. Take every token a model knows and plant it as a *seed* in the semantic space. Now ask of each point in that space: which seed is closest? The answer slices the space into one territory per token — a **Voronoi tessellation** — and the walls between territories are exactly the points equidistant from two seeds.
+
+The whole idea fits in one line. When the read-out is tied to the embedding and the token vectors have comparable length, picking the most likely token is the same as picking the nearest one:
+
+$$
+\Pi(h) \;=\; \arg\max_{t}\,\langle e_t, h\rangle \;=\; \arg\min_{t}\,\lVert h - e_t\rVert^{2}.
+$$
+
+So **greedy decoding is a Voronoi lookup**: the model does not choose a token by some separate act, it reports which territory its hidden state happens to fall in. The walls between territories are the **Voronoi boundary** — the set of states where two tokens tie and the model is genuinely undecided. That boundary is the precise form of the $\partial M$ introduced above: the locus of maximal ambiguity, and the place where all the interesting structure sits.
+
+Two numbers attach to a point $h$. The **Voronoi margin** $m(h)$ is the gap between the winning token's score and the runner-up's; it measures how far inside its territory $h$ sits. The **expressibility gap** $\mathcal{G}_\varepsilon = \{h : m(h) < \varepsilon\}$ is the thin band of states so close to a wall that a finite vocabulary cannot say, with confidence, which token they are. This is the chapter's *void* given a measurable form: not the absence of language, but the set of meanings the vocabulary fails to pin down.
+</div>
+
+<figure style="max-width:460px; margin:1.5em auto; text-align:center;">
+<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="A one-dimensional semantic line tiled into token territories, with the ambiguous band near a boundary shaded and a point h near the wall carrying a small margin" style="width:100%; height:auto; display:block; margin:0 auto;">
+<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
+<line x1="40" y1="150" x2="420" y2="150" style="stroke:var(--mn-border);" stroke-width="2"/>
+<circle cx="90" cy="150" r="7" style="fill:var(--mn-accent);"/>
+<circle cx="230" cy="150" r="7" style="fill:var(--mn-emerald);"/>
+<circle cx="370" cy="150" r="7" style="fill:var(--mn-coral);"/>
+<text x="90" y="132" text-anchor="middle" style="fill:var(--mn-text); font-size:13px; font-family:inherit; font-weight:600;">token A</text>
+<text x="230" y="132" text-anchor="middle" style="fill:var(--mn-text); font-size:13px; font-family:inherit; font-weight:600;">token B</text>
+<text x="370" y="132" text-anchor="middle" style="fill:var(--mn-text); font-size:13px; font-family:inherit; font-weight:600;">token C</text>
+<rect x="150" y="132" width="40" height="36" style="fill:var(--mn-coral); opacity:0.16;"/>
+<line x1="170" y1="132" x2="170" y2="168" style="stroke:var(--mn-coral); stroke-width:1.5; stroke-dasharray:4 3;"/>
+<text x="170" y="192" text-anchor="middle" style="fill:var(--mn-coral); font-size:12px; font-family:inherit;">Voronoi boundary</text>
+<circle cx="158" cy="150" r="5" style="fill:var(--mn-text);"/>
+<text x="146" y="214" text-anchor="middle" style="fill:var(--mn-text); font-size:12px; font-family:inherit;">h</text>
+<text x="146" y="234" text-anchor="middle" style="fill:var(--mn-text-muted); font-size:11px; font-family:inherit;">small margin m(h)</text>
+<text x="40" y="256" text-anchor="start" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">deep in a territory: large margin</text>
+<text x="420" y="278" text-anchor="end" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">the shaded strip is the expressibility gap</text>
+</svg>
+<figcaption class="md">A semantic line tiled into token territories. The **expressibility gap** $\mathcal{G}_\varepsilon$ is the shaded band near each boundary, where a finite vocabulary cannot say which token a state is; a point $h$ near a wall carries a small **Voronoi margin**.</figcaption>
+</figure>
+
+<div class="md" data-mathlevel="50" data-optionaltitle="The hard core of ambiguity">
+There is one finding here worth pausing over, because it resists the usual "just make it bigger" reflex. Across models from a quarter of a billion parameters to more than a billion, the *typical* margin rises with size — larger models sit more securely inside their territories. But the *lower tail* barely moves: a stubborn few percent of positions stay pinned near a boundary no matter how much capacity is spent. The language itself is genuinely ambiguous there — several continuations are truly equally good — and no amount of parameters erases that **hard core** of ambiguity. It is a floor, not a defect: a geometric version of the irreducible loss that scaling cannot remove.
+
+ The basic Voronoi picture — cells, boundaries, and decoding as territory lookup, with a draggable demo you can poke at — is worked out in [The Embedding Space Lab](embeddinglab). What this adds is the *measure* of the ambiguity: the margin, the gap, and the floor.
+
+ The same nearest-seed geometry has an older, non-mechanical ancestor: the geometry the *mind* is hypothesised to use for its own concepts. That thread is picked up in [Conceptual spaces](#conceptual-spaces-the-geometry-of-thought) and its sharpest test, [criterion P](#criterion-p-a-natural-property-is-a-convex-region), just below.
+ </div>
+
+<div class="md" data-mathlevel="75" data-optionaltitle="Two theorems behind the picture">
+### Two theorems behind the picture
+
+\citeauthor{mabrok2026latent} (\citeyear{mabrok2026latent}) turn the Voronoi picture from a sketch into a theorem. Two results, stated without proof, make the picture above a measured claim.
+
+- **The gap grows linearly.** For a semantic manifold of intrinsic dimension $k$, the *normalized* expressibility gap $\eta(\varepsilon)$ — the fraction of semantic space lying within $\varepsilon$ of a boundary — satisfies $\eta(\varepsilon) = c\,\varepsilon + O(\varepsilon^{2})$ for small $\varepsilon$, a consequence of the coarea formula. The coefficient $c$ is the total area of the Voronoi boundary, divided by how sharply the token scores rise away from it. Measured across six transformer models (GPT-2, OPT, Pythia; 124M–1.5B parameters), the log-log slope of $\eta$ against $\varepsilon$ lands at **0.87–1.12** with $R^{2} > 0.985$ — a near-unit slope is exactly the linear law, confirmed.
+
+- **No finite vocabulary is exact.** A rate-distortion bound says the average semantic distortion of a vocabulary of size $N$ scales as $N^{-2/k}$. For a manifold with $k \approx 50$, halving that distortion would need a vocabulary about $2^{25} \approx 3\times 10^{7}$ times larger: the curse of dimensionality, now written down for the vocabulary itself.
+
+The same framework also records two facts the rest of the course gestures at. The intrinsic dimension of the hidden states follows a universal **hourglass** — it peaks around 19–22 in the middle layers, only 1–3% of the ambient width — and perplexity admits a **geometric decomposition**: the low-margin, boundary-proximal positions are precisely the ones that contribute most to a model's perplexity.
+</div>
+
+<div class="md" data-mathlevel="50" data-optionaltitle="Conceptual spaces">
+### Conceptual spaces: the geometry of thought
+
+The Voronoi picture above looks strikingly like an idea a quarter-century older, proposed not for machines but for the human mind. \citeauthor{gardenfors2000conceptual} (\citeyear{gardenfors2000conceptual}) argued that the mind represents meaning as **geometry in quality spaces** — spaces built out of the dimensions by which we actually compare things: colour, temperature, height, weight, time, pitch. In such a space an object is a *point*, a property is a *region*, and **similarity is distance**. The space we have been calling $S$ — the space of what utterances are *about* — is exactly this kind of object.
+
+Gärdenfors also sorts cognition into three levels of resolution, and the sort is worth keeping in view because it is the cognitive-science twin of the token/meaning contrast this chapter opens on. At the **subconceptual** level a route through a jungle is a stream of motor interactions, as fine-grained as firing patterns. At the **conceptual** level the same route is a geometric path — "thirty metres west, then along the trail" — an abstraction that keeps the shape and drops the steps. At the **symbolic** level it is a map, "A to B to C," where only names and their relations remain. Meaning, on this view, lives at the conceptual level: the geometric one. The token is a symbolic label pointing at a region of a conceptual space; the hidden state is a point wandering that space.
+
+Colour is the canonical example, and it is a space of three **integral** dimensions: hue (a circle), saturation, and lightness. You cannot specify a colour without fixing all three, which is what makes the dimensions *integral* rather than *separable* (you can, by contrast, judge an object's size while ignoring its colour). Concrete spaces like this are why the abstract $S$ of the previous sections is not empty talk: meaning is not a bag of symbols, it is a landscape you can move through.
+</div>
+
+<figure style="max-width:440px; margin:1.5em auto; text-align:center;">
+<svg viewBox="0 0 440 300" class="no-smart" role="img" aria-label="The colour cone: hue around a circle, saturation radially, lightness vertically — three integral quality dimensions, a point being one colour" style="width:100%; height:auto; display:block; margin:0 auto;">
+<rect x="1" y="1" width="438" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
+<ellipse cx="220" cy="95" rx="150" ry="44" style="fill:none; stroke:var(--mn-accent); stroke-width:2;" stroke-dasharray="6 4"/>
+<ellipse cx="220" cy="205" rx="150" ry="44" style="fill:none; stroke:var(--mn-accent); stroke-width:2;"/>
+<line x1="70" y1="95" x2="70" y2="205" style="stroke:var(--mn-accent); stroke-width:2;"/>
+<line x1="370" y1="95" x2="370" y2="205" style="stroke:var(--mn-accent); stroke-width:2;"/>
+<line x1="220" y1="95" x2="220" y2="205" style="stroke:var(--mn-text-muted); stroke-width:1.5; stroke-dasharray="4 4;"/>
+<circle cx="305" cy="150" r="5" style="fill:var(--mn-coral);"/>
+<text x="220" y="73" text-anchor="middle" style="fill:var(--mn-accent); font-size:13px; font-family:inherit; font-weight:600;">hue (a circle)</text>
+<text x="220" y="228" text-anchor="middle" style="fill:var(--mn-accent); font-size:13px; font-family:inherit; font-weight:600;">lightness</text>
+<text x="30" y="158" text-anchor="start" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">saturation</text>
+<text x="305" y="128" text-anchor="middle" style="fill:var(--mn-coral); font-size:11px; font-family:inherit;">a point = one colour</text>
+</svg>
+<figcaption class="md">The colour cone: one point is one colour, fixed by three **integral** dimensions. Similar colours sit close together — the geometric core of Gärdenfors' picture.</figcaption>
+</figure>
+
+<div class="md" data-mathlevel="55" data-optionaltitle="Criterion P: natural properties are convex">
+### Criterion P: a natural property is a convex region
+
+Here is the theory's sharpest and most testable claim, and the one that links most directly to the Voronoi picture above. Gärdenfors' **criterion P** says that a *natural* property — one our language actually uses, like "red" or "near" or "fast" — corresponds to a **convex region** of a quality domain:
+
+$$
+\forall\, x, y \in C,\ \forall\, \lambda \in [0, 1] \;:\; \lambda x + (1 - \lambda)\, y \;\in\; C.
+$$
+
+If two things are red, then every colour *between* them is red too. Convexity is what makes a property *learnable* and *communicable*: you can generalise from a few examples to the whole region, and a shared metric lets two people agree on the boundary without enumerating every member. The claim is not merely plausible; it is the best-checked in the theory, colour being the case. Gärdenfors reports that the basic colour terms carve the standardised colour space into convex regions, exactly as criterion P predicts \cite{gardenfors2000conceptual}.
+
+Convexity also quietly answers one of the oldest puzzles in the philosophy of induction. Goodman's **grue** — green before 2030, blue after — fits every emerald we have ever seen as well as "green" does, yet no one induces with it. Geometrically, "green" and "blue" are convex regions of the time–colour space, while "grue" has a *discontinuity* at the cutoff and so fails to be convex. Convexity singles out the inductively respectable properties — a clean, falsifiable reason why the concepts we actually have are the ones we have.
+
+And convexity is where the Voronoi thread pays off. Give each concept a **prototype** — the central representative, the "best" bird or the "most red" red — and assign every new object to its nearest prototype. The decision regions that fall out are **automatically convex**, and their shared walls are the familiar Voronoi boundaries. This is Gärdenfors' lemma 3.1, and it is the cognitive-science twin of the LLM decoding picture above: the *same* nearest-seed geometry a transformer uses to pick a token is the geometry a learner is hypothesised to use to carve the world into categories. The prototype sits at the centre of its convex region, which is also why categories have a *gradual* structure — a robin is a "better" bird than a penguin, the prototype being the geometric centre of the region.
+</div>
+
+<div class="ps-card" id="ps-convex-card">
+	<div class="ps-card-title"><span class="dot"></span>Convex or not? A natural-property test</div>
+	<p class="ps-lead">Click to drop examples of a concept. The dashed outline is their **convex hull** — the smallest convex region containing them. If the concept truly fills that region, it satisfies **criterion P** and is a natural property; if it only occupies part of it (leaving a hole the hull fills), it is not — "grue" in the flesh.</p>
+	<div class="ps-row">
+		<button class="ps-btn ghost" id="ps-convex-red">"Red" (convex)</button>
+		<button class="ps-btn ghost" id="ps-convex-grue">"Grue" (ring, not convex)</button>
+		<button class="ps-btn ghost" id="ps-convex-random">Random</button>
+		<button class="ps-btn ghost" id="ps-convex-clear">Clear</button>
+	</div>
+	<canvas id="ps-convex-canvas" class="ps-canvas" width="760" height="480"></canvas>
+	<div class="ps-readout" id="ps-convex-readout">Drop points, or pick a preset, to test a category against criterion P.</div>
+	<p class="ps-lead">The hull is the convex closure of your examples. A natural category coincides with its hull; an artificial one (draw "grue" as a ring) does not — the hull fills a middle the category never occupies.</p>
+</div>
+
+<div class="md">
 ## Isosurfaces of Probability: Truth Tunnels
 
 Imagine wrapping a “shell” around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces**, surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.
@@ -1048,6 +1163,7 @@ The difficulty is that the web must be discovered before it can be followed, and
 - The off-manifold direction is increasingly implicated in **hallucination**: recent work on LLM decoding names "manifold departure" — hidden states pushed into low-density tail regions — and proposes corrections that keep decoding on the learned manifold, measuring departure by $k$NN distance: a void-detector in all but name.
 - In generative modeling the same geometry reappears as the demand that **geodesics stay on the data manifold** rather than cutting a chord through its low-density interior ("Riemannian flow matching," score-based metrics, manifold-constrained correction) — the literal claim that training and sampling must not traverse the void.
 - Topological studies of LLM latent spaces find *stratified*, negatively curved token subspaces and persistent "hidden holes," more consistent with a web-like than a manifold-like shape; and a slime-mold filament-detector transplanted from cosmology — where it is run on galaxies — has extracted filaments and knots directly from word embeddings. Quantitatively, the word-embedding manifold is measurably *non-isometric* under high-dimensional stretching, and the local intrinsic dimension of contextual models varies sharply across the space — empirical signatures of a structure that is neither flat nor uniform.
+- The **Voronoi / quantization** formalization goes furthest toward a theorem: \citeauthor{mabrok2026latent} (\citeyear{mabrok2026latent}) take the contextual hidden states to lie on a low-dimensional **latent semantic manifold** with the Fisher information metric, identify each token with the **Voronoi region** of its embedding, and read greedy decoding as a nearest-seed projection. They then prove a linear scaling law for the **expressibility gap** (the near-boundary band a finite vocabulary cannot resolve) and a rate-distortion lower bound on vocabulary size, and confirm both across six models — the measured version of this chapter's claim that the boundary is where the structure lives.
 - Finally, "semantic cosmology"-style work has begun applying the full cluster–filament–void vocabulary to training: \citeauthor{vyshnyvetska2025infogravity} (\citeyear{vyshnyvetska2025infogravity}) locates hallucination in the model falling into "low-density semantic voids" of a learned semantic landscape \cite{vyshnyvetska2025infogravity}, the most literal prior statement of the void-avoidance half of the picture. None of these, on our reading, identifies the *double object of learning* proposed here: the filament to be followed and the void-normal to be avoided are one and the same gradient.
 </div>
 
@@ -1186,6 +1302,14 @@ This chapter develops a geometric and topological view of meaningful language. T
 **Generalization and psychological space.** The claim that generalization falls off with distance in a representational space is the classic "universal law of generalization."
 
 - \citeauthor{shepard1987universal}, \citealternativetitle{shepard1987universal} (\citeyear{shepard1987universal}) — the original statement: the probability of generalizing a response decays exponentially with distance in a psychological space.
+
+**Conceptual spaces and the geometry of thought.** The picture of meaning as geometry in quality spaces — objects as points, properties as regions, similarity as distance, and natural properties as convex regions (criterion P) — is the cognitive-science ancestor of the Voronoi picture this chapter builds.
+
+- \citeauthor{gardenfors2000conceptual}, \citealternativetitle{gardenfors2000conceptual} (\citeyear{gardenfors2000conceptual}) — quality spaces, the three levels of cognitive resolution, prototypes whose convex Voronoi regions fall out of nearest-seed assignment (lemma 3.1), and the convexity of natural properties (criterion P), with colour terms as the worked example.
+
+**The Voronoi picture and the geometry of decoding.** The claim that a transformer's hidden states live on a latent semantic manifold and that tokens are its Voronoi regions — with a measured margin, a linearly growing expressibility gap, and a size-independent "hard core" of ambiguity — is the formal, machine side of the same geometry.
+
+- \citeauthor{mabrok2026latent}, \citealternativetitle{mabrok2026latent} (\citeyear{mabrok2026latent}) — the latent semantic manifold, the Voronoi margin and expressibility gap, the coarea-based linear scaling of the gap, the rate-distortion bound on finite vocabularies, and the intrinsic-dimension hourglass.
 
 **The geometry of not-enough-data.** The victory of overparameterized models is often treated as a mystery; the manifold hypothesis resolves it, with a theorem identifying exactly where training can and cannot write. The void is the theorem.
 

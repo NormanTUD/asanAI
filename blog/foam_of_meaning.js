@@ -1260,6 +1260,116 @@
 		refresh();
 	});
 
+	/* ══════════════════════════════════════════════════════════════
+	   Conceptual spaces — criterion P (convex natural properties)
+	   ══════════════════════════════════════════════════════════════ */
+	register(function criterionP() {
+		const cv = $('ps-convex-canvas');
+		if (!cv) return;
+		const ctx = cv.getContext('2d');
+		const ro = $('ps-convex-readout');
+		const W = cv.width, H = cv.height;
+		let pts = [];
+		let mode = 'user';
+
+		function convexHull(points) {
+			if (points.length < 3) return points.slice();
+			const P = points.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+			const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+			const lower = [];
+			for (const p of P) {
+				while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+				lower.push(p);
+			}
+			const upper = [];
+			for (let i = P.length - 1; i >= 0; i--) {
+				const p = P[i];
+				while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+				upper.push(p);
+			}
+			lower.pop(); upper.pop();
+			return lower.concat(upper);
+		}
+
+		function presetDisk() {
+			const rr = rng(123);
+			pts = [];
+			for (let i = 0; i < 26; i++) {
+				const a = rr() * TAU, d = 150 * Math.sqrt(rr());
+				pts.push({ x: W / 2 + Math.cos(a) * d, y: H / 2 + Math.sin(a) * d });
+			}
+			mode = 'red';
+		}
+		function presetRing() {
+			const rr = rng(456);
+			pts = [];
+			for (let i = 0; i < 32; i++) {
+				const a = rr() * TAU, d = 150 * (0.82 + 0.18 * rr());
+				pts.push({ x: W / 2 + Math.cos(a) * d, y: H / 2 + Math.sin(a) * d });
+			}
+			mode = 'grue';
+		}
+		function presetRandom() {
+			const rr = rng(789);
+			pts = [];
+			for (let i = 0; i < 16; i++) pts.push({ x: 70 + rr() * (W - 140), y: 70 + rr() * (H - 140) });
+			mode = 'random';
+		}
+
+		function setReadout() {
+			if (!ro) return;
+			const n = pts.length;
+			if (n === 0) { ro.textContent = 'Drop points, or pick a preset, to test a category against criterion P.'; return; }
+			if (mode === 'red') ro.textContent = n + ' examples, all inside their hull — the category fills its convex closure. Convex, so a natural property (criterion P holds).';
+			else if (mode === 'grue') ro.textContent = n + ' examples on a ring. Their hull fills the empty middle — the category does not occupy its own convex closure. Not convex: this is "grue".';
+			else ro.textContent = n + ' examples. The dashed outline is their convex hull, the smallest convex region containing them. If the category truly fills it, criterion P is satisfied.';
+		}
+
+		function draw() {
+			const P = pal();
+			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+			ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+			for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+			for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+			const h = convexHull(pts);
+			if (h.length >= 3) {
+				ctx.beginPath();
+				for (let i = 0; i < h.length; i++) { if (i === 0) ctx.moveTo(h[i].x, h[i].y); else ctx.lineTo(h[i].x, h[i].y); }
+				ctx.closePath();
+				ctx.fillStyle = rgba(P.accent3, 0.10); ctx.fill();
+				ctx.setLineDash([7, 5]); ctx.strokeStyle = rgba(P.accent3, 0.9); ctx.lineWidth = 2; ctx.stroke();
+				ctx.setLineDash([]);
+			} else if (h.length === 2) {
+				ctx.setLineDash([7, 5]); ctx.strokeStyle = rgba(P.accent3, 0.9); ctx.lineWidth = 2;
+				ctx.beginPath(); ctx.moveTo(h[0].x, h[0].y); ctx.lineTo(h[1].x, h[1].y); ctx.stroke(); ctx.setLineDash([]);
+			}
+			pts.forEach((p) => {
+				ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, TAU);
+				ctx.fillStyle = P.accent; ctx.fill();
+				ctx.lineWidth = 1.5; ctx.strokeStyle = P.ink; ctx.stroke();
+			});
+			ctx.fillStyle = P.ink2; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+			ctx.fillText(pts.length + ' examples · dashed = convex hull (criterion P region)', 14, H - 12);
+			setReadout();
+		}
+
+		cv.addEventListener('click', (e) => {
+			const r = cv.getBoundingClientRect();
+			pts.push({ x: (e.clientX - r.left) * (cv.width / r.width), y: (e.clientY - r.top) * (cv.height / r.height) });
+			mode = 'user';
+			draw();
+		});
+		const bRed = $('ps-convex-red'), bGrue = $('ps-convex-grue'), bRand = $('ps-convex-random'), bClear = $('ps-convex-clear');
+		if (bRed) bRed.onclick = () => { presetDisk(); draw(); };
+		if (bGrue) bGrue.onclick = () => { presetRing(); draw(); };
+		if (bRand) bRand.onclick = () => { presetRandom(); draw(); };
+		if (bClear) bClear.onclick = () => { pts = []; mode = 'user'; draw(); };
+		if (typeof window !== 'undefined' && window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {
+			window.__MN_DARK.onChange(function () { draw(); });
+		}
+		draw();
+	});
+
 })();
 
 
