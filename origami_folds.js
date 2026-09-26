@@ -3249,7 +3249,8 @@ var OrigamiFolds = (function (global) {
 	function update() {
 		if (!_state.initialized) {
 			_log("update() vor init() – initialisiere automatisch");
-			init();
+			var tabPlot = document.getElementById("origami_folds_plot");
+			init(tabPlot || undefined);
 			return OrigamiFolds;
 		}
 
@@ -3410,8 +3411,167 @@ function create_origami_folds(divOrId) {
 	}
 }
 
+function _origamiDirectShapeCheck() {
+	try {
+		var m = (typeof model !== "undefined") ? model : null;
+		if (!m || !m.layers || !m.layers.length) return false;
+		var layers = m.layers;
+		var anyDense = false;
+		for (var i = 0; i < layers.length; i++) {
+			var l = layers[i];
+			var cls = "";
+			try { cls = l.getClassName ? l.getClassName() : ""; } catch (e) { cls = ""; }
+			var lc = String(cls).toLowerCase();
+			if (lc === "dense") {
+				anyDense = true;
+				var outS = null;
+				try { outS = l.outputShape; } catch (e) { outS = null; }
+				if (!outS || !outS.length) return false;
+				var outD = outS[outS.length - 1];
+				if (typeof outD !== "number" || !isFinite(outD) || outD < 1 || outD > 3) return false;
+			} else if (lc === "inputlayer" || lc === "input") {
+				var inS = null;
+				try { inS = l.outputShape; } catch (e) { inS = null; }
+				if (!inS || !inS.length) {
+					try { inS = l.batchInputShape; } catch (e) { inS = null; }
+				}
+				if (!inS || !inS.length) return false;
+				var inD = inS[inS.length - 1];
+				if (typeof inD !== "number" || !isFinite(inD) || inD < 1 || inD > 3) return false;
+			} else if (lc === "flatten" || lc === "reshape" || lc === "dropout") {
+				continue;
+			} else {
+				return false;
+			}
+		}
+		if (!anyDense) return false;
+		if (m.inputs && m.inputs.length) {
+			var is = m.inputs[0].shape;
+			if (is && is.length >= 2) {
+				var fd = is[is.length - 1];
+				if (typeof fd === "number" && isFinite(fd) && (fd < 1 || fd > 3)) return false;
+			}
+		}
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+function _origamiShapesCompatible() {
+	try {
+		if (typeof OrigamiFolds === "undefined" || !OrigamiFolds._buildChain) return _origamiDirectShapeCheck();
+		var chain = OrigamiFolds._buildChain();
+		if (chain && chain.pairs && chain.pairs.length) return true;
+		// Guardrail: _buildChain might fail due to missing TF/model guards;
+		// fall back to direct shape check
+		return _origamiDirectShapeCheck();
+	} catch (e) {
+		return _origamiDirectShapeCheck();
+	}
+}
+
+var _origami_tab_state = {
+	visible: false,
+	retryCount: 0,
+	maxRetries: 20,
+	retryTimer: null
+};
+
+function _origamiApplyTabVisibility(ok) {
+	// Guardrail R4-1: try multiple DOM lookup strategies
+	var li = null;
+	var label = document.getElementById("origami_folds_tab_label");
+	if (label) {
+		li = label.parentElement;
+		if (!li || li.tagName !== "LI") {
+			li = label.parentNode;
+		}
+	}
+	if (!li) {
+		li = document.querySelector("li[data-origami-tab]");
+	}
+	if (!li) {
+		// Guardrail R4-3: fail-open — show the tab
+		return;
+	}
+	// Guardrail R5-1: use !important to beat jQuery UI
+	li.style.setProperty("display", ok ? "" : "none", ok ? "" : "important");
+	if (ok) {
+		li.style.removeProperty("display");
+	}
+	// Guardrail R5-4: re-apply after jQuery UI tabs might re-init
+	setTimeout(function () {
+		try {
+			if (ok && li.style.display === "none") {
+				li.style.removeProperty("display");
+			}
+		} catch (e) { /* silent */ }
+	}, 200);
+}
+
+function check_origami_folds_tab() {
+	try {
+		var ok = _origamiShapesCompatible();
+		_origamiApplyTabVisibility(ok);
+
+		if (ok && !_origami_tab_state.visible) {
+			_origami_tab_state.visible = true;
+			_origami_tab_state.retryCount = 0;
+			if (_origami_tab_state.retryTimer) {
+				clearInterval(_origami_tab_state.retryTimer);
+				_origami_tab_state.retryTimer = null;
+			}
+		}
+		if (!ok && _origami_tab_state.visible) {
+			_origami_tab_state.visible = false;
+			try { OrigamiFolds.destroy(); } catch (e) { /* silent */ }
+		}
+		// Guardrail R1-1: if not compatible yet, retry a few times
+		// (model might still be compiling)
+		if (!ok && _origami_tab_state.retryCount < _origami_tab_state.maxRetries) {
+			if (!_origami_tab_state.retryTimer) {
+				_origami_tab_state.retryTimer = setInterval(function () {
+					_origami_tab_state.retryCount++;
+					var retryOk = _origamiShapesCompatible();
+					if (retryOk) {
+						_origamiApplyTabVisibility(true);
+						_origami_tab_state.visible = true;
+						_origami_tab_state.retryCount = 0;
+						clearInterval(_origami_tab_state.retryTimer);
+						_origami_tab_state.retryTimer = null;
+					} else if (_origami_tab_state.retryCount >= _origami_tab_state.maxRetries) {
+						clearInterval(_origami_tab_state.retryTimer);
+						_origami_tab_state.retryTimer = null;
+					}
+				}, 500);
+			}
+		}
+	} catch (e) { /* silent — never break the app */ }
+}
+
+// Guardrail R3-2: secondary hook on window load
+if (typeof window !== "undefined") {
+	window.addEventListener("load", function () {
+		try { check_origami_folds_tab(); } catch (e) { /* silent */ }
+	});
+	// Guardrail R3-4: DOMContentLoaded fallback
+	document.addEventListener("DOMContentLoaded", function () {
+		try { check_origami_folds_tab(); } catch (e) { /* silent */ }
+	});
+	// Guardrail R3-5: explicit window export
+	window.check_origami_folds_tab = check_origami_folds_tab;
+}
+
 function update_origami_folds() {
 	try {
+		check_origami_folds_tab();
+		if (!_origamiShapesCompatible()) return;
+		var plotDiv = document.getElementById("origami_folds_plot");
+		if (plotDiv && !_state_initialised_in_tab) {
+			OrigamiFolds.init(plotDiv);
+			_state_initialised_in_tab = true;
+		}
 		return OrigamiFolds.update();
 	} catch (e) {
 		if (typeof wrn === "function") {
@@ -3421,6 +3581,7 @@ function update_origami_folds() {
 		}
 	}
 }
+var _state_initialised_in_tab = false;
 
 // Kein Auto-Init: update() initialisiert automatisch beim ersten
 // Trainings-Epoch (document.body ist dann garantiert vorhanden).
