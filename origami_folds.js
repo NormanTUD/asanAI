@@ -2189,14 +2189,12 @@ var OrigamiFolds = (function (global) {
 			ext = Math.max(bx, by, bz);
 		}
 		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
-		var sepAmt = Math.max(ext * 1.5, 1.0);
-
+		var sepAmt = ext * 0.15;
 		var dir = isOut ? 0 : -1;
 		if (dir !== 0) {
 			act = _offsetAct(act, dim, dir * sepAmt);
 			act = _sanitizeAct(act);
 		}
-
 		var offBounds = (dir !== 0)
 			? _offsetBounds(bounds, dim, dir * sepAmt)
 			: bounds;
