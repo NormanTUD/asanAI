@@ -1894,7 +1894,7 @@ var OrigamiFolds = (function (global) {
 		if (!_isFiniteNum(lw) || lw <= 0) lw = 2;
 		var op = _state.config.gridOpacity;
 		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.9;
-		if (isInput) op = 0.55;
+		if (isInput) { op = 0.75; lw = Math.max(lw, 3); }
 
 		function gx(i) { return act.xs[i]; }
 		function gy(i) { return act.ys ? act.ys[i] : 0; }
@@ -2013,7 +2013,7 @@ var OrigamiFolds = (function (global) {
 
 		var op = _state.config.gridSurfaceOpacity;
 		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.25;
-		if (isInput) op = 0.18;
+		if (isInput) op = 0.35;
 
 		var xs = new Array(grid.n);
 		var ys = new Array(grid.n);
@@ -2023,6 +2023,14 @@ var OrigamiFolds = (function (global) {
 			ys[i] = act.ys ? act.ys[i] : 0;
 			zs[i] = act.zs ? act.zs[i] : 0;
 		}
+
+		// Guardrail: skip degenerate flat surfaces (all z same → Plotly artifact)
+		var zMin = zs[0], zMax = zs[0];
+		for (var i2 = 1; i2 < zs.length; i2++) {
+			if (zs[i2] < zMin) zMin = zs[i2];
+			if (zs[i2] > zMax) zMax = zs[i2];
+		}
+		if (zMax - zMin < 1e-9) return [];
 
 		var ii = [], jj = [], kk = [];
 		for (var q = 0; q < grid.quads.length; q++) {
@@ -2146,15 +2154,17 @@ var OrigamiFolds = (function (global) {
 			ext = Math.max(bx, by, bz);
 		}
 		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
-		var sepAmt = Math.max(ext * 1.2, 1.0);
+		var sepAmt = Math.max(ext * 0.8, 0.5);
 
-		var dir = isOut ? 1 : -1;
-		act = _offsetAct(act, dim, dir * sepAmt);
-		// Guardrail: sanitize after offset
-		act = _sanitizeAct(act);
+		var dir = isOut ? 0 : -1;
+		if (dir !== 0) {
+			act = _offsetAct(act, dim, dir * sepAmt);
+			act = _sanitizeAct(act);
+		}
 
-		// Guardrail: recompute bounds from offset data so box matches
-		var offBounds = _offsetBounds(bounds, dim, dir * sepAmt);
+		var offBounds = (dir !== 0)
+			? _offsetBounds(bounds, dim, dir * sepAmt)
+			: bounds;
 
 		var xs = act.xs;
 		var ys = act.ys ? act.ys : new Float64Array(n);
@@ -2179,7 +2189,7 @@ var OrigamiFolds = (function (global) {
 		}
 
 		var gridActForBuild = o.gridAct;
-		if (gridActForBuild) {
+		if (gridActForBuild && dir !== 0) {
 			gridActForBuild = _offsetAct(gridActForBuild, dim, dir * sepAmt);
 			gridActForBuild = _sanitizeAct(gridActForBuild);
 		}
@@ -2219,7 +2229,21 @@ var OrigamiFolds = (function (global) {
 		if (o.cutLayer && offBounds) {
 			var cuts = _buildCutTracesFor(
 				o.cutLayer, dim, offBounds, sceneName, theme, showLegend);
-			for (var c = 0; c < cuts.length; c++) traces.push(cuts[c]);
+			for (var c = 0; c < cuts.length; c++) {
+				var ct = cuts[c];
+				if (dir !== 0) {
+					if (dim <= 1) {
+						for (var cy = 0; cy < ct.y.length; cy++) {
+							if (ct.y[cy] !== null) ct.y[cy] += dir * sepAmt;
+						}
+					} else {
+						for (var cz = 0; cz < ct.z.length; cz++) {
+							if (ct.z[cz] !== null) ct.z[cz] += dir * sepAmt;
+						}
+					}
+				}
+				traces.push(ct);
+			}
 		}
 
 		return traces;
