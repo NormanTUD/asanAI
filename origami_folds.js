@@ -6,12 +6,8 @@
  * Basiert auf: Keup & Helias, "Origami in N dimensions: How feed-forward
  * networks manufacture linear separability" (arXiv:2203.11355).
  *
- * Zeigt die Kette aller aufeinanderfolgenden Layer mit Aktivierungs-
- * Dimensionalität <= 3 als abgegrenzte Sub-Räume (Linie / Fläche / Würfel)
- * innerhalb eines gemeinsamen 3D-Raums. Datenpunkte werden nach Klasse
- * eingefärbt, sodass das progressive Falten und "Schneiden" der Daten
- * sichtbar wird. Zusätzlich werden die ReLU-Hyperplanes ("Schnittlinien")
- * im Eingangsraum jedes Layers eingezeichnet.
+ * Zeigt Layer-Paare (unten Input, oben Output) mit Raumgitter, das die
+ * Krümmung/Faltung der Mannigfaltigkeit sichtbar macht.
  *
  * ============================================================
  * PUBLIC API (window.OrigamiFolds)
@@ -22,9 +18,7 @@
  *   OrigamiFolds.init(domElement)       // in ein DOM-Element
  *   OrigamiFolds.init($("#meinDiv"))    // in ein jQuery-Objekt
  *
- *   OrigamiFolds.update()               // Singleton-Update: prüft selbst, ob
- *                                       // ein Update nötig ist. Aus dem
- *                                       // Trainings-Hook aufrufen.
+ *   OrigamiFolds.update()               // Singleton-Update
  *   OrigamiFolds.forceUpdate()          // ignoriert Change-Detection
  *   OrigamiFolds.destroy()              // vollständiges Aufräumen
  *   OrigamiFolds.getConfig() / setConfig({...})
@@ -32,17 +26,9 @@
  * ============================================================
  * GLOBALS, DIE GELESEN WERDEN (alle optional / mit Guards)
  * ============================================================
- *   model                 tf.LayersModel  (mit überschriebenem .layers-Getter)
- *   model._allLayers      echte Layer-Liste inkl. Skip-Connections
- *   xy_data_global        {x: tf.Tensor, y: tf.Tensor}
- *   labels                Array<string>
- *   is_classification     boolean
- *   is_dark_mode          boolean
- *   started_training      boolean
- *   lang / language       i18n
- *   tf                    TensorFlow.js
- *   Plotly                Plotly.js (wird bei Bedarf nachgeladen)
- *   cnn3d_data_revision   monotoner Predict-Counter (nur gelesen)
+ *   model, model._allLayers, xy_data_global, labels, is_classification,
+ *   is_dark_mode, started_training, lang/language, tf, Plotly,
+ *   cnn3d_data_revision
  */
 
 var OrigamiFolds = (function (global) {
@@ -57,12 +43,7 @@ var OrigamiFolds = (function (global) {
 	var CTRL_ID      = SINGLETON_ID + "_controls";
 	var LOG_PREFIX   = "[origami_folds]";
 
-	// Aktivierungsfunktionen, die eine echte ReLU-artige Hyperplane-Kante
-	// erzeugen (harter Knick bei preactivation == 0).
 	var RELU_LIKE = ["relu", "relu6", "leakyrelu", "elu", "selu", "thresholdedrelu"];
-
-	// Aktivierungen mit weichem "Bending" statt scharfer Kante — laut Paper
-	// qualitativ gleichwertig, aber die Schnittlinie ist nur approximativ.
 	var SOFT_FOLD = ["sigmoid", "hardsigmoid", "tanh", "softsign", "softplus", "swish", "mish"];
 
 	// ============================================================
@@ -79,72 +60,78 @@ var OrigamiFolds = (function (global) {
 
 		initialized:      false,
 		active:           false,
-		deactivated:      false,   // Shapes passen nicht -> Bild deaktiviert
+		deactivated:      false,
 		deactivationMsg:  "",
 
 		plotlyInitialized: false,
 		plotlyLoading:     false,
 
-		// Change-Detection
 		lastFingerprint:  null,
 		lastViewHash:     null,
 		lastDataRevision: -1,
 		dataDirty:        false,
 		pendingRender:    false,
 
-		// Sichtbarkeit
 		isVisible:        false,
 		observer:         null,
 		resizeObserver:   null,
 
-		// Kamera / Interaktion
-		lastCameras:      {},     // { "scene": {...}, "scene2": {...} }
+		lastCameras:      {},
 		userInteracting:  false,
 		interactionTimer: null,
 		rafId:            null,
 
-		// Daten-Cache
-		cachedX:          null,   // tf.Tensor (Subsample), wir besitzen ihn
-		cachedColors:     null,   // Array<string> pro Punkt
-		cachedClassIdx:   null,   // Array<number>
-		cachedClassNames: null,   // Array<string> (Legende)
+		cachedX:          null,
+		cachedColors:     null,
+		cachedClassIdx:   null,
+		cachedClassNames: null,
 		cachedIsRegression: false,
 		cachedSampleCount: 0,
 		cachedXHash:      null,
 
-		// letzte Layer-Chain (für Shape-Change-Detection)
 		lastChainSignature: null,
+		modelRef:           null,
 
 		lastDarkMode:     null,
 		darkModeTimer:    null,
 
-		// Fehler-Backoff
 		consecutiveErrors: 0,
 		lastErrorMsg:      "",
 
 		config: {
-			maxPoints:          2500,   // Subsample-Limit
+			maxPoints:          2500,
 			pointSize:          2.6,
 			pointOpacity:       0.72,
 			showReluCuts:       true,
-			reluCutLimit:       12,     // max. Hyperplanes pro Layer
+			reluCutLimit:       12,
 			showBoundingBox:    true,
-			showSoftFolds:      true,   // auch Sigmoid/Tanh-Kanten zeichnen
-			boxPadding:         0.12,   // relativer Rand um die Punktwolke
-			maxLayersShown:     8,      // max. Subplots
-			subplotHeight:      520,
+			showSoftFolds:      true,
+			boxPadding:         0.12,
+			maxLayersShown:     4,
+			subplotHeight:      460,
 			minSubplotWidth:    300,
-			throttleMs:         450,    // min. Abstand zwischen Rebuilds
+			throttleMs:         450,
 			legendMaxClasses:   24,
 			smoothUpdates:      true,
-			includeInputSpace:  true    // Raum VOR Layer 0 mitzeichnen
+			includeInputSpace:  true,
+
+			showGrid:           true,
+			gridResolution:     13,
+			gridExtend:         1.06,
+			gridLineWidth:      2.2,
+			gridOpacity:        0.9,
+			colorByCurvature:   true,
+			showGridSurface:    true,
+			gridSurfaceOpacity: 0.28,
+			showDataPoints:     true,
+			pairedLayout:       true
 		}
 	};
 
 	var _lastRebuildTime = 0;
 
 	// ============================================================
-	// LOGGING (nutzt deine globalen Helfer, falls vorhanden)
+	// LOGGING
 	// ============================================================
 
 	function _log(msg) {
@@ -199,7 +186,7 @@ var OrigamiFolds = (function (global) {
 			if (!global.model || !global.model.layers) return false;
 			if (!Array.isArray(global.model.layers)) return false;
 			try { if (global.model.isDisposed === true) return false; }
-			catch (e) { /* isDisposed-Getter fehlerhaft -> Modell trotzdem akzeptieren */ }
+			catch (e) { /* ignore */ }
 			return true;
 		} catch (e) { return false; }
 	}
@@ -208,14 +195,15 @@ var OrigamiFolds = (function (global) {
 		if (!layer) return false;
 		try {
 			if (layer.isDisposed === true) return false;
+			if (layer.isDisposedInternal === true) return false;
 			return true;
 		} catch (e) { return true; }
 	}
 
-	function _chainAlive(chain) {
-		if (!chain || !chain.length) return false;
-		for (var i = 0; i < chain.length; i++) {
-			if (!chain[i].isInput && !_layerAlive(chain[i].layer)) return false;
+	function _chainAlive(pairs) {
+		if (!pairs || !pairs.length) return false;
+		for (var i = 0; i < pairs.length; i++) {
+			if (!_layerAlive(pairs[i].layer)) return false;
 		}
 		return true;
 	}
@@ -278,7 +266,11 @@ var OrigamiFolds = (function (global) {
 				panelShadow:"0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
 				btnBg:      "linear-gradient(135deg,#4a67b8,#6b7fd8)",
 				btnText:    "#ffffff",
-				infoText:   "#9aa4c0"
+				infoText:   "#9aa4c0",
+				gridColor:    "rgba(150,170,220,0.45)",
+				surfaceColor: "rgba(120,150,220,0.5)",
+				textAccent:   "#c7d0ea",
+				arrowColor:   "rgba(200,215,255,0.8)"
 			};
 		}
 		return {
@@ -297,7 +289,11 @@ var OrigamiFolds = (function (global) {
 			panelShadow:"0 8px 26px rgba(60,80,140,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
 			btnBg:      "linear-gradient(135deg,#4a67b8,#5f7cc8)",
 			btnText:    "#ffffff",
-			infoText:   "#465072"
+			infoText:   "#465072",
+			gridColor:    "rgba(70,90,160,0.4)",
+			surfaceColor: "rgba(90,120,200,0.5)",
+			textAccent:   "#26304d",
+			arrowColor:   "rgba(60,80,140,0.85)"
 		};
 	}
 
@@ -305,8 +301,6 @@ var OrigamiFolds = (function (global) {
 	// FARBPALETTEN
 	// ============================================================
 
-	// Kräftige, gut unterscheidbare Palette. Die ersten zwei Farben sind
-	// bewusst an origami.png angelehnt (Grün außen / Orange innen).
 	var CLASS_PALETTE = [
 		"#159c72", "#e2661a", "#3b6fd4", "#c2299b", "#8a56d6",
 		"#0f9dbd", "#d4b019", "#d43b3b", "#5aa832", "#7a4ec9",
@@ -320,7 +314,6 @@ var OrigamiFolds = (function (global) {
 		return CLASS_PALETTE[idx % CLASS_PALETTE.length];
 	}
 
-	// Viridis-Approximation für Regression
 	var VIRIDIS = [
 		[0.267, 0.005, 0.329],
 		[0.283, 0.141, 0.458],
@@ -348,6 +341,48 @@ var OrigamiFolds = (function (global) {
 		var g = Math.round((a[1] + (b[1] - a[1]) * f) * 255);
 		var bl = Math.round((a[2] + (b[2] - a[2]) * f) * 255);
 		return "rgb(" + r + "," + g + "," + bl + ")";
+	}
+
+	// ============================================================
+	// VERZERRUNGS-FARBSKALA (divergierend, 0 = neutral)
+	// ============================================================
+
+	var DISTORTION_COLD  = [40, 90, 200];
+	var DISTORTION_MID_L = [150, 150, 158];
+	var DISTORTION_MID_D = [120, 126, 145];
+	var DISTORTION_WARM  = [225, 70, 40];
+
+	function _distortionColor(v, lo, hi, dark) {
+		if (!_isFiniteNum(v)) return "rgb(128,128,128)";
+		var mid = dark ? DISTORTION_MID_D : DISTORTION_MID_L;
+		var t;
+		if (v < 0) {
+			var denom = (lo < 0) ? -lo : 1;
+			t = -Math.min(1, (-v) / denom);
+		} else {
+			var denom2 = (hi > 0) ? hi : 1;
+			t = Math.min(1, v / denom2);
+		}
+		if (!_isFiniteNum(t)) t = 0;
+
+		var a, b, f;
+		if (t < 0) { a = mid; b = DISTORTION_COLD; f = -t; }
+		else       { a = mid; b = DISTORTION_WARM; f = t; }
+
+		var r = Math.round(a[0] + (b[0] - a[0]) * f);
+		var g = Math.round(a[1] + (b[1] - a[1]) * f);
+		var bl = Math.round(a[2] + (b[2] - a[2]) * f);
+		return "rgb(" + r + "," + g + "," + bl + ")";
+	}
+
+	function _distortionScale(dark) {
+		var mid = dark ? DISTORTION_MID_D : DISTORTION_MID_L;
+		function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+		return [
+			[0.00, rgb(DISTORTION_COLD)],
+			[0.50, rgb(mid)],
+			[1.00, rgb(DISTORTION_WARM)]
+		];
 	}
 
 	// ============================================================
@@ -381,40 +416,46 @@ var OrigamiFolds = (function (global) {
 		} catch (e) { return -1; }
 	}
 
-	/**
-	 * Hasht die Gewichte aller relevanten Layer + die Shape-Kette.
-	 * Bei großen Modellen wird mit Stride subsampled, damit das Hashen
-	 * nicht selbst zum Bottleneck wird.
-	 */
-	function _modelFingerprint(chain) {
+	function _modelFingerprint(pairs) {
 		var h = 0x811c9dc5;
-		h = _fnvFeed(h, "chain:" + (chain ? chain.length : 0) + ":");
+		h = _fnvFeed(h, "pairs:" + (pairs ? pairs.length : 0) + ":");
+		if (!pairs) return h >>> 0;
 
-		if (!chain) return h >>> 0;
-
-		for (var i = 0; i < chain.length; i++) {
-			var node = chain[i];
-			h = _fnvFeed(h, "n" + node.layerIdx + ":" + node.dim + ":" +
-			                 (node.activation || "-") + ":");
-			var layer = node.layer;
+		for (var i = 0; i < pairs.length; i++) {
+			var p = pairs[i];
+			h = _fnvFeed(h, "p" + p.layerIdx + ":" + p.dimIn + ">" + p.dimOut +
+			                 ":" + (p.activation || "-") + ":");
+			var layer = p.layer;
 			if (!layer) continue;
-
 			try {
 				var ws = layer.getWeights ? layer.getWeights() : null;
 				if (!ws || !ws.length) { h = _fnvFeed(h, "nw:"); continue; }
 				for (var w = 0; w < ws.length; w++) {
 					if (_isDisposedTensor(ws[w])) { h = _fnvFeed(h, "disp:"); continue; }
 					var d = ws[w].dataSync();
-					// Bei sehr großen Tensoren subsamplen, aber immer
-					// deterministisch, damit der Hash stabil bleibt.
 					var stride = d.length > 4000 ? Math.ceil(d.length / 4000) : 1;
 					h = _hashNumbers(d, h, stride);
 					h = _fnvFeed(h, "|" + d.length + ";");
 				}
-			} catch (e) {
-				h = _fnvFeed(h, "werr:");
-			}
+			} catch (e) { h = _fnvFeed(h, "werr:"); }
 		}
+
+		try {
+			var all = _getVisibleLayers();
+			var firstIdx = pairs[0].layerIdx;
+			for (var a = 0; a < all.length && a < firstIdx; a++) {
+				if (!_layerAlive(all[a])) continue;
+				var ws2 = all[a].getWeights ? all[a].getWeights() : null;
+				if (!ws2 || !ws2.length) continue;
+				for (var w2 = 0; w2 < ws2.length; w2++) {
+					if (_isDisposedTensor(ws2[w2])) continue;
+					var d2 = ws2[w2].dataSync();
+					var st2 = d2.length > 2000 ? Math.ceil(d2.length / 2000) : 1;
+					h = _hashNumbers(d2, h, st2);
+				}
+			}
+		} catch (e) { h = _fnvFeed(h, "preerr:"); }
+
 		return h >>> 0;
 	}
 
@@ -422,29 +463,25 @@ var OrigamiFolds = (function (global) {
 		var c = _state.config;
 		var parts = [
 			"dark=" + (_theme().dark ? 1 : 0),
-			"mp=" + c.maxPoints,
-			"ps=" + c.pointSize,
-			"po=" + c.pointOpacity,
-			"rc=" + (c.showReluCuts ? 1 : 0),
-			"rl=" + c.reluCutLimit,
-			"bb=" + (c.showBoundingBox ? 1 : 0),
-			"sf=" + (c.showSoftFolds ? 1 : 0),
-			"bp=" + c.boxPadding,
-			"ml=" + c.maxLayersShown,
-			"sh=" + c.subplotHeight,
-			"is=" + (c.includeInputSpace ? 1 : 0)
+			"mp=" + c.maxPoints, "ps=" + c.pointSize, "po=" + c.pointOpacity,
+			"rc=" + (c.showReluCuts ? 1 : 0), "rl=" + c.reluCutLimit,
+			"bb=" + (c.showBoundingBox ? 1 : 0), "sf=" + (c.showSoftFolds ? 1 : 0),
+			"bp=" + c.boxPadding, "ml=" + c.maxLayersShown,
+			"sh=" + c.subplotHeight, "is=" + (c.includeInputSpace ? 1 : 0),
+			"sg=" + (c.showGrid ? 1 : 0), "gr=" + c.gridResolution,
+			"ge=" + c.gridExtend, "glw=" + c.gridLineWidth,
+			"go=" + c.gridOpacity, "cbc=" + (c.colorByCurvature ? 1 : 0),
+			"sgs=" + (c.showGridSurface ? 1 : 0), "gso=" + c.gridSurfaceOpacity,
+			"sdp=" + (c.showDataPoints ? 1 : 0), "pl=" + (c.pairedLayout ? 1 : 0)
 		];
 		return _fnvFeed(0x811c9dc5, parts.join(";"));
 	}
 
+
 	// ============================================================
-	// LAYER-CHAIN AUFBAUEN
+	// LAYER-CHAIN / PAARE
 	// ============================================================
 
-	/**
-	 * Liefert alle echten Layer (auch die von Skip-Connections gefilterten),
-	 * bevorzugt aber model.layers, weil das die GUI-Reihenfolge ist.
-	 */
 	function _getVisibleLayers() {
 		if (!_hasModel()) return [];
 		try {
@@ -482,8 +519,6 @@ var OrigamiFolds = (function (global) {
 				}
 			}
 		} catch (e) { /* fall through */ }
-
-		// Eigenständige Activation-Layer
 		try {
 			var cn = layer.getClassName ? layer.getClassName().toLowerCase() : "";
 			if (cn === "relu" || cn === "leakyrelu" || cn === "elu" ||
@@ -491,16 +526,9 @@ var OrigamiFolds = (function (global) {
 				return cn;
 			}
 		} catch (e) { /* fall through */ }
-
 		return null;
 	}
 
-	/**
-	 * Zahl der Feature-Dimensionen eines Output-Shapes (ohne Batch-Dim).
-	 * [null, 3]        -> 3
-	 * [null, 4, 4, 8]  -> 128
-	 * Rückgabe null bei unbekanntem/ungültigem Shape.
-	 */
 	function _featureDim(shape) {
 		if (!Array.isArray(shape) || shape.length < 2) return null;
 		var prod = 1;
@@ -517,119 +545,112 @@ var OrigamiFolds = (function (global) {
 	function _layerOutputShape(layer) {
 		try {
 			var s = layer.outputShape;
-			if (Array.isArray(s) && s.length && Array.isArray(s[0])) {
-				// Multi-Output-Layer -> nicht unterstützt
-				return null;
-			}
+			if (Array.isArray(s) && s.length && Array.isArray(s[0])) return null;
 			return s || null;
 		} catch (e) { return null; }
 	}
 
-	
 	function _layerInputShape(layer) {
 		try {
 			var s = layer.inputShape;
-			if (Array.isArray(s) && s.length && Array.isArray(s[0])) {
-				return null;
-			}
+			if (Array.isArray(s) && s.length && Array.isArray(s[0])) return null;
 			return s || null;
 		} catch (e) { return null; }
 	}
 
-	/**
-	 * Baut die Kette der plotbaren Räume auf.
-	 *
-	 * Ein "Node" ist ein Aktivierungsraum mit dim ∈ {1,2,3}:
-	 *   - Node 0 (optional): der Input-Raum VOR Layer 0
-	 *   - Node i: der Output-Raum NACH Layer j
-	 *
-	 * Ein Node enthält zusätzlich Informationen über den Layer, der IN ihn
-	 * hineinführt (fromLayer) und den Layer, der AUS ihm herausführt
-	 * (layer / cutLayer) — letzterer liefert die ReLU-Hyperplanes, die in
-	 * DIESEM Raum gezeichnet werden.
-	 */
 	function _buildChain() {
-		var chain = [];
 		var layers = _getVisibleLayers();
-
-		if (!layers.length) {
-			return { chain: [], reason: "no_layers" };
-		}
+		if (!layers.length) return { pairs: [], reason: "no_layers" };
 
 		var cfg = _state.config;
+		var spaces = [];
 
-		// ---- Node 0: Input-Raum -------------------------------------
-		if (cfg.includeInputSpace) {
-			var inShape = null;
-			try {
-				if (global.model.inputs && global.model.inputs.length) {
-					inShape = global.model.inputs[0].shape;
-				}
-			} catch (e) { inShape = null; }
-			if (!inShape) inShape = _layerInputShape(layers[0]);
-
-			var inDim = _featureDim(inShape);
-			if (inDim !== null && inDim >= 1 && inDim <= 3) {
-				chain.push({
-					isInput:    true,
-					layerIdx:   -1,
-					layer:      null,       // kein Layer erzeugt diesen Raum
-					cutLayer:   layers[0],  // Layer 0 schneidet HIER hinein
-					cutLayerIdx: 0,
-					dim:        inDim,
-					shape:      inShape,
-					name:       _tr("origami_input_space", "Input"),
-					className:  "Input",
-					activation: null
-				});
+		var inShape = null;
+		try {
+			if (global.model.inputs && global.model.inputs.length) {
+				inShape = global.model.inputs[0].shape;
 			}
-		}
+		} catch (e) { inShape = null; }
+		if (!inShape) inShape = _layerInputShape(layers[0]);
 
-		// ---- Nodes für jeden Layer-Output ---------------------------
+		spaces.push({
+			isInput:    true,
+			layerIdx:   -1,
+			layer:      null,
+			dim:        _featureDim(inShape),
+			shape:      inShape,
+			name:       _tr("origami_input_space", "Input"),
+			className:  "Input",
+			activation: null
+		});
+
 		for (var i = 0; i < layers.length; i++) {
 			var layer = layers[i];
 			if (!layer || !_layerAlive(layer)) continue;
-
 			var outShape = _layerOutputShape(layer);
-			var dim = _featureDim(outShape);
-
-			if (dim === null) continue;          // unbekanntes Shape -> skip
-			if (dim < 1 || dim > 3) continue;    // >3 Dims -> komplett skippen
-
-			var act = _activationNameOfLayer(layer);
 			var cls = "";
 			try { cls = layer.getClassName ? layer.getClassName() : ""; }
 			catch (e) { cls = ""; }
 
-			chain.push({
+			spaces.push({
 				isInput:     false,
 				layerIdx:    i,
 				layer:       layer,
-				cutLayer:    (i + 1 < layers.length) ? layers[i + 1] : null,
-				cutLayerIdx: (i + 1 < layers.length) ? (i + 1) : -1,
-				dim:         dim,
+				dim:         _featureDim(outShape),
 				shape:       outShape,
 				name:        (layer.name || (cls + "_" + i)),
 				className:   cls,
-				activation:  act
+				activation:  _activationNameOfLayer(layer)
+			});
+		}
+
+		var pairs = [];
+		for (var s = 0; s + 1 < spaces.length; s++) {
+			var a = spaces[s], b = spaces[s + 1];
+			var dA = a.dim, dB = b.dim;
+			if (dA === null || dB === null) continue;
+			if (dA < 1 || dA > 3) continue;
+			if (dB < 1 || dB > 3) continue;
+			if (!b.layer) continue;
+
+			pairs.push({
+				inNode:     a,
+				outNode:    b,
+				layer:      b.layer,
+				layerIdx:   b.layerIdx,
+				dimIn:      dA,
+				dimOut:     dB,
+				activation: b.activation,
+				className:  b.className,
+				name:       b.name
 			});
 
-			if (chain.length >= cfg.maxLayersShown) break;
+			if (pairs.length >= cfg.maxLayersShown) break;
 		}
 
-		if (!chain.length) {
-			return { chain: [], reason: "no_low_dim_layers" };
+		if (!pairs.length) {
+			var anyLow = false;
+			for (var q = 0; q < spaces.length; q++) {
+				if (spaces[q].dim !== null && spaces[q].dim >= 1 && spaces[q].dim <= 3) {
+					anyLow = true; break;
+				}
+			}
+			return {
+				pairs:  [],
+				reason: anyLow ? "no_adjacent_low_dim" : "no_low_dim_layers"
+			};
 		}
 
-		return { chain: chain, reason: null };
+		return { pairs: pairs, reason: null };
 	}
 
-	function _chainSignature(chain) {
-		if (!chain || !chain.length) return "empty";
+	function _chainSignature(pairs) {
+		if (!pairs || !pairs.length) return "empty";
 		var parts = [];
-		for (var i = 0; i < chain.length; i++) {
-			var n = chain[i];
-			parts.push(n.layerIdx + ":" + n.dim + ":" + (n.className || "-"));
+		for (var i = 0; i < pairs.length; i++) {
+			var p = pairs[i];
+			parts.push(p.layerIdx + ":" + p.dimIn + ">" + p.dimOut +
+			           ":" + (p.className || "-"));
 		}
 		return parts.join("|");
 	}
@@ -654,7 +675,6 @@ var OrigamiFolds = (function (global) {
 				return global.is_classification;
 			}
 		} catch (e) { /* fall through */ }
-		// Fallback-Heuristik: Labels vorhanden + y hat 2 Dims
 		try {
 			var g = _xyGlobal();
 			if (g && g.y && !_isDisposedTensor(g.y)) {
@@ -672,10 +692,6 @@ var OrigamiFolds = (function (global) {
 		return null;
 	}
 
-	/**
-	 * Erzeugt (und cached) das Subsample von X sowie die Klassenzuordnung.
-	 * Rückgabe: true bei Erfolg, false sonst.
-	 */
 	function _prepareData() {
 		var g = _xyGlobal();
 		if (!g) {
@@ -701,7 +717,6 @@ var OrigamiFolds = (function (global) {
 			return false;
 		}
 
-		// ---- Cache-Check: gleiche Daten wie zuvor? -----------------
 		var xHash = null;
 		try {
 			xHash = (xT.id !== undefined ? "id" + xT.id : "noid") +
@@ -714,7 +729,6 @@ var OrigamiFolds = (function (global) {
 			return true;
 		}
 
-		// ---- Indizes gleichmäßig samplen (deterministisch) --------
 		var stride = (total > maxPoints) ? Math.ceil(total / maxPoints) : 1;
 		var idxs = [];
 		for (var i = 0; i < total; i += stride) {
@@ -726,7 +740,6 @@ var OrigamiFolds = (function (global) {
 			return false;
 		}
 
-		// ---- X subsamplen ----------------------------------------
 		var newX = null;
 		try {
 			newX = global.tf.tidy(function () {
@@ -744,7 +757,6 @@ var OrigamiFolds = (function (global) {
 			return false;
 		}
 
-		// ---- Klassen / Farben ableiten ----------------------------
 		var classIdx     = null;
 		var classNames   = null;
 		var colors       = null;
@@ -760,7 +772,6 @@ var OrigamiFolds = (function (global) {
 				var yArr = null;
 
 				if (yShape.length === 2 && yShape[1] > 1) {
-					// One-Hot -> argmax
 					yArr = global.tf.tidy(function () {
 						var idxT = global.tf.tensor1d(idxs, "int32");
 						var sub  = global.tf.gather(yT, idxT);
@@ -801,7 +812,6 @@ var OrigamiFolds = (function (global) {
 			classIdx = null;
 		}
 
-		// ---- Farben bauen ----------------------------------------
 		if (classIdx && classIdx.length === idxs.length) {
 			if (isRegression) {
 				var mn = Infinity, mx = -Infinity;
@@ -822,7 +832,6 @@ var OrigamiFolds = (function (global) {
 				for (var c = 0; c < classIdx.length; c++) {
 					if (_isFiniteNum(classIdx[c]) && classIdx[c] > maxC) maxC = classIdx[c];
 				}
-				var nCls = Math.min(maxC + 1, _state.config.legendMaxClasses);
 				classNames = [];
 				for (var ci = 0; ci <= maxC; ci++) {
 					if (labelsArr && labelsArr[ci] != null) {
@@ -834,14 +843,12 @@ var OrigamiFolds = (function (global) {
 				colors = classIdx.map(function (ci2) { return _classColor(ci2); });
 			}
 		} else {
-			// Keine Klasseninfo -> einfarbig
 			colors = new Array(idxs.length);
 			for (var k = 0; k < idxs.length; k++) colors[k] = "#159c72";
 			classIdx = null;
 			classNames = null;
 		}
 
-		// ---- alten Cache freigeben, neuen setzen -------------------
 		_safeDispose(_state.cachedX);
 		_state.cachedX            = newX;
 		_state.cachedColors       = colors;
@@ -859,29 +866,8 @@ var OrigamiFolds = (function (global) {
 	}
 
 	// ============================================================
-	// AKTIVIERUNGEN DURCH DIE KETTE SCHICKEN
+	// TENSOR-HELPER
 	// ============================================================
-
-	/**
-	 * Holt SymbolicTensor-Outputs für alle Nodes der Kette und macht
-	 * einen einzigen Forward-Pass. Fallback: schrittweises layer.apply().
-	 *
-	 * Rückgabe: Array von Float32Array-artigen 2D-Arrays [[x,y,z], ...]
-	 *           oder null bei Fehler.
-	 */
-	function _computeActivations(chain) {
-		if (!chain || !chain.length) return null;
-		if (!_state.cachedX || _isDisposedTensor(_state.cachedX)) return null;
-		if (!_hasTF()) return null;
-		if (!_hasModel()) return null;
-		if (!_chainAlive(chain)) return null;
-
-		var out = _computeViaSubModel(chain);
-		if (out) return out;
-
-		_log("Sub-Model fehlgeschlagen, versuche schrittweisen Forward-Pass");
-		return _computeViaStepwise(chain);
-	}
 
 	function _flattenTensorTo2D(t) {
 		if (!t || !t.shape) return t;
@@ -911,106 +897,6 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
-	function _computeViaSubModel(chain) {
-		if (!_chainAlive(chain)) return null;
-		if (!_hasModel()) return null;
-
-		var symOutputs = [];
-		var needsModel = false;
-
-		try {
-			for (var i = 0; i < chain.length; i++) {
-				var n = chain[i];
-				if (n.isInput) { symOutputs.push(null); continue; }
-				if (!_layerAlive(n.layer)) return null;
-				var o = null;
-				try { o = n.layer.output; } catch (e) { o = null; }
-				if (!o || Array.isArray(o)) {
-					// Multi-Node / Multi-Output -> Sub-Model nicht möglich
-					return null;
-				}
-				symOutputs.push(o);
-				needsModel = true;
-			}
-		} catch (e) {
-			return null;
-		}
-
-		if (!needsModel) {
-			// Nur der Input-Raum ist plotbar -> direkt aus cachedX lesen
-			return _readInputOnly(chain);
-		}
-
-		var realOutputs = symOutputs.filter(function (o) { return !!o; });
-		if (!realOutputs.length) return null;
-
-		var subModel = null;
-		var results  = null;
-
-		try {
-			subModel = global.tf.model({
-				inputs:  global.model.inputs,
-				outputs: realOutputs
-			});
-		} catch (e) {
-			_log("tf.model() fehlgeschlagen: " + e);
-			return null;
-		}
-
-		try {
-			results = global.tf.tidy(function () {
-				var preds = subModel.predict(_state.cachedX, { batchSize: 512 });
-				if (!Array.isArray(preds)) preds = [preds];
-
-				var arrays = [];
-				for (var p = 0; p < preds.length; p++) {
-					var flat2d = _flattenTensorTo2D(preds[p]);
-					arrays.push({
-						data: flat2d.dataSync(),
-						dim:  flat2d.shape[1],
-						n:    flat2d.shape[0]
-					});
-				}
-				return arrays;
-			});
-		} catch (e) {
-			if (_isDisposedError(e)) {
-				_log("Sub-Model: Layer bereits disposed (Modell-Rebuild), übersprungen");
-			} else {
-				_warn("Sub-Model predict fehlgeschlagen: " + e);
-			}
-			results = null;
-		}
-
-		if (!results) return null;
-
-		// ---- Ergebnisse den Nodes zuordnen -----------------------
-		var perNode = [];
-		var ri = 0;
-		var inputArr = null;
-
-		for (var q = 0; q < chain.length; q++) {
-			if (chain[q].isInput) {
-				if (!inputArr) inputArr = _readSingleInput(chain[q].dim);
-				perNode.push(inputArr);
-			} else {
-				if (ri >= results.length) { perNode.push(null); continue; }
-				perNode.push(_unpack(results[ri], chain[q].dim));
-				ri++;
-			}
-		}
-
-		return perNode;
-	}
-
-	function _readInputOnly(chain) {
-		var perNode = [];
-		for (var i = 0; i < chain.length; i++) {
-			perNode.push(chain[i].isInput ? _readSingleInput(chain[i].dim) : null);
-		}
-		return perNode;
-	}
-
 	function _readSingleInput(dim) {
 		try {
 			return global.tf.tidy(function () {
@@ -1035,9 +921,6 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
-	/**
-	 * Wandelt {data, dim, n} in {xs, ys, zs} um (ys/zs nur wenn dim erlaubt).
-	 */
 	function _unpack(res, expectedDim) {
 		if (!res || !res.data) return null;
 		var n = res.n, d = res.dim;
@@ -1076,27 +959,518 @@ var OrigamiFolds = (function (global) {
 		return { xs: xs, ys: ys, zs: zs, dim: useDim, n: n };
 	}
 
-	/**
-	 * Fallback: schrittweise layer.apply() auf Tensoren. Robust gegen
-	 * Multi-Node-Layer, aber langsamer und funktioniert nur für lineare
-	 * Topologien (Skip-Connections werden dabei übersprungen).
-	 */
-	function _computeViaStepwise(chain) {
-		if (!_hasModel()) return null;
+
+	// ============================================================
+	// GITTER-GENERIERUNG
+	// ============================================================
+
+	function _makeGrid(bounds, dim) {
+		if (!bounds) return null;
+		if (!_isFiniteNum(dim) || dim < 1 || dim > 3) return null;
+
+		var res = _state.config.gridResolution;
+		if (!_isFiniteNum(res) || res < 3) res = 9;
+		if (res > 31) res = 31;
+		if (dim === 3 && res > 11) res = 11;
+
+		var ext = _state.config.gridExtend;
+		if (!_isFiniteNum(ext) || ext < 1) ext = 1.0;
+
+		function axis(b) {
+			var mid = (b.lo + b.hi) / 2;
+			var half = (b.hi - b.lo) / 2 * ext;
+			if (!_isFiniteNum(half) || half <= 0) half = 0.5;
+			var arr = new Float64Array(res);
+			for (var i = 0; i < res; i++) {
+				arr[i] = mid - half + (2 * half) * (i / (res - 1));
+			}
+			return arr;
+		}
+
+		var ax = axis(bounds.x);
+		var ay = (dim >= 2) ? axis(bounds.y) : null;
+		var az = (dim >= 3) ? axis(bounds.z) : null;
+
+		var n, coords, lines = [], quads = [];
+
+		if (dim === 1) {
+			n = res;
+			coords = new Float64Array(n);
+			for (var i1 = 0; i1 < res; i1++) coords[i1] = ax[i1];
+			var chain1 = [];
+			for (var c1 = 0; c1 < res; c1++) chain1.push(c1);
+			lines.push(chain1);
+		} else if (dim === 2) {
+			n = res * res;
+			coords = new Float64Array(n * 2);
+			for (var iy = 0; iy < res; iy++) {
+				for (var ix = 0; ix < res; ix++) {
+					var k2 = iy * res + ix;
+					coords[k2 * 2]     = ax[ix];
+					coords[k2 * 2 + 1] = ay[iy];
+				}
+			}
+			for (var ry = 0; ry < res; ry++) {
+				var row = [];
+				for (var rx = 0; rx < res; rx++) row.push(ry * res + rx);
+				lines.push(row);
+			}
+			for (var cx = 0; cx < res; cx++) {
+				var col = [];
+				for (var cy = 0; cy < res; cy++) col.push(cy * res + cx);
+				lines.push(col);
+			}
+			for (var qy = 0; qy + 1 < res; qy++) {
+				for (var qx = 0; qx + 1 < res; qx++) {
+					var a2 = qy * res + qx;
+					var b2 = qy * res + qx + 1;
+					var c2 = (qy + 1) * res + qx + 1;
+					var d2 = (qy + 1) * res + qx;
+					quads.push([a2, b2, c2, d2]);
+				}
+			}
+		} else {
+			n = res * res * res;
+			coords = new Float64Array(n * 3);
+			for (var jz = 0; jz < res; jz++) {
+				for (var jy = 0; jy < res; jy++) {
+					for (var jx = 0; jx < res; jx++) {
+						var k3 = (jz * res + jy) * res + jx;
+						coords[k3 * 3]     = ax[jx];
+						coords[k3 * 3 + 1] = ay[jy];
+						coords[k3 * 3 + 2] = az[jz];
+					}
+				}
+			}
+			function idx3(x, y, z) { return (z * res + y) * res + x; }
+			for (var sz = 0; sz < res; sz++) {
+				for (var sy = 0; sy < res; sy++) {
+					if (!(sy === 0 || sy === res - 1 || sz === 0 || sz === res - 1)) continue;
+					var lx = [];
+					for (var sx = 0; sx < res; sx++) lx.push(idx3(sx, sy, sz));
+					lines.push(lx);
+				}
+			}
+			for (var tz = 0; tz < res; tz++) {
+				for (var tx = 0; tx < res; tx++) {
+					if (!(tx === 0 || tx === res - 1 || tz === 0 || tz === res - 1)) continue;
+					var ly = [];
+					for (var ty = 0; ty < res; ty++) ly.push(idx3(tx, ty, tz));
+					lines.push(ly);
+				}
+			}
+			for (var uy = 0; uy < res; uy++) {
+				for (var ux = 0; ux < res; ux++) {
+					if (!(ux === 0 || ux === res - 1 || uy === 0 || uy === res - 1)) continue;
+					var lz = [];
+					for (var uz = 0; uz < res; uz++) lz.push(idx3(ux, uy, uz));
+					lines.push(lz);
+				}
+			}
+		}
+
+		return {
+			coords: coords, n: n, dim: dim, res: res,
+			lines: lines, quads: quads, bounds: bounds
+		};
+	}
+
+	function _pushGridThroughLayer(grid, layer, outDim) {
+		if (!grid || !layer) return null;
+		if (!_layerAlive(layer)) return null;
+		if (!_hasTF()) return null;
+
+		try {
+			var cls = "";
+			try { cls = layer.getClassName ? layer.getClassName() : ""; }
+			catch (e) { cls = ""; }
+
+			if (String(cls).toLowerCase() !== "dense") {
+				_log("Gitter: nur Dense-Layer unterstützt (" + cls + ")");
+				return null;
+			}
+
+			var ws = null;
+			try { ws = layer.getWeights ? layer.getWeights() : null; }
+			catch (e) { ws = null; }
+			if (!ws || !ws.length) return null;
+			if (_isDisposedTensor(ws[0])) return null;
+
+			var kernel = ws[0].dataSync();
+			var bias = (ws.length > 1 && !_isDisposedTensor(ws[1]))
+				? ws[1].dataSync() : null;
+			var kShape = ws[0].shape;
+			if (!Array.isArray(kShape) || kShape.length !== 2) return null;
+			var inDim = kShape[0];
+			var units = kShape[1];
+			if (inDim !== grid.dim) return null;
+
+			var act = _activationNameOfLayer(layer);
+			var n = grid.n;
+			var outData = new Float64Array(n * units);
+
+			for (var i = 0; i < n; i++) {
+				var rowBase = i * grid.dim;
+				for (var u = 0; u < units; u++) {
+					var sum = 0;
+					for (var d = 0; d < inDim; d++) {
+						sum += grid.coords[rowBase + d] * kernel[d * units + u];
+					}
+					if (bias) sum += bias[u];
+
+					if (act === "relu" || act === "relu6") {
+						sum = Math.max(0, sum);
+						if (act === "relu6") sum = Math.min(6, sum);
+					} else if (act === "leakyrelu") {
+						if (sum < 0) sum *= 0.3;
+					} else if (act === "elu") {
+						if (sum < 0) sum = Math.exp(sum) - 1;
+					} else if (act === "selu") {
+						sum = (sum > 0) ? 1.0507 * sum : 1.0507 * (Math.exp(sum) - 1);
+					} else if (act === "sigmoid" || act === "hardsigmoid") {
+						sum = 1 / (1 + Math.exp(-sum));
+					} else if (act === "tanh") {
+						sum = Math.tanh(sum);
+					} else if (act === "softplus") {
+						sum = Math.log(1 + Math.exp(Math.max(sum, -100)));
+					} else if (act === "softsign") {
+						sum = sum / (1 + Math.abs(sum));
+					}
+
+					outData[i * units + u] = _isFiniteNum(sum) ? sum : 0;
+				}
+			}
+
+			return _unpack({
+				data: outData,
+				dim:  units,
+				n:    n
+			}, outDim);
+		} catch (e) {
+			if (_isDisposedError(e)) {
+				_log("Gitter-Forward: Layer disposed, übersprungen");
+			} else {
+				_log("Gitter-Forward: " + e);
+			}
+			return null;
+		}
+	}
+
+	function _gridDistortion(grid, actIn, actOut) {
+		if (!grid || !actIn || !actOut) return null;
+		var n = grid.n;
+		if (actIn.n !== n || actOut.n !== n) return null;
+
+		var res = grid.res, dim = grid.dim;
+		var dist = new Float64Array(n);
+		var cnt  = new Float64Array(n);
+
+		function pIn(i, comp) {
+			if (comp === 0) return actIn.xs[i];
+			if (comp === 1) return actIn.ys ? actIn.ys[i] : 0;
+			return actIn.zs ? actIn.zs[i] : 0;
+		}
+		function pOut(i, comp) {
+			if (comp === 0) return actOut.xs[i];
+			if (comp === 1) return actOut.ys ? actOut.ys[i] : 0;
+			return actOut.zs ? actOut.zs[i] : 0;
+		}
+
+		function edge(i, j) {
+			var di = 0, dj = 0;
+			for (var c = 0; c < 3; c++) {
+				var a = pIn(i, c) - pIn(j, c);
+				di += a * a;
+				var b = pOut(i, c) - pOut(j, c);
+				dj += b * b;
+			}
+			di = Math.sqrt(di); dj = Math.sqrt(dj);
+			if (!(di > 1e-12)) return;
+			var ratio = dj / di;
+			if (!_isFiniteNum(ratio)) return;
+			var lg = Math.log(Math.max(ratio, 1e-6)) / Math.LN2;
+			dist[i] += lg; cnt[i] += 1;
+			dist[j] += lg; cnt[j] += 1;
+		}
+
+		if (dim === 1) {
+			for (var i1 = 0; i1 + 1 < res; i1++) edge(i1, i1 + 1);
+		} else if (dim === 2) {
+			for (var y2 = 0; y2 < res; y2++) {
+				for (var x2 = 0; x2 < res; x2++) {
+					var k2 = y2 * res + x2;
+					if (x2 + 1 < res) edge(k2, k2 + 1);
+					if (y2 + 1 < res) edge(k2, k2 + res);
+				}
+			}
+		} else {
+			var rr = res * res;
+			for (var z3 = 0; z3 < res; z3++) {
+				for (var y3 = 0; y3 < res; y3++) {
+					for (var x3 = 0; x3 < res; x3++) {
+						var k3 = (z3 * res + y3) * res + x3;
+						if (x3 + 1 < res) edge(k3, k3 + 1);
+						if (y3 + 1 < res) edge(k3, k3 + res);
+						if (z3 + 1 < res) edge(k3, k3 + rr);
+					}
+				}
+			}
+		}
+
+		var out = new Float64Array(n);
+		for (var i = 0; i < n; i++) {
+			out[i] = (cnt[i] > 0) ? (dist[i] / cnt[i]) : 0;
+			if (!_isFiniteNum(out[i])) out[i] = 0;
+		}
+
+		var sorted = Array.prototype.slice.call(out);
+		sorted.sort(function (a, b) { return a - b; });
+		var loP = sorted[Math.floor(sorted.length * 0.03)];
+		var hiP = sorted[Math.floor(sorted.length * 0.97)];
+		if (!_isFiniteNum(loP)) loP = 0;
+		if (!_isFiniteNum(hiP)) hiP = 0;
+		if (hiP - loP < 1e-6) { loP -= 0.5; hiP += 0.5; }
+
+		return { values: out, lo: loP, hi: hiP };
+	}
+
+	function _gridAsAct(grid) {
+		if (!grid) return null;
+		var n = grid.n, d = grid.dim;
+		var xs = new Float64Array(n);
+		var ys = (d >= 2) ? new Float64Array(n) : null;
+		var zs = (d >= 3) ? new Float64Array(n) : null;
+
+		for (var i = 0; i < n; i++) {
+			xs[i] = grid.coords[i * d];
+			if (ys) ys[i] = grid.coords[i * d + 1];
+			if (zs) zs[i] = grid.coords[i * d + 2];
+		}
+
+		return { xs: xs, ys: ys, zs: zs, dim: d, n: n };
+	}
+
+	function _mergeBounds(a, b) {
+		if (!a) return b;
+		if (!b) return a;
+		function m(p, q) {
+			return { lo: Math.min(p.lo, q.lo), hi: Math.max(p.hi, q.hi) };
+		}
+		return {
+			x: m(a.x, b.x),
+			y: m(a.y, b.y),
+			z: m(a.z, b.z),
+			dim: Math.max(a.dim || 0, b.dim || 0)
+		};
+	}
+
+	// ============================================================
+	// AKTIVIERUNGEN PRO PAAR
+	// ============================================================
+
+	function _spaceKey(node) {
+		return node.isInput ? "input" : ("L" + node.layerIdx);
+	}
+
+	function _computePairs(pairs) {
+		if (!pairs || !pairs.length) return null;
+		if (!_state.cachedX || _isDisposedTensor(_state.cachedX)) return null;
+		if (!_hasTF() || !_hasModel()) return null;
+		if (!_chainAlive(pairs)) return null;
+
+		var spaceActs = _collectSpaceActivations(pairs);
+		if (!spaceActs) return null;
+
+		var results = [];
+		var prevGridOut = null;
+
+		for (var i = 0; i < pairs.length; i++) {
+			var p = pairs[i];
+			var actIn  = spaceActs[_spaceKey(p.inNode)];
+			var actOut = spaceActs[_spaceKey(p.outNode)];
+
+			if (!actIn || !actOut) {
+				_log("Paar " + i + ": Aktivierungen fehlen, übersprungen");
+				results.push(null);
+				prevGridOut = null;
+				continue;
+			}
+
+			var bIn  = _computeBounds(actIn);
+			var bOut = _computeBounds(actOut);
+
+			var grid = null, gridIn = null, gridOut = null, dist = null;
+
+			if (_state.config.showGrid) {
+				if (prevGridOut && prevGridOut.dim === p.dimIn) {
+					// Gitter aus dem vorherigen Layer übernehmen (Topologie bleibt)
+					grid = {
+						coords: prevGridOut.coords,
+						n: prevGridOut.n,
+						dim: prevGridOut.dim,
+						res: prevGridOut.res,
+						lines: prevGridOut.lines,
+						quads: (prevGridOut.dim === 2) ? prevGridOut.quads : [],
+						bounds: bIn
+					};
+					gridIn = prevGridOut;
+				} else if (bIn) {
+					// Erstes Paar: Gitter aus den Input-Bounds bauen
+					grid = _makeGrid(bIn, p.dimIn);
+					if (grid) gridIn = _gridAsAct(grid);
+				}
+
+				if (grid && gridIn) {
+					gridOut = _pushGridThroughLayer(grid, p.layer, p.dimOut);
+					if (gridOut) {
+						dist = _gridDistortion(grid, gridIn, gridOut);
+						bOut = _mergeBounds(bOut, _computeBounds(gridOut));
+						// Topologie für das nächste Paar vorbereiten
+						if (gridOut) {
+							var outCoords = new Float64Array(gridOut.n * gridOut.dim);
+							for (var q = 0; q < gridOut.n; q++) {
+								outCoords[q * gridOut.dim] = gridOut.xs[q];
+								if (gridOut.dim >= 2 && gridOut.ys)
+									outCoords[q * gridOut.dim + 1] = gridOut.ys[q];
+								if (gridOut.dim >= 3 && gridOut.zs)
+									outCoords[q * gridOut.dim + 2] = gridOut.zs[q];
+							}
+							var outQuads = [];
+							if (gridOut.dim === 2 && grid.quads) {
+								outQuads = grid.quads;
+							}
+							prevGridOut = {
+								coords: outCoords,
+								n: gridOut.n,
+								dim: gridOut.dim,
+								res: grid.res,
+								lines: grid.lines,
+								quads: outQuads,
+								xs: gridOut.xs,
+								ys: gridOut.ys,
+								zs: gridOut.zs
+							};
+						}
+					} else {
+						prevGridOut = null;
+						grid = null;
+						gridIn = null;
+					}
+				} else {
+					prevGridOut = null;
+				}
+			}
+
+			results.push({
+				pair:       p,
+				actIn:      actIn,
+				actOut:     actOut,
+				boundsIn:   bIn,
+				boundsOut:  bOut,
+				grid:       grid,
+				gridIn:     gridIn,
+				gridOut:    gridOut,
+				distortion: dist
+			});
+		}
+
+		var any = false;
+		for (var r = 0; r < results.length; r++) if (results[r]) { any = true; break; }
+		return any ? results : null;
+	}
+
+	function _predictSubModel(symOut) {
+		var subModel = null;
+		try {
+			subModel = global.tf.model({
+				inputs:  global.model.inputs,
+				outputs: symOut
+			});
+		} catch (e) {
+			_log("tf.model() für Paare fehlgeschlagen: " + e);
+			return null;
+		}
+		if (!subModel) return null;
+
+		try {
+			return global.tf.tidy(function () {
+				var preds = subModel.predict(_state.cachedX, { batchSize: 512 });
+				if (!Array.isArray(preds)) preds = [preds];
+				var arr = [];
+				for (var p = 0; p < preds.length; p++) {
+					var f = _flattenTensorTo2D(preds[p]);
+					arr.push({
+						data: f.dataSync(),
+						dim:  f.shape[1],
+						n:    f.shape[0]
+					});
+				}
+				return arr;
+			});
+		} catch (e) {
+			if (_isDisposedError(e)) {
+				_log("Paar-Sub-Model: disposed, Fallback");
+			} else {
+				_warn("Paar-Sub-Model predict fehlgeschlagen: " + e);
+			}
+			return null;
+		}
+	}
+
+	function _collectSpaceActivations(pairs) {
+		var needInput = false;
+		var layerNodes = {};
+
+		for (var i = 0; i < pairs.length; i++) {
+			var a = pairs[i].inNode, b = pairs[i].outNode;
+			if (a.isInput) needInput = true; else layerNodes[_spaceKey(a)] = a;
+			if (b.isInput) needInput = true; else layerNodes[_spaceKey(b)] = b;
+		}
+
+		var out = {};
+		if (needInput) {
+			var inAct = _readSingleInput(pairs[0].inNode.dim);
+			if (!inAct) return null;
+			out["input"] = inAct;
+		}
+
+		var keys = Object.keys(layerNodes);
+		if (!keys.length) return out;
+
+		var symOut = [], order = [];
+		var ok = true;
+		for (var k = 0; k < keys.length; k++) {
+			var node = layerNodes[keys[k]];
+			if (!_layerAlive(node.layer)) { ok = false; break; }
+			var o = null;
+			try { o = node.layer.output; } catch (e) { o = null; }
+			if (!o || Array.isArray(o)) { ok = false; break; }
+			symOut.push(o);
+			order.push(keys[k]);
+		}
+
+		if (ok && symOut.length) {
+			var res = _predictSubModel(symOut);
+			if (res && res.length === order.length) {
+				for (var q = 0; q < order.length; q++) {
+					out[order[q]] = _unpack(res[q], layerNodes[order[q]].dim);
+				}
+				return out;
+			}
+		}
+
+		_log("Paare: Fallback auf schrittweisen Forward-Pass");
+		return _collectSpaceActivationsStepwise(pairs, layerNodes, out);
+	}
+
+	function _collectSpaceActivationsStepwise(pairs, layerNodes, out) {
 		var layers = _getVisibleLayers();
 		if (!layers.length) return null;
 
-		var perNode = new Array(chain.length);
-		for (var z = 0; z < perNode.length; z++) perNode[z] = null;
-
-		// Map: layerIdx -> Position in chain
-		var wanted = {};
-		for (var c = 0; c < chain.length; c++) {
-			if (chain[c].isInput) {
-				perNode[c] = _readSingleInput(chain[c].dim);
-			} else {
-				wanted[chain[c].layerIdx] = c;
-			}
+		var byIdx = {};
+		var keys = Object.keys(layerNodes);
+		for (var k = 0; k < keys.length; k++) {
+			byIdx[layerNodes[keys[k]].layerIdx] = keys[k];
 		}
 
 		var cur = null;
@@ -1109,9 +1483,7 @@ var OrigamiFolds = (function (global) {
 
 		for (var li = 0; li < layers.length; li++) {
 			if (!_layerAlive(layers[li])) {
-				_log("Layer " + li + " bereits disposed (Modell-Rebuild), Forward-Pass abgebrochen");
-				_safeDispose(cur);
-				cur = null;
+				_log("Layer " + li + " disposed, Forward-Pass abgebrochen");
 				break;
 			}
 			var nxt = null;
@@ -1123,7 +1495,7 @@ var OrigamiFolds = (function (global) {
 				});
 			} catch (e) {
 				if (_isDisposedError(e)) {
-					_log("Layer " + li + " apply(): disposed (Modell-Rebuild), abgebrochen");
+					_log("Layer " + li + " apply(): disposed");
 				} else {
 					_warn("Layer " + li + " apply() fehlgeschlagen: " + e);
 				}
@@ -1132,27 +1504,23 @@ var OrigamiFolds = (function (global) {
 
 			_safeDispose(cur);
 			cur = nxt;
+			if (!cur || _isDisposedTensor(cur)) break;
 
-			if (!cur || _isDisposedTensor(cur)) {
-				_warn("Forward-Pass bei Layer " + li + " abgebrochen");
-				break;
-			}
-
-			if (wanted[li] !== undefined) {
-				var pos = wanted[li];
-				perNode[pos] = _captureLayerOutput(cur, chain[pos].dim);
+			if (byIdx[li] !== undefined) {
+				var key = byIdx[li];
+				out[key] = _captureLayerOutput(cur, layerNodes[key].dim);
 			}
 		}
 
 		_safeDispose(cur);
 
-		var any = false;
-		for (var a = 0; a < perNode.length; a++) if (perNode[a]) { any = true; break; }
-		return any ? perNode : null;
+		var any = Object.keys(out).length > 0;
+		return any ? out : null;
 	}
 
+
 	// ============================================================
-	// BOUNDING BOX / RAUM-ABGRENZUNG
+	// BOUNDING BOX
 	// ============================================================
 
 	function _computeBounds(act) {
@@ -1194,14 +1562,6 @@ var OrigamiFolds = (function (global) {
 		};
 	}
 
-	/**
-	 * Erzeugt die Drahtgitter-Linien der Bounding-Box.
-	 * dim 1 -> eine Linie entlang x
-	 * dim 2 -> Rechteck in der xy-Ebene (z = 0)
-	 * dim 3 -> Würfel
-	 *
-	 * Rückgabe: { xs, ys, zs } mit null-Trennern zwischen Kanten.
-	 */
 	function _boxWireframe(bounds, dim) {
 		if (!bounds) return null;
 
@@ -1218,30 +1578,23 @@ var OrigamiFolds = (function (global) {
 		var z0 = bounds.z.lo, z1 = bounds.z.hi;
 
 		if (dim === 1) {
-			// Linie: der Unterraum ist eine 1D-Strecke, eingebettet bei y=0, z=0
 			seg([x0, 0, 0], [x1, 0, 0]);
-			// kleine Endmarkierungen, damit man die Grenzen sieht
 			var tick = (x1 - x0) * 0.02;
 			if (!_isFiniteNum(tick) || tick <= 0) tick = 0.02;
 			seg([x0, -tick, 0], [x0, tick, 0]);
 			seg([x1, -tick, 0], [x1, tick, 0]);
 		} else if (dim === 2) {
-			// Rechteck in der Ebene z = 0
 			seg([x0, y0, 0], [x1, y0, 0]);
 			seg([x1, y0, 0], [x1, y1, 0]);
 			seg([x1, y1, 0], [x0, y1, 0]);
 			seg([x0, y1, 0], [x0, y0, 0]);
 		} else {
-			// Würfel
 			var c = [
 				[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
 				[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]
 			];
-			// Boden
 			seg(c[0], c[1]); seg(c[1], c[2]); seg(c[2], c[3]); seg(c[3], c[0]);
-			// Deckel
 			seg(c[4], c[5]); seg(c[5], c[6]); seg(c[6], c[7]); seg(c[7], c[4]);
-			// Pfosten
 			seg(c[0], c[4]); seg(c[1], c[5]); seg(c[2], c[6]); seg(c[3], c[7]);
 		}
 
@@ -1249,7 +1602,7 @@ var OrigamiFolds = (function (global) {
 	}
 
 	// ============================================================
-	// RELU-SCHNITTLINIEN (Hyperplanes)
+	// RELU-SCHNITTLINIEN
 	// ============================================================
 
 	function _isReluLike(act) {
@@ -1262,13 +1615,6 @@ var OrigamiFolds = (function (global) {
 		return SOFT_FOLD.indexOf(String(act).toLowerCase()) >= 0;
 	}
 
-	/**
-	 * Liest die Gewichtsmatrix eines Dense-Layers und liefert die
-	 * Hyperplanes w_i · x + b_i = 0, ausgedrückt im EINGANGSRAUM dieses
-	 * Layers (also in dem Raum, den wir gerade plotten).
-	 *
-	 * Rückgabe: Array von { w: [w1..wd], b: number, unit: number }
-	 */
 	function _extractHyperplanes(layer, inputDim) {
 		if (!layer) return null;
 		if (!_isFiniteNum(inputDim) || inputDim < 1 || inputDim > 3) return null;
@@ -1277,8 +1623,6 @@ var OrigamiFolds = (function (global) {
 		try { cls = layer.getClassName ? layer.getClassName() : ""; }
 		catch (e) { cls = ""; }
 
-		// Nur Dense-Layer haben eine direkt interpretierbare Hyperplane
-		// im Eingangsraum. Conv/Flatten etc. lassen wir weg.
 		if (String(cls).toLowerCase() !== "dense") return null;
 
 		var ws = null;
@@ -1292,13 +1636,10 @@ var OrigamiFolds = (function (global) {
 		try {
 			var kShape = ws[0].shape;
 			if (!Array.isArray(kShape) || kShape.length !== 2) return null;
-			if (kShape[0] !== inputDim) {
-				// Der Eingangsraum passt nicht (z.B. Flatten dazwischen)
-				return null;
-			}
-			kernel = ws[0].dataSync();   // [inputDim * units]
+			if (kShape[0] !== inputDim) return null;
+			kernel = ws[0].dataSync();
 			if (ws.length > 1 && !_isDisposedTensor(ws[1])) {
-				bias = ws[1].dataSync(); // [units]
+				bias = ws[1].dataSync();
 			}
 			var units = kShape[1];
 			var planes = [];
@@ -1316,7 +1657,7 @@ var OrigamiFolds = (function (global) {
 					norm2 += v * v;
 				}
 				if (!ok) continue;
-				if (norm2 < 1e-12) continue;   // degenerierte Hyperplane
+				if (norm2 < 1e-12) continue;
 
 				var b = 0;
 				if (bias && _isFiniteNum(bias[u])) b = bias[u];
@@ -1331,14 +1672,6 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
-	/**
-	 * Schneidet eine Hyperplane mit der Bounding-Box und liefert
-	 * Linien-/Flächensegmente zum Zeichnen.
-	 *
-	 * dim 1: w0*x + b = 0  -> ein Punkt
-	 * dim 2: w0*x + w1*y + b = 0 -> eine Linie im Rechteck
-	 * dim 3: Ebene im Würfel -> Polygon (als Drahtgitter-Rand gezeichnet)
-	 */
 	function _clipHyperplane(plane, bounds, dim) {
 		if (!plane || !bounds) return null;
 
@@ -1359,11 +1692,9 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (dim === 2) {
-			// Linie w0*x + w1*y + b = 0 im Rechteck clippen
 			var pts = [];
 			var eps = 1e-12;
 
-			// Schnitt mit x = x0 / x1
 			if (Math.abs(w[1]) > eps) {
 				var yAtX0 = -(w[0] * bounds.x.lo + b) / w[1];
 				var yAtX1 = -(w[0] * bounds.x.hi + b) / w[1];
@@ -1374,7 +1705,6 @@ var OrigamiFolds = (function (global) {
 					pts.push([bounds.x.hi, yAtX1]);
 				}
 			}
-			// Schnitt mit y = y0 / y1
 			if (Math.abs(w[0]) > eps) {
 				var xAtY0 = -(w[1] * bounds.y.lo + b) / w[0];
 				var xAtY1 = -(w[1] * bounds.y.hi + b) / w[0];
@@ -1388,7 +1718,6 @@ var OrigamiFolds = (function (global) {
 
 			if (pts.length < 2) return null;
 
-			// Nur die zwei am weitesten entfernten Punkte behalten
 			var best = [pts[0], pts[1]];
 			var bestD = -1;
 			for (var i = 0; i < pts.length; i++) {
@@ -1408,7 +1737,6 @@ var OrigamiFolds = (function (global) {
 			};
 		}
 
-		// dim === 3: Ebene im Würfel -> Schnittpolygon über die 12 Kanten
 		var corners = [
 			[bounds.x.lo, bounds.y.lo, bounds.z.lo],
 			[bounds.x.hi, bounds.y.lo, bounds.z.lo],
@@ -1447,15 +1775,12 @@ var OrigamiFolds = (function (global) {
 
 		if (poly.length < 3) return null;
 
-		// Punkte um ihren Schwerpunkt sortieren, damit das Polygon
-		// nicht zum Sternmuster degeneriert
 		var cx = 0, cy = 0, cz = 0;
 		for (var p = 0; p < poly.length; p++) {
 			cx += poly[p][0]; cy += poly[p][1]; cz += poly[p][2];
 		}
 		cx /= poly.length; cy /= poly.length; cz /= poly.length;
 
-		// Zwei orthogonale Basisvektoren in der Ebene bestimmen
 		var n = [w[0], w[1], w[2]];
 		var nl = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]) || 1;
 		n = [n[0]/nl, n[1]/nl, n[2]/nl];
@@ -1488,19 +1813,16 @@ var OrigamiFolds = (function (global) {
 		for (var r = 0; r < poly.length; r++) {
 			xs.push(poly[r][0]); ys.push(poly[r][1]); zs.push(poly[r][2]);
 		}
-		// Polygon schließen
 		xs.push(poly[0][0]); ys.push(poly[0][1]); zs.push(poly[0][2]);
 		xs.push(null); ys.push(null); zs.push(null);
 
 		return { xs: xs, ys: ys, zs: zs };
 	}
 
-	function _buildCutTraces(node, bounds, sceneName, theme) {
+	function _buildCutTracesFor(cutLayer, dim, bounds, sceneName, theme, showLegend) {
 		if (!_state.config.showReluCuts) return [];
-		if (!node || !bounds) return [];
-
-		var cutLayer = node.cutLayer;
-		if (!cutLayer) return [];
+		if (!cutLayer || !bounds) return [];
+		if (!_layerAlive(cutLayer)) return [];
 
 		var act = _activationNameOfLayer(cutLayer);
 		var isHard = _isReluLike(act);
@@ -1508,14 +1830,14 @@ var OrigamiFolds = (function (global) {
 
 		if (!isHard && !(isSoft && _state.config.showSoftFolds)) return [];
 
-		var planes = _extractHyperplanes(cutLayer, node.dim);
+		var planes = _extractHyperplanes(cutLayer, dim);
 		if (!planes || !planes.length) return [];
 
 		var allXs = [], allYs = [], allZs = [];
 		var drawn = 0;
 
 		for (var i = 0; i < planes.length; i++) {
-			var clipped = _clipHyperplane(planes[i], bounds, node.dim);
+			var clipped = _clipHyperplane(planes[i], bounds, dim);
 			if (!clipped) continue;
 			allXs = allXs.concat(clipped.xs);
 			allYs = allYs.concat(clipped.ys);
@@ -1526,74 +1848,350 @@ var OrigamiFolds = (function (global) {
 		if (!drawn) return [];
 
 		var color = isHard ? theme.cutColor : theme.softCut;
-		var label = (isHard ? _tr("origami_relu_cut", "ReLU-Schnitt") :
-		                      _tr("origami_soft_fold", "weiche Biegung")) +
+		var label = (isHard ? _tr("origami_relu_cut", "Faltkante (ReLU)")
+		                    : _tr("origami_soft_fold", "weiche Biegung")) +
 		            " (" + drawn + ")";
 
-		var tr = {
+		return [{
 			type: "scatter3d",
 			mode: "lines",
 			x: allXs, y: allYs, z: allZs,
-			line: { color: color, width: isHard ? 4 : 2 },
+			line: { color: color, width: isHard ? 5 : 2.5 },
 			name: label,
 			legendgroup: "cuts",
-			showlegend: (sceneName === "scene"),
+			showlegend: showLegend,
 			hoverinfo: "name",
 			scene: sceneName
-		};
-		return [tr];
+		}];
 	}
 
 	// ============================================================
-	// TRACES BAUEN
+	// GITTER-TRACES
 	// ============================================================
 
-	function _buildTracesForNode(node, act, sceneName, theme, showLegend) {
+	var DISTORTION_BUCKETS = 11;
+
+	function _buildGridTraces(grid, act, distortion, sceneName, theme,
+	                          showLegend, tagLabel, isInput) {
 		var traces = [];
-		if (!act || !act.n) return traces;
+		if (!grid || !act) return traces;
+		if (!_state.config.showGrid) return traces;
+		if (act.n !== grid.n) {
+			_log("Gitter-Größe passt nicht (" + grid.n + " vs " + act.n + ")");
+			return traces;
+		}
 
+		var lw = _state.config.gridLineWidth;
+		if (!_isFiniteNum(lw) || lw <= 0) lw = 2;
+		var op = _state.config.gridOpacity;
+		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.9;
+		if (isInput) op = 0.55;
+
+		function gx(i) { return act.xs[i]; }
+		function gy(i) { return act.ys ? act.ys[i] : 0; }
+		function gz(i) { return act.zs ? act.zs[i] : 0; }
+
+		var useColor = (_state.config.colorByCurvature && distortion);
+
+		if (!useColor) {
+			var xs = [], ys = [], zs = [];
+			for (var l = 0; l < grid.lines.length; l++) {
+				var ln = grid.lines[l];
+				for (var p = 0; p < ln.length; p++) {
+					xs.push(gx(ln[p])); ys.push(gy(ln[p])); zs.push(gz(ln[p]));
+				}
+				xs.push(null); ys.push(null); zs.push(null);
+			}
+			traces.push({
+				type: "scatter3d",
+				mode: "lines",
+				x: xs, y: ys, z: zs,
+				line: { color: theme.gridColor, width: lw },
+				opacity: op,
+				name: _tr("origami_grid", "Raumgitter") +
+				      (tagLabel ? (" \u00B7 " + tagLabel) : ""),
+				legendgroup: "grid",
+				showlegend: showLegend,
+				hoverinfo: "skip",
+				scene: sceneName
+			});
+			return traces;
+		}
+
+		var vals = distortion.values;
+		var lo = distortion.lo, hi = distortion.hi;
+
+		var buckets = [];
+		for (var b = 0; b < DISTORTION_BUCKETS; b++) {
+			buckets.push({ x: [], y: [], z: [] });
+		}
+
+		function bucketOf(v) {
+			if (!_isFiniteNum(v)) return Math.floor(DISTORTION_BUCKETS / 2);
+			var span = hi - lo;
+			if (!(span > 1e-9)) return Math.floor(DISTORTION_BUCKETS / 2);
+			var t = (v - lo) / span;
+			if (t < 0) t = 0;
+			if (t > 1) t = 1;
+			var bi = Math.round(t * (DISTORTION_BUCKETS - 1));
+			if (!_isFiniteNum(bi) || bi < 0) bi = 0;
+			if (bi >= DISTORTION_BUCKETS) bi = DISTORTION_BUCKETS - 1;
+			return bi;
+		}
+
+		var segCount = 0;
+		for (var li = 0; li < grid.lines.length; li++) {
+			var line = grid.lines[li];
+			for (var s = 0; s + 1 < line.length; s++) {
+				var iA = line[s], iB = line[s + 1];
+				var vAvg = (vals[iA] + vals[iB]) / 2;
+				var bk = buckets[bucketOf(vAvg)];
+				bk.x.push(gx(iA), gx(iB), null);
+				bk.y.push(gy(iA), gy(iB), null);
+				bk.z.push(gz(iA), gz(iB), null);
+				segCount++;
+			}
+		}
+
+		if (segCount > 60000) {
+			_warn("Gitter hätte " + segCount + " Segmente – Auflösung reduziert.");
+			return traces;
+		}
+
+		for (var bi2 = 0; bi2 < DISTORTION_BUCKETS; bi2++) {
+			var bkt = buckets[bi2];
+			if (!bkt.x.length) continue;
+			var frac = (DISTORTION_BUCKETS > 1)
+				? (bi2 / (DISTORTION_BUCKETS - 1)) : 0.5;
+			var repVal = lo + (hi - lo) * frac;
+			var col = _distortionColor(repVal, lo, hi, theme.dark);
+
+			var inLegend = false;
+			var legName = "";
+			if (showLegend && bi2 === 0) {
+				inLegend = true;
+				legName = _tr("origami_compressed", "gestaucht") +
+				          " (2^" + lo.toFixed(1) + ")";
+			} else if (showLegend && bi2 === DISTORTION_BUCKETS - 1) {
+				inLegend = true;
+				legName = _tr("origami_stretched", "gestreckt") +
+				          " (2^" + hi.toFixed(1) + ")";
+			}
+
+			traces.push({
+				type: "scatter3d",
+				mode: "lines",
+				x: bkt.x, y: bkt.y, z: bkt.z,
+				line: { color: col, width: lw },
+				opacity: op,
+				name: inLegend ? legName : "",
+				legendgroup: "grid_dist",
+				showlegend: inLegend,
+				hoverinfo: "skip",
+				scene: sceneName
+			});
+		}
+
+		return traces;
+	}
+
+	function _buildGridSurface(grid, act, distortion, sceneName, theme, showLegend, isInput) {
+		if (!_state.config.showGridSurface) return [];
+		if (!grid || !act) return [];
+		if (grid.dim !== 2) return [];
+		if (!grid.quads || !grid.quads.length) return [];
+		if (act.n !== grid.n) return [];
+
+		var op = _state.config.gridSurfaceOpacity;
+		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.25;
+		if (isInput) op = 0.18;
+
+		var xs = new Array(grid.n);
+		var ys = new Array(grid.n);
+		var zs = new Array(grid.n);
+		for (var i = 0; i < grid.n; i++) {
+			xs[i] = act.xs[i];
+			ys[i] = act.ys ? act.ys[i] : 0;
+			zs[i] = act.zs ? act.zs[i] : 0;
+		}
+
+		var ii = [], jj = [], kk = [];
+		for (var q = 0; q < grid.quads.length; q++) {
+			var Q = grid.quads[q];
+			ii.push(Q[0], Q[0]);
+			jj.push(Q[1], Q[2]);
+			kk.push(Q[2], Q[3]);
+		}
+
+		var trace = {
+			type: "mesh3d",
+			x: xs, y: ys, z: zs,
+			i: ii, j: jj, k: kk,
+			opacity: op,
+			flatshading: false,
+			name: _tr("origami_surface", "gefaltete Fläche"),
+			legendgroup: "surface",
+			showlegend: showLegend,
+			hoverinfo: "skip",
+			scene: sceneName,
+			lighting: { ambient: 0.75, diffuse: 0.5, specular: 0.08 }
+		};
+
+		if (_state.config.colorByCurvature && distortion) {
+			trace.intensity = Array.prototype.slice.call(distortion.values);
+			trace.colorscale = _distortionScale(theme.dark);
+			trace.cmin = distortion.lo;
+			trace.cmax = distortion.hi;
+			trace.showscale = false;
+		} else {
+			trace.color = theme.surfaceColor;
+		}
+
+		return [trace];
+	}
+
+
+	// ============================================================
+	// TRACES FÜR EINEN RAUM
+	// ============================================================
+
+	function _offsetAct(act, dim, amount) {
+		if (!act || !act.n) return act;
 		var n = act.n;
+		var xs = act.xs.slice();
+		var ys = act.ys ? act.ys.slice() : null;
+		var zs = act.zs ? act.zs.slice() : null;
+
+		if (dim <= 1) {
+			if (!ys) ys = new Float64Array(n);
+			for (var i = 0; i < n; i++) ys[i] += amount;
+		} else {
+			if (!zs) zs = new Float64Array(n);
+			for (var i = 0; i < n; i++) zs[i] += amount;
+		}
+
+		return { xs: xs, ys: ys, zs: zs, dim: act.dim, n: n };
+	}
+
+	function _buildSpaceTraces(o) {
+		var traces = [];
+		if (!o || !o.act || !o.act.n) return traces;
+
+		var act        = o.act;
+		var theme      = o.theme;
+		var sceneName  = o.sceneName;
+		var showLegend = !!o.showLegend;
+		var dim        = o.dim;
+		var isOut      = !!o.isOutput;
+
+		var n  = act.n;
+
+		var bounds = o.bounds || _computeBounds(act);
+
+		var ext = 0;
+		if (bounds) {
+			if (dim <= 1) {
+				ext = Math.abs(bounds.x.hi - bounds.x.lo);
+				if (ext < 1e-6) ext = 1;
+			} else {
+				var ex2 = Math.abs(bounds.x.hi - bounds.x.lo);
+				var ey2 = Math.abs(bounds.y.hi - bounds.y.lo);
+				ext = Math.max(ex2, ey2);
+				if (ext < 1e-6) ext = 1;
+			}
+		}
+		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
+		var sepAmt = ext * 1.2;
+
+		if (bounds) {
+			var dir = isOut ? 1 : -1;
+			act = _offsetAct(act, dim, dir * sepAmt);
+		}
+
 		var xs = act.xs;
-		var ys = act.ys ? act.ys : new Float64Array(n);       // 1D -> y = 0
-		var zs = act.zs ? act.zs : new Float64Array(n);       // 1/2D -> z = 0
+		var ys = act.ys ? act.ys : new Float64Array(n);
+		var zs = act.zs ? act.zs : new Float64Array(n);
 
-		var colors = _state.cachedColors;
-		var classIdx = _state.cachedClassIdx;
-		var classNames = _state.cachedClassNames;
-		var isReg = _state.cachedIsRegression;
-
-		var bounds = _computeBounds(act);
-
-		// ---- Bounding-Box ----------------------------------------
 		if (_state.config.showBoundingBox && bounds) {
-			var wf = _boxWireframe(bounds, act.dim);
+			var wf = _boxWireframe(bounds, dim);
 			if (wf) {
 				traces.push({
 					type: "scatter3d",
 					mode: "lines",
 					x: wf.xs, y: wf.ys, z: wf.zs,
-					line: { color: theme.boxColor, width: 2 },
-					name: _tr("origami_subspace", "Unterraum") + " (" + act.dim + "D)",
+					line: { color: theme.boxColor, width: isOut ? 2 : 1 },
+					opacity: isOut ? 1 : 0.5,
+					name: _tr("origami_subspace", "Unterraum") + " (" + dim + "D)",
 					legendgroup: "box",
-					showlegend: showLegend,
+					showlegend: showLegend && isOut,
 					hoverinfo: "skip",
 					scene: sceneName
 				});
 			}
 		}
 
-		// ---- Datenpunkte ------------------------------------------
+		var gridActForBuild = o.gridAct;
+		if (o.gridAct && bounds) {
+			var gridDir = isOut ? 1 : -1;
+			gridActForBuild = _offsetAct(o.gridAct, dim, gridDir * sepAmt);
+		}
+
+		if (o.grid && gridActForBuild) {
+			var surf = _buildGridSurface(o.grid, gridActForBuild,
+				isOut ? o.distortion : null,
+				sceneName, theme, showLegend && isOut, !isOut);
+			for (var s = 0; s < surf.length; s++) traces.push(surf[s]);
+		}
+
+		if (o.grid && gridActForBuild) {
+			var gt = _buildGridTraces(
+				o.grid, gridActForBuild,
+				isOut ? o.distortion : null,
+				sceneName, theme, showLegend && isOut,
+				isOut ? _tr("origami_after", "nachher")
+				     : _tr("origami_before", "vorher"),
+				!isOut
+			);
+			for (var g = 0; g < gt.length; g++) traces.push(gt[g]);
+		}
+
+		if (_state.config.showDataPoints) {
+			var dpt = _buildDataPointTraces(
+				act, xs, ys, zs, n, dim, o.node, sceneName, theme,
+				showLegend && isOut, !isOut);
+			for (var d = 0; d < dpt.length; d++) traces.push(dpt[d]);
+		}
+
+		if (o.cutLayer && bounds) {
+			var cuts = _buildCutTracesFor(
+				o.cutLayer, dim, bounds, sceneName, theme, showLegend);
+			for (var c = 0; c < cuts.length; c++) traces.push(cuts[c]);
+		}
+
+		return traces;
+	}
+
+	function _buildDataPointTraces(act, xs, ys, zs, n, dim, node,
+	                                sceneName, theme, showLegend, isInput) {
+		var traces = [];
+		var classIdx   = _state.cachedClassIdx;
+		var classNames = _state.cachedClassNames;
+		var isReg      = _state.cachedIsRegression;
+		var colors     = _state.cachedColors;
+		var ptOp       = isInput ? _state.config.pointOpacity * 0.4
+		                         : _state.config.pointOpacity;
+
+		var nodeName = (node && node.name) ? node.name : "";
+
 		if (classNames && classIdx && !isReg) {
-			// Pro Klasse ein eigener Trace -> echte Legende + Filterbarkeit
 			var buckets = {};
 			for (var i = 0; i < n; i++) {
 				var c = classIdx[i];
 				if (!_isFiniteNum(c) || c < 0) c = 0;
-				if (!buckets[c]) buckets[c] = { x: [], y: [], z: [], t: [] };
+				if (!buckets[c]) buckets[c] = { x: [], y: [], z: [] };
 				buckets[c].x.push(xs[i]);
 				buckets[c].y.push(ys[i]);
 				buckets[c].z.push(zs[i]);
-				buckets[c].t.push(classNames[c] || ("#" + c));
 			}
 			var keys = Object.keys(buckets).sort(function (a, b) {
 				return parseInt(a, 10) - parseInt(b, 10);
@@ -1608,24 +2206,22 @@ var OrigamiFolds = (function (global) {
 					marker: {
 						size: _state.config.pointSize,
 						color: _classColor(ci),
-						opacity: _state.config.pointOpacity,
+						opacity: ptOp,
 						line: { width: 0 }
 					},
-					name: classNames[ci] || (_tr("origami_class", "Klasse") + " " + ci),
+					name: classNames[ci] ||
+					      (_tr("origami_class", "Klasse") + " " + ci),
 					legendgroup: "cls" + ci,
 					showlegend: showLegend,
 					hovertemplate:
-						"<b>%{text}</b><br>" +
 						"x: %{x:.4f}" +
-						(act.dim >= 2 ? "<br>y: %{y:.4f}" : "") +
-						(act.dim >= 3 ? "<br>z: %{z:.4f}" : "") +
-						"<extra>" + node.name + "</extra>",
-					text: bk.t,
+						(dim >= 2 ? "<br>y: %{y:.4f}" : "") +
+						(dim >= 3 ? "<br>z: %{z:.4f}" : "") +
+						"<extra>" + nodeName + "</extra>",
 					scene: sceneName
 				});
 			}
 		} else {
-			// Regression oder keine Klassen -> ein Trace mit Farbarray
 			traces.push({
 				type: "scatter3d",
 				mode: "markers",
@@ -1635,7 +2231,7 @@ var OrigamiFolds = (function (global) {
 				marker: {
 					size: _state.config.pointSize,
 					color: colors || "#159c72",
-					opacity: _state.config.pointOpacity,
+					opacity: ptOp,
 					line: { width: 0 }
 				},
 				name: isReg ? _tr("origami_target", "Zielwert")
@@ -1644,40 +2240,67 @@ var OrigamiFolds = (function (global) {
 				showlegend: showLegend,
 				hovertemplate:
 					"x: %{x:.4f}" +
-					(act.dim >= 2 ? "<br>y: %{y:.4f}" : "") +
-					(act.dim >= 3 ? "<br>z: %{z:.4f}" : "") +
-					"<extra>" + node.name + "</extra>",
+					(dim >= 2 ? "<br>y: %{y:.4f}" : "") +
+					(dim >= 3 ? "<br>z: %{z:.4f}" : "") +
+					"<extra>" + nodeName + "</extra>",
 				scene: sceneName
 			});
 		}
-
-		// ---- ReLU-Schnittlinien ----------------------------------
-		var cuts = _buildCutTraces(node, bounds, sceneName, theme);
-		for (var q = 0; q < cuts.length; q++) traces.push(cuts[q]);
 
 		return traces;
 	}
 
 	// ============================================================
-	// LAYOUT
+	// PAIR-LAYOUT
 	// ============================================================
 
 	function _sceneNameFor(i) {
 		return (i === 0) ? "scene" : ("scene" + (i + 1));
 	}
 
-	function _buildLayout(chain, perNode, theme) {
-		var nPlots = chain.length;
+	function _defaultCamera(dim) {
+		if (dim === 1) {
+			return { eye: { x: 0.1, y: -2.2, z: 0.9 }, up: { x: 0, y: 0, z: 1 } };
+		}
+		if (dim === 2) {
+			return { eye: { x: 1.35, y: -1.55, z: 1.05 }, up: { x: 0, y: 0, z: 1 } };
+		}
+		return { eye: { x: 1.5, y: 1.4, z: 1.2 }, up: { x: 0, y: 0, z: 1 } };
+	}
+
+	function _layerOpLabel(p) {
+		var parts = [];
+		parts.push(p.className || "Layer");
+		parts.push(p.dimIn + "\u2192" + p.dimOut);
+		if (p.activation && p.activation !== "linear") {
+			parts.push(p.activation);
+			if (_isReluLike(p.activation)) {
+				parts.push("\u2702");
+			} else if (_isSoftFold(p.activation)) {
+				parts.push("\u223C");
+			}
+		} else {
+			parts.push(_tr("origami_affine", "affin"));
+		}
+		return parts.join(" \u00B7 ");
+	}
+
+	function _buildLayout(results, theme) {
+		var nPairs = results.length;
+		var h = _state.config.subplotHeight;
+		if (!_isFiniteNum(h) || h < 300) h = 500;
+
 		var layout = {
 			paper_bgcolor: theme.paper,
 			plot_bgcolor:  theme.plotBg,
 			font: { color: theme.text, size: 11 },
-			margin: { l: 8, r: 8, t: 54, b: 8 },
-			height: _state.config.subplotHeight,
+			margin: { l: 6, r: 6, t: 54, b: 8 },
+			height: h,
+			autosize: true,
 			showlegend: true,
 			legend: {
 				orientation: "h",
-				x: 0, y: 1.06,
+				x: 0, y: 1.04,
 				font: { size: 10, color: theme.text },
 				bgcolor: "rgba(0,0,0,0)"
 			},
@@ -1688,44 +2311,37 @@ var OrigamiFolds = (function (global) {
 				x: 0.5, xanchor: "center"
 			},
 			hovermode: "closest",
+			annotations: [],
 			transition: _state.config.smoothUpdates
 				? { duration: 250, easing: "cubic-in-out" }
 				: { duration: 0 }
 		};
 
-		// ---- Domains für die Subplots berechnen ------------------
-		// Wir legen alle Räume horizontal nebeneinander, jeder bekommt
-		// eine eigene scene mit eigenem Domain-Bereich.
-		var gap = (nPlots > 1) ? Math.min(0.02, 0.4 / nPlots) : 0;
-		var wEach = (1 - gap * (nPlots - 1)) / nPlots;
-
+		var gap = (nPairs > 1) ? Math.min(0.02, 0.35 / nPairs) : 0;
+		var wEach = (1 - gap * (nPairs - 1)) / nPairs;
 		if (!_isFiniteNum(wEach) || wEach <= 0) wEach = 1;
 
-		for (var i = 0; i < nPlots; i++) {
+		var axisCommon = {
+			gridcolor: theme.grid,
+			zerolinecolor: theme.zeroline,
+			color: theme.axisText,
+			tickfont: { size: 8, color: theme.axisText },
+			showspikes: false
+		};
+
+		for (var i = 0; i < nPairs; i++) {
+			var r = results[i];
+			if (!r) continue;
+
+			var p = r.pair;
 			var sceneName = _sceneNameFor(i);
 			var x0 = i * (wEach + gap);
 			var x1 = x0 + wEach;
 			if (x1 > 1) x1 = 1;
+			var xMid = (x0 + x1) / 2;
 
-			var node = chain[i];
-			var act  = perNode[i];
-			var dim  = act ? act.dim : node.dim;
-
-			// Kamera pro Szene erhalten, falls schon vorhanden
-			var cam = _state.lastCameras[sceneName];
-			if (!cam) {
-				// Standardblick: leicht schräg von oben, so dass man
-				// den "Knick" gut erkennen kann
-				cam = { eye: { x: 1.45, y: 1.35, z: 1.15 } };
-			}
-
-			var axisCommon = {
-				gridcolor: theme.grid,
-				zerolinecolor: theme.zeroline,
-				color: theme.axisText,
-				tickfont: { size: 9, color: theme.axisText },
-				showspikes: false
-			};
+			var dim = Math.max(p.dimIn, p.dimOut);
+			var cam = _state.lastCameras[sceneName] || _defaultCamera(dim);
 
 			layout[sceneName] = {
 				domain: { x: [x0, x1], y: [0, 1] },
@@ -1733,73 +2349,68 @@ var OrigamiFolds = (function (global) {
 				camera: cam,
 				bgcolor: theme.plotBg,
 				xaxis: Object.assign({}, axisCommon, {
-					title: { text: "d0", font: { size: 10, color: theme.axisText } }
+					title: { text: "d0", font: { size: 9, color: theme.axisText } }
 				}),
 				yaxis: Object.assign({}, axisCommon, {
 					title: {
 						text: (dim >= 2 ? "d1" : ""),
-						font: { size: 10, color: theme.axisText }
+						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 2)
 				}),
 				zaxis: Object.assign({}, axisCommon, {
 					title: {
 						text: (dim >= 3 ? "d2" : ""),
-						font: { size: 10, color: theme.axisText }
+						font: { size: 9, color: theme.axisText }
 					},
 					showticklabels: (dim >= 3)
 				})
 			};
 
-			// ---- Titel-Annotation pro Subplot --------------------
-			if (!layout.annotations) layout.annotations = [];
-
-			var actName = node.activation ? (" · " + node.activation) : "";
-			var titleTxt = (node.isInput
-					? _tr("origami_input_space", "Input")
-					: ("L" + node.layerIdx + " " + node.className))
-				+ " [" + dim + "D]" + actName;
-
+			var titleTxt = "L" + p.layerIdx + " " + p.className +
+				"  [" + p.dimIn + "\u2192" + p.dimOut + "D]";
+			var actName = p.activation && p.activation !== "linear"
+				? (" \u00B7 " + p.activation) : "";
 			layout.annotations.push({
-				text: titleTxt,
-				x: (x0 + x1) / 2,
-				y: 1.0,
-				xref: "paper",
-				yref: "paper",
-				xanchor: "center",
-				yanchor: "bottom",
+				text: titleTxt + actName,
+				x: xMid, y: 1.0,
+				xref: "paper", yref: "paper",
+				xanchor: "center", yanchor: "bottom",
 				showarrow: false,
-				font: { size: 10, color: theme.axisText }
+				font: { size: 10, color: theme.textAccent }
 			});
 
-			// ---- Pfeil zum nächsten Raum ("→" wie in origami.png) --
-			if (i < nPlots - 1) {
+			if (i < nPairs - 1) {
 				layout.annotations.push({
-					text: "➜",
+					text: "\u279C",
 					x: x1 + gap / 2,
 					y: 0.5,
-					xref: "paper",
-					yref: "paper",
-					xanchor: "center",
-					yanchor: "middle",
+					xref: "paper", yref: "paper",
+					xanchor: "center", yanchor: "middle",
 					showarrow: false,
-					font: { size: 22, color: theme.axisText }
+					font: { size: 20, color: theme.axisText }
 				});
 			}
-		}
 
-		// Breite dynamisch: genug Platz pro Subplot
-		var minW = _state.config.minSubplotWidth * nPlots;
-		if (_isFiniteNum(minW) && minW > 0) {
-			layout.width = undefined;   // responsive lassen
-			layout.autosize = true;
+			if (r.distortion) {
+				var lo = r.distortion.lo, hi = r.distortion.hi;
+				layout.annotations.push({
+					text: "\u00D72^[" + lo.toFixed(1) + "\u2026" + hi.toFixed(1) + "]",
+					x: xMid, y: 0.01,
+					xref: "paper", yref: "paper",
+					xanchor: "center", yanchor: "bottom",
+					showarrow: false,
+					font: { size: 8.5, color: theme.axisText }
+				});
+			}
 		}
 
 		return layout;
 	}
 
+
 	// ============================================================
-	// KAMERA-ERHALTUNG
+	// KAMERA / INTERAKTION
 	// ============================================================
 
 	function _saveCameras() {
@@ -1827,10 +2438,6 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
-	// ============================================================
-	// INTERAKTIONS-ERKENNUNG
-	// ============================================================
-
 	function _clearInteractionTimer() {
 		if (_state.interactionTimer) {
 			clearTimeout(_state.interactionTimer);
@@ -1854,6 +2461,15 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
+	function _updateCamerasFromRelayout(ev) {
+		if (!ev) return;
+		var ks = Object.keys(ev);
+		for (var i = 0; i < ks.length; i++) {
+			var m = ks[i].match(/^(scene\d*)\.camera$/);
+			if (m) _state.lastCameras[m[1]] = ev[ks[i]];
+		}
+	}
+
 	function _attachInteractionListeners() {
 		var div = _state.plotDiv;
 		if (!div) return;
@@ -1862,8 +2478,6 @@ var OrigamiFolds = (function (global) {
 			div.addEventListener("mousedown",  _onInteractionStart, { passive: true });
 			div.addEventListener("touchstart", _onInteractionStart, { passive: true });
 			div.addEventListener("wheel",      _onInteractionStart, { passive: true });
-
-			// Scroll/Touch nicht an die Seite weitergeben
 			div.addEventListener("wheel", function (e) { e.stopPropagation(); },
 				{ passive: true });
 			div.addEventListener("touchmove", function (e) { e.stopPropagation(); },
@@ -1878,13 +2492,7 @@ var OrigamiFolds = (function (global) {
 					_state.userInteracting = true;
 					_clearInteractionTimer();
 					_state.interactionTimer = setTimeout(_onInteractionEnd, 320);
-					if (ev) {
-						var ks = Object.keys(ev);
-						for (var i = 0; i < ks.length; i++) {
-							var m = ks[i].match(/^(scene\d*)\.camera$/);
-							if (m) _state.lastCameras[m[1]] = ev[ks[i]];
-						}
-					}
+					_updateCamerasFromRelayout(ev);
 				});
 				div.on("plotly_relayout", function () { _saveCameras(); });
 			}
@@ -1910,7 +2518,6 @@ var OrigamiFolds = (function (global) {
 	function _setupObserver() {
 		if (_state.observer || !_state.container) return;
 		if (typeof IntersectionObserver === "undefined") {
-			// Fallback: kein Observer verfügbar -> immer als sichtbar behandeln
 			_state.isVisible = true;
 			return;
 		}
@@ -1920,9 +2527,6 @@ var OrigamiFolds = (function (global) {
 					var wasVisible = _state.isVisible;
 					_state.isVisible = entries[i].isIntersecting;
 					if (!_state.isVisible) continue;
-
-					// Guardrail: bei jedem sichtbaren Callback nacharbeiten,
-					// nicht nur an der Flanke (die kann verpasst werden).
 					if (!wasVisible) _state.pendingRender = true;
 					if (_state.pendingRender || _state.dataDirty) {
 						_state.pendingRender = false;
@@ -1959,7 +2563,6 @@ var OrigamiFolds = (function (global) {
 	function _ensurePlotly(cb) {
 		if (_hasPlotly()) { cb(); return; }
 		if (_state.plotlyLoading) {
-			// warten bis geladen
 			var tries = 0;
 			var iv = setInterval(function () {
 				tries++;
@@ -1978,7 +2581,7 @@ var OrigamiFolds = (function (global) {
 	}
 
 	// ============================================================
-	// DEAKTIVIERUNG / INFO
+	// DEAKTIVIERUNG
 	// ============================================================
 
 	function _deactivate(reasonKey, fallbackMsg) {
@@ -2005,7 +2608,6 @@ var OrigamiFolds = (function (global) {
 		_state.deactivationMsg = "";
 		if (_state.plotDiv) _state.plotDiv.style.display = "";
 		if (_state.infoDiv)  _state.infoDiv.style.display = "none";
-		// Kompletten Neuaufbau erzwingen
 		_state.lastFingerprint = null;
 		_state.lastViewHash = null;
 	}
@@ -2027,7 +2629,6 @@ var OrigamiFolds = (function (global) {
 	}
 
 	function _render() {
-		// ---- Guardrails vor dem Rendern --------------------------
 		if (!_state.initialized || !_state.plotDiv) return;
 		if (!_state.plotDiv.parentNode) {
 			_log("plotDiv nicht im DOM, Render abgebrochen");
@@ -2046,7 +2647,6 @@ var OrigamiFolds = (function (global) {
 			return;
 		}
 
-		// Throttling während des Trainings
 		var now = (typeof performance !== "undefined" && performance.now)
 			? performance.now() : Date.now();
 		var training = false;
@@ -2066,34 +2666,42 @@ var OrigamiFolds = (function (global) {
 			return;
 		}
 
-		// ---- Kette bauen ----------------------------------------
-		var built = _buildChain();
-		var chain = built.chain;
+		if (_state.modelRef !== global.model) {
+			_state.modelRef = global.model;
+			_state.lastFingerprint = null;
+			_state.lastChainSignature = null;
+			_state.dataDirty = true;
+			if (_state.cachedX) { _safeDispose(_state.cachedX); _state.cachedX = null; _state.cachedXHash = null; }
+		}
 
-		if (chain.length && !_chainAlive(chain)) {
-			_log("Layer-Kette enthält disposed Layer (Modell-Rebuild in Progress), übersprungen");
+		var built = _buildChain();
+		var pairs = built.pairs;
+
+		if (pairs.length && !_chainAlive(pairs)) {
+			_log("Paar-Kette enthält disposed Layer, übersprungen");
 			return;
 		}
 
-		if (!chain.length) {
-			if (built.reason === "no_low_dim_layers") {
+		if (!pairs.length) {
+			if (built.reason === "no_adjacent_low_dim") {
+				_deactivate("origami_no_adjacent",
+					"Keine zwei BENACHBARTEN Layer mit \u2264 3 Dimensionen.");
+			} else if (built.reason === "no_low_dim_layers") {
 				_deactivate("origami_no_low_dim",
-					"Kein Layer hat 1–3 Ausgabedimensionen. " +
-					"Der Origami-Plot benötigt mindestens einen Raum mit ≤ 3 Dimensionen.");
+					"Kein Layer hat 1\u20133 Ausgabedimensionen. " +
+					"Baue ein Dense(2) oder Dense(3) ein.");
 			} else {
 				_deactivate("origami_no_layers", "Keine plotbaren Layer gefunden.");
 			}
 			return;
 		}
 
-		// ---- Shape-Änderung? -> ggf. reaktivieren ---------------
-		var sig = _chainSignature(chain);
+		var sig = _chainSignature(pairs);
 		if (sig !== _state.lastChainSignature) {
-			_log("Layer-Kette geändert: " + sig);
+			_log("Paar-Kette geändert: " + sig);
 			_state.lastChainSignature = sig;
-			_state.lastFingerprint = null;     // Neuaufbau erzwingen
+			_state.lastFingerprint = null;
 			if (_state.deactivated) _reactivate();
-			// Plotly muss bei geänderter Subplot-Anzahl neu aufgebaut werden
 			if (_state.plotlyInitialized) {
 				try { global.Plotly.purge(_state.plotDiv); } catch (e) { /* ignore */ }
 				_state.plotlyInitialized = false;
@@ -2102,15 +2710,13 @@ var OrigamiFolds = (function (global) {
 			_reactivate();
 		}
 
-		// ---- Daten vorbereiten ----------------------------------
 		if (!_prepareData()) {
 			_deactivate("origami_no_data",
-				"Keine Trainingsdaten verfügbar (xy_data_global fehlt oder ist leer).");
+				"Keine Trainingsdaten verfügbar.");
 			return;
 		}
 
-		// ---- Change-Detection -----------------------------------
-		var fp = _modelFingerprint(chain);
+		var fp = _modelFingerprint(pairs);
 		var vh = _viewHash();
 		var rev = _currentDataRevision();
 
@@ -2124,48 +2730,64 @@ var OrigamiFolds = (function (global) {
 			return;
 		}
 
-		// ---- Aktivierungen berechnen ---------------------------
-		var perNode = _computeActivations(chain);
-		if (!perNode) {
+		var results = _computePairs(pairs);
+		if (!results) {
 			_state.consecutiveErrors++;
 			if (_state.consecutiveErrors > 4) {
 				_deactivate("origami_activation_failed",
-					"Aktivierungen konnten mehrfach nicht berechnet werden. " +
-					"Der Plot wurde deaktiviert, um Folgefehler zu vermeiden.");
+					"Aktivierungen konnten mehrfach nicht berechnet werden.");
 			} else {
-				_warn("Aktivierungen konnten nicht berechnet werden (Versuch " +
+				_warn("Aktivierungen fehlgeschlagen (Versuch " +
 				      _state.consecutiveErrors + "/4)");
 			}
 			return;
 		}
 		_state.consecutiveErrors = 0;
 
-		// Prüfen, ob überhaupt irgendwas Plotbares dabei ist
-		var anyData = false;
-		for (var a = 0; a < perNode.length; a++) {
-			if (perNode[a] && perNode[a].n > 0) { anyData = true; break; }
-		}
-		if (!anyData) {
-			_deactivate("origami_no_activations",
-				"Es konnten keine Aktivierungen gelesen werden.");
-			return;
-		}
-
-		// ---- Traces + Layout bauen -----------------------------
 		var theme = _theme();
 		var traces = [];
 		var legendDone = false;
 
-		for (var i = 0; i < chain.length; i++) {
-			var act = perNode[i];
-			if (!act) continue;
-			var sceneName = _sceneNameFor(i);
+		for (var i = 0; i < results.length; i++) {
+			var r = results[i];
+			if (!r) continue;
+
 			var showLegend = !legendDone;
-			var t = _buildTracesForNode(chain[i], act, sceneName, theme, showLegend);
-			if (t.length) {
-				legendDone = true;
-				for (var q = 0; q < t.length; q++) traces.push(t[q]);
-			}
+			var sceneName = _sceneNameFor(i);
+
+			var tIn = _buildSpaceTraces({
+				node:       r.pair.inNode,
+				act:        r.actIn,
+				bounds:     r.boundsIn,
+				grid:       r.grid,
+				gridAct:    r.gridIn,
+				distortion: r.distortion,
+				cutLayer:   r.pair.layer,
+				dim:        r.pair.dimIn,
+				sceneName:  sceneName,
+				theme:      theme,
+				showLegend: showLegend,
+				isOutput:   false
+			});
+
+			var tOut = _buildSpaceTraces({
+				node:       r.pair.outNode,
+				act:        r.actOut,
+				bounds:     r.boundsOut,
+				grid:       r.grid,
+				gridAct:    r.gridOut,
+				distortion: r.distortion,
+				cutLayer:   null,
+				dim:        r.pair.dimOut,
+				sceneName:  sceneName,
+				theme:      theme,
+				showLegend: false,
+				isOutput:   true
+			});
+
+			if (tIn.length || tOut.length) legendDone = true;
+			for (var a = 0; a < tIn.length; a++)  traces.push(tIn[a]);
+			for (var b = 0; b < tOut.length; b++) traces.push(tOut[b]);
 		}
 
 		if (!traces.length) {
@@ -2173,7 +2795,7 @@ var OrigamiFolds = (function (global) {
 			return;
 		}
 
-		var layout = _buildLayout(chain, perNode, theme);
+		var layout = _buildLayout(results, theme);
 
 		var plotConfig = {
 			responsive: true,
@@ -2183,7 +2805,6 @@ var OrigamiFolds = (function (global) {
 			scrollZoom: true
 		};
 
-		// ---- Kameras sichern, dann rendern ---------------------
 		_saveCameras();
 
 		if (_state.plotDiv) _state.plotDiv.style.display = "";
@@ -2201,7 +2822,7 @@ var OrigamiFolds = (function (global) {
 						_lastRebuildTime         = now;
 						_attachInteractionListeners();
 						_saveCameras();
-						_log("Plot neu erstellt (" + chain.length + " Räume, " +
+						_log("Plot neu erstellt (" + results.length + " Paare, " +
 						     _state.cachedSampleCount + " Punkte)");
 					})
 					.catch(function (e) {
@@ -2221,7 +2842,6 @@ var OrigamiFolds = (function (global) {
 					})
 					.catch(function (e) {
 						_error("Plotly.react fehlgeschlagen: " + e);
-						// Beim nächsten Mal komplett neu aufbauen
 						_state.plotlyInitialized = false;
 					});
 			}
@@ -2231,12 +2851,12 @@ var OrigamiFolds = (function (global) {
 		}
 	}
 
+
 	// ============================================================
 	// DOM-AUFBAU
 	// ============================================================
 
 	function _resolveParent(divOrId) {
-		// String-ID
 		if (typeof divOrId === "string" && divOrId !== "") {
 			var byId = document.getElementById(divOrId);
 			if (byId) {
@@ -2247,14 +2867,12 @@ var OrigamiFolds = (function (global) {
 			return null;
 		}
 
-		// DOM-Element
 		if (divOrId && typeof HTMLElement !== "undefined" &&
 		    divOrId instanceof HTMLElement) {
 			_state.parentElement = divOrId;
 			return divOrId;
 		}
 
-		// jQuery-Objekt
 		try {
 			if (divOrId && typeof divOrId === "object" &&
 			    typeof divOrId.length === "number" && divOrId.length > 0 &&
@@ -2264,7 +2882,6 @@ var OrigamiFolds = (function (global) {
 			}
 		} catch (e) { /* ignore */ }
 
-		// jQuery-Selektor-Funktion vorhanden und String übergeben, der keine ID war
 		try {
 			if (typeof divOrId === "string" && typeof global.$ === "function") {
 				var $el = global.$(divOrId);
@@ -2279,7 +2896,6 @@ var OrigamiFolds = (function (global) {
 	}
 
 	function _buildDOM(divOrId) {
-		// Singleton: existierenden Container wiederverwenden
 		var existing = document.getElementById(SINGLETON_ID);
 		if (existing && existing.parentNode) {
 			_state.container   = existing;
@@ -2298,7 +2914,6 @@ var OrigamiFolds = (function (global) {
 		_state.container = container;
 		_styleContainer();
 
-		// ---- Kopfzeile ------------------------------------------
 		var head = document.createElement("div");
 		head.style.cssText =
 			"display:flex;align-items:center;justify-content:space-between;" +
@@ -2308,9 +2923,9 @@ var OrigamiFolds = (function (global) {
 		title.style.cssText =
 			"font-weight:700;font-size:13px;letter-spacing:0.3px;color:" +
 			theme.textAccent + ";";
-		title.innerHTML = "✦ " +
-			_tr("origami_title",
-				"Origami: Faltung der Datenmannigfaltigkeit durch die Layer");
+		title.innerHTML = "\u2726 " +
+			_tr("origami_title_paired",
+				"Origami: Faltung der Datenmannigfaltigkeit");
 		head.appendChild(title);
 
 		var btnRow = document.createElement("div");
@@ -2333,7 +2948,7 @@ var OrigamiFolds = (function (global) {
 			return b;
 		}
 
-		mkBtn("↺ " + _tr("origami_reset_view", "Ansicht"),
+		mkBtn("\u21BA " + _tr("origami_reset_view", "Ansicht"),
 			_tr("origami_reset_view_tip",
 				"Setzt alle Kameras auf die Standardansicht zurück."),
 			function () {
@@ -2347,32 +2962,46 @@ var OrigamiFolds = (function (global) {
 				_scheduleRender();
 			});
 
-		mkBtn("⟳ " + _tr("origami_force", "Neu zeichnen"),
+		mkBtn("\u27F3 " + _tr("origami_force", "Neu zeichnen"),
 			_tr("origami_force_tip",
-				"Erzwingt eine Neuberechnung, auch wenn sich nichts geändert hat."),
+				"Erzwingt eine Neuberechnung."),
 			function () { forceUpdate(); });
 
-		mkBtn("✂ " + _tr("origami_toggle_cuts", "Schnitte"),
+		mkBtn("\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
 			_tr("origami_toggle_cuts_tip",
-				"Zeigt/versteckt die ReLU-Hyperplanes (die 'Schnittlinien', an denen " +
-				"der Knick entsteht)."),
+				"Zeigt/versteckt die ReLU-Hyperplanes."),
 			function () {
 				_state.config.showReluCuts = !_state.config.showReluCuts;
 				_scheduleRender();
 			});
 
-		mkBtn("▣ " + _tr("origami_toggle_box", "Rahmen"),
+		mkBtn("\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
 			_tr("origami_toggle_box_tip",
-				"Zeigt/versteckt die Begrenzung des Unterraums (Linie/Rechteck/Würfel)."),
+				"Zeigt/versteckt die Begrenzung des Unterraums."),
 			function () {
 				_state.config.showBoundingBox = !_state.config.showBoundingBox;
+				_scheduleRender();
+			});
+
+		mkBtn("\u229E " + _tr("origami_toggle_grid", "Gitter"),
+			_tr("origami_toggle_grid_tip",
+				"Zeigt/versteckt das Raumgitter."),
+			function () {
+				_state.config.showGrid = !_state.config.showGrid;
+				_scheduleRender();
+			});
+
+		mkBtn("\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
+			_tr("origami_toggle_surface_tip",
+				"Zeigt die gefaltete Fläche als Körper (2D)."),
+			function () {
+				_state.config.showGridSurface = !_state.config.showGridSurface;
 				_scheduleRender();
 			});
 
 		head.appendChild(btnRow);
 		container.appendChild(head);
 
-		// ---- Info-/Deaktivierungsmeldung ------------------------
 		var info = document.createElement("div");
 		info.id = INFO_ID;
 		info.style.cssText =
@@ -2381,16 +3010,14 @@ var OrigamiFolds = (function (global) {
 		container.appendChild(info);
 		_state.infoDiv = info;
 
-		// ---- Plot-Div -------------------------------------------
 		var plot = document.createElement("div");
 		plot.id = PLOT_ID;
 		plot.style.cssText =
-			"width:100%;min-height:" + _state.config.subplotHeight + "px;" +
+			"width:100%;min-height:" + (_state.config.subplotHeight * 2 + 90) + "px;" +
 			"border-radius:8px;overflow:hidden;";
 		container.appendChild(plot);
 		_state.plotDiv = plot;
 
-		// ---- Fußzeile (Legende der Semantik) --------------------
 		var foot = document.createElement("div");
 		foot.style.cssText =
 			"margin-top:8px;font-size:10.5px;line-height:1.6;opacity:0.75;color:" +
@@ -2398,15 +3025,11 @@ var OrigamiFolds = (function (global) {
 		foot.innerHTML =
 			"<b>" + _tr("origami_legend", "Lesehilfe") + ":</b> " +
 			_tr("origami_legend_text",
-				"Jeder Kasten ist ein Aktivierungsraum (1D = Linie, 2D = Fläche, " +
-				"3D = Würfel), eingebettet in einen gemeinsamen 3D-Raum. Die orangen " +
-				"Linien/Flächen sind die ReLU-Hyperplanes des <i>nächsten</i> Layers – " +
-				"genau dort entsteht der Knick. Von links nach rechts siehst du, wie " +
-				"das Netz die Daten Schritt für Schritt faltet, bis die Klassen linear " +
-				"trennbar sind.");
+				"Unten: Raum VOR dem Layer. Oben: NACH dem Layer. " +
+				"Das Gitter zeigt die Faltung. Blau=gestaucht, Rot=gestreckt. " +
+				"Orangene Linien unten = Faltkanten.");
 		container.appendChild(foot);
 
-		// ---- Einhängen -----------------------------------------
 		try {
 			if (parent) {
 				parent.appendChild(container);
@@ -2453,17 +3076,13 @@ var OrigamiFolds = (function (global) {
 			if (cur !== _state.lastDarkMode) {
 				_state.lastDarkMode = cur;
 				_styleContainer();
-				// Buttons/Info neu einfärben: einfachster Weg ist ein Rebuild
 				_state.lastViewHash = null;
 				if (_state.plotlyInitialized && _hasPlotly() && _state.plotDiv) {
-					// Plotly.react reicht, Layout-Farben ändern sich mit
 					_scheduleRender();
 				}
 				return;
 			}
 
-			// Selbstheilung: wenn ein Update ausstand und wir sichtbar sind,
-			// aber der rAF/Observer es verschluckt hat
 			if (_state.pendingRender && _isVisibleNow() && !_state.userInteracting) {
 				_state.pendingRender = false;
 				_scheduleRender();
@@ -2495,7 +3114,6 @@ var OrigamiFolds = (function (global) {
 		_setupResizeObserver();
 		_startDarkModeWatcher();
 
-		// Sofort-Sichtbarkeitscheck (Observer feuert asynchron)
 		if (_isVisibleNow()) _state.isVisible = true;
 
 		_ensurePlotly(function () {
@@ -2508,19 +3126,16 @@ var OrigamiFolds = (function (global) {
 	}
 
 	// ============================================================
-	// PUBLIC: update (Singleton, aus dem Trainings-Hook aufrufen)
+	// PUBLIC: update
 	// ============================================================
 
 	function update() {
 		if (!_state.initialized) {
-			// Automatisch initialisieren, damit ein versehentlicher
-			// update()-Aufruf vor init() nicht ins Leere läuft
 			_log("update() vor init() – initialisiere automatisch");
 			init();
 			return OrigamiFolds;
 		}
 
-		// Container aus dem DOM entfernt? -> neu aufbauen
 		if (!_state.container || !_state.container.parentNode) {
 			_log("Container nicht mehr im DOM, baue neu auf");
 			_state.initialized = false;
@@ -2535,7 +3150,6 @@ var OrigamiFolds = (function (global) {
 		_state.dataDirty = true;
 
 		if (!_isVisibleNow()) {
-			// Nicht im Bild: nur merken, dass etwas zu tun ist
 			_state.pendingRender = true;
 			return OrigamiFolds;
 		}
@@ -2550,7 +3164,7 @@ var OrigamiFolds = (function (global) {
 		_state.lastFingerprint  = null;
 		_state.lastViewHash     = null;
 		_state.lastDataRevision = -1;
-		_state.cachedXHash      = null;   // Daten neu subsamplen
+		_state.cachedXHash      = null;
 		_state.consecutiveErrors = 0;
 		if (_state.deactivated) _reactivate();
 		_state.pendingRender = true;
@@ -2592,8 +3206,8 @@ var OrigamiFolds = (function (global) {
 		_state.active      = false;
 		_state.plotlyInitialized = false;
 		_state.lastCameras = {};
-		_state.layerBlocksSig = null;
 		_state.lastChainSignature = null;
+		_state.modelRef = null;
 
 		_log("zerstört");
 		return OrigamiFolds;
@@ -2615,7 +3229,6 @@ var OrigamiFolds = (function (global) {
 				continue;
 			}
 			var v = cfg[k];
-			// Typprüfung gegen den Default
 			var expected = typeof _state.config[k];
 			if (typeof v !== expected) {
 				_warn("Config '" + k + "' erwartet " + expected + ", bekam " +
@@ -2648,11 +3261,12 @@ var OrigamiFolds = (function (global) {
 		destroy:     destroy,
 		getConfig:   getConfig,
 		setConfig:   setConfig,
-		// für Debugging / erweiterte Nutzung
 		_state:               _state,
 		_buildChain:          _buildChain,
 		_extractHyperplanes:  _extractHyperplanes,
-		_computeActivations:  _computeActivations
+		_computePairs:        _computePairs,
+		_makeGrid:            _makeGrid,
+		_gridDistortion:      _gridDistortion
 	};
 
 	if (typeof global !== "undefined") {
@@ -2664,7 +3278,7 @@ var OrigamiFolds = (function (global) {
 })(typeof window !== "undefined" ? window : this);
 
 // ============================================================
-// KOMFORT-WRAPPER (analog zu create_loss_landscape / create_topological_analyzer)
+// KOMFORT-WRAPPER
 // ============================================================
 
 function create_origami_folds(divOrId) {
@@ -2693,6 +3307,7 @@ function update_origami_folds() {
 
 // Kein Auto-Init: update() initialisiert automatisch beim ersten
 // Trainings-Epoch (document.body ist dann garantiert vorhanden).
-//OrigamiFolds.init("origami_container");   // manuell in ein Div per ID
-//OrigamiFolds.init($("#meinDiv"));         // jQuery
-//OrigamiFolds.init(document.getElementById("x"));  // DOM-Element
+//OrigamiFolds.init("origami_container");
+//OrigamiFolds.init($("#meinDiv"));
+//OrigamiFolds.init(document.getElementById("x"));
+
