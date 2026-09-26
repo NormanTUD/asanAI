@@ -68,6 +68,10 @@ var OrigamiFolds = (function (global) {
 
 		plotlyInitialized: false,
 		plotlyLoading:     false,
+		glSettled:         false,
+		settleRetries:     0,
+		lastPickRecovery:  0,
+		pickRecoveryCount: 0,
 
 		lastFingerprint:  null,
 		lastViewHash:     null,
@@ -135,6 +139,7 @@ var OrigamiFolds = (function (global) {
 	};
 
 	var _lastRebuildTime = 0;
+	var _pickGuardInstalled = false;
 
 	// ============================================================
 	// LOGGING
@@ -3396,6 +3401,7 @@ var OrigamiFolds = (function (global) {
 
 	function _deactivate(reasonKey, fallbackMsg) {
 		_state.deactivated = true;
+		_resetGlSettle();
 		_state.deactivationKey = reasonKey;
 		_state.deactivationMsg = _tr(reasonKey, fallbackMsg);
 
@@ -3421,6 +3427,50 @@ var OrigamiFolds = (function (global) {
 		if (_state.infoDiv)  _state.infoDiv.style.display = "none";
 		_state.lastFingerprint = null;
 		_state.lastViewHash = null;
+		_resetGlSettle();
+	}
+
+	function _resetGlSettle() {
+		_state.glSettled = false;
+		_state.settleRetries = 0;
+	}
+
+	function _tryLockGlCanvasSize() {
+		if (!_state.plotDiv) return;
+		var cv = null;
+		try { cv = _state.plotDiv.querySelector("canvas"); } catch (e) { return; }
+		if (!cv) return;
+		if (cv.width > 0 && cv.height > 0) return;
+		if (!_isVisibleNow()) return;
+		try { global.Plotly.Plots.resize(_state.plotDiv); } catch (e) { /* ignore */ }
+	}
+
+	function _onPickError(e) {
+		if (!_state.plotlyInitialized || !_state.plotDiv) return;
+		var msg = (e && e.message) || "";
+		if (!/length/i.test(msg) || !/undefined/i.test(msg)) return;
+		var now = Date.now();
+		if (now - _state.lastPickRecovery < 1500) return;
+		if (_state.pickRecoveryCount >= 10) return;
+		_state.lastPickRecovery = now;
+		_state.pickRecoveryCount++;
+		try { if (e && e.preventDefault) e.preventDefault(); } catch (x) { /* ignore */ }
+		try { if (global.Plotly) global.Plotly.purge(_state.plotDiv); } catch (x) { /* ignore */ }
+		_state.plotlyInitialized = false;
+		_resetGlSettle();
+		_state.dataDirty = true;
+		_state.pendingRender = true;
+		_scheduleRender();
+		_warn("Plotly-Pick-Crash, Plot neu aufgebaut (" + _state.pickRecoveryCount + "/10)");
+	}
+
+	function _setupPickRecoveryGuard() {
+		if (_pickGuardInstalled) return;
+		if (typeof window === "undefined" || typeof window.addEventListener !== "function") return;
+		try {
+			window.addEventListener("error", _onPickError);
+			_pickGuardInstalled = true;
+		} catch (e) { /* ignore */ }
 	}
 
 	// ============================================================
@@ -3456,6 +3506,23 @@ var OrigamiFolds = (function (global) {
 		if (!_isVisibleNow()) {
 			_state.pendingRender = true;
 			return;
+		}
+
+		if (!_state.plotlyInitialized) {
+			var sw = 0, sh = 0;
+			try { sw = _state.plotDiv.offsetWidth; sh = _state.plotDiv.offsetHeight; } catch (e) { /* ignore */ }
+			if (!sw || !sh) {
+				_state.settleRetries++;
+				if (_state.settleRetries > 40) { _state.glSettled = true; }
+				else { _state.pendingRender = true; _scheduleRender(); return; }
+			}
+			if (!_state.glSettled) {
+				_state.glSettled = true;
+				_state.settleRetries = 0;
+				_state.pendingRender = true;
+				_scheduleRender();
+				return;
+			}
 		}
 
 		var now = (typeof performance !== "undefined" && performance.now)
@@ -3516,6 +3583,7 @@ var OrigamiFolds = (function (global) {
 			if (_state.plotlyInitialized) {
 				try { global.Plotly.purge(_state.plotDiv); } catch (e) { /* ignore */ }
 				_state.plotlyInitialized = false;
+				_resetGlSettle();
 			}
 		} else if (_state.deactivated) {
 			_reactivate();
@@ -3647,6 +3715,8 @@ var OrigamiFolds = (function (global) {
 				global.Plotly.newPlot(_state.plotDiv, traces, layout, plotConfig)
 					.then(function () {
 						_state.plotlyInitialized = true;
+						_state.glSettled = true;
+						_tryLockGlCanvasSize();
 						_state.lastFingerprint   = fp;
 						_state.lastViewHash      = vh;
 						_state.lastDataRevision  = rev;
@@ -3660,6 +3730,7 @@ var OrigamiFolds = (function (global) {
 					.catch(function (e) {
 						_error("Plotly.newPlot fehlgeschlagen: " + e);
 						_state.plotlyInitialized = false;
+						_resetGlSettle();
 					});
 			} else {
 				global.Plotly.react(_state.plotDiv, traces, layout, plotConfig)
@@ -3674,6 +3745,7 @@ var OrigamiFolds = (function (global) {
 					.catch(function (e) {
 						_error("Plotly.react fehlgeschlagen: " + e);
 						_state.plotlyInitialized = false;
+						_resetGlSettle();
 					});
 			}
 		} catch (e) {
@@ -3856,6 +3928,7 @@ var OrigamiFolds = (function (global) {
 			if (_state.plotlyInitialized && _hasPlotly() && _state.plotDiv) {
 				try { global.Plotly.purge(_state.plotDiv); } catch (e) { /* ignore */ }
 				_state.plotlyInitialized = false;
+				_resetGlSettle();
 			}
 			_scheduleRender();
 		});
@@ -4003,6 +4076,7 @@ var OrigamiFolds = (function (global) {
 
 		_setupObserver();
 		_setupResizeObserver();
+		_setupPickRecoveryGuard();
 		_startDarkModeWatcher();
 
 		if (_isVisibleNow()) _state.isVisible = true;
@@ -4097,6 +4171,7 @@ var OrigamiFolds = (function (global) {
 		_state.initialized = false;
 		_state.active      = false;
 		_state.plotlyInitialized = false;
+		_resetGlSettle();
 		_state.lastCameras = {};
 		_state.lastChainSignature = null;
 		_state.modelRef = null;
