@@ -2439,10 +2439,14 @@ var OrigamiFolds = (function (global) {
 			_log("Gitterfläche: " + badIdx + " Quads mit ungültigen Indizes " +
 			      "verworfen (n=" + n + ")");
 		}
+
+		/*
 		if (degenerate > 0) {
 			_log("Gitterfläche: " + degenerate + " entartete Dreiecke " +
 			     "übersprungen (von " + (quads.length * 2) + ")");
 		}
+		*/
+
 		if (!ii.length) {
 			_log("Gitterfläche: kein einziges gültiges Dreieck übrig");
 			return [];
@@ -3662,7 +3666,6 @@ var OrigamiFolds = (function (global) {
 						_state.dataDirty        = false;
 						_lastRebuildTime        = now;
 						_saveCameras();
-						_log("Plot aktualisiert");
 					})
 					.catch(function (e) {
 						_error("Plotly.react fehlgeschlagen: " + e);
