@@ -2417,8 +2417,7 @@ function pctl(s,p){return s[clamp(Math.floor(p*s.length),0,s.length-1)]}
       }
       ctx.stroke();
     }
-    // reference unit circ
-le (euklidisch)
+    // reference unit circle (euklidisch)
     ctx.setLineDash([3,4]);
     ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;
     ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();
@@ -4733,7 +4732,7 @@ le (euklidisch)
     spike:['note','<span class="h">Geometrische Instabilität</span>Eine <b>plötzliche Krümmungsspitze</b>. Genau wie Gradientenexplosionen über die Gradientennorm erkannt werden, lassen sich <em>geometrische</em> Instabilitäten über die Krümmung detektieren. Die Mannigfaltigkeit wird lokal „zerknittert" — lokale lineare Approximationen (und damit die Sätze) gelten dort nicht mehr.']
   };
   function build(){
-    const L=24;const xs=[];for(let l=0;l<=L;l++)xs.push(l/L);
+    const Lm=24;const xs=[];for(let l=0;l<=Lm;l++)xs.push(l/Lm);
     let kProf,curv,marg;
     const m=MODELS[4];
     if(mode==='ok'){
