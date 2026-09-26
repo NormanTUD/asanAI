@@ -1142,6 +1142,7 @@ var OrigamiFolds = (function (global) {
 
 		return {
 			coords: coords, n: n, dim: dim, res: res,
+			topo: dim,
 			lines: lines, quads: quads, bounds: bounds
 		};
 	}
@@ -1232,7 +1233,11 @@ var OrigamiFolds = (function (global) {
 		var n = grid.n;
 		if (actIn.n !== n || actOut.n !== n) return null;
 
-		var res = grid.res, dim = grid.dim;
+		// Topologie-Dimension für die Kanten-Traversal: ein 2D-Blatt
+		// im 3D-Raum hat 2D-Gitterkanten, keine Kubus-Kanten.
+		var res = grid.res;
+		var dim = (typeof grid.topo === "number" && _isFiniteNum(grid.topo))
+			? grid.topo : grid.dim;
 		var dist = new Float64Array(n);
 		var cnt  = new Float64Array(n);
 
@@ -1380,6 +1385,8 @@ var OrigamiFolds = (function (global) {
 						n: prevGridOut.n,
 						dim: prevGridOut.dim,
 						res: prevGridOut.res,
+						topo: (typeof prevGridOut.topo === "number")
+							? prevGridOut.topo : prevGridOut.dim,
 						lines: prevGridOut.lines,
 						quads: prevGridOut.quads || [],
 						bounds: bIn
@@ -1423,6 +1430,8 @@ var OrigamiFolds = (function (global) {
 								n: gridOut.n,
 								dim: gridOut.dim,
 								res: grid.res,
+								topo: (typeof grid.topo === "number")
+									? grid.topo : grid.dim,
 								lines: grid.lines,
 								quads: outQuads,
 								xs: gridOut.xs,
@@ -2185,7 +2194,7 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (segCount > 60000) {
-			_warn("Gitter hätte " + segCount + " Segmente – Auflösung reduziert.");
+			_log("Gitter hätte " + segCount + " Segmente – Auflösung reduziert.");
 			return traces;
 		}
 
@@ -2247,7 +2256,11 @@ var OrigamiFolds = (function (global) {
 	function _rebuildQuads(grid) {
 		if (!grid) return [];
 		var res = grid.res;
-		var dim = grid.dim;
+		// Topologie-Dimension (Bauform des Gitters), nicht die
+		// Koordinaten-Dimension: ein 2D-Blatt, das in den 3D-Raum
+		// geschoben wurde, hat 2D-Quads.
+		var dim = (typeof grid.topo === "number" && _isFiniteNum(grid.topo))
+			? grid.topo : grid.dim;
 		if (!_isFiniteNum(res) || res < 2) return [];
 		if (!_isFiniteNum(dim) || dim < 1 || dim > 3) return [];
 
@@ -2331,8 +2344,10 @@ var OrigamiFolds = (function (global) {
 		// Eine von prevGridOut übernommene Liste kann zu einer anderen
 		// Auflösung gehören. Dann zeigen Indizes ins Leere und ganze
 		// Streifen der Fläche fallen weg.
+		var topo = (typeof grid.topo === "number" && _isFiniteNum(grid.topo))
+			? grid.topo : grid.dim;
 		var quads = grid.quads;
-		var want  = _expectedQuadCount(grid.res, grid.dim);
+		var want  = _expectedQuadCount(grid.res, topo);
 		var needRebuild = false;
 
 		if (!quads || !quads.length) {
@@ -2421,7 +2436,7 @@ var OrigamiFolds = (function (global) {
 		}
 
 		if (badIdx > 0) {
-			_warn("Gitterfläche: " + badIdx + " Quads mit ungültigen Indizes " +
+			_log("Gitterfläche: " + badIdx + " Quads mit ungültigen Indizes " +
 			      "verworfen (n=" + n + ")");
 		}
 		if (degenerate > 0) {
@@ -2429,7 +2444,7 @@ var OrigamiFolds = (function (global) {
 			     "übersprungen (von " + (quads.length * 2) + ")");
 		}
 		if (!ii.length) {
-			_warn("Gitterfläche: kein einziges gültiges Dreieck übrig");
+			_log("Gitterfläche: kein einziges gültiges Dreieck übrig");
 			return [];
 		}
 
@@ -2472,7 +2487,7 @@ var OrigamiFolds = (function (global) {
 			// Ein einziger NaN im intensity-Array lässt Plotly das
 			// komplette Mesh verwerfen – deshalb hier hart absichern.
 			if (nanCount > n * 0.5) {
-				_warn("Verzerrungswerte überwiegend ungültig (" + nanCount +
+				_log("Verzerrungswerte überwiegend ungültig (" + nanCount +
 				      "/" + n + "), Fläche wird einfarbig gezeichnet");
 				trace.color = theme.surfaceColor;
 			} else {
@@ -2704,8 +2719,8 @@ var OrigamiFolds = (function (global) {
 
 		// Zusätzliche Konsistenzprüfung: passt die Punktzahl überhaupt?
 		if (drawGrid && gridActForBuild.n !== o.grid.n) {
-			_warn("Gitter-Punktzahl passt nicht (" + gridActForBuild.n +
-			      " vs " + o.grid.n + ") in Szene " + sceneName);
+			_log("Gitter-Punktzahl passt nicht (" + gridActForBuild.n +
+				      " vs " + o.grid.n + ") in Szene " + sceneName);
 			drawGrid = false;
 		}
 		if (!drawGrid && o.gridAct) {
