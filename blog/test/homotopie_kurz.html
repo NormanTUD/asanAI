@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homotopie — die Kurzversion (interaktiv)</title>
+
+<!-- KaTeX für Formeln -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --bg:#07080f;
+  --bg2:#0d1020;
+  --panel:rgba(20,24,44,0.72);
+  --panel-solid:#141828;
+  --line:rgba(120,140,220,0.18);
+  --text:#e6ebff;
+  --dim:#9aa6cc;
+  --accent:#5ee7ff;
+  --accent2:#ff5ea8;
+  --accent3:#a98bff;
+  --accent4:#7dffb0;
+  --warn:#ffd166;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 800px at 15% -10%, #1b2250 0%, transparent 55%),
+    radial-gradient(1000px 700px at 90% 5%, #3a1444 0%, transparent 50%),
+    radial-gradient(900px 900px at 50% 110%, #06314a 0%, transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:16px; line-height:1.65;
+  overflow-x:hidden;
+}
+#dust{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
+#progressbar{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+  background:linear-gradient(90deg,var(--accent),var(--accent3),var(--accent2));
+  box-shadow:0 0 18px var(--accent);
+  transition:width .15s linear;
+}
+nav#toc{
+  position:fixed;top:0;left:0;bottom:0;width:272px;z-index:150;
+  background:linear-gradient(180deg,rgba(9,11,22,.96),rgba(9,11,22,.88));
+  backdrop-filter:blur(18px);
+  border-right:1px solid var(--line);
+  overflow-y:auto;padding:22px 14px 60px;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+nav#toc.hidden{transform:translateX(-100%)}
+nav#toc h1{
+  font-size:15px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 4px 8px;font-weight:700;
+}
+nav#toc .sub{font-size:11.5px;color:var(--dim);margin:0 0 20px 8px;letter-spacing:.04em}
+nav#toc a{
+  display:block;color:var(--dim);text-decoration:none;font-size:13.2px;
+  padding:7px 10px;border-radius:8px;margin:1px 0;
+  border-left:2px solid transparent;transition:all .18s;
+}
+nav#toc a:hover{color:var(--text);background:rgba(94,231,255,.07)}
+nav#toc a.act{color:var(--accent);border-left-color:var(--accent);background:rgba(94,231,255,.1);font-weight:600}
+nav#toc .grp{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#5b6690;margin:20px 0 6px 10px;font-weight:700}
+#tocToggle{
+  position:fixed;top:14px;left:14px;z-index:160;
+  background:var(--panel);border:1px solid var(--line);color:var(--accent);
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:17px;
+  backdrop-filter:blur(10px);display:none;
+}
+main{margin-left:272px;position:relative;z-index:1;transition:margin-left .35s cubic-bezier(.4,0,.2,1)}
+main.wide{margin-left:0}
+.wrap{max-width:1000px;margin:0 auto;padding:0 28px 140px}
+
+@media(max-width:1100px){
+  nav#toc{transform:translateX(-100%)}
+  nav#toc.show{transform:translateX(0)}
+  main{margin-left:0}
+  #tocToggle{display:block}
+  .wrap{padding:0 16px 100px}
+}
+
+header.hero{
+  min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;padding:60px 24px;position:relative;
+}
+header.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;opacity:.55}
+.hero .eyebrow{
+  font-size:12px;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:22px;font-weight:600;
+}
+.hero h1{
+  font-size:clamp(2.4rem,6.5vw,5rem);margin:0 0 18px;line-height:1.02;font-weight:800;
+  background:linear-gradient(120deg,#fff 5%,var(--accent) 35%,var(--accent3) 62%,var(--accent2) 92%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-.025em;
+}
+.hero p.lead{font-size:clamp(1rem,2.1vw,1.28rem);color:var(--dim);max-width:720px;margin:0 auto 34px}
+.hero .kbd{
+  display:inline-block;padding:9px 20px;border:1px solid var(--line);border-radius:999px;
+  font-size:12.5px;color:var(--dim);background:rgba(20,24,44,.55);backdrop-filter:blur(8px);
+}
+.scrollhint{margin-top:50px;color:var(--dim);font-size:12px;letter-spacing:.2em;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(9px);opacity:1}}
+
+section{padding:74px 0 20px;scroll-margin-top:20px}
+section > h2{
+  font-size:clamp(1.6rem,3.6vw,2.5rem);margin:0 0 6px;font-weight:800;letter-spacing:-.02em;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+}
+section > h2 .num{
+  font-family:var(--mono);font-size:.5em;color:var(--accent);opacity:.85;
+  border:1px solid var(--line);padding:3px 10px;border-radius:7px;background:rgba(94,231,255,.06);
+}
+section > .kicker{color:var(--accent3);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 24px;font-weight:600}
+h3{font-size:1.22rem;margin:38px 0 12px;color:#fff;font-weight:700;letter-spacing:-.01em}
+h4{font-size:1.02rem;margin:26px 0 8px;color:var(--accent);font-weight:700}
+p{margin:0 0 15px;color:#c8d2f0}
+ul,ol{color:#c8d2f0;padding-left:22px;margin:0 0 15px}
+li{margin:6px 0}
+b,strong{color:#fff;font-weight:650}
+a.inl{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:22px;margin:24px 0;backdrop-filter:blur(14px);
+  box-shadow:0 18px 50px rgba(0,0,0,.4);
+}
+.card.tight{padding:16px}
+.note{
+  border-left:3px solid var(--accent);background:rgba(94,231,255,.055);
+  padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0;font-size:14.6px;
+}
+.note.pink{border-color:var(--accent2);background:rgba(255,94,168,.055)}
+.note.violet{border-color:var(--accent3);background:rgba(169,139,255,.055)}
+.note.green{border-color:var(--accent4);background:rgba(125,255,176,.055)}
+.note.warn{border-color:var(--warn);background:rgba(255,209,102,.06)}
+.note .tag{
+  display:inline-block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:700;margin-bottom:5px;
+}
+.note.pink .tag{color:var(--accent2)}
+.note.violet .tag{color:var(--accent3)}
+.note.green .tag{color:var(--accent4)}
+.note.warn .tag{color:var(--warn)}
+
+.ctrl{display:flex;flex-direction:column;gap:5px;margin:12px 0;min-width:170px;flex:1}
+.ctrl label{font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:10px;letter-spacing:.03em}
+.ctrl label .v{color:var(--accent);font-family:var(--mono);font-weight:600}
+.ctrls{display:flex;flex-wrap:wrap;gap:16px 26px;margin:14px 0 6px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent3));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 4px rgba(94,231,255,.25),0 0 14px var(--accent);cursor:grab;
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;border:none;background:#fff;
+  box-shadow:0 0 0 4px rgba(94,231,255,.25);cursor:grab;
+}
+button.btn{
+  background:rgba(94,231,255,.1);border:1px solid rgba(94,231,255,.35);color:var(--accent);
+  padding:8px 15px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;
+  transition:all .17s;font-family:inherit;
+}
+button.btn:hover{background:rgba(94,231,255,.2);transform:translateY(-1px);box-shadow:0 5px 18px rgba(94,231,255,.2)}
+button.btn:active{transform:translateY(0)}
+button.btn.p2{background:rgba(255,94,168,.1);border-color:rgba(255,94,168,.35);color:var(--accent2)}
+button.btn.p2:hover{background:rgba(255,94,168,.2);box-shadow:0 5px 18px rgba(255,94,168,.2)}
+button.btn.p3{background:rgba(169,139,255,.1);border-color:rgba(169,139,255,.35);color:var(--accent3)}
+button.btn.p3:hover{background:rgba(169,139,255,.2)}
+button.btn.p4{background:rgba(125,255,176,.1);border-color:rgba(125,255,176,.35);color:var(--accent4)}
+button.btn.p4:hover{background:rgba(125,255,176,.2)}
+button.btn.on{background:var(--accent);color:#07080f}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+select{
+  background:var(--panel-solid);border:1px solid var(--line);color:var(--text);
+  padding:7px 11px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;
+}
+canvas.demo{
+  width:100%;display:block;border-radius:13px;background:rgba(4,6,14,.6);
+  border:1px solid var(--line);cursor:crosshair;touch-action:none;
+}
+.readout{
+  font-family:var(--mono);font-size:13px;color:var(--accent4);
+  background:rgba(4,6,14,.55);border:1px solid var(--line);border-radius:10px;
+  padding:11px 14px;margin:13px 0 0;white-space:pre-wrap;line-height:1.55;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.cap{font-size:12.3px;color:var(--dim);margin-top:9px;font-style:italic}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--accent);font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;font-weight:700}
+td{color:#c8d2f0}
+tr:hover td{background:rgba(94,231,255,.035)}
+code{font-family:var(--mono);font-size:.9em;background:rgba(94,231,255,.1);padding:2px 6px;border-radius:5px;color:var(--accent)}
+
+.katex{font-size:1.02em!important}
+.eq{text-align:center;margin:18px 0;overflow-x:auto;padding:8px 0}
+
+.step{
+  display:flex;gap:14px;align-items:flex-start;margin:14px 0;
+  padding:13px 16px;border-radius:12px;background:rgba(20,24,44,.45);border:1px solid var(--line);
+}
+.step .n{
+  flex:0 0 28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));
+  color:#07080f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13.5px;
+}
+.step .t{flex:1;font-size:14.4px}
+.step .t b{display:block;color:#fff;margin-bottom:2px}
+
+.big{
+  font-size:clamp(1.1rem,2.6vw,1.5rem);line-height:1.5;color:#fff;font-weight:600;
+  border-left:3px solid var(--accent2);padding:6px 0 6px 20px;margin:26px 0;
+}
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:56px 0}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+.scoreboard{
+  display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;
+}
+.sc{
+  flex:1;min-width:120px;background:rgba(4,6,14,.55);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;text-align:center;
+}
+.sc .lab{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.sc .val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--accent);margin-top:3px}
+.sc.p2 .val{color:var(--accent2)}
+.sc.p3 .val{color:var(--accent3)}
+.sc.p4 .val{color:var(--accent4)}
+</style>
+</head>
+<body>
+
+<div id="progressbar"></div>
+<canvas id="dust"></canvas>
+<button id="tocToggle">☰</button>
+
+<nav id="toc">
+  <h1>Homotopie · kurz</h1>
+  <p class="sub">Das Allerwichtigste aus<br>Bunke — zum Anfassen</p>
+
+  <div class="grp">Ouvertüre</div>
+  <a href="#s0">Die eine Frage</a>
+  <a href="#s1">Werkzeug: Der Film</a>
+
+  <div class="grp">I · Schleifen</div>
+  <a href="#s2">π₁ &amp; die Windungszahl</a>
+  <a href="#s3">Wendeltreppe: π₁(S¹)=ℤ</a>
+  <a href="#s4">Van Kampen: Rechnen</a>
+
+  <div class="grp">II · Höher</div>
+  <a href="#s5">πₙ &amp; das Kommutativ-Wunder</a>
+
+  <div class="grp">Finale</div>
+  <a href="#s6">πₙ(Sⁿ)=ℤ &amp; Brouwer</a>
+</nav>
+
+<main>
+<header class="hero">
+  <canvas id="heroCv"></canvas>
+  <div class="eyebrow">Ulrich Bunke · Introduction to Homotopy Theory</div>
+  <h1>Wie unterscheidet man Räume,<br>die man nicht ineinander<br>verbiegen kann?</h1>
+  <p class="lead">
+    125 Seiten, 61 Spiele — hier nur das <b>Allerwichtigste</b>, in 7 Stationen.
+    Du verstehst es, indem du <b>ziehst und spielst</b>, nicht indem du liest.
+  </p>
+  <div class="kbd">Alle Grafiken sind interaktiv · Zieh an den Reglern</div>
+  <div class="scrollhint">▼ ▼ ▼</div>
+</header>
+
+<div class="wrap">
+
+<section id="s0" class="reveal">
+  <h2><span class="num">00</span> Die eine Frage</h2>
+  <p class="kicker">Worum geht es hier eigentlich?</p>
+
+  <div class="big">
+    Zwei Formen sind „gleich", wenn man die eine stetig in die andere verbiegen kann —
+    ohne zu zerreißen und ohne zu kleben. Die Frage: <b>wann geht das nicht — und wie beweist man es?</b>
+  </div>
+
+  <p>
+    Eine Kaffeetasse und ein Donut sind in diesem Sinne gleich. Eine Kugel und ein Donut nicht.
+    Das „weiß" jeder intuitiv — aber ein <b>Beweis</b> müsste alle (unendlich vielen)
+    Verformungen durchprobieren. Das geht nie direkt. Man braucht einen <b>Indikator</b>.
+  </p>
+
+  <div class="card">
+    <h4>Spiel 1 · Verbiegen, aber nicht zerreißen</h4>
+    <p style="font-size:14.5px">
+      Zieh am Regler. Die Form wird stetig verformt. Achte darauf: <b>Die Anzahl der Löcher
+      ändert sich nie.</b> Das ist kein Zufall — es ist die Idee, die alles auslöst.
+    </p>
+    <canvas id="cvMorph" class="demo" height="300"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Verformung <span class="v" id="vMorphT">0.00</span></label>
+        <input type="range" id="sMorphT" min="0" max="1" step="0.005" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Zielform</label>
+        <select id="selMorph">
+          <option value="0">Tasse ↔ Donut (beide 1 Loch)</option>
+          <option value="1">Kugel ↔ Würfel (beide 0 Löcher)</option>
+          <option value="2">Brezel ↔ Doppel-Donut (beide 2 Löcher)</option>
+        </select>
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="bMorphPlay">▶ Animation</button>
+      <button class="btn p2" id="bMorphTear">✂ Zerreißen (verboten!)</button>
+    </div>
+    <div class="readout" id="roMorph">Löcher: 1 → 1   ·   Erlaubte Verformung ✓</div>
+    <p class="cap">Stetige Verformung = Homotopie(-äquivalenz). Zerreißen und Kleben sind verboten.</p>
+  </div>
+
+  <div class="note">
+    <span class="tag">Die Idee der Invariante</span>
+    Eine <b>Invariante</b> ist eine Zahl oder eine Gruppe, die man aus dem Raum berechnet,
+    die sich beim Verbiegen <b>nicht ändert</b> — und die bei zwei Räumen <i>verschieden</i> ist.
+    Dann sind die Räume <b>nicht</b> ineinander verformbar. Fertig. Das ganze Skript von Bunke
+    ist eine Fabrik für solche Indikatoren: π₀, π₁, π₂, … — und Maschinen, um sie auszurechnen.
+  </div>
+
+  <div class="card tight">
+    <h4>Die Reise auf einen Blick</h4>
+    <canvas id="cvRoadmap" class="demo" height="230"></canvas>
+    <p class="cap">Klicke auf eine Station, um dorthin zu springen.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="s1" class="reveal">
+  <h2><span class="num">01</span> Das eine Werkzeug: Homotopie</h2>
+  <p class="kicker">Der Film zwischen zwei Abbildungen</p>
+
+  <p>
+    Seien <span id="fml1"></span> zwei stetige Abbildungen. Eine <b>Homotopie</b> von <i>f</i>
+    nach <i>g</i> ist ein „Film": für jede Zeit <span id="fml2"></span> eine Abbildung
+    <span id="fml3"></span>, stetig in <i>s</i>, mit <span id="fml4"></span>.
+    Damit hat „stetig verformen" eine exakte Bedeutung.
+  </p>
+
+  <div class="card">
+    <h4>Spiel 2 · Der Film zwischen zwei Wegen</h4>
+    <p style="font-size:14.5px">
+      Zwei Wege γ₀ und γ₁ im selben Raum. Bewege den Zeit-Regler, um den Film zu sehen,
+      der den einen in den anderen überführt. Schalte das <b>Hindernis</b> ein —
+      plötzlich geht es nicht mehr. Das Hindernis ist der Prototyp eines „Lochs".
+    </p>
+    <canvas id="cvHomotopy" class="demo" height="330"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Filmzeit <i>s</i> <span class="v" id="vHomS">0.00</span></label>
+        <input type="range" id="sHomS" min="0" max="1" step="0.005" value="0">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="bHomPlay">▶ Abspielen</button>
+      <button class="btn p2" id="bHomObst">⬤ Hindernis einschalten</button>
+    </div>
+    <div class="readout" id="roHom"></div>
+  </div>
+
+  <div class="note violet">
+    <span class="tag">Merksatz</span>
+    <b>Homotopie</b> = stetige Familie von Abbildungen. Alles, was in dieser Theorie gezählt
+    wird, ändert sich beim Verbiegen nicht. Und <b>Locher</b> sind genau das, was
+    Verformungen blockiert.
+  </div>
+</section>
+
+<section id="s2" class="reveal">
+  <h2><span class="num">02</span> π₁: Schleifen und die Windungszahl</h2>
+  <p class="kicker">Die erste echte Invariante</p>
+
+  <p>
+    Nimm einen festen Punkt <i>x</i> im Raum. Eine <b>Schleife</b> ist ein Weg, der dort
+    anfangen <i>und</i> enden. Zwei Schleifen zählen als <b>derselbe</b>, wenn man eine
+    in die andere verformen kann, <b>ohne den Basispunkt zu bewegen</b>.
+    Die Menge aller solchen Klassen heißt <b>Fundamentalgruppe</b>:
+  </p>
+
+  <div class="eq" id="fml15"></div>
+
+  <div class="big">
+    π₁(X) ist eine <b>Gruppe</b> (hintereinanderlaufen = „multiplizieren"),
+    sie ändert sich beim Verbiegen nicht, und jede Abbildung von Räumen liefert
+    automatisch einen Homomorphismus von π₁-Gruppen.
+    <b>π₁(X) ≠ π₁(Y) ⟹ X und Y sind nicht verformbar. Fertig.</b>
+  </div>
+
+  <div class="card">
+    <h4>Spiel 3 · Die Windungszahl am Kreis</h4>
+    <p style="font-size:14.5px">
+      Am Kreis ist die einzige Eigenschaft einer Schleife, <b>wie oft</b> sie herumläuft —
+      die <b>Windungszahl</b> <i>n</i>. Sie kann positiv, negativ oder null sein,
+      und addiert sich beim Verketten. Das ist genau ℤ.
+    </p>
+    <canvas id="cvCat0" class="demo" height="280"></canvas>
+    <div class="ctrls"><div class="ctrl">
+      <label>Windungszahl <i>n</i> <span class="v" id="vCat0">1</span></label>
+      <input type="range" id="sCat0" min="-4" max="4" step="1" value="1">
+    </div></div>
+    <div class="readout" id="roCat0"></div>
+  </div>
+
+  <p>
+    Was ist aber mit Räumen, in denen Schleifen an <b>mehreren</b> Löchern hängenbleiben?
+    Bau selbst welche:
+  </p>
+
+  <div class="card">
+    <h4>Spiel 4 · Der Schleifen-Rechner</h4>
+    <p style="font-size:14.5px">
+      Klicke Buchstaben an und baue <b>Wörter</b> aus Schleifen: <i>a</i> = einmal um Loch 1,
+      <i>b</i> = einmal um Loch 2. Der Rechner kürzt automatisch (nur <i>aa⁻¹ = e</i>).
+      Probiere den <b>Kommutator</b> <code>aba⁻¹b⁻¹</code>: Bei zwei Löchern ist er
+      <b>nicht</b> trivial — die Gruppe ist frei, nicht abelsch!
+    </p>
+    <canvas id="cvLoop" class="demo" height="360"></canvas>
+    <div class="btnrow">
+      <button class="btn" id="bLoopClear">↺ Löschen</button>
+      <button class="btn p3" id="bLoopA">+ a</button>
+      <button class="btn p3" id="bLoopAi">+ a⁻¹</button>
+      <button class="btn p2" id="bLoopB">+ b</button>
+      <button class="btn p2" id="bLoopBi">+ b⁻¹</button>
+      <button class="btn p4" id="bLoopComm">Kommutator aba⁻¹b⁻¹</button>
+      <button class="btn" id="bLoopPlay">▶ Ablaufen</button>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Anzahl Löcher <span class="v" id="vLoopHoles">2</span></label>
+        <input type="range" id="sLoopHoles" min="0" max="3" step="1" value="2">
+      </div>
+    </div>
+    <div class="readout" id="roLoop"></div>
+    <div class="scoreboard">
+      <div class="sc"><div class="lab">Wort</div><div class="val" id="scWord" style="font-size:1.05rem">e</div></div>
+      <div class="sc p3"><div class="lab">gekürzt</div><div class="val" id="scRed" style="font-size:1.05rem">e</div></div>
+      <div class="sc p4"><div class="lab">π₁ ist</div><div class="val" id="scPi1" style="font-size:.9rem">F₂ (frei)</div></div>
+    </div>
+  </div>
+
+  <div class="note pink">
+    <span class="tag">Nicht alles ist abelsch</span>
+    1 Loch (Kreis): π₁ = ℤ, alles kommutiert. 2 Löcher (Acht): π₁ = F₂, die
+    <b>freie Gruppe</b> — <code>ab ≠ ba</code>. Torus: π₁ = ℤ × ℤ — wieder abelsch,
+    denn dort berandet der Kommutator das ganze Quadrat und ist zusammenziehbar.
+    <b>Die Geometrie der Löcher entscheidet über die Algebra der Schleifen.</b>
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="s3" class="reveal">
+  <h2><span class="num">03</span> Die Wendeltreppe: warum π₁(S¹) = ℤ</h2>
+  <p class="kicker">Der Beweis, den man sehen kann</p>
+
+  <div class="big">
+    Die Abbildung <i>p</i>(t) = e<sup>2πit</sup> wickelt die Gerade ℝ auf den Kreis.
+    Gegeben ein Weg „unten" und ein Startpunkt „oben" — der Weg lässt sich
+    <b>eindeutig</b> nach oben hochheben.
+  </div>
+
+  <div class="card">
+    <h4>Spiel 5 · Die Wendeltreppe</h4>
+    <p style="font-size:14.5px">
+      Ziehe den Punkt unten am Kreis — oben läuft der hochgehobene Punkt auf der Spirale mit.
+      <b>Nach einer vollen Umrundung ist man oben um 1 gestiegen.</b> Das <i>ist</i> die
+      Windungszahl. Klicke „Eine Umrundung" und schau dir die Skala rechts an.
+    </p>
+    <canvas id="cvLift3D" class="demo" height="400"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Position am Kreis (Umläufe) <span class="v" id="vLift">0.00</span></label>
+        <input type="range" id="sLift" min="-3" max="3" step="0.005" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Startblatt (Hochhebungs-Wahl) <span class="v" id="vLiftS">0</span></label>
+        <input type="range" id="sLiftS" min="-2" max="2" step="1" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Ansicht drehen <span class="v" id="vLiftR">0.35</span></label>
+        <input type="range" id="sLiftR" min="0" max="1.4" step="0.01" value="0.35">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="bLiftPlay">▶ Eine Umrundung</button>
+      <button class="btn p2" id="bLiftAll">Alle Hochhebungen zeigen</button>
+    </div>
+    <div class="readout" id="roLift"></div>
+  </div>
+
+  <div class="note green">
+    <span class="tag">Die Definition</span>
+    <b>Eindeutige Wegehochhebung:</b> Zu jedem Weg γ unten und jedem Startpunkt γ̃(0)
+    über γ(0) gibt es <b>genau einen</b> gehobenen Weg γ̃. Und noch besser: ganze
+    <b>Homotopien</b> lassen sich hochheben — homotope Wege haben homotope
+    Hochhebungen mit demselben Endpunkt.
+  </div>
+
+  <p>
+    Für eine Schleife am Kreis heißt das: der gehobene Weg startet bei Höhe <i>h</i>
+    und endet bei <i>h + n</i>. Die Zahl <b>n = Ende − Start</b> ändert sich unter
+    Homotopie nicht — die Endpunkte bleiben oben fest. Und jede Zahl <i>n</i> kommt vor.
+    <b>Also π₁(S¹) ≅ ℤ. ∎</b>
+  </p>
+
+  <div class="note violet">
+    <span class="tag">Das größere Bild</span>
+    Die Wendeltreppe ist ein <b>Überlagerungsraum</b>: lokal sieht ℝ über dem Kreis
+    aus wie „mehrere Kopien" (Blätter), global wickelt sich alles. Ähnlich:
+    ℝ² → Torus (Gitter ℤ²), S² → ℝP² (Antipoden). Der große Satz des Skripts:
+    <b>Überlagerungen von Y sind genau „Mengen mit einer Wirkung von π₁(Y)"</b> —
+    die Geometrie wird vollständig in Algebra übersetzt, und nichts geht verloren.
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="s4" class="reveal">
+  <h2><span class="num">04</span> Van Kampen: π₁ ausrechnen</h2>
+  <p class="kicker">Die erste Rechenmaschine</p>
+
+  <div class="big">
+    Zerlege X in zwei offene Stücke U und V, die sich überlappen.
+    Dann ist π₁(X) das <b>freie Produkt</b> von π₁(U) und π₁(V),
+    modulo der Relationen, die aus dem Schnitt U∩V kommen.
+  </div>
+
+  <div class="eq" id="fml18"></div>
+
+  <div class="card">
+    <h4>Spiel 6 · Van Kampen zusammensetzen</h4>
+    <p style="font-size:14.5px">
+      Ziehe die beiden Stücke auseinander und zusammen, und wechsle das Beispiel.
+      Unten wird die Rechnung live mitgeführt: Erzeuger, Relationen, Ergebnis.
+    </p>
+    <canvas id="cvVK" class="demo" height="330"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Überlappung <span class="v" id="vVK">0.50</span></label>
+        <input type="range" id="sVK" min="0.05" max="0.95" step="0.005" value="0.5">
+      </div>
+      <div class="ctrl">
+        <label>Beispiel</label>
+        <select id="selVK">
+          <option value="0">S² = zwei Scheiben ⟹ π₁ = 1</option>
+          <option value="1">Acht = zwei Kreise ⟹ π₁ = F₂</option>
+          <option value="2">Torus aus Quadrat ⟹ π₁ = ℤ²</option>
+          <option value="3">Σ₂ (Geschlecht 2) ⟹ eine Relation</option>
+          <option value="4">Kreis = zwei Bögen ⟹ π₁ = ℤ</option>
+        </select>
+      </div>
+    </div>
+    <div class="readout" id="roVK"></div>
+  </div>
+
+  <div class="note">
+    <span class="tag">Das Prinzip</span>
+    Große Räume bauen sich aus kleinen zusammen — und die Fundamentalgruppe baut sich mit.
+    Mit dem Satz rechnet man π₁ für <b>alle</b> Flächen aus: Geschlecht <i>g</i> ohne Rand:
+    2g Erzeuger, genau <b>eine</b> Relation ∏[aᵢ,bᵢ] = 1.
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="s5" class="reveal">
+  <h2><span class="num">05</span> Höher: πₙ und das Kommutativ-Wunder</h2>
+  <p class="kicker">Wenn Schleifen nicht mehr reichen</p>
+
+  <p>
+    π₁ sieht nur 1-dimensionale Löcher. Aber die Kugel S² hat π₁ = 1 — und ist trotzdem
+    nicht zusammenziehbar! Für höhere Löcher braucht man <b>n-dimensionale Sonden</b>:
+    statt einer Schleife (S¹) schickt man eine Sphäre Sⁿ in den Raum und fragt,
+    ob sie an etwas hängenbleibt:
+  </p>
+
+  <div class="eq" id="fml24"></div>
+
+  <p>
+    Und dann passiert ein Wunder: <b>ab Dimension 2 sind alle πₙ abelsche Gruppen.</b>
+    Das überrascht — π₁ muss es ja nicht (s. o.) — und es hat einen Beweis,
+    den man buchstäblich <i>sehen</i> kann:
+  </p>
+
+  <div class="eq" id="fml25"></div>
+
+  <div class="card">
+    <h4>Spiel 7 · Der Eckmann–Hilton-Tanz</h4>
+    <p style="font-size:14.5px">
+      Vier Felder a, b, c, d. Schiebe den Regler und beobachte, wie sich <b>a und c
+      umeinander herumbewegen — ohne sich je zu berühren</b> — und am Ende die Plätze
+      getauscht haben. Das <i>ist</i> der ganze Beweis von <i>ab = ba</i>.
+    </p>
+    <canvas id="cvEH" class="demo" height="340"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Beweis-Schritt <span class="v" id="vEH">0.00</span></label>
+        <input type="range" id="sEH" min="0" max="1" step="0.002" value="0">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="bEHPlay">▶ Beweis abspielen</button>
+      <button class="btn p2" id="bEHGrid">Gitter an/aus</button>
+    </div>
+    <div class="readout" id="roEH"></div>
+  </div>
+
+  <div class="note green">
+    <span class="tag">Eckmann–Hilton</span>
+    In Ω²X (Schleifen von Schleifen) gibt es zwei Verknüpfungen: horizontal ∗
+    und vertikal +. Weil beide miteinander verträglich sind (Austauschgesetz),
+    müssen sie <b>gleich</b> sein — und sind dann automatisch <b>kommutativ</b>.
+    Deshalb: πₙ(X) abelsch für alle n ≥ 2.
+  </div>
+</section>
+
+<hr class="sep">
+
+<section id="s6" class="reveal">
+  <h2><span class="num">06</span> Finale: πₙ(Sⁿ) = ℤ und Brouwer</h2>
+  <p class="kicker">Die Antwort auf die Frage, die alles angestoßen hat</p>
+
+  <div class="big">
+    Für jedes n ≥ 1 gilt: <b>π<sub>n</sub>(S<sup>n</sup>) ≅ ℤ</b>.
+    Der Isomorphismus ist der <b>Abbildungsgrad</b>: wie oft die Abbildung die
+    Sphäre „mit Orientierung" überdeckt.
+  </div>
+
+  <div class="card">
+    <h4>Der Beweis in vier Schritten</h4>
+    <div class="step"><div class="n">1</div><div class="t">
+      <b>π₁(S¹) ≅ ℤ</b><br>
+      Durch Hochheben auf die Wendeltreppe ℝ → S¹ (Station 03).
+    </div></div>
+    <div class="step"><div class="n">2</div><div class="t">
+      <b>Blakers–Massey liefert Freudenthal</b><br>
+      Die Einhängung Σ: πᵢ(Sⁿ) → πᵢ₊₁(Sⁿ⁺¹) ist ein Isomorphismus für i ≤ 2n−2.
+    </div></div>
+    <div class="step"><div class="n">3</div><div class="t">
+      <b>Für i = n ist das ein Isomorphismus</b><br>
+      Denn n ≤ 2n−2 für n ≥ 2. Also wird das ℤ von Stufe zu Stufe unverändert weitergereicht.
+    </div></div>
+    <div class="step"><div class="n">4</div><div class="t">
+      <b>Also πₙ(Sⁿ) ≅ ℤ für alle n</b><br>
+      Und der Isomorphismus ist die Windungszahl, n-mal eingehängt — also der Grad. ∎
+    </div></div>
+  </div>
+
+  <p>
+    Derselbe Grad liefert einen der berühmtesten Sätze der Topologie:
+  </p>
+
+  <div class="card">
+    <h4>Spiel 8 · Brouwer im Experiment</h4>
+    <p style="font-size:14.5px">
+      Rühre in einer Tasse Kaffee — <b>irgendein</b> Molekül ist am Ende genau da,
+      wo es angefangen hat. Hier: eine beliebige stetige Abbildung der Scheibe in sich.
+      Forme sie frei — der Fixpunkt existiert trotzdem. <b>Immer.</b>
+    </p>
+    <canvas id="cvBrouwer2" class="demo" height="400"></canvas>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Verformung <span class="v" id="vBr2a">0.40</span></label>
+        <input type="range" id="sBr2a" min="0" max="1" step="0.005" value="0.4">
+      </div>
+      <div class="ctrl">
+        <label>Drehung <span class="v" id="vBr2b">0.50</span></label>
+        <input type="range" id="sBr2b" min="0" max="1" step="0.005" value="0.5">
+      </div>
+      <div class="ctrl">
+        <label>Stauchung <span class="v" id="vBr2c">0.60</span></label>
+        <input type="range" id="sBr2c" min="0.1" max="0.95" step="0.005" value="0.6">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn p4" id="bBr2Iter">▶ Iterieren (Fixpunkt finden)</button>
+      <button class="btn p2" id="bBr2Field">Vektorfeld x→f(x)</button>
+      <button class="btn p3" id="bBr2Rand">🎲 Zufällige Abbildung</button>
+    </div>
+    <div class="readout" id="roBr2"></div>
+  </div>
+
+  <div class="note violet">
+    <span class="tag">Hurewicz — der Schlussstein</span>
+    Homotopiegruppen sind mächtig, aber schwer berechenbar. Homologie ist berechenbar,
+    aber schwächer. <b>Hurewicz</b> verbindet beide: ist X (n−1)-zusammenhängend,
+    dann sind die Invarianten in der ersten nichttrivialen Dimension gleich —
+    <span id="fml30"></span>
+  </div>
+
+  <table>
+    <tr><th>Frage</th><th>Antwort</th></tr>
+    <tr><td>Wie unterscheidet man Räume?</td><td>Durch Invarianten, die beim Verbiegen gleich bleiben</td></tr>
+    <tr><td>Was ist π₁(S¹)?</td><td>ℤ — die Windungszahl, bewiesen per Hochheben</td></tr>
+    <tr><td>Wie rechnet man π₁ aus?</td><td>Zerlegen: Van Kampen</td></tr>
+    <tr><td>Warum ist πₙ (n ≥ 2) abelsch?</td><td>Eckmann–Hilton: zwei verträgliche Verknüpfungen</td></tr>
+    <tr><td>Was ist πₙ(Sⁿ)?</td><td>ℤ — der Abbildungsgrad; daraus folgt Brouwer</td></tr>
+  </table>
+
+  <div class="big" style="border-color:var(--accent4);margin-top:40px">
+    Das war die Kette: Verbiegen (Homotopie) → Schleifen (π₁) → Hochheben (ℤ)
+    → Rechnen (van Kampen) → Höheres (πₙ, abelsch) → die Antwort (πₙ(Sⁿ)=ℤ, Brouwer).
+    Die restlichen 24 Kapitel des Skripts sind Verfeinerungen davon.
+  </div>
+
+  <div class="card tight" style="text-align:center;padding:30px">
+    <p style="color:var(--dim);font-size:13.5px;margin:0">
+      Kurzversion nach <b>Ulrich Bunke</b>, <i>Introduction to Homotopy Theory</i>,
+      Universität Regensburg.<br>
+      8 interaktive Spiele · die Vollversion: <a class="inl" href="homotopie.html">homotopie.html</a>
+    </p>
+  </div>
+</section>
+</div>
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   GLOBALE HELFER
+   ════════════════════════════════════════════════════════════════ */
+const TAU = Math.PI*2;
+const C = {
+  a:'#5ee7ff', b:'#ff5ea8', c:'#a98bff', d:'#7dffb0',
+  w:'#ffd166', dim:'#9aa6cc', txt:'#e6ebff', bg:'#04060e',
+  line:'rgba(120,140,220,0.18)'
+};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const prog=(t,t0,dur)=>clamp((t-t0)/dur,0,1);
+const smooth=t=>t*t*(3-2*t);
+const $=id=>document.getElementById(id);
+
+const CV_MAXDIM = 4096;
+function setupCv(cv, hOverride){
+  if(cv._cssH===undefined) cv._cssH = hOverride || parseInt(cv.getAttribute('height'))||300;
+  const dpr = window.devicePixelRatio||1;
+  const w = Math.max(1, cv.getBoundingClientRect().width||600);
+  const h = cv._cssH;
+  const d = Math.min(dpr, CV_MAXDIM/w, CV_MAXDIM/h);
+  cv.width  = Math.max(1, Math.round(w*d));
+  cv.height = Math.max(1, Math.round(h*d));
+  cv.style.height = h+'px';
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(d,0,0,d,0,0);
+  cv._w = w; cv._h = h;
+  return ctx;
+}
+
+function clearCv(ctx,cv,fill){
+  ctx.clearRect(0,0,cv._w,cv._h);
+  if(fill!==false){
+    ctx.fillStyle='rgba(4,6,14,0.72)';
+    ctx.fillRect(0,0,cv._w,cv._h);
+  }
+}
+function line(ctx,x1,y1,x2,y2,col,w,dash){
+  ctx.save();
+  ctx.strokeStyle=col; ctx.lineWidth=w||1.5;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.restore();
+}
+function dot(ctx,x,y,r,col,glow){
+  ctx.save();
+  if(glow){ ctx.shadowColor=col; ctx.shadowBlur=glow; }
+  ctx.fillStyle=col;
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill();
+  ctx.restore();
+}
+function circ(ctx,x,y,r,col,w,dash){
+  ctx.save();
+  ctx.strokeStyle=col; ctx.lineWidth=w||1.5;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.stroke();
+  ctx.restore();
+}
+function txt(ctx,s,x,y,col,size,align,bold){
+  ctx.save();
+  ctx.fillStyle=col||C.txt;
+  ctx.font=(bold?'700 ':'')+(size||13)+'px Inter, system-ui, sans-serif';
+  ctx.textAlign=align||'left'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y);
+  ctx.restore();
+}
+function poly(ctx,pts,col,w,close,dash){
+  if(pts.length<2) return;
+  ctx.save();
+  ctx.strokeStyle=col; ctx.lineWidth=w||2;
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  if(close) ctx.closePath();
+  ctx.stroke(); ctx.restore();
+}
+function fillPoly(ctx,pts,col,close){
+  if(pts.length<3) return;
+  ctx.save(); ctx.fillStyle=col;
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,col,w,head){
+  line(ctx,x1,y1,x2,y2,col,w);
+  const a=Math.atan2(y2-y1,x2-x1), h=head||8;
+  ctx.save(); ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-h*Math.cos(a-0.4),y2-h*Math.sin(a-0.4));
+  ctx.lineTo(x2-h*Math.cos(a+0.4),y2-h*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function hexA(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function proj(x,y,z,rot,tilt,cx,cy,sc){
+  const cr=Math.cos(rot), sr=Math.sin(rot);
+  let X = x*cr - z*sr, Z = x*sr + z*cr;
+  const ct=Math.cos(tilt), st=Math.sin(tilt);
+  let Y = y*ct - Z*st, Z2 = y*st + Z*ct;
+  const p = 1/(1 + Z2*0.0016);
+  return [cx + X*sc*p, cy - Y*sc*p, Z2];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   NAVIGATION / SCROLL / REVEAL
+   ════════════════════════════════════════════════════════════════ */
+const toc=$('toc'), tocToggle=$('tocToggle');
+tocToggle.onclick=()=>toc.classList.toggle('show');
+const secs=[...document.querySelectorAll('section')];
+const links=[...document.querySelectorAll('#toc a')];
+links.forEach(a=>a.onclick=e=>{
+  e.preventDefault();
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  if(window.innerWidth<1100) toc.classList.remove('show');
+});
+function onScroll(){
+  const st=window.scrollY, dh=document.body.scrollHeight-window.innerHeight;
+  $('progressbar').style.width=(dh>0?(st/dh*100):0)+'%';
+  let cur=null;
+  secs.forEach(s=>{ if(s.getBoundingClientRect().top<160) cur=s.id; });
+  links.forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+cur));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting) e.target.classList.add('in');
+}),{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+
+/* KaTeX */
+function K(id,tex,disp){
+  const el=$(id); if(!el||!window.katex) return;
+  try{ katex.render(tex,el,{displayMode:!!disp,throwOnError:false}); }catch(e){}
+}
+function renderFormulas(){
+  if(!window.katex) return;
+  K('fml1','f,g:X\\to Y');
+  K('fml2','s\\in[0,1]');
+  K('fml3','H(s,\\cdot):X\\to Y');
+  K('fml4','H(0,\\cdot)=f,\\;H(1,\\cdot)=g');
+  K('fml15','\\pi_1(X,x):=\\{[\\gamma]\\;:\\;\\gamma\\text{ Schleife bei }x,\\text{ modulo Homotopie}\\}',true);
+  K('fml18','\\pi_1(X)\\;\\cong\\;\\Big(\\pi_1(U)\\ast\\pi_1(V)\\Big)\\Big/N,\\qquad N=\\big\\langle f_U(g)^{-1}\\,f_V(g)\\big\\rangle',true);
+  K('fml24','\\pi_n(X,x):=[\\,S^n,\\,(X,x)\\,]\\qquad(n\\ge 0)',true);
+  K('fml25','(a\\ast b)+(c\\ast d)=(a+c)\\ast(b+d)\\;\\;\\Longrightarrow\\;\\;+=\\ast\\;\\text{ und beide kommutativ}',true);
+  K('fml30','h:\\pi_n(X)\\xrightarrow{\\;\\cong\\;}H_n(X;\\mathbb{Z})\\qquad\\text{falls }X\\ (n-1)\\text{-zusammenhängend}');
+}
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+  }
+  renderFormulas();
+});
+
+/* ════════════════════════════════════════════════════════════════
+   HINTERGRUND: Sternstaub + Hero
+   ════════════════════════════════════════════════════════════════ */
+(function dustBG(){
+  const cv=$('dust'), ctx=cv.getContext('2d');
+  let W,H,ps=[];
+  function rs(){
+    const dpr=window.devicePixelRatio||1;
+    W=window.innerWidth; H=window.innerHeight;
+    cv.width=W*dpr; cv.height=H*dpr;
+    cv.style.width=W+'px'; cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ps=[]; const n=Math.min(150,Math.round(W*H/16000));
+    for(let i=0;i<n;i++) ps.push({
+      x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*1.3+0.3,
+      vx:(Math.random()-0.5)*0.12,vy:(Math.random()-0.5)*0.12,
+      p:Math.random()*TAU,
+      c:[C.a,C.c,C.b,C.d][Math.floor(Math.random()*4)]
+    });
+  }
+  rs(); window.addEventListener('resize',rs);
+  (function loop(t){
+    ctx.clearRect(0,0,W,H);
+    ps.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      const a=0.12+0.28*(0.5+0.5*Math.sin(t*0.0009+p.p));
+      ctx.globalAlpha=a; ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,TAU); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(loop);
+  })(0);
+})();
+
+(function heroCv(){
+  const cv=$('heroCv'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  let W,H;
+  function rs(){
+    const dpr=window.devicePixelRatio||1;
+    const r=cv.getBoundingClientRect();
+    W=r.width; H=r.height;
+    cv.width=W*dpr; cv.height=H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  rs(); window.addEventListener('resize',rs);
+  (function loop(t){
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=Math.min(W,H)*0.30;
+    const rot=t*0.00019, tilt=0.42+0.12*Math.sin(t*0.00026);
+    const NF=16;
+    const all=[];
+    for(let k=0;k<NF;k++){
+      const ph=k/NF*TAU;
+      const pts=[];
+      for(let i=0;i<=90;i++){
+        const u=i/90*TAU;
+        const lat=0.62+0.22*Math.sin(t*0.0004+ph);
+        const R=1, r0=lat*0.55;
+        const X=(R+r0*Math.cos(u))*Math.cos(u*0.5+ph);
+        const Y=(R+r0*Math.cos(u))*Math.sin(u*0.5+ph);
+        const Z=r0*Math.sin(u);
+        pts.push(proj(X*40,Y*40,Z*40,rot,tilt,cx,cy,s*0.9));
+      }
+      all.push({pts,c:[C.a,C.c,C.b,C.d][k%4],z:Math.sin(ph+rot)});
+    }
+    all.sort((A,B)=>A.z-B.z);
+    all.forEach((o,idx)=>{
+      ctx.globalAlpha=0.25+0.45*(idx/all.length);
+      poly(ctx,o.pts,o.c,1.4);
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(loop);
+  })(0);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   REGISTRY + SLIDER-HELPER
+   ════════════════════════════════════════════════════════════════ */
+const DEMOS=[];
+function reg(fn){ DEMOS.push(fn); fn(); }
+function redrawAll(){ DEMOS.forEach(f=>{try{f();}catch(e){}}); }
+let rsT;
+window.addEventListener('resize',()=>{
+  clearTimeout(rsT); rsT=setTimeout(redrawAll,140);
+});
+
+function slider(id,valId,fmt,cb){
+  const s=$(id), v=$(valId);
+  if(!s) return null;
+  const upd=()=>{
+    if(v) v.textContent = fmt? fmt(parseFloat(s.value)) : s.value;
+    cb && cb(parseFloat(s.value));
+  };
+  s.addEventListener('input',upd);
+  upd();
+  return s;
+}
+function animate(sliderEl,dur,onEnd){
+  if(!sliderEl) return;
+  const a=parseFloat(sliderEl.min), b=parseFloat(sliderEl.max);
+  const t0=performance.now();
+  function step(t){
+    const u=prog(t,t0,dur);
+    sliderEl.value=a+(b-a)*u;
+    sliderEl.dispatchEvent(new Event('input'));
+    if(u<1) requestAnimationFrame(step); else onEnd&&onEnd();
+  }
+  requestAnimationFrame(step);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 1 · Morph (Tasse/Donut …)
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvMorph'); if(!cv) return;
+  let t=0, mode=0, tear=0;
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h, cx=W/2, cy=H/2;
+    const s=Math.min(W,H)*0.30;
+    const tt=smooth(t);
+    const holes = mode===0?1: mode===1?0:2;
+
+    txt(ctx,'Ausgangsform',18,22,C.dim,12);
+    txt(ctx,'Zielform',W-18,22,C.dim,12,'right');
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    const N=260;
+    function outer(u){
+      if(mode===0){
+        const rD=1.0+0.34*Math.cos(u*1);
+        const rT=1.0+0.22*Math.cos(u*2)+0.30*Math.exp(-Math.pow(((u-0.9+TAU)%TAU)-0.0,2)*3);
+        const r=lerp(rT,rD,tt);
+        return r;
+      } else if(mode===1){
+        const p=lerp(6,2,tt);
+        const c=Math.abs(Math.cos(u)),si=Math.abs(Math.sin(u));
+        return Math.pow(Math.pow(c,p)+Math.pow(si,p),-1/p)*1.15;
+      } else {
+        const r=1.0+0.28*Math.cos(u*2+lerp(0,0.6,tt));
+        return r;
+      }
+    }
+    const pts=[];
+    for(let i=0;i<=N;i++){
+      const u=i/N*TAU;
+      let r=outer(u)*s;
+      if(tear>0 && ((u>1.0&&u<1.35))) r*=1-tear*0.9;
+      pts.push([Math.cos(u)*r,Math.sin(u)*r]);
+    }
+    const g=ctx.createRadialGradient(0,0,s*0.1,0,0,s*1.5);
+    g.addColorStop(0,hexA('#5ee7ff',0.22));
+    g.addColorStop(0.6,hexA('#a98bff',0.14));
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    fillPoly(ctx,pts,g);
+    poly(ctx,pts,tear>0?C.b:C.a,2.4,true);
+
+    function hole(hx,hy,hr){
+      ctx.save();
+      ctx.fillStyle='rgba(4,6,14,0.95)';
+      ctx.beginPath(); ctx.arc(hx,hy,hr,0,TAU); ctx.fill();
+      ctx.restore();
+      circ(ctx,hx,hy,hr,C.b,2.2);
+      circ(ctx,hx,hy,hr+5+3*Math.sin(performance.now()*0.003),hexA('#ff5ea8',0.3),1.2,[3,4]);
+    }
+    if(holes===1){
+      const hx=lerp(s*0.45,0,tt), hy=lerp(-s*0.05,0,tt);
+      if(tear<0.5) hole(hx,hy,s*lerp(0.22,0.36,tt));
+    } else if(holes===2){
+      hole(-s*0.48,0,s*0.24);
+      hole( s*0.48,0,s*0.24);
+    }
+    ctx.restore();
+
+    const txtH = holes;
+    $('roMorph').textContent =
+      tear>0.02
+      ? `⚠ ZERREISSEN — das ist KEINE Homotopie!\nLöcher: ${holes} → undefiniert   ·   Verboten ✗`
+      : `Löcher: ${txtH} → ${txtH}   ·   Erlaubte Verformung ✓\nVerformung t = ${t.toFixed(2)} — die Lochzahl ändert sich nie.`;
+  }
+  slider('sMorphT','vMorphT',v=>v.toFixed(2),v=>{t=v;draw();});
+  $('selMorph').onchange=e=>{mode=parseInt(e.target.value);draw();};
+  $('bMorphPlay').onclick=()=>{tear=0;animate($('sMorphT'),2400);};
+  $('bMorphTear').onclick=()=>{
+    const t0=performance.now();
+    (function st(tm){
+      tear=prog(tm,t0,700); draw();
+      if(tear<1) requestAnimationFrame(st);
+      else setTimeout(()=>{tear=0;draw();},900);
+    })(t0);
+  };
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   ROADMAP
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvRoadmap'); if(!cv) return;
+  const stops=[
+    {x:0.08,l:'Der Film',t:'Homotopie',id:'#s1',c:C.a},
+    {x:0.26,l:'Schleifen',t:'π₁ = ℤ',id:'#s2',c:C.a},
+    {x:0.44,l:'Wendeltreppe',t:'Hochheben',id:'#s3',c:C.c},
+    {x:0.60,l:'van Kampen',t:'Rechnen',id:'#s4',c:C.d},
+    {x:0.76,l:'πₙ',t:'abelsch',id:'#s5',c:C.b},
+    {x:0.93,l:'Brouwer',t:'πₙ(Sⁿ)=ℤ',id:'#s6',c:C.w}
+  ];
+  let hov=-1;
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h, y=H*0.52;
+    const g=ctx.createLinearGradient(0,0,W,0);
+    g.addColorStop(0,hexA('#5ee7ff',0.5));
+    g.addColorStop(0.5,hexA('#a98bff',0.5));
+    g.addColorStop(1,hexA('#7dffb0',0.5));
+    ctx.save(); ctx.strokeStyle=g; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const u=i/200, x=W*(0.04+u*0.92);
+      const yy=y+Math.sin(u*5.2)*H*0.10;
+      i?ctx.lineTo(x,yy):ctx.moveTo(x,yy);
+    }
+    ctx.stroke(); ctx.restore();
+    stops.forEach((s,i)=>{
+      const x=W*s.x;
+      const u=(s.x-0.04)/0.92;
+      const yy=y+Math.sin(u*5.2)*H*0.10;
+      s._x=x; s._y=yy;
+      const r=hov===i?13:9;
+      dot(ctx,x,yy,r+5,hexA(s.c,0.18));
+      dot(ctx,x,yy,r,s.c,hov===i?20:8);
+      txt(ctx,s.l,x,yy-26,hov===i?'#fff':C.dim,hov===i?13:12,'center',hov===i);
+      txt(ctx,s.t,x,yy+24,s.c,11.5,'center',true);
+    });
+    txt(ctx,'▸ klicken zum Springen',W-14,H-12,C.dim,11,'right');
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    let h=-1;
+    stops.forEach((s,i)=>{ if(Math.hypot(mx-s._x,my-s._y)<20) h=i; });
+    if(h!==hov){hov=h;draw();cv.style.cursor=h>=0?'pointer':'crosshair';}
+  });
+  cv.addEventListener('click',()=>{
+    if(hov>=0){ document.querySelector(stops[hov].id).scrollIntoView({behavior:'smooth'}); }
+  });
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 2 · Homotopie zwischen Wegen (mit Hindernis)
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvHomotopy'); if(!cv) return;
+  let s=0, obst=false;
+  function P0(t,W,H){ return [W*0.12+t*W*0.76, H*0.72]; }
+  function P1(t,W,H){ return [W*0.12+t*W*0.76, H*0.28]; }
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h;
+    const ox=W*0.5, oy=H*0.5, orr=Math.min(W,H)*0.14;
+    if(obst){
+      ctx.save();
+      const g=ctx.createRadialGradient(ox,oy,0,ox,oy,orr*1.8);
+      g.addColorStop(0,hexA('#ff5ea8',0.5)); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(ox,oy,orr*1.8,0,TAU); ctx.fill();
+      ctx.fillStyle='rgba(4,6,14,0.98)'; ctx.beginPath(); ctx.arc(ox,oy,orr,0,TAU); ctx.fill();
+      ctx.restore();
+      circ(ctx,ox,oy,orr,C.b,2.4);
+      txt(ctx,'Loch',ox,oy,C.b,12,'center',true);
+    }
+    for(let k=0;k<=14;k++){
+      const u=k/14;
+      if(u>s+0.001) break;
+      const pts=[];
+      for(let i=0;i<=90;i++){
+        const t=i/90;
+        const a=P0(t,W,H), b=P1(t,W,H);
+        let y=lerp(a[1],b[1],u);
+        pts.push([a[0],y]);
+      }
+      ctx.globalAlpha=0.10+0.25*u;
+      poly(ctx,pts,C.c,1.2);
+      ctx.globalAlpha=1;
+    }
+    const g0=[],g1=[];
+    for(let i=0;i<=120;i++){const t=i/120;g0.push(P0(t,W,H));g1.push(P1(t,W,H));}
+    poly(ctx,g0,hexA('#5ee7ff',0.85),2.6);
+    poly(ctx,g1,hexA('#7dffb0',0.85),2.6);
+    const cur=[];
+    let blocked=false;
+    for(let i=0;i<=140;i++){
+      const t=i/140;
+      const a=P0(t,W,H), b=P1(t,W,H);
+      const y=lerp(a[1],b[1],s);
+      if(obst && Math.hypot(a[0]-ox,y-oy)<orr) blocked=true;
+      cur.push([a[0],y]);
+    }
+    poly(ctx,cur,blocked?C.b:C.w,3.4);
+    dot(ctx,W*0.12,H*0.72,6,C.a,12); dot(ctx,W*0.12,H*0.28,6,C.d,12);
+    dot(ctx,W*0.88,H*0.72,6,C.a,12); dot(ctx,W*0.88,H*0.28,6,C.d,12);
+    txt(ctx,'γ₀',W*0.10,H*0.72+20,C.a,13,'center',true);
+    txt(ctx,'γ₁',W*0.10,H*0.28-20,C.d,13,'center',true);
+    txt(ctx,'H(s,·)',W*0.90,lerp(H*0.72,H*0.28,s)-18,C.w,12,'center',true);
+
+    $('roHom').textContent = obst
+      ? (blocked
+        ? `s = ${s.toFixed(2)}  ·  ⚠ Der Weg müsste DURCH das Loch — unmöglich!\nγ₀ und γ₁ sind hier NICHT homotop. Das Loch ist die Obstruktion.`
+        : `s = ${s.toFixed(2)}  ·  Noch frei — aber schiebe weiter …`)
+      : `s = ${s.toFixed(2)}  ·  Kein Hindernis → H(s,·) ist eine gültige Homotopie.\nH(0,·) = γ₀ , H(1,·) = γ₁ , Endpunkte bleiben fest. ✓`;
+  }
+  slider('sHomS','vHomS',v=>v.toFixed(2),v=>{s=v;draw();});
+  $('bHomPlay').onclick=()=>animate($('sHomS'),2200);
+  $('bHomObst').onclick=e=>{obst=!obst;e.target.classList.toggle('on',obst);
+    e.target.textContent=obst?'⬤ Hindernis aus':'⬤ Hindernis einschalten';draw();};
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 3 · Windungszahl am Kreis
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvCat0'); if(!cv) return; let n=1;
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h,cx=W/2,cy=H/2,R=Math.min(W,H)*0.33;
+    circ(ctx,cx,cy,R,'rgba(120,140,220,0.35)',2.5);
+    const N=400, pts=[];
+    for(let i=0;i<=N;i++){
+      const u=i/N, a=u*TAU*n-Math.PI/2;
+      const rr=R*(0.62+0.38*u);
+      pts.push([cx+Math.cos(a)*rr, cy+Math.sin(a)*rr]);
+    }
+    if(n!==0) poly(ctx,pts,n>0?C.a:C.b,2.8);
+    else { dot(ctx,cx,cy-R,7,C.d,14); txt(ctx,'konstant',cx,cy,C.d,13,'center',true); }
+    dot(ctx,cx,cy-R,7,C.d,16);
+    txt(ctx,'n = '+n,cx,cy,n>0?C.a:(n<0?C.b:C.d),26,'center',true);
+    $('roCat0').textContent=`Windungszahl n = ${n}\nπ₁(S¹) ≅ ℤ — Verketten = Addieren: n + m.\nBewiesen durch Hochheben auf ℝ (Wendeltreppe).`;
+  }
+  slider('sCat0','vCat0',v=>String(v),v=>{n=v;draw();});
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 4 · Schleifen-Rechner (Wort in freier Gruppe)
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvLoop'); if(!cv) return;
+  let word=[], holes=2, t=0, playing=false;
+  function reduce(w){
+    const s=[];
+    for(const g of w){
+      if(s.length && s[s.length-1].l===g.l && s[s.length-1].i!==g.i) s.pop();
+      else s.push(g);
+    }
+    return s;
+  }
+  function fmt(w){
+    if(!w.length) return 'e';
+    return w.map(g=>g.l+(g.i?'⁻¹':'')).join(' ');
+  }
+  function holePos(W,H,i){
+    const n=holes;
+    if(n===0) return null;
+    const gap=W*0.66/Math.max(n,1);
+    const x0=W*0.5-(n-1)*gap/2;
+    return [x0+i*gap, H*0.44];
+  }
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h;
+    const base=[W*0.5,H*0.84];
+    const hr=Math.min(W,H)*0.075;
+    for(let i=0;i<holes;i++){
+      const p=holePos(W,H,i);
+      ctx.save();
+      const g=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],hr*1.8);
+      g.addColorStop(0,hexA(i===0?'#5ee7ff':(i===1?'#ff5ea8':'#a98bff'),0.35));
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(p[0],p[1],hr*1.8,0,TAU);ctx.fill();
+      ctx.fillStyle='rgba(4,6,14,0.97)';ctx.beginPath();ctx.arc(p[0],p[1],hr,0,TAU);ctx.fill();
+      ctx.restore();
+      const col=i===0?C.a:(i===1?C.b:C.c);
+      circ(ctx,p[0],p[1],hr,col,2.2);
+      txt(ctx,['a','b','c'][i],p[0],p[1],col,15,'center',true);
+    }
+    const segs=[];
+    word.forEach((g,gi)=>{
+      const idx=g.l==='a'?0:(g.l==='b'?1:2);
+      const p=holePos(W,H,idx); if(!p) return;
+      const dir=g.i?-1:1;
+      const pts=[];
+      const N=90;
+      const rr=hr*1.7+gi*3;
+      for(let i=0;i<=N;i++){
+        const u=i/N;
+        if(u<0.28){
+          const v=u/0.28;
+          pts.push([lerp(base[0],p[0],v), lerp(base[1],p[1]+rr,v)]);
+        } else if(u<0.72){
+          const v=(u-0.28)/0.44;
+          const a=Math.PI/2 + dir*v*TAU;
+          pts.push([p[0]+Math.cos(a)*rr, p[1]+Math.sin(a)*rr]);
+        } else {
+          const v=(u-0.72)/0.28;
+          pts.push([lerp(p[0],base[0],v), lerp(p[1]+rr,base[1],v)]);
+        }
+      }
+      segs.push({pts,col:idx===0?C.a:(idx===1?C.b:C.c)});
+    });
+    segs.forEach((s,i)=>{ ctx.globalAlpha=0.55+0.45*(i===segs.length-1?1:0.4); poly(ctx,s.pts,s.col,2.6); ctx.globalAlpha=1; });
+    dot(ctx,base[0],base[1],8,C.d,16);
+    txt(ctx,'Basispunkt',base[0],base[1]+20,C.d,11.5,'center');
+
+    if(segs.length){
+      const total=segs.length;
+      const f=t*total;
+      const si=clamp(Math.floor(f),0,total-1);
+      const u=f-si;
+      const p=segs[si].pts[Math.floor(u*(segs[si].pts.length-1))];
+      if(p){ dot(ctx,p[0],p[1],7,C.w,18); }
+    }
+    const red=reduce(word);
+    $('scWord').textContent=fmt(word);
+    $('scRed').textContent=fmt(red);
+    $('scPi1').textContent = holes===0?'1 (trivial)':(holes===1?'ℤ':'F'+holes+' (frei)');
+    $('roLoop').textContent =
+      `Wort: ${fmt(word)}   ⟶ gekürzt: ${fmt(red)}\n`+
+      (holes>=2 && fmt(red)!=='e' && fmt(word).includes('a b a⁻¹ b⁻¹')
+        ? `⚠ Der Kommutator aba⁻¹b⁻¹ ist NICHT trivial! F₂ ist nicht abelsch.`
+        : (holes>=2?`Nur aa⁻¹ = e kürzt sich. Keine weiteren Relationen ⟹ freie Gruppe.`
+                   :`π₁ = ${holes===0?'1':'ℤ'} — hier kommutiert alles.`));
+  }
+  function add(l,i){ word.push({l,i}); if(word.length>8) word.shift(); draw(); }
+  $('bLoopClear').onclick=()=>{word=[];draw();};
+  $('bLoopA').onclick=()=>add('a',false);
+  $('bLoopAi').onclick=()=>add('a',true);
+  $('bLoopB').onclick=()=>add('b',false);
+  $('bLoopBi').onclick=()=>add('b',true);
+  $('bLoopComm').onclick=()=>{word=[{l:'a',i:false},{l:'b',i:false},{l:'a',i:true},{l:'b',i:true}];draw();};
+  $('bLoopPlay').onclick=()=>{
+    const t0=performance.now();
+    (function st(tm){ t=prog(tm,t0,700*Math.max(word.length,1)); draw();
+      if(t<1) requestAnimationFrame(st); })(t0);
+  };
+  slider('sLoopHoles','vLoopHoles',v=>String(v),v=>{holes=v;
+    word=word.filter(g=>(g.l==='a'&&holes>=1)||(g.l==='b'&&holes>=2)||(g.l==='c'&&holes>=3));
+    draw();});
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 5 · Wendeltreppe ℝ → S¹  (3D)
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvLift3D'); if(!cv) return;
+  let pos=0, sheet=0, rot=0.35, all=false;
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h, cx=W/2, cy=H*0.62, S=Math.min(W,H)*0.0075;
+    const tilt=0.42;
+    const sc=S*Math.min(W,H)*0.40;
+    const circPts=[];
+    for(let i=0;i<=120;i++){
+      const a=i/120*TAU;
+      circPts.push(proj(Math.cos(a)*30, Math.sin(a)*30, -60, rot,tilt,cx,cy,sc));
+    }
+    poly(ctx,circPts,'rgba(120,140,220,0.45)',2.4,true);
+    txt(ctx,'S¹ (unten)',cx,H-16,C.dim,12,'center');
+
+    function spiral(from,to,col,wid,alpha){
+      const pts=[];
+      const N=Math.max(20,Math.round(Math.abs(to-from)*80));
+      for(let i=0;i<=N;i++){
+        const u=from+(to-from)*i/N;
+        const a=u*TAU;
+        pts.push(proj(Math.cos(a)*30, Math.sin(a)*30, -60+u*30, rot,tilt,cx,cy,sc));
+      }
+      ctx.globalAlpha=alpha===undefined?1:alpha;
+      poly(ctx,pts,col,wid); ctx.globalAlpha=1;
+      return pts;
+    }
+    spiral(-3.2,3.2,'rgba(120,140,220,0.22)',1.6);
+
+    if(all){
+      for(let k=-2;k<=2;k++){
+        const col=[C.a,C.c,C.d,C.w,C.b][(k+2)%5];
+        spiral(k, k+pos, col, k===sheet?3.2:1.8, k===sheet?1:0.45);
+      }
+    } else {
+      spiral(sheet, sheet+pos, C.a, 3.2);
+    }
+    const a=pos*TAU;
+    const pDown=proj(Math.cos(a)*30,Math.sin(a)*30,-60,rot,tilt,cx,cy,sc);
+    const pUp=proj(Math.cos(a)*30,Math.sin(a)*30,-60+(sheet+pos)*30,rot,tilt,cx,cy,sc);
+    line(ctx,pDown[0],pDown[1],pUp[0],pUp[1],hexA('#ffd166',0.45),1.5,[4,4]);
+    dot(ctx,pDown[0],pDown[1],7,C.w,16);
+    dot(ctx,pUp[0],pUp[1],8,C.b,18);
+    txt(ctx,'γ(t)',pDown[0],pDown[1]+18,C.w,11.5,'center',true);
+    txt(ctx,'γ̃(t)',pUp[0],pUp[1]-18,C.b,11.5,'center',true);
+
+    for(let k=-3;k<=3;k++){
+      const p=proj(38,0,-60+k*30,rot,tilt,cx,cy,sc);
+      txt(ctx,String(k),p[0]+14,p[1],hexA('#9aa6cc',0.7),11,'left');
+      dot(ctx,p[0],p[1],2.5,hexA('#9aa6cc',0.5));
+    }
+    txt(ctx,'ℝ (oben)',18,20,C.dim,12);
+    txt(ctx,'p(x) = e^(2πix)',18,38,C.c,12,'left',true);
+
+    $('roLift').textContent=
+      `Position unten: ${pos.toFixed(2)} Umläufe  ·  Startblatt: ${sheet}\n`+
+      `Endpunkt oben: ${(sheet+pos).toFixed(2)}  —  Differenz = ${pos.toFixed(2)}\n`+
+      (Math.abs(pos-Math.round(pos))<0.02 && Math.abs(pos)>0.5
+        ? `✓ Geschlossene Schleife unten ⟹ Windungszahl = ${Math.round(pos)} ∈ ℤ = π₁(S¹)`
+        : `Die Hochhebung ist EINDEUTIG, sobald der Startpunkt oben gewählt ist.`);
+  }
+  slider('sLift','vLift',v=>v.toFixed(2),v=>{pos=v;draw();});
+  slider('sLiftS','vLiftS',v=>String(v),v=>{sheet=v;draw();});
+  slider('sLiftR','vLiftR',v=>v.toFixed(2),v=>{rot=v;draw();});
+  $('bLiftPlay').onclick=()=>{
+    const s=$('sLift'); const t0=performance.now();
+    (function st(t){ const u=prog(t,t0,2600);
+      s.value=u; s.dispatchEvent(new Event('input'));
+      if(u<1) requestAnimationFrame(st); })(t0);
+  };
+  $('bLiftAll').onclick=e=>{all=!all;e.target.classList.toggle('on',all);draw();};
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 6 · Van Kampen
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvVK'); if(!cv) return;
+  let ov=0.5, ex=0;
+  const EX=[
+    {t:'S² = zwei Scheiben', u:'π₁(U)=1', v:'π₁(V)=1', i:'π₁(U∩V)=π₁(S¹)=ℤ',
+     res:'π₁(S²) = 1 ∗ 1 / N = 1', note:'Beide Stücke zusammenziehbar ⟹ freies Produkt trivial.'},
+    {t:'Acht = zwei Kreise', u:'π₁(U)=ℤ⟨a⟩', v:'π₁(V)=ℤ⟨b⟩', i:'π₁(U∩V)=1',
+     res:'π₁ = ℤ ∗ ℤ = F₂', note:'Schnitt trivial ⟹ KEINE Relationen ⟹ freies Produkt.'},
+    {t:'Torus aus Quadrat', u:'π₁(U)=F₂⟨a,b⟩', v:'π₁(V)=1', i:'π₁(U∩V)=ℤ⟨[a,b]⟩',
+     res:'π₁(T²) = ⟨a,b | aba⁻¹b⁻¹⟩ = ℤ²', note:'Die 2-Zelle killt genau den Kommutator.'},
+    {t:'Σ₂ (Geschlecht 2)', u:'π₁(U)=F₄', v:'π₁(V)=1', i:'π₁(U∩V)=ℤ',
+     res:'⟨a₁,b₁,a₂,b₂ | [a₁,b₁][a₂,b₂]⟩', note:'2g=4 Erzeuger, EINE Relation ⟹ nicht frei.'},
+    {t:'Kreis = zwei Bögen', u:'π₁(U)=1', v:'π₁(V)=1', i:'π₁(U∩V)= 2 Punkte!',
+     res:'π₁(S¹) = ℤ', note:'⚠ Hier ist U∩V NICHT zusammenhängend — van Kampen in der Gruppoid-Version nötig!'}
+  ];
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h,cy=H*0.42;
+    const R=Math.min(W*0.22,H*0.30);
+    const sep=lerp(R*1.95,R*0.35,ov);
+    const x1=W/2-sep/2, x2=W/2+sep/2;
+    ctx.save();
+    let g=ctx.createRadialGradient(x1,cy,0,x1,cy,R);
+    g.addColorStop(0,hexA('#5ee7ff',0.22)); g.addColorStop(1,hexA('#5ee7ff',0.05));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x1,cy,R,0,TAU); ctx.fill();
+    g=ctx.createRadialGradient(x2,cy,0,x2,cy,R);
+    g.addColorStop(0,hexA('#ff5ea8',0.22)); g.addColorStop(1,hexA('#ff5ea8',0.05));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x2,cy,R,0,TAU); ctx.fill();
+    ctx.restore();
+    if(sep<2*R){
+      ctx.save(); ctx.fillStyle=hexA('#7dffb0',0.24);
+      ctx.beginPath();ctx.arc(x1,cy,R,0,TAU);ctx.clip();
+      ctx.beginPath();ctx.arc(x2,cy,R,0,TAU);ctx.fill();ctx.restore();
+    }
+    circ(ctx,x1,cy,R,C.a,2.4); circ(ctx,x2,cy,R,C.b,2.4);
+    txt(ctx,'U',x1-R*0.55,cy-R*0.55,C.a,17,'center',true);
+    txt(ctx,'V',x2+R*0.55,cy-R*0.55,C.b,17,'center',true);
+    if(sep<2*R) txt(ctx,'U∩V',W/2,cy+R*0.72,C.d,13,'center',true);
+    dot(ctx,W/2,cy,6,C.w,14);
+    txt(ctx,'x',W/2,cy-16,C.w,12,'center',true);
+    const e=EX[ex];
+    const bot=H*0.80;
+    txt(ctx,e.u,x1,bot,C.a,12.5,'center',true);
+    txt(ctx,e.v,x2,bot,C.b,12.5,'center',true);
+    txt(ctx,e.i,W/2,bot+22,C.d,12.5,'center',true);
+    txt(ctx,sep<2*R?'✓ Überlappung vorhanden — van Kampen anwendbar':'✗ Keine Überlappung — Satz gilt nicht!',
+        W/2,H-10,sep<2*R?C.d:C.b,11.5,'center',true);
+    $('roVK').textContent=
+      `${e.t}\n${e.u}   ∗   ${e.v}   modulo Relationen aus ${e.i}\n⟹ ${e.res}\n${e.note}`;
+  }
+  slider('sVK','vVK',v=>v.toFixed(2),v=>{ov=v;draw();});
+  $('selVK').onchange=e=>{ex=parseInt(e.target.value);draw();};
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 7 · Eckmann–Hilton
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvEH'); if(!cv) return;
+  let t=0, grid=true;
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h;
+    const S=Math.min(W*0.30,H*0.62);
+    const cx=W/2, cy=H*0.48;
+    const u=smooth(t);
+    if(grid){
+      ctx.save(); ctx.strokeStyle='rgba(120,140,220,0.13)'; ctx.lineWidth=1;
+      ctx.strokeRect(cx-S,cy-S*0.6,2*S,S*1.2);
+      line(ctx,cx,cy-S*0.6,cx,cy+S*0.6,'rgba(120,140,220,0.13)',1);
+      line(ctx,cx-S,cy,cx+S,cy,'rgba(120,140,220,0.13)',1);
+      ctx.restore();
+    }
+    const qw=S*0.86, qh=S*0.50;
+    function box(x,y,lab,col,active){
+      ctx.save();
+      const g=ctx.createLinearGradient(x-qw/2,y-qh/2,x+qw/2,y+qh/2);
+      g.addColorStop(0,hexA(col,active?0.34:0.14));
+      g.addColorStop(1,hexA(col,active?0.16:0.05));
+      ctx.fillStyle=g;
+      ctx.fillRect(x-qw/2,y-qh/2,qw,qh);
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=active?2.6:1.6;
+      if(active){ctx.shadowColor=col;ctx.shadowBlur=12;}
+      ctx.strokeRect(x-qw/2,y-qh/2,qw,qh); ctx.restore();
+      txt(ctx,lab,x,y,active?'#fff':col,21,'center',true);
+    }
+    const P={
+      lu:[cx-S*0.5, cy+S*0.30],
+      lo:[cx-S*0.5, cy-S*0.30],
+      ru:[cx+S*0.5, cy+S*0.30],
+      ro:[cx+S*0.5, cy-S*0.30]
+    };
+    let aPos, cPos;
+    if(u<0.25){ const v=u/0.25; aPos=[lerp(P.lu[0],P.lo[0],v),lerp(P.lu[1],P.lo[1],v)]; cPos=P.ru; }
+    else if(u<0.5){ const v=(u-0.25)/0.25; aPos=P.lo; cPos=[lerp(P.ru[0],P.lu[0],v),lerp(P.ru[1],P.lu[1],v)]; }
+    else if(u<0.75){ const v=(u-0.5)/0.25; aPos=[lerp(P.lo[0],P.ro[0],v),lerp(P.lo[1],P.ro[1],v)]; cPos=P.lu; }
+    else { const v=(u-0.75)/0.25; aPos=[lerp(P.ro[0],P.ru[0],v),lerp(P.ro[1],P.ru[1],v)]; cPos=P.lu; }
+    [P.lu,P.lo,P.ru,P.ro].forEach(p=>{
+      ctx.save(); ctx.strokeStyle='rgba(120,140,220,0.13)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+      ctx.strokeRect(p[0]-qw/2,p[1]-qh/2,qw,qh); ctx.restore();
+    });
+    box(cPos[0],cPos[1],'c',C.b,true);
+    box(aPos[0],aPos[1],'a',C.a,true);
+    txt(ctx,'horizontal: ∗',cx,cy-S*0.72,C.c,12.5,'center',true);
+    txt(ctx,'vertikal: +',cx-S-30,cy,C.d,12.5,'center',true);
+    const PH=['a und c stehen nebeneinander: a ∗ c',
+              'a wandert nach oben (Einheit unten)',
+              'c wandert nach links',
+              'a wandert nach rechts',
+              'Fertig: c ∗ a — die Plätze sind getauscht!'];
+    const ph = u<0.02?0 : u<0.25?1 : u<0.5?2 : u<0.75?3 : (u>0.98?4:3);
+    $('roEH').textContent=
+      `Schritt ${(u*100).toFixed(0)}%  ·  ${PH[ph]}\n`+
+      `Austauschgesetz: (a∗b)+(c∗d) = (a+c)∗(b+d)\n`+
+      (u>0.98
+        ? `✓ a ∗ c = c ∗ a. Und ebenso + = ∗. Beide Operationen sind DIESELBE und KOMMUTATIV.\n  ⟹ πₙ(X) ist abelsch für alle n ≥ 2.`
+        : `Beobachte: a und c berühren sich NIE — sie können frei umeinander wandern.`);
+  }
+  slider('sEH','vEH',v=>v.toFixed(2),v=>{t=v;draw();});
+  $('bEHPlay').onclick=()=>animate($('sEH'),3600);
+  $('bEHGrid').onclick=e=>{grid=!grid;e.target.classList.toggle('on',grid);draw();};
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   SPIEL 8 · Brouwer im Experiment
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+  const cv=$('cvBrouwer2'); if(!cv) return;
+  let a=0.4,b=0.5,c=0.6, field=false, fp=null, trail=[];
+  function F(px,py,cx,cy,R){
+    let dx=(px-cx)/R, dy=(py-cy)/R;
+    const ang=b*TAU*0.5;
+    let nx=(dx*Math.cos(ang)-dy*Math.sin(ang))*c;
+    let ny=(dx*Math.sin(ang)+dy*Math.cos(ang))*c;
+    nx += a*0.45*Math.sin(dy*2.4);
+    ny += a*0.45*Math.cos(dx*2.1)-a*0.2;
+    const n=Math.hypot(nx,ny);
+    if(n>1){nx/=n;ny/=n;}
+    return [cx+nx*R, cy+ny*R];
+  }
+  function draw(){
+    const ctx=setupCv(cv); clearCv(ctx,cv);
+    const W=cv._w,H=cv._h,cx=W/2,cy=H*0.48,R=Math.min(W,H)*0.34;
+    ctx.save();
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+    g.addColorStop(0,hexA('#5ee7ff',0.09)); g.addColorStop(1,hexA('#a98bff',0.03));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.fill(); ctx.restore();
+    circ(ctx,cx,cy,R,C.a,2.4);
+    if(field){
+      const NG=13;
+      for(let i=0;i<NG;i++)for(let j=0;j<NG;j++){
+        const px=cx+(i/(NG-1)-0.5)*2*R*0.93;
+        const py=cy+(j/(NG-1)-0.5)*2*R*0.93;
+        if(Math.hypot(px-cx,py-cy)>R*0.95) continue;
+        const q=F(px,py,cx,cy,R);
+        const d=Math.hypot(q[0]-px,q[1]-py);
+        const near=d<R*0.035;
+        arrow(ctx,px,py,lerp(px,q[0],0.8),lerp(py,q[1],0.8),
+              near?C.d:hexA('#ff5ea8',0.30),near?2.4:1,near?7:3.5);
+      }
+    }
+    if(trail.length>1) poly(ctx,trail,hexA('#ffd166',0.45),1.6);
+    if(fp){
+      dot(ctx,fp[0],fp[1],18,hexA('#7dffb0',0.18));
+      dot(ctx,fp[0],fp[1],8,C.d,22);
+      circ(ctx,fp[0],fp[1],22+7*Math.sin(performance.now()*0.004),hexA('#7dffb0',0.5),2.2);
+      txt(ctx,'x = f(x)',fp[0],fp[1]-32,C.d,13,'center',true);
+    }
+    txt(ctx,'D²',cx,cy-R-22,C.a,14,'center',true);
+    $('roBr2').textContent=
+      `Beliebige stetige Abbildung f: D² → D²\n`+
+      (fp
+        ? `✓ Fixpunkt gefunden bei (${((fp[0]-cx)/R).toFixed(3)}, ${((cy-fp[1])/R).toFixed(3)})\n`+
+          `  Der Satz von Brouwer garantiert: es gibt IMMER einen.\n`+
+          `  Beweis: sonst hätte man eine Retraktion Dⁿ → Sⁿ⁻¹ vom Grad 0 und 1 zugleich.`
+        : `Klicke „Iterieren" — die Folge x, f(x), f(f(x)), … konvergiert zum Fixpunkt.\n`+
+          `Das ist die konstruktive Seite; Brouwer sagt nur, DASS es einen gibt.`);
+  }
+  slider('sBr2a','vBr2a',v=>v.toFixed(2),v=>{a=v;fp=null;trail=[];draw();});
+  slider('sBr2b','vBr2b',v=>v.toFixed(2),v=>{b=v;fp=null;trail=[];draw();});
+  slider('sBr2c','vBr2c',v=>v.toFixed(2),v=>{c=v;fp=null;trail=[];draw();});
+  $('bBr2Field').onclick=e=>{field=!field;e.target.classList.toggle('on',field);draw();};
+  $('bBr2Rand').onclick=()=>{
+    a=Math.random(); b=Math.random(); c=0.25+Math.random()*0.6;
+    ['sBr2a','sBr2b','sBr2c'].forEach((id,i)=>{
+      const v=[a,b,c][i]; $(id).value=v;
+      $(['vBr2a','vBr2b','vBr2c'][i]).textContent=v.toFixed(2);
+    });
+    fp=null;trail=[];draw();
+  };
+  $('bBr2Iter').onclick=()=>{
+    const W=cv._w,H=cv._h,cx=W/2,cy=H*0.48,R=Math.min(W,H)*0.34;
+    let p=[cx+R*0.72,cy-R*0.42];
+    trail=[p.slice()];
+    let i=0;
+    (function step(){
+      p=F(p[0],p[1],cx,cy,R);
+      trail.push(p.slice());
+      if(trail.length>90) trail.shift();
+      fp=p; i++; draw();
+      if(i<70) requestAnimationFrame(step);
+    })();
+  };
+  reg(draw);
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{ redrawAll(); onScroll(); },120);
+  setTimeout(redrawAll,600);
+});
+onScroll();
+</script>
+</body>
+</html>
