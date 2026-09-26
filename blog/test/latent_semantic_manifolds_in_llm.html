@@ -12,7 +12,43 @@
 <script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
 <!-- Three.js für 3D-Mannigfaltigkeiten -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+  if(!window.THREE)return;
+  THREE.OrbitControls=class{
+    constructor(cam,dom){
+      this.camera=cam;this.domElement=dom;this.target=new THREE.Vector3();
+      this.enableDamping=false;this.dampingFactor=0.1;this.autoRotate=false;this.autoRotateSpeed=2;
+      const off=cam.position.clone().sub(this.target);
+      this._sph=new THREE.Spherical().setFromVector3(off);
+      this._dTh=0;this._dPh=0;this._zm=1;this._drag=false;
+      const el=dom;el.style.touchAction='none';
+      el.addEventListener('pointerdown',e=>{this._drag=true;this._px=e.clientX;this._py=e.clientY});
+      window.addEventListener('pointerup',()=>this._drag=false);
+      el.addEventListener('pointermove',e=>{
+        if(!this._drag)return;
+        this._dTh-=0.005*(e.clientX-this._px);
+        this._dPh-=0.005*(e.clientY-this._py);
+        this._px=e.clientX;this._py=e.clientY;
+      });
+      el.addEventListener('wheel',e=>{e.preventDefault();this._zm*=Math.pow(0.95,-e.deltaY/100)},{passive:false});
+    }
+    update(){
+      if(this.autoRotate)this._sph.theta+=0.0012*this.autoRotateSpeed;
+      this._sph.theta+=this._dTh;
+      this._sph.phi=Math.max(0.05,Math.min(Math.PI-0.05,this._sph.phi+this._dPh));
+      this._sph.radius=Math.max(0.5,Math.min(60,this._sph.radius*this._zm));
+      this._zm=1;
+      if(this.enableDamping){this._dTh*=(1-this.dampingFactor);this._dPh*=(1-this.dampingFactor)}
+      else{this._dTh=0;this._dPh=0}
+      const off=new THREE.Vector3().setFromSpherical(this._sph);
+      this.camera.position.copy(this.target).add(off);
+      this.camera.lookAt(this.target);
+      return this;
+    }
+  };
+})();
+</script>
 
 <style>
 /* ============================================================
@@ -2764,10 +2800,10 @@ le (euklidisch)
     document.getElementById('fDet').textContent=det<0.001?det.toExponential(1):fmt(det,3);
     document.getElementById('fEig').textContent=fmt(l1,2)+'/'+fmt(l2,2);
     document.getElementById('fH').textContent=fmt(H2,2);
-    const st=document.getElementById('fSt');
-    if(det<1e-3){st.textContent='ENTARTET!';st.style.color=C.acc3}
-    else if(H2<0.35){st.textContent='fast sicher';st.style.color='#ffab70'}
-    else{st.textContent='gesund';st.style.color=C.acc5}
+    const stEl=document.getElementById('fSt');
+    if(det<1e-3){stEl.textContent='ENTARTET!';stEl.style.color=C.acc3}
+    else if(H2<0.35){stEl.textContent='fast sicher';stEl.style.color='#ffab70'}
+    else{stEl.textContent='gesund';stEl.style.color=C.acc5}
   }
   [fx,fy,fb].forEach(s=>s.addEventListener('input',draw));
   draw();
@@ -3501,7 +3537,7 @@ le (euklidisch)
 
     // Histogram
     Plotly.react('plGapHist',[
-      {x:s,type:'histogram',nbinsx=undefined,nbinsx:64,
+      {x:s,type:'histogram',nbinsx:64,
         marker:{color:m.col,opacity:0.72},name:'m(h)',
         hovertemplate:'m≈%{x:.2f}<br>%{y} Vorkommen<extra></extra>'},
     ],L({
