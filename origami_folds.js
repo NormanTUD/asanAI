@@ -4233,7 +4233,9 @@ var OrigamiFolds = (function (global) {
 		_extractHyperplanes:  _extractHyperplanes,
 		_computePairs:        _computePairs,
 		_makeGrid:            _makeGrid,
-		_gridDistortion:      _gridDistortion
+		_gridDistortion:      _gridDistortion,
+		classColor:           _classColor,
+		classPalette:         CLASS_PALETTE
 	};
 
 	if (typeof global !== "undefined") {
