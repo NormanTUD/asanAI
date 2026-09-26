@@ -2993,25 +2993,28 @@ var OrigamiFolds = (function (global) {
 		var traces = [];
 		var legendDone = false;
 
-		var nStates = results.length + 1;
 		var states = [];
 
 		for (var i = 0; i < results.length; i++) {
 			var r = results[i];
-			if (!r) { states.push(null); states.push(null); continue; }
+			if (!r) { states.push(null); continue; }
 
-			states.push({
-				node: r.pair.inNode,
-				act: r.actIn,
-				bounds: r.boundsIn,
-				grid: r.grid,
-				gridAct: r.gridIn,
-				distortion: r.distortion,
-				cutLayer: r.pair.layer,
-				dim: r.pair.dimIn,
-				name: r.pair.inNode.name || ("In " + r.pair.dimIn + "D")
-			});
+			if (i === 0) {
+				states.push({
+					node: r.pair.inNode,
+					act: r.actIn,
+					bounds: r.boundsIn,
+					grid: r.grid,
+					gridAct: r.gridIn,
+					distortion: r.distortion,
+					cutLayer: r.pair.layer,
+					dim: r.pair.dimIn,
+					name: r.pair.inNode.name || ("In " + r.pair.dimIn + "D")
+				});
+			}
 
+			var nextCut = (i + 1 < results.length && results[i + 1])
+				? results[i + 1].pair.layer : null;
 			states.push({
 				node: r.pair.outNode,
 				act: r.actOut,
@@ -3019,8 +3022,7 @@ var OrigamiFolds = (function (global) {
 				grid: r.grid,
 				gridAct: r.gridOut,
 				distortion: r.distortion,
-				cutLayer: (i + 1 < results.length && results[i + 1])
-					? results[i + 1].pair.layer : null,
+				cutLayer: nextCut,
 				dim: r.pair.dimOut,
 				name: r.pair.outNode.name || ("Out " + r.pair.dimOut + "D")
 			});
