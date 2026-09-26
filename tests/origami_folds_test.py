@@ -207,6 +207,7 @@ async def main():
                     """(a) => {
                         try { OrigamiFolds.destroy(); } catch (e) {}
                         window._state_initialised_in_tab = false;
+                        OrigamiFolds.setConfig({ showGrid: true, showGridSurface: true, showReluCuts: true });
                         __hidePlot();
                         __setupModel(a.m, 'cls2', true);
                         update_origami_folds();
@@ -468,15 +469,13 @@ async def main():
             # 3D-Erst-Pick bricht ("...length, ...is undefined").
             for i in range(8):
                 s = await scenario_hidden(SHEET, reveal_ms=40)
-                if i == 0 and s["nMesh3d"] < 1:
-                    print("DEBUG hidden#1 snapshot:")
-                    import json
-                    print(json.dumps(s, indent=1, ensure_ascii=False)[:2500])
                 expect_rendered("hidden->shown first render #%d" % (i + 1),
                                 s, need_mesh=True)
                 await new_errors("hidden->shown #%d" % (i + 1))
 
             # ------------------------------------------------ recovery net
+            await page.evaluate(
+                "() => OrigamiFolds.setConfig({ showGrid: true, showGridSurface: true, showReluCuts: true })")
             s = await scenario(SHEET)
             expect_rendered("recovery: Ausgangszustand", s, need_mesh=True)
             await page.evaluate(
