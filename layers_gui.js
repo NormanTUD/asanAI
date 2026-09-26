@@ -627,6 +627,12 @@ async function add_layer(item) {
 
 	await updated_page();
 
+	var $new_layer = $($(".layer_setting")[real_nr + plus_or_minus_one]);
+	var $new_activation = $new_layer.find(".activation");
+	if ($new_activation.length && $new_activation.val() !== "relu") {
+		$new_activation.val("relu").trigger("change");
+	}
+
 	await write_descriptions();
 
 	$(".remove_layer").prop("disabled", false).show();

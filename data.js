@@ -786,12 +786,14 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		var x_print_string = _tensor_print_to_string(x);
 		var y_print_string = _tensor_print_to_string(y);
 
-		var x_latex = array_to_latex(array_sync(x), "Input");
-		var y_latex = array_to_latex(array_sync(y), "Output");
+		var xy_display_max = 8;
+		var x_latex = array_to_ellipsis_latex(array_sync(x), xy_display_max, "Input");
+		var y_latex = array_to_ellipsis_latex(array_sync(y), xy_display_max, "Output");
 
-		var network_name = $("#model_dataset").val().toUpperCase();
+		var network_name = (get_chosen_dataset() || $("#dataset").val() || "").toUpperCase();
+		var network_name_latex = network_name.split("_").join("\\_");
 
-		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
+		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name_latex}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
 		_temml();
 	} catch (e) {
 		let errorContent;

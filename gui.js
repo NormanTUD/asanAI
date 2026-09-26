@@ -599,7 +599,7 @@ function init_weight_file_list() {
 
 	var chosen_dataset = $("#dataset").val();
 
-	var this_struct = traindata_struct[chosen_dataset]["weights_file"];
+	var this_struct = (traindata_struct[chosen_dataset] || {})["weights_file"] || {};
 
 	var weight_files = Object.keys(this_struct);
 
