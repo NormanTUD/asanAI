@@ -1311,7 +1311,7 @@ var OrigamiFolds = (function (global) {
 						dim: prevGridOut.dim,
 						res: prevGridOut.res,
 						lines: prevGridOut.lines,
-						quads: (prevGridOut.dim === 2) ? prevGridOut.quads : [],
+						quads: prevGridOut.quads || [],
 						bounds: bIn
 					};
 					gridIn = prevGridOut;
@@ -1345,7 +1345,7 @@ var OrigamiFolds = (function (global) {
 									outCoords[q * gridOut.dim + 2] = gridOut.zs[q];
 							}
 							var outQuads = [];
-							if (gridOut.dim === 2 && grid.quads) {
+							if (grid.quads) {
 								outQuads = grid.quads;
 							}
 							prevGridOut = {
@@ -2007,7 +2007,6 @@ var OrigamiFolds = (function (global) {
 	function _buildGridSurface(grid, act, distortion, sceneName, theme, showLegend, isInput) {
 		if (!_state.config.showGridSurface) return [];
 		if (!grid || !act) return [];
-		if (grid.dim !== 2) return [];
 		if (!grid.quads || !grid.quads.length) return [];
 		if (act.n !== grid.n) return [];
 
@@ -2481,7 +2480,7 @@ var OrigamiFolds = (function (global) {
 
 			layout[sceneName] = {
 				domain: { x: [x0, x1], y: [y0, y1] },
-				aspectmode: "cube",
+				aspectmode: "auto",
 				camera: cam,
 				bgcolor: theme.plotBg,
 				xaxis: Object.assign({}, axisCommon, {
