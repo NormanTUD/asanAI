@@ -2839,16 +2839,18 @@ const smooth=t=>t*t*(3-2*t);
 const $=id=>document.getElementById(id);
 
 /* HiDPI Canvas Setup */
+const CV_MAXDIM = 4096;
 function setupCv(cv, hOverride){
+  if(cv._cssH===undefined) cv._cssH = hOverride || parseInt(cv.getAttribute('height'))||300;
   const dpr = window.devicePixelRatio||1;
-  const r = cv.getBoundingClientRect();
-  const w = r.width||600;
-  const h = hOverride || parseInt(cv.getAttribute('height'))||300;
-  cv.width = Math.round(w*dpr);
-  cv.height = Math.round(h*dpr);
+  const w = Math.max(1, cv.getBoundingClientRect().width||600);
+  const h = cv._cssH;
+  const d = Math.min(dpr, CV_MAXDIM/w, CV_MAXDIM/h);
+  cv.width  = Math.max(1, Math.round(w*d));
+  cv.height = Math.max(1, Math.round(h*d));
   cv.style.height = h+'px';
   const ctx = cv.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.setTransform(d,0,0,d,0,0);
   cv._w = w; cv._h = h;
   return ctx;
 }
@@ -5334,8 +5336,6 @@ function drawZoo(){
     const sc=S*Math.min(W,H)*0.40;
     const tilt=0.5;
     const rr=rot*TAU;
-    for(let i=0;i<20;i++){
-      const u=i/
     for(let i=0;i<20;i++){
       const u=i/20*TAU; const pts=[];
       for(let j=0;j<=40;j++){ const v=j/40*TAU;
