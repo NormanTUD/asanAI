@@ -41,6 +41,9 @@ var OrigamiFolds = (function (global) {
 	var PLOT_ID      = SINGLETON_ID + "_plot";
 	var INFO_ID      = SINGLETON_ID + "_info";
 	var CTRL_ID      = SINGLETON_ID + "_controls";
+	var TITLE_ID     = SINGLETON_ID + "_title";
+	var BTNROW_ID    = SINGLETON_ID + "_btnrow";
+	var FOOT_ID      = SINGLETON_ID + "_foot";
 	var LOG_PREFIX   = "[origami_folds]";
 
 	var RELU_LIKE = ["relu", "relu6", "leakyrelu", "elu", "selu", "thresholdedrelu"];
@@ -94,6 +97,8 @@ var OrigamiFolds = (function (global) {
 
 		lastDarkMode:     null,
 		darkModeTimer:    null,
+		lastLang:         null,
+		deactivationKey:  "",
 
 		consecutiveErrors: 0,
 		lastErrorMsg:      "",
@@ -275,7 +280,7 @@ var OrigamiFolds = (function (global) {
 				gridColor:    "rgba(160,182,235,0.5)",
 				gridGlow:     "rgba(120,150,225,0.10)",
 				surfaceColor: "rgba(110,145,225,0.55)",
-				textAccent:   "#cdd6f2",
+				textAccent:   "#e3e9fb",
 				arrowColor:   "rgba(150,170,235,0.55)",
 				legendBg:     "rgba(16,20,36,0.72)",
 				legendBorder: "rgba(140,160,230,0.20)",
@@ -2947,12 +2952,6 @@ var OrigamiFolds = (function (global) {
 				itemwidth: 30,
 				tracegroupgap: 6
 			},
-			title: {
-				text: _tr("origami_title",
-					"Origami: Faltung der Datenmannigfaltigkeit durch die Layer"),
-				font: { size: 13, color: theme.text },
-				x: 0.5, xanchor: "center"
-			},
 			hovermode: "closest",
 			annotations: [],
 			transition: _state.config.smoothUpdates
@@ -3091,12 +3090,6 @@ var OrigamiFolds = (function (global) {
 				itemsizing: "constant",
 				itemwidth: 30,
 				tracegroupgap: 6
-			},
-			title: {
-				text: _tr("origami_title",
-					"Origami: Faltung der Datenmannigfaltigkeit durch die Layer"),
-				font: { size: 13, color: theme.text },
-				x: 0.5, xanchor: "center"
 			},
 			hovermode: "closest",
 			annotations: [],
@@ -3380,6 +3373,7 @@ var OrigamiFolds = (function (global) {
 
 	function _deactivate(reasonKey, fallbackMsg) {
 		_state.deactivated = true;
+		_state.deactivationKey = reasonKey;
 		_state.deactivationMsg = _tr(reasonKey, fallbackMsg);
 
 		if (_state.plotDiv) {
@@ -3710,6 +3704,73 @@ var OrigamiFolds = (function (global) {
 		return null;
 	}
 
+	function _buttonDefs() {
+		return [
+			["\u21BA " + _tr("origami_reset_view", "Ansicht"),
+			 _tr("origami_reset_view_tip",
+			  "Setzt alle Kameras auf die Standardansicht zurück.")],
+			["\u27F3 " + _tr("origami_force", "Neu zeichnen"),
+			 _tr("origami_force_tip", "Erzwingt eine Neuberechnung.")],
+			["\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
+			 _tr("origami_toggle_cuts_tip",
+			  "Zeigt/versteckt die ReLU-Hyperplanes.")],
+			["\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
+			 _tr("origami_toggle_box_tip",
+			  "Zeigt/versteckt die Begrenzung des Unterraums.")],
+			["\u229E " + _tr("origami_toggle_grid", "Gitter"),
+			 _tr("origami_toggle_grid_tip", "Zeigt/versteckt das Raumgitter.")],
+			["\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
+			 _tr("origami_toggle_surface_tip",
+			  "Zeigt die gefaltete Fläche als Körper (2D).")]
+		];
+	}
+
+	function _applyStaticTexts() {
+		if (!_state.container) return;
+		var theme = _theme();
+
+		var title = document.getElementById(TITLE_ID);
+		if (title) {
+			title.style.color = theme.textAccent;
+			title.innerHTML = "\u2726 " +
+				_tr("origami_title_paired",
+					"Origami: Faltung der Datenmannigfaltigkeit");
+		}
+
+		var btnRow = document.getElementById(BTNROW_ID);
+		if (btnRow) {
+			var defs = _buttonDefs();
+			var btns = btnRow.querySelectorAll("button");
+			for (var i = 0; i < btns.length && i < defs.length; i++) {
+				btns[i].textContent = defs[i][0];
+				btns[i].title = defs[i][1];
+				btns[i].style.background = theme.btnBg;
+				btns[i].style.color = theme.btnText;
+			}
+		}
+
+		var foot = document.getElementById(FOOT_ID);
+		if (foot) {
+			foot.style.color = theme.infoText;
+			foot.innerHTML =
+				"<b>" + _tr("origami_legend", "Lesehilfe") + ":</b> " +
+				_tr("origami_legend_text",
+					"Unten: Raum VOR dem Layer. Oben: NACH dem Layer. " +
+					"Das Gitter zeigt die Faltung. Blau=gestaucht, Rot=gestreckt. " +
+					"Orangene Linien unten = Faltkanten.");
+		}
+
+		if (_state.infoDiv) {
+			_state.infoDiv.style.color = theme.infoText;
+			if (_state.deactivated &&
+			    _state.infoDiv.style.display !== "none") {
+				_state.infoDiv.innerHTML =
+					"<b>" + _tr("origami_title", "Origami-Visualizer") + "</b><br>" +
+					_tr(_state.deactivationKey, _state.deactivationMsg);
+			}
+		}
+	}
+
 	function _buildDOM(divOrId) {
 		var existing = document.getElementById(SINGLETON_ID);
 		if (existing && existing.parentNode) {
@@ -3735,6 +3796,7 @@ var OrigamiFolds = (function (global) {
 			"gap:10px;flex-wrap:wrap;margin-bottom:8px;";
 
 		var title = document.createElement("div");
+		title.id = TITLE_ID;
 		title.style.cssText =
 			"font-weight:700;font-size:13px;letter-spacing:0.3px;color:" +
 			theme.textAccent + ";";
@@ -3744,13 +3806,14 @@ var OrigamiFolds = (function (global) {
 		head.appendChild(title);
 
 		var btnRow = document.createElement("div");
+		btnRow.id = BTNROW_ID;
 		btnRow.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;";
 
-		function _ofMkBtn(label, tip, onClick) {
+		function _ofMkBtn(def, onClick) {
 			var b = document.createElement("button");
 			b.type = "button";
-			b.textContent = label;
-			b.title = tip;
+			b.textContent = def[0];
+			b.title = def[1];
 			b.style.cssText =
 				"padding:6px 11px;border:none;border-radius:6px;cursor:pointer;" +
 				"font-weight:600;font-size:11px;background:" + theme.btnBg +
@@ -3763,56 +3826,39 @@ var OrigamiFolds = (function (global) {
 			return b;
 		}
 
-		_ofMkBtn("\u21BA " + _tr("origami_reset_view", "Ansicht"),
-			_tr("origami_reset_view_tip",
-				"Setzt alle Kameras auf die Standardansicht zurück."),
-			function () {
-				_state.lastCameras = {};
-				_state.lastFingerprint = null;
-				_state.lastViewHash = null;
-				if (_state.plotlyInitialized && _hasPlotly() && _state.plotDiv) {
-					try { global.Plotly.purge(_state.plotDiv); } catch (e) { /* ignore */ }
-					_state.plotlyInitialized = false;
-				}
-				_scheduleRender();
-			});
+		var _btnDefs = _buttonDefs();
+		_ofMkBtn(_btnDefs[0], function () {
+			_state.lastCameras = {};
+			_state.lastFingerprint = null;
+			_state.lastViewHash = null;
+			if (_state.plotlyInitialized && _hasPlotly() && _state.plotDiv) {
+				try { global.Plotly.purge(_state.plotDiv); } catch (e) { /* ignore */ }
+				_state.plotlyInitialized = false;
+			}
+			_scheduleRender();
+		});
 
-		_ofMkBtn("\u27F3 " + _tr("origami_force", "Neu zeichnen"),
-			_tr("origami_force_tip",
-				"Erzwingt eine Neuberechnung."),
-			function () { forceUpdate(); });
+		_ofMkBtn(_btnDefs[1], function () { forceUpdate(); });
 
-		_ofMkBtn("\u2702 " + _tr("origami_toggle_cuts", "Schnitte"),
-			_tr("origami_toggle_cuts_tip",
-				"Zeigt/versteckt die ReLU-Hyperplanes."),
-			function () {
-				_state.config.showReluCuts = !_state.config.showReluCuts;
-				_scheduleRender();
-			});
+		_ofMkBtn(_btnDefs[2], function () {
+			_state.config.showReluCuts = !_state.config.showReluCuts;
+			_scheduleRender();
+		});
 
-		_ofMkBtn("\u25A3 " + _tr("origami_toggle_box", "Rahmen"),
-			_tr("origami_toggle_box_tip",
-				"Zeigt/versteckt die Begrenzung des Unterraums."),
-			function () {
-				_state.config.showBoundingBox = !_state.config.showBoundingBox;
-				_scheduleRender();
-			});
+		_ofMkBtn(_btnDefs[3], function () {
+			_state.config.showBoundingBox = !_state.config.showBoundingBox;
+			_scheduleRender();
+		});
 
-		_ofMkBtn("\u229E " + _tr("origami_toggle_grid", "Gitter"),
-			_tr("origami_toggle_grid_tip",
-				"Zeigt/versteckt das Raumgitter."),
-			function () {
-				_state.config.showGrid = !_state.config.showGrid;
-				_scheduleRender();
-			});
+		_ofMkBtn(_btnDefs[4], function () {
+			_state.config.showGrid = !_state.config.showGrid;
+			_scheduleRender();
+		});
 
-		_ofMkBtn("\u25E7 " + _tr("origami_toggle_surface", "Fläche"),
-			_tr("origami_toggle_surface_tip",
-				"Zeigt die gefaltete Fläche als Körper (2D)."),
-			function () {
-				_state.config.showGridSurface = !_state.config.showGridSurface;
-				_scheduleRender();
-			});
+		_ofMkBtn(_btnDefs[5], function () {
+			_state.config.showGridSurface = !_state.config.showGridSurface;
+			_scheduleRender();
+		});
 
 		head.appendChild(btnRow);
 		container.appendChild(head);
@@ -3834,6 +3880,7 @@ var OrigamiFolds = (function (global) {
 		_state.plotDiv = plot;
 
 		var foot = document.createElement("div");
+		foot.id = FOOT_ID;
 		foot.style.cssText =
 			"margin-top:8px;font-size:10.5px;line-height:1.6;opacity:0.75;color:" +
 			theme.infoText + ";";
@@ -3884,13 +3931,20 @@ var OrigamiFolds = (function (global) {
 	function _startDarkModeWatcher() {
 		if (_state.darkModeTimer) return;
 		_state.lastDarkMode = _theme().dark;
+		try { _state.lastLang = (typeof lang !== "undefined") ? (lang || "") : ""; }
+		catch (e) { _state.lastLang = ""; }
 		_state.darkModeTimer = setInterval(function () {
 			if (!_state.initialized) return;
 
 			var cur = _theme().dark;
-			if (cur !== _state.lastDarkMode) {
+			var curLang = "";
+			try { curLang = (typeof lang !== "undefined") ? (lang || "") : ""; }
+			catch (e) { curLang = ""; }
+			if (cur !== _state.lastDarkMode || curLang !== _state.lastLang) {
 				_state.lastDarkMode = cur;
+				_state.lastLang = curLang;
 				_styleContainer();
+				_applyStaticTexts();
 				_state.lastViewHash = null;
 				if (_state.plotlyInitialized && _hasPlotly() && _state.plotDiv) {
 					_scheduleRender();
