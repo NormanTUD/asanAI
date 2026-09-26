@@ -593,6 +593,21 @@ window.bibData = {
 	 *  Hamiltonian/Boltzmann physics to energy-based neural models and the
 	 *  manifold hypothesis.
 	 * ───────────────────────────────────────────────────────────────────── */
+	"mabrok2026latent": {
+		title: "Latent Semantic Manifolds in Large Language Models",
+		author: "Mohamed A. Mabrok",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.22301",
+		alternativetitle: "Mabrok, latent semantic manifolds in LLMs (2026)"
+	},
+	"gardenfors2000conceptual": {
+		title: "Conceptual Spaces: The Geometry of Thought",
+		author: "Peter Gärdenfors",
+		year: 2000,
+		publisher: "MIT Press",
+		url: "https://en.wikipedia.org/wiki/Conceptual_space",
+		alternativetitle: "Gärdenfors, Conceptual Spaces: The Geometry of Thought (2000)"
+	},
 	"nlab_phasespace": {
 		title: "phase space",
 		author: "nLab contributors",
