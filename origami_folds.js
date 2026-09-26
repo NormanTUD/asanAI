@@ -1793,7 +1793,8 @@ var OrigamiFolds = (function (global) {
 			return {
 				xs: [xc, xc, null],
 				ys: [-tick, tick, null],
-				zs: [0, 0, null]
+				zs: [0, 0, null],
+				poly: null
 			};
 		}
 
@@ -1836,10 +1837,32 @@ var OrigamiFolds = (function (global) {
 			}
 			if (bestD <= 1e-14) return null;
 
+			// Die Trennlinie zu einem vertikalen Band extrudieren, damit
+			// daraus eine sichtbare Trennflaeche wird. Hoehe orientiert
+			// sich an der z-Ausdehnung der Szene.
+			var zLo = bounds.z.lo, zHi = bounds.z.hi;
+			if (!_isFiniteNum(zLo) || !_isFiniteNum(zHi) || zHi - zLo < 1e-9) {
+				var sp = Math.max(
+					Math.abs(bounds.x.hi - bounds.x.lo),
+					Math.abs(bounds.y.hi - bounds.y.lo)
+				);
+				if (!_isFiniteNum(sp) || sp <= 0) sp = 1;
+				zLo = -sp * 0.28;
+				zHi =  sp * 0.28;
+			}
+
+			var quadPoly = [
+				[best[0][0], best[0][1], zLo],
+				[best[1][0], best[1][1], zLo],
+				[best[1][0], best[1][1], zHi],
+				[best[0][0], best[0][1], zHi]
+			];
+
 			return {
 				xs: [best[0][0], best[1][0], null],
 				ys: [best[0][1], best[1][1], null],
-				zs: [0, 0, null]
+				zs: [0, 0, null],
+				poly: quadPoly
 			};
 		}
 
@@ -1915,14 +1938,16 @@ var OrigamiFolds = (function (global) {
 		}
 		poly.sort(function (a, b2) { return a[3] - b2[3]; });
 
+		var polyOut = [];
 		var xs = [], ys = [], zs = [];
 		for (var r = 0; r < poly.length; r++) {
 			xs.push(poly[r][0]); ys.push(poly[r][1]); zs.push(poly[r][2]);
+			polyOut.push([poly[r][0], poly[r][1], poly[r][2]]);
 		}
 		xs.push(poly[0][0]); ys.push(poly[0][1]); zs.push(poly[0][2]);
 		xs.push(null); ys.push(null); zs.push(null);
 
-		return { xs: xs, ys: ys, zs: zs };
+		return { xs: xs, ys: ys, zs: zs, poly: polyOut };
 	}
 
 	function _buildCutTracesFor(cutLayer, dim, bounds, sceneName, theme, showLegend) {
@@ -1939,55 +1964,108 @@ var OrigamiFolds = (function (global) {
 		var planes = _extractHyperplanes(cutLayer, dim);
 		if (!planes || !planes.length) return [];
 
+		var traces = [];
 		var allXs = [], allYs = [], allZs = [];
 		var drawn = 0;
+
+		// Sammel-Mesh fuer alle Trennflaechen eines Layers. Ein einziger
+		// Trace statt N Stueck haelt die Trace-Zahl klein und sorgt fuer
+		// konsistentes Alpha-Blending.
+		var mx = [], my = [], mz = [];
+		var mi = [], mj = [], mk = [];
+		var vBase = 0;
+		var meshCount = 0;
 
 		for (var i = 0; i < planes.length; i++) {
 			var clipped = _clipHyperplane(planes[i], bounds, dim);
 			if (!clipped) continue;
+
 			allXs = allXs.concat(clipped.xs);
 			allYs = allYs.concat(clipped.ys);
 			allZs = allZs.concat(clipped.zs);
 			drawn++;
+
+			var poly = clipped.poly;
+			if (!poly || poly.length < 3) continue;
+
+			// Guardrail: nur finite Vertices uebernehmen, sonst
+			// verwirft Plotly das gesamte Mesh kommentarlos.
+			var ok = true;
+			for (var v = 0; v < poly.length; v++) {
+				if (!_isFiniteNum(poly[v][0]) ||
+				    !_isFiniteNum(poly[v][1]) ||
+				    !_isFiniteNum(poly[v][2])) { ok = false; break; }
+			}
+			if (!ok) continue;
+
+			for (var v2 = 0; v2 < poly.length; v2++) {
+				mx.push(poly[v2][0]);
+				my.push(poly[v2][1]);
+				mz.push(poly[v2][2]);
+			}
+			// Triangle-Fan: das Polygon ist bereits winkelsortiert,
+			// also konvex genug fuer einen simplen Faecher.
+			for (var t = 1; t + 1 < poly.length; t++) {
+				mi.push(vBase);
+				mj.push(vBase + t);
+				mk.push(vBase + t + 1);
+			}
+			vBase += poly.length;
+			meshCount++;
 		}
 
 		if (!drawn) return [];
 
 		var isHardC = isHard;
-		var coreColor = isHardC ? theme.cutColor : theme.softCut;
-		var glowColor = isHardC ? theme.cutGlow  : theme.softGlow;
 		var label = (isHardC ? _tr("origami_relu_cut", "Faltkante (ReLU)")
 		                     : _tr("origami_soft_fold", "weiche Biegung")) +
 		            " \u00B7 " + drawn;
 
-		return [
-			{
-				// Weicher Halo unter der Kante
-				type: "scatter3d",
-				mode: "lines",
-				x: allXs, y: allYs, z: allZs,
-				line: { color: glowColor, width: isHardC ? 22 : 14 },
-				opacity: 1,
+		// --- Trennflaeche als halbtransparentes Mesh ---
+		if (meshCount > 0 && mi.length > 0) {
+			var faceCol = isHardC
+				? (theme.dark ? "rgb(255,198,70)"  : "rgb(232,168,30)")
+				: (theme.dark ? "rgb(255,222,150)" : "rgb(228,192,110)");
+			traces.push({
+				type: "mesh3d",
+				x: mx, y: my, z: mz,
+				i: mi, j: mj, k: mk,
+				color: faceCol,
+				opacity: isHardC ? 0.30 : 0.18,
+				flatshading: true,
 				name: label,
 				legendgroup: "cuts",
 				showlegend: false,
 				hoverinfo: "skip",
-				scene: sceneName
-			},
-			{
-				// Scharfer Kern
-				type: "scatter3d",
-				mode: "lines",
-				x: allXs, y: allYs, z: allZs,
-				line: { color: coreColor, width: isHardC ? 5 : 2.5 },
-				opacity: isHardC ? 0.95 : 0.7,
-				name: label,
-				legendgroup: "cuts",
-				showlegend: showLegend,
-				hoverinfo: "name",
-				scene: sceneName
-			}
-		];
+				scene: sceneName,
+				lighting: {
+					ambient: 0.98, diffuse: 0.05, specular: 0.0,
+					roughness: 1.0, fresnel: 0.0,
+					vertexnormalsepsilon: 1e-12,
+					facenormalsepsilon: 1e-6
+				},
+				lightposition: { x: 0, y: 0, z: 1000 }
+			});
+		}
+
+		// --- Scharfe Kante als duenne Linie obendrauf ---
+		// Der frühere 22px-Halo wurde entfernt: ueber der blauen Flaeche
+		// erzeugte er genau jene breiten weissen Baender.
+		traces.push({
+			type: "scatter3d",
+			mode: "lines",
+			x: allXs, y: allYs, z: allZs,
+			line: { color: isHardC ? theme.cutColor : theme.softCut,
+			        width: isHardC ? 3.5 : 2 },
+			opacity: isHardC ? 0.95 : 0.7,
+			name: label,
+			legendgroup: "cuts",
+			showlegend: showLegend,
+			hoverinfo: "name",
+			scene: sceneName
+		});
+
+		return traces;
 	}
 
 	// ============================================================
@@ -2010,7 +2088,15 @@ var OrigamiFolds = (function (global) {
 		if (!_isFiniteNum(lw) || lw <= 0) lw = 2;
 		var op = _state.config.gridOpacity;
 		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.9;
-		if (isInput) { op = 0.42; lw = Math.max(lw * 0.7, 1.4); }
+
+		// Liegt eine Fläche darunter, müssen die Linien zurücktreten,
+		// sonst überdecken sie bei dichtem Gitter die gesamte Füllung.
+		var hasSurface = !!_state.config.showGridSurface;
+		if (hasSurface) {
+			lw = Math.max(1.4, lw * 0.75);
+			op = Math.min(op, 0.8);
+		}
+		if (isInput) { op = 0.42; lw = Math.max(lw * 0.7, 1.0); }
 
 		function gx(i) { return act.xs[i]; }
 		function gy(i) { return act.ys ? act.ys[i] : 0; }
@@ -2018,7 +2104,6 @@ var OrigamiFolds = (function (global) {
 
 		var useColor = (_state.config.colorByCurvature && distortion);
 
-		// ---- Ungefärbte Variante (Input-Gitter o. deaktivierte Krümmung)
 		if (!useColor) {
 			var xs = [], ys = [], zs = [];
 			for (var l = 0; l < grid.lines.length; l++) {
@@ -2028,18 +2113,20 @@ var OrigamiFolds = (function (global) {
 				}
 				xs.push(null); ys.push(null); zs.push(null);
 			}
-			// Halo
-			traces.push({
-				type: "scatter3d",
-				mode: "lines",
-				x: xs, y: ys, z: zs,
-				line: { color: theme.gridGlow, width: lw * 4.5 },
-				opacity: 1,
-				hoverinfo: "skip",
-				showlegend: false,
-				legendgroup: "grid",
-				scene: sceneName
-			});
+			// Halo NUR ohne Fläche darunter
+			if (!hasSurface) {
+				traces.push({
+					type: "scatter3d",
+					mode: "lines",
+					x: xs, y: ys, z: zs,
+					line: { color: theme.gridGlow, width: lw * 3.5 },
+					opacity: 1,
+					hoverinfo: "skip",
+					showlegend: false,
+					legendgroup: "grid",
+					scene: sceneName
+				});
+			}
 			traces.push({
 				type: "scatter3d",
 				mode: "lines",
@@ -2056,7 +2143,6 @@ var OrigamiFolds = (function (global) {
 			return traces;
 		}
 
-		// ---- Nach Verzerrung eingefärbt
 		var vals = distortion.values;
 		var lo = distortion.lo, hi = distortion.hi;
 
@@ -2084,9 +2170,11 @@ var OrigamiFolds = (function (global) {
 				bk.x.push(gx(iA), gx(iB), null);
 				bk.y.push(gy(iA), gy(iB), null);
 				bk.z.push(gz(iA), gz(iB), null);
-				allX.push(gx(iA), gx(iB), null);
-				allY.push(gy(iA), gy(iB), null);
-				allZ.push(gz(iA), gz(iB), null);
+				if (!hasSurface) {
+					allX.push(gx(iA), gx(iB), null);
+					allY.push(gy(iA), gy(iB), null);
+					allZ.push(gz(iA), gz(iB), null);
+				}
 				segCount++;
 			}
 		}
@@ -2096,18 +2184,20 @@ var OrigamiFolds = (function (global) {
 			return traces;
 		}
 
-		// Sammel-Halo unter allen farbigen Linien → Tiefe
-		traces.push({
-			type: "scatter3d",
-			mode: "lines",
-			x: allX, y: allY, z: allZ,
-			line: { color: theme.gridGlow, width: lw * 5 },
-			opacity: 1,
-			hoverinfo: "skip",
-			showlegend: false,
-			legendgroup: "grid_dist",
-			scene: sceneName
-		});
+		// Sammel-Halo NUR ohne Fläche
+		if (!hasSurface && allX.length) {
+			traces.push({
+				type: "scatter3d",
+				mode: "lines",
+				x: allX, y: allY, z: allZ,
+				line: { color: theme.gridGlow, width: lw * 4 },
+				opacity: 1,
+				hoverinfo: "skip",
+				showlegend: false,
+				legendgroup: "grid_dist",
+				scene: sceneName
+			});
+		}
 
 		for (var bi2 = 0; bi2 < DISTORTION_BUCKETS; bi2++) {
 			var bkt = buckets[bi2];
@@ -2117,7 +2207,6 @@ var OrigamiFolds = (function (global) {
 			var repVal = lo + (hi - lo) * frac;
 			var col = _distortionColor(repVal, lo, hi, theme.dark);
 
-			// Extreme Buckets etwas dicker → visueller Fokus auf Faltungen
 			var edgeness = Math.abs(frac - 0.5) * 2;
 			var wHere = lw * (0.82 + 0.55 * edgeness);
 
@@ -2150,39 +2239,193 @@ var OrigamiFolds = (function (global) {
 		return traces;
 	}
 
+	function _rebuildQuads(grid) {
+		if (!grid) return [];
+		var res = grid.res;
+		var dim = grid.dim;
+		if (!_isFiniteNum(res) || res < 2) return [];
+		if (!_isFiniteNum(dim) || dim < 1 || dim > 3) return [];
+
+		var quads = [];
+
+		if (dim === 2) {
+			for (var qy = 0; qy + 1 < res; qy++) {
+				for (var qx = 0; qx + 1 < res; qx++) {
+					quads.push([
+						qy * res + qx,
+						qy * res + qx + 1,
+						(qy + 1) * res + qx + 1,
+						(qy + 1) * res + qx
+					]);
+				}
+			}
+			return quads;
+		}
+
+		if (dim === 3) {
+			var idx3 = function (x, y, z) { return (z * res + y) * res + x; };
+			var last = res - 1;
+			var face = function (get) {
+				for (var a = 0; a + 1 < res; a++) {
+					for (var b = 0; b + 1 < res; b++) {
+						quads.push([
+							get(a, b), get(a + 1, b),
+							get(a + 1, b + 1), get(a, b + 1)
+						]);
+					}
+				}
+			};
+			face(function (a, b) { return idx3(a, b, 0); });
+			face(function (a, b) { return idx3(a, b, last); });
+			face(function (a, b) { return idx3(a, 0, b); });
+			face(function (a, b) { return idx3(a, last, b); });
+			face(function (a, b) { return idx3(0, a, b); });
+			face(function (a, b) { return idx3(last, a, b); });
+			return quads;
+		}
+
+		return [];
+	}
+
+	// --- GUARDRAIL D: Soll-Anzahl der Quads berechnen ---
+	// Nur so lässt sich erkennen, ob eine weitergereichte Quad-Liste
+	// noch zur aktuellen Auflösung passt.
+	function _expectedQuadCount(res, dim) {
+		if (!_isFiniteNum(res) || res < 2) return 0;
+		if (dim === 2) return (res - 1) * (res - 1);
+		if (dim === 3) return 6 * (res - 1) * (res - 1);
+		return 0;
+	}
+
+	// --- GUARDRAIL E: Index-Validität ---
+	function _validIdx(v, nMax) {
+		return (typeof v === "number") && isFinite(v) &&
+		       v >= 0 && v < nMax && Math.floor(v) === v;
+	}
+
+	// --- GUARDRAIL B: entartete Dreiecke erkennen ---
+	// Zwei zusammenfallende Ecken -> Fläche 0 -> WebGL verwirft das
+	// Dreieck und es entsteht ein sichtbares Loch im Mesh.
+	function _triAreaSq(xs, ys, zs, a, b, c) {
+		var ax = xs[b] - xs[a], ay = ys[b] - ys[a], az = zs[b] - zs[a];
+		var bx = xs[c] - xs[a], by = ys[c] - ys[a], bz = zs[c] - zs[a];
+		var cx = ay * bz - az * by;
+		var cy = az * bx - ax * bz;
+		var cz = ax * by - ay * bx;
+		var s = cx * cx + cy * cy + cz * cz;
+		return _isFiniteNum(s) ? s : 0;
+	}
+
 	function _buildGridSurface(grid, act, distortion, sceneName, theme, showLegend, isInput) {
 		if (!_state.config.showGridSurface) return [];
 		if (!grid || !act) return [];
-		if (!grid.quads || !grid.quads.length) return [];
 		if (act.n !== grid.n) return [];
+		if (!_isFiniteNum(grid.n) || grid.n < 3) return [];
+
+		// --- GUARDRAIL D: Quad-Liste auf Konsistenz prüfen ---
+		// Eine von prevGridOut übernommene Liste kann zu einer anderen
+		// Auflösung gehören. Dann zeigen Indizes ins Leere und ganze
+		// Streifen der Fläche fallen weg.
+		var quads = grid.quads;
+		var want  = _expectedQuadCount(grid.res, grid.dim);
+		var needRebuild = false;
+
+		if (!quads || !quads.length) {
+			needRebuild = true;
+		} else if (want > 0 && quads.length !== want) {
+			_log("Quad-Anzahl inkonsistent (" + quads.length + " statt " +
+			     want + "), Topologie wird neu gebaut");
+			needRebuild = true;
+		}
+
+		if (needRebuild) {
+			quads = _rebuildQuads(grid);
+			if (!quads || !quads.length) {
+				_log("Keine Quads rekonstruierbar (dim " + grid.dim +
+				     ", res " + grid.res + ")");
+				return [];
+			}
+		}
 
 		var op = _state.config.gridSurfaceOpacity;
-		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.25;
-		if (isInput) op = 0.35;
+		if (!_isFiniteNum(op) || op < 0 || op > 1) op = 0.28;
+		if (isInput) op = Math.min(0.9, op * 0.7);
+		else         op = Math.min(0.9, op * 1.9);
 
-		var xs = new Array(grid.n);
-		var ys = new Array(grid.n);
-		var zs = new Array(grid.n);
-		for (var i = 0; i < grid.n; i++) {
-			xs[i] = act.xs[i];
-			ys[i] = act.ys ? act.ys[i] : 0;
-			zs[i] = act.zs ? act.zs[i] : 0;
+		var n = grid.n;
+		var xs = new Array(n);
+		var ys = new Array(n);
+		var zs = new Array(n);
+		for (var i = 0; i < n; i++) {
+			xs[i] = _isFiniteNum(act.xs[i]) ? act.xs[i] : 0;
+			ys[i] = (act.ys && _isFiniteNum(act.ys[i])) ? act.ys[i] : 0;
+			zs[i] = (act.zs && _isFiniteNum(act.zs[i])) ? act.zs[i] : 0;
 		}
 
-		// Guardrail: skip degenerate flat surfaces (all z same → Plotly artifact)
-		var zMin = zs[0], zMax = zs[0];
-		for (var i2 = 1; i2 < zs.length; i2++) {
-			if (zs[i2] < zMin) zMin = zs[i2];
-			if (zs[i2] > zMax) zMax = zs[i2];
+		function _span(arr) {
+			var mn = Infinity, mx = -Infinity;
+			for (var s = 0; s < arr.length; s++) {
+				var v = arr[s];
+				if (!_isFiniteNum(v)) continue;
+				if (v < mn) mn = v;
+				if (v > mx) mx = v;
+			}
+			if (!_isFiniteNum(mn) || !_isFiniteNum(mx)) return 0;
+			return mx - mn;
 		}
-		if (zMax - zMin < 1e-9) return [];
+		var spanMax = Math.max(_span(xs), _span(ys), _span(zs));
+		if (!(spanMax > 1e-9)) {
+			_log("Gitterfläche degeneriert (Ausdehnung " + spanMax + ")");
+			return [];
+		}
+
+		// Toleranz relativ zur Szenengröße: absolute Schwellen funktionieren
+		// nicht, wenn Aktivierungen mal im 0.01- und mal im 100er-Bereich liegen.
+		var areaEps = Math.pow(spanMax * 1e-7, 2);
+		if (!_isFiniteNum(areaEps) || areaEps <= 0) areaEps = 1e-24;
 
 		var ii = [], jj = [], kk = [];
-		for (var q = 0; q < grid.quads.length; q++) {
-			var Q = grid.quads[q];
-			ii.push(Q[0], Q[0]);
-			jj.push(Q[1], Q[2]);
-			kk.push(Q[2], Q[3]);
+		var badIdx = 0, degenerate = 0;
+
+		for (var q = 0; q < quads.length; q++) {
+			var Q = quads[q];
+			if (!Q || Q.length < 4) { badIdx++; continue; }
+
+			// --- GUARDRAIL E: jeden Index einzeln prüfen ---
+			// Plotly verwirft fehlerhafte Dreiecke lautlos; ohne diese
+			// Prüfung sieht man nur das Loch, nie die Ursache.
+			if (!_validIdx(Q[0], n) || !_validIdx(Q[1], n) ||
+			    !_validIdx(Q[2], n) || !_validIdx(Q[3], n)) {
+				badIdx++;
+				continue;
+			}
+
+			// --- GUARDRAIL B: Nulldreiecke aussortieren ---
+			// Beide Dreiecke getrennt bewerten: oft ist nur eine Hälfte
+			// des Quads kollabiert (typisch an ReLU-Faltkanten).
+			var t1 = _triAreaSq(xs, ys, zs, Q[0], Q[1], Q[2]);
+			var t2 = _triAreaSq(xs, ys, zs, Q[0], Q[2], Q[3]);
+
+			if (t1 > areaEps) {
+				ii.push(Q[0]); jj.push(Q[1]); kk.push(Q[2]);
+			} else { degenerate++; }
+
+			if (t2 > areaEps) {
+				ii.push(Q[0]); jj.push(Q[2]); kk.push(Q[3]);
+			} else { degenerate++; }
+		}
+
+		if (badIdx > 0) {
+			_warn("Gitterfläche: " + badIdx + " Quads mit ungültigen Indizes " +
+			      "verworfen (n=" + n + ")");
+		}
+		if (degenerate > 0) {
+			_log("Gitterfläche: " + degenerate + " entartete Dreiecke " +
+			     "übersprungen (von " + (quads.length * 2) + ")");
+		}
+		if (!ii.length) {
+			_warn("Gitterfläche: kein einziges gültiges Dreieck übrig");
+			return [];
 		}
 
 		var trace = {
@@ -2190,47 +2433,62 @@ var OrigamiFolds = (function (global) {
 			x: xs, y: ys, z: zs,
 			i: ii, j: jj, k: kk,
 			opacity: op,
-			flatshading: false,
-			name: _tr("origami_surface", "gefaltete Fläche"),
+			flatshading: true,
+			name: _tr("origami_surface", "gefaltete Fläche") +
+			      (isInput ? (" \u00B7 " + _tr("origami_before", "vorher")) : ""),
 			legendgroup: "surface",
 			showlegend: showLegend,
 			hoverinfo: "skip",
 			scene: sceneName,
 			lighting: {
-				ambient:       theme.dark ? 0.52 : 0.62,
-				diffuse:       0.82,
-				specular:      0.30,
-				roughness:     0.42,
-				fresnel:       0.85,
+				ambient:   0.95,
+				diffuse:   0.12,
+				specular:  0.02,
+				roughness: 0.9,
+				fresnel:   0.05,
 				vertexnormalsepsilon: 1e-12,
-				facenormalsepsilon: 1e-6
-			}
+				facenormalsepsilon:   1e-6
+			},
+			lightposition: { x: 0, y: 0, z: 1000 }
 		};
 
-		if (_state.config.colorByCurvature && distortion) {
-			// Intensität weich remappen, damit die Fläche nicht
-			// wie ein flacher Farbklecks aussieht
+		if (_state.config.colorByCurvature && distortion && distortion.values) {
 			var raw = distortion.values;
-			var inten = new Array(grid.n);
-			for (var vi = 0; vi < grid.n; vi++) {
+			var inten = new Array(n);
+			var iMin = 1, iMax = 0;
+			var nanCount = 0;
+			for (var vi = 0; vi < n; vi++) {
 				var tt = _distortionT(raw[vi], distortion.lo, distortion.hi);
-				inten[vi] = _isFiniteNum(tt) ? tt : 0.5;
+				if (!_isFiniteNum(tt)) { tt = 0.5; nanCount++; }
+				inten[vi] = tt;
+				if (tt < iMin) iMin = tt;
+				if (tt > iMax) iMax = tt;
 			}
-			trace.intensity  = inten;
-			trace.colorscale = _distortionScale(theme.dark);
-			trace.cmin       = 0;
-			trace.cmax       = 1;
-			trace.showscale  = false;
-			// Fläche bewusst blasser als die Linien → Gitter bleibt Held
-			trace.opacity    = op * (theme.dark ? 0.85 : 0.78);
+			// Ein einziger NaN im intensity-Array lässt Plotly das
+			// komplette Mesh verwerfen – deshalb hier hart absichern.
+			if (nanCount > n * 0.5) {
+				_warn("Verzerrungswerte überwiegend ungültig (" + nanCount +
+				      "/" + n + "), Fläche wird einfarbig gezeichnet");
+				trace.color = theme.surfaceColor;
+			} else {
+				trace.intensity     = inten;
+				trace.intensitymode = "vertex";
+				trace.colorscale    = _distortionScale(theme.dark);
+				if (iMax - iMin < 0.12) {
+					trace.cmin = Math.max(0, iMin - 0.06);
+					trace.cmax = Math.min(1, iMax + 0.06);
+				} else {
+					trace.cmin = 0;
+					trace.cmax = 1;
+				}
+				trace.showscale = false;
+			}
 		} else {
-			trace.color   = theme.surfaceColor;
-			trace.opacity = op * 0.9;
+			trace.color = theme.surfaceColor;
 		}
 
 		return [trace];
 	}
-
 
 	// ============================================================
 	// TRACES FÜR EINEN RAUM
@@ -2280,28 +2538,83 @@ var OrigamiFolds = (function (global) {
 		return b;
 	}
 
-	function _sanitizeAct(act) {
+	function _sanitizeAct(act, inPlace) {
 		if (!act || !act.n) return act;
 		var n = act.n;
-		var cl = _state.config.gridClampRange;
-		var lim = _isFiniteNum(cl) && cl > 0 ? cl : 100;
-		var bad = 0;
+
+		// --- GUARDRAIL A: Defensive Copy ---
+		// Ohne Kopie mutieren wir Arrays, die anderswo (prevGridOut,
+		// results[i].gridOut) noch referenziert werden. Mehrfaches
+		// Clamping legt dann Gitterpunkte übereinander -> Nulldreiecke.
+		var target;
+		if (inPlace === true) {
+			target = act;
+		} else {
+			target = {
+				xs:  act.xs ? Float64Array.from(act.xs) : null,
+				ys:  act.ys ? Float64Array.from(act.ys) : null,
+				zs:  act.zs ? Float64Array.from(act.zs) : null,
+				dim: act.dim,
+				n:   n
+			};
+		}
+
+		// --- GUARDRAIL C: adaptives Clamping ---
+		// Ein fixer absoluter Grenzwert passt nie zu allen Netzen.
+		// Basis ist die robuste Spannweite (5./95. Perzentil) der Daten,
+		// der Config-Wert dient nur noch als untere Schranke.
+		function robustSpan(arr) {
+			if (!arr || !arr.length) return 0;
+			var vals = [];
+			for (var i = 0; i < arr.length; i++) {
+				if (_isFiniteNum(arr[i])) vals.push(arr[i]);
+			}
+			if (vals.length < 4) return 0;
+			vals.sort(function (a, b) { return a - b; });
+			var lo = vals[Math.floor(vals.length * 0.05)];
+			var hi = vals[Math.floor(vals.length * 0.95)];
+			if (!_isFiniteNum(lo) || !_isFiniteNum(hi)) return 0;
+			return Math.abs(hi - lo);
+		}
+
+		var cfgLim = _state.config.gridClampRange;
+		if (!_isFiniteNum(cfgLim) || cfgLim <= 0) cfgLim = 100;
+
+		var spanAll = Math.max(
+			robustSpan(target.xs),
+			robustSpan(target.ys),
+			robustSpan(target.zs)
+		);
+		// Grenze großzügig über der echten Ausdehnung ansetzen, damit
+		// legitime Ausreißer die Fläche nicht zerreißen.
+		var lim = cfgLim;
+		if (spanAll > 1e-9) {
+			lim = Math.max(cfgLim, spanAll * 6);
+		}
+		if (!_isFiniteNum(lim) || lim <= 0) lim = 100;
+
+		var nonFinite = 0, clamped = 0;
 
 		function fix(arr) {
 			if (!arr) return arr;
 			for (var i = 0; i < arr.length; i++) {
-				if (!_isFiniteNum(arr[i])) { arr[i] = 0; bad++; }
-				else if (arr[i] > lim) { arr[i] = lim; bad++; }
-				else if (arr[i] < -lim) { arr[i] = -lim; bad++; }
+				var v = arr[i];
+				if (!_isFiniteNum(v)) { arr[i] = 0; nonFinite++; }
+				else if (v >  lim)    { arr[i] =  lim; clamped++; }
+				else if (v < -lim)    { arr[i] = -lim; clamped++; }
 			}
 			return arr;
 		}
 
-		act.xs = fix(act.xs);
-		act.ys = fix(act.ys);
-		act.zs = fix(act.zs);
-		if (bad > 0) _log("OrigamiFolds: " + bad + " Grid-Punkte gesättigt");
-		return act;
+		target.xs = fix(target.xs);
+		target.ys = fix(target.ys);
+		target.zs = fix(target.zs);
+
+		if (nonFinite > 0 || clamped > 0) {
+			_log("OrigamiFolds: " + nonFinite + " nicht-finite, " +
+			     clamped + " gesättigt (Limit " + lim.toFixed(2) + ")");
+		}
+		return target;
 	}
 
 	function _sanitizeTraces(traces) {
@@ -2335,14 +2648,18 @@ var OrigamiFolds = (function (global) {
 		var traces = [];
 		if (!o || !o.act || !o.act.n) return traces;
 
-		var act        = o.act;
 		var theme      = o.theme;
 		var sceneName  = o.sceneName;
 		var showLegend = !!o.showLegend;
 		var dim        = o.dim;
 		var isOut      = !!o.isOutput;
 
-		var n  = act.n;
+		// --- GUARDRAIL A: immer auf Kopien arbeiten ---
+		// o.act und o.gridAct werden vom Aufrufer weiterverwendet
+		// (prevGridOut, results[]). Jede In-Place-Änderung hier würde
+		// beim nächsten Paar erneut angewandt.
+		var act = _sanitizeAct(o.act, false);
+		var n   = act.n;
 
 		var bounds = o.bounds || _computeBounds(act);
 
@@ -2356,9 +2673,10 @@ var OrigamiFolds = (function (global) {
 		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
 		var sepAmt = ext * 0.15;
 		var dir = isOut ? 0 : -1;
+
 		if (dir !== 0) {
 			act = _offsetAct(act, dim, dir * sepAmt);
-			act = _sanitizeAct(act);
+			act = _sanitizeAct(act, true);   // schon eine Kopie
 		}
 		var offBounds = (dir !== 0)
 			? _offsetBounds(bounds, dim, dir * sepAmt)
@@ -2368,6 +2686,57 @@ var OrigamiFolds = (function (global) {
 		var ys = act.ys ? act.ys : new Float64Array(n);
 		var zs = act.zs ? act.zs : new Float64Array(n);
 
+		var gridActForBuild = null;
+		if (o.gridAct) {
+			gridActForBuild = _sanitizeAct(o.gridAct, false);
+			if (dir !== 0) {
+				gridActForBuild = _offsetAct(gridActForBuild, dim, dir * sepAmt);
+				gridActForBuild = _sanitizeAct(gridActForBuild, true);
+			}
+		}
+
+		var drawGrid = !!(o.grid && gridActForBuild);
+
+		// Zusätzliche Konsistenzprüfung: passt die Punktzahl überhaupt?
+		if (drawGrid && gridActForBuild.n !== o.grid.n) {
+			_warn("Gitter-Punktzahl passt nicht (" + gridActForBuild.n +
+			      " vs " + o.grid.n + ") in Szene " + sceneName);
+			drawGrid = false;
+		}
+		if (!drawGrid && o.gridAct) {
+			_log("OrigamiFolds: Gitter nicht zeichenbar für Szene " + sceneName +
+			     " (dim " + dim + ")");
+		}
+
+		// --- 1. Gefaltete Fläche (Mesh) zuerst, liegt hinten ---
+		if (drawGrid) {
+			var surf = _buildGridSurface(
+				o.grid, gridActForBuild,
+				o.distortion,
+				sceneName, theme,
+				showLegend && isOut,
+				!isOut
+			);
+			for (var sI = 0; sI < surf.length; sI++) traces.push(surf[sI]);
+		}
+
+		// --- 2. Gitterlinien darüber ---
+		// Dieser Block fehlte: _buildGridTraces() wurde nie aufgerufen,
+		// deshalb war nur das Mesh sichtbar, aber kein Liniennetz.
+		if (drawGrid) {
+			var gt = _buildGridTraces(
+				o.grid, gridActForBuild,
+				o.distortion,
+				sceneName, theme,
+				showLegend && isOut,
+				isOut ? _tr("origami_after", "nachher")
+				      : _tr("origami_before", "vorher"),
+				!isOut
+			);
+			for (var g = 0; g < gt.length; g++) traces.push(gt[g]);
+		}
+
+		// --- 3. Bounding Box ---
 		if (_state.config.showBoundingBox && offBounds) {
 			var wf = _boxWireframe(offBounds, dim);
 			if (wf) {
@@ -2386,45 +2755,7 @@ var OrigamiFolds = (function (global) {
 			}
 		}
 
-		var gridActForBuild = o.gridAct;
-		if (gridActForBuild && dir !== 0) {
-			gridActForBuild = _offsetAct(gridActForBuild, dim, dir * sepAmt);
-			gridActForBuild = _sanitizeAct(gridActForBuild);
-		}
-
-		// Guardrail: if grid is missing for output but exists for input,
-		// generate a fallback grid from the activation data
-		if (!o.grid && o.gridAct && isOut) {
-			_log("OrigamiFolds: Output-Grid fehlt, Fallback generiert");
-		}
-
-		var drawGrid = (o.grid && gridActForBuild);
-		if (drawGrid) {
-			var surf = _buildGridSurface(o.grid, gridActForBuild,
-				isOut ? o.distortion : null,
-				sceneName, theme, showLegend && isOut, !isOut);
-			for (var s = 0; s < surf.length; s++) traces.push(surf[s]);
-		}
-
-		if (drawGrid) {
-			var gt = _buildGridTraces(
-				o.grid, gridActForBuild,
-				isOut ? o.distortion : null,
-				sceneName, theme, showLegend && isOut,
-				isOut ? _tr("origami_after", "nachher")
-				     : _tr("origami_before", "vorher"),
-				!isOut
-			);
-			for (var g = 0; g < gt.length; g++) traces.push(gt[g]);
-		}
-
-		if (_state.config.showDataPoints) {
-			var dpt = _buildDataPointTraces(
-				act, xs, ys, zs, n, dim, o.node, sceneName, theme,
-				showLegend && isOut, !isOut);
-			for (var d = 0; d < dpt.length; d++) traces.push(dpt[d]);
-		}
-
+		// --- 4. Faltkanten / Trennflächen ---
 		if (o.cutLayer && offBounds) {
 			var cuts = _buildCutTracesFor(
 				o.cutLayer, dim, offBounds, sceneName, theme, showLegend);
@@ -2443,6 +2774,14 @@ var OrigamiFolds = (function (global) {
 				}
 				traces.push(ct);
 			}
+		}
+
+		// --- 5. Datenpunkte zuletzt (immer oben sichtbar) ---
+		if (_state.config.showDataPoints) {
+			var dpt = _buildDataPointTraces(
+				act, xs, ys, zs, n, dim, o.node, sceneName, theme,
+				showLegend && isOut, !isOut);
+			for (var d = 0; d < dpt.length; d++) traces.push(dpt[d]);
 		}
 
 		return traces;
