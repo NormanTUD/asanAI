@@ -2154,7 +2154,7 @@ var OrigamiFolds = (function (global) {
 			ext = Math.max(bx, by, bz);
 		}
 		if (!_isFiniteNum(ext) || ext < 1e-6) ext = 1;
-		var sepAmt = Math.max(ext * 0.8, 0.5);
+		var sepAmt = Math.max(ext * 1.5, 1.0);
 
 		var dir = isOut ? 0 : -1;
 		if (dir !== 0) {
@@ -2200,14 +2200,15 @@ var OrigamiFolds = (function (global) {
 			_log("OrigamiFolds: Output-Grid fehlt, Fallback generiert");
 		}
 
-		if (o.grid && gridActForBuild) {
+		var drawGrid = (o.grid && gridActForBuild);
+		if (drawGrid) {
 			var surf = _buildGridSurface(o.grid, gridActForBuild,
 				isOut ? o.distortion : null,
 				sceneName, theme, showLegend && isOut, !isOut);
 			for (var s = 0; s < surf.length; s++) traces.push(surf[s]);
 		}
 
-		if (o.grid && gridActForBuild) {
+		if (drawGrid) {
 			var gt = _buildGridTraces(
 				o.grid, gridActForBuild,
 				isOut ? o.distortion : null,
