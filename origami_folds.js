@@ -193,6 +193,10 @@ var OrigamiFolds = (function (global) {
 			if (!Array.isArray(global.model.layers)) return false;
 			try { if (global.model.isDisposed === true) return false; }
 			catch (e) { /* ignore */ }
+			try {
+				var ls = global.model.layers;
+				if (ls.length && ls[0] && ls[0].isDisposed === true) return false;
+			} catch (e) { /* ignore */ }
 			return true;
 		} catch (e) { return false; }
 	}

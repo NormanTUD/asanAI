@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>origami_folds test harness</title>
+</head>
+<body>
+<div id="origami_folds_plot" style="width: 100%; min-height: 500px;"></div>
+
+<script src="../tf/tf.min.js"></script>
+<script>tf.setBackend("cpu"); tf.ready();</script>
+<script src="../libs/plotly-latest.min.js"></script>
+
+<script>
+"use strict";
+// Zählende Instrumentierung: im echten App-Kontext stehen hier die
+// Funktionen aus debug.js (wrn/err erhöhen num_wrns/num_errs, und die
+// Browser-Test-Suite schlägt fehl, wenn die Zähler wachsen).
+window.__counts = { wrn: 0, err: 0 };
+window.__logs = [];
+function wrn(m) { window.__counts.wrn++; window.__logs.push("WRN " + m); }
+function err(m) { window.__counts.err++; window.__logs.push("ERR " + m); }
+function dbg(m) { window.__logs.push("DBG " + m); }
+function info(m) { window.__logs.push("INFO " + m); }
+
+window.is_dark_mode = false;
+window.lang = "de";
+window.language = { en: {}, de: {} };
+
+// Echte Übersetzungen aus translations.php laden (doppelte JSON-Ausgabe:
+// erstes balanciertes Objekt nehmen).
+fetch("../translations.php?print=1").then(function (r) { return r.text(); }).then(function (txt) {
+	var depth = 0, end = -1, inStr = false, esc = false;
+	for (var i = 0; i < txt.length; i++) {
+		var ch = txt[i];
+		if (inStr) {
+			if (esc) esc = false;
+			else if (ch === "\\") esc = true;
+			else if (ch === '"') inStr = false;
+			continue;
+		}
+		if (ch === '"') inStr = true;
+		else if (ch === "{") depth++;
+		else if (ch === "}") { depth--; if (depth === 0) { end = i; break; } }
+	}
+	window.language = JSON.parse(txt.slice(0, end + 1));
+	window.__translationsLoaded = true;
+});
+</script>
+
+<script src="../origami_folds.js"></script>
+
+<script>
+"use strict";
+// ============================================================
+// TEST-API (wird vom Playwright-Treiber gesteuert)
+// ============================================================
+
+function __inputDimOf(spec) {
+	var inp = spec.input;
+	if (Array.isArray(inp)) {
+		var p = 1;
+		for (var i = 0; i < inp.length; i++) p *= inp[i];
+		return p;
+	}
+	return inp;
+}
+
+window.__mkModel = function (spec) {
+	var inputShape = Array.isArray(spec.input) ? spec.input : [spec.input];
+	var inputs = tf.input({shape: inputShape});
+	var x = inputs;
+	var layerOptions = {};
+	
+	spec.layers.forEach(function (L) {
+		var type = L[0];
+		if (type === "dense") {
+			layerOptions.units = L[1];
+			layerOptions.activation = L[2] || "linear";
+			x = tf.layers.dense(layerOptions).apply(x);
+		} else if (type === "dropout") {
+			layerOptions.rate = L[1];
+			x = tf.layers.dropout(layerOptions).apply(x);
+		} else if (type === "activation") {
+			layerOptions.activation = L[1];
+			x = tf.layers.activation(layerOptions).apply(x);
+		} else if (type === "batchnorm") {
+			x = tf.layers.batchNormalization(layerOptions).apply(x);
+		} else if (type === "conv2d") {
+			layerOptions.filters = L[1];
+			layerOptions.kernelSize = L[2] || 3;
+			layerOptions.activation = L[3] || "relu";
+			x = tf.layers.conv2d(layerOptions).apply(x);
+		} else if (type === "flatten") {
+			x = tf.layers.flatten(layerOptions).apply(x);
+		} else if (type === "relu") {
+			x = tf.layers.relu(layerOptions).apply(x);
+		} else {
+			throw new Error("Unknown layer type: " + type);
+		}
+	});
+	
+	var m = tf.model({inputs: inputs, outputs: x});
+	var allLayers = m.layers;
+	var visibleLayers = allLayers.filter(function (l) {
+		try {
+			return l.getClassName() !== "InputLayer";
+		} catch (e) {
+			return false;
+		}
+	});
+	
+	Object.defineProperty(m, "layers", {
+		get: function() { return visibleLayers; },
+		configurable: true,
+		enumerable: true
+	});
+	m._allLayers = allLayers;
+	
+	return m;
+};
+
+window.__mkData = function (modelSpec, n, mode) {
+	var inputSpec = modelSpec.input;
+	var dim = __inputDimOf(modelSpec);
+	var x = new Float32Array(n * dim);
+	var y = new Float32Array(mode === "reg" ? n : n * 2);
+	var clsOf = function (i) { return i % 2; };
+	for (var i = 0; i < n; i++) {
+		var c = clsOf(i);
+		var j;
+		if (Array.isArray(inputSpec)) {
+			// Create a 4D image: 4x4x1, class A = bright left half, class B = bright right half
+			for (j = 0; j < dim; j++) {
+				var col = j % 4;
+				var bright = (c === 0) ? (col < 2 ? 1 : 0.1) : (col >= 2 ? 1 : 0.1);
+				x[i * dim + j] = bright + (Math.random() - 0.5) * 0.2;
+			}
+		} else if (dim === 1) {
+			// 1D input: x[i] = -1.5 or 1.5 plus noise
+			x[i] = (c === 0 ? -1.5 : 1.5) + (Math.random() - 0.5);
+		} else if (dim === 2) {
+			// 2D input: x[i * 2] = -1 or 1, x[i * 2 + 1] = -0.6 or 0.6 plus noise
+			x[i * 2] = (c === 0 ? -1 : 1) + (Math.random() - 0.5);
+			x[i * 2 + 1] = (c === 0 ? -0.6 : 0.6) + (Math.random() - 0.5);
+		} else if (dim === 3) {
+			// 3D input: x[i * 3] = -1.2 or 1.2, x[i * 3 + 1] = 1 or -1, x[i * 3 + 2] = 0.4 or -0.4
+			x[i * 3] = (c === 0 ? -1.2 : 1.2) + (Math.random() - 0.5);
+			x[i * 3 + 1] = (c === 0 ? 1 : -1) + (Math.random() - 0.5);
+			x[i * 3 + 2] = (c === 0 ? 0.4 : -0.4) + (Math.random() - 0.5);
+		} else {
+			// 4D input: x[i * 16 + j] = (Math.random() - 0.5) * 3
+			for (j = 0; j < dim; j++) x[i * dim + j] = (Math.random() - 0.5) * 3;
+		}
+		if (mode === "reg") {
+			// Regression: y[i] = x[i] * 0.8 + (c === 0 ? -0.5 : 0.5)
+			y[i] = x[i] * 0.8 + (c === 0 ? -0.5 : 0.5);
+		} else {
+			// Classification: y[i * 2] = 1 or 0, y[i * 2 + 1] = 1 or 0
+			y[i * 2] = c === 0 ? 1 : 0;
+			y[i * 2 + 1] = c === 1 ? 1 : 0;
+		}
+	}
+	if (mode === "reg") {
+		// Return 1D regression data
+		return { x: tf.tensor(x).reshape([n, dim]), y: tf.tensor1d(y), cls: false };
+	} else {
+		// Return 2D classification data
+		return { x: tf.tensor(x).reshape([n, dim]), y: tf.tensor2d(y, [n, 2]), cls: true };
+	}
+};
+
+window.__setScenario = function (modelSpec, dataMode, withData) {
+	// Reset counters so each scenario starts fresh
+	window.__counts = { wrn: 0, err: 0 };
+	window.__logs = [];
+	if (window.model && typeof window.model.dispose === "function") {
+		try { window.model.dispose(); } catch (e) { /* ignore */ }
+	}
+	if (window.xy_data_global) {
+		try { tf.dispose(window.xy_data_global.x); } catch (e) { /* ignore */ }
+		try { tf.dispose(window.xy_data_global.y); } catch (e) { /* ignore */ }
+		window.xy_data_global = null;
+	}
+	window.model = window.__mkModel(modelSpec);
+	if (withData !== false) {
+		var d = window.__mkData(modelSpec, 300, dataMode || "cls2");
+		window.xy_data_global = { x: d.x, y: d.y };
+		window.is_classification = d.cls;
+		window.labels = d.cls ? ["Klasse 0", "Klasse 1"] : null;
+	} else {
+		window.is_classification = false;
+		window.labels = null;
+	}
+	window.started_training = false;
+	update_origami_folds();
+	return true;
+};
+
+window.__snapshot = function () {
+	var plotDiv = document.getElementById("origami_folds_singleton_plot");
+	// Plotly adds .js-plotly-plot to the target div itself, or creates
+	// a child container. Check both.
+	var pp = null;
+	var nTraces = 0;
+	if (plotDiv) {
+		if (plotDiv.classList.contains("js-plotly-plot")) {
+			pp = plotDiv;
+		} else {
+			pp = plotDiv.querySelector(".js-plotly-plot");
+			if (!pp) {
+				// Fallback: any child div that Plotly populated
+				var kids = plotDiv.children;
+				for (var ki = 0; ki < kids.length; ki++) {
+					if (kids[ki].classList && (kids[ki].classList.contains("js-plotly-plot") || kids[ki].classList.contains("plot-container"))) {
+						pp = kids[ki];
+						break;
+					}
+				}
+			}
+		}
+		if (pp && pp.data) nTraces = pp.data.length;
+	}
+	var info = document.getElementById("origami_folds_singleton_info");
+	var title = document.getElementById("origami_folds_singleton_title");
+	var nMesh = 0, nScenes = 0;
+	if (pp && pp.data) {
+		for (var i = 0; i < pp.data.length; i++) {
+			if (pp.data[i].type === "mesh3d") nMesh++;
+		}
+	}
+	// Count gl-containers anywhere in the plot div (WebGL scenes)
+	if (plotDiv) {
+		nScenes = plotDiv.querySelectorAll(".gl-container").length;
+	}
+	var container = document.getElementById("origami_folds_singleton");
+	var compat = null, buildChainReason = null;
+	try {
+		compat = typeof _origamiShapesCompatible === "function" ? _origamiShapesCompatible() : null;
+		var chain = OrigamiFolds && OrigamiFolds._buildChain ? OrigamiFolds._buildChain() : null;
+		if (chain) buildChainReason = chain.reason || (chain.pairs && chain.pairs.length ? "pairs=" + chain.pairs.length : "unknown");
+	} catch (e) { buildChainReason = "err:" + e; }
+	var modelInfo = null;
+	try {
+		if (window.model && window.model.layers) {
+			modelInfo = { n: window.model.layers.length, cls: [] };
+			for (var li = 0; li < window.model.layers.length && li < 6; li++) {
+				var l = window.model.layers[li];
+				var cls = "";
+				try { cls = l.getClassName ? l.getClassName() : ""; } catch (e2) {}
+				var os = null;
+				try { os = l.outputShape; } catch (e3) {}
+				modelInfo.cls.push(cls + ":" + JSON.stringify(os));
+			}
+		}
+	} catch (e) { modelInfo = "err:" + e; }
+	return {
+		wrn: window.__counts.wrn,
+		err: window.__counts.err,
+		logs: window.__logs.slice(),
+		hasPlot: !!pp,
+		nTraces: (pp && pp.data) ? pp.data.length : 0,
+		nMesh3d: nMesh,
+		nScenes: nScenes,
+		infoVisible: !!(info && info.style.display !== "none" && info.textContent.trim()),
+		infoText: info ? info.textContent.trim() : "",
+		titleText: title ? title.textContent : "",
+		titleColor: title ? title.style.color : "",
+		btnText: (function () {
+			var b = document.querySelector("#origami_folds_singleton_btnrow button");
+			return b ? b.textContent : "";
+		})(),
+		_debug: {
+			compat: compat,
+			buildChainReason: buildChainReason,
+			containerExists: !!container,
+			plotDivExists: !!plotDiv,
+			modelInfo: modelInfo,
+			plotDivChildren: plotDiv ? (function () {
+				var kids = [];
+				for (var ci = 0; ci < plotDiv.children.length && ci < 5; ci++) {
+					kids.push(plotDiv.children[ci].tagName + "." + plotDiv.children[ci].className.substring(0, 40) + "#" + plotDiv.children[ci].id);
+				}
+				var allPlotly = plotDiv.querySelectorAll(".js-plotly-plot");
+				var allGl = plotDiv.querySelectorAll(".gl-container");
+				return { kids: kids, nPlotly: allPlotly.length, nGl: allGl.length, innerHTMLlen: plotDiv.innerHTML.length };
+			})() : null,
+			containerRect: container ? (function () {
+				var r = container.getBoundingClientRect();
+				return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right), w: Math.round(r.width), h: Math.round(r.height), offsetW: container.offsetWidth, offsetH: container.offsetHeight, display: container.style.display, csDisplay: getComputedStyle(container).display };
+			})() : null,
+			logs: window.__logs.slice(-8)
+		}
+	};
+};
+</script>
+</body>
+</html>
