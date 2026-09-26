@@ -2405,17 +2405,30 @@ var OrigamiFolds = (function (global) {
 		var h = _state.config.subplotHeight;
 		if (!_isFiniteNum(h) || h < 300) h = 500;
 
+		// Guardrail: ensure minimum 400px per plot; stack vertically if needed
+		var containerW = 800;
+		if (_state.plotDiv && _state.plotDiv.clientWidth) {
+			containerW = _state.plotDiv.clientWidth;
+		} else if (_state.container && _state.container.clientWidth) {
+			containerW = _state.container.clientWidth;
+		}
+		var minW = 400;
+		var maxPerRow = Math.max(1, Math.floor((containerW - 20) / minW));
+		var rows = Math.ceil(nPairs / maxPerRow);
+		var perRow = rows > 1 ? Math.ceil(nPairs / rows) : nPairs;
+		var totalH = h * rows;
+
 		var layout = {
 			paper_bgcolor: theme.paper,
 			plot_bgcolor:  theme.plotBg,
 			font: { color: theme.text, size: 11 },
 			margin: { l: 6, r: 6, t: 54, b: 8 },
-			height: h,
+			height: totalH,
 			autosize: true,
 			showlegend: true,
 			legend: {
 				orientation: "h",
-				x: 0, y: 1.04,
+				x: 0, y: 1.02,
 				font: { size: 10, color: theme.text },
 				bgcolor: "rgba(0,0,0,0)"
 			},
@@ -2432,10 +2445,6 @@ var OrigamiFolds = (function (global) {
 				: { duration: 0 }
 		};
 
-		var gap = (nPairs > 1) ? Math.min(0.02, 0.35 / nPairs) : 0;
-		var wEach = (1 - gap * (nPairs - 1)) / nPairs;
-		if (!_isFiniteNum(wEach) || wEach <= 0) wEach = 1;
-
 		var axisCommon = {
 			gridcolor: theme.grid,
 			zerolinecolor: theme.zeroline,
@@ -2450,16 +2459,28 @@ var OrigamiFolds = (function (global) {
 
 			var p = r.pair;
 			var sceneName = _sceneNameFor(i);
-			var x0 = i * (wEach + gap);
+
+			var row = Math.floor(i / perRow);
+			var col = i % perRow;
+			var inRow = (row === rows - 1)
+				? (nPairs - row * perRow)
+				: perRow;
+
+			var gap = (inRow > 1) ? 0.02 : 0;
+			var wEach = (1 - gap * (inRow - 1)) / inRow;
+			var x0 = col * (wEach + gap);
 			var x1 = x0 + wEach;
 			if (x1 > 1) x1 = 1;
 			var xMid = (x0 + x1) / 2;
+
+			var y0 = 1 - ((row + 1) / rows);
+			var y1 = 1 - (row / rows);
 
 			var dim = Math.max(p.dimIn, p.dimOut);
 			var cam = _state.lastCameras[sceneName] || _defaultCamera(dim);
 
 			layout[sceneName] = {
-				domain: { x: [x0, x1], y: [0, 1] },
+				domain: { x: [x0, x1], y: [y0, y1] },
 				aspectmode: "cube",
 				camera: cam,
 				bgcolor: theme.plotBg,
@@ -2488,34 +2509,19 @@ var OrigamiFolds = (function (global) {
 				? (" \u00B7 " + p.activation) : "";
 			layout.annotations.push({
 				text: titleTxt + actName,
-				x: xMid, y: 1.0,
-				xref: "paper", yref: "paper",
+				x: xMid, y: y1,
 				xanchor: "center", yanchor: "bottom",
-				showarrow: false,
-				font: { size: 10, color: theme.textAccent }
+				font: { size: 11, color: theme.textAccent },
+				showarrow: false
 			});
 
-			if (i < nPairs - 1) {
+			if (col < inRow - 1) {
 				layout.annotations.push({
-					text: "\u279C",
-					x: x1 + gap / 2,
-					y: 0.5,
-					xref: "paper", yref: "paper",
-					xanchor: "center", yanchor: "middle",
-					showarrow: false,
-					font: { size: 20, color: theme.axisText }
-				});
-			}
-
-			if (r.distortion) {
-				var lo = r.distortion.lo, hi = r.distortion.hi;
-				layout.annotations.push({
-					text: "\u00D72^[" + lo.toFixed(1) + "\u2026" + hi.toFixed(1) + "]",
-					x: xMid, y: 0.01,
-					xref: "paper", yref: "paper",
-					xanchor: "center", yanchor: "bottom",
-					showarrow: false,
-					font: { size: 8.5, color: theme.axisText }
+					text: "\u2192",
+					x: x1, y: (y0 + y1) / 2,
+					xanchor: "left", yanchor: "middle",
+					font: { size: 18, color: theme.arrowColor },
+					showarrow: false
 				});
 			}
 		}
