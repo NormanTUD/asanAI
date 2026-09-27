@@ -407,7 +407,7 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
 
 === ALCHEMY (untold_history.php, Stand: September 2026) ===
 ====================================================================
-Fünf Bilder für den neuen Abschnitt "#### Alchemy: The Displaced Root of
+Sechs Bilder für den neuen Abschnitt "#### Alchemy: The Displaced Root of
 Chemistry" (unter "### The Chemistry of Computation"). Alle via
 Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
 
@@ -449,4 +449,12 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
     Autor: Anonymous (verschiedene Mitwirkende)
     Lokal: flaming_heart_alchemical.jpg (1217x1215, PNG->JPG ~470 KB)
     Genutzt in: untold_history.php § Alchemy (Der Great Work / Philosophers Stone)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+45. img_merlin_enchanteur
+    URL: https://commons.wikimedia.org/wiki/File:Merlin_(illustration_from_middle_ages).jpg
+    Lizenz: Public Domain (via Commons API, Feld LicenseShortName)
+    Autor: Unknown (französische Miniatur, 13. Jh.; Robert de Boron, Merlin en prose)
+    Lokal: merlin_enchanteur.jpg (642x700, Original)
+    Genutzt in: untold_history.php § Alchemy (Einleitung / "failed magic")
     Status: OK - Public Domain, Namensnennung im Caption via literature.js

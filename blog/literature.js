@@ -16040,6 +16040,14 @@ window.bibData = {
 		license: "Public Domain",
 		alternativetitle: "The Flaming Heart (c. 1760)"
 	},
+	"img_merlin_enchanteur": {
+		title: "Merlin dictating his prophecies to his scribe (13th-century French miniature)",
+		author: "Anonymous (French, 13th century)",
+		year: "13th century",
+		url: "https://commons.wikimedia.org/wiki/File:Merlin_(illustration_from_middle_ages).jpg",
+		license: "Public Domain",
+		alternativetitle: "Merlin the Enchanter (13th-c. miniature)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Deep geometric identities of the core machinery:
 	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport;
