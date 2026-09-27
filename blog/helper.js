@@ -406,27 +406,31 @@ function revealContent() {
     // content instead of flashing over the loader on first paint.
     document.documentElement.classList.add('is-ready');
 
+    // One smooth ~600 ms crossfade from boot screen to page: the loader
+    // dissolves out (a whisper of blur, echoing the intro's materialise) while
+    // the page fades in beneath it, both on the same ease so it glides rather
+    // than pops. Pin opacity first so releasing the loader's bodyFadeIn
+    // animation cannot flash the base opacity:0. The forced reflow on the
+    // content gives its transition a real "from" frame -- display:none -> block
+    // without it snaps straight to opacity:1.
+    const MN_GLIDE = '0.6s cubic-bezier(0.4, 0, 0.2, 1)';
     if (loader && loader.parentNode) {
-        // Crossfade the loader out in step with the content fade-in below,
-        // so there is no dark gap (most visible in dark mode): the loader's
-        // background dissolves while the page (and its hero constellation)
-        // fades in beneath it. Pin opacity first so releasing the loader's
-        // bodyFadeIn animation cannot flash the base opacity:0.
         loader.style.opacity = '1';
         loader.style.animation = 'none';
-        loader.style.transition = 'opacity 0.5s ease';
+        loader.style.transition = 'opacity ' + MN_GLIDE + ', filter ' + MN_GLIDE;
         loader.style.pointerEvents = 'none';
         void loader.offsetWidth;
         loader.style.opacity = '0';
+        loader.style.filter = 'blur(8px)';
         setTimeout(function () {
             if (loader.parentNode) loader.parentNode.removeChild(loader);
-        }, 560);
+        }, 680);
     }
 
     content.style.display = 'block';
     content.style.opacity = '0';
-    content.style.transition = 'opacity 0.5s ease';
-
+    content.style.transition = 'opacity ' + MN_GLIDE;
+    void content.offsetWidth;
     requestAnimationFrame(() => {
         content.style.opacity = '1';
     });
@@ -434,7 +438,7 @@ function revealContent() {
     // it is done so no reveal residue survives on the scroll container.
     setTimeout(() => {
         content.style.removeProperty('transition');
-    }, 800);
+    }, 720);
 
     const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
     const perSection = Math.max(40, Math.min(120, 800 / sections.length));
