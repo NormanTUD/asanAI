@@ -227,6 +227,7 @@ function load_base_js () {
 	js("topics");
 	js("keypoint");
 	js("progress_tracker");
+	js("organic-network");
 
 	$files = glob(__DIR__ . "/modules/*.js");
 

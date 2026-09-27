@@ -13656,7 +13656,7 @@ window.bibData = {
 	},
 	"merchant2023gnome": {
 		title: "Scaling deep learning for materials discovery",
-		author: "Aditi Merchant, Samuel Batzner, Samuel S. Schoenholz, Murata Aykol, Gowoon Cheon, Ekin D. Cubuk",
+		author: "Amil Merchant, Simon Batzner, Samuel S. Schoenholz, Murat A. Aykol, Gowoon Cheon, Ekin D. Cubuk",
 		year: 2023,
 		url: "https://doi.org/10.1038/s41586-023-06735-9",
 		alternativetitle: "GNoME (2.2M stable materials)"
@@ -15835,6 +15835,167 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Antoine_Lavoisier",
 		alternativetitle: "Lavoisier (Wikipedia)"
 	},
+	"stockholm_papyrus": {
+		title: "Stockholm Papyrus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Stockholm_papyrus",
+		alternativetitle: "Stockholm Papyrus (c. AD 300, Egyptian craft recipes)"
+	},
+	"leyden_papyrus_x": {
+		title: "Leyden Papyrus X",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Leyden_papyrus_X",
+		alternativetitle: "Leyden Papyrus X (c. AD 300, Egyptian craft recipes)"
+	},
+	"pseudo_democritus": {
+		title: "Pseudo-Democritus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Pseudo-Democritus",
+		alternativetitle: "Pseudo-Democritus (Wikipedia)"
+	},
+	"bolus_of_mendes": {
+		title: "Bolus of Mendes",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Bolus_of_Mendes",
+		alternativetitle: "Bolus of Mendes (Wikipedia)"
+	},
+	"empedocles": {
+		title: "Empedocles",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Empedocles",
+		alternativetitle: "Empedocles (four elements, c. 420 BC)"
+	},
+	"democritus": {
+		title: "Democritus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Democritus",
+		alternativetitle: "Democritus (atomism, c. 380 BC)"
+	},
+	"atomism": {
+		title: "Atomism",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Atomism",
+		alternativetitle: "Atomism (Wikipedia)"
+	},
+	"chinese_alchemy": {
+		title: "Chinese alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Chinese_alchemy",
+		alternativetitle: "Chinese alchemy (Wikipedia)"
+	},
+	"ge_hong": {
+		title: "Ge Hong",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Ge_Hong",
+		alternativetitle: "Ge Hong (Wikipedia)"
+	},
+	"rasayana": {
+		title: "Rasayana",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rasayana",
+		alternativetitle: "Rasayana (Indian alchemy, rasashastra)"
+	},
+	"nagarjuna_metallurgist": {
+		title: "Nagarjuna (metallurgist)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Nagarjuna_(metallurgist)",
+		alternativetitle: "Nagarjuna, the alchemist-metallurgist"
+	},
+	"alchemy_islam": {
+		title: "Alchemy and chemistry in the medieval Islamic world",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Alchemy_and_chemistry_in_medieval_Islam",
+		alternativetitle: "Alchemy in the medieval Islamic world"
+	},
+	"al_razi": {
+		title: "Muhammad ibn Zakariya al-Razi",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Al-Razi",
+		alternativetitle: "al-Razi (Rhazes), Book of Secrets"
+	},
+	"avicenna": {
+		title: "Avicenna",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Avicenna",
+		alternativetitle: "Avicenna (Wikipedia)"
+	},
+	"robert_of_chester": {
+		title: "Robert of Chester",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Robert_of_Chester",
+		alternativetitle: "Robert of Chester (1144 alchemy translation)"
+	},
+	"liber_de_compositione": {
+		title: "Liber de compositione alchemiae",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Liber_de_compositione_alchemiae",
+		alternativetitle: "Liber de compositione alchemiae (1144)"
+	},
+	"turba_philosophorum": {
+		title: "Turba Philosophorum",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Turba_Philosophorum",
+		alternativetitle: "Turba Philosophorum (Wikipedia)"
+	},
+	"albertus_magnus": {
+		title: "Albertus Magnus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Albertus_Magnus",
+		alternativetitle: "Albertus Magnus (Wikipedia)"
+	},
+	"roger_bacon": {
+		title: "Roger Bacon",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Roger_Bacon",
+		alternativetitle: "Roger Bacon (Wikipedia)"
+	},
+	"sendivogius": {
+		title: "Michael Sendivogius",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Michael_Sendivogius",
+		alternativetitle: "Sendivogius (distilled oxygen c. 1600)"
+	},
+	"chrysopoeia": {
+		title: "Chrysopoeia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Chrysopoeia",
+		alternativetitle: "Chrysopoeia (artificial gold-making)"
+	},
+	"sceptical_chymist": {
+		title: "The Sceptical Chymist",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/The_Sceptical_Chymist",
+		alternativetitle: "The Sceptical Chymist (Boyle, 1661)"
+	},
+	"sceptical_chymist_text": {
+		title: "The Sceptical Chymist (1661 text)",
+		author: "Robert Boyle",
+		year: 1661,
+		url: "https://en.wikisource.org/wiki/Sceptical_Chymist",
+		alternativetitle: "Boyle, The Sceptical Chymist (primary text, Wikisource)"
+	},
 	/* ═══════════════════════════════════════════════════════════════════
 	 *  Image sources: Alchemy  (untold_history.php)
 	 *  All Public Domain, downloaded and embedded as figures.
@@ -16184,28 +16345,12 @@ window.bibData = {
 		url: "https://www.nber.org/papers/w31161",
 		alternativetitle: "Brynjolfsson, Li and Raymond 2023 — customer-support agents: +14% avg, +34% for novices (NBER)"
 	},
-	"jumper2021alphafold": {
-		title: "Highly accurate protein structure prediction with AlphaFold",
-		author: "John Jumper, Richard Evans, Alexander Pritzel, Tim Green, Michael Figurnov, Olaf Ronneberger, Kathryn Tunyasuvunakool, Russ Bates, Augustin Zídek, Anna Potapenko, Alex Bridgland, Clemens Meyer, Simon A. A. Kohl, James J. J. Tunbridge, Louise Bissette, John Silver, Rimel Paternotte, Michael C. Smith, Anna Krishnal, Ching-Yong Berjans, et al.",
-		year: 2021,
-		journal: "Nature",
-		url: "https://www.nature.com/articles/s41586-021-03819-2",
-		alternativetitle: "Jumper et al. 2021 — AlphaFold 2 (Nature)"
-	},
 	"nobel2024chemistry": {
 		title: "The Nobel Prize in Chemistry 2024",
 		author: "The Nobel Foundation",
 		year: 2024,
 		url: "https://www.nobelprize.org/prizes/chemistry/2024/summary/",
 		alternativetitle: "Nobel Prize in Chemistry 2024 — Baker, Hassabis, Jumper"
-	},
-	"merchant2023gnome": {
-		title: "Scaling deep learning for materials discovery",
-		author: "Alec Merchant, Simon Batzner, Samuel S. Schoenholz, Muratahan Aykol, Colin J. Olan, Govind S. Ananthanarayanan, T. Ryan Anderson, Regan L. Mitchell, Christoph V. Lampert, Christoph L. Green, et al.",
-		year: 2023,
-		journal: "Nature",
-		url: "https://www.nature.com/articles/s41586-023-06735-9",
-		alternativetitle: "Merchant et al. 2023 — GNoME: 2.2 million new materials (Nature)"
 	},
 	"romera2023funsearch": {
 		title: "Mathematical discoveries from program search with large language models",
