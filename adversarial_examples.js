@@ -49,7 +49,7 @@ var AdversarialExamples = (function () {
 			".adv_status { font-size: 0.9em; margin-top: 8px; min-height: 1.3em; }" +
 			".adv_status.fooled { font-weight: 700; }" +
 			".adv_empty { padding: 30px; text-align: center; opacity: 0.7; font-size: 0.95em; line-height: 1.6; }" +
-			"#adv_margin_plot { width: 100%; height: 220px; }";
+			"#adv_margin_plot { width: 100%; height: 260px; }";
 
 		document.head.appendChild(style);
 	}
@@ -80,8 +80,8 @@ var AdversarialExamples = (function () {
 			'			</select>' +
 			'			<label><span class="TRANSLATEME_adv_target"></span></label>' +
 			'			<select id="adv_target">' +
-			'				<option value="predicted"><span class="TRANSLATEME_adv_target_predicted"></span></option>' +
-			'				<option value="other"><span class="TRANSLATEME_adv_target_other"></span></option>' +
+			'				<option value="predicted" data-tr-option="adv_target_predicted"></option>' +
+			'				<option value="other" data-tr-option="adv_target_other"></option>' +
 			'			</select>' +
 			'		</div>' +
 			'		<div class="adv_row">' +
@@ -119,6 +119,7 @@ var AdversarialExamples = (function () {
 
 		_applyThemeVars();
 		_showSeed();
+		update_translations(); // await not possible
 
 		ExplainabilityLib.onThemeChange(function () {
 			_applyThemeVars();

@@ -92,6 +92,7 @@ var RepresentationAnalysis = (function () {
 
 		_applyThemeVars();
 		_updateGating();
+		update_translations(); // await not possible
 
 		ExplainabilityLib.onThemeChange(function () {
 			_applyThemeVars();
