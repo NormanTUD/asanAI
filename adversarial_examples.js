@@ -420,18 +420,18 @@ var AdversarialExamples = (function () {
 			xs.push(i);
 		}
 
-		Plotly.react(div, [{
+		ExplainabilityLib.drawLabeled(div, [{
 			x: xs,
 			y: _lastMargins,
 			mode: "lines+markers",
 			name: _L("adv_margin"),
 			line: { color: "#e15759", width: 2 }
 		}], ExplainabilityLib.baseLayout({
-			margin: { t: 20, b: 60, l: 70, r: 20 },
-			xaxis: { gridcolor: tc.grid, title: _L("adv_iter"), showgrid: false },
-			yaxis: { gridcolor: tc.grid, title: _L("adv_margin") },
+			margin: { t: 20, b: 70, l: 80, r: 20 },
+			xaxis: { gridcolor: tc.grid, showgrid: false },
+			yaxis: { gridcolor: tc.grid },
 			showlegend: false
-		}), { responsive: true });
+		}), _L("adv_iter") || "Iteration", _L("adv_margin") || "Decision margin");
 	}
 
 	function init(containerId) {

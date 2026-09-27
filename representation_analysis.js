@@ -245,13 +245,13 @@ var RepresentationAnalysis = (function () {
 			marker: { size: 7 }
 		});
 
-		Plotly.react(div, traces, ExplainabilityLib.baseLayout({
-			margin: { t: 10, b: 90, l: 60, r: 20 },
-			xaxis: { gridcolor: tc.grid, tickangle: -45, automargin: true, title: _L("rep_layer_axis") },
-			yaxis: { gridcolor: tc.grid, title: _L("rep_sep_axis"), automargin: true },
+		ExplainabilityLib.drawLabeled(div, traces, ExplainabilityLib.baseLayout({
+			margin: { t: 10, b: 90, l: 70, r: 20 },
+			xaxis: { gridcolor: tc.grid, tickangle: -45 },
+			yaxis: { gridcolor: tc.grid },
 			showlegend: true,
 			legend: { orientation: "h", y: -0.25 }
-		}), { responsive: true });
+		}), _L("rep_layer_axis") || "Layer", _L("rep_sep_axis") || "Separability");
 	}
 
 	async function runFromUI() {

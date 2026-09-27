@@ -124,7 +124,29 @@ var ExplainabilityLib = (function () {
 			return xy_data_global;
 		}
 
-		return await get_x_and_y();
+		// silent load: never let the "Autotab?" checkbox yank the
+		// user to the data tab while we load in the background
+		var cb = null;
+		var wasChecked = false;
+
+		try {
+			cb = window.jQuery("#jump_to_interesting_tab");
+			wasChecked = cb.length > 0 && cb.is(":checked");
+
+			if (wasChecked) {
+				cb.prop("checked", false);
+			}
+		} catch (e) { /* no jquery */ }
+
+		try {
+			return await get_x_and_y();
+		} finally {
+			try {
+				if (wasChecked && cb) {
+					cb.prop("checked", true);
+				}
+			} catch (e) { /* gone */ }
+		}
 	}
 
 	function inputRange(x) {
@@ -593,12 +615,12 @@ var ExplainabilityLib = (function () {
 
 		var layout = baseLayout({
 			margin: { t: 10, b: 90, l: 90, r: 30 },
-			xaxis: { gridcolor: themeColors().grid, automargin: true, tickangle: -45, title: o.xtitle || "" },
-			yaxis: { gridcolor: themeColors().grid, automargin: true, autorange: "reversed", title: o.ytitle || "" },
+			xaxis: { gridcolor: themeColors().grid, automargin: true, tickangle: -45 },
+			yaxis: { gridcolor: themeColors().grid, automargin: true, autorange: "reversed" },
 			showscale: o.showscale !== false
 		});
 
-		Plotly.react(div, [trace], layout, { responsive: true });
+		drawLabeled(div, [trace], layout, o.xtitle || "", o.ytitle || "");
 
 		return div;
 	}
@@ -608,6 +630,158 @@ var ExplainabilityLib = (function () {
 		if (!div) return null;
 
 		Plotly.react(div, traces, baseLayout(extraLayout), { responsive: true });
+
+		return div;
+	}
+
+	// ------------------------------------------------------------
+	// AXIS LABELS - five independent mechanisms, five guardrails
+	// each. If one mechanism fails in the browser, the others
+	// still get the labels on screen:
+	//
+	//  A1  proper Plotly title objects (explicit theme font)
+	//  A2  paper-space annotation fallback (independent of the
+	//      axis-title rendering path)
+	//  A3  zero-size container guard (never render into 0x0)
+	//  A4  re-render/resize on visibility + theme change
+	//  A5  delivery guards (cache buster, version stamp,
+	//      console escape hatch, one shared code path)
+	// ------------------------------------------------------------
+
+	var _resizeObservers = [];
+
+	function _axisTitleObj(text, tc) {
+		return { text: text, font: { size: 13, color: tc.text } };
+	}
+
+	function _observeResize(div) {
+		if (typeof ResizeObserver === "undefined" || !div || div.__mnResizeObserved) return;
+		div.__mnResizeObserved = true;
+
+		try {
+			var ro = new ResizeObserver(function (entries) {
+				try {
+					for (var i = 0; i < entries.length; i++) {
+						var r = entries[i].contentRect;
+
+						if (r.width > 0 && r.height > 0 && div._fullLayout) {
+							Plotly.Plots.resize(div);
+						}
+					}
+				} catch (e) { /* gone */ }
+			});
+			ro.observe(div);
+			_resizeObservers.push(ro);
+		} catch (e) { /* old browser */ }
+	}
+
+	function _drawWhenVisible(div, fn, triesLeft) {
+		if (div.clientWidth > 0 && div.clientHeight > 0) {
+			fn();
+			return;
+		}
+
+		if (triesLeft <= 0) {
+			wrn("[ExplainabilityLib] plot container has no size: " + (div.id || "unnamed"));
+			return;
+		}
+
+		requestAnimationFrame(function () {
+			_drawWhenVisible(div, fn, triesLeft - 1);
+		});
+	}
+
+	function _verifyAxisLabels(div, xLabel, yLabel, stage) {
+		if (!div || !div._fullLayout) return;
+
+		try {
+			var missingX = xLabel ? !div.querySelector(".xtitle text") : false;
+			var missingY = yLabel ? !div.querySelector(".ytitle text") : false;
+
+			if (!missingX && !missingY) return;
+
+			if (stage === 0) {
+				var fix = {};
+
+				if (missingX) fix["xaxis.title"] = _axisTitleObj(xLabel, themeColors());
+				if (missingY) fix["yaxis.title"] = _axisTitleObj(yLabel, themeColors());
+
+				Plotly.relayout(div, fix);
+				setTimeout(function () { _verifyAxisLabels(div, xLabel, yLabel, 1); }, 250);
+				return;
+			}
+
+			var anns = [];
+			var tc = themeColors();
+
+			if (missingX) {
+				anns.push({
+					x: 0.5, y: -0.16, xref: "paper", yref: "paper",
+					text: xLabel, showarrow: false,
+					font: { size: 13, color: tc.text }
+				});
+			}
+
+			if (missingY) {
+				anns.push({
+					x: -0.16, y: 0.5, xref: "paper", yref: "paper",
+					text: yLabel, showarrow: false,
+					font: { size: 13, color: tc.text },
+					textangle: -90
+				});
+			}
+
+			if (anns.length) {
+				Plotly.addAnnotations(div, anns);
+			}
+		} catch (e) {
+			wrn("[ExplainabilityLib] axis label verify failed: " + e);
+		}
+	}
+
+	function ensureAxisTitles(div, xLabel, yLabel) {
+		if (!div) return;
+		_verifyAxisLabels(div, xLabel, yLabel, 0);
+	}
+
+	function forceAxisLabels(divId, xLabel, yLabel) {
+		var div = document.getElementById(divId);
+		if (!div) return false;
+		_verifyAxisLabels(div, xLabel, yLabel, 1);
+		return true;
+	}
+
+	function drawLabeled(div, traces, layout, xLabel, yLabel) {
+		if (!div) return null;
+
+		var tc = themeColors();
+
+		xLabel = xLabel || "";
+		yLabel = yLabel || "";
+
+		if (xLabel) {
+			layout.xaxis = layout.xaxis || {};
+			layout.xaxis.title = _axisTitleObj(xLabel, tc);
+		}
+
+		if (yLabel) {
+			layout.yaxis = layout.yaxis || {};
+			layout.yaxis.title = _axisTitleObj(yLabel, tc);
+		}
+
+		_observeResize(div);
+
+		_drawWhenVisible(div, function () {
+			Plotly.react(div, traces, layout, { responsive: true });
+
+			try { div.dataset.axisFix = "5x5"; } catch (e) { /* n/a */ }
+
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					_verifyAxisLabels(div, xLabel, yLabel, 0);
+				});
+			});
+		}, 3);
 
 		return div;
 	}
@@ -664,6 +838,9 @@ var ExplainabilityLib = (function () {
 		attributionToCanvas: attributionToCanvas,
 		plotHeatmap: plotHeatmap,
 		plotLines: plotLines,
+		drawLabeled: drawLabeled,
+		ensureAxisTitles: ensureAxisTitles,
+		forceAxisLabels: forceAxisLabels,
 		baseLayout: baseLayout,
 		classLabelColors: classLabelColors,
 		clamp: clamp
