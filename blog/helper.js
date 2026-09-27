@@ -388,12 +388,15 @@ function revealContent() {
     const content = document.getElementById('contents');
     if (!content) return;
 
-    // Hold the intro on screen for a minimum beat so the title is actually
-    // readable and the background can settle. Fast pages wait to ~3 s; slow
-    // pages (still loading) reveal the instant they are ready. performance.now()
-    // is measured from navigation start, i.e. from when the loader first shows.
+    // Hold the intro long enough that the title is actually read: the reveal
+    // waits until 3 s AFTER the intro text has fully materialised (intro.js
+    // stamps window.__mnIntroTextDone), and also until the page is ready. On
+    // short/fast pages this is what keeps the title on screen; on slow pages
+    // the page's own load time dominates and nothing artificial is added.
     const mnNow = window.performance ? performance.now() : 0;
-    const MN_MIN_REVEAL = 3000;
+    const mnTextDone = (typeof window.__mnIntroTextDone === 'number' && window.__mnIntroTextDone > 0)
+        ? window.__mnIntroTextDone : 0;
+    const MN_MIN_REVEAL = mnTextDone ? mnTextDone + 3000 : 3000;
     if (mnNow < MN_MIN_REVEAL) {
         setTimeout(revealContent, MN_MIN_REVEAL - mnNow);
         return;

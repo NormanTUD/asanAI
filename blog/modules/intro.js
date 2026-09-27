@@ -102,6 +102,11 @@
 				if (armed) return;
 				armed = true;
 				title.classList.add('is-ready');
+				// The type is fully materialised ~0.65 s after arming (letter
+				// stagger + subtitle). revealContent() reads this and holds the
+				// loader until 3 s after it, so the reader actually has time to
+				// read the title before the page takes over.
+				window.__mnIntroTextDone = (window.performance ? performance.now() : 0) + (reduced ? 120 : 650);
 			}
 			try {
 				if (document.fonts && document.fonts.ready) document.fonts.ready.then(armReady, armReady);
