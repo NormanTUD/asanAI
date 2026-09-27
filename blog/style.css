@@ -4484,8 +4484,8 @@ only the page background here leans on --mn-bg.
 	#loader #intro-count { bottom: 6.6vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-	#loader .intro-letter { opacity: 1; transform: none; animation: none; }
-	#loader .intro-sub { opacity: 1; transform: none; animation: none; }
+	#loader .intro-letter { opacity: 1; transform: none; filter: none; animation: none; }
+	#loader .intro-sub { opacity: 1; transform: none; filter: none; animation: none; }
 	#loader .intro-head { animation: none; }
 	#loader #intro-canvas { display: none; }
 }
