@@ -682,7 +682,10 @@ var ExplainabilityLib = (function () {
 		}
 
 		if (triesLeft <= 0) {
-			wrn("[ExplainabilityLib] plot container has no size: " + (div.id || "unnamed"));
+			// not an error: the tab can legitimately be hidden (or not laid
+			// out yet) when a redraw fires. The ResizeObserver + the next
+			// redraw will render it as soon as it gains a size.
+			dbg("[ExplainabilityLib] plot container has no size, will retry on resize: " + (div.id || "unnamed"));
 			return;
 		}
 
