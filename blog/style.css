@@ -4347,6 +4347,115 @@ html.dark #contents tbody tr:nth-child(even) {
 	to   { transform: rotate(360deg); }
 }
 
+/* ============================================================
+INTRO — the cosmic load sequence ("From Big Bang to ChatGPT").
+The plain border spinner is replaced by a full-bleed canvas
+(Big Bang  ->  river of historical symbols  ->  the LLM lattice
+forming) plus a title. Drawn by modules/intro.js, which injects
+#intro-canvas and .intro-title into #loader. Every colour the
+canvas paints is theme-reactive (read at init + on theme change);
+only the page background here leans on --mn-bg.
+============================================================ */
+#loader {
+	overflow: hidden;
+}
+#loader .spinner {
+	display: none;
+}
+#loader #intro-canvas {
+	position: absolute;
+	inset: 0;
+	display: block;
+	z-index: 0;
+	pointer-events: none;
+}
+#loader .intro-title {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 0 24px 11vh;
+	text-align: center;
+	pointer-events: none;
+	animation: introTitleIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+#loader .intro-head {
+	font-family: var(--mn-font-prose);
+	font-weight: 400;
+	font-size: clamp(1.8rem, 1rem + 3.4vw, 3.1rem);
+	line-height: 1.08;
+	letter-spacing: 0.01em;
+	color: var(--mn-heading);
+	text-shadow: 0 0 26px var(--mn-shadow-glow), 0 0 60px var(--mn-shadow-glow);
+	animation: introTitleGlow 5.5s ease-in-out 1.1s infinite;
+}
+#loader .intro-sub {
+	margin-top: 0.85rem;
+	font-family: var(--mn-font-prose);
+	font-style: italic;
+	font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.3rem);
+	letter-spacing: 0.02em;
+	color: var(--mn-text-secondary);
+}
+#loader .intro-era {
+	margin-top: 1.5rem;
+	min-height: 1.5em;
+	font-family: var(--mn-font-mono);
+	font-size: clamp(0.7rem, 0.58rem + 0.4vw, 0.92rem);
+	letter-spacing: 0.26em;
+	text-indent: 0.26em;
+	color: var(--mn-text);
+}
+#loader .intro-era.swap {
+	animation: introEraSwap 0.8s ease both;
+}
+#loader #loader-status {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 7vh;
+	margin: 0;
+	font-size: 12px;
+	letter-spacing: 0.02em;
+	text-align: center;
+	color: var(--mn-text-muted);
+	z-index: 2;
+}
+#loader #loader-checklist {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: calc(7vh - 0.5rem);
+	margin: 0;
+	z-index: 2;
+}
+@keyframes introTitleIn {
+	from { opacity: 0; transform: translateY(16px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes introTitleGlow {
+	0%, 100% { text-shadow: 0 0 22px var(--mn-shadow-glow), 0 0 46px var(--mn-shadow-glow); }
+	50%      { text-shadow: 0 0 34px var(--mn-shadow-glow), 0 0 92px var(--mn-shadow-glow); }
+}
+@keyframes introEraSwap {
+	0%   { opacity: 0; transform: translateY(8px); }
+	100% { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 560px) {
+	#loader .intro-title { padding-bottom: 15vh; }
+	#loader #loader-status { bottom: 9vh; }
+	#loader #loader-checklist { bottom: calc(9vh - 0.5rem); font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	#loader .intro-title { animation: none; opacity: 1; transform: none; }
+	#loader .intro-head { animation: none; }
+	#loader .intro-era.swap { animation: none; }
+	#loader #intro-canvas { display: none; }
+}
+
 
 /* ============================================================
 STATISTICS MODULE — Gorgeous Additions
