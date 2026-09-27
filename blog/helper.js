@@ -392,7 +392,22 @@ function revealContent() {
     // content instead of flashing over the loader on first paint.
     document.documentElement.classList.add('is-ready');
 
-    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+    if (loader && loader.parentNode) {
+        // Crossfade the loader out in step with the content fade-in below,
+        // so there is no dark gap (most visible in dark mode): the loader's
+        // background dissolves while the page (and its hero constellation)
+        // fades in beneath it. Pin opacity first so releasing the loader's
+        // bodyFadeIn animation cannot flash the base opacity:0.
+        loader.style.opacity = '1';
+        loader.style.animation = 'none';
+        loader.style.transition = 'opacity 0.5s ease';
+        loader.style.pointerEvents = 'none';
+        void loader.offsetWidth;
+        loader.style.opacity = '0';
+        setTimeout(function () {
+            if (loader.parentNode) loader.parentNode.removeChild(loader);
+        }, 560);
+    }
 
     content.style.display = 'block';
     content.style.opacity = '0';

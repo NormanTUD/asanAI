@@ -2,7 +2,6 @@
 	'use strict';
 
 	var started = false;
-	var MIN_SHOW = 2.2;
 
 	function begin() {
 		if (started) return;
@@ -18,12 +17,11 @@
 				return document.documentElement.classList.contains('dark')
 					? [165, 180, 252] : [99, 102, 241];
 			};
-			// A soft dawn-sky wash: deep at the top, gently warm-lifted at
-			// the bottom. Human warmth without a circle, white, or glare.
+			// A static dawn-sky wash: deep at the top, gently warm-lifted at
+			// the bottom. Human warmth without a circle, white, glare, or pulse.
 			function warmHorizon(ctx, t, w, h) {
-				var breathe = 0.5 + 0.5 * Math.sin(t / 6000);
-				var mid = (dark ? 0.045 : 0.03) + 0.02 * breathe;
-				var bot = (dark ? 0.15 : 0.10) + 0.03 * breathe;
+				var mid = dark ? 0.05 : 0.03;
+				var bot = dark ? 0.16 : 0.10;
 				var g = ctx.createLinearGradient(0, 0, 0, h);
 				g.addColorStop(0, 'rgba(' + warm + ',0)');
 				g.addColorStop(0.55, 'rgba(' + warm + ',' + mid + ')');
@@ -52,20 +50,63 @@
 				});
 			}
 
+			// Soft scrim behind the title: stabilises the backdrop (no shimmer
+			// of the drifting network through the letters) and lifts the type.
+			var scrim = document.createElement('div');
+			scrim.className = 'intro-scrim';
+			scrim.setAttribute('aria-hidden', 'true');
+			scrim.style.background = dark
+				? 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(7,11,22,0.5), rgba(7,11,22,0) 72%)'
+				: 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(250,248,241,0.62), rgba(250,248,241,0) 72%)';
+			loader.appendChild(scrim);
+
+			loader.style.setProperty('--intro-glow', dark ? 'rgba(233,170,96,0.20)' : 'rgba(150,110,66,0.28)');
+
 			var status = document.getElementById('loader-status');
 			var title = document.createElement('div');
 			title.className = 'intro-title';
 			title.setAttribute('aria-hidden', 'true');
+
 			var head = document.createElement('span');
 			head.className = 'intro-head';
-			head.textContent = 'From Big Bang to ChatGPT';
+			var HEADLINE = 'From Big Bang to ChatGPT';
+			var li = 0;
+			HEADLINE.split(' ').forEach(function (word) {
+				var w = document.createElement('span');
+				w.className = 'intro-word';
+				word.split('').forEach(function (ch) {
+					var s = document.createElement('span');
+					s.className = 'intro-letter';
+					s.textContent = ch;
+					s.style.animationDelay = (li * 0.012).toFixed(3) + 's';
+					w.appendChild(s);
+					li++;
+				});
+				head.appendChild(w);
+				head.appendChild(document.createTextNode(' '));
+			});
+
 			var sub = document.createElement('span');
 			sub.className = 'intro-sub';
 			sub.textContent = 'A peek inside the black box';
 			sub.style.color = dark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
+
 			title.appendChild(head);
 			title.appendChild(sub);
 			loader.insertBefore(title, status || loader.lastChild);
+
+			// Reveal the type only once the serif is loaded, so it appears in
+			// one clean, animated beat instead of a font-swap flicker.
+			var armed = false;
+			function armReady() {
+				if (armed) return;
+				armed = true;
+				title.classList.add('is-ready');
+			}
+			try {
+				if (document.fonts && document.fonts.ready) document.fonts.ready.then(armReady, armReady);
+			} catch (e) {}
+			setTimeout(armReady, 250);
 
 			var countEl = document.createElement('p');
 			countEl.id = 'intro-count';
@@ -96,20 +137,18 @@
 				return d;
 			}
 			var total = countRows();
-			var progress01 = 0;
-			var finale = false;
 
 			function setCount() {
 				if (!countEl) return;
 				if (total > 0) {
-					var d = finale ? total : countDone();
+					var d = countDone();
 					countEl.textContent = d + ' of ' + total + (total === 1 ? ' module loaded' : ' modules loaded');
 				} else {
 					countEl.textContent = 'preparing\u2026';
 				}
 			}
 			function setBar() {
-				var p = finale ? 1 : progress01;
+				var p = total ? countDone() / total : 0;
 				progressFill.style.width = (p * 100) + '%';
 			}
 			setCount();
@@ -120,57 +159,29 @@
 				if (cc) {
 					new MutationObserver(function () {
 						total = countRows();
-						progress01 = total ? countDone() / total : 0;
 						setCount();
 						setBar();
 					}).observe(cc, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 				}
 			}
 
-			var finaleAt = 0, running = true, lastTick = 0, t0 = (window.performance && performance.now()) || Date.now();
-
-			function triggerFinale() {
-				if (finale) return;
-				finale = true;
-				finaleAt = (window.performance && performance.now()) || Date.now();
-				setCount();
-				setBar();
-				loader.style.animation = 'none';
-				loader.style.transition = 'opacity 0.6s ease';
-				loader.style.opacity = '1';
-				void loader.offsetWidth;
-				loader.style.opacity = '0';
-				loader.style.pointerEvents = 'none';
-			}
-
-			setTimeout(function () { if (!finale) triggerFinale(); }, 12000);
-
 			if (reduced) return;
 
-			function tick(now) {
-				if (!running) return;
-				try {
-					if (!document.body.contains(loader) && !finale) triggerFinale();
-
-					if (now - lastTick >= 120) {
-						lastTick = now;
-						if (!finale && (now - t0) >= MIN_SHOW * 1000 && (total === 0 || countDone() === total)) {
-							triggerFinale();
-						}
-					}
-
-					if (finale && (now - finaleAt) >= 700) {
-						running = false;
-						if (net) net.destroy();
-						return;
-					}
-					requestAnimationFrame(tick);
-				} catch (err) {
-					running = false;
-					if (window.console) { try { console.info('[intro] stopped: ' + err.message); } catch (e) {} }
-				}
+			// The reveal itself is owned by revealContent() (a crossfade).
+			// This loop only exists to release the network once the loader is
+			// gone, so it cannot draw to a detached canvas forever.
+			var stopped = false;
+			function stop() {
+				if (stopped) return;
+				stopped = true;
+				if (net) net.destroy();
 			}
-			requestAnimationFrame(tick);
+			(function tick() {
+				if (stopped) return;
+				if (!document.body.contains(loader)) { stop(); return; }
+				requestAnimationFrame(tick);
+			})();
+			setTimeout(stop, 30000);
 		} catch (err) {
 			if (window.console) { try { console.info('[intro] intro skipped: ' + err.message); } catch (e) {} }
 		}

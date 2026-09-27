@@ -4369,6 +4369,12 @@ only the page background here leans on --mn-bg.
 	z-index: 0;
 	pointer-events: none;
 }
+#loader .intro-scrim {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+}
 #loader .intro-title {
 	position: absolute;
 	inset: 0;
@@ -4377,26 +4383,46 @@ only the page background here leans on --mn-bg.
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 0 24px 11vh;
+	padding: 0 24px 6vh;
 	text-align: center;
 	pointer-events: none;
-	animation: introTitleIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 #loader .intro-head {
 	font-family: var(--mn-font-prose);
 	font-weight: 400;
-	font-size: clamp(1.8rem, 1rem + 3.4vw, 3.1rem);
+	font-size: clamp(1.9rem, 1rem + 3.6vw, 3.3rem);
 	line-height: 1.08;
 	letter-spacing: 0.01em;
 	color: var(--mn-heading);
-	text-shadow: 0 0 26px var(--mn-shadow-glow);
+}
+#loader .intro-word {
+	display: inline-block;
+	white-space: nowrap;
+}
+#loader .intro-letter {
+	display: inline-block;
+	opacity: 0;
+	filter: blur(5px);
+	transform: translateY(0.55em);
+	will-change: transform, opacity, filter;
+}
+#loader .intro-title.is-ready .intro-letter {
+	animation: introLetter 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+#loader .intro-title.is-ready .intro-head {
+	animation: introGlow 5.5s ease-in-out 1.2s infinite;
 }
 #loader .intro-sub {
-	margin-top: 0.85rem;
+	margin-top: 0.9rem;
 	font-family: var(--mn-font-prose);
 	font-style: italic;
 	font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.3rem);
 	letter-spacing: 0.02em;
+	opacity: 0;
+	transform: translateY(0.5em);
+}
+#loader .intro-title.is-ready .intro-sub {
+	animation: introSub 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) 0.16s forwards;
 }
 #loader #loader-status {
 	position: absolute;
@@ -4441,18 +4467,25 @@ only the page background here leans on --mn-bg.
 #loader #loader-checklist {
 	display: none;
 }
-@keyframes introTitleIn {
-	from { opacity: 0; transform: translateY(16px); }
-	to   { opacity: 1; transform: translateY(0); }
+@keyframes introLetter {
+	to { opacity: 1; transform: translateY(0); }
+}
+@keyframes introSub {
+	to { opacity: 1; transform: translateY(0); }
+}
+@keyframes introGlow {
+	0%, 100% { text-shadow: 0 0 16px var(--intro-glow, transparent); }
+	50%      { text-shadow: 0 0 30px var(--intro-glow, transparent); }
 }
 @media (max-width: 560px) {
-	#loader .intro-title { padding-bottom: 12vh; }
+	#loader .intro-title { padding-bottom: 8vh; }
 	#loader #loader-status { bottom: 9.5vh; }
 	#loader #intro-count { bottom: 6.6vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-	#loader .intro-title { animation: none; opacity: 1; transform: none; }
-	#loader .intro-head { text-shadow: none; }
+	#loader .intro-letter { opacity: 1; transform: none; animation: none; }
+	#loader .intro-sub { opacity: 1; transform: none; animation: none; }
+	#loader .intro-head { animation: none; }
 	#loader #intro-canvas { display: none; }
 }
 
