@@ -404,3 +404,49 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lokal: h264_coding_structure.jpg (~69 KB)
     Genutzt in: music_video_generation.php (Wie Videocodecs funktionieren)
     Status: OK - Public Domain
+
+=== ALCHEMY (untold_history.php, Stand: September 2026) ===
+====================================================================
+Fünf Bilder für den neuen Abschnitt "#### Alchemy: The Displaced Root of
+Chemistry" (unter "### The Chemistry of Computation"). Alle via
+Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
+
+40. img_paracelsus_portrait
+    URL: https://commons.wikimedia.org/wiki/File:Paracelsus-03.jpg
+    Lizenz: Public Domain (via Commons API extmetadata, Feld LicenseShortName)
+    Autor: A. Hirschvogel
+    Lokal: paracelsus_portrait.jpg (662x999, Original)
+    Genutzt in: untold_history.php § Alchemy (Paracelsus)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+41. img_jabir_alembic
+    URL: https://commons.wikimedia.org/wiki/File:Drawing_and_description_of_Alembic_,_by_Jabir_Ibn_Hayyan_in_8th_century.jpg
+    Lizenz: Public Domain (via Commons API)
+    Autor: Jabir ibn Hayyan
+    Lokal: jabir_alembic.jpg (567x442, Original)
+    Genutzt in: untold_history.php § Alchemy (Islamische Golden Age)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+42. img_alchemist_studio
+    URL: https://commons.wikimedia.org/wiki/File:An_Alchemist_in_His_Studio_-_DPLA_-_6d56eba7861bee9e66825fc5590aa1b3.jpg
+    Lizenz: Public Domain (via Commons API)
+    Autor: Thomas Wyck (attr.), ca. 1616–1677
+    Lokal: alchemist_in_his_studio.jpg (5842x6636 -> 1280x1454, ~363 KB)
+    Genutzt in: untold_history.php § Alchemy (Das Labor / Glas)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+43. img_libavius_alembics
+    URL: https://commons.wikimedia.org/wiki/File:Alembics_from_Andreas_Libavius_Alchymia.png
+    Lizenz: Public Domain (via Commons API)
+    Autor: Andreas Libavius (Alchymia, 1597)
+    Lokal: libavius_alembics.png (729x973, Original)
+    Genutzt in: untold_history.php § Alchemy (Das Glas des Labors)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+44. img_flaming_heart
+    URL: https://commons.wikimedia.org/wiki/File:The_Flaming_Heart_(Alchemical_and_rosicrucian_compendium,_c._1760).png
+    Lizenz: Public Domain (via Commons API)
+    Autor: Anonymous (verschiedene Mitwirkende)
+    Lokal: flaming_heart_alchemical.jpg (1217x1215, PNG->JPG ~470 KB)
+    Genutzt in: untold_history.php § Alchemy (Der Great Work / Philosophers Stone)
+    Status: OK - Public Domain, Namensnennung im Caption via literature.js

@@ -15724,6 +15724,162 @@ window.bibData = {
 		alternativetitle: "La Marche engravings (Wikipedia)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Alchemy: the displaced root of chemistry  (untold_history.php)
+	 *  Alchemy -> chemistry -> silicon purification. The laboratory, the
+	 *  glassware, the acids, the method, and the very word "chemistry" all
+	 *  descend from the alchemists, whose impossible goal was falsified into
+	 *  the rigorous, quantitative science that built the machine's body.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"alchemy_wiki": {
+		title: "Alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Alchemy",
+		alternativetitle: "Alchemy (Wikipedia)"
+	},
+	"zosimos_panopolis": {
+		title: "Zosimos of Panopolis",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Zosimos_of_Panopolis",
+		alternativetitle: "Zosimos of Panopolis (Wikipedia)"
+	},
+	"hermes_trismegistus": {
+		title: "Hermes Trismegistus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Hermes_Trismegistus",
+		alternativetitle: "Hermes Trismegistus (Wikipedia)"
+	},
+	"tabula_smaragdina": {
+		title: "Tabula Smaragdina (Emerald Tablet)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Tabula_Smaragdina",
+		alternativetitle: "Tabula Smaragdina (Wikipedia)"
+	},
+	"maria_jewess": {
+		title: "Maria the Jewess",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Maria_the_Jewess",
+		alternativetitle: "Maria the Jewess (Wikipedia)"
+	},
+	"jabir_ibn_hayyan": {
+		title: "Jabir ibn Hayyan",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Jabir_ibn_Hayyan",
+		alternativetitle: "Jabir ibn Hayyan (Wikipedia)"
+	},
+	"aqua_regia": {
+		title: "Aqua regia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Aqua_regia",
+		alternativetitle: "Aqua regia (Wikipedia)"
+	},
+	"libavius": {
+		title: "Andreas Libavius",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Andreas_Libavius",
+		alternativetitle: "Andreas Libavius (Wikipedia)"
+	},
+	"athanor": {
+		title: "Athanor",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Athanor",
+		alternativetitle: "Athanor (Wikipedia)"
+	},
+	"paracelsus": {
+		title: "Paracelsus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Paracelsus",
+		alternativetitle: "Paracelsus (Wikipedia)"
+	},
+	"iatrochemistry": {
+		title: "Iatrochemistry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Iatrochemistry",
+		alternativetitle: "Iatrochemistry (Wikipedia)"
+	},
+	"newton_alchemy": {
+		title: "Isaac Newton and alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Isaac_Newton_and_alchemy",
+		alternativetitle: "Newton and alchemy (Wikipedia)"
+	},
+	"philosophers_stone": {
+		title: "Philosopher's stone",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Philosopher%27s_stone",
+		alternativetitle: "Philosopher's stone (Wikipedia)"
+	},
+	"phlogiston": {
+		title: "Phlogiston theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Phlogiston_theory",
+		alternativetitle: "Phlogiston theory (Wikipedia)"
+	},
+	"lavoisier": {
+		title: "Antoine Lavoisier",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Antoine_Lavoisier",
+		alternativetitle: "Lavoisier (Wikipedia)"
+	},
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  Image sources: Alchemy  (untold_history.php)
+	 *  All Public Domain, downloaded and embedded as figures.
+	 * ═══════════════════════════════════════════════════════════════════ */
+	"img_paracelsus_portrait": {
+		title: "Portrait of Paracelsus (Theophrastus von Hohenheim)",
+		author: "A. Hirschvogel",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Paracelsus-03.jpg",
+		license: "Public Domain",
+		alternativetitle: "Paracelsus (portrait)"
+	},
+	"img_jabir_alembic": {
+		title: "Drawing and description of an alembic by Jabir ibn Hayyan (8th century)",
+		author: "Jabir ibn Hayyan",
+		year: "8th century",
+		url: "https://commons.wikimedia.org/wiki/File:Drawing_and_description_of_Alembic_,_by_Jabir_Ibn_Hayyan_in_8th_century.jpg",
+		license: "Public Domain",
+		alternativetitle: "Jabir's alembic (8th c.)"
+	},
+	"img_alchemist_studio": {
+		title: "An Alchemist in His Studio",
+		author: "Thomas Wyck (attr.)",
+		year: "c. 1650",
+		url: "https://commons.wikimedia.org/wiki/File:An_Alchemist_in_His_Studio_-_DPLA_-_6d56eba7861bee9e66825fc5590aa1b3.jpg",
+		license: "Public Domain",
+		alternativetitle: "An Alchemist in His Studio (Wyck)"
+	},
+	"img_libavius_alembics": {
+		title: "Alembics, from Andreas Libavius' Alchymia (1597)",
+		author: "Andreas Libavius",
+		year: 1597,
+		url: "https://commons.wikimedia.org/wiki/File:Alembics_from_Andreas_Libavius_Alchymia.png",
+		license: "Public Domain",
+		alternativetitle: "Libavius' alembics (1597)"
+	},
+	"img_flaming_heart": {
+		title: "The Flaming Heart (alchemical and rosicrucian compendium, c. 1760)",
+		author: "Anonymous",
+		year: "c. 1760",
+		url: "https://commons.wikimedia.org/wiki/File:The_Flaming_Heart_(Alchemical_and_rosicrucian_compendium,_c._1760).png",
+		license: "Public Domain",
+		alternativetitle: "The Flaming Heart (c. 1760)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Deep geometric identities of the core machinery:
 	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport;
 	 *  SDPA as one-sided entropic optimal transport), optimization
