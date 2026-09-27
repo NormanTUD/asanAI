@@ -396,7 +396,7 @@ function revealContent() {
     const mnNow = window.performance ? performance.now() : 0;
     const mnTextDone = (typeof window.__mnIntroTextDone === 'number' && window.__mnIntroTextDone > 0)
         ? window.__mnIntroTextDone : 0;
-    const MN_MIN_REVEAL = mnTextDone ? mnTextDone + 3000 : 3000;
+    const MN_MIN_REVEAL = mnTextDone ? mnTextDone + 1500 : 1500;
     if (mnNow < MN_MIN_REVEAL) {
         setTimeout(revealContent, MN_MIN_REVEAL - mnNow);
         return;
