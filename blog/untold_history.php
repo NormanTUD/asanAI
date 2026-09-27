@@ -960,10 +960,7 @@ That shift — from a *ritual* to a *reproducible sequence of operations* that y
 
 **Maria the Jewess**, working in Alexandria in the early centuries CE, is credited with the *bain-marie* (gentle, indirect heating) and with the distillation vessels *tribikos* and *kerotakis* \cite[on Maria]{maria_jewess}. Centuries later, **Andreas Libavius** catalogued the whole apparatus of the art in his *Alchymia* (1597) \cite[on Libavius]{libavius}.
 
-<figure>
-    <img style="width: 40%; height: auto; display: block; margin: 1em auto;" src="libavius_alembics.png" alt="Plate of alembics and distillation vessels from Andreas Libavius' Alchymia, 1597" />
-    <figcaption class="md">The \citealternativetitle{img_libavius_alembics} (Public Domain): the alembics and distillation vessels as \citeauthor{img_libavius_alembics} drew them in *Alchymia* (\citeyear{img_libavius_alembics}), a catalogue of the laboratory glassware that chemistry would inherit. Source: \citeauthor{img_libavius_alembics}, \citeyear{img_libavius_alembics}, \citealternativetitle{img_libavius_alembics}, Wikimedia Commons.</figcaption>
-</figure>
+\marginfig{libavius_alembics.png}{The \citealternativetitle{img_libavius_alembics} (Public Domain): the alembics and distillation vessels as \citeauthor{img_libavius_alembics} drew them in *Alchymia* (\citeyear{img_libavius_alembics}), a catalogue of the laboratory glassware that chemistry would inherit.}
 
 Every one of these vessels — the retort, the alembic, the slow **athanor** furnace \cite[on the athanor]{athanor} — is the direct ancestor of the glassware of the modern analytical laboratory, and of the sealed, temperature-controlled process chambers in which silicon wafers are doped, etched, and grown.
 
