@@ -4333,19 +4333,40 @@ async function test_explainability_lib() {
 		var big = tf.tidy(function () {
 			return tf.randomNormal([100, 3]);
 		});
-		var small = tf.tidy(function () {
-			return tf.randomNormal([10, 3]);
+		var bigY = tf.tidy(function () {
+			return tf.randomNormal([100, 3]);
 		});
 
-		var sub = ExplainabilityLib.subsampleBatch(big, small, 10);
+		var sub = ExplainabilityLib.subsampleBatch(big, bigY, 10);
 		if (sub.x.shape[0] !== 10 || sub.y.shape[0] !== 10) {
 			err("[test_explainability_lib] subsampleBatch should return 10 rows");
-			big.dispose(); small.dispose();
+			big.dispose(); bigY.dispose();
 			return false;
 		}
 
 		big.dispose();
+		bigY.dispose();
+		sub.x.dispose();
+		sub.y.dispose();
+
+		var small = tf.tidy(function () {
+			return tf.randomNormal([8, 3]);
+		});
+		var smallY = tf.tidy(function () {
+			return tf.randomNormal([8, 3]);
+		});
+
+		var subSmall = ExplainabilityLib.subsampleBatch(small, smallY, 10);
+		if (subSmall.x.shape[0] !== 8 || subSmall.y.shape[0] !== 8) {
+			err("[test_explainability_lib] subsampleBatch should keep a small batch");
+			small.dispose(); smallY.dispose();
+			return false;
+		}
+
 		small.dispose();
+		smallY.dispose();
+		subSmall.x.dispose();
+		subSmall.y.dispose();
 
 		if (num_errs !== old_errs) {
 			err("[test_explainability_lib] new errors during test");
