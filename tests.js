@@ -4240,6 +4240,303 @@ async function test_weight_analysis() {
 	return true;
 }
 
+// ============================================================
+// EXPLAINABILITY TAB TESTS
+// ============================================================
+
+async function test_explainability_lib() {
+	var old_errs = num_errs;
+	var old_wrns = num_wrns;
+
+	try {
+		var a = tf.tidy(function () {
+			return tf.randomNormal([16, 8]);
+		});
+		var b = tf.tidy(function () {
+			return tf.randomNormal([16, 5]);
+		});
+
+		var selfCka = ExplainabilityLib.linearCKA(a, a);
+		if (Math.abs(selfCka - 1) > 0.05) {
+			err("[test_explainability_lib] CKA(A, A) should be ~1, got " + selfCka);
+			a.dispose(); b.dispose();
+			return false;
+		}
+
+		var crossCka = ExplainabilityLib.linearCKA(a, b);
+		if (!isFinite(crossCka) || crossCka < -0.01 || crossCka > 1.01) {
+			err("[test_explainability_lib] CKA out of [0, 1]: " + crossCka);
+			a.dispose(); b.dispose();
+			return false;
+		}
+
+		var mat = ExplainabilityLib.ckaMatrix([a, b]);
+		if (mat.length !== 2 || mat[0].length !== 2) {
+			err("[test_explainability_lib] CKA matrix shape wrong");
+			a.dispose(); b.dispose();
+			return false;
+		}
+
+		if (Math.abs(mat[0][0] - 1) > 0.05 || Math.abs(mat[1][1] - 1) > 0.05) {
+			err("[test_explainability_lib] CKA diagonal should be 1");
+			a.dispose(); b.dispose();
+			return false;
+		}
+
+		if (Math.abs(mat[0][1] - mat[1][0]) > 1e-6) {
+			err("[test_explainability_lib] CKA matrix should be symmetric");
+			a.dispose(); b.dispose();
+			return false;
+		}
+
+		a.dispose();
+		b.dispose();
+
+		var clsActs = tf.tidy(function () {
+			var c1 = tf.concat([
+				tf.concat([tf.fill([8, 1], 0), tf.fill([8, 1], 0)], 1),
+				tf.concat([tf.fill([8, 1], 5), tf.fill([8, 1], 5)], 1)
+			], 0);
+			return c1;
+		});
+
+		var yoh = tf.tidy(function () {
+			var labels = tf.concat([
+				tf.concat([tf.fill([8, 1], 1), tf.fill([8, 1], 0)], 1),
+				tf.concat([tf.fill([8, 1], 0), tf.fill([8, 1], 1)], 1)
+			], 0);
+			return labels;
+		});
+
+		var sep = ExplainabilityLib.classSeparability(clsActs, yoh);
+		if (!isFinite(sep.score) || sep.score <= 0) {
+			err("[test_explainability_lib] separability score should be finite and > 0, got " + sep.score);
+			clsActs.dispose(); yoh.dispose();
+			return false;
+		}
+
+		clsActs.dispose();
+		yoh.dispose();
+
+		var rgb = ExplainabilityLib.viridis(0.5);
+		if (!Array.isArray(rgb) || rgb.length !== 3) {
+			err("[test_explainability_lib] viridis should return [r, g, b]");
+			return false;
+		}
+
+		var tc = ExplainabilityLib.themeColors();
+		if (typeof tc.text !== "string" || typeof tc.grid !== "string") {
+			err("[test_explainability_lib] themeColors should return color strings");
+			return false;
+		}
+
+		var big = tf.tidy(function () {
+			return tf.randomNormal([100, 3]);
+		});
+		var small = tf.tidy(function () {
+			return tf.randomNormal([10, 3]);
+		});
+
+		var sub = ExplainabilityLib.subsampleBatch(big, small, 10);
+		if (sub.x.shape[0] !== 10 || sub.y.shape[0] !== 10) {
+			err("[test_explainability_lib] subsampleBatch should return 10 rows");
+			big.dispose(); small.dispose();
+			return false;
+		}
+
+		big.dispose();
+		small.dispose();
+
+		if (num_errs !== old_errs) {
+			err("[test_explainability_lib] new errors during test");
+			return false;
+		}
+
+		if (num_wrns !== old_wrns) {
+			err("[test_explainability_lib] new warnings during test");
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		err("[test_explainability_lib] exception: " + (e.message || e));
+		return false;
+	}
+}
+
+async function test_adversarial_examples() {
+	await set_dataset_and_wait("signs");
+	await delay(2000);
+
+	var old_errs = num_errs;
+	var old_wrns = num_wrns;
+
+	try {
+		if (typeof model === "undefined" || !model || !model.layers) {
+			err("[test_adversarial_examples] no model");
+			return false;
+		}
+
+		if (!document.getElementById("adversarial_content")) {
+			err("[test_adversarial_examples] #adversarial_content missing");
+			return false;
+		}
+
+		AdversarialExamples.init("adversarial_content");
+
+		if (!document.getElementById("adv_run_btn")) {
+			err("[test_adversarial_examples] run button missing after init");
+			return false;
+		}
+
+		var res = await AdversarialExamples.run({
+			method: "fgsm",
+			eps: 0.05,
+			iters: 1,
+			target: "predicted"
+		});
+
+		if (!res) {
+			err("[test_adversarial_examples] run() returned null");
+			return false;
+		}
+
+		if (typeof res.origTop !== "number" || typeof res.advTop !== "number") {
+			err("[test_adversarial_examples] missing top-1 classes");
+			return false;
+		}
+
+		if (!isFinite(res.targetLogitBefore) || !isFinite(res.targetLogitAfter)) {
+			err("[test_adversarial_examples] target logits not finite");
+			return false;
+		}
+
+		if (res.targetLogitAfter > res.targetLogitBefore + 1e-3) {
+			err("[test_adversarial_examples] untargeted attack should lower the target logit, got " +
+				res.targetLogitBefore + " -> " + res.targetLogitAfter);
+			return false;
+		}
+
+		if (!Array.isArray(res.marginHistory) || res.marginHistory.length < 2) {
+			err("[test_adversarial_examples] margin history missing");
+			return false;
+		}
+
+		for (var i = 0; i < res.marginHistory.length; i++) {
+			if (!isFinite(res.marginHistory[i])) {
+				err("[test_adversarial_examples] non-finite margin at " + i);
+				return false;
+			}
+		}
+
+		if (num_errs !== old_errs) {
+			err("[test_adversarial_examples] new errors during test");
+			return false;
+		}
+
+		if (num_wrns !== old_wrns) {
+			err("[test_adversarial_examples] new warnings during test");
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		err("[test_adversarial_examples] exception: " + (e.message || e));
+		return false;
+	}
+}
+
+async function test_representation_analysis() {
+	await set_dataset_and_wait("signs");
+	await delay(2000);
+
+	var old_errs = num_errs;
+	var old_wrns = num_wrns;
+
+	try {
+		if (typeof model === "undefined" || !model || !model.layers) {
+			err("[test_representation_analysis] no model");
+			return false;
+		}
+
+		if (!document.getElementById("representation_content")) {
+			err("[test_representation_analysis] #representation_content missing");
+			return false;
+		}
+
+		RepresentationAnalysis.init("representation_content");
+
+		var sizeEl = document.getElementById("rep_sample_size");
+		if (sizeEl) {
+			sizeEl.value = "16";
+		}
+
+		await RepresentationAnalysis.runFromUI();
+
+		var state = RepresentationAnalysis.getInternalState();
+
+		if (!state.z || !state.names || state.z.length === 0) {
+			err("[test_representation_analysis] no CKA result");
+			return false;
+		}
+
+		var n = state.z.length;
+		if (state.z.length !== state.names.length || n < 1) {
+			err("[test_representation_analysis] CKA matrix/labels mismatch");
+			return false;
+		}
+
+		for (var i = 0; i < n; i++) {
+			if (state.z[i].length !== n) {
+				err("[test_representation_analysis] CKA matrix not square");
+				return false;
+			}
+
+			if (Math.abs(state.z[i][i] - 1) > 0.05) {
+				err("[test_representation_analysis] CKA diagonal not ~1");
+				return false;
+			}
+
+			for (var j = 0; j < n; j++) {
+				var v = state.z[i][j];
+				if (!isFinite(v) || v < -0.01 || v > 1.01) {
+					err("[test_representation_analysis] CKA value out of range: " + v);
+					return false;
+				}
+			}
+		}
+
+		if (ExplainabilityLib.isClassification() && !state.sep) {
+			err("[test_representation_analysis] separability missing for classification model");
+			return false;
+		}
+
+		if (state.sep) {
+			for (i = 0; i < state.sep.length; i++) {
+				if (!isFinite(state.sep[i].score) || state.sep[i].score < 0) {
+					err("[test_representation_analysis] bad separability score at layer " + i);
+					return false;
+				}
+			}
+		}
+
+		if (num_errs !== old_errs) {
+			err("[test_representation_analysis] new errors during test");
+			return false;
+		}
+
+		if (num_wrns !== old_wrns) {
+			err("[test_representation_analysis] new warnings during test");
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		err("[test_representation_analysis] exception: " + (e.message || e));
+		return false;
+	}
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -4331,6 +4628,9 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
 		//test_equal("test_health_status()", await test_health_status(), true);
 		test_equal("test_weight_analysis()", await test_weight_analysis(), true);
+		test_equal("test_explainability_lib()", await test_explainability_lib(), true);
+		test_equal("test_adversarial_examples()", await test_adversarial_examples(), true);
+		test_equal("test_representation_analysis()", await test_representation_analysis(), true);
 		test_equal("test_multi_run_training()", await test_multi_run_training(), true);
 
 		test_no_new_errors_or_warnings();

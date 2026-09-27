@@ -276,10 +276,12 @@ function hide_no_conv_stuff() {
 	if(input_shape_is_image()) {
 		$(".hide_when_no_image").show();
 		$("[aria-labelledby='activation_atlas_tab_label']").show();
+		$("[aria-labelledby='adversarial_tab_label']").show();
 		$(".hide_when_image").hide();
 	} else {
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("[aria-labelledby='activation_atlas_tab_label']").hide();
+		$("[aria-labelledby='adversarial_tab_label']").hide();
 		$("#auto_augment").prop("checked", false);
 		show_hide_augment_tab();
 		$(".hide_when_no_image").hide();
@@ -2089,6 +2091,8 @@ function invert_elements_in_dark_mode () {
                 is_already_inverted_in_dark_mode = is_dark_mode;
 
                 create_weight_surfaces(1);
+
+                window.dispatchEvent(new CustomEvent("asanai_theme_change"));
         }
 }
 

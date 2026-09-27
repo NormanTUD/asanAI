@@ -1248,11 +1248,6 @@ function _viz_bends_apply_activation(val, name) {
 	}
 }
 
-function _viz_bends_is_bend_activation(name) {
-	const n = name.toLowerCase();
-	return n === 'relu' || n === 'leakyrelu';
-}
-
 function _viz_bends_forward_pass(layerData, x) {
 	let currentInput = [x];
 	for (let l = 0; l < layerData.length; l++) {
@@ -1347,82 +1342,6 @@ function _viz_bends_compute_x_range(layerData, dataXMin, dataXMax) {
 	return { xMin, xMax };
 }
 
-function _viz_bends_detect_bend_points(layerData, xs, combinedY, xMin, xMax, hasBendActivations) {
-	let bendResults = [];
-
-	if (hasBendActivations) {
-		const scanResolution = 5000;
-		const scanStep = (xMax - xMin) / scanResolution;
-
-		let prevPre = _viz_bends_get_pre_activations(layerData, xMin);
-
-		for (let i = 1; i <= scanResolution; i++) {
-			const x = xMin + scanStep * i;
-			const currPre = _viz_bends_get_pre_activations(layerData, x);
-
-			for (let l = 0; l < layerData.length; l++) {
-				if (!_viz_bends_is_bend_activation(layerData[l].actName)) continue;
-
-				for (let j = 0; j < layerData[l].units; j++) {
-					const pPre = prevPre[l][j];
-					const cPre = currPre[l][j];
-
-				if (pPre * cPre >= 0) continue;
-				const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
-				const bendX = (x - scanStep) + t * scanStep;
-				bendResults.push({ x: bendX, layer: l, neuron: j });
-				}
-			}
-
-			prevPre = currPre;
-		}
-
-		bendResults.sort((a, b) => a.x - b.x);
-		const deduped = [];
-		for (const bp of bendResults) {
-			if (deduped.length === 0 ||
-				Math.abs(bp.x - deduped[deduped.length - 1].x) > (xMax - xMin) * 0.0005) {
-				deduped.push(bp);
-			}
-		}
-		bendResults = deduped;
-	}
-
-	if (!hasBendActivations) {
-		const slopes = [];
-		for (let i = 0; i < xs.length - 1; i++) {
-			slopes.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
-		}
-		const curvatureBends = [];
-		for (let i = 0; i < slopes.length - 1; i++) {
-			const d2 = Math.abs(slopes[i + 1] - slopes[i]);
-			curvatureBends.push({ idx: i + 1, curvature: d2 });
-		}
-		curvatureBends.sort((a, b) => b.curvature - a.curvature);
-		const threshold = curvatureBends.length > 0 ? curvatureBends[0].curvature * 0.1 : 0;
-		for (const cb of curvatureBends.slice(0, 20)) {
-			if (cb.curvature > threshold) {
-				bendResults.push({
-					x: xs[cb.idx],
-					layer: -1,
-					neuron: -1,
-				});
-			}
-		}
-		bendResults.sort((a, b) => a.x - b.x);
-		const deduped2 = [];
-		for (const bp of bendResults) {
-			if (deduped2.length === 0 ||
-				Math.abs(bp.x - deduped2[deduped2.length - 1].x) > (xMax - xMin) * 0.01) {
-				deduped2.push(bp);
-			}
-		}
-		bendResults = deduped2;
-	}
-
-	return bendResults;
-}
-
 function _viz_bends_hsl_to_rgb(h, s, l) {
 	s /= 100; l /= 100;
 	const k = n => (n + h / 30) % 12;
@@ -1506,29 +1425,6 @@ function _viz_bends_traces_multilayer(xs, layerData) {
 	return traces;
 }
 
-function _viz_bends_trace_bend_points(xs, layerData, bendResults) {
-	const bendXs = bendResults.map(b => b.x);
-	const bendYs = bendXs.map(bx => _viz_bends_forward_pass(layerData, bx));
-	const bendLabels = bendResults.map(b =>
-		b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
-	);
-
-	return {
-		x: bendXs,
-		y: bendYs,
-		mode: 'markers',
-		name: `Bend Points (${bendResults.length})`,
-		marker: {
-			color: 'rgba(255, 50, 50, 0.9)',
-			size: 11,
-			symbol: 'diamond',
-			line: { color: 'white', width: 2 }
-		},
-		text: bendLabels,
-		hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
-	};
-}
-
 function _viz_bends_trace_slope(xs, combinedY) {
 	const slopeY = [];
 	for (let i = 0; i < xs.length - 1; i++) {
@@ -1547,7 +1443,7 @@ function _viz_bends_trace_slope(xs, combinedY) {
 	};
 }
 
-function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults) {
+function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData) {
 	const traces = [];
 
 	if (dataPoints) {
@@ -1567,10 +1463,6 @@ function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResul
 		name: 'Model Output',
 		line: { color: 'cyan', width: 4 },
 	});
-
-	if (bendResults.length > 0) {
-		traces.push(_viz_bends_trace_bend_points(xs, layerData, bendResults));
-	}
 
 	traces.push(_viz_bends_trace_slope(xs, combinedY));
 
@@ -1642,8 +1534,6 @@ async function visualizeModelBends() {
 		return;
 	}
 
-	const hasBendActivations = layerData.some(ld => _viz_bends_is_bend_activation(ld.actName));
-
 	let dataXMin = null;
 	let dataXMax = null;
 	let dataPoints = null;
@@ -1674,9 +1564,7 @@ async function visualizeModelBends() {
 
 	const combinedY = xs.map(x => _viz_bends_forward_pass(layerData, x));
 
-	const bendResults = _viz_bends_detect_bend_points(layerData, xs, combinedY, xMin, xMax, hasBendActivations);
-
-	const traces = _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults);
+	const traces = _viz_bends_build_traces(xs, combinedY, dataPoints, layerData);
 	const layout = _viz_bends_layout();
 
 	let plotDiv;

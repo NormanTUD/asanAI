@@ -10,6 +10,9 @@ module.exports = {
 	],
 	"globals": {
 		"lang": "writable",
+		"ExplainabilityLib": "readonly",
+		"AdversarialExamples": "readonly",
+		"RepresentationAnalysis": "readonly",
 		"general_options": "writable",
 		"interpolation": "writable",
 		"last_model_structure_string": "writable",

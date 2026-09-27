@@ -114,6 +114,9 @@
 		_js("activation_atlas.js");
 		_js("activation_atlas_tab.js");
 		_js("gradient_flow_heatmap.js");
+		_js("explainability_lib.js");
+		_js("adversarial_examples.js");
+		_js("representation_analysis.js");
 		_js("skip_connection.js");
 		_js("optimizer.js");
 		_js("loss_metric.js");
