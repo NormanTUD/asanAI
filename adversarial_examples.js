@@ -258,7 +258,7 @@ var AdversarialExamples = (function () {
 
 		function _margin(img) {
 			return tf.tidy(function () {
-				var logits = m.apply(img, { training: false });
+				var logits = m.apply(img, { training: false }).reshape([-1]);
 				var sorted = tf.topk(logits, 2).values;
 
 				return tf.sub(sorted.gather([0]), sorted.gather([1])).dataSync()[0];
