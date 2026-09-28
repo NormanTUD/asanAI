@@ -98,14 +98,35 @@
 			rule.setAttribute('aria-hidden', 'true');
 			rule.style.background = dark ? 'rgba(233,170,96,0.4)' : 'rgba(150,110,66,0.38)';
 
+			// Second line: the lesson's own title from the course data;
+			// the tagline is the fallback (index / intro / non-course pages).
+			var subText = 'A peek inside the black box';
+			var nav = window.__moduleNavData;
+			if (nav && nav.modules && typeof nav.current === 'number' && nav.current >= 0
+					&& nav.modules[nav.current] && nav.modules[nav.current].title) {
+				subText = nav.modules[nav.current].title;
+			}
+
 			var sub = document.createElement('span');
 			sub.className = 'intro-sub';
-			sub.textContent = 'A peek inside the black box';
+			sub.textContent = subText;
 			sub.style.color = dark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
+
+			var spinner = document.createElement('span');
+			spinner.className = 'intro-spinner';
+			spinner.setAttribute('aria-hidden', 'true');
+			// Opacity is choreographed in JS (see armReady/settleIfDone) so
+			// the spinner joins the subtitle on exactly the same beat.
+			spinner.style.opacity = '0';
+
+			var subRow = document.createElement('span');
+			subRow.className = 'intro-sub-row';
+			subRow.appendChild(spinner);
+			subRow.appendChild(sub);
 
 			title.appendChild(head);
 			title.appendChild(rule);
-			title.appendChild(sub);
+			title.appendChild(subRow);
 			loader.insertBefore(title, status || loader.lastChild);
 
 			// Reveal the type only once the serif is loaded, so it appears in
@@ -115,6 +136,17 @@
 				if (armed) return;
 				armed = true;
 				title.classList.add('is-ready');
+				// The spinner fades in on the same beat as the subtitle
+				// (introSub: 0.45s, 0.55s delay, same easing) so it reads as
+				// part of the line instead of popping in on its own first.
+				if (!loader.classList.contains('is-settled')) {
+					if (reduced) {
+						spinner.style.opacity = '1';
+					} else {
+						spinner.style.transition = 'opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s';
+						spinner.style.opacity = '1';
+					}
+				}
 				// The type is fully materialised ~1.2 s after arming (letter
 				// stagger + rule + subtitle). revealContent() reads this and
 				// holds the loader until 1.5 s after it, so the reader
@@ -130,13 +162,9 @@
 			var countEl = document.createElement('p');
 			countEl.id = 'intro-count';
 			countEl.setAttribute('aria-hidden', 'true');
-			var spinner = document.createElement('span');
-			spinner.className = 'intro-spinner';
-			spinner.setAttribute('aria-hidden', 'true');
 			var countText = document.createElement('span');
 			countText.className = 'intro-count-text';
 			countText.style.color = dark ? 'rgba(198,168,128,0.72)' : 'rgba(150,116,80,0.8)';
-			countEl.appendChild(spinner);
 			countEl.appendChild(countText);
 			loader.appendChild(countEl);
 
@@ -177,7 +205,7 @@
 					var d = countDone();
 					countText.textContent = d + ' of ' + total + (total === 1 ? ' module loaded' : ' modules loaded');
 				} else {
-					countText.textContent = 'preparing\u2026';
+					countText.textContent = '';
 				}
 			}
 			function setBar() {
@@ -188,6 +216,8 @@
 			function settleIfDone() {
 				if (total > 0 && countDone() === total) {
 					loader.classList.add('is-settled');
+					if (!reduced) spinner.style.transition = 'opacity 0.5s ease 0.25s';
+					spinner.style.opacity = '0';
 				}
 			}
 			setCount();

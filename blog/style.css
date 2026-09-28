@@ -4444,6 +4444,11 @@ only the page background here leans on --mn-bg.
 	opacity: 0.35;
 	animation: introGlowPulse 5.5s ease-in-out 1.2s infinite;
 }
+#loader .intro-sub-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
 #loader .intro-sub {
 	font-family: var(--mn-font-prose);
 	font-style: italic;
@@ -4497,10 +4502,8 @@ only the page background here leans on --mn-bg.
 	border-top-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.85);
 	border-right-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.35);
 	animation: introSpin 0.9s linear infinite;
-	transition: opacity 0.5s ease 0.25s;
-}
-#loader.is-settled .intro-spinner {
-	opacity: 0;
+	/* Opacity is choreographed in JS (modules/intro.js): hidden until the
+	   subtitle's beat, faded out once all modules are loaded. */
 }
 #loader #intro-progress {
 	position: absolute;
