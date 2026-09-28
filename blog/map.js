@@ -907,10 +907,12 @@ function bootAtlas() {
 			if (maxx <= minx || maxy <= miny) { minx = 0; miny = 0; maxx = W; maxy = H; }
 			var cw = (maxx - minx + 1) * cropFrac, ch = (maxy - miny + 1) * cropFrac;
 			var cx = (minx + maxx) / 2, cy = (miny + maxy) / 2;
-			var out = document.createElement('canvas'); out.width = W; out.height = H;
+			var ow = Math.max(2, Math.round(cw)), oh = Math.max(2, Math.round(ch));
+			var out = document.createElement('canvas'); out.width = ow; out.height = oh;
 			var octx = out.getContext('2d');
-			octx.drawImage(src, cx - cw / 2, cy - ch / 2, cw, ch, 0, 0, W, H);
-			var od = octx.getImageData(0, 0, W, H), od2 = od.data, fl = Math.round(floor * 255);
+			octx.drawImage(src, cx - cw / 2, cy - ch / 2, cw, ch, 0, 0, ow, oh);
+			mesh.userData.imgAspect = cw / ch;
+			var od = octx.getImageData(0, 0, ow, oh), od2 = od.data, fl = Math.round(floor * 255);
 			for (var i2 = 0; i2 < od2.length; i2 += 4) {
 				for (var k = 0; k < 3; k++) {
 					od2[i2 + k] = fl + (255 - fl) * Math.pow(od2[i2 + k] / 255, gamma);
@@ -921,6 +923,7 @@ function bootAtlas() {
 			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
 			mesh.material.map = tex;
 			mesh.material.needsUpdate = true;
+			sizeSkyboard(mesh);
 		};
 		img.onerror = function (err) {
 			console.error('[atlas] GUARDRAIL 5: ' + url + ' failed to load:', err);
@@ -934,8 +937,13 @@ function bootAtlas() {
 	// the same way it appears in "The foam of meaning").
 	function sizeSkyboard(mesh) {
 		var fovRad = camera.fov * DEG;
-		var h = 2 * SKYBOARD_D * Math.tan(fovRad / 2);
-		mesh.scale.set(h * camera.aspect, h, 1);
+		var fh = 2 * SKYBOARD_D * Math.tan(fovRad / 2);  // frustum height at the plane
+		var fw = fh * camera.aspect;                      // frustum width at the plane
+		var A = mesh.userData.imgAspect || 1;             // the image's own aspect
+		var pw, ph;
+		if (A > camera.aspect) { pw = fw; ph = fw / A; }  // wider than view -> letterbox top/bottom
+		else { ph = fh; pw = fh * A; }                    // taller than view -> letterbox left/right
+		mesh.scale.set(pw, ph, 1);
 	}
 	function makeSkyboard(url, floor, gamma, cropFrac) {
 		var mesh = new THREE.Mesh(
