@@ -8567,6 +8567,15 @@ html.dark #sidenotes-section .sidenote-fallback li.is-sn-target {
 .md .tml-display, .md mjx-container[display="true"] {
 	text-align: center;
 }
+/* Temml stores the pristine LaTeX source in <annotation encoding="application/x-tex">.
+   That is metadata, never visible content. Firefox hides it via the MathML
+   semantics rule, but Chromium (MathML Core) treats unknown MathML elements as
+   renderable and would print the raw source next to/below the equation — and a
+   markdown re-parse that mangles the source into <em> fragments would hoist
+   those fragments OUT of the <math> entirely. Hide it in every browser. */
+math annotation {
+	display: none !important;
+}
 
 /* ── 11.5. Copy-code button — appears only on hover of <pre> ── */
 .md pre {

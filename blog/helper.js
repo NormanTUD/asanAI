@@ -184,12 +184,68 @@ function smartPunct(root) {
 		return /[A-Za-z\\]/.test(inner);
 	};
 
+	/* Already-rendered <math>…</math> elements (temml output) carry their
+	   pristine LaTeX source in an <annotation> child — with no $ delimiters
+	   left, so the rules below cannot protect it. By design renderMarkdown()
+	   runs more than once, and each later pass re-parses the serialized
+	   container HTML: without this stash the raw source would be fed through
+	   markdown emphasis (…_{x}… → <em>…) and mangled — and Chromium's HTML
+	   parser then hoists the resulting <em> out of the <math> entirely,
+	   printing raw LaTeX next to the equation. Stash every balanced
+	   <math> element first (nesting-aware: temml may nest a <math> inside an
+	   eqref mtext). */
+	const stashMathElements = (s) => {
+		let res = '';
+		let i = 0;
+		while (i < s.length) {
+			const at = s.indexOf('<math', i);
+			if (at === -1) { res += s.slice(i); break; }
+			const c = s[at + 5];
+			if (c !== undefined && /[a-zA-Z0-9-]/.test(c)) {
+				res += s.slice(i, at + 5);
+				i = at + 5;
+				continue;
+			}
+			const gt = s.indexOf('>', at);
+			if (gt === -1) { res += s.slice(at); break; }
+			res += s.slice(i, at);
+			let depth = 1;
+			let k = gt + 1;
+			let end = -1;
+			while (k < s.length) {
+				const no = s.indexOf('<math', k);
+				const nc = s.indexOf('</math>', k);
+				if (nc === -1) break;
+				if (no !== -1 && no < nc) {
+					const c2 = s[no + 5];
+					if (c2 === undefined || !/[a-zA-Z0-9-]/.test(c2)) {
+						depth++;
+						const gg = s.indexOf('>', no);
+						k = (gg === -1) ? s.length : gg + 1;
+						continue;
+					}
+				}
+				depth--;
+				if (depth === 0) { end = nc + 7; break; }
+				k = nc + 7;
+			}
+			if (end === -1) { res += s.slice(at); break; }
+			stash.push(s.slice(at, end));
+			res += makePh();
+			i = end;
+		}
+		return res;
+	};
+
 	window.marked.use({
 		hooks: {
 			preprocess(html) {
 				stash = [];
 				counter = 0;
 				let out = html;
+
+				// Rendered math first — it no longer contains delimiters.
+				out = stashMathElements(out);
 
 				// Block math first so we don't shadow $$…$$ with the inline rule.
 				out = out.replace(/\$\$([\s\S]*?)\$\$/g, (m) => {
@@ -221,9 +277,41 @@ function smartPunct(root) {
 	});
 })();
 
+/* Rendered <math> elements are final: a re-parse must never see their inner
+   text (the x-tex annotation carries the raw LaTeX source, which markdown
+   emphasis would mangle). DOM-level stash/restore around marked.parse — the
+   structural twin of the string-level stash in installMathProtection(). */
+function stashContainerMath(container) {
+	const stashed = Array.from(container.querySelectorAll('math'));
+	stashed.forEach((m, i) => {
+		const ph = document.createElement('span');
+		ph.setAttribute('data-mn-math-ph', String(i));
+		m.replaceWith(ph);
+	});
+	return stashed;
+}
+
+function restoreContainerMath(container, stashed) {
+	if (!stashed || !stashed.length) return;
+	container.querySelectorAll('[data-mn-math-ph]').forEach(ph => {
+		const i = parseInt(ph.getAttribute('data-mn-math-ph'), 10);
+		const m = stashed[i];
+		if (m) ph.replaceWith(m);
+		else ph.remove();
+	});
+	stashed.forEach(m => {
+		if (!m.isConnected) {
+			console.error('[renderMarkdown] rendered <math> placeholder lost by marked; re-appending equation');
+			container.appendChild(m);
+		}
+	});
+}
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
+		// 0. Pull already-rendered <math> elements out (restored after parse).
+		const stashedMath = stashContainerMath(container);
 		// 1. Inhalt holen und Einrückungen fixen
 		// The DOM serializer escapes `>` and `<` inside text nodes to &gt;/&lt; on
 		// readback, so `>` markdown (blockquotes) would otherwise reach marked as
@@ -268,6 +356,8 @@ function renderMarkdown() {
 
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
+		// 3r. Put the rendered <math> elements back (verbatim nodes).
+		restoreContainerMath(container, stashedMath);
 		// 3a. figcaptions sit inside raw HTML blocks that marked skips,
 		//     so their own *markdown* would remain literal — parse them.
 		processFigcapsMarkdown(container);
@@ -302,10 +392,12 @@ function renderMarkdown() {
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
+		const stashedFnMath = stashContainerMath(fnContainer);
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			fnContainer.innerHTML = BlogTopics.preprocess(fnContainer.innerHTML);
 		}
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
+		restoreContainerMath(fnContainer, stashedFnMath);
 		smartPunct(fnContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
@@ -314,10 +406,12 @@ function renderMarkdown() {
 
 	const srcContainer = document.getElementById('sources');
 	if (srcContainer) {
+		const stashedSrcMath = stashContainerMath(srcContainer);
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			srcContainer.innerHTML = BlogTopics.preprocess(srcContainer.innerHTML);
 		}
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
+		restoreContainerMath(srcContainer, stashedSrcMath);
 		smartPunct(srcContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();

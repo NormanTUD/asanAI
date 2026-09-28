@@ -162,8 +162,32 @@ const _temmlOpts = {
 		{ left: "$$", right: "$$", display: true },
 		{ left: "$",  right: "$",  display: false }
 	],
-	annotate: true
+	annotate: true,
+	// Already-rendered <math> elements are final: the walker must never
+	// recurse into them (their annotation holds the raw LaTeX source, which
+	// a second walk could re-interpret). Keep the library defaults too —
+	// providing ignoredTags replaces the whole list.
+	ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "math"]
 };
+
+/* Stamp the pristine LaTeX source into a data-tex attribute on every freshly
+   rendered <math>. The attribute is part of a tag token, so neither marked
+   (inline HTML passes through verbatim) nor the HTML parser can mangle it —
+   unlike the annotation's text node. Only stamp from a PRISTINE annotation
+   (exactly one text child); a mangled annotation (embedded markup from a
+   re-parse) must never overwrite a good source. */
+function _stampMathTex(root) {
+	if (!root || root.nodeType !== 1) return;
+	const maths = root.querySelectorAll ? root.querySelectorAll('math') : [];
+	for (let i = 0; i < maths.length; i++) {
+		const m = maths[i];
+		if (m.getAttribute('data-tex')) continue;
+		const ann = m.querySelector('annotation[encoding="application/x-tex"]');
+		if (ann && ann.childNodes.length === 1 && ann.firstChild.nodeType === 3) {
+			m.setAttribute('data-tex', ann.textContent.trim());
+		}
+	}
+}
 
 function _fixMathInElement(el) {
     // ===== Skip already-rendered elements =====
@@ -207,6 +231,14 @@ function _fixMathInElement(el) {
     // ===== Only fix the specific problem: <em>/<strong> inside math =====
     let changed = false;
 
+    // renderToString output carries no annotation, so stamp the pristine
+    // source into data-tex (the right-click popup's source of record).
+    const renderWithTex = (clean, displayMode) => {
+        const rendered = temml.renderToString(clean, { displayMode });
+        const esc = clean.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return rendered.replace('<math', (t) => t + ' data-tex="' + esc + '"');
+    };
+
     // Block math: $$ ... $$
     html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, inner) => {
         if (!/<\/?(?:em|strong)/i.test(inner)) return match;
@@ -215,7 +247,7 @@ function _fixMathInElement(el) {
         if (!clean) return match;
 
         try {
-            const rendered = temml.renderToString(clean, { displayMode: true });
+            const rendered = renderWithTex(clean, true);
             changed = true;
             return rendered;
         } catch (e) {
@@ -237,7 +269,7 @@ function _fixMathInElement(el) {
         if (!clean) return match;
 
         try {
-            const rendered = temml.renderToString(clean, { displayMode: false });
+            const rendered = renderWithTex(clean, false);
             changed = true;
             return rendered;
         } catch (e) {
@@ -291,6 +323,7 @@ function _renderMathSkippingCode(el) {
                         _fixMathInElement(child);
                     } else {
                         temml.renderMathInElement(child, _temmlOpts);
+                        _stampMathTex(child);
                     }
                 }
             }
@@ -310,6 +343,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
                 // Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
                 if (!fixed) {
                     temml.renderMathInElement(el, _temmlOpts);
+                    _stampMathTex(el);
                     el.setAttribute('data-math-rendered', 'true');
                 }
             }
@@ -522,9 +556,13 @@ function render_temml() {
 		}
 
 		function _extractLatex(mathEl) {
+			// data-tex is stamped from the pristine annotation at render time.
+			// As an attribute it is part of a tag token — neither marked nor
+			// the HTML parser can mangle it — so it outranks the annotation's
+			// text node (which a markdown re-parse could corrupt).
+			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
 			const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
 			if (ann) return ann.textContent.trim();
-			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
 			const wrapper = mathEl.closest('.temml');
 			if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
 			return null;
@@ -972,12 +1010,14 @@ function render_temml() {
 
 			if (rect.width === 0 && rect.height === 0) {
 				temml.renderMathInElement(el, _temmlOpts);
+				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
 				return;
 			}
 
 			if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
 				temml.renderMathInElement(el, _temmlOpts);
+				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
 			} else {
 				_temmlObserver.observe(el);
@@ -988,8 +1028,32 @@ function render_temml() {
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
-	   ═══════════════════════════════════════════════════════════ */
+	   ═══════════════════════════════════════════════════════════════ */
 	if (render_temml._liveUpdate) render_temml._liveUpdate();
+
+	/* ═══════════════════════════════════════════════════════════════
+	   MATH INTEGRITY SCAN  (guardrail — silent when healthy)
+	   Raises a SEVERE console entry (which fails the render validator)
+	   if a rendered equation's source metadata was mangled by a markdown
+	   re-parse or is leaking to the page as visible text.
+	   ═══════════════════════════════════════════════════════════════ */
+	(function mathIntegrityScan() {
+		const maths = document.querySelectorAll('math');
+		for (let i = 0; i < maths.length; i++) {
+			const m = maths[i];
+			if (m.closest && m.closest('.lp-overlay')) continue; // popup preview clone
+			const ann = m.querySelector('annotation[encoding="application/x-tex"]');
+			if (!ann) continue;
+			if (ann.querySelector('*')) {
+				console.error('[math-integrity] <annotation> contains markup — LaTeX source mangled by a markdown re-parse', m);
+				continue;
+			}
+			const r = ann.getBoundingClientRect();
+			if (r.width > 0 || r.height > 0) {
+				console.error('[math-integrity] math annotation is visible on the page', m);
+			}
+		}
+	})();
 }
 
 /* ════════════════════════════════════════════════════════════
