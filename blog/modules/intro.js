@@ -100,7 +100,7 @@
 
 			// Second line: the lesson's own title from the course data;
 			// the tagline is the fallback (index / intro / non-course pages).
-			var subText = 'A peek inside the black box';
+			var subText = 'A Peek inside the Black Box';
 			var nav = window.__moduleNavData;
 			if (nav && nav.modules && typeof nav.current === 'number' && nav.current >= 0
 					&& nav.modules[nav.current] && nav.modules[nav.current].title) {
