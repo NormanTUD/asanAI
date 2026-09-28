@@ -39,19 +39,22 @@ function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight
   cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 addEventListener('resize',resize);resize();
 
-/* ---------- Daten: größerer Klassenabstand ---------- */
+/* ---------- Daten ---------- */
 let rng=42;const rnd=()=>(rng=(rng*1103515245+12345)&0x7fffffff)/0x7fffffff;
 const PTS=[];
 for(let i=0;i<140;i++){const a=rnd()*6.2832,r=Math.sqrt(rnd())*0.40;
   PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:0,r:r});}
 for(let i=0;i<220;i++){const a=rnd()*6.2832,r=0.82+Math.sqrt(rnd())*0.26;
   PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:1,r:r});}
-PTS.forEach((p,i)=>{p.i=i;p.val=p.x*p.x+p.y*p.y;});
-const VMAX=Math.max(...PTS.map(p=>p.val)),THR=0.38;
+
+const KZ=1.95, KB=0.62, PLANE_Z=0.32;
+/* Score: identisch zur z-Hoehe relativ zur Ebene */
+const SCORE=(x,y)=>((x*x+y*y)*KZ-KB)-PLANE_Z;
+const SMIN=-1.0,SMAX=1.75;
+PTS.forEach(p=>p.s=SCORE(p.x,p.y));
 
 const LIFT=(x,y,t)=>{const r2=x*x+y*y;
-  return {x:x*(1-0.12*t*r2),y:y*(1-0.12*t*r2),z:(r2*1.95-0.62)*t};};
-const PLANE_Z=0.32;
+  return {x:x*(1-0.12*t*r2),y:y*(1-0.12*t*r2),z:(r2*KZ-KB)*t};};
 
 /* ---------- Kamera ---------- */
 let camA=0,camB=1.5708,dragA=0,dragB=0,persp=1;
@@ -65,44 +68,49 @@ function proj(p){
   const d=4.4,k=persp<0.02?1:d/(d+z2*0.85*persp);
   return {X:W/2+x*SC()*k+150,Y:H/2-y2*SC()*k,d:z2,k:k};
 }
+/* Achsen-Geometrie */
+let AX_Y,AX_L,AX_R;
+function axisGeom(){AX_Y=H*0.74;AX_L=W/2-SC()*1.00+150;AX_R=W/2+SC()*1.00+150;}
+const sx=s=>AX_L+(AX_R-AX_L)*Math.max(0,Math.min(1,(s-SMIN)/(SMAX-SMIN)));
 
 /* ---------- Szenen ---------- */
 const S=[
 {n:"Schritt 1 / 7",t:"Zwei Klassen, keine Gerade",
  b:"Innen eine Punktwolke, außen ein Ring. Kein einziger gerader Schnitt trennt Rot von Blau.",
  f:"X ⊂ ℝ²,&nbsp; y ∈ {0,1}<small>nicht linear separierbar</small>",
- L:0,A:0,B:1.5708,P:0,pl:0,ed:0,bnd:0,fail:0,lab:0,pr:0},
+ L:0,A:0,B:1.5708,P:0,pl:0,ed:0,fail:0,lab:0,pr:0},
 {n:"Schritt 2 / 7",t:"Jeder Versuch scheitert",
  b:"Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
  f:"w₁x + w₂y + b = 0<small>eine Gerade, immer</small>",
- L:0,A:0,B:1.5708,P:0,pl:0,ed:0,bnd:0,fail:1,lab:0,pr:0},
+ L:0,A:0,B:1.5708,P:0,pl:0,ed:0,fail:1,lab:0,pr:0},
 {n:"Schritt 3 / 7",t:"Eine Dimension mehr Platz",
  b:"Wir kippen die Szene leicht. Noch ist alles flach bei z = 0 — aber jetzt ist Raum nach oben da.",
  f:"ℝ² ↪ ℝ³<small>Einbettung, noch ohne Krümmung</small>",
- L:0,A:0.5,B:1.30,P:1,pl:0,ed:0,bnd:0,fail:0,lab:0,pr:0},
+ L:0,A:0.5,B:1.30,P:1,pl:0,ed:0,fail:0,lab:0,pr:0},
 {n:"Schritt 4 / 7",t:"Der Layer krümmt den Raum",
  b:"Das Gitter hebt sich zu einer Schale. Es zerreißt nicht, es biegt sich. Innere Punkte sinken, äußere steigen.",
  f:"φ(x,y) = (x, y, x² + y²)<small>ein Layer = eine Verbiegung</small>",
- L:1,A:0.5,B:0.62,P:1,pl:0,ed:0,bnd:0,fail:0,lab:0,pr:0},
+ L:1,A:0.5,B:0.62,P:1,pl:0,ed:0,fail:0,lab:0,pr:0},
 {n:"Schritt 5 / 7",t:"Eine Ebene passt dazwischen",
  b:"Was in 2D unmöglich war, ist hier trivial: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
  f:"wᵀφ(x) + b = 0<small>lineare Trennung in ℝ³</small>",
- L:1,A:0.5,B:0.34,P:1,pl:1,ed:0,bnd:0,fail:0,lab:0,pr:0},
+ L:1,A:0.5,B:0.34,P:1,pl:1,ed:0,fail:0,lab:0,pr:0},
 {n:"Schritt 6 / 7",t:"Von der Kante gesehen",
- b:"Die Kamera fährt exakt in die Ebene hinein. Sie wird zur Linie — darunter die eine Klasse, darüber die andere. Weil der Output-Layer linear ist, ist „hinschauen“ und „rechnen“ dasselbe.",
+ b:"Die Kamera fährt exakt in die Ebene hinein. Sie wird zur Linie — darunter der Kern, darüber der Ring.",
  f:"wᵀφ(x) + b ⋛ 0<small>Vorzeichen = Klasse</small>",
- L:1,A:0,B:0,P:1,pl:1,ed:1,bnd:0,fail:0,lab:1,pr:0},
-{n:"Schritt 7 / 7",t:"Alles wird eine Zahl",
- b:"Zurück in 2D wird die Grenze zum Kreis. Und jeder Punkt fällt auf eine einzige Zahl: seinen Abstand zur Ebene. Blau links, Rot rechts — eine Dimension genügt.",
- f:"s = wᵀφ(x) + b ∈ ℝ<small>2D → 1D, linear trennbar</small>",
- L:0,A:0,B:1.5708,P:0,pl:0,ed:0,bnd:1,fail:0,lab:0,pr:1}];
+ L:1,A:0,B:0,P:1,pl:1,ed:1,fail:0,lab:1,pr:0},
+{n:"Schritt 7 / 7",t:"Der Raum fällt auf eine Zahl",
+ b:"Jetzt messen wir nur noch den Abstand zur Ebene. Das gekrümmte Gitter kollabiert: Ringe schrumpfen zu Punkten, Strahlen strecken sich. Übrig bleibt eine Achse — rot links, blau rechts.",
+ f:"s = wᵀφ(x) + b ∈ ℝ<small>ℝ³ → ℝ, jetzt trennt ein Punkt</small>",
+ L:1,A:0,B:0,P:1,pl:0,ed:1,fail:0,lab:0,pr:1}];
 
 /* ---------- Ablauf ---------- */
-let cur=0,prev=0,t0=performance.now(),DUR=1400;
+let cur=0,prev=0,t0=performance.now(),DUR=1600;
 let dA0=0,dB0=0;
 const ease=u=>u<.5?16*u*u*u*u*u:1-Math.pow(-2*u+2,5)/2;
 const lerp=(a,b,u)=>a+(b-a)*u;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const sub=(t,a,b)=>ease(clamp((t-a)/(b-a),0,1));
 
 function bar(){const d=document.getElementById('bar');d.innerHTML='';
   S.forEach((_,i)=>{const e=document.createElement('div');
@@ -111,7 +119,6 @@ function text(){const s=S[cur];sNum.textContent=s.n;sTitle.textContent=s.t;
   sBody.textContent=s.b;sForm.innerHTML=s.f;bar();}
 function go(d){const n=clamp(cur+d,0,S.length-1);if(n===cur)return;
   dA0=dragA;dB0=dragB;prev=cur;cur=n;t0=performance.now();text();}
-
 addEventListener('keydown',e=>{
   if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(1);}
   if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
@@ -123,53 +130,75 @@ addEventListener('mousemove',e=>{if(!md)return;
   dragA+=(e.clientX-mx)*0.006;dragB+=(e.clientY-my)*0.005;
   dA0=dragA;dB0=dragB;mx=e.clientX;my=e.clientY;});
 
-const N=14,EXT=1.24;
-function gridLines(L){const o=[];
-  for(let i=0;i<=N;i++){const v=-EXT+2*EXT*i/N,a=[],b=[];
-    for(let j=0;j<=N*2;j++){const u=-EXT+2*EXT*j/(N*2);
-      a.push(LIFT(u,v,L));b.push(LIFT(v,u,L));}o.push(a,b);}return o;}
+/* ---------- Gitter mit 1D-Kollaps ---------- */
+const N=14,EXT=1.24,RES=44;
+function gridSegs(L,g1){
+  const out=[];
+  for(let i=0;i<=N;i++){
+    const v=-EXT+2*EXT*i/N;
+    for(const swap of [0,1]){
+      const pts=[];
+      for(let j=0;j<=RES;j++){
+        const u=-EXT+2*EXT*j/RES;
+        const X=swap?v:u, Y=swap?u:v;
+        const q=LIFT(X,Y,L);
+        let P=proj(q);
+        if(g1>0.001){
+          const tx=sx(SCORE(X,Y));
+          const ty=AX_Y-58*(1-g1);
+          P={X:lerp(P.X,tx,g1),Y:lerp(P.Y,ty,g1),k:P.k};
+        }
+        pts.push(P);
+      }
+      out.push(pts);
+    }
+  }
+  return out;
+}
 
 /* ---------- Render ---------- */
 function draw(now){
+  axisGeom();
   const raw=clamp((now-t0)/DUR,0,1),u=ease(raw);
   const a=S[prev],b=S[cur];
   const L=lerp(a.L,b.L,u);
   persp=lerp(a.P,b.P,u);
-  const drift=Math.sin(now*0.00021)*0.04*persp;
+  const prRaw=lerp(a.pr,b.pr,raw);
+  const drift=Math.sin(now*0.00021)*0.04*persp*(1-prRaw);
   camA=lerp(a.A,b.A,u)+drift;camB=lerp(a.B,b.B,u);
   if(!md){dragA=lerp(dA0,0,u);dragB=lerp(dB0,0,u);}
-  const pl=lerp(a.pl,b.pl,u),ed=lerp(a.ed,b.ed,u),bd=lerp(a.bnd,b.bnd,u),
-        fl=lerp(a.fail,b.fail,u),lb=lerp(a.lab,b.lab,u),pr=lerp(a.pr,b.pr,u);
+  const pl=lerp(a.pl,b.pl,u),ed=lerp(a.ed,b.ed,u),
+        fl=lerp(a.fail,b.fail,u),lb=lerp(a.lab,b.lab,u);
+  /* gestaffelte Subphasen */
+  const fwd=b.pr>a.pr;
+  const gCol=fwd?sub(prRaw,0,0.55):1-sub(1-prRaw,0,0.55);
+  const pCol=fwd?sub(prRaw,0.30,1.0):1-sub(1-prRaw,0.30,1.0);
+  const axA =fwd?sub(prRaw,0.05,0.5):1-sub(1-prRaw,0.05,0.5);
 
   ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
 
   /* Zahlenstrahl */
-  const AX_Y=H*0.80,AX_L=W/2-SC()*0.95+150,AX_R=W/2+SC()*0.95+150;
-  if(pr>0.01){
-    ctx.globalAlpha=pr;ctx.strokeStyle='#3c4considered';ctx.strokeStyle='#3c4560';
-    ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(AX_L,AX_Y);ctx.lineTo(AX_R,AX_Y);ctx.stroke();
-    for(let i=0;i<=8;i++){const X=lerp(AX_L,AX_R,i/8);
-      ctx.beginPath();ctx.moveTo(X,AX_Y-5);ctx.lineTo(X,AX_Y+5);ctx.stroke();}
-    const TX=lerp(AX_L,AX_R,THR/VMAX);
-    ctx.strokeStyle='#ffd166';ctx.lineWidth=2.2;ctx.beginPath();
-    ctx.moveTo(TX,AX_Y-30);ctx.lineTo(TX,AX_Y+30);ctx.stroke();
-    ctx.fillStyle='#ffd166';ctx.font='13px Georgia';ctx.textAlign='center';
-    ctx.fillText('s = 0',TX,AX_Y+50);
-    ctx.font='600 13px Inter,sans-serif';ctx.fillStyle='#5ad2ff';
-    ctx.fillText('s < 0',lerp(AX_L,TX,0.45),AX_Y+50);
-    ctx.fillStyle='#ff6b8a';ctx.fillText('s > 0',lerp(TX,AX_R,0.6),AX_Y+50);
+  if(axA>0.01){
+    ctx.globalAlpha=axA;ctx.strokeStyle='#3c4560';ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(AX_L,AX_Y);ctx.lineTo(AX_R,AX_Y);ctx.stroke();
+    for(let i=0;i<=10;i++){const X=lerp(AX_L,AX_R,i/10);
+      ctx.beginPath();ctx.moveTo(X,AX_Y-4);ctx.lineTo(X,AX_Y+4);ctx.stroke();}
+    const TX=sx(0);
+    ctx.strokeStyle='#ffd166';ctx.lineWidth=2.4;ctx.beginPath();
+    ctx.moveTo(TX,AX_Y-34);ctx.lineTo(TX,AX_Y+34);ctx.stroke();
+    ctx.textAlign='center';ctx.fillStyle='#ffd166';ctx.font='13px Georgia';
+    ctx.fillText('s = 0',TX,AX_Y+54);
+    ctx.font='600 13px Inter,sans-serif';
+    ctx.fillStyle='#ff6b8a';ctx.fillText('s < 0   Kern',lerp(AX_L,TX,0.42),AX_Y+54);
+    ctx.fillStyle='#5ad2ff';ctx.fillText('s > 0   Ring',lerp(TX,AX_R,0.55),AX_Y+54);
     ctx.textAlign='left';ctx.globalAlpha=1;}
 
-  if(bd>0.01){const p0=proj({x:0,y:0,z:0});
-    ctx.globalAlpha=bd*0.12;ctx.fillStyle='#ff6b8a';ctx.beginPath();
-    ctx.arc(p0.X,p0.Y,SC()*0.62,0,6.2832);ctx.fill();
-    ctx.globalAlpha=bd;ctx.strokeStyle='#ffd166';ctx.lineWidth=2.4;
-    ctx.beginPath();ctx.arc(p0.X,p0.Y,SC()*0.62,0,6.2832);ctx.stroke();ctx.globalAlpha=1;}
-
-  ctx.lineWidth=1;const gAlpha=(0.17+0.26*L)*(1-pr*0.75);
-  gridLines(L).forEach(sg=>{ctx.beginPath();
-    sg.forEach((p,i)=>{const q=proj(p);i?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);});
-    ctx.strokeStyle='rgba(84,102,140,'+gAlpha+')';ctx.stroke();});
+  /* Gitter */
+  ctx.lineWidth=1;
+  const gA=(0.17+0.26*L)*(1-gCol*0.45);
+  gridSegs(L,gCol).forEach(sg=>{ctx.beginPath();
+    sg.forEach((p,i)=>{i?ctx.lineTo(p.X,p.Y):ctx.moveTo(p.X,p.Y);});
+    ctx.strokeStyle='rgba(84,102,140,'+gA+')';ctx.stroke();});
 
   if(fl>0.01){ctx.globalAlpha=fl*0.7;ctx.lineWidth=1.6;ctx.strokeStyle='#8892a8';
     ctx.setLineDash([5,5]);
@@ -179,21 +208,21 @@ function draw(now){
       ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();}
     ctx.setLineDash([]);ctx.globalAlpha=1;}
 
-  /* Punkte */
+  /* Punkte + Ebene */
   const items=[];
   PTS.forEach(p=>{
     const q=LIFT(p.x,p.y,L),s=proj(q);
-    let X=s.X,Y=s.Y;
-    if(pr>0.001){
-      const stag=clamp((pr*1.55)-(p.r/1.10)*0.5,0,1);
-      const w=ease(stag);
-      const tx=lerp(AX_L,AX_R,clamp(p.val/VMAX,0,1));
-      const cx=lerp(X,tx,0.5)+(X-tx)*0.12, cy=lerp(Y,AX_Y,0.35)-70;
+    let X=s.X,Y=s.Y,k=s.k;
+    if(pCol>0.001){
+      const stag=clamp(pCol*1.4-(p.r/1.10)*0.34,0,1),w=ease(stag);
+      const tx=sx(p.s);
+      const cx=lerp(X,tx,0.5),cy=lerp(Y,AX_Y,0.42)-54;
       const m=1-w;
       X=m*m*X+2*m*w*cx+w*w*tx;
       Y=m*m*Y+2*m*w*cy+w*w*AX_Y;
+      k=lerp(k,1,w);
     }
-    items.push({d:s.d,s:{X:X,Y:Y,k:s.k},c:p.c,type:'pt'});});
+    items.push({d:s.d,type:'pt',s:{X:X,Y:Y,k:k},c:p.c});});
 
   if(pl>0.01){const E=0.95,g=[];
     for(let i=0;i<=8;i++)for(let j=0;j<=8;j++)
