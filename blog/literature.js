@@ -16773,5 +16773,46 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Erd%C5%91s_problems",
 		alternativetitle: "Erdős problems (Wikipedia) — including the 1,000-dollar Sidon set problem"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Reference textbooks for the math / geometry / topology chapters
+	 *  (math_i–iv, geometry_i–iii, topology). The course cross-validates its
+	 *  exposition against these five standard texts; cited page numbers refer
+	 *  to the specific edition of each that the course keeps in blog/books/.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"lang2005basicmath": {
+		title: "Basic Mathematics: A First Course in Calculus",
+		author: "Serge Lang",
+		year: 1971,
+		url: "https://link.springer.com/book/10.1007/978-1-4612-2764-5",
+		alternativetitle: "Lang, Basic Mathematics (1st ed., 1971)"
+	},
+	"boyd2018appliedlinearalgebra": {
+		title: "Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares",
+		author: "Stephen Boyd, Lieven Vandenberghe",
+		year: 2018,
+		url: "https://web.stanford.edu/~boyd/vmls/",
+		alternativetitle: "Boyd & Vandenberghe, Applied Linear Algebra"
+	},
+	"axler2024linearalgebra": {
+		title: "Linear Algebra Done Right",
+		author: "Sheldon Axler",
+		year: 2024,
+		url: "https://link.springer.com/book/10.1007/978-3-031-40972-4",
+		alternativetitle: "Axler, Linear Algebra Done Right"
+	},
+	"gudmundsson2004riemannian": {
+		title: "An Introduction to Riemannian Geometry",
+		author: "Sigmundur Gudmundsson",
+		year: 2004,
+		url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html",
+		alternativetitle: "Gudmundsson, Introduction to Riemannian Geometry"
+	},
+	"morris2007topology": {
+		title: "Topology Without Tears: An Invitation to Topology",
+		author: "Sidney A. Morris",
+		year: 2007,
+		url: "https://archive.org/details/topbook",
+		alternativetitle: "Morris, Topology Without Tears"
 	}
 };
