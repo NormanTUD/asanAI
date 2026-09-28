@@ -14741,6 +14741,22 @@ window.bibData = {
 		license: "Public domain",
 		alternativetitle: "Ranger 7 lunar image"
 	},
+	"img_ranger7_impact": {
+		title: "Ranger 7 photograph of the lunar surface taken just before impact",
+		author: "U.S. Senate, Committee on Aeronautical and Space Sciences (via the Digital Public Library of America)",
+		year: 1964,
+		url: "https://commons.wikimedia.org/wiki/File:Photograph_from_Ranger_VII_Spacecraft_Just_before_Impact_on_the_Moon_-_DPLA_-_b9de03ac9d95d193a4343e9c06b84cc8.jpg",
+		license: "Public domain",
+		alternativetitle: "Ranger 7, just before impact"
+	},
+	"img_ranger7_guericke": {
+		title: "Ranger 7 B-camera image of Guericke crater, Mare Nubium",
+		author: "NASA / JPL-Caltech",
+		year: 1964,
+		url: "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg",
+		license: "Public domain",
+		alternativetitle: "Ranger 7, Guericke crater"
+	},
 	"img_gutta_percha_cable": {
 		title: "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
 		author: "Louis Figuier",
