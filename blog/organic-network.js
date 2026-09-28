@@ -20,17 +20,18 @@
      same nodes, same links, same motion.
 
    Smoothness contract:
-   • Heading is a pure function of wall-clock time (a slow sway
-     around a fixed base angle — analytically the same wander the
-     old per-frame angle integration produced), so a stalled frame
-     can never desynchronise direction from real time.
    • Position advances in fixed substeps of the real elapsed dt
      (each ≤ one 60 Hz frame, dt clamped at 250 ms): a janky frame
      fast-forwards the drift along its true path instead of freezing
      (old 50 ms clamp) or teleporting (uncapped single step).
-   • Box edges use a continuous cubic steering force, not a hard
-     reflection — nodes curve away from the walls and never
-     visibly bounce or stick.
+   • Box edges use a curved, persistent deflection instead of a hard
+      reflection: while inside the margin the wall's normal is blended
+      into the heading (signed cube of proximity) and the result is
+      written back to the node's angle. At the wall the heading is
+     fully mirrored — a soft bounce — and because the deflection is
+     state, the node leaves with the turned heading. No sharp V, no
+     sticking to the edge, and no band of parked nodes: the drift
+     keeps circulating through the whole box.
    • Box measurement is throttled (a getBoundingClientRect every
      frame forces a synchronous layout while the page is loading)
      and the theme colour is cached through __MN_DARK.onChange.
@@ -119,12 +120,7 @@
 			return {
 				x: Math.random() * w,
 				y: Math.random() * h,
-				baseAngle: Math.random() * Math.PI * 2,
-				// Sway reproduces the old integrated angle drift
-				// (0.0015·sin(t/9000+φ) per 60 Hz frame integrates to
-				// ±0.81 rad around the base heading) as a closed form.
-				swayAmp: 0.5 + Math.random() * 0.6,
-				swayPeriod: 7000 + Math.random() * 8000,
+				angle: Math.random() * Math.PI * 2,
 				phase: Math.random() * Math.PI * 2,
 				phaseY: Math.random() * Math.PI * 2,
 				r: 1.4 + Math.random() * 1.6,
@@ -189,29 +185,38 @@
 		// advancing k base frames (k ≤ 1).
 		function step(ts, k) {
 			// margin ≤ w/4 and ≤ h/4 so the left/right (top/bottom)
-			// steering zones never overlap.
+			// deflection zones never overlap.
 			const margin = Math.min(70, Math.max(28, Math.min(w, h) * 0.1), w * 0.25, h * 0.25);
-			// Cubic edge steering, saturating at a push that always
-			// outruns the fastest possible outward velocity of any node.
-			const pushMax = o.speed * 1.5 + o.wobble + 0.01;
+			// Max normal pushed into the unit heading at the wall. > 1 so
+			// that at the wall every outward-pointing heading is mirrored
+			// (soft bounce). The push is the SIGNED cube of the proximity
+			// (sign = away from the wall, cube = smooth ramp), which makes
+			// the turn a smooth arc. Being state, the deflection persists
+			// after the node leaves the margin — which is what keeps the
+			// distribution even instead of parking nodes in a band at the
+			// edge.
+			const turn = 1.5;
 			for (let i = 0; i < nodes.length; i++) {
 				const n = nodes[i];
-				const a = n.baseAngle + n.swayAmp * Math.cos(ts / n.swayPeriod + n.phase);
-				let vx = Math.cos(a) * n.speed + Math.sin(ts / 4200 + n.phase) * o.wobble;
-				let vy = Math.sin(a) * n.speed + Math.cos(ts / 5100 + n.phaseY) * o.wobble;
+				n.angle += Math.sin(ts / 9000 + n.phase) * 0.0015 * k;
 
-				let fx = 0, fy = 0;
-				if (n.x < margin) fx = 1 - n.x / margin;
-				else if (n.x > w - margin) fx = -(1 - (w - n.x) / margin);
-				if (n.y < margin) fy = 1 - n.y / margin;
-				else if (n.y > h - margin) fy = -(1 - (h - n.y) / margin);
-				if (fx !== 0) vx += fx * fx * fx * pushMax;
-				if (fy !== 0) vy += fy * fy * fy * pushMax;
+				let dx = Math.cos(n.angle);
+				let dy = Math.sin(n.angle);
+				let px = 0, py = 0;
+				if (n.x < margin) px = 1 - n.x / margin;
+				else if (n.x > w - margin) px = -(1 - (w - n.x) / margin);
+				if (n.y < margin) py = 1 - n.y / margin;
+				else if (n.y > h - margin) py = -(1 - (h - n.y) / margin);
+				if (px !== 0 || py !== 0) {
+					dx += px * px * px * turn;
+					dy += py * py * py * turn;
+					n.angle = Math.atan2(dy, dx);
+				}
 
-				n.x += vx * k;
-				n.y += vy * k;
+				n.x += (Math.cos(n.angle) * n.speed + Math.sin(ts / 4200 + n.phase) * o.wobble) * k;
+				n.y += (Math.sin(n.angle) * n.speed + Math.cos(ts / 5100 + n.phaseY) * o.wobble) * k;
 
-				// Last-resort containment; the steering keeps this from
+				// Last-resort containment; the deflection keeps this from
 				// ever biting in practice.
 				if (n.x < n.r) n.x = n.r;
 				else if (n.x > w - n.r) n.x = w - n.r;
