@@ -50,17 +50,19 @@
 				});
 			}
 
-			// Soft scrim behind the title: stabilises the backdrop (no shimmer
-			// of the drifting network through the letters) and lifts the type.
+			// Soft scrim behind the title: stabilises the backdrop (no
+			// shimmer of the drifting network through the letters), lifts
+			// the type, and a second layer vignettes the edges.
 			var scrim = document.createElement('div');
 			scrim.className = 'intro-scrim';
 			scrim.setAttribute('aria-hidden', 'true');
 			scrim.style.background = dark
-				? 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(7,11,22,0.5), rgba(7,11,22,0) 72%)'
-				: 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(250,248,241,0.62), rgba(250,248,241,0) 72%)';
+				? 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(7,11,22,0.5), rgba(7,11,22,0) 72%), radial-gradient(ellipse 115% 95% at 50% 50%, rgba(2,4,10,0) 55%, rgba(2,4,10,0.45) 100%)'
+				: 'radial-gradient(ellipse 64% 46% at 50% 46%, rgba(250,248,241,0.62), rgba(250,248,241,0) 72%), radial-gradient(ellipse 115% 95% at 50% 50%, rgba(120,96,60,0) 58%, rgba(120,96,60,0.12) 100%)';
 			loader.appendChild(scrim);
 
 			loader.style.setProperty('--intro-glow', dark ? 'rgba(233,170,96,0.20)' : 'rgba(150,110,66,0.28)');
+			loader.style.setProperty('--intro-warm-rgb', warm);
 
 			var status = document.getElementById('loader-status');
 			var title = document.createElement('div');
@@ -71,14 +73,17 @@
 			head.className = 'intro-head';
 			var HEADLINE = 'From Big Bang to ChatGPT';
 			var li = 0;
-			HEADLINE.split(' ').forEach(function (word) {
+			HEADLINE.split(' ').forEach(function (word, wi) {
 				var w = document.createElement('span');
 				w.className = 'intro-word';
 				word.split('').forEach(function (ch) {
 					var s = document.createElement('span');
 					s.className = 'intro-letter';
 					s.textContent = ch;
-					s.style.animationDelay = (li * 0.012).toFixed(3) + 's';
+					// Per-letter stagger with an extra pause at word
+					// boundaries — the line composes itself instead of
+					// cascading in one run.
+					s.style.animationDelay = (li * 0.014 + wi * 0.07).toFixed(3) + 's';
 					w.appendChild(s);
 					li++;
 				});
@@ -86,12 +91,18 @@
 				head.appendChild(document.createTextNode(' '));
 			});
 
+			var rule = document.createElement('span');
+			rule.className = 'intro-rule';
+			rule.setAttribute('aria-hidden', 'true');
+			rule.style.background = dark ? 'rgba(233,170,96,0.4)' : 'rgba(150,110,66,0.38)';
+
 			var sub = document.createElement('span');
 			sub.className = 'intro-sub';
 			sub.textContent = 'A peek inside the black box';
 			sub.style.color = dark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
 
 			title.appendChild(head);
+			title.appendChild(rule);
 			title.appendChild(sub);
 			loader.insertBefore(title, status || loader.lastChild);
 
@@ -102,11 +113,12 @@
 				if (armed) return;
 				armed = true;
 				title.classList.add('is-ready');
-				// The type is fully materialised ~0.65 s after arming (letter
-				// stagger + subtitle). revealContent() reads this and holds the
-				// loader until 3 s after it, so the reader actually has time to
-				// read the title before the page takes over.
-				window.__mnIntroTextDone = (window.performance ? performance.now() : 0) + (reduced ? 120 : 650);
+				// The type is fully materialised ~1.4 s after arming (letter
+				// stagger + rule + subtitle). revealContent() reads this and
+				// holds the loader until 1.5 s after it, so the reader
+				// actually has time to read the title before the page takes
+				// over.
+				window.__mnIntroTextDone = (window.performance ? performance.now() : 0) + (reduced ? 120 : 1400);
 			}
 			try {
 				if (document.fonts && document.fonts.ready) document.fonts.ready.then(armReady, armReady);
@@ -116,16 +128,30 @@
 			var countEl = document.createElement('p');
 			countEl.id = 'intro-count';
 			countEl.setAttribute('aria-hidden', 'true');
-			countEl.style.color = dark ? 'rgba(198,168,128,0.72)' : 'rgba(150,116,80,0.8)';
+			var spinner = document.createElement('span');
+			spinner.className = 'intro-spinner';
+			spinner.setAttribute('aria-hidden', 'true');
+			var countText = document.createElement('span');
+			countText.className = 'intro-count-text';
+			countText.style.color = dark ? 'rgba(198,168,128,0.72)' : 'rgba(150,116,80,0.8)';
+			countEl.appendChild(spinner);
+			countEl.appendChild(countText);
 			loader.appendChild(countEl);
 
 			var progress = document.createElement('div');
 			progress.id = 'intro-progress';
 			progress.setAttribute('aria-hidden', 'true');
-			progress.style.background = dark ? 'rgba(148,163,184,0.16)' : 'rgba(120,112,98,0.2)';
+			progress.style.background = dark ? 'rgba(148,163,184,0.14)' : 'rgba(120,112,98,0.16)';
 			var progressFill = document.createElement('span');
 			progressFill.className = 'intro-progress-fill';
-			progressFill.style.background = dark ? 'rgba(233,170,96,0.8)' : 'rgba(178,110,44,0.85)';
+			// Gradient tail + soft glow: the bar reads as light travelling
+			// across the bottom instead of a mechanical fill.
+			progressFill.style.background = dark
+				? 'linear-gradient(90deg, rgba(233,170,96,0.2), rgba(233,170,96,0.85))'
+				: 'linear-gradient(90deg, rgba(178,110,44,0.25), rgba(178,110,44,0.9))';
+			progressFill.style.boxShadow = dark
+				? '0 0 12px rgba(233,170,96,0.35)'
+				: '0 0 12px rgba(178,110,44,0.3)';
 			progress.appendChild(progressFill);
 			loader.appendChild(progress);
 
@@ -144,20 +170,27 @@
 			var total = countRows();
 
 			function setCount() {
-				if (!countEl) return;
+				if (!countText) return;
 				if (total > 0) {
 					var d = countDone();
-					countEl.textContent = d + ' of ' + total + (total === 1 ? ' module loaded' : ' modules loaded');
+					countText.textContent = d + ' of ' + total + (total === 1 ? ' module loaded' : ' modules loaded');
 				} else {
-					countEl.textContent = 'preparing\u2026';
+					countText.textContent = 'preparing\u2026';
 				}
 			}
 			function setBar() {
 				var p = total ? countDone() / total : 0;
 				progressFill.style.width = (p * 100) + '%';
 			}
+			// All modules in: the spinner fades out, the count line stays.
+			function settleIfDone() {
+				if (total > 0 && countDone() === total) {
+					loader.classList.add('is-settled');
+				}
+			}
 			setCount();
 			setBar();
+			settleIfDone();
 
 			if (window.MutationObserver) {
 				var cc = document.getElementById('loader-checklist');
@@ -166,6 +199,7 @@
 						total = countRows();
 						setCount();
 						setBar();
+						settleIfDone();
 					}).observe(cc, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 				}
 			}

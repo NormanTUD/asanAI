@@ -92,6 +92,29 @@
 			return colorCache;
 		}
 
+		// Pre-rendered glow sprite (rebuilt only when the colour changes):
+		// a bright core with a soft halo. Far calmer than hard dots, and a
+		// single drawImage per node is cheaper than fillStyle + arc.
+		let sprite = null;
+		let spriteKey = '';
+		function ensureSprite(rgb) {
+			const key = rgb[0] + ',' + rgb[1] + ',' + rgb[2];
+			if (sprite && spriteKey === key) return sprite;
+			spriteKey = key;
+			sprite = document.createElement('canvas');
+			sprite.width = 64;
+			sprite.height = 64;
+			const sctx = sprite.getContext('2d');
+			const g = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+			g.addColorStop(0, 'rgba(' + key + ',0.95)');
+			g.addColorStop(0.22, 'rgba(' + key + ',0.45)');
+			g.addColorStop(0.5, 'rgba(' + key + ',0.10)');
+			g.addColorStop(1, 'rgba(' + key + ',0)');
+			sctx.fillStyle = g;
+			sctx.fillRect(0, 0, 64, 64);
+			return sprite;
+		}
+
 		function makeNode() {
 			return {
 				x: Math.random() * w,
@@ -236,15 +259,18 @@
 				}
 			}
 
+			// Nodes are drawn from the shared glow sprite. Bigger nodes sit
+			// "closer": brighter, with a wider halo — a quiet depth cue.
+			const spr = ensureSprite(rgb);
 			for (let i = 0; i < nodes.length; i++) {
 				const n = nodes[i];
 				const pulse = 0.5 + 0.5 * Math.sin(t / 1800 + n.phase);
-				const alpha = o.nodeAlpha * (0.45 + 0.55 * pulse);
-				ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
-				ctx.beginPath();
-				ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-				ctx.fill();
+				const depth = 0.55 + 0.45 * ((n.r - 1.4) / 1.6);
+				ctx.globalAlpha = o.nodeAlpha * (0.45 + 0.55 * pulse) * depth;
+				const s = n.r * 5;
+				ctx.drawImage(spr, n.x - s / 2, n.y - s / 2, s, s);
 			}
+			ctx.globalAlpha = 1;
 		}
 
 		function frame(t) {

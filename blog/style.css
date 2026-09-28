@@ -4368,6 +4368,9 @@ only the page background here leans on --mn-bg.
 	display: block;
 	z-index: 0;
 	pointer-events: none;
+	/* The constellation materialises softly instead of popping in. */
+	opacity: 0;
+	animation: introCanvasIn 1.8s cubic-bezier(0.33, 1, 0.68, 1) 0.1s forwards;
 }
 #loader .intro-scrim {
 	position: absolute;
@@ -4402,18 +4405,27 @@ only the page background here leans on --mn-bg.
 #loader .intro-letter {
 	display: inline-block;
 	opacity: 0;
-	filter: blur(5px);
-	transform: translateY(0.55em);
+	filter: blur(4px);
+	transform: translateY(0.5em) scale(1.05);
 	will-change: transform, opacity, filter;
 }
 #loader .intro-title.is-ready .intro-letter {
-	animation: introLetter 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+	animation: introLetter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+#loader .intro-rule {
+	display: block;
+	width: 44px;
+	height: 1px;
+	margin: 1.05rem 0 0.9rem;
+	transform: scaleX(0);
+}
+#loader .intro-title.is-ready .intro-rule {
+	animation: introRule 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.72s forwards;
 }
 #loader .intro-title.is-ready .intro-head {
 	animation: introGlow 5.5s ease-in-out 1.2s infinite;
 }
 #loader .intro-sub {
-	margin-top: 0.9rem;
 	font-family: var(--mn-font-prose);
 	font-style: italic;
 	font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.3rem);
@@ -4423,7 +4435,7 @@ only the page background here leans on --mn-bg.
 	transform: translateY(0.5em);
 }
 #loader .intro-title.is-ready .intro-sub {
-	animation: introSub 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) 0.16s forwards;
+	animation: introSub 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.85s forwards;
 }
 #loader #loader-status {
 	position: absolute;
@@ -4444,12 +4456,33 @@ only the page background here leans on --mn-bg.
 	right: 0;
 	bottom: 4.8vh;
 	margin: 0;
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
 	font-family: var(--mn-font-mono);
 	font-size: 11px;
+	z-index: 2;
+}
+#loader #intro-count .intro-count-text {
 	letter-spacing: 0.24em;
 	text-indent: 0.24em;
-	z-index: 2;
+}
+/* Comet ring: a two-tone arc on a hairline circle, warm-tinted, that
+   fades out once every module has loaded. */
+#loader .intro-spinner {
+	flex-shrink: 0;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	border: 1.5px solid transparent;
+	border-top-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.85);
+	border-right-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.35);
+	animation: introSpin 0.9s linear infinite;
+	transition: opacity 0.5s ease 0.25s;
+}
+#loader.is-settled .intro-spinner {
+	opacity: 0;
 }
 #loader #intro-progress {
 	position: absolute;
@@ -4463,16 +4496,25 @@ only the page background here leans on --mn-bg.
 	display: block;
 	height: 100%;
 	width: 0%;
-	transition: width 0.4s ease;
+	transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 #loader #loader-checklist {
 	display: none;
 }
 @keyframes introLetter {
-	to { opacity: 1; filter: blur(0); transform: translateY(0); }
+	to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+}
+@keyframes introRule {
+	to { transform: scaleX(1); }
 }
 @keyframes introSub {
 	to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+@keyframes introSpin {
+	to { transform: rotate(360deg); }
+}
+@keyframes introCanvasIn {
+	to { opacity: 1; }
 }
 @keyframes introGlow {
 	0%, 100% { text-shadow: 0 0 16px var(--intro-glow, transparent); }
@@ -4487,6 +4529,8 @@ only the page background here leans on --mn-bg.
 	#loader .intro-letter { opacity: 1; transform: none; filter: none; animation: none; }
 	#loader .intro-sub { opacity: 1; transform: none; filter: none; animation: none; }
 	#loader .intro-head { animation: none; }
+	#loader .intro-rule { transform: none; animation: none; }
+	#loader .intro-spinner { animation: none; }
 	#loader #intro-canvas { display: none; }
 }
 

@@ -414,14 +414,20 @@ function revealContent() {
     // content gives its transition a real "from" frame -- display:none -> block
     // without it snaps straight to opacity:1.
     const MN_GLIDE = '0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    const mnReduced = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (loader && loader.parentNode) {
         loader.style.opacity = '1';
         loader.style.animation = 'none';
-        loader.style.transition = 'opacity ' + MN_GLIDE + ', filter ' + MN_GLIDE;
+        loader.style.transition = 'opacity ' + MN_GLIDE + ', filter ' + MN_GLIDE
+            + (mnReduced ? '' : ', transform ' + MN_GLIDE);
         loader.style.pointerEvents = 'none';
         void loader.offsetWidth;
         loader.style.opacity = '0';
         loader.style.filter = 'blur(8px)';
+        // A whisper of scale-out with the dissolve: the boot screen
+        // breathes out instead of simply vanishing.
+        if (!mnReduced) loader.style.transform = 'scale(1.02)';
         setTimeout(function () {
             if (loader.parentNode) loader.parentNode.removeChild(loader);
         }, 680);
