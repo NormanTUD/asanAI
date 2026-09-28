@@ -129,6 +129,8 @@ html:not(.dark) #atlas-stage {
 }
 .atlas-btn:hover { color: var(--atlas-ink); border-color: var(--atlas-line-strong); }
 .atlas-btn.primary { color: var(--atlas-ink); border-color: var(--atlas-line-strong); background: var(--atlas-card-solid); }
+#atlas-fullscreen { display: inline-flex; align-items: center; padding: 7px 9px; }
+#atlas-fullscreen svg { display: block; }
 
 /* ── detail panel ── */
 .atlas-detail {
@@ -310,6 +312,7 @@ html:not(.dark) #atlas-stage {
 			<div class="atlas-spacer"></div>
 			<button class="atlas-btn primary" id="atlas-journey" type="button">&#9656; Cosmic journey</button>
 			<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982;</button>
+			<button class="atlas-btn" id="atlas-fullscreen" type="button" title="Fullscreen (F)" aria-label="Fullscreen"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
 		</div>
 
 		<div class="atlas-detail" id="atlas-detail"></div>

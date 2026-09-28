@@ -34,8 +34,8 @@ function bootAtlas() {
 	var GALAXY_R = 210;
 	var FILAMENT_R = [260, 440]; // cosmic-web shell
 	var QUESTION_R = [380, 600]; // "?" world shell
-	var WEB_PHOTO_DIST = 300;    // flat cosmic-web photo, in front of camera
-	var CMB_PHOTO_DIST = 320;    // flat CMB photo, always in front of camera
+	var DEEP_WEB_R = 1300;       // cosmic-web skybox sphere (camera max d=750 stays inside)
+	var DEEP_CMB_R = 1500;       // CMB skybox sphere
 	var STAR_R = 470;
 	var MIN_D = 1.1, MAX_D = 750;
 	var SCENE_BG = new THREE.Color(0x05070d);
@@ -54,6 +54,17 @@ function bootAtlas() {
 		THEME.bg = '#05070d';
 	}
 	readTheme();
+
+	// ── smoothness guardrails ──────────────────────────────────
+	// Silent when healthy; each id fires (console.error/warn) at most once,
+	// only on a real regression. The render validator fails on any
+	// console.error, so in a healthy scene none of these may fire.
+	var GR = { fired: {} };
+	function guardrail(id, level, msg) {
+		if (GR.fired[id]) { return; }
+		GR.fired[id] = true;
+		(level === 'warn' ? console.warn : console.error)('[atlas] GUARDRAIL ' + id + ': ' + msg);
+	}
 
 	var lessonTitle = {};
 	(function () {
@@ -194,9 +205,9 @@ function bootAtlas() {
 	var bhGroup, bhSprites = [], bhPhaseLabel = null;
 	var bhHole, bhPhotonRing, bhDisk, bhParticles, bhStar, bhStarGlow, bhNebula, bhCrab, bhM87;
 	var bhGeo, bhVel = [], nebGeo, nebVel = [];
+	var bhWasVisible = false, bhStartedAt = 0, bhT = 0;
 	var raycaster = new THREE.Raycaster();
 	var mouseNDC = new THREE.Vector2();
-	var camFwd = new THREE.Vector3();
 
 	function makeRadialTexture(inner, outer, size) {
 		var c = document.createElement('canvas');
@@ -281,7 +292,7 @@ function bootAtlas() {
 			bgTexture = tex;
 			skySphere = new THREE.Mesh(
 				new THREE.SphereGeometry(2000, 32, 16),
-				new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, depthWrite: false })
+				new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, depthWrite: false, transparent: true })
 			);
 			skySphere.visible = true;
 			scene.add(skySphere);
@@ -337,6 +348,37 @@ function bootAtlas() {
 				console.warn('[atlas] GUARDRAIL 6: no BH objects visible while bhGroup visible — tickBlackHole not running?');
 			}
 		}
+		// A1: threadGroup must be in the scene so the lines rotate with the globe
+		if (!threadGroup || scene.children.indexOf(threadGroup) < 0) {
+			guardrail('A1', 'error', 'threadGroup missing from scene — threads will not rotate with the globe');
+		}
+		// A2: all four spin-synced objects must exist
+		if (!earth || !dotMesh || !atmosphere || !threadGroup) {
+			guardrail('A2', 'error', 'globe spin objects incomplete (earth/dotMesh/atmosphere/threadGroup)');
+		}
+		// B1: fullscreen button present in the top bar
+		if (!document.getElementById('atlas-fullscreen')) {
+			guardrail('B1', 'error', '#atlas-fullscreen button missing from the top bar');
+		}
+		// B2: fullscreen target exists and supports the API
+		var fsT = document.getElementById('atlas-canvas-wrap');
+		if (!fsT || typeof fsT.requestFullscreen !== 'function') {
+			guardrail('B2', 'error', '#atlas-canvas-wrap missing or requestFullscreen unsupported');
+		}
+		// C1: black-hole sequence objects present
+		if (!bhCrab || !bhParticles || !bhNebula || !bhM87) {
+			guardrail('C1', 'error', 'black-hole sequence objects incomplete (crab/particles/nebula/m87)');
+		}
+		// D1: deep-space skyboxes are BackSide spheres with a radius that keeps
+		// the camera (max d=750) inside and well inside the far plane
+		[webSky, cmbSky].forEach(function (s, i) {
+			var nm = i === 0 ? 'webSky' : 'cmbSky';
+			if (!s) { guardrail('D1', 'error', nm + ' not built'); return; }
+			var r = s.geometry && s.geometry.parameters ? s.geometry.parameters.radius : 0;
+			if (s.geometry.type !== 'SphereGeometry' || s.material.side !== THREE.BackSide || r <= MAX_D || r >= 3900) {
+				guardrail('D1', 'error', nm + ' must be a BackSide sphere with radius in (' + MAX_D + ', 3900); got ' + s.geometry.type + ' side=' + s.material.side + ' r=' + r);
+			}
+		});
 	})();
 
 		window.__ATLAS_DEBUG = {
@@ -355,7 +397,21 @@ function bootAtlas() {
 			revealAsparagus: revealAsparagus,
 			asparagusSetGate: function (ms) { qWorldEnteredAt = Date.now() - ms; },
 			updateToggleVisibility: updateAtlasToggleVisibility,
-			camera: function () { return camera; }
+			camera: function () { return camera; },
+			earth: function () { return earth; },
+			tour: function () { return tour; },
+			frame: function () { return frame; },
+			running: function () { return running; },
+			threadGroup: function () { return threadGroup; },
+			webSky: function () { return webSky; },
+			cmbSky: function () { return cmbSky; },
+			bhParticles: function () { return bhParticles; },
+			bhNebula: function () { return bhNebula; },
+			bhCrab: function () { return bhCrab; },
+			bhT: function () { return bhT; },
+			pauseTour: function (b) { tour.paused = !!b; },
+			toggleFullscreen: toggleFullscreen,
+			guardrails: function () { return GR.fired; }
 		};
 	}
 
@@ -487,8 +543,8 @@ function bootAtlas() {
 		scene.add(starField);
 
 		buildFilaments();
-		buildWebPhoto();
-		buildCmbPhoto();
+		buildWebSky();
+		buildCmbSky();
 		buildQuestionWorld();
 
 		// galaxies (real photos, additive blend for dark-bg blending)
@@ -763,8 +819,8 @@ function bootAtlas() {
 
 	// ── deep space: filaments, CMB photo, the question world ──
 	var filamentGroup, filamentLines, filamentNodes = [];
-	var webPhoto;
-	var cmbPhoto;
+	var webSky;
+	var cmbSky;
 	var questionGroup, questionSprites = [], asparagusSprite, asparagusFound = false, qWorldEnteredAt = null;
 
 	function buildFilaments() {
@@ -817,32 +873,46 @@ function bootAtlas() {
 		scene.add(filamentGroup);
 	}
 
-	function buildCmbPhoto() {
-		// the WMAP map shown as a flat 2:1 photograph floating in front
-		// of the camera — no 3D sphere, just the photo
-		var tex = new THREE.TextureLoader().load('wmap_cmb.png');
-		cmbPhoto = new THREE.Mesh(
-			new THREE.PlaneGeometry(830, 415),
+	function buildCmbSky() {
+		// the WMAP map as a full 360° skybox you can look around inside —
+		// the image is 2:1 equirectangular, so it maps cleanly onto the sphere
+		cmbSky = new THREE.Mesh(
+			new THREE.SphereGeometry(DEEP_CMB_R, 48, 32),
 			new THREE.MeshBasicMaterial({
-				map: tex, transparent: true, opacity: 0,
-				depthWrite: false, side: THREE.DoubleSide
+				side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false
 			})
 		);
-		scene.add(cmbPhoto);
+		cmbSky.visible = false;
+		cmbSky.renderOrder = -10;
+		scene.add(cmbSky);
+		new THREE.TextureLoader().load('wmap_cmb.png', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			cmbSky.material.map = tex;
+			cmbSky.material.needsUpdate = true;
+		}, undefined, function (err) {
+			console.error('[atlas] GUARDRAIL 5: wmap_cmb.png failed to load:', err);
+		});
 	}
 
-	function buildWebPhoto() {
+	function buildWebSky() {
 		// a real large-scale-structure render (Springel / MPA Garching) shown
-		// as a flat photograph at the cosmic-web stage
-		var tex = new THREE.TextureLoader().load('cosmic_web_foam.jpg');
-		webPhoto = new THREE.Mesh(
-			new THREE.PlaneGeometry(720, 480),
+		// as a full 360° skybox you can look around inside at the cosmic-web stage
+		webSky = new THREE.Mesh(
+			new THREE.SphereGeometry(DEEP_WEB_R, 48, 32),
 			new THREE.MeshBasicMaterial({
-				map: tex, transparent: true, opacity: 0,
-				depthWrite: false, side: THREE.DoubleSide
+				side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false
 			})
 		);
-		scene.add(webPhoto);
+		webSky.visible = false;
+		webSky.renderOrder = -10;
+		scene.add(webSky);
+		new THREE.TextureLoader().load('cosmic_web_foam.jpg', function (tex) {
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			webSky.material.map = tex;
+			webSky.material.needsUpdate = true;
+		}, undefined, function (err) {
+			console.error('[atlas] GUARDRAIL 5: cosmic_web_foam.jpg failed to load:', err);
+		});
 	}
 
 	function makeQuestionTexture() {
@@ -1213,7 +1283,10 @@ function bootAtlas() {
 			if (t >= 1) { tourTrans.active = false; }
 		} else {
 			var k = state.touring ? 0.06 : 0.12;
-			state.theta += (state.tTheta - state.theta) * k;
+			var dtT = state.tTheta - state.theta;
+			if (dtT > Math.PI) { dtT -= 2 * Math.PI; }
+			else if (dtT < -Math.PI) { dtT += 2 * Math.PI; }
+			state.theta += dtT * k;
 			state.phi += (state.tPhi - state.phi) * k;
 			state.d += (state.tD - state.d) * k;
 		}
@@ -1231,10 +1304,12 @@ function bootAtlas() {
 		var starO = (0.35 + 0.6 * THREE.MathUtils.smoothstep(d, 6, 40))
 			* (1 - THREE.MathUtils.smoothstep(d, 180, 250));
 		if (starField) { starField.material.opacity = starO; }
-		// background: Milky Way sky sphere until galaxy view, then dark
+		// background: Milky Way sky sphere until galaxy view, then dark —
+		// faded smoothly (not a hard cut) as we pass the solar system
 		var qBg = THREE.MathUtils.smoothstep(d, 600, 660);
 		var galBg = THREE.MathUtils.smoothstep(d, 195, 230);
-		if (skySphere) { skySphere.visible = (qBg < 0.5 && galBg < 0.5); }
+		var skyO = (1 - galBg) * (1 - qBg);
+		if (skySphere) { skySphere.material.opacity = skyO; skySphere.visible = skyO > 0.01; }
 		scene.background = SCENE_BG;
 		// solar system: fully visible at the solar-system stop, gone before galaxies
 		var solarO = THREE.MathUtils.smoothstep(d, 14, 45) * (1 - THREE.MathUtils.smoothstep(d, 185, 220));
@@ -1254,14 +1329,14 @@ function bootAtlas() {
 		var filO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 560));
 		if (filamentLines) { filamentLines.material.opacity = filO * 0.3; }
 		filamentNodes.forEach(function (s) { s.material.opacity = filO * 0.85; });
-		// the real cosmic-web photo appears at the web stage, then gives
-		// way to the CMB photo
-		var webO = THREE.MathUtils.smoothstep(d, 420, 480) * (1 - THREE.MathUtils.smoothstep(d, 530, 580));
-		if (webPhoto) { webPhoto.material.opacity = webO; }
-		// the CMB photo appears only at the very end, and gives way to
+		// the real cosmic-web skybox appears at the web stage and is fully
+		// faded before the CMB skybox peaks — so nothing "shows through"
+		var webO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 545));
+		if (webSky) { webSky.material.opacity = webO; webSky.visible = webO > 0.01; }
+		// the CMB skybox appears only at the very end, and gives way to
 		// the question world
-		var cmbO = THREE.MathUtils.smoothstep(d, 500, 550) * (1 - THREE.MathUtils.smoothstep(d, 580, 640));
-		if (cmbPhoto) { cmbPhoto.material.opacity = cmbO; }
+		var cmbO = THREE.MathUtils.smoothstep(d, 510, 555) * (1 - THREE.MathUtils.smoothstep(d, 600, 650));
+		if (cmbSky) { cmbSky.material.opacity = cmbO; cmbSky.visible = cmbO > 0.01; }
 		// the question-mark world is the final stop
 		var qO = THREE.MathUtils.smoothstep(d, 580, 650);
 		questionSprites.forEach(function (s) { s.material.opacity = qO * (s === questionSprites[questionSprites.length - 1] ? 0.95 : 0.55); });
@@ -1308,6 +1383,28 @@ function bootAtlas() {
 			overlapping = r.top < band[1] && r.bottom > band[0];
 		}
 		document.documentElement.classList.toggle('atlas-overlap', overlapping);
+	}
+
+	// ── fullscreen ────────────────────────────────────────────
+	var FS_ENTER = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+	var FS_EXIT = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3M16 3v3a2 2 0 0 0 2 2h3M8 21v-3a2 2 0 0 0-2-2H3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
+	function atlasFsTarget() { return document.getElementById('atlas-canvas-wrap'); }
+	function toggleFullscreen() {
+		var el = atlasFsTarget();
+		if (!el) { return; }
+		if (document.fullscreenElement) {
+			if (document.exitFullscreen) { document.exitFullscreen(); }
+		} else if (el.requestFullscreen) {
+			el.requestFullscreen();
+		}
+	}
+	function updateFullscreenIcon() {
+		var btn = document.getElementById('atlas-fullscreen');
+		if (!btn) { return; }
+		var active = !!document.fullscreenElement;
+		btn.innerHTML = active ? FS_EXIT : FS_ENTER;
+		btn.title = active ? 'Exit fullscreen (F)' : 'Fullscreen (F)';
+		btn.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Fullscreen');
 	}
 	function bindInput() {
 		canvas.addEventListener('mousedown', function (e) {
@@ -1713,10 +1810,30 @@ function bootAtlas() {
 		}
 		var easterClose = document.getElementById('atlas-easter-close');
 		if (easterClose) { easterClose.addEventListener('click', closeAsparagus); }
+		var fsBtn = document.getElementById('atlas-fullscreen');
+		if (fsBtn) {
+			fsBtn.addEventListener('click', toggleFullscreen);
+			updateFullscreenIcon();
+		}
+		document.addEventListener('fullscreenchange', function () {
+			updateFullscreenIcon();
+			if (typeof updateAtlasToggleVisibility === 'function') { updateAtlasToggleVisibility(); }
+			var b = document.getElementById('atlas-fullscreen');
+			if (b) {
+				var want = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen';
+				if (b.getAttribute('aria-label') !== want) { guardrail('B3', 'warn', 'fullscreen button icon out of sync with fullscreen state'); }
+			}
+		});
 		document.addEventListener('keydown', function (e) {
 			var t = e.target;
 			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) { return; }
+			if (e.key === 'f' || e.key === 'F') {
+				if (e.ctrlKey || e.metaKey || e.altKey) { return; }
+				toggleFullscreen();
+				return;
+			}
 			if (e.key === 'Escape') {
+				if (document.fullscreenElement) { return; }
 				if (tour.active) { stopTour(); }
 				else if (state.selected) { clearSelection(); }
 				return;
@@ -1800,7 +1917,10 @@ function bootAtlas() {
 				? moon.position.clone()
 				: (s.face === 'mars')
 					? planets[3].position.clone()
-					: (s.face.isVector3 ? s.face : new THREE.Vector3(s.face[0], s.face[1], s.face[2]));
+					: (s.face.isVector3 ? s.face.clone() : new THREE.Vector3(s.face[0], s.face[1], s.face[2]));
+			// city faces are baked in the un-rotated globe frame; rotate by the
+			// current spin so the camera aims at the dot's real (spun) position
+			if (s.face.isVector3 && earth) { v.applyAxisAngle(new THREE.Vector3(0, 1, 0), earth.rotation.y); }
 			state.tTheta = Math.atan2(v.z, v.x);
 			state.tPhi = Math.acos(THREE.MathUtils.clamp(v.y / v.length(), -1, 1));
 		}
@@ -1897,7 +2017,8 @@ function bootAtlas() {
 		if (bhPhaseLabel) { bhPhaseLabel.textContent = text; }
 	}
 	function tickBlackHole() {
-		var t = tour.active ? (performance.now() - tour.startedAt) / 1000 : (frame * 0.016);
+		var t = (performance.now() - bhStartedAt) / 1000;
+		bhT = t;
 		var activeLabel = '';
 		var i, v;
 		if (t < 4) {
@@ -2007,11 +2128,10 @@ function bootAtlas() {
 			bhStarGlow.material.opacity = Math.max(0, 1 - snT * 2);
 			bhStarGlow.scale.setScalar(30 + snT * 60);
 			bhStarGlow.material.color.setHex(0xaaccff);
-			bhNebula.material.opacity = Math.max(0, 0.5 - snT * 0.5);
-			bhNebula.material.color.setHex(0x88ccff);
-			bhNebula.material.size = 2.0;
-			bhParticles.material.opacity = Math.max(0, 0.7 - snT * 0.5);
-			bhParticles.material.color.setHex(0x88ccff);
+			// clear the disk ring and the surrounding cloud so that, as the
+			// supernova recedes, only the Crab Nebula remains
+			bhNebula.material.opacity = 0;
+			bhParticles.visible = false;
 			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			// Crab Nebula fades in during last half of supernova
 			var crabO = THREE.MathUtils.smoothstep(snT, 0.3, 1.0);
@@ -2021,22 +2141,22 @@ function bootAtlas() {
 			activeLabel = '6. ' + BH_PHASES[5].label;
 		} else if (t < 26) {
 			// Phase 7: black hole with accretion disk
-			var bhT = Math.min(1, (t - 16.5) / 3);
+			var bhIn = Math.min(1, (t - 16.5) / 3);
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = Math.max(0, 0.5 - (t - 16.5) * 0.5);
 			bhNebula.material.opacity = Math.max(0, 0.3 - (t - 16.5) * 0.2);
 			bhCrab.visible = true;
 			bhCrab.material.opacity = Math.max(0, 0.85 - (t - 16.5) * 0.05);
 			bhHole.visible = true;
-			bhHole.scale.setScalar(bhT);
+			bhHole.scale.setScalar(bhIn);
 			bhPhotonRing.visible = true;
-			bhPhotonRing.material.opacity = bhT * 0.9;
+			bhPhotonRing.material.opacity = bhIn * 0.9;
 			bhPhotonRing.rotation.y += 0.03;
 			bhDisk.visible = true;
-			bhDisk.material.opacity = bhT * 0.7;
+			bhDisk.material.opacity = bhIn * 0.7;
 			bhDisk.rotation.z += 0.005;
 			bhParticles.visible = true;
-			bhParticles.material.opacity = bhT * 0.6;
+			bhParticles.material.opacity = bhIn * 0.6;
 			bhParticles.material.color.setHex(0xff6622);
 			bhParticles.material.size = 0.8;
 			var ppos = bhGeo.attributes.position.array;
@@ -2094,11 +2214,67 @@ function bootAtlas() {
 			if (document.hidden) { hide(); } else { show(); }
 		});
 	}
+	// ── live smoothness guardrails (throttled to ~1/s) ─────────
+	var lastLiveGr = 0;
+	function liveGuardrails() {
+		var now = performance.now();
+		if (now - lastLiveGr < 1000) { return; }
+		lastLiveGr = now;
+		var d = state.d;
+		// G1: camera position must stay finite
+		if (!isFinite(camera.position.x) || !isFinite(camera.position.y) || !isFinite(camera.position.z)) {
+			guardrail('G1', 'error', 'camera position is not finite (NaN/Inf)');
+		}
+		// G2: the renderer must actually be drawing the scene
+		if (renderer && renderer.info && renderer.info.render && renderer.info.render.calls === 0) {
+			guardrail('G2', 'error', 'renderer issued 0 draw calls — scene is not being drawn');
+		}
+		// G3: the Milky Way sphere must be able to fade (not a hard cut)
+		if (skySphere && !skySphere.material.transparent) {
+			guardrail('G3', 'warn', 'Milky Way skySphere is not transparent — it cannot fade out smoothly');
+		}
+		// A3: during the spin the globe, dots and threads must stay rotation-synced
+		if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth && threadGroup && dotMesh) {
+			if (earth.rotation.y > 0.02 &&
+				(Math.abs(earth.rotation.y - threadGroup.rotation.y) > 0.05 || Math.abs(earth.rotation.y - dotMesh.rotation.y) > 0.05)) {
+				guardrail('A3', 'error', 'spin desync: earth=' + earth.rotation.y.toFixed(3) + ' thread=' + threadGroup.rotation.y.toFixed(3) + ' dot=' + dotMesh.rotation.y.toFixed(3));
+			}
+		}
+		// C2: the accretion-disk ring must be gone during the supernova (only the Crab remains)
+		if (bhT >= 15.5 && bhT < 16.5 && bhGroup && bhGroup.visible) {
+			if (bhParticles && bhParticles.visible && bhParticles.material.opacity > 0.05) {
+				guardrail('C2', 'error', 'accretion-disk ring still visible during the supernova (t=' + bhT.toFixed(2) + ') — only the Crab Nebula should remain');
+			}
+		}
+		// C3: at the end of the supernova the Crab Nebula must be the dominant object
+		if (bhT >= 16.2 && bhT < 17.0 && bhGroup && bhGroup.visible && bhCrab) {
+			if (bhCrab.material.opacity < 0.3) {
+				guardrail('C3', 'warn', 'Crab Nebula not dominant at the end of the supernova (op=' + bhCrab.material.opacity.toFixed(2) + ')');
+			}
+		}
+		// D2: at the Big Bang stop — no showing-through (web gone, CMB fully in)
+		if (d >= 545 && d <= 560) {
+			if (webSky && webSky.material.opacity > 0.1) {
+				guardrail('D2', 'error', 'cosmic web shows through at the CMB stop (webOp=' + webSky.material.opacity.toFixed(3) + ', d=' + d.toFixed(1) + ')');
+			}
+			if (cmbSky && cmbSky.material.opacity < 0.8) {
+				guardrail('D2', 'error', 'CMB skybox not fully in at the Big Bang stop (op=' + cmbSky.material.opacity.toFixed(3) + ')');
+			}
+		}
+		// D3: the camera must stay inside any visible deep-space skybox
+		if (webSky && webSky.visible && d > webSky.geometry.parameters.radius) {
+			guardrail('D3', 'error', 'camera left the web skybox (d=' + d.toFixed(1) + ' > r=' + webSky.geometry.parameters.radius + ')');
+		}
+		if (cmbSky && cmbSky.visible && d > cmbSky.geometry.parameters.radius) {
+			guardrail('D3', 'error', 'camera left the CMB skybox (d=' + d.toFixed(1) + ' > r=' + cmbSky.geometry.parameters.radius + ')');
+		}
+	}
+
 	function tick() {
 		if (!running) { return; }
 		requestAnimationFrame(tick);
 		applyCamera();
-		updateThreads();
+		if (state.d < 26 || state.threadFocus) { updateThreads(); }
 		// keep dots a readable size as the camera closes in: shrink the world
 		// size near the surface so nearby points spread out instead of merging
 		// into a single glowing blob (full size at the default d=3.2 view).
@@ -2111,23 +2287,17 @@ function bootAtlas() {
 		}
 		tickTour();
 		updateSunDirection();
-		// the web + CMB photos hover in front of the camera, photo-parallel
-		if (webPhoto || cmbPhoto) {
-			camera.getWorldDirection(camFwd);
-			if (webPhoto) {
-				webPhoto.position.copy(camera.position).addScaledVector(camFwd, WEB_PHOTO_DIST);
-				webPhoto.quaternion.copy(camera.quaternion);
-			}
-			cmbPhoto.position.copy(camera.position).addScaledVector(camFwd, CMB_PHOTO_DIST);
-			cmbPhoto.quaternion.copy(camera.quaternion);
-		}
 		// slow cosmic drift
 		if (frame % 2 === 0) {
-			if (bhGroup && bhGroup.visible) { tickBlackHole(); }
+			var bhNowVis = !!(bhGroup && bhGroup.visible);
+			if (bhNowVis && !bhWasVisible) { bhStartedAt = performance.now(); }
+			bhWasVisible = bhNowVis;
+			if (bhNowVis) { tickBlackHole(); }
 			if (!reducedMotion) {
 				if (tour.active && JOURNEY[tour.step] && JOURNEY[tour.step].spin && earth) {
 					earth.rotation.y += 0.003;
 					if (dotMesh) { dotMesh.rotation.y += 0.003; }
+					if (threadGroup) { threadGroup.rotation.y += 0.003; }
 					if (atmosphere) { atmosphere.rotation.y += 0.003; }
 				}
 				planets.forEach(function (p) {
@@ -2165,6 +2335,7 @@ function bootAtlas() {
 		}
 		frame++;
 		renderer.render(scene, camera);
+		liveGuardrails();
 	}
 
 	return start();
