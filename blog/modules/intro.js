@@ -72,6 +72,8 @@
 			var head = document.createElement('span');
 			head.className = 'intro-head';
 			var HEADLINE = 'From Big Bang to ChatGPT';
+			// Plain-text twin for the glow pseudo-element (see style.css).
+			head.setAttribute('data-text', HEADLINE);
 			var li = 0;
 			HEADLINE.split(' ').forEach(function (word, wi) {
 				var w = document.createElement('span');
@@ -80,10 +82,10 @@
 					var s = document.createElement('span');
 					s.className = 'intro-letter';
 					s.textContent = ch;
-					// Per-letter stagger with an extra pause at word
+					// Per-letter stagger with a short pause at word
 					// boundaries — the line composes itself instead of
 					// cascading in one run.
-					s.style.animationDelay = (li * 0.014 + wi * 0.07).toFixed(3) + 's';
+					s.style.animationDelay = (li * 0.011 + wi * 0.045).toFixed(3) + 's';
 					w.appendChild(s);
 					li++;
 				});
@@ -113,12 +115,12 @@
 				if (armed) return;
 				armed = true;
 				title.classList.add('is-ready');
-				// The type is fully materialised ~1.4 s after arming (letter
+				// The type is fully materialised ~1.2 s after arming (letter
 				// stagger + rule + subtitle). revealContent() reads this and
 				// holds the loader until 1.5 s after it, so the reader
 				// actually has time to read the title before the page takes
 				// over.
-				window.__mnIntroTextDone = (window.performance ? performance.now() : 0) + (reduced ? 120 : 1400);
+				window.__mnIntroTextDone = (window.performance ? performance.now() : 0) + (reduced ? 120 : 1200);
 			}
 			try {
 				if (document.fonts && document.fonts.ready) document.fonts.ready.then(armReady, armReady);

@@ -4391,6 +4391,7 @@ only the page background here leans on --mn-bg.
 	pointer-events: none;
 }
 #loader .intro-head {
+	position: relative;
 	font-family: var(--mn-font-prose);
 	font-weight: 400;
 	font-size: clamp(1.9rem, 1rem + 3.6vw, 3.3rem);
@@ -4402,15 +4403,17 @@ only the page background here leans on --mn-bg.
 	display: inline-block;
 	white-space: nowrap;
 }
+/* Letters animate opacity + transform only — both compositor-driven, so
+   the stagger stays smooth even while the main thread is busy loading
+   modules. (Per-letter filter:blur repaints stuttered under load.) */
 #loader .intro-letter {
 	display: inline-block;
 	opacity: 0;
-	filter: blur(4px);
-	transform: translateY(0.5em) scale(1.05);
-	will-change: transform, opacity, filter;
+	transform: translateY(0.45em);
+	will-change: transform, opacity;
 }
 #loader .intro-title.is-ready .intro-letter {
-	animation: introLetter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation: introLetter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 #loader .intro-rule {
 	display: block;
@@ -4420,10 +4423,26 @@ only the page background here leans on --mn-bg.
 	transform: scaleX(0);
 }
 #loader .intro-title.is-ready .intro-rule {
-	animation: introRule 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.72s forwards;
+	animation: introRule 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
 }
+/* The whole headline sharpens as one layer — a single one-time blur on
+   one element instead of 20 per-letter blur repaints. */
 #loader .intro-title.is-ready .intro-head {
-	animation: introGlow 5.5s ease-in-out 1.2s infinite;
+	animation: introFocus 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+/* The idle glow lives on a pseudo-element and pulses via opacity
+   (composited), instead of animating the headline's text-shadow —
+   which repainted the whole line every frame. */
+#loader .intro-title.is-ready .intro-head::after {
+	content: attr(data-text);
+	position: absolute;
+	inset: 0;
+	color: transparent;
+	text-shadow: 0 0 22px var(--intro-glow, transparent),
+	            0 0 48px var(--intro-glow, transparent);
+	pointer-events: none;
+	opacity: 0.35;
+	animation: introGlowPulse 5.5s ease-in-out 1.2s infinite;
 }
 #loader .intro-sub {
 	font-family: var(--mn-font-prose);
@@ -4431,11 +4450,10 @@ only the page background here leans on --mn-bg.
 	font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.3rem);
 	letter-spacing: 0.02em;
 	opacity: 0;
-	filter: blur(4px);
-	transform: translateY(0.5em);
+	transform: translateY(0.4em);
 }
 #loader .intro-title.is-ready .intro-sub {
-	animation: introSub 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.85s forwards;
+	animation: introSub 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
 }
 #loader #loader-status {
 	position: absolute;
@@ -4502,13 +4520,21 @@ only the page background here leans on --mn-bg.
 	display: none;
 }
 @keyframes introLetter {
-	to { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+	to { opacity: 1; transform: translateY(0); }
 }
 @keyframes introRule {
 	to { transform: scaleX(1); }
 }
+@keyframes introFocus {
+	from { filter: blur(3px); }
+	to   { filter: blur(0); }
+}
+@keyframes introGlowPulse {
+	0%, 100% { opacity: 0.35; }
+	50%      { opacity: 1; }
+}
 @keyframes introSub {
-	to { opacity: 1; filter: blur(0); transform: translateY(0); }
+	to { opacity: 1; transform: translateY(0); }
 }
 @keyframes introSpin {
 	to { transform: rotate(360deg); }
@@ -4516,19 +4542,16 @@ only the page background here leans on --mn-bg.
 @keyframes introCanvasIn {
 	to { opacity: 1; }
 }
-@keyframes introGlow {
-	0%, 100% { text-shadow: 0 0 16px var(--intro-glow, transparent); }
-	50%      { text-shadow: 0 0 30px var(--intro-glow, transparent); }
-}
 @media (max-width: 560px) {
 	#loader .intro-title { padding-bottom: 8vh; }
 	#loader #loader-status { bottom: 9.5vh; }
 	#loader #intro-count { bottom: 6.6vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-	#loader .intro-letter { opacity: 1; transform: none; filter: none; animation: none; }
-	#loader .intro-sub { opacity: 1; transform: none; filter: none; animation: none; }
+	#loader .intro-letter { opacity: 1; transform: none; animation: none; }
+	#loader .intro-sub { opacity: 1; transform: none; animation: none; }
 	#loader .intro-head { animation: none; }
+	#loader .intro-head::after { animation: none; }
 	#loader .intro-rule { transform: none; animation: none; }
 	#loader .intro-spinner { animation: none; }
 	#loader #intro-canvas { display: none; }
