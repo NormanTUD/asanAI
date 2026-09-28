@@ -773,6 +773,17 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
     <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="ranger7_moon.jpg" alt="A lunar surface image from NASA's Ranger 7 probe, 1964, the kind of grainy image Robert Nathan's team enhanced with the first digital image-processing pipelines" />
     <figcaption class="md">The \citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first digital image-processing pipelines, the quiet ancestor of the modern computer-vision stack \cite[Tomayko, 1988]{tomayko1988spaceflight}. Source: \citeauthor{img_ranger7_moon}, \citeyear{img_ranger7_moon}, \citealternativetitle{img_ranger7_moon}, Wikimedia Commons.</figcaption>
 </figure>
+
+<div class="image-row">
+    <figure>
+        <img src="ranger7_guericke.jpg" alt="Ranger 7 B-camera image of Guericke crater in Mare Nubium, taken 8.5 minutes before the spacecraft struck the Moon" />
+        <figcaption class="md">The \citealternativetitle{img_ranger7_guericke} (Public Domain): Ranger 7's B-camera photograph of <em>Guericke</em> crater in Mare Nubium, taken 8.5 minutes before impact — a grainy, unevenly-lit frame exactly like the ones Nathan's new pipelines had to stretch, flatten and de-noise. Source: \citeauthor{img_ranger7_guericke}, \citeyear{img_ranger7_guericke}, \citealternativetitle{img_ranger7_guericke}, Wikimedia Commons.</figcaption>
+    </figure>
+    <figure>
+        <img src="ranger7_impact.jpg" alt="Ranger 7's final, highest-resolution photograph of the Moon, taken moments before the spacecraft struck the lunar surface" />
+        <figcaption class="md">The \citealternativetitle{img_ranger7_impact} (Public Domain): Ranger 7's final photograph, the highest-resolution picture of the Moon taken up to that date, moments before the spacecraft struck the surface. Source: \citeauthor{img_ranger7_impact}, \citeyear{img_ranger7_impact}, \citealternativetitle{img_ranger7_impact}, Wikimedia Commons.</figcaption>
+    </figure>
+</div>
 </div>
 
 <div class="md">
