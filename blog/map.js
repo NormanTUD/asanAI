@@ -23,6 +23,7 @@ function bootAtlas() {
 		camera.aspect = s.w / s.h;
 		camera.updateProjectionMatrix();
 		renderer.setSize(s.w, s.h);
+		for (var bi = 0; bi < skyBillboards.length; bi++) { sizeSkyboard(skyBillboards[bi]); }
 	}
 
 	// ── constants ─────────────────────────────────────────────
@@ -36,6 +37,9 @@ function bootAtlas() {
 	var QUESTION_R = [380, 600]; // "?" world shell
 	var DEEP_WEB_R = 1300;       // cosmic-web skybox sphere (camera max d=750 stays inside)
 	var DEEP_CMB_R = 1500;       // CMB skybox sphere
+	var SKYBOARD_D = 300;        // camera-space distance of the full-screen background billboards
+	var skyBillboards = [];      // camera-attached full-screen background planes (web + big bang)
+	var webLocked = false;       // camera rotation is disabled while the cosmic-web photo is on screen
 	var STAR_R = 470;
 	var MIN_D = 1.1, MAX_D = 750;
 	var SCENE_BG = new THREE.Color(0x05070d);
@@ -370,14 +374,19 @@ function bootAtlas() {
 		if (!bhCrab || !bhParticles || !bhNebula || !bhM87) {
 			guardrail('C1', 'error', 'black-hole sequence objects incomplete (crab/particles/nebula/m87)');
 		}
-		// D1: deep-space skyboxes are BackSide spheres with a radius that keeps
-		// the camera (max d=750) inside and well inside the far plane
+		// D1: the deep-space backgrounds (cosmic-web photo + Big-Bang photo) are
+		// full-screen camera-attached billboards (planes) that always face the
+		// viewer and fill the field of view — so they read as flat, non-rotatable
+		// full-bleed photos
 		[webSky, cmbSky].forEach(function (s, i) {
 			var nm = i === 0 ? 'webSky' : 'cmbSky';
 			if (!s) { guardrail('D1', 'error', nm + ' not built'); return; }
-			var r = s.geometry && s.geometry.parameters ? s.geometry.parameters.radius : 0;
-			if (s.geometry.type !== 'SphereGeometry' || s.material.side !== THREE.BackSide || r <= MAX_D || r >= 3900) {
-				guardrail('D1', 'error', nm + ' must be a BackSide sphere with radius in (' + MAX_D + ', 3900); got ' + s.geometry.type + ' side=' + s.material.side + ' r=' + r);
+			var isPlane = s.geometry && s.geometry.type === 'PlaneGeometry';
+			var isBillboard = s.parent === camera;
+			var wellPlaced = Math.abs(s.position.z + SKYBOARD_D) < 1e-3;
+			var bgBlended = !!(s.material && s.material.transparent && s.material.depthWrite === false);
+			if (!isPlane || !isBillboard || !wellPlaced || !bgBlended || s.renderOrder !== -10) {
+				guardrail('D1', 'error', nm + ' must be a camera-attached full-screen billboard (plane at z=-' + SKYBOARD_D + ', transparent, renderOrder -10); got ' + (s.geometry && s.geometry.type) + ' parent=' + (isBillboard ? 'camera' : 'other') + ' z=' + s.position.z + ' order=' + s.renderOrder);
 			}
 		});
 	})();
@@ -918,36 +927,47 @@ function bootAtlas() {
 		};
 		img.src = url;
 	}
-	function buildCmbSky() {
-		// the WMAP map as a full 360° skybox you can look around inside —
-		// the image is 2:1 equirectangular, so it maps cleanly onto the sphere
-		cmbSky = new THREE.Mesh(
-			new THREE.SphereGeometry(DEEP_CMB_R, 48, 32),
+	// ── full-screen background billboards ───────────────────────
+	// camera-attached planes that always face the viewer and fill the field of
+	// view, so the cosmic-web slice and the Big-Bang photo read as flat
+	// full-bleed images you cannot look around inside (the cosmic web is shown
+	// the same way it appears in "The foam of meaning").
+	function sizeSkyboard(mesh) {
+		var fovRad = camera.fov * DEG;
+		var h = 2 * SKYBOARD_D * Math.tan(fovRad / 2);
+		mesh.scale.set(h * camera.aspect, h, 1);
+	}
+	function makeSkyboard(url, floor, gamma, cropFrac) {
+		var mesh = new THREE.Mesh(
+			new THREE.PlaneGeometry(1, 1),
 			new THREE.MeshBasicMaterial({
-				side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false
+				side: THREE.FrontSide, transparent: true, opacity: 0, depthWrite: false
 			})
 		);
+		mesh.position.set(0, 0, -SKYBOARD_D);
+		mesh.renderOrder = -10;
+		camera.add(mesh);
+		sizeSkyboard(mesh);
+		skyBillboards.push(mesh);
+		loadEnhancedSkybox(url, mesh, floor, gamma, cropFrac);
+		return mesh;
+	}
+
+	function buildCmbSky() {
+		// the observable universe on a logarithmic radial scale (Pablo Carlos
+		// Budassi, CC BY-SA 3.0): the Solar System at the centre, out through
+		// the Milky Way and the cosmic web, to the CMB and the Big Bang at the
+		// rim. Shown as a flat full-screen photo at the Big-Bang stop.
+		cmbSky = makeSkyboard('universe_radial_budassi.jpg', 0.05, 0.9, 1.0);
 		cmbSky.visible = false;
-		cmbSky.renderOrder = -10;
-		scene.add(cmbSky);
-		loadEnhancedSkybox('wmap_cmb.png', cmbSky, 0.10, 0.85, 0.68);
 	}
 
 	function buildWebSky() {
-		// a real large-scale-structure render ("Cosmic web texture, 10 Gly span",
-		// Unmismoobjetivo, CC BY-SA 4.0) shown as a full 360° skybox you can look
-		// around inside at the cosmic-web stage. The source is a faint web on a
-		// dark void, so it gets a strong lift+gamma so the filaments glow.
-		webSky = new THREE.Mesh(
-			new THREE.SphereGeometry(DEEP_WEB_R, 48, 32),
-			new THREE.MeshBasicMaterial({
-				side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false
-			})
-		);
+		// the same cosmic-web slice used in "The foam of meaning" (Structure of
+		// the Universe, NASA/ESA/E. Hallman) — a full-screen photo at the
+		// cosmic-web stop that you cannot look around inside.
+		webSky = makeSkyboard('cosmic_web.jpg', 0.04, 0.9, 1.0);
 		webSky.visible = false;
-		webSky.renderOrder = -10;
-		scene.add(webSky);
-		loadEnhancedSkybox('cosmic_web_texture.png', webSky, 0.10, 0.55, 1.0);
 	}
 
 	function makeQuestionTexture() {
@@ -1362,7 +1382,7 @@ function bootAtlas() {
 		var galO = THREE.MathUtils.smoothstep(d, 250, 300) * (1 - THREE.MathUtils.smoothstep(d, 380, 450));
 		galaxyGroup.children.forEach(function (sp) { sp.material.opacity = galO * (0.5 + (sp.userData.texIdx % 3) * 0.15); sp.material.rotation = sp.userData.rot || 0; });
 		// black hole sequence: visible between solar system and galaxies
-		var bhO = THREE.MathUtils.smoothstep(d, 195, 215) * (1 - THREE.MathUtils.smoothstep(d, 270, 290));
+		var bhO = THREE.MathUtils.smoothstep(d, 195, 215) * (1 - THREE.MathUtils.smoothstep(d, 260, 310));
 		bhGroup.visible = bhO > 0.01;
 		// the cosmic web sits between the galaxies and the CMB photo
 		var filO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 560));
@@ -1371,6 +1391,7 @@ function bootAtlas() {
 		// the real cosmic-web skybox appears at the web stage and is fully
 		// faded before the CMB skybox peaks — so nothing "shows through"
 		var webO = THREE.MathUtils.smoothstep(d, 400, 450) * (1 - THREE.MathUtils.smoothstep(d, 500, 545));
+		webLocked = webO > 0.5;
 		if (webSky) { webSky.material.opacity = webO; webSky.visible = webO > 0.01; }
 		// the CMB skybox appears only at the very end, and gives way to
 		// the question world
@@ -1455,7 +1476,7 @@ function bootAtlas() {
 			dragging = false; canvas.classList.remove('dragging');
 		});
 		window.addEventListener('mousemove', function (e) {
-			if (dragging) {
+			if (dragging && !webLocked) {
 				var dx = e.clientX - lastX, dy = e.clientY - lastY;
 				moved += Math.abs(dx) + Math.abs(dy);
 				state.tTheta += dx * 0.005;
@@ -1501,7 +1522,7 @@ function bootAtlas() {
 			}
 		}, { passive: true });
 		canvas.addEventListener('touchmove', function (e) {
-			if (e.touches.length === 1 && tId !== null) {
+			if (e.touches.length === 1 && tId !== null && !webLocked) {
 				var t = e.touches[0];
 				var dx = t.clientX - lastX, dy = t.clientY - lastY;
 				moved += Math.abs(dx) + Math.abs(dy);
@@ -1898,7 +1919,7 @@ function bootAtlas() {
 		{ d: 240, era: 'A star is born — and dies', text: 'A cloud of hydrogen and helium collapses under its own gravity. Conservation of angular momentum flattens it into a spinning accretion disk — gas spirals inward, heats to millions of degrees, and ignites fusion. For millions of years the star burns in equilibrium. When the fuel runs out, the iron core collapses in a quarter-second. The outer layers rebound in a supernova — for a brief moment, brighter than the entire galaxy. What remains is a glowing shell of hot debris, a supernova remnant, expanding outward into the dark for thousands of years — a ghost of the star that was.' },
 		{ d: 300, era: 'The galaxies', text: 'Each galaxy is an island of hundreds of billions of stars — the Milky Way alone holds 100–400 billion. They form from vast clouds of hydrogen and helium that collapse under gravity after the Big Bang, with the first stars igniting in dense cores and pulling in more gas until a rotating disk settles. Dark matter provides the gravitational scaffolding that holds them together. Every pixel of light you have ever seen on a screen was forged inside one of these stellar furnaces.' },
 		{ d: 450, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
-		{ d: 550, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
+		{ d: 550, era: 'The Big Bang', text: 'The whole observable universe, compressed onto a logarithmic radial scale (an artist’s rendering): the Solar System at the centre, then the planets, the Kuiper belt and the Oort cloud, the nearest stars, the Milky Way, the neighbouring galaxies and the cosmic web — until, at the very rim, the cosmic microwave background: the oldest light in the universe, the glow left 380,000 years after the beginning, with the Big Bang beyond it.' },
 		{ d: 650, era: 'Why is there anything at all?', text: 'Why is there something rather than nothing? Jocax’s answer: nothing has no rules — so nothing forbids something. An absolute void is inherently unstable and dissolves. What could prevent something from existing? Nothing, because nothingness has no causal power. And from that something: stars forge the silicon in your GPU, galaxies provide the atoms, the cosmic web provides the structure, and Earth provides the water, the oxygen, and the curiosity. Every layer of this journey — from the Big Bang to the first transistor to the first perceptron — was a necessary condition for you to be reading this. AI is not separate from cosmology. It is cosmology, sufficiently evolved, beginning to ask questions back.' }
 	];
 	var TOUR_STEP_MS = 18000;
@@ -2179,16 +2200,20 @@ function bootAtlas() {
 			bhM87.visible = false;
 			activeLabel = '6. ' + BH_PHASES[5].label;
 		} else {
-			// the story ends on the Crab Nebula — the supernova remnant
-			// lingers; no black hole
+			// the story ends on the Crab Nebula — as we pull back toward the
+			// galaxies it slowly recedes (zooms out) and fades away
+			var recede = THREE.MathUtils.smoothstep(state.d, 248, 295);
+			var crabFade = 1 - recede;
+			var crabScale = 80 * (1 - recede * 0.72);
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = 0;
 			bhNebula.material.opacity = 0;
 			bhParticles.visible = false;
 			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
 			bhM87.visible = false;
-			bhCrab.visible = true;
-			bhCrab.material.opacity = 0.85;
+			bhCrab.visible = crabFade > 0.01;
+			bhCrab.material.opacity = 0.85 * crabFade;
+			bhCrab.scale.set(crabScale, crabScale, 1);
 			activeLabel = '6. ' + BH_PHASES[5].label;
 		}
 		if (activeLabel && activeLabel !== bhGroup.userData.lastLabel) {

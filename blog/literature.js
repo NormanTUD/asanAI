@@ -8431,6 +8431,18 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Cosmic web texture (10 Gly span)"
 	},
+	/* The Big-Bang / cosmic-scale photo in the Atlas (map.php) and in
+	 * untold_history.php: an artist's logarithmic radial view of the observable
+	 * universe, Solar System at the centre out to the CMB and the Big Bang at
+	 * the rim (local file universe_radial_budassi.jpg). */
+	"budassi_universe_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Logarhitmic_radial_photo_of_the_universe_by_pablo_budassi_9MFK.jpg",
+		title: "Logarithmic radial photo of the universe — an artist's log-scale view from the Solar System at the centre out through the Milky Way and the cosmic web to the CMB and the Big Bang at the rim",
+		author: "Pablo Carlos Budassi",
+		year: 2012,
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Logarithmic radial photo of the universe (Budassi)"
+	},
 	/* Figure 1 from "Attention Is All You Need" (Vaswani et al. 2017) — the
 	 * canonical transformer encoder–decoder diagram — shown in the Atlas
 	 * "transformer" stop of the Cosmic journey (local file

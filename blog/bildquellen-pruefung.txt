@@ -499,3 +499,19 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
     Genutzt in: untold_history.php § From the Moon to the GPU (Space Image Processing)
     Status: OK - Public Domain, Autor + Commons-Link im Caption,
              Quelle via \cite{img_ranger7_guericke} zitiert.
+
+49. budassi_universe
+    URL: https://commons.wikimedia.org/wiki/File:Logarhitmic_radial_photo_of_the_universe_by_pablo_budassi_9MFK.jpg (geprüft HTTP 200)
+    Lizenz: CC BY-SA 3.0 (via Commons API, Feld LicenseShortName)
+    Autor: Pablo Carlos Budassi (Own work)
+    Hinweis: Künstlerische Darstellung des observable Universums in logarithmischem
+             radialen Maßstab: Sonnenzentrum (innere/äußere Planeten, Kuipergürtel,
+             Oort-Wolke), dann Alpha Centauri, Perseus-Arm, Milchstraße, Andromeda,
+             nahe Galaxien, Cosmic Web, am Rand CMB + Big Bang. Commons-Upload-Datum
+             2012-12-21 (Jahr im literature.js-Eintrag budassi_universe_image).
+             Original 4288x4288; hier 2048x2048.
+    Lokal: universe_radial_budassi.jpg (2048x2048, JPG)
+    Genutzt in: map.php § The Atlas (Big-Bang-Stop der Cosmic journey) und
+              untold_history.php
+    Status: OK - CC BY-SA 3.0, Autor + Commons-Link im Credit,
+             Quelle via \cite{budassi_universe_image} zitiert.
