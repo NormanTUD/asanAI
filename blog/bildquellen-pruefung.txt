@@ -474,3 +474,28 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
     Genutzt in: map.php § The Atlas (Skybox im "Cosmic web"-Zoom der Cosmic journey)
     Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
              Quelle via \cite{cosmic_web_texture_image} zitiert.
+
+47. ranger7_impact
+    URL: https://commons.wikimedia.org/wiki/File:Photograph_from_Ranger_VII_Spacecraft_Just_before_Impact_on_the_Moon_-_DPLA_-_b9de03ac9d95d193a4343e9c06b84cc8.jpg (geprüft HTTP 200)
+    Lizenz: Public Domain (via Commons API, Feld LicenseShortName)
+    Autor: U.S. Senate, Committee on Aeronautical and Space Sciences (via Digital
+             Public Library of America)
+    Hinweis: Ranger-7-Fotografie der Mondoberfläche kurz vor dem Aufprall
+             (31. Juli 1964) - das höchste-aufgelöste Mondbild seiner Zeit.
+             Original 4052x3274; hier 1920x1551.
+    Lokal: ranger7_impact.jpg (1920x1551, JPG)
+    Genutzt in: untold_history.php § From the Moon to the GPU (Space Image Processing)
+    Status: OK - Public Domain, Autor + Commons-Link im Caption,
+             Quelle via \cite{img_ranger7_impact} zitiert.
+
+48. ranger7_guericke
+    URL: https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg (geprüft HTTP 200)
+    Lizenz: Public Domain (via Commons API, Feld LicenseShortName)
+    Autor: NASA / JPL-Caltech
+    Hinweis: Ranger-7-B-Camera-Aufnahme des Guericke-Kraters (11.5 S, 14.1 W,
+             63 km) aus 1335 km Distanz, 8,5 min vor dem Aufprall (31. Juli 1964);
+             dunkler, flacher Boden von Mare Nubium. Schwarz-Weiß (Original).
+    Lokal: ranger7_guericke.jpg (685x720, JPG, s/w)
+    Genutzt in: untold_history.php § From the Moon to the GPU (Space Image Processing)
+    Status: OK - Public Domain, Autor + Commons-Link im Caption,
+             Quelle via \cite{img_ranger7_guericke} zitiert.
