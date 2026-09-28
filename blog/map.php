@@ -353,7 +353,7 @@ html:not(.dark) #atlas-stage {
 </div>
 
 <div class="md" style="margin-top:14px">
-*Photographs in the deep-space view:* the cosmic foam — Volker Springel / Max-Planck-Institute for Astrophysics, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg)), from \cite[the MPA's movies of large-scale structure]{cosmic_web_foam_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
+*Photographs in the deep-space view:* the cosmic-web skybox — "Cosmic web texture (10 Gly span)", Unmismoobjetivo, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Cosmic_web_texture_(10_Gly_span).png)), \cite{cosmic_web_texture_image}; the CMB sky — NASA/WMAP, public domain ([file](https://commons.wikimedia.org/wiki/File:WMAP_2010.png)).
 
 *The transformer figure in the journey:* Figure 1 (the encoder–decoder architecture) from \cite[Vaswani et al., 2017]{transformer_attention_figure} — Ashish Vaswani and colleagues, Google, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png)).
 

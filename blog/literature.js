@@ -8419,6 +8419,18 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
 	},
+	/* The cosmic-web skybox texture in the Atlas (map.php), used at the
+	 * cosmic-web stage of the Cosmic journey: "Cosmic web texture (10 Gly
+	 * span)" — filaments of dark matter and galaxies across ten
+	 * gigalight-years (local file cosmic_web_texture.png). */
+	"cosmic_web_texture_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Cosmic_web_texture_(10_Gly_span).png",
+		title: "Cosmic web texture (10 Gly span) — filaments of dark matter and galaxies with dense nodes across ten gigalight-years",
+		author: "Unmismoobjetivo",
+		year: 2025,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Cosmic web texture (10 Gly span)"
+	},
 	/* Figure 1 from "Attention Is All You Need" (Vaswani et al. 2017) — the
 	 * canonical transformer encoder–decoder diagram — shown in the Atlas
 	 * "transformer" stop of the Cosmic journey (local file

@@ -934,8 +934,10 @@ function bootAtlas() {
 	}
 
 	function buildWebSky() {
-		// a real large-scale-structure render (Springel / MPA Garching) shown
-		// as a full 360° skybox you can look around inside at the cosmic-web stage
+		// a real large-scale-structure render ("Cosmic web texture, 10 Gly span",
+		// Unmismoobjetivo, CC BY-SA 4.0) shown as a full 360° skybox you can look
+		// around inside at the cosmic-web stage. The source is a faint web on a
+		// dark void, so it gets a strong lift+gamma so the filaments glow.
 		webSky = new THREE.Mesh(
 			new THREE.SphereGeometry(DEEP_WEB_R, 48, 32),
 			new THREE.MeshBasicMaterial({
@@ -945,7 +947,7 @@ function bootAtlas() {
 		webSky.visible = false;
 		webSky.renderOrder = -10;
 		scene.add(webSky);
-		loadEnhancedSkybox('cosmic_web_foam.jpg', webSky, 0.06, 0.68, 0.62);
+		loadEnhancedSkybox('cosmic_web_texture.png', webSky, 0.10, 0.55, 1.0);
 	}
 
 	function makeQuestionTexture() {
@@ -1893,7 +1895,7 @@ function bootAtlas() {
 		{ d: 4.8, face: 'moon', era: 'The Moon', text: 'Ranger 7’s 1964 lunar photos became the first images ever processed by a computer — an untold chapter of AI’s origins.' },
 		{ d: 50, face: 'mars', img: 'perseverance_selfie.gif', era: 'Mars · 2021', text: 'In 1958 the press reported Rosenblatt’s Perceptron might one day be “fired to the planets as mechanical space explorers.” Six decades later, Perseverance drives itself across the Martian surface — choosing its own targets, steering around its own obstacles. The prediction, quietly realized.' },
 		{ d: 180, phi: 0.1, era: 'The solar system', text: 'Every atom of silicon in a GPU was forged in a star. Technology, ultimately, is astrophysics.' },
-		{ d: 240, era: 'A star is born — and dies', text: 'A cloud of hydrogen and helium collapses under its own gravity. Conservation of angular momentum flattens it into a spinning accretion disk — gas spirals inward, heats to millions of degrees, and ignites fusion. For millions of years the star burns in equilibrium. When the fuel runs out, the iron core collapses in a quarter-second. The outer layers rebound in a supernova — for a brief moment, brighter than the entire galaxy. If the remnant exceeds three solar masses, nothing halts the collapse. Space itself curves into an event horizon: a black hole, ringed by the last light that will ever escape.' },
+		{ d: 240, era: 'A star is born — and dies', text: 'A cloud of hydrogen and helium collapses under its own gravity. Conservation of angular momentum flattens it into a spinning accretion disk — gas spirals inward, heats to millions of degrees, and ignites fusion. For millions of years the star burns in equilibrium. When the fuel runs out, the iron core collapses in a quarter-second. The outer layers rebound in a supernova — for a brief moment, brighter than the entire galaxy. What remains is a glowing shell of hot debris, a supernova remnant, expanding outward into the dark for thousands of years — a ghost of the star that was.' },
 		{ d: 300, era: 'The galaxies', text: 'Each galaxy is an island of hundreds of billions of stars — the Milky Way alone holds 100–400 billion. They form from vast clouds of hydrogen and helium that collapse under gravity after the Big Bang, with the first stars igniting in dense cores and pulling in more gas until a rotating disk settles. Dark matter provides the gravitational scaffolding that holds them together. Every pixel of light you have ever seen on a screen was forged inside one of these stellar furnaces.' },
 		{ d: 450, era: 'The cosmic web', text: 'Gravity sculpted the void into a hierarchy: stars form galaxies, galaxies form clusters, clusters form superclusters, superclusters form walls and sheets — all strung along filaments that meet at giant nodes, with vast empty voids between. These are the largest structures that exist. And the same foam-like geometry may shape the space of meaning itself — see <a href="foam_of_meaning.php">The foam of meaning</a>.' },
 		{ d: 550, era: 'The Big Bang', text: 'The cosmic microwave background, here as a flat photograph: the oldest light in the universe, 380,000 years after the beginning.' },
@@ -2176,54 +2178,18 @@ function bootAtlas() {
 			bhCrab.material.opacity = crabO * 0.85;
 			bhM87.visible = false;
 			activeLabel = '6. ' + BH_PHASES[5].label;
-		} else if (t < 26) {
-			// Phase 7: black hole with accretion disk
-			var bhIn = Math.min(1, (t - 16.5) / 3);
-			bhStar.material.opacity = 0;
-			bhStarGlow.material.opacity = Math.max(0, 0.5 - (t - 16.5) * 0.5);
-			bhNebula.material.opacity = Math.max(0, 0.3 - (t - 16.5) * 0.2);
-			// fade the Crab out as the black hole grows so they never overlap
-			bhCrab.visible = bhIn < 0.99;
-			bhCrab.material.opacity = 0.85 * (1 - bhIn);
-			bhHole.visible = true;
-			bhHole.scale.setScalar(bhIn);
-			bhPhotonRing.visible = true;
-			bhPhotonRing.material.opacity = bhIn * 0.9;
-			bhPhotonRing.rotation.y += 0.03;
-			bhDisk.visible = true;
-			bhDisk.material.opacity = bhIn * 0.7;
-			bhDisk.rotation.z += 0.005;
-			bhParticles.visible = true;
-			bhParticles.material.opacity = bhIn * 0.6;
-			bhParticles.material.color.setHex(0xff6622);
-			bhParticles.material.size = 0.8;
-			var ppos = bhGeo.attributes.position.array;
-			for (i = 0; i < bhVel.length; i++) {
-				v = bhVel[i];
-				var a7 = v.angle + t * v.speed * 0.5;
-				ppos[i*3] = Math.cos(a7) * v.radius;
-				ppos[i*3+1] = (Math.random() - 0.5) * 0.5;
-				ppos[i*3+2] = Math.sin(a7) * v.radius;
-			}
-			bhGeo.attributes.position.needsUpdate = true;
-			bhM87.visible = false;
-			activeLabel = '7. ' + BH_PHASES[6].label;
 		} else {
-			// Phase 8: crossfade to real M87 black hole photo (10s)
-			var m87T = THREE.MathUtils.smoothstep(Math.min(1, (t - 26) / 10), 0, 1);
+			// the story ends on the Crab Nebula — the supernova remnant
+			// lingers; no black hole
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = 0;
 			bhNebula.material.opacity = 0;
-			bhCrab.visible = false;
-			bhCrab.material.opacity = 0;
-			bhHole.visible = true;
-			bhHole.scale.setScalar(1);
-			bhPhotonRing.material.opacity = Math.max(0, 0.9 - m87T);
-			bhDisk.material.opacity = Math.max(0, 0.7 - m87T);
-			bhParticles.material.opacity = Math.max(0, 0.6 - m87T);
-			bhM87.visible = m87T > 0.01;
-			bhM87.material.opacity = m87T;
-			activeLabel = '8. ' + BH_PHASES[6].label + ' — EHT image of M87*';
+			bhParticles.visible = false;
+			bhHole.visible = false; bhPhotonRing.visible = false; bhDisk.visible = false;
+			bhM87.visible = false;
+			bhCrab.visible = true;
+			bhCrab.material.opacity = 0.85;
+			activeLabel = '6. ' + BH_PHASES[5].label;
 		}
 		if (activeLabel && activeLabel !== bhGroup.userData.lastLabel) {
 			bhGroup.userData.lastLabel = activeLabel;

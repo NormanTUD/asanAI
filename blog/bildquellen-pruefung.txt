@@ -458,3 +458,19 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
     Lokal: merlin_enchanteur.jpg (642x700, Original)
     Genutzt in: untold_history.php § Alchemy (Einleitung / "failed magic")
     Status: OK - Public Domain, Namensnennung im Caption via literature.js
+
+46. cosmic_web_texture
+    URL: https://commons.wikimedia.org/wiki/File:Cosmic_web_texture_(10_Gly_span).png (geprüft HTTP 200)
+    Lizenz: CC BY-SA 4.0 (via Commons API, Feld LicenseShortName)
+    Autor: Unmismoobjetivo
+    Hinweis: "Cosmic web texture (10 Gly span)" - Visualisierung der großräumigen
+             Struktur (Filamente aus Dunkler Materie + Galaxien über 10
+             Gigalightjahre). Commons-Upload-Datum 2025-08-09 (Jahr im
+             literature.js-Eintrag cosmic_web_texture_image). Original 15000x15000
+             (quadratisch); hier auf den zentralen 2:1-Streifen 2048x1024
+             zugeschnitten, weil die Kugel-Skybox eine quadratische Textur sonst
+             2:1 strecken würde.
+    Lokal: cosmic_web_texture.png (2048x1024, PNG)
+    Genutzt in: map.php § The Atlas (Skybox im "Cosmic web"-Zoom der Cosmic journey)
+    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
+             Quelle via \cite{cosmic_web_texture_image} zitiert.
