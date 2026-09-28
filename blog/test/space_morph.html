@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Layer als Raumkrümmung</title>
+<style>
+  :root{
+    --bg:#0b0d12; --ink:#e8ecf4; --dim:#7b8496;
+    --inner:#ff6b8a; --outer:#5ad2ff; --plane:#ffd166; --grid:#2f3a52;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0}
+  canvas{display:block;width:100%;height:100%}
+  .panel{position:fixed;left:44px;top:44px;max-width:430px;pointer-events:none}
+  .step{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:30px;font-weight:600;margin:10px 0 12px;line-height:1.18}
+  p{font-size:16px;line-height:1.6;color:#b9c2d4;max-width:390px}
+  .formula{margin-top:20px;padding:13px 17px;border-left:2px solid var(--plane);
+    background:rgba(255,209,102,.05);font-family:"Cambria Math",Georgia,serif;
+    font-size:18px;color:#ffe9b0}
+  .formula small{display:block;font-family:inherit;font-size:13px;
+    color:#8e8straggler;margin-top:5px}
+  #bar{position:fixed;left:44px;bottom:38px;display:flex;gap:7px}
+  .dot{width:26px;height:3px;background:#2a3040;transition:background .35s}
+  .dot.on{background:var(--plane)}
+  #hint{position:fixed;right:44px;bottom:36px;font-size:12px;color:#4d5568;
+    letter-spacing:.05em}
+  .fade{transition:opacity .3s}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+
+<div class="panel">
+  <div class="step" id="sNum"></div>
+  <h1 id="sTitle"></h1>
+  <p id="sBody"></p>
+  <div class="formula" id="sForm"></div>
+</div>
+<div id="bar"></div>
+<div id="hint">← →  Schritt &nbsp;·&nbsp; Drag: rotieren &nbsp;·&nbsp; R: Reset</div>
+
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,DPR;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+/* ---------- Daten: Egg-Shape ---------- */
+let rng=42;const rnd=()=>(rng=(rng*1103515245+12345)&0x7fffffff)/0x7fffffff;
+const PTS=[];
+for(let i=0;i<150;i++){const a=rnd()*6.2832,r=Math.sqrt(rnd())*0.46;
+  PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:0});}
+for(let i=0;i<230;i++){const a=rnd()*6.2832,r=0.72+Math.sqrt(rnd())*0.30;
+  PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:1});}
+
+/* ---------- Vorberechnete Transformation ----------
+   Trainiertes 2->3 mit tanh, dann linearer Output.
+   Ergebnis ist geometrisch ein Paraboloid-artiger Lift.     */
+const LIFT=(x,y,t)=>{
+  const r2=x*x+y*y;
+  const z=(r2*1.85-0.62);
+  return {x:x*(1-0.14*t*r2), y:y*(1-0.14*t*r2), z:z*t};
+};
+const PLANE_Z=0.34;   // Trennebene im gelifteten Raum
+
+/* ---------- 3D-Kamera ---------- */
+let camA=0, camB=0, dragA=0, dragB=0;
+const SC=()=>Math.min(W,H)*0.31;
+function proj(p){
+  const A=camA+dragA, B=camB+dragB;
+  let x=p.x*Math.cos(A)-p.y*Math.sin(A);
+  let y=p.x*Math.sin(A)+p.y*Math.cos(A);
+  let z=p.z;
+  const y2=y*Math.cos(B)-z*Math.sin(B);
+  const z2=y*Math.sin(B)+z*Math.cos(B);
+  const d=4.2, k=d/(d+z2*0.9);
+  return {X:W/2+x*SC()*k+140, Y:H/2-y2*SC()*k, d:z2, k:k};
+}
+
+/* ---------- Szenen ---------- */
+const STEPS=[
+ {n:"Schritt 1 / 7",t:"Zwei Klassen, keine Gerade",
+  b:"Innen eine Punktwolke, außen ein Ring. Kein einziger gerader Schnitt trennt Rot von Blau — egal wie man ihn legt.",
+  f:"X ⊂ ℝ²,&nbsp; y ∈ {0,1}<small>nicht linear separierbar</small>",
+  lift:0,cam:[0,0],plane:0,line:0,bnd:0,fail:0},
+
+ {n:"Schritt 2 / 7",t:"Jeder Versuch scheitert",
+  b:"Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
+  f:"w₁x + w₂y + b = 0<small>eine Gerade, immer</small>",
+  lift:0,cam:[0,0],plane:0,line:0,bnd:0,fail:1},
+
+ {n:"Schritt 3 / 7",t:"Eine Dimension mehr Platz",
+  b:"Wir kippen die Szene. Noch ist alles flach bei z = 0 — aber jetzt ist Raum nach oben da.",
+  f:"ℝ² ↪ ℝ³<small>Einbettung, noch ohne Krümmung</small>",
+  lift:0,cam:[0.55,0.95],plane:0,line:0,bnd:0,fail:0},
+
+ {n:"Schritt 4 / 7",t:"Der Layer krümmt den Raum",
+  b:"Das Netz hebt die Ebene zu einer Schale. Das Gitter fließt mit — es zerreißt nicht, es biegt sich. Innere Punkte sinken, äußere steigen.",
+  f:"φ(x,y) = (x, y, x² + y²)<small>ein Layer = eine Verbiegung</small>",
+  lift:1,cam:[0.55,0.95],plane:0,line:0,bnd:0,fail:0},
+
+ {n:"Schritt 5 / 7",t:"Jetzt passt eine Ebene dazwischen",
+  b:"Was in 2D unmöglich war, ist hier trivial: eine flache Ebene schiebt sich sauber zwischen die beiden Klassen.",
+  f:"wᵀφ(x) + b = 0<small>lineare Trennung in ℝ³</small>",
+  lift:1,cam:[0.55,0.95],plane:1,line:0,bnd:0,fail:0},
+
+ {n:"Schritt 6 / 7",t:"Die Kamera fährt in die Kante",
+  b:"Wir schauen entlang der Ebene. Sie wird zur Linie — weil der Output-Layer linear ist, ist „hinschauen“ und „rechnen“ hier dasselbe.",
+  f:"Blickrichtung ⟂ w<small>Ebene → Kante → Linie</small>",
+  lift:1,cam:[0.55,0.0],plane:1,line:1,bnd:0,fail:0},
+
+ {n:"Schritt 7 / 7",t:"Zurück in 2D: ein Kreis",
+  b:"Die Krümmung klappt zusammen. Die gerade Ebene von oben wird unten zur Kurve. Die Gerade im gekrümmten Raum ist der Kreis im flachen.",
+  f:"x² + y² = c<small>dieselbe Grenze, andere Sicht</small>",
+  lift:0,cam:[0,0],plane:0,line:0,bnd:1,fail:0}
+];
+
+/* ---------- Interpolation ---------- */
+let cur=0,prev=0,t0=performance.now(),DUR=900;
+const ease=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const lerp=(a,b,u)=>a+(b-a)*u;
+
+function bar(){const d=document.getElementById('bar');d.innerHTML='';
+  STEPS.forEach((_,i)=>{const e=document.createElement('div');
+    e.className='dot'+(i<=cur?' on':'');d.appendChild(e);});}
+function text(){const s=STEPS[cur];
+  sNum.textContent=s.n;sTitle.textContent=s.t;sBody.textContent=s.b;
+  sForm.innerHTML=s.f;bar();}
+
+function go(d){const n=Math.max(0,Math.min(STEPS.length-1,cur+d));
+  if(n===cur)return;prev=cur;cur=n;t0=performance.now();text();}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+  if(e.key==='r'||e.key==='R'){dragA=dragB=0;}
+});
+let md=false,mx=0,my=0;
+cv.addEventListener('mousedown',e=>{md=true;mx=e.clientX;my=e.clientY;});
+addEventListener('mouseup',()=>md=false);
+addEventListener('mousemove',e=>{if(!md)return;
+  dragA+=(e.clientX-mx)*0.006;dragB+=(e.clientY-my)*0.005;
+  mx=e.clientX;my=e.clientY;});
+
+/* ---------- Zeichnen ---------- */
+const N=15,EXT=1.25;
+function gridLines(L){
+  const out=[];
+  for(let i=0;i<=N;i++){
+    const v=-EXT+2*EXT*i/N;const a=[],b=[];
+    for(let j=0;j<=N*2;j++){const u=-EXT+2*EXT*j/(N*2);
+      a.push(LIFT(u,v,L));b.push(LIFT(v,u,L));}
+    out.push(a,b);}
+  return out;
+}
+
+function draw(now){
+  const u=ease(Math.min(1,(now-t0)/DUR));
+  const A=STEPS[prev],B=STEPS[cur];
+  const L=lerp(A.lift,B.lift,u);
+  camA=lerp(A.cam[0],B.cam[0],u);
+  camB=lerp(A.cam[1],B.cam[1],u);
+  const pl=lerp(A.plane,B.plane,u), ln=lerp(A.line,B.line,u),
+        bd=lerp(A.bnd,B.bnd,u), fl=lerp(A.fail,B.fail,u);
+
+  ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
+
+  /* Decision Boundary in 2D */
+  if(bd>0.01){
+    ctx.globalAlpha=bd*0.13;ctx.fillStyle='#ff6b8a';
+    ctx.beginPath();const p0=proj({x:0,y:0,z:0});
+    ctx.arc(p0.X,p0.Y,SC()*0.60,0,6.2832);ctx.fill();
+    ctx.globalAlpha=bd;ctx.strokeStyle='#ffd166';ctx.lineWidth=2.4;
+    ctx.setLineDash([]);ctx.beginPath();
+    ctx.arc(p0.X,p0.Y,SC()*0.60,0,6.2832);ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  /* Gitter */
+  ctx.lineWidth=1;
+  gridLines(L).forEach(seg=>{
+    ctx.beginPath();
+    seg.forEach((p,i)=>{const q=proj(p);i?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);});
+    ctx.strokeStyle='rgba(84,102,140,'+(0.20+0.30*L)+')';ctx.stroke();
+  });
+
+  /* gescheiterte Geraden */
+  if(fl>0.01){
+    ctx.globalAlpha=fl*0.75;ctx.lineWidth=1.6;ctx.strokeStyle='#8892a8';
+    ctx.setLineDash([5,5]);
+    for(let k=0;k<5;k++){const a=k*0.63+0.2;
+      const p=proj({x:Math.cos(a)*-1.3,y:Math.sin(a)*-1.3,z:0});
+      const q=proj({x:Math.cos(a)*1.3,y:Math.sin(a)*1.3,z:0});
+      ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();}
+    ctx.setLineDash([]);ctx.globalAlpha=1;
+  }
+
+  /* Punkte + Trennebene, tiefensortiert */
+  const items=[];
+  PTS.forEach(p=>{const q=LIFT(p.x,p.y,L);const s=proj(q);
+    items.push({d:s.d,type:'pt',s:s,c:p.c});});
+
+  if(pl>0.01){
+    const E=1.15,st=[];
+    for(let i=0;i<=8;i++)for(let j=0;j<=8;j++){
+      const x=-E+2*E*i/8,y=-E+2*E*j/8;
+      st.push(proj({x:x,y:y,z:PLANE_Z}));}
+    items.push({d:PLANE_Z-0.001,type:'plane',grid:st,a:pl});
+  }
+  items.sort((a,b)=>a.d-b.d);
+
+  items.forEach(it=>{
+    if(it.type==='plane'){
+      const g=it.grid,A_=g[0],B_=g[8],C_=g[80],D_=g[72];
+      ctx.globalAlpha=it.a*(0.16+0.30*ln);
+      ctx.fillStyle='#ffd166';ctx.beginPath();
+      ctx.moveTo(A_.X,A_.Y);ctx.lineTo(B_.X,B_.Y);
+      ctx.lineTo(C_.X,C_.Y);ctx.lineTo(D_.X,D_.Y);ctx.closePath();ctx.fill();
+      ctx.globalAlpha=it.a*0.9;ctx.strokeStyle='#ffd166';
+      ctx.lineWidth=1.3+1.6*ln;ctx.stroke();ctx.globalAlpha=1;
+    } else {
+      const r=(2.7+0.7*it.s.k)*it.s.k;
+      ctx.beginPath();ctx.arc(it.s.X,it.s.Y,r,0,6.2832);
+      ctx.fillStyle=it.c?'#5ad2ff':'#ff6b8a';
+      ctx.globalAlpha=0.55+0.45*it.s.k;ctx.fill();ctx.globalAlpha=1;
+    }
+  });
+
+  /* Achsen */
+  if(L>0.02||camB>0.05){
+    ctx.globalAlpha=Math.min(1,L*2+camB);
+    ctx.strokeStyle='#495madness';ctx.lineWidth=1.2;
+    const o=proj({x:0,y:0,z:0}),z=proj({x:0,y:0,z:1.25});
+    ctx.strokeStyle='#46506b';
+    ctx.beginPath();ctx.moveTo(o.X,o.Y);ctx.lineTo(z.X,z.Y);ctx.stroke();
+    ctx.fillStyle='#6b7characters';ctx.fillStyle='#6b7690';
+    ctx.font='13px Georgia';ctx.fillText('z',z.X+8,z.Y);
+    ctx.globalAlpha=1;
+  }
+  requestAnimationFrame(draw);
+}
+text();requestAnimationFrame(draw);
+</script>
+</body>
+</html>
