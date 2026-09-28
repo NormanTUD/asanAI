@@ -86,6 +86,7 @@ function bootAtlas() {
 		event: 'Events', artifact: 'Artifacts', author: 'Cited authors'
 	};
 	var THREAD_COLOR = { influence: '#8ab4ff', journey: '#f472b6', signal: '#34d399' };
+	var THREAD_WHITE = new THREE.Color(0xffffff);
 	var THREAD_LABEL = { influence: 'Influence', journey: 'Journeys', signal: 'Signals' };
 
 	// ── state ─────────────────────────────────────────────────
@@ -873,6 +874,50 @@ function bootAtlas() {
 		scene.add(filamentGroup);
 	}
 
+	// load a skybox image, crop to the bright region's inscribed rect (these
+	// renders are ellipses/diamonds on a black field — the black corners would
+	// become "holes" on the sphere), scale to fill the frame, then lift the
+	// remaining blacks to a floor + gamma so the result reads as one full field.
+	function loadEnhancedSkybox(url, mesh, floor, gamma, cropFrac) {
+		var img = new Image();
+		img.onload = function () {
+			var W = img.naturalWidth || img.width, H = img.naturalHeight || img.height;
+			var src = document.createElement('canvas'); src.width = W; src.height = H;
+			var sctx = src.getContext('2d'); sctx.drawImage(img, 0, 0, W, H);
+			var id = sctx.getImageData(0, 0, W, H), d = id.data;
+			var minx = W, miny = H, maxx = 0, maxy = 0;
+			for (var y = 0; y < H; y += 2) {
+				for (var x = 0; x < W; x += 2) {
+					var i = (y * W + x) * 4;
+					if (d[i] + d[i + 1] + d[i + 2] > 48) {
+						if (x < minx) minx = x; if (x > maxx) maxx = x;
+						if (y < miny) miny = y; if (y > maxy) maxy = y;
+					}
+				}
+			}
+			if (maxx <= minx || maxy <= miny) { minx = 0; miny = 0; maxx = W; maxy = H; }
+			var cw = (maxx - minx + 1) * cropFrac, ch = (maxy - miny + 1) * cropFrac;
+			var cx = (minx + maxx) / 2, cy = (miny + maxy) / 2;
+			var out = document.createElement('canvas'); out.width = W; out.height = H;
+			var octx = out.getContext('2d');
+			octx.drawImage(src, cx - cw / 2, cy - ch / 2, cw, ch, 0, 0, W, H);
+			var od = octx.getImageData(0, 0, W, H), od2 = od.data, fl = Math.round(floor * 255);
+			for (var i2 = 0; i2 < od2.length; i2 += 4) {
+				for (var k = 0; k < 3; k++) {
+					od2[i2 + k] = fl + (255 - fl) * Math.pow(od2[i2 + k] / 255, gamma);
+				}
+			}
+			octx.putImageData(od, 0, 0);
+			var tex = new THREE.CanvasTexture(out);
+			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
+			mesh.material.map = tex;
+			mesh.material.needsUpdate = true;
+		};
+		img.onerror = function (err) {
+			console.error('[atlas] GUARDRAIL 5: ' + url + ' failed to load:', err);
+		};
+		img.src = url;
+	}
 	function buildCmbSky() {
 		// the WMAP map as a full 360° skybox you can look around inside —
 		// the image is 2:1 equirectangular, so it maps cleanly onto the sphere
@@ -885,13 +930,7 @@ function bootAtlas() {
 		cmbSky.visible = false;
 		cmbSky.renderOrder = -10;
 		scene.add(cmbSky);
-		new THREE.TextureLoader().load('wmap_cmb.png', function (tex) {
-			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
-			cmbSky.material.map = tex;
-			cmbSky.material.needsUpdate = true;
-		}, undefined, function (err) {
-			console.error('[atlas] GUARDRAIL 5: wmap_cmb.png failed to load:', err);
-		});
+		loadEnhancedSkybox('wmap_cmb.png', cmbSky, 0.10, 0.85, 0.68);
 	}
 
 	function buildWebSky() {
@@ -906,13 +945,7 @@ function bootAtlas() {
 		webSky.visible = false;
 		webSky.renderOrder = -10;
 		scene.add(webSky);
-		new THREE.TextureLoader().load('cosmic_web_foam.jpg', function (tex) {
-			if (THREE.sRGBEncoding !== undefined) { tex.encoding = THREE.sRGBEncoding; }
-			webSky.material.map = tex;
-			webSky.material.needsUpdate = true;
-		}, undefined, function (err) {
-			console.error('[atlas] GUARDRAIL 5: cosmic_web_foam.jpg failed to load:', err);
-		});
+		loadEnhancedSkybox('cosmic_web_foam.jpg', webSky, 0.06, 0.68, 0.62);
 	}
 
 	function makeQuestionTexture() {
@@ -1161,12 +1194,14 @@ function bootAtlas() {
 			}
 			if (pts.length < 2) { return; }
 			var geo = new THREE.BufferGeometry().setFromPoints(pts);
+			var baseColor = new THREE.Color(THREAD_COLOR[kind] || '#888888');
 			var mat = new THREE.LineBasicMaterial({
-				color: THREAD_COLOR[kind] || '#888888',
+				color: baseColor,
 				transparent: true, opacity: 0.5, depthWrite: false
 			});
 			var line = new THREE.Line(geo, mat);
 			line.userData.thread = t;
+			line.userData.baseColor = baseColor;
 			line.visible = false;
 			threadGroup.add(line);
 			threadObjs.push(line);
@@ -1195,7 +1230,9 @@ function bootAtlas() {
 			} else {
 				ln.visible = base;
 				if (base) {
-					ln.material.opacity = 0.5 * (1 - THREE.MathUtils.smoothstep(state.d, 18, 26));
+					var close = 1 - THREE.MathUtils.smoothstep(state.d, 18, 26);
+					ln.material.opacity = 0.95 * close;
+					ln.material.color.copy(ln.userData.baseColor).lerp(THREAD_WHITE, 0.35 * close);
 				}
 			}
 		});
@@ -2145,8 +2182,9 @@ function bootAtlas() {
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = Math.max(0, 0.5 - (t - 16.5) * 0.5);
 			bhNebula.material.opacity = Math.max(0, 0.3 - (t - 16.5) * 0.2);
-			bhCrab.visible = true;
-			bhCrab.material.opacity = Math.max(0, 0.85 - (t - 16.5) * 0.05);
+			// fade the Crab out as the black hole grows so they never overlap
+			bhCrab.visible = bhIn < 0.99;
+			bhCrab.material.opacity = 0.85 * (1 - bhIn);
 			bhHole.visible = true;
 			bhHole.scale.setScalar(bhIn);
 			bhPhotonRing.visible = true;
@@ -2176,7 +2214,8 @@ function bootAtlas() {
 			bhStar.material.opacity = 0;
 			bhStarGlow.material.opacity = 0;
 			bhNebula.material.opacity = 0;
-			bhCrab.material.opacity = Math.max(0, 0.85 - (t - 16.5) * 0.05);
+			bhCrab.visible = false;
+			bhCrab.material.opacity = 0;
 			bhHole.visible = true;
 			bhHole.scale.setScalar(1);
 			bhPhotonRing.material.opacity = Math.max(0, 0.9 - m87T);
