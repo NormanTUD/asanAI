@@ -15,15 +15,33 @@
    • The RAF loop never stops. While the hero is scrolled past the
      fold the expensive canvas drawing is skipped (the last painted
      frame stays on the canvas so the CSS opacity fade has content
-     to fade), but the simulation keeps ticking on a dt-clamped
-     clock — so whenever the hero re-enters the viewport the drift
-     is perfectly continuous: same nodes, same links, same motion.
+     to fade), but the simulation keeps ticking — so whenever the
+     hero re-enters the viewport the drift is perfectly continuous:
+     same nodes, same links, same motion.
+
+   Smoothness contract:
+   • Heading is a pure function of wall-clock time (a slow sway
+     around a fixed base angle — analytically the same wander the
+     old per-frame angle integration produced), so a stalled frame
+     can never desynchronise direction from real time.
+   • Position advances in fixed substeps of the real elapsed dt
+     (each ≤ one 60 Hz frame, dt clamped at 250 ms): a janky frame
+     fast-forwards the drift along its true path instead of freezing
+     (old 50 ms clamp) or teleporting (uncapped single step).
+   • Box edges use a continuous cubic steering force, not a hard
+     reflection — nodes curve away from the walls and never
+     visibly bounce or stick.
+   • Box measurement is throttled (a getBoundingClientRect every
+     frame forces a synchronous layout while the page is loading)
+     and the theme colour is cached through __MN_DARK.onChange.
    ════════════════════════════════════════════════════════════ */
 (function () {
 	'use strict';
 
 	const BASE_FRAME_MS = 1000 / 60;
-	const MAX_DT_MS = 50;
+	const MAX_DT_MS = 250;
+	const MAX_SUBSTEPS = 16;
+	const MEASURE_INTERVAL_MS = 250;
 
 	function createNetwork(canvas, opts) {
 		const o = Object.assign({
@@ -54,25 +72,40 @@
 		let nodes = [];
 		let rafId = null;
 		let lastT = null;
+		let lastMeasure = -Infinity;
+		let rect = null;
 		let hasRealSize = false;
 		let isPast = false;
 		let initialized = false;
 		let destroyed = false;
+		let colorCache = null;
+
+		if (window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {
+			window.__MN_DARK.onChange(function () { colorCache = null; });
+		}
 
 		function readColor() {
-			const c = typeof o.color === 'function' ? o.color() : o.color;
-			return c || [120, 130, 160];
+			if (!colorCache) {
+				const c = typeof o.color === 'function' ? o.color() : o.color;
+				colorCache = c || [120, 130, 160];
+			}
+			return colorCache;
 		}
 
 		function makeNode() {
 			return {
-				x:      Math.random() * w,
-				y:      Math.random() * h,
-				angle:  Math.random() * Math.PI * 2,
-				phase:  Math.random() * Math.PI * 2,
+				x: Math.random() * w,
+				y: Math.random() * h,
+				baseAngle: Math.random() * Math.PI * 2,
+				// Sway reproduces the old integrated angle drift
+				// (0.0015·sin(t/9000+φ) per 60 Hz frame integrates to
+				// ±0.81 rad around the base heading) as a closed form.
+				swayAmp: 0.5 + Math.random() * 0.6,
+				swayPeriod: 7000 + Math.random() * 8000,
+				phase: Math.random() * Math.PI * 2,
 				phaseY: Math.random() * Math.PI * 2,
-				r:      1.4 + Math.random() * 1.6,
-				speed:  o.speed * (0.6 + Math.random() * 0.9),
+				r: 1.4 + Math.random() * 1.6,
+				speed: o.speed * (0.6 + Math.random() * 0.9),
 			};
 		}
 
@@ -104,10 +137,7 @@
 			if (nodes.length > N) nodes.length = N;
 		}
 
-		// Applies a fresh measurement of the box. Driven by the per-frame
-		// loop — polling each frame is the most robust way to catch the
-		// #contents display:none → block flip without depending on
-		// ResizeObserver firing reliably across all browsers.
+		// Applies a fresh measurement of the box.
 		function applySize(rect) {
 			const nw = Math.max(rect.width, 1);
 			const nh = Math.max(rect.height, 1);
@@ -132,24 +162,50 @@
 			return (o.sizeFromParent ? (host || canvas) : canvas).getBoundingClientRect();
 		}
 
-		function update(t, dt) {
-			if (!nodes.length) return;
-			// dt-scaled so drift speed is identical on 60 Hz and 120 Hz
-			// screens, and a stalled frame (tab switch, jank) can never
-			// teleport a node across the box.
-			const k = dt / BASE_FRAME_MS;
+		// One substep of the drift, evaluated at simulation time ts and
+		// advancing k base frames (k ≤ 1).
+		function step(ts, k) {
+			// margin ≤ w/4 and ≤ h/4 so the left/right (top/bottom)
+			// steering zones never overlap.
+			const margin = Math.min(70, Math.max(28, Math.min(w, h) * 0.1), w * 0.25, h * 0.25);
+			// Cubic edge steering, saturating at a push that always
+			// outruns the fastest possible outward velocity of any node.
+			const pushMax = o.speed * 1.5 + o.wobble + 0.01;
 			for (let i = 0; i < nodes.length; i++) {
 				const n = nodes[i];
-				n.angle += Math.sin(t / 9000 + n.phase) * 0.0015 * k;
-				const dx = Math.cos(n.angle) * n.speed + Math.sin(t / 4200 + n.phase)  * o.wobble;
-				const dy = Math.sin(n.angle) * n.speed + Math.cos(t / 5100 + n.phaseY) * o.wobble;
-				n.x += dx * k;
-				n.y += dy * k;
-				// Soft bounce off the box edges so the network stays inside.
-				if (n.x < n.r) { n.x = n.r; n.angle = Math.PI - n.angle; }
-				else if (n.x > w - n.r) { n.x = w - n.r; n.angle = Math.PI - n.angle; }
-				if (n.y < n.r) { n.y = n.r; n.angle = -n.angle; }
-				else if (n.y > h - n.r) { n.y = h - n.r; n.angle = -n.angle; }
+				const a = n.baseAngle + n.swayAmp * Math.cos(ts / n.swayPeriod + n.phase);
+				let vx = Math.cos(a) * n.speed + Math.sin(ts / 4200 + n.phase) * o.wobble;
+				let vy = Math.sin(a) * n.speed + Math.cos(ts / 5100 + n.phaseY) * o.wobble;
+
+				let fx = 0, fy = 0;
+				if (n.x < margin) fx = 1 - n.x / margin;
+				else if (n.x > w - margin) fx = -(1 - (w - n.x) / margin);
+				if (n.y < margin) fy = 1 - n.y / margin;
+				else if (n.y > h - margin) fy = -(1 - (h - n.y) / margin);
+				if (fx !== 0) vx += fx * fx * fx * pushMax;
+				if (fy !== 0) vy += fy * fy * fy * pushMax;
+
+				n.x += vx * k;
+				n.y += vy * k;
+
+				// Last-resort containment; the steering keeps this from
+				// ever biting in practice.
+				if (n.x < n.r) n.x = n.r;
+				else if (n.x > w - n.r) n.x = w - n.r;
+				if (n.y < n.r) n.y = n.r;
+				else if (n.y > h - n.r) n.y = h - n.r;
+			}
+		}
+
+		function update(t, dt) {
+			if (!nodes.length) return;
+			// Fixed substeps (≤ one 60 Hz frame each) keep the trajectory
+			// identical on 60 Hz and 120 Hz screens, and let a stalled
+			// frame catch up along the true path instead of freezing.
+			const steps = Math.max(1, Math.min(MAX_SUBSTEPS, Math.ceil(dt / BASE_FRAME_MS)));
+			const sub = dt / steps;
+			for (let s = 1; s <= steps; s++) {
+				step(t - dt + sub * s, sub / BASE_FRAME_MS);
 			}
 		}
 
@@ -196,8 +252,17 @@
 			rafId = requestAnimationFrame(frame);
 
 			if (!host) host = canvas.parentElement;
-			const rect = measure();
-			applySize(rect);
+
+			// Throttled measurement: reading the box every frame forces a
+			// synchronous layout while the page is still loading; 250 ms
+			// is far below perception for a full-viewport box, and
+			// viewport resizes are caught immediately by onResize.
+			if (t - lastMeasure >= MEASURE_INTERVAL_MS) {
+				lastMeasure = t;
+				rect = measure();
+				applySize(rect);
+			}
+			if (!rect) return;
 
 			const past = rect.bottom < 0 || rect.top > window.innerHeight;
 			if (o.scrollFade && past !== isPast) {
@@ -220,14 +285,19 @@
 		// whenever the layout state can have changed.
 		function renderStatic() {
 			if (!host) host = canvas.parentElement;
-			const rect = measure();
+			rect = measure();
 			applySize(rect);
 			if (hasRealSize) draw(0);
 		}
 
+		const onResize = function () {
+			if (!destroyed) lastMeasure = -Infinity;
+		};
+
 		function destroy() {
 			destroyed = true;
 			if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+			window.removeEventListener('resize', onResize);
 		}
 
 		function init() {
@@ -241,6 +311,7 @@
 				window.addEventListener('load', renderStatic);
 				window.addEventListener('blogPostLoadComplete', renderStatic);
 			} else {
+				window.addEventListener('resize', onResize);
 				rafId = requestAnimationFrame(frame);
 			}
 		}
