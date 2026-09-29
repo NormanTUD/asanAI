@@ -96,8 +96,8 @@ function toc() {
 		// h3::before in style.css). Small, muted, tabular.
 		'#toc li.toc-level-2 { counter-increment: tocn2; counter-reset: tocn3; }',
 		'#toc li.toc-level-3 { counter-increment: tocn3; }',
-		'#toc li.toc-level-2 > .toc-row > a::before { content: counter(tocn2) ".\00a0\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.72em; vertical-align: 0.25em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
-		'#toc li.toc-level-3 > .toc-row > a::before { content: counter(tocn2) "." counter(tocn3) "\00a0\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.78em; vertical-align: 0.18em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
+		'#toc li.toc-level-2 > .toc-row > a::before { content: counter(tocn2) ".\\00a0\\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.72em; vertical-align: 0.25em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
+		'#toc li.toc-level-3 > .toc-row > a::before { content: counter(tocn2) "." counter(tocn3) "\\00a0\\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.78em; vertical-align: 0.18em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
 
 		// Toolbar: filter field on its own row, small chip buttons below.
 		'#toc-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }',
