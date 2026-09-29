@@ -15,7 +15,7 @@ tags: interested-layman
 The main history of AI traces the intellectual lineage, the ideas, algorithms, and architectures that directly led to modern systems. But those ideas did not emerge in a vacuum. They rest on a vast, invisible scaffolding of discoveries made in fields entirely unrelated to computation: the chemistry that purified silicon, the physics that explained semiconductors, the looms that inspired programmable input, the video game industry that accidentally built the perfect hardware for neural networks. This page collects those **displaced prerequisites**: the contributions so fundamental they vanish into the background, yet without which no language model could exist.
 </div>
 
-<div class="md" data-depth="40">
+<div class="md" data-depth="100">
 ## Why Is There Anything at All?
 
 Before tracing the Big Bang or the first cell, a deeper question looms: **Why is there something rather than nothing?**
