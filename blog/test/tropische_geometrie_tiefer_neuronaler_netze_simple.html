@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tropische Geometrie tiefer Netze — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1080px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+a.ext{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.split{grid-template-columns:1fr}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+.ctl-hint{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc2)}
+input[type=range].m::-moz-range-thumb{background:var(--acc2)}
+input[type=range].g::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].g::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)}
+.ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)}
+.ro .box .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.thm{background:linear-gradient(150deg,rgba(138,124,255,.1),rgba(13,18,33,.7));border:1px solid rgba(138,124,255,.32);border-radius:13px;padding:16px;margin:18px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px}
+.thm .math{font-family:var(--mono);font-size:15px;color:var(--txt);overflow-x:auto;padding:6px 0;line-height:1.8}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--txt-dim)}
+tr:hover td{background:rgba(255,255,255,.03)}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+canvas{display:block;max-width:100%}
+.cwrap{background:#060910;border:1px solid var(--stroke);border-radius:11px;padding:8px;overflow:hidden}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--acc);line-height:1.1}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ TROPISCHE GEOMETRIE · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Start</a>
+    <a href="#maxplus">Max-Plus</a>
+    <a href="#polynom">Polynom</a>
+    <a href="#knick">Der Knick</a>
+    <a href="#zonotope">Zonotope</a>
+    <a href="#trick">Der Trick</a>
+    <a href="#aekv">Äquivalenz</a>
+    <a href="#tiefe">Tiefe &gt; Breite</a>
+    <a href="#grenzen">Grenzen</a>
+    <a href="#quellen">Quellen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: Zhang, Naitzat &amp; Li · ICML 2018 · <span style="color:var(--txt-dim)">arXiv:1805.07091</span></div>
+  <h1>Ein ReLU-Netz <em>ist</em> tropische Geometrie.</h1>
+  <p class="lead">Das Paper beweist: Ein Feed-Forward-Netz aus ReLU-Schichten ist nicht „ähnlich" den Objekten der tropischen Algebra — es ist <b>exakt</b> dasselbe. Man tauscht die Rechenkunst (<code>+</code>→<code>max</code>, <code>×</code>→<code>+</code>) und bekommt damit eine ganze geometrische Theorie geschenkt — die man nutzen kann, um die drei großen Fragen der Netze zu beantworten: Wo liegen die Entscheidungsgrenzen? Woraus bestehen die Bausteine? Und warum <em>exponentiell</em> Tiefe statt Breite?</p>
+  <div class="kpi">
+    <div class="c"><div class="big">max{x,0}</div><div class="lab">ReLU ist tropisch x⊕0 — der ganze Trick in einer Zeile</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">O(n<sup>d(L−1)</sup>)</div><div class="lab">Lineare Regionen: polynomial in Breite n, exponentiell in Tiefe L</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">⌈log₂ r⌉+2</div><div class="lab">Schichten, die man braucht, um r Monome zu maxen (Turnier-Baum)</div></div>
+    <div class="c"><div class="big" style="color:var(--acc2)">3 Familien = 1</div><div class="lab">ReLU-Netze ≡ stückweise linear ≡ tropisch rational</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">So liest du diese Seite</span>
+  <b>①</b> die neue Rechenkunst (max-plus) → <b>②</b> was ein tropisches Polynom ist (max-von-Gerade) → <b>③</b> der Knick (die Hyperfläche) → <b>④</b> Zonotope &amp; Zählen → <b>⑤</b> der 3-Zeilen-Trick, der ein Netz tropisch macht → <b>⑥</b> die Äquivalenz → <b>⑦</b> warum Tiefe gewinnt. Jede Demo ist ein Spielplatz.
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zuerst anfassen: ein 1D-ReLU-Netz als Knick-Linie</h4><span class="tag">stückweise linear</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Vier ReLU-Neuronen in einer Eingangsgröße. Jedes trägt <b>einen Knick</b> bei. Die dicke Linie ist die Gesamtfunktion; die hellen Linien sind die Einzel-Neuronen. Die „Intelligenz" steckt allein in: <b>wo die Knicken sind, wie viele es gibt.</b> Die Regionen zwischen den Knicken heißen <em>lineare Regionen</em>.</p>
+      <div class="cwrap"><canvas id="cvNet1d" style="width:100%;height:300px;cursor:crosshair"></canvas></div>
+      <div class="btnrow" style="margin-top:12px">
+        <button id="netRand">🎲 Zufall</button>
+        <button id="netReset">↺ Reset</button>
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Neuronen</div><div class="v">4</div></div>
+        <div class="box"><div class="k">Knicke</div><div class="v m" id="netK">4</div></div>
+        <div class="box"><div class="k">Lineare Regionen</div><div class="v g" id="netR">5</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="maxplus" class="anim">
+  <div class="eyebrow">Schritt 1 · Die neue Arithmetik</div>
+  <h2>Ersetze + durch max, × durch +</h2>
+  <p class="lead">Die <b>tropische Semiring</b> schreibt die zwei Grundoperationen um: statt <code>x+y</code> zählt <code>max(x,y)</code>, statt <code>x·y</code> zählt <code>x+y</code>. Klingt harmlos. Aber: ReLU(x) = max(x,0) ist damit genau <code>x ⊕ 0</code>. Alles, was ein ReLU-Netz macht, ist in dieser Schreibweise „normale" Algebra.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Tropischer Taschenrechner: klassische vs. tropische Welt</h4><span class="tag">max-plus</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1fr 1.1fr">
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>x</span><b id="cXV">3</b></div><input type="range" id="cX" min="-50" max="50" value="30"></div>
+          <div class="ctl"><div class="ctl-lab"><span>y</span><b id="cYV">2</b></div><input type="range" id="cY" min="-50" max="50" value="20" class="m"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Potenz a (ganzzahlig)</span><b id="cAV">2</b></div><input type="range" id="cA" min="0" max="5" step="1" value="2" class="v"></div>
+          <div class="note e" style="margin-bottom:0"><span class="h">Die wichtigste Zeile</span>
+          Klassisch: x<sup>a</sup> = x·x·…·x (a-mal multipliziert). Tropisch: „Potenz" = <b>a·x</b>. Ein tropischer <em>Exponent</em> wird zum klassischen <em>Vorfaktor</em> — deshalb landen die Netz-Gewichte in den Exponenten, und deshalb müssen sie <b>ganzzahlig</b> sein.
+          </div>
+        </div>
+        <div>
+          <table>
+            <tr><th>Operation</th><th>Klassisch</th><th>Tropisch</th></tr>
+            <tr><td>Addition</td><td class="n" id="tAddK">—</td><td class="hi" id="tAddT">—</td></tr>
+            <tr><td>Multplikation</td><td class="n" id="tMulK">—</td><td class="hi" id="tMulT">—</td></tr>
+            <tr><td>Potenz x<sup>a</sup></td><td class="n" id="tPowK">—</td><td class="hi" id="tPowT">—</td></tr>
+          </table>
+          <div class="btnrow" id="lawBtns">
+            <button data-law="idem">max(x,x)=x?</button>
+            <button data-law="assoc">max assoc?</button>
+            <button data-law="noinv">add. Inverses?</button>
+          </div>
+          <div class="note" style="margin-bottom:0;font-size:12.5px" id="lawOut">Prüfe die Rechengesetze — sie gelten in der tropischen Welt (bis auf das additive Inverse, das es <em>nicht</em> gibt).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="polynom" class="anim">
+  <div class="eyebrow">Schritt 2 · Bausteine</div>
+  <h2>Ein tropisches Polynom = max von Geraden</h2>
+  <p class="lead">Ein tropisches <b>Monom</b> ist eine Gerade (lineare Funktion). Ein tropisches <b>Polynom</b> ist das <b>max</b> vieler Geraden — also die obere Hülle. Damit ist es immer <b>konvex und stückweise linear</b>. Eine <b>rationale</b> tropische Funktion ist der Quotient <code>f − g</code> zweier solcher — und die darf beliebig nicht-konvex sein. Genau das brauchen wir für ein Netz.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Max von Geraden: baue ein tropisches Polynom (1D)</h4><span class="tag">Polynom</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Vier Monome (Geraden mit Steigung 0,1,2,3). Die <b>dickte türkise Linie</b> ist das max (das Polynom). Schiebe die Schnittpunkte, um die Enveloppe zu verformen. Ein Monom, das <em>nie</em> gewinnt, ist „unsichtbar" — es trägt keinen Knick bei.</p>
+      <div class="split" style="grid-template-columns:1.2fr 1fr">
+        <div class="cwrap"><canvas id="cvPoly" style="width:100%;height:320px"></canvas></div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Monom 0 (St. 0) — Höhe</span><b id="pm0V">0.0</b></div><input type="range" id="pm0" min="-60" max="60" value="0"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Monom 1 (St. 1) — Höhe</span><b id="pm1V">-1.0</b></div><input type="range" id="pm1" min="-60" max="60" value="-10" class="m"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Monom 2 (St. 2) — Höhe</span><b id="pm2V">-2.0</b></div><input type="range" id="pm2" min="-60" max="60" value="-20" class="v"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Monom 3 (St. 3) — Höhe</span><b id="pm3V">-3.5</b></div><input type="range" id="pm3" min="-60" max="60" value="-35" class="g"></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="box"><div class="k">Aktive Monome</div><div class="v" id="pmA">—</div></div>
+            <div class="box"><div class="k">Sichtbare Stücke</div><div class="v g" id="pmS">—</div></div>
+            <div class="box"><div class="k">Knicke</div><div class="v m" id="pmK">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="knick" class="anim">
+  <div class="eyebrow">Schritt 3 · Die Hyperfläche</div>
+  <h2>Der Knick: wo zwei Monome Unentschieden sind</h2>
+  <p class="lead">In der klassischen Welt ist die Nullstelle, wo sich Terme aufheben. In der tropischen Welt gibt es kein Aufheben — stattdessen ist die „Nullstelle" (die <b>tropische Hyperfläche</b>) dort, wo <b>zwei Monome exakt gleich</b> sind: ein Gleichstand. Diese Linie teilt den Raum in <b>lineare Regionen</b>. Bewege den Punkt — die Balken zeigen, welches Monom gerade gewinnt, und wie groß die Lücke ist.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Tropische Kurve in 2D: „Wer gewinnt?"-Detektor</h4><span class="tag">Hyperfläche</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.3fr 1fr">
+        <div>
+          <div class="cwrap"><canvas id="cvCurve" style="width:100%;height:340px;cursor:grab"></canvas></div>
+          <div class="leg">
+            <span><i style="background:#5ee0d0"></i>Monom 0 gewinnt</span>
+            <span><i style="background:#ff7ac0"></i>Monom 1</span>
+            <span><i style="background:#ffc860"></i>Monom 2</span>
+            <span><i style="background:#8a7cff"></i>Monom 3</span>
+            <span><i style="background:#fff"></i>Kurve (Gleichstand)</span>
+          </div>
+        </div>
+        <div>
+          <div class="ro" style="grid-template-columns:1fr">
+            <div class="box"><div class="k">Gewinner am Punkt</div><div class="v" id="cvWin">—</div></div>
+            <div class="box"><div class="k">Lücke zu Platz 2</div><div class="v g" id="cvGap">—</div></div>
+          </div>
+          <div class="note t" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Du stehst auf der tropischen Kurve!</b> — wenn die Lücke ≈ 0 ist. Dort ist die Funktion nicht differenzierbar: genau dort sitzt der <em>Knick</em> des Netzes. Die Zellen drumherum sind die linearen Regionen.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="zonotope" class="anim">
+  <div class="eyebrow">Schritt 4 · Zählen</div>
+  <h2>Zonotope: wie man Regionen zahlt</h2>
+  <p class="lead">Um die linearen Regionen eines Netzes zu <b>messen</b>, übersetzt das Paper das Problem in die Zählung der Ecken eines <b>Zonotops</b> (einer Minkowski-Summe von Strecken). Die gute Nachricht: Konvexgeometer können das seit 50 Jahren. In 2D hat ein Zonotop aus m nicht-parallelen Strecken exakt <b>2m</b> Ecken. Sind zwei Strecken parallel, <em>sterben</em> Ecken — „allgemeine Lage" ist wörtlich gemeint.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zonotop-Baukasten: Minkowski-Summe von Strecken</h4><span class="tag">Zählen</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div>
+          <div class="cwrap"><canvas id="cvZono" style="width:100%;height:320px"></canvas></div>
+          <div class="btnrow" style="margin-top:12px">
+            <button id="zAdd">+ Strecke</button>
+            <button id="zRand">🎲 Neu</button>
+            <button id="zReset">↺ 1 Strecke</button>
+          </div>
+        </div>
+        <div>
+          <div class="ro" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="box"><div class="k">Strecken m</div><div class="v" id="zM">1</div></div>
+            <div class="box"><div class="k">Ecken (gemessen)</div><div class="v g" id="zV">2</div></div>
+            <div class="box"><div class="k">Theorie 2m (d=2)</div><div class="v m" id="zT">2</div></div>
+          </div>
+          <div class="note" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Probiere:</b> Füge viele Strecken hinzu. In der Ebene wachsen die Ecken linear (2m) — das ist <em>polynomial in der Breite</em>. Die <b>Exponentialität</b> kommt erst, wenn man Schichten <em>multipliziert</em> (→ Sektion „Tiefe &gt; Breite").
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trick" class="anim">
+  <div class="eyebrow">Schritt 5 · Der Kern</div>
+  <h2>Der Trick in drei Zeilen: eine Schicht ist tropisch</h2>
+  <p class="lead">Ein ReLU-Neuron berechnet <code>max{Ax+b, t}</code>. Das Problem: A hat <b>negative</b> Einträge, aber tropische Exponenten müssen nicht-negativ sein. Die Lösung: Zerlege A = A₊ − A₋, schiebe den negativen Teil über den „Bruchstrich". Dann ist das Neuron <code>F − G</code> — eine tropische rationale Funktion.</p>
+  <div class="thm">
+    <div class="lbl">Der Schlüssel-Trick (3 Zeilen)</div>
+    <div class="math">
+      <b>1 ·</b> Zerlege:  A = A₊ − A₋ &nbsp;(A₊ = max{A,0}, A₋ = max{−A,0})<br>
+      <b>2 ·</b> Addiere A₋x zu beiden Seiten (erlaubt: max{p,q}+c = max{p+c, q+c})<br>
+      <b>3 ·</b> max{Ax+b, t} = max{A₊x+b, A₋x+t} − A₋x &nbsp;=&nbsp; <b>F ⊘ G</b> ✓
+    </div>
+  </div>
+  <p>Der Rest des Papers ist <em>Buchhaltung</em> über mehrere Schichten: Man induziert, dass wenn Schicht l tropisch rational ist, es Schicht l+1 auch ist. Negative Gewichte <b>tauschen</b> dabei Zähler- und Nenner-Rolle — die tropische Version von „minus mal minus".</p>
+  <div class="note w"><span class="h">Sonderfall</span>
+  Wenn alle Gewichte eines Neurons ≥ 0 sind, ist G = 0 — das Neuron ist <b>direkt</b> ein tropisches Polynom. Nur negative Gewichte zwingen den „Bruch".
+  </div>
+</section>
+
+<section id="aekv" class="anim">
+  <div class="eyebrow">Schritt 6 · Die Antwort</div>
+  <h2>Der Äquivalenzsatz: drei Familien, eine Menge</h2>
+  <p class="lead">Das Paper zeigt, dass diese drei Dinge <b>identisch</b> sind — man kann zwischen ihnen hin- und herschalten, ohne etwas zu verlieren:</p>
+  <div class="thm">
+    <div class="lbl">Der Dreiklang (Satz 5.2 + 5.4 + Prop. 5.5)</div>
+    <div class="math">
+      ReLU-Netze (a–c) &nbsp;⇔&nbsp; stückweise lineare Fgn. mit ganzzahl. Steigungen &nbsp;⇔&nbsp; tropisch rationale Funktionen f ⊘ g
+    </div>
+  </div>
+  <p><b>Quantitativ:</b> Jede Funktion f ⊘ g mit r Monomen lässt sich mit <code>L ≤ max{⌈log₂ r_f⌉, ⌈log₂ r_g⌉} + 2</code> Schichten bauen. Der <em>Logarithmus</em> ist die Tiefe: Ein Netz bildet nur <b>binäre</b> Maxima pro Schicht — das max von r Monomen braucht daher einen Turnier-Baum der Tiefe ⌈log₂ r⌉.</p>
+  <div class="note e"><span class="h">Der philosophische Gewinn</span>
+  Die Menge der ReLU-Netze ist eine <b>Algebra mit Semikörper-Eigenschaft</b>: Man kann tropisch addieren, multiplizieren und dividieren — und bleibt in derselben Familie. Das ist mehr als „ähnlich": Es ist eine <em>Struktur</em>.
+  </div>
+</section>
+
+<section id="tiefe" class="anim">
+  <div class="eyebrow">Schritt 7 · Das Hauptergebnis</div>
+  <h2>Warum Tiefe exponentiell gewinnt</h2>
+  <p class="lead">Theorem 6.3: Ein L-schichtiges Netz mit Breite n_l hat höchstens <code>∏ Σ_{i≤d} C(n_l, i)</code> lineare Regionen. Lies das als <b>Produkt</b>: Jede Schicht <em>multipliziert</em> die Regionen-Count durch ihren eigenen Faktor (≈ n_l<sup>d</sup>). Innerhalb einer Schichte ist es nur <em>polynomial</em> in n — aber über die L Schichten <em>exponentiell</em> in L.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Flach vs. tief: gleiche Neuronen, verschiedene Regionen</h4><span class="tag">Theorem 6.3</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Gleiches Neuronen-Budget N. Links: <b>flach</b> (1 Schicht mit N „Zähnen") → N Regionen. Rechts: <b>tief</b> (L Schichten, je k = N/L Zähne) → k<sup>L</sup> Regionen. Die rechte Kurve „faltet" den Raum L-mal.</p>
+      <div class="split">
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Neuronen-Budget N</span><b id="fdN">16</b></div><input type="range" id="fdN" min="4" max="24" step="1" value="16"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Tiefe L (flach = 1)</span><b id="fdL">3</b></div><input type="range" id="fdL" min="1" max="6" step="1" value="3" class="m"></div>
+          <div class="cwrap"><canvas id="cvDeep" style="width:100%;height:200px"></canvas></div>
+        </div>
+        <div>
+          <div class="cwrap"><canvas id="cvFlat" style="width:100%;height:200px"></canvas></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Regionen flach</div><div class="v" id="fdFlat">16</div></div>
+            <div class="box"><div class="k">Regionen tief</div><div class="v g" id="fdDeep">64</div></div>
+          </div>
+          <div class="note w" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Faktor</b> = tief / flach. Bei N=16, L=4 (k=4): 4⁴ = 256 Regionen flach 16 → Faktor 16. <em>Das ist die Exponentialität, zum Anfassen.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grenzen" class="anim">
+  <div class="eyebrow">Schritt 8 · Ehrlichkeit</div>
+  <h2>Was das Paper <em>nicht</em> behauptet</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Methodisch</h3>
+      <ul style="font-size:13.5px">
+        <li>Betrachtet nur <b>stückweise lineare</b> Aktivierungen (ReLU, Leaky-ReLU, abs, Max-Pooling). <b>tanh / Sigmoid</b> fallen raus.</li>
+        <li>Die <b>ganzzahligen</b> Gewichte sind für die Geometrie nötig (mit reellen Gewichten landet man bei „signomials", Prop. 5.6 — außerhalb der Theorie).</li>
+        <li>Theorem 6.3 <b>verbessert</b> den Bound von Raghu et al. (2017) <em>nicht</em> — es erklärt ihn in drei Zeilen Konvexgeometrie.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc4)">Inhaltlich</h3>
+      <ul style="font-size:13.5px">
+        <li>Löst das <b>Generalisierungs-Rätsel</b> nicht — liefert aber eine neue Sprache, die Frage zu stellen.</li>
+        <li>Die Entscheidungsgrenze ist <b>⊆</b> (nicht =) der tropischen Kurve: Die Kurve enthält auch Knicken <em>innerhalb</em> einer Region.</li>
+        <li>Gezählte Regionen sind <b>Unterschätzungen</b> (zählt Aktivierungs-Muster auf einem Gitter).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note e"><span class="h">Der Passus, der bleibt</span>
+  „To understand them we often just need to understand the relevant tropical geometry." — Zhang, Naitzat &amp; Li (2018)
+  </div>
+</section>
+
+<section id="quellen" class="anim">
+  <div class="eyebrow">Quellen</div>
+  <h2>Originalarbeiten — alle geprüft</h2>
+  <div class="card">
+    <ul style="font-size:13.5px">
+      <li><b>Das Paper selbst:</b> Zhang, Naitzat &amp; Li (2018), ICML: <i>Tropical Geometry of Deep Neural Networks.</i> <a class="ext" href="https://arxiv.org/abs/1805.07091">arXiv:1805.07091</a> — alle Definitionen (Def. 2.1–3.2), Sätze (3.3, 5.2, 5.4, 5.5, 6.1, 6.3) und das Beispiel C.2 stammen aus dem Volltext.</li>
+      <li><b>Die Dualität, die das Paper trägt:</b> Maclagan &amp; Sturmfels — <i>Tropical and Classical Geometry</i> (Prop. 3.1.6): Die tropische Kurve ist das Skelett, dual zur Unterteilung des Newton-Polytops.</li>
+      <li><b>Das Zählen:</b> Gritzmann &amp; Sturmfels — max. Vertex-Count einer Minkowski-Summe von m Strecken.</li>
+      <li><b>Umgekehrte Richtung:</b> Tarela &amp; Martinez — Max-Min-Repräsentation jeder stückweise linearen Funktion.</li>
+      <li><b>Nicht verbessert:</b> Raghu et al. (2017) — früher Expressivitäts-Bound; und Montúfar et al. — passende Untergrenze.</li>
+    </ul>
+    <div class="note e" style="margin-bottom:0"><span class="h">Überarbeitungshinweis</span>
+      Gegenüber der ausführlichen Version: 14 Sektionen auf 8 reduziert, 26 Labore auf 5, alle 3D-Plots (Plotly/CDN) durch 2D-Canvas ersetzt. Die Kurven sind didaktische Nachbauten — ihre Form folgt dem Paper, nicht alle Punktwerte sind Einzelangaben.
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="anim">
+  <div class="eyebrow">Selbsttest</div>
+  <h2>Sechs Fragen</h2>
+  <div class="quiz" id="quizHost"></div>
+  <div class="card" style="text-align:center">
+    <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--acc)" id="qScore">0 / 6</div>
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:4px" id="qMsg">Los geht's!</div>
+    <button id="qReset" style="margin-top:12px">↻ Zurücksetzen</button>
+  </div>
+</section>
+
+</main>
+<footer>
+  Einfache interaktive Erklärung zu <b>„Tropical Geometry of Deep Neural Networks"</b> (Zhang, Naitzat &amp; Li, ICML 2018, arXiv:1805.07091).<br>
+  Alle Simulationen laufen live im Browser — ohne externe Bibliotheken.
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+const INK={grid:'rgba(255,255,255,.06)',axis:'rgba(255,255,255,.15)',txt:'#9aa6c0',faint:'#64708c',acc:'#5ee0d0',acc2:'#ff7ac0',acc3:'#ffc860',acc4:'#8a7cff',acc5:'#6ee88a'};
+
+(function(){
+  const bar=$('#prog');const links=$$('#nav .links a');
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const st=scrollY,dh=document.body.scrollHeight-innerHeight;
+    bar.style.width=(dh>0?st/dh*100:0)+'%';
+    let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*0.4)act=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===act));
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+  $$('.anim').forEach(el=>io.observe(el));
+})();
+
+(function(){
+  const cv=$('#cvNet1d');
+  const NEU=4;
+  let neu=Array.from({length:NEU},(_,i)=>({c:2+i*2, w:[1.4,-1,0.8,1.1][i]}));
+  function draw(){
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const pad={l:34,r:14,t:16,b:24};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const xmin=-1,xmax=9;
+    function netY(x){let s=0;for(const n of neu)s+=n.w*Math.max(x-n.c,0);return s;}
+    const ys=[];
+    for(let i=0;i<=400;i++){const x=xmin+(xmax-xmin)*i/400;ys.push(netY(x));}
+    let ymin=Math.min.apply(null,ys)-1,ymax=Math.max.apply(null,ys)+1;
+    function X(x){return pad.l+(x-xmin)/(xmax-xmin)*pw;}
+    function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();}
+    const cols=[INK.acc,INK.acc2,INK.acc3,INK.acc4];
+    for(let ni=0;ni<NEU;ni++){
+      c.strokeStyle=cols[ni]+'55';c.lineWidth=1.5;
+      c.beginPath();
+      for(let i=0;i<=400;i++){const x=xmin+(xmax-xmin)*i/400;const y=neu[ni].w*Math.max(x-neu[ni].c,0);
+        if(i===0)c.moveTo(X(x),Y(y));else c.lineTo(X(x),Y(y));}
+      c.stroke();
+    }
+    c.strokeStyle=INK.txt;c.lineWidth=3.5;
+    c.beginPath();
+    for(let i=0;i<=400;i++){const x=xmin+(xmax-xmin)*i/400;if(i===0)c.moveTo(X(x),Y(ys[i]));else c.lineTo(X(x),Y(ys[i]));}
+    c.stroke();
+    let kinks=0;
+    for(let ni=0;ni<NEU;ni++){
+      if(Math.abs(neu[ni].w)>1e-9){
+        const kx=X(neu[ni].c),ky=Y(netY(neu[ni].c));
+        c.beginPath();c.arc(kx,ky,6,0,Math.PI*2);c.fillStyle=cols[ni];c.fill();
+        c.strokeStyle='#0a0e18';c.lineWidth=2;c.stroke();kinks++;
+      }
+    }
+    $('#netK').textContent=kinks;$('#netR').textContent=kinks+1;
+  }
+  function rand(){neu=neu.map(()=>({c:1+Math.random()*7,w:(Math.random()*4-2).toFixed(1)*1}));draw();}
+  function reset(){neu=Array.from({length:NEU},(_,i)=>({c:2+i*2,w:[1.4,-1,0.8,1.1][i]}));draw();}
+  $('#netRand').addEventListener('click',rand);
+  $('#netReset').addEventListener('click',reset);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const sX=$('#cX'),sY=$('#cY'),sA=$('#cA');
+  function draw(){
+    const x=+sX.value/10,y=+sY.value/10,a=+sA.value;
+    $('#cXV').textContent=x;$('#cYV').textContent=y;$('#cAV').textContent=a;
+    $('#tAddK').textContent=(x+y).toFixed(1);$('#tAddT').textContent=Math.max(x,y).toFixed(1);
+    $('#tMulK').textContent=(x*y).toFixed(1);$('#tMulT').textContent=(x+y).toFixed(1);
+    $('#tPowK').textContent=Math.pow(x,a).toPrecision(4);$('#tPowT').textContent=(a*x).toFixed(1);
+  }
+  [sX,sY,sA].forEach(s=>s.addEventListener('input',draw));
+  $$('#lawBtns button').forEach(b=>b.addEventListener('click',()=>{
+    const x=+sX.value/10,y=+sY.value/10;const out=$('#lawOut');
+    let msg='';
+    if(b.dataset.law==='idem')msg='max(x,x)=max('+x+','+x+')='+Math.max(x,x)+' = x  ✓  (idempotent — in der klassischen Welt wäre x+x=2x)';
+    else if(b.dataset.law==='assoc')msg='max(x, max(y, z)) = max(max(x,y), z)  ✓  (assoziativ — das macht „Summen" wohldefiniert)';
+    else if(b.dataset.law==='noinv')msg='Es gibt kein z mit max(x,z)=−∞.  ✗  (kein additives Inverses → Semiring, kein Ring)';
+    out.innerHTML=msg;
+  }));
+  draw();
+})();
+
+(function(){
+  const cv=$('#cvPoly');
+  const SLOPES=[0,1,2,3];
+  function draw(){
+    const {c,w,h}=hidpi(cv,320);
+    c.clearRect(0,0,w,h);
+    const pad={l:34,r:14,t:16,b:24};
+    const pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    const xmin=-2,xmax=5;
+    const cc=SLOPES.map((s,i)=>+$('#pm'+i).value/10);
+    function val(x){let m=-1e9,act=-1;for(let i=0;i<4;i++){const v=SLOPES[i]*x+cc[i];if(v>m){m=v;act=i;}}return {v:m,act};}
+    const ys=[];
+    for(let i=0;i<=400;i++){const x=xmin+(xmax-xmin)*i/400;ys.push(val(x));}
+    let ymin=1e9,ymax=-1e9;ys.forEach(o=>{ymin=Math.min(ymin,o.v);ymax=Math.max(ymax,o.v);});
+    ymin-=0.5;ymax+=0.5;
+    function X(x){return pad.l+(x-xmin)/(xmax-xmin)*pw;}
+    function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();}
+    const cols=[INK.txt,INK.acc2,INK.acc3,INK.acc4];
+    for(let i=0;i<4;i++){
+      c.strokeStyle=cols[i]+'66';c.lineWidth=1.5;
+      c.beginPath();
+      for(let j=0;j<=400;j++){const x=xmin+(xmax-xmin)*j/400;const y=SLOPES[i]*x+cc[i];
+        if(j===0)c.moveTo(X(x),Y(y));else c.lineTo(X(x),Y(y));}
+      c.stroke();
+    }
+    c.strokeStyle=INK.acc;c.lineWidth=3.5;
+    c.beginPath();
+    for(let i=0;i<=400;i++){const x=xmin+(xmax-xmin)*i/400;if(i===0)c.moveTo(X(x),Y(ys[i].v));else c.lineTo(X(x),Y(ys[i].v));}
+    c.stroke();
+    const active=new Set();let kinks=0;
+    for(let i=1;i<ys.length;i++){active.add(ys[i].act);if(ys[i].act!==ys[i-1].act)kinks++;}
+    active.add(ys[0].act);
+    $('#pmA').textContent=active.size;$('#pmS').textContent=active.size;$('#pmK').textContent=kinks;
+    for(let i=0;i<4;i++)$('#pm'+i+'V').textContent=cc[i].toFixed(1);
+  }
+  ['pm0','pm1','pm2','pm3'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvCurve');
+  const MONO=[{a:0,b:0,c:0},{a:1,b:0,c:-1},{a:0,b:1,c:-1},{a:1,b:-1,c:1.5}];
+  const COLS=[INK.acc,INK.acc2,INK.acc3,INK.acc4];
+  let px=0,py=0,drag=false;
+  const xmin=-2.5,xmax=2.5,ymin=-2.5,ymax=2.5;
+  function val(x,y){let m1=-1e9,m2=-1e9,i1=0;for(let i=0;i<MONO.length;i++){const v=MONO[i].a*x+MONO[i].b*y+MONO[i].c;if(v>m1){m2=m1;i1=i;m1=v;}else if(v>m2){m2=v;}}return {m1,m2,i1};}
+  function draw(){
+    const {c,w,h}=hidpi(cv,340);
+    c.clearRect(0,0,w,h);
+    function X(x){return w/2+(x-xmin)/(xmax-xmin)*w*0.92;}
+    function Y(y){return h/2-(y-ymin)/(ymax-ymin)*h*0.92;}
+    const step=6;
+    for(let yy=0;yy<h;yy+=step){
+      for(let xx=0;xx<w;xx+=step){
+        const x=xmin+(xx/w)*(xmax-xmin);
+        const y=ymax-(yy/h)*(ymax-ymin);
+        const r=val(x,y);
+        const gap=r.m1-r.m2;
+        if(gap<0.12){c.fillStyle='#fff';}
+        else{c.fillStyle=COLS[r.i1];}
+        c.globalAlpha=0.5;c.fillRect(xx,yy,step,step);
+      }
+    }
+    c.globalAlpha=1;
+    if(px>0&&py>0){
+      const x=xmin+(px/w)*(xmax-xmin);
+      const y=ymax-(py/h)*(ymax-ymin);
+      const r=val(x,y);
+      const mx=X(x),my=Y(y);
+      c.beginPath();c.arc(mx,my,9,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+      c.strokeStyle=COLS[r.i1];c.lineWidth=3;c.stroke();
+      $('#cvWin').textContent='Monom '+r.i1;
+      $('#cvGap').textContent=(r.m1-r.m2).toFixed(3);
+    }else{$('#cvWin').textContent='—';$('#cvGap').textContent='—';}
+  }
+  cv.addEventListener('pointerdown',e=>{drag=true;move(e);});
+  cv.addEventListener('pointermove',e=>{if(drag)move(e);else hover(e);});
+  cv.addEventListener('pointerup',()=>drag=false);
+  cv.addEventListener('pointerleave',()=>{drag=false;});
+  function move(e){
+    const r=cv.getBoundingClientRect();
+    px=(e.clientX-r.left)*(cv.clientWidth/r.width);
+    py=(e.clientY-r.top)*(cv.clientHeight/r.height);
+    draw();
+  }
+  function hover(e){
+    const r=cv.getBoundingClientRect();
+    px=(e.clientX-r.left)*(cv.clientWidth/r.width);
+    py=(e.clientY-r.top)*(cv.clientHeight/r.height);
+    draw();
+  }
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvZono');
+  let segs=[];
+  function genSeg(){const a=Math.random()*Math.PI*2;const l=0.4+Math.random()*0.6;return [Math.cos(a)*l,Math.sin(a)*l];}
+  function hull(pts){
+    pts=pts.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+    const cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+    const lo=[];for(const p of pts){while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+    const up=[];for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>=2&&cross(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+    lo.pop();up.pop();return lo.concat(up);
+  }
+  function zonotope(){
+    const m=segs.length;
+    const pts=[];
+    for(let mask=0;mask<(1<<m);mask++){
+      let x=0,y=0;
+      for(let i=0;i<m;i++)if(mask&(1<<i)){x+=segs[i][0];y+=segs[i][1];}
+      pts.push([x,y]);
+    }
+    return hull(pts);
+  }
+  function draw(){
+    const {c,w,h}=hidpi(cv,320);
+    c.clearRect(0,0,w,h);
+    const z=zonotope();
+    if(z.length<3){
+      c.fillStyle=INK.faint;c.font='12px system-ui';c.fillText('Füge Strecken hinzu.',20,30);
+    }
+    let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    z.forEach(p=>{xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);});
+    xmin-=0.3;xmax+=0.3;ymin-=0.3;ymax+=0.3;
+    const S=Math.min((w-40)/(xmax-xmin),(h-40)/(ymax-ymin));
+    function X(x){return w/2+(x-(xmin+xmax)/2)*S;}
+    function Y(y){return h/2-(y-(ymin+ymax)/2)*S;}
+    if(z.length>=3){
+      c.beginPath();
+      z.forEach((p,i)=>{if(i===0)c.moveTo(X(p[0]),Y(p[1]));else c.lineTo(X(p[0]),Y(p[1]));});
+      c.closePath();
+      c.fillStyle='rgba(94,224,208,.12)';c.fill();
+      c.strokeStyle=INK.acc;c.lineWidth=2.5;c.stroke();
+      z.forEach(p=>{c.beginPath();c.arc(X(p[0]),Y(p[1]),4,0,Math.PI*2);c.fillStyle=INK.acc3;c.fill();});
+    }
+    const m=segs.length;
+    $('#zM').textContent=m;$('#zV').textContent=z.length;$('#zT').textContent=2*m;
+  }
+  $('#zAdd').addEventListener('click',()=>{if(segs.length<10){segs.push(genSeg());draw();}});
+  $('#zRand').addEventListener('click',()=>{segs=Array.from({length:5},genSeg);draw();});
+  $('#zReset').addEventListener('click',()=>{segs=[genSeg()];draw();});
+  segs=[genSeg()];draw();
+  addEventListener('resize',draw);
+})();
+
+(function(){
+  const cvF=$('#cvFlat'),cvD=$('#cvDeep');
+  const sN=$('#fdN'),sL=$('#fdL');
+  function fold1(x,k){const t=x*k;const f=t%1;return 1-Math.abs(1-2*f);}
+  function foldL(x,k,L){for(let i=0;i<L;i++)x=fold1(x,k);return x;}
+  function plot(cv,fn,h){
+    const {c,w}=hidpi(cv,h);
+    c.clearRect(0,0,w,h);
+    const pad={l:30,r:10,t:12,b:20};
+    const pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=2;i++){const gy=pad.t+ph*i/2;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();}
+    c.strokeStyle=cv===cvF?INK.txt:INK.acc;c.lineWidth=2;
+    c.beginPath();
+    for(let i=0;i<=1500;i++){const x=i/1500;const y=fn(x);
+      const px=pad.l+x*pw,py=pad.t+ph-(y-0)/1*ph;
+      if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}
+    c.stroke();
+  }
+  function draw(){
+    const N=+sN.value,L=+sL.value;
+    const k=Math.max(1,Math.floor(N/L));
+    const flatReg=N,deepReg=Math.pow(k,L);
+    $('#fdN').textContent=N;$('#fdL').textContent=L;
+    $('#fdFlat').textContent=flatReg;$('#fdDeep').textContent=deepReg;
+    plot(cvF,x=>foldL(x,N,1),200);
+    plot(cvD,x=>foldL(x,k,L),200);
+  }
+  sN.addEventListener('input',draw);sL.addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const QS=[
+    {q:'Was macht die tropische „Potenz" mit x und a?',o:['x·a','a·x','x^a','max(x,a)'],a:1},
+    {q:'ReLU(x) ist tropisch…',o:['x⊙x','x⊕0','x−0','max(x)'],a:1},
+    {q:'Eine tropische Hyperfläche ist die Stelle, wo…',o:['zwei Monome Unentschieden sind','f(x)=0','die Funktion konvex ist','der Gradient 0 ist'],a:0},
+    {q:'In 2D hat ein Zonotop aus m nicht-parallelen Strecken…',o:['m Ecken','2m Ecken','m² Ecken','2^m Ecken'],a:1},
+    {q:'Theorem 6.3: Regionen wachsen in der Tiefe L…',o:['linear','polynomial','exponentiell','gar nicht'],a:2},
+    {q:'Der Äquivalenzsatz sagt: ReLU-Netze sind…',o:['ähnlich','annähernd','exakt identisch mit','ein Teil von'],a:2}
+  ];
+  const host=$('#quizHost');let score=0,answered=0;
+  QS.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='q';
+    div.innerHTML='<div style="margin-bottom:8px">'+(i+1)+'. '+item.q+'</div>';
+    item.o.forEach((opt,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=opt;
+      b.addEventListener('click',()=>{
+        if(div.dataset.done)return;div.dataset.done='1';answered++;
+        if(oi===item.a){b.classList.add('correct');score++;}
+        else{b.classList.add('wrong');item.o[item.a]&&div.querySelectorAll('.opt')[item.a].classList.add('correct');}
+        $('#qScore').textContent=score+' / '+QS.length;
+        if(answered===QS.length)$('#qMsg').textContent=score>=5?'Stark! Du hast das Paper im Griff.':score>=3?'Solide — schau dir die Sektionen noch einmal an.':'Nochmal von vorn — die Demos helfen.';
+        else $('#qMsg').textContent=answered+' / '+QS.length+' beantwortet.';
+      });
+      div.appendChild(b);
+    });
+    host.appendChild(div);
+  });
+  $('#qReset').addEventListener('click',()=>{location.reload();});
+})();
+</script>
+</body>
+</html>

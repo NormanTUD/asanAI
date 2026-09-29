@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token-Embeddings verletzen die Manifold-Hypothese — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1080px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+a.ext{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.split{grid-template-columns:1fr}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+.ctl-hint{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc2)}
+input[type=range].m::-moz-range-thumb{background:var(--acc2)}
+input[type=range].g::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].g::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)}
+.ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)}
+.ro .box .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.badge-out{font-family:var(--mono);font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:9px;display:inline-block;margin-top:4px;border:1px solid var(--stroke)}
+.badge-out.ok{background:rgba(94,224,208,.12);color:var(--acc);border-color:rgba(94,224,208,.4)}
+.badge-out.warn{background:rgba(255,200,96,.12);color:var(--acc3);border-color:rgba(255,200,96,.4)}
+.badge-out.bad{background:rgba(255,122,192,.14);color:var(--acc2);border-color:rgba(255,122,192,.4)}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.thm{background:linear-gradient(150deg,rgba(138,124,255,.1),rgba(13,18,33,.7));border:1px solid rgba(138,124,255,.32);border-radius:13px;padding:16px;margin:18px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px}
+.thm .math{font-family:var(--mono);font-size:15px;color:var(--txt);overflow-x:auto;padding:6px 0;line-height:1.8}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--txt-dim)}
+tr:hover td{background:rgba(255,255,255,.03)}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+canvas{display:block;max-width:100%}
+.cwrap{background:#060910;border:1px solid var(--stroke);border-radius:11px;padding:8px;overflow:hidden}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--acc);line-height:1.1}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.tok{display:inline-flex;flex-direction:column;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);margin:4px 6px 4px 0;font-size:12px}
+.tok b{color:var(--txt)}
+.tok .p{font-family:var(--mono);font-size:10px;color:var(--acc3);margin-top:2px}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ TOKEN-MANIFOLD VERLETZT · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Start</a>
+    <a href="#manifold">Manifold</a>
+    <a href="#dimension">Dimension</a>
+    <a href="#knick">Knick</a>
+    <a href="#bundle">Bündel</a>
+    <a href="#test">Der Test</a>
+    <a href="#validierung">Prüfen</a>
+    <a href="#ergebnis">4 Modelle</a>
+    <a href="#kontext">Kontext</a>
+    <a href="#grenzen">Grenzen</a>
+    <a href="#quellen">Quellen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: Robinson, Dey &amp; Chiang · NeurIPS 2025 · <span style="color:var(--txt-dim)">arXiv:2504.01002</span></div>
+  <h1>Der Gedankenraum eines LLM ist <em>kein glatter Raum.</em></h1>
+  <p class="lead">Fast jede KI-Arbeit <em>immt an</em>: Daten liegen auf einer glatten, gekrümmten Fläche („Mannigfaltigkeit"). Diese Arbeit baut einen <b>statistischen Test pro Token</b> für diese Annahme — und zeigt: Für die <b>Token-Eingaben</b> echter Sprachmodelle ist sie <b>falsch</b>. Der Raum hat Bruchkanten (Singularitäten). Und genau deshalb reagiert ein Modell manchmal wild auf beinahe identische Prompts.</p>
+  <div class="kpi">
+    <div class="c"><div class="big">4 / 4</div><div class="lab">getestete Modelle verwerfen die Manifold-Hypothese (p bis 3×10⁻⁸)</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">3 / 4</div><div class="lab">verwerfen auch die mildere Fiber-Bundle-Hypothese</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">20 … 531</div><div class="lab">GPT2: Dimension reicht von 20 bis 531 — nicht konstant</div></div>
+    <div class="c"><div class="big" style="color:var(--acc2)">50 257</div><div class="lab">Tokens bei GPT2 = 50 257 simultane Tests</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">Der Bogen in 9 Stationen</span>
+  <b>1</b> Beobachtung (Fragilität) → <b>2</b> Was ist ein Manifold → <b>3</b> Dimension = Steigung → <b>4</b> Knick vs. Biegung → <b>5</b> Fiber Bundle → <b>6</b> der Test → <b>7</b> Validierung an 3 bekannten Formen → <b>8</b> 4 echte LLMs → <b>9</b> Kontext heilt nicht.
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zwei gleiche Prompts, zwei Antworten</h4><span class="tag">Beobachtung</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Zwei semantisch gleiche Prompts. Wolke A ist stabil. Wolke B hängt an einem Token, das nahe an einer Bruchkante liegt: je näher, desto stärker <b>zerfällt</b> die Antwort in getrennte Häufchen.</p>
+      <div class="cwrap"><canvas id="cvPrompt" style="width:100%;height:280px"></canvas></div>
+      <div class="ctl" style="margin-top:12px"><div class="ctl-lab"><span>Nähe zur Bruchkante</span><b id="irrV">20 %</b></div><input type="range" id="irr" min="0" max="100" value="20"></div>
+      <div class="ro">
+        <div class="box"><div class="k">Wolke A</div><div class="v" id="sprA">stabil</div></div>
+        <div class="box"><div class="k">Wolke B</div><div class="v m" id="sprB">stabil</div></div>
+      </div>
+      <div id="promptOut" class="badge-out ok">stabil: glatte Geometrie</div>
+    </div>
+  </div>
+</section>
+
+<section id="manifold" class="anim">
+  <div class="eyebrow">Station 2 · Vorwissen</div>
+  <h2>Was heißt „glatte Fläche" — und was ist eine Bruchkante?</h2>
+  <p class="lead">Regel: <b>Jeder</b> Punkt muss eine Umgebung haben, die wie ein flaches Stück von ℝ<sup>d</sup> aussieht. Zoom ein an einen Punkt: siehrt die Nachbarschaft „flach wie eine Scheibe"? Ein <b>Rand</b> sieht aus wie ein Halbraum (Manifold mit Rand). Eine <b>Spitze</b> (Cusp) oder ein <b>Dimensionssprung</b> sind echte Singularitäten.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zoom-Explorer: ist diese Stelle glatt?</h4><span class="tag">Manifold vs. Singularität</span></div>
+    <div class="demo-body">
+      <div class="btnrow" id="shapeBtns">
+        <button data-sh="circle" class="on">Kreis (glatte Fläche)</button>
+        <button data-sh="seg">Segment (Rand)</button>
+        <button data-sh="cusp">Cusp (Spitze)</button>
+        <button data-sh="lolli">Lollipop (Sprung)</button>
+      </div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvShape" style="width:100%;height:260px"></canvas></div>
+        <div>
+          <div class="cwrap"><canvas id="cvZoom" style="width:100%;height:180px"></canvas></div>
+          <div class="ctl" style="margin-top:12px"><div class="ctl-lab"><span>Punkt auf der Form</span><b id="posV">0.50</b></div><input type="range" id="pos" min="0" max="100" value="50"></div>
+          <div id="zoomOut" class="badge-out ok">glatte Fläche — flache Scheibe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dimension" class="anim">
+  <div class="eyebrow">Station 3 · Das Werkzeug</div>
+  <h2>Dimension = Steigung im Log-Log-Plot</h2>
+  <p class="lead">Der Kerntrick: Zähl, wie viele Nachbarn in Radius r um einen Punkt liegen (das „Volumen"). In d Dimensionen wächst das wie r<sup>d</sup>. Trägst du <code>log(Volumen)</code> gegen <code>log(r)</code> auf, ist die <b>Steigung die Dimension d</b>. Das Volumen wird nicht berechnet, sondern durch <b>Punktzählen</b> geschätzt (Monte-Carlo).</p>
+  <div class="thm">
+    <div class="lbl">Der ganze Trick des Papers</div>
+    <div class="math">Volumen(r) ≈ K · r<sup>d</sup> &nbsp;⟹&nbsp; log V = log K + d·log r &nbsp;⟹&nbsp; <b>Steigung = d</b></div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Baue eine Log-Log-Kurve selbst</h4><span class="tag">Dimension messen</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.2fr 1fr">
+        <div>
+          <div class="cwrap"><canvas id="cvDim" style="width:100%;height:300px"></canvas></div>
+        </div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Steigung links (kleine r)</span><b id="d1V">2.0</b></div><input type="range" id="d1" min="5" max="80" value="20"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Steigung rechts (große r)</span><b id="d2V">1.0</b></div><input type="range" id="d2" min="5" max="80" value="10" class="m"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Knickpunkt</span><b id="kpV">0.50</b></div><input type="range" id="kp" min="20" max="80" value="50" class="v"></div>
+          <div class="ro">
+            <div class="box"><div class="k">Linke Dimension</div><div class="v" id="dimL">2.0</div></div>
+            <div class="box"><div class="k">Rechte Dimension</div><div class="v m" id="dimR">1.0</div></div>
+          </div>
+          <div id="dimOut" class="badge-out ok">Steigung fällt — erlaubt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="knick" class="anim">
+  <div class="eyebrow">Station 4 · Die feine Unterscheidung</div>
+  <h2>Der Test sucht Knicke, nicht Biegungen</h2>
+  <p class="lead">Eine <b>Biegung</b> (sanft gekrümmte Linie) kann von Krümmung kommen — Gray (1974) zeigt, dass das Ball-Volumen einen Korrekturterme <code>K·r<sup>d</sup> + (…)·r<sup>d+1</sup></code> hat. Eine glatte Fläche biegt also <em>sanft</em>. Aber ein <b>Knick</b> (plötzlicher Steigungswechsel) kann von <em>keiner</em> glatten Fläche kommen. <em>Der Test sucht Knicke, nicht Biegungen.</em></p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Biegung (Krümmung) vs. Knick (Singularität)</h4><span class="tag">Test-Design</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.2fr 1fr">
+        <div class="cwrap"><canvas id="cvKnick" style="width:100%;height:300px"></canvas></div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Basisteigung d</span><b id="knDV">2.0</b></div><input type="range" id="knD" min="5" max="80" value="20"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Biegung (Krümmung)</span><b id="knCV">0.00</b></div><input type="range" id="knC" min="-20" max="20" value="0" class="m"></div>
+          <div class="btnrow"><button id="knKink">Knick einbauen (↑)</button></div>
+          <div id="knickOut" class="badge-out ok">Biegung — von Krümmung, noch glatt</div>
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Warum braucht der Test eine Krümmungs-Voraussetzung?</span>
+      Nur innerhalb des „Reach" τ (der größte Radius, für den jeder Punkt noch <em>eindeutig</em> einen nächsten Punkt auf der Form hat) ist die Messung zuverlässig. Convex ⇒ τ=∞, Cusp ⇒ τ=0. <b>Das ist die zentrale Limitation.</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bundle" class="anim">
+  <div class="eyebrow">Station 5 · Verallgemeinerung</div>
+  <h2>Fiber Bundle: zwei Größenskalen</h2>
+  <p class="lead">„Manifold" ist zu streng. Das mildere Modell: Jede Umgebung sieht aus wie <b>Grundraum × Faser</b> — ein dünner Streifen. Zoomt man rein, sieht es 2D aus (die Faser, z. B. Rauschen), zoomt man raus, 1D (der Grundraum, z. B. das Signal).</p>
+  <div class="thm">
+    <div class="lbl">Satz 1 (Fiber Bundle)</div>
+    <div class="math">Für ein Bundle ist die Log-Log-Kurve <b>stückweise linear</b>; die Steigungen sind Dimensionen; und sie dürfen <b>nur fallen</b>, wenn r wächst (dim Faser → dim Grundraum).<br>Ein <em>aufwärts</em> knickender Knick ist unmöglich → Bundle widerlegt.</div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der Streifen: wie die Steigung von 2 auf 1 fällt</h4><span class="tag">Theorem 1</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div class="cwrap"><canvas id="cvBundle" style="width:100%;height:280px"></canvas></div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Faserbreite (Streifenhöhe)</span><b id="bwV">0.16</b></div><input type="range" id="bw" min="2" max="60" value="16"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Kugelradius r</span><b id="brV">0.10</b></div><input type="range" id="br" min="2" max="140" value="10" class="m"></div>
+          <div id="bundleOut" class="badge-out ok">Kugel ganz im Streifen — Steigung ≈ 2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="test" class="anim">
+  <div class="eyebrow">Station 6 · Die Maschine</div>
+  <h2>Der Test: zwei Nullhypothesen, ein Diagramm</h2>
+  <p class="lead">Algorithmus: Distanzmatrix → pro Token die Distanzen sortieren → „Volumen" = Rang → Log-Log → Steigungen per 3-Punkt-Differenz → <b>Sliding-Window t-Test</b> (Fenster A vs. B) → p-Werte → <b>Holm-Bonferroni</b>. Zwei Tests: <b>Manifold</b> reagiert auf <em>jeden</em> Steigungswechsel (zweiseitig); <b>Bundle</b> nur auf <em>steigende</em> (einseitig).</p>
+  <div class="note w"><span class="h">Das Multiple-Testing-Problem</span>
+  <b>50 000 Tokens = 50 000 Tests.</b> Bei α=0.001 und 50 257 Tokens erwarten wir ≈ 50 „Treffer" rein durch Zufall. Holm-Bonferroni schärft die Grenze schrittweise: sortiere p aufsteigend, vergleiche p<sub>(k)</sub> mit <code>α/(n−k+1)</code>. Die im Paper berichteten p-Werte (z. B. 3×10⁻⁸) sind <b>nach</b> Korrektur.
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Holm-Bonferroni: welche „Treffer" sind echt?</h4><span class="tag">Statistik</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvHolm" style="width:100%;height:300px"></canvas></div>
+      <div class="ctl" style="margin-top:12px"><div class="ctl-lab"><span>Anzahl Tests n</span><b id="holmNV">50257</b></div><input type="range" id="holmN" min="100" max="60000" step="100" value="50257"></div>
+      <div class="ro">
+        <div class="box"><div class="k">Erwartete Zufallstreffer (n·α)</div><div class="v g" id="holmFalse">≈ 50</div></div>
+        <div class="box"><div class="k">Überstehen Holm</div><div class="v e" id="holmPass">6</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="validierung" class="anim">
+  <div class="eyebrow">Station 7 · Ehrlichkeitsprobe</div>
+  <h2>Validierung an drei Formen mit bekannter Wahrheit</h2>
+  <p class="lead">Ein Test ist nur gut, wenn er bekannte Fälle korrekt einsortiert. Drei synthetische 3D-Formen, deren Wahrheit man kennt:</p>
+  <table>
+    <tr><th>Form</th><th>Wahrheit</th><th>Manifold-Test</th><th>Bundle-Test</th></tr>
+    <tr><td>Kugel</td><td>echte 2D-Mannigfaltigkeit</td><td class="n">p ≈ 1, keine Verwerfung ✓</td><td class="n">nicht verworfen ✓</td></tr>
+    <tr><td>Cusp z⁸+x²+y²=0</td><td>Bundle, Manifold m. Rand, Spitze</td><td class="hi">p &lt; 5×10⁻⁸ an der Spitze</td><td class="n">nie verworfen ✓ korrekt</td></tr>
+    <tr><td>Lollipop (1D-Stiel + 2D-Kugel)</td><td>beides nicht</td><td class="hi">p &lt; 10⁻⁵ (75+58 Punkte)</td><td class="hi">2 Punkte am Übergang</td></tr>
+  </table>
+  <div class="note e"><span class="h">Der Cusp-Fall ist der Beweis für Trennschärfe</span>
+  <b>Manifold verworfen, Bundle nicht</b> — exakt die mathematische Wahrheit. Der <em>Rand</em> wird übersehen (p &gt; 0.001): Sensitivität kostet Spezifität. Das ist die einzige bekannte Schwäche und wird offen berichtet.
+  </div>
+</section>
+
+<section id="ergebnis" class="anim">
+  <div class="eyebrow">Station 8 · Die Ernte</div>
+  <h2>Das Ergebnis: vier echte Sprachmodelle</h2>
+  <p class="lead">12 h Rechenzeit pro Modell auf einer CPU, fast alles für die Distanzmatrix. (a) Wäre der Raum ein zusammenhängendes Manifold, wäre die Dimension <b>überall gleich</b> — bei GPT2 reicht sie von Q1=20 bis Q3=531. (b) Die Dimensionen bilden <b>drei Gipfel</b> (eine Mischung, kein uniformes Manifold).</p>
+  <table>
+    <tr><th>Modell</th><th>Vokab</th><th>Dim. (Q1/Med/Q3, klein r)</th><th>Manifold verworfen (min p)</th><th>Bundle (klein / groß)</th></tr>
+    <tr><td>GPT2</td><td class="n">50 257</td><td class="n">20 / 389 / 531</td><td class="hi">66 (3×10⁻⁸)</td><td class="n">12 / 7</td></tr>
+    <tr><td>Llemma7B</td><td class="n">32 016</td><td class="n">4096 / 4096 / 4096</td><td class="hi">33 (5×10⁻⁹)</td><td class="n">0 / 1</td></tr>
+    <tr><td>Mistral7B</td><td class="n">32 016</td><td class="n">9 / 48 / 220</td><td class="hi">40 (3×10⁻⁷)</td><td class="n">1 / 2</td></tr>
+    <tr><td>Pythia6.9B</td><td class="n">50 254</td><td class="n">2 / 108 / 235</td><td class="hi">54 (2×10⁻⁷)</td><td class="n">0 / 0</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--txt-faint)">GPT2-Gipfel: ~20 (Zahlen, Monate, Wochentage), ~389 (einzelne Wörter), ~531 (Wortfragmente); plus Dimension-0-Tokens (isolierte Punkte). Zwillinge: Llemma7B und Mistral7B teilen sich 32 016 Tokens, haben aber Median-Dimension 4096 vs. 48 — <b>gDNA</b>, ein Fingerabdruck des Trainings.</p>
+  <div style="margin-top:14px">
+    <span class="tok"><b>affect</b><span class="p">GPT2 · Homonym · p≈2×10⁻⁴</span></span>
+    <span class="tok"><b>monitor</b><span class="p">Mistral7B · Homonym · p≈8×10⁻⁵</span></span>
+    <span class="tok"><b>ember</b><span class="p">Mistral7B · Cusp · p≈2×10⁻⁶</span></span>
+    <span class="tok"><b>aunder</b><span class="p">GPT2 · „launder" Wäsche/Geld · p≈1×10⁻⁴</span></span>
+    <span class="tok"><b>Xan</b><span class="p">GPT2 · nur Wortbeginn · p≈3×10⁻⁸</span></span>
+    <span class="tok"><b>*</b><span class="p">Mistral7B · klebt 3 Bedeutungen · p≈7×10⁻⁴</span></span>
+  </div>
+</section>
+
+<section id="kontext" class="anim">
+  <div class="eyebrow">Station 9 · Persistenz</div>
+  <h2>„Löst mehr Kontext das Problem?" — Nein.</h2>
+  <p class="lead"><b>Lemma 1 (Produkt/Quotient):</b> Ist X ein Manifold und X×Y ein Manifold, dann auch Y. Kontraposition: Ist T <em>kein</em> Manifold, aber T^(w−1) schon, dann auch T^w nicht. Also: <b>für jede Fenstergröße gibt es eine längere, an der die Singularitäten wieder auftauchen.</b> Kontext heilt nichts dauerhaft.</p>
+  <div class="thm">
+    <div class="lbl">Satz 2: Erreichen Singularitäten die Ausgabe?</div>
+    <div class="math">Bedingung: <b>m &gt; 2wd/ℓ</b> und <b>w ≥ m</b> (m = Output-Tokens, w = Fenster, d = umschl. Dimension, ℓ = Latenz).<br>Faustregel: Ein gültiges m existiert immer, wenn <b>2d &lt; ℓ</b> → Singularitäten überleben bis in die Ausgabe.</div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Satz-2-Spielplatz: erfüllt die Bedingung?</h4><span class="tag">Theorem 2</span></div>
+    <div class="demo-body">
+      <div class="split">
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Latenz ℓ</span><b id="t2LV">4096</b></div><input type="range" id="t2L" min="256" max="8192" step="256" value="4096"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Dimension d</span><b id="t2DV">48</b></div><input type="range" id="t2D" min="1" max="4096" step="1" value="48" class="m"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Fenster w</span><b id="t2WV">4096</b></div><input type="range" id="t2W" min="256" max="8192" step="256" value="4096" class="v"></div>
+          <div class="ro">
+            <div class="box"><div class="k">min. Output m</div><div class="v" id="t2M">—</div></div>
+            <div class="box"><div class="k">m ≤ w?</div><div class="v e" id="t2OK">—</div></div>
+          </div>
+          <div id="t2Out" class="badge-out ok">erfüllbar: Singularitäten überleben</div>
+        </div>
+        <div class="cwrap"><canvas id="cvThm2" style="width:100%;height:260px"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grenzen" class="anim">
+  <div class="eyebrow">Ehrlichkeit</div>
+  <h2>Was der Test <em>nicht</em> sagt</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Interpretation</h3>
+      <ul style="font-size:13.5px">
+        <li><b>Keine Verwerfung ≠ „ist glatt"</b> (Pythia6.9B überlebt das Bundle — „könnte ein Bundle sein, oder einfach hohe Krümmung").</li>
+        <li>Verwerfung sagt <b>nicht, welche</b> Bruchkante (Spitze? Einschnürung? Sprung?).</li>
+        <li>Randpunkte werden übersehen — die einzige bekannte Schwäche.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc4)">Praktisch</h3>
+      <ul style="font-size:13.5px">
+        <li>Nur mit Zugriff auf die <b>Embedding-Matrix</b> (Open Weights) brauchbar.</li>
+        <li>Nur Radien <b>unterhalb des Reach τ</b> sind gültig — τ schwer zu schätzen.</li>
+        <li>Simulationen sind didaktische Nachbauten, keine Modellgewichte.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="quellen" class="anim">
+  <div class="eyebrow">Quellen</div>
+  <h2>Original — geprüft</h2>
+  <div class="card">
+    <ul style="font-size:13.5px">
+      <li><b>Das Paper:</b> Robinson, Dey &amp; Chiang (2025), NeurIPS: <i>Token Embeddings Violate the Manifold Hypothesis.</i> <a class="ext" href="https://arxiv.org/abs/2504.01002">arXiv:2504.01002</a> — alle Zahlen aus Tabellen 1–10 und Abbildungen 1–8.</li>
+      <li><b>Krümmung/Korrektur:</b> Gray (1974) — Ball-Volumen-Entwicklung <code>K·r<sup>d</sup> + (…)·r<sup>d+1</sup></code> in Riemannschen Mannigfaltigkeiten.</li>
+      <li><b>Stichwort:</b> „Invarianz des Gebiets" (topologischer Invariance-of-Domain-Satz) für die Nicht-Portabilität von Prompts zwischen Modellen.</li>
+    </ul>
+    <div class="note e" style="margin-bottom:0"><span class="h">Überarbeitungshinweis</span>
+      Gegenüber der ausführlichen Version: 12 Sektionen auf 9, 12 Labore auf 6, alle 3D-Plots (three.js/CDN) durch 2D-Canvas ersetzt. Die synthetischen Wolken sind Nachbauten; die gemeldeten p-Werte und Dimensionen stammen aus dem Paper.
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="anim">
+  <div class="eyebrow">Selbsttest</div>
+  <h2>Sechs Fragen</h2>
+  <div class="quiz" id="quizHost"></div>
+  <div class="card" style="text-align:center">
+    <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--acc)" id="qScore">0 / 6</div>
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:4px" id="qMsg">Los geht's!</div>
+    <button id="qReset" style="margin-top:12px">↻ Zurücksetzen</button>
+  </div>
+</section>
+
+</main>
+<footer>
+  Einfache interaktive Erklärung zu <b>„Token Embeddings Violate the Manifold Hypothesis"</b> (Robinson, Dey &amp; Chiang, NeurIPS 2025, arXiv:2504.01002).<br>
+  Alle Simulationen laufen live im Browser — ohne externe Bibliotheken.
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v);}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+const INK={grid:'rgba(255,255,255,.06)',axis:'rgba(255,255,255,.15)',txt:'#9aa6c0',faint:'#64708c',acc:'#5ee0d0',acc2:'#ff7ac0',acc3:'#ffc860',acc4:'#8a7cff',acc5:'#6ee88a'};
+
+(function(){
+  const bar=$('#prog');const links=$$('#nav .links a');
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const st=scrollY,dh=document.body.scrollHeight-innerHeight;
+    bar.style.width=(dh>0?st/dh*100:0)+'%';
+    let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*0.4)act=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===act));
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+  $$('.anim').forEach(el=>io.observe(el));
+})();
+
+(function(){
+  const cv=$('#cvPrompt');
+  function draw(){
+    const irr=+$('#irr').value/100;
+    $('#irrV').textContent=Math.round(irr*100)+' %';
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const N=110,rA=rng32(11),rB=rng32(22);
+    function scatter(cx,cy,spread,n,col,rnd){
+      for(let i=0;i<n;i++){
+        let x=cx+gauss(rnd)*spread,y=cy+gauss(rnd)*spread;
+        x=clamp(x,10,w-10);y=clamp(y,10,h-10);
+        c.beginPath();c.arc(x,y,3,0,Math.PI*2);c.fillStyle=col;c.fill();
+      }
+    }
+    scatter(w*0.25,h/2,16,N,INK.acc+'b3',rA);
+    const splitP=Math.min(0.9,irr*1.1);
+    const spreadB=16+irr*34;
+    const n1=Math.round(N*(1-splitP/2)),n2=Math.round(N*splitP/2);
+    scatter(w*0.72,h/2,spreadB,n1,INK.acc2+'99',rB);
+    if(n2>0)scatter(w*0.72+40,h/2-34,16,n2,INK.acc3+'cc',rB);
+    c.font='600 12px system-ui';c.fillStyle=INK.txt;
+    c.fillText('Prompt A',w*0.25-24,20);c.fillText('Prompt B',w*0.72-24,20);
+    const out=$('#promptOut');
+    if(splitP>0.5){out.className='badge-out bad';out.textContent='instabil: Antwort zerfällt → Bruchkante';}
+    else if(splitP>0.2){out.className='badge-out warn';out.textContent='leicht instabil';}
+    else{out.className='badge-out ok';out.textContent='stabil: glatte Geometrie';}
+    $('#sprB').textContent=splitP>0.5?'zerfällt':splitP>0.2?'breit':'stabil';
+  }
+  $('#irr').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const SHAPES={
+    circle:t=>{const a=t*Math.PI*2;return [Math.cos(a),Math.sin(a)];},
+    seg:t=>[t*2-1,0],
+    cusp:t=>{const s=t*2-1;return [s*s,s*s*s];},
+    lolli:t=>{if(t<0.5){const a=(t/0.5)*Math.PI*2;return [Math.cos(a)*0.5+0.6,Math.sin(a)*0.5];}const s=(t-0.5)/0.5;return [0.6-s*1.2,0];}
+  };
+  let shape='circle';
+  const cS=$('#cvShape'),cZ=$('#cvZoom');
+  function draw(){
+    const pos=+$('#pos').value/100;
+    const pts=[];for(let i=0;i<=300;i++)pts.push(SHAPES[shape](i/300));
+    // main
+    {
+      const {c,w,h}=hidpi(cS,260);
+      c.clearRect(0,0,w,h);
+      let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+      pts.forEach(p=>{xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);});
+      const S=Math.min((w-40)/(xmax-xmin||1),(h-40)/(ymax-ymin||1));
+      function X(x){return w/2+(x-(xmin+xmax)/2)*S;}function Y(y){return h/2-(y-(ymin+ymax)/2)*S;}
+      c.strokeStyle=INK.acc;c.lineWidth=3;c.beginPath();
+      pts.forEach((p,i)=>{if(i===0)c.moveTo(X(p[0]),Y(p[1]));else c.lineTo(X(p[0]),Y(p[1]));});
+      if(shape==='circle')c.closePath();
+      c.stroke();
+      const pt=SHAPES[shape](pos);
+      c.beginPath();c.arc(X(pt[0]),Y(pt[1]),8,0,Math.PI*2);c.fillStyle=INK.acc2;c.fill();
+      c.strokeStyle='#0a0e18';c.lineWidth=2;c.stroke();
+    }
+    // zoom
+    {
+      const {c,w,h}=hidpi(cZ,180);
+      c.clearRect(0,0,w,h);
+      const zoom=0.18;
+      const center=SHAPES[shape](pos);
+      const zpts=[];for(let i=0;i<=600;i++)zpts.push(SHAPES[shape](i/600));
+      c.strokeStyle=INK.acc2;c.lineWidth=3;c.beginPath();let started=false;
+      zpts.forEach(p=>{
+        const dx=(p[0]-center[0])/zoom,dy=(p[1]-center[1])/zoom;
+        if(Math.abs(dx)<1.2&&Math.abs(dy)<1.2){
+          const x=w/2+dx*w*0.4,y=h/2-dy*h*0.4;
+          if(!started){c.moveTo(x,y);started=true;}else c.lineTo(x,y);
+        } else started=false;
+      });
+      c.stroke();
+      c.beginPath();c.arc(w/2,h/2,5,0,Math.PI*2);c.fillStyle=INK.txt;c.fill();
+      c.font='10px system-ui';c.fillStyle=INK.faint;c.fillText('Zoom',8,16);
+    }
+    const out=$('#zoomOut');
+    let verdict='ok',msg='glatte Fläche — flache Scheibe';
+    if(shape==='cusp'&&Math.abs(pos-0.5)<0.14){verdict='bad';msg='Bruchkante — keine flache Scheibe (Spitze)';}
+    else if(shape==='lolli'&&(Math.abs(pos-0.5)<0.06)){verdict='bad';msg='Bruchkante — Dimensionssprung (1D↔2D)';}
+    else if(shape==='seg'&&(pos<0.05||pos>0.95)){verdict='warn';msg='Randpunkt — sieht aus wie Halbraum';}
+    out.className='badge-out '+verdict;out.textContent=msg;
+  }
+  $$('#shapeBtns button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#shapeBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');shape=b.dataset.sh;draw();
+  }));
+  $('#pos').addEventListener('input',()=>{$('#posV').textContent=(+$('#pos').value/100).toFixed(2);draw();});
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvDim');
+  function draw(){
+    const d1=+$('#d1').value/10,d2=+$('#d2').value/10,kp=+$('#kp').value/100;
+    $('#d1V').textContent=d1.toFixed(1);$('#d2V').textContent=d2.toFixed(1);$('#kpV').textContent=kp.toFixed(2);
+    $('#dimL').textContent=d1.toFixed(1);$('#dimR').textContent=d2.toFixed(1);
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const pad={l:38,r:14,t:16,b:26},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    function yAt(x){if(x<kp)return d1*(kp-x)*0.6;return d2*(x-kp)*0.6;}
+    let ymin=1e9,ymax=-1e9;
+    for(let i=0;i<=200;i++){const y=yAt(i/200);ymin=Math.min(ymin,y);ymax=Math.max(ymax,y);}
+    ymin-=0.3;ymax+=0.3;
+    function X(x){return pad.l+x*pw;}function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();}
+    c.strokeStyle=INK.acc;c.lineWidth=3;c.beginPath();
+    for(let i=0;i<=200;i++){const x=i/200;if(i===0)c.moveTo(X(x),Y(yAt(x)));else c.lineTo(X(x),Y(yAt(x)));}
+    c.stroke();
+    const kx=X(kp),ky=Y(yAt(kp));
+    c.beginPath();c.arc(kx,ky,6,0,Math.PI*2);c.fillStyle=(d2>d1)?INK.acc2:INK.acc3;c.fill();c.strokeStyle='#0a0e18';c.lineWidth=2;c.stroke();
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';c.fillText('log Radius →',w/2,h-8);c.textAlign='left';
+    const out=$('#dimOut');
+    if(d2>d1+0.05){out.className='badge-out bad';out.textContent='Steigung STEIGT → Bruchkante!';}
+    else{out.className='badge-out ok';out.textContent='Steigung fällt — erlaubt';}
+  }
+  ['d1','d2','kp'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvKnick');
+  let kinkOn=false;
+  function draw(){
+    const d=+$('#knD').value/10,c=+$('#knC').value/100;
+    $('#knDV').textContent=d.toFixed(1);$('#knCV').textContent=c.toFixed(2);
+    const {c:cc,w,h}=hidpi(cv,300);
+    cc.clearRect(0,0,w,h);
+    const pad={l:38,r:14,t:16,b:26},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    // y = log volume; base slope d, curvature bends it, kink adds an upward jump at x=0.6
+    function yAt(x){
+      let y=d*x*0.6 + c*x*x*0.6;
+      if(kinkOn&&x>0.6)y+=1.2*(x-0.6);
+      return y;
+    }
+    let ymin=1e9,ymax=-1e9;
+    for(let i=0;i<=200;i++){const y=yAt(i/200);ymin=Math.min(ymin,y);ymax=Math.max(ymax,y);}
+    ymin-=0.3;ymax+=0.3;
+    function X(x){return pad.l+x*pw;}function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    cc.strokeStyle=INK.grid;cc.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;cc.beginPath();cc.moveTo(pad.l,gy);cc.lineTo(w-pad.r,gy);cc.stroke();}
+    cc.strokeStyle=kinkOn?INK.acc2:INK.acc;cc.lineWidth=3;cc.beginPath();
+    for(let i=0;i<=400;i++){const x=i/400;if(i===0)cc.moveTo(X(x),Y(yAt(x)));else cc.lineTo(X(x),Y(yAt(x)));}
+    cc.stroke();
+    if(kinkOn){
+      const kx=X(0.6),ky=Y(yAt(0.6));
+      cc.beginPath();cc.arc(kx,ky,6,0,Math.PI*2);cc.fillStyle=INK.acc2;cc.fill();
+    }
+    const out=$('#knickOut');
+    if(kinkOn){out.className='badge-out bad';out.textContent='Knick — plötzlicher Sprung → Singularität';}
+    else if(Math.abs(c)>0.6){out.className='badge-out warn';out.textContent='starke Biegung — hohe Krümmung, kleiner Reach';}
+    else{out.className='badge-out ok';out.textContent='Biegung — von Krümmung, noch glatt';}
+  }
+  $('#knD').addEventListener('input',draw);$('#knC').addEventListener('input',draw);
+  $('#knKink').addEventListener('click',()=>{kinkOn=!kinkOn;$('#knKink').classList.toggle('on',kinkOn);draw();});
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvBundle');
+  function draw(){
+    const bw=+$('#bw').value/100,r=+$('#br').value/100;
+    $('#bwV').textContent=bw.toFixed(2);$('#brV').textContent=r.toFixed(2);
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const hz=bw/2; // half-width of strip (world)
+    // strip
+    c.fillStyle='rgba(94,224,208,.10)';
+    c.fillRect(0,h/2-hz*(h*0.8),w,hz*2*(h*0.8));
+    c.strokeStyle='rgba(94,224,208,.4)';c.lineWidth=1.5;
+    c.beginPath();c.moveTo(0,h/2-hz*(h*0.8));c.lineTo(w,h/2-hz*(h*0.8));c.stroke();
+    c.beginPath();c.moveTo(0,h/2+hz*(h*0.8));c.lineTo(w,h/2+hz*(h*0.8));c.stroke();
+    const cx=w/2,cy=h/2;
+    const rpx=r*(h*0.8);
+    c.beginPath();c.arc(cx,cy,rpx,0,Math.PI*2);c.fillStyle='rgba(255,200,96,.25)';c.fill();
+    c.strokeStyle=INK.acc3;c.lineWidth=2;c.stroke();
+    c.beginPath();c.arc(cx,cy,4,0,Math.PI*2);c.fillStyle=INK.txt;c.fill();
+    const inside=r<hz;
+    const out=$('#bundleOut');
+    if(inside){out.className='badge-out ok';out.textContent='Kugel ganz im Streifen — Steigung ≈ 2 (Faser)';}
+    else if(r<hz*3){out.className='badge-out warn';out.textContent='Übergang — Kugel ragt raus, Knick';}
+    else{out.className='badge-out ok';out.textContent='Kugel weit draußen — Steigung ≈ 1 (Grundraum)';}
+  }
+  $('#bw').addEventListener('input',draw);$('#br').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvHolm');
+  function normCdf(x){ // Abramowitz-Stegun
+    const t=1/(1+0.2316419*Math.abs(x));
+    const d=0.3989423*Math.exp(-x*x/2);
+    let p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+    return x>0?1-p:p;
+  }
+  function draw(){
+    const n=+$('#holmN').value,alpha=0.001;
+    $('#holmNV').textContent=n.toLocaleString('de-DE');
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const pad={l:44,r:14,t:16,b:26},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    const nPts=60;
+    // simulated sorted p-values: 6 planted effects + uniform noise, sorted asc
+    const planted=[1e-8,2e-8,5e-8,9e-8,3e-7,2e-6];
+    const rng=rng32(99);
+    const ps=[];planted.forEach(p=>ps.push(p));
+    for(let i=0;i<nPts-6;i++)ps.push(rng());
+    ps.sort((a,b)=>a-b);
+    // x axis: rank index 1..nPts (log), y axis: p (log 1e-9..1)
+    function X(i){return pad.l+(i-1)/(nPts-1)*pw;}
+    function Y(p){const lp=Math.log10(Math.max(p,1e-9)),lpmin=-9,lpmax=0;return pad.t+ph-(lp-lpmin)/(lpmax-lpmin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();
+      c.fillStyle=INK.faint;c.font='9px monospace';c.textAlign='right';c.fillText('1e'+(0-i*2.25).toFixed(1),pad.l-4,gy+3);}
+    // Holm line: p_(k) vs alpha/(n-k+1)
+    c.strokeStyle=INK.acc3;c.lineWidth=2;c.beginPath();
+    for(let i=1;i<=nPts;i++){const thr=alpha/(n-i+1);const x=X(i),y=Y(Math.min(thr,1));if(i===1)c.moveTo(x,y);else c.lineTo(x,y);}
+    c.stroke();
+    // Bonferroni line alpha/n
+    c.strokeStyle=INK.faint;c.setLineDash([4,4]);c.beginPath();
+    const yb=Y(alpha/n);c.moveTo(pad.l,yb);c.lineTo(w-pad.r,yb);c.stroke();c.setLineDash([]);
+    // points
+    let pass=0;
+    for(let i=0;i<nPts;i++){
+      const p=ps[i];const thr=alpha/(n-(i+1)+1);
+      const surv=p<thr;
+      if(surv)pass++;
+      c.beginPath();c.arc(X(i+1),Y(p),3,0,Math.PI*2);
+      c.fillStyle=surv?INK.acc5:'rgba(255,122,192,.5)';c.fill();
+    }
+    $('#holmFalse').textContent='≈ '+Math.round(n*alpha);
+    $('#holmPass').textContent=pass;
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';c.fillText('Rang (p sortiert aufsteigend)',w/2,h-8);
+  }
+  $('#holmN').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvThm2');
+  function draw(){
+    const l=+$('#t2L').value,d=+$('#t2D').value,w=+$('#t2W').value;
+    $('#t2LV').textContent=l;$('#t2DV').textContent=d;$('#t2WV').textContent=w;
+    const mmin=2*w*d/l;
+    const m=Math.ceil(mmin+1);
+    const ok=m<=w;
+    $('#t2M').textContent=m;
+    $('#t2OK').textContent=ok?'ja':'nein';
+    const out=$('#t2Out');
+    if(ok){out.className='badge-out ok';out.textContent='erfüllbar: Singularitäten überleben bis in die Ausgabe';}
+    else{out.className='badge-out bad';out.textContent='nicht erfüllbar (2d ≥ ℓ an dieser Stelle)';}
+    const {c,w2,h}=hidpi(cv,260);
+    c.clearRect(0,0,w2,h);
+    const pad={l:40,r:14,t:16,b:26},pw=w2-pad.l-pad.r,ph=h-pad.t-pad.b;
+    // plot m_min(d) vs d, and bound w
+    let dmax=4096;
+    function mminD(dd){return 2*w*dd/l;}
+    let ymin=0,ymax=0;
+    for(let i=0;i<=100;i++){const dd=dmax*i/100;const m=mminD(dd);ymin=Math.min(ymin,m);ymax=Math.max(ymax,m,w);}
+    ymax*=1.1;ymin=Math.min(0,ymin);
+    function X(dd){return pad.l+(dd-dmin)/(dmax-dmin)*pw;}
+    const dmin=1;
+    function X2(dd){return pad.l+(dd-dmin)/(dmax-dmin)*pw;}
+    function Y(v){return pad.t+ph-(v-ymin)/(ymax-ymin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w2-pad.r,gy);c.stroke();}
+    // bound w line
+    c.strokeStyle=INK.acc4;c.lineWidth=2;c.beginPath();c.moveTo(pad.l,Y(w));c.lineTo(w2-pad.r,Y(w));c.stroke();
+    c.fillStyle=INK.acc4;c.font='9px monospace';c.fillText('w (Obergrenze)',pad.l+4,Y(w)-4);
+    // m_min curve
+    c.strokeStyle=INK.acc;c.lineWidth=2.5;c.beginPath();
+    for(let i=0;i<=200;i++){const dd=dmin+(dmax-dmin)*i/200;if(i===0)c.moveTo(X2(dd),Y(mminD(dd)));else c.lineTo(X2(dd),Y(mminD(dd)));}
+    c.stroke();
+    // current d marker
+    const mx=X2(clamp(d,dmin,dmax)),my=Y(mminD(clamp(d,dmin,dmax)));
+    c.beginPath();c.arc(mx,my,5,0,Math.PI*2);c.fillStyle=ok?INK.acc5:INK.acc2;c.fill();
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';c.fillText('d (umschließende Dimension)',w2/2,h-8);
+  }
+  ['t2L','t2D','t2W'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const QS=[
+    {q:'Was bedeutet „Daten liegen auf einer Mannigfaltigkeit"?',o:['Sie sind überall glatt wie eine flache Scheibe','Sie sind konvex','Sie haben feste Dimension','Sie sind symmetrisch'],a:0},
+    {q:'Die Dimension d liest man ab als…',o:['die Fläche unter der Kurve','die Steigung im Log-Log-Plot','die höchste Amplitude','die Anzahl der Punkte'],a:1},
+    {q:'Der Test sucht…',o:['Biegungen (Krümmung)','Knicke (Steigungswechsel)','Farben','Symmetrien'],a:1},
+    {q:'Ein <em>aufwärts</em> knickender Knick in der Log-Log-Kurve…',o:['ist normal','verwirft das Fiber-Bundle','bestätigt das Manifold','sagt nichts'],a:1},
+    {q:'50 000 Tokens = 50 000 Tests. Warum Holm-Bonferroni?',o:['um schneller zu sein','um Zufallstreffer zu streichen','um mehr Daten zu brauchen','es ist optional'],a:1},
+    {q:'Was sagt Lemma 1 über mehr Kontext?',o:['Kontext heilt Singularitäten weg','Kontext heilt nichts dauerhaft','Kontext ist irrelevant','Kontext verdoppelt die Dimension'],a:1}
+  ];
+  const host=$('#quizHost');let score=0,answered=0;
+  QS.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='q';
+    div.innerHTML='<div style="margin-bottom:8px">'+(i+1)+'. '+item.q+'</div>';
+    item.o.forEach((opt,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=opt;
+      b.addEventListener('click',()=>{
+        if(div.dataset.done)return;div.dataset.done='1';answered++;
+        if(oi===item.a){b.classList.add('correct');score++;}
+        else{b.classList.add('wrong');div.querySelectorAll('.opt')[item.a].classList.add('correct');}
+        $('#qScore').textContent=score+' / '+QS.length;
+        if(answered===QS.length)$('#qMsg').textContent=score>=5?'Stark! Du hast das Paper im Griff.':score>=3?'Solide — schau die Stationen noch einmal an.':'Nochmal von vorn — die Demos helfen.';
+        else $('#qMsg').textContent=answered+' / '+QS.length+' beantwortet.';
+      });
+      div.appendChild(b);
+    });
+    host.appendChild(div);
+  });
+  $('#qReset').addEventListener('click',()=>{location.reload();});
+})();
+</script>
+</body>
+</html>

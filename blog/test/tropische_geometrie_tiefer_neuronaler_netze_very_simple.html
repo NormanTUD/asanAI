@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die geheime Rechenkunst hinter neuronalen Netzen — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.ro .box.violet{background:var(--violet-soft);border-color:#ddd2f5}
+.ro .box.violet .v{color:var(--violet)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.eq{font-family:var(--mono);font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto}
+.eq .op{color:var(--teal);font-weight:700}
+.eq .op2{color:var(--amber);font-weight:700}
+.big-num{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:22px 0}
+.big-num .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 6px rgba(60,50,20,.03)}
+.big-num .c .v{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--teal);line-height:1.1}
+.big-num .c .v.amber{color:var(--amber)}
+.big-num .c .v.rose{color:var(--rose)}
+.big-num .c .v.violet{color:var(--violet)}
+.big-num .c .l{font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.4}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Ersetze <em>+</em> durch <em>max</em>.<br>Damit wird alles anders.</h1>
+  <p class="sub">Neuronale Netze aus ReLU-Schichten sind nicht „ähnlich" einer alten Algebra — sie <b>sind</b> exakt die Objekte der sogenannten <b>tropischen Geometrie</b>. Der ganze Trick: Ersetze das Plus durch <b>max</b> und das Mal durch <b>plus</b>. Dieses kleine Experiment zeigt, wie ein Netz zu einer „Knick-Maschine" wird — und warum <b>Tiefe</b> mehr kann als <b>Breite</b>.</p>
+  <div class="chips">
+    <span class="chip">2 kleine Experimente</span>
+    <span class="chip">1 überraschende Gleichung</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Der Trick: eine Rechenkunst für Knick</h2>
+<p>Normale Mathe kennt zwei Grundoperationen: <b>plus</b> und <b>mal</b>. Die tropische Mathe tauscht die Regeln: statt <b>plus</b> zählt hier <b>„wer ist größer"</b> (max), und statt <b>mal</b> zählt <b>plus</b>.</p>
+<div class="eq">
+  normale Welt:&nbsp; <span class="op">x + y</span> &nbsp;und&nbsp; <span class="op2">x · y</span><br>
+  tropische Welt:&nbsp; <span class="op">max(x, y)</span> &nbsp;und&nbsp; <span class="op2">x + y</span>
+</div>
+<p>Das klingt harmlos. Aber es versteckt darin genau das, was ein ReLU-Netz kann. Denn die wichtigste Aktivierungsfunktion aller Bild- und Textmodelle ist:</p>
+<div class="eq">
+  ReLU(x) &nbsp;=&nbsp; max(x, 0) &nbsp;=&nbsp; <span class="op">x ⊕ 0</span>
+</div>
+<div class="note">
+  <b>Der ganze Trick des Papers in einer Zeile:</b> Ein ReLU-Neuron ist in der tropischen Schreibweise „x plus-oder-nichts". Weil das Netz aus nichts anderem als solchen max-Bausteinen besteht, <em>ist</em> es von Natur aus ein tropisches Objekt — nicht ungefährlich, nicht annähernd: <b>identisch</b>.
+</div>
+
+<h2><span class="n">2</span>Experiment: ein Netz ist eine Knick-Maschine</h2>
+<p>Ein ReLU-Netz in einer Eingangsgröße zeichnet eine Linie. Aber keine glatte Kurve — eine <b>geknickte</b> aus geraden Stücken. Jeder Neuron trägt <b>einen Knick</b> bei. Die ganze „Intelligenz" des Netzes steckt darin: <b>Wo sind die Knicken? Und wie viele gibt es?</b> Das sind die sogenannten <b>linearen Regionen</b>.</p>
+<div class="demo">
+  <h3>Die Knick-Maschine: baue dein eigenes 1D-Netz</h3>
+  <p class="dsub">Drei ReLU-Neuronen. Schiebe Position und Stärke jedes Knick. Zähl mit, wie viele gerade Stücke entstehen.</p>
+  <canvas id="cv1d" width="400" height="240"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 1 — Position des Knicks</span><b id="p1V">2.5</b></div>
+    <input type="range" id="p1" min="5" max="95" value="25">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 1 — Stärke (Steigung danach)</span><b id="w1V">+1.5</b></div>
+    <input type="range" id="w1" min="-50" max="50" value="15">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 2 — Position des Knicks</span><b id="p2V">5.0</b></div>
+    <input type="range" id="p2" min="5" max="95" value="50" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 2 — Stärke</span><b id="w2V">-1.0</b></div>
+    <input type="range" id="w2" min="-50" max="50" value="-10" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 3 — Position des Knicks</span><b id="p3V">7.5</b></div>
+    <input type="range" id="p3" min="5" max="95" value="75" class="v">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Neuron 3 — Stärke</span><b id="w3V">+2.0</b></div>
+    <input type="range" id="w3" min="-50" max="50" value="20" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Neuronen</div><div class="v">3</div></div>
+    <div class="box amber"><div class="k">Knicke</div><div class="v" id="knickV">3</div></div>
+    <div class="box rose"><div class="k">Lineare Regionen</div><div class="v" id="regV">4</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Der Punkt:</b> Mehr Neuronen = mehr Knicken = mehr Regionen. Eine solche „geknickte" Funktion heißt <b>stückweise linear</b>. Und genau diese Funktionen sind in der tropischen Sprache <em>„rationale Funktionen"</em> — Differenzen zweier „max-von-Gerade"-Funktionen.
+</div>
+
+<h2><span class="n">3</span>Experiment: warum Tiefe exponentiell gewinnt</h2>
+<p>Jetzt der springende Punkt. Ein flaches Netz mit <b>vielen</b> Neuronen in <b>einer</b> Reihe kann nur so viele Regionen wie Neuronen erzeugen. Aber ein <b>tieferes</b> Netz <b>stapelt</b> die Knicken: jede Schicht <em>faltet</em> die vorhandenen Stücke erneut. Die Anzahl der Regionen wächst dann <b>exponentiell</b> mit der Tiefe — während die Anzahl der Neuronen nur linear wächst.</p>
+<div class="demo">
+  <h3>Das Falt-Experiment: gleiche Neuronen, mehr Tiefe</h3>
+  <p class="dsub">Eine Schicht mit k „Zähnen" wird L-mal auf sich selbst angewendet. Zähl, wie schnell die Streifen explodieren.</p>
+  <canvas id="cvFold" width="400" height="240"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Zähne pro Schicht (k)</span><b id="kV">2</b></div>
+    <input type="range" id="k" min="1" max="4" value="2">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Anzahl der Schichten (L)</span><b id="LV">3</b></div>
+    <input type="range" id="L" min="1" max="5" value="3" class="m">
+  </div>
+  <div class="ro">
+    <div class="box amber"><div class="k">Regionen (Streifen)</div><div class="v" id="foldRegV">8</div></div>
+    <div class="box violet"><div class="k">Neuronen nötig (L·k)</div><div class="v" id="foldNeuV">6</div></div>
+    <div class="box rose"><div class="k">Verhältnis</div><div class="v" id="foldRatioV">1.3</div></div>
+  </div>
+</div>
+<div class="note amber">
+  <b>Das ist die Exponentialität, zum Anfassen:</b> Mit 6 Neuronen in 3 Schichten entstehen 8 Regionen — flach wären es nur 6. Bei L=5 und k=4: <b>1024 Regionen</b> mit „nur" 20 Neuronen. Genau das beweist das Paper in Theorem 6.3: <b>Breite hilft polynomial, Tiefe exponentiell.</b>
+</div>
+
+<h2><span class="n">4</span>Die große Aussage (der Äquivalenzsatz)</h2>
+<p>Das Paper zeigt, dass drei Dinge <b>genau dasselbe</b> sind — man kann zwischen ihnen hin- und herschalten, ohne etwas zu verlieren:</p>
+<ul>
+  <li>Neuronale Netze aus ReLU-Schichten (mit ganzzahligen Gewichten),</li>
+  <li>kontinuierliche, <b>stückweise lineare</b> Funktionen mit ganzzahligen Steigungen,</li>
+  <li><b>tropische rationale Funktionen</b> (Differenzen von „max-von-Gerade").</li>
+</ul>
+<p>Das ist keine Ähnlichkeit und keine Näherung. Es ist eine <b>Gleichheit von Familien</b>. Der Grund: Ein ReLU-Netz kann jeden möglichen Knick erzeugen, und jeder mögliche Knick lässt sich als ReLU-Netz aufbauen. Die Menge der Netz-Funktionen ist damit eine <b>Algebra</b> — man kann tropisch addieren, multiplizieren und dividieren, und bleibt in derselben Familie.</p>
+
+<h2><span class="n">5</span>Die Grenzen (honesty corner)</h2>
+<ul>
+  <li><b>Nur stückweise lineare Aktivierungen:</b> ReLU, Leaky-ReLU, abs, Max-Pooling ja — aber <b>tanh und Sigmoid nein</b> (die sind nicht stückweise linear).</li>
+  <li><b>Ganzzahlige Gewichte:</b> Man kann jede reelle Matrix mit einigem Aufwand auf ganze Zahlen umschreiben — für die tropische <em>Geometrie</em> ist das aber nötig, nicht nur Kosmetik.</li>
+  <li><b>Löst nicht das Generalisierungs-Rätsel:</b> Das Paper erklärt <em>warum</em> Tiefe gewinnt (geometrisch), aber <em>warum</em> Netze auf neuen Daten gut funktionieren, bleibt offen. Es liefert eine neue Sprache, die Frage zu stellen.</li>
+  <li><b>Die Schranke ist neu formuliert, nicht besser:</b> Das Hauptergebnis (Theorem 6.3) verbessert den bekannten Bound von Raghu et al. (2017) nicht — es erklärt ihn in drei Zeilen Konvexgeometrie.</li>
+</ul>
+
+<h2><span class="n">6</span>Woher das stammt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>Qing Zhang, Gregory Naitzat, Chenghua Li (2018):</b> „Tropical Geometry of Deep Neural Networks", <a href="https://arxiv.org/abs/1805.07091">ICML 2018, arXiv:1805.07091</a></p>
+  <p style="font-size:14px;margin-bottom:4px">Das Zählen der Regionen stützt sich auf die <b>Dualität</b> von Maclagan &amp; Sturmfels und den <b>Zonotop-Vertex-Satz</b> von Gritzmann &amp; Sturmfels. Die umgekehrte Richtung (jede stückweise lineare Funktion als Max-Min-Formel) stammt von Tarela &amp; Martinez.</p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Die echten Netze arbeiten in 2 bis 100 000 Dimensionen; hier ist alles 1-dimensionales Spielzeug. Die Zahlen bei „Falten" sind didaktisch — die echte Schranke ist ein Produkt über alle Schichten.</p>
+</div>
+
+<footer>
+  Eine einfache interaktive Erklärung ohne Formeln. Original: Zhang, Naitzat &amp; Li (2018), ICML 2018, arXiv:1805.07091.<br>
+  Alles läuft lokal im Browser — keine Daten verlassen diese Seite. · Volle Version: <a href="tropische_geometrie_tiefer_neuronaler_netze.html">tropische_geometrie_tiefer_neuronaler_netze.html</a> · Einfache Version: <a href="tropische_geometrie_tiefer_neuronaler_netze_simple.html">…_simple.html</a>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  var TAU=Math.PI*2;
+  function $(id){return document.getElementById(id);}
+
+  // ---------- Demo 1: 1D ReLU net ----------
+  var cv1=$('cv1d');
+  var c1=cv1.getContext('2d');
+  var W1=cv1.width, H1=cv1.height;
+  function relu(z){return z>0?z:0;}
+  function netY(x){
+    var c1p=+($('p1').value)/10, c2p=+($('p2').value)/10, c3p=+($('p3').value)/10;
+    var w1=+($('w1').value)/10, w2=+($('w2').value)/10, w3=+($('w3').value)/10;
+    return w1*relu(x-c1p)+w2*relu(x-c2p)+w3*relu(x-c3p);
+  }
+  function draw1d(){
+    c1.clearRect(0,0,W1,H1);
+    c1.fillStyle='#f5f0e6';c1.fillRect(0,0,W1,H1);
+    var pad={l:34,r:14,t:16,b:26};
+    var pw=W1-pad.l-pad.r, ph=H1-pad.t-pad.b;
+    var xmin=0,xmax=10;
+    var yv=[];
+    for(var i=0;i<=200;i++){var x=xmin+(xmax-xmin)*i/200;yv.push(netY(x));}
+    var ymin=Math.min.apply(null,yv)-0.5, ymax=Math.max.apply(null,yv)+0.5;
+    function X(x){return pad.l+(x-xmin)/(xmax-xmin)*pw;}
+    function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c1.strokeStyle='#e7e0d0';c1.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var gy=pad.t+ph*i/4;
+      c1.beginPath();c1.moveTo(pad.l,gy);c1.lineTo(W1-pad.r,gy);c1.stroke();
+    }
+    c1.strokeStyle='#2b2e3a';c1.lineWidth=3;
+    c1.beginPath();
+    for(var i=0;i<200;i++){
+      var x=xmin+(xmax-xmin)*i/200;
+      var px=X(x),py=Y(yv[i]);
+      if(i===0)c1.moveTo(px,py);else c1.lineTo(px,py);
+    }
+    c1.stroke();
+    var c1p=+($('p1').value)/10,c2p=+($('p2').value)/10,c3p=+($('p3').value)/10;
+    var w1=+($('w1').value)/10,w2=+($('w2').value)/10,w3=+($('w3').value)/10;
+    var kinks=[];
+    if(Math.abs(w1)>1e-9)kinks.push({x:c1p,c:'#0f766e'});
+    if(Math.abs(w2)>1e-9)kinks.push({x:c2p,c:'#b45309'});
+    if(Math.abs(w3)>1e-9)kinks.push({x:c3p,c:'#6d28d9'});
+    for(var i=0;i<kinks.length;i++){
+      var kx=X(kinks[i].x);
+      var ky=Y(netY(kinks[i].x));
+      c1.beginPath();c1.arc(kx,ky,6,0,TAU);
+      c1.fillStyle=kinks[i].c;c1.fill();
+      c1.strokeStyle='#fff';c1.lineWidth=2;c1.stroke();
+    }
+    $('p1V').textContent=(+($('p1').value)/10).toFixed(1);
+    $('p2V').textContent=(+($('p2').value)/10).toFixed(1);
+    $('p3V').textContent=(+($('p3').value)/10).toFixed(1);
+    $('w1V').textContent=(+($('w1').value)/10>=0?'+':'')+(+($('w1').value)/10).toFixed(1);
+    $('w2V').textContent=(+($('w2').value)/10>=0?'+':'')+(+($('w2').value)/10).toFixed(1);
+    $('w3V').textContent=(+($('w3').value)/10>=0?'+':'')+(+($('w3').value)/10).toFixed(1);
+    var distinct=kinks.length;
+    $('knickV').textContent=distinct;
+    $('regV').textContent=distinct+1;
+  }
+  ['p1','w1','p2','w2','p3','w3'].forEach(function(id){
+    $(id).addEventListener('input',draw1d);
+  });
+  draw1d();
+
+  // ---------- Demo 2: folding ----------
+  var cv2=$('cvFold');
+  var c2=cv2.getContext('2d');
+  var W2=cv2.width, H2=cv2.height;
+  function fold1(x,k){
+    var t=x*k;
+    var f=t%1;
+    return 1-Math.abs(1-2*f);
+  }
+  function foldL(x,k,L){
+    for(var i=0;i<L;i++)x=fold1(x,k);
+    return x;
+  }
+  function drawFold(){
+    c2.clearRect(0,0,W2,H2);
+    c2.fillStyle='#f5f0e6';c2.fillRect(0,0,W2,H2);
+    var pad={l:34,r:14,t:16,b:26};
+    var pw=W2-pad.l-pad.r, ph=H2-pad.t-pad.b;
+    var k=+($('k').value), L=+($('L').value);
+    var xmin=0,xmax=1;
+    var ys=[];
+    for(var i=0;i<=2000;i++){var x=xmin+(xmax-xmin)*i/2000;ys.push(foldL(x,k,L));}
+    var ymin=0,ymax=1;
+    function X(x){return pad.l+(x-xmin)/(xmax-xmin)*pw;}
+    function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c2.strokeStyle='#e7e0d0';c2.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var gy=pad.t+ph*i/4;
+      c2.beginPath();c2.moveTo(pad.l,gy);c2.lineTo(W2-pad.r,gy);c2.stroke();
+    }
+    c2.strokeStyle='#0f766e';c2.lineWidth=2;
+    c2.beginPath();
+    for(var i=0;i<=2000;i++){
+      var x=xmin+(xmax-xmin)*i/2000;
+      var px=X(x),py=Y(ys[i]);
+      if(i===0)c2.moveTo(px,py);else c2.lineTo(px,py);
+    }
+    c2.stroke();
+    var regions=Math.pow(k,L);
+    var neurons=L*k;
+    $('kV').textContent=k;
+    $('LV').textContent=L;
+    $('foldRegV').textContent=regions;
+    $('foldNeuV').textContent=neurons;
+    $('foldRatioV').textContent=(regions/neurons).toFixed(1);
+  }
+  ['k','L'].forEach(function(id){$(id).addEventListener('input',drawFold);});
+  drawFold();
+})();
+</script>
+</body>
+</html>

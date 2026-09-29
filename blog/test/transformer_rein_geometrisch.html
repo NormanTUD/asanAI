@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Transformer — rein geometrisch</title>
+<style>
+  :root{--bg:#0b0d12;--ink:#e8ecf4;--dim:#7b8496;--acc:#ffd166}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;overflow:hidden}
+  canvas{display:block;width:100%;height:100%;position:fixed;inset:0}
+  .panel{position:fixed;left:44px;top:40px;max-width:330px;pointer-events:none;z-index:2}
+  .step{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:25px;font-weight:600;margin:9px 0 10px;line-height:1.16}
+  .formula{margin-top:14px;padding:10px 14px;border-left:2px solid var(--acc);
+    background:rgba(255,209,102,.05);font-family:"Cambria Math",Georgia,serif;
+    font-size:16px;color:#ffe9b0}
+  .formula small{display:block;font-size:12px;color:#9a8f6d;margin-top:4px}
+  #bar{position:fixed;left:44px;bottom:36px;display:flex;gap:6px;z-index:2}
+  .dot{width:17px;height:3px;background:#2a3040;transition:background .5s}
+  .dot.on{background:var(--acc)}
+  #hint{position:fixed;right:44px;bottom:34px;font-size:12px;color:#4d5568;z-index:2}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="panel">
+  <div class="step" id="sNum"></div><h1 id="sTitle"></h1>
+  <div class="formula" id="sForm"></div>
+</div>
+<div id="bar"></div>
+<div id="hint">← →  Schritt &nbsp;·&nbsp; Drag: rotieren &nbsp;·&nbsp; R: Reset</div>
+
+<script>
+/* ═══════════════ Canvas ═══════════════ */
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,DPR;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+const lerp=(a,b,u)=>a+(b-a)*u;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function ease(u){const s=1/(1+Math.exp(-11*(u-0.5)));
+  const a=1/(1+Math.exp(5.5)),b=1/(1+Math.exp(-5.5));return (s-a)/(b-a);}
+const sub=(t,a,b)=>ease(clamp((t-a)/(b-a),0,1));
+const TAU=6.283185307;
+
+/* ═══════════════ Kamera ═══════════════ */
+let camA=0.55,camB=0.34,dragA=0,dragB=0,ZOOM=1,PAN=0;
+const BASE=()=>Math.min(W,H)*0.215;
+function proj(p){
+  const A=camA+dragA,B=camB+dragB,S0=BASE()*ZOOM;
+  const x=p.x*Math.cos(A)-p.y*Math.sin(A);
+  const y=p.x*Math.sin(A)+p.y*Math.cos(A);
+  const y2=-y*Math.sin(B)+p.z*Math.cos(B);
+  const z2= y*Math.cos(B)+p.z*Math.sin(B);
+  const d=5.4,k=d/(d+z2*0.72);
+  return {X:W/2+x*S0*k+PAN, Y:H/2-y2*S0*k+H*0.03, d:z2, k:k};
+}
+function V(x,y,z){return{x:x,y:y,z:z};}
+const add=(a,b)=>V(a.x+b.x,a.y+b.y,a.z+b.z);
+const mul=(a,s)=>V(a.x*s,a.y*s,a.z*s);
+const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
+const nrm=a=>{const l=Math.hypot(a.x,a.y,a.z)||1;return V(a.x/l,a.y/l,a.z/l);};
+const mix=(a,b,u)=>V(lerp(a.x,b.x,u),lerp(a.y,b.y,u),lerp(a.z,b.z,u));
+
+/* ═══════════════ Tokens ═══════════════ */
+/* Akt 1: 3 Tokens.  Akt 2: 9 Tokens. */
+const WORDS3=["die","Katze","schläft"];
+const WORDS9=["die","Katze","die","müde","war","schläft","auf","dem","Sofa"];
+
+let rng=7;const rnd=()=>(rng=(rng*1103515245+12345)&0x7fffffff)/0x7fffffff;
+
+/* Semantische Rohpositionen (Embedding) — handgesetzt, damit
+   verwandte Wörter nah beieinander liegen. */
+const EMB3=[V(-0.95,-0.55,0.10), V(0.10,0.80,0.25), V(0.90,-0.45,-0.20)];
+const EMB9=[
+ V(-1.15,-0.62,0.08), V(-0.55, 0.78, 0.30), V(-1.05,-0.42,-0.22),
+ V( 0.05, 0.50,-0.62), V( 0.30,-0.15,-0.40), V( 0.72,-0.70, 0.18),
+ V( 1.05, 0.25,-0.05), V(-0.25,-0.95, 0.45), V( 0.55, 0.92, 0.40)];
+
+/* Query-Richtung und Value-Vektor pro Token (fest, deterministisch) */
+function mkTok(emb,words){
+  return emb.map((e,i)=>{
+    const a=(i*2.399+0.7), b=(i*1.137+0.35);
+    return {
+      w:words[i], i:i,
+      e:e,                                   // Embedding
+      q:nrm(V(Math.cos(a),Math.sin(a),Math.sin(b)*0.55)),  // Query-Richtung
+      k:nrm(V(Math.cos(a*0.8+0.9),Math.sin(a*0.8+0.9),Math.cos(b)*0.5)), // Key
+      v:mul(nrm(V(Math.sin(b*1.7),Math.cos(a*1.3),Math.sin(a+b))),0.95)  // Value
+    };});
+}
+const T3=mkTok(EMB3,WORDS3), T9=mkTok(EMB9,WORDS9);
+
+/* ═══════════════ Positions-Helix ═══════════════ */
+/* Drei Frequenzen = drei Kreise verschiedener Geschwindigkeit.
+   Zusammen: Schraubenlinie. PE(pos,2i)=sin, PE(pos,2i+1)=cos  */
+function helix(pos,n){
+  const f1=1.00, f2=0.34, f3=0.11;
+  const t=pos/(n-1||1);
+  return V(Math.cos(TAU*f1*pos*0.62)*0.42 + Math.cos(TAU*f2*pos*0.62)*0.16,
+           Math.sin(TAU*f1*pos*0.62)*0.42 + Math.sin(TAU*f2*pos*0.62)*0.16,
+           (t-0.5)*1.55 + Math.sin(TAU*f3*pos)*0.06);
+}
+
+/* ═══════════════ Attention ═══════════════ */
+function scores(toks,qi,tau){
+  const s=toks.map(t=>dot(toks[qi].q,t.k)*2.4);
+  const mx=Math.max(...s);
+  const ex=s.map(v=>Math.exp((v-mx)/tau));
+  const Z=ex.reduce((a,b)=>a+b,0);
+  return {raw:s, w:ex.map(v=>v/Z)};
+}
+function centroid(toks,w){
+  let c=V(0,0,0);
+  toks.forEach((t,j)=>c=add(c,mul(add(t.pos,mul(t.v,0.0)),w[j])));
+  return c;
+}
+
+/* ═══════════════ LayerNorm-Sphäre ═══════════════ */
+const RSPH=1.18;
+function toSphere(p,u){
+  const l=Math.hypot(p.x,p.y,p.z)||1;
+  return mix(p,mul(p,RSPH/l),u);
+}
+
+/* ═══════════════ FFN-Krümmung (space_morph-Zitat) ═══════════════ */
+function ffnWarp(p,t){
+  const r2=p.x*p.x+p.y*p.y;
+  return V(p.x*(1-0.16*t*r2), p.y*(1-0.16*t*r2), p.z + (r2*0.85-0.42)*t);
+}
+
+/* ═══════════════ Szenen ═══════════════ */
+const S=[
+/* ---------- AKT I : 3 Tokens ---------- */
+{n:"Akt I · 1 / 9", t:"Wort → Punkt",
+ f:"Token ↦ x ∈ ℝ³<small>ähnliche Bedeutung = kurze Distanz</small>",
+ set:3, emb:1, helix:0, qk:0, soft:0, move:0, all:0, res:0, ffn:0, stack:0,
+ A:0.55,B:0.30,Z:1.0,P:120},
+
+{n:"Akt I · 2 / 9", t:"Position ist ein Winkel",
+ f:"PE(pos,2i)=sin, PE(pos,2i+1)=cos<small>feste Verschiebung k = feste Drehung</small>",
+ set:3, emb:1, helix:1, qk:0, soft:0, move:0, all:0, res:0, ffn:0, stack:0,
+ A:0.95,B:0.16,Z:0.95,P:120},
+
+{n:"Akt I · 3 / 9", t:"Blickrichtung trifft Schild",
+ f:"⟨q, kⱼ⟩<small>Skalarprodukt = Länge der Projektion</small>",
+ set:3, emb:1, helix:1, qk:1, soft:0, move:0, all:0, res:0, ffn:0, stack:0,
+ A:0.30,B:0.22,Z:1.05,P:150},
+
+{n:"Akt I · 4 / 9", t:"Längen werden zu Massen",
+ f:"αⱼ = e^{⟨q,kⱼ⟩/τ} ⁄ Σ e^{⟨q,kₗ⟩/τ}<small>eine Einheit Masse, optimal verteilt</small>",
+ set:3, emb:1, helix:1, qk:1, soft:1, move:0, all:0, res:0, ffn:0, stack:0,
+ A:0.30,B:0.22,Z:1.05,P:150},
+
+{n:"Akt I · 5 / 9", t:"Der Punkt fällt in den Schwerpunkt",
+ f:"c = Σ αⱼ · vⱼ<small>Baryzentrum der Value-Vektoren</small>",
+ set:3, emb:1, helix:1, qk:1, soft:1, move:1, all:0, res:0, ffn:0, stack:0,
+ A:0.30,B:0.22,Z:1.05,P:150},
+
+/* ---------- AKT II : 9 Tokens ---------- */
+{n:"Akt II · 6 / 9", t:"Alle gleichzeitig — das Fließfeld",
+ f:"Attention(Q,K,V) = softmax(QKᵀ⁄√dₖ)·V<small>jeder Punkt zieht an jedem</small>",
+ set:9, emb:1, helix:1, qk:0, soft:0, move:1, all:1, res:0, ffn:0, stack:0,
+ A:0.62,B:0.30,Z:0.90,P:120},
+
+{n:"Akt II · 7 / 9", t:"Verschieben, nicht springen",
+ f:"LayerNorm(x + Sublayer(x))<small>Restweg + Rückprojektion auf die Kugel</small>",
+ set:9, emb:1, helix:1, qk:0, soft:0, move:1, all:1, res:1, ffn:0, stack:0,
+ A:0.62,B:0.30,Z:0.90,P:120},
+
+{n:"Akt II · 8 / 9", t:"Der Raum wird gekrümmt",
+ f:"FFN(x) = max(0, xW₁+b₁)W₂+b₂<small>Verbiegung — jetzt linear trennbar</small>",
+ set:9, emb:1, helix:1, qk:0, soft:0, move:1, all:1, res:1, ffn:1, stack:0,
+ A:0.10,B:0.02,Z:0.90,P:120},
+
+{n:"Akt II · 9 / 9", t:"Sechs Schichten = eine Bahn",
+ f:"N = 6<small>jeder Token beschreibt eine Trajektorie</small>",
+ set:9, emb:1, helix:1, qk:0, soft:0, move:1, all:1, res:1, ffn:1, stack:1,
+ A:0.75,B:0.26,Z:0.66,P:90}
+];
+
+/* ═══════════════ Ablauf ═══════════════ */
+let cur=0,prev=0,t0=performance.now(),DUR=2000,dA0=0,dB0=0;
+function bar(){const d=document.getElementById('bar');d.innerHTML='';
+  S.forEach((_,i)=>{const e=document.createElement('div');
+    e.className='dot'+(i<=cur?' on':'');d.appendChild(e);});}
+function text(){const s=S[cur];sNum.textContent=s.n;sTitle.textContent=s.t;
+  sForm.innerHTML=s.f;bar();}
+function go(d){const n=clamp(cur+d,0,S.length-1);if(n===cur)return;
+  dA0=dragA;dB0=dragB;prev=cur;cur=n;t0=performance.now();text();}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+  if(e.key==='r'||e.key==='R'){dA0=dragA;dB0=dragB;t0=performance.now();prev=cur;}});
+let md=false,mx=0,my=0;
+cv.addEventListener('mousedown',e=>{md=true;mx=e.clientX;my=e.clientY;});
+addEventListener('mouseup',()=>md=false);
+addEventListener('mousemove',e=>{if(!md)return;
+  dragA+=(e.clientX-mx)*0.006;dragB+=(e.clientY-my)*0.005;
+  dA0=dragA;dB0=dragB;mx=e.clientX;my=e.clientY;});
+
+/* ═══════════════ Zeichen-Helfer ═══════════════ */
+function line3(a,b,col,wd,al){
+  const p=proj(a),q=proj(b);
+  ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=wd;
+  ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+  ctx.globalAlpha=1;
+}
+function arrow3(a,b,col,wd,al){
+  const p=proj(a),q=proj(b);
+  ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=wd;
+  ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+  const ang=Math.atan2(q.Y-p.Y,q.X-p.X),L=8+wd*1.6;
+  ctx.fillStyle=col;ctx.beginPath();
+  ctx.moveTo(q.X,q.Y);
+  ctx.lineTo(q.X-L*Math.cos(ang-0.36),q.Y-L*Math.sin(ang-0.36));
+  ctx.lineTo(q.X-L*Math.cos(ang+0.36),q.Y-L*Math.sin(ang+0.36));
+  ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+}
+function ball(p,r,col,al){
+  const s=proj(p),R=r*s.k;
+  const g=ctx.createRadialGradient(s.X-R*0.35,s.Y-R*0.35,R*0.12,s.X,s.Y,R);
+  g.addColorStop(0,'#ffffff');g.addColorStop(0.35,col);g.addColorStop(1,col);
+  ctx.globalAlpha=al*(0.62+0.38*s.k);
+  ctx.beginPath();ctx.arc(s.X,s.Y,R,0,TAU);ctx.fillStyle=g;ctx.fill();
+  ctx.globalAlpha=1;
+  return s;
+}
+function label(p,txt,col,al,dx,dy,sz){
+  const s=proj(p);
+  ctx.globalAlpha=al;ctx.fillStyle=col;
+  ctx.font=(sz||12)+'px Inter,sans-serif';ctx.textAlign='left';
+  ctx.fillText(txt,s.X+(dx||9),s.Y+(dy||-8));ctx.globalAlpha=1;
+}
+
+/* ═══════════════ Achsenkreuz ═══════════════ */
+function axes(al){
+  if(al<0.01)return;
+  const L=1.75, o=V(0,0,0);
+  const cfg=[[V(L,0,0),'x₁','#6d7ea8'],[V(0,L,0),'x₂','#6d7ea8'],[V(0,0,L),'x₃','#6d7ea8']];
+  cfg.forEach(c=>{
+    arrow3(o,c[0],c[2],1.3,al*0.62);
+    const s=proj(c[0]);
+    ctx.globalAlpha=al*0.85;ctx.fillStyle='#9aa8c6';
+    ctx.font='italic 14px Georgia';ctx.textAlign='left';
+    ctx.fillText(c[1],s.X+9,s.Y+5);ctx.globalAlpha=1;
+  });
+  /* Bodengitter */
+  ctx.globalAlpha=al*0.16;ctx.strokeStyle='#3d4a68';
+  ctx.lineWidth=0.8;const E=1.5,G=8;
+  for(let i=0;i<=G;i++){const v=-E+2*E*i/G;
+    let p=proj(V(-E,v,0)),q=proj(V(E,v,0));
+    ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+    p=proj(V(v,-E,0));q=proj(V(v,E,0));
+    ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+
+/* ═══════════════ Kugelschale (LayerNorm) ═══════════════ */
+function sphere(al){
+  if(al<0.01)return;
+  ctx.globalAlpha=al*0.13;ctx.strokeStyle='#8fa2c8';ctx.lineWidth=0.9;
+  for(let i=1;i<7;i++){
+    const ph=Math.PI*i/7, r=RSPH*Math.sin(ph), z=RSPH*Math.cos(ph);
+    ctx.beginPath();
+    for(let j=0;j<=54;j++){const a=TAU*j/54;
+      const s=proj(V(Math.cos(a)*r,Math.sin(a)*r,z));
+      j?ctx.lineTo(s.X,s.Y):ctx.moveTo(s.X,s.Y);}
+    ctx.stroke();}
+  for(let i=0;i<8;i++){
+    const a=Math.PI*i/8;
+    ctx.beginPath();
+    for(let j=0;j<=54;j++){const ph=Math.PI*j/54;
+      const s=proj(V(Math.cos(a)*RSPH*Math.sin(ph),Math.sin(a)*RSPH*Math.sin(ph),RSPH*Math.cos(ph)));
+      j?ctx.lineTo(s.X,s.Y):ctx.moveTo(s.X,s.Y);}
+    ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+
+/* ═══════════════ FFN-Gitter ═══════════════ */
+function ffnGrid(t,al){
+  if(al<0.01)return;
+  const E=1.45,N=11,RES=40;
+  ctx.lineWidth=1;
+  for(let i=0;i<=N;i++){const v=-E+2*E*i/N;
+    for(const sw of[0,1]){
+      ctx.beginPath();
+      for(let j=0;j<=RES;j++){const u=-E+2*E*j/RES;
+        const p=ffnWarp(V(sw?v:u, sw?u:v, -0.9), t);
+        const s=proj(p);j?ctx.lineTo(s.X,s.Y):ctx.moveTo(s.X,s.Y);}
+      ctx.strokeStyle='rgba(255,209,102,'+(al*0.20)+')';ctx.stroke();}}
+}
+
+/* ═══════════════ Render ═══════════════ */
+function draw(now){
+  const raw=clamp((now-t0)/DUR,0,1), u=ease(raw);
+  const a=S[prev], b=S[cur];
+
+  camA=lerp(a.A,b.A,u); camB=lerp(a.B,b.B,u);
+  ZOOM=lerp(a.Z,b.Z,u); PAN=lerp(a.P,b.P,u);
+  if(!md){dragA=lerp(dA0,0,u);dragB=lerp(dB0,0,u);dragB=lerp(dB0,0,u);}
+
+  const set   = lerp(a.set,b.set,u);            /* nur Umschaltmarke */
+  const toks  = (u<0.5 ? a.set : b.set)===3 ? T3 : T9;
+  const N     = toks.length;
+
+  const fEmb  = lerp(a.emb  ,b.emb  ,u);
+  const fHel  = lerp(a.helix,b.helix,u);
+  const fQK   = lerp(a.qk   ,b.qk   ,u);
+  const fSoft = lerp(a.soft ,b.soft ,u);
+  const fMove = lerp(a.move ,b.move ,u);
+  const fAll  = lerp(a.all  ,b.all  ,u);
+  const fRes  = lerp(a.res  ,b.res  ,u);
+  const fFFN  = lerp(a.ffn  ,b.ffn  ,u);
+  const fStk  = lerp(a.stack,b.stack,u);
+
+  ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
+
+  /* ---- 1. Positionen aller Tokens für diesen Frame bestimmen ---- */
+  /* Rohlage = Embedding, dann + Helix, dann Attention-Verschiebung,
+     dann LayerNorm-Kugel, dann FFN-Krümmung.  Alles gleitend. */
+  toks.forEach((t,i)=>{
+    const base = mix(t.e, add(mul(t.e,0.55), helix(i,N)), fHel);
+    t.pos0 = mul(base, fEmb);
+  });
+  toks.forEach(t=>t.pos=t.pos0);            /* Basis für Attention */
+
+  /* ---- 2. Attention rechnen ---- */
+  /* Temperatur fährt beim Softmax-Schritt sichtbar herunter:
+     erst flach (viel Entropie), dann scharf.  Das ist der
+     Regularisierungsparameter ε=τ aus der EOT-Formulierung. */
+  const TAUp = lerp(2.6, 0.75, fSoft);
+  const QI   = 1;                            /* der beobachtete Query */
+  const AT   = toks.map((_,i)=>scores(toks,i,TAUp));
+
+  /* Zielpunkt = Baryzentrum (Massenschwerpunkt) */
+  toks.forEach((t,i)=>{
+    let c=V(0,0,0);
+    AT[i].w.forEach((wj,j)=>c=add(c,mul(add(toks[j].pos0,mul(toks[j].v,0.45)),wj)));
+    t.cen=c;
+    const act = (i===QI? fMove : fMove*fAll);
+    let p = mix(t.pos0, t.cen, act*0.85);
+    /* Residual: der Restweg bleibt sichtbar, kein Sprung */
+    p = mix(p, add(t.pos0, mul(add(p,mul(t.pos0,-1)),0.55)), fRes);
+    p = toSphere(p, fRes);
+    p = mix(p, ffnWarp(p,1), fFFN);
+    t.pos=p;
+  });
+
+  /* ---- 3. Hintergrund-Geometrie ---- */
+  axes( (1-fFFN*0.7)*(1-fStk*0.5) );
+  sphere(fRes*(1-fStk*0.55));
+  ffnGrid(fFFN, fFFN);
+
+  /* ---- 4. Helix als Band ---- */
+  if(fHel>0.01){
+    ctx.globalAlpha=fHel*0.34;ctx.strokeStyle='#5ad2ff';ctx.lineWidth=1.3;
+    ctx.beginPath();
+    for(let s=0;s<=260;s++){
+      const pos=(N-1)*s/260;
+      const h=helix(pos,N);
+      const q=proj(mul(h,fHel));
+      s?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);}
+    ctx.stroke();ctx.globalAlpha=1;
+    /* Lot vom Embedding zur Helixlage */
+    toks.forEach((t,i)=>line3(mul(t.e,fEmb),t.pos0,'#5ad2ff',0.9,fHel*0.22));
+  }
+
+  /* ---- 5. Trajektorien (Schichtstapel) ---- */
+  if(fStk>0.01){
+    const LAY=6;
+    toks.forEach((t,i)=>{
+      ctx.beginPath();
+      for(let l=0;l<=LAY*8;l++){
+        const s=l/(LAY*8);
+        let p=mix(t.pos0,t.cen,s*0.85);
+        p=toSphere(p,s);
+        p=mix(p,ffnWarp(p,1),s*0.8);
+        p=add(p,V(0,0,-s*0.55*fStk));      /* Tiefe = Schichtindex */
+        const q=proj(p);
+        l?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);}
+      ctx.strokeStyle='rgba(255,209,102,'+(fStk*0.30)+')';
+      ctx.lineWidth=1.2;ctx.stroke();
+      /* Schichtmarken */
+      for(let l=1;l<=LAY;l++){
+        const s=l/LAY;
+        let p=mix(t.pos0,t.cen,s*0.85);
+        p=toSphere(p,s);p=mix(p,ffnWarp(p,1),s*0.8);
+        p=add(p,V(0,0,-s*0.55*fStk));
+        const q=proj(p);
+        ctx.globalAlpha=fStk*0.55;ctx.fillStyle='#ffd166';
+        ctx.beginPath();ctx.arc(q.X,q.Y,1.8*q.k,0,TAU);ctx.fill();ctx.globalAlpha=1;}
+    });
+    /* Achsenbeschriftung Schichttiefe */
+    const o=proj(V(0,0,0.15)),e=proj(V(0,0,-0.70));
+    arrow3(V(-1.6,-1.5,0.15),V(-1.6,-1.5,-0.70),'#8fa2c8',1.2,fStk*0.7);
+    ctx.globalAlpha=fStk*0.85;ctx.fillStyle='#9aa8c6';
+    ctx.font='12px Inter,sans-serif';
+    const lp=proj(V(-1.6,-1.5,-0.78));
+    ctx.fillText('Schicht  ℓ = 1 … 6',lp.X-30,lp.Y+16);ctx.globalAlpha=1;
+  }
+
+  /* ---- 6. Q/K-Projektion: das Skalarprodukt sichtbar ---- */
+  if(fQK>0.01){
+    const q=toks[QI];
+    const dirLen=1.55;
+    const tip=add(q.pos0,mul(q.q,dirLen*fQK));
+    /* Blickrichtung */
+    arrow3(q.pos0,tip,'#ffd166',2.2,fQK*0.95);
+    label(tip,'q',  '#ffd166',fQK,8,-6,15);
+
+    /* Achse verlängert als dünne Linie — die Projektionsachse */
+    line3(add(q.pos0,mul(q.q,-0.5)),add(q.pos0,mul(q.q,2.1)),'#ffd166',0.7,fQK*0.30);
+
+    toks.forEach((t,j)=>{
+      const rel=add(t.pos0,mul(q.pos0,-1));
+      const pr =dot(rel,q.q);
+      const foot=add(q.pos0,mul(q.q,pr));
+      /* Key-Schild als kurzer Strich am Token */
+      line3(t.pos0,add(t.pos0,mul(t.k,0.34)),'#5ad2ff',1.8,fQK*0.75);
+      /* Fallinie auf die Query-Achse */
+      line3(t.pos0,foot,'#6d7ea8',0.9,fQK*0.40);
+      /* Projektionslänge als dicker Balken auf der Achse */
+      ctx.save();
+      const p0=proj(q.pos0),p1=proj(foot);
+      ctx.globalAlpha=fQK*0.85;
+      ctx.strokeStyle= pr>0 ? '#ffd166' : '#ff6b8a';
+      ctx.lineWidth=3.2;
+      ctx.beginPath();ctx.moveTo(p0.X,p0.Y);ctx.lineTo(p1.X,p1.Y);ctx.stroke();
+      ctx.restore();ctx.globalAlpha=1;
+    });
+  }
+
+  /* ---- 7. Softmax: Masse als Kugelgröße + Massebalken ---- */
+  if(fSoft>0.01){
+    const w=AT[QI].w;
+    /* Massebalken unten: eine Einheit, aufgeteilt */
+    const BX=W-360, BY=H-92, BW=300, BH=16;
+    ctx.globalAlpha=fSoft*0.9;
+    ctx.strokeStyle='#3c4560';ctx.lineWidth=1;
+    ctx.strokeRect(BX,BY,BW,BH);
+    let acc=0;
+    w.forEach((wj,j)=>{
+      const x0=BX+BW*acc, x1=BX+BW*(acc+wj);acc+=wj;
+      ctx.fillStyle = j===QI ? '#ffd166' : '#5ad2ff';
+      ctx.globalAlpha=fSoft*(0.35+0.55*wj*N/1.6);
+      ctx.fillRect(x0,BY,x1-x0,BH);
+      ctx.globalAlpha=fSoft*0.85;
+      ctx.strokeStyle='#0b0d12';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x1,BY);ctx.lineTo(x1,BY+BH);ctx.stroke();
+      if(wj>0.10){
+        ctx.fillStyle='#0b0d12';ctx.font='600 11px Inter,sans-serif';
+        ctx.textAlign='center';
+        ctx.fillText(toks[j].w,(x0+x1)/2,BY+12);ctx.textAlign='left';}
+    });
+    ctx.globalAlpha=fSoft*0.7;ctx.fillStyle='#7b8496';
+    ctx.font='11px Inter,sans-serif';
+    ctx.fillText('Σ αⱼ = 1     τ = '+TAUp.toFixed(2),BX,BY-8);
+    ctx.globalAlpha=1;
+  }
+
+  /* ---- 8. Anziehungsfäden zum Schwerpunkt ---- */
+  if(fMove>0.01){
+    const list = fAll>0.5 ? toks.map((_,i)=>i) : [QI];
+    list.forEach(i=>{
+      const w=AT[i].w;
+      w.forEach((wj,j)=>{
+        if(wj<0.035)return;
+        line3(toks[j].pos,toks[i].pos,'#ffd166',0.6+5.2*wj,
+              fMove*(0.10+0.75*wj)*(i===QI?1:0.55));
+      });
+      /* Schwerpunkt-Marke */
+      if(i===QI||fAll>0.5){
+        const s=proj(toks[i].cen);
+        ctx.globalAlpha=fMove*(i===QI?0.85:0.30);
+        ctx.strokeStyle='#ffd166';ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.arc(s.X,s.Y,5.5*s.k,0,TAU);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(s.X-8*s.k,s.Y);ctx.lineTo(s.X+8*s.k,s.Y);
+        ctx.moveTo(s.X,s.Y-8*s.k);ctx.lineTo(s.X,s.Y+8*s.k);ctx.stroke();
+        ctx.globalAlpha=1;}
+      /* Residual-Weg als gestrichelte Spur */
+      if(fRes>0.01){
+        ctx.setLineDash([3,4]);
+        line3(toks[i].pos0,toks[i].pos,'#8892a8',1.1,fRes*0.45);
+        ctx.setLineDash([]);}
+    });
+  }
+
+  /* ---- 9. Tokens zeichnen, tiefensortiert ---- */
+  const order=toks.map((t,i)=>({i:i,d:proj(t.pos).d}))
+                  .sort((p,q)=>p.d-q.d);
+  order.forEach(o=>{
+    const t=toks[o.i];
+    const wj = fSoft>0.01 ? AT[QI].w[o.i] : 1/N;
+    const isQ = (o.i===QI);
+    /* Radius wächst mit zugeteilter Masse */
+    const R = 5.2 + (fSoft>0.01 ? 26*wj*(1/Math.max(1,N/3)) : 0) + (isQ?2.4:0);
+    const col = isQ ? '#ffd166' : '#5ad2ff';
+    ball(t.pos,R,col,0.92);
+    /* Wortmarke */
+    label(t.pos, t.w, isQ?'#ffe9b0':'#b9c2d4', 0.90, 10+R*0.35, -R*0.55-4, isQ?14:12.5);
+    /* Value-Vektor als kurzer Pfeil */
+    if(fMove>0.01&&fAll<0.5&&!isQ)
+      arrow3(t.pos,add(t.pos,mul(t.v,0.42)),'#5ad2ff',1.3,fMove*0.45);
+  });
+
+  /* ---- 10. Legende, minimal ---- */
+  const LX=W-360;
+  ctx.globalAlpha=0.75;ctx.font='12px Inter,sans-serif';
+  if(fQK>0.3){
+    ctx.fillStyle='#ffd166';ctx.fillText('q  Blickrichtung',LX,H-160);
+    ctx.fillStyle='#5ad2ff';ctx.fillText('k  Schild',LX,H-142);
+    ctx.fillStyle='#ffd166';ctx.fillText('⟨q,k⟩  Projektion auf die Achse',LX,H-124);}
+  if(fMove>0.3&&fQK<0.3){
+    ctx.fillStyle='#ffd166';ctx.fillText('✛  Massenschwerpunkt',LX,H-160);
+    ctx.fillStyle='#8892a8';ctx.fillText('- -  Residual-Weg',LX,H-142);}
+  ctx.globalAlpha=1;
+
+  requestAnimationFrame(draw);
+}
+
+text();requestAnimationFrame(draw);
+</script>
+</body>
+</html>
