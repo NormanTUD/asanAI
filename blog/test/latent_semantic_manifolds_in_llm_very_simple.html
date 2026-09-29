@@ -173,7 +173,7 @@ function hidpi(cv,h){
       let d1=1e9,d2=1e9,i1=0;
       for(let i=0;i<a.length;i++){
         const dx=x-a[i].x,dy=y-a[i].y,dd=dx*dx+dy*dy;
-        if(dd<d1){d2=d1;i1=a[i].c;d1=dd;}
+        if(dd<d1){d2=d1;i1=i;d1=dd;}
         else if(dd<d2){d2=dd;}
       }
       const m=Math.sqrt(d2)-Math.sqrt(d1);
