@@ -63,11 +63,11 @@ The same effect recurs everywhere: clouds swirled into **birds**, rocks rebuilt 
 <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:16px 0;">
 	<figure style="margin:0; flex:1 1 300px; max-width:440px; background:var(--mn-surface, #f8fafc); padding:14px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);">
 		<img src="inceptionism_sky_arrow.png" style="width:100%; border-radius:6px;" alt="A blue sky with clouds next to a deep-dream rendering that turns the cloud shapes into swirling animal-like forms" />
-		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">“If a cloud looks a little bit like a bird, the network will make it look more like a bird” — repeat the loop and a detailed *bird* emerges from the sky. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</figcaption>
+		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">“If a cloud looks a little bit like a bird, the network will make it look more like a bird” — repeat the loop and a detailed *bird* emerges from the sky. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})</figcaption>
 	</figure>
 	<figure style="margin:0; flex:1 1 300px; max-width:440px; background:var(--mn-surface, #f8fafc); padding:14px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);">
 		<img src="inceptionism_funny_animals.png" style="width:100%; border-radius:6px;" alt="Four deep-dream panels showing hybrid animals named Admiral Dog, Pig-Snail, Camel-Bird, and Dog-Fish" />
-		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">Trained mostly on animals, the network reads the world as animals — but the concepts are so abstract that its dreams are *remixes*: Admiral Dog, Pig-Snail, Camel-Bird, Dog-Fish. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</figcaption>
+		<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b);">Trained mostly on animals, the network reads the world as animals — but the concepts are so abstract that its dreams are *remixes*: Admiral Dog, Pig-Snail, Camel-Bird, Dog-Fish. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})</figcaption>
 	</figure>
 </div>
 
@@ -85,7 +85,7 @@ An especially revealing variant: instead of starting from noise, start from a re
 
 <figure style="background:var(--mn-surface, #f8fafc); padding:16px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0); margin:16px 0; max-width:680px; margin-left:auto; margin-right:auto;">
 	<img src="inceptionism_dream_map.png" style="width:100%; border-radius:6px;" alt="A dream map: a transformed photograph annotated with the object labels the network assigns to different regions of the image" />
-	<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b); text-align:center;">Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}</figcaption>
+	<figcaption style="font-size:0.8rem; margin-top:8px; color:var(--mn-text-secondary, #64748b); text-align:center;">Above, a network's own interpretation of a photo, annotated with the labels it perceives: “tower-like” and “animal-like” regions are precisely where the dream edit later mutates them. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})</figcaption>
 </figure>
 
 <div class="md">

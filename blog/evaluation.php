@@ -167,7 +167,7 @@ Evidence of contamination:
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
 
-**Frontier\cite[Hendrycks et al., 2021]{hendrycks2021math}s are novel, require expert construction, and are not available online.
+**Frontier math problems** (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
 </div>
 
 <div class="md">
@@ -203,7 +203,7 @@ The most reliable current evaluations are:
 
 1. **LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) Elo**, for general chat quality.
 2. **GPQA / FrontierMath / ARC-AGI**, for hard reasoning, contamination-resistant.
-3. **\cite[Chen et al., 2021]{chen2021humaneval} / LiveCodeBench / SWE-Bench**, for code.
+3. **HumanEval** (\cite[Chen et al., 2021]{chen2021humaneval}) / LiveCodeBench / SWE-Bench, for code.
 4. **Human preference studies**, the gold standard, when affordable.
 
 Static benchmarks like (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) are **informative but no longer load-bearing** for frontier-model comparison.
@@ -273,7 +273,7 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 		text: models.map(m => m.name),
 		textposition: 'top center',
 		marker: { size: 14, color: '#3b82f6' },
-		hovertemplate: '%{text}<br>Elo: %{x}<br>\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}: %{y}%<extra></extra>'
+		hovertemplate: '%{text}<br>Elo: %{x}<br>(\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): %{y}%<extra></extra>'
 	}], {
 		title: { text: 'LMSYS Arena Elo vs MMLU (correlation only ~0.5)', font: { size: 13 } },
 		xaxis: { title: 'Arena Elo (Jan 2025)' },
