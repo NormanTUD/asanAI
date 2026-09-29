@@ -63,9 +63,9 @@ Standard filters:
 * **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).
 * **Stop-word fraction**: English text has 20–30% stop-words. Lower indicates non-natural text.
 * **Perplexity filter**: compute perplexity under a small reference LM (KenLM). High perplexity → outlier text. Drop top/bottom percentiles.
-* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **\cite[Rae et al., 2021]{rae2021gopher} rules** and **C4** rules \cite[Raffel et al., 2020]{raffel2020t5} are the most cited.
+* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **\cite[Rae et al., 2021]{rae2021gopher} rules** and **C4** rules (\cite[Raffel et al., 2020]{raffel2020t5}) are the most cited.
 
-FineWeb \cite[Penedo et al., 2024]{penedo2024fineweb} pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
+FineWeb (\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
 </div>
 
 <div id="filter-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -95,7 +95,7 @@ Documents with identical MinHash signatures have high Jaccard similarity. Thresh
 <div class="md">
 ### Substring Deduplication (Suffix Array)
 
-For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** \cite[Abbas et al., 2023]{abbas2023semdedup} extend this to semantic duplicates via embedding-based clustering.
+For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** (\cite[Abbas et al., 2023]{abbas2023semdedup}) extend this to semantic duplicates via embedding-based clustering.
 </div>
 
 <div class="md">
@@ -115,7 +115,7 @@ A document in the training set may **contain benchmark items verbatim**. Models 
 * **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.
 * **Adversarial contamination**: bad actors can post benchmark items publicly to poison future training sets.
 
-Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI \cite[Chollet, 2024]{chollet2024arcagi} use private, novel questions precisely to avoid this issue.
+Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI (\cite[Chollet, 2024]{chollet2024arcagi}) use private, novel questions precisely to avoid this issue.
 </div>
 
 <div class="md">
@@ -123,8 +123,8 @@ Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perpl
 
 Beyond raw web text, frontier models train on carefully curated datasets:
 
-* **The Pile** \cite[Gao et al., 2020]{gao2020pile}: ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination.
-* **RedPajama** \cite[Together, 2023]{together2024redpajama}: open replication of LLaMA's training mix. 1.2T tokens, all sources documented.
+* **The Pile** (\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination.
+* **RedPajama** (\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix. 1.2T tokens, all sources documented.
 * **SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama. 627B tokens.
 * **FineWeb** (HuggingFace, 2024): 1.3T high-quality English tokens.
 * **FineWeb-Edu** (HuggingFace, 2024): 1.3T tokens scored for educational quality.
@@ -156,7 +156,7 @@ Code is only 10–15% of a frontier training mix, yet it is the single most effe
 
 ### Verifiable ground truth at web scale
 
-Prose makes claims; code makes predictions. Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle. GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** \cite[Chen et al., 2021]{chen2021codex} is literally the training pattern itself: docstring → program. Verifiability compounds: \cite[Li et al., 2022]{li2022alphacode} reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.
+Prose makes claims; code makes predictions. Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle. GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program. Verifiability compounds: (\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.
 
 ### Dense, and up-weighted by tokenization
 
@@ -164,15 +164,15 @@ Code is telegraphic: little stylistic redundancy, high signal per byte. BPE spli
 
 ### Explicit step-by-step reasoning in the raw
 
-A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis. Code is the densest source of (problem → algorithm → implementation) triples on the web. Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning \cite[Ma et al., 2023]{ma2023codereasoning}. What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived \cite[Waheed et al., 2025]{waheed2025codeinduced}.
+A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis. Code is the densest source of (problem → algorithm → implementation) triples on the web. Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\cite[Ma et al., 2023]{ma2023codereasoning}). What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\cite[Waheed et al., 2025]{waheed2025codeinduced}).
 
 ### Why this becomes everything else
 
-Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K \cite[Gao et al., 2022]{gao2022pal}. Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
+Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\cite[Gao et al., 2022]{gao2022pal}). Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions (\cite[Wang et al., 2024]{wang2024codeact})) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
 
-The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% \cite[Chen et al., 2021]{chen2021codex}; Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks \cite[Rozière et al., 2023]{roziere2023codellama}; DeepSeek-Coder trained 2T project-level tokens from scratch \cite[Guo et al., 2024]{guo2024deepseekcoder}.
+The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\cite[Guo et al., 2024]{guo2024deepseekcoder}).
 
-The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part. The sharpest illustration is **SWE-bench** \cite[Jimenez et al., 2024]{jimenez2024swebench}, 2,294 real GitHub issues: the best model of 2023 resolved 1.96%. Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.
+The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part. The sharpest illustration is **SWE-bench** (\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues: the best model of 2023 resolved 1.96%. Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.
 </div>
 
 <div class="md">
@@ -181,13 +181,13 @@ The other side of the same data: models are strongest where the corpus is thicke
 With natural data exhaust, frontier labs increasingly generate **synthetic training data**:
 
 * **Self-instruct**: prompt the model to generate variations of seed instructions.
-* **Constitutional AI** \cite[Bai et al., 2022]{bai2022constitutional}: model generates responses, critiques them against rules, revises.
+* **Constitutional AI** (\cite[Bai et al., 2022]{bai2022constitutional}): model generates responses, critiques them against rules, revises.
 * **Distillation**: a stronger model generates high-quality responses that a smaller model is then trained on.
 * **Problem synthesis**: generate \cite[Hendrycks et al., 2021]{hendrycks2021math}s with verifiable solutions.
 
 Risks:
 
-* **Model collapse** \cite[Shumailov et al., 2023]{shumailov2023modelcollapse}: training on a model's own outputs causes drift away from the true data distribution over generations.
+* **Model collapse** (\cite[Shumailov et al., 2023]{shumailov2023modelcollapse}): training on a model's own outputs causes drift away from the true data distribution over generations.
 * **Loss of diversity**: synthetic data tends to converge to common modes.
 * **Reward hacking**: synthetic data optimized for a verifier is gamed.
 

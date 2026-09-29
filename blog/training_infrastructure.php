@@ -72,7 +72,7 @@ $$
 
 Each GPU computes half the output; results are concatenated (or all-gathered). TP requires **fast interconnect** (NVLink, InfiniBand) because every layer requires a sync.
 
-Megatron-LM \cite[Shoeybi et al., 2019]{shoeybi2019megatron} tensor-parallels the MLP and attention blocks of a Transformer. For attention:
+Megatron-LM (\cite[Shoeybi et al., 2019]{shoeybi2019megatron}) tensor-parallels the MLP and attention blocks of a Transformer. For attention:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d}}\right) V
@@ -86,7 +86,7 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 
 **Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc. Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.
 
-The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
+The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe (\cite[Huang et al., 2018]{huang2018gpipe}) splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Sequence Parallelism">
@@ -94,7 +94,7 @@ The challenge: **pipeline bubbles**, idle time waiting for the previous stage to
 
 For very long contexts, the attention matrix $QK^\top$ is $O(n^2)$ per head. **Sequence parallelism** splits the sequence dimension across GPUs: GPU $i$ holds tokens $[i \cdot n/P, (i+1) \cdot n/P)$. Each computes attention on its local chunk; only the relevant $QK^\top$ slice is computed, reducing memory by $1/P$.
 
-Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.
+Ring Attention (\cite[Liu et al., 2023]{liu2023ring}) and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.
 </div>
 
 <div class="md">

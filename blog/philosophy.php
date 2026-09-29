@@ -133,29 +133,29 @@ Pills cannot be pregnant and women cannot be carcinogenic, so the selectional re
 
 #### From 273 items to 44,000
 
-The first public collection was hand-written — over 270 expert-crafted schemas compiled by Ernest Davis (for the full dataset history see \cite[Kocijan et al., 2020]{kocijan2020review}). The competition's arc is a clean one:
+The first public collection was hand-written — over 270 expert-crafted schemas compiled by Ernest Davis (for the full dataset history see (\cite[Kocijan et al., 2020]{kocijan2020review})). The competition's arc is a clean one:
 
 * **2016.** The first formal challenge, run at IJCAI-16 on *literary* pronoun-disambiguation problems (not the constructed pairs). The best system, from the University of Science and Technology of China, reached **58%**; humans do 92–96%. No prize was awarded.
 * **2017.** A neural model that explicitly *acquires* cause-effect knowledge reached ~70% on a 70-item subset.
-* **2018.** An ensemble of recurrent language models trained on independent corpora hit **63.7%** on the full 273-item set \cite[Trinh & Le, 2019]{trinh2018commonsense} — the first systems to learn the commonsense from data rather than from rules.
-* **2019.** Fine-tuning **BERT** on WSC-style data reached **90.1%** on the original set \cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande}.
-* **2020.** **GPT-3** hit **88.3%** zero-/few-shot, with no special training \cite[Brown et al., 2020]{brown2020gpt3}.
+* **2018.** An ensemble of recurrent language models trained on independent corpora hit **63.7%** on the full 273-item set (\cite[Trinh & Le, 2019]{trinh2018commonsense}) — the first systems to learn the commonsense from data rather than from rules.
+* **2019.** Fine-tuning **BERT** on WSC-style data reached **90.1%** on the original set (\cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande}).
+* **2020.** **GPT-3** hit **88.3%** zero-/few-shot, with no special training (\cite[Brown et al., 2020]{brown2020gpt3}).
 
 So the *original*, small, hand-crafted challenge was **saturated by 2019** — precisely the point at which the community had to ask whether “solved” meant “understood.”
 
 #### WinoGrande: making it adversarial
 
-The obvious worry is that the 273 items are few, and that models win by exploiting **spurious biases** (word associations, answer-position priors) rather than genuine commonsense. \cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande} answered this with **WinoGrande**: 44,000 fill-in-the-blank items, built with a crowdsourcing procedure plus a bias-removal step (**AfLite**) that *generalizes* “human-detectable word associations” to **machine-detectable embedding associations** and discards any item a surface classifier could already separate:
+The obvious worry is that the 273 items are few, and that models win by exploiting **spurious biases** (word associations, answer-position priors) rather than genuine commonsense. (\cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande}) answered this with **WinoGrande**: 44,000 fill-in-the-blank items, built with a crowdsourcing procedure plus a bias-removal step (**AfLite**) that *generalizes* “human-detectable word associations” to **machine-detectable embedding associations** and discards any item a surface classifier could already separate:
 
 $$
 \text{keep item } i \iff d\big(e(w),\, e(w')\big) < \tau
 $$
 
-where $e(\cdot)$ are word embeddings and $\tau$ is a threshold: the polar and alternate words must sit *close* in embedding space, exactly so that no embedding shortcut survives. On this harder, fairer set, the best models of the day scored **59–79%**, some 15–35 points **below** the 94% human ceiling; \cite[Hendrycks et al., 2020]{hendrycks2020winograd} reached a matching conclusion on a sibling benchmark. The lesson is blunt: on the *original* set a model “defeated” the challenge by pattern-matching; on the *adversarial* set the same model's commonsense shows its seams.
+where $e(\cdot)$ are word embeddings and $\tau$ is a threshold: the polar and alternate words must sit *close* in embedding space, exactly so that no embedding shortcut survives. On this harder, fairer set, the best models of the day scored **59–79%**, some 15–35 points **below** the 94% human ceiling; (\cite[Hendrycks et al., 2020]{hendrycks2020winograd}) reached a matching conclusion on a sibling benchmark. The lesson is blunt: on the *original* set a model “defeated” the challenge by pattern-matching; on the *adversarial* set the same model's commonsense shows its seams.
 
 #### “The Defeat” — and what a defeat means
 
-In 2023, \cite[Kocijan, Davis, Lukasiewicz, Marcus, Morgenstern, 2023]{kocijan2023defeat} declared the challenge **defeated**: fine-tuned transformers now exceed 90% even on the adversarial items. But the paper is really a meditation on **what a benchmark's defeat proves**. The key concept is the **surrogate task**: the WSC is not *itself* intelligence; it is a *proxy* for the broader capacity (world-knowledge plus reasoning) it was built to elicit. A system can **maximize the proxy without acquiring the underlying capability** — the same Goodhart dynamic that corrodes every leaderboard (see the <a href="evaluation">Evaluation chapter</a>). Beating the Winograd Schema shows that a system can *predict the answer* to these sentences; it does not, by itself, certify that the system *holds the commonsense model* the sentence was designed to probe.
+In 2023, (\cite[Kocijan, Davis, Lukasiewicz, Marcus, Morgenstern, 2023]{kocijan2023defeat}) declared the challenge **defeated**: fine-tuned transformers now exceed 90% even on the adversarial items. But the paper is really a meditation on **what a benchmark's defeat proves**. The key concept is the **surrogate task**: the WSC is not *itself* intelligence; it is a *proxy* for the broader capacity (world-knowledge plus reasoning) it was built to elicit. A system can **maximize the proxy without acquiring the underlying capability** — the same Goodhart dynamic that corrodes every leaderboard (see the <a href="evaluation">Evaluation chapter</a>). Beating the Winograd Schema shows that a system can *predict the answer* to these sentences; it does not, by itself, certify that the system *holds the commonsense model* the sentence was designed to probe.
 
 That distinction — **competence on a surrogate** versus **the competence the surrogate was a stand-in for** — is the single most important idea in all of evaluation, and the Winograd Schema is the cleanest case study we have of it.
 </div>
@@ -171,18 +171,18 @@ The Winograd Schema is one node in a much larger web of attempts to *test* wheth
 
 | Test | Year | What it isolates | Status |
 |------|------|------------------|--------|
-| **Turing Test** \cite[Turing, 1950]{turing1950computing} | 1950 | Behavioural indistinguishability in open conversation | Trivially passed; disputed as a measure |
-| **Dreyfus critique** \cite[Dreyfus, 1972]{dreyfus1972what} | 1972 | Background knowledge, context, the uncodiable | A philosophical warning, now largely vindicated |
-| **Chinese Room** \cite[Searle, 1980]{searle1980minds} | 1980 | Whether syntax can ground semantics | A thought experiment; still contested |
-| **Moravec's Paradox** \cite[Moravec, 1988]{moravec1988mindchildren} | 1988 | The common-sense / sensorimotor gap | Very much alive |
-| **Baby Benchmark** \cite[Hinton, 2007]{hinton2007baby} | 2007 | What a one-year-old learns in a week | Never seriously benchmarked |
-| **False-belief (theory of mind)** \cite[Wimmer & Perner, 1983]{wimmer1983belief} | 1983 | Modeling other minds' beliefs | Contested evidence for LLMs |
-| **bAbI** \cite[Weston et al., 2015]{weston2015babi} | 2015 | Multi-step logical deduction | Saturated; shown to leak answers |
-| **CLEVR** \cite[Johnson et al., 2017]{johnson2017clevr} | 2017 | Compositional + causal visual reasoning | Strong; physical causality still hard |
-| **CommonsenseQA** \cite[Talmor et al., 2019]{talmor2018commonsenseqa} | 2019 | Multiple-choice commonsense | High scores; contamination concerns |
-| **HellaSwag** \cite[Zellers et al., 2019]{zellers2019hellaswag} | 2019 | Plausible next-sentence completion | Saturated by frontier models |
-| **Winograd / WinoGrande** \cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande} | 2019–20 | Commonsense pronoun resolution | “Defeated” at 90%+ |
-| **ARC-AGI** \cite[Chollet, 2019]{chollet2019measure} | 2019 | Novel, near-innate-priors abstract reasoning | Far below human; the live frontier |
+| **Turing Test** (\cite[Turing, 1950]{turing1950computing}) | 1950 | Behavioural indistinguishability in open conversation | Trivially passed; disputed as a measure |
+| **Dreyfus critique** (\cite[Dreyfus, 1972]{dreyfus1972what}) | 1972 | Background knowledge, context, the uncodiable | A philosophical warning, now largely vindicated |
+| **Chinese Room** (\cite[Searle, 1980]{searle1980minds}) | 1980 | Whether syntax can ground semantics | A thought experiment; still contested |
+| **Moravec's Paradox** (\cite[Moravec, 1988]{moravec1988mindchildren}) | 1988 | The common-sense / sensorimotor gap | Very much alive |
+| **Baby Benchmark** (\cite[Hinton, 2007]{hinton2007baby}) | 2007 | What a one-year-old learns in a week | Never seriously benchmarked |
+| **False-belief (theory of mind)** (\cite[Wimmer & Perner, 1983]{wimmer1983belief}) | 1983 | Modeling other minds' beliefs | Contested evidence for LLMs |
+| **bAbI** (\cite[Weston et al., 2015]{weston2015babi}) | 2015 | Multi-step logical deduction | Saturated; shown to leak answers |
+| **CLEVR** (\cite[Johnson et al., 2017]{johnson2017clevr}) | 2017 | Compositional + causal visual reasoning | Strong; physical causality still hard |
+| **CommonsenseQA** (\cite[Talmor et al., 2019]{talmor2018commonsenseqa}) | 2019 | Multiple-choice commonsense | High scores; contamination concerns |
+| **HellaSwag** (\cite[Zellers et al., 2019]{zellers2019hellaswag}) | 2019 | Plausible next-sentence completion | Saturated by frontier models |
+| **Winograd / WinoGrande** (\cite[Sakaguchi et al., 2019]{sakaguchi2019winogrande}) | 2019–20 | Commonsense pronoun resolution | “Defeated” at 90%+ |
+| **ARC-AGI** (\cite[Chollet, 2019]{chollet2019measure}) | 2019 | Novel, near-innate-priors abstract reasoning | Far below human; the live frontier |
 
 A few patterns emerge.
 

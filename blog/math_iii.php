@@ -117,7 +117,7 @@ Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods
 
 A neural network is, mathematically, a **function approximator**. Given a function $f^*: X \to Y$, the network learns parameters $\theta$ such that $f_\theta(x) \approx f^*(x)$ for the inputs in the training distribution.
 
-The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989} states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
+The **Universal Approximation Theorem** (\cite[Cybenko, 1989]{cybenko1989}) (\cite[Hornik et al., 1989]{hornik1989}) states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The integral and the closed integral">
@@ -151,7 +151,7 @@ $$\oint_{C} ds = \text{the perimeter of } C .$$
 
 Two things to notice. First, why there is **no upper limit**: the curve $C$ under the sign *is* the "from … to …" — $\oint_C$ means "add up all the way around $C$." Because the loop is closed you finish where you began, so there is no separate start- and end-number to write down. Second, $ds$ is not a mystery variable: it is one tiny piece of length along the curve, playing exactly the role that $\Delta x$ played in the Riemann sum above. The only difference is that the thing you would normally write between the sign and the $ds$ (the "height") is just the number $1$, and a lone $1$ is left out by convention — exactly as $\int_a^b dx$ really means $\int_a^b 1\,dx$. So here you are adding up pure length.
 
-Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (that is $360^\circ$ \cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}), no matter what shape the loop is.
+Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}, that is $360^\circ$), no matter what shape the loop is.
 
 You will meet the same idea again in physics and in [Geometry III](geometry_iii): add up a quantity all the way round a closed loop — or across a closed surface, like the total amount that flows out of a box — and the single number you get at the end describes the whole closed shape, not just one point on it.
 </div>
@@ -297,7 +297,7 @@ A **term** is something that *has* a type. We write $x : A$ for “$x$ is a term
 
 ### Functions as types
 
-The key idea: **functions are also typed**. If $A$ and $B$ are types, the type $A \to B$ (“$A$ arrow $B$”) is *the type of functions from $A$ to $B$*. A term $f : A \to B$ is a rule that turns any $a : A$ into an $f(a) : B$ — precisely the classical definition of a **mapping** from a set into a set \cite[Lang, Basic Mathematics, Ch. 14, p. 345]{lang2005basicmath}.
+The key idea: **functions are also typed**. If $A$ and $B$ are types, the type $A \to B$ (“$A$ arrow $B$”) is *the type of functions from $A$ to $B$*. A term $f : A \to B$ is a rule that turns any $a : A$ into an $f(a) : B$ — precisely the classical definition of a **mapping** from a set into a set (\cite[Lang, Basic Mathematics, Ch. 14, p. 345]{lang2005basicmath}).
 
 The canonical example, and the simplest piece of every neural network, is the **is-even** test:
 

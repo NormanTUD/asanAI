@@ -15,7 +15,7 @@ math: 58
 <div class="md">
 The Transformer is not the end of the road. Its $O(n^2)$ attention cost creates a quadratic wall: doubling the context length quadruples compute and memory. For long-context applications (genomes, codebases, hour-long video), this is prohibitive. Since 2020, a small but rapidly growing field has produced **sub-quadratic alternatives** that match Transformers on language modelling while scaling to million-token contexts.
 
-This chapter surveys the main candidates, with the mathematical core of each. The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is "a very rough functional program, with these flexible, learnable pieces" \cite[Olah, 2015]{colah2015types}.
+This chapter surveys the main candidates, with the mathematical core of each. The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is "a very rough functional program, with these flexible, learnable pieces" (\cite[Olah, 2015]{colah2015types}).
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="The Quadratic Wall">
@@ -62,11 +62,11 @@ This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{
 <div class="md">
 ### S4
 
-\cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
+\cite[Gu et al. (2021)]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
 
-### Mamba \cite[Gu & Dao, 2023]{gu2023mamba}
+### Mamba
 
-Mamba's key contribution is making the SSM **input-dependent**:
+Mamba's key contribution (\cite[Gu & Dao, 2023]{gu2023mamba}) is making the SSM **input-dependent**:
 
 $$
 B_t, C_t, \Delta_t = \text{Linear}(x_t)
@@ -76,9 +76,9 @@ i.e. the state-transition matrices depend on the current input. This breaks line
 </div>
 
 <div class="md">
-### Mamba-2 and SSD \cite[Dao & Gu, 2024]{dao2024mamba2}
+### Mamba-2 and SSD
 
-Mamba-2 reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**. In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.
+Mamba-2 (\cite[Dao & Gu, 2024]{dao2024mamba2}) reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**. In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.
 
 ### Jamba (AI21, 2024): Hybrid SSM + Attention
 
@@ -102,9 +102,9 @@ $$
 
 By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the “state”), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$, independent of $n$.
 
-### Performer \cite[Choromanski et al., 2021]{choromanski2021performer}
+### Performer
 
-$\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m \cdot x))$ for random $\omega_i \sim \mathcal{N}(0, I)$ (positive random features). Provably unbiased kernel approximation.
+$\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m \cdot x))$ for random $\omega_i \sim \mathcal{N}(0, I)$ (positive random features). Provably unbiased kernel approximation (\cite[Choromanski et al., 2021]{choromanski2021performer}).
 </div>
 
 <div class="md">
@@ -120,16 +120,16 @@ RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at
 
 ### RWKV
 
-\cite[Peng et al., 2023]{peng2023rwkv} introduced a linear-attention-with-decay RNN. RWKV-7 (2025) matches 7B Transformers on language tasks.
+\cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN. RWKV-7 (2025) matches 7B Transformers on language tasks.
 </div>
 
 <div class="md">
 ## Other Architectures
 
-* **Hyena** \cite[Poli et al., 2023]{poli2023hyena}: replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
-* **Mega** \cite[Ma et al., 2022]{ma2022mega}: combines moving-average gated linear units with attention. Position-aware.
+* **Hyena** (\cite[Poli et al., 2023]{poli2023hyena}): replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
+* **Mega** (\cite[Ma et al., 2022]{ma2022mega}): combines moving-average gated linear units with attention. Position-aware.
 * **Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.
-* **Mixture-of-Depths** \cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
+* **Mixture-of-Depths** (\cite[Raposo et al., 2024]{raposo2024mod}): routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
 * **Universal Transformers**: recurrent application of the same Transformer block with a halting mechanism.
 
 The field is in active flux; no single “Transformer replacement” has emerged, but hybrids are clearly the immediate future.

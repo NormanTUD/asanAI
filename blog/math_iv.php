@@ -65,7 +65,7 @@ math: 90
 
 In <a href="math_ii">Math II</a> you met **linear maps** $f(\mathbf{x}) = M\mathbf{x}$. They rotate, scale, shear, mirror — but they must send the origin to itself: $f(\mathbf{0}) = \mathbf{0}$. The origin is glued in place.
 
-Most useful "movements" of data need to move the origin too. The fix is the **affine transformation** — a linear part with a translation added, the same "linear move + translation" split that Lang proves for the rigid motions of the plane (every isometry that moves every point is a rotation, or a rotation followed by a mirror, composed with a translation \cite[Lang, Basic Mathematics, Ch. 6, p. 165]{lang2005basicmath}):
+Most useful "movements" of data need to move the origin too. The fix is the **affine transformation** — a linear part with a translation added, the same "linear move + translation" split that Lang proves for the rigid motions of the plane (every isometry that moves every point is a rotation, or a rotation followed by a mirror, composed with a translation (\cite[Lang, Basic Mathematics, Ch. 6, p. 165]{lang2005basicmath})):
 
 $$
 f(\mathbf{x}) = \underbrace{M\mathbf{x}}_{\text{linear}} + \underbrace{\mathbf{t}}_{\text{translation}}
@@ -81,13 +81,13 @@ An affine map is the most general map that sends **straight lines to straight li
 
 Three facts we'll lean on repeatedly:
 
-- **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map. Lang's geometric transformations close the same way: composing two isometries gives another isometry, and the composition "behaves like a multiplication" \cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}.
+- **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map. Lang's geometric transformations close the same way: composing two isometries gives another isometry, and the composition "behaves like a multiplication" (\cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}).
 - **Three points determine it.** Since lines and ratios are preserved, telling an affine map where three non-collinear points go fixes it everywhere.
-- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension. It is the same scaling law Lang proves for a dilation: stretching every length by $r$ multiplies area by $r^2$ \cite[Lang, Basic Mathematics, Ch. 6, p. 164]{lang2005basicmath}.
+- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension. It is the same scaling law Lang proves for a dilation: stretching every length by $r$ multiplies area by $r^2$ (\cite[Lang, Basic Mathematics, Ch. 6, p. 164]{lang2005basicmath}).
 </div>
 
 <div class="optional md" data-headline="History: where the word comes from">
-**Descartes** made points into coordinates (1637) \cite[Descartes, 1637]{descartesgeometrie}. **Grassmann**'s *Ausdehnungslehre* (1844) and **Möbius**' barycentric work then split a point into a fixed origin plus a free direction — exactly the $M\mathbf{x} + \mathbf{t}$ form \cite{mobiusband}. **Riemann's** 1854 habilitation sorted geometry into a ladder — **affine ⊂ similarity ⊂ Euclidean** \cite[Riemann, 1854]{riemann1854raum} — each rung defined by what its transformations preserve; the affine rung measures *nothing* (no distances, no angles) and keeps exactly lines, parallelism, and ratios \cite{affine_geometry_wiki}. The word *affine* is Latin *affinis* ("related, connected"); it entered mathematics via **Euler** (1748) \cite[Euler, 1748]{euler1748introductio}, and **Klein's** 1948 survey credits the name "affine transformation" to Möbius and Gauss \cite[Klein, 1948]{klein1948geometry}. Affine maps *keep things related* — collinearity, parallelism, ratios — even when they break lengths and angles.
+**Descartes** made points into coordinates (1637) (\cite[Descartes, 1637]{descartesgeometrie}). **Grassmann**'s *Ausdehnungslehre* (1844) and **Möbius**' barycentric work then split a point into a fixed origin plus a free direction — exactly the $M\mathbf{x} + \mathbf{t}$ form \cite{mobiusband}. **Riemann's** 1854 habilitation sorted geometry into a ladder — **affine ⊂ similarity ⊂ Euclidean** (\cite[Riemann, 1854]{riemann1854raum}) — each rung defined by what its transformations preserve; the affine rung measures *nothing* (no distances, no angles) and keeps exactly lines, parallelism, and ratios \cite{affine_geometry_wiki}. The word *affine* is Latin *affinis* ("related, connected"); it entered mathematics via **Euler** (1748) (\cite[Euler, 1748]{euler1748introductio}), and **Klein's** 1948 survey credits the name "affine transformation" to Möbius and Gauss (\cite[Klein, 1948]{klein1948geometry}). Affine maps *keep things related* — collinearity, parallelism, ratios — even when they break lengths and angles.
 </div>
 
 <div class="md" data-mathlevel="65" data-optionaltitle="Homogeneous coordinates: the trick that makes it a matrix">
@@ -112,7 +112,7 @@ Check the top row: $\mathbf{x}' = M\mathbf{x} + \mathbf{t}$. The bottom row $[0,
 </div>
 
 <div class="optional md" data-headline="Beyond affine: projective and Möbius maps">
-Unpinning the last row gives $\mathbf{x}' = H\mathbf{x} / (H\mathbf{x})_{n+1}$ — a **projective transformation** \cite{projective_transformation_wiki}. In 2D, an $H \in \mathbb{R}^{3\times 3}$ is a **homography** \cite{homography_cv_wiki} with 8 degrees of freedom (vs affine's 6); the extra two are the "what happens at infinity" freedom. This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822) \cite[projective geometry]{projective_geometry_wiki}\cite[Poncelet, 1822]{poncelet1822traite}.
+Unpinning the last row gives $\mathbf{x}' = H\mathbf{x} / (H\mathbf{x})_{n+1}$ — a **projective transformation** \cite{projective_transformation_wiki}. In 2D, an $H \in \mathbb{R}^{3\times 3}$ is a **homography** \cite{homography_cv_wiki} with 8 degrees of freedom (vs affine's 6); the extra two are the "what happens at infinity" freedom. This is what makes vanishing points appear — the same object Renaissance painters used for linear perspective \cite{albertidepictura}, the mathematics of **Desargues**' *Brouillon* (1639) \cite{desarguesbrouillon} and of **Poncelet**'s founding treatise (1822), \cite[projective geometry]{projective_geometry_wiki} (\cite[Poncelet, 1822]{poncelet1822traite}).
 
 A separate non-affine family is the **Möbius maps** $z \mapsto (az+b)/(cz+d)$ \cite{mobius_transformation_wiki} on the complex plane: they preserve *angles* (conformal) and send circles/lines to circles/lines. **Riemann** spent his later life on exactly this family — conformal maps of the Riemann sphere \cite{riemann1854raum}. Three families, sorted by what they preserve:
 
@@ -211,7 +211,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 
 ### The first non-affine move
 
-Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; Morris's definition is exactly this — one-to-one, onto, with the topology preserved in both directions \cite[Morris, Topology Without Tears, Ch. 4, p. 75]{morris2007topology}. By **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
+Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; Morris's definition is exactly this — one-to-one, onto, with the topology preserved in both directions (\cite[Morris, Topology Without Tears, Ch. 4, p. 75]{morris2007topology}). By **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
 
 > A homeomorphism cannot change the topology of space. Lines stay lines, holes stay holes, links stay linked.
 
@@ -298,7 +298,7 @@ The fold changes that. Fold **radially** — the crease is the circle of radius 
 - $c$ **inside the outer cloud** — the cloud *splits*: the part past the crease lifts, the rest stays on the floor among the inner points; **not separable**.
 - $c$ **outside the outer cloud** — nothing folds; the problem is unchanged.
 
-That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold into unoccupied dimensions until a flat cut reaches the class that was surrounded** \cite[Keup & Helias, 2022]{keup2022origami}. A ReLU fold does it in one piece; a **tanh** fold does it smoothly — no crease, the lift is a gentle S-curve that pushes right at the border of the flat part. And watch $\lambda = 2$: the mirror fold lands every lifted point back on the floor, and the gap closes again.
+That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold into unoccupied dimensions until a flat cut reaches the class that was surrounded** (\cite[Keup & Helias, 2022]{keup2022origami}). A ReLU fold does it in one piece; a **tanh** fold does it smoothly — no crease, the lift is a gentle S-curve that pushes right at the border of the flat part. And watch $\lambda = 2$: the mirror fold lands every lifted point back on the floor, and the gap closes again.
 
 **Try:** the presets walk the bias through all four cases. Slide $c$ and watch the crease circle cross the clouds — the green cut turns red the moment the height ranges touch.
 </div>
@@ -352,10 +352,10 @@ For the Hopf link it is $\pm 1$; for two unlinked circles it is $0$. The formula
 
 **The tie-in with rectifier networks.** In this book's language: every layer's affine part is a homeomorphism (when invertible) \cite[nLab, invariance of domain]{nlab_invariance_of_domain}, so it cannot change topological content — it cannot unthread anything by itself. The ReLU *fold* is the one non-homeomorphic step: at $\lambda>1$ it overlaps space, and only then can the linking number fall. Four papers make each piece precise:
 
-- **Montúfar, Pascanu, Cho & Bengio** — the piecewise-linear regions of a rectifier net tile the input space, and their count grows exponentially with depth \cite[Montúfar et al., 2014]{montufar2014regions}. The full proof, including the lower bound showing the exponential growth is unavoidable, is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 6.
-- **Keup & Helias** — to make tangled classes separable, a network **folds the data manifold into unoccupied higher dimensions** until a flat cut reaches the "island" class another class surrounds \cite[Keup & Helias, 2022]{keup2022origami}; their 2-D test case — a ring inside a ring — is the flat cousin of the chained rings above.
-- **Amrami & Goldberg** — problems that need exponentially many parameters at any fixed depth are solved with zero error by a net of *linear* depth and width $\le 4$, via an explicit space-folding construction \cite[Amrami & Goldberg, 2021]{amrami2021depth}.
-- **Lewandowski et al.** — a straight input line arrives in activation space as a non-convex path (each crease loses convexity), and their space-folding measure grows with depth in well-trained nets \cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}.
+- **Montúfar, Pascanu, Cho & Bengio** — the piecewise-linear regions of a rectifier net tile the input space, and their count grows exponentially with depth (\cite[Montúfar et al., 2014]{montufar2014regions}). The full proof, including the lower bound showing the exponential growth is unavoidable, is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 6.
+- **Keup & Helias** — to make tangled classes separable, a network **folds the data manifold into unoccupied higher dimensions** until a flat cut reaches the "island" class another class surrounds (\cite[Keup & Helias, 2022]{keup2022origami}); their 2-D test case — a ring inside a ring — is the flat cousin of the chained rings above.
+- **Amrami & Goldberg** — problems that need exponentially many parameters at any fixed depth are solved with zero error by a net of *linear* depth and width $\le 4$, via an explicit space-folding construction (\cite[Amrami & Goldberg, 2021]{amrami2021depth}).
+- **Lewandowski et al.** — a straight input line arrives in activation space as a non-convex path (each crease loses convexity), and their space-folding measure grows with depth in well-trained nets (\cite[Lewandowski et al., 2025]{lewandowski2025spacefolds}).
 
 Four papers, one object: the piecewise-affine map that creases and overlaps space. The <a href="origami">Origami</a> chapter is the full treatment; this chapter hands you the geometry to play with.
 
@@ -397,7 +397,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 </div>
 
 <div class="optional md" data-headline="Who found all this, and why">
-* **Knots.** The first systematic study of knotted loops is **Listing's** *Vorstudien zur Topologie* (1847) — the same book that coined the word "topology" \cite[Listing, 1847]{listingtopologie}. **Poincaré's** *Analysis Situs* (1895) turned knots into a theory of the space *around* the loop, not of the loop itself \cite[Poincaré, 1895]{poincareanalysissitus}.
+* **Knots.** The first systematic study of knotted loops is **Listing's** *Vorstudien zur Topologie* (1847) — the same book that coined the word "topology" (\cite[Listing, 1847]{listingtopologie}). **Poincaré's** *Analysis Situs* (1895) turned knots into a theory of the space *around* the loop, not of the loop itself (\cite[Poincaré, 1895]{poincareanalysissitus}).
 * **The linking number.** Gauss expressed the linking of two closed curves as a single integral — the formula the unlink machine runs \cite[Wikipedia, linking number]{linking_number_wiki}. The two-ring link was studied by **Hopf** in 1931, while working on what is now the Hopf fibration; Gauss knew it earlier, and a Japanese Buddhist sect (Buzan-ha) had used the motif as a crest centuries before \cite[Wikipedia, Hopf link]{hopf_link_wiki}.
 * **Invariance of domain.** Brouwer's theorem (~1910) that a continuous one-to-one map of $\mathbb{R}^n$ onto its image is a homeomorphism settled the open question "is dimension a topological invariant?" \cite[nLab, invariance of domain]{nlab_invariance_of_domain}.
 * **Folding as a map.** Paper-folding mathematics proves that any straight-sided shape can be cut from one sheet with a single straight cut after folding \cite[Wikipedia, fold-and-cut theorem]{foldandcut_wiki}. The neural-network side of the same idea: linear regions (Montúfar et al. 2014 \cite{montufar2014regions}), folding as the separability tool (Keup & Helias 2022 \cite{keup2022origami}), depth via folding (Amrami & Goldberg 2021 \cite{amrami2021depth}), and a quantitative folding measure (Lewandowski et al. 2025 \cite{lewandowski2025spacefolds}).
@@ -408,7 +408,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 
 - **Every linear layer is affine.** $y = Wx + b$ *is* $f(x) = Mx + t$. Delete the nonlinearities and a whole network collapses into a single affine map (composition closes). That collapse is *why* activation functions exist, as the <a href="minimalneuron">Neuron</a> and <a href="origami">Origami</a> chapters argue from the other side.
 - **Every ReLU layer is a stack of folds.** One crease per neuron. The Origami view is the natural geometry of what a rectifier network *is*.
-- **Transformers are affine machines with attention on top.** Query, key, value, and output projections are all $Wx + b$ \cite[Vaswani et al., 2017]{vaswani2017attention}; attention is a learned, input-dependent weighted average on top — the affine parts do the coordinate changes, the attention does the routing.
+- **Transformers are affine machines with attention on top.** Query, key, value, and output projections are all $Wx + b$ (\cite[Vaswani et al., 2017]{vaswani2017attention}); attention is a learned, input-dependent weighted average on top — the affine parts do the coordinate changes, the attention does the routing.
 - **Data augmentation** teaches models what the affine group leaves *invariant* (rotations, crops, flips are affine).
 - **Camera + robotics + graphics** live in $4\times 4$ homogeneous matrices; document scanners + AR live in $3\times 3$ homographies (the projective cousin).
 - **Interpretability probes** (logit lens, tuned lens) are literally learned affine maps from a hidden state to the output (see the <a href="fact_lookup">Fact Lookup</a> and <a href="mechanistic_interpretability">Mechanistic Interpretability</a> chapters).
@@ -417,7 +417,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 <div class="md" data-mathlevel="55" data-optionaltitle="Group Structure: The Algebra of Symmetry">
 ## Group Structure: The Algebra of Symmetry
 
-The affine maps above include the rotations — and all the rotations of a plane together form a **group** (composing two rotations yields another rotation; Lang finds this same "behaves like a multiplication" structure in the geometric transformations he composes \cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}), one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
+The affine maps above include the rotations — and all the rotations of a plane together form a **group** (composing two rotations yields another rotation; Lang finds this same "behaves like a multiplication" structure in the geometric transformations he composes (\cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath})), one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
 
 | Axiom | Statement | Example in $\mathbb{Z}_{12}$ |
 |---|---|---|

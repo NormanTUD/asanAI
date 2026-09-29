@@ -20,9 +20,9 @@ A model that is right 95% of the time but **confident when it is wrong** is not 
 
 A **calibrated** model says $P(\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats. Modern networks are not — they are systematically **over-confident**, especially out of distribution.
 
-The cheap fix is **temperature scaling**: learn a single scalar $T$ and divide the logits by it, stretching the sharp softmax back onto the diagonal. It costs nothing at inference. \cite[Guo et al., 2017]{guo2017calibration}
+The cheap fix is **temperature scaling**: learn a single scalar $T$ and divide the logits by it, stretching the sharp softmax back onto the diagonal. It costs nothing at inference. (\cite[Guo et al., 2017]{guo2017calibration})
 
-LLMs expose a related signal. When asked to estimate the chance that they *know* an answer, they track their actual accuracy surprisingly well \cite[Kadavath et al., 2022]{kadavath2022selfknowledge} — **models mostly know what they know**, and that self-assessment is a usable, cheap reliability lever.
+LLMs expose a related signal. When asked to estimate the chance that they *know* an answer, they track their actual accuracy surprisingly well (\cite[Kadavath et al., 2022]{kadavath2022selfknowledge}) — **models mostly know what they know**, and that self-assessment is a usable, cheap reliability lever.
 </div>
 
 <div class="md">
@@ -33,7 +33,7 @@ LLMs expose a related signal. When asked to estimate the chance that they *know*
 * **Aleatoric** — irreducible noise *in the data* (a blurry photo). More data will not help.
 * **Epistemic** — the *model's* ignorance (a species it has never seen). More data *would* help.
 
-The distinction drives safe autonomy: a car should brake for epistemic uncertainty ("I don't know what that is"), not merely aleatoric ("the rain makes this noisy"). **Deep ensembles** — train several networks, average them — cheaply approximate Bayesian uncertainty: they agree in-distribution and **disagree on out-of-distribution input**, which is exactly the disagreement you want as an alarm. \cite[Lakshminarayanan et al., 2017]{lakshminarayanan2017ensembles}
+The distinction drives safe autonomy: a car should brake for epistemic uncertainty ("I don't know what that is"), not merely aleatoric ("the rain makes this noisy"). **Deep ensembles** — train several networks, average them — cheaply approximate Bayesian uncertainty: they agree in-distribution and **disagree on out-of-distribution input**, which is exactly the disagreement you want as an alarm. (\cite[Lakshminarayanan et al., 2017]{lakshminarayanan2017ensembles})
 </div>
 
 <div class="md">
@@ -45,7 +45,7 @@ The distinction drives safe autonomy: a car should brake for epistemic uncertain
 <div class="md" data-mathlevel="40" data-optionaltitle="Conformal prediction: finite-sample guarantees">
 ## Conformal prediction: finite-sample guarantees
 
-Everything above is empirical. **Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers guaranteed to contain the truth with probability $\ge 1-\varepsilon$ — **distribution-free**, no assumptions about the data or the model. It is the rigorous, assumption-light way to hand a user an honest "I'm not sure," and it applies to LLMs, vision, and structured outputs alike. \cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}
+Everything above is empirical. **Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers guaranteed to contain the truth with probability $\ge 1-\varepsilon$ — **distribution-free**, no assumptions about the data or the model. It is the rigorous, assumption-light way to hand a user an honest "I'm not sure," and it applies to LLMs, vision, and structured outputs alike. (\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})
 </div>
 
 <div class="md">

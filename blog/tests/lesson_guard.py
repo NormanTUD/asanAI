@@ -213,9 +213,18 @@ CITE_MACRO = re.compile(
 )
 
 # Display shapes that are self-contained references (must sit in (…) or be
-# woven in). Narrative subjects exempt by shape: "Zhou et al. (2022)" ends in
-# ")" not ", 2022".
-FLOATING_REF = re.compile(r"(Ch\.|§|p\. \d|Equation|Figure:)|, (19|20)\d{2}$|^Section \d")
+# woven in). Only reference shapes AT THE START of the display count, so a
+# woven fragment like "as Morris shows in Topology Without Tears (Ch. 4,
+# p. 75)" is fine. Narrative subjects exempt by shape: "Zhou et al. (2022)"
+# ends in ")" not ", 2022".
+FLOATING_REF = re.compile(
+    r"^Section \d"
+    r"|^§"
+    r"|^Figure:"
+    r"|^[^,()]{1,80}(?:, [^,()]{1,80}){0,2}, (?:Ch\.|§|p\. \d|Equation|Figure:)"
+    r"|^[^,()]{1,80}(?:, [^,()]{1,80})*, (1[5-9]|20)\d{2}$"
+    r"|^[^,()]{1,80} et al\. (1[5-9]|20)\d{2}$"
+)
 
 
 def _line_of(text: str, pos: int) -> int:

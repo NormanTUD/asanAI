@@ -34,11 +34,11 @@ Before there were deep neural networks, "a machine makes music" meant something 
 
 The oldest trick is to **remove the composer's hand**. In the 1910s Marcel Duchamp let chance pick the notes of a "score" that was really a joke about the pretensions of music. In 1951 John Cage composed *Music of Changes* by consulting the *I Ching*, throwing stalks to decide pitch and duration — deliberately emptying intention out of the piece. The question was never "can we make good music?" It was "what is left of *composition* when the decisions come from somewhere else?"
 
-The machines were already hinting at the answer, mechanically. In **1805** the instrument-maker Johann Nepomuk Mälzel built the **Panharmonicon** \cite[Mälzel's Panharmonicon, 1805]{panharmonicon}, a large organ-like machine that could *play itself* — an automatic player that imitated a whole orchestra and even cannon fire. Beethoven, a friend, wrote *Wellington's Victory* for it. It was not a composer; it was a very elaborate pinball of sound. But a walking, self-playing orchestra was the first time a *device*, not a person, performed a complete piece — the ancestor of every "generative" music system since.
+The machines were already hinting at the answer, mechanically. In **1805** the instrument-maker Johann Nepomuk Mälzel built the **Panharmonicon** (\cite[Mälzel's Panharmonicon, 1805]{panharmonicon}), a large organ-like machine that could *play itself* — an automatic player that imitated a whole orchestra and even cannon fire. Beethoven, a friend, wrote *Wellington's Victory* for it. It was not a composer; it was a very elaborate pinball of sound. But a walking, self-playing orchestra was the first time a *device*, not a person, performed a complete piece — the ancestor of every "generative" music system since.
 
 ### When computers put their hands on the piano
 
-When the first real computers appeared, the question became engineering. In the late 1940s a machine called **CSIRAC** in Adelaide played *Baa, Baa, Black Sheep*. In **1951** Christopher Strachey ran a program on a Ferranti computer in Manchester that generated the first known computer music \cite[Strachey, 1951]{strachey1952}. In **1957** a composer, Leonard Isaacson, and a mathematician, Lejaren Hiller, wrote the **Illiac Suite** for string quartet on the ILLIAC I — the first major work a computer *composed* \cite[Hiller & Isaacson's Illiac Suite]{illiac_suite}. And that same year, **Max Mathews** wrote **MUSIC**, the first computer language for *synthesizing* sound in real time \cite[Max Mathews and MUSIC]{max_mathews} — the moment the computer stopped being a calculator and became an **instrument**.
+When the first real computers appeared, the question became engineering. In the late 1940s a machine called **CSIRAC** in Adelaide played *Baa, Baa, Black Sheep*. In **1951** Christopher Strachey ran a program on a Ferranti computer in Manchester that generated the first known computer music (\cite[Strachey, 1951]{strachey1952}). In **1957** a composer, Leonard Isaacson, and a mathematician, Lejaren Hiller, wrote the **Illiac Suite** for string quartet on the ILLIAC I — the first major work a computer *composed* \cite[Hiller & Isaacson's Illiac Suite]{illiac_suite}. And that same year, **Max Mathews** wrote **MUSIC**, the first computer language for *synthesizing* sound in real time \cite[Max Mathews and MUSIC]{max_mathews} — the moment the computer stopped being a calculator and became an **instrument**.
 
 Around the same years the composer **Iannis Xenakis** went further: in *Pithoprakta* (1955) and, in 1959, *Bohuslav* for the IBM 650, he placed notes with **probability distributions** rather than rules a person could follow. Math, not taste, was the composer.
 
@@ -153,13 +153,13 @@ The three **layers** of MPEG-1 audio are just three levels of this trade-off (La
 
 ### The heir to MP3: the neural audio codec
 
-MP3's core insight — *discard the inaudible, learned or otherwise* — is exactly what a **neural audio codec** does, but end-to-end and with no hand-designed psychoacoustic model. **SoundStream** (Google, 2021) \cite[Zeghidour et al., 2021]{zeghidour2021soundstream} and **EnCodec** (Meta, 2022) \cite[Defossez et al., 2022]{defossez2022encodec} learn a compression that matches what MP3 achieves at a fraction of the bitrate. And they do it in a way that sets up the deep-learning story perfectly: **they turn the waveform into a short list of discrete codes.** That is the bridge from a song to a sequence a Transformer can read. We will build that codec, brick by brick, in a moment.
+MP3's core insight — *discard the inaudible, learned or otherwise* — is exactly what a **neural audio codec** does, but end-to-end and with no hand-designed psychoacoustic model. **SoundStream** (Google, 2021) (\cite[Zeghidour et al., 2021]{zeghidour2021soundstream}) and **EnCodec** (Meta, 2022) (\cite[Defossez et al., 2022]{defossez2022encodec}) learn a compression that matches what MP3 achieves at a fraction of the bitrate. And they do it in a way that sets up the deep-learning story perfectly: **they turn the waveform into a short list of discrete codes.** That is the bridge from a song to a sequence a Transformer can read. We will build that codec, brick by brick, in a moment.
 </div>
 
 <div class="md">
 ## The engine: transformers and attention
 
-Before we generate anything, we have to name the machine doing the generating. Both the song-writer and the video-writer are built on the same engine: the **transformer**, whose defining idea is **self-attention** \cite[Vaswani et al., 2017]{vaswani2017attention}. (The full architecture is the subject of the **Attention** chapter; here is how it is used to *generate*.)
+Before we generate anything, we have to name the machine doing the generating. Both the song-writer and the video-writer are built on the same engine: the **transformer**, whose defining idea is **self-attention** (\cite[Vaswani et al., 2017]{vaswani2017attention}). (The full architecture is the subject of the **Attention** chapter; here is how it is used to *generate*.)
 
 ### What a transformer block actually does
 
@@ -184,7 +184,7 @@ Read it as: *compare my query to everyone's key, turn the matches into weights, 
 
 ### Cross-attention: how the prompt steers the machine
 
-Self-attention lets the model talk to itself. **Cross-attention** lets it talk to *you*. The query still comes from the tokens being generated, but the keys and values come from a **different** sequence — your text prompt, first run through a transformer **encoder** like CLIP \cite[Radford et al., 2021]{radford2021clip} or T5. At every step the model asks the words in your prompt "which part of this should you be steering?" The word *"cello"* claims the low, warm frequencies; *"fast"* claims the tempo. This is the same mechanism that makes a text-to-*image* model paint what you ask for — the reason your prompt has any effect at all.
+Self-attention lets the model talk to itself. **Cross-attention** lets it talk to *you*. The query still comes from the tokens being generated, but the keys and values come from a **different** sequence — your text prompt, first run through a transformer **encoder** like CLIP (\cite[Radford et al., 2021]{radford2021clip}) or T5. At every step the model asks the words in your prompt "which part of this should you be steering?" The word *"cello"* claims the low, warm frequencies; *"fast"* claims the tempo. This is the same mechanism that makes a text-to-*image* model paint what you ask for — the reason your prompt has any effect at all.
 
 ### Position: how the model knows "next"
 
@@ -192,7 +192,7 @@ A raw sequence has no built-in sense of order, so the model is given **positiona
 
 ### Why transformers won
 
-You could have built these machines on older ideas — recurrent networks like WaveNet \cite[van den Oord et al., 2016]{oord2016wavenet} did, at first. They mostly lost for the reason Rich Sutton called **the Bitter Lesson** \cite[Sutton, 2019]{sutton2019bitter}: methods that scale with compute and data beat cleverly hand-crafted ones. The transformer's **next-token** objective is *modality-agnostic* — it does not care whether the tokens are words, audio codes, or video patches — and attention gives it long-range reach at fixed depth. Same architecture, new vocabulary, more data. That is the whole recipe, and it is why one codebase keeps becoming the next breakthrough.
+You could have built these machines on older ideas — recurrent networks like WaveNet (\cite[van den Oord et al., 2016]{oord2016wavenet}) did, at first. They mostly lost for the reason Rich Sutton called **the Bitter Lesson** (\cite[Sutton, 2019]{sutton2019bitter}): methods that scale with compute and data beat cleverly hand-crafted ones. The transformer's **next-token** objective is *modality-agnostic* — it does not care whether the tokens are words, audio codes, or video patches — and attention gives it long-range reach at fixed depth. Same architecture, new vocabulary, more data. That is the whole recipe, and it is why one codebase keeps becoming the next breakthrough.
 </div>
 
 <div class="md">
@@ -209,8 +209,8 @@ This is the LLM way, applied to sound. The model predicts the **next token** giv
 At each step the network outputs a score for every code in the codec's vocabulary, a **softmax** turns that into a probability, and you **sample** one token. The sampling knob is where the *dice* come back into a story that began with dice:
 
 - **Temperature** divides the scores before the softmax. High temperature flattens the distribution (more surprises); low temperature sharpens it (more predictable).
-- **Top-k** \cite[Fan et al., 2018]{fan2018topk} keeps only the $k$ most likely tokens and discards the rest.
-- **Top-p (nucleus)** \cite[Holtzman et al., 2019]{holtzman2019nucleus} keeps the smallest set of tokens whose probabilities add up to $p$.
+- **Top-k** (\cite[Fan et al., 2018]{fan2018topk}) keeps only the $k$ most likely tokens and discards the rest.
+- **Top-p (nucleus)** (\cite[Holtzman et al., 2019]{holtzman2019nucleus}) keeps the smallest set of tokens whose probabilities add up to $p$.
 
 Change these knobs and you change how "on the nose" or "creative" a generated track sounds. It is the same sampling a chatbot uses to decide how to phrase its next sentence.
 
@@ -218,9 +218,9 @@ Change these knobs and you change how "on the nose" or "creative" a generated tr
 
 A whole song is too long to predict flatly, so the serious autoregressive machines build it **coarse-to-fine**, in layers of tokens at different rates:
 
-- **AudioLM** (Google, 2023) first autoregressively writes low-rate **semantic tokens** that carry long-range structure — *this is the verse, the harmony drifts here* — and then a second, non-autoregressive stage fills in the high-rate **acoustic tokens** (the actual codec codes) that a decoder turns back into sound \cite[Borsos et al., 2023]{borsos2023audiolm}.
-- **MusicLM** (Google, 2023) does the same as a hierarchy: a **slow** transformer lays down melody, harmony and rhythm over long timescales, a **fast** transformer adds timbre and detail, and a vocoder renders audio — which is what lets it stay coherent for *minutes* \cite[Agostinelli et al., 2023]{agostinelli2023musiqlm}.
-- **MusicGen** (Meta, 2023) is the lean, open, fast version: a single transformer over EnCodec's stacked codebooks, writing them token by token, steered by a text embedding \cite[Copet et al., 2023]{copet2023musicgen}.
+- **AudioLM** (Google, 2023) first autoregressively writes low-rate **semantic tokens** that carry long-range structure — *this is the verse, the harmony drifts here* — and then a second, non-autoregressive stage fills in the high-rate **acoustic tokens** (the actual codec codes) that a decoder turns back into sound (\cite[Borsos et al., 2023]{borsos2023audiolm}).
+- **MusicLM** (Google, 2023) does the same as a hierarchy: a **slow** transformer lays down melody, harmony and rhythm over long timescales, a **fast** transformer adds timbre and detail, and a vocoder renders audio — which is what lets it stay coherent for *minutes* (\cite[Agostinelli et al., 2023]{agostinelli2023musiqlm}).
+- **MusicGen** (Meta, 2023) is the lean, open, fast version: a single transformer over EnCodec's stacked codebooks, writing them token by token, steered by a text embedding (\cite[Copet et al., 2023]{copet2023musicgen}).
 
 </div>
 
@@ -231,15 +231,15 @@ MusicLM generates high-fidelity music from text descriptions such as "a calming 
 <div class="md">
 ### Family B: sculpt it out of noise (diffusion)
 
-The other family does not write tokens in order. It **denoises**. Start from pure static, and learn to push it — a little at a time — into a coherent signal, the way an image emerges from ink in water. (The full forward/reverse math is the **Diffusion Models** chapter \cite[Ho et al., 2020]{ho2020ddpm}; here is how it is applied to sound and video.)
+The other family does not write tokens in order. It **denoises**. Start from pure static, and learn to push it — a little at a time — into a coherent signal, the way an image emerges from ink in water. (The full forward/reverse math is the **Diffusion Models** chapter (\cite[Ho et al., 2020]{ho2020ddpm}); here is how it is applied to sound and video.)
 
 #### The latent space and the denoiser
 
-You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, \cite[Kingma & Welling, 2013]{kingma2014vae}) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. This is the same "space of coherent relations" from the vocabulary section, seen from the other end: the codec has folded the raw signal into the small set of coordinates the model actually reasons over. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears \cite[Rombach et al., 2022]{rombach2022ldm}.
+You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, (\cite[Kingma & Welling, 2013]{kingma2014vae})) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. This is the same "space of coherent relations" from the vocabulary section, seen from the other end: the codec has folded the raw signal into the small set of coordinates the model actually reasons over. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears (\cite[Rombach et al., 2022]{rombach2022ldm}).
 
 #### Classifier-free guidance: obeying the prompt
 
-To make the denoiser follow your words, **classifier-free guidance** is used \cite[Ho & Salimans, 2022]{ho2022cfg}. During training the prompt is dropped some fraction of the time, so the model learns both "what a signal looks like" and "what it looks like *given this prompt*." At inference the two are combined, and the gap is amplified by a scale $w$:
+To make the denoiser follow your words, **classifier-free guidance** is used (\cite[Ho & Salimans, 2022]{ho2022cfg}). During training the prompt is dropped some fraction of the time, so the model learns both "what a signal looks like" and "what it looks like *given this prompt*." At inference the two are combined, and the gap is amplified by a scale $w$:
 
 $$
 \tilde\epsilon \;=\; \epsilon_{\varnothing} \;+\; w \big(\epsilon_{\text{prompt}} - \epsilon_{\varnothing}\big)
@@ -249,7 +249,7 @@ The bigger $w$, the more faithfully the output follows the prompt (at the cost o
 
 ### The Diffusion Transformer: the unlock for video
 
-The original diffusion denoisers were **U-Nets** — convolutional image networks. In 2023, Peebles and Xie showed you can replace the U-Net with a **transformer that operates on patches** of the latent — a **Diffusion Transformer, or DiT** \cite[Peebles & Xie, 2023]{peebles2023dit}. Two changes make it a big deal:
+The original diffusion denoisers were **U-Nets** — convolutional image networks. In 2023, Peebles and Xie showed you can replace the U-Net with a **transformer that operates on patches** of the latent — a **Diffusion Transformer, or DiT** (\cite[Peebles & Xie, 2023]{peebles2023dit}). Two changes make it a big deal:
 
 - The latent is cut into a grid of **patches**, each patch becoming a **token**, and the transformer attends over all of them — so the denoiser is now structurally *the same family* as an LLM.
 - The timestep and the prompt are injected by **modulating the layer norms** (a trick called **adaLN**) rather than stitched in by hand, so the model always knows *how noisy* the input is and *what it was asked for*.
@@ -301,9 +301,9 @@ The codec race is a long list of ever-better versions of exactly this: **MPEG-1*
 
 ### The video tokenizer and the data
 
-Just as audio got a neural codec, video got a **tokenizer**. In 2021, **VideoGPT** used a **VQ-VAE** to compress a video into **discrete spatio-temporal tokens** and then let a GPT-style model *write* the video token by token \cite[Yan et al., 2021]{yan2021videogpt} \cite[The VQ-VAE]{vq_vae}. **Video became a paragraph, too.**
+Just as audio got a neural codec, video got a **tokenizer**. In 2021, **VideoGPT** used a **VQ-VAE** to compress a video into **discrete spatio-temporal tokens** and then let a GPT-style model *write* the video token by token (\cite[Yan et al., 2021]{yan2021videogpt}) \cite[The VQ-VAE]{vq_vae}. **Video became a paragraph, too.**
 
-The data problem is the same as for images and audio: you need millions of (clip, description) pairs. **WebVid-10M** (2021) scraped about ten million weakly-labelled video-text pairs from the web — the "LAION of video" \cite[Bain et al., 2021]{bain2021webvid}. And the modern models go a step further and **re-caption** their clips: a powerful vision-language model rewrites a rich, accurate description for each clip, so the words actually match the pixels — the trick DALL·E 3 made famous.
+The data problem is the same as for images and audio: you need millions of (clip, description) pairs. **WebVid-10M** (2021) scraped about ten million weakly-labelled video-text pairs from the web — the "LAION of video" (\cite[Bain et al., 2021]{bain2021webvid}). And the modern models go a step further and **re-caption** their clips: a powerful vision-language model rewrites a rich, accurate description for each clip, so the words actually match the pixels — the trick DALL·E 3 made famous.
 
 ### Sora: a diffusion transformer that dreams a world
 
@@ -319,7 +319,7 @@ The remarkable part is not the pipeline but what *emerges at scale*. With no exp
 Scaling video generation models is a promising path towards building general purpose simulators of the physical world.
 </div>
 
-That is the 2018 **World Models** dream — let a network learn a compressed model of an environment and act inside its own dream \cite[Ha & Schmidhuber, 2018]{ha2018worldmodels} — finally realized at internet scale. The caveats are real: it still gets physics wrong (glass that will not shatter like glass, food that will not run out), and long clips drift. But the direction is unmistakable. A machine is learning to *dream a plausible world from a seed.*
+That is the 2018 **World Models** dream — let a network learn a compressed model of an environment and act inside its own dream (\cite[Ha & Schmidhuber, 2018]{ha2018worldmodels}) — finally realized at internet scale. The caveats are real: it still gets physics wrong (glass that will not shatter like glass, food that will not run out), and long clips drift. But the direction is unmistakable. A machine is learning to *dream a plausible world from a seed.*
 </div>
 
 <div class="md">
@@ -332,7 +332,7 @@ You have probably been wondering how any of this connects to a language model. H
 There are **two families**, and both are transformers with attention at their core.
 
 - **Autoregressive over tokens** (AudioLM, MusicGen, VideoGPT): the codec turns the signal into tokens, and the model predicts the *next token*, exactly like an LLM predicts the next word. Here the language model **is** the generator — it literally writes the audio or video, code by code.
-- **Diffusion over latents** (Imagen Video, Stable Video Diffusion, Sora, AudioLDM): the signal lives in a continuous latent space, and a **diffusion transformer** learns to denoise it, while a transformer *encoder* reads the prompt and **classifier-free guidance** pushes the output toward it \cite[Liu et al., 2023]{liu2023audioldm}.
+- **Diffusion over latents** (Imagen Video, Stable Video Diffusion, Sora, AudioLDM): the signal lives in a continuous latent space, and a **diffusion transformer** learns to denoise it, while a transformer *encoder* reads the prompt and **classifier-free guidance** pushes the output toward it (\cite[Liu et al., 2023]{liu2023audioldm}).
 
 Either way the backbone is the same architecture that runs the chatbot you are reading this on. The **only** genuinely new ingredient per modality is the **tokenizer** — the learned codec that turns sound or frames into a vocabulary the Transformer can speak. Change the tokenizer, keep the engine.
 

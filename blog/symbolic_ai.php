@@ -173,7 +173,7 @@ The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) h
 3. If verification fails, refine using the error message.
 4. Iterate.
 
-AlphaProof \cite[DeepMind, 2024]{deepmind2024alphaproof} reached silver-medal level on IMO problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
+AlphaProof (\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level on IMO problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
 </div>
 
 <div class="md">
@@ -192,7 +192,7 @@ The synthesis takes several forms:
 
 ### Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry} (DeepMind, 2024)
 
-Solves IMO \cite[Trinh et al., 2024]{trinh2024alphageometry} problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
+Solves IMO (\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
 
 ### Toolformer \cite[Schick et al., 2023]{schick2023toolformer}
 

@@ -55,13 +55,13 @@ Reduce the bit precision of model weights:
 
 Standard tools:
 
-* **GPTQ** \cite[Frantar et al., 2022]{frantar2022gptq}: post-training quantization using second-order information. The de facto standard.
-* **AWQ** \cite[Lin et al., 2023]{lin2023awq}: activation-aware weight quantization. Identifies salient weight channels and preserves them at higher precision.
-* **SmoothQuant** \cite[Xiao et al., 2022]{xiao2022smoothquant}: migrates quantization difficulty from activations to weights.
-* **BitsAndBytes** \cite[Dettmers et al., 2022]{dettmers2022llmint8}: k-bit quantization for PyTorch (popular for QLoRA).
+* **GPTQ** (\cite[Frantar et al., 2022]{frantar2022gptq}): post-training quantization using second-order information. The de facto standard.
+* **AWQ** (\cite[Lin et al., 2023]{lin2023awq}): activation-aware weight quantization. Identifies salient weight channels and preserves them at higher precision.
+* **SmoothQuant** (\cite[Xiao et al., 2022]{xiao2022smoothquant}): migrates quantization difficulty from activations to weights.
+* **BitsAndBytes** (\cite[Dettmers et al., 2022]{dettmers2022llmint8}): k-bit quantization for PyTorch (popular for QLoRA).
 * **GGUF** (llama.cpp): many quantization schemes in a single file (Q2_K, Q3_K, Q4_K_M, Q5_K_M, Q6_K, Q8_0).
-* **BitNet** \cite[Ma et al., 2024]{ma2024bitnet}: 1.58-bit ternary quantization. Surprisingly competitive at scale.
-* **QuIP#** \cite[Chee et al., 2024]{che2024quip}: lattice-based 2-bit quantization with incoherence processing.
+* **BitNet** (\cite[Ma et al., 2024]{ma2024bitnet}): 1.58-bit ternary quantization. Surprisingly competitive at scale.
+* **QuIP#** (\cite[Chee et al., 2024]{che2024quip}): lattice-based 2-bit quantization with incoherence processing.
 
 ### KV-Cache Quantization
 
@@ -81,9 +81,9 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 
 Beyond quantization:
 
-* **Multi-Query Attention (MQA)** \cite[Shazeer, 2019]{shazeer2019mqa}: all query heads share a single K and V head. 64× KV memory reduction.
-* **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
-* **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few “global” attention layers to preserve long-range context.
+* **Multi-Query Attention (MQA)** (\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head. 64× KV memory reduction.
+* **Grouped-Query Attention (GQA)** (\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
+* **Sliding Window Attention** (\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few “global” attention layers to preserve long-range context.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
@@ -92,9 +92,9 @@ A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughl
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="FlashAttention (online softmax)">
-## FlashAttention \cite[Dao et al., 2022]{dao2022flashattention}
+## FlashAttention
 
-The single biggest speedup for training **and** inference in 2022–2023. Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:
+The single biggest speedup for training **and** inference in 2022–2023 (\cite[Dao et al., 2022]{dao2022flashattention}). Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:
 
 $$
 \text{Standard: } \quad S = QK^\top \in \mathbb{R}^{n \times n} \quad \text{(then softmax, then } \cdot V)
@@ -115,9 +115,9 @@ FlashAttention is now standard in **all** major training and inference stacks (P
 </div>
 
 <div class="md">
-## Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm}
+## Paged Attention
 
-The OS-virtual-memory approach to KV management:
+The OS-virtual-memory approach to KV management (\cite[Kwon et al., 2023]{kwon2023vllm}):
 
 * Allocate KV cache in fixed-size **blocks** (typically 16 tokens).
 * Each request has a **block table** mapping logical → physical blocks.
@@ -130,9 +130,9 @@ The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at hig
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="Speculative decoding (speedup formula)">
-## Speculative Decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative})
+## Speculative Decoding
 
-LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** breaks this:
+LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** (\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:
 
 1. A small **draft model** generates $k$ candidate tokens autoregressively.
 2. The large **target model** verifies all $k$ in a **single parallel forward pass**.
@@ -144,8 +144,8 @@ If $k = 5$ speculative tokens are drafted and per-token acceptance rate is $\alp
 Variants:
 
 * **Self-speculative decoding**: use early-exit from the same model. No draft model needed.
-* **Medusa** \cite[Cai et al., 2024]{cai2024medusa}: parallel draft heads attached to the main model.
-* **EAGLE** \cite[Li et al., 2024]{li2024eagle}: draft at the feature level, not the token level. Higher acceptance.
+* **Medusa** (\cite[Cai et al., 2024]{cai2024medusa}): parallel draft heads attached to the main model.
+* **EAGLE** (\cite[Li et al., 2024]{li2024eagle}): draft at the feature level, not the token level. Higher acceptance.
 * **Lookahead decoding**: parallel candidate generation with Jacobi iteration.
 </div>
 
@@ -186,7 +186,7 @@ A small “student” model trained to mimic a larger “teacher”:
 * **Generative distillation**: train on teacher text outputs.
 * **Distillation with reasoning**: student trained on teacher's CoT traces (R1-distill style).
 
-DeepSeek-R1's distillation experiments \cite[Guo et al., 2025]{guo2025deepseekr1} show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.
+DeepSeek-R1's distillation experiments (\cite[Guo et al., 2025]{guo2025deepseekr1}) show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.
 </div>
 
 <div class="md">

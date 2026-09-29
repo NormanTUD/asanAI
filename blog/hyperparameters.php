@@ -55,7 +55,7 @@ Most published models ship with a hyperparameter table whose values were inherit
 
 ### Scaling laws
 
-At the frontier, search is partly replaced by *fitted laws*. \cite[Kaplan et al., 2020]{kaplan2020scaling} showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws. Fit the laws on cheap small models and you can extrapolate the target size for a fixed budget. \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla} redid the analysis on a larger scale and found that for a fixed compute budget, models should be trained on roughly 20 times as many tokens as they have parameters — far more than the then-standard practice, which had been copied between papers for years. A fitted law can thus overturn a prior belief that no single experiment would have questioned.
+At the frontier, search is partly replaced by *fitted laws*. (\cite[Kaplan et al., 2020]{kaplan2020scaling}) showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws. Fit the laws on cheap small models and you can extrapolate the target size for a fixed budget. (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) redid the analysis on a larger scale and found that for a fixed compute budget, models should be trained on roughly 20 times as many tokens as they have parameters — far more than the then-standard practice, which had been copied between papers for years. A fitted law can thus overturn a prior belief that no single experiment would have questioned.
 
 ### Grid search
 
@@ -63,14 +63,14 @@ The simplest systematic method: choose a grid of candidate values per hyperparam
 
 ### Random search
 
-Draw configurations at random (uniformly for discrete values, log-uniformly for positive continuous ones like the learning rate) and train on them. \cite[Bergstra & Bengio, 2012]{bergstra2010random} showed that for a fixed evaluation budget, random search matches or beats grid search in most realistic settings: when only a few hyperparameters matter much, a grid spreads its points across the values of the ones that do not, while random search keeps covering the full range of every axis.
+Draw configurations at random (uniformly for discrete values, log-uniformly for positive continuous ones like the learning rate) and train on them. (\cite[Bergstra & Bengio, 2012]{bergstra2010random}) showed that for a fixed evaluation budget, random search matches or beats grid search in most realistic settings: when only a few hyperparameters matter much, a grid spreads its points across the values of the ones that do not, while random search keeps covering the full range of every axis.
 
 ### Bayesian optimization
 
 Build a probabilistic *surrogate model* of $\text{config} \mapsto \text{loss}$ from the evaluations already performed, and choose the next configuration by balancing **exploitation** (where the surrogate predicts a good loss) against **exploration** (where it is still uncertain). Two standard instantiations:
 
-* **Gaussian-process surrogates** \cite[Snoek et al., 2012]{snoek2012practical}: a Gaussian process is placed over the loss function; an acquisition function (e.g. expected improvement) picks the next point from the balance of predicted quality and uncertainty.
-* **TPE (Tree-structured Parzen Estimators)** \cite[Bergstra et al., 2013]{bergstra2013science}: instead of a full process, the observed configurations are split into those that gave a *good* loss and those that gave a *bad* one; each group is modeled by its own density, and the next configuration is sampled where the good density is high relative to the bad one.
+* **Gaussian-process surrogates** (\cite[Snoek et al., 2012]{snoek2012practical}): a Gaussian process is placed over the loss function; an acquisition function (e.g. expected improvement) picks the next point from the balance of predicted quality and uncertainty.
+* **TPE (Tree-structured Parzen Estimators)** (\cite[Bergstra et al., 2013]{bergstra2013science}): instead of a full process, the observed configurations are split into those that gave a *good* loss and those that gave a *bad* one; each group is modeled by its own density, and the next configuration is sampled where the good density is high relative to the bad one.
 
 \cite[Hyperopt]{hyperopt} is the open-source implementation this family is usually run with. The defining property of the whole approach: *every evaluation makes the next one smarter*, so the search is sequential and budget-aware rather than exhaustive.
 

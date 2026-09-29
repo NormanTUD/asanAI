@@ -18,7 +18,7 @@ This chapter surveys the research frontier of 2025, the techniques and ideas tha
 <div class="md">
 ## Constitutional AI (CAI)
 
-Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2022instructgpt}'s human-labelling with **AI self-critique against a written constitution**:
+Bai et al. (Anthropic, 2022) replaced most of (\cite[Ouyang et al., 2022]{ouyang2022instructgpt})'s human-labelling with **AI self-critique against a written constitution**:
 
 1. The model generates a response.
 2. The model critiques it against a constitutional principle (“be helpful, harmless, honest”).
@@ -28,7 +28,7 @@ Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2
 
 A typical constitution entry: *“Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response.”*
 
-CAI reduces human labelling by ~10× while matching \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
+CAI reduces human labelling by ~10× while matching (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Sparse Autoencoders (SAE loss)">
@@ -48,7 +48,7 @@ The L1 penalty forces only a few features to be active for any input. Anthropic'
 * Features for **code bugs**, **refusal**, **deception** could be identified.
 * Some features are **universal** across model families (Llama, GPT, Claude).
 
-The “**\cite[Templeton et al., 2024]{anthropic2024goldengate} Claude**” demonstration (Anthropic, 2024) amplified a single feature to make the model obsessed with the \cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
+The “**\cite[Templeton et al., 2024]{anthropic2024goldengate} Claude**” demonstration (Anthropic, 2024) amplified a single feature to make the model obsessed with the (\cite[Templeton et al., 2024]{anthropic2024goldengate}) Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
 </div>
 
 <div class="md">
@@ -98,7 +98,7 @@ $$
 
 Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.
 
-Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
+Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, (\cite[Sakurai et al., 2024]{sakurai2024skrr})).
 </div>
 
 <div class="md">
@@ -108,7 +108,7 @@ A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et 
 
 For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
 
-The trade-off: latency. \cite[Sun et al., 2024]{sun2024ttt} adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
+The trade-off: latency. (\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
 </div>
 
 <div class="md">
@@ -117,7 +117,7 @@ The trade-off: latency. \cite[Sun et al., 2024]{sun2024ttt} adds seconds-to-minu
 See the AI Agents chapter for the basics. Frontier developments:
 
 * **\cite[Multi-Agent]{du2023multiagent}** (\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
-* **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \cite[Patil et al., 2023]{patil2023gorilla}): models learn to call thousands of APIs.
+* **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, (\cite[Patil et al., 2023]{patil2023gorilla})): models learn to call thousands of APIs.
 * **Computer use agents**: Anthropic's Claude can interact with a real desktop. OpenAI's Operator. Google Jarvis (rumored). All powered by screenshot→action Transformers.
 * **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering. Still unreliable but improving.
 * **Hierarchical agents**: a planner agent delegates to specialist sub-agents. Used in many production systems.
@@ -138,7 +138,7 @@ Key 2024–2025 results:
 * **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.
 * **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.
 
-The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open \cite[Du et al., 2023]{du2023multiagent}.
+The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open (\cite[Du et al., 2023]{du2023multiagent}).
 </div>
 
 <div class="md">
@@ -185,7 +185,7 @@ From the Mechanistic Interpretability chapter's foundation, frontier work in 202
 * **Sparse autoencoders** (see above), millions of features per model.
 * **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
 * **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
-* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** \cite[Zou et al., 2023]{zou2023repeng} is the umbrella term.
+* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** (\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.
 
 The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>

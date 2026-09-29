@@ -18,7 +18,7 @@ math: 65
 	<figcaption>A single text prompt, and a diffusion model produced this image in seconds. This one was created with the prompt “Astronaut Riding a Horse” (\cite[Image: Stable Diffusion 3.5]{diffusion_astronaut_img})</figcaption>
 </figure>
 
-Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** \cite[Ho et al., 2020]{ho2020ddpm}, built on a 2019 idea from Yang Song and Stefano Ermon \cite[Song & Ermon, 2019]{song2019score}, quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
+Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** (\cite[Ho et al., 2020]{ho2020ddpm}), built on a 2019 idea from Yang Song and Stefano Ermon (\cite[Song & Ermon, 2019]{song2019score}), quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
 
 The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
 
@@ -76,7 +76,7 @@ You might ask: how can *removing noise* ever create a picture? The trick is this
 That is the deep “why” of diffusion in one sentence. Two ways to make it more concrete:
 
 * **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable. The network first sketches rough shapes, then refines detail. Generation is hierarchical *by construction*.
-* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the logarithm of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
+* **Score matching** (\cite[Song & Ermon, 2019]{song2019score}): a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the logarithm of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
 
 Either view explains why “denoising” and “generation” are two sides of the same coin.
 </div>
@@ -86,7 +86,7 @@ Either view explains why “denoising” and “generation” are two sides of t
 
 To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a vector by a separate text encoder (typically CLIP or T5).
 
-The trick that made text-to-image *actually work* is **classifier-free guidance** \cite[Ho & Salimans, 2022]{ho2022cfg}. At training time, the network is shown the text prompt 90% of the time and *nothing* 10% of the time, learning both a conditional and an unconditional denoiser in one model. At inference, you amplify the gap between them:
+The trick that made text-to-image *actually work* is **classifier-free guidance** (\cite[Ho & Salimans, 2022]{ho2022cfg}). At training time, the network is shown the text prompt 90% of the time and *nothing* 10% of the time, learning both a conditional and an unconditional denoiser in one model. At inference, you amplify the gap between them:
 
 $$
 \tilde\epsilon_\theta(x_t, t, c) \;=\; \epsilon_\theta(x_t, t, \varnothing) \;+\; w \cdot \big(\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \varnothing)\big)
@@ -147,7 +147,7 @@ The full Stable Diffusion pipeline looks like this end-to-end:
 </figure>
 
 <div class="md">
-So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning*, if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
+So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning*, if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** (\cite[Hu et al., 2021]{hu2021lora}) on as few as a few dozen images, or steer outputs with **ControlNet** (\cite[Zhang et al., 2023]{zhang2023controlnet}) using edge maps, depth maps, or pose skeletons.
 
 ## What's the network?
 
@@ -167,7 +167,7 @@ The only fully-connected layers are tiny MLPs for the time and text embeddings. 
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
 
-The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{rombach2022ldm}, the technology behind Stable Diffusion, was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
+The breakthrough of **Latent Diffusion Models** (\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
 
 The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model, it was learned earlier as an ordinary autoencoder and frozen in place.
 
@@ -195,9 +195,9 @@ The general principle is almost embarrassingly simple: **if you can blur it, you
 
 ## Where the field is now
 
-By 2025, the diffusion community has largely moved on to **flow matching** \cite[Lipman et al., 2023]{lipman2023flow}, a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
+By 2025, the diffusion community has largely moved on to **flow matching** (\cite[Lipman et al., 2023]{lipman2023flow}), a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
 
-The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** \cite[Peebles & Xie, 2023]{peebles2023dit}, a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
+The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
 
 Practical models have also become fast. Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.
 
@@ -215,10 +215,10 @@ These are the tools the diffusion community actually uses:
 
 For *controlling* what the model draws:
 
-* **[ControlNet](https://github.com/lllyasviel/ControlNet)** \cite[Zhang et al., 2023]{zhang2023controlnet}, spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.
-* **LoRA** \cite[Hu et al., 2021]{hu2021lora}, small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU. ([paper](https://arxiv.org/abs/2106.09685))
+* **[ControlNet](https://github.com/lllyasviel/ControlNet)** (\cite[Zhang et al., 2023]{zhang2023controlnet}), spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.
+* **LoRA** (\cite[Hu et al., 2021]{hu2021lora}), small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU. ([paper](https://arxiv.org/abs/2106.09685))
 
-If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing \cite[Sohl-Dickstein et al., 2015]{sohl2015deep}, Song & Ermon's score-based 2019 paper \cite[Song & Ermon, 2019]{song2019score}, and Ho's DDPM in 2020 \cite[Ho et al., 2020]{ho2020ddpm}.
+If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\cite[Ho et al., 2020]{ho2020ddpm}).
 </div>
 
 <script>

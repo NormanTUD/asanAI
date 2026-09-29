@@ -28,10 +28,10 @@ LLM evaluations fall into four families:
 
 | Family | What it measures | Example |
 |--------|------------------|---------|
-| **Multiple-choice** | Knowledge / recognition | \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}, HellaSwag, ARC |
-| **Generative, exact-match** | Verifiable outputs | \cite[Chen et al., 2021]{chen2021humaneval}, GSM8K, MATH |
-| **Generative, judged** | Open-ended quality | MT-Bench, AlpacaEval, \cite[Zheng et al., 2023]{zheng2023lmsys} |
-| **Human preference** | Real-world quality | LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys}, Anthropic HH |
+| **Multiple-choice** | Knowledge / recognition | (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}), HellaSwag, ARC |
+| **Generative, exact-match** | Verifiable outputs | (\cite[Chen et al., 2021]{chen2021humaneval}), GSM8K, MATH |
+| **Generative, judged** | Open-ended quality | MT-Bench, AlpacaEval, (\cite[Zheng et al., 2023]{zheng2023lmsys}) |
+| **Human preference** | Real-world quality | LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}), Anthropic HH |
 
 Each has failure modes:
 
@@ -50,7 +50,7 @@ $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
 $$
 
-By 2025, frontier models exceed 88% on \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
 </div>
 
 <div class="md">
@@ -74,7 +74,7 @@ $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
 $$
 
-The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. \cite[Cobbe et al., 2021]{cobbe2021gsm8k}.
+The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}).
 
 ### MATH \cite[Hendrycks et al., 2021]{hendrycks2021math}
 
@@ -96,7 +96,7 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 <div class="md">
 ### MBPP (\cite[Austin et al., 2021]{austin2021mbpp}
 
-974 Python problems, slightly easier than \cite[Chen et al., 2021]{chen2021humaneval}. Used as a complement.
+974 Python problems, slightly easier than (\cite[Chen et al., 2021]{chen2021humaneval}). Used as a complement.
 
 ### BIG-Bench \cite[Srivastava et al., 2022]{srivastava2022bigbench}
 
@@ -154,12 +154,12 @@ Evidence of contamination:
 
 * **Exact-match memorization**: models regurgitate benchmark items verbatim.
 * **Ordering effects**: models perform anomalously well on benchmark-internal “Question 17” but badly on a shuffled version.
-* **Min-checksum tests** \cite[Carlini et al., 2021]{carlini2021extracting}: if a model can complete the second half of a passage, it has probably seen the first half.
+* **Min-checksum tests** (\cite[Carlini et al., 2021]{carlini2021extracting}): if a model can complete the second half of a passage, it has probably seen the first half.
 * **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.
 
 ### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro's harder subset).
+* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})-Pro's harder subset).
 * **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (MIT). These cost money and are not public.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
@@ -199,12 +199,12 @@ The Holistic Evaluation of Language Models benchmark suite evaluates models acro
 
 The most reliable current evaluations are:
 
-1. **LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys} Elo**, for general chat quality.
+1. **LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) Elo**, for general chat quality.
 2. **GPQA / FrontierMath / ARC-AGI**, for hard reasoning, contamination-resistant.
 3. **\cite[Chen et al., 2021]{chen2021humaneval} / LiveCodeBench / SWE-Bench**, for code.
 4. **Human preference studies**, the gold standard, when affordable.
 
-Static benchmarks like \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} are **informative but no longer load-bearing** for frontier-model comparison.
+Static benchmarks like (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) are **informative but no longer load-bearing** for frontier-model comparison.
 </div>
 
 <div class="md">
@@ -223,7 +223,7 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 </div>
 
 <script>
-// \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} leaderboard (illustrative 2024-2025 scores)
+// (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) leaderboard (illustrative 2024-2025 scores)
 (function() {
 	const c = document.getElementById('mmlu-viz');
 	if (!c) return;

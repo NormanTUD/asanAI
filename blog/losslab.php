@@ -122,7 +122,7 @@ In this equation:
 * $E$: Represents the “irreducible loss” (the theoretical minimum error that remains even with infinite data and parameters).
 * $A, B, \alpha, \beta$: Are constants determined through empirical data fitting on over 400 models.
 
-By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}.
+By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}).
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The Deepest Insight: Cross-Entropy Is Shannon Entropy">

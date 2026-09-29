@@ -1094,7 +1094,7 @@ Mathematicians formalize this as follows. Pick a *base field* $k$ — a number s
 
 <div class="optional md" data-headline="Definition">
 
-A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication) \cite[Axler, Linear Algebra Done Right, Ch. 1, p. 12]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
+A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication), as \cite[Axler lists them in Linear Algebra Done Right, Ch. 1, p. 12]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
 
 </div>
 
@@ -1102,7 +1102,7 @@ You don't need to memorise the eight axioms. What you need to remember is:
 
 1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$; the individual values are of course real numbers, used as coordinates.
 2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
-3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them \cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
+3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them (\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}). This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
 
 </div>
 
@@ -1121,7 +1121,7 @@ A note on terminology: in machine learning, you will often see "scalar" used mor
 
 A **vector** is an element of a vector space. The geometric picture is an *arrow* with a direction and a length: "three steps to the right, four steps up." The algebraic picture is a single thing you can add to other vectors and stretch with scalars.
 
-If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis \cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}, the arrow "3 right, 4 up, 2 forward" becomes the column
+If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis (\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}), the arrow "3 right, 4 up, 2 forward" becomes the column
 
 $$ \vec{v} = \begin{pmatrix} 3 \\ 4 \\ 2 \end{pmatrix} $$
 
@@ -1336,7 +1336,7 @@ So far a tensor was just *data* — numbers arranged in a shape. But you can als
 
 **Element-wise.** Combine the matching entries of two tensors, one by one. The tensors do not even need the same shape: shapes are lined up from the right, an axis of length $1$ stretches to match, and a missing leading axis counts as $1$. This rule is called **broadcasting** \cite[Broadcasting, NumPy]{numpy_broadcasting} — and it quietly explains the $\mathbf{x}+b$ of every affine layer.
 
-**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} \underbrace{C_{ij}}_{\text{row of C}}\,\underbrace{D_{jk}}_{\text{column of D}}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 \cite[Einstein, 1916]{einstein1916annalen}. Contraction is the single most important operation in both linear algebra and deep learning.
+**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} \underbrace{C_{ij}}_{\text{row of C}}\,\underbrace{D_{jk}}_{\text{column of D}}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 (\cite[Einstein, 1916]{einstein1916annalen}). Contraction is the single most important operation in both linear algebra and deep learning.
 
 Try both below.
 </div>
@@ -1404,7 +1404,7 @@ Try both below.
 
 <div class="tcalc-card" id="tcalc-contraction">
   <div class="tcalc-card-title">Contraction — the matrix product</div>
-  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$ \cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.4, p. 118]{boyd2018appliedlinearalgebra}.</p>
+  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$ (\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.4, p. 118]{boyd2018appliedlinearalgebra}).</p>
   <div class="tcalc-contr-row">
     <div class="tcalc-gridwrap">
       <div class="tcalc-cap">C (2, 2)</div>
@@ -1429,15 +1429,15 @@ Try both below.
 ### Where the words come from
 Each word is old, and each was coined to solve a concrete problem.
 
-- **Matrix** — from Latin *mātrix*, "womb or mold," ultimately *māter*, "mother" \cite[matrix, Etymonline]{etymonline_matrix}. Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — "a Matrix out of which we may form various systems of determinants" \cite[Sylvester, 1850]{sylvester1850matrix}. Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 "arithmetic of matrices" gave them exactly that \cite[Cayley, 1858]{cayleymemoirmatrices}.
+- **Matrix** — from Latin *mātrix*, "womb or mold," ultimately *māter*, "mother" \cite[matrix, Etymonline]{etymonline_matrix}. Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — "a Matrix out of which we may form various systems of determinants" (\cite[Sylvester, 1850]{sylvester1850matrix}). Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 "arithmetic of matrices" gave them exactly that (\cite[Cayley, 1858]{cayleymemoirmatrices}).
 
-- **Vector** — from Latin *vĕctōr*, "a carrier," from *vĕhĕre*, "to carry" \cite[vector, Etymonline]{etymonline_vector}. Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a "calculus of direction" that adds and rotates directed line segments in space without writing out every component \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
+- **Vector** — from Latin *vĕctōr*, "a carrier," from *vĕhĕre*, "to carry" \cite[vector, Etymonline]{etymonline_vector}. Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a "calculus of direction" that adds and rotates directed line segments in space without writing out every component (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
 
-- **Scalar** — from Latin *scalaris*, "of a ladder" (*scala*, a single step) \cite[scalar, Etymonline]{etymonline_scalar}. It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries \cite[Hamilton, 1854]{hamiltonextensionsquaternions}.
+- **Scalar** — from Latin *scalaris*, "of a ladder" (*scala*, a single step) \cite[scalar, Etymonline]{etymonline_scalar}. It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
 
-- **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, "to stretch" \cite[tensor, Etymonline]{etymonline_tensor}. Hamilton gave it a mathematical life, using it for the length of a quaternion. The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his "Tensoren," 1898 \cite[Voigt, 1898]{voigt1898krystalle}. Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity \cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900} \cite[Einstein, 1916]{einstein1916annalen}.
+- **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, "to stretch" \cite[tensor, Etymonline]{etymonline_tensor}. Hamilton gave it a mathematical life, using it for the length of a quaternion. The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his "Tensoren," 1898 (\cite[Voigt, 1898]{voigt1898krystalle}). Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity (\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}) (\cite[Einstein, 1916]{einstein1916annalen}).
 
-- **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page \cite[Einstein, 1916]{einstein1916annalen}.
+- **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page (\cite[Einstein, 1916]{einstein1916annalen}).
 </div>
 
 <script>
@@ -1448,7 +1448,7 @@ Each word is old, and each was coined to solve a concrete problem.
 <div class="md" data-mathlevel="40" data-optionaltitle="Chaining Functions (Composition)">
 ## Chaining Functions (Composition)
 
-In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects \cite[Olah, 2015]{colah2015types}.
+In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects (\cite[Olah, 2015]{colah2015types}).
 
 You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
@@ -1524,7 +1524,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
 <div class="md" data-mathlevel="45" data-optionaltitle="Matrix Transposition">
 ## Matrix Transposition
 
-Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$ \cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p. 115]{boyd2018appliedlinearalgebra}.
+Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$ (\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p. 115]{boyd2018appliedlinearalgebra}).
 
 Example:
 

@@ -27,7 +27,7 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 <div class="md" data-mathlevel="60" data-optionaltitle="Chain-of-Thought Prompting">
 ## Chain-of-Thought Prompting
 
-The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
+The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, (\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
 
 $$
 P_{\text{CoT}}(y \mid x) = \sum_z P(y \mid x, z)\, P(z \mid x)
@@ -47,13 +47,13 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **Few-shot CoT** | 2022 | Hand-written reasoning examples |
 | **Self-consistency** | 2022 | Sample $k$ CoTs, take majority vote on answers |
 | **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |
-| **Tree of Thoughts (ToT)** \cite[Yao et al., 2023]{yao2023tot} | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
+| **Tree of Thoughts (ToT)** (\cite[Yao et al., 2023]{yao2023tot}) | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
 | **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |
 | **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |
-| **Self-Refine** \cite[Madaan et al., 2023]{madaan2023selfrefine} | 2023 | Generate, critique, refine iteratively |
+| **Self-Refine** (\cite[Madaan et al., 2023]{madaan2023selfrefine}) | 2023 | Generate, critique, refine iteratively |
 | **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |
 | **Verifier-guided search** | 2023 | Generate $k$ candidates, score with a learned verifier |
-| **ReAct** \cite[Yao et al., 2023]{yao2023react} | 2023 | Interleave reasoning with tool use |
+| **ReAct** (\cite[Yao et al., 2023]{yao2023react}) | 2023 | Interleave reasoning with tool use |
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Self-Consistency">
@@ -110,7 +110,7 @@ Forcing the model to verify its own work (critique-then-revise, search over cand
 <div class="md">
 ## Process Reward Models (PRMs)
 
-A **reward model** (used in \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the <a href="finetuninglab">Fine-Tuning chapter</a>) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
+A **reward model** (used in (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}), see the <a href="finetuninglab">Fine-Tuning chapter</a>) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
 
 Training a PRM:
 
@@ -120,7 +120,7 @@ Training a PRM:
 
 At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
 
-The Math-Shepherd method \cite[Zhang et al., 2024]{zhang2024mathshepherd} auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
+The Math-Shepherd method (\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Inference-Time Scaling Laws">

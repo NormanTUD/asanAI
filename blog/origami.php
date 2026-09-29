@@ -131,8 +131,8 @@ Here is the surprising fact at the heart of this chapter: **you can cut out any 
 	<div class="md">
 In the previous chapter we saw that a deep network is a **composition of many simple
 functions**, and that — as the Universal Approximation Theorem guarantees — a wide
-feed-forward net can approximate any continuous function \cite[Cybenko, 1989]{cybenko1989}
-\cite[Hornik et al., 1989]{hornik1989universal}. But the theorem is an *existence* result.
+feed-forward net can approximate any continuous function (\cite[Cybenko, 1989]{cybenko1989})
+(\cite[Hornik et al., 1989]{hornik1989universal}). But the theorem is an *existence* result.
 It does not answer a more mechanical question: **what does a layer actually *do* to the
 data, step by step, to make a task solvable?**
 
@@ -214,7 +214,7 @@ $$x_i^{(l)} \;=\; \Phi\!\left(\sum_j W^{(l)}_{ij}\, x_j^{(l-1)} \;+\; b_i^{(l)}\
    hyperplane** (those preactivations become $0$). The combined effect of all neurons in a
        layer is to jam the data distribution into **the corner of an $N$-dimensional room**.
 
-**Name the primitive, because the rest of the chapter is made of it.** Step 2 is not only a bend — it is a *cut*. Each ReLU neuron is a single **line** (a hyperplane) that divides the space into two halves: the side that stays put, and the side that is folded over. That is exactly the first axiom of *Laws of Form* \cite[Spencer-Brown, 1969]{spencerbrown1969form} — *draw a distinction*: draw one line across the unmarked space, and it becomes two regions, one marked and one unmarked. Everything this chapter does to the data — the whole *spatiality* of a deep network — is built by repeating that one move. The book returns to "draw a distinction" as the foundation of a calculus of space in <a href="coherent_difference">Coherent Difference</a>; here you meet it first in geometry you can draw.
+**Name the primitive, because the rest of the chapter is made of it.** Step 2 is not only a bend — it is a *cut*. Each ReLU neuron is a single **line** (a hyperplane) that divides the space into two halves: the side that stays put, and the side that is folded over. That is exactly the first axiom of *Laws of Form* (\cite[Spencer-Brown, 1969]{spencerbrown1969form}) — *draw a distinction*: draw one line across the unmarked space, and it becomes two regions, one marked and one unmarked. Everything this chapter does to the data — the whole *spatiality* of a deep network — is built by repeating that one move. The book returns to "draw a distinction" as the foundation of a calculus of space in <a href="coherent_difference">Coherent Difference</a>; here you meet it first in geometry you can draw.
 
 This is not just intuition — it has been made rigorous. The affine step is precisely the part that preserves convexity (straight lines stay straight); the ReLU is what breaks it. Map a straight line in the input to the network's activation ("Hamming") space and its image is generally a *non-convex* path whose distance can even decrease. This convexity-breaking has been proved and quantified \cite{lewandowski2025spacefolds}.
 
@@ -272,13 +272,13 @@ class. So how does a network ever get at an "island" class that is completely su
 	<div class="md">
 The hammer comes in several shapes, and they are not interchangeable:
 
-* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the negative half-space is identified with the fold. As a **non-homeomorphism** it can *change the data's topology* — close a hole, merge components, drop a Betti number \cite[Olah, 2014]{colah2014manifolds}\cite[Naitzat et al. 2020]{naitzat2020topology}; that is what untangles. The pointwise map is non-injective, but a crease hitting the data from an unoccupied direction is injective *on the data* — the relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
+* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the negative half-space is identified with the fold. As a **non-homeomorphism** it can *change the data's topology* — close a hole, merge components, drop a Betti number (\cite[Olah, 2014]{colah2014manifolds}) (\cite[Naitzat et al. 2020]{naitzat2020topology}); that is what untangles. The pointwise map is non-injective, but a crease hitting the data from an unoccupied direction is injective *on the data* — the relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
 * **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $\alpha\in(0,1)$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so the topology is preserved. The activation of choice for invertible networks.
-* **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ \cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu} and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ \cite[Ramachandran et al. 2017]{ramachandran2017swish} — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms** (inverse function theorem) \cite[Inverse function theorem]{inverse_function_theorem_wiki}; being non-monotone, they are *not* one-to-one, hence *not* global diffeomorphisms. Smoothing removes corners but not folding.
-* **Tanh** and the **sigmoid** — smooth but *saturating*: they squash $\mathbb{R}^d$ into a bounded open box $(-1,1)^d$ or $(0,1)^d$, pressing the space flat against the boundary where the derivative $\to 0$. Geometrically that is *exactly* the vanishing-gradient problem \cite[Olah, 2015]{colah2015backprop}.
+* **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ (\cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu}) and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ (\cite[Ramachandran et al. 2017]{ramachandran2017swish}) — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms** (inverse function theorem) \cite[Inverse function theorem]{inverse_function_theorem_wiki}; being non-monotone, they are *not* one-to-one, hence *not* global diffeomorphisms. Smoothing removes corners but not folding.
+* **Tanh** and the **sigmoid** — smooth but *saturating*: they squash $\mathbb{R}^d$ into a bounded open box $(-1,1)^d$ or $(0,1)^d$, pressing the space flat against the boundary where the derivative $\to 0$. Geometrically that is *exactly* the vanishing-gradient problem (\cite[Olah, 2015]{colah2015backprop}).
 * **Softmax** — the only map in the list that is not *pointwise*: it reads the whole logit vector at once and lands it in the **probability simplex** $\Delta^{d-1}$, the $(d{-}1)$-dimensional set of all probability distributions \cite{softmax_wiki}. Distances there are not Euclidean but measured by the KL divergence / Fisher–Rao metric — *information geometry* \cite[Information geometry]{info_geometry_nlab}.
 
-The ReLU's non-homeomorphism is the mechanism, not a defect: the high-dimensional section below shows it is exactly the non-homeomorphic activations that reduce Betti numbers and produce the separability this chapter is about \cite[Naitzat et al. 2020]{naitzat2020topology}.
+The ReLU's non-homeomorphism is the mechanism, not a defect: the high-dimensional section below shows it is exactly the non-homeomorphic activations that reduce Betti numbers and produce the separability this chapter is about (\cite[Naitzat et al. 2020]{naitzat2020topology}).
 </div>
 
 	<h2 class="og-h2">The Key Idea — Fold, Don't Crush</h2>
@@ -459,7 +459,7 @@ cut.**
 <div class="optional md" data-headline="Origins: the fold as a field (computational origami)">
 The "fold" in this chapter is a neural-network metaphor — but *folding as mathematics and computation* is a genuine, decades-old field, and the metaphor is load-bearing. It is called **computational origami**, and it studies the algorithms and complexity of exactly the objects this chapter draws: crease patterns, folds, and what can be made from a flat sheet.
 
-**Paper-folding geometry.** A single fold is a surprisingly strong geometric tool. **T. Sundara Row** (1893) collected the first paper constructions \cite[Mathematics of paper folding]{math_paper_folding_wiki}; **Houdini** (1922) turned them into stage tricks — folds, tears, puzzles — in *Paper Magic* \cite[Houdini, 1922]{houdini1922papermagic}. The turning point is **Margherita Piazzola Beloch** (1936): one special fold, the **Beloch fold**, solves the general cubic \cite[Beloch fold]{beloch_fold_wiki}\cite[Hull, 2011]{hull2011beloch}. That is why origami **trisects an angle** and **doubles the cube**, both impossible with ruler and compass — where a compass tops out at quadratics, a fold reaches cubics \cite[Hull, 1997]{hull1997origametry} and folds regular n-gons a compass cannot. The full single-fold power is the **Huzita–Justin axioms**: seven rules, written by **Justin** (1986), rediscovered by **Huzita** (1989), shown complete by **Lang** \cite[Huzita–Hatori axioms]{huzita_justin_wiki}.
+**Paper-folding geometry.** A single fold is a surprisingly strong geometric tool. **T. Sundara Row** (1893) collected the first paper constructions \cite[Mathematics of paper folding]{math_paper_folding_wiki}; **Houdini** (1922) turned them into stage tricks — folds, tears, puzzles — in *Paper Magic* (\cite[Houdini, 1922]{houdini1922papermagic}). The turning point is **Margherita Piazzola Beloch** (1936): one special fold, the **Beloch fold**, solves the general cubic \cite[Beloch fold]{beloch_fold_wiki} (\cite[Hull, 2011]{hull2011beloch}). That is why origami **trisects an angle** and **doubles the cube**, both impossible with ruler and compass — where a compass tops out at quadratics, a fold reaches cubics (\cite[Hull, 1997]{hull1997origametry}) and folds regular n-gons a compass cannot. The full single-fold power is the **Huzita–Justin axioms**: seven rules, written by **Justin** (1986), rediscovered by **Huzita** (1989), shown complete by **Lang** \cite[Huzita–Hatori axioms]{huzita_justin_wiki}.
 
 <div style="display:flex; gap:1.1rem; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin:1.3em 0;">
 	<figure style="margin:0; text-align:center; flex:0 1 240px;">
@@ -688,30 +688,30 @@ barely does:
 	<div class="md">
 Five facts give it a quantitative backbone:
 
-**1. Cover's counting function — the arithmetic of separability** \cite[Cover, 1965]{cover1965}.
+**1. Cover's counting function — the arithmetic of separability** (\cite[Cover, 1965]{cover1965}).
 A $d$-weight linear readout realizes only some of the $2^N$ two-colourings of $N$ points. Cover counted exactly how many, for $N$ points in general position in $\mathbb{R}^d$:
 $$C(N,d) \;=\; 2\sum_{k=0}^{d-1}\binom{N-1}{k}.$$
 When $N\le d$ it saturates at $2^N$: *every* dichotomy is separable (a $d$-weight classifier has VC dimension $d$; a bias adds one, up to $d+1$ points). Once $N$ outnumbers $d$, only a fraction $C(N,d)/2^N$ is separable — but for fixed $N$ that fraction **rises with $d$**, tending to $1$. Cover's point: a complex problem, cast *nonlinearly* in a high-dimensional, not-too-dense space, is more likely to be linearly separable than in a low-dimensional one. A layer wide enough that $d\ge N$ reaches that regime.
 
-**2. Concentration of measure — the new directions are really new** \cite[Vershynin, 2018]{vershynin2018hd}.
+**2. Concentration of measure — the new directions are really new** (\cite[Vershynin, 2018]{vershynin2018hd}).
 In $\mathbb{R}^d$ two random unit vectors are almost surely near-orthogonal: $\langle u,v\rangle$ concentrates at $0$ with a sub-Gaussian tail,
 $$\Pr\!\big(|\langle u,v\rangle|\ge \varepsilon\big)\;\le\;2\,e^{-c\,d\,\varepsilon^{2}},$$
 for a universal positive constant $c$. A fold opened along an unoccupied direction is then, almost surely, independent of every existing data direction — the unused dimensions are *orthogonal* space, so the fold separates rather than shuffles.
 
-**3. The Johnson–Lindenstrauss lemma — the geometry survives compression** \cite[Johnson & Lindenstrauss, 1984]{johnson1984lindenstrauss}.
+**3. The Johnson–Lindenstrauss lemma — the geometry survives compression** (\cite[Johnson & Lindenstrauss, 1984]{johnson1984lindenstrauss}).
 The converse, and the link to the embedding chapters. For any $N$ points $X\subset\mathbb{R}^n$ and $\varepsilon\in(0,1)$, a linear map into $k=O(\log N/\varepsilon^{2})$ dimensions preserves *all* pairwise distances within $(1\pm\varepsilon)$:
 $$(1-\varepsilon)\,\|u-v\| \;\le\; \|f(u)-f(v)\| \;\le\; (1+\varepsilon)\,\|u-v\|\qquad(u,v\in X).$$
 The $\log N$ bound is **tight**. Read it both ways: (i) most high dimensions can be dropped while the geometry survives — which is why an embedding can be compact; (ii) the *distance/angle pattern*, not the coordinates, is the invariant. This is the quantitative case for *neighbourhood structure being the geometry, not the coordinates*. So Cover and JL are two faces of one fact: the relational structure is what matters, and enough dimensions put any finite set into a well-separated general-position configuration.
 
-**And the reverse — what if you *remove* dimensions, say from 100d down to 10d?** The source dimension does not appear in the bound: going from $100$, or from $10^{6}$, dimensions down to $10$ depends only on the number of points $N$ and the tolerance $\varepsilon$. Ten dims preserve *all* pairwise distances whenever $10\ge c\,\varepsilon^{-2}\log N$, i.e. for $N\lesssim\exp(10\,\varepsilon^{2}/c)$ points — you can drop $999{,}999$ of a million dimensions and keep every pairwise distance. And this is the floor: Larsen and Nelson proved a matching lower bound, so no *linear* map can keep the relational structure of $N$ arbitrary points in fewer than $\approx\varepsilon^{-2}\log N$ dimensions \cite[Larsen & Nelson, 2014]{larsen2014jloptimal}. Caveat: JL preserves distances *among the $N$ points* only, and the surviving coordinates are random — only the *relational* structure is invariant. (On manifold data, structured methods such as PCA beat $\log N$, at the price of a worst-case guarantee.)
+**And the reverse — what if you *remove* dimensions, say from 100d down to 10d?** The source dimension does not appear in the bound: going from $100$, or from $10^{6}$, dimensions down to $10$ depends only on the number of points $N$ and the tolerance $\varepsilon$. Ten dims preserve *all* pairwise distances whenever $10\ge c\,\varepsilon^{-2}\log N$, i.e. for $N\lesssim\exp(10\,\varepsilon^{2}/c)$ points — you can drop $999{,}999$ of a million dimensions and keep every pairwise distance. And this is the floor: Larsen and Nelson proved a matching lower bound, so no *linear* map can keep the relational structure of $N$ arbitrary points in fewer than $\approx\varepsilon^{-2}\log N$ dimensions (\cite[Larsen & Nelson, 2014]{larsen2014jloptimal}). Caveat: JL preserves distances *among the $N$ points* only, and the surviving coordinates are random — only the *relational* structure is invariant. (On manifold data, structured methods such as PCA beat $\log N$, at the price of a worst-case guarantee.)
 
-**4. Neural collapse — where the folding ends** \cite[Papyan, Han & Donoho, 2020]{papyan2020neuralcollapse}.
+**4. Neural collapse — where the folding ends** (\cite[Papyan, Han & Donoho, 2020]{papyan2020neuralcollapse}).
 A well-trained classifier settles into a maximally symmetric geometry: in the terminal phase of training, each class's features collapse onto its class mean, and the $K$ class means form a **simplex equiangular tight frame** (ETF) — all pairwise angles equal, each point as far as possible from the others. The "one flat cut" therefore lands on the most separable configuration the space admits, not an arbitrary one.
 
-**5. Folding is topological untangling** \cite[Naitzat, Zhitnikov & Lim, 2020]{naitzat2020topology}.
-The "egg" is literally a topological object: the inner class is a *hole* in the outer class's distribution. Topological data analysis counts such holes with **Betti numbers** ($b_0$ components, $b_1$ loops, $b_2$ voids). Layer by layer a trained net drives them to the minimum per class, and ReLU does it *faster* than $\tanh$ — ReLU is a non-homeomorphism that *changes* topology, $\tanh$ a homeomorphism that preserves it. Deep ReLU nets are *exponentially* more efficient than shallow ones at this simplification \cite[Ergen & Grillo, 2024]{ergengrillo2024topological}. Lee and Ye go one step further and prove the width a net needs is bounded by the topology of the labels \cite[Lee & Ye, 2023]{lee2023topologywidth}.
+**5. Folding is topological untangling** (\cite[Naitzat, Zhitnikov & Lim, 2020]{naitzat2020topology}).
+The "egg" is literally a topological object: the inner class is a *hole* in the outer class's distribution. Topological data analysis counts such holes with **Betti numbers** ($b_0$ components, $b_1$ loops, $b_2$ voids). Layer by layer a trained net drives them to the minimum per class, and ReLU does it *faster* than $\tanh$ — ReLU is a non-homeomorphism that *changes* topology, $\tanh$ a homeomorphism that preserves it. Deep ReLU nets are *exponentially* more efficient than shallow ones at this simplification (\cite[Ergen & Grillo, 2024]{ergengrillo2024topological}). Lee and Ye go one step further and prove the width a net needs is bounded by the topology of the labels (\cite[Lee & Ye, 2023]{lee2023topologywidth}).
 
-Together these facts land on the **manifold hypothesis** \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}: real data sit on a low-dimensional, knotted manifold in the high-dimensional input space, and the network's job is to unfold it — *through the unused dimensions* — until one hyperplane suffices.
+Together these facts land on the **manifold hypothesis** (\cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}): real data sit on a low-dimensional, knotted manifold in the high-dimensional input space, and the network's job is to unfold it — *through the unused dimensions* — until one hyperplane suffices.
 </div>
 
 	<div class="og-note">
@@ -817,7 +817,7 @@ This chapter is a deep dive that pays off across the book:
 * **Deep Learning** — the composition view, the "bend" that prevents collapse, and the
   Universal Approximation Theorem it operationalises.
 * **Basic Math III** — the formal Universal Approximation Theorem
-  \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989universal} and why
+  \cite[Cybenko, 1989]{cybenko1989} (\cite[Hornik et al., 1989]{hornik1989universal}) and why
   *depth* beats width.
 * **Mechanistic Interpretability** — the "mixed selectivity" and bimodal neurons identified
   here are the same phenomenon neuroscientists and interpretability researchers keep
@@ -865,33 +865,33 @@ geometric, topological, and differential objects. A curated map of it, grouped b
 each serves:
 
 **Data that is a shape — topology & TDA.**
-* \cite[Carlsson, 2009]{carlsson2009topologydata} — the founding "shape of data" paper: a point cloud carries stable features (components, loops, voids) you can read out of noise.
-* \cite[Love et al., 2021]{love2021topdeepsurvey} — a survey of topological deep learning in both directions (topology for features; learning for topology).
-* \cite[Lee & Ye, 2023]{lee2023topologywidth} — the width a net needs to separate data is bounded by the *topology* (holes) of the labels: interlocking classes provably need a wider net. The "inner class is a hole" claim, made rigorous.
+* (\cite[Carlsson, 2009]{carlsson2009topologydata}) — the founding "shape of data" paper: a point cloud carries stable features (components, loops, voids) you can read out of noise.
+* (\cite[Love et al., 2021]{love2021topdeepsurvey}) — a survey of topological deep learning in both directions (topology for features; learning for topology).
+* (\cite[Lee & Ye, 2023]{lee2023topologywidth}) — the width a net needs to separate data is bounded by the *topology* (holes) of the labels: interlocking classes provably need a wider net. The "inner class is a hole" claim, made rigorous.
 
 **The fold — piecewise-linear / hyperplane geometry.**
-* \cite[Montúfar et al., 2014]{montufar2014regions} — each ReLU is a hyperplane; a net is the cells of a hyperplane arrangement, and the count grows with depth.
-* \cite[Hanin & Rolnick, 2019]{hanin2019linearregions} — the *typical* (not just maximal) number of linear regions.
-* \cite[Raghu et al., 2017]{raghu2017expressive} — *trajectory length*: sweep a 1-D path through the input and the output crosses its boundary exponentially many times in depth — depth is exponential folding power.
-* \cite[Grigsby & Lindsey, 2020]{grigsby2020transversality} — ReLU folds as *bent hyperplane arrangements*; transversality shows the fold pattern is generically stable.
+* (\cite[Montúfar et al., 2014]{montufar2014regions}) — each ReLU is a hyperplane; a net is the cells of a hyperplane arrangement, and the count grows with depth.
+* (\cite[Hanin & Rolnick, 2019]{hanin2019linearregions}) — the *typical* (not just maximal) number of linear regions.
+* (\cite[Raghu et al., 2017]{raghu2017expressive}) — *trajectory length*: sweep a 1-D path through the input and the output crosses its boundary exponentially many times in depth — depth is exponential folding power.
+* (\cite[Grigsby & Lindsey, 2020]{grigsby2020transversality}) — ReLU folds as *bent hyperplane arrangements*; transversality shows the fold pattern is generically stable.
 
 **The map as a flow — diffeomorphisms & invertible nets.**
-* \cite[Chen et al., 2018]{chen2018neuralode} — a continuous-depth net is the time-$T$ flow of an ODE, i.e. a diffeomorphism; depth becomes time.
-* \cite[Papamakarios et al., 2019]{papamakarios2019flows} — normalizing flows: a base density pushed forward by a diffeomorphism.
-* \cite[Teshima et al., 2020]{teshima2020inndiffeo} — coupling-based invertible nets are *universal diffeomorphism approximators*: the invertibility constraint costs nothing in expressivity.
-* \cite[Dinh et al., 2016]{dinh2016realnvp} — RealNVP: the concrete invertible block, the mirror image of the non-invertible ReLU crease.
+* (\cite[Chen et al., 2018]{chen2018neuralode}) — a continuous-depth net is the time-$T$ flow of an ODE, i.e. a diffeomorphism; depth becomes time.
+* (\cite[Papamakarios et al., 2019]{papamakarios2019flows}) — normalizing flows: a base density pushed forward by a diffeomorphism.
+* (\cite[Teshima et al., 2020]{teshima2020inndiffeo}) — coupling-based invertible nets are *universal diffeomorphism approximators*: the invertibility constraint costs nothing in expressivity.
+* (\cite[Dinh et al., 2016]{dinh2016realnvp}) — RealNVP: the concrete invertible block, the mirror image of the non-invertible ReLU crease.
 
 **Data that is a manifold — unfolding & higher dimensions.**
-* \cite[Tenenbaum et al., 2000]{tenenbaum2000isomap} — the true distance between data points is the *geodesic* on the manifold, not the straight line: flatten without tearing.
-* \cite[Chung et al., 2017]{chung2017perceptual} — each class is a low-dim *perceptual manifold*; classification is the geometry of separating them.
-* \cite[Loaiza-Ganem et al., 2024]{loaizaganem2024manifoldsurvey} — the manifold hypothesis as a *live* deep/generative-learning assumption.
+* (\cite[Tenenbaum et al., 2000]{tenenbaum2000isomap}) — the true distance between data points is the *geodesic* on the manifold, not the straight line: flatten without tearing.
+* (\cite[Chung et al., 2017]{chung2017perceptual}) — each class is a low-dim *perceptual manifold*; classification is the geometry of separating them.
+* (\cite[Loaiza-Ganem et al., 2024]{loaizaganem2024manifoldsurvey}) — the manifold hypothesis as a *live* deep/generative-learning assumption.
 
 **Meaning as position — the namesake, made precise.**
 * \cite[Yoneda embedding]{yoneda_nlab} — an object is fully determined by its relationships to everything else; the exact math of "meaning is position in the web of neighbours."
-* \cite[Cruz Morales, 2021]{cruzmorales2021grothendieck} — Grothendieck's notion of *space* (schemes → toposes → forms), the philosophical home of the chapter's namesake (a secondary account).
+* (\cite[Cruz Morales, 2021]{cruzmorales2021grothendieck}) — Grothendieck's notion of *space* (schemes → toposes → forms), the philosophical home of the chapter's namesake (a secondary account).
 
 **Very wide nets & the terminal geometry.**
-* \cite[Jacot et al., 2018]{jacot2018ntk} — a wide net trained by gradient descent follows a *linear* kernel gradient flow in function space.
-* \cite[Lee et al., 2019]{lee2019widelinear} — at infinite width, *any* depth acts linearly on the initial features: the nonlinearity's whole job is to choose a feature geometry, after which learning is linear.
-* \cite[Wu & Papyan, 2024]{wu2024linguisticcollapse} — the same simplex-ETF terminal geometry that governs image classifiers also governs **language models**.
+* (\cite[Jacot et al., 2018]{jacot2018ntk}) — a wide net trained by gradient descent follows a *linear* kernel gradient flow in function space.
+* (\cite[Lee et al., 2019]{lee2019widelinear}) — at infinite width, *any* depth acts linearly on the initial features: the nonlinearity's whole job is to choose a feature geometry, after which learning is linear.
+* (\cite[Wu & Papyan, 2024]{wu2024linguisticcollapse}) — the same simplex-ETF terminal geometry that governs image classifiers also governs **language models**.
 </div>
