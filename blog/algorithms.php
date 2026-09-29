@@ -32,7 +32,7 @@ But a single circle (a single frequency) has too many ambiguities. So the networ
 <div class="md" data-mathlevel="55" data-optionaltitle="The Algorithm in Five Steps">
 ## The Algorithm in Five Steps
 
-The trained network implements the following algorithm \cite[Section 4]{nanda2023grokking}:
+The trained network implements the following algorithm (\cite[Nanda et al., 2023, Section 4]{nanda2023grokking}):
 
 1. **Embedding:** Map each input number to points on 5 different circles (5 Fourier components)
 2. **Attention:** Bring the representations of $a$ and $b$ together
@@ -54,7 +54,7 @@ This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms e
 <div class="md" data-mathlevel="50" data-optionaltitle="Connection to Grokking">
 ## Connection to Grokking
 
-This algorithm is not present at the start of training. The phenomenon is called **grokking**\cite[]{grokking}: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued. Originally identified by \cite[Power et al., 2022][]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
+This algorithm is not present at the start of training. The phenomenon is called **grokking**: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued. Originally identified by \cite[Power et al. (2022)]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
 
 Here the network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the addition pattern, test accuracy jumping from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
@@ -68,7 +68,7 @@ Below you can explore each step of the algorithm interactively. Change the input
 <div class="md" data-mathlevel="60" data-optionaltitle="The Neuron-Logit Map">
 ## The Neuron-Logit Map $W_L$
 
-The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies \cite[Section 4.2, Equation 2]{nanda2023grokking}:
+The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies (\cite[Nanda et al., 2023, Section 4.2, Equation 2]{nanda2023grokking}):
 
 $$W_L \approx \sum_{k \in \{14,35,41,42,52\}} \cos(\omega_k) \cdot u_k^T + \sin(\omega_k) \cdot v_k^T$$
 
@@ -214,7 +214,7 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
 <div class="md" data-mathlevel="50" data-optionaltitle="The Embedding Space: Fourier Sparsity">
 ## The Embedding Space: Fourier Sparsity
 
-The embedding matrix $W_E$ is a $P \times d_{\text{model}} = 113 \times 128$ matrix. When we take a Discrete Fourier Transform along the token dimension and compute the $\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** \cite[Section 4.1, Figure 3]{nanda2023grokking}.
+The embedding matrix $W_E$ is a $P \times d_{\text{model}} = 113 \times 128$ matrix. When we take a Discrete Fourier Transform along the token dimension and compute the $\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** (\cite[Nanda et al., 2023, Section 4.1, Figure 3]{nanda2023grokking}).
 
 Only 5-6 frequencies have significant norm. These are the **key frequencies** that the network uses for its computation.
 
@@ -423,7 +423,7 @@ Consider teaching addition. A scratchpad-style prompt shows:
 , 4 9 5 C: 0
 ```
 
-The model sees that 8+7 generates carry 1 and 2+6 generates carry 0. But it could conclude: “carry is 1 when both digits are even” or “first pair always has carry 1.” The rules are **ambiguous** from examples alone \cite[Section 2]{zhou2022algorithmic}.
+The model sees that 8+7 generates carry 1 and 2+6 generates carry 0. But it could conclude: “carry is 1 when both digits are even” or “first pair always has carry 1.” The rules are **ambiguous** from examples alone (\cite[Section 2]{zhou2022algorithmic}).
 
 An algorithmic prompt removes this ambiguity by making every computational step explicit:
 
@@ -438,7 +438,7 @@ The result: **90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baseli
 
 Is the model truly executing the algorithm from context, or just pattern-matching the output format? \cite[Zhou et al. (2022)]{zhou2022algorithmic} prove it's genuine execution through three tests:
 
-**Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct. The model doesn't skip steps, it traces through the algorithm as written \cite[Section 3.1]{zhou2022algorithmic}.
+**Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct. The model doesn't skip steps, it traces through the algorithm as written (\cite[Section 3.1]{zhou2022algorithmic}).
 
 **Test 2: Systematic errors destroy performance.** When ALL carry calculations in the prompt examples are wrong (e.g., always using the wrong digit), accuracy drops to ca. 0%. If the model were relying on its pretrained knowledge of addition, wrong examples wouldn't matter. But it's actually learning the rule from context \cite[Figure 3b]{zhou2022algorithmic}.
 
@@ -483,21 +483,21 @@ This is why \cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context l
 
 \cite[Zhou et al. (2022)]{zhou2022algorithmic} identify a hierarchy of capabilities:
 
-1. **Teaching an Algorithm as a Skill:** Provide a detailed, non-ambiguous description of the algorithm execution on running examples. Result: 90.5% on 19-digit addition \cite[Section 3]{zhou2022algorithmic}.
+1. **Teaching an Algorithm as a Skill:** Provide a detailed, non-ambiguous description of the algorithm execution on running examples. Result: 90.5% on 19-digit addition (\cite[Section 3]{zhou2022algorithmic}).
 
-2. **Skill Accumulation:** Teaching multiple algorithms simultaneously (e.g., addition AND subtraction in one prompt). The model learns to select the correct algorithm based on the input \cite[Section 4]{zhou2022algorithmic}.
+2. **Skill Accumulation:** Teaching multiple algorithms simultaneously (e.g., addition AND subtraction in one prompt). The model learns to select the correct algorithm based on the input (\cite[Section 4]{zhou2022algorithmic}).
 
-3. **Skill Composition:** Teaching how to combine skills (e.g., multiplication as repeated addition). Previously learned algorithms become subroutines \cite[Section 5]{zhou2022algorithmic}.
+3. **Skill Composition:** Teaching how to combine skills (e.g., multiplication as repeated addition). Previously learned algorithms become subroutines (\cite[Section 5]{zhou2022algorithmic}).
 
-4. **Skills as Tools:** Using learned algorithms as subroutines within broader reasoning (e.g., using the addition algorithm inside a word problem). This reveals an **interference phenomenon**: mixing formal algorithm execution with informal reasoning in the same context degrades both \cite[Section 6]{zhou2022algorithmic}.
+4. **Skills as Tools:** Using learned algorithms as subroutines within broader reasoning (e.g., using the addition algorithm inside a word problem). This reveals an **interference phenomenon**: mixing formal algorithm execution with informal reasoning in the same context degrades both (\cite[Section 6]{zhou2022algorithmic}).
 
 ### What the Model Cannot Do
 
 Despite these capabilities, there are hard limits:
 
 - **Context length bounds computation:** The model can only execute as many steps as fit in its context window.
-- **Ambiguity kills performance:** If the algorithm description allows multiple interpretations, the model may follow the wrong one. Uncommon operations (like indexing a variable position) are harder than common ones (like always taking the last element) \cite[Section 3.1]{zhou2022algorithmic}.
-- **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation \cite[Section 6]{zhou2022algorithmic}.
+- **Ambiguity kills performance:** If the algorithm description allows multiple interpretations, the model may follow the wrong one. Uncommon operations (like indexing a variable position) are harder than common ones (like always taking the last element) (\cite[Zhou et al., 2022, Section 3.1]{zhou2022algorithmic}).
+- **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation (\cite[Zhou et al., 2022, Section 6]{zhou2022algorithmic}).
 - **No true compilation:** The model doesn't “compile” your code into an internal representation. It simulates execution token by token. This means execution speed is O(output_tokens), not O(algorithm_complexity).
 
 ### Interactive Exploration
@@ -523,7 +523,7 @@ Consider teaching a model to add two numbers. There's a spectrum of how explicit
 | **Chain-of-thought** | Show examples with informal reasoning (“carry the 1...”) | ca. 25% |
 | **Algorithmic prompting** | Show the *exact* algorithm with every micro-step explicit | **90.5%** |
 
-The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** \cite[Section 2]{zhou2022algorithmic}.
+The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** (\cite[Section 2]{zhou2022algorithmic}).
 
 ### The Ambiguity Problem (Visualized)
 
@@ -558,11 +558,11 @@ The circular representations above solve a very specific problem: **modular** ad
 
 Where does this live? In the **hidden states (the residual stream) of the later layers**, not in the input embedding. The circular probes decode the digits reliably from about the **third layer onward** (the first couple of layers are still busy "contextualizing" a multi-digit number, whose several tokens have to be combined first), and a causal intervention that rotates one digit's angle by $+5 \bmod 10$ flips exactly that digit in the model's answer — so the code is genuinely *used*, not merely readable. (The paper's honest caveat: this is one strong, causally-active representation; it may be one of several redundant ones packed in superposition, not the only numeracy signal.) The tell-tale signature is the *error pattern*: arithmetic mistakes cluster on a **single digit** of the answer (the model emits "633" or "823" instead of "833"), exactly what a digit-wise code predicts — not the value-adjacent slips ("831", "834") a real number-line representation would produce. There is no clean, monotonic magnitude to "read off" and compare, which is why comparing small numbers is so error-prone: the model holds a digit-by-digit code, not a quantity.
 
-\cite[Cacioli, 2026]{cacioli2026weber} brought the formal tools of psychophysics to the question. First, **Weber's law** — a 19th-century finding about human perception: the smallest difference you can notice between two stimuli is a constant *fraction* of their size, not a constant *amount*. You tell 10 from 11 instantly, but not 1000 from 1001, because the gap (1) shrinks relative to the magnitude. The consequence is that magnitudes are spaced **logarithmically** in perception: a fixed *ratio* (×1.1) is a fixed *distance*, whether you are near 10 or near 1000. (\cite[Cacioli, 2026]{cacioli2026weber}) found the transformer's magnitude geometry has exactly this **log-compressive, Weber-law** structure (a 10% step is a constant distance), which also resolves a live disagreement in the literature (linear spacing? log? per-digit?). But the decisive finding is a **dissociation**: a model can *have* this logarithmic magnitude geometry and *still* perform at chance on discrimination tasks. Representing magnitude and being *able to use it to compare* are not the same thing — the geometry is necessary but not sufficient.
+\cite[Cacioli (2026)]{cacioli2026weber} brought the formal tools of psychophysics to the question. First, **Weber's law** — a 19th-century finding about human perception: the smallest difference you can notice between two stimuli is a constant *fraction* of their size, not a constant *amount*. You tell 10 from 11 instantly, but not 1000 from 1001, because the gap (1) shrinks relative to the magnitude. The consequence is that magnitudes are spaced **logarithmically** in perception: a fixed *ratio* (×1.1) is a fixed *distance*, whether you are near 10 or near 1000. (\cite[Cacioli, 2026]{cacioli2026weber}) found the transformer's magnitude geometry has exactly this **log-compressive, Weber-law** structure (a 10% step is a constant distance), which also resolves a live disagreement in the literature (linear spacing? log? per-digit?). But the decisive finding is a **dissociation**: a model can *have* this logarithmic magnitude geometry and *still* perform at chance on discrimination tasks. Representing magnitude and being *able to use it to compare* are not the same thing — the geometry is necessary but not sufficient.
 
 **Counting: recognizing is not counting.** "How many r's are in strawberry?" is the canonical failing. (\cite[Fu et al., 2024]{fu2024count}) showed that models **recognize the letters but do not count them**: errors track the number of letters/tokens in the word, and the dominant failure is that *most models break once a symbol repeats more than twice*. Word frequency in the training data barely matters — this is a computation they are performing on the fly, not a lookup they failed to memorize. (\cite[Conde et al., 2025]{conde2025count}) confirmed exact counting is not intrinsic; it only becomes reliable when the model is given a scratchpad (a chain-of-thought it can increment).
 
-**Why it is hard, in principle.** The difference from modular addition is not training data — it is the *shape of the state required*. Mod-$N$ addition lives on a finite circle, so it needs only a bounded, cyclic representation (exactly the Fourier features above (\cite[Ding et al., 2024]{ding2024fittest} \cite[Engels et al., 2025]{engels2024multidim})). Exact counting, by contrast, needs an **unbounded integer** that increments and is read out at the end — a state that grows with the input. (\cite[Hahn, 2020]{hahn2020limitations}) proved the matching impossibility: a fixed-size transformer's self-attention **cannot model periodic finite-state languages** (counting to $n$, parity, "how many times does $x$ appear") **unless the number of layers or heads grows with the sequence length.** In other words, a fixed network has no reliable exact-integer counter, and the depth that would supply one is exactly what is fixed. Modular arithmetic is easy because it is bounded and circular; comparison needs an ordered code the model does not cleanly have, and counting needs unbounded state it cannot hold. Different failures, and neither is "just train it more."
+**Why it is hard, in principle.** The difference from modular addition is not training data — it is the *shape of the state required*. Mod-$N$ addition lives on a finite circle, so it needs only a bounded, cyclic representation (exactly the Fourier features above (\cite[Ding et al., 2024]{ding2024fittest} \cite[Engels et al. (2025)]{engels2024multidim})). Exact counting, by contrast, needs an **unbounded integer** that increments and is read out at the end — a state that grows with the input. (\cite[Hahn, 2020]{hahn2020limitations}) proved the matching impossibility: a fixed-size transformer's self-attention **cannot model periodic finite-state languages** (counting to $n$, parity, "how many times does $x$ appear") **unless the number of layers or heads grows with the sequence length.** In other words, a fixed network has no reliable exact-integer counter, and the depth that would supply one is exactly what is fixed. Modular arithmetic is easy because it is bounded and circular; comparison needs an ordered code the model does not cleanly have, and counting needs unbounded state it cannot hold. Different failures, and neither is "just train it more."
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="A Transformer as a State Machine">

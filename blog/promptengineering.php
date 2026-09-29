@@ -18,7 +18,7 @@ Prompt engineering is the practical craft of communicating with Large Language M
 
 Think of it like this: you are not programming the model. You are **creating a linguistic environment** that statistically steers it toward your desired outcome. Every word you choose reduces the entropy of what comes next.
 
-There is an explicit cousin of this approach: instead of nudging the model through tokens, you can **move the activation vector consciously to a chosen point in the embedding space**, then let generation proceed from that point. This is *latent space steering*: identify a direction $\Delta$ (typically the mean difference between activations of contrastive prompt pairs at a chosen layer), then add $h' = h + \alpha \Delta$ to the hidden state at inference time \cite[§1–2, Definition of latent steering]{emergentmind_latent_space_steering}. Where prompting operates on the *input* surface, latent steering operates on the *internal* representation \cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}, and where prompting is a linguistic lever, latent steering is a geometric one \cite[representation as direction in activation manifold]{emergentmind_representation_steering}.
+There is an explicit cousin of this approach: instead of nudging the model through tokens, you can **move the activation vector consciously to a chosen point in the embedding space**, then let generation proceed from that point. This is *latent space steering*: identify a direction $\Delta$ (typically the mean difference between activations of contrastive prompt pairs at a chosen layer), then add $h' = h + \alpha \Delta$ to the hidden state at inference time (\cite[§1–2, Definition of latent steering]{emergentmind_latent_space_steering}). Where prompting operates on the *input* surface, latent steering operates on the *internal* representation \cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}, and where prompting is a linguistic lever, latent steering is a geometric one \cite[representation as direction in activation manifold]{emergentmind_representation_steering}.
 
 </div>
 
@@ -230,7 +230,7 @@ Provide 3-5 examples of (input, desired output) pairs. The model learns the patt
 * Show examples of the tone, format, and logic you want. The model will mimic the *pattern*, not just the content.
 
 ### Self-Critique / Reflection
-After generating, tell the model to switch into critic mode and evaluate its own output for flaws (\cite[Madaan et al., 2023]{madaan2023selfrefine} \cite[Shinn et al., 2023]{shinn2023reflexion}).
+After generating, tell the model to switch into critic mode and evaluate its own output for flaws (\cite[Madaan et al., 2023]{madaan2023selfrefine} \cite[Shinn et al. (2023)]{shinn2023reflexion}).
 
 * **Prompt:** “Review your answer for factual errors, logical gaps, and unsupported claims. Then rewrite it with corrections.”
 
@@ -294,7 +294,7 @@ are already much smaller regions. But the real narrowing happens when you requir
 
 Each contradiction is the **intersection of two thin regions** that meet in a narrow band. Stack them and the intersection shrinks geometrically. The model has no choice but to land in a small, well-defined neighborhood -- but it still has to find the actual point inside it.
 
-The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time \cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}.
+The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time (\cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}).
 
 </div>
 

@@ -253,7 +253,7 @@ Defenses:
 * **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.
 * **Process reward**: score intermediate reasoning steps, not just final output.
 * **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.
-* **(\cite[Du et al., 2023]{du2023multiagent}) / red-teaming**: train an adversary to find exploits, then train against them.
+* **Debate / red-teaming** (\cite[Du et al., 2023]{du2023multiagent}): train an adversary to find exploits, then train against them.
 </div>
 
 <div class="md">

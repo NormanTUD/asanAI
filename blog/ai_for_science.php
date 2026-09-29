@@ -44,7 +44,7 @@ This is where the story becomes startling. AI has moved from *solving given prob
 | **Deletion codes** (\cite[Weindel & Heckel, 2025]{deletion_codes}) | 2025 | A construction proven to hit the **conjectured-optimal** Varshamov–Tenengolts single-deletion code (a 70-year-open problem) |
 | **AlphaEvolve** (\cite[Georgiev, Gómez-Serrano, Tao, Wagner, 2025]{alphaevolve}) | 2025 | On 67 open problems (with Terence Tao a co-author): matched best-known in most, **improved several** |
 
-The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** reached the **silver-medal** standard at the 2024 IMO (28/42 points), with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry (\cite[Wikipedia, 2024]{imo_wiki} \cite[Chervonyi et al., 2025]{alphageometry2}).
+The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** reached the **silver-medal** standard at the 2024 IMO (28/42 points), with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry (\cite[Wikipedia, 2024]{imo_wiki}) (\cite[Chervonyi et al., 2025]{alphageometry2}).
 </div>
 
 <div class="md">
