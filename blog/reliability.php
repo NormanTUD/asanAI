@@ -28,7 +28,7 @@ LLMs expose a related signal. When asked to estimate the chance that they *know*
 <div class="md">
 ## Two kinds of uncertainty
 
-\cite[Kendall & Gal, 2017]{kendall2017uncertainties} separate the one uncertainty everyone means into two:
+\cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:
 
 * **Aleatoric** — irreducible noise *in the data* (a blurry photo). More data will not help.
 * **Epistemic** — the *model's* ignorance (a species it has never seen). More data *would* help.

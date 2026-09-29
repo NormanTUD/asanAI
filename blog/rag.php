@@ -169,9 +169,9 @@ Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (
 <div id="raglab-context-table"></div>
 
 <div class="md">
-### The “Lost in the Middle” Problem \cite{liu2023lostmiddle}
+### The “Lost in the Middle” Problem
 
-Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
+Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle \cite{liu2023lostmiddle}. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
 
 RAG sidesteps this by only injecting the 3–5 most relevant chunks, keeping them front-and-center where attention is strongest.
 
