@@ -33,9 +33,9 @@ We specify **proxies**, not the goal. **Specification gaming (reward hacking)** 
 <div class="md">
 ## The current toolkit
 
-The modern pipeline: **SFT** (demonstrations) $\to$ **RLHF** (learn a reward model from human preferences) $\to$ **RLAIF / Constitutional AI** (AI feedback instead of humans) $\to$ **preference optimization** (learn the policy directly, no explicit RL loop). (\cite[Christiano et al., 2017]{christiano2017rlhf}) (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) (\cite[Lee et al., 2023]{rlaif}) (\cite[Bai et al., 2022]{bai2022constitutional})
+The modern pipeline: **SFT** (demonstrations) $\to$ **RLHF** (learn a reward model from human preferences) $\to$ **RLAIF / Constitutional AI** (AI feedback instead of humans) $\to$ **preference optimization** (learn the policy directly, no explicit RL loop). (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
 
-**DPO** closed the loop into a single classification-style objective, and its successors (ORPO, SimPO) drop the reference model entirely (\cite[Rafailov et al., 2023]{rafailov2023dpo}) (\cite[Hong et al., 2024]{orpo}). **Rejection-sampling / RL-from-verifiable-rewards (RFT)** closes the loop another way: generate many answers, keep the ones a *verifier* accepts, and retrain on them — the recipe that powers reasoning models.
+**DPO** closed the loop into a single classification-style objective, and its successors (ORPO, SimPO) drop the reference model entirely (\cite[Rafailov et al., 2023]{rafailov2023dpo}; \cite[Hong et al., 2024]{orpo}). **Rejection-sampling / RL-from-verifiable-rewards (RFT)** closes the loop another way: generate many answers, keep the ones a *verifier* accepts, and retrain on them — the recipe that powers reasoning models.
 
 The models also acquire **self-knowledge**: they track their own accuracy surprisingly well, which is a cheap, usable reliability lever. (\cite[Kadavath et al., 2022]{kadavath2022selfknowledge})
 </div>

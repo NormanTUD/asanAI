@@ -272,7 +272,7 @@ class. So how does a network ever get at an "island" class that is completely su
 	<div class="md">
 The hammer comes in several shapes, and they are not interchangeable:
 
-* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the negative half-space is identified with the fold. As a **non-homeomorphism** it can *change the data's topology* — close a hole, merge components, drop a Betti number (\cite[Olah, 2014]{colah2014manifolds}) (\cite[Naitzat et al. 2020]{naitzat2020topology}); that is what untangles. The pointwise map is non-injective, but a crease hitting the data from an unoccupied direction is injective *on the data* — the relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
+* **ReLU** $\Phi(x)=\max(0,x)$ — piecewise-linear and *not invertible* \cite[ReLU]{relu_wiki}: the negative half-space is identified with the fold. As a **non-homeomorphism** it can *change the data's topology* — close a hole, merge components, drop a Betti number (\cite[Olah, 2014]{colah2014manifolds}; \cite[Naitzat et al., 2020]{naitzat2020topology}); that is what untangles. The pointwise map is non-injective, but a crease hitting the data from an unoccupied direction is injective *on the data* — the relational structure survives even as the topology is simplified (the next section's "fold, don't crush").
 * **LeakyReLU** $\Phi(x)=\max(\alpha x,x)$, $\alpha\in(0,1)$ \cite[ReLU]{relu_wiki} — **bi-Lipschitz**, hence a *homeomorphism*: it bends at the crease but never crushes, so the topology is preserved. The activation of choice for invertible networks.
 * **GELU** $\Phi(x)=x\,\Phi_{\mathrm{cdf}}(x)$ (\cite[Hendrycks & Gimpel, 2016]{hendrycks2016gelu}) and **SiLU / Swish** $\Phi(x)=x\,\sigma(x)$ (\cite[Ramachandran et al. 2017]{ramachandran2017swish}) — smooth ($C^\infty$) but non-monotone. Where the Jacobian has full rank they are **local diffeomorphisms** (inverse function theorem) \cite[Inverse function theorem]{inverse_function_theorem_wiki}; being non-monotone, they are *not* one-to-one, hence *not* global diffeomorphisms. Smoothing removes corners but not folding.
 * **Tanh** and the **sigmoid** — smooth but *saturating*: they squash $\mathbb{R}^d$ into a bounded open box $(-1,1)^d$ or $(0,1)^d$, pressing the space flat against the boundary where the derivative $\to 0$. Geometrically that is *exactly* the vanishing-gradient problem (\cite[Olah, 2015]{colah2015backprop}).
@@ -817,7 +817,7 @@ This chapter is a deep dive that pays off across the book:
 * **Deep Learning** — the composition view, the "bend" that prevents collapse, and the
   Universal Approximation Theorem it operationalises.
 * **Basic Math III** — the formal Universal Approximation Theorem
-  (\cite[Cybenko, 1989]{cybenko1989}) (\cite[Hornik et al., 1989]{hornik1989universal}) and why
+  (\cite[Cybenko, 1989]{cybenko1989}; \cite[Hornik et al., 1989]{hornik1989universal}) and why
   *depth* beats width.
 * **Mechanistic Interpretability** — the "mixed selectivity" and bimodal neurons identified
   here are the same phenomenon neuroscientists and interpretability researchers keep

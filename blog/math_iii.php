@@ -117,7 +117,7 @@ Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods
 
 A neural network is, mathematically, a **function approximator**. Given a function $f^*: X \to Y$, the network learns parameters $\theta$ such that $f_\theta(x) \approx f^*(x)$ for the inputs in the training distribution.
 
-The **Universal Approximation Theorem** (\cite[Cybenko, 1989]{cybenko1989}) (\cite[Hornik et al., 1989]{hornik1989}) states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
+The **Universal Approximation Theorem** (\cite[Cybenko, 1989]{cybenko1989}; \cite[Hornik et al., 1989]{hornik1989}) states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The integral and the closed integral">

@@ -51,7 +51,7 @@ This is the foundation of every modern vision-language model.
 <div class="md">
 ## Vision Transformers: Turning Pixels into Tokens
 
-A Vision Transformer (\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
+A Vision Transformer (ViT, \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
 
 $$
 \text{number of patches} \quad n = \frac{HW}{P^2}
