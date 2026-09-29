@@ -925,3 +925,11 @@ body.sel-mode .sel-check { display: inline-flex; }
 .sel-check.checked {
 	border-color: #8b5cf6; background: #6d28d9; color: #ffffff;
 }
+
+/* ============ SPACE MORPH ("Layer als Raumkrümmung") ============ */
+#sm-formula small {
+	display: block;
+	font-size: 12.5px;
+	color: #9a8f6d;
+	margin-top: 5px;
+}
