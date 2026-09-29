@@ -387,9 +387,16 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
    into, shown only once the reader sets at least that depth. Gate is
    `scoreUnit({ depthReq })` (reason `'depth'`); the slider (step 20) sits in
    the overlay and the inline widgets. API: `getDepthLevel` / `setDepthLevel` /
-   `snapDepth` / `depthEra`. As of writing only `intro.php` carries a
-   `data-depth` tag (one-file test) — rolling the tag across the rest of the
-   course is a separate task.
+   `snapDepth` / `depthEra`. Tagged examples: `intro.php` (one test block) and
+   `untold_history.php` (fully tagged — the reference for rollout). **Tagging
+   convention**: tag a section div (top-level `div.md`) with the *farthest
+   back era it substantively reaches* — 1900s+ → `20`, ~1500–1799 → `40`,
+   ~500 BC–1499 (antiquity/medieval) → `60`, prehistory (before ~3300 BC) →
+   `80`, deep time (cosmos, life, Earth, hominid evolution) → `100`. Passing
+   one-line mentions don't count; purely modern / CS-only sections stay
+   untagged (visible at every depth). Blocks with an inner heading collapse
+   with a reason banner when tucked; untitled blocks dim instead. Rolling the
+   tag across the rest of the course is a separate task.
 - **Math-gate bypass (auto-reveal)**: if the user marks all prerequisites of a
   lesson as learned, gated blocks in it are revealed. `LESSON_DEPS` currently
   lists `math-i, math-ii, math-iii, math-iv, differentiation`.

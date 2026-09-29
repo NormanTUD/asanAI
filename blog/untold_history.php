@@ -15,7 +15,7 @@ tags: interested-layman
 The main history of AI traces the intellectual lineage, the ideas, algorithms, and architectures that directly led to modern systems. But those ideas did not emerge in a vacuum. They rest on a vast, invisible scaffolding of discoveries made in fields entirely unrelated to computation: the chemistry that purified silicon, the physics that explained semiconductors, the looms that inspired programmable input, the video game industry that accidentally built the perfect hardware for neural networks. This page collects those **displaced prerequisites**: the contributions so fundamental they vanish into the background, yet without which no language model could exist.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 ## Why Is There Anything at All?
 
 Before tracing the Big Bang or the first cell, a deeper question looms: **Why is there something rather than nothing?**
@@ -41,7 +41,7 @@ Instead of asking “Why something?”, the question becomes: **“What could pr
 These three perspectives share a recognition that existence is not self-evident. Leibniz answers with a necessary ground; Heidegger preserves the wonder; Jocaxian argues that the very emptiness of nothing guarantees its own dissolution.
 </div>
 
-<div class="md">
+<div class="md" data-depth="100">
 ## The Development of the Universe and Earth
 
 According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today (\cite[Weinberg, 1977]{weinberg1977first}). Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium. Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.
@@ -194,7 +194,7 @@ Humans are not descended from monkeys or any other primate living today; rather,
 Early hominins such as *Sahelanthropus tchadensis* (approximately 7 million years ago) and *Ardipithecus ramidus* (approximately 4.4 million years ago) show a mosaic of ape-like and human-like features (\cite[White et al., 2009]{white2009ardipithecus}). The genus *Australopithecus* (approximately 4–2 million years ago) exhibited habitual bipedalism while retaining relatively small brains. Stone-tool knapping, however, **predates** the genus *Homo*: the \citealternativetitle{lomekwi} from approximately 3.3 million years ago, attributed to late australopithecines, is the oldest known assemblage. The emergence of the genus *Homo* around 2.8 million years ago was associated with increasing brain size and the more systematic **\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*. *Homo erectus* (approximately 1.9 million years ago) was the first hominin to spread beyond Africa and developed the more sophisticated Acheulean hand-axe technology. The earliest *secure* archaeological evidence for the controlled use of fire comes from Wonderwerk Cave in South Africa, dated to approximately one million years ago (\cite[Berna et al., 2012]{wonderwerk}); the species responsible (late *H. erectus* or a contemporaneous early *Homo* form) is debated.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 The controlled use of fire was a major \cite[turning point]{wonderwerk}
 in human evolution. While extensive deposits of ash and charcoal
 from sites dating to the past 400,000 years are well documented, the
@@ -243,11 +243,11 @@ very beginning of the history of machines as a history of
 from the direct task.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago. Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago (\cite[Hublin et al., 2017]{hublin2017jebel}). The date at which the cognitive prerequisites for full language were in place remains contested: some scholars speculate, on largely indirect grounds, that they were present by ~135,000 years ago (\cite[Miyagawa et al., 2025]{earlylanguage}), but no direct archaeological evidence for symbolic language of that age survives; the earliest undisputed evidence for fully symbolic behaviour dates to roughly 100,000 years ago. The emergence of modern human behavior (\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour}), including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago. The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science, and, ultimately, the intellectual infrastructure for artificial intelligence.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 **The Earliest Figures: 40,000–35,000 Years Ago.** The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** ("Fanny"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}). Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.
 
 What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**. The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept. And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.
@@ -263,7 +263,7 @@ What they already contain is a move that would run for forty thousand more years
 \marginfig{la_marche_engraving.jpg}{An engraved human figure from the limestone slabs of La Marche, Lussac-les-Châteaux, France (Magdalenian, about 14,000 to 15,000 years old), one of over a hundred individualised faces. [Photo: Znorz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:La_Marche_Cave_Painting.jpg)}
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ## From Mythos to Logos: The Mental Landscape That Made Computation Thinkable
 
 The physical prerequisites for an LLM are the silicon, the cables, the cooling. But there is a deeper layer: the *mental* prerequisites, the ways of thinking that made it possible to conceive of a machine that reasons. These ways of thinking were not invented for computation. They were invented to explain the sky, to justify the rule of kings, to calculate the tides, and to win a game of dice. Their displacement is total: the same logic that classified Greek gods now classifies the layers of a neural network; the same probability that priced a 17th-century gamble now trains a language model.
@@ -304,7 +304,7 @@ Between the fall of the Western Roman Empire and the European Renaissance, the c
 **Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \citetitle{ibnalhaytham1021optics} (\citeyear{ibnalhaytham1021optics}), a seven-volume work that established the **experimental method** as the foundation of optics and, by extension, of natural philosophy. Against the Greek emission and intromission theories of vision, Ibn al-Haytham argued, on the basis of controlled experiments, that vision occurs when light from an object enters the eye, and he designed the first controlled experiments in the history of science: varying one parameter at a time, recording the result, and drawing a general conclusion. The \citetitle{ibnalhaytham1021optics} also described the **camera obscura**, the direct optical ancestor of the photographic camera, the microscope, and the camera that will one day image a brain. The experimental method he codified, hypothesis, controlled experiment, quantitative measurement, general law, is the method that the Royal Society would formalize three centuries later and that the entire empirical science underlying AI depends on.
 </div>
 
-<div class="md" data-mathlevel="35" data-optionaltitle="The Scientific Revolution: 1543–1687">
+<div class="md" data-mathlevel="35" data-depth="40" data-optionaltitle="The Scientific Revolution: 1543–1687">
 ### The Scientific Revolution: 1543–1687
 
 The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:
@@ -335,7 +335,7 @@ The *Principia* also contained the first rigorous formulation of **calculus** (i
 Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\frac{dy}{dx}$, $\int$) in 1684, two years before Newton's *Principia*. The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 ### The Mathematical Infrastructure of Computation
 
 The Scientific Revolution provided the *physical* model of the world. The *mathematical* infrastructure for modern computation was built in parallel, by people working on problems that had nothing to do with machines:
@@ -371,7 +371,7 @@ Each of these revolutions was driven by problems that had nothing to do with com
  The narrative above traces the *intellectual* lineage of the LLM, from Aristotle's syllogisms to the Transformer. But ideas alone do not compute. Every inference made by a modern language model rests upon a vast, invisible scaffolding of discoveries made by people who never imagined, and could never have imagined, that their work would one day help a machine write poetry. These are the **displaced prerequisites**: contributions so fundamental that they vanish into the background, like the air we breathe but rarely notice.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 The entire trajectory from stone tools to silicon chips presupposes a
 transformation so fundamental that it is easily overlooked: the
 **Neolithic Revolution**, the transition from nomadic
@@ -427,7 +427,7 @@ reasons entirely unrelated to computation, yet without which the
 entire edifice of artificial intelligence would be inconceivable.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ## The Material Foundations of Computation
 
 ### Materials, Optics, and Metals
@@ -442,7 +442,7 @@ Glass was made in Mesopotamia and Egypt as early as 3500 BCE, but the transparen
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method
 
 No instrument in this history displaced its original purpose so completely as the microscope. Built to examine the fine detail of lenses, cloth, and surfaces, it ended up supplying both the *model* and the *method* of artificial intelligence: the model, because it revealed the neuron; the method, because it taught science how to zoom in until a new world of units appeared.
@@ -501,7 +501,7 @@ And the parallel is deliberately architectural. \citeauthorlastnameand{olaha2020
 Strip the microscope from the chain and it breaks in three places at once: the neuron, the unit that became the model of every artificial network, would never have been seen; the electron microscope, its descendant, would no longer watch over the silicon that computes; and the method that the whole science of AI is now applying to its own weights — zoom in, find the units, read the circuits — was first learned from a slice of cork.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### From Amber to Amperes: The Discovery and Harnessing of Electricity
 
 No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation. Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded attributed to Thales, later catalogued by \citeauthor{laertius} in \citetitle{laertius} (Book I, §15). For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.
@@ -532,7 +532,7 @@ The transformation of this curiosity into a usable force required a cascade of u
 A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of “computation” whatsoever.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### From Bloomery to Boolean: The Metals That Compute
 
 Metallurgy is a silent prerequisite whose absence makes every other layer of this history impossible. The trail begins not in a logic textbook but in a smelter's furnace, with the first systematic reflection on what an ore actually is. **\citeauthor{theophrastusstones}**'s \citeyear{theophrastusstones} treatise \citetitle{theophrastusstones} (Περὶ λίθων) is the earliest surviving attempt to classify rocks and minerals by their behavior under heat, including the iron ores that would, within a few centuries, replace bronze as the skeleton of civilisation. A few generations later, **\citeauthor{plinynaturalhistory}**'s \citeyear{plinynaturalhistory} \citetitle{plinynaturalhistory}, in particular books XXXIII and XXXIV, gathered everything the Roman world knew about copper, iron, gold, silver, lead, tin, and mercury, including the mining and smelting processes that turned ore into the material substrate of roads, aqueducts, weapons, coinage, and (by then) the bronze gears of the Antikythera mechanism.
@@ -555,7 +555,7 @@ Yet the deepest metallurgical miracle predates Bessemer by more than a millenniu
 Strip any single one of these metallurgical achievements from the causal chain and it breaks. Smelted copper, drawn into wire and insulated with gutta-percha, became the telegraphic nervous system that linked continents into a single information space. Brass gears, cast and filed to tolerance, made possible the Antikythera mechanism, Babbage's Analytical Engine, and the differential analyzer. Refined silicon, grown into defect-free single crystals by \citeauthor{czochralski1918}'s \citeyear{czochralski1918} process and zone-purified by the \citealternativetitle{siemensprocess}, became the substrate on which \citeauthorlastnameand{semiconductor} etched the first point-contact transistor in \citeyear{semiconductor}. Gold bonding wires, the width of a human hair, connect every silicon die to the package that sits on every accelerator board. Tungsten filaments lit the vacuum tubes of ENIAC; lithium cobalt oxide cathodes, discovered by \citeauthor{goodenough1980licoo2} in \citeyear{goodenough1980licoo2} and industrialized by \citeauthor{yoshino1985liion} in \citeyear{yoshino1985liion}, now power the edge devices that run local language models. None of these were invented for artificial intelligence. All of them, together, are the silent, displaced prerequisites: remove a single one and the chain of inference breaks.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### The Periodic Table as Foundation
 
 Ultimately, every element used in computing, silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets, was first isolated, characterized, and understood through chemistry. Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.
@@ -566,7 +566,7 @@ Ultimately, every element used in computing, silicon (Si, 14) for substrates, co
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 ### Writing, Numbers, and Ledgers
 
 #### Tally Bones: Counting Before Writing
@@ -595,7 +595,7 @@ External memory long predates paper: Sumerian clay tablets (c. 3400 BCE), Egypti
 </figure>
 </div>
 
-<div class="md" data-mathlevel="35">
+<div class="md" data-mathlevel="35" data-depth="60">
 The numeral zero, along with the positional decimal system, was \cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci). In his 1202 work *Liber Abaci*, Fibonacci \cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation. Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power. Fibonacci is \cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.
 
 Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India, **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
@@ -605,7 +605,7 @@ Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Afr
 $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### The Printing Press: Mass-Producing Knowledge
 
 <figure>
@@ -616,7 +616,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 **\citeauthor{gutenbergpress}**'s printing press, developed around 1440 in Mainz, combined movable metal type, oil-based ink, and a modified wine press into the first technology for mass-producing identical copies of text. Before Gutenberg, a single book took a scribe months to copy; after him, a press could produce thousands of pages per day. The press made the scientific revolution possible: ideas could be published, circulated, criticised, and improved across distances that a single scholar could never reach. It standardised mathematical notation (making algebra, calculus, and eventually algorithms transmissible across linguistic boundaries), enabled the *Encyclopédie*, and created the mass literacy that the World Wide Web would eventually exploit as its training corpus. Without the printing press, there is no standardisation of knowledge, no scientific community, and no web-scale text corpus on which a language model can be trained.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### Double-Entry Bookkeeping: The First Error-Detecting Code
 
 <figure>
@@ -627,7 +627,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 **\citeauthor{paciolisumma}**'s \citeyear{paciolisumma} \citetitle{paciolisumma} did not invent double-entry bookkeeping, which had been practised in Italian merchant cities for at least two centuries, but it was the first printed, systematic exposition of the method. The principle is simple: every transaction is recorded twice, once as a debit and once as a credit, and the two sides must always balance. If they do not, an error has occurred somewhere in the ledger. This made double-entry the first widely used error-detecting code, a mechanical guarantee of numerical consistency that prefigured checksums, parity bits, and the cyclic redundancy checks that validate every packet on the modern internet. The method also enabled the joint-stock company: by providing an auditable record of assets and liabilities, it allowed strangers to pool capital, trust each other's accounting, and finance ventures from the Dutch East India Company to the semiconductor foundries of Taiwan that no individual could fund alone.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 ### Precision Engineering and Power
 
 #### Navigation and the Longitude Problem
@@ -640,7 +640,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 The "longitude problem", determining one's east-west position at sea, was the great scientific challenge of the 18th century. Latitude could be found from the sun's altitude, but longitude required comparing local time (from a sextant observation) with the time at a reference meridian, which meant carrying a clock accurate to within a few seconds over months of ocean travel. **\citeauthor{mercator1569}**'s \citeyear{mercator1569} map projection had already solved the cartographic problem, allowing rhumb-line courses to be plotted as straight lines on a flat sheet. The British Board of Longitude, established in 1714 with a prize of £20,000, funded decades of research in astronomy, horology, and precision engineering. **\citeauthor{harrisonh4}**'s \citeyear{harrisonh4} chronometer finally solved the timekeeping problem, losing only five seconds over 81 days at sea. The longitude prize seeded the precision engineering tradition that would later produce chronometers, sextants, and eventually the machine tools that make interchangeable parts, the foundation of all modern hardware manufacturing.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### Vacuum Technique: Emptying Space to Fill It with Electrons
 
 <figure>
@@ -651,7 +651,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 **\citeauthor{torricellibarometer}**'s \citeyear{torricellibarometer} barometer demonstrated that the atmosphere has weight and, by implication, that the space above the mercury in a sealed tube is empty, a vacuum. **\citeauthor{vonguericke}**'s \citeyear{vonguericke} \citealternativetitle{vonguericke} (1654) made the point dramatically: two teams of horses could not pull apart a sphere evacuated of air. But the decisive step for computation was the development of glassblowing techniques that could seal metal electrodes inside a glass envelope from which the air had been removed. **\citeauthor{geisslertube}**'s \citeyear{geisslertube} \citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light. Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the "Edison effect." **\citeauthor{flemingdiode}**'s \citeyear{flemingdiode} \citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier; **\citeauthor{deforestaudion}**'s \citeyear{deforestaudion} \citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier. The ENIAC (1946) used 17,468 vacuum tubes; every electronic computer until the transistor era was a room full of glowing glass bulbs, each one dependent on the vacuum techniques pioneered by Torricelli and von Guericke three centuries earlier.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### Precision Clocks: The Metronome of Computation
 
 **\citeauthor{huygenspendulum}**'s \citeyear{huygenspendulum} \citetitle{huygenspendulum} built the first pendulum clock in 1656, improving daily accuracy from roughly 15 minutes to about 15 seconds. The key innovation was the escapement mechanism, a device that converts the continuous swing of a pendulum into discrete, uniform ticks. This is the mechanical ancestor of every digital clock: the escapement does for mechanical time what the quartz crystal oscillator (first used in a clock by Warren Marrison at Bell Labs in 1927) does for electronic time, and what the clock signal in a CPU does for computation, namely it breaks continuous flow into countable, synchronous steps. Without precision clocks, there is no synchronous digital logic, no time-division multiplexing in telecommunications, no coordinated distributed systems, and no GPS timestamps. Every modern computer is, at its core, a clock-driven machine.
@@ -662,7 +662,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### The Steam Engine: Powering Precision Manufacturing
 
 **\citeauthor{newcomenengine}**'s \citeyear{newcomenengine} atmospheric steam engine was the first practical device for converting thermal energy into mechanical work. Built to pump water from flooded coal mines, it consumed enormous quantities of coal and did so inefficiently. **\citeauthor{wattpatent}**'s \citeyear{wattpatent} separate-condenser patent improved efficiency roughly fourfold, making steam power economical for factories, mills, and eventually railways and ships. The steam engine's significance for computation is indirect but essential: it powered the machine tools (lathes, milling machines, grinders) that produced the precision-machined interchangeable parts on which all subsequent engineering, from Babbage's difference engine to the wave-soldered PCBs of modern data centers, would depend. It also drove the Industrial Revolution's demand for standardised measurement, interchangeable components, and systematic quality control, the same practices, at nanometre scale, that govern semiconductor fabrication today.
@@ -673,7 +673,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### Refrigeration and Cooling: Keeping the Mind from Melting
 
 A modern data center generates enormous quantities of heat. Training a large language model pushes thousands of GPUs to their thermal limits for weeks or months. Without industrial **cooling systems**, the silicon would overheat and fail within minutes.
@@ -698,7 +698,7 @@ The history of **artificial** cooling traces back to **William Cullen**, who dem
 Today, hyperscale data centers use elaborate cooling systems, from chilled water loops to, increasingly, liquid immersion cooling, consuming megawatts of power just to prevent the hardware from destroying itself. The quiet hum of air conditioning in a server room is as essential to the existence of ChatGPT as the Transformer architecture itself.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### Programmable Media and the Image
 
 #### The Jacquard Loom: Weaving the Concept of Programmable Input
@@ -715,7 +715,7 @@ Yet the conceptual leap was immense: a complex, sequential process had been **en
 Without the loom, there is no concept of externally encoded, interchangeable instructions, no punched card, no magnetic tape, no software. A textile artisan solving a manufacturing problem inadvertently created the first programmable input mechanism.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 While Leibniz's Stepped Reckoner proved that mechanical calculation was possible, it remained a fragile prototype, prone to jamming and never reliable enough for daily use. The gap between theoretical proof-of-concept and practical tool was bridged over a century later by **Charles Xavier Thomas de Colmar**, a French inventor and entrepreneur.
 
 In \citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**, a calculating machine based on Leibniz's stepped drum mechanism. What distinguished it from all prior devices was not mathematical novelty but *engineering reliability and commercial viability*. After decades of refinement, the Arithmometer entered mass production in the 1850s, becoming the **first commercially successful mechanical calculator** and the first to be produced in industrial quantities.
@@ -730,7 +730,7 @@ The machine could perform addition, subtraction, multiplication, and division, a
 The Arithmometer's significance lies not in a conceptual breakthrough but in a practical one: it proved that Leibniz's dream of mechanized calculation could be made robust, reproducible, and useful to non-specialists. It represents the moment when the “calculator” ceased to be a philosopher's curiosity and became a **commercial product**, an essential step in the trajectory from abstract logic to the industrial-scale computation that would eventually power AI systems.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data
 
 A modern vision model is, at the level of bytes, a pile of images together with labels. That shape, a labelled image-sequence dataset, has a remarkably concrete origin in 19th-century France and Philadelphia.
@@ -765,7 +765,7 @@ Muybridge went further still. He built the **zoöpraxiscope**, a projection devi
 Without chronophotography there are no video frames. Without labelled image-sequences there are no video-classification, action-recognition or world-model datasets. Without synchronised multi-view capture there are no neural radiance fields. Without Muybridge's pewter and silver plates, the contemporary vision stack has nothing to look at. The trained image lives because a horse galloped past a row of tripwires in Palo Alto, and a stubborn photographer was willing to spend three years at the University of Pennsylvania counting its hoofbeats.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From the Moon to the GPU: Space Image Processing
 
 Muybridge's labelled images stayed, for half a century, a pile of glass plates. What turned images into *computable* data, and quietly set the scene for the entire vision stack, was done in a very different place: a laboratory at NASA's Jet Propulsion Laboratory, cleaning up grainy pictures of the Moon and the planets arriving over a slow radio link.
@@ -791,7 +791,7 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
 </div>
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### Networks and Interfaces
 
 #### Land Telegraphy: The First Digital Network
@@ -804,7 +804,7 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
 **\citeauthor{morsetelegraph}**'s \citeyear{morsetelegraph} electromagnetic telegraph and the competing **\citeauthor{cookewheatstone}** \citeyear{cookewheatstone} were the first practical technologies for transmitting information faster than a horse could ride. Morse code, a variable-length binary encoding using short signals (dots) and long signals (dashes), was the first digital communication protocol. By 1866, a transatlantic cable linked Europe and North America; by 1900, over two million miles of telegraph wire encircled the globe. The telegraph introduced concepts that would later become foundational to computer networking: message routing through relay stations (the direct ancestor of packet-switched routers), standardised protocols for interoperation between different manufacturers' equipment, and the idea that a "network" could span continents. The store-and-forward relay stations of the telegraph era were the architectural template for ARPANET's packet-switched routers a century later. Without the telegraph, there is no instant communication, no coordinated railroad scheduling, and no concept of a network of machines forwarding messages, and therefore no internet.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### Fiber Optics and Submarine Cables: The Physical Internet
 
 The “digital ocean” of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
@@ -827,7 +827,7 @@ The “digital ocean” of training data does not exist in an abstract cloud; it
 Without these cables, the internet is a collection of isolated local networks. Without the internet, there is no web-scale training corpus. Without the training corpus, there is no LLM.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### The Silent Other Half: Insulating Electricity from Itself
 
 For every copper wire that carried the first telegraph signal, some unknown insulator had to wrap around it and refuse to carry it themselves. Without insulation, electricity simply arcs to the nearest ground and dissipates as heat; the entire discipline of electrical engineering exists only because someone, somewhere, found a material whose electrons refused to move. The displaced prerequisite, in other words, is not the conductor but the **resistor of motion around it**. The \citealternativetitle{guttapercha} tree, a *Palaquium* of the Malay archipelago, was tapped for centuries by local craftsmen before the British surgeon **William Montgomerie** identified in 1843 its unusual dielectric strength and thermoplastic behaviour. **\citeauthor{faraday}** recognised its insulating value at its introduction, and by 1845 it was being extruded around copper wire to form the first insulated telegraph conductors. **\citeauthor{atlantictelegraph}**'s \citeyear{atlantictelegraph} book \citetitle{atlantictelegraph} documents the central role the material played in the 1857–1858 transatlantic cable attempts: 2,600 nautical miles of copper conductor had to be wrapped in gutta-percha to survive a mile-deep ocean without short-circuiting to seawater. Without gutta-percha, no submarine cable, no global telegraph, no instant transatlantic news, no cable-stitched internet, no undersea fibre backbone.
@@ -842,7 +842,7 @@ The second wave of insulation was synthetic. **\citeauthor{goodyearvulcanization
 Strip any single one of these insulating materials from the causal chain and the chain breaks. Bakelite bobbins let Tesla and Westinghouse's AC motors run unattended for decades; polyethylene's controlled dielectric constant makes the twisted-pair cable in every Ethernet port possible, and its low-loss profile at microwave frequencies is what lets the radar, the cell tower, and the satellite downlink carry data across a continent or an ocean. The enamel coating on a single copper magnet wire is, today, a thin shell of polyimide or polyurethane whose molecular structure was engineered for a thermal class invented for the 1960s space program. Without insulation, the conductor alone cannot even *be* a conductor — a wire shorted to ground is not a wire but a fuse. The displaced prerequisite here is not the metal, not the signal, but the stubbornness of the material wrapped around the metal that lets the signal *stay* a signal.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From Typewriters to Keyboards: The Mechanical Alphabet
 
 Every prompt typed into an LLM passes through a **keyboard** whose layout was dictated not by computation, but by the jamming tendencies of 19th-century typebar mechanisms.
@@ -859,7 +859,7 @@ In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule pate
 Today, a user's fingers follow a key arrangement dictated by 1870s typebar physics, yet without the typewriter's standardization of rapid text input, the entire paradigm of **conversational AI** would lack its most fundamental interface.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face
 
 A machine that cannot *show* its output is, for all practical purposes, mute. The visual display has its origins not in computing, but in 19th-century experimental physics.
@@ -889,7 +889,7 @@ people who could not have foreseen their eventual use in artificial
 intelligence systems.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### The Physics of Computation
 
 #### Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon
@@ -938,7 +938,7 @@ Beyond hardware, physics contributed directly to the mathematical foundations of
 Physics did not set out to create artificial intelligence. It set out to understand the universe. But in doing so, it created every physical prerequisite, from the quantum tunneling effects in transistors to the electromagnetic waves in fiber optic cables, without which no language model could ever exist.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ### The Chemistry of Computation
 
 If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it. Every component of an LLM's physical substrate, from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers, is a product of chemical engineering. Chemistry gave AI its body.
@@ -1037,7 +1037,7 @@ As GPU clusters push thermal limits, data centers increasingly turn to **liquid 
 Chemistry did not intend to create artificial intelligence. It intended to understand and transform matter. But in doing so, from purifying silicon to synthesizing photoresists to engineering cooling fluids, it provided every material prerequisite without which no language model could ever be physically instantiated.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### The Hardware of AI
 
 
@@ -1146,7 +1146,7 @@ Every digital computer operates to the rhythm of a **crystal oscillator**. The q
 None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the “displaced prerequisite”: a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ## From the Battlefield to AlphaGo: How War Research Helped to Build Modern AI
 
@@ -1198,7 +1198,7 @@ These threads, codebreaking, fire control, government patronage, and statistical
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 The contribution of nuclear weapons research to AI is less well-known than that of the wartime codebreakers, but quantitatively and qualitatively it is comparable. Three threads deserve attention.
 
@@ -1246,7 +1246,7 @@ The history of AI is not only the history of algorithms. It is also the history 
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ## To the Moon and Beyond: How Spaceflight Helped to Build the Invisible Scaffolding for Modern AI
 
@@ -1388,7 +1388,7 @@ None of these systems was built for AI. Yet between the corner cubes on the Moon
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ## The Abstraction of Data: From Types to Tensors
 
 
@@ -1417,7 +1417,7 @@ The first major formalization came with **FORTRAN**, designed by \cite[John Back
 The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
+<div class="md" data-mathlevel="55" data-depth="20" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
 #### Floating-Point Standardization: IEEE 754 (1985)
 
 While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
@@ -1427,7 +1427,7 @@ $$\text{float (32-bit):}\quad (-1)^s \times 1.m \times 2^{e-127}$$
 where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in (\cite[IEEE, 2008]{ieee754_2008}) and (\cite[IEEE, 2019]{ieee754_2019}).
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### The Boolean in Programming
 
 - **ALGOL 60** (1960): first language with `Boolean` as a named type.
@@ -1439,7 +1439,7 @@ where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The stand
 The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell1910principia} (Russell & Whitehead, 1910), developed computationally by \cite[Alonzo Church]{churchsimplytyped} (simply typed lambda calculus, 1940), \cite[Roger Hindley]{hindleytypes} (1969) and \cite[Robin Milner]{milnertypeinference} (1978) with type inference, and \cite[Per Martin-Löf]{martinloeftypetheory} (dependent types, 1971).
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ### Arrays: A History of Structured Data
 
@@ -1536,7 +1536,7 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 The invention of arrays was not a single event but an evolutionary process, from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ## The Spreadsheet and the Evolution of Data Usability
 
 
@@ -1641,7 +1641,7 @@ $$\text{If } C_{1,1} \text{ changes} \implies \text{recalculate all } C_{i,j} \t
 This automatic propagation of changes through a dependency graph is the core innovation that separates a spreadsheet from a static table.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### Lotus 1-2-3: The IBM PC Era (1983)
 
 #### The Shift to IBM
@@ -1706,7 +1706,7 @@ $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 ### Beyond Spreadsheets: The Evolution of Data Usability
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
+<div class="md" data-mathlevel="50" data-depth="20" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
 #### The Database Revolution: From Filing Cabinets to SQL
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.
@@ -1723,7 +1723,7 @@ $$\sigma_{\text{age} > 30}(\text{Employees}) \equiv \texttt{SELECT * FROM Employ
 - **SQLite** (2000), embedded database requiring no server, now deployed on billions of devices
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### Statistical Software: Purpose-Built Data Tools
 
 For researchers who needed more than spreadsheets could offer:
@@ -1812,7 +1812,7 @@ The spreadsheet's enduring genius lies not in computational power (Python and SQ
 All these developments, even though they were focussed for the normal user, are now used by data scientists creating systems like LLM as well, as well as the algorithms developed for those tools.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ## The Internet and the Web: The Training Corpus
 
 
