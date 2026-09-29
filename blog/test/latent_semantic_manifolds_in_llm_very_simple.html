@@ -85,10 +85,14 @@ footer a{color:var(--teal)}
     <div class="ctl-lab"><span>Wie viele Wörter hat das Wörterbuch?</span><b id="rN">12</b></div>
     <input type="range" id="sN" min="4" max="40" step="1" value="12">
   </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Temperatur (wie „offen" ist die Auswahl?)</span><b id="rT">0.8</b></div>
+    <input type="range" id="sT" min="10" max="300" step="1" value="80" class="m">
+  </div>
   <div class="ro">
-    <div class="box"><div class="k">Dieser Gedanke wird zu …</div><div class="v" id="rWord">—</div></div>
+    <div class="box"><div class="k">Gewinner-Wort</div><div class="v" id="rWord">—</div></div>
     <div class="box amber"><div class="k">Unsichere Zone</div><div class="v" id="rGap">—</div></div>
-    <div class="box rose"><div class="k">Gefühl</div><div class="v" id="rFeel">—</div></div>
+    <div class="box rose"><div class="k">Gewinn-Chance</div><div class="v" id="rProb">—</div></div>
   </div>
 </div>
 
@@ -148,7 +152,9 @@ function hidpi(cv,h){
   const CW=880,CH=616;
   const off=document.createElement('canvas');off.width=CW;off.height=CH;
   const octx=off.getContext('2d');
-  let N=12,anchors=[],hover=null,gapFrac=0;
+  let N=12,anchors=[],hover=null,gapFrac=0,temperature=0.8;
+  const sT=$('#sT');
+  sT.addEventListener('input',e=>{temperature=e.target.value/100;$('#rT').textContent=temperature.toFixed(2);draw();});
   function gen(n){
     const rng=mulberry32(7+n*13);
     const cols=Math.ceil(Math.sqrt(n*CW/CH)),rows=Math.ceil(n/cols);
@@ -231,28 +237,59 @@ function hidpi(cv,h){
     }
     if(hover){
       const x=clamp(hover[0],0,CW-1),y=clamp(hover[1],0,CH-1);
-      let d1=1e9,d2=1e9,i1=0;
-      for(let i=0;i<anchors.length;i++){const dx=x-anchors[i].x,dy=y-anchors[i].y,dd=dx*dx+dy*dy;if(dd<d1){d2=d1;i1=i;d1=dd;}else if(dd<d2){d2=dd;}}
-      const m=Math.sqrt(d2)-Math.sqrt(d1);
-      const dTyp=Math.sqrt(CW*CH/anchors.length)*0.52;
       const mx=x*sx,my=y*sy;
-      c.beginPath();c.arc(mx,my,12,0,Math.PI*2);
-      c.fillStyle='rgba(255,255,255,.15)';c.fill();
-      c.beginPath();c.arc(mx,my,8,0,Math.PI*2);c.fillStyle='rgba(255,255,255,.92)';c.fill();
+      const T=temperature;
+      const dTyp=Math.sqrt(CW*CH/anchors.length);
+      const Tcanvas=T*dTyp*1.2;
+      const Tpx=Tcanvas*(w/CW);
+      c.beginPath();c.arc(mx,my,Tpx,0,Math.PI*2);
+      c.strokeStyle='rgba(15,118,110,.55)';c.lineWidth=2;c.setLineDash([6,4]);c.stroke();c.setLineDash([]);
+      c.beginPath();c.arc(mx,my,Tpx,0,Math.PI*2);
+      c.fillStyle='rgba(15,118,110,.04)';c.fill();
+      const allD=[];
+      for(let i=0;i<anchors.length;i++){
+        const dx=x-anchors[i].x,dy=y-anchors[i].y;
+        allD.push({i,d:Math.sqrt(dx*dx+dy*dy)});
+      }
+      allD.sort((a,b)=>a.d-b.d);
+      const near=allD.slice(0,5);
+      const sigma=T*dTyp*0.5;
+      const scores=near.map(cd=>({i:cd.i,d:cd.d,s:Math.exp(-cd.d/sigma)}));
+      const sum=scores.reduce((s2,cd)=>s2+cd.s,0)||1;
+      const top=scores.slice(0,5);
+      const panelW=155,panelH=top.length*26+12;
+      const right=mx+Tpx+16;
+      const px=(right+panelW>w-8)?clamp(mx-Tpx-panelW-16,4,w-panelW-8):clamp(right,4,w-panelW-8);
+      const py=clamp(my-panelH/2,8,h-panelH-8);
+      c.fillStyle='rgba(255,253,248,.94)';
+      c.beginPath();c.roundRect(px,py,panelW,panelH,10);c.fill();
+      c.strokeStyle='rgba(15,118,110,.3)';c.lineWidth=1;c.stroke();
+      c.font='700 11px system-ui';c.fillStyle='rgba(40,40,60,.5)';c.textAlign='left';c.textBaseline='middle';
+      c.fillText('Chancen',px+10,py+11);
+      const barMax=panelW-78;
+      for(let j=0;j<top.length;j++){
+        const cd=top[j];
+        const prob=cd.s/sum;
+        const rowY=py+24+j*26;
+        c.font=(j===0?'700':'400')+' 12px system-ui';
+        c.fillStyle=j===0?'#0f766e':'#5c6272';c.textAlign='left';
+        c.fillText(anchors[cd.i].w,px+10,rowY);
+        const bw=Math.max(4,prob*barMax);
+        c.fillStyle='rgba(15,118,110,.1)';
+        c.beginPath();c.roundRect(px+56,rowY-5,barMax,10,5);c.fill();
+        c.fillStyle=j===0?'#0f766e':'rgba(15,118,110,.35)';
+        c.beginPath();c.roundRect(px+56,rowY-5,bw,10,5);c.fill();
+        c.font='600 10px monospace';c.fillStyle=j===0?'#0f766e':'#9aa0b0';c.textAlign='right';
+        c.fillText(Math.round(prob*100)+'%',px+panelW-8,rowY);
+      }
+      c.beginPath();c.arc(mx,my,7,0,Math.PI*2);
+      c.fillStyle='rgba(255,255,255,.92)';c.fill();
       c.strokeStyle='rgba(40,40,60,.5)';c.lineWidth=2;c.stroke();
-      const word=anchors[i1].w;
-      c.font='700 13px system-ui';
-      const tw3=c.measureText(word).width;
-      const bx=clamp(mx+16,4,w-tw3-28),by=clamp(my-32,4,h-28);
-      c.fillStyle='rgba(255,253,248,.95)';
-      c.beginPath();c.roundRect(bx,by,tw3+18,26,7);c.fill();
-      c.strokeStyle='rgba(15,118,110,.4)';c.lineWidth=1;c.stroke();
-      c.fillStyle='#0f766e';c.textAlign='left';c.textBaseline='middle';
-      c.fillText(word,bx+9,by+13);
-      $('#rWord').textContent=word;
-      const near=m/dTyp<0.3;
-      $('#rFeel').textContent=near?'zögert …':'entschlossen';
-      $('#rFeel').parentElement.className='ro box '+(near?'rose':'');
+      const winner=top[0];
+      if(winner){
+        $('#rWord').textContent=anchors[winner.i].w;
+        $('#rProb').textContent=Math.round(winner.s/sum*100)+' %';
+      }
     }
     $('#rGap').textContent=Math.round(gapFrac*100)+' %';
   }
@@ -261,7 +298,7 @@ function hidpi(cv,h){
     hover=[(e.clientX-r.left)/r.width*CW,(e.clientY-r.top)/r.height*CH];
     draw();
   });
-  cv.addEventListener('pointerleave',()=>{hover=null;$('#rWord').textContent='—';$('#rFeel').textContent='—';draw();});
+  cv.addEventListener('pointerleave',()=>{hover=null;$('#rWord').textContent='—';$('#rProb').textContent='—';draw();});
   $('#sN').addEventListener('input',e=>{N=+e.target.value;$('#rN').textContent=N;anchors=gen(N);recompute();});
   anchors=gen(N);recompute();
   addEventListener('resize',draw);
