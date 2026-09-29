@@ -1085,7 +1085,7 @@ Every fruit is now a point in a 4D “Fruit Space.”
     <div id="v4-plot" style="width:100%; height:250px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 ### The formal definition (the important one)
 
 The geometric picture above is intuitive, but it hides a question: when we add a vector to a vector, or stretch a vector by a number, *what rules must those operations obey?* A **vector space** is the precise answer.
@@ -1094,7 +1094,7 @@ Mathematicians formalize this as follows. Pick a *base field* $k$ — a number s
 
 <div class="optional md" data-headline="Definition">
 
-A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication). The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
+A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication) \cite[Axler, Linear Algebra Done Right, Ch. 1, p. 12]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
 
 </div>
 
@@ -1102,7 +1102,7 @@ You don't need to memorise the eight axioms. What you need to remember is:
 
 1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$; the individual values are of course real numbers, used as coordinates.
 2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
-3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
+3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them \cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
 
 </div>
 
@@ -1121,7 +1121,7 @@ A note on terminology: in machine learning, you will often see "scalar" used mor
 
 A **vector** is an element of a vector space. The geometric picture is an *arrow* with a direction and a length: "three steps to the right, four steps up." The algebraic picture is a single thing you can add to other vectors and stretch with scalars.
 
-If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis, the arrow "3 right, 4 up, 2 forward" becomes the column
+If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis \cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}, the arrow "3 right, 4 up, 2 forward" becomes the column
 
 $$ \vec{v} = \begin{pmatrix} 3 \\ 4 \\ 2 \end{pmatrix} $$
 
@@ -1156,7 +1156,7 @@ Vectors can have any number of dimensions. Two essential operations on vectors:
 **Scalar multiplication** multiplies each coordinate:
 
 
-$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix}$$
+$$ \underbrace{c}_{\text{scalar}} \cdot \underbrace{\vec{v}}_{\text{vector}} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix}$$
 
 $$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix}$$
 
@@ -1336,7 +1336,7 @@ So far a tensor was just *data* — numbers arranged in a shape. But you can als
 
 **Element-wise.** Combine the matching entries of two tensors, one by one. The tensors do not even need the same shape: shapes are lined up from the right, an axis of length $1$ stretches to match, and a missing leading axis counts as $1$. This rule is called **broadcasting** \cite[Broadcasting, NumPy]{numpy_broadcasting} — and it quietly explains the $\mathbf{x}+b$ of every affine layer.
 
-**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} C_{ij}\,D_{jk}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 \cite[Einstein, 1916]{einstein1916annalen}. Contraction is the single most important operation in both linear algebra and deep learning.
+**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} \underbrace{C_{ij}}_{\text{row of C}}\,\underbrace{D_{jk}}_{\text{column of D}}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 \cite[Einstein, 1916]{einstein1916annalen}. Contraction is the single most important operation in both linear algebra and deep learning.
 
 Try both below.
 </div>
@@ -1404,7 +1404,7 @@ Try both below.
 
 <div class="tcalc-card" id="tcalc-contraction">
   <div class="tcalc-card-title">Contraction — the matrix product</div>
-  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$.</p>
+  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$ \cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.4, p. 118]{boyd2018appliedlinearalgebra}.</p>
   <div class="tcalc-contr-row">
     <div class="tcalc-gridwrap">
       <div class="tcalc-cap">C (2, 2)</div>
@@ -1495,7 +1495,7 @@ In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in
 
 For two vectors $\vec{a}$ and $\vec{b}$ of length $n$, the product is defined as:
 
-$$\vec{a} \odot \vec{b} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}$$
+$$\vec{a} \odot \vec{b} = \underbrace{\begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}}_{\text{element-wise product}}$$
 
 Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting vector is calculated element-by-element.
 </div>
@@ -1524,7 +1524,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
 <div class="md" data-mathlevel="45" data-optionaltitle="Matrix Transposition">
 ## Matrix Transposition
 
-Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$.
+Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$ \cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p. 115]{boyd2018appliedlinearalgebra}.
 
 Example:
 
