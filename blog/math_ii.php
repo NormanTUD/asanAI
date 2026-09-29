@@ -1094,7 +1094,7 @@ Mathematicians formalize this as follows. Pick a *base field* $k$ — a number s
 
 <div class="optional md" data-headline="Definition">
 
-A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication), as \cite[Axler lists them in Linear Algebra Done Right, Ch. 1, p. 12]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
+A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication), as \cite[Axler lists them in Linear Algebra Done Right (Ch. 1, p. 12)]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
 
 </div>
 

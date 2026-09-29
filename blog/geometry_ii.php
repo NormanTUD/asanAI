@@ -52,7 +52,7 @@ $$
 G \;=\; \underbrace{X^{\top} X}_{\text{“all pairwise alignments at once”}} \qquad\qquad G_{ij} \;=\; \underbrace{\langle x_i, x_j \rangle}_{\text{“how much do data } i \text{ and } j \text{ agree?”}}
 $$
 
-Two things matter. First, $G$ is, as \cite[Axler shows in Linear Algebra Done Right, Ch. 7, §7C, p. 251]{axler2024linearalgebra}, **always symmetric and positive semi-definite**: the diagonal is $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for any vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)
+Two things matter. First, $G$ is, as \cite[Axler shows in Linear Algebra Done Right (Ch. 7, §7C, p. 251)]{axler2024linearalgebra}, **always symmetric and positive semi-definite**: the diagonal is $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for any vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)
 
 Second: **$G$ describes the data’s geometry without any coordinates.** It records only *inner products*, which are unchanged by a rigid motion. Rotate every data point by the same rotation $R$ and every pairwise dot product stays the same, so $G$ is **unchanged**:
 

@@ -60,7 +60,7 @@ the entire job of every hidden layer is to *reshape the data until that final fl
 succeeds*.
 
 And here is the surprise. With a **smooth** activation, each layer is a
-**homeomorphism** — as \cite[Morris shows in Topology Without Tears, Ch. 4, p. 75]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never
+**homeomorphism** — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never
 cut, tear, or fold** it. It preserves every topological property — a loop stays a loop, a
 region that surrounds another still surrounds it, connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).
 </div>
@@ -82,7 +82,7 @@ $N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The pr
    the line (careful about range: tanh lands in $(-1,1)$, not $\mathbb{R}$). Applied to
    each coordinate independently, it is a homeomorphism of $\mathbb{R}^N$.
 
-A composition of homeomorphisms is a homeomorphism — as \cite[Morris shows in Topology Without Tears, Ch. 4, p. 76]{morris2007topology} — so the layer is one. **And so is any
+A composition of homeomorphisms is a homeomorphism — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 76)]{morris2007topology} — so the layer is one. **And so is any
 stack of them.** $\blacksquare$
 
 Two cautions carry all the weight of what follows. First, the **width must be full**: if
