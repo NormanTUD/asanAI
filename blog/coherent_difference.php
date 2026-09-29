@@ -13,7 +13,7 @@ math: 70
 -->
 
 <div class="md">
-Before we open the <a href="embeddinglab">Embeddings chapter</a>, there is one idea worth holding in your head. It is not a theorem. It is not even an equation. It is the structural intuition that quietly holds together a surprising amount of what we are about to do, and that you will meet again and again in slightly different costumes: in topology, in sheaves, in category theory, in Homotopy Type Theory, in the geometry of an embedding space, and, in the simplest concrete case, in how a Transformer turns a list of token IDs into something that means.
+Before we open the <a href="embeddinglab">Embeddings chapter</a>, there is one idea worth holding in your head. It is not a theorem. It is not even an equation. It is the structural intuition that quietly holds together a surprising amount of what we are about to do, and that you will meet again and again in slightly different costumes: in topology, in sheaves, in category theory, in Homotopy Type Theory, in the geometry of an embedding space, and in how a Transformer turns a list of token IDs into something that means.
 </div>
 
 <div class="md">
