@@ -962,6 +962,45 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Die Wiese der Wörter ==================== -->
+<div class="slide" id="slide-wiese-der-worte" data-title="Wiese der Wörter">
+    <div class="slide-content">
+        <h2>Die Wiese der Wörter</h2>
+        <p style="max-width:1000px; margin-left:auto; margin-right:auto;">
+            Das Modell „denkt" in einem Raum mit unendlich vielen Abstufungen — sagen kann es aber nur Wörter aus einem <b>endlichen</b> Wörterbuch. Diese Wiese zeigt, wie dabei aus einem Gedanken ein Wort wird: <b>das nächste Wort gewinnt.</b>
+        </p>
+
+        <div class="demo-box" style="min-height:auto; padding:18px 22px; background:#faf7f0;">
+            <canvas id="wiese-canvas" style="display:block; width:100%; height:420px; border-radius:12px; background:#f6f1e7; cursor:crosshair;"></canvas>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:14px;">
+                <div>
+                    <div class="wiese-ctl-lab"><span>Wie viele Wörter hat das Wörterbuch?</span><b id="wiese-rN">12</b></div>
+                    <input type="range" id="wiese-sN" min="4" max="40" step="1" value="12">
+                </div>
+                <div>
+                    <div class="wiese-ctl-lab"><span>Temperatur (wie „offen" ist die Auswahl?)</span><b id="wiese-rT" class="wiese-t-val">0.80</b></div>
+                    <input type="range" id="wiese-sT" min="10" max="300" step="1" value="80" class="wiese-t">
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                <div class="wiese-box"><div class="wiese-k">Gewinner-Wort</div><div class="wiese-v" id="wiese-rWord">—</div></div>
+                <div class="wiese-box amber"><div class="wiese-k">Unsichere Zone</div><div class="wiese-v" id="wiese-rGap">—</div></div>
+                <div class="wiese-box rose"><div class="wiese-k">Gewinn-Chance</div><div class="wiese-v" id="wiese-rProb">—</div></div>
+            </div>
+        </div>
+
+        <div id="wiese-caption" class="wiese-caption"></div>
+
+        <div class="fragment key-insight" id="wiese-gap-insight" style="max-width:1050px; margin:14px auto 0;">
+            <b>Der „Expressibility Gap" (Mabrok 2026):</b> Gedanken sind unendlich fein abgestuft — Wörter endlich. An den Grenzen zwischen zwei Wörtern passt <b>kein</b> Wort genau, und dieser Verlust hat eine mathematische <b>Untergrenze</b>, die kein Training und kein größeres Wörterbuch wegnimmt.
+            Gemessen an echten Modellen: <b>~40–51&nbsp;%</b> aller Wortvorhersagen liegen in der unsicheren Zone — und den Fehler zu halbieren kostet ≈&nbsp;<b>1000-mal</b> so viele Wörter.
+            <div style="margin-top:8px; font-size:0.72em; color:#64748b;">Mabrok (2026): <i>Latent Semantic Manifolds in Large Language Models</i>, arXiv:2603.22301</div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Für das LLM ist alles ein Muster – Erinnerung ==================== -->
 <div class="slide" id="slide-fuer-das-llm-ist-alles-ein-muster" data-title="Für das LLM ist alles ein Muster">
     <div class="slide-content">
