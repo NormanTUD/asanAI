@@ -13888,6 +13888,20 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2205.10343",
 		alternativetitle: "Grokking as phase transition"
 	},
+	"litman2026theory": {
+		title: "A Theory of Generalization in Deep Learning",
+		author: "Elon Litman, Gabe Guo",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.01172",
+		alternativetitle: "eNTK output-space theory: signal channel and test-invisible reservoir; population-risk / SNR preconditioner"
+	},
+	"litman2026a_theory_of_dl": {
+		title: "A Theory of Deep Learning",
+		author: "Elon Litman",
+		year: 2026,
+		url: "https://elonlit.com/scrivings/a-theory-of-deep-learning/",
+		alternativetitle: "Litman, A Theory of Deep Learning (blog post)"
+	},
 
 	// ===== Alignment (added) =====
 	"ai_safety_debate": {
