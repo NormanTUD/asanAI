@@ -57,9 +57,9 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Self-Consistency">
-## Self-Consistency \cite[Wang et al., 2022]{wang2022selfconsistency}
+## Self-Consistency
 
-The simplest and most reliable inference-time scaling trick:
+The simplest and most reliable inference-time scaling trick (\cite[Wang et al., 2022]{wang2022selfconsistency}):
 
 1. Sample $k$ independent CoTs from the model: $\{z^{(1)}, \dots, z^{(k)}\}$.
 2. Extract the final answer from each: $\{y^{(1)}, \dots, y^{(k)}\}$.

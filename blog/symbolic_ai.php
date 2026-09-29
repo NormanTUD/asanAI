@@ -183,28 +183,28 @@ The synthesis takes several forms:
 
 | Approach | Description | Example |
 |----------|-------------|---------|
-| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry}, AlphaProof |
+| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry (\cite[Trinh et al., 2024]{trinh2024alphageometry}), AlphaProof |
 | **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |
 | **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |
 | **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |
 | **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |
 | **LLM + tool use** | Neural planner, symbolic tools | ReAct \cite{yao2023react}, Toolformer, agents |
 
-### Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry} (DeepMind, 2024)
+### AlphaGeometry (DeepMind, 2024)
 
 Solves IMO (\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
 
-### Toolformer \cite[Schick et al., 2023]{schick2023toolformer}
+### Toolformer
 
-A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity. Pure neural, but uses symbolic tools.
+A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\cite[Schick et al., 2023]{schick2023toolformer}). Pure neural, but uses symbolic tools.
 
 ### Logic Tensor Networks (Serafini & Garcez, 2016)
 
 Embed logical rules as soft constraints on neural network outputs. Combines first-order logic with deep learning in a single end-to-end trainable system.
 
-### DeepProbLog (\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}
+### DeepProbLog
 
-Extends ProbLog (probabilistic logic programming) with neural predicates. A neural net outputs probabilities; the probabilistic logic engine reasons over them.
+Extends ProbLog (probabilistic logic programming) with neural predicates (\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}). A neural net outputs probabilities; the probabilistic logic engine reasons over them.
 </div>
 
 <div class="md">
