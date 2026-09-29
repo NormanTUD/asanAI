@@ -48,9 +48,9 @@ Each GPU holds a **full copy** of the model. Each step:
 
 Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to (ca. )100 GPUs; beyond that, the all-reduce becomes the bottleneck.
 
-### ZeRO (Zero Redundancy Optimizer) \cite[Rajbhandari et al., 2019]{rajbhandari2019zero}
+### ZeRO (Zero Redundancy Optimizer)
 
-The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters. ZeRO partitions these across $P$ GPUs:
+The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters (\cite[Rajbhandari et al., 2019]{rajbhandari2019zero}). ZeRO partitions these across $P$ GPUs:
 
 * **ZeRO-1**: partition optimizer states → memory $\frac{1}{P}$, communication same as DP.
 * **ZeRO-2**: partition optimizer states + gradients → memory $\frac{1}{P}$, communication still same as DP.

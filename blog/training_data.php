@@ -63,7 +63,7 @@ Standard filters:
 * **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).
 * **Stop-word fraction**: English text has 20–30% stop-words. Lower indicates non-natural text.
 * **Perplexity filter**: compute perplexity under a small reference LM (KenLM). High perplexity → outlier text. Drop top/bottom percentiles.
-* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **\cite[Rae et al., 2021]{rae2021gopher} rules** and **C4** rules (\cite[Raffel et al., 2020]{raffel2020t5}) are the most cited.
+* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages). Apply to all documents. **Gopher** rules (\cite[Rae et al., 2021]{rae2021gopher}) and **C4** rules (\cite[Raffel et al., 2020]{raffel2020t5}) are the most cited.
 
 FineWeb (\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
 </div>
@@ -183,7 +183,7 @@ With natural data exhaust, frontier labs increasingly generate **synthetic train
 * **Self-instruct**: prompt the model to generate variations of seed instructions.
 * **Constitutional AI** (\cite[Bai et al., 2022]{bai2022constitutional}): model generates responses, critiques them against rules, revises.
 * **Distillation**: a stronger model generates high-quality responses that a smaller model is then trained on.
-* **Problem synthesis**: generate \cite[Hendrycks et al., 2021]{hendrycks2021math}s with verifiable solutions.
+* **Problem synthesis**: generate problems with verifiable solutions (\cite[Hendrycks et al., 2021]{hendrycks2021math}).
 
 Risks:
 
