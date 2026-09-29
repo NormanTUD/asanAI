@@ -2650,8 +2650,6 @@ setTimeout(()=>{ if(window.katex) renderAllMath(); }, 400);
     ctx.fillStyle = ani>8 ? 'rgba(255,122,89,.14)' : 'rgba(125,255,179,.12)';
     ctx.fillRect(12,12,238,30);
     label(ctx, ani>8 ? 'W schmal → großes Reservoir'
-                     : 'W rund → Reservoir schrumpft (Feature Learning)
-    label(ctx, ani>8 ? 'W schmal → großes Reservoir'
                      : 'W rund → Reservoir schrumpft (Feature Learning)',
           20, 31, ani>8 ? C.res : C.cln, 11.5);
   }
