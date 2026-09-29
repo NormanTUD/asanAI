@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Transformer — geometrisch</title>
+<style>
+  :root{--bg:#0b0d12;--ink:#e8ecf4;--dim:#7b8496;--acc:#ffd166;--cy:#5ad2ff;--rd:#ff6b8a}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;overflow:hidden}
+  canvas{display:block;width:100%;height:100%;position:fixed;inset:0}
+  .panel{position:fixed;left:46px;top:46px;max-width:380px;pointer-events:none;z-index:2}
+  .step{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:27px;font-weight:600;margin:10px 0 0;line-height:1.16}
+  .formula{margin-top:20px;padding:11px 15px;border-left:2px solid var(--acc);
+    background:rgba(255,209,102,.05);font-family:"Cambria Math",Georgia,serif;
+    font-size:17px;color:#ffe9b0}
+  .formula small{display:block;font-size:12.5px;color:#9a8f6d;margin-top:5px;
+    font-family:Inter,sans-serif}
+  #bar{position:fixed;left:46px;bottom:38px;display:flex;gap:7px;z-index:2}
+  .dot{width:22px;height:3px;background:#2a3040;transition:background .5s}
+  .dot.on{background:var(--acc)}
+  #hint{position:fixed;right:46px;bottom:36px;font-size:12px;color:#4d5568;z-index:2}
+  #sent{position:fixed;right:46px;top:46px;font-size:22px;color:#59627a;z-index:2;
+    letter-spacing:.02em}
+  #sent b{color:#e8ecf4;font-weight:600}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="sent">Die <b>Bank</b> war kalt.</div>
+<div class="panel">
+  <div class="step" id="sNum"></div><h1 id="sTitle"></h1>
+  <div class="formula" id="sForm"></div>
+</div>
+<div id="bar"></div>
+<div id="hint">← →  Bild &nbsp;·&nbsp; Ziehen: drehen &nbsp;·&nbsp; R: Ansicht zurück</div>
+
+<script>
+/* ══════════ Canvas ══════════ */
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,DPR;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+const lerp=(a,b,u)=>a+(b-a)*u;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function ease(u){const s=1/(1+Math.exp(-11*(u-.5)));
+  const a=1/(1+Math.exp(5.5)),b=1/(1+Math.exp(-5.5));return (s-a)/(b-a);}
+const TAU=6.283185307;
+const V=(x,y,z)=>({x,y,z});
+const add=(a,b)=>V(a.x+b.x,a.y+b.y,a.z+b.z);
+const sub3=(a,b)=>V(a.x-b.x,a.y-b.y,a.z-b.z);
+const mul=(a,s)=>V(a.x*s,a.y*s,a.z*s);
+const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
+const len=a=>Math.hypot(a.x,a.y,a.z);
+const nrm=a=>{const l=len(a)||1;return V(a.x/l,a.y/l,a.z/l);};
+const mix=(a,b,u)=>V(lerp(a.x,b.x,u),lerp(a.y,b.y,u),lerp(a.z,b.z,u));
+
+/* ══════════ Kamera — Drehung bleibt erhalten ══════════ */
+let sceneA=0.55, sceneB=0.30;      /* von der Szene vorgegeben  */
+let userA=0,     userB=0;          /* vom Nutzer gezogen, BLEIBT */
+let ZOOM=1, PANX=150;
+const BASE=()=>Math.min(W,H)*0.23;
+function proj(p){
+  const A=sceneA+userA, B=sceneB+userB, S0=BASE()*ZOOM;
+  const x = p.x*Math.cos(A)-p.y*Math.sin(A);
+  const y = p.x*Math.sin(A)+p.y*Math.cos(A);
+  const y2=-y*Math.sin(B)+p.z*Math.cos(B);
+  const z2= y*Math.cos(B)+p.z*Math.sin(B);
+  const d=5.6, k=d/(d+z2*0.70);
+  return {X:W/2+x*S0*k+PANX, Y:H/2-y2*S0*k+H*0.02, d:z2, k:k};
+}
+
+/* ══════════ Die drei Wörter ══════════ */
+/* Feste Orte.  "Bank" liegt genau zwischen den zwei Bedeutungen. */
+const MOEBEL = V(-1.05,  0.75, 0.30);   /* Geisterpunkt Sitzbank */
+const GELD   = V( 1.05, -0.80,-0.25);   /* Geisterpunkt Geldhaus */
+const MITTE  = mul(add(MOEBEL,GELD),0.5);
+
+const TOK=[
+ {w:"Die",  e:V(-0.30,-1.05,-0.55), col:'#6d7ea8'},
+ {w:"Bank", e:MITTE,                col:'#ffd166'},   /* der Punkt, um den es geht */
+ {w:"kalt", e:V(-0.95, 1.00, 0.55), col:'#5ad2ff'}    /* liegt nahe bei MÖBEL */
+];
+const QI=1;                                   /* "Bank" ist der Suchende */
+
+/* Wie gut passt jedes Wort zu "Bank"?  = Länge auf dem Suchstrahl. */
+/* Der Strahl zeigt von Bank Richtung "kalt" — das ist die gelernte Frage. */
+const RAY = nrm(sub3(TOK[2].e, TOK[1].e));
+
+/* ══════════ Spirale = Reihenfolge ══════════ */
+/* Ein Schritt weiter  =  immer die gleiche Drehung.  Das ist alles. */
+const DPHI = TAU/5;          /* fester Winkelschritt  (72°) */
+const RHEL = 0.62;
+function helixPt(i){
+  return V(Math.cos(DPHI*i)*RHEL, Math.sin(DPHI*i)*RHEL, (i-1)*0.52);
+}
+
+/* ══════════ Softmax ══════════ */
+function weights(tau){
+  const s=TOK.map(t=>dot(sub3(t.e,TOK[QI].e),RAY)*2.2);
+  s[QI]=0.55;                              /* Bank schaut auch auf sich selbst */
+  const mx=Math.max(...s);
+  const ex=s.map(v=>Math.exp((v-mx)/tau));
+  const Z=ex.reduce((a,b)=>a+b,0);
+  return {s:s, w:ex.map(v=>v/Z)};
+}
+
+/* ══════════ FFN: Raum biegt sich ══════════ */
+function warp(p,t){
+  const r2=p.x*p.x+p.y*p.y;
+  return V(p.x*(1-0.13*t*r2), p.y*(1-0.13*t*r2), p.z+(r2*0.80-0.45)*t);
+}
+
+/* ══════════ Die 7 Bilder ══════════ */
+const S=[
+{n:"Bild 1 / 7", t:"Jedes Wort ist ein Ort",
+ f:"Wort ⟶ Punkt (x, y, z)<small>„Bank“ liegt genau in der Mitte — noch unentschieden</small>",
+ A:0.55,B:0.30,Z:1.00,P:150,
+ ghost:1, helix:0, ray:0, mass:0, move:0, ffn:0, stack:0},
+
+{n:"Bild 2 / 7", t:"Ein Schritt weiter = eine feste Drehung",
+ f:"φ = 72°,&nbsp; 144°,&nbsp; 216°<small>Position wird ein Winkel, keine Nummer</small>",
+ A:0.30,B:0.14,Z:0.98,P:150,
+ ghost:0, helix:1, ray:0, mass:0, move:0, ffn:0, stack:0},
+
+{n:"Bild 3 / 7", t:"„Bank“ schickt einen Suchstrahl aus",
+ f:"Lot fällen ⟶ Länge auf dem Strahl<small>weit vorne = passt gut</small>",
+ A:0.20,B:0.24,Z:1.06,P:150,
+ ghost:1, helix:0, ray:1, mass:0, move:0, ffn:0, stack:0},
+
+{n:"Bild 4 / 7", t:"Die Längen werden zu Anteilen",
+ f:"a₁ + a₂ + a₃ = 1<small>länger ⟶ größerer Anteil</small>",
+ A:0.20,B:0.24,Z:1.06,P:150,
+ ghost:1, helix:0, ray:1, mass:1, move:0, ffn:0, stack:0},
+
+{n:"Bild 5 / 7", t:"„Bank“ rutscht zum Schwerpunkt",
+ f:"neu = a₁·P₁ + a₂·P₂ + a₃·P₃<small>gewichteter Mittelwert — wie eine Wippe</small>",
+ A:0.20,B:0.24,Z:1.06,P:150,
+ ghost:1, helix:0, ray:0, mass:1, move:1, ffn:0, stack:0},
+
+{n:"Bild 6 / 7", t:"Danach biegt sich der Raum",
+ f:"aus x wird f(x)<small>das zweite Teilstück jeder Schicht</small>",
+ A:0.06,B:0.03,Z:1.00,P:150,
+ ghost:0, helix:0, ray:0, mass:0, move:1, ffn:1, stack:0},
+
+{n:"Bild 7 / 7", t:"Und das sechsmal hintereinander",
+ f:"6 Schichten<small>jedes Wort beschreibt eine Bahn</small>",
+ A:0.78,B:0.26,Z:0.72,P:120,
+ ghost:0, helix:0, ray:0, mass:0, move:1, ffn:1, stack:1}
+];
+
+/* ══════════ Ablauf ══════════ */
+let cur=0, prev=0, t0=performance.now(), DUR=2100;
+function bar(){const d=document.getElementById('bar');d.innerHTML='';
+  S.forEach((_,i)=>{const e=document.createElement('div');
+    e.className='dot'+(i<=cur?' on':'');d.appendChild(e);});}
+function text(){const s=S[cur];sNum.textContent=s.n;sTitle.textContent=s.t;
+  sForm.innerHTML=s.f;bar();}
+function go(d){const n=clamp(cur+d,0,S.length-1);if(n===cur)return;
+  prev=cur;cur=n;t0=performance.now();text();}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+  if(e.key==='r'||e.key==='R'){userA=0;userB=0;}});
+let md=false,mx=0,my=0;
+cv.addEventListener('mousedown',e=>{md=true;mx=e.clientX;my=e.clientY;});
+addEventListener('mouseup',()=>md=false);
+addEventListener('mousemove',e=>{if(!md)return;
+  userA+=(e.clientX-mx)*0.006;            /* bleibt stehen, wird nie zurückgesetzt */
+  userB=clamp(userB+(e.clientY-my)*0.005,-1.3,1.3);
+  mx=e.clientX;my=e.clientY;});
+
+/* ══════════ Zeichnen ══════════ */
+function line3(a,b,col,wd,al,dash){
+  const p=proj(a),q=proj(b);
+  ctx.save();ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=wd;
+  if(dash)ctx.setLineDash(dash);
+  ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();ctx.restore();
+}
+function arrow3(a,b,col,wd,al){
+  const p=proj(a),q=proj(b);
+  ctx.save();ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=wd;
+  ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+  const an=Math.atan2(q.Y-p.Y,q.X-p.X),L=9+wd*1.5;
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(q.X,q.Y);
+  ctx.lineTo(q.X-L*Math.cos(an-.36),q.Y-L*Math.sin(an-.36));
+  ctx.lineTo(q.X-L*Math.cos(an+.36),q.Y-L*Math.sin(an+.36));
+  ctx.closePath();ctx.fill();ctx.restore();
+}
+function ball(p,r,col,al){
+  const s=proj(p),R=Math.max(1.5,r*s.k);
+  const g=ctx.createRadialGradient(s.X-R*.35,s.Y-R*.35,R*.1,s.X,s.Y,R);
+  g.addColorStop(0,'#fff');g.addColorStop(.4,col);g.addColorStop(1,col);
+  ctx.globalAlpha=al*(.65+.35*s.k);
+  ctx.beginPath();ctx.arc(s.X,s.Y,R,0,TAU);ctx.fillStyle=g;ctx.fill();
+  ctx.globalAlpha=1;return s;
+}
+function ring(p,r,col,al,wd){
+  const s=proj(p);
+  ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=wd||1.4;
+  ctx.setLineDash([3,4]);
+  ctx.beginPath();ctx.arc(s.X,s.Y,r*s.k,0,TAU);ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=1;return s;
+}
+function tag(p,txt,col,al,dx,dy,sz,bold){
+  const s=proj(p);
+  ctx.globalAlpha=al;ctx.fillStyle=col;
+  ctx.font=(bold?'600 ':'')+(sz||13)+'px Inter,sans-serif';ctx.textAlign='left';
+  ctx.fillText(txt,s.X+(dx||11),s.Y+(dy||-9));ctx.globalAlpha=1;
+}
+
+/* Achsenkreuz mit Beschriftung */
+function axes(al){
+  if(al<.01)return;
+  const L=1.65;
+  [[V(L,0,0),'x'],[V(0,L,0),'y'],[V(0,0,L),'z']].forEach(c=>{
+    arrow3(V(0,0,0),c[0],'#5b6b90',1.2,al*.55);
+    const s=proj(c[0]);
+    ctx.globalAlpha=al*.8;ctx.fillStyle='#8fa2c8';
+    ctx.font='italic 15px Georgia';ctx.fillText(c[1],s.X+9,s.Y+5);ctx.globalAlpha=1;});
+  ctx.globalAlpha=al*.13;ctx.strokeStyle='#46557a';ctx.lineWidth=.8;
+  const E=1.4,G=7;
+  for(let i=0;i<=G;i++){const v=-E+2*E*i/G;
+    let p=proj(V(-E,v,0)),q=proj(V(E,v,0));
+    ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+    p=proj(V(v,-E,0));q=proj(V(v,E,0));
+    ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+
+/* Gebogenes Gitter (Bild 6) */
+function grid(t,al){
+  if(al<.01)return;
+  const E=1.35,N=10,R=36;
+  for(let i=0;i<=N;i++){const v=-E+2*E*i/N;
+    for(const sw of[0,1]){
+      ctx.beginPath();
+      for(let j=0;j<=R;j++){const u=-E+2*E*j/R;
+        const s=proj(warp(V(sw?v:u, sw?u:v, -0.85),t));
+        j?ctx.lineTo(s.X,s.Y):ctx.moveTo(s.X,s.Y);}
+      ctx.strokeStyle='rgba(255,209,102,'+(al*.22)+')';ctx.lineWidth=1;ctx.stroke();}}
+}
+
+/* ══════════ Render ══════════ */
+function draw(now){
+  const u=ease(clamp((now-t0)/DUR,0,1));
+  const a=S[prev],b=S[cur];
+  sceneA=lerp(a.A,b.A,u); sceneB=lerp(a.B,b.B,u);
+  ZOOM=lerp(a.Z,b.Z,u);   PANX=lerp(a.P,b.P,u);
+  const F=k=>lerp(a[k],b[k],u);
+  const fGh=F('ghost'),fHe=F('helix'),fRa=F('ray'),
+        fMa=F('mass'), fMo=F('move'), fFf=F('ffn'), fSt=F('stack');
+
+  ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
+
+  /* Temperatur fährt herunter, sobald Bild 4 läuft */
+  const tau=lerp(2.4,0.62,fMa);
+  const A=weights(tau);
+
+  /* Positionen: Embedding → ggf. Spirale → ggf. Schwerpunkt → ggf. Biegung */
+  const P=TOK.map((t,i)=>{
+    let p=mix(t.e,helixPt(i),fHe);
+    return p;});
+  let CEN=V(0,0,0);
+  A.w.forEach((wj,j)=>CEN=add(CEN,mul(P[j],wj)));
+  const PF=P.map((p,i)=>{
+    let q = (i===QI)? mix(p,CEN,fMo) : p;
+    return mix(q,warp(q,1),fFf);});
+  const CENf=mix(CEN,warp(CEN,1),fFf);
+
+  axes((1-fFf*.65)*(1-fSt*.45));
+  grid(fFf,fFf);
+
+  /* ── Bild 1: die zwei möglichen Bedeutungen ── */
+  if(fGh>.01){
+    [[MOEBEL,'Sitzbank','#5ad2ff'],[GELD,'Geldhaus','#ff6b8a']].forEach(g=>{
+      ball(g[0],9,g[2],fGh*.30);
+      ring(g[0],15,g[2],fGh*.45,1.2);
+      tag(g[0],g[1],g[2],fGh*.75,14,-12,13);});
+    /* Verbindungslinie: Bank sitzt genau in der Mitte */
+    line3(MOEBEL,GELD,'#3f4a66',1.1,fGh*.35,[4,5]);
+  }
+
+  /* ── Bild 2: Spirale + Winkelschritte ── */
+  if(fHe>.01){
+    ctx.globalAlpha=fHe*.32;ctx.strokeStyle='#5ad2ff';ctx.lineWidth=1.4;
+    ctx.beginPath();
+    for(let s=0;s<=200;s++){const i=-0.25+2.5*s/200;
+      const q=proj(V(Math.cos(DPHI*i)*RHEL,Math.sin(DPHI*i)*RHEL,(i-1)*0.52));
+      s?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);}
+    ctx.stroke();ctx.globalAlpha=1;
+    /* Zeiger: von der Achse zum Wort — immer 72° weiter */
+    TOK.forEach((t,i)=>{
+      const h=helixPt(i), ax=V(0,0,h.z);
+      arrow3(ax,h,'#5ad2ff',1.6,fHe*.65);
+      /* Kreisbogen vom vorigen Zeiger zum jetzigen */
+      if(i>0){
+        ctx.globalAlpha=fHe*.45;ctx.strokeStyle='#ffd166';ctx.lineWidth=1.8;
+        ctx.beginPath();
+        for(let s=0;s<=26;s++){
+          const ph=DPHI*(i-1)+DPHI*s/26, z=lerp(helixPt(i-1).z,h.z,s/26);
+          const q=proj(V(Math.cos(ph)*RHEL*1.04,Math.sin(ph)*RHEL*1.04,z));
+          s?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y);}
+        ctx.stroke();ctx.globalAlpha=1;
+        const mp=helixPt(i-0.5);
+        tag(mul(mp,1.30),'+72°','#ffd166',fHe*.85,0,0,13,true);}
+    });
+    /* Drehachse */
+    line3(V(0,0,-0.75),V(0,0,1.30),'#5b6b90',1,fHe*.30,[3,5]);
+  }
+
+  /* ── Bild 3+4: Suchstrahl und Lote ── */
+  if(fRa>.01){
+    const o=P[QI];
+    const tip=add(o,mul(RAY,1.95));
+    line3(add(o,mul(RAY,-1.95)),tip,'#ffd166',1.1,fRa*.22,[4,6]);
+    arrow3(o,tip,'#ffd166',2.4,fRa*.95);
+    tag(tip,'Suchstrahl','#ffd166',fRa*.85,10,-8,13,true);
+
+    /* Lot von jedem Wort auf den Strahl + Länge als dicker Balken */
+    TOK.forEach((t,j)=>{
+      if(j===QI)return;
+      const rel=sub3(P[j],o), pr=dot(rel,RAY);
+      const foot=add(o,mul(RAY,pr));
+      line3(P[j],foot,'#6d7ea8',1.0,fRa*.45,[3,4]);
+      const c = pr>0 ? '#5ad2ff' : '#ff6b8a';
+      const p0=proj(o),p1=proj(foot);
+      ctx.globalAlpha=fRa*.90;ctx.strokeStyle=c;ctx.lineWidth=4.2;
+      ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(p0.X,p0.Y);ctx.lineTo(p1.X,p1.Y);ctx.stroke();
+      ctx.lineCap='butt';ctx.globalAlpha=1;
+      /* rechter Winkel am Fußpunkt */
+      const f=proj(foot);
+      ctx.globalAlpha=fRa*.40;ctx.strokeStyle='#6d7ea8';ctx.lineWidth=1;
+      ctx.strokeRect(f.X-3,f.Y-3,6,6);ctx.globalAlpha=1;
+    });
+  }
+
+  /* ── Bild 4: die Anteile als Balken ── */
+  if(fMa>.01){
+    const BX=W-350, BY=H-100, BW=290, BH=20;
+    ctx.globalAlpha=fMa*.85;
+    ctx.strokeStyle='#3c4560';ctx.lineWidth=1;ctx.strokeRect(BX,BY,BW,BH);
+    let acc=0;
+    A.w.forEach((wj,j)=>{
+      const x0=BX+BW*acc, x1=BX+BW*(acc+wj); acc+=wj;
+      ctx.globalAlpha=fMa*.60;
+      ctx.fillStyle = j===QI ? '#ffd166' : (A.s[j]>0?'#5ad2ff':'#ff6b8a');
+      ctx.fillRect(x0,BY,x1-x0,BH);
+      ctx.globalAlpha=fMa*.9;ctx.strokeStyle='#0b0d12';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x1,BY);ctx.lineTo(x1,BY+BH);ctx.stroke();
+      if(wj>.09){
+        ctx.fillStyle='#0b0d12';ctx.font='600 12px Inter,sans-serif';
+        ctx.textAlign='center';
+        ctx.fillText(TOK[j].w,(x0+x1)/2,BY+14);
+        ctx.textAlign='left';}
+    });
+    ctx.globalAlpha=fMa*.65;ctx.fillStyle='#8892a8';
+    ctx.font='12px Inter,sans-serif';
+    ctx.fillText('zusammen immer 1',BX,BY-9);
+    ctx.textAlign='right';
+    ctx.fillText('Anteil',BX+BW,BY-9);ctx.textAlign='left';
+    ctx.globalAlpha=1;
+  }
+
+  /* ── Bild 5: Hebel zum Schwerpunkt ── */
+  if(fMo>.01){
+    A.w.forEach((wj,j)=>{
+      if(j===QI)return;
+      line3(P[j],CENf,'#ffd166',0.8+5.0*wj,fMo*(0.14+0.70*wj));
+    });
+    /* Schwerpunkt-Fadenkreuz */
+    const s=proj(CENf);
+    ctx.globalAlpha=fMo*.9;ctx.strokeStyle='#ffd166';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.arc(s.X,s.Y,6*s.k,0,TAU);ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(s.X-11*s.k,s.Y);ctx.lineTo(s.X+11*s.k,s.Y);
+    ctx.moveTo(s.X,s.Y-11*s.k);ctx.lineTo(s.X,s.Y+11*s.k);
+    ctx.stroke();ctx.globalAlpha=1;
+    /* der zurückgelegte Weg */
+    line3(P[QI],PF[QI],'#ffd166',1.4,fMo*.55,[4,5]);
+    /* Startposition als Geisterkugel */
+    ball(P[QI],5.0,'#8892a8',fMo*.30);
+  }
+
+  /* ── Wörter zeichnen, hinten zuerst ── */
+  TOK.map((t,i)=>({i,d:proj(PF[i]).d}))
+     .sort((p,q)=>p.d-q.d)
+     .forEach(o=>{
+    const i=o.i, t=TOK[i], isQ=(i===QI);
+    const wj = fMa>.01 ? A.w[i] : 1/3;
+    const R  = 6.0 + (fMa>.01 ? 30*(wj-1/3) : 0) + (isQ?2.0:0);
+    ball(PF[i], Math.max(4,R), t.col, .95);
+    tag(PF[i], t.w, isQ?'#ffe9b0':'#c3ccdd', .95,
+        12+R*.30, -R*.5-5, isQ?16:14, isQ);
+  });
+
+  requestAnimationFrame(draw);
+}
+
+text();requestAnimationFrame(draw);
+</script>
+</body>
+</html>

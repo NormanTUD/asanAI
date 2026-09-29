@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention ist Optimaler Transport — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+button.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1}
+.badge-out.warn{background:var(--amber-soft);color:var(--amber);border:1px solid #f0dcbc}
+.badge-out.bad{background:var(--rose-soft);color:var(--rose);border:1px solid #f2cdd9}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.eq{font-family:var(--mono);font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto;line-height:1.9}
+.eq .op{color:var(--teal);font-weight:700}
+.big-num{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:22px 0}
+.big-num .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 6px rgba(60,50,20,.03)}
+.big-num .c .v{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--teal);line-height:1.1}
+.big-num .c .v.amber{color:var(--amber)}
+.big-num .c .v.rose{color:var(--rose)}
+.big-num .c .v.violet{color:var(--violet)}
+.big-num .c .l{font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.4}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Softmax war <em>geraten</em>.<br>Jetzt wissen wir, warum sie so ist.</h1>
+  <p class="sub">Die Softmax-Attention in Sprach- und Bildmodellen wurde 2017 eingeführt — und sie funktionierte. Aber <b>warum</b> genau diese Form? Eine neue Arbeit zeigt: Softmax ist keine Erfindung. Sie ist die <b>eindeutige Lösung</b> eines einfachen Optimierungsproblems („Geh dorthin, wo es ähnlich ist — aber leg dich nicht fest"). Und noch überraschender: <b>Das Lernen im Netz ist heimlich Reinforcement Learning.</b></p>
+  <div class="chips">
+    <span class="chip">3 kleine Experimente</span>
+    <span class="chip">1 überraschende Gleichung</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Experiment: zwei Kräfte, die gegeneinander ziehen</h2>
+<p>Jedes Attention-Modell hat zwei Ziele, die sich streiten: <b>① Geh dorthin, wo die Ähnlichkeit am größten ist.</b> und <b>② Leg dich nicht fest, bleib breit.</b> Die Softmax-Verteilung ist genau der Kompromiss. Dreh den Query-Pfeil — schau, wie die Aufmerksamkeit „wandert". Ziehe die Temperatur — schau, wie breit oder schmal sie wird.</p>
+<div class="demo">
+  <h3>Was macht Attention eigentlich?</h3>
+  <p class="dsub">Fünf Schlüsselwörter im Kreis. Dreh den Query-Pfeil und ändere die Temperatur.</p>
+  <canvas id="cvAttn" width="400" height="300"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Richtung des Queries (Winkel)</span><b id="qAV">30°</b></div>
+    <input type="range" id="qA" min="0" max="360" value="30">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Stärke des Queries (Länge)</span><b id="qLV">50</b></div>
+    <input type="range" id="qL" min="0" max="100" value="50" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Temperatur τ (wie „offen"?)</span><b id="qTV">1.0</b></div>
+    <input type="range" id="qT" min="20" max="300" value="100" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Gewinner-Schlüssel</div><div class="v" id="aWin">—</div></div>
+    <div class="box amber"><div class="k">Entropie (Unentschlossenheit)</div><div class="v" id="aH">—</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Der Punkt:</b> Kleine Temperatur = „geh dorthin, wo es ähnlich ist" (schmal, fast eine Antwort). Große Temperatur = „bleib breit" (nahezu gleichmäßig). <b>Softmax ist nicht gewählt — sie ist erzwungen</b> von genau diesem Abwägen plus der Regel „die Anteile müssen 1 ergeben".
+</div>
+
+<h2><span class="n">2</span>Experiment: warum die √d_k-Temperierung?</h2>
+<p>Ein berühmtes Detail: Man teilt die Ähnlichkeits-Scores durch <b>√d_k</b>. Warum? Wenn die Komponenten der Vektoren unabhängig und gleich stark sind, hat der Score die <b>Varianz d_k</b>. Ohne zu teilen wird die Softmax für große d_k <em>gesättigt</em> — sie kollabiert zu „eine Antwort, sicher 100 %", und die Gradienten verschwinden. Durch <b>÷√d_k</b> wird die Varianz wieder 1 — die Verteilung bleibt formbar.</p>
+<div class="demo">
+  <h3>Ohne Skalierung vs. mit ÷√d_k</h3>
+  <p class="dsub">Ziehe d_k hoch und beobachte, was ohne Skalierung passiert — und wie ÷√d_k es rettet.</p>
+  <canvas id="cvSqrt" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Dimension d_k der Vektoren</span><b id="dkV">64</b></div>
+    <input type="range" id="dk" min="2" max="512" value="64">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Varianz der Scores</div><div class="v" id="vVar">—</div></div>
+    <div class="box amber"><div class="k">Ohne Skalierung</div><div class="v" id="vNo">—</div></div>
+    <div class="box rose"><div class="k">Mit ÷√d_k</div><div class="v" id="vYes">—</div></div>
+  </div>
+</div>
+
+<h2><span class="n">3</span>Experiment: Backprop ist heimlich Reinforcement Learning</h2>
+<p>Noch überraschender: Der Rückwärtspass, mit dem das Modell lernt, ist <b>exakt</b> das Policy-Gradient-Update aus dem Reinforcement Learning (REINFORCE) — <em>mit</em> einem sogenannten Baseline-Trick. Und dieser Trick kommt <b>geschenkt</b>: Er ist eine reine geometrische Folge davon, dass die Anteile 1 ergeben müssen. Klicke „Schritt" und sieh, wie die Strategie sich auf den besten Schlüssel einpendelt.</p>
+<div class="demo">
+  <h3>Der Attention-Bandit</h3>
+  <p class="dsub">Fünf Schlüssel = fünf „Arme". Jeder hat einen wahren Nutzen u. Die Strategie p lernt, gut belohnte Schlüssel häufiger zu wählen.</p>
+  <canvas id="cvBandit" width="400" height="260"></canvas>
+  <div class="btnrow">
+    <button id="bStep">▶ Schritt</button>
+    <button id="bAuto">▶▶ Auto</button>
+    <button id="bReset">↺ Reset</button>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Schritt</div><div class="v" id="bN">0</div></div>
+    <div class="box amber"><div class="k">Erwarteter Nutzen E[u]</div><div class="v" id="bEU">—</div></div>
+    <div class="box rose"><div class="k">Bester Schlüssel</div><div class="v" id="bBest">1</div></div>
+  </div>
+</div>
+
+<h2><span class="n">4</span>Die große Idee: drei Felder, eine Matrix</h2>
+<p>Das Schönste am Paper: Drei scheinbar unzusammenhängende Bereiche beschreiben <b>denselben Gegenstand</b> — die Matrix <code>(1/τ)(diag(p) − ppᵀ)</code>:</p>
+<ul>
+  <li><b>Optimaler Transport:</b> sie ist die Krümmung des „dualen Potentials" (Log-Sum-Exp).</li>
+  <li><b>Informationsgeometrie:</b> sie ist (bis auf einen Faktor) die <b>Fisher-Matrix</b> — sie misst, wie unterscheidbar zwei Antworten sind.</li>
+  <li><b>Reinforcement Learning:</b> sie ist das „Getriebe", das das Lern-Update dämpft, sobald die Strategie sich schon entschieden hat.</li>
+</ul>
+<div class="note violet">
+  <b>Der eine Satz:</b> Der Vorwärtspass macht <em>optimale Inferenz</em> (Softmax = erzwungene Lösung); der Rückwärtspass macht ein <em>rationales, mannigfaltigkeitsbewusstes</em> Lern-Update. Und beides folgt aus derselben Geometrie.
+</div>
+
+<h2><span class="n">5</span>Die Grenzen (honesty corner)</h2>
+<ul>
+  <li><b>Kein neuer Mechanismus:</b> SDPA bleibt bit-für-bit identisch. Das Paper <em>erklärt</em> die Softmax, es <em>erfindet</em> nichts Neues.</li>
+  <li><b>Keine Experimente:</b> es ist eine rein theoretische Arbeit.</li>
+  <li><b>Kein Sinkhorn:</b> Weil nur <em>eine</em> Randbedingung gilt (die Zeilen müssen 1 ergeben, die Spalten sind frei), gibt es eine geschlossene Lösung — kein iteratives Verfahren nötig.</li>
+  <li><b>Die Entropie-Verbindung ist klassisch</b> (Jaynes 1957). Neu sind die Einbettung in den einseitigen Transport und die Brücke zum Policy-Gradient.</li>
+</ul>
+
+<h2><span class="n">6</span>Woher das stammt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>Elon Litman (Stanford, 2025):</b> „Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport", <a href="https://arxiv.org/abs/2508.08369">arXiv:2508.08369</a></p>
+  <p style="font-size:14px;margin-bottom:4px">SDPA stammt von <b>Vaswani et al. (2017)</b>, „Attention Is All You Need". Optimaler Transport geht zurück auf <b>Monge (1781)</b> und <b>Kantorovich (1942)</b>; die Max-Entropie/Gibbs-Verbindung ist <b>Jaynes (1957)</b>.</p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Die Schlüssel sind hier 2D-Richtungen im Kreis (im echten Modell sind es hohe Vektoren). Die Bandit-Nutzen sind zufällig festgelegt. Alle Gleichgewichte werden live und exakt nach den Formeln des Papers berechnet.</p>
+</div>
+
+<footer>
+  Eine einfache interaktive Erklärung ohne Formeln. Original: Litman (2025), arXiv:2508.08369.<br>
+  Alles läuft lokal im Browser — keine Daten verlassen diese Seite. · Volle Version: <a href="attn_as_optimal_transport.html">attn_as_optimal_transport.html</a> · Einfache Version: <a href="attn_as_optimal_transport_simple.html">…_simple.html</a>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function softmax(a){var m=Math.max.apply(null,a);var e=a.map(function(x){return Math.exp(x-m);});var s=e.reduce(function(x,y){return x+y;},0);return e.map(function(x){return x/s;});}
+  function H(p){var h=0;p.forEach(function(x){if(x>1e-12)h-=x*Math.log(x);});return h;}
+  function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v);}
+
+  // ---------- Demo 1: two forces ----------
+  var KEYS=[{n:'Katze',a:0.35},{n:'Tier',a:1.35},{n:'läuft',a:2.55},{n:'blau',a:4.10},{n:'Haus',a:5.30}];
+  var c1=$('cvAttn').getContext('2d');var W1=400,H1=300;
+  function drawAttn(){
+    var qA=+($('qA').value)*Math.PI/180, qL=+($('qL').value)/100, tau=+($('qT').value)/100;
+    $('qAV').textContent=Math.round(+$('qA').value)+'°';
+    $('qLV').textContent=Math.round(+$('qL').value);
+    $('qTV').textContent=tau.toFixed(1);
+    c1.clearRect(0,0,W1,H1);
+    c1.fillStyle='#f5f0e6';c1.fillRect(0,0,W1,H1);
+    var cx=W1/2, cy=130, R=78;
+    var scores=KEYS.map(function(k){return qL*Math.cos(qA-k.a);});
+    var alpha=softmax(scores.map(function(s){return s/tau;}));
+    var maxA=Math.max.apply(null,alpha);
+    KEYS.forEach(function(k,i){
+      var kx=cx+Math.cos(k.a)*R, ky=cy-Math.sin(k.a)*R;
+      var halo=8+alpha[i]*46;
+      c1.beginPath();c1.arc(kx,ky,halo,0,Math.PI*2);
+      c1.fillStyle='rgba(15,118,110,'+(0.06+alpha[i]*0.5)+')';c1.fill();
+      c1.beginPath();c1.arc(kx,ky,7,0,Math.PI*2);c1.fillStyle='#0f766e';c1.fill();
+      c1.fillStyle='#2b2e3a';c1.font='600 11px system-ui';c1.textAlign='center';
+      c1.fillText(k.n, kx+Math.cos(k.a)*20, ky-Math.sin(k.a)*20+4);
+    });
+    var qlen=20+qL*55;
+    c1.strokeStyle='#be185d';c1.lineWidth=3;
+    c1.beginPath();c1.moveTo(cx,cy);c1.lineTo(cx+Math.cos(qA)*qlen,cy-Math.sin(qA)*qlen);c1.stroke();
+    c1.beginPath();c1.arc(cx+Math.cos(qA)*qlen,cy-Math.sin(qA)*qlen,5,0,Math.PI*2);c1.fillStyle='#be185d';c1.fill();
+    // bars at bottom
+    var by=232, bh=52, bw=(W1-40)/KEYS.length;
+    c1.textAlign='center';
+    KEYS.forEach(function(k,i){
+      var x=20+i*bw+bw/2;
+      var bhv=alpha[i]/maxA*bh;
+      c1.fillStyle='rgba(15,118,110,.25)';
+      c1.fillRect(x-bw*0.32,by-bh,bw*0.64,bh);
+      c1.fillStyle='#0f766e';
+      c1.fillRect(x-bw*0.32,by-bhv,bw*0.64,bhv);
+      c1.fillStyle='#5c6272';c1.font='10px system-ui';
+      c1.fillText(k.n,x,by+14);
+      c1.fillStyle='#0f766e';c1.font='600 10px monospace';
+      c1.fillText(Math.round(alpha[i]*100)+'%',x,by-bhv-4);
+    });
+    var win=KEYS[scores.indexOf(Math.max.apply(null,scores))];
+    var h=H(alpha), hmax=Math.log(KEYS.length);
+    $('aWin').textContent=win.n;
+    $('aH').textContent=h.toFixed(2)+' / '+hmax.toFixed(2);
+  }
+  ['qA','qL','qT'].forEach(function(id){$(id).addEventListener('input',drawAttn);});
+  drawAttn();
+
+  // ---------- Demo 2: sqrt dk ----------
+  var z=(function(){var r=rng32(42);var arr=[];for(var i=0;i<16;i++)arr.push(gauss(r));return arr;})();
+  var c2=$('cvSqrt').getContext('2d');var W2=400,H2=260;
+  function drawSqrt(){
+    var dk=+($('dk').value);
+    $('dkV').textContent=dk;
+    var score=z.map(function(v){return Math.sqrt(dk)*v;});
+    var mean=score.reduce(function(a,b){return a+b;},0)/score.length;
+    var varr=score.reduce(function(a,b){return a+(b-mean)*(b-mean);},0)/score.length;
+    var no=softmax(score.map(function(s){return s/1;}));
+    var yes=softmax(score.map(function(s){return s/Math.sqrt(dk);}));
+    $('vVar').textContent='≈ '+Math.round(varr)+' (soll ≈ '+dk+')';
+    var noMax=Math.max.apply(null,no), yesMax=Math.max.apply(null,yes);
+    $('vNo').textContent=noMax>0.99?'gesättigt!':noMax>0.7?'knapp':'ok';
+    $('vYes').textContent=yesMax>0.99?'gesättigt':yesMax>0.7?'knapp':'formbar ✓';
+    c2.clearRect(0,0,W2,H2);
+    c2.fillStyle='#f5f0e6';c2.fillRect(0,0,W2,H2);
+    function barRow(arr,y0,label,col){
+      c2.fillStyle='#5c6272';c2.font='11px system-ui';c2.textAlign='left';
+      c2.fillText(label,14,y0-6);
+      var bw=(W2-30)/arr.length;
+      arr.forEach(function(v,i){
+        var x=16+i*bw;
+        c2.fillStyle='rgba(0,0,0,.06)';c2.fillRect(x,y0-60,bw*0.7,60);
+        c2.fillStyle=col;c2.fillRect(x,y0-60*v,bw*0.7,60*v);
+      });
+    }
+    barRow(no,110,'Ohne Skalierung (÷1)','#be185d');
+    barRow(yes,210,'Mit ÷√d_k','#0f766e');
+    c2.strokeStyle='#e7e0d0';c2.beginPath();c2.moveTo(14,110);c2.lineTo(W2-14,110);c2.stroke();
+    c2.beginPath();c2.moveTo(14,210);c2.lineTo(W2-14,210);c2.stroke();
+  }
+  $('dk').addEventListener('input',drawSqrt);
+  drawSqrt();
+
+  // ---------- Demo 3: bandit ----------
+  var S0=[0.2,0.0,-0.1,0.1,0.0], U=[1.4,-0.6,0.8,-1.1,0.2], ETA=0.6;
+  var s=S0.slice(), nSteps=0, autoTimer=null;
+  var c3=$('cvBandit').getContext('2d');var W3=400,H3=260;
+  function banditState(){
+    var p=softmax(s);
+    var eu=p.reduce(function(a,b,i){return a+b*U[i];},0);
+    var A=U.map(function(u){return u-eu;});
+    return {p:p,eu:eu,A:A};
+  }
+  function step(){
+    var st=banditState();
+    s=s.map(function(v,i){return v+ETA*st.p[i]*st.A[i];});
+    nSteps++;
+    drawBandit();
+  }
+  function drawBandit(){
+    var st=banditState();
+    $('bN').textContent=nSteps;
+    $('bEU').textContent=st.eu.toFixed(2);
+    var bestU=U.indexOf(Math.max.apply(null,U));
+    $('bBest').textContent=(bestU+1);
+    c3.clearRect(0,0,W3,H3);
+    c3.fillStyle='#f5f0e6';c3.fillRect(0,0,W3,H3);
+    var bw=(W3-40)/U.length;
+    function row(arr,y0,label,col,scale){
+      c3.fillStyle='#5c6272';c3.font='11px system-ui';c3.textAlign='left';
+      c3.fillText(label,14,y0-4);
+      var maxv=Math.max.apply(null,arr.map(Math.abs))||1;
+      arr.forEach(function(v,i){
+        var x=20+i*bw+bw/2;
+        var hgt=(v/maxv)*(y0*0.5);
+        c3.fillStyle=col;c3.globalAlpha=0.85;
+        if(v>=0)c3.fillRect(x-bw*0.3,y0-hgt,bw*0.6,hgt);
+        else c3.fillRect(x-bw*0.3,y0,bw*0.6,-hgt);
+        c3.globalAlpha=1;
+      });
+      c3.strokeStyle='#e7e0d0';c3.beginPath();c3.moveTo(14,y0);c3.lineTo(W3-14,y0);c3.stroke();
+    }
+    row(st.p,80,'Strategie p','#0f766e');
+    row(U,150,'Nutzen u','#b45309');
+    row(st.A,220,'Vorteil A','#6d28d9');
+  }
+  $('bStep').addEventListener('click',step);
+  $('bReset').addEventListener('click',function(){s=S0.slice();nSteps=0;if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('bAuto').classList.remove('on');}drawBandit();});
+  $('bAuto').addEventListener('click',function(){
+    if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('bAuto').classList.remove('on');}
+    else{autoTimer=setInterval(step,180);$('bAuto').classList.add('on');}
+  });
+  drawBandit();
+})();
+</script>
+</body>
+</html>
