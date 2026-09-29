@@ -190,58 +190,60 @@ function incl($headline, $base_name) {
 	include($php_file);
 }
 
-function load_base_js () {
-	js("temml.min");
-	js("bpe");
+function load_base_js ($defer = false) {
+	js("temml.min", null, $defer);
+	js("bpe", null, $defer);
 	css("Temml-Local.min");
-	js("start");
-	js("effects");
+	js("start", null, $defer);
+	js("effects", null, $defer);
 	css("prism-tomorrow.min.css");
 	css("style");
 	print_font_override();
-	js("echarts.min");
-	js("echarts-gl.min.js");
-	js("prism.min");
-	js("prism-python.min");
-	js("prism-json.min");
-	js("sidenotes");
-	js("literature");
-	js("citation_graph");
-	js("jquery-3.7.1.min");
-	js("plotly-2.24.1.min");
-	js("tf.min");
-	js("marked.min");
-	js("toc");
-	js("fcnn_visualization");
-	js("init");
-	js("cluster");
-	js("polish");
-	js("layout_guardrail");
-	js("math_guardrail");
-	js("typography_fix");
-	js("helper");
-	js("master_vis");
-	js("loader");
-	js("three.min");
-	js("search");
-	js("topics");
-	js("keypoint");
-	js("progress_tracker");
-	js("organic-network");
+	js("echarts.min", null, $defer);
+	js("echarts-gl.min.js", null, $defer);
+	js("prism.min", null, $defer);
+	js("prism-python.min", null, $defer);
+	js("prism-json.min", null, $defer);
+	js("sidenotes", null, $defer);
+	js("literature", null, $defer);
+	js("citation_graph", null, $defer);
+	js("jquery-3.7.1.min", null, $defer);
+	js("plotly-2.24.1.min", null, $defer);
+	js("tf.min", null, $defer);
+	js("marked.min", null, $defer);
+	js("toc", null, $defer);
+	js("fcnn_visualization", null, $defer);
+	js("init", null, $defer);
+	js("cluster", null, $defer);
+	js("polish", null, $defer);
+	js("layout_guardrail", null, $defer);
+	js("math_guardrail", null, $defer);
+	js("typography_fix", null, $defer);
+	js("helper", null, $defer);
+	js("master_vis", null, $defer);
+	js("loader", null, $defer);
+	js("three.min", null, $defer);
+	js("search", null, $defer);
+	js("topics", null, $defer);
+	js("keypoint", null, $defer);
+	js("progress_tracker", null, $defer);
+	js("organic-network", null, $defer);
 
 	$files = glob(__DIR__ . "/modules/*.js");
 
 	if ($files) {
 		foreach ($files as $file) {
 			$name = basename($file, ".js");
-			js("modules/$name");
+			js("modules/$name", null, $defer);
 		}
 	}
 ?>
 	<script>
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
-		window.addEventListener('load', sendHeight);
-		window.addEventListener('resize', sendHeight);
+		// Wrappers (not bare references): when load_base_js(true) defers the
+		// base scripts, sendHeight/loader_fn do not exist yet at registration.
+		window.addEventListener('load', function () { sendHeight(); });
+		window.addEventListener('resize', function () { sendHeight(); });
 
 		// Coordination flags
 		let _modulesLoaded = false;
@@ -311,7 +313,7 @@ function load_base_js () {
 			window.dispatchEvent(new CustomEvent('blogPostLoadComplete'));
 		}
 
-		window.addEventListener('DOMContentLoaded', loader_fn);
+		window.addEventListener('DOMContentLoaded', function () { loader_fn(); });
 
 		/* CRITICAL: Sidenote extraction must happen BEFORE init.js's
 		   window.onload fires its renderMarkdown(). If marked.js runs
@@ -357,7 +359,7 @@ function load_base_js () {
 					});
 					ro.observe(document.body);
 				} else {
-					setInterval(sendHeight, 1000);
+					setInterval(function () { sendHeight(); }, 1000);
 				}
 			};
 
@@ -856,5 +858,43 @@ function render_constellation(): void {
 	// self-sizes to the .course-hero and self-fades when scrolled past.
 	echo '<canvas class="organic-network" aria-hidden="true"></canvas>';
 	js("organic-network");
+}
+
+/* Server-rendered boot-screen title: paints with the loader on first
+   paint — no JS required — using the same .intro-* classes/animation
+   as modules/intro.js (which adopts it instead of rebuilding). The
+   per-letter delays mirror intro.js (li*0.011 + wi*0.045) plus a base
+   offset that gives the preloaded webfont a moment to land. */
+function render_loader_title(string $headline, string $subtitle, bool $isDark): void {
+	$warm      = $isDark ? '233,170,96' : '190,120,50';
+	$glow      = $isDark ? 'rgba(233,170,96,0.20)' : 'rgba(150,110,66,0.28)';
+	$ruleColor = $isDark ? 'rgba(233,170,96,0.4)' : 'rgba(150,110,66,0.38)';
+	$subColor  = $isDark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
+	$baseDelay = 0.35;
+	$words     = explode(' ', $headline);
+	$head      = '';
+	$li        = 0;
+	foreach ($words as $wi => $word) {
+		$letters = '';
+		foreach (str_split($word) as $ch) {
+			$delay   = $baseDelay + $li * 0.011 + $wi * 0.045;
+			$letters .= '<span class="intro-letter" style="animation-delay:'
+				. number_format($delay, 3, '.', '') . 's">'
+				. htmlspecialchars($ch, ENT_QUOTES) . '</span>';
+			$li++;
+		}
+		$head .= '<span class="intro-word">' . $letters . '</span>'
+			. ($wi < count($words) - 1 ? ' ' : '');
+	}
+	echo '<div class="intro-title is-ready" aria-hidden="true" '
+		. 'style="--intro-glow:' . $glow . ';--intro-warm-rgb:' . $warm . '">'
+		. '<span class="intro-head" data-text="' . htmlspecialchars($headline, ENT_QUOTES) . '">'
+		. $head
+		. '</span>'
+		. '<span class="intro-rule" style="background:' . $ruleColor . '"></span>'
+		. '<span class="intro-sub-row">'
+		. '<span class="intro-sub" style="color:' . $subColor . '">'
+		. htmlspecialchars($subtitle, ENT_QUOTES)
+		. '</span></span></div>';
 }
 ?>

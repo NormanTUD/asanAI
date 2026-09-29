@@ -65,38 +65,49 @@
 			loader.style.setProperty('--intro-warm-rgb', warm);
 
 			var status = document.getElementById('loader-status');
-			var title = document.createElement('div');
-			title.className = 'intro-title';
-			title.setAttribute('aria-hidden', 'true');
+			// index.php ships the title as static HTML (render_loader_title)
+			// so it paints on first frame without waiting for this script.
+			// Adopt it: only the JS-only bits (spinner, subtitle override)
+			// are still added here.
+			var title = loader.querySelector('.intro-title');
+			if (!title) {
+				title = document.createElement('div');
+				title.className = 'intro-title';
+				title.setAttribute('aria-hidden', 'true');
 
-			var head = document.createElement('span');
-			head.className = 'intro-head';
-			var HEADLINE = 'From Big Bang to ChatGPT';
-			// Plain-text twin for the glow pseudo-element (see style.css).
-			head.setAttribute('data-text', HEADLINE);
-			var li = 0;
-			HEADLINE.split(' ').forEach(function (word, wi) {
-				var w = document.createElement('span');
-				w.className = 'intro-word';
-				word.split('').forEach(function (ch) {
-					var s = document.createElement('span');
-					s.className = 'intro-letter';
-					s.textContent = ch;
-					// Per-letter stagger with a short pause at word
-					// boundaries — the line composes itself instead of
-					// cascading in one run.
-					s.style.animationDelay = (li * 0.011 + wi * 0.045).toFixed(3) + 's';
-					w.appendChild(s);
-					li++;
+				var head = document.createElement('span');
+				head.className = 'intro-head';
+				var HEADLINE = 'From Big Bang to ChatGPT';
+				// Plain-text twin for the glow pseudo-element (see style.css).
+				head.setAttribute('data-text', HEADLINE);
+				var li = 0;
+				HEADLINE.split(' ').forEach(function (word, wi) {
+					var w = document.createElement('span');
+					w.className = 'intro-word';
+					word.split('').forEach(function (ch) {
+						var s = document.createElement('span');
+						s.className = 'intro-letter';
+						s.textContent = ch;
+						// Per-letter stagger with a short pause at word
+						// boundaries — the line composes itself instead of
+						// cascading in one run.
+						s.style.animationDelay = (li * 0.011 + wi * 0.045).toFixed(3) + 's';
+						w.appendChild(s);
+						li++;
+					});
+					head.appendChild(w);
+					head.appendChild(document.createTextNode(' '));
 				});
-				head.appendChild(w);
-				head.appendChild(document.createTextNode(' '));
-			});
 
-			var rule = document.createElement('span');
-			rule.className = 'intro-rule';
-			rule.setAttribute('aria-hidden', 'true');
-			rule.style.background = dark ? 'rgba(233,170,96,0.4)' : 'rgba(150,110,66,0.38)';
+				var rule = document.createElement('span');
+				rule.className = 'intro-rule';
+				rule.setAttribute('aria-hidden', 'true');
+				rule.style.background = dark ? 'rgba(233,170,96,0.4)' : 'rgba(150,110,66,0.38)';
+
+				title.appendChild(head);
+				title.appendChild(rule);
+				loader.insertBefore(title, status || loader.lastChild);
+			}
 
 			// Second line: the lesson's own title from the course data;
 			// the tagline is the fallback (index / intro / non-course pages).
@@ -107,10 +118,20 @@
 				subText = nav.modules[nav.current].title;
 			}
 
-			var sub = document.createElement('span');
-			sub.className = 'intro-sub';
-			sub.textContent = subText;
-			sub.style.color = dark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
+			var subRow = title.querySelector('.intro-sub-row');
+			if (!subRow) {
+				subRow = document.createElement('span');
+				subRow.className = 'intro-sub-row';
+				title.appendChild(subRow);
+			}
+			var sub = subRow.querySelector('.intro-sub');
+			if (!sub) {
+				sub = document.createElement('span');
+				sub.className = 'intro-sub';
+				sub.style.color = dark ? 'rgba(214,176,124,0.85)' : 'rgba(150,110,66,0.88)';
+				subRow.appendChild(sub);
+			}
+			if (sub.textContent !== subText) sub.textContent = subText;
 
 			var spinner = document.createElement('span');
 			spinner.className = 'intro-spinner';
@@ -118,16 +139,7 @@
 			// Opacity is choreographed in JS (see armReady/settleIfDone) so
 			// the spinner joins the subtitle on exactly the same beat.
 			spinner.style.opacity = '0';
-
-			var subRow = document.createElement('span');
-			subRow.className = 'intro-sub-row';
-			subRow.appendChild(spinner);
-			subRow.appendChild(sub);
-
-			title.appendChild(head);
-			title.appendChild(rule);
-			title.appendChild(subRow);
-			loader.insertBefore(title, status || loader.lastChild);
+			subRow.insertBefore(spinner, subRow.firstChild);
 
 			// Reveal the type only once the serif is loaded, so it appears in
 			// one clean, animated beat instead of a font-swap flicker.
