@@ -98,7 +98,7 @@ $$
 
 Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.
 
-Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, (\cite[Sakurai et al., 2024]{sakurai2024skrr})).
+Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
 </div>
 
 <div class="md">
@@ -117,7 +117,7 @@ The trade-off: latency. (\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-mi
 See the AI Agents chapter for the basics. Frontier developments:
 
 * **\cite[Multi-Agent]{du2023multiagent}** (\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
-* **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, (\cite[Patil et al., 2023]{patil2023gorilla})): models learn to call thousands of APIs.
+* **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \cite[Patil et al., 2023]{patil2023gorilla}): models learn to call thousands of APIs.
 * **Computer use agents**: Anthropic's Claude can interact with a real desktop. OpenAI's Operator. Google Jarvis (rumored). All powered by screenshot→action Transformers.
 * **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering. Still unreliable but improving.
 * **Hierarchical agents**: a planner agent delegates to specialist sub-agents. Used in many production systems.

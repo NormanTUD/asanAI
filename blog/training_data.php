@@ -168,7 +168,7 @@ A program is reasoning with the working memory made visible: variables as state,
 
 ### Why this becomes everything else
 
-Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\cite[Gao et al., 2022]{gao2022pal}). Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions (\cite[Wang et al., 2024]{wang2024codeact})) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
+Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\cite[Gao et al., 2022]{gao2022pal}). Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
 
 The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\cite[Guo et al., 2024]{guo2024deepseekcoder}).
 

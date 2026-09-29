@@ -304,7 +304,7 @@ This is the **only** place in the network where one token's content enters anoth
 
 So: no, the network does not "know about" other tokens in the FFN or the Linear layers. It knows about them only because attention already *copied* their information into the vector. After $N$ such mix→transform cycles, the final row (position $t{-}1$) carries a representation progressively enriched with information from the entire sequence — all computed in parallel, no recurrence (\cite[Vaswani et al., 2017]{vaswani2017attention}).
 
-**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers (\cite[Radford et al., 2019]{gpt2})), 2 tokens, batch 1:
+**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:
 
 | Step | Shape | Role of $t=2$ |
 |---|---|---|

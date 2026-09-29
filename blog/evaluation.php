@@ -161,13 +161,13 @@ Evidence of contamination:
 
 ### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})-Pro's harder subset).
+* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})).
 * **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (MIT). These cost money and are not public.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
 
-**Frontier math problems** (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
+**FrontierMATH** problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
 </div>
 
 <div class="md">

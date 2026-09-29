@@ -133,7 +133,7 @@ Pills cannot be pregnant and women cannot be carcinogenic, so the selectional re
 
 #### From 273 items to 44,000
 
-The first public collection was hand-written — over 270 expert-crafted schemas compiled by Ernest Davis (for the full dataset history see (\cite[Kocijan et al., 2020]{kocijan2020review})). The competition's arc is a clean one:
+The first public collection was hand-written — over 270 expert-crafted schemas compiled by Ernest Davis (for the full dataset history see \cite[Kocijan et al., 2020]{kocijan2020review}). The competition's arc is a clean one:
 
 * **2016.** The first formal challenge, run at IJCAI-16 on *literary* pronoun-disambiguation problems (not the constructed pairs). The best system, from the University of Science and Technology of China, reached **58%**; humans do 92–96%. No prize was awarded.
 * **2017.** A neural model that explicitly *acquires* cause-effect knowledge reached ~70% on a 70-item subset.

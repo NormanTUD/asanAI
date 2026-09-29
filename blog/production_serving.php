@@ -120,9 +120,9 @@ Reduce precision of weights and/or activations:
 | int8 (weights only) | 8 | 70 GB | ~0.5% on benchmarks |
 | int4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |
 | int3 / int2 (QuIP, QuIP#) | 2–3 | 17–23 GB | 3–10% |
-| 1-bit (BitNet (\cite[Ma et al., 2024]{ma2024bitnet})) | 1.58 | 13 GB | Comparable to fp16 at scale |
+| 1-bit (BitNet \cite[Ma et al., 2024]{ma2024bitnet}) | 1.58 | 13 GB | Comparable to fp16 at scale |
 
-Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads. AWQ (Activation-aware Weight Quantization (\cite[Lin et al., 2023]{lin2023awq})) and GPTQ (\cite[Frantar et al., 2023]{frantar2022gptq}) are the standard tools. The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.
+Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads. AWQ (Activation-aware Weight Quantization \cite[Lin et al., 2023]{lin2023awq}) and GPTQ (\cite[Frantar et al., 2023]{frantar2022gptq}) are the standard tools. The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.
 
 For activations, **fp8** (H100 native) gives 2× throughput with minimal quality loss. **INT4 KV-cache** is a separate axis, giving up to 4× KV memory reduction.
 </div>

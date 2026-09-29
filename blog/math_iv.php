@@ -65,7 +65,7 @@ math: 90
 
 In <a href="math_ii">Math II</a> you met **linear maps** $f(\mathbf{x}) = M\mathbf{x}$. They rotate, scale, shear, mirror — but they must send the origin to itself: $f(\mathbf{0}) = \mathbf{0}$. The origin is glued in place.
 
-Most useful "movements" of data need to move the origin too. The fix is the **affine transformation** — a linear part with a translation added, the same "linear move + translation" split that Lang proves for the rigid motions of the plane (every isometry that moves every point is a rotation, or a rotation followed by a mirror, composed with a translation (\cite[Lang, Basic Mathematics, Ch. 6, p. 165]{lang2005basicmath})):
+Most useful "movements" of data need to move the origin too. The fix is the **affine transformation** — a linear part with a translation added, the same "linear move + translation" split that Lang proves for the rigid motions of the plane (every isometry that moves every point is a rotation, or a rotation followed by a mirror, composed with a translation \cite[Lang, Basic Mathematics, Ch. 6, p. 165]{lang2005basicmath}):
 
 $$
 f(\mathbf{x}) = \underbrace{M\mathbf{x}}_{\text{linear}} + \underbrace{\mathbf{t}}_{\text{translation}}
@@ -417,7 +417,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 <div class="md" data-mathlevel="55" data-optionaltitle="Group Structure: The Algebra of Symmetry">
 ## Group Structure: The Algebra of Symmetry
 
-The affine maps above include the rotations — and all the rotations of a plane together form a **group** (composing two rotations yields another rotation; Lang finds this same "behaves like a multiplication" structure in the geometric transformations he composes (\cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath})), one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
+The affine maps above include the rotations — and all the rotations of a plane together form a **group** (composing two rotations yields another rotation; Lang finds this same "behaves like a multiplication" structure in the geometric transformations he composes \cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}), one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
 
 | Axiom | Statement | Example in $\mathbb{Z}_{12}$ |
 |---|---|---|

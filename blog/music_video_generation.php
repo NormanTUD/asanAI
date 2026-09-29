@@ -231,11 +231,11 @@ MusicLM generates high-fidelity music from text descriptions such as "a calming 
 <div class="md">
 ### Family B: sculpt it out of noise (diffusion)
 
-The other family does not write tokens in order. It **denoises**. Start from pure static, and learn to push it — a little at a time — into a coherent signal, the way an image emerges from ink in water. (The full forward/reverse math is the **Diffusion Models** chapter (\cite[Ho et al., 2020]{ho2020ddpm}); here is how it is applied to sound and video.)
+The other family does not write tokens in order. It **denoises**. Start from pure static, and learn to push it — a little at a time — into a coherent signal, the way an image emerges from ink in water. (The full forward/reverse math is the **Diffusion Models** chapter \cite[Ho et al., 2020]{ho2020ddpm}; here is how it is applied to sound and video.)
 
 #### The latent space and the denoiser
 
-You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, (\cite[Kingma & Welling, 2013]{kingma2014vae})) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. This is the same "space of coherent relations" from the vocabulary section, seen from the other end: the codec has folded the raw signal into the small set of coordinates the model actually reasons over. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears (\cite[Rombach et al., 2022]{rombach2022ldm}).
+You do not denoise 2.6 million waveform numbers or a million video pixels directly — it is too expensive. First a **variational autoencoder** (a VAE, \cite[Kingma & Welling, 2013]{kingma2014vae}) compresses the signal into a small **latent** space that keeps the important content and throws away the predictable detail. This is the same "space of coherent relations" from the vocabulary section, seen from the other end: the codec has folded the raw signal into the small set of coordinates the model actually reasons over. The diffusion process then runs in this compact space: a network is trained to predict *the noise that was added* at each of many steps, and at generation time you start from random latent noise and denoise it step by step until a clean, novel clip or track appears (\cite[Rombach et al., 2022]{rombach2022ldm}).
 
 #### Classifier-free guidance: obeying the prompt
 
