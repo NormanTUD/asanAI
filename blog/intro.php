@@ -33,13 +33,11 @@ Most discussions of Artificial Intelligence start with what the systems can do t
 
 ## A Synthesis of Science and History
 
-To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields:
+To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. The [Brief History of AI](history.php) traces the direct intellectual lineage; [The Untold History of AI](untold_history.php) collects the displaced prerequisites that made all of it physically possible. The most consequential sidetracks:
 
 * **Astronomy and Precision:** Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.
 * **The Technical and The Philosophical:** We do not just look at code. Concepts of logic, language, and "Geist" migrate from philosophical debates into billions of trainable parameters — and we follow them the whole way.
 * **AI in Society:** We treat the technology as a cultural mirror, looking at how these systems meet human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
-
-The span is correspondingly wide: the journey begins at the **Big Bang** and covers everything in between that made AI possible — the forging of the elements, the first cells, the first numbers, the first looms, the first chips. Two lessons give the overview: [Brief History of AI](history.php) follows the direct intellectual lineage, and [The Untold History of AI](untold_history.php) collects the displaced prerequisites from fields that never intended to build a machine.
 </div>
 
 <div class="md topic-block" data-optionaltitle="How numbers became tokens" data-depth="60">
