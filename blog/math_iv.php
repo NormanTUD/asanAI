@@ -65,10 +65,10 @@ math: 90
 
 In <a href="math_ii">Math II</a> you met **linear maps** $f(\mathbf{x}) = M\mathbf{x}$. They rotate, scale, shear, mirror — but they must send the origin to itself: $f(\mathbf{0}) = \mathbf{0}$. The origin is glued in place.
 
-Most useful "movements" of data need to move the origin too. The fix is the **affine transformation**:
+Most useful "movements" of data need to move the origin too. The fix is the **affine transformation** — a linear part with a translation added, the same "linear move + translation" split that Lang proves for the rigid motions of the plane (every isometry that moves every point is a rotation, or a rotation followed by a mirror, composed with a translation \cite[Lang, Basic Mathematics, Ch. 6, p. 165]{lang2005basicmath}):
 
 $$
-f(\mathbf{x}) = M\mathbf{x} + \mathbf{t}
+f(\mathbf{x}) = \underbrace{M\mathbf{x}}_{\text{linear}} + \underbrace{\mathbf{t}}_{\text{translation}}
 $$
 
 You've met it before: your first neuron $\hat{y} = ax + b$ (<a href="minimalneuron">Neuron</a>) is a 1-D affine map. Every linear layer $y = Wx + b$ is affine in high dimensions. This chapter makes that a full geometry.
@@ -81,9 +81,9 @@ An affine map is the most general map that sends **straight lines to straight li
 
 Three facts we'll lean on repeatedly:
 
-- **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map.
+- **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map. Lang's geometric transformations close the same way: composing two isometries gives another isometry, and the composition "behaves like a multiplication" \cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}.
 - **Three points determine it.** Since lines and ratios are preserved, telling an affine map where three non-collinear points go fixes it everywhere.
-- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension.
+- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension. It is the same scaling law Lang proves for a dilation: stretching every length by $r$ multiplies area by $r^2$ \cite[Lang, Basic Mathematics, Ch. 6, p. 164]{lang2005basicmath}.
 </div>
 
 <div class="optional md" data-headline="History: where the word comes from">
@@ -211,7 +211,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 
 ### The first non-affine move
 
-Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; by **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
+Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; Morris's definition is exactly this — one-to-one, onto, with the topology preserved in both directions \cite[Morris, Topology Without Tears, Ch. 4, p. 75]{morris2007topology}. By **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
 
 > A homeomorphism cannot change the topology of space. Lines stay lines, holes stay holes, links stay linked.
 
@@ -417,7 +417,7 @@ Four papers, one object: the piecewise-affine map that creases and overlaps spac
 <div class="md" data-mathlevel="55" data-optionaltitle="Group Structure: The Algebra of Symmetry">
 ## Group Structure: The Algebra of Symmetry
 
-The affine maps above include the rotations — and all the rotations of a plane together form a **group**, one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
+The affine maps above include the rotations — and all the rotations of a plane together form a **group** (composing two rotations yields another rotation; Lang finds this same "behaves like a multiplication" structure in the geometric transformations he composes \cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}), one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. A **group** is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
 
 | Axiom | Statement | Example in $\mathbb{Z}_{12}$ |
 |---|---|---|
