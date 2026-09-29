@@ -10621,13 +10621,6 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1502.05477",
 		alternativetitle: "TRPO"
 	},
-	"schulman2017ppo": {
-		title: "Proximal Policy Optimization Algorithms",
-		author: "John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov",
-		year: 2017,
-		url: "https://arxiv.org/abs/1707.06347",
-		alternativetitle: "PPO"
-	},
 	"sutton1991dyna": {
 		title: "Dyna, an Integrated Architecture for Learning, Planning, and Reacting Based on Approximating Dynamic Programming",
 		author: "Richard S. Sutton",
