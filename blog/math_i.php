@@ -135,7 +135,7 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="40">
 
-For a mathematical understanding of functions, you need sets first, which are quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
+For a mathematical understanding of functions, you need sets first, which are quite simple. A set is a collection of things \cite[Lang, Basic Mathematics, Ch. 4, §3, p. 99]{lang2005basicmath}, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set \cite[Lang, Basic Mathematics, Ch. 14, §1, p. 345]{lang2005basicmath}. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
 
 Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed. The *set* of jobs could be something like this: $\left\{\text{programmer}, \text{janitor}, \text{cashier}, \dots\right\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.
 
@@ -171,7 +171,7 @@ Throughout this course, we will look into these building blocks and how the comp
 <div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="The Sum Symbol">
 ## The Sum Symbol $ \sum $
 
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation”. This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation” \cite[Lang, Basic Mathematics, Ch. 16, §1, p. 384]{lang2005basicmath}. This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
 
 Think of $\sum$ as a **“for-loop”** for addition.
 
@@ -224,13 +224,13 @@ total = sum(numbers)
 
 The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\sum$:
 
-$$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
+$$\prod_{i = 1}^5 i = \underbrace{1 \cdot 2 \cdot 3 \cdot 4 \cdot 5}_\text{5 factors} = 120 $$
 
 ### The Factorial
 
 A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
 
-Factorials ($n!$) are the product of all positive integers up to $n$:
+Factorials ($n!$) are the product of all positive integers up to $n$ \cite[Lang, Basic Mathematics, Ch. 1, p. 39]{lang2005basicmath}:
 
 $$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
 
@@ -249,7 +249,7 @@ print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
 </code></pre>
 
 <div class="md" data-lesson-id="math-i">
-The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
+The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects \cite[Lang, Basic Mathematics, Ch. 14, §3, p. 359]{lang2005basicmath}.
 </div>
 
 <div class="optional md" data-headline="Why is 0! = 1?">
@@ -260,7 +260,7 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 <div class="optional md" data-headline="Reasoning and History">
 The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**.
 
-Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, $\binom{n}{0}$ and $\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.
+Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$ \cite[Lang, Basic Mathematics, Ch. 1, p. 40]{lang2005basicmath}. Without this definition, $\binom{n}{0}$ and $\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="Arithmetic with infinity in computing">
@@ -277,7 +277,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
 	The exponential of negative infinity is exactly zero. This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\infty$, which makes them effectively ignored. This becomes important later in the chapter on Transformers.
-* $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
+* $\infty$ is not a normal *number*, though \cite[Lang, Basic Mathematics, Ch. 16, §3, p. 397]{lang2005basicmath}. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
 </div>
@@ -290,7 +290,7 @@ In computing, we treat $\infty$ as a value, but in mathematics, we use limits to
 * **The Vanishing Fraction:** As the denominator $x$ becomes infinitely large, the ratio $\frac{n}{x}$ shrinks to zero.
     $$\lim_{x \to \infty} \frac{n}{x} = 0$$
 
-* **Exponential Decay (Masking):** In Softmax layers, we use $e^{-\infty}$. Mathematically, this is the limit of the natural exponential function as it moves toward negative infinity.
+* **Exponential Decay (Masking):** In Softmax layers, we use $e^{-\infty}$. Mathematically, this is the limit of the natural exponential function as it moves toward negative infinity \cite[Lang, Basic Mathematics, Ch. 13, §4, p. 335]{lang2005basicmath}.
     $$\lim_{x \to -\infty} e^x = 0$$
 
 * **Indeterminate Forms:** Limits explain why $\frac{\infty}{\infty}$ is $\text{NaN}$. Different functions reach infinity at different speeds, so the result isn't a single number. For example:
@@ -307,7 +307,7 @@ In computing, we treat $\infty$ as a value, but in mathematics, we use limits to
 
 $e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning. Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
 
-$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
+$$e = \lim_{n \to \infty} \left(1 + \underbrace{\frac{1}{n}}_\text{interest per period}\right)^{\underbrace{n}_\text{periods per year}}$$
 
 The $\lim$ looks at what happens as $n$ grows without bound. Some quantities grow larger, some shrink, and some approach a specific fixed value; this approach is called convergence. This expression converges: the larger $n$ gets, the closer the value comes to the irrational number $e$.
 
@@ -338,7 +338,7 @@ It was not until 1715 that \citeauthor{taylor1715} published the first general m
 <div class="md" data-lesson-id="math-i" data-mathlevel="35" data-optionaltitle="Exponentiation">
 ## Exponentiation
 
-In its simplest form, exponentiation is repeated multiplication. If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
+In its simplest form, exponentiation is repeated multiplication \cite[Lang, Basic Mathematics, Ch. 1, §3, p. 18]{lang2005basicmath}. If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
 
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
 
@@ -347,21 +347,21 @@ In the expression $b^y = x$:
 * **$y$** is the **exponent**.
 * **$x$** is the **result**.
 
-While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
+While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$) \cite[Lang, Basic Mathematics, Ch. 3, §3, p. 71]{lang2005basicmath}. When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 </div>
 
-<div class="optional md" data-headline="Why is $2^{0.5}$ the square root?">
-The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents:
-$$b^m \times b^n = b^{m+n}$$
+<div class="optional md" data-headline="Why is $2^{0.5}$ the square root?" data-mathlevel="40" data-optionaltitle="Why is $2^{0.5}$ the square root?">
+The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents \cite[Lang, Basic Mathematics, Ch. 1, §3, p. 18]{lang2005basicmath}:
+$$b^m \times b^n = b^{\underbrace{m+n}_\text{sum of exponents}}$$
 
 If we multiply $2^{0.5}$ by itself, the rule says:
-$$2^{0.5} \times 2^{0.5} = 2^{0.5 + 0.5} = 2^1 = 2$$
+$$\underbrace{2^{0.5} \times 2^{0.5}}_\text{multiply it by itself} = 2^{0.5 + 0.5} = 2^1 = 2$$
 Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it fits the literal definition of a square root. This logic extends to any floating-point number; for instance, $2^{0.333}$ is approximately the cube root ($\sqrt[3]{2}$) because adding $0.333 + 0.333 + 0.333$ brings us back to roughly $2^1$.
 </div>
 
 <div class="optional md" data-headline="What about negative numbers?">
-Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to “divide” instead of “multiply.”
-$$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
+Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division) \cite[Lang, Basic Mathematics, Ch. 3, §3, p. 72]{lang2005basicmath}. A negative exponent tells you to “divide” instead of “multiply.”
+$$2^{-3} = \underbrace{\frac{1}{2^3}}_\text{reciprocal} = \frac{1}{8} = 0.125$$
 
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 </div>
@@ -369,11 +369,11 @@ In the context of the continuous curve, as the exponent moves into negative terr
 <div class="md" data-lesson-id="math-i" data-mathlevel="40" data-optionaltitle="Logarithms: Reversing the Process">
 ## Logarithms: Reversing the Process
 
-A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
+A logarithm is the inverse operation of exponentiation \cite[Lang, Basic Mathematics, Ch. 13, §5, p. 338]{lang2005basicmath}. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
 
 For example, if we ask “To what power must we raise 2 to get 8?” ($\log_2(8) = ?$), the answer is 3.
 
-Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the “size” or “order of magnitude” of a number rather than just its value.
+Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive) \cite[Lang, Basic Mathematics, Ch. 13, §5, p. 339]{lang2005basicmath}. It tells you the “size” or “order of magnitude” of a number rather than just its value.
 </div>
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
@@ -393,16 +393,16 @@ $$\log(A \times B) = \log(A) + \log(B)$$
 By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to write in \citeyear{laplace1821} that logarithms were *“an admirable artifice which, by reducing to a few days the labour of many months, doubles the life of the astronomer”* (p. 96).
 </div>
 
-<div class="optional md" data-headline="How is the Logarithm calculated today?">
+<div class="optional md" data-headline="How is the Logarithm calculated today?" data-mathlevel="55" data-optionaltitle="How is the Logarithm calculated today?">
 Modern computers calculate logarithms using infinite series. One of the most fundamental is the \citealternativetitle{mercator1668} (p. 32f) for the natural logarithm ($\ln$):
 
-$$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
+$$\ln(1+x) = \sum_{n=1}^{\infty} \underbrace{(-1)^{n+1}}_\text{alternating sign}\, \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="The change of base">
 ### The Change of Base
 
-In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
+In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula** \cite[Lang, Basic Mathematics, Ch. 13, §5, p. 341]{lang2005basicmath}:
 
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
 
