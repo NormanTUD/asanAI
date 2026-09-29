@@ -247,6 +247,44 @@
 		return MATH_LEVELS[0].label;
 	}
 
+	/* ── History-depth dial ─────────────────────────────────────
+	   Independent axis from math comfort: how far BACK in time the
+	   reader wants the course to reach. The course runs from before
+	   the Big Bang to the present; a reader who only cares about the
+	   machine age can dial the deep time away. `label` is the short
+	   tick under the slider, `era` is the prose phrasing used in
+	   tuck reasons. Default is MAX — everything shows until the
+	   reader opts out. */
+	const DEPTH_MIN = 0;
+	const DEPTH_MAX = 100;
+	const DEFAULT_DEPTH = DEPTH_MAX;
+	const DEPTH_LEVELS = [
+		{ v: 0,   label: 'Just AI',   era: 'just the AI itself' },
+		{ v: 20,  label: 'Computers', era: 'the invention of computers' },
+		{ v: 40,  label: '1600s',     era: 'the Scientific Revolution' },
+		{ v: 60,  label: 'Ancient',   era: 'the ancient world' },
+		{ v: 80,  label: 'Prehistory', era: 'prehistory' },
+		{ v: 100, label: 'Big Bang and beyond', era: 'the Big Bang and beyond' }
+	];
+	function snapDepth(v) {
+		if (typeof v !== 'number' || !isFinite(v)) return DEFAULT_DEPTH;
+		let best = DEPTH_LEVELS[0].v;
+		for (let i = 0; i < DEPTH_LEVELS.length; i++) {
+			if (Math.abs(DEPTH_LEVELS[i].v - v) < Math.abs(best - v)) best = DEPTH_LEVELS[i].v;
+		}
+		return best;
+	}
+	function depthLevel(v) {
+		const s = snapDepth(v);
+		for (let i = 0; i < DEPTH_LEVELS.length; i++) {
+			if (DEPTH_LEVELS[i].v === s) return DEPTH_LEVELS[i];
+		}
+		return DEPTH_LEVELS[0];
+	}
+	function depthEra(v) {
+		return depthLevel(v).era;
+	}
+
 	/* ── 1e. Debug mode ────────────────────────────────────────
 	   Opt-in only. Production (and the CI render validator, which fails on
 	   any console.error / console.warn) stays completely silent. Turn it
@@ -351,6 +389,12 @@
 		return Math.max(MATH_MIN, Math.min(MATH_MAX, v));
 	}
 
+	function clampDepth(v) {
+		v = parseInt(v, 10);
+		if (isNaN(v)) return DEFAULT_DEPTH;
+		return Math.max(DEPTH_MIN, Math.min(DEPTH_MAX, v));
+	}
+
 	function normalizePref(parsed) {
 		const out = {
 			topics: {},
@@ -358,11 +402,12 @@
 			profile: null,
 			level: null,
 			mathLevel: DEFAULT_MATH_LEVEL,
+			depth: DEFAULT_DEPTH,
 			corePersonas: [],
 			learned: {}
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
-		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed) || ('depth' in parsed);
 		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
 		const catsObj = (parsed.categories && typeof parsed.categories === 'object') ? parsed.categories : {};
 		TOPICS.forEach(function (t) {
@@ -381,6 +426,9 @@
 			}
 			if (parsed.mathLevel !== undefined) {
 				out.mathLevel = clampMath(parsed.mathLevel);
+			}
+			if (parsed.depth !== undefined) {
+				out.depth = clampDepth(parsed.depth);
 			}
 			if (Array.isArray(parsed.corePersonas)) {
 				out.corePersonas = parsed.corePersonas.filter(function (id) {
@@ -403,7 +451,7 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersonas: [], learned: {} };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, depth: DEFAULT_DEPTH, corePersonas: [], learned: {} };
 	}
 
 	/** the reader's current math-comfort (0–100) */
@@ -426,6 +474,22 @@
 		// one persistPref → one fireChange (no double render, no loop).
 		if (cur.mathLevel >= MATH_MAX) cur.categories['math-heavy'] = true;
 		else if (cur.mathLevel <= MATH_MIN) cur.categories['math-heavy'] = false;
+		persistPref(cur);
+	}
+
+	/** the reader's current history-depth (0–100, higher = deeper past) */
+	function getDepthLevel() {
+		return activePref().depth;
+	}
+
+	/** set the reader's history-depth. Pass { pushHistory:false } while a
+	    slider is being dragged so a whole drag is a single undo step. */
+	function setDepthLevel(value, opts) {
+		opts = opts || {};
+		if (opts.pushHistory !== false) pushHistory();
+		const cur = activePref();
+		cur.depth = clampDepth(value);
+		dlog('depth →', cur.depth, '(how far back into history, 0–100)');
 		persistPref(cur);
 	}
 
@@ -880,13 +944,17 @@
 	    Set-theory: the more of your dials a unit misses, the more it
 	    recedes — but it never disappears without a clear reason.
 	    `opts.mathReq` (0–100) tucks the unit when the reader's math
-	    comfort is below it, independent of interests and tone. The
-	    returned `why` ∈ {null,'category','math','interests','layman'}
+	    comfort is below it, independent of interests and tone.
+	    `opts.depthReq` (0–100) tucks the unit when the reader's
+	    history-depth dial stops before the era the content reaches
+	    back to. The returned
+	    `why` ∈ {null,'category','math','depth','interests','layman'}
 	    names the single binding reason so the home page can group tucked
 	    tiles by category, and `whyLabel` is its human label. */
 	function scoreUnit(tagIds, opts) {
 		opts = opts || {};
 		const mathReq = parseMathReq(opts.mathReq);
+		const depthReq = parseMathReq(opts.depthReq);
 		const parts = splitTags(tagIds);
 		const interests = parts.interests;
 		const cats = parts.cats;
@@ -952,8 +1020,18 @@
 			whyLabel = 'math proficiency';
 		}
 
+		// 5) history-depth gate: independent of interests/tone/math.
+		//    A unit tagged data-depth="N" reaches back further into
+		//    history than the reader's dial allows → tucked.
+		if (depthReq !== null && getDepthLevel() < depthReq) {
+			state = 'off';
+			reason = 'this reaches back to ' + depthEra(depthReq) + ' — your depth stops at ' + depthEra(getDepthLevel());
+			why = 'depth';
+			whyLabel = 'history depth';
+		}
+
 		return { state: state, reason: reason, why: why, whyLabel: whyLabel,
-			interests: interests, cats: cats, mathReq: mathReq };
+			interests: interests, cats: cats, mathReq: mathReq, depthReq: depthReq };
 	}
 
 	/** how many on-DOM units (sections + home tiles) carry category `id`?
@@ -1018,6 +1096,7 @@
 		if (pref.profile === undefined) pref.profile = cur.profile;
 		if (pref.level === undefined) pref.level = cur.level;
 		if (pref.mathLevel === undefined) pref.mathLevel = cur.mathLevel;
+		if (pref.depth === undefined) pref.depth = cur.depth;
 		writePref(pref);
 		fireChange();
 	}
@@ -1275,6 +1354,16 @@
 						${MATH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')}
 					</div>
 				</div>
+				<div class="topics-math-comfort topics-depth-comfort" role="group" aria-label="History depth">
+					<span class="topics-math-label">⧖ History depth <span class="topics-depth-hint">how far back the story goes</span></span>
+					<div class="topics-math-control">
+						<input type="range" class="topics-math-range topics-depth-range" min="${DEPTH_MIN}" max="${DEPTH_MAX}" step="20" value="${snapDepth(getDepthLevel())}" aria-label="History depth">
+						<span class="topics-math-val topics-depth-val">${depthEra(getDepthLevel())}</span>
+					</div>
+					<div class="math-comfort-ticks">
+						${DEPTH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')}
+					</div>
+				</div>
 				<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">
 					<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>
 					<div class="topics-cat-row" id="topics-cat-row"></div>
@@ -1389,9 +1478,9 @@
 			}
 		});
 
-		const mathSlider = overlay.querySelector('.topics-math-range');
+		const mathSlider = overlay.querySelector('.topics-math-range:not(.topics-depth-range)');
 		if (mathSlider) {
-			const oVal = overlay.querySelector('.topics-math-val');
+			const oVal = overlay.querySelector('.topics-math-val:not(.topics-depth-val)');
 			let oDrag = false;
 			const oPaint = function () {
 				const v = parseInt(mathSlider.value, 10);
@@ -1403,6 +1492,21 @@
 				setMathLevel(parseInt(mathSlider.value, 10), { pushHistory: false });
 			});
 			mathSlider.addEventListener('change', function () { oDrag = false; oPaint(); });
+		}
+
+		const depthSlider = overlay.querySelector('.topics-depth-range');
+		if (depthSlider) {
+			const dVal = overlay.querySelector('.topics-depth-val');
+			let dDrag = false;
+			const dPaint = function () {
+				if (dVal) dVal.textContent = depthEra(parseInt(depthSlider.value, 10));
+			};
+			depthSlider.addEventListener('input', function () {
+				dPaint();
+				if (!dDrag) { dDrag = true; pushHistory(); }
+				setDepthLevel(parseInt(depthSlider.value, 10), { pushHistory: false });
+			});
+			depthSlider.addEventListener('change', function () { dDrag = false; dPaint(); });
 		}
 	}
 
@@ -1774,6 +1878,7 @@
 			.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 		const scoreIds = topicIds.concat(tags);
 		const mathReq = block.getAttribute('data-mathlevel') || block.getAttribute('data-math-level');
+		const depthReq = block.getAttribute('data-depth') || block.getAttribute('data-depthlevel');
 		const title = block.getAttribute('data-optionaltitle') || '';
 		let derived = '';
 		if (!title) {
@@ -1784,6 +1889,7 @@
 			topicIds: topicIds,
 			scoreIds: scoreIds,
 			mathReq: mathReq,
+			depthReq: depthReq,
 			title: title,
 			label: title || derived,
 			hasHeading: !!derived
@@ -2483,7 +2589,7 @@
 		}
 
 		const managed = document.querySelectorAll(
-			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]');
+			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-depth], [data-topic]');
 		managed.forEach(function (block) {
 			if (block.classList.contains('optional')) return; // the manual .optional system owns these
 			if (block.classList.contains('course-tile')) {
@@ -2519,7 +2625,7 @@
 				return;
 			}
 			const spec = blockSpec(block);
-			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq });
+			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq, depthReq: spec.depthReq });
 			applyBlockState(block, spec, score, animate);
 		});
 
@@ -2541,6 +2647,7 @@
 		}
 		updateSkipIndicator();
 		applyMathAlts();
+		applyMathVisibility();
 
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
@@ -2576,13 +2683,29 @@
 			const ids = (el.getAttribute('data-math-opt') || '').split(',')
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 			const hide = ids.length ? ids.some(function (id) { return heavyOff.indexOf(id) !== -1; }) : false;
-			const alt = el.querySelector('.math-alt');
-			const eqs = el.querySelectorAll('math');
-			if (!alt && !eqs.length) return;
-			el.classList.toggle('math-opt-simplified', hide);
-			eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
-			if (alt) alt.style.display = hide ? 'block' : 'none';
+		const alt = el.querySelector('.math-alt');
+		const eqs = el.querySelectorAll('math');
+		if (!alt && !eqs.length) return;
+		el.classList.toggle('math-opt-simplified', hide);
+		eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
+		if (alt) alt.style.display = hide ? 'block' : 'none';
 		});
+	}
+
+	/* ── 6c. Global "No math" display-math suppression ─────────
+	   The math-comfort dial gates tagged blocks (data-mathlevel), but
+	   most equations in the course are inline in prose or inside lab
+	   displays that were never tagged. At the minimum stop ("No math")
+	   the reader has asked for NO equations, so every DISPLAY equation
+	   in the reading column is hidden via the .math-off class on <html>
+	   (see style.css — CSS, not per-element JS, so equations that temml
+	   renders lazily after this pass are covered too). Exception:
+	   equations inside a [data-math-opt] host (they have a plain-language
+	   twin, handled by applyMathAlts) and inside .math-alt itself.
+	   Inline math is left alone: it carries the sentence, and hiding it
+	   would leave gaps. */
+	function applyMathVisibility() {
+		document.documentElement.classList.toggle('math-off', getMathLevel() <= MATH_MIN);
 	}
 
 	/* ── 7. Course tile dimming (non-index pages) — 3-state ───── */
@@ -2594,10 +2717,11 @@
 			const cats = (tile.getAttribute('data-tags') || '').split(',')
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 			const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
+			const depthReq = tile.getAttribute('data-depth') || tile.getAttribute('data-depthlevel');
 			const all = interests.concat(cats);
 			tile.classList.remove('topic-tile-dim', 'topic-tile-partial', 'topic-tile-active');
-			if (!all.length && mathReq == null) return;
-			const score = scoreUnit(all, { mathReq: mathReq });
+			if (!all.length && mathReq == null && depthReq == null) return;
+			const score = scoreUnit(all, { mathReq: mathReq, depthReq: depthReq });
 			if (score.state === 'off') {
 				tile.classList.add('topic-tile-dim');
 				tile.title = 'Tucked away — ' + score.reason;
@@ -2854,13 +2978,14 @@
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
+					const depthReq = tile.getAttribute('data-depth') || tile.getAttribute('data-depthlevel');
 					// Overview = the math-comfort dial (+ interests). The
 					// "feels heavy" tone tags (data-tags: math-heavy, code-heavy,
 					// …) are an in-lesson density preference and deliberately do
 					// NOT hide whole lessons here — otherwise switching a tone
 					// off would make a third of the course vanish from the
 					// overview regardless of the dial.
-					const score = scoreUnit(interests, { mathReq: mathReq });
+					const score = scoreUnit(interests, { mathReq: mathReq, depthReq: depthReq });
 					tile.classList.remove('ta-tile-off');
 					if (score.state === 'off') offInfo.push({ tile: tile, score: score });
 				});
@@ -3091,6 +3216,21 @@
 			+ '</div>';
 	}
 
+	function depthSliderHtml() {
+		const v = snapDepth(getDepthLevel());
+		return '<div class="math-comfort depth-comfort itx-item" role="group" aria-label="History depth">'
+			+ '<div class="math-comfort-top">'
+			+   '<span class="math-comfort-label">⧖ History depth</span>'
+			+   '<span class="math-comfort-val" data-depth-val>' + depthEra(v) + '</span>'
+			+ '</div>'
+			+ '<input type="range" class="math-comfort-range depth-comfort-range" min="' + DEPTH_MIN + '" max="' + DEPTH_MAX
+			+ '" step="20" value="' + v + '" aria-label="History depth">'
+			+ '<div class="math-comfort-ticks">'
+			+   DEPTH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')
+			+ '</div>'
+			+ '</div>';
+	}
+
 	function wireMathSlider(h) {
 		const range = h.querySelector('.math-comfort-range');
 		if (!range) return;
@@ -3104,6 +3244,28 @@
 			if (!dragging) { dragging = true; pushHistory(); }
 			_skipInlineWidget = true;
 			try { setMathLevel(parseInt(range.value, 10), { pushHistory: false }); }
+			finally { _skipInlineWidget = false; }
+		});
+		range.addEventListener('change', function () {
+			dragging = false;
+			paint();
+			renderInlineWidget(h);
+		});
+	}
+
+	function wireDepthSlider(h) {
+		const range = h.querySelector('.depth-comfort-range');
+		if (!range) return;
+		const val = h.querySelector('[data-depth-val]');
+		let dragging = false;
+		const paint = function () {
+			if (val) val.textContent = depthEra(parseInt(range.value, 10));
+		};
+		range.addEventListener('input', function () {
+			paint();
+			if (!dragging) { dragging = true; pushHistory(); }
+			_skipInlineWidget = true;
+			try { setDepthLevel(parseInt(range.value, 10), { pushHistory: false }); }
 			finally { _skipInlineWidget = false; }
 		});
 		range.addEventListener('change', function () {
@@ -3158,6 +3320,7 @@
 			+ '<span class="topics-cat-label-mini" aria-hidden="true">tone</span>'
 			+ categoryChipsHtml() + '</div>';
 		const slider = mathSliderHtml();
+		const depthSlider = depthSliderHtml();
 
 		let html, wire;
 		const activePersonas = activePref().corePersonas || [];
@@ -3183,7 +3346,8 @@
 					}).join('') +
 				'</div>',
 				slider,
-				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics; math comfort is set separately below.</p>'
+				depthSlider,
+				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics; math comfort and history depth are set separately below.</p>'
 			].join('');
 		wire = function (h) {
 			h.querySelectorAll('[data-core-persona]').forEach(function (b) {
@@ -3198,6 +3362,7 @@
 				swapWidget(h, function () { renderInlineWidget(h); });
 			});
 			wireMathSlider(h);
+			wireDepthSlider(h);
 		};
 		} else if (mode === 'detailed') {
 			const more = PERSONAS.filter(function (p) { return CORE_PERSONAS.every(function (c) { return c.id !== p.id; }); });
@@ -3216,6 +3381,7 @@
 					'</div>',
 				'</div>',
 				slider,
+				depthSlider,
 				catRow,
 				'<div class="inline-persona-more" role="group" aria-label="More reader types">'
 					+ more.map(function (p) {
@@ -3254,6 +3420,7 @@
 				});
 				wireCategoryChips(h);
 				wireMathSlider(h);
+				wireDepthSlider(h);
 			};
 		} else {
 			// non-personas host: the classic full grid (kept for other pages)
@@ -3303,6 +3470,7 @@
 		return {
 			debug: DEBUG,
 			mathLevel: getMathLevel(),
+			depth: getDepthLevel(),
 			profile: activePref().profile,
 			level: activePref().level,
 			topics: normalize(activeMap()),
@@ -3345,6 +3513,13 @@
 		MATH_LEVELS: MATH_LEVELS,
 		snapMath: snapMath,
 		mathLevelLabel: mathLevelLabel,
+		DEPTH_MIN: DEPTH_MIN,
+		DEPTH_MAX: DEPTH_MAX,
+		DEPTH_LEVELS: DEPTH_LEVELS,
+		snapDepth: snapDepth,
+		depthEra: depthEra,
+		getDepthLevel: getDepthLevel,
+		setDepthLevel: setDepthLevel,
 		DEBUG: DEBUG,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,

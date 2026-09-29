@@ -40,7 +40,7 @@ To understand a Neural Network is to understand a tapestry of ideas that kept si
 * **AI in Society:** We treat the technology as a cultural mirror, looking at how these systems meet human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 </div>
 
-<div class="md topic-block" data-optionaltitle="How numbers became tokens" data-depth="75">
+<div class="md topic-block" data-optionaltitle="How numbers became tokens" data-depth="60">
 * **The Number and the Token:** We follow the number itself — from the Babylonians' place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read. The "token" a Transformer predicts is a direct descendant of the first numerals, and every integer in the code you write inherits the same chain.
 </div>
 

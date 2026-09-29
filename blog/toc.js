@@ -80,66 +80,83 @@ function toc() {
 	} catch (e) { /* noop */ }
 
 	// 1. Setup Styles
-	// Minimalist TOC: no boxes, no backgrounds, no badges. Just typography,
-	// hierarchy by indent + weight, hover for interactivity, and a quiet
-	// meta line on the right for reading time.
+	// Quiet, framed TOC: a soft card (subtle fill + hairline border)
+	// makes it one self-contained object that recedes behind the
+	// lesson. The in-text chapter numbers (2. / 2.3) are mirrored so a
+	// TOC row corresponds 1:1 with its heading. The accent is used
+	// sparingly — hover and the scroll-spy current section change
+	// colour only, no washes — so the TOC never competes with the
+	// content. Every colour is a --mn-* token, both themes work as-is.
 	var s = document.createElement("style");
 	s.textContent = [
-		// Container — no border, no background. The hairline above it is now
-		// drawn by #lesson-home (style.css), which themes it via --mn-border;
-		// that link hands back the 24px margin + 18px padding this rule used
-		// to spend, so the row is net free.
-		'#toc { font-family: var(--mn-font-body); color: #1f2328; padding: 0; margin: 0 0 24px; line-height: 1.55; }',
-		'#toc-toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; font-size: 0.8em; color: #656d76; }',
-		// The filter field takes the full first row so the search sits on its
-		// own at the very top of the TOC; Expand/Collapse wrap below it.
-		'#toc-toolbar input[type="search"] { flex: 1 0 100%; padding: 5px 2px; font-size: 1em; border: none; border-bottom: 1px solid #d0d7de; border-radius: 0; background: transparent; font-family: inherit; color: #1f2328; outline: none; }',
-		'#toc-toolbar input[type="search"]:focus { border-bottom-color: #1f2328; }',
-		'#toc-toolbar button { padding: 4px 10px; font-size: 1em; background: transparent; border: none; cursor: pointer; font-family: inherit; color: #656d76; border-radius: 4px; }',
-		'#toc-toolbar button:hover { background: #f6f8fa; color: #1f2328; }',
+		// Container — quiet card.
+		'#toc { font-family: var(--mn-font-body); color: var(--mn-text); margin: 8px 0 28px; padding: 14px 16px 12px; background: var(--mn-bg-subtle); border: 1px solid var(--mn-border-light); border-radius: var(--mn-radius-md); line-height: 1.5; counter-reset: tocn2 tocn3; }',
 
-		// Tree layout.
+		// Chapter numbers, mirroring the in-text counters (.md h2::before /
+		// h3::before in style.css). Small, muted, tabular.
+		'#toc li.toc-level-2 { counter-increment: tocn2; counter-reset: tocn3; }',
+		'#toc li.toc-level-3 { counter-increment: tocn3; }',
+		'#toc li.toc-level-2 > .toc-row > a::before { content: counter(tocn2) ".\00a0\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.72em; vertical-align: 0.25em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
+		'#toc li.toc-level-3 > .toc-row > a::before { content: counter(tocn2) "." counter(tocn3) "\00a0\00a0"; color: var(--mn-text-muted); font-weight: 500; font-size: 0.78em; vertical-align: 0.18em; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }',
+
+		// Toolbar: filter field on its own row, small chip buttons below.
+		'#toc-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }',
+		'#toc-toolbar input[type="search"] { flex: 1 0 100%; padding: 5px 2px 6px; font-size: 0.9em; border: none; border-bottom: 1px solid var(--mn-border); border-radius: 0; background: transparent; font-family: inherit; color: var(--mn-text); outline: none; transition: border-color 0.18s ease; }',
+		'#toc-toolbar input[type="search"]::placeholder { color: var(--mn-text-muted); opacity: 0.8; }',
+		'#toc-toolbar input[type="search"]:focus { border-bottom-color: var(--mn-accent); }',
+		'#toc-toolbar button { padding: 3px 10px; font-size: 0.72em; letter-spacing: 0.02em; background: transparent; border: 1px solid var(--mn-border); cursor: pointer; font-family: inherit; color: var(--mn-text-muted); border-radius: 999px; transition: color 0.15s ease, border-color 0.15s ease; }',
+		'#toc-toolbar button:hover { color: var(--mn-accent); border-color: var(--mn-accent); }',
+
+		// Tree layout — nested lists get a quiet hairline rail.
 		'#toc > ul, #toc ul { list-style: none; padding: 0; margin: 0; }',
-		'#toc ul ul { padding-left: 1.4em; }',
+		'#toc ul ul { margin-left: 0.4em; padding-left: 1em; border-left: 1px solid var(--mn-border-light); }',
 		'#toc ul.collapsible { max-height: 0; overflow: hidden; transition: none; }',
 		'#toc.toc-ready ul.collapsible { transition: max-height 0.25s ease; }',
 		'#toc li.expanded > ul.collapsible { max-height: 5000px; }',
-		'#toc li { list-style: none; }',
+		// Chapters breathe, sub-sections stay tight.
+		'#toc > ul > li + li { margin-top: 1px; }',
+		'#toc > ul > li.toc-level-2 { margin-top: 9px; }',
+		'#toc > ul > li.toc-level-2:first-child { margin-top: 0; }',
 
-		// Links: just text, no decoration except on hover.
-		'#toc a { text-decoration: none; color: inherit; cursor: pointer; }',
-		'#toc a:hover { text-decoration: underline; text-underline-offset: 3px; }',
-
-		// Hierarchy: only two visible levels — chapter vs sub-section.
-		// Chapter (h2) is slightly bigger and darker; sub-section (h3+) is
-		// the same size but lighter, indented.
-		'#toc .toc-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; padding: 2px 0; }',
+		// Rows + links: colour-only hover, no wash.
+		'#toc .toc-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; padding: 3px 6px; border-radius: 6px; }',
+		'#toc a { text-decoration: none; color: inherit; cursor: pointer; transition: color 0.15s ease; }',
+		'#toc a:hover { color: var(--mn-accent); }',
 		'#toc .toc-row > a { flex: 1; min-width: 0; }',
-		'#toc li.toc-level-2 > .toc-row > a { font-weight: 700; color: #1f2328; }',
-		'#toc li.toc-level-3 > .toc-row > a, #toc li.toc-level-4 > .toc-row > a, #toc li.toc-level-5 > .toc-row > a, #toc li.toc-level-6 > .toc-row > a { color: #57606a; font-weight: 400; }',
 
-		// Optional content: same color, italic. No badge, no border.
-		'#toc li.toc-optional > .toc-row > a { color: #8c959f; font-style: italic; }',
-		'#toc li.toc-optional > .toc-row > a:hover { color: #57606a; }',
+		// Hierarchy: chapter / sub-section / deep.
+		'#toc li.toc-level-2 > .toc-row > a { font-weight: 600; font-size: 1.02em; color: var(--mn-text); }',
+		'#toc li.toc-level-3 > .toc-row > a { color: var(--mn-text-secondary); font-size: 0.96em; }',
+		'#toc li.toc-level-4 > .toc-row > a, #toc li.toc-level-5 > .toc-row > a, #toc li.toc-level-6 > .toc-row > a { color: var(--mn-text-muted); font-size: 0.9em; }',
 
-		// Reading-time meta on the right: very small, tabular, muted.
-		'#toc .toc-meta { flex: 0 0 auto; font-size: 0.78em; color: #8c959f; font-variant-numeric: tabular-nums; font-weight: 400; }',
-		'#toc li.toc-level-2 > .toc-row > .toc-meta { color: #656d76; }',
+		// Optional content: muted + italic, no badge.
+		'#toc li.toc-optional > .toc-row > a { color: var(--mn-text-muted); font-style: italic; }',
+		'#toc li.toc-optional > .toc-row:hover > a { color: var(--mn-text-secondary); }',
 
-		// Toggle icon — a tiny chevron before the link. Click on the
-		// chevron toggles; click anywhere else on the row navigates.
-		'#toc .toggle-icon { display: inline-block; width: 1em; cursor: pointer; color: #8c959f; font-size: 0.75em; user-select: none; margin-right: 4px; flex: 0 0 auto; }',
-		'#toc .toggle-icon:hover { color: #1f2328; }',
+		// Reading-time meta on the right: tiny, tabular, muted.
+		'#toc .toc-meta { flex: 0 0 auto; font-size: 0.75em; color: var(--mn-text-muted); font-variant-numeric: tabular-nums; font-weight: 400; }',
+		'#toc li.toc-level-2 > .toc-row > .toc-meta { color: var(--mn-text-secondary); }',
+
+		// Toggle chevron: tiny, quiet, accent on hover.
+		'#toc .toggle-icon { display: inline-block; width: 1em; cursor: pointer; color: var(--mn-text-muted); font-size: 0.62em; user-select: none; margin-right: 2px; flex: 0 0 auto; opacity: 0.8; transition: color 0.15s ease; }',
+		'#toc .toggle-icon:hover { color: var(--mn-accent); opacity: 1; }',
 		'#toc li:not(.has-children) > .toc-row > .toggle-icon { visibility: hidden; }',
+
+		// Current section (polish.js scroll-spy): colour + the chapter
+		// number turn accent. No background, no bar — a quiet pointer.
+		'#toc li.toc-current > .toc-row > a { color: var(--mn-accent); font-weight: 600; }',
+		'#toc li.toc-current.toc-level-2 > .toc-row > a::before, #toc li.toc-current.toc-level-3 > .toc-row > a::before { color: var(--mn-accent); }',
 
 		// Filter
 		'#toc.filtering li.toc-hidden { display: none; }',
 		'#toc.filtering li.toc-match > ul, #toc.filtering li.toc-ancestor-match > ul { display: block !important; max-height: none !important; overflow: visible !important; }',
-		'#toc.filtering li.toc-match > .toc-row > a, #toc.filtering li.toc-ancestor-match > .toc-row > a { color: #1f2328; font-weight: 700; }',
+		'#toc.filtering li.toc-match > .toc-row > a { color: var(--mn-accent); font-weight: 600; }',
 
 		// Total reading time footer
-		'#toc .toc-footer { font-size: 0.78em; color: #8c959f; margin-top: 14px; padding-top: 10px; border-top: 1px solid #eaeef2; }',
+		'#toc .toc-footer { font-size: 0.78em; color: var(--mn-text-muted); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--mn-border-light); }',
 
+		// Phones: tighter card, drop the reading-time meta.
+		'@media (max-width: 600px) { #toc { margin: 8px 0 20px; padding: 12px 12px 10px; } #toc .toc-meta { display: none; } }',
 		'@media (prefers-reduced-motion: reduce) { #toc ul.collapsible, #toc.toc-ready ul.collapsible { transition: none; } }'
 	].join('\n');
 	document.head.appendChild(s);
