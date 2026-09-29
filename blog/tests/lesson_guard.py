@@ -231,8 +231,14 @@ def _line_of(text: str, pos: int) -> int:
     return text.count("\n", 0, pos) + 1
 
 
-def _preceded_by_paren(text: str, pos: int) -> bool:
-    return text[:pos].rstrip().endswith("(")
+def _inside_parens(text: str, pos: int) -> bool:
+    # True if the cite sits inside a round-paren group on its line — either
+    # directly wrapped `(\cite[…])` or nested in a wider parenthetical
+    # `(e.g., … \cite[…])`. A cite that is already inside a paren group is
+    # bracketed and must NOT get a second layer of parens.
+    line_start = text.rfind("\n", 0, pos) + 1
+    seg = text[line_start:pos]
+    return seg.count("(") > seg.count(")")
 
 
 def guard_cite_no_empty(php: str) -> list[str]:
@@ -271,7 +277,7 @@ def guard_cite_not_floating(php: str) -> list[str]:
         display = m.group(1).strip()
         if not display or not FLOATING_REF.search(display):
             continue
-        if _preceded_by_paren(php, m.start()):
+        if _inside_parens(php, m.start()):
             continue
         issues.append(
             f"line {_line_of(php, m.start())}: floating reference "
