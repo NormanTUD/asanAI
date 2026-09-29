@@ -122,8 +122,17 @@ html {
 	   well-made hardback. White felt sterile; cream reads as warm,
 	   aged, considered, like a book that has been loved. The bg is
 	   FAFAF7 with a slightly warmer undertone so it harmonises with
-	   the warm taupe borders and the dark walnut body text. */
-	background: #FAF8F1;
+	   the warm taupe borders and the dark walnut body text.
+
+	   Over the flat paper sits a whisper of a gradient: a soft light
+	   pool at the top (like a desk lamp) and a gentle warm deepening
+	   toward the bottom of the page. Both are ~1–2 % luminance steps —
+	   visible as mood, not as stripes. */
+	background-color: #FAF8F1;
+	background-image:
+		radial-gradient(1200px 520px at 50% -140px, rgba(255, 253, 244, 0.85), transparent 70%),
+		linear-gradient(to bottom, #FBF9F3 0%, #FAF8F1 45%, #F5F1E6 100%);
+	background-attachment: fixed;
 	color: #3A2F25;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -223,9 +232,16 @@ html {
 html.dark {
 	/* Body copy sits a notch below pure #e2e8f0: long reading passages
 	   feel calmer while contrast on #0f172a stays ≈ 11:1. Headings and
-	   chrome stay brighter via --mn-heading / explicit rules. */
+	   chrome stay brighter via --mn-heading / explicit rules.
+
+	   The night bg gets the same treatment as the cream paper: a faint
+	   indigo glow at the top (the course accent, at 10 % — a night sky
+	   over the desk) over the existing top-down deepening. Subtle
+	   enough that screenshots at 100 % zoom barely register it. */
 	background-color: #05070f;
-	background-image: linear-gradient(to bottom, #080c17, #05070f);
+	background-image:
+		radial-gradient(1100px 500px at 50% -140px, rgba(99, 102, 241, 0.10), transparent 70%),
+		linear-gradient(to bottom, #0a0f1e 0%, #05070f 60%);
 	background-attachment: fixed;
 	color: #cbd5e1;
 	color-scheme: dark;
@@ -1214,47 +1230,10 @@ html.dark .stat-hint-warm {
 	color: #fbbf24 !important;
 }
 
-/* TOC overrides (toc.js injects hardcoded colors) */
-html.dark #toc {
-	background: var(--mn-bg-subtle) !important;
-}
-html.dark #toc a {
-	color: var(--mn-accent) !important;
-}
-html.dark #toc a:hover {
-	color: var(--mn-accent-dark) !important;
-}
-html.dark .toggle-icon {
-	color: var(--mn-text-muted) !important;
-}
-/* The filter field is hardcoded #1f2328 on a transparent background, which is
-   invisible against --mn-bg-subtle in dark mode. Without these the search box
-   looks like a bare rule with nothing in it. */
-html.dark #toc-toolbar,
-html.dark #toc-toolbar button,
-html.dark #toc .toc-footer {
-	color: var(--mn-text-muted) !important;
-}
-html.dark #toc .toc-footer {
-	border-top-color: var(--mn-border) !important;
-}
-html.dark #toc-toolbar input[type="search"] {
-	color: var(--mn-text) !important;
-	border-bottom-color: var(--mn-border) !important;
-}
-html.dark #toc-toolbar input[type="search"]::placeholder {
-	color: var(--mn-text-muted) !important;
-	opacity: 1;
-}
-html.dark #toc-toolbar input[type="search"]:focus {
-	border-bottom-color: var(--mn-accent) !important;
-}
+/* The TOC (toc.js) is fully token-based now, so no per-theme overrides are
+   needed — except the platform search-cancel glyph, which ignores theming. */
 html.dark #toc-toolbar input[type="search"]::-webkit-search-cancel-button {
 	filter: invert(0.7);
-}
-html.dark #toc-toolbar button:hover {
-	background: var(--mn-surface) !important;
-	color: var(--mn-text) !important;
 }
 
 html.dark .token-chip {
@@ -7006,20 +6985,9 @@ blockquote > p:first-of-type::before {
 	color: var(--mn-accent);
 }
 
-/* ── 6. TOC scroll-spy — current section pulses in the nav ── */
-#toc li.toc-current > a {
-	color: var(--mn-accent);
-	font-weight: 700;
-}
-#toc li.toc-current > a::before {
-	content: '\2022';
-	margin-right: .4em;
-	color: var(--mn-accent);
-	opacity: .8;
-}
-#toc a {
-	transition: color .15s ease;
-}
+/* ── 6. TOC ── The table of contents is built + styled at runtime by
+   toc.js (token-based inline <style>), including the .toc-current
+   scroll-spy highlight that polish.js toggles. Nothing to style here. */
 
 /* ── 7. Elegant figcaption ──
    Hangs at the image's left edge, italic for the body text, but
@@ -8569,6 +8537,19 @@ html.dark #sidenotes-section .sidenote-fallback li.is-sn-target {
 }
 .md .tml-display, .md mjx-container[display="true"] {
 	text-align: center;
+}
+/* "No math" stop: hide display equations site-wide in the reading column.
+   Toggled by topics.js (html.math-off) when math comfort is at its minimum.
+   !important because temml stamps an inline `display: block math` on every
+   display equation (inline styles beat plain rules). The :not() exclusions
+   keep equations that have a plain-language twin ([data-math-opt] hosts and
+   .math-alt) under applyMathAlts' control instead. CSS (not per-element JS)
+   so equations temml renders lazily on scroll are covered too. */
+html.math-off #contents math[display="block"]:not([data-math-opt] math):not(.math-alt math),
+html.math-off #contents .tml-display:not([data-math-opt] math):not(.math-alt math),
+html.math-off #contents mjx-container[display="true"]:not([data-math-opt] *):not(.math-alt *),
+html.math-off #contents .MathJax_Display:not([data-math-opt] *):not(.math-alt *) {
+	display: none !important;
 }
 /* Temml stores the pristine LaTeX source in <annotation encoding="application/x-tex">.
    That is metadata, never visible content. Firefox hides it via the MathML
@@ -11302,6 +11283,12 @@ math {
 	font-size: 0.85rem;
 	font-weight: 600;
 	color: var(--mn-text-secondary);
+}
+.topics-depth-hint {
+	font-size: 0.7rem;
+	font-weight: 400;
+	color: var(--mn-text-muted);
+	margin-left: 6px;
 }
 .math-comfort-val, .topics-math-val {
 	font-family: monospace;

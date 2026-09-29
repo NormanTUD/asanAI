@@ -119,15 +119,23 @@ body {
    ────────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
 
-	/* ── 3a. Root typography ──────────────────────────────── */
+	/* ── 3a. Root typography ────────────────────────────────
+	   Comfortable reading size on a phone is ~17 px (Apple's own
+	   default body size). The clamp stays ≥ 16 px (iOS input-zoom
+	   threshold) and only creeps to 17 px at the top of the range —
+	   larger on phones is a no-go. Every rem-based phone rule below
+	   scales up ~6 % with it, which is what we want. */
 	html {
-		font-size: 16px; /* iOS zoom lock; clamp() can override if needed */
+		font-size: clamp(16px, 14.8px + 0.5vw, 17px);
 	}
 
+	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
+	   border on both sides reads as "huge margin". 12 px keeps the text
+	   from kissing the glass. */
 	#contents {
 		width: 100%;
-		padding-left:  max(0.9rem, env(safe-area-inset-left));
-		padding-right: max(0.9rem, env(safe-area-inset-right));
+		padding-left:  max(0.75rem, env(safe-area-inset-left));
+		padding-right: max(0.75rem, env(safe-area-inset-right));
 	}
 
 	#contents h1 {
@@ -201,15 +209,21 @@ body {
 		font-size: 1.15rem;
 	}
 
-	/* Tile itself: slightly larger hit target on phones. */
+	/* Tile: big enough to really read at arm's length. Description
+	   text at 0.83 rem (~13 px) was the main "can't read the start
+	   screen on my phone" complaint — 0.95 rem is comfortable. */
 	.course-tile {
-		padding: 0.95rem 1rem;
+		padding: 1rem 1.05rem;
+	}
+	.course-tile-icon {
+		font-size: 1.65rem;
 	}
 	.course-tile h3 {
-		font-size: 0.98rem;
+		font-size: 1.08rem;
 	}
 	.course-tile p {
-		font-size: 0.83rem;
+		font-size: 0.95rem;
+		line-height: 1.5;
 	}
 
 	/* ── 3d. Aurora block-quote: drop the huge left gutter ── */
@@ -549,10 +563,10 @@ body {
 	#contents h3 { font-size: 0.98rem; }
 
 	.course-tile {
-		padding: 0.8rem 0.85rem;
+		padding: 0.85rem 0.9rem;
 	}
-	.course-tile h3 { font-size: 0.92rem; }
-	.course-tile p { font-size: 0.78rem; }
+	.course-tile h3 { font-size: 1rem; }
+	.course-tile p { font-size: 0.9rem; }
 
 	/* Slightly tighter safe-area padding on tiny screens. */
 	#contents {
