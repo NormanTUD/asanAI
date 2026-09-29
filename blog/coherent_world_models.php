@@ -40,8 +40,6 @@ $$
 \end{aligned}}
 $$
 
-Everything below earns that sentence.
-
 **The status of this chapter.** What follows is a *discipline*, not a derivation. We do not claim sheaf theory, coherence theory, and post-foundationalist epistemology are *literally* one object in three vocabularies; only that, for the purpose of asking when a collection of partial views deserves the name *one description*, they are productive allies — even if the analogy's boundaries are not fully charted and its deepest joints are merely gestured at. The framework is a *lens*: it makes some things visible and others invisible, and it has to be picked up, used, and set down. A reader who rejects the unification is not asked to surrender the chapter — only to say which of the three traditions, in their judgement, the others must be measured against. The discipline survives even where the scaffolding is set aside: the nine-step procedure, the five pathologies, the hierarchy of sameness, "where is the licensed transition?", "never silently upgrade" — these travel on their own. And it will not exempt its own author: near the close the chapter runs these same steps on *itself*, records the residuals it finds, and re-calibrates where its own licences run out — a discipline that will not ask the question of itself earns the right to ask it of the rest of the world only in a weaker sense.
 
 </div>
