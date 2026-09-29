@@ -292,6 +292,31 @@ the cite family):
   `figcaption` / `table caption` / `.figcap` / legacy small-gray caption divs
   even outside `.md` blocks, and `processFigcapsMarkdown()` renders
   `*emphasis*`/`[links]` in captions.
+- **Citation integration — how a cite must sit in the prose.**
+  `\cite[display]{key}` renders `display` verbatim, **without brackets**;
+  plain `\cite{key}` renders `[Author, Year]` (bracketed, fine as-is — never
+  double-wrap it). A display cite must sit in the text in one of two forms:
+  - **Parenthetical** — the reference sits inside round brackets in the
+    sentence: `…nothing at inference. (\cite[Guo et al., 2017]{guo2017calibration})`
+    — add the `(...)` in the prose around the macro.
+  - **Narrative** — the author/title is a grammatical part of the sentence:
+    `As \citeauthor{morris2007topology} shows (Ch. 4, p. 75), …`, or the
+    author as subject with a parenthesized year:
+    `\cite[Zhou et al. (2022)]{zhou2022algorithmic} proved that …`. Concept
+    names work as display because they *are* the noun:
+    `…connects to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: …`.
+  - A **self-contained reference** (Author, Year / book title / "Section N")
+    must never float between words:
+    `…is a homeomorphism Morris, Topology Without Tears, Ch. 4, p. 75: it can…`
+    is broken — either wrap it in `(...)` or rewrite the sentence so the cite
+    is the subject.
+  - **Book cites with chapter/page**: mid-sentence → narrative;
+    sentence-final → parenthetical.
+  - **No cites in headings** (`##`/`###`): the citation goes into the first
+    sentence of the section.
+  - **No empty parts**: `\cite[]{key}` renders an empty link;
+    `\cite[disp]{}` renders literal garbage — both are bugs.
+  - Enforced statically by `blog/tests/lesson_guard.py` (cite guard).
 
 ## The Blog: theming & canvas modules
 
