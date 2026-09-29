@@ -817,7 +817,7 @@ This chapter is a deep dive that pays off across the book:
 * **Deep Learning** — the composition view, the "bend" that prevents collapse, and the
   Universal Approximation Theorem it operationalises.
 * **Basic Math III** — the formal Universal Approximation Theorem
-  \cite[Cybenko, 1989]{cybenko1989} (\cite[Hornik et al., 1989]{hornik1989universal}) and why
+  (\cite[Cybenko, 1989]{cybenko1989}) (\cite[Hornik et al., 1989]{hornik1989universal}) and why
   *depth* beats width.
 * **Mechanistic Interpretability** — the "mixed selectivity" and bimodal neurons identified
   here are the same phenomenon neuroscientists and interpretability researchers keep

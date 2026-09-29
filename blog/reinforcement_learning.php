@@ -126,7 +126,7 @@ The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the adva
 
 ### PPO
 
-**Proximal Policy Optimization** is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
+**Proximal Policy Optimization** (\cite[Schulman et al., 2017]{schulman2017ppo}) is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
 
 $$
 L^{\text{CLIP}}(\theta) = \mathbb{E}_t\!\left[\min\!\left(r_t(\theta)\, \hat A_t,\; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\, \hat A_t\right)\right]
@@ -164,9 +164,9 @@ where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
 <div class="md" data-mathlevel="65" data-optionaltitle="DPO: Direct Preference Optimization">
-## DPO: Direct Preference Optimization \cite[Rafailov et al., 2023]{rafailov2023dpo}
+## DPO: Direct Preference Optimization
 
-Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
+\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:
 
 $$
 \pi^*(y \mid x) \propto \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{1}{\beta} R(x, y)\right)
@@ -195,9 +195,9 @@ Variants have proliferated:
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="GRPO: Group Relative Policy Optimization">
-## GRPO: Group Relative Policy Optimization \cite[Shao et al., 2024]{shao2024grpo}
+## GRPO: Group Relative Policy Optimization
 
-GRPO (Shao et al., DeepSeek, 2024) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
+GRPO (\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
 
 1. Sample $G$ candidate responses from the current policy: $\{y^{(1)}, \dots, y^{(G)}\}$.
 2. Score each with a reward model (or rule-based verifier).
