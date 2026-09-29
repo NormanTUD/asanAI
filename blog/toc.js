@@ -155,8 +155,10 @@ function toc() {
 		// Total reading time footer
 		'#toc .toc-footer { font-size: 0.78em; color: var(--mn-text-muted); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--mn-border-light); }',
 
-		// Phones: tighter card, drop the reading-time meta.
-		'@media (max-width: 600px) { #toc { margin: 8px 0 20px; padding: 12px 12px 10px; } #toc .toc-meta { display: none; } }',
+		// Phones: tighter card, drop the reading-time meta. The filter
+		// field gets 1rem (= root size) so iOS does not auto-zoom when
+		// it is tapped (inputs under 16 px trigger the zoom).
+		'@media (max-width: 600px) { #toc { margin: 8px 0 20px; padding: 12px 12px 10px; } #toc .toc-meta { display: none; } #toc-toolbar input[type="search"] { font-size: 1rem; } }',
 		'@media (prefers-reduced-motion: reduce) { #toc ul.collapsible, #toc.toc-ready ul.collapsible { transition: none; } }'
 	].join('\n');
 	document.head.appendChild(s);

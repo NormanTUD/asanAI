@@ -120,13 +120,12 @@ body {
 @media (max-width: 600px) {
 
 	/* ── 3a. Root typography ────────────────────────────────
-	   Comfortable reading size on a phone is ~17 px (Apple's own
-	   default body size). The clamp stays ≥ 16 px (iOS input-zoom
-	   threshold) and only creeps to 17 px at the top of the range —
-	   larger on phones is a no-go. Every rem-based phone rule below
-	   scales up ~6 % with it, which is what we want. */
+	   A touch above the old 16 px but deliberately restrained —
+	   17 px read as "too large" in testing. 16.5 px stays on the
+	   iOS input-zoom safe side (≥ 16 px) and scales every
+	   rem-based phone rule below by just ~3 %. */
 	html {
-		font-size: clamp(16px, 14.8px + 0.5vw, 17px);
+		font-size: 16.5px;
 	}
 
 	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
