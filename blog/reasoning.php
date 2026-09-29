@@ -71,7 +71,9 @@ The cost is $k \times$ more inference, but no retraining required.
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="Tree of Thoughts">
-## Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot} rather than a linear chain:
+## Tree of Thoughts
+
+Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:
 
 1. **Generate** $b$ candidate thoughts at each step.
 2. **Evaluate** each candidate (by prompting the model itself).
@@ -179,7 +181,7 @@ The frontier of research is **meta-reasoning**: training the model to *decide ho
 
 | Method | Compute cost | When to use |
 |--------|-------------|-------------|
-| Zero-shot CoT | $1\times$ | Quick win on \cite[Hendrycks et al., 2021]{hendrycks2021math}s |
+| Zero-shot CoT | $1\times$ | Quick win on MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) |
 | o1-style long thinking | $10{-}100\times$ | Hard math, code, science |
 | Process Reward Model search | $k \cdot d\times$ | Maximum accuracy on verifiable tasks |
 

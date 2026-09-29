@@ -1392,9 +1392,9 @@ These costs create a barrier to entry, ensuring that only the most capital-rich 
 </div>
 
 <div class="md">
-### The Societal Impact: \citetitle{truthdecay} and the “Liar's Dividend”
+### The Societal Impact: “Truth Decay” and the “Liar's Dividend”
 
-While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of “fake news,” but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthorlastnameand{truthdecay} define as **“Truth Decay”**, the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources.
+While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing (\cite[Kavanagh & Rich, 2018]{truthdecay}). The primary concern is not just the creation of “fake news,” but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthorlastnameand{truthdecay} define as **“Truth Decay”**, the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources.
 
 #### The Liar's Dividend
 \citeauthorlastnameand{chesney2019deepfakes} coined the term **“Liar's Dividend”** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the “cognitive biases” identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence.
