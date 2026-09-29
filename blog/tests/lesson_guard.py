@@ -3,33 +3,49 @@
 # dependencies = []
 # ///
 """
-Lesson Guard — static regression guard for the Math IV lesson.
+Lesson Guard — static regression guards for the blog.
 
 Unlike the browser validators (php_render_validator.py), this runs with no
 browser and no PHP server: it asserts source-level invariants on a lesson's
 .php template and its matching .js module. Each invariant is cheap to check
 and has a concrete bug it was added to keep out.
 
-Guards (Math IV · Affine Maps & the Fold):
+Per-lesson guards (LESSONS list — Math IV · Affine Maps & the Fold):
 
   G1 headings-in-md    every ##/###/#### markdown heading sits inside a
-                       <div class="…md…"> block — outside one it neither
-                       renders nor appears in the table of contents.
+                        <div class="…md…"> block — outside one it neither
+                        renders nor appears in the table of contents.
   G2 citation-keys     every \\cite/\\footcite key used in the lesson exists
-                       in literature.js (window.bibData). A missing key logs
-                       an error and renders broken.
+                        in literature.js (window.bibData). A missing key logs
+                        an error and renders broken.
   G3 no-auto-rotate    no *-auto checkbox is `checked` by default (the 3D
-                       labs must start still, not spinning on load).
+                        labs must start still, not spinning on load).
   G4 3d-nav-wired      each of the four 3D canvases is wired to bind3DNav
                         (wheel/pinch zoom + touch rotate).
   G5 3d-axes           each of the four 3D canvases is wired to drawAxes3D.
   G6 symbolic-pieces   the fold's two piece matrices are rendered as symbolic
-                       LaTeX bmatrix entries (λ, cos²θ, sinθ) into #fd2d-m1 /
-                       #fd2d-m2 (not flat number cells).
+                        LaTeX bmatrix entries (λ, cos²θ, sinθ) into #fd2d-m1 /
+                        #fd2d-m2 (not flat number cells).
   G7 fold-quad-map     the fold 3-D quad loop maps `bend` with destructured
-                       (u, v) — a bare `cs.map(bend)` passes a point array as
-                       `u`, NaNs every quad, and the paper vanishes from the
-                       canvas.
+                        (u, v) — a bare `cs.map(bend)` passes a point array as
+                        `u`, NaNs every quad, and the paper vanishes from the
+                        canvas.
+
+Blog-wide citation-integration guards (every top-level lesson .php, see
+AGENTS.md "Citation integration"): \\cite[display]{key} renders `display`
+verbatim WITHOUT brackets, so a self-contained reference must sit inside
+(...) or be woven into the prose — plain \\cite{key} already renders
+bracketed [Author, Year] and is exempt.
+
+  C1 cite-no-empty      \\cite[]{key} (renders an empty link) and
+                        \\cite[disp]{} (renders literal garbage) are bugs.
+  C2 cite-not-in-headings no cite-family macro on a ##/### heading line —
+                        the citation goes into the first sentence.
+  C3 cite-not-floating   a reference-shaped display (trailing ", Year",
+                        book locator Ch./§/p./Equation/Figure:, "Section N")
+                        must be preceded by "(" — otherwise it floats
+                        between words. Narrative subjects use the year in
+                        parens: \\cite[Zhou et al. (2022)]{…} is fine.
 
 Usage:
     uv run blog/tests/lesson_guard.py [blog/]
@@ -182,6 +198,88 @@ def guard_fold_quad_map(js: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# C1-C3 — citation integration, blog-wide (AGENTS.md "Citation integration")
+# ---------------------------------------------------------------------------
+# Top-level .php files that are not prose lessons.
+CITE_SKIP = {
+    "functions.php", "index.php", "index_full.php", "asanai_blog_proxy.php",
+    "graph.php", "image.php", "mobile-prepend.php", "mobile-loader.php",
+    "search_lib.php", "search.php",
+}
+
+CITE_MACRO = re.compile(
+    r"\\(?:footcite|citeauthorlastnameand|citeauthor|citealternativetitle|"
+    r"citetitle|citeyear|citeurl|cite)\b"
+)
+
+# Display shapes that are self-contained references (must sit in (…) or be
+# woven in). Narrative subjects exempt by shape: "Zhou et al. (2022)" ends in
+# ")" not ", 2022".
+FLOATING_REF = re.compile(r"(Ch\.|§|p\. \d|Equation|Figure:)|, (19|20)\d{2}$|^Section \d")
+
+
+def _line_of(text: str, pos: int) -> int:
+    return text.count("\n", 0, pos) + 1
+
+
+def _preceded_by_paren(text: str, pos: int) -> bool:
+    return text[:pos].rstrip().endswith("(")
+
+
+def guard_cite_no_empty(php: str) -> list[str]:
+    issues = []
+    # \cite[]{key} (empty display → empty link) and \cite[disp][]{key}
+    # (extra empty brackets → renders garbage like "disp][]").
+    for m in re.finditer(r"\\cite(?:\[[^\]]*\])?\[\s*\]\{", php):
+        issues.append(
+            f"line {_line_of(php, m.start())}: empty [] in cite "
+            f"{php[m.start():m.start() + 40]!r} — renders an empty link or "
+            f"literal garbage"
+        )
+    for m in re.finditer(r"\\cite(?:\[[^\]]*\])?\{\s*\}", php):
+        issues.append(
+            f"line {_line_of(php, m.start())}: empty {{}} in cite "
+            f"{php[m.start():m.start() + 40]!r} — macro is never processed"
+        )
+    return issues
+
+
+def guard_cite_not_in_headings(php: str) -> list[str]:
+    issues = []
+    for lineno, line in enumerate(php.splitlines(), start=1):
+        s = line.strip()
+        if re.match(r"^#{1,6}\s", s) and CITE_MACRO.search(s):
+            issues.append(
+                f"line {lineno}: cite in heading {s[:60]!r} — move it to the "
+                f"first sentence of the section"
+            )
+    return issues
+
+
+def guard_cite_not_floating(php: str) -> list[str]:
+    issues = []
+    for m in re.finditer(r"\\cite\[([^\]]*)\]\{([A-Za-z0-9_]+)\}", php):
+        display = m.group(1).strip()
+        if not display or not FLOATING_REF.search(display):
+            continue
+        if _preceded_by_paren(php, m.start()):
+            continue
+        issues.append(
+            f"line {_line_of(php, m.start())}: floating reference "
+            f"\\cite[{display[:50]}]{{…}} is not inside parentheses — wrap it "
+            f"in (…) or weave it into the prose"
+        )
+    return issues
+
+
+CITE_GUARDS = [
+    ("C1 cite-no-empty", guard_cite_no_empty),
+    ("C2 cite-not-in-headings", guard_cite_not_in_headings),
+    ("C3 cite-not-floating", guard_cite_not_floating),
+]
+
+
+# ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
 GUARDS_PHP = [
@@ -208,6 +306,24 @@ def main() -> None:
         sys.exit(1)
 
     total_fail = 0
+    cite_fail = 0
+    cite_checked = 0
+    for path in sorted(root.glob("*.php")):
+        if path.name in CITE_SKIP:
+            continue
+        cite_checked += 1
+        php = _read(path)
+        issues = []
+        for name, fn in CITE_GUARDS:
+            issues.extend(f"[{name}] {i}" for i in fn(php))
+        if issues:
+            cite_fail += len(issues)
+            print("=" * 64)
+            print(f"Cites: {path.name}")
+            print("=" * 64)
+            for i in issues:
+                print(f"  ✗ {i}")
+
     for php_name, js_name in LESSONS:
         php_path, js_path = root / php_name, root / js_name
         if not php_path.exists() or not js_path.exists():
@@ -242,6 +358,9 @@ def main() -> None:
         print()
 
     print("=" * 64)
+    print(f"Citation guards: {cite_checked} file(s) checked, "
+          f"{cite_fail} issue(s)")
+    total_fail += cite_fail
     if total_fail:
         print(f"[FAIL] {total_fail} guard violation(s) found → exit code 1")
         sys.exit(1)
