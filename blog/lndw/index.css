@@ -933,3 +933,91 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #9a8f6d;
 	margin-top: 5px;
 }
+
+/* ============ "DIE WIESE DER WÖRTER" (Slide) ============ */
+#slide-wiese-der-worte input[type=range] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 6px;
+	border-radius: 99px;
+	background: #e3dcc9;
+	outline: none;
+	cursor: pointer;
+}
+#slide-wiese-der-worte input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #0f766e;
+	border: 3px solid #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, .25);
+	cursor: pointer;
+}
+#slide-wiese-der-worte input[type=range]::-moz-range-thumb {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #0f766e;
+	border: 3px solid #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, .25);
+	cursor: pointer;
+}
+#slide-wiese-der-worte input[type=range].wiese-t::-webkit-slider-thumb { background: #b45309; }
+#slide-wiese-der-worte input[type=range].wiese-t::-moz-range-thumb { background: #b45309; }
+.wiese-ctl-lab {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+	font-size: 13px;
+	color: #5c6272;
+	margin-bottom: 6px;
+}
+.wiese-ctl-lab b {
+	font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	color: #0f766e;
+	font-size: 13.5px;
+}
+.wiese-ctl-lab b.wiese-t-val { color: #b45309; }
+.wiese-box {
+	flex: 1;
+	min-width: 110px;
+	background: #e6f2f0;
+	border: 1px solid #d5e8e4;
+	border-radius: 12px;
+	padding: 10px 12px;
+	text-align: center;
+}
+.wiese-box .wiese-k {
+	font-size: 10.5px;
+	color: #9aa0b0;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	margin-bottom: 3px;
+}
+.wiese-box .wiese-v {
+	font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	font-size: 17px;
+	font-weight: 700;
+	color: #0f766e;
+}
+.wiese-box.amber { background: #fdf3e3; border-color: #f0dcbc; }
+.wiese-box.amber .wiese-v { color: #b45309; }
+.wiese-box.rose { background: #fdeef4; border-color: #f2cdd9; }
+.wiese-box.rose .wiese-v { color: #be185d; }
+.wiese-caption {
+	margin-top: 12px;
+	padding: 12px 18px;
+	background: #eff6ff;
+	border-radius: 10px;
+	border: 1px solid #bfdbfe;
+	color: #1e40af;
+	text-align: center;
+	line-height: 1.6;
+	min-height: 64px;
+	font-size: .98em;
+}
+.wiese-hint { color: #64748b; font-size: .85em; }
