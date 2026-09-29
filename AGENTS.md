@@ -312,11 +312,24 @@ the cite family):
     is the subject.
   - **Book cites with chapter/page**: mid-sentence → narrative;
     sentence-final → parenthetical.
+  - **Already inside a parenthetical?** A display cite inside an existing
+    `(...)` group is already compliant — do *not* wrap it again
+    (`(word (cite))` is a double wrap; the inner pair must go).
+  - **Adjacent cites merge into one group**: `(\cite[A]) (\cite[B])` →
+    `(\cite[A]; \cite[B])`. Never leave `(\cite[A]) (\cite[B])` side by side.
+  - **Method-name + cite**: `(\cite[A, Year]) (Name)` or
+    `Name (\cite[A, Year]) (product)` — keep the name as the noun and attach
+    the cite to it: `**Name** (\cite[A, Year])`.
+  - **Narrative subject takes `Author (Year)`**, not `Author, Year`:
+    `\cite[Hahn (2020)]{hahn2020limitations} proved that …` — the bare
+    `Author, Year` form reads as a floating reference outside parens.
   - **No cites in headings** (`##`/`###`): the citation goes into the first
     sentence of the section.
   - **No empty parts**: `\cite[]{key}` renders an empty link;
     `\cite[disp]{}` renders literal garbage — both are bugs.
-  - Enforced statically by `blog/tests/lesson_guard.py` (cite guard).
+  - Enforced statically by `blog/tests/lesson_guard.py` (cite guard; C3
+    "not floating" uses line-level paren depth — a cite counts as
+    parenthetical if any `(` opens unclosed before it on its line).
 
 ## The Blog: theming & canvas modules
 
