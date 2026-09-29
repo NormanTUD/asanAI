@@ -23,7 +23,7 @@ const WordMeadow = (() => {
     const CAPTIONS = [
         'Jeder Punkt der Wiese ist ein möglicher <b>Zwischengedanke</b>. Die Wörter stecken wie Stifte in der Wiese — <b>das nächstgelegene Wort gewinnt</b>.',
         'Der Punkt ist der aktuelle Gedanke. Das nächste Wort gewinnt hier <b>mit klarem Vorsprung</b> — die Gewinn-Chance ist hoch.',
-        'Jetzt liegt der Gedanke auf einem <b>goldenen Band</b>: zwei Wörter sind fast gleich nah → das Modell <b>zögert</b>, die Gewinn-Chance sinkt.',
+        'Jetzt liegt der Gedanke auf einem <b>goldenen Band</b>: zwei Wörter sind fast gleich nah — <b>kein Wort passt genau</b>, die Gewinn-Chance sinkt.',
         'Mehr Wörter → kleinere Zellen, schmalere Bänder. Aber der <b>Anteil</b> der unsicheren Zone bleibt: <b>nie null</b>. Zwischen je zwei Wörtern gibt es immer eine Grenze.',
         '<b>Temperatur</b> = wie offen die Auswahl ist: <b>niedrig</b> → fast immer dasselbe Wort · <b>hoch</b> → viele Wörter im Spiel (der Kreis zeigt die Reichweite).',
         'Genau diese Grenzen machen den <b>Expressibility Gap</b> aus: Der Verlust hat eine Untergrenze, die kein größeres Wörterbuch wegnimmt.'
@@ -226,7 +226,7 @@ const WordMeadow = (() => {
             case 2: return { N: 12, T: 0.8, pointer: findPoint(gen(12), 'boundary') };
             case 3: return { N: 30, T: 0.8, pointer: 'keep' };
             case 4: return { N: 30, T: 2.6, pointer: findPoint(gen(30), 'boundary') };
-            case 5: return { N: 30, T: 2.6, pointer: 'keep' };
+            case 5: return { N: 30, T: 0.8, pointer: 'keep' };
         }
         return { N: 12, T: 0.8, pointer: null };
     }

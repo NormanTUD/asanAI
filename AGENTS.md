@@ -372,10 +372,24 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   `.topic-block`s score 3-state: full / dimmed (`.topic-block-dimmed`) / tucked.
 - **Math-comfort dial**: stored 0–100; the *dial* snaps to 5 stops
   (`MATH_LEVELS` = 0/25/50/75/100: No math / High school / University /
-  Graduate / Research, default 50), the *gate* stays fine-grained (compares
-  stored level vs each block's `data-mathlevel`; strict `<` — `level ==
-  required` passes). `BlogTopics.snapMath(v)` / `mathLevelLabel(v)` guard
-  non-numeric input.
+   Graduate / Research, default 50), the *gate* stays fine-grained (compares
+   stored level vs each block's `data-mathlevel`; strict `<` — `level ==
+   required` passes). `BlogTopics.snapMath(v)` / `mathLevelLabel(v)` guard
+   non-numeric input.
+- **History-depth dial**: a second dial, parallel to math-comfort, for *how
+   far back in time* the course should reach (the textbook spans Big Bang →
+   present, so a reader who only cares about AI can skip the ancient history).
+   Stored 0–100 in the pref as `depth` (default 100 = full depth); the *dial*
+   snaps to 6 stops (`DEPTH_LEVELS` = 0/20/40/60/80/100: Just AI / Computers /
+   1600s / Ancient / Prehistory / Big Bang and beyond). A block **or course
+   tile** tagged `data-depth="N"` (alias `data-depthlevel`) is tucked while the
+   reader's depth is `< N` — `N` is the farthest-back era the unit reaches
+   into, shown only once the reader sets at least that depth. Gate is
+   `scoreUnit({ depthReq })` (reason `'depth'`); the slider (step 20) sits in
+   the overlay and the inline widgets. API: `getDepthLevel` / `setDepthLevel` /
+   `snapDepth` / `depthEra`. As of writing only `intro.php` carries a
+   `data-depth` tag (one-file test) — rolling the tag across the rest of the
+   course is a separate task.
 - **Math-gate bypass (auto-reveal)**: if the user marks all prerequisites of a
   lesson as learned, gated blocks in it are revealed. `LESSON_DEPS` currently
   lists `math-i, math-ii, math-iii, math-iv, differentiation`.
@@ -392,8 +406,8 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
   created (a detached node is invisible).
 - **Persistence**: localStorage `blog_topics_pref` is authoritative; the
   `topics_pref` cookie is a size-guarded mirror (skipped above ~3900 chars).
-  Pref shape: `{topics, categories, profile, level, mathLevel, corePersonas,
-  learned}`.
+   Pref shape: `{topics, categories, profile, level, mathLevel, depth,
+   corePersonas, learned}`.
 - **Math-alts**: a host `[data-math-opt="math-heavy"]` containing a rendered
   `<math>` plus a `.math-alt` plain-language twin; the twin shows when the
   tone is switched off. (Mechanism + test exist; no course content uses it
