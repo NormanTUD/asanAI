@@ -970,6 +970,15 @@
             Das Modell „denkt" in einem Raum mit unendlich vielen Abstufungen — sagen kann es aber nur Wörter aus einem <b>endlichen</b> Wörterbuch. Diese Wiese zeigt, wie dabei aus einem Gedanken ein Wort wird: <b>das nächste Wort gewinnt.</b>
         </p>
 
+        <div style="display:flex; gap:8px; justify-content:center; margin-bottom:12px; flex-wrap:wrap;">
+            <span class="attr-indicator wiese-step active" data-wstep="0">1. Wiese</span>
+            <span class="attr-indicator wiese-step" data-wstep="1">2. Der Gedanke</span>
+            <span class="attr-indicator wiese-step" data-wstep="2">3. Zögern</span>
+            <span class="attr-indicator wiese-step" data-wstep="3">4. Mehr Wörter</span>
+            <span class="attr-indicator wiese-step" data-wstep="4">5. Temperatur</span>
+            <span class="attr-indicator wiese-step" data-wstep="5">6. Expressibility Gap</span>
+        </div>
+
         <div class="demo-box" style="min-height:auto; padding:18px 22px; background:#faf7f0;">
             <canvas id="wiese-canvas" style="display:block; width:100%; height:420px; border-radius:12px; background:#f6f1e7; cursor:crosshair;"></canvas>
 
@@ -1625,11 +1634,15 @@
 <script src="interpolation_viz.js"></script>
 <script src="isosurfaces.js"></script>
 <script src="training_demo.js"></script>
+<script src="wiese_viz.js"></script>
 
 <script>
 	// Schweren Plot in die Lade-Pipeline einhängen (läuft nach dem Formel-Rendering,
 	// meldet sich über den Plotly-Wrapper im Lade-Text an).
 	LoadingTasks.add('Zeichne Dual-Manifolds (Übersetzungsraum) …', renderDualManifolds);
+	if (typeof WordMeadow !== 'undefined') {
+		LoadingTasks.add('Bereite Wiese der Wörter vor …', WordMeadow.precomputeAll);
+	}
 
 	function fitSlides() {
 		const slides = document.querySelectorAll('.slide');

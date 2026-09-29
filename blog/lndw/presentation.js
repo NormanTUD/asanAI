@@ -126,6 +126,14 @@ const DemoRegistry = (() => {
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
 
+                // "Die Wiese der Wörter": Pfeiltasten schalten die
+                // Auto-Demo-Schritte (Maus + Regler bewegen sich selbst).
+                { ref: () => typeof WordMeadow !== 'undefined' ? WordMeadow : null,
+                        guard: d => d.isOnSlide(),
+                        slideTest: s => s.id === 'slide-wiese-der-worte',
+                        onEnter: d => d.enter(),
+                        onLeave: d => d.leave() },
+
         ];
 
     // Normalisiere: Defaults einsetzen
