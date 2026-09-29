@@ -38,7 +38,7 @@ $$
 \underbrace{\langle \mathbf{u}, \mathbf{v} \rangle}_{\substack{\text{“how aligned are} \\ u \text{ and } v\text{?”}} \;} \;=\; \underbrace{\sum_{i=1}^{n} u_i v_i}_{\text{sum of term-by-term agreements}} \;=\; \underbrace{\lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert \, \cos\theta}_{\text{lengths times their alignment } \theta}
 $$
 
-The third form is what matters. The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum. A dot product is a **measure of alignment**.
+The third form is what matters. The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum. A dot product is a **measure of alignment** \cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 3, §3.4, p. 58]{boyd2018appliedlinearalgebra}.
 
 This fact drives the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search finds the vector with the largest inner product. Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). Cosine similarity — the inner product with the lengths divided out — powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
 </div>
@@ -52,7 +52,7 @@ $$
 G \;=\; \underbrace{X^{\top} X}_{\text{“all pairwise alignments at once”}} \qquad\qquad G_{ij} \;=\; \underbrace{\langle x_i, x_j \rangle}_{\text{“how much do data } i \text{ and } j \text{ agree?”}}
 $$
 
-Two things matter. First, $G$ is **always symmetric and positive semi-definite**: the diagonal is $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for any vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)
+Two things matter. First, $G$ is **always symmetric and positive semi-definite** \cite[Axler, Linear Algebra Done Right, Ch. 7, §7C, p. 251]{axler2024linearalgebra}: the diagonal is $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for any vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)
 
 Second: **$G$ describes the data’s geometry without any coordinates.** It records only *inner products*, which are unchanged by a rigid motion. Rotate every data point by the same rotation $R$ and every pairwise dot product stays the same, so $G$ is **unchanged**:
 
@@ -60,7 +60,7 @@ $$
 \underbrace{(RX)^{\top}(RX)}_{\text{the Gram matrix of the rotated data}} \;=\; X^{\top}\underbrace{R^{\top}R}_{\text{a rotation undoes itself }=\, I}\,X \;=\; \underbrace{X^{\top}X}_{\text{the original Gram matrix } G}
 $$
 
-Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free description. Even more rigid: the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the data’s shape independent of coordinates.
+Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free description. Even more rigid: the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis \cite[Axler, Linear Algebra Done Right, Ch. 7, §7B, p. 243]{axler2024linearalgebra}, so they capture the data’s shape independent of coordinates.
 
 That is the seed of the chapter. Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.
 </div>
@@ -70,7 +70,7 @@ That is the seed of the chapter. Everything that follows is a geometric operatio
 
 Suppose the answer *must* lie in a subspace $S$ — a line, a plane, or the set of all outputs a layer can produce. Given a target point $p$ outside $S$, **which point $s \in S$ is closest to $p$?**
 
-The answer is the **orthogonal projection**. Take any candidate $s \in S$ and split the distance into two pieces:
+The answer is the **orthogonal projection** \cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 7, §7.1, p. 130]{boyd2018appliedlinearalgebra}. Take any candidate $s \in S$ and split the distance into two pieces:
 
 $$
 \underbrace{\lVert p - s \rVert^2}_{\text{squared distance from } p \text{ to your candidate } s} \;=\; \underbrace{\lVert p - p_S \rVert^2}_{\text{distance from } p \text{ to the whole subspace } S} \;+\; \underbrace{\lVert p_S - s \rVert^2}_{\text{extra you add by not picking } p_S}
@@ -78,7 +78,7 @@ $$
 
 where $p_S$ is the projection of $p$ onto $S$. The cross term vanishes because $p - p_S$ is *perpendicular to* $S$ while $s - p_S$ lies *in* it. The first term does not depend on $s$; the second is non-negative and zero only when $s = p_S$. So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ sticking out, perpendicular to $S$.
 
-“The error is perpendicular to the model” is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of low-rank approximation: truncating to a few directions gives the best shadow of the data in that subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it reads a single neuron: its output $\langle w, x \rangle$ is how much of the input $x$ points along $w$. Attention does the same move in reverse — project each key onto the query for a similarity, then recombine the values (see [Attention](attentionlab)).
+“The error is perpendicular to the model” is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 12, §12.3, p. 231]{boyd2018appliedlinearalgebra} \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of low-rank approximation: truncating to a few directions gives the best shadow of the data in that subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it reads a single neuron: its output $\langle w, x \rangle$ is how much of the input $x$ points along $w$. Attention does the same move in reverse — project each key onto the query for a similarity, then recombine the values (see [Attention](attentionlab)).
 
 The picture is always *a target, a family of allowed answers, keep the shadow.* In the interactive, move the target and tilt the subspace. The residual stays perpendicular — that right angle *is* the proof — and “explained” behaves like a regression’s $R^2$.
 </div>
@@ -153,7 +153,7 @@ The interactive shows the unit circle (white) and its image under a map with sin
 <div class="md" data-mathlevel="60" data-optionaltitle="Descent: why the gradient is steepest">
 ## Descent: why the gradient is steepest
 
-Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the inner-product identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product, using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
+Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the inner-product identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product \cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 2, §2.2, p. 36]{boyd2018appliedlinearalgebra}, using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
 
 $$
 \underbrace{dL(d)}_{\text{“slope going in direction } d\text{”}} \;=\; \underbrace{\langle \nabla L, \, d \rangle}_{\text{gradient dotted with the direction}} \;=\; \underbrace{\lVert \nabla L \rVert}_{\text{the steepest slope there is}} \;\underbrace{\cos\angle(\nabla L, d)}_{\le 1,\ \text{and } 1 \text{ only when } d \parallel \nabla L}
