@@ -385,9 +385,9 @@ In practice, sub-agents are often just another tool. The opencode agent, for exa
 
 Naive agents attempt tasks step-by-step without foresight. More sophisticated agents **plan** before acting, decomposing complex goals into subtasks.
 
-### Plan-and-Execute (\cite[Wang et al., 2023]{wang2023planandexecute})
+### Plan-and-Execute
 
-The agent first generates a complete plan, then executes each step:
+The agent first generates a complete plan, then executes each step (\cite[Wang et al., 2023]{wang2023planandexecute}):
 </div>
 
 <pre class="wslab-code-block"><code>User: Write a blog post comparing the environmental impact of
@@ -409,7 +409,7 @@ significantly. Adding sub-step: research green vs. grey hydrogen.]
 ...</code></pre>
 
 <div class="md">
-### Reflexion: Learning from Mistakes (\cite[Shinn et al., 2023]{shinn2023reflexion})
+### Reflexion: Learning from Mistakes
 
 \cite[Reflexion]{shinn2023reflexion} adds a self-evaluation step: after completing a task, the agent reflects on what went wrong and stores that reflection in memory for future attempts.
 
@@ -464,7 +464,7 @@ The agent paradigm has spawned numerous open-source frameworks:
 <tr><td><strong>Semantic Kernel</strong></td><td>C# / Python</td><td>Microsoft's enterprise agent SDK</td></tr>
 <tr><td><strong>OpenAI Assistants API</strong></td><td>API</td><td>Managed agent infrastructure with built-in tools</td></tr>
 <tr><td><strong>Anthropic Claude Tool Use</strong></td><td>API</td><td>Native function calling with safety constraints</td></tr>
-<tr><td><strong>opencode</strong></td><td>TypeScript / Bun</td><td>Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK \cite[Abboud, 2025]{abboud2025opencode}</td></tr>
+<tr><td><strong>opencode</strong></td><td>TypeScript / Bun</td><td>Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK (\cite[Abboud, 2025]{abboud2025opencode})</td></tr>
 <tr><td><strong>Neuron (PHP)</strong></td><td>PHP</td><td>Agent framework for PHP backend engineers</td></tr>
 </tbody>
 </table>

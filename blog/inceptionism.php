@@ -55,7 +55,7 @@ Instead of prescribing a class, feed the network a photo and ask it to *enhance 
 
 The funniest artifact of the process is that the dreams obey the network's *natural environment*. Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \cite{mordvintsev2015inceptionism}. The dream exposes the training distribution's hidden scenery.
 
-\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — "dumbbells don't usually appear without people holding them" \cite{mordvintsev2015inceptionism}. \cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism}}
+\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — "dumbbells don't usually appear without people holding them" \cite{mordvintsev2015inceptionism}. (\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}
 
 The same effect recurs everywhere: clouds swirled into **birds**, rocks rebuilt as **towers and pagodas**, leaves peppered with **animals**, even a **duck-billed platypus** appearing in a portrait's armpit. Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over. This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.
 </div>

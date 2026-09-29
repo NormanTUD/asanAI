@@ -44,31 +44,33 @@ Each has failure modes:
 <div class="md" data-mathlevel="40" data-optionaltitle="Multiple-choice benchmarks (MMLU accuracy)">
 ## Multiple-Choice Benchmarks
 
-### MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): Massive Multitask Language Understanding — 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
+### MMLU: Massive Multitask Language Understanding
+
+MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
 
 $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
 $$
 
-By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
 </div>
 
 <div class="md">
-### HellaSwag \cite[Zellers et al., 2019]{zellers2019hellaswag}
+### HellaSwag
 
-Tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
+HellaSwag (\cite[Zellers et al., 2019]{zellers2019hellaswag}) tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
 
-### ARC \cite[Clark et al., 2018]{clark2018arc}
+### ARC
 
-AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
+ARC (\cite[Clark et al., 2018]{clark2018arc}) is the AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 </div>
 
 <div class="md">
 ## Generative, Exact-Match
 
-### GSM8K \cite[Cobbe et al., 2021]{cobbe2021gsm8k}
+### GSM8K
 
-Grade-school \cite[Hendrycks et al., 2021]{hendrycks2021math}s:
+GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}):
 
 $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
@@ -76,15 +78,15 @@ $$
 
 The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}).
 
-### MATH \cite[Hendrycks et al., 2021]{hendrycks2021math}
+### MATH
 
-12,500 competition-\cite[Hendrycks et al., 2021]{hendrycks2021math}s from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
+MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) comprises 12,500 competition math problems from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="HumanEval (pass@k formula)">
-### HumanEval \cite[Chen et al., 2021]{chen2021humaneval}
+### HumanEval
 
-164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
+HumanEval (\cite[Chen et al., 2021]{chen2021humaneval}) consists of 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
 
 $$
 \text{pass@k} = \mathbb{E}\!\left[1 - \frac{\binom{n-c}{k}}{\binom{n}{k}}\right]
@@ -94,13 +96,13 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 </div>
 
 <div class="md">
-### MBPP (\cite[Austin et al., 2021]{austin2021mbpp}
+### MBPP
 
-974 Python problems, slightly easier than (\cite[Chen et al., 2021]{chen2021humaneval}). Used as a complement.
+MBPP (\cite[Austin et al., 2021]{austin2021mbpp}) comprises 974 Python problems, slightly easier than (\cite[Chen et al., 2021]{chen2021humaneval}). Used as a complement.
 
-### BIG-Bench \cite[Srivastava et al., 2022]{srivastava2022bigbench}
+### BIG-Bench
 
-204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
+BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
 </div>
 
 <div id="mmlu-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -122,15 +124,15 @@ $$
 
 where $Q$ is true quality and $T$ is “judge noise”. Empirical agreement with humans is ~70-80% on chat data.
 
-### MT-Bench / AlpacaEval \cite[Zheng et al., 2023]{zheng2023lmsys}
+### MT-Bench / AlpacaEval
 
-MT-Bench: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
+MT-Bench / AlpacaEval (\cite[Zheng et al., 2023]{zheng2023lmsys}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
 
 AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4 baseline.
 
-### LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys}
+### LMSYS
 
-The gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
+LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
 
 $$
 E_A^{\text{new}} = E_A + K \cdot \left(S_{AB} - \frac{1}{1 + 10^{(E_B - E_A)/400}}\right)
@@ -191,9 +193,9 @@ The community is moving towards:
 * **Behavioral red-teaming**: probing for specific failure modes (jailbreaks, hallucinations, bias).
 * **Task-specific evaluation**: medical QA with clinician review, legal tasks with lawyer review, code with actual execution and CI.
 
-### \cite[Liang et al., 2022]{liang2023helm} (Stanford, 2022)
+### HELM: Holistic Evaluation of Language Models
 
-The Holistic Evaluation of Language Models benchmark suite evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
+The Holistic Evaluation of Language Models benchmark suite (\cite[Liang et al., 2022]{liang2023helm}) evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
 
 ### The State of Evaluation in 2025
 

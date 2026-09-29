@@ -320,7 +320,7 @@ The same "many inputs, one shared space" move is what makes it possible to put t
 > And by mapping images and words into the same representation, we can
 > classify images of classes we've never seen!
 
-\cite[Olah, 2015]{colah2015types} — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show (\cite[Olah, 2014]{colah2014nlp}).
+(\cite[Olah, 2015]{colah2015types}) — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show (\cite[Olah, 2014]{colah2014nlp}).
 
 A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
 
