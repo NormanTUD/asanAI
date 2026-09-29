@@ -63,6 +63,7 @@ global.document = {
 	},
 	createElement: function() { return makeNode(); },
 	createTextNode: function() { return {}; },
+	documentElement: { classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } } },
 	getElementById: function() { return null; },
 	querySelector: function() { return null; },
 	querySelectorAll: function() { return []; },
