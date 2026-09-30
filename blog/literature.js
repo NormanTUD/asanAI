@@ -15644,6 +15644,27 @@ window.bibData = {
 		url: "https://scads.ai/transfer-and-service/software/omniopt/",
 		alternativetitle: "OmniOpt"
 	},
+	"olson2025ax": {
+		title: "Ax: A Platform for Adaptive Experimentation",
+		author: "Miles Olson et al.",
+		year: 2025,
+		url: "https://ax.dev/",
+		alternativetitle: "Ax"
+	},
+	"balandat2020botorch": {
+		title: "BoTorch: A Framework for Efficient Monte-Carlo Bayesian Optimization",
+		author: "Maximilian Balandat et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/1910.06403",
+		alternativetitle: "BoTorch"
+	},
+	"akiba2019optuna": {
+		title: "Optuna: A Next-Generation Hyperparameter Optimization Framework",
+		author: "Takuya Akiba et al.",
+		year: 2019,
+		url: "https://github.com/optuna/optuna",
+		alternativetitle: "Optuna"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The Polar Program  (untold_history.php)
 	 *  Ice cores, polar/climate computing, cryogenics -> superconducting

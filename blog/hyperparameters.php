@@ -80,13 +80,12 @@ A bad configuration usually announces itself early: the loss curves of doomed ru
 
 ## A Tool for the Search: OmniOpt
 
-If you have a model whose training can be run as a program, the search does not have to be done by hand. \cite[ScaDS.AI Dresden/Leipzig]{omniopt} has developed exactly such an instrument: **OmniOpt**, a hyperparameter optimization tool that wraps a stochastic Bayesian optimizer (TPE, via \cite{hyperopt}) around your own program.
+If you have a model whose training can be run as a program, the search does not have to be done by hand. \cite[ScaDS.AI Dresden/Leipzig]{omniopt} has developed exactly such an instrument: **OmniOpt**, a hyperparameter optimization tool that wraps an optimizer around your own program. Its current version, OmniOpt2, no longer ties the search to a single algorithm: it is built on the \cite[Ax]{olson2025ax} adaptive-experimentation platform, whose default surrogate is a Gaussian process fitted by \cite[BoTorch]{balandat2020botorch}, and it can additionally run TPE, Sobol quasi-random sequences, factorial designs, and the full range of \cite[Optuna]{akiba2019optuna} samplers. Which algorithm fits the problem is up to the search space: Gaussian processes shine in low-to-medium-dimensional continuous spaces, TPE in high-dimensional or heavily categorical ones, and quasi-random sequences when the evaluations are cheap enough that adaptivity pays no dividend.
 
 * Your program is a **black box** in any programming language on Linux: it reads the hyperparameters as command-line arguments, trains, and prints the objective value to standard output.
 * OmniOpt proposes the next configurations, balancing exploration and exploitation, and checks and installs all dependencies automatically.
-* The evaluations are distributed automatically over the HPC system at TU Dresden — more than 40,000 CPUs and several hundred GPUs.
+* The evaluations are distributed automatically over the HPC system at TU Dresden, given you have access to the system — more than 40,000 CPUs and several hundred GPUs. If you don't have access to the TU Dresden HPC systems, you can run it on any Linux, or any system that has Slurm as a scheduler.
 * The results come back as the full table of evaluated configurations plus 2D slices of the search space as color maps and parallel-coordinate plots.
-* It is free for users with an account on the HPC system of TU Dresden, and a training session, "Hyperparameter Optimization with OmniOpt", is offered regularly.
 
 See the [project page](https://scads.ai/transfer-and-service/software/omniopt/).
 </div>
