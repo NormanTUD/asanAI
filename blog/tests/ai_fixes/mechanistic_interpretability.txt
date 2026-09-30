@@ -5,12 +5,11 @@ Fix the layout overflows on /mechanistic_interpretability.php (blog lesson PHP f
 
 Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
-The layout guardrail flagged 3 element(s) rendering wider than the column:
+The layout guardrail flagged 2 element(s) rendering wider than the column:
 
-  1) div.lg-overflow-flag — measured 450px, allowed ≈ 375px, overflow +75px
-  2) div.lg-overflow-flag — measured 500px, allowed ≈ 375px, overflow +125px
+  1) div.lg-overflow-flag — measured 500px, allowed ≈ 375px, overflow +125px
       content: \"🔬 Probing Layer:Layer 6Early layers (1–3): world model still forming. Middle la\"
-  3) div.lg-overflow-flag — measured 400px, allowed ≈ 375px, overflow +25px
+  2) div.lg-overflow-flag — measured 400px, allowed ≈ 375px, overflow +25px
 
 How to fix each one:
   A. Default — clamp it to the column: set width:100%; max-width:var(--mn-col-width) on the element (or on the wrapper that constrains it) in the lesson file / the relevant CSS. This is the ONLY fix that needs no label.

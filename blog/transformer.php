@@ -440,7 +440,9 @@ $$\text{Concat}(\text{head}_1, \dots, \text{head}_h) = [ \text{head}_1, \text{he
 
 If $d_\text{model} = 512$ and we have $h = 8$ heads (with $d_k = d_v = 64$ in the original Transformer):
 * **Each head:** $d_k = d_v = \frac{512}{8} = 64$
-* **Shapes:** $\underbrace{(B, T, 64)}{\substack{\text{head } 1}} + \dots + \underbrace{(B, T, 64)}{\substack{\text{head } 8}} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}{\substack{\text{Full Tensor}}}$
+* **Shapes:**
+
+<div class="lg-scroll">$$\underbrace{(B, T, 64)}{\substack{\text{head } 1}} + \dots + \underbrace{(B, T, 64)}{\substack{\text{head } 8}} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}{\substack{\text{Full Tensor}}}$$</div>
 
 If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
 $$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$

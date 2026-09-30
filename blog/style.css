@@ -3187,6 +3187,9 @@ h2::after {
 .minimalneuron-page .plot-container {
 	margin: 1rem auto;
 	padding: 0 2rem;
+	/* width:100% + horizontal padding would otherwise push the box past the
+	   reading column (content-box sizing); border-box keeps it inside. */
+	box-sizing: border-box;
 }
 
 .minimalneuron-page .plot-container .js-plotly-plot {

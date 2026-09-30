@@ -52,7 +52,7 @@
     }
 
     function createCanvas(parent, width, height) {
-        const canvas = createElement('canvas', {width, height, style: {border: '1px solid #ccc', borderRadius: '4px', display: 'block', margin: '8px auto'}}, parent);
+        const canvas = createElement('canvas', {width, height, style: {border: '1px solid #ccc', borderRadius: '4px', display: 'block', margin: '8px auto', maxWidth: '100%', height: 'auto'}}, parent);
         return canvas;
     }
 
@@ -146,7 +146,8 @@
             style: {width: '100%', maxWidth: '400px', padding: '8px', fontSize: '14px', fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #ccc'}
         }, inputDiv);
 
-        const canvas = createCanvas(section, 700, 400);
+        const canvasWrap = createElement('div', {className: 'lg-scroll', style: {overflowX: 'auto'}}, section);
+        const canvas = createCanvas(canvasWrap, 700, 400);
         const ctx = canvas.getContext('2d');
 
         const explanationDiv = createElement('div', {style: {margin: '10px 0', padding: '10px', background: themeColor('#ffffff'), borderRadius: '4px', fontSize: '13px'}}, section);
@@ -362,7 +363,7 @@
 
         const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
         const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
-        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '450px'}}, controlRow);
+        const canvasPanel = createElement('div', {style: {flex: '1 1 100%', minWidth: '0'}}, controlRow);
 
         const modulus = 13;
         const totalSteps = 100;
@@ -618,7 +619,7 @@ function initOthelloDemo() {
     const boardCanvas = createCanvas(boardPanel, 280, 280);
 
     // RIGHT: Probe reconstructions + layer slider
-    const probesPanel = createElement('div', {style: {flex: '1', minWidth: '500px'}}, mainRow);
+    const probesPanel = createElement('div', {style: {flex: '1 1 100%', minWidth: '0'}}, mainRow);
 
     const sliderRow = createElement('div', {style: {marginBottom: '10px', padding: '8px 12px', background: themeColor('#fff'), borderRadius: '4px'}}, probesPanel);
     createElement('label', {
@@ -1043,7 +1044,7 @@ function initLinearRepDemo() {
 
     const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
     const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
-    const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '400px'}}, controlRow);
+    const canvasPanel = createElement('div', {style: {flex: '1 1 100%', minWidth: '0'}}, controlRow);
 
     let causalWeight = 1.0; // 0 = Euclidean, 1 = Causal
 
