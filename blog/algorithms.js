@@ -2533,7 +2533,7 @@ function renderWaveInterference(container) {
                 </div>
             </div>
             <div id="wi-status" style="font-size:0.95em; color:#334155; padding:0 4px 10px 4px; line-height:1.5;"></div>
-            <div id="wi-plot" style="width:100%; height:360px; border-radius:6px;"></div>
+            <div id="wi-plot" data-plot-theme="self" style="width:100%; height:360px; border-radius:6px;"></div>
             <div id="wi-explain" style="font-size:0.9em; color:#64748b; padding:10px 4px 0 4px; line-height:1.5;"></div>
         </div>
     `;

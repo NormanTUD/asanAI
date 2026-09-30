@@ -332,5 +332,12 @@ function initOptimizerLab() {
 async function loadOptimizerModule() {
 	updateLoadingStatus("Loading section about Optimizers...");
 	initOptimizerLab();
+
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(() => {
+			try { updateOptPlot(); } catch (e) { /* ignore */ }
+		});
+	}
+
 	return Promise.resolve();
 }

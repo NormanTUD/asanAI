@@ -113,7 +113,7 @@ Different optimizers use different strategies for step 2:
     </div>
 
     <div style="position: relative;">
-        <div id="plot-optimizer" style="height: 420px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+        <div id="plot-optimizer" data-plot-theme="self" style="height: 420px; background: var(--mn-surface, white); border-radius: 8px;"></div>
         <div id="opt-console" class="status-console" style="height: 120px; margin-top: 10px; font-family: monospace; font-size: 0.88em;">Adjust the parameters above and click <b>'Start Simulation'</b> to begin.</div>
     </div>
 </div>

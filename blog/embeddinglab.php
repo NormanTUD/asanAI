@@ -119,7 +119,7 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-1d" style="height: 180px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-1d" data-plot-theme="self" style="height: 180px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Cold + Warm" onkeyup="calcEvo('1d')">
 	<div id="res-1d-wrapper">
@@ -163,7 +163,7 @@ No one programmed this. \citeauthor{mikolov2013word2vec} popularized these analo
 </section>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-2d" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-2d" data-plot-theme="self" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Man + Power" onkeyup="calcEvo('2d')">
 	<div id="res-2d-wrapper">

@@ -81,8 +81,8 @@ The statistical framework of linear regression was famously formalized by \citea
 
 <div id="lin-math-monitor" style="font-size: 0.7em;"></div>
 
-<div id="lin-data-chart" class="plot-container"></div>
-<div id="lin-loss-chart" class="plot-container"></div>
+<div id="lin-data-chart" class="plot-container" data-plot-theme="self"></div>
+<div id="lin-loss-chart" class="plot-container" data-plot-theme="self"></div>
 <div id="lin-console" class="status-console">Click 'Start Training'</div>
 
 <div class="md">

@@ -147,6 +147,13 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     # Enable browser logging to capture the guardrail's console.warn
     options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
 
+    # Lab pages run continuous animation/WebGL loops that keep the browser's
+    # `load` event pending, so a normal `driver.get()` blocks until the
+    # 120 s WebDriver read-timeout and the page is wrongly abandoned.
+    # "none" returns as soon as navigation is accepted; the explicit
+    # readyState + guardrail waits below do the real work.
+    options.set_capability("pageLoadStrategy", "none")
+
     chrome_binary = (
         shutil.which("chromium-browser")
         or shutil.which("chromium")
@@ -231,12 +238,19 @@ def wait_for_guardrail(driver: webdriver.Chrome, timeout: int) -> dict:
     deadline = time.time() + timeout
     state = None
     while time.time() < deadline:
-        state = driver.execute_script(r"""
-            if (typeof window.__layoutGuardrailCheck === 'function') {
-                return window.__layoutGuardrailCheck();
-            }
-            return null;
-        """)
+        try:
+            state = driver.execute_script(r"""
+                if (typeof window.__layoutGuardrailCheck === 'function') {
+                    return window.__layoutGuardrailCheck();
+                }
+                return null;
+            """)
+        except Exception:
+            # Animation-heavy pages can starve the JS thread long enough for
+            # the WebDriver script call to time out. Treat it as "not ready
+            # yet" and retry until the deadline rather than crashing the run.
+            time.sleep(1.0)
+            continue
         if state and state.get("ready"):
             break
         time.sleep(0.5)
