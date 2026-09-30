@@ -62,7 +62,7 @@ Each patch is linearly projected to a $d$-dimensional vector (the patch embeddin
 For a $224 \times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \times 448$ inputs, yielding $>1000$ tokens per image.
 </div>
 
-<div id="vit-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="vit-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**. The same Transformer block that processes word tokens now processes visual tokens. The architecture becomes modality-agnostic.
