@@ -315,12 +315,11 @@ footer a{color:var(--teal)}
         c.font='13px '+getComputedStyle(document.body).fontFamily;c.textAlign='center';c.textBaseline='middle';
         c.fillText(match[i]?'=':'≠',x,y+1);
       }
-      var mx0=pad.l+gw/2, mx1=pad.l+gw*0.75, mx2=pad.l+gw*0.25;
-      var my0=pad.t+gh/2;
-      badge(pad.l+gw*0.75,pad.t+gh/2,0); // P0|P1 (top middle)
-      badge(pad.l+gw*0.25,pad.t+gh/2,1); // P0|P2 (left middle)
-      badge(pad.l+gw*0.75,pad.t+gh/2,2); // P1|P3 (right middle) -> use right col
-      badge(pad.l+gw*0.25,pad.t+gh/2,3); // P2|P3
+       // four pairwise overlaps: top, left, right, bottom
+       badge(pad.l+gw/2,        pad.t+ph/2,        0); // P0|P1 (top)
+       badge(pad.l+pw/2,        pad.t+gh/2,        1); // P0|P2 (left)
+       badge(pad.l+gw-pw/2,     pad.t+gh/2,        2); // P1|P3 (right)
+       badge(pad.l+gw/2,        pad.t+gh-ph/2,     3); // P2|P3 (bottom)
       // labels
       c.fillStyle='#9aa0b0';c.font='11px '+getComputedStyle(document.body).fontFamily;c.textAlign='left';c.textBaseline='alphabetic';
       var L=['P1','P2','P3','P4'];
@@ -396,10 +395,11 @@ footer a{color:var(--teal)}
       {n:'4 · Kalibrierter Fehler',d:'Kohärenz hält, Lizenzen stimmen, Tarski passiert an den <em>meisten</em> Punkten — aber die Kalibrierung ist systematisch leicht daneben. Kein einzelner Kontaktpunkt deckt es.',fix:'Re-Kalibrierung: den Bias in den Übergängen auditieren.'},
       {n:'5 · Frage außerhalb des Covers',d:'Das Modell ist kohärent auf seinem Trainings-Cover — aber die <em>Frage</em> liegt außerhalb. Es gibt keine lizenzierte Brücke zu prüfen. Flüssig, selbstsicher, genau dort, wo es am wenigsten eingeschränkt ist.',fix:'Nicht-Abdeckung erkennen: „Ich weiß es nicht", Retrieval, das nichts zurückgeben darf.'}
     ];
+    var SHORT=['Fiktion','Faktenbuch','Lügner','Kalibrier-Fehler','außerhalb'];
     var sel=0;
     var wrap=$('pathBtns');
     PATH.forEach(function(p,i){
-      var b=document.createElement('button');b.textContent=p.n.split('·')[0].trim();
+      var b=document.createElement('button');b.textContent=(i+1)+' · '+SHORT[i];
       b.addEventListener('click',function(){sel=i;render();});
       wrap.appendChild(b);
     });
@@ -437,8 +437,6 @@ footer a{color:var(--teal)}
       var dx=x+90, dpw=bw-90;
       for(var i=0;i<Math.max(1,N);i++){
         var px=dx+(i+0.5)/N*dpw;
-        var failed=Math.random() < (1-con)*0.5; // deterministic-ish via con
-        // deterministic: fail if i/N > con
         var ok = i/N < con;
         c.beginPath();c.arc(px,ydd+bh/2,7,0,TAU);
         c.fillStyle=ok?'#15803d':'#be185d';c.fill();
