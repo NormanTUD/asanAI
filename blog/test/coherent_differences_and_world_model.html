@@ -6518,10 +6518,12 @@ const LADDER=[
    --------------------------------------------------------------------------- */
 (function(){
   const cv=$('cvOutro'); if(!cv) return;
-  let t=0, raf=null;
+  let t=0, raf=null, ctx=null, W=0, H=0;
+  function setup(){ const r=setupCanvas(cv); ctx=r.ctx; W=r.w; H=r.h; }
 
   function draw(){
-    const {ctx,w,h}=setupCanvas(cv);
+    if(!ctx) return;
+    const w=W, h=H;
     ctx.clearRect(0,0,w,h);
     t+=0.006;
 
@@ -6599,8 +6601,8 @@ const LADDER=[
 
     raf=requestAnimationFrame(draw);
   }
-  draw();
-  window.addEventListener('resize',()=>{});
+  setup(); draw();
+  window.addEventListener('resize',setup);
 })();
 
 /* ---------------------------------------------------------------------------
