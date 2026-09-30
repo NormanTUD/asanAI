@@ -170,6 +170,26 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     return driver
 
 
+def set_viewport(driver: webdriver.Chrome, width: int, height: int = 1000) -> None:
+    """Force an exact viewport width via CDP so the guardrail measures the
+    reading column at that width. Falls back to set_window_size if CDP is
+    unavailable. The column is `min(92vw, var(--mn-col-width))`, so it is
+    narrow on phones and capped by the ch-unit token on wide screens — both
+    regimes are exercised by sweeping widths.
+    """
+    try:
+        driver.execute_cdp_cmd("Emulation.setDeviceMetricsOverride", {
+            "width": width, "height": height,
+            "deviceScaleFactor": 1, "mobile": False,
+        })
+    except Exception:
+        try:
+            driver.set_window_size(width, height)
+        except Exception:
+            pass
+    time.sleep(0.4)
+
+
 def scroll_page(driver: webdriver.Chrome) -> None:
     """Scroll to the bottom and back so IntersectionObserver-gated lazy
     charts/plots initialise before the guardrail measures. A chart that only
@@ -291,6 +311,13 @@ def main():
              "Default: all lessons with COURSE_METADATA.",
     )
     parser.add_argument(
+        "--widths",
+        default="390,768,1280,1920",
+        help="Comma-separated viewport widths (px) to check per page, mobile "
+             "through desktop (default: 390,768,1280,1920). A page only "
+             "passes if the column is clean at every width.",
+    )
+    parser.add_argument(
         "--no-headless",
         action="store_true",
         default=False,
@@ -314,6 +341,14 @@ def main():
 
     port = args.port if args.port != 0 else find_free_port()
 
+    try:
+        widths = [int(w) for w in args.widths.split(",") if w.strip()]
+    except ValueError:
+        print(f"[error] --widths must be comma-separated integers: {args.widths}")
+        sys.exit(1)
+    if not widths:
+        widths = [1920]
+
     if args.pages:
         pages = args.pages
     else:
@@ -331,6 +366,7 @@ def main():
 
     print(f"[info] Document root: {document_root}")
     print(f"[info] Lessons to check: {len(pages)}")
+    print(f"[info] Viewport widths: {widths}px (a page passes only if clean at all)")
     print(f"[info] Fix files go to: {out_dir}")
 
     php_proc = None
@@ -366,29 +402,41 @@ def main():
             except Exception:
                 print(f"[warning] {page} did not reach readyState='complete'")
 
-            scroll_page(driver)
-            state = wait_for_guardrail(driver, args.timeout)
+            page_overflows = False
+            overflow_widths = []
+            for w in widths:
+                set_viewport(driver, w)
+                scroll_page(driver)
+                state = wait_for_guardrail(driver, args.timeout)
 
-            if not state.get("ready"):
-                print(f"[warn]   reading column not measurable in {args.timeout}s — skipped")
-                not_ready.append(page)
-                continue
+                if not state.get("ready"):
+                    print(f"[warn]   {page} @ {w}px: column not measurable in "
+                          f"{args.timeout}s — skipped")
+                    not_ready.append(page)
+                    break
 
-            if state.get("ok"):
-                print(f"[ok]     {page} — column clean ({state.get('mode')}, "
-                      f"≈{state.get('allowedPx', 0)}px)")
+                if state.get("ok"):
+                    print(f"[ok {w:>4}px] {page} — clean "
+                          f"({state.get('mode')}, ≈{state.get('allowedPx', 0)}px)")
+                    continue
+
+                page_overflows = True
+                overflow_widths.append(w)
+                offenders = state.get("offenders") or []
+                print(f"[OVERFLOW {w}px] {page} — {len(offenders)} element(s) wider "
+                      f"than the {state.get('mode')} column (≈{state.get('allowedPx', 0)}px):")
+                for sel in offenders[:12]:
+                    print(f"    ✗ {sel}")
+                if len(offenders) > 12:
+                    print(f"    … and {len(offenders) - 12} more")
+
+            if not page_overflows:
                 clean.append(page)
                 continue
 
-            offenders = state.get("offenders") or []
-            print(f"[OVERFLOW] {page} — {len(offenders)} element(s) wider than the "
-                  f"{state.get('mode')} reading column (≈{state.get('allowedPx', 0)}px):")
-            for sel in offenders[:12]:
-                print(f"    ✗ {sel}")
-            if len(offenders) > 12:
-                print(f"    … and {len(offenders) - 12} more")
-
             fix = capture_ai_fix(driver)
+            where = ", ".join(f"{w}px" for w in overflow_widths)
+            print(f"[overflows at] {where}")
             if not fix:
                 print(f"[warn]   overflows found but no AI-fix prompt in the console "
                       f"— is layout_guardrail.js the current version?")
@@ -396,7 +444,8 @@ def main():
                 continue
 
             out_file = out_dir / f"{slug}.txt"
-            out_file.write_text(fix.rstrip() + "\n", encoding="utf-8")
+            header = (f"# page: {page}\n# overflow at width(s): {where}\n\n")
+            out_file.write_text(header + fix.rstrip() + "\n", encoding="utf-8")
             print(f"[saved]  {out_file}")
             fixed.append((page, out_file))
 
