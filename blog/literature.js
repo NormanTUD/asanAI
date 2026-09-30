@@ -1481,6 +1481,14 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Euler_characteristic",
 		alternativetitle: "Elementa doctrinae solidorum"
 	},
+	"riemann1857genus": {
+		title: "Versuch einer Entwicklung einer allgemeinen Theorie der Abel'schen Integrale",
+		author: "Bernhard Riemann",
+		year: 1857,
+		journal: "Journal für die reine und angewandte Mathematik (Crelle) 54",
+		url: "https://en.wikipedia.org/wiki/Genus_(topology)",
+		alternativetitle: "Riemann, 1857: genus and χ = 2 − 2g"
+	},
 	"gaussdisquisitiones": {
 		title: "Disquisitiones generales circa superficies curvas",
 		author: "Carl Friedrich Gauss",

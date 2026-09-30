@@ -423,11 +423,11 @@ Euler also found the first genuine topological *invariant*. For any convex solid
 
 $$\underbrace{V}_{\substack{\text{corners}\\\text{(vertices)}}} - \underbrace{E}_{\text{edges}} + \underbrace{F}_{\substack{\text{flat}\\\text{faces}}} = \underbrace{2}_{\substack{\text{always, for any}\\\text{ball-shaped solid}}}$$
 
-(\citeyear{eulersolids}; the general statement in \citetitle{eulersolids}) \cite{eulersolids}. A cube ($8 - 12 + 6$), a square pyramid ($5 - 8 + 5$) and an arbitrarily twisted dodecahedron all give $2$. The number $2$ is the **Euler characteristic** $\chi$ of the sphere; it is *the same for every shape that can be deformed into a sphere* and *different* for anything that cannot. Generalised, a closed surface of genus $g$ (a sphere with $g$ handles) has
+(\citeyear{eulersolids}; the general statement in \citetitle{eulersolids}) \cite{eulersolids}. A cube ($8 - 12 + 6$), a square pyramid ($5 - 8 + 5$) and an arbitrarily twisted dodecahedron all give $2$. The number $2$ is the **Euler characteristic** $\chi$ of the sphere; it is *the same for every shape that can be deformed into a sphere* and *different* for anything that cannot. Generalised, \cite[Riemann (1857)]{riemann1857genus} showed that a closed, orientable surface of genus $g$ (a sphere with $g$ handles) has
 
-$$\underbrace{\chi}_{\text{the topological identity number}} = 2 - 2\,\underbrace{g}_{\substack{\text{number of}\\\text{handles}}} \qquad \big(g=0:\ \text{sphere} \Rightarrow \chi=2;\ \ g=1:\ \text{donut} \Rightarrow \chi=0\big)$$
+$$\underbrace{\chi}_{\text{the topological identity number}} \;=\; 2 - 2\,\underbrace{g}_{\substack{\text{number of}\\\text{handles}}} \qquad \Longrightarrow \qquad \underbrace{\chi \;\le\; 2}_{\substack{\text{at most }2,\text{ always;}}} \qquad \chi = 2 \;\Longleftrightarrow\; \underbrace{g=0}_{\text{the sphere}}$$
 
-That a shape's identity is captured by a single *integer* — not by its angles, not by its side lengths, but by something that cannot change under continuous deformation — is the founding intuition of topology \cite{eulersolids}.
+so $\chi$ never exceeds $2$, and equality holds *only* for the sphere: each handle you attach subtracts $2$ ($g=0$: sphere $\Rightarrow \chi=2$; $g=1$: donut $\Rightarrow \chi=0$; $g=2$: double-doughnut $\Rightarrow \chi=-2$) \cite{riemann1857genus}. That a shape's identity is captured by a single *integer* — not by its angles, not by its side lengths, but by something that cannot change under continuous deformation — is the founding intuition of topology \cite{eulersolids}.
 </div>
 
 <div class="md" data-mathlevel="85" data-optionaltitle="Gauss: curvature is intrinsic">
