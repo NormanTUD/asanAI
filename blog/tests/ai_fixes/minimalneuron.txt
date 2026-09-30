@@ -8,7 +8,7 @@ Contract: no in-flow element may exceed the reading column #contents, whose widt
 The layout guardrail flagged 2 element(s) rendering wider than the column:
 
   1) div#lin-data-chart — measured 408px, allowed ≈ 375px, overflow +33px
-      content: \"0246−2−10123456ActualModelModel vs. data points .cls-0{fill:#000;} .cls-1{fill:#\"
+      content: \"02460123456ActualModelModel vs. data points .cls-0{fill:#000;} .cls-1{fill:#FFF;\"
   2) div#lin-loss-chart — measured 408px, allowed ≈ 375px, overflow +33px
       content: \"02460.12512510251002510002510kLoss History .cls-0{fill:#000;} .cls-1{fill:#FFF;}\"
 

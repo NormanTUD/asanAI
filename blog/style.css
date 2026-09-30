@@ -10124,7 +10124,11 @@ html.dark .topics-preset-fun {
 /* prerequisite chips inside the "Builds on" pill */
 .tdp-chip {
 	display: inline-block;
-	white-space: nowrap;
+	/* Long lesson titles must wrap on narrow screens instead of overflowing
+	   the reading column; the 99px radius degrades gracefully to a rounded
+	   box on multi-line chips. */
+	white-space: normal;
+	overflow-wrap: break-word;
 	margin: 1px 3px;
 	padding: 1px 9px;
 	border-radius: 99px;

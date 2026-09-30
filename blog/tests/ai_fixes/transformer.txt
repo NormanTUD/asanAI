@@ -5,14 +5,10 @@ Fix the layout overflows on /transformer.php (blog lesson PHP file).
 
 Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
-The layout guardrail flagged 3 element(s) rendering wider than the column:
+The layout guardrail flagged 1 element(s) rendering wider than the column:
 
-  1) table.lg-overflow-flag — measured 408px, allowed ≈ 375px, overflow +33px
-      content: \"Hyperparameter What it sets Constraint dmodeld_{\\text{model}} the width of every\"
-  2) span.lg-overflow-flag — measured 443px, allowed ≈ 375px, overflow +68px
+  1) span.lg-overflow-flag — measured 443px, allowed ≈ 375px, overflow +68px
       content: \"(B,T,64)⏟head 1+⋯+(B,T,64)⏟head 8→Concat(B,T,512)⏟Full Tensor\\underbrace{(B, T, \"
-  3) table.lg-overflow-flag — measured 409px, allowed ≈ 375px, overflow +34px
-      content: \"Aspect Inference Training Goal Generate text Update weights to minimize loss Wei\"
 
 How to fix each one:
   A. Default — clamp it to the column: set width:100%; max-width:var(--mn-col-width) on the element (or on the wrapper that constrains it) in the lesson file / the relevant CSS. This is the ONLY fix that needs no label.

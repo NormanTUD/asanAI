@@ -5,25 +5,9 @@ Fix the layout overflows on /vectorsearch.php (blog lesson PHP file).
 
 Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
-The layout guardrail flagged 9 element(s) rendering wider than the column:
+The layout guardrail flagged 1 element(s) rendering wider than the column:
 
-  1) table.lg-overflow-flag — measured 471px, allowed ≈ 375px, overflow +96px
-      content: \"Approach Matches on Strengths Weaknesses Keyword (BM25) Exact words Fast, precis\"
-  2) table.lg-overflow-flag — measured 415px, allowed ≈ 375px, overflow +40px
-      content: \"Field Example Purpose id chunk_0042 Unique identifier vector [0.023,−0.841,0.117\"
-  3) table.lg-overflow-flag — measured 523px, allowed ≈ 375px, overflow +148px
-      content: \"Algorithm Speed Memory Recall Best for HNSW Very fast High (full vectors + graph\"
-  4) table.lg-overflow-flag — measured 468px, allowed ≈ 375px, overflow +93px
-      content: \"Library Creator Language Notes FAISS Meta AI C++ / Python The gold standard. Sup\"
-  5) table.lg-overflow-flag — measured 487px, allowed ≈ 375px, overflow +112px
-      content: \"Model Dimensions Creator Notes text-embedding-3-small 1536 OpenAI Good general-p\"
-  6) table.lg-overflow-flag — measured 450px, allowed ≈ 375px, overflow +75px
-      content: \"Strategy How it works Pros Cons Fixed-size Split every NN tokens Simple, predict\"
-  7) table.lg-overflow-flag — measured 434px, allowed ≈ 375px, overflow +59px
-      content: \"Stage Speed Quality Model Retrieval (vector search) ~10ms for millions of docs G\"
-  8) table.lg-overflow-flag — measured 428px, allowed ≈ 375px, overflow +53px
-      content: \"Application What’s stored What’s queried RAG Document chunks User questions Sema\"
-  9) a.tdp-chip.lg-overflow-flag — measured 379px, allowed ≈ 375px, overflow +4px
+  1) a.tdp-chip.lg-overflow-flag — measured 379px, allowed ≈ 375px, overflow +4px
       content: \"Context Windows & Memory: What LLMs Can Hold in Mind\"
 
 How to fix each one:

@@ -171,23 +171,33 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
 
 
 def set_viewport(driver: webdriver.Chrome, width: int, height: int = 1000) -> None:
-    """Force an exact viewport width via CDP so the guardrail measures the
-    reading column at that width. Falls back to set_window_size if CDP is
-    unavailable. The column is `min(92vw, var(--mn-col-width))`, so it is
-    narrow on phones and capped by the ch-unit token on wide screens — both
-    regimes are exercised by sweeping widths.
+    """Force an exact viewport width so the guardrail measures the reading
+    column at that width. The column is `min(92vw, var(--mn-col-width))`, so
+    it is narrow on phones and capped by the ch-unit token on wide screens —
+    sweeping widths exercises both regimes.
+
+    Driven via the real window size (set_window_size): unlike CDP's
+    setDeviceMetricsOverride, the window size PERSISTS across navigation and
+    fires a genuine resize event, so responsive charts (ECharts/Plotly)
+    re-render at the new width — matching a real device. CDP is the fallback
+    for environments where window sizing is unavailable.
     """
     try:
-        driver.execute_cdp_cmd("Emulation.setDeviceMetricsOverride", {
-            "width": width, "height": height,
-            "deviceScaleFactor": 1, "mobile": False,
-        })
+        driver.set_window_size(width, height)
     except Exception:
         try:
-            driver.set_window_size(width, height)
+            driver.execute_cdp_cmd("Emulation.setDeviceMetricsOverride", {
+                "width": width, "height": height,
+                "deviceScaleFactor": 1, "mobile": False,
+            })
         except Exception:
             pass
     time.sleep(0.4)
+    try:
+        driver.execute_script("window.dispatchEvent(new Event('resize'));")
+        time.sleep(0.7)
+    except Exception:
+        pass
 
 
 def scroll_page(driver: webdriver.Chrome) -> None:
@@ -388,24 +398,31 @@ def main():
             url = f"http://localhost:{port}{page}"
             print(f"[checking] {page}")
 
-            try:
-                driver.get(url)
-            except Exception as e:
-                print(f"[error] failed to load {url}: {e}")
-                not_ready.append(page)
-                continue
-
-            try:
-                WebDriverWait(driver, 30).until(
-                    lambda d: d.execute_script("return document.readyState") == "complete"
-                )
-            except Exception:
-                print(f"[warning] {page} did not reach readyState='complete'")
-
             page_overflows = False
             overflow_widths = []
             for w in widths:
+                # Load FRESH at each width so responsive charts size to this
+                # viewport from the start (what a phone/desktop does on load).
+                # Note: driver.get() (navigation) RESETS the CDP device-metrics
+                # override to the window size, so it must be re-asserted after
+                # load, or charts would size to the wide window and
+                # false-positive as overflows.
                 set_viewport(driver, w)
+                try:
+                    driver.get(url)
+                except Exception as e:
+                    print(f"[error] failed to load {url} @ {w}px: {e}")
+                    not_ready.append(page)
+                    break
+
+                try:
+                    WebDriverWait(driver, 30).until(
+                        lambda d: d.execute_script("return document.readyState") == "complete"
+                    )
+                except Exception:
+                    print(f"[warning] {page} @ {w}px did not reach readyState='complete'")
+
+                set_viewport(driver, w)  # re-assert: navigation cleared the override
                 scroll_page(driver)
                 state = wait_for_guardrail(driver, args.timeout)
 

@@ -307,6 +307,28 @@ function restoreContainerMath(container, stashed) {
 	});
 }
 
+/* Wrap every markdown-rendered <table> in a horizontal scroll container.
+   A table can't shrink below its content, so a wide one overflows the reading
+   column (worst on phones). The wrapper is the guardrail's sanctioned
+   .lg-scroll mechanism — it clamps to the column and scrolls the table
+   horizontally when it's too wide. The table keeps display:table, so column
+   alignment is preserved. Idempotent: a table that already has a .table-scroll
+   parent is left alone, so re-renders never nest wrappers. */
+function wrapTablesInScroll(container) {
+	if (!container) return;
+	container.querySelectorAll('table').forEach(t => {
+		if (t.parentElement && t.parentElement.classList.contains('table-scroll')) return;
+		var w = document.createElement('div');
+		// lg-scroll is the guardrail's sanctioned scroller: clamps to the
+		// column, scrolls horizontally when content is wider, and is exempt
+		// from the width check (closest('.lg-scroll')). table-scroll marks the
+		// wrapper so a re-render doesn't nest a second one.
+		w.className = 'table-scroll lg-scroll';
+		t.parentNode.insertBefore(w, t);
+		w.appendChild(t);
+	});
+}
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
@@ -358,6 +380,9 @@ function renderMarkdown() {
 		container.innerHTML = marked.parse(rawContent);
 		// 3r. Put the rendered <math> elements back (verbatim nodes).
 		restoreContainerMath(container, stashedMath);
+		// 3t. Wide markdown tables scroll inside the column instead of
+		//     overflowing it (guarded by the layout guardrail).
+		wrapTablesInScroll(container);
 		// 3a. figcaptions sit inside raw HTML blocks that marked skips,
 		//     so their own *markdown* would remain literal — parse them.
 		processFigcapsMarkdown(container);
