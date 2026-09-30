@@ -2073,11 +2073,12 @@ const PLY = {
 };
 const PCFG = {displayModeBar:false, responsive:true};
 function ply(id,data,layout={}){
-  Plotly.react(id,data,{...PLY,...layout,
+  const L={...PLY,...layout,
     xaxis:{...PLY.xaxis,...(layout.xaxis||{})},
-    yaxis:{...PLY.yaxis,...(layout.yaxis||{})},
-    yaxis2:layout.yaxis2?{...PLY.yaxis,...layout.yaxis2}:undefined
-  },PCFG);
+    yaxis:{...PLY.yaxis,...(layout.yaxis||{})}
+  };
+  if(layout.yaxis2) L.yaxis2={...PLY.yaxis,...layout.yaxis2};
+  Plotly.react(id,data,L,PCFG);
 }
 
 /* Slider-Bindung */
