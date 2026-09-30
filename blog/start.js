@@ -1392,6 +1392,11 @@ function initGlossary() {
 					if (parent.closest('select, option, input, textarea, button, label[for]')) {
 						return NodeFilter.FILTER_REJECT;
 					}
+					// Skip navigation chrome (course tiles, TOC) — glossary
+					// tooltips belong in prose, not in the menu
+					if (parent.closest('.course-tile') || parent.closest('#toc')) {
+						return NodeFilter.FILTER_REJECT;
+					}
 					// Skip if inside math element or already has glossary-term
 					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
 					// Only process if text contains potential matches
