@@ -74,7 +74,7 @@ The KV-cache is the dominant memory cost for long contexts. Quantizing it:
 Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contexts.
 </div>
 
-<div id="quant-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="quant-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## KV-Cache Optimizations
