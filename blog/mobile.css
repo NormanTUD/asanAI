@@ -215,7 +215,8 @@ body {
 		font-size: 1.15rem;
 	}
 
-	.course-tile {
+	#contents a.course-tile,
+	#contents .course-tile {
 		flex-direction: row;
 		align-items: center;
 		gap: 0.7rem;
@@ -226,11 +227,14 @@ body {
 		margin-bottom: 0;
 		flex: 0 0 auto;
 	}
+	/* Title wins the space: it keeps its natural width (shrinking
+	   only when it cannot fit at all); the description grows into
+	   whatever room is left, capped at 45 % of the tile. */
 	#contents .course-tile h3 {
 		font-size: 1.15rem;
 		line-height: 1.25;
 		margin: 0;
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		min-width: 0;
 		white-space: nowrap;
 		overflow: hidden;
@@ -240,7 +244,7 @@ body {
 		margin: 0;
 		font-size: 0.92rem;
 		line-height: 1.3;
-		flex: 0 4 auto;
+		flex: 1 1 0;
 		min-width: 0;
 		max-width: 45%;
 		white-space: nowrap;
@@ -584,12 +588,15 @@ body {
 	#contents h2 { font-size: 1.12rem; }
 	#contents h3 { font-size: 0.98rem; }
 
-	.course-tile {
+	#contents a.course-tile,
+	#contents .course-tile {
 		padding: 0.8rem 0.85rem;
 		gap: 0.55rem;
 	}
 	.course-tile-icon { font-size: 1.3rem; }
+	#contents a.course-tile h3,
 	#contents .course-tile h3 { font-size: 1.05rem; }
+	#contents a.course-tile p,
 	#contents .course-tile p { font-size: 0.88rem; max-width: 42%; }
 
 	/* Slightly tighter safe-area padding on tiny screens. */
