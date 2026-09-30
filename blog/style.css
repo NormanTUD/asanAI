@@ -5396,10 +5396,6 @@ html.dark .course-hero {
 }
 
 @media (max-width: 600px) {
-	.course-tiles {
-		grid-template-columns: 1fr;
-	}
-
 	.course-part-header h2 {
 		font-size: 1.25rem;
 	}

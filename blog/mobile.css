@@ -83,9 +83,10 @@ body {
 		font-size: 0.92rem;
 	}
 
-	/* Tiles: 2 columns down from 3, so they don't feel cramped. */
+	/* Tiles: 1 column (the 2-up grid squeezes rows to ~295 px,
+	   where title + description read cramped). Desktop keeps 3-up. */
 	.course-tiles {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: 1fr;
 		gap: 0.75rem;
 	}
 
