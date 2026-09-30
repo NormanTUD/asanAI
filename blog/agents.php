@@ -82,7 +82,7 @@ This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of i
 
 <div class="md">
 <figure>
-	<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 460px;" />
+	<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 100%;" />
 	<figcaption class="md">\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul. AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.</figcaption>
 </figure>
 </div>
