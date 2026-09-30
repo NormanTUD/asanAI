@@ -7,9 +7,12 @@
    renders WIDER than that column is a layout bug — an unclamped
    <img>, a fixed-width canvas, a wide table, an un-wrapped widget.
 
-   On load, and again on reader-mode toggle / resize / late content
-   swaps, we walk the column and flag every offending element: a red
-   outline in the DOM plus an interactive banner plus console.error.
+    On load, and again on reader-mode toggle / resize / late content
+    swaps, we walk the column and flag every offending element: a red
+    outline in the DOM plus an interactive banner plus console.error.
+    The ready-made AI-fix prompt (see "Copy AI-fix" below) is also
+    printed to the console as a single console.warn line, prefixed
+    "[layout-guardrail] AI-fix prompt:", so automation can capture it.
 
    The banner is actionable:
      • click a flagged entry → scrolls to the element and flashes it
