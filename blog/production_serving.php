@@ -53,7 +53,7 @@ This is the dominant memory cost in inference. Several techniques address it:
 * **Prefix caching**: reuse KV across requests with the same prompt prefix. Standard for system prompts.
 </div>
 
-<div id="kv-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="kv-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## Batching: The Key to GPU Efficiency
@@ -75,7 +75,7 @@ Continuously add new requests to the batch as they arrive. Better throughput, bu
 Continuous batching alone can give 10–20× throughput improvement over static batching for chat workloads.
 </div>
 
-<div id="batching-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="batching-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## Paged Attention
