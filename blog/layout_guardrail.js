@@ -480,6 +480,10 @@
 					(d.snippet ? ' "' + d.snippet + '"' : '');
 			})
 		);
+		// The ready-made AI-fix prompt, verbatim (same text the "Copy AI-fix"
+		// button copies), on the console so tooling can capture it from there.
+		console.warn('[layout-guardrail] AI-fix prompt:\n' +
+			buildFixPrompt(lastDetails, modeName(), allowed));
 		lastState = {
 			ok: false, ready: true, mode: modeName(), allowedPx: allowed,
 			offenders: offenders.map(function (o) { return o.sel; }),
