@@ -1,11 +1,14 @@
+# page: /training_data.php
+# overflow at width(s): 390px
+
 Fix the layout overflows on /training_data.php (blog lesson PHP file).
 
-Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 763px on this page).
+Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
 The layout guardrail flagged 1 element(s) rendering wider than the column:
 
-  1) div.user-select-none.svg-container — measured 880px, allowed ≈ 763px, overflow +117px
-      content: \"00.20.40.60.80123456789all docskept (quality ≥ 0.55)Quality classifier score dis\"
+  1) table.lg-overflow-flag — measured 457px, allowed ≈ 375px, overflow +82px
+      content: \"Source Approx % Tokens Notes Web (Common Crawl, etc.) 50–70% 5–10T Raw HTML, req\"
 
 How to fix each one:
   A. Default — clamp it to the column: set width:100%; max-width:var(--mn-col-width) on the element (or on the wrapper that constrains it) in the lesson file / the relevant CSS. This is the ONLY fix that needs no label.

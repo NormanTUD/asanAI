@@ -1,10 +1,13 @@
+# page: /training_infrastructure.php
+# overflow at width(s): 390px
+
 Fix the layout overflows on /training_infrastructure.php (blog lesson PHP file).
 
-Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 763px on this page).
+Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
 The layout guardrail flagged 1 element(s) rendering wider than the column:
 
-  1) div.user-select-none.svg-container — measured 880px, allowed ≈ 763px, overflow +117px
+  1) div.user-select-none.svg-container — measured 690px, allowed ≈ 375px, overflow +315px
       content: \"Data ParallelismTensor ParallelismPipeline ParallelismSequence ParallelismFSDP (\"
 
 How to fix each one:

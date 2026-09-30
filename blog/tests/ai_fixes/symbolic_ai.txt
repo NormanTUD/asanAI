@@ -1,11 +1,18 @@
+# page: /symbolic_ai.php
+# overflow at width(s): 390px
+
 Fix the layout overflows on /symbolic_ai.php (blog lesson PHP file).
 
-Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 763px on this page).
+Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
 
-The layout guardrail flagged 1 element(s) rendering wider than the column:
+The layout guardrail flagged 3 element(s) rendering wider than the column:
 
-  1) div.user-select-none.svg-container — measured 1100px, allowed ≈ 763px, overflow +337px
+  1) table.lg-overflow-flag — measured 423px, allowed ≈ 375px, overflow +48px
+      content: \"Symbolic (GOFAI) Neural (Connectionist) Representation Symbols, rules, logic Vec\"
+  2) div.user-select-none.svg-container — measured 690px, allowed ≈ 375px, overflow +315px
       content: \"Knowledge graph: blue = individuals, green = classeshasTeacherhasTeachertypetype\"
+  3) table.lg-overflow-flag — measured 422px, allowed ≈ 375px, overflow +47px
+      content: \"Approach Description Example Neural + symbolic modules NN does perception, symbo\"
 
 How to fix each one:
   A. Default — clamp it to the column: set width:100%; max-width:var(--mn-col-width) on the element (or on the wrapper that constrains it) in the lesson file / the relevant CSS. This is the ONLY fix that needs no label.
