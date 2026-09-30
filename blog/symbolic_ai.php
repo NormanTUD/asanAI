@@ -99,7 +99,7 @@ Major public knowledge graphs:
 * **Amazon Product Graph, Facebook Entity Graph**: industrial-scale closed KGs.
 </div>
 
-<div id="kg-viz" style="max-width:1100px; margin:1em auto; height:520px;"></div>
+<div id="kg-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto; height:520px;"></div>
 
 <div class="md">
 ## Reasoning Over Knowledge Graphs
