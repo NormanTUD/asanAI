@@ -74,6 +74,7 @@ li b{color:var(--ink)}
 .verdict.green{background:var(--green-soft);border-color:#c7e2cf}
 .verdict.amber{background:var(--amber-soft);border-color:#f0dcbc}
 .verdict.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.verdict.violet{background:var(--violet-soft);border-color:#ddd2f5}
 .pathbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
 .pathbtns button{font:inherit;font-size:13px;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--dim);cursor:pointer}
 .pathbtns button.sel{background:var(--violet-soft);border-color:#ddd2f5;color:var(--violet);font-weight:700}
@@ -453,7 +454,7 @@ footer a{color:var(--teal)}
       $('fStat').textContent=status;
       $('fC').textContent=passed+' / '+N;
       var v=$('fVerd');
-      v.className='verdict '+cls;
+      v.className=cls;
       if(status==='verifiziert ✓') v.innerHTML='<b>Wahrheitsstatus: gut begründet.</b> Kohärent, an der Welt ansetzend, und <em>bisher</em> an keinem harten Kontaktpunkt gescheitert. Das ist das Bestmögliche — und es bleibt <em>vorläufig</em>: Wahrheit wird nicht erreicht, sie wird nur immer besser angenähert.';
       else if(status==='gerechtfertigt') v.innerHTML='<b>Wahrheitsstatus: vorläufig akzeptierbar.</b> Das Modell hält, aber die Evidenz ist noch dünn. Neue Kontaktpunkte könnten es brechen — das ist der gesunde Zustand einer aktiven Hypothese.';
       else v.innerHTML='<b>Wahrheitsstatus: fragil.</b> Zu viele gescheiterte Kontaktpunkte oder zu wenig Kohärenz. Bevor du diesem Modell vertraust, bricht es an einer der fünf Stellen. Finde zuerst, <em>welche</em>.';

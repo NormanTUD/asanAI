@@ -12207,7 +12207,7 @@ window.bibData = {
 		author: "Nancy Cartwright",
 		year: 1983,
 		publisher: "Oxford University Press",
-		url: "https://global.oup.com/academic/product/how-the-laws-of-physics-lie-9780198247048",
+		url: "https://academic.oup.com/book/27605",
 		alternativetitle: "How the Laws of Physics Lie"
 	},
 	"cartwright1999dappled": {
