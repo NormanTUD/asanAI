@@ -11,7 +11,7 @@ topics: math-i, statistics-i
 math: 65
 -->
 
-<script src="statistics.js"></script>
+<script src="statistics.js?v=<?php echo filemtime(__DIR__.'/statistics.js'); ?>"></script>
 
 <div class="md">
 This first statistics chapter introduces the mathematical framework for reasoning under uncertainty. The core idea: real-world data is not random noise; it follows **distributions** that we can model, sample from, and use to make decisions.

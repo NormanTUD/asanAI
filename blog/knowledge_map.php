@@ -638,7 +638,7 @@ a { color: var(--accent); text-decoration: none; }
 	<div class="km-timeline" id="km-timeline"></div>
 </div>
 
-<script src="echarts.min.js"></script>
+<script src="echarts.min.js?v=<?php echo filemtime(__DIR__.'/echarts.min.js'); ?>"></script>
 <script>
 window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 </script>

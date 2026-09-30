@@ -13,11 +13,11 @@ math: 65
 featured: true
 -->
 
-<script src="llm_river.js"></script>
-<script src="stickybar_transformer.js"></script>
-<script src="attention_engine.js"></script>
-<script src="provenance.js"></script>
-<script src="tda_live.js"></script>
+<script src="llm_river.js?v=<?php echo filemtime(__DIR__.'/llm_river.js'); ?>"></script>
+<script src="stickybar_transformer.js?v=<?php echo filemtime(__DIR__.'/stickybar_transformer.js'); ?>"></script>
+<script src="attention_engine.js?v=<?php echo filemtime(__DIR__.'/attention_engine.js'); ?>"></script>
+<script src="provenance.js?v=<?php echo filemtime(__DIR__.'/provenance.js'); ?>"></script>
+<script src="tda_live.js?v=<?php echo filemtime(__DIR__.'/tda_live.js'); ?>"></script>
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
@@ -1023,6 +1023,6 @@ While the architecture is identical in both modes, the behavior of the model dif
 </details>
 </details>
 <br>
-<script src="transformer_layer_summary.js"></script>
+<script src="transformer_layer_summary.js?v=<?php echo filemtime(__DIR__.'/transformer_layer_summary.js'); ?>"></script>
 </div>
 </div>
