@@ -68,7 +68,7 @@ Standard filters:
 FineWeb (\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication. FineWeb-Edu adds an educational-quality classifier.
 </div>
 
-<div id="filter-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="filter-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## Deduplication

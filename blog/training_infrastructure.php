@@ -59,7 +59,7 @@ The key insight: in data parallelism, each GPU stores **redundant** optimizer st
 FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3. With 64 H100s, you can train a 70B model that wouldn't fit on a single GPU.
 </div>
 
-<div id="parallelism-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="parallelism-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Tensor Parallelism (TP)">
 ### Tensor Parallelism (TP)
