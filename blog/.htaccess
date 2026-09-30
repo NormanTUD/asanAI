@@ -39,24 +39,15 @@ RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
     php_value auto_prepend_file "mobile-prepend.php"
 </IfModule>
 
-# PHP/HTML pages must never be served from an unvalidated cache. They
-# carry ?v=filemtime cache-busters on every CSS/JS asset, so a
-# revalidated (304) page is cheap while guaranteeing fresh markup —
-# without this a phone browser keeps a stale page (heuristic caching,
-# no ETag/Last-Modified on rewritten .php URLs) and the busters never
-# get a chance to take effect.
-#
-# Static assets (.css/.js/.jpg/.png/.svg/.woff2) are versioned via
-# ?v=<filemtime>, so the URL changes whenever the file changes —
-# they are safe to cache aggressively, which keeps page loads fast.
+# Pages (including the rewritten .php URLs) must never be served from
+# an unvalidated cache. They carry ?v=filemtime cache-busters on every
+# CSS/JS asset, so a revalidated (304) page is cheap while guaranteeing
+# fresh markup — without this a phone browser keeps a stale page
+# (heuristic caching, no ETag/Last-Modified on rewritten .php URLs) and
+# the busters never get a chance to take effect. Static assets are
+# versioned via ?v=<filemtime>, so their URLs change when the file
+# does; no-cache just makes the browser revalidate them (cheap 304s).
 <IfModule mod_headers.c>
-    # Everything (in particular the rewritten PHP pages) revalidates.
     Header always set Cache-Control "no-cache, must-revalidate"
     Header always set Pragma "no-cache"
-    # …except static assets, which are ?v-versioned and therefore safe
-    # to cache forever. (Later Header directives win, so this comes
-    # after the blanket rule above.)
-    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|svg|ico|woff2?|ttf|webp)$">
-        Header always set Cache-Control "public, max-age=31536000, immutable"
-    </FilesMatch>
 </IfModule>
