@@ -3320,6 +3320,11 @@ const cssVar = (name) => window.__MN_DARK.themeVar(name);
 	};
 	const patchLayout = (gd) => {
 		try {
+			// Charts that render themselves with themeColor() and re-render on
+			// __MN_DARK.onChange() are already correct; patching them again
+			// would double-apply the swap (see e.g. losslab). Opt out via a
+			// data attribute on the plot container.
+			if (gd.closest && gd.closest('[data-plot-theme="self"]')) return;
 			const layout = gd._fullLayout || gd.layout || {};
 			const update = {};
 			for (const key of PATCH_KEYS) {

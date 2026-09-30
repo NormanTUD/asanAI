@@ -42,7 +42,7 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 	<div id="mse-math" style="flex: 1; font-size: 1.1em; border-left: 3px solid #3b82f6; padding-left: 20px;"></div>
 </div>
 
-<div id="plot-mse" style="height: 350px;"></div>
+<div id="plot-mse" data-plot-theme="self" style="height: 350px;"></div>
 
 <div class="md" data-mathlevel="48" data-optionaltitle="Classification: Cross-Entropy">
 ## Classification: Cross-Entropy
@@ -86,7 +86,7 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 	<div id="cce-math" style="margin-top: 10px; font-size: 1.1em; border-top: 1px solid #ffedd5; padding-top:10px;"></div>
 </div>
 
-<div id="plot-cce" style="height: 380px;"></div>
+<div id="plot-cce" data-plot-theme="self" style="height: 380px;"></div>
 
 <div class="md">
 ## Beware of Goodhart's Law
