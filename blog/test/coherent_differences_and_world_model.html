@@ -1983,8 +1983,9 @@ const TAU=Math.PI*2;
 /* Canvas mit DPR-Skalierung */
 function setupCanvas(cv){
   const dpr = window.devicePixelRatio||1;
+  if(cv.dataset.baseH == null) cv.dataset.baseH = cv.getAttribute('height')|0;
+  const h = cv.dataset.baseH|0;
   const rect = cv.getBoundingClientRect();
-  const h = cv.getAttribute('height')|0;
   cv.width  = Math.max(300, Math.round(rect.width*dpr));
   cv.height = Math.round(h*dpr);
   cv.style.height = h+'px';
