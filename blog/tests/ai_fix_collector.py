@@ -429,12 +429,18 @@ def main():
                     not_ready.append(page)
                     break
 
+                # Only a short grace period: animation/WebGL lab pages never
+                # reach readyState='complete' (their rAF loops keep the page
+                # busy), so a long wait here is pure dead time. The real
+                # readiness gate is wait_for_guardrail() below, which polls
+                # until the reading column is actually measurable.
                 try:
-                    WebDriverWait(driver, 30).until(
+                    WebDriverWait(driver, 8).until(
                         lambda d: d.execute_script("return document.readyState") == "complete"
                     )
                 except Exception:
-                    print(f"[warning] {page} @ {w}px did not reach readyState='complete'")
+                    print(f"[warning] {page} @ {w}px did not reach readyState='complete' in 8s "
+                          f"(normal for animation-heavy labs) — proceeding")
 
                 set_viewport(driver, w)  # re-assert: navigation cleared the override
                 scroll_page(driver)
