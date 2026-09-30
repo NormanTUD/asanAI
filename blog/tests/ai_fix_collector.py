@@ -170,12 +170,33 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     return driver
 
 
+def scroll_page(driver: webdriver.Chrome) -> None:
+    """Scroll to the bottom and back so IntersectionObserver-gated lazy
+    charts/plots initialise before the guardrail measures. A chart that only
+    renders when scrolled into view would otherwise be invisible to a check
+    taken at the top of the page.
+    """
+    try:
+        driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);"
+        )
+        time.sleep(1.2)
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(0.8)
+    except Exception:
+        pass
+
+
 def wait_for_guardrail(driver: webdriver.Chrome, timeout: int) -> dict:
     """Poll window.__layoutGuardrailCheck() until the reading column is
     measurable. Returns the guardrail state object (ready/ok/offenders).
 
     Each call re-runs the full check; when offenders exist it prints the
     AI-fix prompt to the console, which we read afterwards.
+
+    A final 1.5 s settle is built in: the guardrail's MutationObserver
+    schedules a debounced (~220 ms) auto-check after our synchronous call,
+    so we let it fire and adopt its (possibly newer) result.
     """
     deadline = time.time() + timeout
     state = None
@@ -187,8 +208,17 @@ def wait_for_guardrail(driver: webdriver.Chrome, timeout: int) -> dict:
             return null;
         """)
         if state and state.get("ready"):
-            return state
+            break
         time.sleep(0.5)
+
+    if state and state.get("ready"):
+        time.sleep(1.5)  # let the debounced MutationObserver re-check settle
+        later = driver.execute_script(r"""
+            return (typeof window.__layoutGuardrail === 'object'
+                && window.__layoutGuardrail) ? window.__layoutGuardrail : null;
+        """)
+        if later and later.get("ready"):
+            state = later
     return state or {"ready": False, "ok": None, "offenders": [], "mode": "?"}
 
 
@@ -208,8 +238,9 @@ def capture_ai_fix(driver: webdriver.Chrome) -> str:
         msg = entry.get("message", "")
         idx = msg.find(AI_FIX_MARKER)
         if idx != -1:
-            # keep the latest occurrence (last check wins)
-            best = msg[idx + len(AI_FIX_MARKER):].lstrip("\n")
+            # keep the latest occurrence (last check wins); the browser log
+            # serialises newlines as literal "\n" — restore them
+            best = msg[idx + len(AI_FIX_MARKER):].replace("\\n", "\n").lstrip("\n")
     return best
 
 
@@ -294,9 +325,9 @@ def main():
     out_dir = Path(args.out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Clear stale fix files so the directory mirrors the current state.
-    for old in out_dir.glob("*.txt"):
-        old.unlink()
+    # NOTE: captured AI-fix messages are kept (overwritten per page on each run)
+    # rather than wiped, so the directory stays a record of every prompt that
+    # was collected. A file that remains after a clean re-run was fixed since.
 
     print(f"[info] Document root: {document_root}")
     print(f"[info] Lessons to check: {len(pages)}")
@@ -335,6 +366,7 @@ def main():
             except Exception:
                 print(f"[warning] {page} did not reach readyState='complete'")
 
+            scroll_page(driver)
             state = wait_for_guardrail(driver, args.timeout)
 
             if not state.get("ready"):
