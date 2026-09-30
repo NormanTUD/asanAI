@@ -5049,42 +5049,17 @@ const LADDER=[
       `<span class="k">Kohärenz:</span> <span class="hi">${fmt(curCoh,1)} %</span><br>`+
       (derived>0
         ? `<span class="bad">Beobachtung:</span> Die ${derived} abgeleitete${derived>1?'n':''} Sicht${derived>1?'en':''} hat die Korrespondenz-Kurve <strong>überhaupt nicht</strong> bewegt. Abgeleitete Flicken (Text eines früheren Modells, Kopie einer Kopie) verbreitern c_acc <em>nicht</em> — sie fügen nur mehr derselben Vermittlung hinzu.`
-        : `<span class="ok">Jede neue W-verankerte Sicht</span> treibt den Limes voran. Das ist der Ausweg aus der Zirkularität: Kohärenz ist der Test <em>innerhalb</em> einer festen Überdeckung; Korrespondenz ist der Test <em>über die Folge</em> von Überdeckungen. Zwei <strong>genuin verschiedene</
-      (Popper: noch-nicht-falsifiziert, korroboriert.)</p>
-      <div class="badge ok">operationalisierbar</div>
-    </div>
-  </div>
+        : `<span class="ok">Jede neue W-verankerte Sicht</span> treibt den Limes voran. Das ist der Ausweg aus der Zirkularität: Kohärenz ist der Test <em>innerhalb</em> einer festen Überdeckung; Korrespondenz ist der Test <em>über die Folge</em> von Überdeckungen. Zwei <strong>genuin verschiedene</strong> Zugriffe auf W zählen erst als eine Verbreiterung, eine nur abgeleitete Kopie nicht.<br>`+
+      `<span class="k">Basis:</span> (Popper: noch-nicht-falsifiziert, korroboriert.)`);
+  }
+  $('limAdd').addEventListener('click',()=>{anchored++;render();});
+  $('limDerived').addEventListener('click',()=>{derived++;render();});
+  $('limReset').addEventListener('click',()=>{anchored=3;derived=0;q=85;const e=$('limQ');if(e){e.value=85;const l=$('limQLab');if(l)l.textContent='0.85';}render();});
+  bind('limQ','limQLab',v=>{q=v;render();},v=>fmt(v/100,2));
+  render();
+  window.addEventListener('resize',render);
+})();
 
-  <div class="card">
-    <h3 class="mt0">Demo 44 · Die Werkzeugkiste zum Mitnehmen</h3>
-    <p class="small">Was auch dann überlebt, wenn du die große Vereinheitlichung ablehnst.
-    Klick jedes Werkzeug an — du bekommst eine Mini-Übung, die du in 20 Sekunden lösen kannst.</p>
-    <div class="btnrow" id="kitBtns"></div>
-    <div class="card tight" id="kitBody" style="background:rgba(196,181,253,.06);border-color:var(--acc2)"></div>
-  </div>
-
-  <div class="card">
-    <h3 class="mt0">Das allerletzte Bild</h3>
-    <canvas id="cvOutro" height="300"></canvas>
-    <p class="small center" style="margin-top:12px">
-      Bedeutung = innere Struktur + Weltkopplung.
-    </p>
-  </div>
-
-  <div class="box" style="margin-top:30px">
-    <div class="bt">Und jetzt?</div>
-    Geh zurück zu Station 1 und schiebe die Regler noch einmal. Du wirst andere Dinge sehen.
-    Das ist kein Zufall: dein eigenes c<sub>acc</sub> hat sich gerade verbreitert.
-  </div>
-
-  <p class="small center" style="margin-top:40px;color:var(--txt3)">
-    Interaktive Aufbereitung von „From World to Model: Coherent Representation" ·
-    Teil 4, Kapitel 3 · Alle Demos rechnen live, nichts ist vorgerendert.
-  </p>
-</div>
-</section>
-
-<script>
 /* ============================================================================
    RESTLICHE DEMOS (30 – 44)
    ============================================================================ */
@@ -5349,58 +5324,7 @@ const LADDER=[
   render();
 })();
 
-/* ---------------------------------------------------------------------------
-   DEMO 33 · PATHOLOGIE-SIMULATOR
-   --------------------------------------------------------------------------- */
-(function(){
-  const cv=$('cvPatho'); if(!cv) return;
-  const P=[
-    {n:'1 · Selbstkonsistente Fantasie',coh:1,con:0,cov:1,bias:0,
-     what:'Korrespondenz',
-     d:'Abstieg hält, jeder Pfeil ist lizenziert — aber Tarskis „genau dann wenn" scheitert an den Kontaktpunkten. Eine perfekt kohärente Fiktion.',
-     fix:'Erdung: Retrieval, Werkzeuge, Verifikation.'},
-    {n:'2 · Faktenbuch',coh:0,con:1,cov:1,bias:0,
-     what:'Kohärenz',
-     d:'Jede Behauptung ist einzeln geprüft und wahr; Tarski hält überall. Aber das Modell hat keine innere Struktur: die Teile fügen sich nicht zusammen.',
-     fix:'Bessere Synthese, Gedankenketten, strukturierte Notizblöcke.'},
-    {n:'3 · Kontaktpunkt-Lügner',coh:1,con:0,cov:1,bias:20,
-     what:'Korrespondenz',
-     d:'Die inneren Pfeile sind lizenziert, aber die Daten spiegeln W nie wider. Mit genug Daten hält Abstieg intern; die Vorhersagen verfehlen systematisch.',
-      (Popper: noch-nicht-falsifiziert, korroboriert.)</p>
-      <div class="badge ok">operationalisierbar</div>
-    </div>
-  </div>
 
-  <div class="card">
-    <h3 class="mt0">Demo 44 · Die Werkzeugkiste zum Mitnehmen</h3>
-    <p class="small">Was auch dann überlebt, wenn du die große Vereinheitlichung ablehnst.
-    Klick jedes Werkzeug an — du bekommst eine Mini-Übung.</p>
-    <div class="btnrow" id="kitBtns"></div>
-    <div class="card tight" id="kitBody" style="background:rgba(196,181,253,.06);border-color:var(--acc2)"></div>
-  </div>
-
-  <div class="card">
-    <h3 class="mt0">Das allerletzte Bild</h3>
-    <canvas id="cvOutro" height="300"></canvas>
-    <p class="small center" style="margin-top:12px">
-      Bedeutung = innere Struktur + Weltkopplung.
-    </p>
-  </div>
-
-  <div class="box" style="margin-top:30px">
-    <div class="bt">Und jetzt?</div>
-    Geh zurück zu Station 1 und schiebe die Regler noch einmal. Du wirst andere Dinge sehen.
-    Das ist kein Zufall: dein eigenes c<sub>acc</sub> hat sich gerade verbreitert.
-  </div>
-
-  <p class="small center" style="margin-top:40px;color:var(--txt3)">
-    Interaktive Aufbereitung von „From World to Model: Coherent Representation" ·
-    Teil 4, Kapitel 3 · Alle Demos rechnen live, nichts ist vorgerendert.
-  </p>
-</div>
-</section>
-
-<script>
 /* ============================================================================
    DEMOS 33 – 44
    ============================================================================ */
