@@ -1,0 +1,31 @@
+# page: /promptengineering.php
+# overflow at width(s): 390px
+
+Fix the layout overflows on /promptengineering.php (blog lesson PHP file).
+
+Contract: no in-flow element may exceed the reading column #contents, whose width is set by the general max-width CSS variable --mn-col-width (80ch; ≈ 375px on this page).
+
+The layout guardrail flagged 7 element(s) rendering wider than the column:
+
+  1) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"4.2 bits3.1 bits1.8 bits0.9 bits0.3 bits012345Do stuffWrite codeWrite a Python s\"
+  2) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"happy\"not happy\"sadjoyfuldepressedcontent−1−0.500.51−1−0.500.5trace 0Why Negatio\"
+  3) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"Direct AnswerStep 1Step 2Step 3Step 4Final Answer0%20%40%60%80%100%Chain-of-Thou\"
+  4) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"95%85%70%40%10%90%30%15%5%2%85%20%30%8%1%70%15%20%5%1%60%10%10%2%1%Basic injecti\"
+  5) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"WebGL is not supported by your browser - visit https://get.webgl.org for more in\"
+  6) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"10%50%100%Direct Prompt: Low Confidence on First GuessReasoning StepConfidence .\"
+  7) div.user-select-none.svg-container — measured 700px, allowed ≈ 375px, overflow +325px
+      content: \"AccuracyCreativitySafetyConsistencySpeedRobustness00.20.40.60.81Chain-of-Thought\"
+
+How to fix each one:
+  A. Default — clamp it to the column: set width:100%; max-width:var(--mn-col-width) on the element (or on the wrapper that constrains it) in the lesson file / the relevant CSS. This is the ONLY fix that needs no label.
+  B. Scrollable INSIDE — only if it truly cannot shrink (wide equation, table, code block): wrap it in the special tag: \u003Cdiv class=\"lg-scroll\">…\u003C/div> (clamped to the column, horizontal scroll inside). Label it deliberately — the guardrail treats it as exempt.
+  C. Full page width, scroll inside — only for exceptional cases (e.g. the huge transformer equations): \u003Cdiv class=\"lg-widescroll\">…\u003C/div> (max-width:100vw, horizontal scroll inside its own box).
+Never widen the #contents column itself to accommodate content.
+
+Verify afterwards: open the console and run window.__layoutGuardrailCheck() — it must return { ok: true }."
