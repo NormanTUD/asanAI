@@ -5294,6 +5294,11 @@ html.dark .course-hero {
 	padding-bottom: 3rem;
 }
 
+/* Mobile-only jump link below the hero (styled in mobile.css). */
+.course-jump {
+	display: none;
+}
+
 .course-part {
 	margin-bottom: 3rem;
 }
@@ -9350,6 +9355,7 @@ html.reader-mode #reader-toggle {
 }
 @media (max-width: 600px) {
 	#reader-toggle {
+		top: 10px;
 		right: 180px;
 		width: 36px;
 		height: 36px;
@@ -10868,12 +10874,6 @@ html.reader-mode #course-status-box { display: none; }
 }
 
 @media (max-width: 420px) {
-	#topics-toggle {
-		right: 10px;
-		top: 10px;
-		width: 38px;
-		height: 38px;
-	}
 	.topics-modal { padding: 18px 14px 14px; }
 	.topics-audience-clear { font-size: 0.72rem; padding: 3px 6px; }
 	.topics-seg-btn { font-size: 0.76rem; padding: 6px 6px; }

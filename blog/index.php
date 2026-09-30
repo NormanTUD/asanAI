@@ -79,11 +79,12 @@ setTimeout(function () {
 <div class="course-hero">
 	<?php render_constellation(); ?>
 	<h1>From Big Bang to ChatGPT</h1>
+	<a class="course-jump" href="#course-overview">Jump to the course list&nbsp;&darr;</a>
 </div>
 
 <?php incl("A Peek inside the Black Box", "intro"); ?>
 
-<div class="course-overview">
+<div class="course-overview" id="course-overview">
 
 <?php
 $partTitles = [

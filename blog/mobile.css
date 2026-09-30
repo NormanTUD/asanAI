@@ -541,6 +541,23 @@ body {
 		line-height: 1.15;
 	}
 
+	/* The intro runs ~10 viewports long on a phone before the course
+	   list begins — give readers a way to skip straight to the tiles. */
+	.course-jump {
+		display: inline-block;
+		margin-top: 0.8rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--mn-accent);
+		text-decoration: none;
+	}
+	.course-jump:active {
+		opacity: 0.6;
+	}
+	#course-overview {
+		scroll-margin-top: 64px;
+	}
+
 	/* ── 3u. External link arrows: subtler on phones ─────── */
 	.md a[target="_blank"]:not(.cl-inline):not(.cl-h-anchor):not(.cl-copy)::after {
 		font-size: 0.78em;
