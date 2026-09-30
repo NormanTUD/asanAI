@@ -77,7 +77,7 @@ $$H_{0}=\underbrace{\mathbb{Z}}_{\text{one connected piece}}, \qquad H_{1}=\unde
 
 so $b_{0}=1$ (one connected piece), $b_{1}=2$ (two independent loops), and $b_{2}=1$ (one cavity). That $b_{1}=2$ is the "one hole" of the joke made precise: the coffee cup and the doughnut have the same homology groups, which is exactly why no topologist can tell them apart \cite{hatcher}.
 
-The modern reformulation of Euler's observation is the **Euler–Poincaré formula**, and it is the moment the whole edifice clicks:
+The modern reformulation of Euler's observation is the **Euler–Poincaré formula**, the Euler characteristic written as the alternating sum of the Betti numbers, first stated by \citeauthor{poincareanalysissitus} (\citeyear{poincareanalysissitus}) and put in its modern form by \citeauthor{derham1931} (\citeyear{derham1931}); it is the moment the whole edifice clicks:
 
 $$\underbrace{\chi(X)}_{\substack{\text{the Euler characteristic:}\\\text{the same number no matter}\\\text{the triangulation}}} \;=\; \sum_{k\ge 0} \underbrace{(-1)^{k}}_{\substack{\text{alternating}\\\text{plus-minus sign}}} \; \underbrace{\operatorname{rank}\,H_{k}(X)}_{\substack{\text{the }k\text{-th Betti number }b_k:\\\text{independent }k\text{-dim holes}}} ,$$
 
