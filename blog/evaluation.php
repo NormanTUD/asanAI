@@ -105,7 +105,7 @@ MBPP (\cite[Austin et al., 2021]{austin2021mbpp}) comprises 974 Python problems,
 BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
 </div>
 
-<div id="mmlu-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
+<div id="mmlu-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference and Elo)">
 ## Generative, LLM-as-Judge
@@ -143,7 +143,7 @@ with $K=32$, $S_{AB} = 1$ if A wins. Updated continuously with hundreds of thous
 A critical finding: **arena Elo and academic benchmarks correlate only weakly** ($r \approx 0.5$). Models optimized for benchmarks often underperform on real user preference.
 </div>
 
-<div id="arena-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
+<div id="arena-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## Benchmark Contamination: The Crisis
