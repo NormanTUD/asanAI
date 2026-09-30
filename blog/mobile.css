@@ -188,7 +188,15 @@ body {
 		padding: 0.02em 0.08em 0 0;
 	}
 
-	/* ── 3c. Tiles → 1 column, denser ──────────────────────── */
+	/* ── 3c. Tiles → 1 column, single-line rows ─────────────
+	   Each tile is ONE line — icon, title, truncated description —
+	   so the course overview reads like a compact list of buttons
+	   instead of a wall of small wrapped text. The title gets
+	   priority for the space; the description yields first
+	   (higher flex-shrink) and is capped at 45 % width.
+	   Selectors carry `#contents` because the generic `#contents h3`
+	   / `#contents p` rules above would otherwise win on
+	   specificity and keep the old sizes / margins. */
 	.course-tiles {
 		grid-template-columns: 1fr;
 		gap: 0.6rem;
@@ -207,21 +215,37 @@ body {
 		font-size: 1.15rem;
 	}
 
-	/* Tile: big enough to really read at arm's length. Description
-	   text at 0.83 rem (~13 px) was the main "can't read the start
-	   screen on my phone" complaint — 0.95 rem is comfortable. */
 	.course-tile {
-		padding: 1rem 1.05rem;
+		flex-direction: row;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0.8rem 1rem;
 	}
 	.course-tile-icon {
-		font-size: 1.65rem;
+		font-size: 1.5rem;
+		margin-bottom: 0;
+		flex: 0 0 auto;
 	}
-	.course-tile h3 {
-		font-size: 1.08rem;
+	#contents .course-tile h3 {
+		font-size: 1.15rem;
+		line-height: 1.25;
+		margin: 0;
+		flex: 1 1 auto;
+		min-width: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
-	.course-tile p {
-		font-size: 0.95rem;
-		line-height: 1.5;
+	#contents .course-tile p {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.3;
+		flex: 0 4 auto;
+		min-width: 0;
+		max-width: 45%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	/* ── 3d. Aurora block-quote: drop the huge left gutter ── */
