@@ -57,9 +57,9 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
-	<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+	<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 15px;">
 		<p>Target Class: <span style="color: #f59e0b; font-weight: bold;">CAT</span></p>
-		<div style="display: grid; grid-template-columns: 100px 150px 100px; gap: 15px; align-items: center;">
+		<div style="display: grid; grid-template-columns: 70px 1fr 70px; gap: 15px; align-items: center; flex: 1 1 260px;">
 			<b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Confidence</b> <b style="font-size:0.8em">Loss</b>
 
 			<span>Cat (Target)</span>
