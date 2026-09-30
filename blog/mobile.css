@@ -120,12 +120,11 @@ body {
 @media (max-width: 600px) {
 
 	/* ── 3a. Root typography ────────────────────────────────
-	   A touch above the old 16 px but deliberately restrained —
-	   17 px read as "too large" in testing, 16.5 px a touch small.
-	   16.75 px stays on the iOS input-zoom safe side (≥ 16 px) and
-	   scales every rem-based phone rule below by ~4 %. */
+	   17.5 px: on phones the old 16.75 px read as a touch small.
+	   This scales every rem-based phone rule below by ~4.5 % and
+	   stays on the iOS input-zoom safe side (≥ 16 px). */
 	html {
-		font-size: 16.75px;
+		font-size: 17.5px;
 	}
 
 	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
