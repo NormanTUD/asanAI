@@ -36,6 +36,40 @@ const SpaceMorph = (() => {
     const LIFT = (x, y, t) => { const r2 = x * x + y * y;
         return { x: x * (1 - 0.12 * t * r2), y: y * (1 - 0.12 * t * r2), z: (r2 * KZ - KB) * t }; };
 
+    // ---------- Zwei verhakte Volltori (Datensatz D-II aus dem Paper) ----------
+    // Ketten-Hopf-Link, exakt wie in test/topologie_tiefer_neuronaler_netze.html:
+    // A (grün):  flacher Donut in der xy-Ebene (Loch entlang z), Radius M.
+    // B (rot):   stehender Donut in der xz-Ebene, Zentrum bei x=+M,
+    //            dessen Ring durch das Loch von A greift → ineinander verhakt.
+    // Jeder Torus β₁ = 1; zusammen unseparabel durch eine Ebene im ℝ³.
+    const TORI = [];
+    (function(){
+        let s2 = 1234; const rnd2 = () => (s2 = (s2 * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+        const M = 0.72, NA = 230, NB = 230;
+        for (let i = 0; i < NA; i++) {
+            const t = rnd2() * 6.2832, s = rnd2() * 6.2832, rho = 0.16 + 0.04 * rnd2();
+            const R = M + rho * Math.cos(s);
+            TORI.push({ x: R * Math.cos(t), y: R * Math.sin(t), z: rho * Math.sin(s), c: 0 });
+        }
+        for (let i = 0; i < NB; i++) {
+            const t = rnd2() * 6.2832, s = rnd2() * 6.2832, rho = 0.16 + 0.04 * rnd2();
+            const R = M + rho * Math.cos(s);
+            TORI.push({ x: M + R * Math.cos(t), y: rho * Math.sin(s), z: R * Math.sin(t), c: 1 });
+        }
+    })();
+
+    // Entwirrung über eine 4. Dimension (w): die Tori dehnen sich (Schwellung),
+    // ziehen gegeneinander HINDURCH und enden getrennt. Das Hindurchziehen ist
+    // der 4D-Bogen – in 3D unmöglich, in ℝ⁴ ein gerader Weg.
+    function untangle(p, pt) {
+        const e = p * p * (3 - 2 * p);
+        const swell = 1 + 0.22 * Math.sin(p * Math.PI);
+        const sep = 0.95 * e;
+        const dir = pt.c === 0 ? -1 : 1;      // grün -x, rot +x
+        const wobble = Math.sin(p * Math.PI) * 0.18; // sanfte 4D-Andeutung in y
+        return { x: pt.x * swell + dir * sep, y: pt.y * swell + dir * wobble, z: pt.z * swell };
+    }
+
     // ---------- Szenen ----------
     const S = [
         { n: "Schritt 1 / 7", t: "Zwei Klassen, keine Gerade",
@@ -65,12 +99,29 @@ const SpaceMorph = (() => {
         { n: "Schritt 7 / 7", t: "Der Raum fällt auf eine Zahl",
             b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Abbildung trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich. Rot links, blau rechts.",
             f: "s = wᵀφ(x) + b ∈ ℝ<small>ℝ³ → ℝ, jetzt trennt ein Punkt</small>",
-            L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 }
+            L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
+
+        // ── Bonusphase: zwei verhakte Volltori (Datensatz D-II) ──
+        // 2D war der Lehrfilm. Jetzt die echte 3D-Geometrie aus dem Paper:
+        // zwei ineinander verschlungene Donuts, die kein einzelner Layer –
+        // und keine Ebene – trennen kann. Sie entwirren sich erst, weil der
+        // Layer sie durch eine VIERTE Dimension (w) ziehen darf.
+        { n: "Schritt 8 / 10", t: "Die echte Daten­geometrie: zwei verhakte Tori",
+            b: "In der Wirklichkeit liegen die Daten im ℝ³. Zwei ineinander verknotete Volltori, jeder β₁ = 1: keine Ebene im Raum trennt sie. Genau die Daten­geometrie aus dem Paper (D-II).",
+            f: "M = Mₐ ∪ M_b ⊂ ℝ³,&nbsp; β₁(Mₐ)=β₁(M_b)=1<small>verhakten Tori, unseparabel</small>",
+            L: 0, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
+        { n: "Schritt 9 / 10", t: "Durch eine vierte Dimension entwirren",
+            b: "Ein Layer hebt die Daten in eine Extra-Dimension w (die Breite des Netz­raums). In dieser vierten Dimension ziehen sich die beiden Ringe hindurch – das einzige Weg, verhakten Tori zu entwirren, ohne sie zu zerschneiden. Die gepunktete w-Achse deutet es an.",
+            f: "ℝ³ ↪ ℝ⁴,&nbsp; φ(x,y,z) ↦ (…, w)<small>Breite = Extra-Dimension</small>",
+            L: 0, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.55 },
+        { n: "Schritt 10 / 10", t: "Entwirrt – jetzt reicht eine Ebene",
+            b: "Zurück im dreidimensionalen Raum liegen die beiden Tori sauber getrennt: jede Klasse ist ein einzelner Klumpen (β → (1,0,0)). Eine Ebene trennt sie. Was unmöglich schien, erledigt eine Sequenz aus Verbiegen + Falten – Schicht für Schicht.",
+            f: "β → (1, 0, 0)<small>linear separierbar im ausge­streckten Raum</small>",
+            L: 0, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
     ];
 
     // ---------- Ablauf ----------
-    function ease(u) { const s = 1 / (1 + Math.exp(-11 * (u - 0.5)));
-        const a = 1 / (1 + Math.exp(5.5)), b = 1 / (1 + Math.exp(-5.5)); return (s - a) / (b - a); }
+    function ease(u) { return u * u * u * (u * (u * 6 - 15) + 10); }
     function lerp(a, b, u) { return a + (b - a) * u; }
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const sub = (t, a, b) => ease(clamp((t - a) / (b - a), 0, 1));
@@ -199,37 +250,41 @@ const SpaceMorph = (() => {
         if (!md) { dragA = lerp(dA0, 0, u); dragB = lerp(dB0, 0, u); }
         const flat = 1 - clamp((camB + dragB) / 1.5708, 0, 1);
         FIT = lerp(1.0, 0.34, flat); YOFF = lerp(0, H * 0.10, flat);
+        const tor = lerp(a.tori || 0, b.tori || 0, u);
+        const ut = lerp(a.ut || 0, b.ut || 0, u);
         const pl = lerp(a.pl, b.pl, u), sq = lerp(a.sq, b.sq, u),
-            fl = lerp(a.fail, b.fail, u), lb = lerp(a.lab, b.lab, u),
+            fl = lerp(a.fail, b.fail, u) * (1 - tor),
+            lb = lerp(a.lab, b.lab, u) * (1 - tor),
             bx = lerp(a.box, b.box, u);
+        const lesson = 1 - tor;
         const fwd = b.pr > a.pr;
         const tCol = fwd ? sub(prRaw, 0, 1) : 1 - sub(1 - prRaw, 0, 1);
-        const axA = fwd ? sub(prRaw, 0.05, 0.5) : 1 - sub(1 - prRaw, 0.05, 0.5);
+        const axA = (fwd ? sub(prRaw, 0.05, 0.5) : 1 - sub(1 - prRaw, 0.05, 0.5)) * lesson;
 
-        ctx.fillStyle = '#0b0d12'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
 
-        drawBox(bx);
+        drawBox(bx * lesson);
 
         if (axA > 0.01) { ctx.globalAlpha = axA; ctx.strokeStyle = '#3c4560'; ctx.lineWidth = 1.6;
             ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
             for (let i = 0; i <= 10; i++) { const X = lerp(AX_L, AX_R, i / 10);
                 ctx.beginPath(); ctx.moveTo(X, AX_Y - 4); ctx.lineTo(X, AX_Y + 4); ctx.stroke(); }
-            const TX = sx(0); ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2.6;
+            const TX = sx(0); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.6;
             ctx.beginPath(); ctx.moveTo(TX, AX_Y - 36); ctx.lineTo(TX, AX_Y + 36); ctx.stroke();
-            ctx.textAlign = 'center'; ctx.fillStyle = '#ffd166'; ctx.font = '13px Georgia';
+            ctx.textAlign = 'center'; ctx.fillStyle = '#b45309'; ctx.font = '13px Georgia';
             ctx.fillText('s = 0', TX, AX_Y + 58);
             ctx.font = '600 13px system-ui,sans-serif';
-            ctx.fillStyle = '#ff6b8a'; ctx.fillText('s < 0   innerer Kern', lerp(AX_L, TX, 0.40), AX_Y + 58);
-            ctx.fillStyle = '#5ad2ff'; ctx.fillText('s > 0   äußerer Ring', lerp(TX, AX_R, 0.55), AX_Y + 58);
+            ctx.fillStyle = '#be123c'; ctx.fillText('s < 0   innerer Kern', lerp(AX_L, TX, 0.40), AX_Y + 58);
+            ctx.fillStyle = '#0369a1'; ctx.fillText('s > 0   äußerer Ring', lerp(TX, AX_R, 0.55), AX_Y + 58);
             ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
 
         ctx.lineWidth = 1;
-        const gA = (0.16 + 0.24 * L) * (1 - tCol * 0.35);
+        const gA = (0.22 + 0.24 * L) * (1 - tCol * 0.35) * lesson;
         gridSegs(L, tCol).forEach(sg => { ctx.beginPath();
             sg.forEach((p, i) => { i ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y); });
-            ctx.strokeStyle = 'rgba(84,102,140,' + gA + ')'; ctx.stroke(); });
+            ctx.strokeStyle = 'rgba(100,116,139,' + gA + ')'; ctx.stroke(); });
 
-        if (fl > 0.01) { ctx.globalAlpha = fl * 0.7; ctx.lineWidth = 1.6; ctx.strokeStyle = '#8892a8';
+        if (fl > 0.01) { ctx.globalAlpha = fl * 0.7; ctx.lineWidth = 1.6; ctx.strokeStyle = '#94a3b8';
             ctx.setLineDash([5, 5]);
             for (let k = 0; k < 5; k++) { const t = k * 0.63 + 0.2;
                 const p = proj({ x: Math.cos(t) * -1.2, y: Math.sin(t) * -1.2, z: 0 });
@@ -244,12 +299,12 @@ const SpaceMorph = (() => {
             ctx.globalAlpha = 1; }
 
         const items = [];
-        PTS.forEach(p => {
+        if (lesson > 0.01) PTS.forEach(p => {
             const P = warp(p.x, p.y, L, tCol);
             const dep = proj(LIFT(p.x, p.y, L)).d;
             items.push({ d: dep, type: 'pt', s: P, c: p.c }); });
 
-        if (pl > 0.01) {
+        if (pl > 0.01 && lesson > 0.01) {
             const E = 0.92, M = 7, rows = [];
             for (let i = 0; i <= M; i++) {
                 const yv = (-E + 2 * E * i / M) * (1 - sq), row = [];
@@ -279,22 +334,73 @@ const SpaceMorph = (() => {
 
                 const mid = R[Math.floor(M / 2)];
                 ctx.globalAlpha = it.a * (0.45 + 0.55 * it.sq); ctx.lineWidth = 1.4 + 2.4 * it.sq;
-                ctx.strokeStyle = '#ffd166'; ctx.beginPath();
+                ctx.strokeStyle = '#d97706'; ctx.beginPath();
                 mid.forEach((p, j) => j ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y));
                 ctx.stroke(); ctx.globalAlpha = 1;
             } else {
                 const r = (2.8 + 0.7 * it.s.k) * it.s.k;
                 ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
-                ctx.fillStyle = it.c ? '#5ad2ff' : '#ff6b8a';
-                ctx.globalAlpha = 0.55 + 0.45 * it.s.k; ctx.fill(); ctx.globalAlpha = 1;
+                ctx.fillStyle = it.c ? '#0284c7' : '#e11d48';
+                ctx.globalAlpha = (0.55 + 0.45 * it.s.k) * lesson; ctx.fill(); ctx.globalAlpha = 1;
             } });
 
         if (lb > 0.01) { ctx.globalAlpha = lb; ctx.font = '600 14px system-ui,sans-serif';
             const c0 = proj({ x: 0, y: 0, z: PLANE_Z }), LX = W / 2 + BASE() * FIT * 1.12 + 170;
-            ctx.fillStyle = '#5ad2ff'; ctx.fillText('Klasse B — äußerer Ring', LX, c0.Y - 58);
-            ctx.fillStyle = '#ff6b8a'; ctx.fillText('Klasse A — innerer Kern', LX, c0.Y + 66);
-            ctx.fillStyle = '#ffd166'; ctx.font = '13px Georgia';
+            ctx.fillStyle = '#0284c7'; ctx.fillText('Klasse B — äußerer Ring', LX, c0.Y - 58);
+            ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse A — innerer Kern', LX, c0.Y + 66);
+            ctx.fillStyle = '#d97706'; ctx.font = '13px Georgia';
             ctx.fillText('Trennebene, von der Kante', LX, c0.Y + 4); ctx.globalAlpha = 1; }
+
+        // ---------- Zwei verhakte Tori (Bonusphase) ----------
+        if (tor > 0.01) {
+            // 4D-Andeutung: gepunktete w-Achse pulsiert, während die Tori sich entwirren
+            const wA = 1 - Math.abs(ut - 0.5) * 2; // 0 → 1 → 0, Spitze bei ut=0.5
+            const wPulse = 0.45 + 0.55 * wA;
+            if (wPulse > 0.02) {
+                const o = proj({ x: 0, y: 0, z: 0 });
+                ctx.globalAlpha = wPulse * 0.8 * tor;
+                ctx.setLineDash([3, 7]); ctx.lineWidth = 2.2;
+                ctx.strokeStyle = '#7c3aed';
+                ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(o.X, o.Y - H * 0.34); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#6d28d9'; ctx.font = 'italic 700 18px Georgia';
+                ctx.fillText('w  (4. Dimension)', o.X + 12, o.Y - H * 0.30);
+                ctx.globalAlpha = 1;
+            }
+            const titems = [];
+            TORI.forEach(p => {
+                const q = untangle(ut, p);
+                const d = proj(q).d;
+                titems.push({ d: d, s: proj(q), c: p.c });
+            });
+            titems.sort((p, q) => p.d - q.d);
+            titems.forEach(it => {
+                const r = (2.6 + 0.6 * it.s.k) * it.s.k;
+                ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
+                ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
+                ctx.globalAlpha = 0.4 + 0.6 * it.s.k; ctx.fill(); ctx.globalAlpha = 1;
+            });
+            // Trennebene am Ende: senkrechte Ebene x = const zwischen den Klumpen
+            if (pl > 0.01) {
+                const PX = 0.36, E = 0.95, M = 7;
+                for (let i = 0; i <= M; i++) { const yv = -E + 2 * E * i / M;
+                    const a = proj({ x: PX, y: yv, z: -E }), b = proj({ x: PX, y: yv, z: E });
+                    ctx.globalAlpha = pl * 0.22; ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke(); }
+                for (let i = 0; i <= M; i++) { const zv = -E + 2 * E * i / M;
+                    const a = proj({ x: PX, y: -E, z: zv }), b = proj({ x: PX, y: E, z: zv });
+                    ctx.globalAlpha = pl * 0.22; ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke(); }
+                const tl = proj({ x: PX, y: 0, z: E }), bl = proj({ x: PX, y: 0, z: -E });
+                ctx.globalAlpha = pl * 0.9; ctx.lineWidth = 2.2; ctx.strokeStyle = '#d97706';
+                ctx.beginPath(); ctx.moveTo(tl.X, tl.Y); ctx.lineTo(bl.X, bl.Y); ctx.stroke(); ctx.globalAlpha = 1;
+                ctx.font = '13px Georgia'; ctx.fillStyle = '#b45309';
+                ctx.fillText('Trennebene', tl.X + 8, tl.Y);
+            }
+            ctx.font = '600 13px system-ui,sans-serif';
+            ctx.fillStyle = '#15803d'; ctx.fillText('Klasse a — grüner Torus (β→(1,0,0))', 16, H - 52);
+            ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse b — roter Torus (β→(1,0,0))', 16, H - 32);
+        }
 
         raf = requestAnimationFrame(draw);
     }
