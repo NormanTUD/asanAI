@@ -331,7 +331,7 @@ def main():
         "--pages",
         nargs="*",
         default=None,
-        help="Specific pages to check (e.g., /transformer.php /map.php). "
+        help="Specific pages to check (e.g., /transformer.php /atlas.php). "
              "Default: all lessons with COURSE_METADATA.",
     )
     parser.add_argument(
