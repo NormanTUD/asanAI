@@ -8416,7 +8416,7 @@ window.bibData = {
 		license: "Public domain (NASA)",
 		alternativetitle: "Structure of the Universe (the cosmic web)"
 	},
-	/* The flat "cosmic foam" photograph floating in the Atlas (map.php)
+	/* The flat "cosmic foam" photograph floating in the Atlas (atlas.php)
 	 * during the cosmic-web stage of the Cosmic journey: a frame from the
 	 * MPA Garching visualization movies (local file cosmic_web_foam.jpg). */
 	"cosmic_web_foam_image": {
@@ -8427,7 +8427,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
 	},
-	/* The cosmic-web skybox texture in the Atlas (map.php), used at the
+	/* The cosmic-web skybox texture in the Atlas (atlas.php), used at the
 	 * cosmic-web stage of the Cosmic journey: "Cosmic web texture (10 Gly
 	 * span)" — filaments of dark matter and galaxies across ten
 	 * gigalight-years (local file cosmic_web_texture.png). */
@@ -8439,7 +8439,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Cosmic web texture (10 Gly span)"
 	},
-	/* The Big-Bang / cosmic-scale photo in the Atlas (map.php) and in
+	/* The Big-Bang / cosmic-scale photo in the Atlas (atlas.php) and in
 	 * untold_history.php: an artist's logarithmic radial view of the observable
 	 * universe, Solar System at the centre out to the CMB and the Big Bang at
 	 * the rim (local file universe_radial_budassi.jpg). */
@@ -8465,7 +8465,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Figure 1 from 'Attention Is All You Need', via Wikimedia Commons"
 	},
-	/* The all-sky starfield backdrop of the Atlas (map.php): ESO's 360°
+	/* The all-sky starfield backdrop of the Atlas (atlas.php): ESO's 360°
 	 * Aitoff panorama of the whole celestial sphere (the Milky Way band across
 	 * the frame), local file starfield_eso.jpg. */
 	"starfield_eso_image": {
@@ -8477,7 +8477,7 @@ window.bibData = {
 		alternativetitle: "ESO Milky Way panorama (GigaGalaxy Zoom)"
 	},
 	/* The solar-system planet surface maps (Mercury, Venus, Earth, Mars,
-	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (map.js buildCelestial):
+	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (atlas.js buildCelestial):
 	 * equirectangular 2K maps from the Solar System Scope project, based on
 	 * NASA imagery/elevation, local files solsys_*.jpg. */
 	"solsys_planet_textures": {
@@ -8488,7 +8488,7 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope planet textures (solsys_*.jpg)"
 	},
-	/* The Atlas main-globe Earth and Moon surfaces (map.js buildEarth /
+	/* The Atlas main-globe Earth and Moon surfaces (atlas.js buildEarth /
 	 * buildMoon): equirectangular maps from the Solar System Scope project,
 	 * based on NASA imagery/elevation; local files earth_texture.jpg and
 	 * moon_texture.png. */
@@ -8500,7 +8500,7 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.jpg, moon_texture.png)"
 	},
-	/* The Atlas Earth night-lights layer (map.js buildEarth ShaderMaterial
+	/* The Atlas Earth night-lights layer (atlas.js buildEarth ShaderMaterial
 	 * nightMap): NASA/NOAA VIIRS Day/Night Band 2012 composite,
 	 * equirectangular; local file earth_night.jpg. */
 	"earth_night_lights": {
@@ -8513,7 +8513,7 @@ window.bibData = {
 	},
 	/* The Event Horizon Telescope image of the black hole in Messier 87
 	 * (M87*), the first direct image of a black hole shadow, shown in the
-	 * Atlas (map.js) as the crossfade target for the stellar death phase.
+	 * Atlas (atlas.js) as the crossfade target for the stellar death phase.
 	 * Local file m87_real.jpg. */
 	"m87_blackhole_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg",
@@ -8524,7 +8524,7 @@ window.bibData = {
 		alternativetitle: "EHT image of M87* (m87_real.jpg)"
 	},
 	/* The Crab Nebula (M1), the supernova remnant of SN 1054, shown in the
-	 * Atlas (map.js) at the end of the stellar death phase to illustrate
+	 * Atlas (atlas.js) at the end of the stellar death phase to illustrate
 	 * what remains after a star explodes. Local file crab_nebula.jpg. */
 	"crab_nebula_image": {
 		url: "https://en.wikipedia.org/wiki/SN_1054",
