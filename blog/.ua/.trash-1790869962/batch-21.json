@@ -1,0 +1,279 @@
+{
+  "nodes": [
+    {
+      "id": "file:lndw/attention_scripts/outputs/gpt2_attention.json",
+      "type": "config",
+      "name": "gpt2_attention.json",
+      "summary": "Precomputed GPT-2 attention data for the sentence 'the cat sat on the mat': per token list, and per attention head the layer/head index, a German note, argmax token per position, and the full 6x6 attention matrix. Generated offline by attention_scripts/gpt2_attention.py for the blog's attention-head visualizer.",
+      "tags": ["attention", "gpt2", "dataset", "precomputed-output"],
+      "filePath": "lndw/attention_scripts/outputs/gpt2_attention.json"
+    },
+    {
+      "id": "file:lndw/attention_scripts/outputs/mini_h1.json",
+      "type": "config",
+      "name": "mini_h1.json",
+      "summary": "Handcrafted miniature attention head ('H1 Artikel<->Nomen') on 'the cat sat on the mat': 4-D token embeddings, scalar q/k values, raw QK scores, and the resulting softmax attention matrix showing the article attending to its noun. Output of attention_scripts/mini_attention.py used to teach scaled dot-product attention step by step.",
+      "tags": ["attention", "teaching-example", "mini-attention", "dataset"],
+      "filePath": "lndw/attention_scripts/outputs/mini_h1.json"
+    },
+    {
+      "id": "file:lndw/attention_scripts/outputs/mini_h2.json",
+      "type": "config",
+      "name": "mini_h2.json",
+      "summary": "Second handcrafted miniature attention head ('H2 Subjekt<->Verb') on the same 6-token sentence: embeddings, q/k vectors, raw scores, and the attention matrix illustrating a subject-verb syntactic head. Companion to mini_h1.json from attention_scripts/mini_attention.py.",
+      "tags": ["attention", "teaching-example", "mini-attention", "dataset"],
+      "filePath": "lndw/attention_scripts/outputs/mini_h2.json"
+    },
+    {
+      "id": "file:lndw/attention_slides.js",
+      "type": "file",
+      "name": "attention_slides.js",
+      "summary": "Plotly-based 'attention router' visualization for the presentation slides: draws inputs -> values -> outputs columns and shows how different attention-weight mixtures route the same input tokens to different outputs, with an animation that cycles through each output and a German explainer text.",
+      "tags": ["attention", "routing", "visualization", "plotly", "presentation"],
+      "filePath": "lndw/attention_slides.js",
+      "complexity": "moderate",
+      "languageNotes": "Plain object literal AttentionRouterViz with render/animate methods driven by a focus <select>; auto-inits on DOMContentLoaded."
+    },
+    {
+      "id": "file:lndw/attn_demo.js",
+      "type": "file",
+      "name": "attn_demo.js",
+      "summary": "Interactive demo of contextualized word embeddings: walks through four German sentences where 'Bank' (bank/bench) is pulled toward 'Geld' or 'Park' in a 2-D semantic Plotly scatter, illustrating how attention shifts a word's meaning with context.",
+      "tags": ["attention", "embeddings", "ambiguity-resolution", "visualization", "plotly"],
+      "filePath": "lndw/attn_demo.js",
+      "complexity": "moderate",
+      "languageNotes": "State object AttentionDemo with next/prev/reset tied to slide fragments; exposes runAttention() as the legacy entry point."
+    },
+    {
+      "id": "file:lndw/attractors.js",
+      "type": "file",
+      "name": "attractors.js",
+      "summary": "Large canvas-based, 7-step attractor-basin visualization for the presentation: point attractor, repellent, torus (sun/earth/moon with wireframe occlusion), Lorenz chaos, complex basins with attractors and repellents, an interactive 3-D potential-landscape with rolling balls and orbit/zoom/pan camera, and a 'seahorse emoji' scene where an LLM particle orbits semantic clusters forever inside a larger 'Emoji' basin.",
+      "tags": ["attractors", "dynamical-systems", "chaos", "3d-visualization", "canvas", "presentation"],
+      "filePath": "lndw/attractors.js",
+      "complexity": "complex",
+      "languageNotes": "IIFE exposing {init, next, prev, canGoNext, canGoPrev, reset, isOnAttractorSlide}; each step is a self-contained requestAnimationFrame loop created via a safe canvas setup with DPR scaling and a retry loop for lazy slides."
+    },
+    {
+      "id": "file:lndw/chinese_room.js",
+      "type": "file",
+      "name": "chinese_room.js",
+      "summary": "Searle's Chinese Room simulation for the presentation: three rounds of Inuktitut messages where a rulebook (if-then table) produces the correct output without understanding, then a reveal showing 100% accuracy vs 0% understanding in a bar chart and the hidden German translations.",
+      "tags": ["chinese-room", "philosophy-of-mind", "simulation", "presentation", "jquery"],
+      "filePath": "lndw/chinese_room.js",
+      "complexity": "moderate",
+      "languageNotes": "CRSim IIFE with a finite state machine ('showing'/'answered') and arrow-key navigation API; uses jQuery for DOM and Plotly for the reveal chart."
+    },
+    {
+      "id": "file:lndw/embeddinglab.js",
+      "type": "file",
+      "name": "embeddinglab.js",
+      "summary": "Embedding-space teaching suite: editable token tables for 2-D/3-D concept spaces, a mini expression calculator ('König - Mann + Frau') that moves points in the space, Plotly/ECharts-GL manifold and dual-manifold (English/Japanese translation as surface alignment) visualizations, and a direction-demo of gender/power axes with auto-advance demo examples.",
+      "tags": ["embeddings", "word-vectors", "manifold-hypothesis", "visualization", "expression-parser", "presentation"],
+      "filePath": "lndw/embeddinglab.js",
+      "complexity": "complex",
+      "languageNotes": "Mix of plain functions, IIFE demo controllers (ManifoldAlignViz, EmbeddingAutoDemo), and lazy rendering via IntersectionObserver + requestAnimationFrame; uses both Plotly and ECharts GL."
+    },
+    {
+      "id": "file:lndw/fcnn.js",
+      "type": "file",
+      "name": "fcnn.js",
+      "summary": "Canvas renderer that draws the full architecture of the running model: input images, conv2d kernel grids, neuron layers (Dense/Conv/Flatten/LayerNorm), weighted color-coded connections, weight-distribution histogram tooltips, skip-connection strengths, and hover/click tooltip hit-testing over the whole diagram.",
+      "tags": ["cnn", "architecture-visualization", "canvas", "tooltips", "layer-drawing"],
+      "filePath": "lndw/fcnn.js",
+      "complexity": "complex",
+      "languageNotes": "Procedural canvas drawing with offscreen-canvas caching per layer pair; data comes from the global `model` via get_fcnn_data(); restart is debounced and md5-hash cached to skip redundant redraws."
+    },
+    {
+      "id": "function:lndw/attention_slides.js:initAttentionSlides",
+      "type": "function",
+      "name": "initAttentionSlides",
+      "summary": "Entry point that renders the attention-router plot on DOM load (or immediately if the document is already ready).",
+      "tags": ["initialization", "attention", "entry-point"],
+      "filePath": "lndw/attention_slides.js"
+    },
+    {
+      "id": "function:lndw/attn_demo.js:runAttention",
+      "type": "function",
+      "name": "runAttention",
+      "summary": "Public entry point that triggers the current contextualized-embedding example to render in the transformer plot container.",
+      "tags": ["attention", "entry-point", "embeddings"],
+      "filePath": "lndw/attn_demo.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Public AttractorViz initializer: locates the demo container, resets state, and renders step 0; called on DOM ready and on debounced window resize.",
+      "tags": ["initialization", "attractors", "entry-point"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderPointAttractor",
+      "type": "function",
+      "name": "renderPointAttractor",
+      "summary": "Step 0: animates particles wandering chaotically outside a basin, then spiraling into a pulsing fixed point with fading trails, illustrating a stable point attractor.",
+      "tags": ["attractors", "particle-simulation", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderRepellent",
+      "type": "function",
+      "name": "renderRepellent",
+      "summary": "Step 1: animates particles being expelled from a central red repellent with radial repulsion, shockwaves, and a hard inner exclusion radius.",
+      "tags": ["attractors", "repellor", "particle-simulation", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderTorusEarth",
+      "type": "function",
+      "name": "renderTorusEarth",
+      "summary": "Step 2: side-by-side animation of the physical sun/earth/moon system and the same motion on a tilted 3-D torus wireframe with z-depth occlusion, teaching that the moon's path is topologically a circle around a circle.",
+      "tags": ["torus", "topology", "3d-visualization", "occlusion", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderLorenz",
+      "type": "function",
+      "name": "renderLorenz",
+      "summary": "Step 3: integrates the Lorenz system (sigma=10, rho=28, beta=8/3) for six colored particles over a precomputed background attractor path, with a slowly wobbling 3-D projection.",
+      "tags": ["lorenz", "chaos", "dynamical-systems", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderComplexBasins",
+      "type": "function",
+      "name": "renderComplexBasins",
+      "summary": "Step 4: precomputes a basin-of-attraction map from three attractors and two repellents by grid integration, then animates particles with spiral attraction and repeller deflection over the colored basin background.",
+      "tags": ["basins-of-attraction", "force-fields", "particle-simulation", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:render3DBasins",
+      "type": "function",
+      "name": "render3DBasins",
+      "summary": "Step 5: renders an interactive 3-D potential landscape (Gaussian wells for France/capital/Paris/culture with unstable saddle points), draws contour lines, animated edge labels with curved arrows, and balls rolling down the gradient; supports mouse/touch orbit, pan, and zoom.",
+      "tags": ["3d-visualization", "potential-landscape", "gradient-descent", "camera-interaction", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/attractors.js:renderSeahorseEmoji",
+      "type": "function",
+      "name": "renderSeahorseEmoji",
+      "summary": "Step 6: synchronized chat + cluster animation in which an 'LLM' particle types a rambling answer about a nonexistent seahorse emoji while orbiting semantic clusters (horse/sea/fish/mythic), clamped outside each cluster, all inside a larger dashed 'Emoji' meta-basin.",
+      "tags": ["attractors", "llm-behavior", "chat-animation", "canvas"],
+      "filePath": "lndw/attractors.js"
+    },
+    {
+      "id": "function:lndw/chinese_room.js:loadPhilosophyModule",
+      "type": "function",
+      "name": "loadPhilosophyModule",
+      "summary": "Module loader hook (called by the presentation's module queue) that starts the Chinese Room simulation from round 1.",
+      "tags": ["chinese-room", "entry-point", "module-loader"],
+      "filePath": "lndw/chinese_room.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:loadEmbeddingModule",
+      "type": "function",
+      "name": "loadEmbeddingModule",
+      "summary": "Module loader hook that wires up all embedding widgets: lazily renders the 1-D/2-D/3-D space plots and 3-D comparison via IntersectionObserver, initializes the editable embedding tables, and renders the manifold and dual-manifold plots.",
+      "tags": ["embeddings", "entry-point", "module-loader", "lazy-rendering"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:calcEvo",
+      "type": "function",
+      "name": "calcEvo",
+      "summary": "Evaluates embedding-space expressions like 'König - Mann + Frau' with a recursive-descent parser over the vocabulary table, computes the resulting vector, and animates the search path and nearest-neighbor match in the plot.",
+      "tags": ["embeddings", "expression-parser", "vector-arithmetic", "word-analogies"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:renderSpace",
+      "type": "function",
+      "name": "renderSpace",
+      "summary": "Renders one named embedding space (2-D via Plotly, 3-D via ECharts GL) with vocabulary points, optional animation steps (arrows between vectors), and a highlighted result marker.",
+      "tags": ["embeddings", "plotly", "echarts", "visualization"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:renderDualManifolds",
+      "type": "function",
+      "name": "renderDualManifolds",
+      "summary": "Renders two 3-D surfaces (English and rotated/separated Japanese) with word points (King/Queen/Man/Woman/Prince/Princess) and structural lines, visualizing translation as aligning two manifolds.",
+      "tags": ["manifold-hypothesis", "translation", "3d-visualization", "plotly"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:renderManifoldVisualization",
+      "type": "function",
+      "name": "renderManifoldVisualization",
+      "summary": "Renders the manifold hypothesis scene: a curved saddle-like 2-D sheet embedded in 3-D with word points placed on the surface to show that words live on a low-dimensional structure.",
+      "tags": ["manifold-hypothesis", "embeddings", "3d-visualization", "plotly"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:renderDirectionDemo",
+      "type": "function",
+      "name": "renderDirectionDemo",
+      "summary": "Renders the semantic-direction demo for a stage ('gender' or 'power'): highlights parallel arrows (e.g. Man->Woman, King->Queen) and reports the angle/distance metrics between the direction vectors.",
+      "tags": ["embeddings", "semantic-directions", "linear-analogies", "visualization"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/embeddinglab.js:initEmbeddingEditor",
+      "type": "function",
+      "name": "initEmbeddingEditor",
+      "summary": "Builds editable token tables for each .embedding-table-container from the evoSpaces vocabulary data, enabling readers to inspect and modify word vectors.",
+      "tags": ["embeddings", "editor", "table-generation"],
+      "filePath": "lndw/embeddinglab.js"
+    },
+    {
+      "id": "function:lndw/fcnn.js:restart_fcnn",
+      "type": "function",
+      "name": "restart_fcnn",
+      "summary": "Debounced entry point (100 ms) that redraws the network diagram when model data or panel width changes, guarded by an md5 cache key so unchanged data is skipped.",
+      "tags": ["cnn", "entry-point", "redraw", "caching"],
+      "filePath": "lndw/fcnn.js"
+    },
+    {
+      "id": "function:lndw/fcnn.js:draw_fcnn",
+      "type": "function",
+      "name": "draw_fcnn",
+      "summary": "Main drawing routine: computes layer geometry and spacing, then draws each layer (input image, conv2d grids, dense neurons, flatten, layernorm) with weighted connections, skip connections, layer badges, and registers hover hit regions.",
+      "tags": ["cnn", "canvas", "layer-drawing", "layout"],
+      "filePath": "lndw/fcnn.js"
+    },
+    {
+      "id": "function:lndw/fcnn.js:get_fcnn_data",
+      "type": "function",
+      "name": "get_fcnn_data",
+      "summary": "Extracts the drawable architecture from the global model: for each Dense/Flatten/LayerNorm/Conv2d layer (skipping internal skip-projection layers) returns layer names, neuron/unit counts, and meta info (input/output shapes, kernel sizes).",
+      "tags": ["cnn", "model-inspection", "data-extraction"],
+      "filePath": "lndw/fcnn.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:lndw/attention_slides.js", "target": "function:lndw/attention_slides.js:initAttentionSlides", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attn_demo.js", "target": "function:lndw/attn_demo.js:runAttention", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderPointAttractor", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderRepellent", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderTorusEarth", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderLorenz", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderComplexBasins", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:render3DBasins", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/attractors.js", "target": "function:lndw/attractors.js:renderSeahorseEmoji", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/chinese_room.js", "target": "function:lndw/chinese_room.js:loadPhilosophyModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:loadEmbeddingModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:calcEvo", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:renderSpace", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:renderDualManifolds", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:renderManifoldVisualization", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:renderDirectionDemo", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/embeddinglab.js", "target": "function:lndw/embeddinglab.js:initEmbeddingEditor", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/fcnn.js", "target": "function:lndw/fcnn.js:restart_fcnn", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/fcnn.js", "target": "function:lndw/fcnn.js:draw_fcnn", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/fcnn.js", "target": "function:lndw/fcnn.js:get_fcnn_data", "type": "contains", "weight": 1.0 }
+  ]
+}

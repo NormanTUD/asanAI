@@ -1,0 +1,57 @@
+{
+  "nodes": [
+    {
+      "id": "document:todo/coherent_steelman_critique.md",
+      "type": "document",
+      "name": "Steelman & Critique: Coherent Difference + World Models",
+      "summary": "Long working critique of the two WIP chapters coherent_difference.php and coherent_world_models.php: it reconstructs each thesis, argues the strongest case by angle (S1-S8), then attacks that steelman from 13 angles (C1-C13) - vacuity of the never-fixed F/res/licence objects, the Tarski x indirect-realism collapse of the two-leg truth condition, and the self-reference problem - finishing with a scorecard and a prioritized list of fixes.",
+      "tags": ["critique", "steelman", "world-model", "coherent-difference", "philosophy", "sheaf-theory"]
+    },
+    {
+      "id": "file:todo/formulary.php",
+      "type": "file",
+      "name": "Formulary",
+      "summary": "Course-wide math reference lesson (Part 6) collecting every generalized equation used across the textbook into grouped tables - numerical foundations, linear algebra, calculus/gradients, probability/statistics, NN building blocks, optimizers, and the Transformer - each with plain-English meaning, a full symbol definition, and its (however indirect) connection to LLMs.",
+      "tags": ["reference", "math", "formulary", "llm", "transformer"],
+      "filePath": "todo/formulary.php",
+      "complexity": "complex",
+      "languageNotes": "Pure lesson template (include + Markdown tables inside <div class=\"md\">); no PHP logic. Heavily uses LaTeX ($...$) for every equation and a symbol-collision note for overloaded symbols (sigma, T, L)."
+    },
+    {
+      "id": "file:todo/model_theory.php",
+      "type": "file",
+      "name": "Model Theory: What a Model Is",
+      "summary": "Part 4 lesson giving the exact mathematical discipline of model theory - first-order language/structure/theory, the theory-model Galois connection, Tarski's recursive satisfaction definition, the three pillars (completeness, compactness, downward Lowenheim-Skolem), nonstandard models and Skolem's paradox, and Morley's categoricity theorem - and tying each to the course's world-model and contact-point claims.",
+      "tags": ["model-theory", "logic", "tarski", "completeness", "compactness"],
+      "filePath": "todo/model_theory.php",
+      "complexity": "moderate",
+      "languageNotes": "Pure lesson template (include + Markdown with LaTeX display math); uses <div class=\"optional md\"> collapsible boxes and \\cite macros. No PHP functions."
+    },
+    {
+      "id": "file:todo/recursion_coherent_difference.php",
+      "type": "file",
+      "name": "Recursion and the Shape of Coherent Difference",
+      "summary": "Part 4 lesson locating recursion inside the sheaf-theoretic 'coherent difference' picture: the higher-coherence tower (infinity-sheaf / Cech nerve), the regress of licences, Spencer-Brown's distinction as a fixed point, Tarski's circle and the diagonal, the HoTT universe tower, proof-theoretic normalization as descent, confluence (Church-Rosser / Newman), and fixed-point theorems (Brouwer, Lawvere).",
+      "tags": ["recursion", "coherent-difference", "sheaf-theory", "fixed-point", "proof-theory"],
+      "filePath": "todo/recursion_coherent_difference.php",
+      "complexity": "moderate",
+      "languageNotes": "Pure lesson template (include + Markdown with LaTeX display math); uses <div class=\"optional md\"> collapsibles and \\cite / data-cite macros. No PHP functions."
+    },
+    {
+      "id": "file:todo/the_model.php",
+      "type": "file",
+      "name": "The Model: One Object, Many Lenses",
+      "summary": "Part 4 synthesis lesson unifying the course around a single claim: an LLM is simultaneously a physical system, a differentiable function, an information pipeline, a knowledge structure, a reasoning engine, and a potentially agentic system - describing each layer of description, the seams between them, and what the model is not (not a database, program, mind, or opaque black box).",
+      "tags": ["llm", "synthesis", "interpretability", "transformer", "architecture"],
+      "filePath": "todo/the_model.php",
+      "complexity": "moderate",
+      "languageNotes": "Pure prose lesson template (include + Markdown); ends with an empty <div id=\"summary-container\"> placeholder and has no companion JS module."
+    }
+  ],
+  "edges": [
+    { "source": "file:todo/formulary.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:todo/model_theory.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:todo/recursion_coherent_difference.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:todo/the_model.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 }
+  ]
+}

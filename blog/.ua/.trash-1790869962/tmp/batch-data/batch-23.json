@@ -1,0 +1,358 @@
+{
+ "batchIndex": 23,
+ "name": "lndw — Language/Network Demo Collection",
+ "theme": "lndw",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-23.json",
+ "files": [
+  {
+   "path": "lndw/jspace_viz.js",
+   "language": "javascript",
+   "sizeLines": 1083,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "JSpaceViz",
+     "darkBg",
+     "isOnJSpaceSlide",
+     "canGoNext",
+     "canGoPrev",
+     "next",
+     "prev",
+     "reset",
+     "stopAllAnimations",
+     "safeCanvasSetup",
+     "renderStep",
+     "renderBrainModules",
+     "draw",
+     "renderGlobalWorkspace",
+     "renderRiddle",
+     "renderJLensExample",
+     "renderJacobian",
+     "arrow",
+     "dot",
+     "projs",
+     "renderSilentThinking",
+     "init"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/knowledge.js",
+   "language": "javascript",
+   "sizeLines": 870,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loop",
+     "activeCount",
+     "initKnowledgeViz"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/kurz.html",
+   "language": "html",
+   "sizeLines": 12,
+   "fileCategory": "markup",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/neue_intro.html",
+   "language": "html",
+   "sizeLines": 997,
+   "fileCategory": "markup",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/pe_orbit_viz.js",
+   "language": "javascript",
+   "sizeLines": 302,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "PEOrbitViz",
+     "computePE",
+     "finalVector",
+     "textPos",
+     "render",
+     "renderPlot",
+     "renderCaption",
+     "next",
+     "prev",
+     "reset",
+     "canGoNext",
+     "canGoPrev",
+     "isOnPEOrbitSlide",
+     "init",
+     "watchSlides",
+     "observer"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/philosophy.js",
+   "language": "javascript",
+   "sizeLines": 215,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "sinModel",
+     "initPhilosophySlides",
+     "observer"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/plotly.min.js",
+   "language": "javascript",
+   "sizeLines": 8,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/presentation.js",
+   "language": "javascript",
+   "sizeLines": 1181,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "DemoRegistry",
+     "demos",
+     "tryNavigate",
+     "notifyEnter",
+     "_twEscape",
+     "_twParts",
+     "_twTotal",
+     "_twPrefix",
+     "startTypewriter",
+     "resetTypewriter",
+     "_twStop",
+     "initTypewriters",
+     "Presentation",
+     "parseSlideSelection",
+     "idx",
+     "init",
+     "titleOf",
+     "vorhersageIdx",
+     "arIdx",
+     "getFragments",
+     "executeFragmentAction",
+     "isSimpleFragment",
+     "isTopLevelFragment",
+     "isFastRevealable",
+     "revealFastFragments",
+     "next",
+     "prev",
+     "goTo",
+     "updateUI",
+     "slideTitle",
+     "escapeHtml",
+     "overviewVisible",
+     "buildOverview",
+     "renderSearchBar",
+     "toggleOverview",
+     "closeOverview",
+     "searchAppend",
+     "searchBackspace",
+     "clearOverviewSearch",
+     "overviewEscape",
+     "toggleFullscreen",
+     "triggerSlideInit",
+     "Selection",
+     "byId",
+     "paramOrder",
+     "selectedParam",
+     "buildURL",
+     "parts",
+     "fullURL",
+     "updateURL",
+     "panelEl",
+     "isPanelVisible",
+     "syncPanel",
+     "syncChecks",
+     "buildChecks",
+     "clearAll",
+     "openPanel",
+     "closePanel",
+     "handleEscape",
+     "copyURL",
+     "flash",
+     "InputHandler",
+     "navigate",
+     "isOverviewOpen",
+     "handleKeydown",
+     "handleTouchStart",
+     "handleTouchEnd",
+     "handleWheel",
+     "LoadingStatus",
+     "spinnerEl",
+     "textEl",
+     "active",
+     "set",
+     "done",
+     "plotLabel",
+     "yieldFrame",
+     "renderOneMath",
+     "runBootSequence"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/residual_stream_notebook.js",
+   "language": "javascript",
+   "sizeLines": 662,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "ResidualNotebook",
+     "init",
+     "installReflowGuards",
+     "reflow",
+     "ro",
+     "observeSlideActivation",
+     "observer",
+     "render",
+     "renderNotebookLines",
+     "renderIndicators",
+     "nextLayer",
+     "prevLayer",
+     "rebuildUpToLayer",
+     "animateLayer",
+     "textLen",
+     "containerScale",
+     "measureChars",
+     "wordSpan",
+     "lineSegments",
+     "segRect",
+     "wordCenterX",
+     "num",
+     "buildAnnotationEls",
+     "withLabel",
+     "renderAnnotation",
+     "token",
+     "verifyCount",
+     "expected",
+     "updateInfo",
+     "reset",
+     "isOnNotebookSlide",
+     "canGoNext",
+     "canGoPrev"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/sheaves_presentation.js",
+   "language": "javascript",
+   "sizeLines": 2671,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "Presentation",
+     "init",
+     "getFragments",
+     "next",
+     "prev",
+     "goTo",
+     "updateUI",
+     "renderMath",
+     "initSlideViz",
+     "setupCanvas",
+     "drawArrow",
+     "draw",
+     "clippedXs",
+     "clippedYs",
+     "clippedZs",
+     "drawShape"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/temml.min.js",
+   "language": "javascript",
+   "sizeLines": 1,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "temml"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw/trace_through_loss_landscape.js",
+   "language": "javascript",
+   "sizeLines": 937,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "_getThemeColors",
+     "_isEligibleModel",
+     "_safeExtract",
+     "_syncData",
+     "_computeLoss",
+     "_getCurrentWeights",
+     "_computeSurfaceData",
+     "_saveCamera",
+     "_setupInteractionListeners",
+     "_onInteractionStart",
+     "_onInteractionEnd",
+     "_clearInteractionTimeout",
+     "_ensurePlotly",
+     "_scheduleRender",
+     "_renderPlot",
+     "_updateRange",
+     "_tick",
+     "_getOrCreateContainer",
+     "_buildUI",
+     "init_loss_landscape",
+     "destroy",
+     "stop",
+     "update",
+     "create_loss_landscape"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}

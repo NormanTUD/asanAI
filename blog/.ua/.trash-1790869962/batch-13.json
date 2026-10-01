@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "file:attentionlab.php",
+      "type": "file",
+      "name": "The Semantic Tug-of-War: How Transformers 'Think'",
+      "summary": "Part 4 lesson (order 6) on self-attention: RNN signal decay vs direct access, geometric intuition for the scaled-dot-product formula, Q/K/V projections, multi-head attention, attention sinks, and the context window. Hosts four interactive widgets (long-distance-dependency canvas, the step-by-step 'anatomy of attention' 2D SVG walkthrough, a Q/K/V subspace projection plot, and a self-attention connectivity web + matrix).",
+      "tags": ["attention", "transformer", "lesson", "qkv", "multi-head"],
+      "complexity": "moderate",
+      "filePath": "attentionlab.php",
+      "languageNotes": "Lesson PHP template with COURSE_METADATA (part 4, order 6, math 65); large inline <style> block for the anatomy-of-attention widget; Markdown blocks gated by data-mathlevel and topic-blocks for optional deep dives."
+    },
+    {
+      "id": "file:attentionlab.js",
+      "type": "file",
+      "name": "attentionlab.js",
+      "summary": "Interactive module behind the attentionlab lesson: a long-distance-dependency Transformer-vs-RNN demo, a 'neural universe' 3D embedding plot, a self-attention web/matrix visualizer, an 11-step 'anatomy of attention' SVG walkthrough with editable numbers, and a Q/K/V subspace projection visualization.",
+      "tags": ["attention", "visualization", "canvas", "svg", "transformer"],
+      "complexity": "complex",
+      "filePath": "attentionlab.js",
+      "languageNotes": "Large (6k+ lines) vanilla-JS module bootstrapped by loadAttentionModule(); mixes Plotly, raw canvas 2D, and hand-rolled SVG; theme-aware via themeColor()/window.__MN_DARK; includes a click-to-edit number system and an on-page debug panel."
+    },
+    {
+      "id": "function:attentionlab.js:loadAttentionModule",
+      "type": "function",
+      "name": "loadAttentionModule",
+      "summary": "Module entry point that bootstraps all four attentionlab widgets (SelfAttentionLab, AttentionAnatomy, universe plot, QKV subspace viz, LDD demo) and registers theme-change re-render hooks guarded on section visibility.",
+      "tags": ["bootstrap", "attention", "entry-point"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "function:attentionlab.js:initAttentionAnatomy",
+      "type": "function",
+      "name": "initAttentionAnatomy",
+      "summary": "Initializes the step-by-step 'anatomy of attention' interactive: wires up step navigation, token-count and example-set selectors, and kicks off the first render of the AttentionAnatomy engine.",
+      "tags": ["attention", "initialization", "interactive"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "function:attentionlab.js:initQKVSubspaceViz",
+      "type": "function",
+      "name": "initQKVSubspaceViz",
+      "summary": "Sets up the 3D visualization of Q/K/V linear projections as distinct 2D subspaces (planes) inside the embedding space, including rotation controls and theme handling.",
+      "tags": ["qkv", "projection", "3d", "visualization"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "function:attentionlab.js:updateLDD",
+      "type": "function",
+      "name": "updateLDD",
+      "summary": "Redraws the long-distance-dependency canvas: for the current distractor count it shows the Transformer's flat attention signal next to the RNN's exponentially decaying signal, plus the live math readout.",
+      "tags": ["long-distance-dependency", "rnn", "attention", "canvas"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "function:attentionlab.js:runUniverse",
+      "type": "function",
+      "name": "runUniverse",
+      "summary": "Renders the 'neural universe' Plotly 3D scatter of a small word-embedding vocabulary, highlighting the tokens typed by the user to illustrate the distributional hypothesis.",
+      "tags": ["embeddings", "plotly", "distributional-hypothesis", "3d"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "function:attentionlab.js:softmax",
+      "type": "function",
+      "name": "softmax",
+      "summary": "Numerically stable softmax (max-subtraction before exponentiating) shared by the LDD demo and the anatomy-of-attention computations.",
+      "tags": ["softmax", "numerics", "utility"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "class:attentionlab.js:AttentionAnatomy",
+      "type": "class",
+      "name": "AttentionAnatomy",
+      "summary": "The step-by-step engine behind the 'anatomy of attention' walkthrough: tracks the current step and token-set, and drives the equation panel, the editable computation table, the 2D SVG vector scene (arrows, angle arcs, bar plots, attention matrix), hover tooltips with per-step math breakdowns, and a live debug console.",
+      "tags": ["attention", "anatomy", "svg", "interactive", "state-machine"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "class:attentionlab.js:ATTN_2D",
+      "type": "class",
+      "name": "ATTN_2D",
+      "summary": "Shared 2D state and math engine for the attention walkthrough: holds queries/keys/values per token, computes scores, scaled scores, exponentials, attention weights, and outputs, and supports changing token count and example sets.",
+      "tags": ["attention", "state", "math", "qkv"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "class:attentionlab.js:SelfAttentionLab",
+      "type": "class",
+      "name": "SelfAttentionLab",
+      "summary": "Interactive 'connectivity web' for the sentence 'The hunter sees the bear': renders the token stream, draws attention threads on a canvas, and shows the attention-matrix scoreboard with hover explanations of dot-product scores.",
+      "tags": ["self-attention", "canvas", "matrix", "visualization"],
+      "filePath": "attentionlab.js"
+    },
+    {
+      "id": "class:attentionlab.js:LDD",
+      "type": "class",
+      "name": "LDD",
+      "summary": "State object for the long-distance-dependency demo: holds the distractor count, subject/pronoun sentence data, and the signal-strength series fed to the updateLDD canvas draw.",
+      "tags": ["long-distance-dependency", "state", "rnn"],
+      "filePath": "attentionlab.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:attentionlab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:attentionlab.php", "target": "file:attentionlab.js", "type": "related", "weight": 0.5 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:loadAttentionModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:initAttentionAnatomy", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:initQKVSubspaceViz", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:updateLDD", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:runUniverse", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "function:attentionlab.js:softmax", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "class:attentionlab.js:AttentionAnatomy", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "class:attentionlab.js:ATTN_2D", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "class:attentionlab.js:SelfAttentionLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:attentionlab.js", "target": "class:attentionlab.js:LDD", "type": "contains", "weight": 1.0 },
+    { "source": "function:attentionlab.js:loadAttentionModule", "target": "class:attentionlab.js:AttentionAnatomy", "type": "calls", "weight": 0.8 },
+    { "source": "function:attentionlab.js:loadAttentionModule", "target": "class:attentionlab.js:SelfAttentionLab", "type": "calls", "weight": 0.8 },
+    { "source": "function:attentionlab.js:loadAttentionModule", "target": "class:attentionlab.js:LDD", "type": "calls", "weight": 0.8 }
+  ]
+}

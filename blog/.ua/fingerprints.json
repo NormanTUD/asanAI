@@ -1,0 +1,1243 @@
+{
+  "version": "1.0.0-selfcontained",
+  "gitCommitHash": "a6f570ced0a7fe530f4fdd725ecd5a45af351285",
+  "note": "Content-hash + line-count baseline generated in pure Node because @understand-anything/core could not be built (current-directory-only constraint). Not the plugin fingerprint format; future plugin incremental runs will treat this as a full rebuild.",
+  "files": {
+    "activationlab.js": {
+      "sha256": "fe6c94a28cb614bbe6269ddb702a3ce952a32b62488a055a9fbc214894795390",
+      "lines": 406
+    },
+    "activationlab.php": {
+      "sha256": "9a2d1c992a9d9bdbe769a3af98af51f4ed633d744cc155618b254d7fc693104d",
+      "lines": 209
+    },
+    "agents.php": {
+      "sha256": "51692232a8a43dd530983243501e46685cb0dccb06f5c1300534c72c12b98f7e",
+      "lines": 515
+    },
+    "ai_existential_risk.php": {
+      "sha256": "5a3a0eb5527a5e99b9ca083191690a77d1f26a724f00ba22c8076a795aa98224",
+      "lines": 123
+    },
+    "ai_for_science.php": {
+      "sha256": "a242ee2c57f42e751da46204c32a7feec644dfe213e7606599a178131e77f953",
+      "lines": 72
+    },
+    "algorithms.js": {
+      "sha256": "ef0eb3c326ef9018c14593c187edacffa42702be610e11cc276bf296384676c2",
+      "lines": 2630
+    },
+    "algorithms.php": {
+      "sha256": "a0f611384326295452b7b2e7d7dbb7a2bbdfe659248997af6d9aa2e851f26e07",
+      "lines": 579
+    },
+    "alignment.php": {
+      "sha256": "da49ffdf81e6fc008886171f5180eab6e5ea2feb1e6b0ee4ec436d606ab314c1",
+      "lines": 95
+    },
+    "alternative_architectures.php": {
+      "sha256": "d2f287759fc360036559b02e9eddc5bda3a93470ea1349df18e29024abbff350",
+      "lines": 185
+    },
+    "appendix.js": {
+      "sha256": "33b7d0af303d2c2737f61233f5527c0347111d80c06d8d91ac91c9e5de2ca0b4",
+      "lines": 1657
+    },
+    "appendix.php": {
+      "sha256": "2a2b077ad04cb1b7fe43baee10b4e4e179a2dee4bbd3088bf4114cc37a8034c6",
+      "lines": 332
+    },
+    "art.txt": {
+      "sha256": "66b32234f0a77af846fb0188cc62f6fd5cde8dceaca728cbab7fc96ff478f1f7",
+      "lines": 2
+    },
+    "asanai_blog_proxy.php": {
+      "sha256": "4a15928c3aeba0eff1ad51f53f8206175f495754a26a61bcec50f543d79f348f",
+      "lines": 112
+    },
+    "attention_engine.js": {
+      "sha256": "683f169ad0aaadd9a1413503c31e4453e0ca8e180444b34495e3a8b8a1418826",
+      "lines": 2737
+    },
+    "attentionlab.js": {
+      "sha256": "1232c3baedb2cc3d3c1b69b9f041f3be258f0dd4dbaee0a89120a136a5b02c8d",
+      "lines": 6124
+    },
+    "attentionlab.php": {
+      "sha256": "75c56d5913e4229c691f33057ca4d87db356e07b608eb9e45b3a937d2a1fb227",
+      "lines": 1719
+    },
+    "autodiff.js": {
+      "sha256": "10ec57a5bfde83bf3c5b36f48b29d477093a2d28c012d7b14a963942a57cf387",
+      "lines": 704
+    },
+    "autodiff.php": {
+      "sha256": "1089e23b2e920420888aef535ab95db38b15ba797b3adf6aeb0f2936a088afbf",
+      "lines": 382
+    },
+    "backproplab.js": {
+      "sha256": "cbf1ffca23c1fb3df50568cd62dd3657aa69949eec1047ff70c18c66a6b8a60e",
+      "lines": 1319
+    },
+    "backproplab.php": {
+      "sha256": "2ae228d4870f686cd845d7b9ff4924088a2f100be1aba8a89ed344dc91485265",
+      "lines": 123
+    },
+    "beyond_llms.js": {
+      "sha256": "1864ae61fc3871142e70714a8a5dec0580a18da3ac5a15d781303a0606f8c88e",
+      "lines": 5
+    },
+    "beyond_llms.php": {
+      "sha256": "60bc92807a9560e07013362edc55bb8e9b90e9c02058062b8013e024aa6434a3",
+      "lines": 890
+    },
+    "bildquellen-pruefung.txt": {
+      "sha256": "42a65b780a55d54bb65f4f19d12034203ca93059057dcfd8425b3453d5dc3b15",
+      "lines": 209
+    },
+    "bpe.js": {
+      "sha256": "095f2a20c03f7409cb0007c99a5189ca6f4c4f9a555be1a3e4bef80e0df919c8",
+      "lines": 228
+    },
+    "category_theory.html": {
+      "sha256": "5df1130e7cc47cbd6a36436b4d39354b93c456eb7483b6b2fb96937682bfe014",
+      "lines": 20
+    },
+    "citation_graph.js": {
+      "sha256": "6a412aa0be48448854a9409390f0961bfb06922eb429504f41489ff62b5432b8",
+      "lines": 146
+    },
+    "cluster.js": {
+      "sha256": "53e33d8766c190d893da0c4127729c8a0f45909dde4fcc03d7f55ae26ee8f3f9",
+      "lines": 339
+    },
+    "coherent_difference.php": {
+      "sha256": "3d6296c3ce40974afa00d3e487cd6a677ba3086486e6be300aec08eccb17881d",
+      "lines": 1164
+    },
+    "coherent_world_models.php": {
+      "sha256": "42a31330d30fdaa839f9c3215c84f7319b09316c4d49840e1c5bc814cca0f136",
+      "lines": 1808
+    },
+    "commutation.html": {
+      "sha256": "aed3abdde91e4387bf30188185b5cd380393cfcf3116b3ebb8693d77681d34f6",
+      "lines": 91
+    },
+    "computer_vision.js": {
+      "sha256": "b28ee61934d558ebcade37ec3b43985ea78025dbdfc25dda38952db2de0ecb50",
+      "lines": 788
+    },
+    "computer_vision.php": {
+      "sha256": "dd508a57d32ff9237ce0147568159b8e6673992e2dc0d163f422dbec2c2419d6",
+      "lines": 268
+    },
+    "contextwindows.js": {
+      "sha256": "f9021f885b2ab130243b3b3a3dedec1fc5879638866150ee78a39f3bd901f28f",
+      "lines": 201
+    },
+    "contextwindows.php": {
+      "sha256": "5095084576f638d8b69eed7679159496c37f80cdddd26d79d9bd8fb672f46555",
+      "lines": 400
+    },
+    "coq/coherent_world_models/AdmissibleTransitions.v": {
+      "sha256": "76613aabe81a8b06c34d4e6727e5f409d88f836ce6655517130ae7e63bb55cb7",
+      "lines": 212
+    },
+    "coq/coherent_world_models/AILLM.v": {
+      "sha256": "a90d0d161f993cb0aab85e60cf76e7e92790f6a56a46613ff9ff4817bb29a40e",
+      "lines": 403
+    },
+    "coq/coherent_world_models/Commitments.v": {
+      "sha256": "321c43606cd01c5470a1d091d01c9b7792e005268f060798314b712722814827",
+      "lines": 222
+    },
+    "coq/coherent_world_models/ContextsAndSites.v": {
+      "sha256": "7721285450316360506039940a51d3657ad181865ca3144e4b95a7b81db2c6d6",
+      "lines": 254
+    },
+    "coq/coherent_world_models/EqualizersAndPullbacks.v": {
+      "sha256": "6af783289b154536db2e33daccf03534d84f5f10ac41dcae798a121296927413",
+      "lines": 182
+    },
+    "coq/coherent_world_models/Forbidden.v": {
+      "sha256": "ef5e9a7a6eb22173271e89ff433b6b5c469f2c2ab28f98c8694b5740a0ec83f6",
+      "lines": 182
+    },
+    "coq/coherent_world_models/HigherCoherence.v": {
+      "sha256": "14c99f97f787d7f33b8987a8a212c9030ddb2e2a22d100aac47a4c7f8fc3b66c",
+      "lines": 266
+    },
+    "coq/coherent_world_models/Library.v": {
+      "sha256": "90ca6b5165d2008621de2abd82ba205c83e04c7010100e2c799d4dd0baf0b7dd",
+      "lines": 329
+    },
+    "coq/coherent_world_models/MasterDiagram.v": {
+      "sha256": "71cefa16ae68c71ab96706f22dafde4aa0a8087bc37b6a6481f7a7897e65b515",
+      "lines": 279
+    },
+    "coq/coherent_world_models/NotionsOfSameness.v": {
+      "sha256": "cf5493506609277ee52dbcd9f5806924c391955858f01aae3dbcca7026bf818a",
+      "lines": 359
+    },
+    "coq/coherent_world_models/ObserverInDiagram.v": {
+      "sha256": "9e1451ec9928fbfec1efdd5cd22eeaf7257382baaf893ab6d52b0c01d12745a4",
+      "lines": 177
+    },
+    "coq/coherent_world_models/Ologs.v": {
+      "sha256": "afbd7d3f1b0c5a363499a50ee6857026d18d09338d64d5c35132726ab7541ee1",
+      "lines": 213
+    },
+    "coq/coherent_world_models/PracticalProcedure.v": {
+      "sha256": "2b4c0e3a2d27ec8468a4142c1ab3ae6e26967ecd6f7f15795ae1b71a6c42dafd",
+      "lines": 175
+    },
+    "coq/coherent_world_models/Sheaves.v": {
+      "sha256": "a0a9d9fb33229b7768517a9a8c8eb52aa595f16191019e55a4f5bb70582d41fd",
+      "lines": 290
+    },
+    "coq/coherent_world_models/Tarski.v": {
+      "sha256": "87d82ed88bf3afb0b71723255c40e9fc25c6922a4207b80c43bdd84cbdf32b27",
+      "lines": 350
+    },
+    "coq/coherent_world_models/TheoryChain.v": {
+      "sha256": "ebeab30c979e687d7959889c00991cd3a9bd68f9ad3ff50ed71b79e66db4c54a",
+      "lines": 411
+    },
+    "coq/coherent_world_models/ThreeDifferences.v": {
+      "sha256": "ebc7776470bb3b9a755596a69db791a44cecbe716db1288ed0566add9bea8ff8",
+      "lines": 225
+    },
+    "coq/coherent_world_models/ThreePathologies.v": {
+      "sha256": "26f53a70a9a6f26fd0f23021b0d8552a0722772183253398b5c68af9c563d563",
+      "lines": 206
+    },
+    "coq/coherent_world_models/Traces.v": {
+      "sha256": "57da6d45c69e149f911ad6ca7baf00a58b5040736435770e1af6ea745f59e970",
+      "lines": 254
+    },
+    "corrections.md": {
+      "sha256": "a1a7572dc620a73b0edb1f8d30a5fd68a9b7e3e9b0f8ca103f32db582c2015db",
+      "lines": 255
+    },
+    "darkmode-ci/autofix.js": {
+      "sha256": "5273518a6c5fc9947bab8d92b7fd6646828f786119733d876f903a3f84eea54a",
+      "lines": 308
+    },
+    "darkmode-ci/ci/github-actions.yml": {
+      "sha256": "f56acdc9b0a6cd98036f78a21b6ab996b491659d9c38bd9a3ccc74401c8ceecb",
+      "lines": 122
+    },
+    "darkmode-ci/lib/bug-detector.js": {
+      "sha256": "1bc95264880880220786a24d2d15e777719f6c2429592a1b70de035ac506cf20",
+      "lines": 148
+    },
+    "darkmode-ci/lib/color-utils.js": {
+      "sha256": "198bf6666da35b679543bb24ee0d8f85d5205bb4692bb4e44d405d5eca2ee4da",
+      "lines": 68
+    },
+    "darkmode-ci/lib/element-snapshot.js": {
+      "sha256": "08dd66ed0e1c7816906ff7310d3b22f0c8d430d1d0116176d70809b9433c3bbf",
+      "lines": 116
+    },
+    "darkmode-ci/lib/pixel-diff.js": {
+      "sha256": "35fe934fb8117c65866695941731ec2163a66843c0a88c72399ea3a0a15a14a6",
+      "lines": 118
+    },
+    "darkmode-ci/lib/scroll-capture.js": {
+      "sha256": "ea15a72a84f9570214aa0be1007fbab523033ce411c3bd70634da2d68e657f90",
+      "lines": 203
+    },
+    "darkmode-ci/lib/selectors.js": {
+      "sha256": "70362d44e33be0ba173b801e77ce999b7236648b0cceeb543cd4d15cd7fe8e7e",
+      "lines": 63
+    },
+    "darkmode-ci/lib/theme-controller.js": {
+      "sha256": "3bf1de33cd94953e58f6f1e594b16d52b1d4c88933914b171e55047140ef4a85",
+      "lines": 50
+    },
+    "darkmode-ci/make-sxs.js": {
+      "sha256": "d4a45be44e2b7d11ed5ea3e903343d6ec8577207ceb0b0c3a141f9a234735799",
+      "lines": 114
+    },
+    "darkmode-ci/package.json": {
+      "sha256": "967a1b52f81f02b78734fdfbfde1bedc89cbba72f2eb41209f6090e8e833c0a3",
+      "lines": 26
+    },
+    "darkmode-ci/README.md": {
+      "sha256": "fc0c59c923a7d9c0a2c8fd7c478ee5b48f66e5dabcd9a2e0fbf17708be5b438a",
+      "lines": 221
+    },
+    "darkmode-ci/scroll-capture.js": {
+      "sha256": "eba8ad1ac4809e4e6cdd3835c3449cc61f439cfecbfd527cc21cb9451139b34d",
+      "lines": 121
+    },
+    "darkmode-ci/test.js": {
+      "sha256": "681b2a2e1b81a07ab4c57bd1e53fb6b3bb09993382c6f88c6131ab85e8a38cd5",
+      "lines": 227
+    },
+    "darkmode-ci/watch-and-fix.js": {
+      "sha256": "184ac18c9ce8b9d02b3be35a29dcfd13b8c368c4854e32b93ca84445a0eab3c7",
+      "lines": 92
+    },
+    "darkmode_todo.txt": {
+      "sha256": "77dfc82f354ca61e73c7075770d85d88976ba37faa6f7b836836c1cf0f810b2a",
+      "lines": 10
+    },
+    "deconvolution.php": {
+      "sha256": "85232adb583bb83b5547a076544918e6d77390a516b794ffeaf8f2119dfd6e82",
+      "lines": 77
+    },
+    "deeplearninglab.js": {
+      "sha256": "29007a349c9a11b3f23bb5955369a53a77ca89994aab621db5fe731f981307bb",
+      "lines": 407
+    },
+    "deeplearninglab.php": {
+      "sha256": "2062a7b077efb4a3265704ba242c9f106dc1f797520d4ed561eff55ad64698ed",
+      "lines": 250
+    },
+    "deep_theory.php": {
+      "sha256": "346e6b06732d898184c29a8cb0f8b6447895fc1e2c1723fba692d75eda9be1ed",
+      "lines": 108
+    },
+    "derivativelab.js": {
+      "sha256": "a8ea8eb4e4c8524c7c4c6d936d506d0ce623e4ff58acbe8146828f10f488d420",
+      "lines": 124
+    },
+    "derivativelab.php": {
+      "sha256": "760192e5c1044446ea6d7ab00a2a8311eb87c7e1a2a63ae2f3575e013e867ff2",
+      "lines": 154
+    },
+    "differentiation.js": {
+      "sha256": "967bdec675ff7a19f0c4e4ace0deb7effed03a5ab337712ad4d6497e2e6db28a",
+      "lines": 364
+    },
+    "differentiation.php": {
+      "sha256": "9f761f6745a272b35683e64928f3bbdae66e91a8f93d8e1d9ce5ad0afea51ee7",
+      "lines": 330
+    },
+    "diffusion.php": {
+      "sha256": "31478ef512de68ebe6807e77f4d8dc3edeb1f7104a2a9bf13049c4f6973fd601",
+      "lines": 511
+    },
+    "effects.js": {
+      "sha256": "8ca3701c62a3a7f1ec0db4b6d29229b0c9d391c6fb8ad9a34c026bb852705b8b",
+      "lines": 60
+    },
+    "embeddinglab.js": {
+      "sha256": "e4c079d1e4461c055e1c02a73f6543e9b6a543d7fe293761044c3ff07fd6aa91",
+      "lines": 8651
+    },
+    "embeddinglab.php": {
+      "sha256": "ea8c9927280e9e27eb3a972b640c8e25915bc3c22502e925dd4bd8a9f6382d00",
+      "lines": 1334
+    },
+    "evaluation.php": {
+      "sha256": "e6149eaea8c1057fdf60d631a6ff79379bd9f93572662308b20d8f384dc736df",
+      "lines": 290
+    },
+    "fact_lookup.php": {
+      "sha256": "f249deb68cebd9d628fc50802d671160fe62e51369b8f655382bbaa9e5f0ea43",
+      "lines": 354
+    },
+    "fcnn_visualization.js": {
+      "sha256": "a1db473c123a75e5739aa66fb76236066668524bc6316db1c7048ce6e9b88b51",
+      "lines": 181
+    },
+    "find_double_defined_js.sh": {
+      "sha256": "0e5a120e4d879853f9cb3d98eb6281374a691800a985f209c65a8120aefc4ed7",
+      "lines": 19
+    },
+    "finetuninglab.js": {
+      "sha256": "19be993d1b1791937619ac6ffd99eff91042c933c19695d954d5026b2321031a",
+      "lines": 116
+    },
+    "finetuninglab.php": {
+      "sha256": "035a69b9567839164807f40b8d95853750a68f2dc068e983a11116098d97cb8b",
+      "lines": 514
+    },
+    "foam_of_meaning.js": {
+      "sha256": "cb6600766399db3441fe33102ef5ecd2b9f663c6f0d0a216945617a8004de73e",
+      "lines": 1264
+    },
+    "foam_of_meaning.php": {
+      "sha256": "688a859d1ace0d5ceb625ab477ae93b6acc58ea8343d156dc8b99f4a44aaed91",
+      "lines": 1128
+    },
+    "frontier.php": {
+      "sha256": "c2969bdf15ecb9b879ccbca29b800ec54a967f97426bb664e00081e85964e7e0",
+      "lines": 211
+    },
+    "functions.php": {
+      "sha256": "6119c58582944456494992676b002237e247d43190f2a4f2cbb35c87abdcc951",
+      "lines": 837
+    },
+    "geometric_topological_theory_of_meaningful_language_spaces.md": {
+      "sha256": "78fa63e528cfb897c32e2c0f62e5e3d025279e17c3cf347791574d1f96b30e76",
+      "lines": 1655
+    },
+    "geometry_iii.php": {
+      "sha256": "20a2ecb83444a2fe0320116cbceef56955fd0cb9e58c72331e4416d139d0810f",
+      "lines": 304
+    },
+    "geometry_ii.php": {
+      "sha256": "aaa243c623be9e711c1eb68f6943bc725fa94069ad6e3cbbd3185e7ad040bef4",
+      "lines": 492
+    },
+    "geometry_i.php": {
+      "sha256": "2baaf3a6fb4317a2a76e0f5425a3d9b3b3840e48fc268824cf03dacf2dee4c4b",
+      "lines": 741
+    },
+    "global_ai_ecosystem.php": {
+      "sha256": "85c8847c045b643580bec095f01a8726264b98bffa3b5c14ca839a429eeec298",
+      "lines": 228
+    },
+    "graph.php": {
+      "sha256": "d97c5b364ce4e2debfd65fe5aac0f2ec075646e450de417ed92a3a35f198b80d",
+      "lines": 1243
+    },
+    "hallucinations.js": {
+      "sha256": "51764347b71cd8813ef6c1d4cbd7208a53feaeeba9e5e3b2189cb9d33d322c43",
+      "lines": 162
+    },
+    "hallucinations.php": {
+      "sha256": "930013ab71a0a25f20b653ccbf05e9c64e1b1384e38765c49937dca1018a38b1",
+      "lines": 302
+    },
+    "helper.js": {
+      "sha256": "966f75e60b35dc28bfe5543ff40417368f3c4fba055744e5d14f5c50e304addd",
+      "lines": 3181
+    },
+    "history.js": {
+      "sha256": "f2ac6e32e225c53e360018611a758fa39491dd027367788c87d4da56223a1f01",
+      "lines": 65
+    },
+    "history.php": {
+      "sha256": "107ffa3fb68279699b2685c7c37ae94fa4e950507c707e7b2bfaa5bdca0e0d12",
+      "lines": 1036
+    },
+    ".htaccess": {
+      "sha256": "8d37c312c05c3f1b55f217f03773e9a7058e7fbf8dbd9960c1f3022b7535fcc9",
+      "lines": 41
+    },
+    "human_mind.php": {
+      "sha256": "4be81fd1101e92a4a79366f63a172e7f45b959367aa2ee1422de4725f0dcb7c9",
+      "lines": 375
+    },
+    "hyperparameters.php": {
+      "sha256": "417fbb82f5b31aec98a64b5f86f73fba3f95c58f97c4b405bfb7d52b23d6e3b6",
+      "lines": 93
+    },
+    "image.php": {
+      "sha256": "2357e32b0feb08faf327cb60ecd5134fa06c9f8e89f970e018833068b8b12a3d",
+      "lines": 575
+    },
+    "inceptionism.php": {
+      "sha256": "a00c8714bbef96d12b4ffdf2cbba4eb132ced57bf40bbccb33d03ac4deab9979",
+      "lines": 105
+    },
+    "index_full.php": {
+      "sha256": "3b5ade8ad1d37a642a2ba11745738a51d3fe12752f078a41ad32eefa249826e8",
+      "lines": 81
+    },
+    "index.php": {
+      "sha256": "42cded75412c024726ff3b118ae956e2b6fdace729a97a16e067d00b32dc5e94",
+      "lines": 110
+    },
+    "inference_optimization.php": {
+      "sha256": "9ba05ba0db0295130ecc33d901c9cf4c449bf977895f6060ccc949afde40b711",
+      "lines": 309
+    },
+    "init.js": {
+      "sha256": "7b8051239860e90aa7ef56de48e0bc86cc90d1421811fca085fe70c98273adb2",
+      "lines": 18
+    },
+    "intro.php": {
+      "sha256": "fae36642116371e7fcc1ed8123e98cda9cbd1765dfb412f4a20b4f4a738c4913",
+      "lines": 108
+    },
+    "intuition.js": {
+      "sha256": "40cf909e0dfb5ec492f280c88f03ab200b561d89492b167e73e2e73908e67cbc",
+      "lines": 2134
+    },
+    "intuition.php": {
+      "sha256": "33f76ac065620248f61c6995e8742f8abc4cb83ff76103b6413b78dd1a87a0a2",
+      "lines": 411
+    },
+    "js_syntax_test.sh": {
+      "sha256": "0713bda9535e7b397b526d5335d4b978dd9b85fddd14d1c9a4e052b450628720",
+      "lines": 12
+    },
+    "keypoint.js": {
+      "sha256": "8c657f005301bbbe68f75d67b85187b4052c3f56e997c9833e9e5cf2a9531d96",
+      "lines": 273
+    },
+    "knowledge_map.php": {
+      "sha256": "d4c82dfb09671869bba5e4fd3cf676a45865129879367b706d163af86e0fc89e",
+      "lines": 1621
+    },
+    "language.js": {
+      "sha256": "986b5f9725f96d20cdf8d576fd649ba88dd8be2c5b3b8ce7a5ff353463d83a13",
+      "lines": 339
+    },
+    "language.php": {
+      "sha256": "5551d10603cf37f9c47eef42f10652fe88ad451368f0f2445ded440c316de665",
+      "lines": 287
+    },
+    "law_regulation.php": {
+      "sha256": "09633d201b199a2c25f3a337eee906f3b3daad7f44a39800e653ecf3252d0cff",
+      "lines": 221
+    },
+    "layer_commuting_diagram.html": {
+      "sha256": "ec811d6f5a91659e5ef959b561c6a7d7d857b6d93f164bf606b5532f42187f20",
+      "lines": 86
+    },
+    "layout_guardrail.js": {
+      "sha256": "f35496729195b1901e44d3039d05aefc1c015cb008be9e1101e451d52a40901c",
+      "lines": 570
+    },
+    "learnsys/test.html": {
+      "sha256": "00106c4a7a766d292aefe3a3ca3a2bd23f712bd1d5146b881403388e047bee09",
+      "lines": 1872
+    },
+    "learnsys/umwelt.html": {
+      "sha256": "9e124f1aba9bab32f5b2eea31a7016ce7ba1a63ac1e257725bfb49ef1021560b",
+      "lines": 793
+    },
+    "literature.js": {
+      "sha256": "5e77ee237294ef8d3809db2712c3dd72e425724eabce1ebfcc1b8f4d8fd76aa4",
+      "lines": 14657
+    },
+    "literature.php": {
+      "sha256": "a073b273cf2c7472941d47f0dc87da086e2922df533d2f6f79d5ca207beeb48b",
+      "lines": 131
+    },
+    "llm_river.js": {
+      "sha256": "a94a31a56f935be594a199b254f72213189307063be99e3bfdc754d4b39f65be",
+      "lines": 367
+    },
+    "lndw/attention_scripts/outputs/gpt2_attention.json": {
+      "sha256": "677b4983e8be15d274730620d364285f969e7a50ce2885a442a3350a7b9b516c",
+      "lines": 268
+    },
+    "lndw/attention_scripts/outputs/mini_h1.json": {
+      "sha256": "5ea659cc90cc53a72c4c01891ebc6e465ef0eaf25c8d38c0bb9ff9eabed5b50f",
+      "lines": 189
+    },
+    "lndw/attention_scripts/outputs/mini_h2.json": {
+      "sha256": "4d1e108b9b2d7c535a6d852482bb5ed364d615badac381f67c979b7fa76a03e5",
+      "lines": 189
+    },
+    "lndw/attention_slides.js": {
+      "sha256": "49c027d0e60c5551414660d9c7a86035108ad32d688f7de8d6ac3de5d0767490",
+      "lines": 205
+    },
+    "lndw/attn_demo.js": {
+      "sha256": "36dd1ff3593284ac35411ffcbae1e886ae3230f43067d73aa80d99925c820d23",
+      "lines": 188
+    },
+    "lndw/attractors.js": {
+      "sha256": "38090075983b86a64710b40a1cfaad558cfcd4c8b687f33b1daea205f3f6731a",
+      "lines": 2676
+    },
+    "lndw/chinese_room.js": {
+      "sha256": "5244f1a5805eb333dc8a6b12607981266fd48e582f5e0b7b669d048356ba6312",
+      "lines": 306
+    },
+    "lndw/embeddinglab.js": {
+      "sha256": "5ceca06840a2ad15902e171e1a51a658f6b64ed5baa1a008eea1cbc22bf3926b",
+      "lines": 2378
+    },
+    "lndw/fcnn.js": {
+      "sha256": "1da07097cfcd75f445e5112c0e13f9e4882d8610241861ee7ca5581a8f608fef",
+      "lines": 2527
+    },
+    "lndw/garben.html": {
+      "sha256": "f83b1bd9e15b82bbd1eeed50f2f560a111906ed5a5e783959a491dfc9a72f6b7",
+      "lines": 433
+    },
+    "lndw/heads_web.js": {
+      "sha256": "8e0bf1fe0b084eb8c2a77f6f5a524f381d9254900371cfde930906b05bd97d00",
+      "lines": 262
+    },
+    "lndw_history/backprop_slides.js": {
+      "sha256": "994c956dcedf9d1f60cd06138284c06f53659f55b17a9cd442dded8e872b6787",
+      "lines": 1252
+    },
+    "lndw_history/history.js": {
+      "sha256": "71a1eeefb23614d423d76c2af51416ec9ee01a8cc62f0609b24e5ac16da20a6a",
+      "lines": 174
+    },
+    "lndw_history/history_presentation.js": {
+      "sha256": "52b1b0939164bed794d4a6937ecba47f8167fd57c621a62632819a4a550f8bc0",
+      "lines": 231
+    },
+    "lndw_history/index.css": {
+      "sha256": "20fe7b8ac1ea146eea9f31aa9f5abdebdcd214d7ed2a6e131c52468d571b3bfe",
+      "lines": 623
+    },
+    "lndw_history/index.html": {
+      "sha256": "551e7d7cc7b3d0f2aabf4e1ff39f138a51c1518b11aa51c3dbdfecc6b21bbd3f",
+      "lines": 1166
+    },
+    "lndw/hott.html": {
+      "sha256": "675849a6f37099531773b2b87a84545292c668b95638739e7eb6f8dca6e2fc0b",
+      "lines": 909
+    },
+    "lndw/index.html": {
+      "sha256": "af8fc950bd53ef252f8657fac2f33f358a7808cdda2dff4ac15c6b4da3075300",
+      "lines": 1895
+    },
+    "lndw/index.js": {
+      "sha256": "7422bd89ba7251a3b1e3675b9ab8c7b7a9b6e0a1771f1bfd22404699e5f338db",
+      "lines": 2055
+    },
+    "lndw/interpolation_viz.js": {
+      "sha256": "22f0a0d1c04a7d72f2cf379cca8446a414495bb82394e28053cedae04c9c8e49",
+      "lines": 132
+    },
+    "lndw/intuition.js": {
+      "sha256": "0ba1b90d9d7bb1ec322373e3b35c88edb65a1470e68f786b56a2046330a61861",
+      "lines": 917
+    },
+    "lndw/isosurfaces.js": {
+      "sha256": "9800698c4e0ee493232fe960ccf9741423a0160616687477a97582d080c32be4",
+      "lines": 867
+    },
+    "lndw/jquery.min.js": {
+      "sha256": "fc9a93dd241f6b045cbff0481cf4e1901becd0e12fb45166a8f17f95823f0b1a",
+      "lines": 3
+    },
+    "lndw/jspace_viz.js": {
+      "sha256": "d93b9c9ae6511df461e5f645a84beb79226a90bbd01e31e3a59ac052126f17d9",
+      "lines": 1083
+    },
+    "lndw/knowledge.js": {
+      "sha256": "14758add830867cdf1dfeaa72b7bd503b65354b15578fe2d8b4327bb769e37d7",
+      "lines": 870
+    },
+    "lndw/kurz.html": {
+      "sha256": "8862c3d6bb97dad75bf00fce092024f6c592d3ab2df0b5f7f4c1ad7ac8144b53",
+      "lines": 12
+    },
+    "lndw/neue_intro.html": {
+      "sha256": "5f0a308d9343a2c64ef97df138e668466ddacbd25114195f4bebf745b75d9376",
+      "lines": 997
+    },
+    "lndw/old/index.html": {
+      "sha256": "f535df2f9b9165b392b66aebce47375ed25548a58ac273037db8f97fdc86a3a2",
+      "lines": 1432
+    },
+    "lndw/pe_orbit_viz.js": {
+      "sha256": "e230f1d0f3ece7926785a2246451e8c30c2f20923c7aa61a10e8103e092ef701",
+      "lines": 302
+    },
+    "lndw/philosophy.js": {
+      "sha256": "b0f5ba7e4a66e9616e5cfa772254733439b23e83106df58a61cea3efceedc69f",
+      "lines": 215
+    },
+    "lndw/plotly.min.js": {
+      "sha256": "5071ffeecaa5b6a8ef90e9aabfaeef30e87ff5a02b6d3b38a02a2345e582591f",
+      "lines": 8
+    },
+    "lndw/presentation.js": {
+      "sha256": "93759a0daa6b404481a564fae25625865cc715457f9a41949efbf4cd8ceb9ccf",
+      "lines": 1181
+    },
+    "lndw/residual_stream_notebook.js": {
+      "sha256": "a4f72f86e38e561fc90331e9700c47dc96e775a968fec6553148c3e8ab83e3e7",
+      "lines": 662
+    },
+    "lndw/sheaves_presentation.js": {
+      "sha256": "4519b4155fcfce1a2956d495e54cbc3964481ce562edf07bae33e06eba505934",
+      "lines": 2671
+    },
+    "lndw/temml.min.js": {
+      "sha256": "b9573be68a7148c1d6bf77a742b49cf9b12f1ca8ca300202471576ff05c515a2",
+      "lines": 1
+    },
+    "lndw/trace_through_loss_landscape.js": {
+      "sha256": "9883ac6d151bdf3f503a935929e5a967dade64604023c1ede940cb020a50cb4d",
+      "lines": 937
+    },
+    "lndw/training_demo.js": {
+      "sha256": "a3a1d7e8a880658b479de346b2f45ff7cf7f1d10cb5d7b240c4e8f867477b4cf",
+      "lines": 859
+    },
+    "lndw/training.html": {
+      "sha256": "9d9b78b0b1a56bcb40fb71e129bd74623e2eaad991f17f620ac40f898060f6b2",
+      "lines": 114
+    },
+    "lndw/training_viz.js": {
+      "sha256": "f40a4cdb6efaaa037d4963fe785b7363c7f4430c2a43f17b6a350a7f428dac14",
+      "lines": 242
+    },
+    "lndw/zipf_data.json": {
+      "sha256": "53eb3381ccfed81792bf01a333a1d2c2ecab68cb950d46e246b4ab0e92a73801",
+      "lines": 818
+    },
+    "lndw/zipf.js": {
+      "sha256": "33ce06d95901f7e401a1fa8fa3ef05e5a84340e8128c1d365d121d5e8ca652dc",
+      "lines": 191
+    },
+    "loader.js": {
+      "sha256": "c73dd0f899080067a15eb67b909a3d5ea1f906b4b19be48205029eaa8bf3f2ef",
+      "lines": 61
+    },
+    "losslab.js": {
+      "sha256": "604f0d850b5370214e64fa02e7d03f8c1d456fbc2bce5dc3d42aa994ccde467d",
+      "lines": 137
+    },
+    "losslab.php": {
+      "sha256": "974acb78a704a789d24cbd43514caf4fcb29a20dc272957302172a3168f8d088",
+      "lines": 161
+    },
+    "master_vis.js": {
+      "sha256": "310fb9f4046cc5c9a71c04e771e660ac1447864124005441fc6b307092684222",
+      "lines": 199
+    },
+    "math_deri.html": {
+      "sha256": "adf893590bfde5912f51cbb691d6fc4f2cd56084d4e3362a5cf509a8ea651043",
+      "lines": 1555
+    },
+    "math_iii_hott.js": {
+      "sha256": "dafd91382c7b12064583371c0a2913d00aaf5b3356443ba4d161d58f12dff0f1",
+      "lines": 1051
+    },
+    "math_iii.php": {
+      "sha256": "fbfc23b323fdf74a2fe1865a4d9b3bcd838fc2e90fa513b1352ed6f3fe470af9",
+      "lines": 719
+    },
+    "math_ii.php": {
+      "sha256": "605d8195f533f388b0f5cdd9a566b00b02198e0be9f4ad47738d3bac0bd2b9a3",
+      "lines": 1272
+    },
+    "math_i.php": {
+      "sha256": "45729f5a9d94dfd75921b68e41131113b53b5902e8c69c0cc554e6db2efef261",
+      "lines": 748
+    },
+    "math_iv_affine.js": {
+      "sha256": "9e5e9b5c60d72201412904e1116170b82511666696483ec7bcbd9a8246c0640c",
+      "lines": 2410
+    },
+    "math_iv.php": {
+      "sha256": "66d6f4818ac0d3131fa3233737c62bbf653df9bcd2f35746c374f8797f196a66",
+      "lines": 431
+    },
+    "mechanistic_interpretability.js": {
+      "sha256": "31edeadce56ca3e6631e19fb3854df4b5329aafa86093a85c7411c995f1b92fb",
+      "lines": 1365
+    },
+    "mechanistic_interpretability.php": {
+      "sha256": "65869f005dc3f83c7e6b358502c8a3dc5a61a997ac10cbfa1d3b2d729b7a71b5",
+      "lines": 729
+    },
+    "minimalneuron.js": {
+      "sha256": "1cced20606ce79d02fc6fcd2d8430446ff1c574f25b6f6795b0555a6a762dd9b",
+      "lines": 216
+    },
+    "minimalneuron.php": {
+      "sha256": "374d8f90d9451fdde274a6c3131b861bdd6948c7876a42120180f03cab419bee",
+      "lines": 212
+    },
+    "mobile.css": {
+      "sha256": "281b61c22215f9af694b9e0b8cecbf3d3df356a594b376b67e6adec6cb760b60",
+      "lines": 694
+    },
+    "mobile.js": {
+      "sha256": "f4479cba2343bbbb670627c75d2cd95226c53db8850b8a968177680a63ccb498",
+      "lines": 286
+    },
+    "mobile-loader.php": {
+      "sha256": "afc2742809c25e83e7d5e7f272833ca443f0b65c27924b4ed812be23bd37ce91",
+      "lines": 28
+    },
+    "mobile-prepend.php": {
+      "sha256": "f2159f8aca31e294e238a5a4ad44f45df3587082d0eb3205024756dd0e28b277",
+      "lines": 97
+    },
+    "multimodal.php": {
+      "sha256": "1fd20b9c6e5bd98811aeca06410de27b42962f86b3b40c1bbc64dd22e15ce9cd",
+      "lines": 222
+    },
+    "myths.php": {
+      "sha256": "457f2dd52bf9f96769b8f126db8e62b35cd3b28a88f399ecc3956b789e77ecea",
+      "lines": 145
+    },
+    "normalizationlab.js": {
+      "sha256": "be1452d362e66fbab0a69e0d2d45dc6a3fee57e68564385acbe54b389ee69c00",
+      "lines": 634
+    },
+    "normalizationlab.php": {
+      "sha256": "5bb2a4475cc154fa808ccfa3945773c001dad9c03fed5ff752bf2b0d62916d9e",
+      "lines": 360
+    },
+    "optimizerlab.js": {
+      "sha256": "8e10eb603d135de2103bfbd09e2bcdee831fb86064d6a8712a3dec02e7e7b61d",
+      "lines": 337
+    },
+    "optimizerlab.php": {
+      "sha256": "e15e0f823c1dd23dd0415363dd85f7de6c10a53fda056d272af35d1f019b7f3b",
+      "lines": 192
+    },
+    "organic-network.js": {
+      "sha256": "9ee5a85298476566acc0e5f87e02d75d4114f0b209649ae5af2e3b7ee4554038",
+      "lines": 246
+    },
+    "origami.js": {
+      "sha256": "e3ffba0aba6fc4dc08925ca8a5ba7df11f6581f3269627eb9a6268563ae819d4",
+      "lines": 844
+    },
+    "origami.php": {
+      "sha256": "5971a8e3709034bec8755ee9f3a3d977ecb1e7a5bb5009801d677f8548aee3ca",
+      "lines": 630
+    },
+    "overandunderfittinglab.js": {
+      "sha256": "609bb28c0051a480e111731b2f55eb815c936eee31eb9fb1b4bb8ef272d5810f",
+      "lines": 380
+    },
+    "overandunderfittinglab.php": {
+      "sha256": "f71f5690b9e1f8ca2169a4c56ef33662e4f1fecf15bff18eb1b3274655bb6c9d",
+      "lines": 325
+    },
+    "philosophy.js": {
+      "sha256": "fb9cd09cb3e5ea8141aa78b13c46e9d207e05a694aca205e163e6faca90589a4",
+      "lines": 1582
+    },
+    "philosophy.php": {
+      "sha256": "a6326361197871fbb1452a03174750e1e504cb733444bfde68d45d2762cf56e1",
+      "lines": 1671
+    },
+    "php_syntax_check.sh": {
+      "sha256": "f3ad818c445ad0faaae349e32ed8c1d6db1cfc687d50d29f0302cc5da5ea682d",
+      "lines": 12
+    },
+    "polish.js": {
+      "sha256": "78082df8c35d4bd01277aaf14e3619ba97ce6da939958b2d2e6ed4c3eafdea01",
+      "lines": 1109
+    },
+    "polyhedral-inconsistencies.md": {
+      "sha256": "bb1fb99e974f82087fa24f1a69cda439bb718ee3c129bfccd1e3e3e9d61fb423",
+      "lines": 116
+    },
+    "positionalembeddingslab.js": {
+      "sha256": "35e86f38070bc5b838173fd6d5388c89997a8b1d459d1501e5e1d138d019a483",
+      "lines": 613
+    },
+    "positionalembeddingslab.php": {
+      "sha256": "57cbd2ead0cd2d44cb960b5aed238e62427b8804fd37b76b704ec34329633865",
+      "lines": 204
+    },
+    "prism-tomorrow.min.css": {
+      "sha256": "1b15fe2971998a048aebb60f26f6eed76122071db9ef3b995abd003224f52a98",
+      "lines": 1
+    },
+    "production_serving.php": {
+      "sha256": "39756aa8a21c3910d74bf720eaebca4328162ddeaffe2a30a388335c4ea4cd96",
+      "lines": 295
+    },
+    "progress_tracker.js": {
+      "sha256": "721682f951f30235c7ff208ff20fc74acd1e8b5c55d02b85272ee598d5c13754",
+      "lines": 508
+    },
+    "promptengineering.js": {
+      "sha256": "071a79dad8f67f60ca3af58d501de0f6516447889428915757404ae88b3ec1a7",
+      "lines": 696
+    },
+    "promptengineering.php": {
+      "sha256": "a2396163c7865e64cf31edd54dc5dc2081a71b85a77f24561d81680fe0a30370",
+      "lines": 460
+    },
+    "provenance.js": {
+      "sha256": "1b131f263322bb900cfb64ae6a17dea00c4d16ac209eb0219c592ced26d8ffb0",
+      "lines": 3236
+    },
+    "py/autodiff/custom.py": {
+      "sha256": "9d2096133c9450e85e1ea611b01f04fe30922a1a56b3d4761c8e226807982be8",
+      "lines": 64
+    },
+    "py/autodiff/pytorch.py": {
+      "sha256": "33ff716081c86e72df8a77441b1139dc008697d72304fc1f50f63e2753e078ea",
+      "lines": 40
+    },
+    "py/autodiff/tensorflow.py": {
+      "sha256": "907ec45440be186ab90f8e450c314b31882ba5ff6a03dc7cfdd9e69974a67eab",
+      "lines": 40
+    },
+    "py/minimalneuron/pytorch.py": {
+      "sha256": "a560c4c2db76f06afa2078e979cf954fe1437446bd3ae3d22955b2bcb224fdab",
+      "lines": 32
+    },
+    "py/minimalneuron/tensorflow.py": {
+      "sha256": "5c2916608679a09ece3b8e3528f3c5c0a6b2c22d72ef387fc7e3aa0582ebb40a",
+      "lines": 66
+    },
+    "py/qos.py": {
+      "sha256": "ebd5b74ad4f0555ec5f3edf421d228a3d4727a6aabd3c910264bdde82355854d",
+      "lines": 94
+    },
+    "py/visionlab/pytorch.py": {
+      "sha256": "c6bbbcc88393ef7c2dc156a3dba80b627a299960bc6083fdc88b36dacb7a06d6",
+      "lines": 133
+    },
+    "py/visionlab/tensorflow.py": {
+      "sha256": "0cf07145e9f7fdf4281dd8f71f7e97ff13340e0eb92ef588070552b7d0cace26",
+      "lines": 141
+    },
+    "py/zipf_data.py": {
+      "sha256": "1058cb5ab6c43d0a2d8eaecf1d79ce07a186fe9bb935d6e36c4052a46b9606e5",
+      "lines": 87
+    },
+    "rag.js": {
+      "sha256": "d98b56fbdea661f36829e677afe80cf78928c66d27b59818d2b8b843c992cda6",
+      "lines": 379
+    },
+    "rag.php": {
+      "sha256": "1a5141dd08f821fc107c6e8176d4834a1273c20c53db86f18e4d7c35fa9a6dfa",
+      "lines": 200
+    },
+    "README.md": {
+      "sha256": "4a38e4178dbdf309c65ca524a26b688f1f514de4adce89575ffcf4c82ac15a4f",
+      "lines": 76
+    },
+    "reasoning.php": {
+      "sha256": "96888015162af717e20cc2b091de5c675fc738013a1d64a15c89987a5a8c35f4",
+      "lines": 195
+    },
+    "recurrent_networks.php": {
+      "sha256": "260e309fd32fc7aa884f1aeb6ddf03d0b7f7345c9986854f9e06f7ccdafabeb1",
+      "lines": 84
+    },
+    "reinforcement_learning.php": {
+      "sha256": "18b33d70065703ee87641c92094464b46ac132afeea2a7fbf37c30281fc1371b",
+      "lines": 274
+    },
+    "reliability.php": {
+      "sha256": "910559cd0e667f5780f90cfa975448459d570eae0ef99169f6d0570fac1b6ca8",
+      "lines": 63
+    },
+    "research_science_history.md": {
+      "sha256": "2d74f9bc37007d3efa8f8ba377949b3f2440ed5961bce05dff24c864ee479fc7",
+      "lines": 753
+    },
+    "resnetlab.js": {
+      "sha256": "322fb7e0e4b858894429c52a978525760a4138d2d23d3bd923403a07dda5bf7e",
+      "lines": 176
+    },
+    "resnetlab.php": {
+      "sha256": "d7ed30db5f5f55cb46afafec6244575b04859d6e2392e96de9aa27e76ca3cd95",
+      "lines": 124
+    },
+    "running_locally.php": {
+      "sha256": "3f80fa2253f0a3beaed1ee3affcda6ef31edb0b71eb191b179e1dee8096db189",
+      "lines": 234
+    },
+    "samplinglab.js": {
+      "sha256": "951e1397cadb25aaae8b613a1a58e970845c88b5d15b1b3389ae215eadd21380",
+      "lines": 117
+    },
+    "samplinglab.php": {
+      "sha256": "6c047537e3474f191ab8622bc03ea17e0bfd0e82fd3aeb0c1752032b4a1469c5",
+      "lines": 328
+    },
+    "search.js": {
+      "sha256": "7a22092ce1ee8fffc2b1c687cadfc544ce6a1172f5743e1685159075afc99ca8",
+      "lines": 402
+    },
+    "search_lib.php": {
+      "sha256": "72c6714a9058503625fa3d70eb7025f5b81822d08374e4e324663753fee48b20",
+      "lines": 814
+    },
+    "search.php": {
+      "sha256": "22bc197739a596ee32cf0d16765c95923a7f27468b9c07019a4ca3ac3fc11f36",
+      "lines": 11
+    },
+    "security_inference.php": {
+      "sha256": "8626a3558916ec5902ccc10a3f458a9a7b194193d50a386b15ac18cec5323c35",
+      "lines": 86
+    },
+    "sidenotes.js": {
+      "sha256": "cb3520271daa107ed1d23ad951e49bf0f46ea8114c85a158a61e569dd72f762d",
+      "lines": 2589
+    },
+    "software.js": {
+      "sha256": "ea427fb62e81dcbfac56c32b8089ba2bd8b9c34636ff3dcbb322fcaff7dcf7ff",
+      "lines": 5
+    },
+    "software.php": {
+      "sha256": "95fe2fd93df94fc7cbaf967f18d8be4144f2ccc65778ca7056fe30cafafe51d1",
+      "lines": 499
+    },
+    "speech_audio.php": {
+      "sha256": "b9e8d6a7654bc7cd462f577e9b54b9f9f8dcde792380627cdb4dd615ba0165e2",
+      "lines": 206
+    },
+    "start.js": {
+      "sha256": "eb9f6da1e41f2be70bb4aa44557e2a4df1f95df4ab7a7d11cffd38d7f2b81ad0",
+      "lines": 1996
+    },
+    "statistics_ii.js": {
+      "sha256": "8ff75c51f1f5417bda2197eb26ea35a23eb98955ae8289c810ca601f6db71367",
+      "lines": 34
+    },
+    "statistics_ii.php": {
+      "sha256": "e8f1b64970e3e09323193c7423287c3f9cb6fd7c1482045de2111e35ec3ba623",
+      "lines": 466
+    },
+    "statistics_i.js": {
+      "sha256": "0995d43923b59366bf17c56cd4260305d17cd59990507f254c0078dbe7ad6dc3",
+      "lines": 32
+    },
+    "statistics_i.php": {
+      "sha256": "45dd13db65e5841f8a0604450c17daaf9e5e9403a72cad13ca199efad5bd8102",
+      "lines": 879
+    },
+    "statistics.js": {
+      "sha256": "bfde849c2c13cc467c5a9ef06804a457733d119e4990484a16a4d5b9a8850ee8",
+      "lines": 2423
+    },
+    "statistics.php": {
+      "sha256": "250a38b28c1f39b5e09dbe0d50b15a1a4cb496bc8086e54f6977fd420243a2b5",
+      "lines": 1238
+    },
+    "stickybar_transformer.js": {
+      "sha256": "b6f0c9ec7a0ed112235ffba9e557f44eb5cead2fd317d4d421d4b62db6f3d904",
+      "lines": 388
+    },
+    "story.html": {
+      "sha256": "5f0a308d9343a2c64ef97df138e668466ddacbd25114195f4bebf745b75d9376",
+      "lines": 997
+    },
+    "style.css": {
+      "sha256": "666117caa1d867a80cfb01875fad2fbfd941027d573b15cfa2b6b14d0a118b31",
+      "lines": 10872
+    },
+    "symbolic_ai.php": {
+      "sha256": "43590fd9ff54b7d86edb075279b530d5fcef75eeda94085d3060abc20a17fb9c",
+      "lines": 314
+    },
+    "tda_live.js": {
+      "sha256": "376dbf96a788510ee983e9313fa01739b7a06219387d784a6e0705b65b7c4f24",
+      "lines": 2266
+    },
+    "Temml-Local.css": {
+      "sha256": "1fed2cb69eb3c48702bb22e776e046ae91d7a3d8348b3e7b26bdc2193f72ebeb",
+      "lines": 354
+    },
+    "Temml-Local.min.css": {
+      "sha256": "1c6a2a791d7a64c84a26491306481b880211fde05ab60f2a773450b0dcc05ddc",
+      "lines": 8
+    },
+    "temperaturelab.js": {
+      "sha256": "b4dcf3d6dfb98468afb06b27c6db6f3de1ab02a3d80c7c3004a4cb26fa12a7e9",
+      "lines": 100
+    },
+    "tests/hover_layout_guard.html": {
+      "sha256": "e9b4f86e731ebb4af9f994f095f274658e04fe5e52a025f6e4179cc00758154e",
+      "lines": 234
+    },
+    "tests/hover_layout_guard.sh": {
+      "sha256": "d115bb405ec36754d8eb0dd7bd86a1a86c896d8efe1a13061fb4cf180788126e",
+      "lines": 43
+    },
+    "tests/js_validator.py": {
+      "sha256": "1bee9a5633b9d464254d40bb261d0b613cb363b41e711613cfc8bb24f5987fda",
+      "lines": 1199
+    },
+    "tests/keypoint_test.js": {
+      "sha256": "9e7b343114ac487b3397e5a4c3d58fc47c8c139df6a7aee124640f5935909590",
+      "lines": 265
+    },
+    "tests/latex_error_checker.py": {
+      "sha256": "17a19720e248aee7f71e688f9684abf75950c00534f4758a8c3c8424ec076a5d",
+      "lines": 1319
+    },
+    "tests/lesson_guard.py": {
+      "sha256": "68c56b27229022dc09be4bb4664384a7fb4290a23ff526f4957bc143f531a282",
+      "lines": 254
+    },
+    "tests/_lg_probe.html": {
+      "sha256": "26e7ba9f1f1a3ad38e27ed1a288dadcc3054027913c4d5f1f4060b51c4dc684b",
+      "lines": 26
+    },
+    "tests/link_checker.py": {
+      "sha256": "b0debae5368526900e92d73043d92501ebac070cf38ff1e94501b17c22ad005e",
+      "lines": 745
+    },
+    "tests/math_alt_test.js": {
+      "sha256": "1759f09ec320dc979275085be913e3f47d691a75524f2a847d2f4c7639ed5096",
+      "lines": 133
+    },
+    "tests/php_render_validator.py": {
+      "sha256": "39b8aaecd20ae1f6d189eca07c612323da5dc506e36b3173bc596e4a9162ccea",
+      "lines": 635
+    },
+    "tests/php_validator.py": {
+      "sha256": "bbbd9cc7e383f18fecf2b6fab873dabcc6a390312b39a4630e61de8c969985c0",
+      "lines": 642
+    },
+    "tests/search_js_test.js": {
+      "sha256": "0cdfb297fd38cce59c1840ec4eec9962ae8640087a8079c367daf4cf576e7fc0",
+      "lines": 87
+    },
+    "tests/search_test.php": {
+      "sha256": "db0e222a1f6a5adc20ba7e5a7d689131d52fe5cab48620f2dc0a91df925eadbc",
+      "lines": 324
+    },
+    "tests/topics_test.js": {
+      "sha256": "89b3977d6c22ab0f059345b23f27b9eeeac147c76440048897b13ff16d32e0b6",
+      "lines": 256
+    },
+    "tests/typo_checker.py": {
+      "sha256": "018bc8b98f28f0530db73e7509bc0649d3f612301d6ad0c80052f1bdc2f675d3",
+      "lines": 858
+    },
+    "tests/typography_fix.html": {
+      "sha256": "0742649db0c3d950e4c4fd641120bc00723771c2e5b87b1aaac0c0be883baf26",
+      "lines": 72
+    },
+    "tests/typography_fix.sh": {
+      "sha256": "930c338098033875df3a19b01e660b900e447108386618b2c2dc48979b814f99",
+      "lines": 41
+    },
+    "tests/typo_whitelist.txt": {
+      "sha256": "3efdd61617526d3b1b5851a2ea01285018cff3fc53ced20d7dd4e4b73f0a1e25",
+      "lines": 558
+    },
+    "tests/width_layout_guard.html": {
+      "sha256": "8c989b337e19cecf9677cdec46cf0bfa218fd81f61f33a7c40d7d72ef73769d2",
+      "lines": 99
+    },
+    "tests/width_layout_guard.sh": {
+      "sha256": "2a2bbe8a81def24b2a8112b47c2f07e5aa681e07f46fdcbe6a006608b72721df",
+      "lines": 45
+    },
+    "toc.js": {
+      "sha256": "3622a3c43d4e67c6a0878286de3650157256e5aada2710f41420734020d00679",
+      "lines": 492
+    },
+    "todo/coherent_steelman_critique.md": {
+      "sha256": "4046f52626810fbd42d00e8063f1017c2348439d4ee1589a1e4b5536aff41ff6",
+      "lines": 818
+    },
+    "todo_coherent_world_models.md": {
+      "sha256": "2034a154c504ad21ce5337ab2657f6750e72f4f6b591771bb17cb1ab92b5d090",
+      "lines": 150
+    },
+    "todo/formulary.php": {
+      "sha256": "49d2bdc083194d263c190a7a80a62a7239a656c5766cd1e96f6169403ae4e190",
+      "lines": 448
+    },
+    "todo/model_theory.php": {
+      "sha256": "13844f3b0b57c8112f615bf553c36c1731dd985dc84a9817f5945cc23de5a133",
+      "lines": 226
+    },
+    "todo_new.txt": {
+      "sha256": "d2d6d6df8ff9847e94a2852657ddac1ac4bf790e7b5cef18d637f8b1e5b21885",
+      "lines": 6
+    },
+    "todo/recursion_coherent_difference.php": {
+      "sha256": "557dd22761b6670fd5f3250243329abe8bda055f7778406b7cc920a9ee945fbb",
+      "lines": 295
+    },
+    "todo/the_model.php": {
+      "sha256": "6f906b63ae89b1b7257f1d00e854ef531a46af584cdfe0e66d69a50334329b5d",
+      "lines": 166
+    },
+    "todo.txt": {
+      "sha256": "858b6aab0aa10d4206fdc3418eacaf1fb3ba98f9ebc533ba9af7224a9c6835b2",
+      "lines": 46
+    },
+    "tokenizerlab.js": {
+      "sha256": "81a0c36977df4f10830b074213948621939729b9697f2f7eaa0e844a28fd73f1",
+      "lines": 299
+    },
+    "tokenizerlab.php": {
+      "sha256": "f1480aacaa12e73e085f15d5bd5b717cc01c301c10806c352eca198d8ab233bc",
+      "lines": 218
+    },
+    "topics.js": {
+      "sha256": "b2768cdc9a632e585aa27684967d09620b98dffa74f087a4b9e9b1121ffd1464",
+      "lines": 2662
+    },
+    "topology.js": {
+      "sha256": "9a6eee9e99eb83088cd5686a53615a3d4f1522d2fb5757d6f20a474b424d16d1",
+      "lines": 411
+    },
+    "topology.php": {
+      "sha256": "cd3682447eef881dabd76276d241b2a7be7735579b29392a15187dc82d6438db",
+      "lines": 326
+    },
+    "training_data.php": {
+      "sha256": "845a49fbef72055607fa7db9d640904da5478eea411c1eb022e338dca02c4c89",
+      "lines": 255
+    },
+    "training_infrastructure.php": {
+      "sha256": "0197a874fe53b9c6b90306bacb4133b1e22b45fff2411bc2ae5816ff49606d89",
+      "lines": 244
+    },
+    "traininglab.js": {
+      "sha256": "5eee99bd24260a94e994ebe8860cb1ca32b9c6e4f8e5941968f4c23d29bb6f8d",
+      "lines": 713
+    },
+    "traininglab.php": {
+      "sha256": "310a19815731160570f35f75d443d6c4902d0776df365c892f131a104b8b4f70",
+      "lines": 679
+    },
+    "transformer.js": {
+      "sha256": "1af6f8f0105d7a1d6d525fca25b91590485a9d6933cbb54daf5eca1ab4b7f9e7",
+      "lines": 7499
+    },
+    "transformer_layer_summary.js": {
+      "sha256": "ef0b6250e51aa50044231c95fcbcfd08f44816de6cd32c596a2490dba6aaa5ab",
+      "lines": 624
+    },
+    "transformer.php": {
+      "sha256": "a36e1efab195e087d9d5019d84be970ca4dc99e6ef31d213e3492828cef91f9c",
+      "lines": 1023
+    },
+    "typography_fix.js": {
+      "sha256": "0b88de9e6c76b6e11f2d0d7c88f7bce6ab2b77207b89910231c76feee0bc35e2",
+      "lines": 420
+    },
+    "unexpected_capabilities.php": {
+      "sha256": "48ab6b2526ad514e6b304ff6529562b4f8e2c49021925e5551f572b9d9756b00",
+      "lines": 188
+    },
+    "untold_history.js": {
+      "sha256": "3fda438149ba49d608ff26d960cf74d544ef6254c7f908ccdf2946b005fdb380",
+      "lines": 5
+    },
+    "untold_history.php": {
+      "sha256": "368df05c62ef3931f02bba5675d8c003d2f51e8e5dcf33a4a87cdabea6a98705",
+      "lines": 1639
+    },
+    ".user.ini": {
+      "sha256": "46af3ca7bf86545cbb9cf1451403147bb62638b92d9467d9d533ef4456c33a98",
+      "lines": 2
+    },
+    "vectorsearch.js": {
+      "sha256": "63e5c6e8941f1f0b0cdf829d86a67a653ac4f38543d98155700e0a61a0cf0af6",
+      "lines": 450
+    },
+    "vectorsearch.php": {
+      "sha256": "b788cf5c33bb94f11ca9745d562eaf445cf4885448386fbdc37678e435ffc217",
+      "lines": 388
+    },
+    "vis_ideas.txt": {
+      "sha256": "8ac9f6a01c2171eb40c26a1debd382a9d1727f3379eb7a2c616645815806f14f",
+      "lines": 98
+    },
+    "websearch.js": {
+      "sha256": "d9b3cdb34e7f7896c4cd47a3d363a4a30ec826a6b6a72ccb2af44b7ec951b308",
+      "lines": 568
+    },
+    "websearch.php": {
+      "sha256": "c4eb89600888c22089eb0dc558d996e89a87dc5464f9884bf5ecb3ff3e803be9",
+      "lines": 452
+    },
+    "wordpress_code.html": {
+      "sha256": "c688460c736d9938dc65f00e43eb9a88a71d0b88d85ad5d493ad247a23051735",
+      "lines": 18
+    }
+  }
+}

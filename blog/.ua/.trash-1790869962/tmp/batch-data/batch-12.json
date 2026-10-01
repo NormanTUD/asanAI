@@ -1,0 +1,180 @@
+{
+ "batchIndex": 12,
+ "name": "Part 4 — The Transformer Revolution",
+ "theme": "part-4",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-12.json",
+ "files": [
+  {
+   "path": "algorithms.js",
+   "language": "javascript",
+   "sizeLines": 2630,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "renderFourierAlgorithm",
+     "tokens",
+     "computeSignals",
+     "toks",
+     "sigs",
+     "total",
+     "getSoftmax",
+     "exps",
+     "sum",
+     "cite",
+     "mathBlock",
+     "mathInline",
+     "renderMath",
+     "card",
+     "plotDiv",
+     "theta",
+     "renderEmbedCircle",
+     "allX",
+     "allY",
+     "arcA",
+     "falsePeaks",
+     "circleTheta",
+     "highPeaks",
+     "traces",
+     "sorted",
+     "updatePlayground",
+     "activeFreqs",
+     "flatSignal",
+     "playSignal",
+     "nearPeakTokens",
+     "updateDots",
+     "goToStep",
+     "renderICLExecution",
+     "render",
+     "bindEvents",
+     "computeSteps",
+     "resetExecution",
+     "renderStep",
+     "stepOnce",
+     "executeAll",
+     "toggleAnimate",
+     "renderAlgorithmicPrompting",
+     "renderAmbiguity",
+     "drawAmbiguityChart",
+     "renderSpecificity",
+     "renderStages",
+     "renderProof",
+     "drawProofChart",
+     "renderWaveInterference",
+     "x",
+     "waveA",
+     "waveB"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "algorithms.php",
+   "language": "php",
+   "sizeLines": 579,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "generateNorms"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "alternative_architectures.php",
+   "language": "php",
+   "sizeLines": 185,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loadAlternativeArchitecturesModule"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  }
+ ]
+}

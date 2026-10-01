@@ -1,0 +1,133 @@
+{
+ "batchIndex": 25,
+ "name": "lndw_history",
+ "theme": "lndw_history",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-25.json",
+ "files": [
+  {
+   "path": "lndw_history/backprop_slides.js",
+   "language": "javascript",
+   "sizeLines": 1252,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "BPSlides",
+     "loss1D",
+     "drawChainViz",
+     "initForwardViz",
+     "currY",
+     "nextY",
+     "positions",
+     "initActivationViz",
+     "initFlowAnimation",
+     "drawBase",
+     "drawSignal",
+     "animateForward",
+     "step",
+     "animateBackward",
+     "resetFlow",
+     "chainAddLayer",
+     "chainRemoveLayer",
+     "chainReset",
+     "gradLoss1D",
+     "drawGDViz",
+     "toScreen",
+     "updateLRViz",
+     "stepGD",
+     "autoGD",
+     "resetGD",
+     "updateVanishViz",
+     "respawnBall",
+     "toggleLandscapePause",
+     "setBallSpeed",
+     "initResnetConcept",
+     "initLossLandscape",
+     "lossFunc",
+     "project",
+     "doRespawnBall",
+     "gradLoss",
+     "animate",
+     "projCorners",
+     "initNNTimeline",
+     "initResnetArchDiagram",
+     "renderTemml",
+     "html",
+     "initAll",
+     "cleanup",
+     "observer"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw_history/history_presentation.js",
+   "language": "javascript",
+   "sizeLines": 231,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "Presentation",
+     "init",
+     "getFragments",
+     "next",
+     "prev",
+     "goTo",
+     "updateUI",
+     "buildOverview",
+     "toggleOverview",
+     "closeOverview",
+     "toggleFullscreen",
+     "triggerSlideInit",
+     "fitSlides"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw_history/history.js",
+   "language": "javascript",
+   "sizeLines": 174,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "renderGatePlots",
+     "renderTimeline",
+     "xPositions",
+     "initHistoryViz"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw_history/index.css",
+   "language": "css",
+   "sizeLines": 623,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "lndw_history/index.html",
+   "language": "html",
+   "sizeLines": 1166,
+   "fileCategory": "markup",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}

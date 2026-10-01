@@ -1,0 +1,352 @@
+{
+  "nodes": [
+    {
+      "id": "file:transformer.js",
+      "type": "file",
+      "name": "transformer.js",
+      "summary": "Core interactive module for the 'Architecture of Meaning' lesson: implements a decoder-only transformer from scratch in the browser (causal multi-head attention, pre-LN, FFN/GELU, sinusoidal positional encoding, unembedding/softmax), trains it on a user-typed corpus via TensorFlow.js, and renders a large suite of visualizations (embedding space, migration/trajectory plots, attention web, parameter sunburst, vector math).",
+      "tags": ["transformer", "attention", "training", "visualization", "tensorflowjs", "tokenization"],
+      "filePath": "transformer.js",
+      "complexity": "complex",
+      "languageNotes": "Uses global state on `window` (currentWeights, persistentEmbeddingSpace, isTraining) plus module-local registries (Maps) for lazy viewport-gated rendering. Hand-rolled 2D-array linear algebra (matMul/softmax/matAdd) for the visual path, and a parallel TensorFlow.js tensor path (convert_weights_to_tensors / convert_tensors_to_weights) for actual gradient training. Entry point is async loadTransformerModule(). Integrates with optional globals AttentionEngine, Prov (provenance), TDALive (topology), Plotly, and ECharts."
+    },
+    {
+      "id": "file:transformer.php",
+      "type": "file",
+      "name": "The Architecture of Meaning: A Deep Dive into Transformers",
+      "summary": "Part 4 flagship lesson that assembles tokenization, embedding, positional encoding, attention, FFN, unembedding, loss and optimizer into one trainable machine. Prose derives each equation (causal mask, multi-head attention, residual recurrence, temperature/softmax, KV-cache, MoE, induction/syntax heads) and interleaves the live transformers demo, a topological-data-analysis (TDA) attractor/repeller panel, and hyperparameter sliders.",
+      "tags": ["transformer", "attention", "architecture", "lesson", "llm", "interpretability"],
+      "filePath": "transformer.php",
+      "complexity": "complex",
+      "languageNotes": "Standard lesson contract (line-1 include functions.php + COURSE_METADATA block). Loads many auxiliary scripts (llm_river.js, stickybar_transformer.js, attention_engine.js, provenance.js, tda_live.js, transformer_layer_summary.js) and drives the JS demo via inline oninput/onclick handlers. Heavy use of topic-block/optional-md progressive disclosure and LaTeX in .md blocks."
+    },
+    {
+      "id": "function:transformer.js:loadTransformerModule",
+      "type": "function",
+      "name": "loadTransformerModule",
+      "summary": "Module entry point invoked by the blog loader: initializes the vector-math observer, updates the train-button/architecture-validity UI, runs the initial demo, and wires the master-token input to a debounced re-run.",
+      "tags": ["entry-point", "module-loader", "bootstrap", "transformer"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:run_transformer_demo",
+      "type": "function",
+      "name": "run_transformer_demo",
+      "summary": "Top-level orchestration of the live demo: tokenizes the training and master inputs, renders the BPE/token visualization, runs the full network forward pass with visualization, refreshes the parameter count, and snapshots state for the TDA live panel.",
+      "tags": ["orchestration", "demo", "forward-pass", "transformer"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:run_and_visualize_network",
+      "type": "function",
+      "name": "run_and_visualize_network",
+      "summary": "Core inference/visualization driver: reads the architecture config, validates dimensions, reinitializes weights if the config changed, runs pre-attention visualizations, executes the forward pass with per-layer migration/trajectory plots, and renders the final probability distribution over the master tokens.",
+      "tags": ["forward-pass", "orchestration", "visualization", "inference"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:causalMultiHeadAttention",
+      "type": "function",
+      "name": "causalMultiHeadAttention",
+      "summary": "Computes masked multi-head attention on plain 2D arrays: projects to Q/K/V, slices per head, builds the scaled dot-product score matrix, applies the causal (-1e9) mask, softmax-normalizes each row, and returns per-head Q/K/V/scores/weights/context (the weighted value sums).",
+      "tags": ["attention", "multi-head", "causal-mask", "linear-algebra"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:forwardOneLayer",
+      "type": "function",
+      "name": "forwardOneLayer",
+      "summary": "Executes one decoder block: pre-LayerNorm, causal multi-head attention with residual add (h_attn), then a second pre-LN + FFN with residual add (h_out); optionally drives the AttentionEngine and FFN-equation renderers for a single layer's on-screen visualization.",
+      "tags": ["transformer-block", "forward-pass", "layer-norm", "residual"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:runSimpleForwardPass",
+      "type": "function",
+      "name": "runSimpleForwardPass",
+      "summary": "Runs the full forward pass over N layers from an embedded+PE input, returning the final hidden-state matrix; when asked, records every intermediate (norms, projections, FFN internals) under a provenance namespace so h_last can be traced back to the input.",
+      "tags": ["forward-pass", "provenance", "inference"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:embedTokensWithPE",
+      "type": "function",
+      "name": "embedTokensWithPE",
+      "summary": "Looks up each token in the persistent embedding table and adds its sinusoidal positional encoding, producing the initial hidden state h_0 (Batch x Length x d_model) used to start the forward pass.",
+      "tags": ["embedding", "positional-encoding", "hidden-state"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:computePositionalEncoding",
+      "type": "function",
+      "name": "computePositionalEncoding",
+      "summary": "Computes the sinusoidal positional-encoding vector (sin/cos over the 10000^(2i/d) frequency bands) for a given position, scaled by posEmbedScalar, matching the Vaswani et al. formula.",
+      "tags": ["positional-encoding", "sinusoidal", "linear-algebra"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:addPositionalEncoding",
+      "type": "function",
+      "name": "addPositionalEncoding",
+      "summary": "Adds the computed sinusoidal positional encoding to a token's embedding vector element-wise to form the position-tagged hidden state.",
+      "tags": ["positional-encoding", "embedding"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:softmax",
+      "type": "function",
+      "name": "softmax",
+      "summary": "Numerically stable softmax: subtracts the max logit before exponentiating to prevent overflow, then normalizes to a probability distribution.",
+      "tags": ["softmax", "probability", "linear-algebra"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:matMul",
+      "type": "function",
+      "name": "matMul",
+      "summary": "Hand-rolled matrix multiplication (with optional bias) over plain 2D arrays; the primitive used by projections, FFN, and unembedding in the visualization code path.",
+      "tags": ["linear-algebra", "matrix", "primitive"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:geluApprox",
+      "type": "function",
+      "name": "geluApprox",
+      "summary": "Approximates the GELU activation via 0.5x(1+erf(x/sqrt(2))) using an erf approximation; the FFN nonlinearity (nanoGPT-style) in the visual forward pass.",
+      "tags": ["gelu", "activation", "nonlinearity"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:calculateLayerNorm",
+      "type": "function",
+      "name": "calculateLayerNorm",
+      "summary": "Applies layer normalization (mean/variance across the feature axis) with learnable gamma/beta to a hidden-state matrix, the Pre-LN operation preceding both the attention and FFN sublayers.",
+      "tags": ["layer-norm", "normalization", "linear-algebra"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:run_ffn_block",
+      "type": "function",
+      "name": "run_ffn_block",
+      "summary": "Runs the feed-forward sublayer (W1 expand -> GELU -> W2 contract) on a hidden state and renders the step-by-step FFN equations/intermediate values for the selected layer.",
+      "tags": ["ffn", "feed-forward", "visualization", "linear-algebra"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:get_init_weights",
+      "type": "function",
+      "name": "get_init_weights",
+      "summary": "Builds the full per-layer parameter structure for a decoder-only transformer (two pre-LNs, Q/K/V/output attention projections, FFN W1/W2 and biases, d_ff = 4*d_model) with randomly initialized weights.",
+      "tags": ["weight-init", "architecture", "transformer"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:get_or_init_embeddings",
+      "type": "function",
+      "name": "get_or_init_embeddings",
+      "summary": "Lazily builds (or returns) the persistent token->vector embedding space for the current vocabulary, seeding random embeddings for any tokens not yet present.",
+      "tags": ["embedding", "vocabulary", "state"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:show_nr_of_params",
+      "type": "function",
+      "name": "show_nr_of_params",
+      "summary": "Counts total trainable parameters across all layers and exposes the breakdown UI (toggle + sunburst + table) so readers can see where the model's parameters live.",
+      "tags": ["parameters", "count", "ui"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:train_transformer",
+      "type": "function",
+      "name": "train_transformer",
+      "summary": "Asynchronous training entry point: validates preconditions, sets up the session and optimizer, converts weights to TF variables, loops epochs awaiting runSingleEpoch, syncs weights back, disposes TF variables, and finalizes the session.",
+      "tags": ["training", "entry-point", "tensorflowjs", "async"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:initTrainingSession",
+      "type": "function",
+      "name": "initTrainingSession",
+      "summary": "Begins a training run: marks isTraining, locks the architecture/training controls so weights can't be invalidated mid-run, flips the button to 'Stop Training', and reads epochs/lr/optimizer from the UI.",
+      "tags": ["training", "state", "ui"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:runSingleEpoch",
+      "type": "function",
+      "name": "runSingleEpoch",
+      "summary": "One training epoch: builds training windows, takes a TF gradient step with gradient clipping, records the loss, renders per-window predictions, updates progress/ETA, syncs state, and captures residual/weight deltas for the TDA panel.",
+      "tags": ["training", "epoch", "gradient", "loss"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:computeAndApplyGradients",
+      "type": "function",
+      "name": "computeAndApplyGradients",
+      "summary": "Runs one forward pass over the training windows through TensorFlow.js, computes cross-entropy loss against the next-token targets, backpropagates, clips gradients, and applies the optimizer update, returning the cost tensor.",
+      "tags": ["training", "backpropagation", "gradient-clipping", "tensorflowjs"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:buildCausalMask",
+      "type": "function",
+      "name": "buildCausalMask",
+      "summary": "Builds the lower-triangular causal mask for a given context size, used to prevent tokens from attending to future positions during training.",
+      "tags": ["causal-mask", "attention", "training"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:renderLossGraph",
+      "type": "function",
+      "name": "renderLossGraph",
+      "summary": "Plots the per-epoch training-loss history as a Plotly line chart in the fixed-height loss panel, updated on each synced epoch.",
+      "tags": ["loss", "plotly", "training", "visualization"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:renderFinalProbabilities",
+      "type": "function",
+      "name": "renderFinalProbabilities",
+      "summary": "Computes and renders the final prediction distribution: unembeds the last hidden state into per-vocabulary logits, applies temperature, softmaxes, and builds the prediction chips and detailed logit/softmax/entropy/temperature breakdowns.",
+      "tags": ["unembedding", "logits", "softmax", "temperature", "sampling"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:render_final_projection",
+      "type": "function",
+      "name": "render_final_projection",
+      "summary": "Renders the 'From Vectors to Words' section: the unembedding matrix multiplication, per-word logit dot-products, and the resulting softmax probabilities for the final hidden state.",
+      "tags": ["unembedding", "projection", "logits", "visualization"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:tokenizeText",
+      "type": "function",
+      "name": "tokenizeText",
+      "summary": "Tokenizes raw text into token units, supporting word-wise (non-alphanumeric split) and BPE modes, the first step that turns the corpus into the integer/vector stream the model consumes.",
+      "tags": ["tokenization", "bpe", "tokenizer"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:transformer_tokenize_render",
+      "type": "function",
+      "name": "transformer_tokenize_render",
+      "summary": "Tokenizes the active input and renders the token chip strip (optionally into the BPE visualization container), returning the token array used by the rest of the pipeline.",
+      "tags": ["tokenization", "rendering", "chips"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:evaluateVectorExpression",
+      "type": "function",
+      "name": "evaluateVectorExpression",
+      "summary": "Parses and evaluates a vector-math expression over word embeddings (e.g. 'king - man + woman') with a small recursive-descent parser, tracking each step and resolving the result to the nearest embedding, illustrating geometric meaning alignment.",
+      "tags": ["vector-math", "embeddings", "parser", "interpretability"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:renderDynamicAttentionWeb",
+      "type": "function",
+      "name": "renderDynamicAttentionWeb",
+      "summary": "Renders the dynamic attention web: token chips with weighted arcs (drawn and hoverable) showing how strongly each token attends to each other, visualizing the attention matrix as a network.",
+      "tags": ["attention", "visualization", "canvas", "web"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:render_migration_logic",
+      "type": "function",
+      "name": "render_migration_logic",
+      "summary": "Renders a single layer's 'migration map' (2D/3D) showing how each token's vector moves from start to end of a layer, the central feature-space trajectory visualization, with vector-field and vector toggle support.",
+      "tags": ["migration", "trajectory", "feature-space", "visualization"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:renderPositionalInjectionHtml",
+      "type": "function",
+      "name": "renderPositionalInjectionHtml",
+      "summary": "Renders the positional-encoding-injection view: per-token semantic vector, injected sinusoidal encoding, and the combined h_0, showing how position is added to meaning.",
+      "tags": ["positional-encoding", "visualization", "html"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:renderParamSunburst",
+      "type": "function",
+      "name": "renderParamSunburst",
+      "summary": "Builds and renders a sunburst chart breaking down the model's parameters by layer and sub-component (embeddings, attention projections, FFN, norms), complementing the parameter table.",
+      "tags": ["parameters", "sunburst", "visualization"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:toggleParamBreakdown",
+      "type": "function",
+      "name": "toggleParamBreakdown",
+      "summary": "Toggles the collapsible parameter-breakdown panel, triggering a lazy render of the parameter sunburst and table the first time it is opened.",
+      "tags": ["parameters", "ui", "lazy-render"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:syncTransformerSettings",
+      "type": "function",
+      "name": "syncTransformerSettings",
+      "summary": "Handles the d_model/heads hyperparameter sliders: enforces the d_model-must-divide-by-heads constraint, updates value labels and slider outlines, and triggers a debounced demo re-run.",
+      "tags": ["hyperparameters", "ui", "validation", "sliders"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:setVisualizationMode",
+      "type": "function",
+      "name": "setVisualizationMode",
+      "summary": "Switches the demo between 'train' and 'inference' visualization modes, gracefully transitioning the active panels so the same architecture is shown computing in the chosen operating mode.",
+      "tags": ["inference", "training", "ui", "mode"],
+      "filePath": "transformer.js"
+    },
+    {
+      "id": "function:transformer.js:debounced_run_transformer_demo",
+      "type": "function",
+      "name": "debounced_run_transformer_demo",
+      "summary": "Debounced wrapper around run_transformer_demo so rapid slider/text edits coalesce into a single recompute, keeping the interactive demo responsive.",
+      "tags": ["debounce", "orchestration", "performance"],
+      "filePath": "transformer.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:transformer.js", "target": "function:transformer.js:loadTransformerModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:run_transformer_demo", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:run_and_visualize_network", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:causalMultiHeadAttention", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:forwardOneLayer", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:runSimpleForwardPass", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:embedTokensWithPE", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:computePositionalEncoding", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:addPositionalEncoding", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:softmax", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:matMul", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:geluApprox", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:calculateLayerNorm", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:run_ffn_block", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:get_init_weights", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:get_or_init_embeddings", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:show_nr_of_params", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:train_transformer", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:initTrainingSession", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:runSingleEpoch", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:computeAndApplyGradients", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:buildCausalMask", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:renderLossGraph", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:renderFinalProbabilities", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:render_final_projection", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:tokenizeText", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:transformer_tokenize_render", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:evaluateVectorExpression", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:renderDynamicAttentionWeb", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:render_migration_logic", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:renderPositionalInjectionHtml", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:renderParamSunburst", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:toggleParamBreakdown", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:syncTransformerSettings", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:setVisualizationMode", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.js", "target": "function:transformer.js:debounced_run_transformer_demo", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:transformer.php", "target": "file:transformer.js", "type": "related", "weight": 0.5 }
+  ]
+}

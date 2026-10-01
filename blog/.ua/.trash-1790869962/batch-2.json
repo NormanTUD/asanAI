@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {
+      "id": "file:literature.js",
+      "type": "file",
+      "name": "literature.js",
+      "summary": "Central bibliography store exposing `window.bibData`, a flat map of ~1,738 citation keys (title, author, year, url, alternativetitle) that `bibtexify()` in helper.js resolves at runtime for \\cite/\\citeauthor/\\footcite macros used across every lesson's prose and figure captions.",
+      "tags": ["bibliography", "citations", "literature", "data", "bibtex", "references"],
+      "filePath": "literature.js",
+      "complexity": "complex",
+      "languageNotes": "Pure declarative data: assigns a single `window.bibData` object literal with no functions or classes; entries are grouped by lesson via comment headers, and every `url` is link-checked in CI (tests/link_checker.py)."
+    }
+  ],
+  "edges": []
+}

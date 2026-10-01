@@ -1,0 +1,77 @@
+{
+ "batchIndex": 31,
+ "name": "todo — WIP Scratch",
+ "theme": "todo",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-31.json",
+ "files": [
+  {
+   "path": "todo/coherent_steelman_critique.md",
+   "language": "markdown",
+   "sizeLines": 818,
+   "fileCategory": "docs",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "todo/formulary.php",
+   "language": "php",
+   "sizeLines": 448,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "model"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "todo/model_theory.php",
+   "language": "php",
+   "sizeLines": 226,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "of",
+     "inclusion",
+     "the"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "todo/recursion_coherent_difference.php",
+   "language": "php",
+   "sizeLines": 295,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "todo/the_model.php",
+   "language": "php",
+   "sizeLines": 166,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "evaluator"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}

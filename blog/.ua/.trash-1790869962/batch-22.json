@@ -1,0 +1,559 @@
+{
+  "nodes": [
+    {
+      "id": "file:lndw/garben.html",
+      "type": "file",
+      "name": "garben.html",
+      "summary": "22-slide standalone presentation on sheaves, cohomology, fiber bundles, gauge theory, Topoi and HoTT, framing a consistent worldview as a global section and LLM hallucination as a cohomological obstruction.",
+      "tags": [
+        "sheaves",
+        "cohomology",
+        "fiber-bundles",
+        "hott",
+        "presentation"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Pure markup; per-slide viz containers and Presentation.next/prev navigation are driven by external sheaves_presentation.js.",
+      "filePath": "lndw/garben.html"
+    },
+    {
+      "id": "file:lndw/heads_web.js",
+      "type": "file",
+      "name": "heads_web.js",
+      "summary": "Self-contained IIFE for the 'Viele Koepfe' slide: a per-head attention table (chip rows) plus a canvas attention-web of bezier arcs over the sentence \"the cat sat on the mat\", with hover-to-inspect and a prev/next head stepper.",
+      "tags": [
+        "attention",
+        "multihead",
+        "canvas",
+        "visualization",
+        "interactive"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "All logic local to one IIFE; only window.HeadsStepDemo is exposed, for presentation.js arrow-key stepping.",
+      "filePath": "lndw/heads_web.js"
+    },
+    {
+      "id": "function:lndw/heads_web.js:setHead",
+      "type": "function",
+      "name": "setHead",
+      "summary": "Selects an attention head (with wraparound), updates the step label and caption, toggles the active table row and redraws the arc web.",
+      "tags": [
+        "attention",
+        "stepper",
+        "state"
+      ],
+      "filePath": "lndw/heads_web.js"
+    },
+    {
+      "id": "function:lndw/heads_web.js:drawArc",
+      "type": "function",
+      "name": "drawArc",
+      "summary": "Draws one attention arc between two word chips as a bezier curve on the canvas, with width, color and % label scaled by attention weight and hover state.",
+      "tags": [
+        "canvas",
+        "attention",
+        "bezier",
+        "drawing"
+      ],
+      "filePath": "lndw/heads_web.js"
+    },
+    {
+      "id": "file:lndw/hott.html",
+      "type": "file",
+      "name": "hott.html",
+      "summary": "12-slide standalone presentation introducing Homotopy Type Theory: types as spaces, paths as equality, type formers, univalence, HITs (the circle), equivalences, the n-type hierarchy, propositions-as-types vs truncated logic, inductive types and the real numbers.",
+      "tags": [
+        "hott",
+        "type-theory",
+        "univalence",
+        "presentation",
+        "visualization"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Inline canvas demos (paths, univalence, HIT, equivalences, n-types) are wired in a <script> block that monkey-patches Presentation.goTo/next/prev to init/cleanup animations per slide.",
+      "filePath": "lndw/hott.html"
+    },
+    {
+      "id": "file:lndw/index.html",
+      "type": "file",
+      "name": "index.html",
+      "summary": "Main lndw presentation deck \"Wie funktionieren Large Language Modelle (LLM)?\": ~45 slides from reality/patterns and classic-vs-AI coding through neurons, tokenization, embeddings, positional encoding, residual streams, attention, FFN, the probability tunnel, prediction (top-k/temperature), training, Chinese Room, hallucination and limits, with a sparkle canvas overlay.",
+      "tags": [
+        "llm",
+        "presentation",
+        "transformer",
+        "intuition",
+        "visualization"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Loads ~20 companion .js modules; several slides (Sonnenbahn, Klassisch vs KI, Neuron Intro, Stueckelung, Vorhersage, Iso-Tunnel) are steppable demos registered as global demo objects for presentation.js.",
+      "filePath": "lndw/index.html"
+    },
+    {
+      "id": "file:lndw/index.js",
+      "type": "file",
+      "name": "index.js",
+      "summary": "Largest lndw module: the intuition-step visualizations (TokenizerViz, PositionalEncodingViz, ResidualStreamViz, PredictionViz, NNApproxViz) plus steppable slide demos (NNStepDemo, TypewriterViz, NeuronIntroViz) and the loadIntuitionModule / loadIntuitionVizModule entry points and lazy IntersectionObserver registration.",
+      "tags": [
+        "tokenizer",
+        "positional-encoding",
+        "residual-stream",
+        "prediction",
+        "neural-network",
+        "visualization"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Object-literal singletons with render/step methods; demos expose isOnSlide/canGoNext/canGoPrev/next/prev/reset so presentation.js can drive them with arrow keys.",
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:TokenizerViz",
+      "type": "function",
+      "name": "TokenizerViz",
+      "summary": "Subword tokenization visualizer: greedy morpheme matching against a curated German/English subword list with a BPE-style fallback for unknown spans, plus whitespace/punctuation handling and a token-chip renderer.",
+      "tags": [
+        "tokenization",
+        "bpe",
+        "subword",
+        "visualization"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:PositionalEncodingViz",
+      "type": "function",
+      "name": "PositionalEncodingViz",
+      "summary": "Sinusoidal positional-encoding explorer: plots per-dimension sin/cos curves and a position-by-dimension heatmap, plus an addition demo showing the same word gets different vectors at different positions.",
+      "tags": [
+        "positional-encoding",
+        "sinusoidal",
+        "plotly",
+        "heatmap"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:ResidualStreamViz",
+      "type": "function",
+      "name": "ResidualStreamViz",
+      "summary": "Canvas visualizer of the transformer residual stream across layers: per-token vector grids with per-layer Attention and FFN contribution blocks, flow/return arrows, hover/click layer selection and per-layer plain-language role descriptions.",
+      "tags": [
+        "residual-stream",
+        "attention",
+        "ffn",
+        "transformer",
+        "canvas"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:PredictionViz",
+      "type": "function",
+      "name": "PredictionViz",
+      "summary": "Next-token prediction visualizer with a smooth tween engine: animates temperature and top-k steps, renders a sorted probability bar chart over a small vocabulary, and a top-k token strip.",
+      "tags": [
+        "prediction",
+        "softmax",
+        "temperature",
+        "top-k",
+        "plotly"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:NNApproxViz",
+      "type": "function",
+      "name": "NNApproxViz",
+      "summary": "Function-approximation demo: fits a 1-hidden-layer ReLU net (evenly spaced hinge points) to a target function via least squares on the normal equations with Gaussian elimination, then plots target vs piecewise-linear approximation with the ReLU knees marked.",
+      "tags": [
+        "neural-network",
+        "relu",
+        "approximation",
+        "least-squares"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:NNStepDemo",
+      "type": "function",
+      "name": "NNStepDemo",
+      "summary": "Arrow-key stepper for the Stueckelung slide: walks the ReLU-approximation demo through 1..20 neurons on a sine and a custom waveform, with fast-mode skipping and a final image-reveal step gated on having seen the Sonnenbahn slide.",
+      "tags": [
+        "stepper",
+        "neural-network",
+        "animation",
+        "demo"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:loadIntuitionModule",
+      "type": "function",
+      "name": "loadIntuitionModule",
+      "summary": "Module entry point that boots the intuition-step visualizations (tokenizer, positional encoding, attention, residual stream, prediction, NN approximation) and wires their input/slider event handlers, then starts the lazy observer.",
+      "tags": [
+        "initialization",
+        "module",
+        "entry-point"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:loadIntuitionVizModule",
+      "type": "function",
+      "name": "loadIntuitionVizModule",
+      "summary": "Alternate entry point wiring the intuition-step visualizations (tokenizer, positional encoding, residual stream, prediction) and the embedding editor/space renderer to their DOM controls.",
+      "tags": [
+        "initialization",
+        "module",
+        "entry-point"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "file:lndw/old/index.html",
+      "type": "file",
+      "name": "old/index.html",
+      "summary": "Legacy standalone LLM-intuition presentation (\"How LLMs Really Work - A Geometric Intuition\"): a dark-themed slide deck with Three.js orbit views and inline demos, kept as an archived version of the current index.html deck.",
+      "tags": [
+        "llm",
+        "presentation",
+        "threejs",
+        "legacy"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Self-contained: inline CSS/JS, loads Three.js/temml/marked/highlight from CDN and defines its own Presentation-style navigation.",
+      "filePath": "lndw/old/index.html"
+    },
+    {
+      "id": "file:lndw/interpolation_viz.js",
+      "type": "file",
+      "name": "interpolation_viz.js",
+      "summary": "Plotly chart distinguishing interpolation from extrapolation: known training points, a dotted true-function curve, and shaded green/red regions marking the (safer) inside range versus the (risky) outside range.",
+      "tags": [
+        "interpolation",
+        "extrapolation",
+        "plotly",
+        "generalization"
+      ],
+      "complexity": "simple",
+      "languageNotes": "One IIFE that lazily renders via IntersectionObserver on first visibility.",
+      "filePath": "lndw/interpolation_viz.js"
+    },
+    {
+      "id": "function:lndw/interpolation_viz.js:renderInterpolationViz",
+      "type": "function",
+      "name": "renderInterpolationViz",
+      "summary": "Builds and renders the interpolation-vs-extrapolation Plotly chart (traces, shaded region shapes and annotations) into the viz container.",
+      "tags": [
+        "plotly",
+        "rendering",
+        "interpolation"
+      ],
+      "filePath": "lndw/interpolation_viz.js"
+    },
+    {
+      "id": "file:lndw/intuition.js",
+      "type": "file",
+      "name": "intuition.js",
+      "summary": "3D Plotly visualizations for the forward pass: ForwardPassViz (tokens moving through embedding/layers/unembedding), Embedding3DViz (word clusters, semantic directions and king-man+woman arithmetic), Attention3DViz (per-layer attention lines and token displacement) and FFN3DViz (rare vs common facts as neuron activation and vector shift).",
+      "tags": [
+        "forward-pass",
+        "embeddings",
+        "attention",
+        "ffn",
+        "plotly3d",
+        "visualization"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Object-literal singletons with render/setStep/animateAll methods; uses a seeded LCG for deterministic point clouds; initForwardPassSlides is the DOMContentLoaded entry point.",
+      "filePath": "lndw/intuition.js"
+    },
+    {
+      "id": "function:lndw/intuition.js:ForwardPassViz",
+      "type": "function",
+      "name": "ForwardPassViz",
+      "summary": "3D Plotly stepper animating a sentence token-by-token through embedding, three transformer layers and unembedding, with movement trails and a target-word region, plus per-step plain-language explanations.",
+      "tags": [
+        "forward-pass",
+        "embeddings",
+        "plotly3d",
+        "animation"
+      ],
+      "filePath": "lndw/intuition.js"
+    },
+    {
+      "id": "function:lndw/intuition.js:Embedding3DViz",
+      "type": "function",
+      "name": "Embedding3DViz",
+      "summary": "3D word-embedding explorer: semantic cluster spheres, labeled directional axes (gender, rank, concreteness) and a step-by-step vector-arithmetic demo showing king - man + woman lands near queen.",
+      "tags": [
+        "embeddings",
+        "vector-arithmetic",
+        "plotly3d",
+        "semantics"
+      ],
+      "filePath": "lndw/intuition.js"
+    },
+    {
+      "id": "function:lndw/intuition.js:Attention3DViz",
+      "type": "function",
+      "name": "Attention3DViz",
+      "summary": "3D Plotly visualizer stepping through transformer layers, showing how tokens displace and how named attention heads (syntax, subject, semantics, context, prediction) draw colored lines between tokens as context accumulates.",
+      "tags": [
+        "attention",
+        "transformer",
+        "plotly3d",
+        "layers"
+      ],
+      "filePath": "lndw/intuition.js"
+    },
+    {
+      "id": "function:lndw/intuition.js:FFN3DViz",
+      "type": "function",
+      "name": "FFN3DViz",
+      "summary": "3D visualizer of the feed-forward network as a knowledge lookup: rare facts activate few neurons (short, local shift) while common patterns activate many (long, distributed shift), shown with detector neurons and an animated vector move.",
+      "tags": [
+        "ffn",
+        "knowledge",
+        "neurons",
+        "plotly3d"
+      ],
+      "filePath": "lndw/intuition.js"
+    },
+    {
+      "id": "file:lndw/isosurfaces.js",
+      "type": "file",
+      "name": "isosurfaces.js",
+      "summary": "Canvas demo of probability iso-surfaces (\"Truth Tunnel\"): as a story is generated token by token it draws an entropy-scaled envelope around the chosen path, small alternative branches at every token, large diverging story branches, near-impossible far words, plus a temperature/entropy HUD and step-by-step info panel.",
+      "tags": [
+        "probability",
+        "entropy",
+        "temperature",
+        "canvas",
+        "visualization"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Single IIFE (IsosurfaceDemo) with a tween engine (easeOutCubic) and a public stepper API (init/next/prev/reset/canGoNext/canGoPrev/isOnIsoSlide) for presentation.js.",
+      "filePath": "lndw/isosurfaces.js"
+    },
+    {
+      "id": "function:lndw/isosurfaces.js:IsosurfaceDemo",
+      "type": "function",
+      "name": "IsosurfaceDemo",
+      "summary": "Encapsulated demo module: owns the iso-surface scene data (prompt, generated tokens, entropy, branches, mini-splits), the tweened step state and the canvas rendering, exposing a stepper API for arrow-key navigation.",
+      "tags": [
+        "demo",
+        "canvas",
+        "iso-surfaces",
+        "stepper"
+      ],
+      "filePath": "lndw/isosurfaces.js"
+    },
+    {
+      "id": "function:lndw/heads_web.js:draw",
+      "type": "function",
+      "name": "draw",
+      "summary": "Main canvas renderer for the attention web: sizes the canvas to the container, computes chip center x-coordinates, and draws every non-diagonal attention arc for the current head, dimming arcs not touching the hovered word.",
+      "tags": [
+        "canvas",
+        "rendering",
+        "attention"
+      ],
+      "filePath": "lndw/heads_web.js"
+    },
+    {
+      "id": "function:lndw/index.js:TypewriterViz",
+      "type": "function",
+      "name": "TypewriterViz",
+      "summary": "Typewriter effect controller for the Klassisch vs. KI slide: auto-types the code panel when the slide activates and blocks navigation until typing completes.",
+      "tags": [
+        "typewriter",
+        "animation",
+        "stepper",
+        "demo"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "function:lndw/index.js:NeuronIntroViz",
+      "type": "function",
+      "name": "NeuronIntroViz",
+      "summary": "Arrow-key scene stepper for the neural-net intro slide: reveals and walks through scenes explaining dense(x)=W*x+B (weights/bias) and vectors/matrices as learnable parameters.",
+      "tags": [
+        "neural-network",
+        "stepper",
+        "animation",
+        "demo"
+      ],
+      "filePath": "lndw/index.js"
+    },
+    {
+      "id": "file:lndw/jquery.min.js",
+      "type": "file",
+      "name": "jquery.min.js",
+      "summary": "Bundled/minified jQuery v3.7.1 (MIT) providing the global $ / jQuery DOM-manipulation helpers used by some lndw demos (e.g. reset_nn_num_neurons).",
+      "tags": [
+        "jquery",
+        "vendor",
+        "library",
+        "dom"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Third-party minified UMD bundle, out of scope for symbol analysis.",
+      "filePath": "lndw/jquery.min.js"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:lndw/heads_web.js",
+      "target": "function:lndw/heads_web.js:setHead",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/heads_web.js",
+      "target": "function:lndw/heads_web.js:drawArc",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:TokenizerViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:PositionalEncodingViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:ResidualStreamViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:PredictionViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:NNApproxViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:NNStepDemo",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:loadIntuitionModule",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:loadIntuitionVizModule",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/interpolation_viz.js",
+      "target": "function:lndw/interpolation_viz.js:renderInterpolationViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/intuition.js",
+      "target": "function:lndw/intuition.js:ForwardPassViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/intuition.js",
+      "target": "function:lndw/intuition.js:Embedding3DViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/intuition.js",
+      "target": "function:lndw/intuition.js:Attention3DViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/intuition.js",
+      "target": "function:lndw/intuition.js:FFN3DViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/isosurfaces.js",
+      "target": "function:lndw/isosurfaces.js:IsosurfaceDemo",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/heads_web.js",
+      "target": "function:lndw/heads_web.js:draw",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:TypewriterViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.js",
+      "target": "function:lndw/index.js:NeuronIntroViz",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:lndw/index.html",
+      "target": "file:lndw/heads_web.js",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lndw/index.html",
+      "target": "file:lndw/index.js",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lndw/index.html",
+      "target": "file:lndw/interpolation_viz.js",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lndw/index.html",
+      "target": "file:lndw/intuition.js",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lndw/index.html",
+      "target": "file:lndw/isosurfaces.js",
+      "type": "related",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lndw/garben.html",
+      "target": "file:lndw/sheaves_presentation.js",
+      "type": "related",
+      "weight": 0.5
+    }
+  ]
+}

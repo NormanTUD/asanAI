@@ -1,0 +1,657 @@
+{
+  "nodes": [
+    {
+      "id": "file:tda_live.js",
+      "type": "file",
+      "name": "tda_live.js",
+      "summary": "TDALive — a live topological data analysis panel for the blog transformer. It runs the residual stream through the network, projects token states and weight trajectories (PCA/slice/native) to 2D/3D, computes a flow vector field with divergence-based attractor/repeller detection, streamlines and basins of attraction, persistent homology (H0/H1, Betti curves), and per-layer topology, rendering everything as a set of Plotly panels fed by an AttentionEngine onForward hook and per-epoch snapshots.",
+      "tags": ["topological-data-analysis", "transformer", "residual-stream", "persistent-homology", "plotly", "interpretability"],
+      "complexity": "complex",
+      "filePath": "tda_live.js",
+      "languageNotes": "IIFE exposing window.TDALive {beginSession,endSession,captureEpoch,isActive,reset,recompute}; renders are signature-cached (frameSig/vfSig) and throttled (requestAnimationFrame + IntersectionObserver + a 500ms auto interval) so the 3D camera is not reset while rotating during live training."
+    },
+    {
+      "id": "file:Temml-Local.css",
+      "type": "file",
+      "name": "Temml-Local.css",
+      "summary": "Local copy of the Temml (MathML) stylesheet: @font-face for the Temml.woff2 script font plus presentation rules that make native MathML render correctly — math font stack, menclose/cancel/vec/polyline accents, browser-specific italic corrections, array cell padding, and CSS-counter-based AMS equation numbering.",
+      "tags": ["mathml", "math-font", "css", "typography", "vendor"],
+      "complexity": "moderate",
+      "filePath": "Temml-Local.css",
+      "languageNotes": "Vendored Temml asset (not authored); uses @supports and @-moz-document url-prefix() to branch Chromium/WebKit/Firefox rendering quirks and clip-path/SVG-mask tricks for \\cancel, \\vec, and long division."
+    },
+    {
+      "id": "file:Temml-Local.min.css",
+      "type": "file",
+      "name": "Temml-Local.min.css",
+      "summary": "Minified build (clean-css v5.3.3, from temml@0.13.1 on jsDelivr) of Temml-Local.css providing the same MathML presentation rules in a single minified line.",
+      "tags": ["mathml", "math-font", "css", "minified", "vendor"],
+      "complexity": "simple",
+      "filePath": "Temml-Local.min.css"
+    },
+    {
+      "id": "file:temperaturelab.js",
+      "type": "file",
+      "name": "temperaturelab.js",
+      "summary": "Interactive demos for the temperature/sampling lesson (German-language UI): a temperature-slider softmax over fixed logits with a live bar chart, a cumulative-probability word sampler, a sinusoidal positional-encoding heatmap, and a toy RLHF reward/penalty feedback widget.",
+      "tags": ["softmax", "temperature", "sampling", "positional-encoding", "rlhf", "visualization"],
+      "complexity": "simple",
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "file:toc.js",
+      "type": "file",
+      "name": "toc.js",
+      "summary": "Builds a minimalist, self-contained table of contents for lesson pages: it walks the headings in #contents, assigns deduplicated slugs, computes per-section reading times from word counts, renders a collapsible tree with a search filter and expand/collapse-all toolbar, and persists expansion state to localStorage per page.",
+      "tags": ["table-of-contents", "navigation", "reading-time", "dom", "local-storage"],
+      "complexity": "moderate",
+      "filePath": "toc.js",
+      "languageNotes": "Uses a flat element index + Range to slice each heading's section text in O(N) rather than a tree-walk per heading, and renders MathJax on a detached clone to strip LaTeX source and citation-SVG metadata before reading the TOC title."
+    },
+    {
+      "id": "document:todo_coherent_world_models.md",
+      "type": "document",
+      "name": "todo_coherent_world_models.md",
+      "summary": "A detailed consistency audit comparing the 'coherent world models' PHP lesson against its 19-file Coq formalisation: file-by-file gap analysis (licences hard-coded True, the Convention T object-vs-meta-level error, incomplete sheaf condition, the inconsistent identification_forbidden axiom) and a final verdict that the Coq files are structurally faithful but substantively thin.",
+      "tags": ["formal-verification", "coq", "audit", "tarski", "sheaves", "todo"],
+      "filePath": "todo_coherent_world_models.md"
+    },
+    {
+      "id": "file:todo_new.txt",
+      "type": "file",
+      "name": "todo_new.txt",
+      "summary": "Short German authoring note flagging 1202 / Fibonacci's introduction of Hindu-Arabic numerals and the zero as a historically pivotal, under-covered point to weave into the book's Stone-Age opening.",
+      "tags": ["todo", "authoring-note", "history", "mathematics"],
+      "filePath": "todo_new.txt"
+    },
+    {
+      "id": "file:todo.txt",
+      "type": "file",
+      "name": "todo.txt",
+      "summary": "A scratch list of research and inspiration links for the book — arXiv papers (lottery ticket hypothesis, inductive backdoors, Llull), D2L attention visualization, Seeing Theory, Complexity Explorables, ciechanowski, redblobgames, karpathy's convnetjs, and other references to mine for lessons and visualizations.",
+      "tags": ["todo", "references", "links", "authoring"],
+      "filePath": "todo.txt"
+    },
+    {
+      "id": "file:topics.js",
+      "type": "file",
+      "name": "topics.js",
+      "summary": "The blog's personalization engine (window.BlogTopics): a 🎯 interest picker with ~27 topics, tone 'categories' (suppress/include filters), a 0-100 math-comfort slider, audience presets (profile x level), classic reader personas, and per-lesson 'learned'/dependency tracking. It preprocesses [[t:...]] markdown into toggleable topic blocks, scores each unit (full/partial/off) against the reader's dials, and tucks/dims/reveals in-lesson sections and home-page course tiles with animated height transitions.",
+      "tags": ["personalization", "adaptive-learning", "topic-filtering", "math-level", "preferences", "course-shell"],
+      "complexity": "complex",
+      "filePath": "topics.js",
+      "languageNotes": "Single IIFE; preference state lives in a cookie (topics_pref, size-guarded to ~4KB) mirrored to localStorage (blog_topics_pref), with an in-memory undo/redo history, a marked.js block extension for [[t:...]] markers, and a 'depsMet' bypass that auto-reveals math-gated blocks once all prerequisites are marked learned."
+    },
+    {
+      "id": "file:transformer_layer_summary.js",
+      "type": "file",
+      "name": "transformer_layer_summary.js",
+      "summary": "A self-booting panel that measures the blog transformer's live weights and explains, purely by the math, what each layer is doing: per-head attention entropy/focus, stable rank of the query-key and value-output blocks, dead FFN units, head similarity, and how hard each layer writes into the residual stream — rendered as per-layer cards (plain-language descriptions, expandable number tables, and a training sparkline), inserting itself next to the TDA-live section and refreshing every 1.2s during training.",
+      "tags": ["transformer", "interpretability", "attention", "stable-rank", "residual-stream", "visualization"],
+      "complexity": "complex",
+      "filePath": "transformer_layer_summary.js",
+      "languageNotes": "IIFE exposing window.TransformerLayerSummary {refresh,current}; reads globals (forwardOneLayer, embedTokensWithPE, currentWeights, lossHistory) and runs its own tiny linear algebra (mul, transpose, power-iteration sigmaMax, stable rank) on the probe-token activations."
+    },
+    {
+      "id": "file:typography_fix.js",
+      "type": "file",
+      "name": "typography_fix.js",
+      "summary": "Butterick-style silent typographic autocorrect for the blog: converts straight quotes, hyphen/dash runs, and '...' ellipses inside .md text nodes, then lints for what it missed. Exposed as window.TypographyFix {version, fixTypography, lint}.",
+      "tags": ["typography", "smart-quotes", "dashes", "ellipsis", "dom", "mutation-observer"],
+      "complexity": "moderate",
+      "filePath": "typography_fix.js",
+      "languageNotes": "Walks only safe text nodes via a TreeWalker (skipping code/pre/math/.no-typo-fix), runs once on DOMContentLoaded + the blogPostLoadComplete event, and a debounced MutationObserver catches late inserts from Toc/MathJax/lab modules."
+    },
+    {
+      "id": "file:vis_ideas.txt",
+      "type": "file",
+      "name": "vis_ideas.txt",
+      "summary": "German brainstorm of advanced embedding-space visualization concepts for the book: manifold intersections/knots, frequency-dependent Voronoi 'ghost' boundaries, Riemannian curvature vector fields, hubness gravitation centers, manifold phase-transition kinks, low-rank subspaces, antipodal opposite-pairs, attractor networks, semantic density clouds, and linear relational embeddings.",
+      "tags": ["visualization", "ideas", "embedding-space", "topology", "brainstorm"],
+      "filePath": "vis_ideas.txt"
+    },
+    {
+      "id": "file:wordpress_code.html",
+      "type": "file",
+      "name": "wordpress_code.html",
+      "summary": "A WordPress embed snippet that hosts the asanAI blog inside an auto-resizing iframe pointing at /asanai_blog_proxy.php, with a window 'message' listener that grows the iframe height in response to height postMessages from the page.",
+      "tags": ["wordpress", "embed", "iframe", "proxy", "snippet"],
+      "complexity": "simple",
+      "filePath": "wordpress_code.html"
+    },
+    {
+      "id": "function:tda_live.js:pcaRows",
+      "type": "function",
+      "name": "pcaRows",
+      "summary": "Projects the analysis point cloud to 2D/3D via PCA, using covariance power iteration with deflation; switches to the covariance matrix for narrow data and the Gram (dual) trick for wide data, returning projected coords, the basis, the mean, and explained-variance fractions.",
+      "tags": ["pca", "linear-algebra", "projection", "dual-trick"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:makeProjector",
+      "type": "function",
+      "name": "makeProjector",
+      "summary": "Builds a model-space-to-display-space projection object (and its inverse) for the chosen method — slice / native / PCA / auto, exposing toDisp/toModel/projectors so flow and states can be drawn and lifted back, with PCA fit, center, and explained variance attached.",
+      "tags": ["projection", "pca", "coordinate-frame"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeH0Persistence",
+      "type": "function",
+      "name": "computeH0Persistence",
+      "summary": "Computes 0-dimensional persistent homology over a distance matrix by Kruskal-style union-find edge insertion, returning the birth/death (persistence) of each connected-component merge plus the eternal component.",
+      "tags": ["persistent-homology", "h0", "union-find", "topology"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeH1Persistence",
+      "type": "function",
+      "name": "computeH1Persistence",
+      "summary": "Computes 1-dimensional persistent homology by detecting 2-cycles (edges that close a bounded loop) via BFS path-length on the growing adjacency, capping the edge set and returning the top-40 most persistent loops.",
+      "tags": ["persistent-homology", "h1", "cycles", "topology"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeBettiCurve",
+      "type": "function",
+      "name": "computeBettiCurve",
+      "summary": "Turns a persistence list into a Betti curve: for a sweep of scale epsilon, counts the number of features of the given dimension alive at that scale, producing the (epsilon, betti) points for the Betti-epsilon plot.",
+      "tags": ["betti-numbers", "persistent-homology", "topology"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeVectorField",
+      "type": "function",
+      "name": "computeVectorField",
+      "summary": "Evaluates the residual-stream flow on a 2D/3D grid in a shared display frame, computing the divergence via central differences and then detecting attractors (negative divergence) and repellers (positive divergence) on that field.",
+      "tags": ["vector-field", "divergence", "flow", "phase-diagram"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:detectExtrema",
+      "type": "function",
+      "name": "detectExtrema",
+      "summary": "Selects the strongest divergence minima (sinks/attractors) or maxima (sources/repellers) on the grid with a small minimum separation, returning up to a handful of labelled extrema centers.",
+      "tags": ["attractors", "repellers", "divergence", "extrema"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:integrateStreamlines",
+      "type": "function",
+      "name": "integrateStreamlines",
+      "summary": "Integrates seed points along the flow field with a scaled step, recording the trail of each state until it converges to an attractor or leaves the bounds, producing the streamline traces drawn in the phase plot.",
+      "tags": ["streamlines", "flow", "integration"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeBasins",
+      "type": "function",
+      "name": "computeBasins",
+      "summary": "For a 2D field, integrates a few flow steps from each grid cell and assigns the cell to the nearest attractor, producing a basin-of-attraction index grid (heatmap) with usage counts.",
+      "tags": ["basins-of-attraction", "flow", "basins", "attractors"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:buildResidualStream",
+      "type": "function",
+      "name": "buildResidualStream",
+      "summary": "Forward-passes the probe tokens through every transformer layer via embedTokensWithPE + forwardOneLayer, collecting the hidden state after each layer into the residual-stream tensor that the rest of the analysis reads.",
+      "tags": ["residual-stream", "forward-pass", "transformer"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeWeightDeltas",
+      "type": "function",
+      "name": "computeWeightDeltas",
+      "summary": "Computes, per layer, the Frobenius/euclidean norm of the change (W - W_prev) in each weight matrix and bias (query/key/value/output, gamma, beta, W1/b1, W2/b2) plus a per-layer total norm, used for the learning-field heatmap and the ΔW trajectory.",
+      "tags": ["weight-deltas", "training-dynamics", "norms"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeFrame",
+      "type": "function",
+      "name": "computeFrame",
+      "summary": "Assembles the full analysis frame for the current mode: builds the point cloud and projector, computes topology, the cached vector field (+ streamlines/basins), the per-layer emergence sweep, and per-layer topology, returning one structured object the renderers consume.",
+      "tags": ["analysis", "frame", "orchestration", "caching"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:computeLayerSweep",
+      "type": "function",
+      "name": "computeLayerSweep",
+      "summary": "Runs a coarse flow field on every residual layer in a shared frame, measures each attractor/repeller's 'ownership' (how many token states it captures) and drift, then matches centers across consecutive layers into tracks that show where each feature is born and how it evolves.",
+      "tags": ["layer-sweep", "attractors", "tracking", "emergence"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:renderPhase",
+      "type": "function",
+      "name": "renderPhase",
+      "summary": "Renders the main phase-space plot: routes to the residual-stream or weight-space view, composes the basins heatmap, divergence contour, 2D arrows / 3D cones, streamlines, attractor/repeller markers, the token point cloud, layer/epoch trails, and attention-flow segments, then Plotly.react's it.",
+      "tags": ["rendering", "plotly", "phase-diagram", "phase-space"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:captureEpoch",
+      "type": "function",
+      "name": "captureEpoch",
+      "summary": "Public entry point transformer.js calls each training epoch: builds a snapshot from the snapshot payload (residual stream, weight deltas, attention), appends it to the epoch history (bounded), and triggers a queued render when auto mode is on.",
+      "tags": ["entry-point", "public-api", "training-dynamics", "snapshot"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:tda_live.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Bootstraps the TDA-live panel: subscribes to the AttentionEngine onForward hook for attention-flow data, populates the layer selector, syncs config, wires all controls, and handles the <details> open/toggle that unlocks live capture.",
+      "tags": ["bootstrap", "initialization", "hooks", "public-api"],
+      "filePath": "tda_live.js"
+    },
+    {
+      "id": "function:temperaturelab.js:updateSamplingChart",
+      "type": "function",
+      "name": "updateSamplingChart",
+      "summary": "Recomputes the temperature-softmax probabilities over the fixed logits (exp(logit/temp) normalized) and redraws the probability bar chart, returning the words and probs for the sampler.",
+      "tags": ["softmax", "temperature", "plotly", "sampling"],
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "function:temperaturelab.js:sampleWord",
+      "type": "function",
+      "name": "sampleWord",
+      "summary": "Draws a random value and walks the cumulative probability distribution to pick a word, writing the chosen word and the random value into the output element.",
+      "tags": ["sampling", "random", "softmax"],
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "function:temperaturelab.js:drawPositionalEncoding",
+      "type": "function",
+      "name": "drawPositionalEncoding",
+      "summary": "Builds the sinusoidal positional-encoding matrix (sin/cos over positions and embedding dims) and renders it as a Viridis Plotly heatmap of the pattern.",
+      "tags": ["positional-encoding", "sinusoidal", "plotly", "heatmap"],
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "function:temperaturelab.js:giveFeedback",
+      "type": "function",
+      "name": "giveFeedback",
+      "summary": "Toy RLHF feedback widget: given positive/negative feedback it shows a +1.0 reward or -1.0 penalty message and gives the AI response box a brief scale 'learning' animation.",
+      "tags": ["rlhf", "feedback", "reward", "ui"],
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "function:temperaturelab.js:loadTemperatureModule",
+      "type": "function",
+      "name": "loadTemperatureModule",
+      "summary": "Module entry point: sets the loading status, performs the initial chart render, draws the positional-encoding heatmap, wires the temperature slider, and resolves so it fits the lesson module queue.",
+      "tags": ["entry-point", "module", "bootstrap"],
+      "filePath": "temperaturelab.js"
+    },
+    {
+      "id": "function:toc.js:toc",
+      "type": "function",
+      "name": "toc",
+      "summary": "Main builder: collects the lesson's headings, assigns dedup slugs, computes section reading times, renders the collapsible TOC tree + toolbar (search, expand/collapse all) and footer, restores persisted expansion, and enables transitions after first paint.",
+      "tags": ["table-of-contents", "builder", "dom", "reading-time"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:slugify",
+      "type": "function",
+      "name": "slugify",
+      "summary": "Converts a heading's title text into a URL-safe slug (Unicode-aware, whitespace→dash), appending a counter to guarantee uniqueness against the usedIds set so anchor links never collide.",
+      "tags": ["slug", "anchor", "deduplication"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:getHeaderTitle",
+      "type": "function",
+      "name": "getHeaderTitle",
+      "summary": "Extracts a heading's clean display title by cloning it, stripping math annotations/anchor links/svg/img, and rendering any inline LaTeX on the detached clone so the raw $...$ source and citation MIME metadata don't leak into the TOC.",
+      "tags": ["heading", "latex", "text-extraction"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:getSectionText",
+      "type": "function",
+      "name": "getSectionText",
+      "summary": "Returns all the text between a heading and the next heading of the same-or-higher level using a document Range bounded by a precomputed flat element index, used to measure a section's reading time.",
+      "tags": ["section", "range", "reading-time"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:countWords",
+      "type": "function",
+      "name": "countWords",
+      "summary": "Counts word tokens in a string with a Unicode-aware regex (matching letter runs), ignoring pure numbers/punctuation, to feed the reading-time estimate.",
+      "tags": ["word-count", "text-analysis"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:formatReadingTime",
+      "type": "function",
+      "name": "formatReadingTime",
+      "summary": "Converts a word count into a human reading-time label (~220 wpm), bucketing to '< 1 min' / '1 min' / rounded minutes.",
+      "tags": ["reading-time", "formatting"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:applyFilter",
+      "type": "function",
+      "name": "applyFilter",
+      "summary": "Filters the TOC to entries whose link text matches the query, marks matched items and their ancestors, and hides everything else (clearing the filter restores the full tree).",
+      "tags": ["filter", "search", "table-of-contents"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:toc.js:setAllExpanded",
+      "type": "function",
+      "name": "setAllExpanded",
+      "summary": "Expands or collapses every collapsible TOC branch at once (updating the chevron glyphs) and saves the resulting state to localStorage.",
+      "tags": ["expand-collapse", "table-of-contents", "state"],
+      "filePath": "toc.js"
+    },
+    {
+      "id": "function:topics.js:preprocess",
+      "type": "function",
+      "name": "preprocess",
+      "summary": "Registers a marked.js block extension that recognizes [[t:id,...]]...[[/t]] markers and renders the inner (recursively preprocessed) markdown as a <div class=\"topic-block\" data-topic=\"...\"> that the visibility engine later tucks or reveals.",
+      "tags": ["markdown", "marked-extension", "topic-block", "preprocessing"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:applyVisibility",
+      "type": "function",
+      "name": "applyVisibility",
+      "summary": "The core visibility pass: scores every managed block/tile (data-topic/data-tags/data-mathlevel) via scoreUnit, reconciles each to full/partial/off (tuck, dim, or plain-language math alt), regroups tucked home-page tiles, dims non-index course tiles, and re-renders inline widgets — with an optional ~220ms height animation.",
+      "tags": ["visibility", "scoring", "topic-block", "tuck", "adaptive"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:scoreUnit",
+      "type": "function",
+      "name": "scoreUnit",
+      "summary": "Given a unit's tag ids and optional math requirement, decides its display state (full/partial/off) and the single binding reason (category/interests/layman/math), applying the layman lens, graded interest match, and the math-comfort gate (bypassed when all lesson prerequisites are learned).",
+      "tags": ["scoring", "adaptive", "math-level", "set-theory"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:applyMathAlts",
+      "type": "function",
+      "name": "applyMathAlts",
+      "summary": "Swaps heavy LaTeX equations for their plain-language .math-alt twins whenever a listed 'suppress' tone category is switched off, so readers who muted math-heavy content get the simple version without losing the original.",
+      "tags": ["math-alternatives", "accessibility", "tone-filter"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:showLearnedUI",
+      "type": "function",
+      "name": "showLearnedUI",
+      "summary": "Builds the per-lesson learned/progress UI: a status pill at the top showing 'Lesson N of M' with a progress bar and 'Next up' link, the spine 'Builds on' prerequisite chips (each one-tap-markable as learned) and 'unlocks' list, plus the bottom 'Mark this lesson as learned' button pinned to the end of the content.",
+      "tags": ["learned-state", "progress", "prerequisites", "course-shell"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:toggleLearned",
+      "type": "function",
+      "name": "toggleLearned",
+      "summary": "Toggles a lesson's learned flag in the persisted preference (pushing an undo step) and re-persists, which re-reveals math-gated blocks whose prerequisites are now all learned.",
+      "tags": ["learned-state", "state", "persistence"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:getLessonId",
+      "type": "function",
+      "name": "getLessonId",
+      "summary": "Resolves the current lesson's id from a [data-lesson-id] element, falling back to the URL slug, so learned/dependency tracking and the progress pill target the right lesson.",
+      "tags": ["lesson-id", "url-slug", "lookup"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:applyAudience",
+      "type": "function",
+      "name": "applyAudience",
+      "summary": "Applies a curated (profile, level) audience preset by enabling exactly the topics in that 4x4 matrix cell and remembering the selection (preserving the reader's tone-category dials, which are a separate axis).",
+      "tags": ["audience", "presets", "profile", "level"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:applyPersona",
+      "type": "function",
+      "name": "applyPersona",
+      "summary": "Loads a classic reader-type persona's curated topic set in one click (or enables everything for the Polymath), leaving the audience profile/level untouched, and flashes a confirmation hint.",
+      "tags": ["persona", "presets", "one-click"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:applyCorePersona",
+      "type": "function",
+      "name": "applyCorePersona",
+      "summary": "Toggles a core persona (Curious/Scientist/Thinker/Polymath) on or off; personas are combinable as a union of their topics, Polymath is exclusive, and toggling one off disables any topics no longer covered by the remaining active personas.",
+      "tags": ["persona", "core-personas", "state"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:renderInlineWidget",
+      "type": "function",
+      "name": "renderInlineWidget",
+      "summary": "Renders the in-page topics widget for [data-topics-inline] hosts in three flavours (simple persona cards, detailed grid, or the classic full grid), wiring persona/personal toggles, tone chips, the math-comfort slider, and the 'open interest picker' link with an animated swap on expand/collapse.",
+      "tags": ["inline-widget", "personas", "math-slider", "rendering"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:regroupTuckedTiles",
+      "type": "function",
+      "name": "regroupTuckedTiles",
+      "summary": "On the index page, moves every 'off'-scored course tile into a per-part, tap-to-expand 'Not shown' box grouped by the reason it was tucked (math comfort / interests / tone), so nothing is deleted — it just recedes into an openable summary.",
+      "tags": ["course-tiles", "index-page", "grouping", "tuck"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:openOverlay",
+      "type": "function",
+      "name": "openOverlay",
+      "summary": "Opens the full interest-picker overlay (ensuring it exists), re-renders the topic grid, tone chips, audience selection and undo/redo buttons, locks body scroll, and focuses the first control.",
+      "tags": ["overlay", "picker", "modal", "ui"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:setMathLevel",
+      "type": "function",
+      "name": "setMathLevel",
+      "summary": "Sets the reader's 0-100 math-comfort value (clamped), persisting it and pushing an undo step unless a slider drag batches multiple updates into a single history entry.",
+      "tags": ["math-level", "state", "persistence"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:topics.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Module bootstrap: ensures the 🎯 toggle button and overlay exist, renders the grid, applies visibility (deferring markdown tucking until after renderMarkdown), renders inline widgets, and shows the learned/progress UI.",
+      "tags": ["bootstrap", "initialization", "entry-point"],
+      "filePath": "topics.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:compute",
+      "type": "function",
+      "name": "compute",
+      "summary": "Core measurement: probes the live weights with a short token window, runs each layer through forwardOneLayer, and per layer computes per-head attention entropy/focus, stable rank of the Q·Kᵀ and V·O blocks, head similarity, dead FFN units, and the residual-stream write magnitudes/cosines, returning a structured report (or null until weights exist).",
+      "tags": ["measurement", "transformer", "attention", "stable-rank"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:stableRank",
+      "type": "function",
+      "name": "stableRank",
+      "summary": "Computes the stable rank of a matrix as ‖M‖_F² / σ_max(M)² (Frobenius norm squared over the largest singular value, via power iteration), used to report how 'deep' a query-key or value-output circuit is.",
+      "tags": ["stable-rank", "linear-algebra", "singular-values"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:attnEntropy",
+      "type": "function",
+      "name": "attnEntropy",
+      "summary": "Computes the mean Shannon entropy (in bits) of a head's causal attention rows, which the concentration metric compares against the causal maximum to gauge how focused each head is.",
+      "tags": ["entropy", "attention", "information-theory"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:headSimilarity",
+      "type": "function",
+      "name": "headSimilarity",
+      "summary": "Measures how alike a layer's attention heads are: the mean pairwise Frobenius distance between head weight matrices normalized by the mean head size, where a low value means the heads are near-copies.",
+      "tags": ["head-similarity", "attention", "redundancy"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:describeAttention",
+      "type": "function",
+      "name": "describeAttention",
+      "summary": "Turns a layer's measured attention metrics into plain-language prose — how sharply focused the heads are, whether heads are near-copies, and what the query-key / value-output effective ranks imply (retrieval vs. multi-directional writes).",
+      "tags": ["explanation", "attention", "prose"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:describeStream",
+      "type": "function",
+      "name": "describeStream",
+      "summary": "Writes the plain-language residual-stream description for a layer: how much of ‖x‖ attention vs. FFN writes, whether the two writes reinforce a shared direction, and whether the layer barely rotates the stream (near-skip).",
+      "tags": ["residual-stream", "explanation", "prose"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:render",
+      "type": "function",
+      "name": "render",
+      "summary": "Renders the latest measurement into the per-layer cards (preserving which <details> the reader had open), updates the status line, and draws the training sparkline of mean attention-focus and dead-FFN across epochs.",
+      "tags": ["rendering", "dom", "sparkline"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:transformer_layer_summary.js:start",
+      "type": "function",
+      "name": "start",
+      "summary": "Module entry point: builds the panel chrome (with the bare-equations explainer) and boots the 1.2s measurement tick on DOMContentLoaded (or immediately if already loaded).",
+      "tags": ["bootstrap", "entry-point", "tick"],
+      "filePath": "transformer_layer_summary.js"
+    },
+    {
+      "id": "function:typography_fix.js:safeTextNodes",
+      "type": "function",
+      "name": "safeTextNodes",
+      "summary": "Collects the editable text nodes inside a subtree using a TreeWalker, prefiltering to nodes that actually contain fixable characters and rejecting any node whose ancestor is a skipped tag (code/pre/math/etc.), matches a no-typo-fix class, or is contenteditable.",
+      "tags": ["text-nodes", "tree-walker", "scoping"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:smartQuotes",
+      "type": "function",
+      "name": "smartQuotes",
+      "summary": "Converts straight ' and \" in the safe text nodes into curly ‘ ’ “ ” using open/close heuristics (word boundary, apostrophe vs. single quote), returning the number of nodes changed.",
+      "tags": ["smart-quotes", "typography", "autocorrect"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:smartDashes",
+      "type": "function",
+      "name": "smartDashes",
+      "summary": "Converts hyphen runs in the safe text nodes into en-dashes (numeric ranges like 1--3) and em-dashes (whitespace-flanked -- and ---), operating on the whole node so GFM table separator rows are left intact.",
+      "tags": ["dashes", "en-dash", "em-dash", "typography"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:smartEllipsis",
+      "type": "function",
+      "name": "smartEllipsis",
+      "summary": "Replaces an exactly-three-dot run (not part of a longer dot run) with a proper … ellipsis character in the safe text nodes.",
+      "tags": ["ellipsis", "typography", "autocorrect"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:fixTypography",
+      "type": "function",
+      "name": "fixTypography",
+      "summary": "Public API that runs all three autocorrect passes (quotes, dashes, ellipsis) over a root's safe text nodes in a single walk, returning per-category fix counts and the elapsed time.",
+      "tags": ["public-api", "autocorrect", "typography"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:lint",
+      "type": "function",
+      "name": "lint",
+      "summary": "Public API that walks the safe text nodes and counts leftover straight quotes / ASCII dashes-in-dash-context / three-dots the autocorrect missed, writing the totals to data-typo-* attributes on <html> and (in debug) to the console.",
+      "tags": ["linter", "typography", "qa"],
+      "filePath": "typography_fix.js"
+    },
+    {
+      "id": "function:typography_fix.js:boot",
+      "type": "function",
+      "name": "boot",
+      "summary": "One-time bootstrap: runs the first pass after a microtask, re-runs on the blogPostLoadComplete event, starts a debounced MutationObserver on late .md inserts, and exposes window.TypographyFix.",
+      "tags": ["bootstrap", "mutation-observer", "public-api"],
+      "filePath": "typography_fix.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:pcaRows", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:makeProjector", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeH0Persistence", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeH1Persistence", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeBettiCurve", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeVectorField", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:detectExtrema", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:integrateStreamlines", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeBasins", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:buildResidualStream", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeWeightDeltas", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeFrame", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:computeLayerSweep", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:renderPhase", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:captureEpoch", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "function:tda_live.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:temperaturelab.js", "target": "function:temperaturelab.js:updateSamplingChart", "type": "contains", "weight": 1.0 },
+    { "source": "file:temperaturelab.js", "target": "function:temperaturelab.js:sampleWord", "type": "contains", "weight": 1.0 },
+    { "source": "file:temperaturelab.js", "target": "function:temperaturelab.js:drawPositionalEncoding", "type": "contains", "weight": 1.0 },
+    { "source": "file:temperaturelab.js", "target": "function:temperaturelab.js:giveFeedback", "type": "contains", "weight": 1.0 },
+    { "source": "file:temperaturelab.js", "target": "function:temperaturelab.js:loadTemperatureModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:toc", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:slugify", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:getHeaderTitle", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:getSectionText", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:countWords", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:formatReadingTime", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:applyFilter", "type": "contains", "weight": 1.0 },
+    { "source": "file:toc.js", "target": "function:toc.js:setAllExpanded", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:preprocess", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:applyVisibility", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:scoreUnit", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:applyMathAlts", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:showLearnedUI", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:toggleLearned", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:getLessonId", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:applyAudience", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:applyPersona", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:applyCorePersona", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:renderInlineWidget", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:regroupTuckedTiles", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:openOverlay", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:setMathLevel", "type": "contains", "weight": 1.0 },
+    { "source": "file:topics.js", "target": "function:topics.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:compute", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:stableRank", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:attnEntropy", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:headSimilarity", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:describeAttention", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:describeStream", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:render", "type": "contains", "weight": 1.0 },
+    { "source": "file:transformer_layer_summary.js", "target": "function:transformer_layer_summary.js:start", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:safeTextNodes", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:smartQuotes", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:smartDashes", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:smartEllipsis", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:fixTypography", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:lint", "type": "contains", "weight": 1.0 },
+    { "source": "file:typography_fix.js", "target": "function:typography_fix.js:boot", "type": "contains", "weight": 1.0 },
+    { "source": "file:tda_live.js", "target": "file:transformer_layer_summary.js", "type": "related", "weight": 0.5 }
+  ]
+}

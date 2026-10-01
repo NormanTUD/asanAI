@@ -1,0 +1,438 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/_lg_probe.html",
+      "type": "file",
+      "name": "_lg_probe.html",
+      "summary": "Manual probe page that loads layout_guardrail.js over a synthetic 800px element and logs its measured width, exemption matches, and the direct __layoutGuardrailCheck() result.",
+      "tags": ["layout", "guardrail", "debug", "overflow"],
+      "complexity": "simple",
+      "filePath": "tests/_lg_probe.html"
+    },
+    {
+      "id": "file:tests/hover_layout_guard.html",
+      "type": "file",
+      "name": "hover_layout_guard.html",
+      "summary": "Self-verifying headless regression test that runs the real render pipeline (start/polish/typography_fix/helper) and asserts that hovering glossary terms in the drop-cap paragraph causes zero layout movement (rects, line boxes, --cl-dc-* vars, ancestor inline styles).",
+      "tags": ["regression-test", "layout", "drop-cap", "hover", "headless"],
+      "complexity": "complex",
+      "filePath": "tests/hover_layout_guard.html",
+      "languageNotes": "Reports its verdict exactly once into <title> (HOVER_LAYOUT_GUARD PASS/FAIL) so the shell runner can grep the dump-dom output; geometry fingerprints are diffed before/during/after each hover cycle."
+    },
+    {
+      "id": "file:tests/hover_layout_guard.sh",
+      "type": "file",
+      "name": "hover_layout_guard.sh",
+      "summary": "Headless Chromium runner for hover_layout_guard.html; dumps the DOM with a virtual-time budget and greps the <title> for the PASS/FAIL verdict, skipping gracefully when chromium or the site is unavailable.",
+      "tags": ["test-runner", "headless-chromium", "shell", "regression-test"],
+      "complexity": "simple",
+      "filePath": "tests/hover_layout_guard.sh"
+    },
+    {
+      "id": "file:tests/js_validator.py",
+      "type": "file",
+      "name": "js_validator.py",
+      "summary": "Static JS linter for the blog: a hand-rolled tokenizer plus a battery of regex checks (bracket balance, unclosed strings/comments, debugger, duplicate declarations, DOM API typos, implied globals) with rich-formatted error/warning/info severity reporting.",
+      "tags": ["linter", "static-analysis", "javascript", "ci", "uv-script"],
+      "complexity": "complex",
+      "filePath": "tests/js_validator.py",
+      "languageNotes": "PEP 723 inline dependencies; self-restarts under `uv run` with UV_EXCLUDE_NEWER pinned; tokenizer is string/template/comment/regex-aware so checkers see only real code."
+    },
+    {
+      "id": "function:tests/js_validator.py:tokenize_js",
+      "type": "function",
+      "name": "tokenize_js",
+      "summary": "Character-by-character JS tokenizer yielding (type, value, line) for code, strings, template literals, comments, and regex literals; the foundation that keeps every other checker from false-positiving inside literals.",
+      "tags": ["tokenizer", "static-analysis", "javascript"],
+      "filePath": "tests/js_validator.py"
+    },
+    {
+      "id": "function:tests/js_validator.py:check_bracket_balance",
+      "type": "function",
+      "name": "check_bracket_balance",
+      "summary": "Stack-based check for mismatched, unexpected, and unclosed (), {}, [] pairs over the code-only output of the tokenizer.",
+      "tags": ["static-analysis", "brackets", "error-detection"],
+      "filePath": "tests/js_validator.py"
+    },
+    {
+      "id": "function:tests/js_validator.py:check_common_mistakes",
+      "type": "function",
+      "name": "check_common_mistakes",
+      "summary": "Pattern table of ~60 common JavaScript typos and case errors (getElementByID, innerHtml, JSON.Stringify, docuemnt, setTimout, …) flagged line by line.",
+      "tags": ["typo-detection", "static-analysis", "dom-api"],
+      "filePath": "tests/js_validator.py"
+    },
+    {
+      "id": "function:tests/js_validator.py:check_implied_globals",
+      "type": "function",
+      "name": "check_implied_globals",
+      "summary": "Heuristic that collects declared variables (var/let/const, parameters, destructuring, loops) and known browser/Node globals to detect accidental assignments to undeclared globals.",
+      "tags": ["static-analysis", "globals", "heuristic"],
+      "filePath": "tests/js_validator.py"
+    },
+    {
+      "id": "function:tests/js_validator.py:main",
+      "type": "function",
+      "name": "main",
+      "summary": "CLI entry point: resolves mixed file/folder/glob inputs, runs all checkers with a progress bar, renders per-file issue trees and a summary table, and exits 1 only on critical errors.",
+      "tags": ["cli", "orchestration", "reporting"],
+      "filePath": "tests/js_validator.py"
+    },
+    {
+      "id": "file:tests/keypoint_test.js",
+      "type": "file",
+      "name": "keypoint_test.js",
+      "summary": "Node smoke test for keypoint.js that builds .md > blockquote trees on a small DOM stub and verifies classifyBlockquote/upgradeBlockquote/upgradeBlockquotes promote short statements and attributed quotes into .kp-block cards while skipping long, complex, formal, or already-tagged ones.",
+      "tags": ["unit-test", "node", "blockquote", "keypoints", "dom-stub"],
+      "complexity": "moderate",
+      "filePath": "tests/keypoint_test.js",
+      "languageNotes": "The DOM stub makes firstChild a read-only getter to mirror real DOM semantics, which keypoint.js relies on."
+    },
+    {
+      "id": "file:tests/latex_error_checker.py",
+      "type": "file",
+      "name": "latex_error_checker.py",
+      "summary": "Playwright-based scanner that starts a PHP built-in server, opens every lesson in headless Chromium, and fails on console errors, JS exceptions, network failures, and KaTeX/Temml/MathJax parse errors in the rendered DOM, plus a source-level phase flagging risky LaTeX patterns.",
+      "tags": ["ci", "playwright", "latex", "rendering", "regression-test"],
+      "complexity": "complex",
+      "filePath": "tests/latex_error_checker.py",
+      "languageNotes": "Auto-installs Playwright Chromium, supports parallel page scanning via a pool of browser contexts, and can save per-page Playwright traces for failed pages."
+    },
+    {
+      "id": "function:tests/latex_error_checker.py:scan_page_with_browser",
+      "type": "function",
+      "name": "scan_page_with_browser",
+      "summary": "Navigates one page, waits for math rendering to settle, and captures console errors/warnings, uncaught exceptions, failed requests, .katex-error/.temml-error/.mjx-error DOM elements, and regex-detected LaTeX leaks.",
+      "tags": ["playwright", "rendering", "error-capture"],
+      "filePath": "tests/latex_error_checker.py"
+    },
+    {
+      "id": "function:tests/latex_error_checker.py:scan_html_for_latex_errors",
+      "type": "function",
+      "name": "scan_html_for_latex_errors",
+      "summary": "Runs a set of KaTeX/Temml/MathJax ParseError regexes over fully-rendered HTML and returns deduplicated, entity-decoded issues with approximate line numbers.",
+      "tags": ["latex", "regex", "rendering"],
+      "filePath": "tests/latex_error_checker.py"
+    },
+    {
+      "id": "function:tests/latex_error_checker.py:main",
+      "type": "function",
+      "name": "main",
+      "summary": "CLI driver: discovers .php/.js files, runs the browser phase (with optional PHP server) and the source phase, prints rich results, and exits 1 on any rendered failure.",
+      "tags": ["cli", "orchestration", "reporting"],
+      "filePath": "tests/latex_error_checker.py"
+    },
+    {
+      "id": "file:tests/lesson_guard.py",
+      "type": "file",
+      "name": "lesson_guard.py",
+      "summary": "Browser-free static regression guard for the Math IV lesson (math_iv.php + math_iv_affine.js): checks markdown headings sit inside .md divs, citation keys exist in literature.js, auto-rotate is off, 3D canvases are wired to bind3DNav/drawAxes3D, fold matrices stay symbolic, and the quad loop destructures (u, v).",
+      "tags": ["regression-test", "static-analysis", "lesson", "math", "invariants"],
+      "complexity": "moderate",
+      "filePath": "tests/lesson_guard.py",
+      "languageNotes": "Each guard encodes a concrete past bug (G1–G7 in the docstring); LESSONS is an extendable (php, js) pair list."
+    },
+    {
+      "id": "function:tests/lesson_guard.py:guard_headings_in_md",
+      "type": "function",
+      "name": "guard_headings_in_md",
+      "summary": "Walks the PHP template with a div-open stack to ensure every markdown heading is inside a <div class=\"…md…\"> block, since headings outside one neither render nor appear in the TOC.",
+      "tags": ["static-analysis", "markdown", "headings"],
+      "filePath": "tests/lesson_guard.py"
+    },
+    {
+      "id": "function:tests/lesson_guard.py:guard_citation_keys",
+      "type": "function",
+      "name": "guard_citation_keys",
+      "summary": "Extracts every \\cite/\\footcite key used in the lesson and fails for any key not defined in literature.js, preventing broken bibtexify() rendering.",
+      "tags": ["citations", "literature", "static-analysis"],
+      "filePath": "tests/lesson_guard.py"
+    },
+    {
+      "id": "file:tests/link_checker.py",
+      "type": "file",
+      "name": "link_checker.py",
+      "summary": "Validates every URL in literature.js by fetching it with browser-like HTTP/2 headers; passes on 2xx (plus %PDF magic check for .pdf links), classifies bot protection and SSL quirks as soft passes, and retries transient 5xx/429 once.",
+      "tags": ["link-checking", "ci", "http", "literature", "uv-script"],
+      "complexity": "complex",
+      "filePath": "tests/link_checker.py",
+      "languageNotes": "Two-pass regex parser for literature.js entries (order of title:/url: fields doesn't matter); concurrent checking via ThreadPoolExecutor over strict and relaxed httpx clients."
+    },
+    {
+      "id": "class:tests/link_checker.py:Outcome",
+      "type": "class",
+      "name": "Outcome",
+      "summary": "Dataclass describing the result of one URL check: category (ok/soft_pass/fail), HTTP status, server/via headers, cookies, body snippet, and reason, with ok/is_real_fail/is_ssl_error/shorten_reason helpers.",
+      "tags": ["dataclass", "http", "classification"],
+      "filePath": "tests/link_checker.py"
+    },
+    {
+      "id": "function:tests/link_checker.py:parse_literature_file",
+      "type": "function",
+      "name": "parse_literature_file",
+      "summary": "Two-pass line parser that yields (key, title, url) for every entry in literature.js that carries a url: field.",
+      "tags": ["parser", "literature", "regex"],
+      "filePath": "tests/link_checker.py"
+    },
+    {
+      "id": "function:tests/link_checker.py:check_url",
+      "type": "function",
+      "name": "check_url",
+      "summary": "Multi-strategy check for a single URL: strict-SSL fetch, SSL-bypass retry on TLS errors, bot-protection detection on 401/403, and one retry after a delay for transient statuses.",
+      "tags": ["http", "resilience", "bot-protection"],
+      "filePath": "tests/link_checker.py"
+    },
+    {
+      "id": "function:tests/link_checker.py:main",
+      "type": "function",
+      "name": "main",
+      "summary": "CLI entry point: resolves literature.js, groups entries by URL, checks them concurrently with a progress bar, prints failures/soft-passes/malformed sections plus a summary table, and exits 1 on real failures.",
+      "tags": ["cli", "orchestration", "reporting"],
+      "filePath": "tests/link_checker.py"
+    },
+    {
+      "id": "file:tests/math_alt_test.js",
+      "type": "file",
+      "name": "math_alt_test.js",
+      "summary": "Node smoke test for the math-alternative-text mechanism in topics.js: with a DOM/cookie mock it verifies applyMathAlts() hides the rendered <math> and shows the .math-alt twin exactly when the math-heavy tone is switched off.",
+      "tags": ["unit-test", "node", "math", "accessibility", "dom-stub"],
+      "complexity": "moderate",
+      "filePath": "tests/math_alt_test.js",
+      "languageNotes": "Mocks document.cookie with a backing map so topics_pref round-trips, and keeps readyState 'loading' so init() side effects don't fire."
+    },
+    {
+      "id": "file:tests/php_render_validator.py",
+      "type": "file",
+      "name": "php_render_validator.py",
+      "summary": "Selenium-based render validator: starts a PHP dev server, opens pages in headless Chrome, and fails on JS console errors (exit 1), unrendered $$ LaTeX (exit 2), or reading-column width overflow via the production layout_guardrail.js (exit 3).",
+      "tags": ["ci", "selenium", "rendering", "layout", "regression-test"],
+      "complexity": "complex",
+      "filePath": "tests/php_render_validator.py",
+      "languageNotes": "Auto-restarts itself under `uv run`; --all-lessons discovers lessons by scanning for COURSE_METADATA blocks; check_width drives window.__layoutGuardrailCheck() on demand for deterministic CI."
+    },
+    {
+      "id": "function:tests/php_render_validator.py:check_unrendered_latex",
+      "type": "function",
+      "name": "check_unrendered_latex",
+      "summary": "Runs in-page JS that finds $$…$$ blocks containing underscores or backslash commands that are not wrapped in a <div> (where markdown parsers mangle them) and outside math/code exclusions.",
+      "tags": ["latex", "rendering", "browser-check"],
+      "filePath": "tests/php_render_validator.py"
+    },
+    {
+      "id": "function:tests/php_render_validator.py:check_width",
+      "type": "function",
+      "name": "check_width",
+      "summary": "Polls window.__layoutGuardrailCheck() until the reading column is measurable, then returns whether the page is ok, the allowed pixel width, and the offender list with details.",
+      "tags": ["layout", "width", "guardrail"],
+      "filePath": "tests/php_render_validator.py"
+    },
+    {
+      "id": "function:tests/php_render_validator.py:discover_lessons",
+      "type": "function",
+      "name": "discover_lessons",
+      "summary": "Finds lesson pages by scanning .php files' first 4 KB for a COURSE_METADATA block, distinguishing lessons from non-lesson PHP scripts.",
+      "tags": ["discovery", "course-metadata", "php"],
+      "filePath": "tests/php_render_validator.py"
+    },
+    {
+      "id": "file:tests/php_validator.py",
+      "type": "file",
+      "name": "php_validator.py",
+      "summary": "Static validator for PHP lesson templates: runs php -l syntax checks, a string/comment-aware HTML tag-balance checker (after stripping PHP blocks, comments, script, and style), and checks for BOM/extra-close-tag/content-after-close issues.",
+      "tags": ["linter", "static-analysis", "php", "html", "ci"],
+      "complexity": "complex",
+      "filePath": "tests/php_validator.py",
+      "languageNotes": "strip_php_blocks tracks PHP string literals and comments so a ?> inside a string does not end the PHP block early; tag checks are skipped for pure-PHP logic files (functions.php, search*.php)."
+    },
+    {
+      "id": "function:tests/php_validator.py:check_php_syntax",
+      "type": "function",
+      "name": "check_php_syntax",
+      "summary": "Runs `php -l` on a file and returns (is_valid, message), handling missing PHP CLI and timeouts.",
+      "tags": ["php", "syntax", "subprocess"],
+      "filePath": "tests/php_validator.py"
+    },
+    {
+      "id": "function:tests/php_validator.py:strip_php_blocks",
+      "type": "function",
+      "name": "strip_php_blocks",
+      "summary": "Removes <?php … ?> blocks while preserving newlines (for line numbers); string- and comment-aware so ?> inside PHP strings or comments is not treated as a real closing tag.",
+      "tags": ["php", "preprocessing", "parsing"],
+      "filePath": "tests/php_validator.py"
+    },
+    {
+      "id": "function:tests/php_validator.py:check_tag_balance",
+      "type": "function",
+      "name": "check_tag_balance",
+      "summary": "Stack-based checker that opens/closes tracked HTML tags (void and self-closing elements excluded) over the stripped template, reporting unclosed, misnested, and unexpected closing tags with line numbers.",
+      "tags": ["html", "tag-balance", "static-analysis"],
+      "filePath": "tests/php_validator.py"
+    },
+    {
+      "id": "file:tests/search_js_test.js",
+      "type": "file",
+      "name": "search_js_test.js",
+      "summary": "Node smoke test for search.js internals (exposed via initSearch._internals): verifies detectMode regex/fuzzy/normal classification, smart-quote normalization, splitTerms, highlightText per mode, and extractMatchFromSnippet.",
+      "tags": ["unit-test", "node", "search", "dom-stub"],
+      "complexity": "simple",
+      "filePath": "tests/search_js_test.js"
+    },
+    {
+      "id": "file:tests/search_test.php",
+      "type": "file",
+      "name": "search_test.php",
+      "summary": "PHP test suite for search_lib.php that builds temp-dir lesson fixtures and asserts the full search behavior: text normalization (umlauts, Greek, hyphens), regex/fuzzy/normal modes, snippet building, heading-slug URLs, caption ranking, citation author search, exclusions, and index cache invalidation.",
+      "tags": ["unit-test", "php", "search", "fixtures", "regression-test"],
+      "complexity": "moderate",
+      "filePath": "tests/search_test.php",
+      "languageNotes": "Creates real fixture .php/.js files in sys_get_temp_dir() and cleans them up at the end; includes an mb_strpos end-of-block crash regression check."
+    },
+    {
+      "id": "file:tests/topics_test.js",
+      "type": "file",
+      "name": "topics_test.js",
+      "summary": "Node smoke test for topics.js: verifies the TOPICS/CATEGORIES registries, cookie round-trip persistence, isEnabled/anyEnabled/isCatEnabled defaults, the 3-state scoreUnit() logic with reason strings, the layman lens, math-level clamping, CORE_PERSONAS, and the marked extension rendering [[t:topic]] blocks.",
+      "tags": ["unit-test", "node", "topics", "preferences", "marked-extension"],
+      "complexity": "moderate",
+      "filePath": "tests/topics_test.js",
+      "languageNotes": "Mocks document.cookie with a backing map (including expiration deletion) and provides a functional marked mock that drives the real registered extension's start/tokenizer/renderer."
+    },
+    {
+      "id": "file:tests/typo_checker.py",
+      "type": "file",
+      "name": "typo_checker.py",
+      "summary": "Spell-checks prose inside PHP lesson templates: strips PHP/HTML/LaTeX/code, splits camelCase and hyphenated words, filters a whitelist plus a built-in ML/tech domain vocabulary, and reports misspellings with suggestions via pyspellchecker.",
+      "tags": ["spell-check", "ci", "prose", "php", "uv-script"],
+      "complexity": "complex",
+      "filePath": "tests/typo_checker.py",
+      "languageNotes": "Whitelist lives next to the script (typo_whitelist.txt); a large TECH_DOMAIN_WORDS set (llm, softmax, vaswani, …) supplements the English dictionary to avoid flagging ML terminology."
+    },
+    {
+      "id": "function:tests/typo_checker.py:strip_code_and_markup",
+      "type": "function",
+      "name": "strip_code_and_markup",
+      "summary": "Removes pre/code/script/style blocks, comments, display+inline LaTeX, \\cite-style macros, HTML tags, URLs, and markdown syntax so only human-readable prose remains (newlines preserved).",
+      "tags": ["preprocessing", "latex", "text-extraction"],
+      "filePath": "tests/typo_checker.py"
+    },
+    {
+      "id": "function:tests/typo_checker.py:extract_words_with_lines",
+      "type": "function",
+      "name": "extract_words_with_lines",
+      "summary": "Extracts (word, line) pairs from prose, skipping short words, splitting camelCase/PascalCase identifiers into sub-words, and splitting hyphenated and possessive words before checking.",
+      "tags": ["text-extraction", "tokenization"],
+      "filePath": "tests/typo_checker.py"
+    },
+    {
+      "id": "function:tests/typo_checker.py:check_file_typos",
+      "type": "function",
+      "name": "check_file_typos",
+      "summary": "Per-file pipeline: strip PHP, strip markup, extract words, drop whitelisted/domain words, run spell.unknown(), and build deduplicated issues with first-seen line, occurrence count, and suggestions.",
+      "tags": ["spell-check", "pipeline", "reporting"],
+      "filePath": "tests/typo_checker.py"
+    },
+    {
+      "id": "file:tests/typo_whitelist.txt",
+      "type": "file",
+      "name": "typo_whitelist.txt",
+      "summary": "One-word-per-line whitelist (~550 entries) suppressing typo_checker.py false positives: ML terminology (subword, neocognitron, rlhf), proper names (rumelhart, nietzsches), and informal forms (didn, aren).",
+      "tags": ["whitelist", "spell-check", "data"],
+      "complexity": "simple",
+      "filePath": "tests/typo_whitelist.txt"
+    },
+    {
+      "id": "file:tests/typography_fix.html",
+      "type": "file",
+      "name": "typography_fix.html",
+      "summary": "Headless regression test that loads production typography_fix.js over a synthetic .md column and asserts all-in-node conversion (both quote pairs, en-dash ranges, ellipsis) while <code> and .no-typo-fix content stay untouched.",
+      "tags": ["regression-test", "typography", "headless", "quotation-marks"],
+      "complexity": "moderate",
+      "filePath": "tests/typography_fix.html",
+      "languageNotes": "Writes its verdict idempotently to <title> (TYPOGRAPHY_FIX PASS/FAIL) for the shell runner to grep; a 4s timeout guard fails on a stuck PENDING state."
+    },
+    {
+      "id": "file:tests/typography_fix.sh",
+      "type": "file",
+      "name": "typography_fix.sh",
+      "summary": "Headless Chromium runner for typography_fix.html; dumps the DOM and greps the <title> for the PASS/FAIL verdict, skipping when chromium or the site is unreachable.",
+      "tags": ["test-runner", "headless-chromium", "shell"],
+      "complexity": "simple",
+      "filePath": "tests/typography_fix.sh"
+    },
+    {
+      "id": "file:tests/width_layout_guard.html",
+      "type": "file",
+      "name": "width_layout_guard.html",
+      "summary": "Headless regression test for layout_guardrail.js over a synthetic 600px column: asserts wide normal elements are flagged while the same width inside .cl-block/.optional/.sideimage/.lg-scroll is exempt, and that __layoutGuardrailTag/__layoutGuardrailExclude work as expected.",
+      "tags": ["regression-test", "layout", "width", "guardrail", "headless"],
+      "complexity": "moderate",
+      "filePath": "tests/width_layout_guard.html",
+      "languageNotes": "Runs in three phases (baseline offenders, tag exemption, fresh-offender exclude) and reports a single idempotent verdict in <title>."
+    },
+    {
+      "id": "file:tests/width_layout_guard.sh",
+      "type": "file",
+      "name": "width_layout_guard.sh",
+      "summary": "Headless Chromium runner for width_layout_guard.html; dumps the DOM with a virtual-time budget and greps the <title> for the PASS/FAIL verdict.",
+      "tags": ["test-runner", "headless-chromium", "shell"],
+      "complexity": "simple",
+      "filePath": "tests/width_layout_guard.sh"
+    }
+  ],
+  "edges": [
+    { "source": "file:tests/js_validator.py", "target": "function:tests/js_validator.py:tokenize_js", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/js_validator.py", "target": "function:tests/js_validator.py:check_bracket_balance", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/js_validator.py", "target": "function:tests/js_validator.py:check_common_mistakes", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/js_validator.py", "target": "function:tests/js_validator.py:check_implied_globals", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/js_validator.py", "target": "function:tests/js_validator.py:main", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/latex_error_checker.py", "target": "function:tests/latex_error_checker.py:scan_page_with_browser", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/latex_error_checker.py", "target": "function:tests/latex_error_checker.py:scan_html_for_latex_errors", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/latex_error_checker.py", "target": "function:tests/latex_error_checker.py:main", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/lesson_guard.py", "target": "function:tests/lesson_guard.py:guard_headings_in_md", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/lesson_guard.py", "target": "function:tests/lesson_guard.py:guard_citation_keys", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/link_checker.py", "target": "class:tests/link_checker.py:Outcome", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/link_checker.py", "target": "function:tests/link_checker.py:parse_literature_file", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/link_checker.py", "target": "function:tests/link_checker.py:check_url", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/link_checker.py", "target": "function:tests/link_checker.py:main", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_render_validator.py", "target": "function:tests/php_render_validator.py:check_unrendered_latex", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_render_validator.py", "target": "function:tests/php_render_validator.py:check_width", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_render_validator.py", "target": "function:tests/php_render_validator.py:discover_lessons", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_validator.py", "target": "function:tests/php_validator.py:check_php_syntax", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_validator.py", "target": "function:tests/php_validator.py:strip_php_blocks", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/php_validator.py", "target": "function:tests/php_validator.py:check_tag_balance", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/typo_checker.py", "target": "function:tests/typo_checker.py:strip_code_and_markup", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/typo_checker.py", "target": "function:tests/typo_checker.py:extract_words_with_lines", "type": "contains", "weight": 1.0 },
+    { "source": "file:tests/typo_checker.py", "target": "function:tests/typo_checker.py:check_file_typos", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:tests/keypoint_test.js", "target": "file:keypoint.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:tests/math_alt_test.js", "target": "file:topics.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:tests/search_js_test.js", "target": "file:search.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:tests/topics_test.js", "target": "file:topics.js", "type": "imports", "weight": 0.7 },
+
+    { "source": "file:keypoint.js", "target": "file:tests/keypoint_test.js", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:topics.js", "target": "file:tests/math_alt_test.js", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:topics.js", "target": "file:tests/topics_test.js", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:search.js", "target": "file:tests/search_js_test.js", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:search_lib.php", "target": "file:tests/search_test.php", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:literature.js", "target": "file:tests/link_checker.py", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:literature.js", "target": "file:tests/lesson_guard.py", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:math_iv.php", "target": "file:tests/lesson_guard.py", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:math_iv_affine.js", "target": "file:tests/lesson_guard.py", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:layout_guardrail.js", "target": "file:tests/_lg_probe.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:layout_guardrail.js", "target": "file:tests/width_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:layout_guardrail.js", "target": "file:tests/php_render_validator.py", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:typography_fix.js", "target": "file:tests/typography_fix.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:helper.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:start.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:polish.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:typography_fix.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:sidenotes.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+    { "source": "file:toc.js", "target": "file:tests/hover_layout_guard.html", "type": "tested_by", "weight": 0.5 },
+
+    { "source": "file:tests/hover_layout_guard.sh", "target": "file:tests/hover_layout_guard.html", "type": "related", "weight": 0.5 },
+    { "source": "file:tests/typography_fix.sh", "target": "file:tests/typography_fix.html", "type": "related", "weight": 0.5 },
+    { "source": "file:tests/width_layout_guard.sh", "target": "file:tests/width_layout_guard.html", "type": "related", "weight": 0.5 },
+
+    { "source": "file:tests/typo_checker.py", "target": "file:tests/typo_whitelist.txt", "type": "depends_on", "weight": 0.7 }
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "nodes": [
+    {
+      "id": "file:start.js",
+      "type": "file",
+      "name": "start.js",
+      "summary": "Site-wide bootstrapping and runtime infrastructure for the blog: LaTeX (Temml) math rendering with a right-click source popup, dark-mode toggling, theme-adaptive restyling of inline demo styles, the mobile drawer, module prev/next navigation, the auto-glossary tooltip system with layout guardrails, and a loader checklist.",
+      "tags": ["math-rendering", "latex", "dark-mode", "glossary", "bootstrap", "navigation"],
+      "complexity": "complex",
+      "filePath": "start.js",
+      "languageNotes": "Large IIFE-free global script; render_temml() does one-time popup bootstrap then a per-pass render; initGlossary uses a portal-to-body tooltip plus prototype/observer guardrails to keep hover layout-neutral."
+    },
+    {
+      "id": "function:start.js:render_temml",
+      "type": "function",
+      "name": "render_temml",
+      "summary": "Core math-rendering pass: fixes em/strong artifacts inside $...$ delimiters, hands off to Temml, defers offscreen elements to an IntersectionObserver, and bootstraps the one-time LaTeX-source popup (copy, scroll, keyboard, live-swap) on first call.",
+      "tags": ["math", "temml", "latex-popup", "rendering"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:postLoadInit",
+      "type": "function",
+      "name": "postLoadInit",
+      "summary": "Shared post-load orchestrator called by index.php and standalone subpages; invokes smartquote, optional blocks, TOC, reading progress, easter eggs, dark mode, drawer, module nav, and glossary in sequence.",
+      "tags": ["initialization", "orchestration", "bootstrap"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:initGlossary",
+      "type": "function",
+      "name": "initGlossary",
+      "summary": "Auto-detects GLOSSARY terms in prose via a word-boundary regex tree-walk, wraps them in .glossary-term spans with portaled body tooltips, and enforces multi-angle guardrails (title-stripping, ancestor-style reverter, metric canaries) so hover never shifts layout.",
+      "tags": ["glossary", "tooltip", "guardrails", "a11y"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:initDarkMode",
+      "type": "function",
+      "name": "initDarkMode",
+      "summary": "Wires the theme-toggle button, applies a persisted/system-preference theme on load with a transition class, and triggers theme adaptation of the interactive labs.",
+      "tags": ["dark-mode", "theme", "cookie"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:adaptLabsToTheme",
+      "type": "function",
+      "name": "adaptLabsToTheme",
+      "summary": "Rewrites hardcoded inline background/color styles, Plotly SVG backgrounds, canvas backgrounds, and Temml math colors so interactive demos stay readable in dark mode; guards against re-running on every DOM mutation.",
+      "tags": ["dark-mode", "theme", "plotly", "inline-style"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:initModuleNav",
+      "type": "function",
+      "name": "initModuleNav",
+      "summary": "Builds a prev/next module navigation bar from window.__moduleNavData and appends it to #contents, using the current lesson's position in the linear course order.",
+      "tags": ["navigation", "module-nav", "course-order"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:updateLoadingStatus",
+      "type": "function",
+      "name": "updateLoadingStatus",
+      "summary": "Updates the loader status line (or a secondary sub-status detail line once the checklist exists) with progress messages emitted by loading submodules.",
+      "tags": ["loader", "status", "progress"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:observeAndRenderMath",
+      "type": "function",
+      "name": "observeAndRenderMath",
+      "summary": "Installs a MutationObserver on a target node that clears the data-math-rendered marker when its content changes and re-runs the Temml render pass.",
+      "tags": ["math", "mutation-observer", "rendering"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:initDrawer",
+      "type": "function",
+      "name": "initDrawer",
+      "summary": "Sets up the mobile navigation drawer: open/close via toggle, backdrop, and Escape key, and closes on module link click.",
+      "tags": ["drawer", "mobile", "navigation"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "function:start.js:sendHeight",
+      "type": "function",
+      "name": "sendHeight",
+      "summary": "Computes the page's full scroll height and posts it to the parent window via postMessage so an embedding iframe can size the content.",
+      "tags": ["iframe", "postmessage", "layout"],
+      "filePath": "start.js"
+    },
+    {
+      "id": "file:statistics.js",
+      "type": "file",
+      "name": "statistics.js",
+      "summary": "Interactive visualization module for the statistics lessons: a unified Plotly theme plus a large suite of hands-on labs (distributions, normal/CLT, least squares, correlation, Bayesian updating, entropy, Markov chains, Zipf/LLN over a Nietzsche corpus, Dirichlet, GMM, and LLM-related Boltzmann/MLE/chain-rule/KL) that render on demand via lazy IntersectionObserver registration.",
+      "tags": ["statistics", "plotly", "visualization", "interactive", "probability"],
+      "complexity": "complex",
+      "filePath": "statistics.js",
+      "languageNotes": "Uses a shared getStatTheme()/mergeLayout() Plotly base; labs are registered lazily by element id in loadStatisticsModule and re-rendered on dark/light toggle via window.__MN_DARK.onChange."
+    },
+    {
+      "id": "function:statistics.js:loadStatisticsModule",
+      "type": "function",
+      "name": "loadStatisticsModule",
+      "summary": "Module entry point: reports a loading status, lazily registers each lab by its target element id, starts the IntersectionObserver, and subscribes to theme changes to re-render initialized plots.",
+      "tags": ["initialization", "lazy-loading", "module-entry"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:initStatistics",
+      "type": "function",
+      "name": "initStatistics",
+      "summary": "Legacy eager initializer that awaits ZarathustraLab.init() and then renders all statistics labs in parallel with Promise.all.",
+      "tags": ["initialization", "eager-loading"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:getStatTheme",
+      "type": "function",
+      "name": "getStatTheme",
+      "summary": "Returns a fresh base Plotly layout (fonts, transparent backgrounds, indigo-pink colorway, themed axes/title/hover/legend) that all statistics labs merge their custom options into.",
+      "tags": ["plotly", "theme", "layout"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "class:statistics.js:ZarathustraLab",
+      "type": "class",
+      "name": "ZarathustraLab",
+      "summary": "Namespace object that fetches zarathustra.txt and powers the corpus-based labs: Law of Large Numbers word-frequency convergence, Markov next-word transition probabilities, and Zipf's-law rank-frequency (with a log-log toggle).",
+      "tags": ["corpus", "zipf", "markov", "law-of-large-numbers", "nietzsche"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "class:statistics.js:LLMStatsLab",
+      "type": "class",
+      "name": "LLMStatsLab",
+      "summary": "Namespace object of LLM-related probability labs: Boltzmann/softmax temperature, Maximum Likelihood Estimation (click-to-add-observations Gaussian fit), the probability chain rule, and KL divergence between two Gaussians.",
+      "tags": ["llm", "softmax", "mle", "kl-divergence", "chain-rule"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderNormalDistribution",
+      "type": "function",
+      "name": "renderNormalDistribution",
+      "summary": "Renders a live normal-distribution lab: a Box-Muller sample histogram against the theoretical PDF, with mu/sigma/points sliders that re-plot and refresh the LaTeX formula.",
+      "tags": ["normal-distribution", "plotly", "box-muller"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderCeresAstronomy",
+      "type": "function",
+      "name": "renderCeresAstronomy",
+      "summary": "Plots the Ceres-orbit story: a true orbit path, noisy Gaussian observations, and a residual-error histogram vs. the theoretical bell curve, driven by a telescope-quality (sigma) slider.",
+      "tags": ["astronomy", "least-squares", "gaussian-error", "plotly"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderGaussLegendreComplex",
+      "type": "function",
+      "name": "renderGaussLegendreComplex",
+      "summary": "Interactive least-squares fit: generates noisy points, computes the slope/intercept analytically, draws the fit plus per-point error squares, and displays the minimized squared-error expression.",
+      "tags": ["least-squares", "regression", "gauss-legendre"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderCorrelationPlayground",
+      "type": "function",
+      "name": "renderCorrelationPlayground",
+      "summary": "Pearson correlation playground: generates a correlated bivariate sample from correlation/scale sliders, scatters it, and walks through the covariance-to-r standardization step by step.",
+      "tags": ["correlation", "pearson", "covariance", "bivariate"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderBayesianComplex",
+      "type": "function",
+      "name": "renderBayesianComplex",
+      "summary": "Bayesian-updating lab (spam-filter style): given prior, likelihood, and false-alarm sliders it computes the posterior and plots prior-vs-posterior belief bars with the Bayes-rule derivation.",
+      "tags": ["bayesian", "inference", "posterior"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderEntropy",
+      "type": "function",
+      "name": "renderEntropy",
+      "summary": "Shannon-entropy lab: two complementary coin sliders compute H(X) in bits, render the derivation, and plot the head/tail probability bars.",
+      "tags": ["entropy", "shannon", "information-theory"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:rollCLT",
+      "type": "function",
+      "name": "rollCLT",
+      "summary": "Central Limit Theorem dice lab: rolls n dice, animates the dice, accumulates the average of each roll, and plots the observed-average histogram against the theoretical Gaussian.",
+      "tags": ["central-limit-theorem", "dice", "distribution"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderDirichletLab",
+      "type": "function",
+      "name": "renderDirichletLab",
+      "summary": "Dirichlet-distribution lab: samples the 3-simplex (topic mixture) for three alpha parameters and renders a ternary scatter of likely topic proportions.",
+      "tags": ["dirichlet", "ternary", "topics"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderGMMContextLab",
+      "type": "function",
+      "name": "renderGMMContextLab",
+      "summary": "Gaussian Mixture Model lab: plots two topic Gaussians and their mixture as a function of cluster separation and variance, illustrating latent-topic inference.",
+      "tags": ["gmm", "latent-variables", "mixture-model"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderStandardScaler",
+      "type": "function",
+      "name": "renderStandardScaler",
+      "summary": "Z-score standardization lab: given observation/mean/sigma it computes the z-score and shows the derivation plus a plain-English outlier interpretation.",
+      "tags": ["z-score", "standardization", "outlier"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderGaussCalc",
+      "type": "function",
+      "name": "renderGaussCalc",
+      "summary": "Normal-distribution calculator: standardizes a [a,b] range to z-scores, looks up the CDF, and shades the area under the curve to show P(a<=X<=b).",
+      "tags": ["normal-cdf", "probability", "calculator"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderPoissonLab",
+      "type": "function",
+      "name": "renderPoissonLab",
+      "summary": "Poisson-distribution lab: plots P(X=k) for a rate lambda slider, using a local factorial helper for the rare-events law.",
+      "tags": ["poisson", "distribution", "rare-events"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:renderExtremeLab",
+      "type": "function",
+      "name": "renderExtremeLab",
+      "summary": "Extreme-value lab bundling a Bernoulli-trial bar chart and a Gumbel PDF plot, both driven by sliders, for the disasters/maxima section.",
+      "tags": ["gumbel", "bernoulli", "extreme-value"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "function:statistics.js:trainMarkovModel",
+      "type": "function",
+      "name": "trainMarkovModel",
+      "summary": "Builds a first-order Markov transition table from the user-editable markov-corpus textarea by counting word→next-word pairs.",
+      "tags": ["markov", "n-gram", "corpus"],
+      "filePath": "statistics.js"
+    },
+    {
+      "id": "file:statistics.php",
+      "type": "file",
+      "name": "statistics.php",
+      "summary": "Consolidated 'statistics' reference lesson (prose + interactive labs) covering distributions, the normal distribution and least squares, Bayesian inference, entropy, correlation, Zipf/Dirichlet/GMM, and LLM probability labs; kept as a complete reference now split into statistics_i.php / statistics_ii.php.",
+      "tags": ["statistics", "lesson", "distributions", "bayes", "visualization"],
+      "complexity": "complex",
+      "filePath": "statistics.php",
+      "languageNotes": "Line 1 includes functions.php; body is Markdown in div.md blocks interleaved with .statlab-interactive-zone widgets (sliders + plot divs) and \\\\cite* citation macros."
+    },
+    {
+      "id": "file:stickybar_transformer.js",
+      "type": "file",
+      "name": "stickybar_transformer.js",
+      "summary": "Unified sticky bottom bar for the transformer lesson: shown while the transformer site is in view, it switches between an idle 'Start Training' panel and a live training panel (epoch, loss, ETA, mini loss sparkline) and exposes window.show/update/hideTrainingProgressBar plus a synced train-button state.",
+      "tags": ["sticky-bar", "training", "progress", "transformer", "ui"],
+      "complexity": "moderate",
+      "filePath": "stickybar_transformer.js",
+      "languageNotes": "Self-contained IIFE; lazily builds the bar DOM, observes #transformer_site with IntersectionObserver, and monkey-patches window.updateTrainButtonState to keep its button in sync."
+    },
+    {
+      "id": "function:stickybar_transformer.js:createStickyBar",
+      "type": "function",
+      "name": "createStickyBar",
+      "summary": "Builds the sticky bar element once (root styles plus idle and training panels), appends it to <body>, and wires the train/stop buttons and hover effects.",
+      "tags": ["dom", "sticky-bar", "initialization"],
+      "filePath": "stickybar_transformer.js"
+    },
+    {
+      "id": "function:stickybar_transformer.js:showTrainingProgressBar",
+      "type": "function",
+      "name": "showTrainingProgressBar",
+      "summary": "Public API: ensures the bar exists, records the training start time, syncs panel mode, and shows the bar if the site is visible.",
+      "tags": ["api", "progress", "training"],
+      "filePath": "stickybar_transformer.js"
+    },
+    {
+      "id": "function:stickybar_transformer.js:updateTrainingProgressBar",
+      "type": "function",
+      "name": "updateTrainingProgressBar",
+      "summary": "Public API: updates the progress fill/percent, epoch label, loss label, and an ETA guesstimate from elapsed time, and redraws the mini loss sparkline each epoch.",
+      "tags": ["api", "progress", "eta", "sparkline"],
+      "filePath": "stickybar_transformer.js"
+    },
+    {
+      "id": "function:stickybar_transformer.js:drawMiniLossChart",
+      "type": "function",
+      "name": "drawMiniLossChart",
+      "summary": "Draws a small filled area + line sparkline of window.lossHistory on the bar's mini canvas, auto-scaled to the min/max loss.",
+      "tags": ["canvas", "sparkline", "loss"],
+      "filePath": "stickybar_transformer.js"
+    },
+    {
+      "id": "function:stickybar_transformer.js:initSiteObserver",
+      "type": "function",
+      "name": "initSiteObserver",
+      "summary": "Observes #transformer_site with an IntersectionObserver to show/sync the bar while the transformer site is in the viewport and hide it otherwise.",
+      "tags": ["intersection-observer", "visibility", "ui"],
+      "filePath": "stickybar_transformer.js"
+    },
+    {
+      "id": "file:story.html",
+      "type": "file",
+      "name": "story.html",
+      "summary": "Standalone, self-contained animated explainer ('Was passiert da eigentlich?') that choreographs a sequence of CSS/JS beats: a phone search query is spoken, tokenized into pills, mapped to points in a 2-D embedding space (with a king/queen analogy), then handed off to a Transformer model block.",
+      "tags": ["animation", "embeddings", "tokenization", "explainer", "standalone"],
+      "complexity": "moderate",
+      "filePath": "story.html",
+      "languageNotes": "Single self-contained HTML file with inline CSS + JS; a 'beats' array of state-setting functions plus keyboard/swipe/click navigation (each beat fully re-sets state so CSS can interpolate forward and backward)."
+    }
+  ],
+  "edges": [
+    { "source": "file:start.js", "target": "function:start.js:render_temml", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:postLoadInit", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:initGlossary", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:initDarkMode", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:adaptLabsToTheme", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:initModuleNav", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:updateLoadingStatus", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:observeAndRenderMath", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:initDrawer", "type": "contains", "weight": 1.0 },
+    { "source": "file:start.js", "target": "function:start.js:sendHeight", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:loadStatisticsModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:initStatistics", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:getStatTheme", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "class:statistics.js:ZarathustraLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "class:statistics.js:LLMStatsLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderNormalDistribution", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderCeresAstronomy", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderGaussLegendreComplex", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderCorrelationPlayground", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderBayesianComplex", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderEntropy", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:rollCLT", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderDirichletLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderGMMContextLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderStandardScaler", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderGaussCalc", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderPoissonLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:renderExtremeLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.js", "target": "function:statistics.js:trainMarkovModel", "type": "contains", "weight": 1.0 },
+    { "source": "file:stickybar_transformer.js", "target": "function:stickybar_transformer.js:createStickyBar", "type": "contains", "weight": 1.0 },
+    { "source": "file:stickybar_transformer.js", "target": "function:stickybar_transformer.js:showTrainingProgressBar", "type": "contains", "weight": 1.0 },
+    { "source": "file:stickybar_transformer.js", "target": "function:stickybar_transformer.js:updateTrainingProgressBar", "type": "contains", "weight": 1.0 },
+    { "source": "file:stickybar_transformer.js", "target": "function:stickybar_transformer.js:drawMiniLossChart", "type": "contains", "weight": 1.0 },
+    { "source": "file:stickybar_transformer.js", "target": "function:stickybar_transformer.js:initSiteObserver", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:statistics.php", "target": "file:statistics.js", "type": "related", "weight": 0.5 },
+    { "source": "file:statistics.js", "target": "function:start.js:render_temml", "type": "calls", "weight": 0.8 },
+    { "source": "file:statistics.js", "target": "function:start.js:updateLoadingStatus", "type": "calls", "weight": 0.8 }
+  ]
+}

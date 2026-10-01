@@ -1,0 +1,583 @@
+{
+ "batchIndex": 8,
+ "name": "Part 1 — Foundations",
+ "theme": "part-1",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-8.json",
+ "files": [
+  {
+   "path": "foam_of_meaning.js",
+   "language": "javascript",
+   "sizeLines": 1264,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "$",
+     "rng",
+     "pal",
+     "rgba",
+     "register",
+     "initPhaseSpace",
+     "plotLayout",
+     "sup",
+     "fmt",
+     "total",
+     "render",
+     "setActive",
+     "drawCluster",
+     "draw",
+     "animate",
+     "step",
+     "select",
+     "show",
+     "seedClusters",
+     "drawLevel",
+     "recur",
+     "update",
+     "interp",
+     "sigmoid",
+     "uf",
+     "generate",
+     "computeH0",
+     "computeH1",
+     "drawPts",
+     "drawBar",
+     "refresh",
+     "alive",
+     "status",
+     "start",
+     "makeLabel",
+     "highlight",
+     "arrow",
+     "colors",
+     "truth",
+     "build",
+     "cx",
+     "cy",
+     "tree",
+     "collect",
+     "rec",
+     "nodesAt",
+     "updatePlot",
+     "drawRadar",
+     "vals",
+     "drawTopo",
+     "beta0",
+     "beta1",
+     "plotLine",
+     "drawScale"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "foam_of_meaning.php",
+   "language": "php",
+   "sizeLines": 1128,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "of"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "geometry_i.php",
+   "language": "php",
+   "sizeLines": 741,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "evaluates"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "geometry_ii.php",
+   "language": "php",
+   "sizeLines": 492,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "boot",
+     "el",
+     "baseLayout",
+     "on",
+     "mount",
+     "projRead",
+     "svdRead",
+     "desRead",
+     "dft",
+     "convRead",
+     "psi",
+     "symRead"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "geometry_iii.php",
+   "language": "php",
+   "sizeLines": 304,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "of"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "history.js",
+   "language": "javascript",
+   "sizeLines": 65,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "renderLinearSeparability",
+     "loadHistoryModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "history.php",
+   "language": "php",
+   "sizeLines": 1036,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "intuition.js",
+   "language": "javascript",
+   "sizeLines": 2134,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "words",
+     "subwordCount",
+     "uniqueWords",
+     "bgWords",
+     "rng",
+     "embed",
+     "attn",
+     "ffn",
+     "total",
+     "scaled",
+     "exps",
+     "sum",
+     "scores",
+     "items",
+     "colors",
+     "entropy",
+     "step",
+     "loadIntuitionVizModule",
+     "runAttention",
+     "drawCurve",
+     "_lazyRegister",
+     "_lazyCreateObserver",
+     "match",
+     "loadIntuitionModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "intuition.php",
+   "language": "php",
+   "sizeLines": 411,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "language.js",
+   "language": "javascript",
+   "sizeLines": 339,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "injectStyles",
+     "buildTimeline",
+     "_buildTimelineDOM",
+     "init"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "language.php",
+   "language": "php",
+   "sizeLines": 287,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "math_i.php",
+   "language": "php",
+   "sizeLines": 748,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loadMathIModule",
+     "lazyRender",
+     "observePlot",
+     "renderELI5Math",
+     "updatePlotLinear",
+     "updatePlotSurface",
+     "updatePlotWaves",
+     "renderStep4",
+     "getThemeColor",
+     "renderLog"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  }
+ ]
+}

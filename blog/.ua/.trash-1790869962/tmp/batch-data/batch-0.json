@@ -1,0 +1,332 @@
+{
+ "batchIndex": 0,
+ "name": "Core Infrastructure & Course Shell",
+ "theme": "infra",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-0.json",
+ "files": [
+  {
+   "path": ".htaccess",
+   "language": "config",
+   "sizeLines": 41,
+   "fileCategory": "config",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": ".user.ini",
+   "language": "ini",
+   "sizeLines": 2,
+   "fileCategory": "config",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "art.txt",
+   "language": "text",
+   "sizeLines": 2,
+   "fileCategory": "data",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "asanai_blog_proxy.php",
+   "language": "php",
+   "sizeLines": 112,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "attention_engine.js",
+   "language": "javascript",
+   "sizeLines": 2737,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "colHeaders",
+     "rows",
+     "vals",
+     "exps",
+     "sum",
+     "Qi",
+     "Ki",
+     "Vi",
+     "WQ_slice",
+     "WK_slice",
+     "WV_slice",
+     "scores",
+     "existingLayerIndex",
+     "toMatrix",
+     "visibleTokens",
+     "makeText",
+     "makePath",
+     "activeHeads",
+     "weightedV",
+     "sumExp"
+    ],
+    "classes": [
+     "AttentionEngine"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "bildquellen-pruefung.txt",
+   "language": "text",
+   "sizeLines": 209,
+   "fileCategory": "data",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "bpe.js",
+   "language": "javascript",
+   "sizeLines": 228,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "parts",
+     "words"
+    ],
+    "classes": [
+     "BPETokenizer"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "category_theory.html",
+   "language": "html",
+   "sizeLines": 20,
+   "fileCategory": "markup",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "citation_graph.js",
+   "language": "javascript",
+   "sizeLines": 146,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "cluster.js",
+   "language": "javascript",
+   "sizeLines": 339,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "hash01",
+     "hashToColor",
+     "cssSafe",
+     "getColor",
+     "preprocess",
+     "findNextCluster",
+     "preprocessBalanced",
+     "escAttr",
+     "injectCSS",
+     "mountPolish",
+     "update",
+     "start"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "commutation.html",
+   "language": "html",
+   "sizeLines": 91,
+   "fileCategory": "markup",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "corrections.md",
+   "language": "markdown",
+   "sizeLines": 255,
+   "fileCategory": "docs",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "darkmode_todo.txt",
+   "language": "text",
+   "sizeLines": 10,
+   "fileCategory": "data",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "effects.js",
+   "language": "javascript",
+   "sizeLines": 60,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "initScrollReveal",
+     "io",
+     "init"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "fcnn_visualization.js",
+   "language": "javascript",
+   "sizeLines": 181,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "get_layer_classname_by_nr",
+     "get_units_at_layer",
+     "restart_fcnn",
+     "restart_fcnn_internal",
+     "get_fcnn_data",
+     "_draw_custom_simple",
+     "draw_fcnn"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "find_double_defined_js.sh",
+   "language": "shell",
+   "sizeLines": 19,
+   "fileCategory": "script",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "functions.php",
+   "language": "php",
+   "sizeLines": 837,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "blog_font_stack",
+     "print_font_override",
+     "render_gem_tabs",
+     "js",
+     "css",
+     "incl",
+     "load_base_js",
+     "runPostLoad",
+     "server_php_self_ends_with_index_php",
+     "call_js_if_matching_file_exists",
+     "print_dynamic_title",
+     "get_ai_course_labels",
+     "parse_course_metadata",
+     "render_course_tile",
+     "get_string_of_file_or_die",
+     "toggleTheme",
+     "toggleReaderMode",
+     "hide_email",
+     "isCli",
+     "get_theme_class",
+     "get_module_nav_data",
+     "render_module_nav",
+     "render_drawer",
+     "render_theme_toggle",
+     "render_topics_toggle",
+     "render_reader_toggle",
+     "render_constellation"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "geometric_topological_theory_of_meaningful_language_spaces.md",
+   "language": "markdown",
+   "sizeLines": 1655,
+   "fileCategory": "docs",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "graph.php",
+   "language": "php",
+   "sizeLines": 1243,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "calcSize",
+     "colX",
+     "rowY",
+     "nodeById",
+     "draw",
+     "positionTooltip",
+     "showTooltip",
+     "hideTooltip",
+     "getConnected",
+     "highlightConnected",
+     "resetHighlight",
+     "buildLegend",
+     "setupScrollHighlighting"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}

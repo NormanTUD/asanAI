@@ -1,0 +1,457 @@
+{
+  "nodes": [
+    {
+      "id": "file:activationlab.js",
+      "type": "file",
+      "name": "activationlab.js",
+      "summary": "Interactive module for the Activation Functions lesson: an explorer that plots and explains ReLU/GELU/SiLU/Sigmoid/Tanh/Leaky-ReLU/Identity, plus a Softmax lab that turns raw logits into a probability pie and bar chart.",
+      "tags": ["javascript", "activation-function", "softmax", "plotly", "visualization"],
+      "filePath": "activationlab.js",
+      "complexity": "moderate",
+      "languageNotes": "Uses IntersectionObserver-based lazy registration (_actLazyRegister) plus a window.__MN_DARK theme observer to re-render Plotly charts on theme change."
+    },
+    {
+      "id": "function:activationlab.js:loadActivationModule",
+      "type": "function",
+      "name": "loadActivationModule",
+      "summary": "Module entry point that lazily registers the activation explorer and the Softmax lab to initialize when scrolled into view, and re-runs them on theme toggle.",
+      "tags": ["module-loader", "lazy-loading"],
+      "filePath": "activationlab.js"
+    },
+    {
+      "id": "function:activationlab.js:initPureActivationLab",
+      "type": "function",
+      "name": "initPureActivationLab",
+      "summary": "Wires the activation-type <select> to plot the chosen function in Plotly and inject its formula and pro/con description via render_temml/renderMarkdown.",
+      "tags": ["activation-function", "plotly", "dom"],
+      "filePath": "activationlab.js"
+    },
+    {
+      "id": "function:activationlab.js:initSoftmaxLab",
+      "type": "function",
+      "name": "initSoftmaxLab",
+      "summary": "Builds the Softmax widget: editable logit inputs, a donut pie and horizontal bar plot of normalized probabilities, and a step-by-step exponential calculation readout.",
+      "tags": ["softmax", "plotly", "dom", "probability"],
+      "filePath": "activationlab.js"
+    },
+    {
+      "id": "function:activationlab.js:erfApprox",
+      "type": "function",
+      "name": "erfApprox",
+      "summary": "Approximates the error function (Abramowitz & Stegun 7.1.26) so GELU can be plotted without a special-math library.",
+      "tags": ["error-function", "math", "approximation"],
+      "filePath": "activationlab.js"
+    },
+    {
+      "id": "file:activationlab.php",
+      "type": "file",
+      "name": "Activation Functions: The Neural Decision Makers",
+      "summary": "Part 2 lesson on why non-linearity is required (linear layers collapse), introducing the activation lab, the Softmax 'multi-class gate', the historical move from Heaviside to ReLU, and GELU/SiLU as the Transformer and diffusion standards.",
+      "tags": ["lesson", "activation-function", "softmax", "relu", "mathematics"],
+      "filePath": "activationlab.php",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:autodiff.js",
+      "type": "file",
+      "name": "autodiff.js",
+      "summary": "Interactive module for the Automatic Differentiation lesson: a tape-based reverse-mode AD stepper, an SVG computational-graph visualizer, a gradient-descent-on-a-loss-landscape animator, and a vanishing/exploding-gradient explorer.",
+      "tags": ["javascript", "automatic-differentiation", "backpropagation", "gradient-descent", "visualization"],
+      "filePath": "autodiff.js",
+      "complexity": "complex",
+      "languageNotes": "Four demo state objects (ADTape, ADGraph, GDDemo, VGDemo) are driven through a shared lazy-load registry; each renders into Plotly or inline SVG."
+    },
+    {
+      "id": "function:autodiff.js:loadAutodiffModule",
+      "type": "function",
+      "name": "loadAutodiffModule",
+      "summary": "Module entry point that lazily registers the tape demo, computational graph, gradient-descent plot, and vanishing-gradient plot to initialize in-view and re-render on theme change.",
+      "tags": ["module-loader", "lazy-loading"],
+      "filePath": "autodiff.js"
+    },
+    {
+      "id": "file:autodiff.php",
+      "type": "file",
+      "name": "Automatic Differentiation: How Machines Learn",
+      "summary": "Part 2 lesson covering why symbolic/numerical differentiation fail at scale, the chain rule, forward vs. reverse mode, the tape with a concrete worked example, PyTorch/TensorFlow tape APIs, a from-scratch autograd engine, and the vanishing/exploding-gradient problem.",
+      "tags": ["lesson", "automatic-differentiation", "chain-rule", "backpropagation", "computation-graph"],
+      "filePath": "autodiff.php",
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backproplab.js",
+      "type": "file",
+      "name": "backproplab.js",
+      "summary": "The backpropagation visualizer: a 3-4-4-2 network rendered as SVG with animated forward/backward pulses, hoverable cones of influence, click-to-expand per-neuron/weight equations with underbraces, and a full-SGD step with live weight update.",
+      "tags": ["javascript", "backpropagation", "svg", "animation", "neural-network"],
+      "filePath": "backproplab.js",
+      "complexity": "complex",
+      "languageNotes": "Single self-contained widget (renderBackpropVisual) using a unique id prefix, a seeded PRNG for deterministic reset, requestAnimationFrame pulse animation, and a symbol/underbrace LaTeX statement builder."
+    },
+    {
+      "id": "function:backproplab.js:loadBackproplabModule",
+      "type": "function",
+      "name": "loadBackproplabModule",
+      "summary": "Module entry point that mounts the sigmoid derivative plot and the main backprop visualizer into the lesson.",
+      "tags": ["module-loader"],
+      "filePath": "backproplab.js"
+    },
+    {
+      "id": "function:backproplab.js:renderBackpropVisual",
+      "type": "function",
+      "name": "renderBackpropVisual",
+      "summary": "Builds the full interactive network: forward/backward math, SVG geometry, editable input/target/learning-rate fields, cone-of-influence highlighting, pulse animation, and the expandable equation panel.",
+      "tags": ["backpropagation", "svg", "dom", "simulation"],
+      "filePath": "backproplab.js"
+    },
+    {
+      "id": "function:backproplab.js:sigmoidPlot",
+      "type": "function",
+      "name": "sigmoidPlot",
+      "summary": "Plots the sigmoid and its derivative in Plotly and attaches a mouse-following tangent-line overlay showing z, sigma, and sigma-prime at the hovered point.",
+      "tags": ["sigmoid", "plotly", "derivative", "canvas"],
+      "filePath": "backproplab.js"
+    },
+    {
+      "id": "file:backproplab.php",
+      "type": "file",
+      "name": "Backpropagation: How a Neural Network Learns From Its Mistakes",
+      "summary": "Part 2 lesson introducing the 1986 backprop algorithm, walking through one neuron's forward pass, the half-SSE loss, and the chain-rule error signal, then embedding the live network visualizer.",
+      "tags": ["lesson", "backpropagation", "chain-rule", "loss", "mathematics"],
+      "filePath": "backproplab.php",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:derivativelab.js",
+      "type": "file",
+      "name": "derivativelab.js",
+      "summary": "Interactive module for the Derivatives lesson: plots a chosen loss landscape, shows the look-ahead secant slope, and performs a single gradient-descent step, with a plain-language 'AI decision' readout.",
+      "tags": ["javascript", "derivative", "gradient-descent", "plotly"],
+      "filePath": "derivativelab.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "function:derivativelab.js:loadDerivativeModule",
+      "type": "function",
+      "name": "loadDerivativeModule",
+      "summary": "Module entry point that initializes the derivative lab and re-renders it on dark/light theme toggle.",
+      "tags": ["module-loader"],
+      "filePath": "derivativelab.js"
+    },
+    {
+      "id": "function:derivativelab.js:initDerivativeLab",
+      "type": "function",
+      "name": "initDerivativeLab",
+      "summary": "Wires the function/x/h sliders to recompute the secant slope, draw the curve with secant and tangent lines, update the math breakdown, and handle the 'Take 1 Step Down' gradient-descent button.",
+      "tags": ["derivative", "gradient-descent", "plotly", "dom"],
+      "filePath": "derivativelab.js"
+    },
+    {
+      "id": "file:derivativelab.php",
+      "type": "file",
+      "name": "Derivatives: How AI \"Learns\" to get better",
+      "summary": "Part 2 lesson framing the derivative as a 'steepness check' for finding the way downhill, introducing gradient descent, partial derivatives and the gradient vector, and the chain rule as the bridge to backpropagation.",
+      "tags": ["lesson", "derivative", "gradient-descent", "partial-derivative", "chain-rule"],
+      "filePath": "derivativelab.php",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:differentiation.js",
+      "type": "file",
+      "name": "differentiation.js",
+      "summary": "Interactive module for the Differentiation lesson with four demos: secant-to-tangent limit, a tangent-line explorer on x^3-3x, a chain-rule (sin(ax)) plot, and a 2D gradient-descent-on-a-surface visualizer.",
+      "tags": ["javascript", "derivative", "tangent-line", "chain-rule", "gradient", "plotly"],
+      "filePath": "differentiation.js",
+      "complexity": "moderate",
+      "languageNotes": "Each demo is a standalone init function registered to its own Plotly container via a shared lazy-load registry, so they initialize independently on scroll."
+    },
+    {
+      "id": "function:differentiation.js:loadDerivativesModule",
+      "type": "function",
+      "name": "loadDerivativesModule",
+      "summary": "Module entry point that lazily registers the four differentiation demos to initialize in-view and re-render on theme change.",
+      "tags": ["module-loader", "lazy-loading"],
+      "filePath": "differentiation.js"
+    },
+    {
+      "id": "function:differentiation.js:initSecantTangent",
+      "type": "function",
+      "name": "initSecantTangent",
+      "summary": "Demos the limit definition by dragging h toward zero, plotting f(x)=x^2 with the converging secant line and the true tangent, and showing the computed slopes in TeX.",
+      "tags": ["derivative", "limit", "secant", "plotly"],
+      "filePath": "differentiation.js"
+    },
+    {
+      "id": "function:differentiation.js:initTangentLineExplorer",
+      "type": "function",
+      "name": "initTangentLineExplorer",
+      "summary": "Moves a point along f(x)=x^3-3x, drawing the tangent line and marking the critical points where f'(x)=0 (the local extrema).",
+      "tags": ["derivative", "tangent-line", "extrema", "plotly"],
+      "filePath": "differentiation.js"
+    },
+    {
+      "id": "function:differentiation.js:initChainRuleDemo",
+      "type": "function",
+      "name": "initChainRuleDemo",
+      "summary": "Visualizes the chain rule on f(x)=sin(ax), plotting the function and its derivative a*cos(ax) while labeling the outer and inner derivatives.",
+      "tags": ["chain-rule", "derivative", "plotly"],
+      "filePath": "differentiation.js"
+    },
+    {
+      "id": "function:differentiation.js:initGradientSurface",
+      "type": "function",
+      "name": "initGradientSurface",
+      "summary": "Shows the 2D gradient of f(x,y)=x^2+y^2 as a contour plot with a red arrow pointing in the negative-gradient (descent) direction, updated by two sliders.",
+      "tags": ["gradient", "partial-derivative", "contour", "plotly"],
+      "filePath": "differentiation.js"
+    },
+    {
+      "id": "file:differentiation.php",
+      "type": "file",
+      "name": "Differentiation: The Mathematics of Change",
+      "summary": "Part 2 lesson on the derivative from the Newton/Leibniz history through the limit definition, the differentiation rules (with the chain rule flagged as the foundation of backprop), partial derivatives, and the gradient vector, with four interactive demos.",
+      "tags": ["lesson", "derivative", "calculus", "chain-rule", "gradient"],
+      "filePath": "differentiation.php",
+      "complexity": "complex"
+    },
+    {
+      "id": "file:hyperparameters.php",
+      "type": "file",
+      "name": "Hyperparameters: The Numbers You Choose",
+      "summary": "Part 2 prose lesson distinguishing learned parameters from chosen hyperparameters, explaining why they cannot be solved for, and surveying how they are actually found: expert transfer, scaling laws, grid/random search, Bayesian optimization, and multi-fidelity search (with a note on the OmniOpt tool).",
+      "tags": ["lesson", "hyperparameters", "optimization", "scaling-laws", "search-strategy"],
+      "filePath": "hyperparameters.php",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:losslab.js",
+      "type": "file",
+      "name": "losslab.js",
+      "summary": "Interactive module for the Loss lesson: a Mean-Squared-Error 'loss bowl' with live slope, and a cross-entropy explorer that splits a softmax-style output vector across Cat/Dog/Bird and shows the log-loss and confidence verdict.",
+      "tags": ["javascript", "loss-function", "mse", "cross-entropy", "plotly"],
+      "filePath": "losslab.js",
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:losslab.js:loadLossModule",
+      "type": "function",
+      "name": "loadLossModule",
+      "summary": "Module entry point that initializes the loss lab and re-renders it on theme toggle.",
+      "tags": ["module-loader"],
+      "filePath": "losslab.js"
+    },
+    {
+      "id": "function:losslab.js:initLossLab",
+      "type": "function",
+      "name": "initLossLab",
+      "summary": "Wires the MSE and cross-entropy sliders to recompute the loss and derivative, render the loss-bowl and log-loss plots, and update the classification-confidence status.",
+      "tags": ["loss-function", "mse", "cross-entropy", "plotly", "dom"],
+      "filePath": "losslab.js"
+    },
+    {
+      "id": "file:losslab.php",
+      "type": "file",
+      "name": "Loss: Teaching through Failure",
+      "summary": "Part 2 lesson on loss functions: Mean Squared Error for regression, cross-entropy for classification, Goodhart's Law, and the deep insight that cross-entropy is Shannon entropy and pairs with softmax to give a clean (y_hat - y) gradient.",
+      "tags": ["lesson", "loss-function", "cross-entropy", "shannon-entropy", "goodharts-law"],
+      "filePath": "losslab.php",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:minimalneuron.js",
+      "type": "file",
+      "name": "minimalneuron.js",
+      "summary": "Interactive module for the Smallest-Network lesson: builds a single-neuron tf.sequential linear model (y=ax+b) with TF.js, trains it with SGD in a live loop, and plots the fitted line, loss history, and current weights.",
+      "tags": ["javascript", "tensorflow-js", "linear-regression", "training", "visualization"],
+      "filePath": "minimalneuron.js",
+      "complexity": "moderate",
+      "languageNotes": "Self-contained MinimalLab namespace plus global toggleTraining/initBlock dispatchers; uses lazy IntersectionObserver init and an async epoch loop with tf.nextFrame for smooth updates."
+    },
+    {
+      "id": "function:minimalneuron.js:loadMinimalNeuronModule",
+      "type": "function",
+      "name": "loadMinimalNeuronModule",
+      "summary": "Module entry point that lazily registers MinimalLab.init to run when the data chart scrolls into view, and re-runs it on theme change.",
+      "tags": ["module-loader", "lazy-loading"],
+      "filePath": "minimalneuron.js"
+    },
+    {
+      "id": "class:minimalneuron.js:MinimalLab",
+      "type": "class",
+      "name": "MinimalLab",
+      "summary": "Namespace holding the single-neuron config and the init / toggleTraining / updateVisuals logic that builds, trains, and plots the y=ax+b model.",
+      "tags": ["tensorflow-js", "training-loop", "namespace"],
+      "filePath": "minimalneuron.js"
+    },
+    {
+      "id": "file:minimalneuron.php",
+      "type": "file",
+      "name": "Smallest possible neural network",
+      "summary": "Part 2 lesson introducing the neuron as y=ax+b (weight and bias), the training loop (predict, loss, gradient descent), random initialization to break symmetry, the mirror-rule for output layers, and the statistical/linear-algebra nature of learning, with a TF.js/PyTorch code tab.",
+      "tags": ["lesson", "neuron", "linear-regression", "weight-init", "matrix"],
+      "filePath": "minimalneuron.php",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:optimizerlab.js",
+      "type": "file",
+      "name": "optimizerlab.js",
+      "summary": "Interactive module for the Optimizer lesson: a 1D loss-landscape simulator that steps through SGD, SGD+Momentum, and Adam, logging each step, detecting convergence/divergence, and plotting the optimization path.",
+      "tags": ["javascript", "optimizer", "sgd", "adam", "momentum", "plotly"],
+      "filePath": "optimizerlab.js",
+      "complexity": "complex",
+      "languageNotes": "Optimizer memory (velocity, Adam m/v/t) lives in module-level let state shared across run/pause/reset; the update loop runs on setInterval and color-codes the gradient magnitude."
+    },
+    {
+      "id": "function:optimizerlab.js:loadOptimizerModule",
+      "type": "function",
+      "name": "loadOptimizerModule",
+      "summary": "Module entry point that initializes the optimizer lab controls and plot.",
+      "tags": ["module-loader"],
+      "filePath": "optimizerlab.js"
+    },
+    {
+      "id": "function:optimizerlab.js:initOptimizerLab",
+      "type": "function",
+      "name": "initOptimizerLab",
+      "summary": "Sets up the optimizer-type selector, learning-rate (with a high-LR warning), start-position, and epochs controls, redrawing the landscape plot as the user adjusts them.",
+      "tags": ["optimizer", "dom", "plotly"],
+      "filePath": "optimizerlab.js"
+    },
+    {
+      "id": "function:optimizerlab.js:startOptimizer",
+      "type": "function",
+      "name": "startOptimizer",
+      "summary": "Runs the selected optimizer (SGD/Momentum/Adam) in a setInterval loop, applying each update rule, logging steps, and stopping on convergence, divergence, or the epoch limit.",
+      "tags": ["optimizer", "adam", "momentum", "simulation"],
+      "filePath": "optimizerlab.js"
+    },
+    {
+      "id": "file:optimizerlab.php",
+      "type": "file",
+      "name": "The Optimizer: Navigating the Loss Landscape",
+      "summary": "Part 2 lesson comparing SGD, Momentum, and Adam on a 1D loss landscape: the update-rule math for each, the Robbins-Monro/Cauchy history, why Adam's per-parameter adaptivity dominates (Zipf), and a table of common pitfalls.",
+      "tags": ["lesson", "optimizer", "sgd", "adam", "gradient-descent"],
+      "filePath": "optimizerlab.php",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:reinforcement_learning.php",
+      "type": "file",
+      "name": "Reinforcement Learning",
+      "summary": "Part 2 lesson on the math of RL: MDPs, value/Q functions and the Bellman equation, Q-learning, policy gradients and REINFORCE, actor-critic/PPO, and the LLM-alignment methods RLHF, DPO, and GRPO, plus reward hacking and open problems.",
+      "tags": ["lesson", "reinforcement-learning", "mdp", "ppo", "dpo", "rlhf"],
+      "filePath": "reinforcement_learning.php",
+      "complexity": "moderate",
+      "languageNotes": "Static prose lesson; defines an inline loadReinforcementLearningModule() in a <script> block (no external JS module)."
+    },
+    {
+      "id": "file:traininglab.js",
+      "type": "file",
+      "name": "traininglab.js",
+      "summary": "Interactive module for the Live-Training lesson: a TrainLab namespace that builds a small TF.js ReLU network on an XOR-like dataset, trains it live, and renders the decision-boundary contour, loss history, per-row predictions, weight heatmaps, and a LaTeX forward-pass equation monitor.",
+      "tags": ["javascript", "tensorflow-js", "training", "decision-boundary", "heatmap"],
+      "filePath": "traininglab.js",
+      "complexity": "complex",
+      "languageNotes": "TrainLab is layered into public API / orchestrators / concrete tasks / atomic helpers; uses tf.browser.toPixels for weight heatmaps and render_temml for the live equations."
+    },
+    {
+      "id": "function:traininglab.js:loadTrainingModule",
+      "type": "function",
+      "name": "loadTrainingModule",
+      "summary": "Module entry point that initializes the training module (setting up the IntersectionObserver that starts TrainLab when the dashboard is visible).",
+      "tags": ["module-loader"],
+      "filePath": "traininglab.js"
+    },
+    {
+      "id": "function:traininglab.js:initTrainingModule",
+      "type": "function",
+      "name": "initTrainingModule",
+      "summary": "Creates an IntersectionObserver that calls TrainLab.init('traininglab') the first time the lab dashboard scrolls into view, falling back to immediate init if no target exists.",
+      "tags": ["lazy-loading", "intersection-observer"],
+      "filePath": "traininglab.js"
+    },
+    {
+      "id": "class:traininglab.js:TrainLab",
+      "type": "class",
+      "name": "TrainLab",
+      "summary": "Namespace encapsulating the live-training lab: model build/compile, the async training loop, and all visualization (decision boundary, loss chart, prediction table, weight heatmaps, and the LaTeX math monitor).",
+      "tags": ["tensorflow-js", "training-loop", "visualization", "namespace"],
+      "filePath": "traininglab.js"
+    },
+    {
+      "id": "file:traininglab.php",
+      "type": "file",
+      "name": "Live Training of a Neural Network",
+      "summary": "Part 2 lesson combining tensors, activations, and a model into a live training dashboard: a 2-input ReLU network trained on a small XOR-like dataset, with a decision-boundary map, live weights/heatmaps, and a full forward-pass equation monitor.",
+      "tags": ["lesson", "training", "neural-network", "decision-boundary", "visualization"],
+      "filePath": "traininglab.php",
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    { "source": "file:activationlab.js", "target": "function:activationlab.js:loadActivationModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:activationlab.js", "target": "function:activationlab.js:initPureActivationLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:activationlab.js", "target": "function:activationlab.js:initSoftmaxLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:activationlab.js", "target": "function:activationlab.js:erfApprox", "type": "contains", "weight": 1.0 },
+    { "source": "function:activationlab.js:loadActivationModule", "target": "function:activationlab.js:initSoftmaxLab", "type": "calls", "weight": 0.8 },
+    { "source": "file:activationlab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:activationlab.php", "target": "file:activationlab.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:autodiff.js", "target": "function:autodiff.js:loadAutodiffModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:autodiff.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:autodiff.php", "target": "file:autodiff.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:backproplab.js", "target": "function:backproplab.js:loadBackproplabModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:backproplab.js", "target": "function:backproplab.js:renderBackpropVisual", "type": "contains", "weight": 1.0 },
+    { "source": "file:backproplab.js", "target": "function:backproplab.js:sigmoidPlot", "type": "contains", "weight": 1.0 },
+    { "source": "function:backproplab.js:loadBackproplabModule", "target": "function:backproplab.js:renderBackpropVisual", "type": "calls", "weight": 0.8 },
+    { "source": "function:backproplab.js:loadBackproplabModule", "target": "function:backproplab.js:sigmoidPlot", "type": "calls", "weight": 0.8 },
+    { "source": "file:backproplab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:backproplab.php", "target": "file:backproplab.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:derivativelab.js", "target": "function:derivativelab.js:loadDerivativeModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:derivativelab.js", "target": "function:derivativelab.js:initDerivativeLab", "type": "contains", "weight": 1.0 },
+    { "source": "function:derivativelab.js:loadDerivativeModule", "target": "function:derivativelab.js:initDerivativeLab", "type": "calls", "weight": 0.8 },
+    { "source": "file:derivativelab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:derivativelab.php", "target": "file:derivativelab.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:differentiation.js", "target": "function:differentiation.js:loadDerivativesModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:differentiation.js", "target": "function:differentiation.js:initSecantTangent", "type": "contains", "weight": 1.0 },
+    { "source": "file:differentiation.js", "target": "function:differentiation.js:initTangentLineExplorer", "type": "contains", "weight": 1.0 },
+    { "source": "file:differentiation.js", "target": "function:differentiation.js:initChainRuleDemo", "type": "contains", "weight": 1.0 },
+    { "source": "file:differentiation.js", "target": "function:differentiation.js:initGradientSurface", "type": "contains", "weight": 1.0 },
+    { "source": "file:differentiation.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:differentiation.php", "target": "file:differentiation.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:hyperparameters.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+
+    { "source": "file:losslab.js", "target": "function:losslab.js:loadLossModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:losslab.js", "target": "function:losslab.js:initLossLab", "type": "contains", "weight": 1.0 },
+    { "source": "function:losslab.js:loadLossModule", "target": "function:losslab.js:initLossLab", "type": "calls", "weight": 0.8 },
+    { "source": "file:losslab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:losslab.php", "target": "file:losslab.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:minimalneuron.js", "target": "function:minimalneuron.js:loadMinimalNeuronModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:minimalneuron.js", "target": "class:minimalneuron.js:MinimalLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:minimalneuron.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:minimalneuron.php", "target": "file:minimalneuron.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:optimizerlab.js", "target": "function:optimizerlab.js:loadOptimizerModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:optimizerlab.js", "target": "function:optimizerlab.js:initOptimizerLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:optimizerlab.js", "target": "function:optimizerlab.js:startOptimizer", "type": "contains", "weight": 1.0 },
+    { "source": "function:optimizerlab.js:loadOptimizerModule", "target": "function:optimizerlab.js:initOptimizerLab", "type": "calls", "weight": 0.8 },
+    { "source": "file:optimizerlab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:optimizerlab.php", "target": "file:optimizerlab.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:reinforcement_learning.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+
+    { "source": "file:traininglab.js", "target": "function:traininglab.js:loadTrainingModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:traininglab.js", "target": "function:traininglab.js:initTrainingModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:traininglab.js", "target": "class:traininglab.js:TrainLab", "type": "contains", "weight": 1.0 },
+    { "source": "function:traininglab.js:loadTrainingModule", "target": "function:traininglab.js:initTrainingModule", "type": "calls", "weight": 0.8 },
+    { "source": "function:traininglab.js:initTrainingModule", "target": "class:traininglab.js:TrainLab", "type": "calls", "weight": 0.8 },
+    { "source": "file:traininglab.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:traininglab.php", "target": "file:traininglab.js", "type": "related", "weight": 0.5 }
+  ]
+}

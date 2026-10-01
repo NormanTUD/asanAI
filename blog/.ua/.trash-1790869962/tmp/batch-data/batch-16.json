@@ -1,0 +1,604 @@
+{
+ "batchIndex": 16,
+ "name": "Part 4 — The Transformer Revolution",
+ "theme": "part-4",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-16.json",
+ "files": [
+  {
+   "path": "embeddinglab.php",
+   "language": "php",
+   "sizeLines": 1334,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "fact_lookup.php",
+   "language": "php",
+   "sizeLines": 354,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "mechanistic_interpretability.js",
+   "language": "javascript",
+   "sizeLines": 1365,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "createElement",
+     "createSlider",
+     "createCanvas",
+     "softmax",
+     "exps",
+     "sum",
+     "matMul",
+     "randomMatrix",
+     "dotProduct",
+     "vecAdd",
+     "vecScale",
+     "norm",
+     "normalize",
+     "colorInterp",
+     "heatColor",
+     "initInductionHead",
+     "draw",
+     "initGrokking",
+     "simulateTrainAccuracy",
+     "simulateTestAccuracy",
+     "computeFourierCoherence",
+     "getPhase",
+     "initOthelloDemo",
+     "resetBoard",
+     "tileName",
+     "nonlinearProbePredict",
+     "wrong",
+     "linearProbePredict",
+     "drawBoardOnCanvas",
+     "computeAccuracy",
+     "findMismatches",
+     "nonlinearProbe",
+     "linearProbe",
+     "refreshFlipSelector",
+     "computeMovePrediction",
+     "scores",
+     "drawPredictionCanvas",
+     "drawIntervention",
+     "initLinearRepDemo",
+     "drawConcepts",
+     "initLoopedTFDemo",
+     "drawState",
+     "init",
+     "initAll"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "mechanistic_interpretability.php",
+   "language": "php",
+   "sizeLines": 729,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "of"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "multimodal.php",
+   "language": "php",
+   "sizeLines": 222,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loadMultimodalModule"
+    ],
+    "classes": [
+     "tokens"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "positionalembeddingslab.js",
+   "language": "javascript",
+   "sizeLines": 613,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "initSineCosine",
+     "updateUnitCircle",
+     "updateWavePlot",
+     "combined",
+     "initRepetitionStarburstDemo",
+     "pe",
+     "addVectors",
+     "getPositionColor",
+     "initHelixManifoldDemo",
+     "pairTrace",
+     "_peLazyRegister",
+     "_peLazyCreateObserver",
+     "match",
+     "loadPositionalEmbeddingsModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "positionalembeddingslab.php",
+   "language": "php",
+   "sizeLines": 204,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "recurrent_networks.php",
+   "language": "php",
+   "sizeLines": 84,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "samplinglab.js",
+   "language": "javascript",
+   "sizeLines": 117,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "entries",
+     "sum",
+     "topKSum",
+     "finalData",
+     "loadSamplingLabModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "samplinglab.php",
+   "language": "php",
+   "sizeLines": 328,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loadSamplingLabModule",
+     "render",
+     "loadTemperatureModule"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "speech_audio.php",
+   "language": "php",
+   "sizeLines": 206,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "loadSpeechAudioModule"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "tokenizerlab.js",
+   "language": "javascript",
+   "sizeLines": 299,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "syncAndTokenize",
+     "visualizeWhitespace",
+     "isWhitespaceToken",
+     "renderTokens",
+     "parts",
+     "wordpieceTokenize",
+     "showTokenizationFailure",
+     "loadTokenizerModule",
+     "revealObserver"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "tokenizerlab.php",
+   "language": "php",
+   "sizeLines": 218,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  }
+ ]
+}

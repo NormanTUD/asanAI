@@ -1,0 +1,198 @@
+{
+  "nodes": [
+    {
+      "id": "file:helper.js",
+      "type": "file",
+      "name": "helper.js",
+      "summary": "The core client-side runtime for the blog: handles Markdown rendering (with LaTeX/index protection), citation processing (\\cite/\\footcite), typography, lazy section initialization, optional block expansion, reading progress, and the global dark-mode theme observer.",
+      "tags": ["javascript", "rendering", "citations", "typography", "dom", "theme"],
+      "filePath": "helper.js",
+      "complexity": "complex",
+      "languageNotes": "Vanilla JS with significant global state via 'window'. Uses IntersectionObserver for lazy init and a MutationObserver for theme changes."
+    },
+    {
+      "id": "function:helper.js:renderMarkdown",
+      "type": "function",
+      "name": "renderMarkdown",
+      "summary": "Orchestrates the rendering of <div class=\"md\"> containers, including restoring escaped characters, processing \\index{} tags, running BlogClusters/BlogTopics preprocessing, and performing post-processing for captions, punctuation, and key-points.",
+      "tags": ["markdown", "rendering"],
+      "filePath": "helper.js"
+    },
+    {
+      "id": "function:helper.js:bibtexify",
+      "type": "function",
+      "name": "bibtexify",
+      "summary": "Parses LaTeX-style citation macros and footnotes in the DOM, resolving them using window.bibData, and constructing a linked bibliography section with stable IDs.",
+      "tags": ["citations", "parsing", "dom"],
+      "filePath": "helper.js"
+    },
+    {
+      "id": "function:helper.js:smartPunct",
+      "type": "function",
+      "name": "smartPunct",
+      "summary": "Performs a typographic pass on text nodes to convert dashes, ellipses, and straight quotes into their proper typographic forms, avoiding code and math blocks.",
+      "tags": ["typography", "dom"],
+      "filePath": "helper.js"
+    },
+    {
+      "id": "function:helper.js:bindIframeSafeLinks",
+      "type": "function",
+      "name": "bindIframeSafeLinks",
+      "summary": "Attaches click handlers to citation links to ensure they resolve correctly to their targets (even with legacy ID drift) and trigger a cinematic sonar/glow highlight effect.",
+      "tags": ["navigation", "animation", "dom"],
+      "filePath": "helper.js"
+    },
+    {
+      "id": "file:image.php",
+      "type": "file",
+      "name": "image.php",
+      "summary": "A server-side PHP utility for intelligent image processing, handling cropping, aspect-ratio fitting, and resizing with robust error reporting and Debian-specific troubleshooting hints.",
+      "tags": ["php", "image-processing", "gd-library", "http"],
+      "filePath": "image.php",
+      "complexity": "moderate",
+      "languageNotes": "Uses custom error/exception handlers to ensure fatal errors return clean, actionable plain-text HTTP responses instead of empty 500s."
+    },
+    {
+      "id": "function:image.php:img_send",
+      "type": "function",
+      "name": "img_send",
+      "summary": "Sends a standardized HTTP error response with a descriptive message and a troubleshooting hint, specifically designed for debugging server-side image failures.",
+      "tags": ["error-handling", "http"],
+      "filePath": "image.php"
+    },
+    {
+      "id": "function:image.php:img_parse_ratio",
+      "type": "function",
+      "name": "img_parse_ratio",
+      "summary": "Parses aspect-ratio query parameters from 'W:H' strings or decimal floats.",
+      "tags": ["utils", "parsing"],
+      "filePath": "image.php"
+    },
+    {
+      "id": "file:index_full.php",
+      "type": "file",
+      "name": "index_full.php",
+      "summary": "The monolithic course view that renders the complete linear curriculum by including every lesson module in sequence.",
+      "tags": ["php", "layout", "course-shell"],
+      "filePath": "index_full.php",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:index.php",
+      "type": "file",
+      "name": "index.php",
+      "summary": "The primary landing page, featuring a course hero, introductory content, and a grid of interactive course tiles for each part.",
+      "tags": ["php", "layout", "landing-page"],
+      "filePath": "index.php",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:init.js",
+      "type": "file",
+      "name": "init.js",
+      "summary": "Provides global initialization logic for the client, such as triggering Markdown rendering on load and resizing Plotly charts on window resize.",
+      "tags": ["javascript", "initialization", "plotly"],
+      "filePath": "init.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:intro.php",
+      "type": "file",
+      "name": "From Big Bang to ChatGPT: Beyond the Black Box",
+      "summary": "The course introduction lesson, providing high-level context, scope, and navigating the interactive philosophy of the curriculum.",
+      "tags": ["php", "lesson", "introduction"],
+      "filePath": "intro.php",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:js_syntax_test.sh",
+      "type": "file",
+      "name": "js_syntax_test.sh",
+      "summary": "A simple shell script for automated syntax validation of all JavaScript files in the project using `node -c`.",
+      "tags": ["shell", "testing", "syntax-check"],
+      "filePath": "js_syntax_test.sh",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:keypoint.js",
+      "type": "file",
+      "name": "keypoint.js",
+      "summary": "A utility that transforms standard Markdown blockquotes into visually distinct 'key-point' cards for important summaries or questions.",
+      "tags": ["javascript", "dom", "callouts"],
+      "filePath": "keypoint.js",
+      "complexity": "moderate",
+      "languageNotes": "Uses a robust, defensive programming pattern with extensive input validation to ensure idempotency and prevent runtime errors during DOM manipulation."
+    },
+    {
+      "id": "function:keypoint.js:upgradeBlockquotes",
+      "type": "function",
+      "name": "upgradeBlockquotes",
+      "summary": "Scans a container for blockquotes that meet specific length and content criteria, then converts them into styled .kp-block elements.",
+      "tags": ["dom", "transformation"],
+      "filePath": "keypoint.js"
+    },
+    {
+      "id": "file:knowledge_map.php",
+      "type": "file",
+      "name": "Knowledge Map",
+      "summary": "A sophisticated interactive visualization that builds a weighted graph of the course based on shared citations, concept affinity (TF-IDF), and the course path.",
+      "tags": ["php", "visualization", "graph", "search"],
+      "filePath": "knowledge_map.php",
+      "complexity": "complex",
+      "languageNotes": "Combines PHP-side graph calculation (concept scoring, edge weighting) with a heavy client-side ECharts-based interactive interface."
+    },
+    {
+      "id": "function:knowledge_map.php:buildConceptGraph",
+      "type": "function",
+      "name": "buildConceptGraph",
+      "summary": "Computes the concept-based graph for the 'Universe' view, identifying high-centrality nodes and density-capped edges based on co-occurrence.",
+      "tags": ["graph", "concepts", "algorithms"],
+      "filePath": "knowledge_map.php"
+    },
+    {
+      "id": "file:layer_commuting_diagram.html",
+      "type": "file",
+      "name": "layer_commuting_diagram.html",
+      "summary": "A static SVG representation of a commuting diagram used to visualize mathematical relationships between layers in a network.",
+      "tags": ["svg", "diagram", "math"],
+      "filePath": "layer_commuting_diagram.html",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:layout_guardrail.js",
+      "type": "file",
+      "name": "layout_guardrail.js",
+      "summary": "A diagnostic tool that detects and flags elements in the #contents column that exceed the allowed width, helping authors catch layout bugs.",
+      "tags": ["javascript", "debugging", "layout", "dom"],
+      "filePath": "layout_guardrail.js",
+      "complexity": "complex",
+      "languageNotes": "Features a sophisticated measurement loop with built-in debouncing, support for 'reader mode' transitions, and a high-fidelity reporting banner with AI-fix generation."
+    },
+    {
+      "id": "function:layout_guardrail.js:check",
+      "type": "function",
+      "name": "check",
+      "summary": "Performs the primary layout measurement sweep, identifies offending elements, and updates the global guardrail state and UI banner.",
+      "tags": ["measurement", "guardrail"],
+      "filePath": "layout_guardrail.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:helper.js", "target": "function:helper.js:renderMarkdown", "type": "contains", "weight": 1.0 },
+    { "source": "file:helper.js", "target": "function:helper.js:bibtexify", "type": "contains", "weight": 1.0 },
+    { "source": "file:helper.js", "target": "function:helper.js:smartPunct", "type": "contains", "weight": 1.0 },
+    { "source": "file:helper.js", "target": "function:helper.js:bindIframeSafeLinks", "type": "contains", "weight": 1.0 },
+    { "source": "function:helper.js:renderMarkdown", "target": "function:keypoint.js:upgradeBlockquotes", "type": "calls", "weight": 0.8 },
+    { "source": "file:image.php", "target": "function:image.php:img_send", "type": "contains", "weight": 1.0 },
+    { "source": "file:image.php", "target": "function:image.php:img_parse_ratio", "type": "contains", "weight": 1.0 },
+    { "source": "file:index_full.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:index_full.php", "target": "file:mobile-loader.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:index.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:index.php", "target": "file:mobile-loader.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:init.js", "target": "function:helper.js:renderMarkdown", "type": "calls", "weight": 0.8 },
+    { "source": "file:intro.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:keypoint.js", "target": "function:keypoint.js:upgradeBlockquotes", "type": "contains", "weight": 1.0 },
+    { "source": "file:knowledge_map.php", "target": "function:knowledge_map.php:buildConceptGraph", "type": "contains", "weight": 1.0 },
+    { "source": "file:layout_guardrail.js", "target": "function:layout_guardrail.js:check", "type": "contains", "weight": 1.0 }
+  ]
+}

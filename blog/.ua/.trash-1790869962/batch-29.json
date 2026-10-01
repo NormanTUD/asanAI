@@ -1,0 +1,387 @@
+{
+  "nodes": [
+    {
+      "id": "file:darkmode-ci/autofix.js",
+      "type": "file",
+      "name": "autofix.js",
+      "summary": "CLI that reads the test runner's _stream.jsonl findings and auto-generates safe dark-mode CSS rules (font contrast fixes and optional stuck-white container fixes), inserting them into style.css after the dark-mode marker with a .bak-autofix backup, and writes autofix_report.json.",
+      "tags": ["autofix", "css-generation", "dark-mode", "cli"],
+      "filePath": "darkmode-ci/autofix.js",
+      "complexity": "complex",
+      "languageNotes": "Aggregates per-page findings by selector|color key, generalizes selectors (strips dynamic IDs, drops bare tags), and only applies fixes that are not HUD/overlay or SVG/MathJax/Plotly elements; supports --dry-run and --only-critical."
+    },
+    {
+      "id": "function:darkmode-ci/autofix.js:main",
+      "type": "function",
+      "name": "main",
+      "summary": "Entry point: validates stream/CSS paths, aggregates font issues and optional stuck-white clusters from _stream.jsonl, filters to safe fixes, renders the CSS block, inserts it into style.css at the dark-mode marker (with backup), and writes the report.",
+      "tags": ["entry-point", "css-injection", "autofix"],
+      "filePath": "darkmode-ci/autofix.js"
+    },
+    {
+      "id": "function:darkmode-ci/autofix.js:generalizeSelector",
+      "type": "function",
+      "name": "generalizeSelector",
+      "summary": "Strips dynamic IDs and collapses duplicate classes from a CSS selector so many element-specific findings collapse into one rule; returns null for bare-tag selectors that are too broad to fix automatically.",
+      "tags": ["selector", "generalization", "safety"],
+      "filePath": "darkmode-ci/autofix.js"
+    },
+    {
+      "id": "function:darkmode-ci/autofix.js:groupByGeneralized",
+      "type": "function",
+      "name": "groupByGeneralized",
+      "summary": "Groups candidate fixes by their generalized selector, merging the affected pages and counting original element occurrences, and collects the bare-tag selectors that were skipped as needing manual fixes.",
+      "tags": ["aggregation", "deduplication", "autofix"],
+      "filePath": "darkmode-ci/autofix.js"
+    },
+    {
+      "id": "function:darkmode-ci/autofix.js:findDarkMarker",
+      "type": "function",
+      "name": "findDarkMarker",
+      "summary": "Locates the insertion point in style.css: a /* ...darkmode... */ comment or the first html.dark rule, falling back to end-of-file, so generated rules land in the dark-mode section.",
+      "tags": ["css-parsing", "insertion-point"],
+      "filePath": "darkmode-ci/autofix.js"
+    },
+    {
+      "id": "function:darkmode-ci/autofix.js:writeReport",
+      "type": "function",
+      "name": "writeReport",
+      "summary": "Writes autofix_report.json into the output dir, recording applied rules (selector, new/old color, severity, contrast, page list), stuck-white fixes, and the skipped unsafe fixes.",
+      "tags": ["reporting", "json-output"],
+      "filePath": "darkmode-ci/autofix.js"
+    },
+    {
+      "id": "file:darkmode-ci/ci/github-actions.yml",
+      "type": "config",
+      "name": "github-actions.yml",
+      "summary": "GitHub Actions workflow ('Dark-mode check') triggered on pushes/PRs touching darkmode-ci/**, style.css, or PHP lessons: installs Chromium + php-cli, serves the blog on :8080, runs test.js with configurable wait/parallel/pages inputs, uploads screenshots, posts a PR summary comment, and exits non-zero when bugs are found.",
+      "tags": ["github-actions", "ci", "workflow"],
+      "filePath": "darkmode-ci/ci/github-actions.yml"
+    },
+    {
+      "id": "file:darkmode-ci/lib/bug-detector.js",
+      "type": "file",
+      "name": "bug-detector.js",
+      "summary": "Detection core: matches light/dark element snapshots pairwise and flags theme-switch bugs (bg+color unchanged on a still-light dark background), WCAG AA font-readability violations, and stuck-white pixel clusters, skipping HUD, accents, backdrop, and math/plot elements.",
+      "tags": ["bug-detection", "theme-switch", "wcag", "contrast"],
+      "filePath": "darkmode-ci/lib/bug-detector.js",
+      "complexity": "moderate",
+      "languageNotes": "Exports the shared constants DARK_PAGE_BG and the intentional indigo ACCENT_COLORS allowlist used to suppress false positives."
+    },
+    {
+      "id": "function:darkmode-ci/lib/bug-detector.js:matchPairs",
+      "type": "function",
+      "name": "matchPairs",
+      "summary": "Greedy nearest-neighbor matching of light and dark snapshot elements by identical selector within a 5px Manhattan distance, producing {light, dark} pairs for comparison.",
+      "tags": ["matching", "snapshots"],
+      "filePath": "darkmode-ci/lib/bug-detector.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/bug-detector.js:detectThemeBugs",
+      "type": "function",
+      "name": "detectThemeBugs",
+      "summary": "Reports element pairs whose background and color barely changed between themes but whose dark background is still light (luminance > 0.7), with severity 'critical' (lum > 0.9) or 'warning', filtering out accents, HUD, backdrop, and tiny elements.",
+      "tags": ["theme-switch-bug", "luminance", "detection"],
+      "filePath": "darkmode-ci/lib/bug-detector.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/bug-detector.js:detectFontIssues",
+      "type": "function",
+      "name": "detectFontIssues",
+      "summary": "Computes WCAG contrast of each text-bearing dark-mode element against its effective background (falling back to the dark page bg when transparent) and reports violations: severity critical (<2), bad (2-3), warn (3-4.5), or tiny-font (<11px text).",
+      "tags": ["wcag", "contrast-ratio", "font-readability"],
+      "filePath": "darkmode-ci/lib/bug-detector.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/bug-detector.js:detectBlock",
+      "type": "function",
+      "name": "detectBlock",
+      "summary": "Async orchestrator for one scroll block: runs matchPairs + detectThemeBugs + detectFontIssues on the snapshots and findStuckWhiteClusters on the two PNGs, returning {bugs, fontIssues, whiteClusters}.",
+      "tags": ["orchestration", "detection", "api"],
+      "filePath": "darkmode-ci/lib/bug-detector.js"
+    },
+    {
+      "id": "file:darkmode-ci/lib/color-utils.js",
+      "type": "file",
+      "name": "color-utils.js",
+      "summary": "Shared color math: parses rgb()/rgba() strings, computes WCAG 2.x relative luminance and contrast ratio, RGB distance, luminance bands, and picks a readable light foreground color against a dark background.",
+      "tags": ["color", "wcag", "luminance", "contrast"],
+      "filePath": "darkmode-ci/lib/color-utils.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "function:darkmode-ci/lib/color-utils.js:parseRgba",
+      "type": "function",
+      "name": "parseRgba",
+      "summary": "Parses an rgb()/rgba() CSS color string into {r,g,b,a} (alpha defaults to 1), returning null on malformed input; the entry point for all color comparisons.",
+      "tags": ["parsing", "color"],
+      "filePath": "darkmode-ci/lib/color-utils.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/color-utils.js:relLum",
+      "type": "function",
+      "name": "relLum",
+      "summary": "Computes WCAG 2.x relative luminance from an {r,g,b} object using the sRGB linearization threshold (0.03928) and the 0.2126/0.7152/0.0722 channel weights.",
+      "tags": ["wcag", "luminance"],
+      "filePath": "darkmode-ci/lib/color-utils.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/color-utils.js:contrastRatio",
+      "type": "function",
+      "name": "contrastRatio",
+      "summary": "Computes the WCAG contrast ratio (Lmax+0.05)/(Lmin+0.05) between two parsed colors; the metric behind all font-readability thresholds.",
+      "tags": ["wcag", "contrast-ratio"],
+      "filePath": "darkmode-ci/lib/color-utils.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/color-utils.js:pickReadableForeground",
+      "type": "function",
+      "name": "pickReadableForeground",
+      "summary": "Walks a list of safe light colors and returns the first whose contrast against the given dark background meets the minimum (default 4.5), used by autofix to choose replacement text colors.",
+      "tags": ["color-selection", "contrast", "autofix"],
+      "filePath": "darkmode-ci/lib/color-utils.js"
+    },
+    {
+      "id": "file:darkmode-ci/lib/element-snapshot.js",
+      "type": "file",
+      "name": "element-snapshot.js",
+      "summary": "Puppeteer page.evaluate helpers that capture every visible element's computed style (bg, color, font size, backdrop) and bounding rect as a flat snapshot, or identify the element under a given viewport point, with SVG/MathJax/Plotly tags skipped.",
+      "tags": ["dom-snapshot", "puppeteer", "computed-style"],
+      "filePath": "darkmode-ci/lib/element-snapshot.js",
+      "complexity": "moderate",
+      "languageNotes": "The skip-tag lists are re-inlined inside the page.evaluate closures because Node-side helpers are not visible in the browser context."
+    },
+    {
+      "id": "function:darkmode-ci/lib/element-snapshot.js:snapshotVisibleElements",
+      "type": "function",
+      "name": "snapshotVisibleElements",
+      "summary": "Captures up to maxElements (default 800) visible in-viewport elements as {sel, ancSel, bg, color, fontSize, hasText, backdrop, inlineBg/inlineColor, x,y,w,h} records built from getBoundingClientRect + getComputedStyle, skipping hidden, low-opacity, SVG, and math/plot nodes.",
+      "tags": ["dom-snapshot", "viewport", "puppeteer"],
+      "filePath": "darkmode-ci/lib/element-snapshot.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/element-snapshot.js:identifyElementAtPoint",
+      "type": "function",
+      "name": "identifyElementAtPoint",
+      "summary": "Uses document.elementsFromPoint to find the first meaningful element (skipping html/body/SVG) at viewport coordinates and returns its selector, colors, snippet of text, and positioning info — used to label stuck-white clusters.",
+      "tags": ["hit-testing", "dom-snapshot"],
+      "filePath": "darkmode-ci/lib/element-snapshot.js"
+    },
+    {
+      "id": "file:darkmode-ci/lib/pixel-diff.js",
+      "type": "file",
+      "name": "pixel-diff.js",
+      "summary": "PNG pixel-level comparison: builds difference masks between light and dark screenshots of the same block, then flood-fills them into bounding-box clusters to find stuck-white regions (white in both themes) and strongly changed regions.",
+      "tags": ["pixel-diff", "pngjs", "flood-fill", "cluster-detection"],
+      "filePath": "darkmode-ci/lib/pixel-diff.js",
+      "complexity": "moderate",
+      "languageNotes": "Handles the pngjs 6.x vs 7.x sync-read API move by detecting PNG.PNG.sync once at load time."
+    },
+    {
+      "id": "function:darkmode-ci/lib/pixel-diff.js:findStuckWhiteClusters",
+      "type": "function",
+      "name": "findStuckWhiteClusters",
+      "summary": "Masks pixels that are near-white (avg > whiteThreshold, default 235) in both light and dark screenshots with low color difference, then returns flood-filled clusters (default min 800 px, aspect-ratio capped) — the visual confirmation of theme-switch bugs.",
+      "tags": ["stuck-white", "pixel-diff", "cluster-detection"],
+      "filePath": "darkmode-ci/lib/pixel-diff.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/pixel-diff.js:findChangedClusters",
+      "type": "function",
+      "name": "findChangedClusters",
+      "summary": "Masks pixels whose light/dark RGB sum-difference exceeds minDifference (default 100) and flood-fills them into clusters (default min 500 px), highlighting regions that did switch between themes.",
+      "tags": ["pixel-diff", "cluster-detection"],
+      "filePath": "darkmode-ci/lib/pixel-diff.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/pixel-diff.js:floodClusters",
+      "type": "function",
+      "name": "floodClusters",
+      "summary": "Iterative 4-neighborhood flood-fill over a binary mask collecting bounding boxes and pixel counts per cluster, filtering by minimum size, minimum extent, and maximum aspect ratio.",
+      "tags": ["flood-fill", "clustering", "algorithm"],
+      "filePath": "darkmode-ci/lib/pixel-diff.js"
+    },
+    {
+      "id": "file:darkmode-ci/lib/scroll-capture.js",
+      "type": "file",
+      "name": "scroll-capture.js (lib)",
+      "summary": "Generic Puppeteer scroll-and-screenshot library (ScrollCapture class): launches Chromium, opens isolated browser contexts, navigates with module-loader wait, scrolls in fixed steps with double-rAF settle, and captures screenshots + DOM snapshots per position in one or both themes.",
+      "tags": ["puppeteer", "screenshot", "scroll", "library"],
+      "filePath": "darkmode-ci/lib/scroll-capture.js",
+      "complexity": "complex",
+      "languageNotes": "Each page gets its own BrowserContext for cookie/storage isolation; scrollTo waits two requestAnimationFrame ticks to fix the pre-paint screenshot race."
+    },
+    {
+      "id": "class:darkmode-ci/lib/scroll-capture.js:ScrollCapture",
+      "type": "class",
+      "name": "ScrollCapture",
+      "summary": "Core reusable capture engine: launch/close, openPage (isolated context), navigate (theme cookie + networkidle2 + _modulesLoaded wait), scrollTo (double-rAF), computeScrollPositions, captureAt (per-position, multi-theme, optional snapshot), and capturePage (full-page loop writing block-NN-yYYY-theme.png files).",
+      "tags": ["puppeteer", "screenshot", "scroll", "api"],
+      "filePath": "darkmode-ci/lib/scroll-capture.js"
+    },
+    {
+      "id": "file:darkmode-ci/scroll-capture.js",
+      "type": "file",
+      "name": "scroll-capture.js (CLI)",
+      "summary": "Thin CLI wrapper around lib/scroll-capture.js for one-off visual inspection: captures a page slug or URL in configurable themes/viewport/scroll steps, writing block PNGs and a scroll_capture.json metadata file.",
+      "tags": ["cli", "screenshot", "visual-inspection"],
+      "filePath": "darkmode-ci/scroll-capture.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:darkmode-ci/lib/selectors.js",
+      "type": "file",
+      "name": "selectors.js",
+      "summary": "Selector classification for false-positive filtering: classifies elements as fixed HUD/overlay UI (drawer, search, topics overlays, toggles) by ancestor/id allowlists, and as skippable tags (SVG, canvas, MathJax/KaTeX, Plotly/ECharts); also builds tag+id+class CSS selectors.",
+      "tags": ["selectors", "classification", "false-positives"],
+      "filePath": "darkmode-ci/lib/selectors.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "function:darkmode-ci/lib/selectors.js:isHudElement",
+      "type": "function",
+      "name": "isHudElement",
+      "summary": "Returns true when a selector or its ancestor matches the FIXED_HUD_ANCESTORS class list or a FIXED_HUD_IDS id, so bug detection and autofix leave deliberate cross-theme UI (drawer, search, topic overlays) untouched.",
+      "tags": ["hud", "filtering", "selectors"],
+      "filePath": "darkmode-ci/lib/selectors.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/selectors.js:isSkippableTag",
+      "type": "function",
+      "name": "isSkippableTag",
+      "summary": "Returns true for selectors whose base tag is in the skip list (svg, canvas, br, script, ...) or which match MathJax/KaTeX/Plotly/ECharts patterns, since computed color on those elements is misleading.",
+      "tags": ["filtering", "svg", "mathjax", "selectors"],
+      "filePath": "darkmode-ci/lib/selectors.js"
+    },
+    {
+      "id": "file:darkmode-ci/lib/theme-controller.js",
+      "type": "file",
+      "name": "theme-controller.js",
+      "summary": "Puppeteer helpers that drive the blog's theme: toggle html.dark + write the theme cookie + update meta theme-color with a settle delay for MutationObservers, preset the cookie pre-navigation, and query the current theme.",
+      "tags": ["theme", "dark-mode", "puppeteer", "cookie"],
+      "filePath": "darkmode-ci/lib/theme-controller.js",
+      "complexity": "simple"
+    },
+    {
+      "id": "function:darkmode-ci/lib/theme-controller.js:setTheme",
+      "type": "function",
+      "name": "setTheme",
+      "summary": "Toggles the html.dark class in the page, writes the theme= light|dark cookie, updates the meta theme-color to #0f172a/#ffffff, and waits settleMs (default 1000) so observers and CSS transitions finish before the next screenshot.",
+      "tags": ["theme-toggle", "dark-mode", "settle"],
+      "filePath": "darkmode-ci/lib/theme-controller.js"
+    },
+    {
+      "id": "function:darkmode-ci/lib/theme-controller.js:presetCookie",
+      "type": "function",
+      "name": "presetCookie",
+      "summary": "Sets the theme cookie at the browser level before navigating so a page boots directly in the desired theme instead of flashing the other one.",
+      "tags": ["cookie", "theme", "bootstrap"],
+      "filePath": "darkmode-ci/lib/theme-controller.js"
+    },
+    {
+      "id": "file:darkmode-ci/make-sxs.js",
+      "type": "file",
+      "name": "make-sxs.js",
+      "summary": "Generates side-by-side comparison images (light | dark | dark-annotated with red boxes around stuck-white clusters read from _stream.jsonl) using ImageMagick +append, one per captured block per page, into the sxs/ directory.",
+      "tags": ["screenshot", "comparison", "imagemagick", "annotation"],
+      "filePath": "darkmode-ci/make-sxs.js",
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:darkmode-ci/package.json",
+      "type": "config",
+      "name": "package.json",
+      "summary": "npm manifest for the darkmode-ci tool: declares pngjs and puppeteer-core dependencies and scripts (test, test:fast, test:single, test:json, capture, fix, fix:dry, fix:critical, fix:all) for the tester, capture CLI, and autofix variants.",
+      "tags": ["npm", "scripts", "dependencies"],
+      "filePath": "darkmode-ci/package.json"
+    },
+    {
+      "id": "document:darkmode-ci/README.md",
+      "type": "document",
+      "name": "README.md",
+      "summary": "Documentation for darkmode-ci: explains the three detection modes (theme-switch bugs, stuck-white clusters, WCAG font readability), CLI flags and env vars, autofix workflow, library API, output layout, exit codes, sample CI usage, and the detection-filtering notes (backdrops, indigo accents, img, math/plot, HUD).",
+      "tags": ["documentation", "dark-mode", "cli-reference"],
+      "filePath": "darkmode-ci/README.md"
+    },
+    {
+      "id": "file:darkmode-ci/test.js",
+      "type": "file",
+      "name": "test.js",
+      "summary": "Main orchestrator CLI: for each of ~60 blog pages, scrolls in steps with a parallel browser-context worker pool, toggles light/dark per block, screenshots + snapshots, runs detectBlock, appends findings to _stream.jsonl, and writes bug_report.json / summary.json with an exit code for CI gating.",
+      "tags": ["cli", "orchestrator", "testing", "dark-mode"],
+      "filePath": "darkmode-ci/test.js",
+      "complexity": "complex",
+      "languageNotes": "Uses a fixed ALL_PAGES slug list of the full course; N async workers share one queue and one launched browser, and white-cluster centers are hit-tested via identifyElementAtPoint to attach element selectors."
+    },
+    {
+      "id": "function:darkmode-ci/test.js:testPage",
+      "type": "function",
+      "name": "testPage",
+      "summary": "Per-page test loop: opens an isolated context, navigates, then for each scroll position captures light then dark (screenshot + DOM snapshot), runs detectBlock, hit-tests up to 5 white-cluster centers for element identification, and streams a JSONL record per block.",
+      "tags": ["per-page-test", "screenshot", "streaming-output"],
+      "filePath": "darkmode-ci/test.js"
+    },
+    {
+      "id": "function:darkmode-ci/test.js:main",
+      "type": "function",
+      "name": "main",
+      "summary": "Entry point: parses CLI/env options, launches ScrollCapture, fans the page queue out over `parallel` workers, writes partial.json incrementally plus final bug_report.json and summary.json, prints or emits JSON, and exits 1 when critical/bad font issues, theme bugs, or white clusters exist.",
+      "tags": ["entry-point", "worker-pool", "ci-gating"],
+      "filePath": "darkmode-ci/test.js"
+    },
+    {
+      "id": "file:darkmode-ci/watch-and-fix.js",
+      "type": "file",
+      "name": "watch-and-fix.js",
+      "summary": "Background watcher that polls _stream.jsonl every minute during a live test.js run and spawns `autofix.js --include-stuck-white` whenever the line count crosses a 10-block boundary or the run finishes, giving incremental CSS fixes while the long scan is still in progress.",
+      "tags": ["watcher", "autofix", "polling"],
+      "filePath": "darkmode-ci/watch-and-fix.js",
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    { "source": "file:darkmode-ci/autofix.js", "target": "function:darkmode-ci/autofix.js:main", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "function:darkmode-ci/autofix.js:generalizeSelector", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "function:darkmode-ci/autofix.js:groupByGeneralized", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "function:darkmode-ci/autofix.js:findDarkMarker", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "function:darkmode-ci/autofix.js:writeReport", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "file:darkmode-ci/lib/color-utils.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/autofix.js", "target": "file:darkmode-ci/lib/selectors.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "function:darkmode-ci/lib/bug-detector.js:matchPairs", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "function:darkmode-ci/lib/bug-detector.js:detectThemeBugs", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "function:darkmode-ci/lib/bug-detector.js:detectFontIssues", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "function:darkmode-ci/lib/bug-detector.js:detectBlock", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "file:darkmode-ci/lib/color-utils.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "file:darkmode-ci/lib/pixel-diff.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/bug-detector.js", "target": "file:darkmode-ci/lib/selectors.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/color-utils.js", "target": "function:darkmode-ci/lib/color-utils.js:parseRgba", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/color-utils.js", "target": "function:darkmode-ci/lib/color-utils.js:relLum", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/color-utils.js", "target": "function:darkmode-ci/lib/color-utils.js:contrastRatio", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/color-utils.js", "target": "function:darkmode-ci/lib/color-utils.js:pickReadableForeground", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/element-snapshot.js", "target": "function:darkmode-ci/lib/element-snapshot.js:snapshotVisibleElements", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/element-snapshot.js", "target": "function:darkmode-ci/lib/element-snapshot.js:identifyElementAtPoint", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/element-snapshot.js", "target": "file:darkmode-ci/lib/selectors.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/pixel-diff.js", "target": "function:darkmode-ci/lib/pixel-diff.js:findStuckWhiteClusters", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/pixel-diff.js", "target": "function:darkmode-ci/lib/pixel-diff.js:findChangedClusters", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/pixel-diff.js", "target": "function:darkmode-ci/lib/pixel-diff.js:floodClusters", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/scroll-capture.js", "target": "class:darkmode-ci/lib/scroll-capture.js:ScrollCapture", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/scroll-capture.js", "target": "file:darkmode-ci/lib/theme-controller.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/scroll-capture.js", "target": "file:darkmode-ci/lib/element-snapshot.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/scroll-capture.js", "target": "file:darkmode-ci/lib/scroll-capture.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/scroll-capture.js", "target": "file:darkmode-ci/lib/theme-controller.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/lib/selectors.js", "target": "function:darkmode-ci/lib/selectors.js:isHudElement", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/selectors.js", "target": "function:darkmode-ci/lib/selectors.js:isSkippableTag", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/theme-controller.js", "target": "function:darkmode-ci/lib/theme-controller.js:setTheme", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/lib/theme-controller.js", "target": "function:darkmode-ci/lib/theme-controller.js:presetCookie", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/test.js", "target": "function:darkmode-ci/test.js:testPage", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/test.js", "target": "function:darkmode-ci/test.js:main", "type": "contains", "weight": 1.0 },
+    { "source": "file:darkmode-ci/test.js", "target": "file:darkmode-ci/lib/scroll-capture.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/test.js", "target": "file:darkmode-ci/lib/element-snapshot.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/test.js", "target": "file:darkmode-ci/lib/bug-detector.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/test.js", "target": "file:darkmode-ci/lib/theme-controller.js", "type": "imports", "weight": 0.7 },
+    { "source": "file:darkmode-ci/watch-and-fix.js", "target": "file:darkmode-ci/autofix.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:darkmode-ci/ci/github-actions.yml", "target": "file:darkmode-ci/test.js", "type": "configures", "weight": 0.6 },
+    { "source": "document:darkmode-ci/README.md", "target": "file:darkmode-ci/test.js", "type": "documents", "weight": 0.5 },
+    { "source": "document:darkmode-ci/README.md", "target": "file:darkmode-ci/autofix.js", "type": "documents", "weight": 0.5 }
+  ]
+}

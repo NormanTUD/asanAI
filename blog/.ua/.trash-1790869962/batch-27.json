@@ -1,0 +1,1025 @@
+{
+ "nodes": [
+  {
+    "id": "file:coq/coherent_world_models/Library.v",
+    "type": "file",
+    "name": "Library.v",
+    "summary": "Foundational Coq library for the coherent-world-models chapter. Defines the basic types (SubjectMatter, Region, Codomain, Trace, AccessFunction, ViewTranslation, Context, ContextRefinement), the admissible-transition class T (TransitionKind, AdmissibleTransition), the hierarchy of sameness predicates (equality, isomorphism, homotopy, approximation, statistical, model-theoretic), and indexicality. Every other file in the directory imports it.",
+    "tags": ["coq", "formal-verification", "foundations", "sameness", "type-theory"],
+    "complexity": "complex",
+    "languageNotes": "Defines the shared vocabulary; uses Notation aliases (W, R, Region, Trace) and two proven weakening lemmas (eq_to_iso, iso_to_homotopy)."
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:SubjectMatter",
+    "type": "class",
+    "name": "SubjectMatter",
+    "summary": "The type W with internal structure; the thing the whole framework represents without being identical to.",
+    "tags": ["coq", "subject-matter", "foundations"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:AccessFunction",
+    "type": "class",
+    "name": "AccessFunction",
+    "summary": "An observation arrow O: W -> R mapping a region of the subject matter to a trace in a codomain.",
+    "tags": ["coq", "observation", "access"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:ViewTranslation",
+    "type": "class",
+    "name": "ViewTranslation",
+    "summary": "A map between two codomains (a view-to-view translation), the carrier of one class of admissible transition.",
+    "tags": ["coq", "translation", "transition"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:TransitionKind",
+    "type": "class",
+    "name": "TransitionKind",
+    "summary": "Inductive sum of the three kinds of transition: observation, translation, and context refinement.",
+    "tags": ["coq", "transition", "inductive"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:AdmissibleTransition",
+    "type": "class",
+    "name": "AdmissibleTransition",
+    "summary": "The predicate marking a TransitionKind as licensed (belonging to the class T), the chapter's central licence machinery.",
+    "tags": ["coq", "licence", "admissible-transition"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:Iso",
+    "type": "class",
+    "name": "Iso",
+    "summary": "An isomorphism as an invertible pair of maps with both round-trip equalities; the witness for isomorphism-sameness.",
+    "tags": ["coq", "isomorphism", "sameness"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:HomotopyEquiv",
+    "type": "class",
+    "name": "HomotopyEquiv",
+    "summary": "A homotopy equivalence modelled as mutually inverse maps up to pointwise equality; the witness for homotopy-sameness.",
+    "tags": ["coq", "homotopy", "sameness"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:CommonModel",
+    "type": "class",
+    "name": "CommonModel",
+    "summary": "A single Model satisfying every theory in a list; the witness for model-theoretic sameness.",
+    "tags": ["coq", "model-theory", "sameness"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Library.v:IndexicalTrace",
+    "type": "class",
+    "name": "IndexicalTrace",
+    "summary": "A trace that points beyond itself to a possible source, capturing indexicality as data rather than a given.",
+    "tags": ["coq", "indexicality", "trace"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Library.v:eq_to_iso",
+    "type": "function",
+    "name": "eq_to_iso",
+    "summary": "Proves equality weakens to isomorphism by exhibiting the identity isomorphism on a type.",
+    "tags": ["coq", "lemma", "hierarchy", "weakening"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Library.v:iso_to_homotopy",
+    "type": "function",
+    "name": "iso_to_homotopy",
+    "summary": "Proves isomorphism weakens to homotopy equivalence by reusing the isomorphism's forward/backward maps.",
+    "tags": ["coq", "lemma", "hierarchy", "weakening"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Traces.v",
+    "type": "file",
+    "name": "Traces.v",
+    "summary": "Formalizes what an access function leaves behind: a ProducedTrace bundling the access function, region, and image proof, plus the four trace properties (transformed, mediated, underdetermined, possibly indexical) and the inference task of recovering a (source, access) pair from a trace.",
+    "tags": ["coq", "trace", "indirect-realism", "inference"],
+    "languageNotes": "Works around Coq 8.20's strict dependent-projection handling with explicit-parameter projection definitions (PTAccess, PTRegion, PTTrace)."
+  },
+  {
+    "id": "class:coq/coherent_world_models/Traces.v:ProducedTrace",
+    "type": "class",
+    "name": "ProducedTrace",
+    "summary": "A trace paired with its producing access function and region, with an equality witness that the trace is the image of the region.",
+    "tags": ["coq", "trace", "record"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Traces.v:MediatedSetup",
+    "type": "class",
+    "name": "MediatedSetup",
+    "summary": "Two access functions on the same source/codomain witnessing that a trace carries the marks of its procedure.",
+    "tags": ["coq", "trace", "mediation"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Traces.v:Inference",
+    "type": "class",
+    "name": "Inference",
+    "summary": "The (partial) recovery of one possible (source, access) pair from a given trace, modelled via PossibleSource.",
+    "tags": ["coq", "inference", "underdetermination"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Traces.v:Transformed",
+    "type": "function",
+    "name": "Transformed",
+    "summary": "Predicate stating a trace is the output of some access function applied to a region of a subject matter.",
+    "tags": ["coq", "trace", "predicate"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Traces.v:Underdetermined",
+    "type": "function",
+    "name": "Underdetermined",
+    "summary": "Predicate stating that at least two distinct (source, access) pairs can yield the same trace, so neither is determined by the trace alone.",
+    "tags": ["coq", "trace", "underdetermination"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Traces.v:make_example",
+    "type": "function",
+    "name": "make_example",
+    "summary": "Constructs a TraceExample from a subject matter, codomain, access function, and source/target equalities; unifies the chapter's four concrete trace examples.",
+    "tags": ["coq", "trace", "constructor"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Traces.v:inferences_disagree",
+    "type": "function",
+    "name": "inferences_disagree",
+    "summary": "Predicate that two inferences from the same trace disagree (different region or different access), formalizing non-unique inference.",
+    "tags": ["coq", "inference", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Commitments.v",
+    "type": "file",
+    "name": "Commitments.v",
+    "summary": "Formalizes the chapter's five foundational commitments (indirect realism, internal structure, existence of admissible transitions, coherence-necessary-not-sufficient, correspondence-separate) plus the wordless-introspection limit case, Kant's thing-in-itself, and the unresolved dispute with qualia-primary views.",
+    "tags": ["coq", "epistemology", "commitments", "indirect-realism"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Commitments.v:IndirectRealism",
+    "type": "class",
+    "name": "IndirectRealism",
+    "summary": "A subject matter kept separate from its codomain, witnessing that a trace lives in the codomain r, never in the source s.",
+    "tags": ["coq", "indirect-realism", "commitment"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Commitments.v:AdmissibleClass",
+    "type": "class",
+    "name": "AdmissibleClass",
+    "summary": "Witnesses a non-trivial class T by exhibiting at least one licensed observation, translation, and refinement.",
+    "tags": ["coq", "admissible-transition", "commitment"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Commitments.v:Position",
+    "type": "class",
+    "name": "Position",
+    "summary": "Inductive type marking which default (indirect realism vs qualia-primary) a view takes in the foundational dispute.",
+    "tags": ["coq", "epistemology", "position"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Commitments.v:our_position",
+    "type": "function",
+    "name": "our_position",
+    "summary": "Declares the chapter's default stance to be IndirectRealismDefault, i.e. the mediated, communicable case.",
+    "tags": ["coq", "position", "definition"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/ThreeDifferences.v",
+    "type": "file",
+    "name": "ThreeDifferences.v",
+    "summary": "Formalizes the three independent sources of disagreement between a subject matter and a trace: world-level, channel-level (calibrable), and processing-level, with a diagnostic disjunction (DisagreementKind) and the discipline to locate the difference at the right level.",
+    "tags": ["coq", "difference", "diagnosis", "calibration"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreeDifferences.v:WorldDifference",
+    "type": "class",
+    "name": "WorldDifference",
+    "summary": "Two subject matters that genuinely differ (no identification procedure), the world-level source of disagreement.",
+    "tags": ["coq", "difference", "world-level"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreeDifferences.v:ChannelDifference",
+    "type": "class",
+    "name": "ChannelDifference",
+    "summary": "Two instruments reading the same subject matter differently; the channel-level source addressed by calibration.",
+    "tags": ["coq", "difference", "channel-level"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreeDifferences.v:ProcessingDifference",
+    "type": "class",
+    "name": "ProcessingDifference",
+    "summary": "Two interpretations of the same trace yielding different conclusions; the processing-level source of disagreement.",
+    "tags": ["coq", "difference", "processing-level"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreeDifferences.v:DisagreementKind",
+    "type": "class",
+    "name": "DisagreementKind",
+    "summary": "Inductive diagnostic naming where a disagreement lives: world, channel, processing, or not-yet-tellable.",
+    "tags": ["coq", "diagnosis", "inductive"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ThreeDifferences.v:locate_difference",
+    "type": "function",
+    "name": "locate_difference",
+    "summary": "Placeholder for the boxed discipline to ask which level is responsible for a given disagreement.",
+    "tags": ["coq", "diagnosis", "definition"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/NotionsOfSameness.v",
+    "type": "file",
+    "name": "NotionsOfSameness.v",
+    "summary": "Formalizes the chapter's six-row hierarchy of sameness (literal, isomorphism, homotopy, approximation, statistical, model-theoretic) as a weakening tower of lemmas, the forbidden silent-upgrade category error, the transformation triangle, and parallel examples across sense data, measurement, and mathematics.",
+    "tags": ["coq", "sameness", "hierarchy", "transformation"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/NotionsOfSameness.v:hierarchy_implications",
+    "type": "function",
+    "name": "hierarchy_implications",
+    "summary": "Conjunction stating each row of the sameness hierarchy implies the next weaker row, from equality down to model-theoretic compatibility.",
+    "tags": ["coq", "hierarchy", "sameness"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/NotionsOfSameness.v:eq_to_iso_witness",
+    "type": "function",
+    "name": "eq_to_iso_witness",
+    "summary": "Proves literal sameness weakens to isomorphism by exhibiting the identity isomorphism.",
+    "tags": ["coq", "lemma", "weakening"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/NotionsOfSameness.v:iso_to_homotopy_witness",
+    "type": "function",
+    "name": "iso_to_homotopy_witness",
+    "summary": "Proves isomorphism-sameness weakens to homotopy-sameness by reusing the invertible map.",
+    "tags": ["coq", "lemma", "weakening"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/NotionsOfSameness.v:approx_is_not_eq",
+    "type": "function",
+    "name": "approx_is_not_eq",
+    "summary": "States that an approximate reading is not literal equality, the concrete form of the forbidden approximation-as-equality error.",
+    "tags": ["coq", "approximation", "silent-upgrade"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/NotionsOfSameness.v:SilentUpgradeError",
+    "type": "class",
+    "name": "SilentUpgradeError",
+    "summary": "Inductive type naming the standing category errors: treating approximation as equality, isomorphism as identity, statistical agreement as proof, consistency as truth.",
+    "tags": ["coq", "category-error", "inductive"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/NotionsOfSameness.v:TransformationTriangle",
+    "type": "class",
+    "name": "TransformationTriangle",
+    "summary": "Two representations meeting at a common target via two transitions, the structure that replaces the naive R_A = R_B? question.",
+    "tags": ["coq", "transformation", "triangle"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/AdmissibleTransitions.v",
+    "type": "file",
+    "name": "AdmissibleTransitions.v",
+    "summary": "Builds the higher-level structure over the class T: InT as the disjunction of licensed observation/translation/refinement, T's three simultaneous interpretations (subcategory constraint, Bayesian prior, Occam penalty), six kinds of admissible transition, and the Sellarsian web as the alternative to foundationalism.",
+    "tags": ["coq", "admissible-transition", "prior", "sellarsian"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AdmissibleTransitions.v:InT",
+    "type": "class",
+    "name": "InT",
+    "summary": "The disjunction predicate that a transition kind is a licensed member of T (observation, translation, or refinement).",
+    "tags": ["coq", "admissible-transition", "predicate"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AdmissibleTransitions.v:SellarsianWeb",
+    "type": "class",
+    "name": "SellarsianWeb",
+    "summary": "A web of four representations joined by licensed bidirectional transitions, embodying the self-correcting enterprise with no foundational top.",
+    "tags": ["coq", "sellarsian", "web"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/AdmissibleTransitions.v:web_is_licensed",
+    "type": "function",
+    "name": "web_is_licensed",
+    "summary": "Placeholder asserting that every arrow in a SellarsianWeb has been independently justified.",
+    "tags": ["coq", "sellarsian", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/ContextsAndSites.v",
+    "type": "file",
+    "name": "ContextsAndSites.v",
+    "summary": "Formalizes contexts (tuples of six facets: where, when, who, how, terms, tradition), refinements as context morphisms, covers and admissible covers, Grothendieck topologies, sites, and contravariant representation schemes (presheaves) into a target category.",
+    "tags": ["coq", "site", "grothendieck-topology", "presheaf"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ContextsAndSites.v:Cover",
+    "type": "class",
+    "name": "Cover",
+    "summary": "A family of sub-contexts with inclusion maps whose images together capture everything relevant about a context.",
+    "tags": ["coq", "cover", "site"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ContextsAndSites.v:GrothendieckTopology",
+    "type": "class",
+    "name": "GrothendieckTopology",
+    "summary": "A cover rule on a context category closed under pullback and composition, the axioms that define a Grothendieck topology.",
+    "tags": ["coq", "grothendieck-topology", "axiom"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ContextsAndSites.v:Site",
+    "type": "class",
+    "name": "Site",
+    "summary": "A context category equipped with a Grothendieck topology, the domain on which presheaves and sheaves live.",
+    "tags": ["coq", "site", "record"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ContextsAndSites.v:RepresentationScheme",
+    "type": "class",
+    "name": "RepresentationScheme",
+    "summary": "A contravariant assignment from contexts to sections in a target category, the general form of a presheaf.",
+    "tags": ["coq", "representation", "contravariant"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ContextsAndSites.v:cover_condition",
+    "type": "function",
+    "name": "cover_condition",
+    "summary": "Placeholder stating that the union of a cover's patch images equals the whole context.",
+    "tags": ["coq", "cover", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Sheaves.v",
+    "type": "file",
+    "name": "Sheaves.v",
+    "summary": "Formalizes presheaves and the sheaf condition (compatible local data on an admissible cover implies unique global data), its pullback form for two patches, the three regimes (strict, homotopical, empirical), and the running train-at-a-platform example with five channels plus the group-presentations parallel.",
+    "tags": ["coq", "sheaf", "descent", "presheaf"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Sheaves.v:Presheaf",
+    "type": "class",
+    "name": "Presheaf",
+    "summary": "A contravariant functor from contexts to types assigning a set of local sections to every context.",
+    "tags": ["coq", "presheaf", "functor"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Sheaves.v:sheaf_condition",
+    "type": "function",
+    "name": "sheaf_condition",
+    "summary": "The sheaf condition as a Prop: compatible local sections over an admissible cover force a unique global section (existence and uniqueness, here as a placeholder).",
+    "tags": ["coq", "sheaf", "descent"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Sheaves.v:sheaf_pullback",
+    "type": "function",
+    "name": "sheaf_pullback",
+    "summary": "The two-patch form of the sheaf condition, stating F(c) is the pullback of F(c_1) and F(c_2) over the overlap.",
+    "tags": ["coq", "sheaf", "pullback"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Sheaves.v:SheafRegime",
+    "type": "class",
+    "name": "SheafRegime",
+    "summary": "Inductive naming the three regimes in which the sheaf condition runs: strict, homotopical, and empirical.",
+    "tags": ["coq", "sheaf", "regime"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Sheaves.v:TrainCover",
+    "type": "class",
+    "name": "TrainCover",
+    "summary": "The running example's admissible cover of a train event by five channels (visual, auditory, radar, linguistic, archival).",
+    "tags": ["coq", "example", "cover"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/EqualizersAndPullbacks.v",
+    "type": "file",
+    "name": "EqualizersAndPullbacks.v",
+    "summary": "Formalizes equalizers (where two parallel maps agree) and pullbacks (agreement through a shared target) as categorical limits with universal properties, their set-level forms, homotopical equalizers, and worked examples (two thermometers, two proofs, two tracks, two definitions of prime).",
+    "tags": ["coq", "equalizer", "pullback", "limit"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/EqualizersAndPullbacks.v:Equalizer",
+    "type": "class",
+    "name": "Equalizer",
+    "summary": "The equalizer of two parallel maps: a carrier of points of agreement with the universal property.",
+    "tags": ["coq", "equalizer", "limit"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/EqualizersAndPullbacks.v:PullbackGeneral",
+    "type": "class",
+    "name": "PullbackGeneral",
+    "summary": "The pullback of two maps to a common target: pairs (x, y) with f(x) = g(y), with the universal property.",
+    "tags": ["coq", "pullback", "limit"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/EqualizersAndPullbacks.v:set_equalizer",
+    "type": "function",
+    "name": "set_equalizer",
+    "summary": "The explicit set-level equalizer {x in X | f x = g x}, the naive form of the categorical equalizer.",
+    "tags": ["coq", "equalizer", "set"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/EqualizersAndPullbacks.v:set_pullback",
+    "type": "function",
+    "name": "set_pullback",
+    "summary": "The explicit set-level pullback {(x, y) | f x = g y}, the naive form of the categorical pullback.",
+    "tags": ["coq", "pullback", "set"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/HigherCoherence.v",
+    "type": "file",
+    "name": "HigherCoherence.v",
+    "summary": "Introduces higher-categorical structure: strict vs homotopical coherence, the recursive tower of n-cells (0-cells through 3-cells), the Cech nerve of a cover, infinity-sheaves valued in infinity-groupoids, and worked examples (lightning-and-thunder, equivalent categories).",
+    "tags": ["coq", "higher-category", "cech-nerve", "infinity-sheaf"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/HigherCoherence.v:StrictCoherence",
+    "type": "class",
+    "name": "StrictCoherence",
+    "summary": "The strict regime where two routes A->C (direct vs via B) agree on the nose.",
+    "tags": ["coq", "coherence", "strict"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/HigherCoherence.v:TwoMorphism",
+    "type": "class",
+    "name": "TwoMorphism",
+    "summary": "A 2-cell witnessing that two routes are not equal but homotopically deformable into each other.",
+    "tags": ["coq", "2-morphism", "higher-category"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/HigherCoherence.v:CechNerve",
+    "type": "class",
+    "name": "CechNerve",
+    "summary": "The simplicial object of a cover: patches in degree 0, pairwise overlaps in degree 1, triple overlaps in degree 2, with face and degeneracy maps.",
+    "tags": ["coq", "cech-nerve", "simplicial"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/HigherCoherence.v:InfinitySheaf",
+    "type": "class",
+    "name": "InfinitySheaf",
+    "summary": "A sheaf-like object valued in infinity-groupoids over the Cech nerve, with a locality condition.",
+    "tags": ["coq", "infinity-sheaf", "record"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/HigherCoherence.v:infinity_sheaf_condition",
+    "type": "function",
+    "name": "infinity_sheaf_condition",
+    "summary": "Placeholder for the sheaf condition in infinity-groupoids: the limit over the Cech nerve reproduces the global sections.",
+    "tags": ["coq", "infinity-sheaf", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/ObserverInDiagram.v",
+    "type": "file",
+    "name": "ObserverInDiagram.v",
+    "summary": "Puts the inquirer back in the diagram: models every access to a subject matter as a six-stage pipeline (subject, signal, internal representation, report, model) with domain examples (vision, audition, mathematics, history) and the discipline that every claim must be backed by a licensed transition.",
+    "tags": ["coq", "observer", "pipeline", "invariance"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ObserverInDiagram.v:ObserverPipeline",
+    "type": "class",
+    "name": "ObserverPipeline",
+    "summary": "The composite access pipeline from subject matter to model via stimulus pickup, neural processing, encoding, and calibration.",
+    "tags": ["coq", "pipeline", "observer"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ObserverInDiagram.v:BackedClaim",
+    "type": "class",
+    "name": "BackedClaim",
+    "summary": "A claim about the subject matter that is backed by an admissible transition preserving the structure invoked.",
+    "tags": ["coq", "claim", "discipline"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ObserverInDiagram.v:observer_composite",
+    "type": "function",
+    "name": "observer_composite",
+    "summary": "Composes the four pipeline stages into a single function from subject matter to model.",
+    "tags": ["coq", "composition", "observer"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ObserverInDiagram.v:claim_is_backed",
+    "type": "function",
+    "name": "claim_is_backed",
+    "summary": "Predicate that a claim about the subject matter is licensed by a transition preserving the invoked structure.",
+    "tags": ["coq", "claim", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/MasterDiagram.v",
+    "type": "file",
+    "name": "MasterDiagram.v",
+    "summary": "Formalizes where AI enters: parametric maps and neural-network morphisms (Transformer residual update, multi-head attention, embeddings, multimodal alignment), training and generative models, hallucination as internal coherence without grounded descent, the master diagram W -> R_i -> G with its five settings, and the sameness hierarchy in the descent context.",
+    "tags": ["coq", "master-diagram", "neural-network", "hallucination"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/MasterDiagram.v:MasterDiagram",
+    "type": "class",
+    "name": "MasterDiagram",
+    "summary": "The master shape W -> R_i -> G: a subject matter, a family of representations, observation arrows, admissible transitions, and a global section, with source/target coherence constraints.",
+    "tags": ["coq", "master-diagram", "record"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/MasterDiagram.v:MultiHeadAttention",
+    "type": "class",
+    "name": "MultiHeadAttention",
+    "summary": "Multi-head attention Attn(Q,K,V) = softmax(QK^T/sqrt(d_k)) V, expressed as a record of scores and their softmax aggregation.",
+    "tags": ["coq", "attention", "transformer"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/MasterDiagram.v:TransformerLayer",
+    "type": "class",
+    "name": "TransformerLayer",
+    "summary": "A residual Transformer layer H_{l+1} = H_l + F(H_l), capturing the learnable update over a hidden state.",
+    "tags": ["coq", "transformer", "residual"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/MasterDiagram.v:Hallucination",
+    "type": "class",
+    "name": "Hallucination",
+    "summary": "A model section that is internally self-consistent yet not grounded in the world it is supposed to represent.",
+    "tags": ["coq", "hallucination", "pathology"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/MasterDiagram.v:global_section_exists",
+    "type": "function",
+    "name": "global_section_exists",
+    "summary": "Placeholder asserting a global section exists for a master diagram, concretely the sheaf condition over all views.",
+    "tags": ["coq", "master-diagram", "predicate"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Ologs.v",
+    "type": "file",
+    "name": "Ologs.v",
+    "summary": "Formalizes ologs (Spivak & Kent ontology logs): types as labelled kinds-of-thing, arrows as functional relations, commutativity asserted via explicit equalities, the calibrated-thermometer worked example, and the master diagram recast as an olog.",
+    "tags": ["coq", "olog", "commutativity", "diagram"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Ologs.v:OlogArrow",
+    "type": "class",
+    "name": "OlogArrow",
+    "summary": "A functional relation between two olog types carrying a verb-phrase label; every source entity maps to exactly one target.",
+    "tags": ["coq", "olog", "arrow"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Ologs.v:CommutativeSquare",
+    "type": "class",
+    "name": "CommutativeSquare",
+    "summary": "An explicitly commuting square of olog arrows, with the commutativity equality supplied externally.",
+    "tags": ["coq", "olog", "commutativity"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Ologs.v:ThermometerOlog",
+    "type": "class",
+    "name": "ThermometerOlog",
+    "summary": "The thermometer example as two routes from thermometer to temperature, whose agreement witnesses calibration (or whose failure marks a hole).",
+    "tags": ["coq", "olog", "example"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Ologs.v:MasterOlog",
+    "type": "class",
+    "name": "MasterOlog",
+    "summary": "The master diagram W -> R -> G recast as an olog with an observation arrow and a gluing arrow.",
+    "tags": ["coq", "olog", "master-diagram"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Ologs.v:master_descent",
+    "type": "function",
+    "name": "master_descent",
+    "summary": "The (degenerate, trivially holding) descent/commutativity condition for the master olog; the real sheaf condition lives in Sheaves.v.",
+    "tags": ["coq", "olog", "descent"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Forbidden.v",
+    "type": "file",
+    "name": "Forbidden.v",
+    "summary": "Formalizes the chapter's five forbidden moves: silent upgrade of a weaker sameness, an unconstrained T (vacuous coherence), identifying G with W, mistaking internal coherence for descent, and treating a borrowed analogy as a theorem, closing with a useful analogy is not a theorem.",
+    "tags": ["coq", "forbidden-move", "discipline", "category-error"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Forbidden.v:SilentUpgrade",
+    "type": "class",
+    "name": "SilentUpgrade",
+    "summary": "An unjustified implication from a weaker sameness claim to a stronger one, without carrying the residual.",
+    "tags": ["coq", "category-error", "record"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Forbidden.v:UnconstrainedT",
+    "type": "class",
+    "name": "UnconstrainedT",
+    "summary": "A T in which every arrow is licensed, making coherence vacuous because every family of local sections agrees.",
+    "tags": ["coq", "admissible-transition", "vacuity"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Forbidden.v:BorrowedAnalogy",
+    "type": "class",
+    "name": "BorrowedAnalogy",
+    "summary": "A structural analogy between two categories being used as a theorem in the borrowed category.",
+    "tags": ["coq", "analogy", "record"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/Forbidden.v:analogy_not_theorem_boxed",
+    "type": "function",
+    "name": "analogy_not_theorem_boxed",
+    "summary": "The boxed principle that a useful analogy is not a theorem, stated as a Prop over borrowed analogies.",
+    "tags": ["coq", "analogy", "principle"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/PracticalProcedure.v",
+    "type": "file",
+    "name": "PracticalProcedure.v",
+    "summary": "Compresses the whole framework into a nine-step procedure (raw datum, interpretation, chain, overlaps, licences, sameness choice, global model, residuals, next observation) as a sequence of records, closing with the principle that anomalies are constraints not yet integrated, not defeats.",
+    "tags": ["coq", "procedure", "audit", "discipline"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/PracticalProcedure.v:Procedure",
+    "type": "class",
+    "name": "Procedure",
+    "summary": "The full nine-step procedure packaged as a single record bundling all steps in order.",
+    "tags": ["coq", "procedure", "record"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/PracticalProcedure.v:Step5_Licences",
+    "type": "class",
+    "name": "Step5_Licences",
+    "summary": "Step 5 of the procedure: the list of licensed transitions, each a member of T.",
+    "tags": ["coq", "procedure", "licence"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/PracticalProcedure.v:SamenessChoice",
+    "type": "class",
+    "name": "SamenessChoice",
+    "summary": "Step 6 of the procedure: which sameness level (literal, isomorphism, homotopy, approximation, statistical, model-theoretic) the comparison uses.",
+    "tags": ["coq", "procedure", "sameness"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/Tarski.v",
+    "type": "file",
+    "name": "Tarski.v",
+    "summary": "Formalizes Tarski's Convention T (object-language, meta-language, quotation-name, proposition, and the iff), truth as an interface condition, the coherence tradition, the synthesis of coherence plus correspondence, the completed diagram, three pathologies, Tarski's four-discipline, the six-step audit protocol, and the closing synthesis.",
+    "tags": ["coq", "tarski", "truth", "correspondence"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Tarski.v:ConventionT",
+    "type": "class",
+    "name": "ConventionT",
+    "summary": "Tarski's Convention T: an object-sentence is true in L iff the meta-language proposition p, a meta-level biconditional relating truth-values.",
+    "tags": ["coq", "tarski", "convention-t"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Tarski.v:CoherenceAndCorrespondence",
+    "type": "class",
+    "name": "CoherenceAndCorrespondence",
+    "summary": "The synthesis requiring both descent on every admissible cover and Tarski at every contact point, jointly, for truth.",
+    "tags": ["coq", "synthesis", "truth"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Tarski.v:CompletedDiagram",
+    "type": "class",
+    "name": "CompletedDiagram",
+    "summary": "The master diagram with three sorts of arrows, each carrying its own condition: licence on O_i, coherence on T_i, Tarski on G->W.",
+    "tags": ["coq", "diagram", "tarski"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/Tarski.v:ClosingSynthesis",
+    "type": "class",
+    "name": "ClosingSynthesis",
+    "summary": "The closing synthesis: truth from coherence plus correspondence, with the residual recorded rather than hidden.",
+    "tags": ["coq", "synthesis", "truth"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/AILLM.v",
+    "type": "file",
+    "name": "AILLM.v",
+    "summary": "Applies the framework to LLMs: the LLM in the master diagram, internal descent techniques (in-context learning, chain-of-thought, self-consistency, verifier-guided search), the lack of grounded observation and its mitigations (RAG, tools, formal verification), a refined hallucination diagnosis, training dynamics, the framework's limits, and an honest closing.",
+    "tags": ["coq", "llm", "hallucination", "application"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:LLMSetup",
+    "type": "class",
+    "name": "LLMSetup",
+    "summary": "An LLM as a system: subject matter, corpus, representations, the sampling step (W -> R), the trained model, and the internal fit (R -> G).",
+    "tags": ["coq", "llm", "setup"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:HallucinationDiagnosis",
+    "type": "class",
+    "name": "HallucinationDiagnosis",
+    "summary": "Inductive naming the four LLM failure modes: non-glueable presheaf, self-consistent fantasy, factbook, and calibrated error.",
+    "tags": ["coq", "hallucination", "diagnosis"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:NonGlueablePresheaf",
+    "type": "class",
+    "name": "NonGlueablePresheaf",
+    "summary": "A hallucination as a non-glueable presheaf: local sections exist but the sheaf condition fails and correspondence also fails.",
+    "tags": ["coq", "hallucination", "presheaf"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:AugmentedLLM",
+    "type": "class",
+    "name": "AugmentedLLM",
+    "summary": "An LLM augmented with admissible transitions (RAG, tools, formal verification, RLHF) to add grounded contact.",
+    "tags": ["coq", "llm", "augmentation"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:TrainingDynamics",
+    "type": "class",
+    "name": "TrainingDynamics",
+    "summary": "The training chain D -> B -> L -> grad -> theta, with sampling, forward, backward, and SGD steps composing to one gradient-descent step.",
+    "tags": ["coq", "training", "gradient-descent"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/AILLM.v:FrameworkLimit",
+    "type": "class",
+    "name": "FrameworkLimit",
+    "summary": "Inductive naming the framework's limits: emergent capabilities, in-context learning as a meta-phenomenon, training dynamics, and value alignment.",
+    "tags": ["coq", "limit", "inductive"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/AILLM.v:hallucination_table",
+    "type": "function",
+    "name": "hallucination_table",
+    "summary": "The chapter's diagnosis table mapping each hallucination mode to what is broken and the typical remedy (an empty list placeholder here).",
+    "tags": ["coq", "hallucination", "table"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/ThreePathologies.v",
+    "type": "file",
+    "name": "ThreePathologies.v",
+    "summary": "Formalizes the three failure modes, each breaking exactly one of coherence or correspondence: self-consistent fantasy (breaks correspondence), contact-point junkie (breaks coherence), and contact-point liar (a hallucinating model), with their break-points on the diagram and remedies.",
+    "tags": ["coq", "pathology", "diagnosis", "remedy"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreePathologies.v:SelfConsistentFantasy",
+    "type": "class",
+    "name": "SelfConsistentFantasy",
+    "summary": "A perfectly coherent fiction: descent holds and all arrows are licensed, but Tarski fails at the contact points, breaking correspondence.",
+    "tags": ["coq", "pathology", "correspondence"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreePathologies.v:ContactPointJunkie",
+    "type": "class",
+    "name": "ContactPointJunkie",
+    "summary": "A factbook: every claim individually true at its contact point, but descent never delivers a coherent global model, breaking coherence.",
+    "tags": ["coq", "pathology", "coherence"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/ThreePathologies.v:PathologyDiagnosis",
+    "type": "class",
+    "name": "PathologyDiagnosis",
+    "summary": "Inductive naming the three pathologies for a unified diagnosis, each paired with a distinct remedy.",
+    "tags": ["coq", "pathology", "inductive"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ThreePathologies.v:SCF_failure_mode",
+    "type": "function",
+    "name": "SCF_failure_mode",
+    "summary": "Declares that the self-consistent fantasy breaks the correspondence condition.",
+    "tags": ["coq", "pathology", "definition"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/ThreePathologies.v:CPJ_failure_mode",
+    "type": "function",
+    "name": "CPJ_failure_mode",
+    "summary": "Declares that the contact-point junkie breaks the coherence condition.",
+    "tags": ["coq", "pathology", "definition"]
+  },
+
+  {
+    "id": "file:coq/coherent_world_models/TheoryChain.v",
+    "type": "file",
+    "name": "TheoryChain.v",
+    "summary": "Lays out the nine-stage chain of refinements (distinction to invariance), maps each theory (sets/type theory, categories, topology, sheaves, higher categories, model theory, probability, ML) to the stages it serves, situates the position relative to structural realism, and states the one-sentence world-model thesis with provisional globality.",
+    "tags": ["coq", "theory-chain", "structural-realism", "world-model"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/TheoryChain.v:ChainStage",
+    "type": "class",
+    "name": "ChainStage",
+    "summary": "Inductive naming the nine stages of the refinement chain, from distinction (sets) to invariance (what survives T).",
+    "tags": ["coq", "chain", "inductive"]
+  },
+  {
+    "id": "class:coq/coherent_world_models/TheoryChain.v:WorldModelDefinition",
+    "type": "class",
+    "name": "WorldModelDefinition",
+    "summary": "The one-sentence thesis: a world model is the global section recovered from local descent data along an admissible cover, provisionally, revisably, and never identical to the subject matter.",
+    "tags": ["coq", "world-model", "thesis"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/TheoryChain.v:next_stage",
+    "type": "function",
+    "name": "next_stage",
+    "summary": "Maps each chain stage to the next refinement in the nine-stage chain (None at the last stage).",
+    "tags": ["coq", "chain", "definition"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/TheoryChain.v:stage_position",
+    "type": "function",
+    "name": "stage_position",
+    "summary": "Assigns a numeric position 0-8 to each stage of the chain.",
+    "tags": ["coq", "chain", "definition"]
+  },
+  {
+    "id": "function:coq/coherent_world_models/TheoryChain.v:all_contributions",
+    "type": "function",
+    "name": "all_contributions",
+    "summary": "The list of every theory's contribution to the chain stages, per the chapter's table.",
+    "tags": ["coq", "chain", "definition"]
+  }
+],
+ "edges": [
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:SubjectMatter", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:AccessFunction", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:ViewTranslation", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:TransitionKind", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:AdmissibleTransition", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:Iso", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:HomotopyEquiv", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:CommonModel", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "class:coq/coherent_world_models/Library.v:IndexicalTrace", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "function:coq/coherent_world_models/Library.v:eq_to_iso", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Library.v", "target": "function:coq/coherent_world_models/Library.v:iso_to_homotopy", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "class:coq/coherent_world_models/Traces.v:ProducedTrace", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "class:coq/coherent_world_models/Traces.v:MediatedSetup", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "class:coq/coherent_world_models/Traces.v:Inference", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "function:coq/coherent_world_models/Traces.v:Transformed", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "function:coq/coherent_world_models/Traces.v:Underdetermined", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "function:coq/coherent_world_models/Traces.v:make_example", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Traces.v", "target": "function:coq/coherent_world_models/Traces.v:inferences_disagree", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "class:coq/coherent_world_models/Commitments.v:IndirectRealism", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "class:coq/coherent_world_models/Commitments.v:AdmissibleClass", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "class:coq/coherent_world_models/Commitments.v:Position", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Commitments.v", "target": "function:coq/coherent_world_models/Commitments.v:our_position", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "class:coq/coherent_world_models/ThreeDifferences.v:WorldDifference", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "class:coq/coherent_world_models/ThreeDifferences.v:ChannelDifference", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "class:coq/coherent_world_models/ThreeDifferences.v:ProcessingDifference", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "class:coq/coherent_world_models/ThreeDifferences.v:DisagreementKind", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreeDifferences.v", "target": "function:coq/coherent_world_models/ThreeDifferences.v:locate_difference", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "function:coq/coherent_world_models/NotionsOfSameness.v:hierarchy_implications", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "function:coq/coherent_world_models/NotionsOfSameness.v:eq_to_iso_witness", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "function:coq/coherent_world_models/NotionsOfSameness.v:iso_to_homotopy_witness", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "function:coq/coherent_world_models/NotionsOfSameness.v:approx_is_not_eq", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "class:coq/coherent_world_models/NotionsOfSameness.v:SilentUpgradeError", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/NotionsOfSameness.v", "target": "class:coq/coherent_world_models/NotionsOfSameness.v:TransformationTriangle", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/AdmissibleTransitions.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AdmissibleTransitions.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AdmissibleTransitions.v", "target": "class:coq/coherent_world_models/AdmissibleTransitions.v:InT", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AdmissibleTransitions.v", "target": "class:coq/coherent_world_models/AdmissibleTransitions.v:SellarsianWeb", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AdmissibleTransitions.v", "target": "function:coq/coherent_world_models/AdmissibleTransitions.v:web_is_licensed", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "class:coq/coherent_world_models/ContextsAndSites.v:Cover", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "class:coq/coherent_world_models/ContextsAndSites.v:GrothendieckTopology", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "class:coq/coherent_world_models/ContextsAndSites.v:Site", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "class:coq/coherent_world_models/ContextsAndSites.v:RepresentationScheme", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ContextsAndSites.v", "target": "function:coq/coherent_world_models/ContextsAndSites.v:cover_condition", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "class:coq/coherent_world_models/Sheaves.v:Presheaf", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "function:coq/coherent_world_models/Sheaves.v:sheaf_condition", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "function:coq/coherent_world_models/Sheaves.v:sheaf_pullback", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "class:coq/coherent_world_models/Sheaves.v:SheafRegime", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Sheaves.v", "target": "class:coq/coherent_world_models/Sheaves.v:TrainCover", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "class:coq/coherent_world_models/EqualizersAndPullbacks.v:Equalizer", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "class:coq/coherent_world_models/EqualizersAndPullbacks.v:PullbackGeneral", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "function:coq/coherent_world_models/EqualizersAndPullbacks.v:set_equalizer", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/EqualizersAndPullbacks.v", "target": "function:coq/coherent_world_models/EqualizersAndPullbacks.v:set_pullback", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "class:coq/coherent_world_models/HigherCoherence.v:StrictCoherence", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "class:coq/coherent_world_models/HigherCoherence.v:TwoMorphism", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "class:coq/coherent_world_models/HigherCoherence.v:CechNerve", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "class:coq/coherent_world_models/HigherCoherence.v:InfinitySheaf", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/HigherCoherence.v", "target": "function:coq/coherent_world_models/HigherCoherence.v:infinity_sheaf_condition", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "class:coq/coherent_world_models/ObserverInDiagram.v:ObserverPipeline", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "class:coq/coherent_world_models/ObserverInDiagram.v:BackedClaim", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "function:coq/coherent_world_models/ObserverInDiagram.v:observer_composite", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ObserverInDiagram.v", "target": "function:coq/coherent_world_models/ObserverInDiagram.v:claim_is_backed", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "class:coq/coherent_world_models/MasterDiagram.v:MasterDiagram", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "class:coq/coherent_world_models/MasterDiagram.v:MultiHeadAttention", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "class:coq/coherent_world_models/MasterDiagram.v:TransformerLayer", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "class:coq/coherent_world_models/MasterDiagram.v:Hallucination", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/MasterDiagram.v", "target": "function:coq/coherent_world_models/MasterDiagram.v:global_section_exists", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "class:coq/coherent_world_models/Ologs.v:OlogArrow", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "class:coq/coherent_world_models/Ologs.v:CommutativeSquare", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "class:coq/coherent_world_models/Ologs.v:ThermometerOlog", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "class:coq/coherent_world_models/Ologs.v:MasterOlog", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Ologs.v", "target": "function:coq/coherent_world_models/Ologs.v:master_descent", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "file:coq/coherent_world_models/MasterDiagram.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "class:coq/coherent_world_models/Forbidden.v:SilentUpgrade", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "class:coq/coherent_world_models/Forbidden.v:UnconstrainedT", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "class:coq/coherent_world_models/Forbidden.v:BorrowedAnalogy", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Forbidden.v", "target": "function:coq/coherent_world_models/Forbidden.v:analogy_not_theorem_boxed", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/NotionsOfSameness.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "file:coq/coherent_world_models/MasterDiagram.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "class:coq/coherent_world_models/PracticalProcedure.v:Procedure", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "class:coq/coherent_world_models/PracticalProcedure.v:Step5_Licences", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/PracticalProcedure.v", "target": "class:coq/coherent_world_models/PracticalProcedure.v:SamenessChoice", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/MasterDiagram.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "file:coq/coherent_world_models/Forbidden.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "class:coq/coherent_world_models/Tarski.v:ConventionT", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "class:coq/coherent_world_models/Tarski.v:CoherenceAndCorrespondence", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "class:coq/coherent_world_models/Tarski.v:CompletedDiagram", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/Tarski.v", "target": "class:coq/coherent_world_models/Tarski.v:ClosingSynthesis", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/MasterDiagram.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/Forbidden.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/Tarski.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "file:coq/coherent_world_models/ThreePathologies.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:LLMSetup", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:HallucinationDiagnosis", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:NonGlueablePresheaf", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:AugmentedLLM", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:TrainingDynamics", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "class:coq/coherent_world_models/AILLM.v:FrameworkLimit", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/AILLM.v", "target": "function:coq/coherent_world_models/AILLM.v:hallucination_table", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/MasterDiagram.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/Forbidden.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "file:coq/coherent_world_models/Tarski.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "class:coq/coherent_world_models/ThreePathologies.v:SelfConsistentFantasy", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "class:coq/coherent_world_models/ThreePathologies.v:ContactPointJunkie", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "class:coq/coherent_world_models/ThreePathologies.v:PathologyDiagnosis", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "function:coq/coherent_world_models/ThreePathologies.v:SCF_failure_mode", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/ThreePathologies.v", "target": "function:coq/coherent_world_models/ThreePathologies.v:CPJ_failure_mode", "type": "contains", "weight": 1.0 },
+
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/Library.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/Traces.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/AdmissibleTransitions.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/ContextsAndSites.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/Sheaves.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "file:coq/coherent_world_models/HigherCoherence.v", "type": "depends_on", "weight": 0.7 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "class:coq/coherent_world_models/TheoryChain.v:ChainStage", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "class:coq/coherent_world_models/TheoryChain.v:WorldModelDefinition", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "function:coq/coherent_world_models/TheoryChain.v:next_stage", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "function:coq/coherent_world_models/TheoryChain.v:stage_position", "type": "contains", "weight": 1.0 },
+  { "source": "file:coq/coherent_world_models/TheoryChain.v", "target": "function:coq/coherent_world_models/TheoryChain.v:all_contributions", "type": "contains", "weight": 1.0 }
+]
+}

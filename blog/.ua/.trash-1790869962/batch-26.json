@@ -1,0 +1,219 @@
+{
+  "nodes": [
+    {
+      "id": "file:py/autodiff/custom.py",
+      "type": "file",
+      "name": "custom.py",
+      "summary": "Hand-rolled reverse-mode autodiff: a Var computational-graph node whose arithmetic ops (+, *, sin) each record a per-node _backward gradient closure, and backward() topologically sorts the graph then runs the closures to accumulate gradients.",
+      "tags": ["autodiff", "gradient", "computational-graph", "reference"],
+      "filePath": "py/autodiff/custom.py",
+      "complexity": "moderate",
+      "languageNotes": "Each op stores a Python closure (_backward) as its gradient rule; backward() seeds the output's adjoint to 1.0 and traverses a reverse topological order — the minimal tensor-core of a deep-learning framework."
+    },
+    {
+      "id": "class:py/autodiff/custom.py:Var",
+      "type": "class",
+      "name": "Var",
+      "summary": "A node in the computational graph holding a value, an accumulated gradient (adjoint), its children, and a _backward closure; the + and * operators plus sin() build child nodes and attach the corresponding gradient-propagation closures.",
+      "tags": ["autodiff", "class", "computational-graph"],
+      "filePath": "py/autodiff/custom.py"
+    },
+    {
+      "id": "function:py/autodiff/custom.py:backward",
+      "type": "function",
+      "name": "backward",
+      "summary": "Driver of reverse-mode autodiff: recursively builds a topological order of the graph, seeds the output's gradient to 1.0, then runs each node's _backward closure in reverse to accumulate df/dx for all leaf inputs.",
+      "tags": ["autodiff", "backpropagation", "topological-sort"],
+      "filePath": "py/autodiff/custom.py"
+    },
+    {
+      "id": "file:py/autodiff/pytorch.py",
+      "type": "file",
+      "name": "pytorch.py",
+      "summary": "Reference script mirroring custom.py with PyTorch: builds f=(x+y)·sin(x) on grad-tracking tensors, calls f.backward(), prints df/dx and df/dy, verifies them analytically, and shows one gradient-descent step on a weight vector.",
+      "tags": ["autodiff", "pytorch", "gradient", "reference"],
+      "filePath": "py/autodiff/pytorch.py",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:py/autodiff/tensorflow.py",
+      "type": "file",
+      "name": "tensorflow.py",
+      "summary": "Reference script mirroring custom.py with TensorFlow: builds f=(x+y)·sin(x) under a GradientTape, calls tape.gradient, verifies the derivatives analytically, and shows one gradient-descent step on a weight variable.",
+      "tags": ["autodiff", "tensorflow", "gradient", "reference"],
+      "filePath": "py/autodiff/tensorflow.py",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:py/minimalneuron/pytorch.py",
+      "type": "file",
+      "name": "pytorch.py",
+      "summary": "Minimal-Neuron XOR demo built with Keras (despite the filename): constructs a one- or two-layer sigmoid model via build_tf_nn, fits it on the XOR truth table, and prints predictions for all four inputs.",
+      "tags": ["neural-net", "xor", "keras", "reference"],
+      "filePath": "py/minimalneuron/pytorch.py",
+      "complexity": "simple"
+    },
+    {
+      "id": "function:py/minimalneuron/pytorch.py:build_tf_nn",
+      "type": "function",
+      "name": "build_tf_nn",
+      "summary": "Builds a Keras Sequential model for XOR: a single sigmoid Dense layer when layers=1, or a 4-unit hidden ReLU layer plus a sigmoid output when layers=2; compiled with Adam and binary cross-entropy.",
+      "tags": ["keras", "xor", "model-building"],
+      "filePath": "py/minimalneuron/pytorch.py"
+    },
+    {
+      "id": "file:py/minimalneuron/tensorflow.py",
+      "type": "file",
+      "name": "tensorflow.py",
+      "summary": "Minimal-Neuron XOR demo written in PyTorch (filename is TensorFlow): defines a one- or two-layer NeuralNet, trains it 500 epochs with BCE loss and Adam on the XOR table, and prints a prediction for each input.",
+      "tags": ["neural-net", "xor", "pytorch", "reference"],
+      "filePath": "py/minimalneuron/tensorflow.py",
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:py/minimalneuron/tensorflow.py:NeuralNet",
+      "type": "class",
+      "name": "NeuralNet",
+      "summary": "An nn.Module XOR network: a single Linear(2→1)+Sigmoid when layers=1, or Linear(2→4)+ReLU+Linear(4→1)+Sigmoid when layers=2.",
+      "tags": ["neural-net", "pytorch", "xor", "model"],
+      "filePath": "py/minimalneuron/tensorflow.py"
+    },
+    {
+      "id": "file:py/visionlab/pytorch.py",
+      "type": "file",
+      "name": "pytorch.py",
+      "summary": "PyTorch binary image classifier (VisionLab): defines a small SimpleCNN, trains it on an ImageFolder dataset with BCE loss, and exposes train/predict CLI modes that save and load the model plus a classes.json.",
+      "tags": ["cnn", "vision", "pytorch", "classification"],
+      "filePath": "py/visionlab/pytorch.py",
+      "complexity": "complex"
+    },
+    {
+      "id": "class:py/visionlab/pytorch.py:SimpleCNN",
+      "type": "class",
+      "name": "SimpleCNN",
+      "summary": "A compact nn.Module CNN: Conv2d(3→32)+ReLU+MaxPool2d+Flatten feeding a Linear(76832→64)→ReLU→Linear(64→1)→Sigmoid head for binary classification of 100×100 RGB images.",
+      "tags": ["cnn", "pytorch", "model", "classification"],
+      "filePath": "py/visionlab/pytorch.py"
+    },
+    {
+      "id": "function:py/visionlab/pytorch.py:train_mode",
+      "type": "function",
+      "name": "train_mode",
+      "summary": "Training loop: loads an ImageFolder with resize/to-tensor transforms, splits train/val when at least 5 images exist, runs 10 epochs of Adam+BCE with per-epoch loss logging, and saves the state_dict and classes.json.",
+      "tags": ["training", "data-loading", "cnn"],
+      "filePath": "py/visionlab/pytorch.py"
+    },
+    {
+      "id": "function:py/visionlab/pytorch.py:predict_mode",
+      "type": "function",
+      "name": "predict_mode",
+      "summary": "Inference: loads the saved model and classes.json, resizes/normalizes a single image, runs a no-grad forward pass, and reports the class name with a thresholded confidence.",
+      "tags": ["inference", "prediction", "cnn"],
+      "filePath": "py/visionlab/pytorch.py"
+    },
+    {
+      "id": "file:py/visionlab/tensorflow.py",
+      "type": "file",
+      "name": "tensorflow.py",
+      "summary": "TensorFlow/Keras binary image classifier (VisionLab): builds a Rescaling→Conv2D→MaxPool→Flatten→Dense→Sigmoid model, trains it with an automatic validation split, and offers train/predict CLI modes that persist the model and classes.",
+      "tags": ["cnn", "vision", "tensorflow", "classification"],
+      "filePath": "py/visionlab/tensorflow.py",
+      "complexity": "complex"
+    },
+    {
+      "id": "function:py/visionlab/tensorflow.py:build_model",
+      "type": "function",
+      "name": "build_model",
+      "summary": "Assembles a Keras Sequential CNN (Rescaling 1/255, Conv2D 3→32 relu, MaxPooling2D 2×2, Flatten, Dense 64 relu, Dense 1 sigmoid) compiled with Adam and binary cross-entropy.",
+      "tags": ["keras", "cnn", "model-building"],
+      "filePath": "py/visionlab/tensorflow.py"
+    },
+    {
+      "id": "function:py/visionlab/tensorflow.py:train_mode",
+      "type": "function",
+      "name": "train_mode",
+      "summary": "Training: counts dataset files to decide on a 20% validation split, streams image_dataset_from_directory, fits 10 epochs, and saves the model plus a classes.json of detected classes.",
+      "tags": ["training", "data-loading", "cnn"],
+      "filePath": "py/visionlab/tensorflow.py"
+    },
+    {
+      "id": "function:py/visionlab/tensorflow.py:predict_mode",
+      "type": "function",
+      "name": "predict_mode",
+      "summary": "Inference: loads the saved Keras model and classes.json, resizes an image to 100×100, predicts, and reports the class name with confidence, handling both binary sigmoid and multi-class softmax outputs.",
+      "tags": ["inference", "prediction", "cnn"],
+      "filePath": "py/visionlab/tensorflow.py"
+    },
+    {
+      "id": "file:py/qos.py",
+      "type": "file",
+      "name": "qos.py",
+      "summary": "AST-based Python quality checker: walks a directory of .py files, flags non-snake_case function names and unused imports via a custom NodeVisitor, and exits non-zero on any issue (acts as a CI smoke test).",
+      "tags": ["linting", "ast", "quality-check", "ci"],
+      "filePath": "py/qos.py",
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:py/qos.py:QualityChecker",
+      "type": "class",
+      "name": "QualityChecker",
+      "summary": "An ast.NodeVisitor that records imported names (with line numbers) and used names, and collects issues such as function definitions that are not in snake_case.",
+      "tags": ["ast", "visitor", "linting"],
+      "filePath": "py/qos.py"
+    },
+    {
+      "id": "function:py/qos.py:run_smoke_test",
+      "type": "function",
+      "name": "run_smoke_test",
+      "summary": "Walks a directory, parses each .py file, runs QualityChecker to detect unused imports and bad function names, prints FAIL/OK results, and exits 1 if any issue or syntax error is found.",
+      "tags": ["linting", "ci", "smoke-test"],
+      "filePath": "py/qos.py"
+    },
+    {
+      "id": "file:py/zipf_data.py",
+      "type": "file",
+      "name": "zipf_data.py",
+      "summary": "Data generator for the Zipf visualization: tokenizes Finnegans Wake and the King James Bible, computes word-frequency distributions, and writes lndw/zipf_data.json for the in-browser Zipf plot.",
+      "tags": ["zipf", "word-frequency", "data-generation", "language"],
+      "filePath": "py/zipf_data.py",
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:py/zipf_data.py:load_words",
+      "type": "function",
+      "name": "load_words",
+      "summary": "Reads a text file, strips the KJV header and verse markers, and returns a list of lowercased words extracted by regex.",
+      "tags": ["tokenization", "parsing", "data-loading"],
+      "filePath": "py/zipf_data.py"
+    },
+    {
+      "id": "function:py/zipf_data.py:zipf_data",
+      "type": "function",
+      "name": "zipf_data",
+      "summary": "Counts word frequencies with a Counter and returns the top words and their frequencies sorted by count (ties broken lexicographically) up to max_ranks.",
+      "tags": ["zipf", "frequency", "ranking"],
+      "filePath": "py/zipf_data.py"
+    }
+  ],
+  "edges": [
+    { "source": "file:py/autodiff/custom.py", "target": "class:py/autodiff/custom.py:Var", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/autodiff/custom.py", "target": "function:py/autodiff/custom.py:backward", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/minimalneuron/pytorch.py", "target": "function:py/minimalneuron/pytorch.py:build_tf_nn", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/pytorch.py", "target": "class:py/visionlab/pytorch.py:SimpleCNN", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/pytorch.py", "target": "function:py/visionlab/pytorch.py:train_mode", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/pytorch.py", "target": "function:py/visionlab/pytorch.py:predict_mode", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/minimalneuron/tensorflow.py", "target": "class:py/minimalneuron/tensorflow.py:NeuralNet", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/tensorflow.py", "target": "function:py/visionlab/tensorflow.py:build_model", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/tensorflow.py", "target": "function:py/visionlab/tensorflow.py:train_mode", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/visionlab/tensorflow.py", "target": "function:py/visionlab/tensorflow.py:predict_mode", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/qos.py", "target": "class:py/qos.py:QualityChecker", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/qos.py", "target": "function:py/qos.py:run_smoke_test", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/zipf_data.py", "target": "function:py/zipf_data.py:load_words", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/zipf_data.py", "target": "function:py/zipf_data.py:zipf_data", "type": "contains", "weight": 1.0 },
+    { "source": "file:py/autodiff/custom.py", "target": "file:py/autodiff/pytorch.py", "type": "related", "weight": 0.5 },
+    { "source": "file:py/autodiff/custom.py", "target": "file:py/autodiff/tensorflow.py", "type": "related", "weight": 0.5 },
+    { "source": "file:py/autodiff/pytorch.py", "target": "file:py/autodiff/tensorflow.py", "type": "related", "weight": 0.5 },
+    { "source": "file:py/minimalneuron/pytorch.py", "target": "file:py/minimalneuron/tensorflow.py", "type": "related", "weight": 0.5 },
+    { "source": "file:py/visionlab/pytorch.py", "target": "file:py/visionlab/tensorflow.py", "type": "related", "weight": 0.5 }
+  ]
+}

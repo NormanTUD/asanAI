@@ -1,0 +1,775 @@
+{
+ "batchIndex": 11,
+ "name": "Part 3 — Deep Learning & Vision",
+ "theme": "part-3",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-11.json",
+ "files": [
+  {
+   "path": "computer_vision.js",
+   "language": "javascript",
+   "sizeLines": 788,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "cacheDOMRefs",
+     "debounce",
+     "getKernelSize",
+     "getInputValues",
+     "getKernelValues",
+     "clamp",
+     "getCanvasCtx",
+     "drawImageToCanvas",
+     "loadImageOntoCanvas",
+     "doSetup",
+     "getPixelAt",
+     "positionOverlay",
+     "hideOverlays",
+     "canvasMouseCoords",
+     "assertTensorRank",
+     "assertTensorShape",
+     "applyConv2D",
+     "applyMultiChannelConv",
+     "processed",
+     "applyGrayscaleConv",
+     "normalizeTensor",
+     "kernelValueToColor",
+     "updateKernelViz",
+     "runConv",
+     "setKernel",
+     "updateConvMath",
+     "extractPatchData",
+     "buildConvLatex",
+     "parts",
+     "_updateConvMathInner",
+     "showPixelInfo",
+     "buildKernelTable",
+     "initVisionLab",
+     "_visLazyRegister",
+     "_visLazyCreateObserver",
+     "match",
+     "loadComputerVisionModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "computer_vision.php",
+   "language": "php",
+   "sizeLines": 268,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "probability"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "deconvolution.php",
+   "language": "php",
+   "sizeLines": 77,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "deeplearninglab.js",
+   "language": "javascript",
+   "sizeLines": 407,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "xs",
+     "ys",
+     "x",
+     "inputs",
+     "vals",
+     "observer",
+     "_dlLazyRegister",
+     "_dlLazyCreateObserver",
+     "match",
+     "loadDeepLearningModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "deeplearninglab.php",
+   "language": "php",
+   "sizeLines": 250,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "inceptionism.php",
+   "language": "php",
+   "sizeLines": 105,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "score",
+     "or",
+     "visualizations"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "normalizationlab.js",
+   "language": "javascript",
+   "sizeLines": 634,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "step",
+     "results",
+     "sum",
+     "variance",
+     "normalizedRow",
+     "_normLazyRegister",
+     "_normLazyCreateObserver",
+     "match",
+     "loadNormalizationModule",
+     "initGroupNormLab",
+     "channelsToGroups",
+     "inputCellColor",
+     "outputCellColor",
+     "renderGroupNorm",
+     "mean",
+     "normalized"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "normalizationlab.php",
+   "language": "php",
+   "sizeLines": 360,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "origami.js",
+   "language": "javascript",
+   "sizeLines": 844,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "r",
+     "ogSet",
+     "ogTex",
+     "ogKeepCam",
+     "ogf1",
+     "ogf0",
+     "ogRotMat",
+     "ogMulMatVec",
+     "ogRelu",
+     "ogWmatrix",
+     "ogMakeEgg",
+     "ogMakeBlobs",
+     "ogLineStats",
+     "ogInitNonsep",
+     "gen",
+     "drawNonsep",
+     "ogInitRelu",
+     "drawGrid",
+     "drawRelu",
+     "ogInitFold1d",
+     "foldY",
+     "drawFold1d",
+     "all",
+     "ogInitFold3d",
+     "normals",
+     "foldHeight",
+     "rot",
+     "proj",
+     "baseRing",
+     "drawFold3d",
+     "step3d",
+     "ogInitCascade",
+     "hsv2rgb",
+     "drawCascade",
+     "forward",
+     "ogInitShear",
+     "peel",
+     "drawShear",
+     "ogInitTuning",
+     "drawTuning",
+     "dipScore",
+     "traces",
+     "ogInitPoker",
+     "drawPoker",
+     "dimIn",
+     "dimL1",
+     "dimL2",
+     "ogInitFC",
+     "regPoly",
+     "star",
+     "SHAPES",
+     "clipHP",
+     "polyArea",
+     "clipToPoly",
+     "mVec",
+     "mMul",
+     "refM",
+     "rebuildFrags",
+     "polyPath",
+     "paperColors",
+     "drawFrags",
+     "drawFilmstrip",
+     "statusText",
+     "drawShapePath",
+     "draw",
+     "settled",
+     "frame",
+     "ensureLoop",
+     "setStep",
+     "setShape",
+     "ogInitAffine",
+     "Wx",
+     "Wxr",
+     "ogInitRelu1d",
+     "ogInitEgg",
+     "draw2d",
+     "zOf",
+     "draw3d",
+     "ogInitRot",
+     "genPts",
+     "t",
+     "ogInitEgg3",
+     "drawTop",
+     "loadOrigamiModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "origami.php",
+   "language": "php",
+   "sizeLines": 630,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "forms",
+     "is",
+     "that",
+     "living",
+     "and",
+     "you",
+     "at",
+     "with",
+     "but",
+     "develops",
+     "head",
+     "of"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "overandunderfittinglab.js",
+   "language": "javascript",
+   "sizeLines": 380,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "rebuild",
+     "_oufLazyRegister",
+     "_oufLazyCreateObserver",
+     "match",
+     "loadOverAndUnderFittingModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "overandunderfittinglab.php",
+   "language": "php",
+   "sizeLines": 325,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "$f"
+    ],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "resnetlab.js",
+   "language": "javascript",
+   "sizeLines": 176,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "_resLazyRegister",
+     "_resLazyCreateObserver",
+     "match",
+     "loadResnetModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "resnetlab.php",
+   "language": "php",
+   "sizeLines": 124,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  },
+  {
+   "path": "topology.js",
+   "language": "javascript",
+   "sizeLines": 411,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "r",
+     "tpSet",
+     "buildNet",
+     "disposeNet",
+     "computeAcc",
+     "xs",
+     "paintDecisionGrid",
+     "tpScatter",
+     "X",
+     "Y",
+     "tpInitEgg",
+     "genEgg",
+     "eggUnits",
+     "eggRebuild",
+     "eggTrain",
+     "ys",
+     "tpInit1d",
+     "gen1d",
+     "d1Units",
+     "d1PaintLine",
+     "d1XToPx",
+     "d1PaintRep",
+     "rep",
+     "d1Rebuild",
+     "d1Train",
+     "tpInitPlay",
+     "genSpiral",
+     "playPairs",
+     "playRebuild",
+     "playPaintRep",
+     "playToData",
+     "playRemoveNearest",
+     "playStartLoop",
+     "loadTopologyModule"
+    ],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "topology.php",
+   "language": "php",
+   "sizeLines": 326,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "is",
+     "be",
+     "a",
+     "on"
+    ]
+   },
+   "importMap": [
+    "functions.php"
+   ],
+   "neighbors": [
+    {
+     "id": "file:functions.php",
+     "name": "functions.php",
+     "type": "file",
+     "path": "functions.php",
+     "exportedFunctions": [
+      "blog_font_stack",
+      "print_font_override",
+      "render_gem_tabs",
+      "js",
+      "css",
+      "incl",
+      "load_base_js",
+      "runPostLoad",
+      "server_php_self_ends_with_index_php",
+      "call_js_if_matching_file_exists",
+      "print_dynamic_title",
+      "get_ai_course_labels",
+      "parse_course_metadata",
+      "render_course_tile",
+      "get_string_of_file_or_die",
+      "toggleTheme",
+      "toggleReaderMode",
+      "hide_email",
+      "isCli",
+      "get_theme_class",
+      "get_module_nav_data",
+      "render_module_nav",
+      "render_drawer",
+      "render_theme_toggle",
+      "render_topics_toggle",
+      "render_reader_toggle",
+      "render_constellation"
+     ],
+     "exportedClasses": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,250 @@
+{
+  "nodes": [
+    {
+      "id": "file:math_ii.php",
+      "type": "file",
+      "name": "Basic Math Concepts II — Linear Algebra for AI",
+      "summary": "PHP lesson on linear algebra for AI — vector spaces, matrices/tensors, function composition, the Hadamard product, transposition, and softmax/cross-entropy — with inline Plotly.js visualizations (1D–4D vector spaces, RGB image tensor, composition, Hadamard) that lazy-render on scroll.",
+      "tags": ["linear-algebra", "vector-spaces", "tensors", "hadamard-product", "visualization", "lesson"],
+      "filePath": "math_ii.php",
+      "complexity": "complex",
+      "languageNotes": "All interactivity lives in inline <script> inside the PHP file (no separate .js); heavy 3-D Plotly surfaces are lazy-rendered via an IntersectionObserver (lazyRender/observePlot)."
+    },
+    {
+      "id": "function:math_ii.php:loadMathIIModule",
+      "type": "function",
+      "name": "loadMathIIModule",
+      "summary": "Module-queue entry point for this lesson; kicks off initialization of the Math II plot suite once loaded.",
+      "tags": ["module-loader", "entry-point", "bootstrap"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initDataBasics",
+      "type": "function",
+      "name": "initDataBasics",
+      "summary": "Bootstrap that runs cheap global work immediately and defers each heavy section behind a lazyInit until its container scrolls near the viewport.",
+      "tags": ["bootstrap", "lazy-init", "performance"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initMathIIPlots",
+      "type": "function",
+      "name": "initMathIIPlots",
+      "summary": "One-time initializer that renders the Math II Plotly visualizations (BW/RGB image tensors, vector plots, composition, Hadamard, interactive vector spaces) once Plotly is available.",
+      "tags": ["initializer", "plotly", "one-time"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:lazyRender",
+      "type": "function",
+      "name": "lazyRender",
+      "summary": "Central lazy-render primitive: stores the latest render callback for a plot and either draws it now (if visible) or queues it for the IntersectionObserver to fire on scroll-in.",
+      "tags": ["lazy-render", "intersection-observer", "infrastructure"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initInteractiveVectorSpaces",
+      "type": "function",
+      "name": "initInteractiveVectorSpaces",
+      "summary": "Wires the 1D–4D interactive vector-space plots (line, plane, RGB color cube, 4D feature bar chart) to their sliders, with the 3-D scatter lazy-rendered.",
+      "tags": ["vector-spaces", "interactive", "plotly", "dimensionality"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:renderELI5Math",
+      "type": "function",
+      "name": "renderELI5Math",
+      "summary": "Sets up the 'ELI5' mixed 2-D/3-D step plots (linear, surface, waves, static f=x+y) with one-shot observers for cheap 2-D plots and lazy rendering for 3-D surfaces.",
+      "tags": ["eli5", "surface-plot", "plotly", "lazy-render"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initCompositionPlot",
+      "type": "function",
+      "name": "initCompositionPlot",
+      "summary": "Sets up the function-composition widget: reads a/b/c/d sliders, plots f, g, and (g∘f), and re-renders the composition formula on input.",
+      "tags": ["composition", "interactive", "plotly"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initHadamard",
+      "type": "function",
+      "name": "initHadamard",
+      "summary": "Attaches input listeners to the six Hadamard vector cells and triggers the initial Hadamard product computation.",
+      "tags": ["hadamard-product", "interactive", "setup"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:runHadamardExperiment",
+      "type": "function",
+      "name": "runHadamardExperiment",
+      "summary": "Reads the two 3-element vectors and writes the element-wise (Hadamard) product into the display as a LaTeX pmatrix.",
+      "tags": ["hadamard-product", "element-wise", "latex"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:initLogPlot",
+      "type": "function",
+      "name": "initLogPlot",
+      "summary": "Sets up the logarithm widget: base and x sliders drive a Plotly log curve, a 'your value' marker, and the log⇄exponent formula.",
+      "tags": ["logarithm", "interactive", "plotly"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:renderVectorPlot",
+      "type": "function",
+      "name": "renderVectorPlot",
+      "summary": "Renders the static 2-D vector visualization of the arrow [3,4] with a labeled arrowhead annotation.",
+      "tags": ["vector", "plotly", "static"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "function:math_ii.php:renderMovableVector",
+      "type": "function",
+      "name": "renderMovableVector",
+      "summary": "Renders the movable-vector widget: a fixed [2,3] vector translated to a user-chosen start position via range sliders.",
+      "tags": ["vector", "interactive", "plotly"],
+      "filePath": "math_ii.php"
+    },
+    {
+      "id": "file:math_iii.php",
+      "type": "file",
+      "name": "Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
+      "summary": "PHP lesson on approximation, high-dimensional geometry (curse vs. blessing of dimensionality, concentration of measure, manifold hypothesis) and a tour of type theory / homotopy type theory (HoTT), with an interactive HoTT lab (path deformation, equality-as-path, Bloch sphere) driven by math_iii_hott.js.",
+      "tags": ["approximation", "high-dimensional", "type-theory", "hott", "dimensionality", "lesson"],
+      "filePath": "math_iii.php",
+      "complexity": "complex",
+      "languageNotes": "Lesson body ships scoped .hott-* CSS plus an inline HoTT interactive lab; the module js('math_iii_hott') and the lab logic live in math_iii_hott.js."
+    },
+    {
+      "id": "function:math_iii.php:loadMathIIIModule",
+      "type": "function",
+      "name": "loadMathIIIModule",
+      "summary": "Module-queue entry point for the Math III lesson; triggers the HoTT lab bootstrap (implemented in math_iii_hott.js).",
+      "tags": ["module-loader", "entry-point", "hott"],
+      "filePath": "math_iii.php"
+    },
+    {
+      "id": "file:math_iv.php",
+      "type": "file",
+      "name": "Basic Math Concepts IV — Affine Maps & the Fold",
+      "summary": "PHP lesson on affine maps (Mx + t, homogeneous coordinates, projective/Möbius) and the fold — the first non-affine move, equivalent to a ReLU — culminating in unthreading a Hopf link; interactive 2D/3D affine machines and fold/unlink labs are driven by math_iv_affine.js.",
+      "tags": ["affine-maps", "homogeneous-coordinates", "fold", "relu", "topology", "lesson"],
+      "filePath": "math_iv.php",
+      "complexity": "moderate",
+      "languageNotes": "Lesson body ships scoped .af-* CSS and an inline loadMathIVModule stub; the affine/fold/unlink lab logic lives in math_iv_affine.js."
+    },
+    {
+      "id": "function:math_iv.php:loadMathIVModule",
+      "type": "function",
+      "name": "loadMathIVModule",
+      "summary": "Guarded module-queue entry point stub for the Math IV lesson; the real affine/fold/unlink lab logic lives in math_iv_affine.js.",
+      "tags": ["module-loader", "entry-point", "stub"],
+      "filePath": "math_iv.php"
+    },
+    {
+      "id": "file:statistics_i.js",
+      "type": "file",
+      "name": "statistics_i.js",
+      "summary": "Loader module for the Statistics I lesson; re-bootstraps the shared statistics.js lab (guarded by window.__statisticsModuleLoaded) so it runs standalone or inside the combined course page.",
+      "tags": ["loader", "statistics", "module", "bootstrap"],
+      "filePath": "statistics_i.js",
+      "complexity": "simple",
+      "languageNotes": "Dynamic <script> injection of the shared statistics.js, guarded by a global flag so it is evaluated only once."
+    },
+    {
+      "id": "function:statistics_i.js:loadStatisticsIModule",
+      "type": "function",
+      "name": "loadStatisticsIModule",
+      "summary": "Module-queue entry point for Statistics I: sets the loading status, ensures statistics.js is loaded, then bootstraps loadStatisticsModule() exactly once.",
+      "tags": ["module-loader", "entry-point", "bootstrap"],
+      "filePath": "statistics_i.js"
+    },
+    {
+      "id": "function:statistics_i.js:_statEnsureStatisticsJs",
+      "type": "function",
+      "name": "_statEnsureStatisticsJs",
+      "summary": "Injects a <script src='statistics.js'> tag on demand (resolving when loaded or failed) so the shared lab can be reused by both statistics lessons.",
+      "tags": ["script-injection", "loader", "guard"],
+      "filePath": "statistics_i.js"
+    },
+    {
+      "id": "file:statistics_i.php",
+      "type": "file",
+      "name": "Statistics I — Distributions and Inference",
+      "summary": "PHP lesson introducing probability distributions and inference — Bernoulli, Binomial, Normal, Gumbel, Poisson, the Central Limit Theorem, Z-scores, the Phi-table, least squares, and correlation — with interactive Plotly labs loaded from statistics.js.",
+      "tags": ["distributions", "normal-distribution", "central-limit-theorem", "inference", "statistics", "lesson"],
+      "filePath": "statistics_i.php",
+      "complexity": "complex"
+    },
+    {
+      "id": "file:statistics_ii.js",
+      "type": "file",
+      "name": "statistics_ii.js",
+      "summary": "Loader module for the Statistics II lesson; injects the shared statistics.js lab on demand and re-bootstraps it (guarded by window.__statisticsModuleLoaded).",
+      "tags": ["loader", "statistics", "module", "bootstrap"],
+      "filePath": "statistics_ii.js",
+      "complexity": "simple",
+      "languageNotes": "Dynamic <script> injection of the shared statistics.js, guarded by a global flag so it is evaluated only once."
+    },
+    {
+      "id": "function:statistics_ii.js:loadStatisticsIIModule",
+      "type": "function",
+      "name": "loadStatisticsIIModule",
+      "summary": "Module-queue entry point for Statistics II: sets the loading status, ensures statistics.js is loaded, then bootstraps loadStatisticsModule() exactly once.",
+      "tags": ["module-loader", "entry-point", "bootstrap"],
+      "filePath": "statistics_ii.js"
+    },
+    {
+      "id": "function:statistics_ii.js:_statEnsureStatisticsJs",
+      "type": "function",
+      "name": "_statEnsureStatisticsJs",
+      "summary": "Injects a <script src='statistics.js'> tag on demand so the shared statistics lab can be loaded standalone or inside the combined course page.",
+      "tags": ["script-injection", "loader", "guard"],
+      "filePath": "statistics_ii.js"
+    },
+    {
+      "id": "file:statistics_ii.php",
+      "type": "file",
+      "name": "Statistics II — Inference and Information",
+      "summary": "PHP lesson on statistical inference and information — Bayesian updating, Shannon entropy, the Dirichlet distribution, Gaussian mixtures / EM, the law of large numbers, Markov chains, Boltzmann/temperature, MLE, the chain rule, KL divergence, and bag-of-words — with interactive labs in statistics.js.",
+      "tags": ["bayesian", "entropy", "dirichlet", "markov-chains", "em", "inference"],
+      "filePath": "statistics_ii.php",
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:loadMathIIModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initDataBasics", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initMathIIPlots", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:lazyRender", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initInteractiveVectorSpaces", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:renderELI5Math", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initCompositionPlot", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initHadamard", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:runHadamardExperiment", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:initLogPlot", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:renderVectorPlot", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "function:math_ii.php:renderMovableVector", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_ii.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:math_ii.php", "target": "file:commutation.html", "type": "depends_on", "weight": 0.7 },
+
+    { "source": "file:math_iii.php", "target": "function:math_iii.php:loadMathIIIModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_iii.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+
+    { "source": "file:math_iv.php", "target": "function:math_iv.php:loadMathIVModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:math_iv.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+
+    { "source": "file:statistics_i.js", "target": "function:statistics_i.js:loadStatisticsIModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics_i.js", "target": "function:statistics_i.js:_statEnsureStatisticsJs", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:statistics_i.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:statistics_i.php", "target": "file:statistics_i.js", "type": "related", "weight": 0.5 },
+
+    { "source": "file:statistics_ii.js", "target": "function:statistics_ii.js:loadStatisticsIIModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:statistics_ii.js", "target": "function:statistics_ii.js:_statEnsureStatisticsJs", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:statistics_ii.php", "target": "file:functions.php", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:statistics_ii.php", "target": "file:statistics_ii.js", "type": "related", "weight": 0.5 }
+  ]
+}

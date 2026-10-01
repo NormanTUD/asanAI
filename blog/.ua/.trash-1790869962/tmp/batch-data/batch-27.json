@@ -1,0 +1,578 @@
+{
+ "batchIndex": 27,
+ "name": "coq — Formalizations (Coq)",
+ "theme": "coq",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-27.json",
+ "files": [
+  {
+   "path": "coq/coherent_world_models/AdmissibleTransitions.v",
+   "language": "coq",
+   "sizeLines": 212,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "admissible_observation",
+     "admissible_translation",
+     "admissible_refinement",
+     "justified",
+     "web_is_licensed"
+    ],
+    "classes": [
+     "InT",
+     "SubcategoryConstraint",
+     "BayesianPrior",
+     "OccamPenalty",
+     "AdmissibleKind",
+     "SellarsianWeb"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/AILLM.v",
+   "language": "coq",
+   "sizeLines": 403,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "hallucination_table"
+    ],
+    "classes": [
+     "LLMSetup",
+     "LLMInternalOnly",
+     "InContextLearning",
+     "ChainOfThought",
+     "SelfConsistency",
+     "VerifierGuidedSearch",
+     "InContextObservation",
+     "RAG",
+     "ToolUse",
+     "FormalVerification",
+     "NonGlueablePresheaf",
+     "HallucinationDiagnosis",
+     "HallucinationCase",
+     "AugmentedLLM",
+     "TrainingDynamics",
+     "DataQuality",
+     "LossLandscape",
+     "HallucinationTableEntry",
+     "ValueAlignmentProblem",
+     "LLMAudit",
+     "FrameworkLimit",
+     "HonestClaim",
+     "HonestClosing"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Commitments.v",
+   "language": "coq",
+   "sizeLines": 222,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "CoherenceHolds",
+     "CorrespondenceHolds",
+     "our_position"
+    ],
+    "classes": [
+     "IndirectRealism",
+     "InternalStructure",
+     "AdmissibleClass",
+     "WordlessIntrospection",
+     "LimitCase",
+     "ThingInItself",
+     "Position"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/ContextsAndSites.v",
+   "language": "coq",
+   "sizeLines": 254,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "refine",
+     "cover_condition"
+    ],
+    "classes": [
+     "ContextFacet",
+     "IndexedContext",
+     "HistoricalPeriodExample",
+     "LaboratorySetupExample",
+     "FormalSystemExample",
+     "Cover",
+     "AdmissibleCover",
+     "FullAdmissibleCover",
+     "CoverDiagnosis",
+     "GrothendieckTopology",
+     "Site",
+     "RepresentationScheme",
+     "TargetCategory",
+     "SetValuedPresheaf"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/EqualizersAndPullbacks.v",
+   "language": "coq",
+   "sizeLines": 182,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "set_equalizer",
+     "times_of_agreement",
+     "set_pullback"
+    ],
+    "classes": [
+     "Equalizer",
+     "TwoThermometersExample",
+     "TwoProofsExample",
+     "HomotopicalEqualizer",
+     "PullbackGeneral",
+     "TwoTracksExample",
+     "TwoPrimeDefinitions"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Forbidden.v",
+   "language": "coq",
+   "sizeLines": 182,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "analogy_not_theorem_boxed"
+    ],
+    "classes": [
+     "SilentUpgradeKind",
+     "SilentUpgrade",
+     "UnconstrainedT",
+     "Identification",
+     "CoherentModel",
+     "MistakenCoherence",
+     "BorrowedAnalogy"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/HigherCoherence.v",
+   "language": "coq",
+   "sizeLines": 266,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "infinity_sheaf_condition"
+    ],
+    "classes": [
+     "StrictCoherence",
+     "TwoMorphism",
+     "Dimension",
+     "NCell",
+     "ZeroCell",
+     "OneCell",
+     "TwoCell",
+     "ThreeCell",
+     "ThreeMorphism",
+     "CechNerve",
+     "InfinityGroupoid",
+     "InfinitySheaf",
+     "LightningThunder",
+     "LightningTriple",
+     "EquivalentCategories"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Library.v",
+   "language": "coq",
+   "sizeLines": 329,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "Region",
+     "Trace",
+     "observation_licensed",
+     "translation_licensed",
+     "refinement_licensed",
+     "T",
+     "Same",
+     "Isomorphic",
+     "Homotopic",
+     "eq_to_iso",
+     "iso_to_homotopy",
+     "FreePattern"
+    ],
+    "classes": [
+     "SubjectMatter",
+     "Codomain",
+     "AccessFunction",
+     "ViewTranslation",
+     "Context",
+     "ContextRefinement",
+     "TransitionKind",
+     "AdmissibleTransition",
+     "Representation",
+     "Iso",
+     "HomotopyEquiv",
+     "HigherPath",
+     "Approx",
+     "StatisticalAgreement",
+     "Model",
+     "Theory",
+     "CommonModel",
+     "IndexicalTrace"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/MasterDiagram.v",
+   "language": "coq",
+   "sizeLines": 279,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "global_section_exists"
+    ],
+    "classes": [
+     "ParametricMap",
+     "ParametricFramework",
+     "ParametricComposition",
+     "TransformerLayer",
+     "ResidualUpdate",
+     "MultiHeadAttention",
+     "Embedding",
+     "MultimodalAlignment",
+     "TrainingSetup",
+     "GenerativeModel",
+     "Hallucination",
+     "MasterDiagram",
+     "MasterSetting",
+     "HierarchyInDescent"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/NotionsOfSameness.v",
+   "language": "coq",
+   "sizeLines": 359,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "LiteralSame",
+     "literal_witness",
+     "IsomorphismSame",
+     "HomotopySame",
+     "ApproxSame",
+     "StatSame",
+     "ModelTheoreticSame",
+     "eq_to_iso_witness",
+     "iso_to_homotopy_witness",
+     "homotopy_to_approx_witness",
+     "approx_to_stat_witness",
+     "stat_to_model_witness",
+     "hierarchy_implications",
+     "approx_is_not_eq"
+    ],
+    "classes": [
+     "ApproxWitness",
+     "SilentUpgradeError",
+     "IsoCoinsExample",
+     "StatAgreement",
+     "ModelConsistency",
+     "TransformationTriangle",
+     "SenseDataExample",
+     "MeasurementExample",
+     "MathExample",
+     "EqualityRow",
+     "IsomorphismRow",
+     "HomotopyRow",
+     "ApproxRow",
+     "StatRow",
+     "ModelRow"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/ObserverInDiagram.v",
+   "language": "coq",
+   "sizeLines": 177,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "compose",
+     "observer_composite",
+     "ask_preservation",
+     "ask_discarding",
+     "claim_is_backed"
+    ],
+    "classes": [
+     "ObserverPipeline",
+     "VisionPipeline",
+     "AuditionPipeline",
+     "MathematicsPipeline",
+     "HistoryPipeline",
+     "RepresentationQuestion",
+     "BackedClaim"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Ologs.v",
+   "language": "coq",
+   "sizeLines": 213,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "functional_arrow",
+     "master_descent"
+    ],
+    "classes": [
+     "OlogType",
+     "ThermometerType",
+     "TemperatureType",
+     "OlogArrow",
+     "CommutativeSquare",
+     "ThermometerReading",
+     "ThermometerOlog",
+     "ThermometerStatus",
+     "MasterOlog"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/PracticalProcedure.v",
+   "language": "coq",
+   "sizeLines": 175,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "Step1_RawDatum",
+     "Step2_Interpretation",
+     "Step3_Chain",
+     "Step4_Overlaps",
+     "Step5_Licences",
+     "SamenessChoice",
+     "Step6_Sameness",
+     "Step7_GlobalModel",
+     "Step8_Residuals",
+     "Step9_NextObservation",
+     "Procedure"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Sheaves.v",
+   "language": "coq",
+   "sizeLines": 290,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "sheaf_condition",
+     "sheaf_pullback",
+     "strict_compatible",
+     "homotopical_compatible",
+     "train_descent"
+    ],
+    "classes": [
+     "PresheafOn",
+     "Presheaf",
+     "TwoPatchCover",
+     "TwoPatchCompatibility",
+     "Pullback",
+     "SheafRegime",
+     "CompatibleRegime",
+     "EmpiricalSetup",
+     "TrainEvent",
+     "TrainChannel",
+     "ChannelName",
+     "TrainCover",
+     "GroupPresentations"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Tarski.v",
+   "language": "coq",
+   "sizeLines": 350,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": [
+     "ObjectLanguage",
+     "MetaLanguage",
+     "ConventionT",
+     "SnowIsWhite",
+     "TarskiConsequence",
+     "TruthAsInterface",
+     "CoherenceTradition",
+     "CoherenceAndCorrespondence",
+     "CompletedDiagram",
+     "SelfConsistentFantasy",
+     "ContactPointJunkie",
+     "ContactPointLiar",
+     "TarskiDiscipline",
+     "AuditStep",
+     "AuditState",
+     "ClosingSynthesis"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/TheoryChain.v",
+   "language": "coq",
+   "sizeLines": 411,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "next_stage",
+     "stage_position",
+     "set_type_theory_contributes",
+     "category_theory_contributes",
+     "topology_sites_contributes",
+     "sheaf_theory_contributes",
+     "higher_categories_contribute",
+     "model_theory_contributes",
+     "probability_contributes",
+     "machine_learning_contributes",
+     "all_contributions",
+     "chapter_position",
+     "chain_step"
+    ],
+    "classes": [
+     "ChainStage",
+     "StageMachinery",
+     "Theory",
+     "TheoryContribution",
+     "StructuralRealism",
+     "ChapterPosition",
+     "MasterChain",
+     "Perspective",
+     "SubjectWithPerspectives",
+     "DataArrival",
+     "ModelSequence",
+     "ModelWithTime",
+     "WorldModelDefinition",
+     "ModelChoice"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/ThreeDifferences.v",
+   "language": "coq",
+   "sizeLines": 225,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "silent_upgrade",
+     "locate_difference"
+    ],
+    "classes": [
+     "WorldDifference",
+     "QuantumIndistinguishability",
+     "WorldDifferenceKind",
+     "StonesExample",
+     "ChannelDifference",
+     "CoLocatedInstruments",
+     "ChannelDiagnosis",
+     "ThermometersExample",
+     "ProcessingDifference",
+     "DisagreementKind"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/ThreePathologies.v",
+   "language": "coq",
+   "sizeLines": 206,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "SCF_failure_mode",
+     "SCF_remedy",
+     "CPJ_failure_mode",
+     "CPJ_remedy",
+     "CPL_failure_mode",
+     "CPL_remedy"
+    ],
+    "classes": [
+     "FailureMode",
+     "SelfConsistentFantasy",
+     "ContactPointJunkie",
+     "ContactPointLiar",
+     "BreakPoint",
+     "PathologyLocation",
+     "PathologyDiagnosis",
+     "Remedy"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  },
+  {
+   "path": "coq/coherent_world_models/Traces.v",
+   "language": "coq",
+   "sizeLines": 254,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [
+     "PTAccess",
+     "PTRegion",
+     "PTTrace",
+     "Transformed",
+     "Underdetermined",
+     "FreePattern",
+     "make_example",
+     "inferred_pair_of",
+     "inferences_disagree"
+    ],
+    "classes": [
+     "ProducedTrace",
+     "MediatedSetup",
+     "Indexical",
+     "TraceExample",
+     "PossibleSource",
+     "Inference"
+    ]
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}

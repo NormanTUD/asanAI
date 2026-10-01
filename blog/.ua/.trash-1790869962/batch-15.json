@@ -1,0 +1,268 @@
+{
+  "nodes": [
+    {
+      "id": "file:embeddinglab.js",
+      "type": "file",
+      "name": "embeddinglab.js",
+      "summary": "Interactive module for the 'Embeddings: The Geometry of Meaning' lesson (Part 4, order 4). ~8650 lines of vanilla JS that renders ~25 distinct visualizations of embedding-space geometry: 1D/2D/3D word spaces, vector arithmetic, dot-product/cosine similarity, rotational and scale invariance, parallelogram law, Riemannian manifolds, cross-lingual alignment, metric tensors, anisotropy, superposition, negation, in-context learning, hyperbolic (Poincare) embeddings, and canvas-based topology (Voronoi, persistent homology, polytopes, grammar-as-rotation).",
+      "tags": ["embeddings", "vector-space", "geometry", "visualization", "transformer"],
+      "complexity": "complex",
+      "filePath": "embeddinglab.js",
+      "languageNotes": "No in-project imports; pairs with embeddinglab.php lesson. Uses dual rendering backends (ECharts GL + Plotly for 3D scatter/surface, raw Canvas 2D for topology/homology/polytope/grammar). Lazy-loads every widget through an IntersectionObserver registry (_embLazyRegister) so heavy plots only render when scrolled into view, and re-renders all on dark/light theme change via window.__MN_DARK."
+    },
+    {
+      "id": "function:embeddinglab.js:loadEmbeddingModule",
+      "type": "function",
+      "name": "loadEmbeddingModule",
+      "summary": "Module entry point satisfying the blog's load*Module() queue contract. Sets up the embedding-space IntersectionObserver, calls initEmbeddingEditor() eagerly, registers all ~20 other visualizations via _embLazyRegister, starts the lazy observer, and hooks window.__MN_DARK to re-render everything on theme toggle.",
+      "tags": ["module-entry", "embeddings", "lazy-loading", "boot"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:_getEC3D",
+      "type": "function",
+      "name": "_getEC3D",
+      "summary": "Caches and initializes one ECharts GL instance per plot div (purging any prior Plotly chart and its loading spinner first), attaching a ResizeObserver so each 3D embedding plot resizes with its container.",
+      "tags": ["echarts", "3d-plot", "cache", "resize"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:_embLazyRegister",
+      "type": "function",
+      "name": "_embLazyRegister",
+      "summary": "Registers a (elementId, initFn) pair into the lazy-render registry; _embLazyCreateObserver then attaches a single IntersectionObserver that runs each initFn once when its plot scrolls into view, deferring heavy 3D/canvas work until needed.",
+      "tags": ["lazy-loading", "intersection-observer", "performance"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderSpace",
+      "type": "function",
+      "name": "renderSpace",
+      "summary": "Renders one of the 1D/2D/3D 'evolution' embedding spaces from the evoSpaces data (temperature scale, gender/power plane, human/animal/divine 3D space) as a labeled scatter, with optional highlighted token and animated vector-step traces.",
+      "tags": ["embedding-space", "3d-plot", "scatter", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderComparison3D",
+      "type": "function",
+      "name": "renderComparison3D",
+      "summary": "Renders a side-by-side 3D comparison of selected tokens (e.g. Man/King/Lion) and computes pairwise metrics (Euclidean distance, cosine similarity, angle) shown in a stats panel to compare how geometry encodes relations.",
+      "tags": ["embedding-space", "cosine-similarity", "3d-plot", "comparison"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:calcEvo",
+      "type": "function",
+      "name": "calcEvo",
+      "summary": "Drives the vector-arithmetic calculator (e.g. King - Man + Woman = Queen): parses a small expression grammar over named tokens, applies the vector ops, and renders the resulting displacement in the space with a live result readout.",
+      "tags": ["vector-arithmetic", "word-analogies", "expression-parser", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initEmbeddingEditor",
+      "type": "function",
+      "name": "initEmbeddingEditor",
+      "summary": "Builds the editable embedding tables (one row per word with per-dimension inputs) and wires add/remove/update handlers so a reader can mutate word vectors and watch dependent plots respond.",
+      "tags": ["embedding-space", "editor", "dom", "interactivity"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderDotProductLab",
+      "type": "function",
+      "name": "renderDotProductLab",
+      "summary": "Interactive two-vector lab where sliders set each vector's angle/magnitude and the plot updates live to show the dot product, cosine similarity, and the angle between vectors, tying the inner product to semantic alignment.",
+      "tags": ["dot-product", "cosine-similarity", "inner-product", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderRotationalInvariance",
+      "type": "function",
+      "name": "renderRotationalInvariance",
+      "summary": "Visualizes that cosine similarity / relative geometry is invariant to a global rotation of the embedding space, rotating the whole word cloud and showing similarity values are preserved.",
+      "tags": ["rotational-invariance", "embedding-space", "geometry", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderParallelogram",
+      "type": "function",
+      "name": "renderParallelogram",
+      "summary": "Demonstrates the parallelogram law of vector addition for word-analogy concepts (royalty, gender, etc.), drawing the completed parallelogram and the landing vertex for A - B + C style relations.",
+      "tags": ["parallelogram-law", "word-analogies", "vector-arithmetic", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderManifoldVisualization",
+      "type": "function",
+      "name": "renderManifoldVisualization",
+      "summary": "Illustrates the manifold hypothesis by projecting word embeddings onto a curved low-dimensional surface embedded in a higher-dimensional ambient space, with intrinsic coordinates (u,v) and a z-surface.",
+      "tags": ["manifold-hypothesis", "embedding-space", "3d-plot", "geometry"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderCrossLingualFrame",
+      "type": "function",
+      "name": "renderCrossLingualFrame",
+      "summary": "2D cross-lingual alignment visual (English/Japanese) showing two language frames that can be rotated into alignment, with an animate/reset control to demonstrate how the two spaces share structure.",
+      "tags": ["cross-lingual", "alignment", "multilingual", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderDualManifolds",
+      "type": "function",
+      "name": "renderDualManifolds",
+      "summary": "Renders two 3D parametric surfaces (English and Japanese manifolds) and frames translation as path-finding between corresponding points on the dual surfaces, with rotation/separation controls and an alignment animation.",
+      "tags": ["translation", "dual-manifolds", "3d-surface", "cross-lingual"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderMetricTensor",
+      "type": "function",
+      "name": "renderMetricTensor",
+      "summary": "Visualizes a local metric tensor that warps the embedding space (an 'attention warping' picture), showing how distances/similarities are rescaled anisotropically across the space.",
+      "tags": ["metric-tensor", "riemannian-geometry", "attention", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderScaleInvariance",
+      "type": "function",
+      "name": "renderScaleInvariance",
+      "summary": "Shows that normalizing vectors to the unit sphere makes cosine similarity invariant to magnitude, with a magnitude slider demonstrating that scaling a vector does not change its directional similarity.",
+      "tags": ["scale-invariance", "normalization", "cosine-similarity", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderPlatonicHypothesis",
+      "type": "function",
+      "name": "renderPlatonicHypothesis",
+      "summary": "Illustrates the Platonic representation hypothesis: different models/tasks converge on shared 'Platonic' directions in embedding space, with a control to select a module position and show alignment of directions.",
+      "tags": ["platonic-hypothesis", "alignment", "representation", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initAnisotropy",
+      "type": "function",
+      "name": "initAnisotropy",
+      "summary": "Sets up the anisotropy visualization, generating an anisotropic (coned) set of word vectors and a control to compare the narrow cosine distribution of real embeddings against an isotropic baseline.",
+      "tags": ["anisotropy", "embedding-space", "scatter", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderSuperposition",
+      "type": "function",
+      "name": "renderSuperposition",
+      "summary": "Demonstrates superposition / polysemanticity by showing a single direction encoding several simultaneously-active features (a 'polyseme' vector), with a slider controlling how many features share one dimension.",
+      "tags": ["superposition", "polysemanticity", "interpretability", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderNegation",
+      "type": "function",
+      "name": "renderNegation",
+      "summary": "Visualizes negation as a direction in embedding space, letting the reader pick a negation word and see the negated position of a concept (e.g. 'not hot') plotted against the original.",
+      "tags": ["negation", "semantic-direction", "embedding-space", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initICL",
+      "type": "function",
+      "name": "initICL",
+      "summary": "Initializes the in-context-learning visualization, building a task-vector picture where a prompt's examples steer the embedding toward an answer, with a prompt panel and controls to inspect the steering vector.",
+      "tags": ["in-context-learning", "task-vector", "prompting", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderHyperbolicEmbedding",
+      "type": "function",
+      "name": "renderHyperbolicEmbedding",
+      "summary": "Lays out a hierarchical tree inside the Poincare disk and renders geodesics/distances in hyperbolic geometry, with a curvature slider to show how hierarchy packs into a bounded disk.",
+      "tags": ["hyperbolic-embedding", "poincare-disk", "hierarchy", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initTopologyCones",
+      "type": "function",
+      "name": "initTopologyCones",
+      "summary": "Sets up the 'narrow cones' topology visualization, sampling token-vector points and their local cone angles across a dimension slider to show how high-dimensional clusters look like thin cones.",
+      "tags": ["topology", "high-dimensional", "cones", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:renderFractalFolding",
+      "type": "function",
+      "name": "renderFractalFolding",
+      "summary": "Shows semantic folding / fractal self-similarity: zooming into a cluster reveals the same structure at smaller scale, with a zoom slider illustrating self-similar organization of the embedding space.",
+      "tags": ["fractal", "self-similarity", "scaling", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initHolographic",
+      "type": "function",
+      "name": "initHolographic",
+      "summary": "Sets up the holographic-information-storage demo, where damaging a fraction of a token's dimensions still leaves meaning recoverable from the surviving ones, with a damage slider and before/after similarity stats.",
+      "tags": ["holographic-principle", "robustness", "noise", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initVoronoi",
+      "type": "function",
+      "name": "initVoronoi",
+      "summary": "Builds an interactive Voronoi-cell partition of the 2D embedding plane on a canvas: clicking a point shows its owning seed/word and cell, with a legend and stats on cell areas as a picture of decision regions in meaning-space.",
+      "tags": ["voronoi", "decision-region", "canvas", "visualization"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initHomology",
+      "type": "function",
+      "name": "initHomology",
+      "summary": "Computes and renders persistent homology of token-vector clouds on a canvas: a 3D point cloud, a scale (filtration) slider, and a persistence barcode tracking which loops/cavities (holes) in meaning-space survive across scale.",
+      "tags": ["persistent-homology", "topology", "barcode", "canvas"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initPolytope",
+      "type": "function",
+      "name": "initPolytope",
+      "summary": "Computes convex hulls of token groups and renders the resulting polytopes with click-to-inspect, a legend, and a 'dilemma' list of words falling in overlapping hulls, framing the hulls as boundaries of the conceivable.",
+      "tags": ["convex-hull", "polytope", "clustering", "canvas"],
+      "filePath": "embeddinglab.js"
+    },
+    {
+      "id": "function:embeddinglab.js:initGrammarRotation",
+      "type": "function",
+      "name": "initGrammarRotation",
+      "summary": "Demonstrates grammar as rotation operators in embedding space: conjugation/tense/pair relations act as consistent rotations, with pair highlighting and stats showing that the same rotation maps many word pairs.",
+      "tags": ["grammar", "rotation-operator", "relation", "canvas"],
+      "filePath": "embeddinglab.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:loadEmbeddingModule", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:_getEC3D", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:_embLazyRegister", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderSpace", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderComparison3D", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:calcEvo", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initEmbeddingEditor", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderDotProductLab", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderRotationalInvariance", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderParallelogram", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderManifoldVisualization", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderCrossLingualFrame", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderDualManifolds", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderMetricTensor", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderScaleInvariance", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderPlatonicHypothesis", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initAnisotropy", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderSuperposition", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderNegation", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initICL", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderHyperbolicEmbedding", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initTopologyCones", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:renderFractalFolding", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initHolographic", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initVoronoi", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initHomology", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initPolytope", "type": "contains", "weight": 1.0 },
+    { "source": "file:embeddinglab.js", "target": "function:embeddinglab.js:initGrammarRotation", "type": "contains", "weight": 1.0 }
+  ]
+}

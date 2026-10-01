@@ -1,0 +1,2165 @@
+[
+ {
+  "id": "config:.htaccess",
+  "name": ".htaccess",
+  "filePath": ".htaccess",
+  "summary": "Apache config: rewrites .php-less pretty URLs to the underlying .php file, blocks direct access to .search_cache.json, and auto-prepends mobile-prepend.php into every response so mobile.css/mobile.js load on all pages.",
+  "type": "config"
+ },
+ {
+  "id": "config:.user.ini",
+  "name": ".user.ini",
+  "filePath": ".user.ini",
+  "summary": "Per-directory PHP runtime override that sets auto_prepend_file to mobile-prepend.php as a fallback for servers that do not honor the .htaccess php_value directive.",
+  "type": "config"
+ },
+ {
+  "id": "file:art.txt",
+  "name": "art.txt",
+  "filePath": "art.txt",
+  "summary": "One-line scratch note holding a single external URL (an SBMA Underhill-AI event page) with no other content.",
+  "type": "file"
+ },
+ {
+  "id": "file:asanai_blog_proxy.php",
+  "name": "asanai_blog_proxy.php",
+  "filePath": "asanai_blog_proxy.php",
+  "summary": "Self-contained reverse proxy that fetches any path under asanai.scads.ai/blog over cURL, validates the target to block SSRF, and rewrites relative src/href and in-JS asset paths so proxied HTML/JS keeps loading through the proxy.",
+  "type": "file"
+ },
+ {
+  "id": "file:attention_engine.js",
+  "name": "attention_engine.js",
+  "filePath": "attention_engine.js",
+  "summary": "Large interactive multi-head self-attention engine for the Transformer lesson: runs a real QKV forward pass over tokens, renders per-head attention-weight matrices with LaTeX annotations, an 'attention path visualizer' (APV) arc view, and hooks for provenance/TDA tooling.",
+  "type": "file"
+ },
+ {
+  "id": "file:bildquellen-pruefung.txt",
+  "name": "bildquellen-pruefung.txt",
+  "filePath": "bildquellen-pruefung.txt",
+  "summary": "Image source-and-license audit log: per-image records (URL, license via the Commons API, author, local filename, lesson of use, and OK/UNCLEAR status) documenting provenance and licensing for every figure in the book.",
+  "type": "file"
+ },
+ {
+  "id": "file:bpe.js",
+  "name": "bpe.js",
+  "filePath": "bpe.js",
+  "summary": "Self-contained Byte-Pair-Encoding tokenizer: trains a merge table on a text corpus and tokenizes by replaying merges with a greedy longest-match fallback for rare words.",
+  "type": "file"
+ },
+ {
+  "id": "file:category_theory.html",
+  "name": "category_theory.html",
+  "filePath": "category_theory.html",
+  "summary": "Standalone test page that renders a TikZJax commutative diagram (x -> f(x) -> (g o f)(x)) to verify the diagram toolchain used for category-theory content.",
+  "type": "file"
+ },
+ {
+  "id": "file:citation_graph.js",
+  "name": "citation_graph.js",
+  "filePath": "citation_graph.js",
+  "summary": "Data file exposing window.citationGraph, a directed map from each literature.js citation key to the keys it builds on, encoding the intellectual lineage (foundations through modern LLMs) behind the book's bibliography.",
+  "type": "file"
+ },
+ {
+  "id": "file:cluster.js",
+  "name": "cluster.js",
+  "filePath": "cluster.js",
+  "summary": "Implements 'Aurora Clusters': converts [[c:name]]...[[/c]] markers in lesson Markdown into softly-glowing color lanes, assigning each cluster name a stable hue (curated palette or golden-angle fallback) and injecting matching CSS variables.",
+  "type": "file"
+ },
+ {
+  "id": "file:commutation.html",
+  "name": "commutation.html",
+  "filePath": "commutation.html",
+  "summary": "A pre-rendered SVG of the same commutative diagram (x, f(x), (g o f)(x) with f, g o f, g arrows) used as a static asset alongside the TikZJax test page.",
+  "type": "file"
+ },
+ {
+  "id": "document:corrections.md",
+  "name": "Corrections for coherent_world_models.php",
+  "filePath": "corrections.md",
+  "summary": "Content-audit of the coherent_world_models lesson cataloguing 9 mathematical/philosophical inconsistencies (object-vs-element G, fan-vs-chain cover structure, self-undermining 'coherence = descent', etc.) with a severity table; all items marked as applied.",
+  "type": "document"
+ },
+ {
+  "id": "file:darkmode_todo.txt",
+  "name": "darkmode_todo.txt",
+  "filePath": "darkmode_todo.txt",
+  "summary": "Tracking note of dark-mode background fixes per lesson (white Plotly/ECharts canvases and light callout boxes), each marked FIXED, plus maintenance notes pointing to the CSS block and the global Plotly theme observer in helper.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:effects.js",
+  "name": "effects.js",
+  "filePath": "effects.js",
+  "summary": "Quiet visual enhancement: adds an 'effects-on' class to <html> and cascade-fades in each .course-part via IntersectionObserver as it scrolls into view, falling back to fully visible when the observer or reduced-motion is unavailable.",
+  "type": "file"
+ },
+ {
+  "id": "file:fcnn_visualization.js",
+  "name": "fcnn_visualization.js",
+  "filePath": "fcnn_visualization.js",
+  "summary": "Canvas renderer for a full-network (Dense/Flatten/LayerNorm/Conv2D) architecture: reads the live TF.js model's layers, computes node/layer layout, and draws connected neurons with theme-aware colors and labels.",
+  "type": "file"
+ },
+ {
+  "id": "file:find_double_defined_js.sh",
+  "name": "find_double_defined_js.sh",
+  "filePath": "find_double_defined_js.sh",
+  "summary": "Development shell script that greps every .js file for top-level 'function <name>' definitions and reports any name defined more than once in a file, exiting non-zero if duplicates are found.",
+  "type": "file"
+ },
+ {
+  "id": "file:functions.php",
+  "name": "functions.php",
+  "filePath": "functions.php",
+  "summary": "The blog's central server-side infrastructure: parses every lesson's COURSE_METADATA block to auto-build the course drawer/index/progress, provides the asset and lesson loaders (js/css/incl), the post-load JS orchestrator, and renders the chrome (theme/topics/reader toggles, drawer, module nav, hero constellation).",
+  "type": "file"
+ },
+ {
+  "id": "document:geometric_topological_theory_of_meaningful_language_spaces.md",
+  "name": "A Geometric and Topological Theory of Meaningful Language Spaces",
+  "filePath": "geometric_topological_theory_of_meaningful_language_spaces.md",
+  "summary": "Long research-program essay proposing a geometric/topological account of language: a combinatorial possibility space X_N, multi-field 'void vectors' (syntactic/semantic/grounding/epistemic), cosmic-web cluster-filament-void structure, fractality, and a four-level program ending in open questions.",
+  "type": "document"
+ },
+ {
+  "id": "file:graph.php",
+  "name": "graph.php",
+  "filePath": "graph.php",
+  "summary": "'River of Ideas' interactive SVG timeline: a ~15-row-by-11-column vertical graph of ~120 AI-history milestones across 8 colored streams, with curved dependency edges, hover tooltips, 2-hop connectedness highlighting, a legend, era bands, and optional scroll-to-section highlighting.",
+  "type": "file"
+ },
+ {
+  "id": "file:helper.js",
+  "name": "helper.js",
+  "filePath": "helper.js",
+  "summary": "The core client-side runtime for the blog: handles Markdown rendering (with LaTeX/index protection), citation processing (\\cite/\\footcite), typography, lazy section initialization, optional block expansion, reading progress, and the global dark-mode theme observer.",
+  "type": "file"
+ },
+ {
+  "id": "file:image.php",
+  "name": "image.php",
+  "filePath": "image.php",
+  "summary": "A server-side PHP utility for intelligent image processing, handling cropping, aspect-ratio fitting, and resizing with robust error reporting and Debian-specific troubleshooting hints.",
+  "type": "file"
+ },
+ {
+  "id": "file:index_full.php",
+  "name": "index_full.php",
+  "filePath": "index_full.php",
+  "summary": "The monolithic course view that renders the complete linear curriculum by including every lesson module in sequence.",
+  "type": "file"
+ },
+ {
+  "id": "file:index.php",
+  "name": "index.php",
+  "filePath": "index.php",
+  "summary": "The primary landing page, featuring a course hero, introductory content, and a grid of interactive course tiles for each part.",
+  "type": "file"
+ },
+ {
+  "id": "file:init.js",
+  "name": "init.js",
+  "filePath": "init.js",
+  "summary": "Provides global initialization logic for the client, such as triggering Markdown rendering on load and resizing Plotly charts on window resize.",
+  "type": "file"
+ },
+ {
+  "id": "file:intro.php",
+  "name": "From Big Bang to ChatGPT: Beyond the Black Box",
+  "filePath": "intro.php",
+  "summary": "The course introduction lesson, providing high-level context, scope, and navigating the interactive philosophy of the curriculum.",
+  "type": "file"
+ },
+ {
+  "id": "file:js_syntax_test.sh",
+  "name": "js_syntax_test.sh",
+  "filePath": "js_syntax_test.sh",
+  "summary": "A simple shell script for automated syntax validation of all JavaScript files in the project using `node -c`.",
+  "type": "file"
+ },
+ {
+  "id": "file:keypoint.js",
+  "name": "keypoint.js",
+  "filePath": "keypoint.js",
+  "summary": "A utility that transforms standard Markdown blockquotes into visually distinct 'key-point' cards for important summaries or questions.",
+  "type": "file"
+ },
+ {
+  "id": "file:knowledge_map.php",
+  "name": "Knowledge Map",
+  "filePath": "knowledge_map.php",
+  "summary": "A sophisticated interactive visualization that builds a weighted graph of the course based on shared citations, concept affinity (TF-IDF), and the course path.",
+  "type": "file"
+ },
+ {
+  "id": "file:layer_commuting_diagram.html",
+  "name": "layer_commuting_diagram.html",
+  "filePath": "layer_commuting_diagram.html",
+  "summary": "A static SVG representation of a commuting diagram used to visualize mathematical relationships between layers in a network.",
+  "type": "file"
+ },
+ {
+  "id": "file:layout_guardrail.js",
+  "name": "layout_guardrail.js",
+  "filePath": "layout_guardrail.js",
+  "summary": "A diagnostic tool that detects and flags elements in the #contents column that exceed the allowed width, helping authors catch layout bugs.",
+  "type": "file"
+ },
+ {
+  "id": "file:literature.js",
+  "name": "literature.js",
+  "filePath": "literature.js",
+  "summary": "Central bibliography store exposing `window.bibData`, a flat map of ~1,738 citation keys (title, author, year, url, alternativetitle) that `bibtexify()` in helper.js resolves at runtime for \\cite/\\citeauthor/\\footcite macros used across every lesson's prose and figure captions.",
+  "type": "file"
+ },
+ {
+  "id": "file:literature.php",
+  "name": "literature.php",
+  "filePath": "literature.php",
+  "summary": "Paginated literature reader that reads literature.js, parses each bibliography entry with a tolerant regex (no strict JSON), and renders a dark-themed table of title/author/year/link with a ?page= pagination control (10 per page).",
+  "type": "file"
+ },
+ {
+  "id": "file:llm_river.js",
+  "name": "llm_river.js",
+  "filePath": "llm_river.js",
+  "summary": "ECharts 'Probability Flow' ThemeRiver for the transformer lesson: projects a chosen token's hidden state at every processing stage onto the vocab and visualizes the top-N word probabilities as flowing bands.",
+  "type": "file"
+ },
+ {
+  "id": "file:loader.js",
+  "name": "loader.js",
+  "filePath": "loader.js",
+  "summary": "Module-loading orchestrator: runs every loader in window.__moduleLoaderQueue concurrently (each yielding once so the browser can paint), updating a visible per-module checklist and status until all resolve.",
+  "type": "file"
+ },
+ {
+  "id": "file:master_vis.js",
+  "name": "master_vis.js",
+  "filePath": "master_vis.js",
+  "summary": "2D linear-regression lab ('Master Viz Engine'): an editable (x, y) data table, weight/bias sliders, live MSE readout, residual and model-line plots, a 3D log-loss landscape, and a step-animated SGD/Adam optimizer.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_deri.html",
+  "name": "math_deri.html",
+  "filePath": "math_deri.html",
+  "summary": "Standalone interactive 'Understanding Derivatives' guide built on Plotly: self-contained sections (tangent/limit, power rule, constant/sum/product/quotient/chain, trig, etc.) each with a slider and a live plot.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_iii_hott.js",
+  "name": "math_iii_hott.js",
+  "filePath": "math_iii_hott.js",
+  "summary": "Interactive Homotopy Type Theory lab woven into the 'Type Theory and HoTT' lesson: ten canvas/Three.js/Plotly components covering the black-box problem, type-checking/Curry-Howard, homotopy, identity types, the tower of equalities, verification, uncertainty, ontologies, a Bloch-sphere qubit, and XAI decision paths.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_iv_affine.js",
+  "name": "math_iv_affine.js",
+  "filePath": "math_iv_affine.js",
+  "summary": "Affine, space-folding, and Hopf interactive labs for the Math IV lesson: a DOM-free pure-math core (matrices, folds, Hopf tubes, Gauss linking number) plus five canvas labs — 2D/3D affine warp, the 2D fold with a 3D bent-paper view, a radial/ReLU 'circle in a circle' classifier, and a Hopf link unlinked by a fold.",
+  "type": "file"
+ },
+ {
+  "id": "file:mobile-loader.php",
+  "name": "mobile-loader.php",
+  "filePath": "mobile-loader.php",
+  "summary": "Small includable that emits a <link> to mobile.css (before </head>) and a deferred <script> to mobile.js, both with ?v=filemtime cache-busters; intended for index.php / index_full.php.",
+  "type": "file"
+ },
+ {
+  "id": "file:mobile-prepend.php",
+  "name": "mobile-prepend.php",
+  "filePath": "mobile-prepend.php",
+  "summary": "Registered via .user.ini's auto_prepend_file to run at the top of every PHP script: starts output buffering and, when the buffer contains </head>, injects cache-busted <link>/<script> tags for mobile.css and mobile.js (skipping pages that already load them or are tiny/CLI).",
+  "type": "file"
+ },
+ {
+  "id": "file:mobile.css",
+  "name": "mobile.css",
+  "filePath": "mobile.css",
+  "summary": "Mobile/responsive polish CSS layer loaded after style.css: mobile-first hygiene, plus tablet (<=900px), phone (<=600px), small-phone (<=380px), touch-only (hover:none), landscape, and reduced-motion rules, scoped so they never leak into the chrome.",
+  "type": "file"
+ },
+ {
+  "id": "file:mobile.js",
+  "name": "mobile.js",
+  "filePath": "mobile.js",
+  "summary": "Mobile/responsive JS polish loaded after start.js: injects mobile.css as a fallback, adds touch-only glossary tap-tooltips and drawer swipe-to-close, fixes the iOS viewport height and input auto-zoom, and broadcasts resize so Plotly charts re-fit.",
+  "type": "file"
+ },
+ {
+  "id": "file:organic-network.js",
+  "name": "organic-network.js",
+  "filePath": "organic-network.js",
+  "summary": "Decorative slow-drifting node-and-link network rendered behind the course hero: seeded once, structure-preserving across resizes, dt-clamped so motion stays continuous, and it keeps ticking (but skips painting) when scrolled off-screen.",
+  "type": "file"
+ },
+ {
+  "id": "file:php_syntax_check.sh",
+  "name": "php_syntax_check.sh",
+  "filePath": "php_syntax_check.sh",
+  "summary": "Developer shell script that recursively runs php -l over every .php file and reports any that fail, exiting non-zero if syntax errors are found.",
+  "type": "file"
+ },
+ {
+  "id": "file:polish.js",
+  "name": "polish.js",
+  "filePath": "polish.js",
+  "summary": "Reading-polish layer that makes long technical prose pleasant: per-heading anchor links, TOC scroll-spy, keyboard shortcuts, code copy buttons, footnote/citation hover previews, an image lightbox, back-to-top, drop-cap sizing, equation/caption numbering, and acronym small-caps.",
+  "type": "file"
+ },
+ {
+  "id": "document:polyhedral-inconsistencies.md",
+  "name": "polyhedral-inconsistencies.md",
+  "filePath": "polyhedral-inconsistencies.md",
+  "summary": "Working research note (not a lesson) cataloguing tensions in the polyhedral / ReLU 'space-folding' literature — exponential region bounds vs. realized geometry, features-as-directions vs. the polytope lens, disentangled vs. folded representations, direction-sensitivity, and a feedforward/reservoir parallel — each with the papers involved and reconciliation status.",
+  "type": "document"
+ },
+ {
+  "id": "file:prism-tomorrow.min.css",
+  "name": "prism-tomorrow.min.css",
+  "filePath": "prism-tomorrow.min.css",
+  "summary": "Minified PrismJS 'Tomorrow' syntax-highlighting theme (single-line vendor CSS) providing token colors for code blocks.",
+  "type": "file"
+ },
+ {
+  "id": "file:progress_tracker.js",
+  "name": "progress_tracker.js",
+  "filePath": "progress_tracker.js",
+  "summary": "Course-progress tracker that paints a segmented 'where I've been' bar on each homepage course tile and, on subpages, marks a 200px scroll band as 'seen' only after 3 s of dwell; state (with band arrays) is persisted to localStorage and old formats are auto-migrated.",
+  "type": "file"
+ },
+ {
+  "id": "file:provenance.js",
+  "name": "provenance.js",
+  "filePath": "provenance.js",
+  "summary": "Instruments the Transformer lesson so every rendered number can be hovered to reveal its full computation: a value-matched registry of intermediate matrices, a tooltip with underbraced formulas, and a 'light cone' / importance / full-network dependency view.",
+  "type": "file"
+ },
+ {
+  "id": "document:README.md",
+  "name": "README.md",
+  "filePath": "README.md",
+  "summary": "Course front-page describing 'From Big Bang to ChatGPT': its six parts, interactive/local/math-first approach, tech stack (PHP + vanilla JS, TeXmacs/Temml, Plotly, TensorFlow.js), and credit/license.",
+  "type": "document"
+ },
+ {
+  "id": "document:research_science_history.md",
+  "name": "research_science_history.md",
+  "filePath": "research_science_history.md",
+  "summary": "Authoring research notes tracing how the mental and physical landscape (mythos, Scientific Revolution, Enlightenment) made LLMs possible; raw structured source material for the history lesson, organized around 'LLM hooks'.",
+  "type": "document"
+ },
+ {
+  "id": "file:search_lib.php",
+  "name": "search_lib.php",
+  "filePath": "search_lib.php",
+  "summary": "Pure-function search engine core: indexes the blog's PHP lessons into blocks (headings, paragraphs, captions), normalizes text (smart quotes, diacritics, Greek, LaTeX, citations), and matches queries in normal, regex, and fuzzy modes with scoring and snippets.",
+  "type": "file"
+ },
+ {
+  "id": "file:search.js",
+  "name": "search.js",
+  "filePath": "search.js",
+  "summary": "Client-side search overlay (Ctrl/Cmd+K, '/' key): debounced fetch to search.php, grouped result rendering with term highlighting, keyboard navigation, and hash-based in-page heading scroll.",
+  "type": "file"
+ },
+ {
+  "id": "file:search.php",
+  "name": "search.php",
+  "filePath": "search.php",
+  "summary": "Thin JSON endpoint for the blog search: reads the ?q= query, runs runSearch over the local directory, and returns the result set as JSON with noindex headers.",
+  "type": "file"
+ },
+ {
+  "id": "file:sidenotes.js",
+  "name": "sidenotes.js",
+  "filePath": "sidenotes.js",
+  "summary": "Tufte-style margin annotations and sticky side figures: extracts \\sidenote/\\sideimage/\\marginfig directives, threads their content through the main LaTeX/Markdown pipeline, and positions/visibly-toggles them in a margin rail with a wrap fallback.",
+  "type": "file"
+ },
+ {
+  "id": "file:start.js",
+  "name": "start.js",
+  "filePath": "start.js",
+  "summary": "Site-wide bootstrapping and runtime infrastructure for the blog: LaTeX (Temml) math rendering with a right-click source popup, dark-mode toggling, theme-adaptive restyling of inline demo styles, the mobile drawer, module prev/next navigation, the auto-glossary tooltip system with layout guardrails, and a loader checklist.",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics.js",
+  "name": "statistics.js",
+  "filePath": "statistics.js",
+  "summary": "Interactive visualization module for the statistics lessons: a unified Plotly theme plus a large suite of hands-on labs (distributions, normal/CLT, least squares, correlation, Bayesian updating, entropy, Markov chains, Zipf/LLN over a Nietzsche corpus, Dirichlet, GMM, and LLM-related Boltzmann/MLE/chain-rule/KL) that render on demand via lazy IntersectionObserver registration.",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics.php",
+  "name": "statistics.php",
+  "filePath": "statistics.php",
+  "summary": "Consolidated 'statistics' reference lesson (prose + interactive labs) covering distributions, the normal distribution and least squares, Bayesian inference, entropy, correlation, Zipf/Dirichlet/GMM, and LLM probability labs; kept as a complete reference now split into statistics_i.php / statistics_ii.php.",
+  "type": "file"
+ },
+ {
+  "id": "file:stickybar_transformer.js",
+  "name": "stickybar_transformer.js",
+  "filePath": "stickybar_transformer.js",
+  "summary": "Unified sticky bottom bar for the transformer lesson: shown while the transformer site is in view, it switches between an idle 'Start Training' panel and a live training panel (epoch, loss, ETA, mini loss sparkline) and exposes window.show/update/hideTrainingProgressBar plus a synced train-button state.",
+  "type": "file"
+ },
+ {
+  "id": "file:story.html",
+  "name": "story.html",
+  "filePath": "story.html",
+  "summary": "Standalone, self-contained animated explainer ('Was passiert da eigentlich?') that choreographs a sequence of CSS/JS beats: a phone search query is spoken, tokenized into pills, mapped to points in a 2-D embedding space (with a king/queen analogy), then handed off to a Transformer model block.",
+  "type": "file"
+ },
+ {
+  "id": "file:style.css",
+  "name": "style.css",
+  "filePath": "style.css",
+  "summary": "The blog's single global stylesheet: defines the design system via --mn-* custom properties (cream-paper light palette with a full dark-mode override, five surface/border steps, walnut text ramp, spacing ladder, --mn-col-width, and accent colors coral/rose/emerald/sky/indigo), self-hosted @font-face faces (Source Serif 4, Computer Modern 'CMS'/'CMSS', Utopia-derivative 'Lingua Franca'), and all component styles for the course shell and lesson widgets — typography with drop caps and Butterick rules, Tufte-style sidenotes and margin figures, callouts/code blocks, aurora color clusters, search overlay, theme toggle, module nav, mobile drawer, glossary tooltips, topic-block dim/collapse states, course-progress tiles, plus ~1,000 dark-mode inline-style rescue rules for lab pages and a final guardrail block locking drop-cap layout and word-breaking.",
+  "type": "file"
+ },
+ {
+  "id": "file:tda_live.js",
+  "name": "tda_live.js",
+  "filePath": "tda_live.js",
+  "summary": "TDALive — a live topological data analysis panel for the blog transformer. It runs the residual stream through the network, projects token states and weight trajectories (PCA/slice/native) to 2D/3D, computes a flow vector field with divergence-based attractor/repeller detection, streamlines and basins of attraction, persistent homology (H0/H1, Betti curves), and per-layer topology, rendering everything as a set of Plotly panels fed by an AttentionEngine onForward hook and per-epoch snapshots.",
+  "type": "file"
+ },
+ {
+  "id": "file:Temml-Local.css",
+  "name": "Temml-Local.css",
+  "filePath": "Temml-Local.css",
+  "summary": "Local copy of the Temml (MathML) stylesheet: @font-face for the Temml.woff2 script font plus presentation rules that make native MathML render correctly — math font stack, menclose/cancel/vec/polyline accents, browser-specific italic corrections, array cell padding, and CSS-counter-based AMS equation numbering.",
+  "type": "file"
+ },
+ {
+  "id": "file:Temml-Local.min.css",
+  "name": "Temml-Local.min.css",
+  "filePath": "Temml-Local.min.css",
+  "summary": "Minified build (clean-css v5.3.3, from temml@0.13.1 on jsDelivr) of Temml-Local.css providing the same MathML presentation rules in a single minified line.",
+  "type": "file"
+ },
+ {
+  "id": "file:temperaturelab.js",
+  "name": "temperaturelab.js",
+  "filePath": "temperaturelab.js",
+  "summary": "Interactive demos for the temperature/sampling lesson (German-language UI): a temperature-slider softmax over fixed logits with a live bar chart, a cumulative-probability word sampler, a sinusoidal positional-encoding heatmap, and a toy RLHF reward/penalty feedback widget.",
+  "type": "file"
+ },
+ {
+  "id": "file:toc.js",
+  "name": "toc.js",
+  "filePath": "toc.js",
+  "summary": "Builds a minimalist, self-contained table of contents for lesson pages: it walks the headings in #contents, assigns deduplicated slugs, computes per-section reading times from word counts, renders a collapsible tree with a search filter and expand/collapse-all toolbar, and persists expansion state to localStorage per page.",
+  "type": "file"
+ },
+ {
+  "id": "document:todo_coherent_world_models.md",
+  "name": "todo_coherent_world_models.md",
+  "filePath": "todo_coherent_world_models.md",
+  "summary": "A detailed consistency audit comparing the 'coherent world models' PHP lesson against its 19-file Coq formalisation: file-by-file gap analysis (licences hard-coded True, the Convention T object-vs-meta-level error, incomplete sheaf condition, the inconsistent identification_forbidden axiom) and a final verdict that the Coq files are structurally faithful but substantively thin.",
+  "type": "document"
+ },
+ {
+  "id": "file:todo_new.txt",
+  "name": "todo_new.txt",
+  "filePath": "todo_new.txt",
+  "summary": "Short German authoring note flagging 1202 / Fibonacci's introduction of Hindu-Arabic numerals and the zero as a historically pivotal, under-covered point to weave into the book's Stone-Age opening.",
+  "type": "file"
+ },
+ {
+  "id": "file:todo.txt",
+  "name": "todo.txt",
+  "filePath": "todo.txt",
+  "summary": "A scratch list of research and inspiration links for the book — arXiv papers (lottery ticket hypothesis, inductive backdoors, Llull), D2L attention visualization, Seeing Theory, Complexity Explorables, ciechanowski, redblobgames, karpathy's convnetjs, and other references to mine for lessons and visualizations.",
+  "type": "file"
+ },
+ {
+  "id": "file:topics.js",
+  "name": "topics.js",
+  "filePath": "topics.js",
+  "summary": "The blog's personalization engine (window.BlogTopics): a 🎯 interest picker with ~27 topics, tone 'categories' (suppress/include filters), a 0-100 math-comfort slider, audience presets (profile x level), classic reader personas, and per-lesson 'learned'/dependency tracking. It preprocesses [[t:...]] markdown into toggleable topic blocks, scores each unit (full/partial/off) against the reader's dials, and tucks/dims/reveals in-lesson sections and home-page course tiles with animated height transitions.",
+  "type": "file"
+ },
+ {
+  "id": "file:transformer_layer_summary.js",
+  "name": "transformer_layer_summary.js",
+  "filePath": "transformer_layer_summary.js",
+  "summary": "A self-booting panel that measures the blog transformer's live weights and explains, purely by the math, what each layer is doing: per-head attention entropy/focus, stable rank of the query-key and value-output blocks, dead FFN units, head similarity, and how hard each layer writes into the residual stream — rendered as per-layer cards (plain-language descriptions, expandable number tables, and a training sparkline), inserting itself next to the TDA-live section and refreshing every 1.2s during training.",
+  "type": "file"
+ },
+ {
+  "id": "file:typography_fix.js",
+  "name": "typography_fix.js",
+  "filePath": "typography_fix.js",
+  "summary": "Butterick-style silent typographic autocorrect for the blog: converts straight quotes, hyphen/dash runs, and '...' ellipses inside .md text nodes, then lints for what it missed. Exposed as window.TypographyFix {version, fixTypography, lint}.",
+  "type": "file"
+ },
+ {
+  "id": "file:vis_ideas.txt",
+  "name": "vis_ideas.txt",
+  "filePath": "vis_ideas.txt",
+  "summary": "German brainstorm of advanced embedding-space visualization concepts for the book: manifold intersections/knots, frequency-dependent Voronoi 'ghost' boundaries, Riemannian curvature vector fields, hubness gravitation centers, manifold phase-transition kinks, low-rank subspaces, antipodal opposite-pairs, attractor networks, semantic density clouds, and linear relational embeddings.",
+  "type": "file"
+ },
+ {
+  "id": "file:wordpress_code.html",
+  "name": "wordpress_code.html",
+  "filePath": "wordpress_code.html",
+  "summary": "A WordPress embed snippet that hosts the asanAI blog inside an auto-resizing iframe pointing at /asanai_blog_proxy.php, with a window 'message' listener that grows the iframe height in response to height postMessages from the page.",
+  "type": "file"
+ },
+ {
+  "id": "file:foam_of_meaning.js",
+  "name": "foam_of_meaning.js",
+  "filePath": "foam_of_meaning.js",
+  "summary": "Interactive demos for the 'The foam of meaning' lesson: a self-contained register(fn) component registry that mounts themed Plotly/Canvas/Three.js visualizations for the combinatorial explosion, coherence radar, void classifier, cosmic-web canvas, zoom cascade, phase transition, scaling laws, persistent homology, 3D fiber bundle, commutative square, Tarski truth chain, renormalization group, and a grand synthesis view.",
+  "type": "file"
+ },
+ {
+  "id": "file:foam_of_meaning.php",
+  "name": "The foam of meaning",
+  "filePath": "foam_of_meaning.php",
+  "summary": "A geometric and topological theory of meaningful language spaces: the possibility space X of linguistic forms, the interpretation map pi:X->S into semantic structures, the world space W, and the landscape of clusters, filaments, and voids, with the renormalization-group and commutativity/compositionality framing.",
+  "type": "file"
+ },
+ {
+  "id": "file:geometry_i.php",
+  "name": "The Shape of Space — A History of Geometry",
+  "filePath": "geometry_i.php",
+  "summary": "A history of geometry from prehistoric shells and surveying, through Greek proof, Islamic algebra and trigonometry, Renaissance perspective and Descartes' coordinates, to Gauss's Theorema Egregium, non-Euclidean geometry, Riemannian manifolds, and Poincaré's topology, closing on embeddings as the modern need.",
+  "type": "file"
+ },
+ {
+  "id": "file:geometry_ii.php",
+  "name": "The Shape of the Machine — A Working Geometry for AI",
+  "filePath": "geometry_ii.php",
+  "summary": "A working geometric toolkit behind neural networks: the inner product and Gram matrix, orthogonal projection, the SVD, steepest-descent, convolution and the DFT, and symmetry (invariance/equivariance), each tied to the layer that uses it, with inline lazy-initialized Plotly interactives.",
+  "type": "file"
+ },
+ {
+  "id": "file:geometry_iii.php",
+  "name": "The Shape of Holes: A Working Algebraic Topology",
+  "filePath": "geometry_iii.php",
+  "summary": "A working algebraic topology lesson: Euler's bridges, homology chains and the boundary-of-a-boundary rule, homotopy and the fundamental group, exact sequences, Mayer-Vietoris, Seifert-van Kampen, CW complexes, categories, Leray spectral sequences, Steenrod operations, and persistent homology as a bridge to HoTT.",
+  "type": "file"
+ },
+ {
+  "id": "file:history.js",
+  "name": "history.js",
+  "filePath": "history.js",
+  "summary": "Renders the linear-separability demonstration for the Brief History of AI lesson: two Plotly scatter plots showing the OR gate is linearly separable and the XOR gate is not, plus a dark-mode re-render hook.",
+  "type": "file"
+ },
+ {
+  "id": "file:history.php",
+  "name": "Brief History of AI",
+  "filePath": "history.php",
+  "summary": "Traces the convergence of unrelated currents into modern AI: prehistoric counting tools, the Salamis tablet and abacus, number systems, formal logic, computation, and the shifting paths that merged into neural networks and LLMs.",
+  "type": "file"
+ },
+ {
+  "id": "file:intuition.js",
+  "name": "intuition.js",
+  "filePath": "intuition.js",
+  "summary": "Interactive visualizations for the LLM intuition lesson covering tokenization, embedding arithmetic, positional encoding, attention, the feed-forward network, the residual stream, final prediction, and the autoregressive loop, using an IntersectionObserver-based lazy-init registry and theme re-rendering.",
+  "type": "file"
+ },
+ {
+  "id": "file:intuition.php",
+  "name": "An Intuition of how Large Language Models (LLMs) work",
+  "filePath": "intuition.php",
+  "summary": "Explains LLMs as next-word prediction machines and walks the autoregressive loop step by step (user input, appending predicted words until the endoftext token), hosting the interactive visualization containers driven by intuition.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:language.js",
+  "name": "language.js",
+  "filePath": "language.js",
+  "summary": "Builds a vertical interactive timeline of language milestones (from biological capacity for language to LLaMA/ChatGPT) with collapsible deep-dives and click-to-expand descriptions, injecting its CSS via adoptedStyleSheets to avoid reflow.",
+  "type": "file"
+ },
+ {
+  "id": "file:language.php",
+  "name": "The History of Language: From Sanskrit to LLMs",
+  "filePath": "language.php",
+  "summary": "Traces language from the descended larynx and symbolic displacement, through oral mnemonic tradition, clay tokens, writing, and formal grammar (Panini, Frege), to the distributional embeddings and Transformers of modern LLMs.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_i.php",
+  "name": "Basic Math Concepts I — The Numerical Foundations",
+  "filePath": "math_i.php",
+  "summary": "The first of three math chapters covering numerical foundations for AI: programming and variables, sums, products, infinity, Euler's number, exponentials and logarithms, with lazy-initialized interactive plots and an ELI-5 rendering.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_ii.php",
+  "name": "Basic Math Concepts II — Linear Algebra for AI",
+  "filePath": "math_ii.php",
+  "summary": "PHP lesson on linear algebra for AI — vector spaces, matrices/tensors, function composition, the Hadamard product, transposition, and softmax/cross-entropy — with inline Plotly.js visualizations (1D–4D vector spaces, RGB image tensor, composition, Hadamard) that lazy-render on scroll.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_iii.php",
+  "name": "Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory",
+  "filePath": "math_iii.php",
+  "summary": "PHP lesson on approximation, high-dimensional geometry (curse vs. blessing of dimensionality, concentration of measure, manifold hypothesis) and a tour of type theory / homotopy type theory (HoTT), with an interactive HoTT lab (path deformation, equality-as-path, Bloch sphere) driven by math_iii_hott.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:math_iv.php",
+  "name": "Basic Math Concepts IV — Affine Maps & the Fold",
+  "filePath": "math_iv.php",
+  "summary": "PHP lesson on affine maps (Mx + t, homogeneous coordinates, projective/Möbius) and the fold — the first non-affine move, equivalent to a ReLU — culminating in unthreading a Hopf link; interactive 2D/3D affine machines and fold/unlink labs are driven by math_iv_affine.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics_i.js",
+  "name": "statistics_i.js",
+  "filePath": "statistics_i.js",
+  "summary": "Loader module for the Statistics I lesson; re-bootstraps the shared statistics.js lab (guarded by window.__statisticsModuleLoaded) so it runs standalone or inside the combined course page.",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics_i.php",
+  "name": "Statistics I — Distributions and Inference",
+  "filePath": "statistics_i.php",
+  "summary": "PHP lesson introducing probability distributions and inference — Bernoulli, Binomial, Normal, Gumbel, Poisson, the Central Limit Theorem, Z-scores, the Phi-table, least squares, and correlation — with interactive Plotly labs loaded from statistics.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics_ii.js",
+  "name": "statistics_ii.js",
+  "filePath": "statistics_ii.js",
+  "summary": "Loader module for the Statistics II lesson; injects the shared statistics.js lab on demand and re-bootstraps it (guarded by window.__statisticsModuleLoaded).",
+  "type": "file"
+ },
+ {
+  "id": "file:statistics_ii.php",
+  "name": "Statistics II — Inference and Information",
+  "filePath": "statistics_ii.php",
+  "summary": "PHP lesson on statistical inference and information — Bayesian updating, Shannon entropy, the Dirichlet distribution, Gaussian mixtures / EM, the law of large numbers, Markov chains, Boltzmann/temperature, MLE, the chain rule, KL divergence, and bag-of-words — with interactive labs in statistics.js.",
+  "type": "file"
+ },
+ {
+  "id": "file:activationlab.js",
+  "name": "activationlab.js",
+  "filePath": "activationlab.js",
+  "summary": "Interactive module for the Activation Functions lesson: an explorer that plots and explains ReLU/GELU/SiLU/Sigmoid/Tanh/Leaky-ReLU/Identity, plus a Softmax lab that turns raw logits into a probability pie and bar chart.",
+  "type": "file"
+ },
+ {
+  "id": "file:activationlab.php",
+  "name": "Activation Functions: The Neural Decision Makers",
+  "filePath": "activationlab.php",
+  "summary": "Part 2 lesson on why non-linearity is required (linear layers collapse), introducing the activation lab, the Softmax 'multi-class gate', the historical move from Heaviside to ReLU, and GELU/SiLU as the Transformer and diffusion standards.",
+  "type": "file"
+ },
+ {
+  "id": "file:autodiff.js",
+  "name": "autodiff.js",
+  "filePath": "autodiff.js",
+  "summary": "Interactive module for the Automatic Differentiation lesson: a tape-based reverse-mode AD stepper, an SVG computational-graph visualizer, a gradient-descent-on-a-loss-landscape animator, and a vanishing/exploding-gradient explorer.",
+  "type": "file"
+ },
+ {
+  "id": "file:autodiff.php",
+  "name": "Automatic Differentiation: How Machines Learn",
+  "filePath": "autodiff.php",
+  "summary": "Part 2 lesson covering why symbolic/numerical differentiation fail at scale, the chain rule, forward vs. reverse mode, the tape with a concrete worked example, PyTorch/TensorFlow tape APIs, a from-scratch autograd engine, and the vanishing/exploding-gradient problem.",
+  "type": "file"
+ },
+ {
+  "id": "file:backproplab.js",
+  "name": "backproplab.js",
+  "filePath": "backproplab.js",
+  "summary": "The backpropagation visualizer: a 3-4-4-2 network rendered as SVG with animated forward/backward pulses, hoverable cones of influence, click-to-expand per-neuron/weight equations with underbraces, and a full-SGD step with live weight update.",
+  "type": "file"
+ },
+ {
+  "id": "file:backproplab.php",
+  "name": "Backpropagation: How a Neural Network Learns From Its Mistakes",
+  "filePath": "backproplab.php",
+  "summary": "Part 2 lesson introducing the 1986 backprop algorithm, walking through one neuron's forward pass, the half-SSE loss, and the chain-rule error signal, then embedding the live network visualizer.",
+  "type": "file"
+ },
+ {
+  "id": "file:derivativelab.js",
+  "name": "derivativelab.js",
+  "filePath": "derivativelab.js",
+  "summary": "Interactive module for the Derivatives lesson: plots a chosen loss landscape, shows the look-ahead secant slope, and performs a single gradient-descent step, with a plain-language 'AI decision' readout.",
+  "type": "file"
+ },
+ {
+  "id": "file:derivativelab.php",
+  "name": "Derivatives: How AI \"Learns\" to get better",
+  "filePath": "derivativelab.php",
+  "summary": "Part 2 lesson framing the derivative as a 'steepness check' for finding the way downhill, introducing gradient descent, partial derivatives and the gradient vector, and the chain rule as the bridge to backpropagation.",
+  "type": "file"
+ },
+ {
+  "id": "file:differentiation.js",
+  "name": "differentiation.js",
+  "filePath": "differentiation.js",
+  "summary": "Interactive module for the Differentiation lesson with four demos: secant-to-tangent limit, a tangent-line explorer on x^3-3x, a chain-rule (sin(ax)) plot, and a 2D gradient-descent-on-a-surface visualizer.",
+  "type": "file"
+ },
+ {
+  "id": "file:differentiation.php",
+  "name": "Differentiation: The Mathematics of Change",
+  "filePath": "differentiation.php",
+  "summary": "Part 2 lesson on the derivative from the Newton/Leibniz history through the limit definition, the differentiation rules (with the chain rule flagged as the foundation of backprop), partial derivatives, and the gradient vector, with four interactive demos.",
+  "type": "file"
+ },
+ {
+  "id": "file:hyperparameters.php",
+  "name": "Hyperparameters: The Numbers You Choose",
+  "filePath": "hyperparameters.php",
+  "summary": "Part 2 prose lesson distinguishing learned parameters from chosen hyperparameters, explaining why they cannot be solved for, and surveying how they are actually found: expert transfer, scaling laws, grid/random search, Bayesian optimization, and multi-fidelity search (with a note on the OmniOpt tool).",
+  "type": "file"
+ },
+ {
+  "id": "file:losslab.js",
+  "name": "losslab.js",
+  "filePath": "losslab.js",
+  "summary": "Interactive module for the Loss lesson: a Mean-Squared-Error 'loss bowl' with live slope, and a cross-entropy explorer that splits a softmax-style output vector across Cat/Dog/Bird and shows the log-loss and confidence verdict.",
+  "type": "file"
+ },
+ {
+  "id": "file:losslab.php",
+  "name": "Loss: Teaching through Failure",
+  "filePath": "losslab.php",
+  "summary": "Part 2 lesson on loss functions: Mean Squared Error for regression, cross-entropy for classification, Goodhart's Law, and the deep insight that cross-entropy is Shannon entropy and pairs with softmax to give a clean (y_hat - y) gradient.",
+  "type": "file"
+ },
+ {
+  "id": "file:minimalneuron.js",
+  "name": "minimalneuron.js",
+  "filePath": "minimalneuron.js",
+  "summary": "Interactive module for the Smallest-Network lesson: builds a single-neuron tf.sequential linear model (y=ax+b) with TF.js, trains it with SGD in a live loop, and plots the fitted line, loss history, and current weights.",
+  "type": "file"
+ },
+ {
+  "id": "file:minimalneuron.php",
+  "name": "Smallest possible neural network",
+  "filePath": "minimalneuron.php",
+  "summary": "Part 2 lesson introducing the neuron as y=ax+b (weight and bias), the training loop (predict, loss, gradient descent), random initialization to break symmetry, the mirror-rule for output layers, and the statistical/linear-algebra nature of learning, with a TF.js/PyTorch code tab.",
+  "type": "file"
+ },
+ {
+  "id": "file:optimizerlab.js",
+  "name": "optimizerlab.js",
+  "filePath": "optimizerlab.js",
+  "summary": "Interactive module for the Optimizer lesson: a 1D loss-landscape simulator that steps through SGD, SGD+Momentum, and Adam, logging each step, detecting convergence/divergence, and plotting the optimization path.",
+  "type": "file"
+ },
+ {
+  "id": "file:optimizerlab.php",
+  "name": "The Optimizer: Navigating the Loss Landscape",
+  "filePath": "optimizerlab.php",
+  "summary": "Part 2 lesson comparing SGD, Momentum, and Adam on a 1D loss landscape: the update-rule math for each, the Robbins-Monro/Cauchy history, why Adam's per-parameter adaptivity dominates (Zipf), and a table of common pitfalls.",
+  "type": "file"
+ },
+ {
+  "id": "file:reinforcement_learning.php",
+  "name": "Reinforcement Learning",
+  "filePath": "reinforcement_learning.php",
+  "summary": "Part 2 lesson on the math of RL: MDPs, value/Q functions and the Bellman equation, Q-learning, policy gradients and REINFORCE, actor-critic/PPO, and the LLM-alignment methods RLHF, DPO, and GRPO, plus reward hacking and open problems.",
+  "type": "file"
+ },
+ {
+  "id": "file:traininglab.js",
+  "name": "traininglab.js",
+  "filePath": "traininglab.js",
+  "summary": "Interactive module for the Live-Training lesson: a TrainLab namespace that builds a small TF.js ReLU network on an XOR-like dataset, trains it live, and renders the decision-boundary contour, loss history, per-row predictions, weight heatmaps, and a LaTeX forward-pass equation monitor.",
+  "type": "file"
+ },
+ {
+  "id": "file:traininglab.php",
+  "name": "Live Training of a Neural Network",
+  "filePath": "traininglab.php",
+  "summary": "Part 2 lesson combining tensors, activations, and a model into a live training dashboard: a 2-input ReLU network trained on a small XOR-like dataset, with a decision-boundary map, live weights/heatmaps, and a full forward-pass equation monitor.",
+  "type": "file"
+ },
+ {
+  "id": "file:computer_vision.js",
+  "name": "computer_vision.js",
+  "filePath": "computer_vision.js",
+  "summary": "Interactive convolution and feature-map explorer for the 'What Machines See' lesson. Runs TF.js convolutions over a stop-sign image, renders a multi-filter edge-detection grid plus a combined heatmap, and computes per-pixel convolution math on hover.",
+  "type": "file"
+ },
+ {
+  "id": "file:computer_vision.php",
+  "name": "What Machines See",
+  "filePath": "computer_vision.php",
+  "summary": "Lesson covering the whole vision stack: the convolution mechanism, the feature hierarchy, the full CNN pipeline (with PyTorch and TensorFlow reference code), and the task ladder from classification to detection, segmentation (U-Net, Mask R-CNN, SAM), Vision Transformers (ViT/MAE/CLIP), and 3D.",
+  "type": "file"
+ },
+ {
+  "id": "file:deconvolution.php",
+  "name": "Pixels and Checkerboards",
+  "filePath": "deconvolution.php",
+  "summary": "Lesson on transposed convolutions (deconvolution) and the checkerboard upsampling artifact, grounded in Odena et al. 2016, with the two standard fixes: resize-conv and jitter.",
+  "type": "file"
+ },
+ {
+  "id": "file:deeplearninglab.js",
+  "name": "deeplearninglab.js",
+  "filePath": "deeplearninglab.js",
+  "summary": "Deep-learning playground exposing a global DeepLab object: trains TF.js models live for linear regression, AND, and XOR, and renders loss curves, decision-boundary contours, and per-layer weight heatmaps.",
+  "type": "file"
+ },
+ {
+  "id": "file:deeplearninglab.php",
+  "name": "Deep Learning",
+  "filePath": "deeplearninglab.php",
+  "summary": "Lesson from a single neuron to deep networks: layer composition, the Universal Approximation Theorem, why depth beats width (reuse), backpropagation, residual connections, and the optimizer's implicit bias (saddle points, grokking, double descent).",
+  "type": "file"
+ },
+ {
+  "id": "file:inceptionism.php",
+  "name": "Inceptionism: What the Network Sees",
+  "filePath": "inceptionism.php",
+  "summary": "Lesson on Inceptionism/DeepDream: freezing the weights and running gradient ascent on an image to reveal the shapes and objects a network stores (bananas, the weightlifter's dumbbells, dream maps, fractal dreams) as engineered pareidolia.",
+  "type": "file"
+ },
+ {
+  "id": "file:normalizationlab.js",
+  "name": "normalizationlab.js",
+  "filePath": "normalizationlab.js",
+  "summary": "Layer-Normalization and Group-Normalization labs: a global NormLab object that renders the step-by-step mean/variance/standardize/scale-shift math with live gamma/beta controls and bar plots, plus an interactive group-regrouping heatmap.",
+  "type": "file"
+ },
+ {
+  "id": "file:normalizationlab.php",
+  "name": "Understanding Layer Normalization",
+  "filePath": "normalizationlab.php",
+  "summary": "Lesson on Layer Normalization (Ba et al. 2016): the mean/variance/standardize/scale-shift math, its role in GPT pre-norm, RNNs, and ViTs, the geometric 'projection onto a sphere' view, and Group Normalization as the diffusion-model default.",
+  "type": "file"
+ },
+ {
+  "id": "file:origami.js",
+  "name": "origami.js",
+  "filePath": "origami.js",
+  "summary": "Interactive demos for 'Origami in N Dimensions': ReLU networks as paper-folds, including the non-separable egg, the ReLU hyperplane hammer, 1-D/3-D folding, the exponential region cascade, shear/peeling, bimodal tuning, and the poker-hand causal validation.",
+  "type": "file"
+ },
+ {
+  "id": "file:origami.php",
+  "name": "Origami in N Dimensions",
+  "filePath": "origami.php",
+  "summary": "Lesson (Keup & Helias 2022) that a stack of dense ReLU layers manufactures linear separability by progressively folding the data manifold into unoccupied higher dimensions, tying the picture to the fold-and-cut theorem, the inefficient shear alternative, and a poker-hand causal validation.",
+  "type": "file"
+ },
+ {
+  "id": "file:overandunderfittinglab.js",
+  "name": "overandunderfittinglab.js",
+  "filePath": "overandunderfittinglab.js",
+  "summary": "Over/under-fitting lab exposing a global FittingLab object: fits a polynomial-regression model on noisy sin(x) with adjustable degree, noise, and L2, and plots the model against ground truth to expose the bias-variance tradeoff and the extrapolation trap.",
+  "type": "file"
+ },
+ {
+  "id": "file:overandunderfittinglab.php",
+  "name": "Over- and underfitting",
+  "filePath": "overandunderfittinglab.php",
+  "summary": "Lesson on the bias-variance tradeoff using polynomial regression on a sine wave: the MSE loss, gradient descent with Adam, the extrapolation failure (a metaphor for LLM hallucination), L1/L2 regularization, dropout, Runge's phenomenon, and double descent.",
+  "type": "file"
+ },
+ {
+  "id": "file:resnetlab.js",
+  "name": "resnetlab.js",
+  "filePath": "resnetlab.js",
+  "summary": "ResNet lab exposing a global ResNetLab object: plots gradient strength versus depth for a plain (multiplicative, vanishing) network against a residual (additive, preserved) network, and draws an SVG residual-block architecture diagram.",
+  "type": "file"
+ },
+ {
+  "id": "file:resnetlab.php",
+  "name": "Deep Learning Mechanics: ResNets & Vanishing Gradients",
+  "filePath": "resnetlab.php",
+  "summary": "Lesson on the vanishing-gradient problem and the ResNet residual shortcut: the multiplicative chain rule, the identity 'gradient superhighway' (d(F+x)/dx = dF/dx + 1), and 1x1 convolutions for projection shortcuts.",
+  "type": "file"
+ },
+ {
+  "id": "file:topology.js",
+  "name": "topology.js",
+  "filePath": "topology.js",
+  "summary": "Interactive demos for 'Topology and the Geometry of Thought': live TF.js tanh/ReLU networks untangling the 2-D egg, the 1-D egg, and a click-to-build spiral, painting decision grids and live hidden-layer representations.",
+  "type": "file"
+ },
+ {
+  "id": "file:topology.php",
+  "name": "Topology and the Geometry of Thought",
+  "filePath": "topology.php",
+  "summary": "Lesson (Olah 2014) that a smooth (tanh/sigmoid) layer is a homeomorphism - it can stretch and squish but never cut, tear, or fold - and therefore a network's power is bounded by its width, since a surrounded class needs an extra dimension to escape.",
+  "type": "file"
+ },
+ {
+  "id": "file:algorithms.js",
+  "name": "algorithms.js",
+  "filePath": "algorithms.js",
+  "summary": "Interactive visualization module for the 'How Transformers Execute Algorithms' lesson. Renders step-by-step Fourier-based modular addition, in-context algorithm execution (LLM tracing addition/multiplication/GCD), algorithmic prompting (Zhou et al. 2022), and wave interference demos using Plotly and Canvas 2D.",
+  "type": "file"
+ },
+ {
+  "id": "file:algorithms.php",
+  "name": "How Transformers Execute Algorithms",
+  "filePath": "algorithms.php",
+  "summary": "Part 4 lesson on how a one-layer Transformer discovers the Discrete Fourier Transform for modular addition (Nanda et al. 2023 grokking), covering the 5-step algorithm, W_L neuron-logit map, Fourier sparsity of W_E, in-context algorithm execution (Garg 2022, Zhou 2022), digit-wise number representations (Levy & Geva 2024), counting limits (Fu 2024, Conde 2025), and the transformer-as-state-machine view (Hahn 2020). Embeds inline Plotly scripts plus the algorithms.js widgets.",
+  "type": "file"
+ },
+ {
+  "id": "file:alternative_architectures.php",
+  "name": "Beyond Transformers (Mamba, RWKV, RetNet)",
+  "filePath": "alternative_architectures.php",
+  "summary": "Part 4 survey lesson on sub-quadratic Transformer alternatives: state-space models (S4, Mamba, Mamba-2/SSD, Jamba), linear attention (Performer, RetNet), RWKV, Hyena, Mega, Mixture-of-Depths, with compute/memory comparison tables and where Transformers still win. Ships a stub JS module (loadAlternativeArchitecturesModule) that only updates the loading status.",
+  "type": "file"
+ },
+ {
+  "id": "file:attentionlab.php",
+  "name": "The Semantic Tug-of-War: How Transformers 'Think'",
+  "filePath": "attentionlab.php",
+  "summary": "Part 4 lesson (order 6) on self-attention: RNN signal decay vs direct access, geometric intuition for the scaled-dot-product formula, Q/K/V projections, multi-head attention, attention sinks, and the context window. Hosts four interactive widgets (long-distance-dependency canvas, the step-by-step 'anatomy of attention' 2D SVG walkthrough, a Q/K/V subspace projection plot, and a self-attention connectivity web + matrix).",
+  "type": "file"
+ },
+ {
+  "id": "file:attentionlab.js",
+  "name": "attentionlab.js",
+  "filePath": "attentionlab.js",
+  "summary": "Interactive module behind the attentionlab lesson: a long-distance-dependency Transformer-vs-RNN demo, a 'neural universe' 3D embedding plot, a self-attention web/matrix visualizer, an 11-step 'anatomy of attention' SVG walkthrough with editable numbers, and a Q/K/V subspace projection visualization.",
+  "type": "file"
+ },
+ {
+  "id": "file:coherent_difference.php",
+  "name": "Coherent Difference",
+  "filePath": "coherent_difference.php",
+  "summary": "Part 4 prose lesson (order 2) that plants the structural intuition that global meaning emerges from local differences glued together coherently, walking the chain distinction -> relation -> topology -> sheaves -> category theory as conceptual scaffolding for the upcoming Embeddings chapter. Static Markdown with heavy LaTeX and citations; no interactive JS.",
+  "type": "file"
+ },
+ {
+  "id": "file:coherent_world_models.php",
+  "name": "From World to Model: Coherent Representation",
+  "filePath": "coherent_world_models.php",
+  "summary": "Part 4 prose lesson (order 3) that argues descent is a single operation under three names, unifying sheaf/inf-descent, the coherence theory of truth, and post-foundationalist epistemology, bridging perception to model theory and AI world models. Static Markdown with dense math diagrams; no interactive JS.",
+  "type": "file"
+ },
+ {
+  "id": "file:diffusion.php",
+  "name": "Diffusion Models",
+  "filePath": "diffusion.php",
+  "summary": "Part 4 lesson (order 14) on denoising diffusion (DDPM, Latent/Stable Diffusion) covering the forward noising/reverse denoising process, classifier-free guidance, the text-to-image pipeline, and DiT/flow-matching, with inline JS interactive widgets for noise sliders, tokenizer/embedding, and cross-attention.",
+  "type": "file"
+ },
+ {
+  "id": "file:embeddinglab.js",
+  "name": "embeddinglab.js",
+  "filePath": "embeddinglab.js",
+  "summary": "Interactive module for the 'Embeddings: The Geometry of Meaning' lesson (Part 4, order 4). ~8650 lines of vanilla JS that renders ~25 distinct visualizations of embedding-space geometry: 1D/2D/3D word spaces, vector arithmetic, dot-product/cosine similarity, rotational and scale invariance, parallelogram law, Riemannian manifolds, cross-lingual alignment, metric tensors, anisotropy, superposition, negation, in-context learning, hyperbolic (Poincare) embeddings, and canvas-based topology (Voronoi, persistent homology, polytopes, grammar-as-rotation).",
+  "type": "file"
+ },
+ {
+  "id": "file:embeddinglab.php",
+  "name": "Embeddings: The Geometry of Meaning",
+  "filePath": "embeddinglab.php",
+  "summary": "Lesson on word embeddings as geometry: embedding-space lookup from token IDs, vector arithmetic, Euclidean vs cosine similarity, cross-lingual and platonic alignment, anisotropy, superposition, hyperbolic/Poincare embeddings, topology, Voronoi cells, persistent homology, and grammar-as-rotation, each with an interactive canvas/plotly visualization.",
+  "type": "file"
+ },
+ {
+  "id": "file:fact_lookup.php",
+  "name": "Where 'Paris' Lives — How an LLM Retrieves a Fact",
+  "filePath": "fact_lookup.php",
+  "summary": "Long interpretability lesson walking through the forward pass that retrieves a fact: residual stream as scratchpad, attention as routing, MLPs as soft key-value memory, ROME/MEMIT, the linear representation hypothesis, the logit lens, Hopfield/attractor analogies, superposition and SAEs, and honest limits.",
+  "type": "file"
+ },
+ {
+  "id": "file:mechanistic_interpretability.js",
+  "name": "mechanistic_interpretability.js",
+  "filePath": "mechanistic_interpretability.js",
+  "summary": "Canvas-based interactive module for the Mechanistic Interpretability lesson, bundling five demos: induction heads, grokking, the Othello-GPT world model, linear representations/ causal inner product, and a looped-transformer computer, plus low-level drawing and linear-algebra utilities.",
+  "type": "file"
+ },
+ {
+  "id": "file:mechanistic_interpretability.php",
+  "name": "Mechanistic Interpretability",
+  "filePath": "mechanistic_interpretability.php",
+  "summary": "Lesson on reverse-engineering transformers: circuits, the residual-stream communication bus, QK/OV and Q/K/V composition, communication channels, superposition, sparse autoencoders, activation patching, the logit lens, grokking, Othello-GPT, the linear representation hypothesis, looped transformers, circuit tracing, and interpretability-driven safety.",
+  "type": "file"
+ },
+ {
+  "id": "file:multimodal.php",
+  "name": "Multimodal & Vision-Language Models",
+  "filePath": "multimodal.php",
+  "summary": "Lesson tracing how pixels become tokens: contrastive CLIP alignment, Vision Transformer patchification, and the three ways to plug vision into an LLM (projection, cross-attention, native), plus VQA benchmarks and limits; ships an inline ViT patchification Plotly plot.",
+  "type": "file"
+ },
+ {
+  "id": "file:positionalembeddingslab.js",
+  "name": "positionalembeddingslab.js",
+  "filePath": "positionalembeddingslab.js",
+  "summary": "Interactive module for positional embeddings: unit-circle and sine/cosine wave explorers, the sinusoidal positional-encoding lab (adding a PE vector to 'king'), a repetition starburst, and a 3D PE helix manifold, all lazy-initialized via IntersectionObserver.",
+  "type": "file"
+ },
+ {
+  "id": "file:positionalembeddingslab.php",
+  "name": "Positional Embeddings",
+  "filePath": "positionalembeddingslab.php",
+  "summary": "Lesson explaining why order matters and the sinusoidal positional-encoding formula: sine/cosine fundamentals, the PE formula and frequency scaling, the PE-as-helix-manifold intuition, the repetition starburst, and the history of positional strategies (learned, relative, RoPE, ALiBi).",
+  "type": "file"
+ },
+ {
+  "id": "file:recurrent_networks.php",
+  "name": "Networks with Memory",
+  "filePath": "recurrent_networks.php",
+  "summary": "Lesson on recurrent networks and LSTMs: the recurrent loop and unrolling, the long-distance/vanishing-gradient problem, the LSTM cell state as a conveyor belt with forget/input/output gates, the GRU, and why attention next removes the chain.",
+  "type": "file"
+ },
+ {
+  "id": "file:samplinglab.js",
+  "name": "samplinglab.js",
+  "filePath": "samplinglab.js",
+  "summary": "Interactive module exposing a Sampler object that applies temperature and top-k truncation to simulated logits, renders a Plotly bar chart plus a results table, and supports weighted 'roll the dice' sampling.",
+  "type": "file"
+ },
+ {
+  "id": "file:samplinglab.php",
+  "name": "Temperature & Sampling",
+  "filePath": "samplinglab.php",
+  "summary": "Lesson on decoding strategies with formulas and recommended settings: temperature/softmax, greedy, top-k, top-p (nucleus), min-p, top-n, TFS, eta, repetition/frequency/presence penalties, DRY, XTC, contrastive search, beam search, mirostat, and speculative sampling; ships an inline top-k/top-p/min-p Plotly viz.",
+  "type": "file"
+ },
+ {
+  "id": "file:speech_audio.php",
+  "name": "Speech & Audio Models",
+  "filePath": "speech_audio.php",
+  "summary": "Lesson on audio as tokens: spectrograms/mel-spectrograms, neural audio codecs (SoundStream/EnCodec/DAC), self-supervised representations (wav2vec 2.0/HuBERT), Whisper/Conformer ASR, TTS generations, music generation, and unified speech-text models; ships inline mel-spectrogram and codec Plotly plots.",
+  "type": "file"
+ },
+ {
+  "id": "file:tokenizerlab.js",
+  "name": "tokenizerlab.js",
+  "filePath": "tokenizerlab.js",
+  "summary": "Interactive module for the Tokenization lesson: a live master input feeds side-by-side visualizations of word-level, n-gram, character, WordPiece, and BPE tokenization, plus a 'why LLMs can't count letters' BPE demo.",
+  "type": "file"
+ },
+ {
+  "id": "file:tokenizerlab.php",
+  "name": "Tokenization: How Words become Numbers",
+  "filePath": "tokenizerlab.php",
+  "summary": "Lesson on tokenization: a sticky input drives five methods (word-level, n-gram, character, WordPiece, BPE) with history of each, the BPE-as-compression/Zipf's-law rationale, and a demo of why models can't count letters.",
+  "type": "file"
+ },
+ {
+  "id": "file:transformer.js",
+  "name": "transformer.js",
+  "filePath": "transformer.js",
+  "summary": "Core interactive module for the 'Architecture of Meaning' lesson: implements a decoder-only transformer from scratch in the browser (causal multi-head attention, pre-LN, FFN/GELU, sinusoidal positional encoding, unembedding/softmax), trains it on a user-typed corpus via TensorFlow.js, and renders a large suite of visualizations (embedding space, migration/trajectory plots, attention web, parameter sunburst, vector math).",
+  "type": "file"
+ },
+ {
+  "id": "file:transformer.php",
+  "name": "The Architecture of Meaning: A Deep Dive into Transformers",
+  "filePath": "transformer.php",
+  "summary": "Part 4 flagship lesson that assembles tokenization, embedding, positional encoding, attention, FFN, unembedding, loss and optimizer into one trainable machine. Prose derives each equation (causal mask, multi-head attention, residual recurrence, temperature/softmax, KV-cache, MoE, induction/syntax heads) and interleaves the live transformers demo, a topological-data-analysis (TDA) attractor/repeller panel, and hyperparameter sliders.",
+  "type": "file"
+ },
+ {
+  "id": "file:agents.php",
+  "name": "AI Agents: Autonomous Reasoning and Tool Use",
+  "filePath": "agents.php",
+  "summary": "Lesson on LLM-based agents: the observe-reason-act control loop, tool use, and the lineage from symbolic GOFAI systems (GPS, STRIPS, SHRDLU, Soar, BDI) to ReAct.",
+  "type": "file"
+ },
+ {
+  "id": "file:contextwindows.php",
+  "name": "Context Windows & Memory: What LLMs Can Hold in Mind",
+  "filePath": "contextwindows.php",
+  "summary": "Lesson on context windows: the fixed-size token buffer, size growth from 1K to 1M+ tokens, token/word conversion, the self-attention O(n^2) bottleneck, and the 'lost in the middle' attention effect.",
+  "type": "file"
+ },
+ {
+  "id": "file:contextwindows.js",
+  "name": "contextwindows.js",
+  "filePath": "contextwindows.js",
+  "summary": "Auto-injects scoped CSS and renders the context-window segment bar diagram and the U-shaped 'lost in the middle' attention bar chart; exposes window.loadContextwindowsModule.",
+  "type": "file"
+ },
+ {
+  "id": "file:evaluation.php",
+  "name": "Evaluation & Benchmarks",
+  "filePath": "evaluation.php",
+  "summary": "Lesson on LLM evaluation: the four benchmark families (multiple-choice, exact-match, LLM-judge, human preference), the math of MMLU/HellaSwag/ARC/GSM8K/HumanEval, and benchmark contamination and Goodhart's law.",
+  "type": "file"
+ },
+ {
+  "id": "file:finetuninglab.php",
+  "name": "Fine-Tuning & Post-Training",
+  "filePath": "finetuninglab.php",
+  "summary": "Lesson on the post-training pipeline SFT -> DPO/KTO/GRPO -> RLHF (PPO) -> reasoning RL, with the cross-entropy SFT loss, reward modeling, and preference-optimization objectives.",
+  "type": "file"
+ },
+ {
+  "id": "file:finetuninglab.js",
+  "name": "finetuninglab.js",
+  "filePath": "finetuninglab.js",
+  "summary": "Post-training demo: a scenario picker rendering raw 'base' data vs 'fine-tuned assistant output' (Wikipedia HTML, C++ sort, 0.999=1 forum) with Prism/Mermaid/Markdown re-rendering and IntersectionObserver-based lazy init.",
+  "type": "file"
+ },
+ {
+  "id": "file:hallucinations.php",
+  "name": "Hallucinations and Dangers of AI and How to use AI Safely",
+  "filePath": "hallucinations.php",
+  "summary": "Lesson on hallucinations: LLMs as pattern-completion engines, next-token probability, the role of temperature/softmax, the dangers of blind trust, and safe-use guidance.",
+  "type": "file"
+ },
+ {
+  "id": "file:hallucinations.js",
+  "name": "hallucinations.js",
+  "filePath": "hallucinations.js",
+  "summary": "Interactive hallucination visualizations: a next-token probability bar chart, a temperature/softmax slider demo, and a covariate-shift Plotly plot tying distribution drift to hallucination risk.",
+  "type": "file"
+ },
+ {
+  "id": "file:inference_optimization.php",
+  "name": "Inference Optimization",
+  "filePath": "inference_optimization.php",
+  "summary": "Lesson on inference optimization: the memory-bandwidth-bound math, quantization (GPTQ/AWQ/SmoothQuant/BitNet/QuIP#), KV-cache management, paged attention, FlashAttention, and speculative decoding.",
+  "type": "file"
+ },
+ {
+  "id": "file:production_serving.php",
+  "name": "Production Serving & Inference",
+  "filePath": "production_serving.php",
+  "summary": "Lesson on production serving: TTFT/TPOT latency targets, the KV-cache memory tax, MQA/GQA, paged attention (vLLM), continuous batching, and the serving stack.",
+  "type": "file"
+ },
+ {
+  "id": "file:promptengineering.php",
+  "name": "Prompt Engineering: How to talk to LLMs",
+  "filePath": "promptengineering.php",
+  "summary": "Lesson on prompt engineering: defining roles, specificity/entropy, avoiding negations, delimiters, input canonicalization, plus chain-of-thought, few-shot, and latent-space steering.",
+  "type": "file"
+ },
+ {
+  "id": "file:promptengineering.js",
+  "name": "promptengineering.js",
+  "filePath": "promptengineering.js",
+  "summary": "Seven Plotly visualizations for prompt engineering: specificity-vs-entropy cone, negation space, technique radar, CoT accuracy curve, prompt-injection heatmap, a 3D familiar/interesting/minimal semantic cloud, and an interactive prompt lab.",
+  "type": "file"
+ },
+ {
+  "id": "file:rag.php",
+  "name": "Retrieval-Augmented Generation: Giving LLMs a Search Engine",
+  "filePath": "rag.php",
+  "summary": "Lesson on Retrieval-Augmented Generation: the retrieve-then-generate pipeline, chunking, embedding, vector databases, and top-k retrieval to ground answers.",
+  "type": "file"
+ },
+ {
+  "id": "file:rag.js",
+  "name": "rag.js",
+  "filePath": "rag.js",
+  "summary": "RAG demo: a pipeline diagram, a context-cost comparison table, and an interactive similarity search that embeds a query and documents as bag-of-tag vectors and ranks them by cosine similarity.",
+  "type": "file"
+ },
+ {
+  "id": "file:reasoning.php",
+  "name": "Reasoning & Test-Time Compute",
+  "filePath": "reasoning.php",
+  "summary": "Lesson on reasoning and test-time compute: chain-of-thought (zero/few-shot), self-consistency, Tree/Graph of Thoughts, and the o1/R1 paradigm of scaling compute at inference time.",
+  "type": "file"
+ },
+ {
+  "id": "file:reliability.php",
+  "name": "Reliability — Calibration & Knowing When to Stop",
+  "filePath": "reliability.php",
+  "summary": "Short lesson on reliability: calibration via temperature scaling, aleatoric vs epistemic uncertainty, abstention/OOD detection, and conformal prediction for finite-sample guarantees.",
+  "type": "file"
+ },
+ {
+  "id": "file:running_locally.php",
+  "name": "Running Models Locally",
+  "filePath": "running_locally.php",
+  "summary": "Lesson on running LLMs locally: consumer/Apple-hardware VRAM table, the GGUF format and llama.cpp quantization schemes, and Ollama/LM Studio setup.",
+  "type": "file"
+ },
+ {
+  "id": "file:security_inference.php",
+  "name": "Security & Adversarial Attacks",
+  "filePath": "security_inference.php",
+  "summary": "Lesson on security and adversarial attacks: direct/indirect prompt injection, jailbreaking, data poisoning and backdoors, plus the corresponding defenses.",
+  "type": "file"
+ },
+ {
+  "id": "file:symbolic_ai.php",
+  "name": "Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI",
+  "filePath": "symbolic_ai.php",
+  "summary": "Lesson on symbolic AI and the neuro-symbolic synthesis: propositional/first-order logic, knowledge representation (RDF/ontologies), and how symbolic methods complement neural nets.",
+  "type": "file"
+ },
+ {
+  "id": "file:training_data.php",
+  "name": "Training Data Curation",
+  "filePath": "training_data.php",
+  "summary": "Lesson on training-data curation: the scale and composition of frontier corpora, Common Crawl, quality filtering, deduplication, and decontamination.",
+  "type": "file"
+ },
+ {
+  "id": "file:training_infrastructure.php",
+  "name": "Training Infrastructure",
+  "filePath": "training_infrastructure.php",
+  "summary": "Lesson on distributed training infrastructure: the per-step memory budget, data/tensor/pipeline/sequence parallelism, and the ZeRO/FSDP families.",
+  "type": "file"
+ },
+ {
+  "id": "file:vectorsearch.php",
+  "name": "Semantic Search & Vector Databases: Finding Needles in Haystacks",
+  "filePath": "vectorsearch.php",
+  "summary": "Lesson on semantic search and vector databases: BM25, dense-vector cosine similarity, hybrid search, and ANN (HNSW/IVF) for sub-50ms top-k retrieval.",
+  "type": "file"
+ },
+ {
+  "id": "file:vectorsearch.js",
+  "name": "vectorsearch.js",
+  "filePath": "vectorsearch.js",
+  "summary": "Semantic-search demo: a pipeline diagram, keyword/semantic/hybrid comparison cards, and an interactive dual search scoring documents with a BM25-like keyword score and tag-based cosine semantic score.",
+  "type": "file"
+ },
+ {
+  "id": "file:websearch.php",
+  "name": "How LLMs Search the Web",
+  "filePath": "websearch.php",
+  "summary": "Lesson on how LLMs search the web: the tool-use pipeline (intent detection, search API, fetch, extract, chunk/rank, generation) and when a query actually requires a search.",
+  "type": "file"
+ },
+ {
+  "id": "file:websearch.js",
+  "name": "websearch.js",
+  "filePath": "websearch.js",
+  "summary": "Web-search demo: pipeline and fetch diagrams plus an animated step-by-step simulation of intent-detect -> search -> fetch -> extract -> rank -> answer over a mock topic database.",
+  "type": "file"
+ },
+ {
+  "id": "file:ai_existential_risk.php",
+  "name": "AI Existential Risk — What Is Real and What Is Speculative",
+  "filePath": "ai_existential_risk.php",
+  "summary": "Part 6 lesson (order 12) surveying the AI existential-risk hypothesis: literary origins (Shelley, Butler, Asimov's Three Laws), I.J. Good's intelligence explosion, Bostrom's control/alignment and orthogonality theses, the three risk mechanisms, empirical signals (sleeper agents, alignment faking, reward tampering, the treacherous turn), and a considered split of what is realistic vs. speculative.",
+  "type": "file"
+ },
+ {
+  "id": "file:ai_for_science.php",
+  "name": "Closing the Loop — AI for Science",
+  "filePath": "ai_for_science.php",
+  "summary": "Part 6 lesson (order 11) on AI as a discovery engine: AlphaFold/AlphaFold 3/AlphaMissense, the 2026 OpenAI Navier–Stokes singularity proof with Lean 4 formalization, AlphaTensor/FunSearch/AlphaEvolve, GNoME, weather models, and the framing that prediction and discovery become one act.",
+  "type": "file"
+ },
+ {
+  "id": "file:alignment.php",
+  "name": "Alignment — Making Objectives Match Intent",
+  "filePath": "alignment.php",
+  "summary": "Part 6 lesson (order 7) on the alignment program: the specification problem, the RLHF/RLAIF/Constitutional AI/DPO toolkit, failure modes (mesa-optimization, deceptive alignment, reward tampering), the two research programs of scalable oversight and the control problem, and interpretability as a safety instrument.",
+  "type": "file"
+ },
+ {
+  "id": "file:appendix.js",
+  "name": "appendix.js",
+  "filePath": "appendix.js",
+  "summary": "Interactive module for the Appendix lesson with four canvas/plot visualizations: Taylor-series sine approximation, the group structure of positional embeddings (clock + Cayley table), the layer-interference 'wave geometry', and probability isosurfaces ('truth tunnels'). Uses a lazy IntersectionObserver registry and re-renders on theme toggle.",
+  "type": "file"
+ },
+ {
+  "id": "file:appendix.php",
+  "name": "Appendix",
+  "filePath": "appendix.php",
+  "summary": "Part 6 lesson (order 13) serving as the book's reference appendix: grokking, symbol-convention disambiguation, sine/cosine via Taylor series, the group structure of positional embeddings, layer-interference wave geometry, and probability isosurfaces, each paired with an interactive widget.",
+  "type": "file"
+ },
+ {
+  "id": "file:beyond_llms.js",
+  "name": "beyond_llms.js",
+  "filePath": "beyond_llms.js",
+  "summary": "Placeholder module for the 'Beyond LLMs' lesson; loadBeyondLlmsModule() only updates the loading status and resolves immediately with no interactive content.",
+  "type": "file"
+ },
+ {
+  "id": "file:beyond_llms.php",
+  "name": "Beyond LLMs — The Wider World of Algorithms & Models",
+  "filePath": "beyond_llms.php",
+  "summary": "Part 6 lesson (order 4), a wide tour of non-LLM machine learning: the Wake-Sleep/Helmholtz algorithm, clustering (k-means, hierarchical, DBSCAN, EM/GMM), classical supervised methods (trees, forests, gradient boosting, SVMs), Bayesian inference (MCMC, VI, GPs), evolutionary and RL methods, symbolic AI, recommender systems, time series, graphs, dimensionality reduction, and more, capped by an 80+ algorithm model-zoo table.",
+  "type": "file"
+ },
+ {
+  "id": "file:deep_theory.php",
+  "name": "Why Do Networks Generalize?",
+  "filePath": "deep_theory.php",
+  "summary": "Part 6 lesson (order 5) on the open theory of deep learning: why over-parameterized nets that memorize still generalize, covering double descent and benign overfitting, the loss landscape and edge of stability, NTK/NNGP lazy limits, implicit bias and neural collapse, and three partial explanatory lenses (kernel, sparsity/lottery ticket, grokking).",
+  "type": "file"
+ },
+ {
+  "id": "file:frontier.php",
+  "name": "Frontier Topics",
+  "filePath": "frontier.php",
+  "summary": "Part 6 lesson (order 6) surveying the 2025 research frontier: Constitutional AI, sparse autoencoders, long-context techniques, process reward models, Mixture-of-Depths, test-time training, agentic architectures, world models, multilingual/low-resource AI, memory and continual learning, and the mechanistic-interpretability frontier.",
+  "type": "file"
+ },
+ {
+  "id": "file:global_ai_ecosystem.php",
+  "name": "The Global AI Ecosystem",
+  "filePath": "global_ai_ecosystem.php",
+  "summary": "Part 6 lesson (order 1) correcting the Silicon-Valley-centric narrative: a geography of AI across China, India, Africa, the UAE, France, Korea, Japan, Singapore, Israel, Russia, Canada, and the EU, plus open-source as a global equalizer and the geopolitics of a multipolar future.",
+  "type": "file"
+ },
+ {
+  "id": "file:human_mind.php",
+  "name": "The Mind That Built Machines",
+  "filePath": "human_mind.php",
+  "summary": "Part 6 lesson (order 3) on the cognitive, psychological, and evolutionary prerequisites of AI: the expensive-tissue hypothesis, the social and predictive brain, reward as RL, chunking and the working-memory bottleneck, abstraction and analogy, the psychology of the scientific mind, and the social ratchet of cumulative culture.",
+  "type": "file"
+ },
+ {
+  "id": "file:law_regulation.php",
+  "name": "AI Law & Regulation",
+  "filePath": "law_regulation.php",
+  "summary": "Part 6 lesson (order 8) on the legal landscape around AI: the EU AI Act risk pyramid, GDPR and data-protection cases, copyright over training data (US and EU), the US patchwork of executive orders and state laws, Chinese regulation, AI liability, sectoral rules, and international coordination.",
+  "type": "file"
+ },
+ {
+  "id": "file:myths.php",
+  "name": "Common Myths and Misconceptions About AI",
+  "filePath": "myths.php",
+  "summary": "Part 6 lesson (order 12) reading popular AI beliefs through the folklorist Brednich's method for urban legends: is it a mind (aliveness, the Turing Test, computational theory of mind), a danger (singularity, job loss), trustworthy or unprecedented, plus the legends that turned out to be true (deepfakes, invented cases, the winning painting).",
+  "type": "file"
+ },
+ {
+  "id": "file:philosophy.js",
+  "name": "philosophy.js",
+  "filePath": "philosophy.js",
+  "summary": "Interactive module for the Philosophy lesson implementing three visualizations as self-contained IIFEs: an Inuktitut Chinese-Room conversation simulator (CRSim), a presheaf/sheaf 'glue' visualization (SheafViz), and a concept-direction / linear-representation steering demo (PhiloLinearRep).",
+  "type": "file"
+ },
+ {
+  "id": "file:philosophy.php",
+  "name": "Philosophical and societal implications, ethical usage of AI",
+  "filePath": "philosophy.php",
+  "summary": "Part 6 lesson (order 9) on reason and intelligence: forms of logical reasoning, the Turing Test, Moravec's paradox, the Winograd schema, the Chinese Room argument, the vector grounding problem, Mary's Room, sentience, and the ethics of AI usage, with an interactive Chinese-Room simulator and a sheaf-theory visualization.",
+  "type": "file"
+ },
+ {
+  "id": "file:software.js",
+  "name": "software.js",
+  "filePath": "software.js",
+  "summary": "Placeholder module for the 'Software' lesson; loadSoftwareModule() only updates the loading status and resolves immediately with no interactive content.",
+  "type": "file"
+ },
+ {
+  "id": "file:software.php",
+  "name": "Software: Operating Systems, Programming Languages & the Abstraction Stack",
+  "filePath": "software.php",
+  "summary": "Part 6 lesson (order 12) tracing the ladder of abstractions that makes AI possible: operating systems (Multics/Unix, the Altair and MS-DOS race), programming languages and compilers, libraries and frameworks, and the competing labs (Bell Labs vs MIT, Xerox PARC, the browser wars) that built the stack.",
+  "type": "file"
+ },
+ {
+  "id": "file:unexpected_capabilities.php",
+  "name": "Unexpected Capabilities of LLMs",
+  "filePath": "unexpected_capabilities.php",
+  "summary": "Part 6 lesson (order 10) cataloguing LLM capabilities that surprised researchers and were not in the training objective: in-context learning and induction heads, chain-of-thought, Othello-GPT world models, theory of mind, Toolformer, emergent translation, superposition, the Platonic Representation Hypothesis, self-improvement, verbatim memorization, and more, ending with the phase-transition pattern.",
+  "type": "file"
+ },
+ {
+  "id": "file:untold_history.js",
+  "name": "untold_history.js",
+  "filePath": "untold_history.js",
+  "summary": "Placeholder module for the 'Untold History' lesson; loadUntoldHistoryModule() only updates the loading status and resolves immediately with no interactive content.",
+  "type": "file"
+ },
+ {
+  "id": "file:untold_history.php",
+  "name": "The Untold History of AI",
+  "filePath": "untold_history.php",
+  "summary": "Part 6 lesson (order 2) tracing the 'displaced prerequisites' that made AI physically and intellectually possible: the cosmological and evolutionary chain from the Big Bang to life, the mythos-to-logos intellectual revolutions (probability, Boolean logic, information theory), the material foundations (metallurgy, electricity, optics, insulation), hardware, war/space research, and data-abstraction and web history, all framed as contributions that vanish into the background beneath modern LLMs.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/attention_scripts/outputs/gpt2_attention.json",
+  "name": "gpt2_attention.json",
+  "filePath": "lndw/attention_scripts/outputs/gpt2_attention.json",
+  "summary": "Precomputed GPT-2 attention data for the sentence 'the cat sat on the mat': per token list, and per attention head the layer/head index, a German note, argmax token per position, and the full 6x6 attention matrix. Generated offline by attention_scripts/gpt2_attention.py for the blog's attention-head visualizer.",
+  "type": "config"
+ },
+ {
+  "id": "file:lndw/attention_scripts/outputs/mini_h1.json",
+  "name": "mini_h1.json",
+  "filePath": "lndw/attention_scripts/outputs/mini_h1.json",
+  "summary": "Handcrafted miniature attention head ('H1 Artikel<->Nomen') on 'the cat sat on the mat': 4-D token embeddings, scalar q/k values, raw QK scores, and the resulting softmax attention matrix showing the article attending to its noun. Output of attention_scripts/mini_attention.py used to teach scaled dot-product attention step by step.",
+  "type": "config"
+ },
+ {
+  "id": "file:lndw/attention_scripts/outputs/mini_h2.json",
+  "name": "mini_h2.json",
+  "filePath": "lndw/attention_scripts/outputs/mini_h2.json",
+  "summary": "Second handcrafted miniature attention head ('H2 Subjekt<->Verb') on the same 6-token sentence: embeddings, q/k vectors, raw scores, and the attention matrix illustrating a subject-verb syntactic head. Companion to mini_h1.json from attention_scripts/mini_attention.py.",
+  "type": "config"
+ },
+ {
+  "id": "file:lndw/attention_slides.js",
+  "name": "attention_slides.js",
+  "filePath": "lndw/attention_slides.js",
+  "summary": "Plotly-based 'attention router' visualization for the presentation slides: draws inputs -> values -> outputs columns and shows how different attention-weight mixtures route the same input tokens to different outputs, with an animation that cycles through each output and a German explainer text.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/attn_demo.js",
+  "name": "attn_demo.js",
+  "filePath": "lndw/attn_demo.js",
+  "summary": "Interactive demo of contextualized word embeddings: walks through four German sentences where 'Bank' (bank/bench) is pulled toward 'Geld' or 'Park' in a 2-D semantic Plotly scatter, illustrating how attention shifts a word's meaning with context.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/attractors.js",
+  "name": "attractors.js",
+  "filePath": "lndw/attractors.js",
+  "summary": "Large canvas-based, 7-step attractor-basin visualization for the presentation: point attractor, repellent, torus (sun/earth/moon with wireframe occlusion), Lorenz chaos, complex basins with attractors and repellents, an interactive 3-D potential-landscape with rolling balls and orbit/zoom/pan camera, and a 'seahorse emoji' scene where an LLM particle orbits semantic clusters forever inside a larger 'Emoji' basin.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/chinese_room.js",
+  "name": "chinese_room.js",
+  "filePath": "lndw/chinese_room.js",
+  "summary": "Searle's Chinese Room simulation for the presentation: three rounds of Inuktitut messages where a rulebook (if-then table) produces the correct output without understanding, then a reveal showing 100% accuracy vs 0% understanding in a bar chart and the hidden German translations.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/embeddinglab.js",
+  "name": "embeddinglab.js",
+  "filePath": "lndw/embeddinglab.js",
+  "summary": "Embedding-space teaching suite: editable token tables for 2-D/3-D concept spaces, a mini expression calculator ('König - Mann + Frau') that moves points in the space, Plotly/ECharts-GL manifold and dual-manifold (English/Japanese translation as surface alignment) visualizations, and a direction-demo of gender/power axes with auto-advance demo examples.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/fcnn.js",
+  "name": "fcnn.js",
+  "filePath": "lndw/fcnn.js",
+  "summary": "Canvas renderer that draws the full architecture of the running model: input images, conv2d kernel grids, neuron layers (Dense/Conv/Flatten/LayerNorm), weighted color-coded connections, weight-distribution histogram tooltips, skip-connection strengths, and hover/click tooltip hit-testing over the whole diagram.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/garben.html",
+  "name": "garben.html",
+  "filePath": "lndw/garben.html",
+  "summary": "22-slide standalone presentation on sheaves, cohomology, fiber bundles, gauge theory, Topoi and HoTT, framing a consistent worldview as a global section and LLM hallucination as a cohomological obstruction.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/heads_web.js",
+  "name": "heads_web.js",
+  "filePath": "lndw/heads_web.js",
+  "summary": "Self-contained IIFE for the 'Viele Koepfe' slide: a per-head attention table (chip rows) plus a canvas attention-web of bezier arcs over the sentence \"the cat sat on the mat\", with hover-to-inspect and a prev/next head stepper.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/hott.html",
+  "name": "hott.html",
+  "filePath": "lndw/hott.html",
+  "summary": "12-slide standalone presentation introducing Homotopy Type Theory: types as spaces, paths as equality, type formers, univalence, HITs (the circle), equivalences, the n-type hierarchy, propositions-as-types vs truncated logic, inductive types and the real numbers.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/index.html",
+  "name": "index.html",
+  "filePath": "lndw/index.html",
+  "summary": "Main lndw presentation deck \"Wie funktionieren Large Language Modelle (LLM)?\": ~45 slides from reality/patterns and classic-vs-AI coding through neurons, tokenization, embeddings, positional encoding, residual streams, attention, FFN, the probability tunnel, prediction (top-k/temperature), training, Chinese Room, hallucination and limits, with a sparkle canvas overlay.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/index.js",
+  "name": "index.js",
+  "filePath": "lndw/index.js",
+  "summary": "Largest lndw module: the intuition-step visualizations (TokenizerViz, PositionalEncodingViz, ResidualStreamViz, PredictionViz, NNApproxViz) plus steppable slide demos (NNStepDemo, TypewriterViz, NeuronIntroViz) and the loadIntuitionModule / loadIntuitionVizModule entry points and lazy IntersectionObserver registration.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/old/index.html",
+  "name": "old/index.html",
+  "filePath": "lndw/old/index.html",
+  "summary": "Legacy standalone LLM-intuition presentation (\"How LLMs Really Work - A Geometric Intuition\"): a dark-themed slide deck with Three.js orbit views and inline demos, kept as an archived version of the current index.html deck.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/interpolation_viz.js",
+  "name": "interpolation_viz.js",
+  "filePath": "lndw/interpolation_viz.js",
+  "summary": "Plotly chart distinguishing interpolation from extrapolation: known training points, a dotted true-function curve, and shaded green/red regions marking the (safer) inside range versus the (risky) outside range.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/intuition.js",
+  "name": "intuition.js",
+  "filePath": "lndw/intuition.js",
+  "summary": "3D Plotly visualizations for the forward pass: ForwardPassViz (tokens moving through embedding/layers/unembedding), Embedding3DViz (word clusters, semantic directions and king-man+woman arithmetic), Attention3DViz (per-layer attention lines and token displacement) and FFN3DViz (rare vs common facts as neuron activation and vector shift).",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/isosurfaces.js",
+  "name": "isosurfaces.js",
+  "filePath": "lndw/isosurfaces.js",
+  "summary": "Canvas demo of probability iso-surfaces (\"Truth Tunnel\"): as a story is generated token by token it draws an entropy-scaled envelope around the chosen path, small alternative branches at every token, large diverging story branches, near-impossible far words, plus a temperature/entropy HUD and step-by-step info panel.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/jquery.min.js",
+  "name": "jquery.min.js",
+  "filePath": "lndw/jquery.min.js",
+  "summary": "Bundled/minified jQuery v3.7.1 (MIT) providing the global $ / jQuery DOM-manipulation helpers used by some lndw demos (e.g. reset_nn_num_neurons).",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/jspace_viz.js",
+  "name": "jspace_viz.js",
+  "filePath": "lndw/jspace_viz.js",
+  "summary": "Step-driven (6-step) canvas visualization of J-Space: specialized brain modules, Global Workspace Theory, the hidden-intermediate-thoughts riddle, the J-Lens (Jacobian Lens) decoding internal activations, the Jacobian as a word-direction decoder, and silent/deceptive thinking. Exposes a JSpaceViz API (init/next/prev/reset) driven by the presentation engine.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/knowledge.js",
+  "name": "knowledge.js",
+  "filePath": "lndw/knowledge.js",
+  "summary": "Four-step canvas visualization of how factual knowledge (\"Paris is the capital of France\") is stored in a language model: the \"capital-of\" embedding direction, attention gathering context, FFN detector-neuron activation, and the combined picture, shown for the sentence \"Die Hauptstadt von Frankreich ist ___\".",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/kurz.html",
+  "name": "kurz.html",
+  "filePath": "lndw/kurz.html",
+  "summary": "12-line meta-refresh redirector that loads index.html in the short presentation mode (?fast=1&short=1) restricted to a curated 15-slide subset of the lndw deck.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/neue_intro.html",
+  "name": "neue_intro.html",
+  "filePath": "lndw/neue_intro.html",
+  "summary": "Self-contained animated intro page (\"Was passiert da eigentlich? — Von der Sprache ins Modell\"): a CSS smartphone types/speaks \"warum ist der himmel blau\", zooms into the screen, tokenizes the sentence, places tokens in a 2D embedding space (with a king-queen-man-woman analogy), and hands off to the Transformer. Driven by an inline beats array and keyboard/touch/click navigation.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/pe_orbit_viz.js",
+  "name": "pe_orbit_viz.js",
+  "filePath": "lndw/pe_orbit_viz.js",
+  "summary": "Plotly-based step visualization of positional encodings: shows the base embedding of \"Katze\" and how adding a positional-encoding vector at each of 12 positions traces an orbit around it, ending with a summary connecting all position points.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/philosophy.js",
+  "name": "philosophy.js",
+  "filePath": "lndw/philosophy.js",
+  "summary": "Plotly visualizations for the philosophy/language slides: a SunrisePlot that fits a cosine/sinus model (-A*cos + mean + d) to the sun's elevation over 24 hours via sliders (amplitude, phase, period, vertical shift), and a lazy CooccurrencePlot horizontal bar chart of city-word co-occurrence counts.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/plotly.min.js",
+  "name": "plotly.min.js",
+  "filePath": "lndw/plotly.min.js",
+  "summary": "Bundled/minified Plotly.js v2.35.0 (MIT) providing the global Plotly plotting library (newPlot/react/relayout) used by the lndw demo visualizations.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/presentation.js",
+  "name": "presentation.js",
+  "filePath": "lndw/presentation.js",
+  "summary": "The lndw slide-deck engine: a DemoRegistry that declaratively wires per-slide interactive demos (next/prev/guards/lifecycle), a FragmentActions map, a typewriter code-reveal effect, the core Presentation controller (slides, fragments, ?slides=/?fast=/?short=/#N URL selection, overview + search, fullscreen), a per-slide Selection panel with a 3x-Esc URL builder, an InputHandler (keyboard/touch/wheel), a LoadingStatus/LoadingTasks boot pipeline, and a runBootSequence that renders TeX math slide-by-slide via temml and drains heavy plot/demo tasks.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/residual_stream_notebook.js",
+  "name": "residual_stream_notebook.js",
+  "filePath": "lndw/residual_stream_notebook.js",
+  "summary": "Animated visualization of the transformer residual stream as a notebook: five layers of 'experts' progressively scribble annotations (underlines, brackets, arrows, scribbles, boxes, margin notes) onto the sentence \"Die Katze saß auf der Matte weil sie müde war\", each layer adding a deeper linguistic/semantic reading.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/sheaves_presentation.js",
+  "name": "sheaves_presentation.js",
+  "filePath": "lndw/sheaves_presentation.js",
+  "summary": "A ~2670-line standalone slide deck + visualization engine teaching sheaves/cohomology/topos/HoTT: an Assets loader, a minimal Presentation controller with math rendering (temml), and a vizRegistry of ~15 canvas/Plotly visualizations (panorama, sheaf 3D, stalks, bird, topology, cohomology, Cech, laser, fiber bundle, gauge/parallel transport, calibration/Homotopy, infinity-sheaf/Manhattan, fibration, Hopf fibration, topoi, HoTT).",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/temml.min.js",
+  "name": "temml.min.js",
+  "filePath": "lndw/temml.min.js",
+  "summary": "Bundled/minified temml (a KaTeX-derived, TypeScript-friendly TeX typesetting library) providing temml.renderToString used to render math in the presentation decks.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/trace_through_loss_landscape.js",
+  "name": "trace_through_loss_landscape.js",
+  "filePath": "lndw/trace_through_loss_landscape.js",
+  "summary": "Singleton 3D loss-landscape plotter (Plotly) for single-neuron, single-input linear models: reads the live model weights and dataset globals, computes an MSE surface over (w,b), and animates the optimization path and current position, preserving the camera and deferring updates while the user interacts.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/training_demo.js",
+  "name": "training_demo.js",
+  "filePath": "lndw/training_demo.js",
+  "summary": "IIFE exposing window.TrainingDemo that trains a small 4-4-2 feedforward network in-browser on six cat/dog photos, animating the forward pass, backpropagation, and SGD weight updates on a canvas beside a 3D loss-landscape view in Plotly.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/training_viz.js",
+  "name": "training_viz.js",
+  "filePath": "lndw/training_viz.js",
+  "summary": "Global TrainingViz object implementing a simple step-through 'Training' slide that simulates a language model predicting the next word, showing correct/wrong prediction cards and a Plotly loss chart.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/training.html",
+  "name": "training.html",
+  "filePath": "lndw/training.html",
+  "summary": "Standalone draft presentation page hosting the 'Training' slide: a network canvas, a 3D loss-landscape container, a nav bar, and inline wiring that boots TrainingDemo through the LoadingTasks pipeline.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw/zipf_data.json",
+  "name": "zipf_data.json",
+  "filePath": "lndw/zipf_data.json",
+  "summary": "Precomputed word-frequency data (total/unique word counts and top-word frequency lists) for Finnegans Wake and the King James Bible, consumed by zipf.js to demonstrate Zipf's law.",
+  "type": "config"
+ },
+ {
+  "id": "file:lndw/zipf.js",
+  "name": "zipf.js",
+  "filePath": "lndw/zipf.js",
+  "summary": "Global ZipfViz object that fetches real word-frequency data and plots Zipf's law (rank vs. frequency, log-log) for Finnegans Wake and the King James Bible with word annotations.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw_history/backprop_slides.js",
+  "name": "backprop_slides.js",
+  "filePath": "lndw_history/backprop_slides.js",
+  "summary": "Canvas/SVG/Plotly visualizations for the Backpropagation and ResNet slides of the AI-history deck, wrapped in the BPSlides IIFE module. Covers forward/backward flow animation, chain rule, gradient descent, 3D loss landscape, vanishing gradients, ResNet diagrams, and TeML math rendering.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw_history/history_presentation.js",
+  "name": "history_presentation.js",
+  "filePath": "lndw_history/history_presentation.js",
+  "summary": "Minimal slide-deck presentation engine (adapted from presentation.js) that drives slide navigation, fragments, an overview grid, fullscreen, and keyboard/touch controls for the AI-history deck, and triggers viz re-rendering on slide change.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw_history/history.js",
+  "name": "history.js",
+  "filePath": "lndw_history/history.js",
+  "summary": "Interactive Plotly visualizations for the AI-history deck: OR/XOR gate separability plots for the first AI-winter slide and a color-coded timeline of computing milestones from the Lebombo bone to ChatGPT. Exposed as window.HistoryViz.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw_history/index.css",
+  "name": "index.css",
+  "filePath": "lndw_history/index.css",
+  "summary": "Stylesheet for the AI-history slide deck: slide layout and typography, fragments, navigation bar and progress bar, overview grid, era badges, chat/notebook widgets, and animations.",
+  "type": "file"
+ },
+ {
+  "id": "file:lndw_history/index.html",
+  "name": "index.html",
+  "filePath": "lndw_history/index.html",
+  "summary": "The AI-history slide deck (Geschichte der Künstlichen Intelligenz): ~30 slides tracing computing from prehistoric bones through mechanical, formal, electronic, and neural eras to Transformers and ChatGPT, mixing prose, images, and interactive canvas/Plotly/SVG widgets.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/autodiff/custom.py",
+  "name": "custom.py",
+  "filePath": "py/autodiff/custom.py",
+  "summary": "Hand-rolled reverse-mode autodiff: a Var computational-graph node whose arithmetic ops (+, *, sin) each record a per-node _backward gradient closure, and backward() topologically sorts the graph then runs the closures to accumulate gradients.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/autodiff/pytorch.py",
+  "name": "pytorch.py",
+  "filePath": "py/autodiff/pytorch.py",
+  "summary": "Reference script mirroring custom.py with PyTorch: builds f=(x+y)·sin(x) on grad-tracking tensors, calls f.backward(), prints df/dx and df/dy, verifies them analytically, and shows one gradient-descent step on a weight vector.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/autodiff/tensorflow.py",
+  "name": "tensorflow.py",
+  "filePath": "py/autodiff/tensorflow.py",
+  "summary": "Reference script mirroring custom.py with TensorFlow: builds f=(x+y)·sin(x) under a GradientTape, calls tape.gradient, verifies the derivatives analytically, and shows one gradient-descent step on a weight variable.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/minimalneuron/pytorch.py",
+  "name": "pytorch.py",
+  "filePath": "py/minimalneuron/pytorch.py",
+  "summary": "Minimal-Neuron XOR demo built with Keras (despite the filename): constructs a one- or two-layer sigmoid model via build_tf_nn, fits it on the XOR truth table, and prints predictions for all four inputs.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/minimalneuron/tensorflow.py",
+  "name": "tensorflow.py",
+  "filePath": "py/minimalneuron/tensorflow.py",
+  "summary": "Minimal-Neuron XOR demo written in PyTorch (filename is TensorFlow): defines a one- or two-layer NeuralNet, trains it 500 epochs with BCE loss and Adam on the XOR table, and prints a prediction for each input.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/visionlab/pytorch.py",
+  "name": "pytorch.py",
+  "filePath": "py/visionlab/pytorch.py",
+  "summary": "PyTorch binary image classifier (VisionLab): defines a small SimpleCNN, trains it on an ImageFolder dataset with BCE loss, and exposes train/predict CLI modes that save and load the model plus a classes.json.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/visionlab/tensorflow.py",
+  "name": "tensorflow.py",
+  "filePath": "py/visionlab/tensorflow.py",
+  "summary": "TensorFlow/Keras binary image classifier (VisionLab): builds a Rescaling→Conv2D→MaxPool→Flatten→Dense→Sigmoid model, trains it with an automatic validation split, and offers train/predict CLI modes that persist the model and classes.",
+  "type": "file"
+ },
+ {
+  "id": "file:py/qos.py",
+  "name": "qos.py",
+  "filePath": "py/qos.py",
+  "summary": "AST-based Python quality checker: walks a directory of .py files, flags non-snake_case function names and unused imports via a custom NodeVisitor, and exits non-zero on any issue (acts as a CI smoke test).",
+  "type": "file"
+ },
+ {
+  "id": "file:py/zipf_data.py",
+  "name": "zipf_data.py",
+  "filePath": "py/zipf_data.py",
+  "summary": "Data generator for the Zipf visualization: tokenizes Finnegans Wake and the King James Bible, computes word-frequency distributions, and writes lndw/zipf_data.json for the in-browser Zipf plot.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Library.v",
+  "name": "Library.v",
+  "filePath": "coq/coherent_world_models/Library.v",
+  "summary": "Foundational Coq library for the coherent-world-models chapter. Defines the basic types (SubjectMatter, Region, Codomain, Trace, AccessFunction, ViewTranslation, Context, ContextRefinement), the admissible-transition class T (TransitionKind, AdmissibleTransition), the hierarchy of sameness predicates (equality, isomorphism, homotopy, approximation, statistical, model-theoretic), and indexicality. Every other file in the directory imports it.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Traces.v",
+  "name": "Traces.v",
+  "filePath": "coq/coherent_world_models/Traces.v",
+  "summary": "Formalizes what an access function leaves behind: a ProducedTrace bundling the access function, region, and image proof, plus the four trace properties (transformed, mediated, underdetermined, possibly indexical) and the inference task of recovering a (source, access) pair from a trace.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Commitments.v",
+  "name": "Commitments.v",
+  "filePath": "coq/coherent_world_models/Commitments.v",
+  "summary": "Formalizes the chapter's five foundational commitments (indirect realism, internal structure, existence of admissible transitions, coherence-necessary-not-sufficient, correspondence-separate) plus the wordless-introspection limit case, Kant's thing-in-itself, and the unresolved dispute with qualia-primary views.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/ThreeDifferences.v",
+  "name": "ThreeDifferences.v",
+  "filePath": "coq/coherent_world_models/ThreeDifferences.v",
+  "summary": "Formalizes the three independent sources of disagreement between a subject matter and a trace: world-level, channel-level (calibrable), and processing-level, with a diagnostic disjunction (DisagreementKind) and the discipline to locate the difference at the right level.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/NotionsOfSameness.v",
+  "name": "NotionsOfSameness.v",
+  "filePath": "coq/coherent_world_models/NotionsOfSameness.v",
+  "summary": "Formalizes the chapter's six-row hierarchy of sameness (literal, isomorphism, homotopy, approximation, statistical, model-theoretic) as a weakening tower of lemmas, the forbidden silent-upgrade category error, the transformation triangle, and parallel examples across sense data, measurement, and mathematics.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/AdmissibleTransitions.v",
+  "name": "AdmissibleTransitions.v",
+  "filePath": "coq/coherent_world_models/AdmissibleTransitions.v",
+  "summary": "Builds the higher-level structure over the class T: InT as the disjunction of licensed observation/translation/refinement, T's three simultaneous interpretations (subcategory constraint, Bayesian prior, Occam penalty), six kinds of admissible transition, and the Sellarsian web as the alternative to foundationalism.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/ContextsAndSites.v",
+  "name": "ContextsAndSites.v",
+  "filePath": "coq/coherent_world_models/ContextsAndSites.v",
+  "summary": "Formalizes contexts (tuples of six facets: where, when, who, how, terms, tradition), refinements as context morphisms, covers and admissible covers, Grothendieck topologies, sites, and contravariant representation schemes (presheaves) into a target category.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Sheaves.v",
+  "name": "Sheaves.v",
+  "filePath": "coq/coherent_world_models/Sheaves.v",
+  "summary": "Formalizes presheaves and the sheaf condition (compatible local data on an admissible cover implies unique global data), its pullback form for two patches, the three regimes (strict, homotopical, empirical), and the running train-at-a-platform example with five channels plus the group-presentations parallel.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/EqualizersAndPullbacks.v",
+  "name": "EqualizersAndPullbacks.v",
+  "filePath": "coq/coherent_world_models/EqualizersAndPullbacks.v",
+  "summary": "Formalizes equalizers (where two parallel maps agree) and pullbacks (agreement through a shared target) as categorical limits with universal properties, their set-level forms, homotopical equalizers, and worked examples (two thermometers, two proofs, two tracks, two definitions of prime).",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/HigherCoherence.v",
+  "name": "HigherCoherence.v",
+  "filePath": "coq/coherent_world_models/HigherCoherence.v",
+  "summary": "Introduces higher-categorical structure: strict vs homotopical coherence, the recursive tower of n-cells (0-cells through 3-cells), the Cech nerve of a cover, infinity-sheaves valued in infinity-groupoids, and worked examples (lightning-and-thunder, equivalent categories).",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/ObserverInDiagram.v",
+  "name": "ObserverInDiagram.v",
+  "filePath": "coq/coherent_world_models/ObserverInDiagram.v",
+  "summary": "Puts the inquirer back in the diagram: models every access to a subject matter as a six-stage pipeline (subject, signal, internal representation, report, model) with domain examples (vision, audition, mathematics, history) and the discipline that every claim must be backed by a licensed transition.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/MasterDiagram.v",
+  "name": "MasterDiagram.v",
+  "filePath": "coq/coherent_world_models/MasterDiagram.v",
+  "summary": "Formalizes where AI enters: parametric maps and neural-network morphisms (Transformer residual update, multi-head attention, embeddings, multimodal alignment), training and generative models, hallucination as internal coherence without grounded descent, the master diagram W -> R_i -> G with its five settings, and the sameness hierarchy in the descent context.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Ologs.v",
+  "name": "Ologs.v",
+  "filePath": "coq/coherent_world_models/Ologs.v",
+  "summary": "Formalizes ologs (Spivak & Kent ontology logs): types as labelled kinds-of-thing, arrows as functional relations, commutativity asserted via explicit equalities, the calibrated-thermometer worked example, and the master diagram recast as an olog.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Forbidden.v",
+  "name": "Forbidden.v",
+  "filePath": "coq/coherent_world_models/Forbidden.v",
+  "summary": "Formalizes the chapter's five forbidden moves: silent upgrade of a weaker sameness, an unconstrained T (vacuous coherence), identifying G with W, mistaking internal coherence for descent, and treating a borrowed analogy as a theorem, closing with a useful analogy is not a theorem.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/PracticalProcedure.v",
+  "name": "PracticalProcedure.v",
+  "filePath": "coq/coherent_world_models/PracticalProcedure.v",
+  "summary": "Compresses the whole framework into a nine-step procedure (raw datum, interpretation, chain, overlaps, licences, sameness choice, global model, residuals, next observation) as a sequence of records, closing with the principle that anomalies are constraints not yet integrated, not defeats.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/Tarski.v",
+  "name": "Tarski.v",
+  "filePath": "coq/coherent_world_models/Tarski.v",
+  "summary": "Formalizes Tarski's Convention T (object-language, meta-language, quotation-name, proposition, and the iff), truth as an interface condition, the coherence tradition, the synthesis of coherence plus correspondence, the completed diagram, three pathologies, Tarski's four-discipline, the six-step audit protocol, and the closing synthesis.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/AILLM.v",
+  "name": "AILLM.v",
+  "filePath": "coq/coherent_world_models/AILLM.v",
+  "summary": "Applies the framework to LLMs: the LLM in the master diagram, internal descent techniques (in-context learning, chain-of-thought, self-consistency, verifier-guided search), the lack of grounded observation and its mitigations (RAG, tools, formal verification), a refined hallucination diagnosis, training dynamics, the framework's limits, and an honest closing.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/ThreePathologies.v",
+  "name": "ThreePathologies.v",
+  "filePath": "coq/coherent_world_models/ThreePathologies.v",
+  "summary": "Formalizes the three failure modes, each breaking exactly one of coherence or correspondence: self-consistent fantasy (breaks correspondence), contact-point junkie (breaks coherence), and contact-point liar (a hallucinating model), with their break-points on the diagram and remedies.",
+  "type": "file"
+ },
+ {
+  "id": "file:coq/coherent_world_models/TheoryChain.v",
+  "name": "TheoryChain.v",
+  "filePath": "coq/coherent_world_models/TheoryChain.v",
+  "summary": "Lays out the nine-stage chain of refinements (distinction to invariance), maps each theory (sets/type theory, categories, topology, sheaves, higher categories, model theory, probability, ML) to the stages it serves, situates the position relative to structural realism, and states the one-sentence world-model thesis with provisional globality.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/_lg_probe.html",
+  "name": "_lg_probe.html",
+  "filePath": "tests/_lg_probe.html",
+  "summary": "Manual probe page that loads layout_guardrail.js over a synthetic 800px element and logs its measured width, exemption matches, and the direct __layoutGuardrailCheck() result.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/hover_layout_guard.html",
+  "name": "hover_layout_guard.html",
+  "filePath": "tests/hover_layout_guard.html",
+  "summary": "Self-verifying headless regression test that runs the real render pipeline (start/polish/typography_fix/helper) and asserts that hovering glossary terms in the drop-cap paragraph causes zero layout movement (rects, line boxes, --cl-dc-* vars, ancestor inline styles).",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/hover_layout_guard.sh",
+  "name": "hover_layout_guard.sh",
+  "filePath": "tests/hover_layout_guard.sh",
+  "summary": "Headless Chromium runner for hover_layout_guard.html; dumps the DOM with a virtual-time budget and greps the <title> for the PASS/FAIL verdict, skipping gracefully when chromium or the site is unavailable.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/js_validator.py",
+  "name": "js_validator.py",
+  "filePath": "tests/js_validator.py",
+  "summary": "Static JS linter for the blog: a hand-rolled tokenizer plus a battery of regex checks (bracket balance, unclosed strings/comments, debugger, duplicate declarations, DOM API typos, implied globals) with rich-formatted error/warning/info severity reporting.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/keypoint_test.js",
+  "name": "keypoint_test.js",
+  "filePath": "tests/keypoint_test.js",
+  "summary": "Node smoke test for keypoint.js that builds .md > blockquote trees on a small DOM stub and verifies classifyBlockquote/upgradeBlockquote/upgradeBlockquotes promote short statements and attributed quotes into .kp-block cards while skipping long, complex, formal, or already-tagged ones.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/latex_error_checker.py",
+  "name": "latex_error_checker.py",
+  "filePath": "tests/latex_error_checker.py",
+  "summary": "Playwright-based scanner that starts a PHP built-in server, opens every lesson in headless Chromium, and fails on console errors, JS exceptions, network failures, and KaTeX/Temml/MathJax parse errors in the rendered DOM, plus a source-level phase flagging risky LaTeX patterns.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/lesson_guard.py",
+  "name": "lesson_guard.py",
+  "filePath": "tests/lesson_guard.py",
+  "summary": "Browser-free static regression guard for the Math IV lesson (math_iv.php + math_iv_affine.js): checks markdown headings sit inside .md divs, citation keys exist in literature.js, auto-rotate is off, 3D canvases are wired to bind3DNav/drawAxes3D, fold matrices stay symbolic, and the quad loop destructures (u, v).",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/link_checker.py",
+  "name": "link_checker.py",
+  "filePath": "tests/link_checker.py",
+  "summary": "Validates every URL in literature.js by fetching it with browser-like HTTP/2 headers; passes on 2xx (plus %PDF magic check for .pdf links), classifies bot protection and SSL quirks as soft passes, and retries transient 5xx/429 once.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/math_alt_test.js",
+  "name": "math_alt_test.js",
+  "filePath": "tests/math_alt_test.js",
+  "summary": "Node smoke test for the math-alternative-text mechanism in topics.js: with a DOM/cookie mock it verifies applyMathAlts() hides the rendered <math> and shows the .math-alt twin exactly when the math-heavy tone is switched off.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/php_render_validator.py",
+  "name": "php_render_validator.py",
+  "filePath": "tests/php_render_validator.py",
+  "summary": "Selenium-based render validator: starts a PHP dev server, opens pages in headless Chrome, and fails on JS console errors (exit 1), unrendered $$ LaTeX (exit 2), or reading-column width overflow via the production layout_guardrail.js (exit 3).",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/php_validator.py",
+  "name": "php_validator.py",
+  "filePath": "tests/php_validator.py",
+  "summary": "Static validator for PHP lesson templates: runs php -l syntax checks, a string/comment-aware HTML tag-balance checker (after stripping PHP blocks, comments, script, and style), and checks for BOM/extra-close-tag/content-after-close issues.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/search_js_test.js",
+  "name": "search_js_test.js",
+  "filePath": "tests/search_js_test.js",
+  "summary": "Node smoke test for search.js internals (exposed via initSearch._internals): verifies detectMode regex/fuzzy/normal classification, smart-quote normalization, splitTerms, highlightText per mode, and extractMatchFromSnippet.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/search_test.php",
+  "name": "search_test.php",
+  "filePath": "tests/search_test.php",
+  "summary": "PHP test suite for search_lib.php that builds temp-dir lesson fixtures and asserts the full search behavior: text normalization (umlauts, Greek, hyphens), regex/fuzzy/normal modes, snippet building, heading-slug URLs, caption ranking, citation author search, exclusions, and index cache invalidation.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/topics_test.js",
+  "name": "topics_test.js",
+  "filePath": "tests/topics_test.js",
+  "summary": "Node smoke test for topics.js: verifies the TOPICS/CATEGORIES registries, cookie round-trip persistence, isEnabled/anyEnabled/isCatEnabled defaults, the 3-state scoreUnit() logic with reason strings, the layman lens, math-level clamping, CORE_PERSONAS, and the marked extension rendering [[t:topic]] blocks.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/typo_checker.py",
+  "name": "typo_checker.py",
+  "filePath": "tests/typo_checker.py",
+  "summary": "Spell-checks prose inside PHP lesson templates: strips PHP/HTML/LaTeX/code, splits camelCase and hyphenated words, filters a whitelist plus a built-in ML/tech domain vocabulary, and reports misspellings with suggestions via pyspellchecker.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/typo_whitelist.txt",
+  "name": "typo_whitelist.txt",
+  "filePath": "tests/typo_whitelist.txt",
+  "summary": "One-word-per-line whitelist (~550 entries) suppressing typo_checker.py false positives: ML terminology (subword, neocognitron, rlhf), proper names (rumelhart, nietzsches), and informal forms (didn, aren).",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/typography_fix.html",
+  "name": "typography_fix.html",
+  "filePath": "tests/typography_fix.html",
+  "summary": "Headless regression test that loads production typography_fix.js over a synthetic .md column and asserts all-in-node conversion (both quote pairs, en-dash ranges, ellipsis) while <code> and .no-typo-fix content stay untouched.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/typography_fix.sh",
+  "name": "typography_fix.sh",
+  "filePath": "tests/typography_fix.sh",
+  "summary": "Headless Chromium runner for typography_fix.html; dumps the DOM and greps the <title> for the PASS/FAIL verdict, skipping when chromium or the site is unreachable.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/width_layout_guard.html",
+  "name": "width_layout_guard.html",
+  "filePath": "tests/width_layout_guard.html",
+  "summary": "Headless regression test for layout_guardrail.js over a synthetic 600px column: asserts wide normal elements are flagged while the same width inside .cl-block/.optional/.sideimage/.lg-scroll is exempt, and that __layoutGuardrailTag/__layoutGuardrailExclude work as expected.",
+  "type": "file"
+ },
+ {
+  "id": "file:tests/width_layout_guard.sh",
+  "name": "width_layout_guard.sh",
+  "filePath": "tests/width_layout_guard.sh",
+  "summary": "Headless Chromium runner for width_layout_guard.html; dumps the DOM with a virtual-time budget and greps the <title> for the PASS/FAIL verdict.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/autofix.js",
+  "name": "autofix.js",
+  "filePath": "darkmode-ci/autofix.js",
+  "summary": "CLI that reads the test runner's _stream.jsonl findings and auto-generates safe dark-mode CSS rules (font contrast fixes and optional stuck-white container fixes), inserting them into style.css after the dark-mode marker with a .bak-autofix backup, and writes autofix_report.json.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/ci/github-actions.yml",
+  "name": "github-actions.yml",
+  "filePath": "darkmode-ci/ci/github-actions.yml",
+  "summary": "GitHub Actions workflow ('Dark-mode check') triggered on pushes/PRs touching darkmode-ci/**, style.css, or PHP lessons: installs Chromium + php-cli, serves the blog on :8080, runs test.js with configurable wait/parallel/pages inputs, uploads screenshots, posts a PR summary comment, and exits non-zero when bugs are found.",
+  "type": "config"
+ },
+ {
+  "id": "file:darkmode-ci/lib/bug-detector.js",
+  "name": "bug-detector.js",
+  "filePath": "darkmode-ci/lib/bug-detector.js",
+  "summary": "Detection core: matches light/dark element snapshots pairwise and flags theme-switch bugs (bg+color unchanged on a still-light dark background), WCAG AA font-readability violations, and stuck-white pixel clusters, skipping HUD, accents, backdrop, and math/plot elements.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/color-utils.js",
+  "name": "color-utils.js",
+  "filePath": "darkmode-ci/lib/color-utils.js",
+  "summary": "Shared color math: parses rgb()/rgba() strings, computes WCAG 2.x relative luminance and contrast ratio, RGB distance, luminance bands, and picks a readable light foreground color against a dark background.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/element-snapshot.js",
+  "name": "element-snapshot.js",
+  "filePath": "darkmode-ci/lib/element-snapshot.js",
+  "summary": "Puppeteer page.evaluate helpers that capture every visible element's computed style (bg, color, font size, backdrop) and bounding rect as a flat snapshot, or identify the element under a given viewport point, with SVG/MathJax/Plotly tags skipped.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/pixel-diff.js",
+  "name": "pixel-diff.js",
+  "filePath": "darkmode-ci/lib/pixel-diff.js",
+  "summary": "PNG pixel-level comparison: builds difference masks between light and dark screenshots of the same block, then flood-fills them into bounding-box clusters to find stuck-white regions (white in both themes) and strongly changed regions.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/scroll-capture.js",
+  "name": "scroll-capture.js (lib)",
+  "filePath": "darkmode-ci/lib/scroll-capture.js",
+  "summary": "Generic Puppeteer scroll-and-screenshot library (ScrollCapture class): launches Chromium, opens isolated browser contexts, navigates with module-loader wait, scrolls in fixed steps with double-rAF settle, and captures screenshots + DOM snapshots per position in one or both themes.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/scroll-capture.js",
+  "name": "scroll-capture.js (CLI)",
+  "filePath": "darkmode-ci/scroll-capture.js",
+  "summary": "Thin CLI wrapper around lib/scroll-capture.js for one-off visual inspection: captures a page slug or URL in configurable themes/viewport/scroll steps, writing block PNGs and a scroll_capture.json metadata file.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/selectors.js",
+  "name": "selectors.js",
+  "filePath": "darkmode-ci/lib/selectors.js",
+  "summary": "Selector classification for false-positive filtering: classifies elements as fixed HUD/overlay UI (drawer, search, topics overlays, toggles) by ancestor/id allowlists, and as skippable tags (SVG, canvas, MathJax/KaTeX, Plotly/ECharts); also builds tag+id+class CSS selectors.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/lib/theme-controller.js",
+  "name": "theme-controller.js",
+  "filePath": "darkmode-ci/lib/theme-controller.js",
+  "summary": "Puppeteer helpers that drive the blog's theme: toggle html.dark + write the theme cookie + update meta theme-color with a settle delay for MutationObservers, preset the cookie pre-navigation, and query the current theme.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/make-sxs.js",
+  "name": "make-sxs.js",
+  "filePath": "darkmode-ci/make-sxs.js",
+  "summary": "Generates side-by-side comparison images (light | dark | dark-annotated with red boxes around stuck-white clusters read from _stream.jsonl) using ImageMagick +append, one per captured block per page, into the sxs/ directory.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/package.json",
+  "name": "package.json",
+  "filePath": "darkmode-ci/package.json",
+  "summary": "npm manifest for the darkmode-ci tool: declares pngjs and puppeteer-core dependencies and scripts (test, test:fast, test:single, test:json, capture, fix, fix:dry, fix:critical, fix:all) for the tester, capture CLI, and autofix variants.",
+  "type": "config"
+ },
+ {
+  "id": "document:darkmode-ci/README.md",
+  "name": "README.md",
+  "filePath": "darkmode-ci/README.md",
+  "summary": "Documentation for darkmode-ci: explains the three detection modes (theme-switch bugs, stuck-white clusters, WCAG font readability), CLI flags and env vars, autofix workflow, library API, output layout, exit codes, sample CI usage, and the detection-filtering notes (backdrops, indigo accents, img, math/plot, HUD).",
+  "type": "document"
+ },
+ {
+  "id": "file:darkmode-ci/test.js",
+  "name": "test.js",
+  "filePath": "darkmode-ci/test.js",
+  "summary": "Main orchestrator CLI: for each of ~60 blog pages, scrolls in steps with a parallel browser-context worker pool, toggles light/dark per block, screenshots + snapshots, runs detectBlock, appends findings to _stream.jsonl, and writes bug_report.json / summary.json with an exit code for CI gating.",
+  "type": "file"
+ },
+ {
+  "id": "file:darkmode-ci/watch-and-fix.js",
+  "name": "watch-and-fix.js",
+  "filePath": "darkmode-ci/watch-and-fix.js",
+  "summary": "Background watcher that polls _stream.jsonl every minute during a live test.js run and spawns `autofix.js --include-stuck-white` whenever the line count crosses a 10-block boundary or the run finishes, giving incremental CSS fixes while the long scan is still in progress.",
+  "type": "file"
+ },
+ {
+  "id": "file:learnsys/test.html",
+  "name": "test.html",
+  "filePath": "learnsys/test.html",
+  "summary": "Self-contained 'Deep' adaptive-learning interface (test page): a single-page app that renders a root narrative full of inline 'portals' (\\deep{}) that open into full-screen topic views via a vim-style open stack, with a force-directed knowledge graph, Temml LaTeX rendering, breadcrumb/visited-state tracking, and a light/dark theme.",
+  "type": "file"
+ },
+ {
+  "id": "file:learnsys/umwelt.html",
+  "name": "umwelt.html",
+  "filePath": "learnsys/umwelt.html",
+  "summary": "A-Frame 3D test scene (German) visualizing Uexküll's 'Umwelten': a beach with a jogging human, a following dog, and a flying butterfly, each wrapped in a translucent 'world bubble' with sensory particles, plus a dark AI scene of floating vector-space tokens — switching perceiver changes which world is visible.",
+  "type": "file"
+ },
+ {
+  "id": "document:todo/coherent_steelman_critique.md",
+  "name": "Steelman & Critique: Coherent Difference + World Models",
+  "filePath": "todo/coherent_steelman_critique.md",
+  "summary": "Long working critique of the two WIP chapters coherent_difference.php and coherent_world_models.php: it reconstructs each thesis, argues the strongest case by angle (S1-S8), then attacks that steelman from 13 angles (C1-C13) - vacuity of the never-fixed F/res/licence objects, the Tarski x indirect-realism collapse of the two-leg truth condition, and the self-reference problem - finishing with a scorecard and a prioritized list of fixes.",
+  "type": "document"
+ },
+ {
+  "id": "file:todo/formulary.php",
+  "name": "Formulary",
+  "filePath": "todo/formulary.php",
+  "summary": "Course-wide math reference lesson (Part 6) collecting every generalized equation used across the textbook into grouped tables - numerical foundations, linear algebra, calculus/gradients, probability/statistics, NN building blocks, optimizers, and the Transformer - each with plain-English meaning, a full symbol definition, and its (however indirect) connection to LLMs.",
+  "type": "file"
+ },
+ {
+  "id": "file:todo/model_theory.php",
+  "name": "Model Theory: What a Model Is",
+  "filePath": "todo/model_theory.php",
+  "summary": "Part 4 lesson giving the exact mathematical discipline of model theory - first-order language/structure/theory, the theory-model Galois connection, Tarski's recursive satisfaction definition, the three pillars (completeness, compactness, downward Lowenheim-Skolem), nonstandard models and Skolem's paradox, and Morley's categoricity theorem - and tying each to the course's world-model and contact-point claims.",
+  "type": "file"
+ },
+ {
+  "id": "file:todo/recursion_coherent_difference.php",
+  "name": "Recursion and the Shape of Coherent Difference",
+  "filePath": "todo/recursion_coherent_difference.php",
+  "summary": "Part 4 lesson locating recursion inside the sheaf-theoretic 'coherent difference' picture: the higher-coherence tower (infinity-sheaf / Cech nerve), the regress of licences, Spencer-Brown's distinction as a fixed point, Tarski's circle and the diagonal, the HoTT universe tower, proof-theoretic normalization as descent, confluence (Church-Rosser / Newman), and fixed-point theorems (Brouwer, Lawvere).",
+  "type": "file"
+ },
+ {
+  "id": "file:todo/the_model.php",
+  "name": "The Model: One Object, Many Lenses",
+  "filePath": "todo/the_model.php",
+  "summary": "Part 4 synthesis lesson unifying the course around a single claim: an LLM is simultaneously a physical system, a differentiable function, an information pipeline, a knowledge structure, a reasoning engine, and a potentially agentic system - describing each layer of description, the seams between them, and what the model is not (not a database, program, mind, or opaque black box).",
+  "type": "file"
+ }
+]

@@ -1,0 +1,498 @@
+{
+  "nodes": [
+    {
+      "id": "config:.htaccess",
+      "type": "config",
+      "name": ".htaccess",
+      "summary": "Apache config: rewrites .php-less pretty URLs to the underlying .php file, blocks direct access to .search_cache.json, and auto-prepends mobile-prepend.php into every response so mobile.css/mobile.js load on all pages.",
+      "tags": ["apache", "rewrite", "routing", "config", "mobile"],
+      "filePath": ".htaccess"
+    },
+    {
+      "id": "config:.user.ini",
+      "type": "config",
+      "name": ".user.ini",
+      "summary": "Per-directory PHP runtime override that sets auto_prepend_file to mobile-prepend.php as a fallback for servers that do not honor the .htaccess php_value directive.",
+      "tags": ["php", "ini", "config", "auto-prepend"],
+      "filePath": ".user.ini"
+    },
+    {
+      "id": "file:art.txt",
+      "type": "file",
+      "name": "art.txt",
+      "summary": "One-line scratch note holding a single external URL (an SBMA Underhill-AI event page) with no other content.",
+      "tags": ["scratch", "note", "data"],
+      "filePath": "art.txt",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:asanai_blog_proxy.php",
+      "type": "file",
+      "name": "asanai_blog_proxy.php",
+      "summary": "Self-contained reverse proxy that fetches any path under asanai.scads.ai/blog over cURL, validates the target to block SSRF, and rewrites relative src/href and in-JS asset paths so proxied HTML/JS keeps loading through the proxy.",
+      "tags": ["proxy", "php", "curl", "ssrf-protection", "rewriting"],
+      "filePath": "asanai_blog_proxy.php",
+      "complexity": "moderate",
+      "languageNotes": "Procedural PHP; uses cURL with FOLLOWLOCATION, a MIME map keyed on file extension, and preg_replace_callback to redirect asset references through itself."
+    },
+    {
+      "id": "file:attention_engine.js",
+      "type": "file",
+      "name": "attention_engine.js",
+      "summary": "Large interactive multi-head self-attention engine for the Transformer lesson: runs a real QKV forward pass over tokens, renders per-head attention-weight matrices with LaTeX annotations, an 'attention path visualizer' (APV) arc view, and hooks for provenance/TDA tooling.",
+      "tags": ["attention", "transformer", "visualization", "multi-head", "interactive"],
+      "filePath": "attention_engine.js",
+      "complexity": "complex",
+      "languageNotes": "Single AttentionEngine class with a static hook registry (onForward/_fireForwardHooks) so external tooling can observe every forward pass; registers instances into window.__apv_instances and drives rendering through layered tab builders."
+    },
+    {
+      "id": "class:attention_engine.js:AttentionEngine",
+      "type": "class",
+      "name": "AttentionEngine",
+      "summary": "The attention computation + rendering engine: holds QKV/output weights, runs the causal multi-head forward pass, and renders per-head weight matrices and context vectors into the lesson's DOM.",
+      "tags": ["attention", "transformer", "qkv", "rendering", "multi-head"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "function:attention_engine.js:forward",
+      "type": "function",
+      "name": "forward",
+      "summary": "Runs one attention forward pass: projects h0 into Q/K/V, slices per-head, scores (with causal mask), softmaxes, and computes per-token context vectors, then fires registered forward hooks.",
+      "tags": ["attention", "forward-pass", "qkv", "softmax", "causal-mask"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "function:attention_engine.js:renderUI",
+      "type": "function",
+      "name": "renderUI",
+      "summary": "Orchestrates the on-screen attention visualization, dispatching to unified layer tabs or the fallback tab builder and updating per-layer content as head data changes.",
+      "tags": ["rendering", "ui", "tabs", "attention"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "function:attention_engine.js:onForward",
+      "type": "function",
+      "name": "onForward",
+      "summary": "Static public hook: registers a callback invoked after every forward pass with the engine, head data, hidden state, tokens and token strings, letting TDA/provenance tooling subscribe without touching rendering.",
+      "tags": ["hooks", "observer", "api", "attention"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "function:attention_engine.js:dot",
+      "type": "function",
+      "name": "dot",
+      "summary": "Matrix multiplication used for the QKV/output projections, with defensive shape checks that return empty results on malformed input.",
+      "tags": ["linear-algebra", "matrix", "attention"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "function:attention_engine.js:softmax",
+      "type": "function",
+      "name": "softmax",
+      "summary": "Numerically-aware softmax that normalizes the attention scores of a row into weights summing to 1.",
+      "tags": ["softmax", "normalization", "attention"],
+      "filePath": "attention_engine.js"
+    },
+    {
+      "id": "file:bildquellen-pruefung.txt",
+      "type": "file",
+      "name": "bildquellen-pruefung.txt",
+      "summary": "Image source-and-license audit log: per-image records (URL, license via the Commons API, author, local filename, lesson of use, and OK/UNCLEAR status) documenting provenance and licensing for every figure in the book.",
+      "tags": ["image-provenance", "licensing", "audit", "data", "attribution"],
+      "filePath": "bildquellen-pruefung.txt",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:bpe.js",
+      "type": "file",
+      "name": "bpe.js",
+      "summary": "Self-contained Byte-Pair-Encoding tokenizer: trains a merge table on a text corpus and tokenizes by replaying merges with a greedy longest-match fallback for rare words.",
+      "tags": ["tokenization", "bpe", "subword", "nlp"],
+      "filePath": "bpe.js",
+      "complexity": "moderate",
+      "languageNotes": "Single BPETokenizer class; training only uses non-whitespace words and preserves whitespace runs as their own tokens at tokenize-time."
+    },
+    {
+      "id": "class:bpe.js:BPETokenizer",
+      "type": "class",
+      "name": "BPETokenizer",
+      "summary": "BPE subword tokenizer holding a character vocabulary and an ordered merge list; exposes train() to build the merge table and tokenize() to segment text into subword tokens.",
+      "tags": ["bpe", "tokenization", "subword", "tokenizer"],
+      "filePath": "bpe.js"
+    },
+    {
+      "id": "function:bpe.js:train",
+      "type": "function",
+      "name": "train",
+      "summary": "Iteratively finds the most frequent adjacent token pair above a frequency floor, merges it, and records it, building the ordered merge list until no pairs qualify or a maxMerges cap is hit.",
+      "tags": ["bpe", "training", "merge-table"],
+      "filePath": "bpe.js"
+    },
+    {
+      "id": "function:bpe.js:tokenize",
+      "type": "function",
+      "name": "tokenize",
+      "summary": "Segments text into words and whitespace runs, replays the learned merges per word, and falls back to greedy longest-match against the known token set so rare words avoid single-character splits.",
+      "tags": ["tokenization", "bpe", "greedy-match"],
+      "filePath": "bpe.js"
+    },
+    {
+      "id": "file:category_theory.html",
+      "type": "file",
+      "name": "category_theory.html",
+      "summary": "Standalone test page that renders a TikZJax commutative diagram (x -> f(x) -> (g o f)(x)) to verify the diagram toolchain used for category-theory content.",
+      "tags": ["tikzjax", "commutative-diagram", "category-theory", "test-page"],
+      "filePath": "category_theory.html",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:citation_graph.js",
+      "type": "file",
+      "name": "citation_graph.js",
+      "summary": "Data file exposing window.citationGraph, a directed map from each literature.js citation key to the keys it builds on, encoding the intellectual lineage (foundations through modern LLMs) behind the book's bibliography.",
+      "tags": ["citations", "lineage", "knowledge-graph", "data", "references"],
+      "filePath": "citation_graph.js",
+      "complexity": "simple",
+      "languageNotes": "Pure data: assigns one window.citationGraph object literal of key -> [ancestor keys]; grouped by era via comment headers."
+    },
+    {
+      "id": "file:cluster.js",
+      "type": "file",
+      "name": "cluster.js",
+      "summary": "Implements 'Aurora Clusters': converts [[c:name]]...[[/c]] markers in lesson Markdown into softly-glowing color lanes, assigning each cluster name a stable hue (curated palette or golden-angle fallback) and injecting matching CSS variables.",
+      "tags": ["clusters", "markdown-extension", "theming", "color", "visualization"],
+      "filePath": "cluster.js",
+      "complexity": "moderate",
+      "languageNotes": "IIFE exposing window.BlogClusters; registers a custom marked block extension so multi-paragraph cluster blocks get correct inner wrapping, and a MutationObserver re-injects CSS vars for late-loading modules."
+    },
+    {
+      "id": "function:cluster.js:preprocess",
+      "type": "function",
+      "name": "preprocess",
+      "summary": "Runs before marked.parse: registers the clusterBlock marked extension (once) and delegates to the balanced scanner to turn inline clusters into data-cluster spans.",
+      "tags": ["preprocess", "marked-extension", "markdown"],
+      "filePath": "cluster.js"
+    },
+    {
+      "id": "function:cluster.js:findNextCluster",
+      "type": "function",
+      "name": "findNextCluster",
+      "summary": "Balanced scanner that walks the text to the next [[c:NAME]]/[[cluster:NAME]] open, then advances char-by-char matching nested opens to their closes and returns the name, inner text and span.",
+      "tags": ["parsing", "nesting", "balanced-scan"],
+      "filePath": "cluster.js"
+    },
+    {
+      "id": "function:cluster.js:injectCSS",
+      "type": "function",
+      "name": "injectCSS",
+      "summary": "Scans the DOM (and window.__blogClusters) for cluster names and writes a #blog-cluster-vars <style> block defining --cl-<name> base/glow/soft/mist/halo custom properties, skipping rework when the name set is unchanged.",
+      "tags": ["css-variables", "theming", "injection"],
+      "filePath": "cluster.js"
+    },
+    {
+      "id": "function:cluster.js:getColor",
+      "type": "function",
+      "name": "getColor",
+      "summary": "Resolves a cluster name to its hue (from the curated PALETTE or a deterministic golden-angle hash) and derives the full HSL palette (base, glow, soft, mist, three halos).",
+      "tags": ["color", "palette", "hashing"],
+      "filePath": "cluster.js"
+    },
+    {
+      "id": "file:commutation.html",
+      "type": "file",
+      "name": "commutation.html",
+      "summary": "A pre-rendered SVG of the same commutative diagram (x, f(x), (g o f)(x) with f, g o f, g arrows) used as a static asset alongside the TikZJax test page.",
+      "tags": ["svg", "commutative-diagram", "category-theory", "asset"],
+      "filePath": "commutation.html",
+      "complexity": "simple"
+    },
+    {
+      "id": "document:corrections.md",
+      "type": "document",
+      "name": "Corrections for coherent_world_models.php",
+      "summary": "Content-audit of the coherent_world_models lesson cataloguing 9 mathematical/philosophical inconsistencies (object-vs-element G, fan-vs-chain cover structure, self-undermining 'coherence = descent', etc.) with a severity table; all items marked as applied.",
+      "tags": ["corrections", "category-theory", "audit", "coherent-world-models", "research"],
+      "filePath": "corrections.md"
+    },
+    {
+      "id": "file:darkmode_todo.txt",
+      "type": "file",
+      "name": "darkmode_todo.txt",
+      "summary": "Tracking note of dark-mode background fixes per lesson (white Plotly/ECharts canvases and light callout boxes), each marked FIXED, plus maintenance notes pointing to the CSS block and the global Plotly theme observer in helper.js.",
+      "tags": ["dark-mode", "plotly", "todo", "css", "data"],
+      "filePath": "darkmode_todo.txt",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:effects.js",
+      "type": "file",
+      "name": "effects.js",
+      "summary": "Quiet visual enhancement: adds an 'effects-on' class to <html> and cascade-fades in each .course-part via IntersectionObserver as it scrolls into view, falling back to fully visible when the observer or reduced-motion is unavailable.",
+      "tags": ["scroll-reveal", "effects", "accessibility", "intersection-observer"],
+      "filePath": "effects.js",
+      "complexity": "simple",
+      "languageNotes": "IIFE; respects prefers-reduced-motion and no-JS (default visible state)."
+    },
+    {
+      "id": "file:fcnn_visualization.js",
+      "type": "file",
+      "name": "fcnn_visualization.js",
+      "summary": "Canvas renderer for a full-network (Dense/Flatten/LayerNorm/Conv2D) architecture: reads the live TF.js model's layers, computes node/layer layout, and draws connected neurons with theme-aware colors and labels.",
+      "tags": ["visualization", "neural-network", "canvas", "tensorflowjs", "architecture"],
+      "filePath": "fcnn_visualization.js",
+      "complexity": "moderate",
+      "languageNotes": "Global functions driven by a shared `model` (TF.js) handle; debounced restart via setTimeout, and uses themeColor()/isDarkMode() helpers for theming."
+    },
+    {
+      "id": "function:fcnn_visualization.js:draw_fcnn",
+      "type": "function",
+      "name": "draw_fcnn",
+      "summary": "Sizing and draw entry point: sizes the #fcnn_canvas from its container, computes node radius and layer spacing, and hands off to the low-level drawer.",
+      "tags": ["canvas", "layout", "visualization"],
+      "filePath": "fcnn_visualization.js"
+    },
+    {
+      "id": "function:fcnn_visualization.js:restart_fcnn",
+      "type": "function",
+      "name": "restart_fcnn",
+      "summary": "Debounced (100ms) redraw trigger that clears any pending timeout and re-renders the network once the canvas is visible.",
+      "tags": ["debounce", "redraw", "visualization"],
+      "filePath": "fcnn_visualization.js"
+    },
+    {
+      "id": "function:fcnn_visualization.js:get_fcnn_data",
+      "type": "function",
+      "name": "get_fcnn_data",
+      "summary": "Walks the TF.js model.layers, keeping only Dense/Flatten/LayerNorm/Conv2D layers, and returns parallel arrays of layer names, unit counts, and per-layer meta info for the drawer.",
+      "tags": ["tensorflowjs", "model-introspection", "layout"],
+      "filePath": "fcnn_visualization.js"
+    },
+    {
+      "id": "file:find_double_defined_js.sh",
+      "type": "file",
+      "name": "find_double_defined_js.sh",
+      "summary": "Development shell script that greps every .js file for top-level 'function <name>' definitions and reports any name defined more than once in a file, exiting non-zero if duplicates are found.",
+      "tags": ["devtool", "lint", "shell", "duplicate-detection"],
+      "filePath": "find_double_defined_js.sh",
+      "complexity": "simple"
+    },
+    {
+      "id": "file:functions.php",
+      "type": "file",
+      "name": "functions.php",
+      "summary": "The blog's central server-side infrastructure: parses every lesson's COURSE_METADATA block to auto-build the course drawer/index/progress, provides the asset and lesson loaders (js/css/incl), the post-load JS orchestrator, and renders the chrome (theme/topics/reader toggles, drawer, module nav, hero constellation).",
+      "tags": ["infrastructure", "php", "course-metadata", "layout", "shell"],
+      "filePath": "functions.php",
+      "complexity": "complex",
+      "languageNotes": "Mix of PHP helpers and an inline <script> post-load orchestrator; scans *.php files via glob and parses COURSE_METADATA comments so lessons are discovered automatically. A mid-file output-buffering seam (the '}' at line ~694) closes the if(!index) HTML head/body block before the remaining helper functions are defined."
+    },
+    {
+      "id": "function:functions.php:parse_course_metadata",
+      "type": "function",
+      "name": "parse_course_metadata",
+      "summary": "Core discovery routine: globs all *.php lessons, extracts each COURSE_METADATA comment, sorts by part then order, and returns modules grouped by part — the single source of truth for the drawer, index tiles and progress.",
+      "tags": ["course-metadata", "discovery", "parsing", "course-structure"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:incl",
+      "type": "function",
+      "name": "incl",
+      "summary": "Includes a lesson section: loads its matching .js (passing the headline as the loader label), requires the .php file to exist, prints the <h1>, and includes the lesson body.",
+      "tags": ["lesson-inclusion", "routing", "loader"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:js",
+      "type": "function",
+      "name": "js",
+      "summary": "De-duplicating script tag emitter: anchors local lookups to __DIR__, appends a ?v=filemtime cache buster, and for files defining load*Module() pushes the loader onto window.__moduleLoaderQueue with a cleaned label.",
+      "tags": ["asset-loading", "script", "module-queue", "cache-busting"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:css",
+      "type": "function",
+      "name": "css",
+      "summary": "Emits a stylesheet <link> with a ?v=filemtime cache buster for local files (or a raw link for URLs).",
+      "tags": ["asset-loading", "stylesheet", "cache-busting"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:load_base_js",
+      "type": "function",
+      "name": "load_base_js",
+      "summary": "Loads the full base asset bundle (Temml, bpe, echarts, prism, literature, citation_graph, jquery, plotly, tf, marked, helper, cluster, topics, search, keypoint, progress_tracker, and all modules/*.js) and prints the inline post-load coordination script.",
+      "tags": ["asset-loading", "bundle", "bootstrap"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:print_font_override",
+      "type": "function",
+      "name": "print_font_override",
+      "summary": "Prints a <head> font override: preloads the chosen serif (Lingua Franca or Computer Modern), publishes window.__blogFontSpecs for force-loading, and sets the --mn-font-* CSS variables site-wide.",
+      "tags": ["fonts", "theming", "css-variables"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_gem_tabs",
+      "type": "function",
+      "name": "render_gem_tabs",
+      "summary": "Renders a CSS-only radio-button tab group (title => content panels) with a unique hash per group so multiple tab groups can coexist on one page, and injects a one-time copy-buttons script.",
+      "tags": ["tabs", "ui", "content"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:print_dynamic_title",
+      "type": "function",
+      "name": "print_dynamic_title",
+      "summary": "Reads the calling lesson's own COURSE_METADATA title and emits it into the requested tag (the <title> with LaTeX $ stripped, or the <h1>).",
+      "tags": ["title", "course-metadata", "parsing"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:get_ai_course_labels",
+      "type": "function",
+      "name": "get_ai_course_labels",
+      "summary": "Builds the \\label{...} -> lesson-slug map by scanning every lesson's content, used to resolve in-page label targets for the course index.",
+      "tags": ["labels", "course-metadata", "indexing"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_course_tile",
+      "type": "function",
+      "name": "render_course_tile",
+      "summary": "Renders one course index tile as a link card with icon, title, description, accent color, and data-topics/data-tags/data-mathlevel attributes that drive the 3-state dimming in topics.js.",
+      "tags": ["course-tile", "index", "theming", "data-attributes"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:get_module_nav_data",
+      "type": "function",
+      "name": "get_module_nav_data",
+      "summary": "Flattens parse_course_metadata into the linear course order and returns it with the current lesson's index, powering the progress bar and next/prev navigation.",
+      "tags": ["navigation", "progress", "course-structure"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_module_nav",
+      "type": "function",
+      "name": "render_module_nav",
+      "summary": "Renders the previous/next lesson navigation links for the current lesson based on get_module_nav_data.",
+      "tags": ["navigation", "prev-next", "ui"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_drawer",
+      "type": "function",
+      "name": "render_drawer",
+      "summary": "Renders the slide-out course drawer: a backdrop, a header with close button, and per-part sections listing every module, marking the current lesson active.",
+      "tags": ["drawer", "navigation", "course-structure", "ui"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_theme_toggle",
+      "type": "function",
+      "name": "render_theme_toggle",
+      "summary": "Renders the top-right dark/light toggle button (sun/moon SVGs) wired to toggleTheme().",
+      "tags": ["theme", "toggle", "ui"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_topics_toggle",
+      "type": "function",
+      "name": "render_topics_toggle",
+      "summary": "Renders the 'pick your interests' target button that opens the topics overlay (wired up later by topics.js).",
+      "tags": ["topics", "toggle", "ui"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_reader_toggle",
+      "type": "function",
+      "name": "render_reader_toggle",
+      "summary": "Renders the reader-mode book button (keyboard shortcut R) wired to toggleReaderMode(), a CSS-only focus mode persisted in localStorage.",
+      "tags": ["reader-mode", "toggle", "ui"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:render_constellation",
+      "type": "function",
+      "name": "render_constellation",
+      "summary": "Emits the hero <canvas class=\"organic-network\"> and loads organic-network.js to paint the drifting node/edge backdrop that self-fades on scroll.",
+      "tags": ["hero", "canvas", "decoration", "asset-loading"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "function:functions.php:runPostLoad",
+      "type": "function",
+      "name": "runPostLoad",
+      "summary": "Inline-JS orchestrator that runs exactly once after both modules and window load: extracts sidenotes, runs bibtexify + renderMarkdown, force-loads the page's font faces (4s capped), reveals content, and dispatches blogPostLoadComplete.",
+      "tags": ["post-load", "orchestration", "rendering", "fonts"],
+      "filePath": "functions.php"
+    },
+    {
+      "id": "document:geometric_topological_theory_of_meaningful_language_spaces.md",
+      "type": "document",
+      "name": "A Geometric and Topological Theory of Meaningful Language Spaces",
+      "summary": "Long research-program essay proposing a geometric/topological account of language: a combinatorial possibility space X_N, multi-field 'void vectors' (syntactic/semantic/grounding/epistemic), cosmic-web cluster-filament-void structure, fractality, and a four-level program ending in open questions.",
+      "tags": ["research", "topology", "language", "semantics", "hypothesis", "voids"],
+      "filePath": "geometric_topological_theory_of_meaningful_language_spaces.md"
+    },
+    {
+      "id": "file:graph.php",
+      "type": "file",
+      "name": "graph.php",
+      "summary": "'River of Ideas' interactive SVG timeline: a ~15-row-by-11-column vertical graph of ~120 AI-history milestones across 8 colored streams, with curved dependency edges, hover tooltips, 2-hop connectedness highlighting, a legend, era bands, and optional scroll-to-section highlighting.",
+      "tags": ["timeline", "graph", "visualization", "ai-history", "svg", "interactive"],
+      "filePath": "graph.php",
+      "complexity": "complex",
+      "languageNotes": "Self-contained: inline <style> + <script> IIFE with hardcoded NODES and EDGES data arrays; draws glow + main path per edge, era bands and a right-side timeline, and re-renders on resize."
+    }
+  ],
+  "edges": [
+    { "source": "file:functions.php", "target": "function:functions.php:parse_course_metadata", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:incl", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:js", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:css", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:load_base_js", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:print_font_override", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_gem_tabs", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:print_dynamic_title", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:get_ai_course_labels", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_course_tile", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:get_module_nav_data", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_module_nav", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_drawer", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_theme_toggle", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_topics_toggle", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_reader_toggle", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:render_constellation", "type": "contains", "weight": 1.0 },
+    { "source": "file:functions.php", "target": "function:functions.php:runPostLoad", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:attention_engine.js", "target": "class:attention_engine.js:AttentionEngine", "type": "contains", "weight": 1.0 },
+    { "source": "file:attention_engine.js", "target": "function:attention_engine.js:forward", "type": "contains", "weight": 1.0 },
+    { "source": "file:attention_engine.js", "target": "function:attention_engine.js:renderUI", "type": "contains", "weight": 1.0 },
+    { "source": "file:attention_engine.js", "target": "function:attention_engine.js:onForward", "type": "contains", "weight": 1.0 },
+    { "source": "file:attention_engine.js", "target": "function:attention_engine.js:dot", "type": "contains", "weight": 1.0 },
+    { "source": "file:attention_engine.js", "target": "function:attention_engine.js:softmax", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:bpe.js", "target": "class:bpe.js:BPETokenizer", "type": "contains", "weight": 1.0 },
+    { "source": "file:bpe.js", "target": "function:bpe.js:train", "type": "contains", "weight": 1.0 },
+    { "source": "file:bpe.js", "target": "function:bpe.js:tokenize", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:cluster.js", "target": "function:cluster.js:preprocess", "type": "contains", "weight": 1.0 },
+    { "source": "file:cluster.js", "target": "function:cluster.js:findNextCluster", "type": "contains", "weight": 1.0 },
+    { "source": "file:cluster.js", "target": "function:cluster.js:injectCSS", "type": "contains", "weight": 1.0 },
+    { "source": "file:cluster.js", "target": "function:cluster.js:getColor", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:fcnn_visualization.js", "target": "function:fcnn_visualization.js:draw_fcnn", "type": "contains", "weight": 1.0 },
+    { "source": "file:fcnn_visualization.js", "target": "function:fcnn_visualization.js:restart_fcnn", "type": "contains", "weight": 1.0 },
+    { "source": "file:fcnn_visualization.js", "target": "function:fcnn_visualization.js:get_fcnn_data", "type": "contains", "weight": 1.0 },
+
+    { "source": "file:functions.php", "target": "file:citation_graph.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:functions.php", "target": "file:bpe.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:functions.php", "target": "file:cluster.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:functions.php", "target": "file:effects.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:functions.php", "target": "file:fcnn_visualization.js", "type": "depends_on", "weight": 0.7 }
+  ]
+}

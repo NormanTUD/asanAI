@@ -1,0 +1,246 @@
+{
+  "nodes": [
+    {
+      "id": "file:lndw/training_demo.js",
+      "type": "file",
+      "name": "training_demo.js",
+      "summary": "IIFE exposing window.TrainingDemo that trains a small 4-4-2 feedforward network in-browser on six cat/dog photos, animating the forward pass, backpropagation, and SGD weight updates on a canvas beside a 3D loss-landscape view in Plotly.",
+      "tags": ["neural-network", "backpropagation", "training", "visualization", "plotly"],
+      "complexity": "complex",
+      "languageNotes": "IIFE with a single mutable state object `s`; no external imports; canvas 2D plus Plotly; German UI strings.",
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:fwd",
+      "type": "function",
+      "name": "fwd",
+      "summary": "Runs the forward pass of the 4-4-2 net (ReLU hidden layer, softmax output with a 0.5 display temperature) and stores inputs, hidden activations, logits, and outputs in state.",
+      "tags": ["forward-pass", "softmax", "relu"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:bwd",
+      "type": "function",
+      "name": "bwd",
+      "summary": "Computes cross-entropy loss and backpropagates gradients to the output and hidden layers, using a 0.01 slope for dead ReLU units.",
+      "tags": ["backpropagation", "gradient", "cross-entropy"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:upd",
+      "type": "function",
+      "name": "upd",
+      "summary": "Applies an SGD step to W1, b1, W2, and b2 at the given learning rate, snapshotting the previous weights so the update animation can show deltas.",
+      "tags": ["sgd", "weight-update"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:extractFeatures",
+      "type": "function",
+      "name": "extractFeatures",
+      "summary": "Downsamples a loaded image to 2x2 on an offscreen canvas and returns four normalized luminance values used as the network's input features.",
+      "tags": ["feature-extraction", "image", "canvas"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:computeFixedSurface",
+      "type": "function",
+      "name": "computeFixedSurface",
+      "summary": "Precomputes a 45x45 grid of the real network loss over two swept weights (all others frozen at their initial values) to build a static 3D loss landscape.",
+      "tags": ["loss-landscape", "surface", "precomputation"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:draw",
+      "type": "function",
+      "name": "draw",
+      "summary": "Renders the full canvas scene: input image, network layers and connections with forward-flow and gradient highlighting, trace dots, output bars, loss readout, and a loss sparkline.",
+      "tags": ["canvas", "rendering", "network-diagram"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:updatePlot",
+      "type": "function",
+      "name": "updatePlot",
+      "summary": "Builds and updates the Plotly 3D loss-surface plot with the current weight ball and a trailing path, using restyle on subsequent frames to keep the camera and surface stable.",
+      "tags": ["plotly", "3d", "loss-landscape"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:tick",
+      "type": "function",
+      "name": "tick",
+      "summary": "requestAnimationFrame main loop driving the phase state machine (forward, loss, backprop, update, next image) and recording loss and weight-position history.",
+      "tags": ["animation-loop", "state-machine", "requestanimationframe"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Public entry point that sizes the canvas, initializes weights, preloads the images, computes the fixed loss surface, and draws the first frame.",
+      "tags": ["initialization", "public-api"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:start",
+      "type": "function",
+      "name": "start",
+      "summary": "Starts the animation loop plus a periodic timer that refreshes the 3D plot only while the Training slide is active.",
+      "tags": ["public-api", "animation-loop"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:stop",
+      "type": "function",
+      "name": "stop",
+      "summary": "Stops the requestAnimationFrame loop and clears the plot-update timer.",
+      "tags": ["public-api", "lifecycle"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "function:lndw/training_demo.js:reset",
+      "type": "function",
+      "name": "reset",
+      "summary": "Stops and reinitializes the network, fixed loss surface, and loss/position histories to a clean starting state.",
+      "tags": ["public-api", "lifecycle"],
+      "filePath": "lndw/training_demo.js"
+    },
+    {
+      "id": "file:lndw/training_viz.js",
+      "type": "file",
+      "name": "training_viz.js",
+      "summary": "Global TrainingViz object implementing a simple step-through 'Training' slide that simulates a language model predicting the next word, showing correct/wrong prediction cards and a Plotly loss chart.",
+      "tags": ["training", "language-model", "visualization", "plotly", "simulation"],
+      "complexity": "moderate",
+      "languageNotes": "Object literal of methods with German UI strings; simulates model improvement by raising correctProb with each step; uses an IntersectionObserver to defer chart rendering until the container is visible.",
+      "filePath": "lndw/training_viz.js"
+    },
+    {
+      "id": "function:lndw/training_viz.js:render",
+      "type": "function",
+      "name": "render",
+      "summary": "Renders the sentence with the target word highlighted, the correct/wrong prediction cards, and the loss display for the current position.",
+      "tags": ["rendering", "dom", "prediction"],
+      "filePath": "lndw/training_viz.js"
+    },
+    {
+      "id": "function:lndw/training_viz.js:next",
+      "type": "function",
+      "name": "next",
+      "summary": "Advances one step by simulating a model prediction whose correctness improves over time, records loss/correctness history, and advances the word index (advancing slides when all examples are done).",
+      "tags": ["simulation", "state-machine", "loss"],
+      "filePath": "lndw/training_viz.js"
+    },
+    {
+      "id": "function:lndw/training_viz.js:renderChart",
+      "type": "function",
+      "name": "renderChart",
+      "summary": "Renders a Plotly marker-and-line loss chart colored by correctness, sized to its container.",
+      "tags": ["plotly", "loss-chart", "rendering"],
+      "filePath": "lndw/training_viz.js"
+    },
+    {
+      "id": "function:lndw/training_viz.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Renders the initial state and sets up an IntersectionObserver to (re)render the chart once the plot container becomes visible.",
+      "tags": ["initialization", "intersection-observer"],
+      "filePath": "lndw/training_viz.js"
+    },
+    {
+      "id": "file:lndw/training.html",
+      "type": "file",
+      "name": "training.html",
+      "summary": "Standalone draft presentation page hosting the 'Training' slide: a network canvas, a 3D loss-landscape container, a nav bar, and inline wiring that boots TrainingDemo through the LoadingTasks pipeline.",
+      "tags": ["presentation", "training", "neural-network", "markup"],
+      "complexity": "simple",
+      "languageNotes": "Loads vendor scripts (jquery/plotly/temml) plus presentation.js and training_demo.js; inline fitSlides() scales slide content to the viewport.",
+      "filePath": "lndw/training.html"
+    },
+    {
+      "id": "file:lndw/zipf_data.json",
+      "type": "config",
+      "name": "zipf_data.json",
+      "summary": "Precomputed word-frequency data (total/unique word counts and top-word frequency lists) for Finnegans Wake and the King James Bible, consumed by zipf.js to demonstrate Zipf's law.",
+      "tags": ["zipfs-law", "word-frequency", "dataset", "corpus"],
+      "filePath": "lndw/zipf_data.json"
+    },
+    {
+      "id": "file:lndw/zipf.js",
+      "type": "file",
+      "name": "zipf.js",
+      "summary": "Global ZipfViz object that fetches real word-frequency data and plots Zipf's law (rank vs. frequency, log-log) for Finnegans Wake and the King James Bible with word annotations.",
+      "tags": ["zipfs-law", "frequency-analysis", "statistics", "plotly", "data-viz"],
+      "complexity": "moderate",
+      "languageNotes": "Object literal of methods; async fetch with a graceful empty fallback; log-log Plotly layout with hand-placed annotations.",
+      "filePath": "lndw/zipf.js"
+    },
+    {
+      "id": "function:lndw/zipf.js:loadData",
+      "type": "function",
+      "name": "loadData",
+      "summary": "Fetches and caches zipf_data.json (with a graceful empty-object fallback) and returns the {finwake, kjv} frequency datasets.",
+      "tags": ["data-loading", "fetch", "caching"],
+      "filePath": "lndw/zipf.js"
+    },
+    {
+      "id": "function:lndw/zipf.js:buildTrace",
+      "type": "function",
+      "name": "buildTrace",
+      "summary": "Builds a Plotly markers-and-lines trace for a dataset's top frequencies with per-point hover text showing rank, word, and count.",
+      "tags": ["plotly", "trace", "data-viz"],
+      "filePath": "lndw/zipf.js"
+    },
+    {
+      "id": "function:lndw/zipf.js:buildAnnotations",
+      "type": "function",
+      "name": "buildAnnotations",
+      "summary": "Builds Plotly annotations labeling the top-8 words, mid-list ellipsis markers, and the last top-N word with its frequency.",
+      "tags": ["plotly", "annotations"],
+      "filePath": "lndw/zipf.js"
+    },
+    {
+      "id": "function:lndw/zipf.js:renderGermanZipf",
+      "type": "function",
+      "name": "renderGermanZipf",
+      "summary": "Assembles the log-log Zipf plot comparing the two corpora (top 200 words) with combined annotations and a fitted y-range, then renders it via Plotly.react.",
+      "tags": ["zipfs-law", "plotly", "log-log", "rendering"],
+      "filePath": "lndw/zipf.js"
+    },
+    {
+      "id": "function:lndw/zipf.js:init",
+      "type": "function",
+      "name": "init",
+      "summary": "Entry point that triggers renderGermanZipf to build the Zipf plot.",
+      "tags": ["initialization", "public-api"],
+      "filePath": "lndw/zipf.js"
+    }
+  ],
+  "edges": [
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:fwd", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:bwd", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:upd", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:extractFeatures", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:computeFixedSurface", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:draw", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:updatePlot", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:tick", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:start", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:stop", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_demo.js", "target": "function:lndw/training_demo.js:reset", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_viz.js", "target": "function:lndw/training_viz.js:render", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_viz.js", "target": "function:lndw/training_viz.js:next", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_viz.js", "target": "function:lndw/training_viz.js:renderChart", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training_viz.js", "target": "function:lndw/training_viz.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/zipf.js", "target": "function:lndw/zipf.js:loadData", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/zipf.js", "target": "function:lndw/zipf.js:buildTrace", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/zipf.js", "target": "function:lndw/zipf.js:buildAnnotations", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/zipf.js", "target": "function:lndw/zipf.js:renderGermanZipf", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/zipf.js", "target": "function:lndw/zipf.js:init", "type": "contains", "weight": 1.0 },
+    { "source": "file:lndw/training.html", "target": "file:lndw/training_demo.js", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:lndw/zipf.js", "target": "file:lndw/zipf_data.json", "type": "depends_on", "weight": 0.7 },
+    { "source": "file:lndw/training_demo.js", "target": "file:lndw/training_viz.js", "type": "related", "weight": 0.5 }
+  ]
+}

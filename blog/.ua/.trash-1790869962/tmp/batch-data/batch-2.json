@@ -1,0 +1,21 @@
+{
+ "batchIndex": 2,
+ "name": "Core Infrastructure & Course Shell",
+ "theme": "infra",
+ "project": "blog — From Big Bang to ChatGPT",
+ "outputFileName": "batch-2.json",
+ "files": [
+  {
+   "path": "literature.js",
+   "language": "javascript",
+   "sizeLines": 14657,
+   "fileCategory": "code",
+   "symbols": {
+    "functions": [],
+    "classes": []
+   },
+   "importMap": [],
+   "neighbors": []
+  }
+ ]
+}
