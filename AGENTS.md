@@ -627,7 +627,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |
-| `python3 blog/atlas/atlas_check.py` | Atlas audit (see above) | any check | manual |
+| `python3 blog/atlas_data/atlas_check.py` | Atlas audit (see above) | any check | manual |
 | `bash tests/smoke_tests` | Toolkit static analysis: `tests/find_*` (deep nesting, long functions, missing translations, unawaited async, uncalled functions, unused variables) — **skips** `find_unwrapped_base_functions` (network + `ack`) and `find_double_defined_functions` | any finding | Toolkit CI |
 | `bash run_tests` (needs Docker) | Full Toolkit: docker build (port 1122), in-browser Playwright suite (the real tests are `run_tests()` inside `tests.js`, run in Firefox then Chromium; the in-page result **is** the exit code), optional `--screenshot-test` pixel diff | failed tests | Toolkit CI |
 
