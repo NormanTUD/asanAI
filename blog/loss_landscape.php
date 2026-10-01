@@ -102,10 +102,10 @@ Then press **Run** and watch a point (the model) descend by gradient descent. Sw
 		<span class="ll-ctrl"><label>Steps</label><input type="range" id="ll-real-steps" min="20" max="400" value="160" oninput="LossLandscape.redrawSurface()"></span>
 	</div>
 	<div id="ll-real-surface" data-plot-theme="self" style="height:430px;"></div>
-	<p class="ll-cap">The colored surface is $\mathcal{L}(w, b)$; the bright line is the descent path. For the linear case it slides straight into the bowl's floor; for the bumpy cases it has to work around folds. This is the *real* terrain, computed — not a cartoon.</p>
+	<p class="ll-cap">The colored surface is the loss at every $(w, b)$; the bright line is the descent path. For the linear case it slides straight into the bowl's floor; for the bumpy cases it has to work around folds. This is the *real* terrain, computed from the network — not a cartoon.</p>
 </div>
 
-<div class="md topic-block" data-optionaltitle="Why the surface is bumpy at all" data-mathlevel="60">
+<div class="md" data-mathlevel="60" data-optionaltitle="Why the surface is bumpy at all">
 ### Where the Bumps Come From
 
 Two ingredients create the non-convexity. **Composition**: each layer is $W x + b$ then a bend $\sigma$, and bends *in a row* do not commute, so the surface is a stack of warped coordinate systems rather than a single quadratic bowl. **Many parameters, few constraints**: with $p \gg N$ (more weights than data points) there are *many* different $\theta$ that fit the data equally well, so the low-loss region is not a single point but a *manifold* — a long, thin, nearly flat valley. Both effects separate a deep network's landscape from the smooth bowl of a linear model above.
@@ -116,9 +116,9 @@ The surface for a **deep linear** network (no bends) was even solved *exactly*: 
 <div class="md">
 ## How Do You Even Study a Million-Dimensional Surface?
 
-You can't plot $\mathbb{R}^{10^{9}}$. So the field invented a set of *lenses* — here is the standard toolkit, and two of them are interactive below.
+You can't plot a space with a billion axes. So the field invented a set of *lenses* — here is the standard toolkit, and two of them are interactive below.
 
-1. **Random 2-D slices.** Pick two random directions $d_1, d_2$ in weight space and plot $\mathcal{L}$ along $\theta_0 + \alpha d_1 + \beta d_2$. A single slice is a fair sample of "a typical direction." **Li et al. (2018)** standardized this and, crucially, introduced **FilterNorm** — a normalization that makes the curvature comparable across layers so the slices are *readable* \cite[Li et al., 2018]{li2018losslandscape}.
+1. **Random 2-D slices.** Pick two random directions $d_1, d_2$ in weight space and plot the loss along the line $\theta_0 + \alpha d_1 + \beta d_2$. A single slice is a fair sample of "a typical direction." **Li et al. (2018)** standardized this and, crucially, introduced **FilterNorm** — a normalization that makes the curvature comparable across layers so the slices are *readable* \cite[Li et al., 2018]{li2018losslandscape}.
 2. **Count the critical points.** Instead of looking, *count*. Tools from the **statistical physics** of disordered systems let you estimate how many minima and saddles of each "height" exist. **Mehta et al.** imported these potential-energy-landscape methods directly to the XOR network and counted its minima and saddles like a chemist counts energy wells \cite[Mehta et al., 2018]{mehta2018lossxor}.
 3. **Trace the Hessian's eigenvalues.** The signs of the Hessian's eigenvalues tell you the *type* of a flat spot: all positive → minimum, all negative → maximum, mixed → saddle. In high dimensions the number of negative eigenvalues is a fingerprint. (The interactive in the next section does exactly this, in miniature.)
 4. **Connect the minima.** Probe whether two separately-trained solutions can be joined by a *low-loss path*. If yes, they are not really separate basins at all. We come back to this — it is the biggest surprise.
@@ -147,26 +147,26 @@ This is a *stylized* terrain — a hand-built function chosen to show each of th
 	<div id="ll-preset-info" class="ll-info"></div>
 </div>
 
-<div class="md topic-block" data-optionaltitle="Saddles, not local minima" data-mathlevel="65">
+<div class="md">
 ## The Plot Twist: The Traps Aren't Where You Thought
 
 Here is the result that upended the folklore, and it deserves a pull-quote:
 
 <div class="smart-quote" data-cite="dauphin2014saddle">
-For $N=1$, an exact saddle point is a 0-probability event. As $N$ grows it becomes exponentially unlikely to randomly pick all eigenvalues to be positive or negative, and therefore **most critical points are saddle points**.
+For N = 1, an exact saddle point is a 0-probability event. As N grows it becomes exponentially unlikely to randomly pick all eigenvalues to be positive or negative, and therefore most critical points are saddle points.
 </div>
 
 **Dauphin, Pascanu, Ganguli & Bengio** (2014, with the earlier preprint of **Pascanu, Dauphin, Ganguli & Bengio**) argued — from statistical physics, random-matrix theory, and direct evidence — that the real obstruction in high dimensions is the *proliferation of saddle points*, not of bad local minima \cite[Dauphin et al., 2014]{dauphin2014saddle}; \cite[Pascanu et al., 2014]{pascanu2014saddle}.
 
-Why saddles dominate: a critical point has $p$ eigenvalues of its Hessian. A **local minimum** needs *all* $p$ to be positive. For a point with moderate loss the eigenvalues sit around zero with random signs, so the chance that *all* $p$ land on the positive side is about $2^{-p}$ — astronomically small when $p$ is in the billions. A **saddle** (at least one negative) is the overwhelmingly likely outcome. The counting of these points is a classical result from the physics of random energy landscapes \cite[Fyodorov & Williams, 2007]{fyodorov2007complexity}.
+Why saddles dominate: a flat spot has $p$ "curvatures" (the eigenvalues of the Hessian). A **local minimum** needs *all* $p$ to be positive. Near a point with moderate loss those curvatures sit around zero with random signs, so the chance that *all* $p$ land on the positive side is about $2^{-p}$ — astronomically small when $p$ is in the billions. A **saddle** (at least one negative curvature) is the overwhelmingly likely outcome. Counting these points is a classical result from the physics of random energy landscapes \cite[Fyodorov & Williams, 2007]{fyodorov2007complexity}.
 
-So the "trap" is not a pit you fall into and never leave. It is a **flat saddle** — a point where the gradient is zero (so plain gradient descent would stall) but which has a downhill escape direction. And crucially, that stall is *temporary*: the random noise in mini-batch training gives the model little kicks that push it off flat saddles and onto steeper downhill. That single fact — *saddles stall, but noise unsticks them* — is a large part of why huge networks can be trained at all.
+So the "trap" is not a pit you fall into and never leave. It is a **flat saddle** — a spot where the slope is zero (so plain gradient descent would stall) but which still has a downhill escape direction. And crucially, that stall is *temporary*: the random noise in mini-batch training gives the model little kicks that push it off flat saddles and onto steeper downhill. That single fact — *saddles stall, but noise unsticks them* — is a large part of why huge networks can be trained at all.
 
 \marginfig{paraboloids_comparison.png}{**Left:** an *elliptic* paraboloid $z=x^2+y^2$ — a bowl, a minimum. **Right:** a *hyperbolic* paraboloid $z=x^2-y^2$ — a saddle. The two archetypes every critical point falls into. [Image: Snorri95, Wikimedia Commons, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Hyperbolic_vs_elliptic_paraboloid.png)}
 
 ### Reading a Saddle Off the Hessian
 
-The clean way to *detect* which kind of flat spot you are on is to look at the Hessian's eigenvalues. The interactive below simulates a point whose loss is at level $\lambda$: its curvature matrix splits into an always-convex part and an error-driven part, and you can watch the eigenvalues cross from all-positive (a minimum) into mixed-sign (a saddle) as the loss grows.
+The clean way to *detect* which kind of flat spot you are on is to look at those curvatures. The interactive below simulates a point whose loss is at level $\lambda$: its curvature matrix splits into an always-convex part and an error-driven part, and you can watch the curvatures cross from all-positive (a minimum) into mixed-sign (a saddle) as the loss grows.
 </div>
 
 <!-- ─── Interactive 3: Hessian eigenvalue readout ─── -->
@@ -175,13 +175,13 @@ The clean way to *detect* which kind of flat spot you are on is to look at the H
 		<span class="ll-ctrl"><label>Loss level $\lambda$ (0 = a minimum, large = high up)</label>
 			<input type="range" id="ll-hess-lam" min="0" max="4" step="0.05" value="0.6" oninput="LossLandscape.drawHessian()" style="width:190px;">
 		</span>
-		<span class="ll-readout">negative eigenvalues: <b id="ll-hess-neg">0</b></span>
+		<span class="ll-readout">negative curvatures: <b id="ll-hess-neg">0</b></span>
 		<span class="ll-readout">type: <b id="ll-hess-type">Minimum</b></span>
 	</div>
 	<div id="ll-hessian" data-plot-theme="self" style="height:260px;"></div>
 </div>
 
-<div class="md topic-block" data-optionaltitle="Reading a saddle, made precise" data-mathlevel="70">
+<div class="md" data-mathlevel="70" data-optionaltitle="Reading a saddle, made precise">
 The mechanism, made precise by **Choromanska et al.**, is that the Hessian of a network loss splits into a **positive-semidefinite** part (curvature from how the network fits) plus a part **linear in the errors**:
 
 $$H \;=\; \underbrace{\frac{2}{N}\sum_{i=1}^{N} J_i J_i^{\top}}_{H_{0}\ \ge\ 0\ :\ \text{always pushes to a minimum}} \;+\; \underbrace{\lambda\, H_{1}}_{\text{signs set by the errors}}$$
@@ -191,7 +191,7 @@ When the loss $\lambda$ is **small** (near the bottom), the $H_0$ part wins and 
 > **The punchline so far:** gradient descent doesn't fail by falling into a trap; it only *pauses* on flat saddles, and mini-batch noise is the breeze that carries it on. The "local minimum" you were warned about is, in a billion dimensions, a rarity.
 </div>
 
-<div class="md topic-block" data-optionaltitle="The minima that exist are fine" data-mathlevel="60">
+<div class="md" data-mathlevel="60" data-optionaltitle="The minima that exist are fine">
 ## And The Minima That *Do* Exist Are Mostly Good
 
 Even setting saddles aside, the older fear was that you might land in a **local minimum with high loss** — a genuine dead end. Two results essentially defused this for the networks we actually use.
@@ -211,7 +211,7 @@ In plain terms: two networks trained from scratch, with different random seeds, 
 > **Reframe.** Stop picturing a mountain range with isolated pits. Picture a **broad, gently undulating plain** with a few shallow dips and a network of low, wide valleys joining them. A downhill walk, nudged by noise, will find one of the dips. It does not matter which — they are all good, and they are all reachable.
 </div>
 
-<div class="md topic-block" data-optionaltitle="How you navigate the terrain" data-mathlevel="55">
+<div class="md" data-mathlevel="55" data-optionaltitle="How you navigate the terrain">
 ## Navigating: What the Optimizer Actually Does
 
 Given that picture — mostly flat, mostly benign, with saddles you can kick off — here is what the *choices* in an optimizer do to the walk:
@@ -224,7 +224,7 @@ Given that picture — mostly flat, mostly benign, with saddles you can kick off
 The deep point: the optimizer is not just a way to go downhill — it is a **biased sampler** over the landscape, and *which* minimum it lands in determines the model's quality. That leads to the final, practical question.
 </div>
 
-<div class="md topic-block" data-optionaltitle="Sharp vs flat minima — and why it matters" data-mathlevel="65">
+<div class="md" data-mathlevel="65" data-optionaltitle="Sharp vs flat minima — and why it matters">
 ## Not All Minima Are Equal: Sharpness
 
 Two minima can have the same (low) training loss but behave very differently on *unseen* data. A **sharp** minimum is a narrow spike — a small change in the weights (e.g. the noise of a different data batch, or a slightly different input) sends the loss soaring. A **flat** minimum sits in a broad bowl — the model stays good under small perturbations.
@@ -253,7 +253,7 @@ If the terrain is the problem, the obvious engineering answer is: **flatten it.*
 	<div id="ll-resnet-info" class="ll-info"></div>
 </div>
 
-<div class="md topic-block" data-optionaltitle="Why ResNets flatten the landscape" data-mathlevel="60">
+<div class="md" data-mathlevel="60" data-optionaltitle="Why ResNets flatten the landscape">
 ### The Identity Shortcut That Changed Everything
 
 **Residual networks** (He et al., 2015) stopped asking each block to learn a mapping $H(x)$ and instead asked it to learn only a **correction** $F(x)$, added to the input:
