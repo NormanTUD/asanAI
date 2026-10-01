@@ -58,9 +58,10 @@ def load():
     thrs = json.load(open('atlas/threads.json'))
     return ents, thrs
 
+_TH = []
 def thread_occ(ents, C, lift, base=0.01, kind='influence'):
     tot=0; occ=0
-    for t in thrs:
+    for t in _TH:
         k = t.get('kind','influence')
         if kind and k!=kind: continue
         if k=='journey':
