@@ -17030,5 +17030,116 @@ window.bibData = {
 		year: 2007,
 		url: "https://archive.org/details/topbook",
 		alternativetitle: "Morris, Topology Without Tears"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Earth's Habitability: The Magnetic Shield, the Atmosphere, and
+	 *  the Oxygen  (untold_history.php)
+	 *  Without these three, no air to breathe, no ozone shield, no food
+	 *  chain — and therefore no human to invent the Transformer.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"gilbert1600magnete": {
+		title: "De Magnete, Magneticisque Corporibus, et de Magno Magnete Tellure",
+		author: "William Gilbert",
+		year: 1600,
+		url: "https://www.gutenberg.org/ebooks/33810",
+		alternativetitle: "Gilbert, De Magnete (1600)"
+	},
+	"halley1692magnetic": {
+		title: "An Account of the Cause of the Change of the Variation of the Magnetic Needle; with an Hypothesis of the Structure of the Internal Parts of the Earth",
+		author: "Edmond Halley",
+		year: 1692,
+		url: "https://en.wikipedia.org/wiki/Edmond_Halley",
+		alternativetitle: "Halley, Phil. Trans. 16 (1692)"
+	},
+	"magnetic_field_wiki": {
+		title: "Earth's magnetic field",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Earth%27s_magnetic_field",
+		alternativetitle: "Earth's magnetic field (Wikipedia)"
+	},
+	"magnetosphere_wiki": {
+		title: "Magnetosphere",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Magnetosphere",
+		alternativetitle: "Magnetosphere (Wikipedia)"
+	},
+	"atmosphere_wiki": {
+		title: "Atmosphere of Earth",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Atmosphere_of_Earth",
+		alternativetitle: "Atmosphere of Earth (Wikipedia)"
+	},
+	"goe_wiki": {
+		title: "Great Oxidation Event",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Great_Oxidation_Event",
+		alternativetitle: "Great Oxidation Event (Wikipedia)"
+	},
+	"helmont1648ortus": {
+		title: "Ortus Medicinae, vel Opera et Opuscula Omnia",
+		author: "Jan Baptist van Helmont",
+		year: 1648,
+		url: "https://en.wikipedia.org/wiki/Jan_Baptist_van_Helmont",
+		alternativetitle: "van Helmont, Ortus Medicinae (1648, posthumous)"
+	},
+	"hales1727vegetable": {
+		title: "Vegetable Staticks",
+		author: "Stephen Hales",
+		year: 1727,
+		url: "https://en.wikipedia.org/wiki/Stephen_Hales",
+		alternativetitle: "Hales, Vegetable Staticks (1727)"
+	},
+	"black1756fixedair": {
+		title: "Experiments upon Magnesia Alba, Quicklime, and some other Alkaline Substances",
+		author: "Joseph Black",
+		year: 1756,
+		url: "https://en.wikipedia.org/wiki/Joseph_Black",
+		alternativetitle: "Black, 'On Fixed Air' (1756)"
+	},
+	"priestley1771airs": {
+		title: "Observations on Different Kinds of Air",
+		author: "Joseph Priestley",
+		year: 1772,
+		url: "https://doi.org/10.1098/rstl.1772.0001",
+		alternativetitle: "Priestley, Phil. Trans. 62 (1772)"
+	},
+	"scheele1777airfire": {
+		title: "Chemische Abhandlung von der Luft und dem Feuer",
+		author: "Carl Wilhelm Scheele",
+		year: 1777,
+		url: "https://en.wikipedia.org/wiki/Carl_Wilhelm_Scheele",
+		alternativetitle: "Scheele, Chemische Abhandlung von der Luft und dem Feuer (1777)"
+	},
+	"ingenhousz1779experiments": {
+		title: "Experiments upon Vegetables, Discovering Their Great Power of Purifying the Common Air in the Sun-shine, and of Injuring it in the Shade and at Night",
+		author: "Jan Ingenhousz",
+		year: 1779,
+		url: "https://www.loc.gov/item/18000763/",
+		alternativetitle: "Ingenhousz, Experiments upon Vegetables (1779)"
+	},
+	"senebier1783recherches": {
+		title: "Recherches sur l'influence de la lumière solaire pour métamorphoser l'air fixe en air pur par la végétation",
+		author: "Jean Senebier",
+		year: 1783,
+		url: "https://archive.org/details/bub_gb_HF8S5jGE2ssC",
+		alternativetitle: "Senebier, Recherches sur l'influence de la lumière solaire (1783)"
+	},
+	"lavoisier1789traite": {
+		title: "Traité Élémentaire de Chimie",
+		author: "Antoine Lavoisier",
+		year: 1789,
+		url: "https://en.wikipedia.org/wiki/Traité_élémentaire_de_chimie",
+		alternativetitle: "Lavoisier, Traité Élémentaire de Chimie (1789)"
+	},
+	"desaussure1804recherches": {
+		title: "Recherches chimiques sur la végétation",
+		author: "Nicolas-Théodore de Saussure",
+		year: 1804,
+		url: "https://en.wikipedia.org/wiki/Nicolas-Théodore_de_Saussure",
+		alternativetitle: "de Saussure, Recherches chimiques sur la végétation (1804)"
 	}
 };
