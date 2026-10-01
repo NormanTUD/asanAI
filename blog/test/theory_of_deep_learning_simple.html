@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die mathematische Theorie des Deep Learning — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1000px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h1 em{font-style:normal;color:var(--acc)}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:78ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:72ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].m::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc3)} .ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)} .ro .box .v.p{color:var(--acc2)}
+.badge-out{font-family:var(--mono);font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px;border:1px solid transparent}
+.badge-out.ok{background:rgba(110,232,138,.12);color:var(--acc5);border-color:rgba(110,232,138,.3)}
+.badge-out.warn{background:rgba(255,200,96,.12);color:var(--acc3);border-color:rgba(255,200,96,.3)}
+.badge-out.bad{background:rgba(255,122,192,.12);color:var(--acc2);border-color:rgba(255,122,192,.3)}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+canvas{display:block;width:100%;border-radius:11px}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--acc);line-height:1.1}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.aha{background:linear-gradient(150deg,rgba(110,232,138,.09),rgba(13,18,33,.6));border:1px solid rgba(110,232,138,.3);border-radius:13px;padding:15px 17px;margin:18px 0}
+.aha .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc5);font-weight:660;margin-bottom:7px}
+.aha p{margin-bottom:8px;font-size:14px}
+.aha p:last-child{margin-bottom:0}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+footer a{color:var(--acc)}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ THEORIE DES DEEP LEARNING · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Start</a>
+    <a href="#spannung">Die Spannung</a>
+    <a href="#maschine">Die Maschine</a>
+    <a href="#universal">Universalität</a>
+    <a href="#tiefe">Tiefe &gt; Breite</a>
+    <a href="#yaro">Yarotsky: x² bauen</a>
+    <a href="#optimieren">Optimieren</a>
+    <a href="#general">Generalisierung</a>
+    <a href="#adversarial">Adversarial</a>
+    <a href="#grenzen">Grenzen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: theory_of_deep_learning.html · 14 Kapitel, 23 Ahas</div>
+  <h1>Warum funktioniert<br>Deep <em>Learning</em>?</h1>
+  <p class="lead">Neuronale Netze erkennen Gesichter, übersetzen Sprachen, schreiben Code. Die <b>Mathematik</b> dahinter beantwortet drei Fragen: Was <b>kann</b> ein Netz überhaupt darstellen (Approximation)? Wie <b>findet</b> man gute Gewichte (Optimierung)? Und warum funktioniert es auf <b>nie gesehene</b> Daten (Generalisierung)? Diese Seite beantwortet sie mit neun Experimenten, die du selbst spielst — Schulmathematik genügt.</p>
+  <div class="kpi">
+    <div class="c"><div class="big">3</div><div class="lab">Säulen: Approximation · Optimierung · Generalisierung</div></div>
+    <div class="c"><div class="big" style="color:var(--acc2)">2ⁿ⁻¹</div><div class="lab">Zacken, die n verkettete „Hut“-Funktionen erzeugen</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">≈ 60 Mio.</div><div class="lab">maximale Stücke mit nur 30 Neuronen, wenn man tief baut</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">10⁻²⁴</div><div class="lab">Gradient nach 40 Sigmoid-Schichten (0.25⁴⁰)</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">So liest du diese Seite</span>
+  <b>①</b> Die eine Spannung (mehr Daten → besser) → <b>②</b> wie ein Netz aussieht → <b>③</b> warum es alles darstellen kann → <b>④</b> warum Tiefe so mächtig ist → <b>⑤</b> Yarotskys Trick, aus Knicken x² zu bauen → <b>⑥</b> wie man trainiert → <b>⑦</b> warum Generalisierung klappt, obwohl sie eigentlich nicht dürfte → <b>⑧</b> Adversarial Examples → <b>⑨</b> Grenzen + Test. Jede Demobox ist ein Spielplatz: ziehe Regler, klicke Knöpfe.
+  </div>
+</section>
+
+<section id="spannung">
+  <h2>① Die Ausgangsfrage: eine einzige Spannung</h2>
+  <p>Wir sehen <strong>endlich viele Beispiele</strong> und wollen eine <strong>Regel</strong> finden, die auch für <strong>nie gesehene Fälle</strong> gilt. Das Dilemma: Ein zu einfaches Modell verpasst die Regel (Underfitting). Ein zu komplexes lernt die Beispiele auswendig (Overfitting) und erfindet zwischen ihnen vor. Die gesamte Theorie ist der Versuch, die <em>richtige Mitte</em> zu finden — und zu erklären, warum große Netze sie trotzdem erreichen.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Overfitting live: Polynomgrad vs. Anzahl Beispiele</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="s0canvas"></canvas>
+      <div class="leg"><span><i style="background:var(--acc)"></i>wahre Regel</span><span><i style="background:var(--acc2)"></i>gepastes Modell</span><span><i style="background:#fff"></i>Trainingspunkte</span></div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Trainingsbeispiele m</span><b id="s0mV">8</b></div>
+        <input type="range" id="s0m" min="3" max="40" value="8" step="1">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Modell-Komplexität (Polynomgrad)</span><b id="s0dV">2</b></div>
+        <input type="range" id="s0d" min="1" max="12" value="2" step="1" class="m">
+      </div>
+      <div class="btnrow"><button id="s0new">Neue Stichprobe ziehen</button></div>
+      <div class="ro">
+        <div class="box"><div class="k">Trainings-Fehler</div><div class="v" id="s0tr">–</div></div>
+        <div class="box"><div class="k">Wahrer (Test-)Fehler</div><div class="v p" id="s0te">–</div></div>
+      </div>
+      <div id="s0out" class="badge-out ok">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #1 — Die zentrale Spannung</div>
+  <p>Setze den Grad auf <b>12</b> bei nur 8 Beispielen: Trainings-Fehler ≈ 0 (die rote Kurve trifft jeden Punkt), aber der Test-Fehler explodiert. Das Modell hat die Punkte <strong>auswendig gelernt</strong>. Die Theorie muss erklären: Wie groß darf ein Netz sein, damit es die Wahrheit <em>darstellen</em> kann, aber nicht alles auswendig lernt — und wie findet man es trotzdem?</p></div>
+</section>
+
+<section id="maschine">
+  <h2>② Die Maschine: Schichten, Gewichte, Knicke</h2>
+  <p>Ein neuronales Netz ist nichts Mysteriöses. Es ist eine Kette von „<strong>Gewichte × Eingabe + Verschiebung</strong>“, zwischen denen immer eine <strong>Knick-Funktion</strong> (Aktivierung, typisch ReLU) steckt. Jeder Knick erzeugt eine scharfe Kante im Ausgabeverlauf. Ein ReLU-Netz ist deshalb im Kern eine <b>stückweise lineare Funktion</b> — eine Faltkarte aus vielen kleinen geraden Flächenstücken. Diese Perspektive ist der Schlüssel zu fast allem, was folgt.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Verschwindende Gradienten: wie stark überlebt der Rückwärtsfluss?</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Beim Lernen wird der Fehler rückwärts durch die Schichten multipliziert mit der Ableitung der Aktivierung. Nach n Schichten bleibt <code>(max σ′)ⁿ</code> übrig. Bei Sigmoid ist max σ′ = 0.25 — nach 40 Schichten ist nichts mehr übrig. Bei ReLU ist σ′ ∈ {0,1} — nichts schrumpft. <em>Deshalb</em> hat ReLU das moderne Deep Learning ermöglicht.</p>
+      <div class="btnrow">
+        <button id="vgSig" class="on">Sigmoid (max σ′ = 0.25)</button>
+        <button id="vgRelu">ReLU (max σ′ = 1)</button>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Verkettungstiefe n</span><b id="vgV">10</b></div>
+        <input type="range" id="vg" min="1" max="40" value="10" step="1">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">(max σ′)ⁿ — Rest des Gradienten</div><div class="v" id="vgGrad">–</div></div>
+      </div>
+      <div id="vgOut" class="badge-out warn">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #2 — ReLU gewinnt, weil es den Gradienten nicht erdrosselt</div>
+  <p><code>0.25⁴⁰ ≈ 10⁻²⁴</code>: Bei Sigmoid lernen die vorderen Schichten nie, weil der Gradient beim Zurückpropagieren zu Staub zerfällt. ReLU hat σ′ ∈ {0,1}, also kein Schrumpfen. Nebenprodukt: Ist die Eingabe immer negativ, ist σ′ = 0 — das Neuron ist <strong>tot</strong>. Leaky-ReLU oder He-Initialisierung reparieren das.</p></div>
+</section>
+
+<section id="universal">
+  <h2>③ Universalität: Netze können (fast) alles</h2>
+  <p>Die erste große Frage: Gibt es Funktionen, die ein Netz <em>prinzipiell</em> nicht darstellen kann? Antwort: <strong>nein</strong> — schon mit <strong>einer</strong> versteckten Schicht, wenn man sie breit genug macht (Satz von Leshno–Lin–Pinkus–Schocken, 1993). Jedes ReLU-Neuron ist ein Knick; addiert man viele Knicke mit passenden Höhen, kann man jede stückweise lineare Kurve bauen — und damit jede stetige Funktion beliebig gut annähern.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Baue eine Zielkurve aus Neuronen-Knikken</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="uaPlot"></canvas>
+      <div class="leg"><span><i style="background:var(--acc)"></i>Zielfunktion</span><span><i style="background:var(--acc2)"></i>Netz (stückweise linear)</span><span><i style="background:var(--acc2);border-radius:50%"></i>Stützstellen</span></div>
+      <div class="btnrow">
+        <button class="on" data-f="zigzag">Zickzack (10 Zacken)</button>
+        <button data-f="runge">Runge-Funktion</button>
+        <button data-f="step">Stufensprung</button>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Breite n (Anzahl Neuronen)</span><b id="uaNV">8</b></div>
+        <input type="range" id="uaN" min="1" max="120" value="8" step="1">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">max. Fehler zur Zielkurve</div><div class="v" id="uaErr">–</div></div>
+        <div class="box"><div class="k">Parameter</div><div class="v m" id="uaP">–</div></div>
+      </div>
+      <div id="uaOut" class="badge-out warn">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #3 — Universalität sagt nichts über die Größe</div>
+  <p>Der Satz garantiert nur: <em>irgendwann</em> wird die Approximation gut. Er sagt nicht, <strong>wie viele</strong> Neuronen man braucht. Für den Zickzack mit 10 Zacken brauchst du ≈ 20 Neuronen für kleinen Fehler. Genau diese Frage — wie viele Parameter für Genauigkeit ε? — ist die eigentlich interessante, und sie hat eine <strong>gute</strong> Antwort (Tiefe!) und eine <strong>schlechte</strong> (Fluch der Dimensionalität).</p></div>
+</section>
+
+<section id="tiefe">
+  <h2>④ Das Herzstück: Tiefe multipliziert, Breite addiert</h2>
+  <p>Wenn man Netze <strong>addiert</strong> (breite Schicht), addieren sich die Knicke. Wenn man Netze <strong>verkettet</strong> (tiefe Schichten), <em>multiplizieren</em> sie sich. Das Schlüsselbeispiel: Die „Hut“-Funktion <code>h₁(x) = max(0,2x) − max(0,4x−2)</code> aus 2 ReLUs hat 2 Zacken. Verkettet man sie n-mal, bekommt man <code>2ⁿ⁻¹</code> Zacken — mit nur <strong>O(n)</strong> Parametern.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Sägezahn-Telemetrie: Zacken verdoppeln sich pro Schicht</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="sawPlot"></canvas>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Verkettungen n (Tiefe)</span><b id="sawNV">3</b></div>
+        <input type="range" id="sawN" min="1" max="8" value="3" step="1">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Zacken</div><div class="v" id="sawTeeth">–</div></div>
+        <div class="box"><div class="k">Netzgröße (Parameter)</div><div class="v m" id="sawSize">–</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Das Stücke-Budget: gleiche 30 Neuronen, verschiedene Aufteilungen</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="budPlot"></canvas>
+      <p style="font-size:12.5px;margin-top:10px">Satz (Telgarsky): Ein ReLU-Netz mit Tiefe L und Breite w hat höchstens <code>(2w)^L</code> stückweise lineare Stücke. Bei fixer Gesamtzahl N = 30 Neuronen ist die beste Aufteilung <em>tief und schmal</em> (w = 3, L ≈ 10).</p>
+      <div class="ro">
+        <div class="box"><div class="k">beste Aufteilung</div><div class="v" id="budBest">–</div></div>
+        <div class="box"><div class="k">max. Stücke (tief)</div><div class="v m" id="budMax">–</div></div>
+        <div class="box"><div class="k">max. Stücke (flach)</div><div class="v p" id="budFlat">–</div></div>
+      </div>
+      <div id="budOut" class="badge-out ok">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #4 — Tiefe schlägt Breite dramatisch</div>
+  <p>30 Neuronen auf <b>1 Schicht</b> → höchstens ~31 Stücke. Auf <b>10 Schichten à 3 Neuronen</b> → bis zu 6¹⁰ ≈ <b>60 Millionen</b> Stücke. Dasselbe Budget, Millionenfacher Reichweite. Da die Approximationsgüte wie p⁻² mit der Stückzahl skaliert, ist das ein gewaltiger Unterschied. <em>Das</em> ist der Grund, warum Netze tief gebaut werden.</p></div>
+  <div class="note w"><span class="h">Die unangenehme Wahrheit</span>
+  In der Praxis erreichen zufällig initialisierte tiefe Netze diese Zahlen <em>nicht annähernd</em> — der erwartete Stücke-Wert wächst nur <strong>linear</strong> in der Tiefe (Hanin &amp; Rolnick). Die exponentiellen Schranken sind erreichbar, aber nicht typisch. Die Theorie liefert Obergrenzen, keine Versprechen.</div>
+</section>
+
+<section id="yaro">
+  <h2>⑤ Yarotskys Trick: aus Sägezähnen wird x²</h2>
+  <p>Hier ist eines der <strong>schönsten Resultate</strong> der Theorie. ReLU ist stückweise linear — wie soll daraus eine <em>geschwungene</em> Kurve wie x² werden? Dmitry Yarotsky (2017) zeigte: Die Sägezähne aus Kapitel 4 bilden eine <strong>Teleskopsumme</strong>, die x² <em>exponentiell</em> gut annähert. Die stückweise lineare Interpolante von x² an 2ⁿ Stützstellen lässt sich mit nur <strong>O(n)</strong> Parametern bauen — nicht O(2ⁿ)!</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>x² approximieren: exponentiell genau, linear groß</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="sqPlot"></canvas>
+      <div class="leg"><span><i style="background:var(--acc)"></i>x²</span><span><i style="background:var(--acc2)"></i>Netz-Approximation (2ⁿ Stützstellen)</span></div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Genauigkeitsstufe n</span><b id="sqNV">3</b></div>
+        <input type="range" id="sqN" min="1" max="10" value="3" step="1">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">max. Fehler</div><div class="v p" id="sqErr">–</div></div>
+        <div class="box"><div class="k">Schranke 2⁻²ⁿ⁻¹</div><div class="v" id="sqBound">–</div></div>
+        <div class="box"><div class="k">Netzgröße (Teleskop)</div><div class="v e" id="sqSize">–</div></div>
+        <div class="box"><div class="k">Stützstellen</div><div class="v m" id="sqKnots">–</div></div>
+      </div>
+      <div id="sqOut" class="badge-out ok">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #5 — Exponentielle Konvergenz bei konstantem Mehraufwand</div>
+  <p>Der Fehler fällt wie <code>2⁻²ⁿ</code>, die Netzgröße wächst nur wie <code>7n</code>. <strong>Doppelte Genauigkeit kostet nur +7 Parameter.</strong> Bei n = 10: Fehler ≈ 5·10⁻⁷ mit nur 70 Parametern. Bei <em>fester</em> Tiefe wäre das unmöglich — dort fällt der Fehler nur polynomiell. Und mit der Polarisation <code>xy = ((x+y)² − (x−y)²)/4</code> kann das Netz dann auch <strong>multiplizieren</strong> — und damit (via Monom-Baum) jedes Polynom, und damit jede glatte Funktion.</p></div>
+</section>
+
+<section id="optimieren">
+  <h2>⑥ Wie findet man die Gewichte? Gradientenabstieg</h2>
+  <p>Die zweite Säule: <strong>Optimierung</strong>. Die Gewichte sind ein riesiges Set von Zahlen. Um sie zu finden, misst man, in welche Richtung der Fehler <em>am stärksten sinkt</em> (der Gradient), und macht einen kleinen Schritt in diese Richtung — wieder und wieder. Das Problem: Die Fehlerlandschaft ist <em>kein</em> glatter Berg. Sie hat hunderte Tälern und Sattelpunkte.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Gradientenabstieg über eine unwegsame Landschaft</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="gdPlot"></canvas>
+      <p style="font-size:12.5px;margin-top:10px">Dunkel = niedriger Fehler. Der weiße Punkt klettert bergab. Nutze „Ein Schritt“, um den Weg zu sehen; „Auto“ läuft 20 Schritte pro Klick.</p>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Lernrate</span><b id="gdLV">0.05</b></div>
+        <input type="range" id="gdL" min="1" max="100" value="5" class="m">
+      </div>
+      <div class="btnrow">
+        <button id="gdStep">Ein Schritt</button>
+        <button id="gdAuto">20 Schritte</button>
+        <button id="gdReset">Zurücksetzen</button>
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Aktueller Fehler</div><div class="v" id="gdErr">–</div></div>
+        <div class="box"><div class="k">Schritte</div><div class="v m" id="gdCnt">0</div></div>
+      </div>
+      <div id="gdOut" class="badge-out ok">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #6 — Sattelpunkte, keine lokalen Minima</div>
+  <p>Das klassische Schreckgespenst — „das Netz steckt in einem schlechten lokalen Minimum“ — ist in hohen Dimensionen fast irrelevant. Was dort dominant ist, sind <strong>Sattelpunkte</strong> (in einer Richtung bergauf, in einer anderen bergab). Und selbst die kann man überwinden: Sehr <b>breite</b> Netze werden während des Trainings überraschend <em>linear</em> (Neural-Tangent-Kernel-Theorie) — die Landschaft verhält sich dann fast konvex, und Gradientenabstieg findet zuverlässig ein gutes Minimum.</p></div>
+</section>
+
+<section id="general">
+  <h2>⑦ Generalisierung: das große Paradox</h2>
+  <p>Die dritte Säule. Die klassische Statistik sagt: <em>mehr Parameter als Datenpunkte</em> → Katastrophe, das Modell kann nur noch auswendig lernen. Aber ImageNet-Modelle haben bis zu <strong>1000× mehr Parameter als Trainingsbilder</strong> — und funktionieren hervorragend. Warum?</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Double Descent: der Test-Fehler über der Modellgröße</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="ddPlot"></canvas>
+      <div class="leg"><span><i style="background:var(--txt-faint)"></i>klassische Vorhersage</span><span><i style="background:var(--acc)"></i>beobachteter Test-Fehler</span><span><i style="background:var(--acc2)"></i>Überparametrisierungsgrenze</span></div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Modellgröße (Parameter / Datenpunkte)</span><b id="ddV">1.00</b></div>
+        <input type="range" id="ddX" min="0" max="200" value="100" class="v">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Klassische Vorhersage</div><div class="v" id="ddClass" style="color:var(--txt-faint)">–</div></div>
+        <div class="box"><div class="k">Tatsächlich (Double Descent)</div><div class="v e" id="ddReal">–</div></div>
+      </div>
+      <div id="ddOut" class="badge-out warn">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #7 — Mehr Parameter sind Heil, kein Fluch</div>
+  <p>Rechts von der Überparametrisierungsgrenze <em>sinkt</em> der Test-Fehler erneut — statt zu explodieren. Der Mechanismus: Sehr breite Netze werden im Training linear (NTK), und Gradientenabstieg findet in der Überparametrisierung systematisch die <strong>einfachsten</strong> Lösungen. Einfache Lösungen generalisieren. Das klassische Paradox „zu viele Parameter = Auswendiglernen“ gilt für moderne Netze nicht.</p></div>
+</section>
+
+<section id="adversarial">
+  <h2>⑧ Adversarial Examples: der Panda, der ein Wombat wird</h2>
+  <p>Ein Netz ist zu 99 % sicher, dass ein Bild einen Panda zeigt. Fügt man winzige Rauschen hinzu — für das menschliche Auge <em>unsichtbar</em> — wird es zum Wombat. Das ist kein Bug, sondern eine <strong>Notwendigkeit</strong> in hohen Dimensionen: Die Entscheidungsgrenze ist eine dünne Wand, und „unsichtbar“ heißt in 300 000 Dimensionen nur „sehr kleine Länge“.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der kürzeste feindliche Stoß</h4><span class="tag">live</span></div>
+    <div class="demo-body">
+      <canvas id="advPlot"></canvas>
+      <p style="font-size:12.5px;margin-top:10px">Der Punkt ist ein „Panda“-Beispiel nahe der Entscheidungsgrenze. Der Pfeil zeigt den <b>kürzesten</b> Stoß, der die Klassifikation kippt. Näher an der Grenze → kürzerer Stoß.</p>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Entfernung zur Entscheidungsgrenze</span><b id="advDV">0.05</b></div>
+        <input type="range" id="advD" min="1" max="40" value="5" class="v">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Benötigter Stoß (L2)</div><div class="v p" id="advStep">–</div></div>
+        <div class="box"><div class="k">Modell-Konfidenz vorher</div><div class="v" id="advConf">–</div></div>
+        <div class="box"><div class="k">Klasse nach Stoß</div><div class="v m" id="advAfter">–</div></div>
+      </div>
+      <div id="advOut" class="badge-out bad">–</div>
+    </div>
+  </div>
+  <div class="aha"><div class="h">Aha #8 — Warum „unsichtbar“ trotzdem genügt</div>
+  <p>Bei Bildern sind das 300 000+ Zahlen. Ein Stoß der Länge 0.05 pro Zahl ist für Menschen unsichtbar — aber die Entscheidungsgrenze liegt in genau dieser Distanz. Die Theorie sagt nicht „Netze sind schlecht“, sondern: <strong>Glatt klassifizierende Funktionen in hohen Dimensionen <em>müssen</em> feindliche Beispiele haben.</strong> Abhilfe (z. B. adversariales Training) verschiebt die Grenze weiter weg, aber eliminiert das Problem nicht.</p></div>
+</section>
+
+<section id="grenzen">
+  <h2>⑨ Grenzen und offene Fragen</h2>
+  <ul>
+    <li><b>Die Schranken sind optimistisch:</b> Zufällig initialisierte Netze erreichen die exponentiellen Stücke-Zahlen praktisch nicht (Erwartungswert wächst linear in der Tiefe).</li>
+    <li><b>Yarotskys Gewichte sind nicht stetig:</b> Die optimale Gewichtsauswahl für die schnellste Konvergenz springt unstetig — ein stabiler Trainingsalgorithmus kann sie nicht erreichen.</li>
+    <li><b>Architekturen:</b> Warum ResNets, CNNs und Transformer jeweils <em>so</em> funktionieren, ist nicht vollständig verstanden. Die Theorie erklärt die <em>Prinzipien</em> (Tiefe, Stückweise Linearität, NTK), nicht die <em>Rezepte</em>.</li>
+    <li><b>Fluch der Dimensionalität:</b> Für Funktionen auf [0,1]ᵈ wächst der Parameterbedarf wie ε⁻ᵈ — in 10 Dimensionen wird selbst Yarotsky teuer. Tiefe halbiert den Exponenten (ε⁻ᵈᐟ²), aber löst ihn nicht auf.</li>
+    <li><b>Honesty corner:</b> Alle Diagramme hier sind didaktische 1D-/2D-Nachstellungen. Die echten Beweise (Telgarsky 2016, Yarotsky 2017, Jacot et al. 2018, NTK) sind mehrere Dutzend Seiten lang — aber die <em>Ideen</em> dahinter sind, was du hier gespielt hast.</li>
+  </ul>
+</section>
+
+<section id="quiz">
+  <h2>⑩ Teste dein Verständnis</h2>
+  <div class="quiz" id="quiz"></div>
+  <div class="note e"><span class="h">Ergebnis</span><span id="quizScore">–</span></div>
+</section>
+
+<footer>
+  <p>Einfache interaktive Begleitung zu <a href="theory_of_deep_learning.html">theory_of_deep_learning.html</a> (14 Kapitel). Alle Experimente laufen lokal im Browser — keine Daten verlassen diese Seite.<br>
+  Quellen: Telgarsky (2016) · Yarotsky (2017) · Jacot et al./NTK (2018) · Belkin et al./Double Descent (2019) · Szegedy et al./Adversarial (2014)</p>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function sq(v){return v*v;}
+  function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function fmtBig(v){
+    if(v>=1e9)return (v/1e9).toFixed(v<1e10?1:0)+" Mrd.";
+    if(v>=1e6)return (v/1e6).toFixed(v<1e7?1:0)+" Mio.";
+    if(v>=1e3)return (v/1e3).toFixed(v<1e4?1:0)+"k";
+    return Math.round(v).toString();
+  }
+  var TEAL='#5ee0d0', PINK='#ff7ac0', AMBER='#ffc860', VIOLET='#8a7cff', GREEN='#6ee88a', FAINT='#64708c';
+  function setupCanvas(id){
+    var cv=$(id);
+    var w=cv.parentElement.clientWidth-0, h=Math.round(w*0.62);
+    if(cv.width!==w){cv.width=w;cv.height=h;}
+    return {cv:cv,g:cv.getContext('2d'),W:w,H:h};
+  }
+  function frame(g,W,H){g.clearRect(0,0,W,H);g.fillStyle='#060910';g.fillRect(0,0,W,H);}
+
+  // ---------- ① overfitting ----------
+  var trueFn=function(x){return 0.5+0.35*Math.sin(2*Math.PI*x)+0.15*Math.sin(4*Math.PI*x);};
+  var samples=[];
+  function newSamples(){
+    var m=+($('s0m').value);
+    var r=rng32((Date.now()&0xffff)^m*7);
+    samples=[];
+    for(var i=0;i<m;i++){var x=r();samples.push([x,trueFn(x)+(r()-0.5)*0.08]);}
+  }
+  function polyFit(pts,d){
+    var n=d+1,i,j,k,p;
+    var A=[],b=[];
+    for(i=0;i<n;i++){A.push(new Array(n).fill(0));b.push(0);}
+    for(p=0;p<pts.length;p++){
+      var x=pts[p][0],y=pts[p][1];
+      for(i=0;i<n;i++){
+        b[i]+=Math.pow(x,i)*y;
+        for(j=0;j<n;j++){A[i][j]+=Math.pow(x,i+j);}
+      }
+    }
+    for(i=0;i<n;i++){
+      var piv=A[i][i]||1e-9;
+      for(j=i;j<n;j++){A[i][j]/=piv;}
+      b[i]/=piv;
+      for(k=0;k<n;k++){
+        if(k===i)continue;
+        var f=A[k][i];
+        for(j=i;j<n;j++){A[k][j]-=f*A[i][j];}
+        b[k]-=f*b[i];
+      }
+    }
+    return b;
+  }
+  function polyEval(c,x){var s=0;for(var i=c.length-1;i>=0;i--){s=s*x+c[i];}return s;}
+  function drawS0(){
+    var m=+($('s0m').value),d=+($('s0d').value);
+    $('s0mV').textContent=m;$('s0dV').textContent=d;
+    if(samples.length!==m)newSamples();
+    var c=polyFit(samples,d);
+    var S=setupCanvas('s0canvas'),g=S.g,W=S.W,H=S.H;
+    var pad={l:30,r:10,t:14,b:24},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(clamp(y,-0.2,1.2)+0.2)/1.4*ph;}
+    frame(g,W,H);
+    g.strokeStyle=TEAL;g.lineWidth=2;g.setLineDash([5,4]);
+    g.beginPath();
+    for(var i=0;i<=200;i++){var x=i/200,px=X(x),py=Y(trueFn(x));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle=PINK;g.lineWidth=2.5;
+    g.beginPath();
+    for(i=0;i<=200;i++){x=i/200;px=X(x);py=Y(clamp(polyEval(c,x),-0.2,1.2));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    for(i=0;i<samples.length;i++){
+      g.beginPath();g.arc(X(samples[i][0]),Y(samples[i][1]),4,0,Math.PI*2);
+      g.fillStyle='#fff';g.fill();g.strokeStyle='#0d1322';g.lineWidth=1.5;g.stroke();
+    }
+    var tr=0;for(i=0;i<samples.length;i++){tr+=sq(polyEval(c,samples[i][0])-samples[i][1]);}tr=Math.sqrt(tr/samples.length);
+    var te=0;for(i=0;i<=200;i++){x=i/200;te+=sq(polyEval(c,x)-trueFn(x));}te=Math.sqrt(te/201);
+    $('s0tr').textContent=tr.toFixed(3);
+    $('s0te').textContent=te.toFixed(3);
+    var out=$('s0out');
+    if(tr<0.02&&te>0.08){out.className='badge-out bad';out.textContent='Overfitting: Punkte getroffen — Wahrheit ignoriert';}
+    else if(te<0.03){out.className='badge-out ok';out.textContent='gut: trifft die wahre Regel';}
+    else{out.className='badge-out warn';out.textContent='suboptimal — zu wenig Daten oder falsche Komplexität';}
+  }
+  $('s0m').addEventListener('input',drawS0);
+  $('s0d').addEventListener('input',drawS0);
+  $('s0new').addEventListener('click',function(){newSamples();drawS0();});
+
+  // ---------- ② vanishing gradient ----------
+  var vgAct='sig';
+  function drawVG(){
+    var n=+($('vg').value);
+    $('vgV').textContent=n;
+    var maxDer=vgAct==='sig'?0.25:1;
+    var grad=Math.pow(maxDer,n);
+    $('vgGrad').textContent=grad<1e-4?grad.toExponential(1):grad.toFixed(5);
+    var out=$('vgOut');
+    if(vgAct==='sig'){
+      if(grad<1e-6){out.className='badge-out bad';out.textContent='Gradient erstickt — vordere Schichten lernen nie';}
+      else if(grad<0.05){out.className='badge-out warn';out.textContent='Gradient wird schwach — Training kriecht';}
+      else{out.className='badge-out ok';out.textContent='Gradient ok (noch)';}
+    }else{
+      out.className='badge-out ok';out.textContent='ReLU: kein Schrumpfen (aber Risiko tote Neuronen)';
+    }
+  }
+  $('vg').addEventListener('input',drawVG);
+  $('vgSig').addEventListener('click',function(){vgAct='sig';$('vgSig').classList.add('on');$('vgRelu').classList.remove('on');drawVG();});
+  $('vgRelu').addEventListener('click',function(){vgAct='relu';$('vgRelu').classList.add('on');$('vgSig').classList.remove('on');drawVG();});
+
+  // ---------- ③ universal approx ----------
+  var uaKey='zigzag';
+  function targetFn(x){
+    if(uaKey==='zigzag')return 0.5+0.35*Math.sin(2*Math.PI*5*x);
+    if(uaKey==='runge')return 0.5+0.45/(1+25*sq(2*x-1));
+    return x<0.5?0.15:0.85;
+  }
+  function drawUA(){
+    var n=+($('uaN').value);
+    $('uaNV').textContent=n;
+    var S=setupCanvas('uaPlot'),g=S.g,W=S.W,H=S.H;
+    var pad={l:30,r:10,t:14,b:24},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(clamp(y,-0.2,1.2)+0.2)/1.4*ph;}
+    frame(g,W,H);
+    g.strokeStyle=TEAL;g.lineWidth=2;g.setLineDash([5,4]);
+    g.beginPath();
+    for(var i=0;i<=300;i++){var x=i/300,px=X(x),py=Y(targetFn(x));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle=PINK;g.lineWidth=2.5;
+    g.beginPath();
+    var err=0;
+    for(i=0;i<=300;i++){
+      x=i/300;
+      var k=Math.min(Math.floor(x*n),n-1);
+      var t=x*n-k;
+      var y=targetFn(k/n)*(1-t)+targetFn((k+1)/n)*t;
+      err=Math.max(err,Math.abs(y-targetFn(x)));
+      px=X(x);py=Y(y);
+      if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+    }
+    g.stroke();
+    for(i=0;i<=n;i++){
+      g.beginPath();g.arc(X(i/n),Y(targetFn(i/n)),3,0,Math.PI*2);
+      g.fillStyle=PINK;g.fill();
+    }
+    $('uaErr').textContent=err.toFixed(4);
+    $('uaP').textContent='~'+(3*n+2);
+    var out=$('uaOut');
+    if(err<0.01){out.className='badge-out ok';out.textContent='gut approximiert — genug Knicke';}
+    else if(err<0.1){out.className='badge-out warn';out.textContent='grobe Näherung — mehr Neuronen?';}
+    else{out.className='badge-out bad';out.textContent='zu wenige Neuronen — Knicke liegen falsch';}
+  }
+  document.querySelectorAll('#universal .btnrow button[data-f]').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      document.querySelectorAll('#universal .btnrow button[data-f]').forEach(function(c){c.classList.remove('on');});
+      ch.classList.add('on');uaKey=ch.dataset.f;drawUA();
+    });
+  });
+  $('uaN').addEventListener('input',drawUA);
+
+  // ---------- ④ sawtooth + budget ----------
+  function h1(x){return x<0.5?2*x:2-2*x;}
+  function hn(x,n){var v=x;for(var i=0;i<n;i++){v=h1(v);}return v;}
+  function drawSaw(){
+    var n=+($('sawN').value);
+    $('sawNV').textContent=n;
+    $('sawTeeth').textContent=Math.pow(2,n-1).toLocaleString('de-DE');
+    $('sawSize').textContent=(3*n+2);
+    var S=setupCanvas('sawPlot'),g=S.g,W=S.W,H=S.H;
+    var pad={l:30,r:10,t:14,b:24},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(y+0.05)/1.1*ph;}
+    frame(g,W,H);
+    for(var k=1;k<n;k++){
+      g.strokeStyle='rgba(138,124,255,'+(0.1+0.09*k)+')';g.lineWidth=1;
+      g.beginPath();
+      for(var i=0;i<=1200;i++){var x=i/1200,px=X(x),py=Y(hn(x,k));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+      g.stroke();
+    }
+    g.strokeStyle=TEAL;g.lineWidth=2.5;
+    g.beginPath();
+    for(i=0;i<=3000;i++){x=i/3000;px=X(x);py=Y(hn(x,n));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+  }
+  $('sawN').addEventListener('input',drawSaw);
+  function drawBud(){
+    var N=30;
+    var S=setupCanvas('budPlot'),g=S.g,W=S.W,H=S.H;
+    var pad={l:48,r:12,t:14,b:30},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    var Ls=[],Ps=[];
+    var best=1,bestP=0,flatP=0;
+    for(var L=1;L<=N;L++){
+      var w=Math.floor(N/L);
+      if(w<1)break;
+      var p=Math.pow(2*w,L);
+      Ls.push(L);Ps.push(p);
+      if(p>bestP){bestP=p;best=L;}
+      if(L===1)flatP=p;
+    }
+    var yMax=Math.log10(bestP)+0.5, yMin=0;
+    function X(l){return pad.l+(l-1)/(Ls.length-1)*pw;}
+    function Y(p){return pad.t+ph-(Math.log10(p)-yMin)/(yMax-yMin)*ph;}
+    frame(g,W,H);
+    g.strokeStyle='rgba(255,255,255,.08)';g.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var gy=pad.t+ph*i/4;
+      g.beginPath();g.moveTo(pad.l,gy);g.lineTo(W-pad.r,gy);g.stroke();
+      g.font='9px '+getComputedStyle(document.body).getPropertyValue('--mono');g.fillStyle=FAINT;
+      g.fillText(fmtBig(Math.pow(10,yMax-(yMax-yMin)*i/4)),2,gy+3);
+    }
+    g.strokeStyle=TEAL;g.lineWidth=3;
+    g.beginPath();
+    for(i=0;i<Ls.length;i++){var px=X(Ls[i]),py=Y(Ps[i]);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    g.beginPath();g.arc(X(best),Y(bestP),7,0,Math.PI*2);g.fillStyle=AMBER;g.fill();
+    g.strokeStyle='#0d1322';g.lineWidth=2;g.stroke();
+    g.beginPath();g.arc(X(1),Y(flatP),7,0,Math.PI*2);g.fillStyle=PINK;g.fill();
+    g.strokeStyle='#0d1322';g.lineWidth=2;g.stroke();
+    g.font='10px sans-serif';g.fillStyle=FAINT;g.textAlign='center';
+    g.fillText('Tiefe L  (Breite = 30/L)',W/2,H-8);
+    g.textAlign='left';
+    $('budBest').textContent=best+' × '+Math.floor(N/best)+' Neuronen';
+    $('budMax').textContent=fmtBig(bestP);
+    $('budFlat').textContent=fmtBig(flatP);
+    var ratio=bestP/flatP;
+    var out=$('budOut');
+    if(ratio>1e6){out.className='badge-out bad';out.textContent='Millionenfacher Vorsprung durch Tiefe!';}
+    else if(ratio>100){out.className='badge-out warn';out.textContent='Hundertfacher Vorsprung durch Tiefe';}
+    else{out.className='badge-out ok';out.textContent='Vorteil durch Tiefe: ×'+Math.round(ratio);}
+  }
+
+  // ---------- ⑤ Yarotsky x^2 ----------
+  function drawSq(){
+    var n=+($('sqN').value);
+    $('sqNV').textContent=n;
+    var knots=1<<n;
+    var S=setupCanvas('sqPlot'),g=S.g,W=S.W,H=S.H;
+    var pad={l:34,r:10,t:14,b:26},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(y+0.05)/1.05*ph;}
+    frame(g,W,H);
+    // gridlines
+    g.strokeStyle='rgba(255,255,255,.06)';g.lineWidth=1;
+    for(var q=0;q<=4;q++){var gy=pad.t+ph*q/4;g.beginPath();g.moveTo(pad.l,gy);g.lineTo(W-pad.r,gy);g.stroke();}
+    // true x^2
+    g.strokeStyle=TEAL;g.lineWidth=2;g.setLineDash([5,4]);
+    g.beginPath();
+    for(var i=0;i<=300;i++){var x=i/300,px=X(x),py=Y(x*x);if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();g.setLineDash([]);
+    // piecewise linear interpolant at 2^n knots
+    var err=0;
+    g.strokeStyle=PINK;g.lineWidth=2.5;
+    g.beginPath();
+    for(i=0;i<=300;i++){
+      x=i/300;
+      var kk=Math.min(Math.floor(x*knots),knots-1);
+      var t=x*knots-kk;
+      var a=(kk/knots), b2=((kk+1)/knots);
+      var y=a*a*(1-t)+b2*b2*t;
+      err=Math.max(err,Math.abs(y-x*x));
+      px=X(x);py=Y(y);
+      if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+    }
+    g.stroke();
+    // knots
+    for(i=0;i<=knots;i++){
+      var kx=i/knots;
+      g.beginPath();g.arc(X(kx),Y(kx*kx),2.5,0,Math.PI*2);g.fillStyle=PINK;g.fill();
+    }
+    var bound=Math.pow(2,-2*n-1);
+    $('sqErr').textContent=err<1e-4?err.toExponential(1):err.toFixed(5);
+    $('sqBound').textContent=bound.toExponential(1);
+    $('sqSize').textContent='~'+(7*n)+' Parameter';
+    $('sqKnots').textContent=knots.toLocaleString('de-DE');
+    var out=$('sqOut');
+    if(err<0.001){out.className='badge-out ok';out.textContent='exponentiell genau: '+(7*n)+' Parameter für Fehler '+err.toExponential(1);}
+    else if(err<0.05){out.className='badge-out warn';out.textContent='näher — weitere Stufe?';}
+    else{out.className='badge-out bad';out.textContent='noch grob — mehr Stufen n';}
+  }
+  $('sqN').addEventListener('input',drawSq);
+
+  // ---------- ⑥ gradient descent ----------
+  function gdfn(x,y){
+    return 0.4*Math.sin(3*x)*Math.sin(3*y)
+         +0.08*Math.sin(7*x+1)*Math.cos(5*y)
+         +0.15*sq(x-0.2)+0.15*sq(y+0.3)
+         +0.35*sq(x+0.7)*sq(y-0.5);
+  }
+  var gdx=0.9,gdy=0.8,gdCnt=0,gdTrail=[];
+  function gdDraw(){
+    var S=setupCanvas('gdPlot'),g=S.g,W=S.W,H=S.H;
+    frame(g,W,H);
+    var lo=1e9,hi=-1e9,x,y,v;
+    for(y=0;y<H;y++){for(x=0;x<W;x++){v=gdfn(-1+2*x/W,-1+2*y/H);if(v<lo)lo=v;if(v>hi)hi=v;}}
+    var img=g.createImageData(W,H);
+    for(y=0;y<H;y++){for(x=0;x<W;x++){
+      v=gdfn(-1+2*x/W,-1+2*y/H);
+      var t=clamp((v-lo)/(hi-lo),0,1);
+      var idx=(y*W+x)*4;
+      img.data[idx]=Math.round(8+30*t);
+      img.data[idx+1]=Math.round(12+70*t);
+      img.data[idx+2]=Math.round(24+120*t);
+      img.data[idx+3]=255;
+    }}
+    g.putImageData(img,0,0);
+    g.strokeStyle='rgba(94,224,208,.8)';g.lineWidth=1.5;
+    g.beginPath();
+    for(var i=0;i<gdTrail.length;i++){
+      var px=W/2+(gdTrail[i][0]+1)/2*W,py=H/2+(gdTrail[i][1]+1)/2*H;
+      if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+    }
+    g.lineTo(W/2+(gdx+1)/2*W,H/2+(gdy+1)/2*H);
+    g.stroke();
+    g.beginPath();g.arc(W/2+(gdx+1)/2*W,H/2+(gdy+1)/2*H,7,0,Math.PI*2);
+    g.fillStyle='#fff';g.fill();g.strokeStyle='#0d1322';g.lineWidth=2;g.stroke();
+    var e=gdfn(gdx,gdy);
+    $('gdErr').textContent=e.toFixed(3);
+    $('gdCnt').textContent=gdCnt;
+    var out=$('gdOut');
+    if(e<lo+0.05){out.className='badge-out ok';out.textContent='im globalen Tal — fertig!';}
+    else if(gdCnt>0&&e<0.15){out.className='badge-out warn';out.textContent='in einem Tal — ist es das beste?';}
+    else{out.className='badge-out ok';out.textContent='klettert bergab …';}
+  }
+  function gdStep(){
+    var lr=+($('gdL').value)/100;
+    var eps=0.01;
+    var gx=(gdfn(gdx+eps,gdy)-gdfn(gdx-eps,gdy))/(2*eps);
+    var gy=(gdfn(gdx,gdy+eps)-gdfn(gdx,gdy-eps))/(2*eps);
+    gdx=clamp(gdx-lr*gx,-1,1);
+    gdy=clamp(gdy-lr*gy,-1,1);
+    gdTrail.push([gdx,gdy]);
+    if(gdTrail.length>300)gdTrail.shift();
+    gdCnt++;
+    gdDraw();
+  }
+  $('gdL').addEventListener('input',function(){$('gdLV').textContent=(+($('gdL').value)/100).toFixed(2);});
+  $('gdStep').addEventListener('click',gdStep);
+  $('gdAuto').addEventListener('click',function(){for(var i=0;i<20;i++)gdStep();});
+  $('gdReset').addEventListener('click',function(){gdx=0.9;gdy=0.8;gdCnt=0;gdTrail=[];gdDraw();});
+
+  // ---------- ⑦ double descent ----------
+  function lossClass(x){
+    if(x<1)return 0.35+0.15*(1-x);
+    return 0.35+0.5*(x-1);
+  }
+  function lossReal(x){
+    var before=0.30+0.30*sq(x-0.6);
+    var spike=0.5*Math.exp(-sq(x-1)/0.015);
+    var tail=0.12+0.20*Math.exp(-sq(x-1.4)/0.5);
+    var v=x<1?before:tail;
+    return Math.min(1,v+spike);
+  }
+  function drawDD(){
+    var S=setupCanvas('ddPlot'),g=S.g,W=S.W,H=S.H;
+    var pad={l:40,r:12,t:14,b:30},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    var xSel=+($('ddX').value)/100;
+    $('ddV').textContent=xSel.toFixed(2);
+    function X(x){return pad.l+x/2*pw;}
+    function Y(y){return pad.t+ph-clamp(y,0,1)/1*ph;}
+    frame(g,W,H);
+    g.strokeStyle='rgba(255,255,255,.08)';
+    for(var i=0;i<=4;i++){var gy=pad.t+ph*i/4;g.beginPath();g.moveTo(pad.l,gy);g.lineTo(W-pad.r,gy);g.stroke();}
+    g.strokeStyle=PINK;g.lineWidth=1;g.setLineDash([4,4]);
+    g.beginPath();g.moveTo(X(1),pad.t);g.lineTo(X(1),H-pad.b);g.stroke();g.setLineDash([]);
+    g.font='9px sans-serif';g.fillStyle=PINK;g.fillText('Überparam.',X(1)+3,pad.t+8);
+    g.strokeStyle=FAINT;g.lineWidth=2;g.setLineDash([5,4]);
+    g.beginPath();
+    for(i=0;i<=200;i++){var x=i/100,y=lossClass(x);if(i===0)g.moveTo(X(x),Y(y));else g.lineTo(X(x),Y(y));}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle=TEAL;g.lineWidth=3;
+    g.beginPath();
+    for(i=0;i<=400;i++){x=i/200;y=lossReal(x);if(i===0)g.moveTo(X(x),Y(y));else g.lineTo(X(x),Y(y));}
+    g.stroke();
+    g.beginPath();g.arc(X(xSel),Y(lossClass(xSel)),6,0,Math.PI*2);g.fillStyle=FAINT;g.fill();
+    g.strokeStyle='#060910';g.lineWidth=2;g.stroke();
+    g.beginPath();g.arc(X(xSel),Y(lossReal(xSel)),8,0,Math.PI*2);g.fillStyle=GREEN;g.fill();
+    g.strokeStyle='#060910';g.lineWidth=2;g.stroke();
+    g.font='10px sans-serif';g.fillStyle=FAINT;g.textAlign='center';
+    g.fillText('Parameter / Datenpunkte →',W/2,H-8);
+    g.textAlign='left';
+    $('ddClass').textContent=lossClass(xSel).toFixed(3);
+    $('ddReal').textContent=lossReal(xSel).toFixed(3);
+    var out=$('ddOut');
+    if(xSel>1.1){out.className='badge-out ok';out.textContent='Double Descent: überparametrisiert UND besser!';}
+    else if(xSel>0.9){out.className='badge-out warn';out.textContent='Interpolationspunkt: Fehler springt hoch …';}
+    else{out.className='badge-out ok';out.textContent='klassisches Regime: mehr Parameter → weniger Fehler';}
+  }
+  $('ddX').addEventListener('input',drawDD);
+
+  // ---------- ⑧ adversarial ----------
+  // decision boundary: line through origin with angle a
+  var advAngle=0.6; // radians of normal
+  function drawAdv(){
+    var dist=+($('advD').value)/100;
+    $('advDV').textContent=dist.toFixed(2);
+    var S=setupCanvas('advPlot'),g=S.g,W=S.W,H=S.H;
+    var cx=W/2,cy=H/2,scale=Math.min(W,H)*0.42;
+    frame(g,W,H);
+    var nx=Math.cos(advAngle),ny=Math.sin(advAngle);
+    var mx=-ny,my=nx; // perpendicular to boundary
+    var R=Math.max(W,H)*1.6;
+    // panda half-plane tint (side where (p-c)·n < 0), as a wide flat triangle
+    g.fillStyle='rgba(94,224,208,.06)';
+    g.beginPath();
+    g.moveTo(cx+mx*R,cy+my*R);
+    g.lineTo(cx-mx*R,cy-my*R);
+    g.lineTo(cx-nx*R,cy-ny*R);
+    g.closePath();g.fill();
+    // boundary line
+    g.strokeStyle='rgba(255,255,255,.4)';g.lineWidth=1.5;g.setLineDash([6,4]);
+    g.beginPath();
+    g.moveTo(cx+mx*R,cy+my*R);
+    g.lineTo(cx-mx*R,cy-my*R);
+    g.stroke();g.setLineDash([]);
+    g.font='11px sans-serif';g.fillStyle='rgba(255,255,255,.4)';
+    g.fillText('Entscheidungsgrenze',cx+mx*R*0.6+6,cy+my*R*0.6);
+    // point on panda side at distance dist along -normal
+    var px=cx-nx*dist*scale, py=cy-ny*dist*scale;
+    // shortest adversarial step: move to just across the boundary along +normal
+    var ax=cx+nx*0.02*scale, ay=cy+ny*0.02*scale;
+    // arrow
+    g.strokeStyle=PINK;g.lineWidth=2.5;
+    g.beginPath();g.moveTo(px,py);g.lineTo(ax,ay);g.stroke();
+    var ang=Math.atan2(ay-py,ax-px);
+    g.beginPath();
+    g.moveTo(ax,ay);
+    g.lineTo(ax-10*Math.cos(ang-0.4),ay-10*Math.sin(ang-0.4));
+    g.moveTo(ax,ay);
+    g.lineTo(ax-10*Math.cos(ang+0.4),ay-10*Math.sin(ang+0.4));
+    g.stroke();
+    // points
+    g.beginPath();g.arc(px,py,7,0,Math.PI*2);g.fillStyle=TEAL;g.fill();
+    g.strokeStyle='#060910';g.lineWidth=2;g.stroke();
+    g.beginPath();g.arc(ax,ay,7,0,Math.PI*2);g.fillStyle=PINK;g.fill();
+    g.strokeStyle='#060910';g.lineWidth=2;g.stroke();
+    g.font='11px sans-serif';
+    g.fillStyle=TEAL;g.fillText('Panda (klassifiziert: Panda, 99 %)',px-10,py-14);
+    g.fillStyle=PINK;g.fillText('nach Stoß: Wombat!',ax+10,ay+4);
+    // confidence: sigmoid of margin*10
+    var conf=1/(1+Math.exp(-10*dist));
+    $('advStep').textContent=dist.toFixed(2)+' (× Bild-Skala)';
+    $('advConf').textContent=(conf*100).toFixed(1)+' %';
+    $('advAfter').textContent='Wombat';
+    var out=$('advOut');
+    if(dist<0.03){out.className='badge-out bad';out.textContent='Stoß nur '+(dist*100).toFixed(1)+' % — unsichtbar, aber Klasse kippt';}
+    else if(dist<0.1){out.className='badge-out warn';out.textContent='kleiner Stoß genügt — nahe der Grenze';}
+    else{out.className='badge-out ok';out.textContent='weit von der Grenze — robuster';}
+  }
+  $('advD').addEventListener('input',drawAdv);
+
+  // ---------- ⑩ quiz ----------
+  var quizData=[
+    {q:'Was passiert, wenn ein sehr komplexes Modell nur wenige Trainingsbeispiele sieht?',
+     opts:['Es lernt die Regel perfekt','Trainings-Fehler → 0, aber Test-Fehler explodiert (Overfitting)','Es bricht ab','Es konvergiert schneller'],a:1},
+    {q:'Warum hat ReLU Sigmoid im modernen Deep Learning verdrängt?',
+     opts:['ReLU ist schneller zu berechnen','Bei Sigmoid schrumpft der Gradient pro Schicht mit Faktor 0.25 (verschwindende Gradienten)','ReLU hat weniger Parameter','ReLU kann nur positive Werte'],a:1},
+    {q:'Ein Hut-Netz h₁ (2 ReLUs, 2 Zacken) wird 5-mal verkettet. Wie viele Zacken hat das Ergebnis?',
+     opts:['10','16','32','2'],a:2},
+    {q:'30 Neuronen: flach (1 Schicht) vs. 10 Schichten à 3. Warum ist die tiefe Version stärker?',
+     opts:['Tiefe Netze haben mehr Parameter','Knicke addieren sich linear — keine','Knicke multiplizieren sich: (2w)^L Stücke → exponentiell mehr stückweise lineare Bereiche','Tiefe Netze trainieren schneller'],a:2},
+    {q:'Yarotskys Teleskop-Konstruktion approximiert x². Wie skaliert der Fehler mit der Stufe n?',
+     opts:['wie 1/n (polynomiell)','wie 2⁻²ⁿ (exponentiell), bei nur O(n) Parametern','wie 1/2ⁿ bei O(2ⁿ) Parametern','konstant'],a:1},
+    {q:'Warum klappt Generalisierung trotz 1000× mehr Parametern als Daten?',
+     opts:['Klappt gar nicht','NTK: sehr breite Netze werden linear; Gradientenabstieg findet die einfachsten Lösungen, die generalisieren','Die Daten sind zu einfach','Es ist ein ungeklärtes Zufallsphänomen ohne Erklärung'],a:1},
+    {q:'Warum genügen „unsichtbare“ Störungen für Adversarial Examples?',
+     opts:['Weil die Modelle fehlerhaft gebaut sind','In hohen Dimensionen ist der kürzeste Stoß zur Entscheidungsgrenze sehr klein — glatte Klassifizierer müssen feindliche Beispiele haben','Weil das Rauschen die Gewichte ändert','Weil CPUs Rundungsfehler machen'],a:1}
+  ];
+  var quizEl=$('quiz'),correct=0;
+  quizData.forEach(function(item,qi){
+    var qd=document.createElement('div');qd.className='q';
+    qd.innerHTML='<b>Frage '+(qi+1)+'</b>: '+item.q;
+    item.opts.forEach(function(opt,oi){
+      var b=document.createElement('button');
+      b.className='opt';b.textContent=opt;
+      b.addEventListener('click',function(){
+        if(b.classList.contains('correct')||b.classList.contains('wrong'))return;
+        var buttons=qd.querySelectorAll('.opt');
+        buttons.forEach(function(x){x.disabled=true;});
+        if(oi===item.a){b.classList.add('correct');correct++;}
+        else{b.classList.add('wrong');buttons[item.a].classList.add('correct');}
+        $('quizScore').textContent='Richtig: '+correct+' von '+quizData.length;
+      });
+      qd.appendChild(b);
+    });
+    quizEl.appendChild(qd);
+  });
+
+  // ---------- scroll progress + nav ----------
+  window.addEventListener('scroll',function(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+    $('prog').style.width=p+'%';
+    var secs=document.querySelectorAll('main section');
+    var cur=secs[0];
+    secs.forEach(function(s){if(s.getBoundingClientRect().top<120)cur=s;});
+    document.querySelectorAll('#nav a').forEach(function(a){
+      a.classList.toggle('on',a.getAttribute('href')==='#'+cur.id);
+    });
+  },{passive:true});
+
+  // ---------- init (on load; canvas sizes need layout) ----------
+  function initAll(){
+    drawS0();drawVG();drawUA();drawSaw();drawBud();drawSq();gdDraw();drawDD();drawAdv();
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initAll);}
+  else{initAll();}
+  var rt;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(initAll,150);});
+})();
+</script>
+</body>
+</html>
