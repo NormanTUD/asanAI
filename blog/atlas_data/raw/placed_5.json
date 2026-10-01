@@ -1,0 +1,4546 @@
+[
+[
+"Norman Steenrod",
+43.16,
+-77.61,
+"Rochester, USA",
+1952,
+1
+],
+[
+"nostalgebraist",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Nouha Dziri",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Nova DasSarma",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"NumPy developers",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"NVIDIA Corporation",
+37.35,
+-121.96,
+"Santa Clara, USA",
+2016,
+1
+],
+[
+"O. Toupet",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Ofir Press",
+32.08,
+34.78,
+"Tel Aviv, Israel",
+2022,
+1
+],
+[
+"Oksana Yakhnenko",
+40.71,
+-74.01,
+"New York, USA",
+2013,
+1
+],
+[
+"Olaf Ronneberger",
+48.52,
+9.06,
+"Tübingen, Germany",
+2015,
+1
+],
+[
+"Olatunji Ruwase",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Oleg Klimov",
+37.77,
+-122.42,
+"San Francisco, USA",
+2017,
+1
+],
+[
+"Olivia Caramello",
+45.46,
+9.19,
+"Milan, Italy",
+2018,
+1
+],
+[
+"Ollama",
+37.77,
+-122.42,
+"San Francisco, USA",
+2024,
+1
+],
+[
+"Omar Khattab",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2020,
+1
+],
+[
+"Omer Levy",
+32.08,
+34.78,
+"Tel Aviv, Israel",
+2019,
+1
+],
+[
+"on behalf of the Estate of W. Ross Ashby",
+51.51,
+-0.13,
+"London, UK",
+1948,
+1
+],
+[
+"OpenAI",
+37.77,
+-122.42,
+"San Francisco, USA",
+2024,
+1
+],
+[
+"Opher Lieber",
+32.08,
+34.78,
+"Tel Aviv, Israel",
+2024,
+1
+],
+[
+"Ora Lassila",
+null,
+null,
+"",
+2001,
+0
+],
+[
+"Oracle",
+37.53,
+-122.08,
+"Redwood Shores, USA",
+2010,
+1
+],
+[
+"Oren Etzioni",
+47.61,
+-122.33,
+"Seattle, USA",
+2018,
+1
+],
+[
+"Oriol Vinyals",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Orisvaldo Neto",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Osama Shukir Muhammed Amin",
+null,
+null,
+"",
+2000,
+0
+],
+[
+"Oskar Morgenstern",
+42.37,
+-71.11,
+"Cambridge, USA",
+1944,
+1
+],
+[
+"Otto Kandler",
+48.52,
+9.06,
+"Tübingen, Germany",
+1990,
+1
+],
+[
+"Otto Neugebauer",
+41.82,
+-71.41,
+"Providence, USA",
+1951,
+1
+],
+[
+"Otto von Guericke",
+52.13,
+11.63,
+"Magdeburg, Germany",
+1654,
+1
+],
+[
+"Owain Evans",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"P. B. Sheridan",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"P. Haffner",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1998,
+1
+],
+[
+"P. J. Grabowski",
+40.01,
+-105.27,
+"Boulder, USA",
+1984,
+1
+],
+[
+"P. Kyle McCarter",
+40.34,
+-74.66,
+"Princeton, USA",
+2020,
+1
+],
+[
+"P. Liyanage",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"P.C. Jones",
+null,
+null,
+"",
+1980,
+0
+],
+[
+"Pablo Barceló",
+51.75,
+-1.26,
+"Oxford, UK",
+2021,
+1
+],
+[
+"Pablo García-Medrano",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Pamela Mishkin",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Paola Villa",
+null,
+null,
+"",
+2001,
+0
+],
+[
+"Paolo Frasconi",
+43.72,
+10.4,
+"Pisa, Italy",
+1994,
+1
+],
+[
+"Paolo Massa",
+null,
+null,
+"",
+1981,
+0
+],
+[
+"Paris",
+null,
+null,
+"",
+2000,
+0
+],
+[
+"Parmenides",
+40.61,
+14.71,
+"Elea, Italy",
+-475,
+1
+],
+[
+"Partha Niyogi",
+12.97,
+77.59,
+"Bengaluru, India",
+2006,
+1
+],
+[
+"Pascal",
+null,
+null,
+"",
+1970,
+0
+],
+[
+"Pascal Fontaine",
+47.27,
+11.39,
+"Innsbruck, Austria",
+2018,
+1
+],
+[
+"Pascal Vincent",
+45.5,
+-73.57,
+"Montréal, Canada",
+2008,
+1
+],
+[
+"Patrice Simard",
+null,
+null,
+"",
+1994,
+0
+],
+[
+"Patrick Esser",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Patrick Haffner",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1998,
+1
+],
+[
+"Patrick J. Flynn",
+null,
+null,
+"",
+2010,
+0
+],
+[
+"Patrick J. Hayes",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1969,
+1
+],
+[
+"Patrick Lewis",
+52.2,
+0.12,
+"Cambridge, UK",
+2020,
+1
+],
+[
+"Paul A. Merolla",
+41.05,
+-73.69,
+"Yorktown Heights, USA",
+2014,
+1
+],
+[
+"Paul Baran",
+34.02,
+-118.49,
+"Santa Monica, USA",
+1964,
+1
+],
+[
+"Paul Barham",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Paul C. Horning",
+null,
+null,
+"",
+2016,
+0
+],
+[
+"Paul Christiano",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Paul Ehrenfest",
+52.16,
+4.49,
+"Leiden, Netherlands",
+1917,
+1
+],
+[
+"Paul F. Christiano",
+37.77,
+-122.42,
+"San Francisco, USA",
+2017,
+1
+],
+[
+"Paul Fischer",
+null,
+null,
+"",
+2002,
+0
+],
+[
+"Paul Goldberg",
+null,
+null,
+"",
+2013,
+0
+],
+[
+"Paul John Werbos",
+38.99,
+-76.94,
+"College Park, USA",
+1974,
+1
+],
+[
+"Paul M. Churchland",
+32.87,
+-117.24,
+"San Diego, USA",
+1981,
+1
+],
+[
+"Paul N. Edwards",
+34.07,
+-118.44,
+"Los Angeles, USA",
+1996,
+1
+],
+[
+"Paul Teller",
+37.87,
+-122.26,
+"Berkeley, USA",
+2001,
+1
+],
+[
+"Paul Tillich",
+42.37,
+-71.11,
+"Cambridge, USA",
+1952,
+1
+],
+[
+"Paul Tucker",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Pauline Luc",
+51.51,
+-0.13,
+"London, UK",
+2022,
+1
+],
+[
+"PCI-SIG",
+34.05,
+-118.24,
+"Los Angeles, USA",
+2003,
+1
+],
+[
+"Pedro Domingos",
+47.61,
+-122.33,
+"Seattle, USA",
+1997,
+1
+],
+[
+"Pedro Reviriego",
+40.43,
+-3.73,
+"Madrid, Spain",
+2024,
+1
+],
+[
+"Peixian Chen",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Peiyi Wang",
+30.27,
+120.16,
+"Hangzhou, China",
+2024,
+1
+],
+[
+"Peng",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Pengcheng He",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Pengfei Li",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Per Martin-Löf",
+57.71,
+11.97,
+"Gothenburg, Sweden",
+1972,
+1
+],
+[
+"Percy Liang",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Petar Veličković",
+55.95,
+-3.19,
+"Edinburgh, UK",
+2018,
+1
+],
+[
+"Pete Warden",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Peter Auer",
+49.02,
+12.1,
+"Regensburg, Germany",
+2002,
+1
+],
+[
+"Peter B. Beaumont",
+null,
+null,
+"",
+2001,
+0
+],
+[
+"Peter Battaglia",
+51.51,
+-0.13,
+"London, UK",
+2020,
+1
+],
+[
+"Peter Beaumont",
+null,
+null,
+"",
+1969,
+0
+],
+[
+"Peter Bloem",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Peter Clark",
+47.61,
+-122.33,
+"Seattle, USA",
+2018,
+1
+],
+[
+"Peter Dayan",
+51.52,
+-0.13,
+"London, UK",
+1995,
+1
+],
+[
+"Peter Dayan and P. Read Montague",
+51.52,
+-0.13,
+"London, UK",
+1997,
+1
+],
+[
+"Peter Dehmer",
+null,
+null,
+"",
+2014,
+0
+],
+[
+"Peter F. Patel-Schneider",
+40.74,
+-74.4,
+"Murray Hill, USA",
+2004,
+1
+],
+[
+"Peter Harrington",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Peter Hart",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1967,
+1
+],
+[
+"Peter J. Liu",
+37.39,
+-122.08,
+"Mountain View, USA",
+2019,
+1
+],
+[
+"Peter L. Bartlett",
+37.87,
+-122.26,
+"Berkeley, USA",
+2019,
+1
+],
+[
+"Peter Lee",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"Peter Li",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Peter McCullagh",
+45.5,
+-73.57,
+"Montréal, Canada",
+2017,
+1
+],
+[
+"Peter Meer",
+null,
+null,
+"",
+2002,
+0
+],
+[
+"Peter Naur (editor)",
+55.68,
+12.57,
+"Copenhagen, Denmark",
+1963,
+1
+],
+[
+"Peter Norvig",
+37.39,
+-122.08,
+"Mountain View, USA",
+2021,
+1
+],
+[
+"Peter Schuster",
+48.21,
+16.37,
+"Vienna, Austria",
+1978,
+1
+],
+[
+"Peter Shaw",
+37.39,
+-122.08,
+"Mountain View, USA",
+2018,
+1
+],
+[
+"Peter Singer",
+40.34,
+-74.66,
+"Princeton, USA",
+2009,
+1
+],
+[
+"Peter T. Johnstone",
+53.38,
+-1.47,
+"Sheffield, UK",
+2002,
+1
+],
+[
+"Peter Welinder",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Philip Foulds",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Philip Gage",
+null,
+null,
+"",
+1994,
+0
+],
+[
+"Philipp Fischer",
+48.52,
+9.06,
+"Tübingen, Germany",
+2015,
+1
+],
+[
+"Philipp Gunz",
+48.52,
+9.06,
+"Tübingen, Germany",
+2017,
+1
+],
+[
+"Philipp Moritz",
+37.87,
+-122.26,
+"Berkeley, USA",
+2015,
+1
+],
+[
+"Philipp Seidl",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Philippe Roussel",
+43.3,
+5.37,
+"Marseille, France",
+1973,
+1
+],
+[
+"Phillip F. Scott",
+52.2,
+0.12,
+"Cambridge, UK",
+1968,
+1
+],
+[
+"Phillip Guo",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Phillip Isola",
+42.37,
+-71.11,
+"Cambridge, USA",
+2024,
+1
+],
+[
+"Phillip Wallis",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Phu Mon Htut",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Pierre Castéran",
+null,
+null,
+"",
+2013,
+0
+],
+[
+"Pierre de Fermat",
+43.6,
+1.44,
+"Toulouse, France",
+1654,
+1
+],
+[
+"Pierre Deligne",
+40.34,
+-74.66,
+"Princeton, USA",
+1974,
+1
+],
+[
+"Pierre Foret",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Pierre Hansen",
+null,
+null,
+"",
+2009,
+0
+],
+[
+"Pierre Simon Laplace",
+48.85,
+2.35,
+"Paris, France",
+1821,
+1
+],
+[
+"Pierre-Antoine Manzagol",
+45.5,
+-73.57,
+"Montréal, Canada",
+2008,
+1
+],
+[
+"Pierre-Jean Texier",
+44.84,
+-0.58,
+"Bordeaux, France",
+2013,
+1
+],
+[
+"Pierre-Simon Laplace",
+48.85,
+2.35,
+"Paris, France",
+1810,
+1
+],
+[
+"Pieter Abbeel",
+37.87,
+-122.26,
+"Berkeley, USA",
+2023,
+1
+],
+[
+"Pieter R. Roelfsema",
+52.37,
+4.9,
+"Amsterdam, Netherlands",
+2000,
+1
+],
+[
+"Pieter Roelfsema",
+52.37,
+4.9,
+"Amsterdam, Netherlands",
+2000,
+1
+],
+[
+"Pietro Liò",
+52.2,
+0.12,
+"Cambridge, UK",
+2018,
+1
+],
+[
+"Ping-yeh Chiang",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Piotr Dollár",
+32.87,
+-117.24,
+"San Diego, USA",
+2021,
+1
+],
+[
+"Plato",
+37.98,
+23.73,
+"Athens, Greece",
+-380,
+1
+],
+[
+"Pliny the Elder",
+41.9,
+12.5,
+"Rome, Italy",
+77,
+1
+],
+[
+"Plotinus",
+41.9,
+12.5,
+"Rome, Italy",
+250,
+1
+],
+[
+"Potsawee Manakul",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Prafulla Dhariwal",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Prajit Ramachandran",
+37.39,
+-122.08,
+"Mountain View, USA",
+2017,
+1
+],
+[
+"Prakhar Gupta",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Prasad Joshi",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Prateek Jain",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Preetum Nakkiran",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Preyas Popat",
+null,
+null,
+"",
+2009,
+0
+],
+[
+"Priests of Memphis (tr. Carol Andrews)",
+null,
+null,
+"",
+-196,
+0
+],
+[
+"Przemysław Dębiak",
+37.77,
+-122.42,
+"San Francisco, USA",
+2019,
+1
+],
+[
+"published in The Graphic",
+null,
+null,
+"",
+1877,
+0
+],
+[
+"Push Singh",
+null,
+null,
+"",
+2004,
+0
+],
+[
+"Python Software Foundation",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"PyTorch Team",
+37.52,
+-122.18,
+"Menlo Park, USA",
+2019,
+1
+],
+[
+"Pāṇini",
+33.75,
+72.83,
+"Taxila, Pakistan",
+-350,
+1
+],
+[
+"Qi Meng",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Qi Zhang",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Qian Yang",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Qihao Zhu",
+30.27,
+120.16,
+"Hangzhou, China",
+2024,
+1
+],
+[
+"Qingguo Hu",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Qingyang Wu",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Qingzhen Guo",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Qiwei Ye",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Quentin Anthony",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Quentin Duval",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Quirin Fischer",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Quoc Le",
+37.39,
+-122.08,
+"Mountain View, USA",
+2022,
+1
+],
+[
+"Quoc V. Le",
+37.39,
+-122.08,
+"Mountain View, USA",
+2019,
+1
+],
+[
+"Qwen Team",
+30.27,
+120.16,
+"Hangzhou, China",
+2024,
+1
+],
+[
+"R. A. Hughes",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"R. A. Nelson",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"R. Balasubramaniam",
+null,
+null,
+"",
+1990,
+0
+],
+[
+"R. C. Sprigg",
+-34.93,
+138.6,
+"Adelaide, Australia",
+1947,
+1
+],
+[
+"R. D. Maurer",
+null,
+null,
+"",
+1970,
+0
+],
+[
+"R. Frei",
+42.28,
+-83.74,
+"Ann Arbor, USA",
+2009,
+1
+],
+[
+"R. Goldberg",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"R. Gomes",
+null,
+null,
+"",
+2005,
+0
+],
+[
+"R. I. Gerlach",
+null,
+null,
+"",
+2009,
+0
+],
+[
+"R. Iyer",
+null,
+null,
+"",
+2009,
+0
+],
+[
+"R. J. Beeber",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"R. Nutt",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"R. Wengert",
+null,
+null,
+"",
+1964,
+0
+],
+[
+"Rachel Ward",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Racter (William Chamberlain",
+null,
+null,
+"",
+1984,
+0
+],
+[
+"Radford M. Neal",
+43.65,
+-79.38,
+"Toronto, Canada",
+2011,
+1
+],
+[
+"Radu Diaconescu",
+null,
+null,
+"",
+1975,
+0
+],
+[
+"Rafael Bombarell",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Rafael Rafailov",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Raffael",
+41.9,
+12.5,
+"Rome, Italy",
+1509,
+1
+],
+[
+"Raffi Childers",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Raghu Ramakrishnan",
+null,
+null,
+"",
+1996,
+0
+],
+[
+"Raia Hadsell",
+43.65,
+-79.38,
+"Toronto, Canada",
+2007,
+1
+],
+[
+"Rajan Manohar",
+null,
+null,
+"",
+2014,
+0
+],
+[
+"Rajarshi Salakhutdinov",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2019,
+1
+],
+[
+"Rajat Monga",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Rajat Raina",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2009,
+1
+],
+[
+"Rajeev Motwani",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1999,
+1
+],
+[
+"Ralph Alpher",
+41.88,
+-87.63,
+"Chicago, USA",
+1948,
+1
+],
+[
+"Ralph D. Snyder",
+null,
+null,
+"",
+2008,
+0
+],
+[
+"Ralph Hartley",
+null,
+null,
+"",
+1928,
+0
+],
+[
+"Ram Pasunuru",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Rama (photograph); clay tablet Sb 13088",
+null,
+null,
+"",
+2000,
+0
+],
+[
+"Rami Al-Rfou",
+37.39,
+-122.08,
+"Mountain View, USA",
+2021,
+1
+],
+[
+"Ramon Llull",
+39.57,
+2.65,
+"Mallorca, Spain",
+1305,
+1
+],
+[
+"Raoul Bott",
+42.37,
+-71.11,
+"Cambridge, USA",
+1959,
+1
+],
+[
+"Raphael Pisoni",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Raquel Ferrando",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Rathinakumar Appuswamy",
+null,
+null,
+"",
+2014,
+0
+],
+[
+"Raul Puri",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Ravid Shwartz-Ziv",
+32.79,
+34.99,
+"Haifa, Israel",
+2017,
+1
+],
+[
+"Ray Kurzweil",
+42.37,
+-71.11,
+"Cambridge, USA",
+2005,
+1
+],
+[
+"Raymond Francis",
+34.22,
+-118.1,
+"Pasadena, USA",
+2017,
+1
+],
+[
+"Raymond T. Ng",
+43.65,
+-79.38,
+"Toronto, Canada",
+2000,
+1
+],
+[
+"Razvan Pascanu",
+43.65,
+-79.38,
+"Toronto, Canada",
+2014,
+1
+],
+[
+"Rebecca Castaño",
+34.22,
+-118.1,
+"Pasadena, USA",
+2009,
+1
+],
+[
+"Rebecca Solnit",
+37.77,
+-122.42,
+"San Francisco, USA",
+2003,
+1
+],
+[
+"Reimar Leber",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Reiner Pope",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Reinhard Heckel",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Remo Nitschke",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Renaud Lambiotte",
+null,
+null,
+"",
+2008,
+0
+],
+[
+"Renee DiResta",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"René Descartes",
+48.85,
+2.35,
+"Paris, France",
+1637,
+1
+],
+[
+"René Doursat",
+null,
+null,
+"",
+1992,
+0
+],
+[
+"Reuters",
+40.71,
+-74.01,
+"New York, USA",
+2023,
+1
+],
+[
+"Rewon Child",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Rex Ying",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Rhonda L. Quinn",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Rhys Gould",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Rianne van den Berg",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Ricardo J. G. B. Campello",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Rich Sutton",
+53.52,
+-113.5,
+"Edmonton, Canada",
+2019,
+1
+],
+[
+"Richang M. Ng",
+null,
+null,
+"",
+2014,
+0
+],
+[
+"Richard A. Mortlock",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Richard A. Olshen",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1984,
+1
+],
+[
+"Richard Bellman",
+34.02,
+-118.49,
+"Santa Monica, USA",
+1957,
+1
+],
+[
+"Richard Dawkins",
+51.75,
+-1.26,
+"Oxford, UK",
+2006,
+1
+],
+[
+"Richard E. Fikes",
+37.52,
+-122.18,
+"Menlo Park, USA",
+1971,
+1
+],
+[
+"Richard E. Howard",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1989,
+1
+],
+[
+"Richard Evans",
+51.51,
+-0.13,
+"London, UK",
+2021,
+1
+],
+[
+"Richard Leibler",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1959,
+1
+],
+[
+"Richard Ren",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Richard S. Sutton",
+53.52,
+-113.5,
+"Edmonton, Canada",
+2019,
+1
+],
+[
+"Richard Socher",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2011,
+1
+],
+[
+"Richard Wrangham",
+42.37,
+-71.11,
+"Cambridge, USA",
+2009,
+1
+],
+[
+"Ricky T. Q. Chen",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Rico Sennrich",
+55.95,
+-3.19,
+"Edinburgh, UK",
+2016,
+1
+],
+[
+"Rif A. Saurous",
+37.39,
+-122.08,
+"Mountain View, USA",
+2017,
+1
+],
+[
+"Rik Adriaensen",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Rina Dechter",
+null,
+null,
+"",
+1987,
+0
+],
+[
+"Rishi Bommasani",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2022,
+1
+],
+[
+"Risto Miikkulainen",
+30.28,
+-97.73,
+"Austin, USA",
+2002,
+1
+],
+[
+"Rob DeSalle",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Rob J. Hyndman",
+-37.81,
+144.96,
+"Melbourne, Australia",
+2008,
+1
+],
+[
+"Robert A. Collins",
+52.2,
+0.12,
+"Cambridge, UK",
+1968,
+1
+],
+[
+"Robert A. Jacobs",
+null,
+null,
+"",
+1991,
+0
+],
+[
+"Robert A. Messenger",
+null,
+null,
+"",
+1972,
+0
+],
+[
+"Robert Axelrod",
+42.28,
+-83.74,
+"Ann Arbor, USA",
+1984,
+1
+],
+[
+"Robert B. Brandom",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+1994,
+1
+],
+[
+"Robert Bell",
+37.21,
+-121.95,
+"Los Gatos, USA",
+2009,
+1
+],
+[
+"Robert C. Williamson",
+null,
+null,
+"",
+2001,
+0
+],
+[
+"Robert Chesney",
+30.28,
+-97.73,
+"Austin, USA",
+2019,
+1
+],
+[
+"Robert E. Kahn",
+42.37,
+-71.11,
+"Cambridge, USA",
+1974,
+1
+],
+[
+"Robert E. Schapire",
+32.87,
+-117.24,
+"San Diego, USA",
+1997,
+1
+],
+[
+"Robert Frost",
+42.83,
+-71.32,
+"Derry, USA",
+1914,
+1
+],
+[
+"Robert Goldblatt",
+34.41,
+-119.85,
+"Santa Barbara, USA",
+1979,
+1
+],
+[
+"Robert Heath Dennard",
+41.03,
+-73.76,
+"White Plains, USA",
+1968,
+1
+],
+[
+"Robert Hooke",
+51.51,
+-0.13,
+"London, UK",
+1665,
+1
+],
+[
+"Robert Hooke (engraving after his own drawing)",
+51.51,
+-0.13,
+"London, UK",
+1665,
+1
+],
+[
+"Robert Huben",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"Robert J. Lang",
+42.36,
+-71.06,
+"Boston, USA",
+1999,
+1
+],
+[
+"Robert K. Merton",
+40.71,
+-74.01,
+"New York, USA",
+1973,
+1
+],
+[
+"Robert Kowalski",
+37.52,
+-122.18,
+"Menlo Park, USA",
+1974,
+1
+],
+[
+"Robert Krzyzanowski",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Robert L. Quinn",
+null,
+null,
+"",
+2013,
+0
+],
+[
+"Robert Lasenby",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"Robert M. Bell",
+37.21,
+-121.95,
+"Los Gatos, USA",
+2007,
+1
+],
+[
+"Robert M. Gray",
+null,
+null,
+"",
+2006,
+0
+],
+[
+"Robert Marco Tomasulo",
+41.64,
+-73.92,
+"Poughkeepsie, USA",
+1967,
+1
+],
+[
+"Robert Melancton Metcalfe",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1976,
+1
+],
+[
+"Robert Norton Noyce",
+37.35,
+-121.96,
+"Santa Clara, USA",
+1959,
+1
+],
+[
+"Robert of Chester",
+51.75,
+-1.26,
+"Oxford, UK",
+1145,
+1
+],
+[
+"Robert Tibshirani",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1996,
+1
+],
+[
+"Robert W. Kennard",
+null,
+null,
+"",
+1970,
+0
+],
+[
+"Robert W. Wilson",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1965,
+1
+],
+[
+"Roberta Raileanu",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Roberto Dessì",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Robin I. M. Dunbar",
+51.75,
+-1.26,
+"Oxford, UK",
+2012,
+1
+],
+[
+"Robin Jia",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Robin Manhaeve",
+50.88,
+4.7,
+"Leuven, Belgium",
+2018,
+1
+],
+[
+"Robin Milner",
+55.95,
+-3.19,
+"Edinburgh, UK",
+1978,
+1
+],
+[
+"Robin Rombach",
+48.52,
+9.06,
+"Tübingen, Germany",
+2022,
+1
+],
+[
+"Robin Sibson",
+null,
+null,
+"",
+1973,
+0
+],
+[
+"Robotics and Automation Department",
+34.22,
+-118.1,
+"Pasadena, USA",
+2023,
+1
+],
+[
+"Rodney Kinney",
+47.61,
+-122.33,
+"Seattle, USA",
+2024,
+1
+],
+[
+"Rodrigo Alvarez-Icaza",
+null,
+null,
+"",
+2014,
+0
+],
+[
+"Rodrigo Costas",
+null,
+null,
+"",
+2009,
+0
+],
+[
+"Roee Hendel",
+40.34,
+-74.66,
+"Princeton, USA",
+2023,
+1
+],
+[
+"Roei Schuster",
+32.08,
+34.78,
+"Tel Aviv, Israel",
+2019,
+1
+],
+[
+"Roen Kelly",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Roger C. Conant",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+1970,
+1
+],
+[
+"Roger Eckhardt",
+null,
+null,
+"",
+1987,
+0
+],
+[
+"Roger Grosse",
+43.65,
+-79.38,
+"Toronto, Canada",
+2025,
+1
+],
+[
+"Roger Koenker",
+41.88,
+-87.63,
+"Chicago, USA",
+2009,
+1
+],
+[
+"Roger Lynds",
+null,
+null,
+"",
+1980,
+0
+],
+[
+"Roger N. Shepard",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1987,
+1
+],
+[
+"Roger Penrose",
+51.75,
+-1.26,
+"Oxford, UK",
+1989,
+1
+],
+[
+"Rohan Baxter",
+null,
+null,
+"",
+2002,
+0
+],
+[
+"Rohit Mehta",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Roko",
+null,
+null,
+"",
+2008,
+0
+],
+[
+"Rolf Wilhelm Brednich",
+52.52,
+13.4,
+"Berlin, Germany",
+1990,
+1
+],
+[
+"Ron Burkey",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1972,
+1
+],
+[
+"Ron Kowitz",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Ronald A. Fisher",
+52.2,
+0.12,
+"Cambridge, UK",
+1936,
+1
+],
+[
+"Ronald A. Howard",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1960,
+1
+],
+[
+"Ronald Aylmer Fisher",
+52.2,
+0.12,
+"Cambridge, UK",
+1922,
+1
+],
+[
+"Ronald Brown",
+null,
+null,
+"",
+1967,
+0
+],
+[
+"Ronald J. Williams",
+43.65,
+-79.38,
+"Toronto, Canada",
+1992,
+1
+],
+[
+"Ronan Collobert",
+null,
+null,
+"",
+2011,
+0
+],
+[
+"Ronan Le Bras",
+47.61,
+-122.33,
+"Seattle, USA",
+2019,
+1
+],
+[
+"Ronen Eldan",
+40.34,
+-74.66,
+"Princeton, USA",
+2023,
+1
+],
+[
+"Rong Ge",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Rongwu Xu",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Rongxiang Weng",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Rose Yu",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2018,
+1
+],
+[
+"Ross Anderson",
+52.2,
+0.12,
+"Cambridge, UK",
+2023,
+1
+],
+[
+"Ross Girshick",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2017,
+1
+],
+[
+"Rowan Zellers",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2019,
+1
+],
+[
+"Roy Ka-Wei Lee",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"Royden Yates",
+null,
+null,
+"",
+2012,
+0
+],
+[
+"Rudolf E. Kalman",
+40.81,
+-73.95,
+"New York, USA",
+1960,
+1
+],
+[
+"Rudolf E. Kálmán",
+40.81,
+-73.95,
+"New York, USA",
+1960,
+1
+],
+[
+"Rudolf Virchow",
+52.52,
+13.4,
+"Berlin, Germany",
+1858,
+1
+],
+[
+"Rui Zheng",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Ruibin Xiong",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Runlong Zhou",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Runpeng Geng",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2024,
+1
+],
+[
+"Ruochen Li",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Ruokun Liu",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Ruoxi Wang",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Rupert Lane",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Rupesh Kumar Srivastava",
+43.65,
+-79.38,
+"Toronto, Canada",
+2015,
+1
+],
+[
+"Ruslan Salakhutdinov",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2014,
+1
+],
+[
+"Russian Virtual Computer Museum",
+55.75,
+37.62,
+"Moscow, Russia",
+2000,
+1
+],
+[
+"Ruth Lakretz",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2020,
+1
+],
+[
+"Ryan Greenblatt",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Ryan Lowe",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Ryan P. Adams",
+42.37,
+-71.11,
+"Cambridge, USA",
+2012,
+1
+],
+[
+"Ryan Somma",
+null,
+null,
+"",
+2005,
+0
+],
+[
+"Ryo Yoshida",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Ryoma Sakurai",
+34.82,
+135.5,
+"Osaka, Japan",
+2024,
+1
+],
+[
+"Réjean Ducharme",
+45.5,
+-73.57,
+"Montréal, Canada",
+2003,
+1
+],
+[
+"Rémi Coulom",
+48.85,
+2.35,
+"Paris, France",
+2006,
+1
+],
+[
+"Rémi Tachet des Combes",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"S. Bengtson",
+null,
+null,
+"",
+2010,
+0
+],
+[
+"S. Best",
+null,
+null,
+"",
+1957,
+0
+],
+[
+"S. Chopra",
+40.74,
+-74.4,
+"Murray Hill, USA",
+2007,
+1
+],
+[
+"S. Conway Morris",
+52.63,
+-1.13,
+"Cambridge, UK",
+2001,
+1
+],
+[
+"S. Johnstone",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"S. M. Ali Eslami",
+51.51,
+-0.13,
+"London, UK",
+2018,
+1
+],
+[
+"S. M. Andrews",
+null,
+null,
+"",
+2010,
+0
+],
+[
+"S. P. B. G. Brink",
+null,
+null,
+"",
+2010,
+0
+],
+[
+"S. W. Poulton",
+null,
+null,
+"",
+2011,
+0
+],
+[
+"S. Zhu",
+null,
+null,
+"",
+2016,
+0
+],
+[
+"Saffron Huang",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Sahar Abdelnabi",
+52.52,
+13.4,
+"Berlin, Germany",
+2023,
+1
+],
+[
+"Saining Xie",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Saleh Ashkboos",
+47.37,
+8.54,
+"Zürich, Switzerland",
+2022,
+1
+],
+[
+"Sam Bowman",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2024,
+1
+],
+[
+"Sam Gross",
+32.87,
+-117.24,
+"San Diego, USA",
+2019,
+1
+],
+[
+"Sam Harris",
+47.61,
+-122.33,
+"Seattle, USA",
+2012,
+1
+],
+[
+"Sam McCandlish",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Sam Ringer",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Sam Ritter",
+51.75,
+-1.26,
+"Oxford, UK",
+2024,
+1
+],
+[
+"Sam T. Roweis",
+45.5,
+-73.57,
+"Montréal, Canada",
+2000,
+1
+],
+[
+"Sammy Lokorodi",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Samuel Batzner",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Samuel Butler",
+51.94,
+-1.15,
+"Oxford, UK",
+1863,
+1
+],
+[
+"Samuel Eilenberg",
+41.79,
+-87.6,
+"Chicago, USA",
+1945,
+1
+],
+[
+"Samuel F. B. Morse",
+40.71,
+-74.01,
+"New York, USA",
+1837,
+1
+],
+[
+"Samuel Ichiye Hayakawa",
+47.61,
+-122.33,
+"Seattle, USA",
+1941,
+1
+],
+[
+"Samuel L. Smith",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Samuel Marks",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2023,
+1
+],
+[
+"Samuel R. Bowman",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2025,
+1
+],
+[
+"Samuel S. Schoenholz",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Samy Bengio",
+45.5,
+-73.57,
+"Montréal, Canada",
+2002,
+1
+],
+[
+"Samyam Rajbhandari",
+37.35,
+-121.96,
+"Santa Clara, USA",
+2019,
+1
+],
+[
+"Samyam Rajbhandary",
+37.35,
+-121.96,
+"Santa Clara, USA",
+2020,
+1
+],
+[
+"Sander Dieleman",
+51.51,
+-0.13,
+"London, UK",
+2016,
+1
+],
+[
+"Sandhini Agarwal",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Sandipan Kundu",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Sandrine Prat",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Sanjay Ghemawat",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Sanjeev Arora",
+40.34,
+-74.66,
+"Princeton, USA",
+2017,
+1
+],
+[
+"Sanjoy Mitter",
+42.37,
+-71.11,
+"Cambridge, USA",
+2016,
+1
+],
+[
+"Sanmi Koyejo",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Santiago Fernandez",
+45.5,
+-73.57,
+"Montréal, Canada",
+2006,
+1
+],
+[
+"Santiago Ramón y Cajal",
+40.42,
+-3.7,
+"Madrid, Spain",
+1905,
+1
+],
+[
+"Santosh Divvala",
+null,
+null,
+"",
+2016,
+0
+],
+[
+"Sanyuan Chen",
+30.27,
+120.16,
+"Hangzhou, China",
+2023,
+1
+],
+[
+"Sara Anne Gordon",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Sara Hooker",
+40.71,
+-74.01,
+"New York, USA",
+2020,
+1
+],
+[
+"Sara Sabour",
+43.65,
+-79.38,
+"Toronto, Canada",
+2017,
+1
+],
+[
+"Sarah Chen",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Sarah E. Freidline",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Sarah Wiegreffe",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2023,
+1
+],
+[
+"Sarnoff Mednick",
+37.87,
+-122.26,
+"Berkeley, USA",
+1962,
+1
+],
+[
+"Sasank Chilamkurthy",
+32.87,
+-117.24,
+"San Diego, USA",
+2019,
+1
+],
+[
+"Satwik Kottur",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Saul Santos",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Saunders Mac Lane",
+41.79,
+-87.6,
+"Chicago, USA",
+1945,
+1
+],
+[
+"Saurav Kadavath",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"ScaDS.AI Dresden/Leipzig",
+51.05,
+13.74,
+"Dresden, Germany",
+2020,
+1
+],
+[
+"Scherf",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Scott Gray",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Scott Johnston",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Scott Linderman",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Scott Lundberg",
+47.61,
+-122.33,
+"Seattle, USA",
+2023,
+1
+],
+[
+"Seamless Communication",
+48.85,
+2.35,
+"Paris, France",
+2024,
+1
+],
+[
+"Sean J. Taylor",
+37.77,
+-122.42,
+"San Francisco, USA",
+2018,
+1
+],
+[
+"Sean R. Eddy",
+53.73,
+-1.55,
+"Cardiff, UK",
+1998,
+1
+],
+[
+"Sean Welleck",
+47.61,
+-122.33,
+"Seattle, USA",
+2023,
+1
+],
+[
+"SearXNG Community",
+48.85,
+2.35,
+"Paris, France",
+2024,
+1
+],
+[
+"Sebastian Borgeaud",
+51.51,
+-0.13,
+"London, UK",
+2022,
+1
+],
+[
+"Sebastian Riedel",
+52.2,
+0.12,
+"Cambridge, UK",
+2020,
+1
+],
+[
+"Sebastian Ruder",
+47.23,
+11.43,
+"Heidelberg, Germany",
+2023,
+1
+],
+[
+"Sebastijan Dumancic",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Self-generated (Plotly)",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Seneca the Younger",
+40.84,
+14.25,
+"Naples, Italy",
+65,
+1
+],
+[
+"Senjie Jin",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Sepp Hochreiter",
+48.14,
+11.58,
+"Munich, Germany",
+1997,
+1
+],
+[
+"Seppo Linnainmaa",
+60.17,
+24.94,
+"Helsinki, Finland",
+1970,
+1
+],
+[
+"Sergei Vassilvitskii",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2007,
+1
+],
+[
+"Sergey Brin",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1998,
+1
+],
+[
+"Sergey Levine",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2016,
+1
+],
+[
+"Serper",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Seshu Mandal",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Sewon Min",
+40.34,
+-74.66,
+"Princeton, USA",
+2022,
+1
+],
+[
+"Seyedarmin Azizi",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Seymour Papert",
+42.37,
+-71.11,
+"Cambridge, USA",
+1969,
+1
+],
+[
+"Shailesh Mishra",
+52.52,
+13.4,
+"Berlin, Germany",
+2023,
+1
+],
+[
+"Shakir Mohamed",
+51.51,
+-0.13,
+"London, UK",
+2015,
+1
+],
+[
+"Sham Kakade",
+42.37,
+-71.11,
+"Cambridge, USA",
+2022,
+1
+],
+[
+"Shan Carter",
+37.77,
+-122.42,
+"San Francisco, USA",
+2024,
+1
+],
+[
+"Shane Legg",
+51.51,
+-0.13,
+"London, UK",
+2015,
+1
+],
+[
+"Shanghang Zhang",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Shanshan Liu",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Shaohan Huang",
+30.27,
+120.16,
+"Hangzhou, China",
+2023,
+1
+],
+[
+"Shaojie Bai",
+45.5,
+-73.57,
+"Montréal, Canada",
+2018,
+1
+],
+[
+"Shaolei Ren",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shaoqing Ren",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2015,
+1
+],
+[
+"Shara E. Bailey",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Sharan Narang",
+37.39,
+-122.08,
+"Mountain View, USA",
+2022,
+1
+],
+[
+"Shariq Hashme",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"SharkD",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Sharon Holt",
+null,
+null,
+"",
+2013,
+0
+],
+[
+"Shashank Gupta",
+40.44,
+-79.94,
+"Pittsburgh, USA",
+2023,
+1
+],
+[
+"Shashank Rajput",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Shashank Subramanian",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Shashwat Garg",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shashwat Goel",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Shauna Kravec",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Shayne Gould",
+41.88,
+-87.63,
+"Chicago, USA",
+2023,
+1
+],
+[
+"Shayne Longpre",
+40.71,
+-74.01,
+"New York, USA",
+2022,
+1
+],
+[
+"Sheer El-Showk",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Shengfeng Pan",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Sherjil Ozair",
+43.65,
+-79.38,
+"Toronto, Canada",
+2014,
+1
+],
+[
+"Sherry Moore",
+37.39,
+-122.08,
+"Mountain View, USA",
+2016,
+1
+],
+[
+"Shi Fu",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Shichang Zhang",
+null,
+null,
+"",
+2025,
+0
+],
+[
+"Shigeru Miyagawa",
+35.71,
+139.76,
+"Tokyo, Japan",
+2024,
+1
+],
+[
+"Shih-Yang Liu",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Shihan Dou",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shiing-Shen Chern",
+40.81,
+-73.95,
+"New York, USA",
+1946,
+1
+],
+[
+"Shikha Bordia",
+40.34,
+-74.66,
+"Princeton, USA",
+2019,
+1
+],
+[
+"Shishir G. Patil",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Shivam Garg",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2022,
+1
+],
+[
+"Shivani Agrawal",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shixiang Shane Gu",
+37.39,
+-122.08,
+"Mountain View, USA",
+2022,
+1
+],
+[
+"Sho Yaida",
+41.82,
+-71.41,
+"Providence, USA",
+2024,
+1
+],
+[
+"Sholto Douglas",
+51.51,
+-0.13,
+"London, UK",
+2023,
+1
+],
+[
+"Shrimai Prabhumoye",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shuai Zhang",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Shuang Li",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shuangfei Zhai",
+37.39,
+-122.08,
+"Mountain View, USA",
+2023,
+1
+],
+[
+"Shujie Liu",
+null,
+null,
+"",
+2023,
+0
+],
+[
+"Shuming Ma",
+null,
+null,
+"",
+2024,
+0
+],
+[
+"Shunichi Amari",
+35.01,
+135.77,
+"Kyoto, Japan",
+1972,
+1
+],
+[
+"Shunryu Suzuki",
+35.01,
+135.77,
+"Kyoto, Japan",
+1970,
+1
+],
+[
+"Shunyu Yao",
+40.34,
+-74.66,
+"Princeton, USA",
+2023,
+1
+],
+[
+"Shuxin Zheng",
+null,
+null,
+"",
+2020,
+0
+],
+[
+"Shuyan Zhou",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2022,
+1
+],
+[
+"Shweta Jain",
+null,
+null,
+"",
+2018,
+0
+],
+[
+"Si Ma",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Siamak Ravanbakhsh",
+40.34,
+-74.66,
+"Princeton, USA",
+2017,
+1
+],
+[
+"Sid Black",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Sid Kouider",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Sida D. Wang",
+43.65,
+-79.38,
+"Toronto, Canada",
+2011,
+1
+],
+[
+"Siddhartha Brahma",
+37.39,
+-122.08,
+"Mountain View, USA",
+2022,
+1
+],
+[
+"Sidney Altman",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1976,
+1
+],
+[
+"Siemens AG",
+48.14,
+11.58,
+"Munich, Germany",
+1900,
+1
+],
+[
+"Sigmund Freud",
+48.21,
+16.37,
+"Vienna, Austria",
+1900,
+1
+],
+[
+"Silviu-Marian Udrescu",
+51.51,
+-0.13,
+"London, UK",
+2020,
+1
+],
+[
+"Simon Donaldson",
+52.2,
+0.12,
+"Cambridge, UK",
+1983,
+1
+],
+[
+"Simon Duane",
+52.2,
+0.12,
+"Cambridge, UK",
+1987,
+1
+],
+[
+"Simon Godsill",
+53.38,
+-1.47,
+"Sheffield, UK",
+2000,
+1
+],
+[
+"Simon Hawkins",
+52.63,
+-1.13,
+"Cambridge, UK",
+2002,
+1
+],
+[
+"Simon Kornblith",
+40.81,
+-73.95,
+"New York, USA",
+2020,
+1
+],
+[
+"Simon Neubauer",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Simon Osindero",
+51.51,
+-0.13,
+"London, UK",
+2006,
+1
+],
+[
+"Simon Schmitt",
+51.51,
+-0.13,
+"London, UK",
+2020,
+1
+],
+[
+"Simon Stevin",
+51.92,
+4.48,
+"Brussels, Belgium",
+1585,
+1
+],
+[
+"Simran Liu",
+null,
+null,
+"",
+2021,
+0
+],
+[
+"Siméon-Denis Poisson",
+48.85,
+2.35,
+"Paris, France",
+1837,
+1
+],
+[
+"Siyuan Ma",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Siyuan Zhuang",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"SK Hynix",
+36.35,
+127.38,
+"Icheon, South Korea",
+2013,
+1
+],
+[
+"Skalse",
+51.51,
+-0.13,
+"London, UK",
+2021,
+1
+],
+[
+"Skyler Hallinan",
+37.77,
+-122.42,
+"San Francisco, USA",
+2023,
+1
+],
+[
+"Slav Petrov",
+42.37,
+-71.11,
+"Cambridge, USA",
+2022,
+1
+],
+[
+"Slava Gerovitch",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1961,
+1
+],
+[
+"Smalltalk (smalltalk.com)",
+41.88,
+-87.63,
+"Chicago, USA",
+1972,
+1
+],
+[
+"Smithsonian Institution",
+38.89,
+-77.02,
+"Washington, USA",
+2000,
+1
+],
+[
+"Solomon Kullback",
+40.71,
+-74.01,
+"New York, USA",
+1959,
+1
+],
+[
+"Song Han",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Sonia Harmand",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Sonja Diekelmann and Jana Born",
+null,
+null,
+"",
+2010,
+0
+],
+[
+"Soonho Kong",
+42.37,
+-71.11,
+"Cambridge, USA",
+2015,
+1
+],
+[
+"Sophie Clément",
+null,
+null,
+"",
+2015,
+0
+],
+[
+"Soren Windolf",
+51.51,
+-0.13,
+"London, UK",
+2025,
+1
+],
+[
+"Soroush Vosoughi",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Soumadeep Saha",
+null,
+null,
+"",
+2022,
+0
+],
+[
+"Soumik Mandal",
+null,
+null,
+"",
+2019,
+0
+],
+[
+"Soumith Chintala",
+32.87,
+-117.24,
+"San Diego, USA",
+2019,
+1
+],
+[
+"Sourya Basu",
+41.31,
+-72.92,
+"New Haven, USA",
+2020,
+1
+],
+[
+"Souvik Kundu",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Sri Harsha Choday",
+37.35,
+-121.96,
+"Santa Clara, USA",
+2018,
+1
+],
+[
+"Srinivas Vasudevan",
+37.39,
+-122.08,
+"Mountain View, USA",
+2017,
+1
+],
+[
+"Srinivasan Parthasarathy",
+null,
+null,
+"",
+2026,
+0
+],
+[
+"Stan Honda",
+null,
+null,
+"",
+1997,
+0
+],
+[
+"Stan Lanning",
+37.21,
+-121.95,
+"Los Gatos, USA",
+2006,
+1
+],
+[
+"Standards Council of the C++ Foundation",
+32.87,
+-117.24,
+"San Diego, USA",
+2011,
+1
+],
+[
+"Stanford Encyclopedia of Philosophy",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2020,
+1
+],
+[
+"Stanford Institute for Human-Centered AI",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2025,
+1
+],
+[
+"Stanislas Dehaene",
+48.85,
+2.35,
+"Paris, France",
+2001,
+1
+],
+[
+"Stanislav Fort",
+37.77,
+-122.42,
+"San Francisco, USA",
+2022,
+1
+],
+[
+"Stanislaw Jastrzebski",
+48.85,
+2.35,
+"Paris, France",
+2019,
+1
+],
+[
+"Stanisław Ulam",
+40.81,
+-73.95,
+"New York, USA",
+1949,
+1
+],
+[
+"Stanley L. Miller",
+42.28,
+-83.74,
+"Ann Arbor, USA",
+1953,
+1
+],
+[
+"Stanley Mazor",
+37.35,
+-121.96,
+"Santa Clara, USA",
+1971,
+1
+],
+[
+"Stefan Heil",
+48.21,
+16.37,
+"Vienna, Austria",
+1996,
+1
+],
+[
+"Stefan Heimersheim",
+48.52,
+9.06,
+"Tübingen, Germany",
+2023,
+1
+],
+[
+"Stefan Wager",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2018,
+1
+],
+[
+"Stefanie Jegelka",
+42.37,
+-71.11,
+"Cambridge, USA",
+2019,
+1
+],
+[
+"Stefano Benazzi",
+null,
+null,
+"",
+2017,
+0
+],
+[
+"Stefano Ermon",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2022,
+1
+],
+[
+"Stefano Massaroli",
+37.44,
+-122.14,
+"Palo Alto, USA",
+2023,
+1
+],
+[
+"Stella Biderman",
+37.77,
+-122.42,
+"San Francisco, USA",
+2020,
+1
+],
+[
+"Stephanie Lin",
+42.37,
+-71.11,
+"Cambridge, USA",
+2021,
+1
+],
+[
+"Stephen A. Della Pietra",
+41.79,
+-87.6,
+"Chicago, USA",
+1996,
+1
+],
+[
+"Stephen Bates",
+43.07,
+-89.4,
+"Minneapolis, USA",
+2021,
+1
+],
+[
+"Stephen C. Johnson",
+40.74,
+-74.4,
+"Murray Hill, USA",
+1967,
+1
+],
+[
+"Stephen Chrisomalis",
+43.2,
+-77.6,
+"Ithaca, USA",
+2010,
+1
+],
+[
+"Stephen Greenblatt",
+41.31,
+-72.92,
+"New Haven, USA",
+2011,
+1
+],
+[
+"Stephen Muggleton",
+52.2,
+0.12,
+"Cambridge, UK",
+1991,
+1
+],
+[
+"Stephen Robertson",
+51.58,
+-1.51,
+"Slough, UK",
+2009,
+1
+],
+[
+"Stephen Smale",
+37.44,
+-122.14,
+"Palo Alto, USA",
+1961,
+1
+],
+[
+"Stephencdickson",
+null,
+null,
+"",
+1800,
+0
+],
+[
+"Stevan Harnad",
+43.25,
+-79.87,
+"Kingston, Canada",
+1990,
+1
+],
+[
+"Steve Awodey",
+41.31,
+-72.92,
+"New Haven, USA",
+2010,
+1
+],
+[
+"Steve Crocker",
+34.02,
+-118.49,
+"Santa Monica, USA",
+1969,
+1
+]
+]

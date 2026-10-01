@@ -1,0 +1,7131 @@
+[
+{
+"name": "Norman Steenrod",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eilenbergsteenrod1952",
+"steenrod1947"
+],
+"titles": [
+"Foundations of Algebraic Topology",
+"Products of Cocycles and Extensions of Mappings"
+]
+},
+{
+"name": "nostalgebraist",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"nostalgebraist2020logitlens"
+],
+"titles": [
+"Interpreting GPT: The Logit Lens"
+]
+},
+{
+"name": "Nouha Dziri",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Nova DasSarma",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"incontextlearninghead",
+"elhage2021mathematical",
+"kadavath2022selfknowledge"
+],
+"titles": [
+"In-context Learning and Induction Heads",
+"A Mathematical Framework for Transformer Circuits",
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "NumPy developers",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"numpy_broadcasting"
+],
+"titles": [
+"Broadcasting"
+]
+},
+{
+"name": "NVIDIA Corporation",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"nvlink"
+],
+"titles": [
+"NVIDIA NVLink High-Speed GPU Interconnect"
+]
+},
+{
+"name": "O. Toupet",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"toupet2025enav"
+],
+"titles": [
+"Enhanced Autonomous Navigation on the Perseverance Mars Rover"
+]
+},
+{
+"name": "Ofir Press",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"alibi2022",
+"press2022alibi",
+"press2022compositionality"
+],
+"titles": [
+"Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation",
+"Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation",
+"Measuring and Narrowing the Compositionality Gap in Language Models"
+]
+},
+{
+"name": "Oksana Yakhnenko",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bordes2013transE",
+"bordes2013transe"
+],
+"titles": [
+"Translating Embeddings for Modeling Multi-relational Data",
+"Translating Embeddings for Modeling Multi-relational Data"
+]
+},
+{
+"name": "Olaf Ronneberger",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ronneberger2015unet"
+],
+"titles": [
+"U-Net: Convolutional Networks for Biomedical Image Segmentation"
+]
+},
+{
+"name": "Olatunji Ruwase",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rajbhandari2019zero"
+],
+"titles": [
+"ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"
+]
+},
+{
+"name": "Oleg Klimov",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schulman2017ppo"
+],
+"titles": [
+"Proximal Policy Optimization Algorithms"
+]
+},
+{
+"name": "Olivia Caramello",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"caramello2017theories"
+],
+"titles": [
+"Theories, Sites, Toposes: Relating and studying mathematical theories through topos-theoretic bridges"
+]
+},
+{
+"name": "Ollama",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ollama2024"
+],
+"titles": [
+"Ollama: Get up and running with large language models locally"
+]
+},
+{
+"name": "Omar Khattab",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"khattab2020colbert"
+],
+"titles": [
+"ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT"
+]
+},
+{
+"name": "Omer Levy",
+"works": 4,
+"yearMin": 2019,
+"yearMax": 2019,
+"keys": [
+"bart",
+"keyvalmem",
+"talmor2018commonsenseqa",
+"geva2021kv"
+],
+"titles": [
+"BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
+"Transformer Feed-Forward Layers Are Key-Value Memories",
+"CommonsenseQA: A Question Answering Challenge Targeting Commonsense Reasoning"
+]
+},
+{
+"name": "on behalf of the Estate of W. Ross Ashby",
+"works": 1,
+"yearMin": 1948,
+"yearMax": 1948,
+"keys": [
+"homeostatphoto"
+],
+"titles": [
+"W. Ross Ashby's Homeostat"
+]
+},
+{
+"name": "OpenAI",
+"works": 5,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"openai2023functioncalling",
+"openai2024o1",
+"openai2023apipricing",
+"navier_stokes_openai",
+"openai2023superintelligence"
+],
+"titles": [
+"Function calling guide",
+"Learning to Reason with LLMs",
+"OpenAI API Pricing"
+]
+},
+{
+"name": "Opher Lieber",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lieber2024jamba"
+],
+"titles": [
+"Jamba: A Hybrid Transformer-Mamba Language Model"
+]
+},
+{
+"name": "Ora Lassila",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"berners2001sw"
+],
+"titles": [
+"The Semantic Web"
+]
+},
+{
+"name": "Oracle",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"java_oracle"
+],
+"titles": [
+"Java (Oracle)"
+]
+},
+{
+"name": "Oren Etzioni",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"clark2018arc"
+],
+"titles": [
+"Think you have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge"
+]
+},
+{
+"name": "Oriol Vinyals",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hinton2015distilling",
+"sutskever2014seq2seq",
+"oord2016wavenet"
+],
+"titles": [
+"Distilling the Knowledge in a Neural Network",
+"Sequence to Sequence Learning with Neural Networks",
+"WaveNet: A Generative Model for Raw Audio"
+]
+},
+{
+"name": "Orisvaldo Neto",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"udrescu2020aifeynman"
+],
+"titles": [
+"AI Feynman 2.0: Pareto-optimal symbolic regression exploiting graph modularity"
+]
+},
+{
+"name": "Osama Shukir Muhammed Amin",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"cuneiform"
+],
+"titles": [
+"Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum"
+]
+},
+{
+"name": "Oskar Morgenstern",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"vonneumann_morgenstern1944"
+],
+"titles": [
+"Theory of Games and Economic Behavior"
+]
+},
+{
+"name": "Otto Kandler",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"woese1990domains"
+],
+"titles": [
+"Towards a Natural System of Organisms: Proposal for the Domains Archaea, Bacteria, and Eucarya"
+]
+},
+{
+"name": "Otto Neugebauer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"neugebauerexactsciences"
+],
+"titles": [
+"The Exact Sciences in Antiquity"
+]
+},
+{
+"name": "Otto von Guericke",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"vonguericke"
+],
+"titles": [
+"Experimenta Nova Magdeburgica (1672, describing the 1654 hemispheres experiment)"
+]
+},
+{
+"name": "Owain Evans",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"berglund2023reversal",
+"lin2021truthful",
+"lin2022uncertainty"
+],
+"titles": [
+"The Reversal Curse: LLMs trained on 'A is B' fail to learn 'B is A'",
+"Truthful AI: Developing and Governing AI That Does Not Lie",
+"Teaching Models to Express Their Uncertainty in Words"
+]
+},
+{
+"name": "P. B. Sheridan",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "P. Haffner",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lecun1998gradient"
+],
+"titles": [
+"Gradient-based learning applied to document recognition"
+]
+},
+{
+"name": "P. J. Grabowski",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kruger1982selfsplicing"
+],
+"titles": [
+"Self-Splicing RNA: Autoexcision and Autocyclization of the Ribosomal RNA Intervening Sequence of Tetrahymena"
+]
+},
+{
+"name": "P. Kyle McCarter",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"earliestalphabet"
+],
+"titles": [
+"Two Early Alphabetic Inscriptions from the Wadi el-Ḥôl: New Evidence for the Origin of the Alphabet from the Western Desert of Egypt"
+]
+},
+{
+"name": "P. Liyanage",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brocks2017rise"
+],
+"titles": [
+"The Rise of Algae in Cryogenian Oceans and the Emergence of Animals"
+]
+},
+{
+"name": "P.C. Jones",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"goodenough1980licoo2"
+],
+"titles": [
+"LixCoO2 (0<x⩽1): A new cathode material for batteries of high energy density"
+]
+},
+{
+"name": "Pablo Barceló",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"perez2021attention"
+],
+"titles": [
+" Attention is Turing-Complete "
+]
+},
+{
+"name": "Pablo García-Medrano",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"handaxementaltemplate"
+],
+"titles": [
+"The Mental Template in Handaxe Manufacture: New Insights into Acheulean Lithic Technological Behavior at Boxgrove, Sussex, UK"
+]
+},
+{
+"name": "Pamela Mishkin",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ouyang2022instructgpt"
+],
+"titles": [
+"Training language models to follow instructions with human feedback"
+]
+},
+{
+"name": "Paola Villa",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lebomboarticle"
+],
+"titles": [
+"Early evidence of San material culture represented by organic artifacts from Border Cave, South Africa"
+]
+},
+{
+"name": "Paolo Frasconi",
+"works": 1,
+"yearMin": 1994,
+"yearMax": 1994,
+"keys": [
+"bengio1994learning"
+],
+"titles": [
+"Learning long-term dependencies with gradient descent is difficult"
+]
+},
+{
+"name": "Paolo Massa",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"simonnewell_image"
+],
+"titles": [
+"Herbert A. Simon and Allen Newell, chess match (1981)"
+]
+},
+{
+"name": "Paris",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"susa_geometry_tablet"
+],
+"titles": [
+"Geometry problem on a clay tablet belonging to a school for scribes; Susa, first half of the 2nd millennium BC"
+]
+},
+{
+"name": "Parmenides",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"parmenides480fragments"
+],
+"titles": [
+"On Nature"
+]
+},
+{
+"name": "Partha Niyogi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sindhwani2006geometric"
+],
+"titles": [
+"The Geometric Basis of Semi-Supervised Learning"
+]
+},
+{
+"name": "Pascal",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pascal"
+],
+"titles": [
+"Pascal"
+]
+},
+{
+"name": "Pascal Fontaine",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"barrett2018smtlib"
+],
+"titles": [
+"The SMT-LIB Standard: Version 2.6"
+]
+},
+{
+"name": "Pascal Vincent",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"neuralprobabilistic",
+"bengio2013representation",
+"vincent2008dae"
+],
+"titles": [
+"A Neural Probabilistic Language Model",
+"Representation Learning: A Review and New Perspectives",
+"Extracting and Composing Robust Features with Denoising Autoencoders"
+]
+},
+{
+"name": "Patrice Simard",
+"works": 1,
+"yearMin": 1994,
+"yearMax": 1994,
+"keys": [
+"bengio1994learning"
+],
+"titles": [
+"Learning long-term dependencies with gradient descent is difficult"
+]
+},
+{
+"name": "Patrick Esser",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rombach2022ldm"
+],
+"titles": [
+"High-Resolution Image Synthesis with Latent Diffusion Models"
+]
+},
+{
+"name": "Patrick Haffner",
+"works": 1,
+"yearMin": 1998,
+"yearMax": 1998,
+"keys": [
+"lecun1998gradientbased"
+],
+"titles": [
+"Gradient-based learning applied to document recognition"
+]
+},
+{
+"name": "Patrick J. Flynn",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jain2010clustering"
+],
+"titles": [
+"Data Clustering: A User's Dilemma"
+]
+},
+{
+"name": "Patrick J. Hayes",
+"works": 1,
+"yearMin": 1969,
+"yearMax": 1969,
+"keys": [
+"mccarthy1969some"
+],
+"titles": [
+"Some Philosophical Problems from the Standpoint of Artificial Intelligence"
+]
+},
+{
+"name": "Patrick Lewis",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lewis2020rag"
+],
+"titles": [
+"Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+]
+},
+{
+"name": "Paul A. Merolla",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merolla2014truenorth"
+],
+"titles": [
+"A million spiking-neuron integrated circuit with a scalable communication network and interface"
+]
+},
+{
+"name": "Paul Baran",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"baran1964"
+],
+"titles": [
+"On Distributed Communications Networks"
+]
+},
+{
+"name": "Paul Barham",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Paul C. Horning",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"horning2016rpr"
+],
+"titles": [
+"Evolved RNA Polymerase Ribozymes with Expanded Activity and Generality"
+]
+},
+{
+"name": "Paul Christiano",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ouyang2022instructgpt",
+"ai_safety_debate"
+],
+"titles": [
+"Training language models to follow instructions with human feedback",
+"AI Safety via Debate"
+]
+},
+{
+"name": "Paul Ehrenfest",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"whyspace3dims"
+],
+"titles": [
+"In that way does it become manifest in the fundamental laws of physics that space has three dimensions"
+]
+},
+{
+"name": "Paul F. Christiano",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"christiano2017rlhf"
+],
+"titles": [
+"Deep Reinforcement Learning from Human Preferences"
+]
+},
+{
+"name": "Paul Fischer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"auer2002ucb"
+],
+"titles": [
+"Finite-time Analysis of the Multiarmed Bandit Problem"
+]
+},
+{
+"name": "Paul Goldberg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wonderwerk"
+],
+"titles": [
+"Microstratigraphic evidence of in situ fire in the Acheulean strata of Wonderwerk Cave, Northern Cape province, South Africa"
+]
+},
+{
+"name": "Paul John Werbos",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"werbos1974"
+],
+"titles": [
+"Beyond Regression: New Tools for Prediction and Analysis in the Behavioral Sciences"
+]
+},
+{
+"name": "Paul M. Churchland",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"churchland1981eliminative"
+],
+"titles": [
+"Eliminative Materialism and the Propositional Attitudes"
+]
+},
+{
+"name": "Paul N. Edwards",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"edwards1996closedworld"
+],
+"titles": [
+"The Closed World: Computers and the Politics of Discourse in Cold War America"
+]
+},
+{
+"name": "Paul Teller",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"teller2001ambit"
+],
+"titles": [
+"The Ambits of Structural Realism"
+]
+},
+{
+"name": "Paul Tillich",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tillich1952couragetobe"
+],
+"titles": [
+"The Courage to Be"
+]
+},
+{
+"name": "Paul Tucker",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Pauline Luc",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"alayrac2022flamingo"
+],
+"titles": [
+"Flamingo: a Visual Language Model for Few-Shot Learning"
+]
+},
+{
+"name": "PCI-SIG",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pciespec"
+],
+"titles": [
+"PCI Express Base Specification Revision 1.0"
+]
+},
+{
+"name": "Pedro Domingos",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"domingos1997nb"
+],
+"titles": [
+"On the optimality of the simple Bayesian classifier under zero-one loss"
+]
+},
+{
+"name": "Pedro Reviriego",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fu2024count",
+"conde2025count"
+],
+"titles": [
+"Why Do Large Language Models (LLMs) Struggle to Count Letters?",
+"Can ChatGPT Learn to Count Letters?"
+]
+},
+{
+"name": "Peixian Chen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fu2023mme"
+],
+"titles": [
+"MME: A Comprehensive Evaluation Benchmark for Multimodal Large Language Models"
+]
+},
+{
+"name": "Peiyi Wang",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhang2024mathshepherd",
+"shao2024grpo"
+],
+"titles": [
+"Math-Shepherd: Verify and Reinforce LLMs Step-by-step without Human Annotations",
+"DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models"
+]
+},
+{
+"name": "Peng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"garg2026features"
+],
+"titles": [
+"How Many Features Can a Language Model Store Under the Linear Representation Hypothesis?"
+]
+},
+{
+"name": "Pengcheng He",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ma2023queryrewriting"
+],
+"titles": [
+"Query Rewriting for Retrieval-Augmented Large Language Models"
+]
+},
+{
+"name": "Pengfei Li",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"li2023thirsty"
+],
+"titles": [
+"Making AI Less 'Thirsty': Uncovering and Addressing the Secret Water Footprint of AI Models"
+]
+},
+{
+"name": "Per Martin-Löf",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"martinloeftypetheory"
+],
+"titles": [
+"An Intuitionistic Theory of Types: Predicative Part"
+]
+},
+{
+"name": "Percy Liang",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"park2023generativeagents",
+"liu2023lostmiddle",
+"garg2022incontext",
+"liang2023helm"
+],
+"titles": [
+"Generative Agents: Interactive Simulacra of Human Behavior",
+"Lost in the Middle: How Language Models Use Long Contexts",
+"What Can Transformers Learn In-Context? A Case Study of Simple Function Classes"
+]
+},
+{
+"name": "Petar Veličković",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bronstein2021geometric",
+"velickovic2018gat"
+],
+"titles": [
+"Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges",
+"Graph Attention Networks"
+]
+},
+{
+"name": "Pete Warden",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Peter Auer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"auer2002ucb"
+],
+"titles": [
+"Finite-time Analysis of the Multiarmed Bandit Problem"
+]
+},
+{
+"name": "Peter B. Beaumont",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lebomboarticle"
+],
+"titles": [
+"Early evidence of San material culture represented by organic artifacts from Border Cave, South Africa"
+]
+},
+{
+"name": "Peter Battaglia",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sanchez2020hamiltonian"
+],
+"titles": [
+"Hamiltonian Graph Networks with ODE Integrators"
+]
+},
+{
+"name": "Peter Beaumont",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lebomboboneoriginal"
+],
+"titles": [
+"Border Cave - A Progress Report"
+]
+},
+{
+"name": "Peter Bloem",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schlichtkrull2018rgcn"
+],
+"titles": [
+"Modeling Relational Data with Graph Convolutional Networks"
+]
+},
+{
+"name": "Peter Clark",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"clark2018arc",
+"madaan2023selfrefine"
+],
+"titles": [
+"Think you have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge",
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Peter Dayan",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hinton1995wakesleep",
+"watkins1992qlearning"
+],
+"titles": [
+"The Wake-Sleep Algorithm for Unsupervised Neural Networks",
+"Q-learning"
+]
+},
+{
+"name": "Peter Dayan and P. Read Montague",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schultz1997dopamine"
+],
+"titles": [
+"A Neural Substrate of Prediction and Reward"
+]
+},
+{
+"name": "Peter Dehmer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"emmert2014tda"
+],
+"titles": [
+"Statistical Physics of Viral Evolution"
+]
+},
+{
+"name": "Peter F. Patel-Schneider",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"horrocks2004owl",
+"baader2003dl"
+],
+"titles": [
+"OWL Web Ontology Language Overview",
+"The Description Logic Handbook: Theory, Implementation, and Applications"
+]
+},
+{
+"name": "Peter Harrington",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pathak2022fourcastnet"
+],
+"titles": [
+"FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators"
+]
+},
+{
+"name": "Peter Hart",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"cover1967knn"
+],
+"titles": [
+"Nearest neighbor pattern classification"
+]
+},
+{
+"name": "Peter J. Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tfive"
+],
+"titles": [
+"Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer"
+]
+},
+{
+"name": "Peter L. Bartlett",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bartlett_benign_overfitting"
+],
+"titles": [
+"Benign overfitting in linear regression"
+]
+},
+{
+"name": "Peter Lee",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bubeck2023sparks"
+],
+"titles": [
+"Sparks of Artificial General Intelligence: Early experiments with GPT-4"
+]
+},
+{
+"name": "Peter Li",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"carpenter2017stan"
+],
+"titles": [
+"Stan: A Probabilistic Programming Language"
+]
+},
+{
+"name": "Peter McCullagh",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"glmsecondedition"
+],
+"titles": [
+"Generalized Linear Models (2nd. ed.)"
+]
+},
+{
+"name": "Peter Meer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"comaniciu2002mean"
+],
+"titles": [
+"Mean Shift: A Robust Approach Toward Feature Space Analysis"
+]
+},
+{
+"name": "Peter Naur (editor)",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"algol60report"
+],
+"titles": [
+"Revised Report on the Algorithmic Language ALGOL 60"
+]
+},
+{
+"name": "Peter Norvig",
+"works": 2,
+"yearMin": 2021,
+"yearMax": 2021,
+"keys": [
+"russell2021aima",
+"russell2010aima"
+],
+"titles": [
+"Artificial Intelligence: A Modern Approach",
+"Artificial Intelligence: A Modern Approach"
+]
+},
+{
+"name": "Peter Schuster",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eigen1978hypercycle"
+],
+"titles": [
+"Hypercycles: A Principle of Self-Organization"
+]
+},
+{
+"name": "Peter Shaw",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shaw2018relative"
+],
+"titles": [
+"Self-Attention with Relative Position Representations"
+]
+},
+{
+"name": "Peter Singer",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"singer1972famine",
+"singer1981expandingcircle",
+"singer2009lifeyoucansave"
+],
+"titles": [
+"Famine, Affluence, and Morality",
+"The Expanding Circle: Ethics and Sociobiology",
+"The Life You Can Save"
+]
+},
+{
+"name": "Peter T. Johnstone",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"johnstone_elephant"
+],
+"titles": [
+"Sketches of an Elephant: A Topos Theory Compendium"
+]
+},
+{
+"name": "Peter Welinder",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ouyang2022instructgpt"
+],
+"titles": [
+"Training language models to follow instructions with human feedback"
+]
+},
+{
+"name": "Philip Foulds",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"handaxesymmetry"
+],
+"titles": [
+"Symmetry is its own reward: on the character and significance of Acheulean handaxe symmetry in the Middle Pleistocene"
+]
+},
+{
+"name": "Philip Gage",
+"works": 1,
+"yearMin": 1994,
+"yearMax": 1994,
+"keys": [
+"gage1994bpe"
+],
+"titles": [
+"A New Algorithm for Data Compression"
+]
+},
+{
+"name": "Philipp Fischer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ronneberger2015unet"
+],
+"titles": [
+"U-Net: Convolutional Networks for Biomedical Image Segmentation"
+]
+},
+{
+"name": "Philipp Gunz",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hublin2017jebel"
+],
+"titles": [
+"New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens"
+]
+},
+{
+"name": "Philipp Moritz",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schulman2015trpo"
+],
+"titles": [
+"Trust Region Policy Optimization"
+]
+},
+{
+"name": "Philipp Seidl",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ramsauer2020hopfield"
+],
+"titles": [
+"Hopfield Networks is All You Need"
+]
+},
+{
+"name": "Philippe Roussel",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"colmerauer1973prolog"
+],
+"titles": [
+"Un Système de Communication Homme–Machine en Français"
+]
+},
+{
+"name": "Phillip F. Scott",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hewish1968pulsar"
+],
+"titles": [
+"Observation of a Rapidly Pulsating Radio Source"
+]
+},
+{
+"name": "Phillip Guo",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023representation"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Phillip Isola",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"huh2024platonic"
+],
+"titles": [
+"The Platonic Representation Hypothesis"
+]
+},
+{
+"name": "Phillip Wallis",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hu2021lora"
+],
+"titles": [
+"LoRA: Low-Rank Adaptation of Large Language Models"
+]
+},
+{
+"name": "Phu Mon Htut",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"htu2019dependencies"
+],
+"titles": [
+"Do Attention Heads in BERT Track Syntactic Dependencies?"
+]
+},
+{
+"name": "Pierre Castéran",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bertot2013coq"
+],
+"titles": [
+"Interactive Theorem Proving and Program Development: Coq'Art: The Calculus of Inductive Constructions"
+]
+},
+{
+"name": "Pierre de Fermat",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"oevresdeformat",
+"pascalfirmat1654"
+],
+"titles": [
+"Œuvres de Fermat",
+"Correspondance de 1654 sur le problème des points"
+]
+},
+{
+"name": "Pierre Deligne",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"deligne1974weil"
+],
+"titles": [
+"La conjecture de Weil. I"
+]
+},
+{
+"name": "Pierre Foret",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"foret2021sam"
+],
+"titles": [
+"Sharpness-Aware Minimization for Efficiently Improving Generalization"
+]
+},
+{
+"name": "Pierre Hansen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"aloise2009np"
+],
+"titles": [
+"NP-hardness of Euclidean sum-of-squares clustering"
+]
+},
+{
+"name": "Pierre Simon Laplace",
+"works": 1,
+"yearMin": 1821,
+"yearMax": 1821,
+"keys": [
+"laplace1821"
+],
+"titles": [
+"Précis de l'histoire de l'astronomie"
+]
+},
+{
+"name": "Pierre-Antoine Manzagol",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"vincent2008dae"
+],
+"titles": [
+"Extracting and Composing Robust Features with Denoising Autoencoders"
+]
+},
+{
+"name": "Pierre-Jean Texier",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"achleuleankariandusi"
+],
+"titles": [
+"An earlier origin for the Acheulian"
+]
+},
+{
+"name": "Pierre-Simon Laplace",
+"works": 3,
+"yearMin": 1810,
+"yearMax": 1810,
+"keys": [
+"laplace1810clt",
+"laplace1812analytic",
+"laplace1814essai"
+],
+"titles": [
+"Mémoire sur les approximations des formules qui sont fonctions de très grands nombres et sur la probabilité des causes",
+"Théorie analytique des probabilités",
+"Essai philosophique sur les théories des probabilités"
+]
+},
+{
+"name": "Pieter Abbeel",
+"works": 8,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ho2020ddpm",
+"li2023seqparallel",
+"liu2023ringattention",
+"liu2023ring",
+"schulman2015trpo",
+"abbeel2004irl",
+"levine2016guidance",
+"openai2021dota"
+],
+"titles": [
+"Denoising Diffusion Probabilistic Models",
+"Ring Attention with Blockwise Transformers for Near-Infinite Context",
+"Ring Attention with Blockwise Transformers for Near-Infinite Context"
+]
+},
+{
+"name": "Pieter R. Roelfsema",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lamme2000rpt"
+],
+"titles": [
+"The distinct modes of vision offered by feedforward and recurrent processing"
+]
+},
+{
+"name": "Pieter Roelfsema",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"distinctmodes"
+],
+"titles": [
+"The distinct modes of vision offered by feedforward and recurrent processing"
+]
+},
+{
+"name": "Pietro Liò",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"velickovic2018gat"
+],
+"titles": [
+"Graph Attention Networks"
+]
+},
+{
+"name": "Ping-yeh Chiang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jain2023baseline"
+],
+"titles": [
+"Baseline Defenses for Adversarial Attacks Against Aligned Language Models"
+]
+},
+{
+"name": "Piotr Dollár",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"he2017maskrcnn",
+"he2021mae"
+],
+"titles": [
+"Mask R-CNN",
+"Masked Autoencoders Are Scalable Vision Learners"
+]
+},
+{
+"name": "Plato",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"platomeno",
+"platorepublic",
+"plato380republic",
+"plato399apology"
+],
+"titles": [
+"Meno (72a–84b)",
+"Republic (527a)",
+"The Republic"
+]
+},
+{
+"name": "Pliny the Elder",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"plinynaturalhistory"
+],
+"titles": [
+"Naturalis Historia (Books XXXIII–XXXIV on metals and mining)"
+]
+},
+{
+"name": "Plotinus",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"plotinus250enneads"
+],
+"titles": [
+"The Enneads"
+]
+},
+{
+"name": "Potsawee Manakul",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"manakul2023selfcheck"
+],
+"titles": [
+"SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models"
+]
+},
+{
+"name": "Prafulla Dhariwal",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gresser2023jukebox",
+"schulman2017ppo"
+],
+"titles": [
+"Jukebox: A Generative Model for Music",
+"Proximal Policy Optimization Algorithms"
+]
+},
+{
+"name": "Prajit Ramachandran",
+"works": 1,
+"yearMin": 2017,
+"yearMax": 2017,
+"keys": [
+"ramachandran2017swish"
+],
+"titles": [
+"Searching for Activation Functions"
+]
+},
+{
+"name": "Prakhar Gupta",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Prasad Joshi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"davies2018loihi"
+],
+"titles": [
+"Loihi: A Neuromorphic Manycore Processor with On-Chip Learning"
+]
+},
+{
+"name": "Prateek Jain",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kusupati2022matryoshka"
+],
+"titles": [
+"Matryoshka Representation Learning"
+]
+},
+{
+"name": "Preetum Nakkiran",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"nakkiran2019deepdd"
+],
+"titles": [
+"Deep Double Descent: Where Bigger Models and More Data Hurt"
+]
+},
+{
+"name": "Preyas Popat",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"aloise2009np"
+],
+"titles": [
+"NP-hardness of Euclidean sum-of-squares clustering"
+]
+},
+{
+"name": "Priests of Memphis (tr. Carol Andrews)",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rosetta196bc"
+],
+"titles": [
+"Decree of Memphis (196 BC), tr. Carol Andrews, The Rosetta Stone"
+]
+},
+{
+"name": "Przemysław Dębiak",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"openai2021dota"
+],
+"titles": [
+"Dota 2 with Large Scale Deep Reinforcement Learning"
+]
+},
+{
+"name": "published in The Graphic",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"img_caxton_celebration"
+],
+"titles": [
+"The Caxton Celebration: William Caxton showing specimens of his printing to King Edward IV and his Queen"
+]
+},
+{
+"name": "Push Singh",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"liu2004conceptnet"
+],
+"titles": [
+"ConceptNet — A Practical Commonsense Reasoning Tool-Kit"
+]
+},
+{
+"name": "Python Software Foundation",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"python"
+],
+"titles": [
+"Python 3 Documentation"
+]
+},
+{
+"name": "PyTorch Team",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rajbhandary2025pytorchfsdp"
+],
+"titles": [
+"PyTorch FSDP Documentation"
+]
+},
+{
+"name": "Pāṇini",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"panini_ashtadhyayi"
+],
+"titles": [
+"Ashtadhyayi (अष्टाध्यायी)"
+]
+},
+{
+"name": "Qi Meng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ke2017lightgbm"
+],
+"titles": [
+"LightGBM: A Highly Efficient Gradient Boosting Decision Tree"
+]
+},
+{
+"name": "Qi Zhang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xi2023rise"
+],
+"titles": [
+"The Rise and Potential of Large Language Model Based Agents: A Survey"
+]
+},
+{
+"name": "Qian Yang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chen2024qwen2audio"
+],
+"titles": [
+"Qwen2-Audio Technical Report"
+]
+},
+{
+"name": "Qihao Zhu",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shao2024grpo",
+"guo2024deepseekcoder"
+],
+"titles": [
+"DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+"DeepSeek-Coder: When the Large Language Model Meets Programming — The Rise of Code Intelligence"
+]
+},
+{
+"name": "Qingguo Hu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xiao2026length"
+],
+"titles": [
+"Can LLMs Track Their Output Length? A Dynamic Feedback Mechanism for Precise Length Regulation"
+]
+},
+{
+"name": "Qingyang Wu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"liu2023llava"
+],
+"titles": [
+"Visual Instruction Tuning"
+]
+},
+{
+"name": "Qingzhen Guo",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lu2023doublehelix"
+],
+"titles": [
+"The Double Helix inside the NLP Transformer"
+]
+},
+{
+"name": "Qiwei Ye",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ke2017lightgbm"
+],
+"titles": [
+"LightGBM: A Highly Efficient Gradient Boosting Decision Tree"
+]
+},
+{
+"name": "Quentin Anthony",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"peng2023rwkv"
+],
+"titles": [
+"RWKV: Reinventing RNNs for the Transformer Era"
+]
+},
+{
+"name": "Quentin Duval",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lecun2022jepa"
+],
+"titles": [
+"Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture"
+]
+},
+{
+"name": "Quirin Fischer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"openai2021dota"
+],
+"titles": [
+"Dota 2 with Large Scale Deep Reinforcement Learning"
+]
+},
+{
+"name": "Quoc Le",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wei2022chainofthought",
+"shazeer2017moe",
+"trinh2024alphageometry"
+],
+"titles": [
+"Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+"Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+"Solving Olympiad Geometry without Human Demonstrations"
+]
+},
+{
+"name": "Quoc V. Le",
+"works": 7,
+"yearMin": 2017,
+"yearMax": 2019,
+"keys": [
+"trinh2018commonsense",
+"ramachandran2017swish",
+"sutskever2014seq2seq",
+"mikolov2013exploiting",
+"mckenzie2023inverse",
+"chung2022flan",
+"real2019amoeba"
+],
+"titles": [
+"A Simple Method for Commonsense Reasoning",
+"Searching for Activation Functions",
+"Sequence to Sequence Learning with Neural Networks"
+]
+},
+{
+"name": "Qwen Team",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"qwen2024"
+],
+"titles": [
+"Qwen2.5: Open Foundation and Instruction-Tuning Models"
+]
+},
+{
+"name": "R. A. Hughes",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "R. A. Nelson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "R. Balasubramaniam",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ironpillardelhi"
+],
+"titles": [
+"On the Corrosion Resistance of the Delhi Iron Pillar"
+]
+},
+{
+"name": "R. C. Sprigg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sprigg1947ediacara"
+],
+"titles": [
+"Early Cambrian 'Jellyfishes' of Ediacara, South Australia and Mount John, Kimberly District, Western Australia"
+]
+},
+{
+"name": "R. D. Maurer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"radiationlosses"
+],
+"titles": [
+"Radiation Losses in Glass Optical Waveguides"
+]
+},
+{
+"name": "R. Frei",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"frei2009chromium"
+],
+"titles": [
+"Fluctuations in Precambrian Atmospheric Oxygenation Recorded by Chromium Isotopes"
+]
+},
+{
+"name": "R. Goldberg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "R. Gomes",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gomes2005nice"
+],
+"titles": [
+"Origin of the cataclysmic Late Heavy Bombardment period of the terrestrial planets"
+]
+},
+{
+"name": "R. I. Gerlach",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sutherland2009pyrimidine"
+],
+"titles": [
+"Synergistic Prebiotic Synthesis of Pyrimidine Ribonucleotides"
+]
+},
+{
+"name": "R. Iyer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sutherland2009pyrimidine"
+],
+"titles": [
+"Synergistic Prebiotic Synthesis of Pyrimidine Ribonucleotides"
+]
+},
+{
+"name": "R. J. Beeber",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "R. Nutt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "R. Wengert",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wengert1964"
+],
+"titles": [
+"A Simple Automatic Derivative Evaluation Program"
+]
+},
+{
+"name": "Rachel Ward",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"he2023sideeffects"
+],
+"titles": [
+"Side Effects of Learning from Low-Dimensional Data Embedded in a Euclidean Space"
+]
+},
+{
+"name": "Racter (William Chamberlain",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"racter1984"
+],
+"titles": [
+"The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter"
+]
+},
+{
+"name": "Radford M. Neal",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hinton1995wakesleep",
+"neal1998wake",
+"neal2011hmc"
+],
+"titles": [
+"The Wake-Sleep Algorithm for Unsupervised Neural Networks",
+"Connectionist learning of belief networks",
+"MCMC using Hamiltonian dynamics"
+]
+},
+{
+"name": "Radu Diaconescu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"diaconescu1975"
+],
+"titles": [
+"Axiom of choice and complementation"
+]
+},
+{
+"name": "Rafael Bombarell",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"duvenaud2015convfp"
+],
+"titles": [
+"Convolutional Networks on Graphs for Learning Molecular Fingerprints"
+]
+},
+{
+"name": "Rafael Rafailov",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rafailov2023dpo",
+"tian2023calibration"
+],
+"titles": [
+"Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+"Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback"
+]
+},
+{
+"name": "Raffael",
+"works": 1,
+"yearMin": 1509,
+"yearMax": 1509,
+"keys": [
+"aristotleandplato"
+],
+"titles": [
+"La scuola di Atene"
+]
+},
+{
+"name": "Raffi Childers",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"openai2021dota"
+],
+"titles": [
+"Dota 2 with Large Scale Deep Reinforcement Learning"
+]
+},
+{
+"name": "Raghu Ramakrishnan",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhang1996birch"
+],
+"titles": [
+"BIRCH: An Efficient Data Clustering Method for Very Large Databases"
+]
+},
+{
+"name": "Raia Hadsell",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lecun2007ebm",
+"lecun2006"
+],
+"titles": [
+"Energy-Based Models",
+"A Tutorial on Energy-Based Learning"
+]
+},
+{
+"name": "Rajan Manohar",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merolla2014truenorth"
+],
+"titles": [
+"A million spiking-neuron integrated circuit with a scalable communication network and interface"
+]
+},
+{
+"name": "Rajarshi Salakhutdinov",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"keskar2019ctrl"
+],
+"titles": [
+"CTRL: A Conditional Transformer Language Model for Controllable Generation"
+]
+},
+{
+"name": "Rajat Monga",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Rajat Raina",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"raina2009large"
+],
+"titles": [
+"Large-scale deep unsupervised learning using graphics processors"
+]
+},
+{
+"name": "Rajeev Motwani",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"page1999pagerank"
+],
+"titles": [
+"The PageRank Citation Ranking: Bringing Order to the Web"
+]
+},
+{
+"name": "Ralph Alpher",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"alperbethegamow1948"
+],
+"titles": [
+"The Origin of Chemical Elements"
+]
+},
+{
+"name": "Ralph D. Snyder",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hyndman2008exp"
+],
+"titles": [
+"Forecasting with Exponential Smoothing: The State Space Approach"
+]
+},
+{
+"name": "Ralph Hartley",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hartley1928transmission"
+],
+"titles": [
+"Transmission of Information"
+]
+},
+{
+"name": "Ram Pasunuru",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mialon2023augmented"
+],
+"titles": [
+"Augmented Language Models: a Survey"
+]
+},
+{
+"name": "Rama (photograph); clay tablet Sb 13088",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"susa_geometry_tablet"
+],
+"titles": [
+"Geometry problem on a clay tablet belonging to a school for scribes; Susa, first half of the 2nd millennium BC"
+]
+},
+{
+"name": "Rami Al-Rfou",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lester2021prompttuning"
+],
+"titles": [
+"The Power of Scale for Parameter-Efficient Prompt Tuning"
+]
+},
+{
+"name": "Ramon Llull",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"blanquerna",
+"arsmagnavolvelle",
+"arsmagna"
+],
+"titles": [
+"Romanç d'Evast e Blaquerna",
+"Llull-Diagramm from Ars Magna",
+"Ars magna generalis et ultima quaruncunque artium et scientiarum assecutrix et clauigera et ad eas aditum faciliorem praebens antehac nusquam arti impressorie emunctius commendata"
+]
+},
+{
+"name": "Raoul Bott",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bott1959"
+],
+"titles": [
+"The Stable Homotopy of the Classical Groups"
+]
+},
+{
+"name": "Raphael Pisoni",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lewandowski2025spacefolds",
+"lewandowski2025spacebetween"
+],
+"titles": [
+"On Space Folds of ReLU Neural Networks",
+"The Space Between: On Folding, Symmetries and Sampling"
+]
+},
+{
+"name": "Raquel Ferrando",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fu2024count"
+],
+"titles": [
+"Why Do Large Language Models (LLMs) Struggle to Count Letters?"
+]
+},
+{
+"name": "Rathinakumar Appuswamy",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merolla2014truenorth"
+],
+"titles": [
+"A million spiking-neuron integrated circuit with a scalable communication network and interface"
+]
+},
+{
+"name": "Raul Puri",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shoeybi2019megatron"
+],
+"titles": [
+"Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism"
+]
+},
+{
+"name": "Ravid Shwartz-Ziv",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shwartz2017opening"
+],
+"titles": [
+"Opening the Black Box of Deep Neural Networks via Information"
+]
+},
+{
+"name": "Ray Kurzweil",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kurzweil2005singularity"
+],
+"titles": [
+"The Singularity Is Near: When Humans Transcend Biology"
+]
+},
+{
+"name": "Raymond Francis",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"verma2023autonomy",
+"francis2017aegis"
+],
+"titles": [
+"Autonomous Robotics Is Driving Perseverance Rover's Progress on Mars",
+"AEGIS Autonomous Targeting for ChemCam on Mars Science Laboratory: Deployment and Results of Initial Science Team Use"
+]
+},
+{
+"name": "Raymond T. Ng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"breunig2000lof"
+],
+"titles": [
+"LOF: Identifying Density-Based Local Outliers"
+]
+},
+{
+"name": "Razvan Pascanu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"montufar2014regions"
+],
+"titles": [
+"On the Number of Linear Regions of Deep Neural Networks"
+]
+},
+{
+"name": "Rebecca Castaño",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"estlin2009aegis"
+],
+"titles": [
+"AEGIS Automated Targeting for the MER Opportunity Rover"
+]
+},
+{
+"name": "Rebecca Solnit",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"solnit2003motion"
+],
+"titles": [
+"Motion Studies: Time, Space and Eadweard Muybridge"
+]
+},
+{
+"name": "Reimar Leber",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wallace2024hierarchy"
+],
+"titles": [
+"The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions"
+]
+},
+{
+"name": "Reiner Pope",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pope2023efficiently"
+],
+"titles": [
+"Efficiently Scaling Transformer Inference"
+]
+},
+{
+"name": "Reinhard Heckel",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"deletion_codes"
+],
+"titles": [
+"LLM-Guided Search for Deletion-Correcting Codes"
+]
+},
+{
+"name": "Remo Nitschke",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"earlylanguage"
+],
+"titles": [
+"Linguistic capacity was present in the Homo sapiens population 135 thousand years ago"
+]
+},
+{
+"name": "Renaud Lambiotte",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"blondel2008louvain"
+],
+"titles": [
+"Fast unfolding of communities in large networks"
+]
+},
+{
+"name": "Renee DiResta",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"goldstein2023generative"
+],
+"titles": [
+"Generative Language Models and Automated Influence Operations: Emerging Threats and Potential Mitigations"
+]
+},
+{
+"name": "René Descartes",
+"works": 5,
+"yearMin": 1637,
+"yearMax": 1637,
+"keys": [
+"descartesgeometrie",
+"lageometrie",
+"descartesmeditations",
+"descartes1637discours",
+"descartes1664lemonde"
+],
+"titles": [
+"La Géométrie (appendix to Discours de la méthode)",
+"La géométrie",
+"Meditations on First Philosophy"
+]
+},
+{
+"name": "René Doursat",
+"works": 1,
+"yearMin": 1992,
+"yearMax": 1992,
+"keys": [
+"geman1992bias"
+],
+"titles": [
+"Neural Networks and the Bias/Variance Dilemma"
+]
+},
+{
+"name": "Reuters",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"reuters2023chatgptbrowsing",
+"gettystability2023"
+],
+"titles": [
+"ChatGPT users can now browse internet, OpenAI says",
+"Getty Images v. Stability AI lawsuit"
+]
+},
+{
+"name": "Rewon Child",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gpt2",
+"kaplan2020scaling",
+"radford2019language"
+],
+"titles": [
+"Language Models are Unsupervised Multitask Learners",
+"Scaling Laws for Neural Language Models",
+"Language Models are Unsupervised Multitask Learners"
+]
+},
+{
+"name": "Rex Ying",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hamilton2017graphsage"
+],
+"titles": [
+"Inductive Representation Learning on Large Graphs"
+]
+},
+{
+"name": "Rhonda L. Quinn",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lomekwi"
+],
+"titles": [
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Rhys Gould",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"successorheads"
+],
+"titles": [
+"Successor Heads: Recurring, Interpretable Attention Heads In The Wild"
+]
+},
+{
+"name": "Rianne van den Berg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schlichtkrull2018rgcn"
+],
+"titles": [
+"Modeling Relational Data with Graph Convolutional Networks"
+]
+},
+{
+"name": "Ricardo J. G. B. Campello",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"campello2013hdbscan",
+"campello2015hdbscan"
+],
+"titles": [
+"Density-Based Clustering Based on Hierarchical Density Estimates",
+"Hierarchical Density Estimates for Data Clustering, Visualization, and Outlier Detection"
+]
+},
+{
+"name": "Rich Sutton",
+"works": 1,
+"yearMin": 2019,
+"yearMax": 2019,
+"keys": [
+"sutton2019bitter"
+],
+"titles": [
+"The Bitter Lesson"
+]
+},
+{
+"name": "Richang M. Ng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dauphin2014saddle"
+],
+"titles": [
+"Identifying and attacking the saddle point problem in high-dimensional non-convex optimization"
+]
+},
+{
+"name": "Richard A. Mortlock",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lomekwi"
+],
+"titles": [
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Richard A. Olshen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"breiman1984cart"
+],
+"titles": [
+"Classification and Regression Trees"
+]
+},
+{
+"name": "Richard Bellman",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bellman1957dynamic",
+"bellman1957dp"
+],
+"titles": [
+"Dynamic Programming",
+"Dynamic Programming"
+]
+},
+{
+"name": "Richard Dawkins",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dawkins2006goddelusion",
+"dawkins1976selfishgene"
+],
+"titles": [
+"The God Delusion",
+"The Selfish Gene"
+]
+},
+{
+"name": "Richard E. Fikes",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fikes1971strips"
+],
+"titles": [
+"STRIPS: A New Approach to the Application of Theorem Proving to Problem Solving"
+]
+},
+{
+"name": "Richard E. Howard",
+"works": 1,
+"yearMin": 1989,
+"yearMax": 1989,
+"keys": [
+"lecun1989backpropagation"
+],
+"titles": [
+"Backpropagation Applied to Handwritten Zip Code Recognition"
+]
+},
+{
+"name": "Richard Evans",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jumper2021alphafold"
+],
+"titles": [
+"Highly accurate protein structure prediction with AlphaFold"
+]
+},
+{
+"name": "Richard Leibler",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"leiblerkullback"
+],
+"titles": [
+"On Information and Sufficiency"
+]
+},
+{
+"name": "Richard Ren",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023representation"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Richard S. Sutton",
+"works": 6,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sutton2018reinforcement",
+"sutton1996sarsa",
+"sutton1988td",
+"sutton1991dyna",
+"sutton2018rlbook",
+"sutton2019bitterlesson"
+],
+"titles": [
+"Reinforcement Learning: An Introduction",
+"Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding",
+"Learning to Predict by the Methods of Temporal Differences"
+]
+},
+{
+"name": "Richard Socher",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"socher2011"
+],
+"titles": [
+"Parsing Natural Scenes and Natural Language with Recursive Neural Networks"
+]
+},
+{
+"name": "Richard Wrangham",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wrangham2009catching"
+],
+"titles": [
+"Catching Fire: How Cooking Made Us Human"
+]
+},
+{
+"name": "Ricky T. Q. Chen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lipman2023flow"
+],
+"titles": [
+"Flow Matching for Generative Modeling"
+]
+},
+{
+"name": "Rico Sennrich",
+"works": 2,
+"yearMin": 2016,
+"yearMax": 2016,
+"keys": [
+"analyzingmultiheads",
+"sennrich2016subword"
+],
+"titles": [
+"Analyzing Multi-Head Self-Attention",
+"Neural Machine Translation of Rare Words with Subword Units"
+]
+},
+{
+"name": "Rif A. Saurous",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dillon2017tfp"
+],
+"titles": [
+"TensorFlow Distributions"
+]
+},
+{
+"name": "Rik Adriaensen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"adriaensen2024moore"
+],
+"titles": [
+"Extracting Moore Machines from Transformers using Queries and Counterexamples"
+]
+},
+{
+"name": "Rina Dechter",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"deeplearningfirstuse"
+],
+"titles": [
+"Learning while searching in constraint-satisfaction-problems"
+]
+},
+{
+"name": "Rishi Bommasani",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"liang2023helm",
+"wei2022emergent"
+],
+"titles": [
+"Holistic Evaluation of Language Models (HELM)",
+"Emergent Abilities of Large Language Models"
+]
+},
+{
+"name": "Risto Miikkulainen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"stanley2002neat"
+],
+"titles": [
+"Evolving Neural Networks through Augmenting Topologies"
+]
+},
+{
+"name": "Rob DeSalle",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"earlylanguage"
+],
+"titles": [
+"Linguistic capacity was present in the Homo sapiens population 135 thousand years ago"
+]
+},
+{
+"name": "Rob J. Hyndman",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hyndman2008exp"
+],
+"titles": [
+"Forecasting with Exponential Smoothing: The State Space Approach"
+]
+},
+{
+"name": "Robert A. Collins",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hewish1968pulsar"
+],
+"titles": [
+"Observation of a Rapidly Pulsating Radio Source"
+]
+},
+{
+"name": "Robert A. Jacobs",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jacobs1991moe"
+],
+"titles": [
+"Adaptive Mixtures of Local Experts"
+]
+},
+{
+"name": "Robert A. Messenger",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"messenger1972thaid"
+],
+"titles": [
+"THAID: A Sequential Search Program for the Analysis of Nominal Scale Dependent Variables"
+]
+},
+{
+"name": "Robert Axelrod",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"axelrod1984cooperation"
+],
+"titles": [
+"The Evolution of Cooperation"
+]
+},
+{
+"name": "Robert B. Brandom",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brandom1994making",
+"brandom2000articulating"
+],
+"titles": [
+"Making It Explicit: Reasoning, Representing, and Discursive Commitment",
+"Articulating Reasons: An Introduction to Inferentialism"
+]
+},
+{
+"name": "Robert Bell",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"koren2009mf"
+],
+"titles": [
+"Matrix Factorization Techniques for Recommender Systems"
+]
+},
+{
+"name": "Robert C. Williamson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"scholkopf2001ocsvm"
+],
+"titles": [
+"Estimating the Support of a High-Dimensional Distribution"
+]
+},
+{
+"name": "Robert Chesney",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chesney2019deepfakes"
+],
+"titles": [
+"Deepfakes and the New Disinformation War"
+]
+},
+{
+"name": "Robert E. Kahn",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"cerfkahn"
+],
+"titles": [
+"A Protocol for Packet Network Intercommunication"
+]
+},
+{
+"name": "Robert E. Schapire",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"freund1997boosting"
+],
+"titles": [
+"A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting"
+]
+},
+{
+"name": "Robert Frost",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"frost1914northofboston"
+],
+"titles": [
+"North of Boston"
+]
+},
+{
+"name": "Robert Goldblatt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"goldblatt1979topoi"
+],
+"titles": [
+"Topoi: The Categorial Analysis of Logic"
+]
+},
+{
+"name": "Robert Heath Dennard",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dennard1968"
+],
+"titles": [
+"Field-Effect Transistor Memory (U.S. Patent 3,387,286)"
+]
+},
+{
+"name": "Robert Hooke",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"micrographia",
+"hookecork",
+"img_micrographia_titlepage"
+],
+"titles": [
+"Micrographia: or Some Physiological Descriptions of Minute Bodies Made by Magnifying Glasses. With Observations and Inquiries Thereupon",
+"Micrographia, Plate II: observation of the pores (cells) of cork",
+"Title page of Micrographia (1665)"
+]
+},
+{
+"name": "Robert Hooke (engraving after his own drawing)",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"img_micrographia_cork"
+],
+"titles": [
+"Hooke was the first to apply the word 'cell' to biological objects: Cork"
+]
+},
+{
+"name": "Robert Huben",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"cunningham2023sparse",
+"sparseautoencoders"
+],
+"titles": [
+"Sparse Autoencoders Find Highly Interpretable Features in Language Models",
+"Sparse Autoencoders Find Highly Interpretable Features in Language Models"
+]
+},
+{
+"name": "Robert J. Lang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"langorigami_computational"
+],
+"titles": [
+"Lang, Computational Origami"
+]
+},
+{
+"name": "Robert K. Merton",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merton1973norms"
+],
+"titles": [
+"The Normative Structure of Science"
+]
+},
+{
+"name": "Robert Kowalski",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kowalski1974prolog"
+],
+"titles": [
+"Predicate Logic as a Programming Language"
+]
+},
+{
+"name": "Robert Krzyzanowski",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kissane2024attention"
+],
+"titles": [
+"Interpreting Attention Layer Outputs with Sparse Autoencoders"
+]
+},
+{
+"name": "Robert L. Quinn",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"achleuleankariandusi"
+],
+"titles": [
+"An earlier origin for the Acheulian"
+]
+},
+{
+"name": "Robert Lasenby",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"elhage2022solu",
+"elhage2023privileged",
+"bricken2023monosemanticity",
+"monosemanticity"
+],
+"titles": [
+"Softmax Linear Units",
+"Privileged Bases in the Transformer Residual Stream",
+"Towards Monosemanticity: Decomposing Language Models With Dictionary Learning"
+]
+},
+{
+"name": "Robert M. Bell",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bell2007netflix"
+],
+"titles": [
+"The BellKor Solution to the Netflix Prize"
+]
+},
+{
+"name": "Robert M. Gray",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gray2006toeplitz"
+],
+"titles": [
+"Toeplitz and Circulant Matrices: A Review"
+]
+},
+{
+"name": "Robert Marco Tomasulo",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tomasulo1967"
+],
+"titles": [
+"An Efficient Algorithm for Exploiting Multiple Arithmetic Units"
+]
+},
+{
+"name": "Robert Melancton Metcalfe",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"metcalfe1976"
+],
+"titles": [
+"Ethernet: Distributed Packet Switching for Local Computer Networks"
+]
+},
+{
+"name": "Robert Norton Noyce",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"noyceic"
+],
+"titles": [
+"Semiconductor Device-and-Lead Structure (U.S. Patent 2,981,877)"
+]
+},
+{
+"name": "Robert of Chester",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chester1145"
+],
+"titles": [
+"Liber algebrae et almucabola"
+]
+},
+{
+"name": "Robert Tibshirani",
+"works": 1,
+"yearMin": 1996,
+"yearMax": 1996,
+"keys": [
+"tibshirani1996lasso"
+],
+"titles": [
+"Regression Shrinkage and Selection via the Lasso"
+]
+},
+{
+"name": "Robert W. Kennard",
+"works": 1,
+"yearMin": 1970,
+"yearMax": 1970,
+"keys": [
+"hoerl1970ridge"
+],
+"titles": [
+"Ridge Regression: Biased Estimation for Nonorthogonal Problems"
+]
+},
+{
+"name": "Robert W. Wilson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"penzias1965measurement"
+],
+"titles": [
+"A Measurement of Excess Antenna Temperature at 4080 Mc/s"
+]
+},
+{
+"name": "Roberta Raileanu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mialon2023augmented"
+],
+"titles": [
+"Augmented Language Models: a Survey"
+]
+},
+{
+"name": "Roberto Dessì",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mialon2023augmented",
+"schick2023toolformer"
+],
+"titles": [
+"Augmented Language Models: a Survey",
+"Toolformer: Language Models Can Teach Themselves to Use Tools"
+]
+},
+{
+"name": "Robin I. M. Dunbar",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dunbar2012socialbrain"
+],
+"titles": [
+"The Social Brain Meets Neuroimaging"
+]
+},
+{
+"name": "Robin Jia",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhou2026negation"
+],
+"titles": [
+"How Language Models Process Negation"
+]
+},
+{
+"name": "Robin Manhaeve",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"manhaeve2018deepproblog"
+],
+"titles": [
+"DeepProbLog: Neural Probabilistic Logic Programming"
+]
+},
+{
+"name": "Robin Milner",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"milnertypeinference"
+],
+"titles": [
+"A Theory of Type Polymorphism in Programming"
+]
+},
+{
+"name": "Robin Rombach",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rombach2022ldm"
+],
+"titles": [
+"High-Resolution Image Synthesis with Latent Diffusion Models"
+]
+},
+{
+"name": "Robin Sibson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sibson1973slink"
+],
+"titles": [
+"SLINK: an optimally efficient algorithm for the single-link cluster method"
+]
+},
+{
+"name": "Robotics and Automation Department",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jpl2023mobility"
+],
+"titles": [
+"Mars 2020 Rover: Mobility (Perseverance)"
+]
+},
+{
+"name": "Rodney Kinney",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"soldaini2024dolma"
+],
+"titles": [
+"Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research"
+]
+},
+{
+"name": "Rodrigo Alvarez-Icaza",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merolla2014truenorth"
+],
+"titles": [
+"A million spiking-neuron integrated circuit with a scalable communication network and interface"
+]
+},
+{
+"name": "Rodrigo Costas",
+"works": 1,
+"yearMin": 2009,
+"yearMax": 2009,
+"keys": [
+"sleepingbeauty"
+],
+"titles": [
+"Sleeping Beauty"
+]
+},
+{
+"name": "Roee Hendel",
+"works": 1,
+"yearMin": 2023,
+"yearMax": 2023,
+"keys": [
+"hendel2023incontext"
+],
+"titles": [
+"In-Context Learning Creates Task Vectors"
+]
+},
+{
+"name": "Roei Schuster",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"keyvalmem",
+"geva2021kv"
+],
+"titles": [
+"Transformer Feed-Forward Layers Are Key-Value Memories",
+"Transformer Feed-Forward Layers Are Key-Value Memories"
+]
+},
+{
+"name": "Roen Kelly",
+"works": 1,
+"yearMin": 2025,
+"yearMax": 2025,
+"keys": [
+"cerespath"
+],
+"titles": [
+"The Sky Today on Wednesday, December 24: Ceres makes us see double"
+]
+},
+{
+"name": "Roger C. Conant",
+"works": 1,
+"yearMin": 1970,
+"yearMax": 1970,
+"keys": [
+"conantashby1970"
+],
+"titles": [
+"Every good regulator of a system must be a model of that system"
+]
+},
+{
+"name": "Roger Eckhardt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eckhardt1987ulam"
+],
+"titles": [
+"Stan Ulam, John von Neumann, and the Monte Carlo Method"
+]
+},
+{
+"name": "Roger Grosse",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"elhage2022solu",
+"lindsey2025biology",
+"ameisen2025circuit"
+],
+"titles": [
+"Softmax Linear Units",
+"On the Biology of a Large Language Model",
+"Circuit Tracing: Revealing Computational Graphs in Language Models"
+]
+},
+{
+"name": "Roger Koenker",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"parametriclinks"
+],
+"titles": [
+"Parametric Links for Binary Choice Models: A Fisherian-Bayesian Colloquy"
+]
+},
+{
+"name": "Roger Lynds",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lymanalphaforest"
+],
+"titles": [
+"The Absorption-Line Spectrum of 4C 05.34"
+]
+},
+{
+"name": "Roger N. Shepard",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shepard1987universal"
+],
+"titles": [
+"Toward a Universal Law of Generalization for Psychological Science"
+]
+},
+{
+"name": "Roger Penrose",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"penrose1989emperor",
+"penrose1994shadows",
+"hameroff1996orch"
+],
+"titles": [
+"The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
+"Shadows of the Mind: A Search for the Missing Science of Consciousness",
+"Orchestrated reduction of quantum coherence in brain microtubules: A model for consciousness"
+]
+},
+{
+"name": "Rohan Baxter",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hawkins2002ae"
+],
+"titles": [
+"Outlier Detection Using Replicator Neural Networks"
+]
+},
+{
+"name": "Rohit Mehta",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mehta2020play"
+],
+"titles": [
+"Let Children Play! Connecting Evolutionary Psychology and Creativity with Peter Gray's Play Deficit Hypothesis"
+]
+},
+{
+"name": "Roko",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rokosbasilisk"
+],
+"titles": [
+"Roko's Basilisk"
+]
+},
+{
+"name": "Rolf Wilhelm Brednich",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brednich1990spinne",
+"brednich1991maus",
+"brednich1993huhn"
+],
+"titles": [
+"Die Spinne in der Yucca-Palme",
+"Die Maus im Jumbo-Jet",
+"Das Huhn mit dem Gipsbein"
+]
+},
+{
+"name": "Ron Burkey",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"burkey_lvdc"
+],
+"titles": [
+"The Launch Vehicle Digital Computer"
+]
+},
+{
+"name": "Ron Kowitz",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ronkowitz2017perceptron"
+],
+"titles": [
+"Perceptron"
+]
+},
+{
+"name": "Ronald A. Fisher",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fisher1936lda"
+],
+"titles": [
+"The Use of Multiple Measurements in Taxonomic Problems"
+]
+},
+{
+"name": "Ronald A. Howard",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"howard1960pi"
+],
+"titles": [
+"Dynamic Programming and Markov Processes"
+]
+},
+{
+"name": "Ronald Aylmer Fisher",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fisher1922"
+],
+"titles": [
+"On the Mathematical Foundations of Theoretical Statistics"
+]
+},
+{
+"name": "Ronald Brown",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brown1967"
+],
+"titles": [
+"Groupoids and van Kampen's theorem"
+]
+},
+{
+"name": "Ronald J. Williams",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rumelhart1986",
+"williams1992reinforce"
+],
+"titles": [
+"Backpropagation",
+"Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning"
+]
+},
+{
+"name": "Ronan Collobert",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"collobert2002"
+],
+"titles": [
+"Torch: A Modular Machine Learning Software Library"
+]
+},
+{
+"name": "Ronan Le Bras",
+"works": 1,
+"yearMin": 2019,
+"yearMax": 2019,
+"keys": [
+"sakaguchi2019winogrande"
+],
+"titles": [
+"WinoGrande: An Adversarial Winograd Schema Challenge at Scale"
+]
+},
+{
+"name": "Ronen Eldan",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bubeck2023moeoverview",
+"bubeck2023sparks"
+],
+"titles": [
+"An Overview of Sparse Mixture-of-Experts in Language Models",
+"Sparks of Artificial General Intelligence: Early experiments with GPT-4"
+]
+},
+{
+"name": "Rong Ge",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"arora2017gan"
+],
+"titles": [
+"Generalization and Equilibrium in Generative Adversarial Nets (GANs)"
+]
+},
+{
+"name": "Rongwu Xu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"safetyheads"
+],
+"titles": [
+"On the Role of Attention Heads in Large Language Model Safety"
+]
+},
+{
+"name": "Rongxiang Weng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xi2023rise"
+],
+"titles": [
+"The Rise and Potential of Large Language Model Based Agents: A Survey"
+]
+},
+{
+"name": "Rose Yu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"li2018dcrnn"
+],
+"titles": [
+"Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting"
+]
+},
+{
+"name": "Ross Anderson",
+"works": 1,
+"yearMin": 2023,
+"yearMax": 2023,
+"keys": [
+"shumailov2023modelcollapse"
+],
+"titles": [
+"The Curse of Recursion: Training on Generated Data Makes Models Forget"
+]
+},
+{
+"name": "Ross Girshick",
+"works": 5,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"girshick2014rcnn",
+"ren2015faster",
+"redmon2016yolo",
+"he2017maskrcnn",
+"he2021mae"
+],
+"titles": [
+"Rich feature hierarchies for accurate object detection and semantic segmentation",
+"Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks",
+"You Only Look Once: Unified, Real-Time Object Detection"
+]
+},
+{
+"name": "Rowan Zellers",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zellers2019hellaswag"
+],
+"titles": [
+"HellaSwag: Can a Machine Really Finish Your Sentence?"
+]
+},
+{
+"name": "Roy Ka-Wei Lee",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wang2023planandexecute"
+],
+"titles": [
+"Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning by Large Language Models"
+]
+},
+{
+"name": "Royden Yates",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"emergenceofmodernhumanbehaviour"
+],
+"titles": [
+"Emergence of modern human behavior: Middle Stone Age engravings from South Africa"
+]
+},
+{
+"name": "Rudolf E. Kalman",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kalman1960kf"
+],
+"titles": [
+"A New Approach to Linear Filtering and Prediction Problems"
+]
+},
+{
+"name": "Rudolf E. Kálmán",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kalman1960filter"
+],
+"titles": [
+"A New Approach to Linear Filtering and Prediction Problems"
+]
+},
+{
+"name": "Rudolf Virchow",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"virchow1858"
+],
+"titles": [
+"Die zelluläre Pathologie (Cellular Pathology)"
+]
+},
+{
+"name": "Rui Zheng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xi2023rise"
+],
+"titles": [
+"The Rise and Potential of Large Language Model Based Agents: A Survey"
+]
+},
+{
+"name": "Ruibin Xiong",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xiong2020"
+],
+"titles": [
+"On Layer Normalization in the Transformer Architecture"
+]
+},
+{
+"name": "Runlong Zhou",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"The Ramon Llull's Thinking Machine for Automated Ideation",
+"zhao2025thinkingmachine"
+],
+"titles": [
+"The Ramon Llull's Thinking Machine for Automated Ideation",
+"The Ramón Llull's Thinking Machine for Automated Ideation"
+]
+},
+{
+"name": "Runpeng Geng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"liu2024formalizing"
+],
+"titles": [
+"Formalizing and Benchmarking Prompt Injection Attacks and Defenses"
+]
+},
+{
+"name": "Ruochen Li",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"The Ramon Llull's Thinking Machine for Automated Ideation",
+"zhao2025thinkingmachine"
+],
+"titles": [
+"The Ramon Llull's Thinking Machine for Automated Ideation",
+"The Ramón Llull's Thinking Machine for Automated Ideation"
+]
+},
+{
+"name": "Ruokun Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"davies2018loihi"
+],
+"titles": [
+"Loihi: A Neuromorphic Manycore Processor with On-Chip Learning"
+]
+},
+{
+"name": "Ruoxi Wang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wang2017dcn"
+],
+"titles": [
+"Deep & Cross Network for Ad Click Predictions"
+]
+},
+{
+"name": "Rupert Lane",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lane2025eliza"
+],
+"titles": [
+"ELIZA Reanimated: Restoring the Mother of All Chatbots to One of the World's First Time-Sharing Systems"
+]
+},
+{
+"name": "Rupesh Kumar Srivastava",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"greff2015lstm",
+"highway2015"
+],
+"titles": [
+"LSTM: A Search Space Odyssey",
+"Highway Networks"
+]
+},
+{
+"name": "Ruslan Salakhutdinov",
+"works": 3,
+"yearMin": 2014,
+"yearMax": 2014,
+"keys": [
+"zaheer2017deepsets",
+"breakingsoftmaxbottleneck",
+"srivastava2014dropout"
+],
+"titles": [
+"Deep Sets",
+"Breaking the Softmax Bottleneck: A High-Rank RNN Language Model",
+"Dropout: A Simple Way to Prevent Neural Networks from Overfitting"
+]
+},
+{
+"name": "Russian Virtual Computer Museum",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"argon16_museum"
+],
+"titles": [
+"Argon-16 Computer"
+]
+},
+{
+"name": "Ruth Lakretz",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lakretz2020nested"
+],
+"titles": [
+"Mechanisms for Handling Nested Dependencies in Neural-Network Language Models and Humans"
+]
+},
+{
+"name": "Ryan Greenblatt",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"alignment_faking",
+"ai_control"
+],
+"titles": [
+"Alignment faking in large language models",
+"AI Control: Improving Safety Despite Intentional Subversion"
+]
+},
+{
+"name": "Ryan Lowe",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ouyang2022instructgpt"
+],
+"titles": [
+"Training language models to follow instructions with human feedback"
+]
+},
+{
+"name": "Ryan P. Adams",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shahriari2016bo",
+"snoek2012spearmint",
+"duvenaud2015convfp",
+"snoek2012practical"
+],
+"titles": [
+"Taking the Human Out of the Loop: A Review of Bayesian Optimization",
+"Practical Bayesian Optimization of Machine Learning Algorithms",
+"Convolutional Networks on Graphs for Learning Molecular Fingerprints"
+]
+},
+{
+"name": "Ryan Somma",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"img_burgess_shale_fossils"
+],
+"titles": [
+"Burgess Shale fossils, Middle Cambrian of the Canadian Rockies"
+]
+},
+{
+"name": "Ryo Yoshida",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"someya2025derivational"
+],
+"titles": [
+"Derivational Probing: Unveiling the Layer-wise Derivation of Syntactic Structures in Neural Language Models"
+]
+},
+{
+"name": "Ryoma Sakurai",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sakurai2024skrr"
+],
+"titles": [
+"Skip \\u0026 Reroute: A Simple Data Augmentation Framework for Multi-Hop Question Answering"
+]
+},
+{
+"name": "Réjean Ducharme",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"neuralprobabilistic"
+],
+"titles": [
+"A Neural Probabilistic Language Model"
+]
+},
+{
+"name": "Rémi Coulom",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"coulom2006mcts"
+],
+"titles": [
+"Efficient Selectivity and Backup Operators in Monte-Carlo Tree Search"
+]
+},
+{
+"name": "Rémi Tachet des Combes",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bubeck2023sparsemoe"
+],
+"titles": [
+"Sparsity Certified Networks: Rigorous Guarantees on Generalization and Inference"
+]
+},
+{
+"name": "S. Bengtson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"elalbani2010gabon"
+],
+"titles": [
+"Large Colonial Organisms with Coordinated Growth in Oxygenated Environments 2.1 Gyr ago"
+]
+},
+{
+"name": "S. Best",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"backusfortran"
+],
+"titles": [
+"The FORTRAN Automatic Coding System"
+]
+},
+{
+"name": "S. Chopra",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lecun2007icdar"
+],
+"titles": [
+"Energy-Based Models in Document Recognition and Computer Vision"
+]
+},
+{
+"name": "S. Conway Morris",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shu2001chengjiang"
+],
+"titles": [
+"Primitive Deuterostomes from the Chengjiang Lagerstätte (Lower Cambrian, China)"
+]
+},
+{
+"name": "S. Johnstone",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"francis2017aegis"
+],
+"titles": [
+"AEGIS Autonomous Targeting for ChemCam on Mars Science Laboratory: Deployment and Results of Initial Science Team Use"
+]
+},
+{
+"name": "S. M. Ali Eslami",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"garnelo2018np"
+],
+"titles": [
+"Neural Processes"
+]
+},
+{
+"name": "S. M. Andrews",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"amelin2010solarsystem"
+],
+"titles": [
+"U-Pb chronology of the Solar System's oldest solids with variable 238U/235U"
+]
+},
+{
+"name": "S. P. B. G. Brink",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"trinilshell"
+],
+"titles": [
+"Homo erectus at Trinil on Java used shells for tool production and engraving"
+]
+},
+{
+"name": "S. W. Poulton",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"frei2009chromium",
+"canfield2011ferruginous"
+],
+"titles": [
+"Fluctuations in Precambrian Atmospheric Oxygenation Recorded by Chromium Isotopes",
+"Ferruginous Conditions: A Dominant Feature of the Ocean through Earth's History"
+]
+},
+{
+"name": "S. Zhu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhu2016multicellular"
+],
+"titles": [
+"Decimetre-Scale Multicellular Eukaryotes from the 1.56-Billion-Year-Old Gaoyuzhuang Formation in North China"
+]
+},
+{
+"name": "Saffron Huang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"perez2022emergent"
+],
+"titles": [
+"Emergent Auto-Missionizing Behavior in Large Language Models"
+]
+},
+{
+"name": "Sahar Abdelnabi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"greshake2023injection"
+],
+"titles": [
+"Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
+]
+},
+{
+"name": "Saining Xie",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"peebles2023dit",
+"he2021mae"
+],
+"titles": [
+"Scalable Diffusion Models with Transformers",
+"Masked Autoencoders Are Scalable Vision Learners"
+]
+},
+{
+"name": "Saleh Ashkboos",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"frantar2022gptq"
+],
+"titles": [
+"GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers"
+]
+},
+{
+"name": "Sam Bowman",
+"works": 2,
+"yearMin": 2024,
+"yearMax": 2024,
+"keys": [
+"hubinger2024sleeperagents",
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training",
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "Sam Gross",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pytorch"
+],
+"titles": [
+"PyTorch: An Imperative Style, High-Performance Deep Learning Library"
+]
+},
+{
+"name": "Sam Harris",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"harris2010morallandscape",
+"harris2012freewill"
+],
+"titles": [
+"The Moral Landscape",
+"Free Will"
+]
+},
+{
+"name": "Sam McCandlish",
+"works": 5,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"elhage2022solu",
+"incontextlearninghead",
+"kaplan2020scaling",
+"kadavath2022selfknowledge",
+"belrose2023tunedlens"
+],
+"titles": [
+"Softmax Linear Units",
+"In-context Learning and Induction Heads",
+"Scaling Laws for Neural Language Models"
+]
+},
+{
+"name": "Sam Ringer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "Sam Ritter",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"raposo2024mod"
+],
+"titles": [
+"Mixture-of-Depths: Dynamically allocating compute in transformer-based language models"
+]
+},
+{
+"name": "Sam T. Roweis",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"roweis2000lle"
+],
+"titles": [
+"Nonlinear Dimensionality Reduction by Locally Linear Embedding"
+]
+},
+{
+"name": "Sammy Lokorodi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lomekwi"
+],
+"titles": [
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Samuel Batzner",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merchant2023gnome"
+],
+"titles": [
+"Scaling deep learning for materials discovery"
+]
+},
+{
+"name": "Samuel Butler",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"butler1863machines"
+],
+"titles": [
+"Darwin among the Machines"
+]
+},
+{
+"name": "Samuel Eilenberg",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eilenbergmaclane1942",
+"eilenbergsteenrod1952",
+"eilenberglane1945"
+],
+"titles": [
+"Group Extensions and Homology",
+"Foundations of Algebraic Topology",
+"General Theory of Natural Equivalences"
+]
+},
+{
+"name": "Samuel F. B. Morse",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"morsetelegraph"
+],
+"titles": [
+"Improvement in the Mode of Communicating Information by Signals by the Application of Electromagnetism (U.S. Patent 1,647)"
+]
+},
+{
+"name": "Samuel Ichiye Hayakawa",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hayakawa"
+],
+"titles": [
+"Language in Thought and Action"
+]
+},
+{
+"name": "Samuel L. Smith",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"smith2017orthogonal"
+],
+"titles": [
+"Offline bilingual word vectors, orthogonal transformations and the inverted softmax"
+]
+},
+{
+"name": "Samuel Marks",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"geometryoftruth",
+"marks2023geometry",
+"marks2024featurecircuits"
+],
+"titles": [
+"The Geometry of Truth: Emergent Linear Structure in LLM Representations of True/False Datasets",
+"The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets",
+"Sparse Feature Circuits: Discovering and Editing Interpretable Causal Graphs in Language Models"
+]
+},
+{
+"name": "Samuel R. Bowman",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lindsey2025biology",
+"ameisen2025circuit",
+"htu2019dependencies"
+],
+"titles": [
+"On the Biology of a Large Language Model",
+"Circuit Tracing: Revealing Computational Graphs in Language Models",
+"Do Attention Heads in BERT Track Syntactic Dependencies?"
+]
+},
+{
+"name": "Samuel S. Schoenholz",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"merchant2023gnome"
+],
+"titles": [
+"Scaling deep learning for materials discovery"
+]
+},
+{
+"name": "Samy Bengio",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"collobert2002",
+"dinh2017realnvp"
+],
+"titles": [
+"Torch: A Modular Machine Learning Software Library",
+"Density estimation using Real NVP"
+]
+},
+{
+"name": "Samyam Rajbhandari",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rajbhandari2019zero"
+],
+"titles": [
+"ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"
+]
+},
+{
+"name": "Samyam Rajbhandary",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rasley2020deepspeed"
+],
+"titles": [
+"DeepSpeed: System Optimizations Enable Training Deep Learning Models with Over 100 Billion Parameters"
+]
+},
+{
+"name": "Sander Dieleman",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"silver2016alphago",
+"silver2016go",
+"oord2016wavenet"
+],
+"titles": [
+"Mastering the Game of Go with Deep Neural Networks and Tree Search",
+"Mastering the Game of Go with Deep Neural Networks and Tree Search",
+"WaveNet: A Generative Model for Raw Audio"
+]
+},
+{
+"name": "Sandhini Agarwal",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ouyang2022instructgpt"
+],
+"titles": [
+"Training language models to follow instructions with human feedback"
+]
+},
+{
+"name": "Sandipan Kundu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bai2022constitutional"
+],
+"titles": [
+"Constitutional AI: Harmlessness from AI Feedback"
+]
+},
+{
+"name": "Sandrine Prat",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lomekwi"
+],
+"titles": [
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Sanjay Ghemawat",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Sanjeev Arora",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"arora2017gan",
+"implicit_reg_deep"
+],
+"titles": [
+"Generalization and Equilibrium in Generative Adversarial Nets (GANs)",
+"Implicit Regularization in Deep Matrix Factorization"
+]
+},
+{
+"name": "Sanjoy Mitter",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"fefferman2016testing"
+],
+"titles": [
+"Testing the manifold hypothesis"
+]
+},
+{
+"name": "Sanmi Koyejo",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023representation"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Santiago Fernandez",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ctc2006"
+],
+"titles": [
+"Connectionist Temporal Classification: Labelling Unsegmented Sequence Data with Recurrent Neural Networks"
+]
+},
+{
+"name": "Santiago Ramón y Cajal",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"cajaltextura",
+"cajal1888",
+"img_cajal_cerebellum"
+],
+"titles": [
+"Textura del sustema nervioso del hombre y de los vertebrados",
+"De la nature du réseau nerveux (on the nature of the nerve network)",
+"Ramón y Cajal's drawing of the cells of the chick cerebellum, from Estructura de los centros nerviosos de las aves, Madrid, 1905"
+]
+},
+{
+"name": "Santosh Divvala",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"redmon2016yolo"
+],
+"titles": [
+"You Only Look Once: Unified, Real-Time Object Detection"
+]
+},
+{
+"name": "Sanyuan Chen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chen2023vallx"
+],
+"titles": [
+"Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers"
+]
+},
+{
+"name": "Sara Anne Gordon",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gordon2015indecent"
+],
+"titles": [
+"Indecent Exposures: Eadweard Muybridge's \\"
+]
+},
+{
+"name": "Sara Hooker",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hooker2020"
+],
+"titles": [
+"The Hardware Lottery"
+]
+},
+{
+"name": "Sara Sabour",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sabour2017capsules"
+],
+"titles": [
+"Dynamic Routing Between Capsules"
+]
+},
+{
+"name": "Sarah Chen",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023representation"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Sarah E. Freidline",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hublin2017jebel"
+],
+"titles": [
+"New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens"
+]
+},
+{
+"name": "Sarah Wiegreffe",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Sarnoff Mednick",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mednick1962creative"
+],
+"titles": [
+"The Associative Basis of the Creative Process"
+]
+},
+{
+"name": "Sasank Chilamkurthy",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pytorch"
+],
+"titles": [
+"PyTorch: An Imperative Style, High-Performance Deep Learning Library"
+]
+},
+{
+"name": "Satwik Kottur",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zaheer2017deepsets"
+],
+"titles": [
+"Deep Sets"
+]
+},
+{
+"name": "Saul Santos",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ramsauer2021hopfield"
+],
+"titles": [
+"https://arxiv.org/abs/2402.13725v1"
+]
+},
+{
+"name": "Saunders Mac Lane",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eilenbergmaclane1942",
+"maclane1998categories",
+"eilenberglane1945",
+"maclanemoerdijk1992"
+],
+"titles": [
+"Group Extensions and Homology",
+"Categories for the Working Mathematician",
+"General Theory of Natural Equivalences"
+]
+},
+{
+"name": "Saurav Kadavath",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hendrycks2021math",
+"bai2022constitutional",
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Measuring Mathematical Problem Solving With the MATH Dataset",
+"Constitutional AI: Harmlessness from AI Feedback",
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "ScaDS.AI Dresden/Leipzig",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"omniopt"
+],
+"titles": [
+"OmniOpt — Hyperparameter Optimization at ScaDS.AI Dresden/Leipzig"
+]
+},
+{
+"name": "Scherf",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brenner2026gridwalkers"
+],
+"titles": [
+"Predictive Statistics Shape Emergent World Representations of Grid Walkers"
+]
+},
+{
+"name": "Scott Gray",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kaplan2020scaling"
+],
+"titles": [
+"Scaling Laws for Neural Language Models"
+]
+},
+{
+"name": "Scott Johnston",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"incontextlearninghead",
+"kadavath2022selfknowledge"
+],
+"titles": [
+"In-context Learning and Induction Heads",
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "Scott Linderman",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bricken2023monosemanticity"
+],
+"titles": [
+"Towards Monosemanticity: Decomposing Language Models With Dictionary Learning"
+]
+},
+{
+"name": "Scott Lundberg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bubeck2023sparks"
+],
+"titles": [
+"Sparks of Artificial General Intelligence: Early experiments with GPT-4"
+]
+},
+{
+"name": "Seamless Communication",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wang2024seamless"
+],
+"titles": [
+"SeamlessM4T: Massively Multilingual & Multimodal Machine Translation"
+]
+},
+{
+"name": "Sean J. Taylor",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"taylor2018prophet"
+],
+"titles": [
+"Forecasting at Scale"
+]
+},
+{
+"name": "Sean R. Eddy",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"eddy1998hmmer"
+],
+"titles": [
+"Profile hidden Markov models"
+]
+},
+{
+"name": "Sean Welleck",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "SearXNG Community",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"searxng"
+],
+"titles": [
+"SearXNG Documentation"
+]
+},
+{
+"name": "Sebastian Borgeaud",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hoffmann2022chinchilla",
+"rae2021gopher"
+],
+"titles": [
+"Training Compute-Optimal Large Language Models",
+"Scaling Language Models: Methods, Analysis & Insights from Training Gopher"
+]
+},
+{
+"name": "Sebastian Riedel",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lewis2020rag",
+"trouillon2016complex"
+],
+"titles": [
+"Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+"Complex Embeddings for Simple Link Prediction"
+]
+},
+{
+"name": "Sebastian Ruder",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sogaard2018limitations",
+"shi2023cottransfer"
+],
+"titles": [
+"On the Limitations of Unsupervised Bilingual Dictionary Induction",
+"Language Models are Multilingual Chain-of-Thought Reasoners"
+]
+},
+{
+"name": "Sebastijan Dumancic",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"manhaeve2018deepproblog"
+],
+"titles": [
+"DeepProbLog: Neural Probabilistic Logic Programming"
+]
+},
+{
+"name": "Self-generated (Plotly)",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wave_interference_diagram"
+],
+"titles": [
+"Interactive Wave Interference Demo"
+]
+},
+{
+"name": "Seneca the Younger",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"seneca49onshortness",
+"seneca64letters"
+],
+"titles": [
+"On the Shortness of Life",
+"Epistulae Morales ad Lucilium (Letters to Lucilius)"
+]
+},
+{
+"name": "Senjie Jin",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xi2023rise"
+],
+"titles": [
+"The Rise and Potential of Large Language Model Based Agents: A Survey"
+]
+},
+{
+"name": "Sepp Hochreiter",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ramsauer2020hopfield",
+"lstm"
+],
+"titles": [
+"Hopfield Networks is All You Need",
+"Long Short-Term Memory"
+]
+},
+{
+"name": "Seppo Linnainmaa",
+"works": 1,
+"yearMin": 1970,
+"yearMax": 1970,
+"keys": [
+"linnainmaa1970"
+],
+"titles": [
+"Algorithmin kumulatiivinen pyöristysvirhe yksittäisten pyöristysvirheiden osittaisderivatojen summationa"
+]
+},
+{
+"name": "Sergei Vassilvitskii",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"arthur2007kmeanspp"
+],
+"titles": [
+"k-means++: The Advantages of Careful Seeding"
+]
+},
+{
+"name": "Sergey Brin",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"brin1998pagerank",
+"page1999pagerank"
+],
+"titles": [
+"The Anatomy of a Large-Scale Hypertextual Web Search Engine",
+"The PageRank Citation Ranking: Bringing Order to the Web"
+]
+},
+{
+"name": "Sergey Levine",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schulman2015trpo",
+"levine2016guidance"
+],
+"titles": [
+"Trust Region Policy Optimization",
+"End-to-End Training of Deep Visuomotor Policies"
+]
+},
+{
+"name": "Serper",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"serper"
+],
+"titles": [
+"Serper — Google Search API"
+]
+},
+{
+"name": "Seshu Mandal",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"belkin2019reconciling"
+],
+"titles": [
+"Reconciling modern machine-learning practice and previous theoretical theories"
+]
+},
+{
+"name": "Sewon Min",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"press2022compositionality"
+],
+"titles": [
+"Measuring and Narrowing the Compositionality Gap in Language Models"
+]
+},
+{
+"name": "Seyedarmin Azizi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"baghaei2026collapse"
+],
+"titles": [
+"One Token Away from Collapse: The Fragility of Instruction-Tuned Helpfulness"
+]
+},
+{
+"name": "Seymour Papert",
+"works": 1,
+"yearMin": 1969,
+"yearMax": 1969,
+"keys": [
+"minskyperceptrons"
+],
+"titles": [
+"Perceptrons"
+]
+},
+{
+"name": "Shailesh Mishra",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"greshake2023injection"
+],
+"titles": [
+"Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
+]
+},
+{
+"name": "Shakir Mohamed",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rezende2015nf"
+],
+"titles": [
+"Variational Inference with Normalizing Flows"
+]
+},
+{
+"name": "Sham Kakade",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kusupati2022matryoshka"
+],
+"titles": [
+"Matryoshka Representation Learning"
+]
+},
+{
+"name": "Shan Carter",
+"works": 7,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"goh2021multimodal",
+"templeton2024scaling",
+"lindsey2025biology",
+"ameisen2025circuit",
+"goldengateclaude",
+"monosemanticity",
+"olaha2020zoomin"
+],
+"titles": [
+"Multimodal Neurons in Artificial Neural Networks",
+"Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+"On the Biology of a Large Language Model"
+]
+},
+{
+"name": "Shane Legg",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hutter2006universal",
+"christiano2017rlhf",
+"mnih2015dqn"
+],
+"titles": [
+"Universal Intelligence: A Definition of Machine Intelligence",
+"Deep Reinforcement Learning from Human Preferences",
+"Human-level control through deep reinforcement learning"
+]
+},
+{
+"name": "Shanghang Zhang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhou2021informer"
+],
+"titles": [
+"Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting"
+]
+},
+{
+"name": "Shanshan Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"conde2025count"
+],
+"titles": [
+"Can ChatGPT Learn to Count Letters?"
+]
+},
+{
+"name": "Shaohan Huang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"sun2023retnet"
+],
+"titles": [
+"Retentive Network: A Successor to Transformer for Large Language Models"
+]
+},
+{
+"name": "Shaojie Bai",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bai2018tcn"
+],
+"titles": [
+"An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling"
+]
+},
+{
+"name": "Shaolei Ren",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"li2023thirsty"
+],
+"titles": [
+"Making AI Less 'Thirsty': Uncovering and Addressing the Secret Water Footprint of AI Models"
+]
+},
+{
+"name": "Shaoqing Ren",
+"works": 2,
+"yearMin": 2015,
+"yearMax": 2015,
+"keys": [
+"he2015resnet",
+"ren2015faster"
+],
+"titles": [
+"Deep Residual Learning for Image Recognition",
+"Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks"
+]
+},
+{
+"name": "Shara E. Bailey",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hublin2017jebel"
+],
+"titles": [
+"New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens"
+]
+},
+{
+"name": "Sharan Narang",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tfive",
+"chung2022flan"
+],
+"titles": [
+"Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+"Scaling Instruction-Finetuned Language Models"
+]
+},
+{
+"name": "Shariq Hashme",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"openai2021dota"
+],
+"titles": [
+"Dota 2 with Large Scale Deep Reinforcement Learning"
+]
+},
+{
+"name": "SharkD",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rgb_color_cube"
+],
+"titles": [
+"RGB Color Cube"
+]
+},
+{
+"name": "Sharon Holt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wonderwerk"
+],
+"titles": [
+"Microstratigraphic evidence of in situ fire in the Acheulean strata of Wonderwerk Cave, Northern Cape province, South Africa"
+]
+},
+{
+"name": "Shashank Gupta",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Shashank Rajput",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"giannou2023looped"
+],
+"titles": [
+"Looped Transformers as Programmable Computers"
+]
+},
+{
+"name": "Shashank Subramanian",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pathak2022fourcastnet"
+],
+"titles": [
+"FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators"
+]
+},
+{
+"name": "Shashwat Garg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023repeng"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Shashwat Goel",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zou2023representation"
+],
+"titles": [
+"Representation Engineering: A Top-Down Approach to AI Transparency"
+]
+},
+{
+"name": "Shauna Kravec",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"elhage2022solu",
+"bricken2023monosemanticity",
+"monosemanticity",
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Softmax Linear Units",
+"Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+"Towards Monosemanticity: Decomposing Language Models With Dictionary Learning"
+]
+},
+{
+"name": "Shayne Gould",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gould2023successor"
+],
+"titles": [
+"Successor Heads: Recurring, Interpretable Attention Heads In The Wild"
+]
+},
+{
+"name": "Shayne Longpre",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chung2022flan"
+],
+"titles": [
+"Scaling Instruction-Finetuned Language Models"
+]
+},
+{
+"name": "Sheer El-Showk",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "Shengfeng Pan",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rope2021",
+"su2021rope"
+],
+"titles": [
+"RoFormer: Enhanced Transformer with Rotary Position Embedding",
+"RoFormer: Enhanced Transformer with Rotary Position Embedding"
+]
+},
+{
+"name": "Sherjil Ozair",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"goodfellow2014gan"
+],
+"titles": [
+"Generative Adversarial Networks"
+]
+},
+{
+"name": "Sherry Moore",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"tensorflow2016"
+],
+"titles": [
+"TensorFlow: A System for Large-Scale Machine Learning"
+]
+},
+{
+"name": "Shi Fu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wang2024entropy"
+],
+"titles": [
+"Entropy-Aware Sampling for Language Model Decoding"
+]
+},
+{
+"name": "Shichang Zhang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"saraipour2025syllogisms"
+],
+"titles": [
+"From Indirect Object Identification to Syllogisms: Exploring Binary Mechanisms in Transformer Circuits"
+]
+},
+{
+"name": "Shigeru Miyagawa",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"earlylanguage"
+],
+"titles": [
+"Linguistic capacity was present in the Homo sapiens population 135 thousand years ago"
+]
+},
+{
+"name": "Shih-Yang Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"liu2024dora"
+],
+"titles": [
+"DoRA: Weight-Decomposed Low-Rank Adaptation"
+]
+},
+{
+"name": "Shihan Dou",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xi2023rise"
+],
+"titles": [
+"The Rise and Potential of Large Language Model Based Agents: A Survey"
+]
+},
+{
+"name": "Shiing-Shen Chern",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chern1946"
+],
+"titles": [
+"Characteristic Classes of Hermitian Manifolds"
+]
+},
+{
+"name": "Shikha Bordia",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"htu2019dependencies"
+],
+"titles": [
+"Do Attention Heads in BERT Track Syntactic Dependencies?"
+]
+},
+{
+"name": "Shishir G. Patil",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"patil2023gorilla"
+],
+"titles": [
+"Gorilla: Large Language Model Connected with Massive APIs"
+]
+},
+{
+"name": "Shivam Garg",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"garg2022incontext"
+],
+"titles": [
+"What Can Transformers Learn In-Context? A Case Study of Simple Function Classes"
+]
+},
+{
+"name": "Shivani Agrawal",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pope2023efficiently"
+],
+"titles": [
+"Efficiently Scaling Transformer Inference"
+]
+},
+{
+"name": "Shixiang Shane Gu",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kojima2022zeroshot",
+"huang2022selfimprove",
+"chung2022flan"
+],
+"titles": [
+"Large Language Models are Zero-Shot Reasoners",
+"Large Language Models Can Self-Improve",
+"Scaling Instruction-Finetuned Language Models"
+]
+},
+{
+"name": "Sho Yaida",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"principles_dl_theory"
+],
+"titles": [
+"The Principles of Deep Learning Theory"
+]
+},
+{
+"name": "Sholto Douglas",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pope2023efficiently"
+],
+"titles": [
+"Efficiently Scaling Transformer Inference"
+]
+},
+{
+"name": "Shrimai Prabhumoye",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Shuai Zhang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhou2021informer"
+],
+"titles": [
+"Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting"
+]
+},
+{
+"name": "Shuang Li",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"du2023multiagent"
+],
+"titles": [
+"Improving Factuality and Reasoning in Language Models through Multiagent Debate"
+]
+},
+{
+"name": "Shuangfei Zhai",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zhai2023entropy"
+],
+"titles": [
+"Stabilizing Transformer Training by Preventing Attention Entropy Collapse"
+]
+},
+{
+"name": "Shujie Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chen2023vallx"
+],
+"titles": [
+"Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers"
+]
+},
+{
+"name": "Shuming Ma",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ma2024bitnet"
+],
+"titles": [
+"The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits"
+]
+},
+{
+"name": "Shunichi Amari",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"amari1972",
+"adaptivepattern"
+],
+"titles": [
+"Learning Patterns and Pattern Sequences by Self-Organizing Nets of Threshold Elements",
+"A Theory of Adaptive Pattern Classifiers"
+]
+},
+{
+"name": "Shunryu Suzuki",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"suzuki1970zenmind"
+],
+"titles": [
+"Zen Mind, Beginner's Mind"
+]
+},
+{
+"name": "Shunyu Yao",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"yao2023react",
+"shinn2023reflexion",
+"sumers2024cognitive",
+"yao2023tot"
+],
+"titles": [
+"ReAct: Synergizing Reasoning and Acting in Language Models",
+"Reflexion: Language Agents with Verbal Reinforcement Learning",
+"Cognitive Architectures for Language Agents"
+]
+},
+{
+"name": "Shuxin Zheng",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xiong2020"
+],
+"titles": [
+"On Layer Normalization in the Transformer Architecture"
+]
+},
+{
+"name": "Shuyan Zhou",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gao2022pal"
+],
+"titles": [
+"PAL: Program-aided Language Models"
+]
+},
+{
+"name": "Shweta Jain",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"davies2018loihi"
+],
+"titles": [
+"Loihi: A Neuromorphic Manycore Processor with On-Chip Learning"
+]
+},
+{
+"name": "Si Ma",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"belkin2019reconciling"
+],
+"titles": [
+"Reconciling modern machine-learning practice and previous theoretical theories"
+]
+},
+{
+"name": "Siamak Ravanbakhsh",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"zaheer2017deepsets"
+],
+"titles": [
+"Deep Sets"
+]
+},
+{
+"name": "Sid Black",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"black2022polytopelens",
+"gao2020pile"
+],
+"titles": [
+"Interpreting Neural Networks through the Polytope Lens",
+"The Pile: An 800GB Dataset of Diverse Text for Language Modeling"
+]
+},
+{
+"name": "Sid Kouider",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dehaene2017c0c1c2"
+],
+"titles": [
+"What is consciousness, and could machines have it?"
+]
+},
+{
+"name": "Sida D. Wang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hinton2011capsules"
+],
+"titles": [
+"Transforming Auto-Encoders"
+]
+},
+{
+"name": "Siddhartha Brahma",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chung2022flan"
+],
+"titles": [
+"Scaling Instruction-Finetuned Language Models"
+]
+},
+{
+"name": "Sidney Altman",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"altman1976rnasep"
+],
+"titles": [
+"Ribonuclease P: A Single-Component Enzyme with Catalytic RNA"
+]
+},
+{
+"name": "Siemens AG",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"siemensprocess"
+],
+"titles": [
+"Method of Producing Pure Silicon (Siemens Process)"
+]
+},
+{
+"name": "Sigmund Freud",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"freud1900dreams"
+],
+"titles": [
+"The Interpretation of Dreams"
+]
+},
+{
+"name": "Silviu-Marian Udrescu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"udrescu2020aifeynman"
+],
+"titles": [
+"AI Feynman 2.0: Pareto-optimal symbolic regression exploiting graph modularity"
+]
+},
+{
+"name": "Simon Donaldson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"donaldson1983gauge"
+],
+"titles": [
+"An Application of Gauge Theory to Four-Dimensional Topology"
+]
+},
+{
+"name": "Simon Duane",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"duane1987hmc"
+],
+"titles": [
+"Hybrid Monte Carlo"
+]
+},
+{
+"name": "Simon Godsill",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"doucet2000pf"
+],
+"titles": [
+"On Sequential Monte Carlo Sampling Methods for Bayesian Filtering"
+]
+},
+{
+"name": "Simon Hawkins",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hawkins2002ae"
+],
+"titles": [
+"Outlier Detection Using Replicator Neural Networks"
+]
+},
+{
+"name": "Simon Kornblith",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chen2020simclr"
+],
+"titles": [
+"A Simple Framework for Contrastive Learning of Visual Representations"
+]
+},
+{
+"name": "Simon Neubauer",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hublin2017jebel"
+],
+"titles": [
+"New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens"
+]
+},
+{
+"name": "Simon Osindero",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hinton2006"
+],
+"titles": [
+"A fast learning algorithm for deep belief nets"
+]
+},
+{
+"name": "Simon Schmitt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schrittwieser2020muzero"
+],
+"titles": [
+"Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model"
+]
+},
+{
+"name": "Simon Stevin",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"stevin"
+],
+"titles": [
+"De Thiende (De la disme, “The Art of Tenths”)"
+]
+},
+{
+"name": "Simran Liu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"grokking_effective"
+],
+"titles": [
+"Towards Understanding Grokking: An Effective Theory of Representation Learning"
+]
+},
+{
+"name": "Siméon-Denis Poisson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"poisson"
+],
+"titles": [
+"Recherches sur la probabilité des jugements"
+]
+},
+{
+"name": "Siyuan Ma",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"belkin2019"
+],
+"titles": [
+"Reconciling modern machine learning practice and the bias-variance trade-off"
+]
+},
+{
+"name": "Siyuan Zhuang",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kwon2023vllm"
+],
+"titles": [
+"Efficient Memory Management for Large Language Model Serving with PagedAttention"
+]
+},
+{
+"name": "SK Hynix",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hbm2013"
+],
+"titles": [
+"High Bandwidth Memory (HBM) DRAM (JESD235)"
+]
+},
+{
+"name": "Skalse",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"mesa_optimization"
+],
+"titles": [
+"Risks from Learned Optimization in Advanced Machine Learning Systems"
+]
+},
+{
+"name": "Skyler Hallinan",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"madaan2023selfrefine"
+],
+"titles": [
+"Self-Refine: Iterative Refinement with Self-Feedback"
+]
+},
+{
+"name": "Slav Petrov",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chung2022flan"
+],
+"titles": [
+"Scaling Instruction-Finetuned Language Models"
+]
+},
+{
+"name": "Slava Gerovitch",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gerovitch_argon"
+],
+"titles": [
+"Soviet Space Program: Computers"
+]
+},
+{
+"name": "Smalltalk (smalltalk.com)",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"smalltalk"
+],
+"titles": [
+"Smalltalk"
+]
+},
+{
+"name": "Smithsonian Institution",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"poincare_image"
+],
+"titles": [
+"Portrait of Henri Poincaré (1854–1912), Mathematician"
+]
+},
+{
+"name": "Solomon Kullback",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"leiblerkullback"
+],
+"titles": [
+"On Information and Sufficiency"
+]
+},
+{
+"name": "Song Han",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xiao2023streaming"
+],
+"titles": [
+"Efficient Streaming Language Models with Attention Sinks"
+]
+},
+{
+"name": "Sonia Harmand",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"achleuleankariandusi",
+"lomekwi"
+],
+"titles": [
+"An earlier origin for the Acheulian",
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Sonja Diekelmann and Jana Born",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"diekelmann2010sleep"
+],
+"titles": [
+"The Memory Function of Sleep"
+]
+},
+{
+"name": "Soonho Kong",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"moura2015lean"
+],
+"titles": [
+"The Lean Theorem Prover (System Description)"
+]
+},
+{
+"name": "Sophie Clément",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lomekwi"
+],
+"titles": [
+"3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya"
+]
+},
+{
+"name": "Soren Windolf",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ameisen2025circuittracing"
+],
+"titles": [
+"Circuit Tracing: Mapping How Language Models Process Language, Internally"
+]
+},
+{
+"name": "Soroush Vosoughi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"shi2023cottransfer"
+],
+"titles": [
+"Language Models are Multilingual Chain-of-Thought Reasoners"
+]
+},
+{
+"name": "Soumadeep Saha",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chaturvedi2022faithfulness"
+],
+"titles": [
+"Analyzing Semantic Faithfulness of Language Models via Input Intervention on Question Answering"
+]
+},
+{
+"name": "Soumik Mandal",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"belkin2019"
+],
+"titles": [
+"Reconciling modern machine learning practice and the bias-variance trade-off"
+]
+},
+{
+"name": "Soumith Chintala",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"pytorch"
+],
+"titles": [
+"PyTorch: An Imperative Style, High-Performance Deep Learning Library"
+]
+},
+{
+"name": "Sourya Basu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"basu2020mirostat"
+],
+"titles": [
+"Mirostat: A Neural Text Decoding Algorithm that Directly Controls Perplexity"
+]
+},
+{
+"name": "Souvik Kundu",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"baghaei2026collapse"
+],
+"titles": [
+"One Token Away from Collapse: The Fragility of Instruction-Tuned Helpfulness"
+]
+},
+{
+"name": "Sri Harsha Choday",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"davies2018loihi"
+],
+"titles": [
+"Loihi: A Neuromorphic Manycore Processor with On-Chip Learning"
+]
+},
+{
+"name": "Srinivas Vasudevan",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dillon2017tfp"
+],
+"titles": [
+"TensorFlow Distributions"
+]
+},
+{
+"name": "Srinivasan Parthasarathy",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kohli2026loop"
+],
+"titles": [
+"Loop, Think, & Generalize: Implicit Reasoning in Recurrent-Depth Transformers"
+]
+},
+{
+"name": "Stan Honda",
+"works": 1,
+"yearMin": 1997,
+"yearMax": 1997,
+"keys": [
+"deepblue"
+],
+"titles": [
+"Deep Blue computer beats world chess champion – archive, 1997"
+]
+},
+{
+"name": "Stan Lanning",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"bennett2007netflix"
+],
+"titles": [
+"The Netflix Prize"
+]
+},
+{
+"name": "Standards Council of the C++ Foundation",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"isocpp"
+],
+"titles": [
+"C++ Standards"
+]
+},
+{
+"name": "Stanford Encyclopedia of Philosophy",
+"works": 3,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ockham",
+"lumpschool",
+"septruringtest"
+],
+"titles": [
+"William of Ockham",
+"Structural Realism",
+"The Turing Test"
+]
+},
+{
+"name": "Stanford Institute for Human-Centered AI",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"aiindex2025"
+],
+"titles": [
+"AI Index Report"
+]
+},
+{
+"name": "Stanislas Dehaene",
+"works": 4,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dehaene2001gnwt",
+"dehaene2017c0c1c2",
+"dehaene",
+"dehaene1997numbersense"
+],
+"titles": [
+"Towards a cognitive neuroscience of consciousness: basic evidence and a workspace framework",
+"What is consciousness, and could machines have it?",
+"Towards a cognitive neuroscience of consciousness: basic evidence and a workspace framework"
+]
+},
+{
+"name": "Stanislav Fort",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"kadavath2022selfknowledge"
+],
+"titles": [
+"Language Models (Mostly) Know What They Know"
+]
+},
+{
+"name": "Stanislaw Jastrzebski",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"houlsby2019adapters"
+],
+"titles": [
+"Parameter-Efficient Transfer Learning for NLP"
+]
+},
+{
+"name": "Stanisław Ulam",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"ulam_vonneumann1949montecarlo"
+],
+"titles": [
+"The Monte Carlo Method"
+]
+},
+{
+"name": "Stanley L. Miller",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"miller1953aminoacids"
+],
+"titles": [
+"A Production of Amino Acids under Possible Primitive Earth Conditions"
+]
+},
+{
+"name": "Stanley Mazor",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"intel4004"
+],
+"titles": [
+"A New Era of Integrated Electronics: The Intel 4004 Microprocessor"
+]
+},
+{
+"name": "Stefan Heil",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"schmidhuber1996nplm"
+],
+"titles": [
+"Sequential Neural Text Compression"
+]
+},
+{
+"name": "Stefan Heimersheim",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"conmy2023automated"
+],
+"titles": [
+"Towards Automated Circuit Discovery for Mechanistic Interpretability"
+]
+},
+{
+"name": "Stefan Wager",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"wager2018cf"
+],
+"titles": [
+"Estimation and Inference of Heterogeneous Treatment Effects using Random Forests"
+]
+},
+{
+"name": "Stefanie Jegelka",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"xu2019gin"
+],
+"titles": [
+"How Powerful are Graph Neural Networks?"
+]
+},
+{
+"name": "Stefano Benazzi",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"hublin2017jebel"
+],
+"titles": [
+"New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens"
+]
+},
+{
+"name": "Stefano Ermon",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"dao2022flashattention",
+"song2019score"
+],
+"titles": [
+"FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+"Generative Modeling by Estimating Gradients of the Data Distribution"
+]
+},
+{
+"name": "Stefano Massaroli",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"poli2023hyena"
+],
+"titles": [
+"Hyena Hierarchy: Towards Larger Convolutional Language Models"
+]
+},
+{
+"name": "Stella Biderman",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"gao2020pile"
+],
+"titles": [
+"The Pile: An 800GB Dataset of Diverse Text for Language Modeling"
+]
+},
+{
+"name": "Stephanie Lin",
+"works": 2,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"lin2021truthful",
+"lin2022uncertainty"
+],
+"titles": [
+"Truthful AI: Developing and Governing AI That Does Not Lie",
+"Teaching Models to Express Their Uncertainty in Words"
+]
+},
+{
+"name": "Stephen A. Della Pietra",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"berger1996cpmc"
+],
+"titles": [
+"A Maximum Entropy Approach to Natural Language Processing"
+]
+},
+{
+"name": "Stephen Bates",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"angelopoulos2021conformal"
+],
+"titles": [
+"A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification"
+]
+},
+{
+"name": "Stephen C. Johnson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"johnson1967hierarchical"
+],
+"titles": [
+"Hierarchical Clustering Schemes"
+]
+},
+{
+"name": "Stephen Chrisomalis",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"chrisomalis2010"
+],
+"titles": [
+"Numerical Notation: A Comparative History"
+]
+},
+{
+"name": "Stephen Greenblatt",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"greenblatt2011swerve"
+],
+"titles": [
+"The Swerve: How the World Became Modern"
+]
+},
+{
+"name": "Stephen Muggleton",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"muggleton1991ilp"
+],
+"titles": [
+"Inductive Logic Programming"
+]
+},
+{
+"name": "Stephen Robertson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"robertson2009bm25"
+],
+"titles": [
+"The Probabilistic Relevance Framework: BM25 and Beyond"
+]
+},
+{
+"name": "Stephen Smale",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"smale1961hccobordism"
+],
+"titles": [
+"Generalized Poincaré's Conjecture in Dimensions Greater Than Four"
+]
+},
+{
+"name": "Stephencdickson",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"jacquard_loom"
+],
+"titles": [
+"A Jacquard Loom Showing Information Punchcards, National Museum of Scotland"
+]
+},
+{
+"name": "Stevan Harnad",
+"works": 1,
+"yearMin": 1990,
+"yearMax": 1990,
+"keys": [
+"harnad1990symbol"
+],
+"titles": [
+"The Symbol Grounding Problem"
+]
+},
+{
+"name": "Steve Awodey",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"awodey2010category"
+],
+"titles": [
+"Category Theory"
+]
+},
+{
+"name": "Steve Crocker",
+"works": 1,
+"yearMin": null,
+"yearMax": null,
+"keys": [
+"rfc1"
+],
+"titles": [
+"Network Working Group Request for Comment: 1"
+]
+}
+]
