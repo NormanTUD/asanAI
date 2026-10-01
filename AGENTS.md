@@ -54,7 +54,7 @@ tags.**
 | `tests/`, `run_tests`, `_run_tests.py` | Toolkit test suite (static + in-browser Playwright) |
 | `blog/` | The Blog: one `<slug>.php` per lesson + shared infra |
 | `blog/tests/` | Blog test suite (Python validators, Node unit tests) |
-| `blog/atlas/` | Atlas 3D-map data (generated JSON) + Python pipeline |
+| `blog/atlas_data/` | Atlas 3D-map data (generated JSON) + Python pipeline |
 | `blog/todo/` | **Staging** draft lessons — not part of the course |
 | `blog/test/` | One-off HTML experiments/scratch — not part of the course |
 | `blog/py/` | Python snippets inlined into lessons via `get_string_of_file_or_die()` |
@@ -183,7 +183,7 @@ without touching any other file.** Remove a lesson by deleting its file
   `<pre><code class="language-python">…</code></pre>` (Prism highlights
   python/json; `addCopyButtons()` adds copy buttons). Markdown fences are the
   exception. Inline external code: `<?php print get_string_of_file_or_die("py/…"); ?>`.
-- **Cross-references**: link sibling lessons by slug (`[The Atlas](map.php)`)
+- **Cross-references**: link sibling lessons by slug (`[The Atlas](atlas.php)`)
   and use raw anchors `<a id="…"></a>` + `[text](#anchor)`. The `\label{}` /
   `\index{}` machinery exists but is **dormant — do not use it**.
 - **Inline `<script>` and lesson-local `<style>` blocks are accepted** for
@@ -461,12 +461,12 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
 
 ## The Atlas (interactive 3D course map)
 
-`blog/map.php` + `blog/map.js`: an interactive three.js globe where every named
+`blog/atlas.php` + `blog/atlas.js`: an interactive three.js globe where every named
 **person / place / institution / event / artifact** in the textbook is a dot,
 great-circle **threads** link them, and a "cosmic journey" tour zooms from
 Earth to the Big Bang and back.
 
-The Atlas is **data-driven**. Dots/threads are *not* drawn in `map.js` — they
+The Atlas is **data-driven**. Dots/threads are *not* drawn in `atlas.js` — they
 load from five generated files in `blog/atlas/`: `entities.json` (dots with
 `lat/lng`, `type`, `active[]`, `cited_in[]`, `bibkeys[]`, `conf`),
 `authors.json` (one dot per bibliography author), `threads.json`
@@ -489,7 +489,7 @@ entity/author extraction.
 
 **The contract: add it to the data, not to the JS.** If a thing is real and
 on-topic, it is a dot — searchable, filterable, eligible as a thread endpoint
-and tour stop. A hardcoded marker in `map.js` breaks all of that:
+and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
 
 - **New entity** → record in a raw list (`raw/out_part*.json`, schema in
   `BRIEF_entities.md`) → `merge --merge` → `threads --build` (if a thread
@@ -503,7 +503,7 @@ and tour stop. A hardcoded marker in `map.js` breaks all of that:
   `atlas_threads.py` (endpoints by display name) → `threads --build` →
   `check`. Both endpoints must already be entities or the thread is silently
   dropped.
-- **New tour stop** → `JOURNEY` array in `map.js` (one of the few legitimate
+- **New tour stop** → `JOURNEY` array in `atlas.js` (one of the few legitimate
   hardcoded pieces); its `dot` must be a real `entities.json` id and its `img`
   a real file in `blog/`.
 
@@ -522,8 +522,8 @@ and tour stop. A hardcoded marker in `map.js` breaks all of that:
   `out_part11.json` is not audited until added to that list).
   **The Atlas data is currently stale** (literature.js has grown past 2120
   keys) — re-run the pipeline and bump the count before relying on `check`.
-- Every texture loaded in `map.js` must be a real file in `blog/`, cited in
-  `map.php` with a `literature.js` key, and recorded in
+- Every texture loaded in `atlas.js` must be a real file in `blog/`, cited in
+  `atlas.php` with a `literature.js` key, and recorded in
   `bildquellen-pruefung.txt` (known outlier: the public-domain WMAP CMB photo
   is credited with a direct link and has no key).
 
