@@ -467,7 +467,7 @@ great-circle **threads** link them, and a "cosmic journey" tour zooms from
 Earth to the Big Bang and back.
 
 The Atlas is **data-driven**. Dots/threads are *not* drawn in `atlas.js` — they
-load from five generated files in `blog/atlas/`: `entities.json` (dots with
+ load from five generated files in `blog/atlas_data/`: `entities.json` (dots with
 `lat/lng`, `type`, `active[]`, `cited_in[]`, `bibkeys[]`, `conf`),
 `authors.json` (one dot per bibliography author), `threads.json`
 (`kind` ∈ {influence, journey, signal}; endpoints are entity **ids**),
