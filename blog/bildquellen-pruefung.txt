@@ -553,3 +553,61 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
              (Kein eigener literature.js-Key; die Sattelfläche wird via
               \cite{hyperbolic_paraboloid_saddle} zitiert, die Bildquelle im
               Marginfig-Caption als Commons-Link genannt.)
+
+53. loss_landscape_resnet56_noskip (Li et al., 2018 — Figure 1a)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/noshortLogRotatedLower.png)
+    Lizenz: MIT (für Code+Figures-Repo tomgoldstein/loss-landscape; die
+            Figuren wurden zur Veröffentlichung in NeurIPS 2018 unter
+            CC-BY-Attribution gestellt; arXiv HTML spiegelt die Figuren
+            unter perpetual non-exclusive distribution).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 1a — Loss-Oberfläche ResNet-56 OHNE Skip-Connections
+             (chaotisches Terrain, Testfehler ~13% auf CIFAR-10).
+             Filter-normalisierte 2-D-Richtungsprojektion.
+    Lokal: loss_landscape_resnet56_noskip.png
+    Genutzt in: loss_landscape.php § hero figure (without-skip panel)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert, Autoren + Repo-Link im Caption.
+
+54. loss_landscape_resnet56_skip (Li et al., 2018 — Figure 1b)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/shortHighResLog.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 1b — Loss-Oberfläche ResNet-56 MIT Skip-Connections
+             (eine glatte konvexe Becken-Struktur, Testfehler ~6%).
+             Identische Architektur + Training wie Figur 1a; einziger
+             Unterschied = An-/Abwesenheit der Skip-Connections.
+    Lokal: loss_landscape_resnet56_skip.png
+    Genutzt in: loss_landscape.php § hero figure (with-skip panel)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert, Autoren + Repo-Link im Caption.
+
+55. loss_landscape_resnet110_noskip (Li et al., 2018 — Figure 4a)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/notresnet110.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 4a — Loss-Oberfläche ResNet-110 OHNE Skip-Connections.
+             Zeigt wie das Terrain mit der Tiefe vollständig in "chaotic
+             behavior" kollabiert.
+    Lokal: loss_landscape_resnet110_noskip.png
+    Genutzt in: loss_landscape.php § Aha #4 — Skip-Verbindungen als
+             topologische Chirurgie
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert.
+
+56. loss_landscape_densenet121 (Li et al., 2018 — Figure 4b)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/densenet121.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 4b — Loss-Oberfläche DenseNet-121 (alle Schichten
+             skip-connected). Glatt und ohne erkennbare Non-Convexity,
+             bestätigt Li et al.s Befund, dass Skip-Verbindungen jede
+             Art von Tiefe "reparieren".
+    Lokal: loss_landscape_densenet121.png
+    Genutzt in: loss_landscape.php § Aha #4 (alternativer Beleg, DenseNet)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert.

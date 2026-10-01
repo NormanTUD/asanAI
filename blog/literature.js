@@ -15308,6 +15308,41 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1502.03167",
 		alternativetitle: "Ioffe & Szegedy, batch normalization (2015)"
 	},
+	"dinh2017sharpness": {
+		title: "Sharp Minima Can Generalize For Deep Nets",
+		author: "Laurent Dinh, Razvan Pascanu, Samy Bengio, Yoshua Bengio",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.04933",
+		alternativetitle: "Dinh et al., sharp minima can generalize (2017)"
+	},
+	"cohen2021edgeofstability": {
+		title: "Gradient Descent on Neural Networks Typically Occurs at the Edge of Stability",
+		author: "Jeremy Cohen, Simran Kaur, Yuanzhi Li, J. Zico Kolter, Andrej Risteski",
+		year: 2021,
+		url: "https://arxiv.org/abs/2103.00065",
+		alternativetitle: "Cohen et al., edge of stability (2021)"
+	},
+	"chaudhari2016entropysgd": {
+		title: "Entropy-SGD: Biasing Gradient Descent Into Wide Valleys",
+		author: "Pratik Chaudhari, Anna Choromanska, Stefano Soatto, Yann LeCun, Carlo Baldi, Kurt Keutzer",
+		year: 2016,
+		url: "https://arxiv.org/abs/1611.01838",
+		alternativetitle: "Chaudhari et al., Entropy-SGD / local entropy (2016)"
+	},
+	"hopfield1982": {
+		title: "Neural networks and physical systems with emergent collective computational abilities",
+		author: "John J. Hopfield",
+		year: 1982,
+		url: "https://www.pnas.org/doi/10.1073/pnas.79.8.2554",
+		alternativetitle: "Hopfield, energy landscapes in neural nets (1982)"
+	},
+	"wales2003energy": {
+		title: "Energy Landscapes: Applications to Clusters, Biomolecules and Glasses",
+		author: "David J. Wales",
+		year: 2004,
+		url: "https://www.cambridge.org/9780521814157",
+		alternativetitle: "Wales, energy landscapes (Cambridge, 2003)"
+	},
 	"titan_contour_map": {
 		title: "First topographic map of Titan (Cassini)",
 		author: "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
