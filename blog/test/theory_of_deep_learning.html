@@ -2432,7 +2432,11 @@ function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
   const w=r.width||cv.clientWidth||600;
-  const h=parseFloat(cv.getAttribute('height'))||300;
+  // Store original logical height once to avoid cumulative scaling on redraws
+  if(!cv.dataset.origHeight){
+    cv.dataset.origHeight = cv.getAttribute('height')||'300';
+  }
+  const h=parseFloat(cv.dataset.origHeight);
   cv.width=w*dpr; cv.height=h*dpr;
   cv.style.height=h+'px';
   const ctx=cv.getContext('2d');
