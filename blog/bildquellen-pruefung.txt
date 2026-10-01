@@ -515,3 +515,41 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
               untold_history.php
     Status: OK - CC BY-SA 3.0, Autor + Commons-Link im Credit,
              Quelle via \cite{budassi_universe_image} zitiert.
+
+=== LOSS LANDSCAPE (loss_landscape.php, Stand: Oktober 2026) ===
+====================================================================
+50. titan_topo (titan_contour_map)
+    URL: https://commons.wikimedia.org/wiki/File:First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg (geprüft HTTP 200)
+    Lizenz: Public Domain (via Commons API, Feld LicenseShortName)
+    Autor: NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann
+    Hinweis: Erste Topografie-Konturkarte des Saturnmonds Titan (Cassini, 2013).
+             Dient als Metapher für die "Landschaft" = Höhenlinien des Verlusts.
+    Lokal: titan_topo.jpg (2197x2197, JPG)
+    Genutzt in: loss_landscape.php § hero / "What is a loss landscape"
+    Status: OK - Public Domain, Autor + Commons-Link im Caption,
+             Quelle via \cite{titan_contour_map} zitiert.
+
+51. saddle_hyperbolic_paraboloid (hyperbolic_paraboloid_saddle)
+    URL: https://commons.wikimedia.org/wiki/File:Hyperbolic_paraboloid_quadric.png (geprüft HTTP 200)
+    Lizenz: CC0 (via Commons API, Feld LicenseShortName)
+    Autor: Rectas
+    Hinweis: Hyperbolisches Paraboloid z = x^2 - y^2 — die kanonische
+             "Sattelfläche". Genau die Form, an der man Sattelpunkte
+             im 2-D-Verlust abliest (Aufwölbung in x, Einbeulung in y).
+    Lokal: saddle_hyperbolic_paraboloid.png (1080x1080, PNG)
+    Genutzt in: loss_landscape.php § saddle points
+    Status: OK - CC0 (Public Domain), Autor + Commons-Link im Caption,
+             Quelle via \cite{hyperbolic_paraboloid_saddle} zitiert.
+
+52. paraboloids_comparison
+    URL: https://commons.wikimedia.org/wiki/File:Hyperbolic_vs_elliptic_paraboloid.png (geprüft HTTP 200)
+    Lizenz: CC BY-SA 3.0 (via Commons API, Feld LicenseShortName)
+    Autor: Snorri95 (Wikimedia Commons)
+    Hinweis: Elliptisches (Becken/Minimum) vs. hyperbolisches (Sattel)
+             Paraboloid nebeneinander — der visuelle Kern von "Minimum vs. Sattel".
+    Lokal: paraboloids_comparison.png (929x281, PNG)
+    Genutzt in: loss_landscape.php § saddle points (Marginfigur)
+    Status: OK - CC BY-SA 3.0, Autor + Commons-Link im Caption.
+             (Kein eigener literature.js-Key; die Sattelfläche wird via
+              \cite{hyperbolic_paraboloid_saddle} zitiert, die Bildquelle im
+              Marginfig-Caption als Commons-Link genannt.)

@@ -13856,7 +13856,7 @@ window.bibData = {
 	},
 	"draxler_mode_connectivity": {
 		title: "Essentially No Barriers in Neural Network Energy Landscape",
-		author: "David Draxler, Ambra Veschgini, Manfred Salmhofer, Franziska Hamprecht",
+		author: "Felix Draxler, Kambis Veschgini, Manfred Salmhofer, Fred A. Hamprecht",
 		year: 2018,
 		url: "https://arxiv.org/abs/1803.00885",
 		alternativetitle: "Mode connectivity"
@@ -15193,17 +15193,134 @@ window.bibData = {
 	},
 	"dauphin2014saddle": {
 		title: "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization",
-		author: "Yann Dauphin, Richang M. Ng, Abolruzah E. Mohammad-Yaraghchi, Yann LeCun",
+		author: "Yann Dauphin, Razvan Pascanu, Caglar Gulcehre, Kyunghyun Cho, Surya Ganguli, Yoshua Bengio",
 		year: 2014,
-		url: "https://arxiv.org/abs/1411.2618",
+		url: "https://arxiv.org/abs/1406.2572",
 		alternativetitle: "Dauphin et al., saddle points (2014)"
 	},
 	"li2018losslandscape": {
 		title: "Visualizing the Loss Landscape of Neural Nets",
-		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, John E. Davis",
+		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein",
 		year: 2018,
 		url: "https://arxiv.org/abs/1712.09913",
 		alternativetitle: "Li et al., loss landscape (2018)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Loss Landscape  (loss_landscape.php)
+	 *  Origin of the energy/loss-landscape metaphor, saddle points, mode
+	 *  connectivity, and the methods that study and smooth the terrain.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"rumelhart1986learning": {
+		title: "Learning representations by back-propagating errors",
+		author: "David E. Rumelhart, Geoffrey E. Hinton, Ronald J. Williams",
+		year: 1986,
+		url: "https://www.nature.com/articles/323533a0",
+		alternativetitle: "Rumelhart, Hinton & Williams, backprop (1986)"
+	},
+	"dauphin2014identifying": {
+		title: "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization",
+		author: "Yann Dauphin, Razvan Pascanu, Caglar Gulcehre, Kyunghyun Cho, Surya Ganguli, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1406.2572",
+		alternativetitle: "Dauphin et al., the saddle point problem (2014)"
+	},
+	"pascanu2014saddle": {
+		title: "On the saddle point problem for non-convex optimization",
+		author: "Razvan Pascanu, Yann N. Dauphin, Surya Ganguli, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1405.4604",
+		alternativetitle: "Pascanu et al., saddle points (2014)"
+	},
+	"saxe2014exact": {
+		title: "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+		author: "Andrew M. Saxe, James L. McClelland, Surya Ganguli",
+		year: 2013,
+		url: "https://arxiv.org/abs/1312.6120",
+		alternativetitle: "Saxe, McClelland & Ganguli, exact deep linear solutions (2014)"
+	},
+	"choromanska2015loss": {
+		title: "The Loss Surfaces of Multilayer Networks",
+		author: "Anna Choromanska, Mikael Henaff, Michael Mathieu, Gérard Ben Arous, Yann LeCun",
+		year: 2015,
+		url: "https://arxiv.org/abs/1412.0233",
+		alternativetitle: "Choromanska et al., the loss surfaces of multilayer networks (2015)"
+	},
+	"fyodorov2007complexity": {
+		title: "Replica symmetry breaking condition exposed by random matrix calculation of landscape complexity",
+		author: "Yan V. Fyodorov, Ian N. Williams",
+		year: 2007,
+		url: "https://arxiv.org/abs/cond-mat/0702601",
+		alternativetitle: "Fyodorov & Williams, counting saddles (2007)"
+	},
+	"mehta2018lossxor": {
+		title: "The Loss Surface of XOR Artificial Neural Networks",
+		author: "Dhagash Mehta, Xiaojun Zhao, Edgar A. Bernal, David J. Wales",
+		year: 2018,
+		url: "https://arxiv.org/abs/1804.02411",
+		alternativetitle: "Mehta et al., the loss surface of XOR networks (2018)"
+	},
+	"wu2017towards": {
+		title: "Towards Understanding Generalization of Deep Learning: Perspective of Loss Landscapes",
+		author: "Lei Wu, Zhanxing Zhu, Weinan E",
+		year: 2017,
+		url: "https://arxiv.org/abs/1706.10239",
+		alternativetitle: "Wu, Zhu & E, loss-landscape generalization (2017)"
+	},
+	"nguyen2017loss": {
+		title: "The loss surface of deep and wide neural networks",
+		author: "Quynh Nguyen, Matthias Hein",
+		year: 2017,
+		url: "https://arxiv.org/abs/1704.08045",
+		alternativetitle: "Nguyen & Hein, no bad local minima in deep wide nets (2017)"
+	},
+	"garipov2018mode": {
+		title: "Loss Surfaces, Mode Connectivity, and Fast Ensembling of DNNs",
+		author: "Timur Garipov, Pavel Izmailov, Dmitrii Podoprikhin, Dmitry Vetrov, Andrew Gordon Wilson",
+		year: 2018,
+		url: "https://arxiv.org/abs/1802.10026",
+		alternativetitle: "Garipov et al., loss surfaces & mode connectivity (2018)"
+	},
+	"keskar2016largebatch": {
+		title: "On Large-Batch Training for Deep Learning: Generalization Gap and Sharp Minima",
+		author: "Nitish Shirish Keskar, Dheevatsa Mudigere, Jorge Nocedal, Mikhail Smelyanskiy, Ping Tak Peter Tang",
+		year: 2017,
+		url: "https://arxiv.org/abs/1609.04836",
+		alternativetitle: "Keskar et al., sharp minima & generalization (2017)"
+	},
+	"smithle2018bayesian": {
+		title: "A Bayesian Perspective on Generalization and Stochastic Gradient Descent",
+		author: "Samuel L. Smith, Quoc V. Le",
+		year: 2018,
+		url: "https://arxiv.org/abs/1710.06451",
+		alternativetitle: "Smith & Le, SGD as Bayesian inference toward flat minima (2018)"
+	},
+	"he2016identity": {
+		title: "Identity Mappings in Deep Residual Networks",
+		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+		year: 2016,
+		url: "https://arxiv.org/abs/1603.05027",
+		alternativetitle: "He et al., identity mappings in deep residual networks (2016)"
+	},
+	"ioffe2015batchnorm": {
+		title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+		author: "Sergey Ioffe, Christian Szegedy",
+		year: 2015,
+		url: "https://arxiv.org/abs/1502.03167",
+		alternativetitle: "Ioffe & Szegedy, batch normalization (2015)"
+	},
+	"titan_contour_map": {
+		title: "First topographic map of Titan (Cassini)",
+		author: "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+		year: 2013,
+		url: "https://upload.wikimedia.org/wikipedia/commons/0/01/First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg",
+		alternativetitle: "Titan topographic contour map (public domain)"
+	},
+	"hyperbolic_paraboloid_saddle": {
+		title: "Hyperbolic paraboloid quadric (z = x^2 - y^2), the canonical saddle surface",
+		author: "Rectas",
+		year: "2023",
+		url: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Hyperbolic_paraboloid_quadric.png",
+		alternativetitle: "Hyperbolic paraboloid = a saddle (CC0)"
 	},
 	"belkin2019reconciling": {
 		title: "Reconciling modern machine-learning practice and previous theoretical theories",
