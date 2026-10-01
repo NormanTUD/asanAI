@@ -478,14 +478,14 @@ baked `earth_texture.jpg`).
 Regenerate from `blog/`, in this order:
 
 ```
-python3 atlas/atlas_parse_bib.py          literature.js  -> raw/bib_parsed.json
-python3 atlas/atlas_merge.py --merge      raw/           -> entities/authors/bibliography/world.json
-python3 atlas/atlas_threads.py --build    entities.json  -> threads.json
-python3 atlas/atlas_check.py              independent audit — must exit 0
+python3 atlas_data/atlas_parse_bib.py     literature.js  -> raw/bib_parsed.json
+python3 atlas_data/atlas_merge.py --merge raw/           -> entities/authors/bibliography/world.json
+python3 atlas_data/atlas_threads.py --build entities.json -> threads.json
+python3 atlas_data/atlas_check.py         independent audit — must exit 0
 ```
 
-`raw/BRIEF_entities.md` and `raw/BRIEF_authors.md` are the worker specs for
-entity/author extraction.
+`atlas_data/raw/BRIEF_entities.md` and `atlas_data/raw/BRIEF_authors.md` are the
+worker specs for entity/author extraction.
 
 **The contract: add it to the data, not to the JS.** If a thing is real and
 on-topic, it is a dot — searchable, filterable, eligible as a thread endpoint
