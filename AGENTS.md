@@ -491,10 +491,10 @@ worker specs for entity/author extraction.
 on-topic, it is a dot — searchable, filterable, eligible as a thread endpoint
 and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
 
-- **New entity** → record in a raw list (`raw/out_part*.json`, schema in
-  `BRIEF_entities.md`) → `merge --merge` → `threads --build` (if a thread
+- **New entity** → record in a raw list (`atlas_data/raw/out_part*.json`, schema in
+  `atlas_data/raw/BRIEF_entities.md`) → `merge --merge` → `threads --build` (if a thread
   endpoint) → `check`.
-- **New author dot** → row in `raw/placed_*.json`
+- **New author dot** → row in `atlas_data/raw/placed_*.json`
   (`[name, lat, lng, "City, Country", year, conf]`) → `merge --merge` →
   `check`. `works`/`keys`/`cited_in` are joined automatically — don't hand-write.
 - **New cited work** → source of truth is `literature.js`, not the JSON. Add
