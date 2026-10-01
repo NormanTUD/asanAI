@@ -1175,7 +1175,7 @@ function bootAtlas() {
 		// the opaque Earth wherever it approaches the limb, so lines "end at the
 		// edge" of the globe. 0.06 keeps every front-facing segment in front of
 		// the limb while still reading as a line anchored to its two dots.
-		var ARC_BASE = 0.06;
+		var ARC_BASE = 0.01;
 		var A = a.clone().normalize(), B = b.clone().normalize();
 		var ang = Math.acos(THREE.MathUtils.clamp(A.dot(B), -1, 1));
 		var pts = [];

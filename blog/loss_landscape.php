@@ -5,7 +5,7 @@ title: The Loss Landscape
 description: The high-dimensional surface every optimizer walks on — why it is non-convex but mostly benign, how skip connections flatten it, and how the saddles outnumber the minima.
 icon: &#127956;
 part: 2
-order: 5
+order: 6
 color: sky
 topics: training, math-i, math-ii
 tags: math-heavy
