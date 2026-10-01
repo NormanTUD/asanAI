@@ -72,31 +72,31 @@ const SpaceMorph = (() => {
 
     // ---------- Szenen ----------
     const S = [
-        { n: "Schritt 1 / 7", t: "Zwei Klassen, keine Gerade",
+        { n: "Schritt 1 / 10", t: "Zwei Klassen, keine Gerade",
             b: "Innen eine Punktwolke, außen ein Ring. Kein einziger gerader Schnitt trennt Rot von Blau.",
             f: "X ⊂ ℝ²,&nbsp; y ∈ {0,1}<small>nicht linear separierbar</small>",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 2 / 7", t: "Jeder Versuch scheitert",
+        { n: "Schritt 2 / 10", t: "Jeder Versuch scheitert",
             b: "Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
             f: "w₁x + w₂y + b = 0<small>eine Gerade, immer</small>",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 3 / 7", t: "Eine Dimension mehr Platz",
+        { n: "Schritt 3 / 10", t: "Eine Dimension mehr Platz",
             b: "Das alte Bild liegt jetzt als Boden unter uns. Senkrecht dazu steht die neue Achse z. Die Daten sind unverändert — aber über ihnen ist Raum entstanden.",
             f: "ℝ² ↪ ℝ³<small>Einbettung, noch ohne Krümmung</small>",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
-        { n: "Schritt 4 / 7", t: "Der Layer krümmt den Raum",
+        { n: "Schritt 4 / 10", t: "Der Layer krümmt den Raum",
             b: "Die Kamera fährt in die Seitenansicht und bleibt dort. Das Gitter hebt sich zu einer Schale: innere Punkte sinken, äußere steigen. Es zerreißt nicht, es biegt sich.",
             f: "φ(x,y) = (x, y, x² + y²)<small>ein Layer = eine Verbiegung</small>",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 5 / 7", t: "Eine Ebene passt dazwischen",
+        { n: "Schritt 5 / 10", t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen. In 2D war das unmöglich.",
             f: "wᵀφ(x) + b = 0<small>lineare Trennung in ℝ³</small>",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 6 / 7", t: "Die Ebene wird zur Linie",
+        { n: "Schritt 6 / 10", t: "Die Ebene wird zur Linie",
             b: "Wir stauchen die Ebene entlang der Blickrichtung. Ihre Querlinien laufen zusammen, das Band wird schmaler — bis nur noch eine Linie übrig ist.",
             f: "wᵀφ(x) + b ⋛ 0<small>Fläche → Kante → Linie</small>",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0 },
-        { n: "Schritt 7 / 7", t: "Der Raum fällt auf eine Zahl",
+        { n: "Schritt 7 / 10", t: "Der Raum fällt auf eine Zahl",
             b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Abbildung trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich. Rot links, blau rechts.",
             f: "s = wᵀφ(x) + b ∈ ℝ<small>ℝ³ → ℝ, jetzt trennt ein Punkt</small>",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
@@ -106,18 +106,18 @@ const SpaceMorph = (() => {
         // zwei ineinander verschlungene Donuts, die kein einzelner Layer –
         // und keine Ebene – trennen kann. Sie entwirren sich erst, weil der
         // Layer sie durch eine VIERTE Dimension (w) ziehen darf.
-        { n: "Schritt 8 / 10", t: "Die echte Daten­geometrie: zwei verhakte Tori",
-            b: "In der Wirklichkeit liegen die Daten im ℝ³. Zwei ineinander verknotete Volltori, jeder β₁ = 1: keine Ebene im Raum trennt sie. Genau die Daten­geometrie aus dem Paper (D-II).",
+        { n: "Schritt 8 / 10", t: "Die echte Datengeometrie: zwei verhakte Tori",
+            b: "In der Wirklichkeit liegen die Daten im ℝ³. Zwei ineinander verknotete Volltori, jeder β₁ = 1: keine Ebene im Raum trennt sie. Genau die Datengeometrie aus dem Paper (D-II).",
             f: "M = Mₐ ∪ M_b ⊂ ℝ³,&nbsp; β₁(Mₐ)=β₁(M_b)=1<small>verhakten Tori, unseparabel</small>",
-            L: 0, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
         { n: "Schritt 9 / 10", t: "Durch eine vierte Dimension entwirren",
-            b: "Ein Layer hebt die Daten in eine Extra-Dimension w (die Breite des Netz­raums). In dieser vierten Dimension ziehen sich die beiden Ringe hindurch – das einzige Weg, verhakten Tori zu entwirren, ohne sie zu zerschneiden. Die gepunktete w-Achse deutet es an.",
+            b: "Ein Layer hebt die Daten in eine Extra-Dimension w (die Breite des Netzraums). In dieser vierten Dimension ziehen sich die beiden Ringe hindurch – das einzige Weg, verhakten Tori zu entwirren, ohne sie zu zerschneiden. Die gepunktete w-Achse deutet es an.",
             f: "ℝ³ ↪ ℝ⁴,&nbsp; φ(x,y,z) ↦ (…, w)<small>Breite = Extra-Dimension</small>",
-            L: 0, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.55 },
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.55 },
         { n: "Schritt 10 / 10", t: "Entwirrt – jetzt reicht eine Ebene",
             b: "Zurück im dreidimensionalen Raum liegen die beiden Tori sauber getrennt: jede Klasse ist ein einzelner Klumpen (β → (1,0,0)). Eine Ebene trennt sie. Was unmöglich schien, erledigt eine Sequenz aus Verbiegen + Falten – Schicht für Schicht.",
-            f: "β → (1, 0, 0)<small>linear separierbar im ausge­streckten Raum</small>",
-            L: 0, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
+            f: "β → (1, 0, 0)<small>linear separierbar im ausgestreckten Raum</small>",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
     ];
 
     // ---------- Ablauf ----------
@@ -142,7 +142,7 @@ const SpaceMorph = (() => {
             S.forEach((_, i) => {
                 const e = document.createElement('div');
                 e.style.cssText = 'width:24px;height:3px;transition:background .5s;background:' +
-                    (i <= cur ? '#ffd166' : '#2a3040') + ';';
+                    (i <= cur ? '#d97706' : '#cbd5e1') + ';';
                 bar.appendChild(e);
             });
         }
@@ -197,21 +197,21 @@ const SpaceMorph = (() => {
     function drawBox(al) {
         if (al < 0.01) return;
         const E = EXT, ZT = 1.35, G = 10;
-        ctx.globalAlpha = al * 0.26; ctx.fillStyle = '#121a2b';
+        ctx.globalAlpha = al * 0.12; ctx.fillStyle = '#64748b';
         const c = [proj({ x: -E, y: -E, z: 0 }), proj({ x: E, y: -E, z: 0 }),
             proj({ x: E, y: E, z: 0 }), proj({ x: -E, y: E, z: 0 })];
         ctx.beginPath(); ctx.moveTo(c[0].X, c[0].Y);
         for (let i = 1; i < 4; i++) ctx.lineTo(c[i].X, c[i].Y);
         ctx.closePath(); ctx.fill();
 
-        ctx.globalAlpha = al * 0.34; ctx.strokeStyle = '#46557a'; ctx.lineWidth = 0.9;
+        ctx.globalAlpha = al * 0.40; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 0.9;
         for (let i = 0; i <= G; i++) { const v = -E + 2 * E * i / G;
             let p = proj({ x: -E, y: v, z: 0 }), q = proj({ x: E, y: v, z: 0 });
             ctx.beginPath(); ctx.moveTo(p.X, p.Y); ctx.lineTo(q.X, q.Y); ctx.stroke();
             p = proj({ x: v, y: -E, z: 0 }); q = proj({ x: v, y: E, z: 0 });
             ctx.beginPath(); ctx.moveTo(p.X, p.Y); ctx.lineTo(q.X, q.Y); ctx.stroke(); }
 
-        ctx.globalAlpha = al * 0.20; ctx.strokeStyle = '#5a6b96'; ctx.setLineDash([2, 6]);
+        ctx.globalAlpha = al * 0.35; ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([2, 6]);
         [0.45, 0.90].forEach(zv => { const s = 0.42;
             const r = [proj({ x: -s, y: -s, z: zv }), proj({ x: s, y: -s, z: zv }),
                 proj({ x: s, y: s, z: zv }), proj({ x: -s, y: s, z: zv })];
@@ -220,17 +220,17 @@ const SpaceMorph = (() => {
             ctx.closePath(); ctx.stroke(); });
         ctx.setLineDash([]);
 
-        ctx.globalAlpha = al * 0.85; ctx.strokeStyle = '#8fa2c8'; ctx.lineWidth = 1.6;
+        ctx.globalAlpha = al * 0.85; ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.6;
         const o = proj({ x: 0, y: 0, z: 0 }), tp = proj({ x: 0, y: 0, z: ZT });
         ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(tp.X, tp.Y); ctx.stroke();
-        ctx.fillStyle = '#8fa2c8'; ctx.beginPath();
+        ctx.fillStyle = '#64748b'; ctx.beginPath();
         ctx.moveTo(tp.X, tp.Y - 1); ctx.lineTo(tp.X - 4.5, tp.Y + 11); ctx.lineTo(tp.X + 4.5, tp.Y + 11);
         ctx.closePath(); ctx.fill();
         ctx.lineWidth = 1.2;
         [0.45, 0.90].forEach(zv => { const m = proj({ x: 0, y: 0, z: zv });
             ctx.beginPath(); ctx.moveTo(m.X - 5, m.Y); ctx.lineTo(m.X + 5, m.Y); ctx.stroke(); });
         ctx.font = 'italic 16px Georgia'; ctx.fillText('z', tp.X + 12, tp.Y + 5);
-        ctx.font = '12px system-ui,sans-serif'; ctx.fillStyle = '#78849c';
+        ctx.font = '12px system-ui,sans-serif'; ctx.fillStyle = '#475569';
         ctx.fillText('alte 2D-Ebene', c[3].X + 12, c[3].Y - 8);
         ctx.globalAlpha = 1;
     }
@@ -265,7 +265,7 @@ const SpaceMorph = (() => {
 
         drawBox(bx * lesson);
 
-        if (axA > 0.01) { ctx.globalAlpha = axA; ctx.strokeStyle = '#3c4560'; ctx.lineWidth = 1.6;
+        if (axA > 0.01) { ctx.globalAlpha = axA; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.6;
             ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
             for (let i = 0; i <= 10; i++) { const X = lerp(AX_L, AX_R, i / 10);
                 ctx.beginPath(); ctx.moveTo(X, AX_Y - 4); ctx.lineTo(X, AX_Y + 4); ctx.stroke(); }
@@ -318,14 +318,14 @@ const SpaceMorph = (() => {
             if (it.type === 'plane') {
                 const R = it.rows, M = R.length - 1;
                 ctx.globalAlpha = it.a * 0.17 * (1 - it.sq);
-                ctx.fillStyle = '#ffd166'; ctx.beginPath();
+                ctx.fillStyle = '#f59e0b'; ctx.beginPath();
                 ctx.moveTo(R[0][0].X, R[0][0].Y);
                 for (let j = 1; j <= M; j++) ctx.lineTo(R[0][j].X, R[0][j].Y);
                 for (let j = M; j >= 0; j--) ctx.lineTo(R[M][j].X, R[M][j].Y);
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.globalAlpha = it.a * 0.42 * (1 - it.sq); ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1;
+                ctx.globalAlpha = it.a * 0.42 * (1 - it.sq); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1;
                 for (let i = 0; i <= M; i++) { ctx.beginPath();
                     R[i].forEach((p, j) => j ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y)); ctx.stroke(); }
                 for (let j = 0; j <= M; j++) { ctx.beginPath();
