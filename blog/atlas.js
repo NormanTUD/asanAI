@@ -1170,21 +1170,30 @@ function bootAtlas() {
 
 	// ── threads ───────────────────────────────────────────────
 	function greatCircle(a, b, lift, n) {
-		// The base must clear the globe's silhouette: with a near-zero base the
-		// arc dives to the surface at each endpoint and is depth-culled behind
-		// the opaque Earth wherever it approaches the limb, so lines "end at the
-		// edge" of the globe. 0.06 keeps every front-facing segment in front of
-		// the limb while still reading as a line anchored to its two dots.
-		var ARC_BASE = 0.01;
+		// The base lifts the whole arc off the surface so it clears the globe's
+		// silhouette from a grazing view — with a near-zero base the arc dives
+		// to the surface at each endpoint and is depth-culled behind the opaque
+		// Earth wherever it approaches the limb, so lines "end at the edge".
+		var ARC_BASE = 0.06;
+		// Minimum bow: most threads are short (nearby cities) so lift*ang alone
+		// would hug the surface and render as an invisible 1px line. Give every
+		// arc at least this much arch so it reads as a line floating over the
+		// globe, then scale up with angular length for far-flung connections.
+		var MIN_ANG = 0.35;
 		var A = a.clone().normalize(), B = b.clone().normalize();
 		var ang = Math.acos(THREE.MathUtils.clamp(A.dot(B), -1, 1));
+		// Co-located endpoints (same city, e.g. a person and their place) make
+		// ang=0 -> sin(ang)=0 -> the slerp collapses to the origin. Skip those:
+		// a spatial thread between the same point is meaningless.
+		if (ang < 1e-3) { return []; }
+		var peak = lift * Math.max(ang, MIN_ANG);
 		var pts = [];
 		for (var i = 0; i <= n; i++) {
 			var t = i / n;
-			var s1 = Math.sin((1 - t) * ang) / Math.sin(ang || 1e-6);
-			var s2 = Math.sin(t * ang) / Math.sin(ang || 1e-6);
+			var s1 = Math.sin((1 - t) * ang) / Math.sin(ang);
+			var s2 = Math.sin(t * ang) / Math.sin(ang);
 			var p = A.clone().multiplyScalar(s1).add(B.clone().multiplyScalar(s2)).normalize();
-			var r = EARTH_R + ARC_BASE + lift * ang * Math.sin(Math.PI * t);
+			var r = EARTH_R + ARC_BASE + peak * Math.sin(Math.PI * t);
 			pts.push(p.multiplyScalar(r));
 		}
 		return pts;

@@ -15343,6 +15343,34 @@ window.bibData = {
 		url: "https://www.cambridge.org/9780521814157",
 		alternativetitle: "Wales, energy landscapes (Cambridge, 2003)"
 	},
+	"mandt2017variational": {
+		title: "A Variational Analysis of Stochastic Gradient Descent",
+		author: "Stephan Mandt, Matthew D. Hoffman, David M. Blei",
+		year: 2017,
+		url: "https://arxiv.org/abs/1702.06059",
+		alternativetitle: "Mandt et al., SGD as variational inference (2017)"
+	},
+	"amit1989modeling": {
+		title: "Modeling Brain Function: The World of Attractor Neural Networks",
+		author: "Daniel J. Amit",
+		year: 1989,
+		url: "https://www.cambridge.org/9780521361246",
+		alternativetitle: "Amit, attractor neural networks / permutation symmetry (1989)"
+	},
+	"kawaguchi2016deep": {
+		title: "Deep Learning without Poor Local Minima",
+		author: "Kenji Kawaguchi",
+		year: 2016,
+		url: "https://arxiv.org/abs/1605.07110",
+		alternativetitle: "Kawaguchi, no poor local minima in deep nets (2016)"
+	},
+	"lu2017expressive": {
+		title: "The Expressive Power of Neural Networks: A Survey",
+		author: "Yingcong Lu",
+		year: 2017,
+		url: "https://arxiv.org/abs/1708.04669",
+		alternativetitle: "Lu, depth and expressivity of neural networks (2017)"
+	},
 	"titan_contour_map": {
 		title: "First topographic map of Titan (Cassini)",
 		author: "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",

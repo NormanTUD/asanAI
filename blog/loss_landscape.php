@@ -66,6 +66,16 @@ The fix from \citeauthor{li2018losslandscape}: instead of a random Gaussian dire
 
 </div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="Non-convexity comes from the non-linearities, not from depth">
+
+### Non-convexity comes from the non-linearities, not from depth
+
+A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all. Every critical point is either a global minimum or a saddle. \citeauthor{saxe2014deep} (\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \citeauthor{kawaguchi2016deep} (\citeyear{kawaguchi2016deep}) and \citeauthor{telgarsky2016wars} (\citeyear{telgarsky2016wars}) extended the result.
+
+So where does the non-convexity of real networks come from? From the activation functions. ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima. Depth alone is harmless. This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved. \citeauthor{lu2017expressive} (\citeyear{lu2017expressive}) reviews the broader picture.
+
+</div>
+
 <div class="md" data-mathlevel="50" data-optionaltitle="Saddles outnumber minima in high dimensions">
 
 ### Saddles outnumber minima in high dimensions
@@ -76,6 +86,8 @@ For a long time, the worry was that local minima would trap gradient descent. \c
 * saddles (curving up in some directions, down in others) are exponentially common (proportional to $e^{+c\,d}$).
 
 A "stuck plateau" is almost never a valley floor. It is a saddle whose gradient happens to be tiny. Newton-class methods slow down at saddles too, which is why classical second-order optimizers struggle on deep nets. \citeauthor{dauphin2014saddle}'s **Saddle-Free Newton** escapes them by ignoring the negative eigenvalues of the Hessian. Plain SGD escapes them for free, because the stochastic noise of mini-batches is exactly the kick needed to dislodge the ball off a saddle along its descending direction. That is the modern view of deep-net optimization.
+
+The mini-batch noise does more than kick the ball off saddles. Each mini-batch gives a slightly different gradient, so the surface SGD effectively optimizes is the true loss convolved with the noise distribution. This smoothed surface has fewer saddles, fewer sharp minima, flatter basins. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) and \citeauthor{mandt2017variational} (\citeyear{mandt2017variational}) made this precise: small-batch SGD is approximately sampling from a Boltzmann-like distribution $p(\theta) \propto e^{-\mathcal{L}(\theta)/T}$ where the temperature $T$ is set by the learning rate and batch size. Higher temperature (smaller batch, larger learning rate) flattens the effective surface and biases the trajectory toward wide basins. This is the deepest reason mini-batch noise is a feature, not a bug.
 
 <figure>
 <img src="saddle_hyperbolic_paraboloid.png" alt="The hyperbolic paraboloid z = x^2 - y^2, the canonical saddle surface">
@@ -95,6 +107,14 @@ The intuition goes back to \citeauthor{hochreiter1991vanishing}'s \citeyear{hoch
 \citetitle{keskar2016largebatch} (\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on ImageNet. The story is not so clean once \citeauthor{dinh2017sharpness} (\citeyear{dinh2017sharpness}) is added. Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one. "Sharp" was not a property of the minimum. It was an artifact of the parameterization. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.
 
 The live descendants of this debate are **Sharpness-Aware Minimization** \cite{foret2021sam}, which explicitly adds a "be flat" penalty to the loss, and the **Edge of Stability** phenomenon \cite{cohen2021edgeofstability}, where the sharpness hovers at $2/\eta$ throughout training. Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates.
+
+### The surface itself moves during training
+
+The "ball rolling downhill" picture is misleading in a deeper way: the surface is not fixed. The loss depends on the weights, so as the weights change, the loss surface deforms under the optimizer's feet. **Sharpness-Aware Minimization** \cite{foret2021sam} works precisely because of this. Instead of descending the surface where it currently is, SAM takes a small step, evaluates the loss at the new point, and uses *that* gradient. It looks ahead to where the surface will be, not where it currently is, and the resulting iterates settle into flatter regions.
+
+### Gradient descent hovers at the edge of instability
+
+The picture gets sharper still. \citeauthor{cohen2021edgeofstability} (\citeyear{cohen2021edgeofstability}) showed empirically that the largest eigenvalue of the Hessian self-tunes to $2/\eta$ throughout training, where $\eta$ is the learning rate. Gradient descent cannot descend below this sharpness. The optimizer oscillates at the boundary between stable and unstable. The "ball settling into a valley and resting there" picture is wrong. The ball is in constant small-scale oscillation, and the curvature of the basin adapts to match the learning rate. This is the most precise statement we have about what training actually does at convergence.
 
 </div>
 
@@ -130,6 +150,12 @@ Train two ResNets independently on CIFAR-10 from different random initialization
 
 The set of well-performing weights is connected. The landscape is one big basin, full of curvature ripples and small ridges but without barriers. This is also why "model ensembling", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.
 
+### Permutation symmetry and the astronomical number of equivalent minima
+
+The "one big valley" claim needs a caveat. Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance. This permutation symmetry means every "true" minimum corresponds to an astronomical number of equivalent positions in raw weight space. A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe. The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.
+
+This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to align the neurons of the two networks before drawing the line between their minima. Without alignment, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley. The "one connected valley" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point. In raw parameter space the same statement is false; the same minimum has many disconnected copies. \citeauthor{amit1989modeling} (\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.
+
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="SGD travels in an almost one-dimensional subspace">
@@ -148,11 +174,12 @@ PCA on the iterates $\theta_0, \theta_1, \ldots, \theta_T$ recovers what is actu
 
 The picture that survives the most careful empirical work \cite{li2018losslandscape,garipov2018mode,choromanska2015loss} is roughly this:
 
-1. The landscape is one connected valley. Local minima are exponentially rare. Saddles dominate but are easy to escape with stochastic noise. Independent runs find different points, all connected by low-loss paths.
+1. The landscape is one connected valley. Local minima are exponentially rare. Saddles dominate but are easy to escape with stochastic noise. Independent runs find different points, all connected by low-loss paths (once permutation symmetries are factored out).
 2. Skip connections reshape the topology. They replace chaotic multi-basin terrain with one smooth basin. As a side effect, trainable 100-layer nets exist.
-3. Width flattens. Wider networks have wider basins. Sharpness and generalization error track each other when measured with filter normalization.
-4. Optimizers are nearly one-dimensional. The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant.
+3. Width flattens. Wider networks have wider basins. Sharpness and generalization error track each other when measured with filter normalization. In the infinite-width limit the landscape becomes a single quadratic bowl, a result known as the **Neural Tangent Kernel** \cite{jacot2018ntk}.
+4. Optimizers are nearly one-dimensional. The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant. The optimizer sees a noise-smoothed version of the surface, not the raw one, which is why small batches help \cite{mandt2017variational}.
 5. Flat generalizes, sharp memorizes, but only when "flat/sharp" is defined by a scale-invariant measure (filter-normalized Hessian, local entropy \cite{chaudhari2016entropysgd}, or SAM \cite{foret2021sam}). The naive measures are broken by ReLU rescaling.
+6. The optimizer does not settle. At convergence it hovers at the edge of instability, with the largest Hessian eigenvalue at $2/\eta$ \cite{cohen2021edgeofstability}. SAM works by looking ahead to where the surface will be after the next step, not where it currently is \cite{foret2021sam}.
 
 </div>
 
