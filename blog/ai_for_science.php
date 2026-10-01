@@ -18,7 +18,7 @@ This book opened with the universe: stars forging the elements, a handful of law
 <div class="md">
 ## The flagship: AlphaFold
 
-**Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge. **AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin \cite[Jumper et al., 2021]{jumper2021alphafold}; its leaders shared the 2024 **Nobel Prize in Chemistry**. **AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues \cite[Abramson et al., 2024]{alphafold3}, and **AlphaMissense** scored essentially all ~216 million possible human missense variants \cite[Abramson et al., 2023]{alphamissense}. The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology. \cite[EMBL-EBI, 2023]{alphafold_db}
+**Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge. **AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin (\cite[Jumper et al., 2021]{jumper2021alphafold}); its leaders shared the 2024 **Nobel Prize in Chemistry**. **AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues (\cite[Abramson et al., 2024]{alphafold3}), and **AlphaMissense** scored essentially all ~216 million possible human missense variants (\cite[Abramson et al., 2023]{alphamissense}). The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology. (\cite[EMBL-EBI, 2023]{alphafold_db})
 </div>
 
 <div class="image-row md">
@@ -33,27 +33,27 @@ This book opened with the universe: stars forging the elements, a handful of law
 
 This is where the story becomes startling. AI has moved from *solving given problems* to *opening new ones*.
 
-**The headline.** In September 2026, an **OpenAI** system of roughly **10,000 coordinating agents** (88 hours, ~130 billion tokens) produced an **analytic proof — with a machine-checked Lean 4 formalization** — that the 3D incompressible **Navier–Stokes** equations can develop a **finite-time singularity** under a smooth external force, resolving statement (C)/(D) of the **Clay Millennium** formulation. \cite[OpenAI, 2026]{navier_stokes_openai} Two caveats belong in any honest account: it is a *forced* result, and — as of writing — it is **not yet peer-reviewed**, and its priority is **in active dispute** with work by Buckmaster (NYU) and Alpöge (Anthropic). \cite[Wikipedia, 2026]{navier_stokes_priority}
+**The headline.** In September 2026, an **OpenAI** system of roughly **10,000 coordinating agents** (88 hours, ~130 billion tokens) produced an **analytic proof — with a machine-checked Lean 4 formalization** — that the 3D incompressible **Navier–Stokes** equations can develop a **finite-time singularity** under a smooth external force, resolving statement (C)/(D) of the **Clay Millennium** formulation. (\cite[OpenAI, 2026]{navier_stokes_openai}) Two caveats belong in any honest account: it is a *forced* result, and — as of writing — it is **not yet peer-reviewed**, and its priority is **in active dispute** with work by Buckmaster (NYU) and Alpöge (Anthropic). (\cite[Wikipedia, 2026]{navier_stokes_priority})
 
 **The pattern behind it.** The proof did not appear from a single forward pass. It came from an **evolutionary LLM search** — propose code/proof, test it, refine — a method first shown to find *new* mathematical results years earlier:
 
 | System | Year | What it found |
 |--------|------|---------------|
-| **AlphaTensor** \cite[Fawzi et al., 2022]{alphatensor} | 2022 | Faster, provably-correct matrix-multiplication algorithms (first improvement over Strassen's 4×4 two-level scheme in ~50 years) |
-| **FunSearch** \cite[Romera-Paredes et al., 2024]{funsearch} | 2024 | New cap-set constructions and a better bin-packing lower bound — the *first* LLM discoveries on open problems |
-| **Deletion codes** \cite[Weindel & Heckel, 2025]{deletion_codes} | 2025 | A construction proven to hit the **conjectured-optimal** Varshamov–Tenengolts single-deletion code (a 70-year-open problem) |
-| **AlphaEvolve** \cite[Georgiev, Gómez-Serrano, Tao, Wagner, 2025]{alphaevolve} | 2025 | On 67 open problems (with Terence Tao a co-author): matched best-known in most, **improved several** |
+| **AlphaTensor** (\cite[Fawzi et al., 2022]{alphatensor}) | 2022 | Faster, provably-correct matrix-multiplication algorithms (first improvement over Strassen's 4×4 two-level scheme in ~50 years) |
+| **FunSearch** (\cite[Romera-Paredes et al., 2024]{funsearch}) | 2024 | New cap-set constructions and a better bin-packing lower bound — the *first* LLM discoveries on open problems |
+| **Deletion codes** (\cite[Weindel & Heckel, 2025]{deletion_codes}) | 2025 | A construction proven to hit the **conjectured-optimal** Varshamov–Tenengolts single-deletion code (a 70-year-open problem) |
+| **AlphaEvolve** (\cite[Georgiev, Gómez-Serrano, Tao, Wagner, 2025]{alphaevolve}) | 2025 | On 67 open problems (with Terence Tao a co-author): matched best-known in most, **improved several** |
 
-The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** reached the **silver-medal** standard at the 2024 IMO (28/42 points), with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry \cite[Wikipedia, 2024]{imo_wiki} \cite[Chervonyi et al., 2025]{alphageometry2}.
+The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** reached the **silver-medal** standard at the 2024 IMO (28/42 points), with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry (\cite[Wikipedia, 2024]{imo_wiki}; \cite[Chervonyi et al., 2025]{alphageometry2}).
 </div>
 
 <div class="md">
 ## Materials, weather, molecules
 
-* **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, ~800,000 of them promising ceramics, superhard substances, and superconductors \cite[Merchant et al., 2023]{merchant2023gnome}.
-* **Weather.** **FourCastNet** and **Graph Cast** forecast a week of global weather in *seconds*, matching or beating the physics-based ECMWF model while being orders of magnitude faster \cite[Pathak et al., 2022]{pathak2022fourcastnet}.
-* **Games → search.** **AlphaGo** beat the Go champion \cite[Silver et al., 2016]{silver2016go}; **AlphaZero** then taught itself Go, chess and shogi by self-play \cite[Silver et al., 2018]{silver2018zero} — the *learned value + search* engine that powered everything above.
-* **World models.** **JEPA**-style models predict the *next state* of a system rather than its raw pixels — the idea behind control and robotics \cite[LeCun, 2022]{lecun2022jepa}.
+* **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, ~800,000 of them promising ceramics, superhard substances, and superconductors (\cite[Merchant et al., 2023]{merchant2023gnome}).
+* **Weather.** **FourCastNet** and **Graph Cast** forecast a week of global weather in *seconds*, matching or beating the physics-based ECMWF model while being orders of magnitude faster (\cite[Pathak et al., 2022]{pathak2022fourcastnet}).
+* **Games → search.** **AlphaGo** beat the Go champion (\cite[Silver et al., 2016]{silver2016go}); **AlphaZero** then taught itself Go, chess and shogi by self-play (\cite[Silver et al., 2018]{silver2018zero}) — the *learned value + search* engine that powered everything above.
+* **World models.** **JEPA**-style models predict the *next state* of a system rather than its raw pixels — the idea behind control and robotics (\cite[LeCun, 2022]{lecun2022jepa}).
 </div>
 
 <div class="md">

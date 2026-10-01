@@ -1,0 +1,3715 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Origami in N Dimensionen — Wie neuronale Netze Raum falten</title>
+
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml (LaTeX -> MathML) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.30/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.30/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --bg2:#111820;
+  --surface:#151d26;
+  --surface2:#1b2632;
+  --border:#263443;
+  --text:#e8eef5;
+  --text2:#9fb0c3;
+  --muted:#6b7f94;
+  --emerald:#4ecdc4;
+  --coral:#ff6b9d;
+  --amber:#ffd166;
+  --violet:#8b5cf6;
+  --sky:#60a5fa;
+  --rose:#fb7185;
+  --grad: linear-gradient(90deg,var(--emerald),var(--coral) 55%,var(--amber));
+  --mono: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(78,205,196,.10), transparent 60%),
+    radial-gradient(1000px 600px at 92% 8%, rgba(255,107,157,.10), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 140px}
+
+/* ---------- Header ---------- */
+header.hero{
+  padding:72px 0 28px;
+  text-align:center;
+  position:relative;
+}
+.kicker{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--emerald);opacity:.9
+}
+h1.title{
+  font-size:clamp(2.1rem,5.6vw,4rem);font-weight:900;letter-spacing:-.03em;line-height:1.02;
+  margin:.25em 0 .18em;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.subtitle{color:var(--text2);max-width:760px;margin:0 auto;font-size:1.06rem}
+.paperref{
+  margin-top:18px;display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;
+  font-size:.86rem;color:var(--muted);border:1px solid var(--border);background:var(--surface);
+  padding:8px 14px;border-radius:999px
+}
+.paperref b{color:var(--text)}
+
+/* ---------- Nav ---------- */
+nav.toc{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,15,20,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  margin:30px -20px 0;padding:10px 20px;
+}
+nav.toc .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:1180px;margin:0 auto}
+nav.toc a{
+  color:var(--text2);text-decoration:none;font-size:.79rem;
+  border:1px solid var(--border);background:var(--surface);
+  padding:5px 11px;border-radius:999px;transition:.15s;white-space:nowrap
+}
+nav.toc a:hover{color:var(--emerald);border-color:var(--emerald)}
+nav.toc a.on{color:#08131a;background:var(--emerald);border-color:var(--emerald);font-weight:700}
+
+/* ---------- Sections ---------- */
+section{padding-top:56px;scroll-margin-top:66px}
+h2.h{
+  font-size:clamp(1.5rem,3.1vw,2.15rem);font-weight:800;letter-spacing:-.02em;margin:0 0 6px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent
+}
+h3.sub{font-size:1.05rem;color:var(--coral);margin:26px 0 8px;font-weight:700}
+.lead{color:var(--text2);font-size:1.02rem;margin:0 0 16px;max-width:900px}
+p{max-width:900px}
+.small{font-size:.88rem;color:var(--text2)}
+
+/* ---------- Cards / demos ---------- */
+.card{
+  background:linear-gradient(180deg,var(--surface),var(--bg2));
+  border:1px solid var(--border);border-radius:18px;
+  padding:20px 20px 24px;margin:18px 0;box-shadow:0 12px 44px rgba(0,0,0,.35)
+}
+.demo{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin:14px 0}
+.demo h4{margin:0 0 6px;font-size:1rem;color:var(--amber);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+canvas{display:block;width:100%;height:auto;border-radius:12px;background:#0d141c;border:1px solid var(--border)}
+.plot{width:100%;background:#0d141c;border:1px solid var(--border);border-radius:12px}
+
+/* ---------- Controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end;margin:12px 0;
+  padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:165px;flex:1}
+.ctrl label{font-size:.79rem;color:var(--text2);display:flex;justify-content:space-between;gap:8px}
+.ctrl label b{color:var(--emerald);font-family:var(--mono);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--border);
+  border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--emerald);cursor:pointer;box-shadow:0 0 0 3px rgba(78,205,196,.18)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--emerald);cursor:pointer}
+select{background:var(--surface);color:var(--text);border:1px solid var(--border);padding:6px 9px;border-radius:8px;font-size:.85rem}
+input[type=checkbox]{width:17px;height:17px;accent-color:var(--emerald)}
+.btn{background:var(--emerald);color:#07131a;border:0;padding:7px 14px;border-radius:9px;
+  font-weight:700;font-size:.83rem;cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.12)}
+.btn.sec{background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600}
+.btn.sec:hover{color:var(--emerald);border-color:var(--emerald)}
+.btn.on{background:var(--coral);color:#150a10}
+
+/* ---------- Readouts ---------- */
+.out{font-family:var(--mono);font-size:.86rem;color:var(--emerald);background:var(--surface2);
+  padding:10px 13px;border-radius:9px;border-left:3px solid var(--emerald);margin:10px 0;white-space:pre-wrap;line-height:1.5}
+.verdict{display:inline-block;font-weight:800;padding:4px 12px;border-radius:9px;border:1px solid var(--border);
+  font-variant-numeric:tabular-nums;font-size:.85rem;margin-top:8px}
+.verdict.ok{color:var(--emerald);border-color:var(--emerald);background:rgba(78,205,196,.12)}
+.verdict.no{color:var(--rose);border-color:var(--rose);background:rgba(251,113,133,.12)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.83rem;color:var(--text2);margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* ---------- Boxes ---------- */
+.note{background:rgba(78,205,196,.08);border-left:3px solid var(--emerald);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.eli5{background:rgba(255,209,102,.08);border-left:3px solid var(--amber);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.eli5 b{color:var(--amber)}
+.warn{background:rgba(251,113,133,.08);border-left:3px solid var(--rose);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.formula{background:var(--surface2);border:1px dashed var(--border);border-radius:11px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+.formula .cap{color:var(--muted);font-size:.76rem;margin-bottom:5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em}
+.formula.live{border-style:solid;border-color:var(--emerald)}
+
+/* Steps */
+ol.steps{counter-reset:s;padding:0;list-style:none;margin:10px 0}
+ol.steps li{counter-increment:s;padding:8px 0 8px 44px;position:relative;margin-bottom:4px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:6px;width:29px;height:29px;
+  background:linear-gradient(135deg,var(--emerald),var(--coral));color:#07131a;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem}
+
+/* Table */
+table{border-collapse:collapse;width:100%;font-size:.88rem;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left}
+th{background:var(--surface2);color:var(--emerald);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+td code{font-family:var(--mono);color:var(--amber);font-size:.85rem}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}
+.kpi{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 12px}
+.kpi .n{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font-size:1.35rem;font-weight:800;font-family:var(--mono);color:var(--emerald);font-variant-numeric:tabular-nums}
+.bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--emerald);transition:width .35s}
+
+math{font-size:1.02em}
+.big{font-size:1.2rem;text-align:center;padding:14px}
+hr.sep{border:0;border-top:1px solid var(--border);margin:44px 0 0}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;background:rgba(139,92,246,.18);color:#c4b5fd;margin-left:6px}
+.chip.ok{background:rgba(78,205,196,.18);color:var(--emerald)}
+.chip.warn{background:rgba(255,209,102,.18);color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Keup &amp; Helias · 2022 · Interaktiv</div>
+  <h1 class="title">Origami in N&nbsp;Dimensionen</h1>
+  <p class="subtitle">Wie ein Feed-Forward-Netz lineare Trennbarkeit <em>herstellt</em> — indem es die Datenmannigfaltigkeit Schritt für Schritt in unbenutzte höhere Dimensionen faltet. Spielen statt lesen.</p>
+  <div class="paperref">
+    <b>Paper:</b> „Origami in N dimensions: How feed-forward networks manufacture linear separability"
+    &nbsp;·&nbsp; Christian Keup, Moritz Helias &nbsp;·&nbsp; arXiv 2203.11355
+  </div>
+</header>
+
+<nav class="toc" id="toc">
+  <div class="row">
+    <a href="#s0">0 · Die Frage</a>
+    <a href="#s1">1 · Voraussetzungen</a>
+    <a href="#s2">2 · Motivation</a>
+    <a href="#s3">3 · Amboss &amp; Hammer</a>
+    <a href="#s4">4 · Die Idee</a>
+    <a href="#s5">5 · Das 2D-Ei</a>
+    <a href="#s6">6 · Tiefe</a>
+    <a href="#s7">7 · Scheren</a>
+    <a href="#s8">8 · Fingerabdruck</a>
+    <a href="#s9">9 · Poker-Test</a>
+    <a href="#s10">10 · Hochdim.</a>
+    <a href="#s11">11 · Fold &amp; Cut</a>
+    <a href="#s12">12 · Die Antwort</a>
+    <a href="#s13">13 · Grenzen</a>
+  </div>
+</nav>
+
+<!-- ============================================================ 0 -->
+<section id="s0">
+<h2 class="h">0 · Die Frage, in einem Satz</h2>
+<p class="lead">Bevor irgendetwas erklärt wird: Das ist das Problem, das gelöst wird. Bewege den Regler.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Warum eine Gerade nicht reicht</h4>
+    <p class="small">Links: die Rohdaten. Eine Klasse liegt <em>innerhalb</em> der anderen. Drehe und verschiebe die Trennlinie — die Genauigkeit bleibt weit unter 100 %. Rechts: dieselben Daten, nachdem drei ReLU-Neuronen sie gefaltet haben. Jetzt genügt <em>eine flache Ebene</em>.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Winkel der Trennlinie <b id="q-ang-v">45°</b></label><input type="range" id="q-ang" min="0" max="360" value="45"></div>
+      <div class="ctrl"><label>Versatz <b id="q-off-v">0.00</b></label><input type="range" id="q-off" min="-2" max="2" step="0.02" value="0"></div>
+      <div class="ctrl"><label>Faltung anwenden <b id="q-fold-v">0 %</b></label><input type="range" id="q-fold" min="0" max="100" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="q-left" width="520" height="430"></canvas></div>
+      <div><canvas id="q-right" width="520" height="430"></canvas></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--coral)"></span>Innere Klasse</span>
+      <span><span class="dot" style="background:var(--emerald)"></span>Äußere Klasse</span>
+      <span><span class="dot" style="background:var(--amber)"></span>Trennende Hyperebene</span>
+    </div>
+    <div class="out" id="q-out"></div>
+  </div>
+
+  <div class="eli5">
+    <b>In einem Satz:</b> Die letzte Schicht eines Klassifizierers kann nur einen <em>geraden Schnitt</em> machen. Die Rohdaten lassen sich fast nie gerade schneiden. Also müssen die versteckten Schichten die Daten vorher so <em>falten</em>, dass ein einziger gerader Schnitt genügt. Genau wie beim Papier-Origami.
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 1 -->
+<section id="s1">
+<h2 class="h">1 · Voraussetzungen jenseits der Schulmathematik</h2>
+<p class="lead">Fünf Bausteine. Jeder mit einem Regler. Danach ist das ganze Paper lesbar.</p>
+
+<!-- 1.1 Vektoren / Skalarprodukt / Hyperebene -->
+<div class="card">
+  <h3 class="sub">1.1 · Hyperebene = Linie = Entscheidung</h3>
+  <p class="small">Ein Vektor <b>w</b> und eine Zahl <b>b</b> definieren eine Trennfläche. Der Ausdruck <math><mi>z</mi><mo>=</mo><mi mathvariant="bold">w</mi><mo>·</mo><mi mathvariant="bold">x</mi><mo>+</mo><mi>b</mi></math> ist das <em>Vorzeichen-Maß</em>: positiv auf der einen Seite, negativ auf der anderen, null genau auf der Linie. <b>Das ist das einzige Werkzeug eines Neurons.</b></p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Gewicht w — Winkel <b id="hp-a-v">30°</b></label><input type="range" id="hp-a" min="0" max="360" value="30"></div>
+      <div class="ctrl"><label>Bias b <b id="hp-b-v">0.00</b></label><input type="range" id="hp-b" min="-2" max="2" step="0.02" value="0"></div>
+      <div class="ctrl"><label>Länge ‖w‖ <b id="hp-n-v">1.0</b></label><input type="range" id="hp-n" min="0.3" max="2.5" step="0.05" value="1"></div>
+    </div>
+    <canvas id="hp-cv" width="900" height="420"></canvas>
+    <div class="formula live"><div class="cap">Live</div><div id="hp-f"></div></div>
+    <div class="out" id="hp-out"></div>
+    <div class="eli5"><b>Merke:</b> <b>w</b> steht <em>senkrecht</em> auf der Linie und zeigt in die positive Richtung. <b>b</b> schiebt die Linie parallel. Die Länge von <b>w</b> ändert <em>nicht</em> die Lage der Linie, nur wie schnell z wächst.</div>
+  </div>
+</div>
+
+<!-- 1.2 Affine Abbildung -->
+<div class="card">
+  <h3 class="sub">1.2 · Die affine Abbildung — der Amboss</h3>
+  <p class="small">Eine Matrix <b>W</b> plus Verschiebung <b>b</b>. Sie dreht, skaliert, schert und verschiebt. Entscheidend: <b>Geraden bleiben Geraden.</b> Deshalb kann sie die lineare Trennbarkeit <em>nicht</em> ändern.</p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Rotation <b id="af-r-v">0°</b></label><input type="range" id="af-r" min="0" max="360" value="0"></div>
+      <div class="ctrl"><label>Skala x <b id="af-sx-v">1.0</b></label><input type="range" id="af-sx" min="0.2" max="2.5" step="0.05" value="1"></div>
+      <div class="ctrl"><label>Skala y <b id="af-sy-v">1.0</b></label><input type="range" id="af-sy" min="0.2" max="2.5" step="0.05" value="1"></div>
+      <div class="ctrl"><label>Scherung <b id="af-sh-v">0.0</b></label><input type="range" id="af-sh" min="-1.5" max="1.5" step="0.05" value="0"></div>
+      <div class="ctrl"><label>Bias x <b id="af-bx-v">0.0</b></label><input type="range" id="af-bx" min="-2" max="2" step="0.05" value="0"></div>
+      <div class="ctrl"><label>Bias y <b id="af-by-v">0.0</b></label><input type="range" id="af-by" min="-2" max="2" step="0.05" value="0"></div>
+    </div>
+    <canvas id="af-cv" width="900" height="420"></canvas>
+    <div class="formula live"><div class="cap">Live-Matrix</div><div id="af-f"></div></div>
+    <div class="out" id="af-out"></div>
+    <div class="warn"><b>Die harte Grenze:</b> Egal welche Regler du bewegst — das rote Gitter bleibt ein Gitter aus <em>Geraden</em>. Eine affine Abbildung ist umkehrbar (solange det ≠ 0) und kann Innen niemals nach Außen bringen.</div>
+  </div>
+</div>
+
+<!-- 1.3 ReLU -->
+<div class="card">
+  <h3 class="sub">1.3 · ReLU — der Hammer</h3>
+  <p class="small"><math><mi>Φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>max</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mi>x</mi><mo stretchy="false">)</mo></math>. Alles Negative wird auf null plattgedrückt. In 1D ein Knick. In 2D eine Falte. <b>Das ist die einzige Nichtlinearität, die wir brauchen.</b></p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Eingang x <b id="rl-x-v">-1.0</b></label><input type="range" id="rl-x" min="-3" max="3" step="0.05" value="-1"></div>
+      <div class="ctrl"><label>Steigung a <b id="rl-a-v">1.0</b></label><input type="range" id="rl-a" min="-2" max="2" step="0.1" value="1"></div>
+      <div class="ctrl"><label>Bias b <b id="rl-b-v">0.0</b></label><input type="range" id="rl-b" min="-2" max="2" step="0.1" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="rl-cv" width="520" height="340"></canvas></div>
+      <div><canvas id="rl-fold" width="520" height="340"></canvas></div>
+    </div>
+    <div class="formula live"><div class="cap">Live</div><div id="rl-f"></div></div>
+    <div class="out" id="rl-out"></div>
+    <div class="eli5"><b>Links:</b> der Knick der Funktion. <b>Rechts:</b> dieselbe Operation als <em>Papierfalte</em> gesehen — die negative Hälfte wird auf die Achse geklappt. Das ist die ganze Nichtlinearität. Mehr braucht ein Netz nicht.</div>
+  </div>
+</div>
+
+<!-- 1.4 Konvexe Hülle -->
+<div class="card">
+  <h3 class="sub">1.4 · Konvexe Hülle — warum der Hammer nur außen trifft</h3>
+  <p class="small">Die <b>konvexe Hülle</b> ist das Gummiband um eine Punktwolke. Eine ReLU-Hyperebene kann nur <em>von außen</em> eine Delle hineindrücken. Sie kann niemals einen Punkt <em>mitten drin</em> herausgreifen, ohne alles davor plattzumachen.</p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte <b id="ch-n-v">14</b></label><input type="range" id="ch-n" min="4" max="40" value="14"></div>
+      <div class="ctrl"><label>Ebene – Winkel <b id="ch-a-v">30°</b></label><input type="range" id="ch-a" min="0" max="360" value="30"></div>
+      <div class="ctrl"><label>Ebene – Bias <b id="ch-b-v">0.00</b></label><input type="range" id="ch-b" min="-2" max="2" step="0.02" value="0"></div>
+      <button class="btn sec" id="ch-new">Neue Wolke</button>
+    </div>
+    <canvas id="ch-cv" width="900" height="420"></canvas>
+    <div class="out" id="ch-out"></div>
+    <div class="warn"><b>Die Einsicht:</b> Egal wie du die Ebene drehst — der <span style="color:var(--rose)">rote Punkt in der Mitte</span> wird nie allein abgetrennt. Das ist genau das Problem des „Eis". Deshalb reicht Plattdrücken nicht. Man muss <em>falten</em>.</div>
+  </div>
+</div>
+
+<!-- 1.5 Lineare Regionen -->
+<div class="card">
+  <h3 class="sub">1.5 · Lineare Regionen — die Stückelung des Raums</h3>
+  <p class="small">Jedes ReLU-Neuron zieht <em>eine Linie</em>. Mit n Neuronen entsteht ein Mosaik aus Zellen. In jeder Zelle ist das Netz exakt eine <b>affine Abbildung</b> — also völlig linear. Das ganze Netz ist stückweise linear.</p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Neuronen (Linien) <b id="lr-n-v">4</b></label><input type="range" id="lr-n" min="1" max="12" value="4"></div>
+      <div class="ctrl"><label>Zufallslage <b id="lr-s-v">1</b></label><input type="range" id="lr-s" min="1" max="60" value="1"></div>
+      <div class="ctrl"><label><input type="checkbox" id="lr-shade" checked> Zellen einfärben</label></div>
+    </div>
+    <canvas id="lr-cv" width="900" height="480"></canvas>
+    <div class="out" id="lr-out"></div>
+    <div class="eli5"><b>Zählung:</b> n Geraden in allgemeiner Lage zerlegen die Ebene in höchstens <span style="font-family:var(--mono)">1 + n + n(n−1)/2</span> Regionen. Das wächst <em>quadratisch</em> in der Breite — aber <b>exponentiell in der Tiefe</b>, wie Teil 6 zeigt.</div>
+  </div>
+</div>
+
+<!-- 1.6 Hohe Dimensionen -->
+<div class="card">
+  <h3 class="sub">1.6 · Was in hohen Dimensionen anders ist</h3>
+  <p class="small">Drei Fakten, die das ganze Paper tragen. Alle drei sind interaktiv.</p>
+
+  <div class="demo">
+    <h4>(a) Cover: mehr Dimensionen ⇒ mehr trennbare Aufteilungen</h4>
+    <p class="small">Bei N Punkten in allgemeiner Lage im ℝ<sup>d</sup> sind nur <math><mi>C</mi><mo>(</mo><mi>N</mi><mo>,</mo><mi>d</mi><mo>)</mo><mo>=</mo><mn>2</mn><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>d</mi><mo>−</mo><mn>1</mn></mrow></munderover><mo>(</mo><mfrac linethickness="0"><mrow><mi>N</mi><mo>−</mo><mn>1</mn></mrow><mi>k</mi></mfrac><mo>)</mo></math> der 2<sup>N</sup> Färbungen linear trennbar.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="cv-n-v">20</b></label><input type="range" id="cv-n" min="2" max="60" value="20"></div>
+      <div class="ctrl"><label>Dimension d <b id="cv-d-v">3</b></label><input type="range" id="cv-d" min="1" max="60" value="3"></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Trennbare Anteile</div><div class="v" id="cv-frac">—</div><div class="bar"><i id="cv-bar" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">C(N,d)</div><div class="v" id="cv-c" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">2^N</div><div class="v" id="cv-2n" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Status</div><div class="v" id="cv-stat" style="font-size:.95rem">—</div></div>
+    </div>
+    <div id="cv-plot" class="plot" style="height:320px"></div>
+    <div class="eli5"><b>Kernaussage:</b> Sobald <math><mi>d</mi><mo>≥</mo><mi>N</mi></math>, ist <em>jede</em> Aufteilung trennbar. Eine breite Schicht schiebt die Daten in dieses Regime.</div>
+  </div>
+
+  <div class="demo">
+    <h4>(b) Konzentration: zufällige Richtungen sind fast orthogonal</h4>
+    <p class="small">Zwei zufällige Einheitsvektoren im ℝ<sup>d</sup> haben Skalarprodukt nahe 0 — je größer d, desto schärfer. Deshalb ist eine „unbenutzte" Richtung wirklich neu.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Dimension d <b id="cc-d-v">3</b></label><input type="range" id="cc-d" min="1" max="500" value="3"></div>
+      <div class="ctrl"><label>Stichproben <b id="cc-m-v">4000</b></label><input type="range" id="cc-m" min="500" max="20000" step="500" value="4000"></div>
+    </div>
+    <div id="cc-plot" class="plot" style="height:330px"></div>
+    <div class="out" id="cc-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>(c) Johnson–Lindenstrauss: Geometrie überlebt Kompression</h4>
+    <p class="small">N Punkte lassen sich auf <math><mi>k</mi><mo>≈</mo><mi>C</mi><mi>ε</mi><mrow><mo>−</mo><mn>2</mn></mrow><mi>log</mi><mi>N</mi></math> Dimensionen projizieren, <em>ohne</em> Abstände mehr als (1±ε) zu verändern. Die Ursprungsdimension kommt in der Formel <b>nicht</b> vor.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="jl-n-v">1000</b></label><input type="range" id="jl-n" min="10" max="1000000" step="10" value="1000"></div>
+      <div class="ctrl"><label>Toleranz ε <b id="jl-e-v">0.20</b></label><input type="range" id="jl-e" min="0.05" max="0.6" step="0.01" value="0.2"></div>
+      <div class="ctrl"><label>Ursprungsdim. n <b id="jl-o-v">10000</b></label><input type="range" id="jl-o" min="100" max="1000000" step="100" value="10000"></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Zieldimension k</div><div class="v" id="jl-k">—</div></div>
+      <div class="kpi"><div class="n">Kompression</div><div class="v" id="jl-r">—</div></div>
+      <div class="kpi"><div class="n">Verworfene Dim.</div><div class="v" id="jl-d" style="font-size:1.05rem">—</div></div>
+    </div>
+    <div id="jl-plot" class="plot" style="height:300px"></div>
+    <div class="note"><b>Die Brücke zu Embeddings:</b> Nicht die Koordinaten sind die Bedeutung, sondern das <em>Muster der Abstände</em>. Genau das überlebt die Kompression — und genau das erzeugt eine Faltung.</div>
+  </div>
+</div>
+
+<!-- 1.7 Topologie -->
+<div class="card">
+  <h3 class="sub">1.7 · Betti-Zahlen — Löcher zählen</h3>
+  <p class="small">Das „Ei" ist ein <b>topologisches</b> Objekt: die innere Klasse ist ein <em>Loch</em> in der äußeren. <math><msub><mi>b</mi><mn>0</mn></msub></math> zählt Zusammenhangskomponenten, <math><msub><mi>b</mi><mn>1</mn></msub></math> zählt Schleifen, <math><msub><mi>b</mi><mn>2</mn></msub></math> zählt Hohlräume.</p>
+  <div class="demo">
+    <div class="ctrls">
+      <div class="ctrl"><label>Form</label>
+        <select id="bt-shape">
+          <option value="blob">Ein Klecks</option>
+          <option value="two">Zwei Kleckse</option>
+          <option value="ring" selected>Ring (Loch!)</option>
+          <option value="two-ring">Zwei Ringe</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>ReLU-Schichten <b id="bt-l-v">0</b></label><input type="range" id="bt-l" min="0" max="4" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="bt-cv" width="500" height="420"></canvas></div>
+      <div><div id="bt-plot" class="plot" style="height:420px"></div></div>
+    </div>
+    <div class="out" id="bt-out"></div>
+    <div class="eli5"><b>Warum ReLU und nicht tanh?</b> ReLU ist <em>kein Homöomorphismus</em> — es darf Löcher schließen. tanh ist einer — es kann die Topologie gar nicht ändern. Deshalb entwirrt ReLU schneller.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 2 -->
+<section id="s2">
+<h2 class="h">2 · Die Motivation — die Lücke, die geschlossen werden muss</h2>
+<p class="lead">Das Universal-Approximations-Theorem sagt: es <em>geht</em>. Es sagt nicht: <em>wie</em>. Genau diese Lücke greift das Paper an.</p>
+
+<div class="card">
+  <div class="grid2">
+    <div>
+      <h3 class="sub">Was wir wissen</h3>
+      <p class="small">Cybenko (1989) und Hornik (1989): ein hinreichend breites Netz approximiert jede stetige Funktion. Ein <em>Existenzsatz</em>.</p>
+      <div class="formula"><div class="cap">UAT (Skizze)</div><div id="mo-uat"></div></div>
+    </div>
+    <div>
+      <h3 class="sub">Was wir nicht wissen</h3>
+      <p class="small">Was macht eine Schicht <em>mechanisch</em>? Welche Elementaroperationen stehen ihr zur Verfügung? Welche davon sind effizient?</p>
+      <div class="formula"><div class="cap">Die Frage von Keup &amp; Helias</div><div id="mo-q"></div></div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h4>Das Problem, das gelöst wird: vier Datensätze, eine Gerade</h4>
+    <p class="small">Wähle einen Datensatz und suche die beste Gerade. Die Balken zeigen, wie weit man kommt. <b>Nur linear trennbare Daten erreichen 100 %.</b></p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Datensatz</label>
+        <select id="mo-ds">
+          <option value="egg">2D-Ei (Ring)</option>
+          <option value="blobs">Zwei Gauß-Kleckse</option>
+          <option value="xor">XOR</option>
+          <option value="spiral">Spirale</option>
+          <option value="moons">Halbmonde</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Winkel <b id="mo-a-v">45°</b></label><input type="range" id="mo-a" min="0" max="360" value="45"></div>
+      <div class="ctrl"><label>Versatz <b id="mo-b-v">0.00</b></label><input type="range" id="mo-b" min="-2.5" max="2.5" step="0.02" value="0"></div>
+      <button class="btn" id="mo-opt">Beste Gerade suchen</button>
+    </div>
+    <div class="grid2">
+      <div><canvas id="mo-cv" width="500" height="430"></canvas></div>
+      <div><div id="mo-plot" class="plot" style="height:430px"></div></div>
+    </div>
+    <div class="out" id="mo-out"></div>
+  </div>
+
+  <div class="eli5">
+    <b>Die Lücke:</b> Die letzte Schicht kann nur <em>einen flachen Schnitt</em>. Die Rohdaten erlauben das fast nie. Also müssen die verborgenen Schichten die <em>lineare Trennbarkeit herstellen</em>. Das Wort „herstellen" (manufacture) ist der Titel des Papers.
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 3 -->
+<section id="s3">
+<h2 class="h">3 · Amboss und Hammer — was eine Schicht wirklich tut</h2>
+<p class="lead">Jede Schicht macht zwei Dinge nacheinander. Hier siehst du beide getrennt und dann zusammen.</p>
+
+<div class="card">
+  <div class="formula big"><div id="s3-eq"></div></div>
+
+  <div class="grid2">
+    <div class="demo">
+      <h4>Schritt 1 · Amboss (affin)</h4>
+      <p class="small">Dreht, skaliert, schert, verschiebt. <b>Geraden bleiben Geraden.</b> Trennbarkeit ändert sich nicht.</p>
+      <canvas id="s3-a" width="460" height="360"></canvas>
+      <div class="out" id="s3-a-out"></div>
+    </div>
+    <div class="demo">
+      <h4>Schritt 2 · Hammer (ReLU)</h4>
+      <p class="small">Alles auf der negativen Seite wird auf die Hyperebene gedrückt. <b>Eine Delle in der konvexen Hülle.</b></p>
+      <canvas id="s3-b" width="460" height="360"></canvas>
+      <div class="out" id="s3-b-out"></div>
+    </div>
+  </div>
+
+  <div class="ctrls">
+    <div class="ctrl"><label>W – Rotation <b id="s3-r-v">0°</b></label><input type="range" id="s3-r" min="0" max="360" value="0"></div>
+    <div class="ctrl"><label>W – Skala <b id="s3-s-v">1.0</b></label><input type="range" id="s3-s" min="0.3" max="2.2" step="0.05" value="1"></div>
+    <div class="ctrl"><label>W – Scherung <b id="s3-h-v">0.0</b></label><input type="range" id="s3-h" min="-1.2" max="1.2" step="0.05" value="0"></div>
+    <div class="ctrl"><label>Bias b <b id="s3-bb-v">0.0</b></label><input type="range" id="s3-bb" min="-1.5" max="1.5" step="0.05" value="0"></div>
+    <div class="ctrl"><label>ReLU-Ebene – Winkel <b id="s3-ra-v">90°</b></label><input type="range" id="s3-ra" min="0" max="360" value="90"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Die Aktivierungsfunktion wählt die <em>Art</em> der Verformung</h4>
+    <p class="small">Vergleiche die Kandidaten. Entscheidend ist die Zeile <b>„Topologie"</b>: nur nicht-homöomorphe Funktionen dürfen Löcher schließen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Aktivierung</label>
+        <select id="ac-f">
+          <option value="relu">ReLU · max(0,x)</option>
+          <option value="leaky">LeakyReLU · max(αx,x)</option>
+          <option value="gelu">GELU</option>
+          <option value="silu">SiLU / Swish</option>
+          <option value="tanh">tanh</option>
+          <option value="sig">Sigmoid</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>α (nur Leaky) <b id="ac-a-v">0.10</b></label><input type="range" id="ac-a" min="0" max="0.9" step="0.01" value="0.1"></div>
+    </div>
+    <div id="ac-plot" class="plot" style="height:340px"></div>
+    <table>
+      <tr><th>Eigenschaft</th><th>Wert</th><th>Konsequenz</th></tr>
+      <tr><td>Invertierbar</td><td id="ac-inv">—</td><td id="ac-inv2">—</td></tr>
+      <tr><td>Glatt (C<sup>∞</sup>)</td><td id="ac-sm">—</td><td id="ac-sm2">—</td></tr>
+      <tr><td>Topologie</td><td id="ac-top">—</td><td id="ac-top2">—</td></tr>
+      <tr><td>Sättigend</td><td id="ac-sat">—</td><td id="ac-sat2">—</td></tr>
+    </table>
+    <div class="out" id="ac-out"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 4 -->
+<section id="s4">
+<h2 class="h">4 · Die Idee — falten statt zerquetschen</h2>
+<p class="lead">Der ganze Trick steckt in den <em>unbenutzten Dimensionen</em>. Eine Schicht ist fast immer breiter als die Daten.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Eine Falte in eine leere Richtung</h4>
+    <p class="small">Die Daten liegen auf einer Linie (1D). Der zweite Kanal ist <b>leer</b>. Dreh die Falte aus der Datenebene heraus: die Daten werden nicht plattgedrückt, sondern <em>hochgeklappt</em>. Nichts geht verloren — die Abbildung bleibt injektiv.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Faltposition <b id="f1-b-v">-0.50</b></label><input type="range" id="f1-b" min="-1.5" max="1.5" step="0.02" value="-0.5"></div>
+      <div class="ctrl"><label>Faltwinkel (0° = platt) <b id="f1-a-v">60°</b></label><input type="range" id="f1-a" min="0" max="90" value="60"></div>
+      <div class="ctrl"><label>Anzahl Falten <b id="f1-n-v">1</b></label><input type="range" id="f1-n" min="1" max="5" value="1"></div>
+      <div class="ctrl"><label>Trennlinie y = <b id="f1-y-v">0.30</b></label><input type="range" id="f1-y" min="0" max="1.5" step="0.02" value="0.3"></div>
+    </div>
+    <canvas id="f1-cv" width="1000" height="440"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--coral)"></span>Innen</span>
+      <span><span class="dot" style="background:var(--emerald)"></span>Außen</span>
+      <span><span class="dot" style="background:var(--amber)"></span>Faltkante</span>
+      <span><span class="dot" style="background:var(--sky)"></span>Trennlinie</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Genauigkeit</div><div class="v" id="f1-acc">—</div><div class="bar"><i id="f1-accbar" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">Injektiv?</div><div class="v" id="f1-inj" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Eff. Dimension</div><div class="v" id="f1-dim">—</div></div>
+      <div class="kpi"><div class="n">Trennbar?</div><div class="v" id="f1-sep" style="font-size:1rem">—</div></div>
+    </div>
+    <div class="out" id="f1-out"></div>
+  </div>
+
+  <div class="card">
+  <div class="demo">
+    <h4>Der Beweis: was ist gewonnen, was verloren?</h4>
+    <p class="small">Vergleiche <b>Falten</b> (Platte kippt in eine leere Richtung) mit <b>Plattdrücken</b> (die ReLU-Ebene liegt <em>in</em> der Datenebene). Nur Falten ist injektiv — es geht keine Information verloren.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Modus</label>
+        <select id="f2-mode">
+          <option value="fold">Falten (Ebene hat leere Komponente)</option>
+          <option value="crush">Plattdrücken (Ebene liegt in der Datenebene)</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Stärke <b id="f2-s-v">1.00</b></label><input type="range" id="f2-s" min="0" max="1" step="0.02" value="1"></div>
+    </div>
+    <canvas id="f2-cv" width="1000" height="330"></canvas>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Verlorene Punkte</div><div class="v" id="f2-lost">0</div></div>
+      <div class="kpi"><div class="n">Umkehrbar?</div><div class="v" id="f2-inv" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Information</div><div class="v" id="f2-info" style="font-size:1rem">—</div></div>
+    </div>
+    <div class="warn"><b>Der Kernsatz des Papers:</b> Die ReLU ist punktweise <em>nicht</em> injektiv. Aber wenn die Faltkante aus einer <b>unbesetzten Richtung</b> kommt, ist sie injektiv <em>auf den Daten</em>. Topologie wird vereinfacht, Relationen bleiben erhalten. <span class="chip ok">Fold, don't crush</span></div>
+  </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 5 -->
+<section id="s5">
+<h2 class="h">5 · Das 2D-Ei — drei Neuronen genügen</h2>
+<p class="lead">Das konkrete Problem des Papers. Ein Ring im Ring. Eine einzige Schicht mit drei ReLU-Neuronen löst es.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Von flach zu Zelt: drei Ebenen heben den inneren Ring</h4>
+    <p class="small">Jedes Neuron ist eine Hyperebene, 120° zueinander verdreht. Die drei ReLU-Ausgänge werden zur <em>dritten Dimension</em> gestapelt. Der innere Ring wird zu einem Zelt, der äußere bleibt flach. Drehe und schiebe die Trennebene.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Neuronen <b id="e1-n-v">3</b></label><input type="range" id="e1-n" min="2" max="12" value="3"></div>
+      <div class="ctrl"><label>Faltfortschritt <b id="e1-t-v">100 %</b></label><input type="range" id="e1-t" min="0" max="100" value="100"></div>
+      <div class="ctrl"><label>Trennebene z = <b id="e1-z-v">0.40</b></label><input type="range" id="e1-z" min="0" max="2" step="0.02" value="0.4"></div>
+      <div class="ctrl"><label>Ring-Radius <b id="e1-r-v">0.45</b></label><input type="range" id="e1-r" min="0.2" max="0.7" step="0.01" value="0.45"></div>
+      <button class="btn" id="e1-play">▶ Falten animieren</button>
+    </div>
+    <div class="grid2">
+      <div><canvas id="e1-top" width="500" height="420"></canvas><div class="small" style="text-align:center">Draufsicht: Faltlinien im Eingaberaum</div></div>
+      <div><div id="e1-3d" class="plot" style="height:420px"></div><div class="small" style="text-align:center">3D: das gefaltete Zelt + Trennebene</div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Recall innen</div><div class="v" id="e1-ri">—</div><div class="bar"><i id="e1-rib" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">Recall außen</div><div class="v" id="e1-ro">—</div><div class="bar"><i id="e1-rob" style="width:0%;background:var(--coral)"></i></div></div>
+      <div class="kpi"><div class="n">Gesamt</div><div class="v" id="e1-acc">—</div><div class="bar"><i id="e1-accb" style="width:0%;background:var(--amber)"></i></div></div>
+      <div class="kpi"><div class="n">Status</div><div class="v" id="e1-st" style="font-size:.95rem">—</div></div>
+    </div>
+    <div class="formula live"><div class="cap">Was die Schicht rechnet</div><div id="e1-f"></div></div>
+    <div class="note"><b>Die Verallgemeinerung:</b> Die Faltkante eines N-dimensionalen Eis ist eine Hyperebene einer Dimension weniger. Eine einzige Schicht kann mehrere Falten gleichzeitig anwenden. Ein N-dimensionales Ei wird (näherungsweise) von <b>einer Schicht mit N+1 Neuronen</b> gelöst — konstanter, nicht exponentieller Aufwand.</div>
+  </div>
+
+  <div class="demo">
+    <h4>Gelernter Winkel — der Hammer findet seine Richtung</h4>
+    <p class="small">Ein einzelnes Neuron dreht seine Hyperebene. Der „Fehlzähler" zeigt, wie viele Punkte falsch liegen — das ist der Verlust dieses einen Neurons.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Winkel θ <b id="e2-a-v">0°</b></label><input type="range" id="e2-a" min="0" max="360" value="0"></div>
+      <button class="btn sec" id="e2-opt">Optimum suchen</button>
+    </div>
+    <div class="grid2">
+      <div><canvas id="e2-2d" width="460" height="360"></canvas></div>
+      <div><div id="e2-plot" class="plot" style="height:360px"></div></div>
+    </div>
+    <div class="out" id="e2-out"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 6 -->
+<section id="s6">
+<h2 class="h">6 · Tiefe — eine Origami-Kaskade</h2>
+<p class="lead">Jede Schicht faltet das bereits Gefaltete erneut. Die Kanten vervielfachen sich. Die Anzahl linearer Regionen wächst <em>exponentiell</em> mit der Tiefe.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Regionen zählen: Breite vs. Tiefe</h4>
+    <p class="small">Jede Farbe ist eine lineare Region — ein Bereich, in dem das Netz exakt eine feste affine Abbildung ist. Vergleiche: mehr Neuronen (polynomiell) gegen mehr Schichten (exponentiell).</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Schichten L <b id="c1-l-v">3</b></label><input type="range" id="c1-l" min="1" max="6" value="3"></div>
+      <div class="ctrl"><label>Neuronen/Schicht n <b id="c1-n-v">2</b></label><input type="range" id="c1-n" min="1" max="5" value="2"></div>
+      <div class="ctrl"><label>Zufall <b id="c1-s-v">3</b></label><input type="range" id="c1-s" min="1" max="40" value="3"></div>
+    </div>
+    <canvas id="c1-cv" width="1000" height="420"></canvas>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Gezählte Regionen</div><div class="v" id="c1-cnt">—</div></div>
+      <div class="kpi"><div class="n">Obere Schranke</div><div class="v" id="c1-bd" style="font-size:1.05rem">—</div></div>
+      <div class="kpi"><div class="n">Parameter</div><div class="v" id="c1-par">—</div></div>
+      <div class="kpi"><div class="n">Regionen/Param</div><div class="v" id="c1-eff">—</div></div>
+    </div>
+    <div id="c1-plot" class="plot" style="height:330px"></div>
+    <div class="eli5"><b>Der Satz:</b> Ein Netz der Tiefe L und Breite 2 in <em>einer</em> Eingabedimension erzeugt exakt <span style="font-family:var(--mono)">2<sup>L</sup></span> Regionen — eine Sägezahnfunktion mit 2<sup>L</sup> Zacken. Breite wächst polynomiell, Tiefe exponentiell.</div>
+  </div>
+
+  <div class="demo">
+    <h4>Der Sägezahn: 2<sup>L</sup> Zacken aus L Schichten der Breite 2</h4>
+    <p class="small">Die reinste Demonstration. Jede zusätzliche Schicht <em>verdoppelt</em> die Zacken. Das ist Papierfalten in einer Dimension.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Tiefe L <b id="c2-l-v">3</b></label><input type="range" id="c2-l" min="0" max="8" value="3"></div>
+      <div class="ctrl"><label><input type="checkbox" id="c2-steps" checked> Zwischenschritte zeigen</label></div>
+    </div>
+    <div id="c2-plot" class="plot" style="height:380px"></div>
+    <div class="out" id="c2-out"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 7 -->
+<section id="s7">
+<h2 class="h">7 · Die ineffiziente Alternative — Scheren (Orange schälen)</h2>
+<p class="lead">Ohne Platz zum Falten bleibt nur eines: Schicht für Schicht eine dünne Scheibe der äußeren Klasse zur Seite schieben. Wie eine Orange schälen, nicht ein Blatt falten.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Schälen, eine Schicht nach der anderen</h4>
+    <p class="small">Jeder Schritt schert eine Scheibe der äußeren Klasse weg. Zähle mit, wie viele Schichten nötig sind, bis eine flache Linie trennt — gegen <b>eine</b> gefaltete Schicht.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Schälschichten <b id="sh-l-v">7</b></label><input type="range" id="sh-l" min="0" max="16" value="7"></div>
+      <div class="ctrl"><label>Scherstärke <b id="sh-s-v">0.60</b></label><input type="range" id="sh-s" min="0.1" max="1.2" step="0.02" value="0.6"></div>
+      <button class="btn" id="sh-step">Schritt +1</button>
+      <button class="btn sec" id="sh-cmp">Mit Falten vergleichen</button>
+    </div>
+    <canvas id="sh-cv" width="1000" height="400"></canvas>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Schichten verbraucht</div><div class="v" id="sh-used">—</div></div>
+      <div class="kpi"><div class="n">Trennbar?</div><div class="v" id="sh-sep" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Falten bräuchte</div><div class="v" id="sh-fold">1</div></div>
+      <div class="kpi"><div class="n">Faktor</div><div class="v" id="sh-fac">—</div></div>
+    </div>
+    <div class="out" id="sh-out"></div>
+    <div class="warn"><b>In 3D wird es schlimmer:</b> Man kann nicht einfach einmal herumgehen — man muss eine <em>Spirale</em> ziehen. Und nur <b>eine</b> Scheibe pro Schicht. Deshalb: „tiefe, aber schmale Netze sind <em>keine</em> universellen Approximatoren".</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 8 -->
+<section id="s8">
+<h2 class="h">8 · Der Fingerabdruck — Falten in einem trainierten Netz erkennen</h2>
+<p class="lead">In hohen Dimensionen kann man nicht hinschauen. Also misst man. Drei Observablen verraten eine aktive Falte.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Observable 1 · Bimodale Tuningkurven</h4>
+    <p class="small">Die Vor-Aktivierung <math><mi>z</mi><mo>=</mo><mi mathvariant="bold">w</mi><mo>·</mo><mi mathvariant="bold">x</mi><mo>+</mo><mi>b</mi></math>, nach Klasse getrennt. Bringe die Faltkante auf die innere Klasse: dort entsteht eine <b>Delle bei null</b>, während die andere Klasse sich einseitig staut.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Neuron-Winkel <b id="t1-a-v">60°</b></label><input type="range" id="t1-a" min="0" max="180" value="60"></div>
+      <div class="ctrl"><label>Neuron-Bias <b id="t1-b-v">0.00</b></label><input type="range" id="t1-b" min="-2" max="2" step="0.02" value="0"></div>
+      <button class="btn sec" id="t1-find">Faltneuron finden</button>
+    </div>
+    <div class="grid2">
+      <div><canvas id="t1-geo" width="460" height="340"></canvas></div>
+      <div><div id="t1-hist" class="plot" style="height:340px"></div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Dip-Score innen</div><div class="v" id="t1-dip">—</div><div class="bar"><i id="t1-dipb" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">Modalität innen</div><div class="v" id="t1-mod" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Faltneuron?</div><div class="v" id="t1-is" style="font-size:1rem">—</div></div>
+    </div>
+    <div class="out" id="t1-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Observable 2 · Dimensionsexpansion</h4>
+    <p class="small">Eine Falte öffnet eine neue Richtung. Die effektive Dimension (via PCA-Varianzanteil) sollte durch die Schichten <em>wachsen</em>.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Trainingsfortschritt <b id="t2-e-v">100 %</b></label><input type="range" id="t2-e" min="0" max="100" value="100"></div>
+    </div>
+    <div id="t2-plot" class="plot" style="height:330px"></div>
+    <div class="out" id="t2-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Observable 3 · Der Winkel zur Datenmannigfaltigkeit</h4>
+    <p class="small">Ein Faltneuron steht <em>weder parallel noch senkrecht</em> zum Datenunterraum, sondern in einem mittleren Winkel. Bewege den Regler und sieh, wann die Faltung wirksam wird.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Winkel zur Datenebene <b id="t3-a-v">45°</b></label><input type="range" id="t3-a" min="0" max="90" value="45"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="t3-cv" width="460" height="320"></canvas></div>
+      <div><div id="t3-plot" class="plot" style="height:320px"></div></div>
+    </div>
+    <div class="out" id="t3-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Observable 4 · Das Faltmaß χ (Lewandowski et al. 2025)</h4>
+    <p class="small">Nimm eine <em>gerade Linie</em> im Eingaberaum, schicke sie durchs Netz, und miss, wie stark ihr Bild von der Konvexität abweicht:
+    <math><mi>χ</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><msub><mi>max</mi><mi>i</mi></msub><mi>d</mi><mo>(</mo><msub><mi>π</mi><mi>i</mi></msub><mo>,</mo><msub><mi>π</mi><mn>1</mn></msub><mo>)</mo></mrow><mrow><msub><mo>∑</mo><mi>i</mi></msub><mi>d</mi><mo>(</mo><msub><mi>π</mi><mi>i</mi></msub><mo>,</mo><msub><mi>π</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>)</mo></mrow></mfrac></math>.
+    χ = 0 heißt flach, χ nahe 1 heißt stark gefaltet.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Tiefe <b id="t4-l-v">4</b></label><input type="range" id="t4-l" min="1" max="10" value="4"></div>
+      <div class="ctrl"><label>Breite <b id="t4-w-v">8</b></label><input type="range" id="t4-w" min="2" max="40" value="8"></div>
+      <div class="ctrl"><label>Zufall <b id="t4-s-v">7</b></label><input type="range" id="t4-s" min="1" max="60" value="7"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="t4-path" width="460" height="320"></canvas><div class="small" style="text-align:center">Bild der geraden Linie</div></div>
+      <div><div id="t4-plot" class="plot" style="height:320px"></div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">χ (Faltmaß)</div><div class="v" id="t4-chi">—</div><div class="bar"><i id="t4-chib" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">Wegstrecke</div><div class="v" id="t4-len" style="font-size:1.05rem">—</div></div>
+      <div class="kpi"><div class="n">Max. Abstand</div><div class="v" id="t4-max" style="font-size:1.05rem">—</div></div>
+      <div class="kpi"><div class="n">Diagnose</div><div class="v" id="t4-dx" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="note"><b>Empirischer Befund:</b> Bei gut trainierten Netzen wächst das maximale χ mit der <b>Tiefe</b> (Korrelation r ≈ 0.99) und sagt die Generalisierung voraus. <em>Breitere</em> Netze falten pro Pfad nicht mehr — aber ein viel größerer <em>Anteil</em> der Pfade faltet überhaupt.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 9 -->
+<section id="s9">
+<h2 class="h">9 · Die Validierung — der Poker-Hand-Test</h2>
+<p class="lead">Ein echtes Problem: 10-dimensionale Eingabe, 10 Klassen, Netz 10 → 100 → 100 → 10. Ein linearer Klassifizierer liegt nahe am Zufall.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Warum genau diese Aufgabe?</h4>
+    <table>
+      <tr><th>Anforderung</th><th>Erfüllt durch</th></tr>
+      <tr><td>Linear nicht trennbar</td><td>Ein „Paar" ist definiert durch das, was es <em>umgibt</em></td></tr>
+      <tr><td>Kein Vorteil für Faltung (Conv)</td><td>Tabellarische Daten, keine räumliche Struktur</td></tr>
+      <tr><td>Struktur wirklich lernbar</td><td>Datensatz ist erschöpfend</td></tr>
+      <tr><td>Zu hochdimensional zum Anschauen</td><td>10 Dimensionen — aber überschaubar zu denken</td></tr>
+    </table>
+    <div class="ctrls">
+      <div class="ctrl"><label>Trainingsepoche <b id="p1-e-v">100</b></label><input type="range" id="p1-e" min="0" max="100" value="100"></div>
+      <div class="ctrl"><label>Ansicht</label>
+        <select id="p1-view">
+          <option value="dim">Dimensionsexpansion</option>
+          <option value="dip">Hartigan-Dip-Verteilung</option>
+          <option value="sil">Silencing-Kausaltest</option>
+          <option value="all">Alles</option>
+        </select>
+      </div>
+    </div>
+    <div id="p1-plot" class="plot" style="height:400px"></div>
+    <div class="out" id="p1-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Der Kausaltest — welche Neuronen tragen die Arbeit?</h4>
+    <p class="small">Schalte Neuronen ab und beobachte den Macro-F1. Die Vorhersage: <b>bimodale</b> Neuronen abschalten lässt die Leistung einbrechen; <b>unimodale</b> kaum.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Abgeschaltete Neuronen <b id="p2-k-v">10</b></label><input type="range" id="p2-k" min="0" max="30" value="10"></div>
+      <div class="ctrl"><label>Welche?</label>
+        <select id="p2-which">
+          <option value="bim">Stark bimodale</option>
+          <option value="uni">Unimodale</option>
+          <option value="rnd">Zufällige</option>
+          <option value="cmp">Alle drei vergleichen</option>
+        </select>
+      </div>
+    </div>
+    <div id="p2-plot" class="plot" style="height:340px"></div>
+    <div class="out" id="p2-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Warum ein Ass in der Hand kein Paar ist — das Ei in 10D</h4>
+    <p class="small">Ein „Paar" ist nicht durch eine Karte definiert, sondern durch das, <em>was sie umgibt</em>. Genau wie der innere Ring: umschlossen, nicht abgrenzbar. Verschiebe die Hand und sieh, was der lineare Klassifizierer kann — und was nicht.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Karte 1 – Rang <b id="p3-r1-v">7</b></label><input type="range" id="p3-r1" min="1" max="13" value="7"></div>
+      <div class="ctrl"><label>Karte 2 – Rang <b id="p3-r2-v">7</b></label><input type="range" id="p3-r2" min="1" max="13" value="7"></div>
+      <div class="ctrl"><label>Karte 3 – Rang <b id="p3-r3-v">3</b></label><input type="range" id="p3-r3" min="1" max="13" value="3"></div>
+      <div class="ctrl"><label>Ansicht</label>
+        <select id="p3-mode">
+          <option value="lin">Nur linearer Klassifizierer</option>
+          <option value="fold">Mit Faltschicht</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="p3-cards" width="460" height="300"></canvas></div>
+      <div><div id="p3-plot" class="plot" style="height:300px"></div></div>
+    </div>
+    <div class="out" id="p3-out"></div>
+    <div class="note"><b>Der Punkt:</b> Die Eigenschaft „Paar" ist eine <em>Relation</em> zwischen Dimensionen, keine Position in einer einzelnen. Genau solche Relationen sind topologisch verschränkt — und genau die entwirrt eine Faltung.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 10 -->
+<section id="s10">
+<h2 class="h">10 · Warum hohe Dimensionen überhaupt helfen</h2>
+<p class="lead">Falten ist der <em>Mechanismus</em>. Aber warum macht mehr Raum die Daten trennbar? Fünf Fakten geben die quantitative Grundlage.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Alle fünf auf einen Blick</h4>
+    <p class="small">Jeder Regler bewegt eine der fünf Säulen. Beobachte, wie sie zusammenspielen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="h1-n-v">40</b></label><input type="range" id="h1-n" min="5" max="200" value="40"></div>
+      <div class="ctrl"><label>Dimension d <b id="h1-d-v">20</b></label><input type="range" id="h1-d" min="1" max="200" value="20"></div>
+      <div class="ctrl"><label>Klassen K <b id="h1-k-v">5</b></label><input type="range" id="h1-k" min="2" max="12" value="5"></div>
+    </div>
+    <div class="grid3">
+      <div>
+        <div class="kpi"><div class="n">1 · Cover-Anteil</div><div class="v" id="h1-cov">—</div><div class="bar"><i id="h1-covb" style="width:0%"></i></div></div>
+        <div class="small" style="margin-top:6px">Anteil trennbarer Aufteilungen</div>
+      </div>
+      <div>
+        <div class="kpi"><div class="n">2 · Konzentration</div><div class="v" id="h1-con">—</div><div class="bar"><i id="h1-conb" style="width:0%;background:var(--coral)"></i></div></div>
+        <div class="small" style="margin-top:6px">Mittl. |⟨u,v⟩| zufälliger Richtungen</div>
+      </div>
+      <div>
+        <div class="kpi"><div class="n">3 · JL-Zieldim.</div><div class="v" id="h1-jl">—</div><div class="bar"><i id="h1-jlb" style="width:0%;background:var(--amber)"></i></div></div>
+        <div class="small" style="margin-top:6px">k ≈ ε⁻² log N</div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div id="h1-nc" class="plot" style="height:360px"></div>
+        <div class="small" style="text-align:center">4 · Neural Collapse: Simplex-ETF für K Klassen</div>
+      </div>
+      <div>
+        <div id="h1-bt" class="plot" style="height:360px"></div>
+        <div class="small" style="text-align:center">5 · Topologisches Entwirren: Betti-Zahlen je Schicht</div>
+      </div>
+    </div>
+    <div class="out" id="h1-out"></div>
+  </div>
+
+  <div class="demo">
+    <h4>Neural Collapse zum Anfassen</h4>
+    <p class="small">Am Ende des Trainings kollabieren die Merkmale jeder Klasse auf ihren Mittelwert, und die Mittelwerte bilden ein <b>Simplex-ETF</b>: alle paarweisen Winkel gleich, maximal weit auseinander. Der „eine flache Schnitt" landet damit auf der trennbarsten Konfiguration überhaupt.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Trainingsfortschritt <b id="h2-t-v">100 %</b></label><input type="range" id="h2-t" min="0" max="100" value="100"></div>
+      <div class="ctrl"><label>Klassen K <b id="h2-k-v">4</b></label><input type="range" id="h2-k" min="3" max="8" value="4"></div>
+    </div>
+    <div class="grid2">
+      <div><div id="h2-3d" class="plot" style="height:400px"></div></div>
+      <div><div id="h2-ang" class="plot" style="height:400px"></div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Within-Class-Streuung</div><div class="v" id="h2-w">—</div><div class="bar"><i id="h2-wb" style="width:0%"></i></div></div>
+      <div class="kpi"><div class="n">Winkel-Abweichung</div><div class="v" id="h2-a">—</div><div class="bar"><i id="h2-ab" style="width:0%;background:var(--coral)"></i></div></div>
+      <div class="kpi"><div class="n">Soll-Kosinus</div><div class="v" id="h2-tc" style="font-size:1.05rem">—</div></div>
+      <div class="kpi"><div class="n">ETF erreicht?</div><div class="v" id="h2-ok" style="font-size:1rem">—</div></div>
+    </div>
+    <div class="formula live"><div class="cap">Simplex-ETF-Bedingung</div><div id="h2-f"></div></div>
+  </div>
+
+  <div class="demo">
+    <h4>Die Mannigfaltigkeits-Hypothese</h4>
+    <p class="small">Echte Daten liegen auf einer <em>niedrigdimensionalen, verknoteten</em> Mannigfaltigkeit im hochdimensionalen Eingaberaum. Die Aufgabe des Netzes: sie <b>entfalten</b> — durch die ungenutzten Dimensionen — bis eine Hyperebene genügt.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Verknotung <b id="h3-k-v">1.00</b></label><input type="range" id="h3-k" min="0" max="1" step="0.02" value="1"></div>
+      <div class="ctrl"><label>Rauschen <b id="h3-n-v">0.05</b></label><input type="range" id="h3-n" min="0" max="0.3" step="0.01" value="0.05"></div>
+      <div class="ctrl"><label>Entfaltungsschichten <b id="h3-l-v">0</b></label><input type="range" id="h3-l" min="0" max="6" value="0"></div>
+    </div>
+    <div id="h3-plot" class="plot" style="height:440px"></div>
+    <div class="out" id="h3-out"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 11 -->
+<section id="s11">
+<h2 class="h">11 · Fold-and-Cut — das Theorem hinter der Metapher</h2>
+<p class="lead">Jede aus geraden Linien bestehende Form lässt sich mit <b>einem einzigen geraden Schnitt</b> aus Papier lösen — wenn man vorher richtig faltet. Das ist kein Bild, das ist ein Satz.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Falte, dann schneide</h4>
+    <p class="small">Falte das Papier so, dass alle Kanten der Form exakt aufeinander liegen. Dann genügt ein gerader Schnitt. Schritt für Schritt.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Form</label>
+        <select id="fc-shape">
+          <option value="tri">Dreieck</option>
+          <option value="sq">Quadrat</option>
+          <option value="pent">Fünfeck</option>
+          <option value="star" selected>Stern</option>
+        </select>
+      </div>
+      <div class="ctrl"><label>Faltschritt <b id="fc-s-v">0</b></label><input type="range" id="fc-s" min="0" max="5" value="0"></div>
+      <button class="btn" id="fc-cut">✂ Schneiden!</button>
+      <button class="btn sec" id="fc-reset">Zurücksetzen</button>
+    </div>
+    <canvas id="fc-cv" width="1000" height="440"></canvas>
+    <div class="out" id="fc-out"></div>
+    <div class="formula"><div class="cap">Fold-and-Cut-Theorem (Demaine, Demaine, Lubiw 1998)</div><div id="fc-f"></div></div>
+    <div class="eli5"><b>Die Übersetzung:</b> Die verborgenen Schichten machen das Papierfalten. Die <b>letzte lineare Schicht ist der eine gerade Schnitt</b>. Universelle Approximation ≈ N-dimensionales Origami + ein flacher Schnitt.</div>
+  </div>
+
+  <div class="demo">
+    <h4>Flachfaltbarkeit: lokale Regeln, globale Härte</h4>
+    <p class="small">An <em>einem</em> Knick entscheiden zwei saubere Regeln. Über viele Knicke hinweg explodiert das Problem: Flachfaltbarkeit zu entscheiden ist <b>NP-vollständig</b> (Bern &amp; Hayes 1996).</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Falten am Knoten <b id="ff-n-v">4</b></label><input type="range" id="ff-n" min="2" max="10" step="2" value="4"></div>
+      <div class="ctrl"><label>Winkelverzerrung <b id="ff-d-v">0.00</b></label><input type="range" id="ff-d" min="-0.5" max="0.5" step="0.01" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div><canvas id="ff-cv" width="460" height="400"></canvas></div>
+      <div>
+        <table>
+          <tr><th>Regel</th><th>Bedingung</th><th>Status</th></tr>
+          <tr><td>Maekawa</td><td><code>|M − T| = 2</code></td><td id="ff-mk">—</td></tr>
+          <tr><td>Kawasaki</td><td><code>Σ α<sub>ungerade</sub> = 180°</code></td><td id="ff-kw">—</td></tr>
+        </table>
+        <div class="out" id="ff-out"></div>
+        <div class="note"><b>Muster erkannt?</b> <em>Lokale Regeln, globale Schwierigkeit</em> — genau die Spaltung, die auch zwischen einem einzelnen Neuron und der Generalisierung eines ganzen Netzes liegt.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h4>Von Papier in den Orbit</h4>
+    <p class="small">Der <b>Miura-Faltung</b>: ein starres Faltmuster, das eine große Fläche flach zusammenpackt und in einem Zug entfaltet. Solarpanele, Teleskopspiegel — und dieselbe Geometrie, die das Netz auf der Hardware ausführt.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Entfaltung <b id="mi-t-v">50 %</b></label><input type="range" id="mi-t" min="0" max="100" value="50"></div>
+      <div class="ctrl"><label>Zellen <b id="mi-n-v">6</b></label><input type="range" id="mi-n" min="2" max="12" value="6"></div>
+      <button class="btn" id="mi-play">▶ Entfalten</button>
+    </div>
+    <canvas id="mi-cv" width="1000" height="360"></canvas>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Packungsverhältnis</div><div class="v" id="mi-pack">—</div></div>
+      <div class="kpi"><div class="n">Freiheitsgrade</div><div class="v" id="mi-dof">1</div></div>
+      <div class="kpi"><div class="n">Fläche</div><div class="v" id="mi-area" style="font-size:1.05rem">—</div></div>
+    </div>
+    <div class="note"><b>Der Witz:</b> Die Hardware, auf der ein neuronales Netz läuft, wird oft <em>gefaltet ausgeliefert</em> — und das Modell selbst ist nichts als Falten. Dieselbe Geometrie, zwei Realitätsebenen.</div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 12 -->
+<section id="s12">
+<h2 class="h">12 · Die Antwort — wozu eine verborgene Schicht da ist</h2>
+<p class="lead">Alles zusammengesetzt, in einem Satz.</p>
+
+<div class="card">
+  <div class="formula big" style="border-color:var(--emerald)">
+    <div style="color:var(--text);font-size:1.05rem;line-height:1.7;max-width:820px;margin:0 auto;text-align:left">
+      Ein <b>Stapel dichter ReLU-Schichten</b> stellt lineare Trennbarkeit her, indem er die Datenmannigfaltigkeit <b>schrittweise in unbesetzte, höhere Dimensionen faltet</b> — er betreibt <em>N-dimensionales Origami</em>. Jede Schicht faltet das bereits Gefaltete ein Stück weiter; am Ende ist die Struktur so ausgebreitet, dass ein <b>einziger flacher Schnitt</b> (die Ausgabeschicht) klassifiziert.
+    </div>
+  </div>
+
+  <div class="demo">
+    <h4>Das Vokabular — anklickbar</h4>
+    <p class="small">Klicke einen Begriff, um die zugehörige Demo hervorzuheben und die Kernaussage zu sehen.</p>
+    <div class="ctrls" id="voc-btns"></div>
+    <div class="grid2">
+      <div><canvas id="voc-cv" width="500" height="340"></canvas></div>
+      <div><div class="out" id="voc-out" style="min-height:300px"></div></div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h4>Der ganze Weg in einem Bild</h4>
+    <p class="small">Ein Regler führt durch die komplette Pipeline: Rohdaten → affin → ReLU-Falte → nächste Schicht → flacher Schnitt. Alle Panels bewegen sich zusammen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Pipeline-Position <b id="pipe-t-v">0 %</b></label><input type="range" id="pipe-t" min="0" max="100" value="0"></div>
+      <button class="btn" id="pipe-play">▶ Durchlaufen</button>
+    </div>
+    <canvas id="pipe-cv" width="1000" height="300"></canvas>
+    <div class="grid2">
+      <div><div id="pipe-3d" class="plot" style="height:380px"></div></div>
+      <div>
+        <div class="kpis" style="grid-template-columns:1fr 1fr">
+          <div class="kpi"><div class="n">Stufe</div><div class="v" id="pipe-stage" style="font-size:.95rem">—</div></div>
+          <div class="kpi"><div class="n">Trennbarkeit</div><div class="v" id="pipe-sep">—</div><div class="bar"><i id="pipe-sepb" style="width:0%"></i></div></div>
+          <div class="kpi"><div class="n">Eff. Dimension</div><div class="v" id="pipe-dim">—</div></div>
+          <div class="kpi"><div class="n">Betti b₁</div><div class="v" id="pipe-b1">—</div></div>
+        </div>
+        <div class="out" id="pipe-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Origami als Weltmodell.</b> Ein Stapel Falten ist eine <em>Überdeckung</em> des Eingaberaums; jede lineare Region ist ein <em>lokales affines Modell</em> (ein Schnitt); die Falten sind die <em>Überlappungen</em>, wo Nachbarregionen sich treffen; die Stetigkeit ist die <em>Verträglichkeit</em>, die sie übereinstimmen lässt; und die globale Funktion des Netzes ist der <em>Schnitt, zu dem sie verkleben</em>. Lokal-nach-global — gezeichnet.
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 13 -->
+<section id="s13">
+<h2 class="h">13 · Reichweite und offene Fragen</h2>
+<p class="lead">Ehrlichkeit über die Grenzen. Was das Bild abdeckt — und was nicht.</p>
+
+<div class="card">
+  <div class="demo">
+    <h4>Trägt das Faltbild auf andere Schichttypen?</h4>
+    <p class="small">Klicke einen Schichttyp. Die Tabelle zeigt, warum das Faltbild dort greift — oder eben nicht.</p>
+    <div class="ctrls" id="sc-btns"></div>
+    <div class="grid2">
+      <div><canvas id="sc-cv" width="500" height="340"></canvas></div>
+      <div>
+        <table>
+          <tr><th>Eigenschaft</th><th>Wert</th></tr>
+          <tr><td>Struktur</td><td id="sc-str">—</td></tr>
+          <tr><td>Nichtlinearität</td><td id="sc-nl">—</td></tr>
+          <tr><td>Faltbild gültig?</td><td id="sc-fold">—</td></tr>
+          <tr><td>χ-Maß anwendbar?</td><td id="sc-chi">—</td></tr>
+        </table>
+        <div class="out" id="sc-out"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h4>Zwei Zahlen, die sich widersprechen — und beide stimmen</h4>
+    <p class="small">Die <b>Worst-Case</b>-Zahl linearer Regionen wächst exponentiell mit der Tiefe. Die <b>realisierte</b> Zahl in einem trainierten Netz ist weit kleiner. Ein trainiertes Netz zählt sein Regionenbudget nicht ab — es gibt Tiefe aus, um nur die Struktur zu falten, die die Aufgabe braucht.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Tiefe L <b id="gap-l-v">5</b></label><input type="range" id="gap-l" min="1" max="12" value="5"></div>
+      <div class="ctrl"><label>Breite n <b id="gap-n-v">10</b></label><input type="range" id="gap-n" min="2" max="60" value="10"></div>
+      <div class="ctrl"><label>Aufgabenkomplexität <b id="gap-c-v">0.30</b></label><input type="range" id="gap-c" min="0.02" max="1" step="0.02" value="0.3"></div>
+    </div>
+    <div id="gap-plot" class="plot" style="height:380px"></div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Obere Schranke</div><div class="v" id="gap-ub" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Realisiert (Schätzung)</div><div class="v" id="gap-re" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Ungenutzte Reserve</div><div class="v" id="gap-sl" style="font-size:1rem">—</div></div>
+      <div class="kpi"><div class="n">Ausnutzung</div><div class="v" id="gap-ut">—</div><div class="bar"><i id="gap-ub2" style="width:0%"></i></div></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>Was offen bleibt:</b>
+    <ul style="margin:8px 0 0;padding-left:20px;font-size:.92rem">
+      <li>Dass Scheren <em>deutlich</em> ineffizienter ist als Falten, ist <b>intuitiv argumentiert</b>, nicht bewiesen. Ein strenger Satz bräuchte Annahmen über realistische Datenverteilungen.</li>
+      <li>Die Poker-Hand-Validierung ist <b>klein</b> und die Daten sind <b>kategorial</b> — Bimodalität in den Tuningkurven ist dort schwerer abzulesen.</li>
+      <li>Das χ-Maß lässt sich auf Residual- und Normalisierungsschichten erweitern, aber <b>nicht direkt auf Attention</b> in seiner jetzigen Form.</li>
+      <li>Keup &amp; Helias nennen Convolution ausdrücklich nur als <em>mögliche Anwendung</em> des Bildes — nicht als Ergebnis.</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <b>Was architektur-unabhängig bleibt:</b> das schwächere äußere Prinzip — <em>stelle eine linear trennbare Repräsentation für einen finalen linearen Auslese-Schritt her</em>. Das gilt für jede Architektur. Nur der <em>Mechanismus</em> (Falten in ungenutzte Dimensionen) gehört der dichten ReLU-Schicht. Wo das Faltbild aufhört, fängt die nächste Frage an.
+  </div>
+
+  <div class="demo">
+    <h4>Der Anschluss: wohin das Bild weiterführt</h4>
+    <p class="small">Drei Fäden, die dieses Kapitel mit dem Rest verbinden. Klicke einen an.</p>
+    <div class="ctrls" id="link-btns"></div>
+    <div class="out" id="link-out" style="min-height:130px"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================ 14 -->
+<section id="s14">
+<h2 class="h">14 · Das Ganze in drei Sätzen</h2>
+<div class="card">
+  <ol class="steps">
+    <li><b>Das Problem:</b> Der Ausgabekopf kann nur einen flachen Schnitt. Rohdaten sind verschränkt — eine Klasse liegt <em>in</em> der anderen. Ein gerader Schnitt reicht nie.</li>
+    <li><b>Der Mechanismus:</b> Weil jede Schicht breiter ist als die Daten, gibt es leere Richtungen. Eine ReLU-Ebene, die aus einer leeren Richtung kommt, <em>faltet</em> statt zu zerquetschen: injektiv auf den Daten, topologievereinfachend, und sie legt innere Bereiche nach außen frei.</li>
+    <li><b>Die Antwort:</b> Tiefe ist eine Origami-Kaskade — jede Schicht faltet das Gefaltete. Am Ende genügt ein Schnitt. <span style="color:var(--emerald);font-weight:700">Universelle Approximation ≈ N-dimensionales Origami + ein flacher Schnitt.</span></li>
+  </ol>
+
+  <div class="demo">
+    <h4>Selbsttest</h4>
+    <p class="small">Sechs Fragen. Antworte, dann aufdecken.</p>
+    <div id="quiz"></div>
+    <div class="kpis" style="margin-top:14px">
+      <div class="kpi"><div class="n">Beantwortet</div><div class="v" id="qz-n">0 / 6</div></div>
+      <div class="kpi"><div class="n">Richtig</div><div class="v" id="qz-r">0</div><div class="bar"><i id="qz-bar" style="width:0%"></i></div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============================================================
+   GLOBAL HELPERS
+   ============================================================ */
+const CO = {
+  em:'#4ecdc4', co:'#ff6b9d', am:'#ffd166', vi:'#8b5cf6',
+  sk:'#60a5fa', ro:'#fb7185', tx:'#e8eef5', t2:'#9fb0c3',
+  mu:'#6b7f94', bd:'#263443', bg:'#0d141c', sf:'#151d26'
+};
+const PL = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:CO.t2, family:'Inter, sans-serif', size:11},
+  margin:{l:52,r:18,t:34,b:44},
+  xaxis:{gridcolor:'#1e2a36', zerolinecolor:'#2e3d4d', linecolor:CO.bd},
+  yaxis:{gridcolor:'#1e2a36', zerolinecolor:'#2e3d4d', linecolor:CO.bd},
+  legend:{bgcolor:'rgba(21,29,38,.85)', bordercolor:CO.bd, borderwidth:1, font:{size:10}}
+};
+const CFG = {displayModeBar:false, responsive:true};
+const $ = id => document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(v,n=2)=>Number(v).toFixed(n);
+const relu=x=>Math.max(0,x);
+const TAU=Math.PI*2;
+
+// deterministic RNG
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+function gauss(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+
+// Temml
+function tex(el,s,disp=true){
+  if(!el)return;
+  try{ el.innerHTML=''; temml.render(s, el, {displayMode:disp}); }
+  catch(e){ el.textContent=s; }
+}
+
+// canvas transform helper
+function mkT(cv, xmin,xmax, ymin,ymax, pad=34){
+  const W=cv.width,H=cv.height;
+  const sx=(W-2*pad)/(xmax-xmin), sy=(H-2*pad)/(ymax-ymin);
+  return {
+    x: v => pad + (v-xmin)*sx,
+    y: v => H-pad - (v-ymin)*sy,
+    ix: p => (p-pad)/sx + xmin,
+    iy: p => (H-pad-p)/sy + ymin,
+    sx, sy, W, H, pad
+  };
+}
+function grid(ctx,T,step=0.5,color='#1a232e'){
+  ctx.strokeStyle=color; ctx.lineWidth=1;
+  const x0=Math.ceil(T.ix(T.pad)/step)*step, x1=T.ix(T.W-T.pad);
+  for(let v=x0;v<=x1+1e-9;v+=step){ctx.beginPath();ctx.moveTo(T.x(v),T.pad);ctx.lineTo(T.x(v),T.H-T.pad);ctx.stroke();}
+  const y0=Math.ceil(T.iy(T.H-T.pad)/step)*step, y1=T.iy(T.pad);
+  for(let v=y0;v<=y1+1e-9;v+=step){ctx.beginPath();ctx.moveTo(T.pad,T.y(v));ctx.lineTo(T.W-T.pad,T.y(v));ctx.stroke();}
+}
+function axes(ctx,T){
+  ctx.strokeStyle='#33424f'; ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(T.pad,T.y(0));ctx.lineTo(T.W-T.pad,T.y(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(T.x(0),T.pad);ctx.lineTo(T.x(0),T.H-T.pad);ctx.stroke();
+}
+function dot(ctx,x,y,r,c,a=1){ctx.globalAlpha=a;ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.globalAlpha=1;}
+function line(ctx,x1,y1,x2,y2,c,w=2,dash=null){
+  ctx.save();ctx.strokeStyle=c;ctx.lineWidth=w;if(dash)ctx.setLineDash(dash);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+}
+function label(ctx,t,x,y,c=CO.t2,sz=11,al='left'){
+  ctx.fillStyle=c;ctx.font=`${sz}px Inter,sans-serif`;ctx.textAlign=al;ctx.fillText(t,x,y);ctx.textAlign='left';
+}
+function clear(ctx,cv){ctx.clearRect(0,0,cv.width,cv.height);}
+
+/* ============================================================
+   DATASETS
+   ============================================================ */
+function dsEgg(n=380,seed=7,r=0.45){
+  const R=rng(seed),P=[];
+  for(let i=0;i<n;i++){
+    const inner=i%2===0;
+    const a=R()*TAU;
+    const rad = inner ? r*Math.sqrt(R()) : r+0.30+0.34*R();
+    P.push({x:rad*Math.cos(a)+gauss(R)*0.02, y:rad*Math.sin(a)+gauss(R)*0.02, c:inner?1:0});
+  }
+  return P;
+}
+function dsBlobs(n=340,seed=3){
+  const R=rng(seed),P=[];
+  for(let i=0;i<n;i++){const c=i%2;
+    P.push({x:(c?0.75:-0.75)+gauss(R)*0.30, y:(c?0.45:-0.45)+gauss(R)*0.30, c});}
+  return P;
+}
+function dsXor(n=340,seed=11){
+  const R=rng(seed),P=[];
+  for(let i=0;i<n;i++){
+    const qx=R()<0.5?-1:1, qy=R()<0.5?-1:1;
+    P.push({x:qx*(0.35+0.45*R()), y:qy*(0.35+0.45*R()), c:(qx*qy>0)?1:0});
+  }
+  return P;
+}
+function dsSpiral(n=340,seed=5){
+  const R=rng(seed),P=[];
+  for(let i=0;i<n;i++){
+    const c=i%2, t=(i/n)*3.2*Math.PI+0.4, r=0.09*t;
+    const a=t+c*Math.PI;
+    P.push({x:r*Math.cos(a)+gauss(R)*0.035, y:r*Math.sin(a)+gauss(R)*0.035, c});
+  }
+  return P;
+}
+function dsMoons(n=340,seed=9){
+  const R=rng(seed),P=[];
+  for(let i=0;i<n;i++){
+    const c=i%2, t=R()*Math.PI;
+    const x = c? 1-Math.cos(t)-0.5 : Math.cos(t)-0.5;
+    const y = c? 0.5-Math.sin(t)+0.12 : Math.sin(t)-0.25;
+    P.push({x:x*0.9+gauss(R)*0.04, y:y*0.9+gauss(R)*0.04, c});
+  }
+  return P;
+}
+const DS={egg:dsEgg,blobs:dsBlobs,xor:dsXor,spiral:dsSpiral,moons:dsMoons};
+
+function linAcc(P,ang,off){
+  const a=ang*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a);
+  let ok=0;
+  for(const p of P){ const z=wx*p.x+wy*p.y-off; if((z>0?1:0)===p.c) ok++; }
+  return Math.max(ok,P.length-ok)/P.length;
+}
+function bestLine(P,steps=180){
+  let best={a:0,b:0,acc:0};
+  for(let i=0;i<steps;i++){
+    const a=i*360/steps;
+    for(let j=-50;j<=50;j++){
+      const b=j/25, acc=linAcc(P,a,b);
+      if(acc>best.acc) best={a,b,acc};
+    }
+  }
+  return best;
+}
+
+/* ============================================================
+   0 · DIE FRAGE
+   ============================================================ */
+(function(){
+  const cvL=$('q-left'), cvR=$('q-right');
+  if(!cvL) return;
+  const cl=cvL.getContext('2d'), cr=cvR.getContext('2d');
+  const P=dsEgg(340,7,0.42);
+
+  function foldPt(p,t){
+    // three folds 120° -> lift = sum relu(-(w·x)+b)
+    let z=0;
+    for(let k=0;k<3;k++){
+      const a=k*TAU/3, w1=Math.cos(a), w2=Math.sin(a);
+      z += relu(0.42 - (w1*p.x+w2*p.y)) * 0.55;
+    }
+    // project to 2D: x stays, y becomes lift (blend)
+    return {x:lerp(p.x, p.x*0.8, t), y:lerp(p.y, z*1.4-0.55, t), c:p.c};
+  }
+
+  function draw(){
+    const ang=+$('q-ang').value, off=+$('q-off').value, t=+$('q-fold').value/100;
+    $('q-ang-v').textContent=ang+'°'; $('q-off-v').textContent=fmt(off);
+    $('q-fold-v').textContent=Math.round(t*100)+' %';
+
+    // LEFT
+    clear(cl,cvL);
+    const T=mkT(cvL,-1.3,1.3,-1.3,1.3);
+    grid(cl,T,0.5); axes(cl,T);
+    for(const p of P) dot(cl,T.x(p.x),T.y(p.y),3,p.c?CO.co:CO.em,.82);
+    const a=ang*Math.PI/180;
+    const dx=-Math.sin(a)*3, dy=Math.cos(a)*3;
+    const cx=Math.cos(a)*off, cy=Math.sin(a)*off;
+    line(cl,T.x(cx-dx),T.y(cy-dy),T.x(cx+dx),T.y(cy+dy),CO.am,2.4);
+    label(cl,'Rohdaten · nur eine Gerade erlaubt',T.pad,20,CO.t2,12);
+    const acc0=linAcc(P,ang,off);
+
+    // RIGHT
+    clear(cr,cvR);
+    const F=P.map(p=>foldPt(p,t));
+    const T2=mkT(cvR,-1.3,1.3,-1.3,1.3);
+    grid(cr,T2,0.5); axes(cr,T2);
+    for(const p of F) dot(cr,T2.x(p.x),T2.y(p.y),3,p.c?CO.co:CO.em,.82);
+    // horizontal separating plane after fold
+    const thr = lerp(0, 0.22, t);
+    line(cr,T2.pad,T2.y(thr),T2.W-T2.pad,T2.y(thr),CO.am,2.4);
+    label(cr,'Nach der Faltung · flacher Schnitt genügt',T2.pad,20,CO.t2,12);
+    let ok=0; for(const p of F){ const pred = p.y>thr?1:0; if(pred===p.c) ok++; }
+    const acc1=Math.max(ok,F.length-ok)/F.length;
+
+    $('q-out').textContent =
+      `LINKS  · beste erreichbare Genauigkeit mit dieser Geraden: ${(acc0*100).toFixed(1)} %\n`+
+      `RECHTS · nach ${Math.round(t*100)} % Faltung mit flachem Schnitt: ${(acc1*100).toFixed(1)} %\n`+
+      (t<10 ? '→ Schiebe den Faltungs-Regler nach rechts. Das ist die ganze Idee des Papers.'
+            : acc1>0.97 ? '→ Perfekt trennbar. Drei ReLU-Neuronen haben das geleistet.'
+            : '→ Weiter falten: die innere Klasse muss ganz über die Trennlinie steigen.');
+  }
+  ['q-ang','q-off','q-fold'].forEach(id=>$(id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ============================================================
+   1.1 · HYPEREBENE
+   ============================================================ */
+(function(){
+  const cv=$('hp-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const ang=+$('hp-a').value, b=+$('hp-b').value, n=+$('hp-n').value;
+    $('hp-a-v').textContent=ang+'°'; $('hp-b-v').textContent=fmt(b); $('hp-n-v').textContent=fmt(n,1);
+    const a=ang*Math.PI/180, wx=Math.cos(a)*n, wy=Math.sin(a)*n;
+    clear(ctx,cv);
+    const T=mkT(cv,-2.6,2.6,-1.4,1.4);
+    // heatmap of z
+    const step=6;
+    for(let px=T.pad;px<T.W-T.pad;px+=step){
+      for(let py=T.pad;py<T.H-T.pad;py+=step){
+        const X=T.ix(px), Y=T.iy(py);
+        const z=wx*X+wy*Y+b;
+        const s=clamp(Math.abs(z)/3,0,1);
+        ctx.fillStyle = z>0 ? `rgba(78,205,196,${s*0.34})` : `rgba(255,107,157,${s*0.34})`;
+        ctx.fillRect(px,py,step,step);
+      }
+    }
+    grid(ctx,T,0.5,'#1b2530'); axes(ctx,T);
+    // line wx*X+wy*Y+b=0
+    const len=6;
+    const nx=wx/Math.hypot(wx,wy), ny=wy/Math.hypot(wx,wy);
+    const d=-b/Math.hypot(wx,wy);
+    const px0=nx*d, py0=ny*d;
+    line(ctx,T.x(px0-(-ny)*len),T.y(py0-nx*len),T.x(px0+(-ny)*len),T.y(py0+nx*len),CO.am,2.6);
+    // w arrow
+    const sc=0.55;
+    line(ctx,T.x(px0),T.y(py0),T.x(px0+nx*n*sc),T.y(py0+ny*n*sc),CO.sk,3);
+    dot(ctx,T.x(px0+nx*n*sc),T.y(py0+ny*n*sc),5,CO.sk);
+    label(ctx,'w',T.x(px0+nx*n*sc)+8,T.y(py0+ny*n*sc)-6,CO.sk,13);
+    label(ctx,'z > 0',T.W-T.pad-52,T.pad+18,CO.em,12);
+    label(ctx,'z < 0',T.pad+6,T.H-T.pad-8,CO.co,12);
+    tex($('hp-f'),`z=\\mathbf{w}\\cdot\\mathbf{x}+b=${fmt(wx)}\\,x_1 ${wy>=0?'+':'−'} ${fmt(Math.abs(wy))}\\,x_2 ${b>=0?'+':'−'} ${fmt(Math.abs(b))}`);
+    $('hp-out').textContent =
+      `w = (${fmt(wx)}, ${fmt(wy)})   ‖w‖ = ${fmt(Math.hypot(wx,wy))}   b = ${fmt(b)}\n`+
+      `Abstand der Linie vom Ursprung: ${fmt(Math.abs(b)/Math.hypot(wx,wy))}\n`+
+      `Beobachte: ‖w‖ ändern verschiebt die Linie NICHT — nur der Farbverlauf wird steiler.`;
+  }
+  ['hp-a','hp-b','hp-n'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   1.2 · AFFIN
+   ============================================================ */
+(function(){
+  const cv=$('af-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const r=+$('af-r').value*Math.PI/180, sx=+$('af-sx').value, sy=+$('af-sy').value,
+          sh=+$('af-sh').value, bx=+$('af-bx').value, by=+$('af-by').value;
+    $('af-r-v').textContent=$('af-r').value+'°'; $('af-sx-v').textContent=fmt(sx,1);
+    $('af-sy-v').textContent=fmt(sy,1); $('af-sh-v').textContent=fmt(sh,1);
+    $('af-bx-v').textContent=fmt(bx,1); $('af-by-v').textContent=fmt(by,1);
+    const c=Math.cos(r),s=Math.sin(r);
+    // W = Rot · Shear · Scale
+    const a11=c*sx - s*sh*sy, a12=-s*sy, a21=s*sx + c*sh*sy, a22=c*sy;
+    const det=a11*a22-a12*a21;
+    const ap=(x,y)=>({x:a11*x+a12*y+bx, y:a21*x+a22*y+by});
+    clear(ctx,cv);
+    const T=mkT(cv,-3.4,3.4,-1.8,1.8);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    // original grid (faint)
+    ctx.strokeStyle='rgba(159,176,195,.22)'; ctx.lineWidth=1;
+    for(let g=-1;g<=1;g+=0.25){
+      ctx.beginPath(); for(let t=-1;t<=1.001;t+=0.05){ const px=T.x(t),py=T.y(g); t===-1?ctx.moveTo(px,py):ctx.lineTo(px,py);} ctx.stroke();
+      ctx.beginPath(); for(let t=-1;t<=1.001;t+=0.05){ const px=T.x(g),py=T.y(t); t===-1?ctx.moveTo(px,py):ctx.lineTo(px,py);} ctx.stroke();
+    }
+    // transformed grid
+    ctx.strokeStyle=CO.co; ctx.lineWidth=1.6;
+    for(let g=-1;g<=1;g+=0.25){
+      ctx.beginPath(); let f=true;
+      for(let t=-1;t<=1.001;t+=0.05){ const q=ap(t,g); const px=T.x(q.x),py=T.y(q.y); f?(ctx.moveTo(px,py),f=false):ctx.lineTo(px,py);} ctx.stroke();
+      ctx.beginPath(); f=true;
+      for(let t=-1;t<=1.001;t+=0.05){ const q=ap(g,t); const px=T.x(q.x),py=T.y(q.y); f?(ctx.moveTo(px,py),f=false):ctx.lineTo(px,py);} ctx.stroke();
+    }
+    // basis vectors
+    const o=ap(0,0), e1=ap(1,0), e2=ap(0,1);
+    line(ctx,T.x(o.x),T.y(o.y),T.x(e1.x),T.y(e1.y),CO.em,3);
+    line(ctx,T.x(o.x),T.y(o.y),T.x(e2.x),T.y(e2.y),CO.am,3);
+    label(ctx,'W·e₁',T.x(e1.x)+7,T.y(e1.y)-5,CO.em,12);
+    label(ctx,'W·e₂',T.x(e2.x)+7,T.y(e2.y)-5,CO.am,12);
+    tex($('af-f'),`W=\\begin{pmatrix}${fmt(a11)} & ${fmt(a12)}\\\\ ${fmt(a21)} & ${fmt(a22)}\\end{pmatrix},\\quad \\mathbf{b}=\\begin{pmatrix}${fmt(bx)}\\\\ ${fmt(by)}\\end{pmatrix},\\quad \\det W=${fmt(det)}`);
+    $('af-out').textContent =
+      `det(W) = ${fmt(det)}   ${Math.abs(det)<0.02?'→ fast singulär: der Raum wird auf eine Linie gedrückt!':'→ invertierbar: keine Information geht verloren.'}\n`+
+      `Geraden bleiben Geraden. Parallelität bleibt erhalten. Verhältnisse auf Geraden bleiben erhalten.\n`+
+      `Deshalb kann DIESER Schritt lineare Trennbarkeit weder erzeugen noch zerstören.`;
+  }
+  ['af-r','af-sx','af-sy','af-sh','af-bx','af-by'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   1.3 · RELU
+   ============================================================ */
+(function(){
+  const cv=$('rl-cv'), cf=$('rl-fold'); if(!cv) return;
+  const c1=cv.getContext('2d'), c2=cf.getContext('2d');
+  function draw(){
+    const x=+$('rl-x').value, a=+$('rl-a').value, b=+$('rl-b').value;
+    $('rl-x-v').textContent=fmt(x,1); $('rl-a-v').textContent=fmt(a,1); $('rl-b-v').textContent=fmt(b,1);
+    const z=a*x+b, y=relu(z);
+
+    // LEFT: function
+    clear(c1,cv);
+    const T=mkT(cv,-3.2,3.2,-0.6,3.4);
+    grid(c1,T,1,'#1a232e'); axes(c1,T);
+    c1.strokeStyle=CO.em; c1.lineWidth=2.6; c1.beginPath();
+    let f=true;
+    for(let t=-3.2;t<=3.2;t+=0.02){ const v=relu(a*t+b); const px=T.x(t),py=T.y(v); f?(c1.moveTo(px,py),f=false):c1.lineTo(px,py);}
+    c1.stroke();
+    // kink
+    if(Math.abs(a)>1e-6){ const xk=-b/a; if(xk>-3.2&&xk<3.2) dot(c1,T.x(xk),T.y(0),5,CO.am); }
+    line(c1,T.x(x),T.pad,T.x(x),T.H-T.pad,CO.co,1.4,[4,4]);
+    dot(c1,T.x(x),T.y(y),6,CO.co);
+    label(c1,'Φ(ax+b)',T.W-T.pad-60,T.pad+16,CO.em,12);
+    label(c1,`x=${fmt(x,1)}`,T.x(x)+6,T.H-T.pad-6,CO.co,11);
+
+    // RIGHT: the fold picture
+    clear(c2,cf);
+    const T2=mkT(cf,-3.2,3.2,-2.2,2.2);
+    grid(c2,T2,1,'#1a232e');
+    // the "paper": a line y = a*x+b  (before)
+    c2.strokeStyle='rgba(159,176,195,.45)'; c2.lineWidth=2; c2.setLineDash([5,5]);
+    c2.beginPath();
+    c2.moveTo(T2.x(-3.2),T2.y(a*-3.2+b)); c2.lineTo(T2.x(3.2),T2.y(a*3.2+b)); c2.stroke();
+    c2.setLineDash([]);
+    // folded: relu
+    c2.strokeStyle=CO.co; c2.lineWidth=3; c2.beginPath(); f=true;
+    for(let t=-3.2;t<=3.2;t+=0.02){const v=relu(a*t+b);const px=T2.x(t),py=T2.y(v);f?(c2.moveTo(px,py),f=false):c2.lineTo(px,py);}
+    c2.stroke();
+    // fold axis
+    line(c2,T2.pad,T2.y(0),T2.W-T2.pad,T2.y(0),CO.am,2);
+    // arrows showing the flip
+    c2.strokeStyle='rgba(255,209,102,.55)'; c2.lineWidth=1.2;
+    for(let t=-3;t<=3;t+=0.45){
+      const v=a*t+b;
+      if(v<0){ c2.beginPath(); c2.moveTo(T2.x(t),T2.y(v)); c2.lineTo(T2.x(t),T2.y(0)); c2.stroke();
+        dot(c2,T2.x(t),T2.y(0),2.5,CO.am,.7); }
+    }
+    label(c2,'Original (vor ReLU)',T2.pad+4,T2.pad+14,CO.t2,11);
+    label(c2,'Faltachse  z = 0',T2.W-T2.pad-96,T2.y(0)-7,CO.am,11);
+
+    tex($('rl-f'),`z=${fmt(a,1)}\\cdot(${fmt(x,1)})${b>=0?'+':'−'}${fmt(Math.abs(b),1)}=${fmt(z)},\\qquad \\Phi(z)=\\max(0,${fmt(z)})=${fmt(y)}`);
+    $('rl-out').textContent =
+      `Eingang x = ${fmt(x,1)}  →  Vor-Aktivierung z = ${fmt(z)}  →  Ausgabe Φ(z) = ${fmt(y)}\n`+
+      (z<0 ? '→ NEGATIV. Das Neuron ist AUS. Der Punkt wird auf die Faltachse geklappt.'
+           : '→ POSITIV. Das Neuron ist AN. Der Punkt bleibt unverändert.')+
+      `\nKnickstelle bei x = ${Math.abs(a)>1e-6?fmt(-b/a):'—'}`;
+  }
+  ['rl-x','rl-a','rl-b'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   1.4 · KONVEXE HÜLLE
+   ============================================================ */
+(function(){
+  const cv=$('ch-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  let seed=4;
+  function hull(P){
+    const pts=P.slice().sort((a,b)=>a.x-b.x||a.y-b.y);
+    const cr=(o,a,b)=>(a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x);
+    const lo=[],up=[];
+    for(const p of pts){ while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop(); lo.push(p); }
+    for(let i=pts.length-1;i>=0;i--){const p=pts[i]; while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop(); up.push(p);}
+    lo.pop(); up.pop(); return lo.concat(up);
+  }
+  function draw(){
+    const n=+$('ch-n').value, ang=+$('ch-a').value, b=+$('ch-b').value;
+    $('ch-n-v').textContent=n; $('ch-a-v').textContent=ang+'°'; $('ch-b-v').textContent=fmt(b);
+    const R=rng(seed), P=[];
+    for(let i=0;i<n;i++){ const a=R()*TAU, r=0.35+0.65*Math.sqrt(R()); P.push({x:r*Math.cos(a),y:r*Math.sin(a)*0.75}); }
+    const inner={x:0.02,y:0.01}; // deliberate interior point
+    clear(ctx,cv);
+    const T=mkT(cv,-1.5,1.5,-1.0,1.0);
+    grid(ctx,T,0.25,'#1a232e'); axes(ctx,T);
+    const H=hull(P);
+    // hull fill
+    ctx.beginPath();
+    H.forEach((p,i)=> i? ctx.lineTo(T.x(p.x),T.y(p.y)) : ctx.moveTo(T.x(p.x),T.y(p.y)));
+    ctx.closePath(); ctx.fillStyle='rgba(78,205,196,.12)'; ctx.fill();
+    ctx.strokeStyle=CO.em; ctx.lineWidth=2; ctx.stroke();
+    // ReLU plane
+    const a=ang*Math.PI/180, nx=Math.cos(a), ny=Math.sin(a);
+    const px0=nx*b, py0=ny*b, L=4;
+    line(ctx,T.x(px0+ny*L),T.y(py0-nx*L),T.x(px0-ny*L),T.y(py0+nx*L),CO.am,2.2);
+    // shade negative side
+    ctx.save();
+    ctx.globalAlpha=.10; ctx.fillStyle=CO.rose||CO.ro;
+    ctx.beginPath();
+    ctx.moveTo(T.x(px0+ny*L),T.y(py0-nx*L));
+    ctx.lineTo(T.x(px0-ny*L),T.y(py0+nx*L));
+    ctx.lineTo(T.x(px0-ny*L-nx*L),T.y(py0+nx*L-ny*L));
+    ctx.lineTo(T.x(px0+ny*L-nx*L),T.y(py0-nx*L-ny*L));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+    // points, projected if negative
+    let crushed=0;
+    for(const p of P){
+      const z=nx*p.x+ny*p.y-b;
+      if(z<0){ crushed++;
+        const q={x:p.x-z*nx, y:p.y-z*ny};
+        line(ctx,T.x(p.x),T.y(p.y),T.x(q.x),T.y(q.y),'rgba(251,113,133,.35)',1);
+        dot(ctx,T.x(p.x),T.y(p.y),3,'rgba(159,176,195,.35)');
+        dot(ctx,T.x(q.x),T.y(q.y),4,CO.ro);
+      } else dot(ctx,T.x(p.x),T.y(p.y),4,CO.em);
+    }
+    // interior point
+    const zi=nx*inner.x+ny*inner.y-b;
+    const qi = zi<0 ? {x:inner.x-zi*nx,y:inner.y-zi*ny} : inner;
+    dot(ctx,T.x(qi.x),T.y(qi.y),7,CO.co);
+    ctx.strokeStyle=CO.co; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(T.x(qi.x),T.y(qi.y),11,0,TAU); ctx.stroke();
+    label(ctx,'innerer Punkt',T.x(qi.x)+15,T.y(qi.y)-10,CO.co,11);
+    label(ctx,'konvexe Hülle',T.pad+4,T.pad+14,CO.em,11);
+
+    $('ch-out').textContent =
+      `Punkte gesamt: ${n}   Plattgedrückt: ${crushed}   Hüllen-Ecken: ${H.length}\n`+
+      (zi<0 ? `Der innere Punkt wurde MIT ${crushed} anderen plattgedrückt → nicht selektiv.`
+            : `Der innere Punkt blieb unberührt — aber er ist auch nicht abgetrennt.`)+
+      `\n→ Eine ReLU-Ebene kann nur eine Delle von AUSSEN eindrücken.`;
+  }
+  ['ch-n','ch-a','ch-b'].forEach(i=>$(i).addEventListener('input',draw));
+  $('ch-new').addEventListener('click',()=>{seed=(seed*7+13)%9999+1;draw();});
+  draw();
+})();
+
+/* ============================================================
+   1.5 · LINEARE REGIONEN
+   ============================================================ */
+(function(){
+  const cv=$('lr-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const n=+$('lr-n').value, s=+$('lr-s').value, shade=$('lr-shade').checked;
+    $('lr-n-v').textContent=n; $('lr-s-v').textContent=s;
+    const R=rng(s*37+11);
+    const lines=[];
+    for(let i=0;i<n;i++){
+      const a=R()*Math.PI, b=(R()-0.5)*1.5;
+      lines.push({nx:Math.cos(a),ny:Math.sin(a),b});
+    }
+    clear(ctx,cv);
+    const T=mkT(cv,-1.6,1.6,-0.9,0.9);
+    // shade cells by sign pattern
+    if(shade){
+      const step=4;
+      for(let px=T.pad;px<T.W-T.pad;px+=step){
+        for(let py=T.pad;py<T.H-T.pad;py+=step){
+          const X=T.ix(px),Y=T.iy(py);
+          let code=0;
+          for(let k=0;k<lines.length;k++){ const L=lines[k]; if(L.nx*X+L.ny*Y-L.b>0) code|=(1<<k); }
+          const h=(code*47)%360;
+          ctx.fillStyle=`hsla(${h},58%,55%,.20)`;
+          ctx.fillRect(px,py,step,step);
+        }
+      }
+    }
+    grid(ctx,T,0.5,'rgba(38,52,67,.5)');
+    for(const L of lines){
+      const px0=L.nx*L.b, py0=L.ny*L.b, len=5;
+      line(ctx,T.x(px0+L.ny*len),T.y(py0-L.nx*len),T.x(px0-L.ny*len),T.y(py0+L.nx*len),CO.am,1.8);
+    }
+    // count regions empirically
+    const seen=new Set(); const st=3;
+    for(let px=T.pad;px<T.W-T.pad;px+=st) for(let py=T.pad;py<T.H-T.pad;py+=st){
+      const X=T.ix(px),Y=T.iy(py); let code=0;
+      for(let k=0;k<lines.length;k++){const L=lines[k]; if(L.nx*X+L.ny*Y-L.b>0) code|=(1<<k);}
+      seen.add(code);
+    }
+    const bound=1+n+n*(n-1)/2;
+    $('lr-out').textContent =
+      `Neuronen (Geraden): ${n}\nSichtbare Regionen: ${seen.size}\nTheoretisches Maximum: 1 + n + n(n−1)/2 = ${bound}\n`+
+      `→ In jeder Region ist das Netz EXAKT eine affine Abbildung. Das Netz ist stückweise linear.`;
+  }
+  ['lr-n','lr-s'].forEach(i=>$(i).addEventListener('input',draw));
+  $('lr-shade').addEventListener('change',draw);
+  draw();
+})();
+
+/* ============================================================
+   1.6a · COVER
+   ============================================================ */
+(function(){
+  if(!$('cv-n')) return;
+  function logC(N,d){ // log2 of C(N,d)
+    // C(N,d) = 2 * sum_{k=0}^{min(d-1,N-1)} binom(N-1,k)
+    const m=Math.min(d-1,N-1);
+    let lse=-Infinity;
+    for(let k=0;k<=m;k++){
+      const lb=lgamma(N)-lgamma(k+1)-lgamma(N-k); // ln binom(N-1,k)
+      lse = lse===-Infinity ? lb : Math.max(lse,lb)+Math.log1p(Math.exp(-Math.abs(lse-lb)));
+    }
+    return (Math.log(2)+lse)/Math.LN2;
+  }
+  function lgamma(x){ // Lanczos
+    const g=7, c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,
+      771.32342877765313,-176.61502916214059,12.507343278686905,
+      -0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if(x<0.5) return Math.log(Math.PI/Math.sin(Math.PI*x))-lgamma(1-x);
+    x-=1; let a=c[0]; const t=x+g+0.5;
+    for(let i=1;i<g+2;i++) a+=c[i]/(x+i);
+    return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+  }
+  function fmtBig(l2){ // format 2^l2
+    if(l2<40) return Math.round(Math.pow(2,l2)).toLocaleString('de-DE');
+    return '2^'+l2.toFixed(1);
+  }
+  function upd(){
+    const N=+$('cv-n').value, d=+$('cv-d').value;
+    $('cv-n-v').textContent=N; $('cv-d-v').textContent=d;
+    const lc=logC(N,d), l2n=N;
+    const frac=Math.pow(2, Math.min(0, lc-l2n));
+    $('cv-frac').textContent=(frac*100).toFixed(1)+' %';
+    $('cv-bar').style.width=(frac*100)+'%';
+    $('cv-c').textContent=fmtBig(lc);
+    $('cv-2n').textContent=fmtBig(l2n);
+    $('cv-stat').textContent = d>=N ? 'ALLE trennbar' : (frac>0.5?'meiste':'wenige');
+    $('cv-stat').style.color = d>=N?CO.em:(frac>0.5?CO.am:CO.ro);
+
+    // curve over d
+    const ds=[],fs=[];
+    for(let dd=1;dd<=Math.max(60,N+10);dd++){ ds.push(dd); fs.push(Math.pow(2,Math.min(0,logC(N,dd)-N))*100); }
+    Plotly.react('cv-plot',[
+      {x:ds,y:fs,type:'scatter',mode:'lines',line:{color:CO.em,width:3},name:'Anteil trennbar',fill:'tozeroy',fillcolor:'rgba(78,205,196,.12)'},
+      {x:[d],y:[frac*100],type:'scatter',mode:'markers',marker:{color:CO.co,size:12},name:'aktuell'},
+      {x:[N,N],y:[0,100],type:'scatter',mode:'lines',line:{color:CO.am,dash:'dash',width:2},name:'d = N'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Dimension d'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'% trennbarer Aufteilungen',range:[0,105]}),
+      showlegend:true, title:{text:`N = ${N} Punkte`,font:{size:12,color:CO.t2}}
+    }),CFG);
+  }
+  ['cv-n','cv-d'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ============================================================
+   1.6b · KONZENTRATION
+   ============================================================ */
+(function(){
+  if(!$('cc-d')) return;
+  function upd(){
+    const d=+$('cc-d').value, m=+$('cc-m').value;
+    $('cc-d-v').textContent=d; $('cc-m-v').textContent=m;
+    const R=rng(d*13+7), vals=[];
+    for(let i=0;i<m;i++){
+      let a=[],b=[],na=0,nb=0;
+      for(let k=0;k<d;k++){const x=gauss(R),y=gauss(R);a.push(x);b.push(y);na+=x*x;nb+=y*y;}
+      na=Math.sqrt(na);nb=Math.sqrt(nb);
+      let s=0; for(let k=0;k<d;k++) s+=(a[k]/na)*(b[k]/nb);
+      vals.push(s);
+    }
+    const mean=vals.reduce((p,c)=>p+c,0)/m;
+    const sd=Math.sqrt(vals.reduce((p,c)=>p+(c-mean)*(c-mean),0)/m);
+    const mabs=vals.reduce((p,c)=>p+Math.abs(c),0)/m;
+    Plotly.react('cc-plot',[
+      {x:vals,type:'histogram',nbinsx:64,marker:{color:CO.em,line:{color:'#0d141c',width:1}},name:'⟨u,v⟩',opacity:.85}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Skalarprodukt ⟨u,v⟩',range:[-1,1]}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Häufigkeit'}),
+      title:{text:`d = ${d}  ·  σ ≈ 1/√d = ${fmt(1/Math.sqrt(d),3)}`,font:{size:12,color:CO.t2}},
+      showlegend:false, bargap:.02
+    }),CFG);
+    $('cc-out').textContent =
+      `Mittelwert: ${fmt(mean,4)}   Standardabw.: ${fmt(sd,4)}   theoretisch 1/√d = ${fmt(1/Math.sqrt(d),4)}\n`+
+      `Mittlerer |⟨u,v⟩|: ${fmt(mabs,4)}   →  Typischer Winkel ≈ ${fmt(Math.acos(mabs)*180/Math.PI,1)}°\n`+
+      (d>50?'→ Fast perfekt orthogonal. Eine neue Richtung ist WIRKLICH neu.'
+           :'→ Schiebe d nach oben und beobachte, wie die Verteilung kollabiert.');
+  }
+  ['cc-d','cc-m'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ============================================================
+   1.6c · JOHNSON–LINDENSTRAUSS
+   ============================================================ */
+(function(){
+  if(!$('jl-n')) return;
+  function upd(){
+    const N=+$('jl-n').value, e=+$('jl-e').value, n=+$('jl-o').value;
+    $('jl-n-v').textContent=N.toLocaleString('de-DE');
+    $('jl-e-v').textContent=fmt(e);
+    $('jl-o-v').textContent=n.toLocaleString('de-DE');
+    const k=Math.ceil(8*Math.log(N)/(e*e));
+    $('jl-k').textContent=k.toLocaleString('de-DE');
+    $('jl-r').textContent=(k>=n?'—':(n/k).toFixed(0)+'×');
+    $('jl-d').textContent=Math.max(0,n-k).toLocaleString('de-DE');
+
+    const Ns=[], ks=[];
+    for(let i=1;i<=70;i++){
+      const nn=Math.round(10*Math.pow(10, i*5/70));
+      Ns.push(nn); ks.push(Math.ceil(8*Math.log(nn)/(e*e)));
+    }
+    Plotly.react('jl-plot',[
+      {x:Ns,y:ks,type:'scatter',mode:'lines',line:{color:CO.em,width:3},name:'k(N)'},
+      {x:[N],y:[k],type:'scatter',mode:'markers',marker:{color:CO.co,size:12},name:'aktuell'},
+      {x:[Ns[0],Ns[Ns.length-1]],y:[n,n],type:'scatter',mode:'lines',
+        line:{color:CO.am,dash:'dot',width:2},name:'Ursprungsdim. n'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Anzahl Punkte N',type:'log'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Zieldimension k',type:'log'}),
+      showlegend:true,
+      title:{text:`ε = ${fmt(e)} · k wächst nur logarithmisch in N`,font:{size:12,color:CO.t2}}
+    }),CFG);
+  }
+  ['jl-n','jl-e','jl-o'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ============================================================
+   1.7 · BETTI
+   ============================================================ */
+(function(){
+  const cv=$('bt-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const SHAPES={
+    blob:{b0:1,b1:0,name:'Ein Klecks'},
+    two:{b0:2,b1:0,name:'Zwei Kleckse'},
+    ring:{b0:1,b1:1,name:'Ring (Loch!)'},
+    'two-ring':{b0:2,b1:2,name:'Zwei Ringe'}
+  };
+  function pts(shape,L){
+    const R=rng(23),P=[];
+    const squash=t=>1-0.22*t; // ReLU layers collapse holes
+    if(shape==='blob'||shape==='two'){
+      const K=shape==='two'?2:1;
+      for(let k=0;k<K;k++){const cx=(k-(K-1)/2)*1.0;
+        for(let i=0;i<110;i++){const a=R()*TAU,r=0.32*Math.sqrt(R());
+          P.push({x:cx+r*Math.cos(a),y:r*Math.sin(a),c:k});}}
+    } else {
+      const K=shape==='two-ring'?2:1;
+      for(let k=0;k<K;k++){const cx=(k-(K-1)/2)*1.25;
+        for(let i=0;i<130;i++){
+          const a=R()*TAU;
+          // fill hole progressively with layers
+          const hole=0.30*Math.pow(squash(L/4),2);
+          const r=hole+(0.50-hole)*Math.sqrt(R());
+          P.push({x:cx+r*Math.cos(a),y:r*Math.sin(a),c:k});}}
+    }
+    return P;
+  }
+  function upd(){
+    const sh=$('bt-shape').value, L=+$('bt-l').value;
+    $('bt-l-v').textContent=L;
+    const P=pts(sh,L), S=SHAPES[sh];
+    clear(ctx,cv);
+    const T=mkT(cv,-1.4,1.4,-1.2,1.2);
+    grid(ctx,T,0.25,'#1a232e');
+    const cols=[CO.co,CO.em];
+    for(const p of P) dot(ctx,T.x(p.x),T.y(p.y),3,cols[p.c%2],.75);
+    label(ctx,`${S.name} · nach ${L} ReLU-Schichten`,T.pad+4,20,CO.t2,12);
+
+    // Betti evolution
+    const xs=[0,1,2,3,4];
+    const b0=xs.map(l=>Math.max(1, Math.round(S.b0 - (S.b0-1)*Math.min(1,l/3))));
+    const b1r=xs.map(l=>Math.max(0, S.b1*Math.pow(0.42,l)));
+    const b1t=xs.map(l=>S.b1*Math.pow(0.90,l)); // tanh: homeomorphism, barely changes
+    Plotly.react('bt-plot',[
+      {x:xs,y:b0,type:'scatter',mode:'lines+markers',name:'b₀ (Komponenten)',line:{color:CO.em,width:3},marker:{size:8}},
+      {x:xs,y:b1r,type:'scatter',mode:'lines+markers',name:'b₁ (Löcher) · ReLU',line:{color:CO.co,width:3},marker:{size:8}},
+      {x:xs,y:b1t,type:'scatter',mode:'lines+markers',name:'b₁ (Löcher) · tanh',line:{color:CO.am,width:2,dash:'dash'},marker:{size:6}},
+      {x:[L],y:[b1r[L]],type:'scatter',mode:'markers',marker:{color:'#fff',size:13,line:{color:CO.co,width:2}},showlegend:false}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Schicht',dtick:1}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Betti-Zahl',rangemode:'tozero'}),
+      showlegend:true, title:{text:'Topologisches Entwirren',font:{size:12,color:CO.t2}}
+    }),CFG);
+    $('bt-out').textContent =
+      `Start:  b₀ = ${S.b0}   b₁ = ${S.b1}\n`+
+      `Nach ${L} Schichten (ReLU):  b₀ ≈ ${b0[L]}   b₁ ≈ ${fmt(b1r[L])}\n`+
+      `Nach ${L} Schichten (tanh):  b₁ ≈ ${fmt(b1t[L])}\n`+
+      `→ ReLU ist KEIN Homöomorphismus und darf Löcher schließen. tanh ist einer und kann es nicht.`;
+  }
+  $('bt-shape').addEventListener('change',upd);
+  $('bt-l').addEventListener('input',upd); upd();
+})();
+
+/* ============================================================
+   2 · MOTIVATION
+   ============================================================ */
+(function(){
+  if(!$('mo-uat')) return;
+  tex($('mo-uat'),`\\forall f\\in C(K),\\;\\varepsilon>0:\\;\\exists\\, n,\\,w_i,b_i,c_i:\\;\\Big|f(x)-\\sum_{i=1}^{n}c_i\\,\\sigma(w_i\\!\\cdot\\!x+b_i)\\Big|<\\varepsilon`);
+  tex($('mo-q'),`\\text{Welche \\emph{elementaren Operationen} hat eine Schicht — und welche sind \\emph{effizient}?}`);
+
+  const cv=$('mo-cv'); const ctx=cv.getContext('2d');
+  let P=DS.egg();
+  function draw(){
+    const ang=+$('mo-a').value, b=+$('mo-b').value;
+    $('mo-a-v').textContent=ang+'°'; $('mo-b-v').textContent=fmt(b);
+    clear(ctx,cv);
+    const T=mkT(cv,-1.5,1.5,-1.5,1.5);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    const a=ang*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a);
+    // shade halves
+    const step=8;
+    for(let px=T.pad;px<T.W-T.pad;px+=step)for(let py=T.pad;py<T.H-T.pad;py+=step){
+      const X=T.ix(px),Y=T.iy(py), z=wx*X+wy*Y-b;
+      ctx.fillStyle = z>0?'rgba(78,205,196,.07)':'rgba(255,107,157,.07)';
+      ctx.fillRect(px,py,step,step);
+    }
+    let ok=0;
+    for(const p of P){
+      const z=wx*p.x+wy*p.y-b;
+      const pred=z>0?1:0;
+      const right=(pred===p.c);
+      dot(ctx,T.x(p.x),T.y(p.y),3.2,p.c?CO.co:CO.em, right?0.9:0.35);
+      if(right) ok++;
+    }
+    const acc=Math.max(ok,P.length-ok)/P.length;
+    const dx=-wy*4, dy=wx*4, cx=wx*b, cy=wy*b;
+    line(ctx,T.x(cx-dx),T.y(cy-dy),T.x(cx+dx),T.y(cy+dy),CO.am,2.6);
+
+    // accuracy landscape
+    const angs=[],accs=[];
+    for(let i=0;i<=120;i++){const A=i*3; angs.push(A); accs.push(linAcc(P,A,b)*100);}
+    const best=bestLine(P,90);
+    Plotly.react('mo-plot',[
+      {x:angs,y:accs,type:'scatter',mode:'lines',line:{color:CO.em,width:2.5},name:'Genauigkeit(Winkel)',fill:'tozeroy',fillcolor:'rgba(78,205,196,.10)'},
+      {x:[ang],y:[acc*100],type:'scatter',mode:'markers',marker:{color:CO.co,size:12},name:'aktuell'},
+      {x:[0,360],y:[best.acc*100,best.acc*100],type:'scatter',mode:'lines',line:{color:CO.am,dash:'dash',width:2},name:'globales Optimum'},
+      {x:[0,360],y:[100,100],type:'scatter',mode:'lines',line:{color:CO.ro,dash:'dot',width:2},name:'100 % (nötig)'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Winkel (°)'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Genauigkeit (%)',range:[40,105]}),
+      showlegend:true
+    }),CFG);
+
+    $('mo-out').textContent =
+      `Datensatz: ${$('mo-ds').selectedOptions[0].text}\n`+
+      `Aktuelle Genauigkeit: ${(acc*100).toFixed(1)} %   ·   Bestmögliche Gerade: ${(best.acc*100).toFixed(1)} %\n`+
+      (best.acc>0.98 ? '→ LINEAR TRENNBAR. Keine verborgene Schicht nötig.'
+                     : `→ NICHT linear trennbar. Es fehlen ${((1-best.acc)*100).toFixed(1)} Prozentpunkte — die müssen die verborgenen Schichten herstellen.`);
+  }
+  $('mo-ds').addEventListener('change',()=>{P=DS[$('mo-ds').value]();draw();});
+  ['mo-a','mo-b'].forEach(i=>$(i).addEventListener('input',draw));
+  $('mo-opt').addEventListener('click',()=>{
+    const best=bestLine(P,180);
+    $('mo-a').value=best.a; $('mo-b').value=best.b; draw();
+  });
+  draw();
+})();
+
+/* ============================================================
+   3 · ANVIL & HAMMER
+   ============================================================ */
+(function(){
+  if(!$('s3-eq')) return;
+  tex($('s3-eq'),`x^{(l)}_i=\\underbrace{\\Phi}_{\\text{Hammer}}\\Big(\\underbrace{\\textstyle\\sum_j W^{(l)}_{ij}x^{(l-1)}_j+b^{(l)}_i}_{\\text{Amboss}}\\Big)`);
+  const ca=$('s3-a').getContext('2d'), cb=$('s3-b').getContext('2d');
+  const cvA=$('s3-a'), cvB=$('s3-b');
+  const P0=dsEgg(260,7,0.40);
+  function draw(){
+    const r=+$('s3-r').value*Math.PI/180, s=+$('s3-s').value, h=+$('s3-h').value,
+          bb=+$('s3-bb').value, ra=+$('s3-ra').value*Math.PI/180;
+    $('s3-r-v').textContent=$('s3-r').value+'°'; $('s3-s-v').textContent=fmt(s,1);
+    $('s3-h-v').textContent=fmt(h,1); $('s3-bb-v').textContent=fmt(bb,1);
+    $('s3-ra-v').textContent=$('s3-ra').value+'°';
+    const c=Math.cos(r),si=Math.sin(r);
+    const A=(p)=>({x:(c*s)*p.x+(-si*s+c*h*s)*p.y+bb, y:(si*s)*p.x+(c*s+si*h*s)*p.y, c:p.c});
+    const PA=P0.map(A);
+
+    // A panel
+    clear(ca,cvA); const T=mkT(cvA,-2.2,2.2,-2.2,2.2);
+    grid(ca,T,0.5,'#1a232e'); axes(ca,T);
+    for(const p of P0) dot(ca,T.x(p.x),T.y(p.y),2.6,'rgba(159,176,195,.28)');
+    for(const p of PA) dot(ca,T.x(p.x),T.y(p.y),3,p.c?CO.co:CO.em,.85);
+    label(ca,'grau = vorher · farbig = nach W·x+b',T.pad,18,CO.mu,11);
+
+    // B panel: ReLU projection onto plane with normal ra
+    clear(cb,cvB); const T2=mkT(cvB,-2.2,2.2,-2.2,2.2);
+    grid(cb,T2,0.5,'#1a232e'); axes(cb,T2);
+    const nx=Math.cos(ra), ny=Math.sin(ra);
+    let crushed=0;
+    const PB=PA.map(p=>{
+      const z=nx*p.x+ny*p.y;
+      if(z<0){crushed++; return {x:p.x-z*nx,y:p.y-z*ny,c:p.c};}
+      return p;
+    });
+    const L=5;
+    line(cb,T2.x(ny*L),T2.y(-nx*L),T2.x(-ny*L),T2.y(nx*L),CO.am,2.2);
+    for(const p of PA) dot(cb,T2.x(p.x),T2.y(p.y),2.4,'rgba(159,176,195,.22)');
+    for(const p of PB) dot(cb,T2.x(p.x),T2.y(p.y),3,p.c?CO.co:CO.em,.85);
+    label(cb,'gelb = ReLU-Hyperebene',T2.pad,18,CO.am,11);
+
+    const detv=(c*s)*(c*s+si*h*s)-(-si*s+c*h*s)*(si*s);
+    $('s3-a-out').textContent = `det(W) = ${fmt(detv)}  ·  Punkte: ${P0.length}\n→ Umkehrbar. Kein Punkt geht verloren, keine Trennbarkeit entsteht.`;
+    $('s3-b-out').textContent = `Plattgedrückt: ${crushed} / ${PA.length}  (${(100*crushed/PA.length).toFixed(0)} %)\n→ Delle in der konvexen Hülle. Nur von außen.`;
+  }
+  ['s3-r','s3-s','s3-h','s3-bb','s3-ra'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ---- 3b · Aktivierungsvergleich ---- */
+(function(){
+  if(!$('ac-f')) return;
+  const F={
+    relu:x=>Math.max(0,x),
+    leaky:(x,a)=>Math.max(a*x,x),
+    gelu:x=>0.5*x*(1+Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x*x*x))),
+    silu:x=>x/(1+Math.exp(-x)),
+    tanh:x=>Math.tanh(x),
+    sig:x=>1/(1+Math.exp(-x))
+  };
+  const META={
+    relu:{inv:'Nein',inv2:'darf Punkte identifizieren → kann Topologie ändern',
+          sm:'Nein (Knick bei 0)',sm2:'stückweise linear → exakte Faltkanten',
+          top:'NICHT-Homöomorphismus',top2:'✓ kann Löcher schließen — das ist der Mechanismus',
+          sat:'Nein (rechts linear)',sat2:'keine verschwindenden Gradienten für x>0',
+          note:'Der Standard. Genau die richtige Nichtlinearität zum Falten.'},
+    leaky:{inv:'Ja',inv2:'bi-Lipschitz → umkehrbar',
+          sm:'Nein',sm2:'knickt, zerquetscht aber nie',
+          top:'Homöomorphismus',top2:'✗ Topologie bleibt erhalten — kein Entwirren',
+          sat:'Nein',sat2:'beide Äste linear',
+          note:'Die Wahl für invertierbare Netze. Biegt, aber faltet nicht wirklich.'},
+    gelu:{inv:'Nein (nicht monoton)',inv2:'lokaler Diffeomorphismus, global nicht injektiv',
+          sm:'Ja (C^∞)',sm2:'glatte Kanten statt scharfer Falten',
+          top:'kann Topologie ändern',top2:'✓ Glätten entfernt Ecken, nicht das Falten',
+          sat:'links ja',sat2:'kleines negatives Minimum',
+          note:'Transformer-Standard. Weiche Falte statt harter Kante.'},
+    silu:{inv:'Nein (nicht monoton)',inv2:'wie GELU',
+          sm:'Ja (C^∞)',sm2:'glatt, mit Unterschwinger',
+          top:'kann Topologie ändern',top2:'✓ dieselbe Klasse wie GELU',
+          sat:'links ja',sat2:'nähert sich 0 von unten',
+          note:'x·σ(x). Sehr ähnlich zu GELU.'},
+    tanh:{inv:'Ja',inv2:'streng monoton, umkehrbar',
+          sm:'Ja',sm2:'überall glatt',
+          top:'Homöomorphismus',top2:'✗ kann Topologie NICHT ändern',
+          sat:'JA, beidseitig',sat2:'⚠ verschwindende Gradienten — genau das Problem',
+          note:'Entwirrt nachweislich langsamer als ReLU (Naitzat et al. 2020).'},
+    sig:{inv:'Ja',inv2:'streng monoton',
+          sm:'Ja',sm2:'glatt',
+          top:'Homöomorphismus',top2:'✗ Topologie bleibt',
+          sat:'JA, beidseitig',sat2:'⚠ max. Ableitung nur 0.25',
+          note:'Drückt ℝ^d in (0,1)^d. Geometrisch: das Vanishing-Gradient-Problem.'}
+  };
+  function upd(){
+    const k=$('ac-f').value, a=+$('ac-a').value;
+    $('ac-a-v').textContent=fmt(a);
+    const xs=[],ys=[],ds=[];
+    for(let x=-4;x<=4;x+=0.02){
+      xs.push(x);
+      const y = k==='leaky'?F.leaky(x,a):F[k](x);
+      ys.push(y);
+      const h=1e-4, y2=(k==='leaky'?F.leaky(x+h,a):F[k](x+h));
+      ds.push((y2-y)/h);
+    }
+    Plotly.react('ac-plot',[
+      {x:xs,y:ys,type:'scatter',mode:'lines',name:'Φ(x)',line:{color:CO.em,width:3}},
+      {x:xs,y:ds,type:'scatter',mode:'lines',name:"Φ'(x)",line:{color:CO.co,width:2,dash:'dot'},yaxis:'y2'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'x'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Φ(x)'}),
+      yaxis2:{overlaying:'y',side:'right',title:"Φ'(x)",gridcolor:'rgba(0,0,0,0)',color:CO.co},
+      showlegend:true
+    }),CFG);
+    const M=META[k];
+    $('ac-inv').textContent=M.inv; $('ac-inv2').textContent=M.inv2;
+    $('ac-sm').textContent=M.sm;   $('ac-sm2').textContent=M.sm2;
+    $('ac-top').textContent=M.top; $('ac-top2').textContent=M.top2;
+    $('ac-sat').textContent=M.sat; $('ac-sat2').textContent=M.sat2;
+    $('ac-out').textContent=M.note;
+  }
+  $('ac-f').addEventListener('change',upd);
+  $('ac-a').addEventListener('input',upd); upd();
+})();
+
+/* ============================================================
+   4 · FOLD, DON'T CRUSH
+   ============================================================ */
+(function(){
+  const cv=$('f1-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const b=+$('f1-b').value, ang=+$('f1-a').value, n=+$('f1-n').value, ythr=+$('f1-y').value;
+    $('f1-b-v').textContent=fmt(b); $('f1-a-v').textContent=ang+'°';
+    $('f1-n-v').textContent=n; $('f1-y-v').textContent=fmt(ythr);
+    const lift=Math.sin(ang*Math.PI/180);
+
+    // 1D data: inner class in the middle
+    const R=rng(31), P=[];
+    for(let i=0;i<220;i++){
+      const x=-1.6+3.2*(i/219)+gauss(R)*0.006;
+      const inner = Math.abs(x)<0.55;
+      P.push({x, c:inner?1:0});
+    }
+    // fold positions
+    const bs=[]; for(let k=0;k<n;k++) bs.push(b + k*(1.2/n) - (n-1)*0.6/n);
+
+    clear(ctx,cv);
+    const T=mkT(cv,-2.0,2.0,-0.55,1.8);
+    grid(ctx,T,0.25,'#1a232e');
+    line(ctx,T.pad,T.y(0),T.W-T.pad,T.y(0),'#33424f',1.4);
+
+    // before
+    for(const p of P) dot(ctx,T.x(p.x),T.y(-0.35),3,p.c?CO.co:CO.em,.7);
+    label(ctx,'vorher (1D-Daten auf der Linie)',T.pad+4,T.y(-0.35)-14,CO.mu,11);
+
+    // fold: x stays, y = sum over folds of relu(x-b_k) with alternating sign, times lift
+    function F(p){
+      let y=0, sgn=1;
+      for(const bk of bs){ y += sgn*relu(p.x-bk)*lift; sgn=-sgn; }
+      return {x:p.x, y:Math.abs(y)*1.1, c:p.c};
+    }
+    const FP=P.map(F);
+    // fold edges
+    for(const bk of bs){
+      if(bk>-2&&bk<2) line(ctx,T.x(bk),T.y(0),T.x(bk),T.y(1.75),'rgba(255,209,102,.45)',1.5,[5,5]);
+    }
+    // the folded curve
+    ctx.strokeStyle='rgba(159,176,195,.35)'; ctx.lineWidth=1.5; ctx.beginPath();
+    let f2=true;
+    for(let t=-2;t<=2;t+=0.01){ const q=F({x:t,c:0}); const px=T.x(q.x),py=T.y(q.y); f2?(ctx.moveTo(px,py),f2=false):ctx.lineTo(px,py);}
+    ctx.stroke();
+    for(const p of FP) dot(ctx,T.x(p.x),T.y(p.y),3.2,p.c?CO.co:CO.em,.85);
+    // separating line
+    line(ctx,T.pad,T.y(ythr),T.W-T.pad,T.y(ythr),CO.sk,2.2);
+    label(ctx,`Trennlinie y = ${fmt(ythr)}`,T.W-T.pad-124,T.y(ythr)-7,CO.sk,11);
+    label(ctx,'nachher (in 2D gefaltet)',T.pad+4,T.pad+14,CO.t2,11);
+
+    // metrics
+    let ok=0; for(const p of FP){ const pred=p.y>ythr?1:0; if(pred===p.c) ok++; }
+    const acc=Math.max(ok,FP.length-ok)/FP.length;
+    // injectivity: check for collisions in y for distinct x? fold is injective if lift>0
+    const inj = lift>0.02;
+    const effDim = lift<0.02 ? 1 : 2;
+    $('f1-acc').textContent=(acc*100).toFixed(1)+' %';
+    $('f1-accbar').style.width=(acc*100)+'%';
+    $('f1-inj').textContent = inj?'JA ✓':'NEIN ✗';
+    $('f1-inj').style.color = inj?CO.em:CO.ro;
+    $('f1-dim').textContent = effDim;
+    const sep = acc>0.985;
+    $('f1-sep').textContent = sep?'JA ✓':'noch nicht';
+    $('f1-sep').style.color = sep?CO.em:CO.am;
+
+    $('f1-out').textContent =
+      `Falten: ${n}  ·  Faltwinkel: ${ang}°  ·  Hebung: ${fmt(lift)}\n`+
+      `Genauigkeit mit flacher Trennlinie: ${(acc*100).toFixed(1)} %\n`+
+      (ang<5 ? '→ Winkel 0° = PLATTDRÜCKEN. Die Daten bleiben auf der Linie, nichts gewonnen.'
+             : sep ? '→ Perfekt getrennt. Die Faltung hat die innere Klasse nach oben geklappt.'
+                   : '→ Faltposition und Trennlinie anpassen, bis die innere Klasse ganz oben liegt.');
+  }
+  ['f1-b','f1-a','f1-n','f1-y'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ---- 4b · FOLD vs CRUSH ---- */
+(function(){
+  const cv=$('f2-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const mode=$('f2-mode').value, s=+$('f2-s').value;
+    $('f2-s-v').textContent=fmt(s);
+    const R=rng(17), P=[];
+    for(let i=0;i<160;i++){ const x=-1.5+3*(i/159); P.push({x, y:0, c:Math.abs(x)<0.5?1:0}); }
+    clear(ctx,cv);
+    const T=mkT(cv,-1.9,1.9,-0.5,1.3);
+    grid(ctx,T,0.25,'#1a232e');
+    line(ctx,T.pad,T.y(0),T.W-T.pad,T.y(0),'#33424f',1.4);
+    // original ghost
+    for(const p of P) dot(ctx,T.x(p.x),T.y(0),2.6,'rgba(159,176,195,.28)');
+    let lost=0;
+    const Q=P.map(p=>{
+      if(mode==='fold'){
+        return {x:p.x, y:relu(p.x+0.5)*s*0.55, c:p.c};
+      } else {
+        // crush: plane IN the data plane -> everything x<b collapses to b
+        const b=-0.5;
+        if(p.x<b){ lost++; return {x:lerp(p.x,b,s), y:0, c:p.c}; }
+        return {x:p.x, y:0, c:p.c};
+      }
+    });
+    for(const p of Q) dot(ctx,T.x(p.x),T.y(p.y),3.2,p.c?CO.co:CO.em,.85);
+    line(ctx,T.x(-0.5),T.y(-0.3),T.x(-0.5),T.y(1.2),CO.am,2,[5,5]);
+    label(ctx,'ReLU-Ebene',T.x(-0.5)+8,T.pad+14,CO.am,11);
+    label(ctx,'grau = vorher',T.pad+4,T.H-14,CO.mu,11);
+
+    const inj = mode==='fold';
+    $('f2-lost').textContent = mode==='fold'?'0':Math.round(lost*s);
+    $('f2-lost').style.color = mode==='fold'?CO.em:CO.ro;
+    $('f2-inv').textContent = inj?'JA ✓':'NEIN ✗';
+    $('f2-inv').style.color = inj?CO.em:CO.ro;
+    $('f2-info').textContent = inj?'erhalten':'zerstört';
+    $('f2-info').style.color = inj?CO.em:CO.ro;
+  }
+  $('f2-mode').addEventListener('change',draw);
+  $('f2-s').addEventListener('input',draw); draw();
+})();
+
+/* ============================================================
+   5 · DAS 2D-EI
+   ============================================================ */
+(function(){
+  const cvT=$('e1-top'); if(!cvT) return; const ct=cvT.getContext('2d');
+  let anim=null;
+  function neurons(n){
+    const A=[]; for(let k=0;k<n;k++){const a=k*TAU/n; A.push({wx:Math.cos(a),wy:Math.sin(a),a});} return A;
+  }
+  function draw(){
+    const n=+$('e1-n').value, t=+$('e1-t').value/100, z=+$('e1-z').value, r0=+$('e1-r').value;
+    $('e1-n-v').textContent=n; $('e1-t-v').textContent=Math.round(t*100)+' %';
+    $('e1-z-v').textContent=fmt(z); $('e1-r-v').textContent=fmt(r0);
+    const N=neurons(n), b=r0*0.95;
+    const P=dsEgg(420,7,r0);
+
+    // top view
+    clear(ct,cvT);
+    const T=mkT(cvT,-1.35,1.35,-1.35,1.35);
+    grid(ct,T,0.5,'#1a232e'); axes(ct,T);
+    for(const p of P) dot(ct,T.x(p.x),T.y(p.y),2.8,p.c?CO.co:CO.em,.75);
+    for(const nu of N){
+      const px0=nu.wx*b, py0=nu.wy*b, L=4;
+      line(ct,T.x(px0+nu.wy*L),T.y(py0-nu.wx*L),T.x(px0-nu.wy*L),T.y(py0+nu.wx*L),CO.am,1.8);
+    }
+    ct.strokeStyle='rgba(255,209,102,.4)'; ct.lineWidth=1.5; ct.setLineDash([4,4]);
+    ct.beginPath(); ct.arc(T.x(0),T.y(0),r0*T.sx,0,TAU); ct.stroke(); ct.setLineDash([]);
+    label(ct,`${n} Faltlinien, ${(360/n).toFixed(0)}° versetzt`,T.pad+4,20,CO.am,11);
+
+    // lift function
+    function lift(x,y){ let s=0; for(const nu of N) s+=relu(b-(nu.wx*x+nu.wy*y)); return s*t; }
+
+    // 3D
+    const g=26, xs=[],ys=[],zs=[];
+    for(let i=0;i<g;i++){ xs.push(-1.3+2.6*i/(g-1)); ys.push(-1.3+2.6*i/(g-1)); }
+    for(let j=0;j<g;j++){ const row=[]; for(let i=0;i<g;i++) row.push(lift(xs[i],ys[j])); zs.push(row); }
+    const inner=P.filter(p=>p.c===1), outer=P.filter(p=>p.c===0);
+    const tr=[
+      {type:'surface',x:xs,y:ys,z:zs,opacity:.35,showscale:false,
+        colorscale:[[0,'#1b2632'],[0.5,'#2d5f66'],[1,'#4ecdc4']],name:'Faltfläche'},
+      {type:'scatter3d',mode:'markers',x:inner.map(p=>p.x),y:inner.map(p=>p.y),
+        z:inner.map(p=>lift(p.x,p.y)+0.02),marker:{size:2.6,color:CO.co},name:'innen'},
+      {type:'scatter3d',mode:'markers',x:outer.map(p=>p.x),y:outer.map(p=>p.y),
+        z:outer.map(p=>lift(p.x,p.y)+0.02),marker:{size:2.2,color:CO.em},name:'außen'},
+      {type:'surface',x:[-1.3,1.3],y:[-1.3,1.3],z:[[z,z],[z,z]],opacity:.30,showscale:false,
+        colorscale:[[0,CO.am],[1,CO.am]],name:'Trennebene'}
+    ];
+    Plotly.react('e1-3d',tr,{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      margin:{l:0,r:0,t:0,b:0},showlegend:false,
+      scene:{
+        xaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false,title:'x₁'},
+        yaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false,title:'x₂'},
+        zaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false,title:'Σ ReLU'},
+        camera:{eye:{x:1.5,y:-1.6,z:1.0}}
+      }
+    },CFG);
+
+    // metrics
+    let ri=0,ro=0;
+    for(const p of inner) if(lift(p.x,p.y)>z) ri++;
+    for(const p of outer) if(lift(p.x,p.y)<=z) ro++;
+    const pi=ri/Math.max(1,inner.length), po=ro/Math.max(1,outer.length);
+    const acc=(ri+ro)/P.length;
+    $('e1-ri').textContent=(pi*100).toFixed(1)+' %'; $('e1-rib').style.width=(pi*100)+'%';
+    $('e1-ro').textContent=(po*100).toFixed(1)+' %'; $('e1-rob').style.width=(po*100)+'%';
+    $('e1-acc').textContent=(acc*100).toFixed(1)+' %'; $('e1-accb').style.width=(acc*100)+'%';
+    $('e1-st').textContent = acc>0.96?'gelöst ✓':(acc>0.85?'fast':'falten!');
+    $('e1-st').style.color = acc>0.96?CO.em:(acc>0.85?CO.am:CO.ro);
+
+    tex($('e1-f'),`h_k=\\max\\Big(0,\\;${fmt(b)}-(\\cos\\theta_k\\,x_1+\\sin\\theta_k\\,x_2)\\Big),\\quad \\theta_k=\\tfrac{2\\pi k}{${n}},\\quad z=\\sum_{k=1}^{${n}}h_k`);
+  }
+  ['e1-n','e1-t','e1-z','e1-r'].forEach(i=>$(i).addEventListener('input',draw));
+  $('e1-play').addEventListener('click',()=>{
+    if(anim){clearInterval(anim);anim=null;$('e1-play').textContent='▶ Falten animieren';return;}
+    $('e1-play').textContent='⏸ Stopp'; let v=0;
+    anim=setInterval(()=>{ v=(v+2)%102; $('e1-t').value=Math.min(100,v); draw(); },55);
+  });
+  draw();
+})();
+
+/* ---- 5b · GELERNTER WINKEL ---- */
+(function(){
+  const cv=$('e2-2d'); if(!cv) return; const ctx=cv.getContext('2d');
+  const P=dsEgg(300,13,0.42);
+  function miss(ang){
+    const a=ang*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a), b=0.40;
+    let m=0;
+    for(const p of P){ const z=b-(wx*p.x+wy*p.y); const fires=z>0; if(fires!==(p.c===1)) m++; }
+    return Math.min(m,P.length-m);
+  }
+  function draw(){
+    const ang=+$('e2-a').value; $('e2-a-v').textContent=ang+'°';
+    const a=ang*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a), b=0.40;
+    clear(ctx,cv);
+    const T=mkT(cv,-1.3,1.3,-1.3,1.3);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    for(const p of P){
+      const z=b-(wx*p.x+wy*p.y);
+      const on=z>0;
+      dot(ctx,T.x(p.x),T.y(p.y),3,p.c?CO.co:CO.em, on?0.95:0.32);
+    }
+    const px0=wx*b, py0=wy*b, L=4;
+    line(ctx,T.x(px0+wy*L),T.y(py0-wx*L),T.x(px0-wy*L),T.y(py0+wx*L),CO.am,2.4);
+    line(ctx,T.x(0),T.y(0),T.x(wx*0.6),T.y(wy*0.6),CO.sk,2.5);
+    label(ctx,'w',T.x(wx*0.6)+8,T.y(wy*0.6)-5,CO.sk,12);
+    label(ctx,'hell = Neuron feuert',T.pad+4,20,CO.t2,11);
+
+    const angs=[],ms=[];
+    for(let i=0;i<=180;i++){const A=i*2; angs.push(A); ms.push(miss(A));}
+    Plotly.react('e2-plot',[
+      {x:angs,y:ms,type:'scatter',mode:'lines',line:{color:CO.co,width:2.5},name:'Fehlzähler',fill:'tozeroy',fillcolor:'rgba(255,107,157,.10)'},
+      {x:[ang],y:[miss(ang)],type:'scatter',mode:'markers',marker:{color:CO.am,size:12},name:'aktuell'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Winkel θ (°)'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'falsch klassifiziert'}),
+      showlegend:false,title:{text:'Verlustlandschaft eines Neurons',font:{size:12,color:CO.t2}}
+    }),CFG);
+    $('e2-out').textContent =
+      `Winkel θ = ${ang}°   ·   Fehlklassifiziert: ${miss(ang)} von ${P.length}\n`+
+      `→ Genau das minimiert der Gradientenabstieg. Jedes Neuron sucht seinen eigenen Faltwinkel.`;
+  }
+  $('e2-a').addEventListener('input',draw);
+  $('e2-opt').addEventListener('click',()=>{
+    let best=0,bm=Infinity;
+    for(let A=0;A<360;A++){const m=miss(A); if(m<bm){bm=m;best=A;}}
+    $('e2-a').value=best; draw();
+  });
+  draw();
+})();
+
+/* ============================================================
+   6 · TIEFE
+   ============================================================ */
+(function(){
+  const cv=$('c1-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const L=+$('c1-l').value, n=+$('c1-n').value, s=+$('c1-s').value;
+    $('c1-l-v').textContent=L; $('c1-n-v').textContent=n; $('c1-s-v').textContent=s;
+    const R=rng(s*91+7);
+    const W=[],B=[];
+    for(let l=0;l<L;l++){
+      const wl=[],bl=[];
+      for(let i=0;i<n;i++){
+        const row=[]; const dim = l===0?2:n;
+        for(let j=0;j<dim;j++) row.push(gauss(R)*1.25);
+        wl.push(row); bl.push(gauss(R)*0.55);
+      }
+      W.push(wl); B.push(bl);
+    }
+    function fwd(x,y){
+      let v=[x,y]; const pat=[];
+      for(let l=0;l<L;l++){
+        const nv=[];
+        for(let i=0;i<n;i++){
+          let s2=B[l][i];
+          for(let j=0;j<v.length;j++) s2+=W[l][i][j]*v[j];
+          pat.push(s2>0?1:0);
+          nv.push(relu(s2));
+        }
+        v=nv;
+      }
+      return pat;
+    }
+    clear(ctx,cv);
+    const T=mkT(cv,-1.6,1.6,-0.7,0.7);
+    const step=3, seen=new Map();
+    for(let px=T.pad;px<T.W-T.pad;px+=step){
+      for(let py=T.pad;py<T.H-T.pad;py+=step){
+        const X=T.ix(px),Y=T.iy(py);
+        const pat=fwd(X,Y).join('');
+        if(!seen.has(pat)) seen.set(pat, (seen.size*61)%360);
+        const h=seen.get(pat);
+        ctx.fillStyle=`hsla(${h},62%,58%,.42)`;
+        ctx.fillRect(px,py,step,step);
+      }
+    }
+    // outline
+    ctx.strokeStyle='rgba(38,52,67,.6)'; ctx.lineWidth=1;
+    ctx.strokeRect(T.pad,T.pad,T.W-2*T.pad,T.H-2*T.pad);
+    label(ctx,`${L} Schichten × ${n} Neuronen`,T.pad+6,T.pad+16,'#fff',12);
+
+    const cnt=seen.size;
+    const params=L*n*(n+1)+2*n;
+    // bound: product over layers
+    let bd=1; for(let l=0;l<L;l++) bd*=Math.pow(2,Math.min(n,2));
+    $('c1-cnt').textContent=cnt;
+    $('c1-bd').textContent=bd>1e6?bd.toExponential(1):bd;
+    $('c1-par').textContent=params;
+    $('c1-eff').textContent=(cnt/params).toFixed(2);
+
+    // comparison plot
+    const Ls=[1,2,3,4,5,6,7,8];
+    const depth=Ls.map(l=>Math.pow(2,l));
+    const width=Ls.map(l=>1+2*l+2*l*(2*l-1)/2);
+    Plotly.react('c1-plot',[
+      {x:Ls,y:depth,type:'scatter',mode:'lines+markers',name:'Tiefe (2^L) — exponentiell',
+        line:{color:CO.em,width:3},marker:{size:7}},
+      {x:Ls,y:width,type:'scatter',mode:'lines+markers',name:'Breite (quadratisch)',
+        line:{color:CO.co,width:3,dash:'dash'},marker:{size:7}},
+      {x:[L],y:[Math.pow(2,L)],type:'scatter',mode:'markers',
+        marker:{color:CO.am,size:13,line:{color:'#fff',width:1.5}},name:'aktuell'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Tiefe L bzw. Neuronen n',dtick:1}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Anzahl Regionen',type:'log'}),
+      showlegend:true,title:{text:'Tiefe schlägt Breite — exponentiell',font:{size:12,color:CO.t2}}
+    }),CFG);
+  }
+  ['c1-l','c1-n','c1-s'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ---- 6b · SÄGEZAHN ---- */
+(function(){
+  if(!$('c2-l')) return;
+  function saw(x,L){
+    let v=x;
+    for(let l=0;l<L;l++){ v = 2*Math.abs(v-0.5); v = 1-Math.abs(1-2*Math.abs(v*0.5)); v = Math.abs(2*(v%1)-1); }
+    return v;
+  }
+  function sawExact(x,L){
+    // triangle wave iterated: T(x)=1-|2x-1| maps [0,1]->[0,1]
+    let v=x;
+    for(let l=0;l<L;l++) v = 1-Math.abs(2*v-1);
+    return v;
+  }
+  function upd(){
+    const L=+$('c2-l').value, showSteps=$('c2-steps').checked;
+    $('c2-l-v').textContent=L;
+    const xs=[]; for(let i=0;i<=2000;i++) xs.push(i/2000);
+    const traces=[];
+    if(showSteps){
+      for(let l=1;l<L;l++){
+        traces.push({x:xs,y:xs.map(x=>sawExact(x,l)),type:'scatter',mode:'lines',
+          line:{color:`rgba(159,176,195,${0.15+0.10*l})`,width:1.2},name:`L=${l}`,showlegend:l<4});
+      }
+    }
+    traces.push({x:xs,y:xs.map(x=>sawExact(x,L)),type:'scatter',mode:'lines',
+      line:{color:CO.em,width:2.5},name:`L=${L} · ${Math.pow(2,L)} Zacken`});
+    Plotly.react('c2-plot',traces,Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Eingang x',range:[0,1]}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Ausgang',range:[-0.03,1.03]}),
+      showlegend:true,
+      title:{text:`Tiefe ${L} · Breite 2 · exakt 2^${L} = ${Math.pow(2,L)} lineare Regionen`,
+             font:{size:12,color:CO.t2}}
+    }),CFG);
+    $('c2-out').textContent =
+      `Jede Schicht wendet T(x) = 1 − |2x − 1| an — eine Faltung des Intervalls [0,1] auf sich selbst.\n`+
+      `Nach ${L} Schichten: ${Math.pow(2,L)} Zacken, ${Math.pow(2,L)} lineare Regionen, mit nur ${L*6} Parametern.\n`+
+      `→ Ein flaches Netz bräuchte ${Math.pow(2,L)} Neuronen für dasselbe. Das ist der Tiefen-Vorteil.`;
+  }
+  $('c2-l').addEventListener('input',upd);
+  $('c2-steps').addEventListener('change',upd); upd();
+})();
+
+/* ============================================================
+   7 · SCHEREN
+   ============================================================ */
+(function(){
+  const cv=$('sh-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  let cmp=false;
+  function draw(){
+    const L=+$('sh-l').value, s=+$('sh-s').value;
+    $('sh-l-v').textContent=L; $('sh-s-v').textContent=fmt(s);
+    const P=dsEgg(300,7,0.40);
+    // peeling: each layer shears one slice of outer class away
+    function peel(p,L){
+      let q={x:p.x,y:p.y,c:p.c};
+      for(let l=0;l<L;l++){
+        const a=l*TAU/8, nx=Math.cos(a), ny=Math.sin(a);
+        const z=nx*q.x+ny*q.y;
+        if(z>0.42){ q={x:q.x+nx*s*0.16, y:q.y+ny*s*0.16, c:q.c}; }
+      }
+      return q;
+    }
+    clear(ctx,cv);
+    const T=mkT(cv,-2.0,2.0,-1.0,1.0);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    const Q=P.map(p=>peel(p,L));
+    for(const p of P) dot(ctx,T.x(p.x),T.y(p.y),2.2,'rgba(159,176,195,.20)');
+    for(const p of Q) dot(ctx,T.x(p.x),T.y(p.y),3,p.c?CO.co:CO.em,.85);
+    // best flat line
+    let best={a:0,b:0,acc:0};
+    for(let i=0;i<72;i++){ const A=i*5;
+      for(let j=-40;j<=40;j++){ const B=j/20;
+        const a=A*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a);
+        let ok=0; for(const p of Q){ const z=wx*p.x+wy*p.y-B; if((z>0?1:0)===p.c) ok++; }
+        const acc=Math.max(ok,Q.length-ok)/Q.length;
+        if(acc>best.acc) best={a:A,b:B,acc};
+      }}
+    const ba=best.a*Math.PI/180;
+    const dx=-Math.sin(ba)*5, dy=Math.cos(ba)*5;
+    const cx=Math.cos(ba)*best.b, cy=Math.sin(ba)*best.b;
+    line(ctx,T.x(cx-dx),T.y(cy-dy),T.x(cx+dx),T.y(cy+dy),CO.am,2.4,[6,4]);
+    label(ctx,`${L} Schälschichten · grau = Original`,T.pad+4,20,CO.t2,12);
+
+    if(cmp){
+      // overlay folded version at right
+      label(ctx,'Vergleich: 1 Faltschicht löst dasselbe',T.W-T.pad-230,T.H-14,CO.em,12);
+    }
+
+    const sep = best.acc>0.97;
+    $('sh-used').textContent=L;
+    $('sh-sep').textContent = sep?'JA ✓':'NEIN';
+    $('sh-sep').style.color = sep?CO.em:CO.ro;
+    $('sh-fac').textContent = L>0 ? L+'×' : '—';
+    $('sh-out').textContent =
+      `Nach ${L} Schälschichten: beste flache Trennung = ${(best.acc*100).toFixed(1)} %\n`+
+      (sep ? `→ Endlich trennbar — nach ${L} Schichten. Falten hätte EINE gebraucht.`
+           : `→ Noch nicht trennbar. Mehr Schichten nötig (jede schält nur eine dünne Scheibe).`)+
+      `\n→ In N Dimensionen braucht man eine Spirale statt eines Rundgangs. Der Aufwand explodiert.`;
+  }
+  ['sh-l','sh-s'].forEach(i=>$(i).addEventListener('input',draw));
+  $('sh-step').addEventListener('click',()=>{
+    $('sh-l').value=Math.min(16,+$('sh-l').value+1); draw();
+  });
+  $('sh-cmp').addEventListener('click',(e)=>{cmp=!cmp;e.target.classList.toggle('on',cmp);draw();});
+  draw();
+})();
+
+/* ============================================================
+   8 · FINGERABDRUCK
+   ============================================================ */
+/* 8.1 · bimodale Tuningkurven */
+(function(){
+  const cv=$('t1-geo'); if(!cv) return; const ctx=cv.getContext('2d');
+  const P=dsEgg(600,7,0.42);
+  function dipScore(vals){
+    // simple bimodality: fraction near zero vs spread
+    if(vals.length<8) return 0;
+    const mn=Math.min(...vals), mx=Math.max(...vals);
+    const nb=18, h=new Array(nb).fill(0);
+    for(const v of vals){ const k=clamp(Math.floor((v-mn)/(mx-mn+1e-9)*nb),0,nb-1); h[k]++; }
+    // find center dip relative to two side peaks
+    const mid=Math.floor(nb/2);
+    const left=Math.max(...h.slice(0,mid)), right=Math.max(...h.slice(mid)), center=h[mid];
+    const peak=Math.min(left,right);
+    return peak>0 ? clamp(1-center/peak,0,1) : 0;
+  }
+  function draw(){
+    const ang=+$('t1-a').value, b=+$('t1-b').value;
+    $('t1-a-v').textContent=ang+'°'; $('t1-b-v').textContent=fmt(b);
+    const a=ang*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a);
+
+    clear(ctx,cv);
+    const T=mkT(cv,-1.3,1.3,-1.3,1.3);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    for(const p of P) dot(ctx,T.x(p.x),T.y(p.y),2.4,p.c?CO.co:CO.em,.6);
+    const px0=wx*b, py0=wy*b, L=4;
+    line(ctx,T.x(px0+wy*L),T.y(py0-wx*L),T.x(px0-wy*L),T.y(py0+wx*L),CO.am,2.4);
+    line(ctx,T.x(0),T.y(0),T.x(wx*0.5),T.y(wy*0.5),CO.sk,2.5);
+    label(ctx,'w',T.x(wx*0.5)+8,T.y(wy*0.5)-5,CO.sk,12);
+
+    const zi=[],zo=[];
+    for(const p of P){ const z=wx*p.x+wy*p.y-b; (p.c?zi:zo).push(z); }
+    const dip=dipScore(zi);
+    Plotly.react('t1-hist',[
+      {x:zi,type:'histogram',nbinsx:34,name:'innere Klasse',marker:{color:CO.co},opacity:.75},
+      {x:zo,type:'histogram',nbinsx:34,name:'äußere Klasse',marker:{color:CO.em},opacity:.65}
+    ],Object.assign({},PL,{
+      barmode:'overlay', bargap:.03,
+      xaxis:Object.assign({},PL.xaxis,{title:'Vor-Aktivierung z = w·x + b'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Anzahl'}),
+      shapes:[{type:'line',x0:0,x1:0,y0:0,y1:1,yref:'paper',
+        line:{color:CO.am,width:2,dash:'dash'}}],
+      showlegend:true,title:{text:'Tuningkurve — Delle bei null suchen',font:{size:12,color:CO.t2}}
+    }),CFG);
+
+    $('t1-dip').textContent=fmt(dip);
+    $('t1-dipb').style.width=(dip*100)+'%';
+    $('t1-mod').textContent = dip>0.35?'bimodal':'unimodal';
+    $('t1-mod').style.color = dip>0.35?CO.co:CO.t2;
+    $('t1-is').textContent = dip>0.35?'JA ✓':'nein';
+    $('t1-is').style.color = dip>0.35?CO.em:CO.mu;
+    $('t1-out').textContent =
+      `Dip-Score (innere Klasse): ${fmt(dip,3)}\n`+
+      (dip>0.35 ? '→ BIMODAL. Die Faltkante liegt mitten in der inneren Klasse — ein Faltneuron.'
+                : '→ Unimodal. Dieses Neuron faltet nicht; es trennt nur oder tut nichts.')+
+      `\n→ Genau danach sucht man in einem trainierten Netz: Neuronen mit Delle bei z = 0.`;
+  }
+  ['t1-a','t1-b'].forEach(i=>$(i).addEventListener('input',draw));
+  $('t1-find').addEventListener('click',()=>{
+    let best={a:0,b:0,s:-1};
+    for(let A=0;A<180;A+=3) for(let B=-1.5;B<=1.5;B+=0.1){
+      const a=A*Math.PI/180, wx=Math.cos(a), wy=Math.sin(a);
+      const zi=[]; for(const p of P) if(p.c===1) zi.push(wx*p.x+wy*p.y-B);
+      const s=dipScore(zi);
+      if(s>best.s) best={a:A,b:B,s};
+    }
+    $('t1-a').value=best.a; $('t1-b').value=fmt(best.b); draw();
+  });
+  draw();
+})();
+
+/* 8.2 · Dimensionsexpansion */
+(function(){
+  if(!$('t2-e')) return;
+  function upd(){
+    const e=+$('t2-e').value/100; $('t2-e-v').textContent=Math.round(e*100)+' %';
+    const layers=['Eingang','Schicht 1','Schicht 2','Schicht 3','Ausgang'];
+    const untrained=[10,11,11.5,11.8,10];
+    const trained  =[10,24,38,31,10];
+    const cur = untrained.map((u,i)=>lerp(u,trained[i],e));
+    Plotly.react('t2-plot',[
+      {x:layers,y:untrained,type:'scatter',mode:'lines+markers',name:'untrainiert',
+        line:{color:CO.mu,width:2,dash:'dash'},marker:{size:8}},
+      {x:layers,y:cur,type:'scatter',mode:'lines+markers',name:`Training ${Math.round(e*100)} %`,
+        line:{color:CO.em,width:3.5},marker:{size:11},fill:'tonexty',fillcolor:'rgba(78,205,196,.12)'},
+      {x:layers,y:trained,type:'scatter',mode:'lines',name:'voll trainiert',
+        line:{color:CO.co,width:2,dash:'dot'}}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Schicht'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Effektive Dimension (PCA)',rangemode:'tozero'}),
+      showlegend:true,title:{text:'Falten öffnet neue Richtungen',font:{size:12,color:CO.t2}}
+    }),CFG);
+    const peak=Math.max(...cur), gain=peak/cur[0];
+    $('t2-out').textContent =
+      `Maximale effektive Dimension: ${fmt(peak,1)}   Expansionsfaktor: ${fmt(gain,2)}×\n`+
+      (e<0.2 ? '→ Ein untrainiertes Netz expandiert kaum. Die Falten existieren noch nicht.'
+             : '→ Deutliche Expansion in den verborgenen Schichten — genau die Signatur des Faltens.')+
+      `\n→ Am Ende kollabiert es wieder auf 10 Klassen (Neural Collapse).`;
+  }
+  $('t2-e').addEventListener('input',upd); upd();
+})();
+
+/* 8.3 · Winkel zur Datenmannigfaltigkeit */
+(function(){
+  const cv=$('t3-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const a=+$('t3-a').value; $('t3-a-v').textContent=a+'°';
+    const th=a*Math.PI/180;
+    clear(ctx,cv);
+    const T=mkT(cv,-1.6,1.6,-1.1,1.1);
+    grid(ctx,T,0.25,'#1a232e');
+    // data subspace = horizontal band
+    ctx.fillStyle='rgba(78,205,196,.12)';
+    ctx.fillRect(T.pad,T.y(0.16),T.W-2*T.pad,T.y(-0.16)-T.y(0.16));
+    line(ctx,T.pad,T.y(0),T.W-T.pad,T.y(0),CO.em,2);
+    label(ctx,'Datenunterraum',T.pad+6,T.y(0)-10,CO.em,11);
+    // neuron hyperplane at angle a
+    const nx=Math.cos(th), ny=Math.sin(th), L=3;
+    line(ctx,T.x(ny*L),T.y(-nx*L),T.x(-ny*L),T.y(nx*L),CO.am,2.4);
+    line(ctx,T.x(0),T.y(0),T.x(nx*0.55),T.y(ny*0.55),CO.sk,2.6);
+    label(ctx,'w',T.x(nx*0.55)+8,T.y(ny*0.55)-5,CO.sk,12);
+    // arc
+    ctx.strokeStyle=CO.co; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.arc(T.x(0),T.y(0),34,0,-th,true); ctx.stroke();
+    label(ctx,`θ = ${a}°`,T.x(0)+42,T.y(0)-14,CO.co,12);
+
+    // effectiveness curve: peaks at intermediate angles
+    const angs=[],eff=[];
+    for(let A=0;A<=90;A++){
+      const r=A*Math.PI/180;
+      // fold effectiveness: sin(θ)·cos(θ)-like → peaks at 45°, but real folds prefer ~30-60
+      const v=Math.pow(Math.sin(r),0.9)*Math.pow(Math.cos(r),0.55);
+      angs.push(A); eff.push(v/0.52*100);
+    }
+    const r=th, cur=Math.pow(Math.sin(r),0.9)*Math.pow(Math.cos(r),0.55)/0.52*100;
+    Plotly.react('t3-plot',[
+      {x:angs,y:eff,type:'scatter',mode:'lines',name:'Faltwirksamkeit',
+        line:{color:CO.em,width:3},fill:'tozeroy',fillcolor:'rgba(78,205,196,.12)'},
+      {x:[a],y:[cur],type:'scatter',mode:'markers',marker:{color:CO.co,size:13},name:'aktuell'},
+      {x:[0,0],y:[0,100],type:'scatter',mode:'lines',line:{color:CO.mu,dash:'dot',width:1.5},name:'parallel (nutzlos)'},
+      {x:[90,90],y:[0,100],type:'scatter',mode:'lines',line:{color:CO.mu,dash:'dot',width:1.5},showlegend:false}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Winkel zur Datenebene (°)'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'relative Wirksamkeit (%)',range:[0,110]}),
+      showlegend:true
+    }),CFG);
+
+    $('t3-out').textContent =
+      `Winkel θ = ${a}°   Wirksamkeit: ${fmt(cur,1)} %\n`+
+      (a<8 ? '→ PARALLEL: die Ebene liegt in den Daten → Plattdrücken, kein Falten.'
+           : a>82 ? '→ ORTHOGONAL: die Ebene berührt die Daten gar nicht → keine Wirkung.'
+                  : '→ MITTLERER WINKEL: hier faltet das Neuron wirksam. Genau das lernt das Netz.');
+  }
+  $('t3-a').addEventListener('input',draw); draw();
+})();
+
+/* 8.4 · χ-Faltmaß */
+(function(){
+  const cv=$('t4-path'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const L=+$('t4-l').value, W=+$('t4-w').value, s=+$('t4-s').value;
+    $('t4-l-v').textContent=L; $('t4-w-v').textContent=W; $('t4-s-v').textContent=s;
+    const R=rng(s*173+29);
+    // build random net
+    const Ws=[],Bs=[];
+    for(let l=0;l<L;l++){
+      const dim = l===0?2:W;
+      const wl=[],bl=[];
+      for(let i=0;i<W;i++){
+        const row=[]; for(let j=0;j<dim;j++) row.push(gauss(R)*Math.sqrt(2/dim)*1.6);
+        wl.push(row); bl.push(gauss(R)*0.4);
+      }
+      Ws.push(wl); Bs.push(bl);
+    }
+    function fwd(x,y){
+      let v=[x,y];
+      for(let l=0;l<L;l++){
+        const nv=[];
+        for(let i=0;i<W;i++){
+          let z=Bs[l][i]; for(let j=0;j<v.length;j++) z+=Ws[l][i][j]*v[j];
+          nv.push(relu(z));
+        }
+        v=nv;
+      }
+      return v;
+    }
+    // straight line in input, image in output (project to 2 PCs via first 2 dims)
+    const N=90, pts=[];
+    for(let k=0;k<N;k++){
+      const t=-1.2+2.4*k/(N-1);
+      const out=fwd(t, t*0.35+0.15);
+      pts.push(out);
+    }
+    // metrics
+    const d=(a,b)=>{let s2=0;for(let i=0;i<a.length;i++){const q=a[i]-b[i];s2+=q*q;}return Math.sqrt(s2);};
+    let total=0; for(let i=0;i<pts.length-1;i++) total+=d(pts[i],pts[i+1]);
+    let maxd=0; for(let i=0;i<pts.length;i++) maxd=Math.max(maxd,d(pts[i],pts[0]));
+    const chi = total>1e-9 ? clamp(1-maxd/total,0,1) : 0;
+
+    // draw projected path (dims 0,1)
+    clear(ctx,cv);
+    let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    for(const p of pts){ xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);
+      ymin=Math.min(ymin,p[1]||0);ymax=Math.max(ymax,p[1]||0); }
+    const pad2=(xmax-xmin)*0.12+0.05, pad3=(ymax-ymin)*0.12+0.05;
+    const T=mkT(cv,xmin-pad2,xmax+pad2,ymin-pad3,ymax+pad3);
+    grid(ctx,T,(xmax-xmin)/5||0.2,'#1a232e');
+    ctx.strokeStyle=CO.em; ctx.lineWidth=2.4; ctx.beginPath();
+    pts.forEach((p,i)=>{ const px=T.x(p[0]),py=T.y(p[1]||0); i?ctx.lineTo(px,py):ctx.moveTo(px,py); });
+    ctx.stroke();
+    pts.forEach((p,i)=>{ if(i%9===0) dot(ctx,T.x(p[0]),T.y(p[1]||0),3,CO.co,.85); });
+    dot(ctx,T.x(pts[0][0]),T.y(pts[0][1]||0),6,CO.am);
+    dot(ctx,T.x(pts[N-1][0]),T.y(pts[N-1][1]||0),6,CO.sk);
+    label(ctx,'Start',T.x(pts[0][0])+8,T.y(pts[0][1]||0)-8,CO.am,11);
+    label(ctx,'Ende',T.x(pts[N-1][0])+8,T.y(pts[N-1][1]||0)-8,CO.sk,11);
+    label(ctx,'Projektion auf die ersten 2 Kanäle',T.pad+4,16,CO.t2,11);
+
+    // chi vs depth curve
+    const Ls=[],chis=[];
+    for(let LL=1;LL<=10;LL++){
+      const R2=rng(s*173+29);
+      const W2=[],B2=[];
+      for(let l=0;l<LL;l++){
+        const dim=l===0?2:W; const wl=[],bl=[];
+        for(let i=0;i<W;i++){ const row=[]; for(let j=0;j<dim;j++) row.push(gauss(R2)*Math.sqrt(2/dim)*1.6);
+          wl.push(row); bl.push(gauss(R2)*0.4);} W2.push(wl);B2.push(bl);
+      }
+      const f=(x,y)=>{ let v=[x,y];
+        for(let l=0;l<LL;l++){ const nv=[];
+          for(let i=0;i<W;i++){ let z=B2[l][i]; for(let j=0;j<v.length;j++) z+=W2[l][i][j]*v[j]; nv.push(relu(z)); }
+          v=nv; }
+        return v; };
+      const pp=[]; for(let k=0;k<60;k++){ const t=-1.2+2.4*k/59; pp.push(f(t,t*0.35+0.15)); }
+      let tot=0; for(let i=0;i<pp.length-1;i++) tot+=d(pp[i],pp[i+1]);
+      let mx=0; for(let i=0;i<pp.length;i++) mx=Math.max(mx,d(pp[i],pp[0]));
+      Ls.push(LL); chis.push(tot>1e-9?clamp(1-mx/tot,0,1):0);
+    }
+    Plotly.react('t4-plot',[
+      {x:Ls,y:chis,type:'scatter',mode:'lines+markers',name:'œá(Tiefe)',
+        line:{color:CO.em,width:3},marker:{size:8},fill:'tozeroy',fillcolor:'rgba(78,205,196,.10)'},
+      {x:[L],y:[chi],type:'scatter',mode:'markers',
+        marker:{color:CO.co,size:14,line:{color:'#fff',width:1.5}},name:'aktuell'}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Tiefe L',dtick:1}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Faltma√ü œá',range:[0,1]}),
+      showlegend:true,title:{text:'œá w√§chst mit der Tiefe',font:{size:12,color:CO.t2}}
+    }),CFG);
+
+    $('t4-chi').textContent=fmt(chi,3);
+    $('t4-chib').style.width=(chi*100)+'%';
+    $('t4-len').textContent=fmt(total,2);
+    $('t4-max').textContent=fmt(maxd,2);
+    $('t4-dx').textContent = chi<0.15?'fast flach':(chi<0.5?'gefaltet':'stark gefaltet');
+    $('t4-dx').style.color = chi<0.15?CO.mu:(chi<0.5?CO.am:CO.em);
+  }
+  ['t4-l','t4-w','t4-s'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ============================================================
+   9 ¬∑ POKER
+   ============================================================ */
+(function(){
+  if(!$('p1-e')) return;
+  function upd(){
+    const e=+$('p1-e').value/100, view=$('p1-view').value;
+    $('p1-e-v').textContent=Math.round(e*100);
+    const layers=['Eingang','Schicht 1','Schicht 2','Ausgang'];
+    const dimU=[10,12,12,10], dimT=[10,34,41,10];
+    const cur=dimU.map((u,i)=>lerp(u,dimT[i],e));
+
+    let traces=[], lay={};
+    if(view==='dim'||view==='all'){
+      traces.push({x:layers,y:dimU,type:'scatter',mode:'lines+markers',name:'untrainiert',
+        line:{color:CO.mu,dash:'dash',width:2},marker:{size:8}});
+      traces.push({x:layers,y:cur,type:'scatter',mode:'lines+markers',name:'trainiert',
+        line:{color:CO.em,width:3.5},marker:{size:11}});
+      lay={xaxis:Object.assign({},PL.xaxis,{title:'Schicht'}),
+           yaxis:Object.assign({},PL.yaxis,{title:'Effektive Dimension',rangemode:'tozero'})};
+    }
+    if(view==='dip'){
+      const R=rng(77), du=[], dt=[];
+      for(let i=0;i<200;i++){
+        du.push(Math.abs(gauss(R))*0.012+0.004);
+        dt.push(Math.abs(gauss(R))*0.012+0.004 + e*(0.018+Math.abs(gauss(R))*0.014));
+      }
+      traces=[
+        {x:du,type:'histogram',name:'untrainiert',marker:{color:CO.mu},opacity:.7,nbinsx:34},
+        {x:dt,type:'histogram',name:'trainiert',marker:{color:CO.em},opacity:.7,nbinsx:34}
+      ];
+      lay={barmode:'overlay',bargap:.03,
+        xaxis:Object.assign({},PL.xaxis,{title:'Hartigan-Dip-Statistik'}),
+        yaxis:Object.assign({},PL.yaxis,{title:'Anzahl Neuronen'})};
+    }
+    if(view==='sil'){
+      const base=0.62*e+0.10;
+      traces=[
+        {x:['Nichts abgeschaltet','10 bimodale aus','10 unimodale aus','10 zuf√§llige aus'],
+         y:[base, base*0.42, base*0.94, base*0.78],
+         type:'bar',marker:{color:[CO.em,CO.ro,CO.am,CO.sk]},name:'Macro-F1'}
+      ];
+      lay={xaxis:Object.assign({},PL.xaxis,{title:''}),
+           yaxis:Object.assign({},PL.yaxis,{title:'Macro-F1',range:[0,0.85]}),showlegend:false};
+    }
+    if(view==='all'){
+      const base=0.62*e+0.10;
+      traces.push({x:['keine','bimodal','unimodal','zuf√§llig'],y:[base,base*0.42,base*0.94,base*0.78],
+        type:'bar',marker:{color:[CO.em,CO.ro,CO.am,CO.sk]},name:'Macro-F1',yaxis:'y2'});
+      lay.yaxis2={overlaying:'y',side:'right',title:'F1',color:CO.am,gridcolor:'rgba(0,0,0,0)'};
+    }
+    Plotly.react('p1-plot',traces,Object.assign({},PL,lay,{showlegend:view!=='sil'}),CFG);
+
+    const peak=Math.max(...cur);
+    $('p1-out').textContent =
+      `Netz: 10 ‚Üí 100 ‚Üí 100 ‚Üí 10   ¬∑   Trainingsfortschritt: ${Math.round(e*100)} %\n`+
+      `Maximale effektive Dimension: ${fmt(peak,1)}  (Eingang: 10)\n`+
+      (e<0.15?'‚Üí Untrainiert: keine Expansion, keine Bimodalit√§t, kein kausaler Effekt.'
+             :'‚Üí Trainiert: Expansion + Bimodalit√§t + kausale Abh√§ngigkeit von den Faltneuronen.');
+  }
+  $('p1-e').addEventListener('input',upd);
+  $('p1-view').addEventListener('change',upd); upd();
+})();
+
+(function(){
+  if(!$('p2-k')) return;
+  function upd(){
+    const k=+$('p2-k').value, w=$('p2-which').value;
+    $('p2-k-v').textContent=k;
+    const base=0.72;
+    const fB=n=>base*Math.exp(-n*0.062);
+    const fU=n=>base*(1-0.0035*n);
+    const fR=n=>base*(1-0.012*n);
+    const ns=[]; for(let i=0;i<=30;i++) ns.push(i);
+    let traces=[];
+    const add=(f,name,col,dash)=>traces.push({x:ns,y:ns.map(f),type:'scatter',mode:'lines',
+      name,line:{color:col,width:3,dash:dash||'solid'}});
+    if(w==='bim'||w==='cmp') add(fB,'stark bimodale aus',CO.ro);
+    if(w==='uni'||w==='cmp') add(fU,'unimodale aus',CO.em);
+    if(w==='rnd'||w==='cmp') add(fR,'zuf√§llige aus',CO.sk,'dash');
+    const cur = w==='bim'?fB(k):w==='uni'?fU(k):w==='rnd'?fR(k):fB(k);
+    traces.push({x:[k],y:[cur],type:'scatter',mode:'markers',
+      marker:{color:CO.am,size:13,line:{color:'#fff',width:1.5}},name:'aktuell'});
+    Plotly.react('p2-plot',traces,Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Anzahl abgeschalteter Neuronen'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Macro-F1',range:[0,0.8]}),
+      showlegend:true
+    }),CFG);
+    $('p2-out').textContent =
+      `Basis-F1 (nichts abgeschaltet): ${fmt(base)}\n`+
+      `Nach ${k} abgeschalteten ${w==='bim'?'bimodalen':w==='uni'?'unimodalen':'zuf√§lligen'} Neuronen: ${fmt(cur)}\n`+
+      (w==='bim'||w==='cmp'
+        ? '‚Üí Bimodale Neuronen sind KAUSAL: sie abzuschalten bricht die Leistung ein.'
+        : '‚Üí Unimodale Neuronen tragen kaum bei. Die Arbeit liegt bei den Faltneuronen.');
+  }
+  $('p2-k').addEventListener('input',upd);
+  $('p2-which').addEventListener('change',upd); upd();
+})();
+
+(function(){
+  const cv=$('p3-cards'); if(!cv) return; const ctx=cv.getContext('2d');
+  const NAMES=['','A','2','3','4','5','6','7','8','9','10','B','D','K'];
+  function draw(){
+    const r1=+$('p3-r1').value, r2=+$('p3-r2').value, r3=+$('p3-r3').value, m=$('p3-mode').value;
+    $('p3-r1-v').textContent=NAMES[r1]; $('p3-r2-v').textContent=NAMES[r2]; $('p3-r3-v').textContent=NAMES[r3];
+    const ranks=[r1,r2,r3];
+    const counts={}; for(const r of ranks) counts[r]=(counts[r]||0)+1;
+    const maxc=Math.max(...Object.values(counts));
+    const hand = maxc>=3?'Drilling':maxc===2?'Paar':'Nichts';
+
+    clear(ctx,cv);
+    // draw 3 cards
+    const w=100,h=145,gap=24, x0=(cv.width-3*w-2*gap)/2, y0=60;
+    ranks.forEach((r,i)=>{
+      const x=x0+i*(w+gap);
+      const dup = counts[r]>1;
+      ctx.fillStyle = dup?'rgba(255,107,157,.16)':'rgba(78,205,196,.10)';
+      ctx.strokeStyle = dup?CO.co:CO.em; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.roundRect(x,y0,w,h,10); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = dup?CO.co:CO.em; ctx.font='bold 40px Inter,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(NAMES[r], x+w/2, y0+h/2+14);
+      ctx.font='12px Inter,sans-serif'; ctx.fillStyle=CO.mu;
+      ctx.fillText('Karte '+(i+1), x+w/2, y0+h+20);
+      ctx.textAlign='left';
+    });
+    label(ctx,`Hand: ${hand}`,cv.width/2-42,34,hand==='Nichts'?CO.mu:CO.co,17);
+
+    // linear vs fold
+    const linAccs=[0.33,0.30,0.28];
+    const foldAccs=[0.98,0.95,0.93];
+    const use = m==='lin'?linAccs:foldAccs;
+    Plotly.react('p3-plot',[
+      {x:['Nichts','Paar','Drilling'],y:linAccs,type:'bar',name:'linear',
+        marker:{color: m==='lin'?CO.ro:'rgba(107,127,148,.45)'}},
+      {x:['Nichts','Paar','Drilling'],y:foldAccs,type:'bar',name:'mit Faltschicht',
+        marker:{color: m==='fold'?CO.em:'rgba(107,127,148,.45)'}}
+    ],Object.assign({},PL,{
+      barmode:'group',
+      xaxis:Object.assign({},PL.xaxis,{title:'Handtyp'}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Erkennungsrate',range:[0,1.05]}),
+      showlegend:true
+    }),CFG);
+
+    $('p3-out').textContent =
+      `Hand: ${hand}   ${hand!=='Nichts'?'‚Üê durch eine RELATION zwischen Karten definiert':''}\n`+
+      (m==='lin'
+        ? '‚Üí Ein linearer Klassifizierer sieht nur einzelne Kartenwerte. Er kann "gleicher Rang" nicht ausdr√ºcken.'
+        : '‚Üí Die Faltschicht entwirrt die Relation: "gleicher Rang" wird zu einer Richtung im Raum.');
+  }
+  ['p3-r1','p3-r2','p3-r3'].forEach(i=>$(i).addEventListener('input',draw));
+  $('p3-mode').addEventListener('change',draw); draw();
+})();
+
+/* ============================================================
+   10 ¬∑ HOCHDIMENSIONAL
+   ============================================================ */
+(function(){
+  if(!$('h1-n')) return;
+  function lgamma(x){
+    const g=7,c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,
+      771.32342877765313,-176.61502916214059,12.507343278686905,
+      -0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if(x<0.5) return Math.log(Math.PI/Math.sin(Math.PI*x))-lgamma(1-x);
+    x-=1; let a=c[0]; const t=x+g+0.5;
+    for(let i=1;i<g+2;i++) a+=c[i]/(x+i);
+    return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+  }
+  function coverFrac(N,d){
+    const m=Math.min(d-1,N-1); let lse=-Infinity;
+    for(let k=0;k<=m;k++){
+      const lb=lgamma(N)-lgamma(k+1)-lgamma(N-k);
+      lse = lse===-Infinity ? lb : Math.max(lse,lb)+Math.log1p(Math.exp(-Math.abs(lse-lb)));
+    }
+    const l2=(Math.log(2)+lse)/Math.LN2;
+    return Math.pow(2,Math.min(0,l2-N));
+  }
+  function upd(){
+    const N=+$('h1-n').value, d=+$('h1-d').value, K=+$('h1-k').value;
+    $('h1-n-v').textContent=N; $('h1-d-v').textContent=d; $('h1-k-v').textContent=K;
+
+    const cov=coverFrac(N,d);
+    $('h1-cov').textContent=(cov*100).toFixed(1)+' %'; $('h1-covb').style.width=(cov*100)+'%';
+    const con=Math.sqrt(2/(Math.PI*d));
+    $('h1-con').textContent=fmt(con,4); $('h1-conb').style.width=clamp((1-con)*100,0,100)+'%';
+    const jl=Math.ceil(8*Math.log(Math.max(2,N))/0.04);
+    $('h1-jl').textContent=jl; $('h1-jlb').style.width=clamp(100*jl/Math.max(jl,d),0,100)+'%';
+
+    // Simplex ETF
+    const R=rng(K*31+5);
+    const pts={x:[],y:[],z:[],c:[]};
+    const means=[];
+    for(let k=0;k<K;k++){
+      const a=k*TAU/K, ph=(k%2?0.55:-0.55);
+      means.push([Math.cos(a),Math.sin(a),ph]);
+    }
+    const cols=[CO.em,CO.co,CO.am,CO.sk,CO.vi,CO.ro,'#a3e635','#f97316'];
+    const tr=[];
+    for(let k=0;k<K;k++){
+      const xs=[],ys=[],zs=[];
+      for(let i=0;i<26;i++){
+        xs.push(means[k][0]+gauss(R)*0.07);
+        ys.push(means[k][1]+gauss(R)*0.07);
+        zs.push(means[k][2]+gauss(R)*0.07);
+      }
+      tr.push({type:'scatter3d',mode:'markers',x:xs,y:ys,z:zs,
+        marker:{size:3,color:cols[k%cols.length]},name:'Klasse '+(k+1)});
+      tr.push({type:'scatter3d',mode:'lines',x:[0,means[k][0]],y:[0,means[k][1]],z:[0,means[k][2]],
+        line:{color:cols[k%cols.length],width:4},showlegend:false});
+    }
+    Plotly.react('h1-nc',tr,{
+      paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},showlegend:false,
+      scene:{xaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             yaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             zaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             camera:{eye:{x:1.5,y:1.5,z:1.1}}}
+    },CFG);
+
+    // Betti
+    const xs=[0,1,2,3,4];
+    Plotly.react('h1-bt',[
+      {x:xs,y:xs.map(l=>Math.max(1,K*Math.pow(0.55,l))),type:'scatter',mode:'lines+markers',
+        name:'b‚ÇÄ ¬∑ ReLU',line:{color:CO.em,width:3},marker:{size:8}},
+      {x:xs,y:xs.map(l=>K*1.6*Math.pow(0.40,l)),type:'scatter',mode:'lines+markers',
+        name:'b‚ÇÅ ¬∑ ReLU',line:{color:CO.co,width:3},marker:{size:8}},
+      {x:xs,y:xs.map(l=>K*1.6*Math.pow(0.86,l)),type:'scatter',mode:'lines+markers',
+        name:'b‚ÇÅ ¬∑ tanh',line:{color:CO.am,width:2,dash:'dash'},marker:{size:6}}
+    ],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Schicht',dtick:1}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Betti-Zahl',rangemode:'tozero'}),
+      showlegend:true
+    }),CFG);
+
+    $('h1-out').textContent =
+      `Cover: ${(cov*100).toFixed(1)} % aller ${N}-Punkt-Aufteilungen sind in ${d} Dim. trennbar\n`+
+      `Konzentration: mittleres |‚ü®u,v‚ü©| ‚âà ${fmt(con,4)}  (Winkel ‚âà ${fmt(Math.acos(Math.min(1,con))*180/Math.PI,1)}¬∞)\n`+
+      `JL: ${N} Punkte passen mit ¬±10 % Verzerrung in ${jl} Dimensionen\n`+
+      `Neural Collapse: ${K} Klassen bilden ein Simplex-ETF mit Soll-Kosinus ${fmt(-1/(K-1),3)}`;
+  }
+  ['h1-n','h1-d','h1-k'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ---- 10b ¬∑ NEURAL COLLAPSE ---- */
+(function(){
+  if(!$('h2-t')) return;
+  function upd(){
+    const t=+$('h2-t').value/100, K=+$('h2-k').value;
+    $('h2-t-v').textContent=Math.round(t*100)+' %'; $('h2-k-v').textContent=K;
+    const R=rng(K*97+3);
+    const cols=[CO.em,CO.co,CO.am,CO.sk,CO.vi,CO.ro,'#a3e635','#f97316'];
+    // target: simplex ETF in 3D (approx for K<=4 exact)
+    const means=[];
+    for(let k=0;k<K;k++){
+      const a=k*TAU/K, z=(K===3?0:(k%2?0.6:-0.6));
+      means.push([Math.cos(a),Math.sin(a),z]);
+    }
+    // normalize
+    means.forEach(m=>{const n=Math.hypot(...m); m[0]/=n;m[1]/=n;m[2]/=n;});
+    const spread = lerp(0.55, 0.055, t);
+    const tr=[];
+    const empMeans=[];
+    for(let k=0;k<K;k++){
+      const xs=[],ys=[],zs=[];
+      let mx=0,my=0,mz=0;
+      for(let i=0;i<40;i++){
+        const x=means[k][0]+gauss(R)*spread, y=means[k][1]+gauss(R)*spread, z=means[k][2]+gauss(R)*spread;
+        xs.push(x);ys.push(y);zs.push(z); mx+=x;my+=y;mz+=z;
+      }
+      empMeans.push([mx/40,my/40,mz/40]);
+      tr.push({type:'scatter3d',mode:'markers',x:xs,y:ys,z:zs,
+        marker:{size:2.6,color:cols[k%cols.length],opacity:.8},name:'K'+(k+1)});
+      tr.push({type:'scatter3d',mode:'lines',x:[0,means[k][0]],y:[0,means[k][1]],z:[0,means[k][2]],
+        line:{color:cols[k%cols.length],width:5},showlegend:false});
+    }
+    Plotly.react('h2-3d',tr,{
+      paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},showlegend:false,
+      scene:{xaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             yaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},             zaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             camera:{eye:{x:1.6,y:1.6,z:1.2}}}
+    },CFG);
+
+    // angle matrix
+    const ang=[], txt=[];
+    for(let i=0;i<K;i++){ const row=[],rt=[];
+      for(let j=0;j<K;j++){
+        const a=empMeans[i], b=empMeans[j];
+        const na=Math.hypot(...a), nb=Math.hypot(...b);
+        const c=(a[0]*b[0]+a[1]*b[1]+a[2]*b[2])/(na*nb+1e-9);
+        row.push(c); rt.push(fmt(c,2));
+      } ang.push(row); txt.push(rt);
+    }
+    Plotly.react('h2-ang',[{
+      z:ang,type:'heatmap',colorscale:[[0,'#ff6b9d'],[0.5,'#151d26'],[1,'#4ecdc4']],
+      zmin:-1,zmax:1,text:txt,texttemplate:'%{text}',
+      textfont:{size:11,color:'#fff'},showscale:true,
+      colorbar:{title:{text:'cos',font:{size:10}},thickness:12,len:.7}
+    }],Object.assign({},PL,{
+      xaxis:Object.assign({},PL.xaxis,{title:'Klasse',dtick:1}),
+      yaxis:Object.assign({},PL.yaxis,{title:'Klasse',dtick:1}),
+      title:{text:'Paarweise Kosinus der Klassenmittel',font:{size:12,color:CO.t2}}
+    }),CFG);
+
+    const target=-1/(K-1);
+    let dev=0,cnt=0;
+    for(let i=0;i<K;i++)for(let j=0;j<K;j++) if(i!==j){dev+=Math.abs(ang[i][j]-target);cnt++;}
+    dev/=Math.max(1,cnt);
+    $('h2-w').textContent=fmt(spread,3); $('h2-wb').style.width=clamp((1-spread/0.55)*100,0,100)+'%';
+    $('h2-a').textContent=fmt(dev,3);    $('h2-ab').style.width=clamp((1-dev)*100,0,100)+'%';
+    $('h2-tc').textContent=fmt(target,3);
+    const ok=spread<0.12&&dev<0.25;
+    $('h2-ok').textContent=ok?'JA ✓':'noch nicht';
+    $('h2-ok').style.color=ok?CO.em:CO.am;
+    tex($('h2-f'),`\\mu_k^\\top\\mu_\\ell \\;\\to\\; -\\tfrac{1}{K-1}\\,\\|\\mu_k\\|^2 \\quad (k\\neq\\ell),\\qquad K=${K}\\;\\Rightarrow\\;\\cos=${fmt(target,3)}`);
+  }
+  ['h2-t','h2-k'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ---- 10c · MANNIGFALTIGKEITS-HYPOTHESE ---- */
+(function(){
+  if(!$('h3-k')) return;
+  function upd(){
+    const k=+$('h3-k').value, nz=+$('h3-n').value, L=+$('h3-l').value;
+    $('h3-k-v').textContent=fmt(k); $('h3-n-v').textContent=fmt(nz); $('h3-l-v').textContent=L;
+    const R=rng(19);
+    const N=340;
+    const x1=[],y1=[],z1=[],x2=[],y2=[],z2=[];
+    const unfold=1-Math.pow(0.68,L);
+    for(let i=0;i<N;i++){
+      const t=i/N*TAU*2;
+      // trefoil-ish knot, progressively unknotted
+      const knot=k*(1-unfold);
+      let X=Math.sin(t)+2*Math.sin(2*t)*knot;
+      let Y=Math.cos(t)-2*Math.cos(2*t)*knot;
+      let Z=-Math.sin(3*t)*knot;
+      // unfolded target: two separated rings
+      X=lerp(X, Math.cos(t)*1.6, unfold);
+      Y=lerp(Y, Math.sin(t)*1.6, unfold);
+      Z=lerp(Z, 0, unfold);
+      x1.push(X+gauss(R)*nz); y1.push(Y+gauss(R)*nz); z1.push(Z+gauss(R)*nz);
+      let X2=Math.sin(t+0.9)+2*Math.sin(2*t+0.9)*knot;
+      let Y2=Math.cos(t+0.9)-2*Math.cos(2*t+0.9)*knot;
+      let Z2=-Math.sin(3*t+0.9)*knot+0.6;
+      X2=lerp(X2, Math.cos(t)*1.6, unfold);
+      Y2=lerp(Y2, Math.sin(t)*1.6, unfold);
+      Z2=lerp(Z2, 1.6, unfold);
+      x2.push(X2+gauss(R)*nz); y2.push(Y2+gauss(R)*nz); z2.push(Z2+gauss(R)*nz);
+    }
+    const tr=[
+      {type:'scatter3d',mode:'markers',x:x1,y:y1,z:z1,marker:{size:2.6,color:CO.co},name:'Klasse A'},
+      {type:'scatter3d',mode:'markers',x:x2,y:y2,z:z2,marker:{size:2.6,color:CO.em},name:'Klasse B'}
+    ];
+    if(unfold>0.6){
+      const zp=lerp(0.8,0.8,1);
+      tr.push({type:'surface',x:[-2.2,2.2],y:[-2.2,2.2],z:[[zp,zp],[zp,zp]],
+        opacity:.28,showscale:false,colorscale:[[0,CO.am],[1,CO.am]]});
+    }
+    Plotly.react('h3-plot',tr,{
+      paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},
+      showlegend:true,legend:{bgcolor:'rgba(21,29,38,.85)',bordercolor:CO.bd,borderwidth:1,font:{size:10}},
+      scene:{xaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             yaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             zaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             camera:{eye:{x:1.8,y:1.5,z:1.0}}}
+    },CFG);
+    $('h3-out').textContent =
+      `Verknotung: ${fmt(k)}  ·  Entfaltung nach ${L} Schichten: ${(unfold*100).toFixed(0)} %\n`+
+      (L===0 ? '→ Verknotet. Keine Hyperebene trennt die beiden Schleifen.'
+             : unfold>0.6 ? '→ Entfaltet. Eine flache Ebene (gelb) genügt jetzt.'
+                          : '→ Teilweise entfaltet. Mehr Schichten nötig.');
+  }
+  ['h3-k','h3-n','h3-l'].forEach(i=>$(i).addEventListener('input',upd)); upd();
+})();
+
+/* ============================================================
+   11 · FOLD AND CUT
+   ============================================================ */
+(function(){
+  const cv=$('fc-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  let cut=false;
+  const SHAPES={
+    tri:{n:3,name:'Dreieck',folds:3},
+    sq:{n:4,name:'Quadrat',folds:4},
+    pent:{n:5,name:'Fünfeck',folds:5},
+    star:{n:10,name:'Stern',folds:5}
+  };
+  function shapePts(key,cx,cy,r){
+    const S=SHAPES[key], P=[];
+    if(key==='star'){
+      for(let i=0;i<10;i++){ const a=-Math.PI/2+i*TAU/10, rr=i%2?r*0.45:r;
+        P.push({x:cx+rr*Math.cos(a), y:cy+rr*Math.sin(a)}); }
+    } else {
+      for(let i=0;i<S.n;i++){ const a=-Math.PI/2+i*TAU/S.n;
+        P.push({x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)}); }
+    }
+    return P;
+  }
+  function draw(){
+    const key=$('fc-shape').value, step=+$('fc-s').value;
+    $('fc-s-v').textContent=step;
+    const S=SHAPES[key];
+    clear(ctx,cv);
+    const W=cv.width,H=cv.height;
+    // paper
+    const px=60,py=40,pw=W-120,ph=H-80;
+    ctx.fillStyle='rgba(232,238,245,.055)';
+    ctx.strokeStyle=CO.bd; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.roundRect(px,py,pw,ph,10); ctx.fill(); ctx.stroke();
+    label(ctx,'Papier',px+10,py+22,CO.mu,12);
+
+    const cx=W/2, cy=H/2, r=Math.min(pw,ph)*0.26;
+    const P=shapePts(key,cx,cy,r);
+    // fold creases: perpendicular bisectors of edges (simplified)
+    const nF=Math.min(step,S.folds);
+    for(let k=0;k<nF;k++){
+      const a=k*Math.PI/S.folds;
+      const dx=Math.cos(a)*600, dy=Math.sin(a)*600;
+      line(ctx,cx-dx,cy-dy,cx+dx,cy+dy,'rgba(255,209,102,.5)',1.6,[7,5]);
+    }
+    // folded illustration: shrink the visible paper as folds accumulate
+    if(nF>0){
+      const sc=Math.pow(0.78,nF);
+      ctx.save();
+      ctx.globalAlpha=.20; ctx.fillStyle=CO.em;
+      ctx.beginPath();
+      ctx.ellipse(cx,cy,pw*0.5*sc,ph*0.5*sc,0,0,TAU);
+      ctx.fill(); ctx.restore();
+      label(ctx,`nach ${nF} Falten: alle Kanten liegen aufeinander`,px+10,H-52,CO.em,12);
+    }
+    // shape outline
+    ctx.strokeStyle=cut?CO.em:CO.co; ctx.lineWidth=2.6;
+    ctx.beginPath();
+    P.forEach((p,i)=> i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+    ctx.closePath(); ctx.stroke();
+    if(cut){
+      ctx.fillStyle='rgba(78,205,196,.18)'; ctx.fill();
+      // the single straight cut
+      line(ctx,px+20,cy,W-px-20,cy,CO.am,3.2);
+      label(ctx,'✂ EIN gerader Schnitt',W/2-80,cy-14,CO.am,14);
+    }
+    label(ctx,S.name,W/2-24,H-20,CO.t2,13);
+
+    $('fc-out').textContent =
+      `Form: ${S.name}  ·  Faltschritte: ${nF} / ${S.folds}\n`+
+      (nF<S.folds ? '→ Weiter falten, bis alle Kanten der Form exakt aufeinander liegen.'
+                  : cut ? '→ FERTIG. Ein einziger gerader Schnitt hat die ganze Form gelöst.'
+                        : '→ Bereit zum Schneiden. Drücke ✂ Schneiden!')+
+      `\n→ Übersetzung: verborgene Schichten = Falten, Ausgabeschicht = der eine Schnitt.`;
+  }
+  $('fc-shape').addEventListener('change',()=>{cut=false;draw();});
+  $('fc-s').addEventListener('input',()=>{cut=false;draw();});
+  $('fc-cut').addEventListener('click',()=>{cut=true;draw();});
+  $('fc-reset').addEventListener('click',()=>{cut=false;$('fc-s').value=0;draw();});
+  tex($('fc-f'),`\\text{Jede Figur aus endlich vielen Geradenstücken kann durch geeignetes Flachfalten}\\\\\\text{mit \\emph{einem} geraden Schnitt ausgeschnitten werden.}`);
+  draw();
+})();
+
+/* ---- 11b · FLACHFALTBARKEIT ---- */
+(function(){
+  const cv=$('ff-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  function draw(){
+    const n=+$('ff-n').value, d=+$('ff-d').value;
+    $('ff-n-v').textContent=n; $('ff-d-v').textContent=fmt(d);
+    clear(ctx,cv);
+    const W=cv.width,H=cv.height, cx=W/2, cy=H/2, R=Math.min(W,H)*0.36;
+    // background disc
+    ctx.fillStyle='rgba(232,238,245,.045)';
+    ctx.beginPath(); ctx.arc(cx,cy,R+18,0,TAU); ctx.fill();
+    // creases with alternating M/V
+    const angles=[]; let acc=0;
+    for(let i=0;i<n;i++){
+      const base=TAU/n;
+      const wob = (i%2? d : -d)*base*0.5;
+      angles.push(acc); acc += base + wob;
+    }
+    // normalize to 2π
+    const total=acc; const scale=TAU/total;
+    let M=0,V=0;
+    for(let i=0;i<n;i++){
+      const a=angles[i]*scale;
+      const isM = i%2===0;
+      isM?M++:V++;
+      const col = isM?CO.co:CO.sk;
+      line(ctx,cx,cy,cx+R*Math.cos(a),cy+R*Math.sin(a),col,2.8);
+      label(ctx,isM?'M':'T',cx+(R+16)*Math.cos(a)-4,cy+(R+16)*Math.sin(a)+4,col,12);
+    }
+    dot(ctx,cx,cy,7,CO.am);
+    label(ctx,'Knoten',cx+12,cy-12,CO.am,12);
+    // legend
+    label(ctx,'M = Bergfalte',18,H-34,CO.co,12);
+    label(ctx,'T = Talfalte',18,H-16,CO.sk,12);
+
+    // Maekawa
+    const mk = Math.abs(M-V)===2;
+    $('ff-mk').textContent = `M=${M}, T=${V} → |M−T|=${Math.abs(M-V)}  ${mk?'✓':'✗'}`;
+    $('ff-mk').style.color = mk?CO.em:CO.ro;
+    // Kawasaki: alternating angle sum
+    let odd=0, even=0;
+    for(let i=0;i<n;i++){
+      const a1=angles[i]*scale, a2=angles[(i+1)%n]*scale + (i===n-1?TAU:0);
+      const seg=(a2-a1)*180/Math.PI;
+      if(i%2===0) odd+=seg; else even+=seg;
+    }
+    const kw = Math.abs(odd-180)<3;
+    $('ff-kw').textContent = `Σ ungerade = ${fmt(odd,1)}°  ${kw?'✓':'✗'}`;
+    $('ff-kw').style.color = kw?CO.em:CO.ro;
+
+    $('ff-out').textContent =
+      `Falten: ${n}  ·  Verzerrung: ${fmt(d)}\n`+
+      (mk&&kw ? '→ Beide Regeln erfüllt: dieser Knoten ist FLACHFALTBAR.'
+              : '→ Mindestens eine Regel verletzt: nicht flachfaltbar.')+
+      `\n→ Über viele Knoten hinweg ist diese Entscheidung NP-vollständig.`;
+  }
+  ['ff-n','ff-d'].forEach(i=>$(i).addEventListener('input',draw)); draw();
+})();
+
+/* ---- 11c · MIURA ---- */
+(function(){
+  const cv=$('mi-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  let anim=null;
+  function draw(){
+    const t=+$('mi-t').value/100, n=+$('mi-n').value;
+    $('mi-t-v').textContent=Math.round(t*100)+' %'; $('mi-n-v').textContent=n;
+    clear(ctx,cv);
+    const W=cv.width,H=cv.height;
+    const rows=4, cols=n;
+    const cw = (W-120)/cols * (0.30+0.70*t);
+    const ch = (H-110)/rows;
+    const skew = (1-t)*0.0 + 0.36*ch*(1-0.4*t);
+    const x0=(W-cw*cols)/2, y0=60;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const off = (c%2? skew : 0);
+        const x=x0+c*cw, y=y0+r*ch+ (r%2? off : -off)*0.5;
+        const pts=[
+          {x:x, y:y + (c%2? skew*0.5:0)},
+          {x:x+cw, y:y + ((c+1)%2? skew*0.5:0)},
+          {x:x+cw, y:y+ch + ((c+1)%2? skew*0.5:0)},
+          {x:x, y:y+ch + (c%2? skew*0.5:0)}
+        ];
+        const hue = (r*2+c)%2 ? 168 : 340;
+        ctx.fillStyle=`hsla(${hue},62%,58%,${0.16+0.12*t})`;
+        ctx.strokeStyle=`hsla(${hue},62%,62%,.75)`;
+        ctx.lineWidth=1.4;
+        ctx.beginPath();
+        pts.forEach((p,i)=> i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+    }
+    label(ctx,`Miura-Faltung · Entfaltung ${Math.round(t*100)} %`,60,34,CO.t2,13);
+    label(ctx,'1 Freiheitsgrad: EIN Zug entfaltet alles',60,H-22,CO.em,12);
+
+    const pack = 1/(0.30+0.70*t);
+    $('mi-pack').textContent=fmt(pack,2)+'×';
+    $('mi-area').textContent=(cw*cols*ch*rows/1000).toFixed(0)+'k px²';
+  }
+  ['mi-t','mi-n'].forEach(i=>$(i).addEventListener('input',draw));
+  $('mi-play').addEventListener('click',()=>{
+    if(anim){clearInterval(anim);anim=null;$('mi-play').textContent='▶ Entfalten';return;}
+    $('mi-play').textContent='⏸ Stopp'; let v=0,dir=1;
+    anim=setInterval(()=>{ v+=dir*2; if(v>=100){v=100;dir=-1;} if(v<=0){v=0;dir=1;}
+      $('mi-t').value=v; draw(); },45);
+  });
+  draw();
+})();
+
+/* ============================================================
+   12 · DIE ANTWORT
+   ============================================================ */
+(function(){
+  if(!$('voc-btns')) return;
+  const VOC=[
+    {k:'affin',n:'Affine Abbildung',c:CO.sk,
+     t:'DER AMBOSS\n\nW·x + b — Rotation, Skalierung, Scherung, Verschiebung.\n\nGeraden bleiben Geraden. Die lineare Trennbarkeit wird hier WEDER erzeugt NOCH zerstört.\n\nDieser Schritt positioniert die Daten nur — er richtet sie für den Hammerschlag aus.'},
+    {k:'relu',n:'ReLU',c:CO.co,
+     t:'DER HAMMERSCHLAG\n\nΦ(x) = max(0,x). Jedes Neuron ist eine Hyperebene; alles auf der negativen Seite wird darauf plattgedrückt.\n\nGrenze: kann nur die KONVEXE HÜLLE verformen — eine Delle von außen. Ein Punkt mitten in der Verteilung ist so nicht erreichbar.'},
+    {k:'falten',n:'Falten',c:CO.em,
+     t:'DER PRIMÄRE, EFFIZIENTE MECHANISMUS\n\nWenn eine Schicht breiter ist als die Daten, gibt es unbesetzte Richtungen. Eine ReLU-Ebene, die aus einer solchen Richtung kommt, faltet statt zu zerquetschen.\n\n· injektiv auf den Daten (kein Informationsverlust)\n· vereinfacht die Topologie (schließt Löcher)\n· legt innere Bereiche nach außen frei\n\nEin N-dim. Ei: eine Schicht mit N+1 Neuronen.'},
+    {k:'scheren',n:'Scheren',c:CO.am,
+     t:'DER INEFFIZIENTE RÜCKFALL\n\nOhne Platz zum Falten: Schicht für Schicht eine dünne Scheibe wegschieben. Wie eine Orange schälen.\n\nNur EINE Scheibe pro Schicht. In 3D braucht man eine Spirale. Deshalb sind tiefe, schmale Netze keine universellen Approximatoren.'},
+    {k:'bimodal',n:'Bimodale Tuningkurven',c:CO.vi,
+     t:'DER FINGERABDRUCK\n\nEin Faltneuron reagiert SCHWACH auf die innere Klasse und STARK auf die äußere.\n\nDas Histogramm der Vor-Aktivierung zeigt eine DELLE BEI NULL für eine Klasse — bimodal — und ist unimodal für die anderen.\n\nKausaltest: diese Neuronen abschalten lässt die Leistung einbrechen.'},
+    {k:'schnitt',n:'Der eine flache Schnitt',c:CO.ro,
+     t:'DIE AUSGABESCHICHT\n\nDer finale lineare Auslesekopf. Bei K Klassen: ein flacher Schnitt PRO Klasse, Softmax wählt den Gewinner.\n\nEcho des Fold-and-Cut-Theorems:\nuniverselle Approximation ≈ N-dim. Origami + ein flacher Schnitt.'},
+    {k:'regionen',n:'Lineare Regionen',c:'#a3e635',     t:'DAS RÜCKGRAT DER TIEFE\n\nJede Region ist ein Bereich, in dem das Netz EXAKT eine affine Abbildung ist — ein lokales Modell.\n\nDie Regionen kacheln den Eingaberaum; die Falten sind ihre Nähte; die Stetigkeit über jede Naht ist die Verträglichkeit.\n\nDie Worst-Case-Zahl wächst exponentiell mit der Tiefe. Die realisierte Zahl in einem trainierten Netz ist weit kleiner.'},
+    {k:'hoch',n:'Hochdim. Fundament',c:'#f97316',
+     t:'DAS QUANTITATIVE WARUM\n\n· Cover: mehr Dimensionen ⇒ mehr trennbare Aufteilungen\n· Konzentration: neue Richtungen sind wirklich neu (fast orthogonal)\n· Johnson–Lindenstrauss: Geometrie überlebt Kompression\n· Neural Collapse: das Ende ist ein Simplex-ETF\n· Topologisches Entwirren: Betti-Zahlen sinken, ReLU schneller als tanh'}
+  ];
+  const cv=$('voc-cv'), ctx=cv.getContext('2d');
+  let sel='falten';
+
+  function drawVoc(){
+    clear(ctx,cv);
+    const T=mkT(cv,-1.3,1.3,-1.3,1.3);
+    grid(ctx,T,0.5,'#1a232e'); axes(ctx,T);
+    const P=dsEgg(280,7,0.42);
+    const V=VOC.find(v=>v.k===sel);
+
+    if(sel==='affin'){
+      const a=0.5;
+      for(const p of P){ const q={x:p.x*Math.cos(a)-p.y*Math.sin(a)*1.3, y:p.x*Math.sin(a)+p.y*Math.cos(a)*0.8, c:p.c};
+        dot(ctx,T.x(p.x),T.y(p.y),2,'rgba(159,176,195,.25)');
+        dot(ctx,T.x(q.x),T.y(q.y),3,q.c?CO.co:CO.em,.85); }
+    } else if(sel==='relu'){
+      for(const p of P){ const z=p.x; const q=z<0?{x:0,y:p.y,c:p.c}:p;
+        dot(ctx,T.x(q.x),T.y(q.y),3,q.c?CO.co:CO.em,.85); }
+      line(ctx,T.x(0),T.pad,T.x(0),T.H-T.pad,CO.am,2.4);
+    } else if(sel==='falten'){
+      for(const p of P){
+        let z=0; for(let k=0;k<3;k++){const a=k*TAU/3; z+=relu(0.4-(Math.cos(a)*p.x+Math.sin(a)*p.y));}
+        dot(ctx,T.x(p.x),T.y(p.y-z*0.9+0.3),3,p.c?CO.co:CO.em,.85);
+      }
+      for(let k=0;k<3;k++){const a=k*TAU/3, b=0.4;
+        line(ctx,T.x(Math.cos(a)*b+Math.sin(a)*3),T.y(Math.sin(a)*b-Math.cos(a)*3),
+                 T.x(Math.cos(a)*b-Math.sin(a)*3),T.y(Math.sin(a)*b+Math.cos(a)*3),CO.am,1.6);}
+    } else if(sel==='scheren'){
+      for(const p of P){ let q={...p};
+        for(let l=0;l<6;l++){ const a=l*TAU/8, nx=Math.cos(a), ny=Math.sin(a);
+          if(nx*q.x+ny*q.y>0.42){ q.x+=nx*0.1; q.y+=ny*0.1; } }
+        dot(ctx,T.x(q.x),T.y(q.y),3,q.c?CO.co:CO.em,.85); }
+    } else if(sel==='bimodal'){
+      const a=Math.PI/3, wx=Math.cos(a), wy=Math.sin(a);
+      for(const p of P){ const z=wx*p.x+wy*p.y;
+        dot(ctx,T.x(p.x),T.y(p.y),3,p.c?CO.co:CO.em, Math.abs(z)<0.15?0.25:0.9); }
+      line(ctx,T.x(wy*3),T.y(-wx*3),T.x(-wy*3),T.y(wx*3),CO.vi,2.4);
+    } else if(sel==='schnitt'){
+      for(const p of P){
+        let z=0; for(let k=0;k<3;k++){const a=k*TAU/3; z+=relu(0.4-(Math.cos(a)*p.x+Math.sin(a)*p.y));}
+        dot(ctx,T.x(p.x),T.y(p.y-z*0.9+0.3),3,p.c?CO.co:CO.em,.85);
+      }
+      line(ctx,T.pad,T.y(0.05),T.W-T.pad,T.y(0.05),CO.ro,3);
+      label(ctx,'✂ der eine flache Schnitt',T.pad+6,T.y(0.05)-9,CO.ro,12);
+    } else if(sel==='regionen'){
+      const R=rng(9), ls=[];
+      for(let i=0;i<7;i++){const a=R()*Math.PI, b=(R()-0.5)*1.4; ls.push({nx:Math.cos(a),ny:Math.sin(a),b});}
+      const st=4;
+      for(let px=T.pad;px<T.W-T.pad;px+=st)for(let py=T.pad;py<T.H-T.pad;py+=st){
+        const X=T.ix(px),Y=T.iy(py); let code=0;
+        for(let k=0;k<ls.length;k++){const L=ls[k]; if(L.nx*X+L.ny*Y-L.b>0) code|=(1<<k);}
+        ctx.fillStyle=`hsla(${(code*53)%360},58%,58%,.24)`; ctx.fillRect(px,py,st,st);
+      }
+      for(const L of ls){ line(ctx,T.x(L.nx*L.b+L.ny*5),T.y(L.ny*L.b-L.nx*5),
+                                  T.x(L.nx*L.b-L.ny*5),T.y(L.ny*L.b+L.nx*5),'#a3e635',1.5); }
+    } else if(sel==='hoch'){
+      const R=rng(3);
+      for(let i=0;i<180;i++){
+        const a=R()*TAU, r=0.2+0.9*Math.sqrt(R());
+        dot(ctx,T.x(r*Math.cos(a)),T.y(r*Math.sin(a)),2.6,i%3===0?CO.em:(i%3===1?CO.co:CO.am),.6);
+      }
+      for(let k=0;k<5;k++){const a=k*TAU/5;
+        line(ctx,T.x(0),T.y(0),T.x(Math.cos(a)*1.05),T.y(Math.sin(a)*1.05),'#f97316',2);}
+      label(ctx,'Simplex-ETF · maximal getrennt',T.pad+4,20,'#f97316',11);
+    }
+    label(ctx,V.n,T.pad+4,T.H-12,V.c,13);
+  }
+
+  function build(){
+    const box=$('voc-btns'); box.innerHTML='';
+    VOC.forEach(v=>{
+      const b=document.createElement('button');
+      b.className='btn sec'+(v.k===sel?' on':'');
+      b.textContent=v.n; b.style.borderColor=v.c;
+      b.addEventListener('click',()=>{sel=v.k;build();});
+      box.appendChild(b);
+    });
+    $('voc-out').textContent=VOC.find(v=>v.k===sel).t;
+    drawVoc();
+  }
+  build();
+})();
+
+/* ---- 12b · PIPELINE ---- */
+(function(){
+  const cv=$('pipe-cv'); if(!cv) return; const ctx=cv.getContext('2d');
+  let anim=null;
+  const STAGES=['Rohdaten','Affin (W·x+b)','ReLU-Falte','2. Schicht','Flacher Schnitt'];
+  function draw(){
+    const t=+$('pipe-t').value/100; $('pipe-t-v').textContent=Math.round(t*100)+' %';
+    const P=dsEgg(300,7,0.42);
+    const stage=Math.min(4,Math.floor(t*4.999));
+    const local=(t*4.999)%1;
+
+    function transform(p,t){
+      let q={x:p.x,y:p.y,c:p.c,z:0};
+      // stage 1: affine
+      const s1=clamp(t*4-0,0,1);
+      const a=0.35*s1;
+      const nx=q.x*Math.cos(a)-q.y*Math.sin(a), ny=q.x*Math.sin(a)+q.y*Math.cos(a);
+      q.x=lerp(q.x,nx*1.15,s1); q.y=lerp(q.y,ny*1.15,s1);
+      // stage 2: relu fold -> z
+      const s2=clamp(t*4-1,0,1);
+      let z=0; for(let k=0;k<3;k++){const th=k*TAU/3; z+=relu(0.42-(Math.cos(th)*q.x+Math.sin(th)*q.y));}
+      q.z=z*s2*1.15;
+      // stage 3: second layer sharpens
+      const s3=clamp(t*4-2,0,1);
+      q.z += relu(q.z-0.15)*0.7*s3;
+      return q;
+    }
+    const Q=P.map(p=>transform(p,t));
+
+    // 2D strip: 5 panels
+    clear(ctx,cv);
+    const W=cv.width,H=cv.height, pw=W/5;
+    for(let s=0;s<5;s++){
+      const x0=s*pw;
+      ctx.fillStyle = s<=stage ? 'rgba(78,205,196,.06)' : 'rgba(21,29,38,.5)';
+      ctx.fillRect(x0+4,4,pw-8,H-8);
+      ctx.strokeStyle = s===stage?CO.em:CO.bd; ctx.lineWidth=s===stage?2:1;
+      ctx.strokeRect(x0+4,4,pw-8,H-8);
+      label(ctx,STAGES[s],x0+pw/2,24,s===stage?CO.em:CO.mu,12,'center');
+      // mini scatter
+      const T=mkT({width:pw,height:H-30},-1.5,1.5,-1.5,1.5,22);
+      const tt=clamp((s+1)/5,0,1);
+      const R=P.map(p=>transform(p,Math.min(t,tt)));
+      for(const p of R){
+        const px=x0+T.x(p.x), py=34+T.y(p.y-p.z*0.55);
+        if(py>30&&py<H-8) dot(ctx,px,py,2,p.c?CO.co:CO.em,.7);
+      }
+      if(s===4){ line(ctx,x0+14,34+T.y(-0.25),x0+pw-14,34+T.y(-0.25),CO.am,2); }
+    }
+
+    // 3D
+    const inner=Q.filter(p=>p.c===1), outer=Q.filter(p=>p.c===0);
+    Plotly.react('pipe-3d',[
+      {type:'scatter3d',mode:'markers',x:inner.map(p=>p.x),y:inner.map(p=>p.y),z:inner.map(p=>p.z),
+        marker:{size:3,color:CO.co},name:'innen'},
+      {type:'scatter3d',mode:'markers',x:outer.map(p=>p.x),y:outer.map(p=>p.y),z:outer.map(p=>p.z),
+        marker:{size:2.6,color:CO.em},name:'außen'},
+      {type:'surface',x:[-1.4,1.4],y:[-1.4,1.4],z:[[0.35,0.35],[0.35,0.35]],
+        opacity:.3,showscale:false,colorscale:[[0,CO.am],[1,CO.am]]}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},showlegend:false,
+      scene:{xaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             yaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false},
+             zaxis:{color:CO.mu,gridcolor:'#1e2a36',showbackground:false,title:'Falthöhe'},
+             camera:{eye:{x:1.6,y:-1.5,z:0.9}}}
+    },CFG);
+
+    // metrics
+    let ok=0; for(const p of Q){ const pred=p.z>0.35?1:0; if(pred===p.c) ok++; }
+    const sep=Math.max(ok,Q.length-ok)/Q.length;
+    const dim = t<0.25?1.9:(t<0.5?2.0:2.8);
+    const b1 = Math.max(0, 1-Math.pow(clamp((t-0.2)/0.6,0,1),1.2));
+    $('pipe-stage').textContent=STAGES[stage];
+    $('pipe-sep').textContent=(sep*100).toFixed(1)+' %';
+    $('pipe-sepb').style.width=(sep*100)+'%';
+    $('pipe-dim').textContent=fmt(dim,1);
+    $('pipe-b1').textContent=fmt(b1,2);
+    $('pipe-out').textContent =
+      `Stufe ${stage+1}/5: ${STAGES[stage]}\n`+
+      `Trennbarkeit mit flachem Schnitt: ${(sep*100).toFixed(1)} %\n`+
+      (stage===0?'→ Verschränkt. Keine Gerade trennt.'
+       :stage===1?'→ Nur gedreht/skaliert. Trennbarkeit unverändert.'
+       :stage===2?'→ Die Falte hebt die innere Klasse in die dritte Dimension.'
+       :stage===3?'→ Zweite Schicht schärft die Falte weiter.'
+       :'→ Ein flacher Schnitt genügt. Fertig.');
+  }
+  $('pipe-t').addEventListener('input',draw);
+  $('pipe-play').addEventListener('click',()=>{
+    if(anim){clearInterval(anim);anim=null;$('pipe-play').textContent='▶ Durchlaufen';return;}
+    $('pipe-play').textContent='⏸ Stopp'; let v=0;
+    anim=setInterval(()=>{ v=(v+1.5)%102; $('pipe-t').value=Math.min(100,v); draw(); },60);
+  });
+  draw();
+})();
+
+/* ============================================================
+   13 · GRENZEN
+   ============================================================ */
+(function(){
+  if(!$('sc-btns')) return;
+  const SC=[
+    {k:'dense',n:'Dense / MLP',c:CO.em,
+     str:'Volle Matrix W, punktweise ReLU',
+     nl:'Eine Hyperebene pro Neuron, global',
+     fold:'JA ✓ — das ist das Objekt des Papers',
+     chi:'JA ✓',
+     out:'Das Faltbild gehört genau hierher. Eine Schicht breiter als die Daten, eine ReLU-Ebene aus einer leeren Richtung → Falte.'},
+    {k:'conv',n:'Convolution',c:CO.am,
+     str:'Lokale, gewichtsgeteilte affine Abbildung',
+     nl:'ReLU pro Kanal, aber lokal begrenzt',
+     fold:'TEILWEISE — nur als mögliche Anwendung genannt',
+     chi:'mit Anpassung',
+     out:'Erster Schritt einer Erweiterung: jedes Filter-Patch als winziges Dense-Netz behandeln. Falten ist nur möglich, wenn es MEHR Filter als Datendimensionen unter dem Patch gibt.'},
+    {k:'attn',n:'Attention',c:CO.ro,
+     str:'QKᵀV — Eingabe-abhängige Gewichte',
+     nl:'Softmax, nicht punktweise',
+     fold:'NEIN ✗ — nicht in dieser Form',
+     chi:'NEIN ✗',
+     out:'Attention ist keine feste affine Abbildung plus punktweise Nichtlinearität. Das χ-Maß ist in seiner jetzigen Form NICHT direkt anwendbar (Lewandowski et al. 2025).'},
+    {k:'rnn',n:'Rekurrent',c:CO.vi,
+     str:'Gewichte über die Zeit wiederverwendet',
+     nl:'tanh oder ReLU pro Schritt',
+     fold:'UNKLAR — Zeitachse statt Tiefe',
+     chi:'offen',
+     out:'Die Gewichtswiederverwendung über die Zeit ist strukturell anders als Tiefe. Ob „Falten in der Zeit" dasselbe leistet, ist offen.'},
+    {k:'res',n:'Residual + Norm',c:CO.sk,
+     str:'x + F(x), LayerNorm',
+     nl:'ReLU/GELU innerhalb von F',
+     fold:'JA ✓ — mit Erweiterung',
+     chi:'JA ✓ (erweitert)',
+     out:'Das χ-Maß lässt sich auf Residual- und Normalisierungsschichten erweitern. Der Skip verändert die Geometrie, aber die Falten bleiben lesbar.'}
+  ];
+  const cv=$('sc-cv'), ctx=cv.getContext('2d');
+  let sel='dense';
+
+  function drawSC(){
+    clear(ctx,cv);
+    const S=SC.find(s=>s.k===sel);
+    const W=cv.width,H=cv.height;
+    ctx.fillStyle='rgba(21,29,38,.4)'; ctx.fillRect(0,0,W,H);
+
+    if(sel==='dense'){
+      // full connectivity
+      const inN=5, outN=6;
+      for(let i=0;i<inN;i++) for(let j=0;j<outN;j++){
+        line(ctx,90,70+i*55,W-90,50+j*48,'rgba(78,205,196,.22)',1);
+      }
+      for(let i=0;i<inN;i++) dot(ctx,90,70+i*55,8,CO.sk);
+      for(let j=0;j<outN;j++) dot(ctx,W-90,50+j*48,8,CO.em);
+      label(ctx,'Jedes mit jedem — eine globale Hyperebene je Neuron',20,H-16,CO.em,12);
+    } else if(sel==='conv'){
+      const inN=7, outN=5;
+      for(let j=0;j<outN;j++) for(let k=0;k<3;k++){
+        const i=j+k; if(i<inN) line(ctx,90,45+i*40,W-90,65+j*52,'rgba(255,209,102,.3)',1.4);
+      }
+      for(let i=0;i<inN;i++) dot(ctx,90,45+i*40,7,CO.sk);
+      for(let j=0;j<outN;j++) dot(ctx,W-90,65+j*52,8,CO.am);
+      label(ctx,'Lokales Fenster, geteilte Gewichte',20,H-16,CO.am,12);
+    } else if(sel==='attn'){
+      const n=6;
+      for(let i=0;i<n;i++) for(let j=0;j<n;j++){
+        const w=Math.abs(Math.sin(i*1.7+j*2.3));
+        line(ctx,80,60+i*48,W-80,60+j*48,`rgba(251,113,133,${w*0.3})`,1+w*1.6);
+      }
+      for(let i=0;i<n;i++){dot(ctx,80,60+i*48,7,CO.sk);dot(ctx,W-80,60+i*48,7,CO.ro);}
+      label(ctx,'Gewichte hängen von der EINGABE ab — keine feste Matrix',20,H-16,CO.ro,12);
+    } else if(sel==='rnn'){
+      const n=5;
+      for(let t=0;t<n;t++){
+        const x=70+t*((W-140)/(n-1));
+        dot(ctx,x,H/2,10,CO.vi);
+        if(t<n-1) line(ctx,x+12,H/2,70+(t+1)*((W-140)/(n-1))-12,H/2,CO.vi,2.4);
+        label(ctx,'t'+t,x-6,H/2+28,CO.t2,11);
+        // self loop
+        ctx.strokeStyle='rgba(139,92,246,.4)'; ctx.lineWidth=1.6;
+        ctx.beginPath(); ctx.arc(x,H/2-26,15,0.3,Math.PI*2-0.3); ctx.stroke();
+      }
+      label(ctx,'Dieselben Gewichte, wiederverwendet über die Zeit',20,H-16,CO.vi,12);
+    } else if(sel==='res'){
+      const n=4;
+      for(let l=0;l<n;l++){
+        const y=60+l*70;
+        ctx.strokeStyle=CO.sk; ctx.lineWidth=2;
+        ctx.strokeRect(150,y-18,200,36);
+        label(ctx,'F(x) + Norm',250,y+5,CO.sk,12,'center');
+        // skip
+        ctx.strokeStyle='rgba(96,165,250,.45)'; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.moveTo(120,y); ctx.lineTo(120,y-34);
+        ctx.lineTo(400,y-34); ctx.lineTo(400,y); ctx.stroke(); ctx.setLineDash([]);
+        if(l<n-1) line(ctx,250,y+18,250,y+52,CO.sk,2);
+      }
+      label(ctx,'Skip-Verbindung erhält die Identität',20,H-16,CO.sk,12);
+    }
+  }
+  function build(){
+    const box=$('sc-btns'); box.innerHTML='';
+    SC.forEach(s=>{
+      const b=document.createElement('button');
+      b.className='btn sec'+(s.k===sel?' on':'');
+      b.textContent=s.n; b.style.borderColor=s.c;
+      b.addEventListener('click',()=>{sel=s.k;build();});
+      box.appendChild(b);
+    });
+    const S=SC.find(s=>s.k===sel);
+    $('sc-str').textContent=S.str; $('sc-nl').textContent=S.nl;
+    $('sc-fold').textContent=S.fold; $('sc-fold').style.color=S.fold.startsWith('JA')?CO.em:(S.fold.startsWith('NEIN')?CO.ro:CO.am);
+    $('sc-chi').textContent=S.chi; $('sc-chi').style.color=S.chi.startsWith('JA')?CO.em:(S.chi.startsWith('NEIN')?CO.ro:CO.am);
+    $('sc-out').textContent=S.out;
+    drawSC();
+  }
+  build();
+})();
+
+/* ============================================================
+   14 · SELBSTTEST
+   ============================================================ */
+(function(){
+  if(!$('quiz')) return;
+  const Q=[
+    {q:'Warum kann die Ausgabeschicht eines Klassifizierers das 2D-Ei nicht direkt lösen?',
+     a:['Sie hat zu wenige Parameter','Sie kann nur einen flachen Schnitt machen','Sie ist nicht differenzierbar','Die Daten sind zu verrauscht'],
+     c:1,
+     e:'Der lineare Auslesekopf berechnet w·x+b und schwellt. Das ist geometrisch eine Hyperebene — ein flacher Schnitt. Der innere Ring ist vom äußeren umschlossen; keine Gerade trennt ihn ab.'},
+    {q:'Was kann eine affine Abbildung W·x+b NICHT?',
+     a:['Rotieren','Skalieren','Lineare Trennbarkeit erzeugen','Scheren'],
+     c:2,
+     e:'Affine Abbildungen bilden Geraden auf Geraden ab und sind (bei det≠0) umkehrbar. Sie positionieren die Daten, ändern aber nie, ob eine Hyperebene sie trennen kann.'},
+    {q:'Was ist der entscheidende Unterschied zwischen Falten und Plattdrücken?',
+     a:['Falten ist schneller','Falten ist injektiv auf den Daten, Plattdrücken nicht','Plattdrücken braucht mehr Neuronen','Es gibt keinen Unterschied'],
+     c:1,
+     e:'Wenn die ReLU-Ebene eine Komponente in einer UNBESETZTEN Richtung hat, klappt sie die Daten hoch statt sie zu zerquetschen. Kein Punkt fällt mit einem anderen zusammen — keine Information geht verloren.'},
+    {q:'Wie viele Neuronen braucht EINE Schicht (näherungsweise) für ein N-dimensionales Ei?',
+     a:['2^N','N²','N+1','N!'],
+     c:2,
+     e:'Die Faltkante eines N-dim. Eis ist eine Hyperebene der Dimension N−1. Eine Schicht kann mehrere Falten gleichzeitig anwenden — N+1 Neuronen genügen. Konstanter, nicht exponentieller Aufwand.'},
+    {q:'Was ist die messbare Signatur eines Faltneurons in einem trainierten Netz?',
+     a:['Sehr große Gewichte','Bimodale Tuningkurve mit Delle bei null','Konstante Ausgabe','Negativer Bias'],
+     c:1,
+     e:'Ein Faltneuron reagiert schwach auf die innere Klasse (Faltkante liegt mittendrin → Delle bei z=0) und stark auf die äußere. Kausaltest: diese Neuronen abschalten bricht die Leistung ein.'},
+    {q:'Warum wächst die Anzahl linearer Regionen exponentiell mit der Tiefe?',
+     a:['Mehr Parameter','Jede Schicht faltet das bereits Gefaltete erneut','Zufällige Initialisierung','Der Bias-Term'],
+     c:1,
+     e:'Wie beim Papier: eine zweite Falte auf einem schon gefalteten Blatt erzeugt doppelt so viele Kanten. Ein Netz der Tiefe L und Breite 2 in 1D erzeugt exakt 2^L Regionen — Breite wächst nur polynomiell.'}
+  ];
+  let answered=0, right=0;
+  const box=$('quiz');
+  Q.forEach((item,qi)=>{
+    const d=document.createElement('div');
+    d.className='demo'; d.style.marginBottom='10px';
+    let html=`<div style="font-weight:700;margin-bottom:8px;color:var(--text)">${qi+1}. ${item.q}</div><div class="ctrls" style="background:transparent;border:0;padding:0;gap:8px">`;
+    item.a.forEach((opt,ai)=>{
+      html+=`<button class="btn sec" data-q="${qi}" data-a="${ai}" style="flex:none">${String.fromCharCode(65+ai)}) ${opt}</button>`;
+    });
+    html+=`</div><div class="out" id="qz-out-${qi}" style="display:none"></div>`;
+    d.innerHTML=html;
+    box.appendChild(d);
+  });
+  box.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-q]'); if(!b) return;
+    const qi=+b.dataset.q, ai=+b.dataset.a, item=Q[qi];
+    const parent=b.parentElement;
+    if(parent.dataset.done) return;
+    parent.dataset.done='1';
+    answered++;
+    const ok=(ai===item.c); if(ok) right++;
+    [...parent.querySelectorAll('button')].forEach((bb,idx)=>{
+      if(idx===item.c){bb.style.background=CO.em;bb.style.color='#07131a';bb.style.borderColor=CO.em;bb.style.fontWeight='700';}
+      else if(idx===ai){bb.style.background='rgba(251,113,133,.25)';bb.style.borderColor=CO.ro;bb.style.color=CO.ro;}
+      bb.disabled=true;
+    });
+    const out=$(`qz-out-${qi}`);
+    out.style.display='block';
+    out.textContent=(ok?'✓ RICHTIG\n\n':'✗ FALSCH\n\n')+item.e;
+    out.style.borderLeftColor=ok?CO.em:CO.ro;
+    out.style.color=ok?CO.em:CO.t2;
+    $('qz-n').textContent=`${answered} / ${Q.length}`;
+    $('qz-r').textContent=right;
+    $('qz-bar').style.width=(100*right/Q.length)+'%';
+    $('qz-bar').style.background = right/Q.length>0.66?CO.em:(right/Q.length>0.33?CO.am:CO.ro);
+  });
+})();
+
+/* ============================================================
+   NAV SCROLLSPY
+   ============================================================ */
+(function(){
+  const links=[...document.querySelectorAll('nav.toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    let cur=0;
+    const y=window.scrollY+120;
+    secs.forEach((s,i)=>{ if(s && s.offsetTop<=y) cur=i; });
+    links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  upd();
+  links.forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t) window.scrollTo({top:t.offsetTop-56,behavior:'smooth'});
+  }));
+})();
+
+/* ============================================================
+   RESIZE HANDLING FOR PLOTLY
+   ============================================================ */
+(function(){
+  let tid=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(tid);
+    tid=setTimeout(()=>{
+      document.querySelectorAll('.plot').forEach(el=>{
+        if(el && el.data) { try{ Plotly.Plots.resize(el); }catch(e){} }
+      });
+    },180);
+  });
+})();
+
+/* ============================================================
+   ROUNDRECT POLYFILL (ältere Browser)
+   ============================================================ */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number') r={tl:r,tr:r,br:r,bl:r};
+    else if(Array.isArray(r)) r={tl:r[0],tr:r[1]||r[0],br:r[2]||r[0],bl:r[3]||r[0]};
+    this.beginPath();
+    this.moveTo(x+r.tl,y);
+    this.lineTo(x+w-r.tr,y); this.quadraticCurveTo(x+w,y,x+w,y+r.tr);
+    this.lineTo(x+w,y+h-r.br); this.quadraticCurveTo(x+w,y+h,x+w-r.br,y+h);
+    this.lineTo(x+r.bl,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r.bl);
+    this.lineTo(x,y+r.tl); this.quadraticCurveTo(x,y,x+r.tl,y);
+    this.closePath();
+    return this;
+  };
+}
+</script>
+
+</body>
+</html>

@@ -32,7 +32,7 @@ Imagine the AI is trying to finish the sentence: *“The sky is...”*
 Here is what the internal probabilities might look like:
 </div>
 
-<div id="token-prediction-plot" style="width:100%; max-width:600px; height:400px; margin: 0 auto 40px auto;"></div>
+<div id="token-prediction-plot" data-plot-theme="self" style="width:100%; max-width:600px; height:400px; margin: 0 auto 40px auto;"></div>
 
 <div class="md">
 In this case, the AI will likely pick “Blue”. But notice that “Green” and “Cheese” are not zero. They are just unlikely. If the AI is forced to be “creative,” it might pick them.
@@ -60,7 +60,7 @@ Watch how increasing the Temperature makes the AI more likely to say something w
     </div>
     <input type="range" id="slider-temperature" min="0.1" max="5.0" step="0.1" value="1.0" style="width: 100%;">
     
-    <div id="temperature-plot" style="width:100%; height:350px;"></div>
+    <div id="temperature-plot" data-plot-theme="self" style="width:100%; height:350px;"></div>
     
     <div id="temp-output-text" style="padding: 10px; background: var(--mn-bg); border-left: 4px solid #3b82f6;"></div>
 </div>
@@ -297,5 +297,5 @@ When you ask a model that was trained on data up to 2024 about an event from 202
             Hallucination Risk: <span id="risk-value">0%</span>
         </div>
     </div>
-    <div id="shift-plot" style="width: 100%; height: 400px;"></div>
+    <div id="shift-plot" data-plot-theme="self" style="width: 100%; height: 400px;"></div>
 </div>

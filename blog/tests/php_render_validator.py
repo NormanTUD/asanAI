@@ -15,6 +15,8 @@ then checks for:
   - Unrendered LaTeX strings (raw LaTeX source instead of rendered equations) → exit code 2
   - Reading-column width overflow (layout_guardrail.js; margin notes & boxes
     exempt) when --check-width is set → exit code 3
+  - Math-integrity violations (visible/mangled temml annotations, data-tex
+    vs annotation mismatch) when --check-math is set → exit code 4
 
 Usage:
     uv run blog/tests/php_render_validator.py blog/
@@ -317,6 +319,66 @@ def check_unrendered_latex(driver: webdriver.Chrome) -> list[str]:
 
     return found
 
+def check_math(driver: webdriver.Chrome) -> list[str]:
+    """
+    Math-integrity check for temml-rendered equations.
+
+    temml renders with annotate:true, parking the raw LaTeX source in an
+    <annotation encoding="application/x-tex"> child of the <math>. That
+    source must stay pristine and invisible. Violations found:
+      - visible_annotation: the annotation is rendered on the page
+        (raw LaTeX leaks next to the equation — the Chromium leak bug)
+      - mangled_annotation: the annotation contains child markup, i.e. a
+        markdown re-parse fed the source through emphasis (<em> etc.)
+      - tex_mismatch: data-tex (stamped from the pristine source at render
+        time) disagrees with the annotation's text
+    """
+    # Equations render lazily (IntersectionObserver), so scroll to the bottom
+    # and back before inspecting — otherwise below-the-fold math is unchecked.
+    # execute_script awaits the returned Promise.
+    issues = driver.execute_script(r"""
+    return new Promise(function (resolve) {
+        function runChecks() {
+            var issues = [];
+            var maths = document.querySelectorAll('math');
+            for (var i = 0; i < maths.length; i++) {
+                var m = maths[i];
+                if (m.closest && m.closest('.lp-overlay')) continue; // popup preview clone
+                var ann = m.querySelector('annotation[encoding="application/x-tex"]');
+                if (!ann) continue;
+
+                var cs = window.getComputedStyle(ann);
+                var rect = ann.getBoundingClientRect();
+                if (cs.display !== 'none' && (rect.width > 0 || rect.height > 0)) {
+                    issues.push({type: 'visible_annotation',
+                                 tex: (ann.textContent || '').slice(0, 80)});
+                }
+                if (ann.querySelector('*')) {
+                    issues.push({type: 'mangled_annotation',
+                                 tex: (ann.textContent || '').slice(0, 80)});
+                }
+                var dt = m.getAttribute('data-tex');
+                if (dt !== null && dt !== (ann.textContent || '').trim()) {
+                    issues.push({type: 'tex_mismatch',
+                                 detail: 'data-tex and annotation disagree'});
+                }
+            }
+            resolve(issues);
+        }
+        window.scrollTo(0, document.body.scrollHeight);
+        setTimeout(function () {
+            window.scrollTo(0, 0);
+            setTimeout(runChecks, 1500);
+        }, 1500);
+    });
+    """)
+
+    found = []
+    for issue in issues or []:
+        found.append(f"[{issue['type']}] {issue.get('detail', issue.get('tex', ''))}")
+    return found
+
+
 def discover_lessons(document_root: str) -> list[str]:
     """Lesson pages = .php files that carry a COURSE_METADATA block.
 
@@ -446,6 +508,18 @@ def main():
         help="Max seconds per page to wait for the reading column to become measurable (default: 25)",
     )
     parser.add_argument(
+        "--check-math",
+        action="store_true",
+        default=False,
+        help="Check temml math integrity (annotation visible/mangled, data-tex mismatch)",
+    )
+    parser.add_argument(
+        "--fail-on-math",
+        action="store_true",
+        default=True,
+        help="Exit with code 4 if math-integrity violations are found (default: True)",
+    )
+    parser.add_argument(
         "--all-lessons",
         action="store_true",
         default=False,
@@ -497,6 +571,7 @@ def main():
     print(f"[info] Pages to check: {len(pages)} ({', '.join(pages[:8])}"
           f"{', …' if len(pages) > 8 else ''})")
     print(f"[info] Timeout: {args.timeout}s | Headless: {headless} | "
+          f"Math: {'ON' if args.check_math else 'off'} | "
           f"Width: {'ON' if args.check_width else 'off'} | Width-only: {args.width_only}")
 
     # Start PHP server
@@ -514,6 +589,7 @@ def main():
 
         all_js_errors = []
         all_latex_issues = []
+        all_math_issues = []
         all_width_issues = []
 
         for page in pages:
@@ -554,6 +630,16 @@ def main():
                         print(f"  ✗ {issue}")
                     all_latex_issues.extend([(page, issue) for issue in latex_issues])
 
+                # Check math integrity (temml annotations / data-tex)
+                if args.check_math:
+                    math_issues = check_math(driver)
+                    if math_issues:
+                        page_ok = False
+                        print(f"\n[MATH ISSUES] Found {len(math_issues)} math-integrity issue(s) on {page}:")
+                        for issue in math_issues:
+                            print(f"  ✗ {issue}")
+                        all_math_issues.extend([(page, issue) for issue in math_issues])
+
             # Check the reading-column width guardrail
             if args.check_width:
                 wres = check_width(driver, args.width_timeout)
@@ -587,12 +673,17 @@ def main():
         print(f"  Pages checked: {len(pages)}")
         print(f"  JS errors: {len(all_js_errors)}")
         print(f"  Unrendered LaTeX: {len(all_latex_issues)}")
+        if args.check_math:
+            print(f"  Math integrity: {len(all_math_issues)}")
         if args.check_width:
             n_off = sum(len(off) for _, off, _, _ in all_width_issues)
             print(f"  Width overflows: {n_off} across {len(all_width_issues)} page(s)")
 
-        # Determine exit code (width overflow is the newest gate; report first)
-        if all_width_issues and args.fail_on_width:
+        # Determine exit code (newest gate reports first)
+        if all_math_issues and args.fail_on_math:
+            print(f"\n[FAIL] Math-integrity violations detected → exit code 4")
+            exit_code = 4
+        elif all_width_issues and args.fail_on_width:
             print(f"\n[FAIL] Reading-column width overflow detected → exit code 3")
             exit_code = 3
         elif all_js_errors and args.fail_on_js_errors:

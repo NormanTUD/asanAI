@@ -122,8 +122,17 @@ html {
 	   well-made hardback. White felt sterile; cream reads as warm,
 	   aged, considered, like a book that has been loved. The bg is
 	   FAFAF7 with a slightly warmer undertone so it harmonises with
-	   the warm taupe borders and the dark walnut body text. */
-	background: #FAF8F1;
+	   the warm taupe borders and the dark walnut body text.
+
+	   Over the flat paper sits a whisper of a gradient: a soft light
+	   pool at the top (like a desk lamp) and a gentle warm deepening
+	   toward the bottom of the page. Both are ~1–2 % luminance steps —
+	   visible as mood, not as stripes. */
+	background-color: #FAF8F1;
+	background-image:
+		radial-gradient(1200px 520px at 50% -140px, rgba(255, 253, 244, 0.85), transparent 70%),
+		linear-gradient(to bottom, #FBF9F3 0%, #FAF8F1 45%, #F5F1E6 100%);
+	background-attachment: fixed;
 	color: #3A2F25;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -223,9 +232,16 @@ html {
 html.dark {
 	/* Body copy sits a notch below pure #e2e8f0: long reading passages
 	   feel calmer while contrast on #0f172a stays ≈ 11:1. Headings and
-	   chrome stay brighter via --mn-heading / explicit rules. */
+	   chrome stay brighter via --mn-heading / explicit rules.
+
+	   The night bg gets the same treatment as the cream paper: a faint
+	   indigo glow at the top (the course accent, at 10 % — a night sky
+	   over the desk) over the existing top-down deepening. Subtle
+	   enough that screenshots at 100 % zoom barely register it. */
 	background-color: #05070f;
-	background-image: linear-gradient(to bottom, #080c17, #05070f);
+	background-image:
+		radial-gradient(1100px 500px at 50% -140px, rgba(99, 102, 241, 0.10), transparent 70%),
+		linear-gradient(to bottom, #0a0f1e 0%, #05070f 60%);
 	background-attachment: fixed;
 	color: #cbd5e1;
 	color-scheme: dark;
@@ -1214,19 +1230,10 @@ html.dark .stat-hint-warm {
 	color: #fbbf24 !important;
 }
 
-/* TOC overrides (toc.js injects hardcoded colors) */
-html.dark #toc {
-	background: var(--mn-bg-subtle) !important;
-	border-color: var(--mn-border) !important;
-}
-html.dark #toc a {
-	color: var(--mn-accent) !important;
-}
-html.dark #toc a:hover {
-	color: var(--mn-accent-dark) !important;
-}
-html.dark .toggle-icon {
-	color: var(--mn-text-muted) !important;
+/* The TOC (toc.js) is fully token-based now, so no per-theme overrides are
+   needed — except the platform search-cancel glyph, which ignores theming. */
+html.dark #toc-toolbar input[type="search"]::-webkit-search-cancel-button {
+	filter: invert(0.7);
 }
 
 html.dark .token-chip {
@@ -1777,6 +1784,9 @@ html.theme-transition *::after {
 	outline: 3px solid #f59e0b !important;
 	outline-offset: 3px !important;
 }
+/* Math guardrail (debug only) — flag + flash for untitled / raw-math blocks. */
+.mg-overflow-flag { outline: 3px dashed #f59e0b; outline-offset: 2px; cursor: crosshair; }
+.mg-flash { outline: 3px solid #f59e0b !important; outline-offset: 3px !important; }
 
 /* ── Prose vs. chrome ───────────────────────────────────────
    #contents inherits the reading serif; everything interactive
@@ -2872,8 +2882,12 @@ pre code {
 
 /* Same guardrail for every descendant of optional content — animations
    sometimes apply transform/filter to individual children, which would
-   re-introduce the containing-block bug. */
-.optional-content *,
+   re-introduce the containing-block bug.
+   SVG subtrees are exempt: the `transform` presentation attribute on SVG
+   elements (e.g. the flip matrix inside the citation "open in new" icon)
+   is essential to the icon's orientation, and a transform inside an SVG
+   cannot create a containing block for fixed-positioned HTML descendants. */
+.optional-content *:not(svg, svg *),
 .optional-content *::before,
 .optional-content *::after {
 	transform: none !important;
@@ -3173,6 +3187,9 @@ h2::after {
 .minimalneuron-page .plot-container {
 	margin: 1rem auto;
 	padding: 0 2rem;
+	/* width:100% + horizontal padding would otherwise push the box past the
+	   reading column (content-box sizing); border-box keeps it inside. */
+	box-sizing: border-box;
 }
 
 .minimalneuron-page .plot-container .js-plotly-plot {
@@ -4312,6 +4329,219 @@ html.dark #contents tbody tr:nth-child(even) {
 	to   { transform: rotate(360deg); }
 }
 
+/* ============================================================
+INTRO — the cosmic load sequence ("From Big Bang to ChatGPT").
+The plain border spinner is replaced by a full-bleed canvas
+(Big Bang  ->  river of historical symbols  ->  the LLM lattice
+forming) plus a title. Drawn by modules/intro.js, which injects
+#intro-canvas and .intro-title into #loader. Every colour the
+canvas paints is theme-reactive (read at init + on theme change);
+only the page background here leans on --mn-bg.
+============================================================ */
+#loader {
+	overflow: hidden;
+}
+#loader .spinner {
+	display: none;
+}
+#loader #intro-canvas {
+	position: absolute;
+	inset: 0;
+	display: block;
+	z-index: 0;
+	pointer-events: none;
+	/* The constellation materialises softly instead of popping in. */
+	opacity: 0;
+	animation: introCanvasIn 1.8s cubic-bezier(0.33, 1, 0.68, 1) 0.1s forwards;
+}
+#loader .intro-scrim {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+}
+#loader .intro-title {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 0 24px 6vh;
+	text-align: center;
+	pointer-events: none;
+}
+#loader .intro-head {
+	position: relative;
+	font-family: var(--mn-font-prose);
+	font-weight: 400;
+	font-size: clamp(1.9rem, 1rem + 3.6vw, 3.3rem);
+	line-height: 1.08;
+	letter-spacing: 0.01em;
+	color: var(--mn-heading);
+}
+#loader .intro-word {
+	display: inline-block;
+	white-space: nowrap;
+}
+/* Letters animate opacity + transform only — both compositor-driven, so
+   the stagger stays smooth even while the main thread is busy loading
+   modules. (Per-letter filter:blur repaints stuttered under load.) */
+#loader .intro-letter {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(0.45em);
+	will-change: transform, opacity;
+}
+#loader .intro-title.is-ready .intro-letter {
+	animation: introLetter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+#loader .intro-rule {
+	display: block;
+	width: 44px;
+	height: 1px;
+	margin: 1.05rem 0 0.9rem;
+	transform: scaleX(0);
+}
+#loader .intro-title.is-ready .intro-rule {
+	animation: introRule 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+}
+/* The whole headline sharpens as one layer — a single one-time blur on
+   one element instead of 20 per-letter blur repaints. */
+#loader .intro-title.is-ready .intro-head {
+	animation: introFocus 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+/* The idle glow lives on a pseudo-element and pulses via opacity
+   (composited), instead of animating the headline's text-shadow —
+   which repainted the whole line every frame. */
+#loader .intro-title.is-ready .intro-head::after {
+	content: attr(data-text);
+	position: absolute;
+	inset: 0;
+	color: transparent;
+	text-shadow: 0 0 22px var(--intro-glow, transparent),
+	            0 0 48px var(--intro-glow, transparent);
+	pointer-events: none;
+	opacity: 0.35;
+	animation: introGlowPulse 5.5s ease-in-out 1.2s infinite;
+}
+#loader .intro-sub-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+#loader .intro-sub {
+	font-family: var(--mn-font-prose);
+	font-style: italic;
+	font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.3rem);
+	letter-spacing: 0.02em;
+	opacity: 0;
+	transform: translateY(0.4em);
+}
+#loader .intro-title.is-ready .intro-sub {
+	animation: introSub 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+}
+#loader #loader-status {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 7.5vh;
+	margin: 0;
+	text-align: center;
+	font-family: var(--mn-font-mono);
+	font-size: 11px;
+	letter-spacing: 0.03em;
+	color: var(--mn-text-muted);
+	z-index: 2;
+}
+#loader #intro-count {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 4.8vh;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
+	font-family: var(--mn-font-mono);
+	font-size: 11px;
+	z-index: 2;
+}
+#loader #intro-count .intro-count-text {
+	letter-spacing: 0.24em;
+	text-indent: 0.24em;
+}
+/* Comet ring: a two-tone arc on a hairline circle, warm-tinted, that
+   fades out once every module has loaded. */
+#loader .intro-spinner {
+	flex-shrink: 0;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	border: 1.5px solid transparent;
+	border-top-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.85);
+	border-right-color: rgba(var(--intro-warm-rgb, 233,170,96), 0.35);
+	animation: introSpin 0.9s linear infinite;
+	/* Opacity is choreographed in JS (modules/intro.js): hidden until the
+	   subtitle's beat, faded out once all modules are loaded. */
+}
+#loader #intro-progress {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	z-index: 2;
+}
+#loader #intro-progress .intro-progress-fill {
+	display: block;
+	height: 100%;
+	width: 0%;
+	transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#loader #loader-checklist {
+	display: none;
+}
+@keyframes introLetter {
+	to { opacity: 1; transform: translateY(0); }
+}
+@keyframes introRule {
+	to { transform: scaleX(1); }
+}
+@keyframes introFocus {
+	from { filter: blur(3px); }
+	to   { filter: blur(0); }
+}
+@keyframes introGlowPulse {
+	0%, 100% { opacity: 0.35; }
+	50%      { opacity: 1; }
+}
+@keyframes introSub {
+	to { opacity: 1; transform: translateY(0); }
+}
+@keyframes introSpin {
+	to { transform: rotate(360deg); }
+}
+@keyframes introCanvasIn {
+	to { opacity: 1; }
+}
+@media (max-width: 560px) {
+	#loader .intro-title { padding-bottom: 8vh; }
+	#loader #loader-status { bottom: 9.5vh; }
+	#loader #intro-count { bottom: 6.6vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+	#loader .intro-letter { opacity: 1; transform: none; animation: none; }
+	#loader .intro-sub { opacity: 1; transform: none; animation: none; }
+	#loader .intro-head { animation: none; }
+	#loader .intro-head::after { animation: none; }
+	#loader .intro-rule { transform: none; animation: none; }
+	#loader .intro-spinner { animation: none; }
+	#loader #intro-canvas { display: none; }
+}
+
 
 /* ============================================================
 STATISTICS MODULE — Gorgeous Additions
@@ -5067,6 +5297,11 @@ html.dark .course-hero {
 	padding-bottom: 3rem;
 }
 
+/* Mobile-only jump link below the hero (styled in mobile.css). */
+.course-jump {
+	display: none;
+}
+
 .course-part {
 	margin-bottom: 3rem;
 }
@@ -5103,7 +5338,7 @@ html.dark .course-hero {
 
 .course-tiles {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 1rem;
 }
 
@@ -5164,10 +5399,6 @@ html.dark .course-hero {
 }
 
 @media (max-width: 600px) {
-	.course-tiles {
-		grid-template-columns: 1fr;
-	}
-
 	.course-part-header h2 {
 		font-size: 1.25rem;
 	}
@@ -5321,6 +5552,17 @@ html.is-ready #drawer-toggle,
 html.is-ready #topics-toggle {
 	opacity: 1;
 	visibility: visible;
+}
+/* Atlas: while the full-bleed map stage scrolls under the fixed top chrome,
+   hide those toggles. map.js toggles .atlas-overlap on <html>. !important so
+   it beats the later per-toggle is-ready rules (e.g. #topics-toggle @9016). */
+html.atlas-overlap #search-trigger,
+html.atlas-overlap #theme-toggle,
+html.atlas-overlap #topics-toggle,
+html.atlas-overlap #reader-toggle {
+	opacity: 0 !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5815,6 +6057,45 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	font-size: 1.1rem;
 	color: var(--mn-text-muted);
 	line-height: 1;
+}
+
+/* ── Home link — the quiet breadcrumb above the TOC ──
+   #lesson-home (rendered by functions.php) sits directly above the TOC
+   with no rule of its own: an overline there reads as a typographic
+   overstrike on the small caps, not as chrome. It hands back the 24px
+   margin + 18px padding toc.js spent on its own top rule, so the row
+   stays net free. */
+#contents > .lesson-home {
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	margin: 12px 0 0;
+	padding: 8px 0 10px;
+	color: var(--mn-text-muted);
+	font-family: var(--mn-font-body);
+	font-size: .68rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: .13em;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: color .16s ease;
+}
+#contents > .lesson-home:hover {
+	color: var(--mn-accent);
+	text-decoration: none;
+}
+#contents > .lesson-home:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+#contents > .lesson-home .lesson-home-ico {
+	flex: 0 0 auto;
+	opacity: .75;
+}
+#contents > .lesson-home:hover .lesson-home-ico {
+	opacity: 1;
 }
 
 @media (max-width: 600px) {
@@ -6708,20 +6989,9 @@ blockquote > p:first-of-type::before {
 	color: var(--mn-accent);
 }
 
-/* ── 6. TOC scroll-spy — current section pulses in the nav ── */
-#toc li.toc-current > a {
-	color: var(--mn-accent);
-	font-weight: 700;
-}
-#toc li.toc-current > a::before {
-	content: '\2022';
-	margin-right: .4em;
-	color: var(--mn-accent);
-	opacity: .8;
-}
-#toc a {
-	transition: color .15s ease;
-}
+/* ── 6. TOC ── The table of contents is built + styled at runtime by
+   toc.js (token-based inline <style>), including the .toc-current
+   scroll-spy highlight that polish.js toggles. Nothing to style here. */
 
 /* ── 7. Elegant figcaption ──
    Hangs at the image's left edge, italic for the body text, but
@@ -7105,6 +7375,49 @@ span.cl-eq {
 	color: var(--mn-accent);
 }
 @media (max-width: 600px) { #cl-top { display: none; } }
+
+/* ── 7b. Mini-TOC — the current section, once the real TOC is off-screen ──
+   Same restraint as #cl-top: no chip, no background, no icon. One muted
+   line at the left edge that names the section you are in and takes you
+   back to the table of contents. Hidden until the TOC has scrolled away. */
+#cl-mini-toc {
+	position: fixed;
+	left: 16px;
+	top: 50%;
+	z-index: 9000;
+	max-width: 24ch;
+	background: transparent;
+	border: none;
+	padding: 4px 2px;
+	font-family: inherit;
+	font-size: .72rem;
+	font-weight: 500;
+	letter-spacing: .02em;
+	line-height: 1.35;
+	text-align: left;
+	color: var(--mn-text-muted);
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(-50%) translateX(-6px);
+	pointer-events: none;
+	transition: opacity .25s ease, transform .25s ease, color .15s ease;
+}
+#cl-mini-toc.is-visible {
+	opacity: 1;
+	transform: translateY(-50%) translateX(0);
+	pointer-events: auto;
+}
+#cl-mini-toc:hover {
+	color: var(--mn-accent);
+}
+/* Names the section, does not repeat it: one line, ellipsised. */
+#cl-mini-toc > span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+@media (max-width: 900px) { #cl-mini-toc { display: none; } }
 
 /* ── 4. Shortcut help overlay (only on `?`) ── */
 #cl-shortcut-help {
@@ -8098,7 +8411,11 @@ p:has(> .sideimage-marker:only-child) {
 	float: right !important;
 	clear: right !important;
 	display: block !important;
-	width: 420px !important;
+	/* Width is JS-driven via --si-float-width so a tall image can be
+	   narrowed to keep its rendered height within budget (see
+	   _placeFloat() in sidenotes.js). Falls back to 420px when JS has
+	   not sized it. */
+	width: var(--si-float-width, 420px) !important;
 	max-width: calc(100vw - 380px) !important;
 	margin: 0.5rem 0 1.5rem 1.5rem !important;
 	margin-right: calc(400px - 50vw + 8px) !important;
@@ -8110,12 +8427,19 @@ p:has(> .sideimage-marker:only-child) {
 	padding: 0.65rem 0.65rem 0.5rem;
 	background: var(--mn-surface);
 	box-shadow: var(--mn-shadow-md);
+	/* Deliberately NOT height-capped and NOT scrollable: this float is
+	   allowed to run past its own section so the sections below wrap
+	   prose beside it, which is what removes the empty gutter. Capping
+	   it here would bring the gutter back. */
 	max-height: none !important;
 	overflow: visible !important;
 }
 .sideimage.sideimage-float img {
 	width: 100%;
 	height: auto;
+	/* No height cap: the figure is allowed to be tall, and the prose
+	   below it is indented for exactly the figure's real height, so
+	   there is never an empty gutter beside a letterboxed box. */
 	max-height: none;
 	object-fit: contain;
 }
@@ -8124,6 +8448,46 @@ p:has(> .sideimage-marker:only-child) {
 	line-height: 1.45;
 	color: var(--mn-text-secondary);
 	margin-top: 0.6rem;
+}
+
+/* A \sideimage[float] that _placeFloat() had to put INLINE as its last
+   resort: not enough prose left on the page to fill a float. It renders
+   as a centred block figure with the text — a readable
+   newspaper-column width and full natural height, so nothing is
+   letterboxed or cut off.                                              */
+.sideimage.sideimage-inline.sideimage-tall {
+	max-width: 360px;
+}
+.sideimage.sideimage-inline.sideimage-tall img {
+	max-height: none;
+}
+
+/* \sideimage[float] — restore plain float semantics on a page
+   that has one.
+
+   The blanket rule above hands `contain: layout` to every element
+   inside #contents, and its specificity (1,0,6) beats the `.md` /
+   #contents guardrail's `contain: none` (0,1,0). So every .md section
+   is an independent formatting context, which breaks a float twice:
+
+     1. it traps the float inside its own section, so the next section
+        starts *underneath* the image instead of beside it (the gap);
+     2. a formatting context cannot shrink back. The section that
+        follows the image stays narrowed for its whole height, leaving
+        a tall empty gutter below the picture long after the float has
+        ended — the same gap, lower down the page.
+
+   Turning the rule off for the sections of a page that has a float
+   fixes both at once, and in the way CSS intends: each line box beside
+   the image is indented, and the column snaps back to full width as
+   soon as the image is behind us. The inner paragraphs keep their own
+   `contain: layout`, so they stay tidy boxes of their own.
+
+   sidenotes.js adds `sideimage-float-active` to #contents while any
+   figure is really floating, and removes it again if the figure ends
+   up inline. */
+#contents.sideimage-float-active .md {
+	contain: none !important;
 }
 
 /* Graceful fallback when the image fails to load. We log a
@@ -8177,6 +8541,28 @@ html.dark #sidenotes-section .sidenote-fallback li.is-sn-target {
 }
 .md .tml-display, .md mjx-container[display="true"] {
 	text-align: center;
+}
+/* "No math" stop: hide display equations site-wide in the reading column.
+   Toggled by topics.js (html.math-off) when math comfort is at its minimum.
+   !important because temml stamps an inline `display: block math` on every
+   display equation (inline styles beat plain rules). The :not() exclusions
+   keep equations that have a plain-language twin ([data-math-opt] hosts and
+   .math-alt) under applyMathAlts' control instead. CSS (not per-element JS)
+   so equations temml renders lazily on scroll are covered too. */
+html.math-off #contents math[display="block"]:not([data-math-opt] math):not(.math-alt math),
+html.math-off #contents .tml-display:not([data-math-opt] math):not(.math-alt math),
+html.math-off #contents mjx-container[display="true"]:not([data-math-opt] *):not(.math-alt *),
+html.math-off #contents .MathJax_Display:not([data-math-opt] *):not(.math-alt *) {
+	display: none !important;
+}
+/* Temml stores the pristine LaTeX source in <annotation encoding="application/x-tex">.
+   That is metadata, never visible content. Firefox hides it via the MathML
+   semantics rule, but Chromium (MathML Core) treats unknown MathML elements as
+   renderable and would print the raw source next to/below the equation — and a
+   markdown re-parse that mangles the source into <em> fragments would hoist
+   those fragments OUT of the <math> entirely. Hide it in every browser. */
+math annotation {
+	display: none !important;
 }
 
 /* ── 11.5. Copy-code button — appears only on hover of <pre> ── */
@@ -8246,6 +8632,7 @@ html.reader-mode #search-trigger,
 html.reader-mode #topics-toggle,
 html.reader-mode .drawer-backdrop,
 html.reader-mode #cl-top,
+html.reader-mode #cl-mini-toc,
 html.reader-mode .organic-network,
 html.reader-mode .course-hero {
 	display: none !important;
@@ -8464,6 +8851,7 @@ body:has(#cl-lb.is-visible) #search-trigger,
 body:has(#cl-lb.is-visible) #topics-toggle,
 body:has(#cl-lb.is-visible) #drawer-toggle,
 body:has(#cl-lb.is-visible) #cl-top,
+body:has(#cl-lb.is-visible) #cl-mini-toc,
 body:has(#cl-lb.is-visible) #reading-progress {
 	opacity: 0 !important;
 	visibility: hidden !important;
@@ -8503,7 +8891,7 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
 	#theme-toggle, #search-trigger, #reader-toggle, #topics-toggle,
 	#toc, .km-hero, .km-lane-glow,
-	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
+	#cl-top, #cl-mini-toc, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.cl-h-anchor, .cl-progress, .cl-progress > div,
@@ -8966,6 +9354,7 @@ html.reader-mode #reader-toggle {
 }
 @media (max-width: 600px) {
 	#reader-toggle {
+		top: 10px;
 		right: 180px;
 		width: 36px;
 		height: 36px;
@@ -9542,36 +9931,81 @@ html.dark .topics-preset-fun {
 	border-radius: 12px;
 	transition: background 0.25s, border 0.25s, padding 0.25s, opacity 0.3s ease, filter 0.3s ease;
 }
-.topic-block.topic-block-collapsed {
-	max-height: 120px;
-	overflow: hidden;
+/* The height clip lives in its own class so JS can animate max-height
+   freely between the folded (168px) and full states. `.topic-block-
+   collapsed` keeps the gradient fade + badge + click-through state. The
+   preview is tall enough that a section heading sits clearly ABOVE the
+   2-line reveal badge (no overlap) with room for a fade in between. */
+.topic-block--clipped {
+	max-height: 168px;
+	overflow: hidden !important;
 }
+/* The clip MUST win the overflow fight. `.md` (and the glossary invariant
+   near the bottom of the sheet) set `overflow: visible !important` at the
+   same single-class specificity but LATER, so by source order they would win
+   and let a clipped markdown block's MathJax/text bleed out the 168px box and
+   paint over the next element (the "texts + plots overlap" bug). Re-assert the
+   clip at two-class specificity so it always wins regardless of order. Every
+   clipped block also carries `.topic-block` (added by applyVisibility). */
+.topic-block.topic-block--clipped,
+.md.topic-block--clipped {
+	max-height: 168px;
+	overflow: hidden !important;
+}
+/* Faded content must never intercept the badge tap. (The old full-height mask
+   was a no-op — the inner is as tall as its content, so nothing faded inside
+   the 168px window and the body hard-cut behind the badge. The fade now lives
+   in the `::after` below, which is sized to the visible window.) */
 .topic-block.topic-block-collapsed .topic-block-inner {
-	-webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
-	mask-image: linear-gradient(to bottom, #000 40%, transparent 100%);
+	pointer-events: none;
+}
+/* Smooth recede: a gradient from transparent (just under the heading) to the
+   page paper, running to the very bottom of the 168px window. It reaches full
+   opacity well before the reveal badge so the badge band — and any table rows,
+   which carry their own lighter --mn-bg-subtle fill — are fully covered rather
+   than showing through a half-fade. Only the heading stays crisp. */
+.topic-block.topic-block-collapsed::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 60px;
+	bottom: 0;
+	background: linear-gradient(to bottom, transparent 0%, var(--mn-bg) 30%, var(--mn-bg) 100%);
+	pointer-events: none;
+	z-index: 1;
 }
 .topic-block.topic-block-collapsed .topic-block-fade-badge {
 	position: absolute;
-	bottom: 8px;
-	left: 50%;
-	transform: translateX(-50%);
+	bottom: 10px;
+	left: 12px;
+	right: 12px;
+	width: auto;
+	transform: none;
 }
 
 .topic-block-fade-badge {
-	display: inline-flex;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 14px;
-	border-radius: 99px;
+	gap: 6px 10px;
+	padding: 10px 14px;
+	box-sizing: border-box;
+	border-radius: 12px;
 	border: 1px solid var(--mn-border);
 	background: var(--mn-surface);
 	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-	font-size: 0.78rem;
+	font-size: 0.8rem;
+	line-height: 1.35;
 	color: var(--mn-text-secondary);
 	cursor: pointer;
 	transition: border-color 0.18s, box-shadow 0.18s;
 	z-index: 2;
+	text-align: left;
 }
+.topic-block-fade-badge .tbf-icon { flex: 0 0 auto; }
+.topic-block-fade-badge .tbf-title { flex: 0 1 auto; font-weight: 600; color: var(--mn-text); }
+.topic-block-fade-badge .tbf-text { flex: 1 1 auto; white-space: normal; overflow: visible; text-overflow: clip; }
 .topic-block-fade-badge:hover {
 	border-color: var(--mn-accent);
 	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -9584,6 +10018,67 @@ html.dark .topics-preset-fun {
 	font-size: 0.7rem;
 	color: var(--mn-text-muted);
 	font-weight: 600;
+}
+/* Fold-away control for a section the reader pried open. Sits in the normal
+   flow at the END OF THE SECTION — after the block's trailing demos, right
+   before the next heading (no overlap) — so a user-revealed, still-gated
+   section can be tucked away again without touching the dial. */
+.topic-block-recollapse {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 18px 0 6px;
+	padding: 6px 12px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-family: var(--mn-font-body);
+	color: var(--mn-text-muted);
+	background: transparent;
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.topic-block-recollapse:hover {
+	color: var(--mn-text);
+	border-color: var(--mn-accent);
+	background: var(--mn-bg-subtle);
+}
+
+/* Grouped reveal badge: one in-flow badge standing in for a run of
+   consecutive tucked sections. Lists every section heading it covers so
+   the reader sees exactly what one tap will reveal. */
+.topic-block-group-badge {
+	width: 100%;
+	box-sizing: border-box;
+	margin-top: 8px;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: flex-start;
+	gap: 5px;
+}
+.topic-block-group-badge .tbf-group-titles {
+	flex: 1 1 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 8px;
+	font-size: 0.78rem;
+	line-height: 1.4;
+}
+.topic-block-group-badge .tbf-group-title {
+	color: var(--mn-text);
+	font-weight: 600;
+}
+.topic-block-group-badge .tbf-group-sep {
+	color: var(--mn-text-muted);
+}
+
+/* Demos / plot containers that follow a collapsed math section recede with it
+   (hidden until the section is revealed). Kept out of flow so the next section
+   slides up instead of leaving a gap. */
+.topic-demo-tucked {
+	display: none !important;
 }
 
 /* ── block-level math alternative ────────────────────────────
@@ -9632,7 +10127,11 @@ html.dark .topics-preset-fun {
 /* prerequisite chips inside the "Builds on" pill */
 .tdp-chip {
 	display: inline-block;
-	white-space: nowrap;
+	/* Long lesson titles must wrap on narrow screens instead of overflowing
+	   the reading column; the 99px radius degrades gracefully to a rounded
+	   box on multi-line chips. */
+	white-space: normal;
+	overflow-wrap: break-word;
 	margin: 1px 3px;
 	padding: 1px 9px;
 	border-radius: 99px;
@@ -9706,6 +10205,109 @@ a.tdp-chip.tdp-chip-met:hover {
 	color: var(--mn-emerald, #10b981);
 	background: color-mix(in srgb, var(--mn-emerald, #10b981) 10%, transparent);
 }
+/* ── Course status box at the end of the article (compact + expandable) ──
+   A small always-visible capsule at the end of the lesson body shows
+   "Lesson N of M" + progress; tapping it opens a panel with Next-up /
+   Builds-on / Unlocks detail. */
+/* In-flow, right-aligned, at the END of the reading column (after the
+   learned button, before footnotes/sources). It was a position:fixed veil
+   that floated over the centered content — covering the TOC at the top and,
+   while scrolling, wide plots / text. In-flow it reserves its own space, so
+   there is no layout shift when it fades in. `position:relative` anchors the
+   dropdown panel. The z-index makes the WHOLE box subtree — including the
+   opened panel, which paints over the footnotes/sources below — win the
+   stacking contest against every in-flow article element (the column's
+   positioned content tops out at z-index 10; fixed chrome sits at 9000+,
+   which must stay above the panel). */
+#course-status-box {
+	position: relative;
+	z-index: 60;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+	padding: 2px 0 0;
+	font-family: inherit;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .35s ease, visibility .35s ease;
+}
+html.is-ready #course-status-box { opacity: 1; visibility: visible; }
+html.reader-mode #course-status-box { display: none; }
+.csb-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 14px;
+	border-radius: 99px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text-secondary);
+	font-size: 0.82rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.18s, box-shadow 0.18s, color 0.18s;
+}
+.csb-toggle:hover {
+	border-color: var(--mn-accent);
+	color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+.csb-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+.csb-toggle .csb-label { white-space: nowrap; }
+.csb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mn-border); flex-shrink: 0; }
+.csb-dot-progress { background: var(--mn-accent); }
+.csb-dot-met { background: var(--mn-emerald, #10b981); }
+.csb-dot-unmet { background: var(--mn-coral, #f97316); }
+.csb-bar {
+	display: inline-block; width: 46px; height: 5px;
+	border-radius: 99px; background: var(--mn-border);
+	overflow: hidden; flex-shrink: 0;
+}
+.csb-bar-fill { display: block; height: 100%; border-radius: 99px; background: var(--mn-accent); transition: width 0.3s ease; }
+.csb-caret { font-size: 0.7rem; line-height: 1; opacity: 0.8; transition: transform 0.22s ease; }
+.csb.is-open .csb-caret { transform: rotate(180deg); }
+.csb-panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	min-width: 260px;
+	max-width: min(88vw, 460px);
+	padding: 12px 14px;
+	border-radius: 14px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+	opacity: 0;
+	transform: translateY(-6px) scale(0.98);
+	transform-origin: top right;
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	z-index: 9999;
+}
+.csb.is-open .csb-panel { opacity: 1; transform: none; pointer-events: auto; }
+.csb-line { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; line-height: 1.55; }
+.csb-line + .csb-line { margin-top: 10px; }
+.csb-line .csb-ico { flex-shrink: 0; font-size: 1rem; line-height: 1.55; }
+.csb-line .csb-txt { min-width: 0; }
+.csb-line-next .csb-ico { color: var(--mn-accent); }
+.csb-line-met .csb-ico { color: var(--mn-emerald, #10b981); }
+.csb-line-unmet .csb-ico { color: var(--mn-text-muted); }
+.csb-line-unlocks { font-size: 0.82rem; opacity: 0.92; }
+.csb-line-unlocks .csb-ico { color: var(--mn-accent); }
+@media (max-width: 720px) {
+	.csb-toggle .csb-bar { display: none; }
+	.csb-panel { left: 0; right: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.csb-toggle, .csb-caret, .csb-panel, .csb-bar-fill { transition: none !important; }
+}
+
 /* Learned / dependency pills — a stack of labelled lines */
 .topic-deps-pill {
 	display: flex;
@@ -10275,12 +10877,6 @@ a.tdp-chip.tdp-chip-met:hover {
 }
 
 @media (max-width: 420px) {
-	#topics-toggle {
-		right: 10px;
-		top: 10px;
-		width: 38px;
-		height: 38px;
-	}
 	.topics-modal { padding: 18px 14px 14px; }
 	.topics-audience-clear { font-size: 0.72rem; padding: 3px 6px; }
 	.topics-seg-btn { font-size: 0.76rem; padding: 6px 6px; }
@@ -10691,6 +11287,12 @@ math {
 	font-weight: 600;
 	color: var(--mn-text-secondary);
 }
+.topics-depth-hint {
+	font-size: 0.7rem;
+	font-weight: 400;
+	color: var(--mn-text-muted);
+	margin-left: 6px;
+}
 .math-comfort-val, .topics-math-val {
 	font-family: monospace;
 	font-weight: 700;
@@ -10855,7 +11457,7 @@ math {
 }
 .tph-group-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 10px;
 }
 .ta-part-hidden-body .course-tile { opacity: 1; filter: none; pointer-events: auto; }

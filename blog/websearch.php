@@ -29,7 +29,7 @@ $$
 \end{gathered}
 $$
 
-**Key insight:** The LLM itself cannot “see” the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*. Teaching models to invoke such tools autonomously is precisely what tool-augmented language models do \cite[Schick et al., 2023]{schick2023toolformer}, \cite[Mialon et al., 2023]{mialon2023augmented}.
+**Key insight:** The LLM itself cannot “see” the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*. Teaching models to invoke such tools autonomously is precisely what tool-augmented language models do (\cite[Schick et al., 2023]{schick2023toolformer}), (\cite[Mialon et al., 2023]{mialon2023augmented}).
 </div>
 <div id="wslab-pipeline-diagram"></div>
 <div class="md">
@@ -47,7 +47,7 @@ Not every question requires a web search. The system (or the LLM itself) first d
 | Explicit request | “Search the web for…” | → Search |
 | Ambiguity / uncertainty | Model unsure about facts | → Search |
 
-Modern systems use **few-shot prompting** or **fine-tuned classifiers** to make this decision, an idea popularized by Toolformer, which trains a model to decide autonomously when calling a search tool would help \cite[Schick et al., 2023]{schick2023toolformer}. The LLM is given a system prompt like the following:
+Modern systems use **few-shot prompting** or **fine-tuned classifiers** to make this decision, an idea popularized by Toolformer, which trains a model to decide autonomously when calling a search tool would help (\cite[Schick et al., 2023]{schick2023toolformer}). The LLM is given a system prompt like the following:
 </div>
 
 <pre class="wslab-code-block"><code>You have access to a `web_search(query)` tool.
@@ -70,7 +70,7 @@ Once the LLM decides to search, it doesn't just forward the user's raw question 
 | “Did that company go bankrupt?” | `"[company name from context] bankruptcy filing 2026"` |
 | “How much does it cost now?” | `"[product name] current price 2026"` |
 
-This is called **query transformation** \cite[Ma et al., 2023]{ma2023queryrewriting}, the LLM uses conversational context to produce a precise, keyword-rich search string. Some systems generate **multiple queries** to cover different angles of the question.
+This is called **query transformation** (\cite[Ma et al., 2023]{ma2023queryrewriting}), the LLM uses conversational context to produce a precise, keyword-rich search string. Some systems generate **multiple queries** to cover different angles of the question.
 
 $$
 \text{Conversational question} \;\xrightarrow{\text{LLM rewrite}}\; \text{Search-optimized query}
@@ -84,11 +84,11 @@ This is the question everyone asks: *“What search engine does ChatGPT use?”*
 
 | Provider | Search Backend | How it works |
 |----------|---------------|--------------|
-| OpenAI (ChatGPT) | **Bing Search API** (Microsoft partnership) \cite[Reuters, 2023]{reuters2023chatgptbrowsing} | JSON API returns titles, snippets, URLs |
-| Google (Gemini) | **Google Search** (internal) \cite[Google, 2025]{google2025grounding} | Direct access to Google's index |
-| Anthropic (Claude) | **Claude web search tool** \cite[Anthropic, 2025]{anthropic2025websearch} | Via tool use / function calling |
-| Perplexity | **Own crawlers + LLM index** \cite[Wikipedia, 2026]{perplexityai} | Synthesizes answers from live web results |
-| You.com | **Web search APIs + LLM** \cite[Wikipedia, 2026]{youcom} | Pivoted from consumer search to LLM APIs |
+| OpenAI (ChatGPT) | **Bing Search API** (Microsoft partnership) (\cite[Reuters, 2023]{reuters2023chatgptbrowsing}) | JSON API returns titles, snippets, URLs |
+| Google (Gemini) | **Google Search** (internal) (\cite[Google, 2025]{google2025grounding}) | Direct access to Google's index |
+| Anthropic (Claude) | **Claude web search tool** (\cite[Anthropic, 2025]{anthropic2025websearch}) | Via tool use / function calling |
+| Perplexity | **Own crawlers + LLM index** (\cite[Wikipedia, 2026]{perplexityai}) | Synthesizes answers from live web results |
+| You.com | **Web search APIs + LLM** (\cite[Wikipedia, 2026]{youcom}) | Pivoted from consumer search to LLM APIs |
 
 ### For local/open-source LLMs:
 
@@ -144,7 +144,7 @@ Raw HTML is full of navigation bars, ads, scripts, and boilerplate. The system u
 | Tool | What it does |
 |------|--------------|
 | **Readability.js** (Mozilla) \cite[Mozilla]{mozillareadability} | Extracts the “main content” from a page (like Reader Mode) |
-| **Trafilatura** (Python) \cite[Barbaresi, 2021]{barbaresi2021trafilatura} | Extracts and cleans article text from HTML |
+| **Trafilatura** (Python) (\cite[Barbaresi, 2021]{barbaresi2021trafilatura}) | Extracts and cleans article text from HTML |
 | **BeautifulSoup** \cite[Richardson]{beautifulsoup} | General HTML parser, extract specific elements |
 | **Playwright / Puppeteer** \cite[Microsoft]{playwright} \cite[Google]{puppeteer} | Full headless browser, handles JavaScript-rendered pages |
 | **Jina Reader API** \cite[Jina AI]{jinareader} | Converts any URL to clean markdown via API call |
@@ -171,9 +171,9 @@ A single web page might contain 5,000+ tokens of text, too much to include for e
 
 1. **Chunks** the extracted text into passages (200–500 tokens each)
 2. **Re-ranks** chunks by relevance to the original query using either:
-   - Cosine similarity (same as RAG) \cite[Reimers & Gurevych, 2019]{reimers2019sentencebert}
-   - A **cross-encoder re-ranker** (a small model that scores query-passage pairs directly) \cite[Reimers & Gurevych, 2019]{reimers2019sentencebert}
-   - Simple keyword/BM25 scoring \cite[Robertson & Zaragoza, 2009]{robertson2009bm25}
+   - Cosine similarity (same as RAG) (\cite[Reimers & Gurevych, 2019]{reimers2019sentencebert})
+   - A **cross-encoder re-ranker** (a small model that scores query-passage pairs directly) (\cite[Reimers & Gurevych, 2019]{reimers2019sentencebert})
+   - Simple keyword/BM25 scoring (\cite[Robertson & Zaragoza, 2009]{robertson2009bm25})
 
 Only the **top chunks** from the **top pages** make it into the final prompt.
 
@@ -215,7 +215,7 @@ complexity from O(n²) to O(n) while maintaining 97% of standard..."
 
 User: What are the latest advances in transformer architecture?</code></pre>
 <div class="md">
-The LLM then generates an answer **grounded in these sources** \cite[Lewis et al., 2020]{lewis2020rag}, citing them inline, exactly like what you're reading right now.
+The LLM then generates an answer **grounded in these sources** (\cite[Lewis et al., 2020]{lewis2020rag}), citing them inline, exactly like what you're reading right now.
 
 ## The Full Architecture Diagram
 </div>
@@ -353,7 +353,7 @@ The LLM doesn't have “built-in” web access. Instead, it uses a protocol call
    - Generates a final answer, or
    - Makes another tool call (e.g., `fetch_page` for more detail)
 
-This loop can repeat multiple times: the LLM might search, read a page, search again with refined terms, then finally answer. This interleaving of reasoning and tool calls is the defining pattern of LLM agents \cite[Yao et al., 2023]{yao2023react}.
+This loop can repeat multiple times: the LLM might search, read a page, search again with refined terms, then finally answer. This interleaving of reasoning and tool calls is the defining pattern of LLM agents (\cite[Yao et al., 2023]{yao2023react}).
 
 ## Custom Sites vs. Open Web Browsing
 
@@ -405,7 +405,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 - **JavaScript-heavy sites:** Require expensive headless browser rendering
 - **Multimedia content:** Images, videos, and interactive content can't be “read”
 - **Hallucinated citations:** The LLM might misattribute information to the wrong source
-- **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt \cite[Greshake et al., 2023]{greshake2023injection} (see the Security chapter)
+- **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (\cite[Greshake et al., 2023]{greshake2023injection}) (see the Security chapter)
 
 ## Summary
 
@@ -447,5 +447,5 @@ The only differences are:
 3. **Scale:** RAG searches thousands–millions of your documents. Web search covers billions of pages.
 4. **Trust:** RAG sources are curated. Web sources may be unreliable.
 
-The core pattern is identical: **retrieve relevant text → inject into prompt → generate grounded answer.** \cite[Lewis et al., 2020]{lewis2020rag}
+The core pattern is identical: **retrieve relevant text → inject into prompt → generate grounded answer.** (\cite[Lewis et al., 2020]{lewis2020rag})
 </div>

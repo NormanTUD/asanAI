@@ -60,21 +60,21 @@ the entire job of every hidden layer is to *reshape the data until that final fl
 succeeds*.
 
 And here is the surprise. With a **smooth** activation, each layer is a
-**homeomorphism**: it can stretch and squish space, rotate and shear it, but it can **never
+**homeomorphism** — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never
 cut, tear, or fold** it. It preserves every topological property — a loop stays a loop, a
-region that surrounds another still surrounds it, connected things stay connected.
+region that surrounds another still surrounds it, connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).
 </div>
 
-<div class="optional md" data-headline="The homeomorphism theorem, proved">
-A feed-forward layer computes $\mathbf{h} = \Phi(W\,\mathbf{x} + \mathbf{b})$: a linear
+<div class="optional md" data-headline="The homeomorphism theorem, proved" data-mathlevel="65" data-optionaltitle="The homeomorphism theorem, proved">
+A feed-forward layer computes $\mathbf{h} = \underbrace{\Phi}_{\text{pointwise activation}}(\underbrace{W\,\mathbf{x}}_{\text{linear map}} + \underbrace{\mathbf{b}}_{\text{shift}})$: a linear
 map, a shift, then a pointwise activation. Olah's claim is that — with $N$ inputs and
 $N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The proof is just
 "three homeomorphisms glued together":
 
 1. **$\mathbf{x} \mapsto W\,\mathbf{x}$.** If $\det W \neq 0$ then $W$ is invertible, with
-   inverse $W^{-1}$. A linear map and its inverse are both continuous, so this is a
-   homeomorphism. (A non-singular matrix is exactly a change of basis — a reversible
-   stretch-and-rotate of the whole space.)
+    inverse $W^{-1}$. A linear map and its inverse are both continuous, so this is a
+    homeomorphism (\cite[Morris, Topology Without Tears, Ch. 5, p. 95]{morris2007topology}). (A non-singular matrix is exactly a change of basis — a reversible
+    stretch-and-rotate of the whole space.)
 2. **$\mathbf{u} \mapsto \mathbf{u} + \mathbf{b}$.** A translation. Its inverse subtracts
    $\mathbf{b}$. Both are continuous. A homeomorphism.
 3. **$\mathbf{z} \mapsto \Phi(\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and
@@ -82,7 +82,7 @@ $N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The pr
    the line (careful about range: tanh lands in $(-1,1)$, not $\mathbb{R}$). Applied to
    each coordinate independently, it is a homeomorphism of $\mathbb{R}^N$.
 
-A composition of homeomorphisms is a homeomorphism, so the layer is one. **And so is any
+A composition of homeomorphisms is a homeomorphism — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 76)]{morris2007topology} — so the layer is one. **And so is any
 stack of them.** $\blacksquare$
 
 Two cautions carry all the weight of what follows. First, the **width must be full**: if
@@ -106,8 +106,8 @@ it plateaus, no matter how you aim it.
 But the homeomorphism argument goes much deeper than "a line won't do it". It says a
 **2-wide** smooth network — *any number of layers* — **cannot solve the egg at all**.
 
-> **Claim.** Let the inner class be a disk $A = \{x : \|x\| < \tfrac13\}$ and the outer
-> class a ring $B = \{x : \tfrac23 < \|x\| < 1\}$. No network of width $\le 2$ with smooth
+> **Claim.** Let the inner class be a disk $\underbrace{A}_{\text{inner disk}} = \{x : \|x\| < \tfrac13\}$ and the outer
+> class a ring $\underbrace{B}_{\text{outer ring}} = \{x : \tfrac23 < \|x\| < 1\}$. No network of width $\le 2$ with smooth
 > activations, **at any depth**, can separate $A$ from $B$. Add a **third** hidden unit and
 > a single layer does it.
 

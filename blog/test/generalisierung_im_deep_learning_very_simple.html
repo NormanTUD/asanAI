@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warum Auswendiglernen nicht schadet — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.big-num{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:22px 0}
+.big-num .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 6px rgba(60,50,20,.03)}
+.big-num .c .v{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--teal);line-height:1.1}
+.big-num .c .v.amber{color:var(--amber)}
+.big-num .c .v.rose{color:var(--rose)}
+.big-num .c .v.violet{color:var(--violet)}
+.big-num .c .l{font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.4}
+.rule{font-family:var(--mono);font-size:13.5px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Es lernt <em>alles</em> auswendig.<br>Und funktioniert trotzdem.</h1>
+  <p class="sub">Ein neuronales Netz mit mehr Parametern als Trainingsbeispielen kann <b>jede</b> Antwortensammlung auswendig lernen — auch reines Rauschen. Trotzdem lernt es an echten Daten zuverlässig weiter. Eine neue Theorie von Stanford erklärt, warum — und versteckt dabei einen praktischen Bonus: <b>eine einzige Zeile Code, die das Training besser macht.</b></p>
+  <div class="chips">
+    <span class="chip">3 kleine Experimente</span>
+    <span class="chip">0 Formeln</span>
+    <span class="chip">1 Zeile Code</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Das Rätsel: auswendig lernen und trotzdem gut</h2>
+<p>Stell dir vor, du übst für eine Prüfung mit einem Schülern, der <b>jede</b> Übungsaufgabe perfekt hinkriegt — auch die, bei denen die „richtige Antwort" völlig willkürlich ist. Bei der echten Prüfung würde man sagen: kaputt. Der hat nur auswendig gelernt.</p>
+<p>Genau das kann ein modernes neuronales Netz: Es hat <b>mehr Parameter als Trainingsbeispiele</b> und kann deshalb selbst reine Zufallsantworten exakt treffen. Die klassische Theorie sagt dann: „Ein Modell, das <em>alles</em> kann, ist <em>nichts</em> wert — wir können nichts garantieren."</p>
+<p>Und trotzdem: Das <b>dasselbe</b> Training funktioniert an echten Daten hervorragend. Das ist das Rätsel, das das Paper löst.</p>
+<div class="big-num">
+  <div class="c"><div class="v">milliarden</div><div class="l">Parameter in einem modernen Netz</div></div>
+  <div class="c"><div class="v amber">0 %</div><div class="l">Trainingsfehler — auch auf reinem Rauschen</div></div>
+  <div class="c"><div class="v rose">klein</div><div class="l">bleibt der Testfehler — und das will erklärt sein</div></div>
+</div>
+<div class="note">
+  <b>Die Frage des Papers:</b> Wohin geht der Fehler, den das Netz beim Auswendiglernen erzeugt — und warum taucht er auf neuen Daten nicht wieder auf?
+</div>
+
+<h2><span class="n">2</span>Die Antwort in einem Bild: zwei Zimmer</h2>
+<p>Der Trick des Papers: Schau nicht auf die <em>Gewichte</em> (da gibt es Milliarden davon), sondern auf die <em>Ausgaben</em> — eine pro Trainingsbeispiel. Der Raum dieser Ausgaben zerfällt in zwei zueinander senkrechte Zimmer:</p>
+<ul>
+  <li><b>Signalkanal:</b> die Richtungen, in denen das Training tatsächlich Fehler abgebaut hat. Was hier ankommt, zählt — und wird auch im Test sichtbar.</li>
+  <li><b>Reservoir:</b> die Richtungen, in denen das Training <em>nichts</em> abbauen konnte. Restfehler, der hier geparkt ist, ist für <b>jede</b> Testfrage unsichtbar.</li>
+</ul>
+<div class="demo">
+  <h3>Probiere es: Wohin darf der Fehler?</h3>
+  <p class="dsub">Der rosa Pfeil ist ein Restfehler des Netzes. Die graue Mitte ist der Ausgaberaum mit den beiden Zimmern. Zieh die Regler — und dreh am Ende den Testpunkt herum.</p>
+  <canvas id="cvRes" width="400" height="300"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Richtung des Restfehlers</span><b id="rAngV">30°</b></div>
+    <input type="range" id="rAng" min="0" max="360" value="30">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Richtung des Testpunkts</span><b id="rQV">100°</b></div>
+    <input type="range" id="rQ" min="0" max="360" value="100" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Trainingsfehler</div><div class="v" id="rTr">1.00</div></div>
+    <div class="box amber"><div class="k">Testbewegung</div><div class="v" id="rTe">–</div></div>
+    <div class="box rose"><div class="k">Fehler liegt im …</div><div class="v" id="rWhere" style="font-size:13px">–</div></div>
+  </div>
+</div>
+<div class="note amber">
+  <b>Das Experiment:</b> Dreh den Restfehler in die orange Reservoir-Richtung. Der Trainingsfehler bleibt bei 1,00 — das Netz hat diesen Punkt offensichtlich nicht perfekt gelernt. Aber die <em>Testbewegung</em> fällt auf exakt 0. Und jetzt dreh den Testpunkt, wie du willst: Es bleibt 0. Das ist die ganze Kernaussage des Papers — keine Näherung, keine Wahrscheinlichkeit, einfach Null.
+</div>
+
+<h2><span class="n">3</span>Warum das Reservoir so riesig ist</h2>
+<p>Ein Feinkost: Während des Trainings ändert sich ständig, welche Richtungen das Netz „erreichen" kann — neue öffnen sich, alte schließen sich. Deshalb reicht kein einziger Schnappschuss: Das Paper <b>summiert über die gesamte Trainingslaufzeit</b> auf. Das Ergebnis heißt W — die „kumulative Erreichbarkeit".</p>
+<p>Die Regel ist einfach: Eine Richtung mit großem W-Wert ist eine, in der das Training irgendwann tatsächlich Fehler abgebaut hat → Signalkanal. Eine Richtung mit Wert Null ist eine, in der das Training nie hinkam → Reservoir.</p>
+<p>Bei echten Netzen fällt dieses Spektrum über <b>viele Größenordnungen</b> ab: Die überwältigende Mehrheit aller Richtungen liegt praktisch bei Null. Das Reservoir ist riesig, der Signalkanal winzig.</p>
+<div class="note violet">
+  <b>Und das erklärt gleich noch eines:</b> Warum schadet Überparametrisierung nicht? Weil immer genug Platz da ist, Rauschen zu parken — dort, wo keine Testfrage es sehen kann.
+</div>
+
+<h2><span class="n">4</span>Das Rennen: Gerade gegen Zickzack</h2>
+<p>Aber der Signalkanal ist kein sicherer Hafen — dort liegen <em>beides</em>: echte Struktur und auswendig gelerntes Rauschen. Hier führt das Training selbst eine Trennung durch, die fast zum Nichts kostet. Der Kniff ist ein simpler Skalierungsunterschied:</p>
+<ul>
+  <li><b>Echtes Signal</b> zeigt in jeder Charge in etwa dieselbe Richtung. Schritt für Schritt. Nach T Schritten wächst der Fortschritt <b>wie T</b> — geradeaus.</li>
+  <li><b>Rauschen</b> taktet zufällig hin und her, wie ein Betrunkener. Nach T Schritten ist der Abstand vom Start nur <b>wie √T</b> — der Zickzack-Weg.</li>
+</ul>
+<p>Die Wurzel wächst viel langsamer als die Gerade. Länger trainieren, und das Signal lässt das Rauschen hinter sich.</p>
+<div class="demo">
+  <h3>Probiere es: Signal gegen Rauschen</h3>
+  <p class="dsub">Grüne Linie: echtes Signal (immer dieselbe Richtung). Rosa Linien: fünf unabhängige Rausch-Läufe. Zieh die Zeit — und würfel neu.</p>
+  <canvas id="cvRace" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Trainings-Schritte T</span><b id="raceTV">100</b></div>
+    <input type="range" id="raceT" min="10" max="500" value="100">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Rauschstärke σ</span><b id="raceSigV">1.0</b></div>
+    <input type="range" id="raceSig" min="20" max="300" value="100" class="m">
+  </div>
+  <div class="ctl">
+    <button id="bRaceRun">⚄ Neu würfeln</button>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Signal nach T</div><div class="v" id="raceDrift">–</div></div>
+    <div class="box amber"><div class="k">Rauschen typisch ±</div><div class="v" id="raceSpread">–</div></div>
+    <div class="box rose"><div class="k">Signal : Rauschen</div><div class="v" id="raceRatio">–</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Was du siehst:</b> Je länger du trainierst, desto weiter zieht die gerade Linie weg von den Zickzacks. Und größere Batches machen die Zickzacks noch kleiner — deshalb lohnt sich langes Training mit großen Batches.
+</div>
+
+<h2><span class="n">5</span>Vier berühmte Rätsel — ein Mechanismus</h2>
+<p>Das Schönste an der Theorie: Die vier bekanntesten „Mysterien" des Deep Learning erweisen sich als derselbe Mechanismus, nur aus verschiedenen Winkeln betrachtet.</p>
+<ul>
+  <li><b>Benign Overfitting:</b> Auswendig gelerntes Rauschen sitzt physisch im Reservoir → es ist folgenlos. Trainingsfehler 0, Testfehler trotzdem klein.</li>
+  <li><b>Double Descent:</b> Mehr Kapazität ist nur ein gutes Geschäft, wenn die neue Richtung mehr Signal als Rauschen mitbringt. Der berühmte Peak liegt exakt an diesem Vorzeichenwechsel.</li>
+  <li><b>Implicit Bias:</b> Das Netz passt die Richtungen in einer festen Reihenfolge an (die „leichten" zuerst). Das ist kein Zusatzterm, sondern ein Zeitplan, der von selbst entsteht.</li>
+  <li><b>Grokking:</b> Das echte Signal <em>wandert</em> aus dem Reservoir in den Signalkanal — und genau im Moment des Überholens springt die Testgenauigkeit.</li>
+</ul>
+
+<h2><span class="n">6</span>Der praktische Bonus: eine Zeile Code</h2>
+<p>Man kann pro Parameter messen, wie stark sein <b>kohärentes Signal</b> ist (der mittlere Gradient, im Quadrat) und wie groß seine <b>Schwankung</b> von Charge zu Charge ist. Die ganze Theorie kollabiert zu einer einzigen Regel:</p>
+<div class="rule">Parameter k aktualisieren &nbsp;⇐&nbsp; Signal²(k) &gt; Rausch²(k) / (b − 1)</div>
+<p>In Worten: <b>Ein Parameter darf nur lernen, wenn sein kohärentes Signal sein Rauschen schlägt.</b> Kann es das nicht, wird der Update übersprungen. Das ist eine einzige zusätzliche Zeile im Standard-Optimierer AdamW — kein Validierungsdatensatz, kein Architekturwissen, kein Verlustwissen.</p>
+<div class="demo">
+  <h3>Probiere es: Das Gate in Aktion</h3>
+  <p class="dsub">Jeder Punkt ist ein Parameter: horizontal = sein Rausch², vertikal = sein Signal². Die gestrichelte Linie ist die Schwelle. Grün = darf lernen, rot = wird blockiert.</p>
+  <canvas id="cvGate" width="400" height="300"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Batchgröße b</span><b id="gateBV">4</b></div>
+    <input type="range" id="gateB" min="2" max="64" value="4">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Anteil echter Signal-Parameter</span><b id="gateFracV">30 %</b></div>
+    <input type="range" id="gateFrac" min="0" max="100" value="30" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">dürfen lernen</div><div class="v" id="gatePass">–</div></div>
+    <div class="box rose"><div class="k">werden blockiert</div><div class="v" id="gateBlock">–</div></div>
+    <div class="box amber"><div class="k">Schwelle 1/(b−1)</div><div class="v" id="gateTh">–</div></div>
+  </div>
+</div>
+<div class="note violet">
+  <b>Warum b im Nenner?</b> Kleine Batches haben viel Rauschen — das Gate wird vorsichtig und blockiert mehr. Große Batches machen das Rauschen kleiner — mehr Parameter dürfen lernen. Die Schwelle sitzt genau dort, wo Signal und Rauschen sich die Waage halten.
+</div>
+<p>Im Paper wurde dieselbe Zeile in fünf völlig verschiedenen Experimenten eingebaucht: physikalische Simulationen (PINNs), Grokking, Feinabstimmung von Sprachmodellen (DPO), Bildkodierung (INRs) und chaotische Systeme (Lorenz). Alle wurden besser.</p>
+<div class="big-num">
+  <div class="c"><div class="v">5</div><div class="l">Experimente, dieselbe eine Zeile</div></div>
+  <div class="c"><div class="v amber">5×</div><div class="l">schnelleres Grokking</div></div>
+  <div class="c"><div class="v rose">2,4×</div><div class="l">schnellere PINNs</div></div>
+  <div class="c"><div class="v violet">1 Vektor</div><div class="l">zusätzlicher Speicher in AdamW</div></div>
+</div>
+
+<h2><span class="n">7</span>Die Grenzen (honesty corner)</h2>
+<ul>
+  <li><b>Glattes Netz:</b> Die Theorie verlangt ein zweimal differenzierbares Netz — das erfüllen ResNets und Transformer.</li>
+  <li><b>Konvexer Ausgangsverlust:</b> wird für die Hauptsätze benötigt.</li>
+  <li><b>Exakte Kopplung nur bei quadratischem Verlust:</b> Bei anderen Verlusten bleibt ein kleiner Rest — der schrumpft mit Glattheit und Datendichte.</li>
+  <li><b>Mehrfach-Epochen:</b> Die Herleitung des Gates setzt unabhängige Batches voraus; bei vielen Durchläufen bleibt ein kleiner Restterm.</li>
+  <li><b>Und die Stärken:</b> Keine „Breite gegen unendlich", keine eingefrorenen Kerne, keine asymptotischen Aussagen, kein „mit hoher Wahrscheinlichkeit" — die Kernsätze sind reine Algebra.</li>
+</ul>
+<div class="card">
+  <p style="margin:0;font-size:15px;color:var(--ink)"><b>Der eine Satz für Experten:</b> Der empirische Tangentenkern spaltet den Ausgaberaum in Signalkanal range(W) und Reservoir ker(W) der kumulativen Dissipation; da Training und Test-Transfer denselben Faktor Jᵀ teilen, gilt ker(W) ⊆ ker(G<sub>Q</sub>) für jede Testmenge Q; im Signalkanal trennt SGD Drift (∝ T) von Diffusion (∝ √T) — und die einzige binäre, first-order-populationssichere Update-Regel ist das SNR-Gate μ² &gt; σ²/(b−1).</p>
+</div>
+
+<footer>
+  <p>Quelle: Litman &amp; Guo, <a href="https://arxiv.org/abs/2605.01172" target="_blank">„A Theory of Generalization in Deep Learning"</a>, Stanford University, arXiv:2605.01172<br>
+  Volle Version mit 14 interaktiven Demos und allen Formeln: <a href="generalisierung_im_deep_learning.html">Volle Version</a></p>
+</footer>
+
+</main>
+<script>
+(function(){
+  function arrow(c,x0,y0,x1,y1,color,w){
+    c.strokeStyle=color; c.fillStyle=color; c.lineWidth=w;
+    c.beginPath(); c.moveTo(x0,y0); c.lineTo(x1,y1); c.stroke();
+    var a=Math.atan2(y1-y0,x1-x0), s=9;
+    c.beginPath();
+    c.moveTo(x1,y1);
+    c.lineTo(x1-s*Math.cos(a-0.42), y1-s*Math.sin(a-0.42));
+    c.lineTo(x1-s*Math.cos(a+0.42), y1-s*Math.sin(a+0.42));
+    c.closePath(); c.fill();
+  }
+
+  /* ===== Demo 1: Reservoir — Unsichtbarkeit ===== */
+  var cv1=document.getElementById('cvRes');
+  var ctx1=cv1.getContext('2d');
+  var W1=cv1.width, H1=cv1.height;
+  var sAng=document.getElementById('rAng');
+  var sQ=document.getElementById('rQ');
+  var vAng=document.getElementById('rAngV');
+  var vQ=document.getElementById('rQV');
+  var vTe=document.getElementById('rTe');
+  var vWhere=document.getElementById('rWhere');
+
+  function drawRes(){
+    var ang=sAng.value/180*Math.PI;
+    var q=sQ.value/180*Math.PI;
+    var cx=W1/2, cy=H1/2, L=100;
+    ctx1.clearRect(0,0,W1,H1);
+    ctx1.fillStyle='#f5f0e6'; ctx1.fillRect(0,0,W1,H1);
+
+    ctx1.fillStyle='rgba(15,118,110,.09)';
+    ctx1.fillRect(0, cy-16, W1, 32);
+    ctx1.fillStyle='rgba(180,83,9,.09)';
+    ctx1.fillRect(cx-16, 0, 32, H1);
+
+    arrow(ctx1, cx, cy, W1-14, cy, '#0f766e', 2);
+    arrow(ctx1, cx, cy, cx, 14, '#b45309', 2);
+
+    ctx1.font='11px sans-serif'; ctx1.textAlign='left';
+    ctx1.fillStyle='#0f766e';
+    ctx1.fillText('Signalkanal', W1-96, cy-24);
+    ctx1.fillStyle='#b45309';
+    ctx1.fillText('Reservoir', cx+22, 22);
+
+    var hx=L*Math.cos(ang), hy=L*Math.sin(ang);
+    drawResProj(ctx1, cx, cy, hx);
+    arrow(ctx1, cx, cy, cx+hx, cy+hy, '#be185d', 3);
+
+    var tq=58;
+    arrow(ctx1, cx, cy, cx+tq*Math.cos(q), cy+tq*Math.sin(q), '#6d28d9', 2);
+    ctx1.fillStyle='#6d28d9';
+    ctx1.fillText('Testpunkt', cx+tq*Math.cos(q)+7, cy+tq*Math.sin(q)+4);
+
+    var cosA=Math.cos(ang);
+    var testMotion=Math.abs(cosA*Math.cos(q));
+    vAng.textContent=sAng.value+'°';
+    vQ.textContent=sQ.value+'°';
+    vTe.textContent=testMotion.toFixed(2);
+    vWhere.textContent = Math.abs(cosA)<0.15 ? 'Reservoir' : (Math.abs(cosA)>0.85 ? 'Signalkanal' : 'dazwischen');
+  }
+
+  function drawResProj(c,cx,cy,hx){
+    if(Math.abs(hx)<5) return;
+    c.save();
+    c.setLineDash([6,4]);
+    arrow(c, cx, cy, cx+hx, cy, '#0f766e', 2.5);
+    c.restore();
+  }
+
+  [sAng,sQ].forEach(function(el){ el.addEventListener('input',drawRes); });
+  drawRes();
+
+  /* ===== Demo 2: T vs sqrt(T) ===== */
+  var cv2=document.getElementById('cvRace');
+  var ctx2=cv2.getContext('2d');
+  var W2=cv2.width, H2=cv2.height;
+  var sT=document.getElementById('raceT');
+  var sSig=document.getElementById('raceSig');
+  var vT=document.getElementById('raceTV');
+  var vSig=document.getElementById('raceSigV');
+  var vDrift=document.getElementById('raceDrift');
+  var vSpread=document.getElementById('raceSpread');
+  var vRatio=document.getElementById('raceRatio');
+  var MAXT=500, walks=[];
+
+  function genWalks(){
+    walks=[];
+    for(var k=0;k<5;k++){
+      var w=[0];
+      for(var i=0;i<MAXT;i++) w.push(w[i]+(Math.random()*2-1));
+      walks.push(w);
+    }
+  }
+  genWalks();
+
+  function drawRace(){
+    var T=parseInt(sT.value);
+    var sig=sSig.value/100;
+    var mu=1;
+    var drift=mu*T, spread=sig*Math.sqrt(T);
+    var maxVal=Math.max(drift, 4.5*spread, 6);
+    var pad={l:16, r:16, t:14, b:24};
+    var pw=W2-pad.l-pad.r, ph=H2-pad.t-pad.b;
+    var xOf=function(t){ return pad.l+t/MAXT*pw; };
+    var yOf=function(v){ return pad.t+ph/2-v/maxVal*(ph/2); };
+
+    ctx2.clearRect(0,0,W2,H2);
+    ctx2.fillStyle='#f5f0e6'; ctx2.fillRect(0,0,W2,H2);
+
+    ctx2.strokeStyle='#ddd5c2'; ctx2.lineWidth=1;
+    ctx2.beginPath(); ctx2.moveTo(pad.l, yOf(0)); ctx2.lineTo(W2-pad.r, yOf(0)); ctx2.stroke();
+
+    for(var k=1;k<5;k++){
+      ctx2.strokeStyle='rgba(190,24,93,.18)'; ctx2.lineWidth=1.5;
+      ctx2.beginPath();
+      for(var i=0;i<=T;i++) i?ctx2.lineTo(xOf(i), yOf(walks[k][i])):ctx2.moveTo(xOf(0), yOf(0));
+      ctx2.stroke();
+    }
+    ctx2.strokeStyle='#be185d'; ctx2.lineWidth=2.5;
+    ctx2.beginPath();
+    for(var i=0;i<=T;i++) i?ctx2.lineTo(xOf(i), yOf(walks[0][i])):ctx2.moveTo(xOf(0), yOf(0));
+    ctx2.stroke();
+
+    ctx2.strokeStyle='#0f766e'; ctx2.lineWidth=3;
+    ctx2.beginPath(); ctx2.moveTo(xOf(0), yOf(0)); ctx2.lineTo(xOf(T), yOf(drift)); ctx2.stroke();
+
+    ctx2.fillStyle='#0f766e';
+    ctx2.beginPath(); ctx2.arc(xOf(T), yOf(drift), 5, 0, Math.PI*2); ctx2.fill();
+    ctx2.fillStyle='#be185d';
+    ctx2.beginPath(); ctx2.arc(xOf(T), yOf(walks[0][T]), 5, 0, Math.PI*2); ctx2.fill();
+
+    ctx2.fillStyle='#9aa0b0'; ctx2.font='10px monospace'; ctx2.textAlign='left';
+    ctx2.fillText('0', pad.l, H2-8);
+    ctx2.textAlign='right';
+    ctx2.fillText(MAXT+' Schritte', W2-pad.r, H2-8);
+
+    vT.textContent=T;
+    vSig.textContent=sig.toFixed(1);
+    vDrift.textContent=String(Math.round(drift));
+    vSpread.textContent=spread.toFixed(1);
+    vRatio.textContent=(spread>0 ? Math.round(drift/spread) : '∞')+' : 1';
+  }
+
+  document.getElementById('bRaceRun').addEventListener('click',function(){ genWalks(); drawRace(); });
+  [sT,sSig].forEach(function(el){ el.addEventListener('input',drawRace); });
+  drawRace();
+
+  /* ===== Demo 3: SNR-Gate ===== */
+  var cv3=document.getElementById('cvGate');
+  var ctx3=cv3.getContext('2d');
+  var W3=cv3.width, H3=cv3.height;
+  var sB=document.getElementById('gateB');
+  var sFrac=document.getElementById('gateFrac');
+  var vB=document.getElementById('gateBV');
+  var vFrac=document.getElementById('gateFracV');
+  var vPass=document.getElementById('gatePass');
+  var vBlock=document.getElementById('gateBlock');
+  var vTh=document.getElementById('gateTh');
+  var pts=[], N=70;
+
+  function genPts(){
+    pts=[];
+    var f=sFrac.value/100;
+    for(var i=0;i<N;i++){
+      if(Math.random()<f) pts.push({mu2:0.5+Math.random()*0.5, s2:0.05+Math.random()*0.3});
+      else pts.push({mu2:0.02+Math.random()*0.35, s2:0.2+Math.random()*0.75});
+    }
+  }
+  genPts();
+
+  function drawGate(){
+    var b=parseInt(sB.value);
+    var pad={l:36, r:14, t:14, b:32};
+    var pw=W3-pad.l-pad.r, ph=H3-pad.t-pad.b;
+    var xOf=function(x){ return pad.l+x*pw; };
+    var yOf=function(y){ return pad.t+ph-y*ph; };
+
+    ctx3.clearRect(0,0,W3,H3);
+    ctx3.fillStyle='#f5f0e6'; ctx3.fillRect(0,0,W3,H3);
+
+    ctx3.strokeStyle='#c9c0a8'; ctx3.lineWidth=1;
+    ctx3.beginPath();
+    ctx3.moveTo(pad.l, pad.t); ctx3.lineTo(pad.l, H3-pad.b); ctx3.lineTo(W3-pad.r, H3-pad.b);
+    ctx3.stroke();
+
+    ctx3.fillStyle='#9aa0b0'; ctx3.font='10px monospace';
+    ctx3.textAlign='center';
+    ctx3.fillText('Rausch² (σ²)', W3/2, H3-8);
+    ctx3.save(); ctx3.translate(11, H3/2); ctx3.rotate(-Math.PI/2);
+    ctx3.fillText('Signal² (μ²)', 0, 0);
+    ctx3.restore();
+
+    var slope=1/(b-1);
+    var xEnd=Math.min(1, 1/slope);
+    ctx3.strokeStyle='#b45309'; ctx3.lineWidth=2; ctx3.setLineDash([6,4]);
+    ctx3.beginPath(); ctx3.moveTo(xOf(0), yOf(0)); ctx3.lineTo(xOf(xEnd), yOf(slope*xEnd)); ctx3.stroke();
+    ctx3.setLineDash([]);
+    ctx3.fillStyle='#b45309'; ctx3.textAlign='left';
+    ctx3.fillText('Schwelle', xOf(Math.min(0.72, xEnd*0.9))+6, yOf(slope*Math.min(0.72, xEnd*0.9))-6);
+
+    var pass=0;
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      var ok=p.mu2>p.s2/(b-1);
+      if(ok) pass++;
+      ctx3.beginPath();
+      ctx3.arc(xOf(p.s2), yOf(p.mu2), 4, 0, Math.PI*2);
+      ctx3.fillStyle=ok?'rgba(15,118,110,.75)':'rgba(190,24,93,.6)';
+      ctx3.fill();
+    }
+
+    vB.textContent=b;
+    vFrac.textContent=sFrac.value+' %';
+    vPass.textContent=Math.round(100*pass/N)+' %';
+    vBlock.textContent=Math.round(100*(N-pass)/N)+' %';
+    vTh.textContent=slope.toFixed(2);
+  }
+
+  sB.addEventListener('input', drawGate);
+  sFrac.addEventListener('input', function(){ genPts(); drawGate(); });
+  drawGate();
+})();
+</script>
+</body>
+</html>

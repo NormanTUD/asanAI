@@ -102,7 +102,7 @@ Floating-point arithmetic cannot represent most real numbers exactly (0.1 in bin
 For a sequence of operations $f_1, f_2, \dots, f_n$, the **forward error** grows at worst as:
 
 $$
-\underbrace{|\hat y - y|}_{\text{forward error}} \leq C \cdot n \cdot \epsilon_{\text{machine}}
+\underbrace{|\hat y - y|}_{\text{forward error}} \leq C \cdot n \cdot \underbrace{\epsilon_{\text{machine}}}_{\text{machine precision}}
 $$
 
 where $\epsilon_{\text{machine}}$ is machine precision ($\approx 10^{-7}$ for fp32) and $C$ is a problem-dependent constant. So even if individual steps are approximate, the result is bounded.
@@ -117,7 +117,7 @@ Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods
 
 A neural network is, mathematically, a **function approximator**. Given a function $f^*: X \to Y$, the network learns parameters $\theta$ such that $f_\theta(x) \approx f^*(x)$ for the inputs in the training distribution.
 
-The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[Hornik et al., 1989]{hornik1989} states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists.
+The **Universal Approximation Theorem** (\cite[Cybenko, 1989]{cybenko1989}; \cite[Hornik et al., 1989]{hornik1989}) states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision. The theorem says nothing about *how to find* such a network, only that one exists. The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 3.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The integral and the closed integral">
@@ -133,7 +133,7 @@ $$\int_a^b f(x)\,\mathrm{d}x = \underbrace{\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i
 
 The sign $\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \cite{historyofmathematicalnotation}. The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by "indivisibles"; Newton and Leibniz turned it into a general calculation. The result that makes the integral *useful* is the **Fundamental Theorem of Calculus (FTC)**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then the whole limit collapses to a subtraction of two endpoint values. In general,
 
-$$\int_a^b f(x)\,\mathrm{d}x = F(b) - F(a) \;=\; \big[\,F(x)\,\big]_{a}^{b} .$$
+$$\int_a^b f(x)\,\mathrm{d}x = \underbrace{F(b) - F(a)}_{\text{endpoint values}} \;=\; \big[\,F(x)\,\big]_{a}^{b} .$$
 
 So you rarely take the limit by hand: find *any* antiderivative $F$ of $f$, then subtract its value at the lower limit from its value at the upper limit.
 
@@ -151,7 +151,7 @@ $$\oint_{C} ds = \text{the perimeter of } C .$$
 
 Two things to notice. First, why there is **no upper limit**: the curve $C$ under the sign *is* the "from … to …" — $\oint_C$ means "add up all the way around $C$." Because the loop is closed you finish where you began, so there is no separate start- and end-number to write down. Second, $ds$ is not a mystery variable: it is one tiny piece of length along the curve, playing exactly the role that $\Delta x$ played in the Riemann sum above. The only difference is that the thing you would normally write between the sign and the $ds$ (the "height") is just the number $1$, and a lone $1$ is left out by convention — exactly as $\int_a^b dx$ really means $\int_a^b 1\,dx$. So here you are adding up pure length.
 
-Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (that is $360^\circ$), no matter what shape the loop is.
+Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}, that is $360^\circ$), no matter what shape the loop is.
 
 You will meet the same idea again in physics and in [Geometry III](geometry_iii): add up a quantity all the way round a closed loop — or across a closed surface, like the total amount that flows out of a box — and the single number you get at the end describes the whole closed shape, not just one point on it.
 </div>
@@ -203,7 +203,7 @@ You may have heard of the “curse of dimensionality”: in high dimensions, dis
 In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with small variance, the probability that a cosine has magnitude above $0.1$ is only about $0.6\%$:
 
 $$
-P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0.006
+P\!\left(\underbrace{|\cos(\mathbf{v}_1, \mathbf{v}_2)|}_{\text{cosine similarity}} > 0.1\right) \approx 0.006
 $$
 
 This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many “almost-orthogonal” directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
@@ -225,7 +225,7 @@ This is possible precisely because high-dimensional space has exponentially many
 A foundational result in high-dimensional probability. For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:
 
 $$
-P\!\left(\underbrace{|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]|}_{\text{deviation from the mean}} > t\right) \leq 2 \exp\!\left(-\frac{c d t^2}{L^2}\right)
+P\!\left(\underbrace{|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]|}_{\text{deviation from the mean}} > t\right) \leq \underbrace{2 \exp\!\left(-\frac{c d t^2}{L^2}\right)}_{\text{exponential in } d}
 $$
 
 In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**. Random high-dimensional vectors are almost deterministic in their statistical properties.
@@ -249,7 +249,7 @@ This is why deep learning is so effective on images, audio, and text: each of th
 A surprising property of well-behaved approximations: errors don't necessarily compound.
 
 * **Forward stability** (numerical analysis): small perturbations in input cause bounded perturbations in output.
-* **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\!\left(\sqrt{V / n}\right)$. More data reduces the bound; more parameters increases it.
+* **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\!\left(\sqrt{V / n}\right)$. More data reduces the bound; more parameters increases it. The derivation proceeds via **covering numbers**: one bounds how many $\varepsilon$-balls are needed to cover the set of all functions a $V$-parameter network can compute, then applies a uniform-concentration inequality. The full derivation is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 14.
 * **Smoothness priors**: most natural signals are smooth, adjacent pixels in an image, adjacent tokens in text, are correlated. Neural networks encode this prior through their architecture.
 
 These guarantees are why training a 70B model on 15T tokens can produce a model that generalizes to novel inputs, even though the model has never seen them before.
@@ -278,7 +278,7 @@ Every loss function, every embedding, every layer of every network is a function
 In most of this textbook we write types informally (“$x$ is a vector, $w$ is a matrix”). For most purposes that's enough. But sometimes a sharper language helps, and the sharpest language for “spaces + functions between them” turns out to be **type theory**.
 </div>
 
-<div class="optional md" data-headline="Type Theory and Homotopy Type Theory (for the curious)">
+<div class="optional md" data-headline="Type Theory and Homotopy Type Theory (for the curious)" data-mathlevel="85">
 **Type theory** is a foundation for mathematics where the basic objects are *types* (think: sets with structure) and the basic maps are *functions* between them. Most modern proof assistants (Lean, Coq, Agda) are built on type theory for the same reason Tensor notation is built on tensors: once you commit, the compiler / kernel checks every step.
 
 ### What a type actually is
@@ -297,7 +297,7 @@ A **term** is something that *has* a type. We write $x : A$ for “$x$ is a term
 
 ### Functions as types
 
-The key idea: **functions are also typed**. If $A$ and $B$ are types, the type $A \to B$ (“$A$ arrow $B$”) is *the type of functions from $A$ to $B$*. A term $f : A \to B$ is a rule that turns any $a : A$ into an $f(a) : B$.
+The key idea: **functions are also typed**. If $A$ and $B$ are types, the type $A \to B$ (“$A$ arrow $B$”) is *the type of functions from $A$ to $B$*. A term $f : A \to B$ is a rule that turns any $a : A$ into an $f(a) : B$ — precisely the classical definition of a **mapping** from a set into a set (\cite[Lang, Basic Mathematics, Ch. 14, p. 345]{lang2005basicmath}).
 
 The canonical example, and the simplest piece of every neural network, is the **is-even** test:
 

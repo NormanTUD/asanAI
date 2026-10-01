@@ -184,12 +184,68 @@ function smartPunct(root) {
 		return /[A-Za-z\\]/.test(inner);
 	};
 
+	/* Already-rendered <math>…</math> elements (temml output) carry their
+	   pristine LaTeX source in an <annotation> child — with no $ delimiters
+	   left, so the rules below cannot protect it. By design renderMarkdown()
+	   runs more than once, and each later pass re-parses the serialized
+	   container HTML: without this stash the raw source would be fed through
+	   markdown emphasis (…_{x}… → <em>…) and mangled — and Chromium's HTML
+	   parser then hoists the resulting <em> out of the <math> entirely,
+	   printing raw LaTeX next to the equation. Stash every balanced
+	   <math> element first (nesting-aware: temml may nest a <math> inside an
+	   eqref mtext). */
+	const stashMathElements = (s) => {
+		let res = '';
+		let i = 0;
+		while (i < s.length) {
+			const at = s.indexOf('<math', i);
+			if (at === -1) { res += s.slice(i); break; }
+			const c = s[at + 5];
+			if (c !== undefined && /[a-zA-Z0-9-]/.test(c)) {
+				res += s.slice(i, at + 5);
+				i = at + 5;
+				continue;
+			}
+			const gt = s.indexOf('>', at);
+			if (gt === -1) { res += s.slice(at); break; }
+			res += s.slice(i, at);
+			let depth = 1;
+			let k = gt + 1;
+			let end = -1;
+			while (k < s.length) {
+				const no = s.indexOf('<math', k);
+				const nc = s.indexOf('</math>', k);
+				if (nc === -1) break;
+				if (no !== -1 && no < nc) {
+					const c2 = s[no + 5];
+					if (c2 === undefined || !/[a-zA-Z0-9-]/.test(c2)) {
+						depth++;
+						const gg = s.indexOf('>', no);
+						k = (gg === -1) ? s.length : gg + 1;
+						continue;
+					}
+				}
+				depth--;
+				if (depth === 0) { end = nc + 7; break; }
+				k = nc + 7;
+			}
+			if (end === -1) { res += s.slice(at); break; }
+			stash.push(s.slice(at, end));
+			res += makePh();
+			i = end;
+		}
+		return res;
+	};
+
 	window.marked.use({
 		hooks: {
 			preprocess(html) {
 				stash = [];
 				counter = 0;
 				let out = html;
+
+				// Rendered math first — it no longer contains delimiters.
+				out = stashMathElements(out);
 
 				// Block math first so we don't shadow $$…$$ with the inline rule.
 				out = out.replace(/\$\$([\s\S]*?)\$\$/g, (m) => {
@@ -221,9 +277,63 @@ function smartPunct(root) {
 	});
 })();
 
+/* Rendered <math> elements are final: a re-parse must never see their inner
+   text (the x-tex annotation carries the raw LaTeX source, which markdown
+   emphasis would mangle). DOM-level stash/restore around marked.parse — the
+   structural twin of the string-level stash in installMathProtection(). */
+function stashContainerMath(container) {
+	const stashed = Array.from(container.querySelectorAll('math'));
+	stashed.forEach((m, i) => {
+		const ph = document.createElement('span');
+		ph.setAttribute('data-mn-math-ph', String(i));
+		m.replaceWith(ph);
+	});
+	return stashed;
+}
+
+function restoreContainerMath(container, stashed) {
+	if (!stashed || !stashed.length) return;
+	container.querySelectorAll('[data-mn-math-ph]').forEach(ph => {
+		const i = parseInt(ph.getAttribute('data-mn-math-ph'), 10);
+		const m = stashed[i];
+		if (m) ph.replaceWith(m);
+		else ph.remove();
+	});
+	stashed.forEach(m => {
+		if (!m.isConnected) {
+			console.error('[renderMarkdown] rendered <math> placeholder lost by marked; re-appending equation');
+			container.appendChild(m);
+		}
+	});
+}
+
+/* Wrap every markdown-rendered <table> in a horizontal scroll container.
+   A table can't shrink below its content, so a wide one overflows the reading
+   column (worst on phones). The wrapper is the guardrail's sanctioned
+   .lg-scroll mechanism — it clamps to the column and scrolls the table
+   horizontally when it's too wide. The table keeps display:table, so column
+   alignment is preserved. Idempotent: a table that already has a .table-scroll
+   parent is left alone, so re-renders never nest wrappers. */
+function wrapTablesInScroll(container) {
+	if (!container) return;
+	container.querySelectorAll('table').forEach(t => {
+		if (t.parentElement && t.parentElement.classList.contains('table-scroll')) return;
+		var w = document.createElement('div');
+		// lg-scroll is the guardrail's sanctioned scroller: clamps to the
+		// column, scrolls horizontally when content is wider, and is exempt
+		// from the width check (closest('.lg-scroll')). table-scroll marks the
+		// wrapper so a re-render doesn't nest a second one.
+		w.className = 'table-scroll lg-scroll';
+		t.parentNode.insertBefore(w, t);
+		w.appendChild(t);
+	});
+}
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
+		// 0. Pull already-rendered <math> elements out (restored after parse).
+		const stashedMath = stashContainerMath(container);
 		// 1. Inhalt holen und Einrückungen fixen
 		// The DOM serializer escapes `>` and `<` inside text nodes to &gt;/&lt; on
 		// readback, so `>` markdown (blockquotes) would otherwise reach marked as
@@ -268,6 +378,11 @@ function renderMarkdown() {
 
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
+		// 3r. Put the rendered <math> elements back (verbatim nodes).
+		restoreContainerMath(container, stashedMath);
+		// 3t. Wide markdown tables scroll inside the column instead of
+		//     overflowing it (guarded by the layout guardrail).
+		wrapTablesInScroll(container);
 		// 3a. figcaptions sit inside raw HTML blocks that marked skips,
 		//     so their own *markdown* would remain literal — parse them.
 		processFigcapsMarkdown(container);
@@ -302,10 +417,12 @@ function renderMarkdown() {
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
+		const stashedFnMath = stashContainerMath(fnContainer);
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			fnContainer.innerHTML = BlogTopics.preprocess(fnContainer.innerHTML);
 		}
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
+		restoreContainerMath(fnContainer, stashedFnMath);
 		smartPunct(fnContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
@@ -314,10 +431,12 @@ function renderMarkdown() {
 
 	const srcContainer = document.getElementById('sources');
 	if (srcContainer) {
+		const stashedSrcMath = stashContainerMath(srcContainer);
 		if (window.BlogTopics && BlogTopics.preprocess) {
 			srcContainer.innerHTML = BlogTopics.preprocess(srcContainer.innerHTML);
 		}
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
+		restoreContainerMath(srcContainer, stashedSrcMath);
 		smartPunct(srcContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
@@ -388,16 +507,55 @@ function revealContent() {
     const content = document.getElementById('contents');
     if (!content) return;
 
+    // Hold the intro long enough that the title is actually read: the reveal
+    // waits until 3 s AFTER the intro text has fully materialised (intro.js
+    // stamps window.__mnIntroTextDone), and also until the page is ready. On
+    // short/fast pages this is what keeps the title on screen; on slow pages
+    // the page's own load time dominates and nothing artificial is added.
+    const mnNow = window.performance ? performance.now() : 0;
+    const mnTextDone = (typeof window.__mnIntroTextDone === 'number' && window.__mnIntroTextDone > 0)
+        ? window.__mnIntroTextDone : 0;
+    const MN_MIN_REVEAL = mnTextDone ? mnTextDone + 1500 : 1500;
+    if (mnNow < MN_MIN_REVEAL) {
+        setTimeout(revealContent, MN_MIN_REVEAL - mnNow);
+        return;
+    }
+
     // Floating top buttons (search / theme) fade in together with the
     // content instead of flashing over the loader on first paint.
     document.documentElement.classList.add('is-ready');
 
-    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+    // One smooth ~600 ms crossfade from boot screen to page: the loader
+    // dissolves out (a whisper of blur, echoing the intro's materialise) while
+    // the page fades in beneath it, both on the same ease so it glides rather
+    // than pops. Pin opacity first so releasing the loader's bodyFadeIn
+    // animation cannot flash the base opacity:0. The forced reflow on the
+    // content gives its transition a real "from" frame -- display:none -> block
+    // without it snaps straight to opacity:1.
+    const MN_GLIDE = '0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    const mnReduced = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (loader && loader.parentNode) {
+        loader.style.opacity = '1';
+        loader.style.animation = 'none';
+        loader.style.transition = 'opacity ' + MN_GLIDE + ', filter ' + MN_GLIDE
+            + (mnReduced ? '' : ', transform ' + MN_GLIDE);
+        loader.style.pointerEvents = 'none';
+        void loader.offsetWidth;
+        loader.style.opacity = '0';
+        loader.style.filter = 'blur(8px)';
+        // A whisper of scale-out with the dissolve: the boot screen
+        // breathes out instead of simply vanishing.
+        if (!mnReduced) loader.style.transform = 'scale(1.02)';
+        setTimeout(function () {
+            if (loader.parentNode) loader.parentNode.removeChild(loader);
+        }, 680);
+    }
 
     content.style.display = 'block';
     content.style.opacity = '0';
-    content.style.transition = 'opacity 0.5s ease';
-
+    content.style.transition = 'opacity ' + MN_GLIDE;
+    void content.offsetWidth;
     requestAnimationFrame(() => {
         content.style.opacity = '1';
     });
@@ -405,7 +563,7 @@ function revealContent() {
     // it is done so no reveal residue survives on the scroll container.
     setTimeout(() => {
         content.style.removeProperty('transition');
-    }, 800);
+    }, 720);
 
     const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
     const perSection = Math.max(40, Math.min(120, 800 / sections.length));
@@ -589,6 +747,15 @@ function bindIframeSafeLinks() {
 			// --- 2. Reveal any ancestor category blocks that were toggled off ---
 			revealAncestorCategoryBlocks(targetEl);
 
+			// --- 2b. Unfold any ancestor tucked section (math/interests
+			// gate) — a source/citation jump must never land on hidden text.
+			// The ~240 ms unfold animation needs to settle before the
+			// smooth scroll, so the wait below is lengthened when this fired.
+			let unfoldedTucked = 0;
+			if (window.BlogTopics && window.BlogTopics.revealAncestorsOf) {
+				unfoldedTucked = window.BlogTopics.revealAncestorsOf(targetEl) || 0;
+			}
+
 			// --- 3. Force-run any lazy-init section that contains the target ---
 			forceInitLazySections(targetEl);
 
@@ -604,8 +771,9 @@ function bindIframeSafeLinks() {
 				scrollTarget = ancestorQuote;
 			}
 
-			// Small delay to let DOM reflow after reveals
-			requestAnimationFrame(() => {
+			// Small delay to let DOM reflow after reveals (longer when a
+			// tucked section is still unfolding).
+			const afterReveals = () => {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 				sonarWhenVisible(targetEl);
@@ -656,7 +824,12 @@ function bindIframeSafeLinks() {
 						});
 					}, 850);
 				}, 1800);
-			});
+			};
+			if (unfoldedTucked) {
+				setTimeout(afterReveals, 280);
+			} else {
+				requestAnimationFrame(afterReveals);
+			}
 		} else {
 			console.warn(`Target element #${link.getAttribute('data-target')} not found — link has no valid destination and is being hidden.`);
 			// GUARDRAIL: a citation/backlink that points nowhere is
@@ -2217,6 +2390,7 @@ function addConsoleEasterEggs() {
    GLOSSARY — auto-linked term definitions
    ════════════════════════════════════════════════════════ */
 const GLOSSARY = {
+	'chautauqua': 'One of the self-contained units of this course. The name comes from the Chautauqua, an outdoor tradition of shared learning that began in 1874 at Chautauqua Lake, New York; Robert Pirsig used the word for the philosophical digressions that punctuate his book Zen and the Art of Motorcycle Maintenance.',
 	'tensor': 'A multi-dimensional array of numbers — the fundamental data structure in ML frameworks like TensorFlow and PyTorch.',
 	'logit': 'The raw, unnormalized output of a model layer before softmax is applied. Logits can be any real number.',
 	'softmax': 'A function that converts a vector of logits into a probability distribution where values sum to 1.',
@@ -2227,6 +2401,7 @@ const GLOSSARY = {
 	'residual stream': 'The sum of all layer outputs flowing through the model; each layer reads from and writes to this shared "notebook."',
 	'layer normalization': 'A technique that normalizes activations across the feature dimension, stabilizing training by keeping values in a consistent range.',
 	'backpropagation': 'The algorithm that computes gradients of the loss with respect to every weight in the network by applying the chain rule backwards.',
+	'mesa-optimizer': 'An optimizer that emerges inside the weights of a trained model — a found optimizer, as opposed to a meta-optimizer, the outer procedure that finds or builds other optimizers (for an LLM, the external training process such as gradient descent). The contrast is the point: mesa marks the inner, discovered optimizer; meta (or base) marks the outer one that produced it. A mesa-optimizer pursues its own internal objective, a mesa-objective, which can differ from the training loss — so making the outer system behave correctly says nothing by itself about what the inner optimizer will do.',
 	'group': 'A set equipped with an associative binary operation, an identity element, and inverses for every element. The algebraic structure underlying symmetry.',
 	'subgroup': 'A subset of a group that is itself a group under the same operation. e.g. the even integers form a subgroup of the integers under addition.',
 	'groupoid': 'A generalisation of a group in which there can be many objects, not just one. Each pair of objects has a set of invertible morphisms between them that compose and have inverses.',
@@ -2889,7 +3064,6 @@ const GLOSSARY = {
 	'descent data': 'The data you need to descend from a cover to the underlying object: a section on each patch + an isomorphism on each pairwise overlap + coherence on each triple overlap + …. For a sheaf this is just a tuple agreeing on overlaps; for a stack it includes the isomorphisms; for an ∞-stack it includes the higher coherence.',
 	'descent morphism': 'A morphism f: X → Y such that descent holds along f: i.e., a Y-point of a sheaf is determined by its pullback to X together with descent data. The most useful test for whether a morphism is an effective descent morphism is the Beck monadicity theorem.',
 	'mod': 'A model of a theory: a set (or object of a target category) on which all axioms of the theory hold.',
-	'backpropagation': 'The algorithm that computes gradients of the loss with respect to every weight in the network by applying the chain rule backwards.',
 	'residual stream': 'The sum of all layer outputs flowing through the model; each layer reads from and writes to this shared "notebook".',
 	'representation scheme': 'In this chapter: a presheaf F: C^op → V, i.e. an assignment of a target-category object to every context, together with restriction maps along refinements. The "data" half of a coherent-modelling setup: V carries the representations, C^op says how they restrict.',
 	'composable morphism': 'A morphism in a category — an object with composition defined. In ML: a parametric map whose parameters also compose, so that two layers chained together yield a third parameterised map. The categorical upgrade of "just a function".',
@@ -3146,6 +3320,11 @@ const cssVar = (name) => window.__MN_DARK.themeVar(name);
 	};
 	const patchLayout = (gd) => {
 		try {
+			// Charts that render themselves with themeColor() and re-render on
+			// __MN_DARK.onChange() are already correct; patching them again
+			// would double-apply the swap (see e.g. losslab). Opt out via a
+			// data attribute on the plot container.
+			if (gd.closest && gd.closest('[data-plot-theme="self"]')) return;
 			const layout = gd._fullLayout || gd.layout || {};
 			const update = {};
 			for (const key of PATCH_KEYS) {

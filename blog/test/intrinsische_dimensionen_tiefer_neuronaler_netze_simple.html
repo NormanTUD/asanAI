@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intrinsische Dimension tiefer Netze — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1080px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+a.ext{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.split{grid-template-columns:1fr}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+.ctl-hint{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc2)}
+input[type=range].m::-moz-range-thumb{background:var(--acc2)}
+input[type=range].g::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].g::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)}
+.ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)}
+.ro .box .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.thm{background:linear-gradient(150deg,rgba(138,124,255,.1),rgba(13,18,33,.7));border:1px solid rgba(138,124,255,.32);border-radius:13px;padding:16px;margin:18px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px}
+.thm .math{font-family:var(--mono);font-size:15.5px;color:var(--txt);overflow-x:auto;padding:6px 0;line-height:1.8}
+canvas{display:block;max-width:100%}
+.cwrap{background:#060910;border:1px solid var(--stroke);border-radius:11px;padding:8px;overflow:hidden}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--acc);line-height:1.1}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ INTRINSISCHE DIMENSION · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Start</a>
+    <a href="#edid">ED vs ID</a>
+    <a href="#pca">PCA-Falle</a>
+    <a href="#twonn">Nachbar-Trick</a>
+    <a href="#buckel">Der Buckel</a>
+    <a href="#vorhersage">Vorhersage</a>
+    <a href="#gekruemmt">Gekrümmt</a>
+    <a href="#anstieg">Anstieg</a>
+    <a href="#zufall">Zufalls-Labels</a>
+    <a href="#grenzen">Grenzen</a>
+    <a href="#quellen">Quellen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: Ansuini, Laio, Macke &amp; Zoccolan · NeurIPS 2019 · <span style="color:var(--txt-dim)">arXiv:1905.12784</span></div>
+  <h1>Wie viele Zahlen braucht<br>ein <em>Gedanke</em>?</h1>
+  <p class="lead">Ein Bild hat 150 528 Zahlen. Ein Netzwerkschicht-Vektor hat 100 000. Aber: <b>Wie viele davon sind wirklich nötig?</b> Dieses Paper misst es — und findet, dass Tiefe Netze ihre Daten auf extrem dünnen, aber <em>gekrümmten</em> Flächen zusammenfalten. Und dass die Dicke dieser Fläche verrät, wie gut das Netz auf <em>neuen</em> Daten funktionieren wird.</p>
+  <div class="kpi">
+    <div class="c"><div class="big">150 528</div><div class="lab">Zahlen pro Farbbild (224×224×3) — die „Bühne"</div></div>
+    <div class="c"><div class="big" style="color:var(--acc2)">≈ 19</div><div class="lab">Zahlen, die in einer Netzwerkschicht wirklich „echte" Freiheitsgrade sind (gemessen)</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">2·10⁻⁴</div><div class="lab">Verhältnis ID/ED in pool4 von VGG-16: 19 von 100 352</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">r = 0,94</div><div class="lab">Wie stark die ID der letzten Schicht die Test-Genauigkeit vorhersagt</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">So liest du diese Seite</span>
+  <b>①</b> Zwei Dimensionen unterscheiden (ED vs ID) → <b>②</b> warum der naheliegende Weg (PCA) scheitert → <b>③</b> der Trick, der es trotzdem misst (TwoNN) → <b>④</b> die drei großen Ergebnisse → <b>⑤</b> die Grenzen. Jede Demobox ist ein Spielplatz.
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zuerst anfassen: ein Papierstreifen im 3D-Raum</h4><span class="tag">ED vs ID · live gemessen</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Ein schmaler Streifen liegt im 3D-Raum. Er braucht <b>immer 3 Zahlen</b> pro Punkt (x, y, z) — das ist seine <b>ED</b>. Aber um einen Punkt <em>auf dem Streifen</em> zu beschreiben, reicht meist <b>1 Zahl</b> (wo entlang der Länge) oder <b>2</b> (plus: wo über die Breite). Das ist die <b>ID</b>. Rolle den Streifen auf — die ID ändert sich <b>nicht</b> (Krümmung ist für sie unsichtbar), aber für lineare Methoden schon. Der Schätzer unten rechts misst die ID live nach dem Verfahren, das im Paper verwendet wird.</p>
+      <div class="split" style="grid-template-columns:1.3fr 1fr">
+        <div class="cwrap"><canvas id="cvStrip" style="width:100%;height:380px"></canvas></div>
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Breite des Streifens</span><b id="stWV">0.02</b></div>
+            <input type="range" id="stW" min="1" max="100" value="3">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Aufrollung</span><b id="stCV">0.00</b></div>
+            <input type="range" id="stC" class="m" min="0" max="100" value="0">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Drehung der Ansicht</span><b id="stRV">35°</b></div>
+            <input type="range" id="stR" class="v" min="0" max="360" value="35">
+          </div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">ED (Koordinaten)</div><div class="v m">3</div></div>
+            <div class="box"><div class="k">ID (gemessen, TwoNN)</div><div class="v" id="stID">—</div></div>
+          </div>
+          <div class="note" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Dick:</b> Streifen ist breit → ID ≈ 2. <b>Dünn:</b> ID ≈ 1. Krümmung zählt nicht. Genau das müssen wir jetzt in 100 000 Dimensionen können.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="edid" class="anim">
+  <div class="eyebrow">Schritt 1 · Begriffe</div>
+  <h2>Zwei verschiedene „Dimensionen"</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc2)">ED — Einbettungsdimension</h3>
+      <p style="font-size:13.5px">Die Anzahl der Zahlen, die <b>tatsächlich gespeichert</b> werden. In einer Netzwerkschicht: die Anzahl der Neuronen. Bei VGG-16 sind es in pool1 <b>802 816</b>, in pool4 <b>100 352</b> Zahlen pro Bild.</p>
+      <p style="font-size:13.5px;margin:0;color:var(--txt-faint)">ED = Größe des <em>Behälters</em>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc5)">ID — Intrinsische Dimension</h3>
+      <p style="font-size:13.5px">Die <b>minimale Anzahl an Parametern</b>, mit der sich die Daten ohne wesentlichen Verlust beschreiben lassen. In pool4 von VGG-16-R: <b>≈ 19</b> — bei 100 352 gespeicherten Zahlen.</p>
+      <p style="font-size:13.5px;margin:0;color:var(--txt-faint)">ID = Größe des <em>Inhalts</em>.</p>
+    </div>
+  </div>
+  <p>Warum ist das eine gute Idee? Weil echte Daten in riesigen Räumen <b>nicht überall vorkommen</b>. Ein 100 000-dimensionales Raum für „Hund-Bilder" ist zu 99,99 % leer — die echten Bilder liegen auf einer dünnen Struktur. In der Mathematik nennt man so etwas eine <strong>Mannigfaltigkeit</strong>: eine Menge, die lokal wie ein flacher, niedrigdimensionaler Raum aussieht, global aber beliebig gekrümmt sein darf (die Erdoberfläche: lokal eine Landkarte mit 2 Koordinaten, global eine Kugel im 3D-Raum).</p>
+  <div class="note t"><span class="h">Der Skalen-Vorbehalt</span>
+  Die ID hängt immer davon ab, <em>wie genau man hinschaut</em>. Ein dünner, aber endlicher Streifen ist aus der Ferne 1-dimensional, aus der Nähe 2. Deshalb misst das Paper die ID auf mehreren Skalen (durch systematisches Verkleinern der Stichprobe) und vertraut nur Messungen, die dabei <b>stabil</b> bleiben.
+  </div>
+</section>
+
+<section id="pca" class="anim">
+  <div class="eyebrow">Schritt 2 · Die Falle</div>
+  <h2>Warum der naheliegende Weg (PCA) scheitert</h2>
+  <p class="lead">Die klassische Antwort auf „wie viele Dimensionen?" ist die Hauptkomponentenanalyse (PCA): Sie findet die Richtungen, in denen die Daten am stärksten gestreut sind. Das ist ein <b>lineares</b> Werkzeug — es sucht die beste <em>flache</em> Approximation. An gekrümmten Daten überschätzt es die Dimension um ein bis zwei Größenordnungen.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Die Spirale: ein 1D-Objekt, das linear 2D aussieht</h4><span class="tag">PCA vs TwoNN</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.2fr 1fr">
+        <div class="cwrap"><canvas id="cvSpiral" style="width:100%;height:360px"></canvas></div>
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Aufwicklung</span><b id="spCV">3.0</b></div>
+            <input type="range" id="spC" min="0" max="100" value="60">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Dicke</span><b id="spNV">0.02</b></div>
+            <input type="range" id="spN" class="m" min="0" max="50" value="4">
+          </div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">PC-ID (90 % Varianz)</div><div class="v m" id="spPC">—</div><div class="u">lineare Methode</div></div>
+            <div class="box"><div class="k">TwoNN-ID</div><div class="v" id="spID">—</div><div class="u">nichtlineare Methode</div></div>
+          </div>
+          <div class="note e" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Das ist Q2 des Papers:</b> Im echten VGG-16 misst PC-ID in der letzten Schicht <b>≈ 200</b>, TwoNN misst <b>≈ 18</b> — ein Faktor über 10. Die Datenflächen der Netze sind also <em>gekrümmt, nicht flach</em>. (Dazu mehr in der Sektion „Gekrümmt".)</div>
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Beobachte</span>
+      Die Pfeile sind die beiden Hauptkomponenten (die „flache" Zusammenfassung der Wolke). Solange die Spirale eingerollt ist, streut sie in beide Richtungen → PCA braucht 2 Komponenten. ZweiNN sieht die lokale Nachbarschaft und weiß: hier reicht <b>1</b> Regler (die Bogenlänge).
+      </div>
+    </div>
+  </div>
+  <div class="note w"><span class="h">Noch ein Indiz aus dem Paper</span>
+  Das Eigenwert-Spektrum der Netzwerkschichten hat <b>keine Lücke</b> — die Eigenwerte fallen glatt ab. Eine klare Lücke wäre das Signal für „hier endet der eigentliche Raum". Ihre Abwesenheit ist schon für sich ein Hinweis auf Nichtlinearität. Und: PCA kann nicht einmal unterscheiden, ob ein Netz <em>trainiert</em> oder zufällig initialisiert ist — die PC-Profile sehen fast gleich aus.
+  </div>
+</section>
+
+<section id="twonn" class="anim">
+  <div class="eyebrow">Schritt 3 · Der Trick</div>
+  <h2>ZweiNN: die Dimension aus Nachbarschafts-Abständen</h2>
+  <p class="lead">Der Schätzer, den das Paper verwendet (Facco, d'Errico, Rodriguez &amp; Laio 2017), braucht von jedem Punkt nur <b>zwei</b> Zahlen: den Abstand r₁ zum nächsten und r₂ zum zweitnächsten Nachbarn.</p>
+  <div class="thm">
+    <div class="lbl">Die drei Ideen (in Klartext)</div>
+    <div class="math" style="font-size:14px">
+      <b>1 · Verhältnis:</b>&nbsp; μ = r₂ / r₁ &nbsp;(immer ≥ 1)<br>
+      <b>2 · Verteilung:</b>&nbsp; Für gleichmäßig verteilte Punkte auf einer k-dimensionalen Fläche ist μ eine <i>Pareto-Verteilung</i> — und deren Form <em>ist</em> die Dimension: f(μ) ∝ μ<sup>−(k+1)</sup><br>
+      <b>3 · Ablesen:</b>&nbsp; Trägt man ln μ gegen −ln(1 − F(μ)) auf (F = kumulierte Verteilung), liegen die Punkte auf einer Geraden — <em>deren Steigung ist k</em>.
+    </div>
+  </div>
+  <p><b>Warum funktioniert das?</b> In k Dimensionen wächst das Volumen wie r<sup>k</sup>. Die „Volumen-Schale" zwischen 1. und 2. Nachbar enthält im Mittel eine konstante Punktzahl — und wie groß das Verhältnis r₂/r₁ typischerweise ist, hängt <em>nur</em> vom Wachstum r<sup>k</sup> ab: In hohen Dimensionen ist „drumherum" einfach viel mehr Platz, also rückt der 2. Nachbar weiter weg. Und das schlaue Detail: Der Abstand r₁ selbst kürzt sich heraus — <b>dichte und dünne Regionen der Fläche stören die Messung nicht</b>.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>TwoNN-Labor: selbst messen</h4><span class="tag">Der Kern des Papers</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div>
+          <div class="btnrow" id="ttBtns">
+            <button data-t="line" class="on">Linie (k=1)</button>
+            <button data-t="spiral">Spirale (k=1)</button>
+            <button data-t="disk">Scheibe (k=2)</button>
+            <button data-t="gauss">Gauß-Wolke (k=2, ungleichmäßig)</button>
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Punkte N</span><b id="ttNV">300</b></div>
+            <input type="range" id="ttN" min="60" max="700" step="20" value="300">
+          </div>
+          <div class="cwrap"><canvas id="cvTwo" style="width:100%;height:300px;cursor:crosshair"></canvas></div>
+          <div class="ctl-hint">Klick auf die Fläche: zeigt die beiden Nachbarkreise eines Punktes (grün = r₁, rosa = r₂).</div>
+        </div>
+        <div>
+          <div class="cwrap"><canvas id="cvTwoReg" style="width:100%;height:300px"></canvas></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">TwoNN-ID (Regression)</div><div class="v" id="ttID">—</div></div>
+            <div class="box"><div class="k">MLE-ID (Alternativweg)</div><div class="v v" id="ttMLE">—</div><div class="u">N / Σ ln μ</div></div>
+          </div>
+          <div class="note" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Probiere:</b> Spirale → ≈ 1 (PCA würde 2 sagen). Gauß-Wolke mit klumpiger Dichte → trotzdem ≈ 2. <em>Genau diese Robustheit macht den Schätzer für Netzwerkschichten tauglich</em> — das Paper hat ihn an künstlichen Daten in 100 000 Dimensionen getestet: keine Verschlechterung, weil nur Abstände zwischen Paaren eingehen.
+          </div>
+        </div>
+      </div>
+      <div class="note w" style="margin-bottom:0"><span class="h">Einschränkung, die das Paper selbst nennt</span>
+      Für k &lt; ~20 ist der Schätzer sehr genau. Für größere k und endliche Stichproben <b>unterschätzt</b> er systematisch — deshalb sind alle Werte über ~20 im Paper nur <em>untere Schranken</em>.
+      </div>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Warum „in hohen Dimensionen mehr Platz"? Das Volumen-Argument</h4><span class="tag">Intuition in 30 Sekunden</span></div>
+    <div class="demo-body">
+      <div class="split">
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Dimension d</span><b id="vVD">20</b></div>
+            <input type="range" id="vV" min="1" max="40" step="1" value="20">
+          </div>
+          <div class="ro">
+            <div class="box"><div class="k">Volumen wächst bei Radius ×2 um</div><div class="v g" id="vVF">—</div></div>
+          </div>
+          <div class="ctl-hint">Das Volumen einer d-dimensionalen Kugel wächst wie r<sup>d</sup>. Verdopple den Radius: in 2D ×4, in 3D ×8, in 20D über eine Million. Genau deshalb ist der 2. Nachbar in hohen d weiter weg — und genau deshalb trägt das Verhältnis r₂/r₁ die Dimension in sich.</div>
+        </div>
+        <div class="cwrap"><canvas id="cvVol" style="width:100%;height:220px"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="buckel" class="anim">
+  <div class="eyebrow">Schritt 4 · Ergebnis 1</div>
+  <h2>Der Buckel: die ID steigt, dann fällt sie monoton</h2>
+  <p class="lead">Das erste große Ergebnis: In <em>allen</em> 14 getesteten Netzen (VGG, VGG-bn, ResNet, AlexNet — ImageNet-vortrainiert) zeigt die ID die gleiche Form: <b>steiler Anstieg in den ersten Schichten, Gipfel bei 20–40 % der Tiefe (Werte 100–120), dann monotoner Abfall</b> auf sehr kleine Werte am Ausgang.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>VGG-16-R: die ID durch die Schichten (Form nach Fig. 2A des Papers)</h4><span class="tag">Hauptergebnis</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvHunch" style="width:100%;height:340px"></canvas></div>
+      <div class="ctl" style="margin-top:12px">
+        <div class="ctl-lab"><span>Wähle die Schicht</span><b id="hnLV">pool4</b></div>
+        <input type="range" id="hnL" class="v" min="0" max="7" value="3">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">ED (gespeicherte Zahlen)</div><div class="v m" id="hnED">—</div></div>
+        <div class="box"><div class="k">ID (geschätzt)</div><div class="v" id="hnID">—</div></div>
+        <div class="box"><div class="k">Verhältnis ID/ED</div><div class="v g" id="hnR">—</div></div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Zwei Beobachtungen</span>
+      <b>1 ·</b> Der Abfall zum Ausgang ist intuitiv: am Ende muss die Darstellung auf die Klassifikation komprimiert werden. Für ~1000 Kategorien braucht man mindestens log₂(1000) ≈ 10 Dimensionen — und exakt „die Größenordnung 10" wird in allen Ausgabeschichten gemessen. <b>2 ·</b> Der <em>Anstieg</em> am Anfang ist der überraschende Teil — dazu in der Sektion „Anstieg".
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vorhersage" class="anim">
+  <div class="eyebrow">Schritt 5 · Ergebnis 2</div>
+  <h2>Die Form sagt die Leistung voraus</h2>
+  <p class="lead">Das spektakulärste Ergebnis: Messe die ID der <b>Trainingsdaten</b> in der letzten versteckten Schicht. Diese <em>eine Zahl</em> korreliert mit <b>r = 0,94</b> mit dem Top-5-Fehler auf dem <b>Testdatensatz</b> (innerhalb der ResNets sogar r = 0,99). Je kleiner die ID, desto besser generalisiert.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>ID letzte Schicht → Testfehler (Form nach Fig. 4 des Papers)</h4><span class="tag">r = 0,94</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvCorr" style="width:100%;height:320px"></canvas></div>
+      <div class="note e" style="margin-bottom:0"><span class="h">Warum das praktisch wertvoll ist</span>
+      Man kann die Generalisierungsfähigkeit eines Netzes abschätzen, <b>ohne einen Testdatensatz anzufassen</b> — allein aus der Geometrie seiner internen Darstellung. (Beispielwerte in der Grafik sind schematisch; die Endpunkte ResNet152 ≈ 12 und AlexNet ≈ 25 sind die im Paper genannten Realwerte.)
+      </div>
+    </div>
+  </div>
+  <div class="note w"><span class="h">Die ehrliche Einschränkung (vom Paper selbst)</span>
+  Trainiert man <em>dasselbe</em> Netz 50-mal mit verschiedenen Zufallsstarts, streut die ID leicht, aber die Korrelation mit der Genauigkeit verschwindet (r ≈ −0,003) — weil die Genauigkeit dann kaum variiert. Die Korrelation von 0,94 beschreibt Unterschiede <b>zwischen Architekturen</b>, nicht zwischen Trainingsläufen. Und: Korrelation ist keine bewiesene Kausalität.
+  </div>
+</section>
+
+<section id="gekruemmt" class="anim">
+  <div class="eyebrow">Schritt 6 · Ergebnis 3</div>
+  <h2>Gekrümmt, nicht flach — und das ist ein Lern-Effekt</h2>
+  <p class="lead">Tiefe Netze machen die Datenflächen <b>nicht flach</b>. Sie machen sie nur <em>dünn</em>. Das widerspricht einer verbreiteten Vorstellung aus der Neurowissenschaft, nach der „Abflachen" (Untangling) das Ziel der Verarbeitung wäre.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Den Krümmungsnachweis selbst nachrechnen</h4><span class="tag">Gauß-Zwilling</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Der elegante Kontrolltest des Papers: Erzeuge eine <b>Gauß-Wolke mit exakt derselben Kovarianzmatrix</b> wie die echte Netzwerkschicht. Wäre die echte Darstellung nur linear strukturiert, müssten beide dieselbe ID haben. Ziehe den Regler von „gekrümmt" (Spirale) zu „linear" (Gauß mit gleicher Streuung):</p>
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div class="cwrap"><canvas id="cvMorph" style="width:100%;height:320px"></canvas></div>
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Linearisierung</span><b id="moTV">0 %</b></div>
+            <input type="range" id="moT" class="g" min="0" max="100" value="0">
+          </div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">TwoNN-ID</div><div class="v" id="moID">—</div></div>
+            <div class="box"><div class="k">PC-ID (90 %)</div><div class="v m" id="moPC">—</div></div>
+          </div>
+          <div class="note t" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Was passiert:</b> Die ZweiNN-ID <b>schnellt hoch</b>, während die PCA-Entscheidung (die graue Ellipse der Streuung) <em>praktisch unverändert</em> bleibt. Im echten VGG-16: echte ID ≈ 18 und <b>stabil</b> bei wachsender Stichprobe; Gauß-Zwilling: ID ≈ 100-mal höher und <b>wachsend</b> mit N — das Zeichen eines schlecht definierten Schätzwerts. <em>Also: Die niedrige ID ist kein Artefakt, die Daten tragen starke nichtlineare Struktur.</em>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Und untrainierte Netze?</span>
+      Bei zufälligen Gewichten ist jede Schicht näherungsweise eine <b>Drehung</b> — die ID bleibt flach durch alle Schichten, der Buckel existiert nicht. <em>Der Buckel ist also ein echtes Trainings-Ergebnis</em>, keine Architektureigenschaft.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="anstieg" class="anim">
+  <div class="eyebrow">Schritt 7 · Die Erklärung des Anstiegs</div>
+  <h2>Warum steigt die ID zuerst? Der Helligkeits-Trick</h2>
+  <p class="lead">Der Mechanismus, den das Paper isoliert: <b>irrelevante, aber stark korrelierte Eingangsmerkmale</b> drücken die Eingangs-ID künstlich nach unten. Die ersten Schichten „beschneiden" sie — und die ID steigt, weil die echte Struktur sichtbar wird.</p>
+  <p>Das Versuchsdesign (eines der schönsten im Paper): Zu jedem MNIST-Bild wird eine <em>für alle Pixel gleiche</em>, aber von Bild zu Bild zufällige Helligkeit addiert (das „MNIST⋆"). Das Bild wird entlang <em>einer</em> Richtung im Pixelraum extrem gestreckt — alle Punkte liegen fast auf einer Geraden. Die gemessene Eingangs-ID fällt von ≈ 13 auf ≈ <b>3</b>. Das Netz generalisiert trotzdem (≈ 98 % Testgenauigkeit) — und zeigt jetzt <b>plötzlich den Buckel</b>, den das unveränderte MNIST-Netz nicht hatte.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Die Störachse: Helligkeit als irrelevante, aber dominante Koordinate</h4><span class="tag">MNIST⋆</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvMnist" style="width:100%;height:220px"></canvas></div>
+      <div class="ctl" style="margin-top:12px">
+        <div class="ctl-lab"><span>Helligkeits-Stärke λ</span><b id="mnLV">0</b></div>
+        <input type="range" id="mnL" class="m" min="0" max="100" value="0">
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k">Eingangs-ID (wie im Paper gemessen)</div><div class="v" id="mnID">≈ 13</div></div>
+        <div class="box"><div class="k">Testgenauigkeit des Netzes</div><div class="v e">≈ 98 %</div></div>
+        <div class="box"><div class="k">Buckel im Netz</div><div class="v g" id="mnBuck">—</div></div>
+      </div>
+      <div class="note e" style="margin-bottom:0"><span class="h">Die Deutung</span>
+      Die ersten Schichten des Netzes <b>normieren die Störachse weg</b> (Helligkeit, Kontrast, Flanken) — ein „Whitening". Damit verschwindet die künstliche Streckrichtung, und die echte Dimensionalität der Ziffernformen wird sichtbar: die ID <em>steigt</em>. Biologische Parallele aus dem Paper: Genaus dieses Beschneiden irrelevanter Merkmale wie Helligkeit wurde im Sehsystem der Ratte entlang der visuellen Areale nachgewiesen.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="zufall" class="anim">
+  <div class="eyebrow">Schritt 8 · Die Gegenprobe</div>
+  <h2>Zufalls-Labels: wenn Generalisieren unmöglich ist</h2>
+  <p>Tiefe Netze lernen zufällig vermishte Labels <b>perfekt auswendig</b> (Trainingsfehler 0) — mit zwangsläufig Zufallsniveau im Test. Was macht dann die Geometrie? <b>Der Buckel verschwindet:</b> Die ID fällt nicht mehr monotone ab, sondern <b>wächst in der zweiten Netz-Hälfte stark an</b> und sättigt nahe der ED der Ausgabeschicht.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Die zwei Profile gegenüber (Form nach Fig. 6B des Papers)</h4><span class="tag">MNIST vs MNIST†</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvRand" style="width:100%;height:280px"></canvas></div>
+      <div class="note w" style="margin-bottom:0"><span class="h">Warum das sein muss (Intuition, kein Beweis)</span>
+      Eine <em>Regel</em> zu lernen, reicht eine dünne Fläche — ähnliche Bilder liegen beieinander, ein glatter Trennschnitt genügt. <em>Einzelfälle</em> auswendig zu lernen, verlangt, dass jeder Punkt individuell adressierbar ist — das braucht Platz, also Dimensionen. Praktischer Nutzen: Ein Netz, das auf inkonsistenten Daten trainiert wurde, erkennt man <b>ohne Testset</b> — man schaut nur, ob die ID in den letzten Schichten <em>steigt</em> statt fällt.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grenzen" class="anim">
+  <div class="eyebrow">Schritt 9 · Ehrlichkeit</div>
+  <h2>Die Grenzen, die das Paper selbst nennt</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Methodisch</h3>
+      <ul style="font-size:13.5px">
+        <li>Werte über ~20 sind <b>untere Schranken</b> (endliche Stichproben).</li>
+        <li>Die ID ist eine <b>globale</b> Größe — lokale Variationen bleiben verborgen.</li>
+        <li>Skalenstabilität muss immer per Dezimierungstest geprüft werden.</li>
+        <li>Die Trainings-Dynamik-Analyse ist explizit <b>explorativ</b>: Die ID der letzten Schicht kann nach dem Abfall wieder <em>ansteigen, ohne</em> substantielles Overfitting — sie ist also nicht verlässlich als Overfitting-Alarm (Abgrenzung gegen eine frühere Arbeit von Ma et al.).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc4)">Inhaltlich</h3>
+      <ul style="font-size:13.5px">
+        <li>Die ID↔Leistung-Korrelation gilt <b>zwischen Architekturen</b>, nicht zwischen Zufallsinitialisierungen.</li>
+        <li>Es ist eine <b>Korrelation</b>, keine Kausalität.</li>
+        <li>Getestet wurde nur <b>Bildklassifikation</b> — keine Sprache, kein Reinforcement Learning.</li>
+        <li>AlexNet und das kleine MNIST-Netz zeigen den Anstieg nur schwach/überhaupt nicht — der Mechanismus (irrelevante korrelierte Eingangsmerkmale) ist nicht der einzige mögliche.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note e"><span class="h">Das Schlusswort der Autoren</span>
+  „Wir hoffen, dass datengetriebene, empirische Ansätze zur Untersuchung tiefer neuronaler Netze Intuitionen und Randbedingungen liefern, die letztlich die Entwicklung theoretischer Erklärungen ihrer Rechenfähigkeiten inspirieren und ermöglichen."
+  </div>
+</section>
+
+<section id="quellen" class="anim">
+  <div class="eyebrow">Quellen</div>
+  <h2>Originalarbeiten — alle geprüft</h2>
+  <div class="card">
+    <ul style="font-size:13.5px">
+      <li><b>Das Paper selbst:</b> Ansuini, Laio, Macke &amp; Zoccolan (2019), NeurIPS: <i>Intrinsic dimension of data representations in deep neural networks.</i> <a class="ext" href="https://arxiv.org/abs/1905.12784">arXiv:1905.12784</a> — alle zitierten Werte (ID≈19 bei ED≈10⁵, r=0,94/0,99, PC-ID≈200 vs ID≈18, MNIST⋆: 13→3, 14 Architekturen, Gipfel 100–120 bei relativer Tiefe 0,2–0,4) stammen aus dem Volltext.</li>
+      <li><b>Der Schätzer:</b> Facco, d'Errico, Rodriguez &amp; Laio (2017), <i>Scientific Reports</i> 7:12140: <i>Estimating the intrinsic dimension of datasets by a minimal neighborhood information.</i> <a class="ext" href="https://arxiv.org/abs/1803.06992">arXiv:1803.06992</a></li>
+      <li><b>Code des Papers (reproduzierbar):</b> <a class="ext" href="https://github.com/ansuini/IntrinsicDimDeep">github.com/ansuini/IntrinsicDimDeep</a></li>
+      <li><b>Fortsetzung für große Transformer:</b> Valeriani, Doimo, Cuturello, Laio, Ansuini &amp; Cazzaniga (2023), NeurIPS: <i>The geometry of hidden representations of large transformer models.</i> <a class="ext" href="https://arxiv.org/abs/2302.00294">arXiv:2302.00294</a></li>
+      <li><b>Geometrie der Tokens in LLMs:</b> Ferrara et al. (2025), ICLR: <i>The geometry of tokens in internal representations of large language models.</i></li>
+    </ul>
+    <div class="note e" style="margin-bottom:0"><span class="h">Überarbeitungshinweis</span>
+      Gegenüber der ausführlichen Version: 16 Sektionen auf 9 reduziert, 14 Labore auf 7, die vollständige Pareto-Herleitung und die MLE-Formeln auf die eine Regressions-Identität verkürzt, das Quiz von 10 auf 6 Fragen. Schematische Kurven (Buckel, Korrelation, Zufalls-Labels) sind als solche markiert — ihre <em>Form</em> folgt den Figures des Papers, ihre Punktwerte sind nicht alle Einzelangaben aus dem Paper.
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="anim">
+  <div class="eyebrow">Selbsttest</div>
+  <h2>Sechs Fragen</h2>
+  <div class="quiz" id="quizHost"></div>
+  <div class="card" style="text-align:center">
+    <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--acc)" id="qScore">0 / 6</div>
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:4px" id="qMsg">Los geht's!</div>
+    <button id="qReset" style="margin-top:12px">↻ Zurücksetzen</button>
+  </div>
+</section>
+
+</main>
+<footer>
+  Einfache interaktive Erklärung zu <b>„Intrinsic dimension of data representations in deep neural networks"</b> (Ansuini, Laio, Macke &amp; Zoccolan, NeurIPS 2019, arXiv:1905.12784).<br>
+  TwoNN-Schätzer nach Facco et al. 2017. Alle Simulationen laufen live im Browser — ohne externe Bibliotheken.
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(v,n=2)=>Number(v).toFixed(n);
+const TAU=Math.PI*2;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+const INK={grid:'rgba(255,255,255,.06)',axis:'rgba(255,255,255,.15)',txt:'#9aa6c0',faint:'#64708c',acc:'#5ee0d0',acc2:'#ff7ac0',acc3:'#ffc860',acc4:'#8a7cff',acc5:'#6ee88a'};
+
+(function(){
+  const bar=$('#prog');const links=$$('#nav .links a');
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const st=scrollY,dh=document.body.scrollHeight-innerHeight;
+    bar.style.width=(dh>0?st/dh*100:0)+'%';
+    let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*0.4)act=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===act));
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+  $$('.anim').forEach(el=>io.observe(el));
+})();
+
+function dist(a,b){let s=0;for(let k=0;k<a.length;k++){const d=a[k]-b[k];s+=d*d;}return Math.sqrt(s);}
+function neighbors(pts){
+  const N=pts.length,out=new Array(N);
+  for(let i=0;i<N;i++){
+    let r1=Infinity,r2=Infinity,i1=-1,i2=-1;
+    for(let j=0;j<N;j++){
+      if(i===j)continue;
+      const d=dist(pts[i],pts[j]);
+      if(d<r1){r2=r1;i2=i1;r1=d;i1=j;}
+      else if(d<r2){r2=d;i2=j;}
+    }
+    out[i]={r1,r2,i1,i2,mu:r1>1e-9?r2/r1:1};
+  }
+  return out;
+}
+function twoNN(pts,discard=0.1){
+  if(pts.length<8)return {id:NaN,mus:[],nb:[]};
+  const nb=neighbors(pts);
+  const mus=nb.map(o=>o.mu).filter(m=>isFinite(m)&&m>1+1e-9).sort((a,b)=>a-b);
+  const Nn=mus.length;
+  if(Nn<6)return {id:NaN,mus,nb};
+  const keep=Math.max(4,Math.floor(Nn*(1-discard)));
+  let sxy=0,sxx=0;
+  for(let i=0;i<keep;i++){
+    const F=(i+1)/(Nn+1);
+    const x=Math.log(mus[i]),y=-Math.log(1-F);
+    sxy+=x*y;sxx+=x*x;
+  }
+  return {id:sxx>0?sxy/sxx:NaN,mus,nb};
+}
+function idMLE(mus){const m=mus.filter(v=>isFinite(v)&&v>1+1e-9);if(!m.length)return NaN;let s=0;for(const v of m)s+=Math.log(v);return m.length/s;}
+function pca2(pts){
+  const N=pts.length;let mx=0,my=0;
+  pts.forEach(p=>{mx+=p[0];my+=p[1];});mx/=N;my/=N;
+  let cxx=0,cyy=0,cxy=0;
+  pts.forEach(p=>{const a=p[0]-mx,b=p[1]-my;cxx+=a*a;cyy+=b*b;cxy+=a*b;});
+  cxx/=(N-1);cyy/=(N-1);cxy/=(N-1);
+  const tr=cxx+cyy,det=cxx*cyy-cxy*cxy;
+  const disc=Math.sqrt(Math.max(tr*tr/4-det,0));
+  const l1=(tr+2*disc)/2,l2=(tr-2*disc)/2;
+  const ang=Math.atan2(l1-cxx,2*cxy)/2;
+  return {mx,my,l1,l2,ang};
+}
+function pcID90(pts){
+  const {l1,l2}=pca2(pts);const tot=l1+l2;
+  if(tot<=0)return 1;
+  return l1/tot>=0.9?1:2;
+}
+
+(function(){
+  const cv=$('#cvStrip');
+  const sW=$('#stW'),sC=$('#stC'),sR=$('#stR');
+  function draw(){
+    const {c,w,h}=hidpi(cv,380);
+    const width=+sW.value/100;
+    const curv=+sC.value/100*3.2;
+    const rot=+sR.value*Math.PI/180;
+    c.clearRect(0,0,w,h);
+    const cx=w/2,cy=h*0.56,S=Math.min(w,h)*0.30;
+    function proj(x,y,z){
+      const X=x*Math.cos(rot)-y*Math.sin(rot);
+      const Y=x*Math.sin(rot)+y*Math.cos(rot);
+      return [cx+X*S,cy-z*S*0.9+Y*S*0.44];
+    }
+    c.strokeStyle='rgba(255,255,255,.08)';c.lineWidth=1;
+    for(let i=-2;i<=2;i++){
+      let p1=proj(i/2,-1,0),p2=proj(i/2,1,0);
+      c.beginPath();c.moveTo(p1[0],p1[1]);c.lineTo(p2[0],p2[1]);c.stroke();
+      p1=proj(-1,i/2,0);p2=proj(1,i/2,0);
+      c.beginPath();c.moveTo(p1[0],p1[1]);c.lineTo(p2[0],p2[1]);c.stroke();
+    }
+    const axes=[[[0,0,0],[1.15,0,0],'#5ee0d0','x'],[[0,0,0],[0,1.15,0],'#8a7cff','y'],[[0,0,0],[0,0,1.0],'#ff7ac0','z']];
+    for(const [a,b,col,lab] of axes){
+      const p=proj(...a),q=proj(...b);
+      c.strokeStyle=col;c.lineWidth=1.6;c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();
+      c.fillStyle=col;c.font='600 12px system-ui';c.fillText(lab,q[0]+5,q[1]);
+    }
+    const NU=64,NV=Math.max(2,Math.round(2+width*16));
+    const pts=[];
+    for(let iu=0;iu<NU;iu++){
+      const u=(iu/(NU-1))*2-1;
+      for(let iv=0;iv<NV;iv++){
+        const v=NV===1?0:((iv/(NV-1))*2-1)*width*0.5;
+        const ang=curv*u;
+        let X,Y,Z;
+        if(curv>0.02){
+          X=v;Y=Math.sin(ang)*0.62;Z=(1-Math.cos(ang))*0.62;
+        }else{X=v;Y=u*0.62;Z=0;}
+        pts.push([X,Y,Z-0.1]);
+      }
+    }
+    const proj2=pts.map(p=>{const q=proj(...p);return {x:q[0],y:q[1],d:p[1]};});
+    proj2.sort((a,b)=>a.d-b.d);
+    for(const p of proj2){
+      c.beginPath();c.arc(p.x,p.y,2.1,0,TAU);
+      const t=clamp((p.d+0.7)/1.4,0,1);
+      c.fillStyle=`hsla(${190+t*70},95%,${58+t*12}%,.9)`;c.fill();
+    }
+    const sample=pts.filter((_,i)=>i%3===0).slice(0,320);
+    const r=twoNN(sample);
+    $('#stWV').textContent=fmt(width,2);
+    $('#stCV').textContent=fmt(curv,2);
+    $('#stRV').textContent=Math.round(+sR.value)+'°';
+    $('#stID').textContent=isFinite(r.id)?fmt(r.id,2):'—';
+  }
+  [sW,sC,sR].forEach(s=>s.addEventListener('input',draw));
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvSpiral');
+  let selIdx=null;
+  function gen(curl,thick,N=420){
+    const rng=mulberry32(77);
+    const pts=[];
+    for(let i=0;i<N;i++){
+      const t=lerp(0.15,2.9,rng());
+      const ang=t*curl;
+      const r=0.5+t*0.55;
+      pts.push([Math.cos(ang)*r+gauss(rng)*thick,Math.sin(ang)*r*0.85+gauss(rng)*thick]);
+    }
+    return pts;
+  }
+  function draw(){
+    const curl=+$('#spC').value/100*5;
+    const thick=+$('#spN').value/100*0.08;
+    $('#spCV').textContent=fmt(curl,1);
+    $('#spNV').textContent=fmt(thick,2);
+    const pts=gen(curl,thick);
+    const {c,w,h}=hidpi(cv,360);
+    c.clearRect(0,0,w,h);
+    const mx=(w-40)/3.4,my=(h-40)/3.0;
+    function px(p){return [w/2+p[0]*mx,h/2-p[1]*my];}
+    for(const p of pts){
+      const q=px(p);
+      c.beginPath();c.arc(q[0],q[1],2.3,0,TAU);
+      c.fillStyle='rgba(94,224,208,.6)';c.fill();
+    }
+    const pc=pca2(pts);
+    const e1x=Math.cos(pc.ang),e1y=Math.sin(pc.ang);
+    const L1=Math.sqrt(pc.l1)*mx*1.6,L2=Math.sqrt(pc.l2)*my*1.6;
+    c.strokeStyle=INK.acc2;c.lineWidth=3;
+    c.beginPath();c.moveTo(w/2-e1x*L1,h/2+e1y*L1);c.lineTo(w/2+e1x*L1,h/2-e1y*L1);c.stroke();
+    c.strokeStyle=INK.acc5;c.lineWidth=3;
+    c.beginPath();c.moveTo(w/2-Math.cos(pc.ang+Math.PI/2)*L2,h/2-Math.sin(pc.ang+Math.PI/2)*L2);
+    c.lineTo(w/2+Math.cos(pc.ang+Math.PI/2)*L2,h/2+Math.sin(pc.ang+Math.PI/2)*L2);c.stroke();
+    c.fillStyle=INK.txt;c.font='11px system-ui';
+    c.fillText('Hauptkomponenten (lineare Zusammenfassung)',10,h-8);
+    const id=twoNN(pts).id;
+    const pcid=pcID90(pts);
+    $('#spID').textContent=isFinite(id)?fmt(id,2):'—';
+    $('#spPC').textContent=pcid;
+  }
+  $('#spC').addEventListener('input',draw);
+  $('#spN').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvTwo'),cvR=$('#cvTwoReg');
+  let type='line',N=300,pts=[],pick=null;
+  function gen(){
+    const rng=mulberry32(2024);
+    pts=[];
+    for(let i=0;i<N;i++){
+      if(type==='line')pts.push([(rng()*2-1)*2.4,gauss(rng)*0.015]);
+      else if(type==='spiral'){const t=lerp(0.15,2.9,rng());const a=t*4.2,r=0.5+t*0.55;pts.push([Math.cos(a)*r+gauss(rng)*0.02,Math.sin(a)*r*0.85+gauss(rng)*0.02]);}
+      else if(type==='disk'){const u=Math.sqrt(rng())*2.3,a=rng()*TAU;pts.push([Math.cos(a)*u,Math.sin(a)*u*0.85]);}
+      else if(type==='gauss')pts.push([gauss(rng)*1.5,gauss(rng)*0.8]);
+    }
+    pick=null;
+  }
+  function draw(){
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    for(const p of pts){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);}
+    const pad=26;
+    const sx=(w-2*pad)/(xmax-xmin||1),sy=(h-2*pad)/(ymax-ymin||1);
+    const s=Math.min(sx,sy);
+    const ox=w/2-(xmin+xmax)/2*s,oy=h/2+(ymin+ymax)/2*s;
+    for(const p of pts){
+      c.beginPath();c.arc(ox+p[0]*s,oy-p[1]*s,2.4,0,TAU);
+      c.fillStyle='rgba(94,224,208,.75)';c.fill();
+    }
+    if(pick!=null&&pts[pick]){
+      const p=pts[pick],nb=neighbors(pts)[pick];
+      c.beginPath();c.arc(ox+p[0]*s,oy-p[1]*s,3.5,0,TAU);c.fillStyle=INK.acc3;c.fill();
+      c.strokeStyle=INK.acc5;c.lineWidth=1.5;
+      c.beginPath();c.arc(ox+p[0]*s,oy-p[1]*s,nb.r1*s,0,TAU);c.stroke();
+      c.strokeStyle=INK.acc2;
+      c.beginPath();c.arc(ox+p[0]*s,oy-p[1]*s,nb.r2*s,0,TAU);c.stroke();
+      const a1=pts[nb.i1],a2=pts[nb.i2];
+      c.fillStyle=INK.acc5;c.beginPath();c.arc(ox+a1[0]*s,oy-a1[1]*s,3.5,0,TAU);c.fill();
+      c.fillStyle=INK.acc2;c.beginPath();c.arc(ox+a2[0]*s,oy-a2[1]*s,3.5,0,TAU);c.fill();
+    }
+  }
+  cv.addEventListener('pointerdown',e=>{
+    const r=cv.getBoundingClientRect();
+    const w=cv.clientWidth,h=300;
+    let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    for(const p of pts){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);}
+    const pad=26,sx=(w-2*pad)/(xmax-xmin||1),sy=(h-2*pad)/(ymax-ymin||1);
+    const s=Math.min(sx,sy);
+    const ox=w/2-(xmin+xmax)/2*s,oy=h/2+(ymin+ymax)/2*s;
+    const mx=(e.clientX-r.left)*(w/r.width),my=(e.clientY-r.top)*(h/r.height);
+    const dx=(mx-ox)/s,dy=(oy-my)/s;
+    let best=-1,bd=1e9;
+    for(let i=0;i<pts.length;i++){const d=(pts[i][0]-dx)**2+(pts[i][1]-dy)**2;if(d<bd){bd=d;best=i;}}
+    if(best>=0&&bd<0.05){pick=best;draw();}
+  });
+  function drawReg(){
+    const {c,w,h}=hidpi(cvR,300);
+    c.clearRect(0,0,w,h);
+    const r=twoNN(pts);
+    const mus=r.mus,Nn=mus.length;
+    const padL=44,padR=14,padT=14,padB=30;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    let xMax=0.05;
+    const xs=mus.map(m=>Math.log(m)),ys=mus.map((m,i)=>-Math.log(1-(i+1)/(Nn+1)));
+    for(const x of xs)xMax=Math.max(xMax,x);
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(fmt(ys[0]-i*(ys[0]-ys[Nn-1])/4*1,1),6,y+3);
+      const x=padL+pw*i/4;
+      c.fillText(fmt(xMax*i/4,2),x-8,h-8);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    for(let i=0;i<Nn;i++){
+      const x=padL+pw*(xs[i]/xMax),y=padT+ph*(1-ys[i]/ys[0]);
+      c.beginPath();c.arc(x,y,2,0,TAU);c.fillStyle='rgba(94,224,208,.55)';c.fill();
+    }
+    const d=r.id;
+    if(isFinite(d)){
+      c.strokeStyle=INK.acc3;c.lineWidth=2;
+      const y0=0,x0=0,y1=d*xMax;
+      c.beginPath();c.moveTo(padL,padT+ph);c.lineTo(padL+pw,(padT+ph-ph*(y1/ys[0])));c.stroke();
+    }
+    c.fillStyle=INK.txt;c.font='11px system-ui';
+    c.fillText('Steigung = geschätzte ID',padL+8,padT+12);
+    $('#ttID').textContent=isFinite(d)?fmt(d,2):'—';
+    $('#ttMLE').textContent=isFinite(idMLE(mus))?fmt(idMLE(mus),2):'—';
+  }
+  function all(){gen();draw();drawReg();}
+  $$('#ttBtns button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#ttBtns button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');type=b.dataset.t;all();
+  }));
+  $('#ttN').addEventListener('input',e=>{N=+e.target.value;$('#ttNV').textContent=N;all();});
+  all();
+  addEventListener('resize',()=>{draw();drawReg();});
+})();
+
+(function(){
+  const cv=$('#cvVol');
+  function draw(){
+    const d=+$('#vV').value;
+    $('#vVD').textContent=d;
+    const f=Math.pow(2,d);
+    $('#vVF').textContent=f>=1e6?Math.round(f/1e6)+' Mio':f>=1e3?Math.round(f/1000)+' Tsd':'×'+f;
+    const {c,w,h}=hidpi(cv,220);
+    c.clearRect(0,0,w,h);
+    const padL=40,padR=14,padT=14,padB=26;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    for(let i=1;i<=Math.max(d,40);i++){
+      const t=i/40;
+      const x=padL+pw*t;
+      const y=padT+ph-(i/40)*ph*0.92;
+      c.fillStyle=i<=d?'rgba(255,200,96,.7)':'rgba(255,255,255,.10)';
+      c.fillRect(x-1.5,y,3,h-padB-y);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+    c.fillText('1',padL-12,h-padB-2);
+    c.fillText('2⁴⁰',w-padR-20,padT+8);
+    c.fillText('log 2^d — Volumenwachstum bei Radius ×2',padL+6,padT+8);
+  }
+  $('#vV').addEventListener('input',draw);
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const LAYERS=['pool1','pool2','pool3','pool4','pool5','fc1','fc2','fc3'];
+  const ED=[802816,401408,200704,100352,25088,4096,4096,4096];
+  const ID=[28,52,61,19,13,12,11,10];
+  const cv=$('#cvHunch');
+  function draw(){
+    const li=+$('#hnL').value;
+    const {c,w,h}=hidpi(cv,340);
+    c.clearRect(0,0,w,h);
+    const padL=44,padR=56,padT=16,padB=34;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(String(70-i*17.5),8,y+3);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    const X=i=>padL+pw*i/(LAYERS.length-1);
+    const Y=v=>padT+ph*(1-v/70);
+    c.beginPath();
+    LAYERS.forEach((L,i)=>{i?c.lineTo(X(i),Y(ID[i])):c.moveTo(X(i),Y(ID[i]));});
+    c.strokeStyle=INK.acc;c.lineWidth=2.5;c.stroke();
+    LAYERS.forEach((L,i)=>{
+      c.beginPath();c.arc(X(i),Y(ID[i]),i===li?6:4,0,TAU);
+      c.fillStyle=i===li?INK.acc3:'rgba(94,224,208,.8)';c.fill();
+      c.fillStyle=INK.txt;c.font='10.5px system-ui';c.textAlign='center';
+      c.fillText(L,X(i),h-18);
+      c.fillStyle=INK.faint;c.font='9px ui-monospace,monospace';
+      c.fillText(ED[i].toLocaleString('de-DE'),X(i),h-6);
+      c.textAlign='left';
+    });
+    c.fillStyle=INK.acc;c.font='11px system-ui';
+    c.fillText('ID (links, 0–70)',padL+4,padT+2);
+    c.fillStyle=INK.faint;
+    c.fillText('ED unter den Schichten (VGG-16, echte Werte)',w-padR-190,padT+2);
+    $('#hnLV').textContent=LAYERS[li];
+    $('#hnED').textContent=ED[li].toLocaleString('de-DE');
+    $('#hnID').textContent='≈ '+ID[li];
+    const r=ID[li]/ED[li];
+    $('#hnR').textContent=r<0.001?r.toExponential(1):fmt(r,4);
+  }
+  $('#hnL').addEventListener('input',draw);
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvCorr');
+  function draw(){
+    const {c,w,h}=hidpi(cv,320);
+    c.clearRect(0,0,w,h);
+    const pts=[
+      [12,16.5,'ResNet152'],[12.8,18,'ResNet101'],[14,20,'ResNet50'],[15,24,'ResNet20'],
+      [19,26,'VGG-16-R'],[21,31,'VGG19'],[21.5,29,'VGG16-bn'],[22,30,'VGG16'],
+      [22.5,30.5,'VGG19-bn'],[23,32,'VGG16-bn2'],[23.5,31.5,'VGG19-bn2'],[24,33,'VGG-s'],
+      [24.5,32.5,'VGG-m'],[25,38,'AlexNet']
+    ];
+    const padL=48,padR=16,padT=16,padB=34;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    const x0=10,x1=27,y0=14,y1=40;
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText((y0+(y1-y0)*i/4).toFixed(0)+' %',8,y+3);
+      const x=padL+pw*i/4;
+      c.fillText((x0+(x1-x0)*i/4).toFixed(0),x-8,h-8);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    const X=v=>padL+pw*(v-x0)/(x1-x0);
+    const Y=v=>padT+ph*(1-(v-y0)/(y1-y0));
+    c.strokeStyle='rgba(255,200,96,.55)';c.lineWidth=2;c.setLineDash([6,4]);
+    c.beginPath();c.moveTo(X(10),Y(39));c.lineTo(X(27),Y(15));c.stroke();c.setLineDash([]);
+    for(const [x,y,lab] of pts){
+      c.beginPath();c.arc(X(x),Y(y),5,0,TAU);
+      c.fillStyle=lab.includes('ResNet')?INK.acc5:INK.acc2;c.fill();
+      c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=1;c.stroke();
+    }
+    c.fillStyle=INK.acc5;c.font='11px system-ui';
+    c.fillText('ResNet152',X(12)-24,Y(16.5)-12);
+    c.fillStyle=INK.acc2;
+    c.fillText('AlexNet',X(25)-18,Y(38)-12);
+    c.fillStyle=INK.txt;
+    c.fillText('ID letzte Schicht (Trainingsdaten) →',w-210,h-20);
+    c.fillText('Top-5-Fehler im Testset (Achse oben)',padL+4,padT+2);
+    c.fillStyle=INK.acc3;c.font='600 12px system-ui';
+    c.fillText('r = 0,94 (alle Netze) · r = 0,99 (nur ResNets)',padL+4,padT+18);
+  }
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvMorph');
+  let spiral=null,gaussP=null,seedRng=null;
+  function build(){
+    const rng=mulberry32(555);
+    const N=320;
+    spiral=[];gaussP=[];
+    for(let i=0;i<N;i++){
+      const t=lerp(0.15,2.9,rng());
+      const a=t*4.2,r=0.5+t*0.55;
+      spiral.push([Math.cos(a)*r,Math.sin(a)*r*0.85]);
+    }
+    let mx=0,my=0;
+    spiral.forEach(p=>{mx+=p[0];my+=p[1];});mx/=N;my/=N;
+    let cxx=0,cxy=0,cyy=0;
+    spiral.forEach(p=>{const a=p[0]-mx,b=p[1]-my;cxx+=a*a;cyy+=b*b;cxy+=a*b;});
+    cxx/=(N-1);cyy/=(N-1);cxy/=(N-1);
+    const tr=cxx+cyy,det=cxx*cyy-cxy*cxy;
+    const disc=Math.sqrt(Math.max(tr*tr/4-det,0));
+    const l1=(tr+2*disc)/2,l2=(tr-2*disc)/2;
+    const ang=Math.atan2(l1-cxx,2*cxy)/2;
+    const e1=[Math.cos(ang),Math.sin(ang)],e2=[-Math.sin(ang),Math.cos(ang)];
+    const r2=mulberry32(666);
+    for(let i=0;i<N;i++){
+      const u=gauss(r2)*Math.sqrt(l1),v=gauss(r2)*Math.sqrt(l2);
+      gaussP.push([mx+e1[0]*u+e2[0]*v,my+e1[1]*u+e2[1]*v]);
+    }
+  }
+  build();
+  function draw(){
+    const t=+$('#moT').value/100;
+    $('#moTV').textContent=Math.round(t*100)+' %';
+    const N=spiral.length;
+    const pts=spiral.map((p,i)=>[lerp(p[0],gaussP[i][0],t),lerp(p[1],gaussP[i][1],t)]);
+    const {c,w,h}=hidpi(cv,320);
+    c.clearRect(0,0,w,h);
+    let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    for(const p of pts){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);}
+    const pad=30,s=Math.min((w-2*pad)/(xmax-xmin||1),(h-2*pad)/(ymax-ymin||1));
+    const ox=w/2-(xmin+xmax)/2*s,oy=h/2+(ymin+ymax)/2*s;
+    const pc=pca2(pts);
+    c.save();
+    c.translate(ox+pc.mx*s,oy-pc.my*s);
+    c.rotate(-pc.ang);
+    c.strokeStyle='rgba(255,255,255,.35)';c.setLineDash([5,4]);c.lineWidth=1.4;
+    c.beginPath();c.ellipse(0,0,Math.sqrt(pc.l1)*s,Math.sqrt(pc.l2)*s,0,0,TAU);c.stroke();
+    c.restore();
+    for(const p of pts){
+      c.beginPath();c.arc(ox+p[0]*s,oy-p[1]*s,2.2,0,TAU);
+      c.fillStyle='rgba(94,224,208,.65)';c.fill();
+    }
+    const id=twoNN(pts).id;
+    const pcid=pcID90(pts);
+    $('#moID').textContent=isFinite(id)?fmt(id,2):'—';
+    $('#moPC').textContent=pcid;
+  }
+  $('#moT').addEventListener('input',draw);
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvMnist');
+  const DIGITS=['0','1','2','3','4','5','6','7','8','9','0','1'];
+  function draw(){
+    const lam=+$('#mnL').value/100;
+    $('#mnLV').textContent=Math.round(lam*100);
+    const {c,w,h}=hidpi(cv,220);
+    c.clearRect(0,0,w,h);
+    const cols=12,rows=1;
+    const cell=Math.min((w-20)/cols,(h-20)/rows);
+    const ox=(w-cols*cell)/2,oy=(h-rows*cell)/2;
+    const rng=mulberry32(42);
+    const xis=DIGITS.map(()=>rng());
+    for(let i=0;i<cols;i++){
+      const x=ox+i*cell,y=oy;
+      const xi=xis[i];
+      const bright=lam*xi;
+      const base=0.10+bright*0.75;
+      c.fillStyle=`rgba(255,255,255,${0.04})`;
+      c.fillRect(x,y,cell,cell);
+      c.fillStyle=`rgba(255,255,255,${clamp(base,0,1)})`;
+      c.font='700 '+Math.round(cell*0.62)+'px monospace';
+      c.textAlign='center';c.textBaseline='middle';
+      c.fillText(DIGITS[i],x+cell/2,y+cell/2+2);
+      c.textAlign='left';c.textBaseline='alphabetic';
+      c.strokeStyle='rgba(255,255,255,.12)';c.strokeRect(x,y,cell,cell);
+    }
+    const idVal=lerp(13,3,Math.min(lam*1.4,1));
+    $('#mnID').textContent='≈ '+fmt(idVal,1);
+    $('#mnBuck').textContent=lam<0.05?'kein (wie originales MNIST)':'erscheint!';
+  }
+  $('#mnL').addEventListener('input',draw);
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvRand');
+  function draw(){
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const padL=44,padR=16,padT=16,padB=30;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    const X=i=>padL+pw*i/7;
+    const Y=v=>padT+ph*(1-v/60);
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=3;i++){
+      const y=padT+ph*i/3;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(String(60-i*20),10,y+3);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    const real=[8,14,22,18,12,9,8];
+    const rand=[8,14,20,26,34,44,55];
+    c.beginPath();
+    real.forEach((v,i)=>{i?c.lineTo(X(i),Y(v)):c.moveTo(X(i),Y(v));});
+    c.strokeStyle=INK.acc5;c.lineWidth=2.5;c.stroke();
+    c.beginPath();
+    rand.forEach((v,i)=>{i?c.lineTo(X(i),Y(v)):c.moveTo(X(i),Y(v));});
+    c.strokeStyle=INK.acc2;c.lineWidth=2.5;c.stroke();
+    c.fillStyle=INK.acc5;c.font='12px system-ui';
+    c.fillText('echte Labels: ID fällt →',padL+8,padT+14);
+    c.fillStyle=INK.acc2;
+    c.fillText('Zufalls-Labels: ID steigt in der zweiten Hälfte →',padL+8,padT+32);
+    c.fillStyle=INK.faint;c.font='11px system-ui';
+    c.fillText('Schichttiefe →',w-90,h-8);
+  }
+  draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const QS=[
+    {q:'Was ist der Unterschied zwischen ED und ID?',o:['ED = gespeicherte Zahlen, ID = echte Freiheitsgrade','ED = kleine Dimension, ID = große','ID = Anzahl der Neuronen, ED = Anzahl der Bilder','Beides dasselbe, nur anders genannt'],a:0,
+     e:'ED ist die Größe des Behälters (Neuronen/Zahlen), ID die des Inhalts (minimale Parameter).'},
+    {q:'Warum liefert PCA an einer Spirale ID = 2, während TwoNN 1 sagt?',o:['PCA ist langsamer','PCA findet nur flache (lineare) Zusammenfassungen — die eingerollte Spirale streut in 2 Richtungen','PCA zählt immer 2','TwoNN ist der unzuverlässigere'],a:1,
+     e:'PCA ist ein lineares Werkzeug; an gekrümmten Daten überschätzt es die Dimension um Größenordnungen.'},
+    {q:'Was braucht der TwoNN-Schätzer von jedem Datenpunkt?',o:['Nur die Abstände zum 1. und 2. nächsten Nachbarn','Die vollständige Dichte-Verteilung','Die Labels der Punkte','Die Gradienten des Netzes'],a:0,
+     e:'Nur r₁ und r₂. Das Verhältnis μ = r₂/r₁ trägt die Dimension in sich — unabhängig von lokaler Dichte.'},
+    {q:'Was zeigt die ID über die Schichten eines trainierten CNNs?',o:['Steigt monoton','Fällt monoton','Erst steiler Anstieg, dann monotoner Abfall („Buckel")','Bleibt konstant'],a:2,
+     e:'Der Buckel: Anstieg in den frühen Schichten, Gipfel bei 20–40 % Tiefe, dann monotoner Abfall. In allen 14 getesteten Netzen.'},
+    {q:'Die ID der letzten versteckten Schicht (Trainingsdaten) …',o:['sagt nichts über die Testleistung aus','korreliert mit r = 0,94 mit dem Top-5-Testfehler','ist immer genau 10','nimmt nur zu, wenn Overfitting auftritt'],a:1,
+     e:'Je kleiner die ID, desto besser die Generalisierung — messbar ohne Testset. (Einschränkung: gilt zwischen Architekturen, nicht zwischen Zufallsstarts.)'},
+    {q:'Warum wächst die ID bei Zufalls-Labels (MNIST†) in der zweiten Netz-Hälfte?',o:['Das Netz lernt besser','Auswendiglernen verlangt, dass jeder Punkt individuell adressierbar ist — das braucht Dimensionen','Die Labels sind zu lang','Es ist ein Bug des Schätzers'],a:1,
+     e:'Regeln brauchen dünne Flächen, Einzelfälle brauchen Platz. Der Anstieg ist damit ein Testset-freies Erkennungsmerkmal für Inkonsistenz.'}
+  ];
+  let score=0,answered=0;
+  const host=$('#quizHost');
+  QS.forEach((Q,qi)=>{
+    const d=document.createElement('div');d.className='q';
+    d.innerHTML='<b>F'+(qi+1)+'</b> · '+Q.q;
+    const wrap=document.createElement('div');
+    Q.o.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=o;
+      b.addEventListener('click',()=>{
+        if(b.dataset.done)return;
+        d.querySelectorAll('.opt').forEach(x=>x.dataset.done='1');
+        if(oi===Q.a){b.classList.add('correct');score++;}
+        else{b.classList.add('wrong');d.querySelectorAll('.opt')[Q.a].classList.add('correct');}
+        answered++;
+        const e=document.createElement('div');e.style.cssText='font-size:12px;color:var(--txt-faint);margin-top:6px';
+        e.textContent=Q.e;
+        d.appendChild(e);
+        $('#qScore').textContent=score+' / '+QS.length;
+        if(answered===QS.length)$('#qMsg').textContent=score===QS.length?'Perfekt.':score>=4?'Solide.':'Nochmal die Demos anschauen.';
+      });
+      wrap.appendChild(b);
+    });
+    d.appendChild(wrap);
+    host.appendChild(d);
+  });
+  $('#qReset').addEventListener('click',()=>location.reload());
+})();
+</script>
+</body>
+</html>

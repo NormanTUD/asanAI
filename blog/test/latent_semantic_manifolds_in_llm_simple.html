@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latente Semantische Mannigfaltigkeiten in LLMs — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1080px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+a.ext{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.split{grid-template-columns:1fr}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+.ctl-hint{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc2)}
+input[type=range].m::-moz-range-thumb{background:var(--acc2)}
+input[type=range].g::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].g::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)}
+.ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)}
+.ro .box .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.thm{background:linear-gradient(150deg,rgba(138,124,255,.1),rgba(13,18,33,.7));border:1px solid rgba(138,124,255,.32);border-radius:13px;padding:16px;margin:18px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px}
+.thm .math{font-family:var(--mono);font-size:16px;color:var(--txt);overflow-x:auto;padding:8px 0;line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--txt-dim)}
+tr:hover td{background:rgba(255,255,255,.03)}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+canvas{display:block;max-width:100%}
+.cwrap{background:#060910;border:1px solid var(--stroke);border-radius:11px;padding:8px;overflow:hidden}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:23px;font-weight:700;color:var(--acc);line-height:1.1}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ LATENT SEMANTIC MANIFOLDS · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Kernbild</a>
+    <a href="#problem">Problem</a>
+    <a href="#blat">Das Blatt</a>
+    <a href="#margin">Margin &amp; Gap</a>
+    <a href="#satz1">Satz 1</a>
+    <a href="#satz2">Satz 2</a>
+    <a href="#empirie">Messung</a>
+    <a href="#konsequenzen">Folgen</a>
+    <a href="#quellen">Quellen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: Mabrok (2026) · <span style="color:var(--txt-dim)">arXiv:2603.22301</span></div>
+  <h1>Aus Gedanken werden Wörter.<br>Dabei geht <em style="color:var(--acc3)">immer etwas verloren</em>.</h1>
+  <p class="lead">Ein Sprachmodell „denkt" in einem unendlich fein abgestuften Zahlenraum — muss aber am Ende aus einem <b>endlichen</b> Wörterbuch genau <b>ein</b> Wort wählen. Dieses Paper baut die Geometrie dieser Zwangsübersetzung — und beweist: Der Verlust hat eine mathematische Untergrenze, die kein Training und kein größeres Wörterbuch wegbekommt.</p>
+  <div class="kpi">
+    <div class="c"><div class="big">k ≈ 20</div><div class="lab">Richtungen werden im Modell wirklich genutzt — bei 768–2048 verfügbaren</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">≈ 40–51&nbsp;%</div><div class="lab">aller Wortvorhersagen liegen in der „Zwischenzone" zweier Wörter</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">β ≈ 1</div><div class="lab">gemessene Steigung, R² &gt; 0.985 — bestätigt den bewiesenen Satz 1</div></div>
+    <div class="c"><div class="big" style="color:var(--acc5)">2<sup>k/2</sup></div><div class="lab">mal so viele Wörter, um den Fehler zu halbieren (k=20 → ×1024)</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">So liest du diese Seite</span>
+  Fünf Schritte: <b>①</b> das Kernbild anfassen (unten) → <b>②</b> das dünne Blatt verstehen → <b>③</b> zwei neue Begriffe (Margin, Gap) → <b>④</b> die zwei Sätze → <b>⑤</b> was an echten Modellen gemessen wurde. Jedes Demo ist ein Spielplatz: erst ziehen, dann lesen.
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Das ganze Paper in einem Bild: beweg den Gedanken</h4><span class="tag">Kernbild · interaktiv</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Die Fläche ist der „Gedankensraum" des Modells (vereinfacht auf 2D). Jeder Anker ist ein <b>Wort</b> aus dem Wörterbuch. Der Raum ist aufgeteilt: an jedem Ort gewinnt das nächstgelegene Wort. Bewege die Maus über die Fläche — der <b>türkise Punkt</b> ist der aktuelle Gedanke. Goldene Bänder sind die <b>Zwischenzonen</b>, wo zwei Wörter dicht beieinander liegen und das Modell „zögert".</p>
+      <div class="cwrap"><canvas id="cvVoro" style="width:100%;height:380px;cursor:crosshair"></canvas></div>
+      <div class="leg">
+        <span><i style="background:rgba(94,224,208,.8)"></i>Gewinner-Zelle</span>
+        <span><i style="background:#ffc860"></i>Zwischenzone (Gap)</span>
+        <span><i style="background:#fff"></i>Gedanke (Maus)</span>
+        <span><i style="background:#ff7ac0"></i>Wort-Anker</span>
+      </div>
+      <div class="split" style="margin-top:14px">
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Wörter im Wörterbuch N</span><b id="vN">14</b></div>
+            <input type="range" id="sN" class="m" min="4" max="36" step="1" value="14">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Unschärfe-Schwelle ε</span><b id="vEps">0.30</b></div>
+            <input type="range" id="sEps" class="g" min="0.02" max="1.2" step="0.01" value="0.3">
+            <div class="ctl-hint">Wie nah muss ein Gedanke an eine Wortgrenze sein, damit er „unscharf" zählt? Klein = nur knappe Fälle, groß = viel Zwischenzone.</div>
+          </div>
+        </div>
+        <div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Gewonnenes Wort</div><div class="v m" id="rWord">—</div></div>
+            <div class="box"><div class="k">Margin (Abstand zur Grenze)</div><div class="v" id="rMar">—</div></div>
+            <div class="box"><div class="k">Zwischenzone η(ε)</div><div class="v g" id="rEta">—</div><div class="u">Anteil der Fläche</div></div>
+            <div class="box"><div class="k">Status</div><div class="v e" id="rStat">—</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Das ist die ganze Frage des Papers</span>
+      Mitten in einer Zelle liegt die Wortwahl klar fest. Auf der <b>Grenze</b> ist der Gedanke <em>präziser als jedes verfügbare Wort</em>. Wie viel des Gedankenraums ist Grenzland — und lässt sich das durch ein größeres Wörterbuch oder besseres Training wegdrücken? <em>Nein. Das zeigen die beiden Sätze weiter unten.</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problem" class="anim">
+  <div class="eyebrow">Schritt 2 · Das Problem</div>
+  <h2>Ein Modell mit einer eingebauten Lücke</h2>
+  <p class="lead">Zwei Forschungslager haben sich nie getroffen. Das Paper baut die Brücke — und füllt damit eine echte Lücke.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc5)">Lager A · Die Empiriker</h3>
+      <p style="font-size:13.5px">Sie <b>messen</b>, was in Modellen passiert: Ansuini et al. (2019) fanden das „Buckel"-Muster der Dimension in CNNs, Valeriani et al. (2023) bestätigten es für große Transformer, Ferrara et al. (2025) verknüpften Geometrie mit Vorhersagefehler.</p>
+      <p style="font-size:13.5px;margin:0"><b>Das Defizit:</b> Sie beschreiben <em>was</em> — aber nicht <em>warum</em>, und sie liefern keine Grenzen.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc4)">Lager B · Die Informationsgeometer</h3>
+      <p style="font-size:13.5px">Seit Rao (1945) und Amari ist klar: Räume von Wahrscheinlichkeitsverteilungen sind gekrümmte Räume mit einer natürlichen Messlatte, der <em>Fisher-Metrik</em>.</p>
+      <p style="font-size:13.5px;margin:0"><b>Das Defizit:</b> Diese elegante Theorie wurde nie an die echten Innenleben von Sprachmodellen angeschlossen.</p>
+    </div>
+  </div>
+  <div class="note t"><span class="h">Was Mabrok jetzt tut</span>
+  Er formalisiert die Vermutung, dass die inneren Zustände (Hidden States) eines LLM auf einer <b>dünnen, gekrümmten Fläche</b> („Mannigfaltigkeit") liegen, definiert darauf eine Distanz (Fisher), zeigt dass <b>Wortauswahl = „nächster Anker"</b> ist — und beweist daraus zwei Sätze, die sich an echten Modellen überprüfen lassen.
+  </div>
+  <h3>Die Pipeline: diskret → kontinuierlich → diskret</h3>
+  <p>Ein Sprachmodell hat drei Stationen. Die äußeren sind <em>diskret</em> (endlich viele Wörter), die mittlere <em>kontinuierlich</em> (unendlich fein):</p>
+  <div class="card" style="font-family:var(--mono);font-size:13px;line-height:2">
+    <span style="color:var(--acc2)">Wörter (diskret, N Stück)</span>
+    &nbsp;→&nbsp;
+    <span style="color:var(--acc)">gedanklicher Zustand h (kontinuierlich, beliebig fein)</span>
+    &nbsp;→&nbsp;
+    <span style="color:var(--acc2)">ein einziges Wort (diskret)</span>
+  </div>
+  <div class="note w"><span class="h">In einem Satz</span>Die Mittelschicht kann <b>beliebig feine</b> Bedeutungsnuancen tragen. Der Ausgang kann nur <b>N</b> verschiedene Dinge sagen. Jeder einzelne Schritt der Textgenerierung ist daher eine <em>Quantisierung</em> — ein unvermeidlicher Rundungsfehler der Bedeutung. Das Paper fragt: Wie groß ist dieser Fehler, und wie schnell kann man ihn reduzieren?</div>
+</section>
+
+<section id="blat" class="anim">
+  <div class="eyebrow">Schritt 3 · Die Idee</div>
+  <h2>Gedanken leben auf einem dünnen Blatt im riesigen Raum</h2>
+  <p class="lead">Das Modell hat 768–2048 Zahlen pro Zustand. Aber: Fast nichts spielt sich in allen diesen Richtungen ab. Die Zustände liegen (fast) genau auf einer <em>dünnen Fläche</em> — wie Punkte auf einer Landkarte, die in einem 100-dimensionalen Lagerhaus hängt.</p>
+  <p>So eine Fläche heißt <strong>Mannigfaltigkeit</strong>. „Intrinsische Dimension" k heißt: wie viele Regler braucht man, um einen Punkt auf dem Blatt zu beschreiben (auf einer Landkarte: zwei — Länge und Breite). Die Umgebung hat Dimension d. Gemessen ist: <b>k ≈ 20, d = 768–2048</b> — also nur 1–3 % des Raums sind „bewohnt".</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Wie dünn ist „20 von 768" wirklich — und wie verändert sich k in der Tiefe?</h4><span class="tag">Hypothese 4.1 · Messung</span></div>
+    <div class="demo-body">
+      <div class="split">
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Verfügbare Dimensionen d</span><b id="dimDV">768</b></div>
+            <input type="range" id="dimD" min="64" max="4096" step="64" value="768">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Genutzte Dimensionen k</span><b id="dimKV">20</b></div>
+            <input type="range" id="dimK" class="m" min="1" max="120" step="1" value="20">
+          </div>
+          <div class="btnrow">
+            <button data-mdl="768,20">GPT-2 (768)</button>
+            <button data-mdl="1600,20">GPT-2 XL (1600)</button>
+            <button data-mdl="2048,21">OPT-1.3B (2048)</button>
+          </div>
+          <div class="ro">
+            <div class="box"><div class="k">Auslastung k/d</div><div class="v g" id="dimU">2.6 %</div></div>
+            <div class="box"><div class="k">Faktor d/k</div><div class="v v" id="dimF">38×</div></div>
+            <div class="box"><div class="k">LoRA-Rang r ≈ k</div><div class="v e" id="dimR">20</div><div class="u">warum LoRA so klein reicht</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="cwrap"><canvas id="cvDim" style="width:100%;height:300px"></canvas></div>
+          <div class="ctl-hint" style="margin-top:7px">Jede Zelle = eine Dimension. Türkis = wird genutzt, grau = liegt brach.</div>
+        </div>
+      </div>
+      <div class="cwrap" style="margin-top:14px"><canvas id="cvHour" style="width:100%;height:220px"></canvas></div>
+      <div class="ctl" style="margin-top:12px">
+        <div class="ctl-lab"><span>Schicht in der Tiefe (0 = Embedding, L = Ausgang)</span><b id="hrLV">24 / 48</b></div>
+        <input type="range" id="hrL" class="v" min="0" max="100" value="50">
+      </div>
+      <div class="note t" style="margin-bottom:0"><span class="h">Das Sanduhr-Muster (gemessen an 6 Modellen)</span>
+      k <b>steigt</b> in den ersten Schichten (Kontext wird zusammengeführt), erreicht ein Plateau bei <b>k ≈ 19–22</b> und <b>sinkt</b> zum Ausgang — wo alles auf die eine Frage „welches Wort?" komprimiert wird. Bemerkenswert: <b>d verdreifacht sich</b> (768 → 2048), <b>k bleibt ≈ 20</b>. Die Dimension ist eine Eigenschaft der <em>Aufgabe</em> (nächstes Wort in natürlicher Sprache), nicht der Architektur.
+      </div>
+      <div class="note w"><span class="h">Wichtige Einschränkung (vom Paper selbst)</span>
+      Schicht 0 — die rohen Wort-Embeddings — liegt <em>nicht</em> sauber auf einem Blatt (die Schätzer dort liefern Ausreißer, z. B. 68). Robinson, Dey &amp; Chiang (2025) haben statistisch gezeigt, dass Embedding-Schichten die Mannigfaltigkeits-Vermutung verletzen. Das Paper betrachtet daher nur <b>kontextuelle Zustände ab Schicht 1</b>. Seine Lesart: <em>Das Blatt wird vom Transformer erst erzeugt — es wird nicht von der Worttabelle geerbt.</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="margin" class="anim">
+  <div class="eyebrow">Schritt 4 · Zwei neue Begriffe</div>
+  <h2>Margin und Expressibility Gap</h2>
+  <p class="lead">Das Paper erfindet zwei Messgrößen. Beide hängen an einer einzigen Zahl pro Wortvorhersage: dem Abstand zwischen dem Siegertoken und dem Zweitplatzierten.</p>
+  <div class="thm" style="border-color:rgba(94,224,208,.3);background:linear-gradient(150deg,rgba(94,224,208,.08),rgba(13,18,33,.7))">
+    <div class="lbl" style="color:var(--acc)">Die drei Definitionen (Def. 10.1 &amp; 10.2 des Papers)</div>
+    <div class="math" style="font-size:14.5px">
+      <b>Margin:</b>&nbsp; m(h) = Score(Sieger) − Score(Zweitbester) &nbsp;≥&nbsp; 0<br>
+      <b>Gap-Menge:</b>&nbsp; G<sub>ε</sub> = { h : m(h) &lt; ε } &nbsp;— alle Gedanken, bei denen der Sieger weniger als ε Vorsprung hat<br>
+      <b>Normalisiert:</b>&nbsp; η(ε) = Volumen(G<sub>ε</sub>) / Volumen(ganzes Blatt) &nbsp;∈ [0, 1]
+    </div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Wort-Labor: wie knapp wird's?</h4><span class="tag">Margin anfassen</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Das Modell vergibt vier Kandidaten Punkten (Logits). Ziehe die Regler — die <b>Margin</b> ist die Lücke zwischen Platz 1 und 2. Ist sie klein, steht das Modell zwischen zwei Wörtern: genau dann liegt der Gedanke im Gap.</p>
+      <div class="split">
+        <div>
+          <div id="logitCtls"></div>
+          <div class="btnrow">
+            <button data-pre="1">Klarer Fall</button>
+            <button data-pre="2">Knapper Fall</button>
+            <button data-pre="3">Ratlos</button>
+          </div>
+          <div class="ctl-hint">Tatsächliche Modelle (Messung): Median der Margin ≈ 0.49–0.64, aber 40–51 % aller Positionen liegen unter 0.5 — fast die Hälfte aller Vorhersagen ist „knapp".</div>
+        </div>
+        <div>
+          <div class="cwrap"><canvas id="cvWlab" style="width:100%;height:280px"></canvas></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Margin m</div><div class="v" id="wlMar">—</div></div>
+            <div class="box"><div class="k">P(Sieger)</div><div class="v e" id="wlP">—</div></div>
+            <div class="box"><div class="k">Status</div><div class="v g" id="wlSt" style="font-size:12px">—</div></div>
+            <div class="box"><div class="k">Entropie H</div><div class="v v" id="wlH">—</div><div class="u">bit</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:0"><span class="h">Warum Margin, nicht Entropie?</span>
+      Die Entropie misst die <em>gesamte</em> Unsicherheit der Verteilung, die Margin nur die <em>Sieger-Lücke</em>. Das Paper misst die Korrelation: nur ρ ≈ −0.16 bis −0.23 — verwandt, aber nicht dasselbe. Für die Frage „kann ein Wort diesen Gedanken ausdrücken?" ist die <b>Sieger-Lücke</b> die richtige Größe.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="satz1" class="anim">
+  <div class="eyebrow">Schritt 5 · Hauptsatz 1</div>
+  <h2>Satz 1: Die Zwischenzone wächst <em style="color:var(--acc)">linear</em> mit der Schwelle</h2>
+  <p class="lead">Erste beweisbare, messbare Aussage des Papers: Der Anteil η(ε) der Gedanken, die näher als ε an einer Wortgrenze liegen, wächst für kleine ε <b>genau linear</b> mit ε.</p>
+  <div class="thm">
+    <div class="lbl">Satz 10.5 (im Wortlaut der Idee)</div>
+    <div class="math" style="font-size:14.5px">
+      η(ε) = [ Grenzfläche / (λ · Volumen) ] · ε &nbsp;+&nbsp; O(ε²)
+    </div>
+    <p style="color:var(--txt-dim);font-size:13px;margin-top:6px">mit λ = Steigung der Margin (wie schnell wächst die Sicherheit, wenn man sich von der Grenze wegbewegt?) und <b>Grenzfläche</b> = Gesamtlänge aller Wortgrenzen im Blatt. Gültig für ε &lt; 1/(2·Krümmung).</p>
+  </div>
+  <div class="note"><span class="h">Warum ist das so einfach? — Der Schlauch-Trick</span>
+  Die Zwischenzone um eine Grenze ist ein <b>dünner Schlauch</b> um diese Grenze. Und: Das Volumen eines dünnen Schlauchs ist ≈ <b>Oberfläche × Dicke</b> — genau wie die Länge einer Mauer mal ihre Dicke das Volumen der Mauer gibt. Dicke hier = ε/λ. Also: linear. Der formale Beweis im Paper ist die Koflächenformel (der Riemannsche Fubini), in vier Schritten.</div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der Schlauch selbst: eine Mauer und ihr Sicherheitsabstand</h4><span class="tag">Satz 10.5 · Mechanik</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.15fr 1fr">
+        <div class="cwrap"><canvas id="cvTube" style="width:100%;height:300px"></canvas></div>
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Schwelle ε</span><b id="tEV">0.30</b></div>
+            <input type="range" id="tE" class="g" min="0.02" max="2" step="0.01" value="0.3">
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Margin-Steigung λ (Trainingsqualität)</span><b id="tLV">1.00</b></div>
+            <input type="range" id="tL" class="v" min="0.3" max="3" step="0.01" value="1">
+            <div class="ctl-hint">Großes λ = scharfe Entscheidungsgrenzen = dünnerer Schlauch bei gleicher ε. Größere Modelle haben größeres λ (gemessen: Median-Margin steigt mit der Größe).</div>
+          </div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Zwischenzone η(ε)</div><div class="v g" id="tEta">—</div></div>
+            <div class="box"><div class="k">Vorhersage α·ε</div><div class="v" id="tLin">—</div></div>
+            <div class="box"><div class="k">Abweichung</div><div class="v m" id="tDev">—</div><div class="u">der O(ε²)-Term</div></div>
+            <div class="box"><div class="k">Gültig bis ε₀</div><div class="v v" id="tE0">—</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cwrap" style="margin-top:12px"><canvas id="cvTubePlot" style="width:100%;height:230px"></canvas></div>
+      <div class="note e" style="margin-bottom:0"><span class="h">Und die Messung an echten Modellen?</span>
+      Die Autoren haben η(ε) für sechs Modelle (GPT-2, OPT, Pythia; 124M–1.5B) auf WikiText-103 bestimmt und im Log-Log-Plot die Steigung ausgelesen: <b>β = 0.873 … 1.117</b>, also ≈ 1, mit <b>R² &gt; 0.985</b>. Damit ist zum ersten Mal ein <em>bewiesener</em> geometrischer Satz über LLM-Innenleben empirisch bestätigt.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="satz2" class="anim">
+  <div class="eyebrow">Schritt 6 · Hauptsatz 2</div>
+  <h2>Satz 2: Kein endliches Wörterbuch kann den Fehler auf Null drücken</h2>
+  <p class="lead">Der eigentliche Hammer: Für <em>jedes</em> endliche Wörterbuch der Größe N gibt es eine Untergrenze für den Mittelungsfehler der Wortwahl — und das Verbessern wird grotesk teuer.</p>
+  <div class="thm">
+    <div class="lbl">Satz 10.8 (im Wortlaut der Idee)</div>
+    <div class="math" style="font-size:14.5px">
+      Fehler(N) &nbsp;≥&nbsp; c<sub>k</sub> · ( Volumen / N )<sup>2/k</sup>
+    </div>
+    <p style="color:var(--txt-dim);font-size:13px;margin-top:6px">Der Fehler fällt also nur wie <b>N<sup>−2/k</sup></b> — die „Rate-Distortion"-Untergrenze der Quantisierung, übertragene auf eine gekrümmte Fläche. Umgekehrt: Wer Fehler D will, braucht mindestens N ∝ D<sup>−k/2</sup> Wörter.</p>
+  </div>
+  <div class="note w"><span class="h">Was bedeutet −2/k konkret?</span>
+  Der Fehler halbiert sich, wenn man das Wörterbuch um den Faktor <b>2<sup>k/2</sup></b> vergrößert. Bei k = 20: 2<sup>10</sup> ≈ <b>1024</b>. Bei k = 50: 2<sup>25</sup> ≈ <b>33 Millionen</b>. Je dünner das Blatt (je größer k), desto hoffnungsloser. Das ist der <em>Fluch der Dimension</em> in seiner reinsten Form.</div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Rate-Distortion-Rechner: was kostet Halbierung?</h4><span class="tag">Satz 10.8</span></div>
+    <div class="demo-body">
+      <div class="split">
+        <div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Intrinsische Dimension k</span><b id="rdKV">20</b></div>
+            <input type="range" id="rdK" min="2" max="60" step="1" value="20">
+            <div class="ctl-hint">Gemessen: 15–22. Schiebe auf 50 und sieh, wie schnell es hoffnungslos wird.</div>
+          </div>
+          <div class="ctl">
+            <div class="ctl-lab"><span>Wörterbuchgröße N</span><b id="rdNV">50 257</b></div>
+            <input type="range" id="rdN" class="m" min="2" max="6.5" step="0.01" value="4.7">
+            <div class="ctl-hint">Logarithmisch. GPT-2: 50 257 · Llama-3: 128 256 · Gemma: 256 000.</div>
+          </div>
+          <div class="btnrow">
+            <button data-rdp="7.03,50257">GPT-2 (50k)</button>
+            <button data-rdp="7.81,128256">Llama-3 (128k)</button>
+            <button data-rdp="9.0,1000000">1 Million</button>
+          </div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Untergrenze des Fehlers D</div><div class="v" id="rdD">—</div></div>
+            <div class="box"><div class="k">N, um D zu halbieren</div><div class="v g" id="rdHalf">—</div></div>
+            <div class="box"><div class="k">erforderlicher Faktor</div><div class="v m" id="rdFac">—</div></div>
+            <div class="box"><div class="k">c<sub>k</sub></div><div class="v v" id="rdCk" style="font-size:13px">—</div></div>
+          </div>
+          <div class="note w" style="margin-top:12px;font-size:12.5px"><b>Übersetzt:</b> <span id="rdStory">—</span></div>
+        </div>
+        <div>
+          <div class="cwrap"><canvas id="cvRD" style="width:100%;height:400px"></canvas></div>
+          <div class="leg" style="margin-top:8px">
+            <span><i style="background:#5ee0d0"></i>k = 5</span>
+            <span><i style="background:#ff7ac0"></i>k = 20 (gemessen)</span>
+            <span><i style="background:#8a7cff"></i>k = 50</span>
+          </div>
+        </div>
+      </div>
+      <div class="note t" style="margin-bottom:0"><span class="h">Beweis in fünf Sätzen</span>
+      ① Das Blatt wird in N Voronoi-Zellen zerlegt. ② Für eine Zelle von gegebenem Volumen ist die <em>Kugel</em> die Form mit dem kleinsten mittleren Abstand zum Mittelpunkt. ③ Der mittlere Abstand² in einer k-dimensionalen Kugel ist k·r²/(k+2). ④ Die Funktion x↦x<sup>1+2/k</sup> ist konvex — mit der Jensen-Ungleichung folgt: <b>gleiche Zellgrößen</b> sind optimal. ⑤ Zusammensetzen ergibt N<sup>−2/k</sup>. Weil selbst der <em>perfekte</em> Fall schon diese Schranke hat, gilt sie für jedes echte Vokabular — <b>unentrinnbar, egal wie gut trainiert.</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="empirie" class="anim">
+  <div class="eyebrow">Schritt 7 · Die Messung</div>
+  <h2>Was an sechs echten Modellen herauskam</h2>
+  <p class="lead">GPT-2, OPT und Pythia in zwei Größenstufen (124M–1.5B), je ≈ 1 800 Hidden States pro Schicht von WikiText-103. Vier Experimente: Dimension, Krümmung, Gap, Visualisierung. Alle echten Zahlen aus den Tabellen 2–4 des Papers:</p>
+  <div class="card" style="overflow-x:auto">
+    <table>
+      <thead><tr><th>Modell</th><th>d</th><th>k̂ Peak</th><th>Auslastung</th><th>Median m</th><th>P(m &lt; 0.5)</th><th>Steigung β</th><th>R²</th><th>m₀.₀₅ (Boden)</th></tr></thead>
+      <tbody>
+        <tr><td class="hi">GPT-2 (124M)</td><td class="n">768</td><td class="n">19.2</td><td class="n">2.5 %</td><td class="n">0.487</td><td class="n">51 %</td><td class="n">1.117</td><td class="n">0.995</td><td class="n">0.041</td></tr>
+        <tr><td class="hi">OPT-125M</td><td class="n">768</td><td class="n">19.5</td><td class="n">2.5 %</td><td class="n">0.536</td><td class="n">47 %</td><td class="n">0.929</td><td class="n">0.995</td><td class="n">0.050</td></tr>
+        <tr><td class="hi">Pythia-160M</td><td class="n">768</td><td class="n">21.7</td><td class="n">2.8 %</td><td class="n">0.507</td><td class="n">49 %</td><td class="n">1.030</td><td class="n">0.998</td><td class="n">0.048</td></tr>
+        <tr><td class="hi">GPT-2 XL (1.5B)</td><td class="n">1600</td><td class="n">20.2</td><td class="n">1.3 %</td><td class="n">0.586</td><td class="n">43 %</td><td class="n">0.946</td><td class="n">0.986</td><td class="n">0.047</td></tr>
+        <tr><td class="hi">OPT-1.3B</td><td class="n">2048</td><td class="n">20.9</td><td class="n">1.0 %</td><td class="n">0.641</td><td class="n">40 %</td><td class="n">0.873</td><td class="n">0.991</td><td class="n">0.055</td></tr>
+        <tr><td class="hi">Pythia-1B</td><td class="n">2048</td><td class="n">22.1</td><td class="n">1.1 %</td><td class="n">0.555</td><td class="n">45 %</td><td class="n">1.021</td><td class="n">0.989</td><td class="n">0.047</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3 style="margin-top:0">① k ≪ d bestätigt</h3><p style="font-size:12.5px;margin:0">k ≈ 19–22 bei d = 768–2048, trotz Verdreifachung von d. Auslastung 1–3 %.</p></div>
+    <div class="card"><h3 style="margin-top:0">② Blatt ist glatt</h3><p style="font-size:12.5px;margin:0">Krümmung ~10⁻⁵, über alle Schichten stabil. Damit ist die Voraussetzung von Satz 1 erfüllt.</p></div>
+    <div class="card"><h3 style="margin-top:0">③ Satz 1 bestätigt</h3><p style="font-size:12.5px;margin:0">Steigungen 0.873–1.117 ≈ 1, R² &gt; 0.985 — bei allen sechs Modellen.</p></div>
+    <div class="card"><h3 style="margin-top:0">④ Gap bleibt unten fest</h3><p style="font-size:12.5px;margin:0">m₀.₀₅ ≈ 0.04–0.06 bei <em>allen</em> — trotz Faktor 12 an Parametern. Der „irreduzible Boden": ~5 % der Stellen sind in der Sprache selbst zweideutig.</p></div>
+    <div class="card"><h3 style="margin-top:0">⑤ Architekturunabhängig</h3><p style="font-size:12.5px;margin:0">GPT-2 · OPT · Pythia, verschiedene Trainingsdaten — alles identisch. → Eigenschaft der Aufgabe, nicht des Modells.</p></div>
+    <div class="card" style="border-color:rgba(255,200,96,.3)"><h3 style="margin-top:0;color:var(--acc3)">⑥ Skalierung polarisiert</h3><p style="font-size:12.5px;margin:0">Median steigt (0.49 → 0.64), IQR wächst (0.63 → 0.75): leichte Stellen werden leichter, schwierige bleiben schwer.</p></div>
+  </div>
+  <div class="note e"><span class="h">Perplexität bekommt eine geometrische Erklärung</span>
+  Große Margin → spitzer Softmax → niedrige Überraung → niedrige Perplexität. Die Median-Margin-Reihenfolge der sechs Modelle stimmt exakt mit ihrer Perplexitäts-Rangfolge überein. <em>Skalierung senkt PPL, weil Zustände von den Wortgrenzen weg in die Zellinnere wandern — und an der unteren Grenze (dem irreduziblen Boden) stoppt das.</em>
+  </div>
+</section>
+
+<section id="konsequenzen" class="anim">
+  <div class="eyebrow">Schritt 8 · Wofür gut?</div>
+  <h2>Folgen — und die ehrlichen Grenzen</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc)">Was man damit machen kann</h3>
+      <ul style="font-size:13.5px">
+        <li><b>LoRA erklärt:</b> Gewichts-Updates müssen nur den k-dimensionalen Tangentialraum abdecken → Rang r ≈ 20–64 reicht. Ein rein empirisches Praxisrätsel wird geometrisch verstanden.</li>
+        <li><b>Layer-adaptives Pruning:</b> Endschichten haben kleineres k → dort aggressiver schneiden als in der Mitte.</li>
+        <li><b>Architektur-Design:</b> mittlere Schichten tragen die höchste Dimension → dort Breite investieren, Ränder dünner halten (Sanduhr-Profil als Blaupause).</li>
+        <li><b>Dekodierung:</b> Die Margin sagt, wo das Modell „zögert" — ein natürlicher Trigger für Vorsicht, Nachfragen oder abgestuftes Sampling.</li>
+        <li><b>Tokenizer-Design:</b> Neue Subwords dort einfügen, wo der Gap am größten ist (Lloyd-Iteration auf dem Blatt, Abschnitt 11 des Papers).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Wo die Theorie bricht (vom Paper selbst genannt)</h3>
+      <ul style="font-size:13.5px">
+        <li>Reale Zustände liegen nur <em>nahe</em> dem Blatt (Dicke δ) — bei großem δ wird es zum „dicken" Satz statt zur Mannigfaltigkeit.</li>
+        <li>Glätte versagt an <b>Umbrüchen</b>: Attention-Head-Wechsel, Polysemie-Auflösung, memorisierte Beispiele können Sprünge/Falten erzeugen.</li>
+        <li>Der Raum kann <b>mehrere Komponenten</b> haben (z. B. pro Sprache) — dann ist ein einzelner Atlas nicht mehr genug.</li>
+        <li>Die Fisher-Metrik <b>kollabiert</b> an sehr sicheren Stellen (p → 1) — dort verliert sie ihre Aussagekraft.</li>
+        <li>Ein <b>einzelnes</b> Paper, keine Peer-Review-Vielfalt: Die Sätze sind nachvollziehbar, aber die Community muss sie erst nachrechnen.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="quellen" class="anim">
+  <div class="eyebrow">Quellen</div>
+  <h2>Originalarbeiten — alle geprüft</h2>
+  <p>Diese einfache Version wurde gegen die Originaltexte abgeglichen. Alle zitierten Zahlen stammen aus den dortigen Tabellen.</p>
+  <div class="card">
+    <ul style="font-size:13.5px">
+      <li><b>Das Paper selbst:</b> Mohamed A. Mabrok (2026): <i>Latent Semantic Manifolds in Large Language Models.</i> <a class="ext" href="https://arxiv.org/abs/2603.22301">arXiv:2603.22301</a> (eingereicht 17.03.2026, CC BY 4.0). Hypothese 4.1, Def. 10.1/10.2, Satz 10.5, Satz 10.8, Tabellen 2–4, Abschnitt 15.1.</li>
+      <li><b>Buckel-Muster in CNNs:</b> Ansuini, Laio, Macke &amp; Zoccolan (2019), NeurIPS. <i>Intrinsic dimension of data representations in deep neural networks.</i> <a class="ext" href="https://arxiv.org/abs/1905.12784">arXiv:1905.12784</a></li>
+      <li><b>Gleiche Dynamik in großen Transformern:</b> Valeriani, Doimo, Cuturello, Laio, Ansuini &amp; Cazzaniga (2023), NeurIPS. <i>The geometry of hidden representations of large transformer models.</i> <a class="ext" href="https://arxiv.org/abs/2302.00294">arXiv:2302.00294</a></li>
+      <li><b>Der Schätzer (TWO-NN):</b> Facco, d'Errico, Rodriguez &amp; Laio (2017), <i>Scientific Reports</i> 7:12140. <i>Estimating the intrinsic dimension of datasets by a minimal neighborhood information.</i> <a class="ext" href="https://arxiv.org/abs/1803.06992">arXiv:1803.06992</a></li>
+      <li><b>Zweiter Schätzer (MLE):</b> Levina &amp; Bickel (2004), NeurIPS. <i>Maximum likelihood estimation of intrinsic dimension.</i></li>
+      <li><b>Embedding-Schicht verletzt die Hypothese:</b> Robinson, Dey &amp; Chiang (2025). <i>Token embeddings violate the manifold hypothesis.</i> <a class="ext" href="https://arxiv.org/abs/2504.01002">arXiv:2504.01002</a></li>
+      <li><b>Irreduzibler Verlust / Scaling Laws:</b> Kaplan et al. (2020). <a class="ext" href="https://arxiv.org/abs/2001.08361">arXiv:2001.08361</a> · Hoffmann et al. (2022), NeurIPS.</li>
+      <li><b>LoRA:</b> Hu et al. (2022), ICLR. <a class="ext" href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a></li>
+      <li><b>Geometrie der Tokens:</b> Ferrara et al. (2025), ICLR. <i>The geometry of tokens in internal representations of large language models.</i></li>
+      <li><b>Quantisierung auf Mannigfaltigkeiten (Engpass in Satz 10.8):</b> Graf &amp; Luschgy (2000), <i>Foundations of quantization for probability distributions</i>, Springer LNM 1730.</li>
+    </ul>
+    <div class="note e" style="margin-bottom:0"><span class="h">Überarbeitungshinweis</span>
+      Gegenüber der ausführlichen Version wurden: die sechs „Werkzeuge" (Softmax, Fisher, Riemannsche Metrik, Koflächenformel, Geodäten, Jensen) auf das reduziert, was für das Verständnis der zwei Sätze nötig ist; alle 20+ Labore auf sechs; die Formeln in Alltags-Sprache übersetzt. <b>Keine Zahl wurde geändert</b> — alle Messwerte (k̂, β, R², Mediane, m₀.₀₅) wurden 1:1 aus den Tabellen 2–4 des Papers übernommen.
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="anim">
+  <div class="eyebrow">Selbsttest</div>
+  <h2>Fünf Fragen</h2>
+  <div class="quiz" id="quizHost"></div>
+  <div class="card" style="text-align:center">
+    <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--acc)" id="qScore">0 / 5</div>
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:4px" id="qMsg">Los geht's!</div>
+    <button id="qReset" style="margin-top:12px">↻ Zurücksetzen</button>
+  </div>
+</section>
+
+</main>
+<footer>
+  Einfache interaktive Erklärung zu <b>„Latent Semantic Manifolds in Large Language Models"</b> (Mabrok 2026, arXiv:2603.22301).<br>
+  Alle Messzahlen aus den Originaltabellen des Papers. Simulationen laufen live im Browser — ohne externe Bibliotheken.
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(v,n=2)=>Number(v).toFixed(n);
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+const INK={bg:'#060910',grid:'rgba(255,255,255,.06)',axis:'rgba(255,255,255,.25)',txt:'#9aa6c0',acc:'#5ee0d0',acc2:'#ff7ac0',acc3:'#ffc860',acc4:'#8a7cff',acc5:'#6ee88a',faint:'#64708c'};
+
+(function(){
+  const bar=$('#prog');const links=$$('#nav .links a');
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const st=scrollY,dh=document.body.scrollHeight-innerHeight;
+    bar.style.width=(dh>0?st/dh*100:0)+'%';
+    let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*0.4)act=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===act));
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+  $$('.anim').forEach(el=>io.observe(el));
+})();
+
+(function(){
+  const cv=$('#cvVoro');
+  const WORDS=["Hund","Katze","Baum","Haus","Auto","Buch","Maus","Lampe","Blume","Stein","Tisch","Stuhl","Wasser","Feuer","Nacht","Sonne","Regen","Mond","Kaffee","Stern","Fluss","Berg","Vogel","Fisch","Milch","Zucker","Tür","Fenster","Brücke","Feld","Küche","Garten","Schiff","Uhr","Weg","Stadt"];
+  const CW=300,CH=200;
+  const off=document.createElement('canvas');off.width=CW;off.height=CH;
+  const octx=off.getContext('2d');
+  let anchors=[],N=14,eps=0.3,marginField=null,eta=0;
+  let hover=null;
+  function genAnchors(n){
+    const rng=mulberry32(1234+n);
+    const cols=Math.ceil(Math.sqrt(n*CW/CH)),rows=Math.ceil(n/cols);
+    const pts=[];
+    for(let i=0;i<n;i++){
+      const cx=i%cols,cy=Math.floor(i/cols);
+      pts.push({x:((cx+0.15+rng()*0.7)/cols)*CW,y:((cy+0.15+rng()*0.7)/rows)*CH,w:WORDS[i%WORDS.length],c:(i*47)%360});
+    }
+    return pts;
+  }
+  function recompute(){
+    const img=octx.createImageData(CW,CH);
+    const a=anchors;
+    let cnt=0;
+    const dTyp=Math.sqrt(CW*CH/a.length)*0.55;
+    const epsPx=eps*dTyp;
+    for(let y=0;y<CH;y++){
+      for(let x=0;x<CW;x++){
+        let d1=1e9,d2=1e9,i1=0;
+        for(let i=0;i<a.length;i++){
+          const dx=x-a[i].x,dy=y-a[i].y,dd=dx*dx+dy*dy;
+          if(dd<d1){d2=d1;i1=a[i].c;d1=dd;}
+          else if(dd<d2){d2=dd;}
+        }
+        const m=Math.sqrt(d2)-Math.sqrt(d1);
+        const inGap=m<epsPx;
+        if(inGap)cnt++;
+        const p=(y*CW+x)*4;
+        if(inGap){img.data[p]=255;img.data[p+1]=200;img.data[p+2]=96;img.data[p+3]=255;}
+        else{
+          const h=a[i1].c,l=18+10*(Math.min(m/dTyp,1));
+          const c=hsl(h,45,l);
+          img.data[p]=c[0];img.data[p+1]=c[1];img.data[p+2]=c[2];img.data[p+3]=255;
+        }
+      }
+    }
+    octx.putImageData(img,0,0);
+    marginField=new Float32Array(CW*CH);
+    for(let y=0;y<CH;y++)for(let x=0;x<CW;x++){
+      let d1=1e9,d2=1e9;
+      for(let i=0;i<a.length;i++){const dx=x-a[i].x,dy=y-a[i].y,dd=dx*dx+dy*dy;if(dd<d1){d2=d1;d1=dd;}else if(dd<d2){d2=dd;}}
+      marginField[y*CW+x]=Math.sqrt(d2)-Math.sqrt(d1);
+    }
+    eta=cnt/(CW*CH);
+    draw();
+  }
+  function hsl(h,s,l){
+    s/=100;l/=100;
+    const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l);
+    const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+    return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
+  }
+  function draw(){
+    const {c,w,h}=hidpi(cv,380);
+    c.clearRect(0,0,w,h);
+    c.imageSmoothingEnabled=false;
+    c.drawImage(off,0,0,w,h);
+    const sx=w/CW,sy=h/CH;
+    for(const a of anchors){
+      c.beginPath();c.arc(a.x*sx,a.y*sy,4,0,Math.PI*2);
+      c.fillStyle='#ff7ac0';c.fill();
+      c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1;c.stroke();
+    }
+    if(hover){
+      const x=clamp(hover[0],0,CW-1),y=clamp(hover[1],0,CH-1);
+      let d1=1e9,d2=1e9,i1=0;
+      for(let i=0;i<anchors.length;i++){const dx=x-anchors[i].x,dy=y-anchors[i].y,dd=dx*dx+dy*dy;if(dd<d1){d2=d1;i1=i;d1=dd;}else if(dd<d2){d2=dd;}}
+      const m=Math.sqrt(d2)-Math.sqrt(d1);
+      const dTyp=Math.sqrt(CW*CH/anchors.length)*0.55;
+      const mx=x*sx,my=y*sy;
+      c.beginPath();c.arc(mx,my,9,0,Math.PI*2);c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=1;c.stroke();
+      c.beginPath();c.arc(mx,my,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+      const word=anchors[i1].w;
+      c.font='600 13px ui-monospace,monospace';
+      const tw=c.measureText(word).width;
+      c.fillStyle='rgba(6,9,16,.9)';c.fillRect(mx+10,my-24,tw+14,22);
+      c.strokeStyle='rgba(94,224,208,.6)';c.strokeRect(mx+10,my-24,tw+14,22);
+      c.fillStyle='#5ee0d0';c.fillText(word,mx+17,my-9);
+      $('#rWord').textContent=word;
+      $('#rMar').textContent=fmt(m/dTyp,2);
+      const st=m/dTyp<eps?'IN DER ZWISCHENZONE':'klar';
+      $('#rStat').textContent=st;
+      $('#rStat').style.color=m/dTyp<eps?'var(--acc3)':'var(--acc5)';
+    }
+    $('#rEta').textContent=fmt(eta*100,1)+' %';
+  }
+  function toCanvas(e){
+    const r=cv.getBoundingClientRect();
+    return [(e.clientX-r.left)/r.width*CW,(e.clientY-r.top)/r.height*CH];
+  }
+  cv.addEventListener('pointermove',e=>{hover=toCanvas(e);draw();});
+  cv.addEventListener('pointerleave',()=>{hover=null;$('#rWord').textContent='—';$('#rMar').textContent='—';$('#rStat').textContent='—';draw();});
+  const sN=$('#sN'),sE=$('#sE');
+  sN.addEventListener('input',()=>{N=+sN.value;anchors=genAnchors(N);recompute();});
+  sE.addEventListener('input',()=>{eps=+sE.value;recompute();});
+  anchors=genAnchors(N);recompute();
+  addEventListener('resize',()=>draw());
+})();
+
+(function(){
+  const cvD=$('#cvDim'),cvH=$('#cvHour');
+  function drawDim(){
+    const d=+$('#dimD').value,k=+$('#dimK').value;
+    $('#dimDV').textContent=d;$('#dimKV').textContent=k;
+    $('#dimU').textContent=fmt(k/d*100,1)+' %';
+    $('#dimF').textContent=Math.round(d/k)+'×';
+    $('#dimR').textContent=k;
+    const {c,w,h}=hidpi(cvD,300);
+    c.clearRect(0,0,w,h);
+    const cols=Math.min(48,Math.ceil(Math.sqrt(d*2.2)));
+    const rows=Math.ceil(d/cols);
+    const cell=Math.min((w-20)/cols,(h-20)/rows);
+    const ox=(w-cols*cell)/2,oy=(h-rows*cell)/2;
+    for(let i=0;i<d;i++){
+      const x=ox+(i%cols)*cell,y=oy+Math.floor(i/cols)*cell;
+      c.fillStyle=i<k?'rgba(94,224,208,.85)':'rgba(255,255,255,.07)';
+      c.fillRect(x+1,y+1,cell-2,cell-2);
+    }
+  }
+  const L=48;
+  function kProfile(t){
+    const rise=1-Math.exp(-t*7);
+    const fall=1-0.32*smooth(t,0.45,1.0);
+    return 12+11*rise*fall-2.5*t*t;
+  }
+  function smooth(x,a,b){const u=clamp((x-a)/(b-a),0,1);return u*u*(3-2*u);}
+  function drawHour(){
+    const {c,w,h}=hidpi(cvH,220);
+    c.clearRect(0,0,w,h);
+    const padL=38,padR=14,padT=14,padB=26;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(String(28-i*7),6,y+3);
+    }
+    c.strokeStyle='rgba(255,255,255,.12)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+    c.fillText('0',padL,h-8);c.fillText('L='+L,w-padR-14,h-8);
+    const N=120;
+    c.beginPath();
+    for(let i=0;i<=N;i++){
+      const t=i/N,x=padL+pw*t,y=padT+ph*(1-(kProfile(t)-5)/24);
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    }
+    c.strokeStyle=INK.acc;c.lineWidth=2;c.stroke();
+    const t=+$('#hrL').value/100;
+    const k=kProfile(t);
+    const x=padL+pw*t,y=padT+ph*(1-(k-5)/24);
+    c.beginPath();c.arc(x,y,5,0,Math.PI*2);c.fillStyle=INK.acc3;c.fill();
+    c.strokeStyle='rgba(255,255,255,.3)';c.setLineDash([3,3]);
+    c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();c.setLineDash([]);
+    $('#hrLV').textContent=Math.round(t*L)+' / '+L;
+  }
+  $('#dimD').addEventListener('input',drawDim);
+  $('#dimK').addEventListener('input',drawDim);
+  $('#hrL').addEventListener('input',drawHour);
+  $$('[data-mdl]').forEach(b=>b.addEventListener('click',()=>{
+    const [d,k]=b.dataset.mdl.split(',').map(Number);
+    $('#dimD').value=d;$('#dimK').value=k;drawDim();
+  }));
+  drawDim();drawHour();
+  addEventListener('resize',()=>{drawDim();drawHour();});
+})();
+
+(function(){
+  const WORDS4=["Hund","Katze","Igel","Auto"];
+  const COLS4=['#5ee0d0','#ff7ac0','#8a7cff','#ffc860'];
+  const host=$('#logitCtls');
+  const vals=[3.2,2.8,1.2,0.4];
+  WORDS4.forEach((w,i)=>{
+    const d=document.createElement('div');d.className='ctl';
+    d.innerHTML='<div class="ctl-lab"><span style="color:'+COLS4[i]+'">'+w+'</span><b id="lg'+i+'">'+fmt(vals[i],1)+'</b></div><input type="range" id="lgS'+i+'" min="0" max="5" step="0.05" value="'+vals[i]+'">';
+    host.appendChild(d);
+    d.querySelector('input').addEventListener('input',e=>{vals[i]=+e.target.value;draw();});
+  });
+  $$('[data-pre]').forEach(b=>b.addEventListener('click',()=>{
+    const p={1:[3.4,2.2,1.0,0.3],2:[2.6,2.45,0.8,0.4],3:[2.2,2.0,1.9,1.8]}[b.dataset.pre];
+    p.forEach((v,i)=>{vals[i]=v;$('#lgS'+i).value=v;});
+    draw();
+  }));
+  function draw(){
+    vals.forEach((v,i)=>$('#lg'+i).textContent=fmt(v,2));
+    const mx=Math.max(...vals);
+    const l=vals.map(v=>v-mx);
+    const ex=l.map(x=>Math.exp(x/1.0));
+    const S=ex.reduce((a,b)=>a+b,0);
+    const p=ex.map(x=>x/S);
+    const order=[0,1,2,3].sort((a,b)=>vals[b]-vals[a]);
+    const m=vals[order[0]]-vals[order[1]];
+    let H=0;p.forEach(q=>{if(q>1e-9)H-=q*Math.log2(q);});
+    const {c,w,h}=hidpi($('#cvWlab'),280);
+    c.clearRect(0,0,w,h);
+    const bw=Math.min(90,(w-60)/4-14),x0=40;
+    WORDS4.forEach((wd,i)=>{
+      const bh=p[i]*(h-70);
+      const x=x0+i*((w-60)/4);
+      c.fillStyle=COLS4[i]+'33';c.fillRect(x,20,bw,h-40);
+      c.fillStyle=COLS4[i];c.fillRect(x,20+(h-40-bh),bw,bh);
+      c.fillStyle='#e8ecf6';c.font='600 12px system-ui';c.textAlign='center';
+      c.fillText(wd,x+bw/2,h-18);
+      c.fillStyle=INK.txt;c.font='11px ui-monospace,monospace';
+      c.fillText(fmt(p[i]*100,0)+' %',x+bw/2,20+(h-40-bh)-6);
+      c.textAlign='left';
+    });
+    const i1=order[0],i2=order[1];
+    const x1=x0+i1*((w-60)/4)+bw/2,x2=x0+i2*((w-60)/4)+bw/2;
+    const y1=20+(h-40)-p[i1]*(h-40),y2=20+(h-40)-p[i2]*(h-40);
+    c.strokeStyle=INK.acc3;c.lineWidth=2;c.setLineDash([5,4]);
+    c.beginPath();c.moveTo(Math.min(x1,x2)-8,Math.max(y1,y2));c.lineTo(Math.max(x1,x2)+8,Math.max(y1,y2));c.stroke();
+    c.setLineDash([]);
+    const midX=(x1+x2)/2,topY=Math.min(y1,y2);
+    c.fillStyle=INK.acc3;c.font='600 11px ui-monospace,monospace';c.textAlign='center';
+    c.fillText('m = '+fmt(m,2),midX,topY-14<24?topY+16:topY-8);
+    c.textAlign='left';
+    $('#wlMar').textContent=fmt(m,2);
+    $('#wlP').textContent=fmt(p[i1]*100,1)+' %';
+    $('#wlH').textContent=fmt(H,2);
+    const st=m>2?'sehr sicher':m>0.8?'klar':m>0.25?'knapp':'fast unentschieden';
+    $('#wlSt').textContent=st;
+    $('#wlSt').style.color=m>0.8?'var(--acc5)':m>0.25?'var(--acc3)':'var(--acc2)';
+  }
+  draw();
+  addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvTube'),cvP=$('#cvTubePlot');
+  const H=1.0,L=1.0,kappa=0.35;
+  function draw(){
+    const eps=+$('#tE').value,lambda=+$('#tL').value;
+    $('#tEV').textContent=fmt(eps,2);$('#tLV').textContent=fmt(lambda,2);
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const m=30,top=20,bot=h-20;
+    c.fillStyle='rgba(255,255,255,.04)';
+    c.fillRect(m,top,w-2*m,bot-top);
+    const cy=(top+bot)/2;
+    const bandHalfPx=Math.min((eps/lambda)*(bot-top),(bot-top)/2-2);
+    c.fillStyle='rgba(255,200,96,.28)';
+    c.fillRect(m,cy-bandHalfPx,w-2*m,bandHalfPx*2);
+    c.strokeStyle=INK.acc3;c.setLineDash([6,4]);c.lineWidth=1.5;
+    c.beginPath();c.moveTo(m,cy-bandHalfPx);c.lineTo(w-m,cy-bandHalfPx);c.stroke();
+    c.beginPath();c.moveTo(m,cy+bandHalfPx);c.lineTo(w-m,cy+bandHalfPx);c.stroke();
+    c.setLineDash([]);
+    c.strokeStyle=INK.acc;c.lineWidth=3;
+    c.beginPath();c.moveTo(m,cy);c.lineTo(w-m,cy);c.stroke();
+    c.fillStyle=INK.txt;c.font='12px system-ui';
+    c.fillText('Wortgrenze ∂V (Margin = 0)',m+8,cy-8);
+    c.fillStyle=INK.acc3;
+    c.fillText('Gap Gε',m+8,cy-bandHalfPx+16);
+    c.fillText('Dicke = ε/λ',w-m-90,cy+bandHalfPx+16);
+    const eta=Math.min(1,2*eps/lambda);
+    const etaLin=2*eps/lambda;
+    const e0=1/(2*kappa);
+    const dev=Math.abs(eta-etaLin);
+    $('#tEta').textContent=fmt(eta*100,1)+' %';
+    $('#tLin').textContent=fmt(etaLin*100,1)+' %';
+    $('#tDev').textContent=dev<0.001?'0 (linear)':'sättigt';
+    $('#tE0').textContent=fmt(e0,2);
+    drawPlot(eps,lambda);
+  }
+  function drawPlot(eps,lambda){
+    const {c,w,h}=hidpi(cvP,230);
+    c.clearRect(0,0,w,h);
+    const padL=44,padR=14,padT=16,padB=30;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    const eMax=1.2;
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText((100-i*25)+' %',8,y+3);
+      const x=padL+pw*i/4;
+      c.fillText(fmt(eMax*i/4,1),x-8,h-10);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    const e0=1/(2*kappa);
+    c.fillStyle='rgba(138,124,255,.07)';
+    const xE=padL+pw*(e0/eMax);
+    c.fillRect(xE,padT,w-padR-xE,ph);
+    c.fillStyle=INK.acc4;c.font='10px system-ui';
+    c.fillText('Gültigkeitsgrenze ε₀='+fmt(e0,2),Math.min(xE+6,w-150),padT+14);
+    c.beginPath();
+    for(let i=0;i<=100;i++){
+      const e=eMax*i/100;
+      const eta=Math.min(1,2*e/lambda);
+      const x=padL+pw*(e/eMax),y=padT+ph*(1-eta);
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    }
+    c.strokeStyle=INK.acc3;c.lineWidth=2;c.stroke();
+    c.beginPath();
+    for(let i=0;i<=100;i++){
+      const e=eMax*i/100*Math.min(1,e0/eMax*1.0);
+      const eta=2*e/lambda;
+      const x=padL+pw*((e0*Math.min(1,i/100))/eMax),y=padT+ph*(1-eta);
+      i?c.lineTo(x,y):c.moveTo(x,y);
+    }
+    c.strokeStyle='rgba(94,224,208,.5)';c.setLineDash([5,4]);c.stroke();c.setLineDash([]);
+    const xe=padL+pw*(eps/eMax),ye=padT+ph*(1-Math.min(1,2*eps/lambda));
+    c.beginPath();c.arc(xe,ye,5,0,Math.PI*2);c.fillStyle=INK.acc3;c.fill();
+    c.strokeStyle='rgba(255,255,255,.4)';c.stroke();
+    c.fillStyle=INK.txt;c.font='11px system-ui';
+    c.fillText('η(ε) — gestrichelt: lineare Vorhersage α·ε, durchgezogen: mit Sättigung',padL+6,padT+12);
+  }
+  $('#tE').addEventListener('input',draw);
+  $('#tL').addEventListener('input',draw);
+  draw();
+  addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#cvRD');
+  function logGamma(z){
+    const cf=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
+    z-=1;
+    let x=0.99999999999980993;
+    for(let i=0;i<8;i++)x+=cf[i]/(z+i+1);
+    const t=z+7.5;
+    return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+  }
+  function ck(k){
+    const logW=(k/2)*Math.log(Math.PI)-logGamma(k/2+1);
+    return (k/(k+2))*Math.exp(-(2/k)*logW);
+  }
+  function D(k,N){return ck(k)*Math.pow(1/N,2/k);}
+  function draw(){
+    const k=+$('#rdK').value,N=Math.round(Math.pow(10,+$('#rdN').value));
+    $('#rdKV').textContent=k;$('#rdNV').textContent=N.toLocaleString('de-DE');
+    const d=D(k,N);
+    const fac=Math.pow(2,k/2);
+    const Nhalf=N*fac;
+    $('#rdD').textContent=d<0.001?d.toExponential(2):fmt(d,4);
+    $('#rdCk').textContent=fmt(ck(k),3);
+    $('#rdFac').textContent='×'+(fac>=100?Math.round(fac).toLocaleString('de-DE'):fmt(fac,1));
+    $('#rdHalf').textContent=Nhalf>=1e6?Math.round(Nhalf/1e6)+' Mio':Math.round(Nhalf).toLocaleString('de-DE');
+    $('#rdStory').textContent='Mit '+k+' freien Reglern im Gedankenraum: Um den Wortfehler von '+($('#rdD').textContent)+' auf die Hälfte zu drücken, bräuchtest du '+($('#rdHalf').textContent)+' Wörter — statt '+N.toLocaleString('de-DE')+'.';
+    const {c,w,h}=hidpi(cv,400);
+    c.clearRect(0,0,w,h);
+    const padL=52,padR=14,padT=18,padB=34;
+    const pw=w-padL-padR,ph=h-padT-padB;
+    const nMin=2,nMax=1e6;
+    const dMin=0.001;
+    c.strokeStyle=INK.grid;
+    for(let i=0;i<=4;i++){
+      const y=padT+ph*i/4;
+      c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(Math.pow(10,-0.75*i).toExponential(1),6,y+3);
+    }
+    for(const lg of [1,2,3,4,5,6]){
+      const x=padL+pw*((lg-0.3)/5.7);
+      c.fillStyle=INK.faint;c.font='10px ui-monospace,monospace';
+      c.fillText(['','10','100','1k','10k','100k','1M'][lg],x-12,h-10);
+    }
+    c.strokeStyle='rgba(255,255,255,.15)';
+    c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    c.fillStyle=INK.txt;c.font='11px system-ui';
+    c.fillText('Fehler D (log)',padL-46,padT-4);
+    c.fillText('Wörterbuchgröße N (log)',w-160,h-2);
+    const curves=[[5,INK.acc],[20,INK.acc2],[50,INK.acc4]];
+    for(const [kk,col] of curves){
+      c.beginPath();
+      for(let i=0;i<=140;i++){
+        const lg=0.3+(i/140)*5.7;
+        const NN=Math.pow(10,lg);
+        const dd=D(kk,NN);
+        const lgd=Math.log10(Math.max(dd,dMin*0.5));
+        const y=padT+ph*(1-(lgd-Math.log10(dMin))/(Math.log10(1)-Math.log10(dMin)));
+        const x=padL+pw*((lg-0.3)/5.7);
+        if(y<h-padB+40&&y>padT-40){i?c.lineTo(x,y):c.moveTo(x,y);}
+      }
+      c.strokeStyle=col;c.lineWidth=kk===k?3:1.6;c.stroke();
+    }
+    const lgN=Math.log10(N);
+    const xN=padL+pw*((lgN-0.3)/5.7);
+    c.strokeStyle='rgba(255,255,255,.35)';c.setLineDash([4,4]);
+    c.beginPath();c.moveTo(xN,padT);c.lineTo(xN,h-padB);c.stroke();c.setLineDash([]);
+    const lgd=Math.log10(Math.max(d,dMin*0.5));
+    const yN=padT+ph*(1-(lgd-Math.log10(dMin))/(Math.log10(1)-Math.log10(dMin)));
+    c.beginPath();c.arc(xN,clamp(yN,padT,h-padB),6,0,Math.PI*2);
+    c.fillStyle=INK.acc3;c.fill();c.strokeStyle='#fff';c.stroke();
+    c.fillStyle=INK.txt;c.font='11px ui-monospace,monospace';
+    c.fillText('N='+N.toLocaleString('de-DE'),clamp(xN+8,8,w-90),clamp(yN-10,padT+12,h-padB-4));
+  }
+  $('#rdK').addEventListener('input',draw);
+  $('#rdN').addEventListener('input',draw);
+  $$('[data-rdp]').forEach(b=>b.addEventListener('click',()=>{
+    const [lgN]=b.dataset.rdp.split(',').map(Number);
+    $('#rdN').value=lgN;draw();
+  }));
+  draw();
+  addEventListener('resize',draw);
+})();
+
+(function(){
+  const QS=[
+    {q:'Was ist die Margin m(h)?',o:['Score des Siegertokens minus Score des Zweitplatzierten','Das mittlere Logit','Die Entropie der Wortverteilung','Der Abstand zum nächstgelegenen Anker im 2D-Projektion'],a:0,
+     e:'m(h) = ℓ(t*) − ℓ(t**). Sie misst, wie klar der Sieg ist.'},
+    {q:'η(ε) = 0.45 bedeutet:',o:['45 % der Gedanken liegen näher als ε an einer Wortgrenze','Das Modell macht 45 % Fehler','Die Entropie beträgt 0.45 bit','Das Modell kennt 45 Wörter'],a:0,
+     e:'η(ε) ist der Anteil der Mannigfaltigkeit, der in der Zwischenzone G_ε liegt.'},
+    {q:'Satz 10.8: Um den Fehler bei k=20 zu halbieren, braucht man ungefähr:',o:['doppelt so viele Wörter','1024-mal so viele Wörter','10-mal so viele Wörter','es ist unmöglich, er bleibt konstant'],a:1,
+     e:'Halbierung kostet den Faktor 2^(k/2) = 2^10 ≈ 1024 Wörter.'},
+    {q:'Warum betrachtet das Paper nur Schichten ab 1?',o:['Schicht 0 ist zu langsam','Die rohen Embeddings liegen nicht sauber auf einem Blatt (Robinson et al. 2025)','In Schicht 0 gibt es keine Attention','Schicht 0 ist frei verfügbar'],a:1,
+     e:'Embeddings verletzen die Mannigfaltigkeits-Hypothese; das Blatt wird vom Transformer erst erzeugt.'},
+    {q:'k̂ bleibt bei ≈ 20, während d von 768 auf 2048 steigt. Woraus folgt das?',o:['Die Dimension ist eine Eigenschaft der Aufgabe, nicht der Architektur','Die Modelle waren schlecht trainiert','Es ist ein Messfehler','GPT-2 ist der Sonderfall'],a:0,
+     e:'GPT-2, OPT und Pythia mit unterschiedlichen Trainingsdaten zeigen dasselbe k — die Aufgabe „nächstes Token in natürlicher Sprache" setzt die Skala.'}
+  ];
+  let score=0,answered=0;
+  const host=$('#quizHost');
+  QS.forEach((Q,qi)=>{
+    const d=document.createElement('div');d.className='q';
+    d.innerHTML='<b>F'+(qi+1)+'</b> · '+Q.q;
+    const wrap=document.createElement('div');
+    Q.o.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=o;
+      b.addEventListener('click',()=>{
+        if(b.dataset.done)return;
+        d.querySelectorAll('.opt').forEach(x=>x.dataset.done='1');
+        if(oi===Q.a){b.classList.add('correct');score++;}
+        else{b.classList.add('wrong');d.querySelectorAll('.opt')[Q.a].classList.add('correct');}
+        answered++;
+        const e=document.createElement('div');e.style.cssText='font-size:12px;color:var(--txt-faint);margin-top:6px';
+        e.textContent=Q.e;
+        d.appendChild(e);
+        $('#qScore').textContent=score+' / '+QS.length;
+        if(answered===QS.length)$('#qMsg').textContent=score===QS.length?'Perfekt — du hast das Paper im Kopf.':score>=3?'Solide — die Kernideen sitzen.':'Schau dir die Demos noch einmal an.';
+      });
+      wrap.appendChild(b);
+    });
+    d.appendChild(wrap);
+    host.appendChild(d);
+  });
+  $('#qReset').addEventListener('click',()=>location.reload());
+})();
+</script>
+</body>
+</html>

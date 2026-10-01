@@ -45,7 +45,7 @@ In one sentence, Olah captures the whole operation:
 > The kernel slides to every position of the image and computes a new pixel
 > as a weighted sum of the pixels it floats over.
 
-\cite[Olah, 2014]{colah2014conv} Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement \cite[Olah, 2014]{colah2014conv}. Reusing one component across many positions is **weight tying** in a vision setting \cite[Olah, 2015]{colah2015types}. Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs \cite[Olah, 2014]{colah2014conv}.
+(\cite[Olah, 2014]{colah2014conv}) Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement (\cite[Olah, 2014]{colah2014conv}). Reusing one component across many positions is **weight tying** in a vision setting (\cite[Olah, 2015]{colah2015types}). Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs (\cite[Olah, 2014]{colah2014conv}). The formal treatment of the convolution as a translation-equivariant operator — where the same kernel is applied at every position by a single weight-sharing constraint — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.2.
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Why Does This Matter for AI?">
@@ -224,12 +224,12 @@ Both versions train with `python3 tf.py --mode train --path dataset` (one subfol
 <div class="md">
 ## From classification to detection
 
-**Classification** asks one question of a whole image: *which of the labels?* ImageNet \cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet} and the ResNet that dominated it \cite[He et al., 2015]{he2015resnet} are the reference points. **Detection** asks for *many* objects at once, each with a box and a label, measured by **mAP** across IoU thresholds. Two families emerged:
+**Classification** asks one question of a whole image: *which of the labels?* ImageNet (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}) and the ResNet that dominated it (\cite[He et al., 2015]{he2015resnet}) are the reference points. **Detection** asks for *many* objects at once, each with a box and a label, measured by **mAP** across IoU thresholds. Two families emerged:
 
 | Family | Idea | Method |
 |--------|------|--------|
-| Two-stage | Propose regions, then classify | **R-CNN** \cite[Girshick et al., 2014]{girshick2014rcnn} → **Faster R-CNN** (learned proposals) \cite[Ren et al., 2015]{ren2015faster} |
-| One-stage | Predict boxes in one pass | **YOLO** \cite[Redmon et al., 2016]{redmon2016yolo} — detection as a single regression, fast enough for real time |
+| Two-stage | Propose regions, then classify | **R-CNN** (\cite[Girshick et al., 2014]{girshick2014rcnn}) → **Faster R-CNN** (learned proposals) (\cite[Ren et al., 2015]{ren2015faster}) |
+| One-stage | Predict boxes in one pass | **YOLO** (\cite[Redmon et al., 2016]{redmon2016yolo}) — detection as a single regression, fast enough for real time |
 
 Two-stage was more accurate; one-stage was faster. The gap closed as both scaled — the same lesson as everywhere in this book.
 </div>
@@ -239,9 +239,9 @@ Two-stage was more accurate; one-stage was faster. The gap closed as both scaled
 
 Boxes are coarse. **Segmentation** labels at the pixel level: **semantic** (each pixel → class), **instance** (each object separated), **panoptic** (both).
 
-* **U-Net** \cite[Ronneberger et al., 2015]{ronneberger2015unet}: encoder–decoder with skip connections; the biomedical workhorse, trainable on few images.
-* **Mask R-CNN** \cite[He et al., 2017]{he2017maskrcnn}: Faster R-CNN plus a branch that predicts a **mask per instance**.
-* **Segment Anything (SAM)** \cite[Kirillov et al., 2023]{kirillov2023sam}: a *promptable* foundation model — point at an object, it segments it. Trained on **1 billion masks**, it transfers zero-shot. The "ImageNet moment" for segmentation.
+* **U-Net** (\cite[Ronneberger et al., 2015]{ronneberger2015unet}): encoder–decoder with skip connections; the biomedical workhorse, trainable on few images.
+* **Mask R-CNN** (\cite[He et al., 2017]{he2017maskrcnn}): Faster R-CNN plus a branch that predicts a **mask per instance**.
+* **Segment Anything (SAM)** (\cite[Kirillov et al., 2023]{kirillov2023sam}): a *promptable* foundation model — point at an object, it segments it. Trained on **1 billion masks**, it transfers zero-shot. The "ImageNet moment" for segmentation.
 </div>
 
 <div class="image-row md">
@@ -254,7 +254,7 @@ Boxes are coarse. **Segmentation** labels at the pixel level: **semantic** (each
 <div class="md">
 ## ViTs: the Transformer arrives in vision
 
-The **Vision Transformer (ViT)** \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit} splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer. With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential. Two companions completed the picture: **MAE** \cite[He et al., 2022]{he2021mae}, self-supervised pretraining by masking 75% of patches; and **CLIP** \cite[Radford et al., 2021]{radford2021clip}, contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to <a href="multimodal">Multimodal</a> and <a href="diffusion">Diffusion</a>. An audit of CLIP itself then uncovered **multimodal neurons** — individual units that fire for one concept (“spider web”, a celebrity's face) whether it appears in an image or in text, foreshadowing the mechanistic-interpretability work we meet later \cite{goh2021multimodal}.
+The **Vision Transformer (ViT)** (\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer. With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential. Two companions completed the picture: **MAE** (\cite[He et al., 2022]{he2021mae}), self-supervised pretraining by masking 75% of patches; and **CLIP** (\cite[Radford et al., 2021]{radford2021clip}), contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to <a href="multimodal">Multimodal</a> and <a href="diffusion">Diffusion</a>. An audit of CLIP itself then uncovered **multimodal neurons** — individual units that fire for one concept (“spider web”, a celebrity's face) whether it appears in an image or in text, foreshadowing the mechanistic-interpretability work we meet later \cite{goh2021multimodal}. A separate audit of ViTs found that the network quietly reserves a few high-norm **register** tokens as scratchpad working memory, the vision analogue of the attention sink (\cite[Darcet et al., 2024]{darcet2024registers}) (see <a href="attentionlab">Attention</a>).
 </div>
 
 <div class="md">

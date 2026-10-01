@@ -12,7 +12,7 @@ tags: interested-layman
 -->
 
 <div class="md">
-The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. The Soviet cybernetics and pattern-recognition tradition (Ivakhnenko, etc., covered in the History chapter) developed largely independently of Western deep learning. In Europe, a separate lineage through Schmidhuber's IDSIA group (LSTM, etc.) and its successors has shaped modern deep learning from a different direction.
+The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community (\cite[AI4Bharat, 2024]{ai4bharat2024}). The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges (\cite[Masakhane, 2024]{masakhane2024}). The Soviet cybernetics and pattern-recognition tradition (Ivakhnenko, etc., covered in the History chapter) developed largely independently of Western deep learning. In Europe, a separate lineage through Schmidhuber's IDSIA group (LSTM, etc.) and its successors has shaped modern deep learning from a different direction.
 
 This chapter is a corrective: a brief tour of AI's worldwide geography.
 </div>
@@ -38,7 +38,7 @@ China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-s
 
 * **Massive engineering talent**: top Chinese universities (Tsinghua, Peking, Shanghai Jiao Tong) produce ~100,000 CS graduates per year.
 * **Aggressive open-source publishing**: Chinese labs release model weights and papers freely. This is partly a competitive strategy (commoditize the closed labs) and partly regulatory pressure to “contribute to the community”.
-* **Low inference cost**: aggressive optimization yields APIs at \$0.27/1M tokens (DeepSeek), 10× cheaper than GPT-4o \cite[DeepSeek, 2024]{deepseek2024v3}.
+* **Low inference cost**: aggressive optimization yields APIs at \$0.27/1M tokens (DeepSeek), 10× cheaper than GPT-4o (\cite[DeepSeek, 2024]{deepseek2024v3}).
 * **Industry integration**: deep partnerships with Alibaba Cloud, Tencent Cloud, Baidu Cloud for distribution.
 
 ### Constraints
@@ -109,7 +109,7 @@ African AI is **early but rapidly growing**, focused on problems specific to the
 * **Funding**: most grants are from Western foundations with priorities that don't always align with African needs.
 * **Talent retention**: many top researchers leave for North American/European industry.
 
-The African AI ecosystem is **small but scrappy**, with strong community support \cite[Masakhane, 2024]{masakhane2024} and a focus on local problems.
+The African AI ecosystem is **small but scrappy**, with strong community support (\cite[Masakhane, 2024]{masakhane2024}) and a focus on local problems.
 </div>
 
 <div class="md">
@@ -148,7 +148,7 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 
 ### Israel
 
-* **AI21 Labs**: Jurassic-2, Jamba (hybrid SSM-Transformer) \cite[Lieber et al., 2024]{lieber2024jamba}.
+* **AI21 Labs**: Jurassic-2, Jamba (hybrid SSM-Transformer) (\cite[Lieber et al., 2024]{lieber2024jamba}).
 * **Mobileye**: autonomous driving.
 * **Unit 8200 alumni**: many AI startups trace their founders to Israeli military intelligence.
 

@@ -1453,7 +1453,7 @@ async function safe_execute(label, fn, _throw = true, _warn = true) {
 }
 
 async function get_example_predict_data_or_error() {
-	var example_url = "traindata/" + $("#model_dataset").val() + "/examples.json";
+	var example_url = "traindata/" + (get_chosen_dataset() || $("#dataset").val()) + "/examples.json";
 
 	var example_predict_data = null;
 	try {
@@ -2095,6 +2095,8 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 			});
 			return;
 		}
+
+		existing_table.remove();
 
 		var str = "<table class='predict_table'>";
 

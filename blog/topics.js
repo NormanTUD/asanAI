@@ -23,6 +23,10 @@
 (function () {
 	'use strict';
 
+	// Build fingerprint for tbDebug() — bump on each masking/reveal change
+	// so a stale/cached/production page is obvious in the debug report.
+	window.__TB_VER = '2026-09-22-overview-dial-only';
+
 	/* ── 1. Topic registry (single source of truth) ─────────────
 	   Math and Statistics are split into cumulative levels (i = HS,
 	   ii = undergrad, iii = grad / research) so a reader can opt in
@@ -226,6 +230,9 @@
 		{ v: 100, label: 'Research' }
 	];
 	function snapMath(v) {
+		// Guard: a non-numeric/NaN level (shouldn't happen — clampMath
+		// normalises — but never trust it) snaps to the middle stop.
+		if (typeof v !== 'number' || !isFinite(v)) return DEFAULT_MATH_LEVEL;
 		let best = MATH_LEVELS[0].v;
 		for (let i = 0; i < MATH_LEVELS.length; i++) {
 			if (Math.abs(MATH_LEVELS[i].v - v) < Math.abs(best - v)) best = MATH_LEVELS[i].v;
@@ -238,6 +245,44 @@
 			if (MATH_LEVELS[i].v === s) return MATH_LEVELS[i].label;
 		}
 		return MATH_LEVELS[0].label;
+	}
+
+	/* ── History-depth dial ─────────────────────────────────────
+	   Independent axis from math comfort: how far BACK in time the
+	   reader wants the course to reach. The course runs from before
+	   the Big Bang to the present; a reader who only cares about the
+	   machine age can dial the deep time away. `label` is the short
+	   tick under the slider, `era` is the prose phrasing used in
+	   tuck reasons. Default is MAX — everything shows until the
+	   reader opts out. */
+	const DEPTH_MIN = 0;
+	const DEPTH_MAX = 100;
+	const DEFAULT_DEPTH = DEPTH_MAX;
+	const DEPTH_LEVELS = [
+		{ v: 0,   label: 'Just AI',   era: 'just the AI itself' },
+		{ v: 20,  label: 'Computers', era: 'the invention of computers' },
+		{ v: 40,  label: '1600s',     era: 'the Scientific Revolution' },
+		{ v: 60,  label: 'Ancient',   era: 'the ancient world' },
+		{ v: 80,  label: 'Prehistory', era: 'prehistory' },
+		{ v: 100, label: 'Big Bang and beyond', era: 'the Big Bang and beyond' }
+	];
+	function snapDepth(v) {
+		if (typeof v !== 'number' || !isFinite(v)) return DEFAULT_DEPTH;
+		let best = DEPTH_LEVELS[0].v;
+		for (let i = 0; i < DEPTH_LEVELS.length; i++) {
+			if (Math.abs(DEPTH_LEVELS[i].v - v) < Math.abs(best - v)) best = DEPTH_LEVELS[i].v;
+		}
+		return best;
+	}
+	function depthLevel(v) {
+		const s = snapDepth(v);
+		for (let i = 0; i < DEPTH_LEVELS.length; i++) {
+			if (DEPTH_LEVELS[i].v === s) return DEPTH_LEVELS[i];
+		}
+		return DEPTH_LEVELS[0];
+	}
+	function depthEra(v) {
+		return depthLevel(v).era;
 	}
 
 	/* ── 1e. Debug mode ────────────────────────────────────────
@@ -316,6 +361,18 @@
 	   For backwards compatibility, an old flat topics-only map is
 	   recognised and treated as `{ topics: <that map> }`. */
 	function readRawPref() {
+		// localStorage is the primary store and always holds the full state;
+		// the cookie is a size-limited fallback (writePref stops updating it
+		// once the payload outgrows ~4 KB). Read localStorage first, so a stale
+		// cookie can't mask newer localStorage state — that made persona / topic
+		// changes appear to do nothing once the saved state grew past ~4 KB.
+		try {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				if (parsed && typeof parsed === 'object') return parsed;
+			}
+		} catch (e) { /* private mode -> fall through to cookie */ }
 		const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE_NAME + '=([^;]*)'));
 		if (m) {
 			try {
@@ -323,13 +380,6 @@
 				if (parsed && typeof parsed === 'object') return parsed;
 			} catch (e) { /* fall through */ }
 		}
-		try {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (raw) {
-				const parsed = JSON.parse(raw);
-				if (parsed && typeof parsed === 'object') return parsed;
-			}
-		} catch (e) { /* fall through */ }
 		return null;
 	}
 
@@ -339,6 +389,12 @@
 		return Math.max(MATH_MIN, Math.min(MATH_MAX, v));
 	}
 
+	function clampDepth(v) {
+		v = parseInt(v, 10);
+		if (isNaN(v)) return DEFAULT_DEPTH;
+		return Math.max(DEPTH_MIN, Math.min(DEPTH_MAX, v));
+	}
+
 	function normalizePref(parsed) {
 		const out = {
 			topics: {},
@@ -346,11 +402,12 @@
 			profile: null,
 			level: null,
 			mathLevel: DEFAULT_MATH_LEVEL,
+			depth: DEFAULT_DEPTH,
 			corePersonas: [],
 			learned: {}
 		};
 		if (!parsed || typeof parsed !== 'object') return out;
-		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed);
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed) || ('categories' in parsed) || ('mathLevel' in parsed) || ('depth' in parsed);
 		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
 		const catsObj = (parsed.categories && typeof parsed.categories === 'object') ? parsed.categories : {};
 		TOPICS.forEach(function (t) {
@@ -369,6 +426,9 @@
 			}
 			if (parsed.mathLevel !== undefined) {
 				out.mathLevel = clampMath(parsed.mathLevel);
+			}
+			if (parsed.depth !== undefined) {
+				out.depth = clampDepth(parsed.depth);
 			}
 			if (Array.isArray(parsed.corePersonas)) {
 				out.corePersonas = parsed.corePersonas.filter(function (id) {
@@ -391,7 +451,7 @@
 		TOPICS.forEach(function (t) { topics[t.id] = true; });
 		const categories = {};
 		CATEGORIES.forEach(function (c) { categories[c.id] = (c.kind === 'suppress'); });
-		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, corePersonas: [], learned: {} };
+		return { topics: topics, categories: categories, profile: null, level: null, mathLevel: DEFAULT_MATH_LEVEL, depth: DEFAULT_DEPTH, corePersonas: [], learned: {} };
 	}
 
 	/** the reader's current math-comfort (0–100) */
@@ -407,6 +467,29 @@
 		const cur = activePref();
 		cur.mathLevel = clampMath(value);
 		dlog('mathLevel →', cur.mathLevel, '(comfort with math, 0–100)');
+		// Master-control coupling: at the extremes the math-comfort dial also
+		// drives the 'math-heavy' tone so "slider up = all math shows". Max
+		// stop → tone ON; min stop → tone OFF; between the stops the reader's
+		// explicit tone choice is kept. Mutating the pref in place keeps this
+		// one persistPref → one fireChange (no double render, no loop).
+		if (cur.mathLevel >= MATH_MAX) cur.categories['math-heavy'] = true;
+		else if (cur.mathLevel <= MATH_MIN) cur.categories['math-heavy'] = false;
+		persistPref(cur);
+	}
+
+	/** the reader's current history-depth (0–100, higher = deeper past) */
+	function getDepthLevel() {
+		return activePref().depth;
+	}
+
+	/** set the reader's history-depth. Pass { pushHistory:false } while a
+	    slider is being dragged so a whole drag is a single undo step. */
+	function setDepthLevel(value, opts) {
+		opts = opts || {};
+		if (opts.pushHistory !== false) pushHistory();
+		const cur = activePref();
+		cur.depth = clampDepth(value);
+		dlog('depth →', cur.depth, '(how far back into history, 0–100)');
 		persistPref(cur);
 	}
 
@@ -541,16 +624,58 @@
 		}, 0);
 	}
 
-	/** Keep the learned button pinned to the END of the lesson content.
-	    Called after every applyVisibility (which runs post-renderMarkdown,
-	    once #sources-section / #footnotes-section exist) and on init. It is a
-	    no-op when the button is already the last child, so re-calling it on
-	    click never moves the element → no scroll jump. */
+	/** Keep the learned button pinned to the END OF THE LESSON BODY —
+	    right before #footnotes-section / #sources-section, never after them.
+	    The button is created once (on init, before bibtexify has appended
+	    those sections), so "settling" means: if the footnotes/sources now
+	    exist, sit immediately before the first of them; otherwise (no
+	    citations at all) stay the last child of #contents. Either way it is
+	    a no-op once in place, so re-calling it on click never moves the
+	    element → no scroll jump. */
 	function settleLearnedButton() {
 		const btn = document.getElementById('topic-learned-btn');
 		const contents = document.getElementById('contents');
 		if (!btn || !contents) return;
-		if (contents.lastElementChild !== btn) contents.appendChild(btn);
+		// The course status box now lives at the END of the article body;
+		// the learned button sits right before it (see settleCourseStatusBox).
+		const box = document.getElementById('course-status-box');
+		if (box && box.parentNode === contents && box.previousElementSibling !== btn) {
+			box.parentNode.insertBefore(btn, box);
+			return;
+		}
+		const anchor = contents.querySelector('#footnotes-section, #sources-section');
+		if (anchor) {
+			if (anchor.previousElementSibling !== btn) anchor.parentNode.insertBefore(btn, anchor);
+		} else if (contents.lastElementChild !== btn) {
+			contents.appendChild(btn);
+		}
+	}
+
+	/** Pin the course-status box ("Lesson N of M") to the END of the lesson
+	    body: right before #footnotes-section / #sources-section when present,
+	    otherwise the last child of #contents — always after the learned
+	    button. Idempotent: a no-op once in place, so re-calling never shifts
+	    the element → no scroll jump. Safe to call before the box exists
+	    (guarded) or before the learned button exists (order is re-asserted
+	    whichever of the two settles last). */
+	function settleCourseStatusBox() {
+		try {
+			const box = document.getElementById('course-status-box');
+			const contents = document.getElementById('contents');
+			if (!box || !contents || box.parentNode !== contents) return;
+			const anchor = contents.querySelector('#footnotes-section, #sources-section');
+			if (anchor) {
+				if (anchor.previousElementSibling !== box) anchor.parentNode.insertBefore(box, anchor);
+			} else if (contents.lastElementChild !== box) {
+				contents.appendChild(box);
+			}
+			const btn = document.getElementById('topic-learned-btn');
+			if (btn && btn.parentNode === contents && box.previousElementSibling !== btn) {
+				box.parentNode.insertBefore(btn, box);
+			}
+		} catch (e) {
+			if (DEBUG) derr('settleCourseStatusBox:', e);
+		}
 	}
 
 	function showLearnedUI() {
@@ -578,56 +703,108 @@
 			const nMet = deps.filter(function (d) { return isLearned(d); }).length;
 			const unlocks = isSpine ? unlocksOf(lessonId) : [];
 
-			// Status pill (top of content). Idempotent: created once, only
-			// its class/text are swapped afterwards, so it never reflows the
-			// top of the page on re-render.
-			let pill = document.getElementById('topic-deps-pill');
-			if (inCourse || deps.length > 0 || unlocks.length > 0) {
-				if (!pill) {
-					pill = document.createElement('div');
-					pill.id = 'topic-deps-pill';
-					contents.insertBefore(pill, contents.firstChild);
-					pill.addEventListener('click', function (e) {
+			// Course-status box at the END of the article (after the
+			// "mark as learned" button, before footnotes/sources) — see
+			// settleCourseStatusBox(). Compact "Lesson N of M" status is
+			// always visible; the Builds-on / Next-up / Unlocks detail lives
+			// in a panel that opens on tap. Idempotent: the box is created
+			// once and only its content/classes are swapped after.
+			const legacyPill = document.getElementById('topic-deps-pill');
+			if (legacyPill) legacyPill.remove();
+
+			const showStatus = inCourse || deps.length > 0 || unlocks.length > 0;
+			if (!showStatus) {
+				const oldBox = document.getElementById('course-status-box');
+				if (oldBox) oldBox.remove();
+			} else {
+				let box = document.getElementById('course-status-box');
+				if (!box) {
+					box = document.createElement('div');
+					box.id = 'course-status-box';
+					box.className = 'csb';
+
+					const toggle = document.createElement('button');
+					toggle.type = 'button';
+					toggle.id = 'csb-toggle';
+					toggle.className = 'csb-toggle';
+					toggle.setAttribute('aria-expanded', 'false');
+					toggle.innerHTML =
+						'<span class="csb-dot" aria-hidden="true"></span>'
+						+ '<span class="csb-label"></span>'
+						+ '<span class="csb-bar" aria-hidden="true"><span class="csb-bar-fill"></span></span>'
+						+ '<span class="csb-caret" aria-hidden="true">▾</span>';
+
+					const panel = document.createElement('div');
+					panel.id = 'csb-panel';
+					panel.className = 'csb-panel';
+					panel.setAttribute('role', 'region');
+					panel.setAttribute('aria-label', 'Course progress and prerequisites');
+
+					box.appendChild(toggle);
+					box.appendChild(panel);
+
+					toggle.addEventListener('click', function () {
+						const open = box.classList.toggle('is-open');
+						toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+					});
+					// Tap a prerequisite chip's ✓ to mark it learned (was on the pill).
+					box.addEventListener('click', function (e) {
 						const mark = (e.target && e.target.closest) ? e.target.closest('.tdp-mark') : null;
 						if (!mark) return;
 						const d = mark.getAttribute('data-mark-dep');
 						if (!d || isLearned(d)) return;
 						toggleLearned(d);   // → fireChange → applyVisibility (re-reveals gated blocks)
-						showLearnedUI();   // refresh the pill + button
+						showLearnedUI();   // refresh the box + button
 					});
+
+					// In-flow, at the END of the reading column (not a floating
+					// body overlay) so it can never cover the TOC or plots.
+					// Attach first (a detached node can't be settled), then pin
+					// it before footnotes/sources / after the learned button.
+					contents.appendChild(box);
+					settleCourseStatusBox();
 				}
-				pill.className = 'topic-deps-pill '
-					+ (isSpine && deps.length > 0 ? (met ? 'topic-deps-met' : 'topic-deps-unmet') : 'topic-deps-progress');
-				let html = '';
+
+				const toggle = box.querySelector('#csb-toggle');
+				const panel = box.querySelector('#csb-panel');
+
+				const pct = (inCourse && total > 0) ? Math.round((done / total) * 100) : 0;
+				const dotState = (isSpine && deps.length > 0)
+					? (met ? 'met' : 'unmet')
+					: (inCourse ? 'progress' : 'none');
+				toggle.querySelector('.csb-dot').className = 'csb-dot csb-dot-' + dotState;
+				toggle.querySelector('.csb-label').textContent =
+					inCourse ? ('Lesson ' + (pos + 1) + ' of ' + total) : 'Course';
+				toggle.querySelector('.csb-bar').style.display = inCourse ? '' : 'none';
+				toggle.querySelector('.csb-bar-fill').style.width = pct + '%';
+
+				let phtml = '';
 				if (inCourse) {
-					const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-					html += '<span class="tdp-line tdp-line-progress"><span class="tdp-icon" aria-hidden="true">\u25B8</span><span class="tdp-body">'
-						+ '<span class="tdp-pos">Lesson ' + (pos + 1) + ' of ' + total + '</span> '
-						+ '<span class="tdp-bar" aria-hidden="true"><span class="tdp-bar-fill" style="width:' + pct + '%"></span></span> '
-						+ (next
-							? 'Next up: <a class="tdp-chip" href="' + escAttr(next.url) + '">' + escAttr(next.title) + '</a>'
-							: 'You&rsquo;re at the end of the course.')
-						+ '</span></span>';
+					phtml += next
+						? '<div class="csb-line csb-line-next"><span class="csb-ico" aria-hidden="true">▸</span><span class="csb-txt">Next up: <a class="tdp-chip" href="' + escAttr(next.url) + '">' + escAttr(next.title) + '</a></span></div>'
+						: '<div class="csb-line csb-line-next"><span class="csb-ico" aria-hidden="true">✓</span><span class="csb-txt">You&rsquo;re at the end of the course.</span></div>';
 				}
 				if (isSpine && deps.length > 0) {
-					html += met
-						? '<span class="tdp-line tdp-line-met"><span class="tdp-icon" aria-hidden="true">✓</span><span class="tdp-body">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></span>'
-						: '<span class="tdp-line tdp-line-unmet"><span class="tdp-icon" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="tdp-body">Builds on ' + depChips(lessonId) + ' — read them, then tap the <b>✓</b> next to each to unlock the full depth.</span></span>';
+					phtml += met
+						? '<div class="csb-line csb-line-met"><span class="csb-ico" aria-hidden="true">✓</span><span class="csb-txt">Prerequisites covered: ' + depChips(lessonId) + ' — the full depth here is unlocked.</span></div>'
+						: '<div class="csb-line csb-line-unmet"><span class="csb-ico" aria-hidden="true">' + (nMet > 0 ? '\u25D0' : '\u25CB') + '</span><span class="csb-txt">Builds on ' + depChips(lessonId) + ' — tap the <b>✓</b> next to each to unlock the full depth.</span></div>';
 				}
 				if (isSpine && unlocks.length > 0) {
-					html += '<span class="tdp-line tdp-line-unlocks"><span class="tdp-icon" aria-hidden="true">↳</span><span class="tdp-body">'
+					phtml += '<div class="csb-line csb-line-unlocks"><span class="csb-ico" aria-hidden="true">↳</span><span class="csb-txt">'
 						+ (isLearned(lessonId) ? 'You&rsquo;ve unlocked ' : 'Once marked learned, this unlocks ')
-						+ unlocks.map(lessonLink).join(' ') + '.</span></span>';
+						+ unlocks.map(lessonLink).join(' ') + '.</span></div>';
 				}
-				pill.innerHTML = html;
-			} else if (pill) {
-				pill.remove();
+				panel.innerHTML = phtml;
+
+				const hasDetail = phtml.trim().length > 0;
+				toggle.classList.toggle('csb-has-detail', hasDetail);
+				toggle.querySelector('.csb-caret').style.display = hasDetail ? '' : 'none';
 			}
 
 			// "Mark as learned" button (bottom of content). Created once and
-			// pinned to the end of #contents (after footnotes/sources). We
-			// only update its label/state here; position is handled by
-			// settleLearnedButton() so a click never moves it (no scroll jump).
+			// kept at the end of the lesson body — before footnotes/sources —
+			// by settleLearnedButton(). We only update its label/state here,
+			// so a click never moves it (no scroll jump).
 			const learned = isLearned(lessonId);
 			let btn = document.getElementById('topic-learned-btn');
 			if (!btn) {
@@ -639,12 +816,17 @@
 					showLearnedUI();
 				});
 				contents.appendChild(btn);   // attach it; getElementById can't find a detached node
-				settleLearnedButton();        // then pin to the end (after footnotes/sources)
+				settleLearnedButton();        // then keep it before footnotes/sources, if any
 			}
 			btn.className = 'topic-learned-btn' + (learned ? ' topic-learned-active' : '');
 			btn.innerHTML = learned
 				? '<span aria-hidden="true">✓</span> Marked as learned <span class="tlb-hint">(click to undo)</span>'
 				: '<span aria-hidden="true">○</span> Mark this lesson as learned';
+
+			// Re-assert the end-of-article order (learned button → course
+			// status box → footnotes/sources) now that both elements exist.
+			// No-op once settled, so this never causes a scroll jump.
+			settleCourseStatusBox();
 		} catch (e) {
 			if (DEBUG) dlog('showLearnedUI error:', e);
 		}
@@ -762,13 +944,17 @@
 	    Set-theory: the more of your dials a unit misses, the more it
 	    recedes — but it never disappears without a clear reason.
 	    `opts.mathReq` (0–100) tucks the unit when the reader's math
-	    comfort is below it, independent of interests and tone. The
-	    returned `why` ∈ {null,'category','math','interests','layman'}
+	    comfort is below it, independent of interests and tone.
+	    `opts.depthReq` (0–100) tucks the unit when the reader's
+	    history-depth dial stops before the era the content reaches
+	    back to. The returned
+	    `why` ∈ {null,'category','math','depth','interests','layman'}
 	    names the single binding reason so the home page can group tucked
 	    tiles by category, and `whyLabel` is its human label. */
 	function scoreUnit(tagIds, opts) {
 		opts = opts || {};
 		const mathReq = parseMathReq(opts.mathReq);
+		const depthReq = parseMathReq(opts.depthReq);
 		const parts = splitTags(tagIds);
 		const interests = parts.interests;
 		const cats = parts.cats;
@@ -819,17 +1005,33 @@
 		//    needs more math than the reader is comfortable with, it is
 		//    tucked — UNLESS the reader has already learned all
 		//    prerequisites of the current lesson (depsMet bypasses it).
-		const lessonId = getLessonId();
+		//    The bypass is a per-LESSON "you earned this by learning the
+		//    prereqs" signal, so it only applies on a real lesson page. On
+		//    the index there is no current lesson — getLessonId()'s URL-slug
+		//    fallback would otherwise read "blog" as a dep-less lesson,
+		//    depsMet() would return true, and the gate would be silently
+		//    suppressed for every tile (the slider's level never applied).
+		const lessonId = isIndexPage() ? null : getLessonId();
 		const depsOK = lessonId ? depsMet(lessonId) : false;
 		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
-			reason = 'needs ~' + mathReq + '% math comfort (you are at ' + getMathLevel() + '%)';
+			reason = 'needs ' + mathLevelLabel(mathReq) + ' math (you are at ' + mathLevelLabel(getMathLevel()) + ')';
 			why = 'math';
 			whyLabel = 'math proficiency';
 		}
 
+		// 5) history-depth gate: independent of interests/tone/math.
+		//    A unit tagged data-depth="N" reaches back further into
+		//    history than the reader's dial allows → tucked.
+		if (depthReq !== null && getDepthLevel() < depthReq) {
+			state = 'off';
+			reason = 'this reaches back to ' + depthEra(depthReq) + ' — your depth stops at ' + depthEra(getDepthLevel());
+			why = 'depth';
+			whyLabel = 'history depth';
+		}
+
 		return { state: state, reason: reason, why: why, whyLabel: whyLabel,
-			interests: interests, cats: cats, mathReq: mathReq };
+			interests: interests, cats: cats, mathReq: mathReq, depthReq: depthReq };
 	}
 
 	/** how many on-DOM units (sections + home tiles) carry category `id`?
@@ -894,6 +1096,7 @@
 		if (pref.profile === undefined) pref.profile = cur.profile;
 		if (pref.level === undefined) pref.level = cur.level;
 		if (pref.mathLevel === undefined) pref.mathLevel = cur.mathLevel;
+		if (pref.depth === undefined) pref.depth = cur.depth;
 		writePref(pref);
 		fireChange();
 	}
@@ -1151,6 +1354,16 @@
 						${MATH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')}
 					</div>
 				</div>
+				<div class="topics-math-comfort topics-depth-comfort" role="group" aria-label="History depth">
+					<span class="topics-math-label">⧖ History depth <span class="topics-depth-hint">how far back the story goes</span></span>
+					<div class="topics-math-control">
+						<input type="range" class="topics-math-range topics-depth-range" min="${DEPTH_MIN}" max="${DEPTH_MAX}" step="20" value="${snapDepth(getDepthLevel())}" aria-label="History depth">
+						<span class="topics-math-val topics-depth-val">${depthEra(getDepthLevel())}</span>
+					</div>
+					<div class="math-comfort-ticks">
+						${DEPTH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')}
+					</div>
+				</div>
 				<div class="topics-categories" role="group" aria-label="Tone filters — switch off what feels heavy">
 					<span class="topics-categories-label">Tone — switch off whatever feels heavy</span>
 					<div class="topics-cat-row" id="topics-cat-row"></div>
@@ -1265,9 +1478,9 @@
 			}
 		});
 
-		const mathSlider = overlay.querySelector('.topics-math-range');
+		const mathSlider = overlay.querySelector('.topics-math-range:not(.topics-depth-range)');
 		if (mathSlider) {
-			const oVal = overlay.querySelector('.topics-math-val');
+			const oVal = overlay.querySelector('.topics-math-val:not(.topics-depth-val)');
 			let oDrag = false;
 			const oPaint = function () {
 				const v = parseInt(mathSlider.value, 10);
@@ -1279,6 +1492,21 @@
 				setMathLevel(parseInt(mathSlider.value, 10), { pushHistory: false });
 			});
 			mathSlider.addEventListener('change', function () { oDrag = false; oPaint(); });
+		}
+
+		const depthSlider = overlay.querySelector('.topics-depth-range');
+		if (depthSlider) {
+			const dVal = overlay.querySelector('.topics-depth-val');
+			let dDrag = false;
+			const dPaint = function () {
+				if (dVal) dVal.textContent = depthEra(parseInt(depthSlider.value, 10));
+			};
+			depthSlider.addEventListener('input', function () {
+				dPaint();
+				if (!dDrag) { dDrag = true; pushHistory(); }
+				setDepthLevel(parseInt(depthSlider.value, 10), { pushHistory: false });
+			});
+			depthSlider.addEventListener('change', function () { dDrag = false; dPaint(); });
 		}
 	}
 
@@ -1600,13 +1828,22 @@
 		const label = score.why === 'math'
 			? score.reason || ''
 			: (score.reason || 'outside your interests');
+		// Section title: prefer the author's data-optionaltitle, else the first
+		// heading inside the block (available once Markdown has rendered).
+		let title = block.getAttribute('data-optionaltitle') || '';
+		if (!title) {
+			const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+			if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+		}
 		badge.innerHTML =
 			'<span class="tbf-icon" aria-hidden="true">' + escAttr(icon) + '</span>'
+			+ (title ? '<span class="tbf-title">' + escAttr(title) + '</span>' : '')
 			+ '<span class="tbf-text">' + escAttr(label) + '</span>'
 			+ '<span class="tbf-action">tap to reveal ↓</span>';
 		badge.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
+			block._tbUserRevealed = true; // reader chose to see it → keep it revealed
 			revealBlock(block, true);
 		});
 		block.appendChild(badge);
@@ -1629,31 +1866,83 @@
 		return inner;
 	}
 
-	/** read everything a managed block tells us about itself */
+	/** read everything a managed block tells us about itself.
+	    `label` is the banner title: the explicit `data-optionaltitle` if
+	    present, otherwise the first H1–H6 heading inside the block (after
+	    Markdown has rendered). A math-gated block always collapses when off;
+	    `label` just makes the banner read like the section rather than bare
+	    "needs … math". `hasHeading` is used by the authoring guardrail. */
 	function blockSpec(block) {
 		const topicIds = readTopicAttr(block);
 		const tags = (block.getAttribute('data-tags') || '').split(',')
 			.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 		const scoreIds = topicIds.concat(tags);
 		const mathReq = block.getAttribute('data-mathlevel') || block.getAttribute('data-math-level');
+		const depthReq = block.getAttribute('data-depth') || block.getAttribute('data-depthlevel');
+		const title = block.getAttribute('data-optionaltitle') || '';
+		let derived = '';
+		if (!title) {
+			const h = block.querySelector('h1, h2, h3, h4, h5, h6');
+			if (h) derived = (h.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+		}
 		return {
 			topicIds: topicIds,
 			scoreIds: scoreIds,
 			mathReq: mathReq,
-			title: block.getAttribute('data-optionaltitle') || ''
+			depthReq: depthReq,
+			title: title,
+			label: title || derived,
+			hasHeading: !!derived
 		};
 	}
 
+	/** True when a block wraps a real interactive / plot / media widget that
+	    does NOT tolerate a hard 120px clip: clipping hides a tall plot and can
+	    let an oversized / absolutely-positioned child break the layout below
+	    (the math_iii HoTT plots). Such blocks dim (fade) instead of collapsing,
+	    so their layout — and the JS that draws the plot — keeps working.
+
+	    Small static previews do NOT count: math_ii's 180px pixelated 3×3
+	    tensor previews must still get the full collapse + "tap to reveal". A
+	    canvas only counts as a plot when it is large (a real plot), not a tiny
+	    bitmap preview. */
+	function isFragile(block) {
+		if (!block.querySelector) return false;
+		// Explicit interactive / plot / media markers always count.
+		if (block.querySelector('iframe, video, audio, embed, object, [data-interactive], .hott-plot, .hott-canvas, .interactive, .widget')) {
+			return true;
+		}
+		// A canvas counts only if it is a large plot, not a tiny preview.
+		const canvases = block.querySelectorAll('canvas');
+		for (let i = 0; i < canvases.length; i++) {
+			const c = canvases[i];
+			const bw = parseInt(c.getAttribute('width'), 10) || 0;
+			const bh = parseInt(c.getAttribute('height'), 10) || 0;
+			const w = c.offsetWidth || bw;
+			const h = c.offsetHeight || bh;
+			if (w > 320 || h > 240) return true;
+		}
+		return false;
+	}
+
 	/** collapse a block: content stays visible but gets a gradient fade
-	    via CSS class. A small badge appears at the bottom. */
+	    via CSS class. A small badge appears at the bottom and the block is
+	    clipped to TUCK_H (eased when `animate`). */
 	function collapseBlock(block, spec, score, animate) {
 		const chip = block.querySelector(':scope > .topic-partial-chip');
 		if (chip) chip.remove();
 		ensureInner(block);
 		block.classList.remove('topic-block-revealed');
 		block.classList.remove('topic-block-partial');
+		block.classList.remove('topic-block--clipped');
 		block.classList.add('topic-block-collapsed');
 		setBanner(block, spec, score);
+		if (animate && !prefersReducedMotion()) {
+			const fromH = block.getBoundingClientRect().height || block.scrollHeight;
+			animateClip(block, fromH, TUCK_H, true);
+		} else {
+			block.classList.add('topic-block--clipped');
+		}
 	}
 
 	/** small "show the full math" affordance shown while a block is in
@@ -1670,14 +1959,67 @@
 		btn.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
+			block._tbUserRevealed = true;
 			revealBlock(block, true);
 		});
 		block.appendChild(btn);
 		return btn;
 	}
 
-	/** expand (reveal) a block: remove the fade + badge + alt mode. */
+	const TUCK_H = 168; // must match `.topic-block--clipped` max-height
+
+	/** Smoothly animate a block's clip between `fromH` and `toH` by easing
+	    its max-height. `isCollapse` keeps the rest-state clip class on the
+	    tucked end and drops it on the expanded end. Falls back to an instant
+	    jump on any failure or under reduced-motion. */
+	function animateClip(block, fromH, toH, isCollapse) {
+		try {
+			block.style.overflow = 'hidden';
+			block.style.maxHeight = fromH + 'px';
+			void block.offsetHeight; // commit the start height before easing
+			block.style.transition = 'max-height 240ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+			block.style.maxHeight = toH + 'px';
+			let done = false;
+			const finish = function () {
+				if (done) return;
+				done = true;
+				block.style.transition = '';
+				block.style.overflow = '';
+				block.style.maxHeight = '';
+				block.removeEventListener('transitionend', handler);
+				if (isCollapse) block.classList.add('topic-block--clipped');
+				else block.classList.remove('topic-block--clipped');
+			};
+			const handler = function (e) {
+				if (e.target === block && e.propertyName === 'max-height') finish();
+			};
+			block.addEventListener('transitionend', handler);
+			setTimeout(finish, 420); // safety net if transitionend is missed
+		} catch (e) {
+			block.style.maxHeight = ''; block.style.overflow = ''; block.style.transition = '';
+			if (isCollapse) block.classList.add('topic-block--clipped');
+			else block.classList.remove('topic-block--clipped');
+		}
+	}
+
+	/** expand (reveal) a block: remove the fade + badge + alt mode, then
+	    ease the clip open (or jump instantly when not animating). */
+	function clearClipInline(block) {
+		block.style.overflow = '';
+		block.style.maxHeight = '';
+		block.style.transition = '';
+	}
+
 	function revealBlock(block, animate) {
+		// Idempotent: a double-trigger (per-badge handler + the document
+		// delegation fallback both firing) must not re-run the animation.
+		if (block.classList.contains('topic-block-revealed')) {
+			block.classList.remove('topic-block--clipped');
+			clearClipInline(block);
+			syncDemoTucking(block);
+			if (block._tbUserRevealed === true) ensureRecollapse(block);
+			return;
+		}
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
 		if (badge) badge.remove();
 		const altRev = block.querySelector(':scope > .topic-block-alt-reveal');
@@ -1685,12 +2027,433 @@
 		block.classList.remove('topic-block-collapsed');
 		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
+		const fullH = block.scrollHeight || block.offsetHeight || 0;
+		const canAnimate = animate && !prefersReducedMotion() && fullH > TUCK_H;
+		if (canAnimate) {
+			animateClip(block, TUCK_H, fullH, false);
+			// Hard guarantee: a reveal must never leave the block stuck
+			// clipped — if the transitionend is missed (or the clip's
+			// `overflow:hidden !important` wins the fight), force the unclip.
+			setTimeout(function () {
+				if (block.classList.contains('topic-block--clipped')) {
+					block.classList.remove('topic-block--clipped');
+					clearClipInline(block);
+				}
+			}, 520);
+		} else {
+			block.classList.remove('topic-block--clipped');
+			clearClipInline(block);
+		}
+		syncDemoTucking(block);
+		if (block._tbUserRevealed === true) ensureRecollapse(block);
 	}
 
 	function reapplyBlock(block) {
 		if (block._tbScore && block._tbSpec) {
 			applyBlockState(block, block._tbSpec, block._tbScore, true);
 		}
+	}
+
+	/** A section the reader pried open (still gated) stays open only while they
+	    want it. This fold-away control lets them tuck it back without touching
+	    the math dial. It is placed in-flow at the END OF THE SECTION — after
+	    the demos that follow the block, right before the next heading / managed
+	    block — because "the section" is the block plus its trailing demos, not
+	    just the block's div. The delegation-free per-button handler is enough
+	    here (no competing document-level handler targets this class). */
+	function ensureRecollapse(block) {
+		try {
+			let btn = findRecollapse(block);
+			if (!btn) {
+				btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'topic-block-recollapse';
+				btn.setAttribute('aria-label', 'Fold this section away');
+				btn.textContent = '\u25B2 \u00A0Fold this section away';
+				btn.addEventListener('click', function (e) {
+					e.stopPropagation();
+					block._tbUserRevealed = false;
+					block._tbState = 'off';
+					reapplyBlock(block);
+					// Re-tucking this block may have created a new run of
+					// consecutive tucked sections → regroup behind one badge.
+					rebuildGroupBadges();
+				});
+			}
+			const parent = block.parentNode;
+			if (!parent) return btn;
+			const boundary = sectionEndBefore(block);
+			if (boundary && boundary !== btn) {
+				// insertBefore on an already-correct node is a no-op (no
+				// reflow, no scroll jump); it also migrates a stale copy
+				// that is still a child of the block.
+				parent.insertBefore(btn, boundary);
+			} else if (parent.lastElementChild !== btn) {
+				parent.appendChild(btn);
+			}
+			return btn;
+		} catch (e) {
+			if (DEBUG) derr('ensureRecollapse:', e);
+			return null;
+		}
+	}
+	/** Locate the recollapse button for `block` at EITHER of its possible
+	    home positions: a (stale) direct child of the block, or the in-flow
+	    sibling at the section end (after the block's trailing demos). */
+	function findRecollapse(block) {
+		if (!block) return null;
+		try {
+			if (block.querySelector) {
+				const asChild = block.querySelector(':scope > .topic-block-recollapse');
+				if (asChild) return asChild;
+			}
+			let sib = block.nextElementSibling;
+			while (sib) {
+				if (sib.classList && sib.classList.contains('topic-block-recollapse')) return sib;
+				if (sib.tagName === 'SECTION') break;
+				if (sib.id && TB_NO_TUCK_IDS[sib.id]) break;
+				if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
+				if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+				sib = sib.nextElementSibling;
+			}
+		} catch (e) {
+			if (DEBUG) derr('findRecollapse:', e);
+		}
+		return null;
+	}
+	function removeRecollapse(block) {
+		try {
+			const btn = findRecollapse(block);
+			if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+		} catch (e) {
+			if (DEBUG) derr('removeRecollapse:', e);
+		}
+	}
+
+	/* ── Reveal badges ───────────────────────────────────────────
+	   Every tucked section shows its OWN "tap to reveal" badge — the reader
+	   opens one section at a time. The helpers below used to build a single
+	   grouped "N sections tucked away" badge for a run of consecutive tucked
+	   sections; that grouping is retired (the reader preferred one button per
+	   section), but the helpers stay exported via _internals so the test
+	   harness and any stray-badge cleanup keep working. */
+
+	/** Elements that do not visually separate two tucked sections:
+	    script/style/template (not rendered) and tucked demos (display:none). */
+	function isTuckTransparent(el) {
+		if (!el || !el.tagName) return false;
+		if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'TEMPLATE') return true;
+		if (el.classList && el.classList.contains('topic-demo-tucked')) return true;
+		return false;
+	}
+
+	function isTuckedBlock(el) {
+		return !!(el && el.classList
+			&& el.classList.contains('topic-block')
+			&& el.classList.contains('topic-block-collapsed'));
+	}
+
+	/** The next tucked block that continues the run started by `block`, or
+	    null the moment any VISIBLE content separates them. A bare heading or
+	    a plain (unmanaged) prose div between two tucked blocks is visible
+	    content → the sections are no longer "directly in a row". */
+	function nextTuckedInRun(block) {
+		let sib = block ? block.nextElementSibling : null;
+		while (sib) {
+			if (isTuckTransparent(sib)) { sib = sib.nextElementSibling; continue; }
+			if (isTuckedBlock(sib)) return sib;
+			return null;
+		}
+		return null;
+	}
+
+	/** Best-effort title for a tucked block: the author's data-optionaltitle,
+	    else the first heading inside (post-Markdown), else empty. */
+	function tuckedTitle(block) {
+		try {
+			let t = block.getAttribute ? (block.getAttribute('data-optionaltitle') || '') : '';
+			if (!t && block.querySelector) {
+				const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+				if (h) t = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			}
+			return (t || '').slice(0, 80);
+		} catch (e) {
+			return '';
+		}
+	}
+
+	/** One grouped badge standing in for `run` (an array of ≥2 consecutive
+	    tucked blocks). Placed in-flow at the end of the run — after the last
+	    member's trailing demos, before the next heading/section boundary. */
+	function placeGroupBadge(run) {
+		const first = run[0];
+		const parent = first && first.parentNode;
+		if (!parent) return null;
+		const badge = document.createElement('button');
+		badge.type = 'button';
+		badge.className = 'topic-block-fade-badge topic-block-group-badge';
+		badge.setAttribute('aria-label', 'Reveal all tucked sections in this group');
+		badge._groupMembers = run.slice();
+		const titles = run.map(tuckedTitle).filter(Boolean);
+		const n = run.length;
+		const anyMath = run.some(function (b) { return b._tbWhy === 'math'; });
+		badge.innerHTML =
+			'<span class="tbf-icon" aria-hidden="true">' + (anyMath ? '\u222B' : '\u2726') + '</span>'
+			+ '<span class="tbf-title">' + n + (n === 1 ? ' section' : ' sections') + ' tucked away</span>'
+			+ (titles.length
+				? '<span class="tbf-group-titles">'
+					+ titles.map(function (t) {
+						return '<span class="tbf-group-title">' + escAttr(t) + '</span>';
+					}).join('<span class="tbf-group-sep" aria-hidden="true">\u00B7</span>')
+					+ '</span>'
+				: '')
+			+ '<span class="tbf-action">tap to reveal all \u2193</span>';
+		badge.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			revealGroupBadge(badge);
+		});
+		parent.insertBefore(badge, first);
+		if (DEBUG) dlog('group badge placed at run start for ' + n + ' sections:',
+			titles.length ? titles.join(' / ') : '(no titles found)');
+		return badge;
+	}
+
+	/** Reveal every block of a group at once and remove the badge.
+	    Idempotent per member (revealBlock guards on topic-block-revealed);
+	    the badge is detached before revealing so a stale re-dispatch can
+	    never double-run. */
+	function revealGroupBadge(badge) {
+		let revealed = 0, failed = 0;
+		try {
+			const members = (badge && badge._groupMembers) ? badge._groupMembers.slice() : [];
+			if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+			// Per-member isolation: one failing member must not strand the
+			// rest — every reveal is attempted independently.
+			members.forEach(function (b) {
+				try {
+					if (!b || !b.classList) { failed++; return; }
+					if (b.classList.contains('topic-block-revealed')) return;
+					b._tbUserRevealed = true; // reader chose to see it → keep it revealed
+					revealBlock(b, true);
+					revealed++;
+				} catch (mb) {
+					failed++;
+					if (DEBUG) derr('revealGroupBadge member failed:', mb);
+				}
+			});
+			if (DEBUG) dlog('group badge: revealed ' + revealed + ' of ' + members.length
+				+ (failed ? ' (' + failed + ' FAILED)' : '') + ' sections');
+		} catch (e) {
+			failed++;
+			if (DEBUG) derr('revealGroupBadge:', e);
+		}
+		// Safety net — ALWAYS runs (outside the try): if any member refused
+		// to reveal (state drift, exception), a fresh rebuild re-badges the
+		// remainder (group or solo) instead of leaving it unreachable.
+		try { rebuildGroupBadges(); } catch (e) {
+			if (DEBUG) derr('revealGroupBadge rebuild:', e);
+		}
+	}
+
+	/** Reveal every tucked section that contains `el`. Anchor links (TOC
+	    entries, footnote/source jumps, in-text references) must never land
+	    on hidden content: the reader navigated to a specific spot, so each
+	    covering section is unfolded and STAYS unfolded (with its fold-away
+	    button) until they fold it again. Returns the number of sections
+	    unfolded, so callers can delay their scroll until the clip animation
+	    has settled (~240 ms). */
+	function revealAncestorsOf(el) {
+		let revealed = 0;
+		try {
+			let node = (el && el.closest) ? el.closest('.topic-block') : null;
+			while (node) {
+				if (node.classList.contains('topic-block-collapsed')
+						&& !node.classList.contains('topic-block-revealed')) {
+					node._tbUserRevealed = true;
+					revealBlock(node, true);
+					revealed++;
+				}
+				node = node.parentElement ? node.parentElement.closest('.topic-block') : null;
+			}
+			if (revealed) {
+				// A revealed member may have broken up a grouped run —
+				// rebuild so the remaining run keeps one correct badge.
+				try { rebuildGroupBadges(); } catch (e) {
+					if (DEBUG) derr('revealAncestorsOf rebuild:', e);
+				}
+			}
+		} catch (e) {
+			if (DEBUG) derr('revealAncestorsOf:', e);
+		}
+		return revealed;
+	}
+
+	/** Rebuild reveal badges from the current block states. Every tucked
+	    section carries its OWN "tap to reveal" badge — the reader opens one
+	    section at a time (no grouped "N sections" badge). Safe to call any
+	    time. Two jobs: remove any legacy/stray grouped badge so the two
+	    affordances never co-exist, and self-heal — a collapsed section with
+	    no badge of its own (state drift after a failed reveal) gets one back. */
+	function rebuildGroupBadges() {
+		try {
+			document.querySelectorAll('.topic-block-group-badge').forEach(function (g) {
+				if (g.parentNode) g.parentNode.removeChild(g);
+			});
+			const collapsed = Array.prototype.slice.call(
+				document.querySelectorAll('.topic-block.topic-block-collapsed'));
+			collapsed.forEach(function (b) {
+				const hasBadge = b.querySelector ? !!b.querySelector(':scope > .topic-block-fade-badge') : true;
+				if (hasBadge) return;
+				try {
+					const spec = b._tbSpec || blockSpec(b);
+					const score = b._tbScore || { state: 'off', why: b._tbWhy || 'category', reason: b._tbReason || 'tucked away' };
+					setBanner(b, spec, score);
+					if (DEBUG) dlog('self-healed missing reveal badge:', (spec && spec.label) || b.tagName);
+				} catch (he) {
+					if (DEBUG) derr('self-heal badge failed:', he);
+				}
+			});
+			return 0;
+		} catch (e) {
+			if (DEBUG) derr('rebuildGroupBadges:', e);
+			return 0;
+		}
+	}
+
+	/** Fallback reveal path. Some pages carry document/body click handlers
+	    (lightbox, provenance, bindIframeSafeLinks) and per-badge handlers can
+	    get desynced from the live badge element; a delegated bubble handler on
+	    document always fires when a `.topic-block-fade-badge` is actually
+	    clicked, so "tap to reveal" can never be a dead button. */
+	function ensureBadgeDelegation() {
+		if (document.__tbBadgeDeleg) return;
+		document.__tbBadgeDeleg = true;
+		document.addEventListener('click', function (ev) {
+			const t = ev.target;
+			if (!t || !t.closest) return;
+			const badge = t.closest('.topic-block-fade-badge');
+			if (!badge) return;
+			// Grouped badges carry the same base class for styling but cover
+			// MANY blocks and sit OUTSIDE any of them — their own handler
+			// (revealGroupBadge) is the only valid path.
+			if (badge.classList.contains('topic-block-group-badge')) return;
+			const block = badge.closest('.topic-block') || badge.parentElement;
+			if (!block || !block.classList.contains('topic-block-collapsed')) return;
+			block._tbUserRevealed = true;
+			revealBlock(block, true);
+		}, false);
+	}
+
+	/** Hide the demo/plot containers that follow a collapsed block, up to (not
+	    including) the next heading or the next managed block. A math section's
+	    interactive widgets (vector plots, matrix canvases, …) sit in their own
+	    un-gated divs right after the gated prose; when the prose is masked the
+	    widgets should recede with it instead of floating out on their own. */
+	// Page furniture the tuck must stop before. Footnotes and the source
+	// bibliography are appended as trailing <section> elements; masking them
+	// is a hard no (the reader's citation trail must never disappear), so we
+	// stop at any <section> and at these ids regardless of what else follows.
+	const TB_NO_TUCK_IDS = {
+		'footnotes': 1, 'sources': 1, 'footnotes-section': 1, 'sources-section': 1,
+		'contents': 1, 'loader': 1, 'toc': 1, 'course-status': 1,
+		'course-status-box': 1, 'topic-learned-btn': 1, 'sidenotes-rail': 1,
+		'curiosity-score': 1
+	};
+
+	/** The element that ends `block`'s SECTION: the next page-furniture id,
+	    <section>, managed block, or bare heading — exactly the same boundary
+	    rules tuckFollowingDemos() walks with, so "end of section" always
+	    means "where the demos stop". Returns null when the section runs to
+	    the end of the parent. Used to place controls (recollapse button,
+	    grouped reveal badge) at the true end of a section rather than at the
+	    end of the block's own div — which, when demos follow, is mid-section. */
+	function sectionEndBefore(block) {
+		if (!block || !block.nextElementSibling) return null;
+		let sib = block.nextElementSibling;
+		while (sib) {
+			if (sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE' || sib.tagName === 'TEMPLATE') {
+				sib = sib.nextElementSibling; continue;
+			}
+			if (sib.tagName === 'SECTION') return sib;
+			if (sib.id && TB_NO_TUCK_IDS[sib.id]) return sib;
+			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) return sib;
+			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) return sib;
+			sib = sib.nextElementSibling;
+		}
+		return null;
+	}
+
+	function tuckFollowingDemos(block) {
+		const hidden = [];
+		let sib = block.nextElementSibling;
+		while (sib) {
+			// Hard stops: page furniture / structural sections (never tuck).
+			if (sib.tagName === 'SECTION') break;
+			if (sib.id && TB_NO_TUCK_IDS[sib.id]) break;
+			// A new section: a gated / titled managed block. Match the data-*
+			// attributes (present in the source) rather than the .topic-block
+			// class, so this is reliable even before applyVisibility has tagged
+			// the block. Plain (ungated) .md prose and .optional boxes that sit
+			// between the demos belong to the current section and tuck with it —
+			// only a gated block starts a new section.
+			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
+			// A bare heading that starts a new section.
+			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+			// Skip non-rendered nodes without tucking them.
+			if (sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE' || sib.tagName === 'TEMPLATE') {
+				sib = sib.nextElementSibling; continue;
+			}
+			if (sib.classList) {
+				sib.classList.add('topic-demo-tucked');
+				hidden.push(sib);
+			}
+			sib = sib.nextElementSibling;
+		}
+		return hidden;
+	}
+
+	function untuckDemos(demos) {
+		(demos || []).forEach(function (d) { d.classList.remove('topic-demo-tucked'); });
+		// No global resize here: Plotly.resize() throws on a plot div that is
+		// still display:none (a still-tucked or not-yet-inited demo). The
+		// demos' own lazyInit IntersectionObserver re-renders them the moment
+		// they are unhidden and scrolled into view, so a forced resize is both
+		// unnecessary and the source of the "Resize must be passed a displayed
+		// plot div" promise errors.
+	}
+
+	function syncDemoTucking(block) {
+		const wasTucked = !!(block._tbTuckedDemos && block._tbTuckedDemos.length);
+		const shouldTuck = block.classList.contains('topic-block-collapsed') && block._tbWhy === 'math';
+		if (shouldTuck) {
+			block._tbTuckedDemos = tuckFollowingDemos(block);
+		} else {
+			untuckDemos(block._tbTuckedDemos);
+			block._tbTuckedDemos = null;
+		}
+		return shouldTuck || wasTucked;
+	}
+
+	/** Fill in the section title on badges that were created before Markdown
+	    rendered (blocks without a data-optionaltitle). Idempotent. */
+	function refreshBadgeTitles() {
+		document.querySelectorAll('.topic-block.topic-block-collapsed .topic-block-fade-badge').forEach(function (badge) {
+			if (badge.querySelector('.tbf-title')) return;
+			const block = badge.parentElement;
+			let title = block.getAttribute('data-optionaltitle') || '';
+			if (!title) {
+				const h = block.querySelector('h1,h2,h3,h4,h5,h6');
+				if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			}
+			if (!title) return;
+			const span = document.createElement('span');
+			span.className = 'tbf-title';
+			span.textContent = title;
+			const icon = badge.querySelector('.tbf-icon');
+			if (icon) badge.insertBefore(span, icon.nextSibling);
+			else badge.insertBefore(span, badge.firstChild);
+		});
 	}
 
 	/** slim chip shown on a PARTIAL section: it stays readable, just
@@ -1713,13 +2476,38 @@
 	/** reconcile one managed block to its target `score.state`, animating
 	    only when the state actually changed and `animate` is set. */
 	function applyBlockState(block, spec, score, animate) {
-		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; return; }
+		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; block._tbWhy = score.why; return; }
 		block._tbScore = score;
 		block._tbSpec = spec;
+		block._tbWhy = score.why;
 		const wasCollapsed = block.classList.contains('topic-block-collapsed');
 		const nowOff = score.state === 'off';
-		const hasTitle = !!spec.title;
+		// A math-gated block always collapses when its math is off (strong
+		// "masking"), so it no longer depends on having an explicit title.
+		// Titled blocks (or blocks with a first heading) collapse for any
+		// reason; untitled non-math blocks only dim, as before.
+		// EXCEPTION: blocks wrapping interactive / plot / media content
+		// (`isFragile`) are never hard-clipped — clipping breaks their layout
+		// (math_iii's canvases). They dim instead, staying fully functional.
+		const fragile = isFragile(block);
+		const collapsible = !fragile && (!!spec.label || score.why === 'math');
 		const alt = block.querySelector(':scope > .topic-block-alt');
+
+		// A block the reader manually revealed stays revealed for the whole
+		// session — a later re-score (slider tick, Markdown re-render,
+		// optional-block pass) must not tuck it back. This wins over the
+		// math-alternative path too, so "show the full math" sticks.
+		if (nowOff && block._tbUserRevealed === true) {
+			block.classList.remove('topic-block-collapsed');
+			block.classList.remove('topic-block--clipped');
+			block.classList.remove('topic-block-dimmed');
+			block.classList.remove('topic-block-alt-active');
+			block.classList.add('topic-block-revealed');
+			block._tbReason = 'user-revealed';
+			syncDemoTucking(block);
+			ensureRecollapse(block);
+			return;
+		}
 
 		// Math alternative: the block is too math-heavy for the reader and
 		// the author supplied a plain-language twin. Show the twin instead
@@ -1732,6 +2520,8 @@
 			block.classList.add('topic-block-alt-active');
 			setAltReveal(block, spec, score);
 			block._tbReason = 'alt';
+			syncDemoTucking(block);
+			removeRecollapse(block);
 			return;
 		}
 
@@ -1743,26 +2533,31 @@
 		if (staleAltReveal) staleAltReveal.remove();
 
 		if (nowOff) {
-			if (hasTitle) {
-				// Explicitly titled optional block → full collapse + banner
+			if (collapsible) {
+				// Titled / headed / math-gated block → full collapse + banner
 				if (!wasCollapsed) {
 					collapseBlock(block, spec, score, !!animate);
 				} else if (block._tbReason !== score.reason) {
 					setBanner(block, spec, score);
 				}
 			} else {
-				// No title → just dim, keep content visible
+				// No title and not a math gate → just dim, keep content visible
 				if (wasCollapsed) revealBlock(block, !!animate);
 				block.classList.add('topic-block-dimmed');
 			}
 			block._tbReason = score.reason;
+			syncDemoTucking(block);
+			removeRecollapse(block);
 			return;
 		}
 		block.classList.remove('topic-block-dimmed');
+		block.classList.remove('topic-block--clipped');
 		if (wasCollapsed) revealBlock(block, !!animate);
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);
 		block._tbReason = score.state;
+		syncDemoTucking(block);
+		removeRecollapse(block);
 	}
 
 	/** (re)build visibility for every managed block + tiles + indicators.
@@ -1784,17 +2579,43 @@
 			});
 			if (isIndexPage()) dimCourseTiles();
 			updateSkipIndicator();
-			// Still pin the learned button past any sources/footnotes that
-			// renderMarkdown() appends later (this early-return path skips
-			// the settle call at the bottom of the function).
-			settleLearnedButton();
+		// Still keep the learned button + course status box at the end of
+		// the lesson body in case footnotes/sources were appended after
+		// them (this early-return path skips the settle calls at the bottom
+		// of the function).
+		settleLearnedButton();
+		settleCourseStatusBox();
 			return;
 		}
 
 		const managed = document.querySelectorAll(
-			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]');
+			'.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-depth], [data-topic]');
 		managed.forEach(function (block) {
 			if (block.classList.contains('optional')) return; // the manual .optional system owns these
+			if (block.classList.contains('course-tile')) {
+				// Index tiles carry data-mathlevel too, but they are NOT
+				// sections: tucking them would clip them to the 168px
+				// section height and cut off their text. Their own path is
+				// regroupTuckedTiles() (off tiles move to the per-part
+				// "Not shown" box) + dimCourseTiles() (partial match).
+				// One-time cleanup of stale tuck state left behind by older
+				// versions of this file (clipped box, injected badges):
+				block.classList.remove('topic-block-collapsed', 'topic-block--clipped',
+					'topic-block-revealed', 'topic-block-dimmed', 'topic-block-partial',
+					'topic-block-alt-active');
+				clearClipInline(block);
+				['.topic-block-fade-badge', '.topic-block-alt-reveal', '.topic-block-recollapse']
+					.forEach(function (sel) {
+						const stale = block.querySelector(':scope > ' + sel);
+						if (stale) stale.remove();
+					});
+				let sib = block.nextElementSibling; // stale sibling button (up to 2 ahead)
+				for (let i = 0; i < 2 && sib; i++, sib = sib.nextElementSibling) {
+					if (sib.classList && sib.classList.contains('topic-block-recollapse')) { sib.remove(); break; }
+					if (sib.classList && sib.classList.contains('course-tile')) break;
+				}
+				return;
+			}
 			if (!block.classList.contains('topic-block')) block.classList.add('topic-block');
 			const isMd = block.classList.contains('md');
 			if (isMd && !tuckMd) {
@@ -1804,9 +2625,13 @@
 				return;
 			}
 			const spec = blockSpec(block);
-			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq });
+			const score = scoreUnit(spec.scoreIds, { mathReq: spec.mathReq, depthReq: spec.depthReq });
 			applyBlockState(block, spec, score, animate);
 		});
+
+		// Post-render: now that Markdown is live, fill in section titles on
+		// badges for blocks that had no data-optionaltitle.
+		refreshBadgeTitles();
 
 		// Inline skipped markers (for ad-hoc skipped-in-place text)
 		document.querySelectorAll('.topic-inline').forEach(function (el) {
@@ -1822,14 +2647,19 @@
 		}
 		updateSkipIndicator();
 		applyMathAlts();
+		applyMathVisibility();
 
 		// keep any inline widgets in sync with the new counts
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 
-		// Pin the "mark as learned" button to the end of the content now
-		// that footnotes/sources may have been appended (post-render).
-		// No-op if it is already last, so a click never shifts it.
+		// Group consecutive tucked sections behind one "reveal all" badge
+		// (lists the section headings it covers). Must run AFTER all block
+		// states are settled and badge titles are filled in — and BEFORE the
+		// end-of-article settle calls, so the learned button / course box
+		// re-pin themselves to the very end if a group badge landed there.
+		rebuildGroupBadges();
 		settleLearnedButton();
+		settleCourseStatusBox();
 	}
 
 	/* ── 6b. Math alternative text ──────────────────────────────
@@ -1853,13 +2683,29 @@
 			const ids = (el.getAttribute('data-math-opt') || '').split(',')
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 			const hide = ids.length ? ids.some(function (id) { return heavyOff.indexOf(id) !== -1; }) : false;
-			const alt = el.querySelector('.math-alt');
-			const eqs = el.querySelectorAll('math');
-			if (!alt && !eqs.length) return;
-			el.classList.toggle('math-opt-simplified', hide);
-			eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
-			if (alt) alt.style.display = hide ? 'block' : 'none';
+		const alt = el.querySelector('.math-alt');
+		const eqs = el.querySelectorAll('math');
+		if (!alt && !eqs.length) return;
+		el.classList.toggle('math-opt-simplified', hide);
+		eqs.forEach(function (m) { m.style.display = hide ? 'none' : ''; });
+		if (alt) alt.style.display = hide ? 'block' : 'none';
 		});
+	}
+
+	/* ── 6c. Global "No math" display-math suppression ─────────
+	   The math-comfort dial gates tagged blocks (data-mathlevel), but
+	   most equations in the course are inline in prose or inside lab
+	   displays that were never tagged. At the minimum stop ("No math")
+	   the reader has asked for NO equations, so every DISPLAY equation
+	   in the reading column is hidden via the .math-off class on <html>
+	   (see style.css — CSS, not per-element JS, so equations that temml
+	   renders lazily after this pass are covered too). Exception:
+	   equations inside a [data-math-opt] host (they have a plain-language
+	   twin, handled by applyMathAlts) and inside .math-alt itself.
+	   Inline math is left alone: it carries the sentence, and hiding it
+	   would leave gaps. */
+	function applyMathVisibility() {
+		document.documentElement.classList.toggle('math-off', getMathLevel() <= MATH_MIN);
 	}
 
 	/* ── 7. Course tile dimming (non-index pages) — 3-state ───── */
@@ -1871,10 +2717,11 @@
 			const cats = (tile.getAttribute('data-tags') || '').split(',')
 				.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 			const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
+			const depthReq = tile.getAttribute('data-depth') || tile.getAttribute('data-depthlevel');
 			const all = interests.concat(cats);
 			tile.classList.remove('topic-tile-dim', 'topic-tile-partial', 'topic-tile-active');
-			if (!all.length && mathReq == null) return;
-			const score = scoreUnit(all, { mathReq: mathReq });
+			if (!all.length && mathReq == null && depthReq == null) return;
+			const score = scoreUnit(all, { mathReq: mathReq, depthReq: depthReq });
 			if (score.state === 'off') {
 				tile.classList.add('topic-tile-dim');
 				tile.title = 'Tucked away — ' + score.reason;
@@ -2076,8 +2923,7 @@
 		body.textContent = '';
 		const GROUPS = [
 			{ why: 'math',      label: 'Needs more math comfort', icon: '∫' },
-			{ why: 'interests', label: 'Outside your interests',  icon: '✦' },
-			{ why: 'category',  label: 'Tone switched off',       icon: '✕' }
+			{ why: 'interests', label: 'Outside your interests',  icon: '✦' }
 		];
 		const buckets = GROUPS.map(function (g) { return { g: g, list: [] }; });
 		const fallback = { label: 'Not quite matching your settings', icon: '…', list: [] };
@@ -2131,10 +2977,15 @@
 				tiles.forEach(function (tile) {
 					const interests = (tile.getAttribute('data-topics') || '').split(',')
 						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
-					const cats = (tile.getAttribute('data-tags') || '').split(',')
-						.map(function (s) { return cssSafe(s.trim()); }).filter(Boolean);
 					const mathReq = tile.getAttribute('data-mathlevel') || tile.getAttribute('data-math-level');
-					const score = scoreUnit(interests.concat(cats), { mathReq: mathReq });
+					const depthReq = tile.getAttribute('data-depth') || tile.getAttribute('data-depthlevel');
+					// Overview = the math-comfort dial (+ interests). The
+					// "feels heavy" tone tags (data-tags: math-heavy, code-heavy,
+					// …) are an in-lesson density preference and deliberately do
+					// NOT hide whole lessons here — otherwise switching a tone
+					// off would make a third of the course vanish from the
+					// overview regardless of the dial.
+					const score = scoreUnit(interests, { mathReq: mathReq, depthReq: depthReq });
 					tile.classList.remove('ta-tile-off');
 					if (score.state === 'off') offInfo.push({ tile: tile, score: score });
 				});
@@ -2365,6 +3216,21 @@
 			+ '</div>';
 	}
 
+	function depthSliderHtml() {
+		const v = snapDepth(getDepthLevel());
+		return '<div class="math-comfort depth-comfort itx-item" role="group" aria-label="History depth">'
+			+ '<div class="math-comfort-top">'
+			+   '<span class="math-comfort-label">⧖ History depth</span>'
+			+   '<span class="math-comfort-val" data-depth-val>' + depthEra(v) + '</span>'
+			+ '</div>'
+			+ '<input type="range" class="math-comfort-range depth-comfort-range" min="' + DEPTH_MIN + '" max="' + DEPTH_MAX
+			+ '" step="20" value="' + v + '" aria-label="History depth">'
+			+ '<div class="math-comfort-ticks">'
+			+   DEPTH_LEVELS.map(function (l) { return '<span>' + escAttr(l.label) + '</span>'; }).join('')
+			+ '</div>'
+			+ '</div>';
+	}
+
 	function wireMathSlider(h) {
 		const range = h.querySelector('.math-comfort-range');
 		if (!range) return;
@@ -2378,6 +3244,28 @@
 			if (!dragging) { dragging = true; pushHistory(); }
 			_skipInlineWidget = true;
 			try { setMathLevel(parseInt(range.value, 10), { pushHistory: false }); }
+			finally { _skipInlineWidget = false; }
+		});
+		range.addEventListener('change', function () {
+			dragging = false;
+			paint();
+			renderInlineWidget(h);
+		});
+	}
+
+	function wireDepthSlider(h) {
+		const range = h.querySelector('.depth-comfort-range');
+		if (!range) return;
+		const val = h.querySelector('[data-depth-val]');
+		let dragging = false;
+		const paint = function () {
+			if (val) val.textContent = depthEra(parseInt(range.value, 10));
+		};
+		range.addEventListener('input', function () {
+			paint();
+			if (!dragging) { dragging = true; pushHistory(); }
+			_skipInlineWidget = true;
+			try { setDepthLevel(parseInt(range.value, 10), { pushHistory: false }); }
 			finally { _skipInlineWidget = false; }
 		});
 		range.addEventListener('change', function () {
@@ -2432,6 +3320,7 @@
 			+ '<span class="topics-cat-label-mini" aria-hidden="true">tone</span>'
 			+ categoryChipsHtml() + '</div>';
 		const slider = mathSliderHtml();
+		const depthSlider = depthSliderHtml();
 
 		let html, wire;
 		const activePersonas = activePref().corePersonas || [];
@@ -2457,7 +3346,8 @@
 					}).join('') +
 				'</div>',
 				slider,
-				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics; math comfort is set separately below.</p>'
+				depthSlider,
+				'<p class="inline-topics-foot">Mix and match — each label unlocks its topics; math comfort and history depth are set separately below.</p>'
 			].join('');
 		wire = function (h) {
 			h.querySelectorAll('[data-core-persona]').forEach(function (b) {
@@ -2472,6 +3362,7 @@
 				swapWidget(h, function () { renderInlineWidget(h); });
 			});
 			wireMathSlider(h);
+			wireDepthSlider(h);
 		};
 		} else if (mode === 'detailed') {
 			const more = PERSONAS.filter(function (p) { return CORE_PERSONAS.every(function (c) { return c.id !== p.id; }); });
@@ -2490,6 +3381,7 @@
 					'</div>',
 				'</div>',
 				slider,
+				depthSlider,
 				catRow,
 				'<div class="inline-persona-more" role="group" aria-label="More reader types">'
 					+ more.map(function (p) {
@@ -2528,6 +3420,7 @@
 				});
 				wireCategoryChips(h);
 				wireMathSlider(h);
+				wireDepthSlider(h);
 			};
 		} else {
 			// non-personas host: the classic full grid (kept for other pages)
@@ -2577,6 +3470,7 @@
 		return {
 			debug: DEBUG,
 			mathLevel: getMathLevel(),
+			depth: getDepthLevel(),
 			profile: activePref().profile,
 			level: activePref().level,
 			topics: normalize(activeMap()),
@@ -2594,6 +3488,7 @@
 		applyVisibility({ animate: false, tuckMd: false });
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 		showLearnedUI();
+		ensureBadgeDelegation();
 		if (DEBUG) dlog('ready — dump state with BlogTopics.dump()');
 	}
 
@@ -2615,6 +3510,16 @@
 		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
 		MATH_MIN: MATH_MIN,
 		MATH_MAX: MATH_MAX,
+		MATH_LEVELS: MATH_LEVELS,
+		snapMath: snapMath,
+		mathLevelLabel: mathLevelLabel,
+		DEPTH_MIN: DEPTH_MIN,
+		DEPTH_MAX: DEPTH_MAX,
+		DEPTH_LEVELS: DEPTH_LEVELS,
+		snapDepth: snapDepth,
+		depthEra: depthEra,
+		getDepthLevel: getDepthLevel,
+		setDepthLevel: setDepthLevel,
 		DEBUG: DEBUG,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
@@ -2656,6 +3561,33 @@
 		isLearned: isLearned,
 		depsMet: depsMet,
 		toggleLearned: toggleLearned,
-		onChange: function (fn) { document.addEventListener('topics:change', fn); }
+		revealAncestorsOf: revealAncestorsOf,
+		courseOrder: courseOrder,
+		courseIndexOf: courseIndexOf,
+		countLearned: countLearned,
+		onChange: function (fn) { document.addEventListener('topics:change', fn); },
+		// Test/diagnostic hooks (private by convention). Lets the Node
+		// integration test — and future tbDebug tooling — drive the tuck /
+		// reveal / placement code without a browser. NOT part of the public
+		// contract; page code must not depend on it.
+		_internals: {
+			applyVisibility: applyVisibility,
+			showLearnedUI: showLearnedUI,
+			settleLearnedButton: settleLearnedButton,
+			settleCourseStatusBox: settleCourseStatusBox,
+			rebuildGroupBadges: rebuildGroupBadges,
+			ensureRecollapse: ensureRecollapse,
+			removeRecollapse: removeRecollapse,
+			findRecollapse: findRecollapse,
+			sectionEndBefore: sectionEndBefore,
+			nextTuckedInRun: nextTuckedInRun,
+			isTuckTransparent: isTuckTransparent,
+			revealGroupBadge: revealGroupBadge,
+			placeGroupBadge: placeGroupBadge,
+			revealBlock: revealBlock,
+			collapseBlock: collapseBlock,
+			setBanner: setBanner,
+			blockSpec: blockSpec
+		}
 	};
 })();

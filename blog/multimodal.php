@@ -51,7 +51,7 @@ This is the foundation of every modern vision-language model.
 <div class="md">
 ## Vision Transformers: Turning Pixels into Tokens
 
-A Vision Transformer \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit} (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
+A Vision Transformer (ViT, \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
 
 $$
 \text{number of patches} \quad n = \frac{HW}{P^2}
@@ -62,7 +62,7 @@ Each patch is linearly projected to a $d$-dimensional vector (the patch embeddin
 For a $224 \times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \times 448$ inputs, yielding $>1000$ tokens per image.
 </div>
 
-<div id="vit-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="vit-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**. The same Transformer block that processes word tokens now processes visual tokens. The architecture becomes modality-agnostic.
@@ -83,11 +83,11 @@ $$
 
 The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. **Only the projection layer is trained initially**; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read.
 
-LLaVA-1.5 \cite[Liu et al., 2023]{liu2023llava} used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.
+LLaVA-1.5 (\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.
 
 ### Pattern 2: Cross-Attention (Flamingo-style)
 
-The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo \cite[Alayrac et al., 2022]{alayrac2022flamingo} interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
+The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo (\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
 
 ### Pattern 3: Native Multimodality (GPT-4o, Gemini)
 

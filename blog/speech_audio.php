@@ -40,7 +40,7 @@ where $w$ is a window function (Hann, Hamming) and $H$ is the hop size.
 **Mel-spectrograms** warp the frequency axis to the **mel scale**, which approximates human pitch perception (logarithmic in frequency). A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\text{mel bins}, \text{time frames}) \approx (80, 500)$.
 </div>
 
-<div id="spectrogram-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="spectrogram-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ### 2. Neural Audio Codecs (the modern approach)
@@ -55,7 +55,7 @@ For an LLM to “read” audio as discrete tokens (like text tokens), a **neural
 The codec has an **encoder** $E: \text{waveform} \to \mathbb{Z}^{T \times n_q}$ (frames × codebook entries) and a **decoder** $D: \mathbb{Z}^{T \times n_q} \to \text{waveform}$. With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second, comparable in density to text.
 </div>
 
-<div id="codec-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="codec-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ### 3. Self-Supervised Representations

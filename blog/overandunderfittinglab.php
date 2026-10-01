@@ -315,7 +315,7 @@ The classical bias–variance tradeoff predicts a clean U-shaped test-error curv
 
 When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*. This has been observed in deep neural networks, random forests, and even simple linear models.
 
-The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well. This challenges the simple “more parameters = more overfitting” narrative and is an active area of research.
+The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well. This challenges the simple “more parameters = more overfitting” narrative. A rigorous explanation now exists: if the network's weights remain small — as standard initialization and weight decay ensure — then the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**, and the generalization bound depends on that Lipschitz constant, not on the number of weights \cite{petersen2024mathdl}. Adding parameters in the overparameterized regime therefore no longer increases the generalization error.
 
 Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.
 

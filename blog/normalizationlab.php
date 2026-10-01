@@ -303,12 +303,12 @@ Drag the slider below and watch the same eight channels get regrouped.
         <div id="gn-hint" style="font-size:12px; color:var(--mn-text-secondary); font-style:italic;"></div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:16px;">
-        <div>
+    <div style="display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:18px; margin-bottom:16px;">
+        <div style="min-width:0; max-width:100%;">
             <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">① Input feature map (8 channels × 16 positions)</div>
             <div id="gn-input" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
         </div>
-        <div>
+        <div style="min-width:0; max-width:100%;">
             <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#10b981; margin-bottom:8px;">② After GroupNorm (γ = 1, β = 0)</div>
             <div id="gn-output" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
         </div>

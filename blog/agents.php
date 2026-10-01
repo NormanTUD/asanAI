@@ -82,7 +82,7 @@ This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of i
 
 <div class="md">
 <figure>
-	<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 460px;" />
+	<img src="alphago_leesedol.jpg" alt="Photograph of the AlphaGo versus Lee Sedol match" style="max-width: 100%;" />
 	<figcaption class="md">\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul. AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.</figcaption>
 </figure>
 </div>
@@ -91,7 +91,7 @@ This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of i
 <div class="md">
 ### 3. The LLM Agent Revolution (2022–present)
 
-The breakthrough insight, articulated in \cite[Yao et al., 2023]{yao2023react}, was that LLMs already encode vast world knowledge and can perform multi-step reasoning in natural language. Instead of learning a policy from scratch, you can use the LLM *as* the policy, prompting it to reason, select tools, and iterate.
+The breakthrough insight, articulated in (\cite[Yao et al., 2023]{yao2023react}), was that LLMs already encode vast world knowledge and can perform multi-step reasoning in natural language. Instead of learning a policy from scratch, you can use the LLM *as* the policy, prompting it to reason, select tools, and iterate.
 
 This collapses the classical agent architecture into a single model that handles perception (reading text), reasoning (chain-of-thought), and action selection (tool calls) simultaneously.
 </div>
@@ -199,7 +199,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 
 <div class="md">
-Concrete coding agents implement this loop as **multi-step tool usage**. A deep dive into the opencode agent \cite[Abboud, 2025]{abboud2025opencode} shows the pattern clearly: the LLM call is a streaming loop in which the model continuously emits text and tool calls, the framework executes each call, and the results are fed back into the context. Termination is explicit — a `stopWhen` clause ends the loop after a maximum number of steps, and a rejected permission request aborts it. The framework processes the stream event by event (text deltas, tool calls, tool results, tool errors), persisting each artifact to disk as it goes. This is precisely the observe→reason→act cycle of the diagram above, made concrete.
+Concrete coding agents implement this loop as **multi-step tool usage**. A deep dive into the opencode agent (\cite[Abboud, 2025]{abboud2025opencode}) shows the pattern clearly: the LLM call is a streaming loop in which the model continuously emits text and tool calls, the framework executes each call, and the results are fed back into the context. Termination is explicit — a `stopWhen` clause ends the loop after a maximum number of steps, and a rejected permission request aborts it. The framework processes the stream event by event (text deltas, tool calls, tool results, tool errors), persisting each artifact to disk as it goes. This is precisely the observe→reason→act cycle of the diagram above, made concrete.
 </div>
 
 <div class="md">
@@ -211,7 +211,7 @@ The system prompt is the agent's “DNA.” It defines:
 3. **Output format** (how to structure thoughts, actions, and final answers)
 4. **Persona** (role, expertise level, communication style)
 
-Real agents rarely rely on a single prompt. In opencode, the effective system prompt is assembled at runtime from several sources — a provider-specific base prompt, an optional `AGENTS.md` file from the project, and an agent-specific prompt — and switching between a read-only planning mode and a full build mode is itself injected as a system reminder \cite[Abboud, 2025]{abboud2025opencode}.
+Real agents rarely rely on a single prompt. In opencode, the effective system prompt is assembled at runtime from several sources — a provider-specific base prompt, an optional `AGENTS.md` file from the project, and an agent-specific prompt — and switching between a read-only planning mode and a full build mode is itself injected as a system reminder (\cite[Abboud, 2025]{abboud2025opencode}).
 </div>
 
 <pre class="wslab-code-block"><code>You are a research assistant agent. You have access to the following tools:
@@ -315,7 +315,7 @@ Tools are defined as JSON schemas that the LLM sees in its system prompt:
 }</code></pre>
 
 <div class="md">
-Real registries look exactly like this. The opencode agent ships a set of built-in tools — read, write, edit, bash, glob, grep, list, webfetch, todo management, and a task tool for spawning sub-agents — each defined with a description and a parameters schema and registered so the model can invoke it by name \cite[Abboud, 2025]{abboud2025opencode}. The description and schema are what the LLM sees; an `execute` function is what actually runs when the model decides to call the tool. The same function-calling primitives are used with every major provider (Anthropic, OpenAI, Google, or any OpenAI-compatible endpoint), because a provider-agnostic SDK translates the tool definitions into each vendor's dialect.
+Real registries look exactly like this. The opencode agent ships a set of built-in tools — read, write, edit, bash, glob, grep, list, webfetch, todo management, and a task tool for spawning sub-agents — each defined with a description and a parameters schema and registered so the model can invoke it by name (\cite[Abboud, 2025]{abboud2025opencode}). The description and schema are what the LLM sees; an `execute` function is what actually runs when the model decides to call the tool. The same function-calling primitives are used with every major provider (Anthropic, OpenAI, Google, or any OpenAI-compatible endpoint), because a provider-agnostic SDK translates the tool definitions into each vendor's dialect.
 </div>
 
 <div class="md">
@@ -338,7 +338,7 @@ A single LLM call is stateless, it only “remembers” what's in its context wi
 </tbody>
 </table>
 
-A practical illustration of session-scoped working memory comes from the opencode agent: it exposes todo-list tools (write and read) whose state persists per session and is fed back into the model — an explicit prompt-level scratchpad \cite[Abboud, 2025]{abboud2025opencode}. And when the growing conversation history approaches the model's context limit, the agent automatically summarizes the session so far and continues from that summary instead of losing state entirely.
+A practical illustration of session-scoped working memory comes from the opencode agent: it exposes todo-list tools (write and read) whose state persists per session and is fed back into the model — an explicit prompt-level scratchpad (\cite[Abboud, 2025]{abboud2025opencode}). And when the growing conversation history approaches the model's context limit, the agent automatically summarizes the session so far and continues from that summary instead of losing state entirely.
 
 ### The Scratchpad Pattern
 
@@ -377,7 +377,7 @@ $$
 \text{Agent}_A \;\xrightarrow{\text{message}}\; \text{Orchestrator} \;\xrightarrow{\text{inject into context}}\; \text{Agent}_B
 $$
 
-In practice, sub-agents are often just another tool. The opencode agent, for example, exposes a single `task` tool whose description enumerates the available sub-agents; invoking it spins up a brand-new session with its own context window, its own toolset, and possibly a different model, and the sub-agent's final output is returned as the tool result \cite[Abboud, 2025]{abboud2025opencode}. The orchestrator in the diagram above can therefore be another LLM — a recursive delegation that hints at full autonomy.
+In practice, sub-agents are often just another tool. The opencode agent, for example, exposes a single `task` tool whose description enumerates the available sub-agents; invoking it spins up a brand-new session with its own context window, its own toolset, and possibly a different model, and the sub-agent's final output is returned as the tool result (\cite[Abboud, 2025]{abboud2025opencode}). The orchestrator in the diagram above can therefore be another LLM — a recursive delegation that hints at full autonomy.
 </div>
 
 <div class="md">
@@ -385,9 +385,9 @@ In practice, sub-agents are often just another tool. The opencode agent, for exa
 
 Naive agents attempt tasks step-by-step without foresight. More sophisticated agents **plan** before acting, decomposing complex goals into subtasks.
 
-### Plan-and-Execute (\cite[Wang et al., 2023]{wang2023planandexecute})
+### Plan-and-Execute
 
-The agent first generates a complete plan, then executes each step:
+The agent first generates a complete plan, then executes each step (\cite[Wang et al., 2023]{wang2023planandexecute}):
 </div>
 
 <pre class="wslab-code-block"><code>User: Write a blog post comparing the environmental impact of
@@ -409,7 +409,7 @@ significantly. Adding sub-step: research green vs. grey hydrogen.]
 ...</code></pre>
 
 <div class="md">
-### Reflexion: Learning from Mistakes (\cite[Shinn et al., 2023]{shinn2023reflexion})
+### Reflexion: Learning from Mistakes
 
 \cite[Reflexion]{shinn2023reflexion} adds a self-evaluation step: after completing a task, the agent reflects on what went wrong and stores that reflection in memory for future attempts.
 
@@ -446,7 +446,7 @@ $$
 
 The field is actively researching how to push this frontier, making agents both more capable *and* more aligned simultaneously, rather than trading one for the other.
 
-Concrete agents build these mitigations in from the start. In opencode \cite[Abboud, 2025]{abboud2025opencode}, a permission system gates sensitive tools like `bash`, so a read-only planning agent must explicitly request approval before executing anything; the read tool refuses binary files, and edits are rejected for paths outside the working directory; oversized tool output is truncated before it re-enters the context; and at each step the agent records a git snapshot of the working tree, letting a failed change be rolled back in full. One grounding mechanism deserves special mention: after the model edits a file, the agent queries a Language Server for static diagnostics and feeds them back into the context, so undefined symbols or type errors become immediately visible — a squiggly-line IDE check injected into the agent's own observations.
+Concrete agents build these mitigations in from the start. In opencode (\cite[Abboud, 2025]{abboud2025opencode}), a permission system gates sensitive tools like `bash`, so a read-only planning agent must explicitly request approval before executing anything; the read tool refuses binary files, and edits are rejected for paths outside the working directory; oversized tool output is truncated before it re-enters the context; and at each step the agent records a git snapshot of the working tree, letting a failed change be rolled back in full. One grounding mechanism deserves special mention: after the model edits a file, the agent queries a Language Server for static diagnostics and feeds them back into the context, so undefined symbols or type errors become immediately visible — a squiggly-line IDE check injected into the agent's own observations.
 </div>
 
 <div class="md">
@@ -464,7 +464,7 @@ The agent paradigm has spawned numerous open-source frameworks:
 <tr><td><strong>Semantic Kernel</strong></td><td>C# / Python</td><td>Microsoft's enterprise agent SDK</td></tr>
 <tr><td><strong>OpenAI Assistants API</strong></td><td>API</td><td>Managed agent infrastructure with built-in tools</td></tr>
 <tr><td><strong>Anthropic Claude Tool Use</strong></td><td>API</td><td>Native function calling with safety constraints</td></tr>
-<tr><td><strong>opencode</strong></td><td>TypeScript / Bun</td><td>Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK \cite[Abboud, 2025]{abboud2025opencode}</td></tr>
+<tr><td><strong>opencode</strong></td><td>TypeScript / Bun</td><td>Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK (\cite[Abboud, 2025]{abboud2025opencode})</td></tr>
 <tr><td><strong>Neuron (PHP)</strong></td><td>PHP</td><td>Agent framework for PHP backend engineers</td></tr>
 </tbody>
 </table>

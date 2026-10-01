@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wenn aus Gedanken Wörter werden — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Wenn aus <em>Gedanken</em> Wörter werden</h1>
+  <p class="sub">Sprachmodelle wie ChatGPT „denken" in Zahlenräumen mit unendlich vielen Abstufungen — sagen aber am Ende immer nur einzelne Wörter aus einem endlichen Wörterbuch. Was dabei passiert, ist die Geschichte dieses kleinen Experiments. Und sie hat eine überraschende Moral: <b>Einige Gedanken passen nie genau in ein Wort.</b></p>
+  <div class="chips">
+    <span class="chip">1 interaktives Experiment</span>
+    <span class="chip">0 Formeln</span>
+    <span class="chip">1 bewiesener Satz, in Klartext</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Das Experiment: ein Gedankenfeld</h2>
+<p>Stell dir vor, jeder mögliche „Zwischengedanke" des Modells ist ein Ort auf einer Wiese. Und die Wörter des Modells sind <b>Stifte</b>, die auf der Wiese stecken. An jedem Ort der Wiese gewinnt das <b>nächste Wort</b> — genau so wie im Spiel „wer ist am nächsten?".</p>
+<p>Bewege die Maus über die Wiese. Der weiße Punkt ist der aktuelle Gedanke. Die Farben zeigen, welches Wort gerade gewinnen würde. Und die <b>goldenen Bänder</b> dazwischen? Das sind die Orte, an denen zwei Wörter fast gleich nah sind — das Modell ist dort <b>unschlüssig</b>.</p>
+
+<div class="demo">
+  <h3>Die Wiese der Wörter</h3>
+  <div class="dsub">Maus über die Fläche bewegen · Regler für Wörterbuchgröße ziehen</div>
+  <canvas id="cv" style="height:420px;cursor:crosshair"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Wie viele Wörter hat das Wörterbuch?</span><b id="rN">12</b></div>
+    <input type="range" id="sN" min="4" max="40" step="1" value="12">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Temperatur (wie „offen" ist die Auswahl?)</span><b id="rT">0.8</b></div>
+    <input type="range" id="sT" min="10" max="300" step="1" value="80" class="m">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Gewinner-Wort</div><div class="v" id="rWord">—</div></div>
+    <div class="box amber"><div class="k">Unsichere Zone</div><div class="v" id="rGap">—</div></div>
+    <div class="box rose"><div class="k">Gewinn-Chance</div><div class="v" id="rProb">—</div></div>
+  </div>
+</div>
+
+<div class="note"><b>Was du gerade gesehen hast:</b> Je mehr Wörter, desto kleiner werden die Zellen — und desto kleiner die unsichere goldene Zone. <b>Aber nie null.</b> Zwischen je zwei Wörtern gibt es immer eine Grenze, und auf der Grenze ist der Gedanke prinzipiell zwischen zwei Wörtern hin- und hergerissen.</div>
+
+<h2><span class="n">2</span>Die Messung: halb so unscharf, wie man denkt</h2>
+<p>Die Forscher des Original-Papers (Mabrok, 2026) haben genau diese „unsichere Zone" an sechs echten Sprachmodellen gemessen — von kleinen (124 Millionen Parameter) bis zu großen (1,5 Milliarden). Das Ergebnis:</p>
+<ul>
+  <li><b>Etwa 40 bis 51 %</b> aller Wortvorhersagen liegen in der unsicheren Zone. Das Modell „zögert" fast die Hälfte der Zeit zwischen mindestens zwei Wörtern.</li>
+  <li>Größere Modelle sind im Schnitt <b>etwas</b> sicherer — ihre Gedanken liegen etwas tiefer in den Zellen. Aber …</li>
+  <li>… die <b>schwierigsten ~5 %</b> bleiben bei <em>allen</em> Modellen gleich schwierig, egal wie groß. Der Grund ist kein schlechtes Training: An genau diesen Stellen ist die <b>Sprache selbst</b> zweideutig. Mehr Wörter oder mehr Training können das nicht wegzaubern.</li>
+</ul>
+<div class="note amber"><b>Der Kernsatz, ganz ohne Formel:</b> Die unsichere Zone hat eine <em>Boden</em>-Größe, die keine Technik erreichen kann. Sprache ist eine <b>verlustbehaftete Kompression</b> von Bedeutung — wie eine Landkarte, die immer etwas vom echten Terrain weglässt. Das Paper gibt diesem Verlust sogar einen Namen: <b>„Expressibility Gap"</b>.</div>
+
+<h2><span class="n">3</span>Warum mehr Wörter so teuer sind</h2>
+<p>Hilft ein größeres Wörterbuch also nicht? Es hilft — aber mit abnehmendem Ertrag, und zwar erschreckend schnell. Der Gedankensraum hat (gemessen) rund <b>20 echte Freiheitsgrade</b>. In solchen Räumen gilt ein bewiesener Satz aus dem Paper, der in Klartext lautet:</p>
+<div class="note violet"><b>Um den Fehler zu halbieren, brauchst du etwa 1000-mal so viele Wörter.</b><br><span style="font-size:13.5px">Und das ist kein schlechtes Wörterbuch — es ist ein mathematischer Notstand. Man kann es sich so vorstellen: Ein Wort „bedient" ein Stück der Wiese. Wenn die Wiese 20-mal so „voll" ist wie eine Fläche, dann verkleinert sich das Stück pro Wort mit jedem doppelten Wörterbuch nur um den 20-ten Wurzel-Bruchteil — also kaum. Der genaue Satz: Fehler ∝ (1/N)<sup>2/20</sup>.</span></div>
+<p>Das erklärt, warum moderne Modelle Wörterbücher mit 50 000 bis 250 000 Wörtern verwenden — und warum selbst die größten davon an den knappen Stellen zögern. Es ist kein Bug. Es ist die Geometrie.</p>
+
+<h2><span class="n">4</span>Wofür das gut ist</h2>
+<ul>
+  <li><b>Reden mit dem Modell:</b> Die „Unsicherheit" an einer Stelle ist messbar — Modelle könnten künftig selbst sagen: „Hier zögere ich, zwei Wörter liegen nahe beieinander".</li>
+  <li><b>Bessere Wörterbücher:</b> Neue Teilewörter genau dort einfügen, wo die unsichere Zone am breitesten ist.</li>
+  <li><b>Erwartungshaltung:</b> Einiges, was sich „halluziniert" anfühlt, ist vielleicht einfach ein Gedanke, der auf einer Wortgrenze liegt — und dort ist <em>jedes</em> Modell blind.</li>
+</ul>
+
+<h2><span class="n">5</span>Woher das stammt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>Mohamed A. Mabrok (2026):</b> „Latent Semantic Manifolds in Large Language Models", <a href="https://arxiv.org/abs/2603.22301">arXiv:2603.22301</a></p>
+  <p style="font-size:14px;margin-bottom:4px">Die Idee, dass Modelle ihre Daten auf dünnen „Blättern" (Mannigfaltigkeiten) organisieren, geht zurück auf <b>Ansuini, Laio, Macke &amp; Zoccolan (2019)</b>, <a href="https://arxiv.org/abs/1905.12784">arXiv:1905.12784</a>, und wurde für große Transformer von <b>Valeriani et al. (2023)</b>, <a href="https://arxiv.org/abs/2302.00294">arXiv:2302.00294</a>, bestätigt.</p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Das Gedankenfeld ist hier 2-dimensional (im echten Modell sind es ~20 Dimensionen), die Wörter sind zufällig verteilt (im echten Modell verteilt das Training sie semantisch sinnvoll), und die „unsichere Zone" wird hier mit geometrischem Abstand gemessen (im Paper mit der „Margin" der Modell-Scores). Alle Prozentzahlen oben stammen aus den Tabellen des Original-Papers.</p>
+</div>
+
+<footer>
+  Eine einfache interaktive Erklärung ohne Formeln. Original: Mabrok (2026), arXiv:2603.22301.<br>
+  Alles läuft lokal im Browser — keine Daten verlassen diese Seite.
+</footer>
+
+</main>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+(function(){
+  const cv=$('#cv');
+  const WORDS=["Hund","Katze","Baum","Haus","Auto","Buch","Maus","Lampe","Blume","Stein","Tisch","Stuhl","Wasser","Feuer","Nacht","Sonne","Regen","Mond","Kaffee","Stern","Fluss","Berg","Vogel","Fisch","Milch","Zucker","Tür","Fenster","Brücke","Feld","Küche","Garten","Schiff","Uhr","Weg","Stadt","Brötchen","Apfel","Tee","Hut","Glocke"];
+  const HUES=[188,220,260,290,320,350,15,40,60,90,140,170,200,240,280,310,340,25,50,75,120,155,195,230,270,300,330,10,45,100,160,210,250,295,335,20,65,130,185,245,305];
+  const CW=880,CH=616;
+  const off=document.createElement('canvas');off.width=CW;off.height=CH;
+  const octx=off.getContext('2d');
+  let N=12,anchors=[],hover=null,gapFrac=0,temperature=0.8;
+  const sT=$('#sT');
+  sT.addEventListener('input',e=>{temperature=e.target.value/100;$('#rT').textContent=temperature.toFixed(2);draw();});
+  function gen(n){
+    const rng=mulberry32(7+n*13);
+    const cols=Math.ceil(Math.sqrt(n*CW/CH)),rows=Math.ceil(n/cols);
+    const pts=[];
+    for(let i=0;i<n;i++){
+      const cx=(i%cols),cy=Math.floor(i/cols);
+      const jx=(rng()-0.5)*0.72, jy=(rng()-0.5)*0.72;
+      pts.push({
+        x:clamp((cx+0.3+jx)/cols*CW, 22, CW-22),
+        y:clamp((cy+0.3+jy)/rows*CH, 22, CH-22),
+        w:WORDS[i%WORDS.length],
+        c:HUES[i%HUES.length]
+      });
+    }
+    return pts;
+  }
+  function hsl(h,s,l){
+    s/=100;l/=100;
+    const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l);
+    const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+    return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
+  }
+  function smoothstep(a,b,t){t=clamp((t-a)/(b-a),0,1);return t*t*(3-2*t);}
+  function recompute(){
+    const img=octx.createImageData(CW,CH);
+    const a=anchors;
+    const dTyp=Math.sqrt(CW*CH/a.length)*0.52;
+    const epsPx=0.32*dTyp;
+    const blendW=0.55*dTyp;
+    let cnt=0;
+    for(let y=0;y<CH;y++)for(let x=0;x<CW;x++){
+      let d1=1e9,d2=1e9,i1=0;
+      for(let i=0;i<a.length;i++){
+        const dx=x-a[i].x,dy=y-a[i].y,dd=dx*dx+dy*dy;
+        if(dd<d1){d2=d1;i1=i;d1=dd;}
+        else if(dd<d2){d2=dd;}
+      }
+      const m=Math.sqrt(d2)-Math.sqrt(d1);
+      const p=(y*CW+x)*4;
+      const cellCol=hsl(a[i1].c,34+14*Math.min(m/dTyp,1),68+14*Math.min(m/dTyp,1));
+      const gold=[255,205,100];
+      const t=smoothstep(epsPx*0.4, epsPx+blendW, m);
+      img.data[p]=Math.round(gold[0]+(cellCol[0]-gold[0])*t);
+      img.data[p+1]=Math.round(gold[1]+(cellCol[1]-gold[1])*t);
+      img.data[p+2]=Math.round(gold[2]+(cellCol[2]-gold[2])*t);
+      img.data[p+3]=255;
+      if(t<0.4)cnt++;
+    }
+    octx.putImageData(img,0,0);
+    gapFrac=cnt/(CW*CH);
+    draw();
+  }
+  function draw(){
+    const {c,w,h}=hidpi(cv,420);
+    c.clearRect(0,0,w,h);
+    c.imageSmoothingEnabled=true;
+    c.imageSmoothingQuality='high';
+    c.drawImage(off,0,0,w,h);
+    const sx=w/CW,sy=h/CH;
+    const showLabels=N<=20;
+    for(const a of anchors){
+      const ax=a.x*sx,ay=a.y*sy;
+      c.save();
+      c.shadowColor='rgba(0,0,0,.18)';c.shadowBlur=6;c.shadowOffsetY=1;
+      c.beginPath();c.arc(ax,ay,6,0,Math.PI*2);
+      c.fillStyle='#fff';c.fill();
+      c.restore();
+      c.beginPath();c.arc(ax,ay,6,0,Math.PI*2);
+      c.strokeStyle='rgba(40,40,60,.35)';c.lineWidth=1.5;c.stroke();
+      if(showLabels){
+        c.font='600 11px system-ui';
+        c.textAlign='center';c.textBaseline='top';
+        const ly=ay+11;
+        const tw2=c.measureText(a.w).width;
+        c.fillStyle='rgba(255,253,248,.82)';
+        c.fillRect(ax-tw2/2-4,ly-2,tw2+8,16);
+        c.fillStyle='rgba(40,40,60,.75)';
+        c.fillText(a.w,ax,ly+1);
+      }
+    }
+    if(hover){
+      const x=clamp(hover[0],0,CW-1),y=clamp(hover[1],0,CH-1);
+      const mx=x*sx,my=y*sy;
+      const T=temperature;
+      const dTyp=Math.sqrt(CW*CH/anchors.length);
+      const Tcanvas=T*dTyp*1.2;
+      const Tpx=Tcanvas*(w/CW);
+      c.beginPath();c.arc(mx,my,Tpx,0,Math.PI*2);
+      c.strokeStyle='rgba(15,118,110,.55)';c.lineWidth=2;c.setLineDash([6,4]);c.stroke();c.setLineDash([]);
+      c.beginPath();c.arc(mx,my,Tpx,0,Math.PI*2);
+      c.fillStyle='rgba(15,118,110,.04)';c.fill();
+      const allD=[];
+      for(let i=0;i<anchors.length;i++){
+        const dx=x-anchors[i].x,dy=y-anchors[i].y;
+        allD.push({i,d:Math.sqrt(dx*dx+dy*dy)});
+      }
+      allD.sort((a,b)=>a.d-b.d);
+      const near=allD.slice(0,5);
+      const sigma=T*dTyp*0.5;
+      const scores=near.map(cd=>({i:cd.i,d:cd.d,s:Math.exp(-cd.d/sigma)}));
+      const sum=scores.reduce((s2,cd)=>s2+cd.s,0)||1;
+      const top=scores.slice(0,5);
+      const panelW=155,panelH=top.length*26+12;
+      const right=mx+Tpx+16;
+      const px=(right+panelW>w-8)?clamp(mx-Tpx-panelW-16,4,w-panelW-8):clamp(right,4,w-panelW-8);
+      const py=clamp(my-panelH/2,8,h-panelH-8);
+      c.fillStyle='rgba(255,253,248,.94)';
+      c.beginPath();c.roundRect(px,py,panelW,panelH,10);c.fill();
+      c.strokeStyle='rgba(15,118,110,.3)';c.lineWidth=1;c.stroke();
+      c.font='700 11px system-ui';c.fillStyle='rgba(40,40,60,.5)';c.textAlign='left';c.textBaseline='middle';
+      c.fillText('Chancen',px+10,py+11);
+      const barMax=panelW-78;
+      for(let j=0;j<top.length;j++){
+        const cd=top[j];
+        const prob=cd.s/sum;
+        const rowY=py+24+j*26;
+        c.font=(j===0?'700':'400')+' 12px system-ui';
+        c.fillStyle=j===0?'#0f766e':'#5c6272';c.textAlign='left';
+        c.fillText(anchors[cd.i].w,px+10,rowY);
+        const bw=Math.max(4,prob*barMax);
+        c.fillStyle='rgba(15,118,110,.1)';
+        c.beginPath();c.roundRect(px+56,rowY-5,barMax,10,5);c.fill();
+        c.fillStyle=j===0?'#0f766e':'rgba(15,118,110,.35)';
+        c.beginPath();c.roundRect(px+56,rowY-5,bw,10,5);c.fill();
+        c.font='600 10px monospace';c.fillStyle=j===0?'#0f766e':'#9aa0b0';c.textAlign='right';
+        c.fillText(Math.round(prob*100)+'%',px+panelW-8,rowY);
+      }
+      c.beginPath();c.arc(mx,my,7,0,Math.PI*2);
+      c.fillStyle='rgba(255,255,255,.92)';c.fill();
+      c.strokeStyle='rgba(40,40,60,.5)';c.lineWidth=2;c.stroke();
+      const winner=top[0];
+      if(winner){
+        $('#rWord').textContent=anchors[winner.i].w;
+        $('#rProb').textContent=Math.round(winner.s/sum*100)+' %';
+      }
+    }
+    $('#rGap').textContent=Math.round(gapFrac*100)+' %';
+  }
+  cv.addEventListener('pointermove',e=>{
+    const r=cv.getBoundingClientRect();
+    hover=[(e.clientX-r.left)/r.width*CW,(e.clientY-r.top)/r.height*CH];
+    draw();
+  });
+  cv.addEventListener('pointerleave',()=>{hover=null;$('#rWord').textContent='—';$('#rProb').textContent='—';draw();});
+  $('#sN').addEventListener('input',e=>{N=+e.target.value;$('#rN').textContent=N;anchors=gen(N);recompute();});
+  anchors=gen(N);recompute();
+  addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,9 @@ module.exports = {
 	],
 	"globals": {
 		"lang": "writable",
+		"ExplainabilityLib": "readonly",
+		"AdversarialExamples": "readonly",
+		"RepresentationAnalysis": "readonly",
 		"general_options": "writable",
 		"interpolation": "writable",
 		"last_model_structure_string": "writable",
@@ -248,6 +251,7 @@ module.exports = {
 		"parse_int": "readonly",
 		"labels": "writable",
 		"started_training": "writable",
+		"training_run_count": "writable",
 		"training_history": "writable",
 		"training_history_counter": "writable",
 		"last_model_fingerprint": "writable",

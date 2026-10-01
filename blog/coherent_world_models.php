@@ -40,13 +40,11 @@ $$
 \end{aligned}}
 $$
 
-Everything below earns that sentence.
-
 **The status of this chapter.** What follows is a *discipline*, not a derivation. We do not claim sheaf theory, coherence theory, and post-foundationalist epistemology are *literally* one object in three vocabularies; only that, for the purpose of asking when a collection of partial views deserves the name *one description*, they are productive allies — even if the analogy's boundaries are not fully charted and its deepest joints are merely gestured at. The framework is a *lens*: it makes some things visible and others invisible, and it has to be picked up, used, and set down. A reader who rejects the unification is not asked to surrender the chapter — only to say which of the three traditions, in their judgement, the others must be measured against. The discipline survives even where the scaffolding is set aside: the nine-step procedure, the five pathologies, the hierarchy of sameness, "where is the licensed transition?", "never silently upgrade" — these travel on their own. And it will not exempt its own author: near the close the chapter runs these same steps on *itself*, records the residuals it finds, and re-calibrates where its own licences run out — a discipline that will not ask the question of itself earns the right to ask it of the rest of the world only in a weaker sense.
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="50" data-optionaltitle="Traces">
 
 ### Traces
 
@@ -75,7 +73,7 @@ Note on properties (1)-(3): they hold given our commitment to indirect realism. 
 
 What we receive is *almost always already mediated*: this is our default commitment, not a universal claim. The redness of red, the pain of a headache, the taste of coffee are, on this account, the final output of a long pipeline (photoreceptors, retinal processing, lateral geniculate nucleus, visual cortex, attentional and mnemonic modulation, ...) applied to the world; they *feel* immediate only because we do not consciously witness the pipeline; the redness is the brain's construction, not the photon's revelation.
 
-There is a rare limit case: **wordless introspection**. In the immediate, pre-conceptual awareness of one's own experience, before it is named, categorised, or compared, the trace and the topic coincide. The experience is not *of* something else; it is its own subject matter. The machinery we have built (admissible transitions, covers, sheaf conditions) was built for mediated traces, where the trace is *of* a distinct source; here the distinction collapses, and the apparatus has nothing to operate on.
+There is a limit case: **wordless introspection**. In the immediate, pre-conceptual awareness of one's own experience, before it is named, categorised, or compared, the trace and the topic coincide. The experience is not *of* something else; it is its own subject matter. The machinery we have built (admissible transitions, covers, sheaf conditions) was built for mediated traces, where the trace is *of* a distinct source; here the distinction collapses, and the apparatus has nothing to operate on.
 
 In this limit, the machinery changes shape. The access function $O$ is no longer external-to-the-trace but intrinsic to it; indexicality becomes trivial (the trace IS of itself); underdetermination fails (there is nothing to recover, since trace and source coincide); *transformed* and *mediated* weaken, since there is no external-to-internal pipeline to traverse. Wordless introspection marks a *boundary*: inside it, productive machinery for working with mediated reports; outside it, experience without representation, where the question "is the model true?" does not arise.
 
@@ -159,7 +157,7 @@ $$
 The distinction between channels and interpretation is in part the moral of \citeauthor{cartwright1983laws}'s (\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived — a frictionless plane, an isolated system, an exactly spherical earth — and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \cite{cartwright1983laws} \cite{cartwright1999dappled}. The right model is rarely the one whose equations are most elegant; it is the one that respects which factors actually matter for the phenomenon at hand and which are genuinely absent. Conflating "the law is true" (a statement about a clean laboratory model) with "the law applies here" (a statement about a real situation) is one of the most common forms of silent upgrade between world-level and channel-level difference.
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Notions of sameness">
 
 ### Notions of sameness
 
@@ -226,7 +224,7 @@ What "silent strengthening" means: passing from a witness of $\simeq$ to a claim
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Transformation is the missing concept">
 
 ### Transformation is the missing concept
 
@@ -252,7 +250,7 @@ $$
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Ologs: a diagram that pays its way">
 
 ### Ologs: a diagram that pays its way
 
@@ -282,7 +280,7 @@ For this chapter: every diagram so far is an olog in disguise. The master diagra
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Admissible transitions">
 
 ### Admissible transitions
 
@@ -372,7 +370,7 @@ What the picture says. The four $R_i$ are deliberately heterogeneous — a senso
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="The mathematics of coherence: sites and sheaves">
 
 ## The mathematics of coherence: sites and sheaves
 
@@ -427,7 +425,7 @@ $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain co
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="Sheaves: coherence = descent">
 
 ### Sheaves: coherence = descent
 
@@ -505,7 +503,7 @@ It is the premise that makes local-to-global gluing *legitimate* rather than mer
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="The running example (now that we have sheaves)">
 
 ### The running example (now that we have sheaves)
 
@@ -529,7 +527,7 @@ The same shape governs **mathematical data** — here genuinely as a flat cover,
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Equalizers: where two maps agree">
 
 ### Equalizers: where two maps agree
 
@@ -553,7 +551,7 @@ Two thermometers report a temperature over time: the equalizer is the *times* at
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="Pullbacks: agreement through a shared target">
 
 ### Pullbacks: agreement through a shared target
 
@@ -569,7 +567,7 @@ The pullback *is* the object of agreements. Visual and radar tracks pull back ov
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="85" data-optionaltitle="Higher coherence">
 
 ### Higher coherence
 
@@ -656,7 +654,7 @@ $$
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60" data-optionaltitle="The model, assembled">
 
 ## The model, assembled
 
@@ -736,6 +734,8 @@ $$
 \underbrace{P(z \mid x_1,\dots,x_n)}_{\text{latent structure integrating them}}.
 $$
 
+**A concrete instance you have already met: the Origami chapter is descent, drawn.** The master diagram is not only for calibrated thermometers. A trained deep ReLU network *is* a worked example of it, in a form you can draw. Its **linear regions** are the patches of the cover; on each one the network is exactly an affine map, a **local section**; the **creases** (the ReLU hyperplanes) are the **overlaps** where two regions meet; the network's *continuity* across every crease is the **compatibility** condition; and the network's global, piecewise-affine function is the **global section** the local pieces glue into. In the notation of the sheaf condition above: the regions are the $c_i$, the affine formula on each region is a section $s_i \in F(c_i)$, the shared crease is the overlap $c_i \times_c c_j$, and the fact that two affine pieces meet without a jump is the agreement $d_0 s_1 = d_1 s_2$. Hold it at the strength this chapter always holds such analogies: it is a *piecewise-linear, approximate* sheaf — the compatibility is continuity, not smoothness (there is a kink on every crease), and the "world" the model describes is the task's data distribution, not $W$ itself. But the *shape* is exactly the master diagram. See the <a href="origami">Origami</a> chapter, where every crease can be drawn.
+
 **Hallucination** = internal coherence without descent from a grounded cover. Two sub-types:
 
 1. **Locally incoherent presheaf.** The model's outputs contradict each other on overlapping local patches (e.g. three different answers to the same factual question in one conversation). The presheaf is broken: local sections do not agree on overlaps.
@@ -785,7 +785,7 @@ A representation is judged not by whether it *is* the subject matter but by *whi
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="The hierarchy: never upgrade silently">
 
 ### The hierarchy: never upgrade silently
 
@@ -817,7 +817,7 @@ Correlation is not identity. A plausible transformation is not proof. Consistenc
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="80" data-optionaltitle="The one diagram">
 
 ### The one diagram
 
@@ -1067,7 +1067,7 @@ The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Bl
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Tarski's Convention T">
 
 ### Tarski's Convention T
 
@@ -1106,7 +1106,7 @@ This is correspondence, not as a metaphor, but as a precise, formally statable c
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Why Tarski's correspondence is structural">
 
 ### Why Tarski's correspondence is structural
 
@@ -1221,7 +1221,7 @@ This is the precise statement of what it means to say that a coherent world mode
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Contact points: where consistency stops being enough">
 
 ### Contact points: where consistency stops being enough
 
@@ -1330,7 +1330,7 @@ The converse is what makes the criterion asymmetric and usable. A *single* genui
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="75" data-optionaltitle="The diagram, completed">
 
 ### The diagram, completed
 
@@ -1366,7 +1366,7 @@ The model $G$ is true when the *two* truth conditions (coherence and corresponde
 
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="70" data-optionaltitle="Five pathologies">
 
 ### Five pathologies
 
@@ -1702,11 +1702,14 @@ The chapter's nine-step procedure, applied to a deployed LLM answering a user qu
 
 The procedure is the same for any model — scientific, mathematical, historical, LLM — because the chapter's claim is that the *shape* is the same. That is why the very next section runs these nine steps on the chapter *itself*: the one model in this book that is also its own author, and therefore the one where the question "where is the licensed transition?" is hardest to answer honestly.
 
+</div>
+
+<div class="md" data-mathlevel="60" data-optionaltitle="Where this framework reaches its limits">
 ### Where this framework reaches its limits
 
 A framework aware of its reach must be clear about where it stops helping. The chapter's machinery, applied to LLMs, runs out of steam in at least four directions:
 
-**Emergent capabilities.** Some LLM behaviours appear discontinuously at scale: few-shot in-context learning, chain-of-thought reasoning, code generation, instruction following, the long tail of surprising competencies the literature has catalogued since GPT-3. The chapter's vocabulary can *name* these as phenomena — they are local sections that begin to cohere at a critical scale — but it does not *explain* them. The mathematics of why descent becomes qualitatively different at scale is the open problem of modern deep learning theory, and it is the subject of its own chapter, <a href="deep_theory">Why Do Networks Generalize?</a> — double descent, loss landscapes, the neural tangent kernel, and the honest limits of current theory.
+**Emergent capabilities.** Some LLM behaviours appear discontinuously at scale: few-shot in-context learning, chain-of-thought reasoning, code generation, instruction following, the long tail of surprising competencies the literature has catalogued since GPT-3. The chapter's vocabulary can *name* these as phenomena — they are local sections that begin to cohere at a critical scale — but it does not *explain* them. The mathematics of why descent becomes qualitatively different at scale is the open problem of modern deep learning theory, and it is the subject of its own chapter, <a href="deep_theory">Why Do Networks Generalize?</a> — double descent, loss landscapes, the neural tangent kernel, and the honest limits of current theory. A complete, self-contained mathematical treatment of all three — with proofs — is \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}).
 
 **In-context learning as a meta-phenomenon.** The chapter treats in-context learning as *descent within the prompt*: the prompt is a cover, the continuation is the unique section compatible with it. This is descriptively right but explanatorily thin. Why does a fixed-parameter model perform *more* in-context learning at scale, with no architectural change? Why does the same model sometimes use the cover well and sometimes badly? The chapter's framework does not say.
 

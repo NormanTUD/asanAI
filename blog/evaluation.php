@@ -28,10 +28,10 @@ LLM evaluations fall into four families:
 
 | Family | What it measures | Example |
 |--------|------------------|---------|
-| **Multiple-choice** | Knowledge / recognition | \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}, HellaSwag, ARC |
-| **Generative, exact-match** | Verifiable outputs | \cite[Chen et al., 2021]{chen2021humaneval}, GSM8K, MATH |
-| **Generative, judged** | Open-ended quality | MT-Bench, AlpacaEval, \cite[Zheng et al., 2023]{zheng2023lmsys} |
-| **Human preference** | Real-world quality | LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys}, Anthropic HH |
+| **Multiple-choice** | Knowledge / recognition | (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}), HellaSwag, ARC |
+| **Generative, exact-match** | Verifiable outputs | (\cite[Chen et al., 2021]{chen2021humaneval}), GSM8K, MATH |
+| **Generative, judged** | Open-ended quality | MT-Bench, AlpacaEval, (\cite[Zheng et al., 2023]{zheng2023lmsys}) |
+| **Human preference** | Real-world quality | LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}), Anthropic HH |
 
 Each has failure modes:
 
@@ -44,47 +44,49 @@ Each has failure modes:
 <div class="md" data-mathlevel="40" data-optionaltitle="Multiple-choice benchmarks (MMLU accuracy)">
 ## Multiple-Choice Benchmarks
 
-### MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): Massive Multitask Language Understanding — 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
+### MMLU: Massive Multitask Language Understanding
+
+MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
 
 $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
 $$
 
-By 2025, frontier models exceed 88% on \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
 </div>
 
 <div class="md">
-### HellaSwag \cite[Zellers et al., 2019]{zellers2019hellaswag}
+### HellaSwag
 
-Tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
+HellaSwag (\cite[Zellers et al., 2019]{zellers2019hellaswag}) tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
 
-### ARC \cite[Clark et al., 2018]{clark2018arc}
+### ARC
 
-AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
+ARC (\cite[Clark et al., 2018]{clark2018arc}) is the AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 </div>
 
 <div class="md">
 ## Generative, Exact-Match
 
-### GSM8K \cite[Cobbe et al., 2021]{cobbe2021gsm8k}
+### GSM8K
 
-Grade-school \cite[Hendrycks et al., 2021]{hendrycks2021math}s:
+GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}):
 
 $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
 $$
 
-The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. \cite[Cobbe et al., 2021]{cobbe2021gsm8k}.
+The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}).
 
-### MATH \cite[Hendrycks et al., 2021]{hendrycks2021math}
+### MATH
 
-12,500 competition-\cite[Hendrycks et al., 2021]{hendrycks2021math}s from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
+MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) comprises 12,500 competition math problems from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="HumanEval (pass@k formula)">
-### HumanEval \cite[Chen et al., 2021]{chen2021humaneval}
+### HumanEval
 
-164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
+HumanEval (\cite[Chen et al., 2021]{chen2021humaneval}) consists of 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
 
 $$
 \text{pass@k} = \mathbb{E}\!\left[1 - \frac{\binom{n-c}{k}}{\binom{n}{k}}\right]
@@ -94,16 +96,16 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 </div>
 
 <div class="md">
-### MBPP (\cite[Austin et al., 2021]{austin2021mbpp}
+### MBPP
 
-974 Python problems, slightly easier than \cite[Chen et al., 2021]{chen2021humaneval}. Used as a complement.
+MBPP (\cite[Austin et al., 2021]{austin2021mbpp}) comprises 974 Python problems, slightly easier than (\cite[Chen et al., 2021]{chen2021humaneval}). Used as a complement.
 
-### BIG-Bench \cite[Srivastava et al., 2022]{srivastava2022bigbench}
+### BIG-Bench
 
-204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
+BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
 </div>
 
-<div id="mmlu-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="mmlu-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference and Elo)">
 ## Generative, LLM-as-Judge
@@ -122,15 +124,15 @@ $$
 
 where $Q$ is true quality and $T$ is “judge noise”. Empirical agreement with humans is ~70-80% on chat data.
 
-### MT-Bench / AlpacaEval \cite[Zheng et al., 2023]{zheng2023lmsys}
+### MT-Bench / AlpacaEval
 
-MT-Bench: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
+MT-Bench / AlpacaEval (\cite[Zheng et al., 2023]{zheng2023lmsys}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
 
 AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4 baseline.
 
-### LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys}
+### LMSYS
 
-The gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
+LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
 
 $$
 E_A^{\text{new}} = E_A + K \cdot \left(S_{AB} - \frac{1}{1 + 10^{(E_B - E_A)/400}}\right)
@@ -141,7 +143,7 @@ with $K=32$, $S_{AB} = 1$ if A wins. Updated continuously with hundreds of thous
 A critical finding: **arena Elo and academic benchmarks correlate only weakly** ($r \approx 0.5$). Models optimized for benchmarks often underperform on real user preference.
 </div>
 
-<div id="arena-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="arena-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 ## Benchmark Contamination: The Crisis
@@ -154,18 +156,18 @@ Evidence of contamination:
 
 * **Exact-match memorization**: models regurgitate benchmark items verbatim.
 * **Ordering effects**: models perform anomalously well on benchmark-internal “Question 17” but badly on a shuffled version.
-* **Min-checksum tests** \cite[Carlini et al., 2021]{carlini2021extracting}: if a model can complete the second half of a passage, it has probably seen the first half.
+* **Min-checksum tests** (\cite[Carlini et al., 2021]{carlini2021extracting}): if a model can complete the second half of a passage, it has probably seen the first half.
 * **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.
 
 ### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro's harder subset).
+* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})).
 * **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (MIT). These cost money and are not public.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
 
-**Frontier\cite[Hendrycks et al., 2021]{hendrycks2021math}s are novel, require expert construction, and are not available online.
+**FrontierMATH** problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
 </div>
 
 <div class="md">
@@ -191,20 +193,20 @@ The community is moving towards:
 * **Behavioral red-teaming**: probing for specific failure modes (jailbreaks, hallucinations, bias).
 * **Task-specific evaluation**: medical QA with clinician review, legal tasks with lawyer review, code with actual execution and CI.
 
-### \cite[Liang et al., 2022]{liang2023helm} (Stanford, 2022)
+### HELM: Holistic Evaluation of Language Models
 
-The Holistic Evaluation of Language Models benchmark suite evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
+The Holistic Evaluation of Language Models benchmark suite (\cite[Liang et al., 2022]{liang2023helm}) evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
 
 ### The State of Evaluation in 2025
 
 The most reliable current evaluations are:
 
-1. **LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys} Elo**, for general chat quality.
+1. **LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) Elo**, for general chat quality.
 2. **GPQA / FrontierMath / ARC-AGI**, for hard reasoning, contamination-resistant.
-3. **\cite[Chen et al., 2021]{chen2021humaneval} / LiveCodeBench / SWE-Bench**, for code.
+3. **HumanEval** (\cite[Chen et al., 2021]{chen2021humaneval}) / LiveCodeBench / SWE-Bench, for code.
 4. **Human preference studies**, the gold standard, when affordable.
 
-Static benchmarks like \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} are **informative but no longer load-bearing** for frontier-model comparison.
+Static benchmarks like (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) are **informative but no longer load-bearing** for frontier-model comparison.
 </div>
 
 <div class="md">
@@ -223,7 +225,7 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 </div>
 
 <script>
-// \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} leaderboard (illustrative 2024-2025 scores)
+// (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) leaderboard (illustrative 2024-2025 scores)
 (function() {
 	const c = document.getElementById('mmlu-viz');
 	if (!c) return;
@@ -271,7 +273,7 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 		text: models.map(m => m.name),
 		textposition: 'top center',
 		marker: { size: 14, color: '#3b82f6' },
-		hovertemplate: '%{text}<br>Elo: %{x}<br>\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}: %{y}%<extra></extra>'
+		hovertemplate: '%{text}<br>Elo: %{x}<br>(\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): %{y}%<extra></extra>'
 	}], {
 		title: { text: 'LMSYS Arena Elo vs MMLU (correlation only ~0.5)', font: { size: 13 } },
 		xaxis: { title: 'Arena Elo (Jan 2025)' },

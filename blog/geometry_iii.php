@@ -21,7 +21,7 @@ In this way, a homology theory is an algebraic image of topology. The domain of 
 
 The chapters before this one gave you two ways to think about shape. [Geometry I](geometry_i) gave you the historic way, space as an object to measure, evolve, and embed. [Geometry II](geometry_ii) gave you the working way, the toolkit a machine actually uses: projections that squash data, matrices that rotate it, convolutions that slide over it. This chapter gives you the third and deepest way, **algebraic topology**, the part of mathematics that turns shape itself into algebra, groups, rings, and exact sequences, so that holes, loops, and connections become objects you can compute with the same arithmetic a computer already owns.
 
-There is a famous joke that a topologist cannot tell a coffee cup from a doughnut: deform one into the other without tearing and they are the same shape, and both have exactly one hole. The joke is almost right, but it misses the point. Topology does not invalidate geometry; it looks at the same spaces from angles geometry alone cannot reach. Once you stop caring about distance, angle, and size, a large class of properties survives, and these are precisely the properties geometry on its own cannot see. Those properties are the **topological invariants**. Algebraic topology exists to make this precise: to count the holes, locate them, and compare two shapes by the algebra of their holes alone.
+There is a famous joke that a topologist cannot tell a coffee cup from a doughnut: deform one into the other without tearing and — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — they are the same shape, and both have exactly one hole. The joke is almost right, but it misses the point. Topology does not invalidate geometry; it looks at the same spaces from angles geometry alone cannot reach. Once you stop caring about distance, angle, and size, a large class of properties survives, and these are precisely the properties geometry on its own cannot see. Those properties are the **topological invariants** (\cite[Morris, Topology Without Tears, Ch. 4, p. 83]{morris2007topology}). Algebraic topology exists to make this precise: to count the holes, locate them, and compare two shapes by the algebra of their holes alone.
 
 Why should a reader of a course about AI care about holes? Because the raw material of this book is **meaning**, and in the modern view meaning has a shape. A word is a point in a high-dimensional space, a concept is a cloud of points, and a relation between concepts is a tunnel or a wall inside that cloud. The [Embeddings](embeddinglab) chapter runs on this picture, and algebraic topology is the mathematics of the holes inside it. As we will see at the end, it is now being used, live, to inspect the geometry in which a transformer's thoughts actually live.
 
@@ -29,6 +29,11 @@ Like the history chapters, for each tool we ask the same four questions: what it
 </div>
 
 <div class="md" data-mathlevel="30" data-optionaltitle="The bridge that started it all">
+<figure>
+	<img style="width: 100%" src="konigsberg_bridges.png" alt="Euler's diagram of the seven bridges of Königsberg" />
+	<figcaption class="md">Euler's 1736 diagram of the seven bridges of Königsberg. The insight, keep only the *pattern of connections* and discard distances, is the founding act of topology, and the negative answer ("no tour crosses each bridge exactly once") the first theorem of the subject \cite{eulerbridges}.</figcaption>
+</figure>
+
 ## The bridge that started it all
 
 The seed is the oldest result in this story that is recognizably topological: **Euler's bridges of Königsberg** (1736) and, for a polyhedron, the formula (1752) \cite{eulerbridges} \cite{eulersolids},
@@ -60,7 +65,7 @@ To make homology a group you first need a machine that grinds a space into group
 
 $$\underbrace{\partial_{k-1}\,\partial_{k}}_{\substack{\text{take the boundary,}\\\text{then take it again}}} \;=\; \underbrace{0}_{\substack{\text{the zero map:}\\\text{always nothing}}} \qquad\Longleftrightarrow\qquad \underbrace{\partial^{2}=0}_{\text{"the boundary of a boundary is empty"}}$$
 
-**the boundary of a boundary is empty.** Walk around the edge of a triangle and you return to where you started; take the boundary of that loop and you get nothing. More concretely, run a loop around two adjacent triangles: the shared edge is counted twice with opposite signs and cancels. So the image of $\partial_k$ always lies inside the kernel of $\partial_{k-1}$: boundaries are cycles.
+**The boundary of a boundary is empty.** Walk around the edge of a triangle and you return to where you started; take the boundary of that loop and you get nothing. More concretely, run a loop around two adjacent triangles: the shared edge is counted twice with opposite signs and cancels. So the image of $\partial_k$ always lies inside the kernel of $\partial_{k-1}$: boundaries are cycles.
 
 4. **Define the homology group.** Three more signs do the actual work here, so name them first. **$\ker$** (kernel, the German *Kern*, "core") of a map is the set of inputs the map **sends to zero**, the information it forgets. **$\operatorname{im}$** (image, the German *Bild*, "picture") is the set of outputs the map **actually reaches**. And the slash in $A/B$ is a **quotient**: collapse the sub-object $B$ to a single point, so two things differing by an element of $B$ count as the same; read it *"mod"* or *"modulo."* With those in hand, the $k$-cycles that are *not* boundaries, the genuine $k$-dimensional holes, are the closed cycles *modulo* the ones that already bound a solid piece. So declare
 
@@ -72,7 +77,7 @@ $$H_{0}=\underbrace{\mathbb{Z}}_{\text{one connected piece}}, \qquad H_{1}=\unde
 
 so $b_{0}=1$ (one connected piece), $b_{1}=2$ (two independent loops), and $b_{2}=1$ (one cavity). That $b_{1}=2$ is the "one hole" of the joke made precise: the coffee cup and the doughnut have the same homology groups, which is exactly why no topologist can tell them apart \cite{hatcher}.
 
-The modern reformulation of Euler's observation is the **Euler–Poincaré formula**, and it is the moment the whole edifice clicks:
+The modern reformulation of Euler's observation is the **Euler–Poincaré formula**, the Euler characteristic written as the alternating sum of the Betti numbers, first stated by \citeauthor{poincareanalysissitus} (\citeyear{poincareanalysissitus}) and put in its modern form by \citeauthor{derham1931} (\citeyear{derham1931}); it is the moment the whole edifice clicks:
 
 $$\underbrace{\chi(X)}_{\substack{\text{the Euler characteristic:}\\\text{the same number no matter}\\\text{the triangulation}}} \;=\; \sum_{k\ge 0} \underbrace{(-1)^{k}}_{\substack{\text{alternating}\\\text{plus-minus sign}}} \; \underbrace{\operatorname{rank}\,H_{k}(X)}_{\substack{\text{the }k\text{-th Betti number }b_k:\\\text{independent }k\text{-dim holes}}} ,$$
 
@@ -84,14 +89,9 @@ i.e. the hole-counting characteristic is the *alternating sum* of the **ranks** 
 <div class="md" data-mathlevel="75" data-optionaltitle="Homotopy: the deformation you are allowed to make">
 ## Homotopy: the deformation you are allowed to make
 
-Before going further we need the other pillar algebraic topology stands on: not what shapes *are* (homology) but what they can be *turned into* (homotopy). Two continuous maps $f, g : X \to Y$ are **homotopic** if you can slide one into the other without ever breaking it: there is a continuous family $f_t$ with $f_0 = f$ and $f_1 = g$. Two spaces have the **same homotopy type** if maps go both ways whose compositions are homotopic to the identity, so you can continuously inflate and deflate one into the other.
+Before going further we need the other pillar algebraic topology stands on: not what shapes *are* (homology) but what they can be *turned into* (homotopy). Two continuous maps $f, g : X \to Y$ are **homotopic** if you can slide one into the other without ever breaking it: there is a continuous family $f_t$ with $f_0 = f$ and $f_1 = g$, every $f_t$ a continuous map in the topological sense (\cite[Morris, Topology Without Tears, Ch. 5, p. 92]{morris2007topology}). Two spaces have the **same homotopy type** if maps go both ways whose compositions are homotopic to the identity, so you can continuously inflate and deflate one into the other.
 
-Homotopy is the precise version of "don't tear, don't glue": deformation under the rule that connected things stay connected. A disk shrinks to a point, and a solid ball shrinks to a point, but a circle does not and a sphere does not. The "how many times can one loop wind around a hole" count is the seed of the **fundamental group**.
-
-<figure>
-	<img style="width: 100%" src="konigsberg_bridges.png" alt="Euler's diagram of the seven bridges of Königsberg" />
-	<figcaption class="md">Euler's 1736 diagram of the seven bridges of Königsberg. The insight, keep only the *pattern of connections* and discard distances, is the founding act of topology, and the negative answer ("no tour crosses each bridge exactly once") the first theorem of the subject \cite{eulerbridges}.</figcaption>
-</figure>
+Homotopy is the precise version of "don't tear, don't glue": deformation under the rule that connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 5, p. 97]{morris2007topology}). A disk shrinks to a point, and a solid ball shrinks to a point, but a circle does not and a sphere does not. The "how many times can one loop wind around a hole" count is the seed of the **fundamental group**.
 
 The fundamental group $\pi_{1}(X,x)$, read *pi-one of X at x*, collects the loops in $X$ based at a point $x \in X$ (the $\in$, read *"in,"* means "$x$ is an element of $X$"), up to homotopy, with concatenation as the group operation. (The $\pi$ is the Greek letter pi; the subscript $1$ records that we probe **1-dimensional** holes with **1-dimensional** things, loops. Higher $\pi_n$ use $n$-spheres to probe $n$-dimensional holes, and appear below.) **Poincaré** invented it in 1895 as the algebraic window into spaces \cite{poincareanalysissitus}. Its most distinctive feature is that it is not generally commutative: going around loop $A$ then $B$ can differ from $B$ then $A$ in a space with enough crossing loops. That non-commutativity makes $\pi_1$ strictly richer than the (abelian) homology groups, and it is why, as we will see in the Math III HoTT lab, modern type theory treats *proofs of equality as paths*: the structure of points and paths between them carries the meaning of the space \cite{hottbook} \cite{youvan2024}.
 </div>
@@ -101,11 +101,11 @@ The fundamental group $\pi_{1}(X,x)$, read *pi-one of X at x*, collects the loop
 
 Now the central bookkeeping device, the tool that made the subject read as one connected account rather than a pile of invariants: the **exact sequence**. A sequence of groups and maps
 
-$$\cdots \to A_{k+1} \xrightarrow{\,f_{k+1}\,} A_{k} \xrightarrow{\,f_{k}\,} A_{k-1} \to \cdots$$
+$$\cdots \to A_{k+1} \xrightarrow{\,f_{k+1}\,} \underbrace{A_{k}}_{\substack{\text{the term at which}\\\text{we check exactness}}} \xrightarrow{\,f_{k}\,} A_{k-1} \to \cdots$$
 
 is **exact at $A_k$** if the image of $f_{k+1}$ equals the kernel of $f_k$, i.e. everything killed by $f_k$ came from exactly one step back. An **exact sequence** is one exact at every term. Its two extremities deserve names; a *short* exact sequence is
 
-$$0 \longrightarrow A \longrightarrow B \longrightarrow C \longrightarrow 0,$$
+$$0 \longrightarrow \underbrace{A}_{\text{injects into } B} \longrightarrow \underbrace{B}_{\text{the middle term}} \longrightarrow \underbrace{C}_{\substack{\text{the quotient of } B\\\text{by } A}} \longrightarrow 0,$$
 
 which simply says $A$ injects into $B$ and $C$ is the quotient $B/A$; the $0$ at each end says nothing extra conspires (no leftover kernel or cokernel).
 
@@ -119,7 +119,7 @@ The deep discovery, and it took mathematics by surprise, is that **almost every 
 
 The first and most famous exact sequence answers a practical question: if you know the homology of two overlapping halves of a space, and of their overlap, do you know the homology of the whole? Yes, via a long exact sequence. Stating it uses three signs. **$\cup$** (*union*) puts the two spaces together: $X = A \cup B$ is everything in $A$ or in $B$. **$\cap$** (*cap*) is the overlap: $A \cap B$ is what the two pieces share. Peano gave both their glyphs in 1895, in the same project that gave set theory its $\in$; the shapes are self-evident, one opens to *contain*, the other pinches to the *common* middle. **$\oplus$** (*direct sum*, loosely *"plus"*) glues two algebraic objects side by side as independent pieces, so an element of $G \oplus H$ is a pair $(g,h)$ added component-wise, like the $x$- and $y$-axes of $\mathbb{R} \oplus \mathbb{R}$ meeting only at the origin. In the sequence below, $H_k(A) \oplus H_k(B)$ lines up every $k$-hole of $A$ next to every $k$-hole of $B$. For a space $X = A \cup B$ with overlap $A \cap B$:
 
-$$\cdots \to H_{k}(A\cap B) \to H_{k}(A)\oplus H_{k}(B) \to H_{k}(X) \to H_{k-1}(A\cap B) \to \cdots$$
+$$\cdots \to \underbrace{H_{k}(A\cap B)}_{\substack{\text{the overlap}}} \to \underbrace{H_{k}(A)\oplus H_{k}(B)}_{\substack{\text{the two pieces}}} \to \underbrace{H_{k}(X)}_{\substack{\text{the whole space}}} \to H_{k-1}(A\cap B) \to \cdots$$
 
 This is the **Mayer–Vietoris sequence**, the divide-and-conquer algorithm of algebraic topology: split, compute the parts, glue the answers. Without it, computing the homology of a torus by hand is a chore; with it, it is two lines.
 
@@ -151,7 +151,7 @@ Why does this matter for us? Because the groupoid version of the theorem is one 
 <div class="md" data-mathlevel="80" data-optionaltitle="Covering spaces: the fundamental group as symmetry">
 ## Covering spaces: the fundamental group as symmetry
 
-There is a second, geometric way to understand $\pi_{1}(X)$, the one that makes the fundamental group feel like a **symmetry group** rather than an inventory of loops. A **covering space** $\tilde{X} \xrightarrow{\;p\;} X$ is a local homeomorphism that looks, over every small neighbourhood of $X$, like a stack of identical sheets. The universal example: the real line covers the circle by wrapping (each point of the line maps to a point of the circle), and the plane covers the torus in a doubly-periodic grid.
+There is a second, geometric way to understand $\pi_{1}(X)$, the one that makes the fundamental group feel like a **symmetry group** rather than an inventory of loops. A **covering space** $\tilde{X} \xrightarrow{\;p\;} X$ is a local homeomorphism (\cite[Morris, Topology Without Tears, Ch. 4, p. 88]{morris2007topology}) that looks, over every small neighbourhood of $X$, like a stack of identical sheets. The universal example: the real line covers the circle by wrapping (each point of the line maps to a point of the circle), and the plane covers the torus in a doubly-periodic grid.
 
 The beautiful fact, essentially due to **Poincaré** and made formal by the covering space theory of the 1920s to 1930s, is that $\pi_{1}(X,x)$ acts on the sheets by *permuting them* as you walk a loop, and that **the conjugacy classes of subgroups of $\pi_{1}(X)$ classify all covering spaces**. Write it as a dictionary:
 

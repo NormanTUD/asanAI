@@ -1111,6 +1111,14 @@ async function _init_app_finalization(LM) {
 	create_loss_landscape();
 	create_topological_analyzer();
 
+	// Space Warps parked in todo/ (see todo/space_warps_tab_snippets.txt)
+	// if (typeof NeuralSpaceWarps !== "undefined") {
+	// 	NeuralSpaceWarps.start({
+	// 		debug: true,
+	// 		target: "#space_warps_content"
+	// 	});
+	// }
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 }
 

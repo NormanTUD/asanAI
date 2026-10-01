@@ -33,6 +33,7 @@ function initLossLab() {
 			yaxis: { title: 'Loss Amount', range: [-5, 105] },
 			showlegend: false,
 			margin: { t: 20 },
+			font: { color: themeColor('#475569') },
 			paper_bgcolor: themeColor('#fff'),
 			plot_bgcolor: themeColor('#fff'),
 			annotations: [{
@@ -105,6 +106,7 @@ function initLossLab() {
 			yaxis: { title: 'Loss Magnitude', range: [0, 5] }, // Fixed range prevents disappearing
 			showlegend: false,
 			margin: { t: 20 },
+			font: { color: themeColor('#475569') },
 			paper_bgcolor: themeColor('#fff'),
 			plot_bgcolor: themeColor('#fff')
 		});

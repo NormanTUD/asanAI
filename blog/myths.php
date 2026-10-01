@@ -44,7 +44,7 @@ We talk to the assistant like a colleague, and some now worry it might *suffer*.
 
 \marginfig{turing.jpg}{Alan Turing, 1950. He proposed a *pragmatic* test, not a *definition* of mind — and the conflation of the two is what the myth runs on.}
 
-The **Turing Test** is usually read as "fool a human and you think." That was never it: Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss \cite[Turing, 1950]{turing1950computing}, not a definition of mind. "Does it think?" is really "where do we draw the line that puts *our* minds in *other* minds" — a question we have never been good at, with or without silicon \cite[the Turing Test]{septruringtest}.
+The **Turing Test** is usually read as "fool a human and you think." That was never it: Turing offered the Imitation Game as a *behavioral* way to sidestep a question he called too meaningless to discuss (\cite[Turing, 1950]{turing1950computing}), not a definition of mind. "Does it think?" is really "where do we draw the line that puts *our* minds in *other* minds" — a question we have never been good at, with or without silicon \cite[the Turing Test]{septruringtest}.
 
 ### The brain is a computer, so a computer can think
 

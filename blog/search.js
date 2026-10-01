@@ -17,7 +17,7 @@
 			'<div class="search-modal">' +
 				'<div class="search-header">' +
 					'<svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
-					'<input type="text" class="search-input" placeholder="Search across all modules…" autofocus spellcheck="false">' +
+					'<input type="text" class="search-input" placeholder="Search across all modules…" spellcheck="false">' +
 					'<button class="search-close" aria-label="Close search">&times;</button>' +
 				'</div>' +
 				'<div class="search-hints">' +

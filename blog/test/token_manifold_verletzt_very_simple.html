@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruchkanten im Gedankenraum — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.cwrap{background:#f5f0e6;border:1px solid var(--line);border-radius:11px;padding:6px;overflow:hidden}
+.cwrap canvas{border-radius:8px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+button.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1}
+.badge-out.warn{background:var(--amber-soft);color:var(--amber);border:1px solid #f0dcbc}
+.badge-out.bad{background:var(--rose-soft);color:var(--rose);border:1px solid #f2cdd9}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.eq{font-family:var(--mono);font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto}
+.eq .op{color:var(--teal);font-weight:700}
+.big-num{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:22px 0}
+.big-num .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 6px rgba(60,50,20,.03)}
+.big-num .c .v{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--teal);line-height:1.1}
+.big-num .c .v.amber{color:var(--amber)}
+.big-num .c .v.rose{color:var(--rose)}
+.big-num .c .l{font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.4}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Ist der Gedankenraum eines<br>Sprachmodells <em>glatt</em>?</h1>
+  <p class="sub">Fast jede KI-Arbeit nimmt stillschweigend an: Die „Gedanken" eines Modells liegen auf einer <b>glatten, gekrümmten Fläche</b> (einer Mannigfaltigkeit). Eine neue Arbeit baut einen Test dafür — und findet: <b>Bei echten Sprachmodellen ist das falsch.</b> Der Raum hat <em>Bruchkanten</em>. Und genau deshalb reagiert ein Sprachmodell manchmal so wild auf beinahe identische Prompts.</p>
+  <div class="chips">
+    <span class="chip">3 kleine Experimente</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+    <span class="chip">4 echte Modelle getestet</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Experiment: zwei gleiche Prompts, zwei Antworten</h2>
+<p>Das Ausgangsproblem: Ein Sprachmodell antwortet manchmal auf zwei beinahe <em>gleiche</em> Prompts völlig unterschiedlich. Die Hypothese des Papers: Manche Wörter liegen an einer <b>Bruchkante</b> im Gedankenraum. Verschiebt man den Prompt nur ein bisschen, „springt" die Antwort in eine ganz andere Ecke — die Antwort-Wolke <b>zerfällt in getrennte Häufchen</b>.</p>
+<div class="demo">
+  <h3>Zwei Prompts, zwei Antwort-Wolken</h3>
+  <p class="dsub">Ziehe den Regler „Bruchkante" nach rechts und schau, was mit Wolke B passiert.</p>
+  <canvas id="cvPrompt" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Wie nah liegt das Wort an einer Bruchkante?</span><b id="irrV">20 %</b></div>
+    <input type="range" id="irr" min="0" max="100" value="20">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Wolke A (stabil)</div><div class="v" id="sprA">—</div></div>
+    <div class="box amber"><div class="k">Wolke B (bewegt)</div><div class="v" id="sprB">—</div></div>
+  </div>
+  <div id="promptOut" class="badge-out ok">stabil: glatte Geometrie</div>
+</div>
+<div class="note">
+  <b>Was du siehst:</b> Solange das Wort an einer „glatten" Stelle liegt, bleibt die Antwortwolke zusammen. Liegt es an einer Bruchkante, <em>spaltet</em> sie sich auf — das Modell ist dort „blind". Das ist die <b>Prompt-Fragilität</b>, die man im Alltag spürt.
+</div>
+
+<h2><span class="n">2</span>Experiment: glatte Fläche oder Bruchkante?</h2>
+<p>Was heißt „glatte Fläche" (Mannigfaltigkeit)? Die Regel ist einfach: <b>Zoom in an jeden Punkt. Wenn das kleine Umfeld wie eine flache Scheibe aussieht, ist die Stelle glatt.</b> Ist es an einer Stelle <em>nicht</em> flach — eine Spitze, eine Einschnürung, ein plötzlicher Richtungswechsel — ist das eine <b>Singularität</b> (eine Bruchkante).</p>
+<div class="demo">
+  <h3>Zoom-Test: ist diese Stelle glatt?</h3>
+  <p class="dsub">Wähle eine Form, setze den Punkt, und zoom ein. Der Ausschnitt zeigt, wie die Nachbarschaft aussieht.</p>
+  <div class="btnrow">
+    <button id="shCircle" class="on">Kreis (glatte Fläche)</button>
+    <button id="shCusp">Cusp (Spitze)</button>
+  </div>
+  <div class="split">
+    <div class="cwrap"><canvas id="cvShape" width="200" height="200"></canvas></div>
+    <div class="cwrap"><canvas id="cvZoom" width="200" height="200"></canvas></div>
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Punkt auf der Form</span><b id="posV">0.50</b></div>
+    <input type="range" id="pos" min="0" max="100" value="50">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Zoom-Tiefe</span><b id="zoomV">0.10</b></div>
+    <input type="range" id="zoom" min="2" max="60" value="10" class="m">
+  </div>
+  <div id="zoomOut" class="badge-out ok">glatte Fläche — wie eine flache Scheibe</div>
+</div>
+
+<h2><span class="n">3</span>Der Trick: Dimension = Steigung</h2>
+<p>Wie misst man so etwas objektiv? Der Kerntrick des Papers: Zähl, wie viele Nachbarn in einem Kreis um einen Punkt liegen (das ist das „Volumen"). In einem d-dimensionalen Raum wächst das Volumen wie <b>r<sup>d</sup></b>. Trägst du das im Doppel-Logarithmus auf, ist die <b>Steigung</b> die Dimension.</p>
+<div class="eq">
+  Volumen(r) ≈ K · r<sup>d</sup> &nbsp;&nbsp;⟹&nbsp;&nbsp; Steigung im Log-Log-Plot = <span class="op">d</span>
+</div>
+<p>Glatter Raum = die Steigung bleibt gleich (oder fällt sanft). <b>Aber wenn die Steigung plötzlich <em>steigt</em>, ist da eine Bruchkante</b> — das ist das Warnsignal des Tests.</p>
+<div class="demo">
+  <h3>Baue eine Log-Log-Kurve: fällt sie oder knickt sie?</h3>
+  <p class="dsub">Zwei Steigungen, links und rechts vom Knickpunkt. Schau, was der Test meldet.</p>
+  <canvas id="cvDim" width="400" height="240"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Steigung links (kleine Radien)</span><b id="d1V">2.0</b></div>
+    <input type="range" id="d1" min="5" max="80" value="20">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Steigung rechts (große Radien)</span><b id="d2V">1.0</b></div>
+    <input type="range" id="d2" min="5" max="80" value="10" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Position des Knicks</span><b id="kpV">0.50</b></div>
+    <input type="range" id="kp" min="20" max="80" value="50" class="v">
+  </div>
+  <div id="dimOut" class="badge-out ok">Steigung fällt — erlaubt (glatt / Bündel)</div>
+</div>
+
+<h2><span class="n">4</span>Was sie an echten Modellen gemessen haben</h2>
+<p>Die Autoren haben den Test an <b>vier echten Sprachmodellen</b> durchgezogen (je 12 Stunden Rechenzeit pro Modell, fast alles für die Distanzmatrix). Das Ergebnis ist eindeutig:</p>
+<div class="big-num">
+  <div class="c"><div class="v">4 / 4</div><div class="l">Modelle verwerfen die „glatte Fläche"-Hypothese (Manifold)</div></div>
+  <div class="c"><div class="v amber">3 / 4</div><div class="l">verwerfen auch die mildere „Bündel"-Hypothese</div></div>
+  <div class="c"><div class="v rose">3×10⁻⁸</div><div class="l">kleinster p-Wert (GPT2) — auch nach Streichung von Zufallstreffern</div></div>
+  <div class="c"><div class="v">20 … 531</div><div class="l">Dimension reicht bei GPT2 von 20 bis 531 — nicht konstant!</div></div>
+</div>
+<p>Bei GPT2 zeigt die Verteilung der Dimensionen <b>drei Gipfel</b>: etwa 20 (Zahlen, Monate, Wochentage), etwa 389 (einzelne Wörter), etwa 531 (meist Wortfragmente). Es gibt sogar Wörter mit <b>Dimension 0</b> — isolierte Punkte, die im Gedankenraum unendlich weit von allem anderen entfernt sind.</p>
+
+<h2><span class="n">5</span>Warum das wichtig ist</h2>
+<ul>
+  <li><b>Prompts sind nicht portabel:</b> Zwei Modelle mit demselben Wörterbuch (Llemma7B und Mistral7B, beide 32 016 Tokens) haben völlig andere Geometrien (Median-Dimension 4096 vs. 48). Was bei dem einen „glatt" ist, ist beim anderen eine Bruchkante.</li>
+  <li><b>Kontext heilt nicht:</b> Ein längeres Kontext-Fenster „verwischt" die Singularitäten nicht weg — für jedes Fenster gibt es ein längeres, an dem sie wieder auftauchen.</li>
+  <li><b>Singularitäten erreichen die Ausgabe:</b> Unter bestimmten Bedingungen bleiben die Bruchkanten auch im Output erhalten.</li>
+</ul>
+
+<h2><span class="n">6</span>Die Grenzen (honesty corner)</h2>
+<ul>
+  <li><b>Keine Verwerfung heißt nichts:</b> „Der Test meldet nichts" ist kein Beweis, dass es glatt ist (z. B. Pythia6.9B). Nur eine <em>Verwerfung</em> ist eine Aussage.</li>
+  <li><b>Verwerfung sagt nicht, welche Bruchkante:</b> Spitze? Einschnürung? Dimensionssprung? Der Test meldet es, aber nicht die Art.</li>
+  <li><b>Die zentrale Limitation:</b> Der Test ist nur für Radien <em>unterhalb</em> des „Reach" gültig — und der Reach ist schwer zu schätzen.</li>
+  <li><b>Randpunkte werden übersehen:</b> Die einzige bekannte Schwäche — Sensitivität kostet Spezifität, offen berichtet.</li>
+</ul>
+
+<h2><span class="n">7</span>Woher das stammt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>M. Robinson, S. Dey &amp; T. Chiang (2025):</b> „Token Embeddings Violate the Manifold Hypothesis", <a href="https://arxiv.org/abs/2504.01002">NeurIPS 2025, arXiv:2504.01002</a></p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Die Wolken und Formen sind didaktische Nachbauten (keine echten Modellgewichte). Alle Prozent- und p-Werte stammen aus den Tabellen 1–10 und Abbildungen 1–8 des Original-Papers. „Manifold" wird hier mit „glatte Fläche" übersetzt, „Fiber Bundle" mit „Bündel".</p>
+</div>
+
+<footer>
+  Eine einfache interaktive Erklärung ohne Formeln. Original: Robinson, Dey &amp; Chiang (2025), NeurIPS 2025, arXiv:2504.01002.<br>
+  Alles läuft lokal im Browser — keine Daten verlassen diese Seite. · Volle Version: <a href="token_manifold_verletzt.html">token_manifold_verletzt.html</a> · Einfache Version: <a href="token_manifold_verletzt_simple.html">…_simple.html</a>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v);}
+  function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  // ---------- Demo 1: prompt fragility ----------
+  var c1=$('cvPrompt').getContext('2d');
+  var W1=400,H1=260;
+  function drawPrompt(){
+    var irr=+($('irr').value)/100;
+    $('irrV').textContent=Math.round(irr*100)+' %';
+    c1.clearRect(0,0,W1,H1);
+    c1.fillStyle='#f5f0e6';c1.fillRect(0,0,W1,H1);
+    var N=90;
+    var rA=rng32(11), rB=rng32(22);
+    var spreadA=14;
+    function scatter(cx,cy,spread,n,col,rnd){
+      for(var i=0;i<n;i++){
+        var x=cx+gauss(rnd)*spread, y=cy+gauss(rnd)*spread;
+        x=clamp(x,10,W1-10);y=clamp(y,10,H1-10);
+        c1.beginPath();c1.arc(x,y,3,0,Math.PI*2);c1.fillStyle=col;c1.fill();
+      }
+    }
+    scatter(90,H1/2,spreadA,N,'rgba(15,118,110,.7)',rA);
+    // B: split into two clusters as irr grows
+    var splitP=Math.min(0.9, irr*1.1);
+    var spreadB=14+irr*30;
+    var n1=Math.round(N*(1-splitP/2)), n2=Math.round(N*splitP/2);
+    scatter(300,H1/2,spreadB,n1,'rgba(190,24,93,.6)',rB);
+    if(n2>0){
+      scatter(300+40,H1/2-30,16,n2,'rgba(180,83,9,.75)',rB);
+    }
+    c1.font='600 12px system-ui';c1.fillStyle='#2b2e3a';
+    c1.fillText('Prompt A',70,18);
+    c1.fillText('Prompt B',280,18);
+    // spread measure (std of B)
+    var meanX=0;for(var i=0;i<N;i++){meanX+=0;}
+    var sprB=spreadB*(splitP>0.3?1.5:1);
+    $('sprA').textContent='niedrig';
+    $('sprB').textContent=sprB<40?'niedrig':sprB<70?'mittel':'hoch';
+    var out=$('promptOut');
+    if(splitP>0.5){out.className='badge-out bad';out.textContent='instabil: Antwort zerfällt → Bruchkante';}
+    else if(splitP>0.2){out.className='badge-out warn';out.textContent='leicht instabil';}
+    else{out.className='badge-out ok';out.textContent='stabil: glatte Geometrie';}
+  }
+  $('irr').addEventListener('input',drawPrompt);
+  drawPrompt();
+
+  // ---------- Demo 2: zoom manifold ----------
+  var shape='circle';
+  var cS=$('cvShape').getContext('2d'), cZ=$('cvZoom').getContext('2d');
+  function shapePt(t){
+    if(shape==='circle'){var a=t*Math.PI*2;return [Math.cos(a),Math.sin(a)];}
+    else{var s=t*2-1;return [s*s, s*s*s];} // cusp at t=0.5
+  }
+  function drawShape(){
+    var W=200,H=200;
+    cS.clearRect(0,0,W,H);
+    cS.fillStyle='#f5f0e6';cS.fillRect(0,0,W,H);
+    var pos=+($('pos').value)/100;
+    var pts=[];
+    for(var i=0;i<=200;i++){pts.push(shapePt(i/200));}
+    // bounds
+    var xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+    pts.forEach(function(p){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);});
+    var S=Math.min((W-40)/(xmax-xmin||1),(H-40)/(ymax-ymin||1));
+    function X(x){return W/2+(x-(xmin+xmax)/2)*S;}
+    function Y(y){return H/2-(y-(ymin+ymax)/2)*S;}
+    cS.strokeStyle='#0f766e';cS.lineWidth=3;
+    cS.beginPath();
+    pts.forEach(function(p,i){if(i===0)cS.moveTo(X(p[0]),Y(p[1]));else cS.lineTo(X(p[0]),Y(p[1]));});
+    if(shape==='circle')cS.closePath();
+    cS.stroke();
+    var pt=shapePt(pos);
+    cS.beginPath();cS.arc(X(pt[0]),Y(pt[1]),8,0,Math.PI*2);cS.fillStyle='#be185d';cS.fill();
+    cS.strokeStyle='#fff';cS.lineWidth=2;cS.stroke();
+    drawZoom(pos);
+  }
+  function drawZoom(pos){
+    var W=200,H=200;
+    cZ.clearRect(0,0,W,H);
+    cZ.fillStyle='#fffdf8';cZ.fillRect(0,0,W,H);
+    var zoom=+($('zoom').value)/100; // 0.02..0.6 world units half-width
+    var pos=+($('pos').value)/100;
+    var center=shapePt(pos);
+    var pts=[];
+    for(var i=0;i<=400;i++){pts.push(shapePt(i/400));}
+    cZ.strokeStyle='#be185d';cZ.lineWidth=3;
+    cZ.beginPath();
+    var started=false;
+    pts.forEach(function(p){
+      var dx=(p[0]-center[0])/zoom, dy=(p[1]-center[1])/zoom;
+      if(Math.abs(dx)<1.2&&Math.abs(dy)<1.2){
+        var x=W/2+dx*W*0.4, y=H/2-dy*H*0.4;
+        if(!started){cZ.moveTo(x,y);started=true;}else cZ.lineTo(x,y);
+      } else {started=false;}
+    });
+    cZ.stroke();
+    cZ.beginPath();cZ.arc(W/2,H/2,6,0,Math.PI*2);cZ.fillStyle='#2b2e3a';cZ.fill();
+    // label
+    cZ.font='10px system-ui';cZ.fillStyle='#9aa0b0';
+    cZ.fillText('Zoom in',8,16);
+    // diagnosis
+    var out=$('zoomOut');
+    var isCusp=shape==='cusp';
+    var nearTip=isCusp && Math.abs(pos-0.5)<0.12;
+    if(isCusp&&nearTip){out.className='badge-out bad';out.textContent='Bruchkante — keine flache Scheibe (Singularität)';}
+    else{out.className='badge-out ok';out.textContent='glatte Fläche — wie eine flache Scheibe';}
+  }
+  function shapeChanged(){drawShape();}
+  $('shCircle').addEventListener('click',function(){$('shCircle').className='on';$('shCusp').className='';shape='circle';drawShape();});
+  $('shCusp').addEventListener('click',function(){$('shCusp').className='on';$('shCircle').className='';shape='cusp';drawShape();});
+  $('pos').addEventListener('input',function(){$('posV').textContent=(+($('pos').value)/100).toFixed(2);drawShape();});
+  $('zoom').addEventListener('input',function(){$('zoomV').textContent=(+($('zoom').value)/100).toFixed(2);drawShape();});
+  drawShape();
+
+  // ---------- Demo 3: dimension = slope ----------
+  var c3=$('cvDim').getContext('2d');
+  var W3=400,H3=240;
+  function drawDim(){
+    c3.clearRect(0,0,W3,H3);
+    c3.fillStyle='#f5f0e6';c3.fillRect(0,0,W3,H3);
+    var d1=+($('d1').value)/10, d2=+($('d2').value)/10, kp=+($('kp').value)/100;
+    $('d1V').textContent=d1.toFixed(1);$('d2V').textContent=d2.toFixed(1);$('kpV').textContent=kp.toFixed(2);
+    var pad={l:34,r:14,t:16,b:26};
+    var pw=W3-pad.l-pad.r, ph=H3-pad.t-pad.b;
+    // x = log radius 0..1 (normalized), y = log volume
+    function yAt(x){
+      // build a continuous-ish curve: slope d1 left of kp, d2 right, continuous at kp
+      var yk=0;
+      if(x<kp)return yk+d1*(kp-x)*0.6;
+      else return yk+d2*(x-kp)*0.6;
+    }
+    var ymin=1e9,ymax=-1e9;
+    for(var i=0;i<=200;i++){var x=i/200;var y=yAt(x);ymin=Math.min(ymin,y);ymax=Math.max(ymax,y);}
+    ymin-=0.3;ymax+=0.3;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(y-ymin)/(ymax-ymin)*ph;}
+    c3.strokeStyle='#e7e0d0';c3.lineWidth=1;
+    for(var i=0;i<=4;i++){var gy=pad.t+ph*i/4;c3.beginPath();c3.moveTo(pad.l,gy);c3.lineTo(W3-pad.r,gy);c3.stroke();}
+    c3.strokeStyle='#0f766e';c3.lineWidth=3;
+    c3.beginPath();
+    for(var i=0;i<=200;i++){var x=i/200;var px=X(x),py=Y(yAt(x));if(i===0)c3.moveTo(px,py);else c3.lineTo(px,py);}
+    c3.stroke();
+    // kink marker
+    var kx=X(kp),ky=Y(yAt(kp));
+    c3.beginPath();c3.arc(kx,ky,6,0,Math.PI*2);c3.fillStyle=(d2>d1?'#be185d':'#b45309');c3.fill();
+    c3.strokeStyle='#fff';c3.lineWidth=2;c3.stroke();
+    c3.font='10px system-ui';c3.fillStyle='#9aa0b0';c3.textAlign='center';
+    c3.fillText('log Radius →',W3/2,H3-8);
+    c3.textAlign='left';
+    c3.fillText('log Volumen',6,12);
+    var out=$('dimOut');
+    if(d2>d1+0.05){out.className='badge-out bad';out.textContent='Steigung STEIGT → Bruchkante! (Bündel verletzt)';}
+    else{out.className='badge-out ok';out.textContent='Steigung fällt — erlaubt (glatt / Bündel)';}
+  }
+  ['d1','d2','kp'].forEach(function(id){$(id).addEventListener('input',drawDim);});
+  drawDim();
+})();
+</script>
+</body>
+</html>

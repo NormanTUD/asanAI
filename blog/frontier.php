@@ -18,7 +18,7 @@ This chapter surveys the research frontier of 2025, the techniques and ideas tha
 <div class="md">
 ## Constitutional AI (CAI)
 
-Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2022instructgpt}'s human-labelling with **AI self-critique against a written constitution**:
+Bai et al. (Anthropic, 2022) replaced most of (\cite[Ouyang et al., 2022]{ouyang2022instructgpt})'s human-labelling with **AI self-critique against a written constitution**:
 
 1. The model generates a response.
 2. The model critiques it against a constitutional principle (“be helpful, harmless, honest”).
@@ -28,7 +28,7 @@ Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2
 
 A typical constitution entry: *“Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response.”*
 
-CAI reduces human labelling by ~10× while matching \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
+CAI reduces human labelling by ~10× while matching (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Sparse Autoencoders (SAE loss)">
@@ -44,11 +44,11 @@ $$
 
 The L1 penalty forces only a few features to be active for any input. Anthropic's work on Claude 3 Sonnet (2024) found:
 
-* A single SAE feature activated on **\cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge** references, across languages, image descriptions, and even ASCII art.
+* A single SAE feature activated on **Golden Gate Bridge** references, across languages, image descriptions, and even ASCII art (\cite[Templeton et al., 2024]{anthropic2024goldengate}).
 * Features for **code bugs**, **refusal**, **deception** could be identified.
 * Some features are **universal** across model families (Llama, GPT, Claude).
 
-The “**\cite[Templeton et al., 2024]{anthropic2024goldengate} Claude**” demonstration (Anthropic, 2024) amplified a single feature to make the model obsessed with the \cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
+The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
 </div>
 
 <div class="md">
@@ -67,7 +67,7 @@ Techniques enabling this:
 * **RoPE scaling** (\cite[Su et al., 2021]{su2021rope}): interpolate or extrapolate rotary position embeddings. **YaRN** (\cite[Peng et al., 2023]{peng2023yarn}) extends this with frequency-aware scaling.
 * **ALiBi** (\cite[Press et al., 2022]{press2022alibi}): linear bias to attention scores; doesn't require position embedding changes.
 * **Ring Attention** (\cite[Li2023Seqparallel]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.
-* **InfLLM** (Mini\cite[Ma et al., 2024]{ma2024bitnet}): training-free long-context via KV compression.
+* **InfLLM**: training-free long-context via KV compression (\cite[Ma et al., 2024]{ma2024bitnet}).
 * **Landmark Attention** (\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}: append “landmark” tokens summarizing past context.
 
 The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle. The reason is poorly understood but reproducible across architectures.
@@ -88,9 +88,9 @@ The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="Mixture of Depths (MoD) routing">
-## \cite[Sparse Expert Models]{bubeck2023moeoverview} of Depths (MoD)
+## Mixture of Depths (MoD)
 
-Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers**. Easy tokens skip; hard tokens use full depth.
+Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\cite[Bubeck et al., 2023]{bubeck2023moeoverview}). Easy tokens skip; hard tokens use full depth.
 
 $$
 \text{tokens through layer } l = \begin{cases} \text{skip} & \text{if } p_\theta(x) < r \\ \text{process} & \text{otherwise} \end{cases}
@@ -102,13 +102,13 @@ Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **con
 </div>
 
 <div class="md">
-## Test-Time Training (\cite[Sun et al., 2024]{sun2024ttt})
+## Test-Time Training
 
-A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et al., 2024][]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
+A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
 
 For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
 
-The trade-off: latency. \cite[Sun et al., 2024]{sun2024ttt} adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
+The trade-off: latency. (\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
 </div>
 
 <div class="md">
@@ -138,7 +138,7 @@ Key 2024–2025 results:
 * **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.
 * **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.
 
-The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open \cite[Du et al., 2023]{du2023multiagent}.
+The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open (\cite[Du et al., 2023]{du2023multiagent}).
 </div>
 
 <div class="md">
@@ -185,7 +185,7 @@ From the Mechanistic Interpretability chapter's foundation, frontier work in 202
 * **Sparse autoencoders** (see above), millions of features per model.
 * **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
 * **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
-* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** \cite[Zou et al., 2023]{zou2023repeng} is the umbrella term.
+* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** (\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.
 
 The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>

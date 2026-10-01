@@ -101,6 +101,8 @@ Even though in this example, we treat tokens as words, they can also be parts of
 In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, “You shall know a word by the company it keeps” (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthorlastnameand{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
 
 Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of “how parallel are these two arrows” we still use for semantic search. Their paper, “\citetitle{salton1975vectorspace}”, is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
+
+Proximity is what makes that geometry *useful*, not merely descriptive. Once similar words sit near each other, a model that has memorized a handful of sentences can **generalize** to a whole class of new ones, because swapping a word for a spatial neighbor keeps the sentence plausible — and doing that at several positions at once multiplies the number of sentences one embedding covers. You need to see each word used at least once, but never every sentence you will ever understand: the network, like a reader, has met all the words before, just not all their combinations (\cite[Olah, 2014]{colah2014nlp}). Why that transfer falls off with distance, and how the sparse “foam” of clusters, filaments, and voids makes it work, is the subject of <a href="foam_of_meaning">The foam of meaning</a>.
 </div>
 
 <div class="md">
@@ -117,7 +119,7 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-1d" style="height: 180px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-1d" data-plot-theme="self" style="height: 180px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Cold + Warm" onkeyup="calcEvo('1d')">
 	<div id="res-1d-wrapper">
@@ -135,18 +137,33 @@ Human language is far too nuanced for a single axis. To capture independent feat
 Because these positions are derived from logical relationships in data, the space itself becomes “computable”. We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
-<div class="topic-block" data-optionaltitle="Vector arithmetic: the word2vec analogy" data-mathlevel="50">
-<div style="text-align: center; margin: 1.5em 0; font-size: 1.2em;">
-$$\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}}$$
+<div class="topic-block" data-optionaltitle="Analogies as a constant difference vector" data-mathlevel="50">
+<div style="text-align: center; margin: 1em 0; font-size: 1.05em; line-height: 2.2;">
+$$\vec{v}_{\text{woman}} - \vec{v}_{\text{man}} \;\approx\; \vec{v}_{\text{aunt}} - \vec{v}_{\text{uncle}}$$
+$$\vec{v}_{\text{woman}} - \vec{v}_{\text{man}} \;\approx\; \vec{v}_{\text{queen}} - \vec{v}_{\text{king}}$$
 </div>
 </div>
 
-<div class="md" data-mathlevel="45">
-This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec. What makes it remarkable is *how* it arises: Olah stresses that none of these regularities — similar words landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was trained only to do a simple task, and the structures "popped out of the optimization process" as a side effect \cite[Olah, 2014]{colah2014nlp}.
+<div class="md" data-mathlevel="45" data-optionaltitle="A relationship is a direction">
+The deeper point is that a *relationship* is itself a vector. The arrow from “man” to “woman” is the same arrow as from “uncle” to “aunt”, or from “king” to “queen”: gender, in this space, is one fixed direction. Carry it to any male word and you land on the matching female word — apply it to “king” and you get “queen”, to “uncle” and you get “aunt”. A relationship is not a *point* you look up; it is a *direction* you can reuse, and that reusability is what lets you *do arithmetic* with meaning.
+
+No one programmed this. \citeauthor{mikolov2013word2vec} popularized these analogies with Word2Vec, but what makes them remarkable is *how* they arise: \citeauthor{colah2014nlp} stresses that none of these regularities — synonyms landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was only trained to do a simple task, and the whole geometric structure “popped out of the optimization process” as a side effect (\cite[Olah, 2014]{colah2014nlp}).
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-2d" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-diff-vec" style="height: 440px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Three male→female pairs.
+        The <span style="color:#ec4899; font-weight:bold;">pink arrows</span> are the difference vectors
+        $\vec{v}_{\text{female}} - \vec{v}_{\text{male}}$: Woman−Man, Aunt−Uncle, Queen−King.
+        All three are the <b>identical arrow</b> — the “gender” direction.
+        Pick it up at any male word and it drops you on the matching female word.
+        That single reusable direction is what makes the arithmetic above work.
+    </div>
+</section>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-2d" data-plot-theme="self" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Man + Power" onkeyup="calcEvo('2d')">
 	<div id="res-2d-wrapper">
@@ -186,7 +203,7 @@ $$ d(\mathbf{A}, \mathbf{B}) = \sqrt{\sum_{i=1}^{n} (B_i - A_i)^2} $$
 </div>
 
 <div class="smart-quote" data-cite="heraclitus500fragments">
-War (as in 'the tension between opposites') is the father of all things.
+War (as in: 'the tension between opposites') is the father of all things.
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -303,13 +320,13 @@ The same "many inputs, one shared space" move is what makes it possible to put t
 > And by mapping images and words into the same representation, we can
 > classify images of classes we've never seen!
 
-\cite[Olah, 2015]{colah2015types} — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show \cite[Olah, 2014]{colah2014nlp}.
+(\cite[Olah, 2015]{colah2015types}) — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show (\cite[Olah, 2014]{colah2014nlp}).
 
 A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
 
 In other words, a translation Transformer can be described as translating **paths through meaning-space**, identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
 
-This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** \cite[Vaswani et al., 2017]{vaswani2017attention}. This relational map is what gets preserved and transferred, **not any individual coordinate** \cite[Elhage et al., 2021]{elhage2021mathematical}.
+This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** (\cite[Vaswani et al., 2017]{vaswani2017attention}). This relational map is what gets preserved and transferred, **not any individual coordinate** (\cite[Elhage et al., 2021]{elhage2021mathematical}).
 
 </div>
 
@@ -434,7 +451,7 @@ To them, I said, the truth would be literally nothing but the shadows of the ima
 </div>
 
 <div class="md" data-mathlevel="45">
-Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it. The idea that an image and a word can even *share* a single representation — so that a model classifies images of classes it has never been shown, by landing them near the right word vector — is older than the hypothesis \cite[Olah, 2014]{colah2014nlp}.
+Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it. The idea that an image and a word can even *share* a single representation — so that a model classifies images of classes it has never been shown, by landing them near the right word vector — is older than the hypothesis (\cite[Olah, 2014]{colah2014nlp}).
 
 The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth. A vision model that learns “dog” from millions of photographs, a language model that learns “dog” from billions of sentences, and an audio model that learns “dog” from spectrograms of barking, all three converge to place “dog” in the *same neighborhood*, near “cat” and “wolf,” far from “piano” and “thunder.” The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
 
@@ -652,7 +669,7 @@ This is why **scaling works**: adding more parameters doesn't add proportionally
 degrees of freedom, it adds more *resolution* for describing the same
 low-dimensional structure. It's like going from a 100×100 pixel image to a
 1000×1000 pixel image of the same scene, more numbers, but the same underlying
-reality.
+reality. A precise, checkable condition under which the curse of dimensionality is provably overcome — the **Barron class**: functions whose Fourier transform has a finite first moment $\int_{\mathbb{R}^d} \|\xi\|\,|\hat{g}(\xi)|\,d\xi < \infty$ — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 8.2.
 </div>
 
 <div class="topic-block" data-optionaltitle="Intrinsic vs. ambient dimension" data-mathlevel="55">
@@ -965,6 +982,8 @@ This is not just a mathematical curiosity. The Voronoi tessellation is **mathema
 * **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
 
 Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token “owns” that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
+
+The same geometry, pushed further — the latent semantic manifold, the Voronoi *margin* as a measure of genuine ambiguity, the linear growth of the expressibility gap, and the convexity of natural properties (criterion P) — is developed in [The foam of meaning](foam_of_meaning).
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">

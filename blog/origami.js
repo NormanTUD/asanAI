@@ -8,7 +8,6 @@ const OG = {
 	registry: [],
 	observer: null,
 	redos: [],
-	regen: [],
 
 	isDark() { return (typeof isDarkMode === 'function') ? isDarkMode() : false; },
 
@@ -65,6 +64,18 @@ const OG = {
 			});
 		}, { rootMargin: margin });
 		this.registry.forEach((r) => { if (!r.done) this.observer.observe(r.el); });
+	},
+
+	addRegen(el, fn) {
+		const block = el && (el.closest('.og-demo') || el.closest('.og-card'));
+		if (!block || block.querySelector('.og-regen-btn')) return;
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'og-btn og-btn-sec og-regen-btn';
+		btn.title = 'Neue Zufallsdaten generieren (Resample)';
+		btn.textContent = '🎲 Neu würfeln';
+		btn.addEventListener('click', (e) => { e.stopPropagation(); try { fn(); } catch (err) { console.error('origami resample failed:', err); } });
+		block.appendChild(btn);
 	}
 };
 
@@ -164,6 +175,7 @@ function ogInitNonsep() {
 	const setupSel = document.getElementById('og-setup');
 	gen(setupSel ? setupSel.value : 'egg'); drawNonsep();
 	OG.redos.push(drawNonsep);
+	OG.addRegen(c, () => { gen(setupSel ? setupSel.value : 'egg'); drawNonsep(); });
 }
 
 /* ------------------------------------------------------------------ Demo 2 */
@@ -172,8 +184,9 @@ function ogInitRelu() {
 	if (!cb || !ca) return;
 	const bx = cb.getContext('2d'), ax = ca.getContext('2d');
 	const W = 360, H = 320, cx = 190, cy = 160, SC = 62;
-	const pts = [];
-	for (let i = 0; i < 220; i++) { const a = Math.random() * OGT, r = 0.4 + Math.random() * 0.9; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
+	let pts = [];
+	function fillRelu() { pts.length = 0; for (let i = 0; i < 220; i++) { const a = Math.random() * OGT, r = 0.4 + Math.random() * 0.9; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } }
+	fillRelu();
 	function drawGrid(g) {
 		const p = OG.pal();
 		g.fillStyle = p.bg; g.fillRect(0, 0, W, H);
@@ -207,6 +220,7 @@ function ogInitRelu() {
 	document.getElementById('og-hp-b').oninput = drawRelu;
 	drawRelu();
 	OG.redos.push(drawRelu);
+	OG.addRegen(cb, () => { fillRelu(); drawRelu(); });
 }
 
 /* ------------------------------------------------------------------ Demo 3 */
@@ -255,9 +269,9 @@ function ogInitFold3d() {
 	const ctx = c.getContext('2d');
 	const W = c.width, H = c.height, scale = 100;
 	let yaw = 0.7, pitch = 0.42;
-	const inner = [], outer = [];
-	for (let i = 0; i < 320; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.25; inner.push([Math.cos(a) * r, Math.sin(a) * r]); }
-	for (let i = 0; i < 620; i++) { const a = Math.random() * OGT, r = 0.9 + Math.random() * 0.4; outer.push([Math.cos(a) * r, Math.sin(a) * r]); }
+	let inner = [], outer = [];
+	function fillFold3d() { inner.length = 0; outer.length = 0; for (let i = 0; i < 320; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.25; inner.push([Math.cos(a) * r, Math.sin(a) * r]); } for (let i = 0; i < 620; i++) { const a = Math.random() * OGT, r = 0.9 + Math.random() * 0.4; outer.push([Math.cos(a) * r, Math.sin(a) * r]); } }
+	fillFold3d();
 	const normals = [0, 1, 2].map((k) => { const a = k * OGT / 3; return [Math.cos(a), Math.sin(a)]; });
 	const C = 0.6, PLANE = 0.3;
 	function foldHeight(x, y, t) { let z = 0; for (const [nx, ny] of normals) z += Math.max(0, nx * x + ny * y - C); return z * t; }
@@ -312,6 +326,7 @@ function ogInitFold3d() {
 	};
 	drawFold3d();
 	OG.redos.push(drawFold3d);
+	OG.addRegen(c, () => { fillFold3d(); drawFold3d(); });
 }
 
 /* ------------------------------------------------------------------ Demo 5 */
@@ -326,20 +341,21 @@ function ogInitCascade() {
 		let seed = 12345; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280 - 0.5; }
 		const layers = [];
 		for (let l = 0; l < L; l++) { const inS = l === 0 ? 2 : N, Wt = [], b = []; for (let i = 0; i < N; i++) { const row = []; for (let j = 0; j < inS; j++) row.push(rnd() * 2); Wt.push(row); b.push(rnd() * 0.8); } layers.push({ W: Wt, b }); }
-		const wOut = []; for (let i = 0; i < N; i++) wOut.push(rnd() * 2);
-		function forward(x, y) { let a = [x, y]; for (const { W, b } of layers) { const na = []; for (let i = 0; i < W.length; i++) { let s = b[i]; for (let j = 0; j < W[i].length; j++) s += W[i][j] * a[j]; na.push(Math.max(0, s)); } a = na; } let s = 0; for (let i = 0; i < a.length; i++) s += wOut[i] * a[i]; return s; }
+		const BASE = 1 << N;
+		function regionKey(x, y) { let a = [x, y], key = 0; for (const { W, b } of layers) { let bits = 0; const na = []; for (let i = 0; i < W.length; i++) { let s = b[i]; for (let j = 0; j < W[i].length; j++) s += W[i][j] * a[j]; if (s > 0) bits |= (1 << i); na.push(Math.max(0, s)); } key = key * BASE + bits; a = na; } return key; }
 		const p = OG.pal();
 		const img = ctx.createImageData(W, H);
 		const cx = W / 2, cy = H / 2, SC = 120;
+		const seen = new Set();
 		for (let py = 0; py < H; py += 2) for (let px = 0; px < W; px += 2) {
-			const x = (px - cx) / SC, y = (cy - py) / SC, v = forward(x, y);
-			const hue = ((Math.floor(v * 3) * 47) % 360 + 360) % 360;
-			const rgb = hsv2rgb(hue / 360, p.dark ? 0.5 : 0.4, v > 0 ? (p.dark ? 0.55 : 0.7) : (p.dark ? 0.16 : 0.9));
+			const x = (px - cx) / SC, y = (cy - py) / SC;
+			const key = regionKey(x, y); seen.add(key);
+			const hue = ((key * 0.6180339887) % 1) * 360;
+			const rgb = hsv2rgb(hue / 360, 0.55, p.dark ? 0.6 : 0.75);
 			for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) { const idx = ((py + dy) * W + (px + dx)) * 4; img.data[idx] = rgb[0]; img.data[idx + 1] = rgb[1]; img.data[idx + 2] = rgb[2]; img.data[idx + 3] = 255; }
 		}
 		ctx.putImageData(img, 0, 0);
-		const regions = Math.pow(N, L);
-		document.getElementById('og-cas-out').innerHTML = 'Upper bound on linear regions ≈ N<sup>L</sup> = ' + N + '<sup>' + L + '</sup> = <b>' + regions + '</b> — depth multiplies boundaries exponentially, not additively.';
+		document.getElementById('og-cas-out').innerHTML = 'Distinct linear regions in view: <b>' + seen.size + '</b> of at most ' + N + '<sup>' + L + '</sup> = ' + Math.pow(N, L) + ' — each flat colour is one region where the net is a single linear map. Depth multiplies boundaries exponentially, not additively.';
 	}
 	document.getElementById('og-cas-l').oninput = drawCascade;
 	document.getElementById('og-cas-n').oninput = drawCascade;
@@ -352,9 +368,9 @@ function ogInitShear() {
 	const c = document.getElementById('og-shear'); if (!c) return;
 	const ctx = c.getContext('2d');
 	const W = c.width, H = c.height, cx = W / 2, cy = H / 2, SC = 95;
-	const inner = [], outer = [];
-	for (let i = 0; i < 80; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.15; inner.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
-	for (let i = 0; i < 210; i++) { const a = Math.random() * OGT, r = 0.65 + Math.random() * 0.32; outer.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); }
+	let inner = [], outer = [];
+	function fillShear() { inner.length = 0; outer.length = 0; for (let i = 0; i < 80; i++) { const a = Math.random() * OGT, r = 0.15 + Math.random() * 0.15; inner.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } for (let i = 0; i < 210; i++) { const a = Math.random() * OGT, r = 0.65 + Math.random() * 0.32; outer.push({ x: Math.cos(a) * r, y: Math.sin(a) * r }); } }
+	fillShear();
 	let step = 0;
 	function peel(pt, L) {
 		let x = pt.x, y = pt.y;
@@ -381,13 +397,15 @@ function ogInitShear() {
 	document.getElementById('og-shear-step').onclick = () => { step = (step % 12) + 1; document.getElementById('og-shear-l').value = step; drawShear(); };
 	drawShear();
 	OG.redos.push(drawShear);
+	OG.addRegen(c, () => { fillShear(); drawShear(); });
 }
 
 /* ------------------------------------------------------------------ Demo 7 */
 function ogInitTuning() {
 	const el = document.getElementById('og-tuning'); if (!el) return;
-	const N = 900, data = [];
-	for (let i = 0; i < N; i++) { const a = Math.random() * OGT; let r, cls; const u = Math.random(); if (u < 0.25) { r = 0.15 + Math.random() * 0.15; cls = 0; } else if (u < 0.55) { r = 0.45 + Math.random() * 0.15; cls = 1; } else { r = 0.8 + Math.random() * 0.3; cls = 2; } data.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cls }); }
+	const N = 900; let data = [];
+	function fillTuning() { data.length = 0; for (let i = 0; i < N; i++) { const a = Math.random() * OGT; let r, cls; const u = Math.random(); if (u < 0.25) { r = 0.15 + Math.random() * 0.15; cls = 0; } else if (u < 0.55) { r = 0.45 + Math.random() * 0.15; cls = 1; } else { r = 0.8 + Math.random() * 0.3; cls = 2; } data.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cls }); } }
+	fillTuning();
 	const colors = ['#ff6b9d', '#ffe66d', '#4ecdc4'], names = ['inner', 'middle', 'outer'];
 	function drawTuning() {
 		const p = OG.pal(), pp = OG.plotPal();
@@ -414,6 +432,7 @@ function ogInitTuning() {
 	document.getElementById('og-tune-b').oninput = drawTuning;
 	drawTuning();
 	OG.redos.push(drawTuning);
+	OG.addRegen(el, () => { fillTuning(); drawTuning(); });
 }
 
 /* ------------------------------------------------------------------ Demo 8 */
@@ -566,7 +585,7 @@ function ogInitFC() {
 		layer.forEach((p, i) => { const x = p[0] * s, y = p[1] * s; i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
 		if (close) ctx.closePath();
 	}
-	function draw() {
+	function drawFC() {
 		const p = OG.pal();
 		animScale += (targetScale - animScale) * 0.15; animRot += (targetRot - animRot) * 0.15;
 		if (cutState === 'cutting') { cutProg += 0.035; if (cutProg >= 1) { cutProg = 1; cutState = 'done'; } }
@@ -586,7 +605,7 @@ function ogInitFC() {
 			ctx.strokeStyle = p.bad; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
 			for (let i = 0; i < step; i++) { const ax = axisList[i] * Math.PI / 180; const nx = Math.cos(ax), ny = Math.sin(ax); ctx.beginPath(); ctx.moveTo(nx * 300, ny * 300); ctx.lineTo(-nx * 300, -ny * 300); ctx.stroke(); }
 			ctx.setLineDash([]);
-			if (step >= 1) {
+			if (step >= 1 && cutState !== 'idle') {
 				const a0 = shape[0], a1 = shape[1], dx = a1[0] - a0[0], dy = a1[1] - a0[1];
 				const len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, L = 1.2, prog = cutState === 'cutting' ? cutProg : 1;
 				const px = a0[0] * s, py = a0[1] * s;
@@ -599,7 +618,7 @@ function ogInitFC() {
 		statusText();
 	}
 	function settled() { return Math.abs(targetScale - animScale) < 0.001 && Math.abs(targetRot - animRot) < 0.01 && cutState !== 'cutting'; }
-	function frame() { draw(); rafId = settled() ? null : requestAnimationFrame(frame); }
+	function frame() { drawFC(); rafId = settled() ? null : requestAnimationFrame(frame); }
 	function ensureLoop() { if (rafId === null) rafId = requestAnimationFrame(frame); }
 	function setStep(k) { step = Math.max(0, Math.min(FRAGS.length - 1, k)); const sl = document.getElementById('og-fc-step'); if (sl) sl.value = step; ogSet('og-fc-step-v', step);
 		targetScale = Math.pow(0.86, step); targetRot = step * 14; cutState = 'idle'; cutProg = 0; drawFilmstrip(); ensureLoop(); }
@@ -621,7 +640,7 @@ function ogInitAffine() {
 	const ctx = c.getContext('2d');
 	let pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9);
 	const sample = { x: 0.35, y: 0.2 };
-	function draw() {
+	function drawAff() {
 		const p = OG.pal();
 		const thd = +document.getElementById('og-aff-rot').value, th = thd * Math.PI / 180, sx = +document.getElementById('og-aff-sx').value, sy = +document.getElementById('og-aff-sy').value, sh = +document.getElementById('og-aff-sh').value, bx = +document.getElementById('og-aff-bx').value, by = +document.getElementById('og-aff-by').value, useR = document.getElementById('og-aff-relu').checked;
 		ogSet('og-aff-rot-v', thd + '°'); ogSet('og-aff-sx-v', ogf1(sx)); ogSet('og-aff-sy-v', ogf1(sy)); ogSet('og-aff-sh-v', ogf1(sh)); ogSet('og-aff-bx-v', ogf1(bx)); ogSet('og-aff-by-v', ogf1(by)); ogSet('og-aff-relu-v', useR ? 'on' : 'off');
@@ -646,17 +665,17 @@ function ogInitAffine() {
 			(useR ? String.raw`\;\;\;\text{e.g. }\mathbf{x}=(0.35,0.2):\ \mathbf{x}'=(${smpAff[0]},\,${smpAff[1]})\to\mathbf{z}=(${smpR[0]},\,${smpR[1]})` : String.raw`\;\;\;\text{e.g. }\mathbf{x}=(0.35,0.2):\ \mathbf{x}'=(${smpAff[0]},\,${smpAff[1]})`)
 		);
 	}
-	['og-aff-rot', 'og-aff-sx', 'og-aff-sy', 'og-aff-sh', 'og-aff-bx', 'og-aff-by', 'og-aff-relu'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = draw; });
-	OG.redos.push(draw);
-	OG.regen.push(() => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); draw(); });
-	draw();
+	['og-aff-rot', 'og-aff-sx', 'og-aff-sy', 'og-aff-sh', 'og-aff-bx', 'og-aff-by', 'og-aff-relu'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawAff; });
+	OG.redos.push(drawAff);
+	OG.addRegen(c, () => { pts = ogMakeEgg(220, 380, 0, 0.30, 0.55, 0.9); drawAff(); });
+	drawAff();
 }
 
 /* ------------------------------------------------------------------ Demo: 1-D ReLU (one value, one corner) */
 function ogInitRelu1d() {
 	const c = document.getElementById('og-relu1d'); if (!c) return;
 	const ctx = c.getContext('2d');
-	function draw() {
+	function drawR1d() {
 		const p = OG.pal();
 		const v = +document.getElementById('og-relu-x').value, y = ogRelu(v);
 		ogSet('og-relu-xv', ogf1(v));
@@ -671,9 +690,9 @@ function ogInitRelu1d() {
 		ctx.fillStyle = p.muted; ctx.font = '12px sans-serif'; ctx.fillText(v < 0 ? 'Negative is projected to 0 ("hammered")' : 'Positive passes through unchanged', 14, 42);
 		ogTex('og-relu-live', String.raw`\tilde x=${ogf1(v)} \;\Rightarrow\; \mathrm{ReLU}(\tilde x)=\max(0,${ogf1(v)})=${ogf1(y)}${v < 0 ? String.raw`\;\;(\text{hammered})` : String.raw`\;\;(\text{unchanged})`}`);
 	}
-	const sl = document.getElementById('og-relu-x'); if (sl) sl.oninput = draw;
-	OG.redos.push(draw);
-	draw();
+	const sl = document.getElementById('og-relu-x'); if (sl) sl.oninput = drawR1d;
+	OG.redos.push(drawR1d);
+	drawR1d();
 }
 
 /* ------------------------------------------------------------------ Demo: circle-in-circle 3-D lift (S4a) */
@@ -684,18 +703,18 @@ function ogInitEgg() {
 	function draw2d() { const p = OG.pal(); const cx = c.width / 2, cy = c.height / 2, s = 150; ctx.fillStyle = p.bg; ctx.fillRect(0, 0, c.width, c.height);
 		for (const q of pts) { ctx.fillStyle = q.cl === 0 ? p.inner : p.outer; ctx.beginPath(); ctx.arc(cx + q.x * s, cy - q.y * s, 1.8, 0, OGT); ctx.fill(); }
 		ctx.fillStyle = p.muted; ctx.font = '12px sans-serif'; ctx.fillText('No straight line separates the core from the ring', 14, 22); }
-	function zOf(q, lift, mode) {
+	function zEgg(q, lift, mode) {
 		if (mode === 'radial') return lift * Math.max(0, 1 - 2 * Math.hypot(q.x, q.y));
 		const N = +mode; let z = Infinity;
 		for (let k = 0; k < N; k++) { const a = k * OGT / N; z = Math.min(z, Math.max(0, lift * (1 - 2 * (Math.cos(a) * q.x + Math.sin(a) * q.y)))); }
 		return z;
 	}
-	function draw3d() {
+	function drawEgg3d() {
 		const p = OG.pal(), pp = OG.plotPal();
 		const lift = +document.getElementById('og-egg-lift').value, cPl = +document.getElementById('og-egg-plane').value, mode = document.getElementById('og-egg-mode').value;
 		ogSet('og-egg-lift-v', ogf1(lift)); ogSet('og-egg-plane-v', ogf1(cPl));
 		const x0 = [], y0 = [], z0 = [], x1 = [], y1 = [], z1 = []; let zInMin = 1e9, zInMax = -1e9, zOutMax = -1e9;
-		for (const q of pts) { const z = zOf(q, lift, mode);
+		for (const q of pts) { const z = zEgg(q, lift, mode);
 			if (q.cl === 0) { x0.push(q.x); y0.push(q.y); z0.push(z); zInMin = Math.min(zInMin, z); zInMax = Math.max(zInMax, z); } else { x1.push(q.x); y1.push(q.y); z1.push(z); zOutMax = Math.max(zOutMax, z); } }
 		const gx = [], gy = [], gz = []; for (let i = -1; i <= 1; i += 0.2) for (let j = -1; j <= 1; j += 0.2) { gx.push(i); gy.push(j); gz.push(cPl); }
 		const layout = { paper_bgcolor: pp.paper, plot_bgcolor: pp.plot, font: { color: pp.font }, margin: { l: 0, r: 0, t: 10, b: 0 }, scene: { xaxis: { color: pp.axis, range: [-1, 1] }, yaxis: { color: pp.axis, range: [-1, 1] }, zaxis: { color: pp.axis, range: [-0.1, 1.65] } }, showlegend: false };
@@ -715,11 +734,11 @@ function ogInitEgg() {
 			ogTex('og-egg-f3', String.raw`z = \min_{k=1}^{${mode}} \mathrm{ReLU}\bigl(${ogf1(lift)} - ${ogf1(2 * lift)}\,(\hat{u}_k \cdot x)\bigr) \;\;\leftarrow \text{this plot: ${mode} neurons, computed live`);
 		}
 	}
-	['og-egg-lift', 'og-egg-plane'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = draw3d; });
-	const modeEl = document.getElementById('og-egg-mode'); if (modeEl) modeEl.onchange = draw3d;
-	OG.redos.push(() => { draw2d(); draw3d(); });
-	OG.regen.push(() => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); draw3d(); });
-	draw2d(); draw3d();
+	['og-egg-lift', 'og-egg-plane'].forEach(id => { const e = document.getElementById(id); if (e) e.oninput = drawEgg3d; });
+	const modeEl = document.getElementById('og-egg-mode'); if (modeEl) modeEl.onchange = drawEgg3d;
+	OG.redos.push(() => { draw2d(); drawEgg3d(); });
+	OG.addRegen(c, () => { pts = ogMakeEgg(360, 640, 0, 0.34, 0.55, 0.9); draw2d(); drawEgg3d(); });
+	draw2d(); drawEgg3d();
 }
 
 /* ------------------------------------------------------------------ Demo: learned rotation + hammer (S4b) */
@@ -732,7 +751,7 @@ function ogInitRot() {
 		for (let i = 0; i < 240; i++) { const a = PHI + (Math.random() - 0.5) * (76 * Math.PI / 180), r = 0.3 + Math.random() * 0.7; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cl: 1 }); }
 		for (let i = 0; i < 240; i++) { const a = PHI + Math.PI + (Math.random() - 0.5) * (76 * Math.PI / 180), r = 0.3 + Math.random() * 0.7; pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, cl: 0 }); } }
 	genPts();
-	function draw() {
+	function drawRot() {
 		const p = OG.pal(), pp = OG.plotPal();
 		const thd = +document.getElementById('og-rot-th').value, th = thd * Math.PI / 180;
 		const cs = Math.cos(th), sn = Math.sin(th);
@@ -765,10 +784,10 @@ function ogInitRot() {
 			{ x: gx, y: gy, z: gz, mode: 'markers', type: 'scatter3d', marker: { size: 1.5, color: p.fold, opacity: 0.3 }, name: 'fold z=0' }
 		], layout, { displayModeBar: false });
 	}
-	const sl = document.getElementById('og-rot-th'); if (sl) sl.oninput = draw;
-	OG.redos.push(draw);
-	OG.regen.push(() => { genPts(); draw(); });
-	draw();
+	const sl = document.getElementById('og-rot-th'); if (sl) sl.oninput = drawRot;
+	OG.redos.push(drawRot);
+	OG.addRegen(c, () => { genPts(); drawRot(); });
+	drawRot();
 }
 
 /* ------------------------------------------------------------------ Demo: 2-D egg with 3 neurons (Fig. 2) */
@@ -779,7 +798,7 @@ function ogInitEgg3() {
 	let N = 3, fs = 1;
 	let pts = ogMakeEgg(400, 700, 0, 0.22, 0.70, 0.92);
 	function normals() { const arr = []; for (let k = 0; k < N; k++) { const ang = k * OGT / N; arr.push([Math.cos(ang), Math.sin(ang)]); } return arr; }
-	function zOf(x, y) { let z = 0; for (const n of normals()) z += Math.max(0, n[0] * x + n[1] * y - d) * fs; return z; }
+	function zEgg3(x, y) { let z = 0; for (const n of normals()) z += Math.max(0, n[0] * x + n[1] * y - d) * fs; return z; }
 	function drawTop(p) {
 		const W = top.width, H = top.height, cx = W / 2, cy = H / 2, s = 150;
 		tctx.fillStyle = p.bg; tctx.fillRect(0, 0, W, H);
@@ -790,12 +809,12 @@ function ogInitEgg3() {
 		for (const q of pts) { tctx.fillStyle = q.cl === 0 ? p.inner : p.outer; tctx.beginPath(); tctx.arc(cx + q.x * s, cy - q.y * s, 1.8, 0, OGT); tctx.fill(); }
 		tctx.fillStyle = p.muted; tctx.font = '12px sans-serif'; tctx.fillText(N + ' fold lines (hyperplanes): core inside, ring outside', 14, 22);
 	}
-	function draw3d() {
+	function drawEgg3f() {
 		const p = OG.pal(), pp = OG.plotPal();
 		const cPl = +document.getElementById('og-egg3-plane').value;
 		ogSet('og-egg3-n-v', N); ogSet('og-egg3-fs-v', ogf1(fs)); ogSet('og-egg3-plane-v', ogf1(cPl));
 		const x0 = [], y0 = [], z0 = [], x1 = [], y1 = [], z1 = []; let zInMax = -1e9, zOutMin = 1e9;
-		for (const q of pts) { const z = zOf(q.x, q.y);
+		for (const q of pts) { const z = zEgg3(q.x, q.y);
 			if (q.cl === 0) { x0.push(q.x); y0.push(q.y); z0.push(z); zInMax = Math.max(zInMax, z); } else { x1.push(q.x); y1.push(q.y); z1.push(z); zOutMin = Math.min(zOutMin, z); } }
 		const gx = [], gy = [], gz = []; for (let i = -1; i <= 1; i += 0.2) for (let j = -1; j <= 1; j += 0.2) { gx.push(i); gy.push(j); gz.push(cPl); }
 		const layout = { paper_bgcolor: pp.paper, plot_bgcolor: pp.plot, font: { color: pp.font }, margin: { l: 0, r: 0, t: 10, b: 0 }, scene: { xaxis: { color: pp.axis }, yaxis: { color: pp.axis }, zaxis: { color: pp.axis, title: 'Z (free dim.)' } }, showlegend: false };
@@ -813,21 +832,27 @@ function ogInitEgg3() {
 		ogTex('og-egg3-sep', String.raw`Z(\mathbf{x})=\textstyle\sum_{k=1}^{N} z_k \;\Rightarrow\; \text{core: } Z\approx 0\ (\text{flat floor}),\ \text{ring: } Z\ge ${ogf1(zOutMin)}\ (\text{basin walls}). \;\; \text{Plane } Z=c \text{ separates if } c\in(${ogf1(zInMax)},\,${ogf1(zOutMin)}).`);
 		drawTop(p);
 	}
-	const nSl = document.getElementById('og-egg3-n'); if (nSl) nSl.oninput = () => { N = +nSl.value; draw3d(); };
-	const fsSl = document.getElementById('og-egg3-fs'); if (fsSl) fsSl.oninput = () => { fs = +fsSl.value; draw3d(); };
-	const plSl = document.getElementById('og-egg3-plane'); if (plSl) plSl.oninput = draw3d;
-	OG.redos.push(draw3d);
-	OG.regen.push(() => { pts = ogMakeEgg(400, 700, 0, 0.22, 0.70, 0.92); draw3d(); });
-	draw3d();
+	const nSl = document.getElementById('og-egg3-n'); if (nSl) nSl.oninput = () => { N = +nSl.value; drawEgg3f(); };
+	const fsSl = document.getElementById('og-egg3-fs'); if (fsSl) fsSl.oninput = () => { fs = +fsSl.value; drawEgg3f(); };
+	const plSl = document.getElementById('og-egg3-plane'); if (plSl) plSl.oninput = drawEgg3f;
+	OG.redos.push(drawEgg3f);
+	OG.addRegen(top, () => { pts = ogMakeEgg(400, 700, 0, 0.22, 0.70, 0.92); drawEgg3f(); });
+	drawEgg3f();
 }
 
 /* ------------------------------------------------------------------ module */
 async function loadOrigamiModule() {
 	updateLoadingStatus('Loading section about origami & linear separability...');
 
+	OG.register('og-fc', ogInitFC);
 	OG.register('og-nonsep', ogInitNonsep);
+	OG.register('og-affine', ogInitAffine);
+	OG.register('og-relu1d', ogInitRelu1d);
 	OG.register('og-before', ogInitRelu);
 	OG.register('og-fold1d', ogInitFold1d);
+	OG.register('og-egg2d', ogInitEgg);
+	OG.register('og-rot2d', ogInitRot);
+	OG.register('og-egg3top', ogInitEgg3);
 	OG.register('og-fold3d', ogInitFold3d);
 	OG.register('og-cascade', ogInitCascade);
 	OG.register('og-shear', ogInitShear);

@@ -4,8 +4,10 @@
 
    • ¶ anchor links on every heading, visible on hover
    • TOC scroll-spy: the section you're reading lights up
+   • A quiet line at the left edge naming the current section, once
+     the TOC itself has scrolled away
    • Code blocks show their language as a quiet corner label
-   • Keyboard shortcuts (1-9 jump, / search, ? help, j/k nav)
+   • Keyboard shortcuts (1-8 jump by 10%, 9 end, / search, ? help, j/k nav)
    • Quiet word-count + reading-time stamp at the top of each module
    • A back-to-top chevron that only appears after 60% scroll
    • Anything else that needs a pinch of JS lives here too.
@@ -114,6 +116,70 @@
 		});
 	}
 
+	/* ── 2b. Mini-TOC — the section you are in, once the real TOC is off-screen ──
+	   The TOC and its scroll-spy live at the top of a lesson, so after about
+	   one screen of reading both are gone and the only thing that said which
+	   section you are in has scrolled away with them. This is one quiet line
+	   at the left edge that fades in only while the TOC is out of view and
+	   names the current section; clicking it brings the TOC back. Same
+	   restraint as #cl-top: no background, no icon, no permanent chrome.
+
+	   The label is derived from the TOC's own links, so the chip can never
+	   name a section the TOC does not have. It is recomputed on scroll rather
+	   than taken from the scroll-spy above: the spy's IntersectionObserver
+	   only reports a heading that *enters* its narrow band, so between two
+	   headings it keeps the last one — fine for a highlight, wrong for a
+	   caption that claims to say where you are. */
+	function installMiniToc() {
+		const toc = document.getElementById('toc');
+		if (!toc) return;                       // index pages: no TOC, so no chip
+
+		const sections = [];
+		toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+			const h = document.getElementById(a.getAttribute('href').slice(1));
+			if (h) sections.push(h);
+		});
+		if (!sections.length) return;
+
+		const btn = document.createElement('button');
+		btn.id = 'cl-mini-toc';
+		btn.type = 'button';
+		btn.title = 'Back to the table of contents';
+		btn.setAttribute('aria-label', 'Back to the table of contents');
+		const label = document.createElement('span');
+		btn.appendChild(label);
+		btn.addEventListener('click', function () {
+			toc.scrollIntoView({ block: 'start', behavior: 'smooth' });
+		});
+		document.body.appendChild(btn);
+
+		const MARKER = 0.25;                    // a heading counts as "reached" at a quarter down
+		let visible = false;
+		function updateChip() {
+			// Current section = the last one whose heading has passed the marker.
+			const line = window.innerHeight * MARKER;
+			let current = '';
+			for (const h of sections) {
+				if (h.getBoundingClientRect().top > line) break;
+				current = h.textContent.trim();
+			}
+			if (label.textContent !== current) label.textContent = current;
+
+			// Show only once the whole TOC is above the fold.
+			const shouldShow = current !== '' && toc.getBoundingClientRect().bottom < 0;
+			if (shouldShow !== visible) {
+				visible = shouldShow;
+				btn.classList.toggle('is-visible', visible);
+			}
+		}
+		let raf = null;
+		document.addEventListener('scroll', function () {
+			if (raf) return;
+			raf = requestAnimationFrame(function () { updateChip(); raf = null; });
+		}, { passive: true });
+		updateChip();
+	}
+
 	/* ── 3. Code-block language label ──
 	   Prism already adds `language-xxx` to the inner <code>.
 	   We surface that as `data-language` on the <pre>, so the
@@ -139,9 +205,28 @@
 	     Esc   → close any open modal/drawer
 	     g g   → jump to top of the page
 	     G     → jump to bottom
-	     1-9   → jump to the Nth item in the TOC
+	     0     → jump to the top of the text
+	     1-8   → jump to 10% … 80% of the text
+	     9     → jump to the end of the text
 	     n / p → next / previous section in the TOC
 	   We only activate when the user is not typing in an input. */
+
+	/* Percentage of *the text*, not of the document: the loader, the chrome
+	   and the trailing margin are not part of what the reader scrolls through,
+	   so 5 has to land on the middle sentence and not in the middle pixel.
+	   Falls back to the plain scroll range if #contents is missing or empty. */
+	function jumpToReadingProgress(pct) {
+		const contents = document.getElementById('contents');
+		let top = 0;
+		let bottom = document.documentElement.scrollHeight - window.innerHeight;
+		if (contents && contents.offsetHeight > window.innerHeight) {
+			top = contents.getBoundingClientRect().top + window.scrollY;
+			bottom = top + contents.offsetHeight - window.innerHeight;
+		}
+		const y = top + (bottom - top) * (Math.min(100, Math.max(0, pct)) / 100);
+		window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+	}
+
 	function installShortcuts() {
 		const help = ensureShortcutHelp();
 		const isEditable = function (el) {
@@ -196,13 +281,12 @@
 				return;
 			}
 
-			// 1-9 → Nth TOC item
-			if (/^[1-9]$/.test(ev.key)) {
-				const links = document.querySelectorAll('#toc a');
-				if (links.length) {
-					const target = links[Math.min(links.length, parseInt(ev.key, 10)) - 1];
-					if (target) { ev.preventDefault(); target.click(); }
-				}
+			// 0 → top, 1-8 → 10% … 80%, 9 → all the way to the end
+			if (/^[0-9]$/.test(ev.key)) {
+				const k = parseInt(ev.key, 10);
+				const pct = k === 0 ? 0 : k === 9 ? 100 : k * 10;
+				ev.preventDefault();
+				jumpToReadingProgress(pct);
 				return;
 			}
 
@@ -252,7 +336,9 @@
 			'    <dt><kbd>g</kbd> <kbd>g</kbd></dt><dd>Jump to top</dd>',
 			'    <dt><kbd>G</kbd></dt><dd>Jump to bottom</dd>',
 			'    <dt><kbd>n</kbd> / <kbd>p</kbd></dt><dd>Next / previous section</dd>',
-			'    <dt><kbd>1</kbd>…<kbd>9</kbd></dt><dd>Jump to Nth section</dd>',
+			'    <dt><kbd>0</kbd></dt><dd>Jump to the top of the text</dd>',
+			'    <dt><kbd>1</kbd>…<kbd>8</kbd></dt><dd>Jump to 10% … 80% of the text</dd>',
+			'    <dt><kbd>9</kbd></dt><dd>Jump to the end of the text</dd>',
 			'  </dl>',
 			'  <div class="cl-sh-foot">Press <kbd>?</kbd> again to close</div>',
 			'</div>'
@@ -839,12 +925,27 @@
 		// applied — no visible fallback-size -> measured-size jump.
 		p.classList.add('cl-dc-pending');
 		if (!p.__dcPendingTimer) {
-			p.__dcPendingTimer = setTimeout(function () {
-				// Font API never settled — reveal the CSS fallback size
-				// rather than leaving the first letter invisible.
-				p.__dcPendingTimer = null;
-				if (p.classList.contains('cl-dc-pending')) finishDropcapSizing(p);
-			}, 2000);
+			const arm = function () {
+				p.__dcPendingTimer = setTimeout(function () {
+					p.__dcPendingTimer = null;
+					if (!p.classList.contains('cl-dc-pending')) return;
+					// Still not laid out (#contents is display:none until
+					// revealContent()). The user cannot see a missing
+					// letter yet, so re-arm instead of locking the CSS
+					// fallback size — the deferred fit() will apply the
+					// real size as soon as the paragraph is laid out, and
+					// a fallback->measured jump would be visible on reveal.
+					if (p.clientWidth === 0 && (p.__dcPendingArms || 0) < 6) {
+						p.__dcPendingArms = (p.__dcPendingArms || 0) + 1;
+						arm();
+						return;
+					}
+					// Font API never settled — reveal the CSS fallback
+					// size rather than leaving the first letter invisible.
+					finishDropcapSizing(p);
+				}, 2000);
+			};
+			arm();
 		}
 		if (DC_NATIVE) {
 			// The @supports block in style.css does the layout; just say
@@ -884,6 +985,17 @@
 			} catch (e) { return DC_LINES_MAX; }
 		};
 		const fit = function (ratio) {
+			// #contents is display:none until revealContent(). A Range over
+			// a hidden subtree yields ZERO line boxes, which would step the
+			// fit loop down to the 3-line minimum and lock a bogus small cap
+			// (with a dcKey of clientWidth=0) that a later legitimate
+			// re-measure must then undo. Defer until the paragraph is
+			// actually laid out — cl-dc-pending keeps the cap hidden meanwhile.
+			if (p.clientWidth === 0 && (p.__dcFitRetries || 0) < 300) {
+				p.__dcFitRetries = (p.__dcFitRetries || 0) + 1;
+				p.__dcFitRaf = requestAnimationFrame(function () { fit(ratio); });
+				return;
+			}
 			const cs = getComputedStyle(p);
 			const fs = parseFloat(cs.fontSize) || 18;
 			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
@@ -918,6 +1030,11 @@
 			p.classList.remove('cl-dropcap', 'cl-dc-pending', 'cl-dc-sized');
 			p.style.removeProperty('--cl-dc-size');
 			delete p.dataset.dcLocked;
+			// cancel any in-flight deferred fit; the re-tag below starts
+			// a fresh sizing pass for the new paragraph
+			if (p.__dcFitRaf) { cancelAnimationFrame(p.__dcFitRaf); p.__dcFitRaf = null; }
+			p.__dcFitRetries = 0;
+			p.__dcPendingArms = 0;
 		});
 		// Walk every .md block in document order — the page may OPEN with
 		// a figure row, heading or anchor wrapper that holds no <p> at all
@@ -1051,6 +1168,7 @@
 	/* bootstrap */
 	function start() {
 		run(document);
+		installMiniToc();
 		installTocScrollSpy();
 		installShortcuts();
 		installReadingMeta();

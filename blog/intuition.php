@@ -232,7 +232,7 @@ Type **“bank river”** or **“bank money”** below. Notice how the diamond,
 	<input type="text" id="trans-input" class="bw-cell" style="width: 90%;" value="bank river" oninput="runAttention()">
 	<p>The diamond shows where “Bank” moves in context.</p>
 </div>
-<div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
+<div id="transformer-plot" class="plot-container" data-plot-theme="self" style="height: 450px; background: var(--mn-surface, #fff);"></div>
 
 <script>
 	runAttention();

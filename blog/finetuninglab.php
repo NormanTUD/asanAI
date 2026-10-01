@@ -90,7 +90,7 @@ $$
 <div class="md" data-mathlevel="65" data-optionaltitle="Stage 3a: RLHF with PPO">
 ## Stage 3a: RLHF with PPO
 
-The InstructGPT pipeline \cite[Ouyang et al., 2022]{ouyang2022instructgpt}:
+The InstructGPT pipeline (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}):
 
 $$
 \mathcal{L}_{\text{PPO}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y) - \beta\, \text{KL}\!\big(\pi_\theta(y \mid x) \,\|\, \pi_{\text{ref}}(y \mid x)\big)\Big]
@@ -117,7 +117,7 @@ By 2025, most frontier labs use PPO **only** for the final “alignment tax” r
 <div class="md" data-mathlevel="65" data-optionaltitle="Stage 3b: DPO and the Preference Optimization Family">
 ## Stage 3b: DPO and the Preference Optimization Family
 
-DPO \cite[Rafailov et al., 2023]{rafailov2023dpo} showed that the RLHF objective has a closed-form solution. The implicit reward is:
+DPO (\cite[Rafailov et al., 2023]{rafailov2023dpo}) showed that the RLHF objective has a closed-form solution. The implicit reward is:
 
 $$
 R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
@@ -144,7 +144,7 @@ DPO matches PPO on alignment benchmarks while being 5–10× simpler to implemen
 | **DPO** | Bradley-Terry from log-ratio | Simple, no RM | Overfits on long responses |
 | **IPO** | $\sigma^{-1}$ regularizer instead of $\log \sigma$ | Robust to deterministic preferences | Slightly weaker on standard benchmarks |
 | **KTO** | Kahneman-Tversky utility; binary good/bad labels | Uses cheaper binary feedback | Less sample-efficient |
-| **ORPO** \cite[Zhang et al., 2024]{orpo} | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |
+| **ORPO** (\cite[Zhang et al., 2024]{orpo}) | Odds-ratio penalty on SFT loss | Combines SFT + preference in one loss | Newer, less battle-tested |
 | **SimPO** | Length-normalized log-prob, no reference | Reference-free | Quality slightly behind DPO |
 | **Cal-DPO** | Calibrated DPO with length normalization | Best of both worlds | More complex |
 
@@ -154,7 +154,7 @@ The choice in 2025: **DPO with length normalization** or **SimPO** for most case
 <div class="md" data-mathlevel="35" data-optionaltitle="Stage 4: GRPO for Reasoning">
 ## Stage 4: GRPO for Reasoning
 
-GRPO (Group Relative Policy Optimization) \cite[Shao et al., 2024]{shao2024grpo} is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
+GRPO (Group Relative Policy Optimization) (\cite[Shao et al., 2024]{shao2024grpo}) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
 
 * **Group sampling**: for each prompt, sample $G$ candidate responses from the current policy.
 * **Verifiable reward**: for math, the reward is binary, the answer is correct or not. For code, it's test pass/fail.
@@ -201,9 +201,9 @@ This iterative DPO produces stronger alignment than offline DPO (where preferenc
 
 Full fine-tuning of a 70B model requires ~1 TB of GPU memory (params + grads + optimizer). **Parameter-Efficient Fine-Tuning (PEFT)** methods train only a tiny fraction of parameters:
 
-### LoRA (Low-Rank Adaptation) \cite[Hu et al., 2021]{hu2021lora}
+### LoRA (Low-Rank Adaptation)
 
-Freeze the original weights $W \in \mathbb{R}^{d \times k}$ and train low-rank updates $\Delta W = BA$ where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll \min(d, k)$:
+Freeze the original weights $W \in \mathbb{R}^{d \times k}$ and train low-rank updates $\Delta W = BA$ where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll \min(d, k)$ (\cite[Hu et al., 2021]{hu2021lora}):
 
 $$
 W' = W + \alpha \cdot BA
@@ -213,16 +213,16 @@ With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% o
 </div>
 
 <div class="md">
-### QLoRA \cite[Dettmers et al., 2023]{dettmers2023qlora}
+### QLoRA
 
-Combines 4-bit quantization of the base model with LoRA adapters in fp16. A 70B QLoRA fine-tune fits on a single 48 GB GPU.
+Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\cite[Dettmers et al., 2023]{dettmers2023qlora}). A 70B QLoRA fine-tune fits on a single 48 GB GPU.
 
 ### Other PEFT Methods
 
-* **Adapters** \cite[Houlsby et al., 2019]{houlsby2019adapters}: small bottleneck layers inserted between Transformer blocks.
-* **Prompt tuning** \cite[Lester et al., 2021]{lester2021prompttuning}: learnable soft prompts prepended to inputs.
-* **IA³** \cite[Liu et al., 2022]{liu2022ia3}: learnable scaling vectors on attention and FFN.
-* **DoRA** \cite[Liu et al., 2024]{liu2024dora}: decomposed magnitude and direction updates, often outperforms LoRA at the same rank.
+* **Adapters** (\cite[Houlsby et al., 2019]{houlsby2019adapters}): small bottleneck layers inserted between Transformer blocks.
+* **Prompt tuning** (\cite[Lester et al., 2021]{lester2021prompttuning}): learnable soft prompts prepended to inputs.
+* **IA³** (\cite[Liu et al., 2022]{liu2022ia3}): learnable scaling vectors on attention and FFN.
+* **DoRA** (\cite[Liu et al., 2024]{liu2024dora}): decomposed magnitude and direction updates, often outperforms LoRA at the same rank.
 </div>
 
 <div id="lora-viz" style="max-width:880px; margin:1em auto;"></div>

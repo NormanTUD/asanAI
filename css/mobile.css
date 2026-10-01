@@ -899,14 +899,18 @@
 @media only screen and (max-width: 1100px) {
 	body.darkmode #mobile_bottom_nav,
 	body.dark-mode #mobile_bottom_nav {
-		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
-		border-top-color: #626567;
+		background: linear-gradient(135deg, rgba(96, 108, 148, 0.4) 0%, rgba(44, 49, 70, 0.5) 100%);
+		-webkit-backdrop-filter: blur(18px) saturate(150%);
+		backdrop-filter: blur(18px) saturate(150%);
+		border-top-color: rgba(255, 255, 255, 0.14);
 	}
 
 	body.darkmode .mobile-panel,
 	body.dark-mode .mobile-panel {
-		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
-		border-top-color: #626567;
+		background: linear-gradient(135deg, rgba(96, 108, 148, 0.4) 0%, rgba(44, 49, 70, 0.5) 100%);
+		-webkit-backdrop-filter: blur(18px) saturate(150%);
+		backdrop-filter: blur(18px) saturate(150%);
+		border-top-color: rgba(255, 255, 255, 0.14);
 	}
 
 	body.darkmode .mobile-nav-item,
@@ -961,7 +965,9 @@
 
 	body.darkmode #layers_container_left.left_side,
 	body.dark-mode #layers_container_left.left_side {
-		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
-		border-right-color: #626567;
+		background: linear-gradient(135deg, rgba(96, 108, 148, 0.4) 0%, rgba(44, 49, 70, 0.5) 100%);
+		-webkit-backdrop-filter: blur(18px) saturate(150%);
+		backdrop-filter: blur(18px) saturate(150%);
+		border-right-color: rgba(255, 255, 255, 0.14);
 	}
 }

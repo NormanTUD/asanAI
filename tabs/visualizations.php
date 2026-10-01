@@ -6,10 +6,16 @@
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Feature Maps</a></li>
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation Function</a></li>
 		<li><a href="#weight_surfaces" onclick="create_weight_surfaces(true)" id="weight_surfaces_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
+		<!-- Space Warps tab parked in todo/ (see todo/space_warps_tab_snippets.txt)
+		<li style="display: none"><a onclick="if(typeof NeuralSpaceWarps!=='undefined'){NeuralSpaceWarps.refresh();}" id="space_warps_tab_label" href="#space_warps_tab" style="display: none"><span class="TRANSLATEME_space_warps"></span></a></li>
+		-->
+		<li style="display: none" data-origami-tab="1"><a onclick="update_origami_folds();" id="origami_folds_tab_label" href="#origami_folds_tab"><span class="TRANSLATEME_origami_folds"></span></a></li>
 		<li><a id="health_status_tab_label" href="#health_status"><span class="TRANSLATEME_health_status"></span></a></li>
 		<li><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
+		<li><a id="adversarial_tab_label" class="hide_when_no_image" href="#adversarial" onclick="if(typeof AdversarialExamples!=='undefined'){AdversarialExamples.init('adversarial_content');}"><span class="TRANSLATEME_adversarial"></span></a></li>
 		<li><a id="gradient_flow_tab_label" class="hide_when_no_image" href="#gradient_flow"><span class="TRANSLATEME_gradient_flow"></span></a></li>
+		<li><a id="representation_tab_label" href="#representation" onclick="if(typeof RepresentationAnalysis!=='undefined'){RepresentationAnalysis.init('representation_content');}"><span class="TRANSLATEME_representation"></span></a></li>
 		<li><a id="topological_data_analysis_tab_label" class="hide_when_no_image" href="#topological_data_analysis"><span class="TRANSLATEME_topological_data_analysis"></span></a></li>
 		<li><a onclick="WeightAnalysis.weight_analysis_render('weight_analysis');" id="weight_analysis_tab_label" href="#weight_analysis"><span class="TRANSLATEME_weight_analysis"></span></a></li>
 		<!--<li><a href="#loss_landscape_tab" id="loss_landscape_tab_label"><span class="TRANSLATEME_loss_landscape"></span></a></li>-->
@@ -76,6 +82,20 @@
 		<div id="weight_surfaces_content"></div>
 	</div>
 
+	<!-- Space Warps tab content parked in todo/ (see todo/space_warps_tab_snippets.txt)
+	<div id="space_warps_tab" class="tab">
+		<div id="space_warps_content"></div>
+	</div>
+	-->
+
+	<div id="origami_folds_tab" class="tab" style="display: none">
+		<div style="padding: 8px 12px;">
+			<span class="TRANSLATEME_origami_folds_hint" style="font-size: 0.85em; opacity: 0.7;"></span>
+		</div>
+		<div id="origami_folds_plot" style="width: 100%; min-height: 500px;"></div>
+		<div id="origami_folds_info" style="display: none; padding: 8px 12px; font-size: 0.85em;"></div>
+	</div>
+
 	<div id="health_status" class="tab">
 		<div class="TRANSLATEME_no_health_status_data"></div>
 	</div>
@@ -84,6 +104,14 @@
 	</div>
 
 	<div id="activation_atlas" class="tab" style="display: none">
+	</div>
+
+	<div id="adversarial" class="tab" style="display: none">
+		<div id="adversarial_content"></div>
+	</div>
+
+	<div id="representation" class="tab" style="display: none">
+		<div id="representation_content"></div>
 	</div>
 
 	<div id="gradient_flow" class="tab" style="display: none">

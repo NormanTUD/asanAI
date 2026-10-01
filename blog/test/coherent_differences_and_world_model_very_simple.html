@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was ein Weltmodell ist — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --green:#15803d; --green-soft:#e7f3ea;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+input[type=range].g::-webkit-slider-thumb{background:var(--green)}
+input[type=range].g::-moz-range-thumb{background:var(--green)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.ro .box.violet{background:var(--violet-soft);border-color:#ddd2f5}
+.ro .box.violet .v{color:var(--violet)}
+.ro .box.green{background:var(--green-soft);border-color:#c7e2cf}
+.ro .box.green .v{color:var(--green)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.green{border-color:var(--green);background:var(--green-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.eq{font-family:var(--mono);font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto}
+.eq .op{color:var(--teal);font-weight:700}
+.eq .op2{color:var(--amber);font-weight:700}
+.verdict{margin-top:12px;border-radius:12px;padding:12px 14px;font-size:14px;background:var(--teal-soft);color:var(--dim);border:1px solid #d5e8e4}
+.verdict b{color:var(--ink)}
+.verdict.green{background:var(--green-soft);border-color:#c7e2cf}
+.verdict.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.verdict.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.verdict.violet{background:var(--violet-soft);border-color:#ddd2f5}
+.pathbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
+.pathbtns button{font:inherit;font-size:13px;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--dim);cursor:pointer}
+.pathbtns button.sel{background:var(--violet-soft);border-color:#ddd2f5;color:var(--violet);font-weight:700}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 9 Minuten</div>
+  <h1>Was ist ein <em>Weltmodell</em>? — und<br>wann darf man ihm vertrauen?</h1>
+  <p class="sub">Alles, was du je über die Welt weißt, kommt als <b>umgewandelte Spur</b> bei dir an. Ein Weltmodell ist der Versuch, aus vielen solchen Flicken ein einziges Ganzes zu nähen. Diese Seite zeigt in vier kleinen Experimenten, wie das Nähen funktioniert — und woran es <b>scheitert</b>: Warum reicht es nicht, wenn sich ein Modell <b>selbst</b> zusammenreimt, um es zu <b>wahr</b> zu machen.</p>
+  <div class="chips">
+    <span class="chip">4 kleine Experimente</span>
+    <span class="chip">5 Arten, wie ein Modell kaputt sein kann</span>
+    <span class="chip">1 entscheidender Unterschied</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Was bei dir ankommt, ist nie die Sache selbst</h2>
+<p>Ein Physiker fasst nie ein Elektron an. Wenn du Rot siehst, hältst du nicht „das Rot" in der Hand — du hältst den <b>letzten Output einer Kette</b>: eine Lichtwelle trifft auf eine Fläche, ein Auge wandelt sie um, ein Nerv leitet weiter, ein Gehirn rechnet. Zwischen der Sache <b>W</b> in der Welt und der Spur <b>r</b>, die du bekommst, steht immer eine <b>Zugriffsfunktion</b> O. Und diese Spur ist <b>unterbestimmt</b>: Viele verschiedene Kombinationen aus (Sache, Zugriff) liefern genau dasselbe r.</p>
+<div class="demo">
+  <h3>Experiment 1 · Die Spur-Maschine</h3>
+  <p class="dsub">Links liegt eine Sache W in der Welt, rechts landet deine Spur r. Wähle W und den Zugriff O — und rate, was wirklich da war.</p>
+  <canvas id="cvTrace" width="400" height="230"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Sache W in der Welt</span><b id="wV">Rechteck</b></div>
+    <input type="range" id="w" min="0" max="3" step="1" value="0">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Zugriff O</span><b id="oV">identisch</b></div>
+    <input type="range" id="o" min="0" max="3" step="1" value="0" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Rauschen in der Spur</span><b id="nV">8 %</b></div>
+    <input type="range" id="n" min="0" max="60" step="1" value="8" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Sache W</div><div class="v" id="wGuess">Rechteck</div></div>
+    <div class="box amber"><div class="k">Zugriff O</div><div class="v" id="oGuess">identisch</div></div>
+    <div class="box rose"><div class="k">Erkennbar?</div><div class="v" id="guessV">—</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Der Punkt:</b> Du hältst nie den Input, sondern immer den Output einer Maschine — und die Maschine trägt ihre eigenen Spuren. Genau deshalb ist „die Welt" nicht etwas, das dir einfach gegeben wird: Es ist ein <b>Rekonstrukt</b>, das du aus unterbestimmten Flicken baust.
+</div>
+
+<h2><span class="n">2</span>Ein Ganzes aus Flicken: der Nähtest</h2>
+<p>Ein Weltmodell ist nie eine einzige totale Aufnahme. Es besteht aus vielen <b>lokalen Flicken</b> — jede Messung, jede Perspektive, jeder Sensor deckt ein Stück ab. Ein solches Modell darf sich nur dann <b>ein Ganzes</b> nennen, wenn die Flicken dort übereinstimmen, wo sie sich <b>überlappen</b>. Diese Bedingung — auf Überlappungen stimmig — nennt man <b>Kohärenz</b>. Ist sie erfüllt, fügt sich alles zu einem einzigen globalen Bild. Ist sie nicht erfüllt, hast du nur eine Ansammlung von Flicken.</p>
+<div class="demo">
+  <h3>Experiment 2 · Das Flickenteppich</h3>
+  <p class="dsub">Vier Flicken decken sich an den Nähten. Schiebe, wie oft zwei Flicken sich auf einer gemeinsamen Naht <em>einigen</em>.</p>
+  <canvas id="cvPatch" width="400" height="230"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Überlappungen, die übereinstimmen</span><b id="agV">4 / 4</b></div>
+    <input type="range" id="ag" min="0" max="4" step="1" value="4" class="g">
+  </div>
+  <div class="ro">
+    <div class="box green"><div class="k">Stimmige Nähte</div><div class="v" id="agN">4 / 4</div></div>
+    <div class="box rose"><div class="k">Globales Bild?</div><div class="v" id="patchV">Ja</div></div>
+  </div>
+  <div class="verdict" id="patchVerd"></div>
+</div>
+<div class="note green">
+  <b>Kohärenz, zum Anfassen:</b> „Ganz" ist keine Eigenschaft eines einzelnen Flickens — es ist eine Eigenschaft <em>zwischen</em> den Flicken. Alles, was auf den Überlappungen nicht zusammenstimmt, verhindert, dass daraus ein Weltmodell wird. (In der Mathematik heißt diese Bedingung „Garbenbedingung".)
+</div>
+
+<h2><span class="n">3</span>Kohärent ist nicht dasselbe wie wahr</h2>
+<p>Jetzt der springende Punkt — und der, an dem sich die meisten Modelle (und Modelle von uns, und <b>LLMs</b>) irren. Ein Modell kann sich <b>perfekt selbst</b> zusammenreimen (Kohärenz) und trotzdem <b>nichts</b> mit der Welt zu tun haben. Umgekehrt kann etwas mit der Welt übereinstimmen (Korrespondenz), ohne sich intern sauber aufzulösen. <b>Kohärenz</b> prüft, ob das Modell <em>in sich</em> stimmig ist. <b>Korrespondenz</b> prüft, ob es an der <em>Welt</em> ansetzt. Das sind zwei verschiedene Tests — und einer allein reicht nie.</p>
+<div class="demo">
+  <h3>Experiment 3 · Die zwei Tests</h3>
+  <p class="dsub">Schiebe, wie gut sich ein Modell selbst zusammenreimt, und wie gut es an der Welt ansetzt.</p>
+  <canvas id="cvCC" width="400" height="230"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Kohärenz (stimmig in sich)</span><b id="cohV">0.95</b></div>
+    <input type="range" id="coh" min="0" max="100" step="1" value="95">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Korrespondenz (ansetzt an der Welt)</span><b id="conV">0.90</b></div>
+    <input type="range" id="con" min="0" max="100" step="1" value="90" class="m">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Kohärenz</div><div class="v" id="cohN">0.95</div></div>
+    <div class="box amber"><div class="k">Korrespondenz</div><div class="v" id="conN">0.90</div></div>
+  </div>
+  <div class="verdict" id="ccVerd"></div>
+</div>
+<div class="note violet">
+  <b>Der Fehler vieler Systeme:</b> Sie optimieren fast nur den linken Test (selbst zusammenreimen) und halten das Ergebnis dann für wahr. Aber eine Theorie, die <em>nie</em> scheitern kann, ist keine ungetestete Theorie mehr — sie ist eine <b>kohärente Fiktion</b>. Wahr zu sein heißt nicht, sich gut anzuhören.
+</div>
+
+<h2><span class="n">4</span>Die fünf Arten, kaputt zu sein</h2>
+<p>Wenn ein Modell <b>nicht</b> kohärent <em>und</em> korrespondent ist, so gibt es genau fünf Grundfehler — und jeder braucht ein eigenes Heilmittel:</p>
+<div class="demo">
+  <h3>Experiment 4 · Der Pathologie-Simulator</h3>
+  <p class="dsub">Wähle einen Fehler-Typ und lies, wo genau er sitzt und was ihn heilt.</p>
+  <div class="pathbtns" id="pathBtns"></div>
+  <div class="verdict violet" id="pathVerd" style="margin-top:0"></div>
+</div>
+<div class="note">
+  <b>Warum das zählt:</b> „Das Modell ist falsch" ist zu grob. Es sagt nicht, <em>wie</em> es falsch ist. Erst wenn du kennst, <em>an welcher der fünf Stellen</em> ein Modell bricht, weißt du, was du eigentlich testen müsstest.
+</div>
+
+<h2><span class="n">5</span>Die Antwort: Wahrheit ist ein Ziel, kein Zustand</h2>
+<p>Zusammengenommen ergibt sich die zentrale Unterscheidung. <b>Wahrheit</b> — das Modell stimmt in sich <em>und</em> an der Welt überein — ist ein <b>Limes</b>: Je mehr unabhängige, an der Welt verankerte Zugriffe du hinzufügst, desto näher kommst du ihr. Aber du erreichst sie <b>nie vollständig</b>; sie bleibt ein regulatives Ideal. Was du dagegen <b>jeden Tag wirklich</b> machen kannst, ist eine <b>gerechtfertigte Akzeptanz</b>: Das Modell ist auf deiner aktuellen Abdeckung kohärent, und <em>bisher</em> hat es an keinem einzigen harten Kontaktpunkt zu einer unabhängigen Quelle gescheitert.</p>
+<div class="eq">
+  Wahrheit &nbsp;=&nbsp; <span class="op">lim ( Kohärenz ∧ Korrespondenz )</span> &nbsp;&nbsp;<span style="color:var(--faint)”— angenähert, nie erreicht</span><br>
+  Gerechtfertigte Akzeptanz &nbsp;=&nbsp; <span class="op2">kohärent + (bisher) kein gescheiterter Kontaktpunkt</span>
+</div>
+<div class="demo">
+  <h3>Experiment 5 · Rechne dir den Status aus</h3>
+  <p class="dsub">Schiebe die drei Werte und lies den Wahrheitsstatus deines Modells live ab.</p>
+  <canvas id="cvFinal" width="400" height="210"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Kohärenz</span><b id="fCohV">0.95</b></div>
+    <input type="range" id="fCoh" min="0" max="100" step="1" value="95" class="g">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Korrespondenz</span><b id="fConV">0.90</b></div>
+    <input type="range" id="fCon" min="0" max="100" step="1" value="90">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Harte Kontaktpunkte</span><b id="fNV">6</b></div>
+    <input type="range" id="fN" min="1" max="24" step="1" value="6" class="m">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Status</div><div class="v" id="fStat">—</div></div>
+    <div class="box green"><div class="k">Kontaktpunkte</div><div class="v" id="fC">0 / 0</div></div>
+  </div>
+  <div class="verdict" id="fVerd"></div>
+</div>
+<div class="note amber">
+  <b>Der ganze Text in einer Zeile:</b> Bedeutung ist <b>innere Struktur</b> (Kohärenz) <b>plus</b> <b>Weltkopplung</b> (Korrespondenz). Genau das verwechselt ein LLM: Es hat eine brillante innere Struktur und hält sie dann für Weltwissen.
+</div>
+
+<h2><span class="n">6</span>Woher das stammt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>„From World to Model: Coherent Representation"</b> — Teil 4, Kapitel 3: Vom Weltzugang zum Weltmodell. Der Kernbegriff „globale Schnitt aus lokalen, auf Überlappungen stimmigen Daten" stammt aus der Theorie der <b>Garben</b> (Sheaves); die Trennung von Wahrheit und bloßer Konsistenz folgt <b>Tarski</b> und <b>Popper</b>.</p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Die echte Konstruktion arbeitet mit Überdeckungen, Karten und Kategorien — hier ersetzt jede davon ein Schieberegler. Alle fünf Pathologien sind didaktisch verdichtet.</p>
+</div>
+
+<footer>
+  Eine einfache interaktive Erklärung. Alles läuft lokal im Browser — keine Daten verlassen diese Seite.<br>
+  Volle Version (20 Stationen, 30+ Demos): <a href="coherent_differences_and_world_model.html">coherent_differences_and_world_model.html</a>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  var TAU=Math.PI*2;
+  function $(id){return document.getElementById(id);}
+
+  // ---------- Demo 1: Spur-Maschine ----------
+  (function(){
+    var cv=$('cvTrace'), c=cv.getContext('2d'), W=cv.width, H=cv.height;
+    var WN=['Rechteck','Kreis','Dreieck','Welle'], ON=['identisch','Schatten','Verschleiert','verdreht'];
+    function shape(type,cx,cy,s){
+      if(type===0){c.beginPath();c.rect(cx-s,cy-s*0.7,2*s,1.4*s);}
+      else if(type===1){c.beginPath();c.arc(cx,cy,s,0,TAU);}
+      else if(type===2){c.beginPath();c.moveTo(cx,cy-s);c.lineTo(cx+s,cy+s*0.8);c.lineTo(cx-s,cy+s*0.8);c.closePath();}
+      else{c.beginPath();var st=26;for(var i=0;i<=st;i++){var xx=cx-s+2*s*i/st,yy=cy-Math.sin(i/st*TAU)*s*0.6;i===0?c.moveTo(xx,yy):c.lineTo(xx,yy);}}
+    }
+    function drawSeen(w,o,cx,cy,s){
+      c.save();c.fillStyle='#b45309';
+      if(o===1){c.globalAlpha=0.55;c.translate(0,s*0.55);c.scale(1.15,0.42);shape(w,cx,cy,s);c.fill();}
+      else if(o===2){for(var g=0;g<3;g++){c.globalAlpha=0.34;shape(w,cx+(g-1)*4,cy+(g-1)*3,s);c.fill();}}
+      else if(o===3){c.translate(cx,cy);c.rotate(0.55);c.translate(-cx,-cy);shape(w,cx,cy,s);c.fill();}
+      else{shape(w,cx,cy,s);c.fill();}
+      c.restore();
+    }
+    function draw(){
+      c.clearRect(0,0,W,H);
+      c.fillStyle='#f5f0e6';c.fillRect(0,0,W,H);
+      var w=+($('w').value), o=+($('o').value), n=+($('n').value);
+      // panels
+      c.strokeStyle='#e7e0d0';c.lineWidth=1;
+      c.strokeRect(14,22,W/2-24,H-54);
+      c.strokeRect(W/2+10,22,W/2-24,H-54);
+      c.font='12px '+getComputedStyle(document.body).fontFamily;c.fillStyle='#9aa0b0';
+      c.fillText('W  (die Sache)',30,40);
+      c.fillText('r  (deine Spur)',W/2+26,40);
+      var cL=W/4+6, cR=W*3/4-6, cy=H/2+6, s=42;
+      // W (solid)
+      shape(w,cL,cy,s);c.fillStyle='#0f766e';c.fill();
+      // arrow + O label
+      c.strokeStyle='#9aa0b0';c.lineWidth=2;c.beginPath();c.moveTo(cL+s+6,cy);c.lineTo(cR-s-8,cy);c.stroke();
+      c.beginPath();c.moveTo(cR-s-8,cy);c.lineTo(cR-s-16,cy-4);c.lineTo(cR-s-16,cy+4);c.closePath();c.fillStyle='#9aa0b0';c.fill();
+      c.font='12px '+getComputedStyle(document.body).fontFamily;c.fillStyle='#5c6272';c.textAlign='center';
+      c.fillText('O = '+ON[o],(cL+s+cR-s)/2,cy-12);c.textAlign='left';
+      // r = W viewed through O
+      drawSeen(w,o,cR,cy,s);
+      // noise (deterministic seed from n so it doesn't flicker)
+      if(n>1){var rng=1234;function rr(){rng=(rng*7919+13)%99991;return rng/99991;}c.fillStyle='rgba(43,46,58,0.5)';for(var i=0;i<n*2;i++){c.beginPath();c.arc(cR+(rr()-0.5)*s*2.6,cy+(rr()-0.5)*s*2.2,1.4+rr()*2,0,TAU);c.fill();}}
+      $('wV').textContent=WN[w];$('oV').textContent=ON[o];$('nV').textContent=n+' %';
+      $('wGuess').textContent=WN[w];$('oGuess').textContent=ON[o];
+      var idn=(o===0||o===3)?'ja':(o===1?'teilweise':'kaum');
+      if(n>25 && o!==0 && o!==3) idn='kaum';
+      if(n>45) idn='kaum';
+      $('guessV').textContent=idn;
+    }
+    ['w','o','n'].forEach(function(id){$(id).addEventListener('input',draw);});
+    draw();
+  })();
+
+  // ---------- Demo 2: Flickenteppich ----------
+  (function(){
+    var cv=$('cvPatch'), c=cv.getContext('2d'), W=cv.width, H=cv.height;
+    function draw(){
+      c.clearRect(0,0,W,H);
+      c.fillStyle='#f5f0e6';c.fillRect(0,0,W,H);
+      var ag=+($('ag').value);
+      var pad={l:16,t:18,r:16,b:16};
+      var gw=W-pad.l-pad.r, gh=H-pad.t-pad.b;
+      var o=22, pw=gw*0.5-o*0.5, ph=gh*0.5-o*0.5;
+      // four patches
+      var P=[
+        {x:pad.l,y:pad.t,               c:'#0f766e'},
+        {x:pad.l+gw-pw,y:pad.t,         c:'#b45309'},
+        {x:pad.l,y:pad.t+gh-ph,         c:'#6d28d9'},
+        {x:pad.l+gw-pw,y:pad.t+gh-ph,   c:'#be185d'}
+      ];
+      for(var i=0;i<4;i++){
+        c.fillStyle='rgba(255,255,255,0.65)';c.fillRect(P[i].x,P[i].y,pw,ph);
+        c.strokeStyle=P[i].c;c.lineWidth=2;c.strokeRect(P[i].x,P[i].y,pw,ph);
+      }
+      // overlaps: indices of matching seams
+      // seams: 0=left (P0|P1), 1=right (P0|P2), 2=right (P1|P3), 3=left (P2|P3)
+      var match=[ag>=1,ag>=2,ag>=3,ag>=4];
+      function badge(x,y,i){
+        c.beginPath();c.arc(x,y,13,0,TAU);
+        c.fillStyle=match[i]?'#e7f3ea':'#fdeef4';c.fill();
+        c.strokeStyle=match[i]?'#15803d':'#be185d';c.lineWidth=1.5;c.stroke();
+        c.fillStyle=match[i]?'#15803d':'#be185d';
+        c.font='13px '+getComputedStyle(document.body).fontFamily;c.textAlign='center';c.textBaseline='middle';
+        c.fillText(match[i]?'=':'≠',x,y+1);
+      }
+       // four pairwise overlaps: top, left, right, bottom
+       badge(pad.l+gw/2,        pad.t+ph/2,        0); // P0|P1 (top)
+       badge(pad.l+pw/2,        pad.t+gh/2,        1); // P0|P2 (left)
+       badge(pad.l+gw-pw/2,     pad.t+gh/2,        2); // P1|P3 (right)
+       badge(pad.l+gw/2,        pad.t+gh-ph/2,     3); // P2|P3 (bottom)
+      // labels
+      c.fillStyle='#9aa0b0';c.font='11px '+getComputedStyle(document.body).fontFamily;c.textAlign='left';c.textBaseline='alphabetic';
+      var L=['P1','P2','P3','P4'];
+      for(var i=0;i<4;i++){c.fillStyle=P[i].c;c.fillText(L[i],P[i].x+8,P[i].y+18);}
+      c.textBaseline='alphabetic';
+      $('agV').textContent=ag+' / 4';
+      $('agN').textContent=ag+' / 4';
+      $('patchV').textContent=ag===4?'Ja':(ag>=3?'fast':'Nein');
+      var v=$('patchVerd');
+      if(ag===4){v.className='verdict green';v.innerHTML='<b>✓ Globales Bild.</b> Alle Nähte stimmen überein — aus den vier Flicken wird <em>ein</em> konsistentes Ganzes. Das ist Kohärenz: die Sache an sich, rekonstruiert aus stimmigen Überlappungen.';}
+      else if(ag===3){v.className='verdict amber';v.innerHTML='<b>Fast kohärent —</b> genau eine Naht stimmt nicht. Schon ein einziger widersprüchlicher Überlapp reicht, um das globale Bild zu brechen. Der „Flicken" um die schlechte Naht kann nicht mehr mit den anderen verschmolzen werden.';}
+      else{v.className='verdict rose';v.innerHTML='<b>Kein globales Bild.</b> Die Flicken widersprechen sich an '+ (4-ag) +' Nähten. Was du hast, ist eine Ansammlung lokaler Daten — kein Weltmodell.';}
+    }
+    $('ag').addEventListener('input',draw);
+    draw();
+  })();
+
+  // ---------- Demo 3: Kohärenz vs Korrespondenz ----------
+  (function(){
+    var cv=$('cvCC'), c=cv.getContext('2d'), W=cv.width, H=cv.height;
+    function cell(x,y,wd,ht,soft,tx){
+      c.fillStyle=soft;c.fillRect(x,y,wd,ht);
+      c.fillStyle='#5c6272';c.font='11px '+getComputedStyle(document.body).fontFamily;c.textAlign='center';
+      var words=tx.split(' ');var ln='';var yy=y+24;
+      for(var i=0;i<words.length;i++){ln+=words[i]+' ';if(c.measureText(ln).width>wd-12){c.fillText(ln.trim(),x+wd/2,yy);yy+=14;ln='';}}
+      if(ln)c.fillText(ln.trim(),x+wd/2,yy);
+    }
+    function draw(){
+      c.clearRect(0,0,W,H);
+      c.fillStyle='#f5f0e6';c.fillRect(0,0,W,H);
+      var coh=+($('coh').value)/100, con=+($('con').value)/100;
+      var pad={l:44,t:16,r:14,b:30};
+      var gw=W-pad.l-pad.r, gh=H-pad.t-pad.b;
+      var midX=pad.l+gw/2, midY=pad.t+gh/2;
+      // 4 cells
+      cell(pad.l,midY,gw/2,gh/2,'rgba(190,24,93,0.07)','kohärent ·\nnicht wahr');
+      cell(midX,midY,gw/2,gh/2,'rgba(21,128,61,0.10)','kohärent\n+ wahr ✓');
+      cell(pad.l,pad.t,gw/2,gh/2,'rgba(180,83,9,0.07)','inkohärent ·\nnicht wahr');
+      cell(midX,pad.t,gw/2,gh/2,'rgba(109,40,217,0.08)','inkohärent\n+ trifft zu?');
+      // grid lines
+      c.strokeStyle='#e7e0d0';c.lineWidth=1;
+      c.beginPath();c.moveTo(midX,pad.t);c.lineTo(midX,pad.t+gh);c.stroke();
+      c.beginPath();c.moveTo(pad.l,midY);c.lineTo(pad.l+gw,midY);c.stroke();
+      // axes
+      c.strokeStyle='#c9c2b0';c.lineWidth=1.5;
+      c.beginPath();c.moveTo(pad.l,midY);c.lineTo(pad.l+gw,midY);c.stroke();
+      c.beginPath();c.moveTo(midX,midY);c.lineTo(midX,pad.t+gh);c.stroke();
+      c.fillStyle='#9aa0b0';c.font='11px '+getComputedStyle(document.body).fontFamily;c.textAlign='left';
+      c.fillText('← Kohärenz',pad.l+4,pad.t+gh-6);
+      c.fillText('← Korrespondenz',pad.l+4,pad.t+12);
+      // point
+      var px=pad.l+con*gw, py=pad.t+gh-coh*gh;
+      c.beginPath();c.arc(px,py,7,0,TAU);c.fillStyle='#2b2e3a';c.fill();
+      c.strokeStyle='#fff';c.lineWidth=2;c.stroke();
+      $('cohV').textContent=coh.toFixed(2);$('conV').textContent=con.toFixed(2);
+      $('cohN').textContent=coh.toFixed(2);$('conN').textContent=con.toFixed(2);
+      var hi=coh>0.5, hc=con>0.5, v=$('ccVerd');
+      if(hi&&hc){v.className='verdict green';v.innerHTML='<b>✓ Gutes Weltmodell.</b> Es reimt sich in sich zusammen <em>und</em> es setzt an der Welt an. Das ist der seltene Fall, in dem Vertrauen berechtigt ist.';}
+      else if(hi&&!hc){v.className='verdict amber';v.innerHTML='<b>Kohärente Fiktion.</b> Alles klingt logisch, nichts berührt die Welt. Genau hier leben Selbstbetrug und Halluzinationen: konsistent, aber nicht wahr.';}
+      else if(!hi&&hc){v.className='verdict amber';v.innerHTML='<b>Treffer ohne Struktur.</b> Es trifft einzelne Fakten, löst sie aber nicht in sich auf — es bleibt ein Faktenbuch, kein Weltmodell.';}
+      else{v.className='verdict rose';v.innerHTML='<b>Weder noch.</b> Ein solches System verdient nicht einmal den Namen „Modell".'}
+    }
+    ['coh','con'].forEach(function(id){$(id).addEventListener('input',draw);});
+    draw();
+  })();
+
+  // ---------- Demo 4: Pathologien ----------
+  (function(){
+    var PATH=[
+      {n:'1 · Selbstkonsistente Fantasie',d:'Abstieg hält, jeder Schritt ist lizenziert — aber „wahr" scheitert an den Kontaktpunkten. Eine perfekt kohärente Fiktion.',fix:'Erdung: Retrieval, Werkzeuge, Verifikation.'},
+      {n:'2 · Faktenbuch',d:'Jede einzelne Aussage ist geprüft und wahr; aber die Teile fügen sich nicht zu einer inneren Struktur zusammen.',fix:'Bessere Synthese: Gedankenketten, strukturierte Notizblöcke.'},
+      {n:'3 · Kontaktpunkt-Lügner',d:'Die inneren Pfeile sind lizenziert, aber die Daten spiegeln die Welt nie wider. Abstieg hält intern; die Vorhersagen verfehlen systematisch.',fix:'𝒯 neu wählen — die Lizenzierung war zu freizügig.'},
+      {n:'4 · Kalibrierter Fehler',d:'Kohärenz hält, Lizenzen stimmen, Tarski passiert an den <em>meisten</em> Punkten — aber die Kalibrierung ist systematisch leicht daneben. Kein einzelner Kontaktpunkt deckt es.',fix:'Re-Kalibrierung: den Bias in den Übergängen auditieren.'},
+      {n:'5 · Frage außerhalb des Covers',d:'Das Modell ist kohärent auf seinem Trainings-Cover — aber die <em>Frage</em> liegt außerhalb. Es gibt keine lizenzierte Brücke zu prüfen. Flüssig, selbstsicher, genau dort, wo es am wenigsten eingeschränkt ist.',fix:'Nicht-Abdeckung erkennen: „Ich weiß es nicht", Retrieval, das nichts zurückgeben darf.'}
+    ];
+    var SHORT=['Fiktion','Faktenbuch','Lügner','Kalibrier-Fehler','außerhalb'];
+    var sel=0;
+    var wrap=$('pathBtns');
+    PATH.forEach(function(p,i){
+      var b=document.createElement('button');b.textContent=(i+1)+' · '+SHORT[i];
+      b.addEventListener('click',function(){sel=i;render();});
+      wrap.appendChild(b);
+    });
+    function render(){
+      var b=wrap.querySelectorAll('button');
+      for(var i=0;i<b.length;i++)b[i].className=(i===sel?'sel':'');
+      var p=PATH[sel];
+      $('pathVerd').innerHTML='<b>'+p.n+'</b><br>'+p.d+'<br><span style="color:var(--green);font-weight:700">Heilmittel:</span> '+p.fix;
+    }
+    render();
+  })();
+
+  // ---------- Demo 5: Finale / Status ----------
+  (function(){
+    var cv=$('cvFinal'), c=cv.getContext('2d'), W=cv.width, H=cv.height;
+    function bar(x,y,w,h,val,col){
+      c.fillStyle='#ece5d3';c.fillRect(x,y,w,h);
+      c.fillStyle=col;c.fillRect(x,y,w*val,h);
+      c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(x,y,w*val,h);
+    }
+    function draw(){
+      c.clearRect(0,0,W,H);
+      c.fillStyle='#f5f0e6';c.fillRect(0,0,W,H);
+      var coh=+($('fCoh').value)/100, con=+($('fCon').value)/100, N=+($('fN').value);
+      var x=70,bw=W-140,bh=22, gap=54;
+      var y0=38;
+      c.font='12px '+getComputedStyle(document.body).fontFamily;c.fillStyle='#5c6272';
+      c.fillText('Kohärenz',x,y0+bh-4);
+      c.fillText('Korrespondenz',x,y0+gap+bh-4);
+      bar(x+90,y0,bw-90,bh,coh,'#15803d');
+      bar(x+90,y0+gap,bw-90,bh,con,'#0f766e');
+      // contact dots
+      var yd=y0+2*gap, ydd=yd+8;
+      c.fillStyle='#9aa0b0';c.fillText('Kontaktpunkte',x,ydd+bh/2);
+      var dx=x+90, dpw=bw-90;
+      for(var i=0;i<Math.max(1,N);i++){
+        var px=dx+(i+0.5)/N*dpw;
+        var ok = i/N < con;
+        c.beginPath();c.arc(px,ydd+bh/2,7,0,TAU);
+        c.fillStyle=ok?'#15803d':'#be185d';c.fill();
+        c.strokeStyle='#fff';c.lineWidth=1.5;c.stroke();
+      }
+      // compute
+      var passed=0;
+      for(var i=0;i<N;i++){if(i/N<con)passed++;}
+      var status, cls;
+      if(coh>=0.85&&con>=0.85&&passed===N){status='verifiziert ✓';cls='verdict green';}
+      else if(coh>=0.6&&con>=0.5&&passed>=N*0.5){status='gerechtfertigt';cls='verdict amber';}
+      else{status='fragil ✗';cls='verdict rose';}
+      $('fCohV').textContent=coh.toFixed(2);$('fConV').textContent=con.toFixed(2);$('fNV').textContent=N;
+      $('fStat').textContent=status;
+      $('fC').textContent=passed+' / '+N;
+      var v=$('fVerd');
+      v.className=cls;
+      if(status==='verifiziert ✓') v.innerHTML='<b>Wahrheitsstatus: gut begründet.</b> Kohärent, an der Welt ansetzend, und <em>bisher</em> an keinem harten Kontaktpunkt gescheitert. Das ist das Bestmögliche — und es bleibt <em>vorläufig</em>: Wahrheit wird nicht erreicht, sie wird nur immer besser angenähert.';
+      else if(status==='gerechtfertigt') v.innerHTML='<b>Wahrheitsstatus: vorläufig akzeptierbar.</b> Das Modell hält, aber die Evidenz ist noch dünn. Neue Kontaktpunkte könnten es brechen — das ist der gesunde Zustand einer aktiven Hypothese.';
+      else v.innerHTML='<b>Wahrheitsstatus: fragil.</b> Zu viele gescheiterte Kontaktpunkte oder zu wenig Kohärenz. Bevor du diesem Modell vertraust, bricht es an einer der fünf Stellen. Finde zuerst, <em>welche</em>.';
+    }
+    ['fCoh','fCon','fN'].forEach(function(id){$(id).addEventListener('input',draw);});
+    draw();
+  })();
+})();
+</script>
+</body>
+</html>

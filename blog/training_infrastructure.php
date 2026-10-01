@@ -48,9 +48,9 @@ Each GPU holds a **full copy** of the model. Each step:
 
 Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to (ca. )100 GPUs; beyond that, the all-reduce becomes the bottleneck.
 
-### ZeRO (Zero Redundancy Optimizer) \cite[Rajbhandari et al., 2019]{rajbhandari2019zero}
+### ZeRO (Zero Redundancy Optimizer)
 
-The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters. ZeRO partitions these across $P$ GPUs:
+The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters (\cite[Rajbhandari et al., 2019]{rajbhandari2019zero}). ZeRO partitions these across $P$ GPUs:
 
 * **ZeRO-1**: partition optimizer states → memory $\frac{1}{P}$, communication same as DP.
 * **ZeRO-2**: partition optimizer states + gradients → memory $\frac{1}{P}$, communication still same as DP.
@@ -59,7 +59,7 @@ The key insight: in data parallelism, each GPU stores **redundant** optimizer st
 FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3. With 64 H100s, you can train a 70B model that wouldn't fit on a single GPU.
 </div>
 
-<div id="parallelism-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="parallelism-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Tensor Parallelism (TP)">
 ### Tensor Parallelism (TP)
@@ -72,7 +72,7 @@ $$
 
 Each GPU computes half the output; results are concatenated (or all-gathered). TP requires **fast interconnect** (NVLink, InfiniBand) because every layer requires a sync.
 
-Megatron-LM \cite[Shoeybi et al., 2019]{shoeybi2019megatron} tensor-parallels the MLP and attention blocks of a Transformer. For attention:
+Megatron-LM (\cite[Shoeybi et al., 2019]{shoeybi2019megatron}) tensor-parallels the MLP and attention blocks of a Transformer. For attention:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q K^\top}{\sqrt{d}}\right) V
@@ -86,7 +86,7 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 
 **Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc. Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.
 
-The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
+The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe (\cite[Huang et al., 2018]{huang2018gpipe}) splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Sequence Parallelism">
@@ -94,7 +94,7 @@ The challenge: **pipeline bubbles**, idle time waiting for the previous stage to
 
 For very long contexts, the attention matrix $QK^\top$ is $O(n^2)$ per head. **Sequence parallelism** splits the sequence dimension across GPUs: GPU $i$ holds tokens $[i \cdot n/P, (i+1) \cdot n/P)$. Each computes attention on its local chunk; only the relevant $QK^\top$ slice is computed, reducing memory by $1/P$.
 
-Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.
+Ring Attention (\cite[Liu et al., 2023]{liu2023ring}) and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.
 </div>
 
 <div class="md">

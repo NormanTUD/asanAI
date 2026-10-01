@@ -47,7 +47,7 @@ Where:
 
 $$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{I} $$
 
-The **$+\mathbf{I}$** term is the magic. It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
+The **$+\mathbf{I}$** term is the magic. It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term. Formally, the backpropagation recursion through a residual block involves the factor $\mathbf{I} + J_F$ (where $J_F$ is the Jacobian of the residual function) rather than $J_F$ alone — so the gradient is never *multiplied by* a potentially tiny matrix, only *shifted* by one. The full analysis is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.1.
 
 ## Handling Dimension Mismatches ($1 \times 1$ Convs)
 

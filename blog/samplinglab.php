@@ -18,7 +18,7 @@ This chapter covers every common decoding method with its mathematical formulati
 </div>
 
 <div class="optional md" data-headline="Where the math comes from">
-Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it is *exactly* the Boltzmann distribution over energy levels. Sampling, then, is not a new trick: it is thermodynamics in disguise.
+Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it *is* physics. The softmax with temperature $T$ is exactly the **Boltzmann distribution** (\cite[Boltzmann, 1877]{boltzmann}) over the token "energy levels" $E_i = -z_i$ (the logit, negated), written in dimensionless form by absorbing the Boltzmann constant into $T$: $\;P_i = e^{z_i/T} / \sum_j e^{z_j/T}$. So $T$ is not a knob we invented — it is a **temperature** in the thermodynamic sense. $T \to 0$ is the **ground state**: the system collapses onto the single lowest-energy, highest-probability token (greedy). $T \to \infty$ is the **infinite-temperature** limit, where every state is equally populated (uniform). Raising $T$ does not make the model "creative" in any vague sense; it lets higher-energy, rarer tokens be occupied at all, the way a hotter gas puts its particles into excited states. Sampling is thermodynamics in disguise.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="The Probability Distribution">
@@ -50,9 +50,9 @@ Drawback: **repetition loops** and **mode collapse** (“the the the the...”).
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Top-k Sampling">
-## Top-$k$ Sampling \cite[Fan et al., 2018]{fan2018topk}
+## Top-$k$ Sampling
 
-Restrict to the $k$ tokens with highest probability, then renormalize:
+Restrict to the $k$ tokens with highest probability, then renormalize (\cite[Fan et al., 2018]{fan2018topk}):
 
 $$
 \mathcal{V}_k = \{i : z_i \geq z_{(k)}\}, \quad P'(i) = \begin{cases} P(i) / Z & i \in \mathcal{V}_k \\ 0 & \text{otherwise} \end{cases}
@@ -68,9 +68,9 @@ Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context. Som
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Top-p (Nucleus) Sampling">
-## Top-$p$ (Nucleus) Sampling \cite[Holtzman et al., 2020]{holtzman2020nucleus}
+## Top-$p$ (Nucleus) Sampling
 
-Sample from the smallest set of tokens whose cumulative probability exceeds $p$:
+Sample from the smallest set of tokens whose cumulative probability exceeds $p$ (\cite[Holtzman et al., 2020]{holtzman2020nucleus}):
 
 $$
 \mathcal{V}_p = \text{smallest set s.t. } \sum_{i \in \mathcal{V}_p} P(i) \geq p
@@ -86,9 +86,9 @@ Most production APIs default to **top-$p$ = 0.9 or 0.95**.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Min-p Sampling">
-## Min-$p$ Sampling \cite[Nguyen et al., 2025]{nguyen2025minp}
+## Min-$p$ Sampling
 
-The new frontier method, recommended by many open-source models (Qwen, Mistral):
+The new frontier method (\cite[Nguyen et al., 2025]{nguyen2025minp}), recommended by many open-source models (Qwen, Mistral):
 
 * Choose $m = \max_i P(i)$ (the highest probability).
 * Include all tokens with $P(i) \geq s \cdot m$ where $s \in [0, 1]$ is the min-$p$ parameter.
@@ -127,9 +127,9 @@ Similar to min-$p$ but with a different criterion: cut off tokens with probabili
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="Repetition Penalty">
-## Repetition Penalty \cite[Keskar et al., 2019]{keskar2019ctrl}
+## Repetition Penalty
 
-Reduce the logits of tokens that have already appeared in the context:
+Reduce the logits of tokens that have already appeared in the context (\cite[Keskar et al., 2019]{keskar2019ctrl}):
 
 $$
 z_i' = \begin{cases} z_i / \theta & \text{if } i \in \text{context} \\ z_i & \text{if } i \notin \text{context} \end{cases}
@@ -182,9 +182,9 @@ Drawbacks: tends to produce generic, “averaged” outputs in open-ended genera
 </div>
 
 <div class="md">
-## mirostat \cite[Basu et al., 2020]{basu2020mirostat}
+## mirostat
 
-A sampling scheme that **targets a fixed perplexity** during generation. The model adjusts its sampling to maintain target surprise:
+A sampling scheme (\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation. The model adjusts its sampling to maintain target surprise:
 
 * Target perplexity $\tau$ (e.g., $\tau = 5$).
 * After each generated token, compute current perplexity.
@@ -226,7 +226,7 @@ This guarantees the output distribution exactly matches the target model's distr
 
 A 2024 idea: adjust temperature based on the entropy of the predicted distribution. When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it. The intuition: respect the model's confidence rather than always applying the same temperature.
 
-Implementations: **entropy-aware sampling** \cite[Wang et al., 2024]{wang2024entropy}, **DynTemp**, and proprietary variants in vLLM and llama.cpp.
+Implementations: **entropy-aware sampling** (\cite[Wang et al., 2024]{wang2024entropy}), **DynTemp**, and proprietary variants in vLLM and llama.cpp.
 
 Not yet standardized but promising.
 </div>

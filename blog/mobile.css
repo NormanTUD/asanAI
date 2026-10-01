@@ -83,9 +83,10 @@ body {
 		font-size: 0.92rem;
 	}
 
-	/* Tiles: 2 columns down from 3, so they don't feel cramped. */
+	/* Tiles: 1 column (the 2-up grid squeezes rows to ~295 px,
+	   where title + description read cramped). Desktop keeps 3-up. */
 	.course-tiles {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: 1fr;
 		gap: 0.75rem;
 	}
 
@@ -119,15 +120,21 @@ body {
    ────────────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
 
-	/* ── 3a. Root typography ──────────────────────────────── */
+	/* ── 3a. Root typography ────────────────────────────────
+	   17.5 px: on phones the old 16.75 px read as a touch small.
+	   This scales every rem-based phone rule below by ~4.5 % and
+	   stays on the iOS input-zoom safe side (≥ 16 px). */
 	html {
-		font-size: 16px; /* iOS zoom lock; clamp() can override if needed */
+		font-size: 17.5px;
 	}
 
+	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
+	   border on both sides reads as "huge margin". 12 px keeps the text
+	   from kissing the glass. */
 	#contents {
 		width: 100%;
-		padding-left:  max(0.9rem, env(safe-area-inset-left));
-		padding-right: max(0.9rem, env(safe-area-inset-right));
+		padding-left:  max(0.75rem, env(safe-area-inset-left));
+		padding-right: max(0.75rem, env(safe-area-inset-right));
 	}
 
 	#contents h1 {
@@ -182,7 +189,15 @@ body {
 		padding: 0.02em 0.08em 0 0;
 	}
 
-	/* ── 3c. Tiles → 1 column, denser ──────────────────────── */
+	/* ── 3c. Tiles → 1 column, single-line rows ─────────────
+	   Each tile is ONE line — icon, title, truncated description —
+	   so the course overview reads like a compact list of buttons
+	   instead of a wall of small wrapped text. The title gets
+	   priority for the space; the description yields first
+	   (higher flex-shrink) and is capped at 45 % width.
+	   Selectors carry `#contents` because the generic `#contents h3`
+	   / `#contents p` rules above would otherwise win on
+	   specificity and keep the old sizes / margins. */
 	.course-tiles {
 		grid-template-columns: 1fr;
 		gap: 0.6rem;
@@ -201,15 +216,41 @@ body {
 		font-size: 1.15rem;
 	}
 
-	/* Tile itself: slightly larger hit target on phones. */
-	.course-tile {
-		padding: 0.95rem 1rem;
+	#contents a.course-tile,
+	#contents .course-tile {
+		flex-direction: row;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0.8rem 1rem;
 	}
-	.course-tile h3 {
-		font-size: 0.98rem;
+	.course-tile-icon {
+		font-size: 1.5rem;
+		margin-bottom: 0;
+		flex: 0 0 auto;
 	}
-	.course-tile p {
-		font-size: 0.83rem;
+	/* Title wins the space: it keeps its natural width (shrinking
+	   only when it cannot fit at all); the description grows into
+	   whatever room is left, capped at 45 % of the tile. */
+	#contents .course-tile h3 {
+		font-size: 1.15rem;
+		line-height: 1.25;
+		margin: 0;
+		flex: 0 1 auto;
+		min-width: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	#contents .course-tile p {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.3;
+		flex: 1 1 0;
+		min-width: 0;
+		max-width: 45%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	/* ── 3d. Aurora block-quote: drop the huge left gutter ── */
@@ -501,6 +542,23 @@ body {
 		line-height: 1.15;
 	}
 
+	/* The intro runs ~10 viewports long on a phone before the course
+	   list begins — give readers a way to skip straight to the tiles. */
+	.course-jump {
+		display: inline-block;
+		margin-top: 0.8rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--mn-accent);
+		text-decoration: none;
+	}
+	.course-jump:active {
+		opacity: 0.6;
+	}
+	#course-overview {
+		scroll-margin-top: 64px;
+	}
+
 	/* ── 3u. External link arrows: subtler on phones ─────── */
 	.md a[target="_blank"]:not(.cl-inline):not(.cl-h-anchor):not(.cl-copy)::after {
 		font-size: 0.78em;
@@ -548,11 +606,16 @@ body {
 	#contents h2 { font-size: 1.12rem; }
 	#contents h3 { font-size: 0.98rem; }
 
-	.course-tile {
+	#contents a.course-tile,
+	#contents .course-tile {
 		padding: 0.8rem 0.85rem;
+		gap: 0.55rem;
 	}
-	.course-tile h3 { font-size: 0.92rem; }
-	.course-tile p { font-size: 0.78rem; }
+	.course-tile-icon { font-size: 1.3rem; }
+	#contents a.course-tile h3,
+	#contents .course-tile h3 { font-size: 1.05rem; }
+	#contents a.course-tile p,
+	#contents .course-tile p { font-size: 0.88rem; max-width: 42%; }
 
 	/* Slightly tighter safe-area padding on tiny screens. */
 	#contents {

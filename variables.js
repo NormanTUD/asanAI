@@ -173,6 +173,7 @@ var layer_structure_cache = null;
 var allowed_layer_cache = [];
 var last_allowed_layers_update = null;
 var started_training = false;
+var training_run_count = 0;
 
 var training_history = [];
 var training_history_counter = 0;

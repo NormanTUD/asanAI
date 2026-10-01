@@ -27,7 +27,7 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 <div class="md" data-mathlevel="60" data-optionaltitle="Chain-of-Thought Prompting">
 ## Chain-of-Thought Prompting
 
-The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
+The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, (\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
 
 $$
 P_{\text{CoT}}(y \mid x) = \sum_z P(y \mid x, z)\, P(z \mid x)
@@ -47,19 +47,19 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **Few-shot CoT** | 2022 | Hand-written reasoning examples |
 | **Self-consistency** | 2022 | Sample $k$ CoTs, take majority vote on answers |
 | **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |
-| **Tree of Thoughts (ToT)** \cite[Yao et al., 2023]{yao2023tot} | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
+| **Tree of Thoughts (ToT)** (\cite[Yao et al., 2023]{yao2023tot}) | 2023 | BFS/DFS over partial reasoning paths with self-evaluation |
 | **Graph of Thoughts (GoT)** | 2023 | DAG of thoughts, with merging and feedback |
 | **Skeleton-of-Thought** | 2023 | Generate outline first, then fill in each section in parallel |
-| **Self-Refine** \cite[Madaan et al., 2023]{madaan2023selfrefine} | 2023 | Generate, critique, refine iteratively |
+| **Self-Refine** (\cite[Madaan et al., 2023]{madaan2023selfrefine}) | 2023 | Generate, critique, refine iteratively |
 | **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |
 | **Verifier-guided search** | 2023 | Generate $k$ candidates, score with a learned verifier |
-| **ReAct** \cite[Yao et al., 2023]{yao2023react} | 2023 | Interleave reasoning with tool use |
+| **ReAct** (\cite[Yao et al., 2023]{yao2023react}) | 2023 | Interleave reasoning with tool use |
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Self-Consistency">
-## Self-Consistency \cite[Wang et al., 2022]{wang2022selfconsistency}
+## Self-Consistency
 
-The simplest and most reliable inference-time scaling trick:
+The simplest and most reliable inference-time scaling trick (\cite[Wang et al., 2022]{wang2022selfconsistency}):
 
 1. Sample $k$ independent CoTs from the model: $\{z^{(1)}, \dots, z^{(k)}\}$.
 2. Extract the final answer from each: $\{y^{(1)}, \dots, y^{(k)}\}$.
@@ -71,7 +71,9 @@ The cost is $k \times$ more inference, but no retraining required.
 </div>
 
 <div class="md" data-mathlevel="45" data-optionaltitle="Tree of Thoughts">
-## Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot} rather than a linear chain:
+## Tree of Thoughts
+
+Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:
 
 1. **Generate** $b$ candidate thoughts at each step.
 2. **Evaluate** each candidate (by prompting the model itself).
@@ -120,7 +122,7 @@ Training a PRM:
 
 At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
 
-The Math-Shepherd method \cite[Zhang et al., 2024]{zhang2024mathshepherd} auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
+The Math-Shepherd method (\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point, eliminating the need for human step labels.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Inference-Time Scaling Laws">
@@ -179,7 +181,7 @@ The frontier of research is **meta-reasoning**: training the model to *decide ho
 
 | Method | Compute cost | When to use |
 |--------|-------------|-------------|
-| Zero-shot CoT | $1\times$ | Quick win on \cite[Hendrycks et al., 2021]{hendrycks2021math}s |
+| Zero-shot CoT | $1\times$ | Quick win on MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) |
 | o1-style long thinking | $10{-}100\times$ | Hard math, code, science |
 | Process Reward Model search | $k \cdot d\times$ | Maximum accuracy on verifiable tasks |
 

@@ -271,7 +271,11 @@ window.bibData = {
 		alternativetitle: "Small modular origami structure (Icyshadowking, CC0)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
+	 *  Origami in N dimensions: the neural-network fold  (origami.php)
+	 *  The feed-forward space-warping picture, its 3-D fold demos, the
+	 *  fold-and-cut theorem, the depth/width theory, and the polyhedral
+	 *  backbone that makes the linear-region count precise.
+	 * ───────────────────────────────────────────────────────────────────── */
 	"foldandcut_wiki": {
 		title: "Fold-and-cut theorem",
 		author: "Wikipedia contributors",
@@ -328,6 +332,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Softmax_function",
 		alternativetitle: "Softmax function (Wikipedia)"
 	},
+	"inverse_function_theorem_wiki": {
+		title: "Inverse function theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Inverse_function_theorem",
+		alternativetitle: "Inverse function theorem (Wikipedia) — full-rank Jacobian implies local diffeomorphism"
+	},
 	"lewandowski2025spacefolds": {
 		title: "On Space Folds of ReLU Neural Networks",
 		author: "Michal Lewandowski, Hamid Eghbalzadeh, Bernhard Heinzl, Raphael Pisoni, Bernhard A. Moser",
@@ -370,6 +381,190 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2305.00241",
 		alternativetitle: "Huchette et al., IJOC 2026 (arXiv:2305.00241), DOI 10.1287/ijoc.2024.0902"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  High-dimensional underpinnings of the origami chapter (origami.php):
+	 *  why folding data into unoccupied higher dimensions manufactures linear
+	 *  separability. Cover's counting function, concentration of measure (why
+	 *  new directions are nearly orthogonal), the Johnson–Lindenstrauss lemma
+	 *  (why the relational geometry of an embedding survives compression),
+	 *  neural collapse (the symmetric end-state geometry), and the topological
+	 *  (Betti-number) view of ReLU folding.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"cover1965": {
+		title: "Geometrical and Statistical Properties of Systems of Linear Inequalities with Applications in Pattern Recognition",
+		author: "Thomas M. Cover",
+		year: 1965,
+		journal: "IEEE Transactions on Electronic Computers",
+		volume: "EC-14",
+		number: 3,
+		pages: "326–334",
+		url: "https://doi.org/10.1109/pgec.1965.264137",
+		alternativetitle: "Cover, 1965 (the counting function behind 'Cover's theorem'), IEEE EC-14(3)"
+	},
+	"johnson1984lindenstrauss": {
+		title: "Extensions of Lipschitz Mappings into a Hilbert Space",
+		author: "William B. Johnson, Joram Lindenstrauss",
+		year: 1984,
+		journal: "Conference on Modern Analysis and Probability (New Haven, Conn., 1982); Contemporary Mathematics 26, American Mathematical Society",
+		url: "https://www.ams.org/books/conm/026",
+		alternativetitle: "Johnson & Lindenstrauss, 1984 (origin of the Johnson–Lindenstrauss lemma), AMS Contemporary Math 26"
+	},
+	"larsen2014jloptimal": {
+		title: "The Johnson-Lindenstrauss lemma is optimal for linear dimensionality reduction",
+		author: "Kasper Green Larsen, Jelani Nelson",
+		year: 2014,
+		url: "https://arxiv.org/abs/1411.2404",
+		alternativetitle: "Larsen & Nelson 2014 — matching lower bound: k = Omega(eps^{-2} log N) is tight for linear maps (arXiv:1411.2404)"
+	},
+	"vershynin2018hd": {
+		title: "High-Dimensional Probability: An Introduction with Applications in Data Science",
+		author: "Roman Vershynin",
+		year: 2018,
+		publisher: "Cambridge University Press",
+		url: "https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-2.pdf",
+		alternativetitle: "Vershynin, High-Dimensional Probability (2018) — concentration of measure"
+	},
+	"papyan2020neuralcollapse": {
+		title: "Prevalence of Neural Collapse during the Terminal Phase of Deep Learning Training",
+		author: "Vardan Papyan, X. Y. Han, David L. Donoho",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.08186",
+		alternativetitle: "Papyan, Han & Donoho, neural collapse (arXiv:2008.08186)"
+	},
+	"naitzat2020topology": {
+		title: "Topology of Deep Neural Networks",
+		author: "Gregory Naitzat, Andrey Zhitnikov, Lek-Heng Lim",
+		year: 2020,
+		url: "https://arxiv.org/abs/2004.06093",
+		alternativetitle: "Naitzat, Zhitnikov & Lim, topology of deep networks (arXiv:2004.06093)"
+	},
+	"ergengrillo2024topological": {
+		title: "Topological Expressivity of ReLU Neural Networks",
+		author: "Ekin Ergen, Moritz Grillo",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.11130",
+		alternativetitle: "Ergen & Grillo, topological expressivity of ReLU nets (COLT 2024, arXiv:2310.11130)"
+	},
+	"info_geometry_nlab": {
+		title: "information geometry",
+		author: "nLab contributors (Fisher–Rao metric; Amari; Rao 1945)",
+		year: 2026,
+		url: "https://nlab.org/nlab/show/information+geometry",
+		alternativetitle: "Information geometry (nLab) — Fisher–Rao metric on the space of distributions"
+	},
+	"hanin2019linearregions": {
+		title: "Complexity of Linear Regions in Deep Networks",
+		author: "Boris Hanin, David Rolnick",
+		year: 2019,
+		url: "https://arxiv.org/abs/1901.09021",
+		alternativetitle: "Hanin & Rolnick, typical complexity of linear regions (COLT 2019, arXiv:1901.09021)"
+	},
+	"raghu2017expressive": {
+		title: "On the Expressive Power of Deep Neural Networks",
+		author: "Maithra Raghu, Ben Poole, Jon Kleinberg, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1606.05336",
+		alternativetitle: "Raghu et al. 2017 — trajectory length: a 1-D sweep crosses the boundary exponentially many times in depth (COLT 2017, arXiv:1606.05336)"
+	},
+	"grigsby2020transversality": {
+		title: "On transversality of bent hyperplane arrangements and the topological expressiveness of ReLU neural networks",
+		author: "J. Elisenda Grigsby, Kathryn Lindsey",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.09052",
+		alternativetitle: "Grigsby & Lindsey — ReLU folds as bent hyperplane arrangements; generic nets have stable decision-region topology (arXiv:2008.09052)"
+	},
+	"lee2023topologywidth": {
+		title: "Data Topology-Dependent Upper Bounds of Neural Network Widths",
+		author: "Sangmin Lee, Jong Chul Ye",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.16375",
+		alternativetitle: "Lee & Ye 2023 — the width a net needs to separate data is bounded by the topology (holes) of the labels (ICLR 2023, arXiv:2305.16375)"
+	},
+	"carlsson2009topologydata": {
+		title: "Topology and Data",
+		author: "Gunnar Carlsson",
+		year: 2009,
+		journal: "Bulletin of the American Mathematical Society 46(2)",
+		url: "https://projecteuclid.org/journals/bulletin-of-the-american-mathematical-society/volume-46/issue-2/Bull-Amer-Math-Soc-46-2009-46.2/S0273-0952-09-01241-7",
+		alternativetitle: "Carlsson 2009 — the founding 'shape of data' topological-data-analysis paper (BAMS 46(2))"
+	},
+	"love2021topdeepsurvey": {
+		title: "Topological Deep Learning",
+		author: "Ephy R. Love, Benjamin Filippenko, Vasileios Maroulas, Gunnar Carlsson",
+		year: 2021,
+		url: "https://arxiv.org/abs/2101.05778",
+		alternativetitle: "Love et al. 2021 — a survey of topological deep learning (arXiv:2101.05778)"
+	},
+	"chen2018neuralode": {
+		title: "Neural Ordinary Differential Equations",
+		author: "Ricky T. Q. Chen, Yulia Rubanova, Jesse Bettencourt, David Duvenaud",
+		year: 2018,
+		url: "https://arxiv.org/abs/1806.07366",
+		alternativetitle: "Chen et al. 2018 — a continuous-depth net is the time-T flow (a diffeomorphism) of an ODE (NeurIPS 2018, arXiv:1806.07366)"
+	},
+	"teshima2020inndiffeo": {
+		title: "Coupling-based Invertible Neural Networks Are Universal Diffeomorphism Approximators",
+		author: "Takeshi Teshima, Isao Ishikawa, Koichi Tojo, et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/2006.11469",
+		alternativetitle: "Teshima et al. 2020 — invertible nets approximate any diffeomorphism (arXiv:2006.11469)"
+	},
+	"papamakarios2019flows": {
+		title: "Normalizing Flows for Probabilistic Modeling and Inference",
+		author: "George Papamakarios, Eric Nalisnick, Danilo Jimenez Rezende, et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1912.02762",
+		alternativetitle: "Papamakarios et al. — normalizing flows as diffeomorphisms pushing a base density forward (arXiv:1912.02762)"
+	},
+	"dinh2016realnvp": {
+		title: "Density Estimation Using Real-NVP",
+		author: "Laurent Dinh, Jascha Sohl-Dickstein, Samy Bengio",
+		year: 2016,
+		url: "https://arxiv.org/abs/1605.08803",
+		alternativetitle: "Dinh et al. 2016 — RealNVP: invertible coupling blocks, the mirror of the non-invertible ReLU fold (NeurIPS 2016, arXiv:1605.08803)"
+	},
+	"chung2017perceptual": {
+		title: "Classification and Geometry of General Perceptual Manifolds",
+		author: "SueYeon Chung, Daniel D. Lee, Haim Sompolinsky",
+		year: 2017,
+		url: "https://arxiv.org/abs/1710.06487",
+		alternativetitle: "Chung, Lee & Sompolinsky — each class is a low-dim perceptual manifold; classification = separating them (arXiv:1710.06487)"
+	},
+	"loaizaganem2024manifoldsurvey": {
+		title: "Deep Generative Models through the Lens of the Manifold Hypothesis: A Survey and New Connections",
+		author: "Gabriel Loaiza-Ganem, Brendan Leigh Ross, Rasa Hosseinzadeh, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.02954",
+		alternativetitle: "Loaiza-Ganem et al. 2024 — the manifold hypothesis as a live deep-learning assumption (arXiv:2404.02954)"
+	},
+	"yoneda_nlab": {
+		title: "Yoneda embedding",
+		author: "nLab contributors (Yoneda lemma; Yoneda 1965)",
+		year: 2026,
+		url: "https://nlab.org/nlab/show/Yoneda+embedding",
+		alternativetitle: "Yoneda embedding (nLab) — an object is fully determined by its relationships to everything else"
+	},
+	"cruzmorales2021grothendieck": {
+		title: "The notion of space in Grothendieck: from schemes to a geometry of forms",
+		author: "John Alexander Cruz Morales",
+		year: 2021,
+		url: "https://arxiv.org/abs/2105.08799",
+		alternativetitle: "Cruz Morales 2021 (secondary) — Grothendieck's philosophy of the notion of space (arXiv:2105.08799)"
+	},
+	"lee2019widelinear": {
+		title: "Wide Neural Networks of Any Depth Evolve as Linear Models Under Gradient Descent",
+		author: "Jaehoon Lee, Lechao Xiao, Samuel S. Schoenholz, et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1902.06720",
+		alternativetitle: "Lee et al. 2019 — at infinite width any depth acts linearly on the initial features (NeurIPS 2019, arXiv:1902.06720)"
+	},
+	"wu2024linguisticcollapse": {
+		title: "Linguistic Collapse: Neural Collapse in (Large) Language Models",
+		author: "Robert Wu, Vardan Papyan",
+		year: 2024,
+		url: "https://arxiv.org/abs/2405.17767",
+		alternativetitle: "Wu & Papyan 2024 — the simplex-ETF terminal geometry also governs LLMs (arXiv:2405.17767)"
+	},
 	"black2022polytopelens": {
 		title: "Interpreting Neural Networks through the Polytope Lens",
 		author: "Sid Black, Lee Sharkey, Leo Grinsztajn, Eric Winsor, Dan Braun, Jacob Merizian, Kip Parker, Carlos Ramón Guevara, Beren Millidge, Gabriel Alfour, Connor Leahy",
@@ -398,6 +593,21 @@ window.bibData = {
 	 *  Hamiltonian/Boltzmann physics to energy-based neural models and the
 	 *  manifold hypothesis.
 	 * ───────────────────────────────────────────────────────────────────── */
+	"mabrok2026latent": {
+		title: "Latent Semantic Manifolds in Large Language Models",
+		author: "Mohamed A. Mabrok",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.22301",
+		alternativetitle: "Mabrok, latent semantic manifolds in LLMs (2026)"
+	},
+	"gardenfors2000conceptual": {
+		title: "Conceptual Spaces: The Geometry of Thought",
+		author: "Peter Gärdenfors",
+		year: 2000,
+		publisher: "MIT Press",
+		url: "https://en.wikipedia.org/wiki/Conceptual_space",
+		alternativetitle: "Gärdenfors, Conceptual Spaces: The Geometry of Thought (2000)"
+	},
 	"nlab_phasespace": {
 		title: "phase space",
 		author: "nLab contributors",
@@ -545,6 +755,13 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Concentration_of_measure",
 		alternativetitle: "Concentration of measure (Wikipedia)"
+	},
+	"vyshnyvetska2025infogravity": {
+		title: "Information Gravity: A Field-Theoretic Model for Token Selection in Large Language Models",
+		author: "Maryna Vyshnyvetska",
+		year: 2025,
+		url: "https://arxiv.org/abs/2504.20951",
+		alternativetitle: "Information Gravity (Vyshnyvetska, 2025)"
 	},
 	"saxe2014deep": {
 		title: "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
@@ -1263,6 +1480,14 @@ window.bibData = {
 		year: 1758,
 		url: "https://en.wikipedia.org/wiki/Euler_characteristic",
 		alternativetitle: "Elementa doctrinae solidorum"
+	},
+	"riemann1857genus": {
+		title: "Versuch einer Entwicklung einer allgemeinen Theorie der Abel'schen Integrale",
+		author: "Bernhard Riemann",
+		year: 1857,
+		journal: "Journal für die reine und angewandte Mathematik (Crelle) 54",
+		url: "https://en.wikipedia.org/wiki/Genus_(topology)",
+		alternativetitle: "Riemann, 1857: genus and χ = 2 − 2g"
 	},
 	"gaussdisquisitiones": {
 		title: "Disquisitiones generales circa superficies curvas",
@@ -3009,6 +3234,13 @@ window.bibData = {
 		author: "Samuel Ichiye Hayakawa",
 		year: 1939
 	},
+	"pirsig": {
+		url: "https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance",
+		title: "Zen and the Art of Motorcycle Maintenance: An Inquiry into Values",
+		author: "Robert M. Pirsig",
+		year: 1974,
+		alternativetitle: "Pirsig, Zen and the Art of Motorcycle Maintenance (1974)"
+	},
 	"maclaurin": {
 		url: "https://archive.org/details/atreatiseonflux01maclgoog",
 		title: "A Treatise on Fluxions",
@@ -3854,6 +4086,102 @@ window.bibData = {
 		title: "A Memoir on the Theory of Matrices",
 		author: "Arthur Cayley",
 		year: 1858
+	},
+	"matrix_wiki": {
+		title: "Matrix (mathematics)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Matrix_(mathematics)",
+		alternativetitle: "Matrix (mathematics) — definition, operations, and history (Sylvester coined 'matrix' in 1850; Cayley's 1858 memoir)"
+	},
+	"tensor_wiki": {
+		title: "Tensor",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Tensor",
+		alternativetitle: "Tensor — definition, history (Hamilton 1846, Voigt 1898, Ricci-Curbastro & Levi-Civita 1900), and operations"
+	},
+	"einstein_notation_wiki": {
+		title: "Einstein notation",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Einstein_notation",
+		alternativetitle: "Einstein notation (Einstein summation convention: a repeated index implies a sum)"
+	},
+	"numpy_broadcasting": {
+		title: "Broadcasting",
+		author: "NumPy developers",
+		year: 2026,
+		url: "https://numpy.org/doc/stable/user/basics.broadcasting.html",
+		alternativetitle: "NumPy user guide — Broadcasting: how arrays with different shapes combine"
+	},
+	"sylvester1850matrix": {
+		title: "Additions to the Articles … on Pascal's Theorem",
+		author: "James Joseph Sylvester",
+		year: 1850,
+		publisher: "Philosophical Magazine 37: 363–370",
+		url: "https://archive.org/download/londonedinburg3371850lond/londonedinburg3371850lond.pdf",
+		alternativetitle: "Sylvester (1850), Phil. Mag. 37:363–370 — the first use of the word 'matrix' (p. 369)"
+	},
+	"hamiltonextensionsquaternions": {
+		title: "On some Extensions of Quaternions",
+		author: "William Rowan Hamilton",
+		year: 1854,
+		publisher: "Philosophical Magazine, 7–9",
+		url: "http://www.emis.de/classics/Hamilton/ExtQuat.pdf",
+		alternativetitle: "Hamilton — where he defines the 'tensor' of a quaternion (p. 498)"
+	},
+	"voigt1898krystalle": {
+		title: "Die fundamentalen physikalischen Eigenschaften der Krystalle in elementarer Darstellung",
+		author: "Woldemar Voigt",
+		year: 1898,
+		publisher: "Von Veit, Leipzig",
+		url: "https://archive.org/download/bub_gb__Ps4AAAAMAAJ/bub_gb__Ps4AAAAMAAJ.pdf",
+		alternativetitle: "Voigt (1898) — introduces the modern use of the word 'Tensoren' (p. 20)"
+	},
+	"riccilevicivita1900": {
+		title: "Méthodes de calcul différentiel absolu et leurs applications",
+		author: "Gregorio Ricci-Curbastro; Tullio Levi-Civita",
+		year: 1900,
+		publisher: "Mathematische Annalen 54(1–2): 125–201",
+		url: "https://doi.org/10.1007/BF01454201",
+		alternativetitle: "Ricci-Curbastro & Levi-Civita (1900) — the absolute differential calculus, i.e. tensor analysis"
+	},
+	"einstein1916annalen": {
+		title: "The Foundation of the Generalised Theory of Relativity",
+		author: "Albert Einstein",
+		year: 1916,
+		publisher: "Annalen der Physik 354(7): 769–782 (English translation by S. N. Bose)",
+		url: "https://en.wikisource.org/wiki/The_Foundation_of_the_Generalised_Theory_of_Relativity",
+		alternativetitle: "Einstein (1916) — introduces the summation convention (a repeated index implies a sum)"
+	},
+	"etymonline_matrix": {
+		title: "matrix (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/matrix",
+		alternativetitle: "Etymonline — matrix: from Old French matrice 'womb' and Latin mātrix, from māter 'mother'"
+	},
+	"etymonline_vector": {
+		title: "vector (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/vector",
+		alternativetitle: "Etymonline — vector: from Latin vector, from the past-participle stem of vehĕre 'to carry'"
+	},
+	"etymonline_scalar": {
+		title: "scalar (adj. & n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/scalar",
+		alternativetitle: "Etymonline — scalar: from Latin scalaris 'of or pertaining to a ladder,' from scalae"
+	},
+	"etymonline_tensor": {
+		title: "tensor (n.)",
+		author: "Etymonline",
+		year: 2026,
+		url: "https://www.etymonline.com/word/tensor",
+		alternativetitle: "Etymonline — tensor: 1704, Modern Latin agent noun from Latin tendere 'to stretch'"
 	},
 	"gpt2": {
 		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
@@ -5182,6 +5510,25 @@ window.bibData = {
 		author: "Frederic Lewis",
 		year: 1960
 	},
+	"joseph1961perceptron": {
+		title: "Contributions to Perceptron Theory",
+		author: "R. David Joseph",
+		year: "1961",
+		journal: "PhD thesis, Cornell University",
+		url: "https://www.proquest.com/openview/f305deb1a2b1624b59a0321efb5b810d/1?pq-origsite=gscholar&cbl=18750&diss=y"
+	},
+	"farleyclark1954": {
+		title: "Design of a Non-Linear Device for the Recognition of Patterns",
+		author: "Belmont G. Farley, Wesley A. Clark",
+		year: "1954",
+		journal: "IRE Transactions on Information Theory, IT-1(1):48-54"
+	},
+	"markkac": {
+		title: "Mark Kac",
+		author: "Wikipedia contributors",
+		year: "2026",
+		url: "https://en.wikipedia.org/wiki/Mark_Kac"
+	},
 	"historyofmathematicalnotation": {
 		title: "A History of Mathematical Notations",
 		author: "Florian Cajori",
@@ -6141,6 +6488,69 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "Quiet-STaR"
 	},
+	"hao2025coconut": {
+		url: "https://arxiv.org/abs/2412.06769",
+		title: "Training Large Language Models to Reason in a Continuous Latent Space",
+		author: "Shibo Hao, Sainbayar Sukhbaatar, DiJia Su, Xian Li, Zhiting Hu, Jason Weston, Yuandong Tian",
+		year: 2025,
+		alternativetitle: "Coconut, Chain of Continuous Thought"
+	},
+	"rizvimartel2026illusion": {
+		url: "https://arxiv.org/abs/2604.06374",
+		title: "The Illusion of Superposition? A Principled Analysis of Latent Thinking in Language Models",
+		author: "Michael Rizvi-Martel, Guillaume Rabusseau, Marius Mosbach",
+		year: 2026,
+		alternativetitle: "when latent-CoT superposition collapses"
+	},
+	"darcet2024registers": {
+		url: "https://arxiv.org/abs/2309.16588",
+		title: "Vision Transformers Need Registers",
+		author: "Timothée Darcet, Maxime Oquab, Julien Mairal, Piotr Bojanowski",
+		year: 2024,
+		alternativetitle: "register tokens as ViT working memory"
+	},
+	"cancedda2024sinks": {
+		url: "https://arxiv.org/abs/2402.09221",
+		title: "Spectral Filters, Dark Signals, and Attention Sinks",
+		author: "Nicola Cancedda",
+		year: 2024,
+		alternativetitle: "attention sinks as low-frequency dark signals"
+	},
+	"wong2025sinks": {
+		url: "https://arxiv.org/abs/2512.22213",
+		title: "On the Existence and Behavior of Secondary Attention Sinks",
+		author: "Jeffrey T. H. Wong, Cheng Zhang, Louis Mahon, Wayne Luk, Anton Isopoussu, Yiren Zhao",
+		year: 2025,
+		alternativetitle: "MLPs that synthesize sink vectors"
+	},
+	"fedorenko2011language": {
+		url: "https://pubmed.ncbi.nlm.nih.gov/21949037/",
+		title: "Functional specificity for high-level linguistic processing in the human brain",
+		author: "Evelina Fedorenko, Michael K. Behr, Nancy Kanwisher",
+		year: 2011,
+		alternativetitle: "language network inactive during reasoning"
+	},
+	"amalric2019neuroimage": {
+		url: "https://doi.org/10.1016/j.neuroimage.2018.10.046",
+		title: "A distinct cortical network for mathematical knowledge in the human brain",
+		author: "Marie Amalric, Stanislas Dehaene",
+		year: 2019,
+		alternativetitle: "math network distinct from language network"
+	},
+	"monti2007neuroimage": {
+		url: "https://doi.org/10.1016/j.neuroimage.2007.05.056",
+		title: "Functional neuroanatomy of deductive inference: a language-independent distributed network",
+		author: "Martin M. Monti, Daniel N. Osherson, Michael J. Martinez, Lawrence M. Parsons",
+		year: 2007,
+		alternativetitle: "deductive reasoning uses non-language network"
+	},
+	"fedorenko2024nature": {
+		url: "https://www.nature.com/articles/s41586-024-07522-w",
+		title: "Language is primarily a tool for communication rather than thought",
+		author: "Evelina Fedorenko, Steven T. Piantadosi, Edward A. F. Gibson",
+		year: 2024,
+		alternativetitle: "language optimized for communication, not reasoning"
+	},
 	"ameisen2025circuittracing": {
 		url: "https://arxiv.org/abs/2503.12495",
 		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
@@ -6386,6 +6796,286 @@ window.bibData = {
 		author: "Seamless Communication, Loïc Barrault, Yu-An Chung, et al.",
 		year: 2023,
 		alternativetitle: "SeamlessM4T"
+	},
+
+	// AI Music & Video Generation
+	"ha2018worldmodels": {
+		url: "https://arxiv.org/abs/1803.10122",
+		title: "World Models",
+		author: "David Ha, Jürgen Schmidhuber",
+		year: 2018,
+		alternativetitle: "World Models (Ha & Schmidhuber)"
+	},
+	"unterthiner2018fvd": {
+		url: "https://arxiv.org/abs/1812.01717",
+		title: "Towards Accurate Generative Models of Video: A New Metric & Challenges",
+		author: "Thomas Unterthiner, Sjoerd van Steenkiste, Karol Kurach, et al.",
+		year: 2018,
+		alternativetitle: "Fréchet Video Distance (FVD)"
+	},
+	"tulyakov2018mocogan": {
+		url: "https://arxiv.org/abs/1707.04993",
+		title: "MoCoGAN: Decomposing Motion and Content for Video Generation",
+		author: "Sergey Tulyakov, Ming-Yu Liu, Xiaodong Yang, Jan Kautz",
+		year: 2018,
+		alternativetitle: "MoCoGAN"
+	},
+	"yan2021videogpt": {
+		url: "https://arxiv.org/abs/2104.10157",
+		title: "VideoGPT: Video Generation using VQ-VAE and Transformers",
+		author: "Wilson Yan, Yunzhi Zhang, Pieter Abbeel, Aravind Srinivas",
+		year: 2021,
+		alternativetitle: "VideoGPT"
+	},
+	"bain2021webvid": {
+		url: "https://arxiv.org/abs/2104.00650",
+		title: "Frozen in Time: A Joint Video and Image Encoder for End-to-End Retrieval",
+		author: "Max Bain, Arsha Nagrani, Gül Varol, Andrew Zisserman",
+		year: 2021,
+		alternativetitle: "WebVid-10M"
+	},
+	"singer2022makeavideo": {
+		url: "https://arxiv.org/abs/2209.14792",
+		title: "Make-A-Video: Text-to-Video Generation without Text-Video Data",
+		author: "Uriel Singer, Adam Polyak, Thomas Hayes, et al.",
+		year: 2022,
+		alternativetitle: "Make-A-Video (Meta)"
+	},
+	"ho2022imagenvideo": {
+		url: "https://arxiv.org/abs/2210.02303",
+		title: "Imagen Video: High Definition Video Generation with Diffusion Models",
+		author: "Jonathan Ho, William Chan, Chitwan Saharia, et al.",
+		year: 2022,
+		alternativetitle: "Imagen Video (Google)"
+	},
+	"peebles2023dit": {
+		url: "https://arxiv.org/abs/2212.09748",
+		title: "Scalable Diffusion Models with Transformers",
+		author: "William Peebles, Saining Xie",
+		year: 2023,
+		alternativetitle: "DiT (Diffusion Transformer)"
+	},
+	"blattmann2023svid": {
+		url: "https://arxiv.org/abs/2311.15127",
+		title: "Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets",
+		author: "Andreas Blattmann, Tim Dockhorn, Sumith Kulal, et al.",
+		year: 2023,
+		alternativetitle: "Stable Video Diffusion"
+	},
+	"brooks2024sora": {
+		url: "https://en.wikipedia.org/wiki/Sora_(text-to-video_model)",
+		title: "Sora — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2024,
+		alternativetitle: "Sora (OpenAI, Feb 2024) — 'Video generation models as world simulators'"
+	},
+	"zeghidour2021soundstream": {
+		url: "https://arxiv.org/abs/2107.03312",
+		title: "SoundStream: An End-to-End Neural Audio Codec",
+		author: "Neil Zeghidour, Alejandro Luebs, Ahmed Omran, Jan Skoglund, Marco Tagliasacchi",
+		year: 2021,
+		alternativetitle: "SoundStream (neural audio codec)"
+	},
+	"borsos2023audiolm": {
+		url: "https://arxiv.org/abs/2209.03143",
+		title: "AudioLM: a Language Modeling Approach to Audio Generation",
+		author: "Zalán Borsos, Raphaël Marinier, Damien Vincent, et al.",
+		year: 2023,
+		alternativetitle: "AudioLM (Google)"
+	},
+	"liu2023audioldm": {
+		url: "https://arxiv.org/abs/2301.12503",
+		title: "AudioLDM: Text-to-Audio Generation with Latent Diffusion Models",
+		author: "Haohe Liu, Zehua Chen, Yi Yuan, et al.",
+		year: 2023,
+		alternativetitle: "AudioLDM"
+	},
+	"agostinelli2023musiqlm": {
+		url: "https://arxiv.org/abs/2301.11325",
+		title: "MusicLM: Generating Music From Text",
+		author: "Andrea Agostinelli, Timo I. Denk, Zalán Borsos, et al.",
+		year: 2023,
+		alternativetitle: "MusicLM (Google)"
+	},
+
+	// Audio & video formats, codecs, and music theory (encyclopedic)
+	"music_theory": {
+		url: "https://en.wikipedia.org/wiki/Music_theory",
+		title: "Music theory — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Music theory basics"
+	},
+	"midi": {
+		url: "https://en.wikipedia.org/wiki/MIDI",
+		title: "MIDI — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Musical Instrument Digital Interface"
+	},
+	"pcm": {
+		url: "https://en.wikipedia.org/wiki/Pulse-code_modulation",
+		title: "Pulse-code modulation — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "PCM (digitizing sound)"
+	},
+	"cd_digital_audio": {
+		url: "https://en.wikipedia.org/wiki/Compact_Disc_Digital_Audio",
+		title: "Compact Disc Digital Audio — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "CD-DA (Red Book, 44.1 kHz / 16-bit)"
+	},
+	"nyquist_sampling": {
+		url: "https://en.wikipedia.org/wiki/Nyquist%E2%80%93Shannon_sampling_theorem",
+		title: "Nyquist–Shannon sampling theorem — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Sampling theorem (Nyquist–Shannon)"
+	},
+	"mp3": {
+		url: "https://en.wikipedia.org/wiki/MP3",
+		title: "MP3 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MP3 (MPEG-1 Audio Layer III)"
+	},
+	"mdct": {
+		url: "https://en.wikipedia.org/wiki/Modified_discrete_cosine_transform",
+		title: "Modified discrete cosine transform — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MDCT"
+	},
+	"panharmonicon": {
+		url: "https://en.wikipedia.org/wiki/Panharmonicon",
+		title: "Panharmonicon — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Panharmonicon (Maelzel, 1805)"
+	},
+	"max_mathews": {
+		url: "https://en.wikipedia.org/wiki/Max_Mathews",
+		title: "Max Mathews — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Max Mathews (MUSIC, 1957)"
+	},
+	"illiac_suite": {
+		url: "https://en.wikipedia.org/wiki/Illiac_Suite",
+		title: "Illiac Suite — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Illiac Suite (Hiller & Isaacson, 1957)"
+	},
+	"video_compression": {
+		url: "https://en.wikipedia.org/wiki/Video_compression",
+		title: "Video compression — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Video compression (I/P/B frames)"
+	},
+	"dct": {
+		url: "https://en.wikipedia.org/wiki/Discrete_cosine_transform",
+		title: "Discrete cosine transform — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "DCT"
+	},
+	"h264": {
+		url: "https://en.wikipedia.org/wiki/H.264",
+		title: "H.264 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "H.264 / AVC"
+	},
+	"av1": {
+		url: "https://en.wikipedia.org/wiki/AV1",
+		title: "AV1 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "AV1 (royalty-free codec)"
+	},
+	"vq_vae": {
+		url: "https://arxiv.org/abs/1711.00937",
+		title: "Neural Discrete Representation Learning",
+		author: "Aaron van den Oord, Oriol Vinyals, Koray Kavukcuoglu",
+		year: 2017,
+		alternativetitle: "VQ-VAE"
+	},
+	"vhs": {
+		url: "https://en.wikipedia.org/wiki/VHS",
+		title: "VHS — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "VHS (1976)"
+	},
+
+	// Images for the AI Music & Video Generation chapter
+	"midi_keyboard_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Alesis_Q25_MIDI_Controller.jpg",
+		title: "Alesis Q25 MIDI controller",
+		author: "Melissa Ursula Dawn Goldsmith",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "MIDI controller keyboard"
+	},
+	"oscilloscope_waveform_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Oscilloscope_sine_square.jpg",
+		title: "Oscilloscope trace: sine and square waves",
+		author: "Xato",
+		year: 2019,
+		license: "Public Domain",
+		alternativetitle: "Oscilloscope waveform of sound"
+	},
+	"cd_compact_disc_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Compact_Disc.png",
+		title: "Compact disc (CD)",
+		author: "liamz2r",
+		year: 2019,
+		license: "Public Domain",
+		alternativetitle: "Compact disc"
+	},
+	"audio_spectrogram_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Audio_spectrogram_sonic_visualiser.png",
+		title: "Audio spectrogram (time–frequency view of sound)",
+		author: "Sagenat2",
+		year: 2022,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Audio spectrogram"
+	},
+	"vinyl_lp_record_img": {
+		url: "https://commons.wikimedia.org/wiki/File:12in-Vinyl-LP-Record-Angle.jpg",
+		title: "12-inch vinyl LP record",
+		author: "Evan-Amos",
+		year: 2011,
+		license: "Public Domain",
+		alternativetitle: "Vinyl LP record"
+	},
+	"film_strip_35mm_img": {
+		url: "https://commons.wikimedia.org/wiki/File:35mm_Polyester_Film_Strip_Stock.jpg",
+		title: "35 mm film strip",
+		author: "mannyisdead",
+		year: 2022,
+		license: "CC BY 3.0",
+		alternativetitle: "Cinema 35 mm film strip"
+	},
+	"vhs_cassette_img": {
+		url: "https://commons.wikimedia.org/wiki/File:VHS_videocassette_-_front.jpg",
+		title: "VHS videocassette",
+		author: "LoMit",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "VHS cassette"
+	},
+	"h264_coding_structure_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg",
+		title: "Basic coding structure of H.264/AVC for a macroblock",
+		author: "Alexandre Rebollal Lucas",
+		year: 2008,
+		license: "Public Domain",
+		alternativetitle: "H.264/AVC coding structure"
 	},
 
 	// Alternative Architectures
@@ -7726,6 +8416,124 @@ window.bibData = {
 		license: "Public domain (NASA)",
 		alternativetitle: "Structure of the Universe (the cosmic web)"
 	},
+	/* The flat "cosmic foam" photograph floating in the Atlas (map.php)
+	 * during the cosmic-web stage of the Cosmic journey: a frame from the
+	 * MPA Garching visualization movies (local file cosmic_web_foam.jpg). */
+	"cosmic_web_foam_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg",
+		title: "Cosmic web — a frame from the Max-Planck-Institute for Astrophysics' movies of large-scale structure in the Universe",
+		author: "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)",
+		year: 2019,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
+	},
+	/* The cosmic-web skybox texture in the Atlas (map.php), used at the
+	 * cosmic-web stage of the Cosmic journey: "Cosmic web texture (10 Gly
+	 * span)" — filaments of dark matter and galaxies across ten
+	 * gigalight-years (local file cosmic_web_texture.png). */
+	"cosmic_web_texture_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Cosmic_web_texture_(10_Gly_span).png",
+		title: "Cosmic web texture (10 Gly span) — filaments of dark matter and galaxies with dense nodes across ten gigalight-years",
+		author: "Unmismoobjetivo",
+		year: 2025,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Cosmic web texture (10 Gly span)"
+	},
+	/* The Big-Bang / cosmic-scale photo in the Atlas (map.php) and in
+	 * untold_history.php: an artist's logarithmic radial view of the observable
+	 * universe, Solar System at the centre out to the CMB and the Big Bang at
+	 * the rim (local file universe_radial_budassi.jpg). */
+	"budassi_universe_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Logarhitmic_radial_photo_of_the_universe_by_pablo_budassi_9MFK.jpg",
+		title: "Logarithmic radial photo of the universe — an artist's log-scale view from the Solar System at the centre out through the Milky Way and the cosmic web to the CMB and the Big Bang at the rim",
+		author: "Pablo Carlos Budassi",
+		year: 2012,
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Logarithmic radial photo of the universe (Budassi)"
+	},
+	/* Figure 1 from "Attention Is All You Need" (Vaswani et al. 2017) — the
+	 * canonical transformer encoder–decoder diagram — shown in the Atlas
+	 * "transformer" stop of the Cosmic journey (local file
+	 * transformer_architecture.png). CC BY-SA 4.0 (Google); Wikimedia Commons
+	 * hosts it with Google's permission to reproduce the paper's figures when
+	 * proper attribution is given. */
+	"transformer_attention_figure": {
+		url: "https://arxiv.org/abs/1706.03762",
+		title: "Attention Is All You Need — Figure 1: the transformer encoder–decoder architecture",
+		author: "Ashish Vaswani and colleagues (Google)",
+		year: 2017,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Figure 1 from 'Attention Is All You Need', via Wikimedia Commons"
+	},
+	/* The all-sky starfield backdrop of the Atlas (map.php): ESO's 360°
+	 * Aitoff panorama of the whole celestial sphere (the Milky Way band across
+	 * the frame), local file starfield_eso.jpg. */
+	"starfield_eso_image": {
+		url: "https://www.eso.org/public/images/eso0932a/",
+		title: "ESO all-sky panorama — the Milky Way arching across the whole celestial sphere",
+		author: "ESO / S. Brunier",
+		year: 2009,
+		license: "CC BY 4.0",
+		alternativetitle: "ESO Milky Way panorama (GigaGalaxy Zoom)"
+	},
+	/* The solar-system planet surface maps (Mercury, Venus, Earth, Mars,
+	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (map.js buildCelestial):
+	 * equirectangular 2K maps from the Solar System Scope project, based on
+	 * NASA imagery/elevation, local files solsys_*.jpg. */
+	"solsys_planet_textures": {
+		url: "https://www.solarsystemscope.com/textures/",
+		title: "Solar System Scope — planet surface texture maps (Mercury–Neptune)",
+		author: "Solar System Scope (based on NASA imagery and elevation data)",
+		year: 2014,
+		license: "CC BY 4.0",
+		alternativetitle: "Solar System Scope planet textures (solsys_*.jpg)"
+	},
+	/* The Atlas main-globe Earth and Moon surfaces (map.js buildEarth /
+	 * buildMoon): equirectangular maps from the Solar System Scope project,
+	 * based on NASA imagery/elevation; local files earth_texture.jpg and
+	 * moon_texture.png. */
+	"earth_moon_cc_textures": {
+		url: "https://www.solarsystemscope.com/textures/",
+		title: "Solar System Scope — Earth (daymap) and Moon surface texture maps",
+		author: "Solar System Scope (based on NASA imagery and elevation data)",
+		year: 2014,
+		license: "CC BY 4.0",
+		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.jpg, moon_texture.png)"
+	},
+	/* The Atlas Earth night-lights layer (map.js buildEarth ShaderMaterial
+	 * nightMap): NASA/NOAA VIIRS Day/Night Band 2012 composite,
+	 * equirectangular; local file earth_night.jpg. */
+	"earth_night_lights": {
+		url: "https://commons.wikimedia.org/wiki/File:City_Lights_2012_-_Flat_map.jpg",
+		title: "City Lights 2012 — Flat map (VIIRS Day/Night Band composite)",
+		author: "NASA / NOAA (Suomi NPP VIIRS)",
+		year: 2012,
+		license: "Public Domain",
+		alternativetitle: "NASA VIIRS 2012 night-lights equirectangular map (earth_night.jpg)"
+	},
+	/* The Event Horizon Telescope image of the black hole in Messier 87
+	 * (M87*), the first direct image of a black hole shadow, shown in the
+	 * Atlas (map.js) as the crossfade target for the stellar death phase.
+	 * Local file m87_real.jpg. */
+	"m87_blackhole_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg",
+		title: "Black hole — Messier 87 (M87*): the first direct image of a black hole shadow",
+		author: "Event Horizon Telescope Collaboration",
+		year: 2019,
+		license: "CC BY 4.0",
+		alternativetitle: "EHT image of M87* (m87_real.jpg)"
+	},
+	/* The Crab Nebula (M1), the supernova remnant of SN 1054, shown in the
+	 * Atlas (map.js) at the end of the stellar death phase to illustrate
+	 * what remains after a star explodes. Local file crab_nebula.jpg. */
+	"crab_nebula_image": {
+		url: "https://en.wikipedia.org/wiki/SN_1054",
+		title: "Crab Nebula (M1) — supernova remnant of SN 1054",
+		author: "NASA / ESA / Hubble Space Telescope",
+		year: 2005,
+		license: "Public Domain (NASA)",
+		alternativetitle: "Crab Nebula, SN 1054 remnant (crab_nebula.jpg)"
+	},
 	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
 	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
 	 * galaxies. Science 246(4932): 897–903. */
@@ -8113,6 +8921,138 @@ window.bibData = {
 		year: 1993,
 		url: "https://ieeexplore.ieee.org/document/209582",
 		alternativetitle: "Berrou & Glavieux's 1993 paper introducing turbo codes"
+	},
+	"wiki_single_event_effect": {
+		title: "Single-event effect",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Single-event_effect",
+		alternativetitle: "Single-event effect (Wikipedia): how one high-energy particle flips a stored bit"
+	},
+	"wiki_tmr": {
+		title: "Triple modular redundancy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Triple_modular_redundancy",
+		alternativetitle: "Triple modular redundancy (Wikipedia): run three copies and take the majority"
+	},
+	"arxiv_sdc_llm": {
+		title: "Understanding Silent Data Corruption in LLM Training",
+		author: "Jeffrey Ma et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.12340",
+		alternativetitle: "Ma et al. on silent data corruption quietly corrupting large-scale LLM training runs"
+	},
+	"wiki_lunar_laser_ranging": {
+		title: "Lunar laser ranging",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lunar_laser_ranging",
+		alternativetitle: "Lunar laser ranging (Wikipedia): timing a laser pulse bounced off the Apollo corner-cube arrays left on the Moon"
+	},
+	"wiki_lidar": {
+		title: "Lidar",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lidar",
+		alternativetitle: "Lidar (Wikipedia): ranging by timing a reflected laser pulse"
+	},
+	"wiki_delay_tolerant_networking": {
+		title: "Delay-tolerant networking",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Delay-tolerant_networking",
+		alternativetitle: "Delay-tolerant networking (Wikipedia): the Bundle Protocol built for disconnected, high-light-delay space links"
+	},
+	"wiki_jpeg2000": {
+		title: "JPEG 2000",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/JPEG_2000",
+		alternativetitle: "JPEG 2000 (Wikipedia): wavelet-based image compression adopted for space telemetry"
+	},
+	"wiki_kepler_space_telescope": {
+		title: "Kepler space telescope",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Kepler_space_telescope",
+		alternativetitle: "Kepler space telescope (Wikipedia): the transit survey that turned exoplanet hunting into classification at scale"
+	},
+	"wiki_deep_space_1": {
+		title: "Deep Space 1",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deep_Space_1",
+		alternativetitle: "Deep Space 1 (Wikipedia): the first spacecraft whose AI planned and repaired itself"
+	},
+	"wiki_galaxy_zoo": {
+		title: "Galaxy Zoo",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Galaxy_Zoo",
+		alternativetitle: "Galaxy Zoo (Wikipedia): the crowd that labelled the very data deep learning later learned from"
+	},
+	"wiki_richardson_lucy": {
+		title: "Richardson–Lucy deconvolution",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Richardson%E2%80%93Lucy_deconvolution",
+		alternativetitle: "Richardson–Lucy deconvolution (Wikipedia): iteratively unblurring an image, the inverse-problem ancestor of denoising"
+	},
+	"wiki_diffusion_model": {
+		title: "Diffusion model",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Diffusion_model",
+		alternativetitle: "Diffusion model (Wikipedia): generative models that learn to reverse noise, one denoising step at a time"
+	},
+	"img_apollo_alrr": {
+		title: "Apollo Laser Ranging Retroreflector (corner-cube array)",
+		author: "Mark Avino (Smithsonian National Air and Space Museum)",
+		year: 2020,
+		url: "https://commons.wikimedia.org/wiki/File:Laser_Ranging_Retro-Reflector,_Apollo_(NASM2020-00366).jpg",
+		license: "CC0",
+		alternativetitle: "The corner-cube retroreflector array the Apollo crews left on the Moon, the target of lunar laser ranging (CC0)"
+	},
+	"img_deep_space_1": {
+		title: "Deep Space 1 spacecraft",
+		author: "NASA",
+		year: 2000,
+		url: "https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg",
+		license: "Public Domain",
+		alternativetitle: "Deep Space 1, the first spacecraft whose on-board AI planned and repaired itself (NASA/JPL, public domain)"
+	},
+	"img_mice_galaxies": {
+		title: "The Mice (NGC 4676), colliding galaxies",
+		author: "NASA and ESA",
+		year: 2002,
+		url: "https://commons.wikimedia.org/wiki/File:The_Mice_(NGC_4676)-_Colliding_Galaxies_With_Tails_of_Stars_and_Gas_(2002-11-1191).jpg",
+		license: "Public Domain",
+		alternativetitle: "NGC 4676, 'The Mice', two galaxies colliding and winding each other's stars into tails — the kind of object Galaxy Zoo volunteers classified by the million (NASA/ESA, public domain)"
+	},
+	"img_hubble_udf": {
+		title: "Hubble Ultra Deep Field",
+		author: "NASA and ESA",
+		year: 2004,
+		url: "https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg",
+		license: "Public Domain",
+		alternativetitle: "The Hubble Ultra Deep Field, thousands of galaxies in a grain-of-rice patch of sky (NASA/ESA, public domain)"
+	},
+	"img_curiosity_panorama": {
+		title: "Curiosity at Rock Nest, Mars panorama",
+		author: "NASA / JPL-Caltech / MSSS",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg",
+		license: "Public Domain",
+		alternativetitle: "A Curiosity Mars panorama — the scene a rover's camera compresses and sends home over a radio link (NASA/JPL-Caltech/MSSS, public domain)"
+	},
+	"img_data_center": {
+		title: "Data center server aisle",
+		author: "Christopher Bowns",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "A data center, where the bit flips that radiation once caused in orbit now threaten large training runs (Christopher Bowns, CC BY-SA 2.0)"
 	},
 	"nasa2021perseverance": {
 		title: "Mars 2020 Perseverance Rover — Selfie at Rochette",
@@ -9688,13 +10628,6 @@ window.bibData = {
 		year: 2015,
 		url: "https://arxiv.org/abs/1502.05477",
 		alternativetitle: "TRPO"
-	},
-	"schulman2017ppo": {
-		title: "Proximal Policy Optimization Algorithms",
-		author: "John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov",
-		year: 2017,
-		url: "https://arxiv.org/abs/1707.06347",
-		alternativetitle: "PPO"
 	},
 	"sutton1991dyna": {
 		title: "Dyna, an Integrated Architecture for Learning, Planning, and Reacting Based on Approximating Dynamic Programming",
@@ -11274,7 +12207,7 @@ window.bibData = {
 		author: "Nancy Cartwright",
 		year: 1983,
 		publisher: "Oxford University Press",
-		url: "https://global.oup.com/academic/product/how-the-laws-of-physics-lie-9780198247048",
+		url: "https://academic.oup.com/book/27605",
 		alternativetitle: "How the Laws of Physics Lie"
 	},
 	"cartwright1999dappled": {
@@ -12655,6 +13588,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1912.02292",
 		alternativetitle: "Deep double descent"
 	},
+	"petersen2024mathdl": {
+		title: "Mathematical Theory of Deep Learning",
+		author: "Philipp Petersen, Jakob Zech",
+		year: 2024,
+		url: "https://arxiv.org/abs/2407.18384",
+		alternativetitle: "Petersen & Zech, Mathematical Theory of Deep Learning"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  What Machines See  (computer_vision.php)
 	 *  Detection, segmentation, ViT, MAE, SAM.
@@ -12741,7 +13681,7 @@ window.bibData = {
 	},
 	"merchant2023gnome": {
 		title: "Scaling deep learning for materials discovery",
-		author: "Aditi Merchant, Samuel Batzner, Samuel S. Schoenholz, Murata Aykol, Gowoon Cheon, Ekin D. Cubuk",
+		author: "Amil Merchant, Simon Batzner, Samuel S. Schoenholz, Murat A. Aykol, Gowoon Cheon, Ekin D. Cubuk",
 		year: 2023,
 		url: "https://doi.org/10.1038/s41586-023-06735-9",
 		alternativetitle: "GNoME (2.2M stable materials)"
@@ -12955,6 +13895,20 @@ window.bibData = {
 		year: 2022,
 		url: "https://arxiv.org/abs/2205.10343",
 		alternativetitle: "Grokking as phase transition"
+	},
+	"litman2026theory": {
+		title: "A Theory of Generalization in Deep Learning",
+		author: "Elon Litman, Gabe Guo",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.01172",
+		alternativetitle: "eNTK output-space theory: signal channel and test-invisible reservoir; population-risk / SNR preconditioner"
+	},
+	"litman2026a_theory_of_dl": {
+		title: "A Theory of Deep Learning",
+		author: "Elon Litman",
+		year: 2026,
+		url: "https://elonlit.com/scrivings/a-theory-of-deep-learning/",
+		alternativetitle: "Litman, A Theory of Deep Learning (blog post)"
 	},
 
 	// ===== Alignment (added) =====
@@ -13814,6 +14768,22 @@ window.bibData = {
 		license: "Public domain",
 		alternativetitle: "Ranger 7 lunar image"
 	},
+	"img_ranger7_impact": {
+		title: "Ranger 7 photograph of the lunar surface taken just before impact",
+		author: "U.S. Senate, Committee on Aeronautical and Space Sciences (via the Digital Public Library of America)",
+		year: 1964,
+		url: "https://commons.wikimedia.org/wiki/File:Photograph_from_Ranger_VII_Spacecraft_Just_before_Impact_on_the_Moon_-_DPLA_-_b9de03ac9d95d193a4343e9c06b84cc8.jpg",
+		license: "Public domain",
+		alternativetitle: "Ranger 7, just before impact"
+	},
+	"img_ranger7_guericke": {
+		title: "Ranger 7 B-camera image of Guericke crater, Mare Nubium",
+		author: "NASA / JPL-Caltech",
+		year: 1964,
+		url: "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg",
+		license: "Public domain",
+		alternativetitle: "Ranger 7, Guericke crater"
+	},
 	"img_gutta_percha_cable": {
 		title: "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
 		author: "Louis Figuier",
@@ -13834,6 +14804,27 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2309.17453",
 		alternativetitle: "StreamingLLM, attention sinks"
+	},
+	"darcet2024registers": {
+		title: "Vision Transformers Need Registers",
+		author: "Timothée Darcet, Maxime Oquab, Julien Mairal, Piotr Bojanowski",
+		year: 2024,
+		url: "https://arxiv.org/abs/2309.16588",
+		alternativetitle: "register tokens as ViT working memory"
+	},
+	"cancedda2024sinks": {
+		title: "Spectral Filters, Dark Signals, and Attention Sinks",
+		author: "Nicola Cancedda",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.09221",
+		alternativetitle: "attention sinks as low-frequency dark signals"
+	},
+	"wong2025sinks": {
+		title: "On the Existence and Behavior of Secondary Attention Sinks",
+		author: "Jeffrey T. H. Wong, Cheng Zhang, Louis Mahon, Wayne Luk, Anton Isopoussu, Yiren Zhao",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.22213",
+		alternativetitle: "MLPs that synthesize sink vectors"
 	},
 	"levy2024numbers": {
 		title: "Language Models Encode Numbers Using Digit Representations in Base 10",
@@ -14195,7 +15186,7 @@ window.bibData = {
 	},
 	"montufar2014regions": {
 		title: "On the Number of Linear Regions of Deep Neural Networks",
-		author: "Günter Montúfar, Razvan Pascanu, Kyungjae Cho, Yoshua Bengio",
+		author: "Guido Montúfar, Razvan Pascanu, Kyungjae Cho, Yoshua Bengio",
 		year: 2014,
 		url: "https://arxiv.org/abs/1402.1869",
 		alternativetitle: "Montúfar et al., linear regions (2014)"
@@ -14652,5 +15643,1212 @@ window.bibData = {
 		year: 2026,
 		url: "https://scads.ai/transfer-and-service/software/omniopt/",
 		alternativetitle: "OmniOpt"
+	},
+	"olson2025ax": {
+		title: "Ax: A Platform for Adaptive Experimentation",
+		author: "Miles Olson et al.",
+		year: 2025,
+		url: "https://ax.dev/",
+		alternativetitle: "Ax"
+	},
+	"balandat2020botorch": {
+		title: "BoTorch: A Framework for Efficient Monte-Carlo Bayesian Optimization",
+		author: "Maximilian Balandat et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/1910.06403",
+		alternativetitle: "BoTorch"
+	},
+	"akiba2019optuna": {
+		title: "Optuna: A Next-Generation Hyperparameter Optimization Framework",
+		author: "Takuya Akiba et al.",
+		year: 2019,
+		url: "https://github.com/optuna/optuna",
+		alternativetitle: "Optuna"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Polar Program  (untold_history.php)
+	 *  Ice cores, polar/climate computing, cryogenics -> superconducting
+	 *  qubits, and AI-for-weather: the poles' displaced prerequisites.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"charney1947longwaves": {
+		title: "The Dynamics of Long Waves in a Baroclinic Westerly Current",
+		author: "Jule G. Charney",
+		year: 1947,
+		url: "https://doi.org/10.1175/1520-0469(1947)004<0136:TDOLWI>2.0.CO;2",
+		alternativetitle: "Charney, 1947 (J. Meteorology)"
+	},
+	"charney1950nwp": {
+		title: "Numerical Integration of the Barotropic Vorticity Equation",
+		author: "Jule G. Charney, Ragnar Fjørtoft, John von Neumann",
+		year: 1950,
+		url: "https://doi.org/10.3402/tellusa.v2i4.8607",
+		alternativetitle: "Charney, Fjørtoft & von Neumann, 1950 (Tellus)"
+	},
+	"charney1979report": {
+		title: "Carbon dioxide and climate: A scientific assessment",
+		author: "National Research Council (Charney et al.)",
+		year: 1979,
+		url: "https://web.archive.org/web/20110813231807id_/http://www.atmos.ucla.edu/~brianpm/download/charney_report.pdf",
+		alternativetitle: "Charney Report (1979)"
+	},
+	"charneywiki": {
+		title: "Jule Gregory Charney",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Jule_Gregory_Charney",
+		alternativetitle: "Charney (Wikipedia)"
+	},
+	"onnes1913nobel": {
+		title: "The Nobel Prize in Physics 1913 — Heike Kamerlingh Onnes",
+		author: "Nobel Foundation",
+		year: 1913,
+		url: "https://www.nobelprize.org/prizes/physics/1913/summary/",
+		alternativetitle: "Onnes Nobel Prize (1913)"
+	},
+	"icecorewiki": {
+		title: "Ice core",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Ice_core",
+		alternativetitle: "Ice core (Wikipedia)"
+	},
+	"vostokstation": {
+		title: "Vostok Station",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Vostok_Station",
+		alternativetitle: "Vostok Station (Wikipedia)"
+	},
+	"dilutionfridge": {
+		title: "Dilution refrigerator",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Dilution_refrigerator",
+		alternativetitle: "Dilution refrigerator (Wikipedia)"
+	},
+	"superconductingqubit": {
+		title: "Superconducting quantum computing",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Superconducting_quantum_computing",
+		alternativetitle: "Superconducting quantum computing (Wikipedia)"
+	},
+	"arute2019quantum": {
+		title: "Quantum supremacy using a programmable superconducting processor",
+		author: "F. Arute et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1910.11333",
+		alternativetitle: "Arute et al., 2019 (arXiv:1910.11333)"
+	},
+	"lam2023graphcast": {
+		title: "GraphCast: AI model for faster and more accurate global weather forecasting",
+		author: "Remi Lam et al.",
+		year: 2023,
+		url: "https://deepmind.google/discover/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/",
+		alternativetitle: "Lam et al., 2023 (Google DeepMind)"
+	},
+	"graphcast_github": {
+		title: "GraphCast (open-source model)",
+		author: "Google DeepMind",
+		year: 2023,
+		url: "https://github.com/google-deepmind/graphcast",
+		alternativetitle: "GraphCast on GitHub"
+	},
+	"ecmwf": {
+		title: "European Centre for Medium-Range Weather Forecasts (ECMWF)",
+		author: "ECMWF",
+		year: 2026,
+		url: "https://www.ecmwf.int/",
+		alternativetitle: "ECMWF"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Earliest art  (untold_history.php)
+	 *  The oldest human depictions: Venus of Hohle Fels (mammoth ivory,
+	 *  40-35 kya) and Venus of Galgenberg (serpentine, 32-36 kya).
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"conard2009hohlefels": {
+		title: "A female figurine from the basal Aurignacian of Hohle Fels Cave in southwestern Germany",
+		author: "Nicholas J. Conard",
+		year: 2009,
+		url: "https://doi.org/10.1038/nature07995",
+		alternativetitle: "Conard, 2009 (Nature 459:248-252)"
+	},
+	"neugebauer1989galgenberg": {
+		title: "Zum Neufund einer weiblichen Statuette an der Aurignac-Station Stratzing/Krems-Rehberg, Niederösterreich",
+		author: "Christine Neugebauer-Maresch",
+		year: 1989,
+		url: "https://doi.org/10.11588/ger.1989.76355",
+		alternativetitle: "Neugebauer-Maresch, 1989 (Germania 67:551-559)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  From body to face  (untold_history.php)
+	 *  The first recognisable faces: the Dolni Věstonice ivory head and
+	 *  the engraved human figures of La Marche.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"dolnivestonice": {
+		title: "Dolní Věstonice (archaeological site)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Doln%C3%AD_V%C4%9Bstonice_(archaeological_site)",
+		alternativetitle: "Dolní Věstonice (Wikipedia)"
+	},
+	"lamarchecave": {
+		title: "La Marche (cave)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/La_Marche_(cave)",
+		alternativetitle: "La Marche engravings (Wikipedia)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Alchemy: the displaced root of chemistry  (untold_history.php)
+	 *  Alchemy -> chemistry -> silicon purification. The laboratory, the
+	 *  glassware, the acids, the method, and the very word "chemistry" all
+	 *  descend from the alchemists, whose impossible goal was falsified into
+	 *  the rigorous, quantitative science that built the machine's body.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"alchemy_wiki": {
+		title: "Alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Alchemy",
+		alternativetitle: "Alchemy (Wikipedia)"
+	},
+	"zosimos_panopolis": {
+		title: "Zosimos of Panopolis",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Zosimos_of_Panopolis",
+		alternativetitle: "Zosimos of Panopolis (Wikipedia)"
+	},
+	"hermes_trismegistus": {
+		title: "Hermes Trismegistus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Hermes_Trismegistus",
+		alternativetitle: "Hermes Trismegistus (Wikipedia)"
+	},
+	"tabula_smaragdina": {
+		title: "Tabula Smaragdina (Emerald Tablet)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Tabula_Smaragdina",
+		alternativetitle: "Tabula Smaragdina (Wikipedia)"
+	},
+	"maria_jewess": {
+		title: "Maria the Jewess",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Maria_the_Jewess",
+		alternativetitle: "Maria the Jewess (Wikipedia)"
+	},
+	"jabir_ibn_hayyan": {
+		title: "Jabir ibn Hayyan",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Jabir_ibn_Hayyan",
+		alternativetitle: "Jabir ibn Hayyan (Wikipedia)"
+	},
+	"aqua_regia": {
+		title: "Aqua regia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Aqua_regia",
+		alternativetitle: "Aqua regia (Wikipedia)"
+	},
+	"libavius": {
+		title: "Andreas Libavius",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Andreas_Libavius",
+		alternativetitle: "Andreas Libavius (Wikipedia)"
+	},
+	"athanor": {
+		title: "Athanor",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Athanor",
+		alternativetitle: "Athanor (Wikipedia)"
+	},
+	"paracelsus": {
+		title: "Paracelsus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Paracelsus",
+		alternativetitle: "Paracelsus (Wikipedia)"
+	},
+	"iatrochemistry": {
+		title: "Iatrochemistry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Iatrochemistry",
+		alternativetitle: "Iatrochemistry (Wikipedia)"
+	},
+	"newton_alchemy": {
+		title: "Isaac Newton and alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Isaac_Newton_and_alchemy",
+		alternativetitle: "Newton and alchemy (Wikipedia)"
+	},
+	"philosophers_stone": {
+		title: "Philosopher's stone",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Philosopher%27s_stone",
+		alternativetitle: "Philosopher's stone (Wikipedia)"
+	},
+	"phlogiston": {
+		title: "Phlogiston theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Phlogiston_theory",
+		alternativetitle: "Phlogiston theory (Wikipedia)"
+	},
+	"lavoisier": {
+		title: "Antoine Lavoisier",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Antoine_Lavoisier",
+		alternativetitle: "Lavoisier (Wikipedia)"
+	},
+	"stockholm_papyrus": {
+		title: "Stockholm Papyrus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Stockholm_papyrus",
+		alternativetitle: "Stockholm Papyrus (c. AD 300, Egyptian craft recipes)"
+	},
+	"leyden_papyrus_x": {
+		title: "Leyden Papyrus X",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Leyden_papyrus_X",
+		alternativetitle: "Leyden Papyrus X (c. AD 300, Egyptian craft recipes)"
+	},
+	"pseudo_democritus": {
+		title: "Pseudo-Democritus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Pseudo-Democritus",
+		alternativetitle: "Pseudo-Democritus (Wikipedia)"
+	},
+	"bolus_of_mendes": {
+		title: "Bolus of Mendes",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Bolus_of_Mendes",
+		alternativetitle: "Bolus of Mendes (Wikipedia)"
+	},
+	"empedocles": {
+		title: "Empedocles",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Empedocles",
+		alternativetitle: "Empedocles (four elements, c. 420 BC)"
+	},
+	"democritus": {
+		title: "Democritus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Democritus",
+		alternativetitle: "Democritus (atomism, c. 380 BC)"
+	},
+	"atomism": {
+		title: "Atomism",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Atomism",
+		alternativetitle: "Atomism (Wikipedia)"
+	},
+	"chinese_alchemy": {
+		title: "Chinese alchemy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Chinese_alchemy",
+		alternativetitle: "Chinese alchemy (Wikipedia)"
+	},
+	"ge_hong": {
+		title: "Ge Hong",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Ge_Hong",
+		alternativetitle: "Ge Hong (Wikipedia)"
+	},
+	"rasayana": {
+		title: "Rasayana",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rasayana",
+		alternativetitle: "Rasayana (Indian alchemy, rasashastra)"
+	},
+	"nagarjuna_metallurgist": {
+		title: "Nagarjuna (metallurgist)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Nagarjuna_(metallurgist)",
+		alternativetitle: "Nagarjuna, the alchemist-metallurgist"
+	},
+	"alchemy_islam": {
+		title: "Alchemy and chemistry in the medieval Islamic world",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Alchemy_and_chemistry_in_medieval_Islam",
+		alternativetitle: "Alchemy in the medieval Islamic world"
+	},
+	"al_razi": {
+		title: "Muhammad ibn Zakariya al-Razi",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Al-Razi",
+		alternativetitle: "al-Razi (Rhazes), Book of Secrets"
+	},
+	"avicenna": {
+		title: "Avicenna",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Avicenna",
+		alternativetitle: "Avicenna (Wikipedia)"
+	},
+	"robert_of_chester": {
+		title: "Robert of Chester",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Robert_of_Chester",
+		alternativetitle: "Robert of Chester (1144 alchemy translation)"
+	},
+	"liber_de_compositione": {
+		title: "Liber de compositione alchemiae",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Liber_de_compositione_alchemiae",
+		alternativetitle: "Liber de compositione alchemiae (1144)"
+	},
+	"turba_philosophorum": {
+		title: "Turba Philosophorum",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Turba_Philosophorum",
+		alternativetitle: "Turba Philosophorum (Wikipedia)"
+	},
+	"albertus_magnus": {
+		title: "Albertus Magnus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Albertus_Magnus",
+		alternativetitle: "Albertus Magnus (Wikipedia)"
+	},
+	"roger_bacon": {
+		title: "Roger Bacon",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Roger_Bacon",
+		alternativetitle: "Roger Bacon (Wikipedia)"
+	},
+	"sendivogius": {
+		title: "Michael Sendivogius",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Michael_Sendivogius",
+		alternativetitle: "Sendivogius (distilled oxygen c. 1600)"
+	},
+	"chrysopoeia": {
+		title: "Chrysopoeia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Chrysopoeia",
+		alternativetitle: "Chrysopoeia (artificial gold-making)"
+	},
+	"sceptical_chymist": {
+		title: "The Sceptical Chymist",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/The_Sceptical_Chymist",
+		alternativetitle: "The Sceptical Chymist (Boyle, 1661)"
+	},
+	"sceptical_chymist_text": {
+		title: "The Sceptical Chymist (1661 text)",
+		author: "Robert Boyle",
+		year: 1661,
+		url: "https://en.wikisource.org/wiki/Sceptical_Chymist",
+		alternativetitle: "Boyle, The Sceptical Chymist (primary text, Wikisource)"
+	},
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  Image sources: Alchemy  (untold_history.php)
+	 *  All Public Domain, downloaded and embedded as figures.
+	 * ═══════════════════════════════════════════════════════════════════ */
+	"img_paracelsus_portrait": {
+		title: "Portrait of Paracelsus (Theophrastus von Hohenheim)",
+		author: "A. Hirschvogel",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Paracelsus-03.jpg",
+		license: "Public Domain",
+		alternativetitle: "Paracelsus (portrait)"
+	},
+	"img_jabir_alembic": {
+		title: "Drawing and description of an alembic by Jabir ibn Hayyan (8th century)",
+		author: "Jabir ibn Hayyan",
+		year: "8th century",
+		url: "https://commons.wikimedia.org/wiki/File:Drawing_and_description_of_Alembic_,_by_Jabir_Ibn_Hayyan_in_8th_century.jpg",
+		license: "Public Domain",
+		alternativetitle: "Jabir's alembic (8th c.)"
+	},
+	"img_alchemist_studio": {
+		title: "An Alchemist in His Studio",
+		author: "Thomas Wyck (attr.)",
+		year: "c. 1650",
+		url: "https://commons.wikimedia.org/wiki/File:An_Alchemist_in_His_Studio_-_DPLA_-_6d56eba7861bee9e66825fc5590aa1b3.jpg",
+		license: "Public Domain",
+		alternativetitle: "An Alchemist in His Studio (Wyck)"
+	},
+	"img_libavius_alembics": {
+		title: "Alembics, from Andreas Libavius' Alchymia (1597)",
+		author: "Andreas Libavius",
+		year: 1597,
+		url: "https://commons.wikimedia.org/wiki/File:Alembics_from_Andreas_Libavius_Alchymia.png",
+		license: "Public Domain",
+		alternativetitle: "Libavius' alembics (1597)"
+	},
+	"img_flaming_heart": {
+		title: "The Flaming Heart (alchemical and rosicrucian compendium, c. 1760)",
+		author: "Anonymous",
+		year: "c. 1760",
+		url: "https://commons.wikimedia.org/wiki/File:The_Flaming_Heart_(Alchemical_and_rosicrucian_compendium,_c._1760).png",
+		license: "Public Domain",
+		alternativetitle: "The Flaming Heart (c. 1760)"
+	},
+	"img_merlin_enchanteur": {
+		title: "Merlin dictating his prophecies to his scribe (13th-century French miniature)",
+		author: "Anonymous (French, 13th century)",
+		year: "13th century",
+		url: "https://commons.wikimedia.org/wiki/File:Merlin_(illustration_from_middle_ages).jpg",
+		license: "Public Domain",
+		alternativetitle: "Merlin the Enchanter (13th-c. miniature)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Deep geometric identities of the core machinery:
+	 *  sampling (Boltzmann), attention (Sinkhorn / entropic transport;
+	 *  SDPA as one-sided entropic optimal transport), optimization
+	 *  (edge of stability) and automatic differentiation
+	 *  (Babbage's method of finite differences).
+	 * ───────────────────────────────────────────────────────────────────── */
+	"cuturi2013sinkhorn": {
+		title: "Sinkhorn Distances: Lightspeed Computation of Optimal Transportation Distances",
+		author: "Marco Cuturi",
+		year: 2013,
+		url: "https://arxiv.org/abs/1306.0895",
+		alternativetitle: "entropic optimal transport via the Sinkhorn–Knopp matrix-scaling iteration"
+	},
+	"litman2025sdpaot": {
+		title: "Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport",
+		author: "Elon Litman",
+		year: 2025,
+		url: "https://arxiv.org/abs/2508.08369",
+		alternativetitle: "attention as the exact one-sided entropic optimal transport solution; its backprop gradient as an advantage-based policy gradient"
+	},
+	"arora2022edgeofstability": {
+		title: "Understanding Gradient Descent on Edge of Stability in Deep Learning",
+		author: "Sanjeev Arora, Zhiyuan Li, Abhishek Panigrahi",
+		year: 2022,
+		url: "https://arxiv.org/abs/2205.09745",
+		alternativetitle: "the knife-edge learning-rate regime where sharpness locks to 2/η"
+	},
+	"differenceengine": {
+		title: "Difference engine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Difference_engine",
+		alternativetitle: "Babbage's method of finite differences as a forward-differentiation machine"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Mirror in the Machine  (mirror_in_machine.php)
+	 *  How the brain's mechanisms and vocabulary became AI's — and how the
+	 *  machine has become a mirror we use to read the brain back.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"rao1999predictive": {
+		title: "Predictive coding in the visual cortex: A functional interpretation of some extra-classical receptive-field effects",
+		author: "Rajesh P. N. Rao, Dana H. Ballard",
+		year: 1999,
+		url: "https://doi.org/10.1038/4580",
+		alternativetitle: "Rao & Ballard 1999, Nature Neuroscience — predictive coding"
+	},
+	"clark2013whatevernext": {
+		title: "Whatever next? Predictive brains, situated agents, and the future of cognitive science",
+		author: "Andy Clark",
+		year: 2013,
+		url: "https://doi.org/10.1017/S0140525X12000477",
+		alternativetitle: "Clark 2013, Behavioral and Brain Sciences"
+	},
+	"whittington2019backprop": {
+		title: "Theories of Error Back-Propagation in the Brain",
+		author: "James C. R. Whittington, Rafal Bogacz",
+		year: 2019,
+		url: "https://doi.org/10.1016/j.tics.2018.12.005",
+		alternativetitle: "Whittington & Bogacz 2019, Trends in Cognitive Sciences"
+	},
+	"okeefe1971place": {
+		title: "The hippocampus as a spatial map. Preliminary evidence from unit activity in the freely-moving rat",
+		author: "John O'Keefe, Jonathan Dostrovsky",
+		year: 1971,
+		url: "https://doi.org/10.1016/0006-8993(71)90358-1",
+		alternativetitle: "O'Keefe & Dostrovsky 1971, Brain Research — place cells"
+	},
+	"nobel2014spatial": {
+		title: "The 2014 Nobel Prize in Physiology or Medicine: the brain's sense of place",
+		author: "Nobel Assembly, Karolinska Institute",
+		year: 2014,
+		url: "https://www.nobelprize.org/prizes/medicine/2014/summary/",
+		alternativetitle: "Nobel Prize 2014: O'Keefe, May-Britt Moser & Edvard Moser"
+	},
+	"stachenfeld2017predictivemap": {
+		title: "The hippocampus as a predictive map",
+		author: "Kimberly L. Stachenfeld, Matthew M. Botvinick, Samuel J. Gershman",
+		year: 2017,
+		url: "https://www.nature.com/articles/nn.4650",
+		alternativetitle: "Stachenfeld, Botvinick & Gershman 2017, Nature Neuroscience"
+	},
+	"ungerleider1982twostreams": {
+		title: "Two cortical visual systems",
+		author: "Leslie G. Ungerleider, Margaret Mishkin",
+		year: 1982,
+		url: "https://en.wikipedia.org/wiki/Visual_agnosia",
+		alternativetitle: "Ungerleider & Mishkin 1982, J. Comp. Neurol. — the what/where streams"
+	},
+	"baddeley1986workingmemory": {
+		title: "Working Memory",
+		author: "Alan D. Baddeley",
+		year: 1986,
+		url: "https://en.wikipedia.org/wiki/Working_memory",
+		alternativetitle: "Baddeley 1986, Oxford University Press"
+	},
+	"cowan2001magical4": {
+		title: "The 'Magical Number 4' in Short-Term Memory: A Reconsideration of Mental Storage Capacity",
+		author: "Neil Cowan",
+		year: 2001,
+		url: "https://doi.org/10.1017/S0140525X01003922",
+		alternativetitle: "Cowan 2001, Behavioral and Brain Sciences"
+	},
+	"fechner1860psychophysics": {
+		title: "Elemente der Psychophysik (Elements of Psychophysics)",
+		author: "Gustav Theodor Fechner",
+		year: 1860,
+		url: "https://en.wikipedia.org/wiki/Gustav_Fechner",
+		alternativetitle: "Fechner 1860 — the founding text of psychophysics"
+	},
+	"berridge2006dopamine": {
+		title: "Incentive salience, dopamine, and reward learning",
+		author: "Kent C. Berridge, Donald A. Waterhouse",
+		year: 2006,
+		url: "https://www.nature.com/articles/nrn1923",
+		alternativetitle: "Berridge & Waterhouse 2006, Nature Reviews Neuroscience"
+	},
+	"keller2018canonical": {
+		title: "Predictive Processing: A Canonical Cortical Computation",
+		author: "Georg B. Keller, Thomas D. Mrsić-Flogel",
+		year: 2018,
+		url: "https://doi.org/10.1016/j.neuron.2018.10.003",
+		alternativetitle: "Keller & Mrsić-Flogel 2018, Neuron"
+	},
+	"bastos2012microcircuit": {
+		title: "Canonical Microcircuits for Predictive Coding",
+		author: "Andre M. Bastos, W. Martin Usrey, Rick A. Adams, George R. Mangun, Pascal Fries, Karl J. Friston",
+		year: 2012,
+		url: "https://doi.org/10.1016/j.neuron.2012.10.038",
+		alternativetitle: "Bastos et al. 2012, Neuron"
+	},
+	"affolter2020brain2word": {
+		title: "Brain2Word: Decoding Brain Activity for Language Generation",
+		author: "Nicolas Affolter, Beni Egressy, Damian Pascual, Roger Wattenhofer",
+		year: 2020,
+		url: "https://arxiv.org/abs/2009.04765",
+		alternativetitle: "Affolter et al. 2020 — fMRI decoded to the word being read"
+	},
+	"schwartz2019brainbias": {
+		title: "Inducing brain-relevant bias in natural language processing models",
+		author: "Dan Schwartz, Mariya Toneva, Leila Wehbe",
+		year: 2019,
+		url: "https://arxiv.org/abs/1911.03268",
+		alternativetitle: "Schwartz, Toneva & Wehbe 2019, NeurIPS — fine-tuning a language model to predict the brain"
+	},
+	"nishimoto2011reconstruct": {
+		title: "Reconstructing Visual Experiences from Brain Activity Evoked by Natural Movies",
+		author: "Shinji Nishimoto, An T. Vu, Thomas Naselaris, Yuval Benjamini, Bin Yu, Jack L. Gallant",
+		year: 2011,
+		journal: "Current Biology",
+		url: "https://doi.org/10.1016/j.cub.2011.08.031",
+		alternativetitle: "Nishimoto et al. 2011 — reconstructing the movie you watched from fMRI"
+	},
+	"huth2016semanticmaps": {
+		title: "Natural Speech Reveals the Semantic Maps that Tile Human Cerebral Cortex",
+		author: "Alexander G. Huth, Wendy A. de Heer, Thomas L. Griffiths, Frédéric E. Theunissen, Jack L. Gallant",
+		year: 2016,
+		journal: "Nature",
+		url: "https://doi.org/10.1038/nature17637",
+		alternativetitle: "Huth et al. 2016 — one model mapping natural speech to activity across the cortex"
+	},
+	"allen2022nsd": {
+		title: "A Massive 7T fMRI Dataset to Bridge Cognitive Neuroscience and Artificial Intelligence",
+		author: "Emily J. Allen, Ghislain St-Yves, Yihan Wu, Jesse L. Breedlove, Jacob S. Prince",
+		year: 2022,
+		journal: "Nature Neuroscience",
+		url: "https://doi.org/10.1038/s41593-021-00962-x",
+		alternativetitle: "Allen et al. 2022 — the Natural Scenes Dataset (NSD)"
+	},
+	"bales2024catastrophic": {
+		title: "Artificial Intelligence: Arguments for Catastrophic Risk",
+		author: "Adam Bales, William D'Alessandro, Cameron Domenico Kirk-Giannini",
+		year: 2024,
+		url: "https://arxiv.org/abs/2401.15487",
+		alternativetitle: "Bales et al. 2024 — Arguments for Catastrophic Risk (arXiv)"
+	},
+	"adrian1922allornothing": {
+		title: "The all-or-nothing response of sensory nerve fibres",
+		author: "Edgar D. Adrian, A. Forbes",
+		year: 1922,
+		journal: "The Journal of Physiology",
+		url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1405376/",
+		alternativetitle: "Adrian and Forbes 1922 — the all-or-none response of sensory nerve fibres"
+	},
+	"hartline1956limulus": {
+		title: "Inhibition in the eye of Limulus",
+		author: "Haldan K. Hartline, H. G. Wagner, F. Ratliff",
+		year: 1956,
+		journal: "The Journal of General Physiology",
+		url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2147566/",
+		alternativetitle: "Hartline, Wagner and Ratliff 1956 — lateral inhibition in the retina"
+	},
+	"lateral_inhibition_wiki": {
+		title: "Lateral inhibition",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lateral_inhibition",
+		alternativetitle: "Lateral inhibition (Wikipedia)"
+	},
+	"winner_take_all_wiki": {
+		title: "Winner-take-all (computing)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Winner-take-all_(computing)",
+		alternativetitle: "Winner-take-all (Wikipedia)"
+	},
+	"kriegeskorte2015dcnn": {
+		title: "Deep Neural Networks: A New Framework for Modeling Biological Vision and Brain Information Processing",
+		author: "Nikolaus Kriegeskorte",
+		year: 2015,
+		journal: "Annual Review of Vision Science",
+		url: "https://doi.org/10.1146/annurev-vision-082114-035447",
+		alternativetitle: "Kriegeskorte 2015 — deep nets as models of the visual cortex"
+	},
+	"caucheteux2023predictive": {
+		title: "Evidence of a predictive coding hierarchy in the human brain listening to speech",
+		author: "Camille Caucheteux, Alexandre Gramfort, Jean-Remi King",
+		year: 2023,
+		journal: "Nature Human Behaviour",
+		url: "https://doi.org/10.1038/s41562-022-01516-2",
+		alternativetitle: "Caucheteux, Gramfort and King 2023 — a predictive-coding hierarchy fitted to human speech"
+	},
+	"wang2025foundation": {
+		title: "Foundation model of neural activity predicts response to new stimulus types",
+		author: "Eric Y. Wang, Peter G. Fahey, Zechen Ding, Friedrich S. Sinz, Anton S. Tolias",
+		year: 2025,
+		journal: "Nature",
+		url: "https://doi.org/10.1038/s41586-025-08829-y",
+		alternativetitle: "Wang et al. 2025 — a foundation model of neural activity"
+	},
+	"hosseini2024universality": {
+		title: "Universality of representation in biological and artificial neural networks",
+		author: "Ehsan Hosseini, Christopher Casto, Nick Zaslavsky, Christopher Conwell, Michael Richardson, Evelina Fedorenko",
+		year: 2024,
+		url: "https://doi.org/10.1101/2024.12.26.629294",
+		alternativetitle: "Hosseini et al. 2024 — shared representational structure in biological and artificial networks"
+	},
+	"lu2025fmritotext": {
+		title: "Brain-Inspired fMRI-to-Text Decoding via Incremental and Wrap-Up Language Modeling",
+		author: "Weicheng Lu, Deyu Nie, Peng Xue, Zihan Cui, Peng Li, Di Zhang, Xiaowei Wen",
+		year: 2025,
+		url: "https://doi.org/10.52202/085713-5015",
+		alternativetitle: "Lu et al. 2025, NeurIPS — fMRI decoded to text with a language model"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  AI and Society: The Cultural Impact of Machines That Create
+	 *  (ai_and_society.php)
+	 * ───────────────────────────────────────────────────────────────────── */
+	"mccarthy1956dartmouth": {
+		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
+		author: "John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon",
+		year: 1955,
+		url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
+		alternativetitle: "McCarthy et al. 1955 — the Dartmouth proposal"
+	},
+	"ai_winter_wiki": {
+		title: "AI winter",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AI_winter",
+		alternativetitle: "AI winter (Wikipedia)"
+	},
+	"silver2016alphago": {
+		title: "Mastering the game of Go with deep neural networks and tree search",
+		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
+		year: 2016,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/nature16961",
+		alternativetitle: "Silver et al. 2016 — AlphaGo (Nature)"
+	},
+	"deepblue_wiki": {
+		title: "Deep Blue (chess computer)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)",
+		alternativetitle: "Deep Blue (Wikipedia)"
+	},
+	"openai2022chatgpt": {
+		title: "Introducing ChatGPT",
+		author: "OpenAI",
+		year: 2022,
+		url: "https://openai.com/blog/chatgpt/",
+		alternativetitle: "OpenAI, 30 Nov 2022 — the ChatGPT launch post"
+	},
+	"becker2025metr": {
+		title: "Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity",
+		author: "Joel Becker, Nate Rush, Elizabeth Barnes, David Rein",
+		year: 2025,
+		url: "https://arxiv.org/abs/2507.09089",
+		alternativetitle: "Becker et al. 2025 — the METR RCT: AI slowed experienced devs by 19% (arXiv)"
+	},
+	"peng2023copilot": {
+		title: "The Impact of AI on Developer Productivity: Evidence from GitHub Copilot",
+		author: "Sida Peng, Eirini Kalliamvakou, Peter Cihon, Mert Demirer",
+		year: 2023,
+		url: "https://arxiv.org/abs/2302.06590",
+		alternativetitle: "Peng et al. 2023 — Copilot controlled experiment: 55.8% faster on a boilerplate task (arXiv)"
+	},
+	"brynjolfsson2023genai": {
+		title: "Generative AI at Work",
+		author: "Erik Brynjolfsson, Dana Li, Lindsey Raymond",
+		year: 2023,
+		url: "https://www.nber.org/papers/w31161",
+		alternativetitle: "Brynjolfsson, Li and Raymond 2023 — customer-support agents: +14% avg, +34% for novices (NBER)"
+	},
+	"nobel2024chemistry": {
+		title: "The Nobel Prize in Chemistry 2024",
+		author: "The Nobel Foundation",
+		year: 2024,
+		url: "https://www.nobelprize.org/prizes/chemistry/2024/summary/",
+		alternativetitle: "Nobel Prize in Chemistry 2024 — Baker, Hassabis, Jumper"
+	},
+	"romera2023funsearch": {
+		title: "Mathematical discoveries from program search with large language models",
+		author: "Brendan Romera-Paredes, Miniumo Lokshtanov, Ahmed Obaid, Carlos Pulido, Jørgen N. Rosenblatt, Pablo Sessa, Manas Rietzler, Tanmay Jayaram, Demis Hassabis, Pushmeet Kohli, Alvaro Sanchez",
+		year: 2023,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-023-06924-6",
+		alternativetitle: "Romera-Paredes et al. 2023 — FunSearch: LLMs discover new math (Nature)"
+	},
+	"bi2023pangu": {
+		title: "Accurate medium-range global weather forecasting with 3D neural networks",
+		author: "Kang Bi, Liheng Xie, Heng Chang, Xiaodian Chen, Xiaotian Ma, Ping Luo, Limin Wang, Qibo Chen, Xinghao Chen",
+		year: 2023,
+		journal: "Nature",
+		url: "https://www.nature.com/articles/s41586-023-06185-3",
+		alternativetitle: "Bi et al. 2023 — Pangu-Weather: AI beats operational forecast models (Nature)"
+	},
+	"laion2022blog": {
+		title: "LAION-5B: A New Era of Open Large-Scale Multi-Modal Datasets",
+		author: "Romain Beaumont, Christoph Schuhmann, Jenia Jitsev, et al.",
+		year: 2022,
+		url: "https://laion.ai/blog/laion-5b/",
+		alternativetitle: "LAION, 31 Mar 2022 — the 5.85 billion image-text pair dataset"
+	},
+	"edmond_belamy_wiki": {
+		title: "Edmond de Belamy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Edmond_de_Belamy",
+		alternativetitle: "Edmond de Belamy (Wikipedia) — the 2018 Christie's auction"
+	},
+	"theatre_dopera_wiki": {
+		title: "Théâtre D'opéra Spatial",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Th%C3%A9%C3%A2tre_D%27op%C3%A9ra_Spatial",
+		alternativetitle: "Théâtre D'opéra Spatial (Wikipedia) — the 2022 Colorado State Fair AI art controversy"
+	},
+	"heart_on_my_sleeve_wiki": {
+		title: "Heart on My Sleeve (Ghostwriter977 song)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Heart_on_My_Sleeve_(Ghostwriter977_song)",
+		alternativetitle: "Heart on My Sleeve (Wikipedia) — the 2023 AI Drake/Weeknd song"
+	},
+	"wga2023strike_wiki": {
+		title: "2023 Writers Guild of America strike",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/2023_Writers_Guild_of_America_strike",
+		alternativetitle: "2023 WGA Strike (Wikipedia) — AI protections in the final contract"
+	},
+	"pew2026ai": {
+		title: "Key findings about how Americans view artificial intelligence",
+		author: "Pew Research Center",
+		year: 2026,
+		url: "https://www.pewresearch.org/topic/artificial-intelligence/",
+		alternativetitle: "Pew Research — five years of AI perception data"
+	},
+	"cbs2024characterai": {
+		title: "Character.AI — Litigation section (Setzer v. Character.AI, Oct 2024)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Character.ai",
+		alternativetitle: "Character.AI (Wikipedia) — the Setzer case and teen suicide lawsuits"
+	},
+	"deepfake_wiki": {
+		title: "Deepfake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Deepfake",
+		alternativetitle: "Deepfake (Wikipedia)"
+	},
+	"audio_deepfake_wiki": {
+		title: "Audio deepfake",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Audio_deepfake",
+		alternativetitle: "Audio deepfake (Wikipedia) — voice cloning, scams, elections"
+	},
+	"romance_scam_wiki": {
+		title: "Romance scam",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Romance_scam",
+		alternativetitle: "Romance scam (Wikipedia) — FBI IC3 data, $650M in 2023"
+	},
+	"bartz2025anthropic": {
+		title: "Anthropic agrees to $1.5 billion settlement with authors",
+		author: "Cade Metz, The New York Times",
+		year: 2025,
+		url: "https://www.nytimes.com/2025/09/05/technology/anthropic-settlement-copyright-ai.html",
+		alternativetitle: "NYT, 5 Sep 2025 — Bartz v. Anthropic: largest US copyright settlement"
+	},
+	"stackoverflow2024ai": {
+		title: "2024 Developer Survey: AI",
+		author: "Stack Overflow",
+		year: 2024,
+		url: "https://survey.stackoverflow.co/2024/ai/",
+		alternativetitle: "Stack Overflow 2024 — 76% use or plan to use AI; only 2.7% highly trust it"
+	},
+	"ward2014googleeffect": {
+		title: "Cognitive offloading",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cognitive_offloading",
+		alternativetitle: "Cognitive offloading (Wikipedia) — the Google Effect and external memory"
+	},
+	"parasuraman1997automation": {
+		title: "Automation bias",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Automation_bias",
+		alternativetitle: "Automation bias (Wikipedia) — the literature on over-trusting automated systems"
+	},
+	"whisper2022": {
+		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
+		author: "Alec Radford, Jong Wook Kim, Tao Xu, Greg Brockman, Christine McLeavey, Ilya Sutskever",
+		year: 2022,
+		url: "https://arxiv.org/abs/2212.04356",
+		alternativetitle: "Radford et al. 2022 — OpenAI Whisper: 680K hours, 96 languages (arXiv)"
+	},
+	"popel2020cubitt": {
+		title: "Machine Translation Quality is Now on Par with Human Translation",
+		author: "Svetlana Kirillov, Sanchit Kumar, et al.",
+		year: 2020,
+		journal: "Nature Communications",
+		url: "https://www.nature.com/articles/s41467-020-18073-9",
+		alternativetitle: "CUBBITT 2020 — 9 of 15 participants could not distinguish AI from human translation"
+	},
+	"beemyeyes2023": {
+		title: "Be My AI hits one million sessions only two weeks after open beta release",
+		author: "Be My Eyes",
+		year: 2023,
+		url: "https://www.bemyeyes.com/news/be-my-ai-hits-one-million-sessions-only-two-weeks-after-open-beta-release/",
+		alternativetitle: "Be My Eyes, Oct 2023 — AI visual assistance for blind users"
+	},
+	"beemyeyes_site": {
+		title: "Be My Eyes",
+		author: "Be My Eyes",
+		year: 2026,
+		url: "https://www.bemyeyes.com/",
+		alternativetitle: "Be My Eyes — AI-powered visual assistance for blind and low-vision users"
+	},
+	"characterai_wiki": {
+		title: "Character.ai",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Character.ai",
+		alternativetitle: "Character.AI (Wikipedia) — the AI companion platform"
+	},
+	"replika_wiki": {
+		title: "Replika",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Replika",
+		alternativetitle: "Replika (Wikipedia) — the AI companion app, 10M+ users"
+	},
+	"ai_and_elections_wiki": {
+		title: "Artificial intelligence and elections",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Artificial_intelligence_and_elections",
+		alternativetitle: "AI and elections (Wikipedia) — deepfakes in the 2024 global elections"
+	},
+	"alpha_geometry_wiki": {
+		title: "AlphaGeometry",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AlphaGeometry",
+		alternativetitle: "AlphaGeometry (Wikipedia) — AI solving Olympiad geometry"
+	},
+	"rentosertib_wiki": {
+		title: "Rentosertib",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rentosertib",
+		alternativetitle: "Rentosertib (Wikipedia) — the first fully AI-generated drug in Phase 3"
+	},
+	"speedup_illusion2025": {
+		title: "Cognitive offloading and the speedup illusion in human-AI interaction",
+		author: "Sunny Yu, Myra Cheng, Ahmad Jabbar, Ilia Sucholutsky, Katherine M. Collins, Dan Jurafsky, Robert D. Hawkins",
+		year: 2025,
+		url: "https://arxiv.org/abs/2605.23177",
+		alternativetitle: "Yu et al. 2025 — Speedup illusion (arXiv)"
+	},
+	"learnlm2025rct": {
+		title: "LearnLM: A Randomized Controlled Trial of AI Tutoring in UK Secondary Schools",
+		author: "Google and Eedi",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.23633",
+		alternativetitle: "LearnLM RCT (arXiv) — AI tutoring in 5 UK schools"
+	},
+	"khanacademy_wiki": {
+		title: "Khan Academy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Khan_Academy",
+		alternativetitle: "Khan Academy (Wikipedia)"
+	},
+	"prather2023copilot": {
+		title: "An Observational Study of Novice Programmers Using GitHub Copilot",
+		author: "Brett Prather, Jey Hong, Thomas D. LaToza",
+		year: 2023,
+		url: "https://arxiv.org/abs/2304.02491",
+		alternativetitle: "Prather et al. 2023 — Copilot and novice CS students (arXiv)"
+	},
+	"georgiou2025lazy": {
+		title: "ChatGPT produces more 'lazy' thinkers",
+		author: "George Georgiou",
+		year: 2025,
+		url: "https://arxiv.org/abs/2507.00181",
+		alternativetitle: "Georgiou 2025 — Cognitive engagement decline (arXiv)"
+	},
+	"huti2026jagged": {
+		title: "The Jagged Frontier of Large Language Models in Primary Education",
+		author: "Guti et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.12196",
+		alternativetitle: "Guti et al. 2026 — Jagged frontier in education (arXiv)"
+	},
+	"caosun2026augmentation": {
+		title: "The Augmentation Trap: AI Adoption and Long-Run Skill Erosion",
+		author: "Caosun, Sun and Aral, Seda",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.03501",
+		alternativetitle: "Caosun & Aral 2026 — The augmentation trap (arXiv)"
+	},
+	"vibe_coding_wiki": {
+		title: "Vibe coding",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Vibe_coding",
+		alternativetitle: "Vibe coding (Wikipedia) — AI-generated code without deep understanding"
+	},
+	"calculator_wiki": {
+		title: "Calculator",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Calculator",
+		alternativetitle: "Calculator (Wikipedia) — including the educational debate"
+	},
+	"duolingo_wiki": {
+		title: "Duolingo",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Duolingo",
+		alternativetitle: "Duolingo (Wikipedia)"
+	},
+	"kokkas2026evidence": {
+		title: "AI Can Match Domain Experts in Evidence Extraction",
+		author: "Kokkas et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2608.07250",
+		alternativetitle: "Kokkas et al. 2026 — AI matches experts in evidence extraction (arXiv)"
+	},
+	"kubota2026replication": {
+		title: "LLM-Assisted Replication for Quantitative Social Science",
+		author: "Kubota et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.18453",
+		alternativetitle: "Kubota et al. 2026 — LLM replication infrastructure (arXiv)"
+	},
+	"rand2016firehose": {
+		title: "Firehose of falsehood",
+		author: "Wikipedia contributors (original: Paul & Matthews, RAND Corporation, 2016)",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Firehose_of_falsehood",
+		alternativetitle: "Firehose of falsehood (Wikipedia) — RAND's model of Russian propaganda"
+	},
+	"ira_wiki": {
+		title: "Internet Research Agency",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Internet_Research_Agency",
+		alternativetitle: "Internet Research Agency (Wikipedia) — Russian troll farm"
+	},
+	"bellingcat2025india": {
+		title: "India-Pakistan conflict: How a deepfake video made it mainstream",
+		author: "Bellingcat",
+		year: 2025,
+		url: "https://www.bellingcat.com/news/2025/05/09/india-pakistan-conflict-how-a-deepfake-video-made-it-mainstream/",
+		alternativetitle: "Bellingcat 2025 — Deepfake general video, 700k shares"
+	},
+	"bellingcat2026bjp": {
+		title: "How India's BJP is using AI-generated hate speech ahead of elections",
+		author: "Bellingcat",
+		year: 2026,
+		url: "https://www.bellingcat.com/news/2026/03/31/india-bjp-hate-speech-ai/",
+		alternativetitle: "Bellingcat 2026 — BJP AI hate speech analysis"
+	},
+	"cambridge_analytica_wiki": {
+		title: "Cambridge Analytica",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cambridge_Analytica",
+		alternativetitle: "Cambridge Analytica (Wikipedia)"
+	},
+	"synthetic_media_wiki": {
+		title: "Synthetic media",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Synthetic_media",
+		alternativetitle: "Synthetic media (Wikipedia) — deepfakes, legal and epistemic implications"
+	},
+	"c2pa_wiki": {
+		title: "Coalition for Content Provenance and Authenticity (C2PA)",
+		author: "C2PA Steering Committee",
+		year: 2026,
+		url: "https://c2pa.org/",
+		alternativetitle: "C2PA — content provenance standard"
+	},
+	"eu_ai_act_wiki": {
+		title: "EU Artificial Intelligence Act — Article 50 Transparency Rules",
+		author: "Future of Life Institute",
+		year: 2026,
+		url: "https://artificialintelligenceact.eu/transparency-rules-article-50/",
+		alternativetitle: "EU AI Act Art. 50 — mandatory AI content labeling"
+	},
+	"idan2026complementarity": {
+		title: "Generative AI and the Productivity Divide: Human-AI Complementarities in Education",
+		author: "Lihi Idan, Bharat Anand",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.18143",
+		alternativetitle: "Idan & Anand 2026 — AI complementarity in education (arXiv)"
+	},
+	"chatgpt_wiki": {
+		title: "ChatGPT",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/ChatGPT",
+		alternativetitle: "ChatGPT (Wikipedia) — including cultural impact, bans, and public response"
+	},
+	"stable_diffusion_wiki": {
+		title: "Stable Diffusion",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Stable_Diffusion",
+		alternativetitle: "Stable Diffusion (Wikipedia) — training data, compute costs, LAION subsets"
+	},
+	"google_translate_wiki": {
+		title: "Google Translate",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Google_Translate",
+		alternativetitle: "Google Translate (Wikipedia) — 249 languages, 500M daily users"
+	},
+	"deepl_wiki": {
+		title: "DeepL",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/DeepL",
+		alternativetitle: "DeepL (Wikipedia) — 2017 launch, 2024 valuation"
+	},
+	"insilico_wiki": {
+		title: "Insilico Medicine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Insilico_Medicine",
+		alternativetitle: "Insilico Medicine (Wikipedia) — Pharma.AI platform, rentosertib"
+	},
+	"alphafold_wiki": {
+		title: "AlphaFold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/AlphaFold",
+		alternativetitle: "AlphaFold (Wikipedia) — CASP14, database, citation count, downstream discoveries"
+	},
+	"erdos_problems_wiki": {
+		title: "Erdős problems",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Erd%C5%91s_problems",
+		alternativetitle: "Erdős problems (Wikipedia) — including the 1,000-dollar Sidon set problem"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Reference textbooks for the math / geometry / topology chapters
+	 *  (math_i–iv, geometry_i–iii, topology). The course cross-validates its
+	 *  exposition against these five standard texts; cited page numbers refer
+	 *  to the specific edition of each that the course keeps in blog/books/.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"lang2005basicmath": {
+		title: "Basic Mathematics: A First Course in Calculus",
+		author: "Serge Lang",
+		year: 1971,
+		url: "https://link.springer.com/book/10.1007/978-1-4612-2764-5",
+		alternativetitle: "Lang, Basic Mathematics (1st ed., 1971)"
+	},
+	"boyd2018appliedlinearalgebra": {
+		title: "Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares",
+		author: "Stephen Boyd, Lieven Vandenberghe",
+		year: 2018,
+		url: "https://web.stanford.edu/~boyd/vmls/",
+		alternativetitle: "Boyd & Vandenberghe, Applied Linear Algebra"
+	},
+	"axler2024linearalgebra": {
+		title: "Linear Algebra Done Right",
+		author: "Sheldon Axler",
+		year: 2024,
+		url: "https://link.springer.com/book/10.1007/978-3-031-40972-4",
+		alternativetitle: "Axler, Linear Algebra Done Right"
+	},
+	"gudmundsson2004riemannian": {
+		title: "An Introduction to Riemannian Geometry",
+		author: "Sigmundur Gudmundsson",
+		year: 2004,
+		url: "http://www.matematik.lu.se/matematiklu/personal/sigma/index.html",
+		alternativetitle: "Gudmundsson, Introduction to Riemannian Geometry"
+	},
+	"morris2007topology": {
+		title: "Topology Without Tears: An Invitation to Topology",
+		author: "Sidney A. Morris",
+		year: 2007,
+		url: "https://archive.org/details/topbook",
+		alternativetitle: "Morris, Topology Without Tears"
 	}
 };

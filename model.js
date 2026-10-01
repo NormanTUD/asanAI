@@ -2099,7 +2099,11 @@ function get_current_chosen_object_default_weights_string () {
 
 	var response = "";
 
-	var weights_file = this_struct["weights_file"][get_chosen_dataset()];
+	var weights_file = (this_struct["weights_file"] || {})[get_chosen_dataset()];
+
+	if(!weights_file) {
+		return "";
+	}
 
 	if(!weights_files[weights_file]) {
 		$.ajax({

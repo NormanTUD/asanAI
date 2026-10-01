@@ -1,0 +1,35 @@
+# Space Warps Tab — parked code
+#
+# The Space Warps visualizer (the `NeuralSpaceWarps` API) lives in
+# `todo/fold_lens.js`. This file holds the small pieces of "wiring" that
+# used to hook the Space Warps tab into the running app. They are commented
+# out at their original locations so the feature is fully disabled, and kept
+# here so nothing is lost.
+#
+# To re-enable:
+#   1. Restore `_js("fold_lens.js");` in index.php (currently commented).
+#   2. Re-load the script tag, e.g. `_js("todo/fold_lens.js");` or move the
+#      file back to the repo root.
+#   3. Un-comment the three snippets below at the marked locations.
+
+
+## 1) Tab label  ->  tabs/visualizations.php  (inside `<ul class="navi_list">`)
+
+		<li style="display: none"><a onclick="if(typeof NeuralSpaceWarps!=='undefined'){NeuralSpaceWarps.refresh();}" id="space_warps_tab_label" href="#space_warps_tab" style="display: none"><span class="TRANSLATEME_space_warps"></span></a></li>
+
+
+## 2) Tab content panel  ->  tabs/visualizations.php  (inside `<div id="visualization_tab">`)
+
+	<div id="space_warps_tab" class="tab">
+		<div id="space_warps_content"></div>
+	</div>
+
+
+## 3) Bootstrap  ->  main.js  (inside `_init_app_finalization`, after create_topological_analyzer())
+
+	if (typeof NeuralSpaceWarps !== "undefined") {
+		NeuralSpaceWarps.start({
+			debug: true,
+			target: "#space_warps_content"
+		});
+	}

@@ -162,8 +162,32 @@ const _temmlOpts = {
 		{ left: "$$", right: "$$", display: true },
 		{ left: "$",  right: "$",  display: false }
 	],
-	annotate: true
+	annotate: true,
+	// Already-rendered <math> elements are final: the walker must never
+	// recurse into them (their annotation holds the raw LaTeX source, which
+	// a second walk could re-interpret). Keep the library defaults too —
+	// providing ignoredTags replaces the whole list.
+	ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option", "math"]
 };
+
+/* Stamp the pristine LaTeX source into a data-tex attribute on every freshly
+   rendered <math>. The attribute is part of a tag token, so neither marked
+   (inline HTML passes through verbatim) nor the HTML parser can mangle it —
+   unlike the annotation's text node. Only stamp from a PRISTINE annotation
+   (exactly one text child); a mangled annotation (embedded markup from a
+   re-parse) must never overwrite a good source. */
+function _stampMathTex(root) {
+	if (!root || root.nodeType !== 1) return;
+	const maths = root.querySelectorAll ? root.querySelectorAll('math') : [];
+	for (let i = 0; i < maths.length; i++) {
+		const m = maths[i];
+		if (m.getAttribute('data-tex')) continue;
+		const ann = m.querySelector('annotation[encoding="application/x-tex"]');
+		if (ann && ann.childNodes.length === 1 && ann.firstChild.nodeType === 3) {
+			m.setAttribute('data-tex', ann.textContent.trim());
+		}
+	}
+}
 
 function _fixMathInElement(el) {
     // ===== Skip already-rendered elements =====
@@ -207,6 +231,14 @@ function _fixMathInElement(el) {
     // ===== Only fix the specific problem: <em>/<strong> inside math =====
     let changed = false;
 
+    // renderToString output carries no annotation, so stamp the pristine
+    // source into data-tex (the right-click popup's source of record).
+    const renderWithTex = (clean, displayMode) => {
+        const rendered = temml.renderToString(clean, { displayMode });
+        const esc = clean.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return rendered.replace('<math', (t) => t + ' data-tex="' + esc + '"');
+    };
+
     // Block math: $$ ... $$
     html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, inner) => {
         if (!/<\/?(?:em|strong)/i.test(inner)) return match;
@@ -215,7 +247,7 @@ function _fixMathInElement(el) {
         if (!clean) return match;
 
         try {
-            const rendered = temml.renderToString(clean, { displayMode: true });
+            const rendered = renderWithTex(clean, true);
             changed = true;
             return rendered;
         } catch (e) {
@@ -237,7 +269,7 @@ function _fixMathInElement(el) {
         if (!clean) return match;
 
         try {
-            const rendered = temml.renderToString(clean, { displayMode: false });
+            const rendered = renderWithTex(clean, false);
             changed = true;
             return rendered;
         } catch (e) {
@@ -291,6 +323,7 @@ function _renderMathSkippingCode(el) {
                         _fixMathInElement(child);
                     } else {
                         temml.renderMathInElement(child, _temmlOpts);
+                        _stampMathTex(child);
                     }
                 }
             }
@@ -310,6 +343,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
                 // Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
                 if (!fixed) {
                     temml.renderMathInElement(el, _temmlOpts);
+                    _stampMathTex(el);
                     el.setAttribute('data-math-rendered', 'true');
                 }
             }
@@ -522,9 +556,13 @@ function render_temml() {
 		}
 
 		function _extractLatex(mathEl) {
+			// data-tex is stamped from the pristine annotation at render time.
+			// As an attribute it is part of a tag token — neither marked nor
+			// the HTML parser can mangle it — so it outranks the annotation's
+			// text node (which a markdown re-parse could corrupt).
+			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
 			const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
 			if (ann) return ann.textContent.trim();
-			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
 			const wrapper = mathEl.closest('.temml');
 			if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
 			return null;
@@ -972,12 +1010,14 @@ function render_temml() {
 
 			if (rect.width === 0 && rect.height === 0) {
 				temml.renderMathInElement(el, _temmlOpts);
+				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
 				return;
 			}
 
 			if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
 				temml.renderMathInElement(el, _temmlOpts);
+				_stampMathTex(el);
 				el.setAttribute('data-math-rendered', 'true');
 			} else {
 				_temmlObserver.observe(el);
@@ -988,8 +1028,32 @@ function render_temml() {
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
-	   ═══════════════════════════════════════════════════════════ */
+	   ═══════════════════════════════════════════════════════════════ */
 	if (render_temml._liveUpdate) render_temml._liveUpdate();
+
+	/* ═══════════════════════════════════════════════════════════════
+	   MATH INTEGRITY SCAN  (guardrail — silent when healthy)
+	   Raises a SEVERE console entry (which fails the render validator)
+	   if a rendered equation's source metadata was mangled by a markdown
+	   re-parse or is leaking to the page as visible text.
+	   ═══════════════════════════════════════════════════════════════ */
+	(function mathIntegrityScan() {
+		const maths = document.querySelectorAll('math');
+		for (let i = 0; i < maths.length; i++) {
+			const m = maths[i];
+			if (m.closest && m.closest('.lp-overlay')) continue; // popup preview clone
+			const ann = m.querySelector('annotation[encoding="application/x-tex"]');
+			if (!ann) continue;
+			if (ann.querySelector('*')) {
+				console.error('[math-integrity] <annotation> contains markup — LaTeX source mangled by a markdown re-parse', m);
+				continue;
+			}
+			const r = ann.getBoundingClientRect();
+			if (r.width > 0 || r.height > 0) {
+				console.error('[math-integrity] math annotation is visible on the page', m);
+			}
+		}
+	})();
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1326,6 +1390,11 @@ function initGlossary() {
 						return NodeFilter.FILTER_REJECT;
 					}
 					if (parent.closest('select, option, input, textarea, button, label[for]')) {
+						return NodeFilter.FILTER_REJECT;
+					}
+					// Skip navigation chrome (course tiles, TOC) — glossary
+					// tooltips belong in prose, not in the menu
+					if (parent.closest('.course-tile') || parent.closest('#toc')) {
 						return NodeFilter.FILTER_REJECT;
 					}
 					// Skip if inside math element or already has glossary-term
@@ -1712,16 +1781,30 @@ function initGlossary() {
 	// GUARDRAIL (causes 3 + 5) — drop-cap geometry canary.
 	//
 	// The drop cap's size (--cl-dc-size / --cl-dc-lines) is measured
-	// once by polish.js. Anything that later re-sizes the cap — the
+	// by polish.js. Anything that later re-sizes the cap — the
 	// MutationObserver re-measure loop, a stray inline write, a
 	// font-swap — reflows the justified text wrapping the float, i.e.
 	// "the stuff around the drop cap moves". We cache the paragraph's
 	// document-space geometry after the first settled reading and, on
 	// every sweep, verify it is unchanged unless the viewport itself
 	// changed (the one legitimate re-size trigger). On drift we re-pin
-	// the last known-good --cl-dc-* values and log loudly.
+	// the last known-good --cl-dc-* values and log loudly — UNLESS
+	// polish.js's own measurement key (p.dataset.dcKey) changed since
+	// our baseline, which marks a legitimate re-measure (its inputs —
+	// font-size / line-height / width / text length — really did
+	// change, e.g. the display:none -> block reveal), in which case
+	// the new values are the correct ones and we re-baseline quietly.
 	// ─────────────────────────────────────────────────────────────────
-	var dcCanary = { p: null, w: 0, h: 0, vw: 0, vh: 0, vars: null, settled: false };
+	// `key` mirrors polish.js's per-paragraph measurement key
+	// (p.dataset.dcKey = font-size | line-height | clientWidth | text
+	// length). polish.js itself only re-measures a locked cap when that
+	// key changes (or on a viewport-breakpoint force), so a key change
+	// since our baseline marks a LEGITIMATE re-measure (e.g. #contents
+	// going display:none -> block, reader-mode font-size changes).
+	var dcCanary = { p: null, w: 0, h: 0, vw: 0, vh: 0, vars: null, key: null, settled: false };
+	function dcKeyOf(p) {
+		return (p.dataset && p.dataset.dcKey) || null;
+	}
 	function dropcapCanary() {
 		var p = document.querySelector('.cl-dropcap');
 		if (!p || p.classList.contains('cl-dc-pending')) return; // not sized yet
@@ -1737,6 +1820,7 @@ function initGlossary() {
 				lines: cs.getPropertyValue('--cl-dc-lines'),
 				size: cs.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			dcCanary.settled = true;
 			return;
 		}
@@ -1753,6 +1837,7 @@ function initGlossary() {
 				lines: cs2.getPropertyValue('--cl-dc-lines'),
 				size: cs2.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			return;
 		}
 		if (dcCanary.p !== p) {
@@ -1766,35 +1851,47 @@ function initGlossary() {
 				lines: cs3.getPropertyValue('--cl-dc-lines'),
 				size: cs3.getPropertyValue('--cl-dc-size')
 			};
+			dcCanary.key = dcKeyOf(p);
 			return;
 		}
 		var w = p.offsetWidth, h = p.offsetHeight;
 		if (w === dcCanary.w && h === dcCanary.h) return;
-		// Geometry changed without a viewport resize. Two cases:
-		//  • the --cl-dc-* vars themselves drifted (a stray re-measure
-		//    or stray inline write re-sized the cap) — re-pin them to
-		//    the last known-good values and log loudly;
+		// Geometry changed without a viewport resize. Cases:
+		//  • the --cl-dc-* vars drifted AND polish.js's measurement key
+		//    changed since our baseline — a legitimate re-measure (the
+		//    inputs the size is computed from really did change: reveal
+		//    from display:none, reader mode, content swap). The NEW
+		//    values are the correct ones; re-baseline quietly.
+		//  • the --cl-dc-* vars drifted with the measurement key intact
+		//    (a stray re-measure loop or stray inline write) — re-pin
+		//    them to the last known-good values and log loudly;
 		//  • the vars are intact and only the paragraph reflowed
-		//    (legitimate: reader mode, dark-mode metrics, content
-		//    swap) — re-baseline quietly.
+		//    (legitimate: dark-mode metrics, content swap) — re-baseline
+		//    quietly.
 		var csNow = window.getComputedStyle(p);
 		var varsNow = {
 			lines: csNow.getPropertyValue('--cl-dc-lines'),
 			size: csNow.getPropertyValue('--cl-dc-size')
 		};
 		if (JSON.stringify(varsNow) !== JSON.stringify(dcCanary.vars)) {
-			try {
-				console.error('[glossary] DROP-CAP DRIFT: --cl-dc-* changed ' +
-					JSON.stringify(dcCanary.vars) + ' -> ' + JSON.stringify(varsNow) +
-					' without a viewport resize. Re-pinning last known good values.');
-			} catch (e) {}
-			if (dcCanary.vars && dcCanary.vars.lines) p.style.setProperty('--cl-dc-lines', dcCanary.vars.lines);
-			if (dcCanary.vars && dcCanary.vars.size) p.style.setProperty('--cl-dc-size', dcCanary.vars.size);
-			try {
-				console.error('[glossary] DROP-CAP DRIFT: paragraph geometry ' +
-					dcCanary.w + 'x' + dcCanary.h + ' -> ' + w + 'x' + h);
-			} catch (e) {}
-			// Keep the last known-good values as the canary baseline.
+			var keyNow = dcKeyOf(p);
+			if (keyNow && dcCanary.key && keyNow !== dcCanary.key) {
+				dcCanary.vars = varsNow;
+				dcCanary.key = keyNow;
+			} else {
+				try {
+					console.error('[glossary] DROP-CAP DRIFT: --cl-dc-* changed ' +
+						JSON.stringify(dcCanary.vars) + ' -> ' + JSON.stringify(varsNow) +
+						' without a viewport resize. Re-pinning last known good values.');
+				} catch (e) {}
+				if (dcCanary.vars && dcCanary.vars.lines) p.style.setProperty('--cl-dc-lines', dcCanary.vars.lines);
+				if (dcCanary.vars && dcCanary.vars.size) p.style.setProperty('--cl-dc-size', dcCanary.vars.size);
+				try {
+					console.error('[glossary] DROP-CAP DRIFT: paragraph geometry ' +
+						dcCanary.w + 'x' + dcCanary.h + ' -> ' + w + 'x' + h);
+				} catch (e) {}
+				// Keep the last known-good values as the canary baseline.
+			}
 		} else {
 			dcCanary.vars = varsNow;
 		}
@@ -1993,3 +2090,236 @@ function sendHeight() {
 		}, '*');
 	}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   tbDebug — DIAGNOSTIC TOOL (masking / reveal / overlap).
+   Not part of the course runtime; it only defines `window.tbDebug`
+   and installs a light error collector so the exact DOM state of the
+   topic-blocks (clip, overflow, badge hit-test, overlaps) can be
+   dumped from the browser console. Run:
+       tbDebug()                  read-only report
+       tbDebug({reveal:true})     also taps the first collapsed block's
+                                  badge and measures before/after
+   The report is copied to the clipboard + logged to the console.
+   ════════════════════════════════════════════════════════════════ */
+(async function installTBDebug(){
+  "use strict";
+  const r = n => Math.round((+n||0)*100)/100;
+  const sleep = ms => new Promise(res => setTimeout(res, ms));
+  const rect = el => { if(!el) return null; const b=el.getBoundingClientRect(); return {t:r(b.top),l:r(b.left),w:r(b.width),h:r(b.height)}; };
+  const name = el => {
+    if(!el) return '?';
+    if(el.id) return '#'+el.id;
+    const cls=((el.className||'')+'').trim().split(/\s+/).filter(Boolean);
+    let lab='';
+    try{ const h=el.querySelector&&el.querySelector('h1,h2,h3,h4,h5,h6'); if(h) lab=h.textContent.trim().slice(0,28); else if(el.dataset&&el.dataset.optionaltitle) lab=String(el.dataset.optionaltitle).slice(0,28); }catch(e){}
+    return (cls[0]||el.tagName.toLowerCase())+(lab?(' "'+lab+'"'):'');
+  };
+  const ovArea = (a,b)=>{ if(!a||!b) return 0; const ox=Math.max(0,Math.min(a.l+a.w,b.l+b.w)-Math.max(a.l,b.l)); const oy=Math.max(0,Math.min(a.t+a.h,b.t+b.h)-Math.max(a.t,b.t)); return r(ox*oy); };
+  const hitTop = el => {
+    if(!el) return null;
+    const b=el.getBoundingClientRect(); const x=b.left+b.width/2, y=b.top+b.height/2;
+    if(x<0||y<0||x>innerWidth||y>innerHeight) return {offscreen:true};
+    const t=document.elementFromPoint(x,y);
+    return { top:t?name(t):null, blocked:t?!(t===el||el.contains(t)):false, x:r(x), y:r(y) };
+  };
+  if(!window.__tbErrs){
+    window.__tbErrs=[];
+    const oe=window.onerror;
+    window.onerror=function(m,s,l){ try{window.__tbErrs.push(String(m)+(s?(' @'+String(s).split('/').pop()+':'+l):''));}catch(_){} return oe?oe.apply(this,arguments):false; };
+    window.addEventListener('unhandledrejection',e=>{ try{window.__tbErrs.push('promise: '+(e.reason&&e.reason.message||e.reason));}catch(_){} });
+  }
+  window.tbDebug = async function(opts){
+    opts=opts||{};
+    try{
+      const html=document.documentElement;
+      const box=document.getElementById('course-status-box');
+      const lessonEl=document.querySelector('[data-lesson-id]');
+      const nav=window.__moduleNavData||{};
+      const report={
+        ver: window.__TB_VER || 'OLD/unknown -> stale cache or production (my fixes NOT loaded)',
+        at: new Date().toISOString(),
+        env:{ url:location.href, lessonId: lessonEl?lessonEl.getAttribute('data-lesson-id'):null, vw:innerWidth, vh:innerHeight, dpr:window.devicePixelRatio||1,
+          reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches, readerMode:html.classList.contains('reader-mode'), dark:html.classList.contains('dark'),
+          mathLevel:(window.BlogTopics&&BlogTopics.getMathLevel)?BlogTopics.getMathLevel():null,
+          navCurrent:nav.current, navTotal:(nav.modules||[]).length, ua:navigator.userAgent },
+        courseStatusBox: box ? {
+          position:getComputedStyle(box).position,
+          zIndex:getComputedStyle(box).zIndex,
+          parent:box.parentElement?(box.parentElement.id||box.parentElement.tagName):null,
+          prevSibling:box.previousElementSibling?(box.previousElementSibling.id||box.previousElementSibling.tagName):null,
+          nextSibling:box.nextElementSibling?(box.nextElementSibling.id||box.nextElementSibling.tagName):null,
+          open:box.classList.contains('is-open'),
+          panel: (function(){ const p=box.querySelector('.csb-panel'); if(!p) return null;
+            const cs=getComputedStyle(p); const h=p.getBoundingClientRect().height;
+            return { position:cs.position, zIndex:cs.zIndex, pointerEvents:cs.pointerEvents, height:r(h), visible: h>0&&cs.opacity!=='0', hit: h>0?hitTop(p):null }; })(),
+          rect:rect(box)
+        } : { present:false }
+      };
+      const NO_TUCK_IDS={ 'footnotes':1,'sources':1,'footnotes-section':1,'sources-section':1,'contents':1,'loader':1,'toc':1,'course-status':1,'course-status-box':1,'topic-learned-btn':1,'sidenotes-rail':1,'curiosity-score':1 };
+      const isTuckedB=el=>!!(el&&el.classList&&el.classList.contains('topic-block')&&el.classList.contains('topic-block-collapsed'));
+      const isTransparent=el=>!!(el&&((el.tagName==='SCRIPT'||el.tagName==='STYLE'||el.tagName==='TEMPLATE')||(el.classList&&el.classList.contains('topic-demo-tucked'))));
+      const runEndOf=b=>{ let s=b.nextElementSibling; while(s){ if(s.tagName==='SCRIPT'||s.tagName==='STYLE'||s.tagName==='TEMPLATE'){s=s.nextElementSibling;continue;} if(s.tagName==='SECTION') return s; if(s.id&&NO_TUCK_IDS[s.id]) return s; if(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]')) return s; if(s.matches&&s.matches('h1,h2,h3,h4,h5,h6')) return s; s=s.nextElementSibling; } return null; };
+      const nextInRun=b=>{ let s=b.nextElementSibling; while(s){ if(isTransparent(s)){s=s.nextElementSibling;continue;} return isTuckedB(s)?s:null; } return null; };
+      const recollapseEls=[], groupBadges=[], tuckedRuns=[];
+      const sel='.topic-block, [data-optionaltitle], [data-mathlevel], [data-math-level], [data-topic]';
+      const refs=[]; document.querySelectorAll(sel).forEach(el=>{ if(el.classList) refs.push(el); });
+      document.querySelectorAll('canvas, .hott-plot, [id$="-plot"], #vector-plot, #movable-vector-plot, #section-bw, #toc').forEach(el=>{ if(!refs.includes(el)) refs.push(el); });
+      const blocks=[], stuckClips=[], coveredBadges=[];
+      document.querySelectorAll(sel).forEach(el=>{
+        if(!el.classList) return;
+        const cls=[...el.classList];
+        const c=getComputedStyle(el);
+        const maxH=c.maxHeight;
+        const clipped=cls.includes('topic-block--clipped');
+        const collapsed=cls.includes('topic-block-collapsed');
+        const badgeEl=el.querySelector(':scope > .topic-block-fade-badge');
+        let badge=null;
+        if(badgeEl){ badge={ present:true, text:badgeEl.textContent.trim().slice(0,64), rect:rect(badgeEl), hidden:getComputedStyle(badgeEl).visibility==='hidden', pe:getComputedStyle(badgeEl).pointerEvents, hit:hitTop(badgeEl) }; if(badge.hit&&badge.hit.blocked) coveredBadges.push({label:name(el), coveredBy:badge.hit.top}); }
+        const offsetH=el.offsetHeight, scrollH=el.scrollHeight, clientH=el.clientHeight;
+        const clipBroken = clipped && maxH!=='none' && offsetH > (parseFloat(maxH)||0)+2;
+        // Fold-away button audit: it must live as a SIBLING at the section
+        // end (after the block's trailing demos, before the next heading).
+        // A copy still INSIDE the block div is stale (mid-section bug).
+        let rec=null;
+        try{
+          const asChild=el.querySelector(':scope > .topic-block-recollapse');
+          let sibBtn=null, s=el.nextElementSibling;
+          while(s){
+            if(s.classList&&s.classList.contains('topic-block-recollapse')){ sibBtn=s; break; }
+            if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])) break;
+            if(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]')) break;
+            if(s.matches&&s.matches('h1,h2,h3,h4,h5,h6')) break;
+            s=s.nextElementSibling;
+          }
+          const found=asChild||sibBtn;
+          if(found) rec={ where:asChild?'STALE-child-of-block':(sibBtn?'section-end':'?'), rect:rect(found), hit:hitTop(found) };
+          else if(el._tbUserRevealed===true) rec={ where:'MISSING (user-revealed block has no fold-away button)' };
+        }catch(re){ rec={ where:'error: '+(re&&re.message) }; }
+        const e={ label:name(el), md:cls.includes('md'),
+          mathlevel:el.getAttribute('data-mathlevel')||el.getAttribute('data-math-level')||null, title:el.getAttribute('data-optionaltitle')||null,
+          state:{collapsed, clipped, dimmed:cls.includes('topic-block-dimmed'), revealed:cls.includes('topic-block-revealed'), alt:cls.includes('topic-block-alt-active')},
+          tb:{ userRevealed:el._tbUserRevealed??null, reason:el._tbReason??null, score:el._tbScore?(el._tbScore.state+'/'+(el._tbScore.why||'')+'/'+(el._tbScore.reason||'')):null },
+          computed:{ maxH, overflow:c.overflow, opacity:c.opacity, position:c.position },
+          rect:rect(el), offsetH, scrollH, clientH,
+          clipBroken, contentOverflows:scrollH>clientH+2,
+          sectionEnd:runEndOf(el)?name(runEndOf(el)):null,
+          media:{ canvas:!!el.querySelector('canvas'), svg:!!el.querySelector('svg'), media:!!el.querySelector('iframe,video,audio,embed,object') },
+          badge, recollapse:rec };
+        blocks.push(e);
+        if(clipBroken) stuckClips.push({label:e.label, offsetH, maxH});
+      });
+      // Recollapse buttons that are detached from any section (orphans)
+      document.querySelectorAll('.topic-block-recollapse').forEach(el=>{
+        const asChild=el.parentElement&&el.parentElement.querySelector(':scope > .topic-block-recollapse')===el;
+        const block=asChild?el.parentElement:null;
+        let owned=false;
+        if(!asChild){ let s=el.previousElementSibling;
+          while(s){ if(s.classList&&s.classList.contains('topic-block')){ owned=true; break; }
+            if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])||(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]'))||(s.matches&&s.matches('h1,h2,h3,h4,h5,h6'))) break;
+            s=s.previousElementSibling; } }
+        if(owned||block) return;
+        recollapseEls.push({ kind:'orphan', parent:el.parentElement?(el.parentElement.id||el.parentElement.tagName):null, rect:rect(el) });
+      });
+      // Grouped reveal badges: members, titles, placement, hit-test
+      document.querySelectorAll('.topic-block-group-badge').forEach(el=>{
+        const members=(el._groupMembers||[]);
+        groupBadges.push({
+          text:el.textContent.trim().slice(0,160),
+          memberCount:members.length,
+          memberLabels:members.map(name),
+          parent:el.parentElement?(el.parentElement.id||el.parentElement.tagName):null,
+          boundaryAfter:(function(){ let s=el.nextElementSibling;
+            const seen=[];
+            while(s){ seen.push(name(s)); if(s.tagName==='SECTION'||(s.id&&NO_TUCK_IDS[s.id])||(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]'))||(s.matches&&s.matches('h1,h2,h3,h4,h5,h6'))) return s&&name(s); s=s.nextElementSibling; }
+            return 'END-OF-PARENT (after: '+seen.slice(0,3).join(', ')+')'; })(),
+          rect:rect(el), hit:hitTop(el)
+        });
+      });
+      // Tucked runs (consecutive collapsed sections) — the grouping unit
+      {
+        const collapsed=[...document.querySelectorAll('.topic-block.topic-block-collapsed')];
+        const seen={};
+        collapsed.forEach(b=>{
+          if(seen[b]) return;
+          const run=[b]; let n=nextInRun(b);
+          while(n){ if(seen[n]) break; seen[n]=1; run.push(n); n=nextInRun(n); }
+          seen[b]=1;
+          tuckedRuns.push({ size:run.length, grouped:run.length>=2, labels:run.map(name) });
+        });
+      }
+      const lm=[]; refs.forEach(el=>lm.push({name:name(el), rect:rect(el)}));
+      if(box) lm.push({name:'#course-status-box', rect:rect(box)});
+      const overlaps=[];
+      for(let i=0;i<lm.length;i++) for(let j=i+1;j<lm.length;j++){ const A=ovArea(lm[i].rect,lm[j].rect); if(A>600) overlaps.push({a:lm[i].name, b:lm[j].name, area:A}); }
+      overlaps.sort((x,y)=>y.area-x.area);
+      if(opts.reveal){
+        const target=refs.find(el=>el.classList&&el.classList.contains('topic-block-collapsed')&&el.querySelector(':scope > .topic-block-fade-badge'));
+        if(target){ const be=target.querySelector(':scope > .topic-block-fade-badge');
+          const stateStr=x=>[...x.classList].filter(c=>c.indexOf('topic-block')===0).join(' ');
+          const badges=[...target.querySelectorAll(':scope > .topic-block-fade-badge')];
+          const before={state:stateStr(target), h:target.offsetHeight, inView:hitTop(be)};
+          // 1) Click the badge (the real user path).
+          be.click(); await sleep(900);
+          const afterClick={state:stateStr(target), h:target.offsetHeight, badgeStill:!!target.querySelector(':scope > .topic-block-fade-badge'), userRevealed:target._tbUserRevealed};
+          // 2) Manual reveal: bypass the handler, unclip directly -> proves the
+          //    clip/CSS/DOM mechanism itself works (independent of the click).
+          target._tbUserRevealed = true;
+          target.classList.remove('topic-block-collapsed','topic-block--clipped','topic-block-dimmed');
+          target.classList.add('topic-block-revealed');
+          target.style.overflow=''; target.style.maxHeight=''; target.style.transition='';
+          await sleep(80);
+          const afterManual={state:stateStr(target), h:target.offsetHeight, userRevealed:target._tbUserRevealed};
+          report.revealTest={
+            target:name(target),
+            badges:{count:badges.length, beParentIsTarget:be.parentElement===target, beTag:be.tagName, beType:be.type, beDisabled:be.disabled},
+            before, afterClick,
+            clickChanged:(before.state!==afterClick.state)||before.h!==afterClick.h,
+            afterManual, manualWorked:afterManual.h>before.h+50
+          };
+          } else report.revealTest={note:'no collapsed block with a badge found'};
+        // Grouped badge test (if present): one tap must reveal the WHOLE run.
+        const g=document.querySelector('.topic-block-group-badge');
+        if(g){
+          const countC=()=>document.querySelectorAll('.topic-block.topic-block-collapsed').length;
+          const beforeG=countC();
+          g.click(); await sleep(900);
+          const afterG=countC();
+          report.groupRevealTest={ present:true, members:g._groupMembers?g._groupMembers.length:null,
+            collapsedBefore:beforeG, collapsedAfter:afterG, revealed:beforeG-afterG,
+            ok:afterG<beforeG };
+        } else report.groupRevealTest={present:false};
+      }
+      report.blocks=blocks; report.stuckClips=stuckClips; report.coveredBadges=coveredBadges;
+      report.recollapseOrphans=recollapseEls; report.groupBadges=groupBadges; report.tuckedRuns=tuckedRuns;
+      report.overlaps=overlaps.slice(0,30); report.errors=window.__tbErrs.slice(-40);
+      console.log('%c[TB-DEBUG]','font-weight:bold;font-size:13px');
+      console.log('BUILD: '+report.ver);
+      console.log('math='+report.env.mathLevel+' · '+report.env.vw+'x'+report.env.vh+(report.env.readerMode?' · reader-mode':'')+(report.env.reducedMotion?' · reduced-motion':'')+' · lesson='+(report.env.lessonId||''));
+      let csbInfo='ABSENT';
+      if(box){
+        const csb=report.courseStatusBox; const csp=csb.panel;
+        csbInfo=csb.position+' z='+csb.zIndex+' in '+csb.parent+' | prev='+csb.prevSibling+' next='+csb.nextSibling;
+        csbInfo+= csb.open ? (' | OPEN panel z='+(csp?csp.zIndex:'?')+' pe='+(csp?csp.pointerEvents:'?')) : ' | closed';
+      }
+      console.log('course box: '+csbInfo);
+      console.log('blocks='+blocks.length+' (collapsed='+blocks.filter(b=>b.state.collapsed).length+', dimmed='+blocks.filter(b=>b.state.dimmed).length+')');
+      console.log('STUCK CLIPS = '+stuckClips.length); stuckClips.forEach(s=>console.log('   · '+s.label+' -> offsetH '+s.offsetH+' vs maxH '+s.maxH));
+      console.log('COVERED BADGES (tap blocked) = '+coveredBadges.length); coveredBadges.forEach(s=>console.log('   · '+s.label+' -> blocked by '+s.coveredBy));
+      blocks.filter(b=>b.recollapse&&/MISSING|STALE/.test(b.recollapse.where||'')).forEach(b=>console.log('   ! FOLD-AWAY BUTTON '+b.recollapse.where+' on '+b.label));
+      console.log('FOLD-AWAY BUTTONS = '+blocks.filter(b=>b.recollapse&&b.recollapse.rect).length+' (orphans='+recollapseEls.length+')'); recollapseEls.forEach(s=>console.log('   ! orphan fold-away button in '+(s.parent||'?')));
+      console.log('GROUP BADGES = '+groupBadges.length); groupBadges.forEach(gb=>console.log('   · '+gb.memberCount+' members ['+(gb.hit&&gb.hit.blocked?'BLOCKED by '+gb.hit.top:'hit ok')+']: '+gb.memberLabels.join(' / ')));
+      console.log('TUCKED RUNS = '+tuckedRuns.length+' (grouped='+tuckedRuns.filter(t=>t.grouped).length+')'); tuckedRuns.forEach(t=>console.log('   · size '+t.size+(t.grouped?' [GROUPED]':' [own badge]')+': '+t.labels.join(' / ')));
+      console.log('OVERLAPPING PAIRS = '+overlaps.length); overlaps.slice(0,12).forEach(o=>console.log('   · '+o.a+'  x  '+o.b+'  = '+o.area+'px^2'));
+      if(report.revealTest) console.log('REVEAL TEST: '+JSON.stringify(report.revealTest));
+      if(report.groupRevealTest&&report.groupRevealTest.present) console.log('GROUP REVEAL TEST: '+JSON.stringify(report.groupRevealTest));
+      console.log('captured errors = '+report.errors.length); report.errors.forEach(e=>console.log('   ! '+e));
+      const s=JSON.stringify(report,null,1);
+      try{ await navigator.clipboard.writeText(s); console.log('%c✅ JSON kopiert -> zurückschicken','color:#10b981;font-weight:bold'); }
+      catch(e){ console.log('⚠️ clipboard blockiert (http) -> kopiere die JSON-String-Zeile darunter'); }
+      console.log(s);
+      return s;
+    }catch(err){ console.error('[TB-DEBUG] failed:', err&&err.stack||err); return 'TB-DEBUG error: '+(err&&err.message||err); }
+  };
+  console.log('%c[TB-DEBUG] bereit -> tbDebug()  oder  tbDebug({reveal:true})','font-weight:bold;color:#6366f1');
+})();

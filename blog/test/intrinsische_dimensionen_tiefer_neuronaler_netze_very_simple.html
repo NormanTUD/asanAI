@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie viele Regler stecken in einem Gedanken? — ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.big-num{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:22px 0}
+.big-num .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 6px rgba(60,50,20,.03)}
+.big-num .c .v{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--teal);line-height:1.1}
+.big-num .c .v.amber{color:var(--amber)}
+.big-num .c .v.rose{color:var(--rose)}
+.big-num .c .v.violet{color:var(--violet)}
+.big-num .c .l{font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.4}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 8 Minuten</div>
+  <h1>Wie viele <em>Regler</em> stecken<br>in einem Gedanken?</h1>
+  <p class="sub">Ein Bild besteht aus 150 528 Zahlen. Ein Netzwerkschicht-Vektor aus 100 000. Aber die Forscher haben herausgefunden: <b>Für das, was das Netz wirklich „weiß", reichen oft nur ein paar Dutzend.</b> Dieses kleine Experiment zeigt, warum das so ist — und warum es wichtig ist.</p>
+  <div class="chips">
+    <span class="chip">2 kleine Experimente</span>
+    <span class="chip">0 Formeln</span>
+    <span class="chip">1 überraschende Zahl</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Das Experiment: ein Gesicht mit 4 Reglern</h2>
+<p>Stell dir vor, du zeigst jemandem ein Gesicht. Wo sind die Augen? Wie breit ist der Mund? Wie groß ist das Gesicht? Wie stark lächelt es? <b>Vier Zahlen</b> genügen, um dieses Gesicht fast perfekt zu beschreiben.</p>
+<p>Aber: Ein digitales Bild dieses Gesichts besteht aus <b>150 528 Zahlen</b> (jede Farbe an jedem Pixel). Die meisten davon sind <em>leer</em> — Hintergrund. Die „wahre Information" steckt nur in ein paar wenigen Reglern.</p>
+<p>Das ist der Kern der Frage: <b>Wie viele Regler braucht ein Bild <em>tatsächlich</em>?</b> Nicht wie viele Zahlen gespeichert werden, sondern wie viele man wirklich bewegen muss, um das Wesentliche zu beschreiben.</p>
+<div class="demo">
+  <h3>Probiere es: Gestalte ein Gesicht mit 4 Reglern</h3>
+  <p class="dsub">Bewege die Regler. Jede Zahl verändert das Bild — und 4 Zahlen reichen für dieses einfache Gesicht völlig aus.</p>
+  <canvas id="cvFace" width="400" height="280"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Position (links/rechts)</span><b id="fXV">0.5</b></div>
+    <input type="range" id="fX" min="0" max="100" value="50">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Position (oben/untten)</span><b id="fYV">0.45</b></div>
+    <input type="range" id="fY" min="0" max="100" value="45" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Größe des Gesichts</span><b id="fSV">0.30</b></div>
+    <input type="range" id="fS" min="10" max="60" value="30" class="v">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Lächel-Stärke</span><b id="fMV">0.3</b></div>
+    <input type="range" id="fM" min="0" max="100" value="30">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Regler, die du bewegst</div><div class="v">4</div></div>
+    <div class="box amber"><div class="k">Zahlen im digitalen Bild</div><div class="v">150 528</div></div>
+    <div class="box rose"><div class="k">Verhältnis</div><div class="v">4 / 150 528</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Der Punkt:</b> Ein echtes Foto eines Gesichts hat 150 528 Zahlen, aber die <em>wesentlichen Freiheitsgrade</em> — wo das Gesicht ist, wie groß es ist, wie es aussieht — sind viel weniger. Das ist eine <b>Mannigfaltigkeit</b>: eine Struktur, die in einem riesigen Raum lebt, aber selbst viel dünner ist als der Raum, in dem sie liegt.
+</div>
+
+<h2><span class="n">2</span>Netzwerke spielen dasselbe Spiel</h2>
+<p>Ein neuronales Netz, das Bilder lernt (z. B. „ist das ein Hund?"), verarbeitet jedes Bild durch viele Schichten. In jeder Schicht werden die Zahlen neu zusammengefasst. Die Forscher haben gemessen: <b>Je tiefer die Schicht, desto weniger Regler braucht der Vektor.</b></p>
+<p>Das klingt kontraintuitiv — man würde denken, dass ein tieferes Netz die Daten <em>zerstört</em> (wie ein Papier, das man immer weiter zerknüllt). Aber das Gegenteil passiert: Die Schichten <em>ordnen</em> die Daten, sodass immer weniger Zahlen nötig sind, um das Wesentliche zu beschreiben.</p>
+<div class="demo">
+  <h3>Der Buckel: wie die Reglerzahl durch die Schichten verläuft</h3>
+  <p class="dsub">Bewege den Regler, um die Schicht auszuwählen. Die Kurve zeigt, wie viele Regler (intrinsische Dimension) in jeder Schicht gemessen wurden.</p>
+  <canvas id="cvBuckel" width="400" height="220"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Ausgewählte Schicht</span><b id="buckelLayerV">pool4</b></div>
+    <input type="range" id="buckelLayer" min="0" max="3" value="2">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Regler in dieser Schicht</div><div class="v" id="buckelID">19</div></div>
+    <div class="box amber"><div class="k">Gespeicherte Zahlen</div><div class="v" id="buckelED">100 352</div></div>
+    <div class="box rose"><div class="k">Verhältnis</div><div class="v" id="buckelRatio">0.0002</div></div>
+  </div>
+</div>
+<p>Die Kurve hat eine <b>Buckel-Form</b>: Am Anfang ist die Reglerzahl hoch (die Schichten sehen noch viele Details), dann sinkt sie — und in den letzten Schichten ist sie am niedrigsten. Das Netz hat die Daten auf eine extrem dünne Fläche „zusammengefaltet".</p>
+<div class="big-num">
+  <div class="c"><div class="v">100 352</div><div class="l">Zahlen in der Schicht „pool4" von VGG-16</div></div>
+  <div class="c"><div class="v amber">≈ 19</div><div class="l">Regler, die wirklich „echt" sind</div></div>
+  <div class="c"><div class="v rose">2 × 10⁻⁴</div><div class="l">Verhältnis: nur 0.02 % der Zahlen tragen Information</div></div>
+</div>
+
+<h2><span class="n">3</span>Warum das überraschend ist</h2>
+<p>Stell dir vor, du hast ein Buch mit 100 000 Wörtern. Aber das, was das Buch <em>bedeutet</em>, lässt sich in 19 Wörtern zusammenfassen. Das ist keine schlechte Zusammenfassung — es bedeutet, dass die Information in den Daten <b>gekrümmt</b> ist. Sie liegt nicht überall verstreut, sondern auf einer dünnen, gewundenen Fläche.</p>
+<p>Das ist wichtig, weil <b>lineare Methoden</b> (wie die klassische Hauptkomponentenanalyse, PCA) nur <em>flache</em> Approximationen finden können. An einer gekrümmten Fläche brauchen sie viel mehr Komponenten, um dasselbe zu beschreiben. Die Forscher haben gemessen: PCA schätzt in den letzten Schichten <b>≈ 200</b> Regler, die nichtlineare Methode <b>≈ 19</b>. Ein Faktor über 10.</p>
+<div class="note amber">
+  <b>Was das bedeutet:</b> Die Daten in tiefen Netzen sind <em>nicht</em> einfach in einem flachen Untergrund organisiert. Sie liegen auf einer <b>gekrümmten Fläche</b> — wie die Oberfläche der Erde auf einer Landkarte. Man braucht einen nichtlinearen Blick, um die wahre Dimension zu sehen.
+</div>
+
+<h2><span class="n">4</span>Der Trick, wie man das misst (in 30 Sekunden)</h2>
+<p>Die Forscher verwenden eine Methode namens <b>TwoNN</b> (Two Nearest Neighbours). Die Idee ist überraschend einfach:</p>
+<ul>
+  <li>Für jeden Punkt: Wie weit ist der <b>nächste</b> Nachbar? Wie weit der <b>zweitnächste</b>?</li>
+  <li>Bilde das <b>Verhältnis</b> dieser beiden Abstände.</li>
+  <li>In einer k-dimensionalen Welt hat dieses Verhältnis eine <b>typische Form</b> — und aus dieser Form liest man die Dimension k ab.</li>
+</ul>
+<p>Das Schöne daran: Die Methode ist <b>robust</b>. Sie funktioniert auch, wenn die Daten ungleichmäßig verteilt sind (manche Regionen dichter als andere) und auch, wenn die Fläche <em>gekrümmt</em> ist. Genau deshalb eignet sie sich für Netzwerkschichten, wo die Daten nie gleichmäßig verteilt sind.</p>
+<div class="note violet">
+  <b>Ein wichtiger Vorbehalt</b> (den die Forscher selbst nennen): Die Methode ist für Dimensionen bis etwa 20 sehr genau. Für größere Werte wird sie unzuverlässig — die gemessenen Zahlen sind dann eher <em>untere Schranken</em> als genaue Werte.
+</div>
+
+<h2><span class="n">5</span>Was es bringt: Vorhersage der Generalisierung</h2>
+<p>Der eigentliche Nutzen der Messung: <b>Die intrinsische Dimension der letzten Schicht sagt vorher, wie gut das Netz auf <em>neuen</em> Daten funktioniert.</b></p>
+<p>Die Forscher haben 14 verschiedene Netze getestet (unterschiedliche Architekturen, Trainingstiefs). Die Korrelation zwischen der ID der letzten Schicht und der Test-Genauigkeit ist <b>r = 0.94</b> — das ist eine sehr starke Verbindung. Ein Netz, das seine Daten auf eine dünnere Fläche zusammenfaltet, generalisiert besser.</p>
+<div class="card">
+  <p style="margin:0;font-size:15px;color:var(--ink)"><b>Der eine Satz für Experten:</b> Die intrinsische Dimension der Repräsentationsflächen in tiefen CNNs ist in den letzten Schichten niedrig (≈ 19), nichtlinear gekrümmt, und korreliert stark (r ≈ 0.94) mit der Generalisierungsleistung — was darauf hindeutet, dass die Generalisierung durch die Geometrie der gelernten Repräsentation mitbestimmt wird.</p>
+</div>
+<div class="big-num">
+  <div class="c"><div class="v">14</div><div class="l">Netzarchitekturen getestet</div></div>
+  <div class="c"><div class="v amber">r = 0.94</div><div class="l">Korrelation ID ↔ Test-Genauigkeit</div></div>
+  <div class="c"><div class="v rose">≈ 19</div><div class="l">Typische ID in pool4 (VGG-16)</div></div>
+</div>
+
+<h2><span class="n">6</span>Die Grenzen (honesty corner)</h2>
+<ul>
+  <li><b>Skala:</b> Die ID hängt davon ab, wie genau man hinschaut. Die Forscher haben auf mehreren Skalen gemessen und nur stabile Werte verwendet.</li>
+  <li><b>Unter-schätzung:</b> Für k > 20 ist der Schätzer unzuverlässig — die Werte sind dann untere Schranken.</li>
+  <li><b>Nur CNNs:</b> Das Paper betrachtet Convolutional Networks. Für Transformer/LLMs ist die Frage offen (und andere Papiere zeigen dort andere Geometrien).</li>
+  <li><b>MNIST*:</b> Wenn man die MNIST-Ziffern künstell vereinfacht (weniger Details), sinkt die ID von 13 auf 3 — das zeigt, dass die ID tatsächlich die <em>komplexität der Daten</em> misst, nicht nur die der Architektur.</li>
+</ul>
+
+<footer>
+  <p>Quelle: Ansuini, Laio, Macke &amp; Zoccolan, <a href="https://arxiv.org/abs/1905.12784" target="_blank">"Intrinsic Dimension of Data Sets and Neural Networks"</a>, NeurIPS 2019<br>
+  TwoNN-Methode: Facco, d'Errico, Rodriguez &amp; Laio, <a href="https://arxiv.org/abs/1803.06992" target="_blank">"Estimating the Intrinsic Dimension: Intrinsic and Fractal Dimension</a>", Sci Rep 2017<br>
+  Komplexe Version mit Live-TwoNN-Implementierung: <a href="intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html">Einfache Version</a> · <a href="intrinsische_dimensionen_tiefer_neuronaler_netze.html">Volle Version</a></p>
+</footer>
+
+</main>
+<script>
+(function(){
+  var cv = document.getElementById('cvFace');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  var sX = document.getElementById('fX');
+  var sY = document.getElementById('fY');
+  var sS = document.getElementById('fS');
+  var sM = document.getElementById('fM');
+  var vX = document.getElementById('fXV');
+  var vY = document.getElementById('fYV');
+  var vS = document.getElementById('fSV');
+  var vM = document.getElementById('fMV');
+
+  function drawFace(){
+    var x = sX.value / 100 * W;
+    var y = sY.value / 100 * H;
+    var s = sS.value / 100;
+    var m = sM.value / 100;
+    var r = s * 80;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f5f0e6';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#2b2e3a';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#2b2e3a';
+    var eyeOff = r * 0.3;
+    var eyeY = y - r * 0.15;
+    var eyeR = r * 0.1;
+    ctx.beginPath();
+    ctx.arc(x - eyeOff, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + eyeOff, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.fill();
+    var mouthY = y + r * 0.3;
+    var mouthW = r * 0.5;
+    var mouthCurve = m * r * 0.4 - r * 0.1;
+    ctx.beginPath();
+    ctx.moveTo(x - mouthW, mouthY);
+    ctx.quadraticCurveTo(x, mouthY + mouthCurve, x + mouthW, mouthY);
+    ctx.stroke();
+    vX.textContent = (x / W).toFixed(2);
+    vY.textContent = (y / H).toFixed(2);
+    vS.textContent = s.toFixed(2);
+    vM.textContent = m.toFixed(2);
+  }
+
+  [sX, sY, sS, sM].forEach(function(el){
+    el.addEventListener('input', drawFace);
+  });
+  drawFace();
+
+  var cv2 = document.getElementById('cvBuckel');
+  var ctx2 = cv2.getContext('2d');
+  var W2 = cv2.width, H2 = cv2.height;
+  var layers = [
+    {name:'pool1', id:58, ed:802816},
+    {name:'pool2', id:28, ed:201088},
+    {name:'pool3', id:22, ed:50272},
+    {name:'pool4', id:19, ed:100352}
+  ];
+  var layerSlider = document.getElementById('buckelLayer');
+  var layerLabel = document.getElementById('buckelLayerV');
+  var idOut = document.getElementById('buckelID');
+  var edOut = document.getElementById('buckelED');
+  var ratioOut = document.getElementById('buckelRatio');
+
+  function drawBuckel(selIdx){
+    ctx2.clearRect(0, 0, W2, H2);
+    var pad = {l:40, r:20, t:20, b:40};
+    var plotW = W2 - pad.l - pad.r;
+    var plotH = H2 - pad.t - pad.b;
+    var maxID = 70;
+    ctx2.fillStyle = '#f5f0e6';
+    ctx2.fillRect(0, 0, W2, H2);
+    ctx2.strokeStyle = '#e7e0d0';
+    ctx2.lineWidth = 1;
+    for(var i = 0; i <= 4; i++){
+      var gy = pad.t + plotH - (i / 4) * plotH;
+      ctx2.beginPath();
+      ctx2.moveTo(pad.l, gy);
+      ctx2.lineTo(W2 - pad.r, gy);
+      ctx2.stroke();
+      ctx2.fillStyle = '#9aa0b0';
+      ctx2.font = '10px monospace';
+      ctx2.textAlign = 'right';
+      ctx2.fillText(Math.round(i / 4 * maxID), pad.l - 6, gy + 3);
+    }
+    var pts = [];
+    var nPts = 20;
+    for(var i = 0; i < nPts; i++){
+      var t = i / (nPts - 1);
+      var id;
+      if(t < 0.3) id = 40 + t * 40;
+      else if(t < 0.6) id = 52 - (t - 0.3) * 60;
+      else id = 34 - (t - 0.6) * 30;
+      id = Math.max(15, id);
+      var px = pad.l + t * plotW;
+      var py = pad.t + plotH - (id / maxID) * plotH;
+      pts.push({x:px, y:py, id:id});
+    }
+    ctx2.beginPath();
+    ctx2.moveTo(pts[0].x, pts[0].y);
+    for(var i = 1; i < pts.length; i++){
+      ctx2.lineTo(pts[i].x, pts[i].y);
+    }
+    ctx2.strokeStyle = '#0f766e';
+    ctx2.lineWidth = 3;
+    ctx2.stroke();
+    var sel = layers[selIdx];
+    var selIdx2 = [0.05, 0.25, 0.55, 0.85][selIdx];
+    var sx = pad.l + selIdx2 * plotW;
+    var sy = pad.t + plotH - (sel.id / maxID) * plotH;
+    ctx2.beginPath();
+    ctx2.arc(sx, sy, 8, 0, Math.PI * 2);
+    ctx2.fillStyle = '#b45309';
+    ctx2.fill();
+    ctx2.strokeStyle = '#fff';
+    ctx2.lineWidth = 2;
+    ctx2.stroke();
+    ctx2.fillStyle = '#5c6272';
+    ctx2.font = '11px sans-serif';
+    ctx2.textAlign = 'center';
+    var labels = ['pool1', 'pool2', 'pool3', 'pool4'];
+    for(var i = 0; i < 4; i++){
+      var lx = pad.l + [0.05, 0.25, 0.55, 0.85][i] * plotW;
+      ctx2.fillText(labels[i], lx, H2 - 12);
+    }
+    ctx2.fillStyle = '#9aa0b0';
+    ctx2.textAlign = 'left';
+    ctx2.fillText('intrinsische Dimension (Regler)', pad.l, 12);
+    layerLabel.textContent = sel.name;
+    idOut.textContent = sel.id;
+    edOut.textContent = sel.ed.toLocaleString('de-DE');
+    ratioOut.textContent = (sel.id / sel.ed).toExponential(1).replace('.', ',');
+  }
+
+  layerSlider.addEventListener('input', function(){
+    drawBuckel(parseInt(layerSlider.value));
+  });
+  drawBuckel(2);
+})();
+</script>
+</body>
+</html>

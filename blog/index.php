@@ -47,7 +47,7 @@
 		}
 	});
 	</script>
-	<?php load_base_js(); ?>
+	<?php load_base_js(true); ?>
 	<?php js("search"); ?>
 	<?php include_once("mobile-loader.php"); ?>
 </head>
@@ -61,20 +61,30 @@
 <?php render_drawer(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
+	<?php render_loader_title('From Big Bang to ChatGPT', 'A Peek inside the Black Box', $themeClass === 'dark'); ?>
 	<p id="loader-status">Initializing AI Course...</p>
 	<div id="loader-checklist" aria-hidden="true"></div>
 </div>
+<script>
+setTimeout(function () {
+	var loader = document.getElementById('loader');
+	if (!loader || !document.body.contains(loader)) return;
+	var status = document.getElementById('loader-status');
+	if (status) status.textContent = 'Still loading — if this persists, please refresh the page.';
+}, 20000);
+</script>
 
 <div id="contents" style="display: none">
 
 <div class="course-hero">
 	<?php render_constellation(); ?>
 	<h1>From Big Bang to ChatGPT</h1>
+	<a class="course-jump" href="#course-overview">Jump to the course list&nbsp;&darr;</a>
 </div>
 
-<?php incl("Beyond the Black Box", "intro"); ?>
+<?php incl("A Peek inside the Black Box", "intro"); ?>
 
-<div class="course-overview">
+<div class="course-overview" id="course-overview">
 
 <?php
 $partTitles = [

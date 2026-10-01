@@ -42,7 +42,7 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 	<div id="mse-math" style="flex: 1; font-size: 1.1em; border-left: 3px solid #3b82f6; padding-left: 20px;"></div>
 </div>
 
-<div id="plot-mse" style="height: 350px;"></div>
+<div id="plot-mse" data-plot-theme="self" style="height: 350px;"></div>
 
 <div class="md" data-mathlevel="48" data-optionaltitle="Classification: Cross-Entropy">
 ## Classification: Cross-Entropy
@@ -57,9 +57,9 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
-	<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+	<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 15px;">
 		<p>Target Class: <span style="color: #f59e0b; font-weight: bold;">CAT</span></p>
-		<div style="display: grid; grid-template-columns: 100px 150px 100px; gap: 15px; align-items: center;">
+		<div style="display: grid; grid-template-columns: 70px 1fr 70px; gap: 15px; align-items: center; flex: 1 1 260px;">
 			<b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Confidence</b> <b style="font-size:0.8em">Loss</b>
 
 			<span>Cat (Target)</span>
@@ -86,7 +86,7 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 	<div id="cce-math" style="margin-top: 10px; font-size: 1.1em; border-top: 1px solid #ffedd5; padding-top:10px;"></div>
 </div>
 
-<div id="plot-cce" style="height: 380px;"></div>
+<div id="plot-cce" data-plot-theme="self" style="height: 380px;"></div>
 
 <div class="md">
 ## Beware of Goodhart's Law
@@ -122,7 +122,7 @@ In this equation:
 * $E$: Represents the “irreducible loss” (the theoretical minimum error that remains even with infinite data and parameters).
 * $A, B, \alpha, \beta$: Are constants determined through empirical data fitting on over 400 models.
 
-By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}.
+By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}).
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The Deepest Insight: Cross-Entropy Is Shannon Entropy">

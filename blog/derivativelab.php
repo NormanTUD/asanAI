@@ -64,7 +64,7 @@ tags: math-heavy, code-heavy
     </div>
 
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div id="plot-derivative" style="flex: 2; min-width: 300px; height: 450px;"></div>
+        <div id="plot-derivative" data-plot-theme="self" style="flex: 2; min-width: 300px; height: 450px;"></div>
         
         <div id="deriv-stats" style="flex: 1; min-width: 250px; padding: 15px; border-left: 4px solid #10b981; background: #f8fafc;">
             <p>The Math Breakdown:</p>

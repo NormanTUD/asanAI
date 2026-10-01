@@ -75,7 +75,7 @@ For an LLM, the “state” is the current context window, the “action” is t
 <div class="md" data-mathlevel="60" data-optionaltitle="Tabular RL: Q-Learning">
 ## Tabular RL: Q-Learning
 
-Q-Learning \cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
+Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$ by iterative updates:
 
 $$
 Q(s, a) \leftarrow Q(s, a) + \alpha \left[r + \gamma \max_{a'} Q(s', a') - Q(s, a)\right]
@@ -95,7 +95,7 @@ $$
 J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_{t=0}^{T} \gamma^t R(s_t, a_t)\right]
 $$
 
-The **policy gradient theorem** \cite[Sutton & Barto, 2018]{sutton2018reinforcement}:
+The **policy gradient theorem** (\cite[Sutton & Barto, 2018]{sutton2018reinforcement}):
 
 $$
 \nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_{t=0}^{T} \nabla_\theta \log \pi_\theta(a_t \mid s_t) \cdot \hat A_t\right]
@@ -105,7 +105,9 @@ where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is 
 
 ### REINFORCE
 
-REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
+REINFORCE (\cite[Williams, 1992]{williams1992reinforce}) has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
+
+The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Actor-Critic Methods">
@@ -118,13 +120,13 @@ REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **
 
 The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the advantage.
 
-### A2C / A3C \cite[Mnih et al., 2016]{mnih2016a3c}
+### A2C / A3C
 
-**Asynchronous** Advantage Actor-Critic: parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
+**Asynchronous** Advantage Actor-Critic (\cite[Mnih et al., 2016]{mnih2016a3c}): parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
 
-### PPO \cite[Schulman et al., 2017]{schulman2017ppo}
+### PPO
 
-**Proximal Policy Optimization** is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
+**Proximal Policy Optimization** (\cite[Schulman et al., 2017]{schulman2017ppo}) is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
 
 $$
 L^{\text{CLIP}}(\theta) = \mathbb{E}_t\!\left[\min\!\left(r_t(\theta)\, \hat A_t,\; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\, \hat A_t\right)\right]
@@ -162,9 +164,9 @@ where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
 <div class="md" data-mathlevel="65" data-optionaltitle="DPO: Direct Preference Optimization">
-## DPO: Direct Preference Optimization \cite[Rafailov et al., 2023]{rafailov2023dpo}
+## DPO: Direct Preference Optimization
 
-Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
+\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:
 
 $$
 \pi^*(y \mid x) \propto \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{1}{\beta} R(x, y)\right)
@@ -186,16 +188,16 @@ $$
 
 Variants have proliferated:
 
-* **IPO** \cite[Azar et al., 2023]{azar2023ipo}: robust to deterministic preferences.
-* **KTO** \cite[Ethayarajh et al., 2024]{ethayarajh2024kto}: uses binary good/bad labels instead of pairs.
-* **ORPO** \cite[Hong et al., 2024]{hong2024orpo}: combines SFT and odds-ratio preference loss in one objective.
-* **SimPO** \cite[Meng et al., 2024]{meng2024simpo}: length-normalized, no reference model.
+* **IPO** (\cite[Azar et al., 2023]{azar2023ipo}): robust to deterministic preferences.
+* **KTO** (\cite[Ethayarajh et al., 2024]{ethayarajh2024kto}): uses binary good/bad labels instead of pairs.
+* **ORPO** (\cite[Hong et al., 2024]{hong2024orpo}): combines SFT and odds-ratio preference loss in one objective.
+* **SimPO** (\cite[Meng et al., 2024]{meng2024simpo}): length-normalized, no reference model.
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="GRPO: Group Relative Policy Optimization">
-## GRPO: Group Relative Policy Optimization \cite[Shao et al., 2024]{shao2024grpo}
+## GRPO: Group Relative Policy Optimization
 
-GRPO (Shao et al., DeepSeek, 2024) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
+GRPO (\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
 
 1. Sample $G$ candidate responses from the current policy: $\{y^{(1)}, \dots, y^{(G)}\}$.
 2. Score each with a reward model (or rule-based verifier).
@@ -251,7 +253,7 @@ Defenses:
 * **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.
 * **Process reward**: score intermediate reasoning steps, not just final output.
 * **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.
-* **\cite[Du et al., 2023]{du2023multiagent} / red-teaming**: train an adversary to find exploits, then train against them.
+* **Debate / red-teaming** (\cite[Du et al., 2023]{du2023multiagent}): train an adversary to find exploits, then train against them.
 </div>
 
 <div class="md">

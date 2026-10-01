@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Origami in N Dimensions – Dense–ReLU–Dense Network</title>
+
+<!-- Temml für Formel-Rendering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<!-- Three.js für 3D (ES Modules) -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, "Segoe UI", sans-serif;
+    background: #1a1a1f; color: #eaeaea; display: flex; height: 100vh; overflow: hidden;
+  }
+  #sidebar {
+    width: 640px; padding: 16px; background: #23232b;
+    overflow-y: auto; overflow-x: hidden; border-right: 1px solid #333;
+  }
+  #main { flex: 1; display: flex; flex-direction: column; }
+  #canvas-row { flex: 1; display: flex; }
+  .canvas-box {
+    flex: 1; border: 1px solid #333; position: relative;
+    display: flex; flex-direction: column; background: #111;
+  }
+  .canvas-box h3 {
+    margin: 0; padding: 8px 12px; background: #2a2a33;
+    font-size: 13px; font-weight: 500; border-bottom: 1px solid #333;
+  }
+  canvas.plot2d { flex: 1; width: 100%; background: #0f0f14; }
+  #three-container { flex: 1; }
+  h1 { font-size: 17px; margin: 0 0 6px 0; color: #ffb86c; }
+  h2 { font-size: 11px; margin: 12px 0 5px 0; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
+  .sechd { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 9px 0 4px 0; }
+  .sechd-t { font-size: 11px; font-weight: 700; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; }
+  .actpick { font-size: 11px; color: #9aa7b5; display: flex; align-items: center; gap: 5px; }
+  .actpick select {
+    background: #1b1b22; color: #50fa7b; border: 1px solid #3a3a44; border-radius: 4px;
+    font: 11px monospace; padding: 2px 5px; cursor: pointer;
+  }
+  .actpick select:hover { border-color: #8be9fd; }
+  .actpick select:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
+  .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 12px 0 8px; }
+  .btnrow button { margin: 0; width: 100%; padding: 7px 10px; font-size: 12.5px; }
+  .acc { margin: 10px 0 4px; }
+  .acc-hd { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: #8be9fd; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; padding: 6px 2px; user-select: none; border-top: 1px solid #2c2c35; }
+  .acc-hd:hover { color: #a8ecfd; }
+  .caret { color: #7f8ea0; font-size: 11px; transition: transform .15s ease; }
+  .acc.open .caret { transform: rotate(90deg); }
+  .acc-bd { display: none; }
+  .acc.open .acc-bd { display: block; }
+  .togglerow { margin: 8px 0 2px; }
+  .togglerow a { font-size: 11px; color: #8be9fd; text-decoration: none; cursor: pointer; }
+  .togglerow a:hover { text-decoration: underline; }
+  p, label { font-size: 12.5px; line-height: 1.5; }
+  .formula { background: #111; padding: 8px; border-radius: 4px; margin: 6px 0; overflow-x:auto; font-size: 15px;}
+  .lossline { font-size: 11.5px; color: #8be9fd; font-family: monospace; margin: 2px 0 6px; }
+  .fmat {
+    background: #111; padding: 6px 4px; border-radius: 4px; margin: 4px 0;
+    display: flex; align-items: center; flex-wrap: nowrap; gap: 2px 3px; overflow-x: auto;
+  }
+  .matbox { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+  .mat {
+    display: grid; gap: 2px 4px; align-items: center;
+    border-left: 2px solid #8be9fd; border-right: 2px solid #8be9fd; padding: 2px 4px;
+  }
+  .ub { position: relative; width: 100%; height: 13px; margin-top: 1px; }
+  .ub-line { position: absolute; top: 0; left: 0; right: 0; border-bottom: 2px solid #8be9fd; }
+  .ub-line::before, .ub-line::after { content: ''; position: absolute; bottom: 0; width: 2px; height: 5px; background: #8be9fd; }
+  .ub-line::before { left: 0; }
+  .ub-line::after { right: 0; }
+  .ub-tip { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 0;
+    border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #8be9fd; }
+  .ub-lbl { position: absolute; top: 8px; left: 0; right: 0; text-align: center;
+    font-size: 10px; font-weight: 600; font-family: Georgia, "Times New Roman", serif; color: #ffb86c; letter-spacing: .5px; }
+  .rowlbl {
+    font-size: 10px; font-style: italic; text-align: right; padding-right: 5px;
+    border-right: 1px solid #3a3a44; align-self: center;
+  }
+  .collbl { font-size: 10px; font-style: italic; text-align: center; }
+  .ubdesc { font-size: 9.5px; color: #7f8ea0; text-align: center; white-space: nowrap; margin-top: 1px; }
+  .fm-pre, .fm-op, .fm-fn { font-family: "Cambria Math", "STIX Two Math", Georgia, serif; color: #eaeaea; font-size: 14px; }
+  .fm-pre { font-weight: 600; }
+  .fm-fn { color: #50fa7b; }
+  .matstatic { font-family: "Cambria Math", Georgia, serif; font-style: italic; color: #eaeaea; font-size: 12px; min-width: 10px; text-align: center; }
+  .cell {
+    width: 34px; font-size: 10.5px; text-align: right; font-family: monospace;
+    background: #1b1b22; color: #50fa7b; border: 1px solid #333; border-radius: 2px; padding: 1px 3px;
+  }
+  .cell:focus { outline: none; border-color: #8be9fd; box-shadow: 0 0 0 1px #8be9fd; }
+  .cell::-webkit-outer-spin-button, .cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .cell[type=number] { -moz-appearance: textfield; }
+  .val { color: #50fa7b; font-family: monospace; }
+  button {
+    background: #6272a4; color: white; border: none;
+    padding: 6px 11px; border-radius: 5px; cursor: pointer; margin: 3px 3px 3px 0;
+    transition: background .12s, transform .05s, box-shadow .12s;
+  }
+  button:hover { background: #7b8cbf; box-shadow: 0 1px 6px rgba(0,0,0,0.35); }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
+  .status { font-size: 12.5px; padding: 8px 10px; border-radius: 5px; margin: 8px 0; font-weight: 600; }
+  .status.good { background: #10331a; color: #50fa7b; }
+  .status.bad  { background: #331111; color: #ff6b6b; }
+  .glb { display: flex; gap: 6px; align-items: center; margin: 8px 0 2px; font-weight: 600; cursor: pointer; }
+  .neuron { margin: 4px 0; padding: 5px 8px 6px; background: #16161c; border-radius: 5px; border-left: 2px solid #3a3a44; transition: opacity .15s; }
+  .neuron.off { opacity: 0.4; }
+  .nhead { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; font-size: 12px; }
+  .nhead input { cursor: pointer; }
+  .wgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; min-width: 0; }
+  .wrow { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; min-width: 0; }
+  .wrow .wl { width: 30px; flex: none; font-size: 11px; color: #8be9fd; }
+  .wrow input[type=range] { flex: 1 1 0; width: auto; min-width: 0; }
+  .wrow .val { width: 36px; flex: none; text-align: right; font-size: 11px; }
+  .wrow .chk { flex: none; margin: 0; display: flex; align-items: center; }
+  .legend { font-size: 11px; margin-top: 6px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+  .cbox-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; background: #2a2a33; border-bottom: 1px solid #333; }
+  .cbox-hd h3 { margin: 0; font-size: 13px; font-weight: 500; }
+  .rtgl { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; color: #9aa7b5; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; }
+  .foldpath { width: 100%; height: 120px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; margin: 4px 0 6px; display: block; }
+  .foldrow { display: flex; gap: 6px; margin: 4px 0 2px; }
+  .foldcanv { flex: 1 1 0; min-width: 0; height: 132px; background: #0f0f14; border: 1px solid #333; border-radius: 4px; display: block; }
+  .foldlegend { font-size: 9.5px; color: #7f8ea0; margin: 2px 0 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .foldpathrow { display: flex; align-items: center; gap: 5px; margin: 5px 0 2px; }
+  .pmlabel { font-size: 10.5px; color: #7f8ea0; }
+  .pm { background: #1b1b22; color: #9aa7b5; border: 1px solid #3a3a44; border-radius: 4px; font: 10.5px monospace; padding: 2px 8px; cursor: pointer; }
+  .pm.on { background: #2a3550; color: #8be9fd; border-color: #8be9fd; }
+  .pmwalk { margin-left: auto; }
+  .pmwalk.on { background: #ffb142; color: #1a1206; border-color: #ffb142; }
+  .foldstats { font-size: 10.5px; font-family: monospace; color: #ffb86c; margin: 4px 0; line-height: 1.4; }
+  .foldinfo { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 11.5px; font-family: monospace; color: #c7d0dc; }
+  .foldinfo b { color: #50fa7b; font-weight: 600; }
+  .foldseq { font-family: monospace; font-size: 11px; color: #9aa7b5; margin-top: 5px; line-height: 1.5; word-break: break-word; }
+  .foldnote { font-size: 11px; color: #7f8ea0; margin-top: 5px; line-height: 1.45; }
+  .foldl2 { margin-top: 5px; color: #ffb86c; }
+  .foldl2 b { color: #50fa7b; }
+  .viewsel { display: flex; gap: 4px; }
+  .vsel { background: #1b1b22; color: #9aa7b5; border: 1px solid #3a3a44; border-radius: 4px; font: 11px monospace; padding: 2px 8px; cursor: pointer; }
+  .vsel.on { background: #2a3550; color: #8be9fd; border-color: #8be9fd; }
+  .vsel:disabled { opacity: 0.4; cursor: default; }
+  .l2box { margin: 4px 0 8px; padding: 8px; background: #16161c; border-radius: 5px; border-left: 2px solid #9b59b6; }
+  .l2box.off { opacity: 0.55; }
+  .l2cap { font-size: 10.5px; color: #9aa7b5; margin-bottom: 6px; }
+  .l2rand { color: #ffb86c; text-decoration: none; cursor: pointer; }
+  .l2rand:hover { text-decoration: underline; }
+  .w2grid { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 3px 6px; align-items: center; }
+  .w2grid .wl { font-size: 10px; color: #8be9fd; }
+  .w2grid .cell { width: 100%; }
+  .l2nrow { display: flex; gap: 14px; margin-top: 5px; }
+  .nchk { font-size: 10px; color: #c7d0dc; display: flex; align-items: center; gap: 3px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h1>🥚 Origami in N Dimensions</h1>
+  <p><i>Dense → f(·) → Dense · 2 → 3 → 1 · nach Keup &amp; Helias (2022)</i></p>
+
+  <div class="formula" id="fnet"></div>
+  <div id="lossline" class="lossline">Loss: – · Acc: –</div>
+
+  <div id="status" class="status good">…</div>
+
+  <div class="btnrow">
+    <button id="btnFold">🎬 Falt-Animation</button>
+    <button id="btnOpt">⚡ Optimal</button>
+    <button id="btnTrain">🧠 Trainieren</button>
+    <button id="btnRand">🎲 Zufall</button>
+  </div>
+
+  <div class="acc open" id="acc-net">
+  <div class="acc-hd" data-acc>Netzwerk-Gewichte <span class="caret">▸</span></div>
+  <div class="acc-bd">
+  <div class="sechd" style="margin-top:4px">
+    <span class="sechd-t">Versteckter Layer</span>
+    <label class="actpick">f(x)
+      <select id="actfn">
+        <option value="relu" selected>ReLU</option>
+        <option value="tanh">tanh</option>
+        <option value="sigmoid">σ (sigmoid)</option>
+        <option value="gelu">GELU</option>
+        <option value="linear">linear</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="neuron" data-i="1">
+    <label class="nhead"><input type="checkbox" id="n1" checked> <b>Neuron 1</b> <span class="dot" style="background:#e74c3c"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a1x" min="-2" max="2" step="0.01" value="0"><span class="val" id="va1x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a1y" min="-2" max="2" step="0.01" value="1"><span class="val" id="va1y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b1" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb1"></span></div>
+  </div>
+
+  <div class="neuron" data-i="2">
+    <label class="nhead"><input type="checkbox" id="n2" checked> <b>Neuron 2</b> <span class="dot" style="background:#27ae60"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a2x" min="-2" max="2" step="0.01" value="-0.87"><span class="val" id="va2x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a2y" min="-2" max="2" step="0.01" value="-0.5"><span class="val" id="va2y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b2" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb2"></span></div>
+  </div>
+
+  <div class="neuron" data-i="3">
+    <label class="nhead"><input type="checkbox" id="n3" checked> <b>Neuron 3</b> <span class="dot" style="background:#3498db"></span></label>
+    <div class="wgrid">
+      <div class="wrow"><span class="wl">w_x</span><input type="range" id="a3x" min="-2" max="2" step="0.01" value="0.87"><span class="val" id="va3x"></span></div>
+      <div class="wrow"><span class="wl">w_y</span><input type="range" id="a3y" min="-2" max="2" step="0.01" value="-0.5"><span class="val" id="va3y"></span></div>
+    </div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="b3" min="-1" max="1" step="0.01" value="0"><span class="val" id="vb3"></span></div>
+  </div>
+
+  <div class="sechd"><span class="sechd-t">Readout (linear)</span></div>
+  <div class="neuron">
+    <div class="wrow"><span class="wl">r₁</span><input type="range" id="r1" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr1"></span><label class="chk"><input type="checkbox" id="re1" checked></label></div>
+    <div class="wrow"><span class="wl">r₂</span><input type="range" id="r2" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr2"></span><label class="chk"><input type="checkbox" id="re2" checked></label></div>
+    <div class="wrow"><span class="wl">r₃</span><input type="range" id="r3" min="-2" max="2" step="0.05" value="1"><span class="val" id="vr3"></span><label class="chk"><input type="checkbox" id="re3" checked></label></div>
+    <div class="wrow"><span class="wl">bias</span><input type="range" id="rb" min="-2" max="2" step="0.01" value="-0.47"><span class="val" id="vrb"></span></div>
+  </div>
+
+  <div class="sechd"><span class="sechd-t">2. Hidden-Layer (optional)</span>
+    <label class="rtgl"><input type="checkbox" id="useLayer2"> an</label>
+  </div>
+  <div id="l2box" class="l2box" style="display:none">
+    <div class="l2cap">W2 (3×3) falt H1 → H2 &nbsp;·&nbsp; <a href="#" id="l2rand" class="l2rand">🎲 Demo-Werte</a></div>
+    <div id="w2grid" class="w2grid"></div>
+  </div>
+  </div>
+  </div>
+
+  <div class="togglerow"><a href="#" id="matToggle">▾ Gewichtsmatrix</a></div>
+  <div id="fmat" class="fmat"></div>
+
+  <div class="acc open" id="acc-fold">
+  <div class="acc-hd" data-acc>Space-Folding · Lewandowski 2025 <span class="caret">▸</span></div>
+  <div class="acc-bd">
+  <div class="foldrow">
+    <canvas id="foldCube" class="foldcanv"></canvas>
+    <canvas id="foldPath" class="foldcanv"></canvas>
+  </div>
+  <div class="foldinfo">
+    <span>χ(Γ) = <b id="foldChi">–</b></span>
+    <span>r1 = <b id="foldR1">–</b></span>
+    <span>r2 = <b id="foldR2">–</b></span>
+    <span>Regionen <b id="foldReg">–</b></span>
+  </div>
+  <div class="foldpathrow">
+    <span class="pmlabel">Pfad Γ:</span>
+    <button id="pmStd" class="pm on">Standard</button>
+    <button id="pmWorst" class="pm">Φ̂ Max</button>
+    <button id="pmPick" class="pm">✏️ wählen</button>
+    <button id="pmWalk" class="pm pmwalk">▶ Walk</button>
+  </div>
+  <div class="togglerow"><a href="#" id="foldDetailsToggle">▸ Details (Muster · Φ̂ · Legende)</a></div>
+  <div id="foldDetails" style="display:none">
+    <div class="foldlegend"><span>◆ Hamming-Kubus · gold = Pfad Γ</span><span>rot = Falzrückgang</span><span>┄ dH(π₁,·)</span></div>
+    <div id="foldL2" class="foldinfo foldl2" style="display:none">–</div>
+    <div id="foldStats" class="foldstats" style="display:none">–</div>
+    <div id="foldSeq" class="foldseq">–</div>
+    <div id="foldSeq2" class="foldseq" style="display:none">–</div>
+  </div>
+  <div class="foldnote" id="foldNote">Gerader Pfad Γ → Bit-Flip-Walk im Hamming-Raum. Jede gekreuzte Faltlinie flippt ein Bit.</div>
+  </div>
+  </div>
+
+  <div class="legend">
+    <span class="dot" style="background:#ffb142"></span> innere Klasse (Kreis) &nbsp;
+    <span class="dot" style="background:#19d3b5"></span> äußere Klasse (Ring)
+  </div>
+</div>
+
+<div id="main">
+  <div id="canvas-row">
+    <div class="canvas-box">
+      <div class="cbox-hd"><h3>Eingaberaum (2D) — Faltlinien wᵢ·x + bᵢ = 0</h3><label class="rtgl"><input type="checkbox" id="showRegions"> Falt-Regionen</label></div>
+      <canvas class="plot2d" id="input2d"></canvas>
+    </div>
+    <div class="canvas-box">
+      <div class="cbox-hd"><h3>Hidden-Layer-Ausgabe (3D) — drehbar, gelb = Readout-Ebene</h3>
+        <div class="viewsel"><button id="viewH1" class="vsel on">Fold ①</button><button id="viewH2" class="vsel" disabled>Fold ②</button></div>
+      </div>
+      <div id="three-container"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ------------------ Aktivierungsfunktionen ------------------ */
+function erf(x) { // Approximation (Abramowitz & Stegun 7.1.26), da JS kein Math.erf hat
+  const s = x < 0 ? -1 : 1; const a = Math.abs(x);
+  const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429, p=0.3275911;
+  const t = 1 / (1 + p * a);
+  const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-a * a);
+  return s * y;
+}
+const ACTS = {
+  relu:    { label: 'ReLU',        short: 'ReLU', tex: '\\mathrm{ReLU}', fn: v => Math.max(0, v) },
+  tanh:    { label: 'tanh',        short: 'tanh', tex: '\\tanh',         fn: v => Math.tanh(v) },
+  sigmoid: { label: 'σ (sigmoid)', short: 'σ',    tex: '\\sigma',        fn: v => 1 / (1 + Math.exp(-v)) },
+  gelu:    { label: 'GELU',        short: 'GELU', tex: '\\mathrm{GELU}', fn: v => 0.5 * v * (1 + erf(v / Math.SQRT2)) },
+  linear:  { label: 'linear',      short: 'id',   tex: '\\mathrm{id}',   fn: v => v },
+};
+function actName() { const e = $('actfn'); return (e && ACTS[e.value]) ? e.value : 'relu'; }
+function applyAct(v) { return ACTS[actName()].fn(v); }
+function actDeriv(z, name) { // Ableitung der Aktivierung (für Backpropagation)
+  switch (name) {
+    case 'tanh':    { const t = Math.tanh(z); return 1 - t * t; }
+    case 'sigmoid': { const s = 1 / (1 + Math.exp(-z)); return s * (1 - s); }
+    case 'gelu':    { return 0.5 * (1 + erf(z / Math.SQRT2)) + z / Math.sqrt(2 * Math.PI) * Math.exp(-0.5 * z * z); }
+    case 'linear':  return 1;
+    case 'relu':
+    default:        return z > 0 ? 1 : 0;
+  }
+}
+let renderedAct = null, renderedL2 = false;
+function updateActFormula() {
+  const a = actName();
+  const span = $('fmact'); if (span) span.textContent = ACTS[a].short + '(';
+  if (renderedAct !== a || renderedL2 !== useLayer2) {
+    const f = ACTS[a].tex;
+    const tex = useLayer2
+      ? String.raw`y \;=\; A_3\, ${f}\!\left(A_2\, ${f}\!\left(A_1 x + B_1\right) + B_2\right) + B_3`
+      : String.raw`y \;=\; A_2\, ${f}\!\left(A_1 x + B_1\right) + B_2`;
+    try { temml.render(tex, document.getElementById('fnet')); renderedAct = a; renderedL2 = useLayer2; }
+    catch (err) { console.warn('[egg] Formel-Rendering', err); }
+  }
+}
+
+/* ------------------ Formel (abstrakt) + editierbare Matrizen ------------------ */
+const EDITABLE = new Set(['a1x','a1y','a2x','a2y','a3x','a3y','b1','b2','b3','r1','r2','r3','rb']);
+function mkTok(t) { const s = document.createElement('span'); s.className = 'matstatic'; s.textContent = t; return s; }
+function applyCell(c) {
+  const param = c.dataset.param;
+  const v = parseFloat(c.value);
+  if (isNaN(v)) return;
+  if (['r1', 'r2', 'r3', 'rb'].includes(param)) autoFit = false;
+  set(param, v);
+  if (!training && !animating) refreshAll();
+}
+function cellInput(param) {
+  const c = document.createElement('input');
+  c.type = 'number'; c.step = '0.01'; c.min = '-2'; c.max = '2';
+  c.className = 'cell'; c.id = 'cell-' + param; c.dataset.param = param;
+  c.addEventListener('input', () => applyCell(c));
+  c.addEventListener('keydown', (e) => {
+    const up = e.key === 'ArrowUp' || e.key === 'ArrowRight';
+    const dn = e.key === 'ArrowDown' || e.key === 'ArrowLeft';
+    if (!up && !dn) return;
+    e.preventDefault();
+    const d = (e.shiftKey ? 0.5 : 0.1) * (up ? 1 : -1);
+    const base = parseFloat(c.value); const cur = isNaN(base) ? 0 : base;
+    c.value = Math.max(-2, Math.min(2, Math.round((cur + d) * 100) / 100)).toFixed(2);
+    applyCell(c);
+  });
+  return c;
+}
+const NEURON_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
+function matBox(label, rows, cols, cells, rowLabels, colLabels, desc) {
+  const box = document.createElement('div'); box.className = 'matbox';
+  const grid = document.createElement('div'); grid.className = 'mat';
+  grid.style.gridTemplateColumns = (rowLabels ? 'auto ' : '') + 'repeat(' + cols + ',auto)';
+  if (colLabels) {
+    if (rowLabels) grid.append(mkTok(''));
+    for (let c = 0; c < cols; c++) {
+      const s = document.createElement('span'); s.className = 'collbl';
+      s.textContent = colLabels[c]; s.style.color = NEURON_COLORS[c] || '#ffb86c';
+      grid.append(s);
+    }
+  }
+  for (let r = 0; r < rows; r++) {
+    if (rowLabels) {
+      const lb = document.createElement('span'); lb.className = 'rowlbl';
+      lb.textContent = rowLabels[r]; lb.style.color = NEURON_COLORS[r] || '#ffb86c';
+      grid.append(lb);
+    }
+    for (let c = 0; c < cols; c++) {
+      const tok = cells[r][c];
+      grid.append(EDITABLE.has(tok) ? cellInput(tok) : mkTok(tok));
+    }
+  }
+  box.append(grid);
+  if (label) {
+    const ub = document.createElement('div'); ub.className = 'ub';
+    const line = document.createElement('i'); line.className = 'ub-line';
+    const tip = document.createElement('i'); tip.className = 'ub-tip';
+    const lbl = document.createElement('span'); lbl.className = 'ub-lbl'; lbl.textContent = label;
+    ub.append(line, tip, lbl);
+    box.append(ub);
+  }
+  if (desc) { const d = document.createElement('div'); d.className = 'ubdesc'; d.textContent = desc; box.append(d); }
+  return box;
+}
+function buildFormulaDOM() {
+  const el = document.getElementById('fmat'); if (!el) return;
+  el.textContent = '';
+  const frag = document.createDocumentFragment();
+  const sp = (t, cls) => { const s = document.createElement('span'); s.className = cls; s.textContent = t; frag.append(s); };
+  sp('ŷ = ', 'fm-pre');
+  frag.append(matBox('A2', 1, 3, [['r1','r2','r3']], null, ['N1','N2','N3'], 'Readout'));
+  sp('· ', 'fm-op');
+  const actSpan = document.createElement('span'); actSpan.className = 'fm-fn'; actSpan.id = 'fmact';
+  actSpan.textContent = ACTS[actName()].short + '('; frag.append(actSpan);
+  frag.append(matBox('A1', 3, 2, [['a1x','a1y'],['a2x','a2y'],['a3x','a3y']], ['N1','N2','N3'], null, 'Falten 2D → 3D'));
+  frag.append(matBox('', 2, 1, [['x'],['y']]));
+  sp(' + ', 'fm-op');
+  frag.append(matBox('B1', 3, 1, [['b1'],['b2'],['b3']], ['N1','N2','N3'], null, 'Faltlinie'));
+  sp(') + ', 'fm-op');
+  frag.append(matBox('B2', 1, 1, [['rb']], null, null, 'Hyperebene'));
+  el.append(frag);
+}
+
+/* ------------------ Daten (2D-Egg, fix 2000 Punkte) ------------------ */
+const N = 2000;
+let points = [], labels = []; // 0 = innen, 1 = außen
+function generateData() {
+  const r1 = 0.45, r2 = 1.0;
+  points = []; labels = [];
+  for (let i = 0; i < N; i++) {
+    if (Math.random() < 0.4) {
+      const r = r1 * Math.sqrt(Math.random());
+      const t = Math.random() * 2 * Math.PI;
+      points.push([r * Math.cos(t), r * Math.sin(t)]); labels.push(0);
+    } else {
+      const t = Math.random() * 2 * Math.PI;
+      const rr = r1 + 0.1 + Math.random() * (r2 - r1 - 0.1);
+      points.push([rr * Math.cos(t), rr * Math.sin(t)]); labels.push(1);
+    }
+  }
+}
+
+/* ------------------ Parameter lesen/schreiben ------------------ */
+const $ = id => document.getElementById(id);
+const val = id => +$(id).value;
+const on = id => $(id).checked;
+const set = (id, v) => { const e = $(id); if (e.type === 'checkbox') e.checked = v; else e.value = v; };
+
+function getParams() {
+  const A1 = [[val('a1x'), val('a1y')], [val('a2x'), val('a2y')], [val('a3x'), val('a3y')]];
+  const B1 = [val('b1'), val('b2'), val('b3')];
+  const A2 = [val('r1') * (on('re1') ? 1 : 0), val('r2') * (on('re2') ? 1 : 0), val('r3') * (on('re3') ? 1 : 0)];
+  const B2 = val('rb');
+  const act = actName();
+  const neuronOn = [on('n1'), on('n2'), on('n3')];
+  return { A1, B1, A2, B2, act, neuronOn };
+}
+
+/* ------------------ 2D Plot (Faltlinien) ------------------ */
+const c2 = $('input2d');
+const ctx = c2.getContext('2d');
+const HP_COLORS = ['#e74c3c', '#27ae60', '#3498db'];
+
+function draw2D(B1o) {
+  const w = c2.width = c2.clientWidth;
+  const h = c2.height = c2.clientHeight;
+  ctx.fillStyle = '#0f0f14';
+  ctx.fillRect(0, 0, w, h);
+  const scale = Math.min(w, h) * 0.4;
+  const cx = w / 2, cy = h / 2;
+  const toPx = (x, y) => [cx + x * scale, cy - y * scale];
+  const P = getParams();
+  const B1 = B1o || P.B1; // Guard 3: Faltlinien vom expliziten B1
+
+  // Space-Folding: Linear-Regionen nach Aktivierungsmuster einfärben (hinten, halbtransparent)
+  if (showRegions) {
+    const G = 44, lo = -1.25, hi = 1.25;
+    const acc = {};
+    for (let i = 0; i < G; i++) for (let j = 0; j < G; j++) {
+      const xa = lo + (hi - lo) * i / G, xb = lo + (hi - lo) * (i + 1) / G;
+      const ya = lo + (hi - lo) * j / G, yb = lo + (hi - lo) * (j + 1) / G;
+      const mx = (xa + xb) / 2, my = (ya + yb) / 2;
+      const code = patternCode(mx, my, P, B1);
+      ctx.fillStyle = PATTERN_COLORS[code] + '26';
+      ctx.fillRect(cx + xa * scale, cy - yb * scale, (xb - xa) * scale, (yb - ya) * scale);
+      if (!acc[code]) acc[code] = [0, 0, 0];
+      acc[code][0] += mx; acc[code][1] += my; acc[code][2]++;
+    }
+    // Muster-Code (3-Bit) in den Centroid jeder Region — Aktivierungstessellation (Fig. 2)
+    ctx.font = 'bold 12px ui-monospace, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const key in acc) {
+      const a = acc[key]; const [px, py] = toPx(a[0] / a[2], a[1] / a[2]);
+      const bin = (+key).toString(2).padStart(3, '0');
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(15,15,20,0.92)'; ctx.strokeText(bin, px, py);
+      ctx.fillStyle = PATTERN_COLORS[+key]; ctx.fillText(bin, px, py);
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  for (let i = 0; i < points.length; i++) {
+    const [px, py] = toPx(points[i][0], points[i][1]);
+    ctx.fillStyle = labels[i] === 0 ? '#ffb142' : '#19d3b5';
+    ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 2 * Math.PI); ctx.fill();
+  }
+
+  ctx.lineWidth = 2.5;
+  for (let k = 0; k < 3; k++) {
+    const [wx, wy] = P.A1[k], b = B1[k];
+    ctx.strokeStyle = HP_COLORS[k];
+    ctx.setLineDash(P.neuronOn[k] ? [] : [6, 5]);
+    let p1, p2;
+    if (Math.abs(wy) > 1e-6) { p1 = toPx(-2, (-b - wx * -2) / wy); p2 = toPx(2, (-b - wx * 2) / wy); }
+    else if (Math.abs(wx) > 1e-6) { p1 = toPx(-b / wx, -2); p2 = toPx(-b / wx, 2); }
+    else { ctx.setLineDash([]); continue; }
+    ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+
+    const mid = toPx(-b * wx * 0.3, -b * wy * 0.3);
+    const tip = toPx(-b * wx * 0.3 + wx * 0.15, -b * wy * 0.3 + wy * 0.15);
+    ctx.beginPath(); ctx.moveTo(mid[0], mid[1]); ctx.lineTo(tip[0], tip[1]); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Space-Folding-Pfad Γ (gerade Sehne) + rote Bit-Flip-Kreuze an jeder Faltlinie
+  if (foldChord) {
+    const [gx1, gy1, gx2, gy2] = foldChord;
+    const a = toPx(gx1, gy1), b = toPx(gx2, gy2);
+    ctx.strokeStyle = '#ffd866'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    ctx.fillStyle = '#ffd866'; ctx.beginPath(); ctx.arc(a[0], a[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#19d3b5'; ctx.beginPath(); ctx.arc(b[0], b[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    const st = 64; let prev = patternCode(gx1, gy1, P, B1);
+    for (let i = 1; i <= st; i++) {
+      const lam = i / st, x = gx1 + (gx2 - gx1) * lam, y = gy1 + (gy2 - gy1) * lam;
+      const c = patternCode(x, y, P, B1);
+      if (c !== prev) {
+        const p = toPx(x, y);
+        ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(p[0] - 4, p[1] - 4); ctx.lineTo(p[0] + 4, p[1] + 4);
+        ctx.moveTo(p[0] + 4, p[1] - 4); ctx.lineTo(p[0] - 4, p[1] + 4); ctx.stroke();
+      }
+      prev = c;
+    }
+  }
+}
+
+/* ------------------ Space-Folding (Lewandowski et al. 2025, arXiv:2502.09954) ------------------ */
+const PATTERN_COLORS = ['#e74c3c', '#27ae60', '#3498db', '#e0a100', '#9b59b6', '#1abc9c', '#e76f51', '#8a8f98'];
+let showRegions = false;
+let foldChord = null; // [x1,y1,x2,y2] – aktuelle gerade Sehne Γ im Eingaberaum
+let walkProgress = 1; // 1 = ganzer Pfad; <1 = animierte Offenbarung
+let lastMain = null; // letzte vollständige Metrik (für den Walk-Loop)
+function popcount(n) { let c = 0; while (n) { c += n & 1; n >>= 1; } return c; }
+const hamming = (a, b) => popcount(a ^ b);
+function patternCode(x, y, P, B1) { // Aktivierungsmuster = Vorzeichen der Prä-Aktivierung (für ReLU = binarisierter Output)
+  const B = B1 || P.B1; let code = 0;
+  for (let k = 0; k < 3; k++) {
+    const z = P.A1[k][0] * x + P.A1[k][1] * y + B[k];
+    if (P.neuronOn[k] && z > 0) code |= (1 << (2 - k));
+  }
+  return code;
+}
+// Hamming-Walk über eine Muster-Folge: r1 = max dH zu Start, r2 = Summe der Bit-Flips, χ = 1 − r1/r2.
+function foldMetricsFrom(codes) {
+  const dh = codes.map(c => hamming(c, codes[0]));
+  const dhstep = []; for (let i = 0; i < codes.length - 1; i++) dhstep.push(hamming(codes[i], codes[i + 1]));
+  const r2 = dhstep.reduce((a, b) => a + b, 0);
+  let r1 = 0, foldIdx = -1;
+  for (let i = 0; i < dh.length; i++) { if (dh[i] > r1) r1 = dh[i]; if (i > 0 && dh[i] < dh[i - 1] && foldIdx < 0) foldIdx = i; }
+  return { codes, dh, dhstep, r1, r2, chi: r2 > 0 ? 1 - r1 / r2 : 0, foldIdx };
+}
+// χ①: gerader Pfad im Input → Muster Layer 1 (konvex, Lemma 1 ⇒ χ≈0)
+function foldMetrics(x1, y1, x2, y2, st, P, B1) {
+  const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(patternCode(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1)); }
+  return foldMetricsFrom(codes);
+}
+function h1At(x, y, P, B1) { const B = B1 || P.B1; const o = [0, 0, 0]; for (let k = 0; k < 3; k++) { let v = P.A1[k][0] * x + P.A1[k][1] * y + B[k]; v = applyAct(v); o[k] = P.neuronOn[k] ? v : 0; } return o; }
+function h2At(x, y, P, B1) { const h = h1At(x, y, P, B1); const o = [0, 0, 0]; for (let k = 0; k < 3; k++) { let v = W2m[k * 3] * h[0] + W2m[k * 3 + 1] * h[1] + W2m[k * 3 + 2] * h[2] + B2m[k]; v = applyAct(v); o[k] = neuronOn2[k] ? v : 0; } return o; }
+function pat2At(h1) { let c = 0; for (let k = 0; k < 3; k++) { const z = W2m[k * 3] * h1[0] + W2m[k * 3 + 1] * h1[1] + W2m[k * 3 + 2] * h1[2] + B2m[k]; if (neuronOn2[k] && z > 0) c |= (1 << (2 - k)); } return c; }
+// χ①∘② (Gesamt): gerader Pfad im Input → beide Layer → Muster Layer 2 (echter Space-Fold)
+function chiTotal(x1, y1, x2, y2, st, P, B1) {
+  const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(pat2At(h1At(x1 + (x2 - x1) * lam, y1 + (y2 - y1) * lam, P, B1))); }
+  return foldMetricsFrom(codes);
+}
+// χ② (Layer 2 isoliert): gerade Linie im H1-Raum → Muster Layer 2
+function chiLayer2(x1, y1, x2, y2, st, P, B1) {
+  const a = h1At(x1, y1, P, B1), b = h1At(x2, y2, P, B1); const codes = [];
+  for (let i = 0; i <= st; i++) { const lam = i / st; codes.push(pat2At([a[0] + (b[0] - a[0]) * lam, a[1] + (b[1] - a[1]) * lam, a[2] + (b[2] - a[2]) * lam])); }
+  return foldMetricsFrom(codes);
+}
+function fullPatternAt(x, y, P, B1) { // kombiniertes Muster (Layer1 ⋃ Layer2) = Linear-Region des Gesamtnetzes
+  const p1 = patternCode(x, y, P, B1);
+  if (!useLayer2) return p1;
+  return p1 * 8 + pat2At(h1At(x, y, P, B1));
+}
+function regionCount(P, B1) { // Anzahl der Linear-Regionen (Expressivität, Montúfar et al.) im Domain-Grid
+  const seen = new Set(); const G = 44, lo = -1.2, hi = 1.2;
+  for (let i = 0; i < G; i++) for (let j = 0; j < G; j++)
+    seen.add(fullPatternAt(lo + (hi - lo) * i / (G - 1), lo + (hi - lo) * j / (G - 1), P, B1));
+  return seen.size;
+}
+const DEFAULT_CHORD = [-1, 0.3, 1, 0.3];
+let pathMode = 'std'; // 'std' | 'worst' | 'pick'
+let pickA = null, pickB = null; // vom Nutzer im 2D-Plot gewählte Endpunkte
+let scanCache = null;
+function chiForChord(x1, y1, x2, y2, st, P, B1) { return useLayer2 ? chiTotal(x1, y1, x2, y2, st, P, B1) : foldMetrics(x1, y1, x2, y2, st, P, B1); }
+// Paper (Φ̂, Eq. 5 + MNIST): max/Ø/Anteil der χ über inter-class-Strecken zwischen echten Datenpunkten
+function scanPaths(P, B1) {
+  const inner = [], outer = [];
+  for (let i = 0; i < points.length; i++) { if (labels[i] === 0) inner.push(points[i]); else outer.push(points[i]); }
+  const chords = [[-1, 0.3, 1, 0.3], [0.3, -1, 0.3, 1], [-0.85, -0.85, 0.85, 0.85], [0.85, -0.85, -0.85, 0.85]];
+  const NI = 12, NO = 12;
+  for (let i = 0; i < NI; i++) { const a = inner[Math.floor(i * inner.length / NI)]; for (let j = 0; j < NO; j++) { const b = outer[Math.floor(j * outer.length / NO)]; chords.push([a[0], a[1], b[0], b[1]]); } }
+  let maxChi = -1, sum = 0, folded = 0, worst = DEFAULT_CHORD.slice();
+  for (const c of chords) { const m = chiForChord(c[0], c[1], c[2], c[3], 20, P, B1); if (m.chi > maxChi) { maxChi = m.chi; worst = c.slice(); } sum += m.chi; if (m.chi > 0.02) folded++; }
+  return { worst, maxChi, meanChi: sum / chords.length, fracFold: folded / chords.length, n: chords.length };
+}
+const fcv = $('foldPath'); const fctx = fcv.getContext('2d');
+function drawFoldPath(m) { // Fig. 6: dH(π₁,·) (gestrichelt-punktig) + dH(πᵢ,πᵢ₊₁) (gestrichelt)
+  const w = fcv.width = fcv.clientWidth || 600, h = fcv.height = fcv.clientHeight || 120;
+  fctx.clearRect(0, 0, w, h);
+  const padL = 20, padR = 10, padT = 10, padB = 18;
+  const nFull = m.dh.length, n = Math.max(2, Math.ceil(nFull * walkProgress));
+  const dh = m.dh.slice(0, n), dhstep = m.dhstep.slice(0, n - 1), maxDh = Math.max(3, m.r1);
+  const X = i => padL + (w - padL - padR) * (i / (n - 1));
+  const Y = v => padT + (h - padT - padB) * (1 - v / maxDh);
+  fctx.strokeStyle = '#333'; fctx.lineWidth = 1;
+  fctx.beginPath(); fctx.moveTo(padL, h - padB); fctx.lineTo(w - padR, h - padB); fctx.stroke();
+  for (let d = 1; d <= maxDh; d++) { fctx.strokeStyle = '#1c1c24'; fctx.beginPath(); fctx.moveTo(padL, Y(d)); fctx.lineTo(w - padR, Y(d)); fctx.stroke(); }
+  fctx.strokeStyle = '#19d3b5'; fctx.setLineDash([4, 3]); fctx.lineWidth = 1.5; fctx.beginPath();
+  for (let i = 0; i < dhstep.length; i++) { const x0 = X(i), x1 = X(i + 1), yv = dhstep[i]; if (i === 0) fctx.moveTo(x0, Y(yv)); fctx.lineTo(x1, Y(yv)); }
+  fctx.stroke();
+  fctx.strokeStyle = '#ffb142'; fctx.setLineDash([2, 2]); fctx.lineWidth = 2; fctx.beginPath();
+  for (let i = 0; i < n; i++) { const x = X(i), y = Y(dh[i]); if (i === 0) fctx.moveTo(x, y); else fctx.lineTo(x, y); }
+  fctx.stroke(); fctx.setLineDash([]);
+  if (m.foldIdx > 0 && m.foldIdx < n) { const x = X(m.foldIdx); fctx.strokeStyle = '#ff6b6b'; fctx.lineWidth = 1.5; fctx.beginPath(); fctx.moveTo(x, Y(dh[m.foldIdx])); fctx.lineTo(x, h - padB); fctx.stroke(); }
+  fctx.font = '10px monospace';
+  fctx.fillStyle = '#ffb142'; fctx.fillText('dH(π₁,·)', padL + 4, padT + 9);
+  fctx.fillStyle = '#19d3b5'; fctx.fillText('dH(πᵢ,πᵢ₊₁)', padL + 4, padT + 20);
+  fctx.fillStyle = '#7f8ea0'; fctx.fillText('Γ: λ = 0 → 1 (gerade Sehne im Eingaberaum)', padL + 4, h - 5);
+}
+const fcvCube = $('foldCube'); const fctxC = fcvCube.getContext('2d');
+// Fig. 1: der gerade Pfad Γ als Bit-Flip-Walk auf dem Hamming-Kubus (8 Muster für 3 Neuronen)
+function drawCubeWalk(codes) {
+  const w = fcvCube.width = fcvCube.clientWidth || 280, h = fcvCube.height = fcvCube.clientHeight || 132;
+  fctxC.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2 + 2, s = Math.min(w, h) * 0.30;
+  const projV = v => { const x = ((v >> 2) & 1) - 0.5, y = ((v >> 1) & 1) - 0.5, z = (v & 1) - 0.5; return [cx + (x - z) * 0.866 * s, cy + ((x + z) * 0.5 - y) * s]; };
+  fctxC.lineWidth = 1; fctxC.strokeStyle = '#2b2b34';
+  for (let v = 0; v < 8; v++) for (let b = 0; b < 3; b++) if (v & (1 << b)) { const v2 = v ^ (1 << b); if (v2 < v) { const p = projV(v), q = projV(v2); fctxC.beginPath(); fctxC.moveTo(p[0], p[1]); fctxC.lineTo(q[0], q[1]); fctxC.stroke(); } }
+  const codesP = codes.slice(0, Math.max(2, Math.ceil(codes.length * walkProgress)));
+  const walk = []; for (const c of codesP) if (!walk.length || walk[walk.length - 1] !== c) walk.push(c);
+  const visited = new Set(walk);
+  for (let i = 0; i < walk.length - 1; i++) {
+    const p = projV(walk[i]), q = projV(walk[i + 1]);
+    const back = i > 0 && hamming(walk[i + 1], walk[0]) < hamming(walk[i], walk[0]);
+    fctxC.strokeStyle = back ? '#ff6b6b' : '#ffd866'; fctxC.lineWidth = 2.2;
+    fctxC.beginPath(); fctxC.moveTo(p[0], p[1]); fctxC.lineTo(q[0], q[1]); fctxC.stroke();
+  }
+  for (let v = 0; v < 8; v++) { const p = projV(v); const inW = visited.has(v); fctxC.fillStyle = inW ? '#50fa7b' : '#3a3a44'; fctxC.beginPath(); fctxC.arc(p[0], p[1], inW ? 3 : 1.6, 0, 2 * Math.PI); fctxC.fill(); }
+  if (walk.length) { const p0 = projV(walk[0]); fctxC.strokeStyle = '#50fa7b'; fctxC.lineWidth = 2; fctxC.beginPath(); fctxC.arc(p0[0], p0[1], 5, 0, 2 * Math.PI); fctxC.stroke(); const pc = projV(walk[walk.length - 1]); fctxC.fillStyle = '#50fa7b'; fctxC.beginPath(); fctxC.arc(pc[0], pc[1], 4, 0, 2 * Math.PI); fctxC.fill(); }
+  fctxC.fillStyle = '#7f8ea0'; fctxC.font = '10px monospace'; fctxC.fillText('Hamming-Kubus', 6, 12);
+}
+
+// Animierter Walk: Punkt wandert entlang Γ, Kubus + dH-Kurve offenbaren sich progressively
+let animWalk = false, walkT = 0, walkRaf = 0;
+function walkLoop() {
+  if (!animWalk) return;
+  if (training || anyAnim()) { stopWalk(); return; }
+  walkT += 0.006; if (walkT > 1.06) walkT = 0;
+  walkProgress = Math.min(1, walkT);
+  if (lastMain) { drawFoldPath(lastMain); drawCubeWalk(lastMain.codes); }
+  walkRaf = requestAnimationFrame(walkLoop);
+}
+function startWalk() { if (walkRaf) return; animWalk = true; walkT = 0; $('pmWalk').textContent = '⏸ Stop'; $('pmWalk').classList.add('on'); walkRaf = requestAnimationFrame(walkLoop); }
+function stopWalk() { animWalk = false; if (walkRaf) { cancelAnimationFrame(walkRaf); walkRaf = 0; } $('pmWalk').textContent = '▶ Walk'; $('pmWalk').classList.remove('on'); walkProgress = 1; if (lastMain) { drawFoldPath(lastMain); drawCubeWalk(lastMain.codes); } }
+
+function updateFoldPanel(B1o) {
+  const P = getParams();
+  const B1 = B1o || P.B1;
+  if (useLayer2) scanCache = scanPaths(P, B1); // Φ̂-Verteilung immer aktuell
+  let chord;
+  if (pathMode === 'pick' && pickA && pickB) chord = [pickA[0], pickA[1], pickB[0], pickB[1]];
+  else if (pathMode === 'worst' && scanCache) chord = scanCache.worst;
+  else chord = DEFAULT_CHORD.slice();
+  foldChord = chord;
+  const m1 = foldMetrics(chord[0], chord[1], chord[2], chord[3], 28, P, B1); // χ① (Layer 1)
+  const main = useLayer2 ? chiTotal(chord[0], chord[1], chord[2], chord[3], 28, P, B1) : m1;
+  lastMain = main;
+  $('foldChi').textContent = main.chi.toFixed(3);
+  $('foldR1').textContent = main.r1; $('foldR2').textContent = main.r2;
+  $('foldReg').textContent = regionCount(P, B1);
+  $('foldSeq').textContent = 'Muster Layer ①: ' + m1.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+  if (useLayer2) {
+    const ml2 = chiLayer2(chord[0], chord[1], chord[2], chord[3], 28, P, B1);
+    $('foldL2').textContent = 'χ① = ' + m1.chi.toFixed(3) + '   ·   χ② = ' + ml2.chi.toFixed(3) + '   ·   χ①∘② = ' + main.chi.toFixed(3);
+    $('foldL2').style.display = '';
+    $('foldSeq2').style.display = '';
+    $('foldSeq2').textContent = 'Muster Layer ② (Gesamt): ' + main.codes.map(c => c.toString(2).padStart(3, '0')).join(' → ');
+    if (scanCache) { $('foldStats').textContent = 'Φ̂ über ' + scanCache.n + ' inter-class-Pfade:  max χ = ' + scanCache.maxChi.toFixed(3) + '   ·   Ø χ = ' + scanCache.meanChi.toFixed(3) + '   ·   ' + (scanCache.fracFold * 100).toFixed(0) + '% der Pfade falten'; $('foldStats').style.display = ''; }
+    else $('foldStats').style.display = 'none';
+    drawFoldPath(main); drawCubeWalk(main.codes);
+    $('foldNote').textContent = (pathMode === 'pick' && (!pickA || !pickB))
+      ? '✏️ Klicke zwei Punkte im 2D-Plot, um den Pfad Γ zu wählen.'
+      : (main.chi < 0.02
+        ? 'Kein Space-Fold auf diesem Pfad — „Φ̂ Max" findet den stärksten Falz, „✏️ wählen" für eigene Pfade.'
+        : 'Space-Fold! dH(π₁,·) sinkt (nicht-konvex, Fig. 4). Gesamtfaltung χ①∘② = ' + main.chi.toFixed(3) + '.');
+  } else {
+    $('foldL2').style.display = 'none';
+    $('foldSeq2').style.display = 'none';
+    $('foldStats').style.display = 'none';
+    drawFoldPath(main); drawCubeWalk(main.codes);
+    $('foldNote').textContent = (pathMode === 'pick' && (!pickA || !pickB))
+      ? '✏️ Klicke zwei Punkte im 2D-Plot, um den Pfad Γ zu wählen.'
+      : '1 Hidden-Layer ⇒ χ① ≈ 0 (konvex, Lemma 1). Layer 2 ein für echte Space-Folds + Φ̂-Scan.';
+  }
+}
+
+/* ------------------ 3D Szene (Three.js) ------------------ */
+let scene, camera, renderer, controls, pointCloud, planeMesh;
+const container = $('three-container');
+function initThree() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0f0f14);
+  camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.01, 100);
+  camera.position.set(2.6, 2, 2.6);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  scene.add(new THREE.AxesHelper(1.6));
+  const grid = new THREE.GridHelper(3, 15, 0x444444, 0x222222);
+  scene.add(grid);
+  animate();
+  window.addEventListener('resize', onResize);
+}
+function onResize() {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  draw2D();
+}
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/* ------------------ Hidden Layer berechnen ------------------ */
+let H = null, cent = [0, 0, 0];
+function computeHidden(B1o) {
+  const P = getParams(), m = points.length;
+  const B1 = B1o || P.B1; // Guard 3: explizites B1 trennt die Animation vom Slider-Roundtrip
+  H = new Float32Array(m * 3);
+  let cx = 0, cy = 0, cz = 0;
+  for (let i = 0; i < m; i++) {
+    const [x, y] = points[i];
+    for (let k = 0; k < 3; k++) {
+      let v = P.A1[k][0] * x + P.A1[k][1] * y + B1[k];
+      v = applyAct(v);
+      if (!P.neuronOn[k]) v = 0;
+      H[i * 3 + k] = v;
+      if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
+    }
+  }
+  cent = [cx / m, cy / m, cz / m];
+}
+
+/* ------------------ 2. Hidden-Layer (optional, additive) ------------------ */
+let useLayer2 = false, viewSel = 'h1';
+let W2m = [1, -1, -1, 1, 0, 0, 0, 1, 0], B2m = [0, 0, 0], neuronOn2 = [true, true, true];
+let H2 = null, H2cent = [0, 0, 0];
+function computeH2() {
+  if (!useLayer2 || !H) return;
+  const m = points.length;
+  H2 = new Float32Array(m * 3);
+  let cx = 0, cy = 0, cz = 0;
+  for (let i = 0; i < m; i++) {
+    for (let k = 0; k < 3; k++) {
+      let v = W2m[k * 3] * H[i * 3] + W2m[k * 3 + 1] * H[i * 3 + 1] + W2m[k * 3 + 2] * H[i * 3 + 2] + B2m[k];
+      v = applyAct(v);
+      if (!neuronOn2[k]) v = 0;
+      H2[i * 3 + k] = v;
+      if (k === 0) cx += v; else if (k === 1) cy += v; else cz += v;
+    }
+  }
+  H2cent = [cx / m, cy / m, cz / m];
+}
+function activeH() { return useLayer2 ? H2 : H; }
+function activeCent() { return useLayer2 ? H2cent : cent; }
+function displayState() { return (useLayer2 && viewSel === 'h2') ? { H: H2, cent: H2cent } : { H, cent }; }
+
+function drawPointCloud(src, cs) {
+  const Hsrc = src || H;
+  const c = cs || cent;
+  const m = points.length;
+  const positions = new Float32Array(m * 3);
+  const colors = new Float32Array(m * 3);
+  for (let i = 0; i < m; i++) {
+    for (let k = 0; k < 3; k++) positions[i * 3 + k] = Hsrc[i * 3 + k] - c[k];
+    if (labels[i] === 0) { colors[i * 3] = 0.9; colors[i * 3 + 1] = 0.5; colors[i * 3 + 2] = 0.15; }
+    else { colors[i * 3] = 0.08; colors[i * 3 + 1] = 0.63; colors[i * 3 + 2] = 0.52; }
+  }
+  if (pointCloud) { scene.remove(pointCloud); pointCloud.geometry.dispose(); pointCloud.material.dispose(); }
+  const geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  pointCloud = new THREE.Points(geom, new THREE.PointsMaterial({ size: 0.025, vertexColors: true }));
+  scene.add(pointCloud);
+}
+
+/* ------------------ Readout (lineares Neuron) ------------------ */
+function readoutScore(i) {
+  const P = getParams(); const Hh = activeH();
+  return P.A2[0] * Hh[i * 3] + P.A2[1] * Hh[i * 3 + 1] + P.A2[2] * Hh[i * 3 + 2] + P.B2;
+}
+function drawPlane() {
+  if (planeMesh) { scene.remove(planeMesh); planeMesh.geometry.dispose(); planeMesh.material.dispose(); planeMesh = null; }
+  if (useLayer2 && viewSel !== 'h2') return; // Readout-Ebene nur im Readout-Raum (H2) anzeigen
+  const P = getParams(); const cc = activeCent();
+  const mag = Math.hypot(P.A2[0], P.A2[1], P.A2[2]);
+  if (mag < 1e-6) return; // keine gültige Normale -> keine Ebene
+  const n = new THREE.Vector3(P.A2[0], P.A2[1], P.A2[2]).normalize();
+  const constTerm = P.A2[0] * cc[0] + P.A2[1] * cc[1] + P.A2[2] * cc[2] + P.B2;
+  const dist = -constTerm / mag; // Ebene: A2·(p+cent)+B2=0  =>  n·p = dist
+  const geom = new THREE.PlaneGeometry(2.5, 2.5);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffff66, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
+  planeMesh = new THREE.Mesh(geom, mat);
+  planeMesh.quaternion.copy(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n));
+  planeMesh.position.copy(n.clone().multiplyScalar(dist));
+  scene.add(planeMesh);
+}
+
+/* ------------------ Falzpfad Γ im Hidden-Raum (gerade → gebrochen) ------------------ */
+let pathLine = null;
+function drawPath3D(B1o) {
+  if (pathLine) { scene.remove(pathLine); pathLine.geometry.dispose(); pathLine.material.dispose(); pathLine = null; }
+  if (!foldChord) return;
+  const P = getParams();
+  const B1 = B1o || P.B1;
+  const d = displayState();
+  const c = d.cent;
+  const at = (useLayer2 && viewSel === 'h2') ? h2At : h1At;
+  const st = 48, pts = [];
+  for (let i = 0; i <= st; i++) { const l = i / st; const x = foldChord[0] + (foldChord[2] - foldChord[0]) * l, y = foldChord[1] + (foldChord[3] - foldChord[1]) * l; const hv = at(x, y, P, B1); pts.push(new THREE.Vector3(hv[0] - c[0], hv[1] - c[1], hv[2] - c[2])); }
+  const geom = new THREE.BufferGeometry().setFromPoints(pts);
+  pathLine = new THREE.Line(geom, new THREE.LineBasicMaterial({ color: 0xffd866 }));
+  scene.add(pathLine);
+}
+
+function misclassified() {
+  const P = getParams();
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) return points.length;
+  let mis = 0;
+  for (let i = 0; i < points.length; i++) if ((readoutScore(i) > 0 ? 1 : 0) !== labels[i]) mis++;
+  return mis;
+}
+
+const statusEl = $('status');
+function updateStatus() {
+  const P = getParams();
+  const m = metrics();
+  updateLossLine(m.acc, m.loss);
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) { statusEl.className = 'status bad'; statusEl.textContent = '– Kein Readout (r-Gewichte = 0)'; return; }
+  if (m.acc >= 100 - 1e-9) { statusEl.className = 'status good'; statusEl.textContent = '✓ Klar getrennt · 100 %'; }
+  else {
+    statusEl.className = 'status bad';
+    statusEl.textContent = '✗ Trennt nicht klar · ' + m.acc.toFixed(1) + ' % korrekt  (f=' + ACTS[P.act].label + ')';
+  }
+}
+
+// Besten Readout-Bias für die aktuellen r-Gewichte -> perfekte Trennung.
+function bestB2() {
+  const P = getParams(); const Hh = activeH();
+  if (Math.hypot(P.A2[0], P.A2[1], P.A2[2]) < 1e-6) return P.B2;
+  let mi = -Infinity, mo = Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const s = P.A2[0] * Hh[i * 3] + P.A2[1] * Hh[i * 3 + 1] + P.A2[2] * Hh[i * 3 + 2];
+    if (labels[i] === 0) { if (s > mi) mi = s; } else { if (s < mo) mo = s; }
+  }
+  return -(mi + mo) / 2;
+}
+
+/* ------------------ Netz trainieren (Adam + Random-Restarts) ------------------ */
+const CLIP = [2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2]; // pro Parameter (entspricht den Slider-Grenzen)
+function writeW(w) {
+  set('a1x', w[0]); set('a1y', w[1]); set('a2x', w[2]); set('a2y', w[3]); set('a3x', w[4]); set('a3y', w[5]);
+  set('b1', w[6]); set('b2', w[7]); set('b3', w[8]);
+  set('r1', w[9]); set('r2', w[10]); set('r3', w[11]); set('rb', w[12]);
+}
+// Aktuelle (13) Parameter aus dem DOM lesen.
+function currentW() {
+  return [val('a1x'), val('a1y'), val('a2x'), val('a2y'), val('a3x'), val('a3y'),
+          val('b1'), val('b2'), val('b3'), val('r1'), val('r2'), val('r3'), val('rb')];
+}
+// Zufälliger Start: A1-Zeilen als zufällige Einheitsvektoren, Bias klein, Readout zufällig.
+function randomInit() {
+  const r = (a, b) => a + Math.random() * (b - a);
+  const row = () => { let x = r(-1, 1), y = r(-1, 1); const m = Math.hypot(x, y) || 1; return [x / m, y / m]; };
+  const r1 = row(), r2 = row(), r3 = row();
+  return [r1[0], r1[1], r2[0], r2[1], r3[0], r3[1], r(-.2, .2), r(-.2, .2), r(-.2, .2), r(-.5, .5), r(-.5, .5), r(-.5, .5), r(-.5, .5)];
+}
+function netForward(w, x, y) {
+  const z1 = [0, 0, 0], h = [0, 0, 0];
+  for (let k = 0; k < 3; k++) { z1[k] = w[k * 2] * x + w[k * 2 + 1] * y + w[6 + k]; h[k] = z1[k] > 0 ? z1[k] : 0; }
+  const z2 = w[9] * h[0] + w[10] * h[1] + w[11] * h[2] + w[12];
+  return { z1, h, z2 };
+}
+function metrics() { // Genauigkeit + Loss (BCE) des aktuellen, toggled Netzwerks (optional durch Layer 2)
+  const P = getParams();
+  let ok = 0, loss = 0; const m = points.length;
+  for (let i = 0; i < m; i++) {
+    const [x, y] = points[i], t = labels[i];
+    const h1 = [0, 0, 0];
+    for (let k = 0; k < 3; k++) {
+      let v = P.A1[k][0] * x + P.A1[k][1] * y + P.B1[k];
+      v = applyAct(v);
+      h1[k] = P.neuronOn[k] ? v : 0;
+    }
+    let out = h1;
+    if (useLayer2) {
+      out = [0, 0, 0];
+      for (let k = 0; k < 3; k++) {
+        let v = W2m[k * 3] * h1[0] + W2m[k * 3 + 1] * h1[1] + W2m[k * 3 + 2] * h1[2] + B2m[k];
+        v = applyAct(v);
+        out[k] = neuronOn2[k] ? v : 0;
+      }
+    }
+    let z2 = P.B2;
+    for (let k = 0; k < 3; k++) z2 += P.A2[k] * out[k];
+    if ((z2 > 0 ? 1 : 0) === t) ok++;
+    const p = 1 / (1 + Math.exp(-z2));
+    const pc = Math.min(1 - 1e-9, Math.max(1e-9, p));
+    loss += -(t * Math.log(pc) + (1 - t) * Math.log(1 - pc));
+  }
+  return { acc: ok / m * 100, loss: loss / m };
+}
+function updateLossLine(acc, loss) {
+  const el = $('lossline'); if (!el) return;
+  el.textContent = 'Loss: ' + (loss == null ? '–' : loss.toFixed(4)) + '   ·   Acc: ' + (acc == null ? '–' : acc.toFixed(1) + ' %');
+}
+
+let training = false;
+let trainRaf = 0, foldRaf = 0; // Guard 1: rAF-Id ist die Quelle der Wahrheit (0 = nichts läuft)
+const APP_VERSION = 'fold-v14'; // Guard 4: Version zum Verifizieren (Console + Status)
+function anyAnim() { return !!(trainRaf || foldRaf); }
+// Paper-Faltweg (Fig. 2c): drei Falten um 120°, Readout (1,1,1), Bias auto-fit -> trennt garantiert.
+function knownOptimal() { return [0, 1, -0.87, -0.5, 0.87, -0.5, 0, 0, 0, 1, 1, 1, 0]; }
+function bestB2for(w) { // besten Readout-Bias (analytischer Mittelpunkt, O(n)) für die fixen übrigen 12 Parameter (ReLU)
+  let mi = -Infinity, mo = Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const x = points[i][0], y = points[i][1]; let s = 0;
+    for (let k = 0; k < 3; k++) { const z = w[2 * k] * x + w[2 * k + 1] * y + w[6 + k]; s += w[9 + k] * (z > 0 ? z : 0); }
+    if (labels[i] === 0) { if (s > mi) mi = s; } else { if (s < mo) mo = s; }
+  }
+  if (mi === -Infinity || mo === Infinity) return 0;
+  return -(mi + mo) / 2;
+}
+function setTrainBtn(running) { $('btnTrain').textContent = running ? '⏹ Stop' : '🧠 Trainieren'; }
+function stopTraining() { // Training abbrechen – das Netz bleibt an der Stelle, an der es stoppt
+  if (!trainRaf) return;
+  cancelAnimationFrame(trainRaf); trainRaf = 0;
+  training = false;
+  $('btnTrain').disabled = false;
+  setTrainBtn(false);
+  refreshAll();
+}
+function startTraining() {
+  // Toggle: läuft es gerade -> stoppen; sonst -> starten.
+  if (training && trainRaf) { stopTraining(); return; }
+  // ReLU  -> verlässlicher Morph zur Paper-Lösung (klar getrennt, 100 %).
+  // Sonst -> echtes Adam-Backprop (bewegt die Gewichte, senkt den Loss).
+  if (!points.length) return;
+  if (anyAnim()) return;
+  animating = false; training = false;
+  $('btnFold').disabled = false;
+  training = true; autoFit = false;
+  $('btnTrain').disabled = false; // bleibt klickbar = Stop
+  setTrainBtn(true);
+  const W = currentW();
+  const done = () => { cancelAnimationFrame(trainRaf); trainRaf = 0; training = false; setTrainBtn(false); };
+  if (useLayer2) { trainAdam2(done); return; } // 25 Parameter (Layer 1 + Layer 2 + Readout)
+  if (actName() === 'relu') trainMorph(W, done);
+  else trainAdam(W, done);
+}
+// ReLU: morph von der aktuellen Position zur bekannten, klar trennenden Paper-Lösung.
+function trainMorph(W, done) {
+  writeW(W); refreshAll();
+  const m0 = metrics();
+  statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + m0.acc.toFixed(1) + ' %  (v' + APP_VERSION + ')';
+  const Wf = knownOptimal(); Wf[12] = bestB2for(Wf);
+  let t = 0;
+  const frame = () => {
+    try {
+      t += 0.016; const raw = Math.min(1, t);
+      const f = (1 - Math.cos(Math.PI * raw)) / 2;
+      const Wc = W.map((v, i) => v + (Wf[i] - v) * f);
+      writeW(Wc); refreshAll();
+      const mtr = metrics();
+      if (raw < 1) {
+        statusEl.className = 'status bad';
+        statusEl.textContent = '🧠 Trainiere… ' + mtr.acc.toFixed(1) + ' % · loss ' + mtr.loss.toFixed(3);
+        trainRaf = requestAnimationFrame(frame);
+      } else { writeW(Wf); refreshAll(); done(); updateStatus(); }
+    } catch (err) { console.error('[egg] Training', err); done(); refreshAll(); }
+  };
+  trainRaf = requestAnimationFrame(frame);
+}
+// Andere Aktivierungen: Adam + Backprop auf den 13 Parametern.
+function trainAdam(W, done) {
+  const act = actName();
+  const AF = ACTS[act].fn, AD = z => actDeriv(z, act);
+  const m = points.length, invM = 1 / m;
+  writeW(W); refreshAll();
+  const g = new Array(13).fill(0), mW = new Array(13).fill(0), vW = new Array(13).fill(0);
+  const b1 = 0.9, b2 = 0.999, eps = 1e-8, lr = 0.05, STEPS = 4, MAXF = 160;
+  let step = 0, fi = 0, stale = 0, lastLoss = metrics().loss;
+  let best = { acc: -1, w: W.slice() };
+  statusEl.className = 'status bad';
+  statusEl.textContent = '🧠 Trainiere… ' + metrics().acc.toFixed(1) + ' %  (f=' + ACTS[act].label + ')  (v' + APP_VERSION + ')';
+  const frame = () => {
+    try {
+      for (let s = 0; s < STEPS; s++) {
+        step++; g.fill(0);
+        for (let i = 0; i < m; i++) {
+          const x = points[i][0], y = points[i][1], lab = labels[i];
+          const z0 = W[0] * x + W[1] * y + W[6];
+          const z1 = W[2] * x + W[3] * y + W[7];
+          const z2 = W[4] * x + W[5] * y + W[8];
+          const h0 = AF(z0), h1 = AF(z1), h2 = AF(z2);
+          const zo = W[9] * h0 + W[10] * h1 + W[11] * h2 + W[12];
+          const dzo = (1 / (1 + Math.exp(-zo)) - lab) * invM;
+          g[9] += dzo * h0; g[10] += dzo * h1; g[11] += dzo * h2; g[12] += dzo;
+          let d;
+          d = dzo * W[9] * AD(z0);  g[0] += d * x; g[1] += d * y; g[6] += d;
+          d = dzo * W[10] * AD(z1); g[2] += d * x; g[3] += d * y; g[7] += d;
+          d = dzo * W[11] * AD(z2); g[4] += d * x; g[5] += d * y; g[8] += d;
+        }
+        for (let j = 0; j < 13; j++) {
+          mW[j] = b1 * mW[j] + (1 - b1) * g[j];
+          vW[j] = b2 * vW[j] + (1 - b2) * g[j] * g[j];
+          const mh = mW[j] / (1 - Math.pow(b1, step));
+          const vh = vW[j] / (1 - Math.pow(b2, step));
+          const nv = W[j] - lr * mh / (Math.sqrt(vh) + eps);
+          W[j] = Math.max(-CLIP[j], Math.min(CLIP[j], nv));
+        }
+      }
+      writeW(W); refreshAll();
+      const met = metrics();
+      if (met.acc > best.acc) best = { acc: met.acc, w: W.slice() };
+      if (met.loss < lastLoss - 1e-4) { lastLoss = met.loss; stale = 0; } else stale++;
+      fi++;
+      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) { writeW(best.w); refreshAll(); done(); updateStatus(); }
+      else { statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3); trainRaf = requestAnimationFrame(frame); }
+    } catch (err) { console.error('[egg] Training', err); done(); refreshAll(); }
+  };
+  trainRaf = requestAnimationFrame(frame);
+}
+// 2. Hidden-Layer: Adam-Backprop über alle 25 Parameter (A1,B1,W2,B2,Readout).
+function trainAdam2(done) {
+  const act = actName();
+  const AF = ACTS[act].fn, AD = z => actDeriv(z, act);
+  const m = points.length, invM = 1 / m;
+  let W = currentW().concat(W2m.slice(), B2m.slice()); // [13 | 9 (W2) | 3 (B2)]
+  const CLIP25 = CLIP.concat([2, 2, 2, 2, 2, 2, 2, 2, 2, 1.5, 1.5, 1.5]);
+  const g = new Array(25).fill(0), mW = new Array(25).fill(0), vW = new Array(25).fill(0);
+  const b1c = 0.9, b2c = 0.999, eps = 1e-8, lr = 0.05, STEPS = 4, MAXF = 220;
+  let step = 0, fi = 0, stale = 0, lastLoss = metrics().loss;
+  let best = { acc: -1, w: W.slice() };
+  statusEl.className = 'status bad';
+  statusEl.textContent = '🧠 Trainiere… ' + metrics().acc.toFixed(1) + ' % (2 Layer)  (v' + APP_VERSION + ')';
+  const syncL2 = () => {
+    for (let i = 0; i < 9; i++) { const c = $('cell-w2_' + i); if (c && document.activeElement !== c) c.value = W2m[i].toFixed(2); }
+    for (let i = 0; i < 3; i++) { const c = $('cell-b2_' + i); if (c && document.activeElement !== c) c.value = B2m[i].toFixed(2); }
+  };
+  const writeW25 = (w) => { writeW(w.slice(0, 13)); for (let i = 0; i < 9; i++) W2m[i] = w[13 + i]; for (let i = 0; i < 3; i++) B2m[i] = w[22 + i]; syncL2(); };
+  const paint = () => { computeHidden(); computeH2(); updateFoldPanel(); const d = displayState(); draw2D(); drawPointCloud(d.H, d.cent); drawPlane(); drawPath3D(); updateAllLabels(); };
+  const frame = () => {
+    try {
+      for (let s = 0; s < STEPS; s++) {
+        step++; g.fill(0);
+        for (let i = 0; i < m; i++) {
+          const x = points[i][0], y = points[i][1], lab = labels[i];
+          const z1 = [W[0] * x + W[1] * y + W[6], W[2] * x + W[3] * y + W[7], W[4] * x + W[5] * y + W[8]];
+          const h1 = [AF(z1[0]), AF(z1[1]), AF(z1[2])];
+          const z2 = [W[13] * h1[0] + W[14] * h1[1] + W[15] * h1[2] + W[22], W[16] * h1[0] + W[17] * h1[1] + W[18] * h1[2] + W[23], W[19] * h1[0] + W[20] * h1[1] + W[21] * h1[2] + W[24]];
+          const h2 = [AF(z2[0]), AF(z2[1]), AF(z2[2])];
+          const zo = W[9] * h2[0] + W[10] * h2[1] + W[11] * h2[2] + W[12];
+          const dzo = (1 / (1 + Math.exp(-zo)) - lab) * invM;
+          g[9] += dzo * h2[0]; g[10] += dzo * h2[1]; g[11] += dzo * h2[2]; g[12] += dzo;
+          for (let j = 0; j < 3; j++) { const d2 = dzo * W[9 + j] * AD(z2[j]); g[13 + j * 3] += d2 * h1[0]; g[14 + j * 3] += d2 * h1[1]; g[15 + j * 3] += d2 * h1[2]; g[22 + j] += d2; }
+          for (let k = 0; k < 3; k++) { let d1 = 0; for (let j = 0; j < 3; j++) d1 += dzo * W[9 + j] * AD(z2[j]) * W[13 + j * 3 + k]; d1 *= AD(z1[k]); g[2 * k] += d1 * x; g[2 * k + 1] += d1 * y; g[6 + k] += d1; }
+        }
+        for (let j = 0; j < 25; j++) {
+          mW[j] = b1c * mW[j] + (1 - b1c) * g[j];
+          vW[j] = b2c * vW[j] + (1 - b2c) * g[j] * g[j];
+          const mh = mW[j] / (1 - Math.pow(b1c, step)), vh = vW[j] / (1 - Math.pow(b2c, step));
+          W[j] = Math.max(-CLIP25[j], Math.min(CLIP25[j], W[j] - lr * mh / (Math.sqrt(vh) + eps)));
+        }
+      }
+      writeW25(W); paint();
+      const met = metrics();
+      if (met.acc > best.acc) best = { acc: met.acc, w: W.slice() };
+      if (met.loss < lastLoss - 1e-4) { lastLoss = met.loss; stale = 0; } else stale++;
+      fi++;
+      if (met.acc >= 100 - 1e-6 || fi >= MAXF || stale >= 45) { writeW25(best.w); paint(); done(); updateStatus(); }
+      else { statusEl.className = 'status bad'; statusEl.textContent = '🧠 Trainiere… ' + met.acc.toFixed(1) + ' % · loss ' + met.loss.toFixed(3) + ' (2 Layer)'; trainRaf = requestAnimationFrame(frame); }
+    } catch (err) { console.error('[egg] Training2', err); done(); refreshAll(); }
+  };
+  trainRaf = requestAnimationFrame(frame);
+}
+function randomize() {
+  if (training) return;
+  autoFit = false;
+  set('n1', true); set('n2', true); set('n3', true); // Aktivierung bleibt, wie gewählt
+  set('re1', true); set('re2', true); set('re3', true);
+  writeW(randomInit());
+  refreshAll();
+}
+
+/* ------------------ Optimal-Preset (Paper Fig. 2c) ------------------ */
+function setOptimal() {
+  set('a1x', 0); set('a1y', 1);
+  set('a2x', -0.87); set('a2y', -0.5);
+  set('a3x', 0.87); set('a3y', -0.5);
+  set('b1', 0); set('b2', 0); set('b3', 0);
+  set('actfn', 'relu');
+  set('n1', true); set('n2', true); set('n3', true);
+  set('r1', 1); set('r2', 1); set('r3', 1);
+  set('re1', true); set('re2', true); set('re3', true);
+  autoFit = true;
+  refreshAll();
+}
+
+/* ------------------ Falt-Animation ------------------ */
+let animating = false;
+function animateFold() {
+  // Guard 1: rAF-Id als Quelle der Wahrheit – hängende Flags zurücksetzen statt Early-Return
+  if (!points.length) return;
+  if (anyAnim()) return;
+  animating = false; training = false;
+  $('btnFold').disabled = false; $('btnTrain').disabled = false;
+
+  animating = true; autoFit = true;
+  $('btnFold').disabled = true;
+  // Optimaler Falz; Bias startet bei [1,1,1] (flacher Slice) -> [0,0,0] (voll gefaltet)
+  set('a1x', 0); set('a1y', 1); set('a2x', -0.87); set('a2y', -0.5); set('a3x', 0.87); set('a3y', -0.5);
+  set('actfn', 'relu'); set('n1', true); set('n2', true); set('n3', true);
+  set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
+  set('rb', bestB2for(knownOptimal()));
+
+  const HOLD = 0.45;
+  // Guard 3: Geometrie/2D vom EXPLIZITEN b treiben, nicht vom Slider-Roundtrip
+  const setFrame = (b) => {
+    set('b1', b); set('b2', b); set('b3', b);
+    for (const id of ['b1', 'b2', 'b3']) { // Diagnose: großer Widerspruch = echter Slider-Fehler
+      const e = $(id);
+      if (e && Math.abs(+e.value - b) > 0.05) console.error('[egg] Slider', id, 'akzeptiert', b, 'nicht →', e.value);
+    }
+    updateAllLabels();
+    computeHidden([b, b, b]);
+    if (useLayer2) computeH2();
+    updateFoldPanel([b, b, b]);
+    const d = displayState();
+    drawPointCloud(d.H, d.cent); drawPlane(); drawPath3D([b, b, b]); draw2D([b, b, b]);
+  };
+  const endFold = () => { cancelAnimationFrame(foldRaf); foldRaf = 0; animating = false; $('btnFold').disabled = false; refreshAll(); };
+
+  // Guard 2: flachen b=1-Frame SYNCHRON zeichnen, bevor rAF überhaupt startet
+  setFrame(1);
+  // Guard 5: Status zeigt den echten Bias-Wert → Start ist eindeutig b=1,1,1
+  statusEl.className = 'status good';
+  statusEl.textContent = '🎬 flacher Slice · b=1.00, 1.00, 1.00  (v' + APP_VERSION + ')';
+
+  let p = 0;
+  const step = () => {
+    try {
+      p += 0.010; const raw = Math.min(1, p);
+      let b;
+      if (raw < HOLD) b = 1; // flacher Slice sichtbar halten
+      else { const q = (raw - HOLD) / (1 - HOLD); const e = (1 - Math.cos(Math.PI * q)) / 2; b = 1 - e; }
+      setFrame(b);
+      if (raw >= HOLD) { statusEl.className = 'status bad'; statusEl.textContent = '🎬 faltend · b=' + b.toFixed(2); }
+      if (raw < 1) foldRaf = requestAnimationFrame(step);
+      else endFold();
+    } catch (err) { // Guard 2: Fehler hinterlässt keinen hängenden Zustand
+      console.error('[egg] Falt-Animation abgebrochen:', err);
+      endFold();
+    }
+  };
+  foldRaf = requestAnimationFrame(step);
+}
+
+/* ------------------ 2. Hidden-Layer: UI (3×3 W2 + Biases + Neuronen) ------------------ */
+function l2cell(id, val) {
+  const c = document.createElement('input');
+  c.type = 'number'; c.step = '0.05'; c.min = '-3'; c.max = '3';
+  c.className = 'cell'; c.id = 'cell-' + id; c.value = (+val).toFixed(2);
+  c.addEventListener('input', () => {
+    if (training || animating) return;
+    const v = parseFloat(c.value); if (isNaN(v)) return;
+    const idx = +id.replace(/^w2_/, '').replace(/^b2_/, '');
+    if (id.startsWith('w2_')) W2m[idx] = v; else B2m[idx] = v;
+    refreshAll();
+  });
+  return c;
+}
+function buildL2UI() {
+  const g = $('w2grid'); if (!g) return; g.textContent = '';
+  for (let r = 0; r < 3; r++) {
+    const lbl = document.createElement('span'); lbl.className = 'wl'; lbl.textContent = 'N2-' + (r + 1); lbl.style.color = NEURON_COLORS[r]; g.appendChild(lbl);
+    for (let c = 0; c < 3; c++) g.appendChild(l2cell('w2_' + (r * 3 + c), W2m[r * 3 + c]));
+  }
+  const bl = document.createElement('span'); bl.className = 'wl'; bl.textContent = 'bias'; g.appendChild(bl);
+  for (let c = 0; c < 3; c++) g.appendChild(l2cell('b2_' + c, B2m[c]));
+  const nr = document.createElement('div'); nr.className = 'l2nrow';
+  for (let k = 0; k < 3; k++) {
+    const l = document.createElement('label'); l.className = 'nchk';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'n2_' + (k + 1); cb.checked = neuronOn2[k];
+    cb.addEventListener('change', e => { if (training || animating) return; neuronOn2[k] = e.target.checked; refreshAll(); });
+    l.appendChild(cb); l.appendChild(document.createTextNode(' N2-' + (k + 1)));
+    nr.appendChild(l);
+  }
+  g.appendChild(nr);
+}
+function setViewSel(v) { viewSel = v; syncViewSel(); refreshAll(); }
+function syncViewSel() { if ($('viewH1')) { $('viewH1').classList.toggle('on', viewSel === 'h1'); $('viewH2').classList.toggle('on', viewSel === 'h2'); } }
+
+/* ------------------ UI-Verkabelung ------------------ */
+let autoFit = true; // Readout-Bias automatisch auf perfekte Trennung halten
+
+function updateAllLabels() {
+  for (const id of ['a1x', 'a1y', 'b1', 'a2x', 'a2y', 'b2', 'a3x', 'a3y', 'b3', 'r1', 'r2', 'r3', 'rb']) {
+    $('v' + id).textContent = val(id).toFixed(2);
+    const c = $('cell-' + id);
+    if (c && document.activeElement !== c) c.value = val(id).toFixed(2);
+  }
+  for (let i = 1; i <= 3; i++) {
+    document.querySelector('.neuron[data-i="' + i + '"]').classList.toggle('off', !on('n' + i));
+  }
+}
+
+function refreshAll() {
+  updateAllLabels();
+  updateActFormula();
+  computeHidden();
+  if (useLayer2) computeH2();
+  updateFoldPanel();
+  draw2D();
+  const d = displayState();
+  drawPointCloud(d.H, d.cent);
+  drawPlane();
+  drawPath3D();
+  updateStatus();
+  if (autoFit) {
+    set('rb', bestB2());
+    updateAllLabels();
+    drawPlane();
+    updateStatus();
+  }
+}
+
+document.querySelectorAll('#sidebar input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    if (training || animating) return;
+    if (/^(w2_|b2_|n2_)/.test(inp.id) || inp.id === 'useLayer2') return; // eigene Listener
+    if (['r1', 'r2', 'r3', 'rb'].includes(inp.id)) autoFit = false;
+    refreshAll();
+  });
+});
+$('showRegions').addEventListener('change', () => { if (training || animating) return; showRegions = $('showRegions').checked; refreshAll(); });
+$('actfn').addEventListener('change', () => {
+  if (training || animating) return;
+  refreshAll();
+});
+
+$('useLayer2').addEventListener('change', e => {
+  if (training || animating) return;
+  useLayer2 = e.target.checked;
+  $('l2box').style.display = useLayer2 ? '' : 'none';
+  $('viewH2').disabled = !useLayer2;
+  if (useLayer2) computeH2();
+  refreshAll();
+});
+$('viewH1').addEventListener('click', () => { if (training || animating) return; setViewSel('h1'); });
+$('viewH2').addEventListener('click', () => { if (training || animating || !useLayer2) return; setViewSel('h2'); });
+$('l2rand').addEventListener('click', e => {
+  e.preventDefault(); if (training || animating) return;
+  W2m = [1, -1, -1, 1, 0, 0, 0, 1, 0]; B2m = [0, 0, 0];
+  buildL2UI(); refreshAll();
+});
+
+// Interaktive Pfad-Analyse: zwei Punkte im 2D-Plot klicken → Γ
+function px2data(px, py) { const w = c2.width, h = c2.height, scale = Math.min(w, h) * 0.4, cx = w / 2, cy = h / 2; return [(px - cx) / scale, (cy - py) / scale]; }
+c2.addEventListener('click', e => {
+  if (pathMode !== 'pick' || training || animating) return;
+  const r = c2.getBoundingClientRect();
+  const d = px2data(e.clientX - r.left, e.clientY - r.top);
+  if (!pickA || (pickA && pickB)) { pickA = d; pickB = null; }
+  else pickB = d;
+  refreshAll();
+});
+function syncPathSel() { $('pmStd').classList.toggle('on', pathMode === 'std'); $('pmWorst').classList.toggle('on', pathMode === 'worst'); $('pmPick').classList.toggle('on', pathMode === 'pick'); c2.style.cursor = pathMode === 'pick' ? 'crosshair' : 'default'; }
+$('pmStd').addEventListener('click', () => { if (training || animating) return; pathMode = 'std'; pickA = pickB = null; syncPathSel(); refreshAll(); });
+$('pmWorst').addEventListener('click', () => { if (training || animating) return; pathMode = 'worst'; syncPathSel(); refreshAll(); });
+$('pmPick').addEventListener('click', () => { if (training || animating) return; pathMode = 'pick'; pickA = pickB = null; syncPathSel(); refreshAll(); });
+$('pmWalk').addEventListener('click', () => { if (training || animating) return; if (walkRaf) stopWalk(); else startWalk(); });
+
+// Aufklappbare Abschnitte (weniger Clutter): Netzwerk-Gewichte + Space-Folding
+document.querySelectorAll('[data-acc]').forEach(hd => hd.addEventListener('click', () => { hd.parentElement.classList.toggle('open'); }));
+$('matToggle').addEventListener('click', e => { e.preventDefault(); const m = $('fmat'); const show = m.style.display === 'none'; m.style.display = show ? '' : 'none'; e.target.textContent = (show ? '▾' : '▸') + ' Gewichtsmatrix'; });
+$('foldDetailsToggle').addEventListener('click', e => { e.preventDefault(); const d = $('foldDetails'); const show = d.style.display === 'none'; d.style.display = show ? '' : 'none'; e.target.textContent = (show ? '▾' : '▸') + ' Details (Muster · Φ̂ · Legende)'; });
+
+$('btnOpt').addEventListener('click', setOptimal);
+$('btnTrain').addEventListener('click', startTraining);
+$('btnRand').addEventListener('click', randomize);
+$('btnFold').addEventListener('click', animateFold);
+
+/* ------------------ Start ------------------ */
+console.info('[egg] egg.html version ' + APP_VERSION); // Guard 4: zeigt im Console, welche Version läuft
+// Guard 4: immer sichtbares Versions-Badge (unten rechts) – so siehst du auf einen Blick, ob der Cache aktuell ist
+(function () {
+  const b = document.createElement('div');
+  b.textContent = APP_VERSION;
+  b.style.cssText = 'position:fixed;bottom:6px;right:8px;font:11px monospace;color:#50fa7b;background:#1b1b22;border:1px solid #333;padding:2px 6px;border-radius:3px;z-index:9999;opacity:0.85';
+  document.body.appendChild(b);
+})();
+initThree();
+generateData();
+buildFormulaDOM();
+buildL2UI();
+// Startzustand: FLACHER Slice (B1 = 1,1,1) mit optimalem Falz + Readout an
+// -> Faltlinie zeigt 1,1,1 beim Laden; 🎬 Falt-Animation falzt sie auf 0,0,0
+set('a1x', 0); set('a1y', 1);
+set('a2x', -0.87); set('a2y', -0.5);
+set('a3x', 0.87); set('a3y', -0.5);
+set('actfn', 'relu'); set('n1', true); set('n2', true); set('n3', true);
+set('r1', 1); set('r2', 1); set('r3', 1); set('re1', true); set('re2', true); set('re3', true);
+set('b1', 1); set('b2', 1); set('b3', 1);
+refreshAll();
+</script>
+</body>
+</html>

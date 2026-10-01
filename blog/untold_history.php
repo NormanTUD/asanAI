@@ -15,7 +15,7 @@ tags: interested-layman
 The main history of AI traces the intellectual lineage, the ideas, algorithms, and architectures that directly led to modern systems. But those ideas did not emerge in a vacuum. They rest on a vast, invisible scaffolding of discoveries made in fields entirely unrelated to computation: the chemistry that purified silicon, the physics that explained semiconductors, the looms that inspired programmable input, the video game industry that accidentally built the perfect hardware for neural networks. This page collects those **displaced prerequisites**: the contributions so fundamental they vanish into the background, yet without which no language model could exist.
 </div>
 
-<div class="md">
+<div class="md" data-depth="100">
 ## Why Is There Anything at All?
 
 Before tracing the Big Bang or the first cell, a deeper question looms: **Why is there something rather than nothing?**
@@ -41,23 +41,28 @@ Instead of asking “Why something?”, the question becomes: **“What could pr
 These three perspectives share a recognition that existence is not self-evident. Leibniz answers with a necessary ground; Heidegger preserves the wonder; Jocaxian argues that the very emptiness of nothing guarantees its own dissolution.
 </div>
 
-<div class="md">
+<div class="md" data-depth="100">
 ## The Development of the Universe and Earth
 
-According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today \cite[Weinberg, 1977]{weinberg1977first}. Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium. Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.
+According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today (\cite[Weinberg, 1977]{weinberg1977first}). Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium. Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.
 
-Successive generations of stars forged heavier elements in their cores and dispersed them through supernova explosions, seeding the interstellar medium with the raw materials for planets and, eventually, life. The discovery of the cosmic microwave background radiation provided strong empirical support for this model \cite[Penzias and Wilson, 1965]{penzias1965measurement}.
+Successive generations of stars forged heavier elements in their cores and dispersed them through supernova explosions, seeding the interstellar medium with the raw materials for planets and, eventually, life. The discovery of the cosmic microwave background radiation provided strong empirical support for this model (\cite[Penzias and Wilson, 1965]{penzias1965measurement}).
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="wmap_cmb.png" alt="Full-sky map of the cosmic microwave background temperature fluctuations measured by NASA's Wilkinson Microwave Anisotropy Probe (WMAP)" />
     <figcaption class="md">The \citealternativetitle{wmap_cmb}: the temperature fluctuations of the cosmic microwave background as measured by NASA's Wilkinson Microwave Anisotropy Probe, the earliest direct image of the infant universe roughly 380,000 years after the Big Bang.</figcaption>
 </figure>
 
+<figure>
+    <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="universe_radial_budassi.jpg" alt="A logarithmic radial view of the observable universe: the Solar System at the centre, out through the Milky Way and the cosmic web to the cosmic microwave background and the Big Bang at the rim" />
+    <figcaption class="md">The \citealternativetitle{budassi_universe_image} (CC BY-SA 3.0): the whole observable universe on a logarithmic radial scale — the Solar System at the centre, the planets and the Oort cloud, the nearest stars, the Milky Way, the neighbouring galaxies and the cosmic web, out to the cosmic microwave background and the Big Bang at the very rim. Source: \citeauthor{budassi_universe_image}, \citeyear{budassi_universe_image}, \citealternativetitle{budassi_universe_image}, Wikimedia Commons.</figcaption>
+</figure>
+
 ### The Forging of the Elements: From the First Minutes to the Periodic Table
 
-The picture of *how* the matter of the universe became the elements on the periodic table was assembled over more than a century, and its modern form rests on a single, remarkable convergence of nuclear physics and stellar astronomy. In the first few minutes after the Big Bang, the universe was a hot, dense plasma of protons and neutrons. As it expanded and cooled, protons and neutrons fused into the lightest nuclei before the density ever fell low enough for heavier ones to survive. The landmark 1948 calculation of \citeauthorlastnameand{alperbethegamow1948}, the famous "alpha-beta-gamma" paper, first showed that this process could predict the observed abundance of the light elements, and the full modern theory of **Big Bang nucleosynthesis** confirms that within roughly the first twenty minutes the universe had fused about **75% of its mass into hydrogen and 25% into helium-4**, leaving only traces of deuterium, helium-3, and lithium-7 \cite[Weinberg, 1977]{weinberg1977first}. This is a hard fact about the cosmos: nearly all the hydrogen in every atom on Earth, including the hydrogen in your body and in every drop of water, was made not inside any star but in those first twenty minutes.
+The picture of *how* the matter of the universe became the elements on the periodic table was assembled over more than a century, and its modern form rests on a single, remarkable convergence of nuclear physics and stellar astronomy. In the first few minutes after the Big Bang, the universe was a hot, dense plasma of protons and neutrons. As it expanded and cooled, protons and neutrons fused into the lightest nuclei before the density ever fell low enough for heavier ones to survive. The landmark 1948 calculation of \citeauthorlastnameand{alperbethegamow1948}, the famous "alpha-beta-gamma" paper, first showed that this process could predict the observed abundance of the light elements, and the full modern theory of **Big Bang nucleosynthesis** confirms that within roughly the first twenty minutes the universe had fused about **75% of its mass into hydrogen and 25% into helium-4**, leaving only traces of deuterium, helium-3, and lithium-7 (\cite[Weinberg, 1977]{weinberg1977first}). This is a hard fact about the cosmos: nearly all the hydrogen in every atom on Earth, including the hydrogen in your body and in every drop of water, was made not inside any star but in those first twenty minutes.
 
-Big Bang nucleosynthesis, however, could not make the rest. There is no stable nucleus with five or eight nucleons, a "mass gap" that stalls any chain of fusion beyond helium, so every element from carbon upward had to be forged later, inside stars. That insight was the work of a generation of physicists. In 1939, \citeauthor{bethe1939energy} worked out, in his paper \citetitle{bethe1939energy}, the **carbon-nitrogen-oxygen (CNO) cycle** by which more massive main-sequence stars convert hydrogen into helium. The closely related **proton-proton chain**, dominant in lower-mass stars like the Sun, had been proposed independently the year before by Carl Friedrich von Weizsäcker. Together these are the two nuclear reaction chains by which stars sustain their luminosity for millions to billions of years; a decade earlier, \citeauthorlastnameand{eddington1926stars} had already argued on purely physical grounds that nuclear fusion was the only way a star could stay hot so long, but it was Bethe (and Weizsäcker, for the pp-chain) who supplied the actual nuclear bookkeeping. As a star exhausts its hydrogen, its core contracts and heats until helium ignites. Fusing three helium nuclei into carbon through the unstable intermediate beryllium-8 could only work if carbon-12 possessed a particular excited state; Hoyle calculated this requirement in 1954, and the state was found shortly afterward almost exactly where he had placed it, the **Hoyle state**, a triumph that became one of the great confirmations of the whole theory \cite[Burbidge et al., 1957]{b2fh1957}. From carbon, a cascade of successive "burning" stages in the most massive stars, carbon burning, neon burning, then onion-skin layers of oxygen and silicon burning, climbs the periodic table up to the iron group.
+Big Bang nucleosynthesis, however, could not make the rest. There is no stable nucleus with five or eight nucleons, a "mass gap" that stalls any chain of fusion beyond helium, so every element from carbon upward had to be forged later, inside stars. That insight was the work of a generation of physicists. In 1939, \citeauthor{bethe1939energy} worked out, in his paper \citetitle{bethe1939energy}, the **carbon-nitrogen-oxygen (CNO) cycle** by which more massive main-sequence stars convert hydrogen into helium. The closely related **proton-proton chain**, dominant in lower-mass stars like the Sun, had been proposed independently the year before by Carl Friedrich von Weizsäcker. Together these are the two nuclear reaction chains by which stars sustain their luminosity for millions to billions of years; a decade earlier, \citeauthorlastnameand{eddington1926stars} had already argued on purely physical grounds that nuclear fusion was the only way a star could stay hot so long, but it was Bethe (and Weizsäcker, for the pp-chain) who supplied the actual nuclear bookkeeping. As a star exhausts its hydrogen, its core contracts and heats until helium ignites. Fusing three helium nuclei into carbon through the unstable intermediate beryllium-8 could only work if carbon-12 possessed a particular excited state; Hoyle calculated this requirement in 1954, and the state was found shortly afterward almost exactly where he had placed it, the **Hoyle state**, a triumph that became one of the great confirmations of the whole theory (\cite[Burbidge et al., 1957]{b2fh1957}). From carbon, a cascade of successive "burning" stages in the most massive stars, carbon burning, neon burning, then onion-skin layers of oxygen and silicon burning, climbs the periodic table up to the iron group.
 
 The iron group marks the absolute wall. Fusing nuclei up to iron *releases* energy; fusing iron *consumes* it, so an iron core cannot power a star. This is why the cosmic abundance of the elements has its deepest peak at iron, and it is the reason a massive star's life ends in a **core-collapse supernova**, a catastrophe whose rebounding shockwave drives a final burst of explosive nucleosynthesis and flings the star's freshly forged material out into space. But iron is not the end of the story: the heaviest elements, the gold, platinum, and uranium, are built by a different mechanism entirely, the **neutron-capture processes**. In the 1957 review that became the founding document of modern nucleosynthesis, \citetitle{b2fh1957}, \citeauthorlastnameand{b2fh1957} laid out both the **s-process** (slow neutron capture, proceeding in the gentle atmospheres of dying red-giant stars) and the **r-process** (rapid neutron capture, demanding the extreme neutron densities of stellar death), a framework first sketched the same year by \citeauthor{cameron1957nucleogenesis}.
 
@@ -77,41 +82,41 @@ None of this was done for us. But the very first stars, the **Population III** g
 
 ### The Making of Planets
 
-The idea that the Sun and the planets condensed from a single rotating disk of gas and dust is older than modern astronomy. \citeauthor{kant1755heavens}, in his 1755 \citealternativetitle{kant1755heavens}, first proposed that the Solar System had formed by the gravitational settling of a nebula, an idea later given mathematical form by Laplace; it was not until the early 1980s, when disks of gas were directly imaged around young stars, that the **nebular hypothesis** was confirmed as the standard model of planet formation. Our own system began when a fragment of a giant molecular cloud collapsed roughly **4.57 billion years ago** to make a protostar, the Sun, ringed by a hot, dense **protoplanetary disk** of gas and dust. The age of the Solar System is measured by radiometric dating of the oldest solids ever found, the calcium-aluminium-rich inclusions in meteorites, which predate any planet and fix the clock at about 4.57 billion years \cite[Amelin et al., 2010]{amelin2010solarsystem}.
+The idea that the Sun and the planets condensed from a single rotating disk of gas and dust is older than modern astronomy. \citeauthor{kant1755heavens}, in his 1755 \citealternativetitle{kant1755heavens}, first proposed that the Solar System had formed by the gravitational settling of a nebula, an idea later given mathematical form by Laplace; it was not until the early 1980s, when disks of gas were directly imaged around young stars, that the **nebular hypothesis** was confirmed as the standard model of planet formation. Our own system began when a fragment of a giant molecular cloud collapsed roughly **4.57 billion years ago** to make a protostar, the Sun, ringed by a hot, dense **protoplanetary disk** of gas and dust. The age of the Solar System is measured by radiometric dating of the oldest solids ever found, the calcium-aluminium-rich inclusions in meteorites, which predate any planet and fix the clock at about 4.57 billion years (\cite[Amelin et al., 2010]{amelin2010solarsystem}).
 
-Within that disk, planets grew by accretion. Microscopic dust grains bumped and stuck into pebbles, pebbles into kilometre-sized **planetesimals**, and planetesimals, by gravity, into **planetary embryos**. The disk's temperature gradient decided everything: inside the **frost line**, a few astronomical units from the young Sun, only metals and silicates could condense, so the inner planets, Mercury, Venus, Earth, and Mars, became small and rocky; beyond it, volatiles such as water ice could freeze out, adding so much solid material that a core could grow to about ten Earth masses and then grab a giant envelope of gas, the mechanism by which **Jupiter and Saturn** assembled in the core-accretion picture \cite[Amelin et al., 2010]{amelin2010solarsystem}. The terrestrial planets accreted over the first few tens of millions of years; the Earth, our own, is dated to roughly 4.5 billion years \cite[Allègre et al., 1995]{allegre1995age}. The final architecture, the present spacing and tilts of the giant planets, is thought to have been set by a late dynamical instability that scattered planetesimals inward and stirred the outer disk, the **Nice model** \cite[Gomes et al., 2005]{gomes2005nice}.
+Within that disk, planets grew by accretion. Microscopic dust grains bumped and stuck into pebbles, pebbles into kilometre-sized **planetesimals**, and planetesimals, by gravity, into **planetary embryos**. The disk's temperature gradient decided everything: inside the **frost line**, a few astronomical units from the young Sun, only metals and silicates could condense, so the inner planets, Mercury, Venus, Earth, and Mars, became small and rocky; beyond it, volatiles such as water ice could freeze out, adding so much solid material that a core could grow to about ten Earth masses and then grab a giant envelope of gas, the mechanism by which **Jupiter and Saturn** assembled in the core-accretion picture (\cite[Amelin et al., 2010]{amelin2010solarsystem}). The terrestrial planets accreted over the first few tens of millions of years; the Earth, our own, is dated to roughly 4.5 billion years (\cite[Allègre et al., 1995]{allegre1995age}). The final architecture, the present spacing and tilts of the giant planets, is thought to have been set by a late dynamical instability that scattered planetesimals inward and stirred the outer disk, the **Nice model** (\cite[Gomes et al., 2005]{gomes2005nice}).
 
-The Earth and the Moon share a violent origin. Tens of millions of years into the Solar System's formation, a Mars-sized protoplanet, conventionally named **Theia**, struck the proto-Earth, and the Moon accreted from the disk of vaporized debris that the impact flung into orbit \cite[Hartmann and Davis, 1975]{hartmann1975satellite}. A high-energy "giant-impact" version of this scenario, in which the impactor struck near the very end of Earth's accretion, is the best supported today and accounts for the striking isotopic similarity between the Moon and the Earth \cite[Canup and Asphaug, 2001]{canupasphaug2001moon}.
+The Earth and the Moon share a violent origin. Tens of millions of years into the Solar System's formation, a Mars-sized protoplanet, conventionally named **Theia**, struck the proto-Earth, and the Moon accreted from the disk of vaporized debris that the impact flung into orbit (\cite[Hartmann and Davis, 1975]{hartmann1975satellite}). A high-energy "giant-impact" version of this scenario, in which the impactor struck near the very end of Earth's accretion, is the best supported today and accounts for the striking isotopic similarity between the Moon and the Earth (\cite[Canup and Asphaug, 2001]{canupasphaug2001moon}).
 
-In its earliest phase, the planet was largely molten, bombarded by debris from the still-forming solar system. Over hundreds of millions of years, the surface cooled to form a solid crust, oceans condensed from outgassed water vapor and delivered by cometary impacts, and plate tectonics began reshaping the surface in a process that continues to this day. The **Late Heavy Bombardment**, a sustained wave of impacts ending roughly 3.8 billion years ago, is associated in the Nice model with the final migration of the giant planets, though whether it was a true spike or a sampling artefact of the craters we can see is still debated; it marked the transition to a more stable planetary environment in which life could take hold \cite[Gomes et al., 2005]{gomes2005nice}.
+In its earliest phase, the planet was largely molten, bombarded by debris from the still-forming solar system. Over hundreds of millions of years, the surface cooled to form a solid crust, oceans condensed from outgassed water vapor and delivered by cometary impacts, and plate tectonics began reshaping the surface in a process that continues to this day. The **Late Heavy Bombardment**, a sustained wave of impacts ending roughly 3.8 billion years ago, is associated in the Nice model with the final migration of the giant planets, though whether it was a true spike or a sampling artefact of the craters we can see is still debated; it marked the transition to a more stable planetary environment in which life could take hold (\cite[Gomes et al., 2005]{gomes2005nice}).
 
 ### The Development of Life
 
 The origin of life on Earth remains one of the most profound questions in science. The trajectory from the first self-replicating molecule to the human brain that wrote the Transformer paper spans roughly 4 billion years, and each milestone in that trajectory is a *displaced prerequisite*: a biological fact that no one intended to contribute to computation, yet without which no substrate for thought, no eye to read a screen, and no hand to type a prompt would exist.
 
-**Before the Cell: From Chemistry to the First Self-Replicator.** None of the milestones that follow are, strictly speaking, the origin of life. The rock record begins at the first *cell*, but the transition from non-living chemistry to biology happened earlier, and it left no fossils behind. The problem, as \citeauthorlastnameand{orgel1973molecularevolution} set it out in \citeyear{orgel1973molecularevolution}, is a chicken-and-egg: every modern cell runs on three mutually interdependent macromolecules, DNA, RNA, and protein, and none of them can be made, read, or copied without the others. Life therefore could not have appeared in its present form; something simpler must have come first. The question had a poetic early form. In an 1871 letter to Joseph Dalton Hooker, \citeauthorlastnameand{darwin1871warmpond} speculated that if, "in some warm little pond with all sorts of ammonia and phosphoric salts … in it," a protein compound were "chemically formed, ready to undergo still more complex changes," then, "oh what a big if," the next steps might follow \cite[Darwin, 1871]{darwin1871warmpond}.
+**Before the Cell: From Chemistry to the First Self-Replicator.** None of the milestones that follow are, strictly speaking, the origin of life. The rock record begins at the first *cell*, but the transition from non-living chemistry to biology happened earlier, and it left no fossils behind. The problem, as \citeauthorlastnameand{orgel1973molecularevolution} set it out in \citeyear{orgel1973molecularevolution}, is a chicken-and-egg: every modern cell runs on three mutually interdependent macromolecules, DNA, RNA, and protein, and none of them can be made, read, or copied without the others. Life therefore could not have appeared in its present form; something simpler must have come first. The question had a poetic early form. In an 1871 letter to Joseph Dalton Hooker, \citeauthorlastnameand{darwin1871warmpond} speculated that if, "in some warm little pond with all sorts of ammonia and phosphoric salts … in it," a protein compound were "chemically formed, ready to undergo still more complex changes," then, "oh what a big if," the next steps might follow (\cite[Darwin, 1871]{darwin1871warmpond}).
 
-**The Primordial Soup and Prebiotic Synthesis: ~4.2–3.8 Billion Years Ago.** By the 1920s the speculation had hardened into a hypothesis. \citeauthorlastnameand{oparin1936origin}, in \citealternativetitle{oparin1936origin} (\citeyear{oparin1936origin}), and independently \citeauthorlastnameand{haldane1929origin}, in a \citeyear{haldane1929origin} letter to *Nature*, both argued that the young Earth's reducing atmosphere and its vast, slowly cooling ocean together made one enormous chemical laboratory: energy from lightning, ultraviolet radiation, and volcanism would drive simple inorganic gases into progressively more complex organic molecules, which would accumulate in the ocean until, by chance, some self-maintaining cycle appeared \cite[Haldane, 1929]{haldane1929origin}. This "primordial soup" could not be tested for three decades. Then, in \citeyear{miller1953aminoacids}, a graduate student named \citeauthorlastnameand{miller1953aminoacids}, working under Nobel laureate Harold Urey, who insisted on taking no credit for the result, bottled a model of the early Earth and ran it for a week. A sealed loop of methane, ammonia, and hydrogen was boiled and struck by a continuous electric spark; the condensate that trickled back into the "ocean" came out a deep red, and paper chromatography found five amino acids in it, glycine and the two alanines, plus, more tentatively, aspartic and aminobutyric acid \cite[Miller, 1953]{miller1953aminoacids}.
+**The Primordial Soup and Prebiotic Synthesis: ~4.2–3.8 Billion Years Ago.** By the 1920s the speculation had hardened into a hypothesis. \citeauthorlastnameand{oparin1936origin}, in \citealternativetitle{oparin1936origin} (\citeyear{oparin1936origin}), and independently \citeauthorlastnameand{haldane1929origin}, in a \citeyear{haldane1929origin} letter to *Nature*, both argued that the young Earth's reducing atmosphere and its vast, slowly cooling ocean together made one enormous chemical laboratory: energy from lightning, ultraviolet radiation, and volcanism would drive simple inorganic gases into progressively more complex organic molecules, which would accumulate in the ocean until, by chance, some self-maintaining cycle appeared (\cite[Haldane, 1929]{haldane1929origin}). This "primordial soup" could not be tested for three decades. Then, in \citeyear{miller1953aminoacids}, a graduate student named \citeauthorlastnameand{miller1953aminoacids}, working under Nobel laureate Harold Urey, who insisted on taking no credit for the result, bottled a model of the early Earth and ran it for a week. A sealed loop of methane, ammonia, and hydrogen was boiled and struck by a continuous electric spark; the condensate that trickled back into the "ocean" came out a deep red, and paper chromatography found five amino acids in it, glycine and the two alanines, plus, more tentatively, aspartic and aminobutyric acid (\cite[Miller, 1953]{miller1953aminoacids}).
 
 <figure>
     <img style="width: 62%; height: auto; display: block; margin: 1em auto;" src="miller_urey_apparatus.png" alt="Schematic of the Miller–Urey apparatus: a sealed loop in which a prebiotic atmosphere of methane, ammonia and hydrogen is boiled, struck by an electric spark, and condensed back into a primitive ocean" />
     <figcaption class="md">The \citealternativetitle{img_miller_urey_apparatus} (CC BY-SA 3.0): the Miller–Urey apparatus — a closed loop of methane, ammonia and hydrogen, boiled and struck by an electric arc, whose condensate turned out to contain amino acids. Source: \citeauthor{img_miller_urey_apparatus}, \citeyear{img_miller_urey_apparatus}, \citealternativetitle{img_miller_urey_apparatus}, Wikimedia Commons.</figcaption>
 </figure>
 
-The apparatus looked like science fiction; the chemistry inside it was ordinary. The spark tore methane and nitrogen apart into radicals that recombined into **hydrogen cyanide (HCN)** and aldehydes such as formaldehyde; in the water, HCN plus an aldehyde then ran a non-enzymatic **Strecker synthesis** to yield amino acids, while formaldehyde condensed through a **formose** reaction toward the sugar ribose \cite[Cleaves, 2012]{cleaves2012prebiotic}. The same logic reached the other building blocks. In \citeyear{oro1961adenine}, \citeauthorlastnameand{oro1961adenine} cooked concentrated HCN in water and pulled the nucleobase **adenine** out of the resulting slurry, a pentamer of hydrogen cyanide \cite[Oró, 1961]{oro1961adenine}. Nor was the chemistry confined to Earth: in \citeyear{orgelparris1979murchison}, \citeauthorlastnameand{orgelparris1979murchison} reported that the Murchison meteorite, which fell in Australia in 1969, carried a rich, partly extraterrestrial suite of amino acids, evidence that the raw materials of life can be delivered from space as well as synthesised in situ \cite[Orgel and Parris, 1979]{orgelparris1979murchison}. (Modern geochemistry has complicated the exact atmosphere — early Earth was probably CO₂- and N₂-rich, not the CH₄–NH₃ of the 1953 flask — but the core lesson survives: given reducing chemistry and a steady energy flux, the monomers of life form on their own \cite[Cleaves, 2012]{cleaves2012prebiotic}.)
+The apparatus looked like science fiction; the chemistry inside it was ordinary. The spark tore methane and nitrogen apart into radicals that recombined into **hydrogen cyanide (HCN)** and aldehydes such as formaldehyde; in the water, HCN plus an aldehyde then ran a non-enzymatic **Strecker synthesis** to yield amino acids, while formaldehyde condensed through a **formose** reaction toward the sugar ribose (\cite[Cleaves, 2012]{cleaves2012prebiotic}). The same logic reached the other building blocks. In \citeyear{oro1961adenine}, \citeauthorlastnameand{oro1961adenine} cooked concentrated HCN in water and pulled the nucleobase **adenine** out of the resulting slurry, a pentamer of hydrogen cyanide (\cite[Oró, 1961]{oro1961adenine}). Nor was the chemistry confined to Earth: in \citeyear{orgelparris1979murchison}, \citeauthorlastnameand{orgelparris1979murchison} reported that the Murchison meteorite, which fell in Australia in 1969, carried a rich, partly extraterrestrial suite of amino acids, evidence that the raw materials of life can be delivered from space as well as synthesised in situ (\cite[Orgel and Parris, 1979]{orgelparris1979murchison}). (Modern geochemistry has complicated the exact atmosphere — early Earth was probably CO₂- and N₂-rich, not the CH₄–NH₃ of the 1953 flask — but the core lesson survives: given reducing chemistry and a steady energy flux, the monomers of life form on their own \cite[Cleaves, 2012]{cleaves2012prebiotic}.)
 
-**The RNA World: When One Molecule Was Both Program and Machine.** The soup supplies monomers, but monomers do not make life. What life needs, above all, is a molecule that can (i) store information, (ii) copy itself, and (iii) catalyse the reactions of its own copying. The RNA world hypothesis, first articulated by Alexander Rich in 1962 and named by \citeauthorlastnameand{gilbert1986rnaworld} in \citeyear{gilbert1986rnaworld}, proposes that all three jobs were once done by a single molecule: RNA \cite[Gilbert, 1986]{gilbert1986rnaworld}. RNA is DNA's near-twin, so it can carry a sequence and act as a template; and, crucially, it can fold into shapes that behave as enzymes. That last point was not an inference but a discovery, and it came as a shock, because enzymes were *defined* to be protein. In 1982, Thomas Cech's group, chasing the protein enzyme that spliced the *Tetrahymena* ribosomal RNA and never finding it, reported that the intervening RNA sequence simply cut itself out — no protein in the mixture \cite[Kruger et al., 1982]{kruger1982selfsplicing}. Almost at the same time, \citeauthorlastnameand{altman1976rnasep} at Yale showed that the "enzyme" RNase P was in fact catalysed by its own RNA subunit \cite[Altman and Polisky, 1976]{altman1976rnasep}. For this "discovery of the catalytic properties of RNA," Cech and Altman shared the \citeyear{nobel1989cechantman} Nobel Prize in Chemistry \cite[Nobel Prize in Chemistry, 1989]{nobel1989cechantman}.
+**The RNA World: When One Molecule Was Both Program and Machine.** The soup supplies monomers, but monomers do not make life. What life needs, above all, is a molecule that can (i) store information, (ii) copy itself, and (iii) catalyse the reactions of its own copying. The RNA world hypothesis, first articulated by Alexander Rich in 1962 and named by \citeauthorlastnameand{gilbert1986rnaworld} in \citeyear{gilbert1986rnaworld}, proposes that all three jobs were once done by a single molecule: RNA (\cite[Gilbert, 1986]{gilbert1986rnaworld}). RNA is DNA's near-twin, so it can carry a sequence and act as a template; and, crucially, it can fold into shapes that behave as enzymes. That last point was not an inference but a discovery, and it came as a shock, because enzymes were *defined* to be protein. In 1982, Thomas Cech's group, chasing the protein enzyme that spliced the *Tetrahymena* ribosomal RNA and never finding it, reported that the intervening RNA sequence simply cut itself out — no protein in the mixture (\cite[Kruger et al., 1982]{kruger1982selfsplicing}). Almost at the same time, \citeauthorlastnameand{altman1976rnasep} at Yale showed that the "enzyme" RNase P was in fact catalysed by its own RNA subunit (\cite[Altman and Polisky, 1976]{altman1976rnasep}). For this "discovery of the catalytic properties of RNA," Cech and Altman shared the \citeyear{nobel1989cechantman} Nobel Prize in Chemistry (\cite[Nobel Prize in Chemistry, 1989]{nobel1989cechantman}).
 
-The hypothesis's weak flank was always whether RNA's building blocks are prebiotically accessible, and it kept getting patched. In \citeyear{sutherland2009pyrimidine}, Sutherland's Manchester group built the pyrimidine nucleotides cytidine and uridine from small two- and three-carbon fragments (glycolaldehyde, cyanamide, cyanoacetylene) in a coupled pathway that also delivered enantiopure ribose \cite[Powner et al., 2009]{sutherland2009pyrimidine}. And in \citeyear{horning2016rpr}, in-vitro evolution produced the 24-3 polymerase ribozyme, an RNA enzyme that copies a wide range of RNA templates, a first RNA-only version of the polymerase chain reaction \cite[Horning et al., 2016]{horning2016rpr}.
+The hypothesis's weak flank was always whether RNA's building blocks are prebiotically accessible, and it kept getting patched. In \citeyear{sutherland2009pyrimidine}, Sutherland's Manchester group built the pyrimidine nucleotides cytidine and uridine from small two- and three-carbon fragments (glycolaldehyde, cyanamide, cyanoacetylene) in a coupled pathway that also delivered enantiopure ribose (\cite[Powner et al., 2009]{sutherland2009pyrimidine}). And in \citeyear{horning2016rpr}, in-vitro evolution produced the 24-3 polymerase ribozyme, an RNA enzyme that copies a wide range of RNA templates, a first RNA-only version of the polymerase chain reaction (\cite[Horning et al., 2016]{horning2016rpr}).
 
 <figure>
     <img style="width: 34%; height: auto; display: block; margin: 1em auto;" src="hammerhead_ribozyme.png" alt="Three-dimensional structure of the hammerhead ribozyme, one of the small self-cleaving RNA enzymes that demonstrated RNA can act as a catalyst" />
     <figcaption class="md">The \citealternativetitle{img_hammerhead_ribozyme} (CC BY-SA 3.0): the hammerhead ribozyme, one of the small self-cleaving RNA enzymes whose discovery showed that RNA, and not only protein, can be an enzyme. Source: \citeauthor{img_hammerhead_ribozyme}, \citeyear{img_hammerhead_ribozyme}, \citealternativetitle{img_hammerhead_ribozyme}, Wikimedia Commons.</figcaption>
 </figure>
 
-**Getting From Molecules to a System: Metabolism, Hypercycles, and Protocells.** Replication-first (an RNA world) and metabolism-first are the two poles, and the field is not settled between them. \citeauthorlastnameand{wachtershauser1988} took the opposite tack: life began not with a molecule but with a *network*, a set of inorganic, metal-sulfide-catalysed reactions that were autocatalytic even before any membrane existed \cite[Wächtershäuser, 1988]{wachtershauser1988}. If replication is the essence, the formal problem is that a self-replicator that copies itself too imperfectly dilutes its own information away, an **error threshold** that \citeauthorlastnameand{eigen1971selforganization} quantified in \citeyear{eigen1971selforganization} and that marks the boundary between an evolving *quasispecies* and its collapse into noise \cite[Eigen, 1971]{eigen1971selforganization}. \citeauthorlastnameand{eigen1978hypercycle} argued that a *single* molecule cannot reliably cross that threshold: several short replicators that catalyse each other's copying in a closed loop, a **hypercycle**, can pool their information and climb the threshold together \cite[Eigen and Schuster, 1978]{eigen1978hypercycle}. \citeauthorlastnameand{ganti2000chemoton} formalised the minimal self-sustaining unit, the **chemoton**, as a coupled pair of a metabolism and a self-reproducing information network \cite[Gánti, 2000]{ganti2000chemoton}. Whichever molecule won the replication race, the next physical demand was a *boundary*: a compartment that kept the chemistry together. Lipid vesicles and **coacervates** meet that demand, and in \citeyear{smith2010coacervate} \citeauthorlastnameand{smith2010coacervate} showed that coacervate droplets can concentrate reactants and convert a nutrient flux into growth, a concrete working model of a **protocell** \cite[Smith and Szostak, 2010]{smith2010coacervate} \cite[for the general notion of a protocell]{protocell_wiki}.
+**Getting From Molecules to a System: Metabolism, Hypercycles, and Protocells.** Replication-first (an RNA world) and metabolism-first are the two poles, and the field is not settled between them. \citeauthorlastnameand{wachtershauser1988} took the opposite tack: life began not with a molecule but with a *network*, a set of inorganic, metal-sulfide-catalysed reactions that were autocatalytic even before any membrane existed (\cite[Wächtershäuser, 1988]{wachtershauser1988}). If replication is the essence, the formal problem is that a self-replicator that copies itself too imperfectly dilutes its own information away, an **error threshold** that \citeauthorlastnameand{eigen1971selforganization} quantified in \citeyear{eigen1971selforganization} and that marks the boundary between an evolving *quasispecies* and its collapse into noise (\cite[Eigen, 1971]{eigen1971selforganization}). \citeauthorlastnameand{eigen1978hypercycle} argued that a *single* molecule cannot reliably cross that threshold: several short replicators that catalyse each other's copying in a closed loop, a **hypercycle**, can pool their information and climb the threshold together (\cite[Eigen and Schuster, 1978]{eigen1978hypercycle}). \citeauthorlastnameand{ganti2000chemoton} formalised the minimal self-sustaining unit, the **chemoton**, as a coupled pair of a metabolism and a self-reproducing information network (\cite[Gánti, 2000]{ganti2000chemoton}). Whichever molecule won the replication race, the next physical demand was a *boundary*: a compartment that kept the chemistry together. Lipid vesicles and **coacervates** meet that demand, and in \citeyear{smith2010coacervate} \citeauthorlastnameand{smith2010coacervate} showed that coacervate droplets can concentrate reactants and convert a nutrient flux into growth, a concrete working model of a **protocell** (\cite[Smith and Szostak, 2010]{smith2010coacervate}) \cite[for the general notion of a protocell]{protocell_wiki}.
 
-**The Code Freezes, and the First Cell Appears.** The transition from chemistry to biology is not a single event but a threshold crossed, after which Darwinian evolution takes over. The most striking fossil of that threshold is the **genetic code**. \citeauthorlastnameand{crick1968code} argued in \citeyear{crick1968code} that the code's present, near-universal, degenerate form is a **frozen accident**: once the translation machinery had evolved around a particular mapping of codons to amino acids, the mapping could no longer be altered without breaking everything that depended on it, so the first code that worked got locked in for good \cite[Crick, 1968]{crick1968code}. That is the same logic as a legacy software interface that can never be redesigned because an ecosystem has grown on top of it. When a compartment enclosed a self-replicating, catalytic, energy-consuming network, the chemistry became an *organism*, and that organism is what the rocks first caught. What follows is therefore not the beginning of life but the beginning of life's *observable* record: the first cells.
+**The Code Freezes, and the First Cell Appears.** The transition from chemistry to biology is not a single event but a threshold crossed, after which Darwinian evolution takes over. The most striking fossil of that threshold is the **genetic code**. \citeauthorlastnameand{crick1968code} argued in \citeyear{crick1968code} that the code's present, near-universal, degenerate form is a **frozen accident**: once the translation machinery had evolved around a particular mapping of codons to amino acids, the mapping could no longer be altered without breaking everything that depended on it, so the first code that worked got locked in for good (\cite[Crick, 1968]{crick1968code}). That is the same logic as a legacy software interface that can never be redesigned because an ecosystem has grown on top of it. When a compartment enclosed a self-replicating, catalytic, energy-consuming network, the chemistry became an *organism*, and that organism is what the rocks first caught. What follows is therefore not the beginning of life but the beginning of life's *observable* record: the first cells.
 
 **The First Cells: 3.8–3.5 Billion Years Ago.** The earliest secure evidence for life on Earth is geological, not morphological. In 1986, \citeauthorlastnameand{walter1986stromatolites} reported microbially induced sedimentary structures older than 3,470 million years from the Dresser Formation in the Pilbara craton, Western Australia: layered, millimetre-scale laminations produced only by the mat-like growth of microbial communities, the fossil descendants of modern stromatolites. Two years earlier, a bolder claim had appeared: \citeauthorlastnameand{cloud1973isotope} argued in \citeyear{cloud1973isotope} that carbon-isotope fractionation in 3,800-million-year-old graphite from the Isua supracrustal belt in Greenland recorded the metabolic signature of living organisms. That particular claim has since been contested, but the broader conclusion, that life was present on Earth by at least 3.5 Ga, is now secure. In \citeyear{vankranendonk2016microbial}, \citeauthorlastnameand{vankranendonk2016microbial} described 3,700-million-year-old filamentous microfossils and spheroidal cells from the Dresser Formation, pushing the secure morphological record back a further 200 million years.
 
@@ -163,7 +168,7 @@ The original description of the best-preserved Cambrian fauna came from \citeaut
     </figure>
     <figure>
         <img src="burgess_shale_fossils.jpg" alt="An assortment of Burgess Shale fossils from the Middle Cambrian of the Canadian Rockies, showing the extraordinary morphological diversity of the Cambrian Explosion" />
-        <figcaption class="md">The \citealternativetitle{img_burgess_shale_fossils} (CC BY 2.0): a selection of Middle Cambrian fossils from the Burgess Shale, the type locality for the Cambrian Explosion, where the first appearance of most modern animal body plans is preserved in fine detail \cite[Whittington, 1979]{whittington1979burgess}. Source: \citeauthor{img_burgess_shale_fossils}, \citeyear{img_burgess_shale_fossils}, \citealternativetitle{img_burgess_shale_fossils}, Wikimedia Commons.</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_burgess_shale_fossils} (CC BY 2.0): a selection of Middle Cambrian fossils from the Burgess Shale, the type locality for the Cambrian Explosion, where the first appearance of most modern animal body plans is preserved in fine detail (\cite[Whittington, 1979]{whittington1979burgess}). Source: \citeauthor{img_burgess_shale_fossils}, \citeyear{img_burgess_shale_fossils}, \citealternativetitle{img_burgess_shale_fossils}, Wikimedia Commons.</figcaption>
     </figure>
 </div>
 
@@ -172,7 +177,7 @@ The Chinese **Chengjiang lagerstätte**, described in the early 2000s, extended 
 <div class="image-row">
     <figure>
         <img src="vetulicola_cuneatus.jpg" alt="Vetulicola cuneatus, a primitive deuterostome from the Chengjiang biota, with a body plan that predates the clear split between the two major groups of animals" />
-        <figcaption class="md">The \citealternativetitle{img_vetulicola_cuneatus} (CC BY-SA 4.0): <em>Vetulicola cuneatus</em>, a primitive deuterostome from the Chengjiang biota, one of the earliest animals on the lineage leading to the chordates \cite[Shu et al., 2001]{shu2001chengjiang}. Source: \citeauthor{img_vetulicola_cuneatus}, \citeyear{img_vetulicola_cuneatus}, \citealternativetitle{img_vetulicola_cuneatus}, Wikimedia Commons.</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_vetulicola_cuneatus} (CC BY-SA 4.0): <em>Vetulicola cuneatus</em>, a primitive deuterostome from the Chengjiang biota, one of the earliest animals on the lineage leading to the chordates (\cite[Shu et al., 2001]{shu2001chengjiang}). Source: \citeauthor{img_vetulicola_cuneatus}, \citeyear{img_vetulicola_cuneatus}, \citealternativetitle{img_vetulicola_cuneatus}, Wikimedia Commons.</figcaption>
     </figure>
     <figure>
         <img src="hallucigenia_smithsonian.jpg" alt="Hallucigenia sparsa, a bizarre lobopodian from the Cambrian, preserved with its four rows of spines that made it look 'upside down' when first reconstructed" />
@@ -184,12 +189,12 @@ The Chinese **Chengjiang lagerstätte**, described in the early 2000s, extended 
 
 ### The Development of Humans
 
-Humans are not descended from monkeys or any other primate living today; rather, humans and modern apes share common ancestors at various points in the deep past. The order Primates diverged from other mammals approximately 65–80 million years ago, and the lineage leading to Old World monkeys (Cercopithecoidea) split from the lineage leading to apes (Hominoidea) roughly 25–30 million years ago \cite[Begun, 2003]{begun2003planet}. Within the apes, the human lineage (Hominini) diverged from the lineage leading to chimpanzees and bonobos between approximately 6 and 8 million years ago.
+Humans are not descended from monkeys or any other primate living today; rather, humans and modern apes share common ancestors at various points in the deep past. The order Primates diverged from other mammals approximately 65–80 million years ago, and the lineage leading to Old World monkeys (Cercopithecoidea) split from the lineage leading to apes (Hominoidea) roughly 25–30 million years ago (\cite[Begun, 2003]{begun2003planet}). Within the apes, the human lineage (Hominini) diverged from the lineage leading to chimpanzees and bonobos between approximately 6 and 8 million years ago.
 
-Early hominins such as *Sahelanthropus tchadensis* (approximately 7 million years ago) and *Ardipithecus ramidus* (approximately 4.4 million years ago) show a mosaic of ape-like and human-like features \cite[White et al., 2009]{white2009ardipithecus}. The genus *Australopithecus* (approximately 4–2 million years ago) exhibited habitual bipedalism while retaining relatively small brains. Stone-tool knapping, however, **predates** the genus *Homo*: the \citealternativetitle{lomekwi} from approximately 3.3 million years ago, attributed to late australopithecines, is the oldest known assemblage. The emergence of the genus *Homo* around 2.8 million years ago was associated with increasing brain size and the more systematic **\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*. *Homo erectus* (approximately 1.9 million years ago) was the first hominin to spread beyond Africa and developed the more sophisticated Acheulean hand-axe technology. The earliest *secure* archaeological evidence for the controlled use of fire comes from Wonderwerk Cave in South Africa, dated to approximately one million years ago \cite[Berna et al., 2012]{wonderwerk}; the species responsible (late *H. erectus* or a contemporaneous early *Homo* form) is debated.
+Early hominins such as *Sahelanthropus tchadensis* (approximately 7 million years ago) and *Ardipithecus ramidus* (approximately 4.4 million years ago) show a mosaic of ape-like and human-like features (\cite[White et al., 2009]{white2009ardipithecus}). The genus *Australopithecus* (approximately 4–2 million years ago) exhibited habitual bipedalism while retaining relatively small brains. Stone-tool knapping, however, **predates** the genus *Homo*: the \citealternativetitle{lomekwi} from approximately 3.3 million years ago, attributed to late australopithecines, is the oldest known assemblage. The emergence of the genus *Homo* around 2.8 million years ago was associated with increasing brain size and the more systematic **\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*. *Homo erectus* (approximately 1.9 million years ago) was the first hominin to spread beyond Africa and developed the more sophisticated Acheulean hand-axe technology. The earliest *secure* archaeological evidence for the controlled use of fire comes from Wonderwerk Cave in South Africa, dated to approximately one million years ago (\cite[Berna et al., 2012]{wonderwerk}); the species responsible (late *H. erectus* or a contemporaneous early *Homo* form) is debated.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 The controlled use of fire was a major \cite[turning point]{wonderwerk}
 in human evolution. While extensive deposits of ash and charcoal
 from sites dating to the past 400,000 years are well documented, the
@@ -238,11 +243,27 @@ very beginning of the history of machines as a history of
 from the direct task.
 </div>
 
-<div class="md">
-Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago. Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago \cite[Hublin et al., 2017]{hublin2017jebel}. The date at which the cognitive prerequisites for full language were in place remains contested: some scholars speculate, on largely indirect grounds, that they were present by ~135,000 years ago \cite[Miyagawa et al., 2025]{earlylanguage}, but no direct archaeological evidence for symbolic language of that age survives; the earliest undisputed evidence for fully symbolic behaviour dates to roughly 100,000 years ago. The emergence of modern human behavior \cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour}, including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago. The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science, and, ultimately, the intellectual infrastructure for artificial intelligence.
+<div class="md" data-depth="80">
+Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago. Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago (\cite[Hublin et al., 2017]{hublin2017jebel}). The date at which the cognitive prerequisites for full language were in place remains contested: some scholars speculate, on largely indirect grounds, that they were present by ~135,000 years ago (\cite[Miyagawa et al., 2025]{earlylanguage}), but no direct archaeological evidence for symbolic language of that age survives; the earliest undisputed evidence for fully symbolic behaviour dates to roughly 100,000 years ago. The emergence of modern human behavior (\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour}), including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago. The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science, and, ultimately, the intellectual infrastructure for artificial intelligence.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
+**The Earliest Figures: 40,000–35,000 Years Ago.** The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** ("Fanny"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}). Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.
+
+What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**. The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept. And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.
+
+\marginfig{venus_hohle_fels.jpg}{The Venus of Hohle Fels, a mammoth-ivory figurine about 6 cm tall, from the Hohle Fels cave near Schelklingen, Germany (40,000 to 35,000 years old). [Photo: Ramessos, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:VenusHohlefels2.jpg)}
+
+\marginfig{venus_galgenberg.jpg}{The Venus of Galgenberg, nicknamed "Fanny", in green serpentine (7.2 cm), from the Stratzing site in Lower Austria (about 32,000 to 36,000 years old). [Photo: Aiwok, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG)}
+
+**From a Body to a Face: 26,000–14,000 Years Ago.** The Venus figurines are schematic; the first *recognisable* faces came later. The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \cite{dolnivestonice}. A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \cite{lamarchecave}, so individualised that they were long disputed.
+
+\marginfig{dolni_vestonice_head.jpg}{The ivory head from Dolní Věstonice, Czech Republic (about 26,000 years old), one of the oldest known realistic human faces; the carving matches the skull of a buried elderly woman found at the site. [Photo: Zde, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg)}
+
+\marginfig{la_marche_engraving.jpg}{An engraved human figure from the limestone slabs of La Marche, Lussac-les-Châteaux, France (Magdalenian, about 14,000 to 15,000 years old), one of over a hundred individualised faces. [Photo: Znorz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:La_Marche_Cave_Painting.jpg)}
+</div>
+
+<div class="md" data-depth="60">
 ## From Mythos to Logos: The Mental Landscape That Made Computation Thinkable
 
 The physical prerequisites for an LLM are the silicon, the cables, the cooling. But there is a deeper layer: the *mental* prerequisites, the ways of thinking that made it possible to conceive of a machine that reasons. These ways of thinking were not invented for computation. They were invented to explain the sky, to justify the rule of kings, to calculate the tides, and to win a game of dice. Their displacement is total: the same logic that classified Greek gods now classifies the layers of a neural network; the same probability that priced a 17th-century gamble now trains a language model.
@@ -281,7 +302,9 @@ Between the fall of the Western Roman Empire and the European Renaissance, the c
 **Muhammad ibn Musa al-Khwarizmi** (c. 780–850 CE) wrote the \citetitle{alkhwarizmi820algebra} (c. 820 CE), the first systematic treatise on algebra, a work that gave the discipline its name (al-jabr, "the reunion of broken parts") and the discipline of *algorithm* its name (a Latinization of al-Khwarizmi's name). The book solved linear and quadratic equations by geometric and arithmetic methods, and its procedures, step-by-step, unambiguous, mechanical, are the direct ancestors of the *algorithms* that now run on every GPU.
 
 **Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \citetitle{ibnalhaytham1021optics} (\citeyear{ibnalhaytham1021optics}), a seven-volume work that established the **experimental method** as the foundation of optics and, by extension, of natural philosophy. Against the Greek emission and intromission theories of vision, Ibn al-Haytham argued, on the basis of controlled experiments, that vision occurs when light from an object enters the eye, and he designed the first controlled experiments in the history of science: varying one parameter at a time, recording the result, and drawing a general conclusion. The \citetitle{ibnalhaytham1021optics} also described the **camera obscura**, the direct optical ancestor of the photographic camera, the microscope, and the camera that will one day image a brain. The experimental method he codified, hypothesis, controlled experiment, quantitative measurement, general law, is the method that the Royal Society would formalize three centuries later and that the entire empirical science underlying AI depends on.
+</div>
 
+<div class="md" data-mathlevel="35" data-depth="40" data-optionaltitle="The Scientific Revolution: 1543–1687">
 ### The Scientific Revolution: 1543–1687
 
 The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:
@@ -310,7 +333,9 @@ The *Principia* also contained the first rigorous formulation of **calculus** (i
 **Leibniz: The Calculus of Reasoning.** \citeauthorlastnameand{leibniz1686calculus} was working on a project that Newton never conceived: a **universal characteristic** (*Characteristica Universalis*), a formal language in which all concepts are expressed as symbols and all reasoning is performed as calculation. The idea is that all reasoning is, at bottom, a form of computation. The \citetitle{leibniz1666combinatoria} (\citeyear{leibniz1666combinatoria}) articulated the ambition: "If disputes should arise between scholars, it would be unnecessary for them to argue with one another... They can say, let us calculate". The \citetitle{leibniz1686calculus} (\citeyear{leibniz1686calculus}) developed the logical analysis of notions and truths that would, three centuries later, become the foundation of formal logic and, ultimately, of the logic gate.
 
 Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\frac{dy}{dx}$, $\int$) in 1684, two years before Newton's *Principia*. The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.
+</div>
 
+<div class="md" data-depth="40">
 ### The Mathematical Infrastructure of Computation
 
 The Scientific Revolution provided the *physical* model of the world. The *mathematical* infrastructure for modern computation was built in parallel, by people working on problems that had nothing to do with machines:
@@ -346,7 +371,7 @@ Each of these revolutions was driven by problems that had nothing to do with com
  The narrative above traces the *intellectual* lineage of the LLM, from Aristotle's syllogisms to the Transformer. But ideas alone do not compute. Every inference made by a modern language model rests upon a vast, invisible scaffolding of discoveries made by people who never imagined, and could never have imagined, that their work would one day help a machine write poetry. These are the **displaced prerequisites**: contributions so fundamental that they vanish into the background, like the air we breathe but rarely notice.
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 The entire trajectory from stone tools to silicon chips presupposes a
 transformation so fundamental that it is easily overlooked: the
 **Neolithic Revolution**, the transition from nomadic
@@ -402,7 +427,7 @@ reasons entirely unrelated to computation, yet without which the
 entire edifice of artificial intelligence would be inconceivable.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ## The Material Foundations of Computation
 
 ### Materials, Optics, and Metals
@@ -417,12 +442,12 @@ Glass was made in Mesopotamia and Egypt as early as 3500 BCE, but the transparen
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method
 
 No instrument in this history displaced its original purpose so completely as the microscope. Built to examine the fine detail of lenses, cloth, and surfaces, it ended up supplying both the *model* and the *method* of artificial intelligence: the model, because it revealed the neuron; the method, because it taught science how to zoom in until a new world of units appeared.
 
-**The book that named the cell.** \citeauthor{micrographia}'s \citeyear{micrographia} \citetitle{micrographia} was the first major publication of the Royal Society and its first best-seller; Samuel Pepys called it “the most ingenious book that ever I read in my life”. Hooke used a compound microscope, built for him in London by the optician Christopher Cock, magnifying some fifty times in diameter, to describe a louse, a flea, a gnat, a fly's eye, and the jagged edge of a honed razor — the first book to publish drawings of the world as seen through lenses \cite{micrographia_wiki}. The most consequential observation in the book was made on its least interesting specimen: a thin slice of cork. Hooke saw that it was “all perforated and porous, much like a Honey-comb”, and that “these pores, or cells, … were indeed the first microscopical pores I ever saw, and perhaps, that were ever seen” \cite[Hooke, 1665]{hookecork}. He named them *cells*, after the small rooms of a monastery, without knowing what they were for: he had seen only the empty walls of dead plant tissue. But the word caught, and within two centuries it came to name the unit of all living things.
+**The book that named the cell.** \citeauthor{micrographia}'s \citeyear{micrographia} \citetitle{micrographia} was the first major publication of the Royal Society and its first best-seller; Samuel Pepys called it “the most ingenious book that ever I read in my life”. Hooke used a compound microscope, built for him in London by the optician Christopher Cock, magnifying some fifty times in diameter, to describe a louse, a flea, a gnat, a fly's eye, and the jagged edge of a honed razor — the first book to publish drawings of the world as seen through lenses \cite{micrographia_wiki}. The most consequential observation in the book was made on its least interesting specimen: a thin slice of cork. Hooke saw that it was “all perforated and porous, much like a Honey-comb”, and that “these pores, or cells, … were indeed the first microscopical pores I ever saw, and perhaps, that were ever seen” (\cite[Hooke, 1665]{hookecork}). He named them *cells*, after the small rooms of a monastery, without knowing what they were for: he had seen only the empty walls of dead plant tissue. But the word caught, and within two centuries it came to name the unit of all living things.
 
 <div class="smart-quote" data-cite="hookecork">
 I could exceedingly plainly perceive it to be all perforated and porous, much like a Honey-comb, but that the pores of it were not regular … these pores, or cells, … were indeed the first microscopical pores I ever saw, and perhaps, that were ever seen, for I had not met with any Writer or Person, that had made any mention of them before this.
@@ -476,7 +501,7 @@ And the parallel is deliberately architectural. \citeauthorlastnameand{olaha2020
 Strip the microscope from the chain and it breaks in three places at once: the neuron, the unit that became the model of every artificial network, would never have been seen; the electron microscope, its descendant, would no longer watch over the silicon that computes; and the method that the whole science of AI is now applying to its own weights — zoom in, find the units, read the circuits — was first learned from a slice of cork.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### From Amber to Amperes: The Discovery and Harnessing of Electricity
 
 No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation. Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded attributed to Thales, later catalogued by \citeauthor{laertius} in \citetitle{laertius} (Book I, §15). For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.
@@ -507,7 +532,7 @@ The transformation of this curiosity into a usable force required a cascade of u
 A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of “computation” whatsoever.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### From Bloomery to Boolean: The Metals That Compute
 
 Metallurgy is a silent prerequisite whose absence makes every other layer of this history impossible. The trail begins not in a logic textbook but in a smelter's furnace, with the first systematic reflection on what an ore actually is. **\citeauthor{theophrastusstones}**'s \citeyear{theophrastusstones} treatise \citetitle{theophrastusstones} (Περὶ λίθων) is the earliest surviving attempt to classify rocks and minerals by their behavior under heat, including the iron ores that would, within a few centuries, replace bronze as the skeleton of civilisation. A few generations later, **\citeauthor{plinynaturalhistory}**'s \citeyear{plinynaturalhistory} \citetitle{plinynaturalhistory}, in particular books XXXIII and XXXIV, gathered everything the Roman world knew about copper, iron, gold, silver, lead, tin, and mercury, including the mining and smelting processes that turned ore into the material substrate of roads, aqueducts, weapons, coinage, and (by then) the bronze gears of the Antikythera mechanism.
@@ -530,7 +555,7 @@ Yet the deepest metallurgical miracle predates Bessemer by more than a millenniu
 Strip any single one of these metallurgical achievements from the causal chain and it breaks. Smelted copper, drawn into wire and insulated with gutta-percha, became the telegraphic nervous system that linked continents into a single information space. Brass gears, cast and filed to tolerance, made possible the Antikythera mechanism, Babbage's Analytical Engine, and the differential analyzer. Refined silicon, grown into defect-free single crystals by \citeauthor{czochralski1918}'s \citeyear{czochralski1918} process and zone-purified by the \citealternativetitle{siemensprocess}, became the substrate on which \citeauthorlastnameand{semiconductor} etched the first point-contact transistor in \citeyear{semiconductor}. Gold bonding wires, the width of a human hair, connect every silicon die to the package that sits on every accelerator board. Tungsten filaments lit the vacuum tubes of ENIAC; lithium cobalt oxide cathodes, discovered by \citeauthor{goodenough1980licoo2} in \citeyear{goodenough1980licoo2} and industrialized by \citeauthor{yoshino1985liion} in \citeyear{yoshino1985liion}, now power the edge devices that run local language models. None of these were invented for artificial intelligence. All of them, together, are the silent, displaced prerequisites: remove a single one and the chain of inference breaks.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### The Periodic Table as Foundation
 
 Ultimately, every element used in computing, silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets, was first isolated, characterized, and understood through chemistry. Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.
@@ -541,7 +566,7 @@ Ultimately, every element used in computing, silicon (Si, 14) for substrates, co
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="80">
 ### Writing, Numbers, and Ledgers
 
 #### Tally Bones: Counting Before Writing
@@ -550,15 +575,15 @@ External memory did not begin with writing. Long before paper or ink, humans out
 
 #### The First Written Numbers: Tokens, Tablets, and Base 60
 
-The first numbers ever written down were not drawn — they were *pressed*. In the farming villages of southern Mesopotamia, granary clerks and shepherds kept small clay **tokens**: cones, spheres, and lens-shaped lumps, each encoding a unit of account (a small jar of oil, a large jar, a measure of grain, an animal). The shapes had been in use, by the dating of the earliest deposits, since at least the **9th millennium BCE** \cite[Ifrah, 2000]{ifrah2000} \cite[Schmandt-Besserat, 1992]{schmandtbesserat1992}. To make the record tamper-proof, the tokens were sealed inside a hollow clay envelope — a **bulla** — and the shapes were impressed on the outside so the contents could be checked without breaking it: the first external memory of a sealed record, a data structure with a checksum. Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet: the **proto-cuneiform** tablets, the oldest documents in the world, are almost entirely lists of grain, beer, and workers. By c. 2000 BCE the system had abstracted into something recognisably numeric: **two** wedge signs only — the vertical wedge 𒁹 (1) and the corner wedge 𒌋 (10) — combined to form the digits 1–59, then stacked in **base 60** with **position**, the first positional numeral system on record \cite[Chrisomalis, 2010]{chrisomalis2010}. A gap marked an empty position — a zero *placeholder*, but not a number: it was never written in the final position, and there was no radix point, so where the units place fell had to be inferred from context. The sexagesimal legacy is still running: the 360° of the circle, the 60-minute hour, the 60-second minute.
+The first numbers ever written down were not drawn — they were *pressed*. In the farming villages of southern Mesopotamia, granary clerks and shepherds kept small clay **tokens**: cones, spheres, and lens-shaped lumps, each encoding a unit of account (a small jar of oil, a large jar, a measure of grain, an animal). The shapes had been in use, by the dating of the earliest deposits, since at least the **9th millennium BCE** (\cite[Ifrah, 2000]{ifrah2000}; \cite[Schmandt-Besserat, 1992]{schmandtbesserat1992}). To make the record tamper-proof, the tokens were sealed inside a hollow clay envelope — a **bulla** — and the shapes were impressed on the outside so the contents could be checked without breaking it: the first external memory of a sealed record, a data structure with a checksum. Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet: the **proto-cuneiform** tablets, the oldest documents in the world, are almost entirely lists of grain, beer, and workers. By c. 2000 BCE the system had abstracted into something recognisably numeric: **two** wedge signs only — the vertical wedge 𒁹 (1) and the corner wedge 𒌋 (10) — combined to form the digits 1–59, then stacked in **base 60** with **position**, the first positional numeral system on record (\cite[Chrisomalis, 2010]{chrisomalis2010}). A gap marked an empty position — a zero *placeholder*, but not a number: it was never written in the final position, and there was no radix point, so where the units place fell had to be inferred from context. The sexagesimal legacy is still running: the 360° of the circle, the 60-minute hour, the 60-second minute.
 
 #### Roman Numerals: The System That Blocked Arithmetic
 
-While Mesopotamia and Egypt built positional systems, Europe inherited its numerals from Rome — and Rome's system was an abacus made of letters. The seven glyphs **I, V, X, L, C, D, M** descend from **Etruscan** numerals: I (1), X (10, a cross of the hands) and the C-shaped arc for 100, later identified with the letter *C* of *centum*; the "half" values were derived by halving — half of X is V, half of the 50-sign is the inverted-T ⊥ that became L — and 500 and 1000 began as boxed or circled 5 and 10 (⊕, a circle around X) that flattened into **D** and, under the influence of the word *mille*, **M** \cite[Chrisomalis, 2010]{chrisomalis2010} \cite[Ifrah, 2000]{ifrah2000}. Numbers were written **additively** — the value is the sum of the letters — with the subtractive convention (IV, XL, XC, CD, CM) layered on later; the system has no zero, no place value, and no way to say "this position is empty", so 1,009 is simply MIX and a thousand is three M's. Arithmetic in it is not a matter of carrying digits but of *juggling letters*: multiplying MMCDXLVI by anything was a page-long exercise, which is why medieval European calculation was done on the **abacus** and the lined **counting table** (*Rechentisch*) instead of on the page. The same system kept its fractions in base 12: the *as* was divided into twelve *unciae*, written as dots — the source of the English words "ounce" and "inch". From the 14th century the positional 0–9 system steadily displaced it in accounting and science; the Roman numeral survived exactly where no calculation was needed — clock faces, chapter numbers, and the statue of Liberty.
+While Mesopotamia and Egypt built positional systems, Europe inherited its numerals from Rome — and Rome's system was an abacus made of letters. The seven glyphs **I, V, X, L, C, D, M** descend from **Etruscan** numerals: I (1), X (10, a cross of the hands) and the C-shaped arc for 100, later identified with the letter *C* of *centum*; the "half" values were derived by halving — half of X is V, half of the 50-sign is the inverted-T ⊥ that became L — and 500 and 1000 began as boxed or circled 5 and 10 (⊕, a circle around X) that flattened into **D** and, under the influence of the word *mille*, **M** (\cite[Chrisomalis, 2010]{chrisomalis2010}; \cite[Ifrah, 2000]{ifrah2000}). Numbers were written **additively** — the value is the sum of the letters — with the subtractive convention (IV, XL, XC, CD, CM) layered on later; the system has no zero, no place value, and no way to say "this position is empty", so 1,009 is simply MIX and a thousand is three M's. Arithmetic in it is not a matter of carrying digits but of *juggling letters*: multiplying MMCDXLVI by anything was a page-long exercise, which is why medieval European calculation was done on the **abacus** and the lined **counting table** (*Rechentisch*) instead of on the page. The same system kept its fractions in base 12: the *as* was divided into twelve *unciae*, written as dots — the source of the English words "ounce" and "inch". From the 14th century the positional 0–9 system steadily displaced it in accounting and science; the Roman numeral survived exactly where no calculation was needed — clock faces, chapter numbers, and the statue of Liberty.
 
 #### How 0–9 Got Here
 
-The digits in this very sentence are Indian, carried by Arabs, and fixed in form by European type. Their ancestors are the **Brahmi** numerals already visible on the edicts of Ashoka (3rd century BCE) — but Brahmi was still *additive*, with separate signs for each magnitude (1, 10, 100, …) and no zero. Around **600 CE** the writing of numbers in India shifted to *positional* notation: one set of glyphs for 1–9, repeated by position, with a **dot** for the empty place \cite[Chrisomalis, 2010]{chrisomalis2010}; the **Bakhshali manuscript**, radiocarbon-dated to the 3rd–4th century CE, already shows that placeholder in use. Brahmagupta's 628 CE treatise made zero a *number* with rules for arithmetic, and an inscription at **Gwalior** dated **876 CE** is the oldest dated, undisputed zero symbol. The system crossed into the Islamic world in the 8th–9th centuries, where it was called *al-ḥisāb al-hindī* — "Indian arithmetic" — and treated in dedicated monographs by **al-Khwārizmī** (c. 825) and **al-Kindī** (c. 830); the 10th-century **al-Uqlīḍīsī** was the first to extend it to decimal fractions, which is why the system is properly named "Hindu–**Arabic**" \cite[Smith and Karpinski, 1911]{smithkarpinski1911}. Christian Europe first met the digits in the Spanish *Codex Vigilanus* of 976; **Fibonacci**'s 1202 *Liber Abaci* made them a tool of commerce; and the familiar shapes of 0–9 as we set them in type are a product of the late 15th and early 16th centuries, when the medieval Indian and Arabic glyph forms (the Ganges numerals and their descendants) settled into their European forms. "Arabic numerals" is thus a misattribution in the name: Indian invention, Arab carrier, Italian populariser. And zero was not invented only once: the **Maya** independently developed a zero (a shell glyph) for their vigesimal positional system in the Classic period \cite[Ifrah, 2000]{ifrah2000}, and China had already been computing positionally in **base 10 on counting rods** for two millennia before the Indian system arrived, writing the empty rod position as 〇 — the oldest surviving use of that character for zero is in **Qin Jiushao**'s 1247 treatise. Zero as a *placeholder* appears at least three times independently; zero as a *number* appears once.
+The digits in this very sentence are Indian, carried by Arabs, and fixed in form by European type. Their ancestors are the **Brahmi** numerals already visible on the edicts of Ashoka (3rd century BCE) — but Brahmi was still *additive*, with separate signs for each magnitude (1, 10, 100, …) and no zero. Around **600 CE** the writing of numbers in India shifted to *positional* notation: one set of glyphs for 1–9, repeated by position, with a **dot** for the empty place (\cite[Chrisomalis, 2010]{chrisomalis2010}); the **Bakhshali manuscript**, radiocarbon-dated to the 3rd–4th century CE, already shows that placeholder in use. Brahmagupta's 628 CE treatise made zero a *number* with rules for arithmetic, and an inscription at **Gwalior** dated **876 CE** is the oldest dated, undisputed zero symbol. The system crossed into the Islamic world in the 8th–9th centuries, where it was called *al-ḥisāb al-hindī* — "Indian arithmetic" — and treated in dedicated monographs by **al-Khwārizmī** (c. 825) and **al-Kindī** (c. 830); the 10th-century **al-Uqlīḍīsī** was the first to extend it to decimal fractions, which is why the system is properly named "Hindu–**Arabic**" (\cite[Smith and Karpinski, 1911]{smithkarpinski1911}). Christian Europe first met the digits in the Spanish *Codex Vigilanus* of 976; **Fibonacci**'s 1202 *Liber Abaci* made them a tool of commerce; and the familiar shapes of 0–9 as we set them in type are a product of the late 15th and early 16th centuries, when the medieval Indian and Arabic glyph forms (the Ganges numerals and their descendants) settled into their European forms. "Arabic numerals" is thus a misattribution in the name: Indian invention, Arab carrier, Italian populariser. And zero was not invented only once: the **Maya** independently developed a zero (a shell glyph) for their vigesimal positional system in the Classic period (\cite[Ifrah, 2000]{ifrah2000}), and China had already been computing positionally in **base 10 on counting rods** for two millennia before the Indian system arrived, writing the empty rod position as 〇 — the oldest surviving use of that character for zero is in **Qin Jiushao**'s 1247 treatise. Zero as a *placeholder* appears at least three times independently; zero as a *number* appears once.
 
 #### Paper: The Substrate That Made Mass Distribution Possible
 
@@ -570,7 +595,7 @@ External memory long predates paper: Sumerian clay tablets (c. 3400 BCE), Egypti
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="35" data-depth="60">
 The numeral zero, along with the positional decimal system, was \cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci). In his 1202 work *Liber Abaci*, Fibonacci \cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation. Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power. Fibonacci is \cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.
 
 Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India, **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
@@ -580,7 +605,7 @@ Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Afr
 $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### The Printing Press: Mass-Producing Knowledge
 
 <figure>
@@ -591,7 +616,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 **\citeauthor{gutenbergpress}**'s printing press, developed around 1440 in Mainz, combined movable metal type, oil-based ink, and a modified wine press into the first technology for mass-producing identical copies of text. Before Gutenberg, a single book took a scribe months to copy; after him, a press could produce thousands of pages per day. The press made the scientific revolution possible: ideas could be published, circulated, criticised, and improved across distances that a single scholar could never reach. It standardised mathematical notation (making algebra, calculus, and eventually algorithms transmissible across linguistic boundaries), enabled the *Encyclopédie*, and created the mass literacy that the World Wide Web would eventually exploit as its training corpus. Without the printing press, there is no standardisation of knowledge, no scientific community, and no web-scale text corpus on which a language model can be trained.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### Double-Entry Bookkeeping: The First Error-Detecting Code
 
 <figure>
@@ -602,7 +627,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 **\citeauthor{paciolisumma}**'s \citeyear{paciolisumma} \citetitle{paciolisumma} did not invent double-entry bookkeeping, which had been practised in Italian merchant cities for at least two centuries, but it was the first printed, systematic exposition of the method. The principle is simple: every transaction is recorded twice, once as a debit and once as a credit, and the two sides must always balance. If they do not, an error has occurred somewhere in the ledger. This made double-entry the first widely used error-detecting code, a mechanical guarantee of numerical consistency that prefigured checksums, parity bits, and the cyclic redundancy checks that validate every packet on the modern internet. The method also enabled the joint-stock company: by providing an auditable record of assets and liabilities, it allowed strangers to pool capital, trust each other's accounting, and finance ventures from the Dutch East India Company to the semiconductor foundries of Taiwan that no individual could fund alone.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 ### Precision Engineering and Power
 
 #### Navigation and the Longitude Problem
@@ -615,7 +640,7 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 The "longitude problem", determining one's east-west position at sea, was the great scientific challenge of the 18th century. Latitude could be found from the sun's altitude, but longitude required comparing local time (from a sextant observation) with the time at a reference meridian, which meant carrying a clock accurate to within a few seconds over months of ocean travel. **\citeauthor{mercator1569}**'s \citeyear{mercator1569} map projection had already solved the cartographic problem, allowing rhumb-line courses to be plotted as straight lines on a flat sheet. The British Board of Longitude, established in 1714 with a prize of £20,000, funded decades of research in astronomy, horology, and precision engineering. **\citeauthor{harrisonh4}**'s \citeyear{harrisonh4} chronometer finally solved the timekeeping problem, losing only five seconds over 81 days at sea. The longitude prize seeded the precision engineering tradition that would later produce chronometers, sextants, and eventually the machine tools that make interchangeable parts, the foundation of all modern hardware manufacturing.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### Vacuum Technique: Emptying Space to Fill It with Electrons
 
 <figure>
@@ -626,7 +651,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 **\citeauthor{torricellibarometer}**'s \citeyear{torricellibarometer} barometer demonstrated that the atmosphere has weight and, by implication, that the space above the mercury in a sealed tube is empty, a vacuum. **\citeauthor{vonguericke}**'s \citeyear{vonguericke} \citealternativetitle{vonguericke} (1654) made the point dramatically: two teams of horses could not pull apart a sphere evacuated of air. But the decisive step for computation was the development of glassblowing techniques that could seal metal electrodes inside a glass envelope from which the air had been removed. **\citeauthor{geisslertube}**'s \citeyear{geisslertube} \citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light. Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the "Edison effect." **\citeauthor{flemingdiode}**'s \citeyear{flemingdiode} \citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier; **\citeauthor{deforestaudion}**'s \citeyear{deforestaudion} \citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier. The ENIAC (1946) used 17,468 vacuum tubes; every electronic computer until the transistor era was a room full of glowing glass bulbs, each one dependent on the vacuum techniques pioneered by Torricelli and von Guericke three centuries earlier.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### Precision Clocks: The Metronome of Computation
 
 **\citeauthor{huygenspendulum}**'s \citeyear{huygenspendulum} \citetitle{huygenspendulum} built the first pendulum clock in 1656, improving daily accuracy from roughly 15 minutes to about 15 seconds. The key innovation was the escapement mechanism, a device that converts the continuous swing of a pendulum into discrete, uniform ticks. This is the mechanical ancestor of every digital clock: the escapement does for mechanical time what the quartz crystal oscillator (first used in a clock by Warren Marrison at Bell Labs in 1927) does for electronic time, and what the clock signal in a CPU does for computation, namely it breaks continuous flow into countable, synchronous steps. Without precision clocks, there is no synchronous digital logic, no time-division multiplexing in telecommunications, no coordinated distributed systems, and no GPS timestamps. Every modern computer is, at its core, a clock-driven machine.
@@ -637,7 +662,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 #### The Steam Engine: Powering Precision Manufacturing
 
 **\citeauthor{newcomenengine}**'s \citeyear{newcomenengine} atmospheric steam engine was the first practical device for converting thermal energy into mechanical work. Built to pump water from flooded coal mines, it consumed enormous quantities of coal and did so inefficiently. **\citeauthor{wattpatent}**'s \citeyear{wattpatent} separate-condenser patent improved efficiency roughly fourfold, making steam power economical for factories, mills, and eventually railways and ships. The steam engine's significance for computation is indirect but essential: it powered the machine tools (lathes, milling machines, grinders) that produced the precision-machined interchangeable parts on which all subsequent engineering, from Babbage's difference engine to the wave-soldered PCBs of modern data centers, would depend. It also drove the Industrial Revolution's demand for standardised measurement, interchangeable components, and systematic quality control, the same practices, at nanometre scale, that govern semiconductor fabrication today.
@@ -648,14 +673,14 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 </figure>
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 #### Refrigeration and Cooling: Keeping the Mind from Melting
 
 A modern data center generates enormous quantities of heat. Training a large language model pushes thousands of GPUs to their thermal limits for weeks or months. Without industrial **cooling systems**, the silicon would overheat and fail within minutes.
 
-Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**. The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water, often an artificial pond or a specially dammed millpond, chosen so that a few days of sustained frost would freeze it solid. The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months \cite[Ice-cutting on Lake Traunsee, 1899]{eisschlagen_traunsee}. The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes, as fish ponds, fire-water reservoirs, or simply recreational lakes.
+Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**. The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water, often an artificial pond or a specially dammed millpond, chosen so that a few days of sustained frost would freeze it solid. The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months (\cite[Ice-cutting on Lake Traunsee, 1899]{eisschlagen_traunsee}). The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes, as fish ponds, fire-water reservoirs, or simply recreational lakes.
 
-Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams. At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week. The icicles were then knocked off with mallets, collected, and stored \cite[Ice gallows (Eisgalgen) at Mittenwald, 2015]{eisgalgen_mittenwald}. A single large installation, such as the one still occasionally operated at a brewery in Ulm, can “harvest” up to 100 m³ of ice during a sufficiently cold week. Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody, a complete ice-making installation with no moving parts and no machinery at all.
+Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams. At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week. The icicles were then knocked off with mallets, collected, and stored (\cite[Ice gallows (Eisgalgen) at Mittenwald, 2015]{eisgalgen_mittenwald}). A single large installation, such as the one still occasionally operated at a brewery in Ulm, can “harvest” up to 100 m³ of ice during a sufficiently cold week. Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody, a complete ice-making installation with no moving parts and no machinery at all.
 
 <div class="image-row">
     <figure>
@@ -673,7 +698,7 @@ The history of **artificial** cooling traces back to **William Cullen**, who dem
 Today, hyperscale data centers use elaborate cooling systems, from chilled water loops to, increasingly, liquid immersion cooling, consuming megawatts of power just to prevent the hardware from destroying itself. The quiet hum of air conditioning in a server room is as essential to the existence of ChatGPT as the Transformer architecture itself.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### Programmable Media and the Image
 
 #### The Jacquard Loom: Weaving the Concept of Programmable Input
@@ -690,7 +715,7 @@ Yet the conceptual leap was immense: a complex, sequential process had been **en
 Without the loom, there is no concept of externally encoded, interchangeable instructions, no punched card, no magnetic tape, no software. A textile artisan solving a manufacturing problem inadvertently created the first programmable input mechanism.
 </div>
 
-<div class="md">
+<div class="md" data-depth="40">
 While Leibniz's Stepped Reckoner proved that mechanical calculation was possible, it remained a fragile prototype, prone to jamming and never reliable enough for daily use. The gap between theoretical proof-of-concept and practical tool was bridged over a century later by **Charles Xavier Thomas de Colmar**, a French inventor and entrepreneur.
 
 In \citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**, a calculating machine based on Leibniz's stepped drum mechanism. What distinguished it from all prior devices was not mathematical novelty but *engineering reliability and commercial viability*. After decades of refinement, the Arithmometer entered mass production in the 1850s, becoming the **first commercially successful mechanical calculator** and the first to be produced in industrial quantities.
@@ -705,7 +730,7 @@ The machine could perform addition, subtraction, multiplication, and division, a
 The Arithmometer's significance lies not in a conceptual breakthrough but in a practical one: it proved that Leibniz's dream of mechanized calculation could be made robust, reproducible, and useful to non-specialists. It represents the moment when the “calculator” ceased to be a philosopher's curiosity and became a **commercial product**, an essential step in the trajectory from abstract logic to the industrial-scale computation that would eventually power AI systems.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data
 
 A modern vision model is, at the level of bytes, a pile of images together with labels. That shape, a labelled image-sequence dataset, has a remarkably concrete origin in 19th-century France and Philadelphia.
@@ -726,7 +751,7 @@ In 1878, the industrialist **Leland Stanford** commissioned **Eadweard Muybridge
     <figcaption class="md">Muybridge's 1878 sequence of the horse *Occident* galloping past a battery of tripwire cameras: the founding image of \citealternativetitle{muybridge1887catalogue}, and arguably the first instance in history of a *labelled image-sequence dataset*: a continuous motion, sampled in equal time-intervals, with the subject, action and breed known in advance.</figcaption>
 </figure>
 
-Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically. The resulting work, ***Animal Locomotion***, comprised **781 collotype plates containing more than 20,000 individual photographs** \cite[Muybridge, 1887]{muybridge1887catalogue}. Each plate captured a single motion (a woman opening a parasol, an ostrich running, a child ascending stairs) in 36 successive frames, photographed by 12 to 24 synchronised cameras whose shutters were tripped by electromagnets and time-stamped by a chronographic clock. Crucially, every plate was **annotated**: subject, action, age, build, even clothing and props, in exactly the form of a modern supervised-learning dataset. Plate 626, for instance, is not just a horse running, it is *“Gallop; thoroughbred bay mare, Annie G.”*
+Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically. The resulting work, ***Animal Locomotion***, comprised **781 collotype plates containing more than 20,000 individual photographs** (\cite[Muybridge, 1887]{muybridge1887catalogue}). Each plate captured a single motion (a woman opening a parasol, an ostrich running, a child ascending stairs) in 36 successive frames, photographed by 12 to 24 synchronised cameras whose shutters were tripped by electromagnets and time-stamped by a chronographic clock. Crucially, every plate was **annotated**: subject, action, age, build, even clothing and props, in exactly the form of a modern supervised-learning dataset. Plate 626, for instance, is not just a horse running, it is *“Gallop; thoroughbred bay mare, Annie G.”*
 
 Two structural inventions of this project have proved decisive for every vision model trained since:
 
@@ -740,7 +765,7 @@ Muybridge went further still. He built the **zoöpraxiscope**, a projection devi
 Without chronophotography there are no video frames. Without labelled image-sequences there are no video-classification, action-recognition or world-model datasets. Without synchronised multi-view capture there are no neural radiance fields. Without Muybridge's pewter and silver plates, the contemporary vision stack has nothing to look at. The trained image lives because a horse galloped past a row of tripwires in Palo Alto, and a stubborn photographer was willing to spend three years at the University of Pennsylvania counting its hoofbeats.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From the Moon to the GPU: Space Image Processing
 
 Muybridge's labelled images stayed, for half a century, a pile of glass plates. What turned images into *computable* data, and quietly set the scene for the entire vision stack, was done in a very different place: a laboratory at NASA's Jet Propulsion Laboratory, cleaning up grainy pictures of the Moon and the planets arriving over a slow radio link.
@@ -751,11 +776,22 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
 
 <figure>
     <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="ranger7_moon.jpg" alt="A lunar surface image from NASA's Ranger 7 probe, 1964, the kind of grainy image Robert Nathan's team enhanced with the first digital image-processing pipelines" />
-    <figcaption class="md">The \citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first digital image-processing pipelines, the quiet ancestor of the modern computer-vision stack \cite[Tomayko, 1988]{tomayko1988spaceflight}. Source: \citeauthor{img_ranger7_moon}, \citeyear{img_ranger7_moon}, \citealternativetitle{img_ranger7_moon}, Wikimedia Commons.</figcaption>
+    <figcaption class="md">The \citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first digital image-processing pipelines, the quiet ancestor of the modern computer-vision stack (\cite[Tomayko, 1988]{tomayko1988spaceflight}). Source: \citeauthor{img_ranger7_moon}, \citeyear{img_ranger7_moon}, \citealternativetitle{img_ranger7_moon}, Wikimedia Commons.</figcaption>
 </figure>
+
+<div class="image-row">
+    <figure>
+        <img src="ranger7_guericke.jpg" alt="Ranger 7 B-camera image of Guericke crater in Mare Nubium, taken 8.5 minutes before the spacecraft struck the Moon" />
+        <figcaption class="md">The \citealternativetitle{img_ranger7_guericke} (Public Domain): Ranger 7's B-camera photograph of <em>Guericke</em> crater in Mare Nubium, taken 8.5 minutes before impact — a grainy, unevenly-lit frame exactly like the ones Nathan's new pipelines had to stretch, flatten and de-noise. Source: \citeauthor{img_ranger7_guericke}, \citeyear{img_ranger7_guericke}, \citealternativetitle{img_ranger7_guericke}, Wikimedia Commons.</figcaption>
+    </figure>
+    <figure>
+        <img src="ranger7_impact.jpg" alt="Ranger 7's final, highest-resolution photograph of the Moon, taken moments before the spacecraft struck the lunar surface" />
+        <figcaption class="md">The \citealternativetitle{img_ranger7_impact} (Public Domain): Ranger 7's final photograph, the highest-resolution picture of the Moon taken up to that date, moments before the spacecraft struck the surface. Source: \citeauthor{img_ranger7_impact}, \citeyear{img_ranger7_impact}, \citealternativetitle{img_ranger7_impact}, Wikimedia Commons.</figcaption>
+    </figure>
+</div>
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### Networks and Interfaces
 
 #### Land Telegraphy: The First Digital Network
@@ -768,7 +804,7 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
 **\citeauthor{morsetelegraph}**'s \citeyear{morsetelegraph} electromagnetic telegraph and the competing **\citeauthor{cookewheatstone}** \citeyear{cookewheatstone} were the first practical technologies for transmitting information faster than a horse could ride. Morse code, a variable-length binary encoding using short signals (dots) and long signals (dashes), was the first digital communication protocol. By 1866, a transatlantic cable linked Europe and North America; by 1900, over two million miles of telegraph wire encircled the globe. The telegraph introduced concepts that would later become foundational to computer networking: message routing through relay stations (the direct ancestor of packet-switched routers), standardised protocols for interoperation between different manufacturers' equipment, and the idea that a "network" could span continents. The store-and-forward relay stations of the telegraph era were the architectural template for ARPANET's packet-switched routers a century later. Without the telegraph, there is no instant communication, no coordinated railroad scheduling, and no concept of a network of machines forwarding messages, and therefore no internet.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### Fiber Optics and Submarine Cables: The Physical Internet
 
 The “digital ocean” of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
@@ -791,7 +827,7 @@ The “digital ocean” of training data does not exist in an abstract cloud; it
 Without these cables, the internet is a collection of isolated local networks. Without the internet, there is no web-scale training corpus. Without the training corpus, there is no LLM.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### The Silent Other Half: Insulating Electricity from Itself
 
 For every copper wire that carried the first telegraph signal, some unknown insulator had to wrap around it and refuse to carry it themselves. Without insulation, electricity simply arcs to the nearest ground and dissipates as heat; the entire discipline of electrical engineering exists only because someone, somewhere, found a material whose electrons refused to move. The displaced prerequisite, in other words, is not the conductor but the **resistor of motion around it**. The \citealternativetitle{guttapercha} tree, a *Palaquium* of the Malay archipelago, was tapped for centuries by local craftsmen before the British surgeon **William Montgomerie** identified in 1843 its unusual dielectric strength and thermoplastic behaviour. **\citeauthor{faraday}** recognised its insulating value at its introduction, and by 1845 it was being extruded around copper wire to form the first insulated telegraph conductors. **\citeauthor{atlantictelegraph}**'s \citeyear{atlantictelegraph} book \citetitle{atlantictelegraph} documents the central role the material played in the 1857–1858 transatlantic cable attempts: 2,600 nautical miles of copper conductor had to be wrapped in gutta-percha to survive a mile-deep ocean without short-circuiting to seawater. Without gutta-percha, no submarine cable, no global telegraph, no instant transatlantic news, no cable-stitched internet, no undersea fibre backbone.
@@ -806,7 +842,7 @@ The second wave of insulation was synthetic. **\citeauthor{goodyearvulcanization
 Strip any single one of these insulating materials from the causal chain and the chain breaks. Bakelite bobbins let Tesla and Westinghouse's AC motors run unattended for decades; polyethylene's controlled dielectric constant makes the twisted-pair cable in every Ethernet port possible, and its low-loss profile at microwave frequencies is what lets the radar, the cell tower, and the satellite downlink carry data across a continent or an ocean. The enamel coating on a single copper magnet wire is, today, a thin shell of polyimide or polyurethane whose molecular structure was engineered for a thermal class invented for the 1960s space program. Without insulation, the conductor alone cannot even *be* a conductor — a wire shorted to ground is not a wire but a fuse. The displaced prerequisite here is not the metal, not the signal, but the stubbornness of the material wrapped around the metal that lets the signal *stay* a signal.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### From Typewriters to Keyboards: The Mechanical Alphabet
 
 Every prompt typed into an LLM passes through a **keyboard** whose layout was dictated not by computation, but by the jamming tendencies of 19th-century typebar mechanisms.
@@ -823,7 +859,7 @@ In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule pate
 Today, a user's fingers follow a key arrangement dictated by 1870s typebar physics, yet without the typewriter's standardization of rapid text input, the entire paradigm of **conversational AI** would lack its most fundamental interface.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 #### Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face
 
 A machine that cannot *show* its output is, for all practical purposes, mute. The visual display has its origins not in computing, but in 19th-century experimental physics.
@@ -853,7 +889,7 @@ people who could not have foreseen their eventual use in artificial
 intelligence systems.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### The Physics of Computation
 
 #### Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon
@@ -902,10 +938,77 @@ Beyond hardware, physics contributed directly to the mathematical foundations of
 Physics did not set out to create artificial intelligence. It set out to understand the universe. But in doing so, it created every physical prerequisite, from the quantum tunneling effects in transistors to the electromagnetic waves in fiber optic cables, without which no language model could ever exist.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ### The Chemistry of Computation
 
 If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it. Every component of an LLM's physical substrate, from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers, is a product of chemical engineering. Chemistry gave AI its body.
+
+#### Alchemy: The Displaced Root of Chemistry
+
+<figure>
+    <img style="width: 38%; height: auto; display: block; margin: 1em auto;" src="merlin_enchanteur.jpg" alt="Thirteenth-century French miniature of Merlin the Enchanter dictating his prophecies to his scribe" />
+    <figcaption class="md">The \citealternativetitle{img_merlin_enchanteur} (Public Domain): Merlin the Enchanter dictating his prophecies to his scribe, from a thirteenth-century French miniature of Robert de Boron's *Merlin en prose* — the magician whose art promised to command the world and could not, emblem of the failed magic from which chemistry was born. Source: \citeauthor{img_merlin_enchanteur}, \citeyear{img_merlin_enchanteur}, \citealternativetitle{img_merlin_enchanteur}, Wikimedia Commons.</figcaption>
+</figure>
+
+Before chemistry could purify silicon, it had to exist — and it was born inside a failed magic. *Chemistry* descends from *alchemy*: the Arabic *al-kīmiyā* Europe borrowed was a loan from Late Greek *khēmeía* (*Khemeu* in the third-century papyri), traced in turn to the Egyptian *khem*, the "black earth" of the Nile \cite[the etymology]{alchemy_wiki}. Alchemy was the art of transmuting base metals into gold, distilling an *elixir of life*, and perfecting matter through a staged *Great Work* (*opus magnum*). Its *goal* was impossible — no chemistry turns lead into gold, no powder grants immortality — yet the craft behind it, transforming one substance into another by fire, reaches back to the first metalsmiths, five thousand years ago, and ran in parallel across Roman Egypt, the Islamic world, medieval Europe, China, and India \cite[overview]{alchemy_wiki}. The impossible aim is what made the *instrument* possible: chasing it, the alchemists built the laboratory.
+
+**Before the word: metal and idea.** Before the name, people were smelting copper (c. 5500 BCE), casting bronze by 3500 BCE, and — in the late Bronze Age — working iron, a metal so hard to extract that its secret was guarded for centuries \cite[overview]{alchemy_wiki}. To make metal is already to *transform matter by fire according to a method*, the seed of the enterprise. The Greeks gave the craft its first theory: **Empedocles** (c. 490–430 BCE) held all matter to be a mixture of four elements — earth, water, air, fire — combined and separated by Love and Strife \cite[on the four elements]{empedocles}; **Democritus** (c. 460–370 BCE) went further, making matter of indivisible *atoms* in the void, the first claim that the world is built from a finite set of discrete parts \cite[on Democritus]{democritus} \cite[on atomism]{atomism}. The four elements would govern chemical thinking for two thousand years; the atom would resurface as the foundation of the periodic table and of a chip's crystal lattice.
+
+**The first recipes.** The earliest alchemical *documents* to survive are not treatises but craft recipes. The **Stockholm Papyrus** and **Leyden Papyrus X** (both copied c. 300 CE) list instructions for dyeing cloth, making artificial gemstones, and — tellingly — *imitating* gold and silver, plating base metal to pass as the precious kind \cite[on the Stockholm Papyrus]{stockholm_papyrus} \cite[on the Leyden Papyrus X]{leyden_papyrus_x}. Attributed to the mythical **Pseudo-Democritus** and the craftsman **Bolus of Mendes** \cite[on Pseudo-Democritus]{pseudo_democritus} \cite[on Bolus of Mendes]{bolus_of_mendes}, they mark the moment the potter's, dyer's, and gold-beater's trades became written secret knowledge — the moment craft becomes *alchemy*. **Diocletian** is said to have ordered the alchemical books burned in AD 292; the need for such an order measures how much had accumulated \cite[overview]{alchemy_wiki}.
+
+**The roots: the Emerald Tablet and the sealed world.** The oldest substantial alchemical texts come from third-century Roman Egypt, above all **Zosimos of Panopolis** \cite[on Zosimos]{zosimos_panopolis}, framed by a mythical sage, **Hermes Trismegistus**, the "Thrice-Great", said to have authored the **Emerald Tablet** (*Tabula Smaragdina*) \cite[on Hermes]{hermes_trismegistus} \cite[on the Tablet]{tabula_smaragdina}. The Tablet is a dozen lines long; its governing line — *that which is below is like that which is above* — claims the sealed vessel on the bench enacts the transformations of the cosmos. That a small closed system can re-run the whole of nature in miniature is the original statement of *scaling the universe down into a test tube* — the same logic that lets a neuron model a synapse, a transistor a switch, and a trained network a corpus.
+
+**The Islamic Golden Age: alchemy becomes method.** Translated into Arabic, alchemy was recast as a natural philosophy of *process*. At its centre stands **Jabir ibn Hayyan** (the Latin *Geber*), to whom a large corpus of eighth- and ninth-century treatises is attributed; he is often called the father of early chemistry \cite[on Jabir]{jabir_ibn_hayyan}. That corpus made the art procedural — *calcination, sublimation, crystallization, distillation, filtration* as repeatable operations — and gave the first clear accounts of the mineral acids, **nitric, sulfuric, hydrochloric**, and of **aqua regia**, the one mixture that dissolves even gold \cite[on aqua regia]{aqua_regia}. It also built a theory of matter on two deeper principles, *sulfur* (the combustible) and *mercury* (the volatile), that would shape European alchemy for centuries \cite[on alchemy in the Islamic world]{alchemy_islam}. Nor was the goal accepted: the physicians **al-Razi** (Rhazes) and **Avicenna** (Ibn Sina) subjected transmutation to the sceptical scrutiny they brought to medicine, and al-Razi's *Book of Secrets* models the new empirical temper \cite[on al-Razi]{al_razi} \cite[on Avicenna]{avicenna}.
+
+<figure>
+    <img style="width: 40%; height: auto; display: block; margin: 1em auto;" src="jabir_alembic.jpg" alt="Drawing and description of an alembic attributed to Jabir ibn Hayyan, 8th century" />
+    <figcaption class="md">The \citealternativetitle{img_jabir_alembic} (Public Domain): an alembic as \citeauthor{img_jabir_alembic} drew and described in the eighth century, one of the earliest recorded distillation apparatuses. Source: \citeauthor{img_jabir_alembic}, \citeyear{img_jabir_alembic}, \citealternativetitle{img_jabir_alembic}, Wikimedia Commons.</figcaption>
+</figure>
+
+That shift — from a *ritual* to a *reproducible sequence of operations* yielding a *reproducible result* — is the method of science and of the semiconductor fab: a written procedure, followed step by step, reliably gives the same outcome.
+
+**The glass of the laboratory.** The alchemists' second great invention was physical: the glassware.
+
+<figure>
+    <img style="width: 62%; height: auto; display: block; margin: 1em auto;" src="alchemist_in_his_studio.jpg" alt="A 17th-century painting of an alchemist in his studio, surrounded by furnaces, stills, and vessels" />
+    <figcaption class="md">The \citealternativetitle{img_alchemist_studio} (Public Domain): an alchemist in his studio, as \citeauthor{img_alchemist_studio} painted him, the bench crowded with the furnaces, stills, and vessels that were his true instrument. Source: \citeauthor{img_alchemist_studio}, \citeyear{img_alchemist_studio}, \citealternativetitle{img_alchemist_studio}, Wikimedia Commons.</figcaption>
+</figure>
+
+**Maria the Jewess**, working in Alexandria in the early centuries CE, is credited with the *bain-marie* (gentle, indirect heating) and the distillation vessels *tribikos* and *kerotakis* \cite[on Maria]{maria_jewess}. Centuries later, **Andreas Libavius** catalogued the whole apparatus in his *Alchymia* (1597) \cite[on Libavius]{libavius}.
+
+\marginfig{libavius_alembics.png}{The \citealternativetitle{img_libavius_alembics} (Public Domain): the alembics and distillation vessels as \citeauthor{img_libavius_alembics} drew them in *Alchymia* (\citeyear{img_libavius_alembics}), a catalogue of the laboratory glassware that chemistry would inherit.}
+
+Every one of these vessels — the retort, the alembic, the slow **athanor** furnace \cite[on the athanor]{athanor} — is the direct ancestor of the modern laboratory's glassware, and of the sealed, temperature-controlled chambers in which silicon wafers are doped, etched, and grown.
+
+**Two other lineages: China and India.** In **China**, alchemy grew up inside **Taoism** in two forms: *waidan*, the "external" alchemy of elixirs, and *neidan*, the "internal" alchemy of cultivating the body's own substances \cite[on Chinese alchemy]{chinese_alchemy}. The external elixir was typically based on **cinnabar** (mercury sulfide), reduced to mercury and mixed with other metals in the search for immortality — a search so persistent that the mercury is thought to have poisoned several emperors who took it \cite[on Chinese alchemy]{chinese_alchemy}. The fourth-century Taoist **Ge Hong** systematised it in his *Baopuzi*, the classic of the Chinese tradition \cite[on Ge Hong]{ge_hong}. In **India**, a parallel tradition, **rasayana** (later *rasashastra*, "the knowledge of mercury"), treated mercury and its compounds as the active principle of transformation and the path to an imperishable body, codified by the alchemist-philosopher **Nagarjuna** in his *Rasendramangalam* and by **Nityanatha** in the *Rasaratnakara* \cite[on rasayana]{rasayana} \cite[on Nagarjuna the metallurgist]{nagarjuna_metallurgist}. In both, as in the West, the same structure recurs: an impossible goal (immortality, a perfected body), a search for a single potent substance (mercury, the elixir), and, as by-product, a growing, written, reproducible technology of transforming matter.
+
+**Medieval Europe: the art goes to school.** The Arabic corpus came back into Latin in the twelfth and thirteenth centuries. The first major translation, **Robert of Chester's** *Liber de compositione alchemiae* (1144), opened the Western tradition \cite[on Robert of Chester]{robert_of_chester} \cite[on the Liber de compositione]{liber_de_compositione}; the *Turba Philosophorum*, a dramatized debate among the "philosophers", became one of the most widely copied alchemical texts \cite[on the Turba]{turba_philosophorum}. The thirteenth-century natural philosophers **Albertus Magnus** and **Roger Bacon** took the experimental program seriously even as they remained bound to the older elemental theory \cite[on Albertus Magnus]{albertus_magnus} \cite[on Roger Bacon]{roger_bacon}.
+
+**Paracelsus: alchemy learns to be useful.** The last great alchemist was the first great chemist of medicine. **Paracelsus** (Theophrastus von Hohenheim, 1493–1541) broke with the Galenic tradition, insisted that a substance's *dose* and *preparation* mattered more than its occult properties, and founded **iatrochemistry**, the chemical treatment of the body \cite[on Paracelsus]{paracelsus} \cite[on iatrochemistry]{iatrochemistry}. He recast the theory of matter: in place of the four classical elements, three "first principles", the *tria prima* — **sulfur** (flammability), **mercury** (volatility), **salt** (solidity) — out of which all bodies were compounded, to be separated, purified, and recombined by the alchemist's art.
+
+<figure>
+    <img style="width: 34%; height: auto; display: block; margin: 1em auto;" src="paracelsus_portrait.jpg" alt="Portrait of Paracelsus (Theophrastus von Hohenheim)" />
+    <figcaption class="md">The \citealternativetitle{img_paracelsus_portrait} (Public Domain): \citeauthor{img_paracelsus_portrait} (Paracelsus, 1493–1541), who turned the alchemists' dream of a universal *elixir* into the systematic preparation of medicines, the founding move of pharmacology. Source: \citeauthor{img_paracelsus_portrait}, \citeyear{img_paracelsus_portrait}, \citealternativetitle{img_paracelsus_portrait}, Wikimedia Commons.</figcaption>
+</figure>
+
+Alchemy's dream of a perfecting *elixir* became, in his hands, *pharmacology*: the deliberate, repeatable preparation of active substances. The quest for a "universal medicine" that alchemists chased for a millennium still runs in the background of every drug-discovery pipeline.
+
+**The long sixteenth century.** **Michael Sendivogius** (1566–1636), a Polish alchemist, is credited with distilling and recognising, around 1600, a gas that supports both flame and breath — what we now call **oxygen** — two and a half centuries before Lavoisier named it \cite[on Sendivogius]{sendivogius}. The English mathematician **John Dee** built an entire symbolic system, the *Monas Hieroglyphica* (1564), on the conviction that nature's processes follow lawful, decodable patterns — the conviction, stripped of its occult dress, that later underwrites every formal model of a physical system \cite[overview]{alchemy_wiki}.
+
+**Newton, the alchemist.** The displacement was complete by the time of **Isaac Newton**, who wrote more on alchemy than on physics or mathematics and spent his later years in a private, coded investigation of transmutation \cite[on Newton's alchemy]{newton_alchemy}. The man who wrote the laws of motion was, in private, still trying to make gold. Alchemy had by then become "normal" science in the sense that matters: its *aims* were abandoned, but its *tools* — furnace, alembic, acid, sealed vessel, notebook of reproducible procedures — passed intact to the new chemistry.
+
+**Boyle, and the first doubt.** The first great crack in the alchemical edifice came from within, from **Robert Boyle** (1627–1691). In *The Sceptical Chymist* (1661) — a dialogue between a chymist and his sceptical interlocutor — Boyle attacked the *tria prima* and the Aristotelian four elements as explanations of matter's properties, and proposed a *corpuscular* account in which an *element* is simply a body not shown to be composed of simpler bodies \cite[on the Sceptical Chymist]{sceptical_chymist} \cite[Boyle's text]{sceptical_chymist_text}. He did not abolish the laboratory or the search for transmutation (he kept a private alchemical program); he changed the *standard of proof*. A theory now had to account for observable change, and an "element" was defined by what it could not be reduced to, not by what it was mystically believed to be. That is the method of science, arriving in the chemistry of the body.
+
+**Failure as the engine of rigor.** The decisive turn came when alchemy's central claim — transmutation — was finally *falsified*. **Antoine Lavoisier**'s careful weighing in the 1770s and 1780s showed that combustion was not the release of a mysterious *phlogiston* \cite[on phlogiston]{phlogiston} but a combination with **oxygen**, and that in a closed reaction the total mass of matter is neither created nor destroyed \cite[on Lavoisier]{lavoisier}. With the balance as its central instrument, chemistry became quantitative, predictive, and — above all — *falsifiable*. The **philosopher's stone**, that legendary agent that would transmute any base matter into gold \cite[on the stone]{philosophers_stone}, was revealed to be a fiction. But the *idea* it encoded — a substance that drives a transformation while remaining unchanged — is the definition of a **catalyst**, and catalysts run every modern chemical plant, including the ones that make silicon. And the alchemists' *Great Work*, a long iterative cycle of transformations (blackening, whitening, yellowing, reddening), is at the level of structure the same loop a process engineer runs: apply, observe, adjust, repeat.
+
+<figure>
+    <img style="width: 42%; height: auto; display: block; margin: 1em auto;" src="flaming_heart_alchemical.jpg" alt="Plate from an alchemical and rosicrucian compendium (c. 1760) showing the flaming heart, a symbol of the Great Work" />
+    <figcaption class="md">The \citealternativetitle{img_flaming_heart} (Public Domain): the "flaming heart" from an alchemical and rosicrucian compendium of about \citeyear{img_flaming_heart}, an emblem of the *Great Work*, the long staged process whose goal was never achieved and whose method was. Source: \citeauthor{img_flaming_heart}, \citeyear{img_flaming_heart}, \citealternativetitle{img_flaming_heart}, Wikimedia Commons.</figcaption>
+</figure>
+
+**Why alchemy is a prerequisite of AI.** Strip the alchemical layer and the chain breaks, as it does without the microscope or the neuron doctrine. No alchemy, no laboratory; no laboratory, no reproducible procedure; no reproducible procedure, no systematic discovery of the acids and techniques chemistry needed; no chemistry, no silicon purification, no doping, no photolithography, no transistor. The discipline that gave the machine its *body* began as a dream that could not be realized, and became indispensable only by failing. The gold the alchemists never made is the gold of the wire bonds in every accelerator; the elixir they never found is the pure silicon on which every inference runs.
+
+**The dream returns: AI and chemistry.** The arc closes almost too neatly. The alchemists' dream was to *understand matter well enough to command it* — to predict which combinations of substances yield which results, and to design new substances with the properties they wanted. For four centuries it was a fantasy, because no one had the computational power to hold the space of all possible substances in their head. Now we do. In 2021, DeepMind's **AlphaFold2** predicted the three-dimensional structure of essentially every known protein — around two hundred million of them — and released them to the public, a single model redrawing the map of biochemistry overnight \cite[on AlphaFold]{jumper2021alphafold} \cite[the database]{alphafold_db} \cite[overview]{alphafold_wiki}; the work shared the 2024 Nobel Prize in Chemistry \cite[on the Nobel Prize]{nobel2024chemistry}. In 2023, **GNoME** used a neural network to predict the stability of crystalline materials at scale, generating **2.2 million** previously unknown stable structures — 381,000 on the thermodynamic convex hull, the most stable configurations — of which 736 have since been synthesised and confirmed \cite[on GNoME]{merchant2023gnome}. The *philosopher's stone* — the hypothetical substance that drives a transformation — has reappeared as a *model* that finds, in the space of all possible matter, the configurations that will actually hold. The dream alchemy could not realise, for want of the tool, now runs in a data centre: the body of the machine is being designed by the machine's own descendant.
 
 #### Silicon Purification: From Sand to Semiconductor
 
@@ -934,7 +1037,7 @@ As GPU clusters push thermal limits, data centers increasingly turn to **liquid 
 Chemistry did not intend to create artificial intelligence. It intended to understand and transform matter. But in doing so, from purifying silicon to synthesizing photoresists to engineering cooling fluids, it provided every material prerequisite without which no language model could ever be physically instantiated.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ### The Hardware of AI
 
 
@@ -956,9 +1059,27 @@ NASA never asked for anything that could not be done with the current technology
 
 * **Software first.** For the Viking lander, Martin Marietta's team inverted the usual order: they built an *emulated* hardware mock-up and finished the software a full **year before** the flight hardware existed, letting the hardware's requirements evolve around the code \cite{tomayko1988spaceflight}. "Software first", where the program defines the machine rather than the other way around, is now the default way embedded and accelerator systems are designed.
 
+#### The Polar Program That Nudged the State of the Art
+
+The poles gave AI three things it could not get anywhere else: the oldest data on Earth, the first reason to aim a giant computer at the whole sky, and a benchmark of cold the next computer had to beat.
+
+**The data is ice.** An ice core is a column of fallen snow compressed to ice, each year's air sealed in its bubbles. Polar drilling, begun in the 1957–58 International Geophysical Year — the Soviet Vostok core, nearly 3,700 m deep and holding 420,000 years, the EPICA Dome C core with 800,000 years of CO₂ and temperature, and Greenland's GRIP/NEEM — turned the ice sheets into a deep-time archive \cite[ice cores]{icecorewiki} \cite[Vostok Station]{vostokstation}. No ice core, no 800,000-year climate record, and no dataset long enough to anchor a climate model.
+
+\marginfig{vostok_ice_core.jpg}{Vostok Station, Antarctica, and the caves cut into the ice sheet to store drill cores at −55 °C year-round. [Photo: Todd Sowers, Lamont–Doherty / NOAA, public domain](https://commons.wikimedia.org/wiki/File:Wostok-Station_core32.jpg)}
+
+**The demand was the atmosphere.** Forecasting the weather was the first problem worth a digital computer. Jule Charney, at the Institute for Advanced Study with von Neumann, worked out the theory of upper-air "long waves" (\cite[Charney, 1947]{charney1947longwaves}), and in 1950 his team ran the **first numerical weather forecast on the ENIAC** (\cite[Charney, Fjørtoft & von Neumann, 1950]{charney1950nwp}). Weather and climate models remain among the largest supercomputing workloads, run at gold-standard centres such as ECMWF \cite{ecmwf}.
+
+\marginfig{eniac_1946.jpg}{Two of the ENIAC's programmers, Jean "Betty" Jennings and Frances Bilas, setting up the machine in 1946 — the computer that, with Charney's team, produced the first numerical weather forecast. [Photo: U.S. Army, public domain](https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg)}
+
+**The cold had to be beaten.** Vostok has recorded −89 °C, the coldest reliably measured on Earth \cite{vostokstation}. Beating that cold is the hidden prerequisite of the next compute substrate: Kamerlingh Onnes liquefied helium and found superconductivity (1911; Nobel 1913) \cite{onnes1913nobel}, the dilution refrigerator (1964) pushed to 2 mK \cite{dilutionfridge}, and **superconducting qubits now run below 15 mK** in IBM and Google processors \cite{superconductingqubit}.
+
+\marginfig{qubit_cryostat.jpg}{The FMN Laboratory team (Bauman University, Moscow) assembling the cryogenic stage of a superconducting quantum computer, cooled to near absolute zero. [Photo: Sergey Kushlevich, CC BY 4.0](https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg)}
+
+**The full circle.** In 2023 DeepMind's **GraphCast**, a graph network trained on four decades of global reanalysis, forecast ten days of weather in under a minute on one TPU, beating ECMWF's model on over 90% of measured variables (\cite[Lam et al., 2023]{lam2023graphcast} \cite[GraphCast, open source]{graphcast_github}). The ice and the atmosphere that forged the machines are now read by them.
+
 #### The Central Processing Unit (CPU)
 
-The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1946), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see ENIAC description]{eniac1946}. The transistor (1947) made miniaturization possible \cite[Bardeen et al., 1948]{semiconductor}, and the **integrated circuit**, independently conceived by **Jack Kilby** (1958) \cite[Kilby, 1958]{kilbyic} and **Robert Noyce** (1959) \cite[Noyce, 1959]{noyceic}, placed multiple transistors on a single die.
+The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1946), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see ENIAC description]{eniac1946}. The transistor (1947) made miniaturization possible (\cite[Bardeen et al., 1948]{semiconductor}), and the **integrated circuit**, independently conceived by **Jack Kilby** (1958) (\cite[Kilby, 1958]{kilbyic}) and **Robert Noyce** (1959) (\cite[Noyce, 1959]{noyceic}), placed multiple transistors on a single die.
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="eniac.jpg" alt="The ENIAC at the Moore School of Electrical Engineering, with Cpl. Irwin Goldstein setting switches on one of its function tables" />
@@ -1025,7 +1146,7 @@ Every digital computer operates to the rhythm of a **crystal oscillator**. The q
 None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the “displaced prerequisite”: a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ## From the Battlefield to AlphaGo: How War Research Helped to Build Modern AI
 
@@ -1077,7 +1198,7 @@ These threads, codebreaking, fire control, government patronage, and statistical
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 The contribution of nuclear weapons research to AI is less well-known than that of the wartime codebreakers, but quantitatively and qualitatively it is comparable. Three threads deserve attention.
 
@@ -1125,7 +1246,7 @@ The history of AI is not only the history of algorithms. It is also the history 
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ## To the Moon and Beyond: How Spaceflight Helped to Build the Invisible Scaffolding for Modern AI
 
@@ -1189,11 +1310,85 @@ Rudolf Kálmán's recursive filter \cite{kalman1960filter} was developed at the 
 
 Spaceflight's gift to computing is not only success. On 4 June 1996 the maiden flight of the European **Ariane 5** launcher broke apart 39 seconds after lift-off. The cause, established beyond doubt by the inquiry board \cite{ariane501_report}, was an unremarkable line of code: a 64-bit floating-point value, the horizontal-bias estimate of an inertial reference unit, was converted to a 16-bit signed integer and overflowed. The exception disabled the active unit; the backup unit, running identical software, failed moments later for the same reason; the resulting attitude data steered the booster into aerodynamic loads that destroyed it. The alignment routine that caused the crash had already served its purpose on Ariane 4, whose trajectory it was written to handle, and simply did nothing useful on Ariane 5. For AI, the lesson is that numerical robustness is a systems property, not a library feature: silent overflows, unvalidated conversions, and trusted inherited defaults are not theoretical concerns. A single such bug destroyed a launch vehicle worth several hundred million dollars and redefined the modern discipline of software verification.
 
-None of these systems was built for AI. Together they form much of the navigational and operational backbone on which every mobile robot, including the autonomous vehicles studied by every modern ML lab, now depends.
+### The Space Program's Unexpected Payload: What the Void Left in the Code
+
+The machines above are the visible lineage: the guidance computer, the fly-by-wire law, the autonomous rover. But the space program's deeper legacy is a set of ideas that migrated into AI *sideways*, through problems no one was trying to solve for computation. The vacuum, the light-delay, the radiation, and the sheer size of a sky survey each forced an invention that, decades later, turned out to be load-bearing for a model.
+
+#### Space Radiation: The Bit Flip That Now Haunts the Data Center
+
+A single high-energy particle, a fragment of a cosmic ray that no atmosphere is left to stop, can strike a memory cell and flip one stored bit. This **single-event upset** (SEU) is a constant, unavoidable background in orbit, so a spacecraft's electronics have to be built to *expect* its own memory to lie \cite[Single-event effect]{wiki_single_event_effect}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block; margin: 1em auto;" src="data_center.jpg" alt="A data center aisle of server racks" />
+    <figcaption class="md">The \citealternativetitle{img_data_center} (CC BY-SA 2.0): a data-center aisle, the ground-based home of the same bit-flip threat that radiation poses in orbit — where a single silent flip in a GPU's memory can quietly corrupt a training run. Source: [Christopher Bowns, CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg).</figcaption>
+</figure>
+
+The toolkit is old and blunt: **error-correcting codes** detect and repair single-bit errors; **scrubbing** periodically re-reads memory and fixes what it finds; and the heaviest hammer, **triple modular redundancy**, runs the same computation three times on separate hardware and lets the majority vote, so that one flipped bit loses \cite[Triple modular redundancy]{wiki_tmr}. A spacecraft computer is, in effect, a machine that does not trust its own memory.
+
+The displacement is startling. The same bit-flip problem now lives not in the void but in the data center. A single corrupted word in a GPU's high-bandwidth memory, or a **silent data corruption** — the hardware returning a wrong result *without* raising a single error flag — can quietly poison a training run that has already consumed weeks of compute and millions of dollars, and the corruption is often invisible until a loss curve suddenly goes wrong (\cite[Ma et al., 2025]{arxiv_sdc_llm}). The discipline "the machine may lie to you without telling you, so run it three times and cross-check" was invented for a computer hanging in space, and it is the same discipline — ECC, redundancy, checkpointing, and replication — that keeps a ten-thousand-GPU cluster from training on garbage. The radiation belt above a low orbit is the reason a data center on the ground is taught to doubt its own silicon.
+
+#### The Corner Cubes on the Moon: How a Range Finder Became the Car's Eyes
+
+When Apollo 11, 14, and 15 landed, the astronauts left behind small arrays of **corner-cube retroreflectors**, mirrors that reflect a beam of light straight back to whoever aimed it, regardless of the angle. Since 1969, observatories have fired a laser at those cubes and *timed the round trip of the pulse* to measure the Earth–Moon distance to the millimetre \cite[Lunar laser ranging]{wiki_lunar_laser_ranging}. The whole trick is one line of arithmetic: distance is the speed of light times the round-trip time, divided by two.
+
+<figure>
+    <img style="width: 55%; height: auto; display: block; margin: 1em auto;" src="apollo_alrr.jpg" alt="A corner-cube retroreflector array of the kind Apollo left on the Moon" />
+    <figcaption class="md">The \citealternativetitle{img_apollo_alrr} (CC0): a corner-cube retroreflector array of the kind the Apollo crews set down on the Moon. Aim a laser at it and the light comes straight back to you no matter the angle — the trick that lets a ground telescope measure the Earth–Moon distance to the millimetre, and the same trick at the heart of LIDAR. Source: [Mark Avino, CC0](https://commons.wikimedia.org/wiki/File:Laser_Ranging_Retro-Reflector,_Apollo_(NASM2020-00366).jpg).</figcaption>
+</figure>
+
+That single idea — send out light, time the echo, and the range is known — is the entire operating principle of **LIDAR**, the laser-radar that now lets a self-driving car paint a millimetre-precise three-dimensional map of the street around it in real time \cite[Lidar]{wiki_lidar}. And the corner cube itself, the device that bounces light faithfully home, is the same class of hardware now bolted onto survey targets, road signs, and drones as a LIDAR registration reference. A piece of hardware engineered to measure the Moon is the conceptual ancestor of the sensor that lets a car decide, in a fraction of a second, how far away a pedestrian is.
+
+#### Forty Minutes of Silence: The Light-Delay That Invented "Autonomy" and a New Kind of Network
+
+Talk to a rover on Mars and the reply takes three to twenty-two minutes one way, depending on where the two planets are in their orbits; at the outer planets it is hours. You cannot run a mission on a request–reply loop when a single "ping" is an hour of silence. That constraint forced two of the most consequential ideas in modern autonomy and networking.
+
+* **Autonomy, literally.** When you cannot wait for a reply, the machine has to notice a problem and fix it before an engineer can even hear about it. *Deep Space 1* (1998) flew **Remote Agent**, the first artificial-intelligence system to plan, execute, and repair a spacecraft *on its own*: presented with three simulated hardware failures, it diagnosed each and worked around it, no human in the loop \cite[Deep Space 1]{wiki_deep_space_1}. Its **Autonav** was fully autonomous navigation — the craft worked out its own position by watching known asteroids drift against the fixed star background, an inverse GPS performed in deep space, freeing it from depending on a ground station for every fix. "Act without waiting for a reply" is the literal origin of the word *autonomous* in AI; its descendants are the self-driving stack and the on-device models that must reason on a laptop or a phone with no round trip to a server.
+
+* **Delay-tolerant networking.** A space link is slow, lossy, and periodically *simply disconnected* (a spacecraft slides behind the Sun and loses contact). The NASA/JPL **DTN** working group answered with the **Bundle Protocol**: cut the data into self-contained "bundles," store them, and forward them opportunistically, passing custody from node to node, with no end-to-end connection assumed at all \cite[Delay-tolerant networking]{wiki_delay_tolerant_networking}. Standardized by the IETF, that "store, carry, forward" logic now underpins the Internet of Things, disaster-recovery communications, and military networks — precisely the places where the old "always connected, end-to-end" assumption breaks down. A network was designed around the silence between worlds, and the same design is now what keeps data moving where any link can vanish.
+
+<figure>
+    <img style="width: 30%; height: auto; display: block; margin: 1em auto;" src="deep_space_1_spacecraft.jpg" alt="The Deep Space 1 spacecraft" />
+    <figcaption class="md">The \citealternativetitle{img_deep_space_1} (Public Domain): *Deep Space 1* (1998), the first spacecraft to carry an AI that planned its own actions and diagnosed and worked around its own faults — the flight proof that a machine could get work done without waiting for a reply from Earth. Source: [NASA/JPL, public domain](https://commons.wikimedia.org/wiki/File:Deep-Space-1-ds1craft2.jpg).</figcaption>
+</figure>
+
+#### Fitting a Mountain in a Matchbox: The Compression Standard Chosen for a Mars Radio Link
+
+A rover's camera can produce megabytes a picture, but the radio link home carries kilobits a second. To get a scene across that pipe, the space-agency standards body (CCSDS) chose **JPEG 2000** for planetary imaging. Its core is not a discrete cosine transform but a **discrete wavelet transform**: decompose the image into a set of frequency sub-bands, discard the fine detail the eye and the science can least afford, and entropy-code what remains. Crucially it *degrades gracefully* — lose a chunk of the bitstream and you get a blurry image, not a broken one, which a lossy radio link prizes above everything \cite[JPEG 2000]{wiki_jpeg2000}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block; margin: 1em auto;" src="curiosity_panorama.jpg" alt="A panoramic view of the Martian surface from the Curiosity rover" />
+    <figcaption class="md">The \citealternativetitle{img_curiosity_panorama} (Public Domain): a panorama from the Curiosity rover — the kind of scene a spacecraft camera has to compress hard enough to squeeze across a radio link carrying kilobits a second. The wavelet decomposition that JPEG 2000 uses for exactly this job is the fixed, hand-designed ancestor of the learned basis a neural autoencoder finds. Source: [NASA/JPL-Caltech/MSSS, public domain](https://commons.wikimedia.org/wiki/File:PIA16453-MarsCuriosityRover-RocknestPanorama-20121126.jpg).</figcaption>
+</figure>
+
+The displacement is mathematical. That three-step recipe — *transform into a compact basis, keep only the coefficients that matter, re-encode the rest* — is exactly what a neural **autoencoder** does, except it *learns* the transform instead of fixing it in advance. The "latent code" that you can later decode back into a full image is the direct successor of the wavelet sub-bands an engineer squeezed into a packet so a picture of Mars would arrive before the spacecraft rounded the planet. The question "how do I fit the whole scene into a handful of numbers and get it back?" was tuned on a radio link, and it is the same question behind every representation a model learns: how many numbers do I actually need to hold a face, a word, a protein?
+
+#### A Deluge of Galaxies: When the Data Was Bigger Than the Algorithm
+
+By 2007 the Sloan Digital Sky Survey had imaged roughly nine hundred thousand galaxies, and the honest state of the art was that the automated image-analysis programs of the day **could not** classify them reliably — in the words of one of the founders, "the human brain is actually much better than a computer at these pattern-recognition tasks." So a group of astrophysicists did something that had never been done at that scale: they put the galaxies on the public web and let people click. **Galaxy Zoo**, launched on 11 July 2007, drew in more than one hundred thousand volunteers who produced over forty million classifications in their first six months — one hundred and twenty-five million in all, feeding more than sixty peer-reviewed papers and eventually the Zooniverse \cite[Galaxy Zoo]{wiki_galaxy_zoo}.
+
+<figure>
+    <img style="width: 72%; height: auto; display: block; margin: 1em auto;" src="mice_galaxies.jpg" alt="NGC 4676, two galaxies colliding and winding each other's stars into tails" />
+    <figcaption class="md">The \citealternativetitle{img_mice_galaxies} (Public Domain): NGC 4676, "The Mice" — two galaxies colliding and flinging stars into long tails, exactly the sort of interacting oddity that Galaxy Zoo's volunteers flagged by the million and that the automated classifiers of the day kept getting wrong. Source: [NASA/ESA, public domain](https://commons.wikimedia.org/wiki/File:The_Mice_(NGC_4676)-_Colliding_Galaxies_With_Tails_of_Stars_and_Gas_(2002-11-1191).jpg).</figcaption>
+</figure>
+
+The loop is the point, and it is the origin story of a whole subfield. The *data deluge* that machine learning could not solve was solved by crowd-sourcing; and those millions of human labels became precisely the training data that let deep learning finally learn to classify galaxies better than the crowd ever could. The space survey created the dataset, the crowd made it *labelled*, and the labelled set became the thing that taught the model. "AI for science" began, in one of its first great successes, not with a clever algorithm but with a pile of images no algorithm could handle and a forum full of volunteers — the same data-beats-hands rule that the \cite[Bitter Lesson]{sutton2019bitter} would later name.
+
+#### Unblurring the Sky: The Inverse Problem That Became the Denoising Step
+
+A telescope image is never the object. It is the object smeared by the optics and the atmosphere (a "point-spread function"), plus noise, on top. Recovering the sharp image is an **inverse problem**. The canonical tool, **Richardson–Lucy** deconvolution (Richardson 1972, Lucy 1974), is an iterative maximum-likelihood loop: guess the sharp image, smear it the way the optics would, compare the smear to the measurement you actually made, nudge the guess, and repeat until the smear matches the sky \cite[Richardson–Lucy deconvolution]{wiki_richardson_lucy}. At its heart is one repeated gesture: *given a corrupted measurement, work backward toward the clean signal.*
+
+<figure>
+    <img style="width: 58%; height: auto; display: block; margin: 1em auto;" src="hubble_ultra_deep_field.jpg" alt="The Hubble Ultra Deep Field, thousands of galaxies in a tiny patch of sky" />
+    <figcaption class="md">The \citealternativetitle{img_hubble_udf} (Public Domain): the Hubble Ultra Deep Field, thousands of galaxies in a grain-of-rice patch of sky — a picture recovered from smear and noise by exactly the iterative "clean the corrupted measurement" reflex that Richardson–Lucy deconvolution made standard, and that denoising diffusion models now learn to perform on their own. Source: [NASA/ESA, public domain](https://commons.wikimedia.org/wiki/File:Hubble_ultra_deep_field.jpg).</figcaption>
+</figure>
+
+That gesture is the single most important idea in modern generative AI. A **denoising diffusion model** (Ho et al., 2020) is built on exactly this move, only *learned*: a forward process gradually adds noise to real data until it is pure static, and a network is trained to reverse one tiny bit of that noise at a time \cite[Diffusion model]{wiki_diffusion_model}. Sampling begins from pure static and *denoises* it, step by step, until a face, a molecule, or a protein emerges. The iterative un-blurring of a fuzzy astronomical plate and the iterative un-noising of a diffusion sample are the same reflex in two centuries — and the score-based view that ties them together makes the resemblance exact, not just poetic.
+
+None of these systems was built for AI. Yet between the corner cubes on the Moon and the forty-minute radio link to Mars, the space program quietly supplied the bit-flip discipline that guards a GPU cluster, the ranging idea that became the self-driving car's eyes, the first machine that repaired itself, the compression mathematics behind the latent space, the labelled data that taught the first "AI for science" models, and the denoising loop at the heart of generative AI. Together with the hardware, the coding theory, and the fly-by-wire laws, they form much of the invisible scaffolding on which every mobile robot — and every model that learns to see, plan, and speak — now depends.
 
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ## The Abstraction of Data: From Types to Tensors
 
 
@@ -1220,15 +1415,19 @@ The first major formalization came with **FORTRAN**, designed by \cite[John Back
 #### ALGOL 60 and Explicit Type Declarations (1960)
 
 The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
+</div>
 
+<div class="md" data-mathlevel="55" data-depth="20" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
 #### Floating-Point Standardization: IEEE 754 (1985)
 
 While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
 
 $$\text{float (32-bit):}\quad (-1)^s \times 1.m \times 2^{e-127}$$
 
-where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in \cite[IEEE, 2008]{ieee754_2008} and \cite[IEEE, 2019]{ieee754_2019}.
+where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in (\cite[IEEE, 2008]{ieee754_2008}) and (\cite[IEEE, 2019]{ieee754_2019}).
+</div>
 
+<div class="md" data-depth="20">
 #### The Boolean in Programming
 
 - **ALGOL 60** (1960): first language with `Boolean` as a named type.
@@ -1240,7 +1439,7 @@ where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The stand
 The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell1910principia} (Russell & Whitehead, 1910), developed computationally by \cite[Alonzo Church]{churchsimplytyped} (simply typed lambda calculus, 1940), \cite[Roger Hindley]{hindleytypes} (1969) and \cite[Robin Milner]{milnertypeinference} (1978) with type inference, and \cite[Per Martin-Löf]{martinloeftypetheory} (dependent types, 1971).
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 
 ### Arrays: A History of Structured Data
 
@@ -1257,7 +1456,9 @@ The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with n
 - **FORTRAN (1957)**, Designed by John Backus at IBM, FORTRAN was the first widely-used high-level language and introduced explicit multi-dimensional arrays for scientific computing. A declaration like `DIMENSION A(10,10)` allocated a $10 \times 10$ matrix in memory.
 - **ALGOL 60 (1960)**, Introduced explicit type declarations and dynamic array bounds.
 - **C (1972)**, Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
+</div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="Why Arrays Matter">
 #### Why Arrays Matter
 
 Arrays map directly to how computer memory works, sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
@@ -1265,8 +1466,9 @@ Arrays map directly to how computer memory works, sequential, indexed storage. A
 $$\text{address}(A[i]) = \text{base\_address} + i \times \text{element\_size}$$
 
 This efficiency made arrays the foundation for virtually all higher-level data structures (linked lists, hash tables, heaps, etc.) and algorithms (sorting, searching, matrix operations).
+</div>
 
-
+<div class="md">
 ### NumPy: Efficient Arrays for Python
 
 #### The Problem
@@ -1334,7 +1536,7 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 The invention of arrays was not a single event but an evolutionary process, from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
 </div>
 
-<div class="md">
+<div class="md" data-depth="60">
 ## The Spreadsheet and the Evolution of Data Usability
 
 
@@ -1423,7 +1625,9 @@ VisiCalc became the first **“killer application”**, software so compelling t
 “VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes.”
 
 The spreadsheet metaphor, a grid of cells, each containing either a value or a formula, proved so intuitive that it has survived essentially unchanged for over 45 years.
+</div>
 
+<div class="md" data-mathlevel="55" data-optionaltitle="The Mathematical Model">
 #### The Mathematical Model
 
 A spreadsheet can be formalized as a **directed acyclic graph (DAG)** of cell dependencies. Each cell $C_{i,j}$ contains either a constant $v$ or a function $f$ of other cells:
@@ -1435,7 +1639,9 @@ When any cell's value changes, the system performs a **topological sort** of the
 $$\text{If } C_{1,1} \text{ changes} \implies \text{recalculate all } C_{i,j} \text{ where } C_{1,1} \in \text{deps}(C_{i,j})$$
 
 This automatic propagation of changes through a dependency graph is the core innovation that separates a spreadsheet from a static table.
+</div>
 
+<div class="md" data-depth="20">
 ### Lotus 1-2-3: The IBM PC Era (1983)
 
 #### The Shift to IBM
@@ -1498,7 +1704,9 @@ is functionally equivalent to:
 $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 
 ### Beyond Spreadsheets: The Evolution of Data Usability
+</div>
 
+<div class="md" data-mathlevel="50" data-depth="20" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
 #### The Database Revolution: From Filing Cabinets to SQL
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.
@@ -1513,7 +1721,9 @@ $$\sigma_{\text{age} > 30}(\text{Employees}) \equiv \texttt{SELECT * FROM Employ
 - **Oracle** (1979), **IBM DB2** (1983), **Microsoft SQL Server** (1989), commercial implementations
 - **MySQL** (1995), **PostgreSQL** (1996), open-source alternatives that democratized database access
 - **SQLite** (2000), embedded database requiring no server, now deployed on billions of devices
+</div>
 
+<div class="md" data-depth="20">
 #### Statistical Software: Purpose-Built Data Tools
 
 For researchers who needed more than spreadsheets could offer:
@@ -1602,7 +1812,7 @@ The spreadsheet's enduring genius lies not in computational power (Python and SQ
 All these developments, even though they were focussed for the normal user, are now used by data scientists creating systems like LLM as well, as well as the algorithms developed for those tools.
 </div>
 
-<div class="md">
+<div class="md" data-depth="20">
 ## The Internet and the Web: The Training Corpus
 
 

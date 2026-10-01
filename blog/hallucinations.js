@@ -40,7 +40,7 @@ function renderCovariateShift() {
 			font: { color: themeColor('#1e293b') },
 			xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 			yaxis: {range: [0, 1.2], showticklabels: false, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') }
-		});
+		}, { responsive: true });
 	}
 	slider.oninput = updatePlot;
 	updatePlot();
@@ -81,7 +81,7 @@ function renderTokenPrediction() {
 		textposition: 'auto'
 	}];
 
-		Plotly.react('token-prediction-plot', data, tokenPredictionLayout());
+		Plotly.react('token-prediction-plot', data, tokenPredictionLayout(), { responsive: true });
 	}
 	
 	// ... (rest of file)
@@ -138,7 +138,7 @@ function renderTokenPrediction() {
 				margin: { t: 40, b: 40, l: 40, r: 20 }
 			};
 
-			Plotly.react(plotId, data, layout);
+			Plotly.react(plotId, data, layout, { responsive: true });
 
 			// Update explanation text
 			if (temp < 0.3) {

@@ -821,6 +821,177 @@ function runHadamardExperiment() {
 	render_temml();
 }
 
+// ── Tensor calculations: broadcasting + contraction ─────────────────────────
+
+function initTcalcBroadcast() {
+	const el = document.getElementById('tcalc-bcast');
+	if (!el || el.dataset.ready) return;
+	el.dataset.ready = '1';
+
+	const g = (id) => document.getElementById(id);
+	const clamp = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+	const label = (d) => (d.length ? '(' + d.join(', ') + ')' : '()');
+	const SDIMS = { 'sc': [], '3': [3], '1x3': [1, 3], '3x1': [3, 1], '3x3': [3, 3], '2x3': [2, 3], '4': [4] };
+	const SDEF = { 'sc': [5], '3': [10, 20, 30], '1x3': [10, 20, 30], '3x1': [10, 20, 30], '3x3': [1, 2, 3, 4, 5, 6, 7, 8, 9], '2x3': [1, 2, 3, 4, 5, 6], '4': [1, 2, 3, 4] };
+	const PRESETS = {
+		bias: { a: '3x3', b: '3', op: '+' },
+		rows: { a: '3x3', b: '3x1', op: '*' },
+		shift: { a: '3x3', b: 'sc', op: '+' },
+		batch: { a: '2x3', b: '3', op: '+' },
+		clash: { a: '3x3', b: '4', op: '*' }
+	};
+
+	let Ashape = '3x3', Bshape = '3', op = '+';
+	let A = SDEF[Ashape].slice(), B = SDEF[Bshape].slice();
+
+	const Agrid = g('tcalc-bcast-a'), Bgrid = g('tcalc-bcast-b'), Rgrid = g('tcalc-bcast-res');
+	const Shapes = g('tcalc-bcast-shapes'), Status = g('tcalc-bcast-status');
+	const Sym = g('tcalc-bcast-sym'), Acap = g('tcalc-bcast-acap'), Bcap = g('tcalc-bcast-bcap');
+	const asel = g('tcalc-bcast-ashape'), bsel = g('tcalc-bcast-bshape'), opWrap = g('tcalc-bcast-op'), presetWrap = g('tcalc-bcast-presets');
+
+	function bshape(a, b) {
+		const n = Math.max(a.length, b.length);
+		const x = [...Array(n - a.length).fill(1), ...a], y = [...Array(n - b.length).fill(1), ...b], out = [];
+		for (let i = 0; i < n; i++) { if (x[i] === y[i] || x[i] === 1 || y[i] === 1) out.push(Math.max(x[i], y[i])); else return null; }
+		return out;
+	}
+	function bcast(flat, shape, out) {
+		const nd = out.length, pad = [...Array(nd - shape.length).fill(1), ...shape], st = new Array(nd).fill(0);
+		let acc = 1;
+		for (let i = nd - 1; i >= 0; i--) { st[i] = acc; acc *= pad[i]; }
+		const idx = new Array(nd).fill(0), res = [];
+		const T = out.reduce((p, q) => p * q, 1);
+		for (let t = 0; t < T; t++) {
+			let s = 0;
+			for (let i = 0; i < nd; i++) s += (idx[i] % pad[i]) * st[i];
+			res.push(flat[s]);
+			let d = nd - 1;
+			while (d >= 0) { idx[d]++; if (idx[d] < out[d]) break; idx[d] = 0; d--; }
+		}
+		return res;
+	}
+	function gridFor(grid, arr, onEdit) {
+		const dims = grid === Agrid ? SDIMS[Ashape] : SDIMS[Bshape];
+		grid.style.gridTemplateColumns = 'repeat(' + (dims.length ? dims[dims.length - 1] : 1) + ',auto)'; grid.innerHTML = '';
+		arr.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { onEdit(i, inp.value); }); grid.appendChild(inp); });
+	}
+	function buildA() {
+		const dims = SDIMS[Ashape], n = dims.reduce((p, q) => p * q, 1) || 1;
+		if (A.length !== n) A = SDEF[Ashape].slice();
+		if (Acap) Acap.textContent = 'A ' + label(dims);
+		gridFor(Agrid, A, (i, v) => { A[i] = clamp(v); refresh(); });
+	}
+	function buildB() {
+		const dims = SDIMS[Bshape], n = dims.reduce((p, q) => p * q, 1) || 1;
+		if (B.length !== n) B = SDEF[Bshape].slice();
+		Bcap.textContent = 'B ' + label(dims);
+		gridFor(Bgrid, B, (i, v) => { B[i] = clamp(v); refresh(); });
+	}
+	function dimRow(parent, lbl, dims, opts) {
+		const row = document.createElement('div'); row.className = 'tcalc-shape-row';
+		const l = document.createElement('span'); l.className = 'lbl'; l.textContent = lbl; row.appendChild(l);
+		const boxes = [];
+		dims.forEach((d, i) => {
+			const box = document.createElement('span'); box.className = 'tcalc-dim';
+			const a = opts.a[i], b = opts.b[i];
+			if (d === null) { box.style.opacity = '.25'; box.textContent = ''; }
+			else {
+				box.textContent = d;
+				const conflict = a != null && b != null && a !== b && a !== 1 && b !== 1;
+				if (conflict) box.classList.add('bad');
+				else if (d === 1 && (a || b) && Math.max(a || 1, b || 1) !== 1) box.classList.add('stretch');
+			}
+			boxes.push(box); row.appendChild(box);
+		});
+		parent.appendChild(row); return boxes;
+	}
+	function markPreset(name) {
+		if (!presetWrap) return;
+		presetWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.preset === name));
+	}
+	function applyPreset(name) {
+		const p = PRESETS[name]; if (!p) return;
+		Ashape = p.a; Bshape = p.b; op = p.op;
+		A = SDEF[Ashape].slice(); B = SDEF[Bshape].slice();
+		if (asel) asel.value = Ashape;
+		if (bsel) bsel.value = Bshape;
+		opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.op === op));
+		buildA(); buildB(); refresh();
+		markPreset(name);
+	}
+	function refresh() {
+		Sym.textContent = op === '+' ? '+' : (op === '-' ? '−' : '×');
+		const aD = SDIMS[Ashape], bD = SDIMS[Bshape], out = bshape(aD, bD);
+		const n = Math.max(aD.length, bD.length, out ? out.length : 0);
+		const pA = [...Array(n - aD.length).fill(null), ...aD], pB = [...Array(n - bD.length).fill(null), ...bD];
+		const pO = out ? [...Array(n - out.length).fill(null), ...out] : [];
+		Shapes.innerHTML = '';
+		dimRow(Shapes, 'A', pA, { kind: 'a', a: pA, b: pB });
+		dimRow(Shapes, 'B', pB, { kind: 'b', a: pA, b: pB });
+		if (!out) {
+			Status.className = 'tcalc-status err';
+			const fail = (function () { for (let i = n - 1; i >= 0; i--) { const a = pA[i], b = pB[i]; if (a != null && b != null && a !== b && a !== 1 && b !== 1) return [a, b]; } return [pA[n - 1], pB[n - 1]]; })();
+			Status.textContent = 'Not broadcastable: axes ' + fail[0] + ' and ' + fail[1] + ' (neither equal nor 1).';
+			Rgrid.style.gridTemplateColumns = 'repeat(3,auto)'; Rgrid.innerHTML = ''; return;
+		}
+		dimRow(Shapes, '=', pO, { kind: 'o', a: pA, b: pB });
+		const x = bcast(A, aD, out), y = bcast(B, bD, out);
+		const res = x.map((v, i) => (op === '+' ? v + y[i] : op === '-' ? v - y[i] : v * y[i]));
+		Status.className = 'tcalc-status ok'; Status.textContent = 'broadcast to ' + label(out);
+		Rgrid.style.gridTemplateColumns = 'repeat(' + out[out.length - 1] + ',auto)'; Rgrid.innerHTML = '';
+		res.forEach((v) => { const d = document.createElement('div'); d.className = 'tcalc-cell result'; d.textContent = v; Rgrid.appendChild(d); });
+	}
+
+	opWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => { op = btn.dataset.op; opWrap.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn)); markPreset(''); refresh(); }));
+	if (asel) asel.addEventListener('change', () => { Ashape = asel.value; A = SDEF[Ashape].slice(); markPreset(''); buildA(); refresh(); });
+	if (bsel) bsel.addEventListener('change', () => { Bshape = bsel.value; B = SDEF[Bshape].slice(); markPreset(''); buildB(); refresh(); });
+	if (presetWrap) presetWrap.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => applyPreset(btn.dataset.preset)));
+	buildA(); buildB(); refresh();
+	markPreset('bias');
+}
+
+function initTcalcContraction() {
+	const el = document.getElementById('tcalc-contraction');
+	if (!el || el.dataset.ready) return;
+	el.dataset.ready = '1';
+	const clamp = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+	const C = [1, 2, 3, 4], D = [5, 6, 7, 8];
+	let sel = { r: 0, c: 0 };
+	const Cg = document.getElementById('tcalc-contr-c'), Dg = document.getElementById('tcalc-contr-d'), Mg = document.getElementById('tcalc-contr-m'), Det = document.getElementById('tcalc-contr-detail');
+
+	function build(grid, arr) {
+		grid.style.gridTemplateColumns = 'repeat(2,auto)'; grid.innerHTML = '';
+		arr.forEach((v, i) => { const inp = document.createElement('input'); inp.type = 'number'; inp.value = v; inp.className = 'tcalc-cell input'; inp.addEventListener('input', () => { arr[i] = clamp(inp.value); refresh(); }); grid.appendChild(inp); });
+	}
+	function chip(cls, html) { const s = document.createElement('span'); s.className = cls; s.innerHTML = html; return s; }
+	function op(txt) { const s = document.createElement('span'); s.className = 'tcalc-plus'; s.textContent = txt; return s; }
+	function refresh() {
+		const M = [0, 0, 0, 0];
+		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) M[i * 2 + k] = C[i * 2] * D[k] + C[i * 2 + 1] * D[2 + k];
+		Mg.style.gridTemplateColumns = 'repeat(2,auto)'; Mg.innerHTML = '';
+		for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) {
+			const d = document.createElement('div'); d.className = 'tcalc-cell result click' + (i === sel.r && k === sel.c ? ' sel' : ''); d.textContent = M[i * 2 + k];
+			d.addEventListener('click', () => { sel = { r: i, c: k }; refresh(); const c = Mg.children[i * 2 + k]; if (c) { c.classList.add('tcalc-pulse'); setTimeout(() => c.classList.remove('tcalc-pulse'), 750); } });
+			Mg.appendChild(d);
+		}
+		for (let i = 0; i < 2; i++) for (let c = 0; c < 2; c++) { Cg.children[i * 2 + c].classList.toggle('hl', i === sel.r); Dg.children[i * 2 + c].classList.toggle('hl', c === sel.c); }
+		const i = sel.r, k = sel.c;
+		const t1 = C[i * 2] * D[k], t2 = C[i * 2 + 1] * D[2 + k];
+		Det.innerHTML = '';
+		const row = document.createElement('div'); row.className = 'tcalc-contr-terms';
+		row.appendChild(chip('tcalc-chip', 'C<sub>' + (i + 1) + ',1</sub>&middot;D<sub>1,' + (k + 1) + '</sub> = ' + C[i * 2] + '&times;' + D[k] + ' = ' + t1));
+		row.appendChild(op('+'));
+		row.appendChild(chip('tcalc-chip', 'C<sub>' + (i + 1) + ',2</sub>&middot;D<sub>2,' + (k + 1) + '</sub> = ' + C[i * 2 + 1] + '&times;' + D[2 + k] + ' = ' + t2));
+		row.appendChild(op('='));
+		row.appendChild(chip('tcalc-chip result', 'M<sub>' + (i + 1) + ',' + (k + 1) + '</sub> = ' + (t1 + t2)));
+		Det.appendChild(row);
+		const cap = document.createElement('div'); cap.className = 'tcalc-contr-cap';
+		cap.textContent = 'One row of C dotted with one column of D — multiply along the shared index and add. That single step is the whole matrix product.';
+		Det.appendChild(cap);
+	}
+	build(Cg, C); build(Dg, D); refresh();
+}
+
 // ── Module loader ───────────────────────────────────────────────────────────
 
 async function loadMathLabModule() {
@@ -914,7 +1085,7 @@ Every fruit is now a point in a 4D “Fruit Space.”
     <div id="v4-plot" style="width:100%; height:250px;"></div>
 </div>
 
-<div class="md">
+<div class="md" data-mathlevel="60">
 ### The formal definition (the important one)
 
 The geometric picture above is intuitive, but it hides a question: when we add a vector to a vector, or stretch a vector by a number, *what rules must those operations obey?* A **vector space** is the precise answer.
@@ -923,7 +1094,7 @@ Mathematicians formalize this as follows. Pick a *base field* $k$ — a number s
 
 <div class="optional md" data-headline="Definition">
 
-A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication). The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
+A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication), as \cite[Axler lists them in Linear Algebra Done Right (Ch. 1, p. 12)]{axler2024linearalgebra}. The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
 
 </div>
 
@@ -931,7 +1102,7 @@ You don't need to memorise the eight axioms. What you need to remember is:
 
 1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$; the individual values are of course real numbers, used as coordinates.
 2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
-3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
+3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them (\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}). This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
 
 </div>
 
@@ -950,7 +1121,7 @@ A note on terminology: in machine learning, you will often see "scalar" used mor
 
 A **vector** is an element of a vector space. The geometric picture is an *arrow* with a direction and a length: "three steps to the right, four steps up." The algebraic picture is a single thing you can add to other vectors and stretch with scalars.
 
-If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis, the arrow "3 right, 4 up, 2 forward" becomes the column
+If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis (\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}), the arrow "3 right, 4 up, 2 forward" becomes the column
 
 $$ \vec{v} = \begin{pmatrix} 3 \\ 4 \\ 2 \end{pmatrix} $$
 
@@ -985,7 +1156,7 @@ Vectors can have any number of dimensions. Two essential operations on vectors:
 **Scalar multiplication** multiplies each coordinate:
 
 
-$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix}$$
+$$ \underbrace{c}_{\text{scalar}} \cdot \underbrace{\vec{v}}_{\text{vector}} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix}$$
 
 $$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix}$$
 
@@ -1060,7 +1231,7 @@ When you type numbers into the grid, the computer organises them into a structur
 Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
 </div>
 
-<div class="topic-block" data-optionaltitle="A colour image as a 3-axis tensor" data-mathlevel="45">
+<div class="md topic-block" data-optionaltitle="A colour image as a 3-axis tensor" data-mathlevel="45">
 $$
 \mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
 \begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
@@ -1107,10 +1278,177 @@ With other methods of making numbers from data (like Embeddings to create number
 </div>
 </div>
 
+<style>
+.tcalc-card{background:var(--mn-surface,#fff);border:1px solid var(--mn-border,#e6e6e6);border-radius:var(--mn-radius-lg,14px);padding:18px 18px 20px;margin:18px 0;box-shadow:var(--mn-shadow-sm,0 1px 3px rgba(0,0,0,.06));}
+.tcalc-card-title{font-weight:700;font-size:1.02rem;margin-bottom:4px;color:var(--mn-text,#111);}
+.tcalc-hint{margin:0 0 14px;font-size:.9rem;color:var(--mn-text-secondary,#666);line-height:1.5;}
+.tcalc-bcast-row,.tcalc-contr-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;}
+.tcalc-gridwrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.tcalc-cap{font-size:.82rem;color:var(--mn-text-secondary,#666);font-family:var(--mn-font-mono,monospace);}
+.tcalc-sym{font-size:1.5rem;font-weight:700;color:var(--mn-accent,#2b6cb0);padding:0 2px;}
+.tcalc-grid{display:grid;gap:4px;}
+.tcalc-cell{min-width:42px;padding:5px 6px;text-align:center;font-family:var(--mn-font-mono,monospace);font-size:.9rem;border-radius:var(--mn-radius-sm,6px);border:1px solid var(--mn-border,#e0e0e0);background:var(--mn-bg-subtle,#fafafa);color:var(--mn-text,#111);box-sizing:border-box;}
+.tcalc-cell.input{width:52px;-moz-appearance:textfield;}
+.tcalc-cell.input::-webkit-outer-spin-button,.tcalc-cell.input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.tcalc-cell.result{background:var(--mn-accent-lighter,#eaf1fb);border-color:var(--mn-accent-light,#cdddf5);font-weight:600;}
+.tcalc-cell.result.click{cursor:pointer;}
+.tcalc-cell.result.click:hover{outline:2px solid var(--mn-accent-light,#cdddf5);}
+.tcalc-cell.result.sel{background:var(--mn-accent,#2b6cb0);border-color:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-cell.hl{background:var(--mn-sky-light,#e2f0ff);border-color:var(--mn-sky,#7cc0ff);}
+.tcalc-bcast-foot{margin-top:14px;display:flex;flex-direction:column;gap:8px;align-items:center;}
+.tcalc-shapes{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.tcalc-shape-row{display:flex;gap:4px;align-items:center;}
+.tcalc-shape-row .lbl{width:14px;font-family:var(--mn-font-mono,monospace);font-size:.8rem;color:var(--mn-text-secondary,#666);text-align:right;}
+.tcalc-dim{min-width:30px;text-align:center;padding:2px 5px;font-size:.82rem;font-family:var(--mn-font-mono,monospace);border:1px dashed var(--mn-border,#ccc);border-radius:4px;color:var(--mn-text,#111);}
+.tcalc-dim.stretch{border-style:solid;border-color:var(--mn-emerald,#2f9e6f);color:var(--mn-emerald,#2f9e6f);font-weight:700;}
+.tcalc-dim.bad{border-style:solid;border-color:var(--mn-coral,#e0654a);color:var(--mn-coral,#e0654a);font-weight:700;}
+.tcalc-status{font-size:.85rem;font-family:var(--mn-font-mono,monospace);}
+.tcalc-status.ok{color:var(--mn-emerald,#2f9e6f);}
+.tcalc-status.err{color:var(--mn-coral,#e0654a);}
+.tcalc-controls{margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--mn-border-light,#eee);}
+.tcalc-ctl-lbl{font-size:.85rem;color:var(--mn-text-secondary,#666);}
+.tcalc-controls select{font:inherit;font-size:.9rem;padding:5px 8px;border-radius:6px;border:1px solid var(--mn-border,#ddd);background:var(--mn-bg,#fff);color:var(--mn-text,#111);}
+.tcalc-op{display:inline-flex;border:1px solid var(--mn-border,#ddd);border-radius:6px;overflow:hidden;}
+.tcalc-op button{font:inherit;font-size:.95rem;line-height:1;padding:6px 12px;border:none;cursor:pointer;background:var(--mn-bg,#fff);color:var(--mn-text-secondary,#555);}
+.tcalc-op button + button{border-left:1px solid var(--mn-border,#ddd);}
+.tcalc-op button.active{background:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-detail{margin-top:14px;text-align:center;font-size:.95rem;min-height:1.4em;}
+.tcalc-presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0;padding-top:12px;border-top:1px solid var(--mn-border-light,#eee);}
+.tcalc-preset{font:inherit;font-size:.82rem;line-height:1;padding:6px 11px;border-radius:99px;border:1px solid var(--mn-border,#ddd);background:var(--mn-bg,#fff);color:var(--mn-text-secondary,#555);cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+.tcalc-preset:hover{border-color:var(--mn-accent,#2b6cb0);color:var(--mn-accent,#2b6cb0);}
+.tcalc-preset.active{background:var(--mn-accent,#2b6cb0);border-color:var(--mn-accent,#2b6cb0);color:#fff;}
+.tcalc-contr-axis{margin-top:12px;text-align:center;font-size:.85rem;color:var(--mn-text-secondary,#666);font-family:var(--mn-font-mono,monospace);}
+.tcalc-contr-terms{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;}
+.tcalc-chip{display:inline-flex;align-items:center;gap:1px;padding:6px 10px;border-radius:8px;border:1px solid var(--mn-border,#e0e0e0);background:var(--mn-bg-subtle,#fafafa);font-family:var(--mn-font-mono,monospace);font-size:.88rem;color:var(--mn-text,#111);}
+.tcalc-chip sub{font-size:.7em;}
+.tcalc-chip.result{background:var(--mn-accent-lighter,#eaf1fb);border-color:var(--mn-accent-light,#cdddf5);font-weight:700;}
+.tcalc-plus{font-size:1.05rem;font-weight:700;color:var(--mn-accent,#2b6cb0);padding:0 1px;}
+.tcalc-contr-cap{margin-top:10px;font-size:.85rem;color:var(--mn-text-secondary,#666);text-align:center;}
+@keyframes tcalcPulse{0%{box-shadow:0 0 0 0 rgba(43,108,176,.5);}100%{box-shadow:0 0 0 8px rgba(43,108,176,0);}}
+.tcalc-pulse{animation:tcalcPulse .7s ease-out;}
+@media (max-width:560px){.tcalc-cell{min-width:34px;padding:4px;}.tcalc-cell.input{width:44px;}.tcalc-sym{font-size:1.25rem;}.tcalc-chip{padding:5px 7px;font-size:.8rem;}}
+</style>
+
+<div class="md" data-mathlevel="40">
+## Doing arithmetic with tensors
+
+So far a tensor was just *data* — numbers arranged in a shape. But you can also *compute* with it, and two operations power almost everything that follows.
+
+**Element-wise.** Combine the matching entries of two tensors, one by one. The tensors do not even need the same shape: shapes are lined up from the right, an axis of length $1$ stretches to match, and a missing leading axis counts as $1$. This rule is called **broadcasting** \cite[Broadcasting, NumPy]{numpy_broadcasting} — and it quietly explains the $\mathbf{x}+b$ of every affine layer.
+
+**Contraction.** Multiply entries along a shared axis and add them up. The matrix product is exactly one contraction, $M_{ik}=\sum_{j} \underbrace{C_{ij}}_{\text{row of C}}\,\underbrace{D_{jk}}_{\text{column of D}}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 (\cite[Einstein, 1916]{einstein1916annalen}). Contraction is the single most important operation in both linear algebra and deep learning.
+
+Try both below.
+</div>
+
+<div class="tcalc-card" id="tcalc-bcast">
+  <div class="tcalc-card-title">Broadcasting, hands-on</div>
+  <p class="tcalc-hint">Two tensors combine one entry at a time, but they need not share a shape: right-align the shapes, an axis of $1$ stretches, and a missing leading axis counts as $1$. Tap a scenario, or set both shapes yourself — and find the one that fails.</p>
+  <div class="tcalc-bcast-row">
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap" id="tcalc-bcast-acap">A (3, 3)</div>
+      <div class="tcalc-grid" id="tcalc-bcast-a"></div>
+    </div>
+    <div class="tcalc-sym" id="tcalc-bcast-sym">+</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap" id="tcalc-bcast-bcap">B (3)</div>
+      <div class="tcalc-grid" id="tcalc-bcast-b"></div>
+    </div>
+    <div class="tcalc-sym">=</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">result</div>
+      <div class="tcalc-grid" id="tcalc-bcast-res"></div>
+    </div>
+  </div>
+  <div class="tcalc-bcast-foot">
+    <div class="tcalc-shapes" id="tcalc-bcast-shapes"></div>
+    <div class="tcalc-status ok" id="tcalc-bcast-status"></div>
+  </div>
+  <div class="tcalc-presets" id="tcalc-bcast-presets">
+    <span class="tcalc-ctl-lbl">try:</span>
+    <button type="button" class="tcalc-preset" data-preset="bias">bias per column</button>
+    <button type="button" class="tcalc-preset" data-preset="rows">scale each row</button>
+    <button type="button" class="tcalc-preset" data-preset="shift">shift every cell</button>
+    <button type="button" class="tcalc-preset" data-preset="batch">batch of 2</button>
+    <button type="button" class="tcalc-preset" data-preset="clash">shape clash</button>
+  </div>
+  <div class="tcalc-controls">
+    <span class="tcalc-ctl-lbl">shape of A</span>
+    <select id="tcalc-bcast-ashape">
+      <option value="sc">scalar ()</option>
+      <option value="3">row (3)</option>
+      <option value="1x3">row (1, 3)</option>
+      <option value="3x1">col (3, 1)</option>
+      <option value="3x3" selected>matrix (3, 3)</option>
+      <option value="2x3">matrix (2, 3)</option>
+      <option value="4">row (4)</option>
+    </select>
+    <span class="tcalc-ctl-lbl">shape of B</span>
+    <select id="tcalc-bcast-bshape">
+      <option value="sc">scalar ()</option>
+      <option value="3" selected>row (3)</option>
+      <option value="1x3">row (1, 3)</option>
+      <option value="3x1">col (3, 1)</option>
+      <option value="3x3">matrix (3, 3)</option>
+      <option value="2x3">matrix (2, 3)</option>
+      <option value="4">row (4)</option>
+    </select>
+    <span class="tcalc-ctl-lbl">operator</span>
+    <div class="tcalc-op" id="tcalc-bcast-op">
+      <button type="button" data-op="+" class="active">+</button>
+      <button type="button" data-op="-">&#8722;</button>
+      <button type="button" data-op="*">&#215;</button>
+    </div>
+  </div>
+</div>
+
+<div class="tcalc-card" id="tcalc-contraction">
+  <div class="tcalc-card-title">Contraction — the matrix product</div>
+  <p class="tcalc-hint">A contraction multiplies entries along a shared axis and adds them — the matrix product is one contraction, $M_{ik}=\sum_{j} C_{ij}D_{jk}$. Click any cell of $M$ to watch its dot product: a row of $C$ dotted with a column of $D$. This single operation is every linear layer in a neural net, $y = Wx$ (\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.4, p. 118]{boyd2018appliedlinearalgebra}).</p>
+  <div class="tcalc-contr-row">
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">C (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-c"></div>
+    </div>
+    <div class="tcalc-sym">&#215;</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">D (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-d"></div>
+    </div>
+    <div class="tcalc-sym">=</div>
+    <div class="tcalc-gridwrap">
+      <div class="tcalc-cap">M = C&#183;D (2, 2)</div>
+      <div class="tcalc-grid" id="tcalc-contr-m"></div>
+    </div>
+  </div>
+  <div class="tcalc-contr-axis">contract the shared axis: (2, 2) &middot; (2, 2) &rarr; (2, 2)</div>
+  <div class="tcalc-detail" id="tcalc-contr-detail"></div>
+</div>
+
+<div class="md" data-mathlevel="40" data-optionaltitle="Where the words come from">
+### Where the words come from
+Each word is old, and each was coined to solve a concrete problem.
+
+- **Matrix** — from Latin *mātrix*, "womb or mold," ultimately *māter*, "mother" \cite[matrix, Etymonline]{etymonline_matrix}. Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — "a Matrix out of which we may form various systems of determinants" (\cite[Sylvester, 1850]{sylvester1850matrix}). Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 "arithmetic of matrices" gave them exactly that (\cite[Cayley, 1858]{cayleymemoirmatrices}).
+
+- **Vector** — from Latin *vĕctōr*, "a carrier," from *vĕhĕre*, "to carry" \cite[vector, Etymonline]{etymonline_vector}. Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a "calculus of direction" that adds and rotates directed line segments in space without writing out every component (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
+
+- **Scalar** — from Latin *scalaris*, "of a ladder" (*scala*, a single step) \cite[scalar, Etymonline]{etymonline_scalar}. It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
+
+- **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, "to stretch" \cite[tensor, Etymonline]{etymonline_tensor}. Hamilton gave it a mathematical life, using it for the length of a quaternion. The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his "Tensoren," 1898 (\cite[Voigt, 1898]{voigt1898krystalle}). Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity (\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}; \cite[Einstein, 1916]{einstein1916annalen}).
+
+- **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page (\cite[Einstein, 1916]{einstein1916annalen}).
+</div>
+
+<script>
+  if (typeof initTcalcBroadcast === 'function') initTcalcBroadcast();
+  if (typeof initTcalcContraction === 'function') initTcalcContraction();
+</script>
+
 <div class="md" data-mathlevel="40" data-optionaltitle="Chaining Functions (Composition)">
 ## Chaining Functions (Composition)
 
-In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects \cite[Olah, 2015]{colah2015types}.
+In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects (\cite[Olah, 2015]{colah2015types}).
 
 You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
@@ -1157,7 +1495,7 @@ In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in
 
 For two vectors $\vec{a}$ and $\vec{b}$ of length $n$, the product is defined as:
 
-$$\vec{a} \odot \vec{b} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}$$
+$$\vec{a} \odot \vec{b} = \underbrace{\begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}}_{\text{element-wise product}}$$
 
 Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting vector is calculated element-by-element.
 </div>
@@ -1186,7 +1524,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
 <div class="md" data-mathlevel="45" data-optionaltitle="Matrix Transposition">
 ## Matrix Transposition
 
-Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$.
+Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$ (\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p. 115]{boyd2018appliedlinearalgebra}).
 
 Example:
 

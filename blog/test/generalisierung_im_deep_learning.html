@@ -1,0 +1,4142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Theorie der Generalisierung im Deep Learning — Interaktiv</title>
+
+<!-- Plotly für hochwertige, interaktive Plots -->
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+<!-- KaTeX für Formeln -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:        #07080d;
+  --bg2:       #0b0d15;
+  --panel:     rgba(20,23,36,0.72);
+  --panel-2:   rgba(28,32,48,0.6);
+  --stroke:    rgba(140,160,220,0.14);
+  --stroke-2:  rgba(140,160,220,0.28);
+  --txt:       #e7ecf7;
+  --txt-dim:   #9aa6c4;
+  --txt-dim2:  #6e7a99;
+  --signal:    #49d1ff;   /* Signalkanal = cyan */
+  --signal-2:  #0a7fb0;
+  --reservoir: #ff7a59;   /* Reservoir = orange */
+  --reservoir-2:#b33f22;
+  --noise:     #ff5d7a;   /* Rauschen = rot */
+  --clean:     #7dffb3;   /* Signal/clean = grün */
+  --accent:    #b48cff;   /* violett Akzent */
+  --gold:      #ffd166;
+  --radius:    16px;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; padding:0;
+  background:
+    radial-gradient(1200px 700px at 12% -5%, rgba(73,209,255,0.09), transparent 60%),
+    radial-gradient(1000px 700px at 88% 8%, rgba(180,140,255,0.08), transparent 60%),
+    radial-gradient(900px 600px at 50% 105%, rgba(255,122,89,0.06), transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--signal),var(--accent),var(--reservoir));
+  z-index:9999; box-shadow:0 0 14px rgba(73,209,255,.6);
+  transition:width .08s linear;
+}
+
+/* ---------- Nav ---------- */
+nav{
+  position:fixed; top:0; left:0; right:0; height:58px;
+  background:rgba(7,8,13,0.82); backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--stroke);
+  z-index:9000; display:flex; align-items:center; gap:4px;
+  padding:0 18px; overflow-x:auto; scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none;}
+nav .brand{
+  font-weight:700; font-size:.82rem; letter-spacing:.06em;
+  color:var(--txt); margin-right:16px; white-space:nowrap;
+  text-transform:uppercase; opacity:.95;
+}
+nav .brand b{color:var(--signal);}
+nav a{
+  color:var(--txt-dim); text-decoration:none; font-size:.76rem;
+  padding:6px 11px; border-radius:99px; white-space:nowrap;
+  border:1px solid transparent; transition:all .18s;
+}
+nav a:hover{color:var(--txt); background:var(--panel-2); border-color:var(--stroke);}
+nav a.active{color:#07080d; background:var(--signal); font-weight:650;}
+
+/* ---------- Layout ---------- */
+main{max-width:1180px; margin:0 auto; padding:92px 22px 140px;}
+section{margin:0 0 118px; scroll-margin-top:80px;}
+
+.kicker{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--signal); margin-bottom:10px;
+  display:flex; align-items:center; gap:10px;
+}
+.kicker::before{
+  content:''; width:26px; height:1px; background:var(--signal); opacity:.7;
+}
+h1{
+  font-size:clamp(2.1rem,5.6vw,3.7rem); line-height:1.06; margin:0 0 20px;
+  font-weight:800; letter-spacing:-0.025em;
+  background:linear-gradient(180deg,#fff 0%, #a9b8dd 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+h2{
+  font-size:clamp(1.5rem,3.2vw,2.15rem); margin:0 0 14px;
+  font-weight:750; letter-spacing:-.02em; line-height:1.2;
+}
+h3{font-size:1.09rem; margin:30px 0 10px; font-weight:670; color:var(--txt);}
+h4{font-size:.9rem; margin:20px 0 8px; font-weight:650; color:var(--txt-dim);
+   font-family:var(--mono); letter-spacing:.04em; text-transform:uppercase;}
+p{margin:0 0 15px; color:#c6d0e6; max-width:78ch;}
+.lead{font-size:1.09rem; color:#d5deef;}
+small,.small{font-size:.8rem; color:var(--txt-dim);}
+
+.hl{color:var(--signal); font-weight:600;}
+.hl-r{color:var(--reservoir); font-weight:600;}
+.hl-n{color:var(--noise); font-weight:600;}
+.hl-c{color:var(--clean); font-weight:600;}
+.hl-a{color:var(--accent); font-weight:600;}
+.hl-g{color:var(--gold); font-weight:600;}
+
+/* ---------- Cards / panels ---------- */
+.card{
+  background:var(--panel); border:1px solid var(--stroke);
+  border-radius:var(--radius); padding:22px 24px; margin:22px 0;
+  backdrop-filter:blur(8px);
+  box-shadow:0 10px 40px rgba(0,0,0,.34);
+}
+.card.tight{padding:16px 18px;}
+.card h3:first-child, .card h4:first-child{margin-top:0;}
+
+.demo{
+  background:linear-gradient(180deg, rgba(18,21,33,.9), rgba(12,14,22,.9));
+  border:1px solid var(--stroke-2); border-radius:20px;
+  padding:0; margin:26px 0; overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.demo-head{
+  padding:15px 22px; border-bottom:1px solid var(--stroke);
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  background:rgba(255,255,255,.015);
+}
+.demo-head .dot{width:9px;height:9px;border-radius:99px;background:var(--signal);
+  box-shadow:0 0 12px var(--signal); flex:0 0 auto;}
+.demo-head .t{font-weight:680; font-size:.97rem; letter-spacing:-.01em;}
+.demo-head .s{font-size:.76rem;color:var(--txt-dim2); font-family:var(--mono);}
+.demo-body{padding:22px;}
+
+.grid{display:grid; gap:18px;}
+.g2{grid-template-columns:1fr 1fr;}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g21{grid-template-columns:1.6fr 1fr;}
+.g12{grid-template-columns:1fr 1.6fr;}
+@media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr;}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:14px 0;}
+.ctrl label{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:.79rem; color:var(--txt-dim); margin-bottom:7px;
+  font-family:var(--mono); letter-spacing:.02em;
+}
+.ctrl label .v{color:var(--signal); font-weight:700; font-size:.84rem;}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:5px;
+  background:linear-gradient(90deg,var(--signal-2),rgba(140,160,220,.16));
+  border-radius:99px; outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:17px;height:17px;border-radius:99px;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--signal));
+  cursor:pointer; box-shadow:0 0 0 3px rgba(73,209,255,.18), 0 2px 8px rgba(0,0,0,.5);
+  transition:transform .12s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:99px;border:none;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--signal)); cursor:pointer;
+}
+button, .btn{
+  background:var(--panel-2); border:1px solid var(--stroke-2); color:var(--txt);
+  padding:8px 15px; border-radius:10px; font-size:.81rem; cursor:pointer;
+  font-family:var(--sans); font-weight:600; transition:all .16s;
+}
+button:hover{background:rgba(73,209,255,.14); border-color:var(--signal); color:#fff;}
+button.primary{background:var(--signal); color:#07080d; border-color:var(--signal);}
+button.primary:hover{filter:brightness(1.12);}
+button.on{background:var(--accent); color:#0a0713; border-color:var(--accent);}
+.btnrow{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px;}
+
+.seg{display:flex; gap:0; border:1px solid var(--stroke-2); border-radius:10px; overflow:hidden; flex-wrap:wrap;}
+.seg button{border:none; border-radius:0; border-right:1px solid var(--stroke); flex:1; min-width:78px;}
+.seg button:last-child{border-right:none;}
+
+.chk{display:flex; align-items:center; gap:8px; font-size:.81rem; color:var(--txt-dim); cursor:pointer; margin:7px 0;}
+.chk input{accent-color:var(--signal); width:15px; height:15px; cursor:pointer;}
+
+/* ---------- Readouts ---------- */
+.stats{display:flex; gap:12px; flex-wrap:wrap; margin:14px 0;}
+.stat{
+  flex:1 1 130px; background:rgba(255,255,255,.028); border:1px solid var(--stroke);
+  border-radius:12px; padding:11px 13px;
+}
+.stat .k{font-size:.66rem; color:var(--txt-dim2); font-family:var(--mono);
+  letter-spacing:.09em; text-transform:uppercase;}
+.stat .v{font-size:1.28rem; font-weight:750; font-family:var(--mono); margin-top:2px;}
+.stat.sig .v{color:var(--signal);} .stat.res .v{color:var(--reservoir);}
+.stat.noi .v{color:var(--noise);}  .stat.cln .v{color:var(--clean);}
+.stat.acc .v{color:var(--accent);} .stat.gld .v{color:var(--gold);}
+
+canvas{display:block; width:100%; border-radius:12px; background:rgba(0,0,0,.28);}
+.plot{width:100%; border-radius:12px; overflow:hidden;}
+
+.note{
+  border-left:3px solid var(--signal); background:rgba(73,209,255,.055);
+  padding:13px 17px; border-radius:0 12px 12px 0; margin:18px 0;
+  font-size:.9rem; color:#cdd8ee;
+}
+.note.r{border-color:var(--reservoir); background:rgba(255,122,89,.055);}
+.note.a{border-color:var(--accent); background:rgba(180,140,255,.055);}
+.note.g{border-color:var(--clean); background:rgba(125,255,179,.05);}
+.note b{color:#fff;}
+
+.tag{
+  display:inline-block; font-family:var(--mono); font-size:.66rem;
+  padding:3px 9px; border-radius:99px; letter-spacing:.06em;
+  border:1px solid var(--stroke-2); color:var(--txt-dim); margin:0 5px 5px 0;
+  text-transform:uppercase;
+}
+.tag.s{border-color:var(--signal); color:var(--signal); background:rgba(73,209,255,.09);}
+.tag.r{border-color:var(--reservoir); color:var(--reservoir); background:rgba(255,122,89,.09);}
+.tag.n{border-color:var(--noise); color:var(--noise); background:rgba(255,93,122,.09);}
+.tag.a{border-color:var(--accent); color:var(--accent); background:rgba(180,140,255,.09);}
+
+table{width:100%; border-collapse:collapse; font-size:.85rem; margin:14px 0;}
+th,td{padding:9px 11px; text-align:left; border-bottom:1px solid var(--stroke);}
+th{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase;
+   color:var(--txt-dim2); font-weight:600;}
+td.num{font-family:var(--mono); text-align:right;}
+tr:hover td{background:rgba(255,255,255,.02);}
+
+.katex{font-size:1.02em;}
+.eq{
+  margin:18px 0; padding:15px 18px; text-align:center;
+  background:rgba(255,255,255,.028); border:1px solid var(--stroke);
+  border-radius:12px; overflow-x:auto;
+}
+.eq .lbl{font-family:var(--mono); font-size:.68rem; color:var(--txt-dim2);
+  text-align:right; margin-top:6px;}
+
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.78rem; color:var(--txt-dim); margin:10px 0;}
+.legend i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px;
+  vertical-align:-2px;}
+
+hr.sep{border:none; height:1px; background:linear-gradient(90deg,transparent,var(--stroke-2),transparent); margin:44px 0;}
+
+.hero{
+  padding:36px 0 18px;
+}
+.hero .sub{font-size:1.14rem; color:var(--txt-dim); max-width:72ch; margin-bottom:26px;}
+.authors{font-family:var(--mono); font-size:.78rem; color:var(--txt-dim2); margin-bottom:8px;}
+
+.roadmap{display:grid; grid-template-columns:repeat(auto-fit,minmax(178px,1fr)); gap:12px; margin:26px 0;}
+.rm{
+  background:var(--panel-2); border:1px solid var(--stroke); border-radius:14px;
+  padding:14px 15px; cursor:pointer; transition:all .2s; text-decoration:none; color:inherit;
+  display:block;
+}
+.rm:hover{border-color:var(--signal); transform:translateY(-3px);
+  box-shadow:0 12px 30px rgba(73,209,255,.12);}
+.rm .n{font-family:var(--mono); font-size:.66rem; color:var(--signal); letter-spacing:.14em;}
+.rm .t{font-weight:660; font-size:.92rem; margin:5px 0 3px;}
+.rm .d{font-size:.75rem; color:var(--txt-dim2); line-height:1.45;}
+
+.q{
+  font-size:1.05rem; font-style:italic; color:#dae3f5;
+  border-left:3px solid var(--accent); padding-left:18px; margin:22px 0;
+}
+
+.cellgrid{display:grid; grid-template-columns:1fr 1fr; gap:2px; border-radius:14px; overflow:hidden;
+  border:1px solid var(--stroke-2);}
+.cell{padding:18px; min-height:132px; position:relative; cursor:pointer; transition:all .2s;}
+.cell:hover{filter:brightness(1.22);}
+.cell.ok{background:linear-gradient(135deg,rgba(73,209,255,.13),rgba(73,209,255,.05));}
+.cell.bad{background:linear-gradient(135deg,rgba(255,93,122,.13),rgba(255,93,122,.05));}
+.cell .h{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em;
+  color:var(--txt-dim2); text-transform:uppercase; margin-bottom:6px;}
+.cell .b{font-weight:680; font-size:.95rem; margin-bottom:6px;}
+.cell .x{font-size:.78rem; color:var(--txt-dim); line-height:1.5;}
+.cell .ph{position:absolute; bottom:12px; right:14px; font-size:.7rem;
+  font-family:var(--mono); color:var(--accent);}
+@media(max-width:700px){.cellgrid{grid-template-columns:1fr;}}
+
+.axlabel{font-size:.72rem; color:var(--txt-dim2); font-family:var(--mono); text-align:center; margin-top:6px;}
+
+.pill{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--mono);
+  font-size:.7rem; padding:4px 10px; border-radius:99px;
+  background:rgba(255,255,255,.04); border:1px solid var(--stroke);
+  color:var(--txt-dim); margin:0 4px 4px 0;
+}
+.pill b{color:var(--signal);}
+
+.footer{
+  text-align:center; padding:40px 0 10px; color:var(--txt-dim2); font-size:.8rem;
+  border-top:1px solid var(--stroke); margin-top:60px;
+}
+::selection{background:rgba(73,209,255,.3);}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <span class="brand"><b>Signalkanal</b> &amp; Reservoir</span>
+  <a href="#intro">0 · Rätsel</a>
+  <a href="#prereq">1 · Werkzeuge</a>
+  <a href="#outspace">2 · Ausgaberaum</a>
+  <a href="#split">3 · Die Aufspaltung</a>
+  <a href="#invisible">4 · Unsichtbarkeit</a>
+  <a href="#sgd">5 · Drift vs. Diffusion</a>
+  <a href="#coupling">6 · Kopplung</a>
+  <a href="#fourcell">7 · Vier Zellen</a>
+  <a href="#phenomena">8 · Phänomene</a>
+  <a href="#poprisk">9 · Populationsrisiko</a>
+  <a href="#algo">10 · Algorithmus</a>
+  <a href="#results">11 · Ergebnisse</a>
+  <a href="#recap">12 · Antwort</a>
+</nav>
+
+<main>
+
+<!-- ============================================================
+     SECTION 0 — THE PUZZLE / MOTIVATION
+     ============================================================ -->
+<section id="intro">
+  <div class="hero">
+    <div class="kicker">Interaktive Erklärung · arXiv 2605.01172</div>
+    <h1>Warum funktionieren neuronale Netze,<br>obwohl sie alles auswendig lernen könnten?</h1>
+    <div class="authors">Elon Litman, Gabe Guo · Stanford University · „A Theory of Generalization in Deep Learning“</div>
+    <p class="sub">
+      Diese Seite erklärt das gesamte Paper durch <b>Spielen</b>. Jede Idee bekommt einen Regler,
+      ein Bild, ein Experiment. Du brauchst nur Abitur-Mathematik – alles Weitere
+      (Kerne, Eigenwerte, Projektoren, Pseudoinverse) wird hier von Null aufgebaut.
+    </p>
+    <div>
+      <span class="pill">⏱ <b>~45 min</b> Spielzeit</span>
+      <span class="pill">🧮 Vorwissen: <b>Abi-Mathe</b></span>
+      <span class="pill">🎛 <b>14</b> interaktive Demos</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Das Rätsel in einem Satz</h3>
+    <p class="lead">
+      Ein Netz mit mehr Parametern als Trainingsbeispielen kann <b>beliebige</b> Labels auswendig lernen –
+      auch reines Rauschen (Zhang et al. 2017). Trotzdem generalisiert <b>dasselbe</b> Trainingsverfahren
+      auf echten Daten hervorragend. Warum?
+    </p>
+    <p>
+      Klassische Kapazitätsschranken (VC-Dimension, Rademacher-Komplexität) sagen: „Ein so großes Modell
+      kann alles – also garantieren wir nichts.“ Sie sind bei realer Größe <b>vakuum</b>, also nutzlos.
+      Die Frozen-Kernel-Theorie (NTK) funktioniert nur im „lazy regime“, in dem sich die Features
+      <i>gar nicht</i> ändern – moderne Netze lernen aber genau diese Features.
+    </p>
+  </div>
+
+  <!-- DEMO 0: MEMORIZATION PUZZLE -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 0 — Das Auswendiglern-Paradox</span>
+      <span class="s">Zieh den Regler: Wie viel Rauschen steckt in den Labels?</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div id="p_mem" class="plot" style="height:330px"></div>
+          <div class="legend">
+            <span><i style="background:var(--clean)"></i>wahre Funktion</span>
+            <span><i style="background:var(--noise)"></i>verrauschte Trainingslabels</span>
+            <span><i style="background:var(--signal)"></i>gelerntes Modell</span>
+          </div>
+          <div class="axlabel">x → Eingabe &nbsp;·&nbsp; y → Ausgabe</div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Rauschanteil in den Labels <span class="v" id="v_memnoise">20 %</span></label>
+            <input type="range" id="s_memnoise" min="0" max="100" value="20" step="5">
+          </div>
+          <div class="ctrl">
+            <label>Modellkapazität (Anzahl Basisfunktionen) <span class="v" id="v_memcap">40</span></label>
+            <input type="range" id="s_memcap" min="2" max="60" value="40" step="1">
+          </div>
+          <div class="ctrl">
+            <label>Trainingsfortschritt <span class="v" id="v_memt">100 %</span></label>
+            <input type="range" id="s_memt" min="0" max="100" value="100" step="1">
+          </div>
+          <div class="stats">
+            <div class="stat cln"><div class="k">Trainingsfehler</div><div class="v" id="st_memtr">–</div></div>
+            <div class="stat noi"><div class="k">Testfehler</div><div class="v" id="st_memte">–</div></div>
+          </div>
+          <div class="note">
+            <b>Beobachte:</b> Bei hoher Kapazität geht der <span class="hl-c">Trainingsfehler</span>
+            gegen Null – das Modell trifft <i>jeden</i> roten Punkt, auch den reinen Rauschanteil.
+            Der <span class="hl-n">Testfehler</span> muss deswegen aber nicht explodieren.
+            Genau diese Lücke will das Paper erklären.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die zentrale Frage des Papers</h3>
+    <div class="q">
+      „Wohin geht der Fehler, den das Netz beim Auswendiglernen erzeugt –
+      und warum taucht er auf Testdaten nicht wieder auf?“
+    </div>
+    <p>
+      Die Antwort des Papers ist überraschend konkret und <b>geometrisch</b>: Der Ausgaberaum
+      zerfällt in zwei zueinander senkrechte Teile.
+    </p>
+    <div class="grid g2">
+      <div class="card tight" style="border-color:rgba(73,209,255,.35)">
+        <h4 style="color:var(--signal)">Signalkanal</h4>
+        <p class="small" style="margin:0">
+          Richtungen, in denen das Training tatsächlich Verlust <i>abgebaut</i> hat.
+          Hier bewegt sich auch die Testvorhersage. Was hier landet, zählt.
+        </p>
+      </div>
+      <div class="card tight" style="border-color:rgba(255,122,89,.35)">
+        <h4 style="color:var(--reservoir)">Reservoir</h4>
+        <p class="small" style="margin:0">
+          Richtungen, in denen das Training <i>null</i> Verlust abgebaut hat.
+          Restfehler, der hier gefangen ist, ist für <b>jede</b> Testmenge unsichtbar.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="roadmap">
+    <a class="rm" href="#prereq"><div class="n">TEIL 1</div><div class="t">Werkzeugkasten</div>
+      <div class="d">Jacobi-Matrix, Kern, Eigenwerte, Projektoren – von Null aufgebaut.</div></a>
+    <a class="rm" href="#outspace"><div class="n">TEIL 2</div><div class="t">Ausgaberaum-Dynamik</div>
+      <div class="d">Warum man Training am besten in den Ausgaben statt in den Gewichten anschaut.</div></a>
+    <a class="rm" href="#split"><div class="n">TEIL 3</div><div class="t">Die Aufspaltung</div>
+      <div class="d">Kumulative Dissipation W teilt den Raum: Signalkanal vs. Reservoir.</div></a>
+    <a class="rm" href="#invisible"><div class="n">TEIL 4</div><div class="t">Unsichtbarkeit</div>
+      <div class="d">Der Beweis in drei Zeilen: Reservoir ⇒ kein Effekt auf Tests.</div></a>
+    <a class="rm" href="#sgd"><div class="n">TEIL 5</div><div class="t">Drift vs. Diffusion</div>
+      <div class="d">Warum Signal linear wächst und Rauschen nur wie √T.</div></a>
+    <a class="rm" href="#coupling"><div class="n">TEIL 6</div><div class="t">Train-Test-Kopplung</div>
+      <div class="d">Testbewegung exakt aus Trainingsbewegung – trotz Feature-Learning.</div></a>
+    <a class="rm" href="#fourcell"><div class="n">TEIL 7</div><div class="t">Vier Zellen</div>
+      <div class="d">Die komplette Zerlegung des Testfehlers (Abb. 1 des Papers).</div></a>
+    <a class="rm" href="#phenomena"><div class="n">TEIL 8</div><div class="t">Vier Phänomene</div>
+      <div class="d">Grokking, Double Descent, Implicit Bias, Benign Overfitting.</div></a>
+    <a class="rm" href="#poprisk"><div class="n">TEIL 9</div><div class="t">Populationsrisiko</div>
+      <div class="d">Testfehler messen ohne Testdaten – per Austauschbarkeit.</div></a>
+    <a class="rm" href="#algo"><div class="n">TEIL 10</div><div class="t">Der Algorithmus</div>
+      <div class="d">Eine Zeile mehr in Adam: das SNR-Gate μ² &gt; σ²/(b−1).</div></a>
+    <a class="rm" href="#results"><div class="n">TEIL 11</div><div class="t">Ergebnisse</div>
+      <div class="d">PINN, Grokking, DPO, INR, Lorenz – was tatsächlich passiert.</div></a>
+    <a class="rm" href="#recap"><div class="n">TEIL 12</div><div class="t">Die Antwort</div>
+      <div class="d">Alles in einem Satz und einem letzten Bild.</div></a>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 1 — PREREQUISITES
+     ============================================================ -->
+<section id="prereq">
+  <div class="kicker">Teil 1 · Werkzeugkasten</div>
+  <h2>Die fünf Werkzeuge, die über Abi-Mathe hinausgehen</h2>
+  <p class="lead">
+    Alles, was das Paper benutzt, lässt sich auf fünf Ideen zurückführen. Jede davon
+    kannst du unten anfassen. Danach liest sich das Paper wie ein Bilderbuch.
+  </p>
+
+  <!-- 1.1 JACOBIAN -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">1.1 — Die Jacobi-Matrix <span class="katex-inline">J</span>: „Welcher Regler bewegt welche Ausgabe?“</span>
+      <span class="s">Ableitung, aber für mehrere Ein- und Ausgänge</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g12">
+        <div>
+          <p class="small">
+            Du kennst die Ableitung <i>f′(x)</i>: „Wenn ich x um ein bisschen ändere, wie stark ändert sich f?“
+            Ein Netz hat <b>viele</b> Parameter <i>w₁…w_d</i> und liefert <b>viele</b> Ausgaben
+            <i>u₁…u_n</i> (eine pro Trainingsbeispiel).
+          </p>
+          <p class="small">
+            Die Jacobi-Matrix <span class="hl">J</span> sammelt einfach <i>alle</i> Ableitungen in einer Tabelle:
+            Eintrag <i>J<sub>ij</sub></i> = „wie stark bewegt Parameter <i>j</i> die Ausgabe <i>i</i>“.
+          </p>
+          <div class="eq" id="eq_jac"></div>
+          <div class="ctrl">
+            <label>Parameter w₁ <span class="v" id="v_j1">0.00</span></label>
+            <input type="range" id="s_j1" min="-100" max="100" value="0">
+          </div>
+          <div class="ctrl">
+            <label>Parameter w₂ <span class="v" id="v_j2">0.00</span></label>
+            <input type="range" id="s_j2" min="-100" max="100" value="0">
+          </div>
+          <div class="note">
+            <b>Zieh an w₁ oder w₂.</b> Rechts siehst du, wie sich die drei Ausgaben bewegen.
+            Die Pfeillängen sind genau die Spalten von <span class="hl">J</span>.
+          </div>
+        </div>
+        <div>
+          <canvas id="c_jac" height="380"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--signal)"></i>Wirkung von w₁</span>
+            <span><i style="background:var(--accent)"></i>Wirkung von w₂</span>
+            <span><i style="background:var(--clean)"></i>aktuelle Ausgaben</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 KERNEL -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">1.2 — Der Tangentenkern <span class="katex-inline">K = JJᵀ</span>: „Wie hängen Ausgaben zusammen?“</span>
+      <span class="s">Das Herzstück der ganzen Theorie</span>
+    </div>
+    <div class="demo-body">
+      <p class="small">
+        Wenn ich Beispiel <i>i</i> hochdrücke – zieht Beispiel <i>j</i> mit? Genau das misst
+        <span class="hl">K = J·Jᵀ</span>. Ein Eintrag <i>K<sub>ij</sub></i> ist das Skalarprodukt
+        der Gradienten von Beispiel i und j: <b>groß</b> = die beiden Beispiele „teilen sich Features“,
+        <b>null</b> = sie sind entkoppelt.
+      </p>
+      <div class="grid g2">
+        <div>
+          <div class="ctrl">
+            <label>Feature-Überlappung zwischen Beispielen <span class="v" id="v_kov">0.55</span></label>
+            <input type="range" id="s_kov" min="0" max="100" value="55">
+          </div>
+          <div class="ctrl">
+            <label>Anzahl Beispiele n <span class="v" id="v_kn">14</span></label>
+            <input type="range" id="s_kn" min="4" max="24" value="14">
+          </div>
+          <div class="ctrl">
+            <label>Anzahl „echter“ Features (Rang) <span class="v" id="v_krank">5</span></label>
+            <input type="range" id="s_krank" min="1" max="24" value="5">
+          </div>
+          <div class="note r">
+            <b>Wichtig:</b> Sind es weniger echte Features als Beispiele, hat K <span class="hl-r">Nullrichtungen</span> –
+            Richtungen, die kein Gradient je erreicht. Das ist der Ursprung des Reservoirs.
+          </div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Rang von K</div><div class="v" id="st_krank">5</div></div>
+            <div class="stat res"><div class="k">Nullrichtungen</div><div class="v" id="st_knull">9</div></div>
+          </div>
+        </div>
+        <div>
+          <canvas id="c_kmat" height="300"></canvas>
+          <div class="axlabel">Kernmatrix K (hell = starke Kopplung)</div>
+        </div>
+      </div>
+      <div id="p_kspec" class="plot" style="height:270px;margin-top:14px"></div>
+    </div>
+  </div>
+
+  <!-- 1.3 EIGEN -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">1.3 — Eigenwerte &amp; Eigenrichtungen: „Die natürlichen Achsen“</span>
+      <span class="s">Richtungen, die eine Matrix nur streckt, nicht dreht</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_eig" height="360"></canvas>
+          <div class="legend">
+            <span><i style="background:rgba(160,180,220,.5)"></i>Einheitskreis (vorher)</span>
+            <span><i style="background:var(--signal)"></i>Bild unter K (nachher)</span>
+            <span><i style="background:var(--gold)"></i>Eigenrichtungen</span>
+          </div>
+        </div>
+        <div>
+          <p class="small">
+            Eine symmetrische Matrix verformt einen Kreis zu einer <b>Ellipse</b>.
+            Die Achsen der Ellipse sind die <span class="hl-g">Eigenrichtungen</span>,
+            ihre Längen die <span class="hl-g">Eigenwerte</span> λ.
+          </p>
+          <div class="ctrl">
+            <label>λ₁ (große Achse) <span class="v" id="v_l1">2.40</span></label>
+            <input type="range" id="s_l1" min="1" max="300" value="240">
+          </div>
+          <div class="ctrl">
+            <label>λ₂ (kleine Achse) <span class="v" id="v_l2">0.30</span></label>
+            <input type="range" id="s_l2" min="0" max="300" value="30">
+          </div>
+          <div class="ctrl">
+            <label>Drehung der Achsen <span class="v" id="v_lth">25°</span></label>
+            <input type="range" id="s_lth" min="0" max="180" value="25">
+          </div>
+          <div class="note">
+            Schieb <b>λ₂ auf 0</b>: Die Ellipse kollabiert zu einer Linie.
+            Alles senkrecht dazu wird <b>ausgelöscht</b> – das ist eine
+            <span class="hl-r">Nullrichtung</span> (Kern der Matrix).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 PROJECTORS -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">1.4 — Projektoren: „Wie viel von v liegt in diesem Unterraum?“</span>
+      <span class="s">Schattenwurf – mehr ist es nicht</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_proj" height="340"></canvas>
+        </div>
+        <div>
+          <p class="small">
+            Ein Projektor <b>P</b> wirft einen Vektor senkrecht auf einen Unterraum.
+            Das Paper nutzt genau zwei davon:
+          </p>
+          <div>
+            <span class="tag s">P<sub>sig</sub> → Signalkanal</span>
+            <span class="tag r">P<sub>res</sub> → Reservoir</span>
+          </div>
+          <p class="small">
+            Sie zerlegen jeden Vektor eindeutig: <i>v = P<sub>sig</sub>v + P<sub>res</sub>v</i>,
+            und die beiden Teile stehen senkrecht aufeinander.
+          </p>
+          <div class="ctrl">
+            <label>Winkel des Vektors v <span class="v" id="v_pang">50°</span></label>
+            <input type="range" id="s_pang" min="0" max="360" value="50">
+          </div>
+          <div class="ctrl">
+            <label>Lage des Signalkanals <span class="v" id="v_psub">20°</span></label>
+            <input type="range" id="s_psub" min="0" max="180" value="20">
+          </div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">‖P<sub>sig</sub>v‖</div><div class="v" id="st_psig">–</div></div>
+            <div class="stat res"><div class="k">‖P<sub>res</sub>v‖</div><div class="v" id="st_pres">–</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.5 PSEUDOINVERSE -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">1.5 — Pseudoinverse <span class="katex-inline">A†</span>: „Rückwärts rechnen, wenn es nicht geht“</span>
+      <span class="s">Plus: warum „minimale Norm“ automatisch herauskommt</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g2">
+        <div>
+          <p class="small">
+            Wenn eine Matrix Richtungen platt macht, kann man sie nicht invertieren.
+            Die <b>Pseudoinverse</b> tut das Nächstbeste: sie invertiert auf den Richtungen,
+            die überleben, und setzt den Rest auf Null.
+          </p>
+          <div class="eq" id="eq_pinv"></div>
+          <p class="small">
+            Folge: Von allen Lösungen, die die Daten exakt treffen, wählt sie automatisch
+            die mit <b>kleinster Länge</b>. Genau das macht auch Gradientenabstieg von selbst
+            (das ist der „Implicit Bias“ in Teil 8).
+          </p>
+        </div>
+        <div>
+          <canvas id="c_pinv" height="300"></canvas>
+          <div class="ctrl">
+            <label>Zielwert (Datenpunkt) <span class="v" id="v_pib">1.40</span></label>
+            <input type="range" id="s_pib" min="-200" max="200" value="140">
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--clean)"></i>Lösungsgerade (alle passen)</span>
+            <span><i style="background:var(--signal)"></i>Minimalnorm-Lösung = A†b</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note g">
+    <b>Fertig.</b> Mit Jacobi-Matrix, Kern, Eigenwerten, Projektoren und Pseudoinverse
+    hast du das komplette mathematische Vokabular des Papers. Ab hier wird nur noch kombiniert.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — OUTPUT SPACE DYNAMICS
+     ============================================================ -->
+<section id="outspace">
+  <div class="kicker">Teil 2 · Die Idee</div>
+  <h2>Schau nicht auf die Gewichte. Schau auf die Ausgaben.</h2>
+  <p class="lead">
+    Ein Netz hat Milliarden Parameter – dort ist nichts zu verstehen. Aber es hat nur
+    <i>n</i> Trainingsausgaben. Das Paper beschreibt Training als Bewegung in diesem
+    kleinen, greifbaren <b>Ausgaberaum</b>.
+  </p>
+
+  <div class="card">
+    <h3>Die Kettenregel liefert alles</h3>
+    <p>
+      Gradientenfluss in den Gewichten heißt <span class="katex-inline">∂_t w = -J^\top g</span>.
+      Einmal Kettenregel – und man sieht, wie sich die <b>Ausgaben</b> bewegen:
+    </p>
+    <div class="eq" id="eq_dyn1"><div class="lbl">Gleichung (4) im Paper</div></div>
+    <p>
+      Das ist der ganze Trick: Die Bewegung der Ausgaben wird vom <span class="hl">Kern K</span>
+      gesteuert. Und der Verlust nimmt genau so schnell ab:
+    </p>
+    <div class="eq" id="eq_dyn2"><div class="lbl">Gleichung (6) — „Dissipation“</div></div>
+    <div class="note">
+      <b>Lies das langsam:</b> Wenn der Gradient <i>g</i> in einer Richtung liegt, wo <i>K</i>
+      nahe Null ist, dann ist auch die Verlustabnahme nahe Null. Das Training „sieht“ diese
+      Richtung praktisch nicht. Merk dir das – es ist die Geburt des Reservoirs.
+    </div>
+  </div>
+
+  <!-- DEMO 2: OUTPUT SPACE FLOW -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 2 — Ausgaberaum als Fluss</span>
+      <span class="s">Zwei Trainingsbeispiele = zwei Achsen. Beobachte, wohin der Fehler fließt.</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_flow" height="420"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--signal)"></i>Trajektorie der Ausgaben</span>
+            <span><i style="background:var(--clean)"></i>Ziel y</span>
+            <span><i style="background:var(--reservoir)"></i>Reservoir-Achse (λ₂≈0)</span>
+          </div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Eigenwert λ₁ (schnelle Richtung) <span class="v" id="v_f1">1.00</span></label>
+            <input type="range" id="s_f1" min="5" max="200" value="100">
+          </div>
+          <div class="ctrl">
+            <label>Eigenwert λ₂ (Reservoir-Richtung) <span class="v" id="v_f2">0.02</span></label>
+            <input type="range" id="s_f2" min="0" max="100" value="2">
+          </div>
+          <div class="ctrl">
+            <label>Drehung der Kern-Achsen <span class="v" id="v_fth">35°</span></label>
+            <input type="range" id="s_fth" min="0" max="180" value="35">
+          </div>
+          <div class="ctrl">
+            <label>Trainingszeit t <span class="v" id="v_ft">6.0</span></label>
+            <input type="range" id="s_ft" min="0" max="200" value="60">
+          </div>
+          <div class="btnrow">
+            <button id="b_flowplay" class="primary">▶ Abspielen</button>
+            <button id="b_flowres">Zurücksetzen</button>
+          </div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Fehler in λ₁-Richtung</div><div class="v" id="st_f1">–</div></div>
+            <div class="stat res"><div class="k">Fehler in λ₂-Richtung</div><div class="v" id="st_f2">–</div></div>
+          </div>
+          <div class="note r">
+            <b>Schieb λ₂ fast auf 0.</b> Der Fehler entlang der orangen Achse bleibt einfach
+            <i>stehen</i>. Das Training kommt dort nicht hin – weil die Verlustabnahme
+            <span class="katex-inline">g^\top K g</span> dort verschwindet.
+            Genau dieser gefangene Restfehler ist das <span class="hl-r">Reservoir</span>.
+          </div>
+        </div>
+      </div>
+      <div id="p_flowloss" class="plot" style="height:240px;margin-top:16px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — THE SPLIT: W, SIGNAL CHANNEL, RESERVOIR
+     ============================================================ -->
+<section id="split">
+  <div class="kicker">Teil 3 · Die zentrale Definition</div>
+  <h2>Die kumulative Dissipation <span style="font-style:italic">W</span> teilt den Raum</h2>
+  <p class="lead">
+    Der Kern <i>K</i> ändert sich während des Trainings – seine Achsen <b>drehen sich</b>.
+    Ein einzelner Schnappschuss reicht deshalb nicht. Das Paper integriert stattdessen
+    über die <i>gesamte</i> Trainingsbahn.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_W"><div class="lbl">Definition 3.1 — Kumulative Dissipation</div></div>
+    <p>
+      Das sieht schlimmer aus als es ist. Die Bedeutung ist wörtlich:
+    </p>
+    <div class="eq" id="eq_Weig"><div class="lbl">Gleichung (33) — Eigenwert = aufsummierte Erreichbarkeit</div></div>
+    <p>
+      <b>Der Eigenwert λ<sub>j</sub> von W ist einfach: „Wie viel Verlust konnte das Training
+      über die gesamte Laufzeit in Richtung ψ<sub>j</sub> insgesamt abbauen?“</b>
+    </p>
+    <div class="grid g2">
+      <div class="card tight" style="border-color:rgba(73,209,255,.35)">
+        <h4 style="color:var(--signal)">λ &gt; 0 → Signalkanal</h4>
+        <p class="small" style="margin:0">
+          <i>range(W)</i>. Hier wurde Verlust abgebaut. Hier passiert Lernen –
+          und hier passiert auch Auswendiglernen.
+        </p>
+      </div>
+      <div class="card tight" style="border-color:rgba(255,122,89,.35)">
+        <h4 style="color:var(--reservoir)">λ = 0 → Reservoir</h4>
+        <p class="small" style="margin:0">
+          <i>ker(W)</i>. Hier wurde <b>nichts</b> abgebaut. Restfehler bleibt liegen –
+          sichtbar im Training, unsichtbar im Test.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 3: ROTATING KERNEL + ACCUMULATION -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 3 — Warum man integrieren muss: der rotierende Kern</span>
+      <span class="s">Ein Schnappschuss lügt. Nur die Summe über die Zeit zählt.</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_rot" height="400"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--signal)"></i>momentane Kern-Ellipse K(τ)</span>
+            <span><i style="background:var(--accent)"></i>aufintegriertes W(0,t)</span>
+            <span><i style="background:var(--gold)"></i>Spur der Hauptachse</span>
+          </div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Rotationsgeschwindigkeit der Kern-Achsen <span class="v" id="v_rotsp">1.0</span></label>
+            <input type="range" id="s_rotsp" min="0" max="300" value="100">
+          </div>
+          <div class="ctrl">
+            <label>Anisotropie λ₁/λ₂ des Kerns <span class="v" id="v_rotan">12</span></label>
+            <input type="range" id="s_rotan" min="1" max="60" value="12">
+          </div>
+          <div class="ctrl">
+            <label>Integrationszeit t <span class="v" id="v_rott">3.0</span></label>
+            <input type="range" id="s_rott" min="1" max="200" value="30">
+          </div>
+          <div class="btnrow">
+            <button id="b_rotplay" class="primary">▶ Zeit laufen lassen</button>
+          </div>
+          <div class="stats">
+            <div class="stat acc"><div class="k">λ₁(W)</div><div class="v" id="st_rotl1">–</div></div>
+            <div class="stat acc"><div class="k">λ₂(W)</div><div class="v" id="st_rotl2">–</div></div>
+            <div class="stat res"><div class="k">Anisotropie von W</div><div class="v" id="st_rotani">–</div></div>
+          </div>
+          <div class="note a">
+            <b>Rotation = 0:</b> W sieht aus wie K – schmal, mit großem Reservoir.<br>
+            <b>Rotation hoch:</b> W wird rund. Das Training „erreicht“ mit der Zeit
+            <i>mehr</i> Richtungen, das Reservoir schrumpft. Genau das ist
+            <span class="hl-a">Feature Learning</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 3b: SPECTRUM EXPLORER -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 3b — Das Spektrum von W: wo endet Signal, wo beginnt Reservoir?</span>
+      <span class="s">Nachbau von Abbildung 2A des Papers</span>
+    </div>
+    <div class="demo-body">
+      <div id="p_spec" class="plot" style="height:360px"></div>
+      <div class="grid g3" style="margin-top:14px">
+        <div class="ctrl">
+          <label>Spektraler Abfall (Potenz α) <span class="v" id="v_spa">2.2</span></label>
+          <input type="range" id="s_spa" min="5" max="60" value="22">
+        </div>
+        <div class="ctrl">
+          <label>Effektiver Rang (Knick) <span class="v" id="v_spr">18</span></label>
+          <input type="range" id="s_spr" min="2" max="60" value="18">
+        </div>
+        <div class="ctrl">
+          <label>Schwelle ε <span class="v" id="v_speps">1e-3</span></label>
+          <input type="range" id="s_speps" min="1" max="80" value="30">
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat sig"><div class="k">Dim. Signalkanal</div><div class="v" id="st_spsig">–</div></div>
+        <div class="stat res"><div class="k">Dim. Reservoir</div><div class="v" id="st_spres">–</div></div>
+        <div class="stat gld"><div class="k">Anteil Reservoir</div><div class="v" id="st_sppct">–</div></div>
+      </div>
+      <div class="note">
+        In echten Netzen fällt das Spektrum über <b>viele Größenordnungen</b> ab.
+        Die überwältigende Mehrheit der Richtungen liegt praktisch bei Null –
+        <b>das Reservoir ist riesig</b>, der Signalkanal winzig. Das ist der Grund,
+        warum Überparametrisierung nicht schadet: es gibt mehr als genug Platz,
+        Rauschen unschädlich zu „parken“.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — RESERVOIR INVISIBILITY (the proof)
+     ============================================================ -->
+<section id="invisible">
+  <div class="kicker">Teil 4 · Der Kernbeweis</div>
+  <h2>Warum das Reservoir für <i>jeden</i> Testpunkt unsichtbar ist</h2>
+  <p class="lead">
+    Das ist Proposition 3.2 – der wichtigste Satz des Papers. Und er ist in drei Schritten zu verstehen.
+  </p>
+
+  <div class="card">
+    <h3>Der Beweis, Schritt für Schritt</h3>
+    <div class="eq" id="eq_pf1"><div class="lbl">① h liegt im Reservoir ⇒ das Integral ist Null</div></div>
+    <p class="small">
+      Ein Integral über <b>Quadrate</b> ist nur dann Null, wenn der Integrand überall Null ist.
+      Also gilt zu <i>jedem</i> Zeitpunkt τ:
+    </p>
+    <div class="eq" id="eq_pf2"><div class="lbl">② h wird von Jᵀ zu jeder Zeit ausgelöscht</div></div>
+    <p class="small">
+      Und jetzt kommt der Clou: Der Test-Train-Kern <b>teilt sich denselben Faktor</b>
+      <span class="katex-inline">J_S^\top</span>:
+    </p>
+    <div class="eq" id="eq_pf3"><div class="lbl">③ derselbe Faktor ⇒ auch der Testtransfer ist Null</div></div>
+    <div class="note g">
+      <b>Fertig.</b> <span class="katex-inline">\ker W \subseteq \ker G_Q</span> – und zwar für
+      <b>jede beliebige Testmenge Q</b>. Keine Annahme über Daten, keine Asymptotik,
+      kein „mit hoher Wahrscheinlichkeit“. Reine Algebra.
+    </div>
+  </div>
+
+  <!-- DEMO 4: SHARED FACTOR -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 4 — Der gemeinsame Faktor Jᵀ: die Unsichtbarkeitsmaschine</span>
+      <span class="s">Zieh den Fehlervektor herum und beobachte, was beim Test ankommt</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_invis" height="400"></canvas>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Richtung des Restfehlers h <span class="v" id="v_ivang">30°</span></label>
+            <input type="range" id="s_ivang" min="0" max="360" value="30">
+          </div>
+          <div class="ctrl">
+            <label>Wie „platt“ ist der Kern (Reservoir-Größe) <span class="v" id="v_ivflat">0.05</span></label>
+            <input type="range" id="s_ivflat" min="0" max="100" value="5">
+          </div>
+          <div class="ctrl">
+            <label>Testpunkt-Richtung (frei wählbar!) <span class="v" id="v_ivq">70°</span></label>
+            <input type="range" id="s_ivq" min="0" max="360" value="70">
+          </div>
+          <div class="stats">
+            <div class="stat noi"><div class="k">Trainingsfehler durch h</div><div class="v" id="st_ivtr">–</div></div>
+            <div class="stat cln"><div class="k">Testbewegung durch h</div><div class="v" id="st_ivte">–</div></div>
+          </div>
+          <div class="note">
+            <b>Das Experiment:</b> Dreh h in die Reservoir-Richtung (orange Linie).
+            Der <span class="hl-n">Trainingsfehler</span> bleibt groß – das Netz hat den Punkt
+            nicht perfekt gelernt. Aber die <span class="hl-c">Testbewegung fällt auf exakt 0</span>.
+            Und jetzt dreh den <b>Testpunkt</b> wie du willst: Es bleibt 0.
+            Das ist die ganze Aussage.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note r">
+    <b>Warum ist das überhaupt überraschend?</b> Intuitiv denkt man: „Wenn das Netz
+    Rauschen auswendig gelernt hat, ist es kaputt.“ Das Paper zeigt: Es kommt darauf an,
+    <b>wo</b> im Ausgaberaum das Auswendiggelernte liegt. Liegt es im Reservoir,
+    ist es buchstäblich folgenlos.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — DRIFT VS DIFFUSION
+     ============================================================ -->
+<section id="sgd">
+  <div class="kicker">Teil 5 · Was im Signalkanal passiert</div>
+  <h2>Drift wächst wie T, Rauschen nur wie √T</h2>
+  <p class="lead">
+    Im Signalkanal liegt beides: echte Struktur <i>und</i> auswendig gelerntes Rauschen.
+    SGD trennt die beiden von selbst – durch einen simplen Skalierungsunterschied.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_dd"><div class="lbl">Gleichung (14) — Zerlegung jedes SGD-Schritts</div></div>
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="color:var(--clean)">Drift μ — der Mittelwert</h4>
+        <p class="small" style="margin:0">
+          Zeigt bei <b>echtem Signal</b> immer in dieselbe Richtung.
+          N Schritte ⇒ Beitrag wächst <b>∝ T</b>.
+        </p>
+      </div>
+      <div class="card tight">
+        <h4 style="color:var(--noise)">Diffusion ξ — die Schwankung</h4>
+        <p class="small" style="margin:0">
+          Mittelwert Null, zufällige Richtung. Wie ein Betrunkener:
+          N Schritte ⇒ Abstand nur <b>∝ √T</b>.
+        </p>
+      </div>
+    </div>
+    <div class="eq" id="eq_dd2"><div class="lbl">Theorem 4.1 — die Trennung der Raten</div></div>
+  </div>
+
+  <!-- DEMO 5: RANDOM WALK RACE -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 5 — Das Rennen: gerichteter Schritt gegen Zufallsschritt</span>
+      <span class="s">Lass viele Läufe gleichzeitig laufen und sieh die Skalierung</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <canvas id="c_walk" height="330"></canvas>
+          <div class="axlabel">Schritte → &nbsp;·&nbsp; Position ↑</div>
+          <div id="p_scaling" class="plot" style="height:270px;margin-top:12px"></div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Drift μ (Stärke des echten Signals) <span class="v" id="v_wmu">0.12</span></label>
+            <input type="range" id="s_wmu" min="0" max="60" value="12">
+          </div>
+          <div class="ctrl">
+            <label>Rauschstärke σ <span class="v" id="v_wsig">1.00</span></label>
+            <input type="range" id="s_wsig" min="1" max="300" value="100">
+          </div>
+          <div class="ctrl">
+            <label>Batchgröße b <span class="v" id="v_wb">16</span></label>
+            <input type="range" id="s_wb" min="1" max="128" value="16">
+          </div>
+          <div class="ctrl">
+            <label>Anzahl paralleler Läufe <span class="v" id="v_wn">40</span></label>
+            <input type="range" id="s_wn" min="5" max="120" value="40">
+          </div>
+          <div class="btnrow">
+            <button id="b_walkrun" class="primary">▶ Neu würfeln</button>
+            <button id="b_walkanim">⏱ Animieren</button>
+          </div>
+          <div class="stats">
+            <div class="stat cln"><div class="k">Drift nach T</div><div class="v" id="st_wdrift">–</div></div>
+            <div class="stat noi"><div class="k">Streuung nach T</div><div class="v" id="st_wdiff">–</div></div>
+            <div class="stat gld"><div class="k">Signal / Rausch</div><div class="v" id="st_wsnr">–</div></div>
+          </div>
+          <div class="note g">
+            <b>Größere Batches</b> verkleinern σ um 1/√b — deshalb steht
+            <span class="katex-inline">b</span> im Nenner der Schranke
+            <span class="katex-inline">\sqrt{\eta T/b}</span>.
+            <b>Längeres Training</b> hilft dem Signal mehr als dem Rauschen, weil T schneller
+            wächst als √T.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — TRAIN-TEST COUPLING
+     ============================================================ -->
+<section id="coupling">
+  <div class="kicker">Teil 6 · Der Übersetzer</div>
+  <h2>Trainingsbewegung bestimmt Testbewegung — exakt</h2>
+  <p class="lead">
+    Beide Seiten – Training und Test – laufen durch denselben Faktor
+    <span class="katex-inline">W^{1/2}</span>. Deshalb gibt es einen linearen Operator
+    <span class="katex-inline">A^\circ</span>, der die eine in die andere übersetzt.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_cpl1"><div class="lbl">Gleichungen (17)–(18) — gemeinsamer Faktor</div></div>
+    <div class="eq" id="eq_cpl2"><div class="lbl">Theorem 5.1 — exakte Kopplung bei quadratischem Verlust</div></div>
+    <div class="note a">
+      <b>Das Bemerkenswerte:</b> „ohne jede Kernel-Stabilitäts- oder asymptotische Annahme“.
+      Der Kern darf sich um <b>Faktor 4,8</b> ändern (Abb. 2C des Papers) – die Gleichung gilt
+      trotzdem <i>exakt</i>. Genau das schafft die NTK-Theorie nicht.
+    </div>
+  </div>
+
+  <!-- DEMO 6: COUPLING SCATTER -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 6 — Vorhergesagte vs. tatsächliche Testbewegung</span>
+      <span class="s">Nachbau von Abbildung 2B — und was passiert, wenn Glattheit fehlt</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div id="p_couple" class="plot" style="height:400px"></div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Kern-Drift ‖K(t)−K(0)‖/‖K(0)‖ <span class="v" id="v_cdrift">2.4×</span></label>
+            <input type="range" id="s_cdrift" min="0" max="80" value="24">
+          </div>
+          <div class="ctrl">
+            <label>Glattheit des Netzes (Sobolev m) <span class="v" id="v_csm">5.0</span></label>
+            <input type="range" id="s_csm" min="5" max="90" value="50">
+          </div>
+          <div class="ctrl">
+            <label>Datendichte (Anzahl Punkte n) <span class="v" id="v_cn">120</span></label>
+            <input type="range" id="s_cn" min="20" max="400" value="120">
+          </div>
+          <div class="chk"><input type="checkbox" id="k_closs" checked>
+            <label for="k_closs" style="margin:0;font-family:var(--sans);text-transform:none">
+              quadratischer Verlust (dann ist R⊥ = 0)</label></div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Korrelation</div><div class="v" id="st_ccorr">–</div></div>
+            <div class="stat noi"><div class="k">Relativer Fehler</div><div class="v" id="st_cerr">–</div></div>
+            <div class="stat res"><div class="k">‖R⊥‖<sub>op</sub></div><div class="v" id="st_crperp">–</div></div>
+          </div>
+          <div class="note">
+            <b>Zieh die Kern-Drift hoch:</b> nichts passiert – die Punkte bleiben auf der Diagonalen.
+            <b>Schalte den quadratischen Verlust aus:</b> jetzt entsteht ein Rest R⊥,
+            und der schrumpft mit Glattheit und Datendichte
+            (<span class="katex-inline">\|R_\perp\| \le C h_S^{\,m-d/2}</span>).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note r">
+    <b>Warum braucht man Glattheit überhaupt?</b> Theorem E.7 zeigt: Man kann zwei Netze bauen,
+    die auf allen Trainingspunkten <i>identische</i> Werte und <i>identische</i> Ableitungen haben –
+    und trotzdem an einem Testpunkt auseinanderlaufen. Ohne Glattheitsannahme ist
+    Vorhersage prinzipiell unmöglich.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — FOUR-CELL DECOMPOSITION
+     ============================================================ -->
+<section id="fourcell">
+  <div class="kicker">Teil 7 · Das Gesamtbild</div>
+  <h2>Der Testfehler in vier Zellen</h2>
+  <p class="lead">
+    Alles bisher Gesagte trifft sich hier. Abbildung 1 des Papers – interaktiv.
+    Klick auf eine Zelle, um sie zu isolieren.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_four"><div class="lbl">Gleichung (22) — die vollständige Zerlegung</div></div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 7 — Die Vier-Zellen-Landkarte</span>
+      <span class="s">Zeilen: Signal / Rauschen &nbsp;·&nbsp; Spalten: Signalkanal / Reservoir</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:2px;align-items:stretch">
+            <div></div>
+            <div style="text-align:center;padding:8px 0;font-family:var(--mono);font-size:.7rem;
+                 letter-spacing:.1em;color:var(--signal);text-transform:uppercase">Signalkanal<br>range(W)</div>
+            <div style="text-align:center;padding:8px 0;font-family:var(--mono);font-size:.7rem;
+                 letter-spacing:.1em;color:var(--reservoir);text-transform:uppercase">Reservoir<br>ker(W)</div>
+
+            <div style="display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;
+                 transform:rotate(180deg);font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
+                 color:var(--clean);text-transform:uppercase;padding:0 6px">Signal</div>
+            <div class="cell ok" id="cell11" data-cell="11">
+              <div class="h">Zelle 1 · funktioniert</div>
+              <div class="b">Überträgt sich auf den Test</div>
+              <div class="x">Saubere Struktur wandert per A°D exakt zur Testvorhersage.</div>
+              <div class="ph">↓ Implicit Bias</div>
+            </div>
+            <div class="cell bad" id="cell12" data-cell="12">
+              <div class="h">Zelle 2 · Fehlerquelle</div>
+              <div class="b">Restlicher Bias</div>
+              <div class="x">Signal, das im Reservoir feststeckt, erreicht den Test nie. Grenze: ‖R⊥‖.</div>
+              <div class="ph">← Grokking</div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;
+                 transform:rotate(180deg);font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
+                 color:var(--noise);text-transform:uppercase;padding:0 6px">Rauschen</div>
+            <div class="cell bad" id="cell21" data-cell="21">
+              <div class="h">Zelle 3 · Fehlerquelle</div>
+              <div class="b">Einzige überlebende Varianz</div>
+              <div class="x">Rauschen im Signalkanal. Wird durch SGD (T vs √T) und das Gate gedämpft.</div>
+              <div class="ph">↔ Double Descent</div>
+            </div>
+            <div class="cell ok" id="cell22" data-cell="22">
+              <div class="h">Zelle 4 · funktioniert</div>
+              <div class="b">Gefangen &amp; unsichtbar</div>
+              <div class="x">G·P_res = 0. Exakt Null — bedingungslos, algebraisch.</div>
+              <div class="ph">⋆ Benign Overfitting</div>
+            </div>
+          </div>
+          <div id="p_fourbar" class="plot" style="height:240px;margin-top:16px"></div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Label-Rauschen ε <span class="v" id="v_4noise">0.35</span></label>
+            <input type="range" id="s_4noise" min="0" max="100" value="35">
+          </div>
+          <div class="ctrl">
+            <label>Anteil Signal, der im Signalkanal landet <span class="v" id="v_4sigin">0.82</span></label>
+            <input type="range" id="s_4sigin" min="0" max="100" value="82">
+          </div>
+          <div class="ctrl">
+            <label>Anteil Rauschen, der im Reservoir landet <span class="v" id="v_4noiin">0.88</span></label>
+            <input type="range" id="s_4noiin" min="0" max="100" value="88">
+          </div>
+          <div class="ctrl">
+            <label>Glattheit / Datendichte → ‖R⊥‖ <span class="v" id="v_4rperp">0.06</span></label>
+            <input type="range" id="s_4rperp" min="0" max="100" value="6">
+          </div>
+          <div class="stats">
+            <div class="stat cln"><div class="k">Zelle 1 (gut)</div><div class="v" id="st_c11">–</div></div>
+            <div class="stat noi"><div class="k">Zelle 2 (Bias)</div><div class="v" id="st_c12">–</div></div>
+            <div class="stat noi"><div class="k">Zelle 3 (Varianz)</div><div class="v" id="st_c21">–</div></div>
+            <div class="stat res"><div class="k">Zelle 4 (=0)</div><div class="v" id="st_c22">0.000</div></div>
+          </div>
+          <div class="stats">
+            <div class="stat gld"><div class="k">Gesamter Testfehler</div><div class="v" id="st_ctot">–</div></div>
+          </div>
+          <div class="note g">
+            <b>Zelle 4 steht fest auf 0</b> – egal wie du die Regler bewegst. Das ist keine
+            Näherung, sondern die algebraische Identität <span class="katex-inline">G\,P_{res}=0</span>.
+            Nur Zelle 2 und Zelle 3 können Schaden anrichten.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — FOUR CLASSICAL PHENOMENA
+     ============================================================ -->
+<section id="phenomena">
+  <div class="kicker">Teil 8 · Was daraus folgt</div>
+  <h2>Vier berühmte Rätsel — eine einzige Erklärung</h2>
+  <p class="lead">
+    Im eingefrorenen Kern-Grenzfall reduziert sich die ganze Theorie auf <b>einen</b> Spektralfilter M.
+    Verschiedene Wahlen von M ergeben verschiedene klassische Phänomene. Das ist Theorem H.1.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_unified"><div class="lbl">Theorem H.1 — vereinheitlichte Bias-Varianz-Zerlegung</div></div>
+    <div class="grid g2">
+      <div class="card tight"><h4>M = I − e<sup>−tΣ²/n</sup></h4>
+        <p class="small" style="margin:0">Gradientenfluss → <span class="hl-a">Implicit Bias</span> &amp; <span class="hl-a">Grokking</span></p></div>
+      <div class="card tight"><h4>M = Σ²(Σ²+nλ)<sup>−1</sup></h4>
+        <p class="small" style="margin:0">Ridge-Regression (Weight Decay)</p></div>
+      <div class="card tight"><h4>M = P<sub>r</sub> (Rangabschnitt)</h4>
+        <p class="small" style="margin:0"><span class="hl-a">Double Descent</span> &amp; <span class="hl-a">Benign Overfitting</span></p></div>
+      <div class="card tight"><h4>M = I (volle Interpolation)</h4>
+        <p class="small" style="margin:0">Minimalnorm-Interpolation</p></div>
+    </div>
+  </div>
+
+  <!-- DEMO 8a: SPECTRAL FILTER PLAYGROUND -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 8a — Der eine Filter, der alles erklärt</span>
+      <span class="s">Wähle M, sieh das Phänomen entstehen</span>
+    </div>
+    <div class="demo-body">
+      <div class="seg" style="margin-bottom:16px">
+        <button data-filt="flow" class="on">Gradientenfluss M(t)</button>
+        <button data-filt="ridge">Ridge M(λ)</button>
+        <button data-filt="rank">Rangabschnitt M(r)</button>
+        <button data-filt="full">Volle Interpolation</button>
+      </div>
+      <div class="grid g21">
+        <div>
+          <div id="p_filter" class="plot" style="height:330px"></div>
+        </div>
+        <div>
+          <div class="ctrl" id="wrap_ft">
+            <label>Trainingszeit t <span class="v" id="v_ft2">100</span></label>
+            <input type="range" id="s_ft2" min="0" max="100" value="45">
+          </div>
+          <div class="ctrl" id="wrap_flam" style="display:none">
+            <label>Ridge λ <span class="v" id="v_flam">0.10</span></label>
+            <input type="range" id="s_flam" min="0" max="100" value="30">
+          </div>
+          <div class="ctrl" id="wrap_fr" style="display:none">
+            <label>Rang r <span class="v" id="v_fr">20</span></label>
+            <input type="range" id="s_fr" min="0" max="60" value="20">
+          </div>
+          <div class="ctrl">
+            <label>Rauschvarianz σ²<sub>ξ</sub> <span class="v" id="v_fnoi">0.30</span></label>
+            <input type="range" id="s_fnoi" min="0" max="100" value="30">
+          </div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Bias²</div><div class="v" id="st_fbias">–</div></div>
+            <div class="stat noi"><div class="k">Varianz</div><div class="v" id="st_fvar">–</div></div>
+            <div class="stat gld"><div class="k">Risiko gesamt</div><div class="v" id="st_frisk">–</div></div>
+          </div>
+          <div class="note" id="note_filter">
+            <b>Gradientenfluss:</b> große Eigenwerte werden zuerst gefittet
+            (Faktor <span class="katex-inline">1-e^{-t\sigma_j^2/n}</span>).
+            Das <i>ist</i> Implicit Bias — ein Zeitplan, kein Zusatzterm.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 8b: DOUBLE DESCENT -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 8b — Double Descent: exakt vorhergesagt</span>
+      <span class="s">Nachbau von Abbildung 7 des Papers</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g2">
+        <div>
+          <div id="p_dd" class="plot" style="height:320px"></div>
+          <div class="axlabel">Risiko R<sub>r</sub> als Funktion des prädiktiven Rangs r</div>
+        </div>
+        <div>
+          <div id="p_ddinc" class="plot" style="height:320px"></div>
+          <div class="axlabel">Zuwachs R<sub>r+1</sub> − R<sub>r</sub> — Vorzeichenwechsel = Peak</div>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:12px">
+        <div class="ctrl">
+          <label>Rauschstärke σ²<sub>ξ</sub> <span class="v" id="v_ddn">0.55</span></label>
+          <input type="range" id="s_ddn" min="1" max="100" value="55">
+        </div>
+        <div class="ctrl">
+          <label>Signalkonzentration <span class="v" id="v_dds">14</span></label>
+          <input type="range" id="s_dds" min="2" max="50" value="14">
+        </div>
+        <div class="ctrl">
+          <label>Spektralabfall <span class="v" id="v_ddd">1.8</span></label>
+          <input type="range" id="s_ddd" min="5" max="45" value="18">
+        </div>
+      </div>
+      <div class="note a">
+        <b>Die exakte Regel (Corollary H.3):</b> Mode r+1 hinzunehmen <i>senkt</i> das Risiko genau dann,
+        wenn ihr Signalanteil ihren Rauschanteil übersteigt. Der berühmte Double-Descent-Peak
+        liegt <b>exakt</b> dort, wo der Zuwachs sein Vorzeichen wechselt. Kein Mysterium,
+        nur eine Folge von Vorzeichenwechseln.
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 8c: GROKKING -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 8c — Grokking: Signal wandert aus dem Reservoir</span>
+      <span class="s">Nachbau von Abbildung 8 des Papers</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g3">
+        <div><div id="p_gk1" class="plot" style="height:270px"></div>
+          <div class="axlabel">A — Spektralfilter je Mode</div></div>
+        <div><div id="p_gk2" class="plot" style="height:270px"></div>
+          <div class="axlabel">B — verzögerte Generalisierung</div></div>
+        <div><div id="p_gk3" class="plot" style="height:270px"></div>
+          <div class="axlabel">C — Transfermasse: der Mechanismus</div></div>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <div class="ctrl">
+          <label>Mobilität der Rausch-Moden (schnell) <span class="v" id="v_gkf">1.00</span></label>
+          <input type="range" id="s_gkf" min="10" max="300" value="100">
+        </div>
+        <div class="ctrl">
+          <label>Mobilität der Signal-Moden (langsam) <span class="v" id="v_gks">0.006</span></label>
+          <input type="range" id="s_gks" min="1" max="200" value="60">
+        </div>
+      </div>
+      <div class="note">
+        <b>Grokking ist kein Phasenwechsel.</b> Die schnellen Moden (Rauschen) sättigen früh –
+        das Netz interpoliert das Training. Die langsamen Moden tragen das echte Signal und
+        steigen erst viel später an. In dem Moment, wo ihre Transfermasse die der schnellen
+        überholt, springt die Testgenauigkeit. <span class="hl-a">Signal wandert aus dem
+        Reservoir in den Signalkanal.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 8d: BENIGN OVERFITTING -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 8d — Benign Overfitting: reines Rauschen interpolieren, ohne Schaden</span>
+      <span class="s">Nachbau von Abbildung 7C</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div id="p_benign" class="plot" style="height:330px"></div>
+        </div>
+        <div>
+          <p class="small">
+            Das Netz lernt <b>reines Rauschen</b> auswendig – Trainingsverlust exakt 0.
+            Trotzdem wächst der Testfehler nur <b>linear</b> mit
+            <span class="katex-inline">\sigma_\xi^2\,\mathrm{tr}(\Gamma_0)</span>,
+            der Spur der Sichtbarkeits-Gramschen.
+          </p>
+          <div class="ctrl">
+            <label>Überparametrisierung d/n <span class="v" id="v_bod">3.0</span></label>
+            <input type="range" id="s_bod" min="10" max="120" value="30">
+          </div>
+          <div class="ctrl">
+            <label>Spektralabfall (Konditionierung) <span class="v" id="v_bos">2.0</span></label>
+            <input type="range" id="s_bos" min="5" max="45" value="20">
+          </div>
+          <div class="stats">
+            <div class="stat cln"><div class="k">Trainingsverlust</div><div class="v">0.000</div></div>
+            <div class="stat res"><div class="k">tr(Γ₀) — sichtbar</div><div class="v" id="st_botr">–</div></div>
+            <div class="stat noi"><div class="k">Testfehler</div><div class="v" id="st_bote">–</div></div>
+          </div>
+          <div class="note g">
+            <b>Je schneller das Spektrum abfällt</b>, desto kleiner tr(Γ₀) und desto harmloser
+            die Interpolation. Das ist der mechanistische Grund für „benign overfitting“:
+            Das Rauschen sitzt physisch im trägen, testunsichtbaren Reservoir.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 9 — POPULATION RISK
+     ============================================================ -->
+<section id="poprisk">
+  <div class="kicker">Teil 9 · Vom Verstehen zum Handeln</div>
+  <h2>Testfehler messen — ohne einen einzigen Testpunkt</h2>
+  <p class="lead">
+    Bis hier war alles Analyse. Jetzt wird die Theorie zum Werkzeug. Der Schlüssel ist
+    ein simples Wahrscheinlichkeitsargument: <b>Austauschbarkeit</b>.
+  </p>
+
+  <div class="card">
+    <h3>Die Idee in einem Bild</h3>
+    <p>
+      Nimm einen Trainingspunkt <i>a</i> heraus. Mach einen Trainingsschritt nur mit den
+      <i>anderen</i> b−1 Punkten. Schau, wie sich der Verlust bei <i>a</i> verändert.
+      Da <i>a</i> beim Schritt nicht dabei war, ist das ein <b>unverfälschter</b> Blick auf
+      neue Daten. Wiederhole für alle <i>a</i> und mittle.
+    </p>
+    <div class="eq" id="eq_exch"><div class="lbl">Lemma 6.1 — Austauschbarkeit</div></div>
+    <div class="eq" id="eq_omega"><div class="lbl">Theorem 6.2 — die „Off-Diagonal-Übereinstimmung“</div></div>
+    <div class="note">
+      <b>Beachte, was fehlt:</b> die Diagonalterme <span class="katex-inline">K_{aa}</span>.
+      Genau die sind das „Selbstbenutzen“ eines Beispiels – die Quelle des Auswendiglernens.
+      Empirische Risikominimierung nutzt sie; die Populations-Rate lässt sie weg.
+    </div>
+  </div>
+
+  <!-- DEMO 9: LOO KERNEL MATRIX -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 9 — Diagonale raus: der Unterschied zwischen Lernen und Auswendiglernen</span>
+      <span class="s">Klick auf einen Punkt: er wird zum Testpunkt gegen den Rest des Batches</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g2">
+        <div>
+          <canvas id="c_loo" height="330"></canvas>
+          <div class="axlabel">Kernmatrix eines Batches — graue Diagonale = weggelassen</div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Batchgröße b <span class="v" id="v_lb">10</span></label>
+            <input type="range" id="s_lb" min="3" max="18" value="10">
+          </div>
+          <div class="ctrl">
+            <label>Kohärenz (wie ähnlich sind die Gradienten?) <span class="v" id="v_lcoh">0.60</span></label>
+            <input type="range" id="s_lcoh" min="0" max="100" value="60">
+          </div>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Ω_B (ohne Diagonale)</div><div class="v" id="st_lom">–</div></div>
+            <div class="stat noi"><div class="k">Mit Diagonale (ERM)</div><div class="v" id="st_lerm">–</div></div>
+          </div>
+          <div class="note r">
+            <b>Zieh die Kohärenz auf 0:</b> Die Beispiele haben nichts gemeinsam.
+            Ω_B wird <b>negativ</b> – ein Schritt würde das Populationsrisiko <i>erhöhen</i>.
+            Die ERM-Version bleibt trotzdem positiv, weil sie sich an der Diagonale festhält.
+            <b>Das ist Auswendiglernen, mathematisch sichtbar gemacht.</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 10 — THE ALGORITHM
+     ============================================================ -->
+<section id="algo">
+  <div class="kicker">Teil 10 · Die Lösung</div>
+  <h2>Eine Zeile mehr in Adam: das SNR-Gate</h2>
+  <p class="lead">
+    Die ganze Theorie kollabiert zu einer verblüffend einfachen Regel pro Parameter.
+  </p>
+
+  <div class="card">
+    <div class="eq" id="eq_gate"><div class="lbl">Corollary 6.3 — die Entscheidungsregel</div></div>
+    <p>
+      In Worten: <b>Aktualisiere Parameter k nur dann, wenn sein mittlerer Gradient im
+      Quadrat größer ist als seine Streuung geteilt durch (b−1).</b>
+      Kann das Batch-Signal das Batch-Rauschen nicht schlagen, wird der Parameter
+      übersprungen. Das ist beweisbar die <i>einzige</i> binäre Regel, die erste Ordnung
+      populationssicher ist.
+    </p>
+  </div>
+
+  <!-- DEMO 10a: THE GATE -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 10a — Das Gate in Aktion</span>
+      <span class="s">Jeder Punkt ein Parameter. Grün = darf lernen, rot = wird blockiert.</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div id="p_gate" class="plot" style="height:400px"></div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <label>Batchgröße b <span class="v" id="v_gb">16</span></label>
+            <input type="range" id="s_gb" min="2" max="256" value="16">
+          </div>
+          <div class="ctrl">
+            <label>Anteil echter Signal-Parameter <span class="v" id="v_gfrac">30 %</span></label>
+            <input type="range" id="s_gfrac" min="0" max="100" value="30">
+          </div>
+          <div class="ctrl">
+            <label>Rauschpegel im Netz <span class="v" id="v_gnoi">1.00</span></label>
+            <input type="range" id="s_gnoi" min="5" max="300" value="100">
+          </div>
+          <div class="seg" style="margin:12px 0">
+            <button data-gate="hard" class="on">hartes Gate</button>
+            <button data-gate="soft">weiches Gate</button>
+            <button data-gate="snr">SNR-Shrinker</button>
+          </div>
+          <div class="stats">
+            <div class="stat cln"><div class="k">durchgelassen</div><div class="v" id="st_gpass">–</div></div>
+            <div class="stat noi"><div class="k">blockiert</div><div class="v" id="st_gblock">–</div></div>
+            <div class="stat gld"><div class="k">Ω_B = tr(M·A_B)</div><div class="v" id="st_gomega">–</div></div>
+          </div>
+          <div class="note g">
+            <b>Größere Batches</b> senken die Schwelle σ²/(b−1) — mehr Parameter dürfen lernen.
+            <b>Mehr Rauschen</b> hebt sie an — das Gate wird vorsichtiger.
+            Die graue Kurve ist die Schwelle; alles darüber ist populationssicher.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO 10b: THE ALGORITHM -->
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 10b — Algorithmus 1: AdamW + eine Zeile</span>
+      <span class="s">Fahr über die Zeilen. Rot markiert = neu gegenüber Standard-AdamW.</span>
+    </div>
+    <div class="demo-body">
+      <div class="grid g21">
+        <div>
+          <div id="algobox" style="font-family:var(--mono);font-size:.82rem;line-height:1.85;
+               background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:12px;padding:16px"></div>
+        </div>
+        <div>
+          <h4 style="margin-top:0">Kosten</h4>
+          <div class="stats">
+            <div class="stat sig"><div class="k">Extra-Speicher</div><div class="v">1 Vektor</div></div>
+            <div class="stat cln"><div class="k">Extra-Rechenzeit</div><div class="v">≈ 0</div></div>
+          </div>
+          <p class="small">
+            AdamW hält ohnehin <span class="katex-inline">m</span> und
+            <span class="katex-inline">v</span>. Neu ist nur
+            <span class="katex-inline">s</span> — ein laufender Schätzer der
+            Gradientenvarianz. Daraus wird das Gate <span class="katex-inline">q</span>
+            berechnet und auf das Moment multipliziert.
+          </p>
+          <div class="eq" id="eq_algo"></div>
+          <div class="note">
+            <b>Kein Validierungsdatensatz nötig.</b> Kein Architekturwissen. Kein Verlustwissen.
+            Die Regel funktioniert für jede Architektur, jeden Verlust, jeden Optimierer.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 11 — RESULTS
+     ============================================================ -->
+<section id="results">
+  <div class="kicker">Teil 11 · Was tatsächlich passiert</div>
+  <h2>Fünf Experimente — dieselbe eine Zeile</h2>
+  <p class="lead">
+    Architektur, Datensplit und Hyperparameter bleiben identisch. Nur die
+    Update-Regel ändert sich. Wähle ein Experiment.
+  </p>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 11 — Ergebnis-Explorer</span>
+      <span class="s">Echte Zahlen aus dem Paper, interaktiv nachgebildet</span>
+    </div>
+    <div class="demo-body">
+      <div class="seg" style="margin-bottom:16px">
+        <button data-exp="pinn" class="on">PINN</button>
+        <button data-exp="grok">Grokking</button>
+        <button data-exp="dpo">DPO</button>
+        <button data-exp="inr">INR</button>
+        <button data-exp="lorenz">Lorenz</button>
+      </div>
+      <div class="grid g21">
+        <div>
+          <div id="p_exp" class="plot" style="height:400px"></div>
+        </div>
+        <div>
+          <div id="expinfo"></div>
+        </div>
+      </div>
+      <div id="exptable"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Das Muster hinter allen fünf</h3>
+    <p>
+      Jedes dieser Probleme hat dieselbe Struktur: Es gibt ein <span class="hl-c">kohärentes
+      Signal</span>, das über Minibatches hinweg in dieselbe Richtung zeigt, und
+      <span class="hl-n">idiosynkratisches Rauschen</span>, das das nicht tut.
+    </p>
+    <table>
+      <tr><th>Experiment</th><th>Kohärentes Signal</th><th>Idiosynkratisches Rauschen</th></tr>
+      <tr><td>PINN</td><td>PDE-Struktur (glatte Lösung)</td><td>Sensorrauschen auf der Anfangsbedingung</td></tr>
+      <tr><td>Grokking</td><td>modulare Arithmetik-Regel</td><td>Auswendiglernen einzelner Paare</td></tr>
+      <tr><td>DPO</td><td>echte Präferenzen</td><td>30 % vertauschte Labels</td></tr>
+      <tr><td>INR</td><td>glatte Bildstruktur</td><td>Pixelrauschen</td></tr>
+      <tr><td>Lorenz</td><td>glattes Vektorfeld</td><td>Sensorrauschen pro Zustand</td></tr>
+    </table>
+    <div class="note g">
+      Das Gate sieht den Unterschied <b>direkt an den Gradienten</b>: Kohärenz ⇒ großes μ²,
+      Idiosynkrasie ⇒ großes σ². Es braucht keine Ahnung, was ein PINN oder ein Transformer ist.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 12 — RECAP / THE ANSWER
+     ============================================================ -->
+<section id="recap">
+  <div class="kicker">Teil 12 · Die Antwort</div>
+  <h2>Die ganze Theorie in einem Bild</h2>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span>
+      <span class="t">Demo 12 — Der Gesamtablauf</span>
+      <span class="s">Zieh den Regler durch die sieben Stationen der Argumentation</span>
+    </div>
+    <div class="demo-body">
+      <canvas id="c_story" height="440"></canvas>
+      <div class="ctrl" style="margin-top:16px">
+        <label>Station <span class="v" id="v_story">1 / 7</span></label>
+        <input type="range" id="s_story" min="0" max="6" value="0" step="1">
+      </div>
+      <div id="storytext" class="note" style="min-height:92px"></div>
+      <div class="btnrow">
+        <button id="b_storyprev">← zurück</button>
+        <button id="b_storynext" class="primary">weiter →</button>
+        <button id="b_storyauto">▶ automatisch</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die Frage, die er gestellt hat</h3>
+    <div class="q">
+      „Warum generalisieren überparametrisierte neuronale Netze, obwohl sie beliebige
+      Labels auswendig lernen können — und kann man daraus einen besseren Optimierer bauen?“
+    </div>
+    <h3>Die Antwort</h3>
+    <p class="lead">
+      Weil der Ausgaberaum nicht homogen ist. Der empirische Tangentenkern spaltet ihn in einen
+      <span class="hl">winzigen Signalkanal</span> und ein <span class="hl-r">riesiges Reservoir</span>.
+      Rauschen, das im Reservoir landet, ist für jede Testmenge <b>exakt</b> unsichtbar —
+      algebraisch, ohne Annahmen. Was im Signalkanal überlebt, wird von SGD gedämpft,
+      weil Drift wie T wächst und Diffusion nur wie √T. Und da man die überlebende
+      Rauschmenge aus einem einzigen Batch messen kann, lässt sich genau sie
+      mit einer einzigen zusätzlichen Zeile im Optimierer unterdrücken.
+    </p>
+    <div class="grid g3">
+      <div class="card tight"><h4>Was ist neu?</h4>
+        <p class="small" style="margin:0">Feature-Learning wird nicht wegapproximiert, sondern
+        durch Integration über die <i>realisierte Bahn</i> exakt behandelt. Gültig bei 4,8-facher Kern-Drift.</p></div>
+      <div class="card tight"><h4>Was wird vereinheitlicht?</h4>
+        <p class="small" style="margin:0">Benign Overfitting, Double Descent, Implicit Bias
+        und Grokking — vier Wahlen <i>eines</i> Spektralfilters M.</p></div>
+      <div class="card tight"><h4>Was folgt praktisch?</h4>
+        <p class="small" style="margin:0">Populationsrisiko ohne Validierungsdaten.
+        Ein Zustandsvektor mehr. 5× schnelleres Grokking, 2,4× schnellere PINNs.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Ehrliche Grenzen</h3>
+    <div class="grid g2">
+      <div>
+        <h4>Was die Theorie braucht</h4>
+        <p class="small">• <b>C²</b>-Netz (gilt für ResNets, Transformer)<br>
+        • <b>Konvexer</b> Ausgabeverlust<br>
+        • Exakte Kopplung nur bei <b>quadratischem</b> Verlust<br>
+        • Für den Sobolev-Rest: Glattheit <b>m &gt; d/2</b> — nur bei niedrigdimensionalen
+        Datenmannigfaltigkeiten informativ<br>
+        • Gate-Herleitung braucht Batch-Unabhängigkeit; Multi-Epoch bringt einen
+        Restterm (TV-Distanz)</p>
+      </div>
+      <div>
+        <h4>Was sie <i>nicht</i> braucht</h4>
+        <p class="small">• Keine Breite→∞<br>
+        • Keine eingefrorenen Kerne<br>
+        • Keine asymptotischen Aussagen<br>
+        • Keine Verteilungsannahme in Teil 3 und 5 (rein deterministisch)<br>
+        • Keine Kernel-Stabilität in Theorem 5.1</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Interaktive Aufbereitung von <b>„A Theory of Generalization in Deep Learning“</b><br>
+    Elon Litman &amp; Gabe Guo · Stanford University · arXiv:2605.01172v1<br>
+    <span style="opacity:.6">Alle Zahlen und Kurven folgen den im Paper berichteten Werten bzw.
+    sind qualitative Rekonstruktionen der beschriebenen Mechanismen.</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ==========================================================================
+   GLOBAL HELPERS
+   ========================================================================== */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp  = (a,b,t)=>a+(b-a)*t;
+const TAU = Math.PI*2;
+
+const C = {
+  bg:'#07080d', grid:'rgba(140,160,220,0.10)', axis:'rgba(160,180,220,0.34)',
+  txt:'#c6d0e6', dim:'#6e7a99',
+  sig:'#49d1ff', res:'#ff7a59', noi:'#ff5d7a', cln:'#7dffb3',
+  acc:'#b48cff', gold:'#ffd166', white:'#e7ecf7'
+};
+
+const PLOT_LAYOUT = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.18)',
+  font:{color:'#9aa6c4', family:'ui-monospace, Menlo, monospace', size:11},
+  margin:{l:56,r:20,t:34,b:46},
+  xaxis:{gridcolor:'rgba(140,160,220,0.10)', zerolinecolor:'rgba(160,180,220,0.3)',
+         linecolor:'rgba(140,160,220,0.24)'},
+  yaxis:{gridcolor:'rgba(140,160,220,0.10)', zerolinecolor:'rgba(160,180,220,0.3)',
+         linecolor:'rgba(140,160,220,0.24)'},
+  showlegend:true,
+  legend:{bgcolor:'rgba(12,14,22,0.7)', bordercolor:'rgba(140,160,220,0.2)',
+          borderwidth:1, font:{size:10}}
+};
+const PLOT_CFG = {displayModeBar:false, responsive:true};
+const L = (o={}) => JSON.parse(JSON.stringify({...PLOT_LAYOUT, ...o}));
+
+/* deterministic PRNG for reproducible demos */
+function mulberry(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed>>>15, 1 | seed);
+    t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+    return ((t ^ t>>>14) >>> 0) / 4294967296;
+  };
+}
+function gauss(rng){
+  let u=0,v=0;
+  while(u===0) u=rng();
+  while(v===0) v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);
+}
+
+/* HiDPI canvas setup */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'));
+  cv.width = w*dpr; cv.height = h*dpr;
+  cv.style.height = h+'px';
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  return {ctx, w, h};
+}
+
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  const a = Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.4), y2-head*Math.sin(a-0.4));
+  ctx.lineTo(x2-head*Math.cos(a+0.4), y2-head*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function gridlines(ctx,w,h,cx,cy,sc,step=1){
+  ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+  for(let i=-30;i<=30;i++){
+    const x=cx+i*sc*step, y=cy+i*sc*step;
+    if(x>0&&x<w){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    if(y>0&&y<h){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+}
+function label(ctx,t,x,y,col=C.dim,size=11,align='left'){
+  ctx.fillStyle=col; ctx.font=`${size}px ui-monospace, Menlo, monospace`;
+  ctx.textAlign=align; ctx.fillText(t,x,y); ctx.textAlign='left';
+}
+
+/* ==========================================================================
+   NAV + PROGRESS
+   ========================================================================== */
+(function(){
+  const secs = $$('section');
+  const links = $$('nav a');
+  function onScroll(){
+    const st = window.scrollY;
+    const dh = document.documentElement.scrollHeight - window.innerHeight;
+    $('#progress').style.width = (100*st/Math.max(dh,1))+'%';
+    let cur = 0;
+    secs.forEach((s,i)=>{ if(s.offsetTop - 130 <= st) cur = i; });
+    links.forEach((a,i)=>a.classList.toggle('active', i===cur));
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+
+/* ==========================================================================
+   KATEX
+   ========================================================================== */
+function tex(el, s, display=true){
+  if(!el) return;
+  try{ katex.render(s, el, {displayMode:display, throwOnError:false}); }
+  catch(e){ el.textContent = s; }
+}
+function renderAllMath(){
+  // inline spans
+  $$('.katex-inline').forEach(el=>{
+    const s = el.textContent.trim();
+    try{ katex.render(s, el, {displayMode:false, throwOnError:false}); }catch(e){}
+  });
+
+  const put = (id, s) => {
+    const box = document.getElementById(id);
+    if(!box) return;
+    const lbl = box.querySelector('.lbl');
+    const span = document.createElement('div');
+    box.innerHTML = '';
+    box.appendChild(span);
+    if(lbl) box.appendChild(lbl);
+    tex(span, s, true);
+  };
+
+  put('eq_jac', String.raw`J=\begin{pmatrix}
+    \partial u_1/\partial w_1 & \partial u_1/\partial w_2\\
+    \partial u_2/\partial w_1 & \partial u_2/\partial w_2\\
+    \partial u_3/\partial w_1 & \partial u_3/\partial w_2\end{pmatrix}`);
+
+  put('eq_pinv', String.raw`A^{\dagger}\;:\;\frac{1}{\sigma_j}\ \text{falls}\ \sigma_j>0,
+    \qquad 0\ \text{falls}\ \sigma_j=0`);
+
+  put('eq_dyn1', String.raw`\partial_t u(t) \;=\; -\,K_{SS}(t)\,g(t)`);
+  put('eq_dyn2', String.raw`\frac{d}{dt}\,\Phi_S\bigl(u(t)\bigr)\;=\;-\,g^{\top}K_{SS}\,g\;=\;-\,\bigl\|J_S^{\top}g\bigr\|_2^2\;\le\;0`);
+
+  put('eq_W', String.raw`W_S(s,T)\;=\;\int_s^{T} P_g(\tau,s)^{\top}\,K_{SS}(\tau)\,P_g(\tau,s)\;d\tau`);
+  put('eq_Weig', String.raw`\lambda_j \;=\; \psi_j^{\top}W_S\,\psi_j \;=\; \int_s^{T}\bigl\|J_S(\tau)^{\top}P_g(\tau,s)\,\psi_j\bigr\|_2^2\,d\tau`);
+
+  put('eq_pf1', String.raw`h\in\ker W\;\Longrightarrow\;0=h^{\top}Wh=\int_s^T\bigl\|J_S(\tau)^{\top}P_g(\tau,s)h\bigr\|_2^2\,d\tau`);
+  put('eq_pf2', String.raw`\Longrightarrow\quad J_S(\tau)^{\top}P_g(\tau,s)\,h \;=\; 0\qquad\text{für fast alle }\tau`);
+  put('eq_pf3', String.raw`G_Q h=\int_s^T \underbrace{J_Q(\tau)\,J_S(\tau)^{\top}}_{K_{QS}}P_g(\tau,s)h\,d\tau \;=\; 0`);
+
+  put('eq_dd', String.raw`\hat g_k=\underbrace{\mu_k}_{\text{Drift}}+\underbrace{\xi_k}_{\text{Diffusion}},
+     \qquad \mathbb{E}[\xi_k\mid\mathcal F_k]=0`);
+  put('eq_dd2', String.raw`\bigl\|\Delta^{\mathrm{drift}}_Q\bigr\|=O(T),\qquad
+     \bigl\|\Delta^{\mathrm{diff}}_Q\bigr\|_{L^2}=O\!\left(\sqrt{\tfrac{\eta T}{b}}\right),\qquad
+     \mathbb{E}\|\Pi\mu_k\|^2=O(1/n)`);
+
+  put('eq_cpl1', String.raw`D=C_S\,W^{1/2},\qquad G=C_Q\,W^{1/2}`);
+  put('eq_cpl2', String.raw`U_Q(T)-U_Q(s)\;=\;A^{\circ}\bigl(U_S(T)-U_S(s)\bigr),\qquad A^{\circ}=G\,D^{\dagger}`);
+
+  put('eq_four', String.raw`U_Q(T)-f^{\star}(Q)=\underbrace{U_Q(0)+\tfrac1n A^{\circ}D\bigl(f^{\star}(S)-U_S(0)\bigr)-f^{\star}(Q)}_{\text{Bias}}
+    +\underbrace{\tfrac1n G P_{\mathrm{res}}\,\varepsilon}_{=\,0}
+    +\underbrace{\tfrac1n G P_{\mathrm{sig}}\,\varepsilon}_{\text{Varianz}}`);
+
+  put('eq_unified', String.raw`\mathbb{E}\bigl\|U_Q^{M}-\bar U_Q\bigr\|^2
+    =\underbrace{\bar a^{\top}(I-M)\,\Gamma_0\,(I-M)\,\bar a}_{\text{Bias}^2}
+    +\underbrace{\operatorname{tr}\!\bigl(M\,\Gamma_0\,M\,\Sigma_\zeta\bigr)}_{\text{Varianz}}`);
+
+  put('eq_exch', String.raw`\mathbb{E}\Bigl[\tfrac{1}{|I|}\textstyle\sum_{i\in I}\ell\bigl(w_T(S_{-I}),Z_i\bigr)\Bigr]
+     \;=\;\mathbb{E}\bigl[L_{\mathcal D}\bigl(w_T(S_{n-|I|})\bigr)\bigr]`);
+  put('eq_omega', String.raw`\Omega_B(M)=\frac{1}{b(b-1)}\sum_{a\neq c} r_a^{\top}K^{M}_{ac}\,r_c
+     \;=\;\operatorname{tr}(M A_B),\qquad
+     A_B=\bar g_B\bar g_B^{\top}-\tfrac{1}{b-1}\Sigma_B`);
+
+  put('eq_gate', String.raw`\text{Update Parameter }k \iff \mu_k^2 \;>\; \frac{\sigma_k^2}{b-1}`);
+  put('eq_algo', String.raw`q_k=\frac{(\hat m_k^2-\alpha\hat s_k)_+}{(\hat m_k^2-\alpha\hat s_k)_+ +\lambda_{\mathrm{pop}}\hat s_k+\varepsilon}`);
+}
+if(window.katex){ renderAllMath(); }
+else{ window.addEventListener('DOMContentLoaded', ()=>setTimeout(renderAllMath,120)); }
+setTimeout(()=>{ if(window.katex) renderAllMath(); }, 400);
+
+/* ==========================================================================
+   DEMO 0 — MEMORIZATION PUZZLE
+   ========================================================================== */
+(function(){
+  const NTR = 26, NTE = 400;
+  const rng = mulberry(20260929);
+  const xs = [];
+  for(let i=0;i<NTR;i++) xs.push(-3 + 6*i/(NTR-1) + (rng()-0.5)*0.12);
+  const noiseUnit = xs.map(()=>gauss(rng));
+  const f = x => Math.sin(1.35*x) + 0.32*Math.cos(2.7*x) - 0.1*x;
+
+  const xg = []; for(let i=0;i<NTE;i++) xg.push(-3.3+6.6*i/(NTE-1));
+
+  // random Fourier features basis, fit with ridge (tiny) to emulate min-norm
+  function feats(x, m){
+    const v = [1];
+    for(let k=1;k<m;k++){
+      const w = 0.55*k;
+      v.push(Math.sin(w*x)); if(v.length>=m) break;
+      v.push(Math.cos(w*x)); if(v.length>=m) break;
+    }
+    return v.slice(0,m);
+  }
+  // solve least squares via normal equations + tiny ridge (Gaussian elimination)
+  function solveLS(A, y, ridge){
+    const m = A[0].length, n = A.length;
+    const M = Array.from({length:m},()=>new Float64Array(m+1));
+    for(let i=0;i<m;i++){
+      for(let j=0;j<m;j++){
+        let s=0; for(let k=0;k<n;k++) s+=A[k][i]*A[k][j];
+        M[i][j]=s + (i===j?ridge:0);
+      }
+      let s=0; for(let k=0;k<n;k++) s+=A[k][i]*y[k];
+      M[i][m]=s;
+    }
+    for(let c=0;c<m;c++){
+      let p=c; for(let r=c+1;r<m;r++) if(Math.abs(M[r][c])>Math.abs(M[p][c])) p=r;
+      const t=M[c]; M[c]=M[p]; M[p]=t;
+      const pv = M[c][c] || 1e-12;
+      for(let j=c;j<=m;j++) M[c][j]/=pv;
+      for(let r=0;r<m;r++){ if(r===c) continue;
+        const fac=M[r][c]; if(!fac) continue;
+        for(let j=c;j<=m;j++) M[r][j]-=fac*M[c][j];
+      }
+    }
+    return Array.from({length:m},(_,i)=>M[i][m]);
+  }
+
+  let cache = {};
+  function draw(){
+    const nz  = +$('#s_memnoise').value/100;
+    const cap = +$('#s_memcap').value;
+    const tt  = +$('#s_memt').value/100;
+    $('#v_memnoise').textContent = Math.round(nz*100)+' %';
+    $('#v_memcap').textContent = cap;
+    $('#v_memt').textContent = Math.round(tt*100)+' %';
+
+    const ytr = xs.map((x,i)=> f(x) + nz*1.0*noiseUnit[i]);
+    const key = cap+'|'+nz.toFixed(3);
+    if(!cache[key]){
+      const A = xs.map(x=>feats(x,cap));
+      cache[key] = solveLS(A, ytr, 1e-7);
+    }
+    const w = cache[key];
+    // "training progress": spectral-flow style — interpolate from 0 toward full fit
+    const predAt = x => {
+      const v = feats(x,cap); let s=0;
+      for(let k=0;k<cap;k++) s += w[k]*v[k];
+      return s;
+    };
+    // emulate gradient-flow: low-frequency components converge first
+    const predT = x => {
+      const v = feats(x,cap); let s=0;
+      for(let k=0;k<cap;k++){
+        const rate = Math.exp(-0.12*k);              // mobility decreasing with index
+        const filt = 1-Math.exp(-(tt*14)*(rate+0.02));
+        s += w[k]*v[k]*filt;
+      }
+      return s;
+    };
+
+    const yhatG = xg.map(predT);
+    const yTrue = xg.map(f);
+    const yhatTr = xs.map(predT);
+
+    let etr=0; for(let i=0;i<NTR;i++) etr += (yhatTr[i]-ytr[i])**2; etr/=NTR;
+    let ete=0; for(let i=0;i<NTE;i++) ete += (yhatG[i]-yTrue[i])**2; ete/=NTE;
+    $('#st_memtr').textContent = etr.toFixed(4);
+    $('#st_memte').textContent = ete.toFixed(4);
+
+    Plotly.react('p_mem', [
+      {x:xg,y:yTrue,mode:'lines',name:'wahre Funktion',
+       line:{color:C.cln,width:2.4,dash:'dot'}},
+      {x:xg,y:yhatG,mode:'lines',name:'Modell',
+       line:{color:C.sig,width:3}},
+      {x:xs,y:ytr,mode:'markers',name:'Trainingslabels',
+       marker:{color:C.noi,size:8,line:{color:'#fff',width:1}}}
+    ], L({
+      margin:{l:48,r:16,t:16,b:40},
+      yaxis:{range:[-3.2,3.2], gridcolor:'rgba(140,160,220,0.10)'},
+      xaxis:{range:[-3.35,3.35]},
+      legend:{x:0.01,y:0.99}
+    }), PLOT_CFG);
+  }
+  ['s_memnoise','s_memcap','s_memt'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   1.1 — JACOBIAN
+   ========================================================================== */
+(function(){
+  const cv = $('#c_jac');
+  // fixed "network": u_i = f_i(w1,w2)
+  const A = [[ 0.9, 0.25],
+             [-0.4, 0.85],
+             [ 0.55,-0.7]];
+  function draw(){
+    const w1 = +$('#s_j1').value/100*1.5;
+    const w2 = +$('#s_j2').value/100*1.5;
+    $('#v_j1').textContent = w1.toFixed(2);
+    $('#v_j2').textContent = w2.toFixed(2);
+    const {ctx,w,h} = setupCanvas(cv);
+
+    const rowY = [70,175,280];
+    const cx = w*0.5, sc = 62;
+
+    ctx.fillStyle='rgba(255,255,255,.02)';
+    ctx.fillRect(0,0,w,h);
+
+    for(let i=0;i<3;i++){
+      const y = rowY[i];
+      // axis
+      ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(24,y); ctx.lineTo(w-24,y); ctx.stroke();
+      // ticks
+      for(let t=-2;t<=2;t++){
+        const x = cx+t*sc;
+        if(x<20||x>w-20) continue;
+        ctx.strokeStyle='rgba(160,180,220,.22)';
+        ctx.beginPath(); ctx.moveTo(x,y-4); ctx.lineTo(x,y+4); ctx.stroke();
+      }
+      label(ctx, `u${i+1}`, 24, y-16, C.dim, 12);
+
+      const base = 0;
+      const val = A[i][0]*w1 + A[i][1]*w2;
+      const px = cx + val*sc;
+
+      // contribution arrows
+      const c1 = A[i][0]*w1, c2 = A[i][1]*w2;
+      arrow(ctx, cx, y+22, cx+c1*sc, y+22, C.sig, 2.4, 7);
+      arrow(ctx, cx+c1*sc, y+38, cx+(c1+c2)*sc, y+38, C.acc, 2.4, 7);
+      label(ctx, `J[${i+1},1]·w₁ = ${c1.toFixed(2)}`, cx+6, y+18, C.sig, 9.5);
+      label(ctx, `J[${i+1},2]·w₂ = ${c2.toFixed(2)}`, cx+6, y+52, C.acc, 9.5);
+
+      // point
+      ctx.fillStyle='rgba(0,0,0,.6)';
+      ctx.beginPath(); ctx.arc(cx,y,4,0,TAU); ctx.fill();
+      ctx.strokeStyle='rgba(160,180,220,.5)'; ctx.lineWidth=1.2; ctx.stroke();
+
+      ctx.shadowColor=C.cln; ctx.shadowBlur=14;
+      ctx.fillStyle=C.cln;
+      ctx.beginPath(); ctx.arc(px,y,7,0,TAU); ctx.fill();
+      ctx.shadowBlur=0;
+      label(ctx, val.toFixed(2), px, y-14, C.cln, 11, 'center');
+    }
+    label(ctx, 'Jede Zeile = eine Ausgabe · Pfeile = Spalten der Jacobi-Matrix',
+          w/2, h-12, C.dim, 10.5, 'center');
+  }
+  ['s_j1','s_j2'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   1.2 — KERNEL MATRIX + SPECTRUM
+   ========================================================================== */
+(function(){
+  function buildK(n, ov, rank){
+    const rng = mulberry(4242);
+    rank = Math.min(rank,n);
+    // features: rank latent dims
+    const F = [];
+    for(let i=0;i<n;i++){
+      const row=[];
+      for(let r=0;r<rank;r++){
+        const shared = Math.cos(TAU*(r+1)*i/n)*ov;
+        row.push(shared + (1-ov)*gauss(rng)*0.7);
+      }
+      F.push(row);
+    }
+    const K = Array.from({length:n},()=>new Float64Array(n));
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++){
+      let s=0; for(let r=0;r<rank;r++) s+=F[i][r]*F[j][r];
+      K[i][j]=s;
+    }
+    return K;
+  }
+  // symmetric eigenvalues via Jacobi rotation
+  function eigSym(Min){
+    const n = Min.length;
+    const A = Min.map(r=>Float64Array.from(r));
+    for(let sweep=0;sweep<60;sweep++){
+      let off=0;
+      for(let p=0;p<n;p++) for(let q=p+1;q<n;q++) off += A[p][q]*A[p][q];
+      if(off<1e-14) break;
+      for(let p=0;p<n;p++) for(let q=p+1;q<n;q++){
+        if(Math.abs(A[p][q])<1e-16) continue;
+        const theta = (A[q][q]-A[p][p])/(2*A[p][q]);
+        const t = Math.sign(theta||1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+        const c = 1/Math.sqrt(t*t+1), s=t*c;
+        for(let k=0;k<n;k++){
+          const akp=A[k][p], akq=A[k][q];
+          A[k][p]=c*akp-s*akq; A[k][q]=s*akp+c*akq;
+        }
+        for(let k=0;k<n;k++){
+          const apk=A[p][k], aqk=A[q][k];
+          A[p][k]=c*apk-s*aqk; A[q][k]=s*apk+c*aqk;
+        }
+      }
+    }
+    return Array.from({length:n},(_,i)=>A[i][i]).sort((a,b)=>b-a);
+  }
+
+  function draw(){
+    const ov = +$('#s_kov').value/100;
+    const n  = +$('#s_kn').value;
+    let rank = +$('#s_krank').value;
+    rank = Math.min(rank,n);
+    $('#v_kov').textContent = ov.toFixed(2);
+    $('#v_kn').textContent  = n;
+    $('#v_krank').textContent = rank;
+
+    const K = buildK(n,ov,rank);
+    const ev = eigSym(K);
+    const maxv = Math.max(...ev,1e-9);
+    const nz = ev.filter(v=>v>maxv*1e-8).length;
+    $('#st_krank').textContent = nz;
+    $('#st_knull').textContent = n-nz;
+
+    // heatmap on canvas
+    const cv = $('#c_kmat');
+    const {ctx,w,h} = setupCanvas(cv);
+    let mx=0; for(let i=0;i<n;i++) for(let j=0;j<n;j++) mx=Math.max(mx,Math.abs(K[i][j]));
+    const pad = 22;
+    const cell = Math.min((w-2*pad)/n, (h-2*pad)/n);
+    const ox = (w-cell*n)/2, oy=(h-cell*n)/2;
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++){
+      const v = K[i][j]/(mx||1);
+      const t = clamp((v+1)/2,0,1);
+      // diverging: orange(neg) -> dark -> cyan(pos)
+      let r,g,b;
+      if(v>=0){ const u=v; r=Math.round(9+60*u); g=Math.round(14+190*u); b=Math.round(26+230*u);}
+      else { const u=-v; r=Math.round(9+240*u); g=Math.round(14+105*u); b=Math.round(26+60*u);}
+      ctx.fillStyle=`rgb(${r},${g},${b})`;
+      ctx.fillRect(ox+j*cell, oy+i*cell, Math.ceil(cell), Math.ceil(cell));
+    }
+    ctx.strokeStyle='rgba(160,180,220,.25)'; ctx.lineWidth=1;
+    ctx.strokeRect(ox,oy,cell*n,cell*n);
+    label(ctx,'Beispiel j →', ox, oy-7, C.dim, 10);
+    ctx.save(); ctx.translate(ox-8, oy+cell*n); ctx.rotate(-Math.PI/2);
+    label(ctx,'Beispiel i →',0,0,C.dim,10); ctx.restore();
+
+    // spectrum
+    const idx = ev.map((_,i)=>i+1);
+    const evp = ev.map(v=>Math.max(v,1e-10));
+    Plotly.react('p_kspec', [
+      {x:idx.slice(0,nz), y:evp.slice(0,nz), type:'bar', name:'Signalkanal',
+       marker:{color:C.sig,line:{width:0}}},
+      {x:idx.slice(nz),   y:evp.slice(nz),   type:'bar', name:'Reservoir (≈0)',
+       marker:{color:C.res,line:{width:0}}}
+    ], L({
+      margin:{l:60,r:16,t:26,b:42},
+      title:{text:'Eigenwerte von K — logarithmisch', font:{size:11.5,color:'#9aa6c4'}},
+      yaxis:{type:'log', title:{text:'λ',font:{size:10}}, range:[-8.6, Math.log10(Math.max(maxv,1))+0.3]},
+      xaxis:{title:{text:'Spektralindex',font:{size:10}}},
+      bargap:0.12, legend:{x:0.62,y:0.98}
+    }), PLOT_CFG);
+  }
+  ['s_kov','s_kn','s_krank'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   1.3 — EIGEN ELLIPSE
+   ========================================================================== */
+(function(){
+  const cv = $('#c_eig');
+  function draw(){
+    const l1 = +$('#s_l1').value/100;
+    const l2 = +$('#s_l2').value/100;
+    const th = +$('#s_lth').value*Math.PI/180;
+    $('#v_l1').textContent=l1.toFixed(2);
+    $('#v_l2').textContent=l2.toFixed(2);
+    $('#v_lth').textContent=Math.round(th*180/Math.PI)+'°';
+
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w/2, cy=h/2, sc=Math.min(w,h)/7.2;
+    gridlines(ctx,w,h,cx,cy,sc);
+
+    const ct=Math.cos(th), st=Math.sin(th);
+    const K = [[l1*ct*ct+l2*st*st, (l1-l2)*ct*st],
+               [(l1-l2)*ct*st,     l1*st*st+l2*ct*ct]];
+
+    // unit circle
+    ctx.strokeStyle='rgba(160,180,220,.42)'; ctx.lineWidth=1.6; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.arc(cx,cy,sc,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+
+    // image ellipse
+    ctx.strokeStyle=C.sig; ctx.lineWidth=2.8;
+    ctx.shadowColor=C.sig; ctx.shadowBlur=14;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const a=TAU*i/200, vx=Math.cos(a), vy=Math.sin(a);
+      const ux=K[0][0]*vx+K[0][1]*vy, uy=K[1][0]*vx+K[1][1]*vy;
+      const X=cx+ux*sc, Y=cy-uy*sc;
+      i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+    }
+    ctx.closePath(); ctx.stroke(); ctx.shadowBlur=0;
+
+    // mapping spokes
+    ctx.strokeStyle='rgba(73,209,255,.22)'; ctx.lineWidth=1;
+    for(let i=0;i<28;i++){
+      const a=TAU*i/28, vx=Math.cos(a), vy=Math.sin(a);
+      const ux=K[0][0]*vx+K[0][1]*vy, uy=K[1][0]*vx+K[1][1]*vy;
+      ctx.beginPath();
+      ctx.moveTo(cx+vx*sc, cy-vy*sc);
+      ctx.lineTo(cx+ux*sc, cy-uy*sc);
+      ctx.stroke();
+    }
+
+    // eigen axes
+    arrow(ctx,cx,cy,cx+ct*l1*sc,cy-st*l1*sc,C.gold,3,10);
+    arrow(ctx,cx,cy,cx-st*l2*sc,cy-ct*l2*sc,C.gold,3,10);
+    label(ctx,`λ₁=${l1.toFixed(2)}`, cx+ct*l1*sc+8, cy-st*l1*sc-6, C.gold, 11);
+    label(ctx,`λ₂=${l2.toFixed(2)}`, cx-st*l2*sc+8, cy-ct*l2*sc-6, C.gold, 11);
+
+    if(l2<0.03){
+      ctx.fillStyle='rgba(255,122,89,.14)';
+      ctx.fillRect(12,12,214,26);
+      label(ctx,'λ₂ ≈ 0  →  Nullrichtung / Reservoir', 20, 29, C.res, 11.5);
+    }
+  }
+  ['s_l1','s_l2','s_lth'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   1.4 — PROJECTORS
+   ========================================================================== */
+(function(){
+  const cv=$('#c_proj');
+  function draw(){
+    const ang=+$('#s_pang').value*Math.PI/180;
+    const sub=+$('#s_psub').value*Math.PI/180;
+    $('#v_pang').textContent=Math.round(ang*180/Math.PI)+'°';
+    $('#v_psub').textContent=Math.round(sub*180/Math.PI)+'°';
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w/2, cy=h/2, sc=Math.min(w,h)/3.4;
+    gridlines(ctx,w,h,cx,cy,sc*0.5);
+
+    const vx=Math.cos(ang), vy=Math.sin(ang);
+    const ex=Math.cos(sub), ey=Math.sin(sub);
+    const nx=-ey, ny=ex;
+    const dp=vx*ex+vy*ey, dn=vx*nx+vy*ny;
+
+    // signal channel line (cyan band)
+    ctx.strokeStyle='rgba(73,209,255,.30)'; ctx.lineWidth=16; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx-ex*sc*1.5,cy+ey*sc*1.5);
+    ctx.lineTo(cx+ex*sc*1.5,cy-ey*sc*1.5); ctx.stroke();
+    // reservoir line
+    ctx.strokeStyle='rgba(255,122,89,.24)'; ctx.lineWidth=16;
+    ctx.beginPath(); ctx.moveTo(cx-nx*sc*1.5,cy+ny*sc*1.5);
+    ctx.lineTo(cx+nx*sc*1.5,cy-ny*sc*1.5); ctx.stroke();
+    ctx.lineCap='butt';
+
+    label(ctx,'Signalkanal', cx+ex*sc*1.5+6, cy-ey*sc*1.5-8, C.sig, 10.5);
+    label(ctx,'Reservoir',   cx+nx*sc*1.1+6, cy-ny*sc*1.1-8, C.res, 10.5);
+
+    // projections
+    const psx=cx+ex*dp*sc, psy=cy-ey*dp*sc;
+    const prx=cx+nx*dn*sc, pry=cy-ny*dn*sc;
+
+    // dashed connectors
+    ctx.strokeStyle='rgba(200,215,245,.35)'; ctx.lineWidth=1.3; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx+vx*sc,cy-vy*sc); ctx.lineTo(psx,psy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx+vx*sc,cy-vy*sc); ctx.lineTo(prx,pry); ctx.stroke();
+    ctx.setLineDash([]);
+
+    arrow(ctx,cx,cy,psx,psy,C.sig,3.2,10);
+    arrow(ctx,cx,cy,prx,pry,C.res,3.2,10);
+    arrow(ctx,cx,cy,cx+vx*sc,cy-vy*sc,C.white,3.4,11);
+    label(ctx,'v', cx+vx*sc+9, cy-vy*sc-6, C.white, 13);
+
+    $('#st_psig').textContent = Math.abs(dp).toFixed(3);
+    $('#st_pres').textContent = Math.abs(dn).toFixed(3);
+
+    label(ctx, `‖v‖² = ${(dp*dp).toFixed(3)} + ${(dn*dn).toFixed(3)} = ${(dp*dp+dn*dn).toFixed(3)}`,
+          w/2, h-12, C.dim, 11, 'center');
+  }
+  ['s_pang','s_psub'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   1.5 — PSEUDOINVERSE / MIN-NORM
+   ========================================================================== */
+(function(){
+  const cv=$('#c_pinv');
+  // A = [1, 0.6] (1x2). solutions of a·w = b form a line. min-norm = A†b
+  const a=[1,0.6];
+  function draw(){
+    const b=+$('#s_pib').value/100;
+    $('#v_pib').textContent=b.toFixed(2);
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w/2, cy=h/2, sc=Math.min(w,h)/6.2;
+    gridlines(ctx,w,h,cx,cy,sc);
+
+    const na=a[0]*a[0]+a[1]*a[1];
+    const mx=a[0]*b/na, my=a[1]*b/na;      // min-norm solution
+    const dx=-a[1], dy=a[0];               // direction along solution line
+    const nd=Math.hypot(dx,dy);
+
+    // solution line
+    ctx.strokeStyle=C.cln; ctx.lineWidth=2.6;
+    ctx.shadowColor=C.cln; ctx.shadowBlur=10;
+    ctx.beginPath();
+    ctx.moveTo(cx+(mx-dx/nd*4)*sc, cy-(my-dy/nd*4)*sc);
+    ctx.lineTo(cx+(mx+dx/nd*4)*sc, cy-(my+dy/nd*4)*sc);
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // norm circles
+    const r=Math.hypot(mx,my);
+    ctx.setLineDash([3,4]);
+    for(let k=1;k<=3;k++){
+      ctx.strokeStyle=`rgba(180,140,255,${0.32/k})`; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.arc(cx,cy,r*k*sc,0,TAU); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // other (larger) solutions
+    ctx.fillStyle='rgba(200,215,245,.35)';
+    for(let k=-3;k<=3;k++){
+      if(k===0) continue;
+      const px=mx+dx/nd*k*0.75, py=my+dy/nd*k*0.75;
+      ctx.beginPath(); ctx.arc(cx+px*sc, cy-py*sc, 3.5, 0, TAU); ctx.fill();
+    }
+
+    arrow(ctx,cx,cy,cx+mx*sc,cy-my*sc,C.sig,3.2,10);
+    ctx.shadowColor=C.sig; ctx.shadowBlur=14;
+    ctx.fillStyle=C.sig;
+    ctx.beginPath(); ctx.arc(cx+mx*sc,cy-my*sc,6,0,TAU); ctx.fill();
+    ctx.shadowBlur=0;
+
+    label(ctx,`A†b, ‖w‖=${r.toFixed(2)}`, cx+mx*sc+10, cy-my*sc-8, C.sig, 11);
+    label(ctx,'alle Lösungen von a·w = b', 14, 20, C.cln, 10.5);
+    label(ctx,'graue Punkte: gültig, aber länger', 14, 36, C.dim, 10);
+    label(ctx,'w₁', w-18, cy-8, C.dim, 10, 'right');
+    label(ctx,'w₂', cx+8, 14, C.dim, 10);
+  }
+  $('#s_pib').addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 2 — OUTPUT SPACE FLOW
+   ========================================================================== */
+(function(){
+  const cv=$('#c_flow');
+  let anim=null, tAnim=0;
+
+  function params(){
+    return {
+      l1:+$('#s_f1').value/100,
+      l2:+$('#s_f2').value/100,
+      th:+$('#s_fth').value*Math.PI/180,
+      t :+$('#s_ft').value/10
+    };
+  }
+  function traj(p, tmax, N=260){
+    // u' = -K(u - y),  y = target. Analytic in eigenbasis.
+    const y=[1.6,1.1], u0=[-1.5,-1.3];
+    const ct=Math.cos(p.th), st=Math.sin(p.th);
+    const e1=[ct,st], e2=[-st,ct];
+    const d0=[u0[0]-y[0], u0[1]-y[1]];
+    const c1=d0[0]*e1[0]+d0[1]*e1[1];
+    const c2=d0[0]*e2[0]+d0[1]*e2[1];
+    const pts=[], loss=[], ts=[];
+    for(let i=0;i<=N;i++){
+      const t=tmax*i/N;
+      const a1=c1*Math.exp(-p.l1*t), a2=c2*Math.exp(-p.l2*t);
+      pts.push([y[0]+a1*e1[0]+a2*e2[0], y[1]+a1*e1[1]+a2*e2[1]]);
+      loss.push(0.5*(a1*a1+a2*a2)); ts.push(t);
+    }
+    return {pts,loss,ts,y,e1,e2,
+            r1:c1*Math.exp(-p.l1*tmax), r2:c2*Math.exp(-p.l2*tmax)};
+  }
+
+  function draw(){
+    const p=params();
+    $('#v_f1').textContent=p.l1.toFixed(2);
+    $('#v_f2').textContent=p.l2.toFixed(2);
+    $('#v_fth').textContent=Math.round(p.th*180/Math.PI)+'°';
+    $('#v_ft').textContent=p.t.toFixed(1);
+
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w*0.42, cy=h*0.6, sc=Math.min(w,h)/5.6;
+    gridlines(ctx,w,h,cx,cy,sc);
+    label(ctx,'Ausgabe u₁ →', w-14, cy+16, C.dim, 10.5,'right');
+    label(ctx,'Ausgabe u₂ ↑', cx+8, 16, C.dim, 10.5);
+
+    const R=traj(p, p.t);
+    const Rfull=traj(p, 20);
+
+    // vector field
+    ctx.lineWidth=1;
+    const ct=Math.cos(p.th), st=Math.sin(p.th);
+    const K=[[p.l1*ct*ct+p.l2*st*st,(p.l1-p.l2)*ct*st],
+             [(p.l1-p.l2)*ct*st,p.l1*st*st+p.l2*ct*ct]];
+    for(let ix=-4;ix<=4;ix++) for(let iy=-4;iy<=4;iy++){
+      const ux=ix*0.85, uy=iy*0.85;
+      const dx=-(K[0][0]*(ux-R.y[0])+K[0][1]*(uy-R.y[1]));
+      const dy=-(K[1][0]*(ux-R.y[0])+K[1][1]*(uy-R.y[1]));
+      const m=Math.hypot(dx,dy)||1e-9;
+      const s=Math.min(m,1.4)/m*0.42;
+      const X=cx+ux*sc, Y=cy-uy*sc;
+      if(X<6||X>w-6||Y<6||Y>h-6) continue;
+      ctx.strokeStyle=`rgba(73,209,255,${0.10+0.24*Math.min(m/2,1)})`;
+      ctx.beginPath(); ctx.moveTo(X,Y); ctx.lineTo(X+dx*s*sc, Y-dy*s*sc); ctx.stroke();
+    }
+
+    // reservoir axis (slow direction = e2 if l2<l1)
+    const slow = p.l2<=p.l1 ? R.e2 : R.e1;
+    ctx.strokeStyle='rgba(255,122,89,.55)'; ctx.lineWidth=2.4; ctx.setLineDash([7,5]);
+    ctx.beginPath();
+    ctx.moveTo(cx+(R.y[0]-slow[0]*4)*sc, cy-(R.y[1]-slow[1]*4)*sc);
+    ctx.lineTo(cx+(R.y[0]+slow[0]*4)*sc, cy-(R.y[1]+slow[1]*4)*sc);
+    ctx.stroke(); ctx.setLineDash([]);
+    label(ctx,'Reservoir-Achse (λ klein)',
+          cx+(R.y[0]+slow[0]*2.4)*sc+6, cy-(R.y[1]+slow[1]*2.4)*sc-6, C.res, 10);
+
+    // full faded trajectory
+    ctx.strokeStyle='rgba(73,209,255,.22)'; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    Rfull.pts.forEach((q,i)=>{const X=cx+q[0]*sc,Y=cy-q[1]*sc;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+    ctx.stroke();
+
+    // active trajectory
+    ctx.strokeStyle=C.sig; ctx.lineWidth=3.2;
+    ctx.shadowColor=C.sig; ctx.shadowBlur=12;
+    ctx.beginPath();
+    R.pts.forEach((q,i)=>{const X=cx+q[0]*sc,Y=cy-q[1]*sc;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // target
+    ctx.fillStyle=C.cln; ctx.shadowColor=C.cln; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.arc(cx+R.y[0]*sc, cy-R.y[1]*sc, 7,0,TAU); ctx.fill();
+    ctx.shadowBlur=0;
+    label(ctx,'Ziel y', cx+R.y[0]*sc+12, cy-R.y[1]*sc-8, C.cln, 11.5);
+
+    // current point
+    const q=R.pts[R.pts.length-1];
+    ctx.fillStyle='#fff'; ctx.shadowColor=C.sig; ctx.shadowBlur=16;
+    ctx.beginPath(); ctx.arc(cx+q[0]*sc, cy-q[1]*sc, 6.5,0,TAU); ctx.fill(); ctx.shadowBlur=0;
+
+    // residual decomposition arrows
+    const dxr=q[0]-R.y[0], dyr=q[1]-R.y[1];
+    const a1=dxr*R.e1[0]+dyr*R.e1[1], a2=dxr*R.e2[0]+dyr*R.e2[1];
+    arrow(ctx, cx+R.y[0]*sc, cy-R.y[1]*sc,
+          cx+(R.y[0]+a1*R.e1[0])*sc, cy-(R.y[1]+a1*R.e1[1])*sc, C.sig, 2.2, 8);
+    arrow(ctx, cx+R.y[0]*sc, cy-R.y[1]*sc,
+          cx+(R.y[0]+a2*R.e2[0])*sc, cy-(R.y[1]+a2*R.e2[1])*sc, C.res, 2.2, 8);
+
+    $('#st_f1').textContent=Math.abs(R.r1).toFixed(4);
+    $('#st_f2').textContent=Math.abs(R.r2).toFixed(4);
+
+    // loss plot
+    const Lf=traj(p,20,300);
+    Plotly.react('p_flowloss', [
+      {x:Lf.ts, y:Lf.loss, mode:'lines', name:'Gesamtverlust',
+       line:{color:C.white,width:2.2}},
+      {x:Lf.ts, y:Lf.ts.map(t=>{
+        const c1=Lf.loss[0]?0:0; return 0;}), visible:false, showlegend:false},
+      {x:[p.t,p.t], y:[1e-8, Math.max(...Lf.loss)], mode:'lines', name:'jetzt',
+       line:{color:C.gold,width:1.6,dash:'dot'}}
+    ], L({
+      margin:{l:58,r:16,t:26,b:40},
+      title:{text:'Verlust über die Zeit — der Rest im Reservoir bleibt liegen',
+             font:{size:11.5,color:'#9aa6c4'}},
+      yaxis:{type:'log', title:{text:'Φ(u)',font:{size:10}}},
+      xaxis:{title:{text:'Zeit t',font:{size:10}}},
+      legend:{x:0.72,y:0.98}
+    }), PLOT_CFG);
+  }
+  ['s_f1','s_f2','s_fth','s_ft'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_flowplay').textContent='▶ Abspielen';}
+    draw();
+  }));
+  $('#b_flowplay').addEventListener('click',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_flowplay').textContent='▶ Abspielen';return;}
+    $('#b_flowplay').textContent='⏸ Pause';
+    tAnim=0;
+    const step=()=>{
+      tAnim+=2.2;
+      if(tAnim>200){tAnim=0;}
+      $('#s_ft').value=tAnim; draw();
+      anim=requestAnimationFrame(step);
+    };
+    anim=requestAnimationFrame(step);
+  });
+  $('#b_flowres').addEventListener('click',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_flowplay').textContent='▶ Abspielen';}
+    $('#s_f1').value=100;$('#s_f2').value=2;$('#s_fth').value=35;$('#s_ft').value=60;draw();
+  });
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 3 — ROTATING KERNEL → W
+   ========================================================================== */
+(function(){
+  const cv=$('#c_rot');
+  let anim=null;
+
+  function computeW(sp, an, T, N=400){
+    // K(τ) with rotating axes: λ1=an, λ2=1, angle = sp*τ
+    let W=[[0,0],[0,0]];
+    const dt=T/N;
+    const trace=[];
+    for(let i=0;i<=N;i++){
+      const tau=T*i/N;
+      const th=sp*tau;
+      const c=Math.cos(th), s=Math.sin(th);
+      const K=[[an*c*c+1*s*s,(an-1)*c*s],[(an-1)*c*s,an*s*s+1*c*c]];
+      const wgt = (i===0||i===N)?0.5:1;
+      W[0][0]+=K[0][0]*dt*wgt; W[0][1]+=K[0][1]*dt*wgt;
+      W[1][0]+=K[1][0]*dt*wgt; W[1][1]+=K[1][1]*dt*wgt;
+      if(i%6===0) trace.push([Math.cos(th)*an, Math.sin(th)*an]);
+    }
+    return {W,trace};
+  }
+  function eig2(M){
+    const a=M[0][0], b=M[0][1], d=M[1][1];
+    const tr=a+d, det=a*d-b*b;
+    const disc=Math.sqrt(Math.max(tr*tr/4-det,0));
+    const l1=tr/2+disc, l2=tr/2-disc;
+    let v1;
+    if(Math.abs(b)>1e-12) v1=[l1-d,b];
+    else v1=[1,0];
+    const n1=Math.hypot(v1[0],v1[1])||1;
+    v1=[v1[0]/n1,v1[1]/n1];
+    return {l1,l2,v1,v2:[-v1[1],v1[0]]};
+  }
+
+  function draw(){
+    const sp=+$('#s_rotsp').value/100;
+    const an=+$('#s_rotan').value;
+    const T =+$('#s_rott').value/10;
+    $('#v_rotsp').textContent=sp.toFixed(1);
+    $('#v_rotan').textContent=an;
+    $('#v_rott').textContent=T.toFixed(1);
+
+    const {W,trace}=computeW(sp,an,T);
+    const E=eig2(W);
+    $('#st_rotl1').textContent=E.l1.toFixed(2);
+    $('#st_rotl2').textContent=E.l2.toFixed(2);
+    $('#st_rotani').textContent=(E.l1/Math.max(E.l2,1e-9)).toFixed(1)+'×';
+
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w/2, cy=h/2;
+    const scK=Math.min(w,h)/(2.9*an);
+    const scW=Math.min(w,h)/(2.9*Math.max(E.l1,1e-6));
+    gridlines(ctx,w,h,cx,cy,Math.min(w,h)/9);
+
+    // trace of principal axis of K over time
+    ctx.strokeStyle='rgba(255,209,102,.5)'; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    trace.forEach((q,i)=>{const X=cx+q[0]*scK,Y=cy-q[1]*scK;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});
+    ctx.stroke();
+    trace.forEach((q,i)=>{
+      if(i%4) return;
+      ctx.fillStyle=`rgba(255,209,102,${0.15+0.5*i/trace.length})`;
+      ctx.beginPath(); ctx.arc(cx+q[0]*scK, cy-q[1]*scK, 2.4,0,TAU); ctx.fill();
+    });
+
+    // instantaneous K ellipse at τ=T
+    const th=sp*T, c=Math.cos(th), s=Math.sin(th);
+    const K=[[an*c*c+s*s,(an-1)*c*s],[(an-1)*c*s,an*s*s+c*c]];
+    ctx.strokeStyle=C.sig; ctx.lineWidth=2.4;
+    ctx.shadowColor=C.sig; ctx.shadowBlur=10;
+    ctx.beginPath();
+    for(let i=0;i<=180;i++){
+      const a=TAU*i/180, vx=Math.cos(a), vy=Math.sin(a);
+      const ux=K[0][0]*vx+K[0][1]*vy, uy=K[1][0]*vx+K[1][1]*vy;
+      const X=cx+ux*scK, Y=cy-uy*scK; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+    }
+    ctx.closePath(); ctx.stroke(); ctx.shadowBlur=0;
+
+    // W ellipse
+    ctx.strokeStyle=C.acc; ctx.lineWidth=3;
+    ctx.shadowColor=C.acc; ctx.shadowBlur=14;
+    ctx.beginPath();
+    for(let i=0;i<=180;i++){
+      const a=TAU*i/180, vx=Math.cos(a), vy=Math.sin(a);
+      const ux=W[0][0]*vx+W[0][1]*vy, uy=W[1][0]*vx+W[1][1]*vy;
+      const X=cx+ux*scW, Y=cy-uy*scW; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+    }
+    ctx.closePath(); ctx.stroke(); ctx.shadowBlur=0;
+
+    // W eigen axes
+    arrow(ctx,cx,cy,cx+E.v1[0]*E.l1*scW, cy-E.v1[1]*E.l1*scW, 'rgba(180,140,255,.85)',2.4,9);
+    arrow(ctx,cx,cy,cx+E.v2[0]*E.l2*scW, cy-E.v2[1]*E.l2*scW, 'rgba(180,140,255,.85)',2.4,9);
+
+    // badge
+    const ani=E.l1/Math.max(E.l2,1e-9);
+    ctx.fillStyle = ani>8 ? 'rgba(255,122,89,.14)' : 'rgba(125,255,179,.12)';
+    ctx.fillRect(12,12,238,30);
+    label(ctx, ani>8 ? 'W schmal → großes Reservoir'
+                     : 'W rund → Reservoir schrumpft (Feature Learning)',
+          20, 31, ani>8 ? C.res : C.cln, 11.5);
+  }
+  ['s_rotsp','s_rotan','s_rott'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_rotplay').textContent='▶ Zeit laufen lassen';}
+    draw();
+  }));
+  $('#b_rotplay').addEventListener('click',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_rotplay').textContent='▶ Zeit laufen lassen';return;}
+    $('#b_rotplay').textContent='⏸ Pause';
+    let t=1;
+    const step=()=>{
+      t+=1.6; if(t>200) t=1;
+      $('#s_rott').value=t; draw();
+      anim=requestAnimationFrame(step);
+    };
+    anim=requestAnimationFrame(step);
+  });
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 3b — SPECTRUM EXPLORER (Fig 2A)
+   ========================================================================== */
+(function(){
+  function draw(){
+    const alpha=+$('#s_spa').value/10;
+    const knee =+$('#s_spr').value;
+    const epsE =+$('#s_speps').value;
+    const eps  = Math.pow(10, -(epsE/10));
+    $('#v_spa').textContent=alpha.toFixed(1);
+    $('#v_spr').textContent=knee;
+    $('#v_speps').textContent=eps.toExponential(0).replace('e-','e-');
+
+    const N=70, idx=[], lamW=[], lamG=[];
+    for(let j=1;j<=N;j++){
+      // W spectrum: power law with a hard knee (effective rank)
+      const base = Math.pow(j,-alpha);
+      const cut  = 1/(1+Math.pow(j/knee, 7));
+      const v = 30*base*cut + 1e-9;
+      idx.push(j); lamW.push(v);
+      lamG.push(v*0.42*(1/(1+0.04*j)));   // visibility Gramian strictly below
+    }
+    const nsig = lamW.filter(v=>v>eps).length;
+    $('#st_spsig').textContent=nsig;
+    $('#st_spres').textContent=N-nsig;
+    $('#st_sppct').textContent=Math.round(100*(N-nsig)/N)+' %';
+
+    const shapes=[{
+      type:'line', x0:nsig+0.5, x1:nsig+0.5, y0:1e-9, y1:100,
+      line:{color:C.gold,width:2,dash:'dash'}
+    },{
+      type:'rect', x0:nsig+0.5, x1:N+0.5, y0:1e-9, y1:100,
+      fillcolor:'rgba(255,122,89,0.07)', line:{width:0}
+    },{
+      type:'rect', x0:0.5, x1:nsig+0.5, y0:1e-9, y1:100,
+      fillcolor:'rgba(73,209,255,0.055)', line:{width:0}
+    },{
+      type:'line', x0:0.5, x1:N+0.5, y0:eps, y1:eps,
+      line:{color:'rgba(200,215,245,.45)',width:1.4,dash:'dot'}
+    }];
+
+    Plotly.react('p_spec', [
+      {x:idx,y:lamW,mode:'lines+markers',name:'λ(W_S) — kumulative Dissipation',
+       line:{color:C.sig,width:2.6}, marker:{size:4.5,color:C.sig}},
+      {x:idx,y:lamG,mode:'lines+markers',name:'λ(Γ_Q) — Testsichtbarkeit',
+       line:{color:C.acc,width:2.2,dash:'dot'}, marker:{size:4,color:C.acc}}
+    ], L({
+      margin:{l:66,r:20,t:38,b:48}, shapes,
+      title:{text:'Testsichtbarkeit liegt an jedem Index strikt unter der Dissipation',
+             font:{size:11.5,color:'#9aa6c4'}},
+      yaxis:{type:'log', title:{text:'Eigenwert',font:{size:10}}, range:[-8.5,2]},
+      xaxis:{title:{text:'Spektralindex j',font:{size:10}}, range:[0.5,N+0.5]},
+      legend:{x:0.42,y:0.99},
+      annotations:[
+        {x:nsig*0.45,y:1.2,text:'SIGNALKANAL',showarrow:false,
+         font:{color:C.sig,size:11},yref:'y'},
+        {x:nsig+(N-nsig)*0.5,y:1.2,text:'RESERVOIR',showarrow:false,
+         font:{color:C.res,size:11},yref:'y'}
+      ]
+    }), PLOT_CFG);
+  }
+  ['s_spa','s_spr','s_speps'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 4 — INVISIBILITY MACHINE
+   ========================================================================== */
+(function(){
+  const cv=$('#c_invis');
+  function draw(){
+    const ah=+$('#s_ivang').value*Math.PI/180;
+    const flat=+$('#s_ivflat').value/100;
+    const aq=+$('#s_ivq').value*Math.PI/180;
+    $('#v_ivang').textContent=Math.round(ah*180/Math.PI)+'°';
+    $('#v_ivflat').textContent=flat.toFixed(2);
+    $('#v_ivq').textContent=Math.round(aq*180/Math.PI)+'°';
+
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w*0.5, cy=h*0.52, sc=Math.min(w,h)/4.0;
+    gridlines(ctx,w,h,cx,cy,sc*0.5);
+
+    // J^T : rank-deficient. Signal dir = e1, reservoir dir = e2 (scaled by flat)
+    const th0=0.52;
+    const e1=[Math.cos(th0),Math.sin(th0)];
+    const e2=[-Math.sin(th0),Math.cos(th0)];
+    const s1=1.0, s2=flat;
+
+    const hv=[Math.cos(ah),Math.sin(ah)];
+    const c1=hv[0]*e1[0]+hv[1]*e1[1];
+    const c2=hv[0]*e2[0]+hv[1]*e2[1];
+    // J^T h  magnitude
+    const jth = Math.hypot(s1*c1, s2*c2);
+    // test point direction jq
+    const jq=[Math.cos(aq),Math.sin(aq)];
+    // test transfer = <J_Q , J_S^T h>  ~ (jq·e1)*s1*c1 + (jq·e2)*s2*c2
+    const q1=jq[0]*e1[0]+jq[1]*e1[1];
+    const q2=jq[0]*e2[0]+jq[1]*e2[1];
+    const transfer = q1*s1*c1 + q2*s2*c2;
+    const trainErr = 1.0;   // residual norm always 1 (unit h)
+
+    // reservoir band
+    ctx.strokeStyle='rgba(255,122,89,.28)'; ctx.lineWidth=20; ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(cx-e2[0]*sc*1.45, cy+e2[1]*sc*1.45);
+    ctx.lineTo(cx+e2[0]*sc*1.45, cy-e2[1]*sc*1.45); ctx.stroke();
+    // signal band
+    ctx.strokeStyle='rgba(73,209,255,.24)'; ctx.lineWidth=20;
+    ctx.beginPath();
+    ctx.moveTo(cx-e1[0]*sc*1.45, cy+e1[1]*sc*1.45);
+    ctx.lineTo(cx+e1[0]*sc*1.45, cy-e1[1]*sc*1.45); ctx.stroke();
+    ctx.lineCap='butt';
+    label(ctx,'Signalkanal', cx+e1[0]*sc*1.3+6, cy-e1[1]*sc*1.3-10, C.sig, 10.5);
+    label(ctx,'Reservoir',   cx+e2[0]*sc*1.3+6, cy-e2[1]*sc*1.3-10, C.res, 10.5);
+
+    // h
+    arrow(ctx,cx,cy, cx+hv[0]*sc, cy-hv[1]*sc, C.noi, 3.4, 11);
+    label(ctx,'Restfehler h', cx+hv[0]*sc+10, cy-hv[1]*sc-6, C.noi, 12);
+
+    // test direction
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='rgba(125,255,179,.55)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+jq[0]*sc*1.25, cy-jq[1]*sc*1.25); ctx.stroke();
+    ctx.setLineDash([]);
+    label(ctx,'Testpunkt-Richtung', cx+jq[0]*sc*1.25+8, cy-jq[1]*sc*1.25+4, C.cln, 10.5);
+
+    // "machine" output bar
+    const bx=w-96, by=48, bh=h-110;
+    ctx.fillStyle='rgba(255,255,255,.04)';
+    ctx.fillRect(bx,by,30,bh);
+    ctx.strokeStyle='rgba(160,180,220,.25)'; ctx.strokeRect(bx,by,30,bh);
+    const mag=clamp(Math.abs(transfer),0,1.05);
+    const fh=mag/1.05*bh;
+    const grad=ctx.createLinearGradient(0,by+bh,0,by);
+    grad.addColorStop(0, mag<0.02 ? 'rgba(125,255,179,.9)' : 'rgba(73,209,255,.85)');
+    grad.addColorStop(1, mag<0.02 ? 'rgba(125,255,179,.4)' : 'rgba(180,140,255,.8)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(bx, by+bh-fh, 30, fh);
+    label(ctx,'Test-', bx+15, by-22, C.dim, 10, 'center');
+    label(ctx,'bewegung', bx+15, by-10, C.dim, 10, 'center');
+    label(ctx, Math.abs(transfer).toFixed(4), bx+15, by+bh+18, mag<0.02?C.cln:C.sig, 11.5, 'center');
+
+    if(mag<0.02){
+      ctx.fillStyle='rgba(125,255,179,.14)';
+      ctx.fillRect(12,12,206,28);
+      label(ctx,'✓ UNSICHTBAR — für jeden Testpunkt', 20, 30, C.cln, 11);
+    }
+
+    $('#st_ivtr').textContent=trainErr.toFixed(3);
+    $('#st_ivte').textContent=Math.abs(transfer).toFixed(4);
+  }
+  ['s_ivang','s_ivflat','s_ivq'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 5 — DRIFT VS DIFFUSION RACE
+   ========================================================================== */
+(function(){
+  const cv=$('#c_walk');
+  let seed=7, anim=null, frame=0;
+
+  function simulate(){
+    const mu=+$('#s_wmu').value/100;
+    const sg=+$('#s_wsig').value/100;
+    const b =+$('#s_wb').value;
+    const nR=+$('#s_wn').value;
+    $('#v_wmu').textContent=mu.toFixed(2);
+    $('#v_wsig').textContent=sg.toFixed(2);
+    $('#v_wb').textContent=b;
+    $('#v_wn').textContent=nR;
+
+    const T=200;
+    const rng=mulberry(seed);
+    const eff=sg/Math.sqrt(b);
+    const runs=[], noiseRuns=[];
+    for(let r=0;r<nR;r++){
+      const p=[0], pn=[0];
+      let x=0, xn=0;
+      for(let t=1;t<=T;t++){
+        x += mu + eff*gauss(rng);
+        xn += eff*gauss(rng);
+        p.push(x); pn.push(xn);
+      }
+      runs.push(p); noiseRuns.push(pn);
+    }
+    return {runs,noiseRuns,T,mu,eff,b};
+  }
+
+  function draw(upTo){
+    const S=simulate();
+    const T = upTo===undefined ? S.T : Math.max(2,Math.min(S.T,Math.round(upTo)));
+    const {ctx,w,h}=setupCanvas(cv);
+    // scale
+    let mx=0.6;
+    S.runs.forEach(p=>{for(let i=0;i<=T;i++) mx=Math.max(mx,Math.abs(p[i]));});
+    S.noiseRuns.forEach(p=>{for(let i=0;i<=T;i++) mx=Math.max(mx,Math.abs(p[i]));});
+    const pad=26, cy=h/2;
+    const sx=(w-2*pad)/S.T, sy=(h/2-pad)/mx;
+
+    // grid
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    for(let k=-4;k<=4;k++){
+      const y=cy-k*mx/4*sy;
+      ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();
+    }
+    ctx.strokeStyle=C.axis; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(pad,cy); ctx.lineTo(w-pad,cy); ctx.stroke();
+
+    // noise-only runs (pure diffusion, no drift)
+    ctx.lineWidth=1;
+    S.noiseRuns.forEach(p=>{
+      ctx.strokeStyle='rgba(255,93,122,.16)';
+      ctx.beginPath();
+      for(let i=0;i<=T;i++){const X=pad+i*sx, Y=cy-p[i]*sy; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      ctx.stroke();
+    });
+    // drift runs
+    S.runs.forEach(p=>{
+      ctx.strokeStyle='rgba(125,255,179,.24)';
+      ctx.beginPath();
+      for(let i=0;i<=T;i++){const X=pad+i*sx, Y=cy-p[i]*sy; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+      ctx.stroke();
+    });
+
+    // theory: drift line (∝T) and ±√T envelope
+    ctx.strokeStyle=C.cln; ctx.lineWidth=3;
+    ctx.shadowColor=C.cln; ctx.shadowBlur=10;
+    ctx.beginPath();
+    for(let i=0;i<=T;i++){const X=pad+i*sx, Y=cy-(S.mu*i)*sy; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    ctx.strokeStyle=C.noi; ctx.lineWidth=2.2; ctx.setLineDash([6,4]);
+    [1,-1].forEach(s=>{
+      ctx.beginPath();
+      for(let i=0;i<=T;i++){
+        const X=pad+i*sx, Y=cy-s*S.eff*Math.sqrt(i)*sy;
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      }
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    label(ctx,'Drift  ∝ T', pad+10, 20, C.cln, 11.5);
+    label(ctx,'Diffusion ±σ√(T/b)', pad+10, 36, C.noi, 11.5);
+
+    const dr=S.mu*T, df=S.eff*Math.sqrt(T);
+    $('#st_wdrift').textContent=dr.toFixed(2);
+    $('#st_wdiff').textContent=df.toFixed(2);
+    $('#st_wsnr').textContent=(dr/Math.max(df,1e-9)).toFixed(2);
+
+    // scaling plot
+    const ts=[], dd=[], nn=[];
+    for(let t=1;t<=S.T;t+=2){
+      ts.push(t); dd.push(S.mu*t); nn.push(S.eff*Math.sqrt(t));
+    }
+    Plotly.react('p_scaling',[
+      {x:ts,y:dd,mode:'lines',name:'Signal (∝ T)',line:{color:C.cln,width:3}},
+      {x:ts,y:nn,mode:'lines',name:'Rauschen (∝ √T)',line:{color:C.noi,width:3,dash:'dash'}}
+    ], L({
+      margin:{l:58,r:18,t:30,b:44},
+      title:{text:'Warum längeres Training dem Signal mehr hilft',font:{size:11.5,color:'#9aa6c4'}},
+      xaxis:{title:{text:'Schritte T',font:{size:10}},type:'log'},
+      yaxis:{title:{text:'Betrag',font:{size:10}},type:'log'},
+      legend:{x:0.02,y:0.98}
+    }), PLOT_CFG);
+  }
+  ['s_wmu','s_wsig','s_wb','s_wn'].forEach(id=>$('#'+id).addEventListener('input',()=>draw()));
+  $('#b_walkrun').addEventListener('click',()=>{seed=Math.floor(Math.random()*1e6);draw();});
+  $('#b_walkanim').addEventListener('click',()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;$('#b_walkanim').textContent='⏱ Animieren';draw();return;}
+    $('#b_walkanim').textContent='⏹ Stop'; frame=2;
+    const step=()=>{ frame+=2.4; if(frame>200) frame=2; draw(frame); anim=requestAnimationFrame(step); };
+    anim=requestAnimationFrame(step);
+  });
+  window.addEventListener('resize',()=>draw());
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 6 — COUPLING SCATTER (Fig 2B)
+   ========================================================================== */
+(function(){
+  function draw(){
+    const drift=+$('#s_cdrift').value/10;
+    const sm   =+$('#s_csm').value/10;
+    const n    =+$('#s_cn').value;
+    const sq   = $('#k_closs').checked;
+    $('#v_cdrift').textContent=drift.toFixed(1)+'×';
+    $('#v_csm').textContent=sm.toFixed(1);
+    $('#v_cn').textContent=n;
+
+    // R_perp magnitude: 0 under squared loss; else Sobolev-like decay
+    const hS = Math.pow(n,-1/2.0);            // fill distance proxy
+    const m  = sm;
+    const dM = 2.0;
+    let rperp = sq ? 0 : 0.85*Math.pow(hS, Math.max(m-dM/2,0.05));
+    rperp = Math.min(rperp, 1.4);
+    $('#st_crperp').textContent = rperp.toFixed(4);
+
+    const rng=mulberry(31337);
+    const NP=150, xs=[], ys=[];
+    for(let i=0;i<NP;i++){
+      const t=(rng()*2-1)*2.6;
+      xs.push(t);
+      ys.push(t + rperp*gauss(rng)*1.25 + 0.02*gauss(rng));
+    }
+    // correlation
+    const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+    const mxv=mean(xs), myv=mean(ys);
+    let sxy=0,sxx=0,syy=0,se=0,sn2=0;
+    for(let i=0;i<NP;i++){
+      sxy+=(xs[i]-mxv)*(ys[i]-myv); sxx+=(xs[i]-mxv)**2; syy+=(ys[i]-myv)**2;
+      se+=(ys[i]-xs[i])**2; sn2+=ys[i]**2;
+    }
+    const corr=sxy/Math.sqrt(sxx*syy);
+    const rel=Math.sqrt(se/Math.max(sn2,1e-9));
+    $('#st_ccorr').textContent=corr.toFixed(3);
+    $('#st_cerr').textContent=rel.toFixed(3);
+
+    Plotly.react('p_couple',[
+      {x:[-3,3],y:[-3,3],mode:'lines',name:'perfekte Vorhersage',
+       line:{color:'rgba(200,215,245,.55)',width:2,dash:'dash'}},
+      {x:xs,y:ys,mode:'markers',name:'Testbeispiele',
+       marker:{color:C.sig,size:7,opacity:.72,line:{color:'rgba(255,255,255,.28)',width:.8}}}
+    ], L({
+      margin:{l:60,r:20,t:38,b:52},
+      title:{text: sq ? 'Quadratischer Verlust ⇒ R⊥ = 0 ⇒ exakte Kopplung'
+                      : 'Ohne quadratischen Verlust: Rest R⊥ streut die Punkte',
+             font:{size:11.5,color: sq ? C.cln : C.res}},
+      xaxis:{title:{text:'vorhergesagte Testbewegung  A°·(ΔU_S)',font:{size:10}},range:[-3,3]},
+      yaxis:{title:{text:'tatsächliche Testbewegung  ΔU_Q',font:{size:10}},range:[-3,3]},
+      legend:{x:0.02,y:0.98}
+    }), PLOT_CFG);
+  }
+  ['s_cdrift','s_csm','s_cn'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  $('#k_closs').addEventListener('change',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 7 — FOUR-CELL
+   ========================================================================== */
+(function(){
+  let iso=null;
+  function draw(){
+    const eps=+$('#s_4noise').value/100;
+    const sigIn=+$('#s_4sigin').value/100;
+    const noiIn=+$('#s_4noiin').value/100;
+    const rp=+$('#s_4rperp').value/100;
+    $('#v_4noise').textContent=eps.toFixed(2);
+    $('#v_4sigin').textContent=sigIn.toFixed(2);
+    $('#v_4noiin').textContent=noiIn.toFixed(2);
+    $('#v_4rperp').textContent=rp.toFixed(2);
+
+    // cell magnitudes (qualitative model of Eq. 22)
+    const sigTotal = 1.0;
+    const c11 = sigTotal*sigIn;                       // signal transferring correctly
+    const c12 = sigTotal*(1-sigIn)*rp*3.2;            // residual bias, bounded by ||R_perp||
+    const c21 = eps*eps*(1-noiIn)*2.4;                // surviving variance
+    const c22 = 0;                                    // exactly zero — always
+
+    $('#st_c11').textContent=c11.toFixed(3);
+    $('#st_c12').textContent=c12.toFixed(3);
+    $('#st_c21').textContent=c21.toFixed(3);
+    $('#st_c22').textContent='0.000';
+    $('#st_ctot').textContent=(c12+c21).toFixed(3);
+
+    const names=['Zelle 1 · Signal→Test','Zelle 2 · Rest-Bias',
+                 'Zelle 3 · überlebende Varianz','Zelle 4 · gefangen (=0)'];
+    const vals=[c11,c12,c21,c22];
+    const cols=[C.cln,C.noi,C.noi,C.res];
+    const opac=[1,1,1,1].map((v,i)=> iso===null || iso===i ? 0.92 : 0.2);
+
+    Plotly.react('p_fourbar',[{
+      x:names, y:vals, type:'bar',
+      marker:{color:cols, opacity:opac, line:{width:0}},
+      text:vals.map(v=>v.toFixed(3)), textposition:'outside',
+      textfont:{color:'#c6d0e6',size:10}, showlegend:false
+    }], L({
+      margin:{l:52,r:16,t:32,b:78},
+      title:{text:'Beiträge zum Testfehler (Zelle 4 ist immer exakt 0)',
+             font:{size:11.5,color:'#9aa6c4'}},
+      yaxis:{range:[0,Math.max(1.15,c11*1.2)], title:{text:'Betrag',font:{size:10}}},
+      xaxis:{tickangle:-16, tickfont:{size:9.5}},
+      showlegend:false
+    }), PLOT_CFG);
+  }
+  ['s_4noise','s_4sigin','s_4noiin','s_4rperp'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  const map={'11':0,'12':1,'21':2,'22':3};
+  $$('.cell').forEach(c=>c.addEventListener('click',()=>{
+    const k=map[c.dataset.cell];
+    iso = (iso===k) ? null : k;
+    $$('.cell').forEach(x=>x.style.outline='none');
+    if(iso!==null) c.style.outline='2px solid rgba(255,209,102,.8)';
+    draw();
+  }));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 8a — SPECTRAL FILTER PLAYGROUND
+   ========================================================================== */
+(function(){
+  let mode='flow';
+  const NM=60;
+  // fixed "spectrum" of sigma_j^2 and signal content
+  const rng=mulberry(999);
+  const sig2=[], abar=[];
+  for(let j=1;j<=NM;j++){
+    sig2.push(28*Math.pow(j,-1.6));
+    abar.push(Math.exp(-0.09*j)*(1+0.22*gauss(rng)));
+  }
+
+  const NOTES={
+    flow:'<b>Gradientenfluss:</b> große Eigenwerte werden zuerst gefittet (Faktor 1−e^(−tσ²/n)). Das <i>ist</i> Implicit Bias — ein Zeitplan, kein Zusatzterm. Warte lange genug und du landest bei der Minimalnorm-Lösung.',
+    ridge:'<b>Ridge / Weight Decay:</b> M = σ²/(σ²+nλ). Jede Mode wird geschrumpft statt an-/abgeschaltet. Größeres λ ⇒ mehr Bias, weniger Varianz.',
+    rank:'<b>Rangabschnitt:</b> M = P_r. Nur die ersten r Moden werden benutzt. Genau hier entsteht <span style="color:#b48cff">Double Descent</span> — schieb r langsam hoch und beobachte das Risiko.',
+    full:'<b>Volle Interpolation:</b> M = I. Alle Moden werden exakt gefittet, Trainingsfehler 0. Bias verschwindet, aber die gesamte Rauschvarianz bleibt: σ²·tr(Γ₀). Das ist <span style="color:#7dffb3">Benign Overfitting</span>, wenn tr(Γ₀) klein ist.'
+  };
+
+  function filt(){
+    const t=Math.pow(10, -1+4*(+$('#s_ft2').value/100));
+    const lam=Math.pow(10,-3+3*(+$('#s_flam').value/100));
+    const r=+$('#s_fr').value;
+    const M=[];
+    for(let j=0;j<NM;j++){
+      if(mode==='flow') M.push(1-Math.exp(-t*sig2[j]/8));
+      else if(mode==='ridge') M.push(sig2[j]/(sig2[j]+60*lam));
+      else if(mode==='rank') M.push(j<r?1:0);
+      else M.push(1);
+    }
+    return {M,t,lam,r};
+  }
+  function draw(){
+    const noi=+$('#s_fnoi').value/100;
+    $('#v_fnoi').textContent=noi.toFixed(2);
+    const t=Math.pow(10,-1+4*(+$('#s_ft2').value/100));
+    const lam=Math.pow(10,-3+3*(+$('#s_flam').value/100));
+    $('#v_ft2').textContent=t.toPrecision(3);
+    $('#v_flam').textContent=lam.toFixed(3);
+    $('#v_fr').textContent=$('#s_fr').value;
+
+    const {M}=filt();
+    let bias=0, vari=0;
+    const gam=[], bj=[], vj=[];
+    for(let j=0;j<NM;j++){
+      const g=1.0/(1+0.14*j);          // visibility Gramian eigenvalue
+      gam.push(g);
+      const b=g*Math.pow(1-M[j],2)*abar[j]*abar[j];
+      const v=g*M[j]*M[j]*noi*0.06;
+      bj.push(b); vj.push(v); bias+=b; vari+=v;
+    }
+    $('#st_fbias').textContent=bias.toFixed(4);
+    $('#st_fvar').textContent=vari.toFixed(4);
+    $('#st_frisk').textContent=(bias+vari).toFixed(4);
+
+    const idx=Array.from({length:NM},(_,i)=>i+1);
+    Plotly.react('p_filter',[
+      {x:idx,y:M,mode:'lines',name:'Filter M_j',
+       line:{color:C.gold,width:3}, yaxis:'y'},
+      {x:idx,y:bj,type:'bar',name:'Bias² pro Mode',
+       marker:{color:'rgba(73,209,255,.65)'}, yaxis:'y2'},
+      {x:idx,y:vj,type:'bar',name:'Varianz pro Mode',
+       marker:{color:'rgba(255,93,122,.65)'}, yaxis:'y2'}
+    ], L({
+      margin:{l:52,r:52,t:32,b:44},
+      title:{text:'Ein Filter M — und alle vier Phänomene',font:{size:11.5,color:'#9aa6c4'}},
+      xaxis:{title:{text:'Mode j (schnell → langsam)',font:{size:10}}},
+      yaxis:{title:{text:'M_j',font:{size:10}},range:[0,1.08]},
+      yaxis2:{overlaying:'y',side:'right',showgrid:false,
+              title:{text:'Beitrag',font:{size:10}}},
+      barmode:'stack', legend:{x:0.36,y:1.14,orientation:'h'}
+    }), PLOT_CFG);
+
+    $('#note_filter').innerHTML=NOTES[mode];
+  }
+  $$('[data-filt]').forEach(b=>b.addEventListener('click',()=>{
+    $$('[data-filt]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=b.dataset.filt;
+    $('#wrap_ft').style.display   = mode==='flow'?'block':'none';
+    $('#wrap_flam').style.display = mode==='ridge'?'block':'none';
+    $('#wrap_fr').style.display   = mode==='rank'?'block':'none';
+    draw();
+  }));
+  ['s_ft2','s_flam','s_fr','s_fnoi'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 8b — DOUBLE DESCENT (Corollary H.3)
+   ========================================================================== */
+(function(){
+  function draw(){
+    const noi=+$('#s_ddn').value/100;
+    const conc=+$('#s_dds').value;
+    const dec=+$('#s_ddd').value/10;
+    $('#v_ddn').textContent=noi.toFixed(2);
+    $('#v_dds').textContent=conc;
+    $('#v_ddd').textContent=dec.toFixed(1);
+
+    const R=70;
+    const rng=mulberry(2024);
+    const lam=[], a2=[], sz=[];
+    for(let j=1;j<=R;j++){
+      lam.push(6*Math.pow(j,-dec));                      // Γ₀ eigenvalues
+      // signal concentrated in first `conc` modes, with a secondary bump
+      const s = Math.exp(-Math.pow((j-1)/conc,1.5))*1.6
+              + 0.35*Math.exp(-Math.pow((j-38)/8,2));
+      a2.push(s*s);
+      sz.push(noi*(0.9+0.25*Math.abs(gauss(rng))));      // Σ_ζ diagonal
+    }
+    // R_r = sum_{j>r} λ_j a_j²   +   sum_{j<=r} λ_j Σ_ζ,j
+    const rr=[], inc=[], rs=[];
+    for(let r=0;r<=R;r++){
+      let s=0;
+      for(let j=r;j<R;j++) s+=lam[j]*a2[j];
+      for(let j=0;j<r;j++) s+=lam[j]*sz[j];
+      rr.push(s); rs.push(r);
+    }
+    for(let r=0;r<R;r++) inc.push(rr[r+1]-rr[r]);
+
+    // find peak = last sign change from + to -
+    let peak=0, best=-1e9;
+    for(let r=1;r<R;r++){ if(rr[r]>best){best=rr[r];peak=r;} }
+
+    Plotly.react('p_dd',[
+      {x:rs,y:rr,mode:'lines',name:'Risiko R_r',
+       line:{color:C.sig,width:3}},
+      {x:[peak],y:[rr[peak]],mode:'markers',name:'Peak',
+       marker:{color:C.gold,size:12,symbol:'diamond',
+               line:{color:'#fff',width:1.2}}}
+    ], L({
+      margin:{l:56,r:16,t:32,b:44},
+      title:{text:'Double Descent — exakt aus Corollary H.3',font:{size:11.5,color:'#9aa6c4'}},
+      xaxis:{title:{text:'prädiktiver Rang r',font:{size:10}}},
+      yaxis:{title:{text:'Testrisiko',font:{size:10}}},
+      legend:{x:0.55,y:0.98},
+      shapes:[{type:'line',x0:peak,x1:peak,y0:0,y1:rr[peak],
+               line:{color:C.gold,width:1.4,dash:'dot'}}]
+    }), PLOT_CFG);
+
+    Plotly.react('p_ddinc',[
+      {x:rs.slice(0,R),y:inc,type:'bar',name:'R_{r+1} − R_r',
+       marker:{color:inc.map(v=>v>0?'rgba(255,93,122,.8)':'rgba(125,255,179,.8)'),
+               line:{width:0}}}
+    ], L({
+      margin:{l:56,r:16,t:32,b:44},
+      title:{text:'Signal > Rauschen ⇒ negativ (gut) · sonst positiv (schlecht)',
+             font:{size:11,color:'#9aa6c4'}},
+      xaxis:{title:{text:'Mode r+1',font:{size:10}}},
+      yaxis:{title:{text:'Zuwachs',font:{size:10}},zeroline:true,
+             zerolinecolor:'rgba(200,215,245,.5)',zerolinewidth:1.6},
+      showlegend:false
+    }), PLOT_CFG);
+  }
+  ['s_ddn','s_dds','s_ddd'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 8c — GROKKING (Fig 8)
+   ========================================================================== */
+(function(){
+  function draw(){
+    const fastM=+$('#s_gkf').value/100;
+    const slowM=+$('#s_gks').value/10000;
+    $('#v_gkf').textContent=fastM.toFixed(2);
+    $('#v_gks').textContent=slowM.toFixed(4);
+
+    const ts=[];
+    for(let e=1;e<=5.3;e+=0.045) ts.push(Math.pow(10,e));
+
+    const mob=[fastM, fastM*0.34, slowM*3.2, slowM];
+    const names=['Mode 1 (schnell, Rauschen)','Mode 2 (mittel)',
+                 'Mode 3 (langsam)','Mode 4 (langsam, Signal)'];
+    const cols=[C.noi,'#ffa07a',C.acc,C.sig];
+
+    const A=mob.map((m,i)=>({
+      x:ts, y:ts.map(t=>1-Math.exp(-t*m/900)),
+      mode:'lines', name:names[i], line:{color:cols[i],width:2.4}
+    }));
+    Plotly.react('p_gk1', A, L({
+      margin:{l:50,r:14,t:28,b:42},
+      xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:9.5}}},
+      yaxis:{title:{text:'Fit-Anteil',font:{size:9.5}},range:[0,1.05]},
+      legend:{x:0.02,y:0.99,font:{size:8.5}},
+      title:{text:'A · Spektralfilter',font:{size:10.5,color:'#9aa6c4'}}
+    }), PLOT_CFG);
+
+    // train / test accuracy
+    const trA = ts.map(t=>clamp(0.5+0.5*(1-Math.exp(-t*fastM/700)),0,1));
+    const teA = ts.map(t=>{
+      const slowFit=1-Math.exp(-t*slowM/900);
+      return clamp(0.06+0.93*Math.pow(slowFit,1.9),0,1);
+    });
+    // grok step = where test crosses 0.9
+    let gstep=null;
+    for(let i=0;i<ts.length;i++){ if(teA[i]>0.9){gstep=ts[i];break;} }
+
+    Plotly.react('p_gk2',[
+      {x:ts,y:trA,mode:'lines',name:'Training',line:{color:C.noi,width:2.8}},
+      {x:ts,y:teA,mode:'lines',name:'Test',line:{color:C.cln,width:2.8}}
+    ], L({
+      margin:{l:50,r:14,t:28,b:42},
+      xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:9.5}}},
+      yaxis:{title:{text:'Genauigkeit',font:{size:9.5}},range:[0,1.05]},
+      legend:{x:0.02,y:0.99,font:{size:9}},
+      title:{text:'B · verzögerte Generalisierung',font:{size:10.5,color:'#9aa6c4'}},
+      shapes: gstep?[{type:'line',x0:gstep,x1:gstep,y0:0,y1:1.05,
+                      line:{color:C.gold,width:1.6,dash:'dot'}}]:[]
+    }), PLOT_CFG);
+
+    // transfer mass
+    const fastMass = ts.map(t=>Math.pow(1-Math.exp(-t*fastM/900),2)*820);
+    const slowMass = ts.map(t=>Math.pow(1-Math.exp(-t*slowM/900),2)*62000);
+    Plotly.react('p_gk3',[
+      {x:ts,y:fastMass,mode:'lines',name:'schneller Kanal (Rauschen)',
+       line:{color:C.noi,width:2.8}},
+      {x:ts,y:slowMass,mode:'lines',name:'langsames Signal im Reservoir',
+       line:{color:C.sig,width:2.8}}
+    ], L({
+      margin:{l:56,r:14,t:28,b:42},
+      xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:9.5}}},
+      yaxis:{type:'log',title:{text:'Transfermasse',font:{size:9.5}}},
+      legend:{x:0.02,y:0.99,font:{size:8.5}},
+      title:{text:'C · Signal wandert aus dem Reservoir',font:{size:10.5,color:'#9aa6c4'}}
+    }), PLOT_CFG);
+  }
+  ['s_gkf','s_gks'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 8d — BENIGN OVERFITTING (Fig 7C)
+   ========================================================================== */
+(function(){
+  function draw(){
+    const dn=+$('#s_bod').value/10;
+    const dec=+$('#s_bos').value/10;
+    $('#v_bod').textContent=dn.toFixed(1);
+    $('#v_bos').textContent=dec.toFixed(1);
+
+    // tr(Γ0) = sum_j ||J_Q v_j||² / σ_j²  — smaller when spectrum decays fast
+    const R=Math.round(20*dn);
+    let tr=0;
+    for(let j=1;j<=R;j++){
+      const s2=9*Math.pow(j,-dec);
+      const num=0.55*Math.pow(j,-0.55);
+      tr += num/Math.max(s2,1e-6);
+    }
+    tr=Math.min(tr,9);
+    $('#st_botr').textContent=tr.toFixed(3);
+
+    // scan σ²·tr(Γ0) -> test error, exactly linear (slope 1 in these units)
+    const xs=[], ys=[];
+    const rng=mulberry(555);
+    for(let i=0;i<=44;i++){
+      const x=8*i/44;
+      xs.push(x); ys.push(x + 0.13*gauss(rng));
+    }
+    const cur=tr;
+    $('#st_bote').textContent=cur.toFixed(3);
+
+    Plotly.react('p_benign',[
+      {x:[0,8],y:[0,8],mode:'lines',name:'exakte Gerade y = x',
+       line:{color:'rgba(200,215,245,.55)',width:2,dash:'dash'}},
+      {x:xs,y:ys,mode:'markers',name:'reines Rauschen interpoliert',
+       marker:{color:C.res,size:7.5,opacity:.78,
+               line:{color:'rgba(255,255,255,.3)',width:.8}}},
+      {x:[cur],y:[cur],mode:'markers',name:'aktuelle Einstellung',
+       marker:{color:C.gold,size:14,symbol:'star',line:{color:'#fff',width:1}}}
+    ], L({
+      margin:{l:58,r:18,t:36,b:50},
+      title:{text:'Trainingsverlust = 0, trotzdem nur linear wachsender Testfehler',
+             font:{size:11.5,color:'#9aa6c4'}},
+      xaxis:{title:{text:'σ²_ξ · tr(Γ₀)  — Rauschen im sichtbaren Teil',font:{size:10}},
+             range:[0,8.4]},
+      yaxis:{title:{text:'Testfehler',font:{size:10}},range:[0,8.4]},
+      legend:{x:0.02,y:0.99,font:{size:9.5}}
+    }), PLOT_CFG);
+  }
+  ['s_bod','s_bos'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 9 — LOO KERNEL MATRIX
+   ========================================================================== */
+(function(){
+  const cv=$('#c_loo');
+  let hovered=-1;
+  function build(){
+    const b=+$('#s_lb').value;
+    const coh=+$('#s_lcoh').value/100;
+    $('#v_lb').textContent=b;
+    $('#v_lcoh').textContent=coh.toFixed(2);
+    const rng=mulberry(80808);
+    // gradients: coherent part + idiosyncratic part
+    const dim=8, G=[];
+    const base=[]; for(let k=0;k<dim;k++) base.push(gauss(rng));
+    for(let a=0;a<b;a++){
+      const g=[];
+      for(let k=0;k<dim;k++) g.push(coh*base[k] + (1-coh)*gauss(rng)*1.35);
+      G.push(g);
+    }
+    const r=[]; for(let a=0;a<b;a++) r.push(0.8+0.45*Math.abs(gauss(rng)));
+    const K=Array.from({length:b},()=>new Float64Array(b));
+    for(let a=0;a<b;a++) for(let c=0;c<b;c++){
+      let s=0; for(let k=0;k<dim;k++) s+=G[a][k]*G[c][k];
+      K[a][c]=s*r[a]*r[c];
+    }
+    let off=0, all=0;
+    for(let a=0;a<b;a++) for(let c=0;c<b;c++){
+      all+=K[a][c];
+      if(a!==c) off+=K[a][c];
+    }
+    const omega = off/(b*(b-1));
+    const erm   = all/(b*b);
+    return {K,b,omega,erm};
+  }
+  function draw(){
+    const {K,b,omega,erm}=build();
+    $('#st_lom').textContent=omega.toFixed(3);
+    $('#st_lerm').textContent=erm.toFixed(3);
+    $('#st_lom').style.color = omega<0 ? C.noi : C.sig;
+
+    const {ctx,w,h}=setupCanvas(cv);
+    let mx=0;
+    for(let a=0;a<b;a++) for(let c=0;c<b;c++) mx=Math.max(mx,Math.abs(K[a][c]));
+    const pad=30, cell=Math.min((w-2*pad)/b,(h-2*pad)/b);
+    const ox=(w-cell*b)/2, oy=(h-cell*b)/2;
+
+    for(let a=0;a<b;a++) for(let c=0;c<b;c++){
+      const v=K[a][c]/(mx||1);
+      if(a===c){
+        // diagonal: greyed out — this is what LOO removes
+        ctx.fillStyle='rgba(110,122,153,0.30)';
+        ctx.fillRect(ox+c*cell, oy+a*cell, Math.ceil(cell), Math.ceil(cell));
+        ctx.strokeStyle='rgba(200,215,245,.35)'; ctx.lineWidth=1;
+        ctx.beginPath();
+        ctx.moveTo(ox+c*cell+3, oy+a*cell+3);
+        ctx.lineTo(ox+(c+1)*cell-3, oy+(a+1)*cell-3);
+        ctx.stroke();
+        continue;
+      }
+      let r,g,bl;
+      if(v>=0){ const u=Math.min(v,1); r=Math.round(9+60*u); g=Math.round(14+190*u); bl=Math.round(26+230*u);}
+      else { const u=Math.min(-v,1); r=Math.round(9+240*u); g=Math.round(14+95*u); bl=Math.round(26+70*u);}
+      ctx.fillStyle=`rgb(${r},${g},${bl})`;
+      ctx.fillRect(ox+c*cell, oy+a*cell, Math.ceil(cell), Math.ceil(cell));
+      if(hovered>=0 && (a===hovered||c===hovered)){
+        ctx.fillStyle='rgba(255,209,102,.22)';
+        ctx.fillRect(ox+c*cell, oy+a*cell, Math.ceil(cell), Math.ceil(cell));
+      }
+    }
+    ctx.strokeStyle='rgba(160,180,220,.28)'; ctx.lineWidth=1.2;
+    ctx.strokeRect(ox,oy,cell*b,cell*b);
+
+    if(hovered>=0){
+      ctx.strokeStyle=C.gold; ctx.lineWidth=2;
+      ctx.strokeRect(ox, oy+hovered*cell, cell*b, cell);
+      label(ctx, `Punkt ${hovered+1} = Testpunkt gegen die anderen ${b-1}`,
+            ox, oy-10, C.gold, 10.5);
+    } else {
+      label(ctx,'graue Diagonale K_aa: von Ω_B ausgeschlossen', ox, oy-10, C.dim, 10.5);
+    }
+    label(ctx,'Ω_B mittelt nur über die farbigen Felder', w/2, h-10, C.dim, 10.5, 'center');
+  }
+  cv.addEventListener('mousemove', e=>{
+    const b=+$('#s_lb').value;
+    const rect=cv.getBoundingClientRect();
+    const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'));
+    const pad=30, cell=Math.min((w-2*pad)/b,(h-2*pad)/b);
+    const oy=(h-cell*b)/2;
+    const y=e.clientY-rect.top;
+    const idx=Math.floor((y-oy)/cell);
+    hovered = (idx>=0&&idx<b) ? idx : -1;
+    draw();
+  });
+  cv.addEventListener('mouseleave',()=>{hovered=-1;draw();});
+  ['s_lb','s_lcoh'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 10a — THE GATE
+   ========================================================================== */
+(function(){
+  let gmode='hard';
+  function draw(){
+    const b=+$('#s_gb').value;
+    const frac=+$('#s_gfrac').value/100;
+    const nl=+$('#s_gnoi').value/100;
+    $('#v_gb').textContent=b;
+    $('#v_gfrac').textContent=Math.round(frac*100)+' %';
+    $('#v_gnoi').textContent=nl.toFixed(2);
+
+    const N=340, rng=mulberry(1234);
+    const mu2=[], sg2=[], pass=[], q=[];
+    let np_=0, nb=0, omega=0;
+    for(let i=0;i<N;i++){
+      const isSig = rng()<frac;
+      const m = isSig ? Math.abs(gauss(rng))*0.62+0.06 : Math.abs(gauss(rng))*0.035;
+      const s2 = nl*nl*(0.35+1.7*rng());
+      const m2 = m*m;
+      const thr = s2/(b-1);
+      mu2.push(m2); sg2.push(s2);
+      let qk;
+      if(gmode==='hard')      qk = m2>thr ? 1 : 0;
+      else if(gmode==='soft') qk = Math.max(m2-thr,0)/(Math.max(m2-thr,0)+0.1*s2+1e-8);
+      else                    qk = m2/(m2+0.5*s2+1e-8);
+      q.push(qk);
+      const ok=m2>thr;
+      pass.push(ok);
+      if(ok) np_++; else nb++;
+      omega += qk*(m2-thr);
+    }
+    $('#st_gpass').textContent=np_;
+    $('#st_gblock').textContent=nb;
+    $('#st_gomega').textContent=(omega/N).toFixed(4);
+
+    const xs=[], ysP=[], ysB=[], xsB=[];
+    const xP=[], yP=[], xB=[], yB=[], cP=[], cB=[];
+    for(let i=0;i<N;i++){
+      if(pass[i]){ xP.push(sg2[i]); yP.push(mu2[i]); cP.push(q[i]); }
+      else       { xB.push(sg2[i]); yB.push(mu2[i]); cB.push(q[i]); }
+    }
+    // threshold line
+    const smin=0.002, smax=Math.max(...sg2)*1.15;
+    const lx=[], ly=[];
+    for(let i=0;i<=60;i++){
+      const s=smin*Math.pow(smax/smin, i/60);
+      lx.push(s); ly.push(s/(b-1));
+    }
+
+    Plotly.react('p_gate',[
+      {x:lx,y:ly,mode:'lines',name:'Schwelle σ²/(b−1)',
+       line:{color:'rgba(200,215,245,.75)',width:2.4,dash:'dash'}},
+      {x:xP,y:yP,mode:'markers',name:'lernt (populationssicher)',
+       marker:{color:cP,colorscale:[[0,'#0d7a5a'],[1,'#7dffb3']],size:8,
+               opacity:.85,line:{color:'rgba(255,255,255,.25)',width:.6},
+               showscale:false}},
+      {x:xB,y:yB,mode:'markers',name:'blockiert',
+       marker:{color:C.noi,size:7,opacity:.55,
+               line:{color:'rgba(255,255,255,.2)',width:.5}}}
+    ], L({
+      margin:{l:64,r:20,t:34,b:52},
+      title:{text:`Gate-Ebene · b = ${b} · ${np_} von ${N} Parametern lernen`,
+             font:{size:11.5,color:'#9aa6c4'}},
+      xaxis:{type:'log',title:{text:'Varianz σ²_k',font:{size:10}}},
+      yaxis:{type:'log',title:{text:'quadrierter Mittelwert µ²_k',font:{size:10}}},
+      legend:{x:0.01,y:0.99,font:{size:9.5}}
+    }), PLOT_CFG);
+  }
+  $$('[data-gate]').forEach(bt=>bt.addEventListener('click',()=>{
+    $$('[data-gate]').forEach(x=>x.classList.remove('on'));
+    bt.classList.add('on'); gmode=bt.dataset.gate; draw();
+  }));
+  ['s_gb','s_gfrac','s_gnoi'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* ==========================================================================
+   DEMO 10b — ALGORITHM BOX
+   ========================================================================== */
+(function(){
+  const lines=[
+    {t:'<span style="color:#6e7a99">Eingabe:</span> η, (β₁,β₂), ρ, α, λ_pop, λ_wd', n:false},
+    {t:'<b>init</b>&nbsp; m, v, <span style="color:#ff5d7a">s</span> ← 0, 0, <span style="color:#ff5d7a">0</span>', n:true,
+     e:'Neu: <b>s</b> — ein zusätzlicher Vektor in Parametergröße, der die Gradientenvarianz schätzt.'},
+    {t:'<b>for</b> t = 1, 2, … , T <b>do</b>', n:false},
+    {t:'&nbsp;&nbsp;Minibatch B_t, &nbsp; g_t ← mittlerer Gradient', n:false,
+     e:'Genau wie bei AdamW — kein zusätzlicher Backward-Pass.'},
+    {t:'&nbsp;&nbsp;m_prev ← m', n:true, e:'Das alte erste Moment wird als Mittelwert-Referenz gemerkt.'},
+    {t:'&nbsp;&nbsp;<span style="color:#ff5d7a">s ← ρ·s + (1−ρ)·(g_t − m_prev)⊙²</span>', n:true,
+     e:'<b>Der Varianzschätzer.</b> Misst, wie stark die Minibatch-Gradienten um ihren Mittelwert streuen — das ist σ²_k.'},
+    {t:'&nbsp;&nbsp;m ← β₁·m + (1−β₁)·g_t', n:false, e:'Standard-Adam: erstes Moment → schätzt µ_k.'},
+    {t:'&nbsp;&nbsp;v ← β₂·v + (1−β₂)·g_t⊙²', n:false, e:'Standard-Adam: zweites Moment für die Schrittweiten-Normierung.'},
+    {t:'&nbsp;&nbsp;Bias-Korrektur von m̂, v̂, <span style="color:#ff5d7a">ŝ</span>', n:true},
+    {t:'&nbsp;&nbsp;<span style="color:#ff5d7a">δ ← (m̂⊙² − α·ŝ)₊ ,&nbsp; q ← δ / (δ + λ_pop·ŝ + ε)</span>', n:true,
+     e:'<b>Das Gate.</b> δ ist positiv genau dann, wenn µ² > σ²/(b−1). q ∈ [0,1] ist die weiche Version davon.'},
+    {t:'&nbsp;&nbsp;w ← w − η·<span style="color:#ff5d7a">q⊙</span>m̂/(√v̂+ϵ) − η·λ_wd·w', n:true,
+     e:'Der einzige Unterschied zur AdamW-Zeile: das ⊙q. Parameter mit schlechtem SNR werden gedämpft.'},
+    {t:'<b>end for</b>', n:false},
+    {t:'<b>return</b> w_T', n:false}
+  ];
+  const box=$('#algobox');
+  box.innerHTML='';
+  const info=document.createElement('div');
+  lines.forEach((ln,i)=>{
+    const d=document.createElement('div');
+    d.innerHTML = `<span style="color:#4b5470;display:inline-block;width:22px">${i+1}</span>` + ln.t;
+    d.style.padding='1px 6px'; d.style.borderRadius='6px';
+    d.style.cursor = ln.e?'help':'default';
+    if(ln.n){ d.style.background='rgba(255,93,122,.09)'; d.style.borderLeft='2px solid rgba(255,93,122,.6)'; }
+    d.addEventListener('mouseenter',()=>{
+      if(ln.e){ info.innerHTML = ln.e; info.style.opacity='1'; }
+      d.style.background = ln.n?'rgba(255,93,122,.18)':'rgba(73,209,255,.10)';
+    });
+    d.addEventListener('mouseleave',()=>{
+      d.style.background = ln.n?'rgba(255,93,122,.09)':'transparent';
+    });
+    box.appendChild(d);
+  });
+  info.style.cssText='margin-top:14px;padding:11px 14px;border-radius:10px;'+
+    'background:rgba(73,209,255,.07);border-left:3px solid var(--signal);'+
+    'font-family:var(--sans);font-size:.83rem;color:#cdd8ee;min-height:56px;opacity:.65';
+  info.innerHTML='Fahre über eine Zeile für die Erklärung. Rot hinterlegt = neu gegenüber AdamW.';
+  box.appendChild(info);
+})();
+
+/* ==========================================================================
+   DEMO 11 — RESULTS EXPLORER
+   ========================================================================== */
+(function(){
+  const EXP={
+    pinn:{
+      title:'PINN — Advektionsgleichung mit verrauschter Anfangsbedingung',
+      desc:`Ein Physics-Informed Network löst <span class="katex-inline">u_t+\\beta u_x=0</span>
+            bei β=5. Die Anfangsbedingung ist mit Gaußrauschen verschmutzt. Empirische
+            Risikominimierung interpoliert das Sensorrauschen und beschädigt damit die
+            <i>physikalische</i> Vorhersage im gesamten Raum-Zeit-Gebiet.`,
+      stats:[['Bestes ℓ₂ (AdamW)','0.309','noi'],['Bestes ℓ₂ (Pop. Risk)','0.249','cln'],
+             ['Iterationen bis ℓ₂≤0.4','1.400 statt 3.300','gld'],['Beschleunigung','2,4×','acc']],
+      note:`Zwei der vier AdamW-Lernraten erreichen das Ziel innerhalb von 8.000 Iterationen
+            <b>überhaupt nicht</b>. Das Gate braucht kein LR-Tuning.`,
+      make(){
+        const xs=[]; for(let i=1;i<=80;i++) xs.push(Math.round(100*Math.pow(1.058,i)));
+        const f=(a,b,c)=>xs.map(t=>Math.max(c, a*Math.pow(t,-b)+c));
+        return {
+          traces:[
+            {x:xs,y:f(9.5,0.42,0.249),mode:'lines',name:'Pop. Risk (full)',line:{color:C.cln,width:3.2}},
+            {x:xs,y:f(11,0.39,0.298),mode:'lines',name:'Pop. Risk (kein Warmup)',
+             line:{color:'#3fd39a',width:2.2,dash:'dot'}},
+            {x:xs,y:f(13,0.33,0.309),mode:'lines',name:'AdamW lr=1e-4',line:{color:C.noi,width:2.4}},
+            {x:xs,y:f(10,0.26,0.405),mode:'lines',name:'AdamW lr=1e-3',
+             line:{color:'#ff9aab',width:1.9,dash:'dash'}},
+            {x:xs,y:f(14,0.28,0.336),mode:'lines',name:'AdamW lr=5e-5',
+             line:{color:'#c97a86',width:1.9,dash:'dash'}},
+            {x:[100,9000],y:[0.4,0.4],mode:'lines',name:'Ziel ℓ₂ = 0.40',
+             line:{color:C.gold,width:1.8,dash:'dot'}}
+          ],
+          layout:{xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:10}}},
+                  yaxis:{type:'log',title:{text:'relativer ℓ₂-Testfehler',font:{size:10}}},
+                  title:{text:'A — Populations-Testfehler',font:{size:11.5,color:'#9aa6c4'}},
+                  legend:{x:0.01,y:0.02,font:{size:9}}}
+        };
+      },
+      table:[['Methode','Bestes ℓ₂','Iter. bis ≤0.4','Speedup'],
+             ['Pop. Risk (full)','0.249','1.400','2,36×'],
+             ['Pop. Risk (kein Warmup)','0.298','2.500','1,32×'],
+             ['AdamW (lr=1e-3)','0.405','> 8k (1/3)','–'],
+             ['AdamW (lr=1e-4)','0.309','3.300','1,00×'],
+             ['AdamW (lr=5e-5)','0.336','6.100','0,54×'],
+             ['AdamW (lr=1.5e-5)','0.726','nie','–']]
+    },
+
+    grok:{
+      title:'Grokking — modulare Division a·b⁻¹ mod 97',
+      desc:`Ein 2-Schicht-Transformer, 25 % Trainingsanteil. Das Netz memoriert die
+            Trainingsmenge in wenigen hundert Schritten und generalisiert dann
+            <i>zehntausende Schritte später</i> plötzlich. Das Gate verhindert, dass
+            Kapazität ins Memorieren fließt.`,
+      stats:[['95 % Test (AdamW)','29.450 Schritte','noi'],['95 % Test (Pop. Risk)','5.950 Schritte','cln'],
+             ['Beschleunigung','4,9×','acc'],['bei 50 % Schwelle','5,2× schneller','gld']],
+      note:`Das Paper zeigt: Grokking ist <b>kein Phasenübergang</b>, sondern die verzögerte
+            Auflösung des dynamischen Spektralfilters — Signal wandert aus dem Reservoir.`,
+      make(){
+        const xs=[]; for(let i=0;i<110;i++) xs.push(Math.round(50*Math.pow(1.065,i)));
+        const sig=(t,mid,k)=>1/(1+Math.exp(-(Math.log(t)-Math.log(mid))*k));
+        return {
+          traces:[
+            {x:xs,y:xs.map(t=>0.02+0.97*sig(t,5950,5.5)),mode:'lines',
+             name:'Pop. Risk — Test',line:{color:C.cln,width:3.2}},
+            {x:xs,y:xs.map(t=>0.02+0.97*sig(t,29450,5.5)),mode:'lines',
+             name:'AdamW — Test',line:{color:C.noi,width:3.2}},
+            {x:xs,y:xs.map(t=>0.02+0.98*sig(t,260,3.4)),mode:'lines',
+             name:'Training (beide) — memoriert sofort',
+             line:{color:'rgba(200,215,245,.55)',width:2,dash:'dot'}},
+            {x:[50,60000],y:[0.95,0.95],mode:'lines',name:'95 %-Schwelle',
+             line:{color:C.gold,width:1.6,dash:'dash'}}
+          ],
+          layout:{xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:10}}},
+                  yaxis:{title:{text:'Genauigkeit',font:{size:10}},range:[0,1.05]},
+                  title:{text:'Grokking-Verzögerung kollabiert',font:{size:11.5,color:'#9aa6c4'}},
+                  legend:{x:0.01,y:0.99,font:{size:9}}}
+        };
+      },
+      table:[['Schwelle','Pop. Risk','AdamW','Faktor'],
+             ['50 %','5.450','28.600','5,2×'],
+             ['80 %','5.700','29.100','5,1×'],
+             ['95 %','5.950','29.450','4,9×'],
+             ['99 %','6.100','29.900','4,9×']]
+    },
+
+    dpo:{
+      title:'DPO — Präferenz-Feintuning unter verrauschten Labels',
+      desc:`Qwen2.5-0.5B-Instruct, QLoRA r=16, UltraFeedback mit <b>30 % vertauschten</b>
+            Präferenzpaaren (simulierte Annotator-Uneinigkeit). Der saubere Eval-Satz
+            hat kein Rauschen. Alle Hyperparameter identisch, 3 Seeds.`,
+      stats:[['Finale Reward-Genauigkeit','0,641 statt 0,566','cln'],
+             ['Mittlere Trajektorie','0,625 statt 0,549','sig'],
+             ['Reward-Drift','3,05× näher an Referenz','acc'],
+             ['Schritte bis T≥0,56','100 statt 338','gld']],
+      note:`Bemerkenswert: <b>höhere Genauigkeit UND geringere Drift</b> von der
+            Referenzpolitik. Normalerweise ist das ein Tauschgeschäft.`,
+      make(){
+        const xs=[]; for(let i=25;i<=350;i+=25) xs.push(i);
+        const rng=mulberry(77);
+        const pr=xs.map(t=>0.52+0.125*(1-Math.exp(-t/85))+0.006*gauss(rng));
+        const aw=xs.map(t=>0.515+0.058*(1-Math.exp(-t/120))+0.009*gauss(rng));
+        return {
+          traces:[
+            {x:xs,y:pr,mode:'lines+markers',name:'Pop. Risk — Reward-Genauigkeit',
+             line:{color:C.cln,width:3},marker:{size:7}},
+            {x:xs,y:aw,mode:'lines+markers',name:'AdamW — Reward-Genauigkeit',
+             line:{color:C.noi,width:3},marker:{size:7}},
+            {x:[25,350],y:[0.60,0.60],mode:'lines',name:'Schwelle T = 0,60',
+             line:{color:C.gold,width:1.6,dash:'dot'}},
+            {x:[25,350],y:[0.55,0.55],mode:'lines',name:'Schwelle T = 0,55',
+             line:{color:'rgba(255,209,102,.4)',width:1.4,dash:'dot'}}
+          ],
+          layout:{xaxis:{title:{text:'Trainingsschritt',font:{size:10}}},
+                  yaxis:{title:{text:'Genauigkeit auf sauberem Eval',font:{size:10}},range:[0.5,0.68]},
+                  title:{text:'Anhaltende Reward-Genauigkeit',font:{size:11.5,color:'#9aa6c4'}},
+                  legend:{x:0.01,y:0.99,font:{size:9}}}
+        };
+      },
+      table:[['Metrik','AdamW','Pop. Risk','Verhältnis'],
+             ['Finale Reward-Genauigkeit ↑','0,566','0,641','1,13×'],
+             ['Mittlere Trajektorie ↑','0,549','0,625','1,14×'],
+             ['Schlechtester Schritt ↑','0,510','0,589','1,16×'],
+             ['Mittlere Reward-Drift ↓','0,41','0,14','3,05×'],
+             ['Schritte bis T≥0,56 ↓','338','100','3,38×'],
+             ['Schritte bis T≥0,60 ↓','nie erreicht','175','–']]
+    },
+
+    inr:{
+      title:'INR — implizite neuronale Repräsentation zur Bildentrauschung',
+      desc:`Ein Koordinaten-MLP lernt ein verrauschtes Bild. Die glatte Bildstruktur ist
+            das kohärente Signal über Koordinaten-Minibatches hinweg; Pixelrauschen ist
+            inkohärent. AdamW erreicht einen kurzen PSNR-Peak und verschlechtert sich dann —
+            man <i>muss</i> early stoppen.`,
+      stats:[['Bester PSNR (AdamW)','18,01 dB','noi'],['Finaler PSNR (AdamW)','12,75 dB','noi'],
+             ['Finaler PSNR (Pop. Risk)','18,01 dB','cln'],
+             ['Hochfrequente Restleistung','8,5× geringer','acc']],
+      note:`<b>Early Stopping wird überflüssig.</b> Population-Risk-Training verbessert das
+            saubere Bild monoton — ohne Checkpoint-Auswahl, ohne Validierungsbild.`,
+      make(){
+        const xs=[]; for(let i=0;i<90;i++) xs.push(Math.round(8*Math.pow(1.075,i)));
+        const pr=xs.map(t=>12.0+6.1*(1-Math.exp(-t/260)));
+        const aw=xs.map(t=>{
+          const rise=12.0+6.0*(1-Math.exp(-t/150));
+          const fall=5.3/(1+Math.exp(-(Math.log(Math.max(t,1))-Math.log(620))*3.1));
+          return rise-fall;
+        });
+        return {
+          traces:[
+            {x:xs,y:pr,mode:'lines',name:'Pop. Risk — sauberes Bild',
+             line:{color:C.cln,width:3.2}},
+            {x:xs,y:aw,mode:'lines',name:'AdamW — sauberes Bild',
+             line:{color:C.noi,width:3.2}},
+            {x:xs,y:xs.map(t=>11.6+1.2*(1-Math.exp(-t/140))),mode:'lines',
+             name:'verrauschtes Ziel (AdamW passt sich an)',
+             line:{color:'rgba(200,215,245,.45)',width:1.8,dash:'dot'}}
+          ],
+          layout:{xaxis:{type:'log',title:{text:'Trainingsschritt',font:{size:10}}},
+                  yaxis:{title:{text:'PSNR (dB) gegen sauberes Bild',font:{size:10}},range:[10,20]},
+                  title:{text:'AdamW braucht Early Stopping — Pop. Risk nicht',
+                         font:{size:11.5,color:'#9aa6c4'}},
+                  legend:{x:0.01,y:0.99,font:{size:9}}}
+        };
+      },
+      table:[['Bild','Verrauscht','AdamW final','Pop. Risk final'],
+             ['Astronaut','12,2 dB','12,4 dB','16,4 dB'],
+             ['Coffee','12,1 dB','12,2 dB','17,1 dB'],
+             ['Rocket','12,2 dB','12,3 dB','18,1 dB'],
+             ['Camera','12,1 dB','12,4 dB','18,1 dB'],
+             ['Chelsea','11,6 dB','11,7 dB','17,7 dB'],
+             ['Hubble','13,2 dB','13,3 dB','21,3 dB'],
+             ['Immuno','11,9 dB','12,1 dB','17,6 dB'],
+             ['Retina','12,4 dB','12,7 dB','19,1 dB']]
+    },
+
+    lorenz:{
+      title:'Lorenz ’63 — chaotische Dynamik aus verrauschten Messungen',
+      desc:`Ein Ein-Schritt-Prädiktor lernt das Lorenz-Vektorfeld aus sensor-verrauschten
+            Zustandsbeobachtungen. Das glatte Vektorfeld hat kohärenten Gradienten-Mittelwert;
+            punktspezifisches Sensorrauschen ist mittelwertfrei mit hoher Varianz.`,
+      stats:[['Bester Val-MSE (AdamW)','0,0083','noi'],['Finaler Val-MSE (AdamW)','0,0161','noi'],
+             ['Finaler Val-MSE (Pop. Risk)','0,0063','cln'],
+             ['Bei hohem Sensorrauschen','4,7× besser','acc']],
+      note:`Der finale Pop.-Risk-Wert liegt <b>unter AdamWs bestem Checkpoint</b>.
+            Im Attraktorraum driftet AdamW von der Lorenz-Mannigfaltigkeit weg,
+            Pop. Risk folgt ihr.`,
+      make(){
+        const xs=[]; for(let i=0;i<=120;i++) xs.push(i);
+        const pr=xs.map(t=>0.019*Math.exp(-t/22)+0.0063);
+        const aw=xs.map(t=>0.019*Math.exp(-t/16)+0.0083+0.0080/(1+Math.exp(-(t-52)/11)));
+        return {
+          traces:[
+            {x:xs,y:pr,mode:'lines',name:'Pop. Risk — Validierung',line:{color:C.cln,width:3.2}},
+            {x:xs,y:aw,mode:'lines',name:'AdamW — Validierung',line:{color:C.noi,width:3.2}},
+            {x:[0,120],y:[0.0083,0.0083],mode:'lines',name:'AdamWs bester Checkpoint',
+             line:{color:C.gold,width:1.6,dash:'dot'}}
+          ],
+          layout:{xaxis:{title:{text:'Trainings-Epoche',font:{size:10}}},
+                  yaxis:{type:'log',title:{text:'Validierungs-MSE',font:{size:10}}},
+                  title:{text:'AdamW fittet Sensorrauschen und wird wieder schlechter',
+                         font:{size:11.5,color:'#9aa6c4'}},
+                  legend:{x:0.35,y:0.99,font:{size:9}}}
+        };
+      },
+      table:[['Sensorrauschen σ','AdamW final','Pop. Risk final','Faktor'],
+             ['0,10','0,0021','0,0011','1,9×'],
+             ['0,20','0,0055','0,0018','3,1×'],
+             ['0,35','0,0161','0,0044','3,7×'],
+             ['0,50','0,0402','0,0086','4,7×']]
+    }
+  };
+
+  function show(key){
+    const E=EXP[key];
+    const M=E.make();
+    Plotly.react('p_exp', M.traces, L({...M.layout, margin:{l:66,r:20,t:40,b:50}}), PLOT_CFG);
+
+    let html = `<h3 style="margin-top:0">${E.title}</h3><p class="small">${E.desc}</p>`;
+    html += '<div class="stats">';
+    E.stats.forEach(([k,v,c])=>{
+      html += `<div class="stat ${c}"><div class="k">${k}</div><div class="v" style="font-size:1.02rem">${v}</div></div>`;
+    });
+    html += '</div>';
+    html += `<div class="note g">${E.note}</div>`;
+    $('#expinfo').innerHTML = html;
+
+    let t='<table><tr>';
+    E.table[0].forEach(h=>t+=`<th>${h}</th>`);
+    t+='</tr>';
+    for(let i=1;i<E.table.length;i++){
+      t+='<tr>';
+      E.table[i].forEach((c,j)=>t+=`<td${j>0?' class="num"':''}>${c}</td>`);
+      t+='</tr>';
+    }
+    t+='</table>';
+    $('#exptable').innerHTML=t;
+
+    // re-render inline math inside description
+    $$('#expinfo .katex-inline').forEach(el=>{
+      try{ katex.render(el.textContent.trim(), el, {displayMode:false,throwOnError:false}); }catch(e){}
+    });
+  }
+  $$('[data-exp]').forEach(b=>b.addEventListener('click',()=>{
+    $$('[data-exp]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); show(b.dataset.exp);
+  }));
+  show('pinn');
+})();
+
+/* ==========================================================================
+   DEMO 12 — STORY CANVAS
+   ========================================================================== */
+(function(){
+  const cv=$('#c_story');
+  let anim=null;
+
+  const STORY=[
+    {t:'① Das Problem',
+     x:'Ein überparametrisiertes Netz kann <b>alles</b> auswendig lernen — auch reines Rauschen. '+
+       'Klassische Kapazitätsschranken sind deshalb nutzlos. Trotzdem generalisiert es. Warum?'},
+    {t:'② Wechsle die Perspektive',
+     x:'Nicht die Milliarden Gewichte anschauen, sondern die <b>n Ausgaben</b>. Dort steuert der '+
+       'empirische Tangentenkern <span style="color:#49d1ff">K = JJᵀ</span>, welche Richtungen '+
+       'sich überhaupt bewegen können.'},
+    {t:'③ Integriere über die Bahn',
+     x:'Der Kern dreht sich während des Trainings. Die <b>kumulative Dissipation W</b> summiert '+
+       'auf, wie viel Verlust in jeder Richtung insgesamt abgebaut wurde. Ihr Bild = '+
+       '<span style="color:#49d1ff">Signalkanal</span>, ihr Kern = '+
+       '<span style="color:#ff7a59">Reservoir</span>.'},
+    {t:'④ Das Reservoir ist unsichtbar',
+     x:'Test- und Trainingskern teilen sich den Faktor <b>Jᵀ</b>. Wird h von Jᵀ ausgelöscht, '+
+       'ist es auch für <b>jede</b> Testmenge unsichtbar. <span style="color:#7dffb3">'+
+       'G·P_res = 0</span> — exakt, ohne Annahmen. Hier parkt das Auswendiggelernte.'},
+    {t:'⑤ SGD räumt den Rest auf',
+     x:'Im Signalkanal wächst echtes Signal linear mit T (Drift), Rauschen nur mit √T '+
+       '(Diffusion). Längeres Training und größere Batches verschieben das Verhältnis '+
+       'zugunsten des Signals.'},
+    {t:'⑥ Training sagt Test voraus',
+     x:'Beide Seiten faktorisieren über <b>W^½</b>. Bei quadratischem Verlust ist die '+
+       'Testbewegung <b>exakt</b> = A°·(Trainingsbewegung) — selbst wenn sich der Kern '+
+       'um Faktor 4,8 ändert. Das schafft die NTK-Theorie nicht.'},
+    {t:'⑦ Daraus wird ein Algorithmus',
+     x:'Austauschbarkeit macht aus denselben Operatoren eine Rate für das <b>Populationsrisiko</b> '+
+       '— ohne Validierungsdaten. Ergebnis: das Gate <b>µ² > σ²/(b−1)</b>. Eine Zeile mehr in Adam. '+
+       '5× schnelleres Grokking, 2,4× schnellere PINNs, bessere DPO.'}
+  ];
+
+  function draw(k){
+    const {ctx,w,h}=setupCanvas(cv);
+    const cx=w/2, cy=h/2;
+
+    ctx.fillStyle='rgba(255,255,255,.012)';
+    ctx.fillRect(0,0,w,h);
+
+    // ---- stage geometry
+    const R = Math.min(w,h)*0.33;
+    const th0 = -0.42;
+    const e1=[Math.cos(th0), Math.sin(th0)];
+    const e2=[-Math.sin(th0), Math.cos(th0)];
+
+    // reservoir band always present after step 3
+    if(k>=2){
+      const a = k>=3 ? 0.30 : 0.16;
+      ctx.strokeStyle=`rgba(255,122,89,${a})`; ctx.lineWidth=46; ctx.lineCap='round';
+      ctx.beginPath();
+      ctx.moveTo(cx-e2[0]*R*1.25, cy+e2[1]*R*1.25);
+      ctx.lineTo(cx+e2[0]*R*1.25, cy-e2[1]*R*1.25);
+      ctx.stroke();
+      label(ctx,'RESERVOIR  ker(W)', cx+e2[0]*R*1.28+8, cy-e2[1]*R*1.28-4, C.res, 11);
+
+      ctx.strokeStyle=`rgba(73,209,255,${a})`; ctx.lineWidth=30;
+      ctx.beginPath();
+      ctx.moveTo(cx-e1[0]*R*1.25, cy+e1[1]*R*1.25);
+      ctx.lineTo(cx+e1[0]*R*1.25, cy-e1[1]*R*1.25);
+      ctx.stroke();
+      ctx.lineCap='butt';
+      label(ctx,'SIGNALKANAL  range(W)', cx+e1[0]*R*1.28+8, cy-e1[1]*R*1.28-4, C.sig, 11);
+    }
+
+    const rng=mulberry(4711);
+
+    // ---- step-specific content
+    if(k===0){
+      // memorization cloud
+      for(let i=0;i<150;i++){
+        const a=rng()*TAU, r=R*Math.sqrt(rng())*1.15;
+        const X=cx+Math.cos(a)*r, Y=cy+Math.sin(a)*r*0.72;
+        ctx.fillStyle = rng()<0.32 ? 'rgba(255,93,122,.62)' : 'rgba(125,255,179,.5)';
+        ctx.beginPath(); ctx.arc(X,Y, 3.2+2.4*rng(),0,TAU); ctx.fill();
+      }
+      label(ctx,'Trainingsdaten: Signal (grün) + Rauschen (rot)', cx, cy+R*0.98, C.dim, 12,'center');
+      label(ctx,'Das Netz kann beides perfekt fitten. Wo landet das Rauschen?',
+            cx, cy+R*0.98+20, C.txt, 12.5,'center');
+    }
+
+    if(k===1){
+      // output space with kernel ellipse
+      gridlines(ctx,w,h,cx,cy,R/3.2);
+      ctx.strokeStyle=C.sig; ctx.lineWidth=3;
+      ctx.shadowColor=C.sig; ctx.shadowBlur=14;
+      ctx.beginPath();
+      for(let i=0;i<=200;i++){
+        const a=TAU*i/200;
+        const vx=Math.cos(a)*1.0, vy=Math.sin(a)*0.22;
+        const X=cx+(vx*e1[0]+vy*e2[0])*R, Y=cy-(vx*e1[1]+vy*e2[1])*R;
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      }
+      ctx.closePath(); ctx.stroke(); ctx.shadowBlur=0;
+      label(ctx,'K = J·Jᵀ  — die Ellipse zeigt, wohin Training überhaupt kann',
+            cx, cy+R*1.05, C.txt, 12.5,'center');
+      arrow(ctx,cx,cy,cx+e1[0]*R,cy-e1[1]*R,C.sig,3,10);
+      arrow(ctx,cx,cy,cx+e2[0]*R*0.22,cy-e2[1]*R*0.22,C.res,3,10);
+      label(ctx,'schnell', cx+e1[0]*R+8, cy-e1[1]*R-6, C.sig, 11);
+      label(ctx,'fast blockiert', cx+e2[0]*R*0.22+8, cy-e2[1]*R*0.22-6, C.res, 11);
+    }
+
+    if(k===2){
+      // integrate: several rotating ellipses accumulating
+      for(let s=0;s<6;s++){
+        const rot=th0 + s*0.16;
+        const a1=Math.cos(rot), a2=Math.sin(rot);
+        ctx.strokeStyle=`rgba(73,209,255,${0.12+0.10*s})`; ctx.lineWidth=1.8;
+        ctx.beginPath();
+        for(let i=0;i<=120;i++){
+          const a=TAU*i/120;
+          const vx=Math.cos(a), vy=Math.sin(a)*0.2;
+          const X=cx+(vx*a1-vy*a2)*R*0.9, Y=cy-(vx*a2+vy*a1)*R*0.9;
+          i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+        }
+        ctx.closePath(); ctx.stroke();
+      }
+      ctx.strokeStyle=C.acc; ctx.lineWidth=3.4;
+      ctx.shadowColor=C.acc; ctx.shadowBlur=16;
+      ctx.beginPath();
+      for(let i=0;i<=200;i++){
+        const a=TAU*i/200;
+        const vx=Math.cos(a), vy=Math.sin(a)*0.42;
+        const X=cx+(vx*e1[0]+vy*e2[0])*R*0.95, Y=cy-(vx*e1[1]+vy*e2[1])*R*0.95;
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      }
+      ctx.closePath(); ctx.stroke(); ctx.shadowBlur=0;
+      label(ctx,'W = ∫ K(τ) dτ  — die Summe über alle Zeitpunkte',
+            cx, cy+R*1.08, C.acc, 12.5,'center');
+    }
+
+    if(k===3){
+      // invisibility: noise vectors going into reservoir, blocked at test gate
+      for(let i=0;i<22;i++){
+        const t=(i/21-0.5)*2;
+        const X=cx+e2[0]*R*t, Y=cy-e2[1]*R*t;
+        ctx.fillStyle='rgba(255,93,122,.8)';
+        ctx.shadowColor=C.noi; ctx.shadowBlur=8;
+        ctx.beginPath(); ctx.arc(X,Y,4.2,0,TAU); ctx.fill(); ctx.shadowBlur=0;
+      }
+      // gate on the right
+      const gx=w-96;
+      ctx.strokeStyle='rgba(125,255,179,.8)'; ctx.lineWidth=3;
+      ctx.setLineDash([8,6]);
+      ctx.beginPath(); ctx.moveTo(gx,48); ctx.lineTo(gx,h-72); ctx.stroke();
+      ctx.setLineDash([]);
+      label(ctx,'Testvorhersagen', gx+8, 42, C.cln, 11);
+      // blocked arrows
+      for(let i=0;i<5;i++){
+        const y=100+i*(h-200)/4;
+        arrow(ctx, cx+40, y, gx-24, y, 'rgba(255,93,122,.4)', 2, 8);
+        ctx.strokeStyle=C.noi; ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.moveTo(gx-18,y-8); ctx.lineTo(gx-2,y+8);
+        ctx.moveTo(gx-2,y-8);  ctx.lineTo(gx-18,y+8);
+        ctx.stroke();
+      }
+      ctx.fillStyle='rgba(125,255,179,.12)';
+      ctx.fillRect(14,14,236,30);
+      label(ctx,'G · P_res = 0   (exakt, keine Annahme)', 22, 33, C.cln, 12);
+    }
+
+    if(k===4){
+      // drift vs diffusion along signal channel
+      const bx=60, bw=w-200;
+      const rng2=mulberry(99);
+      for(let r=0;r<26;r++){
+        let x=0;
+        ctx.strokeStyle='rgba(255,93,122,.17)'; ctx.lineWidth=1;
+        ctx.beginPath();
+        for(let i=0;i<=120;i++){
+          x += gauss(rng2)*0.9;
+          const X=bx+i/120*bw, Y=cy - x*2.2;
+          i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+        }
+        ctx.stroke();
+      }
+      ctx.strokeStyle=C.cln; ctx.lineWidth=3.4;
+      ctx.shadowColor=C.cln; ctx.shadowBlur=12;
+      ctx.beginPath();
+      for(let i=0;i<=120;i++){
+        const X=bx+i/120*bw, Y=cy-(i*0.62)*2.2*0.42;
+        i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+      }
+      ctx.stroke(); ctx.shadowBlur=0;
+      ctx.strokeStyle=C.noi; ctx.lineWidth=2.2; ctx.setLineDash([6,4]);
+      [1,-1].forEach(s=>{
+        ctx.beginPath();
+        for(let i=0;i<=120;i++){
+          const X=bx+i/120*bw, Y=cy-s*Math.sqrt(i)*2.2*0.95;
+          i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+        }
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+      label(ctx,'Drift ∝ T  (Signal)', bx+10, 34, C.cln, 12.5);
+      label(ctx,'Diffusion ∝ √T  (Rauschen)', bx+10, 54, C.noi, 12.5);
+      label(ctx,'Schritte →', w-110, cy+18, C.dim, 11);
+    }
+
+    if(k===5){
+      // coupling: train displacement -> test displacement
+      const lx=w*0.24, rx=w*0.76;
+      ctx.strokeStyle='rgba(73,209,255,.3)'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.arc(lx,cy,R*0.62,0,TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(rx,cy,R*0.62,0,TAU); ctx.stroke();
+      label(ctx,'Trainingsbewegung ΔU_S', lx, cy+R*0.62+26, C.sig, 12,'center');
+      label(ctx,'Testbewegung ΔU_Q', rx, cy+R*0.62+26, C.sig, 12,'center');
+
+      // displacement vectors
+      const ang1=0.7;
+      arrow(ctx,lx,cy, lx+Math.cos(ang1)*R*0.62, cy-Math.sin(ang1)*R*0.62, C.cln, 3.2, 10);
+      arrow(ctx,rx,cy, rx+Math.cos(ang1+0.35)*R*0.55, cy-Math.sin(ang1+0.35)*R*0.55, C.cln, 3.2, 10);
+
+      // the operator arrow
+      const my=cy-R*0.86;
+      ctx.strokeStyle=C.acc; ctx.lineWidth=3;
+      ctx.beginPath();
+      ctx.moveTo(lx+R*0.7, cy-R*0.30);
+      ctx.bezierCurveTo(lx+R*1.1, my, rx-R*1.1, my, rx-R*0.7, cy-R*0.30);
+      ctx.stroke();
+      arrow(ctx, rx-R*0.78, cy-R*0.34, rx-R*0.68, cy-R*0.28, C.acc, 3, 11);
+      ctx.fillStyle='rgba(180,140,255,.16)';
+      ctx.fillRect(cx-72, my-20, 144, 30);
+      label(ctx,'A° = G·D†', cx, my, C.acc, 14.5,'center');
+      label(ctx,'exakt bei quadratischem Verlust', cx, my+24, C.dim, 10.5,'center');
+    }
+
+    if(k===6){
+      // the gate: scatter of parameters
+      const gx0=70, gy0=40, gw=w-190, gh=h-120;
+      ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+      for(let i=0;i<=5;i++){
+        const X=gx0+i*gw/5, Y=gy0+i*gh/5;
+        ctx.beginPath(); ctx.moveTo(X,gy0); ctx.lineTo(X,gy0+gh); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(gx0,Y); ctx.lineTo(gx0+gw,Y); ctx.stroke();
+      }
+      ctx.strokeStyle=C.axis; ctx.lineWidth=1.4;
+      ctx.strokeRect(gx0,gy0,gw,gh);
+      // threshold line
+      ctx.strokeStyle='rgba(200,215,245,.8)'; ctx.lineWidth=2.4; ctx.setLineDash([7,5]);
+      ctx.beginPath(); ctx.moveTo(gx0, gy0+gh*0.82); ctx.lineTo(gx0+gw, gy0+gh*0.18); ctx.stroke();
+      ctx.setLineDash([]);
+      label(ctx,'Schwelle  µ² = σ²/(b−1)', gx0+gw*0.42, gy0+gh*0.44, '#c6d0e6', 11);
+      const rg=mulberry(31);
+      for(let i=0;i<190;i++){
+        const u=rg(), v=rg();
+        const X=gx0+u*gw, Y=gy0+v*gh;
+        const line = gy0+gh*(0.82-0.64*u);
+        const above = Y<line;
+        ctx.fillStyle = above ? 'rgba(125,255,179,.78)' : 'rgba(255,93,122,.5)';
+        ctx.beginPath(); ctx.arc(X,Y, above?4.6:3.4, 0, TAU); ctx.fill();
+      }
+      label(ctx,'µ²  (Signal)', 18, gy0+gh/2, C.dim, 11);
+      label(ctx,'σ²  (Rauschen) →', gx0+gw/2, gy0+gh+26, C.dim, 11, 'center');
+      ctx.fillStyle='rgba(125,255,179,.12)';
+      ctx.fillRect(w-116, gy0+18, 100, 26);
+      label(ctx,'lernt', w-66, gy0+36, C.cln, 12, 'center');
+      ctx.fillStyle='rgba(255,93,122,.12)';
+      ctx.fillRect(w-116, gy0+gh-44, 100, 26);
+      label(ctx,'blockiert', w-66, gy0+gh-26, C.noi, 12, 'center');
+    }
+
+    // ---- title
+    ctx.fillStyle='rgba(7,8,13,.72)';
+    ctx.fillRect(0,0,w,0);
+  }
+
+  function setStep(k){
+    k=clamp(k,0,STORY.length-1);
+    $('#s_story').value=k;
+    $('#v_story').textContent=(k+1)+' / '+STORY.length;
+    $('#storytext').innerHTML = `<b>${STORY[k].t}</b><br>${STORY[k].x}`;
+    draw(k);
+  }
+  $('#s_story').addEventListener('input',e=>{
+    if(anim){clearInterval(anim);anim=null;$('#b_storyauto').textContent='▶ automatisch';}
+    setStep(+e.target.value);
+  });
+  $('#b_storyprev').addEventListener('click',()=>setStep(+$('#s_story').value-1));
+  $('#b_storynext').addEventListener('click',()=>setStep((+$('#s_story').value+1)%STORY.length));
+  $('#b_storyauto').addEventListener('click',()=>{
+    if(anim){clearInterval(anim);anim=null;$('#b_storyauto').textContent='▶ automatisch';return;}
+    $('#b_storyauto').textContent='⏹ Stop';
+    anim=setInterval(()=>{
+      setStep((+$('#s_story').value+1)%STORY.length);
+    }, 4200);
+  });
+  window.addEventListener('resize',()=>setStep(+$('#s_story').value));
+  setStep(0);
+})();
+
+/* ==========================================================================
+   FINAL MATH PASS (after all dynamic content is in the DOM)
+   ========================================================================== */
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{ if(window.katex) renderAllMath(); }, 150);
+});
+</script>
+</body>
+</html>

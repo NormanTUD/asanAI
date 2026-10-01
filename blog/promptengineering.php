@@ -18,7 +18,7 @@ Prompt engineering is the practical craft of communicating with Large Language M
 
 Think of it like this: you are not programming the model. You are **creating a linguistic environment** that statistically steers it toward your desired outcome. Every word you choose reduces the entropy of what comes next.
 
-There is an explicit cousin of this approach: instead of nudging the model through tokens, you can **move the activation vector consciously to a chosen point in the embedding space**, then let generation proceed from that point. This is *latent space steering*: identify a direction $\Delta$ (typically the mean difference between activations of contrastive prompt pairs at a chosen layer), then add $h' = h + \alpha \Delta$ to the hidden state at inference time \cite[§1–2, Definition of latent steering]{emergentmind_latent_space_steering}. Where prompting operates on the *input* surface, latent steering operates on the *internal* representation \cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}, and where prompting is a linguistic lever, latent steering is a geometric one \cite[representation as direction in activation manifold]{emergentmind_representation_steering}.
+There is an explicit cousin of this approach: instead of nudging the model through tokens, you can **move the activation vector consciously to a chosen point in the embedding space**, then let generation proceed from that point. This is *latent space steering*: identify a direction $\Delta$ (typically the mean difference between activations of contrastive prompt pairs at a chosen layer), then add $h' = h + \alpha \Delta$ to the hidden state at inference time (\cite[§1–2, Definition of latent steering]{emergentmind_latent_space_steering}). Where prompting operates on the *input* surface, latent steering operates on the *internal* representation \cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}, and where prompting is a linguistic lever, latent steering is a geometric one \cite[representation as direction in activation manifold]{emergentmind_representation_steering}.
 
 </div>
 
@@ -118,7 +118,7 @@ Require a dense outline first, then expand each point. This prevents rambling an
 For math, logic, and complex problem-solving, the domain where prompt engineering matters most.
 
 ### Chain-of-Thought (CoT)
-The single most important reasoning technique \cite[Wei et al., 2022]{wei2022cot}. By forcing the model to write out intermediate steps, you populate its context window with logical scaffolding that guides it to the right answer.
+The single most important reasoning technique (\cite[Wei et al., 2022]{wei2022cot}). By forcing the model to write out intermediate steps, you populate its context window with logical scaffolding that guides it to the right answer.
 </div>
 
 <div id="pe-cot-accuracy" style="width:100%; height:320px; margin: 0 auto 30px auto;"></div>
@@ -128,7 +128,7 @@ The single most important reasoning technique \cite[Wei et al., 2022]{wei2022cot
 * **Why it works:** Direct answers let the model guess. Step-by-step reasoning forces it to *simulate* logic, building on each previous token as a foundation.
 
 ### Tree-of-Thought (ToT)
-An extension of CoT \cite[Yao et al., 2023]{yao2023tot} where the model explores multiple reasoning branches simultaneously, then evaluates which path is most promising.
+An extension of CoT (\cite[Yao et al., 2023]{yao2023tot}) where the model explores multiple reasoning branches simultaneously, then evaluates which path is most promising.
 
 * **Prompt:** “Consider 3 different approaches to solve this problem. Evaluate each for correctness. Then pick the best one and solve it.”
 
@@ -143,7 +143,7 @@ Instruct the model to label confidence levels or say “I don't know.” This fi
 * **Prompt:** “For each claim, label your confidence: high / medium / low. If unsure, state 'I do not have sufficient information.'”
 
 ### ReAct (Reasoning + Acting)
-The model alternates between reasoning traces and tool calls (search, calculator, code execution) \cite[Yao et al., 2023]{yao2023react}. Each observation from the tool feeds back into the reasoning loop.
+The model alternates between reasoning traces and tool calls (search, calculator, code execution) (\cite[Yao et al., 2023]{yao2023react}). Each observation from the tool feeds back into the reasoning loop.
 
 * **Pattern:** `Thought` then `Action` then `Observation` then `Thought` then `Action` ...
 
@@ -166,7 +166,7 @@ Respond in JSON only:
 ```
 
 ### Plan-and-Execute
-Separate architectural logic from code generation. First produce a plan, then execute it \cite[Wang et al., 2023]{wang2023planandexecute}.
+Separate architectural logic from code generation. First produce a plan, then execute it (\cite[Wang et al., 2023]{wang2023planandexecute}).
 
 * **Step 1:** “Design the architecture for a rate-limited API proxy.”
 * **Step 2:** “Now implement it in Python using FastAPI.”
@@ -230,7 +230,7 @@ Provide 3-5 examples of (input, desired output) pairs. The model learns the patt
 * Show examples of the tone, format, and logic you want. The model will mimic the *pattern*, not just the content.
 
 ### Self-Critique / Reflection
-After generating, tell the model to switch into critic mode and evaluate its own output for flaws \cite[Madaan et al., 2023]{madaan2023selfrefine} \cite[Shinn et al., 2023]{shinn2023reflexion}.
+After generating, tell the model to switch into critic mode and evaluate its own output for flaws (\cite[Madaan et al., 2023]{madaan2023selfrefine} \cite[Shinn et al. (2023)]{shinn2023reflexion}).
 
 * **Prompt:** “Review your answer for factual errors, logical gaps, and unsupported claims. Then rewrite it with corrections.”
 
@@ -294,7 +294,7 @@ are already much smaller regions. But the real narrowing happens when you requir
 
 Each contradiction is the **intersection of two thin regions** that meet in a narrow band. Stack them and the intersection shrinks geometrically. The model has no choice but to land in a small, well-defined neighborhood -- but it still has to find the actual point inside it.
 
-The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time \cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}.
+The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time (\cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}).
 
 </div>
 
@@ -303,6 +303,9 @@ The mechanism is the same one *latent steering* exploits: identify directions, t
 <div class="md">
 ### Interactive: Watch the Region Shrink
 
+</div>
+
+<div class="md" data-mathlevel="65" data-optionaltitle="The Spatial Picture: Distinction to Gluing">
 ### The Spatial Picture: Distinction, Locality, Coherence, Gluing
 
 There is a deep reason this works, and it is the same reason embeddings work at all. **Meaning is a sheaf over context** \cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an "open set" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that falls out when all the local patches agree on their overlaps.
@@ -322,7 +325,9 @@ The slogan is the same sentence that organizes all of sheaf theory, all of topol
 $$\boxed{\text{local constraints} \;+\; \text{compatibility on overlaps} \;\Rightarrow\; \text{global output}}$$
 
 The chain from distinction to gluing -- distinction, relation, transformation, locality, compatibility, coherence, gluing, globality \cite[the nine-step chain, from Spencer-Brown's first cut to invariance under change of cover]{coherent_difference_chapter} -- is the chain that runs inside an LLM every time it parses a prompt and produces an answer. Prompting via semantic coordinates makes that chain visible: you are choosing which *local sections* to specify and trusting the model to glue them into a global one.
+</div>
 
+<div class="md">
 ### The Recipe
 
 If you want to use this technique deliberately:

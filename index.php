@@ -114,6 +114,9 @@
 		_js("activation_atlas.js");
 		_js("activation_atlas_tab.js");
 		_js("gradient_flow_heatmap.js");
+		_js("explainability_lib.js");
+		_js("adversarial_examples.js");
+		_js("representation_analysis.js");
 		_js("skip_connection.js");
 		_js("optimizer.js");
 		_js("loss_metric.js");
@@ -146,9 +149,11 @@
 		_js("plot_predict.js");
 		_js("my_temml.js");
 		_js("weight_surfaces.js");
+		// _js("fold_lens.js"); // parked in todo/fold_lens.js
 
 		_js("layer_descriptions.js");
 		_js("loss_landscape.js");
+		_js("origami_folds.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");

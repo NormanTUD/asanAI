@@ -1,0 +1,3651 @@
+{
+ "aarhus, denmark": {
+  "label": "Aarhus, Aarhus Kommune, Region Midtjylland, 8000, Danmark",
+  "lat": 56.1496278,
+  "lng": 10.2134046,
+  "query": "Aarhus, Denmark"
+ },
+ "abdera": {
+  "label": "Abdera, Porter Township, Clinton County, Pennsylvania, 16848, United States",
+  "lat": 41.0306208,
+  "lng": -77.5608261,
+  "query": "Abdera"
+ },
+ "abdera, greece": {
+  "label": "Άβδηρα, Δήμος Αβδήρων, Περιφερειακή Ενότητα Ξάνθης, Περιφέρεια Ανατολικής Μακεδο",
+  "lat": 40.9815562,
+  "lng": 24.9515371,
+  "query": "Abdera, Greece"
+ },
+ "aberdeen, scotland": {
+  "label": "Aberdeen City, Alba / Scotland, United Kingdom",
+  "lat": 57.1482429,
+  "lng": -2.0928095,
+  "query": "Aberdeen, Scotland"
+ },
+ "abu dhabi": {
+  "label": "أبو ظبي, أبوظبي, أبو ظبي, الإمارات العربية المتحدة",
+  "lat": 24.4538352,
+  "lng": 54.3774014,
+  "query": "Abu Dhabi"
+ },
+ "abu dhabi, united arab emirates": {
+  "label": "أبو ظبي, أبوظبي, أبو ظبي, الإمارات العربية المتحدة",
+  "lat": 24.4538352,
+  "lng": 54.3774014,
+  "query": "Abu Dhabi, United Arab Emirates"
+ },
+ "accra": {
+  "label": "Accra, Korle-Klottey Municipal District, Greater Accra Region, Ghana",
+  "lat": 5.5571096,
+  "lng": -0.2012376,
+  "query": "Accra"
+ },
+ "africa": {
+  "label": "Afrika;أفريقيا",
+  "lat": 11.5024338,
+  "lng": 17.7578122,
+  "query": "Africa"
+ },
+ "ai singapore": {
+  "label": "Singapore Avenue, Album, East El Paso, El Paso, El Paso County, Texas, 79935, Un",
+  "lat": 31.7781661,
+  "lng": -106.3468021,
+  "query": "AI Singapore"
+ },
+ "ai21 labs": {
+  "label": "Fazenda Estrela - Waldemar labs - Montana, Porto Murtinho, Mato Grosso do Sul, R",
+  "lat": -21.1286239,
+  "lng": -56.8834986,
+  "query": "AI21 Labs"
+ },
+ "ai4bharat": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "AI4Bharat"
+ },
+ "aichi, japan": {
+  "label": "愛知県, 日本",
+  "lat": 34.9991645,
+  "lng": 137.254574,
+  "query": "Aichi, Japan"
+ },
+ "aims": {
+  "label": "Asian Institute of Maritime Studies, A. Arnaiz Avenue, Barangay 13, Zone 4, Dist",
+  "lat": 14.5457461,
+  "lng": 120.991671,
+  "query": "AIMS"
+ },
+ "albuquerque, new mexico, usa": {
+  "label": "Albuquerque, Bernalillo County, New Mexico, United States",
+  "lat": 35.0841034,
+  "lng": -106.650985,
+  "query": "Albuquerque, New Mexico, USA"
+ },
+ "albuquerque, nm, usa": {
+  "label": "Albuquerque, Bernalillo County, New Mexico, United States",
+  "lat": 35.0841034,
+  "lng": -106.650985,
+  "query": "Albuquerque, NM, USA"
+ },
+ "albuquerque, usa": {
+  "label": "Albuquerque, Bernalillo County, New Mexico, United States",
+  "lat": 35.0841034,
+  "lng": -106.650985,
+  "query": "Albuquerque, USA"
+ },
+ "alexandria, egypt": {
+  "label": "الإسكندرية, 21519, مصر",
+  "lat": 31.1991806,
+  "lng": 29.8951716,
+  "query": "Alexandria, Egypt"
+ },
+ "alibaba": {
+  "label": "Alibaba Mahallesi, Gaziantep, Şahinbey, Gaziantep, Güneydoğu Anadolu Bölgesi, Tü",
+  "lat": 37.0527231,
+  "lng": 37.3921815,
+  "query": "Alibaba"
+ },
+ "allentown, pennsylvania, usa": {
+  "label": "Allentown, Lehigh County, Pennsylvania, United States",
+  "lat": 40.6022552,
+  "lng": -75.4716115,
+  "query": "Allentown, Pennsylvania, USA"
+ },
+ "amherst, massachusetts, us": {
+  "label": "Amherst, Hampshire County, Massachusetts, United States",
+  "lat": 42.3731948,
+  "lng": -72.5198761,
+  "query": "Amherst, Massachusetts, US"
+ },
+ "amsterdam, netherlands": {
+  "label": "Amsterdam, Noord-Holland, Nederland",
+  "lat": 52.3730796,
+  "lng": 4.8924534,
+  "query": "Amsterdam, Netherlands"
+ },
+ "ann arbor, mi, usa": {
+  "label": "Ann Arbor, Washtenaw County, Michigan, United States",
+  "lat": 42.2813722,
+  "lng": -83.7484616,
+  "query": "Ann Arbor, MI, USA"
+ },
+ "ann arbor, michigan": {
+  "label": "Ann Arbor, Washtenaw County, Michigan, United States",
+  "lat": 42.2813722,
+  "lng": -83.7484616,
+  "query": "Ann Arbor, Michigan"
+ },
+ "antarctica": {
+  "label": "Antarctica",
+  "lat": -72.8438691,
+  "lng": 0.0,
+  "query": "Antarctica"
+ },
+ "antikythera, greece": {
+  "label": "Αντικύθηρα, Δημοτική Ενότητα Αντικυθήρων, Δήμος Κυθήρων, Περιφερειακή Ενότητα Νή",
+  "lat": 35.8644182,
+  "lng": 23.3037898,
+  "query": "Antikythera, Greece"
+ },
+ "archaeological museum, istanbul": {
+  "label": "İstanbul Arkeoloji Müzesi, Osman Hamdibey Yokuşu Sokağı, Cankurtaran Mahallesi, ",
+  "lat": 41.0116481,
+  "lng": 28.9817301,
+  "query": "Archaeological Museum, Istanbul"
+ },
+ "arlington, united states": {
+  "label": "Arlington, Tarrant County, Texas, United States",
+  "lat": 32.7355816,
+  "lng": -97.1071186,
+  "query": "Arlington, United States"
+ },
+ "arlington, va, usa": {
+  "label": "Arlington County, Virginia, United States",
+  "lat": 38.8769326,
+  "lng": -77.0893094,
+  "query": "Arlington, VA, USA"
+ },
+ "arlington, virginia, usa": {
+  "label": "Arlington County, Virginia, United States",
+  "lat": 38.8769326,
+  "lng": -77.0893094,
+  "query": "Arlington, Virginia, USA"
+ },
+ "armonk, new york, usa": {
+  "label": "Armonk, Town of North Castle, Westchester County, New York, 10504, United States",
+  "lat": 41.132973,
+  "lng": -73.7126064,
+  "query": "Armonk, New York, USA"
+ },
+ "at&t": {
+  "label": "AT&T, Callaway Circle, Callaway, Bay County, Florida, 32404, United States",
+  "lat": 30.161339,
+  "lng": -85.5904905,
+  "query": "AT&T"
+ },
+ "athens, greece": {
+  "label": "Αθήνα, Δήμος Αθηναίων, Περιφερειακή Ενότητα Κεντρικού Τομέα Αθηνών, Περιφέρεια Α",
+  "lat": 37.9755648,
+  "lng": 23.7348324,
+  "query": "Athens, Greece"
+ },
+ "athens, ohio, usa": {
+  "label": "Athens County, Ohio, United States",
+  "lat": 39.3575616,
+  "lng": -82.0609557,
+  "query": "Athens, Ohio, USA"
+ },
+ "atlanta, georgia, usa": {
+  "label": "Atlanta, Fulton County, Georgia, United States",
+  "lat": 33.7544657,
+  "lng": -84.3898151,
+  "query": "Atlanta, Georgia, USA"
+ },
+ "attica, greece": {
+  "label": "Περιφέρεια Αττικής, Αποκεντρωμένη Διοίκηση Αττικής, Ελλάς",
+  "lat": 37.87213,
+  "lng": 23.7975272,
+  "query": "Attica, Greece"
+ },
+ "austin, texas": {
+  "label": "Austin, Travis County, Texas, United States",
+  "lat": 30.2711286,
+  "lng": -97.7436995,
+  "query": "Austin, Texas"
+ },
+ "austin, texas, usa": {
+  "label": "Austin, Travis County, Texas, United States",
+  "lat": 30.2711286,
+  "lng": -97.7436995,
+  "query": "Austin, Texas, USA"
+ },
+ "australia": {
+  "label": "Australia",
+  "lat": -24.7761086,
+  "lng": 134.755,
+  "query": "Australia"
+ },
+ "babylon, iraq": {
+  "label": "بابل, قرية عنان, ناحية مرکز قضاء الحلة, قضاء الحلة, محافظة بابل, العراق",
+  "lat": 32.5447132,
+  "lng": 44.4318143,
+  "query": "Babylon, Iraq"
+ },
+ "baghdad, iraq": {
+  "label": "بغداد, بلدية المنطقة الخضراء, قضاء الزوراء, محافظة بغداد, العراق",
+  "lat": 33.3061701,
+  "lng": 44.3872213,
+  "query": "Baghdad, Iraq"
+ },
+ "baikonur cosmodrome, kazakhstan": {
+  "label": "Байқоңыр ғарыш айлағы, Қармақшы ауданы, Қызылорда облысы, 120500, Қазақстан",
+  "lat": 45.9178932,
+  "lng": 63.4083721,
+  "query": "Baikonur Cosmodrome, Kazakhstan"
+ },
+ "baku, azerbaijan": {
+  "label": "Bakı, Azərbaycan",
+  "lat": 40.3755885,
+  "lng": 49.8328009,
+  "query": "Baku, Azerbaijan"
+ },
+ "bali, indonesia": {
+  "label": "Bali, Indonesia",
+  "lat": -8.2271303,
+  "lng": 115.1919203,
+  "query": "Bali, Indonesia"
+ },
+ "balkans, southern europe": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Balkans, Southern Europe"
+ },
+ "balkh, afghanistan": {
+  "label": "بلخ, ولسوالی بلخ, ولایت بلخ, افغانستان",
+  "lat": 36.758074,
+  "lng": 66.8979538,
+  "query": "Balkh, Afghanistan"
+ },
+ "baltimore, united states": {
+  "label": "Baltimore, Maryland, United States",
+  "lat": 39.2908816,
+  "lng": -76.610759,
+  "query": "Baltimore, United States"
+ },
+ "baltimore, usa": {
+  "label": "Baltimore, Maryland, United States",
+  "lat": 39.2908816,
+  "lng": -76.610759,
+  "query": "Baltimore, USA"
+ },
+ "basel, switzerland": {
+  "label": "Basel, Basel-Stadt, Schweiz/Suisse/Svizzera/Svizra",
+  "lat": 47.5581077,
+  "lng": 7.5878261,
+  "query": "Basel, Switzerland"
+ },
+ "basra, iraq": {
+  "label": "البصرة, ناحية مرکز قضاء البصرة, قضاء البصرة, محافظة البصرة, 00110, العراق",
+  "lat": 30.4952371,
+  "lng": 47.8090981,
+  "query": "Basra, Iraq"
+ },
+ "bath, england": {
+  "label": "Bath, Bath and North East Somerset, West of England, England, United Kingdom",
+  "lat": 51.3813864,
+  "lng": -2.3596963,
+  "query": "Bath, England"
+ },
+ "bath, uk": {
+  "label": "Bath, Bath and North East Somerset, West of England, England, United Kingdom",
+  "lat": 51.3813864,
+  "lng": -2.3596963,
+  "query": "Bath, UK"
+ },
+ "bavaria, germany": {
+  "label": "Bayern, Deutschland",
+  "lat": 48.9467562,
+  "lng": 11.4038717,
+  "query": "Bavaria, Germany"
+ },
+ "beijing, china": {
+  "label": "北京市, 中国",
+  "lat": 39.9057136,
+  "lng": 116.3912972,
+  "query": "Beijing, China"
+ },
+ "bell labs, new jersey, usa": {
+  "label": "Bell Labs Water Tower, Bell Laboratories Road, Holmdel Township, Monmouth County",
+  "lat": 40.3711887,
+  "lng": -74.160558,
+  "query": "Bell Labs, New Jersey, USA"
+ },
+ "bellevue, washington, usa": {
+  "label": "Bellevue, King County, Washington, United States",
+  "lat": 47.6144219,
+  "lng": -122.192337,
+  "query": "Bellevue, Washington, USA"
+ },
+ "bellingham, washington, usa": {
+  "label": "Bellingham, Whatcom County, Washington, United States",
+  "lat": 48.7544012,
+  "lng": -122.478836,
+  "query": "Bellingham, Washington, USA"
+ },
+ "bengaluru": {
+  "label": "Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, India",
+  "lat": 12.9767936,
+  "lng": 77.590082,
+  "query": "Bengaluru"
+ },
+ "bengaluru, india": {
+  "label": "Bengaluru, Bangalore North, Bengaluru Urban, Karnataka, India",
+  "lat": 12.9767936,
+  "lng": 77.590082,
+  "query": "Bengaluru, India"
+ },
+ "berkeley, ca, us": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, CA, US"
+ },
+ "berkeley, ca, usa": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, CA, USA"
+ },
+ "berkeley, california": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, California"
+ },
+ "berkeley, california, usa": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, California, USA"
+ },
+ "berkeley, united states": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, United States"
+ },
+ "berkeley, usa": {
+  "label": "Berkeley, Alameda County, California, United States",
+  "lat": 37.8708393,
+  "lng": -122.272863,
+  "query": "Berkeley, USA"
+ },
+ "berlin, germany": {
+  "label": "Berlin, Deutschland",
+  "lat": 52.5173885,
+  "lng": 13.3951309,
+  "query": "Berlin, Germany"
+ },
+ "birmingham, england": {
+  "label": "Birmingham, West Midlands, England, United Kingdom",
+  "lat": 52.4948994,
+  "lng": -1.8518439,
+  "query": "Birmingham, England"
+ },
+ "blaricum, netherlands": {
+  "label": "Blaricum, Noord-Holland, Nederland",
+  "lat": 52.2811329,
+  "lng": 5.2937137,
+  "query": "Blaricum, Netherlands"
+ },
+ "bletchley park, uk": {
+  "label": "Bletchley Park, Tiltman Lane, Old Bletchley, West Bletchley, Bletchley, Milton K",
+  "lat": 51.9974936,
+  "lng": -0.7410593,
+  "query": "Bletchley Park, UK"
+ },
+ "boca raton, florida, usa": {
+  "label": "Boca Raton, Palm Beach County, Florida, United States",
+  "lat": 26.3586885,
+  "lng": -80.0830984,
+  "query": "Boca Raton, Florida, USA"
+ },
+ "bogotá, colombia": {
+  "label": "Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, Colombia",
+  "lat": 4.6533817,
+  "lng": -74.0836331,
+  "query": "Bogotá, Colombia"
+ },
+ "bologna, italy": {
+  "label": "Bologna, Emilia-Romagna, Italia",
+  "lat": 44.4938203,
+  "lng": 11.3426327,
+  "query": "Bologna, Italy"
+ },
+ "bonn, germany": {
+  "label": "Bonn, Nordrhein-Westfalen, Deutschland",
+  "lat": 50.7352621,
+  "lng": 7.1024635,
+  "query": "Bonn, Germany"
+ },
+ "border cave, eswatini": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Border Cave, Eswatini"
+ },
+ "boston, ma, us": {
+  "label": "Boston, Suffolk County, Massachusetts, United States",
+  "lat": 42.3588336,
+  "lng": -71.0578303,
+  "query": "Boston, MA, US"
+ },
+ "boston, ma, usa": {
+  "label": "Boston, Suffolk County, Massachusetts, United States",
+  "lat": 42.3588336,
+  "lng": -71.0578303,
+  "query": "Boston, MA, USA"
+ },
+ "boston, massachusetts, usa": {
+  "label": "Boston, Suffolk County, Massachusetts, United States",
+  "lat": 42.3588336,
+  "lng": -71.0578303,
+  "query": "Boston, Massachusetts, USA"
+ },
+ "boston, united states": {
+  "label": "Boston, Suffolk County, Massachusetts, United States",
+  "lat": 42.3588336,
+  "lng": -71.0578303,
+  "query": "Boston, United States"
+ },
+ "boston, usa": {
+  "label": "Boston, Suffolk County, Massachusetts, United States",
+  "lat": 42.3588336,
+  "lng": -71.0578303,
+  "query": "Boston, USA"
+ },
+ "bourges, france": {
+  "label": "Bourges, Cher, Centre-Val de Loire, France métropolitaine, 18000, France",
+  "lat": 47.0811658,
+  "lng": 2.399125,
+  "query": "Bourges, France"
+ },
+ "bournemouth, england": {
+  "label": "Bournemouth, Wick, Bournemouth, Christchurch and Poole, England, United Kingdom",
+  "lat": 50.7446718,
+  "lng": -1.8579514,
+  "query": "Bournemouth, England"
+ },
+ "boxgrove, united kingdom": {
+  "label": "Boxgrove, Halnaker, Chichester, West Sussex, England, United Kingdom",
+  "lat": 50.8695773,
+  "lng": -0.7079943,
+  "query": "Boxgrove, United Kingdom"
+ },
+ "breslau, germany": {
+  "label": "Müller-Breslau-Straße, Spreestadt Charlottenburg, Charlottenburg, Charlottenburg",
+  "lat": 52.5116471,
+  "lng": 13.333865,
+  "query": "Breslau, Germany"
+ },
+ "brighton, england": {
+  "label": "Brighton, Brighton and Hove, England, BN1 1HJ, United Kingdom",
+  "lat": 50.8214626,
+  "lng": -0.1400561,
+  "query": "Brighton, England"
+ },
+ "brighton, england, uk": {
+  "label": "Brighton, Brighton and Hove, England, BN1 1HJ, United Kingdom",
+  "lat": 50.8214626,
+  "lng": -0.1400561,
+  "query": "Brighton, England, UK"
+ },
+ "brighton, uk": {
+  "label": "Brighton, Brighton and Hove, England, BN1 1HJ, United Kingdom",
+  "lat": 50.8214626,
+  "lng": -0.1400561,
+  "query": "Brighton, UK"
+ },
+ "brighton, united kingdom": {
+  "label": "Brighton, Brighton and Hove, England, BN1 1HJ, United Kingdom",
+  "lat": 50.8214626,
+  "lng": -0.1400561,
+  "query": "Brighton, United Kingdom"
+ },
+ "bristol, england": {
+  "label": "City of Bristol, West of England, England, United Kingdom",
+  "lat": 51.4430141,
+  "lng": -2.5816622,
+  "query": "Bristol, England"
+ },
+ "bristol, united kingdom": {
+  "label": "City of Bristol, West of England, England, United Kingdom",
+  "lat": 51.4430141,
+  "lng": -2.5816622,
+  "query": "Bristol, United Kingdom"
+ },
+ "british museum, london": {
+  "label": "British Museum, Great Russell Street, St Giles, Bloomsbury, London Borough of Ca",
+  "lat": 51.5193118,
+  "lng": -0.1267051,
+  "query": "British Museum, London"
+ },
+ "brno, czech republic": {
+  "label": "Brno, okres Brno-město, Jihomoravský kraj, Česko",
+  "lat": 49.1922443,
+  "lng": 16.6113382,
+  "query": "Brno, Czech Republic"
+ },
+ "brooklyn, new york, usa": {
+  "label": "Brooklyn, Kings County, New York, United States",
+  "lat": 40.6526006,
+  "lng": -73.9497211,
+  "query": "Brooklyn, New York, USA"
+ },
+ "bruges, belgium": {
+  "label": "Brugge, West-Vlaanderen, Vlaanderen, België / Belgique / Belgien",
+  "lat": 51.2085526,
+  "lng": 3.226772,
+  "query": "Bruges, Belgium"
+ },
+ "brussels, belgium": {
+  "label": "Bruxelles - Brussel, Brussel-Hoofdstad - Bruxelles-Capitale, Région de Bruxelles",
+  "lat": 50.8467372,
+  "lng": 4.352493,
+  "query": "Brussels, Belgium"
+ },
+ "bucharest, romania": {
+  "label": "București, România",
+  "lat": 44.4361414,
+  "lng": 26.102684,
+  "query": "Bucharest, Romania"
+ },
+ "buckinghamshire, england": {
+  "label": "Buckinghamshire, England, United Kingdom",
+  "lat": 51.840894,
+  "lng": -0.8998074,
+  "query": "Buckinghamshire, England"
+ },
+ "budapest, hungary": {
+  "label": "Budapest, Közép-Magyarország, Magyarország",
+  "lat": 47.4978789,
+  "lng": 19.0402383,
+  "query": "Budapest, Hungary"
+ },
+ "buffalo, new york": {
+  "label": "Buffalo, Erie County, New York, United States",
+  "lat": 42.8864163,
+  "lng": -78.8781493,
+  "query": "Buffalo, New York"
+ },
+ "buffalo, new york, usa": {
+  "label": "Buffalo, Erie County, New York, United States",
+  "lat": 42.8864163,
+  "lng": -78.8781493,
+  "query": "Buffalo, New York, USA"
+ },
+ "buffalo, ny, us": {
+  "label": "Buffalo, Erie County, New York, United States",
+  "lat": 42.8864163,
+  "lng": -78.8781493,
+  "query": "Buffalo, NY, US"
+ },
+ "buffalo, usa": {
+  "label": "Buffalo, Erie County, New York, United States",
+  "lat": 42.8864163,
+  "lng": -78.8781493,
+  "query": "Buffalo, USA"
+ },
+ "bures-sur-yvette, france": {
+  "label": "Bures-sur-Yvette, Palaiseau, Essonne, Île-de-France, France métropolitaine, 9144",
+  "lat": 48.6972179,
+  "lng": 2.1632719,
+  "query": "Bures-sur-Yvette, France"
+ },
+ "cairo": {
+  "label": "القاهرة, مصر",
+  "lat": 30.0443879,
+  "lng": 31.2357257,
+  "query": "Cairo"
+ },
+ "calabria, italy": {
+  "label": "Calabria, Italia",
+  "lat": 39.0565974,
+  "lng": 16.5249864,
+  "query": "Calabria, Italy"
+ },
+ "california, usa": {
+  "label": "California, United States",
+  "lat": 36.7014631,
+  "lng": -118.755997,
+  "query": "California, USA"
+ },
+ "cambridge, england": {
+  "label": "Cambridge, Cambridgeshire, Cambridgeshire and Peterborough, England, United King",
+  "lat": 52.1975846,
+  "lng": 0.1391537,
+  "query": "Cambridge, England"
+ },
+ "cambridge, england, uk": {
+  "label": "Cambridge, Cambridgeshire, Cambridgeshire and Peterborough, England, United King",
+  "lat": 52.1975846,
+  "lng": 0.1391537,
+  "query": "Cambridge, England, UK"
+ },
+ "cambridge, ma, us": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, MA, US"
+ },
+ "cambridge, ma, usa": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, MA, USA"
+ },
+ "cambridge, massachusetts": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, Massachusetts"
+ },
+ "cambridge, massachusetts, us": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, Massachusetts, US"
+ },
+ "cambridge, massachusetts, usa": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, Massachusetts, USA"
+ },
+ "cambridge, uk": {
+  "label": "Cambridge, Cambridgeshire, Cambridgeshire and Peterborough, England, United King",
+  "lat": 52.1975846,
+  "lng": 0.1391537,
+  "query": "Cambridge, UK"
+ },
+ "cambridge, united kingdom": {
+  "label": "Cambridge, Cambridgeshire, Cambridgeshire and Peterborough, England, United King",
+  "lat": 52.1975846,
+  "lng": 0.1391537,
+  "query": "Cambridge, United Kingdom"
+ },
+ "cambridge, united states": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, United States"
+ },
+ "cambridge, usa": {
+  "label": "Cambridge, Middlesex County, Massachusetts, United States",
+  "lat": 42.3656347,
+  "lng": -71.1040018,
+  "query": "Cambridge, USA"
+ },
+ "canada": {
+  "label": "Canada",
+  "lat": 61.0666922,
+  "lng": -107.991707,
+  "query": "Canada"
+ },
+ "canberra, australia": {
+  "label": "Canberra, District of Canberra Central, Australian Capital Territory, 2600, Aust",
+  "lat": -35.2975906,
+  "lng": 149.1012676,
+  "query": "Canberra, Australia"
+ },
+ "cary, usa": {
+  "label": "Cary, Wake County, North Carolina, United States",
+  "lat": 35.7873617,
+  "lng": -78.7811623,
+  "query": "Cary, USA"
+ },
+ "cascina, italy": {
+  "label": "Cascina, Pisa, Toscana, Italia",
+  "lat": 43.6766738,
+  "lng": 10.5492244,
+  "query": "Cascina, Italy"
+ },
+ "central europe": {
+  "label": "Central Europe, Muskogee County, Oklahoma, 74423, United States",
+  "lat": 35.6605216,
+  "lng": -95.1539448,
+  "query": "Central Europe"
+ },
+ "central europe (region)": {
+  "label": "Maccaferri Central Europe s.r.o., Senica, okres Senica, Trnavský kraj, 905 01, S",
+  "lat": 48.6646491,
+  "lng": 17.3504792,
+  "query": "Central Europe (region)"
+ },
+ "cern": {
+  "label": "Чорне море - Marea Neagră - Черно море – Karadeniz - შავი ზღვა - Чёрное море",
+  "lat": 43.872824,
+  "lng": 33.9938077,
+  "query": "CERN"
+ },
+ "chaeronea, greece": {
+  "label": "Λιοντάρι της Χαιρώνειας, Λιβαδειάς - Μπράλου, Κοινότητα Χαιρώνειας, Δημοτική Ενό",
+  "lat": 38.4949048,
+  "lng": 22.8483325,
+  "query": "Chaeronea, Greece"
+ },
+ "chapel hill, north carolina, us": {
+  "label": "Chapel Hill, Orange County, North Carolina, United States",
+  "lat": 35.9131542,
+  "lng": -79.05578,
+  "query": "Chapel Hill, North Carolina, US"
+ },
+ "chemnitz, germany": {
+  "label": "Chemnitz, Lichtenau, Sachsen, Deutschland",
+  "lat": 50.8323531,
+  "lng": 12.918914,
+  "query": "Chemnitz, Germany"
+ },
+ "chester, england, uk": {
+  "label": "Chester, Cheshire West and Chester, England, CH1 2ET, United Kingdom",
+  "lat": 53.1908873,
+  "lng": -2.8908955,
+  "query": "Chester, England, UK"
+ },
+ "chicago, illinois": {
+  "label": "Chicago, South Chicago Township, Cook County, Illinois, United States",
+  "lat": 41.8755616,
+  "lng": -87.6244212,
+  "query": "Chicago, Illinois"
+ },
+ "chicago, usa": {
+  "label": "Chicago, South Chicago Township, Cook County, Illinois, United States",
+  "lat": 41.8755616,
+  "lng": -87.6244212,
+  "query": "Chicago, USA"
+ },
+ "china": {
+  "label": "中国",
+  "lat": 34.5412252,
+  "lng": 108.9237067,
+  "query": "China"
+ },
+ "chios, greece": {
+  "label": "Χίος, Περιφερειακή Ενότητα Χίου, Περιφέρεια Βόρειου Αιγαίου, Αποκεντρωμένη Διοίκ",
+  "lat": 38.3758132,
+  "lng": 26.0646552,
+  "query": "Chios, Greece"
+ },
+ "clazomenae, turkey": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Clazomenae, Turkey"
+ },
+ "cluj-napoca, romania": {
+  "label": "Cluj-Napoca, Zona Metropolitană Cluj, Cluj, România",
+  "lat": 46.769379,
+  "lng": 23.5899542,
+  "query": "Cluj-Napoca, Romania"
+ },
+ "cohere": {
+  "label": "Cohere, South Winnipeg Court, Hilltop at Inspiration, Aurora, Douglas County, Co",
+  "lat": 39.5645769,
+  "lng": -104.7200058,
+  "query": "Cohere"
+ },
+ "college park, maryland": {
+  "label": "College Park, Prince George's County, Maryland, United States",
+  "lat": 38.980666,
+  "lng": -76.9369189,
+  "query": "College Park, Maryland"
+ },
+ "college station, texas": {
+  "label": "College Station, Brazos County, Texas, United States",
+  "lat": 30.6183939,
+  "lng": -96.3455991,
+  "query": "College Station, Texas"
+ },
+ "college station, usa": {
+  "label": "College Station, Brazos County, Texas, United States",
+  "lat": 30.6183939,
+  "lng": -96.3455991,
+  "query": "College Station, USA"
+ },
+ "colorado, us": {
+  "label": "Colorado, United States",
+  "lat": 38.7251776,
+  "lng": -105.607716,
+  "query": "Colorado, US"
+ },
+ "como": {
+  "label": "Como, Lombardia, Italia",
+  "lat": 45.9395857,
+  "lng": 9.1493609,
+  "query": "Como"
+ },
+ "concord, united states": {
+  "label": "Concord, Merrimack County, New Hampshire, United States",
+  "lat": 43.207178,
+  "lng": -71.537476,
+  "query": "Concord, United States"
+ },
+ "constantinople (istanbul), turkey": {
+  "label": "Travel Tips Turkey, 3/D, Klod Farer Caddesi, Binbirdirek Mahallesi, İstanbul, Fa",
+  "lat": 41.0078444,
+  "lng": 28.9735074,
+  "query": "Constantinople (Istanbul), Turkey"
+ },
+ "copenhagen, denmark": {
+  "label": "København, Københavns Kommune, Region Hovedstaden, 1357, Danmark",
+  "lat": 55.6867243,
+  "lng": 12.5700724,
+  "query": "Copenhagen, Denmark"
+ },
+ "cordoba, spain": {
+  "label": "Córdoba, Andalucía, España",
+  "lat": 37.8845813,
+  "lng": -4.7760138,
+  "query": "Cordoba, Spain"
+ },
+ "cornwall, england": {
+  "label": "Cornwall, England, United Kingdom",
+  "lat": 50.4433489,
+  "lng": -4.6246566,
+  "query": "Cornwall, England"
+ },
+ "coventry, uk": {
+  "label": "Coventry, West Midlands, England, CV1 1LL, United Kingdom",
+  "lat": 52.4081812,
+  "lng": -1.510477,
+  "query": "Coventry, UK"
+ },
+ "croton, italy": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Croton, Italy"
+ },
+ "cupertino, california, usa": {
+  "label": "Cupertino, Santa Clara County, California, 95014, United States",
+  "lat": 37.3228934,
+  "lng": -122.0322895,
+  "query": "Cupertino, California, USA"
+ },
+ "cupertino, united states": {
+  "label": "Cupertino, Santa Clara County, California, 95014, United States",
+  "lat": 37.3228934,
+  "lng": -122.0322895,
+  "query": "Cupertino, United States"
+ },
+ "cyclades, greece": {
+  "label": "Cyclades, Φηρών - Μεσαριάς, Καρτεράδος, Δημοτική Ενότητα Θήρας, Δήμος Θήρας, Περ",
+  "lat": 36.4106263,
+  "lng": 25.4436646,
+  "query": "Cyclades, Greece"
+ },
+ "daejeon, south korea": {
+  "label": "대전광역시, 대한민국",
+  "lat": 36.3497007,
+  "lng": 127.3849016,
+  "query": "Daejeon, South Korea"
+ },
+ "dallas, texas, usa": {
+  "label": "Dallas, Dallas County, Texas, United States",
+  "lat": 32.7762719,
+  "lng": -96.7968559,
+  "query": "Dallas, Texas, USA"
+ },
+ "darmstadt, germany": {
+  "label": "Darmstadt, Hessen, Deutschland",
+  "lat": 49.872775,
+  "lng": 8.651177,
+  "query": "Darmstadt, Germany"
+ },
+ "dartmouth, new hampshire, usa": {
+  "label": "Dartmouth College, Buck Road, Hanover, Grafton County, New Hampshire, 03755, Uni",
+  "lat": 43.7046757,
+  "lng": -72.2942089,
+  "query": "Dartmouth, New Hampshire, USA"
+ },
+ "data science africa": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Data Science Africa"
+ },
+ "deep learning indaba": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Deep Learning Indaba"
+ },
+ "delft, netherlands": {
+  "label": "Delft, Zuid-Holland, Nederland",
+  "lat": 52.0114017,
+  "lng": 4.35839,
+  "query": "Delft, Netherlands"
+ },
+ "delhi, india": {
+  "label": "Delhi, India",
+  "lat": 28.6328027,
+  "lng": 77.2197713,
+  "query": "Delhi, India"
+ },
+ "detroit, united states": {
+  "label": "Detroit, Wayne County, Michigan, United States",
+  "lat": 42.3315509,
+  "lng": -83.0466403,
+  "query": "Detroit, United States"
+ },
+ "deutsches museum, munich": {
+  "label": "Deutsches Museum, 1, Museumsinsel, Gärtnerplatz, Isarvorstadt, Ludwigsvorstadt-I",
+  "lat": 48.1300409,
+  "lng": 11.582909,
+  "query": "Deutsches Museum, Munich"
+ },
+ "dnipropetrovsk, ukraine": {
+  "label": "Дніпропетровська область, Україна",
+  "lat": 48.662589,
+  "lng": 34.9501715,
+  "query": "Dnipropetrovsk, Ukraine"
+ },
+ "dome c, antarctica": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Dome C, Antarctica"
+ },
+ "dr congo / east africa": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "DR Congo / East Africa"
+ },
+ "dresden, germany": {
+  "label": "Dresden, Sachsen, Deutschland",
+  "lat": 51.0493286,
+  "lng": 13.7381437,
+  "query": "Dresden, Germany"
+ },
+ "dublin, ireland": {
+  "label": "Dublin, County Dublin, Leinster, Éire / Ireland",
+  "lat": 53.3493795,
+  "lng": -6.2605593,
+  "query": "Dublin, Ireland"
+ },
+ "east antarctic plateau": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "East Antarctic plateau"
+ },
+ "east antarctica": {
+  "label": "East Antarctica",
+  "lat": -80.0,
+  "lng": 90.0,
+  "query": "East Antarctica"
+ },
+ "east asia": {
+  "label": "East Asia, Gondrong, Cipondoh, Tangerang, Banten, Indonesia",
+  "lat": -6.1951151,
+  "lng": 106.6985818,
+  "query": "East Asia"
+ },
+ "eastern europe": {
+  "label": "Europe Street, Wells Estate, Nelson Mandela Bay Ward 60, Nelson Mandela Bay Metr",
+  "lat": -33.8222153,
+  "lng": 25.6274003,
+  "query": "Eastern Europe"
+ },
+ "eastern mediterranean coast (modern lebanon)": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Eastern Mediterranean coast (modern Lebanon)"
+ },
+ "edelbach, austria": {
+  "label": "Edelbach (verf.), Katastralgemeinde Edelbach, Allentsteig, Bezirk Zwettl, Nieder",
+  "lat": 48.6844761,
+  "lng": 15.4064389,
+  "query": "Edelbach, Austria"
+ },
+ "edinburgh, scotland": {
+  "label": "City of Edinburgh, Alba / Scotland, United Kingdom",
+  "lat": 55.9533456,
+  "lng": -3.1883749,
+  "query": "Edinburgh, Scotland"
+ },
+ "edinburgh, uk": {
+  "label": "City of Edinburgh, Alba / Scotland, United Kingdom",
+  "lat": 55.9533456,
+  "lng": -3.1883749,
+  "query": "Edinburgh, UK"
+ },
+ "edinburgh, united kingdom": {
+  "label": "City of Edinburgh, Alba / Scotland, United Kingdom",
+  "lat": 55.9533456,
+  "lng": -3.1883749,
+  "query": "Edinburgh, United Kingdom"
+ },
+ "edmonton, alberta, canada": {
+  "label": "Edmonton, Alberta, Canada",
+  "lat": 53.5462055,
+  "lng": -113.491241,
+  "query": "Edmonton, Alberta, Canada"
+ },
+ "edmonton, canada": {
+  "label": "Edmonton, Alberta, Canada",
+  "lat": 53.5462055,
+  "lng": -113.491241,
+  "query": "Edmonton, Canada"
+ },
+ "egyptian museum, cairo": {
+  "label": "المتحف المصري, شارع مريت باشا, الإسماعيلية, باب اللوق, القاهرة, 11556, مصر",
+  "lat": 30.0479664,
+  "lng": 31.2336093,
+  "query": "Egyptian Museum, Cairo"
+ },
+ "eindhoven, netherlands": {
+  "label": "Eindhoven, Noord-Brabant, Nederland",
+  "lat": 51.4392648,
+  "lng": 5.478633,
+  "query": "Eindhoven, Netherlands"
+ },
+ "elea, italy": {
+  "label": "Elea, Isola 3, Interporto di Nola, Nola, Napoli, Campania, 80030, Italia",
+  "lat": 40.9620486,
+  "lng": 14.485719,
+  "query": "Elea, Italy"
+ },
+ "england": {
+  "label": "England, United Kingdom",
+  "lat": 52.5310214,
+  "lng": -1.2649062,
+  "query": "England"
+ },
+ "england, uk": {
+  "label": "England, United Kingdom",
+  "lat": 52.5310214,
+  "lng": -1.2649062,
+  "query": "England, UK"
+ },
+ "ephesus, turkey": {
+  "label": "Efes, Efes Harabeleri Yolu, Atatürk Mahallesi, Selçuk, İzmir, Ege Bölgesi, 35920",
+  "lat": 37.9404456,
+  "lng": 27.3393194,
+  "query": "Ephesus, Turkey"
+ },
+ "epigraphical museum, athens": {
+  "label": "Επιγραφικό μουσείο, 1, Τοσίτσα, Μουσείο, 1η Κοινότητα Αθηνών, Αθήνα, Δήμος Αθηνα",
+  "lat": 37.988769,
+  "lng": 23.7323306,
+  "query": "Epigraphical Museum, Athens"
+ },
+ "espoo, finland": {
+  "label": "Espoo, Helsingin seutukunta, Uusimaa, Manner-Suomi, Suomi / Finland",
+  "lat": 60.2049651,
+  "lng": 24.6559808,
+  "query": "Espoo, Finland"
+ },
+ "eswatini": {
+  "label": "Eswatini",
+  "lat": -26.5624806,
+  "lng": 31.3991317,
+  "query": "Eswatini"
+ },
+ "ethiopia": {
+  "label": "ኢትዮጵያ",
+  "lat": 10.2116702,
+  "lng": 38.6521203,
+  "query": "Ethiopia"
+ },
+ "eugene, oregon, usa": {
+  "label": "Eugene, Lane County, Oregon, United States",
+  "lat": 44.0505054,
+  "lng": -123.0950506,
+  "query": "Eugene, Oregon, USA"
+ },
+ "europe/asia": {
+  "label": "Европа — Азия, «Урал», Миасский городской округ, Челябинская область, Уральский ",
+  "lat": 55.0181376,
+  "lng": 59.7346941,
+  "query": "Europe/Asia"
+ },
+ "european ai office": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "European AI Office"
+ },
+ "fabriano, italy": {
+  "label": "Fabriano, Ancona, Marche, 60044, Italia",
+  "lat": 43.3358407,
+  "lng": 12.9046187,
+  "query": "Fabriano, Italy"
+ },
+ "florence": {
+  "label": "Firenze, Toscana, Italia",
+  "lat": 43.7697955,
+  "lng": 11.2556404,
+  "query": "Florence"
+ },
+ "florence, italy": {
+  "label": "Firenze, Toscana, Italia",
+  "lat": 43.7697955,
+  "lng": 11.2556404,
+  "query": "Florence, Italy"
+ },
+ "france": {
+  "label": "France",
+  "lat": 46.603354,
+  "lng": 1.8883335,
+  "query": "France"
+ },
+ "frankfurt, germany": {
+  "label": "Frankfurt am Main, Hessen, Deutschland",
+  "lat": 50.1106444,
+  "lng": 8.6820917,
+  "query": "Frankfurt, Germany"
+ },
+ "freiburg, germany": {
+  "label": "Freiburg im Breisgau, Baden-Württemberg, Deutschland",
+  "lat": 47.9960901,
+  "lng": 7.8494005,
+  "query": "Freiburg, Germany"
+ },
+ "fremont, california, usa": {
+  "label": "Fremont, Alameda County, California, United States",
+  "lat": 37.5482697,
+  "lng": -121.988571,
+  "query": "Fremont, California, USA"
+ },
+ "g42": {
+  "label": "沪蓉高速, 巫山县, 重庆市, 404700, 中国",
+  "lat": 31.1143118,
+  "lng": 109.8894727,
+  "query": "G42"
+ },
+ "gabon": {
+  "label": "Gabon",
+  "lat": -0.8999695,
+  "lng": 11.6899699,
+  "query": "Gabon"
+ },
+ "gaithersburg, united states": {
+  "label": "Gaithersburg, Montgomery County, Maryland, United States",
+  "lat": 39.1399187,
+  "lng": -77.1929215,
+  "query": "Gaithersburg, United States"
+ },
+ "garching, germany": {
+  "label": "Garching bei München, Landkreis München, Bayern, 85748, Deutschland",
+  "lat": 48.2513878,
+  "lng": 11.6509662,
+  "query": "Garching, Germany"
+ },
+ "garmisch-partenkirchen, germany": {
+  "label": "Garmisch-Partenkirchen, Landkreis Garmisch-Partenkirchen, Bayern, Deutschland",
+  "lat": 47.4923741,
+  "lng": 11.0962815,
+  "query": "Garmisch-Partenkirchen, Germany"
+ },
+ "geneva, switzerland": {
+  "label": "Genève, Schweiz/Suisse/Svizzera/Svizra",
+  "lat": 46.2017559,
+  "lng": 6.1466014,
+  "query": "Geneva, Switzerland"
+ },
+ "germany": {
+  "label": "Deutschland",
+  "lat": 51.1638175,
+  "lng": 10.4478313,
+  "query": "Germany"
+ },
+ "glasgow, scotland": {
+  "label": "Glasgow, Glasgow City, Alba / Scotland, G2 1AL, United Kingdom",
+  "lat": 55.861155,
+  "lng": -4.2501687,
+  "query": "Glasgow, Scotland"
+ },
+ "google ai research accra": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Google AI Research Accra"
+ },
+ "google research": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Google Research"
+ },
+ "gorodomlya island, russia": {
+  "label": "остров Городомля, Солнечный, Осташковский муниципальный округ, Тверская область,",
+  "lat": 57.202932,
+  "lng": 33.0650277,
+  "query": "Gorodomlya Island, Russia"
+ },
+ "graz, austria": {
+  "label": "Graz, Steiermark, Österreich",
+  "lat": 47.0708678,
+  "lng": 15.4382786,
+  "query": "Graz, Austria"
+ },
+ "greenland": {
+  "label": "Kalaallit Nunaat",
+  "lat": 77.6192349,
+  "lng": -42.8125967,
+  "query": "Greenland"
+ },
+ "greenland ice sheet": {
+  "label": "Sermersuaq, Kalaallit Nunaat",
+  "lat": 71.4427808,
+  "lng": -40.515459,
+  "query": "Greenland Ice Sheet"
+ },
+ "gwalior, india": {
+  "label": "Gwalior, Gird Tahsil, Gwalior, Madhya Pradesh, 474001, India",
+  "lat": 26.2037247,
+  "lng": 78.1573628,
+  "query": "Gwalior, India"
+ },
+ "göttingen, germany": {
+  "label": "Göttingen, Radolfshausen, Landkreis Göttingen, Niedersachsen, Deutschland",
+  "lat": 51.5328328,
+  "lng": 9.9351811,
+  "query": "Göttingen, Germany"
+ },
+ "haarlem, netherlands": {
+  "label": "Haarlem, Noord-Holland, Nederland",
+  "lat": 52.3885317,
+  "lng": 4.6388048,
+  "query": "Haarlem, Netherlands"
+ },
+ "haifa, israel": {
+  "label": "חיפה, נפת חיפה, מחוז חיפה, ישראל",
+  "lat": 32.8191218,
+  "lng": 34.9983856,
+  "query": "Haifa, Israel"
+ },
+ "halle, germany": {
+  "label": "Halle (Saale), Sachsen-Anhalt, Deutschland",
+  "lat": 51.4824354,
+  "lng": 11.9712985,
+  "query": "Halle, Germany"
+ },
+ "hanford, washington, usa": {
+  "label": "Hanford, Benton County, Washington, United States",
+  "lat": 46.5793709,
+  "lng": -119.3808693,
+  "query": "Hanford, Washington, USA"
+ },
+ "hangzhou": {
+  "label": "杭州市, 浙江省, 中国",
+  "lat": 30.2489634,
+  "lng": 120.2052342,
+  "query": "Hangzhou"
+ },
+ "hanover": {
+  "label": "Hannover, Region Hannover, Niedersachsen, Deutschland",
+  "lat": 52.3744779,
+  "lng": 9.7385532,
+  "query": "Hanover"
+ },
+ "hanover, germany": {
+  "label": "Hannover, Region Hannover, Niedersachsen, Deutschland",
+  "lat": 52.3744779,
+  "lng": 9.7385532,
+  "query": "Hanover, Germany"
+ },
+ "hanover, united states": {
+  "label": "Hanover, Grafton County, New Hampshire, United States",
+  "lat": 43.7023545,
+  "lng": -72.2892164,
+  "query": "Hanover, United States"
+ },
+ "hefei, china": {
+  "label": "合肥市, 安徽省, 中国",
+  "lat": 31.8665676,
+  "lng": 117.281428,
+  "query": "Hefei, China"
+ },
+ "heidelberg, germany": {
+  "label": "Heidelberg, Baden-Württemberg, Deutschland",
+  "lat": 49.4093582,
+  "lng": 8.694724,
+  "query": "Heidelberg, Germany"
+ },
+ "helsinki, finland": {
+  "label": "Helsinki, Helsingin seutukunta, Uusimaa, Manner-Suomi, Suomi / Finland",
+  "lat": 60.1666204,
+  "lng": 24.9435408,
+  "query": "Helsinki, Finland"
+ },
+ "herzliya, israel": {
+  "label": "הרצליה, נפת תל אביב, מחוז תל אביב, ישראל",
+  "lat": 32.1676842,
+  "lng": 34.8308279,
+  "query": "Herzliya, Israel"
+ },
+ "high plains, us": {
+  "label": "High Plains, Breckinridge County, Kentucky, 40115, United States",
+  "lat": 37.7731192,
+  "lng": -86.2110822,
+  "query": "High Plains, US"
+ },
+ "hinxton, uk": {
+  "label": "Hinxton, South Cambridgeshire, Cambridgeshire, Cambridgeshire and Peterborough, ",
+  "lat": 52.0848693,
+  "lng": 0.1792608,
+  "query": "Hinxton, UK"
+ },
+ "hinxton, united kingdom": {
+  "label": "Hinxton, South Cambridgeshire, Cambridgeshire, Cambridgeshire and Peterborough, ",
+  "lat": 52.0848693,
+  "lng": 0.1792608,
+  "query": "Hinxton, United Kingdom"
+ },
+ "hisarlik, turkey": {
+  "label": "Tevfikiye, Çanakkale Merkez, Çanakkale, Marmara Bölgesi, Türkiye",
+  "lat": 39.958836,
+  "lng": 26.251183,
+  "query": "Hisarlik, Turkey"
+ },
+ "huntsville, alabama, usa": {
+  "label": "Huntsville, Madison County, Alabama, United States",
+  "lat": 34.729847,
+  "lng": -86.5859011,
+  "query": "Huntsville, Alabama, USA"
+ },
+ "iberian peninsula, europe": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Iberian Peninsula, Europe"
+ },
+ "icheon, south korea": {
+  "label": "이천시, 경기도, 대한민국",
+  "lat": 37.2808823,
+  "lng": 127.4429132,
+  "query": "Icheon, South Korea"
+ },
+ "iit madras": {
+  "label": "Indian Institute of Technology - Madras, Adayar, Ward 174, Zone 13 Adyar, Chenna",
+  "lat": 12.9941561,
+  "lng": 80.2366826,
+  "query": "IIT Madras"
+ },
+ "ile-de-france, france": {
+  "label": "Île-de-France, France métropolitaine, France",
+  "lat": 48.6443057,
+  "lng": 2.7537863,
+  "query": "Ile-de-France, France"
+ },
+ "india": {
+  "label": "India",
+  "lat": 22.3511148,
+  "lng": 78.6677428,
+  "query": "India"
+ },
+ "indonesian maritime islands": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Indonesian Maritime Islands"
+ },
+ "instadeep": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "InstaDeep"
+ },
+ "ishango, dr congo": {
+  "label": "Ishango-Isoro, Ruwenzori, Beni, Nord-Kivu, République démocratique du Congo",
+  "lat": -0.1360106,
+  "lng": 29.6011479,
+  "query": "Ishango, DR Congo"
+ },
+ "israel": {
+  "label": "ישראל",
+  "lat": 30.8124247,
+  "lng": 34.8594762,
+  "query": "Israel"
+ },
+ "istanbul archaeology museums, istanbul, turkey": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Istanbul Archaeology Museums, Istanbul, Turkey"
+ },
+ "italy": {
+  "label": "Italia",
+  "lat": 42.6384261,
+  "lng": 12.674297,
+  "query": "Italy"
+ },
+ "ithaca, new york": {
+  "label": "Town of Ithaca, Tompkins County, New York, United States",
+  "lat": 42.4374175,
+  "lng": -76.5483724,
+  "query": "Ithaca, New York"
+ },
+ "ithaca, new york, us": {
+  "label": "Town of Ithaca, Tompkins County, New York, United States",
+  "lat": 42.4374175,
+  "lng": -76.5483724,
+  "query": "Ithaca, New York, US"
+ },
+ "ithaca, new york, usa": {
+  "label": "Town of Ithaca, Tompkins County, New York, United States",
+  "lat": 42.4374175,
+  "lng": -76.5483724,
+  "query": "Ithaca, New York, USA"
+ },
+ "ithaca, ny, us": {
+  "label": "Town of Ithaca, Tompkins County, New York, United States",
+  "lat": 42.4374175,
+  "lng": -76.5483724,
+  "query": "Ithaca, NY, US"
+ },
+ "ithaca, ny, usa": {
+  "label": "Town of Ithaca, Tompkins County, New York, United States",
+  "lat": 42.4374175,
+  "lng": -76.5483724,
+  "query": "Ithaca, NY, USA"
+ },
+ "japan": {
+  "label": "日本",
+  "lat": 36.5748441,
+  "lng": 139.2394179,
+  "query": "Japan"
+ },
+ "java, indonesia": {
+  "label": "Jawa, Indonesia",
+  "lat": -7.3279694,
+  "lng": 109.613911,
+  "query": "Java, Indonesia"
+ },
+ "jebel irhoud, morocco": {
+  "label": "Jebel Irhoud, RP2327, Ighoud إيغود, caïdat de Ighoud, Cercle de Ahmar, Province ",
+  "lat": 31.8940932,
+  "lng": -8.8648306,
+  "query": "Jebel Irhoud, Morocco"
+ },
+ "jedburgh, scotland": {
+  "label": "Jedburgh, Scottish Borders, Alba / Scotland, TD8 6AP, United Kingdom",
+  "lat": 55.4776435,
+  "lng": -2.5553768,
+  "query": "Jedburgh, Scotland"
+ },
+ "jena, germany": {
+  "label": "Jena, Thüringen, Deutschland",
+  "lat": 50.9281717,
+  "lng": 11.5879359,
+  "query": "Jena, Germany"
+ },
+ "jerusalem, israel": {
+  "label": "ירושלים | القدس, נפת ירושלים, מחוז ירושלים, ישראל",
+  "lat": 31.7788472,
+  "lng": 35.2257856,
+  "query": "Jerusalem, Israel"
+ },
+ "jet propulsion laboratory": {
+  "label": "Jet Propulsion Laboratory, 4800, Oak Grove Drive, Pasadena, Los Angeles County, ",
+  "lat": 34.2015125,
+  "lng": -118.1729785,
+  "query": "Jet Propulsion Laboratory"
+ },
+ "kaliningrad, russia": {
+  "label": "Калининград, городской округ Калининград, Калининградская область, Северо-Западн",
+  "lat": 54.710128,
+  "lng": 20.5105838,
+  "query": "Kaliningrad, Russia"
+ },
+ "kaluga, russia": {
+  "label": "Калуга, городской округ Калуга, Калужская область, Центральный федеральный округ",
+  "lat": 54.5101087,
+  "lng": 36.2598115,
+  "query": "Kaluga, Russia"
+ },
+ "kampala, uganda": {
+  "label": "Kampala Capital City, Kampala, Central Region, Uganda",
+  "lat": 0.3177137,
+  "lng": 32.5813539,
+  "query": "Kampala, Uganda"
+ },
+ "kansai, japan": {
+  "label": "関西テレビ放送, 7, 扇町二丁目, 北区, 大阪市, 大阪府, 530-8408, 日本",
+  "lat": 34.7047161,
+  "lng": 135.5102171,
+  "query": "Kansai, Japan"
+ },
+ "kariandusi, west turkana, kenya": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Kariandusi, West Turkana, Kenya"
+ },
+ "kazan, russia": {
+  "label": "Казань, городской округ Казань, Татарстан, Приволжский федеральный округ, Россия",
+  "lat": 55.7946485,
+  "lng": 49.1115022,
+  "query": "Kazan, Russia"
+ },
+ "kendal, england": {
+  "label": "Kendal, Westmorland and Furness, England, United Kingdom",
+  "lat": 54.3289795,
+  "lng": -2.747183,
+  "query": "Kendal, England"
+ },
+ "kerala, india": {
+  "label": "Kerala, India",
+  "lat": 10.3528744,
+  "lng": 76.5120396,
+  "query": "Kerala, India"
+ },
+ "knossos, greece": {
+  "label": "Ανάκτορο της Κνωσού, Κνωσσού - Πεζών, 4η Κοινότητα Ηρακλείου - Νότια, Δημοτική Ε",
+  "lat": 35.2980573,
+  "lng": 25.1628132,
+  "query": "Knossos, Greece"
+ },
+ "kolkata, india": {
+  "label": "Kolkata, Kolkata Metropolitan Area, Kolkata, West Bengal, India",
+  "lat": 22.5726459,
+  "lng": 88.3638953,
+  "query": "Kolkata, India"
+ },
+ "kos, greece": {
+  "label": "Κως, Περιφερειακή Ενότητα Κω, Περιφέρεια Νοτίου Αιγαίου, Αποκεντρωμένη Διοίκηση ",
+  "lat": 36.7936933,
+  "lng": 27.0848266,
+  "query": "Kos, Greece"
+ },
+ "kourou, french guiana": {
+  "label": "Kourou, Cayenne, Guyane, 97310, France",
+  "lat": 5.1579834,
+  "lng": -52.6424204,
+  "query": "Kourou, French Guiana"
+ },
+ "kraków, poland": {
+  "label": "Kraków, województwo małopolskie, Polska",
+  "lat": 50.0469432,
+  "lng": 19.9971534,
+  "query": "Kraków, Poland"
+ },
+ "kues, germany": {
+  "label": "Kues, Bernkastel-Kues, Landkreis Bernkastel-Wittlich, Rheinland-Pfalz, 54470, De",
+  "lat": 49.9101132,
+  "lng": 7.0614136,
+  "query": "Kues, Germany"
+ },
+ "königsberg (kaliningrad), russia": {
+  "label": "Морское наследие России, набережная Петра Великого, Ленинградский район, Калинин",
+  "lat": 54.7065303,
+  "lng": 20.4936743,
+  "query": "Königsberg (Kaliningrad), Russia"
+ },
+ "königsberg, germany": {
+  "label": "Königsberg, Scheuren, Odenthal, Rheinisch-Bergischer Kreis, Nordrhein-Westfalen,",
+  "lat": 51.0416043,
+  "lng": 7.173014,
+  "query": "Königsberg, Germany"
+ },
+ "königsberg, prussia (now kaliningrad, russia)": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Königsberg, Prussia (now Kaliningrad, Russia)"
+ },
+ "lagos": {
+  "label": "Lagos, Lagos Island, Lagos, 100242, Nigeria",
+  "lat": 6.4550575,
+  "lng": 3.3941795,
+  "query": "Lagos"
+ },
+ "lake tanganyika region, dr congo": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Lake Tanganyika region, DR Congo"
+ },
+ "las vegas, united states": {
+  "label": "Las Vegas, Clark County, Nevada, United States",
+  "lat": 36.1674263,
+  "lng": -115.1484131,
+  "query": "Las Vegas, United States"
+ },
+ "lasserre, pyrenees, france": {
+  "label": "Lasserre, Pau, Pyrénées-Atlantiques, Nouvelle-Aquitaine, France métropolitaine, ",
+  "lat": 43.5148414,
+  "lng": -0.0840903,
+  "query": "Lasserre, Pyrenees, France"
+ },
+ "lebombo mountains, eswatini": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Lebombo Mountains, Eswatini"
+ },
+ "leiden, netherlands": {
+  "label": "Leiden, Zuid-Holland, Nederland",
+  "lat": 52.1594747,
+  "lng": 4.4908843,
+  "query": "Leiden, Netherlands"
+ },
+ "leipzig, germany": {
+  "label": "Leipzig, Sachsen, Deutschland",
+  "lat": 51.3406321,
+  "lng": 12.3747329,
+  "query": "Leipzig, Germany"
+ },
+ "lesan ai": {
+  "label": "Lesan Heights, Des Moines, Polk County, Iowa, United States",
+  "lat": 41.5453531,
+  "lng": -93.5937839,
+  "query": "Lesan AI"
+ },
+ "linz, austria": {
+  "label": "Linz, Oberösterreich, Österreich",
+  "lat": 48.3059078,
+  "lng": 14.286198,
+  "query": "Linz, Austria"
+ },
+ "lisbon": {
+  "label": "Lisboa, Portugal",
+  "lat": 38.7077507,
+  "lng": -9.1365919,
+  "query": "Lisbon"
+ },
+ "little rock, usa": {
+  "label": "Little Rock, Big Rock Township, Pulaski County, Arkansas, United States",
+  "lat": 34.7465071,
+  "lng": -92.2896267,
+  "query": "Little Rock, USA"
+ },
+ "liverpool, england": {
+  "label": "Liverpool, Liverpool City Region, England, United Kingdom",
+  "lat": 53.3933411,
+  "lng": -2.9166389,
+  "query": "Liverpool, England"
+ },
+ "london, canada": {
+  "label": "London, Southwestern Ontario, Ontario, Canada",
+  "lat": 42.9836747,
+  "lng": -81.2496068,
+  "query": "London, Canada"
+ },
+ "london, england": {
+  "label": "Greater London, England, United Kingdom",
+  "lat": 51.5074456,
+  "lng": -0.1277653,
+  "query": "London, England"
+ },
+ "london, england, uk": {
+  "label": "Greater London, England, United Kingdom",
+  "lat": 51.5074456,
+  "lng": -0.1277653,
+  "query": "London, England, UK"
+ },
+ "london, uk": {
+  "label": "Greater London, England, United Kingdom",
+  "lat": 51.5074456,
+  "lng": -0.1277653,
+  "query": "London, UK"
+ },
+ "london, united kingdom": {
+  "label": "Greater London, England, United Kingdom",
+  "lat": 51.5074456,
+  "lng": -0.1277653,
+  "query": "London, United Kingdom"
+ },
+ "los alamos national laboratory": {
+  "label": "Los Alamos National Laboratory, Los Alamos, Los Alamos County, New Mexico, 87545",
+  "lat": 35.8190003,
+  "lng": -106.2656274,
+  "query": "Los Alamos National Laboratory"
+ },
+ "los alamos, new mexico, usa": {
+  "label": "Los Alamos, Los Alamos County, New Mexico, 87544, United States",
+  "lat": 35.88137,
+  "lng": -106.298959,
+  "query": "Los Alamos, New Mexico, USA"
+ },
+ "los angeles, ca, us": {
+  "label": "Los Angeles, Los Angeles County, California, United States",
+  "lat": 34.0536909,
+  "lng": -118.242766,
+  "query": "Los Angeles, CA, US"
+ },
+ "los angeles, california, usa": {
+  "label": "Los Angeles, Los Angeles County, California, United States",
+  "lat": 34.0536909,
+  "lng": -118.242766,
+  "query": "Los Angeles, California, USA"
+ },
+ "los angeles, united states": {
+  "label": "Los Angeles, Los Angeles County, California, United States",
+  "lat": 34.0536909,
+  "lng": -118.242766,
+  "query": "Los Angeles, United States"
+ },
+ "los angeles, usa": {
+  "label": "Los Angeles, Los Angeles County, California, United States",
+  "lat": 34.0536909,
+  "lng": -118.242766,
+  "query": "Los Angeles, USA"
+ },
+ "los gatos, united states": {
+  "label": "Los Gatos, Santa Clara County, California, United States",
+  "lat": 37.226611,
+  "lng": -121.9746797,
+  "query": "Los Gatos, United States"
+ },
+ "louvain, belgium": {
+  "label": "Leuven, Vlaams-Brabant, Vlaanderen, België / Belgique / Belgien",
+  "lat": 50.879202,
+  "lng": 4.7011675,
+  "query": "Louvain, Belgium"
+ },
+ "louvre, paris": {
+  "label": "Musée du Louvre, Pont du Carrousel, Saint-Germain-l'Auxerrois, Paris 1er Arrondi",
+  "lat": 48.8611473,
+  "lng": 2.3380277,
+  "query": "Louvre, Paris"
+ },
+ "lower austria": {
+  "label": "Niederösterreich, Österreich",
+  "lat": 48.2817813,
+  "lng": 15.7632457,
+  "query": "Lower Austria"
+ },
+ "lugano, switzerland": {
+  "label": "Lugano, Circolo di Lugano ovest, Distretto di Lugano, Ticino, Schweiz/Suisse/Svi",
+  "lat": 46.0038007,
+  "lng": 8.9512275,
+  "query": "Lugano, Switzerland"
+ },
+ "lumbini, nepal": {
+  "label": "लुम्बिनी प्रदेश, नेपाल",
+  "lat": 27.980713,
+  "lng": 82.9531851,
+  "query": "Lumbini, Nepal"
+ },
+ "luoyang, china": {
+  "label": "洛阳市, 河南省, 中国",
+  "lat": 34.6196539,
+  "lng": 112.4477046,
+  "query": "Luoyang, China"
+ },
+ "lussac-les-châteaux, france": {
+  "label": "Lussac-les-Châteaux, Montmorillon, Vienne, Nouvelle-Aquitaine, France métropolit",
+  "lat": 46.4032478,
+  "lng": 0.7251565,
+  "query": "Lussac-les-Châteaux, France"
+ },
+ "lyon, france": {
+  "label": "Lyon, Métropole de Lyon, Rhône, Auvergne-Rhône-Alpes, France métropolitaine, Fra",
+  "lat": 45.7578137,
+  "lng": 4.8320114,
+  "query": "Lyon, France"
+ },
+ "madison, united states": {
+  "label": "Madison, Dane County, Wisconsin, United States",
+  "lat": 43.07469,
+  "lng": -89.3841663,
+  "query": "Madison, United States"
+ },
+ "madison, wi, usa": {
+  "label": "Madison, Dane County, Wisconsin, United States",
+  "lat": 43.07469,
+  "lng": -89.3841663,
+  "query": "Madison, WI, USA"
+ },
+ "madison, wisconsin": {
+  "label": "Madison, Dane County, Wisconsin, United States",
+  "lat": 43.07469,
+  "lng": -89.3841663,
+  "query": "Madison, Wisconsin"
+ },
+ "madrid, spain": {
+  "label": "Madrid, Comunidad de Madrid, España",
+  "lat": 40.416782,
+  "lng": -3.703507,
+  "query": "Madrid, Spain"
+ },
+ "magdeburg": {
+  "label": "Magdeburg, Sachsen-Anhalt, Deutschland",
+  "lat": 52.1314783,
+  "lng": 11.6400789,
+  "query": "Magdeburg"
+ },
+ "magdeburg, germany": {
+  "label": "Magdeburg, Sachsen-Anhalt, Deutschland",
+  "lat": 52.1314783,
+  "lng": 11.6400789,
+  "query": "Magdeburg, Germany"
+ },
+ "mainz": {
+  "label": "Mainz, Rheinland-Pfalz, Deutschland",
+  "lat": 49.9995205,
+  "lng": 8.2736253,
+  "query": "Mainz"
+ },
+ "mainz, germany": {
+  "label": "Mainz, Rheinland-Pfalz, Deutschland",
+  "lat": 49.9995205,
+  "lng": 8.2736253,
+  "query": "Mainz, Germany"
+ },
+ "mallorca, spain": {
+  "label": "Mallorca, Illes Balears, España",
+  "lat": 39.613432,
+  "lng": 2.8829185,
+  "query": "Mallorca, Spain"
+ },
+ "manchester, england": {
+  "label": "Manchester, Greater Manchester, England, United Kingdom",
+  "lat": 53.4424618,
+  "lng": -2.2324547,
+  "query": "Manchester, England"
+ },
+ "manchester, uk": {
+  "label": "Manchester, Greater Manchester, England, United Kingdom",
+  "lat": 53.4424618,
+  "lng": -2.2324547,
+  "query": "Manchester, UK"
+ },
+ "marseille, france": {
+  "label": "Marseille, Bouches-du-Rhône, Provence-Alpes-Côte d'Azur, France métropolitaine, ",
+  "lat": 43.2963986,
+  "lng": 5.3777888,
+  "query": "Marseille, France"
+ },
+ "mashhad, iran": {
+  "label": "شهر مشهد, بخش مرکزی شهرستان مشهد, شهرستان مشهد, استان خراسان رضوی, ایران",
+  "lat": 36.2974945,
+  "lng": 59.6059232,
+  "query": "Mashhad, Iran"
+ },
+ "maynard, united states": {
+  "label": "Maynard, Middlesex County, Massachusetts, 01754, United States",
+  "lat": 42.4321064,
+  "lng": -71.4539683,
+  "query": "Maynard, United States"
+ },
+ "maynard, usa": {
+  "label": "Maynard, Middlesex County, Massachusetts, 01754, United States",
+  "lat": 42.4321064,
+  "lng": -71.4539683,
+  "query": "Maynard, USA"
+ },
+ "mbzuai": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "MBZUAI"
+ },
+ "melbourne, australia": {
+  "label": "Melbourne, Victoria, Australia",
+  "lat": -37.8142454,
+  "lng": 144.9631732,
+  "query": "Melbourne, Australia"
+ },
+ "menlo park, ca, us": {
+  "label": "Menlo Park, San Mateo County, California, 94025, United States",
+  "lat": 37.4519671,
+  "lng": -122.177992,
+  "query": "Menlo Park, CA, US"
+ },
+ "menlo park, california, usa": {
+  "label": "Menlo Park, San Mateo County, California, 94025, United States",
+  "lat": 37.4519671,
+  "lng": -122.177992,
+  "query": "Menlo Park, California, USA"
+ },
+ "menlo park, united states": {
+  "label": "Menlo Park, San Mateo County, California, 94025, United States",
+  "lat": 37.4519671,
+  "lng": -122.177992,
+  "query": "Menlo Park, United States"
+ },
+ "menlo park, usa": {
+  "label": "Menlo Park, San Mateo County, California, 94025, United States",
+  "lat": 37.4519671,
+  "lng": -122.177992,
+  "query": "Menlo Park, USA"
+ },
+ "mid-atlantic ridge, atlantic ocean": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Mid-Atlantic Ridge, Atlantic Ocean"
+ },
+ "mila": {
+  "label": "Milano, Rodano, Milano, Lombardia, Italia",
+  "lat": 45.4641943,
+  "lng": 9.1896346,
+  "query": "Mila"
+ },
+ "milan, italy": {
+  "label": "Milano, Rodano, Milano, Lombardia, Italia",
+  "lat": 45.4641943,
+  "lng": 9.1896346,
+  "query": "Milan, Italy"
+ },
+ "miletus": {
+  "label": "Miletus, Doddridge County, West Virginia, United States",
+  "lat": 39.2306436,
+  "lng": -80.588709,
+  "query": "Miletus"
+ },
+ "miletus, turkey": {
+  "label": "Milet, 09-55, Balat, Didim, Aydın, Ege Bölgesi, Türkiye",
+  "lat": 37.5318313,
+  "lng": 27.2798246,
+  "query": "Miletus, Turkey"
+ },
+ "milwaukee, wisconsin": {
+  "label": "Milwaukee, Milwaukee County, Wisconsin, United States",
+  "lat": 43.0386475,
+  "lng": -87.9090751,
+  "query": "Milwaukee, Wisconsin"
+ },
+ "minneapolis, mn, us": {
+  "label": "Minneapolis, Hennepin County, Minnesota, United States",
+  "lat": 44.9772995,
+  "lng": -93.2654692,
+  "query": "Minneapolis, MN, US"
+ },
+ "mistral ai": {
+  "label": "Mistral, Cuatro Avenidas, Tandil, Partido de Tandil, Buenos Aires, B7000, Argent",
+  "lat": -37.3174176,
+  "lng": -59.1457722,
+  "query": "Mistral AI"
+ },
+ "mit lincoln laboratory": {
+  "label": "MIT Lincoln Laboratory, 244, Lexington, Middlesex County, Massachusetts, 02420, ",
+  "lat": 42.4571974,
+  "lng": -71.2668016,
+  "query": "MIT Lincoln Laboratory"
+ },
+ "mit rahina, egypt": {
+  "label": "ميت رهينة, الجيزة, 12921, مصر",
+  "lat": 29.853765,
+  "lng": 31.2538075,
+  "query": "Mit Rahina, Egypt"
+ },
+ "montreal": {
+  "label": "Montréal, Agglomération de Montréal, Montréal (région administrative), Québec, C",
+  "lat": 45.5031824,
+  "lng": -73.5698065,
+  "query": "Montreal"
+ },
+ "montreal, canada": {
+  "label": "Montréal, Agglomération de Montréal, Montréal (région administrative), Québec, C",
+  "lat": 45.5031824,
+  "lng": -73.5698065,
+  "query": "Montreal, Canada"
+ },
+ "montreal, quebec, canada": {
+  "label": "Montréal, Agglomération de Montréal, Montréal (région administrative), Québec, C",
+  "lat": 45.5031824,
+  "lng": -73.5698065,
+  "query": "Montreal, Quebec, Canada"
+ },
+ "moravia, czech republic": {
+  "label": "Morava, Česko",
+  "lat": 49.4307215,
+  "lng": 17.0679827,
+  "query": "Moravia, Czech Republic"
+ },
+ "moravian museum, brno": {
+  "label": "Pražákův palác - Moravian Gallery, 18, Husova, Brno-město, Brno-střed, Brno, okr",
+  "lat": 49.1954755,
+  "lng": 16.6042526,
+  "query": "Moravian Museum, Brno"
+ },
+ "moscow, russia": {
+  "label": "Москва, Центральный федеральный округ, Россия",
+  "lat": 55.625578,
+  "lng": 37.6063916,
+  "query": "Moscow, Russia"
+ },
+ "mountain view, ca, us": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, CA, US"
+ },
+ "mountain view, ca, usa": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, CA, USA"
+ },
+ "mountain view, california, us": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, California, US"
+ },
+ "mountain view, california, usa": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, California, USA"
+ },
+ "mountain view, united states": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, United States"
+ },
+ "mountain view, usa": {
+  "label": "Mountain View, Santa Clara County, California, United States",
+  "lat": 37.3893889,
+  "lng": -122.0832101,
+  "query": "Mountain View, USA"
+ },
+ "mulhouse, france": {
+  "label": "Mulhouse, Haut-Rhin, Collectivité européenne d'Alsace, Grand Est, France métropo",
+  "lat": 47.7467233,
+  "lng": 7.3389937,
+  "query": "Mulhouse, France"
+ },
+ "mumbai, india": {
+  "label": "Mumbai, Mumbai Suburban District, Maharashtra, 400051, India",
+  "lat": 19.054999,
+  "lng": 72.8692035,
+  "query": "Mumbai, India"
+ },
+ "munich, germany": {
+  "label": "München, Bayern, Deutschland",
+  "lat": 48.1371079,
+  "lng": 11.5753822,
+  "query": "Munich, Germany"
+ },
+ "murray hill, new jersey": {
+  "label": "Murray Hill, New Providence, Union County, New Jersey, 07974, United States",
+  "lat": 40.6953793,
+  "lng": -74.4009849,
+  "query": "Murray Hill, New Jersey"
+ },
+ "murray hill, new jersey, usa": {
+  "label": "Murray Hill, New Providence, Union County, New Jersey, 07974, United States",
+  "lat": 40.6953793,
+  "lng": -74.4009849,
+  "query": "Murray Hill, New Jersey, USA"
+ },
+ "murray hill, nj, us": {
+  "label": "Murray Hill, New Providence, Union County, New Jersey, 07974, United States",
+  "lat": 40.6953793,
+  "lng": -74.4009849,
+  "query": "Murray Hill, NJ, US"
+ },
+ "murray hill, nj, usa": {
+  "label": "Murray Hill, New Providence, Union County, New Jersey, 07974, United States",
+  "lat": 40.6953793,
+  "lng": -74.4009849,
+  "query": "Murray Hill, NJ, USA"
+ },
+ "murray hill, united states": {
+  "label": "Murray Hill, Manhattan Community Board 6, Manhattan, New York County, New York, ",
+  "lat": 40.7481574,
+  "lng": -73.97875,
+  "query": "Murray Hill, United States"
+ },
+ "murray hill, usa": {
+  "label": "Murray Hill, Manhattan Community Board 6, Manhattan, New York County, New York, ",
+  "lat": 40.7481574,
+  "lng": -73.97875,
+  "query": "Murray Hill, USA"
+ },
+ "nairobi": {
+  "label": "Nairobi, Kenya",
+  "lat": -1.302398,
+  "lng": 36.8288509,
+  "query": "Nairobi"
+ },
+ "nairobi, kenya": {
+  "label": "Nairobi, Kenya",
+  "lat": -1.2890006,
+  "lng": 36.8172812,
+  "query": "Nairobi, Kenya"
+ },
+ "namibia": {
+  "label": "Namibia",
+  "lat": -23.2335499,
+  "lng": 17.3231107,
+  "query": "Namibia"
+ },
+ "natick, usa": {
+  "label": "Natick, Middlesex County, Massachusetts, United States",
+  "lat": 42.2836393,
+  "lng": -71.346996,
+  "query": "Natick, USA"
+ },
+ "national archaeological museum, athens": {
+  "label": "Εθνικό Αρχαιολογικό Μουσείο, 44, Πατησίων, Μουσείο, 1η Κοινότητα Αθηνών, Αθήνα, ",
+  "lat": 37.9890123,
+  "lng": 23.7329577,
+  "query": "National Archaeological Museum, Athens"
+ },
+ "naumburg, germany": {
+  "label": "Naumburg (Saale), Burgenlandkreis, Sachsen-Anhalt, Deutschland",
+  "lat": 51.1525648,
+  "lng": 11.8099186,
+  "query": "Naumburg, Germany"
+ },
+ "near east (iraq/syria)": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Near East (Iraq/Syria)"
+ },
+ "neem, greenland": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "NEEM, Greenland"
+ },
+ "netherlands": {
+  "label": "Nederland",
+  "lat": 52.2434979,
+  "lng": 5.6343227,
+  "query": "Netherlands"
+ },
+ "neuss, germany": {
+  "label": "Neuss, Rhein-Kreis Neuss, Nordrhein-Westfalen, Deutschland",
+  "lat": 51.1981778,
+  "lng": 6.6916476,
+  "query": "Neuss, Germany"
+ },
+ "new hampshire, united states": {
+  "label": "New Hampshire, United States",
+  "lat": 43.4849133,
+  "lng": -71.6553992,
+  "query": "New Hampshire, United States"
+ },
+ "new hampshire, usa": {
+  "label": "New Hampshire, United States",
+  "lat": 43.4849133,
+  "lng": -71.6553992,
+  "query": "New Hampshire, USA"
+ },
+ "new haven, connecticut": {
+  "label": "New Haven, South Central Connecticut Planning Region, Connecticut, United States",
+  "lat": 41.3082138,
+  "lng": -72.9250518,
+  "query": "New Haven, Connecticut"
+ },
+ "new haven, connecticut, usa": {
+  "label": "New Haven, South Central Connecticut Planning Region, Connecticut, United States",
+  "lat": 41.3082138,
+  "lng": -72.9250518,
+  "query": "New Haven, Connecticut, USA"
+ },
+ "new haven, usa": {
+  "label": "New Haven, South Central Connecticut Planning Region, Connecticut, United States",
+  "lat": 41.3082138,
+  "lng": -72.9250518,
+  "query": "New Haven, USA"
+ },
+ "new york city, usa": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York City, USA"
+ },
+ "new york, new york": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, New York"
+ },
+ "new york, new york, us": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, New York, US"
+ },
+ "new york, new york, usa": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, New York, USA"
+ },
+ "new york, ny, us": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, NY, US"
+ },
+ "new york, ny, usa": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, NY, USA"
+ },
+ "new york, united states": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, United States"
+ },
+ "new york, usa": {
+  "label": "New York, United States",
+  "lat": 40.7127281,
+  "lng": -74.0060152,
+  "query": "New York, USA"
+ },
+ "nicaea, turkey": {
+  "label": "İznik, Bursa, Marmara Bölgesi, 16860, Türkiye",
+  "lat": 40.4303445,
+  "lng": 29.7223732,
+  "query": "Nicaea, Turkey"
+ },
+ "nice, france": {
+  "label": "Nice, Alpes-Maritimes, Provence-Alpes-Côte d'Azur, France métropolitaine, France",
+  "lat": 43.7009358,
+  "lng": 7.2683912,
+  "query": "Nice, France"
+ },
+ "nicopolis, greece": {
+  "label": "Νικόπολη, Φιλιππιάδα - Πρέβεζα, Νικόπολη, Δήμος Πρέβεζας, Περιφερειακή Ενότητα Π",
+  "lat": 39.0090619,
+  "lng": 20.7343322,
+  "query": "Nicopolis, Greece"
+ },
+ "nigeria": {
+  "label": "Nigeria",
+  "lat": 9.6000359,
+  "lng": 7.9999721,
+  "query": "Nigeria"
+ },
+ "nineveh, iraq": {
+  "label": "نينوى, 102-7, محلة 102, النصر, الموصل, ناحية مرکز قضاء الموصل, قضاء الموصل, محاف",
+  "lat": 36.3564339,
+  "lng": 43.1621647,
+  "query": "Nineveh, Iraq"
+ },
+ "nordic europe": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Nordic Europe"
+ },
+ "north africa": {
+  "label": "Nord d'Àfrica, el Poble-sec, Sants-Montjuïc, Barcelona, Barcelonès, Barcelona, C",
+  "lat": 41.362599,
+  "lng": 2.159665,
+  "query": "North Africa"
+ },
+ "north china": {
+  "label": "North China, North Village Drive, Oak Ridge, Centerville, Washington Township, M",
+  "lat": 39.6559878,
+  "lng": -84.1566207,
+  "query": "North China"
+ },
+ "northampton, england": {
+  "label": "Northampton, West Northamptonshire, England, United Kingdom",
+  "lat": 52.2343297,
+  "lng": -0.9028043,
+  "query": "Northampton, England"
+ },
+ "northern cape, south africa": {
+  "label": "Northern Cape, South Africa",
+  "lat": -29.573402,
+  "lng": 21.2051361,
+  "query": "Northern Cape, South Africa"
+ },
+ "norwalk, united states": {
+  "label": "Norwalk, Western Connecticut Planning Region, Connecticut, United States",
+  "lat": 41.1175966,
+  "lng": -73.4078968,
+  "query": "Norwalk, United States"
+ },
+ "norway": {
+  "label": "Norge",
+  "lat": 61.1529386,
+  "lng": 8.7876653,
+  "query": "Norway"
+ },
+ "nottingham, england": {
+  "label": "City of Nottingham, Nottinghamshire, East Midlands, England, United Kingdom",
+  "lat": 52.9534193,
+  "lng": -1.1496461,
+  "query": "Nottingham, England"
+ },
+ "novosibirsk, russia": {
+  "label": "Новосибирск, Новосибирская область, Сибирский федеральный округ, 630000, Россия",
+  "lat": 54.9678145,
+  "lng": 82.9515989,
+  "query": "Novosibirsk, Russia"
+ },
+ "oakland, california, usa": {
+  "label": "Oakland, Alameda County, California, United States",
+  "lat": 37.8044557,
+  "lng": -122.271356,
+  "query": "Oakland, California, USA"
+ },
+ "obukhiv, ukraine": {
+  "label": "Обухів, Обухівська міська громада, Обухівський район, Київська область, Україна",
+  "lat": 50.1101633,
+  "lng": 30.6269696,
+  "query": "Obukhiv, Ukraine"
+ },
+ "olduvai gorge, tanzania": {
+  "label": "Olduvai Gorge, Ngorongoro, Arusha, Northern Zone, Tanzania",
+  "lat": -2.9764393,
+  "lng": 35.3378868,
+  "query": "Olduvai Gorge, Tanzania"
+ },
+ "ontario, canada": {
+  "label": "Ontario, Canada",
+  "lat": 50.000678,
+  "lng": -86.000977,
+  "query": "Ontario, Canada"
+ },
+ "orlando, florida": {
+  "label": "Orlando, Orange County, Florida, United States",
+  "lat": 28.5421218,
+  "lng": -81.379045,
+  "query": "Orlando, Florida"
+ },
+ "osaka, japan": {
+  "label": "大阪市, 大阪府, 日本",
+  "lat": 34.6937569,
+  "lng": 135.5014539,
+  "query": "Osaka, Japan"
+ },
+ "oslo, norway": {
+  "label": "Oslo, Norge",
+  "lat": 59.9133301,
+  "lng": 10.7389701,
+  "query": "Oslo, Norway"
+ },
+ "ostend, belgium": {
+  "label": "Oostende, West-Vlaanderen, Vlaanderen, 8400, België / Belgique / Belgien",
+  "lat": 51.2258565,
+  "lng": 2.919496,
+  "query": "Ostend, Belgium"
+ },
+ "otavi, namibia": {
+  "label": "Otavi, Otjozondjupa Region, Namibia",
+  "lat": -19.6412405,
+  "lng": 17.3440906,
+  "query": "Otavi, Namibia"
+ },
+ "oxford, england": {
+  "label": "Oxford, Oxfordshire, England, United Kingdom",
+  "lat": 51.7520131,
+  "lng": -1.2578499,
+  "query": "Oxford, England"
+ },
+ "oxford, england, uk": {
+  "label": "Oxford, Oxfordshire, England, United Kingdom",
+  "lat": 51.7520131,
+  "lng": -1.2578499,
+  "query": "Oxford, England, UK"
+ },
+ "oxford, uk": {
+  "label": "Oxford, Oxfordshire, England, United Kingdom",
+  "lat": 51.7520131,
+  "lng": -1.2578499,
+  "query": "Oxford, UK"
+ },
+ "oxford, united kingdom": {
+  "label": "Oxford, Oxfordshire, England, United Kingdom",
+  "lat": 51.7520131,
+  "lng": -1.2578499,
+  "query": "Oxford, United Kingdom"
+ },
+ "pakistan / nw india": {
+  "label": "High Commission of Pakistan, 2/50-G, Shanti Path, Chanakyapuri, New Delhi, Delhi",
+  "lat": 28.5938052,
+  "lng": 77.1910425,
+  "query": "Pakistan / NW India"
+ },
+ "palermo, italy": {
+  "label": "Palermo, Sicilia, Italia",
+  "lat": 38.1112268,
+  "lng": 13.3524434,
+  "query": "Palermo, Italy"
+ },
+ "palermo, sicily": {
+  "label": "Palermo, Sicilia, Italia",
+  "lat": 38.1112268,
+  "lng": 13.3524434,
+  "query": "Palermo, Sicily"
+ },
+ "palo alto, ca, us": {
+  "label": "Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4443293,
+  "lng": -122.1598465,
+  "query": "Palo Alto, CA, US"
+ },
+ "palo alto, california": {
+  "label": "Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4443293,
+  "lng": -122.1598465,
+  "query": "Palo Alto, California"
+ },
+ "palo alto, california, usa": {
+  "label": "Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4443293,
+  "lng": -122.1598465,
+  "query": "Palo Alto, California, USA"
+ },
+ "palo alto, united states": {
+  "label": "Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4443293,
+  "lng": -122.1598465,
+  "query": "Palo Alto, United States"
+ },
+ "paris, france": {
+  "label": "Paris, Île-de-France, France métropolitaine, France",
+  "lat": 48.8534951,
+  "lng": 2.3483915,
+  "query": "Paris, France"
+ },
+ "pasadena, ca, usa": {
+  "label": "Pasadena, Los Angeles County, California, United States",
+  "lat": 34.1476507,
+  "lng": -118.144155,
+  "query": "Pasadena, CA, USA"
+ },
+ "pasadena, california": {
+  "label": "Pasadena, Los Angeles County, California, United States",
+  "lat": 34.1476507,
+  "lng": -118.144155,
+  "query": "Pasadena, California"
+ },
+ "pasadena, california, usa": {
+  "label": "Pasadena, Los Angeles County, California, United States",
+  "lat": 34.1476507,
+  "lng": -118.144155,
+  "query": "Pasadena, California, USA"
+ },
+ "pasadena, united states": {
+  "label": "Pasadena, Los Angeles County, California, United States",
+  "lat": 34.1476507,
+  "lng": -118.144155,
+  "query": "Pasadena, United States"
+ },
+ "pasadena, usa": {
+  "label": "Pasadena, Los Angeles County, California, United States",
+  "lat": 34.1476507,
+  "lng": -118.144155,
+  "query": "Pasadena, USA"
+ },
+ "patagonia, argentina": {
+  "label": "Patagonia, Río Gallegos, Municipio de Río Gallegos, Güer Aike, Santa Cruz, Argen",
+  "lat": -51.6538867,
+  "lng": -69.2921939,
+  "query": "Patagonia, Argentina"
+ },
+ "patna, india": {
+  "label": "Patna, Patna Rural, Patna, Bihar, India",
+  "lat": 25.6093239,
+  "lng": 85.1235252,
+  "query": "Patna, India"
+ },
+ "peenemünde, germany": {
+  "label": "Peenemünde, Usedom-Nord, Vorpommern-Greifswald, Mecklenburg-Vorpommern, 17449, D",
+  "lat": 54.1355894,
+  "lng": 13.7730504,
+  "query": "Peenemünde, Germany"
+ },
+ "peninsula between egypt and the levant": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Peninsula between Egypt and the Levant"
+ },
+ "pergamon, turkey": {
+  "label": "Pergamon, Eski Elektrik Fabrikası Caddesi, İslamsaray Mahallesi, Bergama, İzmir,",
+  "lat": 39.1306226,
+  "lng": 27.1844821,
+  "query": "Pergamon, Turkey"
+ },
+ "persia, iran": {
+  "label": "استان لرستان, ایران",
+  "lat": 33.5858334,
+  "lng": 48.2395222,
+  "query": "Persia, Iran"
+ },
+ "philadelphia, pennsylvania": {
+  "label": "Philadelphia, Philadelphia County, Pennsylvania, United States",
+  "lat": 39.9527237,
+  "lng": -75.1635262,
+  "query": "Philadelphia, Pennsylvania"
+ },
+ "philadelphia, pennsylvania, usa": {
+  "label": "Philadelphia, Philadelphia County, Pennsylvania, United States",
+  "lat": 39.9527237,
+  "lng": -75.1635262,
+  "query": "Philadelphia, Pennsylvania, USA"
+ },
+ "philadelphia, united states": {
+  "label": "Philadelphia, Philadelphia County, Pennsylvania, United States",
+  "lat": 39.9527237,
+  "lng": -75.1635262,
+  "query": "Philadelphia, United States"
+ },
+ "philadelphia, usa": {
+  "label": "Philadelphia, Philadelphia County, Pennsylvania, United States",
+  "lat": 39.9527237,
+  "lng": -75.1635262,
+  "query": "Philadelphia, USA"
+ },
+ "pilbara craton, western australia": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Pilbara Craton, Western Australia"
+ },
+ "pisa, italy": {
+  "label": "Pisa, Toscana, Italia",
+  "lat": 43.4714722,
+  "lng": 10.6797912,
+  "query": "Pisa, Italy"
+ },
+ "pittsburgh, pa, us": {
+  "label": "Pittsburgh, Allegheny County, Pennsylvania, United States",
+  "lat": 40.4406968,
+  "lng": -80.0025666,
+  "query": "Pittsburgh, PA, US"
+ },
+ "pittsburgh, united states": {
+  "label": "Pittsburgh, Allegheny County, Pennsylvania, United States",
+  "lat": 40.4406968,
+  "lng": -80.0025666,
+  "query": "Pittsburgh, United States"
+ },
+ "pittsburgh, usa": {
+  "label": "Pittsburgh, Allegheny County, Pennsylvania, United States",
+  "lat": 40.4406968,
+  "lng": -80.0025666,
+  "query": "Pittsburgh, USA"
+ },
+ "pompeii, italy": {
+  "label": "Pompei Antica, Masseria Curato, Pompei, Napoli, Campania, 80045, Italia",
+  "lat": 40.7517375,
+  "lng": 14.4905636,
+  "query": "Pompeii, Italy"
+ },
+ "prague, czech republic": {
+  "label": "Praha, Česko",
+  "lat": 50.0874654,
+  "lng": 14.4212535,
+  "query": "Prague, Czech Republic"
+ },
+ "pretoria, south africa": {
+  "label": "Pretoria, City of Tshwane Metropolitan Municipality, Gauteng, 0142, South Africa",
+  "lat": -25.7459277,
+  "lng": 28.1879101,
+  "query": "Pretoria, South Africa"
+ },
+ "princeton, new jersey": {
+  "label": "Princeton, Mercer County, New Jersey, United States",
+  "lat": 40.3496953,
+  "lng": -74.6597376,
+  "query": "Princeton, New Jersey"
+ },
+ "princeton, new jersey, usa": {
+  "label": "Princeton, Mercer County, New Jersey, United States",
+  "lat": 40.3496953,
+  "lng": -74.6597376,
+  "query": "Princeton, New Jersey, USA"
+ },
+ "princeton, nj, us": {
+  "label": "Princeton, Mercer County, New Jersey, United States",
+  "lat": 40.3496953,
+  "lng": -74.6597376,
+  "query": "Princeton, NJ, US"
+ },
+ "princeton, nj, usa": {
+  "label": "Princeton, Mercer County, New Jersey, United States",
+  "lat": 40.3496953,
+  "lng": -74.6597376,
+  "query": "Princeton, NJ, USA"
+ },
+ "princeton, united states": {
+  "label": "Princeton, Mercer County, New Jersey, United States",
+  "lat": 40.3496953,
+  "lng": -74.6597376,
+  "query": "Princeton, United States"
+ },
+ "providence, rhode island": {
+  "label": "Providence, Providence County, Rhode Island, United States",
+  "lat": 41.8239891,
+  "lng": -71.4128343,
+  "query": "Providence, Rhode Island"
+ },
+ "providence, rhode island, usa": {
+  "label": "Providence, Providence County, Rhode Island, United States",
+  "lat": 41.8239891,
+  "lng": -71.4128343,
+  "query": "Providence, Rhode Island, USA"
+ },
+ "providence, united states": {
+  "label": "Providence, Providence County, Rhode Island, United States",
+  "lat": 41.8239891,
+  "lng": -71.4128343,
+  "query": "Providence, United States"
+ },
+ "qufu, china": {
+  "label": "曲阜市, 济宁市, 山东省, 中国",
+  "lat": 35.5956915,
+  "lng": 116.987543,
+  "query": "Qufu, China"
+ },
+ "ramat gan, israel": {
+  "label": "רמת גן, נפת תל אביב, מחוז תל אביב, ישראל",
+  "lat": 32.0686867,
+  "lng": 34.8246812,
+  "query": "Ramat Gan, Israel"
+ },
+ "reading, england, uk": {
+  "label": "Reading, England, United Kingdom",
+  "lat": 51.4564242,
+  "lng": -0.9700664,
+  "query": "Reading, England, UK"
+ },
+ "redmond, united states": {
+  "label": "Redmond, King County, Washington, 98052, United States",
+  "lat": 47.6694141,
+  "lng": -122.1238767,
+  "query": "Redmond, United States"
+ },
+ "redmond, wa, us": {
+  "label": "Redmond, King County, Washington, 98052, United States",
+  "lat": 47.6694141,
+  "lng": -122.1238767,
+  "query": "Redmond, WA, US"
+ },
+ "redmond, washington": {
+  "label": "Redmond, King County, Washington, 98052, United States",
+  "lat": 47.6694141,
+  "lng": -122.1238767,
+  "query": "Redmond, Washington"
+ },
+ "redmond, washington, usa": {
+  "label": "Redmond, King County, Washington, 98052, United States",
+  "lat": 47.6694141,
+  "lng": -122.1238767,
+  "query": "Redmond, Washington, USA"
+ },
+ "redwood city, united states": {
+  "label": "Redwood City, San Mateo County, California, United States",
+  "lat": 37.4863239,
+  "lng": -122.232523,
+  "query": "Redwood City, United States"
+ },
+ "redwood shores, usa": {
+  "label": "Redwood Shores, Redwood City, San Mateo County, California, 94065, United States",
+  "lat": 37.5318804,
+  "lng": -122.2480219,
+  "query": "Redwood Shores, USA"
+ },
+ "regensburg, germany": {
+  "label": "Regensburg, Bayern, Deutschland",
+  "lat": 49.0195333,
+  "lng": 12.0974869,
+  "query": "Regensburg, Germany"
+ },
+ "rehovot, israel": {
+  "label": "רחובות, נפת רחובות, מחוז המרכז, ישראל",
+  "lat": 31.8952532,
+  "lng": 34.8105616,
+  "query": "Rehovot, Israel"
+ },
+ "rheineck, germany": {
+  "label": "Rheineck, Bad Breisig, Landkreis Ahrweiler, Rheinland-Pfalz, 56656, Deutschland",
+  "lat": 50.4968769,
+  "lng": 7.3089004,
+  "query": "Rheineck, Germany"
+ },
+ "rocky mountains, us": {
+  "label": "Rocky Mountains, Teton County, Wyoming, United States",
+  "lat": 43.3578532,
+  "lng": -110.917506,
+  "query": "Rocky Mountains, US"
+ },
+ "rome, italy": {
+  "label": "Roma, Roma Capitale, Lazio, Italia",
+  "lat": 41.8933203,
+  "lng": 12.4829321,
+  "query": "Rome, Italy"
+ },
+ "rostock, germany": {
+  "label": "Rostock, Mecklenburg-Vorpommern, Deutschland",
+  "lat": 54.0886707,
+  "lng": 12.1400211,
+  "query": "Rostock, Germany"
+ },
+ "royal institution, london": {
+  "label": "Royal Institution, 21, Albemarle Street, St. James's, East Marylebone, Mayfair, ",
+  "lat": 51.5097495,
+  "lng": -0.1423309,
+  "query": "Royal Institution, London"
+ },
+ "russia": {
+  "label": "Россия",
+  "lat": 64.6863136,
+  "lng": 97.7453061,
+  "query": "Russia"
+ },
+ "russia / baltic": {
+  "label": "Балтийский завод, округ № 7, Санкт-Петербург, Северо-Западный федеральный округ,",
+  "lat": 59.9235343,
+  "lng": 30.2601561,
+  "query": "Russia / Baltic"
+ },
+ "sacramento, california, usa": {
+  "label": "Sacramento, Sacramento County, California, United States",
+  "lat": 38.5810606,
+  "lng": -121.493895,
+  "query": "Sacramento, California, USA"
+ },
+ "saint petersburg, russia": {
+  "label": "Санкт-Петербург, Северо-Западный федеральный округ, Россия",
+  "lat": 59.9606739,
+  "lng": 30.1586551,
+  "query": "Saint Petersburg, Russia"
+ },
+ "sakana ai": {
+  "label": "Sakana, Baztan, Baztan-Bidasoa, Navarra, Navarra / Nafarroa, 31704, España",
+  "lat": 43.1428431,
+  "lng": -1.4138926,
+  "query": "Sakana AI"
+ },
+ "salamis, greece": {
+  "label": "Σαλαμίνα, Δημοτική Ενότητα Αμπελακίων, Δήμος Σαλαμίνας, Περιφερειακή Ενότητα Νήσ",
+  "lat": 37.9383706,
+  "lng": 23.5083736,
+  "query": "Salamis, Greece"
+ },
+ "salzburg, austria": {
+  "label": "Salzburg, Österreich",
+  "lat": 47.7981346,
+  "lng": 13.0464806,
+  "query": "Salzburg, Austria"
+ },
+ "samos, greece": {
+  "label": "Σάμος, Περιφερειακή Ενότητα Σάμου, Περιφέρεια Βόρειου Αιγαίου, Αποκεντρωμένη Διο",
+  "lat": 37.7246162,
+  "lng": 26.8192919,
+  "query": "Samos, Greece"
+ },
+ "san diego, ca, usa": {
+  "label": "San Diego, San Diego County, California, United States",
+  "lat": 32.7157062,
+  "lng": -117.1638284,
+  "query": "San Diego, CA, USA"
+ },
+ "san diego, california": {
+  "label": "San Diego, San Diego County, California, United States",
+  "lat": 32.7157062,
+  "lng": -117.1638284,
+  "query": "San Diego, California"
+ },
+ "san diego, california, us": {
+  "label": "San Diego, San Diego County, California, United States",
+  "lat": 32.7157062,
+  "lng": -117.1638284,
+  "query": "San Diego, California, US"
+ },
+ "san diego, california, usa": {
+  "label": "San Diego, San Diego County, California, United States",
+  "lat": 32.7157062,
+  "lng": -117.1638284,
+  "query": "San Diego, California, USA"
+ },
+ "san francisco bay, usa": {
+  "label": "San Francisco Bay, San Mateo County, California, United States",
+  "lat": 37.7140291,
+  "lng": -122.3077942,
+  "query": "San Francisco Bay, USA"
+ },
+ "san francisco, ca, us": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, CA, US"
+ },
+ "san francisco, ca, usa": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, CA, USA"
+ },
+ "san francisco, california": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, California"
+ },
+ "san francisco, california, us": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, California, US"
+ },
+ "san francisco, california, usa": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, California, USA"
+ },
+ "san francisco, united states": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, United States"
+ },
+ "san francisco, usa": {
+  "label": "San Francisco, California, United States",
+  "lat": 37.7879363,
+  "lng": -122.4075201,
+  "query": "San Francisco, USA"
+ },
+ "san jose, united states": {
+  "label": "San Jose, Santa Clara County, California, United States",
+  "lat": 37.3361663,
+  "lng": -121.890591,
+  "query": "San Jose, United States"
+ },
+ "san rafael, usa": {
+  "label": "San Rafael, Marin County, California, United States",
+  "lat": 37.9747795,
+  "lng": -122.5316686,
+  "query": "San Rafael, USA"
+ },
+ "santa clara, ca, us": {
+  "label": "Santa Clara County, California, United States",
+  "lat": 37.2333253,
+  "lng": -121.6846349,
+  "query": "Santa Clara, CA, US"
+ },
+ "santa clara, ca, usa": {
+  "label": "Santa Clara County, California, United States",
+  "lat": 37.2333253,
+  "lng": -121.6846349,
+  "query": "Santa Clara, CA, USA"
+ },
+ "santa clara, california": {
+  "label": "Santa Clara County, California, United States",
+  "lat": 37.2333253,
+  "lng": -121.6846349,
+  "query": "Santa Clara, California"
+ },
+ "santa clara, california, usa": {
+  "label": "Santa Clara County, California, United States",
+  "lat": 37.2333253,
+  "lng": -121.6846349,
+  "query": "Santa Clara, California, USA"
+ },
+ "santa clara, united states": {
+  "label": "Santa Clara County, California, United States",
+  "lat": 37.2333253,
+  "lng": -121.6846349,
+  "query": "Santa Clara, United States"
+ },
+ "santa cruz, california, usa": {
+  "label": "Santa Cruz County, California, United States",
+  "lat": 37.050096,
+  "lng": -121.99059,
+  "query": "Santa Cruz, California, USA"
+ },
+ "santa fe, new mexico": {
+  "label": "Santa Fe, Santa Fe County, New Mexico, United States",
+  "lat": 35.6876096,
+  "lng": -105.938456,
+  "query": "Santa Fe, New Mexico"
+ },
+ "santa monica, california, usa": {
+  "label": "Santa Monica, Los Angeles County, California, United States",
+  "lat": 34.0194704,
+  "lng": -118.491227,
+  "query": "Santa Monica, California, USA"
+ },
+ "schelklingen, germany": {
+  "label": "Schelklingen, Alb-Donau-Kreis, Baden-Württemberg, 89601, Deutschland",
+  "lat": 48.3755469,
+  "lng": 9.7341832,
+  "query": "Schelklingen, Germany"
+ },
+ "schwetzingen, germany": {
+  "label": "Schwetzingen, Rhein-Neckar-Kreis, Baden-Württemberg, 68782, Deutschland",
+  "lat": 49.3832919,
+  "lng": 8.5735135,
+  "query": "Schwetzingen, Germany"
+ },
+ "science museum, london": {
+  "label": "Science Museum, Museum Lane, Brompton, Royal Borough of Kensington and Chelsea, ",
+  "lat": 51.4973983,
+  "lng": -0.1746726,
+  "query": "Science Museum, London"
+ },
+ "scotland, uk": {
+  "label": "Alba / Scotland, United Kingdom",
+  "lat": 56.7861112,
+  "lng": -4.1140518,
+  "query": "Scotland, UK"
+ },
+ "scottsdale, az, usa": {
+  "label": "Scottsdale, Maricopa County, Arizona, United States",
+  "lat": 33.4942189,
+  "lng": -111.926018,
+  "query": "Scottsdale, AZ, USA"
+ },
+ "sea of tranquility, moon": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Sea of Tranquility, Moon"
+ },
+ "seattle, united states": {
+  "label": "Seattle, King County, Washington, United States",
+  "lat": 47.6038321,
+  "lng": -122.330062,
+  "query": "Seattle, United States"
+ },
+ "seattle, usa": {
+  "label": "Seattle, King County, Washington, United States",
+  "lat": 47.6038321,
+  "lng": -122.330062,
+  "query": "Seattle, USA"
+ },
+ "seattle, wa, us": {
+  "label": "Seattle, King County, Washington, United States",
+  "lat": 47.6038321,
+  "lng": -122.330062,
+  "query": "Seattle, WA, US"
+ },
+ "seattle, washington": {
+  "label": "Seattle, King County, Washington, United States",
+  "lat": 47.6038321,
+  "lng": -122.330062,
+  "query": "Seattle, Washington"
+ },
+ "seattle, washington, usa": {
+  "label": "Seattle, King County, Washington, United States",
+  "lat": 47.6038321,
+  "lng": -122.330062,
+  "query": "Seattle, Washington, USA"
+ },
+ "seoul, south korea": {
+  "label": "서울특별시, 대한민국",
+  "lat": 37.5666791,
+  "lng": 126.9782914,
+  "query": "Seoul, South Korea"
+ },
+ "serbia, southeast europe": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Serbia, Southeast Europe"
+ },
+ "shanghai, china": {
+  "label": "上海市, 中国",
+  "lat": 31.2312707,
+  "lng": 121.4700152,
+  "query": "Shanghai, China"
+ },
+ "shenzhen, china": {
+  "label": "深圳市, 广东省, 中国",
+  "lat": 22.5445741,
+  "lng": 114.0545429,
+  "query": "Shenzhen, China"
+ },
+ "shrewsbury, england": {
+  "label": "Shrewsbury, Shropshire, England, United Kingdom",
+  "lat": 52.707755,
+  "lng": -2.7540658,
+  "query": "Shrewsbury, England"
+ },
+ "siena, italy": {
+  "label": "Siena, Toscana, Italia",
+  "lat": 43.1672059,
+  "lng": 11.467561,
+  "query": "Siena, Italy"
+ },
+ "silver spring, maryland, usa": {
+  "label": "Silver Spring, Montgomery County, Maryland, United States",
+  "lat": 38.9997621,
+  "lng": -77.0240371,
+  "query": "Silver Spring, Maryland, USA"
+ },
+ "silver spring, united states": {
+  "label": "Silver Spring, Montgomery County, Maryland, United States",
+  "lat": 38.9997621,
+  "lng": -77.0240371,
+  "query": "Silver Spring, United States"
+ },
+ "sinai, egypt": {
+  "label": "سيناء, مصر",
+  "lat": 29.5231697,
+  "lng": 33.8054726,
+  "query": "Sinai, Egypt"
+ },
+ "singapore": {
+  "label": "Singapore",
+  "lat": 1.357107,
+  "lng": 103.8194992,
+  "query": "Singapore"
+ },
+ "smithsonian, washington, d.c.": {
+  "label": "Smithsonian, Jefferson Drive Southwest, Ward 2, Washington, District of Columbia",
+  "lat": 38.8885156,
+  "lng": -77.0285572,
+  "query": "Smithsonian, Washington, D.C."
+ },
+ "sofia, bulgaria": {
+  "label": "София, Средец, Столична, София-град, България",
+  "lat": 42.6977028,
+  "lng": 23.3217359,
+  "query": "Sofia, Bulgaria"
+ },
+ "south africa": {
+  "label": "South Africa",
+  "lat": -28.8166236,
+  "lng": 24.991639,
+  "query": "South Africa"
+ },
+ "south america": {
+  "label": "América do Sul;América del Sur",
+  "lat": -21.0002179,
+  "lng": -61.0006565,
+  "query": "South America"
+ },
+ "south asia": {
+  "label": "Akvo South Asia Hub Office, Choudhary Hukum Chand Marg, Green Park Extension, Ha",
+  "lat": 28.5604411,
+  "lng": 77.2022513,
+  "query": "South Asia"
+ },
+ "south australia": {
+  "label": "South Australia, Australia",
+  "lat": -30.5343665,
+  "lng": 135.6301212,
+  "query": "South Australia"
+ },
+ "south bend, united states": {
+  "label": "South Bend, Saint Joseph County, Indiana, United States",
+  "lat": 41.6833813,
+  "lng": -86.2500066,
+  "query": "South Bend, United States"
+ },
+ "south india": {
+  "label": "South India, Inner Ring Road, Rambagh Colony, Attapur, Ward 61 Attapur, Greater ",
+  "lat": 17.3615965,
+  "lng": 78.4276746,
+  "query": "South India"
+ },
+ "south korea": {
+  "label": "대한민국",
+  "lat": 36.638392,
+  "lng": 127.6961188,
+  "query": "South Korea"
+ },
+ "southampton, england, uk": {
+  "label": "Southampton, England, United Kingdom",
+  "lat": 50.9025349,
+  "lng": -1.404189,
+  "query": "Southampton, England, UK"
+ },
+ "southern argentina / chile": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Southern Argentina / Chile"
+ },
+ "southern mesopotamia": {
+  "label": "Mesopotamia, 102, улица Куникова, Южный район, Новороссийск, городской округ Нов",
+  "lat": 44.6918603,
+  "lng": 37.7629889,
+  "query": "Southern Mesopotamia"
+ },
+ "st andrews, scotland": {
+  "label": "St Andrews, Fife, Alba / Scotland, KY16 9NU, United Kingdom",
+  "lat": 56.3403678,
+  "lng": -2.795044,
+  "query": "St Andrews, Scotland"
+ },
+ "st andrews, united kingdom": {
+  "label": "St Andrews, Fife, Alba / Scotland, KY16 9NU, United Kingdom",
+  "lat": 56.3403678,
+  "lng": -2.795044,
+  "query": "St Andrews, United Kingdom"
+ },
+ "st. paul, minnesota, usa": {
+  "label": "Saint Paul, Ramsey County, Minnesota, United States",
+  "lat": 44.9497487,
+  "lng": -93.0931028,
+  "query": "St. Paul, Minnesota, USA"
+ },
+ "st. petersburg, russia": {
+  "label": "Санкт-Петербург, Северо-Западный федеральный округ, Россия",
+  "lat": 59.9606739,
+  "lng": 30.1586551,
+  "query": "St. Petersburg, Russia"
+ },
+ "stagira": {
+  "label": "Αρχαία Στάγειρα, Σταυρού - Ιερισσού, Ολυμπιάδα, Δήμος Αριστοτέλη, Περιφερειακή Ε",
+  "lat": 40.5913217,
+  "lng": 23.7937806,
+  "query": "Stagira"
+ },
+ "stanford, ca, usa": {
+  "label": "Stanford, Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4265407,
+  "lng": -122.1703055,
+  "query": "Stanford, CA, USA"
+ },
+ "stanford, california": {
+  "label": "Stanford, Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4265407,
+  "lng": -122.1703055,
+  "query": "Stanford, California"
+ },
+ "stanford, california, us": {
+  "label": "Stanford, Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4265407,
+  "lng": -122.1703055,
+  "query": "Stanford, California, US"
+ },
+ "stanford, california, usa": {
+  "label": "Stanford, Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4265407,
+  "lng": -122.1703055,
+  "query": "Stanford, California, USA"
+ },
+ "stanford, usa": {
+  "label": "Stanford, Palo Alto, Santa Clara County, California, United States",
+  "lat": 37.4265407,
+  "lng": -122.1703055,
+  "query": "Stanford, USA"
+ },
+ "stockholm, sweden": {
+  "label": "Stockholm, Stockholms kommun, Stockholms län, 111 29, Sverige",
+  "lat": 59.3251172,
+  "lng": 18.0710935,
+  "query": "Stockholm, Sweden"
+ },
+ "strasbourg, germany": {
+  "label": "Kulturwehr, Barrage Agricole Kehl-Strasbourg, Kehl, Ortenaukreis, Baden-Württemb",
+  "lat": 48.5460135,
+  "lng": 7.8050775,
+  "query": "Strasbourg, Germany"
+ },
+ "stuttgart, germany": {
+  "label": "Stuttgart, Baden-Württemberg, Deutschland",
+  "lat": 48.7784485,
+  "lng": 9.1800132,
+  "query": "Stuttgart, Germany"
+ },
+ "sumer, iraq": {
+  "label": "حي سومر, ناحية بغداد الجديدة, قضاء الرصافة, بغداد, بلدية الغدير, قضاء الزوراء, م",
+  "lat": 33.3132591,
+  "lng": 44.4707336,
+  "query": "Sumer, Iraq"
+ },
+ "sunnyvale, ca, us": {
+  "label": "Sunnyvale, Santa Clara County, California, United States",
+  "lat": 37.3688301,
+  "lng": -122.036349,
+  "query": "Sunnyvale, CA, US"
+ },
+ "sunnyvale, california, us": {
+  "label": "Sunnyvale, Santa Clara County, California, United States",
+  "lat": 37.3688301,
+  "lng": -122.036349,
+  "query": "Sunnyvale, California, US"
+ },
+ "susa, iran": {
+  "label": "شهر شوش, بخش مرکزی, شهرستان شوش, استان خوزستان, 64771-55775, ایران",
+  "lat": 32.2003687,
+  "lng": 48.2489839,
+  "query": "Susa, Iran"
+ },
+ "sweden": {
+  "label": "Sverige",
+  "lat": 59.6749712,
+  "lng": 14.5208584,
+  "query": "Sweden"
+ },
+ "sydney, australia": {
+  "label": "Sydney, New South Wales, Australia",
+  "lat": -33.8698439,
+  "lng": 151.2082848,
+  "query": "Sydney, Australia"
+ },
+ "syracuse": {
+  "label": "City of Syracuse, Onondaga County, New York, United States",
+  "lat": 43.0481221,
+  "lng": -76.1474244,
+  "query": "Syracuse"
+ },
+ "syracuse, italy": {
+  "label": "Siracusa, Sicilia, 96100, Italia",
+  "lat": 37.0315752,
+  "lng": 15.2124277,
+  "query": "Syracuse, Italy"
+ },
+ "são paulo": {
+  "label": "São Paulo, Região Sudeste, Brasil",
+  "lat": -23.5506507,
+  "lng": -46.6333824,
+  "query": "São Paulo"
+ },
+ "taraz, kazakhstan": {
+  "label": "Тараз қаласының әкімшілігі, Жамбыл облысы, Қазақстан",
+  "lat": 42.9015945,
+  "lng": 71.3769302,
+  "query": "Taraz, Kazakhstan"
+ },
+ "teddington, london, uk": {
+  "label": "Teddington, Greater London, England, TW11 8EE, United Kingdom",
+  "lat": 51.4277844,
+  "lng": -0.333653,
+  "query": "Teddington, London, UK"
+ },
+ "tel aviv, israel": {
+  "label": "תל־אביב–יפו, נפת תל אביב, מחוז תל אביב, ישראל",
+  "lat": 32.0852997,
+  "lng": 34.7818064,
+  "query": "Tel Aviv, Israel"
+ },
+ "telloh, iraq": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Telloh, Iraq"
+ },
+ "texas, usa": {
+  "label": "Texas, United States",
+  "lat": 31.2638905,
+  "lng": -98.5456116,
+  "query": "Texas, USA"
+ },
+ "the hague, netherlands": {
+  "label": "Den Haag, Zuid-Holland, Nederland",
+  "lat": 52.0799838,
+  "lng": 4.3113461,
+  "query": "The Hague, Netherlands"
+ },
+ "thessaloniki, greece": {
+  "label": "Θεσσαλονίκη, Δημοτική Ενότητα Θεσαλονίκης, Δήμος Θεσσαλονίκης, Μητροπολιτική Ενό",
+  "lat": 40.6403167,
+  "lng": 22.9352716,
+  "query": "Thessaloniki, Greece"
+ },
+ "tokyo, japan": {
+  "label": "東京都, 日本",
+  "lat": 35.6768601,
+  "lng": 139.7638947,
+  "query": "Tokyo, Japan"
+ },
+ "toronto, canada": {
+  "label": "Toronto, Golden Horseshoe, Ontario, Canada",
+  "lat": 43.6534817,
+  "lng": -79.3839347,
+  "query": "Toronto, Canada"
+ },
+ "toronto, ontario, canada": {
+  "label": "Toronto, Golden Horseshoe, Ontario, Canada",
+  "lat": 43.6534817,
+  "lng": -79.3839347,
+  "query": "Toronto, Ontario, Canada"
+ },
+ "toruń": {
+  "label": "Toruń, województwo kujawsko-pomorskie, Polska",
+  "lat": 53.0102721,
+  "lng": 18.6048094,
+  "query": "Toruń"
+ },
+ "toulouse, france": {
+  "label": "Toulouse, Haute-Garonne, Occitanie, France métropolitaine, France",
+  "lat": 43.6044638,
+  "lng": 1.4442433,
+  "query": "Toulouse, France"
+ },
+ "trinil (sangiran), java, indonesia": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Trinil (Sangiran), Java, Indonesia"
+ },
+ "tucson, arizona": {
+  "label": "Tucson, Pima County, Arizona, United States",
+  "lat": 32.2228765,
+  "lng": -110.974847,
+  "query": "Tucson, Arizona"
+ },
+ "tucson, united states": {
+  "label": "Tucson, Pima County, Arizona, United States",
+  "lat": 32.2228765,
+  "lng": -110.974847,
+  "query": "Tucson, United States"
+ },
+ "tunisia": {
+  "label": "تونس",
+  "lat": 33.8439408,
+  "lng": 9.400138,
+  "query": "Tunisia"
+ },
+ "turin, italy": {
+  "label": "Torino, Piemonte, Italia",
+  "lat": 45.0677551,
+  "lng": 7.6824892,
+  "query": "Turin, Italy"
+ },
+ "tuscaloosa, alabama": {
+  "label": "Tuscaloosa, Tuscaloosa County, Alabama, United States",
+  "lat": 33.2095614,
+  "lng": -87.5675258,
+  "query": "Tuscaloosa, Alabama"
+ },
+ "tübingen, germany": {
+  "label": "Tübingen, Landkreis Tübingen, Baden-Württemberg, Deutschland",
+  "lat": 48.5203263,
+  "lng": 9.053596,
+  "query": "Tübingen, Germany"
+ },
+ "uganda": {
+  "label": "Uganda",
+  "lat": 1.5333554,
+  "lng": 32.2166578,
+  "query": "Uganda"
+ },
+ "ujjain, india": {
+  "label": "Ujjain, Ujjain NagarTahsil, Ujjain, Madhya Pradesh, 456001, India",
+  "lat": 23.1885131,
+  "lng": 75.7716562,
+  "query": "Ujjain, India"
+ },
+ "uk": {
+  "label": "United Kingdom",
+  "lat": 54.7023545,
+  "lng": -3.2765753,
+  "query": "UK"
+ },
+ "ulm, germany": {
+  "label": "Ulm, Baden-Württemberg, Deutschland",
+  "lat": 48.3984968,
+  "lng": 9.9912458,
+  "query": "Ulm, Germany"
+ },
+ "united arab emirates": {
+  "label": "الإمارات العربية المتحدة",
+  "lat": 24.0002488,
+  "lng": 53.9994829,
+  "query": "United Arab Emirates"
+ },
+ "united kingdom": {
+  "label": "United Kingdom",
+  "lat": 54.7023545,
+  "lng": -3.2765753,
+  "query": "United Kingdom"
+ },
+ "united states": {
+  "label": "United States",
+  "lat": 39.7837304,
+  "lng": -100.445882,
+  "query": "United States"
+ },
+ "university of cambridge": {
+  "label": "Q025-7 Trumpington Road, Cambridge, 7, Trumpington Road, Trumpington, Cambridge,",
+  "lat": 52.1890916,
+  "lng": 0.1212977,
+  "query": "University of Cambridge"
+ },
+ "university of oxford": {
+  "label": "Oxford, University Town Center, Irvine, Orange County, California, 92612, United",
+  "lat": 33.6505419,
+  "lng": -117.8270531,
+  "query": "University of Oxford"
+ },
+ "upper egypt": {
+  "label": "Upper Egypt, شارع المحطة, الدهار, البلدة القديمة, الغردقة, البحر الأحمر, 84935, ",
+  "lat": 27.2481556,
+  "lng": 33.8231416,
+  "query": "Upper Egypt"
+ },
+ "upper egypt, egypt": {
+  "label": "الصعيد, الوادي الجديد, مصر",
+  "lat": 26.0,
+  "lng": 32.0,
+  "query": "Upper Egypt, Egypt"
+ },
+ "uppsala, sweden": {
+  "label": "Uppsala, Uppsala kommun, Uppsala län, 753 20, Sverige",
+  "lat": 59.8586126,
+  "lng": 17.6387436,
+  "query": "Uppsala, Sweden"
+ },
+ "urbana-champaign, illinois, us": {
+  "label": "West University Avenue, Urbana, Champaign County, Illinois, 61820, United States",
+  "lat": 40.1163875,
+  "lng": -88.2264107,
+  "query": "Urbana-Champaign, Illinois, US"
+ },
+ "urbana-champaign, usa": {
+  "label": "Murphy USA, 110, South High Cross Road, Urbana, Champaign County, Illinois, 6180",
+  "lat": 40.1108492,
+  "lng": -88.1619741,
+  "query": "Urbana-Champaign, USA"
+ },
+ "uruk, iraq": {
+  "label": "وركاء, ناحية مرکز قضاء الخضر, قضاء الخضر, محافظة المثنى, العراق",
+  "lat": 31.3231771,
+  "lng": 45.6384763,
+  "query": "Uruk, Iraq"
+ },
+ "us": {
+  "label": "United States",
+  "lat": 39.7837304,
+  "lng": -100.445882,
+  "query": "US"
+ },
+ "usa": {
+  "label": "United States",
+  "lat": 39.7837304,
+  "lng": -100.445882,
+  "query": "USA"
+ },
+ "utrecht, netherlands": {
+  "label": "Utrecht, Nederland",
+  "lat": 52.0907006,
+  "lng": 5.1215634,
+  "query": "Utrecht, Netherlands"
+ },
+ "ven, denmark": {
+  "label": "Botschaft des Königreichs Dänemark, 6, Führichgasse, Kärntner Viertel, Katastral",
+  "lat": 48.2048988,
+  "lng": 16.3698783,
+  "query": "Ven, Denmark"
+ },
+ "venice, italy": {
+  "label": "Venezia, Veneto, 30121-30176, Italia",
+  "lat": 45.4371908,
+  "lng": 12.3345898,
+  "query": "Venice, Italy"
+ },
+ "victoria, australia": {
+  "label": "Victoria, Australia",
+  "lat": -36.5986096,
+  "lng": 144.6780052,
+  "query": "Victoria, Australia"
+ },
+ "victoria, british columbia, canada": {
+  "label": "Victoria, Capital Regional District, British Columbia, Canada",
+  "lat": 48.4283182,
+  "lng": -123.364953,
+  "query": "Victoria, British Columbia, Canada"
+ },
+ "vienna, austria": {
+  "label": "Wien, Österreich",
+  "lat": 48.2083537,
+  "lng": 16.3725042,
+  "query": "Vienna, Austria"
+ },
+ "vostok station, antarctica": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Vostok Station, Antarctica"
+ },
+ "waltham, massachusetts, usa": {
+  "label": "Waltham, Middlesex County, Massachusetts, United States",
+  "lat": 42.3762385,
+  "lng": -71.2355644,
+  "query": "Waltham, Massachusetts, USA"
+ },
+ "washington, d.c.": {
+  "label": "Washington, District of Columbia, United States",
+  "lat": 38.8950982,
+  "lng": -77.0363849,
+  "query": "Washington, D.C."
+ },
+ "washington, d.c., united states": {
+  "label": "Washington, District of Columbia, United States",
+  "lat": 38.8950982,
+  "lng": -77.0363849,
+  "query": "Washington, D.C., United States"
+ },
+ "washington, d.c., usa": {
+  "label": "Washington, District of Columbia, United States",
+  "lat": 38.8950982,
+  "lng": -77.0363849,
+  "query": "Washington, D.C., USA"
+ },
+ "waterloo, canada": {
+  "label": "Waterloo, Region of Waterloo, Southwestern Ontario, Ontario, Canada",
+  "lat": 43.4652699,
+  "lng": -80.5222961,
+  "query": "Waterloo, Canada"
+ },
+ "waterloo, ontario, canada": {
+  "label": "Waterloo, Region of Waterloo, Southwestern Ontario, Ontario, Canada",
+  "lat": 43.4652699,
+  "lng": -80.5222961,
+  "query": "Waterloo, Ontario, Canada"
+ },
+ "west chester, pennsylvania, usa": {
+  "label": "West Chester, Chester County, Pennsylvania, 19383, United States",
+  "lat": 39.9597389,
+  "lng": -75.6044609,
+  "query": "West Chester, Pennsylvania, USA"
+ },
+ "west turkana, kenya": {
+  "label": "Kenya Assembly Of God Church, Lodwar-Lokichogio Road, Kakuma Town Market, Kakuma",
+  "lat": 3.7070958,
+  "lng": 34.8712741,
+  "query": "West Turkana, Kenya"
+ },
+ "western australia": {
+  "label": "Western Australia, Australia",
+  "lat": -25.2303005,
+  "lng": 121.0187246,
+  "query": "Western Australia"
+ },
+ "western cape, south africa": {
+  "label": "Western Cape, South Africa",
+  "lat": -33.546977,
+  "lng": 20.72753,
+  "query": "Western Cape, South Africa"
+ },
+ "winnipeg, canada": {
+  "label": "Winnipeg, Manitoba, Canada",
+  "lat": 49.8955367,
+  "lng": -97.1384584,
+  "query": "Winnipeg, Canada"
+ },
+ "xerox parc": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Xerox PARC"
+ },
+ "yale university, new haven": {
+  "label": "Yale University, Trumbull Street, Dixwell, New Haven, South Central Connecticut ",
+  "lat": 41.3135727,
+  "lng": -72.9231731,
+  "query": "Yale University, New Haven"
+ },
+ "yoho national park, canada": {
+  "label": "Yoho National Park, Columbia-Shuswap Regional District, British Columbia, Canada",
+  "lat": 51.3747764,
+  "lng": -116.5358482,
+  "query": "Yoho National Park, Canada"
+ },
+ "yorktown heights, ny, usa": {
+  "label": "Yorktown Heights, Town of Yorktown, Westchester County, New York, United States",
+  "lat": 41.2701781,
+  "lng": -73.7753539,
+  "query": "Yorktown Heights, NY, USA"
+ },
+ "yunnan, china": {
+  "label": "云南省, 中国",
+  "lat": 25.0,
+  "lng": 102.0,
+  "query": "Yunnan, China"
+ },
+ "yuzefava, belarus": {
+  "failed": true,
+  "label": null,
+  "lat": null,
+  "lng": null,
+  "query": "Yuzefava, Belarus"
+ },
+ "zurich, switzerland": {
+  "label": "Zürich, Bezirk Zürich, Zürich, Schweiz/Suisse/Svizzera/Svizra",
+  "lat": 47.3744489,
+  "lng": 8.5410422,
+  "query": "Zurich, Switzerland"
+ }
+}

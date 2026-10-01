@@ -22,7 +22,7 @@ TODO https://people.idsia.ch/~juergen//who-invented-convolutional-neural-network
 </div>
 
 <div class="md">
-The history of AI is not a straight line leading inevitably to the Large Language Model. It is a convergence of ideas from unrelated fields that were never intended to meet. Statistical methods developed by astronomers to map the stars now weigh the next word in a sequence. For example, GPU architectures designed for video games provide the parallel computation required for neural networks, which was never intended for AI use but worked out in the end in favour of it. This document traces the lineage that produced modern LLMs, and tries to check out all paths that lead to it (and where else they lead to).
+The history of AI is not a straight line leading inevitably to the Large Language Model. It is a convergence of ideas from unrelated fields that were never intended to meet. Statistical methods developed by astronomers to map the stars now weigh the next word in a sequence. For example, GPU architectures designed for video games provide the parallel computation required for neural networks, which was never intended for AI use but worked out in the end in favour of it. This document traces the lineage that produced modern LLMs, and tries to check out all paths that lead to it (and where else they lead to). If you want to *see* this convergence, [The Atlas](map.php) places every person, place, institution and event of this history as a dot on an interactive globe — with the threads between them.
 
 ## The Abstraction of Labor: From Wheels to Thought
 
@@ -65,7 +65,7 @@ It can be thought of as the earliest surviving external mathematical memory of e
 
 The **Dolní Věstonice bone** — commonly called the **wolf bone** (Czech: *vlčí radius*, “Věstonice notch-stick”) — is the radius of a wolf, found in 1936 by **\citeauthor{wolfbone}** at the Upper Paleolithic site of Dolní Věstonice in Moravia, Czech Republic, at the base of Mount Děvín. That site is one of the richest Gravettian settlements known (c. 27,000–20,000 BC), famous for the Venus of Dolní Věstonice, one of the oldest fired clay figurines in the world. The 18 cm long bone carries **55 notches** carved in two groups of 30 and 25, separated by two longer marks, and is dated to roughly **27,000 years ago**; a fragment of the head of an ivory Venus figurine lay right next to it. The marks are interpreted as tally marks — some researchers read them as a record of lunar months. What makes the bone remarkable is the *independence* of its invention: the same impulse to “outsource counting to a physical object” shows up, without contact, in south-east Africa (Lebombo, ~43,000 years ago), central Europe (Dolní Věstonice, ~27,000) and again in central Africa (Ishango, ~20,000). Counting devices appear to be a repeatedly convergent human invention rather than a single invention that spread.
 
-*Is there anything older?* No counting device older than the Lebombo bone (~42,000–43,000 years) is known today. Older notched bones do exist — up to roughly **80,000 years old** (e.g., from the **Apollo 11 Rockshelter** in Namibia, \cite[Vogelsang et al., 2010]{vogelsang2010apollo11}) — but it is unclear whether their notches served a counting purpose or are merely decorative \cite{historyofmath_wikipedia}. The oldest known *abstract geometric pattern* at all is a hatched silcrete flake from **Blombos Cave** in South Africa, dated to about **71,000–73,000 years ago** \cite[Henshilwood et al., 2018]{henshilwood2018blombos} — a symbol, but not (as far as we can tell) a number. Rock art reaches a little further still: the finger and hand stencils of **Lubang Jeriji Saléh** on the island of Borneo date to about **52,000 years**, and the banteng bull painted beside them to at least **40,000** \cite[Aubert et al., 2018]{aubert2018borneo}; a warty-pig painting in Leang Tedongnge, Sulawesi, is a minimum **45,500 years old** \cite[Brumm et al., 2021]{brumm2021sulawesi}, and the oldest *narrative* scene — a pig hunt in Leang Bulu' Sipong 4 — at least **43,900** \cite[Aubert et al., 2019]{aubert2019sulawesi}. A controversial 2018 study even pushes dated cave art in Spain back beyond **64,800 years**, which would make it Neanderthal in origin \cite[Hoffmann et al., 2018]{hoffmann2018iberia}. When the scratch became a digit, we do not know.
+*Is there anything older?* No counting device older than the Lebombo bone (~42,000–43,000 years) is known today. Older notched bones do exist — up to roughly **80,000 years old** (e.g., from the **Apollo 11 Rockshelter** in Namibia, \cite[Vogelsang et al., 2010]{vogelsang2010apollo11}) — but it is unclear whether their notches served a counting purpose or are merely decorative \cite{historyofmath_wikipedia}. The oldest known *abstract geometric pattern* at all is a hatched silcrete flake from **Blombos Cave** in South Africa, dated to about **71,000–73,000 years ago** (\cite[Henshilwood et al., 2018]{henshilwood2018blombos}) — a symbol, but not (as far as we can tell) a number. Rock art reaches a little further still: the finger and hand stencils of **Lubang Jeriji Saléh** on the island of Borneo date to about **52,000 years**, and the banteng bull painted beside them to at least **40,000** (\cite[Aubert et al., 2018]{aubert2018borneo}); a warty-pig painting in Leang Tedongnge, Sulawesi, is a minimum **45,500 years old** (\cite[Brumm et al., 2021]{brumm2021sulawesi}), and the oldest *narrative* scene — a pig hunt in Leang Bulu' Sipong 4 — at least **43,900** (\cite[Aubert et al., 2019]{aubert2019sulawesi}). A controversial 2018 study even pushes dated cave art in Spain back beyond **64,800 years**, which would make it Neanderthal in origin (\cite[Hoffmann et al., 2018]{hoffmann2018iberia}). When the scratch became a digit, we do not know.
 
 #### The Ishango Bone
 
@@ -186,7 +186,7 @@ Long before silicon chips, the 13th-century Majorcan mystic \citeauthor{arsmagna
 
 While it looks like a curious mix of mysticism and combinatorics, it is the first documented attempt to create a universal logical language that generates new knowledge through mechanical operations. Llull believed that systematically combining symbols could “calculate” truth, a direct ancestor of the symbol-manipulation view of intelligence. A Transformer's billions of vector operations are the same principle at an unimaginable scale.
 
-A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found in \cite[Collins, 2017]{artandlogicofllull}.
+A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found in (\cite[Collins, 2017]{artandlogicofllull}).
 
 Medieval scholar Ramon Llull had quite an interesting life, and has done many things beyond his combinatorial wheels.\sidenote{One of the earliest novels in medieval Europe after antiquity, *Blanquerna* (\citetitle{blanquerna}), was by him: it tells the rise of a monk through the ranks of the church to the papacy. He is also the only person whose writings were condemned as heretical by one pope — Gregory XI., in 1376 — \cite[yet whose legacy was later explicitly honoured by another]{arsmagnavolvelle}, Pius IX., roughly five centuries later.} His intellectual range, theology, novel-writing, and combinatorial logic together, is a useful reminder that the boundary between "mystic" and "logician" was much thinner in the 13th century than it is now.
 
@@ -565,7 +565,7 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 	</figure>
 </div>
 
-His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University: a sensor of 400 photocells fed the network, and electric motors turned the potentiometers that held the “weights” \cite[Kowitz, 2017]{ronkowitz2017perceptron}. While limited to learning simple linear relationships, a constraint that eventually contributed to the first AI Winter, it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
+His physical implementation, the **Mark I Perceptron**, was a massive hardware system at Cornell University: a sensor of 400 photocells fed the network, and electric motors turned the potentiometers that held the “weights” (\cite[Kowitz, 2017]{ronkowitz2017perceptron}). While limited to learning simple linear relationships, a constraint that eventually contributed to the first AI Winter, it established the fundamental architecture of weighted inputs and thresholds that powers every neural network today.
 
 <div class="optional md" data-headline="An eyewitness account of building the Mark I">
 A \citeyear{jensen2026perceptron} \cite{jensen2026perceptron} by the historian George Osborn Jensen and the Smithsonian curator David E. Dunning reconstructs the Mark I from the perspective of Thomas Osborn, a Cornell undergraduate hired as a “worker bee” at the Cornell Aeronautical Laboratory in Buffalo to solder its six-foot racks in the fall of 1959. The architecture mapped a 20×20 grid of photocell “S-units” onto **512** association units, whose connections were generated as genuinely random numbers on CAL's IBM 704 and then wired by hand. Each A-unit's output passed through a motor-driven potentiometer whose wiper voltage could swing continuously between −11 and +11 V, so “between zero and one there was any number in-between”: the “memory” of the machine was literally the angle of 512 little motors, updated automatically by the feedback loop. The single most striking finding from the testing phase was empirical: introducing a deliberate rate of **forgetting** (resistors allowed to decay slightly between iterations) dramatically sped up learning by preventing the network from overfitting idiosyncrasies of the first few examples, an early, hardware-level instance of what would later be formalized as weight decay. The Mark I never served its intended Pentagon mission of spotting Soviet missile sites from aerial photographs, but Osborn could train it to around 90–95% accuracy on letter recognition, and the team agreed it had done “what it said it was going to do.” After Osborn left Buffalo, “no one said one word to me about it”; he went on to become a quantum physicist at the University of Manitoba, a quiet reminder that landmark devices are also the product of anonymous assembly work.
@@ -580,6 +580,33 @@ A \citeyear{lindquist2026weirdai} \cite{lindquist2026weirdai} in the same “Thi
 Rosenblatt's \cite[Mark I Perceptron]{perceptronresults} (p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
 While this system shared the structural logic of a modern neural network, it functioned strictly as a **linear transducer** by executing the affine transformation $f(x) = Ax + b$. Although it utilized tensors for weights ($A$) and biases ($b$), it lacked the **non-linear activation functions** and **backpropagation** required to be classified as a modern “Dense” network. Without non-linearity, any attempt at adding “depth” was mathematically redundant, as multiple linear layers simply collapse into a single equivalent matrix multiplication; furthermore, the system lacked the modern ecosystem of loss functions, regularization, and gradient-based optimization that allows for automated learning.
+</div>
+
+<div class="md" data-mathlevel="40" data-optionaltitle="Who got there first, and who made it rigorous">
+### The device that came first: Farley and Clark (1954)
+
+Rosenblatt's perceptron gets the "first" in most histories of neural networks, but a 1961 doctoral thesis is unusually blunt about the real priority. Two researchers at the MIT Lincoln Laboratory, **\citeauthorlastnameand{farleyclark1954}** (\citeyear{farleyclark1954}), had already built a perceptron-like pattern-recognition device, and their small network, with its sensory input, non-linear decision elements and trial-and-error reinforcement, was the same basic skeleton that Rosenblatt later scaled up \cite{joseph1961perceptron}. Their names were forgotten for a simple reason: they ran a few experiments on a small machine and then stopped working on it, without a mathematical account of what the device could or could not do \cite{joseph1961perceptron}. Credit in this field went, as it often does, to whoever built the *theory* and kept going.
+
+### The 1961 rigor cleanup: R. David Joseph
+
+The fullest primary snapshot of the field's state of play in 1961 is the Cornell PhD thesis of **\citeauthor{joseph1961perceptron}**, *\citetitle{joseph1961perceptron}* (\citeyear{joseph1961perceptron}) \cite{joseph1961perceptron}. Joseph was not a typical student: a self-taught mathematician who had been doing analyses of self-organizing systems at the Cornell Aeronautical Laboratory, and who completed his doctorate while working in industry, first at the lab and then at Ford's Aeronutronic Division. His thesis advisor was the famous probabilist **\cite[Mark Kac]{markkac}**, which explains the heavily measure-theoretic style, and the work was funded by the Office of Naval Research and the Rome Air Development Center, the same Cold War military money that underwrote nearly all early neural-net research.
+
+Joseph's central contribution was to take the perceptron results of the previous few years, which he judged to rest partly on heuristic arguments with inaccurate supporting formulae (though not incorrect conclusions), and to put them on a rigorous probabilistic footing \cite{joseph1961perceptron}. His most strikingly modern move was to stop asking about one hand-designed circuit and instead place a **probability distribution over an entire class of networks**: fix the retina, the number of association units, the threshold, a reinforcement rule and a measure over which sensory units feed each association unit, then ask what *fraction* of randomly wired members of the class meets a given performance standard. That is an early formal version of asking about the *typical* behavior of a random architecture, decades before such typical-case reasoning became standard. He contrasts the field's two research programs, a **statistical** one (analyze a randomly drawn member of a network class, what nearly all work up to about 1960 did) and an **optimality** one (find the best components and operating procedure under constraints), and his thesis makes the first rigorous while adding some of the second \cite{joseph1961perceptron}. It also already treats multi-layer (four-layer) perceptrons, bounded or saturating weights, and cross-coupled (recurrent) networks as first-class objects.
+
+### The real history of the perceptron convergence theorem
+
+Textbooks usually credit the "perceptron convergence theorem" to Rosenblatt (with Block and Novikoff), but Joseph's survey is a rare, candid record of how collaborative and messy the real provenance was \cite{joseph1961perceptron}. His account runs, roughly:
+
+* Rosenblatt's \citeyear{rosenblatt1958perceptron} report \cite{rosenblatt1958perceptron} had a real defect: its *expected values* were correct, so its qualitative claims about what a perceptron can and cannot do hold, but its *variance* computations were wrong, so its quantitative claims about how well it works did not.
+* The statistician **I. J. Good** gave an IBM lecture, "Speculations on Perceptrons and Other Automata," that criticized the work in strongly worded terms; stripped of the rhetoric, the substantive complaint was that the research was not yet *quantitative*.
+* Inspired by the confusion in Rosenblatt's report, **M. Warshaw** at RAND computed the *actual* distribution of the output unit's input on a high-speed computer, which could have tested the field's normality assumptions empirically, but he made a serious error so that even his qualitative conclusions were wrong.
+* The convergence result itself was assembled in stages: an early proof by Block and Rosenblatt actually landed on the *boundary* of the solution set rather than inside it and did not provably terminate; Joseph's own later procedures reached a genuine solution in finitely many steps with an explicit (if weak) bound on the number of reinforcements; and the probabilist **H. Kesten** sharpened that bound. The clean theorem in modern textbooks is the product of that debugging.
+
+The same survey records a related trick from the **Block, Knight and Rosenblatt** line: for a very large, nearly random network, or for one trained in extremely small steps, replace the *difference* equation governing the stored weights with a *differential* equation so the weights evolve monotonically and their limiting values can be read off. Joseph carefully labels this a *third* kind of analysis, neither statistical (a fraction of a class succeeds) nor exact (a single specified machine).
+
+### A wider field, circa 1961
+
+The thesis's closing survey is a snapshot of how distributed the early-1960s scene already was. At the Aeronutronic/Ford group someone was building an adaptive neuron, the **MIND** element, on a square-loop magnetic core whose magnetic state encoded connection strength, analog weights in physical hardware. There were working groups on the limits of **majority logic** (the circuits a fully self-organized perceptron reduces to, Joseph notes), on **front-end feature extraction** (translating raw patterns into a form a classifier can use, the focus of Von Foerster's group at Illinois and of Sebestyen at Litton), and on military applications of the machinery. And at Stanford, **\citeauthor{widrow1960adaline}** and his student were analyzing the same adaptive systems with the tools of **servo theory**, the \citeyear{widrow1960adaline} *ADALINE* and LMS (delta-rule) line \cite{widrow1960adaline} that eventually leads, through backpropagation, to deep learning. Joseph's closing note is quietly proud and a little defensive: the field was attracting capable people from many directions, and although Cornell had benefited from all that outside activity, there was no reason to change the direction of the Cornell program in any fundamental way \cite{joseph1961perceptron}.
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Hebb's Rule and the Perceptron Learning Rule">
@@ -607,10 +634,10 @@ These early neural networks were extremely limited by today's standards, but the
 
 <figure>
     <img style="width: 100%" src="perceptron_smithsonian.jpg" alt="The Mark I Perceptron at the Smithsonian" />
-    <figcaption class="md">The Mark I Perceptron, on display at the Smithsonian's National Museum of History and Technology \cite[Kowitz, 2017]{ronkowitz2017perceptron}.</figcaption>
+    <figcaption class="md">The Mark I Perceptron, on display at the Smithsonian's National Museum of History and Technology (\cite[Kowitz, 2017]{ronkowitz2017perceptron}).</figcaption>
 </figure>
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the press did not file it as one clever experiment among many; it treated it as the dawn of machine consciousness. At a 1958 United States Navy press conference, Rosenblatt's remarks opened a firestorm inside the fledgling AI community, and *The New York Times* seized on it, describing the Perceptron as "the embryo of an electronic computer that [the Navy] expects will be able to walk, talk, see, write, reproduce itself and be conscious of its existence" \cite[Kowitz, 2017]{ronkowitz2017perceptron}. That was the same framing the paper had already given it \cite{newyorktimesperceptron}: a machine that would eventually walk, talk, think, and even translate languages. What made the hype endure is that most of Rosenblatt's predictions were, in the end, surprisingly accurate. The coverage was even more literal than is usually remembered: it reported Perceptrons might one day be **fired to the planets as mechanical space explorers** \cite{tomayko1988spaceflight}. Six decades later, on the Martian surface, that prediction was quietly realized, when NASA's Perseverance rover used autonomous target selection (**AEGIS**) and hazard-avoidant path planning (**ENav**) to choose which rocks to drill and how to steer around boulders without waiting for a human in Mission Control to tell it to \cite{tomayko1988spaceflight}.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the press did not file it as one clever experiment among many; it treated it as the dawn of machine consciousness. At a 1958 United States Navy press conference, Rosenblatt's remarks opened a firestorm inside the fledgling AI community, and *The New York Times* seized on it, describing the Perceptron as "the embryo of an electronic computer that [the Navy] expects will be able to walk, talk, see, write, reproduce itself and be conscious of its existence" (\cite[Kowitz, 2017]{ronkowitz2017perceptron}). That was the same framing the paper had already given it \cite{newyorktimesperceptron}: a machine that would eventually walk, talk, think, and even translate languages. What made the hype endure is that most of Rosenblatt's predictions were, in the end, surprisingly accurate. The coverage was even more literal than is usually remembered: it reported Perceptrons might one day be **fired to the planets as mechanical space explorers** \cite{tomayko1988spaceflight}. Six decades later, on the Martian surface, that prediction was quietly realized, when NASA's Perseverance rover used autonomous target selection (**AEGIS**) and hazard-avoidant path planning (**ENav**) to choose which rocks to drill and how to steer around boulders without waiting for a human in Mission Control to tell it to \cite{tomayko1988spaceflight}.
 
 Between the invention of the Perceptron in 1958 and the release of ChatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
@@ -628,7 +655,7 @@ A widely cited critique, advanced most prominently by \citeauthor{schmidhuber202
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="The Critique (1969)">
-#### The Critique (1969)
+### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not “linearly separable.”
 
 To understand why the XOR problem was so significant, we first need to look at how a computer processes logic. We can represent logical gates as functions that take an input matrix (representing all possible combinations of two inputs) and map them to an output vector.
@@ -650,8 +677,8 @@ $$ f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef
 Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the “True” and “False” results are not **linearly separable**.
 
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px;">
-    <div id="plot-or-gate" style="flex: 1 1 280px; max-width: 400px; aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
-    <div id="plot-xor-gate" style="flex: 1 1 280px; max-width: 400px; aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
+    <div id="plot-or-gate" style="flex: 1 1 280px; max-width: min(400px, 100%); aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
+    <div id="plot-xor-gate" style="flex: 1 1 280px; max-width: min(400px, 100%); aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
 </div>
 
 Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear activation functions would be able to solve this problem, there was no way to efficiently train those until in \citeyear{rumelhart1986} Rumelhart et al. popularized \citealternativetitle{rumelhart1986}, which reignited interest in connectionist models and paved the way for modern deep learning.
@@ -664,7 +691,7 @@ An important nuance: **Minsky and Papert knew multi-layer networks could solve X
 </div>
 
 <div class="md">
-#### The Lighthill Report (1973) and The Collapse (1974–1980)
+### The Lighthill Report (1973) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
@@ -718,17 +745,19 @@ This paper is now recognized as a direct **precursor of backpropagation**. Kelle
 </div>
 
 <div class="md">
-## The Silicon Engine: Moore's Law
+## The Foundations: From Silicon to the Bitter Lesson
+
+### The Silicon Engine: Moore's Law
 
 While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
 
 This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This “free” improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
 
-## Automatic differentiation (1970)
+### Automatic Differentiation (1970)
 
 While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1970 master's thesis of \citeauthor{linnainmaa1970}. He developed the “automatic differentiation” method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the highly efficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
-## The Illusion of Empathy: The ELIZA-Effect
+### The Illusion of Empathy: The ELIZA-Effect
 
 <div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
 I had not realized ... that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
@@ -744,7 +773,7 @@ Despite having no understanding of the world, users, including Weizenbaum's own 
 A \citeyear{lane2025eliza} \cite{lane2025eliza} reveals a surprising fact about ELIZA's history: the original program is not the version most historians have been writing about. Weizenbaum wrote ELIZA in MAD-SLIP at MIT's Project MAC, but the Lisp clone made soon after by Bernie Cosell at BBN, distributed through the ARPANet, supplanted the original within a few years; the BASIC re-implementation by Jeff Shrager in 1977 was what the wider public ever met. For decades the original MAD-SLIP source was assumed lost. In 2021, Shrager (coincidentally the same Jeff Shrager who wrote the 1977 BASIC version) and the MIT archivist Myles Crowley located a fan-fold printout of the original ELIZA, an early DOCTOR script, and substantial parts of MAD-SLIP itself in Weizenbaum's papers at the MIT Institute Archives. The rediscovered code differs in informative ways from the 1966 CACM paper: the preliminary “PRE” reassembly pattern is missing, the keyword stack and “NEWKEY” rule are not implemented, and reassembly-level calls between rules are not supported. A team led by Rupert Lane, David Berry, Anthony Hay, Arthur Schwarz and Shrager hand-transcribed the roughly 2600 lines of MAD and Fortran Assembly Program, brought up CTSS on an emulator of the IBM 7094 (the same 36-bit, 32 K-word, ~450 kHz machine Weizenbaum had used), debugged a single-character typo deep in the FAP, and on 21 December 2024 at 10:54 GMT got ELIZA running again after nearly sixty years. The reconstructed system nearly exactly reproduces the famous “Men are all alike” conversation from the original paper; the entire stack is open source, so any Unix user can now run the world's earliest chatbot on its original timesharing system. This means the “ELIZA” cited in most AI textbooks is, strictly speaking, Cosell's Lisp clone; Weizenbaum's own program is now the better-documented of the two.
 </div>
 
-## The Triumph of Symbolic AI
+### The Triumph of Symbolic AI
 
 While Perceptrons attempted to mimic the brain's structure, a different approach focused on logic and brute-force search. This “Symbolic AI” reached its zenith in \citeyear{deepblue} with **Deep Blue**.
 
@@ -757,21 +786,21 @@ In a historic six-game rematch, IBM's Deep Blue defeated the reigning world ches
 
 However, Deep Blue's victory represented the pinnacle of specific, hand-crafted logic rather than general intelligence. While effective for the rigid rules of chess, relying on human-designed strategies proved to be a bottleneck for more complex, unstructured problems. This realization leads directly to a fundamental, and somewhat painful, observation about the trajectory of AI progress.
 
-## Bridging the Gap: Long Short-Term Memory (LSTM)
+### Bridging the Gap: Long Short-Term Memory (LSTM)
 
-### The “Vanishing Gradient” Problem (1991)
+#### The “Vanishing Gradient” Problem (1991)
 The Fundamental Deep Learning Problem was identified and analyzed in \citeyear{hochreiter1991vanishing} by \citeauthor{hochreiter1991vanishing} in his diploma thesis supervised by Jürgen Schmidhuber. He showed that in typical deep or recurrent networks, back-propagated error signals either shrink rapidly (vanish) or grow out of bounds (explode), making learning impossible for long sequences. Crucially, Hochreiter derived from first principles the concept of a **recurrent residual connection**: a neural unit with the identity activation function connected to itself with weight 1.0, ensuring constant error flow across arbitrarily many time steps.
 
-### The Architecture (1995-2000)
+#### The Architecture (1995-2000)
 Building on this analysis, Schmidhuber coined the term **\citetitle{lstm}** in a 1995 tech report. The main peer-reviewed publication of \citeyear{lstm} by \citeauthorlastnameand{lstm} is now the most cited AI paper of the 20th century. A critical milestone was the **“vanilla LSTM” architecture with forget gates** (\citeyear{lstm_vanilla}), the variant that everybody uses today (e.g., in Google's TensorFlow). It features gated recurrent residual connections whose gates are initially open (1.0), allowing the network to start with plain residual connections.
 
-### CTC and the Speech Revolution (2006-2015)
+#### CTC and the Speech Revolution (2006-2015)
 In \citeyear{ctc2006}, the training method **Connectionist Temporal Classification (CTC)** was introduced for simultaneous alignment and recognition of sequences. CTC-trained LSTM was successfully applied to speech in 2007 and became the first superior end-to-end neural speech recognizer. In 2015, this CTC-LSTM combination **dramatically improved Google's speech recognition** on Android smartphones. Google Translate (2016), whose technical paper mentions LSTM over 50 times, was based on two connected LSTMs. By 2017, LSTM also powered Facebook's machine translation (over 30 billion translations per week), Apple's Quicktype on roughly 1 billion iPhones, and the voice of Amazon's Alexa.
 
-### The Bridge to Modern AI
+#### The Bridge to Modern AI
 LSTMs were the “workhorse” of AI for two decades (approx. 1997–2017). Without the LSTM, the second AI Winter (early 1990s, triggered by the expert-systems bust) likely would have dragged neural NLP along with it for much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by implementing a form of persistent memory. The most widely used neural language models of that era were based on LSTM as well, the transformer-based Large Language Models (LLMs) in the modern sense only arrived with GPT in 2018. A hands-on, visual tour of that two-decade workhorse — the loops, the gates, the vanishing gradients — lives in the [Networks with Memory chapter](recurrent_networks.php).
 
-## Convolutional Neural Networks and LeNet-5 (1989-1998)
+### Convolutional Neural Networks and LeNet-5 (1989-1998)
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1989backpropagation}, LeCun combined convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional network. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, the refined architecture for recognizing handwritten digits (and, later, bank checks). Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
@@ -779,15 +808,15 @@ While early neural networks were limited, **Yann LeCun et al** revolutionized co
 The popular attribution to LeCun obscures a longer Japanese prior art, which \citeauthor{schmidhuber2025cnn} documents in detail. **Kunihiko Fukushima** introduced **rectified linear units (ReLUs)** in \citeyear{fukushima1969relu} — the same activation function that powers essentially every modern Transformer — and the basic **Neocognitron** architecture with alternating convolutional and downsampling layers in \citeyear{neocognitron}, inspired by Hubel and Wiesel's cat visual-cortex work. **Alex Waibel**, a German researcher in Japan, trained supervised one-dimensional convolutional NNs with weight-sharing (TDNNs) on Linnainmaa's 1970 backpropagation in \citeyear{waibel1987tdnn} for speech recognition, and introduced the term *convolution* into NNs. **Wei Zhang** at Osaka then built the first *modern* two-dimensional CNN trained by backpropagation in \citeyear{zhang1988cnn}, applied to character recognition — one year *before* LeCun's 1989 Bell Labs paper. LeCun's later 1998 survey, widely read as the canonical CNN reference, does not cite Zhang. Schmidhuber reads this as a recurring Anglosphere pattern: real innovations made in Ukraine, Japan, Finland or Switzerland get re-popularized from Toronto or New York with the original authors omitted. Whether or not one accepts his polemical framing, the technical timeline is well-attested in the original papers.
 </div>
 
-## The Neural Turn
+### The Neural Turn
 
 In 2003, **“\citetitle{neuralprobabilistic}”** by **Yoshua Bengio** and co-authors revived backpropagation for language modeling. Their model replaced sparse n-gram tables with dense **word embeddings** \cite[first formalized in]{rumelhart1986pdp}, mapping semantic relationships into a continuous vector space.
 
-## The Democratization of ML Research
+### The Democratization of ML Research
 
 Frameworks like **\cite[Torch]{collobert2002}**, **\cite[TensorFlow]{tensorflow2016}** and **\cite[PyTorch]{pytorch}** abstracted away manual differentiation and GPU memory management, allowing researchers to focus on architecture rather than implementation.
 
-## The Bitter Lesson: Scale over Strategy
+### The Bitter Lesson: Scale over Strategy
 
 <div class="smart-quote" data-cite="sutton2019bitter">
 The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
@@ -803,7 +832,84 @@ Sutton writes from the perspective of a research director surveying decades of f
 
 
 
-## From Language Models to LLMs
+## The Deep Learning Revival (2010s)
+
+### From CPU to GPU: The Realization of the “Bitter Lesson”
+
+The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
+
+### The Deep Learning Revolution (2012)
+After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
+
+#### Highway Networks: The First Very Deep Feedforward NNs (2015)
+
+While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
+
+The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
+
+- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
+- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
+- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
+- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
+- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
+- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
+
+This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
+
+### The Dream of Structure: Recursive Neural Networks
+For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
+
+This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
+
+### The Hardware Lottery: How Gamers Saved AI
+
+We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
+
+Ideas win when they are “hardware-friendly.” Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the “researcher's graveyard.” We conduct our research in the shadow of the computing architectures we happened to inherit.
+
+While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
+
+In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
+
+#### The “Why”: SIMD vs. MIMD
+The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.
+
+A **GPU** (Graphics Processing Unit), conversely, is designed for **throughput**: it has thousands of smaller, simpler cores designed to perform the same instruction on massive amounts of data simultaneously (SIMD: Single Instruction, Multiple Data). It is like a thousand elementary school students who can all perform simple addition at the exact same time.
+
+Since training a neural network involves multiplying billions of floating-point numbers (weights) by billions of other numbers (inputs), the GPU's architecture allowed for speedups of **70x to 100x** over CPUs.
+
+#### The Discovery
+While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2006, which allowed researchers to program GPUs without translating everything into “graphics” language.
+
+* **The Scientific Proof:** In \citeyear{raina2009large}, a team at Stanford led by **Rajat Raina** and **Andrew Ng** published \citetitle{raina2009large}. They demonstrated that off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks orders of magnitude faster than multicore CPUs. This paper quantified the “Bitter Lesson”: cheap hardware could replace complex algorithmic optimizations.
+* **The Practical Proof:** In \citeyear{ciresan2011flexible}, **Dan Cireşan** and **Jürgen Schmidhuber** at IDSIA used this power to push the boundaries of what was possible. Their system, “DanNet,” was the first pure GPU-based CNN to win international pattern recognition contests, beating human performance on tasks like traffic sign recognition years before the more famous AlexNet.
+
+This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
+
+The “Hardware Lottery” describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **“\citealternativetitle{weatherfactory}”** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called “computers”) in parallel to predict global weather. While mathematically sound, it was a practical failure because human “hardware” was too slow and expensive to outpace the actual weather.
+
+Just as Richardson's vision remained a “researcher's graveyard” until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson's “Weather Factory” on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the “hardware-friendly” environment Richardson's numerical methods always required.
+
+#### CUDA
+
+**CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the “Bitter Lesson” that scalable, compute-heavy methods outperform handcrafted algorithms over time.
+
+#### Breaking the Bottleneck: The Birth of Attention
+
+Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
+
+### The Transformer and Attention (2017)
+Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
+
+In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
+
+There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
+
+The Attention Mechanism will be explained in detail later on.
+
+## The Age of Large Language Models
+
+### From Language Models to LLMs
 
 The idea of modeling language statistically predates computers themselves. In the 1940s, \citeauthor{shannon1948communication} applied information theory to English text, treating language as a stochastic process and showing that **n-gram models**, which predict the next word from the previous *n* words, could capture statistical regularities in language. His 1948 paper, \citetitle{shannon1948communication}, laid the mathematical foundation for all subsequent language modeling. Through the 1980s and 1990s, n-gram-based statistical language models dominated speech recognition and machine translation, championed by researchers like Frederick Jelinek at IBM. Meanwhile, **ELIZA** (1966), created by \citeauthorlastnameand{weizenbaum1976computer}, demonstrated early natural language interaction through simple pattern matching, but had no statistical understanding of language whatsoever.
 
@@ -823,7 +929,7 @@ Combined with \citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as de
 
 The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \citealternativetitle{sutton2019bitter}.
 
-## The Machine's Alphabet: Tokens
+### The Machine's Alphabet: Tokens
 
 There is a step in the previous story that is easy to miss, because it happens before any model is trained — yet without it, *none* of the "next-word prediction" above would even be defined: an LLM does not read words, and it does not read letters. It reads **tokens**, small fragments of text chosen in advance, and every one of its trillion predictions is a probability over that fixed token table. Tokenization is the invisible alphabet of the age \cite{sennrich2016subword}.
 
@@ -835,7 +941,7 @@ How did the alphabet form? Each of the three candidate granularities fails alone
 
 In the modern decoding path, "predicting the next word" is literally "predicting the next *token ID*" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter. You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab). And the historical irony is worth stating plainly: the machine that "thinks" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.
 
-## Computer-Generated Text: Early Examples
+### Computer-Generated Text: Early Examples
 
 
 <div class="smart-quote" data-cite="racter1984">
@@ -883,7 +989,7 @@ of English as a stochastic process.
 
 
 
-## Scaling Laws: From Encyclopedias to the Digital Ocean
+### Scaling Laws: From Encyclopedias to the Digital Ocean
 
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
 
@@ -895,80 +1001,7 @@ The final layer of abstraction in the history of LLMs is not mathematical, but t
 The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI. In 1980, \citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters. From outside, the room behaves indistinguishably from a fluent Chinese speaker. Yet the person inside understands nothing. By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*. The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation. \citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for. The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all. LLMs in 2026 have not answered it; they have only made the question louder.
 </div>
 
-## The Dream of Structure: Recursive Neural Networks
-For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
-
-This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
-
-## From CPU to GPU: The Realization of the “Bitter Lesson”
-
-The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
-
-## The Deep Learning Revolution (2012)
-After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
-
-### Highway Networks: The First Very Deep Feedforward NNs (2015)
-
-While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
-
-The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
-
-- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
-- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
-- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
-- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
-- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
-- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
-
-This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
-
-## The Hardware Lottery: How Gamers Saved AI
-
-We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
-
-Ideas win when they are “hardware-friendly.” Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the “researcher's graveyard.” We conduct our research in the shadow of the computing architectures we happened to inherit.
-
-While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
-
-In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
-
-### The “Why”: SIMD vs. MIMD
-The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.
-
-A **GPU** (Graphics Processing Unit), conversely, is designed for **throughput**: it has thousands of smaller, simpler cores designed to perform the same instruction on massive amounts of data simultaneously (SIMD: Single Instruction, Multiple Data). It is like a thousand elementary school students who can all perform simple addition at the exact same time.
-
-Since training a neural network involves multiplying billions of floating-point numbers (weights) by billions of other numbers (inputs), the GPU's architecture allowed for speedups of **70x to 100x** over CPUs.
-
-### The Discovery
-While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2006, which allowed researchers to program GPUs without translating everything into “graphics” language.
-
-* **The Scientific Proof:** In \citeyear{raina2009large}, a team at Stanford led by **Rajat Raina** and **Andrew Ng** published \citetitle{raina2009large}. They demonstrated that off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks orders of magnitude faster than multicore CPUs. This paper quantified the “Bitter Lesson”: cheap hardware could replace complex algorithmic optimizations.
-* **The Practical Proof:** In \citeyear{ciresan2011flexible}, **Dan Cireşan** and **Jürgen Schmidhuber** at IDSIA used this power to push the boundaries of what was possible. Their system, “DanNet,” was the first pure GPU-based CNN to win international pattern recognition contests, beating human performance on tasks like traffic sign recognition years before the more famous AlexNet.
-
-This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
-
-The “Hardware Lottery” describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **“\citealternativetitle{weatherfactory}”** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called “computers”) in parallel to predict global weather. While mathematically sound, it was a practical failure because human “hardware” was too slow and expensive to outpace the actual weather.
-
-Just as Richardson's vision remained a “researcher's graveyard” until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson's “Weather Factory” on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the “hardware-friendly” environment Richardson's numerical methods always required.
-
-### CUDA
-
-**CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the “Bitter Lesson” that scalable, compute-heavy methods outperform handcrafted algorithms over time.
-
-### Breaking the Bottleneck: The Birth of Attention
-
-Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
-
-## The Transformer and Attention (2017)
-Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
-
-In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
-
-There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
-
-The Attention Mechanism will be explained in detail later on.
-
-## The Rise of Generative AI
+### The Rise of Generative AI
 Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \citetitle{firstgpt} in \citeyear{firstgpt}). These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention ist Optimaler Transport — Einfach erklärt</title>
+<style>
+:root{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(800px 500px at 15% 5%,rgba(94,224,208,.07),transparent 60%),
+             radial-gradient(800px 600px at 85% 20%,rgba(138,124,255,.08),transparent 60%),var(--bg)}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:100;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,14,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--stroke)}
+#nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);white-space:nowrap;font-weight:600}
+#nav .links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#nav .links::-webkit-scrollbar{display:none}
+#nav a{color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#nav a.on{color:var(--bg);background:var(--acc);font-weight:600}
+#prog{position:fixed;top:52px;left:0;height:2px;width:0;z-index:101;background:linear-gradient(90deg,var(--acc),var(--acc4),var(--acc2))}
+main{max-width:1080px;margin:0 auto;padding:84px 20px 100px}
+section{padding:56px 0;scroll-margin-top:70px}
+section+section{border-top:1px solid var(--stroke)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:clamp(28px,4.8vw,50px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:18px}
+h2{font-size:clamp(21px,3vw,32px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 10px}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--txt);max-width:70ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.88em;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px;color:var(--acc)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+a.ext{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.split{grid-template-columns:1fr}}
+.demo{background:linear-gradient(160deg,rgba(18,25,44,.95),rgba(11,16,30,.95));border:1px solid var(--stroke-hi);border-radius:16px;overflow:hidden;margin:22px 0}
+.demo-head{padding:12px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.025)}
+.demo-head .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);flex:none}
+.demo-head h4{margin:0;font-size:13.5px;color:var(--txt);font-weight:640}
+.demo-head .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint);margin-left:auto}
+.demo-body{padding:18px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;font-weight:600}
+.ctl-hint{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2);box-shadow:0 0 0 1px rgba(255,255,255,.2);transition:.12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg2)}
+input[type=range].m::-webkit-slider-thumb{background:var(--acc2)}
+input[type=range].m::-moz-range-thumb{background:var(--acc2)}
+input[type=range].g::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].g::-moz-range-thumb{background:var(--acc3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc4)}
+input[type=range].v::-moz-range-thumb{background:var(--acc4)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:rgba(255,255,255,.05);color:var(--txt);transition:.15s}
+button:hover{background:rgba(255,255,255,.11);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));margin-top:12px}
+.ro .box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)}
+.ro .box .v.v{color:var(--acc4)} .ro .box .v.e{color:var(--acc5)}
+.ro .box .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.badge-out{font-family:var(--mono);font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:9px;display:inline-block;margin-top:4px;border:1px solid var(--stroke)}
+.badge-out.ok{background:rgba(94,224,208,.12);color:var(--acc);border-color:rgba(94,224,208,.4)}
+.badge-out.warn{background:rgba(255,200,96,.12);color:var(--acc3);border-color:rgba(255,200,96,.4)}
+.badge-out.bad{background:rgba(255,122,192,.14);color:var(--acc2);border-color:rgba(255,122,192,.4)}
+.note{border-left:3px solid var(--acc);background:rgba(94,224,208,.055);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:rgba(255,200,96,.055)}
+.note.t{border-color:var(--acc4);background:rgba(138,124,255,.055)}
+.note.e{border-color:var(--acc5);background:rgba(110,232,138,.055)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.thm{background:linear-gradient(150deg,rgba(138,124,255,.1),rgba(13,18,33,.7));border:1px solid rgba(138,124,255,.32);border-radius:13px;padding:16px;margin:18px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px}
+.thm .math{font-family:var(--mono);font-size:15px;color:var(--txt);overflow-x:auto;padding:6px 0;line-height:1.8}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--txt-dim)}
+tr:hover td{background:rgba(255,255,255,.03)}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+canvas{display:block;max-width:100%}
+.cwrap{background:#060910;border:1px solid var(--stroke);border-radius:11px;padding:8px;overflow:hidden}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:24px}
+.kpi .c{background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px}
+.kpi .c .big{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--acc);line-height:1.2}
+.kpi .c .lab{font-size:11px;color:var(--txt-faint);margin-top:5px;line-height:1.4}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:rgba(94,224,208,.1);border:1px solid rgba(94,224,208,.28);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.quiz{margin:14px 0}
+.quiz .q{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--stroke);font-size:14px;color:var(--txt);margin-bottom:8px}
+.quiz .opt{display:block;width:100%;text-align:left;margin:5px 0;font-size:13px}
+.quiz .opt.correct{background:rgba(110,232,138,.2);border-color:var(--acc5)}
+.quiz .opt.wrong{background:rgba(255,122,192,.15);border-color:var(--acc2)}
+footer{border-top:1px solid var(--stroke);padding:34px 20px;text-align:center;color:var(--txt-faint);font-size:12px}
+.anim{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.anim.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <div class="brand">◈ ATTENTION = OPTIMAL TRANSPORT · EINFACH</div>
+  <div class="links">
+    <a href="#start" class="on">Start</a>
+    <a href="#buehne">Bühne</a>
+    <a href="#transport">Transport</a>
+    <a href="#satz">Hauptsatz</a>
+    <a href="#familie">Familie</a>
+    <a href="#backward">RL</a>
+    <a href="#dual">Dual</a>
+    <a href="#ring">Ringschluss</a>
+    <a href="#grenzen">Grenzen</a>
+    <a href="#quellen">Quellen</a>
+    <a href="#quiz">Test</a>
+  </div>
+</nav>
+<div id="prog"></div>
+<main>
+
+<section id="start">
+  <div class="pill"><span class="d"></span>Einfache Version · Original: Elon Litman (Stanford) · <span style="color:var(--txt-dim)">arXiv:2508.08369</span></div>
+  <h1>Attention ist <em>Optimaler Transport.</em><br>Und Backprop ist heimlich Reinforcement Learning.</h1>
+  <p class="lead">Die Softmax-Attention wurde 2017 <em>geraten</em> — und sie funktionierte. Dieses Paper zeigt: Softmax ist keine Wahl, sondern die <b>eindeutige Lösung</b> eines sauberen Optimierungsproblems („Ähnlichkeit maximieren, maximal entschlossen bleiben, Wahrscheinlichkeit sein"). Und noch überraschender: <b>Der Gradient, mit dem das Modell lernt, ist ein Policy-Gradient aus dem RL</b> — inklusive Baseline-Trick, der sich von selbst ergibt.</p>
+  <div class="kpi">
+    <div class="c"><div class="big">eindeutig</div><div class="lab">Softmax = die einzige Lösung (Thm 3.3) — nicht gewählt, erzwungen</div></div>
+    <div class="c"><div class="big" style="color:var(--acc3)">÷√d_k</div><div class="lab">normalisiert die Score-Varianz von d_k zurück auf 1</div></div>
+    <div class="c"><div class="big" style="color:var(--acc4)">−(p/τ)·A</div><div class="lab">der Lern-Gradient = REINFORCE mit Erwartungs-Baseline</div></div>
+    <div class="c"><div class="big" style="color:var(--acc2)">1 Matrix</div><div class="lab">(1/τ)(diag(p)−ppᵀ) vereint Transport, Fisher-Geometrie &amp; RL</div></div>
+  </div>
+  <div class="note" style="margin-top:26px"><span class="h">Die vier Fragen, die das Paper beantwortet</span>
+  <b>1</b> Warum <code>exp</code>? → die Entropie erzwingt die Gibbs-Form. <b>2</b> Warum nicht „quadratisch &amp; normieren"? → das wäre Sparsemax, ein anderer Regularisierer. <b>3</b> Warum genau τ=√d_k? → passt die Regularisierung an die Score-Varianz an. <b>4</b> Warum so stabil lernbar? → der Gradient ist vorteilsbasiert (Baseline = Varianzreduktion).
+  </div>
+
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Zuerst anfassen: Was macht Attention?</h4><span class="tag">Spiel 0</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Fünf Schlüsselwörter im Kreis, ein Query-Pfeil im Zentrum. Attention vergleicht das Query mit jedem Schlüssel (Score = Ähnlichkeit) und verteilt die Aufmerksamkeit. <b>Drag den Pfeil</b> — sieh, wie die Aufmerksamkeit <em>wandert</em>. Ziehe die Temperatur — sieh, wie sie von „schmal &amp; sicher" zu „breit &amp; offen" wird.</p>
+      <div class="cwrap"><canvas id="cvAttn" style="width:100%;height:320px;cursor:crosshair"></canvas></div>
+      <div class="ctl" style="margin-top:12px"><div class="ctl-lab"><span>Temperatur τ (klein = schmal &amp; sicher, groß = breit &amp; offen)</span><b id="qTV">1.0</b></div><input type="range" id="qT" min="10" max="300" value="100" class="v"></div>
+      <div class="ro" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="box"><div class="k">Gewinner-Schlüssel</div><div class="v" id="aWin">—</div></div>
+        <div class="box"><div class="k">Entropie H(p)</div><div class="v g" id="aH">—</div></div>
+        <div class="box"><div class="k">Temperatur τ</div><div class="v v" id="aTau">1.0</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="buehne" class="anim">
+  <div class="eyebrow">Bausteine 1+2 · Die Bühne</div>
+  <h2>Der Simplex &amp; die Entropie</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc)">Der Simplex Δ<sup>m−1</sup></h3>
+      <p style="font-size:13.5px">Die Menge aller Antwort-Verteilungen: <code>p_j ≥ 0</code> und <code>Σ p_j = 1</code>. Er ist <b>konvex, kompakt und nicht leer</b> — genau das garantiert später, dass unser Optimierungsproblem eine <em>eindeutige</em> Lösung hat. Für m=3 ist es ein Dreieck, für m=512 ein 511-dimensionales „Hochdrei-Eck".</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Die Entropie H(p)</h3>
+      <p style="font-size:13.5px">„Wie <em>unentschlossen</em> bin ich?" H(p) = −Σ p_j log p_j. Maximal im Zentrum (alles gleich), minimal an den Ecken (eine Antwort). Der Baustein <code>x log x</code> ist <b>streng konvex</b> (zweite Ableitung 1/x &gt; 0) — das ist der Grund, warum die Lösung eindeutig ist.</p>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der Simplex zum Schieben: wohin auch immer — es bleibt eine Antwort</h4><span class="tag">Bühne</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1fr 1fr">
+        <div class="cwrap"><canvas id="cvSimplex" style="width:100%;height:300px;cursor:grab"></canvas></div>
+        <div>
+          <div class="btnrow"><button id="sCorner">Ecke</button><button id="sCenter">Mitte</button><button id="sRand">🎲</button></div>
+          <div class="ro" style="grid-template-columns:1fr">
+            <div class="box"><div class="k">p₁ / p₂ / p₃</div><div class="v" id="spV">—</div></div>
+            <div class="box"><div class="k">Entropie H(p)</div><div class="v g" id="sH">—</div></div>
+            <div class="box"><div class="k">Max. Entropie (log 3)</div><div class="v v">1.099</div></div>
+          </div>
+          <div class="ctl-hint">Zieh den Punkt. An der Ecke = „einsicher" (H≈0), in der Mitte = „maximal offen" (H≈1.1).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="transport" class="anim">
+  <div class="eyebrow">Baustein 3 · Der entscheidende Trick</div>
+  <h2>Optimaler Transport, der auf einseitig degeneriert</h2>
+  <p class="lead">Klassischer Transport (Monge 1781, Kantorovich 1942): Verschiebe einen Erdhaufen (Quelle a) auf einen Zielhaufen (b) bei Kosten C — mit einem Plan P, dessen Zeilen- <em>und</em> Spaltensummen festgelegt sind. Der Kniff des Papers: <b>nur eine Seite festlegen</b>. Eine einzige Quelle (ein Dirac = „ein Quantum Aufmerksamkeit") und ein <em>freier</em> Ziel. Dann kollabiert die Plan-Matrix auf einen einzigen Zeilenvektor — und der zulässige Bereich <b>ist genau der Simplex</b>.</p>
+  <div class="note w"><span class="h">Warum das wichtig ist</span>
+  Volle OT (beide Ränder) braucht den iterativen <b>Sinkhorn-Algorithmus</b>. Hier gilt nur <em>eine</em> Randbedingung (Zeilen = 1, Spalten frei) — deshalb gibt es eine <b>geschlossene Lösung</b>, kein Iterieren. Das ist die Abgrenzung zum „Sinkhorn-Attention".
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der einseitige Transport: eine Quelle, freies Ziel</h4><span class="tag">Degeneration</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1fr 1fr">
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Anzahl Schlüssel m</span><b id="otMV">6</b></div><input type="range" id="otM" min="3" max="8" step="1" value="6"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Score-Differenz (wie unterschiedlich ähnlich?)</span><b id="otDV">2.0</b></div><input type="range" id="otD" min="0" max="50" value="20" class="m"></div>
+          <div class="note" style="margin-bottom:0;font-size:12.5px"><b>4 Stufen:</b> ① volle OT (2 Ränder, quadratisch) → ② Quelle = 1 Dirac → ③ Spaltenbedingung fallen lassen → ④ = eine Zeile = Simplex. Genau das ist ein Attention-Query.</div>
+        </div>
+        <div class="cwrap"><canvas id="cvOT" style="width:100%;height:280px"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="satz" class="anim">
+  <div class="eyebrow">Kapitel 1 · Der Hauptsatz</div>
+  <h2>Softmax ist die eindeutige Lösung — und kein Design</h2>
+  <p class="lead">Das Problem: Minimiere <code>J(p) = −⟨p, s⟩ + τ Σ p_j log p_j</code> über den Simplex. Der erste Term will „dorthin, wo es ähnlich ist" (−Score), der zweite „breit bleiben" (Entropie). Die Lösung ist <b>exakt</b> der Softmax-Vektor.</p>
+  <div class="thm">
+    <div class="lbl">Theorem 3.3 (existiert · eindeutig · Form)</div>
+    <div class="math">
+      <b>A · Existenz:</b> Simplex nicht-leer/konvex/kompakt + J stetig → Extremwertsatz.<br>
+      <b>B · Eindeutigkeit:</b> ⟨p,s⟩ linear + τ·Σp·log·p streng konvex → J streng konvex → genau ein Minimum.<br>
+      <b>C · Form:</b> Lagrange/KKT-Stationarität → <b>p_j ∝ exp(s_j/τ)</b> → nach Normierung: Softmax.
+    </div>
+  </div>
+  <div class="note t"><span class="h">Remark 3.4 — warum τ = √d_k</span>
+  Sind die Komponenten von q und k unabhängig, Mittel 0, Varianz 1, dann hat ⟨q,k⟩ Varianz <b>d_k</b>. Durch ÷√d_k wird die Varianz wieder 1 — sonst saturiert Softmax zu One-Hot und die Gradienten verschwinden. Variational: τ passt die Stärke der entropischen Regularisierung an die Dimension an.
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der Optimierer live: Gradientenabstieg trifft die analytische Softmax</h4><span class="tag">Theorem 3.3</span></div>
+    <div class="demo-body">
+      <p style="font-size:13px;margin-bottom:12px">Links: ein numerischer Optimierer (Spiegelabstieg) startet bei „alles gleich" und rollt ins Tal. Rechts: die <b>analytische</b> Softmax-Lösung (Stern). Bei jedem Score und jeder Temperatur treffen beide <b>aufeinander</b> — der Abstand geht gegen 0.</p>
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div>
+          <div class="cwrap"><canvas id="cvOpt" style="width:100%;height:280px"></canvas></div>
+        </div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>Score s₁</span><b id="o1V">2.0</b></div><input type="range" id="o1" min="-40" max="40" value="20"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Score s₂</span><b id="o2V">0.5</b></div><input type="range" id="o2" min="-40" max="40" value="5" class="m"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Score s₃</span><b id="o3V">-0.5</b></div><input type="range" id="o3" min="-40" max="40" value="-5" class="v"></div>
+          <div class="ctl"><div class="ctl-lab"><span>Temperatur τ (Regularisierung)</span><b id="oTV">1.0</b></div><input type="range" id="oT" min="10" max="300" value="100" class="g"></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Abstand p ↔ Softmax</div><div class="v" id="oGap">—</div></div>
+            <div class="box"><div class="k">Schritte</div><div class="v g" id="oSteps">0</div></div>
+          </div>
+          <div id="optOut" class="badge-out ok">konvergiert zur analytischen Lösung</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="familie" class="anim">
+  <div class="eyebrow">Kapitel 2 · Die Familie</div>
+  <h2>Ein Regularisierer — viele Attention-Mechanismen</h2>
+  <p class="lead">Allgemein: <code>argmin_p −⟨p,s⟩ + Ω(p)</code> über dem Simplex. <b>Ω</b> austauschen, und man bekommt verschiedene Mechanismen — alle aus demselben Problem:</p>
+  <table>
+    <tr><th>Mechanismus</th><th>Ω(p)</th><th>Ergebnis</th></tr>
+    <tr><td>Softmax</td><td class="n">−τ·H(p)</td><td>dicht, glatt (Entropie-Max)</td></tr>
+    <tr><td>Sparsemax</td><td class="n">½·Σ p_j²</td><td>dünn, mit <b>exakten Nullen</b> (L2-Projektion)</td></tr>
+    <tr><td>α-entmax</td><td class="n">Tsallis (α)</td><td>Dünnegrad <b>stufenlos einstellbar</b></td></tr>
+    <tr><td>ALiBi</td><td class="n">−τH + γΣp_j·|i−j|</td><td>lokaler Bias, lineare Distanzstrafe</td></tr>
+  </table>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Familien-Vergleich: gleiche Scores, vier Verteilungen</h4><span class="tag">Regularisierer</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvFamily" style="width:100%;height:260px"></canvas></div>
+      <div class="btnrow" style="margin-top:12px" id="famBtns">
+        <button data-m="softmax" class="on">Softmax</button>
+        <button data-m="sparsemax">Sparsemax</button>
+        <button data-m="entmax">α-entmax</button>
+        <button data-m="alibi">ALiBi</button>
+      </div>
+      <div class="split" style="grid-template-columns:1fr 1fr">
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>α (für entmax)</span><b id="fmAV">1.5</b></div><input type="range" id="fmA" min="101" max="300" value="150"></div>
+          <div class="ctl"><div class="ctl-lab"><span>γ (für ALiBi)</span><b id="fmGV">0.6</b></div><input type="range" id="fmG" min="0" max="30" value="6" class="m"></div>
+        </div>
+        <div class="ro" style="grid-template-columns:1fr 1fr;align-content:start">
+          <div class="box"><div class="k">Nicht-Null-Einträge</div><div class="v" id="fmNZ">—</div></div>
+          <div class="box"><div class="k">Entropie</div><div class="v g" id="fmH">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="backward" class="anim">
+  <div class="eyebrow">Kapitel 3 · Der Rückwärtspass</div>
+  <h2>Backpropagation ist heimlich Reinforcement Learning</h2>
+  <p class="lead">Definiere: Kontext <code>c(p)=Σ p_j v_j</code>, Nutzen <code>u_j = −∂ℒ/∂p_j</code>, Vorteil <code>A_j = u_j − E_p[u]</code>. Dann ist der Gradient des Verlusts nach den Scores:</p>
+  <div class="thm">
+    <div class="lbl">Theorem 5.2 (der Rückwärtspass = REINFORCE)</div>
+    <div class="math">∂ℒ/∂s_j = −(p_j★/τ)·(u_j − E_{p★}[u]) = −(p_j★/τ)·A_j<br><span style="color:var(--txt-faint)">Lies es als RL-Update: „Erhöhe den Score von Schlüssel j proportional zu Wahrscheinlichkeit mal Vorteil." — exakt REINFORCE mit Erwartungs-Baseline.</span></div>
+  </div>
+  <p>Und der Baseline-Trick kommt <b>geschenkt</b>: Die Softmax-Jakobi <code>(1/τ)p_k(δ_kj − p_j)</code> hat <b>Spaltensumme 0</b> — eine reine geometrische Folge von „Σp = 1". Man muss ihn nicht einbauen; er ist da. Das macht den Gradienten varianzarm und das Training stabil.</p>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Der Attention-Bandit: die Strategie lernt, gut belohntes zu wählen</h4><span class="tag">Spiel 2</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.1fr 1fr">
+        <div class="cwrap"><canvas id="cvBandit" style="width:100%;height:280px"></canvas></div>
+        <div>
+          <div class="btnrow"><button id="bStep">▶ Schritt</button><button id="bAuto">▶▶ Auto</button><button id="bReset">↺ Reset</button></div>
+          <div class="ctl"><div class="ctl-lab"><span>Lernrate η</span><b id="bHV">0.6</b></div><input type="range" id="bH" min="1" max="300" value="60"></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Schritt</div><div class="v" id="bN">0</div></div>
+            <div class="box"><div class="k">E[u] (steigt)</div><div class="v g" id="bEU">—</div></div>
+          </div>
+          <div class="ctl-hint">4 Zeilen: Strategie p, Nutzen u, Vorteil A, Update Δs. E[u] steigt monoton zum besten Arm.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dual" class="anim">
+  <div class="eyebrow">Kapitel 4 · Dualität</div>
+  <h2>Das verborgene Potential: Log-Sum-Exp</h2>
+  <p class="lead">Minimiere J über p → eine Funktion V(s) (das „duale Potential"). Der Umhüllungsatz (Envelope-Theorem) sagt: <b>die Steigung der Unteren Umhüllenden ist −p★</b>. Setzt man φ★ = −V, erhält man eine explizite Formel:</p>
+  <div class="thm">
+    <div class="lbl">Theorem 6.3 (das duale Potential)</div>
+    <div class="math">φ★(s) = τ·log(Σ_j exp(s_j/τ)) &nbsp;=&nbsp; <b>Log-Sum-Exp</b><br>
+    Die drei Identitäten: φ★ = −V · ∇φ★ = p★ · ∇²φ★ = τ·F(s)
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:6px">Wert, Gradient und Krümmung <em>eines einzigen</em> Skalars kodieren Problem, Lösung und Lern-Dynamik.</div></div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Log-Sum-Exp als „weicher max" — und sein Gradient ist Softmax</h4><span class="tag">Spiel 3</span></div>
+    <div class="demo-body">
+      <div class="cwrap"><canvas id="cvLSE" style="width:100%;height:280px"></canvas></div>
+      <div class="ctl" style="margin-top:12px"><div class="ctl-lab"><span>Temperatur τ (klein → scharf)</span><b id="lseTV">0.3</b></div><input type="range" id="lseT" min="5" max="300" value="30"></div>
+      <div class="ctl"><div class="ctl-lab"><span>s₁ (s₂ = 0 fest)</span><b id="lseSV">0.0</b></div><input type="range" id="lseS" min="-300" max="400" value="0" class="m"></div>
+      <div class="leg">
+        <span><i style="background:#5ee0d0"></i>φ★(s₁) (Log-Sum-Exp, skaliert)</span>
+        <span><i style="background:#ffc860"></i>harter max(s₁,0)</span>
+        <span><i style="background:#8a7cff"></i>p₁ = ∇φ★/∂s₁ (Softmax-Komponente)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ring" class="anim">
+  <div class="eyebrow">Kapitel 5 · Der Ringschluss</div>
+  <h2>Informationsgeometrie: warum es so sein <em>muss</em></h2>
+  <p class="lead">Das eigentliche Ergebnis des Papers: Die drei Perspektiven — Optimaler Transport, Informationsgeometrie und Reinforcement Learning — landen auf <b>demselben Objekt</b>. Die Fisher-Matrix F = (1/τ²)(diag(p) − ppᵀ) ist das „Getriebe": Sie dämpft das Lern-Signal dort, wo die Strategie sich <em>schon entschieden</em> hat (am Rand des Simplex). Ein Netz, das schon sicher ist, wird nicht mehr grob herumgeschubst.</p>
+  <div class="thm">
+    <div class="lbl">Korollar 7.5 (der Ringschluss)</div>
+    <div class="math">∇²_s φ★(s) = τ·F(s) = (1/τ)(diag(p★) − p★(p★)ᵀ)<br><span style="color:var(--txt-faint)">Krümmung des dualen Potentials = (bis auf τ) die Fisher-Matrix = der RL-Transduktor. Drei Wege, eine Matrix.</span></div>
+  </div>
+  <div class="demo">
+    <div class="demo-head"><span class="dot"></span><h4>Die Fisher-Matrix als Getriebe: sie dämpft, wo man schon sicher ist</h4><span class="tag">Ringschluss</span></div>
+    <div class="demo-body">
+      <div class="split" style="grid-template-columns:1.2fr 1fr">
+        <div class="cwrap"><canvas id="cvFisher" style="width:100%;height:300px"></canvas></div>
+        <div>
+          <div class="ctl"><div class="ctl-lab"><span>„Entschlossenheit" (scharfe Scores)</span><b id="fSV">0.4</b></div><input type="range" id="fS" min="0" max="200" value="40"></div>
+          <div class="ro" style="grid-template-columns:1fr 1fr">
+            <div class="box"><div class="k">Max. p_j</div><div class="v" id="fMax">—</div></div>
+            <div class="box"><div class="k">Dämpfung am Rand</div><div class="v m" id="fDamp">—</div></div>
+          </div>
+          <div class="note" style="margin-top:12px;font-size:12.5px;margin-bottom:0"><b>Warum stabil:</b> Der Standard-Gradient ist <code>−τ·F·u</code>. Wo p konzentriert ist (F klein), wird das Update klein. Das ist <em>mannigfaltigkeitsbewusstes</em> Lernen — kein Engineering, sondern Geometrie.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grenzen" class="anim">
+  <div class="eyebrow">Ehrlichkeit</div>
+  <h2>Was ist <em>nicht</em> beansprucht</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc3)">Keine Neu-Erfindung</h3>
+      <ul style="font-size:13.5px">
+        <li><b>Kein neuer Mechanismus</b> — SDPA bleibt bit-für-bit identisch.</li>
+        <li><b>Keine Experimente</b> — eine rein theoretische Arbeit.</li>
+        <li>Die Max-Entropie/Gibbs-Verbindung ist <b>klassisch</b> (Jaynes 1957).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc4)">Was neu ist</h3>
+      <ul style="font-size:13.5px">
+        <li>Die Einbettung in <b>einseitigen</b> entropischen OT (geschlossene Lösung, kein Sinkhorn).</li>
+        <li>Die Brücke zum <b>Policy-Gradient</b> (Baseline „geschenkt").</li>
+        <li>Die <b>geometrische</b> Erklärung, warum diese beiden zusammengehören (Kor. 7.5).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note e"><span class="h">Der letzte Satz</span>
+  „Dasselbe, bit-für-bit identische Stück Code. Aber jetzt weißt du, <em>warum</em> es so aussieht."
+  </div>
+</section>
+
+<section id="quellen" class="anim">
+  <div class="eyebrow">Quellen</div>
+  <h2>Original — geprüft</h2>
+  <div class="card">
+    <ul style="font-size:13.5px">
+      <li><b>Das Paper:</b> Litman (Stanford, 2025): <i>Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport.</i> <a class="ext" href="https://arxiv.org/abs/2508.08369">arXiv:2508.08369</a> — Thm 3.3, Props 4.1–4.4, Thm 5.2, Lemma 6.2, Thm 6.3, Thm 7.3, Kor. 7.5, Anhang A.</li>
+      <li><b>SDPA:</b> Vaswani et al. (2017) — <i>Attention Is All You Need.</i></li>
+      <li><b>OT:</b> Monge (1781), Kantorovich (1942). <b>Max-Entropie/Gibbs:</b> Jaynes (1957). <b>RL-Baseline:</b> REINFORCE (Williams).</li>
+    </ul>
+    <div class="note e" style="margin-bottom:0"><span class="h">Überarbeitungshinweis</span>
+      Gegenüber der ausführlichen Version: Kapitel auf 8 reduziert, 15+ Labore auf 7, alle Plotly-Plots durch 2D-Canvas ersetzt, Temml-LaTeX durch Klartext-Gleichungen. Die Optimierer, Bandit und Fisher-Demos berechnen die Größen live und exakt nach den Formeln des Papers.
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="anim">
+  <div class="eyebrow">Selbsttest</div>
+  <h2>Sechs Fragen</h2>
+  <div class="quiz" id="quizHost"></div>
+  <div class="card" style="text-align:center">
+    <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--acc)" id="qScore">0 / 6</div>
+    <div style="color:var(--txt-faint);font-size:12px;margin-top:4px" id="qMsg">Los geht's!</div>
+    <button id="qReset" style="margin-top:12px">↻ Zurücksetzen</button>
+  </div>
+</section>
+
+</main>
+<footer>
+  Einfache interaktive Erklärung zu <b>„Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport"</b> (Litman, Stanford, arXiv:2508.08369).<br>
+  Alle Simulationen laufen live im Browser — ohne externe Bibliotheken.
+</footer>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function softmax(a){const m=Math.max.apply(null,a);const e=a.map(x=>Math.exp(x-m));const s=e.reduce((x,y)=>x+y,0);return e.map(x=>x/s);}
+function H(p){let h=0;p.forEach(x=>{if(x>1e-12)h-=x*Math.log(x);});return h;}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v);}
+function hidpi(cv,h){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||600;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';
+  const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+const INK={grid:'rgba(255,255,255,.06)',axis:'rgba(255,255,255,.15)',txt:'#9aa6c0',faint:'#64708c',acc:'#5ee0d0',acc2:'#ff7ac0',acc3:'#ffc860',acc4:'#8a7cff',acc5:'#6ee88a'};
+
+(function(){
+  const bar=$('#prog');const links=$$('#nav .links a');
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const st=scrollY,dh=document.body.scrollHeight-innerHeight;
+    bar.style.width=(dh>0?st/dh*100:0)+'%';
+    let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*0.4)act=i;});
+    links.forEach((a,i)=>a.classList.toggle('on',i===act));
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+  $$('.anim').forEach(el=>io.observe(el));
+})();
+
+(function(){
+  const KEYS=[{n:'Katze',a:0.35},{n:'Tier',a:1.35},{n:'läuft',a:2.55},{n:'blau',a:4.10},{n:'Haus',a:5.30}];
+  const cv=$('#cvAttn');
+  let drag=false,qAng=0.52,qLen=0.5;
+  function draw(){
+    const tau=+$('#qT').value/100;
+    const {c,w,h}=hidpi(cv,320);
+    c.clearRect(0,0,w,h);
+    const cx=w/2, cy=120, R=Math.min(w,h)*0.28;
+    const qA=qAng, qL=qLen;
+    const scores=KEYS.map(k=>qL*Math.cos(qA-k.a));
+    const alpha=softmax(scores.map(s=>s/tau));
+    const maxA=Math.max.apply(null,alpha);
+    KEYS.forEach((k,i)=>{
+      const kx=cx+Math.cos(k.a)*R, ky=cy-Math.sin(k.a)*R;
+      const halo=8+alpha[i]*40;
+      c.beginPath();c.arc(kx,ky,halo,0,Math.PI*2);c.fillStyle='rgba(94,224,208,'+(0.05+alpha[i]*0.5)+')';c.fill();
+      c.beginPath();c.arc(kx,ky,7,0,Math.PI*2);c.fillStyle=INK.acc;c.fill();
+      c.fillStyle=INK.txt;c.font='600 11px system-ui';c.textAlign='center';
+      c.fillText(k.n, kx+Math.cos(k.a)*20, cy-Math.sin(k.a)*(R+20)+4);
+    });
+    const qlen=18+qL*(R*0.9);
+    c.strokeStyle=INK.acc2;c.lineWidth=3;
+    c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(qA)*qlen,cy-Math.sin(qA)*qlen);c.stroke();
+    c.beginPath();c.arc(cx+Math.cos(qA)*qlen,cy-Math.sin(qA)*qlen,5,0,Math.PI*2);c.fillStyle=INK.acc2;c.fill();
+    const by=244,bh=56,bw=(w-40)/KEYS.length;
+    KEYS.forEach((k,i)=>{
+      const x=20+i*bw+bw/2;
+      const bhv=alpha[i]/maxA*bh;
+      c.fillStyle='rgba(94,224,208,.18)';c.fillRect(x-bw*0.32,by-bh,bw*0.64,bh);
+      c.fillStyle=INK.acc;c.fillRect(x-bw*0.32,by-bhv,bw*0.64,bhv);
+      c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';
+      c.fillText(k.n,x,by+14);
+      c.fillStyle=INK.acc;c.font='600 10px monospace';
+      c.fillText(Math.round(alpha[i]*100)+'%',x,by-bhv-4);
+    });
+    const win=KEYS[scores.indexOf(Math.max.apply(null,scores))];
+    $('#aWin').textContent=win.n;
+    $('#aH').textContent=H(alpha).toFixed(2);
+    $('#aTau').textContent=tau.toFixed(1);
+    if($('#qTV'))$('#qTV').textContent=tau.toFixed(1);
+  }
+  function setFromPointer(e){
+    const r=cv.getBoundingClientRect();
+    const w=cv.clientWidth,h=320;
+    const cx=w/2, cy=120;
+    const mx=(e.clientX-r.left)*(w/r.width), my=(e.clientY-r.top)*(h/r.height);
+    qAng=Math.atan2(cy-my,mx-cx);
+    qLen=clamp(Math.hypot(mx-cx,my-cy)/(Math.min(w,h)*0.28*0.9),0,1);
+    draw();
+  }
+  cv.addEventListener('pointerdown',e=>{drag=true;setFromPointer(e);});
+  cv.addEventListener('pointermove',e=>{if(drag)setFromPointer(e);});
+  cv.addEventListener('pointerup',()=>drag=false);
+  cv.addEventListener('pointerleave',()=>drag=false);
+  $('#qT').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvSimplex');
+  let p=[1/3,1/3,1/3];
+  function draw(){
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const A=[w/2,h*0.12], B=[w*0.1,h*0.86], C=[w*0.9,h*0.86];
+    const X=(a,b,cc)=>a[0]+(b[0]-a[0])*cc;
+    const Y=(a,b,cc)=>a[1]+(b[1]-a[1])*cc;
+    function P(){return [p[0]*A[0]+p[1]*B[0]+p[2]*C[0], p[0]*A[1]+p[1]*B[1]+p[2]*C[1]];}
+    c.strokeStyle=INK.axis;c.lineWidth=2;
+    c.beginPath();c.moveTo(A[0],A[1]);c.lineTo(B[0],B[1]);c.lineTo(C[0],C[1]);c.closePath();c.stroke();
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=1;i<4;i++){
+      const t=i/4;
+      c.beginPath();c.moveTo(B[0]+(A[0]-B[0])*t,B[1]+(A[1]-B[1])*t);c.lineTo(C[0]+(A[0]-C[0])*t,C[1]+(A[1]-C[1])*t);c.stroke();
+      c.beginPath();c.moveTo(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t);c.lineTo(C[0]+(B[0]-C[0])*t,C[1]+(B[1]-C[1])*t);c.stroke();
+      c.beginPath();c.moveTo(A[0]+(C[0]-A[0])*t,A[1]+(C[1]-A[1])*t);c.lineTo(B[0]+(C[0]-B[0])*t,B[1]+(C[1]-B[1])*t);c.stroke();
+    }
+    c.fillStyle=INK.faint;c.font='11px system-ui';
+    c.fillText('p₀=1',A[0]-14,A[1]-8);c.fillText('p₁=1',B[0]-6,B[1]+16);c.fillText('p₂=1',C[0]-16,C[1]+16);
+    const pt=P();
+    c.beginPath();c.arc(pt[0],pt[1],8,0,Math.PI*2);c.fillStyle=INK.acc;c.fill();c.strokeStyle='#0a0e18';c.lineWidth=2;c.stroke();
+    $('#spV').textContent=p.map(x=>x.toFixed(2)).join(' / ');
+    $('#sH').textContent=H(p).toFixed(3);
+  }
+  function toBary(e){
+    const r=cv.getBoundingClientRect();
+    const w=cv.clientWidth,h=300;
+    const mx=(e.clientX-r.left)*(w/r.width),my=(e.clientY-r.top)*(h/r.height);
+    const A=[w/2,h*0.12],B=[w*0.1,h*0.86],C=[w*0.9,h*0.86];
+    const d=(b[0]-a[0])*(a[1]-c[1])-(a[0]-c[0])*(b[1]-c[1]);
+    const a2=A,b2=B,c2=C;
+    const dd=(b2[0]-a2[0])*(a2[1]-c2[1])-(a2[0]-c2[0])*(b2[1]-c2[1]);
+    let l1=((b2[0]-c2[0])*(my-c2[1])-(c2[1]-b2[1])*(mx-c2[0]))/dd;
+    let l2=((c2[0]-a2[0])*(my-a2[1])-(a2[1]-c2[1])*(mx-a2[0]))/dd;
+    let l3=1-l1-l2;
+    let q=[l1,l2,l3].map(v=>Math.max(0,v));
+    const s=q[0]+q[1]+q[2]||1;
+    p=q.map(v=>v/s);
+    draw();
+  }
+  cv.addEventListener('pointerdown',toBary);
+  cv.addEventListener('pointermove',e=>{if(e.buttons)toBary(e);});
+  $('#sCorner').addEventListener('click',()=>{p=[0.98,0.01,0.01];draw();});
+  $('#sCenter').addEventListener('click',()=>{p=[1/3,1/3,1/3];draw();});
+  $('#sRand').addEventListener('click',()=>{let a=Math.random(),b=Math.random();if(a+b>1){a=1-a;b=1-b;}p=[a,b,1-a-b];draw();});
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvOT');
+  function draw(){
+    const m=+$('#otM').value, diff=+$('#otD').value/10;
+    $('#otMV').textContent=m;$('#otDV').textContent=diff.toFixed(1);
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const pad=30;
+    const cell=(w-2*pad)/m;
+    // single source (dirac) at top-left, targets along top
+    // row of "target" cells
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';
+    c.fillText('Quelle: 1 Dirac (Query)',w*0.3,16);
+    // plan: one row of probabilities = softmax of scores
+    const rng=rng32(7);
+    const scores=[];for(let j=0;j<m;j++)scores.push((j-m/2)*diff*0.4);
+    const p=softmax(scores.map(s=>s/1.0));
+    for(let j=0;j<m;j++){
+      const x=pad+j*cell;
+      const a=p[j];
+      c.fillStyle='rgba(94,224,208,'+(0.1+a*0.7)+')';
+      c.fillRect(x+2,pad+10,cell-4,cell*0.8);
+      c.strokeStyle=INK.stroke||'rgba(255,255,255,.1)';
+      c.strokeStyle='rgba(255,255,255,.1)';c.strokeRect(x+2,pad+10,cell-4,cell*0.8);
+      c.fillStyle=INK.txt;c.font='10px monospace';
+      c.fillText(j+1, x+cell/2, pad+10+cell*0.8+14);
+      c.fillStyle=INK.acc;c.font='9px monospace';
+      c.fillText(Math.round(a*100)+'%', x+cell/2, pad+10+cell*0.8/2+3);
+    }
+    c.strokeStyle=INK.axis;c.beginPath();c.moveTo(pad,pad+10);c.lineTo(pad,pad+10+cell*0.8);c.stroke();
+    c.fillStyle=INK.faint;c.textAlign='left';c.fillText('freie Ziele (Spaltensummen ≠ 1)',pad,pad+10+cell*0.8+30);
+  }
+  $('#otM').addEventListener('input',draw);$('#otD').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvOpt');
+  let p=[1/3,1/3,1/3], steps=0, animId=null;
+  function target(){
+    const s=[+$('#o1').value/10,+$('#o2').value/10,+$('#o3').value/10];
+    const tau=+$('#oT').value/100;
+    return softmax(s.map(x=>x/tau));
+  }
+  function resetOpt(){p=[1/3,1/3,1/3];steps=0;if(animId)cancelAnimationFrame(animId);}
+  function run(){
+    resetOpt();
+    const s=[+$('#o1').value/10,+$('#o2').value/10,+$('#o3').value/10];
+    const tau=+$('#oT').value/100;
+    const lr=0.15;
+    function frame(){
+      p=p.map((v,j)=>v*Math.exp(lr*(s[j]/tau-Math.log(1e-6))));
+      const ssum=p.reduce((a,b)=>a+b,0);p=p.map(v=>v/ssum);
+      steps++;
+      draw();
+      const gap=p.reduce((a,v,j)=>a+(v-target()[j])*(v-target()[j]),0);
+      if(steps<2000)animId=requestAnimationFrame(frame);
+      else animId=null;
+    }
+    animId=requestAnimationFrame(frame);
+  }
+  function draw(){
+    const s=[+$('#o1').value/10,+$('#o2').value/10,+$('#o3').value/10];
+    const tau=+$('#oT').value/100;
+    $('#o1V').textContent=s[0].toFixed(1);$('#o2V').textContent=s[1].toFixed(1);$('#o3V').textContent=s[2].toFixed(1);
+    $('#oTV').textContent=tau.toFixed(1);
+    const t=target();
+    const gap=Math.sqrt(p.reduce((a,v,j)=>a+(v-t[j])*(v-t[j]),0));
+    $('#oGap').textContent=gap.toFixed(3);$('#oSteps').textContent=steps;
+    const out=$('#optOut');
+    if(gap<0.01){out.className='badge-out ok';out.textContent='konvergiert — Abstand ≈ 0 ✓';}
+    else{out.className='badge-out warn';out.textContent='rollt ins Tal …';}
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const bw=(w-60)/3;
+    const colors=[INK.acc,INK.acc2,INK.acc3];
+    for(let j=0;j<3;j++){
+      const x=30+j*bw+bw/2;
+      const bhMax=200;
+      c.fillStyle='rgba(255,255,255,.05)';c.fillRect(x-bw*0.4,30,bw*0.8,bhMax);
+      c.fillStyle=colors[j]+'55';c.fillRect(x-bw*0.4,30+bhMax*(1-t[j]),bw*0.8,bhMax*t[j]);
+      c.fillStyle=colors[j];c.fillRect(x-bw*0.4,30+bhMax*(1-p[j]),bw*0.4,bhMax*p[j]);
+      c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';
+      c.fillText('s'+(j+1),x,246);
+      c.fillText(Math.round(p[j]*100)+'%',x,258);
+    }
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='left';
+    c.fillText('dunkel = analytisch (Softmax), hell = Optimierer p',14,h-8);
+  }
+  ['o1','o2','o3','oT'].forEach(id=>$('#'+id).addEventListener('input',run));
+  addEventListener('resize',draw);draw();run();
+})();
+
+(function(){
+  const cv=$('#cvFamily');
+  let mode='softmax';
+  const M=12;
+  const S=(function(){const r=rng32(5);const a=[];for(let i=0;i<M;i++)a.push(gauss(r)*1.2);return a;})();
+  function proj(s){ // sparsemax: Euclidean projection onto simplex
+    const srt=s.slice().sort((a,b)=>b-a);
+    let cum=0,theta=0,found=-1;
+    for(let i=0;i<srt.length;i++){
+      cum+=srt[i];
+      const t=(cum-1)/(i+1);
+      if(srt[i]-t>0){theta=t;found=i;}
+    }
+    if(found<0)theta=(s.reduce((a,b)=>a+b,0)-1)/s.length;
+    return s.map(v=>Math.max(0,v-theta));
+  }
+  function entmax(s,alpha){
+    const beta=1/(alpha-1);
+    const srt=s.slice().sort((a,b)=>b-a);
+    let theta=0,found=-1,cum=0;
+    for(let i=0;i<srt.length;i++){
+      const t=i+1;
+      // solve sum (s_j-theta)^beta = 1 for active set
+      let lo=srt[i]-10,hi=10;
+      for(let it=0;it<60;it++){
+        const mid=(lo+hi)/2;
+        let sum=0;for(let j=0;j<=i;j++){const v=srt[j]-mid;if(v>0)sum+=Math.pow(v,beta);}
+        if(sum>1)lo=mid;else hi=mid;
+      }
+      theta=(lo+hi)/2;
+      if(srt[i]-theta>0){found=i;break;}
+    }
+    if(found<0)theta=0;
+    let p=s.map(v=>Math.max(0,v-theta)>0?Math.pow(Math.max(0,v-theta),beta):0);
+    const sm=p.reduce((a,b)=>a+b,0)||1;
+    return p.map(v=>v/sm);
+  }
+  function dist(){
+    const s=S;
+    const iQ=6;
+    if(mode==='softmax')return softmax(s.map(x=>x/1.0));
+    if(mode==='sparsemax')return proj(s);
+    if(mode==='entmax')return entmax(s,+$('#fmA').value/100);
+    if(mode==='alibi'){const g=+$('#fmG').value/10;return softmax(s.map((x,j)=>(x-g*Math.abs(iQ-j))/1.0));}
+  }
+  function draw(){
+    const p=dist();
+    const {c,w,h}=hidpi(cv,260);
+    c.clearRect(0,0,w,h);
+    const bw=(w-40)/M;
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='left';
+    c.fillText(mode.toUpperCase()+' → Verteilung über '+M+' Schlüssel',14,16);
+    for(let j=0;j<M;j++){
+      const x=20+j*bw+bw/2;
+      const bhMax=170, y0=210;
+      c.fillStyle='rgba(255,255,255,.05)';c.fillRect(x-bw*0.4,30,bw*0.8,bhMax);
+      const col=p[j]<1e-6?INK.faint:INK.acc;
+      c.fillStyle=col;c.globalAlpha=p[j]<1e-6?0.4:0.9;
+      c.fillRect(x-bw*0.4,y0-bhMax*p[j],bw*0.8,bhMax*p[j]);
+      c.globalAlpha=1;
+      if(p[j]<1e-6){c.fillStyle=INK.faint;c.font='9px monospace';c.textAlign='center';c.fillText('0',x,y0-4);}
+    }
+    const nz=p.filter(v=>v>1e-4).length;
+    $('#fmNZ').textContent=nz+' / '+M;
+    $('#fmH').textContent=H(p).toFixed(2);
+  }
+  $$('#famBtns button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#famBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m;draw();
+  }));
+  $('#fmA').addEventListener('input',()=>{$('#fmAV').textContent=(+$('#fmA').value/100).toFixed(2);draw();});
+  $('#fmG').addEventListener('input',()=>{$('#fmGV').textContent=(+$('#fmG').value/10).toFixed(1);draw();});
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvBandit');
+  const S0=[0.2,0.0,-0.1,0.1,0.0], U=[1.4,-0.6,0.8,-1.1,0.2];
+  let s=S0.slice(), steps=0, autoTimer=null;
+  function state(){const p=softmax(s);const eu=p.reduce((a,b,i)=>a+b*U[i],0);const A=U.map(u=>u-eu);return {p,eu,A};}
+  function step(){const st=state();const eta=+$('#bH').value/100;s=s.map((v,i)=>v+eta*st.p[i]*st.A[i]);steps++;draw();}
+  function draw(){
+    const st=state();
+    $('#bN').textContent=steps;$('#bEU').textContent=st.eu.toFixed(2);$('#bHV').textContent=(+$('#bH').value/100).toFixed(2);
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const bw=(w-40)/U.length;
+    function row(arr,y0,label,col){
+      c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='left';c.fillText(label,14,y0-6);
+      const maxv=Math.max.apply(null,arr.map(Math.abs))||1;
+      arr.forEach((v,i)=>{
+        const x=20+i*bw+bw/2;
+        const hgt=(v/maxv)*(y0*0.42);
+        c.fillStyle=col;c.globalAlpha=0.85;
+        if(v>=0)c.fillRect(x-bw*0.3,y0-hgt,bw*0.6,hgt);
+        else c.fillRect(x-bw*0.3,y0,bw*0.6,-hgt);
+        c.globalAlpha=1;
+      });
+      c.strokeStyle=INK.axis;c.beginPath();c.moveTo(14,y0);c.lineTo(w-14,y0);c.stroke();
+    }
+    row(st.p,80,'Strategie p',INK.acc);
+    row(U,150,'Nutzen u',INK.acc3);
+    row(st.A,220,'Vorteil A',INK.acc4);
+  }
+  $('#bStep').addEventListener('click',step);
+  $('#bH').addEventListener('input',draw);
+  $('#bReset').addEventListener('click',()=>{s=S0.slice();steps=0;if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('#bAuto').classList.remove('on');}draw();});
+  $('#bAuto').addEventListener('click',()=>{
+    if(autoTimer){clearInterval(autoTimer);autoTimer=null;$('#bAuto').classList.remove('on');}
+    else{autoTimer=setInterval(step,160);$('#bAuto').classList.add('on');}
+  });
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvLSE');
+  function draw(){
+    const tau=+$('#lseT').value/100, s1=+$('#lseS').value/100, s2=0;
+    $('#lseTV').textContent=tau.toFixed(2);$('#lseSV').textContent=s1.toFixed(1);
+    const {c,w,h}=hidpi(cv,280);
+    c.clearRect(0,0,w,h);
+    const pad={l:38,r:14,t:16,b:26},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    const smin=-3,smax=4;
+    function lse(a,b){const m=Math.max(a,b);return tau*Math.log(Math.exp(a/tau)+Math.exp(b/tau));}
+    // collect values
+    let vmin=1e9,vmax=-1e9;
+    for(let i=0;i<=200;i++){const s=smin+(smax-smin)*i/200;const v=lse(s,s2);vmin=Math.min(vmin,v);vmax=Math.max(vmax,v);}
+    vmin=Math.min(vmin,0);vmax*=1.1;
+    function X(s){return pad.l+(s-smin)/(smax-smin)*pw;}
+    function Y(v){return pad.t+ph-(v-vmin)/(vmax-vmin)*ph;}
+    c.strokeStyle=INK.grid;c.lineWidth=1;
+    for(let i=0;i<=4;i++){const gy=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();}
+    // hard max
+    c.strokeStyle=INK.acc3;c.lineWidth=2;c.beginPath();
+    for(let i=0;i<=200;i++){const s=smin+(smax-smin)*i/200;const v=Math.max(s,0);const px=X(s),py=Y(v);if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}
+    c.stroke();
+    // lse
+    c.strokeStyle=INK.acc;c.lineWidth=3;c.beginPath();
+    for(let i=0;i<=200;i++){const s=smin+(smax-smin)*i/200;const v=lse(s,s2);const px=X(s),py=Y(v);if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}
+    c.stroke();
+    // p1 = dLSE/ds1 = softmax first component
+    c.strokeStyle=INK.acc4;c.lineWidth=2.5;c.beginPath();
+    for(let i=0;i<=200;i++){const s=smin+(smax-smin)*i/200;const pr=Math.exp(s/tau)/(Math.exp(s/tau)+Math.exp(s2/tau));const px=X(s),py=pad.t+ph*(1-pr);if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}
+    c.stroke();
+    // current point
+    const cx=X(s1),cy=Y(lse(s1,s2));
+    c.beginPath();c.arc(cx,cy,5,0,Math.PI*2);c.fillStyle=INK.acc;c.fill();
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='center';c.fillText('s₁',w/2,h-8);c.textAlign='left';
+  }
+  $('#lseT').addEventListener('input',draw);$('#lseS').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const cv=$('#cvFisher');
+  const M=6, U=[1.2,-0.8,0.5,1.6,-1.3,0.2];
+  function draw(){
+    const sharp=+$('#fS').value/100;
+    const {c,w,h}=hidpi(cv,300);
+    c.clearRect(0,0,w,h);
+    const s=U.map(u=>u*sharp);
+    const p=softmax(s);
+    const F=(i,j)=>(i===j?p[i]*(1-p[i]):-p[i]*p[j]); // = (1/tau^2)(diag(p)-pp^T) with tau=1
+    // grad_j = sum_k F_jk u_k
+    const gr=U.map((u,j)=>{let g=0;for(let k=0;k<M;k++)g+=F(j,k)*U[k];return g;});
+    const bw=(w-40)/M;
+    function row(arr,y0,label,col){
+      c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='left';c.fillText(label,14,y0-6);
+      const maxv=Math.max.apply(null,arr.map(Math.abs))||1;
+      arr.forEach((v,i)=>{
+        const x=20+i*bw+bw/2;
+        const hgt=(v/maxv)*(y0*0.4);
+        c.fillStyle=col;c.globalAlpha=0.85;
+        if(v>=0)c.fillRect(x-bw*0.3,y0-hgt,bw*0.6,hgt);
+        else c.fillRect(x-bw*0.3,y0,bw*0.6,-hgt);
+        c.globalAlpha=1;
+      });
+      c.strokeStyle=INK.axis;c.beginPath();c.moveTo(14,y0);c.lineTo(w-14,y0);c.stroke();
+    }
+    row(U,60,'Nutzen u',INK.acc3);
+    row(p,120,'Strategie p',INK.acc);
+    row(gr,180,'Gradient −τ·F·u (gedämpft)',INK.acc2);
+    // F heatmap
+    const hy=200, hx=20;
+    const cell=Math.min((w-40)/M, 12);
+    for(let i=0;i<M;i++)for(let j=0;j<M;j++){
+      const v=F(i,j);
+      const a=Math.min(1,Math.abs(v)/0.25);
+      c.fillStyle=v>=0?'rgba(94,224,208,'+a*0.7+')':'rgba(255,122,192,'+a*0.7+')';
+      c.fillRect(hx+j*cell,hy+i*cell,cell-1,cell-1);
+    }
+    c.fillStyle=INK.faint;c.font='10px system-ui';c.textAlign='left';c.fillText('Fisher-Matrix F (Zeilensumme 0, Rang M−1)',20,hy+M*cell+16);
+    const pmax=Math.max.apply(null,p);
+    $('#fMax').textContent=pmax.toFixed(2);
+    // damping near boundary: ratio of gradient magnitude to |u|
+    const damp=1-pmax;
+    $('#fDamp').textContent=Math.round(damp*100)+' % offen';
+  }
+  $('#fS').addEventListener('input',draw);
+  addEventListener('resize',draw);draw();
+})();
+
+(function(){
+  const QS=[
+    {q:'Warum ist Softmax die Lösung und nicht „quadratisch & normieren"?',o:['Weil es schneller ist','Weil der Entropie-Regularisierer die Gibbs-Form erzwingt','Weil es 2017 gewählt wurde','Weil es linear ist'],a:1},
+    {q:'Warum teilt man durch √d_k?',o:['um Speicher zu sparen','um die Score-Varianz von d_k auf 1 zu normalisieren','um die Tiefe zu erhöhen','es ist beliebig'],a:1},
+    {q:'Das einseitige OT-Problem hat…',o:['festen Zeilen- UND Spaltenrändern','nur einen Rand (Zeile=1, Spalten frei)','keine Randbedingung','zwei Quellen'],a:1},
+    {q:'Warum braucht einseitiges OT keinen Sinkhorn-Algorithmus?',o:['er ist zu langsam','weil eine Randbedingung → geschlossene Lösung','weil es keine Kosten gibt','weil es kein Simplex ist'],a:1},
+    {q:'Der Lern-Gradient ∂ℒ/∂s_j ist…',o:['ein einfacher Mittelwert','−(p_j/τ)·(u_j − E[u]) = REINFORCE mit Baseline','ein Zufallswert','der Softmax selbst'],a:1},
+    {q:'Das Baseline kommt „geschenkt", weil…',o:['es im Code hartkodiert ist','die Softmax-Jakobi Spaltensumme 0 hat (Σp=1)','man sie einstellt','es ein Hyperparameter ist'],a:1}
+  ];
+  const host=$('#quizHost');let score=0,answered=0;
+  QS.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='q';
+    div.innerHTML='<div style="margin-bottom:8px">'+(i+1)+'. '+item.q+'</div>';
+    item.o.forEach((opt,oi)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=opt;
+      b.addEventListener('click',()=>{
+        if(div.dataset.done)return;div.dataset.done='1';answered++;
+        if(oi===item.a){b.classList.add('correct');score++;}
+        else{b.classList.add('wrong');div.querySelectorAll('.opt')[item.a].classList.add('correct');}
+        $('#qScore').textContent=score+' / '+QS.length;
+        if(answered===QS.length)$('#qMsg').textContent=score>=5?'Stark! Du hast das Paper im Griff.':score>=3?'Solide — schau die Kapitel noch einmal an.':'Nochmal von vorn — die Spiele helfen.';
+        else $('#qMsg').textContent=answered+' / '+QS.length+' beantwortet.';
+      });
+      div.appendChild(b);
+    });
+    host.appendChild(div);
+  });
+  $('#qReset').addEventListener('click',()=>{location.reload();});
+})();
+</script>
+</body>
+</html>

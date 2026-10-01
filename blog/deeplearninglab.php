@@ -57,6 +57,8 @@ which is just: take $n$ neurons, each one bends the input its own way ($\psi$ wi
 1. It's an **existence** proof, not a **learning** proof. It says the right weights *exist*, not that gradient descent will find them.
 2. "Enough neurons" can mean *astronomically* many. In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.
 
+And the cleanest modern characterization, \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), gives an exact *if and only if*: the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial. That means sigmoid, ReLU, tanh, SiLU — every standard activation — qualifies, while no amount of width can compensate for a polynomial activation.
+
 So the theorem is foundational, but it doesn't explain *why* deep networks work so well. For that, we need to look at what depth actually buys us.
 
 </div>
@@ -102,7 +104,7 @@ The mechanical reason depth is so effective is **reuse**. A sub-result computed 
 - A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.
 - A **deep** network with $n$ layers of just a few neurons each does it in $O(n)$ total neurons. Each layer checks one coordinate and multiplies by the running result from the previous layer.
 
-Same function. Linear vs. exponential. This isn't a fluke: \citeauthor{telgarsky2016wars} proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\Omega(n)}$ neurons to match. And \citeauthor{montufar2014regions} showed that the number of distinct "linear regions" a ReLU network can carve out **grows exponentially with depth** — the compositional structure is exactly what buys the exponential expressivity.
+Same function. Linear vs. exponential. This isn't a fluke: \citeauthor{telgarsky2016wars} proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\Omega(n)}$ neurons to match. And \citeauthor{montufar2014regions} showed that the number of distinct "linear regions" a ReLU network can carve out **grows exponentially with depth** — the compositional structure is exactly what buys the exponential expressivity. And the bound is **tight**: a depth-$L$ ReLU network of width 2 produces a "sawtooth" with exactly $2^L$ linear regions, so the exponential growth is guaranteed, not merely possible \cite{petersen2024mathdl}.
 
 **What this looks like conceptually:** each layer builds features **on top of** the previous layer's features.
 - Layer 1: edges, simple patterns.
@@ -164,7 +166,11 @@ Residual connections also **flatten the loss landscape** \cite[Li et al.]{li2018
 
 The loss $\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**. Gradient descent is a ball rolling downhill on this surface. Two facts shape what it finds.
 
-**Saddle points, not local minima, are the real obstacle.** In very high dimensions, almost every flat spot is a saddle (curving up in some directions, down in others), not a true trap \cite[Dauphin et al.]{dauphin2014saddle}. The **randomness in mini-batch training** acts like little kicks that knock the ball off saddles, which is why training huge networks actually works.
+**Saddle points, not local minima, are the real obstacle.** In very high dimensions, almost every flat spot is a saddle (curving up in some directions, down in others), not a true trap \cite[Dauphin et al.]{dauphin2014saddle}. The **randomness in mini-batch training** acts like little kicks that knock the ball off saddles, which is why training huge networks actually works. And for a single-hidden-layer network with at least as many neurons as training samples, the loss landscape has **no spurious valleys at all** — every local minimum is a global minimum \cite{petersen2024mathdl}.
+
+<div class="smart-quote" data-cite="petersen2024mathdl" data-after="Ch. 12, Prop. 12.4">
+Then, ΛA,σ,S,L, has no spurious valleys.
+</div>
 
 **Which solution does the optimizer pick?** In modern over-parameterized networks, there are **infinitely many** weight configurations that perfectly fit the training data. The question isn't "can we fit the data" — it's "*which* fit do we get?"
 
