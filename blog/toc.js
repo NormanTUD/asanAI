@@ -40,7 +40,7 @@ function toc() {
 	if (isCourseIndexPath(window.location.pathname)) {
 		return;
 	}
-	if (window.location.pathname.endsWith("map.php")) {
+	if (window.location.pathname.endsWith("atlas.php")) {
 		return;
 	}
 
