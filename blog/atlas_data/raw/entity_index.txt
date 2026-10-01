@@ -1,0 +1,1456 @@
+artifact-altair-8800 | Altair 8800 | artifact | history
+artifact-antikythera-mechanism | Antikythera Mechanism | artifact | history,untold_history
+artifact-apollo-guidance-computer | Apollo Guidance Computer | artifact | untold_history
+artifact-arithmometer | Arithmometer | artifact | untold_history
+artifact-babbage-analytical-engine | Babbage Analytical Engine | artifact | software
+artifact-colosseum | Colosseum | artifact | mechanistic_interpretability
+artifact-colossus-mark-2 | Colossus Mark 2 | artifact | untold_history
+artifact-deep-blue | Deep Blue | artifact | history
+artifact-eiffel-tower | Eiffel Tower | artifact | mechanistic_interpretability
+artifact-eniac | ENIAC | artifact | untold_history,software
+artifact-golden-gate-bridge | Golden Gate Bridge | artifact | mechanistic_interpretability
+artifact-homeostat | Homeostat | artifact | history
+artifact-iron-pillar-of-delhi | Iron Pillar of Delhi | artifact | untold_history
+artifact-ishango-bone | Ishango Bone | artifact | history
+artifact-kempelen-speaking-machine | Kempelen's Speaking Machine | artifact | language
+artifact-kish-tablet | Kish tablet | artifact | language
+artifact-ktesiphon-jar | Ktesiphon jar | artifact | untold_history
+artifact-lebombo-bone | Lebombo Bone | artifact | history,language
+artifact-leibniz-calculating-machine | Leibniz's calculating machine | artifact | history
+artifact-mark-i-perceptron | Mark I Perceptron | artifact | history
+artifact-moscow-papyrus | Moscow Mathematical Papyrus | artifact | geometry_i
+artifact-murchison-meteorite | Murchison meteorite | artifact | untold_history
+artifact-next-workstation | NeXT workstation (first web browser) | artifact | untold_history
+artifact-plimpton-322 | Plimpton 322 | artifact | geometry_i
+artifact-point-de-vue-du-gras | Point de vue du Gras | artifact | untold_history
+artifact-rhind-papyrus | Rhind Mathematical Papyrus | artifact | geometry_i
+artifact-rosetta-stone | Rosetta Stone | artifact | language,untold_history
+artifact-salamis-tablet | Salamis Tablet | artifact | history
+artifact-sb-13088 | Sb 13088 | artifact | geometry_i
+artifact-si-427 | Si.427 | artifact | geometry_i
+artifact-snarc | SNARC | artifact | history
+artifact-trojan-horse-tiepolo | The Procession of the Trojan Horse in Troy | artifact | security_inference
+artifact-venus-of-dolni-vestonice | Venus of Dolni Vestonice | artifact | history
+artifact-venus-of-hohle-fels | Venus of Hohle Fels | artifact | untold_history
+artifact-voynich-manuscript | Voynich manuscript | artifact | untold_history
+artifact-zuse-z3 | Zuse Z3 | artifact | history
+event-1906-san-francisco-earthquake | 1906 San Francisco earthquake | event | mechanistic_interpretability
+event-ai-action-summit | AI Action Summit | event | law_regulation
+event-ai-risk-statement-2023 | AI Risk Statement, May 2023 | event | ai_existential_risk
+event-alexnet-imagenet-victory | AlexNet ImageNet victory | event | beyond_llms
+event-alphago-leesedol-2016 | AlphaGo vs. Lee Sedol match | event | agents
+event-alphago-versus-lee-sedol | AlphaGo versus Lee Sedol | event | beyond_llms
+event-antikythera-recovery-1901 | Antikythera shipwreck recovery, 1901 | event | history
+event-apollo-11-landing-1969 | Apollo 11 lunar landing, 1969 | event | history
+event-apollo-11-moon-landing | Apollo 11 Moon landing | event | untold_history
+event-ariane-5-maiden-flight | Ariane 5 maiden flight | event | untold_history
+event-arpanet-first-message | ARPANET first message | event | untold_history
+event-babbage-difference-engine | Babbage Difference Engine | event | untold_history
+event-battle-of-talas-751 | Battle of Talas, 751 | event | untold_history
+event-biden-robocall-2024 | Biden Robocall, New Hampshire Primary, 2024 | event | philosophy
+event-buran-first-flight | Buran first flight | event | untold_history
+event-casp14 | CASP14 | event | ai_for_science
+event-ceres-discovery-1801 | Discovery of Ceres, 1801 | event | statistics_i
+event-chatgpt-launch | ChatGPT launch | event | beyond_llms
+event-cmb-discovery-1965 | Discovery of the cosmic microwave background, 1965 | event | untold_history
+event-colossus-breaks-lorenz | Colossus breaks Lorenz | event | untold_history
+event-daguerreotype | Daguerreotype | event | untold_history
+event-dartmouth-workshop-1956 | Dartmouth Workshop, 1956 | event | history
+event-deep-blue-kasparov-1997 | Deep Blue defeats Kasparov, 1997 | event | history
+event-deep-space-1-remote-agent | Deep Space 1 Remote Agent | event | untold_history
+event-eniac-unveiled | ENIAC unveiled | event | untold_history
+event-eu-ai-act-entry-into-force | EU AI Act entry into force | event | law_regulation,global_ai_ecosystem
+event-eu-gdpr | EU GDPR | event | law_regulation
+event-faraday-electromagnetic-induction | Faraday electromagnetic induction | event | untold_history
+event-first-arpanet-message | First ARPANET message | event | untold_history
+event-first-integrated-circuit | First integrated circuit | event | untold_history
+event-first-numerical-weather-forecast | First numerical weather forecast | event | untold_history
+event-first-nwp-1950 | First numerical weather forecast, 1950 | event | untold_history
+event-first-permanent-photograph | First permanent photograph | event | untold_history
+event-first-transatlantic-telegraph | First transatlantic telegraph | event | untold_history
+event-first-winograd-schema-challenge-2016 | First Winograd Schema Challenge, 2016 | event | philosophy
+event-garmisch-software-engineering-conference | First International Conference on Software Engineering | event | software
+event-graphcast-2023 | GraphCast global weather AI, 2023 | event | untold_history
+event-gutenberg-printing-press | Gutenberg printing press | event | untold_history
+event-hieroglyphs-deciphered-1822 | Decipherment of Egyptian hieroglyphs, 1822 | event | language
+event-hollerith-tabulating-machine | Hollerith tabulating machine | event | untold_history
+event-ibm-702-1953 | IBM 702 debut, 1953 | event | history
+event-ibm-pc-1981 | IBM PC release, 1981 | event | history
+event-imo-2024 | IMO 2024 | event | symbolic_ai
+event-invention-of-the-transistor | Invention of the transistor | event | untold_history
+event-italian-ban-on-chatgpt | Italian ban on ChatGPT | event | law_regulation
+event-jacquard-loom | Jacquard loom | event | untold_history
+event-lighthill-debate-1973 | Lighthill AI debate, 9 May 1973 | event | history
+event-longitude-act-1714 | Longitude Act and Board of Longitude, 1714 | event | untold_history
+event-luddite-uprisings-1811 | Luddite Uprisings | event | myths
+event-macy-conferences-1946 | Macy Conferences, 1946 | event | history
+event-manhattan-project | Manhattan Project | event | untold_history
+event-mars-pathfinder-priority-inversion | Mars Pathfinder priority-inversion incident | event | software
+event-miller-urey-experiment-1953 | Miller-Urey experiment, 1953 | event | untold_history
+event-moth-in-harvard-mark-ii | First logged computer bug (moth in Harvard Mark II) | event | software
+event-muybridge-horse-in-motion-1878 | Muybridge's horse-in-motion sequence, 1878 | event | untold_history
+event-netflix-prize | Netflix Prize | event | beyond_llms
+event-newtons-principia | Newton's Principia | event | untold_history
+event-nobel-medicine-1906 | Nobel Prize in Medicine, 1906 | event | history
+event-nobel-physics-2024 | Nobel Prize in Physics, 2024 | event | history
+event-nobel-prize-in-chemistry-for-alphafold | Nobel Prize in Chemistry for AlphaFold | event | ai_for_science
+event-nyt-v-openai-2023 | New York Times v. OpenAI, 2023 | event | unexpected_capabilities
+event-openai-navier-stokes-singularity-2026 | OpenAI Navier-Stokes singularity result, 2026 | event | ai_for_science
+event-paris-calculating-machines-1951 | Paris conference on calculating machines, 1951 | event | history
+event-pause-giant-ai-2023 | Pause Giant AI Experiments letter, March 2023 | event | ai_existential_risk
+event-perceptron-press-1958 | Perceptron Navy press conference, 1958 | event | history
+event-publication-of-heliocentrism | Publication of heliocentrism | event | untold_history
+event-quantum-supremacy-2019 | Quantum supremacy (Sycamore), 2019 | event | untold_history
+event-schrems-cjeu-ruling | Schrems CJEU ruling | event | law_regulation
+event-shannon-information-theory | Shannon information theory | event | untold_history
+event-sigkdd-test-of-time-award-for-dbscan | SIGKDD Test of Time Award for DBSCAN | event | beyond_llms
+event-sputnik-launch | Sputnik launch | event | untold_history
+event-superintelligence-ban-letter-2025 | Superintelligence-ban open letter, October 2025 | event | ai_existential_risk
+event-tesla-alternating-current-system | Tesla alternating-current system | event | untold_history
+event-trinity-nuclear-test | Trinity nuclear test | event | untold_history
+event-turing-award-2018 | Turing Award for deep learning, 2018 | event | history
+event-turings-computing-paper | Turing's computing paper | event | untold_history,philosophy
+event-usps-cnn-1989 | First deployed CNN for U.S. ZIP-code reading (1989) | event | computer_vision
+event-voltaic-pile | Voltaic pile | event | untold_history
+event-wadi-el-hol-discovery-1993 | Wadi el-Hol inscriptions discovered, 1993 | event | language
+event-world-wide-web | World Wide Web | event | untold_history
+institution-01-ai | 01.AI | institution | global_ai_ecosystem
+institution-3m | 3M | institution | untold_history
+institution-ai-singapore | AI Singapore | institution | global_ai_ecosystem
+institution-ai21-labs | AI21 Labs | institution | global_ai_ecosystem
+institution-ai4bharat | AI4Bharat | institution | global_ai_ecosystem
+institution-aims | AIMS | institution | global_ai_ecosystem
+institution-alibaba | Alibaba | institution | global_ai_ecosystem
+institution-allen-institute-ai | Allen Institute for AI | institution | training_data,evaluation
+institution-amazon | Amazon | institution | history,symbolic_ai,production_serving
+institution-amd | AMD | institution | running_locally,production_serving
+institution-anthropic | Anthropic | institution | reinforcement_learning,mechanistic_interpretability,embeddinglab,websearch,agents,symbolic_ai,production_serving,global_ai_ecosystem
+institution-apple | Apple | institution | history,running_locally,inference_optimization,production_serving
+institution-atari | Atari | institution | reinforcement_learning
+institution-att | AT&T | institution | untold_history
+institution-avianca | Avianca | institution | myths
+institution-baai | BAAI | institution | vectorsearch
+institution-baidu | Baidu | institution | global_ai_ecosystem
+institution-bbc | BBC | institution | history
+institution-bbn | BBN Technologies | institution | history
+institution-bell-labs | Bell Labs | institution | history,tokenizerlab,untold_history
+institution-bigscience | BigScience | institution | positionalembeddingslab
+institution-board-of-longitude | Board of Longitude | institution | untold_history
+institution-brave | Brave | institution | websearch
+institution-brighton-university | Brighton University | institution | origami
+institution-british-museum | British Museum | institution | language
+institution-center-for-ai-safety | Center for AI Safety | institution | ai_existential_risk
+institution-cerebras | Cerebras | institution | training_data,production_serving,global_ai_ecosystem
+institution-cern | CERN | institution | untold_history,beyond_llms
+institution-chroma | Chroma | institution | rag,vectorsearch
+institution-cohere | Cohere | institution | global_ai_ecosystem
+institution-columbia-university | Columbia University | institution | untold_history
+institution-commodore | Commodore | institution | history
+institution-common-crawl | Common Crawl | institution | training_data,evaluation
+institution-computer-history-museum | Computer History Museum | institution | software
+institution-cornell-aeronautical-laboratory | Cornell Aeronautical Laboratory | institution | history
+institution-cornell-university | Cornell University | institution | history,coherent_difference,embeddinglab
+institution-cyberspace-administration-of-china | Cyberspace Administration of China | institution | law_regulation,global_ai_ecosystem
+institution-darpa | DARPA | institution | history
+institution-dartmouth-college | Dartmouth College | institution | software
+institution-data-science-africa | Data Science Africa | institution | global_ai_ecosystem
+institution-databricks | Databricks | institution | untold_history
+institution-dec | DEC (Digital Equipment Corporation) | institution | untold_history
+institution-deep-learning-indaba | Deep Learning Indaba | institution | global_ai_ecosystem
+institution-deepmind | DeepMind | institution | agents,symbolic_ai,training_data,global_ai_ecosystem,ai_for_science
+institution-deepseek | DeepSeek | institution | reinforcement_learning,finetuninglab,inference_optimization,running_locally,reasoning,production_serving,training_data,global_ai_ecosystem
+institution-descript | Descript | institution | speech_audio
+institution-digital-equipment-corporation | Digital Equipment Corporation | institution | software
+institution-digital-research | Digital Research | institution | history
+institution-ecmwf | ECMWF | institution | untold_history
+institution-emb-ebi | European Bioinformatics Institute (EMBL-EBI) | institution | ai_for_science
+institution-epigraphical-museum-athens | Epigraphical Museum (Athens) | institution | history
+institution-epoch-ai | Epoch AI | institution | training_data,evaluation
+institution-eth-zurich | ETH Zurich | institution | coherent_difference
+institution-european-ai-office | European AI Office | institution | global_ai_ecosystem,law_regulation
+institution-european-southern-observatory | European Southern Observatory | institution | atlas
+institution-european-space-agency | European Space Agency | institution | atlas
+institution-facebook | Facebook | institution | history
+institution-fda | FDA | institution | law_regulation
+institution-future-of-life-institute | Future of Life Institute | institution | ai_existential_risk,philosophy
+institution-g42 | G42 | institution | global_ai_ecosystem
+institution-general-electric | General Electric | institution | untold_history,software
+institution-general-motors | General Motors | institution | software
+institution-getty-images | Getty Images | institution | philosophy
+institution-github | GitHub | institution | unexpected_capabilities,training_data
+institution-google | Google | institution | history,tokenizerlab,positionalembeddingslab,transformer,embeddinglab,websearch,contextwindows,training_infrastructure,symbolic_ai,evaluation,production_serving
+institution-google-2 | Google Inc. | institution | inceptionism
+institution-google-ai-research-accra | Google AI Research Accra | institution | global_ai_ecosystem
+institution-google-deepmind | Google DeepMind | institution | ai_existential_risk
+institution-google-research | Google Research | institution | global_ai_ecosystem
+institution-grab | Grab | institution | global_ai_ecosystem
+institution-groq | Groq | institution | production_serving
+institution-harry-ransom-center | Harry Ransom Center | institution | untold_history
+institution-harvard-business-school | Harvard Business School | institution | untold_history
+institution-harvard-university | Harvard University | institution | history
+institution-house-of-wisdom | House of Wisdom | institution | positionalembeddingslab
+institution-huggingface | Hugging Face | institution | vectorsearch,inference_optimization,production_serving,training_data,running_locally,global_ai_ecosystem
+institution-ibm | IBM | institution | history,tokenizerlab,untold_history
+institution-idsia | IDSIA | institution | history,global_ai_ecosystem
+institution-iec | IEC | institution | coherent_difference,geometry_i,untold_history
+institution-ieee | IEEE | institution | untold_history
+institution-ihe-s | Institut des Hautes Études Scientifiques (IHÉS) | institution | geometry_i
+institution-iit-bombay | IIT Bombay | institution | global_ai_ecosystem
+institution-iit-madras | IIT Madras | institution | global_ai_ecosystem
+institution-imperial-academy-of-sciences-saint-petersburg | Imperial Academy of Sciences (Saint Petersburg) | institution | 
+institution-inria | INRIA | institution | untold_history
+institution-instadeep | InstaDeep | institution | global_ai_ecosystem
+institution-institut-royal-des-sciences-naturelles-de-belgique | Institut Royal des Sciences Naturelles de Belgique | institution | geometry_i,history
+institution-institute-for-advanced-study | Institute for Advanced Study | institution | untold_history
+institution-intel | Intel | institution | history,running_locally
+institution-iraq-museum | Iraq Museum | institution | language
+institution-iso | ISO | institution | attentionlab,beyond_llms,coherent_difference,embeddinglab,fact_lookup,history,human_mind,language,math_iv,origami,statistics,statistics_i,symbolic_ai,untold_history
+institution-italian-garante | Italian Garante | institution | 
+institution-jet-propulsion-laboratory | Jet Propulsion Laboratory | institution | untold_history
+institution-jina-ai | Jina AI | institution | websearch
+institution-jpl | JPL | institution | history
+institution-kakao | Kakao | institution | global_ai_ecosystem
+institution-kyutai | Kyutai | institution | global_ai_ecosystem
+institution-langchain | LangChain | institution | agents,symbolic_ai
+institution-lesan-ai | Lesan AI | institution | global_ai_ecosystem
+institution-lg | LG | institution | global_ai_ecosystem
+institution-lighton | LightOn | institution | global_ai_ecosystem
+institution-ligo | LIGO | institution | untold_history
+institution-lmsys | LMSYS | institution | production_serving
+institution-los-alamos-national-laboratory | Los Alamos National Laboratory | institution | untold_history,beyond_llms
+institution-lotus-development-corporation | Lotus Development Corporation | institution | untold_history
+institution-macy-foundation | Josiah Macy Jr. Foundation | institution | history
+institution-mathworks | MathWorks | institution | untold_history
+institution-max-planck-institute-for-astrophysics | Max Planck Institute for Astrophysics | institution | atlas
+institution-mbzuai | MBZUAI | institution | global_ai_ecosystem
+institution-meta | Meta | institution | vectorsearch,training_data,training_infrastructure,production_serving,beyond_llms,global_ai_ecosystem
+institution-microsoft | Microsoft | institution | history,websearch,agents,vectorsearch,training_infrastructure
+institution-midjourney | Midjourney | institution | myths
+institution-mila | Mila | institution | global_ai_ecosystem
+institution-minimax | MiniMax | institution | global_ai_ecosystem
+institution-miri | Machine Intelligence Research Institute | institution | philosophy
+institution-mistral-ai | Mistral AI | institution | global_ai_ecosystem
+institution-mit | MIT | institution | history,agents,evaluation,human_mind,beyond_llms,untold_history
+institution-mit-lincoln-laboratory | MIT Lincoln Laboratory | institution | untold_history
+institution-mits | MITS | institution | history
+institution-mobileye | Mobileye | institution | global_ai_ecosystem
+institution-moonshot-ai | Moonshot AI | institution | global_ai_ecosystem
+institution-moravian-museum | Moravian Museum | institution | history
+institution-mos-technology | MOS Technology | institution | history
+institution-mozilla | Mozilla | institution | websearch
+institution-musee-des-arts-et-metiers | Musée des Arts et Métiers | institution | untold_history
+institution-mysql | MySQL | institution | untold_history
+institution-nasa | NASA | institution | history
+institution-national-museum-of-scotland | National Museum of Scotland | institution | untold_history
+institution-nature | Nature | institution | optimizerlab
+institution-naver | NAVER | institution | global_ai_ecosystem
+institution-ncsoft | NCSoft | institution | global_ai_ecosystem
+institution-netflix | Netflix | institution | beyond_llms
+institution-netscape | Netscape | institution | software
+institution-new-york-times | The New York Times | institution | unexpected_capabilities,philosophy
+institution-new-york-university | New York University | institution | ai_for_science
+institution-next | NeXT | institution | software
+institution-nist | NIST | institution | law_regulation
+institution-noaa | NOAA | institution | atlas
+institution-northeastern-university | Northeastern University | institution | software
+institution-ntt | NTT | institution | global_ai_ecosystem
+institution-nvidia | NVIDIA | institution | history,inference_optimization,training_infrastructure,production_serving
+institution-oecd | OECD | institution | law_regulation
+institution-office-of-naval-research | Office of Naval Research | institution | history
+institution-openai | OpenAI | institution | history,transformer,finetuninglab,websearch,agents,vectorsearch,training_data,production_serving,reasoning,global_ai_ecosystem,beyond_llms
+institution-oracle | Oracle Corporation | institution | untold_history
+institution-peking-university | Peking University | institution | global_ai_ecosystem
+institution-pentagon | The Pentagon | institution | history
+institution-perplexity | Perplexity | institution | websearch
+institution-pinecone | Pinecone | institution | rag,vectorsearch
+institution-preferred-networks | Preferred Networks | institution | global_ai_ecosystem
+institution-princeton-university | Princeton University | institution | history,fact_lookup,mechanistic_interpretability,embeddinglab
+institution-project-mac | Project MAC | institution | history
+institution-qdrant | Qdrant | institution | rag,vectorsearch
+institution-rand-corporation | RAND Corporation | institution | untold_history
+institution-raytheon | Raytheon | institution | history
+institution-remington-rand | Remington Rand | institution | history
+institution-royal-institution | Royal Institution | institution | history
+institution-royal-society | Royal Society | institution | untold_history
+institution-sakana-ai | Sakana AI | institution | global_ai_ecosystem
+institution-sambanova | SambaNova | institution | production_serving
+institution-samsung | Samsung | institution | global_ai_ecosystem
+institution-sas-institute | SAS Institute | institution | untold_history
+institution-sberbank | Sberbank | institution | global_ai_ecosystem
+institution-scads-ai | ScaDS.AI | institution | hyperparameters
+institution-science-museum-london | Science Museum | institution | history
+institution-sea-group | Sea Group | institution | global_ai_ecosystem
+institution-shanghai-jiao-tong-university | Shanghai Jiao Tong University | institution | global_ai_ecosystem
+institution-sk-hynix | SK Hynix | institution | untold_history
+institution-sk-telecom | SK Telecom | institution | global_ai_ecosystem
+institution-smithsonian-national-museum-of-american-history | Smithsonian National Museum of American History | institution | history
+institution-softbank | SoftBank | institution | global_ai_ecosystem
+institution-sorbonne | Sorbonne | institution | history
+institution-space-telescope-science-institute | Space Telescope Science Institute | institution | untold_history
+institution-spotify | Spotify | institution | vectorsearch
+institution-src-uk | Science Research Council (UK) | institution | history
+institution-sri-international | SRI International | institution | untold_history
+institution-stability-ai | Stability AI | institution | global_ai_ecosystem,philosophy
+institution-standford-research-institute | Stanford Research Institute | institution | untold_history
+institution-stanford-encyclopedia-of-philosophy | Stanford Encyclopedia of Philosophy | institution | coherent_world_models
+institution-stanford-university | Stanford University | institution | history,production_serving,evaluation
+institution-statacorp | StataCorp | institution | untold_history
+institution-studia-philosophica | Studia Philosophica | institution | coherent_world_models
+institution-sun-microsystems | Sun Microsystems | institution | software
+institution-sunbird-ai | Sunbird AI | institution | global_ai_ecosystem
+institution-t-bank | T-Bank | institution | global_ai_ecosystem
+institution-tableau | Tableau | institution | untold_history
+institution-technology-innovation-institute | Technology Innovation Institute | institution | global_ai_ecosystem
+institution-telefunken | Telefunken | institution | untold_history
+institution-tencent | Tencent | institution | global_ai_ecosystem
+institution-texas-instruments | Texas Instruments | institution | history
+institution-th-stuttgart | TH Stuttgart | institution | history
+institution-together-ai | Together AI | institution | training_data
+institution-tsinghua-university | Tsinghua University | institution | global_ai_ecosystem
+institution-tu-dresden | TU Dresden | institution | hyperparameters
+institution-tu-munich | TU Munich | institution | history
+institution-uc-berkeley | University of California, Berkeley | institution | history
+institution-uc-berkeley-2 | UC Berkeley | institution | mechanistic_interpretability,embeddinglab,production_serving
+institution-ucla | UCLA | institution | untold_history
+institution-unesco | UNESCO | institution | law_regulation
+institution-united-states-census-bureau | United States Census Bureau | institution | beyond_llms
+institution-united-states-department-of-defense | United States Department of Defense | institution | software
+institution-university-of-brighton | University of Brighton | institution | origami
+institution-university-of-bristol | University of Bristol | institution | history
+institution-university-of-cambridge | University of Cambridge | institution | philosophy,human_mind
+institution-university-of-edinburgh | University of Edinburgh | institution | history,tokenizerlab
+institution-university-of-glasgow | University of Glasgow | institution | untold_history
+institution-university-of-gottingen | University of Göttingen | institution | embeddinglab
+institution-university-of-graz | University of Graz | institution | recurrent_networks,fact_lookup
+institution-university-of-manchester | University of Manchester | institution | untold_history,software
+institution-university-of-manitoba | University of Manitoba | institution | history
+institution-university-of-michigan | University of Michigan | institution | beyond_llms,geometry_iii
+institution-university-of-montreal | Université de Montréal | institution | recurrent_networks,positionalembeddingslab
+institution-university-of-munich | University of Munich | institution | beyond_llms
+institution-university-of-oxford | University of Oxford | institution | philosophy
+institution-university-of-pennsylvania | University of Pennsylvania | institution | untold_history
+institution-university-of-pittsburgh | Carnegie Mellon University | institution | mechanistic_interpretability,untold_history
+institution-university-of-science-and-technology-of-china | University of Science and Technology of China | institution | philosophy
+institution-university-of-toronto | University of Toronto | institution | history,tokenizerlab,recurrent_networks,global_ai_ecosystem
+institution-university-of-tuebingen | University of Tübingen | institution | recurrent_networks,embeddinglab
+institution-university-of-warwick | University of Warwick | institution | coherent_difference
+institution-university-of-waterloo | University of Waterloo | institution | coherent_difference,mechanistic_interpretability
+institution-university-of-wisconsin | University of Wisconsin | institution | beyond_llms
+institution-us-navy | United States Navy | institution | history
+institution-usps | U.S. Postal Service | institution | history,computer_vision
+institution-virgo | Virgo | institution | untold_history
+institution-w3c | W3C | institution | symbolic_ai
+institution-wayve | Wayve | institution | global_ai_ecosystem
+institution-weaviate | Weaviate | institution | rag,vectorsearch
+institution-wikimedia | Wikimedia Foundation | institution | symbolic_ai
+institution-wired | Wired | institution | ai_existential_risk
+institution-xerox | Xerox | institution | software
+institution-xerox-parc | Xerox PARC | institution | untold_history,beyond_llms
+institution-yale-university | Yale University | institution | untold_history
+institution-yandex | Yandex | institution | global_ai_ecosystem
+institution-youcom | You.com | institution | websearch
+institution-zhipu-ai | Zhipu AI | institution | global_ai_ecosystem
+institution-zyphra | Zyphra | institution | alternative_architectures
+person-aapo-hyvarinen | Aapo Hyvarinen | person | beyond_llms
+person-aarohi-srivastava | Aarohi Srivastava | person | evaluation
+person-abraham-de-moivre | Abraham de Moivre | person | statistics_i
+person-abraham-wald | Abraham Wald | person | untold_history
+person-ada-lovelace | Ada Lovelace | person | history,untold_history
+person-adam-paszke | Adam Paszke | person | transformer
+person-adly-templeton | Adly Templeton | person | mechanistic_interpretability,fact_lookup
+person-adrien-marie-legendre | Adrien-Marie Legendre | person | statistics_i,geometry_iii,losslab,derivativelab,differentiation,embeddinglab
+person-aja-huang | Aja Huang | person | agents
+person-akira-yoshino | Akira Yoshino | person | untold_history
+person-al-khwarizmi | al-Khwārizmī | person | geometry_i
+person-al-khwarizmi-2 | Muhammad ibn Musa al-Khwarizmi | person | positionalembeddingslab
+person-alain-colmerauer | Alain Colmerauer | person | software
+person-alan-gardiner | Alan Gardiner | person | language
+person-alan-herries-wilson | Alan Herries Wilson | person | untold_history
+person-alan-hodgkin | Alan Hodgkin | person | beyond_llms
+person-alan-kay | Alan Kay | person | software
+person-alan-turing | Alan Turing | person | history,human_mind,beyond_llms,philosophy,untold_history
+person-alasdair-macintyre | Alasdair MacIntyre | person | philosophy
+person-albert-camus | Albert Camus | person | philosophy
+person-albert-einstein | Albert Einstein | person | geometry_iii
+person-albert-lord | Albert Lord | person | language
+person-alcmaeon-of-croton | Alcmaeon of Croton | person | language
+person-alec-radford | Alec Radford | person | computer_vision,transformer
+person-alessandro-volta | Alessandro Volta | person | untold_history
+person-alethea-power | Alethea Power | person | deeplearninglab,algorithms
+person-alex-krizhevsky | Alex Krizhevsky | person | history,computer_vision
+person-alex-waibel | Alex Waibel | person | history
+person-alexander-bain | Alexander Bain | person | history
+person-alexander-davies | Alexander Davies | person | deeplearninglab
+person-alexander-grothendieck | Alexander Grothendieck | person | coherent_difference,coherent_world_models
+person-alexander-kirillov | Alexander Kirillov | person | computer_vision
+person-alexander-mordvintsev | Alexander Mordvintsev | person | inceptionism
+person-alexander-oparin | Alexander Oparin | person | untold_history
+person-alexander-von-humboldt | Alexander von Humboldt | person | geometry_i
+person-alexey-dosovitskiy | Alexey Dosovitskiy | person | computer_vision
+person-alexey-ivakhnenko | Alexey Ivakhnenko | person | history
+person-alexis-conneau | Alexis Conneau | person | embeddinglab
+person-alfred-huxley | Alfred Huxley | person | beyond_llms
+person-alfred-north-whitehead | Alfred North Whitehead | person | coherent_difference
+person-alfred-tarski | Alfred Tarski | person | foam_of_meaning,coherent_difference,coherent_world_models
+person-alfred-wegener | Alfred Wegener | person | coherent_difference
+person-algirdas-avizienis | Algirdas Avizienis | person | history
+person-alkindi | al-Kindi | person | history
+person-allen-hatcher | Allen Hatcher | person | foam_of_meaning
+person-allen-newell | Allen Newell | person | history,human_mind,beyond_llms
+person-alonzo-church | Alonzo Church | person | recursion_coherent_difference,untold_history,software
+person-alston-scott-householder | Alston Scott Householder | person | activationlab
+person-aman-madaan | Aman Madaan | person | reasoning,promptengineering
+person-anaxagoras | Anaxagoras | person | coherent_difference
+person-anaximander | Anaximander | person | untold_history
+person-anaximenes | Anaximenes | person | untold_history
+person-anders-hejlsberg | Anders Hejlsberg | person | software
+person-anders-sogaard | Anders Søgaard | person | embeddinglab
+person-andre-martinet | André Martinet | person | language
+person-andre-truong-trong-thi | André Truong Trong Thi | person | history
+person-andre-weil | André Weil | person | geometry_i
+person-andrei-markov | Andrei Andreyevich Markov | person | tokenizerlab
+person-andrei-tikhonov | Andrei Tikhonov | person | overandunderfittinglab
+person-andrej-karpathy | Andrej Karpathy | person | history,topology,transformer
+person-andrew-barto | Andrew Barto | person | reinforcement_learning
+person-andrew-gelman | Andrew Gelman | person | beyond_llms
+person-andrew-ng | Andrew Ng | person | history,beyond_llms,frontier
+person-andrew-tanenbaum | Andrew Tanenbaum | person | software
+person-andrey-kolmogorov | Andrey Kolmogorov | person | intuition,statistics_ii
+person-andrey-markov | Andrey Markov | person | statistics_ii
+person-andy-clark | Andy Clark | person | human_mind
+person-angeliki-giannou | Angeliki Giannou | person | mechanistic_interpretability
+person-anil-seth | Anil Seth | person | philosophy
+person-anmol-gulati | Anmol Gulati | person | speech_audio
+person-ann-sophie-barwich | Ann-Sophie Barwich | person | embeddinglab
+person-antonie-van-leeuwenhoek | Antonie van Leeuwenhoek | person | untold_history
+person-antonio-damasio | Antonio Damasio | person | philosophy
+person-antony-hewish | Antony Hewish | person | untold_history
+person-apollo-nius-of-perga | Apollonius of Perga | person | geometry_i
+person-archimedes | Archimedes | person | math_i,math_iii,geometry_i
+person-archimedes-of-syracuse | Archimedes of Syracuse | person | untold_history
+person-aristotle | Aristotle | person | history,language,geometry_i,symbolic_ai,human_mind,untold_history,philosophy
+person-arnaud-doucet | Arnaud Doucet | person | beyond_llms
+person-arno-penzias | Arno Penzias | person | untold_history
+person-arthur-bryson | Arthur E. Bryson | person | history
+person-arthur-cayley | Arthur Cayley | person | math_ii,math_iv,untold_history
+person-arthur-conmy | Arthur Conmy | person | mechanistic_interpretability
+person-arthur-dempster | Arthur Dempster | person | statistics_ii
+person-arthur-eddington | Arthur Stanley Eddington | person | untold_history
+person-arthur-hoerl | Arthur E. Hoerl | person | overandunderfittinglab
+person-arthur-samuel | Arthur Samuel | person | history
+person-aryabhata | Āryabhaṭa | person | geometry_i,positionalembeddingslab
+person-asaf-amrami | Asaf Amrami | person | origami
+person-ashish-vaswani | Ashish Vaswani | person | intuition,language,history,autodiff,origami,positionalembeddingslab,transformer,fact_lookup
+person-august-mobius | August Ferdinand Möbius | person | math_iv
+person-augustin-jean-fresnel | Augustin-Jean Fresnel | person | coherent_world_models
+person-augustin-louis-cauchy | Augustin-Louis Cauchy | person | geometry_ii,differentiation,autodiff,optimizerlab
+person-augustus-odena | Augustus Odena | person | deconvolution
+person-avie-tevanian | Avie Tevanian | person | software
+person-axel-cleeremans | Axel Cleeremans | person | philosophy
+person-baudhayana | Baudhāyana | person | geometry_i
+person-bernard-baars | Bernard Baars | person | philosophy
+person-bernard-widrow | Bernard Widrow | person | formulary
+person-bernhard-riemann | Bernhard Riemann | person | math_iv,embeddinglab
+person-bernhard-scholkopf | Bernhard Schölkopf | person | geometry_ii
+person-bertrand-russell | Bertrand Russell | person | coherent_difference
+person-betty-holberton | Betty Holberton | person | software
+person-bhaskara-i | Bhāskara I | person | geometry_i
+person-bill-gates | Bill Gates | person | history
+person-bill-joy | Bill Joy | person | ai_existential_risk
+person-bjarne-stroustrup | Bjarne Stroustrup | person | software
+person-blaise-pascal | Blaise Pascal | person | statistics_i,untold_history
+person-bob-frankston | Bob Frankston | person | untold_history
+person-bonaventura-cavalieri | Bonaventura Cavalieri | person | math_iii,geometry_i,differentiation
+person-brahmagupta | Brahmagupta | person | history,language
+person-brand-blanshard | Brand Blanshard | person | coherent_world_models
+person-brendan-eich | Brendan Eich | person | software
+person-brook-taylor | Brook Taylor | person | math_i
+person-bruce-schneier | Bruce Schneier | person | philosophy
+person-buddha | Siddhartha Gautama (Buddha) | person | philosophy
+person-cai-lun | Cai Lun | person | untold_history
+person-camille-flammarion | Camille Flammarion | person | statistics_i
+person-camillo-golgi | Camillo Golgi | person | history
+person-carl-friedrich-gauss | Carl Friedrich Gauss | person | math_iv,geometry_ii,statistics_i,losslab,embeddinglab
+person-carl-friedrich-von-weizsacker | Carl Friedrich von Weizsäcker | person | untold_history
+person-carl-gustav-jacob-jacobi | Carl Gustav Jacob Jacobi | person | derivativelab,differentiation
+person-carl-gustav-jacobi | Carl Gustav Jacobi | person | geometry_ii,geometry_iii
+person-carl-gustav-jung | Carl Gustav Jung | person | human_mind
+person-carl-linnaeus | Carl Linnaeus | person | coherent_difference
+person-carl-rasmussen | Carl Rasmussen | person | beyond_llms
+person-carl-runge | Carl David Tolmé Runge | person | overandunderfittinglab
+person-carl-von-linde | Carl von Linde | person | untold_history
+person-carl-woese | Carl Woese | person | untold_history
+person-catherine-olsson | Catherine Olsson | person | mechanistic_interpretability,fact_lookup
+person-charles-babbage | Charles Babbage | person | history,language,untold_history
+person-charles-darwin | Charles Darwin | person | untold_history
+person-charles-ehresmann | Charles Ehresmann | person | embeddinglab
+person-charles-goodhart | Charles Goodhart | person | losslab
+person-charles-goodyear | Charles Goodyear | person | untold_history
+person-charles-k-kao | Charles K. Kao | person | untold_history
+person-charles-stark-draper | Charles Stark Draper | person | untold_history
+person-charles-thomas-de-colmar | Charles Xavier Thomas de Colmar | person | untold_history
+person-charles-walcott | Charles Doolittle Walcott | person | untold_history
+person-charles-wheatstone | Charles Wheatstone | person | untold_history
+person-chevalier-de-mere | Chevalier de Méré | person | statistics_i
+person-chris-olah | Chris Olah | person | statistics_ii,losslab,topology,computer_vision,deconvolution,inceptionism
+person-christiaan-huygens | Christiaan Huygens | person | untold_history
+person-christian-keup | Christian Keup | person | origami
+person-christine-taylor | Christine Taylor | person | philosophy
+person-christopher-bishop | Christopher Bishop | person | beyond_llms
+person-christopher-henshilwood | Christopher Henshilwood | person | human_mind,untold_history
+person-christopher-olah | Christopher Olah | person | embeddinglab,recurrent_networks,attentionlab,transformer,mechanistic_interpretability,fact_lookup,alternative_architectures
+person-christopher-sholes | Christopher Latham Sholes | person | untold_history
+person-christopher-strachey | Christopher Strachey | person | history
+person-christopher-watkins | Christopher Watkins | person | reinforcement_learning
+person-chuck-peddle | Chuck Peddle | person | history
+person-clark-barrett | Clark Barrett | person | beyond_llms
+person-claude-shannon | Claude Shannon | person | history,language,statistics_ii,losslab,untold_history
+person-claude-shannon-2 | Claude Elwood Shannon | person | tokenizerlab
+person-claudius-ptolemy | Claudius Ptolemy | person | geometry_i
+person-cleopatra-vii | Cleopatra VII | person | coherent_world_models
+person-colin-maclaurin | Colin Maclaurin | person | math_i
+person-confucius | Confucius | person | philosophy
+person-corinna-cortes | Corinna Cortes | person | beyond_llms
+person-corrado-bohm | Corrado Böhm | person | software
+person-cyrus-west-field | Cyrus West Field | person | untold_history
+person-damai-dai | Damai Dai | person | fact_lookup
+person-dan-bricklin | Dan Bricklin | person | history
+person-dan-burns | Dan Burns | person | unexpected_capabilities
+person-dan-ciresan | Dan Cireșan | person | history
+person-dan-hendrycks | Dan Hendrycks | person | activationlab,training_data,reasoning,evaluation
+person-daniel-dennett | Daniel Dennett | person | human_mind
+person-dave-cutler | Dave Cutler | person | software
+person-david-arthur | David Arthur | person | beyond_llms
+person-david-blei | David Blei | person | beyond_llms
+person-david-chalmers | David Chalmers | person | human_mind
+person-david-cox | David Cox | person | beyond_llms
+person-david-goldberg | David Goldberg | person | beyond_llms
+person-david-hilbert | David Hilbert | person | embeddinglab
+person-david-hubel | David Hubel | person | history,computer_vision
+person-david-hume | David Hume | person | philosophy
+person-david-klein | David Klein | person | unexpected_capabilities
+person-david-lewis | David Lewis | person | beyond_llms
+person-david-rosenthal | David Rosenthal | person | philosophy
+person-david-rumelhart | David Rumelhart | person | history,differentiation,autodiff,backproplab,optimizerlab
+person-david-silver | David Silver | person | beyond_llms,ai_for_science
+person-david-spivak | David I. Spivak | person | coherent_difference,coherent_world_models
+person-david-wheeler | David Wheeler | person | history,statistics_i
+person-david-wolpert | David Wolpert | person | beyond_llms
+person-dean-edmonds | Dean Edmonds | person | history
+person-deborah-mcguinness | Deborah McGuinness | person | beyond_llms
+person-dedre-gentner | Dedre Gentner | person | human_mind
+person-democritus | Democritus | person | untold_history
+person-dennis-ritchie | Dennis Ritchie | person | untold_history,software
+person-diederik-kingma | Diederik P. Kingma | person | overandunderfittinglab
+person-dimitris-tsipras | Dimitris Tsipras | person | unexpected_capabilities
+person-dirk-buckmaster | Dirk Buckmaster | person | ai_for_science
+person-dmitri-mendeleev | Dmitri Mendeleev | person | untold_history
+person-doina-precup | Doina Precup | person | global_ai_ecosystem
+person-don-ross | Don Ross | person | coherent_world_models
+person-donald-d-hoffman | Donald D. Hoffman | person | hallucinations
+person-donald-davies | Donald Davies | person | untold_history
+person-donald-geman | Donald Geman | person | beyond_llms
+person-donald-hebb | Donald Hebb | person | untold_history,history,formulary
+person-donald-michie | Donald Michie | person | history
+person-donald-rubin | Donald Rubin | person | statistics_ii
+person-donald-trump | Donald Trump | person | philosophy
+person-doug-mcdermott | Doug McDermott | person | beyond_llms
+person-doug-mcilroy | Doug McIlroy | person | software
+person-dzmitry-bahdanau | Dzmitry Bahdanau | person | history,language,positionalembeddingslab
+person-e-t-jaynes | E T Jaynes | person | beyond_llms
+person-eadweard-muybridge | Eadweard Muybridge | person | untold_history
+person-ed-roberts | Ed Roberts | person | history
+person-edgar-codd | Edgar Codd | person | software
+person-edgar-f-codd | Edgar F. Codd | person | untold_history
+person-edmond-halley | Edmond Halley | person | untold_history
+person-edmund-gunter | Edmund Gunter | person | positionalembeddingslab
+person-edsger-dijkstra | Edsger Dijkstra | person | software
+person-eduard-cech | Eduard Čech | person | coherent_world_models
+person-edward-feigenbaum | Edward Feigenbaum | person | beyond_llms
+person-edward-forgy | Edward Forgy | person | beyond_llms
+person-edward-hu | Edward Hu | person | finetuninglab,running_locally
+person-edward-shortliffe | Edward Shortliffe | person | beyond_llms
+person-egbert-van-kampen | Egbert van Kampen | person | geometry_iii
+person-eilhard-mitscherlich | Eilhard Mitscherlich | person | geometry_iii
+person-eleanor-rosch | Eleanor Rosch | person | human_mind
+person-elon-musk | Elon Musk | person | ai_existential_risk
+person-emil-gumbel | Emil Gumbel | person | statistics_i
+person-emily-bender | Emily Bender | person | hallucinations
+person-emmanuel-ameisen | Emmanuel Ameisen | person | mechanistic_interpretability
+person-emmy-noether | Emmy Noether | person | geometry_iii
+person-enrico-betti | Enrico Betti | person | geometry_iii
+person-epictetus | Epictetus | person | philosophy
+person-epicurus | Epicurus | person | philosophy
+person-epimenides-of-crete | Epimenides of Crete | person | philosophy
+person-erhard-schmidt | Erhard Schmidt | person | geometry_i
+person-eric-todd | Eric Todd | person | mechanistic_interpretability,fact_lookup
+person-erik-demaine | Erik Demaine | person | origami
+person-ernest-davis | Ernest Davis | person | philosophy
+person-ernst-ising | Ernst Ising | person | history
+person-erwin-schroedinger | Erwin Schrödinger | person | untold_history
+person-euclid | Euclid | person | geometry_i,geometry_iii
+person-eudoxus-of-cnidus | Eudoxus of Cnidus | person | geometry_i
+person-evangelista-torricelli | Evangelista Torricelli | person | untold_history
+person-evariste-galois | Évariste Galois | person | math_iv
+person-f-h-bradley | F. H. Bradley | person | coherent_world_models
+person-f-william-lawvere | F. William Lawvere | person | coherent_difference
+person-felix-bloch | Felix Bloch | person | untold_history
+person-felix-klein | Felix Klein | person | math_iv
+person-ferdinand-de-saussure | Ferdinand de Saussure | person | language,foam_of_meaning,coherent_difference,embeddinglab
+person-filippo-brunelleschi | Filippo Brunelleschi | person | geometry_i
+person-frances-bilas | Frances Bilas | person | software
+person-frances-spence | Frances Spence | person | software
+person-francesco-scarselli | Francesco Scarselli | person | beyond_llms
+person-francis-bacon | Francis Bacon | person | untold_history
+person-francis-crick | Francis Harry Compton Crick | person | untold_history
+person-francis-galton | Francis Galton | person | statistics_i,minimalneuron
+person-francisco-varela | Francisco Varela | person | human_mind
+person-frank-rosenblatt | Frank Rosenblatt | person | minimalneuron,activationlab
+person-frans-hals | Frans Hals | person | geometry_i
+person-franz-baader | Franz Baader | person | beyond_llms
+person-fred-hoyle | Fred Hoyle | person | untold_history
+person-freddie-williams | Freddie Williams | person | untold_history
+person-frederick-jelinek | Frederick Jelinek | person | history
+person-friedrich-nietzsche | Friedrich Nietzsche | person | statistics_i,statistics_ii,language,minimalneuron
+person-friedrich-nietzsche-2 | Friedrich Wilhelm Nietzsche | person | embeddinglab
+person-g-w-f-hegel | G. W. F. Hegel | person | coherent_world_models
+person-gabriel-goh | Gabriel Goh | person | computer_vision
+person-galileo-galilei | Galileo Galilei | person | human_mind,untold_history,philosophy
+person-garry-kasparov | Garry Kasparov | person | history
+person-gary-kildall | Gary Kildall | person | software
+person-gary-tesauro | Gary Tesauro | person | beyond_llms
+person-gavin-newsom | Gavin Newsom | person | mechanistic_interpretability
+person-geoffrey-hinton | Geoffrey Hinton | person | history,differentiation,autodiff,optimizerlab,deeplearninglab,global_ai_ecosystem,beyond_llms
+person-geoffrey-hinton-2 | Geoffrey Everest Hinton | person | mechanistic_interpretability,tokenizerlab
+person-georg-wilhelm-friedrich-hegel | Georg Wilhelm Friedrich Hegel | person | recursion_coherent_difference
+person-george-a-miller | George A. Miller | person | human_mind
+person-george-boole | George Boole | person | history,language,untold_history
+person-george-box | George Box | person | beyond_llms
+person-george-cybenko | George Cybenko | person | math_iii,deeplearninglab,origami
+person-george-gamow | George Gamow | person | untold_history
+person-george-kingsley-zipf | George Kingsley Zipf | person | statistics_i,language,foam_of_meaning,optimizerlab,tokenizerlab
+person-george-lakoff | George Lakoff | person | foam_of_meaning,human_mind
+person-george-miller | George Miller | person | beyond_llms
+person-george-piazzi | Giuseppe Piazzi | person | statistics_i
+person-george-polya | George Pólya | person | statistics_ii,human_mind
+person-george-spencer-brown | George Spencer-Brown | person | coherent_difference
+person-george-westinghouse | George Westinghouse | person | untold_history
+person-georges-de-ram | Georges de Rham | person | geometry_iii
+person-georgi-gerganov | Georgi Gerganov | person | running_locally,production_serving
+person-georgius-agricola | Georgius Agricola | person | untold_history
+person-gerald-edelman | Gerald Edelman | person | philosophy
+person-gerard-desargues | Gérard Desargues | person | math_iv
+person-gerard-salton | Gerard Salton | person | embeddinglab
+person-gerardus-mercator | Gerardus Mercator | person | math_i
+person-gerd-gigerenzer | Gerd Gigerenzer | person | hallucinations
+person-gerhard-gentzen | Gerhard Gentzen | person | recursion_coherent_difference
+person-gerolamo-cardano | Gerolamo Cardano | person | statistics_i
+person-gilles-deleuze | Gilles Deleuze | person | coherent_difference
+person-giovanni-domenico-tiepolo | Giovanni Domenico Tiepolo | person | security_inference
+person-giulio-tononi | Giulio Tononi | person | philosophy
+person-giuseppe-jacopini | Giuseppe Jacopini | person | software
+person-giuseppe-peano | Giuseppe Peano | person | geometry_iii
+person-gordon-gallup | Gordon Gallup | person | human_mind
+person-gordon-moore | Gordon Moore | person | history
+person-gordon-plotkin | Gordon Plotkin | person | beyond_llms
+person-gottfried-wilhelm-leibniz | Gottfried Wilhelm Leibniz | person | history,math_i,intro,differentiation,coherent_difference,coherent_world_models,untold_history
+person-gotthard-gunther | Gotthard Günther | person | coherent_difference
+person-gottlob-frege | Gottlob Frege | person | history,embeddinglab
+person-graydon-hoare | Graydon Hoare | person | software
+person-greg-egan | Greg Egan | person | origami
+person-gregor-hayes | Gregor Hayes | person | origami
+person-gregorio-ricci-curbastro | Gregorio Ricci-Curbastro | person | math_ii
+person-gregory-bateson | Gregory Bateson | person | history
+person-grigori-perelman | Grigori Perelman | person | geometry_iii
+person-guido-imbens | Guido Imbens | person | beyond_llms
+person-guido-montufar | Guido Montúfar | person | deeplearninglab,origami
+person-guido-van-rossum | Guido van Rossum | person | untold_history,software
+person-gunnar-carlsson | Gunnar Carlsson | person | geometry_iii,foam_of_meaning
+person-h-h-joachim | H. H. Joachim | person | coherent_world_models
+person-hans-bethe | Hans Albrecht Bethe | person | untold_history
+person-hao-li | Hao Li | person | deeplearninglab
+person-harold-urey | Harold Urey | person | untold_history
+person-harry-frankfurt | Harry G. Frankfurt | person | hallucinations
+person-harry-houdini | Harry Houdini | person | origami
+person-haskell-curry | Haskell Curry | person | math_iii
+person-hassler-whitney | Hassler Whitney | person | embeddinglab
+person-hector-levesque | Hector Levesque | person | philosophy
+person-heike-kamerlingh-onnes | Heike Kamerlingh Onnes | person | untold_history
+person-heinrich-geissler | Heinrich Geissler | person | untold_history
+person-heinz-hopf | Heinz Hopf | person | math_iv,geometry_iii
+person-helmut-grottrup | Helmut Gröttrup | person | untold_history
+person-helmut-holzer | Helmut Hölzer | person | untold_history
+person-henri-bergson | Henri Bergson | person | coherent_difference
+person-henri-poincare | Henri Poincaré | person | math_iv,geometry_iii,human_mind
+person-henry-bessemer | Henry Bessemer | person | untold_history
+person-heraclitus | Heraclitus | person | coherent_difference,transformer
+person-herbert-a-simon | Herbert A. Simon | person | history,human_mind,beyond_llms
+person-herbert-edelsbrunner | Herbert Edelsbrunner | person | geometry_iii,foam_of_meaning
+person-herbert-jaeger | Herbert Jaeger | person | beyond_llms
+person-herbert-robbins | Herbert Robbins | person | optimizerlab
+person-herman-hollerith | Herman Hollerith | person | untold_history
+person-hermann-grassmann | Hermann Grassmann | person | math_iv
+person-hermann-minkowski | Hermann Minkowski | person | geometry_i
+person-hermann-schmitz | Hermann Schmitz | person | coherent_difference,human_mind
+person-hermann-seifert | Hermann Seifert | person | geometry_iii
+person-hermann-von-helmholtz | Hermann von Helmholtz | person | beyond_llms
+person-hermann-weyl | Hermann Weyl | person | coherent_difference,embeddinglab
+person-heron-of-alexandria | Heron of Alexandria | person | history
+person-hilary-putnam | Hilary Putnam | person | philosophy
+person-hipparchus | Hipparchus of Nicaea | person | geometry_i
+person-hippocrates-of-chios | Hippocrates of Chios | person | geometry_i
+person-hoagy-cunningham | Hoagy Cunningham | person | mechanistic_interpretability,fact_lookup,embeddinglab
+person-howard-aiken | Howard Aiken | person | history
+person-hubert-dreyfus | Hubert Dreyfus | person | history
+person-hubert-ramsauer | Hubert Ramsauer | person | fact_lookup
+person-hugo-steinhaus | Hugo Steinhaus | person | beyond_llms
+person-humberto-maturana | Humberto Maturana | person | human_mind
+person-hyung-won-chung | Hyung Won Chung | person | unexpected_capabilities
+person-i-j-good | I. J. Good | person | human_mind,philosophy,ai_existential_risk,untold_history
+person-ian-hacking | Ian Hacking | person | coherent_world_models
+person-ibn-al-haytham | Ibn al-Haytham (Alhazen) | person | geometry_i
+person-ieke-moerdijk | Ieke Moerdijk | person | coherent_difference
+person-igor-aizenberg | Igor N. Aizenberg | person | deeplearninglab
+person-ilya-sutskever | Ilya Sutskever | person | tokenizerlab
+person-immanuel-kant | Immanuel Kant | person | untold_history,philosophy,coherent_world_models
+person-irwin-sobel | Irwin Sobel | person | computer_vision
+person-isaac-asimov | Isaac Asimov | person | ai_existential_risk
+person-isaac-newton | Isaac Newton | person | math_i,math_iii,geometry_i,differentiation,untold_history
+person-isadore-singer | Isadore Singer | person | geometry_i
+person-ivan-sutherland | Ivan Sutherland | person | untold_history
+person-j-barkley-rosser | J. Barkley Rosser | person | recursion_coherent_difference
+person-j-c-r-licklider | J. C. R. Licklider | person | software
+person-j-f-adams | J. F. Adams | person | geometry_iii
+person-j-h-c-whitehead | J. H. C. Whitehead | person | geometry_iii
+person-j-r-firth | J. R. Firth | person | language,statistics_ii
+person-j-roger-hindley | J. Roger Hindley | person | software
+person-j-ross-quinlan | J. Ross Quinlan | person | beyond_llms
+person-jack-kilby | Jack Kilby | person | untold_history
+person-jack-lindsey | Jack Lindsey | person | mechanistic_interpretability
+person-jack-merullo | Jack Merullo | person | mechanistic_interpretability,algorithms,fact_lookup
+person-jacob-austin | Jacob Austin | person | evaluation
+person-jacob-steinhardt | Jacob Steinhardt | person | unexpected_capabilities
+person-jacques-hadamard | Jacques Hadamard | person | math_ii
+person-jacques-tits | Jacques Tits | person | geometry_i
+person-jakob-hohwy | Jakob Hohwy | person | philosophy
+person-jakob-listing | Jakob Listing | person | math_iv
+person-james-alexander | James Alexander | person | geometry_iii
+person-james-bergstra | James Bergstra | person | hyperparameters
+person-james-clerk-maxwell | James Clerk Maxwell | person | statistics_ii
+person-james-cooley | James Cooley | person | geometry_ii
+person-james-gosling | James Gosling | person | software
+person-james-gregory | James Gregory | person | math_i
+person-james-hensman | James Hensman | person | beyond_llms
+person-james-jeans | James Hopwood Jeans | person | untold_history
+person-james-joseph-sylvester | James Joseph Sylvester | person | math_ii
+person-james-macqueen | James MacQueen | person | beyond_llms
+person-james-mcclelland | James McClelland | person | history
+person-james-mercer | James Mercer | person | math_ii,geometry_ii
+person-james-watt | James Watt | person | untold_history
+person-jan-czochralski | Jan Czochralski | person | untold_history
+person-janos-bolyai | János Bolyai | person | geometry_i
+person-jared-kaplan | Jared Kaplan | person | hyperparameters
+person-jason-wei | Jason Wei | person | hallucinations,reasoning,promptengineering
+person-jason-weston | Jason Weston | person | philosophy
+person-jasper-snoek | Jasper Snoek | person | hyperparameters
+person-jay-forbie | Jay Forbie | person | software
+person-jay-forrester | Jay Forrester | person | untold_history
+person-jbs-haldane | John Burdon Sanderson Haldane | person | untold_history
+person-jean-baptiste-fourier | Jean-Baptiste Joseph Fourier | person | geometry_ii
+person-jean-daniel-colladon | Jean-Daniel Colladon | person | untold_history
+person-jean-dieudonne | Jean Dieudonné | person | geometry_i
+person-jean-francois-champollion | Jean-François Champollion | person | language
+person-jean-giraud | Jean Giraud | person | coherent_difference
+person-jean-leray | Jean Leray | person | geometry_iii,coherent_difference
+person-jean-louis-gasse | Jean-Louis Gassée | person | software
+person-jean-paul-sartre | Jean-Paul Sartre | person | philosophy
+person-jean-pierre-serre | Jean-Pierre Serre | person | geometry_iii,coherent_difference
+person-jean-victor-poncelet | Jean-Victor Poncelet | person | math_iv
+person-jean-yves-girard | Jean-Yves Girard | person | recursion_coherent_difference
+person-jeff-johnson | Jeff Johnson | person | vectorsearch
+person-jeff-wu | Jeff Wu | person | beyond_llms
+person-jeffrey-elman | Jeffrey L. Elman | person | positionalembeddingslab
+person-jerome-friedman | Jerome Friedman | person | beyond_llms
+person-jesse-j-prinz | Jesse J. Prinz | person | philosophy
+person-jianlin-su | Jianlin Su | person | positionalembeddingslab
+person-jimmy-ba | Jimmy Lei Ba | person | autodiff
+person-jimmy-ba-2 | Jimmy Ba | person | overandunderfittinglab,normalizationlab
+person-jiwoo-hong | Jiwoo Hong | person | reinforcement_learning
+person-joav-goldberg | Yoav Goldberg | person | origami
+person-joe-biden | Joe Biden | person | philosophy
+person-johannes-gutenberg | Johannes Gutenberg | person | untold_history
+person-johannes-kepler | Johannes Kepler | person | math_i,geometry_i,untold_history
+person-john-ambrose-fleming | John Ambrose Fleming | person | untold_history
+person-john-b-goodenough | John B. Goodenough | person | untold_history
+person-john-backus | John Backus | person | untold_history
+person-john-bardeen | John Bardeen | person | untold_history
+person-john-cliff-shaw | John Cliff Shaw | person | history
+person-john-flavell | John Flavell | person | human_mind
+person-john-hadley | John Hadley | person | geometry_i
+person-john-harrison | John Harrison | person | untold_history
+person-john-holland | John Holland | person | beyond_llms
+person-john-hopfield | John J. Hopfield | person | fact_lookup
+person-john-kemeny | John Kemeny | person | software
+person-john-koza | John Koza | person | beyond_llms
+person-john-ladyman | John Ladyman | person | coherent_world_models
+person-john-locke | John Locke | person | philosophy
+person-john-m-jumper | John M. Jumper | person | ai_for_science
+person-john-mccarthy | John McCarthy | person | history,agents
+person-john-michael-lighthill | John Michael Lighthill | person | history
+person-john-milnor | John Milnor | person | geometry_iii
+person-john-napier | John Napier | person | math_i
+person-john-rawls | John Rawls | person | philosophy
+person-john-robinson | John Robinson | person | beyond_llms
+person-john-rupert-firth | John Rupert Firth | person | embeddinglab,attentionlab
+person-john-schulman | John Schulman | person | reinforcement_learning
+person-john-searle | John Searle | person | history,human_mind,philosophy
+person-john-sutherland | John Sutherland | person | untold_history
+person-john-tyndall | John Tyndall | person | untold_history
+person-john-von-neumann | John von Neumann | person | history,human_mind,beyond_llms,untold_history
+person-john-wallis | John Wallis | person | math_i,differentiation
+person-john-wilkins | John Wilkins | person | language
+person-john-worrall | John Worrall | person | coherent_world_models
+person-john-zellig-harris | John Zellig Harris | person | statistics_ii
+person-jon-kleinberg | Jon Kleinberg | person | beyond_llms
+person-jonas-gehring | Jonas Gehring | person | positionalembeddingslab
+person-jonathan-frankle | Jonathan Frankle | person | activationlab
+person-joost-joordens | J. Peter Joordens | person | geometry_i
+person-jordan-hoffmann | Jordan Hoffmann | person | losslab,hyperparameters
+person-josef-hochreiter | Josef Hochreiter | person | autodiff,resnetlab,recurrent_networks
+person-josef-perner | Josef Perner | person | philosophy
+person-joseph-berkson | Joseph Berkson | person | beyond_llms
+person-joseph-henrich | Joseph Henrich | person | human_mind
+person-joseph-louis-lagrange | Joseph-Louis Lagrange | person | differentiation
+person-joseph-marie-jacquard | Joseph-Marie Jacquard | person | language
+person-joseph-nicéphore-niépce | Joseph Nicéphore Niépce | person | untold_history
+person-joseph-redmon | Joseph Redmon | person | computer_vision
+person-joseph-weizenbaum | Joseph Weizenbaum | person | myths,history
+person-joshua-ainslie | Joshua Ainslie | person | contextwindows,inference_optimization,production_serving
+person-joy-buolamwini | Joy Buolamwini | person | statistics_i
+person-judea-pearl | Judea Pearl | person | beyond_llms
+person-juergen-schmidhuber | Jürgen Schmidhuber | person | history,resnetlab,recurrent_networks,fact_lookup,global_ai_ecosystem
+person-jule-charney | Jule Charney | person | untold_history
+person-kaho-park | Kiho Park | person | mechanistic_interpretability,algorithms,fact_lookup
+person-kai-greshake | Kai Greshake | person | websearch,security_inference
+person-kaiming-he | Kaiming He | person | history,autodiff,deeplearninglab,origami,resnetlab,computer_vision,transformer
+person-kaisuke-nakajima | Kaisuke Nakajima | person | tokenizerlab
+person-karel-cech | Karel Čech | person | geometry_iii
+person-karen-simonyan | Karen Simonyan | person | origami
+person-karl-cobbe | Karl Cobbe | person | evaluation
+person-karl-ferdinand-braun | Karl Ferdinand Braun | person | untold_history
+person-karl-friston | Karl Friston | person | human_mind,deep_theory
+person-karl-pearson | Karl Pearson | person | statistics_i,beyond_llms
+person-karl-popper | Karl Popper | person | philosophy
+person-karl-r-popper | Karl R. Popper | person | coherent_world_models
+person-karl-wilhelm-kramp | Karl Wilhelm Kramp | person | math_i
+person-kate-crawford | Kate Crawford | person | philosophy
+person-kawin-ethayarajh | Kawin Ethayarajh | person | reinforcement_learning,embeddinglab
+person-kay-mcnulty | Kay McNulty | person | software
+person-keisuke-sakaguchi | Keisuke Sakaguchi | person | philosophy
+person-ken-thompson | Ken Thompson | person | untold_history,software
+person-kenneth-ivers | Kenneth Iverson | person | software
+person-kenneth-koza | Kenneth Koza | person | beyond_llms
+person-kenneth-li | Kenneth Li | person | mechanistic_interpretability,algorithms,fact_lookup
+person-kenneth-stanley | Kenneth Stanley | person | beyond_llms
+person-kevin-johnson | Kevin Johnson | person | philosophy
+person-kevin-meng | Kevin Meng | person | mechanistic_interpretability,fact_lookup
+person-kevin-wang | Kevin Wang | person | mechanistic_interpretability,fact_lookup
+person-klaus-greff | Klaus Greff | person | recurrent_networks
+person-koji-huzita | Koji Huzita | person | origami
+person-konrad-zuse | Konrad Zuse | person | history
+person-kristen-nygaard | Kristen Nygaard | person | software
+person-kunihiko-fukushima | Kunihiko Fukushima | person | history,activationlab,computer_vision
+person-kurt-godel | Kurt Gödel | person | recursion_coherent_difference,model_theory,philosophy
+person-kurt-hornik | Kurt Hornik | person | deeplearninglab,origami,overandunderfittinglab
+person-kurt-reidemeister | Kurt Reidemeister | person | geometry_iii
+person-kyunghyun-cho | Kyunghyun Cho | person | recurrent_networks,positionalembeddingslab
+person-l-e-j-brouwer | L. E. J. Brouwer | person | math_iv,geometry_iii,coherent_difference
+person-ladislaus-bortkiewicz | Ladislaus Bortkiewicz | person | statistics_i
+person-laozi | Laozi | person | coherent_difference
+person-larry-page | Larry Page | person | beyond_llms
+person-laurence-bonjour | Laurence BonJour | person | coherent_world_models
+person-lauri-alpoge | Lauri Alpöge | person | ai_for_science
+person-lawrence-rabiner | Lawrence Rabiner | person | beyond_llms
+person-lee-de-forest | Lee De Forest | person | untold_history
+person-lee-sedol | Lee Sedol | person | agents
+person-leland-stanford | Leland Stanford | person | untold_history
+person-leo-baekeland | Leo Baekeland | person | untold_history
+person-leo-breiman | Leo Breiman | person | beyond_llms
+person-leon-battista-alberti | Leon Battista Alberti | person | formulary
+person-leon-henkin | Leon Henkin | person | model_theory
+person-leonardo-da-vinci | Leonardo da Vinci | person | language
+person-leonardo-de-moura | Leonardo de Moura | person | beyond_llms
+person-leonardo-fibonacci | Leonardo Fibonacci | person | formulary
+person-leonardo-of-pisa | Leonardo of Pisa (Fibonacci) | person | untold_history
+person-leonardo-torres-quevedo | Leonardo Torres Quevedo | person | history
+person-leonhard-euler | Leonhard Euler | person | math_i,math_iv,geometry_iii,differentiation
+person-leopold-lowenheim | Leopold Löwenheim | person | model_theory
+person-leopold-vietoris | Leopold Vietoris | person | geometry_iii
+person-leslie-baum | Leslie Baum | person | beyond_llms
+person-lewis-fry-richardson | Lewis Fry Richardson | person | history,embeddinglab
+person-lianmin-zheng | Lianmin Zheng | person | evaluation
+person-linus-torvalds | Linus Torvalds | person | software
+person-lionel-naccache | Lionel Naccache | person | philosophy
+person-long-ouyang | Long Ouyang | person | reinforcement_learning,finetuninglab,reasoning
+person-lorraine-daston | Lorraine Daston | person | human_mind,philosophy
+person-louis-daguerre | Louis Daguerre | person | untold_history
+person-louis-lapicque | Louis Lapicque | person | history
+person-luca-pacioli | Luca Pacioli | person | untold_history
+person-lucy-aiello | Lucy Aiello | person | human_mind
+person-ludwig-boltzmann | Ludwig Boltzmann | person | statistics_ii
+person-ludwig-wittgenstein | Ludwig Wittgenstein | person | foam_of_meaning,coherent_difference,embeddinglab
+person-madhava-of-sangamagrama | Madhava of Sangamagrama | person | math_i,geometry_i
+person-maksym-telgarsky | Maksym Telgarsky | person | deeplearninglab
+person-manfred-eigen | Manfred Eigen | person | untold_history
+person-marcus-aurelius | Marcus Aurelius | person | philosophy
+person-marcus-hutter | Marcus Hutter | person | losslab
+person-marcus-minsky | Marvin Minsky | person | history,human_mind,beyond_llms,philosophy
+person-marcus-raichle | Marcus Raichle | person | human_mind
+person-margaret-hamilton | Margaret Hamilton | person | untold_history,software
+person-margherita-piazzola-beloch | Margherita Piazzola Beloch | person | origami
+person-mark-chen | Mark Chen | person | unexpected_capabilities
+person-mark-davies | Mark Davies | person | beyond_llms
+person-mark-newman | Mark Newman | person | beyond_llms
+person-mark-walker | Mark Walker | person | coherent_world_models
+person-marlyn-meltzer | Marlyn Meltzer | person | software
+person-marquis-de-condorcet | Marquis de Condorcet | person | geometry_iii,derivativelab,differentiation
+person-marston-morse | Marston Morse | person | formulary,geometry_i
+person-martin-bern | Martin Bern | person | origami
+person-martin-davis | Martin Davis | person | beyond_llms
+person-martin-demaine | Martin Demaine | person | origami
+person-martin-ester | Martin Ester | person | beyond_llms
+person-martin-grotschel | Martin Grötschel | person | origami
+person-martin-heidegger | Martin Heidegger | person | coherent_difference,philosophy
+person-martin-puterman | Martin Puterman | person | beyond_llms
+person-martin-wattenberg | Martin Wattenberg | person | mechanistic_interpretability,fact_lookup
+person-mary-shelley | Mary Shelley | person | ai_existential_risk
+person-mathieu-cohen-steiner | Mathieu Cohen-Steiner | person | geometry_iii,foam_of_meaning
+person-matthias-schleiden | Matthias Schleiden | person | untold_history
+person-maurice-merleau-ponty | Maurice Merleau-Ponty | person | coherent_difference
+person-maurice-wilkes | Maurice Wilkes | person | software
+person-max-bense | Max Bense | person | history
+person-max-newman | Max Newman | person | recursion_coherent_difference
+person-max-planck | Max Planck | person | untold_history
+person-maximilian-nickel | Maximilian Nickel | person | embeddinglab
+person-menelaus-of-alexandria | Menelaus of Alexandria | person | geometry_i
+person-michael-atiyah | Michael Atiyah | person | geometry_i
+person-michael-barr | Michael Barr | person | coherent_difference
+person-michael-bronstein | Michael M. Bronstein | person | embeddinglab,geometry_ii
+person-michael-bronstein-2 | Michael Bronstein | person | geometry_i
+person-michael-faraday | Michael Faraday | person | untold_history
+person-michael-freedman | Michael Freedman | person | geometry_i
+person-michael-graziano | Michael Graziano | person | philosophy
+person-michael-jordan | Michael Jordan | person | beyond_llms,mechanistic_interpretability
+person-michael-morley | Michael Morley | person | model_theory
+person-michael-polanyi | Michael Polanyi | person | embeddinglab
+person-michael-sandel | Michael Sandel | person | philosophy
+person-michael-tomasello | Michael Tomasello | person | human_mind
+person-michal-lewandowski | Michal Lewandowski | person | origami
+person-mike-schuster | Mike Schuster | person | tokenizerlab
+person-mikhail-belkin | Mikhail Belkin | person | deeplearninglab
+person-milman-parry | Milman Parry | person | language
+person-minyoung-huh | Minyoung Huh | person | embeddinglab
+person-mitch-kapor | Mitch Kapor | person | untold_history
+person-mohammad-gheshlaghi-azar | Mohammad Gheshlaghi Azar | person | reinforcement_learning
+person-mohammad-shoeybi | Mohammad Shoeybi | person | training_infrastructure
+person-mor-geva | Mor Geva | person | origami,fact_lookup
+person-moritz-helias | Moritz Helias | person | origami
+person-myles-tierney | Myles Tierney | person | coherent_difference
+person-naftali-tishby | Naftali Tishby | person | transformer
+person-nagarjuna | Nagarjuna | person | coherent_difference
+person-naim-laird | Naim Laird | person | statistics_ii
+person-nancy-cartwright | Nancy Cartwright | person | coherent_world_models
+person-nasir-al-din-al-tusi | Nasir al-Din al-Tusi | person | geometry_i
+person-nathaniel-rochester | Nathaniel Rochester | person | history
+person-ned-block | Ned Block | person | philosophy
+person-neel-nanda | Neel Nanda | person | deeplearninglab,mechanistic_interpretability,algorithms
+person-nelson-elhage | Nelson Elhage | person | deeplearninglab,mechanistic_interpretability,fact_lookup,embeddinglab
+person-nelson-goodman | Nelson Goodman | person | coherent_world_models
+person-nicholas-metropolis | Nicholas Metropolis | person | untold_history
+person-nicholas-of-cusa | Nicholas of Cusa | person | coherent_difference
+person-nick-bostrom | Nick Bostrom | person | human_mind,philosophy,ai_existential_risk
+person-nicolaus-copernicus | Nicolaus Copernicus | person | untold_history
+person-niels-bohr | Niels Bohr | person | untold_history
+person-niklaus-wirth | Niklaus Wirth | person | software
+person-nikola-tesla | Nikola Tesla | person | untold_history
+person-nikolai-lobachevsky | Nikolai Lobachevsky | person | geometry_i
+person-nitish-srivastava | Nitish Srivastava | person | overandunderfittinglab
+person-noah-goodman | Noah Goodman | person | beyond_llms
+person-noah-shinn | Noah Shinn | person | agents,promptengineering
+person-noam-chomsky | Noam Chomsky | person | human_mind,beyond_llms
+person-noam-shazeer | Noam Shazeer | person | contextwindows,inference_optimization
+person-nora-belrose | Nora Belrose | person | mechanistic_interpretability,fact_lookup
+person-norbert-wiener | Norbert Wiener | person | history
+person-norman-koch | Norman Koch | person | intro
+person-norman-steenrod | Norman Steenrod | person | geometry_iii
+person-ofir-press | Ofir Press | person | positionalembeddingslab
+person-olaf-ronneberger | Olaf Ronneberger | person | computer_vision
+person-ole-johan-dahl | Ole-Johan Dahl | person | software
+person-oliver-heaviside | Oliver Heaviside | person | minimalneuron,formulary
+person-olivia-caramello | Olivia Caramello | person | coherent_difference
+person-oskar-morgenstern | Oskar Morgenstern | person | untold_history
+person-otto-von-guericke | Otto von Guericke | person | untold_history
+person-p-c-mahalanobis | P. C. Mahalanobis | person | geometry_i
+person-panini | Pāṇini | person | history,language
+person-parmenides | Parmenides | person | coherent_difference
+person-patricia-churchland | Patricia Churchland | person | human_mind
+person-patrick-hayes | Patrick Hayes | person | history,agents
+person-patrick-lewis | Patrick Lewis | person | rag,websearch
+person-paul-allen | Paul Allen | person | history
+person-paul-baran | Paul Baran | person | untold_history
+person-paul-christiano | Paul Christiano | person | reinforcement_learning
+person-paul-churchland | Paul Churchland | person | human_mind
+person-paul-werbos | Paul Werbos | person | autodiff,optimizerlab
+person-pedro-domingos | Pedro Domingos | person | beyond_llms
+person-per-martin-lof | Per Martin-Löf | person | untold_history
+person-percy-liang | Percy Liang | person | unexpected_capabilities
+person-peter-auer | Peter Auer | person | beyond_llms
+person-peter-clark | Peter Clark | person | evaluation
+person-peter-dayan | Peter Dayan | person | beyond_llms
+person-peter-gustav-lejeune-dirichlet | Peter Gustav Lejeune Dirichlet | person | statistics_ii
+person-peter-johnstone | Peter T. Johnstone | person | coherent_difference
+person-peter-naur | Peter Naur | person | untold_history
+person-peter-shaw | Peter Shaw | person | positionalembeddingslab
+person-peter-singer | Peter Singer | person | philosophy
+person-philip-gage | Philip Gage | person | tokenizerlab
+person-philo-farnsworth | Philo Farnsworth | person | untold_history
+person-pierre-de-fermat | Pierre de Fermat | person | statistics_i,differentiation,embeddinglab,untold_history
+person-pierre-deligne | Pierre Deligne | person | coherent_difference
+person-pierre-simon-laplace | Pierre-Simon Laplace | person | math_i,statistics_i
+person-pieter-abbeel | Pieter Abbeel | person | beyond_llms
+person-pingala | Pingala | person | history
+person-plato | Plato | person | history,geometry_i,coherent_difference,embeddinglab,symbolic_ai
+person-pliny-the-elder | Pliny the Elder | person | untold_history
+person-plotinus | Plotinus | person | coherent_difference
+person-plutarch | Plutarch | person | philosophy
+person-prajit-ramachandran | Prajit Ramachandran | person | activationlab
+person-ptolemy-v-epiphanes | Ptolemy V Epiphanes | person | coherent_world_models
+person-pythagoras | Pythagoras | person | geometry_i,history
+person-radford-neal | Radford Neal | person | beyond_llms
+person-radu-diaconescu | Radu Diaconescu | person | coherent_difference
+person-rafael-rafailov | Rafael Rafailov | person | reinforcement_learning,finetuninglab
+person-rajat-raina | Rajat Raina | person | history
+person-ramon-llull | Ramon Llull | person | history
+person-raoul-bott | Raoul Bott | person | geometry_iii
+person-ray-kurzweil | Ray Kurzweil | person | myths
+person-ray-solomonoff | Ray Solomonoff | person | intuition
+person-rene-descartes | René Descartes | person | math_i,math_iv,human_mind,philosophy,untold_history
+person-richard-bellman | Richard Bellman | person | beyond_llms
+person-richard-dawkins | Richard Dawkins | person | human_mind
+person-richard-feynman | Richard Feynman | person | unexpected_capabilities
+person-richard-gregory | Richard Gregory | person | history
+person-richard-hamilton | Richard Hamilton | person | geometry_i
+person-richard-s-sutton | Richard S. Sutton | person | history,statistics_i
+person-richard-socher | Richard Socher | person | history
+person-richard-stallman | Richard Stallman | person | software
+person-richard-sutton | Richard Sutton | person | reinforcement_learning,beyond_llms,human_mind,deep_theory
+person-richard-wrangham | Richard Wrangham | person | human_mind
+person-rico-sennrich | Rico Sennrich | person | tokenizerlab
+person-rina-dechter | Rina Dechter | person | deeplearninglab
+person-rob-hyndman | Rob Hyndman | person | beyond_llms
+person-rob-pike | Rob Pike | person | software
+person-robert-axelrod | Robert Axelrod | person | human_mind
+person-robert-brandom | Robert B. Brandom | person | coherent_difference
+person-robert-colmerauer | Robert Colmerauer | person | beyond_llms
+person-robert-frost | Robert Frost | person | philosophy
+person-robert-goldblatt | Robert Goldblatt | person | coherent_difference
+person-robert-griesemer | Robert Griesemer | person | software
+person-robert-hooke | Robert Hooke | person | untold_history
+person-robert-k-merton | Robert K. Merton | person | human_mind
+person-robert-kent | Robert E. Kent | person | coherent_difference
+person-robert-kowalski | Robert Kowalski | person | beyond_llms
+person-robert-lang | Robert J. Lang | person | origami
+person-robert-leibler | Robert Leibler | person | statistics_ii
+person-robert-metcalfe | Robert Metcalfe | person | untold_history
+person-robert-nathan | Robert Nathan | person | untold_history
+person-robert-noyce | Robert Noyce | person | untold_history
+person-robert-nozick | Robert Nozick | person | philosophy
+person-robert-of-chester | Robert of Chester | person | positionalembeddingslab
+person-robert-r-heckel | Robert R. Heckel | person | ai_for_science
+person-robert-tibshirani | Robert Tibshirani | person | overandunderfittinglab
+person-robert-trivers | Robert Trivers | person | hallucinations
+person-robin-dunbar | Robin Dunbar | person | human_mind
+person-robin-milner | Robin Milner | person | untold_history,software
+person-roger-conant | Roger Conant | person | history
+person-roger-hindley | Roger Hindley | person | untold_history
+person-roger-penrose | Roger Penrose | person | human_mind,philosophy
+person-roger-shepard | Roger Shepard | person | foam_of_meaning
+person-ronald-a-fisher | Ronald A. Fisher | person | beyond_llms
+person-ronald-brown | Ronald Brown | person | geometry_iii
+person-ronald-fisher | Ronald Fisher | person | statistics_ii
+person-ronald-howard | Ronald Howard | person | beyond_llms
+person-ronald-j-williams | Ronald J. Williams | person | reinforcement_learning,optimizerlab
+person-rosalind-franklin | Rosalind Franklin | person | the_model,mechanistic_interpretability
+person-ross-girshick | Ross Girshick | person | computer_vision
+person-rowan-zellers | Rowan Zellers | person | evaluation
+person-rudolf-carnap | Rudolf Carnap | person | geometry_iii
+person-rudolf-kalman | Rudolf Kalman | person | beyond_llms
+person-rudolf-kalman-2 | Rudolf Kálmán | person | untold_history
+person-rudolf-virchow | Rudolf Virchow | person | untold_history
+person-ruibin-xiong | Ruibin Xiong | person | transformer
+person-rumi | Jalal ad-Din Rumi | person | philosophy
+person-rupesh-srivastava | Rupesh Kumar Srivastava | person | resnetlab
+person-ruth-lichterman | Ruth Lichterman | person | software
+person-s-i-hayakawa | S. I. Hayakawa | person | intro
+person-samuel-butler | Samuel Butler | person | ai_existential_risk
+person-samuel-eilenberg | Samuel Eilenberg | person | geometry_iii,coherent_difference
+person-samuel-l-smith | Samuel L. Smith | person | embeddinglab
+person-samuel-morse | Samuel Morse | person | untold_history
+person-samyam-rajbhandari | Samyam Rajbhandari | person | training_infrastructure
+person-santiago-ramon-y-cajal | Santiago Ramón y Cajal | person | history
+person-saunders-mac-lane | Saunders Mac Lane | person | geometry_iii,coherent_difference
+person-scott-johnson | Scott Johnson | person | beyond_llms
+person-scott-mednick | Scott Mednick | person | human_mind
+person-sean-eddy | Sean Eddy | person | beyond_llms
+person-seneca | Seneca the Younger | person | philosophy
+person-sepp-hochreiter | Sepp Hochreiter | person | history
+person-seppo-linnainmaa | Seppo Linnainmaa | person | history,autodiff
+person-sergey-brin | Sergey Brin | person | beyond_llms
+person-sergey-levine | Sergey Levine | person | beyond_llms
+person-seymour-papert | Seymour Papert | person | history
+person-shaoqing-ren | Shaoqing Ren | person | computer_vision
+person-shiing-shen-chen | Shiing-Shen Chern | person | formulary,geometry_i
+person-shizuo-kakutani | Shizuo Kakutani | person | recursion_coherent_difference
+person-shunichi-amari | Shunichi Amari | person | history
+person-shunryu-suzuki | Shunryu Suzuki | person | philosophy
+person-shunyu-yao | Shunyu Yao | person | websearch,agents,reasoning,promptengineering
+person-sidney-altman | Sidney Altman | person | untold_history
+person-sigmund-freud | Sigmund Freud | person | human_mind
+person-simeon-denis-poisson | Siméon Denis Poisson | person | statistics_i
+person-simon-donaldson | Simon Donaldson | person | geometry_i
+person-simon-stevin | Simon Stevin | person | history
+person-socrates | Socrates | person | history,symbolic_ai
+person-solomon-kullback | Solomon Kullback | person | statistics_ii
+person-solomon-lefschetz | Solomon Lefschetz | person | recursion_coherent_difference
+person-soren-kierkegaard | Søren Kierkegaard | person | philosophy
+person-sorin-udrescu | Sorin Udrescu | person | unexpected_capabilities
+person-spinoza | Benedictus de Spinoza | person | coherent_difference
+person-stanislas-dehaene | Stanislas Dehaene | person | human_mind
+person-stanisław-ulam | Stanisław Ulam | person | untold_history
+person-stanley-miller | Stanley Miller | person | untold_history
+person-stephen-muggleton | Stephen Muggleton | person | beyond_llms
+person-stephen-smale | Stephen Smale | person | geometry_i
+person-steve-awodey | Steve Awodey | person | coherent_difference
+person-steve-bannon | Steve Bannon | person | philosophy
+person-steve-jobs | Steve Jobs | person | software
+person-steve-wager | Steve Wager | person | beyond_llms
+person-steven-loewenstein | Steven Loewenstein | person | human_mind
+person-stuart-hameroff | Stuart Hameroff | person | philosophy
+person-stuart-lloyd | Stuart Lloyd | person | beyond_llms
+person-stuart-russell | Stuart Russell | person | beyond_llms,philosophy,frontier,alignment
+person-subrahmanyan-chandrasekhar | Subrahmanyan Chandrasekhar | person | untold_history
+person-sushruta | Sushruta | person | language
+person-takeshi-kojima | Takeshi Kojima | person | reasoning
+person-terence-tao | Terence Tao | person | ai_for_science
+person-terry-winograd | Terry Winograd | person | agents
+person-thales-of-miletus | Thales of Miletus | person | geometry_i,untold_history
+person-theo-lutz | Theo Lutz | person | history
+person-theodor-schwann | Theodor Schwann | person | untold_history
+person-theophrastus | Theophrastus | person | untold_history
+person-thomas-bayes | Thomas Bayes | person | statistics_ii
+person-thomas-cover | Thomas Cover | person | beyond_llms
+person-thomas-edison | Thomas Edison | person | untold_history
+person-thomas-etter | Thomas Etter | person | history
+person-thomas-hull | Thomas C. Hull | person | origami
+person-thomas-kurtz | Thomas Kurtz | person | software
+person-thomas-metzinger | Thomas Metzinger | person | philosophy
+person-thomas-nagel | Thomas Nagel | person | human_mind
+person-thomas-newcomen | Thomas Newcomen | person | untold_history
+person-thomas-scanlon | Thomas Scanlon | person | philosophy
+person-thoralf-skolem | Thoralf Skolem | person | model_theory
+person-tim-berners-lee | Tim Berners-Lee | person | beyond_llms,untold_history
+person-tim-dettmers | Tim Dettmers | person | finetuninglab,inference_optimization,running_locally
+person-timnit-gebru | Timnit Gebru | person | philosophy
+person-timothee-schick | Timothee Schick | person | unexpected_capabilities
+person-tom-brown | Tom B. Brown | person | unexpected_capabilities
+person-tom-kilburn | Tom Kilburn | person | untold_history
+person-tomas-mikolov | Tomáš Mikolov | person | history,embeddinglab,attentionlab
+person-tommy-flowers | Tommy Flowers | person | untold_history
+person-torsten-wiesel | Torsten Wiesel | person | history,computer_vision
+person-trenton-bricken | Trenton Bricken | person | mechanistic_interpretability,fact_lookup
+person-tri-dao | Tri Dao | person | contextwindows,inference_optimization
+person-tullio-levi-civita | Tullio Levi-Civita | person | math_ii
+person-tycho-brahe | Tycho Brahe | person | untold_history
+person-tze-leung-lai | Tze Leung Lai | person | beyond_llms
+person-valentina-tereshkova | Valentina Tereshkova | person | hallucinations,promptengineering
+person-vernor-vinge | Vernor Vinge | person | myths
+person-victor-chernozhukov | Victor Chernozhukov | person | beyond_llms
+person-victor-lamme | Victor Lamme | person | philosophy
+person-vincent-blondel | Vincent Blondel | person | beyond_llms
+person-vinod-nair | Vinod Nair | person | autodiff,activationlab
+person-vint-cerf | Vint Cerf | person | untold_history
+person-vladimir-vapnik | Vladimir Vapnik | person | statistics_i,beyond_llms
+person-volker-springel | Volker Springel | person | atlas
+person-volodymyr-mnih | Volodymyr Mnih | person | reinforcement_learning
+person-w-ross-ashby | W. Ross Ashby | person | history,minimalneuron
+person-walter-brattain | Walter Brattain | person | untold_history
+person-walter-cady | Walter Cady | person | untold_history
+person-walter-pitts | Walter Pitts | person | history
+person-walther-mayer | Walther Mayer | person | geometry_iii
+person-warren-marrison | Warren Marrison | person | untold_history
+person-warren-mcculloch | Warren McCulloch | person | history
+person-wei-zhang | Wei Zhang | person | history
+person-wendell-kelley | Wendell Kelley | person | history
+person-werner-heisenberg | Werner Heisenberg | person | untold_history
+person-werner-wengert | Werner Wengert | person | autodiff
+person-wernher-von-braun | Wernher von Braun | person | untold_history
+person-wilfrid-hodges | Wilfrid Hodges | person | coherent_world_models
+person-wilfrid-sellars | Wilfrid Sellars | person | coherent_difference
+person-wilhelm-lenz | Wilhelm Lenz | person | history
+person-william-chamberlain | William Chamberlain | person | history
+person-william-cullen | William Cullen | person | untold_history
+person-william-fox-talbot | William Henry Fox Talbot | person | untold_history
+person-william-g-chase | William G. Chase | person | human_mind
+person-william-hamilton | William Hamilton | person | beyond_llms
+person-william-james | William James | person | philosophy
+person-william-kahan | William Kahan | person | untold_history
+person-william-macaskill | William MacAskill | person | philosophy
+person-william-of-ockham | William of Ockham | person | philosophy
+person-william-rowan-hamilton | William Rowan Hamilton | person | math_ii
+person-william-shockley | William Shockley | person | untold_history
+person-william-thompson | William Thompson | person | beyond_llms
+person-william-thomson-lord-kelvin | William Thomson (Lord Kelvin) | person | untold_history
+person-william-thurston | William Thurston | person | geometry_i
+person-willis-carrier | Willis Carrier | person | untold_history
+person-witold-hurewicz | Witold Hurewicz | person | geometry_iii
+person-woldemar-voigt | Woldemar Voigt | person | math_ii
+person-wolfgang-maass | Wolfgang Maass | person | beyond_llms
+person-wolfgang-von-kempelen | Wolfgang von Kempelen | person | language
+person-wolfram-schultz | Wolfram Schultz | person | human_mind
+person-xavier-glorot | Xavier Glorot | person | activationlab
+person-xuezhi-wang | Xuezhi Wang | person | unexpected_capabilities
+person-yann-dauphin | Yann Dauphin | person | deeplearninglab
+person-yann-lecun | Yann LeCun | person | history,activationlab,computer_vision,global_ai_ecosystem
+person-yanping-huang | Yanping Huang | person | training_infrastructure
+person-yilun-du | Yilun Du | person | reinforcement_learning
+person-yochai-benkler | Yochai Benkler | person | human_mind
+person-yoram-freund | Yoram Freund | person | beyond_llms
+person-yoshua-bengio | Yoshua Bengio | person | history,autodiff,hyperparameters,resnetlab,recurrent_networks,embeddinglab,global_ai_ecosystem
+person-yuntao-bai | Yuntao Bai | person | reinforcement_learning
+person-yury-malkov | Yury Malkov | person | rag,vectorsearch
+person-yuval-noah-harari | Yuval Noah Harari | person | ai_existential_risk
+person-yuxi-li | Yuxi Li | person | embeddinglab
+person-zeno-of-elea | Zeno of Elea | person | history,math_i
+person-zhihong-shao | Zhihong Shao | person | reinforcement_learning,finetuninglab,reasoning
+place-abdera | Abdera | place | untold_history
+place-abu-dhabi | Abu Dhabi | place | global_ai_ecosystem
+place-accra | Accra | place | global_ai_ecosystem
+place-africa | Africa | place | coherent_difference
+place-albuquerque | Albuquerque | place | history
+place-alcatraz-island | Alcatraz Island | place | mechanistic_interpretability
+place-alexandria | Alexandria | place | geometry_i,software
+place-amsterdam | Amsterdam | place | coherent_difference
+place-antarctica | Antarctica | place | coherent_difference
+place-antikythera | Antikythera | place | history
+place-apollo-11-rockshelter | Apollo 11 Rockshelter | place | history
+place-argentina | Argentina | place | language
+place-assyria | Assyria | place | rag
+place-athens | Athens | place | history,coherent_difference
+place-atlanta-georgia | Atlanta (Georgia) | place | mechanistic_interpretability
+place-austin-texas | Austin (Texas) | place | mechanistic_interpretability
+place-australia | Australia | place | coherent_difference
+place-babylon | Babylon | place | formulary
+place-baghdad | Baghdad | place | positionalembeddingslab,untold_history
+place-bali | Bali | place | alternative_architectures,contextwindows,history
+place-beijing-china | Beijing (China) | place | mechanistic_interpretability
+place-bengaluru | Bengaluru | place | global_ai_ecosystem
+place-berkeley | Berkeley | place | history,mechanistic_interpretability,embeddinglab
+place-berlin | Berlin | place | history,contextwindows,symbolic_ai
+place-blaricum | Blaricum | place | geometry_iii,geometry_i
+place-bletchley-park | Bletchley Park | place | history
+place-blombos-cave | Blombos Cave | place | history,language,geometry_i
+place-border-cave | Border Cave | place | untold_history
+place-borneo | Borneo | place | history
+place-boston | Boston | place | philosophy
+place-boxgrove | Boxgrove | place | geometry_i
+place-bristol | Bristol | place | history
+place-brno | Brno | place | history
+place-bucharest | Bucharest | place | coherent_difference
+place-buffalo | Buffalo | place | history
+place-burgess-shale | Burgess Shale | place | untold_history
+place-cairo | Cairo | place | untold_history
+place-california | California | place | mechanistic_interpretability
+place-cambridge-england | Cambridge | place | history,tokenizerlab
+place-canada | Canada | place | global_ai_ecosystem
+place-charnwood-forest | Charnwood Forest | place | untold_history
+place-chengjiang | Chengjiang | place | untold_history
+place-chester | Chester | place | positionalembeddingslab
+place-china | China | place | history,geometry_i,global_ai_ecosystem,untold_history
+place-clazomenae | Clazomenae | place | coherent_difference
+place-colorado | Colorado | place | agents
+place-como | Como | place | untold_history
+place-constantinople-istanbul | Constantinople (Istanbul) | place | mechanistic_interpretability
+place-continental-europe | Continental Europe | place | differentiation
+place-croton | Croton (Crotone) | place | language
+place-cueva-de-las-manos | Cueva de las Manos | place | intro,language
+place-dallas-texas | Dallas (Texas) | place | mechanistic_interpretability
+place-dartmouth | Dartmouth | place | history
+place-delft | Delft | place | untold_history
+place-delhi | Delhi | place | math_i,untold_history
+place-detroit | Detroit | place | software
+place-dolni-vestonice | Dolni Vestonice | place | history
+place-dome-c | Dome C | place | untold_history
+place-dome-c-epica | Dome C (EPICA), Antarctica | place | untold_history
+place-dresden | Dresden | place | hyperparameters
+place-dresser-formation | Dresser Formation | place | untold_history
+place-ediacara-hills | Ediacara Hills | place | untold_history
+place-edinburgh | Edinburgh | place | history,tokenizerlab,coherent_world_models
+place-egypt | Egypt | place | language
+place-elea | Elea | place | coherent_difference
+place-england | England | place | differentiation
+place-ephesus | Ephesus | place | coherent_difference
+place-ethiopia | Ethiopia | place | global_ai_ecosystem
+place-fabriano | Fabriano | place | untold_history
+place-finland | Finland | place | history
+place-florence | Florence | place | untold_history
+place-france | France | place | finetuninglab,hallucinations,global_ai_ecosystem
+place-francevillian-group | Francevillian Group | place | untold_history
+place-freiburg | Freiburg | place | coherent_difference,embeddinglab
+place-gaoyuzhuang-formation | Gaoyuzhuang Formation | place | untold_history
+place-garmisch | Garmisch | place | software
+place-geneva | Geneva | place | coherent_difference
+place-germany | Germany | place | contextwindows
+place-ghirardelli-square | Ghirardelli Square | place | mechanistic_interpretability
+place-gorodomlya-island | Gorodomlya Island | place | untold_history
+place-gottingen | Göttingen | place | embeddinglab
+place-graz | Graz | place | recurrent_networks,fact_lookup
+place-greece | Greece | place | language
+place-gwalior | Gwalior | place | untold_history
+place-hangzhou | Hangzhou | place | global_ai_ecosystem
+place-hanover | Hanover | place | history,coherent_difference,untold_history
+place-high-plains | High Plains | place | agents
+place-hohle-fels | Hohle Fels | place | untold_history
+place-huntsville | Huntsville | place | untold_history
+place-india | India | place | history,language,global_ai_ecosystem
+place-indus-valley | Indus Valley | place | geometry_i
+place-iraq | Iraq | place | language
+place-ishango | Ishango | place | untold_history
+place-israel | Israel | place | global_ai_ecosystem
+place-isua-supracrustal-belt | Isua Supracrustal Belt | place | untold_history
+place-italy | Italy | place | contextwindows
+place-ithaca | Ithaca | place | embeddinglab,coherent_difference
+place-japan | Japan | place | history,global_ai_ecosystem
+place-java | Java | place | geometry_i,software
+place-jebel-irhoud | Jebel Irhoud | place | untold_history
+place-kaliningrad | Kaliningrad (Koenigsberg) | place | geometry_i
+place-kariandusi-west-turkana | Kariandusi (West Turkana) | place | geometry_i
+place-kenya | Kenya | place | geometry_i,history,untold_history
+place-kerala | Kerala (Sangamagrama) | place | math_i
+place-kish | Kish | place | language
+place-kues | Kues | place | coherent_difference
+place-kusumapura | Kusumapura | place | positionalembeddingslab
+place-kyoto | Kyoto | place | philosophy
+place-la-marche | La Marche | place | untold_history
+place-lagash | Lagash | place | language
+place-lagos | Lagos | place | global_ai_ecosystem
+place-lake-tanganyika | Lake Tanganyika region | place | history
+place-las-vegas | Las Vegas | place | human_mind
+place-lasserre | Lasserre | place | geometry_i
+place-lebombo-mountains | Lebombo Mountains | place | history,language
+place-leiden | Leiden | place | beyond_llms
+place-leipzig | Leipzig | place | hyperparameters
+place-lisbon | Lisbon | place | untold_history
+place-lomekwi-3 | Lomekwi 3 | place | history,untold_history
+place-london | London | place | history,coherent_difference,coherent_world_models,embeddinglab,tokenizerlab,global_ai_ecosystem,untold_history,philosophy
+place-los-alamos | Los Alamos | place | untold_history
+place-louvain | Louvain | place | beyond_llms
+place-madrid | Madrid | place | untold_history
+place-magdeburg | Magdeburg | place | untold_history
+place-mainz | Mainz | place | untold_history
+place-manchester | Manchester | place | history
+place-marseille | Marseille | place | software
+place-memphis | Memphis | place | 
+place-menlo-park | Menlo Park | place | philosophy
+place-mesopotamia | Mesopotamia | place | history,language
+place-mid-atlantic-ridge | Mid-Atlantic Ridge | place | coherent_difference
+place-miletus | Miletus | place | untold_history
+place-montreal | Montreal | place | recurrent_networks,positionalembeddingslab,global_ai_ecosystem
+place-moscow | Moscow | place | geometry_i
+place-mount-devin | Mount Devin | place | history
+place-mountain-view | Mountain View | place | tokenizerlab,positionalembeddingslab,transformer
+place-munich | Munich | place | history
+place-murchison | Murchison | place | untold_history
+place-murray-hill | Murray Hill | place | tokenizerlab
+place-nairobi | Nairobi | place | global_ai_ecosystem
+place-namibia | Namibia | place | untold_history
+place-neem | NEEM | place | untold_history
+place-new-hampshire | New Hampshire | place | philosophy
+place-new-york | New York | place | history
+place-nigeria | Nigeria | place | global_ai_ecosystem
+place-northern-cape | Northern Cape | place | untold_history
+place-norway | Norway | place | software
+place-novosibirsk | Novosibirsk | place | tokenizerlab
+place-oakland-california | Oakland (California) | place | mechanistic_interpretability
+place-oflag-xvii-a | Oflag XVII-A | place | geometry_iii
+place-olduvai-gorge | Olduvai Gorge | place | 
+place-osaka | Osaka | place | history
+place-oxford | Oxford | place | coherent_world_models,embeddinglab
+place-paris | Paris | place | history,coherent_difference,coherent_world_models,embeddinglab,finetuninglab,hallucinations,global_ai_ecosystem
+place-patagonia | Patagonia | place | language
+place-penemunde | Peenemünde | place | untold_history
+place-persia | Persia | place | geometry_i
+place-phoenicia | Phoenicia | place | language
+place-pisa | Pisa | place | coherent_difference
+place-pompeii | Pompeii | place | reasoning
+place-prague | Prague | place | embeddinglab
+place-rocky-mountains | Rocky Mountains | place | agents
+place-rome | Rome | place | coherent_difference,contextwindows
+place-russia | Russia | place | global_ai_ecosystem
+place-sacramento-california | Sacramento (California) | place | mechanistic_interpretability
+place-salamis | Salamis | place | untold_history
+place-san-francisco | San Francisco | place | mechanistic_interpretability,transformer
+place-schwetzingen | Schwetzingen | place | law_regulation
+place-seoul | Seoul | place | agents
+place-serabit-el-khadim | Serabit el-Khadim | place | language
+place-shark-bay | Shark Bay | place | untold_history
+place-sinai | Sinai | place | language
+place-singapore | Singapore | place | global_ai_ecosystem
+place-south-africa | South Africa | place | global_ai_ecosystem
+place-south-america | South America | place | coherent_difference
+place-south-korea | South Korea | place | global_ai_ecosystem
+place-soviet-union | Soviet Union | place | history
+place-spain | Spain | place | history
+place-stagira | Stagira | place | untold_history
+place-stockholm | Stockholm | place | history
+place-stratzing | Stratzing | place | untold_history
+place-sulawesi | Sulawesi | place | history
+place-sumer | Sumer | place | language
+place-summit-camp-greenland | Summit Camp (GRIP/NEEM), Greenland | place | untold_history
+place-susa | Susa | place | geometry_i
+place-switzerland | Switzerland | place | history
+place-syracuse | Syracuse | place | untold_history
+place-são-paulo | São Paulo | place | global_ai_ecosystem
+place-texas | Texas | place | mechanistic_interpretability
+place-the-alps | The Alps | place | history
+place-thessaloniki-greece | Thessaloniki (Greece) | place | mechanistic_interpretability
+place-tokyo | Tokyo | place | agents,global_ai_ecosystem
+place-toronto | Toronto | place | history,tokenizerlab,recurrent_networks,coherent_world_models,global_ai_ecosystem
+place-toruń | Toruń | place | untold_history
+place-trinil-java | Trinil (Sangiran), Java | place | geometry_i
+place-troy | Troy | place | security_inference
+place-tuebingen | Tübingen | place | recurrent_networks,embeddinglab
+place-tunisia | Tunisia | place | global_ai_ecosystem
+place-uganda | Uganda | place | global_ai_ecosystem
+place-ujjain | Ujjain | place | positionalembeddingslab
+place-ukraine | Ukraine | place | history
+place-united-arab-emirates | United Arab Emirates | place | global_ai_ecosystem
+place-united-kingdom | United Kingdom | place | global_ai_ecosystem
+place-united-states | United States | place | 
+place-upsala | Uppsala | place | coherent_difference
+place-uruk | Uruk | place | untold_history
+place-utrecht | Utrecht | place | coherent_difference
+place-venice | Venice | place | untold_history
+place-victoria-australia | Victoria, Australia | place | computer_vision
+place-victoria-british-columbia | Victoria (British Columbia) | place | mechanistic_interpretability
+place-vienna | Vienna | place | geometry_iii
+place-vinca | Vinca | place | language
+place-vostok-station | Vostok Station, Antarctica | place | untold_history
+place-vostok-station-2 | Vostok Station | place | untold_history
+place-wadi-el-hol | Wadi el-Hol | place | language
+place-warwick | Warwick | place | coherent_difference
+place-washington-dc | Washington, D.C. | place | history
+place-waterloo | Waterloo | place | coherent_difference
+place-white-sea | White Sea | place | untold_history
+place-wonderwerk-cave | Wonderwerk Cave | place | untold_history
+place-yoho-national-park | Yoho National Park | place | untold_history
+place-zurich | Zurich | place | coherent_difference
