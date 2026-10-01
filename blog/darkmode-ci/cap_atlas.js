@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer-core');
-const URL = process.env.URL || 'http://localhost/asanai/blog/map.php';
+const URL = process.env.URL || 'http://localhost/asanai/blog/atlas.php';
 const W = 820, H = 640;
 async function main() {
     const browser = await puppeteer.launch({
