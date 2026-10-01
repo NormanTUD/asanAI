@@ -104,7 +104,7 @@ function bootAtlas() {
 		year: 2026,
 		show: { person: true, place: true, institution: true, event: true, artifact: true, author: true },
 		showBg: false,
-		tshow: { influence: true, journey: true, signal: true },
+		tshow: { influence: false, journey: false, signal: false },
 		selected: null,
 		hovered: null,
 		threadFocus: null,
@@ -1779,7 +1779,8 @@ function bootAtlas() {
 		html += '<h3 style="margin-top:12px">Threads</h3>';
 		Object.keys(THREAD_LABEL).forEach(function (k) {
 			html += '<label class="atlas-check"><input type="checkbox" data-th="' + k +
-				'" checked><span class="sw" style="background:' + THREAD_COLOR[k] +
+				'"' + (state.tshow[k] ? ' checked' : '') +
+				'><span class="sw" style="background:' + THREAD_COLOR[k] +
 				'"></span>' + THREAD_LABEL[k] + '</label>';
 		});
 		filters.innerHTML = html;
