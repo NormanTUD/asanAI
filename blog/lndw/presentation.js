@@ -534,9 +534,18 @@ function prev() {
 
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
-        slides[currentSlide].classList.remove('active');
+        const oldSlide = slides[currentSlide];
         currentSlide = idx;
-        slides[currentSlide].classList.add('active');
+        const newSlide = slides[currentSlide];
+
+        // Sanfter Crossfade: alte Folie fadet aus, neue fadet ein (mit leichter
+        // translate+scale-Morph). Zwei rAF-Calls, damit der Browser den
+        // Anfangszustand (opacity:0) der neuen Folie wirklich gerendert hat,
+        // bevor .active gesetzt wird — sonst wird die Transition übersprungen.
+        oldSlide.classList.remove('active');
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            newSlide.classList.add('active');
+        }));
 
         const fragments = getFragments(currentSlide);
         if (fastMode) {
@@ -1046,21 +1055,27 @@ const InputHandler = (() => {
 // ────────────────────────────────────────────────────────────
 const LoadingStatus = (() => {
     function spinnerEl() { return document.getElementById('loading-spinner'); }
-    function textEl() {
-        const s = spinnerEl();
-        return s ? s.querySelector('.spinner-text') : null;
-    }
+    function statusEl() { return document.getElementById('intro-status'); }
+    function barEl() { return document.getElementById('intro-bar-fill'); }
     function active() {
         const s = spinnerEl();
         return !!(s && !s.classList.contains('hidden'));
     }
-    function set(text) {
-        const e = textEl();
+    function set(text, pct) {
+        const e = statusEl();
         if (e) e.textContent = text;
+        if (typeof pct === 'number') {
+            const b = barEl();
+            if (b) b.style.width = Math.max(0, Math.min(100, pct)) + '%';
+        }
     }
     function done() {
         const s = spinnerEl();
-        if (s) s.classList.add('hidden');
+        if (s) {
+            const b = barEl();
+            if (b) b.style.width = '100%';
+            s.classList.add('hidden');
+        }
     }
     return { set, done, active };
 })();
@@ -1152,7 +1167,7 @@ async function runBootSequence() {
     const allSlides = Presentation.slides();
     try {
         for (let i = 0; i < allSlides.length; i++) {
-            LoadingStatus.set('Rendere Folie ' + (i + 1) + '/' + allSlides.length + ' · ' + Presentation.slideTitleAt(i) + ' …');
+            LoadingStatus.set('Rendere Folie ' + (i + 1) + '/' + allSlides.length + ' · ' + Presentation.slideTitleAt(i) + ' …', (i / allSlides.length) * 50);
             await yieldFrame();
             allSlides[i].querySelectorAll('.math-display').forEach(el => renderOneMath(el, true, '$$', '$$'));
             allSlides[i].querySelectorAll('.math-inline').forEach(el => renderOneMath(el, false, '$', '$'));
@@ -1167,25 +1182,30 @@ async function runBootSequence() {
         });
 
         const tasks = LoadingTasks.drain();
+        const totalSteps = allSlides.length + tasks.length + 2;
+        let step = allSlides.length;
         for (const t of tasks) {
-            LoadingStatus.set(t.label);
+            step++;
+            LoadingStatus.set(t.label, 50 + (step / totalSteps) * 45);
             await yieldFrame();
             try { t.fn(); } catch (err) { console.warn('Lade-Schritt fehlgeschlagen:', err); }
             await yieldFrame();
         }
 
         if (typeof loadIntuitionModule === 'function') {
-            LoadingStatus.set('Initialisiere Intuition-Demos …');
+            step++;
+            LoadingStatus.set('Initialisiere Intuition-Demos …', 50 + (step / totalSteps) * 45);
             await yieldFrame();
             loadIntuitionModule();
         }
         if (typeof runAttention === 'function') {
-            LoadingStatus.set('Zeichne Attention-Beispiel …');
+            step++;
+            LoadingStatus.set('Zeichne Attention-Beispiel …', 50 + (step / totalSteps) * 45);
             await yieldFrame();
             runAttention();
         }
     } finally {
-        LoadingStatus.set('Fast fertig …');
+        LoadingStatus.set('Fast fertig …', 100);
         await yieldFrame();
         if (typeof fitSlides === 'function') fitSlides();
         LoadingStatus.done();
