@@ -337,17 +337,10 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 
 	const surfaceTrace = {
 		type: "surface", x: Ws, y: Bs, z: Z,
-		colorscale: [
-			[0.0, "#1e3a8a"],
-			[0.2, "#3b82f6"],
-			[0.4, "#06b6d4"],
-			[0.6, "#10b981"],
-			[0.8, "#facc15"],
-			[1.0, "#f97316"]
-		],
-		reversescale: false,
-		cmin, cmax, showscale: true, opacity: 0.92,
-		lighting: { ambient: 0.7, diffuse: 0.7, roughness: 0.3 },
+		colorscale: "Viridis",
+		reversescale: true,
+		cmin, cmax, showscale: true, opacity: 0.95,
+		lighting: { ambient: 0.65, diffuse: 0.65, roughness: 0.4, fresnel: 0.2 },
 		contours: { z: { show: false } },
 		name: "loss surface",
 		hoverinfo: "skip"
@@ -357,7 +350,7 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		return {
 			type: "scatter3d", mode: "lines+markers",
 			x: [w0], y: [b0], z: [Math.log10(initLoss)],
-			marker: { size: 4, color: info.color, symbol: info.marker3Symbol, line: { width: 1, color: info.color } },
+			marker: { size: 2.5, color: info.color, symbol: info.marker3Symbol, line: { width: 0.5, color: info.color } },
 			line:   { width: 5, color: info.color, dash: info.line3Dash },
 			name,
 			legendgroup: name,
@@ -380,9 +373,8 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
-		showlegend: true,
-		modebar: { orientation: "h", remove: ["toImage", "sendDataToCloud"] }
-	}, { responsive: true }).then(() => {
+		showlegend: true
+	}, { responsive: true, displaylogo: false, modebar: { orientation: "h" }, displayModeBar: true }).then(() => {
 		Plotly.restyle("ll-3d-plot", { z: [[initZ]] }, trajTraces.map((_, i) => i + 1)).catch(() => {});
 	});
 }
@@ -471,6 +463,12 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const zMin = state.surfaceZMin;
 	const zMax = state.surfaceZMax;
 
+	function scheduleRestyle(targetId, update, indices) {
+		requestAnimationFrame(() => {
+			Plotly.restyle(targetId, update, indices).catch(() => {});
+		});
+	}
+
 	await model.fit(xsT, ysT, {
 		epochs, batchSize: state.xs.length, verbose: 0,
 		callbacks: {
@@ -483,24 +481,25 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
 				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
 
-				const trajZ = trajLoss.map(l => {
-					let z = Math.log10(Math.max(l, 1e-12));
-					if (z > zMax) z = zMax;
-					if (z < zMin) z = zMin;
-					return z;
-				});
-
-				Plotly.restyle("ll-3d-plot", {
-					x: [trajW], y: [trajB], z: [trajZ]
-				}, [trajIdx]);
-
-				const pl = calculatePredictionLine(w, b);
-				Plotly.restyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
-
-				Plotly.restyle("ll-loss-plot", {
+				scheduleRestyle("ll-loss-plot", {
 					x: [losses.map((_, k) => k + 1)],
 					y: [losses]
 				}, [lossIdx]);
+
+				const pl = calculatePredictionLine(w, b);
+				scheduleRestyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
+
+				if (epoch % 3 === 0 || epoch === epochs - 1) {
+					const trajZ = trajLoss.map(l => {
+						let z = Math.log10(Math.max(l, 1e-12));
+						if (z > zMax) z = zMax;
+						if (z < zMin) z = zMin;
+						return z;
+					});
+					scheduleRestyle("ll-3d-plot", {
+						x: [trajW], y: [trajB], z: [trajZ]
+					}, [trajIdx]);
+				}
 
 				setProgress((epoch + 1) / epochs);
 			}
