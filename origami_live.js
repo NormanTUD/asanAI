@@ -5563,11 +5563,9 @@ var OrigamiLive = (function (global) {
 			_state.lastChainSig = sig;
 			_state.lastFingerprint = null;
 			_setOn();
-			// An den neuen Raum anpassen — Kamera wird unten neu eingestellt,
-			// sobald die Pipeline steht.
-			_state.scrub = 1;
-			_state.scrubTarget = 1;
-			_syncScrub();
+			// KEIN Scrub-Reset mehr — der Nutzer hat die Position bewusst
+			// gewählt, die überlebt jetzt auch einen Architektur-Wechsel.
+			// Kamera wird unten neu eingestellt, sobald die Pipeline steht.
 		} else {
 			_setOn();
 		}

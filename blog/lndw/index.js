@@ -1969,12 +1969,15 @@ const TypewriterViz = (() => {
     }
 
     // Auf Folie betreten automatisch den Schreibmaschinen-Effekt starten.
-    // Das Panel ist immer sichtbar (kein Fragment mehr); der Code wird
-    // sofort getippt. Danach werden Pfeile wieder normal verarbeitet.
+    // Wichtig: erst NACH der Folien-Transition (800 ms) anfangen — sonst
+    // tippt der Code schon während die Folie noch einfadet und der User
+    // sieht nur das fertige Ergebnis.
     function activate() {
         const slide = document.querySelector('.slide.active');
         if (!slide) return;
-        if (typeof startTypewriter === 'function') startTypewriter(slide);
+        if (typeof startTypewriter === 'function') {
+            setTimeout(() => startTypewriter(slide), 850);
+        }
     }
 
     // Schreibmaschine stoppen (Folie verlassen).
