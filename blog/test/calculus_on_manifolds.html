@@ -2468,7 +2468,7 @@ const TANF=[
  {label:'sin(xy)',f:(x,y)=>Math.sin(x*y),fx:(x,y)=>y*Math.cos(x*y),fy:(x,y)=>x*Math.cos(x*y),note:'Glatt (C^∞), überall differenzierbar.'},
  {label:'x²+y²',f:(x,y)=>x*x+y*y,fx:(x,y)=>2*x,fy:(x,y)=>2*y,note:'Paraboloid. Globales Minimum bei 0.'},
  {label:'x·exp(−x²−y²)',f:(x,y)=>x*Math.exp(-x*x-y*y),
-  fx:(x,y)=>(1-2*x*x)*Math.exp(-x*x-y*y),fy:(x,y)=>-2*x*y*Math.exp(-x*x-y*y),note:'Zwei Extrema, dazwischen flach  note:'Zwei Extrema, dazwischen flach. Schöne Tangentialebene zum Spielen.'}
+  fx:(x,y)=>(1-2*x*x)*Math.exp(-x*x-y*y),fy:(x,y)=>-2*x*y*Math.exp(-x*x-y*y),note:'Zwei Extrema, dazwischen flach. Schöne Tangentialebene zum Spielen.'}
 ];
 let tanIdx=0;
 btnGroup($('tanBtns'),TANF,(it,i)=>{tanIdx=i;drawTan();},0);
@@ -3211,7 +3211,7 @@ const TANF=[
   note:'Spivak Fig. 2-2: D₁f(0,0)=D₂f(0,0)=0, aber 0 ist kein Extremum. Die Umkehrung von Satz 2-6 ist falsch!'},
  {label:'sin(xy)',f:(x,y)=>Math.sin(x*y),fx:(x,y)=>y*Math.cos(x*y),fy:(x,y)=>x*Math.cos(x*y),
   note:'C^∞, überall differenzierbar — der Standardfall in Kapitel 4 und 5.'},
- {label:'x² + y²',f:(x,y)=>x*x+y*y,fx:(x,y)=>2*x,fy:(x  note:'Zwei Extrema, dazwischen flach — perfekt zum Verschieben der Ebene.'}
+ {label:'x² + y²',f:(x,y)=>x*x+y*y,fx:(x,y)=>2*x,fy:(x,y)=>2*y,note:'Zwei Extrema, dazwischen flach — perfekt zum Verschieben der Ebene.'}
 ];
 let tanIdx=0;
 btnGroup($('tanBtns'),TANF,(it,i)=>{tanIdx=i;drawTan();},0);
@@ -3449,7 +3449,6 @@ function drawRie(){
   const F=RIEF[rieIdx];
   const {ctx,W,H}=setup($('cRie'));
   ctx.clearRect(0,0,W,H);
-  const pad=40, S=Math.min(W-p
   const pad=44, S=Math.min(W-pad*2,H-pad*2), ox=(W-S)/2, oy=(H-S)/2;
   const sub=1/N;
   let L=0,U=0;
@@ -3723,7 +3722,6 @@ function drawPou(){
   const sum=x=>{let s=0;cs.forEach(c=>s+=bump(x,c,w));return s;};
   cs.forEach((c,i)=>{
     ctx.beginPath();
-    for(let    ctx.beginPath();
     for(let p=0;p<=300;p++){
       const x=p/300;
       let val=bump(x,c,w);
@@ -4270,44 +4268,10 @@ function drawTwoForm(){
      i:[0,0],j:[1,2],k:[2,3],opacity:.55,color:val>=0?'#6ae3ff':'#ff8e6e',flatshading:true},
     {type:'scatter3d',mode:'lines',x:[0,v[0]],y:[0,v[1]],z:[0,v[2]],
      line:{color:'#ffd166',width:8},name:'v₁'},
-    {type:'scatter3d',mode:'lines',x:[0,w[0]],y:[0,w[1]],z:[0,w[2]],
-     line
-  const pad=44, S=Math.min(W-pad*2,H-pad*2), ox=(W-S)/2, oy=(H-S)/2;
-  const sub=1/N;
-  let L=0,U=0;
-  const colr=(v,a)=>{
-    const t=clamp((v+0.3)/1.6,0,1);
-    const r=Math.round(28+226*t), g=Math.round(100+140*(1-Math.abs(t-.5)*2)), b=Math.round(255-130*t);
-    return `rgba(${r},${g},${b},${a})`;
-  };
-  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
-    const x0=i*sub, y0=j*sub;
-    let mn=Infinity,mx=-Infinity;
-    if(F.dirich){mn=0;mx=1;}
-    else for(let p=0;p<=5;p++)for(let q=0;q<=5;q++){
-      const v=F.f(x0+sub*p/5,y0+sub*q/5);
-      if(v<mn)mn=v; if(v>mx)mx=v;
-    }
-    L+=mn*sub*sub; U+=mx*sub*sub;
-    const px=ox+x0*S, py=oy+S-(y0+sub)*S, ps=sub*S;
-    if($('cRieU').checked){ctx.fillStyle=colr(mx,.40);ctx.fillRect(px,py,ps,ps);}
-    if($('cRieL').checked){ctx.fillStyle=colr(mn,.80);ctx.fillRect(px+ps*.14,py+ps*.14,ps*.72,ps*.72);}
-    if(N<=24){ctx.strokeStyle='rgba(140,160,255,.13)';ctx.lineWidth=.6;ctx.strokeRect(px,py,ps,ps);}
-  }
-  ctx.strokeStyle=COL.acc;ctx.lineWidth=2;ctx.strokeRect(ox,oy,S,S);
-  txt(ctx,'A = [0,1] × [0,1]',ox,oy-12,COL.acc,'12px ui-monospace');
-  txt(ctx,'große Kacheln = Obersumme · kleine Kacheln = Untersumme',ox,oy+S+20,COL.faint,'10.5px ui-monospace');
-  $('kL').textContent=F.dirich?'0.000':fmt(L);
-  $('kU').textContent=F.dirich?'1.000':fmt(U);
-  $('kD').textContent=F.dirich?'1.000':fmt(U-L);
-  const d=F.dirich?1:U-L;
-  rieHist.push({n:N,d});
-  const hs={}; rieHist.forEach(h=>hs[h.n]=h.d);
-  const ks=Object.keys(hs).map(Number).sort((a,b)=>a-b);
-  Plotly.react('pRie',[{x:ks,y:ks.map(k=>hs[k]),type:'scatter',mode:'lines+markers',
-    line:{color:F.dirich?COL.warn:COL.acc4,width:2.2},marker:{size:4}}],
-    {...PL,height:170,margin:{l:48,r:10,t:8,b:30},
-     xaxis:{title:'N'},yaxis:{title:'U − L',rangemode:'tozero'}},CFG);
+     {type:'scatter3d',mode:'lines',x:[0,w[0]],y:[0,w[1]],z:[0,w[2]],
+      line:{color:'#ffd166',width:8},name:'w₁'},
+  ];
+  Plotly.react('pTwoForm',tr,{...PL3,showlegend:false},CFG);
 }
 $('sRieN').oninput=drawRie;
 ['cRieL','cRieU'].forEach(i=>$(i).onchange=drawRie);
