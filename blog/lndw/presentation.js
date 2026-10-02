@@ -45,6 +45,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
+                        guard: d => !d.isAnimating(),
                         slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },

@@ -169,6 +169,7 @@ var OrigamiLive = (function (global) {
 		lastRebuild:     0,
 		hasFramed:       false,
 		lastFramedHash:  null,
+		lastFitLayer:    -1,
 
 		// Deaktivierung
 		off:     false,
@@ -231,12 +232,12 @@ var OrigamiLive = (function (global) {
 
 			sheetOpacity:    0.62,
 			stackOpacity:    0.34,
-			stackSpread:     1.0,      // Explosions-Abstand
+			stackSpread:     1.5,      // Explosions-Abstand
 			pointSize:       3.4,
 			foldWidth:       2.2,
 
 			// Animation
-			animate:         true,
+			animate:         false,
 			autoRotate:      false,
 			rotateSpeed:     0.12,
 			scrubSpeed:      0.55,
@@ -2658,6 +2659,14 @@ var OrigamiLive = (function (global) {
 			_buildFoldMode(pipe, th);
 		}
 
+		// Kamera-Radius an die neue aktive Schicht anpassen — nur wenn
+		// der Abstand deutlich daneben liegt, sonst bleibt der vom
+		// Nutzer eingestellte Blick erhalten.
+		if (_state.lastFitLayer !== _state.activeLayer) {
+			_fitRadius();
+			_state.lastFitLayer = _state.activeLayer;
+		}
+
 		if (cfg.showAxes) _buildAxes(pipe, th);
 		_updateNetDiagram(pipe);
 		_updateHud(pipe);
@@ -4950,11 +4959,9 @@ var OrigamiLive = (function (global) {
 		dom.style.cursor = "grab";
 	}
 
-	function _resetCamera() {
-		var o = _state.orbit;
+	function _computeFitRadius() {
 		var pipe = _state.pipeline;
 		var cfg = _state.cfg;
-
 		var R = 420;
 		if (pipe && pipe.stages) {
 			var li = Math.max(0, Math.min(_state.activeLayer, pipe.stages.length - 1));
@@ -4966,9 +4973,6 @@ var OrigamiLive = (function (global) {
 					Math.abs(st.bounds.z.hi - st.bounds.z.lo)
 				) * st.scale;
 
-				// Im Stapel-Modus werden die Halbräume zusätzlich in z
-				// auseinandergezogen — das hier mit einrechnen, sonst
-				// schießt die Szene oben/unten aus dem Bild.
 				if (cfg.mode === MODE_STACK && li > 0) {
 					var prev = pipe.stages[li - 1];
 					if (prev && prev.bounds) {
@@ -4978,7 +4982,7 @@ var OrigamiLive = (function (global) {
 						) * prev.scale;
 						var nShow = Math.max(1, cfg.maxNeurons | 0);
 						var spread = _fin(cfg.stackSpread) ? cfg.stackSpread : 1;
-						var stackH = (nShow - 1) * xyExt * 0.14 * spread;
+						var stackH = (nShow - 1) * xyExt * 0.18 * spread;
 						if (_fin(stackH) && stackH > 0) ext = Math.max(ext, stackH);
 					}
 				}
@@ -4987,6 +4991,24 @@ var OrigamiLive = (function (global) {
 			}
 		}
 		if (!_fin(R) || R < 20) R = 420;
+		return R;
+	}
+
+	function _fitRadius() {
+		if (!_state.orbit) return;
+		var R = _computeFitRadius();
+		var o = _state.orbit;
+		var ratio = R / o.radius;
+		if (ratio < 0.55 || ratio > 1.85) {
+			o.radius = R;
+			if (_state.applyOrbit) _state.applyOrbit();
+			_state.dirty = true;
+		}
+	}
+
+	function _resetCamera() {
+		var o = _state.orbit;
+		var R = _computeFitRadius();
 
 		o.radius = R;
 		o.theta = 0.62;
@@ -5536,6 +5558,7 @@ var OrigamiLive = (function (global) {
 			_state.modelRef = global.model;
 			_state.lastFingerprint = null;
 			_state.lastChainSig = null;
+			_state.lastFitLayer = -1;
 			_tFree(_state.cache.xTensor);
 			_state.cache.xTensor = null;
 			_state.cache.xHash = null;
@@ -5562,6 +5585,7 @@ var OrigamiLive = (function (global) {
 			_log("Kette geändert: " + sig);
 			_state.lastChainSig = sig;
 			_state.lastFingerprint = null;
+			_state.lastFitLayer = -1;
 			_setOn();
 			// KEIN Scrub-Reset mehr — der Nutzer hat die Position bewusst
 			// gewählt, die überlebt jetzt auch einen Architektur-Wechsel.
@@ -6016,6 +6040,7 @@ var OrigamiLive = (function (global) {
 		_state.lastViewHash = null;
 		_state.lastChainSig = null;
 		_state.lastFramedHash = null;
+		_state.lastFitLayer = -1;
 	}
 
 	function destroy() {

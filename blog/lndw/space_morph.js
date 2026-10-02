@@ -568,39 +568,49 @@ const SpaceMorph = (() => {
         return !!s && s.id === SLIDE_ID;
     }
 
-    function canGoNext() { return active && cur < S.length - 1; }
-    function canGoPrev() { return active && cur > 0; }
+    // Blockiere Pfeiltasten, solange eine Animation läuft (Step-Übergang
+    // oder Auto-Orbit), damit der User sich nicht verhaspelt. Schritt 8 →
+    // Orbit ist die einzige Stelle, an der der User aktiv einsteuert; sobald
+    // der Orbit startet, wird er automatisch zu Schritt 9 weitergeführt,
+    // sobald er durch ist.
+    let animating = false;
+    function isAnimating() { return animating; }
+    function canGoNext() { return active && !animating && cur < S.length - 1; }
+    function canGoPrev() { return active && !animating && cur > 0; }
     function next() {
-        if (!active || cur >= S.length - 1) return;
+        if (!active || animating || cur >= S.length - 1) return;
         if (cur === 7) {
             if (!autoOrbitActive && !autoOrbitDone) {
                 // 1. Pfeil-Druck: Auto-Orbit starten UND nach Ablauf automatisch
                 // zu Schritt 9 springen — User muss NICHT nochmal drücken.
+                animating = true;
                 autoOrbitActive = true;
                 autoOrbitDone = false;
                 autoOrbitStart = performance.now();
                 autoOrbitFromAngle = camA;
                 updateText();
                 setTimeout(() => {
-                    if (!autoOrbitDone) {
-                        autoOrbitDone = true;
-                        if (cur === 7) go(1);
-                    }
+                    autoOrbitDone = true;
+                    animating = false;
+                    updateText();
+                    if (cur === 7) go(1);
                 }, ORBIT_AUTO_DUR + 80);
                 return;
             }
-            // Zweiter Druck während des Orbit → sofort zu Schritt 9 (skip)
-            if (autoOrbitActive) {
-                autoOrbitActive = false;
-                autoOrbitDone = true;
-                camA = autoOrbitFromAngle + Math.PI * 2;
-            }
-            go(1);
+            // Block: keine Aktion bis Orbit durch ist
             return;
         }
+        // Step-Übergang: während des Übergangs blocken
+        animating = true;
         go(1);
+        setTimeout(() => { animating = false; updateText(); }, DUR + 80);
     }
-    function prev() { if (canGoPrev()) go(-1); }
+    function prev() {
+        if (!active || animating || cur <= 0) return;
+        animating = true;
+        go(-1);
+        setTimeout(() => { animating = false; updateText(); }, DUR + 80);
+    }
 
     function init() {
         const cv = document.getElementById('space-morph-canvas');
@@ -627,5 +637,5 @@ const SpaceMorph = (() => {
         updateTables();
     }
 
-    return { init, reset, next, prev, canGoNext, canGoPrev, isOnSlide };
+    return { init, reset, next, prev, canGoNext, canGoPrev, isOnSlide, isAnimating };
 })();
