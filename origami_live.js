@@ -5537,6 +5537,7 @@ var OrigamiLive = (function (global) {
 			_state.scrub = 1;
 			_state.scrubTarget = 1;
 			_syncScrub();
+			_resetCamera();
 		} else {
 			_setOn();
 		}
