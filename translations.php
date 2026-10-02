@@ -2692,6 +2692,7 @@
 		       "origami_live_sec_motion" => "Bewegung",
 		       "origami_live_sec_quality" => "Qualität",
 		       "origami_live_settings_tip" => "Einstellungen und Qualität.",
+		       "origami_live_fullscreen_tip" => "Vollbild.",
 		       "origami_live_sheetop" => "Blatt-Deckkraft",
 		       "origami_live_show_axes" => "Achsenkreuz",
 		       "origami_live_show_axes_tip" => "Koordinatenachsen des aktuellen Raums.",

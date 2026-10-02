@@ -3760,7 +3760,7 @@ var OrigamiLive = (function (global) {
 			[MODE_STACK,    "\u2338", "origami_live_mode_stack",    "Stapel",
 			 "origami_live_mode_stack_tip",
 			  "Pro Neuron ein Halbraum-Blatt, gestapelt. Weiße Kante = " +
-			  "die Hyperebene, an der ReLU knickt.")]
+			  "die Hyperebene, an der ReLU knickt."]
 		];
 
 		_state.modeBtns = {};
