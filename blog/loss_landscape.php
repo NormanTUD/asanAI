@@ -447,7 +447,7 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	</div>
 
 	<div class="ll-readout">
-		<span class="ll-readout-label">Final models</span>
+		<span class="ll-readout-label">Trained models</span>
 		<div id="ll-equation" class="ll-equation"></div>
 	</div>
 

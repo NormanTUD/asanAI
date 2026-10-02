@@ -89,6 +89,28 @@ function relayoutForTheme(plotId) {
 	}
 }
 
+/* ── Assertion helper ──────────────────────────────────────────────────────── */
+
+function ll_assert(cond, msg, ctx) {
+	if (cond) return;
+	const tail = ctx ? " (" + JSON.stringify(ctx) + ")" : "";
+	console.error("[loss_landscape ASSERT FAIL] " + msg + tail);
+}
+
+function ll_assert_close(actual, expected, tol, msg, ctx) {
+	if (typeof actual !== "number" || typeof expected !== "number") {
+		ll_assert(false, msg + ": non-numeric value", Object.assign({}, ctx || {}, { actual: actual, expected: expected }));
+		return;
+	}
+	if (!isFinite(actual) || !isFinite(expected)) {
+		ll_assert(false, msg + ": non-finite value", Object.assign({}, ctx || {}, { actual: actual, expected: expected }));
+		return;
+	}
+	if (Math.abs(actual - expected) > tol) {
+		ll_assert(false, msg + ": |" + actual + " - " + expected + "| = " + Math.abs(actual - expected) + " > " + tol, Object.assign({}, ctx || {}, { actual: actual, expected: expected, tol: tol }));
+	}
+}
+
 /* ── Number / equation helpers ────────────────────────────────────────────── */
 
 function formatNumber(n) {
@@ -277,43 +299,94 @@ function createModel(initW, initB) {
 function ensureSurfaceCoversTrajectories(xsT, ysT) {
 	const optimizers = state.currentOptimizers || [];
 	if (optimizers.length === 0) return;
-	const initLoss = state.model && state.model.loss;
-	const initLossValid = initLoss !== null && initLoss !== undefined && isFinite(initLoss);
 
-	const allW = [], allB = [], allLosses = [];
+	// Collect every snapped trajectory grid point across all optimizers.
+	const gridPoints = new Map();
 	optimizers.forEach(name => {
 		const w = state.trajW && state.trajW[name];
 		const b = state.trajB && state.trajB[name];
-		const losses = state.lossHistory[name] || [];
-		const lossesFull = initLossValid ? [initLoss, ...losses] : losses.slice();
 		if (!Array.isArray(w) || !Array.isArray(b)) return;
-		const n = Math.min(w.length, b.length, lossesFull.length);
-		for (let i = 0; i < n; i++) {
-			allW.push(w[i]);
-			allB.push(b[i]);
-			allLosses.push(lossesFull[i]);
+		for (let i = 0; i < w.length; i++) {
+			const wSnap = Math.round(w[i] * 10) / 10;
+			const bSnap = Math.round(b[i] * 10) / 10;
+			const key = wSnap.toFixed(1) + "|" + bSnap.toFixed(1);
+			gridPoints.set(key, { w: wSnap, b: bSnap });
 		}
 	});
-	if (allW.length === 0) return;
 
-	for (let i = 0; i < allW.length; i++) {
-		const w = allW[i], b = allB[i], loss = allLosses[i];
-		const wSnap = Math.round(w * 10) / 10;
-		const bSnap = Math.round(b * 10) / 10;
-		let replaced = false;
+	// For each unique grid point, compute the EXACT loss from the model and write it
+	// to state.landscape. This is the single source of truth: the surface L at the
+	// trajectory's snapped (w, b) IS the model's loss at that exact grid point.
+	gridPoints.forEach(({ w, b }) => {
+		const loss = calculateLoss(w, b, xsT, ysT);
+		ll_assert(isFinite(loss) && loss > 0, "ensureSurfaceCoversTrajectories: calculateLoss returned non-positive", { w: w, b: b, loss: loss });
+
+		const wKey = w.toFixed(1);
+		const bKey = b.toFixed(1);
+
+		let foundIdx = -1;
 		for (let k = 0; k < state.landscape.W.length; k++) {
-			if (Math.abs(state.landscape.W[k] - wSnap) < 0.05 && Math.abs(state.landscape.B[k] - bSnap) < 0.05) {
+			if (state.landscape.W[k].toFixed(1) === wKey && state.landscape.B[k].toFixed(1) === bKey) {
 				state.landscape.L[k] = loss;
-				replaced = true;
+				foundIdx = k;
 				break;
 			}
 		}
-		if (!replaced) {
-			state.landscape.W.push(wSnap);
-			state.landscape.B.push(bSnap);
+		if (foundIdx < 0) {
+			state.landscape.W.push(w);
+			state.landscape.B.push(b);
 			state.landscape.L.push(loss);
+			foundIdx = state.landscape.W.length - 1;
 		}
+
+		ll_assert_close(state.landscape.L[foundIdx], loss, 1e-9,
+			"ensureSurfaceCoversTrajectories: state.landscape.L must equal calculateLoss",
+			{ w: w, b: b, actualL: state.landscape.L[foundIdx], expectedLoss: loss });
+	});
+
+	// DEDUP: keep only the LAST entry per (wKey, bKey) so buildSurfaceGrid's
+	// "last-write-wins" loop in Z[bi][wi] = ... picks the right one.
+	{
+		const seen = new Map();
+		for (let k = 0; k < state.landscape.W.length; k++) {
+			const key = state.landscape.W[k].toFixed(1) + "|" + state.landscape.B[k].toFixed(1);
+			seen.set(key, k);
+		}
+		const keep = new Set(seen.values());
+		const newW = [], newB = [], newL = [];
+		for (let k = 0; k < state.landscape.W.length; k++) {
+			if (keep.has(k)) {
+				newW.push(state.landscape.W[k]);
+				newB.push(state.landscape.B[k]);
+				newL.push(state.landscape.L[k]);
+			}
+		}
+		state.landscape.W = newW;
+		state.landscape.B = newB;
+		state.landscape.L = newL;
 	}
+
+	// Assert: buildSurfaceGrid's Z at every trajectory's snapped (w, b) must equal
+	// the loss that was just written. After dedup, the trajectory's loss is at that vertex.
+	const sg = buildSurfaceGrid();
+	const wIdxMap = new Map(sg.Ws.map((w, idx) => [w.toFixed(1), idx]));
+	const bIdxMap = new Map(sg.Bs.map((b, idx) => [b.toFixed(1), idx]));
+	optimizers.forEach(name => {
+		const w = state.trajW && state.trajW[name];
+		const b = state.trajB && state.trajB[name];
+		if (!Array.isArray(w) || !Array.isArray(b)) return;
+		for (let i = 0; i < w.length; i++) {
+			const wSnap = Math.round(w[i] * 10) / 10;
+			const bSnap = Math.round(b[i] * 10) / 10;
+			const wi = wIdxMap.get(wSnap.toFixed(1));
+			const bi = bIdxMap.get(bSnap.toFixed(1));
+			if (wi === undefined || bi === undefined) continue;
+			const expected = calculateLoss(wSnap, bSnap, xsT, ysT);
+			ll_assert_close(sg.Z[bi][wi], Math.log10(expected), 0.005,
+				"ensureSurfaceCoversTrajectories: buildSurfaceGrid Z must equal log10(calculateLoss(snap))",
+				{ name: name, i: i, wSnap: wSnap, bSnap: bSnap, sz: sg.Z[bi][wi], expectedLoss: expected });
+		}
+	});
 }
 
 function calculatePredictionLine(w, b) {
@@ -437,7 +510,6 @@ function updateTrajectoryZ3D(name, trajIdx) {
 }
 
 function redraw3DTrajectories() {
-	// ── Guard 1: plot element must exist with data ─────────────────────────────
 	const plotEl = document.getElementById("ll-3d-plot");
 	if (!plotEl) { console.error("[loss_landscape] guard: #ll-3d-plot not in DOM"); return; }
 	if (!plotEl.data || plotEl.data.length === 0) { console.error("[loss_landscape] guard: plotEl.data empty"); return; }
@@ -445,10 +517,6 @@ function redraw3DTrajectories() {
 	const scale = state.scale3D || "log";
 	const optimizers = state.currentOptimizers || [];
 	if (optimizers.length === 0) { console.error("[loss_landscape] guard: currentOptimizers empty"); return; }
-
-	const initialLoss = state.model && state.model.loss;
-	const initLossValid = initialLoss !== null && initialLoss !== undefined && isFinite(initialLoss);
-	if (!initLossValid) console.error("[loss_landscape] guard: state.model.loss invalid:", initialLoss);
 
 	const xArrays = [];
 	const yArrays = [];
@@ -458,26 +526,18 @@ function redraw3DTrajectories() {
 	const surfaceGrid = buildSurfaceGrid();
 	const wIdxMap = new Map(surfaceGrid.Ws.map((w, idx) => [w.toFixed(1), idx]));
 	const bIdxMap = new Map(surfaceGrid.Bs.map((b, idx) => [b.toFixed(1), idx]));
-	const surfaceFallback = scale === "log" ? Math.log10(1e-12) : 0;
+	const fallback = scale === "log" ? Math.log10(1e-12) : 0;
 
 	optimizers.forEach((name, i) => {
 		const trajIdx = i + 1;
 		if (!plotEl.data[trajIdx]) { console.error("[loss_landscape] guard: trace " + trajIdx + " missing for " + name); return; }
 
-		let trajW = state.trajW && state.trajW[name];
-		let trajB = state.trajB && state.trajB[name];
-		if (!Array.isArray(trajW) || trajW.length === 0) { console.error("[loss_landscape] guard: trajW empty for " + name); trajW = [state.model.w]; }
-		if (!Array.isArray(trajB) || trajB.length === 0) { console.error("[loss_landscape] guard: trajB empty for " + name); trajB = [state.model.b]; }
+		const trajW = state.trajW && state.trajW[name];
+		const trajB = state.trajB && state.trajB[name];
+		if (!Array.isArray(trajW) || !Array.isArray(trajB) || trajW.length === 0 || trajB.length === 0) { console.error("[loss_landscape] guard: trajW/B empty for " + name); return; }
 
-		const losses = state.lossHistory[name] || [];
-		const allLosses = initLossValid ? [initialLoss, ...losses] : losses.slice();
-		if (allLosses.length === 0) { console.error("[loss_landscape] guard: no losses for " + name); return; }
-
-		const targetLen = Math.min(trajW.length, trajB.length, allLosses.length);
-		if (trajW.length !== trajB.length || trajB.length !== allLosses.length) {
-			console.error("[loss_landscape] guard: length mismatch for " + name + " w=" + trajW.length + " b=" + trajB.length + " z=" + allLosses.length);
-		}
-		if (targetLen === 0) { console.error("[loss_landscape] guard: targetLen 0 for " + name); return; }
+		const targetLen = Math.min(trajW.length, trajB.length);
+		if (targetLen === 0) return;
 
 		const safeX = [];
 		const safeY = [];
@@ -487,13 +547,14 @@ function redraw3DTrajectories() {
 			const bSnap = Math.round(trajB[k] * 10) / 10;
 			const wi = wIdxMap.get(wSnap.toFixed(1));
 			const bi = bIdxMap.get(bSnap.toFixed(1));
-			let surfaceZ = (wi !== undefined && bi !== undefined && surfaceGrid.Z[bi] && surfaceGrid.Z[bi][wi] !== null && surfaceGrid.Z[bi][wi] !== undefined)
+			// Single source of truth: trajectory z = surface z at the snapped (w, b)
+			let sz = (wi !== undefined && bi !== undefined && surfaceGrid.Z[bi] && surfaceGrid.Z[bi][wi] !== null && surfaceGrid.Z[bi][wi] !== undefined)
 				? surfaceGrid.Z[bi][wi]
-				: surfaceFallback;
-			if (!isFinite(surfaceZ)) surfaceZ = surfaceFallback;
+				: fallback;
+			if (!isFinite(sz)) sz = fallback;
 			safeX.push(wSnap);
 			safeY.push(bSnap);
-			safeZ.push(surfaceZ);
+			safeZ.push(sz);
 		}
 
 		xArrays.push(safeX);
@@ -595,7 +656,7 @@ function setScale3D(scale) {
 }
 window.setScale3D = setScale3D;
 
-function redrawSurfaceAndTrajectories() {
+async function redrawSurfaceAndTrajectories() {
 	const plotEl = document.getElementById("ll-3d-plot");
 	if (!plotEl || !plotEl.data || plotEl.data.length === 0) return;
 	const surfaceGrid = buildSurfaceGrid();
@@ -607,11 +668,52 @@ function redrawSurfaceAndTrajectories() {
 	if (zMax - zMin < 0.5) { const mid = (zMax + zMin) / 2; zMin = mid - 0.25; zMax = mid + 0.25; }
 	const newCmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
 	const newCmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
-	Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z], cmin: [newCmin], cmax: [newCmax] }, [0]).catch(() => {});
-	Plotly.relayout("ll-3d-plot", {
-		"scene.zaxis.range": [newCmin, newCmax],
-		"scene.zaxis.autorange": false
-	}).catch(() => {});
+
+	// Assert: every trajectory point's snapped (w, b) must have a valid surface Z
+	const wIdxMap = new Map(surfaceGrid.Ws.map((w, idx) => [w.toFixed(1), idx]));
+	const bIdxMap = new Map(surfaceGrid.Bs.map((b, idx) => [b.toFixed(1), idx]));
+	(state.currentOptimizers || []).forEach(name => {
+		const wArr = state.trajW && state.trajW[name] || [];
+		const bArr = state.trajB && state.trajB[name] || [];
+		const n = Math.min(wArr.length, bArr.length);
+		for (let k = 0; k < n; k++) {
+			const wSnap = Math.round(wArr[k] * 10) / 10;
+			const bSnap = Math.round(bArr[k] * 10) / 10;
+			const wi = wIdxMap.get(wSnap.toFixed(1));
+			const bi = bIdxMap.get(bSnap.toFixed(1));
+			ll_assert(wi !== undefined, "surface missing w grid vertex for trajectory point", { name: name, k: k, wSnap: wSnap });
+			ll_assert(bi !== undefined, "surface missing b grid vertex for trajectory point", { name: name, k: k, bSnap: bSnap });
+			if (wi === undefined || bi === undefined) continue;
+			const sz = surfaceGrid.Z[bi][wi];
+			ll_assert(sz !== null && sz !== undefined && isFinite(sz), "surface Z at trajectory point is null/undefined/NaN",
+				{ name: name, k: k, wSnap: wSnap, bSnap: bSnap, sz: sz });
+		}
+	});
+
+	// Assert: trajectory trace z must equal surface z at the same snapped (w, b)
+	plotEl.data.forEach((tr, ti) => {
+		if (ti === 0) return;  // skip surface trace
+		if (!tr.x || !tr.y || !tr.z) return;
+		const len = Math.min(tr.x.length, tr.y.length, tr.z.length);
+		for (let k = 0; k < len; k++) {
+			const wKey = tr.x[k].toFixed(1);
+			const bKey = tr.y[k].toFixed(1);
+			const wi = wIdxMap.get(wKey);
+			const bi = bIdxMap.get(bKey);
+			if (wi === undefined || bi === undefined) continue;
+			const sz = surfaceGrid.Z[bi][wi];
+			ll_assert_close(tr.z[k], sz, 0.0001, "trajectory point z must equal surface z (single source of truth)",
+				{ name: tr.name, k: k, wKey: wKey, bKey: bKey, trajZ: tr.z[k], surfZ: sz });
+		}
+	});
+
+	try {
+		await Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z], cmin: [newCmin], cmax: [newCmax] }, [0]);
+		await Plotly.relayout("ll-3d-plot", {
+			"scene.zaxis.range": [newCmin, newCmax],
+			"scene.zaxis.autorange": false
+		});
+	} catch (e) { /* ignore */ }
 	redraw3DTrajectories();
 }
 
@@ -628,11 +730,12 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		type: "surface", x: Ws, y: Bs, z: Z,
 		colorscale: "Viridis",
 		reversescale: true,
-		cmin, cmax, showscale: true, opacity: 0.55,
-		lighting: { ambient: 0.7, diffuse: 0.5, roughness: 0.5, fresnel: 0.1 },
+		cmin, cmax, showscale: true, opacity: 0.7,
+		lighting: { ambient: 0.85, diffuse: 0.3, roughness: 0.9, fresnel: 0.05 },
 		contours: { z: { show: false } },
 		name: "loss surface",
-		hoverinfo: "skip"
+		hoverinfo: "skip",
+		connectgaps: true
 	};
 	const trajTraces = optimizers.map(name => {
 		const info = OPTIMIZER_INFO[name];
@@ -640,10 +743,10 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 			type: "scatter3d", mode: "lines+markers",
 			x: [w0], y: [b0], z: [Math.log10(initLoss)],
 			marker: {
-				size: 6, color: info.color, symbol: info.marker3Symbol,
-				line: { width: 1.5, color: "#ffffff" }
+				size: 8, color: info.color, symbol: info.marker3Symbol,
+				line: { width: 2, color: "#ffffff" }
 			},
-			line:   { width: 12, color: info.color, dash: info.line3Dash, shape: "linear" },
+			line:   { width: 5, color: info.color, dash: info.line3Dash, shape: "linear" },
 			name,
 			legendgroup: name,
 			hovertemplate: "<b>" + name + "</b><br>w = %{x:.3g}<br>b = %{y:.3g}<br>log₁₀(loss) = %{z:.3g}<extra></extra>"
@@ -933,7 +1036,7 @@ async function startExperiment() {
 
 		setStatus("Re-sampling surface to cover trajectory ...");
 		ensureSurfaceCoversTrajectories(data.xsT, data.ysT);
-		redrawSurfaceAndTrajectories();
+		await redrawSurfaceAndTrajectories();
 
 		setStatus(state.stopRequested ? "Stopped." : "Done.");
 		setProgress(1);

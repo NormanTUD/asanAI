@@ -169,6 +169,12 @@ def run() -> int:
             page.on("console", lambda m: console_errors.append(f"{m.type}: {m.text}") if m.type == "error" else None)
             page.on("pageerror", lambda e: console_errors.append(f"pageerror: {e}"))
 
+            def log_msg(m):
+                if "DEBUG" in m.text:
+                    with open("/tmp/loss_landscape_debug.log", "a") as f:
+                        f.write(m.text + "\n")
+            page.on("console", log_msg)
+
             try:
                 page.goto(URL, wait_until="networkidle", timeout=30000)
             except PWTimeout:
@@ -260,14 +266,15 @@ def run() -> int:
                     let maxDelta = 0;
                     let worstIdx = -1;
                     let worstPoint = null;
+                    let orphanCount = 0;
                     for (let k = 0; k < tx.length; k++) {
                         const wKey = tx[k].toFixed(1);
                         const bKey = ty[k].toFixed(1);
                         const wi = surfX.findIndex(v => v.toFixed(1) === wKey);
                         const bi = surfY.findIndex(v => v.toFixed(1) === bKey);
-                        if (wi < 0 || bi < 0) continue;
+                        if (wi < 0 || bi < 0) { orphanCount++; continue; }
                         const sz = surfZ[bi][wi];
-                        if (sz == null) continue;
+                        if (sz == null || sz === undefined) { orphanCount++; continue; }
                         const d = Math.abs(tz[k] - sz);
                         if (d > maxDelta) {
                             maxDelta = d;
@@ -275,7 +282,7 @@ def run() -> int:
                             worstPoint = { w: tx[k], b: ty[k], tz: tz[k], sz: sz };
                         }
                     }
-                    out.push({ name: tr.name, maxDelta, worstIdx, worstPoint });
+                    out.push({ name: tr.name, maxDelta, worstIdx, worstPoint, orphanCount, n: tx.length });
                 }
                 return out;
             }""")
@@ -288,6 +295,11 @@ def run() -> int:
                             f"off-surface by {r.get('maxDelta'):.4g}: "
                             f"w={r.get('worstPoint', {}).get('w')}, b={r.get('worstPoint', {}).get('b')}, "
                             f"trajZ={r.get('worstPoint', {}).get('tz'):.4g}, surfZ={r.get('worstPoint', {}).get('sz'):.4g}"
+                        )
+                    if r.get("orphanCount", 0) > 0:
+                        failures.append(
+                            f"trajectory {r.get('name')} has {r.get('orphanCount')}/{r.get('n')} points "
+                            f"on a grid vertex where the surface is null (trajectory floats in the air)"
                         )
 
             if loss_state:
