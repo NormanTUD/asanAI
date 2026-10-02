@@ -227,11 +227,25 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	padding: 8px 10px;
 	min-height: 18px;
 }
+.ll-lab .ll-progress-wrap {
+	margin-top: 8px;
+	height: 8px;
+	background: var(--mn-bg, #FAF8F1);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 4px;
+	overflow: hidden;
+}
+.ll-lab .ll-progress {
+	height: 100%;
+	background: linear-gradient(90deg, var(--mn-accent, #6366f1), var(--mn-accent-dark, #4338ca));
+	transition: width 0.18s ease-out;
+	width: 0%;
+}
 .ll-lab .ll-plot-3d {
 	background: var(--mn-surface, #FDFAF1);
 	border: 1px solid var(--mn-border-light, #E8DFC6);
 	border-radius: 10px;
-	height: 460px;
+	height: 500px;
 	width: 100%;
 	min-width: 0;
 	margin-bottom: 14px;
@@ -240,7 +254,7 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	background: var(--mn-surface, #FDFAF1);
 	border: 1px solid var(--mn-border-light, #E8DFC6);
 	border-radius: 10px;
-	height: 340px;
+	height: 360px;
 	width: 100%;
 	min-width: 0;
 	margin-bottom: 14px;
@@ -318,21 +332,22 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 				<option value="linear" selected>Linear</option>
 				<option value="relu">ReLU</option>
 				<option value="tanh">Tanh</option>
+				<option value="sigmoid">Sigmoid</option>
 			</select>
 
 			<h4>Optimizers</h4>
 			<div class="ll-opts">
 				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="SGD" checked> SGD</label>
 				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Momentum" checked> Momentum</label>
-				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Adam"> Adam</label>
-				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="RMSProp"> RMSProp</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Adam" checked> Adam</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="RMSProp" checked> RMSProp</label>
 			</div>
 
 			<label for="ll-lr">Learning rate:</label>
-			<input type="number" id="ll-lr" value="0.01" step="0.001" min="0.0001" max="1">
+			<input type="number" id="ll-lr" value="0.05" step="0.005" min="0.0001" max="1">
 
 			<label for="ll-epochs">Epochs:</label>
-			<input type="number" id="ll-epochs" value="200" min="1" max="5000">
+			<input type="number" id="ll-epochs" value="100" min="1" max="5000">
 		</div>
 
 		<div class="ll-card">
@@ -340,6 +355,9 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 			<button type="button" id="ll-start" onclick="startExperiment()">Start</button>
 			<button type="button" id="ll-stop" onclick="stopExperiment()" style="display:none;">Stop</button>
 			<div id="ll-status" class="ll-status">Ready.</div>
+			<div class="ll-progress-wrap">
+				<div id="ll-progress" class="ll-progress" style="width:0%;"></div>
+			</div>
 		</div>
 	</div>
 

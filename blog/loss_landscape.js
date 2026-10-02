@@ -149,22 +149,22 @@ function loadExample(type) {
 		case "linear":
 			xs = Array.from({ length: 11 }, (_, i) => i - 5);
 			ys = xs.map(x => 2 * x + 1);
-			setV("ll-epochs", "200");
+			setV("ll-epochs", "100");
 			break;
 		case "linear_negative":
 			xs = Array.from({ length: 11 }, (_, i) => i - 5);
 			ys = xs.map(x => -0.5 * x - 0.8);
-			setV("ll-epochs", "200");
+			setV("ll-epochs", "100");
 			break;
 		case "parabola":
 			xs = Array.from({ length: 21 }, (_, i) => (i - 10) / 2);
 			ys = xs.map(x => x * x + 5);
-			setV("ll-epochs", "300");
+			setV("ll-epochs", "200");
 			break;
 		case "sine":
 			xs = Array.from({ length: 30 }, (_, i) => i * 0.4);
 			ys = xs.map(x => Math.sin(x) * x + 5);
-			setV("ll-epochs", "500");
+			setV("ll-epochs", "300");
 			break;
 		default: return;
 	}
@@ -287,8 +287,8 @@ function buildSurfaceGrid() {
 
 /* ── Plot construction ───────────────────────────────────────────────────── */
 
-function commonAxis(title, opts = {}) {
-	return Object.assign({
+function commonAxis(title, opts) {
+	const base = {
 		title: { text: title, font: { color: tText() } },
 		backgroundcolor: tBg(),
 		gridcolor: tGrid(),
@@ -296,7 +296,33 @@ function commonAxis(title, opts = {}) {
 		titlefont: { color: tText() },
 		zerolinecolor: tGrid(),
 		tickformat: ".0f"
-	}, opts);
+	};
+	if (!opts) return base;
+	return Object.assign(base, opts);
+}
+
+function setAxisIntegerTicks(plotId, axisKey, lo, hi) {
+	const vals = [];
+	let step = 1;
+	const start = Math.ceil(lo / step) * step;
+	const end = Math.floor(hi / step) * step;
+	const half = step / 2;
+	let v = start;
+	const top = end + half;
+	while (v <= top) {
+		const r = Math.round(v);
+		if (r >= lo - half && r <= hi + half) vals.push(r);
+		v = v + step;
+	}
+	const text = vals.map(String);
+	const keys = ["xaxis", "yaxis", "zaxis"];
+	const i = keys.indexOf(axisKey);
+	const prop = i >= 0 ? keys[i] : "zaxis";
+	const update = {};
+	update["scene." + prop + ".tickvals"] = vals;
+	update["scene." + prop + ".ticktext"] = text;
+	update["scene." + prop + ".tickmode"] = "array";
+	Plotly.relayout(plotId, update).catch(() => {});
 }
 
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
@@ -319,7 +345,7 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const trajTraces = optimizers.map(name => ({
 		type: "scatter3d", mode: "lines+markers",
 		x: [w0], y: [b0], z: [Math.log10(initLoss)],
-		marker: { size: 5, color: OPTIMIZER_INFO[name].color },
+		marker: { size: 3, color: OPTIMIZER_INFO[name].color },
 		line:   { width: 4, color: OPTIMIZER_INFO[name].color },
 		name,
 		legendgroup: name,
@@ -339,7 +365,15 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
 		showlegend: true
-	}, { responsive: true });
+	}, { responsive: true }).then(() => {
+		const minW = Math.min(...Ws), maxW = Math.max(...Ws);
+		const minB = Math.min(...Bs), maxB = Math.max(...Bs);
+		const validL = Z.flat().filter(v => v !== null && isFinite(v));
+		const minL = Math.min(...validL), maxL = Math.max(...validL);
+		setAxisIntegerTicks("ll-3d-plot", "xaxis", minW, maxW);
+		setAxisIntegerTicks("ll-3d-plot", "yaxis", minB, maxB);
+		setAxisIntegerTicks("ll-3d-plot", "zaxis", minL, maxL);
+	});
 }
 
 function initFitPlot(optimizers) {
@@ -379,7 +413,7 @@ function initLossCurvePlot(optimizers, initLoss) {
 		x: [0], y: [initLoss], mode: "lines+markers", type: "scatter",
 		name,
 		line:   { color: OPTIMIZER_INFO[name].color, width: 2 },
-		marker: { size: 6, color: OPTIMIZER_INFO[name].color },
+		marker: { size: 4, color: OPTIMIZER_INFO[name].color },
 		hovertemplate: "epoch = %{x}<br>loss = %{y:.3g}<extra>" + name + "</extra>"
 	}));
 	Plotly.newPlot("ll-loss-plot", traces, {
@@ -394,6 +428,11 @@ function initLossCurvePlot(optimizers, initLoss) {
 }
 
 /* ── Training loop ───────────────────────────────────────────────────────── */
+
+function setProgress(fraction) {
+	const bar = document.getElementById("ll-progress");
+	if (bar) bar.style.width = Math.max(0, Math.min(100, fraction * 100)).toFixed(1) + "%";
+}
 
 async function trainOne(name, lr, epochs, xsT, ysT) {
 	const initModel = createModel(0.1, 0.1);
@@ -440,6 +479,7 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 					y: [losses]
 				}, [lossIdx]);
 
+				setProgress((epoch + 1) / epochs);
 				renderModelReadout();
 			}
 		}
@@ -479,6 +519,7 @@ function getSelectedOptimizers() {
 async function startExperiment() {
 	if (state.experimentRunning) return;
 	setRunningUI(true);
+	setProgress(0);
 	state.stopRequested = false;
 	state.landscape = { W: [], B: [], L: [], cache: {} };
 	state.lossHistory = {};
@@ -492,7 +533,7 @@ async function startExperiment() {
 	}
 	state.currentOptimizers = optimizers;
 	const lr = parseFloat(document.getElementById("ll-lr").value) || 0.01;
-	const epochs = parseInt(document.getElementById("ll-epochs").value) || 200;
+	const epochs = parseInt(document.getElementById("ll-epochs").value) || 100;
 	state.activation = document.getElementById("ll-act").value;
 
 	let data;
@@ -512,13 +553,11 @@ async function startExperiment() {
 		renderModelReadout();
 		resizeAllPlots();
 
-		for (const name of optimizers) {
-			if (state.stopRequested) break;
-			setStatus(`Training ${name} ...`);
-			await trainOne(name, lr, epochs, data.xsT, data.ysT);
-		}
+		setStatus(`Training ${optimizers.join(", ")} in parallel ...`);
+		await Promise.all(optimizers.map(name => trainOne(name, lr, epochs, data.xsT, data.ysT)));
 
 		setStatus(state.stopRequested ? "Stopped." : "Done.");
+		setProgress(1);
 		renderModelReadout();
 	} catch (e) {
 		console.error(e);
@@ -542,6 +581,15 @@ function resizeAllPlots() {
 			Plotly.relayout(div.id, { width: div.clientWidth, height: div.clientHeight }).catch(() => {});
 		}
 	});
+}
+
+function setupResizeObserver() {
+	const lab = document.querySelector(".ll-lab");
+	if (!lab || typeof ResizeObserver === "undefined") return;
+	const ro = new ResizeObserver(() => {
+		resizeAllPlots();
+	});
+	ro.observe(lab);
 }
 
 /* ── Module entry point ──────────────────────────────────────────────────── */
@@ -577,6 +625,11 @@ async function loadLossLandscapeLabModule() {
 	});
 
 	window.addEventListener("resize", resizeAllPlots);
+	setupResizeObserver();
+
+	// Resize once after layout settles so Plotly picks up the container width
+	setTimeout(resizeAllPlots, 100);
+	setTimeout(resizeAllPlots, 500);
 
 	if (window.__MN_DARK && typeof window.__MN_DARK.onChange === "function") {
 		window.__MN_DARK.onChange(() => {
