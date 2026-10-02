@@ -126,15 +126,37 @@ function buildEquationLatex(activation, w, b) {
 function renderModelReadout() {
 	const el = document.getElementById("ll-equation");
 	if (!el) return;
-	const w = state.model.w, b = state.model.b, loss = state.model.loss;
-	const latex = buildEquationLatex(state.activation, w, b);
-	const lossLabel = loss !== null ? `loss = ${formatNumber(loss)}` : "loss = —";
-	el.innerHTML = `
-		<div class="ll-eq-row">
-			<span class="temml_me" data-display="1">${latex}</span>
-		</div>
-		<div class="ll-eq-meta">w = ${formatNumber(w)},&nbsp; b = ${formatNumber(b)},&nbsp; ${lossLabel}</div>
-	`;
+	const finals = state.model && state.model.finals;
+	const names = Object.keys(finals || {});
+	if (names.length === 0) {
+		const w = state.model.w, b = state.model.b;
+		const latex = buildEquationLatex(state.activation, w, b);
+		el.innerHTML = `
+			<div class="ll-eq-row">
+				<span class="temml_me" data-display="1">${latex}</span>
+			</div>
+			<div class="ll-eq-meta">w = ${formatNumber(w)}, b = ${formatNumber(b)}</div>
+		`;
+		renderTemmlIn(el);
+		return;
+	}
+	const rows = names.map(name => {
+		const f = finals[name];
+		const info = OPTIMIZER_INFO[name];
+		const latex = buildEquationLatex(state.activation, f.w, f.b);
+		const lossLabel = f.loss !== null && f.loss !== undefined
+			? `loss = ${formatNumber(f.loss)}`
+			: "loss = —";
+		const escapedName = name.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+		return `
+			<div class="ll-eq-row">
+				<span class="ll-eq-name" style="color:${info.color}">${escapedName}</span>
+				<span class="temml_me" data-display="1">${latex}</span>
+				<span class="ll-eq-meta">w = ${formatNumber(f.w)}, b = ${formatNumber(f.b)}, ${lossLabel}</span>
+			</div>
+		`;
+	}).join("");
+	el.innerHTML = rows;
 	renderTemmlIn(el);
 }
 
@@ -272,17 +294,7 @@ async function sampleLandscapeAround(w0, b0, buffer, xsT, ysT) {
 }
 
 function buildSurfaceGrid() {
-	const Ws = Array.from(new Set(state.landscape.W.map(w => w.toFixed(1)))).map(parseFloat).sort((a, b) => a - b);
-	const Bs = Array.from(new Set(state.landscape.B.map(b => b.toFixed(1)))).map(parseFloat).sort((a, b) => a - b);
-	const wIdx = new Map(Ws.map((w, i) => [w.toFixed(1), i]));
-	const bIdx = new Map(Bs.map((b, i) => [b.toFixed(1), i]));
-	const Z = Array.from({ length: Bs.length }, () => Array(Ws.length).fill(null));
-	for (let i = 0; i < state.landscape.W.length; i++) {
-		const wi = wIdx.get(state.landscape.W[i].toFixed(1));
-		const bi = bIdx.get(state.landscape.B[i].toFixed(1));
-		if (wi !== undefined && bi !== undefined) Z[bi][wi] = Math.log10(state.landscape.L[i]);
-	}
-	return { Ws, Bs, Z };
+	return buildSurfaceGridFor(state.scale3D || "log");
 }
 
 /* ── Plot construction ───────────────────────────────────────────────────── */
@@ -325,6 +337,73 @@ function setCam3D(preset) {
 	}).catch(() => {});
 }
 window.setCam3D = setCam3D;
+
+function buildSurfaceGridFor(scale) {
+	const Ws = Array.from(new Set(state.landscape.W.map(w => w.toFixed(1)))).map(parseFloat).sort((a, b) => a - b);
+	const Bs = Array.from(new Set(state.landscape.B.map(b => b.toFixed(1)))).map(parseFloat).sort((a, b) => a - b);
+	const wIdx = new Map(Ws.map((w, i) => [w.toFixed(1), i]));
+	const bIdx = new Map(Bs.map((b, i) => [b.toFixed(1), i]));
+	const Z = Array.from({ length: Bs.length }, () => Array(Ws.length).fill(null));
+	for (let i = 0; i < state.landscape.W.length; i++) {
+		const wi = wIdx.get(state.landscape.W[i].toFixed(1));
+		const bi = bIdx.get(state.landscape.B[i].toFixed(1));
+		if (wi !== undefined && bi !== undefined) {
+			let z = state.landscape.L[i];
+			if (z < 1e-12) z = 1e-12;
+			if (scale === "log") z = Math.log10(z);
+			Z[bi][wi] = z;
+		}
+	}
+	return { Ws, Bs, Z };
+}
+
+function setScale3D(scale) {
+	state.scale3D = scale;
+	const logBtn = document.getElementById("ll-scale-log");
+	const linBtn = document.getElementById("ll-scale-linear");
+	if (logBtn) logBtn.classList.toggle("is-active", scale === "log");
+	if (linBtn) linBtn.classList.toggle("is-active", scale === "linear");
+
+	const surfaceGrid = buildSurfaceGridFor(scale);
+	const lossesAll = state.landscape.L.filter(v => isFinite(v) && v > 0);
+	const validZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
+	const zMin = validZ.length > 0 ? Math.min.apply(null, validZ) : 0;
+	const zMax = validZ.length > 0 ? Math.max.apply(null, validZ) : 1;
+	const cmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
+	const cmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
+
+	const surfaceZUpdate = [surfaceGrid.Z];
+
+	const trajIndices = state.currentOptimizers.map((_, i) => i + 1);
+	const trajZUpdates = state.currentOptimizers.map(name => {
+		const losses = state.lossHistory[name] || [];
+		return losses.map(l => {
+			let z = Math.max(l, 1e-12);
+			if (scale === "log") z = Math.log10(z);
+			if (z > cmax) z = cmax;
+			if (z < cmin) z = cmin;
+			return z;
+		});
+	});
+
+	const intFmt = (v) => String(Math.round(v));
+
+	const updates = {
+		"scene.zaxis.range": [cmin, cmax],
+		"scene.zaxis.autorange": false,
+		"scene.zaxis.tickformat": intFmt,
+		"scene.zaxis.title.text": scale === "log" ? "loss (log₁₀)" : "loss (linear)"
+	};
+
+	requestAnimationFrame(() => {
+		Plotly.restyle("ll-3d-plot", { z: surfaceZUpdate }, [0]).catch(() => {});
+		state.currentOptimizers.forEach((name, i) => {
+			Plotly.restyle("ll-3d-plot", { z: [trajZUpdates[i]] }, [i + 1]).catch(() => {});
+		});
+		Plotly.relayout("ll-3d-plot", updates).catch(() => {});
+	});
+}
+window.setScale3D = setScale3D;
 
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const { Ws, Bs, Z } = surfaceGrid;
@@ -481,6 +560,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
 				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
 
+				state.model.finals = state.model.finals || {};
+				state.model.finals[name] = { w: w, b: b, loss: logs.loss };
+				renderModelReadout();
+
 				scheduleRestyle("ll-loss-plot", {
 					x: [losses.map((_, k) => k + 1)],
 					y: [losses]
@@ -490,8 +573,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				scheduleRestyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
 
 				if (epoch % 3 === 0 || epoch === epochs - 1) {
+					const scale = state.scale3D || "log";
 					const trajZ = trajLoss.map(l => {
-						let z = Math.log10(Math.max(l, 1e-12));
+						let z = Math.max(l, 1e-12);
+						if (scale === "log") z = Math.log10(z);
 						if (z > zMax) z = zMax;
 						if (z < zMin) z = zMin;
 						return z;
@@ -513,10 +598,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const finalW = trajW[trajW.length - 1];
 	const finalB = trajB[trajB.length - 1];
 	const finalLoss = trajLoss[trajLoss.length - 1];
-	state.model.w = finalW;
-	state.model.b = finalB;
-	state.model.loss = finalLoss;
-	state.model.activeOptimizer = name;
 	state.model.finals = state.model.finals || {};
 	state.model.finals[name] = { w: finalW, b: finalB, loss: finalLoss };
 	renderModelReadout();
@@ -556,10 +637,11 @@ async function startExperiment() {
 	state.stopRequested = false;
 	state.landscape = { W: [], B: [], L: [], cache: {} };
 	state.lossHistory = {};
-	state.model = { w: 0.1, b: 0.1, loss: null };
+	state.model = { w: 0.1, b: 0.1, loss: null, finals: {} };
 	state.surfaceLookup = null;
 	state.surfaceZMin = 0;
 	state.surfaceZMax = 0;
+	state.scale3D = "log";
 
 	const optimizers = getSelectedOptimizers();
 	if (optimizers.length === 0) {

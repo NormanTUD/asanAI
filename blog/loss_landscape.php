@@ -338,7 +338,56 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	font-size: 0.75rem;
 	color: var(--mn-text-secondary, #5C5043);
 	font-style: italic;
-	margin-left: auto;
+	margin-right: auto;
+}
+.ll-lab .ll-scale-btn {
+	background: var(--mn-bg, #FAF8F1);
+	color: var(--mn-text, #3A2F25);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.15s;
+	margin: 0;
+}
+.ll-lab .ll-scale-btn.is-active {
+	background: var(--mn-accent, #6366f1);
+	color: white;
+	border-color: var(--mn-accent, #6366f1);
+}
+.ll-lab .ll-scale-btn:hover {
+	background: var(--mn-accent-light, #e0e7ff);
+}
+.ll-lab .ll-scale-btn.is-active:hover {
+	background: var(--mn-accent-dark, #4338ca);
+}
+.ll-lab .ll-equation .ll-eq-row {
+	display: grid;
+	grid-template-columns: 70px max-content 1fr;
+	align-items: baseline;
+	gap: 10px;
+	padding: 4px 0;
+	border-bottom: 1px dashed var(--mn-border-light, #E8DFC6);
+}
+.ll-lab .ll-equation .ll-eq-row:last-child {
+	border-bottom: none;
+}
+.ll-lab .ll-equation .ll-eq-name {
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+.ll-lab .ll-equation .ll-eq-math {
+	font-size: 1.05rem;
+	color: var(--mn-text, #3A2F25);
+}
+.ll-lab .ll-equation .ll-eq-meta {
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.78rem;
+	color: var(--mn-text-secondary, #5C5043);
+	text-align: right;
 }
 </style>
 
@@ -398,7 +447,7 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	</div>
 
 	<div class="ll-readout">
-		<span class="ll-readout-label">Current model</span>
+		<span class="ll-readout-label">Final models</span>
 		<div id="ll-equation" class="ll-equation"></div>
 	</div>
 
@@ -410,6 +459,8 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 		<button type="button" class="ll-cam-btn" onclick="setCam3D('side')">Side</button>
 		<button type="button" class="ll-cam-btn" onclick="setCam3D('reset')">Reset</button>
 		<span class="ll-cam-hint">drag = rotate · scroll = zoom · shift-drag = pan</span>
+		<button type="button" class="ll-scale-btn is-active" id="ll-scale-log"   onclick="setScale3D('log')">Log z</button>
+		<button type="button" class="ll-scale-btn"            id="ll-scale-linear" onclick="setScale3D('linear')">Linear z</button>
 	</div>
 
 	<div id="ll-3d-plot" class="ll-plot-3d" data-plot-theme="self"></div>
