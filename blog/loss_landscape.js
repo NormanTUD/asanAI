@@ -318,10 +318,14 @@ function setAxisIntegerTicks(plotId, axisKey, lo, hi) {
 	const keys = ["xaxis", "yaxis", "zaxis"];
 	const i = keys.indexOf(axisKey);
 	const prop = i >= 0 ? keys[i] : "zaxis";
+	const intFmt = (v) => String(Math.round(v));
 	const update = {};
-	update["scene." + prop + ".tickvals"] = vals;
-	update["scene." + prop + ".ticktext"] = text;
-	update["scene." + prop + ".tickmode"] = "array";
+	update["scene." + prop + ".tickvals"]  = vals;
+	update["scene." + prop + ".ticktext"]  = text;
+	update["scene." + prop + ".tickmode"]  = "array";
+	update["scene." + prop + ".tickformat"] = intFmt;
+	update["scene." + prop + ".range"]      = [lo, hi];
+	update["scene." + prop + ".autorange"] = false;
 	Plotly.relayout(plotId, update).catch(() => {});
 }
 
@@ -462,10 +466,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const ws = layer.getWeights();
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
 				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
-				state.model.w = w;
-				state.model.b = b;
-				state.model.loss = logs.loss;
-				state.model.activeOptimizer = name;
 
 				Plotly.restyle("ll-3d-plot", {
 					x: [trajW], y: [trajB], z: [trajLoss.map(l => Math.log10(l))]
@@ -480,7 +480,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				}, [lossIdx]);
 
 				setProgress((epoch + 1) / epochs);
-				renderModelReadout();
 			}
 		}
 	});
@@ -488,6 +487,18 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	optimizer.dispose();
 	model.dispose();
 	state.lossHistory[name] = losses;
+
+	const finalW = trajW[trajW.length - 1];
+	const finalB = trajB[trajB.length - 1];
+	const finalLoss = trajLoss[trajLoss.length - 1];
+	state.model.w = finalW;
+	state.model.b = finalB;
+	state.model.loss = finalLoss;
+	state.model.activeOptimizer = name;
+	state.model.finals = state.model.finals || {};
+	state.model.finals[name] = { w: finalW, b: finalB, loss: finalLoss };
+	renderModelReadout();
+
 	return { trajW, trajB, trajLoss };
 }
 
@@ -543,7 +554,7 @@ async function startExperiment() {
 		await tf.nextFrame();
 
 		setStatus("Sampling loss surface...");
-		await sampleLandscapeAround(0.1, 0.1, 3, data.xsT, data.ysT);
+		await sampleLandscapeAround(0.1, 0.1, 4, data.xsT, data.ysT);
 
 		state.model.loss = calculateLoss(0.1, 0.1, data.xsT, data.ysT);
 
@@ -605,7 +616,7 @@ async function loadLossLandscapeLabModule() {
 		state.model.loss = computeLossForWeights(state.model.w, state.model.b, xsT, ysT, state.activation);
 
 		state.landscape = { W: [], B: [], L: [], cache: {} };
-		await sampleLandscapeAround(state.model.w, state.model.b, 3, xsT, ysT);
+		await sampleLandscapeAround(state.model.w, state.model.b, 4, xsT, ysT);
 		const surface = buildSurfaceGrid();
 
 		init3DPlot(opts, surface, state.model.w, state.model.b, state.model.loss);
