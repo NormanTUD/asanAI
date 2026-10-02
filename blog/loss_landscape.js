@@ -164,9 +164,9 @@ function renderModelReadout() {
 
 	const origEl = document.getElementById("ll-original-eq");
 	if (origEl) {
-		const origEq = state.exampleType && EXAMPLE_EQUATIONS[state.exampleType];
-		origEl.textContent = origEq ? "Original (data): " + origEq : "";
-		origEl.style.display = origEq ? "" : "none";
+		const showOrig = state.dataMatchesPreset && state.exampleType && EXAMPLE_EQUATIONS[state.exampleType];
+		origEl.textContent = showOrig ? "Original (data): " + EXAMPLE_EQUATIONS[state.exampleType] : "";
+		origEl.style.display = showOrig ? "" : "none";
 	}
 
 	if (names.length === 0) {
@@ -245,6 +245,9 @@ function loadExample(type) {
 	state.xMin = Math.min(...xs);
 	state.xMax = Math.max(...xs);
 	state.exampleType = type;
+	state.presetXs = xs.slice();
+	state.presetYs = ys.slice();
+	state.dataMatchesPreset = true;
 	renderModelReadout();
 }
 window.loadExample = loadExample;
@@ -1121,6 +1124,21 @@ async function loadLossLandscapeLabModule() {
 		state.activation = actEl.value;
 		renderModelReadout();
 	});
+
+	const xEl = document.getElementById("ll-x");
+	const yEl = document.getElementById("ll-y");
+	const checkDataMatchesPreset = () => {
+		if (!state.presetXs || !state.presetYs) { state.dataMatchesPreset = false; return; }
+		const curX = xEl.value.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+		const curY = yEl.value.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+		const same = curX.length === state.presetXs.length && curY.length === state.presetYs.length &&
+			curX.every((v, i) => Math.abs(v - state.presetXs[i]) < 1e-9) &&
+			curY.every((v, i) => Math.abs(v - state.presetYs[i]) < 1e-9);
+		state.dataMatchesPreset = same;
+		renderModelReadout();
+	};
+	if (xEl) xEl.addEventListener("input", checkDataMatchesPreset);
+	if (yEl) yEl.addEventListener("input", checkDataMatchesPreset);
 
 	window.addEventListener("resize", resizeAllPlots);
 	setupResizeObserver();
