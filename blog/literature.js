@@ -3856,6 +3856,55 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1609.04747",
 		alternativetitle: "Ruder, 2016"
 	},
+	"nesterov2004introductory": {
+		title: "Introductory Lectures on Convex Optimization: A Basic Course",
+		author: "Yurii Nesterov",
+		year: 2004,
+		url: "https://link.springer.com/book/10.1007/978-1-4419-8853-9",
+		alternativetitle: "Nesterov, 2004"
+	},
+	"duchi2011adagrad": {
+		title: "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
+		author: "John Duchi, Elad Hazan, Yoram Singer",
+		year: 2011,
+		url: "http://jmlr.org/papers/v12/duchi11a.html",
+		alternativetitle: "Duchi et al., 2011"
+	},
+	"zeiler2012adadelta": {
+		title: "ADADELTA: An Adaptive Learning Rate Method",
+		author: "Matthew D. Zeiler",
+		year: 2012,
+		url: "https://arxiv.org/abs/1212.5701",
+		alternativetitle: "Zeiler, 2012"
+	},
+	"hinton2012rmsprop": {
+		title: "Neural Networks for Machine Learning, Lecture 6e: A practical guide to training restricted Boltzmann machines",
+		author: "Geoffrey Hinton",
+		year: 2012,
+		url: "http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf",
+		alternativetitle: "Hinton, 2012"
+	},
+	"dozat2016nadam": {
+		title: "Incorporating Nesterov Momentum into Adam",
+		author: "Timothy Dozat",
+		year: 2016,
+		url: "http://cs229.stanford.edu/proj2015/054_report.pdf",
+		alternativetitle: "Dozat, 2016"
+	},
+	"reddi2018amsgrad": {
+		title: "On the Convergence of Adam and Beyond",
+		author: "Sashank J. Reddi, Satyen Kale, Sanjiv Kumar",
+		year: 2018,
+		url: "https://arxiv.org/abs/1904.09237",
+		alternativetitle: "Reddi et al., 2018"
+	},
+	"loshchilov2019adamw": {
+		title: "Decoupled Weight Decay Regularization",
+		author: "Ilya Loshchilov, Frank Hutter",
+		year: 2019,
+		url: "https://arxiv.org/abs/1711.05101",
+		alternativetitle: "Loshchilov & Hutter, 2019"
+	},
 	"momentum": {
 		title: "Some methods of speeding up the convergence of iteration methods",
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",

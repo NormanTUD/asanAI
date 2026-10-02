@@ -151,10 +151,97 @@ This division is the key insight: parameters with large, consistent gradients ge
 
 </div>
 
+<div class="md" data-mathlevel="70" data-optionaltitle="The Rest of the Optimizer Family">
+
+### The Rest of the Optimizer Family
+
+SGD, Momentum, and Adam are the headliners, but the zoo is bigger. Each of the optimizers below was invented to fix a specific failure of the previous one. Reading them in order is reading the most productive argument in modern optimization.
+
+#### Nesterov Accelerated Gradient (NAG)
+
+Plain momentum is a heavy ball rolling downhill: it builds up speed from past gradients, which is great, until it overshoots a valley. The ball doesn't know to slow down before the slope reverses.
+
+Nesterov's fix is small but clever: instead of measuring the slope *where you are*, measure it *where you're about to be*. You take the momentum step first (a guess about your future position), then correct based on the gradient there:
+
+$$v_t = \beta \cdot v_{t-1} + \eta \cdot \nabla_\theta J\!\left(\theta - \beta v_{t-1}\right)$$
+$$\theta := \theta - v_t$$
+
+Compare this with plain momentum — the only difference is that the gradient is now evaluated at $\theta - \beta v_{t-1}$ instead of at $\theta$. It's a one-line change, but the ball is now noticeably more responsive: it slows down when it sees the slope curving up ahead, instead of running off the cliff and catching itself on the rebound. \citeauthor{nesterov2004introductory} (\citeyear{nesterov2004introductory}) wrote down the modern form; in practice NAG typically shaves a few percent off training time on RNNs and other models with strong gradient curvature (\cite[Ruder, 2016]{ruder2016overview}).
+
+#### Adagrad — The Per-Parameter GPS
+
+SGD uses one global learning rate for every parameter. But the world isn't uniform. In a language model, the embedding for "the" gets a gradient signal on almost every batch; the embedding for "quokka" gets one gradient per million tokens. Treating them the same is wasteful: "the" gets over-updated and "quokka" gets starved.
+
+In \citeyear{duchi2011adagrad}, \citeauthor{duchi2011adagrad} introduced a simple idea: each parameter gets its own learning rate, scaled by how much it has been updated so far. Let $G_{t,ii}$ be the sum of squared gradients for parameter $i$ up to step $t$. Then:
+
+$$\theta_{t+1,i} = \theta_{t,i} - \frac{\eta}{\sqrt{G_{t,ii}} + \epsilon}\, g_{t,i}$$
+
+Parameters that have received large or frequent gradients get *smaller* effective steps (the denominator is large); parameters that have received small or rare gradients get *larger* effective steps. The $\epsilon$ (usually $10^{-8}$) is just a guard against dividing by zero on the very first step. Think of it as a per-parameter GPS that slows down for crowded streets and speeds up on empty roads. This was the optimizer Google used in 2012 to find cats in raw YouTube frames — the first large-scale demonstration that unsupervised feature learning actually works at scale.
+
+#### Adadelta and RMSprop — Stop the Shrink
+
+Adagrad has a quiet flaw. Because $G_t$ only ever grows (every squared gradient is positive and gets added forever), the denominator $\sqrt{G_{t,ii}}$ grows without bound. Eventually the effective learning rate shrinks to near zero, and the optimizer stops learning. Adagrad is great early in training and dies slowly of starvation.
+
+**RMSprop** (\citeauthor{hinton2012rmsprop}'s \citeyear{hinton2012rmsprop} Coursera lecture) and **Adadelta** (\citealternativetitle{zeiler2012adadelta}) fix this the same way: replace the *sum* of past squared gradients with an *exponentially decaying average*. The sum has infinite memory; the EMA has finite memory, so old gradients fade.
+
+$$E[g^2]_t = \gamma \cdot E[g^2]_{t-1} + (1 - \gamma) \cdot g_t^2$$
+
+with $\gamma \approx 0.9$. This is exactly the "second moment" $v_t$ that Adam will reuse later. The update then looks just like Adagrad's, with the EMA replacing the sum:
+
+$$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{E[g^2]_t} + \epsilon}\, g_t$$
+
+RMSprop and Adadelta were developed independently around the same time and are nearly identical — RMSprop is exactly the first update rule of Adadelta, with $\gamma = 0.9$ and $\eta = 0.001$ as the suggested defaults. Adadelta goes one step further: Zeiler noticed that the *units* of this update don't match the units of $\theta$ (we're multiplying a unitless gradient by a learning rate, which has units of $\theta$). He fixes this by replacing $\eta$ with the RMS of past parameter updates, $\mathrm{RMS}[\Delta\theta]_{t-1}$, so the update has the right units. The practical upshot: Adadelta doesn't need a learning-rate hyperparameter at all.
+
+#### AdaMax — A More Stable Denominator
+
+Adam uses $\sqrt{v_t}$ in the denominator, where $v_t$ is an EMA of squared gradients. But there's nothing sacred about the choice of "squared". You could write the EMA as an $\ell_p$ norm: $v_t = \beta_2 v_{t-1} + (1 - \beta_2)\, |g_t|^p$, and Adam picks $p = 2$.
+
+What happens if you pick $p = \infty$? Then $v_t$ converges to $\max(\beta_2 v_{t-1}, |g_t|)$ — the running *maximum* of past gradient magnitudes, not their mean square. That's **AdaMax**, also from \citeauthor{adam} (\citeyear{adam}):
+
+$$\theta_{t+1} = \theta_t - \frac{\eta}{u_t}\, \hat{m}_t \quad\text{with}\quad u_t = \max(\beta_2 u_{t-1}, |g_t|)$$
+
+Because $u_t$ is a max rather than an average, it doesn't suffer from the zero-bias that $m_t$ and $v_t$ do, so we skip the bias correction. In practice AdaMax is more numerically stable than Adam when gradients have very large outliers — it never lets the denominator get close to zero.
+
+#### Nadam — Adam, but Look Ahead
+
+Nadam is what you get when you apply the Nesterov trick to Adam. The fix from \citeauthor{dozat2016nadam} (\citeyear{dozat2016nadam}) is one line: replace the previous momentum vector $\hat{m}_{t-1}$ in the Adam update with the *current* one $\hat{m}_t$:
+
+$$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon}\!\left( \beta_1 \hat{m}_t + \frac{(1 - \beta_1)\, g_t}{1 - \beta_1^t} \right)$$
+
+It's a one-line modification, but it makes Adam's momentum term "look ahead" the same way Nesterov does, which tends to give modestly faster convergence on tasks with strong gradient curvature.
+
+#### AMSGrad — Fixing a Convergence Flaw
+
+Adam isn't always the best. Practitioners noticed that on some tasks — especially object recognition and machine translation — Adam sometimes fails to converge to a minimum as good as SGD-with-momentum's. The cause was pinned down by \citeauthor{reddi2018amsgrad} (\citeyear{reddi2018amsgrad}): the EMA of squared gradients can *forget* large but rare gradients that would have been informative.
+
+Their fix: instead of using the EMA directly, use the **running maximum** of past $v_t$ values:
+
+$$\hat{v}_t = \max(\hat{v}_{t-1}, v_t)$$
+
+This guarantees a non-increasing effective step size, which restores the convergence guarantees that Adam lacks. In practice AMSGrad sometimes matches Adam, sometimes loses to it; the empirical comparison was messier than the theory suggested, and most practitioners stuck with Adam.
+
+#### AdamW — Fixing the Weight Decay Bug
+
+Adam has a quiet problem with weight decay. In the original paper, $L_2$ regularization is added to the *loss*, which means it shows up inside the gradient $g_t$, which means the EMA in $v_t$ averages it in. The result: the regularization effect depends on the magnitude of recent gradients — exactly the wrong behavior. You want weight-decay strength to be a fixed hyperparameter, not coupled to the optimizer's running statistics.
+
+\citetitle{loshchilov2019adamw} (\citealternativetitle{loshchilov2019adamw}) decouples them. Weight decay is applied *directly* to the weights, not through the gradient:
+
+$$\theta_{t+1} = \theta_t - \eta\!\left( \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} + \lambda\, \theta_t \right)$$
+
+It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples the optimal $\lambda$ from the learning rate. **AdamW is now the default optimizer for training transformers** in practice — every modern recipe for GPT, BERT, Llama, or Stable Diffusion uses AdamW, not Adam.
+
+#### When Adam Doesn't Win
+
+The cleanest family tree above doesn't mean Adam (or AdamW) is always the right choice. \citeauthor{ruder2016overview}'s survey (\citeyear{ruder2016overview}) already noted the wrinkle: for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam. The intuition is sharp — SGD's noisier updates act as an implicit regularizer (they keep the ball bouncing, which helps it escape sharp minima), and a cosine or step-decay schedule gives the optimizer more chances to settle into a flat basin over time.
+
+The pragmatic rule of thumb: **start with AdamW**. If you have the compute for a careful learning-rate sweep and you need every last fraction of a percent of accuracy, try SGD-with-momentum with a cosine schedule. For transformers and large language models specifically, AdamW dominates, because the per-parameter adaptivity genuinely matters when individual weights (especially in token embeddings) see wildly different gradient magnitudes. Don't reach for anything else unless you have a specific reason to.
+
+</div>
+
 <div class="md" data-mathlevel="55" data-optionaltitle="History of Optimizers">
 ### History of Optimizers
 
-In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\citetitle{sgd}” (\citealt{sgd}), introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
+In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\citetitle{sgd}” (\citealternativetitle{sgd}), introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
 
 The modern **SGD** update rule is a direct application of their iterative formula:
 
