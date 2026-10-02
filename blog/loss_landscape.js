@@ -303,6 +303,29 @@ function commonAxis(title, opts) {
 
 /* ─── 3-D plot: trajectory + surface clipping ────────────────────────────── */
 
+function setCam3D(preset) {
+	const cams = {
+		iso:   { eye: { x: 1.3, y: 1.3, z: 1.2 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } },
+		top:   { eye: { x: 0.01, y: 0.01, z: 2.0 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 1, z: 0 } },
+		front: { eye: { x: 0, y: 2.0, z: 0.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } },
+		side:  { eye: { x: 2.0, y: 0, z: 0.3 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } },
+		reset: { eye: { x: 1.3, y: 1.3, z: 1.2 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } }
+	};
+	const c = cams[preset] || cams.iso;
+	Plotly.relayout("ll-3d-plot", {
+		"scene.camera.eye.x":    c.eye.x,
+		"scene.camera.eye.y":    c.eye.y,
+		"scene.camera.eye.z":    c.eye.z,
+		"scene.camera.center.x": c.center.x,
+		"scene.camera.center.y": c.center.y,
+		"scene.camera.center.z": c.center.z,
+		"scene.camera.up.x":     c.up.x,
+		"scene.camera.up.y":     c.up.y,
+		"scene.camera.up.z":     c.up.z
+	}).catch(() => {});
+}
+window.setCam3D = setCam3D;
+
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const { Ws, Bs, Z } = surfaceGrid;
 	const losses = Z.flat().filter(z => z !== null).map(z => Math.pow(10, z));
